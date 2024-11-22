@@ -1,11 +1,9 @@
-import "./App.css";
-import Home from "./features/home/page";
+// import "./App.css";
 import AppRouter from "./routes/routes";
 
 function App() {
   return (
-    // <Home></Home>
-    <div className="app">
+    <div className="">
       <AppRouter />
     </div>
   );
