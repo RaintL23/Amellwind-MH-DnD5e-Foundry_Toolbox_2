@@ -7,16 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { List } from "lucide-react";
+import { Link } from "react-router-dom";
 
 const ToolboxOptions = [
   {
@@ -24,7 +16,7 @@ const ToolboxOptions = [
     optionDescription: "",
     optionIcon: <List />,
     optionButtonName: "Go",
-    optionNavigation: "",
+    optionNavigation: "/monsters/list",
   },
   {
     optionName: "Monster Rune List",
@@ -50,7 +42,7 @@ const Home = () => {
         </CardHeader>
         <CardContent className="flex space-x-4">
           {ToolboxOptions.map((option) => (
-            <div>
+            <div key={option.optionName}>
               <Card className="w-[350px]">
                 <CardTitle>
                   <div className="flex justify-center">
@@ -59,7 +51,9 @@ const Home = () => {
                 </CardTitle>
                 <CardDescription>{option.optionDescription}</CardDescription>
                 <CardFooter>
-                  <Button>{option.optionButtonName}</Button>
+                  <Button asChild>
+                    <Link to={option.optionNavigation}>{option.optionButtonName}</Link>
+                  </Button>
                 </CardFooter>
               </Card>
             </div>
