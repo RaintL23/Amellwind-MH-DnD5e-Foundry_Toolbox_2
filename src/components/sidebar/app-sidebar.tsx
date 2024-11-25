@@ -1,4 +1,5 @@
-import { Home, Inbox, Settings } from "lucide-react";
+import { Home, Inbox, Settings } from "lucide-react"
+
 import {
   Sidebar,
   SidebarContent,
@@ -8,9 +9,9 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import { Link } from "react-router-dom"; // Importa Link para navegación interna.
+} from "@/components/ui/sidebar"
 
+// Menu items.
 const items = [
   {
     title: "Home",
@@ -24,10 +25,10 @@ const items = [
   },
   {
     title: "Settings",
-    url: "/settings",
+    url: "#",
     icon: Settings,
   },
-];
+]
 
 export function AppSidebar() {
   return (
@@ -40,10 +41,10 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link to={item.url}>
+                    <a href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </Link>
+                    </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -52,5 +53,5 @@ export function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  );
+  )
 }

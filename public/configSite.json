@@ -1,0 +1,11 @@
+{
+    "modulos": [
+      {
+        "id": "modulo-MH5eToolBox",
+        "url": "https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json",
+        "enabled": true,
+        "disabledUrl": []
+      }
+    ],
+    "debug": false
+  }
