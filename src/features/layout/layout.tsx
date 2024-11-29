@@ -22,7 +22,7 @@ export default function Layout() {
   return (
     <SidebarProvider>
       <AppSidebar />
-      <main className="ml-2"> {/* Ajusta la clase según el ancho de tu sidebar */}
+      <main className="ml-4 mt-2"> {/* Ajusta la clase según el ancho de tu sidebar */}
         <SidebarTrigger className="" />
         <div className="p-4">
           <Outlet /> {/* Aquí se renderizan las rutas internas */}

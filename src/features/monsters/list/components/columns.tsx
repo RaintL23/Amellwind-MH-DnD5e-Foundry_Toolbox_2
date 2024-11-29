@@ -1,13 +1,34 @@
 // import { ColumnBasic } from "@/components/data-table/data-table-interfaces";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge";
 import MonsterType from "@/models/monster/monsterType"
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table"
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 export const columns: ColumnDef<MonsterType>[] = [
     {
         accessorKey: "name",
-        header: "Name",
+        header: ({ column }) => {
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+                className="bg-transparent"
+              >
+                Name
+                <ArrowUpDown />
+              </Button>
+            )
+          },
     },
     {
         accessorKey: "size",
@@ -82,6 +103,35 @@ export const columns: ColumnDef<MonsterType>[] = [
             }
         }
     },
+    {
+        id: "actions",
+        enableHiding: false,
+        cell: ({ row }) => {
+          const payment = row.original
+     
+          return (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="h-8 w-8 p-0">
+                  <span className="sr-only">Open menu</span>
+                  <MoreHorizontal />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+                {/* <DropdownMenuItem
+                  onClick={() => navigator.clipboard.writeText(payment.id)}
+                >
+                  Copy payment ID
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>View customer</DropdownMenuItem> */}
+                <DropdownMenuItem>Runes</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )
+        },
+      },
 ]
 
 export const Enviroments = [

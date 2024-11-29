@@ -12,18 +12,18 @@ import { Link } from "react-router-dom";
 
 const ToolboxOptions = [
   {
-    optionName: "Monster List",
+    optionName: "Monsters List",
     optionDescription: "",
-    optionIcon: <List />,
+    optionIcon: List,
     optionButtonName: "Go",
     optionNavigation: "/monsters/list",
   },
   {
-    optionName: "Monster Rune List",
+    optionName: "Monsters Rune List",
     optionDescription: "",
-    optionIcon: <List />,
+    optionIcon: List,
     optionButtonName: "Go",
-    optionNavigation: "",
+    optionNavigation: "/monsters/runes/list",
   },
 ];
 
@@ -45,8 +45,8 @@ const Home = () => {
             <div key={option.optionName}>
               <Card className="w-[350px]">
                 <CardTitle>
-                  <div className="flex justify-center">
-                    {option.optionIcon} {option.optionName}
+                  <div className="flex justify-center items-center space-x-2 my-3">
+                    {option.optionName}
                   </div>
                 </CardTitle>
                 <CardDescription>{option.optionDescription}</CardDescription>
