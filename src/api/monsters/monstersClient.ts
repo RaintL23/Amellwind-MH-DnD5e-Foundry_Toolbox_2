@@ -5,23 +5,30 @@ import MonsterRunes from "@/models/monster/MonsterRunes";
 
 export const getMonsters = async (): Promise<Monster[]> => {
   const data = await fetchApiData();
-  console.log("monsters data");
-  console.log(data);
+  // console.log("monsters data");
+  // console.log(data);
   return data.monster;
 };
 
-// export const getMonsterRunes = async (monster: Monster): Promise<string[]> => {
-//   console.log("monster data for runes");
-//   console.log(monster);
-//   return [];
-// };
+export const getMonstersRunes = async (): Promise<MonsterRunes[]> => {
+  const monsters = await getMonsters();
+  const monstersRunes: MonsterRunes[] = [];
+  monsters.forEach(monster => {
+    monstersRunes.push(getMonsterRunes(monster.name, monster));
+  });
+  return monstersRunes;
+};
 
-const getMonsterRunes = (monster: Monster): MonsterRunes => {
+const sumaSimple = (index: number): number => {
+  return index
+}
+
+const getMonsterRunes = (monsterName: string, monster: Monster): MonsterRunes => {
   const result: MonsterRunes = {
     armorEffects: [],
     weaponEffects: [],
   };
-
+  let index = 0;
   if (!monster?.fluff?.entries) return result;
 
   // Función recursiva para buscar en las entries
@@ -31,12 +38,16 @@ const getMonsterRunes = (monster: Monster): MonsterRunes => {
       if (entry.type === "list" && entry.style === "list-hang") {
         if (entry.name === "ARMOR MATERIAL EFFECTS" && entry.items) {
           result.armorEffects = entry.items.map((item) => ({
-            name: item.name || "Unknown",
+            id: ++index,
+            monsterName: monsterName || "Unknown",
+            name: `[A] ${item.name}` || "Unknown",
             effect: item.entries?.[0] || "No effect description",
           }));
         } else if (entry.name === "WEAPON MATERIAL EFFECTS" && entry.items) {
           result.weaponEffects = entry.items.map((item) => ({
-            name: item.name || "Unknown",
+            id: ++index,
+            monsterName: monsterName || "Unknown",
+            name: `[W] ${item.name}` || "Unknown",
             effect: item.entries?.[0] || "No effect description",
           }));
         }
@@ -50,12 +61,25 @@ const getMonsterRunes = (monster: Monster): MonsterRunes => {
   };
 
   processEntries(monster.fluff.entries);
-  console.log("Monster Runes");
-  console.log(result);
   return result;
 };
 
 export const getMonsterRunesNames = (monster: Monster): string[] => {
-  runes = getMonsterRunes(monster);
-  if (runes) return [];
+  const runes = getMonsterRunes(monster.name, monster);
+  const runesNames:string[] = [];
+  if (runes.armorEffects.length > 0){
+    runes.armorEffects.forEach(armorRune => {
+      runesNames.push(armorRune.name);
+    });
+  }
+  if (runes.weaponEffects.length > 0){
+    runes.weaponEffects.forEach(weaponRune => {
+      runesNames.push(weaponRune.name);
+    });
+  }
+  // console.log("Monster Runes 1");
+  // console.log(runesNames);
+  if (runesNames.length == 0)
+    return ["No runes available"];
+  return runesNames;
 };
