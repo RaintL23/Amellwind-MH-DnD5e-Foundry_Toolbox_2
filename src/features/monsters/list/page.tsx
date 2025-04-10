@@ -6,34 +6,34 @@ import { DataTable } from "@/components/data-table-2/data-table";
 // import DataTable from '../../../components/data-table/data-table';
 
 const MonstersListPage = () => {
-    const [monsters, setMonsters] = useState<Monster[]>([]);
-    const [loading, setLoading] = useState(true);
+  const [monsters, setMonsters] = useState<Monster[]>([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const monsterData = await getMonsters();
-                console.log("Monster Data");
-                console.log(monsterData);
-                setMonsters(monsterData);
-            } catch (error) {
-                console.error("Error fetching monsters:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const monsterData = await getMonsters();
+        // console.log("Monster Data");
+        // console.log(monsterData);
+        setMonsters(monsterData);
+      } catch (error) {
+        console.error("Error fetching monsters:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-        fetchData();
-    }, []);
+    fetchData();
+  }, []);
 
-    if (loading) {
-        return <p>Loading monsters...</p>;
-    }
+  if (loading) {
+    return <p>Loading monsters...</p>;
+  }
 
-    return (
-        <div>
-            <h1>Monsters</h1>
-            {/* <table className="min-w-full border-collapse border border-gray-200">
+  return (
+    <div>
+      <h1>Monsters</h1>
+      {/* <table className="min-w-full border-collapse border border-gray-200">
                 <thead>
                 <tr>
                     <th className="border border-gray-300 px-4 py-2">Name</th>
@@ -59,14 +59,14 @@ const MonstersListPage = () => {
                 ))}
                 </tbody>
             </table> */}
-            <DataTable columns={columns} data={monsters} />
-            {/* <DataTable
+      <DataTable columns={columns} data={monsters} />
+      {/* <DataTable
                 columns={columns}
                 data={monsters}
                 tableId="Monster-List"
             /> */}
-        </div>
-    );
-}
+    </div>
+  );
+};
 
 export default MonstersListPage;

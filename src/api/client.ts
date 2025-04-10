@@ -10,8 +10,8 @@ export const fetchApiData = async (): Promise<ApiResponse> => {
     }
 
     const data: ApiResponse = await response.json();
-    console.log("data 1");
-    console.log(data);
+    // console.log("data 1");
+    // console.log(data);
     return data;
   } catch (error) {
     console.error("Error fetching API data:", error);
