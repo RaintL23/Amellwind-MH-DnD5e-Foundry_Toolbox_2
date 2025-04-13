@@ -2,10 +2,8 @@
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/node",
-      "config": {
-        "outputDirectory": "build"
-      }
+      "use": "@vercel/node"
     }
-  ]
+  ],
+  "outputDirectory": "build"
 }
