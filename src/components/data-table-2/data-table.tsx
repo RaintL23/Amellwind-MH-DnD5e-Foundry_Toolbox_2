@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from "react";
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -10,13 +10,13 @@ import {
   SortingState,
   useReactTable,
   VisibilityState,
-} from "@tanstack/react-table"
+} from "@tanstack/react-table";
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -24,47 +24,63 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { ChevronDown } from "lucide-react"
-  
-  interface DataTableProps<TData, TValue> {
-    columns: ColumnDef<TData, TValue>[]
-    data: TData[]
-  }
-  
-  export function DataTable<TData, TValue>({
-    columns,
-    data,
-  }: DataTableProps<TData, TValue>) {
-    const [sorting, setSorting] = React.useState<SortingState>([])
-    const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
-    const [rowSelection, setRowSelection] = React.useState({})
+} from "@/components/ui/table";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { ChevronDown } from "lucide-react";
+import MonsterRune1 from "@/models/monster/monsterRune1";
 
-    const table = useReactTable({
-      data,
-      columns,
-      onSortingChange: setSorting,
-      onColumnFiltersChange: setColumnFilters,
-      getCoreRowModel: getCoreRowModel(),
-      getPaginationRowModel: getPaginationRowModel(),
-      getSortedRowModel: getSortedRowModel(),
-      getFilteredRowModel: getFilteredRowModel(),
-      onColumnVisibilityChange: setColumnVisibility,
-      onRowSelectionChange: setRowSelection,
-      state: {
-        sorting,
-        columnFilters,
-        columnVisibility,
-        rowSelection,
+interface DataTableProps<TData, TValue> {
+  columns: ColumnDef<TData, TValue>[];
+  data: TData[];
+}
+
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+}: DataTableProps<TData, TValue>) {
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+
+  const getUniqueTags = (data: MonsterRune1[]) => {
+    const allTags = data.flatMap((rune) =>
+      rune.type && Array.isArray(rune.type.tags) ? rune.type.tags : []
+    );
+    return Array.from(new Set(allTags));
+  };
+
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility: {
+        "type.tags": false, // oculto por defecto
       },
-    })
-  
-    return (
-      <div className="w-full">
-      <div className="flex items-center py-4">
+      rowSelection,
+    },
+  });
+
+  const uniqueTags = getUniqueTags(data); // `data` es tu array de MonsterRune1
+  const tagColumn = table.getColumn("type.tags");
+
+  return (
+    <div className="w-full">
+      <div className="flex items-center py-4 space-x-2">
         <Input
           placeholder="Filter name..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
@@ -73,6 +89,112 @@ import { ChevronDown } from "lucide-react"
           }
           className="max-w-sm"
         />
+        {table.getColumn("monsterName") && (
+          <Input
+            placeholder="Filter Monster Origin Name..."
+            value={
+              (table.getColumn("monsterName")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("monsterName")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
+        {table.getColumn("effect") && (
+          <Input
+            placeholder="Filter effect..."
+            value={
+              (table.getColumn("effect")?.getFilterValue() as string) ?? ""
+            }
+            onChange={(event) =>
+              table.getColumn("effect")?.setFilterValue(event.target.value)
+            }
+            className="max-w-sm"
+          />
+        )}
+        {tagColumn && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="max-w-sm">
+                Tags <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="max-h-64 overflow-auto">
+              {uniqueTags.map((tag) => (
+                <DropdownMenuCheckboxItem
+                  key={tag}
+                  checked={
+                    (tagColumn.getFilterValue() as string[])?.includes(tag) ??
+                    false
+                  }
+                  onCheckedChange={(checked) => {
+                    const current =
+                      (tagColumn.getFilterValue() as string[]) ?? [];
+                    if (checked) {
+                      tagColumn.setFilterValue([...current, tag]);
+                    } else {
+                      tagColumn.setFilterValue(
+                        current.filter((t) => t !== tag)
+                      );
+                    }
+                  }}
+                >
+                  {tag}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+
+        {/* Dropdown para Type */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              Type
+              <ChevronDown />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            {/* Opción para limpiar el filtro */}
+            <DropdownMenuCheckboxItem
+              key="all-types"
+              checked={!table.getColumn("type.type")?.getFilterValue()}
+              onCheckedChange={() => {
+                table.getColumn("type.type")?.setFilterValue(undefined);
+              }}
+            >
+              All Types
+            </DropdownMenuCheckboxItem>
+
+            {[
+              ...new Set(
+                table
+                  .getPreFilteredRowModel()
+                  .rows.map((row) => row.getValue("type.type"))
+              ),
+            ]
+              .filter(Boolean)
+              .map((type: string) => (
+                <DropdownMenuCheckboxItem
+                  key={type}
+                  checked={
+                    table.getColumn("type.type")?.getFilterValue() === type
+                  }
+                  onCheckedChange={(checked) => {
+                    if (checked) {
+                      table.getColumn("type.type")?.setFilterValue(type);
+                    } else {
+                      table.getColumn("type.type")?.setFilterValue(undefined);
+                    }
+                  }}
+                >
+                  {type}
+                </DropdownMenuCheckboxItem>
+              ))}
+          </DropdownMenuContent>
+        </DropdownMenu>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">
@@ -95,7 +217,7 @@ import { ChevronDown } from "lucide-react"
                   >
                     {column.id}
                   </DropdownMenuCheckboxItem>
-                )
+                );
               })}
           </DropdownMenuContent>
         </DropdownMenu>
@@ -115,7 +237,7 @@ import { ChevronDown } from "lucide-react"
                             header.getContext()
                           )}
                     </TableHead>
-                  )
+                  );
                 })}
               </TableRow>
             ))}
@@ -151,10 +273,10 @@ import { ChevronDown } from "lucide-react"
         </Table>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
-        <div className="flex-1 text-sm text-muted-foreground">
+        {/* <div className="flex-1 text-sm text-muted-foreground">
           {table.getFilteredSelectedRowModel().rows.length} of{" "}
           {table.getFilteredRowModel().rows.length} row(s) selected.
-        </div>
+        </div> */}
         <div className="space-x-2">
           <Button
             variant="outline"
@@ -175,6 +297,5 @@ import { ChevronDown } from "lucide-react"
         </div>
       </div>
     </div>
-    )
-  }
-  
+  );
+}

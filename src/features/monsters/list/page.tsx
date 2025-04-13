@@ -13,8 +13,6 @@ const MonstersListPage = () => {
     const fetchData = async () => {
       try {
         const monsterData = await getMonsters();
-        // console.log("Monster Data");
-        // console.log(monsterData);
         setMonsters(monsterData);
       } catch (error) {
         console.error("Error fetching monsters:", error);
@@ -33,38 +31,7 @@ const MonstersListPage = () => {
   return (
     <div>
       <h1>Monsters</h1>
-      {/* <table className="min-w-full border-collapse border border-gray-200">
-                <thead>
-                <tr>
-                    <th className="border border-gray-300 px-4 py-2">Name</th>
-                    <th className="border border-gray-300 px-4 py-2">Size</th>
-                    <th className="border border-gray-300 px-4 py-2">Type</th>
-                    <th className="border border-gray-300 px-4 py-2">Environment</th>
-                </tr>
-                </thead>
-                <tbody>
-                {monsters.map((monster) => (
-                    <tr key={monster.name}>
-                    <td className="border border-gray-300 px-4 py-2">{monster.name}</td>
-                    <td className="border border-gray-300 px-4 py-2">
-                        {monster.size.join(", ")}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                        {monster.type?.type}
-                    </td>
-                    <td className="border border-gray-300 px-4 py-2">
-                        {monster.environment?.join(", ")}
-                    </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table> */}
       <DataTable columns={columns} data={monsters} />
-      {/* <DataTable
-                columns={columns}
-                data={monsters}
-                tableId="Monster-List"
-            /> */}
     </div>
   );
 };
