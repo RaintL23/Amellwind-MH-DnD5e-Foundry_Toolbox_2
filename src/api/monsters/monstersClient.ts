@@ -1,9 +1,8 @@
 import Monster from "@/models/monster/monster";
 import { fetchApiData } from "../client";
-import MonsterFluff from "@/models/monster/MonsterFluff";
 import MonsterRunes from "@/models/monster/MonsterRunes";
 import MonsterRune1 from "@/models/monster/monsterRune1";
-import MonsterRunes1 from "@/models/monster/monsterRunes1";
+import MonsterEntries from "@/models/monster/monsterEntries";
 
 export const getMonsters = async (): Promise<Monster[]> => {
   const data = await fetchApiData();
@@ -36,7 +35,7 @@ const getMonsterRune2 = (
 ): MonsterRune1[] => {
   let result: MonsterRune1[] = [];
   // Función recursiva para buscar en las entries
-  const processEntries = (entries: MonsterFluff[]) => {
+  const processEntries = (entries: MonsterEntries[]) => {
     if (entries !== undefined) {
       for (const entry of entries) {
         // Si es una lista con style "list-hang" y tiene el nombre que buscamos
@@ -109,7 +108,7 @@ const getMonsterRunes = (
   if (!monster?.fluff?.entries) return result;
 
   // Función recursiva para buscar en las entries
-  const processEntries = (entries: MonsterFluff[]) => {
+  const processEntries = (entries: MonsterEntries[]) => {
     for (const entry of entries) {
       // Si es una lista con style "list-hang" y tiene el nombre que buscamos
       if (entry.type === "list" && entry.style === "list-hang") {

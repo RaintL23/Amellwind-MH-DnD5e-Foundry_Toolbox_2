@@ -1,4 +1,7 @@
 export default interface MonsterEntries {
-    type: string,
-    entries?: MonsterEntries | string;
+  type?: string;
+  name?: string;
+  style?: string;
+  entries?: MonsterEntries | string;
+  items?: any[];
 }
