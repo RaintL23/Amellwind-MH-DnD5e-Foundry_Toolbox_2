@@ -48,9 +48,13 @@ export function DataTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState({});
 
   const getUniqueTags = (data: MonsterRune1[]) => {
-    const allTags = data.flatMap((rune) =>
-      rune.type && Array.isArray(rune.type.tags) ? rune.type.tags : []
-    );
+    const allTags = data.flatMap((rune) => {
+      if (typeof rune.type !== "string" && Array.isArray(rune.type?.tags)) {
+        return rune.type.tags;
+      }
+      return [];
+    });
+
     return Array.from(new Set(allTags));
   };
 
@@ -69,13 +73,14 @@ export function DataTable<TData, TValue>({
       sorting,
       columnFilters,
       columnVisibility: {
-        "type.tags": false, // oculto por defecto
+        "type.tags": false,
+        monsterName: false,
       },
       rowSelection,
     },
   });
 
-  const uniqueTags = getUniqueTags(data); // `data` es tu array de MonsterRune1
+  const uniqueTags = getUniqueTags(data as MonsterRune1[]); // `data` es tu array de MonsterRune1
   const tagColumn = table.getColumn("type.tags");
 
   return (
@@ -167,13 +172,15 @@ export function DataTable<TData, TValue>({
               All Types
             </DropdownMenuCheckboxItem>
 
-            {[
-              ...new Set(
-                table
-                  .getPreFilteredRowModel()
-                  .rows.map((row) => row.getValue("type.type"))
-              ),
-            ]
+            {(
+              [
+                ...new Set(
+                  table
+                    .getPreFilteredRowModel()
+                    .rows.map((row) => row.getValue("type.type"))
+                ),
+              ] as string[]
+            )
               .filter(Boolean)
               .map((type: string) => (
                 <DropdownMenuCheckboxItem
