@@ -44,7 +44,10 @@ export function DataTable<TData, TValue>({
     []
   );
   const [columnVisibility, setColumnVisibility] =
-    React.useState<VisibilityState>({});
+    React.useState<VisibilityState>({
+      "type.tags": false,
+      monsterName: false,
+    });
   const [rowSelection, setRowSelection] = React.useState({});
 
   const getUniqueTags = (data: MonsterRune1[]) => {
@@ -72,10 +75,7 @@ export function DataTable<TData, TValue>({
     state: {
       sorting,
       columnFilters,
-      columnVisibility: {
-        "type.tags": false,
-        monsterName: false,
-      },
+      columnVisibility,
       rowSelection,
     },
   });

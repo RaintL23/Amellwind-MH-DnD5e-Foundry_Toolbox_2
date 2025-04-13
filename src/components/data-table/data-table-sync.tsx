@@ -37,13 +37,13 @@ export const DataTableSync = <TData,>({
   const { getData, setData, setRowSelected, getIsFresh, setIsFresh } =
     useDataTableStoreContext();
   const data = getData(tableId) as TData[];
-  const [canFilter, setCanFilter] = React.useState(true);
+  const [canFilter] = React.useState(true);
   const columnsDataTable = prepareColumns(columns, canFilter);
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
+    []
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = React.useState("");
@@ -58,7 +58,7 @@ export const DataTableSync = <TData,>({
 
   const columnsDefFactoryResponse = React.useMemo<ColumnDef<TData, any>[]>(
     () => [...ColumnsDefFactory(columnsDataTable)],
-    [columnsDataTable, columns],
+    [columnsDataTable, columns]
   );
 
   const table = useReactTable({

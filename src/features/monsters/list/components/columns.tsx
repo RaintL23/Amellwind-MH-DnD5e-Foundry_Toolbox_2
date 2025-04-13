@@ -1,205 +1,199 @@
 // import { ColumnBasic } from "@/components/data-table/data-table-interfaces";
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-  } from "@/components/ui/dropdown-menu"
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
-import MonsterType from "@/models/monster/monsterType"
+import MonsterType from "@/models/monster/monsterType";
 import { capitalizeFirstLetter } from "@/lib/utils";
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
 export const columns: ColumnDef<MonsterType>[] = [
-    {
-        accessorKey: "name",
-        header: ({ column }) => {
-            return (
-              <Button
-                variant="ghost"
-                onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-                className="bg-transparent"
-              >
-                Name
-                <ArrowUpDown />
-              </Button>
-            )
-          },
+  {
+    accessorKey: "name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="bg-transparent"
+        >
+          Name
+          <ArrowUpDown />
+        </Button>
+      );
     },
-    {
-        accessorKey: "size",
-        header: "Size",
-        cell: ({ row }) => {
-            if (row.original.size) {
-                const size = Sizes.filter((x) => row.original.size?.includes(x.label));
-                return (
-                    <div className="flex space-x-2">
-                        {size.map((x) => (
-                            <div key={x.label}>
-                                {x && <Badge variant="outline">{x.value}</Badge>}
-                            </div>
-                        ))}
-                    </div>
-                );
-            }
-            else {
-                return (
-                    <span></span>
-                );
-            }
-        }
+  },
+  {
+    accessorKey: "size",
+    header: "Size",
+    cell: ({ row }) => {
+      if (row.original.size) {
+        const size = Sizes.filter((x) => row.original.size?.includes(x.label));
+        return (
+          <div className="flex space-x-2">
+            {size.map((x) => (
+              <div key={x.label}>
+                {x && <Badge variant="outline">{x.value}</Badge>}
+              </div>
+            ))}
+          </div>
+        );
+      } else {
+        return <span></span>;
+      }
     },
-    {
-        accessorKey: "group",
-        header: "Type",
-        cell: ({ row }) => {
-            if (row.original.group) {
-                return (
-                    <div className="flex space-x-2">
-                        <Badge variant="outline">{row.original.group}</Badge>
-                    </div>
-                );
-            } else if (row.original.type) {
-                return (
-                    <div className="flex space-x-2">
-                        <Badge variant="outline">{capitalizeFirstLetter(
-                            typeof row.original.type === "string"
-                            ? row.original.type : typeof row.original.type === "object"
-                            ? row.original.type.type : ""
-                        )}</Badge>
-                    </div>
-                );
-            } else {
-                return (
-                    <span></span>
-                );
-            }
-        }
+  },
+  {
+    accessorKey: "group",
+    header: "Type",
+    cell: ({ row }) => {
+      if (row.original.group) {
+        return (
+          <div className="flex space-x-2">
+            <Badge variant="outline">{row.original.group}</Badge>
+          </div>
+        );
+      } else if (row.original.type) {
+        return (
+          <div className="flex space-x-2">
+            <Badge variant="outline">
+              {capitalizeFirstLetter(
+                typeof row.original.type === "string"
+                  ? row.original.type
+                  : typeof row.original.type === "object"
+                  ? row.original.type.type
+                  : ""
+              )}
+            </Badge>
+          </div>
+        );
+      } else {
+        return <span></span>;
+      }
     },
-    {
-        accessorKey: "environment",
-        header: "Environment",
-        cell: ({ row }) => {
-            if (row.original.environment) {
-                const evns = Enviroments.filter((x) => row.original.environment?.includes(x.value));
-                return (
-                    <div className="flex space-x-2">
-                        {evns.map((env) => (
-                            <div key={env.label}>
-                                {env && <Badge className={env.color}>{env.label}</Badge>}
-                            </div>
-                        ))}
-                    </div>
-                );
-            }
-            else {
-                return (
-                    <span></span>
-                );
-            }
-        }
+  },
+  {
+    accessorKey: "environment",
+    header: "Environment",
+    cell: ({ row }) => {
+      if (row.original.environment) {
+        const evns = Enviroments.filter((x) =>
+          row.original.environment?.includes(x.value)
+        );
+        return (
+          <div className="flex space-x-2">
+            {evns.map((env) => (
+              <div key={env.label}>
+                {env && <Badge className={env.color}>{env.label}</Badge>}
+              </div>
+            ))}
+          </div>
+        );
+      } else {
+        return <span></span>;
+      }
     },
-    {
-        id: "actions",
-        enableHiding: false,
-        cell: ({ row }) => {
-          const payment = row.original
-     
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-                {/* <DropdownMenuItem
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    cell: () => {
+      return (
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="h-8 w-8 p-0">
+              <span className="sr-only">Open menu</span>
+              <MoreHorizontal />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
+            {/* <DropdownMenuItem
                   onClick={() => navigator.clipboard.writeText(payment.id)}
                 >
                   Copy payment ID
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem>View customer</DropdownMenuItem> */}
-                <DropdownMenuItem>Runes</DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          )
-        },
-      },
-]
+            <DropdownMenuItem>Runes</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      );
+    },
+  },
+];
 
 export const Enviroments = [
-    {
-        value: "arctic",
-        label: "Arctic",
-        color: "bg-[#b0f2ff] text-black"
-    },
-    {
-        value: "coastal",
-        label: "Coastal",
-        color: "bg-[#e6d597] text-black"
-    },
-    {
-        value: "desert",
-        label: "Desert",
-        color: "bg-[#e0c35a] text-black"
-    },
-    {
-        value: "forest",
-        label: "Forest",
-        color: "bg-[#157d1c] text-white"
-    },
-    {
-        value: "grassland",
-        label: "Grassland",
-        color: "bg-[#1bfa2a] text-black"
-    },
-    {
-        value: "mountain",
-        label: "Mountain",
-        color: "bg-[#7d5c15] text-white"
-    },
-    {
-        value: "underdark",
-        label: "Underdark",
-        color: "bg-[#292929] text-white"
-    },
-    {
-        value: "urban",
-        label: "Urban",
-        color: "bg-[#737270] text-white"
-    },
-]
+  {
+    value: "arctic",
+    label: "Arctic",
+    color: "bg-[#b0f2ff] text-black",
+  },
+  {
+    value: "coastal",
+    label: "Coastal",
+    color: "bg-[#e6d597] text-black",
+  },
+  {
+    value: "desert",
+    label: "Desert",
+    color: "bg-[#e0c35a] text-black",
+  },
+  {
+    value: "forest",
+    label: "Forest",
+    color: "bg-[#157d1c] text-white",
+  },
+  {
+    value: "grassland",
+    label: "Grassland",
+    color: "bg-[#1bfa2a] text-black",
+  },
+  {
+    value: "mountain",
+    label: "Mountain",
+    color: "bg-[#7d5c15] text-white",
+  },
+  {
+    value: "underdark",
+    label: "Underdark",
+    color: "bg-[#292929] text-white",
+  },
+  {
+    value: "urban",
+    label: "Urban",
+    color: "bg-[#737270] text-white",
+  },
+];
 
 export const Sizes = [
-    {
-        value: "Tiny",
-        label: "T"
-    },
-    {
-        value: "Small",
-        label: "S",
-    },
-    {
-        value: "Medium",
-        label: "M",
-    },
-    {
-        value: "Large",
-        label: "L",
-    },
-    {
-        value: "Huge",
-        label: "H",
-    },
-    {
-        value: "Gargantuan",
-        label: "G",
-    },
-]
+  {
+    value: "Tiny",
+    label: "T",
+  },
+  {
+    value: "Small",
+    label: "S",
+  },
+  {
+    value: "Medium",
+    label: "M",
+  },
+  {
+    value: "Large",
+    label: "L",
+  },
+  {
+    value: "Huge",
+    label: "H",
+  },
+  {
+    value: "Gargantuan",
+    label: "G",
+  },
+];

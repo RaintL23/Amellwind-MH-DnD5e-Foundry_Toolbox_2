@@ -57,10 +57,10 @@ export const DataTableAsync = <TData,>({
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    getFiltering(tableId),
+    getFiltering(tableId)
   );
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [canFilter, setCanFilter] = React.useState(true);
+  const [canFilter] = React.useState(true);
   const columnsDataTable = prepareColumns(columns, canFilter);
   const [rowCount, setRowCount] = React.useState<number>(data.length);
   const isFirstRender = React.useRef(true);
@@ -71,7 +71,7 @@ export const DataTableAsync = <TData,>({
   });
 
   const [rowSelection, setRowSelection] = React.useState(
-    getRowSelected(tableId),
+    getRowSelected(tableId)
   );
   const [localChange, setLocalChange] = React.useState<boolean>(false);
   const [loading, setLoading] = React.useState<boolean>(true);
@@ -151,7 +151,7 @@ export const DataTableAsync = <TData,>({
       if (response.data.length > 0) {
         setData(tableId, response.data as object[]);
         setRowCount(
-          response.paginationData?.totalCount ?? response.data.length,
+          response.paginationData?.totalCount ?? response.data.length
         );
       } else {
         if (response.paginationData) {
@@ -171,7 +171,7 @@ export const DataTableAsync = <TData,>({
             }
             setData(tableId, response.data as object[]);
             setRowCount(
-              response.paginationData?.totalCount ?? response.data.length,
+              response.paginationData?.totalCount ?? response.data.length
             );
           }
         } else {
@@ -212,7 +212,7 @@ export const DataTableAsync = <TData,>({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const columnsDefFactoryResponse = React.useMemo<ColumnDef<TData, any>[]>(
     () => [...ColumnsDefFactory(columnsDataTable)],
-    [columnsDataTable, columns],
+    [columnsDataTable, columns]
   );
 
   const table = useReactTable({
