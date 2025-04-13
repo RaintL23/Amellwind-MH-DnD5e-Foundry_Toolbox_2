@@ -1,4 +1,7 @@
-import { getMonstersRunes2 } from "@/api/monsters/monstersClient";
+import {
+  getMonstersRunes,
+  getMonstersRunes2,
+} from "@/api/monsters/monstersClient";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/data-table-2/data-table";
 import { columns } from "./components/columns";
@@ -13,6 +16,11 @@ const MonstersRunesListPage = () => {
       try {
         const monsterRunesData1 = await getMonstersRunes2();
         setMonstersRunes1(monsterRunesData1);
+        const monsterRunesData = await getMonstersRunes();
+        console.log("monsterRunesData1");
+        console.log(monsterRunesData1);
+        console.log("monsterRunesData");
+        console.log(monsterRunesData);
       } catch (error) {
         console.error("Error fetching monsters runes:", error);
       } finally {

@@ -46,24 +46,26 @@ const getMonsterRune2 = (
             entry.name === "WEAPON MATERIAL EFFECTS") &&
           entry.items
         ) {
-          result = entry.items.map((item) => ({
-            name: item.name,
-            effect: item.entries?.[0] || "No effect description",
-            monsterName: monsterName,
-            monsterOrigin: monster,
-            type: {
-              type:
-                entry.name == "ARMOR MATERIAL EFFECTS"
-                  ? "Armor"
-                  : entry.name == "WEAPON MATERIAL EFFECTS"
-                  ? "Weapon"
-                  : "Unknown",
-              tags:
-                item.entries?.[0] !== undefined || item.entries?.[0] !== null
-                  ? processRuneTags(item.entries?.[0])
-                  : undefined,
-            },
-          }));
+          result.push(
+            ...entry.items.map((item) => ({
+              name: item.name,
+              effect: item.entries?.[0] || "No effect description",
+              monsterName: monsterName,
+              monsterOrigin: monster,
+              type: {
+                type:
+                  entry.name === "ARMOR MATERIAL EFFECTS"
+                    ? "Armor"
+                    : entry.name === "WEAPON MATERIAL EFFECTS"
+                    ? "Weapon"
+                    : "Unknown",
+                tags:
+                  item.entries?.[0] !== undefined && item.entries?.[0] !== null
+                    ? processRuneTags(item.entries?.[0])
+                    : undefined,
+              },
+            }))
+          );
         }
 
         // Si la entry tiene más entries anidadas, procesarlas también
