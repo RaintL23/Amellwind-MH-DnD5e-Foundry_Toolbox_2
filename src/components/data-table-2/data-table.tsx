@@ -82,6 +82,8 @@ export function DataTable<TData, TValue>({
 
   const uniqueTags = getUniqueTags(data as MonsterRune1[]); // `data` es tu array de MonsterRune1
   const tagColumn = table.getColumn("type.tags");
+  const tierColumn = table.getColumn("tier");
+  const tiers = [0, 1, 2, 3, 4, 5];
 
   return (
     <div className="w-full">
@@ -146,6 +148,39 @@ export function DataTable<TData, TValue>({
                   }}
                 >
                   {tag}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        {tierColumn && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="max-w-sm">
+                Tier <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="max-h-64 overflow-auto">
+              {tiers.map((tier) => (
+                <DropdownMenuCheckboxItem
+                  key={tier}
+                  checked={
+                    (tierColumn.getFilterValue() as number[])?.includes(tier) ??
+                    false
+                  }
+                  onCheckedChange={(checked) => {
+                    const current =
+                      (tierColumn.getFilterValue() as number[]) ?? [];
+                    if (checked) {
+                      tierColumn.setFilterValue([...current, tier]);
+                    } else {
+                      tierColumn.setFilterValue(
+                        current.filter((t) => t !== tier)
+                      );
+                    }
+                  }}
+                >
+                  {tier}
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>

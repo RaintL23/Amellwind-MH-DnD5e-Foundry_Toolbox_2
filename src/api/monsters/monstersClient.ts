@@ -33,17 +33,19 @@ const getMonsterRune2 = (
   monsterName: string,
   monster: Monster
 ): MonsterRune1[] => {
-  let result: MonsterRune1[] = [];
+  const result: MonsterRune1[] = [];
   // Función recursiva para buscar en las entries
   const processEntries = (entries: MonsterEntries[]) => {
     if (entries !== undefined) {
       for (const entry of entries) {
+        // console.log(entry);
         // Si es una lista con style "list-hang" y tiene el nombre que buscamos
         if (
           entry.type === "list" &&
           entry.style === "list-hang" &&
           (entry.name === "ARMOR MATERIAL EFFECTS" ||
-            entry.name === "WEAPON MATERIAL EFFECTS") &&
+            entry.name === "WEAPON MATERIAL EFFECTS" ||
+            entry.name === "OTHER MATERIAL EFFECTS") &&
           entry.items
         ) {
           result.push(
@@ -52,12 +54,15 @@ const getMonsterRune2 = (
               effect: item.entries?.[0] || "No effect description",
               monsterName: monsterName,
               monsterOrigin: monster,
+              tier: selectRuneTier(monster),
               type: {
                 type:
                   entry.name === "ARMOR MATERIAL EFFECTS"
                     ? "Armor"
                     : entry.name === "WEAPON MATERIAL EFFECTS"
                     ? "Weapon"
+                    : entry.name === "OTHER MATERIAL EFFECTS"
+                    ? "Other"
                     : "Unknown",
                 tags:
                   item.entries?.[0] !== undefined && item.entries?.[0] !== null
@@ -82,9 +87,63 @@ const getMonsterRune2 = (
   return result;
 };
 
+const selectRuneTier = (monster: Monster): number => {
+  let rawCR: any = monster.cr;
+
+  // Caso en que es un objeto con campos "cr" y "lair"
+  if (typeof rawCR === "object" && rawCR !== null && "cr" in rawCR) {
+    rawCR = rawCR.cr;
+  }
+
+  // Convertir a número
+  const CR = Number(rawCR);
+
+  if (isNaN(CR)) return 0;
+
+  switch (true) {
+    case CR >= 0 && CR < 5:
+      return 1;
+    case CR >= 5 && CR < 10:
+      return 2;
+    case CR >= 10 && CR < 15:
+      return 3;
+    case CR >= 15 && CR < 20:
+      return 4;
+    case CR >= 20:
+      return 5;
+    default:
+      return 0;
+  }
+};
+
 const processRuneTags = (runeEffect?: string): string[] => {
   const tags: string[] = [];
   if (runeEffect === undefined) return tags;
+  const tagsNames: string[] = [
+    "extra damage",
+    "Greatsword",
+    "Longsword",
+    "Sword",
+    "Bow",
+    "Bowgun",
+    "Hammer",
+    "Gunlance",
+    "Dual Blades",
+    "Hunting Horn",
+    "Insect Glaive",
+    "Lance",
+    "Magnet Spike",
+    "Magus Staff",
+    "Splint Rapier",
+    "Switch Axe",
+    "Tonfas",
+    "Wyvern Boomerang",
+    "Dual Repeaters",
+  ];
+  tagsNames.forEach((tag) => {
+    if (runeEffect.includes(tag)) tags.push(tag);
+  });
+
   if (runeEffect.includes("critical hit")) tags.push("Criticals");
   if (runeEffect.includes("Your weapon deals an extra"))
     tags.push("Simple extra dice damage");
@@ -92,8 +151,6 @@ const processRuneTags = (runeEffect?: string): string[] => {
     tags.push("Saving throw bonus");
   if (runeEffect.includes("speed")) tags.push("Movement bonus");
   if (runeEffect.includes("You have resistance")) tags.push("Resistance");
-  if (runeEffect.includes("extra damage")) tags.push("Extra damage");
-  if (runeEffect.includes("Greatsword")) tags.push("Greatsword");
 
   return tags;
 };

@@ -16,11 +16,6 @@ const MonstersRunesListPage = () => {
       try {
         const monsterRunesData1 = await getMonstersRunes2();
         setMonstersRunes1(monsterRunesData1);
-        const monsterRunesData = await getMonstersRunes();
-        console.log("monsterRunesData1");
-        console.log(monsterRunesData1);
-        console.log("monsterRunesData");
-        console.log(monsterRunesData);
       } catch (error) {
         console.error("Error fetching monsters runes:", error);
       } finally {

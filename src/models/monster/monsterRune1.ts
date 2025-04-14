@@ -6,5 +6,6 @@ export default class MonsterRune1 {
   public effect: string = "";
   public monsterName: string = "";
   public monsterOrigin?: Monster;
+  public tier?: number;
   public type?: MonsterRunes1 | string = { type: "", tags: [] };
 }
