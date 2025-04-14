@@ -120,6 +120,7 @@ const processRuneTags = (runeEffect?: string): string[] => {
   const tags: string[] = [];
   if (runeEffect === undefined) return tags;
   const tagsNames: string[] = [
+    "speed",
     "extra damage",
     "Greatsword",
     "Longsword",
@@ -139,18 +140,42 @@ const processRuneTags = (runeEffect?: string): string[] => {
     "Tonfas",
     "Wyvern Boomerang",
     "Dual Repeaters",
+    "Artificer",
+    "Barbarian",
+    "Bard",
+    "Cleric",
+    "Druid",
+    "Fighter",
+    "Monk",
+    "Paladin",
+    "Ranger",
+    "Rogue",
+    "Sorcerer",
+    "Warlock",
+    "Wizard",
+    "Spellcaster",
+    "Status",
+    "advantage",
+    "disadvantage",
+    "charges",
   ];
   tagsNames.forEach((tag) => {
-    if (runeEffect.includes(tag)) tags.push(tag);
+    if (runeEffect.toLocaleLowerCase().includes(tag.toLocaleLowerCase()))
+      tags.push(tag);
   });
 
-  if (runeEffect.includes("critical hit")) tags.push("Criticals");
-  if (runeEffect.includes("Your weapon deals an extra"))
+  if (runeEffect.toLocaleLowerCase().includes("critical hit"))
+    tags.push("Criticals");
+  if (runeEffect.toLocaleLowerCase().includes("your weapon deals an extra"))
     tags.push("Simple extra dice damage");
-  if (runeEffect.includes("Whenever you make a saving throw against"))
+  if (
+    runeEffect
+      .toLocaleLowerCase()
+      .includes("whenever you make a saving throw against")
+  )
     tags.push("Saving throw bonus");
-  if (runeEffect.includes("speed")) tags.push("Movement bonus");
-  if (runeEffect.includes("You have resistance")) tags.push("Resistance");
+  if (runeEffect.toLocaleLowerCase().includes("you have resistance"))
+    tags.push("Resistance");
 
   return tags;
 };

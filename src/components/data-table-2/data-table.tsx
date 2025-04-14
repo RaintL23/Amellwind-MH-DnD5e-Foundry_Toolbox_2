@@ -57,8 +57,7 @@ export function DataTable<TData, TValue>({
       }
       return [];
     });
-
-    return Array.from(new Set(allTags));
+    return Array.from(new Set(allTags)).sort((a, b) => a.localeCompare(b));
   };
 
   const table = useReactTable({
@@ -80,10 +79,36 @@ export function DataTable<TData, TValue>({
     },
   });
 
-  const uniqueTags = getUniqueTags(data as MonsterRune1[]); // `data` es tu array de MonsterRune1
+  const uniqueTags = getUniqueTags(data as MonsterRune1[]);
   const tagColumn = table.getColumn("type.tags");
   const tierColumn = table.getColumn("tier");
-  const tiers = [0, 1, 2, 3, 4, 5];
+  // const tiers = [0, 1, 2, 3, 4, 5];
+  const tiers = [
+    {
+      tier: 0,
+      cr: "",
+    },
+    {
+      tier: 1,
+      cr: "CR 1 - 5",
+    },
+    {
+      tier: 2,
+      cr: "CR 6 - 10",
+    },
+    {
+      tier: 3,
+      cr: "CR 11 - 15",
+    },
+    {
+      tier: 4,
+      cr: "CR 16 - 20",
+    },
+    {
+      tier: 5,
+      cr: "CR 20+",
+    },
+  ];
 
   return (
     <div className="w-full">
@@ -127,7 +152,10 @@ export function DataTable<TData, TValue>({
                 Tags <ChevronDown />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="max-h-64 overflow-auto">
+            <DropdownMenuContent
+              align="start"
+              className="max-h-64 overflow-auto"
+            >
               {uniqueTags.map((tag) => (
                 <DropdownMenuCheckboxItem
                   key={tag}
@@ -135,6 +163,7 @@ export function DataTable<TData, TValue>({
                     (tagColumn.getFilterValue() as string[])?.includes(tag) ??
                     false
                   }
+                  onSelect={(e) => e.preventDefault()}
                   onCheckedChange={(checked) => {
                     const current =
                       (tagColumn.getFilterValue() as string[]) ?? [];
@@ -163,24 +192,26 @@ export function DataTable<TData, TValue>({
             <DropdownMenuContent className="max-h-64 overflow-auto">
               {tiers.map((tier) => (
                 <DropdownMenuCheckboxItem
-                  key={tier}
+                  key={tier.tier}
                   checked={
-                    (tierColumn.getFilterValue() as number[])?.includes(tier) ??
-                    false
+                    (tierColumn.getFilterValue() as number[])?.includes(
+                      tier.tier
+                    ) ?? false
                   }
+                  onSelect={(e) => e.preventDefault()}
                   onCheckedChange={(checked) => {
                     const current =
                       (tierColumn.getFilterValue() as number[]) ?? [];
                     if (checked) {
-                      tierColumn.setFilterValue([...current, tier]);
+                      tierColumn.setFilterValue([...current, tier.tier]);
                     } else {
                       tierColumn.setFilterValue(
-                        current.filter((t) => t !== tier)
+                        current.filter((t) => t !== tier.tier)
                       );
                     }
                   }}
                 >
-                  {tier}
+                  {tier.tier} ({tier.cr})
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuContent>
@@ -253,6 +284,7 @@ export function DataTable<TData, TValue>({
                     key={column.id}
                     className="capitalize"
                     checked={column.getIsVisible()}
+                    onSelect={(e) => e.preventDefault()}
                     onCheckedChange={(value) =>
                       column.toggleVisibility(!!value)
                     }

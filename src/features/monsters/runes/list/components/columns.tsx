@@ -22,7 +22,7 @@ export const columns: ColumnDef<MonsterRune>[] = [
           <div className="flex space-x-2">
             {size.map((x) => (
               <div key={x.label}>
-                {x && <Badge variant="outline">{x.value}</Badge>}
+                {x && <Badge variant="outline">T{x.value}</Badge>}
               </div>
             ))}
           </div>
@@ -76,25 +76,31 @@ export const Tiers = [
   {
     value: 0,
     label: "T0",
+    color: "",
   },
   {
     value: 1,
     label: "T1",
+    color: "",
   },
   {
     value: 2,
     label: "T2",
+    color: "",
   },
   {
     value: 3,
     label: "T3",
+    color: "",
   },
   {
     value: 4,
     label: "T4",
+    color: "",
   },
   {
     value: 5,
     label: "T5",
+    color: "",
   },
 ];

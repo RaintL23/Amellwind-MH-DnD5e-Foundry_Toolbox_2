@@ -112,14 +112,6 @@ export const columns: ColumnDef<MonsterType>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            {/* <DropdownMenuLabel>Actions</DropdownMenuLabel> */}
-            {/* <DropdownMenuItem
-                  onClick={() => navigator.clipboard.writeText(payment.id)}
-                >
-                  Copy payment ID
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>View customer</DropdownMenuItem> */}
             <DropdownMenuItem>Runes</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
