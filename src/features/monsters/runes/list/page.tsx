@@ -1,7 +1,4 @@
-import {
-  getMonstersRunes,
-  getMonstersRunes2,
-} from "@/api/monsters/monstersClient";
+import { getMonstersRunes2 } from "@/api/monsters/monstersClient";
 import { useEffect, useState } from "react";
 import { DataTable } from "@/components/data-table-2/data-table";
 import { columns } from "./components/columns";
