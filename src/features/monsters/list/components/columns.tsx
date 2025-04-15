@@ -1,10 +1,3 @@
-// import { ColumnBasic } from "@/components/data-table/data-table-interfaces";
-// import {
-//   DropdownMenu,
-//   DropdownMenuContent,
-//   DropdownMenuItem,
-//   DropdownMenuTrigger,
-// } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import MonsterType from "@/models/monster/monsterType";
 import { capitalizeFirstLetter } from "@/lib/utils";
@@ -12,7 +5,6 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
 import { ArrowUpDown } from "lucide-react";
 import { DropdownMonsterMenu } from "./monsterMenu";
-import { getMonster } from "@/api/monsters/monstersClient";
 
 export const columns: ColumnDef<MonsterType>[] = [
   {

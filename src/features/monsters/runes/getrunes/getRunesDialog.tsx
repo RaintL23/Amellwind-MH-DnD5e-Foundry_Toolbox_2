@@ -1,19 +1,12 @@
 import { getMonsterDescription } from "@/api/monsters/monstersClient";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import Monster from "@/models/monster/monster";
-import { X } from "lucide-react";
-import { useState } from "react";
 
 interface GetRunesDialogProps {
   open: boolean;

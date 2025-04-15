@@ -232,7 +232,7 @@ const getMonsterRunesLegacy = (
 };
 
 export const getMonsterRunesNames = (monster: Monster): string[] => {
-  const runes = getMonsterRunes(monster.name, monster);
+  const runes = getMonsterRunesLegacy(monster.name, monster);
   const runesNames: string[] = [];
   if (runes.armorEffects.length > 0) {
     runes.armorEffects.forEach((armorRune) => {
