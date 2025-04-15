@@ -1,16 +1,18 @@
 // import { ColumnBasic } from "@/components/data-table/data-table-interfaces";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+// import {
+//   DropdownMenu,
+//   DropdownMenuContent,
+//   DropdownMenuItem,
+//   DropdownMenuTrigger,
+// } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import MonsterType from "@/models/monster/monsterType";
 import { capitalizeFirstLetter } from "@/lib/utils";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
+import { DropdownMonsterMenu } from "./monsterMenu";
+import { getMonster } from "@/api/monsters/monstersClient";
 
 export const columns: ColumnDef<MonsterType>[] = [
   {
@@ -55,13 +57,15 @@ export const columns: ColumnDef<MonsterType>[] = [
       if (row.original.group) {
         return (
           <div className="flex space-x-2">
-            <Badge variant="outline">{row.original.group}</Badge>
+            <Badge variant="outline" className="whitespace-nowrap">
+              {row.original.group}
+            </Badge>
           </div>
         );
       } else if (row.original.type) {
         return (
           <div className="flex space-x-2">
-            <Badge variant="outline">
+            <Badge variant="outline" className="whitespace-nowrap">
               {capitalizeFirstLetter(
                 typeof row.original.type === "string"
                   ? row.original.type
@@ -102,20 +106,8 @@ export const columns: ColumnDef<MonsterType>[] = [
   {
     id: "actions",
     enableHiding: false,
-    cell: () => {
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem>Runes</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
+    cell: ({ row }) => {
+      return <DropdownMonsterMenu monsterName={row.original.name} />;
     },
   },
 ];

@@ -11,11 +11,18 @@ export const getMonsters = async (): Promise<Monster[]> => {
   return data.monster;
 };
 
-export const getMonstersRunes = async (): Promise<MonsterRunes[]> => {
+export const getMonster = async (
+  monsterName: string
+): Promise<Monster | undefined> => {
+  const data = await getMonsters();
+  return data.find((item) => item.name === monsterName);
+};
+
+export const getMonstersRunesLegacy = async (): Promise<MonsterRunes[]> => {
   const monsters = await getMonsters();
   const monstersRunes: MonsterRunes[] = [];
   monsters.forEach((monster) =>
-    monstersRunes.push(getMonsterRunes(monster.name, monster))
+    monstersRunes.push(getMonsterRunesLegacy(monster.name, monster))
   );
   return monstersRunes;
 };
@@ -180,7 +187,7 @@ const processRuneTags = (runeEffect?: string): string[] => {
   return tags;
 };
 
-const getMonsterRunes = (
+const getMonsterRunesLegacy = (
   monsterName: string,
   monster: Monster
 ): MonsterRunes => {
@@ -241,4 +248,12 @@ export const getMonsterRunesNames = (monster: Monster): string[] => {
   // console.log(runesNames);
   if (runesNames.length == 0) return ["No runes available"];
   return runesNames;
+};
+
+export const getMonsterDescription = (monster: Monster): string => {
+  let desciption = "";
+  monster.fluff.entries?.forEach((entry) => {
+    if (typeof entry === "string") desciption += entry + "\n";
+  });
+  return desciption;
 };

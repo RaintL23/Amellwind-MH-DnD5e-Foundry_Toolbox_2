@@ -79,9 +79,18 @@ export function DataTable<TData, TValue>({
     },
   });
 
+  const hasColumn = (id: string) => {
+    return table.getAllColumns().some((col) => col.id === id)
+      ? table.getColumn(id)
+      : undefined;
+  };
+
   const uniqueTags = getUniqueTags(data as MonsterRune1[]);
-  const tagColumn = table.getColumn("type.tags");
-  const tierColumn = table.getColumn("tier");
+  const tagColumn = hasColumn("type.tags");
+  const tierColumn = hasColumn("tier");
+  const typeColumn = hasColumn("type.type");
+  const monsterNameColumn = hasColumn("monsterName");
+  const effectColumn = hasColumn("effect");
   // const tiers = [0, 1, 2, 3, 4, 5];
   const tiers = [
     {
@@ -121,26 +130,22 @@ export function DataTable<TData, TValue>({
           }
           className="max-w-sm"
         />
-        {table.getColumn("monsterName") && (
+        {monsterNameColumn && (
           <Input
             placeholder="Filter Monster Origin Name..."
-            value={
-              (table.getColumn("monsterName")?.getFilterValue() as string) ?? ""
-            }
+            value={(monsterNameColumn?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("monsterName")?.setFilterValue(event.target.value)
+              monsterNameColumn?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
         )}
-        {table.getColumn("effect") && (
+        {effectColumn && (
           <Input
             placeholder="Filter effect..."
-            value={
-              (table.getColumn("effect")?.getFilterValue() as string) ?? ""
-            }
+            value={(effectColumn?.getFilterValue() as string) ?? ""}
             onChange={(event) =>
-              table.getColumn("effect")?.setFilterValue(event.target.value)
+              effectColumn?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
@@ -194,18 +199,18 @@ export function DataTable<TData, TValue>({
                 <DropdownMenuCheckboxItem
                   key={tier.tier}
                   checked={
-                    (tierColumn.getFilterValue() as number[])?.includes(
+                    (tierColumn?.getFilterValue() as number[])?.includes(
                       tier.tier
                     ) ?? false
                   }
                   onSelect={(e) => e.preventDefault()}
                   onCheckedChange={(checked) => {
                     const current =
-                      (tierColumn.getFilterValue() as number[]) ?? [];
+                      (tierColumn?.getFilterValue() as number[]) ?? [];
                     if (checked) {
-                      tierColumn.setFilterValue([...current, tier.tier]);
+                      tierColumn?.setFilterValue([...current, tier.tier]);
                     } else {
-                      tierColumn.setFilterValue(
+                      tierColumn?.setFilterValue(
                         current.filter((t) => t !== tier.tier)
                       );
                     }
@@ -217,56 +222,56 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
+        {typeColumn && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                Type
+                <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start">
+              {/* Opción para limpiar el filtro */}
+              <DropdownMenuCheckboxItem
+                key="all-types"
+                checked={!table.getColumn("type.type")?.getFilterValue()}
+                onCheckedChange={() => {
+                  table.getColumn("type.type")?.setFilterValue(undefined);
+                }}
+              >
+                All Types
+              </DropdownMenuCheckboxItem>
 
-        {/* Dropdown para Type */}
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              Type
-              <ChevronDown />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="start">
-            {/* Opción para limpiar el filtro */}
-            <DropdownMenuCheckboxItem
-              key="all-types"
-              checked={!table.getColumn("type.type")?.getFilterValue()}
-              onCheckedChange={() => {
-                table.getColumn("type.type")?.setFilterValue(undefined);
-              }}
-            >
-              All Types
-            </DropdownMenuCheckboxItem>
-
-            {(
-              [
-                ...new Set(
-                  table
-                    .getPreFilteredRowModel()
-                    .rows.map((row) => row.getValue("type.type"))
-                ),
-              ] as string[]
-            )
-              .filter(Boolean)
-              .map((type: string) => (
-                <DropdownMenuCheckboxItem
-                  key={type}
-                  checked={
-                    table.getColumn("type.type")?.getFilterValue() === type
-                  }
-                  onCheckedChange={(checked) => {
-                    if (checked) {
-                      table.getColumn("type.type")?.setFilterValue(type);
-                    } else {
-                      table.getColumn("type.type")?.setFilterValue(undefined);
+              {(
+                [
+                  ...new Set(
+                    table
+                      .getPreFilteredRowModel()
+                      .rows.map((row) => row.getValue("type.type"))
+                  ),
+                ] as string[]
+              )
+                .filter(Boolean)
+                .map((type: string) => (
+                  <DropdownMenuCheckboxItem
+                    key={type}
+                    checked={
+                      table.getColumn("type.type")?.getFilterValue() === type
                     }
-                  }}
-                >
-                  {type}
-                </DropdownMenuCheckboxItem>
-              ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        table.getColumn("type.type")?.setFilterValue(type);
+                      } else {
+                        table.getColumn("type.type")?.setFilterValue(undefined);
+                      }
+                    }}
+                  >
+                    {type}
+                  </DropdownMenuCheckboxItem>
+                ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
