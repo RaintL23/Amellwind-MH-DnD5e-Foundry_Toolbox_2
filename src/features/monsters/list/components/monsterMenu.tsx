@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { MoreHorizontal } from "lucide-react";
-import { GetRunesDialog } from "../../runes/getrunes/getRunesDialog";
 import Monster from "@/models/monster/monster";
 import { getMonster } from "@/api/monsters/monstersClient";
+import RunesDialog from "../../runes/getrunes/getRunesDialog";
 
 interface DropdownMonsterMenuProps {
   // monster: Monster | undefined;
@@ -57,7 +57,7 @@ export function DropdownMonsterMenu({ monsterName }: DropdownMonsterMenuProps) {
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <GetRunesDialog
+      <RunesDialog
         open={openDialog}
         setOpen={setOpenDialog}
         monster={monster}

@@ -3,11 +3,13 @@ import { fetchApiData } from "../client";
 import MonsterRunes from "@/models/monster/MonsterRunes";
 import MonsterRune1 from "@/models/monster/monsterRune1";
 import MonsterEntries from "@/models/monster/monsterEntries";
+import MonsterCarveTable from "@/models/monster/monsterCarveTable";
+import MonsterCarveTableItem from "@/models/monster/monsterCarveTableItem";
 
 export const getMonsters = async (): Promise<Monster[]> => {
   const data = await fetchApiData();
   // console.log("monsters data");
-  // console.log(data);
+  // console.log(data.monster);
   return data.monster;
 };
 
@@ -16,15 +18,6 @@ export const getMonster = async (
 ): Promise<Monster | undefined> => {
   const data = await getMonsters();
   return data.find((item) => item.name === monsterName);
-};
-
-export const getMonstersRunesLegacy = async (): Promise<MonsterRunes[]> => {
-  const monsters = await getMonsters();
-  const monstersRunes: MonsterRunes[] = [];
-  monsters.forEach((monster) =>
-    monstersRunes.push(getMonsterRunesLegacy(monster.name, monster))
-  );
-  return monstersRunes;
 };
 
 export const getMonstersRunes2 = async (): Promise<MonsterRune1[]> => {
@@ -45,8 +38,6 @@ const getMonsterRune2 = (
   const processEntries = (entries: MonsterEntries[]) => {
     if (entries !== undefined) {
       for (const entry of entries) {
-        // console.log(entry);
-        // Si es una lista con style "list-hang" y tiene el nombre que buscamos
         if (
           entry.type === "list" &&
           entry.style === "list-hang" &&
@@ -92,6 +83,25 @@ const getMonsterRune2 = (
     processEntries(monster.fluff.entries);
   }
   return result;
+};
+
+export const getMonsterRunesNames = (monster: Monster): string[] => {
+  const runes = getMonsterRunesLegacy(monster.name, monster);
+  const runesNames: string[] = [];
+  if (runes.armorEffects.length > 0) {
+    runes.armorEffects.forEach((armorRune) => {
+      runesNames.push(armorRune.name);
+    });
+  }
+  if (runes.weaponEffects.length > 0) {
+    runes.weaponEffects.forEach((weaponRune) => {
+      runesNames.push(weaponRune.name);
+    });
+  }
+  // console.log("Monster Runes 1");
+  // console.log(runesNames);
+  if (runesNames.length == 0) return ["No runes available"];
+  return runesNames;
 };
 
 const selectRuneTier = (monster: Monster): number => {
@@ -187,6 +197,80 @@ const processRuneTags = (runeEffect?: string): string[] => {
   return tags;
 };
 
+export const getMonsterCarveTable = (monster: Monster): MonsterCarveTable => {
+  const table: MonsterCarveTable = {
+    carveAttempts: 0,
+    cr: 0,
+    items: [],
+  };
+
+  const parseNumber = (value: string | undefined): number =>
+    value && !isNaN(Number(value)) ? Number(value) : 0;
+
+  const processTableEntry = (entry: MonsterEntries) => {
+    if (typeof entry !== "object") return;
+
+    if (entry.type === "table" && entry.colStyles && entry.rows) {
+      const { colLabels, rows } = entry;
+
+      if (colLabels) {
+        const carveIndex = colLabels.indexOf("Carve Chance");
+        const captureIndex = colLabels.indexOf("Capture Chance");
+
+        rows.forEach((row) => {
+          const newItem: MonsterCarveTableItem = {
+            runeName: "",
+            carveRange: "",
+          };
+
+          if (carveIndex > -1) {
+            newItem.carveRange = row[carveIndex];
+          }
+          if (captureIndex > -1) {
+            newItem.captureRange = row[captureIndex];
+          }
+
+          const nextIndex = newItem.captureRange
+            ? captureIndex + 1
+            : carveIndex + 1;
+
+          newItem.runeName = row[nextIndex] || "";
+          table.items.push(newItem);
+        });
+      } else if (rows[0]) {
+        table.carveAttempts = parseNumber(rows[0][3]);
+        table.cr = parseNumber(rows[0][1]);
+      }
+    }
+
+    // Si tiene sub-entries, procesarlos recursivamente
+    if ("entries" in entry && Array.isArray(entry.entries)) {
+      entry.entries.forEach(processTableEntry);
+    }
+  };
+
+  // Iniciar con las entries del monster
+  monster.fluff?.entries?.forEach(processTableEntry);
+
+  return table;
+};
+
+export const getMonsterDescription = (monster: Monster): string => {
+  let desciption = "";
+  monster.fluff.entries?.forEach((entry) => {
+    if (typeof entry === "string") desciption += entry + "\n";
+  });
+  return desciption;
+};
+
+export const getMonstersRunesLegacy = async (): Promise<MonsterRunes[]> => {
+  const monsters = await getMonsters();
+  const monstersRunes: MonsterRunes[] = [];
+  monsters.forEach((monster) =>
+    monstersRunes.push(getMonsterRunesLegacy(monster.name, monster))
+  );
+  return monstersRunes;
+};
 const getMonsterRunesLegacy = (
   monsterName: string,
   monster: Monster
@@ -229,31 +313,4 @@ const getMonsterRunesLegacy = (
 
   processEntries(monster.fluff.entries);
   return result;
-};
-
-export const getMonsterRunesNames = (monster: Monster): string[] => {
-  const runes = getMonsterRunesLegacy(monster.name, monster);
-  const runesNames: string[] = [];
-  if (runes.armorEffects.length > 0) {
-    runes.armorEffects.forEach((armorRune) => {
-      runesNames.push(armorRune.name);
-    });
-  }
-  if (runes.weaponEffects.length > 0) {
-    runes.weaponEffects.forEach((weaponRune) => {
-      runesNames.push(weaponRune.name);
-    });
-  }
-  // console.log("Monster Runes 1");
-  // console.log(runesNames);
-  if (runesNames.length == 0) return ["No runes available"];
-  return runesNames;
-};
-
-export const getMonsterDescription = (monster: Monster): string => {
-  let desciption = "";
-  monster.fluff.entries?.forEach((entry) => {
-    if (typeof entry === "string") desciption += entry + "\n";
-  });
-  return desciption;
 };

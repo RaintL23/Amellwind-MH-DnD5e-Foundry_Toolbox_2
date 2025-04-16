@@ -1,4 +1,8 @@
-import { getMonsterDescription } from "@/api/monsters/monstersClient";
+import {
+  getMonsterCarveTable,
+  getMonsterDescription,
+} from "@/api/monsters/monstersClient";
+import { DataTable } from "@/components/data-table-2/data-table";
 import {
   Dialog,
   DialogContent,
@@ -7,6 +11,10 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import Monster from "@/models/monster/monster";
+import MonsterCarveTable from "@/models/monster/monsterCarveTable";
+import { useEffect, useState } from "react";
+import { columns } from "./columns";
+import { Button } from "@/components/ui/button";
 
 interface GetRunesDialogProps {
   open: boolean;
@@ -14,15 +22,17 @@ interface GetRunesDialogProps {
   monster?: Monster;
 }
 
-export function GetRunesDialog({
-  open,
-  setOpen,
-  monster,
-}: GetRunesDialogProps) {
-  // const [inputValue, setInputValue] = useState("");
-  // const [monsterData, setMonsterData] = useState<Monster | undefined>(
-  //   undefined
-  // );
+const RunesDialog = ({ open, setOpen, monster }: GetRunesDialogProps) => {
+  const [monsterCarveTable, setMonsterCarveTable] =
+    useState<MonsterCarveTable>();
+
+  useEffect(() => {
+    if (monster) {
+      const data = getMonsterCarveTable(monster);
+      setMonsterCarveTable(data);
+      // console.log(data);
+    }
+  }, [monster]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -33,30 +43,26 @@ export function GetRunesDialog({
             {monster ? getMonsterDescription(monster) : "No content"}
           </DialogDescription>
         </DialogHeader>
-        {monster ? (
-          <div className="space-y-2">
-            <p>{monster.name}</p>
+        {monster &&
+        monsterCarveTable?.items &&
+        monsterCarveTable?.items?.length > 0 ? (
+          <div>
+            <DataTable
+              columns={columns}
+              data={monsterCarveTable.items}
+              hideControls={true}
+            />
+            <Button>Carve</Button>
           </div>
         ) : (
           <p>No hay información disponible.</p>
         )}
-        {/* <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right">
-              Name
-            </Label>
-            <Input
-              id="name"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              className="col-span-3"
-            />
-          </div>
-        </div> */}
         {/* <DialogFooter>
           <Button type="submit">Save changes</Button>
         </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default RunesDialog;

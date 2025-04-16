@@ -4,4 +4,7 @@ export default interface MonsterEntries {
   style?: string;
   entries?: MonsterEntries | string;
   items?: any[];
+  colStyles?: string[];
+  colLabels?: string[];
+  rows?: string[][];
 }
