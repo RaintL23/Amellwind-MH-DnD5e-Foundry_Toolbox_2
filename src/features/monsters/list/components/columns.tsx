@@ -74,6 +74,22 @@ export const columns: ColumnDef<MonsterType>[] = [
     },
   },
   {
+    accessorKey: "cr",
+    header: "CR",
+    filterFn: (row, columnId, filterValue) => {
+      const cellValue = row.getValue(columnId) as string[] | undefined;
+
+      if (
+        !filterValue ||
+        (Array.isArray(filterValue) && filterValue.length === 0)
+      ) {
+        return true;
+      }
+
+      return (filterValue as string[]).some((cr) => cellValue?.includes(cr));
+    },
+  },
+  {
     accessorKey: "environment",
     header: "Environment",
     cell: ({ row }) => {
@@ -93,6 +109,18 @@ export const columns: ColumnDef<MonsterType>[] = [
       } else {
         return <span></span>;
       }
+    },
+    filterFn: (row, columnId, filterValue) => {
+      const cellValue = row.getValue(columnId) as string[] | undefined;
+
+      if (
+        !filterValue ||
+        (Array.isArray(filterValue) && filterValue.length === 0)
+      ) {
+        return true;
+      }
+
+      return (filterValue as string[]).some((env) => cellValue?.includes(env));
     },
   },
   {

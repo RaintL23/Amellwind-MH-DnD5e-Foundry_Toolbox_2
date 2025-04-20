@@ -281,6 +281,54 @@ export const getMonsterDescription = (monster: Monster): string => {
   return desciption;
 };
 
+// export const getAllCRs = (monsters: Monster[]): string[] => {
+//   return Array.from(
+//     new Set(
+//       monsters
+//         .map((item) => item.cr)
+//         .filter((cr): cr is string => cr !== undefined)
+//     )
+//   );
+// };
+export const getAllCRs = () => {
+  return [
+    "0",
+    "1/8",
+    "1/4",
+    "1/2",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "10",
+    "11",
+    "12",
+    "13",
+    "14",
+    "15",
+    "16",
+    "17",
+    "18",
+    "19",
+    "20",
+    "21",
+    "22",
+    "23",
+    "24",
+    "25",
+    "26",
+    "27",
+    "28",
+    "29",
+    "30​",
+  ];
+};
+
 export const getMonstersRunesLegacy = async (): Promise<MonsterRunes[]> => {
   const monsters = await getMonsters();
   const monstersRunes: MonsterRunes[] = [];

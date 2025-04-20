@@ -29,6 +29,8 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { ChevronDown } from "lucide-react";
 import MonsterRune1 from "@/models/monster/monsterRune1";
+import { Enviroments } from "@/features/monsters/list/components/columns";
+import { getAllCRs } from "@/api/monsters/monstersClient";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -94,6 +96,7 @@ export function DataTable<TData, TValue>({
   const typeColumn = hasColumn("type.type");
   const monsterNameColumn = hasColumn("monsterName");
   const effectColumn = hasColumn("effect");
+  const enviromentColumn = hasColumn("environment");
   const tiers = [
     {
       tier: 0,
@@ -120,11 +123,13 @@ export function DataTable<TData, TValue>({
       cr: "CR 20+",
     },
   ];
+  const crColumn = hasColumn("cr");
+  const CRs = getAllCRs();
 
   return (
     <div className="w-full">
       <div className="flex items-center py-4 space-x-2">
-        {monsterNameColumn && (
+        {columnName && (
           <Input
             placeholder="Filter name..."
             value={(columnName?.getFilterValue() as string) ?? ""}
@@ -271,6 +276,76 @@ export function DataTable<TData, TValue>({
                     {type}
                   </DropdownMenuCheckboxItem>
                 ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        {enviromentColumn && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="max-w-sm">
+                Enviroment <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="max-h-64 overflow-auto">
+              {Enviroments.map((env) => (
+                <DropdownMenuCheckboxItem
+                  key={env.label}
+                  checked={
+                    (enviromentColumn?.getFilterValue() as string[])?.includes(
+                      env.value
+                    ) ?? false
+                  }
+                  onSelect={(e) => e.preventDefault()}
+                  onCheckedChange={(checked) => {
+                    const current =
+                      (enviromentColumn?.getFilterValue() as string[]) ?? [];
+                    if (checked) {
+                      enviromentColumn?.setFilterValue([...current, env.value]);
+                    } else {
+                      enviromentColumn?.setFilterValue(
+                        current.filter((t) => t !== env.value)
+                      );
+                    }
+                  }}
+                >
+                  {env.label}
+                </DropdownMenuCheckboxItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
+        {crColumn && (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="max-w-sm">
+                Challenge Rating <ChevronDown />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="max-h-64 overflow-auto"
+            >
+              {CRs.map((cr) => (
+                <DropdownMenuCheckboxItem
+                  key={cr}
+                  checked={
+                    (crColumn.getFilterValue() as string[])?.includes(cr) ??
+                    false
+                  }
+                  onSelect={(e) => e.preventDefault()}
+                  onCheckedChange={(checked) => {
+                    const current =
+                      (crColumn.getFilterValue() as string[]) ?? [];
+                    if (checked) {
+                      crColumn.setFilterValue([...current, cr]);
+                    } else {
+                      crColumn.setFilterValue(current.filter((t) => t !== cr));
+                    }
+                  }}
+                >
+                  {cr}
+                </DropdownMenuCheckboxItem>
+              ))}
             </DropdownMenuContent>
           </DropdownMenu>
         )}
