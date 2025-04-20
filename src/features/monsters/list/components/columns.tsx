@@ -73,22 +73,34 @@ export const columns: ColumnDef<MonsterType>[] = [
       }
     },
   },
-  {
-    accessorKey: "cr",
-    header: "CR",
-    filterFn: (row, columnId, filterValue) => {
-      const cellValue = row.getValue(columnId) as string[] | undefined;
+  // {
+  //   accessorKey: "cr",
+  //   header: "CR",
+  //   // header: ({ column }) => {
+  //   //   return (
+  //   //     <Button
+  //   //       variant="ghost"
+  //   //       onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+  //   //       className="bg-transparent"
+  //   //     >
+  //   //       CR
+  //   //       <ArrowUpDown />
+  //   //     </Button>
+  //   //   );
+  //   // },
+  //   filterFn: (row, columnId, filterValue) => {
+  //     const cellValue = row.getValue(columnId) as string[] | undefined;
 
-      if (
-        !filterValue ||
-        (Array.isArray(filterValue) && filterValue.length === 0)
-      ) {
-        return true;
-      }
+  //     if (
+  //       !filterValue ||
+  //       (Array.isArray(filterValue) && filterValue.length === 0)
+  //     ) {
+  //       return true;
+  //     }
 
-      return (filterValue as string[]).some((cr) => cellValue?.includes(cr));
-    },
-  },
+  //     return (filterValue as string[]).some((cr) => cellValue?.includes(cr));
+  //   },
+  // },
   {
     accessorKey: "environment",
     header: "Environment",

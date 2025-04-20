@@ -30,7 +30,7 @@ import { Input } from "../ui/input";
 import { ChevronDown } from "lucide-react";
 import MonsterRune1 from "@/models/monster/monsterRune1";
 import { Enviroments } from "@/features/monsters/list/components/columns";
-import { getAllCRs } from "@/api/monsters/monstersClient";
+// import { getAllCRs } from "@/api/monsters/monstersClient";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -123,8 +123,8 @@ export function DataTable<TData, TValue>({
       cr: "CR 20+",
     },
   ];
-  const crColumn = hasColumn("cr");
-  const CRs = getAllCRs();
+  // const crColumn = hasColumn("cr");
+  // const CRs = getAllCRs();
 
   return (
     <div className="w-full">
@@ -314,7 +314,7 @@ export function DataTable<TData, TValue>({
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-        {crColumn && (
+        {/* {crColumn && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="outline" className="max-w-sm">
@@ -348,7 +348,7 @@ export function DataTable<TData, TValue>({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        )}
+        )} */}
         {!hideControls && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
