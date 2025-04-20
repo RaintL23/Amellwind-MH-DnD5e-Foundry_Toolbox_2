@@ -85,6 +85,15 @@ const getMonsterRune2 = (
   return result;
 };
 
+export const getMonsterRunesByName = (
+  monster: Monster,
+  runeName: string
+): MonsterRune1[] => {
+  const MonsterRunes = getMonsterRune2(monster.name, monster);
+
+  return MonsterRunes.filter((item) => item.name === runeName);
+};
+
 export const getMonsterRunesNames = (monster: Monster): string[] => {
   const runes = getMonsterRunesLegacy(monster.name, monster);
   const runesNames: string[] = [];
@@ -235,6 +244,15 @@ export const getMonsterCarveTable = (monster: Monster): MonsterCarveTable => {
             : carveIndex + 1;
 
           newItem.runeName = row[nextIndex] || "";
+          const runeData = getMonsterRunesByName(monster, newItem.runeName);
+          if (runeData && runeData.length > 0) {
+            newItem.slot = runeData
+              .map((z) =>
+                typeof z.type === "object" && z.type?.type ? z.type.type : null
+              )
+              .filter((type): type is string => type !== null)
+              .join(", ");
+          }
           table.items.push(newItem);
         });
       } else if (rows[0]) {
