@@ -271,6 +271,14 @@ export function RuneDataTable({ data }: RuneDataTableProps) {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     onGlobalFilterChange: setGlobalFilter,
+    globalFilterFn: (row, _columnId, filterValue) => {
+      // Buscar en el nombre y en el efecto de la runa
+      const searchValue = String(filterValue).toLowerCase();
+      const runeName = String(row.original.name).toLowerCase();
+      const runeEffect = String(row.original.effect).toLowerCase();
+
+      return runeName.includes(searchValue) || runeEffect.includes(searchValue);
+    },
     state: {
       sorting,
       columnFilters,
@@ -345,7 +353,7 @@ export function RuneDataTable({ data }: RuneDataTableProps) {
         {/* Search */}
         <div className="md:col-span-2 lg:col-span-4">
           <Input
-            placeholder="Search runes..."
+            placeholder="Search runes by name or effect..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="w-full"
