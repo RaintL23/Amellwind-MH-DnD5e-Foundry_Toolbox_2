@@ -10,9 +10,7 @@ import type {
   Monster,
   MonsterFluff,
 } from "../types/monster.types";
-
-const MONSTER_JSON_URL =
-  "https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json";
+import { MONSTER_HUNTER_JSON_URL } from "@/constants/api.constants";
 
 // Cache for the full data to avoid re-fetching for fluff
 let cachedData: MonsterData | null = null;
@@ -27,7 +25,7 @@ async function fetchMonsterData(): Promise<MonsterData> {
   }
 
   try {
-    const response = await fetch(MONSTER_JSON_URL);
+    const response = await fetch(MONSTER_HUNTER_JSON_URL);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

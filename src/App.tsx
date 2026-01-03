@@ -17,6 +17,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MainLayout } from "./components/layout/MainLayout";
 import { ComingSoon } from "./components/layout/ComingSoon";
 import { MonsterList } from "./features/monsters/components/MonsterList";
+import { RuneList } from "./features/runes/components/RuneList";
 import { Package, Hammer, Shield, ScrollText } from "lucide-react";
 import { useTheme } from "./hooks/useTheme";
 
@@ -48,6 +49,8 @@ function App() {
     switch (currentPage) {
       case "/monsters":
         return <MonsterList />;
+      case "/runes":
+        return <RuneList />;
       case "/items":
         return (
           <ComingSoon
