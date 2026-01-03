@@ -32,6 +32,13 @@ export interface NavItem {
  * Easy to extend with new tools
  */
 export const NAV_ITEMS: NavItem[] = [
+  // {
+  //   id: "home",
+  //   title: "Home",
+  //   icon: <Home className="h-5 w-5" />,
+  //   href: "/",
+  //   enabled: true,
+  // },
   {
     id: "monsters",
     title: "Monster Bestiary",

@@ -15,6 +15,7 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { MainLayout } from "./components/layout/MainLayout";
+import { Homepage } from "./components/layout/Homepage";
 import { ComingSoon } from "./components/layout/ComingSoon";
 import { MonsterList } from "./features/monsters/components/MonsterList";
 import { RuneList } from "./features/runes/components/RuneList";
@@ -36,7 +37,7 @@ const queryClient = new QueryClient({
 });
 
 function App() {
-  const [currentPage, setCurrentPage] = useState("/monsters");
+  const [currentPage, setCurrentPage] = useState("/");
 
   // Initialize theme system
   useTheme();
@@ -47,6 +48,8 @@ function App() {
    */
   const renderPage = () => {
     switch (currentPage) {
+      case "/":
+        return <Homepage onNavigate={setCurrentPage} />;
       case "/monsters":
         return <MonsterList />;
       case "/runes":
@@ -84,7 +87,7 @@ function App() {
           />
         );
       default:
-        return <MonsterList />;
+        return <Homepage onNavigate={setCurrentPage} />;
     }
   };
 
