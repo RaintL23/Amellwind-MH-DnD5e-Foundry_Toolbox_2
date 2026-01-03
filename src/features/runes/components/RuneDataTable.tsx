@@ -81,6 +81,31 @@ const columns: ColumnDef<RuneWithMonster>[] = [
     ),
   },
   {
+    accessorKey: "tier",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tier
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => {
+      const tier = row.getValue("tier") as number;
+      return (
+        <Badge variant="outline" className="font-mono">
+          T{tier}
+        </Badge>
+      );
+    },
+    filterFn: (row, _id, value) => {
+      return value === "all" || row.getValue("tier") === Number(value);
+    },
+  },
+  {
     accessorKey: "type",
     header: ({ column }) => {
       return (
@@ -111,12 +136,100 @@ const columns: ColumnDef<RuneWithMonster>[] = [
     cell: ({ row }) => {
       const effect = row.getValue("effect") as string;
       // Truncate long effects
-      const truncated = effect.length > 150 ? `${effect.slice(0, 150)}...` : effect;
+      const truncated =
+        effect.length > 150 ? `${effect.slice(0, 150)}...` : effect;
       return (
         <div className="text-sm max-w-md" title={effect}>
           {truncated}
         </div>
       );
+    },
+  },
+  {
+    accessorKey: "intent",
+    header: "Intent",
+    cell: ({ row }) => {
+      const intents = row.original.intent;
+      if (!intents || intents.length === 0)
+        return <span className="text-muted-foreground">—</span>;
+
+      return (
+        <div className="flex flex-wrap gap-1">
+          {intents.slice(0, 2).map((intent, i) => (
+            <Badge key={i} variant="secondary" className="text-xs">
+              {intent}
+            </Badge>
+          ))}
+          {intents.length > 2 && (
+            <Badge variant="secondary" className="text-xs">
+              +{intents.length - 2}
+            </Badge>
+          )}
+        </div>
+      );
+    },
+    filterFn: (row, _id, value) => {
+      if (value === "all") return true;
+      const intents = row.original.intent || [];
+      return intents.includes(value);
+    },
+  },
+  {
+    accessorKey: "weapons",
+    header: "Weapons",
+    cell: ({ row }) => {
+      const weapons = row.original.weapons;
+      if (!weapons || weapons.length === 0)
+        return <span className="text-muted-foreground">—</span>;
+
+      return (
+        <div className="flex flex-wrap gap-1">
+          {weapons.slice(0, 1).map((weapon, i) => (
+            <Badge key={i} variant="outline" className="text-xs">
+              {weapon}
+            </Badge>
+          ))}
+          {weapons.length > 1 && (
+            <Badge variant="outline" className="text-xs">
+              +{weapons.length - 1}
+            </Badge>
+          )}
+        </div>
+      );
+    },
+    filterFn: (row, _id, value) => {
+      if (value === "all") return true;
+      const weapons = row.original.weapons || [];
+      return weapons.includes(value);
+    },
+  },
+  {
+    accessorKey: "classes",
+    header: "Classes",
+    cell: ({ row }) => {
+      const classes = row.original.classes;
+      if (!classes || classes.length === 0)
+        return <span className="text-muted-foreground">—</span>;
+
+      return (
+        <div className="flex flex-wrap gap-1">
+          {classes.slice(0, 1).map((className, i) => (
+            <Badge key={i} variant="outline" className="text-xs">
+              {className}
+            </Badge>
+          ))}
+          {classes.length > 1 && (
+            <Badge variant="outline" className="text-xs">
+              +{classes.length - 1}
+            </Badge>
+          )}
+        </div>
+      );
+    },
+    filterFn: (row, _id, value) => {
+      if (value === "all") return true;
+      const classes = row.original.classes || [];
+      return classes.includes(value);
     },
   },
   {
@@ -138,15 +251,6 @@ const columns: ColumnDef<RuneWithMonster>[] = [
     filterFn: (row, _id, value) => {
       return value === "all" || row.getValue("monsterName") === value;
     },
-  },
-  {
-    accessorKey: "monsterSource",
-    header: "Source",
-    cell: ({ row }) => (
-      <div className="text-xs text-muted-foreground">
-        {row.getValue("monsterSource")}
-      </div>
-    ),
   },
 ];
 
@@ -180,12 +284,50 @@ export function RuneDataTable({ data }: RuneDataTableProps) {
   });
 
   // Extract unique values for filters
+  const uniqueTiers = React.useMemo(() => {
+    const tiers = new Set<number>();
+    data.forEach((rune) => {
+      tiers.add(rune.tier);
+    });
+    return Array.from(tiers).sort();
+  }, [data]);
+
   const uniqueTypes = React.useMemo(() => {
     const types = new Set<string>();
     data.forEach((rune) => {
       types.add(rune.type);
     });
     return Array.from(types).sort();
+  }, [data]);
+
+  const uniqueIntents = React.useMemo(() => {
+    const intents = new Set<string>();
+    data.forEach((rune) => {
+      if (rune.intent) {
+        rune.intent.forEach((intent) => intents.add(intent));
+      }
+    });
+    return Array.from(intents).sort();
+  }, [data]);
+
+  const uniqueWeapons = React.useMemo(() => {
+    const weapons = new Set<string>();
+    data.forEach((rune) => {
+      if (rune.weapons) {
+        rune.weapons.forEach((weapon) => weapons.add(weapon));
+      }
+    });
+    return Array.from(weapons).sort();
+  }, [data]);
+
+  const uniqueClasses = React.useMemo(() => {
+    const classes = new Set<string>();
+    data.forEach((rune) => {
+      if (rune.classes) {
+        rune.classes.forEach((className) => classes.add(className));
+      }
+    });
+    return Array.from(classes).sort();
   }, [data]);
 
   const uniqueMonsters = React.useMemo(() => {
@@ -199,15 +341,38 @@ export function RuneDataTable({ data }: RuneDataTableProps) {
   return (
     <div className="w-full space-y-4">
       {/* Filters */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Search */}
-        <div>
+        <div className="md:col-span-2 lg:col-span-4">
           <Input
             placeholder="Search runes..."
             value={globalFilter ?? ""}
             onChange={(event) => setGlobalFilter(event.target.value)}
             className="w-full"
           />
+        </div>
+
+        {/* Tier Filter */}
+        <div>
+          <Select
+            value={
+              (table.getColumn("tier")?.getFilterValue() as string) ?? "all"
+            }
+            onChange={(event) => {
+              const value = event.target.value;
+              table
+                .getColumn("tier")
+                ?.setFilterValue(value === "all" ? undefined : value);
+            }}
+            className="w-full"
+          >
+            <option value="all">All Tiers</option>
+            {uniqueTiers.map((tier) => (
+              <option key={tier} value={tier}>
+                Tier {tier}
+              </option>
+            ))}
+          </Select>
         </div>
 
         {/* Type Filter */}
@@ -228,6 +393,78 @@ export function RuneDataTable({ data }: RuneDataTableProps) {
             {uniqueTypes.map((type) => (
               <option key={type} value={type}>
                 {type.charAt(0).toUpperCase() + type.slice(1)}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        {/* Intent Filter */}
+        <div>
+          <Select
+            value={
+              (table.getColumn("intent")?.getFilterValue() as string) ?? "all"
+            }
+            onChange={(event) => {
+              const value = event.target.value;
+              table
+                .getColumn("intent")
+                ?.setFilterValue(value === "all" ? undefined : value);
+            }}
+            className="w-full"
+          >
+            <option value="all">All Intents</option>
+            {uniqueIntents.map((intent) => (
+              <option key={intent} value={intent}>
+                {intent
+                  .split("-")
+                  .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+                  .join(" ")}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        {/* Weapon Filter */}
+        <div>
+          <Select
+            value={
+              (table.getColumn("weapons")?.getFilterValue() as string) ?? "all"
+            }
+            onChange={(event) => {
+              const value = event.target.value;
+              table
+                .getColumn("weapons")
+                ?.setFilterValue(value === "all" ? undefined : value);
+            }}
+            className="w-full"
+          >
+            <option value="all">All Weapons</option>
+            {uniqueWeapons.map((weapon) => (
+              <option key={weapon} value={weapon}>
+                {weapon.charAt(0).toUpperCase() + weapon.slice(1)}
+              </option>
+            ))}
+          </Select>
+        </div>
+
+        {/* Class Filter */}
+        <div>
+          <Select
+            value={
+              (table.getColumn("classes")?.getFilterValue() as string) ?? "all"
+            }
+            onChange={(event) => {
+              const value = event.target.value;
+              table
+                .getColumn("classes")
+                ?.setFilterValue(value === "all" ? undefined : value);
+            }}
+            className="w-full"
+          >
+            <option value="all">All Classes</option>
+            {uniqueClasses.map((className) => (
+              <option key={className} value={className}>
+                {className.charAt(0).toUpperCase() + className.slice(1)}
               </option>
             ))}
           </Select>
@@ -339,4 +576,3 @@ export function RuneDataTable({ data }: RuneDataTableProps) {
     </div>
   );
 }
-
