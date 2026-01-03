@@ -57,6 +57,7 @@ export interface Monster {
   hasFluffImages?: boolean;
   fluff?: MonsterFluff;
   runes?: Rune[];
+  tokenUrl?: string;
 }
 
 export interface MonsterType {

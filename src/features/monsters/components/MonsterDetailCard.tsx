@@ -487,23 +487,7 @@ function DescriptionTab({ monster }: { monster: Monster }) {
  * Image Tab Component
  */
 function ImageTab({ monster }: { monster: Monster }) {
-  const { data: fluff, isLoading } = useMonsterFluff(
-    monster.name,
-    monster.source
-  );
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="text-center space-y-2">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="text-sm text-muted-foreground">Loading image...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!fluff || !fluff.images || fluff.images.length === 0) {
+  if (!monster.tokenUrl) {
     return (
       <div className="text-center py-12">
         <Image className="h-12 w-12 mx-auto mb-4 text-muted-foreground opacity-50" />
@@ -515,34 +499,24 @@ function ImageTab({ monster }: { monster: Monster }) {
   }
 
   return (
-    <div className="space-y-4">
-      {fluff.images.map((img, index) => {
-        const imageUrl = img.href.url || img.href.path;
-
-        if (!imageUrl) return null;
-
-        return (
-          <div key={index} className="space-y-2">
-            <img
-              src={imageUrl}
-              alt={img.title || monster.name}
-              className="w-full rounded-lg shadow-lg"
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.style.display = "none";
-              }}
-            />
-            {img.title && (
-              <p className="text-sm font-semibold text-center">{img.title}</p>
-            )}
-            {img.credit && (
-              <p className="text-xs text-muted-foreground text-center">
-                Credit: {img.credit}
-              </p>
-            )}
-          </div>
-        );
-      })}
+    <div className="flex items-center justify-center py-4">
+      <img
+        src={monster.tokenUrl}
+        alt={monster.name}
+        className="max-w-full h-auto rounded-lg shadow-lg"
+        onError={(e) => {
+          const target = e.target as HTMLImageElement;
+          target.style.display = "none";
+          const parent = target.parentElement;
+          if (parent) {
+            parent.innerHTML = `
+              <div class="text-center py-12">
+                <p class="text-muted-foreground">Failed to load image.</p>
+              </div>
+            `;
+          }
+        }}
+      />
     </div>
   );
 }
@@ -668,31 +642,42 @@ function extractRunes(entries: Entry[] | ComplexEntry[]): Rune[] {
     entries = entries[0].entries;
   }
 
-  // Find inset entries which contain the rune information
-  for (const entry of entries) {
-    if (typeof entry === "object" && entry.type === "inset" && entry.entries) {
-      // Process each inner entry (usually lists of armor/weapon effects)
-      for (const innerEntry of entry.entries) {
-        if (
-          typeof innerEntry === "object" &&
-          innerEntry.type === "list" &&
-          innerEntry.items
-        ) {
-          // Determine rune type based on the section name
-          const runeType = determineRuneType(innerEntry.name);
+  // Helper function to extract runes from list entries
+  const extractRunesFromList = (listEntries: any[]) => {
+    for (const listEntry of listEntries) {
+      if (
+        typeof listEntry === "object" &&
+        listEntry.type === "list" &&
+        listEntry.items
+      ) {
+        const runeType = determineRuneType(listEntry.name);
 
-          // Extract individual runes from the list items
-          for (const item of innerEntry.items) {
-            if (typeof item === "object" && item.name) {
-              const rune: Rune = {
-                name: item.name || "Unknown",
-                type: runeType,
-                effect: extractEffect(item.entries),
-              };
-              runes.push(rune);
-            }
+        for (const item of listEntry.items) {
+          if (typeof item === "object" && item.name) {
+            const rune: Rune = {
+              name: item.name || "Unknown",
+              type: runeType,
+              effect: extractEffect(item.entries),
+            };
+            runes.push(rune);
           }
         }
+      }
+    }
+  };
+
+  // First attempt: Extract runes directly from entries
+  extractRunesFromList(entries);
+
+  // Second attempt: If no runes found, look inside inset entries
+  if (runes.length === 0) {
+    for (const entry of entries) {
+      if (
+        typeof entry === "object" &&
+        entry.type === "inset" &&
+        entry.entries
+      ) {
+        extractRunesFromList(entry.entries);
       }
     }
   }
