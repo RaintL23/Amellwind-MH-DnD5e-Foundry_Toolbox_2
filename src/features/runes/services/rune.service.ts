@@ -10,14 +10,14 @@ import type {
   Rune,
 } from "@/features/monsters/types/monster.types";
 import type { RuneWithMonster } from "../types/rune.types";
-import { MONSTER_HUNTER_JSON_URL } from "@/constants/api.constants";
+import { MONSTER_HUNTER_MONSTER_MANUAL_JSON_URL } from "@/constants/api.constants";
 import { getCRValue } from "@/features/monsters/services/monster.service";
 
 /**
  * Fetch all runes from all monsters
  */
 export async function fetchAllRunes(): Promise<RuneWithMonster[]> {
-  const response = await fetch(MONSTER_HUNTER_JSON_URL);
+  const response = await fetch(MONSTER_HUNTER_MONSTER_MANUAL_JSON_URL);
   if (!response.ok) {
     throw new Error("Failed to fetch monster data");
   }
@@ -34,7 +34,7 @@ export async function fetchAllRunes(): Promise<RuneWithMonster[]> {
 
     if (fluff && fluff.entries) {
       const runes = extractRunes(fluff.entries);
-      
+
       // Calculate tier based on monster CR
       const crValue = getCRValue(monster.cr);
       const tier = calculateTier(crValue);

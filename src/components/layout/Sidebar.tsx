@@ -14,6 +14,7 @@ import {
   ScrollText,
   ChevronRight,
   Sparkles,
+  // Home,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";

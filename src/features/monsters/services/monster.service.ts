@@ -10,7 +10,7 @@ import type {
   Monster,
   MonsterFluff,
 } from "../types/monster.types";
-import { MONSTER_HUNTER_JSON_URL } from "@/constants/api.constants";
+import { MONSTER_HUNTER_MONSTER_MANUAL_JSON_URL } from "@/constants/api.constants";
 
 // Cache for the full data to avoid re-fetching for fluff
 let cachedData: MonsterData | null = null;
@@ -25,7 +25,7 @@ async function fetchMonsterData(): Promise<MonsterData> {
   }
 
   try {
-    const response = await fetch(MONSTER_HUNTER_JSON_URL);
+    const response = await fetch(MONSTER_HUNTER_MONSTER_MANUAL_JSON_URL);
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
