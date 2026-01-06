@@ -106,8 +106,10 @@ function getDescription(toolId: string): string {
       "Explore the complete bestiary of Monster Hunter monsters adapted for D&D 5e. Includes statistics, abilities, and detailed descriptions.",
     runes:
       "Discover all available material runes that you can apply to weapons and armor to gain special effects.",
+    weapons:
+      "Browse all Monster Hunter weapons with their unique mechanics and rarity tiers. Each weapon has special features that unlock as its rarity increases.",
     items:
-      "Browse the complete catalog of Monster Hunter weapons, armor, and equipment for D&D 5e.",
+      "Browse the complete catalog of Monster Hunter armor and equipment for D&D 5e.",
     crafting:
       "Crafting system to create powerful equipment using materials from defeated monsters.",
     armor:
@@ -136,8 +138,14 @@ function getFeatures(toolId: string): string[] {
       "Filter by weapons and classes",
       "Detailed effects",
     ],
+    weapons: [
+      "Complete weapon catalog",
+      "Multiple rarity tiers",
+      "Unique weapon mechanics",
+      "Detailed feature descriptions",
+    ],
     items: [
-      "Complete equipment catalog",
+      "Complete armor catalog",
       "Statistics and bonuses",
       "Crafting requirements",
     ],

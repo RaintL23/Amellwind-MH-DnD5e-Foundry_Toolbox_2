@@ -19,7 +19,8 @@ import { Homepage } from "./components/layout/Homepage";
 import { ComingSoon } from "./components/layout/ComingSoon";
 import { MonsterList } from "./features/monsters/components/MonsterList";
 import { RuneList } from "./features/runes/components/RuneList";
-import { Package, Hammer, Shield, ScrollText } from "lucide-react";
+import { WeaponList } from "./features/weapons/components/WeaponList";
+import { Hammer, Shield, ScrollText } from "lucide-react";
 import { useTheme } from "./hooks/useTheme";
 
 /**
@@ -54,14 +55,8 @@ function App() {
         return <MonsterList />;
       case "/runes":
         return <RuneList />;
-      case "/items":
-        return (
-          <ComingSoon
-            title="Items & Equipment"
-            description="Browse Monster Hunter weapons, armor, and equipment for D&D 5e"
-            icon={<Package className="h-16 w-16" />}
-          />
-        );
+      case "/weapons":
+        return <WeaponList />;
       case "/crafting":
         return (
           <ComingSoon

@@ -14,7 +14,7 @@ import {
   ScrollText,
   ChevronRight,
   Sparkles,
-  // Home,
+  Sword,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
@@ -52,6 +52,13 @@ export const NAV_ITEMS: NavItem[] = [
     title: "Material Runes",
     icon: <Sparkles className="h-5 w-5" />,
     href: "/runes",
+    enabled: true,
+  },
+  {
+    id: "weapons",
+    title: "Hunter Weapons",
+    icon: <Sword className="h-5 w-5" />,
+    href: "/weapons",
     enabled: true,
   },
   {
