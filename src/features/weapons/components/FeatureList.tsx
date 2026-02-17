@@ -11,6 +11,7 @@ interface FeatureListProps {
   rarityName: string;
   featuresCache: Record<string, ParsedFeature[]>;
   loadFeatures: (featureString: string, rarityName: string) => Promise<void>;
+  title?: string; // Optional title for the feature section
 }
 
 export function FeatureList({
@@ -18,6 +19,7 @@ export function FeatureList({
   rarityName,
   featuresCache,
   loadFeatures,
+  title = "Features",
 }: FeatureListProps) {
   const [isLoading, setIsLoading] = React.useState(false);
 
@@ -45,7 +47,7 @@ export function FeatureList({
   if (!features || features.length === 0) {
     return (
       <div>
-        <div className="text-sm font-semibold mb-2">Features</div>
+        <div className="text-sm font-semibold mb-2">{title}</div>
         <div className="text-sm text-muted-foreground leading-relaxed break-words">
           {featureString}
         </div>
@@ -55,7 +57,7 @@ export function FeatureList({
 
   return (
     <div>
-      <div className="text-sm font-semibold mb-3">Features</div>
+      <div className="text-sm font-semibold mb-3">{title}</div>
       <div className="space-y-3">
         {features.map((feature, idx) => (
           <div

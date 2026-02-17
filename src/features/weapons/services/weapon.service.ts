@@ -8,6 +8,9 @@ import type {
   WeaponData,
   ParsedFeature,
   OptionalFeature,
+  Feature,
+  ComplexEntry,
+  Rarity,
 } from "../types/weapon.types";
 import { MONSTER_HUNTER_GUIDE_JSON_URL } from "@/constants/api.constants";
 
@@ -50,7 +53,7 @@ export async function fetchHunterWeapons(): Promise<HunterWeapon[]> {
 
   // Filter only Hunter Weapons (type: "HW")
   const hunterWeapons = data.item.filter(
-    (item): item is HunterWeapon => item.type === "HW"
+    (item): item is HunterWeapon => item.type === "HW",
   );
 
   return hunterWeapons;
@@ -110,7 +113,7 @@ function extractCellValue(cellValue: any): string {
  * Returns an array of objects where each key is a column label
  */
 export function extractRarityInfo(
-  weapon: HunterWeapon
+  weapon: HunterWeapon,
 ): Record<string, string>[] {
   if (!weapon.entries || weapon.entries.length === 0) {
     return [];
@@ -144,88 +147,9 @@ export function extractRarityInfo(
       }
     }
   }
+  // console.log("rarityInfo2", rarityInfo2);
   return rarityInfo2;
 }
-
-/**
- * Extract rarity information from weapon entries
- * Fully dynamic - works with any table structure
- */
-// export function extractRarityInfo(weapon: HunterWeapon): RarityInfo[] {
-//   if (!weapon.entries || weapon.entries.length === 0) {
-//     return [];
-//   }
-//   const rarities: RarityInfo[] = [];
-
-//   // Find the inset entry that contains the rarity table
-//   for (const entry of weapon.entries) {
-//     if (typeof entry === "object" && entry.type === "inset" && entry.entries) {
-//       // Look for the table inside the inset
-//       for (const innerEntry of entry.entries) {
-//         if (
-//           typeof innerEntry === "object" &&
-//           innerEntry.type === "table" &&
-//           innerEntry.rows
-//         ) {
-//           // Get column labels if available
-//           const colLabels = innerEntry.colLabels || [];
-
-//           // Find the indices of the core columns (these should always exist)
-//           const rarityIdx = colLabels.findIndex(
-//             (label: string) => label.toLowerCase() === "rarity"
-//           );
-//           const slotsIdx = colLabels.findIndex(
-//             (label: string) => label.toLowerCase() === "slots"
-//           );
-//           const bonusIdx = colLabels.findIndex(
-//             (label: string) => label.toLowerCase() === "bonus"
-//           );
-
-//           // Use default indices if colLabels not found
-//           const useRarityIdx = rarityIdx !== -1 ? rarityIdx : 0;
-//           const useSlotsIdx = slotsIdx !== -1 ? slotsIdx : 1;
-//           const useBonusIdx = bonusIdx !== -1 ? bonusIdx : 2;
-
-//           // Find indices of core columns to exclude from additional columns
-//           const coreIndices = new Set([useRarityIdx, useSlotsIdx, useBonusIdx]);
-
-//           // Parse each row
-//           for (const row of innerEntry.rows) {
-//             if (Array.isArray(row) && row.length > 0) {
-//               // Extract additional columns (everything that's not rarity, slots, or bonus)
-//               const additionalColumns: RarityColumnData[] = [];
-
-//               for (let i = 0; i < row.length; i++) {
-//                 // Skip core columns
-//                 if (coreIndices.has(i)) continue;
-
-//                 // Get the label for this column
-//                 const label = colLabels[i] || `Column ${i + 1}`;
-
-//                 // Extract the value (handles nested structures)
-//                 const value = extractCellValue(row[i]);
-
-//                 if (value) {
-//                   additionalColumns.push({ label, value });
-//                 }
-//               }
-
-//               const rarityInfo: RarityInfo = {
-//                 rarity: extractCellValue(row[useRarityIdx]),
-//                 slots: extractCellValue(row[useSlotsIdx]),
-//                 bonus: extractCellValue(row[useBonusIdx]),
-//                 additionalColumns,
-//               };
-
-//               rarities.push(rarityInfo);
-//             }
-//           }
-//         }
-//       }
-//     }
-//   }
-//   return rarities;
-// }
 
 /**
  * Get weapon description (first string entry)
@@ -238,7 +162,7 @@ export function getWeaponDescription(weapon: HunterWeapon): string {
   // Find the first string entry
   for (const entry of weapon.entries) {
     if (typeof entry === "string") {
-      description += entry + "\n";
+      description += entry + "\n\n";
     }
   }
   if (description.trim() !== "") {
@@ -335,7 +259,7 @@ export function parseFeatureString(featureString: string): string[] {
  * Get optional feature details from cached data
  */
 export async function getOptionalFeature(
-  featureName: string
+  featureName: string,
 ): Promise<OptionalFeature | null> {
   try {
     const data = await fetchWeaponData();
@@ -345,7 +269,7 @@ export async function getOptionalFeature(
     }
 
     const feature = data.optionalfeature.find(
-      (f) => f.name.toLowerCase() === featureName.toLowerCase()
+      (f) => f.name.toLowerCase() === featureName.toLowerCase(),
     );
 
     return feature || null;
@@ -359,7 +283,7 @@ export async function getOptionalFeature(
  * Parse and fetch all features from a feature string
  */
 export async function parseAndFetchFeatures(
-  featureString: string
+  featureString: string,
 ): Promise<ParsedFeature[]> {
   if (!featureString) return [];
 
@@ -395,4 +319,61 @@ export async function parseAndFetchFeatures(
   }
 
   return parsedFeatures;
+}
+
+export async function getHunterWeaponRarities(
+  weapon: HunterWeapon,
+): Promise<Rarity[]> {
+  const rarities: Rarity[] = [];
+  const rarityRows: Record<string, string>[] = [];
+  if (!weapon.entries || weapon.entries.length === 0) {
+    return rarities;
+  }
+
+  for (const entry of weapon.entries) {
+    if (typeof entry === "object" && entry.type === "inset" && entry.entries) {
+      for (const innerEntry of entry.entries) {
+        const colsLabels = (innerEntry as ComplexEntry).colLabels;
+        if (typeof innerEntry === "object" && innerEntry.rows && colsLabels) {
+          for (const row of innerEntry.rows) {
+            const colValues: Record<string, string> = {};
+            for (let i = 0; i < row.length; i++) {
+              colValues[colsLabels[i]] = extractCellValue(row[i]);
+            }
+            rarityRows.push(colValues);
+          }
+        }
+      }
+    }
+  }
+
+  let tier = 0;
+  for (const featureRow of rarityRows) {
+    const rarity: Rarity = {
+      tier: tier,
+      name: featureRow["Rarity"],
+      slots: featureRow["Slots"] ? parseInt(featureRow["Slots"]) : 0,
+      bonus: featureRow["Bonus"],
+      features: [],
+    };
+
+    // Iterate over all keys in the feature row
+    for (const [key, value] of Object.entries(featureRow)) {
+      // Skip core columns
+      if (!["Rarity", "Slots", "Bonus"].includes(key)) {
+        const featureItem: Feature = {
+          name: key,
+          source: weapon.source || "AGMH",
+          description: value,
+          value: value,
+        };
+        rarity.features.push(featureItem);
+      }
+    }
+
+    tier = tier + 1;
+    rarities.push(rarity);
+  }
+
+  return rarities;
 }

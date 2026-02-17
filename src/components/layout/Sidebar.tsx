@@ -56,7 +56,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
   {
     id: "weapons",
-    title: "Hunter Weapons",
+    title: "Hunter Weapons [WIP]",
     icon: <Sword className="h-5 w-5" />,
     href: "/weapons",
     enabled: true,
@@ -136,7 +136,7 @@ export function Sidebar({ currentPage, onNavigate, className }: SidebarProps) {
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                 isActive && "bg-accent text-accent-foreground",
                 isDisabled &&
-                  "opacity-50 cursor-not-allowed hover:bg-transparent"
+                  "opacity-50 cursor-not-allowed hover:bg-transparent",
               )}
             >
               <span className={cn(isActive && "text-primary")}>

@@ -3,10 +3,32 @@
  * Based on Amellwind's Guide to Monster Hunting
  */
 
+export interface HunterWeapon2 {
+  name: string;
+  type: "HW"; // Hunter Weapon
+  weight?: number;
+  dmg: string;
+  rarities: Rarity[];
+}
+
+export interface Rarity {
+  tier: number;
+  name: string;
+  slots: number;
+  bonus: string;
+  features: Feature[];
+}
+
+export interface Feature {
+  name: string;
+  source: string;
+  description: string;
+  value: string;
+}
+
 export interface HunterWeapon {
   name: string;
   source: string;
-  page?: number;
   type: "HW"; // Hunter Weapon
   rarity: string; // "none" means it has multiple rarities
   weight?: number;

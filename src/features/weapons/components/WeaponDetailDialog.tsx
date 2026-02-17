@@ -28,6 +28,7 @@ import {
   getWeaponDescription,
   parseAndFetchFeatures,
   extractRarityInfo,
+  // getHunterWeaponRarities,
 } from "../services/weapon.service";
 import { FeatureList } from "./FeatureList";
 
@@ -36,6 +37,25 @@ interface WeaponDetailDialogProps {
   open: boolean;
   onClose: () => void;
 }
+
+// Columns that should be rendered as feature lists (like Features)
+const featureLikeColumns: string[] = [
+  "Features",
+  "Notes",
+  "Phials",
+  "Coatings",
+  "Ammo",
+  "Column 5",
+  "Single Features",
+  "Splint Features",
+];
+
+// All special columns to exclude from the main grid
+const rarityColumnsToExclude: string[] = [
+  ...featureLikeColumns,
+  "Rarity", // Rarity is shown in the header
+  "Available",
+];
 
 export function WeaponDetailDialog({
   weapon,
@@ -58,7 +78,7 @@ export function WeaponDetailDialog({
         [rarityName]: features,
       }));
     },
-    [featuresCache]
+    [featuresCache],
   );
 
   React.useEffect(() => {
@@ -73,7 +93,7 @@ export function WeaponDetailDialog({
   const cost = formatCost(weapon.value);
   const properties = formatWeaponProperties(weapon);
   const description = getWeaponDescription(weapon);
-
+  // const rarities1 = getHunterWeaponRarities(weapon);
   const getRarityColor = (rarity: string): string => {
     const lower = rarity.toLowerCase();
     if (lower === "common") return "bg-gray-600";
@@ -193,72 +213,57 @@ export function WeaponDetailDialog({
                             </div>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                              <div>
-                                <div className="text-xs font-semibold text-muted-foreground mb-1">
-                                  Decoration Slots
-                                </div>
-                                <div className="text-lg font-bold">
-                                  {rarity["Slots"] || "—"}
-                                </div>
-                              </div>
-
-                              <div>
-                                <div className="text-xs font-semibold text-muted-foreground mb-1">
-                                  Bonus
-                                </div>
-                                <div className="text-lg font-bold">
-                                  {rarity["Bonus"] || "—"}
-                                </div>
-                              </div>
-
-                              {/* Additional Columns */}
-                              {rarity["AC Bonus"] && (
-                                <div>
-                                  <div className="text-xs font-semibold text-muted-foreground mb-1">
-                                    AC Bonus
+                              {/* Dynamic rendering of all rarity properties except Features */}
+                              {Object.entries(rarity)
+                                .filter(
+                                  ([key]) =>
+                                    !rarityColumnsToExclude.includes(key),
+                                )
+                                .map(([key, value]) => (
+                                  <div key={key}>
+                                    <div className="text-xs font-semibold text-muted-foreground mb-1">
+                                      {key}
+                                    </div>
+                                    <div className="text-lg font-bold">
+                                      {value || "—"}
+                                    </div>
                                   </div>
-                                  <div className="text-lg font-bold">
-                                    {rarity["AC Bonus"] || "—"}
-                                  </div>
-                                </div>
-                              )}
+                                ))}
                             </div>
 
-                            {/* Features */}
-                            {rarity["Features"] && (
-                              <FeatureList
-                                featureString={rarity["Features"]}
-                                rarityName={rarity["Rarity"]}
-                                featuresCache={featuresCache}
-                                loadFeatures={loadFeatures}
-                              />
-                            )}
+                            {/* Feature-like columns grid */}
+                            {(() => {
+                              // Get all feature-like columns that exist in this rarity
+                              const existingFeatureColumns =
+                                featureLikeColumns.filter((col) => rarity[col]);
 
-                            {/* Additional Columns (Dynamic) */}
-                            {/* {rarity.additionalColumns &&
-                              rarity.additionalColumns.length > 0 && (
-                                <div className="space-y-4">
-                                  {rarity.additionalColumns.map(
-                                    (column, colIdx) => (
-                                      <div key={colIdx}>
-                                        {column.value &&
-                                        column.value !== "--" ? (
-                                          <FeatureList
-                                            featureString={column.value}
-                                            rarityName={`${rarity.rarity}-${column.label}`}
-                                            featuresCache={featuresCache}
-                                            loadFeatures={loadFeatures}
-                                          />
-                                        ) : (
-                                          <div className="text-sm text-muted-foreground">
-                                            —
-                                          </div>
-                                        )}
-                                      </div>
-                                    )
-                                  )}
+                              if (existingFeatureColumns.length === 0)
+                                return null;
+
+                              return (
+                                <div
+                                  className={`grid gap-4 ${
+                                    existingFeatureColumns.length === 1
+                                      ? "grid-cols-1"
+                                      : existingFeatureColumns.length === 2
+                                        ? "grid-cols-1 lg:grid-cols-2"
+                                        : "grid-cols-1 lg:grid-cols-2 xl:grid-cols-3"
+                                  }`}
+                                >
+                                  {existingFeatureColumns.map((columnName) => (
+                                    <div key={columnName}>
+                                      <FeatureList
+                                        featureString={rarity[columnName]}
+                                        rarityName={`${rarity["Rarity"]}-${columnName}`}
+                                        featuresCache={featuresCache}
+                                        loadFeatures={loadFeatures}
+                                        title={columnName}
+                                      />
+                                    </div>
+                                  ))}
                                 </div>
-                              )} */}
+                              );
+                            })()}
                           </div>
                         </CarouselItem>
                       ))}
