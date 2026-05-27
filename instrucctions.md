@@ -1,0 +1,841 @@
+# Amellwind Monster Hunter DnD5e Toolbox
+
+## Descripción
+
+Esta es una aplicación que servirá como toolkit para un Dungeon Master que quiera hacer uso del manual de Amellwind que combina Monster Hunter con Dungeons & Dragons 5e.
+
+La información mostrada en esta aplicación proviene de los siguientes recursos homebrew de Amellwind disponibles en 5etools:
+
+- [Amellwind; Monster Hunter Monster Manual.json](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json)
+- [Amellwind; Amellwind's Guide to Monster Hunting.json](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json)
+
+---
+
+## Stack Tecnológico
+
+| Capa               | Tecnología                           |
+| ------------------ | ------------------------------------ |
+| Framework          | React 18 + TypeScript                |
+| Build tool         | Vite                                 |
+| Estilos            | Tailwind CSS                         |
+| Componentes UI     | shadcn/ui                            |
+| Routing            | React Router v6                      |
+| Almacenamiento     | IndexedDB (API nativa del navegador) |
+| Gestor de paquetes | pnpm                                 |
+
+> Toda la app es una **SPA** (Single Page Application). No hay backend propio — los datos vienen de JSONs externos cacheados en IndexedDB.
+
+---
+
+## Routing y Navegación
+
+La app usa **React Router v6** con rutas declarativas montadas en `App.tsx`. El layout general (Sidebar + área de contenido) se aplica mediante un componente `MainLayout` que envuelve todas las rutas con contenido.
+
+### Estructura de rutas
+
+```text
+/                     → Redirect a /monsters
+/monsters             → Listado de Monstruos
+/runes                → Listado de Runas
+*                     → Página 404 / Not Found
+```
+
+### Implementación en `App.tsx`
+
+```tsx
+<BrowserRouter>
+  <Routes>
+    <Route path="/" element={<MainLayout />}>
+      <Route index element={<Navigate to="/monsters" replace />} />
+      <Route path="monsters" element={<MonsterList />} />
+      <Route path="runes" element={<RuneList />} />
+      <Route path="*" element={<NotFound />} />
+    </Route>
+  </Routes>
+</BrowserRouter>
+```
+
+### Sidebar y navegación
+
+El componente `Sidebar` renderiza los links de navegación usando `<NavLink>` de React Router. Los links activos deben recibir un estilo visual diferenciado (clase `active` o variante de shadcn).
+
+| Link en Sidebar | Ruta destino |
+| --------------- | ------------ |
+| Monsters        | `/monsters`  |
+| Runes           | `/runes`     |
+
+> Las rutas de Weapons, Armor y Encounters se agregarán en iteraciones futuras. Por ahora no se listan en el Sidebar.
+
+---
+
+## Arquitectura de datos
+
+### Concepto general
+
+Los JSONs guardados localmente actúan como la **base de datos** de la aplicación. Toda consulta de datos (listado de monstruos, detalle de un arma, búsqueda, filtros) se realiza **contra los JSONs en caché**, nunca directamente contra la API externa.
+
+La API solo se consulta en un único momento: al abrir la aplicación, para verificar si hay datos más recientes disponibles. Una vez descargados y guardados, la API no vuelve a intervenir hasta la próxima sesión.
+
+```text
+┌─────────────────────────────────────────────────────┐
+│                   FLUJO GENERAL                     │
+│                                                     │
+│  Abrir app → Sincronizar datos (1 sola vez)         │
+│                    ↓                                │
+│          JSONs en IndexedDB (base de datos local)   │
+│                    ↓                                │
+│  Todas las consultas de la app leen de aquí         │
+└─────────────────────────────────────────────────────┘
+```
+
+### Flujo de sincronización al abrir la app
+
+```text
+Abrir app
+  └─ ¿Existe BD local y tiene menos de 24 horas?
+        ├─ SÍ → continuar directamente a la app (sin fetch)
+        └─ NO → fetch a las URLs externas
+                  └─ ¿Respuesta válida?
+                        ├─ SÍ → guardar copia de los datos anteriores ("versión previa")
+                        │        → guardar datos nuevos en BD local con timestamp
+                        │        → continuar a la app con datos actualizados
+                        └─ NO → continuar con los datos actuales aunque estén desactualizados (fallback)
+```
+
+### Almacenamiento: IndexedDB
+
+Al ser una aplicación web de navegador, el almacenamiento se implementa con **`IndexedDB`** (no `localStorage`), ya que los JSONs fuente superan ampliamente el límite de 5–10 MB de localStorage.
+
+IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es persistente entre sesiones sin límite de tamaño práctico.
+
+#### Estructura de la base de datos local
+
+| Store (tabla)   | Contenido                                              |
+| --------------- | ------------------------------------------------------ |
+| `mm_current`    | Datos actuales del Monster Manual (array de monstruos) |
+| `mm_previous`   | Snapshot anterior del Monster Manual (para rollback)   |
+| `mm_meta`       | Timestamp del último fetch, versión, etc.              |
+| `gtmh_current`  | Datos actuales de la Guía de Caza (armas, runas, etc.) |
+| `gtmh_previous` | Snapshot anterior de la Guía de Caza                   |
+| `gtmh_meta`     | Timestamp del último fetch, versión, etc.              |
+
+### Objetivos del sistema
+
+- **Velocidad**: todas las consultas son locales, sin latencia de red.
+- **Actualización**: la sincronización con la API ocurre como máximo una vez cada 24 horas.
+- **Resiliencia**: si el fetch falla o la nueva versión está rota, la app sigue funcionando con los datos anteriores.
+- **Trazabilidad**: el snapshot previo permite hacer rollback manual si una actualización rompe algo.
+
+---
+
+## Entidades de la Aplicación
+
+La jerarquía de clases es la siguiente:
+
+```text
+Actor (clase base)
+  ├── Monster (hereda de Actor)
+  └── Player  (hereda de Actor)
+```
+
+---
+
+### Actor (clase base)
+
+Todos los campos de esta sección son compartidos por Monstruos y Personajes.
+
+> **Nota sobre las fuentes**: Los nombres de campo siguen la convención de 5etools (fuente de datos) y Foundry VTT (sistema de destino). Donde difieren, se indica la equivalencia.
+
+#### Identificación
+
+- **name** — Nombre completo del actor.
+- **shortName** — Nombre abreviado o apodo. Solo aplica en monstruos con nombre largo (ej. "Acidic Glavenus" → "Glavenus"). Omitir en personajes.
+- **size** — Tamaño del actor. Código de 5etools: `T` (Tiny), `S` (Small), `M` (Medium), `L` (Large), `H` (Huge), `G` (Gargantuan). En Foundry: string completo en minúsculas (`med`, `lrg`, etc.).
+- **type**
+  - `type` — Tipo de criatura (ej. `wyvern`, `beast`, `humanoid`).
+  - `tags` _(array)_ — Subtipos opcionales (ej. `["brute"]`, `["fanged"]`). Plural, puede estar vacío.
+- **alignment** — Alineamiento. En 5etools es un array de códigos: `["U"]` = Unaligned, `["N"]` = Neutral, `["CE"]` = Chaotic Evil, etc.
+
+#### Combate base
+
+- **armorClass** _(array)_ — En 5etools es un array porque puede haber múltiples fuentes de AC:
+  - `ac` _(int)_ — Valor de Clase de Armadura.
+  - `from` _(array de strings)_ — Origen/s del valor (ej. `["natural armor"]`, `["chain mail", "shield"]`).
+- **hp**
+  - `formula` — Fórmula de dados (ej. `"20d12 + 140"`). Principalmente para monstruos.
+  - `average` _(int)_ — Promedio calculado de la fórmula.
+  - `current` _(int)_ — HP actual (relevante en combate y para personajes).
+  - `temp` _(int)_ — HP temporales.
+- **speed** — Velocidades de movimiento en pies. Omitir las que no apliquen:
+  - `walk` _(int)_
+  - `swim` _(int)_
+  - `fly` _(int)_
+  - `burrow` _(int)_
+  - `climb` _(int)_
+  - `hover` _(boolean)_ — `true` si puede flotar estático en el aire (sin velocidad fly activa).
+- **initiative** _(int)_ — Bonificador de iniciativa. Calculado: modificador de `dex` + bonificaciones adicionales.
+- **proficiencyBonus** _(int)_ — Calculado a partir del CR (monstruos) o nivel (personajes). Fórmula: `Math.ceil(CR / 4) + 1`.
+
+#### Atributos base (Ability Scores)
+
+Son siempre exactamente 6 campos fijos, **no una lista**. Se almacenan como valores enteros directamente:
+
+| Campo | Atributo     |
+| ----- | ------------ |
+| `str` | Strength     |
+| `dex` | Dexterity    |
+| `con` | Constitution |
+| `int` | Intelligence |
+| `wis` | Wisdom       |
+| `cha` | Charisma     |
+
+- Cada uno almacena solo el **`value`** _(int, 1–30)_.
+- El **modificador** nunca se almacena: siempre se calcula en el cliente con `Math.floor((value - 10) / 2)`.
+- La tabla de referencia modificador/valor:
+
+  | Valor | Modificador |
+  | ----- | ----------- |
+  | 1     | −5          |
+  | 2–3   | −4          |
+  | 4–5   | −3          |
+  | 6–7   | −2          |
+  | 8–9   | −1          |
+  | 10–11 | +0          |
+  | 12–13 | +1          |
+  | 14–15 | +2          |
+  | 16–17 | +3          |
+  | 18–19 | +4          |
+  | 20–21 | +5          |
+  | 22–23 | +6          |
+  | 24–25 | +7          |
+  | 26–27 | +8          |
+  | 28–29 | +9          |
+  | 30    | +10         |
+
+- **savingThrows** — Competencias en saving throws. Objeto con solo las entradas que tienen competencia. Valor: string con el modificador total (ej. `{ "str": "+13", "con": "+13" }`). En Foundry: `proficient: 1` en cada ability.
+
+#### Habilidades (Skills)
+
+Son siempre las mismas 18 habilidades fijas, **no una lista genérica**. En Foundry se identifican por clave abreviada:
+
+| Clave | Habilidad       | Atributo |
+| ----- | --------------- | -------- |
+| `acr` | Acrobatics      | `dex`    |
+| `ani` | Animal Handling | `wis`    |
+| `arc` | Arcana          | `int`    |
+| `ath` | Athletics       | `str`    |
+| `dec` | Deception       | `cha`    |
+| `his` | History         | `int`    |
+| `ins` | Insight         | `wis`    |
+| `itm` | Intimidation    | `cha`    |
+| `inv` | Investigation   | `int`    |
+| `med` | Medicine        | `wis`    |
+| `nat` | Nature          | `int`    |
+| `prc` | Perception      | `wis`    |
+| `prf` | Performance     | `cha`    |
+| `per` | Persuasion      | `cha`    |
+| `rel` | Religion        | `int`    |
+| `slt` | Sleight of Hand | `dex`    |
+| `ste` | Stealth         | `dex`    |
+| `sur` | Survival        | `wis`    |
+
+- `value` _(int)_ — Nivel de competencia: `0` = ninguna, `1` = proficient, `2` = expertise.
+- El modificador total nunca se almacena, siempre se calcula: `atributoMod + (value * proficiencyBonus)`.
+- **passivePerception** _(int)_ — Campo separado a nivel de actor. Calculado: `10 + modificador total de Perception`.
+
+#### Sentidos
+
+- **senses**
+  - `darkvision` _(int, en pies)_ — Visión en oscuridad. Omitir si no tiene.
+  - `blindsight` _(int, en pies)_ — Visión ciega.
+  - `tremorsense` _(int, en pies)_ — Sentido de vibración.
+  - `truesight` _(int, en pies)_ — Visión verdadera.
+  - `special` _(string)_ — Otros sentidos no estándar.
+
+#### Daño y Condiciones
+
+Estos son **tres campos separados**, no uno unificado. Así los maneja tanto 5etools como Foundry:
+
+- **damageImmunities** _(array)_ — Tipos de daño a los que es inmune (recibe 0 daño). Ej: `["acid", "fire"]`.
+- **damageResistances** _(array)_ — Tipos de daño a los que tiene resistencia (recibe 1/2 daño). Puede contener objetos con condición: `{ "resist": ["bludgeoning"], "note": "from nonmagical attacks", "cond": true }`.
+- **damageVulnerabilities** _(array)_ — Tipos de daño a los que es vulnerable (recibe daño doble).
+
+Tipos de daño válidos: `acid`, `bludgeoning`, `cold`, `fire`, `force`, `lightning`, `necrotic`, `piercing`, `poison`, `psychic`, `radiant`, `slashing`, `thunder`.
+
+- **conditionImmunities** _(array)_ — Condiciones a las que el actor es inmune. Valores posibles: `blinded`, `charmed`, `deafened`, `frightened`, `grappled`, `incapacitated`, `invisible`, `paralyzed`, `petrified`, `poisoned`, `prone`, `restrained`, `stunned`, `unconscious`, `exhaustion`.
+
+#### Idiomas
+
+- **languages** _(array de strings)_ — Idiomas que el actor habla o entiende. Ej: `["common", "draconic"]`. Para monstruos suele ser vacío o `["—"]`.
+
+#### Rasgos, Acciones y Reacciones
+
+Todos comparten la misma estructura de entrada. El texto usa el formato de marcado de 5etools, que se debe parsear para mostrar en la UI:
+
+```text
+Marcado 5etools relevante:
+  {@atk mw}         → "Melee Weapon Attack:"
+  {@atk rw}         → "Ranged Weapon Attack:"
+  {@hit N}          → "+N to hit"
+  {@damage NdN + N} → tirada de daño
+  {@dc N}           → "DC N"
+  {@condition X}    → nombre de condición con referencia
+  {@h}              → "Hit:"
+  {@recharge N}     → "(Recharge N–6)"
+```
+
+- **traits** _(array)_ — Rasgos pasivos, siempre activos (ej. Legendary Resistance, Magic Resistance):
+  - `name` _(string)_
+  - `entries` _(array)_ — Párrafos de descripción con marcado 5etools.
+
+- **actions** _(array)_ — Acciones disponibles en combate (incluyendo Multiataques):
+  - `name` _(string)_
+  - `entries` _(array)_ — Descripción del ataque/efecto con marcado 5etools.
+
+- **reactions** _(array)_ — Reacciones disponibles. Misma estructura que `actions`.
+
+---
+
+### Monster (hereda de Actor)
+
+Añade los siguientes campos sobre la base del Actor:
+
+- **group** _(array)_ — Grupo o familia del monstruo (ej. `["Brute Wyverns"]`, `["Fanged Beasts"]`).
+- **source** _(string)_ — Código de la fuente (ej. `"MHMM"`, `"AGMH"`).
+- **page** _(int)_ — Página del libro de origen.
+- **cr** _(string)_ — Challenge Rating (ej. `"19"`, `"1/2"`, `"0"`). Es string porque puede ser fracción.
+- **environment** _(array)_ — Entornos donde habita. Valores del MM analizado: `forest`, `desert`, `swamp`, `mountain`, `underdark`, `arctic`, `coastal`, `grassland`, `urban`, `underwater`.
+- **legendaryActions** _(array)_ — Acciones legendarias. Misma estructura que `actions`. Solo presente en monstruos legendarios.
+- **loot** — Resumen de obtención de materiales al derrotar o capturar el monstruo:
+  - `rolls` _(int)_ — Número de tiradas de d20 al carvear o capturar el monstruo (ej. `3`). Mismo valor para ambos modos — viene del campo `"Carves/Capture"` del JSON.
+  - Los materiales individuales NO viven aquí — son entidades `Rune` separadas que referencian al monstruo. Ver sección **Rune**.
+- **fluff** — Texto de lore del monstruo. Array de entradas de texto 5etools.
+
+---
+
+### Rune (entidad independiente)
+
+Un `Rune` representa un **material crafteable** que se obtiene al carvear o capturar un monstruo. Cada material puede usarse para fabricar armadura, arma, o ambas, y tiene un efecto diferente según el tipo de equipo donde se coloque.
+
+Los `Rune` **no viven dentro del Monster** — son entidades propias que referencian al monstruo de origen. Esto permite consultarlos, filtrarlos y buscarlos de forma independiente.
+
+#### Origen de los datos en el JSON
+
+##### Dónde vive el fluff
+
+El campo `fluff` está **directamente dentro del objeto monstruo** en el array `monster` del JSON. No existe un array separado `monsterFluff` — no hay que hacer ningún join externo:
+
+```json
+{
+  "monster": [
+    {
+      "name": "Acidic Glavenus",
+      "cr": "19",
+      "...": "...otros campos del monstruo...",
+      "fluff": {
+        "entries": ["...texto de lore...", { "type": "inset", "...": "..." }]
+      }
+    }
+  ]
+}
+```
+
+##### Estructura interna de `fluff.entries`
+
+`fluff.entries` es un array mixto que contiene:
+
+1. **Strings** — Párrafos de texto de lore del monstruo (descripción narrativa). Se ignoran para el mapper de Runes.
+2. **Un objeto `inset`** — Contiene toda la información de loot y efectos de materiales. Es el único objeto del array y tiene `"type": "inset"`.
+
+El mapper debe encontrar el inset así:
+
+```ts
+const inset = monster.fluff.entries.find((e) => e.type === "inset");
+if (!inset) return []; // el monstruo no tiene datos de loot
+```
+
+##### Estructura interna del inset
+
+`inset.entries` es un array con exactamente estos elementos (en orden):
+
+```json
+[
+  // 1. Tabla de cabecera: CR y número de tiradas
+  {
+    "type": "table",
+    "rows": [["Challenge Rating", "19", "Carves/Capture", "3"]]
+  },
+
+  // 2. Tabla de loot: una fila por material
+  {
+    "type": "table",
+    "colLabels": ["Carve Chance", "Capture Chance", "Material", "Slots"],
+    "rows": [
+      ["1-6",   "1-4",   "Acidic Glavenus Scale",    "(A)"],
+      ["7-11",  "5-8",   "Acidic Glavenus Cortex",   "(A)"],
+      ["12-14", "9-11",  "Acidic Glavenus Hardfang",  "(A,W)"],
+      ["...",   "...",   "...",                       "..."]
+    ]
+  },
+
+  // 3. Lista de efectos de armadura (puede no existir)
+  {
+    "type": "list",
+    "name": "ARMOR MATERIAL EFFECTS",
+    "items": [
+      { "type": "entries", "name": "Acidic Glavenus Scale", "entries": ["texto del efecto"] },
+      { "...", "name": "Acidic Glavenus Cortex", "entries": ["..."] }
+    ]
+  },
+
+  // 4. Lista de efectos de arma (puede no existir)
+  {
+    "type": "list",
+    "name": "WEAPON MATERIAL EFFECTS",
+    "items": [
+      { "type": "entries", "name": "Acidic Glavenus Hardfang", "entries": ["texto del efecto"] },
+      { "...", "name": "...", "entries": ["..."] }
+    ]
+  }
+]
+```
+
+**Notas críticas sobre el inset:**
+
+- La **tabla de cabecera** (elemento 0) no tiene `colLabels`. El número de tiradas está en `rows[0][3]`. Es un único número que aplica igual para carve y capture (ej. `"3"` significa 3 tiradas de d20 para ambos).
+- La **tabla de loot** (elemento 1) se identifica por tener `colLabels` con el valor `"Carve Chance"` en la primera posición.
+- Las **listas de efectos** se identifican por su `name`: `"ARMOR MATERIAL EFFECTS"` y `"WEAPON MATERIAL EFFECTS"`. Cualquiera de las dos puede estar ausente si el monstruo no tiene materiales de ese tipo.
+- Los efectos de armadura y arma se buscan **por nombre de material** haciendo lookup en los items de cada lista.
+- Puede haber entradas en las listas de efectos que **no están en la tabla de loot** (datos huérfanos del JSON fuente). El mapper debe ignorarlos — solo procesa los materiales que aparecen en la tabla de loot.
+
+##### Cómo identificar la tabla de loot dentro del inset
+
+```ts
+const tables = inset.entries.filter((e) => e.type === "table");
+const lootTable = tables.find((t) => t.colLabels?.[0] === "Carve Chance");
+const headerTable = tables.find((t) => !t.colLabels); // la tabla sin colLabels es la de cabecera
+```
+
+##### Fuentes que el mapper cruza por `name` del material
+
+| Fuente en el JSON                                       | Campo mapeado                                       |
+| ------------------------------------------------------- | --------------------------------------------------- |
+| `lootTable.rows` — cada fila del array                  | `name`, `carveChance`, `captureChance`, `slots`     |
+| `headerTable.rows[0][3]`                                | `rolls` (tiradas d20 tanto para carve como capture) |
+| Lista `ARMOR MATERIAL EFFECTS` → item con mismo `name`  | `armorEffect`                                       |
+| Lista `WEAPON MATERIAL EFFECTS` → item con mismo `name` | `weaponEffect`                                      |
+
+#### Atributos de la entidad Rune
+
+- **name** _(string)_ — Nombre del material (ej. `"Acidic Glavenus Scale"`).
+- **monsterName** _(string)_ — Nombre del monstruo del que proviene (ej. `"Acidic Glavenus"`).
+- **monsterSource** _(string)_ — Código de la fuente del monstruo (ej. `"MHMM"`).
+- **carveChance** _(string)_ — Rango de d20 para obtenerlo por carve (ej. `"1-6"`). Valor `"-"` si no es carveable.
+- **captureChance** _(string)_ — Rango de d20 para obtenerlo por captura (ej. `"1-4"`). Valor `"-"` si no es capturable.
+- **rolls** _(int)_ — Número de tiradas de d20 al carvear o capturar al monstruo (ej. `3`). Es el mismo valor para ambos modos de obtención — viene del campo `"Carves/Capture"` del JSON.
+- **slots** _(array)_ — Tipos de equipo donde se puede usar. Valores posibles: `"A"` (Armor), `"W"` (Weapon). Puede ser `["A"]`, `["W"]`, o `["A", "W"]`. Mapeado desde el string `"(A,W)"` del JSON.
+- **armorEffect** _(string | null)_ — Texto del efecto cuando se coloca en armadura. Presente solo si `slots` incluye `"A"`. El texto puede contener marcado de 5etools que debe parsearse.
+- **weaponEffect** _(string | null)_ — Texto del efecto cuando se coloca en un arma. Presente solo si `slots` incluye `"W"`. Ídem sobre el marcado.
+- **tags** - leer más abajo
+
+#### Lógica del mapper (pseudocódigo)
+
+```text
+por cada monster en mm_current:
+
+  // 1. Encontrar el inset dentro de fluff.entries
+  inset = monster.fluff?.entries?.find(e => e.type === "inset")
+  si no existe inset → saltar este monstruo (no tiene datos de loot)
+
+  // 2. Extraer tablas y listas del inset
+  lootTable    = inset.entries.find(e => e.type === "table" && e.colLabels?.[0] === "Carve Chance")
+  headerTable  = inset.entries.find(e => e.type === "table" && !e.colLabels)
+  armorList    = inset.entries.find(e => e.type === "list" && e.name === "ARMOR MATERIAL EFFECTS")
+  weaponList   = inset.entries.find(e => e.type === "list" && e.name === "WEAPON MATERIAL EFFECTS")
+
+  // 3. Indexar efectos por nombre de material (pueden ser undefined si no existe la lista)
+  armorEffects  = indexarPorNombre(armorList?.items)   // { "Material Name" → item }
+  weaponEffects = indexarPorNombre(weaponList?.items)  // { "Material Name" → item }
+
+  // 4. Leer número de tiradas de la tabla de cabecera
+  rolls = parseInt(headerTable?.rows[0][3]) ?? 0       // "3" → 3
+
+  // 5. Emitir una Rune por cada fila de la tabla de loot
+  por cada row en lootTable.rows:
+    emitir Rune {
+      name:           row[2],
+      monsterName:    monster.name,
+      monsterSource:  monster.source,
+      carveChance:    row[0],                                    // "1-6" o "-"
+      captureChance:  row[1],                                    // "1-4" o "-"
+      rolls:          rolls,                                     // mismo valor para carve y capture
+      slots:          parsearSlots(row[3]),                      // "(A,W)" → ["A", "W"]
+      armorEffect:    armorEffects[row[2]]?.entries.join(" ") ?? null,
+      weaponEffect:   weaponEffects[row[2]]?.entries.join(" ") ?? null,
+    }
+```
+
+#### Notas del mapper
+
+- `armorList` y `weaponList` pueden no existir si todos los materiales del monstruo son de un solo tipo de slot. El mapper debe tolerar la ausencia de cualquiera de las dos listas sin romper.
+- Un material con `slots: ["A", "W"]` tendrá entrada en **ambas** listas de efectos, con el mismo nombre pero descripciones distintas.
+- Un material con `carveChance: "-"` solo se obtiene por captura, y viceversa.
+- Las listas de efectos pueden contener nombres de materiales que **no aparecen en la tabla de loot** (datos huérfanos). Se ignoran — solo se procesan los materiales presentes en `lootTable.rows`.
+- El campo `rolls` es un entero único que aplica tanto para las tiradas de carve como de captura (es así en el JSON fuente: `"Carves/Capture": "3"`).
+
+---
+
+#### Atributo `tags`
+
+- **tags** _(string[])_ — Array de etiquetas derivadas **automáticamente** del texto del efecto (`armorEffect` y/o `weaponEffect`). Una runa puede tener múltiples tags. El array puede estar vacío si el texto no coincide con ningún patrón conocido.
+
+Los tags se extraen aplicando las reglas de detección sobre el texto del efecto **antes** de parsear el marcado de 5etools.
+
+##### Taxonomía de tags
+
+Los tags se agrupan en tres categorías. Los prefijos de categoría son parte del valor del tag:
+
+**1. Restricción de clase** (`class:X`)
+
+Se detectan a partir del patrón `{@i (NombreClase only)}` al inicio del texto del efecto. Un efecto puede restringirse a varias clases a la vez (ej. `(Druid, Sorcerer, Warlock, & Wizard only)`) — en ese caso se emite un tag por cada clase listada.
+
+| Tag                 | Detectado cuando el texto contiene   |
+| ------------------- | ------------------------------------ |
+| `class:spellcaster` | `spellcaster only`                   |
+| `class:monk`        | `Monk only`                          |
+| `class:druid`       | `Druid` dentro del patrón `only`     |
+| `class:sorcerer`    | `Sorcerer` dentro del patrón `only`  |
+| `class:warlock`     | `Warlock` dentro del patrón `only`   |
+| `class:wizard`      | `Wizard` dentro del patrón `only`    |
+| `class:cleric`      | `Cleric` dentro del patrón `only`    |
+| `class:paladin`     | `Paladin` dentro del patrón `only`   |
+| `class:ranger`      | `Ranger` dentro del patrón `only`    |
+| `class:artificer`   | `artificer` dentro del patrón `only` |
+| `class:bard`        | `Bard` dentro del patrón `only`      |
+| `class:barbarian`   | `Barbarian` dentro del patrón `only` |
+| `class:fighter`     | `Fighter` dentro del patrón `only`   |
+| `class:rogue`       | `Rogue` dentro del patrón `only`     |
+
+**2. Restricción de tipo de arma** (`weapon-type:X`)
+
+Misma regla que las clases pero con nombres de armas. Patrón: `{@i (TipoArma only)}`.
+
+| Tag                         | Detectado cuando el texto contiene                       |
+| --------------------------- | -------------------------------------------------------- |
+| `weapon-type:bladed`        | `Bladed Weapon only`                                     |
+| `weapon-type:melee`         | `Melee Weapon only`                                      |
+| `weapon-type:ranged`        | `Ranged weapon only`                                     |
+| `weapon-type:insect-glaive` | `Insect Glaive only`                                     |
+| `weapon-type:greatsword`    | `Greatsword` dentro del patrón `only`                    |
+| `weapon-type:lance`         | `Lance` dentro del patrón `only`                         |
+| `weapon-type:bow`           | `Bow only`                                               |
+| `weapon-type:gunlance`      | `Gunlance only`                                          |
+| `weapon-type:hammer`        | `Hammer` dentro del patrón `only`                        |
+| `weapon-type:charge-blade`  | `Charge blade` o `Charge Blade` dentro del patrón `only` |
+| `weapon-type:switchaxe`     | `switchaxe` dentro del patrón `only`                     |
+
+**3. Mecánica del efecto** (`mechanic:X`)
+
+Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto del efecto.
+
+| Tag                      | Regla de detección                                                                                                     |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| `mechanic:spell`         | Contiene `{@spell`                                                                                                     |
+| `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
+| `mechanic:critical`      | Contiene la palabra `critical` (case-insensitive)                                                                      |
+| `mechanic:extra-damage`  | Contiene `extra {@damage` o `extra \d+d\d+`                                                                            |
+| `mechanic:resistance`    | Contiene `resistance to` seguido de tipo de daño                                                                       |
+| `mechanic:immunity`      | Contiene `immune to` o `immunity to`                                                                                   |
+| `mechanic:bonus-action`  | Contiene `bonus action`                                                                                                |
+| `mechanic:reaction`      | Contiene `reaction`                                                                                                    |
+| `mechanic:saving-throw`  | Contiene `saving throw` con `advantage` o `disadvantage`                                                               |
+| `mechanic:skill-bonus`   | Contiene `{@skill` con un valor de bonus (ej. `+2 bonus on`)                                                           |
+| `mechanic:ac`            | Contiene `\bAC\b` o `armor class`                                                                                      |
+| `mechanic:condition`     | Contiene `{@condition`                                                                                                 |
+| `mechanic:movement`      | Contiene `movement` o `speed` o `jump` en contexto de desplazamiento                                                   |
+| `mechanic:advantage`     | Contiene `advantage` (sin ser seguido de `saving throw` — ese ya tiene su tag)                                         |
+| `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
+| `mechanic:cantrip`       | Contiene `cantrip`                                                                                                     |
+| `mechanic:class-feature` | Contiene el nombre de una feature de clase específica (ej. `wyvernfire`, `dragonpiercer`, `Guard AC`, `Mighty Weapon`) |
+
+##### Notas de implementación de tags
+
+- Las reglas se aplican sobre el texto del efecto **ya concatenado** (`entries.join(" ")`), antes de parsear el marcado de 5etools.
+- Un mismo efecto puede activar múltiples reglas simultáneamente. Ejemplo: `"{@i (Spellcaster only)} This weapon has 4 runes. Cast {@spell lightning bolt}"` → `["class:spellcaster", "mechanic:rune-charges", "mechanic:spell"]`.
+- Si el texto no coincide con ninguna regla, `tags` es `[]`.
+- Las reglas son **case-insensitive** salvo donde se indique lo contrario.
+
+---
+
+### Player (hereda de Actor)
+
+Añade los siguientes campos sobre la base del Actor. Basado en el formato de exportación de Foundry VTT dnd5e system:
+
+#### Identificación del personaje
+
+- **race** — Raza del personaje.
+- **background** — Trasfondo (ej. Hunter Initiate).
+- **class** — Clase y nivel. En Foundry se almacena como item separado, pero a nivel de resumen:
+  - `name` — Nombre de la clase (ej. `"Hunter"`).
+  - `level` _(int)_ — Nivel actual (1–20).
+  - `subclass` — Subclase elegida (ej. Weapon Style).
+- **xp** _(int)_ — Puntos de experiencia acumulados.
+- **alignment** — En personajes es un string legible (ej. `"Neutral Good"`), a diferencia del código de monstruos.
+
+#### HP del personaje
+
+A diferencia de los monstruos (que solo tienen `formula` y `average`), los personajes tienen:
+
+- `hp.max` _(int)_ — HP máximo calculado.
+- `hp.current` _(int)_ — HP actual.
+- `hp.temp` _(int)_ — HP temporales.
+- `hp.tempMax` _(int)_ — Incremento temporal al máximo.
+
+#### Estados especiales
+
+- **inspiration** _(boolean)_ — Si el personaje tiene inspiración activa.
+- **exhaustion** _(int, 0–6)_ — Nivel de agotamiento actual.
+- **deathSaves**
+  - `success` _(int, 0–3)_ — Tiradas de muerte exitosas acumuladas.
+  - `failure` _(int, 0–3)_ — Tiradas de muerte fallidas acumuladas.
+
+#### Equipo y recursos
+
+- **currency** — Monedas:
+  - `pp` _(int)_ — Platinum pieces.
+  - `gp` _(int)_ — Gold pieces.
+  - `ep` _(int)_ — Electrum pieces.
+  - `sp` _(int)_ — Silver pieces.
+  - `cp` _(int)_ — Copper pieces.
+- **attunement** — Slots de sintonización (máximo generalmente 3).
+- **tools** _(array)_ — Herramientas con competencia. Cada entrada: `{ name, ability, value }`.
+- **weaponProficiencies** _(array)_ — Armas con competencia.
+- **armorProficiencies** _(array)_ — Tipos de armadura con competencia.
+- **resources** — Recursos de clase que se recargan (ej. usos de Rage, Ki points):
+  - `primary`, `secondary`, `tertiary`: `{ value, max, rechargeOn: "sr" | "lr", label }`.
+
+#### Magia
+
+- **spellcasting** _(string)_ — Atributo usado para el lanzamiento de conjuros (ej. `"wis"`, `"int"`). Vacío si no lanza conjuros.
+- **spellSlots** — Slots de conjuros por nivel (1–9) + pacto (`pact`): `{ value, max }`.
+
+#### Características de clase y raza (Features)
+
+A diferencia de los monstruos, los personajes tienen features como items separados (ej. Rage, Second Wind, Hunter Arts):
+
+- **features** _(array)_
+  - `name` _(string)_
+  - `source` _(string)_ — Origen (clase, raza, trasfondo).
+  - `description` _(string)_ — Texto del efecto.
+  - `uses` — Si tiene usos limitados: `{ value, max, rechargeOn: "sr" | "lr" }`.
+
+#### Trasfondo y aspecto físico
+
+- **details**
+  - `biography` _(string)_ — Historia del personaje.
+  - `ideal`, `bond`, `flaw`, `trait` _(strings)_ — Rasgos de personalidad.
+  - `age`, `height`, `weight`, `eyes`, `hair`, `skin`, `gender`, `appearance` _(strings)_.
+
+---
+
+## Secciones Pendientes de Concepción
+
+Las siguientes secciones del manual de Amellwind todavía no han sido definidas en este documento:
+
+- [x] **Actor** — Clase base definida.
+- [x] **Monster** — Hereda de Actor, definida con campos de MH (loot, CR, grupos).
+- [x] **Player** — Hereda de Actor, definida con campos de Foundry VTT dnd5e.
+- [x] **Rune (materiales de monstruo)** — Entidad definida: estructura, mapper desde el fluff del MM, taxonomía de tags, pantalla de listado y detalle. Incluye efectos de armadura y arma por material.
+- [ ] **Armas** — Tipos, categorías, propiedades especiales de Monster Hunter. Datos en `GTMH_JSON-DATA.json`. _(Segunda iteración)_
+- [ ] **Runas aplicadas a armas** — Cómo se insertan los materiales en un arma concreta y qué efecto activan. Depende de que **Armas** esté definido. _(Segunda iteración)_
+- [ ] **Armaduras** — Sets de armadura y sus bonificaciones. Datos en `GTMH_JSON-DATA.json`. _(Segunda iteración)_
+- [ ] **Vista de Combate / Encuentros** — Herramienta para gestionar un encuentro activo entre el DM y los jugadores.
+- [ ] **Crafteo** — Sistema de creación de armas y armaduras con las partes de monstruo obtenidas.
+
+---
+
+## Capa de datos: Services y Mappers
+
+### Flujo de datos
+
+Ninguna pantalla consulta IndexedDB directamente. El flujo siempre pasa por dos capas intermedias:
+
+```text
+Pantalla (UI)
+  → Service  (consulta IndexedDB y devuelve entidades tipadas)
+      → Mapper  (transforma el formato crudo de 5etools al esquema de la app)
+```
+
+- **Service**: responsable de leer de IndexedDB y devolver datos ya transformados. La UI no sabe nada del formato fuente.
+- **Mapper**: función pura que recibe un objeto crudo de 5etools y devuelve una entidad tipada del esquema de la app (`Monster`, `Player`, etc.). Un mapper por entidad.
+
+### Mappers requeridos
+
+| Mapper          | Entrada (5etools)                                            | Salida (entidad app)        |
+| --------------- | ------------------------------------------------------------ | --------------------------- |
+| `MonsterMapper` | objeto crudo del store `mm_current`                          | `Monster`                   |
+| `RuneMapper`    | objeto crudo del store `mm_current` (fluff de cada monstruo) | `Rune[]` (uno por material) |
+| `WeaponMapper`  | objeto crudo del store `gtmh_current`                        | `Weapon`                    |
+
+> **Nota**: `RuneMapper` recibe un `Monster` crudo y devuelve un array de `Rune`, uno por cada material en la tabla de loot. Es llamado internamente por `MonsterMapper` o por `RuneService` cuando necesita todos los materiales del catálogo.
+
+Agregar un mapper nuevo cada vez que se incorpore una entidad al esquema.
+
+### Responsabilidades del Mapper
+
+Cada mapper debe encargarse de:
+
+- Renombrar campos (ej. `str` → `str.value`).
+- Calcular campos derivados que no están en el JSON fuente (ej. `modifier = Math.floor((value - 10) / 2)`, `tier` desde `cr`, `passivePerception`).
+- Normalizar tipos (ej. `size: ["H"]` → `size: "Huge"`).
+- Parsear el marcado de texto de 5etools en las `entries` (ej. `{@hit 13}` → `"+13 to hit"`).
+- Proveer valores por defecto para campos opcionales ausentes (ej. `speed.swim ?? 0`).
+
+### Responsabilidades del Service
+
+Cada service debe encargarse de:
+
+- Abrir la conexión a IndexedDB y leer del store correspondiente.
+- Invocar al mapper sobre cada objeto leído.
+- Exponer métodos de consulta útiles para la UI: `getAll()`, `getById(id)`, `getByGroup(group)`, etc.
+- No contener lógica de presentación.
+
+---
+
+## Pantallas / Features de la Aplicación
+
+### Listado de Monstruos
+
+**Fuente de datos**: store `mm_current` de IndexedDB (Monster Manual).
+
+#### Tabla
+
+Mostrar todos los monstruos en una tabla con las siguientes columnas:
+
+| Columna         | Campo fuente         | Notas                                          |
+| --------------- | -------------------- | ---------------------------------------------- |
+| **Name**        | `name`               |                                                |
+| **CR**          | `cr`                 | String: puede ser `"1/2"`, `"0"`, `"19"`, etc. |
+| **Tier**        | calculado desde `cr` | Ver tabla de cálculo abajo.                    |
+| **Type**        | `type.type`          | Capitalizar (`"wyvern"` → `"Wyvern"`).         |
+| **Environment** | `environment`        | Array → separado por comas. Vacío si no tiene. |
+
+**Cálculo de Tier** a partir del CR:
+
+| Tier   | Rango de CR          | Valores posibles en el JSON      |
+| ------ | -------------------- | -------------------------------- |
+| Tier 0 | CR < 1               | `"0"`, `"1/8"`, `"1/4"`, `"1/2"` |
+| Tier 1 | CR 1 – 8 (inclusive) | `"1"` … `"8"`                    |
+| Tier 2 | CR 9 – 16            | `"9"` … `"16"`                   |
+| Tier 3 | CR 17 – 24           | `"17"` … `"24"`                  |
+| Tier 4 | CR 25 – 30           | `"25"` … `"30"`                  |
+
+**Implementación del parser de CR:**
+
+El campo `cr` es siempre un `string`. Para calcular el Tier hay que convertirlo a número primero:
+
+```ts
+function parseCR(cr: string): number {
+  if (cr.includes("/")) {
+    const [num, den] = cr.split("/").map(Number);
+    return num / den; // "1/2" → 0.5, "1/4" → 0.25
+  }
+  return Number(cr);
+}
+
+function getTier(cr: string): number {
+  const value = parseCR(cr);
+  if (value < 1) return 0;
+  if (value <= 8) return 1;
+  if (value <= 16) return 2;
+  if (value <= 24) return 3;
+  return 4;
+}
+```
+
+#### Filtros
+
+Cada columna debe ser filtrable de forma independiente:
+
+- **Name**: input de texto libre, filtrado por coincidencia parcial (case-insensitive).
+- **CR**: selector de valores únicos presentes en los datos.
+- **Tier**: selector múltiple (Tier 0 – Tier 4).
+- **Type**: selector de valores únicos presentes en los datos.
+- **Environment**: selector de valores únicos (expandiendo los arrays).
+
+#### Detalle del monstruo
+
+Al hacer clic en cualquier fila, se abre un **dialog** que muestra el stat block completo del monstruo en el formato visual estándar de D&D 5e:
+
+- Encabezado: nombre, tamaño, tipo, alineamiento.
+- AC, HP (con fórmula), velocidades.
+- Tabla de los 6 atributos con sus valores y modificadores calculados.
+- Saving throws con competencia.
+- Skills con competencia.
+- Resistencias, inmunidades y vulnerabilidades a daño.
+- Inmunidades a condiciones.
+- Sentidos y passive Perception.
+- Idiomas y CR.
+- Traits (rasgos pasivos), Actions, Reactions y Legendary Actions, cada uno en su sección.
+- Tabla de loot (carve/capture) si el monstruo la tiene.
+
+### Listado de Runas
+
+**Fuente de datos**: store `mm_current` de IndexedDB, procesado con `RuneMapper` (genera un `Rune[]` iterando todos los monstruos).
+
+#### Columnas de la tabla
+
+Mostrar todos los materiales de todos los monstruos en una tabla con las siguientes columnas:
+
+| Columna     | Campo fuente    | Notas                                                                    |
+| ----------- | --------------- | ------------------------------------------------------------------------ |
+| **Name**    | `name`          |                                                                          |
+| **Monster** | `monsterName`   | Nombre del monstruo de origen.                                           |
+| **Slots**   | `slots`         | Mostrar como badges: `A` (Armor) y/o `W` (Weapon).                       |
+| **Carve**   | `carveChance`   | Mostrar `—` si el valor es `"-"`.                                        |
+| **Capture** | `captureChance` | Mostrar `—` si el valor es `"-"`.                                        |
+| **Tags**    | `tags`          | Mostrar los primeros 2–3 tags como badges. El resto se ve en el detalle. |
+
+#### Filtros disponibles
+
+Cada columna debe ser filtrable de forma independiente:
+
+- **Name**: input de texto libre, filtrado por coincidencia parcial (case-insensitive).
+- **Monster**: selector de valores únicos presentes en los datos (lista de nombres de monstruos).
+- **Slots**: selector múltiple con opciones `Armor` y `Weapon`.
+- **Tags**: selector múltiple con todos los valores únicos de tags presentes en los datos, agrupados por categoría (`class:`, `weapon-type:`, `mechanic:`).
+- **Obtención**: selector con opciones `Carveable`, `Capturable`, `Ambas` (para filtrar si `carveChance` o `captureChance` no es `"-"`).
+
+#### Detalle de la Runa (dialog)
+
+Al hacer clic en cualquier fila, se abre un **dialog** con la información completa del material.
+
+##### Encabezado del dialog
+
+- Nombre del material.
+- Nombre del monstruo de origen (con link o referencia al detalle del monstruo si aplica).
+- Badges de slots (`Armor`, `Weapon`).
+
+##### Obtención
+
+- Fila: `Carve` — chance en dado d20 (ej. `1–6`) o `No carveable`.
+- Fila: `Capture` — chance en dado d20 o `No capturable`.
+
+##### Efectos del material
+
+- Si `slots` incluye `"A"`: sección **Armor Effect** con el texto del efecto parseado (sin marcado de 5etools).
+- Si `slots` incluye `"W"`: sección **Weapon Effect** con el texto del efecto parseado.
+- Si el material tiene ambos slots, mostrar ambas secciones separadas.
+
+##### Tags del material
+
+- Lista completa de todos los tags, agrupados por categoría.
+- Cada tag se muestra como un badge con color diferente según su categoría: clase (azul), tipo de arma (naranja), mecánica (verde).
+
+---
+
+## Notas de Implementación
+
+- Todas las consultas de datos se realizan contra los JSONs almacenados en **IndexedDB** (base de datos local del navegador). Las URLs de la API (ver `api.constants.ts`) solo se usan para la sincronización inicial o la actualización periódica de esos JSONs.
+- El stack tecnológico es **React + TypeScript + Vite** con **Tailwind CSS** y componentes **shadcn/ui**.
+- La aplicación ya cuenta con estructura de features para: `monsters`, `weapons`, y `runes`.
