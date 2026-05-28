@@ -3,10 +3,37 @@ import { ShoppingCart, X, Plus, Minus, Trash2 } from "lucide-react";
 import { useCart } from "../context/CartContext";
 import { cn } from "@/shared/utils/cn";
 
+const GP_RATES: Record<string, number> = {
+  pp: 10,
+  gp: 1,
+  sp: 0.1,
+  cp: 0.01,
+};
+
+function parseCostGp(cost: string): number {
+  if (!cost || cost === "—") return 0;
+  const match = cost.replace(/,/g, "").match(/([\d.]+)\s*(pp|gp|sp|cp)/i);
+  if (!match) return 0;
+  const amount = parseFloat(match[1]);
+  const rate = GP_RATES[match[2].toLowerCase()] ?? 1;
+  return amount * rate;
+}
+
+function formatTotalGp(gp: number): string {
+  if (gp === 0) return "—";
+  if (gp >= 1000) return `${gp.toLocaleString("en-US")} gp`;
+  return `${gp % 1 === 0 ? gp : gp.toFixed(2)} gp`;
+}
+
 export function CartDrawer() {
   const [open, setOpen] = useState(false);
   const { items, totalItems, removeItem, updateQuantity, clearCart } =
     useCart();
+
+  const totalGp = items.reduce(
+    (sum, entry) => sum + parseCostGp(entry.cost) * entry.quantity,
+    0,
+  );
 
   return (
     <>
@@ -102,6 +129,11 @@ export function CartDrawer() {
                       <div className="flex items-center gap-3 mt-0.5">
                         <span className="text-xs text-primary font-medium">
                           {entry.cost}
+                          {entry.quantity > 1 && parseCostGp(entry.cost) > 0 && (
+                            <span className="text-muted-foreground font-normal ml-1">
+                              × {entry.quantity} = {formatTotalGp(parseCostGp(entry.cost) * entry.quantity)}
+                            </span>
+                          )}
                         </span>
                         {entry.weight && entry.weight !== "—" && (
                           <span className="text-xs text-muted-foreground">
@@ -156,12 +188,18 @@ export function CartDrawer() {
 
         {/* Footer summary */}
         {items.length > 0 && (
-          <div className="shrink-0 border-t border-border px-5 py-4">
+          <div className="shrink-0 border-t border-border px-5 py-4 space-y-2">
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <span>{items.length} item type(s)</span>
               <span>{totalItems} unit(s) total</span>
             </div>
-            <p className="mt-1 text-xs text-muted-foreground/60 italic">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-foreground">Total</span>
+              <span className="text-sm font-bold text-primary">
+                {formatTotalGp(totalGp)}
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground/60 italic">
               This list is for reference only during the current session.
             </p>
           </div>
