@@ -3,6 +3,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { MonsterList } from "@/features/monsters/components/MonsterList";
 import { RuneList } from "@/features/runes/components/RuneList";
 import { CookingPage } from "@/features/cooking/components/CookingPage";
+import { ComboPage } from "@/features/combo/components/ComboPage";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -14,6 +15,7 @@ export default function App() {
           <Route path="monsters" element={<MonsterList />} />
           <Route path="runes" element={<RuneList />} />
           <Route path="cooking" element={<CookingPage />} />
+          <Route path="combo" element={<ComboPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
