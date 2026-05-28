@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-import { Swords, Shield, Gem, ChefHat, ChevronLeft, ChevronRight, X, Hammer } from "lucide-react";
+import { Swords, Shield, Gem, ChefHat, ChevronLeft, ChevronRight, X, Hammer, Package, Store } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
 const NAV_ITEMS = [
@@ -7,9 +7,8 @@ const NAV_ITEMS = [
   { to: "/runes", label: "Runes", icon: Gem },
   { to: "/cooking", label: "Cooking", icon: ChefHat },
   { to: "/combo", label: "Combo List", icon: Hammer },
-  // Futuras iteraciones:
-  // { to: "/weapons", label: "Weapons", icon: Shield },
-  // { to: "/armor", label: "Armor", icon: Shield },
+  { to: "/items", label: "Items", icon: Package },
+  { to: "/shops", label: "Shops", icon: Store },
 ];
 
 interface SidebarProps {

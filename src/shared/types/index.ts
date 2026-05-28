@@ -3,3 +3,4 @@ export * from "./monster.types";
 export * from "./rune.types";
 export * from "./cooking.types";
 export * from "./combo.types";
+export * from "./shop.types";

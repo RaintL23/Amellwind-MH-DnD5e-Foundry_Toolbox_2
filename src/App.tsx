@@ -4,21 +4,31 @@ import { MonsterList } from "@/features/monsters/components/MonsterList";
 import { RuneList } from "@/features/runes/components/RuneList";
 import { CookingPage } from "@/features/cooking/components/CookingPage";
 import { ComboPage } from "@/features/combo/components/ComboPage";
+import { ItemList } from "@/features/shops/components/ItemList";
+import { ShopList } from "@/features/shops/components/ShopList";
+import { CartProvider } from "@/features/shops/context/CartContext";
+import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Navigate to="/monsters" replace />} />
-          <Route path="monsters" element={<MonsterList />} />
-          <Route path="runes" element={<RuneList />} />
-          <Route path="cooking" element={<CookingPage />} />
-          <Route path="combo" element={<ComboPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
+      <CartProvider>
+        <RuneBuildProvider>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Navigate to="/monsters" replace />} />
+            <Route path="monsters" element={<MonsterList />} />
+            <Route path="runes" element={<RuneList />} />
+            <Route path="cooking" element={<CookingPage />} />
+            <Route path="combo" element={<ComboPage />} />
+            <Route path="items" element={<ItemList />} />
+            <Route path="shops" element={<ShopList />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+        </RuneBuildProvider>
+      </CartProvider>
     </BrowserRouter>
   );
 }

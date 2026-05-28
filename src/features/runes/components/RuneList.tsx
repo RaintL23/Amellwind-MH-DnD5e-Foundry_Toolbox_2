@@ -6,7 +6,11 @@ import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { RuneDetailDialog } from "./RuneDetailDialog";
-import { Search } from "lucide-react";
+import { RulesPanel } from "./RulesPanel";
+import { BuildDrawer } from "./BuildDrawer";
+import { useRuneBuild } from "../context/RuneBuildContext";
+import { Search, Layers } from "lucide-react";
+import { cn } from "@/shared/utils/cn";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -42,6 +46,8 @@ export function RuneList() {
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<Rune | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { isInBuild, totalRunes } = useRuneBuild();
 
   useEffect(() => {
     getAllRunes().then((data) => {
@@ -90,7 +96,6 @@ export function RuneList() {
     return result;
   }, [runes, filters]);
 
-  // Resetear a página 1 cuando cambian los filtros
   function updateFilters(next: Filters) {
     setFilters(next);
     setPage(1);
@@ -117,12 +122,23 @@ export function RuneList() {
   return (
     <div className="p-6">
       {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold text-foreground">Runes</h1>
-        <p className="text-sm text-muted-foreground mt-1">
-          {filtered.length} de {runes.length} materiales
-        </p>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Runes</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {filtered.length} de {runes.length} materiales
+          </p>
+        </div>
+        {totalRunes > 0 && (
+          <div className="flex items-center gap-1.5 rounded-md bg-amber-600/10 border border-amber-600/30 px-3 py-1.5 text-xs text-amber-400 font-medium shrink-0">
+            <Layers className="h-3.5 w-3.5" />
+            {totalRunes} en build
+          </div>
+        )}
       </div>
+
+      {/* Rules Panel */}
+      <RulesPanel />
 
       {/* Filters */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
@@ -213,65 +229,76 @@ export function RuneList() {
               </tr>
             </thead>
             <tbody>
-              {paginated.map((rune, i) => (
-                <tr
-                  key={`${rune.monsterSource}-${rune.monsterName}-${rune.name}-${i}`}
-                  className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
-                  onClick={() => {
-                    setSelected(rune);
-                    setDialogOpen(true);
-                  }}
-                >
-                  <td className="px-4 py-3 font-medium text-foreground">
-                    {rune.name}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {rune.monsterName}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex gap-1">
-                      {rune.slots.includes("A") && (
-                        <Badge variant="blue">A</Badge>
-                      )}
-                      {rune.slots.includes("W") && (
-                        <Badge variant="orange">W</Badge>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {rune.carveChance === "-" ? (
-                      <span className="text-muted-foreground/40">—</span>
-                    ) : (
-                      rune.carveChance
+              {paginated.map((rune, i) => {
+                const inBuild = isInBuild(rune);
+                return (
+                  <tr
+                    key={`${rune.monsterSource}-${rune.monsterName}-${rune.name}-${i}`}
+                    className={cn(
+                      "border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors",
+                      inBuild && "bg-amber-900/10 hover:bg-amber-900/20",
                     )}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {rune.captureChance === "-" ? (
-                      <span className="text-muted-foreground/40">—</span>
-                    ) : (
-                      rune.captureChance
-                    )}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {rune.tags.slice(0, 3).map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant={tagVariant(tag)}
-                          className="text-xs"
-                        >
-                          {formatTag(tag)}
-                        </Badge>
-                      ))}
-                      {rune.tags.length > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{rune.tags.length - 3}
-                        </Badge>
+                    onClick={() => {
+                      setSelected(rune);
+                      setDialogOpen(true);
+                    }}
+                  >
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      <div className="flex items-center gap-2">
+                        {rune.name}
+                        {inBuild && (
+                          <Layers className="h-3 w-3 text-amber-400 shrink-0" />
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {rune.monsterName}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex gap-1">
+                        {rune.slots.includes("A") && (
+                          <Badge variant="blue">A</Badge>
+                        )}
+                        {rune.slots.includes("W") && (
+                          <Badge variant="orange">W</Badge>
+                        )}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {rune.carveChance === "-" ? (
+                        <span className="text-muted-foreground/40">—</span>
+                      ) : (
+                        rune.carveChance
                       )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      {rune.captureChance === "-" ? (
+                        <span className="text-muted-foreground/40">—</span>
+                      ) : (
+                        rune.captureChance
+                      )}
+                    </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-wrap gap-1">
+                        {rune.tags.slice(0, 3).map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant={tagVariant(tag)}
+                            className="text-xs"
+                          >
+                            {formatTag(tag)}
+                          </Badge>
+                        ))}
+                        {rune.tags.length > 3 && (
+                          <Badge variant="secondary" className="text-xs">
+                            +{rune.tags.length - 3}
+                          </Badge>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
               {filtered.length === 0 && (
                 <tr>
                   <td
@@ -302,6 +329,9 @@ export function RuneList() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
       />
+
+      {/* Build Planner Drawer */}
+      <BuildDrawer />
     </div>
   );
 }

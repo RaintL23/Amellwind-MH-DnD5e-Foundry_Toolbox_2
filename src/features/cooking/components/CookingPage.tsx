@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Meal, DailySkill, CookingRank } from "@/shared/types";
 import {
   getAllMealTables,
@@ -6,11 +6,20 @@ import {
   rollRandomMeal,
   rollDailySkill,
 } from "../services/cooking.service";
+import { getAllItems } from "@/features/shops/services/item.service";
 import { COOKING_RULES } from "../data/cooking.data";
+import { ItemRefText } from "@/shared/components/ItemRefText";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/shared/utils/cn";
 import { Dices, ChefHat, BookOpen, Star } from "lucide-react";
+
+function parseEntryText(entry: unknown): string {
+  if (typeof entry === "string") {
+    return entry.replace(/\{@\w+ ([^|}]+)[^}]*\}/g, "$1");
+  }
+  return "";
+}
 
 type ActiveTab = "rules" | `rank${CookingRank}` | "daily";
 
@@ -80,6 +89,21 @@ export function CookingPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("rules");
   const [rollResult, setRollResult] = useState<RollResult | null>(null);
   const [rolling, setRolling] = useState(false);
+  const [itemDescMap, setItemDescMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    getAllItems().then((items) => {
+      const map: Record<string, string> = {};
+      items.forEach((item) => {
+        const desc = item.entries
+          .map((e) => parseEntryText(e))
+          .filter(Boolean)
+          .join(" ");
+        if (desc) map[item.name] = desc;
+      });
+      setItemDescMap(map);
+    });
+  }, []);
 
   const mealTables = getAllMealTables();
   const dailySkills = getAllDailySkills();
@@ -276,6 +300,7 @@ export function CookingPage() {
                   result={rollResult}
                   rank={rank}
                   colors={colors}
+                  itemDescMap={itemDescMap}
                   onClose={() => setRollResult(null)}
                 />
               )}
@@ -331,7 +356,10 @@ export function CookingPage() {
                             <Badge variant={colors.badge}>{meal.dc}</Badge>
                           </td>
                           <td className="px-4 py-3 text-muted-foreground leading-relaxed">
-                            {meal.boon}
+                            <ItemRefText
+                              text={meal.boon}
+                              itemDescMap={itemDescMap}
+                            />
                           </td>
                         </tr>
                       );
@@ -377,6 +405,7 @@ export function CookingPage() {
           {rollResult && !isMealResult(rollResult) && (
             <DailySkillResultCard
               result={rollResult}
+              itemDescMap={itemDescMap}
               onClose={() => setRollResult(null)}
             />
           )}
@@ -423,7 +452,10 @@ export function CookingPage() {
                           {skill.name}
                         </td>
                         <td className="px-4 py-3 text-muted-foreground leading-relaxed">
-                          {skill.effect}
+                          <ItemRefText
+                            text={skill.effect}
+                            itemDescMap={itemDescMap}
+                          />
                         </td>
                       </tr>
                     );
@@ -444,11 +476,13 @@ function RollResultCard({
   result,
   rank,
   colors,
+  itemDescMap,
   onClose,
 }: {
   result: MealRollResult;
   rank: CookingRank;
   colors: (typeof RANK_COLORS)[CookingRank];
+  itemDescMap: Record<string, string>;
   onClose: () => void;
 }) {
   return (
@@ -489,7 +523,7 @@ function RollResultCard({
             {result.meal.name}
           </h3>
           <p className="text-sm text-foreground leading-relaxed">
-            {result.meal.boon}
+            <ItemRefText text={result.meal.boon} itemDescMap={itemDescMap} />
           </p>
         </div>
       </div>
@@ -499,9 +533,11 @@ function RollResultCard({
 
 function DailySkillResultCard({
   result,
+  itemDescMap,
   onClose,
 }: {
   result: DailySkillRollResult;
+  itemDescMap: Record<string, string>;
   onClose: () => void;
 }) {
   return (
@@ -533,7 +569,10 @@ function DailySkillResultCard({
             {result.skill.name}
           </h3>
           <p className="text-sm text-foreground leading-relaxed">
-            {result.skill.effect}
+            <ItemRefText
+              text={result.skill.effect}
+              itemDescMap={itemDescMap}
+            />
           </p>
         </div>
       </div>
