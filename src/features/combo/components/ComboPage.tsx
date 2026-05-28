@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import {
   getAllComboTables,
   searchAllComboRows,
@@ -9,6 +9,8 @@ import { COMBO_RULES } from "../data/combo.data";
 import { ComboRow } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
+import { getAllItems } from "@/features/shops/services/item.service";
+import { ItemRefText } from "@/shared/components/ItemRefText";
 import {
   Hammer,
   BookOpen,
@@ -23,14 +25,18 @@ import {
   BookMarked,
 } from "lucide-react";
 
+function parseEntryText(entry: unknown): string {
+  if (typeof entry === "string") {
+    return entry.replace(/\{@\w+ ([^|}]+)[^}]*\}/g, "$1");
+  }
+  return "";
+}
+
 type ActiveTab = "rules" | string;
 
 // ── Colores por categoría ──────────────────────────────────────────────────
 
-const CATEGORY_STYLES: Record<
-  string,
-  { badge: string; row: string }
-> = {
+const CATEGORY_STYLES: Record<string, { badge: string; row: string }> = {
   HEALING: {
     badge: "bg-green-900/40 text-green-300 border border-green-700/40",
     row: "bg-green-900/10",
@@ -109,6 +115,21 @@ const TOOL_ICONS: Record<string, React.ElementType> = {
 export function ComboPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("rules");
   const [search, setSearch] = useState("");
+  const [itemDescMap, setItemDescMap] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    getAllItems().then((items) => {
+      const map: Record<string, string> = {};
+      items.forEach((item) => {
+        const desc = item.entries
+          .map((e) => parseEntryText(e))
+          .filter(Boolean)
+          .join(" ");
+        if (desc) map[item.name] = desc;
+      });
+      setItemDescMap(map);
+    });
+  }, []);
 
   const tables = getAllComboTables();
   const searchResults = useMemo(
@@ -168,7 +189,7 @@ export function ComboPage() {
 
       {/* ── MODO BÚSQUEDA ── */}
       {isSearching ? (
-        <SearchResultsPanel results={searchResults} query={search} />
+        <SearchResultsPanel results={searchResults} query={search} itemDescMap={itemDescMap} />
       ) : (
         <>
           {/* Tabs */}
@@ -191,14 +212,14 @@ export function ComboPage() {
           </div>
 
           {/* ── REGLAS ── */}
-          {activeTab === "rules" && <RulesTab tables={tables} onTabChange={handleTabChange} />}
+          {activeTab === "rules" && (
+            <RulesTab tables={tables} onTabChange={handleTabChange} />
+          )}
 
           {/* ── TOOL TABS ── */}
           {tables.map((table) => {
             if (activeTab !== table.id) return null;
-            return (
-              <ToolTab key={table.id} tableId={table.id} />
-            );
+            return <ToolTab key={table.id} tableId={table.id} itemDescMap={itemDescMap} />;
           })}
         </>
       )}
@@ -230,7 +251,10 @@ function RulesTab({
             <h3 className="font-semibold text-foreground mb-2">{rule.name}</h3>
             <div className="space-y-2">
               {rule.content.map((line, i) => (
-                <p key={i} className="text-sm text-muted-foreground leading-relaxed">
+                <p
+                  key={i}
+                  className="text-sm text-muted-foreground leading-relaxed"
+                >
                   {line}
                 </p>
               ))}
@@ -288,7 +312,7 @@ function RulesTab({
 
 // ── Tool Tab ──────────────────────────────────────────────────────────────
 
-function ToolTab({ tableId }: { tableId: string }) {
+function ToolTab({ tableId, itemDescMap }: { tableId: string; itemDescMap: Record<string, string> }) {
   const [localSearch, setLocalSearch] = useState("");
   const table = getAllComboTables().find((t) => t.id === tableId);
   if (!table) return null;
@@ -300,7 +324,9 @@ function ToolTab({ tableId }: { tableId: string }) {
       {/* Tool header */}
       <div className="rounded-lg border border-border bg-card p-4 mb-5 flex flex-col sm:flex-row items-start sm:items-center gap-3">
         <div className="flex-1">
-          <h2 className="font-bold text-lg text-foreground">{table.toolName}</h2>
+          <h2 className="font-bold text-lg text-foreground">
+            {table.toolName}
+          </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
             {table.rows.length} recetas disponibles ·{" "}
             {getUniqueCategories(table.rows).length > 0
@@ -369,7 +395,7 @@ function ToolTab({ tableId }: { tableId: string }) {
                 </tr>
               ) : (
                 filtered.map((row, i) => (
-                  <CraftRow key={i} row={row} hasCategory={table.hasCategory} />
+                  <CraftRow key={i} row={row} hasCategory={table.hasCategory} itemDescMap={itemDescMap} />
                 ))
               )}
             </tbody>
@@ -382,7 +408,15 @@ function ToolTab({ tableId }: { tableId: string }) {
 
 // ── Craft Row ─────────────────────────────────────────────────────────────
 
-function CraftRow({ row, hasCategory }: { row: ComboRow; hasCategory: boolean }) {
+function CraftRow({
+  row,
+  hasCategory,
+  itemDescMap,
+}: {
+  row: ComboRow;
+  hasCategory: boolean;
+  itemDescMap: Record<string, string>;
+}) {
   const catStyle = row.category ? getCategoryStyle(row.category) : null;
 
   return (
@@ -406,9 +440,19 @@ function CraftRow({ row, hasCategory }: { row: ComboRow; hasCategory: boolean })
           ) : null}
         </td>
       )}
-      <td className="px-4 py-3 font-medium text-foreground">{row.name}</td>
-      <td className="px-4 py-3 text-muted-foreground">{row.item1}</td>
-      <td className="px-4 py-3 text-muted-foreground">{row.item2 || "—"}</td>
+      <td className="px-4 py-3 font-medium text-foreground">
+        <ItemRefText text={row.name} itemDescMap={itemDescMap} />
+      </td>
+      <td className="px-4 py-3 text-muted-foreground">
+        <ItemRefText text={row.item1} itemDescMap={itemDescMap} />
+      </td>
+      <td className="px-4 py-3 text-muted-foreground">
+        {row.item2 ? (
+          <ItemRefText text={row.item2} itemDescMap={itemDescMap} />
+        ) : (
+          "—"
+        )}
+      </td>
       <td className="px-3 py-3 text-center">
         {row.dc ? (
           <Badge variant="default" className="font-mono text-xs">
@@ -434,9 +478,11 @@ function CraftRow({ row, hasCategory }: { row: ComboRow; hasCategory: boolean })
 function SearchResultsPanel({
   results,
   query,
+  itemDescMap,
 }: {
   results: SearchResult[];
   query: string;
+  itemDescMap: Record<string, string>;
 }) {
   if (results.length === 0) {
     return (
@@ -476,14 +522,18 @@ function SearchResultsPanel({
         const hasCategory = table?.hasCategory ?? false;
 
         return (
-          <div key={toolId} className="rounded-lg border border-border overflow-hidden">
+          <div
+            key={toolId}
+            className="rounded-lg border border-border overflow-hidden"
+          >
             <div className="flex items-center gap-2 px-4 py-2.5 bg-muted/50 border-b border-border">
               <Icon className="h-4 w-4 text-primary" />
               <span className="font-semibold text-sm text-foreground">
                 {toolName}
               </span>
               <span className="text-xs text-muted-foreground ml-auto">
-                {groupResults.length} resultado{groupResults.length !== 1 ? "s" : ""}
+                {groupResults.length} resultado
+                {groupResults.length !== 1 ? "s" : ""}
               </span>
             </div>
             <div className="overflow-x-auto">
@@ -514,7 +564,7 @@ function SearchResultsPanel({
                 </thead>
                 <tbody>
                   {groupResults.map(({ row }, i) => (
-                    <CraftRow key={i} row={row} hasCategory={hasCategory} />
+                    <CraftRow key={i} row={row} hasCategory={hasCategory} itemDescMap={itemDescMap} />
                   ))}
                 </tbody>
               </table>

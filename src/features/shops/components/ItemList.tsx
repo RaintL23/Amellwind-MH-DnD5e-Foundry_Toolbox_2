@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
-const DEFAULT_PAGE_SIZE = 15;
+const DEFAULT_PAGE_SIZE = 10;
 
 type SortKey = "name" | "type" | "value";
 type SortDir = "asc" | "desc";
@@ -113,7 +113,10 @@ function ItemDetailPanel({
         {textEntries.length > 0 && (
           <div className="space-y-2">
             {textEntries.map((text, i) => (
-              <p key={i} className="text-sm text-muted-foreground leading-relaxed">
+              <p
+                key={i}
+                className="text-sm text-muted-foreground leading-relaxed"
+              >
                 {text}
               </p>
             ))}
@@ -122,7 +125,8 @@ function ItemDetailPanel({
 
         {item.valueCp === null && (
           <p className="text-xs text-amber-400/80 italic bg-amber-900/20 border border-amber-700/30 rounded-md px-3 py-2">
-            This item cannot be purchased; it must be crafted from the combinations list.
+            This item cannot be purchased; it must be crafted from the
+            combinations list.
           </p>
         )}
       </div>
@@ -184,19 +188,14 @@ export function ItemList() {
   }, []);
 
   const uniqueTypes = useMemo(
-    () =>
-      Array.from(new Set(items.map((i) => i.typeLabel))).sort(),
+    () => Array.from(new Set(items.map((i) => i.typeLabel))).sort(),
     [items],
   );
 
   const uniqueRarities = useMemo(
     () =>
       Array.from(
-        new Set(
-          items
-            .map((i) => i.rarity)
-            .filter((r) => r && r !== "none"),
-        ),
+        new Set(items.map((i) => i.rarity).filter((r) => r && r !== "none")),
       ).sort(),
     [items],
   );
@@ -406,9 +405,7 @@ export function ItemList() {
                             name: item.name,
                             cost: formatValueGp(item.valueCp),
                             weight:
-                              item.weight !== null
-                                ? `${item.weight} lb.`
-                                : "—",
+                              item.weight !== null ? `${item.weight} lb.` : "—",
                             source: "Items",
                           });
                         }}
@@ -466,10 +463,7 @@ export function ItemList() {
             onClick={() => setSelected(null)}
             aria-hidden
           />
-          <ItemDetailPanel
-            item={selected}
-            onClose={() => setSelected(null)}
-          />
+          <ItemDetailPanel item={selected} onClose={() => setSelected(null)} />
         </>
       )}
 
