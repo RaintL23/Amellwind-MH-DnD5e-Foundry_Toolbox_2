@@ -842,7 +842,7 @@ Al hacer clic en cualquier fila, se abre un **dialog** con la información compl
 
 ### Cooking System (Artisan Cooking)
 
-**Ruta**: `/cooking`  
+**Ruta**: `/cooking`
 **Fuente de datos**: datos estáticos embebidos en la app (`cooking.data.ts`). No requiere IndexedDB.
 
 El sistema de cocina artesana permite al DM y a los jugadores gestionar las comidas que otorgan boons a la party durante una cacería. Está modelado sobre las reglas de cocina de la Guía de Caza de Amellwind.
@@ -901,11 +901,11 @@ El sistema de cocina artesana permite al DM y a los jugadores gestionar las comi
 
 La pantalla tiene un sistema de pestañas:
 
-| Pestaña       | Contenido                                                                                    |
-| ------------- | -------------------------------------------------------------------------------------------- |
-| How to Cook   | Tarjetas con las reglas de los 3 pasos + cuadro de resumen de rangos (clickeable).           |
-| Rank 1–4      | Panel con nombre, requisito de nivel, costo, nota al pie + tabla de comidas + botón de roll. |
-| Daily Skills  | Panel explicativo + tabla con las 25 habilidades felyne + botón de roll `1d20 + 1d6 − 1`.   |
+| Pestaña      | Contenido                                                                                    |
+| ------------ | -------------------------------------------------------------------------------------------- |
+| How to Cook  | Tarjetas con las reglas de los 3 pasos + cuadro de resumen de rangos (clickeable).           |
+| Rank 1–4     | Panel con nombre, requisito de nivel, costo, nota al pie + tabla de comidas + botón de roll. |
+| Daily Skills | Panel explicativo + tabla con las 25 habilidades felyne + botón de roll `1d20 + 1d6 − 1`.    |
 
 - **Botón "Roll Random Meal"**: elige una comida al azar del rango activo. Resalta la fila correspondiente en la tabla y muestra una tarjeta de resultado con el nombre, DC, boon y el número obtenido.
 - **Botón "Roll 1d20 + 1d6 − 1"**: calcula un resultado entre 1 y 25, resalta la habilidad en la tabla y muestra una tarjeta de resultado con los dados individuales y el total.
@@ -913,21 +913,21 @@ La pantalla tiene un sistema de pestañas:
 
 #### Service (`cooking.service.ts`)
 
-| Función               | Descripción                                                                        |
-| --------------------- | ---------------------------------------------------------------------------------- |
-| `getAllMealTables()`   | Devuelve todas las tablas de comidas (`MealTable[]`).                              |
-| `getMealTableByRank(rank)` | Devuelve la tabla de un rango concreto.                                       |
-| `getAllMeals()`        | Devuelve todas las comidas de todos los rangos (`Meal[]`).                         |
-| `getMealsByRank(rank)` | Devuelve las comidas de un rango específico.                                      |
-| `getAllDailySkills()`  | Devuelve las 25 habilidades felyne del día.                                        |
-| `rollRandomMeal(rank)` | Elige aleatoriamente una comida del rango dado. Devuelve `{ meal, roll }`.        |
-| `rollDailySkill()`     | Tira `1d20 + 1d6 − 1` y devuelve la skill correspondiente + los dados individuales. |
+| Función                    | Descripción                                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------- |
+| `getAllMealTables()`       | Devuelve todas las tablas de comidas (`MealTable[]`).                               |
+| `getMealTableByRank(rank)` | Devuelve la tabla de un rango concreto.                                             |
+| `getAllMeals()`            | Devuelve todas las comidas de todos los rangos (`Meal[]`).                          |
+| `getMealsByRank(rank)`     | Devuelve las comidas de un rango específico.                                        |
+| `getAllDailySkills()`      | Devuelve las 25 habilidades felyne del día.                                         |
+| `rollRandomMeal(rank)`     | Elige aleatoriamente una comida del rango dado. Devuelve `{ meal, roll }`.          |
+| `rollDailySkill()`         | Tira `1d20 + 1d6 − 1` y devuelve la skill correspondiente + los dados individuales. |
 
 ---
 
 ### Combo List
 
-**Ruta**: `/combo`  
+**Ruta**: `/combo`
 **Fuente de datos**: datos estáticos embebidos en la app (`combo.data.ts`). No requiere IndexedDB.
 
 El Combo List es un sistema de crafteo de objetos (pociones, munición, trampas, etc.) típico del universo Monster Hunter. Cada receta indica dos ingredientes a combinar, la herramienta necesaria, el DC de la tirada de crafteo y la cantidad producida.
@@ -955,35 +955,35 @@ El Combo List es un sistema de crafteo de objetos (pociones, munición, trampas,
 
 ##### Herramientas disponibles
 
-| ID             | Herramienta              | Tiene categorías |
-| -------------- | ------------------------ | ---------------- |
-| `alchemist`    | Alchemist's Supplies     | Sí               |
-| `brewer`       | Brewer's Supplies        | No               |
-| `cook`         | Cook's Utensils          | No               |
-| `glassblower`  | Glassblower's Tools      | Sí               |
-| `herbalism`    | Herbalism Kit            | No               |
-| `poisoner`     | Poisoner's Kit           | No               |
-| `smith`        | Smith's Tools            | Sí               |
-| `tinker`       | Tinker's Tools           | No               |
-| `woodcarver`   | Woodcarver's Tools       | Sí               |
+| ID            | Herramienta          | Tiene categorías |
+| ------------- | -------------------- | ---------------- |
+| `alchemist`   | Alchemist's Supplies | Sí               |
+| `brewer`      | Brewer's Supplies    | No               |
+| `cook`        | Cook's Utensils      | No               |
+| `glassblower` | Glassblower's Tools  | Sí               |
+| `herbalism`   | Herbalism Kit        | No               |
+| `poisoner`    | Poisoner's Kit       | No               |
+| `smith`       | Smith's Tools        | Sí               |
+| `tinker`      | Tinker's Tools       | No               |
+| `woodcarver`  | Woodcarver's Tools   | Sí               |
 
 ##### Categorías de objetos
 
 Las categorías se usan para agrupar visualmente las filas dentro de una tabla. Cada categoría tiene un color badge propio:
 
-| Categoría                  | Color    |
-| -------------------------- | -------- |
-| HEALING                    | verde    |
-| BUFFS                      | azul     |
-| COATINGS                   | morado   |
-| DR AMMO / Bowgun Ammo      | naranja  |
-| Light Bowgun only ammo     | amarillo |
-| Heavy Bowgun only ammo     | rojo     |
-| HORNS                      | teal     |
-| BOMBS                      | ámbar    |
-| BARREL BOMBS               | rojo     |
-| TRAPS                      | cyan     |
-| LURES                      | sky      |
+| Categoría              | Color    |
+| ---------------------- | -------- |
+| HEALING                | verde    |
+| BUFFS                  | azul     |
+| COATINGS               | morado   |
+| DR AMMO / Bowgun Ammo  | naranja  |
+| Light Bowgun only ammo | amarillo |
+| Heavy Bowgun only ammo | rojo     |
+| HORNS                  | teal     |
+| BOMBS                  | ámbar    |
+| BARREL BOMBS           | rojo     |
+| TRAPS                  | cyan     |
+| LURES                  | sky      |
 
 #### Reglas del Combo List
 
@@ -1001,11 +1001,13 @@ Las categorías se usan para agrupar visualmente las filas dentro de una tabla. 
 La pantalla tiene dos modos de funcionamiento:
 
 **Modo normal (sin búsqueda activa)**:
+
 - Pestañas: una pestaña "Reglas" + una pestaña por cada herramienta disponible.
 - **Tab Reglas**: tarjetas con las 3 secciones de reglas + bloque destacado de Combo Books + panel de resumen de herramientas disponibles (clickeable para ir directamente a esa herramienta).
 - **Tab de herramienta**: muestra encabezado con nombre de la herramienta y número de recetas, un buscador local para filtrar dentro de la tabla, y la tabla de recetas (columnas: categoría si aplica, objeto, ingrediente 1, ingrediente 2, DC, cantidad).
 
 **Modo búsqueda (cuando el usuario escribe en el buscador global)**:
+
 - Las pestañas se ocultan y se muestra un panel de resultados agrupados por herramienta.
 - Muestra el número total de resultados y en cuántas herramientas se encontraron.
 - Cada grupo tiene su encabezado con el nombre de la herramienta y el número de resultados dentro de ese grupo.
@@ -1015,11 +1017,11 @@ La búsqueda global filtra simultáneamente por nombre del objeto, ingredientes 
 
 #### Service (`combo.service.ts`)
 
-| Función                       | Descripción                                                                                 |
-| ----------------------------- | ------------------------------------------------------------------------------------------- |
-| `getAllComboTables()`          | Devuelve todas las tablas de herramientas (`ComboToolTable[]`).                             |
-| `searchAllComboRows(query)`    | Busca en todas las tablas por nombre, ingredientes o categoría. Devuelve `SearchResult[]`. |
-| `filterRows(rows, query)`      | Filtra las filas de una tabla concreta por nombre, ingredientes o categoría.               |
+| Función                     | Descripción                                                                                |
+| --------------------------- | ------------------------------------------------------------------------------------------ |
+| `getAllComboTables()`       | Devuelve todas las tablas de herramientas (`ComboToolTable[]`).                            |
+| `searchAllComboRows(query)` | Busca en todas las tablas por nombre, ingredientes o categoría. Devuelve `SearchResult[]`. |
+| `filterRows(rows, query)`   | Filtra las filas de una tabla concreta por nombre, ingredientes o categoría.               |
 
 `SearchResult` tiene la forma `{ toolId, toolName, row }`.
 

@@ -5,6 +5,8 @@ import {
   CACHE_TTL_MS,
 } from "../constants/api.constants";
 
+const OPT_FEATURES_STORE_KEY = "optfeatures";
+
 interface DataMeta {
   timestamp: number;
   url: string;
@@ -28,13 +30,14 @@ async function fetchAndCache(
   currentStore: "MM_CURRENT" | "GTMH_CURRENT",
   previousStore: "MM_PREVIOUS" | "GTMH_PREVIOUS",
   metaStore: "MM_META" | "GTMH_META",
-  dataKey: string
+  dataKey: string,
+  onFullJson?: (json: Record<string, unknown>) => Promise<void>
 ): Promise<unknown | null> {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const json = await response.json();
+    const json = await response.json() as Record<string, unknown>;
     const newData = json[dataKey] ?? json;
 
     // Guardar copia anterior antes de reemplazar
@@ -48,6 +51,8 @@ async function fetchAndCache(
       timestamp: Date.now(),
       url,
     } satisfies DataMeta);
+
+    if (onFullJson) await onFullJson(json);
 
     return newData;
   } catch (error) {
@@ -89,7 +94,12 @@ export async function syncData(): Promise<SyncResult> {
       "GTMH_CURRENT",
       "GTMH_PREVIOUS",
       "GTMH_META",
-      "item"
+      "item",
+      async (json) => {
+        if (Array.isArray(json.optionalfeature)) {
+          await setStoreValue("GTMH_CURRENT", OPT_FEATURES_STORE_KEY, json.optionalfeature);
+        }
+      }
     );
     if (fetched !== null) {
       gtmhData = fetched;
@@ -111,4 +121,27 @@ export async function getMonsterData(): Promise<unknown[]> {
 
 export async function getGtmhData(): Promise<unknown> {
   return getStoreValue<unknown>("GTMH_CURRENT", "data");
+}
+
+/**
+ * Returns the raw optionalfeature array from the GTMH JSON.
+ * If not yet cached (first load after upgrade), fetches lazily from the remote URL.
+ */
+export async function getOptionalFeaturesRaw(): Promise<unknown[]> {
+  const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", OPT_FEATURES_STORE_KEY);
+  if (cached && cached.length > 0) return cached;
+
+  // Lazy-populate for users that already have GTMH items cached but not optfeatures
+  try {
+    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
+    if (!response.ok) return [];
+    const json = await response.json() as Record<string, unknown>;
+    const data: unknown[] = Array.isArray(json.optionalfeature)
+      ? (json.optionalfeature as unknown[])
+      : [];
+    await setStoreValue("GTMH_CURRENT", OPT_FEATURES_STORE_KEY, data);
+    return data;
+  } catch {
+    return [];
+  }
 }

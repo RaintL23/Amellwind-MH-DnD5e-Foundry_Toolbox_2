@@ -6,6 +6,7 @@ import { CookingPage } from "@/features/cooking/components/CookingPage";
 import { ComboPage } from "@/features/combo/components/ComboPage";
 import { ItemList } from "@/features/shops/components/ItemList";
 import { ShopList } from "@/features/shops/components/ShopList";
+import { WeaponList } from "@/features/weapons/components/WeaponList";
 import { CartProvider } from "@/features/shops/context/CartContext";
 import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { NotFound } from "@/components/layout/NotFound";
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="combo" element={<ComboPage />} />
             <Route path="items" element={<ItemList />} />
             <Route path="shops" element={<ShopList />} />
+            <Route path="weapons" element={<WeaponList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

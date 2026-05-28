@@ -1,10 +1,11 @@
 import { NavLink } from "react-router-dom";
-import { Swords, Shield, Gem, ChefHat, ChevronLeft, ChevronRight, X, Hammer, Package, Store } from "lucide-react";
+import { Swords, Shield, Gem, ChefHat, ChevronLeft, ChevronRight, X, Hammer, Package, Store, Sword } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
 const NAV_ITEMS = [
   { to: "/monsters", label: "Monsters", icon: Swords },
   { to: "/runes", label: "Runes", icon: Gem },
+  { to: "/weapons", label: "Weapons", icon: Sword },
   { to: "/cooking", label: "Cooking", icon: ChefHat },
   { to: "/combo", label: "Combo List", icon: Hammer },
   { to: "/items", label: "Items", icon: Package },
