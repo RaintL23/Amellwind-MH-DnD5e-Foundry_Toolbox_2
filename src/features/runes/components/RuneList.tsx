@@ -20,6 +20,31 @@ interface Filters {
   slot: string;
   obtainment: string;
   tag: string;
+  tier: string;
+}
+
+const TIER_LABELS: Record<number, string> = {
+  1: "Tier 1 — Uncommon (CR 1-4)",
+  2: "Tier 2 — Rare (CR 5-10)",
+  3: "Tier 3 — Very Rare (CR 11-16)",
+  4: "Tier 4 — Legendary (CR 17+)",
+};
+
+const TIER_BADGE_CLASS: Record<number, string> = {
+  1: "bg-slate-700/60 text-slate-300 border border-slate-600/40",
+  2: "bg-blue-900/50 text-blue-300 border border-blue-700/40",
+  3: "bg-purple-900/50 text-purple-300 border border-purple-700/40",
+  4: "bg-amber-900/50 text-amber-300 border border-amber-700/40",
+};
+
+function TierBadge({ tier }: { tier: number }) {
+  return (
+    <span
+      className={`inline-flex items-center rounded px-1.5 py-0.5 text-xs font-semibold ${TIER_BADGE_CLASS[tier]}`}
+    >
+      T{tier}
+    </span>
+  );
 }
 
 function tagVariant(tag: string): "blue" | "orange" | "green" {
@@ -29,7 +54,12 @@ function tagVariant(tag: string): "blue" | "orange" | "green" {
 }
 
 function formatTag(tag: string): string {
-  return tag.replace(/^(class:|weapon-type:|mechanic:)/, "");
+  // Strips the first prefix (class:, weapon-type:, mechanic:)
+  // and formats sub-tags: "extra-damage:minor" → "extra-damage (minor)"
+  const stripped = tag.replace(/^(class:|weapon-type:|mechanic:)/, "");
+  const colonIdx = stripped.indexOf(":");
+  if (colonIdx === -1) return stripped;
+  return `${stripped.slice(0, colonIdx)} (${stripped.slice(colonIdx + 1)})`;
 }
 
 export function RuneList() {
@@ -41,6 +71,7 @@ export function RuneList() {
     slot: "",
     obtainment: "",
     tag: "",
+    tier: "",
   });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
@@ -92,6 +123,8 @@ export function RuneList() {
     }
     if (filters.tag)
       result = result.filter((r) => r.tags.includes(filters.tag));
+    if (filters.tier)
+      result = result.filter((r) => r.tier === Number(filters.tier));
 
     return result;
   }, [runes, filters]);
@@ -141,7 +174,7 @@ export function RuneList() {
       <RulesPanel />
 
       {/* Filters */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
         <div className="relative col-span-2 md:col-span-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
@@ -200,6 +233,18 @@ export function RuneList() {
             </option>
           ))}
         </Select>
+
+        <Select
+          value={filters.tier}
+          onChange={(e) => updateFilters({ ...filters, tier: e.target.value })}
+        >
+          <option value="">Todos los tiers</option>
+          {([1, 2, 3, 4] as const).map((t) => (
+            <option key={t} value={t}>
+              {TIER_LABELS[t]}
+            </option>
+          ))}
+        </Select>
       </div>
 
       {/* Table */}
@@ -222,6 +267,9 @@ export function RuneList() {
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                   Capture
+                </th>
+                <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
+                  Tier
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                   Tags
@@ -279,6 +327,9 @@ export function RuneList() {
                       )}
                     </td>
                     <td className="px-4 py-3">
+                      <TierBadge tier={rune.tier} />
+                    </td>
+                    <td className="px-4 py-3">
                       <div className="flex flex-wrap gap-1">
                         {rune.tags.slice(0, 3).map((tag) => (
                           <Badge
@@ -302,7 +353,7 @@ export function RuneList() {
               {filtered.length === 0 && (
                 <tr>
                   <td
-                    colSpan={6}
+                    colSpan={7}
                     className="px-4 py-10 text-center text-muted-foreground"
                   >
                     No se encontraron materiales con los filtros aplicados.

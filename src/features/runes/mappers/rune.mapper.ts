@@ -1,7 +1,27 @@
-import { Rune, RuneSlot } from "@/shared/types";
+import { Rune, RuneSlot, RuneTier } from "@/shared/types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
+
+// ─── CR / Tier helpers ────────────────────────────────────────────────────────
+
+function parseCr(cr: unknown): number {
+  if (typeof cr === "number") return cr;
+  const s = String(cr ?? "0").trim();
+  if (s.includes("/")) {
+    const [num, den] = s.split("/").map(Number);
+    return den ? num / den : 0;
+  }
+  return parseFloat(s) || 0;
+}
+
+function crToTier(cr: unknown): RuneTier {
+  const n = parseCr(cr);
+  if (n <= 4) return 1;
+  if (n <= 10) return 2;
+  if (n <= 16) return 3;
+  return 4;
+}
 
 // ─── Slot parsing ─────────────────────────────────────────────────────────────
 
@@ -63,11 +83,11 @@ const WEAPON_TYPE_PATTERNS: Array<[RegExp, string]> = [
   [/switchaxe.*only/i, "weapon-type:switchaxe"],
 ];
 
+// mechanic:extra-damage, mechanic:healing y mechanic:spell se emiten vía
+// funciones de escala en lugar de patrones simples.
 const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
-  [/\{@spell/i, "mechanic:spell"],
   [/\d+\s*runes?|runes?\s*\d+/i, "mechanic:rune-charges"],
   [/critical/i, "mechanic:critical"],
-  [/extra \{@damage|extra \d+d\d+/i, "mechanic:extra-damage"],
   [/resistance to\s+\w/i, "mechanic:resistance"],
   [/immune to|immunity to/i, "mechanic:immunity"],
   [/bonus action/i, "mechanic:bonus-action"],
@@ -81,13 +101,65 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/\{@condition/i, "mechanic:condition"],
   [/(?:movement|speed|jump)\s+(?:increase|by|\d+)/i, "mechanic:movement"],
   [/\badvantage\b(?!.*saving throw)/i, "mechanic:advantage"],
-  [/(?:regain|restore)\s+\d+.*hit points/i, "mechanic:healing"],
   [/\bcantrip\b/i, "mechanic:cantrip"],
   [
     /wyvernfire|dragonpiercer|Guard AC|Mighty Weapon/i,
     "mechanic:class-feature",
   ],
 ];
+
+// ─── Scaled sub-tag extractors ────────────────────────────────────────────────
+
+/**
+ * Retorna el mayor producto num×size de todas las expresiones XdY en el texto.
+ * Ejemplo: "extra 2d6" → 12; "extra 1d4" → 4.
+ */
+function parseLargestDiceScore(text: string): number {
+  const matches = [...text.matchAll(/(\d+)d(\d+)/gi)];
+  if (!matches.length) return 0;
+  return Math.max(...matches.map(([, n, s]) => parseInt(n) * parseInt(s)));
+}
+
+/**
+ * mechanic:extra-damage:minor  → 1d4 – 1d6  (score ≤ 6)
+ * mechanic:extra-damage:major  → 1d8 / 2d6+ (score > 6)
+ */
+function extraDamageTag(text: string): string | null {
+  if (!/extra (?:\{@damage|\d+d\d+)/i.test(text)) return null;
+  return parseLargestDiceScore(text) > 6
+    ? "mechanic:extra-damage:major"
+    : "mechanic:extra-damage:minor";
+}
+
+/**
+ * mechanic:healing:minor → 1d4 – 1d6 o cantidad fija ≤ 10
+ * mechanic:healing:major → 1d8+ / 2d6+ o cantidad fija > 10
+ */
+function healingTag(text: string): string | null {
+  if (!/(?:regain|restore)\s+\d+.*hit points/i.test(text)) return null;
+  const diceScore = parseLargestDiceScore(text);
+  if (diceScore > 0) {
+    return diceScore > 6 ? "mechanic:healing:major" : "mechanic:healing:minor";
+  }
+  // Cantidad fija de HP sin dados
+  const fixed = text.match(/(?:regain|restore)\s+(\d+)\s+(?:hit points|hp)/i);
+  const amount = fixed ? parseInt(fixed[1]) : 0;
+  return amount > 10 ? "mechanic:healing:major" : "mechanic:healing:minor";
+}
+
+/**
+ * mechanic:spell:lvl3+   → menciona nivel 3-9 explícitamente, o costo ≥ 3 runas
+ * mechanic:spell:lvl1-2  → resto de casos con {@spell
+ */
+function spellTag(text: string): string | null {
+  if (!/\{@spell/i.test(text)) return null;
+  // Nivel explícito en texto: "3rd-level", "4th-level spell", etc.
+  if (/\b[3-9](?:rd|th)-level\b/i.test(text)) return "mechanic:spell:lvl3+";
+  // Costo de runas como proxy de nivel: "(3 runes)", "(4 runes)…"
+  const runeMatches = [...text.matchAll(/\{@spell[^}]+\}\s*\((\d+)\s*runes?\)/gi)];
+  if (runeMatches.some((m) => parseInt(m[1]) >= 3)) return "mechanic:spell:lvl3+";
+  return "mechanic:spell:lvl1-2";
+}
 
 function extractTags(effectText: string): string[] {
   const tags = new Set<string>();
@@ -101,6 +173,16 @@ function extractTags(effectText: string): string[] {
   for (const [pattern, tag] of MECHANIC_PATTERNS) {
     if (pattern.test(effectText)) tags.add(tag);
   }
+
+  // Sub-tags escalados (reemplazan los genéricos)
+  const dmg = extraDamageTag(effectText);
+  if (dmg) tags.add(dmg);
+
+  const heal = healingTag(effectText);
+  if (heal) tags.add(heal);
+
+  const spell = spellTag(effectText);
+  if (spell) tags.add(spell);
 
   return Array.from(tags);
 }
@@ -182,6 +264,8 @@ export function mapRunesFromMonster(rawMonster: any): Rune[] {
       name,
       monsterName: String(rawMonster.name ?? ""),
       monsterSource: String(rawMonster.source ?? ""),
+      monsterCr: String(rawMonster.cr ?? "0"),
+      tier: crToTier(rawMonster.cr),
       carveChance,
       captureChance,
       rolls,

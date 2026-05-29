@@ -17,7 +17,34 @@ import { wouldViolateRule } from "../utils/build.validation";
 import { cn } from "@/shared/utils/cn";
 
 function formatTag(tag: string): string {
-  return tag.replace(/^(class:|weapon-type:|mechanic:)/, "");
+  const stripped = tag.replace(/^(class:|weapon-type:|mechanic:)/, "");
+  const colonIdx = stripped.indexOf(":");
+  if (colonIdx === -1) return stripped;
+  return `${stripped.slice(0, colonIdx)} (${stripped.slice(colonIdx + 1)})`;
+}
+
+const TIER_LABELS: Record<number, string> = {
+  1: "Uncommon",
+  2: "Rare",
+  3: "Very Rare",
+  4: "Legendary",
+};
+
+const TIER_BADGE_CLASS: Record<number, string> = {
+  1: "bg-slate-700/60 text-slate-300 border border-slate-600/40",
+  2: "bg-blue-900/50 text-blue-300 border border-blue-700/40",
+  3: "bg-purple-900/50 text-purple-300 border border-purple-700/40",
+  4: "bg-amber-900/50 text-amber-300 border border-amber-700/40",
+};
+
+function TierBadge({ tier }: { tier: number }) {
+  return (
+    <span
+      className={`inline-flex items-center rounded px-2 py-0.5 text-xs font-semibold ${TIER_BADGE_CLASS[tier]}`}
+    >
+      T{tier} · {TIER_LABELS[tier]}
+    </span>
+  );
 }
 
 interface EffectSectionProps {
@@ -266,7 +293,13 @@ export function RuneDetailDialog({ rune, open, onOpenChange }: RuneDetailDialogP
               <span className="text-sm text-muted-foreground">
                 From{" "}
                 <strong className="text-foreground">{rune.monsterName}</strong>
+                {rune.monsterCr && (
+                  <span className="ml-1 text-muted-foreground/60">
+                    (CR {rune.monsterCr})
+                  </span>
+                )}
               </span>
+              <TierBadge tier={rune.tier} />
               {rune.slots.includes("A") && (
                 <Badge variant="blue">Armor</Badge>
               )}
