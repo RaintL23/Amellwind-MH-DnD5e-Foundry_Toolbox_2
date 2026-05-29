@@ -94,9 +94,16 @@ function AddToBuildSection({ rune }: AddToBuildSectionProps) {
             {weaponViolation && !inWeapon && (
               <div className="mb-1 flex gap-1 items-start rounded bg-orange-900/20 border border-orange-700/30 px-2 py-1">
                 <AlertTriangle className="h-3 w-3 text-orange-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-orange-400/80 leading-tight">
-                  Conflicto: {weaponViolation.rule.split("(")[0].trim()}
-                </p>
+                <div className="text-xs leading-tight space-y-0.5">
+                  <p className="text-orange-400/80">
+                    {weaponViolation.rule.split("(")[0].trim()}
+                  </p>
+                  {weaponViolation.offenders.slice(1).length > 0 && (
+                    <p className="text-orange-400/60">
+                      Choca con: {weaponViolation.offenders.slice(1).join(", ")}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
             <button
@@ -143,9 +150,16 @@ function AddToBuildSection({ rune }: AddToBuildSectionProps) {
             {armorViolation && !inArmor && (
               <div className="mb-1 flex gap-1 items-start rounded bg-orange-900/20 border border-orange-700/30 px-2 py-1">
                 <AlertTriangle className="h-3 w-3 text-orange-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-orange-400/80 leading-tight">
-                  Conflicto: {armorViolation.rule.split("(")[0].trim()}
-                </p>
+                <div className="text-xs leading-tight space-y-0.5">
+                  <p className="text-orange-400/80">
+                    {armorViolation.rule.split("(")[0].trim()}
+                  </p>
+                  {armorViolation.offenders.slice(1).length > 0 && (
+                    <p className="text-orange-400/60">
+                      Choca con: {armorViolation.offenders.slice(1).join(", ")}
+                    </p>
+                  )}
+                </div>
               </div>
             )}
             <button
@@ -238,8 +252,9 @@ export function RuneDetailDialog({ rune, open, onOpenChange }: RuneDetailDialogP
   if (!rune) return null;
 
   const classTags = rune.tags.filter((t) => t.startsWith("class:"));
-  const weaponTags = rune.tags.filter((t) => t.startsWith("weapon-type:"));
-  const mechanicTags = rune.tags.filter((t) => t.startsWith("mechanic:"));
+  const weaponTypeTags = rune.tags.filter((t) => t.startsWith("weapon-type:"));
+  const weaponMechanicTags = rune.weaponTags.filter((t) => t.startsWith("mechanic:"));
+  const armorMechanicTags = rune.armorTags.filter((t) => t.startsWith("mechanic:"));
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -315,7 +330,7 @@ export function RuneDetailDialog({ rune, open, onOpenChange }: RuneDetailDialogP
                 <div className="space-y-2">
                   {classTags.length > 0 && (
                     <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground w-20">Class:</span>
+                      <span className="text-xs text-muted-foreground w-24">Class:</span>
                       {classTags.map((t) => (
                         <Badge key={t} variant="blue">
                           {formatTag(t)}
@@ -323,20 +338,36 @@ export function RuneDetailDialog({ rune, open, onOpenChange }: RuneDetailDialogP
                       ))}
                     </div>
                   )}
-                  {weaponTags.length > 0 && (
+                  {weaponTypeTags.length > 0 && (
                     <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground w-20">Weapon:</span>
-                      {weaponTags.map((t) => (
+                      <span className="text-xs text-muted-foreground w-24">Weapon type:</span>
+                      {weaponTypeTags.map((t) => (
                         <Badge key={t} variant="orange">
                           {formatTag(t)}
                         </Badge>
                       ))}
                     </div>
                   )}
-                  {mechanicTags.length > 0 && (
+                  {weaponMechanicTags.length > 0 && (
                     <div className="flex flex-wrap gap-1 items-center">
-                      <span className="text-xs text-muted-foreground w-20">Mechanic:</span>
-                      {mechanicTags.map((t) => (
+                      <span className="text-xs text-muted-foreground w-24">
+                        <Sword className="inline h-3 w-3 mr-0.5" />
+                        Mechanic:
+                      </span>
+                      {weaponMechanicTags.map((t) => (
+                        <Badge key={t} variant="green">
+                          {formatTag(t)}
+                        </Badge>
+                      ))}
+                    </div>
+                  )}
+                  {armorMechanicTags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 items-center">
+                      <span className="text-xs text-muted-foreground w-24">
+                        <ShieldCheck className="inline h-3 w-3 mr-0.5" />
+                        Mechanic:
+                      </span>
+                      {armorMechanicTags.map((t) => (
                         <Badge key={t} variant="green">
                           {formatTag(t)}
                         </Badge>

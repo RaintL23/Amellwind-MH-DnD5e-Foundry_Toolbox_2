@@ -174,8 +174,9 @@ export function mapRunesFromMonster(rawMonster: any): Rune[] {
     const armorEffect = armorEffects[name] ?? null;
     const weaponEffect = weaponEffects[name] ?? null;
 
-    const allEffectText = [armorEffect, weaponEffect].filter(Boolean).join(" ");
-    const tags = extractTags(allEffectText);
+    const weaponTags = weaponEffect ? extractTags(weaponEffect) : [];
+    const armorTags = armorEffect ? extractTags(armorEffect) : [];
+    const tags = Array.from(new Set([...weaponTags, ...armorTags]));
 
     runes.push({
       name,
@@ -188,6 +189,8 @@ export function mapRunesFromMonster(rawMonster: any): Rune[] {
       armorEffect,
       weaponEffect,
       tags,
+      weaponTags,
+      armorTags,
     });
   }
   // console.log(runes);

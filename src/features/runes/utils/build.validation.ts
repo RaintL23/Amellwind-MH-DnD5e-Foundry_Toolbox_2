@@ -37,16 +37,21 @@ const WEAPON_RULE_GROUPS: { tags: string[]; rule: string }[] = [
   },
 ];
 
+function getSlotTags(rune: Rune, slotType: "weapon" | "armor"): string[] {
+  return slotType === "weapon" ? rune.weaponTags : rune.armorTags;
+}
+
 function checkGroups(
   runes: (Rune | null)[],
   groups: { tags: string[]; rule: string }[],
+  slotType: "weapon" | "armor",
 ): RuleViolation[] {
   const filled = runes.filter((r): r is Rune => r !== null);
   const violations: RuleViolation[] = [];
 
   for (const group of groups) {
     const matching = filled.filter((r) =>
-      r.tags.some((t) => group.tags.includes(t)),
+      getSlotTags(r, slotType).some((t) => group.tags.includes(t)),
     );
     if (matching.length > 1) {
       violations.push({
@@ -60,11 +65,11 @@ function checkGroups(
 }
 
 export function getArmorViolations(runes: (Rune | null)[]): RuleViolation[] {
-  return checkGroups(runes, ARMOR_RULE_GROUPS);
+  return checkGroups(runes, ARMOR_RULE_GROUPS, "armor");
 }
 
 export function getWeaponViolations(runes: (Rune | null)[]): RuleViolation[] {
-  return checkGroups(runes, WEAPON_RULE_GROUPS);
+  return checkGroups(runes, WEAPON_RULE_GROUPS, "weapon");
 }
 
 /** Devuelve true si agregar esta runa al slot tipo daría violación */
@@ -75,11 +80,12 @@ export function wouldViolateRule(
 ): RuleViolation | null {
   const groups = slotType === "armor" ? ARMOR_RULE_GROUPS : WEAPON_RULE_GROUPS;
   const filled = existing.filter((r): r is Rune => r !== null);
+  const runeTags = getSlotTags(rune, slotType);
 
   for (const group of groups) {
-    if (!rune.tags.some((t) => group.tags.includes(t))) continue;
+    if (!runeTags.some((t) => group.tags.includes(t))) continue;
     const matching = filled.filter((r) =>
-      r.tags.some((t) => group.tags.includes(t)),
+      getSlotTags(r, slotType).some((t) => group.tags.includes(t)),
     );
     if (matching.length >= 1) {
       return {
