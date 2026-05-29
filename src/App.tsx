@@ -7,6 +7,8 @@ import { ComboPage } from "@/features/combo/components/ComboPage";
 import { ItemList } from "@/features/shops/components/ItemList";
 import { ShopList } from "@/features/shops/components/ShopList";
 import { WeaponList } from "@/features/weapons/components/WeaponList";
+import { ResourcePage } from "@/features/resources/components/ResourcePage";
+import { EnvironmentList } from "@/features/environments/components/EnvironmentList";
 import { CartProvider } from "@/features/shops/context/CartContext";
 import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { NotFound } from "@/components/layout/NotFound";
@@ -26,6 +28,8 @@ export default function App() {
             <Route path="items" element={<ItemList />} />
             <Route path="shops" element={<ShopList />} />
             <Route path="weapons" element={<WeaponList />} />
+            <Route path="resources" element={<ResourcePage />} />
+            <Route path="environments" element={<EnvironmentList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
