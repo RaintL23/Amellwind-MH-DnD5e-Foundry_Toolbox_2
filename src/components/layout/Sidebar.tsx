@@ -116,7 +116,7 @@ export function Sidebar({
   return (
     <>
       {/* ── Desktop: sidebar estático ── */}
-      <div className="hidden md:flex min-h-screen shrink-0">{inner}</div>
+      <div className="hidden md:flex h-full shrink-0">{inner}</div>
 
       {/* ── Mobile: drawer con overlay ── */}
       {/* Backdrop */}
