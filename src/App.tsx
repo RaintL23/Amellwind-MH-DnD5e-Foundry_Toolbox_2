@@ -11,6 +11,8 @@ import { ResourcePage } from "@/features/resources/components/ResourcePage";
 import { EnvironmentList } from "@/features/environments/components/EnvironmentList";
 import { CartProvider } from "@/features/shops/context/CartContext";
 import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
+import { BuilderInventoryProvider } from "@/features/builder/context/BuilderInventoryContext";
+import { BuilderPage } from "@/features/builder/components/BuilderPage";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -18,6 +20,7 @@ export default function App() {
     <BrowserRouter>
       <CartProvider>
         <RuneBuildProvider>
+        <BuilderInventoryProvider>
         <Routes>
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Navigate to="/monsters" replace />} />
@@ -30,9 +33,11 @@ export default function App() {
             <Route path="weapons" element={<WeaponList />} />
             <Route path="resources" element={<ResourcePage />} />
             <Route path="environments" element={<EnvironmentList />} />
+            <Route path="builder" element={<BuilderPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
+        </BuilderInventoryProvider>
         </RuneBuildProvider>
       </CartProvider>
     </BrowserRouter>

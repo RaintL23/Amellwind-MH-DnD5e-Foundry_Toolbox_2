@@ -1,6 +1,7 @@
 import { NavLink } from "react-router-dom";
-import { Swords, Shield, Gem, ChefHat, ChevronLeft, ChevronRight, X, Hammer, Package, Store, Sword, Leaf, MapPin } from "lucide-react";
+import { Swords, Shield, Gem, ChefHat, ChevronLeft, ChevronRight, X, Hammer, Package, Store, Sword, Leaf, MapPin, User } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 
 const NAV_ITEMS = [
   { to: "/monsters", label: "Monsters", icon: Swords },
@@ -12,6 +13,7 @@ const NAV_ITEMS = [
   { to: "/shops", label: "Shops", icon: Store },
   { to: "/resources", label: "Resources", icon: Leaf },
   { to: "/environments", label: "Environments", icon: MapPin },
+  { to: "/builder", label: "Builder", icon: User },
 ];
 
 interface SidebarProps {
@@ -21,6 +23,21 @@ interface SidebarProps {
   mobileOpen: boolean;
   onToggleCollapse: () => void;
   onMobileClose: () => void;
+}
+
+function BuilderBadge({ collapsed }: { collapsed: boolean }) {
+  const { totalItems } = useBuilderInventory();
+  if (totalItems === 0) return null;
+  return (
+    <span
+      className={cn(
+        "rounded-full bg-primary/80 text-[9px] font-bold text-primary-foreground min-w-[16px] h-4 flex items-center justify-center px-1",
+        collapsed ? "absolute -top-0.5 -right-0.5" : "ml-auto"
+      )}
+    >
+      {totalItems}
+    </span>
+  );
 }
 
 export function Sidebar({
@@ -70,7 +87,7 @@ export function Sidebar({
             title={collapsed ? label : undefined}
             className={({ isActive }) =>
               cn(
-                "flex items-center rounded-md text-sm font-medium transition-colors",
+                "flex items-center rounded-md text-sm font-medium transition-colors relative",
                 collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2",
                 isActive
                   ? "bg-primary/20 text-primary border border-primary/30"
@@ -80,6 +97,7 @@ export function Sidebar({
           >
             <Icon className="h-4 w-4 shrink-0" />
             {!collapsed && label}
+            {to === "/builder" && <BuilderBadge collapsed={collapsed} />}
           </NavLink>
         ))}
       </nav>

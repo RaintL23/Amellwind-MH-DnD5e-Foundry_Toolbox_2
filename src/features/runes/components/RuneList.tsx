@@ -9,7 +9,8 @@ import { RuneDetailDialog } from "./RuneDetailDialog";
 import { RulesPanel } from "./RulesPanel";
 import { BuildDrawer } from "./BuildDrawer";
 import { useRuneBuild } from "../context/RuneBuildContext";
-import { Search, Layers } from "lucide-react";
+import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
+import { Search, Layers, PlusCircle } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -79,6 +80,7 @@ export function RuneList() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const { isInBuild, totalRunes } = useRuneBuild();
+  const { addRune: addRuneToBuilder, runes: builderRunes } = useBuilderInventory();
 
   useEffect(() => {
     getAllRunes().then((data) => {
@@ -274,6 +276,9 @@ export function RuneList() {
                 <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
                   Tags
                 </th>
+                <th className="px-4 py-3 text-center font-semibold text-muted-foreground">
+                  Builder
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -347,13 +352,33 @@ export function RuneList() {
                         )}
                       </div>
                     </td>
+                    <td className="px-4 py-3 text-center">
+                      {(() => {
+                        const inBuilder = builderRunes.some(
+                          (r) => r.name === rune.name && r.monsterName === rune.monsterName
+                        );
+                        return (
+                          <button
+                            onClick={(e) => { e.stopPropagation(); addRuneToBuilder(rune); }}
+                            title={inBuilder ? "Already in Builder" : "Add to Builder"}
+                            className={cn(
+                              "p-0.5 rounded transition-colors",
+                              inBuilder ? "text-green-400 cursor-default" : "text-muted-foreground hover:text-primary"
+                            )}
+                            disabled={inBuilder}
+                          >
+                            <PlusCircle className="h-4 w-4" />
+                          </button>
+                        );
+                      })()}
+                    </td>
                   </tr>
                 );
               })}
               {filtered.length === 0 && (
                 <tr>
                   <td
-                    colSpan={7}
+                    colSpan={8}
                     className="px-4 py-10 text-center text-muted-foreground"
                   >
                     No se encontraron materiales con los filtros aplicados.

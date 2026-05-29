@@ -1,0 +1,200 @@
+import { useState } from "react";
+import { X, Gem, AlertTriangle } from "lucide-react";
+import { cn } from "@/shared/utils/cn";
+import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useBuilderInventory } from "../context/BuilderInventoryContext";
+import { EquipmentSlotType, Rune } from "@/shared/types";
+import { RuleViolation } from "@/features/runes/utils/build.validation";
+
+interface RuneAssignmentPanelProps {
+  slot: EquipmentSlotType;
+  onClose: () => void;
+}
+
+export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps) {
+  const {
+    mainHand,
+    offHand,
+    armor,
+    trinket1,
+    trinket2,
+    assignWeaponRune,
+    removeWeaponRune,
+    assignArmorRune,
+    removeArmorRune,
+    assignTrinketRune,
+    removeTrinketRune,
+  } = useCharacterBuilder();
+  const { runes: availableRunes } = useBuilderInventory();
+  const [violation, setViolation] = useState<RuleViolation | null>(null);
+  const [assigningIndex, setAssigningIndex] = useState<number | null>(null);
+
+  // Determine current rune slots for this equipment slot
+  const isWeapon = slot === "mainHand" || slot === "offHand";
+  const isArmor = slot === "armor";
+  const isTrinket = slot === "trinket1" || slot === "trinket2";
+
+  const equippedItem = isWeapon
+    ? slot === "mainHand" ? mainHand : offHand
+    : isArmor
+      ? armor
+      : slot === "trinket1" ? trinket1 : trinket2;
+
+  if (!equippedItem) {
+    return (
+      <div className="w-full rounded-lg border border-border bg-card/50 p-3 text-center text-sm text-muted-foreground">
+        No item equipped in this slot.
+        <button onClick={onClose} className="ml-2 text-primary hover:underline text-xs">
+          Close
+        </button>
+      </div>
+    );
+  }
+
+  // Get rune slots array
+  const runeSlots: (Rune | null)[] = isWeapon
+    ? (equippedItem as { runes: (Rune | null)[] }).runes
+    : isArmor
+      ? (equippedItem as { runes: (Rune | null)[] }).runes
+      : [(equippedItem as { rune: Rune | null }).rune];
+
+  const itemName = isWeapon
+    ? (equippedItem as { weapon: { name: string } }).weapon.name
+    : isArmor
+      ? (equippedItem as { armor: { name: string } }).armor.name
+      : (equippedItem as { name: string }).name;
+
+  function handleAssignRune(rune: Rune, index: number) {
+    setViolation(null);
+    let result: RuleViolation | null = null;
+
+    if (isWeapon) {
+      result = assignWeaponRune(slot as "mainHand" | "offHand", index, rune);
+    } else if (isArmor) {
+      result = assignArmorRune(index, rune);
+    } else if (isTrinket) {
+      assignTrinketRune(slot as "trinket1" | "trinket2", rune);
+    }
+
+    if (result) {
+      setViolation(result);
+    } else {
+      setAssigningIndex(null);
+    }
+  }
+
+  function handleRemoveRune(index: number) {
+    setViolation(null);
+    if (isWeapon) removeWeaponRune(slot as "mainHand" | "offHand", index);
+    else if (isArmor) removeArmorRune(index);
+    else if (isTrinket) removeTrinketRune(slot as "trinket1" | "trinket2");
+  }
+
+  // Filter available runes by slot type
+  const filteredRunes = availableRunes.filter((r) => {
+    if (isWeapon) return r.slots.includes("W");
+    if (isArmor) return r.slots.includes("A");
+    return true; // trinkets accept any
+  });
+
+  return (
+    <div className="w-full max-w-[320px] rounded-lg border border-border bg-card/50 p-3 space-y-3 overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h3 className="text-xs font-semibold text-foreground">
+          Runes — {itemName}
+        </h3>
+        <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+
+      {/* Violation warning */}
+      {violation && (
+        <div className="flex items-start gap-2 rounded-md bg-destructive/10 border border-destructive/30 p-2">
+          <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
+          <div className="text-xs text-destructive">
+            <p className="font-medium">{violation.rule}</p>
+            <p className="text-destructive/80">Conflicting: {violation.offenders.join(", ")}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Rune slots */}
+      <div className="flex gap-2 flex-wrap">
+        {runeSlots.map((rune, i) => (
+          <div
+            key={i}
+            className={cn(
+              "w-16 h-16 rounded-md border flex flex-col items-center justify-center gap-0.5 relative group",
+              rune
+                ? "border-primary/50 bg-primary/5"
+                : "border-dashed border-border hover:border-primary/30 cursor-pointer"
+            )}
+            onClick={() => !rune && setAssigningIndex(i)}
+          >
+            {rune ? (
+              <>
+                <Gem className="h-3.5 w-3.5 text-primary" />
+                <span className="text-[8px] text-foreground text-center leading-tight px-0.5 truncate w-full">
+                  {rune.name}
+                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveRune(i);
+                  }}
+                  className="absolute -top-1 -right-1 rounded-full bg-destructive p-0.5 opacity-0 group-hover:opacity-100 transition-opacity"
+                >
+                  <X className="h-2.5 w-2.5 text-destructive-foreground" />
+                </button>
+              </>
+            ) : (
+              <>
+                <Gem className="h-3.5 w-3.5 text-muted-foreground/50" />
+                <span className="text-[8px] text-muted-foreground">Empty</span>
+              </>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Rune picker (when assigning) */}
+      {assigningIndex !== null && (
+        <div className="border-t border-border pt-2 space-y-1">
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">Select rune for slot {assigningIndex + 1}</span>
+            <button
+              onClick={() => setAssigningIndex(null)}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Cancel
+            </button>
+          </div>
+          <div className="max-h-[150px] overflow-y-auto space-y-1">
+            {filteredRunes.length === 0 && (
+              <p className="text-xs text-muted-foreground text-center py-2">
+                No runes in inventory. Add runes from the Runes page.
+              </p>
+            )}
+            {filteredRunes.map((rune) => (
+              <button
+                key={`${rune.name}-${rune.monsterName}`}
+                onClick={() => handleAssignRune(rune, assigningIndex)}
+                className="w-full text-left flex items-center gap-2 px-2 py-1.5 rounded hover:bg-accent transition-colors"
+              >
+                <Gem className="h-3 w-3 text-primary shrink-0" />
+                <div className="min-w-0 flex-1">
+                  <div className="text-xs font-medium text-foreground truncate">{rune.name}</div>
+                  <div className="text-[10px] text-muted-foreground truncate">
+                    {isWeapon ? rune.weaponEffect : rune.armorEffect}
+                  </div>
+                </div>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

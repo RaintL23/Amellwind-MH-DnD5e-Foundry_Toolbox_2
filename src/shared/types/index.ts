@@ -8,3 +8,4 @@ export * from "./weapon.types";
 export * from "./optionalfeature.types";
 export * from "./resource.types";
 export * from "./environment.types";
+export * from "./character.types";

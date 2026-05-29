@@ -1,7 +1,8 @@
 import { Weapon, PROPERTY_LABELS, DMG_TYPE_LABELS, DMG_TYPE_COLOR } from "@/shared/types";
 import { formatWeaponValue } from "../services/weapon.service";
 import { cn } from "@/shared/utils/cn";
-import { Swords, Weight, Coins } from "lucide-react";
+import { Swords, Weight, Coins, PlusCircle } from "lucide-react";
+import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 
 const DMG_TYPE_ACCENT: Record<string, string> = {
   S: "text-red-400",
@@ -21,6 +22,8 @@ interface WeaponCardProps {
 }
 
 export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
+  const { addWeapon, weapons } = useBuilderInventory();
+  const isInBuilder = weapons.some((w) => w.name === weapon.name);
   const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
   const accentText = DMG_TYPE_ACCENT[weapon.dmgType] ?? "text-primary";
   const iconBg = DMG_TYPE_ICON_BG[weapon.dmgType] ?? "bg-primary/10";
@@ -80,7 +83,7 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
         </div>
       )}
 
-      {/* Footer: peso + valor */}
+      {/* Footer: peso + valor + builder btn */}
       <div className="flex items-center gap-4 text-xs text-muted-foreground border-t border-border/50 pt-2.5 mt-2">
         <span className="flex items-center gap-1">
           <Weight className="h-3 w-3" />
@@ -93,6 +96,17 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
         {weapon.acBonus !== undefined && (
           <span className="ml-auto text-teal-400 font-medium">+{weapon.acBonus} AC</span>
         )}
+        <button
+          onClick={(e) => { e.stopPropagation(); addWeapon(weapon); }}
+          title={isInBuilder ? "Already in Builder" : "Add to Builder"}
+          className={cn(
+            "ml-auto p-0.5 rounded transition-colors",
+            isInBuilder ? "text-green-400 cursor-default" : "text-muted-foreground hover:text-primary"
+          )}
+          disabled={isInBuilder}
+        >
+          <PlusCircle className="h-4 w-4" />
+        </button>
       </div>
     </button>
   );
