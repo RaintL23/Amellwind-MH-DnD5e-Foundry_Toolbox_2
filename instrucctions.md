@@ -36,41 +36,73 @@ La app usa **React Router v6** con rutas declarativas montadas en `App.tsx`. El 
 ```text
 /                     → Redirect a /monsters
 /monsters             → Listado de Monstruos
-/runes                → Listado de Runas
+/runes                → Listado de Runas (materiales de monstruo)
+/weapons              → Armas de cazador (Hunter Weapons)
 /cooking              → Sistema de Cocina Artesana
-/combo                → Combo List (sistema de crafteo de objetos)
+/combo                → Combo List (crafteo de objetos)
+/items                → Catálogo de ítems (GTMH)
+/shops                → Tiendas y carrito de compra
+/resources            → Recursos de entorno (plantas, minerales, etc.)
+/environments         → Biomas y tablas de encuentro/recursos
+/builder              → Character Builder (ALPHA)
 *                     → Página 404 / Not Found
 ```
 
 ### Implementación en `App.tsx`
 
+La app envuelve las rutas con tres providers globales de estado:
+
+- **`CartProvider`** — carrito de compras (tiendas e ítems).
+- **`RuneBuildProvider`** — planificador de runas en el drawer lateral.
+- **`BuilderInventoryProvider`** — inventario de armas guardadas para el Character Builder.
+
 ```tsx
 <BrowserRouter>
-  <Routes>
-    <Route path="/" element={<MainLayout />}>
-      <Route index element={<Navigate to="/monsters" replace />} />
-      <Route path="monsters" element={<MonsterList />} />
-      <Route path="runes" element={<RuneList />} />
-      <Route path="cooking" element={<CookingPage />} />
-      <Route path="combo" element={<ComboPage />} />
-      <Route path="*" element={<NotFound />} />
-    </Route>
-  </Routes>
+  <CartProvider>
+    <RuneBuildProvider>
+      <BuilderInventoryProvider>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Navigate to="/monsters" replace />} />
+            <Route path="monsters" element={<MonsterList />} />
+            <Route path="runes" element={<RuneList />} />
+            <Route path="cooking" element={<CookingPage />} />
+            <Route path="combo" element={<ComboPage />} />
+            <Route path="items" element={<ItemList />} />
+            <Route path="shops" element={<ShopList />} />
+            <Route path="weapons" element={<WeaponList />} />
+            <Route path="resources" element={<ResourcePage />} />
+            <Route path="environments" element={<EnvironmentList />} />
+            <Route path="builder" element={<BuilderPage />} />
+            <Route path="*" element={<NotFound />} />
+          </Route>
+        </Routes>
+      </BuilderInventoryProvider>
+    </RuneBuildProvider>
+  </CartProvider>
 </BrowserRouter>
 ```
 
 ### Sidebar y navegación
 
-El componente `Sidebar` renderiza los links de navegación usando `<NavLink>` de React Router. Los links activos reciben un estilo visual diferenciado.
+El componente `Sidebar` renderiza los links con `<NavLink>`. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. El link **Builder** muestra un badge con el número de armas en el inventario del builder (`BuilderInventoryContext`).
 
-| Link en Sidebar | Ruta destino |
-| --------------- | ------------ |
-| Monsters        | `/monsters`  |
-| Runes           | `/runes`     |
-| Cooking         | `/cooking`   |
-| Combo List      | `/combo`     |
+| Link en Sidebar | Ruta destino   | Feature principal        |
+| --------------- | -------------- | ------------------------ |
+| Monsters        | `/monsters`    | `monsters`               |
+| Runes           | `/runes`       | `runes`                  |
+| Weapons         | `/weapons`     | `weapons`                |
+| Cooking         | `/cooking`     | `cooking`                |
+| Combo List      | `/combo`       | `combo`                  |
+| Items           | `/items`       | `shops` (catálogo)       |
+| Shops           | `/shops`       | `shops` (tiendas)        |
+| Resources       | `/resources`   | `resources`              |
+| Environments    | `/environments`| `environments`           |
+| Builder         | `/builder`     | `builder` (ALPHA)        |
 
-> Las rutas de Weapons, Armor y Encounters se agregarán en iteraciones futuras. Por ahora no se listan en el Sidebar.
+### Layout global (`MainLayout`)
+
+Además del `Sidebar` y el `<Outlet />` de rutas, el layout monta **`BuildDrawer`** de forma persistente: el planificador de runas está disponible en cualquier pantalla sin cambiar de ruta.
 
 ---
 
@@ -121,9 +153,11 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 | `mm_current`    | Datos actuales del Monster Manual (array de monstruos) |
 | `mm_previous`   | Snapshot anterior del Monster Manual (para rollback)   |
 | `mm_meta`       | Timestamp del último fetch, versión, etc.              |
-| `gtmh_current`  | Datos actuales de la Guía de Caza (armas, runas, etc.) |
+| `gtmh_current`  | Datos actuales de la Guía de Caza. Clave `data`: array de ítems (`item[]`). Clave `optfeatures`: array de optional features de armas. |
 | `gtmh_previous` | Snapshot anterior de la Guía de Caza                   |
 | `gtmh_meta`     | Timestamp del último fetch, versión, etc.              |
+
+Al sincronizar el JSON de GTMH, si el payload incluye `optionalfeature[]`, se guarda por separado bajo la clave `optfeatures` en `gtmh_current` (ver `sync.service.ts`).
 
 ### Objetivos del sistema
 
@@ -136,12 +170,26 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 
 ## Entidades de la Aplicación
 
-La jerarquía de clases es la siguiente:
+La jerarquía de actores y entidades de dominio es la siguiente:
 
 ```text
 Actor (clase base)
   ├── Monster (hereda de Actor)
   └── Player  (hereda de Actor)
+
+Entidades independientes (no heredan de Actor):
+  ├── Rune          — materiales de monstruo (MM)
+  ├── Weapon        — armas de cazador (GTMH, type HW)
+  ├── OptionalFeature — features de arma (GTMH optionalfeature[])
+  ├── MHItem        — ítems generales (GTMH)
+  ├── Resource      — recursos de campo (datos estáticos)
+  ├── Environment   — biomas y tablas de cacería (estático)
+  └── Shop          — tiendas (estático; entradas referencian ítems por nombre)
+
+Estado de UI (no persistido en IndexedDB):
+  ├── CartEntry     — carrito de compras
+  ├── EquippedWeapon / EquippedArmor / EquippedTrinket — Character Builder
+  └── CharacterStats / CombatCalculation — derivados del builder
 ```
 
 ---
@@ -442,7 +490,19 @@ const headerTable = tables.find((t) => !t.colLabels); // la tabla sin colLabels 
 - **slots** _(array)_ — Tipos de equipo donde se puede usar. Valores posibles: `"A"` (Armor), `"W"` (Weapon). Puede ser `["A"]`, `["W"]`, o `["A", "W"]`. Mapeado desde el string `"(A,W)"` del JSON.
 - **armorEffect** _(string | null)_ — Texto del efecto cuando se coloca en armadura. Presente solo si `slots` incluye `"A"`. El texto puede contener marcado de 5etools que debe parsearse.
 - **weaponEffect** _(string | null)_ — Texto del efecto cuando se coloca en un arma. Presente solo si `slots` incluye `"W"`. Ídem sobre el marcado.
-- **tags** - leer más abajo
+- **monsterCr** _(string)_ — CR del monstruo de origen (para referencia y filtros).
+- **tier** _(1 | 2 | 3 | 4)_ — Rareza del material derivada del CR del monstruo (no confundir con el Tier de monstruos en la tabla de Monsters):
+
+  | Tier | CR del monstruo |
+  | ---- | --------------- |
+  | 1    | 1 – 4           |
+  | 2    | 5 – 10          |
+  | 3    | 11 – 16         |
+  | 4    | 17+             |
+
+- **tags** _(string[])_ — Tags combinados de `armorEffect` y `weaponEffect` (ver taxonomía más abajo).
+- **weaponTags** _(string[])_ — Tags extraídos solo del `weaponEffect` (validación de reglas de arma).
+- **armorTags** _(string[])_ — Tags extraídos solo del `armorEffect` (validación de reglas de armadura).
 
 #### Lógica del mapper (pseudocódigo)
 
@@ -646,19 +706,23 @@ A diferencia de los monstruos, los personajes tienen features como items separad
 
 ## Secciones Pendientes de Concepción
 
-Las siguientes secciones del manual de Amellwind todavía no han sido definidas en este documento:
+Estado de cobertura del manual / features de la app:
 
 - [x] **Actor** — Clase base definida.
 - [x] **Monster** — Hereda de Actor, definida con campos de MH (loot, CR, grupos).
 - [x] **Player** — Hereda de Actor, definida con campos de Foundry VTT dnd5e.
-- [x] **Rune (materiales de monstruo)** — Entidad definida: estructura, mapper desde el fluff del MM, taxonomía de tags, pantalla de listado y detalle. Incluye efectos de armadura y arma por material.
-- [x] **Cooking System** — Sistema de cocina artesana con 4 rangos de comidas, reglas de preparación, Daily Skills y tiradas aleatorias. Datos estáticos embebidos en la app.
-- [x] **Combo List** — Sistema de crafteo de objetos usando herramientas. Tablas organizadas por herramienta con búsqueda global y filtro local. Datos estáticos embebidos en la app.
-- [ ] **Armas** — Tipos, categorías, propiedades especiales de Monster Hunter. Datos en `GTMH_JSON-DATA.json`. _(Segunda iteración)_
-- [ ] **Runas aplicadas a armas** — Cómo se insertan los materiales en un arma concreta y qué efecto activan. Depende de que **Armas** esté definido. _(Segunda iteración)_
-- [ ] **Armaduras** — Sets de armadura y sus bonificaciones. Datos en `GTMH_JSON-DATA.json`. _(Segunda iteración)_
-- [ ] **Vista de Combate / Encuentros** — Herramienta para gestionar un encuentro activo entre el DM y los jugadores.
-- [ ] **Crafteo de equipo** — Sistema de creación de armas y armaduras con las partes de monstruo obtenidas.
+- [x] **Rune (materiales de monstruo)** — Entidad, mapper, tags, listado, detalle, tier por CR, reglas de crafteo (`RulesPanel`), planificador (`BuildDrawer`).
+- [x] **Cooking System** — Datos estáticos, pantalla con pestañas y tiradas.
+- [x] **Combo List** — Datos estáticos, pestañas por herramienta, búsqueda global.
+- [x] **Armas (Hunter Weapons)** — Listado desde GTMH (`type: "HW"`), tabla de rarezas, optional features, diálogo de detalle.
+- [x] **Ítems y tiendas** — Catálogo GTMH + tiendas estáticas + carrito compartido.
+- [x] **Recursos de entorno** — Tablas estáticas por categoría (Bonepiles, Fish, etc.).
+- [x] **Entornos / biomas** — Datos estáticos con DCs, clima, encuentros y tablas de recursos por nivel.
+- [x] **Planificador de runas** — Drawer global con slots por rareza de equipo, validación de reglas MH.
+- [~] **Character Builder** — ALPHA: paper doll, stats, cálculo de daño, runas en equipo; armaduras placeholder.
+- [ ] **Armaduras (datos reales)** — Sets completos desde GTMH; hoy el builder usa `armor.placeholder.ts`.
+- [ ] **Vista de Combate / Encuentros activos** — Gestión de combate en tiempo real (distinto de tablas de entorno).
+- [ ] **Persistencia de personajes** — Guardar/cargar builds en localStorage o export JSON.
 
 ---
 
@@ -679,15 +743,28 @@ Pantalla (UI)
 
 ### Mappers requeridos
 
-| Mapper          | Entrada (5etools)                                            | Salida (entidad app)        |
-| --------------- | ------------------------------------------------------------ | --------------------------- |
-| `MonsterMapper` | objeto crudo del store `mm_current`                          | `Monster`                   |
-| `RuneMapper`    | objeto crudo del store `mm_current` (fluff de cada monstruo) | `Rune[]` (uno por material) |
-| `WeaponMapper`  | objeto crudo del store `gtmh_current`                        | `Weapon`                    |
+| Mapper                    | Entrada (5etools / fuente)                                   | Salida (entidad app)           |
+| ------------------------- | ------------------------------------------------------------ | ------------------------------ |
+| `MonsterMapper`           | objeto crudo del store `mm_current`                          | `Monster`                      |
+| `RuneMapper`              | fluff/inset de cada monstruo en `mm_current`                 | `Rune[]` (uno por material)    |
+| `WeaponMapper`            | ítem con `type: "HW"` en `gtmh_current`                      | `Weapon`                       |
+| `OptionalFeatureMapper`   | entrada de `optionalfeature[]` en GTMH                       | `OptionalFeature`              |
+| _(inline en item.service)_ | ítems GTMH sin filtrar por tipo                                | `MHItem`                       |
 
-> **Nota**: `RuneMapper` recibe un `Monster` crudo y devuelve un array de `Rune`, uno por cada material en la tabla de loot. Es llamado internamente por `MonsterMapper` o por `RuneService` cuando necesita todos los materiales del catálogo.
+> **Nota**: `RuneMapper` itera todos los monstruos y emite un `Rune` por fila de la tabla de loot. `RuneService.getAllRunes()` cachea el resultado en memoria hasta `clearRuneCache()` (p. ej. tras `syncData()` en el bootstrap).
 
 Agregar un mapper nuevo cada vez que se incorpore una entidad al esquema.
+
+### Bootstrap de la aplicación (`main.tsx`)
+
+Al arrancar:
+
+1. Se muestra `LoadingScreen` con mensaje de sincronización.
+2. Se ejecuta `syncData()` (fetch condicional si el caché tiene más de 24 h).
+3. Se invalidan cachés en memoria de monstruos y runas (`clearMonsterCache`, `clearRuneCache`).
+4. Se monta `<App />` con el router y providers.
+
+Si el sync falla, la app sigue con datos ya presentes en IndexedDB.
 
 ### Responsabilidades del Mapper
 
@@ -812,7 +889,10 @@ Cada columna debe ser filtrable de forma independiente:
 - **Monster**: selector de valores únicos presentes en los datos (lista de nombres de monstruos).
 - **Slots**: selector múltiple con opciones `Armor` y `Weapon`.
 - **Tags**: selector múltiple con todos los valores únicos de tags presentes en los datos, agrupados por categoría (`class:`, `weapon-type:`, `mechanic:`).
+- **Tier**: selector por tier de material (1–4), alineado con el CR del monstruo de origen.
 - **Obtención**: selector con opciones `Carveable`, `Capturable`, `Ambas` (para filtrar si `carveChance` o `captureChance` no es `"-"`).
+
+La pantalla incluye **paginación** configurable, panel colapsable **`RulesPanel`** con las reglas oficiales de materiales en armadura, arma y trinkets, e integración con **`RuneBuildContext`**: las runas ya colocadas en el planificador se resaltan en la tabla y se pueden añadir desde el detalle.
 
 #### Detalle de la Runa (dialog)
 
@@ -1027,8 +1107,273 @@ La búsqueda global filtra simultáneamente por nombre del objeto, ingredientes 
 
 ---
 
+### Hunter Weapons (Armas)
+
+**Ruta**: `/weapons`
+**Fuente de datos**: store `gtmh_current` → ítems con `type === "HW"` → `WeaponMapper`.
+
+Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a **Legendary** mediante una tabla de rarezas embebida en un bloque `inset` dentro de `entries[]`.
+
+#### Entidad `Weapon`
+
+| Campo              | Descripción |
+| ------------------ | ----------- |
+| `name`, `source`, `page` | Identificación 5etools |
+| `dmg1`, `dmg2`     | Notación de daño (ej. `1d8`, `2d6` en modo versatile) |
+| `dmgType`          | `S` / `P` / `B` (Slashing, Piercing, Bludgeoning) |
+| `properties`       | Códigos MH/D&D: `H`, `2H`, `F`, `L`, `R`, `V`, `A`, `S`, `T`, `MHL` |
+| `weight`, `valueCp`| Peso y valor en copper pieces |
+| `acBonus`, `range`, `isFocus` | Campos opcionales según el arma |
+| `description`      | Texto superior parseado sin marcado 5etools |
+| `rarityRows`       | Filas de la tabla inset: rareza, slots de runa, columnas dinámicas (stats, features, ammo, phials, etc.) |
+| `baseFeatureNames` | Nombres de `{@optfeature ...}` en la descripción (features que aplican a todas las rarezas) |
+
+`FEATURE_COL_KEYS` identifica columnas de tipo feature: `features`, `single features`, `splint features`, `notes`, `ammo`, `coatings`, `phials`, `available`.
+
+#### Entidad `OptionalFeature`
+
+Features opcionales de armas (Melody, Phials, etc.) almacenadas en `gtmh_current` / clave `optfeatures`:
+
+- `name`, `source`, `page`, `featureType[]`
+- `weaponName` — arma base parseada del prerequisite
+- `prerequisiteRarity` — rareza mínima si aplica
+- `paragraphs[]` — texto listo para UI
+
+`optionalfeature.service.ts` expone un `Map` por nombre (lowercase) para resolver features en el diálogo de arma.
+
+#### Pantalla (`WeaponList`)
+
+- Grid de **`WeaponCard`** con color por tipo de daño.
+- Filtros: búsqueda por nombre, tipo de daño, propiedad.
+- **`WeaponDialog`**: carousel de rarezas, stats por tier, lista de features con tooltips/resolución de optional features.
+
+#### Service (`weapon.service.ts`)
+
+| Función           | Descripción |
+| ----------------- | ----------- |
+| `getAllWeapons()` | Filtra `HW`, mapea y cachea en memoria |
+| `clearWeaponCache()` | Invalida caché tras sync |
+
+---
+
+### Ítems y Tiendas
+
+**Rutas**: `/items` (catálogo), `/shops` (tiendas)
+**Fuentes**: ítems desde `gtmh_current` (GTMH); tiendas desde `shops.data.ts` (estático).
+
+#### Entidad `MHItem`
+
+Ítems generales del manual (pociones, munición, phials, coatings, gear, etc.):
+
+- `name`, `source`, `type`, `typeLabel` (mapeo de códigos: `HW`, `MHPSA`, `MHCB`, `P`, `G`, …)
+- `rarity`, `valueCp`, `weight`, `page`, `entries[]`
+
+#### Entidad `Shop` / `ShopEntry`
+
+Tiendas definidas estáticamente con secciones, entradas (nombre, costo, peso, categoría, `craftOnly`, `extra`).
+
+#### Contexto `CartContext`
+
+Estado global del carrito (`CartEntry[]`): nombre, costo, peso, cantidad, tienda de origen. Compartido entre **ItemList** y **ShopList**.
+
+#### Pantallas
+
+- **`ItemList`**: tabla filtrable de todos los ítems GTMH, panel lateral de detalle, añadir al carrito.
+- **`ShopList`**: pestañas por tienda, búsqueda global, tooltips con descripción cruzada desde el catálogo de ítems, añadir al carrito.
+- **`CartDrawer`**: drawer del carrito accesible desde ambas pantallas.
+
+#### Service (`item.service.ts`)
+
+| Función              | Descripción |
+| -------------------- | ----------- |
+| `getAllItems()`      | Mapea todo el array GTMH a `MHItem[]` |
+| `formatValueGp()`    | Formatea `valueCp` a gp legible |
+
+---
+
+### Recursos de entorno (Resources)
+
+**Ruta**: `/resources`
+**Fuente de datos**: `resource.data.ts` (estático).
+
+Recursos recolectables en cacería (plantas, hongos, minerales, peces, insectos, bonepiles).
+
+#### Entidad `Resource`
+
+- `name`, `category` (`Bonepiles` | `Fish` | `Insects` | `Minerals` | `Mushrooms` | `Plants`)
+- `rarity` (Common → Legendary)
+- `details`, `sellValue`, `isCraftingMaterial`
+
+#### Pantalla (`ResourcePage`)
+
+- Pestañas por categoría con iconos.
+- Búsqueda global que agrupa resultados por categoría.
+- Filtro por rareza.
+- Diálogo de detalle con badges de rareza y material de crafteo.
+
+#### Service (`resource.service.ts`)
+
+| Función                 | Descripción |
+| ----------------------- | ----------- |
+| `getAllResourceTables()`| Tablas por categoría con footnotes |
+| `searchResources(query)`| Búsqueda cross-categoría |
+
+---
+
+### Entornos (Environments)
+
+**Ruta**: `/environments`
+**Fuente de datos**: `environment.data.ts` (estático).
+
+Biomas del sistema de cacería con reglas de exploración, clima y tablas por nivel de party.
+
+#### Entidad `Environment`
+
+| Campo | Descripción |
+| ----- | ----------- |
+| `name`, `biome` | Identificación y tipo |
+| `navigationDC`, `encounterDC`, `investigationDC` | DCs de exploración |
+| `totalResources` | Recursos disponibles en el bioma |
+| `commonWeather` | Clima habitual |
+| `specialRules[]` | Reglas especiales (`name` + `description`) |
+| `weatherTable[]` | Tabla opcional de clima (roll + resultado) |
+| `levelTiers[]` | Por rango de nivel: monstruos comunes, tabla de recursos (`ResourceColumn` + `ResourceRow`), tabla de encuentros (`EncounterRow`) |
+
+`ENVIRONMENT_COLORS` asigna paleta visual por nombre de entorno (Ancestral Steppes, Jungle, Volcano, etc.).
+
+#### Pantalla
+
+- **`EnvironmentList`**: tarjetas/grid filtrable por búsqueda.
+- **`EnvironmentDetailDialog`**: DCs, reglas, clima, tablas por tier de nivel.
+
+---
+
+### Planificador de runas (`BuildDrawer`)
+
+**Ubicación**: montado en `MainLayout`, visible en todas las rutas.
+**Estado**: `RuneBuildContext` (provider en `App.tsx`).
+
+Permite simular un set de equipo con materiales de monstruo **sin** depender del Character Builder.
+
+#### Slots y rareza de equipo
+
+| Slot      | Runas según rareza del equipo |
+| --------- | ----------------------------- |
+| Weapon    | 1–5 slots (Common → Legendary) |
+| Armor     | 1–5 slots |
+| Trinket 1 | 1 runa (material de arma o armadura) |
+| Trinket 2 | 1 runa |
+
+`RARITY_SLOTS`: common=1, uncommon=2, rare=3, very rare=4, legendary=5.
+
+#### Validación (`build.validation.ts`)
+
+Grupos de tags **mutuamente excluyentes** al colocar materiales:
+
+- **Armadura**: resistencia/inmunidad elemental, bonus AC, efectos de runa-charges.
+- **Arma**: críticos en 20, daño extra/on-hit, runa-charges.
+
+`wouldViolateRule()` se usa antes de asignar una runa; el drawer muestra alertas con los materiales en conflicto.
+
+#### UI
+
+Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efectos parseados, botón limpiar build. Desde **RuneList** / **RuneDetailDialog** se pueden añadir runas al planificador.
+
+---
+
+### Character Builder (ALPHA)
+
+**Ruta**: `/builder`
+**Estado**: `CharacterBuilderContext` (local a la página) + `BuilderInventoryProvider` (global).
+
+Herramienta experimental para equipar armas/armadura/runas y estimar **daño por turno (DPT)**. Marcada como work in progress en la UI.
+
+#### Modelo `Character` (`builder/models/Character.ts`)
+
+- Nivel 1–20, ability scores, proficiency bonus calculado.
+- Modificadores derivados, AC base, iniciativa, ataques por turno (con override manual).
+
+#### Equipo (`character.types.ts`)
+
+| Tipo | Campos clave |
+| ---- | ------------ |
+| `EquippedWeapon` | `weapon`, `rarity`, `runeSlots`, `runes[]`, `useVersatile` |
+| `EquippedArmor` | `armor`, `runes[]` |
+| `EquippedTrinket` | `name`, `rune` |
+| `ArmorItem` | placeholder hasta datos GTMH reales |
+
+Slots: `mainHand`, `offHand`, `armor`, `trinket1`, `trinket2`.
+
+Reglas de manos: armas `2H` bloquean off-hand; armas `V` (versatile) permiten modo a una o dos manos.
+
+#### Inventario del builder (`BuilderInventoryContext`)
+
+- Armas añadidas desde **WeaponList** / diálogo de arma (`addWeapon`).
+- Armaduras: lista inicial desde `armor.placeholder.ts`.
+- Badge en Sidebar = cantidad de armas en inventario.
+
+#### Componentes
+
+| Componente | Rol |
+| ---------- | --- |
+| `StatsPanel` | Nivel, abilities, AC, iniciativa, ataques/turno |
+| `PaperDoll` | Silueta con slots clicables, selector de rareza de arma |
+| `ItemPickerDialog` | Elegir arma/armadura del inventario |
+| `RuneAssignmentPanel` | Asignar/quitar runas por slot con validación |
+| `CombatResultsPanel` | Desglose DPT, bonus de ataque, críticos, fuentes de daño |
+
+#### Cálculo de combate (`combat.calculator.ts`)
+
+Produce `CombatCalculation` con `DamageBreakdown` por mano:
+
+- Parseo de dados del arma (`dmg1` / `dmg2` versatile).
+- Modificador de atributo (STR/DEX según propiedades).
+- Dados extra extraídos de `weaponEffect` de runas (`+NdM` en el texto).
+- `critRange` y `critRunes` (expansión permanente o Critical Draw condicional).
+- `totalDPT` = suma main + off × ataques por turno.
+
+Reutiliza `wouldViolateRule` al asignar runas en el builder.
+
+---
+
+## Estructura del proyecto
+
+Organización por **features** bajo `src/features/` y código compartido en `src/shared/`:
+
+```text
+src/
+├── App.tsx                 # Router + providers globales
+├── main.tsx                # Bootstrap + sync
+├── components/
+│   ├── layout/             # MainLayout, Sidebar, LoadingScreen, NotFound
+│   └── ui/                 # shadcn: button, dialog, input, badge, …
+├── features/
+│   ├── monsters/           # Listado, stat block, mapper, service, hooks
+│   ├── runes/              # Listado, detalle, BuildDrawer, RuneBuildContext, validación
+│   ├── weapons/            # Listado, cards, optional features, mappers
+│   ├── cooking/            # Datos estáticos + CookingPage
+│   ├── combo/              # Datos estáticos + ComboPage
+│   ├── shops/              # Items, Shops, CartContext, shops.data
+│   ├── resources/          # ResourcePage, resource.data
+│   ├── environments/       # EnvironmentList, environment.data
+│   └── builder/            # Character Builder ALPHA, combat calculator, contexts
+├── shared/
+│   ├── types/              # Entidades tipadas exportadas desde index
+│   ├── db/                 # IndexedDB (idb), sync, database
+│   ├── utils/              # cn, cr.utils, fivetools-parser
+│   └── constants/          # URLs API, nombres de stores
+└── hooks/                  # useTheme, etc.
+```
+
+Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estático), `context/`, `hooks/` según necesidad.
+
+---
+
 ## Notas de Implementación
 
-- Todas las consultas de datos se realizan contra los JSONs almacenados en **IndexedDB** (base de datos local del navegador). Las URLs de la API (ver `api.constants.ts`) solo se usan para la sincronización inicial o la actualización periódica de esos JSONs.
-- El stack tecnológico es **React + TypeScript + Vite** con **Tailwind CSS** y componentes **shadcn/ui**.
-- La aplicación ya cuenta con estructura de features para: `monsters`, `runes`, `cooking`, `combo` y `weapons` (en progreso).
+- Todas las consultas de datos dinámicos se realizan contra **IndexedDB** (MM + GTMH) o archivos **estáticos** embebidos (`*.data.ts`) según la feature.
+- Las URLs externas (ver `shared/constants/api.constants.ts`) solo intervienen en `syncData()` cuando el caché supera el TTL (24 h) o para lazy-load de `optionalfeature`.
+- Stack: **React 18 + TypeScript + Vite**, **Tailwind CSS**, **shadcn/ui** (Radix), **idb** para IndexedDB, **react-router-dom v6**, **lucide-react** para iconos.
+- Features implementadas: `monsters`, `runes`, `weapons`, `cooking`, `combo`, `shops`, `resources`, `environments`, `builder` (ALPHA).
+- Utilidades compartidas clave: `fivetools-parser.ts` (marcado `{@...}`), `cr.utils.ts` (tier/CR de monstruos), `ItemRefText` para referencias cruzadas en texto.
+- El **Character Builder** y las **armaduras reales desde GTMH** siguen siendo áreas activas de desarrollo; no asumir paridad con las reglas completas del manual hasta que salgan de ALPHA.
