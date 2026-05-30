@@ -9,9 +9,12 @@ export function BuilderPage() {
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="shrink-0 border-b border-border bg-card/50 px-6 py-4">
-          <h1 className="text-xl font-bold text-foreground">Character Builder</h1>
+          <h1 className="text-xl font-bold text-foreground">
+            Character Builder (ALPHA)
+          </h1>
           <p className="text-sm text-muted-foreground mt-0.5">
-            Equip weapons, armor & runes to test damage output per turn
+            Equip weapons, armor & runes to test damage output per turn (Work in
+            progress, a lot of bugs and missing features)
           </p>
         </div>
 
