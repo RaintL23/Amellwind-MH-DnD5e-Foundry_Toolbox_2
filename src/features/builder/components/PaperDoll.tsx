@@ -181,10 +181,12 @@ export function PaperDoll() {
 
       {/* Rune Assignment Panel (below paper doll) */}
       {selectedSlot && (
-        <RuneAssignmentPanel
-          slot={selectedSlot}
-          onClose={() => setSelectedSlot(null)}
-        />
+        <div className="w-full min-w-0 self-stretch">
+          <RuneAssignmentPanel
+            slot={selectedSlot}
+            onClose={() => setSelectedSlot(null)}
+          />
+        </div>
       )}
 
       {/* Item Picker Dialog */}

@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useCallback,
+  useMemo,
   ReactNode,
 } from "react";
 import { Rune } from "@/shared/types";
@@ -40,6 +41,7 @@ interface RuneBuildContextValue {
   clearBuild: () => void;
   totalRunes: number;
   isInBuild: (rune: Rune) => boolean;
+  allBuildRunes: Rune[];
 }
 
 const RuneBuildContext = createContext<RuneBuildContextValue | null>(null);
@@ -140,6 +142,20 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     (trinket1Rune ? 1 : 0) +
     (trinket2Rune ? 1 : 0);
 
+  const allBuildRunes: Rune[] = useMemo(() => {
+    const seen = new Set<string>();
+    const result: Rune[] = [];
+    for (const r of [...weaponRunes, ...armorRunes, trinket1Rune, trinket2Rune]) {
+      if (!r) continue;
+      const key = `${r.name}||${r.monsterName}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.push(r);
+      }
+    }
+    return result;
+  }, [weaponRunes, armorRunes, trinket1Rune, trinket2Rune]);
+
   return (
     <RuneBuildContext.Provider
       value={{
@@ -156,6 +172,7 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
         clearBuild,
         totalRunes,
         isInBuild,
+        allBuildRunes,
       }}
     >
       {children}

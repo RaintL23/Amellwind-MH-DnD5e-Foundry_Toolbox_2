@@ -17,7 +17,7 @@ export function BuilderPage() {
 
         {/* Main content grid */}
         <div className="flex-1 overflow-auto p-4 lg:p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 lg:gap-6 max-w-[960px] mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 lg:gap-6 max-w-[960px]">
             {/* Left column: Stats + Combat Results stacked */}
             <div className="space-y-4">
               <StatsPanel />

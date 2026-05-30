@@ -76,6 +76,17 @@ export interface DamageSource {
   average: number;
 }
 
+export interface CritRune {
+  name: string;
+  monsterName: string;
+  /** How many numbers the crit range is expanded (e.g. +1 → 19-20) */
+  rangeBonus: number;
+  /** True when the bonus only applies on the first round (Critical Draw) */
+  conditional: boolean;
+  /** Raw description of the crit effect */
+  description: string;
+}
+
 export interface DamageBreakdown {
   weaponDice: DiceRoll;
   abilityModifier: number;
@@ -87,6 +98,10 @@ export interface DamageBreakdown {
   totalPerTurn: number;
   diceExpression: string;
   sources: DamageSource[];
+  /** Minimum d20 roll needed to crit (permanent effects only, default 20) */
+  critRange: number;
+  /** Runes that affect the critical hit range or add crit effects */
+  critRunes: CritRune[];
 }
 
 export interface CombatCalculation {

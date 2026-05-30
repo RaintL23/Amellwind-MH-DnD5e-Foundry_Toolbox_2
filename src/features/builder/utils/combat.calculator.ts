@@ -1,4 +1,4 @@
-import { DiceRoll, DamageBreakdown, DamageSource, CombatCalculation, EquippedWeapon } from "@/shared/types";
+import { DiceRoll, DamageBreakdown, DamageSource, CombatCalculation, EquippedWeapon, CritRune } from "@/shared/types";
 import { Character } from "../models/Character";
 
 /**
@@ -13,6 +13,53 @@ export function parseDiceNotation(notation: string): DiceRoll {
   const sides = parseInt(match[2], 10);
   const average = count * ((sides + 1) / 2);
   return { count, sides, average, notation };
+}
+
+/**
+ * Extracts crit-range information from a rune's weapon effect text.
+ * Returns null if the effect doesn't affect critical hit range.
+ *
+ * Patterns handled:
+ *   - "critical hit range is increased by N"  → permanent +N expansion
+ *   - "critical hit on a roll of N or higher" → conditional (Critical Draw family)
+ */
+function extractCritInfo(
+  weaponEffect: string,
+  runeName: string,
+  monsterName: string,
+): CritRune | null {
+  // Permanent range expansion: "critical hit range is increased by N"
+  const permanentMatch = weaponEffect.match(
+    /critical hit range is increased by (\d+)/i,
+  );
+  if (permanentMatch) {
+    const bonus = parseInt(permanentMatch[1], 10);
+    return {
+      name: runeName,
+      monsterName,
+      rangeBonus: bonus,
+      conditional: false,
+      description: permanentMatch[0],
+    };
+  }
+
+  // Conditional range: "critical hit on a roll of N or higher" (Critical Draw)
+  const conditionalMatch = weaponEffect.match(
+    /critical hit on a roll of (\d+) or higher/i,
+  );
+  if (conditionalMatch) {
+    const minRoll = parseInt(conditionalMatch[1], 10);
+    const bonus = 20 - minRoll; // e.g. 17 → +3
+    return {
+      name: runeName,
+      monsterName,
+      rangeBonus: bonus,
+      conditional: true,
+      description: conditionalMatch[0],
+    };
+  }
+
+  return null;
 }
 
 /**
@@ -75,6 +122,8 @@ function calculateWeaponDamage(
 
   // Collect rune damage dice with source tracking
   const runeDice: DiceRoll[] = [];
+  const critRunes: CritRune[] = [];
+
   for (const rune of equipped.runes) {
     if (rune) {
       const dice = extractRuneDamageDice(rune.weaponEffect);
@@ -88,8 +137,19 @@ function calculateWeaponDamage(
           average: d.average,
         });
       }
+
+      const crit = rune.weaponEffect
+        ? extractCritInfo(rune.weaponEffect, rune.name, rune.monsterName)
+        : null;
+      if (crit) critRunes.push(crit);
     }
   }
+
+  // Sum permanent crit range bonuses (conditional ones don't change base critRange)
+  const permanentCritBonus = critRunes
+    .filter((c) => !c.conditional)
+    .reduce((sum, c) => sum + c.rangeBonus, 0);
+  const critRange = Math.max(1, 20 - permanentCritBonus);
 
   const runeAverage = runeDice.reduce((sum, d) => sum + d.average, 0);
   const totalPerHit = weaponDice.average + abilityModifier + runeAverage;
@@ -119,6 +179,8 @@ function calculateWeaponDamage(
     totalPerTurn,
     diceExpression,
     sources,
+    critRange,
+    critRunes,
   };
 }
 
