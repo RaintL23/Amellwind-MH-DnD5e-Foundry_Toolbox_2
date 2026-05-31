@@ -24,13 +24,23 @@ export function formatArmorSlotDetail(armor: ArmorItem): string {
 }
 
 /**
- * Placeholder armor data until real armor indexing is implemented.
- * Based on D&D 5e standard armor with MH-style rarity tiers.
+ * Base armors available at the smithy (AGMH PHB table).
+ * No +1/+3 variants — rarity upgrades come from crafting, not the catalog.
  */
-export const PLACEHOLDER_ARMORS: ArmorItem[] = [
+export const BASE_ARMORS: ArmorItem[] = [
   // Light Armor
   {
-    name: "Leather Armor",
+    name: "Padded",
+    category: "light",
+    baseAC: 11,
+    maxDexBonus: null,
+    rarity: "Common",
+    runeSlots: 1,
+    stealthDisadvantage: true,
+    weight: 8,
+  },
+  {
+    name: "Leather",
     category: "light",
     baseAC: 11,
     maxDexBonus: null,
@@ -44,23 +54,23 @@ export const PLACEHOLDER_ARMORS: ArmorItem[] = [
     category: "light",
     baseAC: 12,
     maxDexBonus: null,
-    rarity: "Uncommon",
-    runeSlots: 2,
+    rarity: "Common",
+    runeSlots: 1,
     stealthDisadvantage: false,
     weight: 13,
   },
+
+  // Medium Armor
   {
-    name: "Kulu Hide",
-    category: "light",
+    name: "Hide",
+    category: "medium",
     baseAC: 12,
-    maxDexBonus: null,
-    rarity: "Rare",
-    runeSlots: 3,
+    maxDexBonus: 2,
+    rarity: "Common",
+    runeSlots: 1,
     stealthDisadvantage: false,
     weight: 12,
   },
-
-  // Medium Armor
   {
     name: "Chain Shirt",
     category: "medium",
@@ -76,33 +86,43 @@ export const PLACEHOLDER_ARMORS: ArmorItem[] = [
     category: "medium",
     baseAC: 14,
     maxDexBonus: 2,
-    rarity: "Uncommon",
-    runeSlots: 2,
+    rarity: "Common",
+    runeSlots: 1,
     stealthDisadvantage: true,
     weight: 45,
   },
   {
-    name: "Rathalos Mail",
+    name: "Breastplate",
     category: "medium",
-    baseAC: 15,
+    baseAC: 14,
     maxDexBonus: 2,
-    rarity: "Rare",
-    runeSlots: 3,
+    rarity: "Common",
+    runeSlots: 1,
     stealthDisadvantage: false,
-    weight: 40,
+    weight: 20,
   },
   {
-    name: "Nergigante Mail",
+    name: "Half Plate",
     category: "medium",
     baseAC: 15,
     maxDexBonus: 2,
-    rarity: "Very Rare",
-    runeSlots: 4,
-    stealthDisadvantage: false,
-    weight: 38,
+    rarity: "Common",
+    runeSlots: 1,
+    stealthDisadvantage: true,
+    weight: 40,
   },
 
   // Heavy Armor
+  {
+    name: "Ring Mail",
+    category: "heavy",
+    baseAC: 14,
+    maxDexBonus: 0,
+    rarity: "Common",
+    runeSlots: 1,
+    stealthDisadvantage: true,
+    weight: 40,
+  },
   {
     name: "Chain Mail",
     category: "heavy",
@@ -114,43 +134,26 @@ export const PLACEHOLDER_ARMORS: ArmorItem[] = [
     weight: 55,
   },
   {
-    name: "Splint Armor",
+    name: "Splint Mail",
     category: "heavy",
     baseAC: 17,
     maxDexBonus: 0,
-    rarity: "Uncommon",
-    runeSlots: 2,
+    rarity: "Common",
+    runeSlots: 1,
     stealthDisadvantage: true,
     weight: 60,
   },
   {
-    name: "Diablos Plate",
+    name: "Plate Mail",
     category: "heavy",
     baseAC: 18,
     maxDexBonus: 0,
-    rarity: "Rare",
-    runeSlots: 3,
+    rarity: "Common",
+    runeSlots: 1,
     stealthDisadvantage: true,
     weight: 65,
-  },
-  {
-    name: "Fatalis Armor",
-    category: "heavy",
-    baseAC: 18,
-    maxDexBonus: 0,
-    rarity: "Very Rare",
-    runeSlots: 4,
-    stealthDisadvantage: true,
-    weight: 65,
-  },
-  {
-    name: "Safi'jiiva Plate",
-    category: "heavy",
-    baseAC: 19,
-    maxDexBonus: 0,
-    rarity: "Legendary",
-    runeSlots: 5,
-    stealthDisadvantage: true,
-    weight: 70,
   },
 ];
+
+/** @deprecated Use BASE_ARMORS */
+export const PLACEHOLDER_ARMORS = BASE_ARMORS;

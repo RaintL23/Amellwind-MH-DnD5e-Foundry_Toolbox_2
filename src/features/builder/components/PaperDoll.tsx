@@ -11,8 +11,8 @@ import { EquipmentSlotType, RARITY_ORDER } from "@/shared/types";
 export function PaperDoll() {
   const {
     mainHand, offHand, armor, trinket1, trinket2,
-    isOffHandBlocked,
-    setWeaponRarity, setVersatileMode,
+    isOffHandBlocked, hasIntegratedShield, integratedShieldAcBonus,
+    setWeaponRarity, setArmorRarity, setVersatileMode,
     equipTrinket,
   } = useCharacterBuilder();
   const [pickerSlot, setPickerSlot] = useState<EquipmentSlotType | null>(null);
@@ -74,7 +74,7 @@ export function PaperDoll() {
                 armor
                   ? {
                       name: armor.armor.name,
-                      detail: formatArmorSlotDetail(armor.armor),
+                      detail: `${formatArmorSlotDetail(armor.armor)} • ${armor.rarity}`,
                     }
                   : null
               }
@@ -96,7 +96,22 @@ export function PaperDoll() {
 
           {/* Middle row: Off Hand (left) - empty - Main Hand (right) */}
           <div className="flex items-center justify-start">
-            {isOffHandBlocked ? (
+            {hasIntegratedShield ? (
+              <div
+                title="Integrated shield — cannot be changed separately"
+                className="relative w-20 h-20 rounded-lg border-2 border-teal-700/50 bg-teal-950/20 flex flex-col items-center justify-center gap-0.5 p-1"
+              >
+                <Lock className="absolute top-1 right-1 h-3 w-3 text-muted-foreground/80" />
+                <Shield className="h-4 w-4 text-teal-400" />
+                <span className="text-[9px] font-semibold text-foreground leading-tight text-center">
+                  Shield
+                </span>
+                <span className="text-[9px] text-teal-300">+{integratedShieldAcBonus} AC</span>
+                <span className="text-[8px] text-muted-foreground/70 text-center leading-tight">
+                  (included)
+                </span>
+              </div>
+            ) : isOffHandBlocked ? (
               <div className="w-20 h-20 rounded-lg border-2 border-dashed border-border/50 flex flex-col items-center justify-center gap-1 opacity-50">
                 <Lock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-[9px] text-muted-foreground text-center">Blocked</span>
@@ -132,7 +147,7 @@ export function PaperDoll() {
         </div>
       </div>
 
-      {/* Weapon controls (rarity + versatile) */}
+      {/* Equipment controls (rarity + versatile grip) */}
       {selectedSlot && (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
         (() => {
           const equipped = selectedSlot === "mainHand" ? mainHand : offHand;
@@ -140,7 +155,6 @@ export function PaperDoll() {
           const isVersatile = equipped.weapon.properties.includes("V");
           return (
             <div className="w-full rounded-md border border-border bg-background/50 p-3 space-y-2">
-              {/* Rarity selector */}
               <div className="space-y-1">
                 <span className="text-[10px] text-muted-foreground font-medium uppercase">Rarity</span>
                 <div className="flex gap-1 flex-wrap">
@@ -160,7 +174,6 @@ export function PaperDoll() {
                   ))}
                 </div>
               </div>
-              {/* Versatile toggle */}
               {isVersatile && (
                 <div className="flex items-center gap-2">
                   <span className="text-[10px] text-muted-foreground font-medium uppercase">Grip</span>
@@ -193,8 +206,33 @@ export function PaperDoll() {
         })()
       )}
 
+      {selectedSlot === "armor" && armor && (
+        <div className="w-full rounded-md border border-border bg-background/50 p-3 space-y-2">
+          <div className="space-y-1">
+            <span className="text-[10px] text-muted-foreground font-medium uppercase">Rarity</span>
+            <div className="flex gap-1 flex-wrap">
+              {RARITY_ORDER.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => setArmorRarity(r)}
+                  className={cn(
+                    "px-2 py-0.5 text-xs rounded border transition-colors",
+                    armor.rarity === r
+                      ? "border-primary bg-primary/20 text-primary"
+                      : "border-border text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Rune Assignment Panel (below paper doll) */}
-      {selectedSlot && (
+      {selectedSlot &&
+        !(selectedSlot === "offHand" && hasIntegratedShield) && (
         <div className="w-full min-w-0 self-stretch">
           <RuneAssignmentPanel
             slot={selectedSlot}

@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Search, Sword, Shield, Shirt } from "lucide-react";
-import { CLOTHING_ARMOR, isClothingArmor } from "../data/armor.placeholder";
+import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
@@ -16,8 +16,8 @@ interface ItemPickerDialogProps {
 export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps) {
   const [search, setSearch] = useState("");
   const [selectedRarity, setSelectedRarity] = useState<string>("Common");
-  const { weapons, armors } = useBuilderInventory();
-  const { equipWeapon, unequipWeapon, equipArmor, unequipArmor, equipTrinket, unequipTrinket } =
+  const { weapons } = useBuilderInventory();
+  const { equipWeapon, unequipWeapon, equipArmor, unequipArmor, equipTrinket, unequipTrinket, hasIntegratedShield } =
     useCharacterBuilder();
 
   const isWeaponSlot = slot === "mainHand" || slot === "offHand";
@@ -33,10 +33,8 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
   const filteredArmors = useMemo(() => {
     if (!isArmorSlot) return [];
     const q = search.toLowerCase();
-    return armors.filter(
-      (a) => !isClothingArmor(a) && a.name.toLowerCase().includes(q),
-    );
-  }, [armors, search, isArmorSlot]);
+    return BASE_ARMORS.filter((a) => a.name.toLowerCase().includes(q));
+  }, [search, isArmorSlot]);
 
   const showClothOption = useMemo(() => {
     if (!isArmorSlot) return false;
@@ -69,8 +67,10 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
 
   function handleUnequip() {
     if (!slot) return;
-    if (isWeaponSlot) unequipWeapon(slot);
-    else if (isArmorSlot) unequipArmor();
+    if (isWeaponSlot) {
+      if (slot === "offHand" && hasIntegratedShield) return;
+      unequipWeapon(slot);
+    } else if (isArmorSlot) unequipArmor();
     else if (isTrinketSlot) unequipTrinket(slot);
     onClose();
   }

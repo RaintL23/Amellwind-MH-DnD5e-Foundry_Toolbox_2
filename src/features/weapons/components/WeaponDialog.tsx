@@ -18,6 +18,9 @@ import {
 } from "@/shared/types";
 import { formatWeaponValue } from "../services/weapon.service";
 import { getOptionalFeaturesMap } from "../services/optionalfeature.service";
+import {
+  getWeaponShieldAcBonusAtIndex,
+} from "../utils/shield.utils";
 import { cn } from "@/shared/utils/cn";
 import {
   Swords,
@@ -233,12 +236,20 @@ function RaritySlide({
       {/* Extra stats (AC Bonus, Spirit Gain, Chord Length, etc.) */}
       {otherStats.length > 0 && (
         <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-white/10 pt-2">
-          {otherStats.map(([label, value]) => (
-            <div key={label} className="text-sm">
-              <span className="text-muted-foreground">{label}:</span>{" "}
-              <span className={cn("font-semibold", style.text)}>{value}</span>
-            </div>
-          ))}
+          {otherStats.map(([label, value]) => {
+            const isAcBonus = label.toLowerCase() === "ac bonus";
+            return (
+              <div key={label} className="text-sm">
+                <span className="text-muted-foreground">{label}:</span>{" "}
+                <span className={cn("font-semibold", style.text)}>{value}</span>
+                {isAcBonus && (
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    While the integrated shield is equipped
+                  </p>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
 
@@ -543,11 +554,11 @@ export function WeaponDialog({
                 </span>
               </span>
             )}
-            {weapon.acBonus !== undefined && (
+            {weapon.includesShield && weapon.acBonus !== undefined && (
               <span className="flex items-center gap-1 text-teal-400">
                 <Shield className="h-3.5 w-3.5" />
                 <span className="font-semibold">
-                  +{weapon.acBonus} AC (base)
+                  +{getWeaponShieldAcBonusAtIndex(weapon, current)} AC (integrated shield)
                 </span>
               </span>
             )}
@@ -558,9 +569,34 @@ export function WeaponDialog({
 
           {/* Description */}
           {weapon.description && (
-            <p className="text-sm text-muted-foreground italic mb-5 leading-relaxed">
+            <p className="text-sm text-muted-foreground italic mb-3 leading-relaxed">
               {weapon.description}
             </p>
+          )}
+
+          {weapon.includesShield && (
+            <div className="flex items-start gap-2 rounded-md border border-teal-800/40 bg-teal-950/20 px-3 py-2.5 mb-4">
+              <Shield className="h-4 w-4 text-teal-400 shrink-0 mt-0.5" />
+              <div className="text-xs text-teal-100/90 leading-relaxed space-y-1">
+                <p className="font-medium text-teal-200">
+                  Includes an integrated shield (+{weapon.acBonus ?? 2} AC base).
+                </p>
+                <p>
+                  The shield occupies your off-hand and cannot be swapped separately. Extra AC
+                  from the rarity table applies while the shield is equipped.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {weapon.supplementaryNotes.length > 0 && (
+            <div className="space-y-2 mb-5">
+              {weapon.supplementaryNotes.map((note, i) => (
+                <p key={i} className="text-sm text-muted-foreground leading-relaxed">
+                  {note}
+                </p>
+              ))}
+            </div>
           )}
 
           {/* Rarity progression */}

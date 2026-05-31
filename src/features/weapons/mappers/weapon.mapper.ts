@@ -77,12 +77,19 @@ function parseRarityRows(colLabels: string[], rows: unknown[][]): WeaponRarityRo
   });
 }
 
-/** Extrae el primer string de descripción de entries[] (saltando objetos como insets). */
-function getDescription(entries: unknown[]): string {
-  for (const e of entries) {
-    if (typeof e === "string") return parseFiveToolsMarkup(e);
-  }
-  return "";
+/** Extrae descripción y notas adicionales de entries[] (saltando objetos como insets). */
+function parseDescriptionEntries(entries: unknown[]): {
+  description: string;
+  supplementaryNotes: string[];
+} {
+  const strings = entries
+    .filter((e): e is string => typeof e === "string")
+    .map((e) => parseFiveToolsMarkup(e));
+
+  return {
+    description: strings[0] ?? "",
+    supplementaryNotes: strings.slice(1),
+  };
 }
 
 /**
@@ -128,6 +135,8 @@ export function mapWeapon(raw: any): Weapon {
     : [];
   const baseFeatureNames = extractBaseFeatureNames(insetTextEntries);
 
+  const { description, supplementaryNotes } = parseDescriptionEntries(entries);
+
   return {
     name: String(raw.name ?? "Unknown"),
     source: String(raw.source ?? "AGMH"),
@@ -139,9 +148,11 @@ export function mapWeapon(raw: any): Weapon {
     weight: typeof raw.weight === "number" ? raw.weight : 0,
     valueCp: typeof raw.value === "number" ? raw.value : 0,
     acBonus: typeof raw.ac === "number" ? raw.ac : undefined,
+    includesShield: typeof raw.ac === "number",
     range: typeof raw.range === "string" ? raw.range : undefined,
     isFocus: raw.focus === true,
-    description: getDescription(entries),
+    description,
+    supplementaryNotes,
     rarityRows,
     baseFeatureNames,
   };

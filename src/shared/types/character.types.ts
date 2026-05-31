@@ -39,6 +39,8 @@ export interface EquippedWeapon {
 
 export interface EquippedArmor {
   armor: ArmorItem;
+  rarity: string;
+  runeSlots: number;
   runes: (Rune | null)[];
 }
 

@@ -6,7 +6,7 @@ import {
   ReactNode,
 } from "react";
 import { Weapon, ArmorItem } from "@/shared/types";
-import { PLACEHOLDER_ARMORS } from "../data/armor.placeholder";
+import { BASE_ARMORS } from "../data/armor.placeholder";
 
 interface BuilderInventoryContextValue {
   weapons: Weapon[];
@@ -23,7 +23,7 @@ const BuilderInventoryContext = createContext<BuilderInventoryContextValue | nul
 
 export function BuilderInventoryProvider({ children }: { children: ReactNode }) {
   const [weapons, setWeapons] = useState<Weapon[]>([]);
-  const [armors, setArmors] = useState<ArmorItem[]>(PLACEHOLDER_ARMORS);
+  const [armors, setArmors] = useState<ArmorItem[]>(BASE_ARMORS);
 
   const addWeapon = useCallback((weapon: Weapon) => {
     setWeapons((prev) => {
@@ -49,7 +49,7 @@ export function BuilderInventoryProvider({ children }: { children: ReactNode }) 
 
   const clearInventory = useCallback(() => {
     setWeapons([]);
-    setArmors(PLACEHOLDER_ARMORS);
+    setArmors(BASE_ARMORS);
   }, []);
 
   const totalItems = weapons.length;

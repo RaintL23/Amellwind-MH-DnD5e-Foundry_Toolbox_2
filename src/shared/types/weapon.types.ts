@@ -16,9 +16,13 @@ export interface Weapon {
   weight: number;
   valueCp: number;
   acBonus?: number;
+  /** Weapon includes an integrated shield (source `ac` field). */
+  includesShield?: boolean;
   range?: string;
   isFocus?: boolean;
   description: string;
+  /** Extra paragraphs from weapon entries (shield notes, AC rules, etc.). */
+  supplementaryNotes: string[];
   rarityRows: WeaponRarityRow[];
   /**
    * Names of features referenced via {@optfeature} in the weapon description.

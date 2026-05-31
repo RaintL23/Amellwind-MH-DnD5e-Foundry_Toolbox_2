@@ -93,8 +93,10 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
           <Coins className="h-3 w-3" />
           {formatWeaponValue(weapon.valueCp)}
         </span>
-        {weapon.acBonus !== undefined && (
-          <span className="ml-auto text-teal-400 font-medium">+{weapon.acBonus} AC</span>
+        {weapon.includesShield && weapon.acBonus !== undefined && (
+          <span className="ml-auto text-teal-400 font-medium">
+            +{weapon.acBonus} AC (shield)
+          </span>
         )}
         <button
           onClick={(e) => { e.stopPropagation(); addWeapon(weapon); }}

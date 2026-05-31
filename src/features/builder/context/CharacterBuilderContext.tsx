@@ -20,6 +20,10 @@ import {
 import { Character } from "../models/Character";
 import { calculateCombat } from "../utils/combat.calculator";
 import { wouldViolateRule, RuleViolation } from "@/features/runes/utils/build.validation";
+import {
+  getWeaponShieldAcBonus,
+  weaponIncludesShield,
+} from "@/features/weapons/utils/shield.utils";
 
 // ─── Context Value ───────────────────────────────────────────────────────────
 
@@ -42,6 +46,9 @@ interface CharacterBuilderContextValue {
   // Weapon handling
   isTwoHanded: boolean;
   isOffHandBlocked: boolean;
+  /** Main-hand weapon includes a shield and off-hand is occupied by it. */
+  hasIntegratedShield: boolean;
+  integratedShieldAcBonus: number;
 
   equipWeapon: (slot: "mainHand" | "offHand", weapon: Weapon, rarity: string) => void;
   unequipWeapon: (slot: "mainHand" | "offHand") => void;
@@ -49,6 +56,7 @@ interface CharacterBuilderContextValue {
   setVersatileMode: (slot: "mainHand" | "offHand", twoHanded: boolean) => void;
   equipArmor: (armor: ArmorItem) => void;
   unequipArmor: () => void;
+  setArmorRarity: (rarity: string) => void;
   equipTrinket: (slot: "trinket1" | "trinket2", name: string) => void;
   unequipTrinket: (slot: "trinket1" | "trinket2") => void;
 
@@ -97,6 +105,16 @@ function makeWeaponSlot(weapon: Weapon, rarity: string): EquippedWeapon {
   };
 }
 
+function makeArmorSlot(armor: ArmorItem, rarity: string): EquippedArmor {
+  const runeSlots = getRuneSlots(rarity);
+  return {
+    armor,
+    rarity,
+    runeSlots,
+    runes: new Array<Rune | null>(runeSlots).fill(null),
+  };
+}
+
 /** Checks if a weapon requires or is using both hands */
 function isWeaponTwoHanded(equipped: EquippedWeapon | null): boolean {
   if (!equipped) return false;
@@ -105,6 +123,11 @@ function isWeaponTwoHanded(equipped: EquippedWeapon | null): boolean {
   // Versatile used in two-handed mode
   if (equipped.weapon.properties.includes("V") && equipped.useVersatile) return true;
   return false;
+}
+
+function showsIntegratedShield(mainHand: EquippedWeapon | null): boolean {
+  if (!mainHand || !weaponIncludesShield(mainHand.weapon)) return false;
+  return !isWeaponTwoHanded(mainHand);
 }
 
 // ─── Provider ────────────────────────────────────────────────────────────────
@@ -138,18 +161,19 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       const equipped = makeWeaponSlot(weapon, rarity);
       if (slot === "mainHand") {
         setMainHand(equipped);
-        // If the weapon is two-handed, clear off-hand
-        if (isWeaponTwoHanded(equipped)) setOffHand(null);
-      } else {
+        if (isWeaponTwoHanded(equipped) || weaponIncludesShield(weapon)) {
+          setOffHand(null);
+        }
+      } else if (!showsIntegratedShield(mainHand)) {
         setOffHand(equipped);
       }
     },
-    [],
+    [mainHand],
   );
 
   const unequipWeapon = useCallback((slot: "mainHand" | "offHand") => {
+    if (slot === "offHand") return;
     if (slot === "mainHand") setMainHand(null);
-    else setOffHand(null);
   }, []);
 
   const setWeaponRarity = useCallback((slot: "mainHand" | "offHand", rarity: string) => {
@@ -177,13 +201,22 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   }, []);
 
   const equipArmor = useCallback((armorItem: ArmorItem) => {
-    setArmor({
-      armor: armorItem,
-      runes: new Array<Rune | null>(armorItem.runeSlots).fill(null),
-    });
+    setArmor(makeArmorSlot(armorItem, armorItem.rarity));
   }, []);
 
   const unequipArmor = useCallback(() => setArmor(null), []);
+
+  const setArmorRarity = useCallback((rarity: string) => {
+    setArmor((prev) => {
+      if (!prev) return prev;
+      const newSlots = getRuneSlots(rarity);
+      const newRunes = new Array<Rune | null>(newSlots).fill(null);
+      for (let i = 0; i < Math.min(prev.runes.length, newSlots); i++) {
+        newRunes[i] = prev.runes[i];
+      }
+      return { ...prev, rarity, runeSlots: newSlots, runes: newRunes };
+    });
+  }, []);
 
   const equipTrinket = useCallback((slot: "trinket1" | "trinket2", name: string) => {
     const trinket: EquippedTrinket = { name, rune: null };
@@ -231,7 +264,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     (index: number, rune: Rune): RuleViolation | null => {
       let violation: RuleViolation | null = null;
       setArmor((prev) => {
-        if (!prev || index >= prev.armor.runeSlots) return prev;
+        if (!prev || index >= prev.runeSlots) return prev;
         violation = wouldViolateRule(rune, prev.runes, "armor");
         if (violation) return prev;
         const newRunes = [...prev.runes];
@@ -266,16 +299,25 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
 
   const isTwoHanded = isWeaponTwoHanded(mainHand);
   const isOffHandBlocked = isTwoHanded;
+  const hasIntegratedShield = showsIntegratedShield(mainHand);
+  const integratedShieldAcBonus = useMemo(() => {
+    if (!hasIntegratedShield || !mainHand) return 0;
+    return getWeaponShieldAcBonus(mainHand.weapon, mainHand.rarity);
+  }, [hasIntegratedShield, mainHand]);
 
   const effectiveAttacksPerTurn = attacksPerTurnOverride ?? character.getAttacksPerTurn();
 
   const totalAC = useMemo(() => {
-    if (!armor) return 10 + character.getModifier("dex");
-    const { baseAC, maxDexBonus } = armor.armor;
     const dexMod = character.getModifier("dex");
-    const dexBonus = maxDexBonus === null ? dexMod : Math.min(dexMod, maxDexBonus);
-    return baseAC + dexBonus;
-  }, [armor, character]);
+    const armorAc = armor
+      ? (() => {
+          const { baseAC, maxDexBonus } = armor.armor;
+          const dexBonus = maxDexBonus === null ? dexMod : Math.min(dexMod, maxDexBonus);
+          return baseAC + dexBonus;
+        })()
+      : 10 + dexMod;
+    return armorAc + integratedShieldAcBonus;
+  }, [armor, character, integratedShieldAcBonus]);
 
   const combat = useMemo(
     () => calculateCombat(character, mainHand, offHand, effectiveAttacksPerTurn),
@@ -309,12 +351,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       trinket2,
       isTwoHanded,
       isOffHandBlocked,
+      hasIntegratedShield,
+      integratedShieldAcBonus,
       equipWeapon,
       unequipWeapon,
       setWeaponRarity,
       setVersatileMode,
       equipArmor,
       unequipArmor,
+      setArmorRarity,
       equipTrinket,
       unequipTrinket,
       assignWeaponRune,
@@ -331,9 +376,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       character, setLevel, setAbilityScore,
       attacksPerTurnOverride, effectiveAttacksPerTurn,
       mainHand, offHand, armor, trinket1, trinket2,
-      isTwoHanded, isOffHandBlocked,
+      isTwoHanded, isOffHandBlocked, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
-      equipArmor, unequipArmor, equipTrinket, unequipTrinket,
+      equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket,
       assignWeaponRune, removeWeaponRune, assignArmorRune, removeArmorRune,
       assignTrinketRune, removeTrinketRune,
       totalAC, combat, resetBuild,
