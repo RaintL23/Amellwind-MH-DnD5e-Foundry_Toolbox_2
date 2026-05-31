@@ -161,8 +161,8 @@ export function ComboPage() {
           <h1 className="text-2xl font-bold text-foreground">Combo List</h1>
         </div>
         <p className="text-sm text-muted-foreground">
-          Sistema de crafteo: combina ingredientes con las herramientas
-          adecuadas para crear objetos útiles.
+          Crafting system: combine ingredients with the appropriate tools to
+          create useful objects.
         </p>
       </div>
 
@@ -173,14 +173,14 @@ export function ComboPage() {
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="Buscar por nombre, ingrediente o categoría…"
+          placeholder="Search by name, ingredient or category..."
           className="w-full pl-9 pr-9 py-2 rounded-lg border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
         />
         {search && (
           <button
             onClick={() => setSearch("")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Limpiar búsqueda"
+            aria-label="Clear search"
           >
             <X className="h-4 w-4" />
           </button>
@@ -189,7 +189,11 @@ export function ComboPage() {
 
       {/* ── MODO BÚSQUEDA ── */}
       {isSearching ? (
-        <SearchResultsPanel results={searchResults} query={search} itemDescMap={itemDescMap} />
+        <SearchResultsPanel
+          results={searchResults}
+          query={search}
+          itemDescMap={itemDescMap}
+        />
       ) : (
         <>
           {/* Tabs */}
@@ -219,7 +223,13 @@ export function ComboPage() {
           {/* ── TOOL TABS ── */}
           {tables.map((table) => {
             if (activeTab !== table.id) return null;
-            return <ToolTab key={table.id} tableId={table.id} itemDescMap={itemDescMap} />;
+            return (
+              <ToolTab
+                key={table.id}
+                tableId={table.id}
+                itemDescMap={itemDescMap}
+              />
+            );
           })}
         </>
       )}
@@ -312,7 +322,13 @@ function RulesTab({
 
 // ── Tool Tab ──────────────────────────────────────────────────────────────
 
-function ToolTab({ tableId, itemDescMap }: { tableId: string; itemDescMap: Record<string, string> }) {
+function ToolTab({
+  tableId,
+  itemDescMap,
+}: {
+  tableId: string;
+  itemDescMap: Record<string, string>;
+}) {
   const [localSearch, setLocalSearch] = useState("");
   const table = getAllComboTables().find((t) => t.id === tableId);
   if (!table) return null;
@@ -390,12 +406,17 @@ function ToolTab({ tableId, itemDescMap }: { tableId: string; itemDescMap: Recor
                     colSpan={table.hasCategory ? 6 : 5}
                     className="px-4 py-8 text-center text-muted-foreground text-sm"
                   >
-                    No se encontraron recetas con ese filtro.
+                    No recipes found with that filter.
                   </td>
                 </tr>
               ) : (
                 filtered.map((row, i) => (
-                  <CraftRow key={i} row={row} hasCategory={table.hasCategory} itemDescMap={itemDescMap} />
+                  <CraftRow
+                    key={i}
+                    row={row}
+                    hasCategory={table.hasCategory}
+                    itemDescMap={itemDescMap}
+                  />
                 ))
               )}
             </tbody>
@@ -488,9 +509,9 @@ function SearchResultsPanel({
     return (
       <div className="flex flex-col items-center justify-center py-16 text-center">
         <Search className="h-10 w-10 text-muted-foreground/40 mb-3" />
-        <p className="text-muted-foreground font-medium">Sin resultados</p>
+        <p className="text-muted-foreground font-medium">No results</p>
         <p className="text-sm text-muted-foreground/60 mt-1">
-          No se encontraron recetas para &quot;{query}&quot;
+          No recipes found for &quot;{query}&quot;
         </p>
       </div>
     );
@@ -511,8 +532,8 @@ function SearchResultsPanel({
   return (
     <div className="space-y-5">
       <p className="text-sm text-muted-foreground">
-        {results.length} resultado{results.length !== 1 ? "s" : ""} encontrado
-        {results.length !== 1 ? "s" : ""} en {sortedGroups.length} herramienta
+        {results.length} result{results.length !== 1 ? "s" : ""} found in
+        {results.length !== 1 ? "s" : ""} in {sortedGroups.length} tool
         {sortedGroups.length !== 1 ? "s" : ""}.
       </p>
       {sortedGroups.map(([toolId, groupResults]) => {
@@ -532,7 +553,7 @@ function SearchResultsPanel({
                 {toolName}
               </span>
               <span className="text-xs text-muted-foreground ml-auto">
-                {groupResults.length} resultado
+                {groupResults.length} result
                 {groupResults.length !== 1 ? "s" : ""}
               </span>
             </div>
@@ -542,29 +563,34 @@ function SearchResultsPanel({
                   <tr className="bg-muted/30 border-b border-border">
                     {hasCategory && (
                       <th className="px-3 py-2.5 text-left font-semibold text-muted-foreground w-28 text-xs">
-                        Categoría
+                        Category
                       </th>
                     )}
                     <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground text-xs">
-                      Objeto
+                      Object
                     </th>
                     <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground text-xs">
-                      Ingrediente 1
+                      Ingredient 1
                     </th>
                     <th className="px-4 py-2.5 text-left font-semibold text-muted-foreground text-xs">
-                      Ingrediente 2
+                      Ingredient 2
                     </th>
                     <th className="px-3 py-2.5 text-center font-semibold text-muted-foreground w-14 text-xs">
-                      DC
+                      DC (Crafting Check)
                     </th>
                     <th className="px-3 py-2.5 text-center font-semibold text-muted-foreground w-16 text-xs">
-                      Cant.
+                      Quantity
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   {groupResults.map(({ row }, i) => (
-                    <CraftRow key={i} row={row} hasCategory={hasCategory} itemDescMap={itemDescMap} />
+                    <CraftRow
+                      key={i}
+                      row={row}
+                      hasCategory={hasCategory}
+                      itemDescMap={itemDescMap}
+                    />
                   ))}
                 </tbody>
               </table>

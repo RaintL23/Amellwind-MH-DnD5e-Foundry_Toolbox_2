@@ -1,6 +1,29 @@
 import { ArmorItem } from "@/shared/types";
 
 /**
+ * Clothing (AGMH): for classes without armor proficiency (e.g. casters, monk).
+ * No AC bonus; rarity still grants material/rune slots like normal armor.
+ */
+export const CLOTHING_ARMOR: ArmorItem = {
+  name: "Cloth",
+  category: "clothing",
+  baseAC: 10,
+  maxDexBonus: null,
+  rarity: "Common",
+  runeSlots: 1,
+  stealthDisadvantage: false,
+  weight: 0,
+};
+
+export function isClothingArmor(armor: ArmorItem): boolean {
+  return armor.category === "clothing";
+}
+
+export function formatArmorSlotDetail(armor: ArmorItem): string {
+  return isClothingArmor(armor) ? "10 + DEX" : `AC ${armor.baseAC}`;
+}
+
+/**
  * Placeholder armor data until real armor indexing is implemented.
  * Based on D&D 5e standard armor with MH-style rarity tiers.
  */

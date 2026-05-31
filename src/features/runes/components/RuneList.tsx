@@ -158,7 +158,7 @@ export function RuneList() {
         <div>
           <h1 className="text-2xl font-bold text-foreground">Runes</h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {filtered.length} de {runes.length} materiales
+            {filtered.length} of {runes.length} materials
           </p>
         </div>
         {totalRunes > 0 && (
@@ -355,7 +355,7 @@ export function RuneList() {
                     colSpan={7}
                     className="px-4 py-10 text-center text-muted-foreground"
                   >
-                    No se encontraron materiales con los filtros aplicados.
+                    No materials found with the applied filters.
                   </td>
                 </tr>
               )}
@@ -379,7 +379,6 @@ export function RuneList() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
       />
-
     </div>
   );
 }

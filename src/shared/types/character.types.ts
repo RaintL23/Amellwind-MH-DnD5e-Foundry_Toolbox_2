@@ -13,7 +13,7 @@ export type EquipmentSlotType =
 
 // ─── Armor (placeholder until real data source exists) ───────────────────────
 
-export type ArmorCategory = "light" | "medium" | "heavy";
+export type ArmorCategory = "light" | "medium" | "heavy" | "clothing";
 
 export interface ArmorItem {
   name: string;

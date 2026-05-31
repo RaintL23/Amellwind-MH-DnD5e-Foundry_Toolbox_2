@@ -68,7 +68,8 @@ export function WeaponList() {
           )}
         </div>
         <p className="text-sm text-muted-foreground">
-          Las 14 armas de Monster Hunter adaptadas al sistema D&D 5e. Cada una escala de Común a Legendaria.
+          14 weapons from Monster Hunter adapted to the D&D 5e system. Each
+          scales from Common to Legendary.
         </p>
       </div>
 
@@ -81,7 +82,7 @@ export function WeaponList() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar arma..."
+              placeholder="Search weapon..."
               className="pl-9 h-8 text-sm"
             />
           </div>
@@ -96,7 +97,7 @@ export function WeaponList() {
                   "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
                   dmgFilter === value
                     ? "border-primary bg-primary/20 text-primary"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground",
                 )}
               >
                 {value ? DMG_TYPE_LABELS[value] : label}
@@ -120,10 +121,14 @@ export function WeaponList() {
           {/* Clear filters */}
           {(search || dmgFilter || propFilter) && (
             <button
-              onClick={() => { setSearch(""); setDmgFilter(""); setPropFilter(""); }}
+              onClick={() => {
+                setSearch("");
+                setDmgFilter("");
+                setPropFilter("");
+              }}
               className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
             >
-              Limpiar
+              Clear
             </button>
           )}
         </div>
@@ -135,18 +140,22 @@ export function WeaponList() {
           <div className="flex items-center justify-center h-48">
             <div className="flex flex-col items-center gap-3 text-muted-foreground">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm">Cargando armas...</span>
+              <span className="text-sm">Loading weapons...</span>
             </div>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Swords className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No se encontraron armas con esos filtros.</p>
+            <p className="text-sm">No weapons found with those filters.</p>
             <button
-              onClick={() => { setSearch(""); setDmgFilter(""); setPropFilter(""); }}
+              onClick={() => {
+                setSearch("");
+                setDmgFilter("");
+                setPropFilter("");
+              }}
               className="text-xs underline underline-offset-2 hover:text-foreground"
             >
-              Limpiar filtros
+              Clear filters
             </button>
           </div>
         ) : (

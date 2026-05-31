@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
-import { Search, Sword, Shield } from "lucide-react";
+import { Search, Sword, Shield, Shirt } from "lucide-react";
+import { CLOTHING_ARMOR, isClothingArmor } from "../data/armor.placeholder";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
@@ -32,8 +33,19 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
   const filteredArmors = useMemo(() => {
     if (!isArmorSlot) return [];
     const q = search.toLowerCase();
-    return armors.filter((a) => a.name.toLowerCase().includes(q));
+    return armors.filter(
+      (a) => !isClothingArmor(a) && a.name.toLowerCase().includes(q),
+    );
   }, [armors, search, isArmorSlot]);
+
+  const showClothOption = useMemo(() => {
+    if (!isArmorSlot) return false;
+    const q = search.toLowerCase().trim();
+    if (!q) return true;
+    return ["cloth", "clothing", "robe", "tunic", "caster", "mage", "wizard", "monk"].some(
+      (term) => term.includes(q) || q.includes(term),
+    );
+  }, [isArmorSlot, search]);
 
   function handleSelectWeapon(weapon: Weapon) {
     if (!slot || !isWeaponSlot) return;
@@ -137,6 +149,32 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
                   </div>
                 </button>
               ))}
+
+            {isArmorSlot && showClothOption && (
+              <div className="space-y-1 pb-2 mb-2 border-b border-border">
+                <p className="text-[10px] uppercase tracking-wide text-muted-foreground font-medium px-1">
+                  Clothing
+                </p>
+                <button
+                  onClick={() => handleSelectArmor(CLOTHING_ARMOR)}
+                  className="w-full text-left flex items-start gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors"
+                >
+                  <Shirt className="h-4 w-4 text-violet-400 shrink-0 mt-0.5" />
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium text-foreground">Cloth</div>
+                    <div className="text-xs text-muted-foreground leading-relaxed">
+                      10 + DEX (no armor bonus) • {CLOTHING_ARMOR.rarity} •{" "}
+                      {CLOTHING_ARMOR.runeSlots} slot
+                    </div>
+                    <p className="text-[10px] text-muted-foreground/90 mt-1 leading-relaxed">
+                      For barbarians, monks, or spellcasters without armor proficiency
+                      (robe, tunic, etc.). Rarity upgrades add material slots like normal
+                      armor.
+                    </p>
+                  </div>
+                </button>
+              </div>
+            )}
 
             {isArmorSlot &&
               filteredArmors.map((a) => (

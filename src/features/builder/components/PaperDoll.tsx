@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Sword, Shield, Gem, Lock } from "lucide-react";
+import { Sword, Shield, Shirt, Gem, Lock } from "lucide-react";
+import { formatArmorSlotDetail, isClothingArmor } from "../data/armor.placeholder";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { EquipmentSlot } from "./EquipmentSlot";
@@ -62,8 +63,21 @@ export function PaperDoll() {
           <div className="flex items-end justify-center">
             <EquipmentSlot
               label="Armor"
-              icon={<Shield className={cn("h-4 w-4", armor && "text-teal-400")} />}
-              equipped={armor ? { name: armor.armor.name, detail: `AC ${armor.armor.baseAC}` } : null}
+              icon={
+                armor && isClothingArmor(armor.armor) ? (
+                  <Shirt className="h-4 w-4 text-violet-400" />
+                ) : (
+                  <Shield className={cn("h-4 w-4", armor && "text-teal-400")} />
+                )
+              }
+              equipped={
+                armor
+                  ? {
+                      name: armor.armor.name,
+                      detail: formatArmorSlotDetail(armor.armor),
+                    }
+                  : null
+              }
               onClickEquip={() => setPickerSlot("armor")}
               onClickDetails={() => setSelectedSlot("armor")}
               isSelected={selectedSlot === "armor"}
