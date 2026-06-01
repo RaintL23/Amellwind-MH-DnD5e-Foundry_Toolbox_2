@@ -1,23 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
-import { Weapon, DMG_TYPE_LABELS, PROPERTY_LABELS } from "@/shared/types";
+import { Weapon } from "@/shared/types";
 import { getAllWeapons } from "../services/weapon.service";
 import { WeaponCard } from "./WeaponCard";
 import { WeaponDialog } from "./WeaponDialog";
-import { Input } from "@/components/ui/input";
-import { Search, Swords } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
-
-const DMG_FILTER_OPTIONS = [
-  { value: "", label: "All Types" },
-  { value: "S", label: "Slashing" },
-  { value: "P", label: "Piercing" },
-  { value: "B", label: "Bludgeoning" },
-];
-
-const PROPERTY_FILTER_OPTIONS = [
-  { value: "", label: "All Properties" },
-  ...Object.entries(PROPERTY_LABELS).map(([k, v]) => ({ value: k, label: v })),
-];
+import { WeaponListFilters } from "./WeaponListFilters";
+import { Swords } from "lucide-react";
 
 export function WeaponList() {
   const [weapons, setWeapons] = useState<Weapon[]>([]);
@@ -54,9 +41,14 @@ export function WeaponList() {
     setDialogOpen(true);
   }
 
+  function clearFilters() {
+    setSearch("");
+    setDmgFilter("");
+    setPropFilter("");
+  }
+
   return (
     <div className="flex flex-col h-full min-h-0">
-      {/* Page header */}
       <div className="shrink-0 border-b border-border px-6 py-5">
         <div className="flex items-center gap-3 mb-1">
           <Swords className="h-6 w-6 text-primary" />
@@ -73,68 +65,14 @@ export function WeaponList() {
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
-        <div className="flex flex-wrap gap-3 items-center">
-          {/* Search */}
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search weapon..."
-              className="pl-9 h-8 text-sm"
-            />
-          </div>
+      <WeaponListFilters
+        filters={{ search, dmgFilter, propFilter }}
+        onSearchChange={setSearch}
+        onDmgFilterChange={setDmgFilter}
+        onPropFilterChange={setPropFilter}
+        onClear={clearFilters}
+      />
 
-          {/* Damage type filter */}
-          <div className="flex items-center gap-1">
-            {DMG_FILTER_OPTIONS.map(({ value, label }) => (
-              <button
-                key={value}
-                onClick={() => setDmgFilter(value)}
-                className={cn(
-                  "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                  dmgFilter === value
-                    ? "border-primary bg-primary/20 text-primary"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
-                {value ? DMG_TYPE_LABELS[value] : label}
-              </button>
-            ))}
-          </div>
-
-          {/* Property filter */}
-          <select
-            value={propFilter}
-            onChange={(e) => setPropFilter(e.target.value)}
-            className="h-8 rounded-md border border-border bg-card px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            {PROPERTY_FILTER_OPTIONS.map(({ value, label }) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </select>
-
-          {/* Clear filters */}
-          {(search || dmgFilter || propFilter) && (
-            <button
-              onClick={() => {
-                setSearch("");
-                setDmgFilter("");
-                setPropFilter("");
-              }}
-              className="text-xs text-muted-foreground hover:text-foreground underline underline-offset-2"
-            >
-              Clear
-            </button>
-          )}
-        </div>
-      </div>
-
-      {/* Content */}
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {loading ? (
           <div className="flex items-center justify-center h-48">
@@ -148,11 +86,7 @@ export function WeaponList() {
             <Swords className="h-10 w-10 opacity-20" />
             <p className="text-sm">No weapons found with those filters.</p>
             <button
-              onClick={() => {
-                setSearch("");
-                setDmgFilter("");
-                setPropFilter("");
-              }}
+              onClick={clearFilters}
               className="text-xs underline underline-offset-2 hover:text-foreground"
             >
               Clear filters
@@ -171,7 +105,6 @@ export function WeaponList() {
         )}
       </div>
 
-      {/* Dialog */}
       <WeaponDialog
         weapon={selected}
         open={dialogOpen}
