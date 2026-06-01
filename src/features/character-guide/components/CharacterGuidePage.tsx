@@ -9,12 +9,13 @@ import {
 } from "../data/character-guide.data";
 import { GuideTable } from "./GuideTable";
 
-type TabId = "creating" | "higher-level" | "skills";
+type TabId = "creating" | "higher-level" | "skills" | "hunt-roles";
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "creating", label: "Creating a Character" },
   { id: "higher-level", label: "Higher Level" },
   { id: "skills", label: "Skills" },
+  { id: "hunt-roles", label: "Hunt Roles" },
 ];
 
 function Paragraphs({ lines }: { lines: string[] }) {

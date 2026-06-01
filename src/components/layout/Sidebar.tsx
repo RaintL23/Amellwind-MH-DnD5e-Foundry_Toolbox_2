@@ -21,6 +21,7 @@ import {
   ScrollText,
   Award,
   BookOpen,
+  CalendarClock,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -61,6 +62,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/cooking", label: "Cooking", icon: ChefHat },
       { to: "/combo", label: "Combo List", icon: Hammer },
       { to: "/resources", label: "Resources", icon: Leaf },
+      { to: "/downtime", label: "Downtime", icon: CalendarClock },
     ],
   },
 ];

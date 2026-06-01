@@ -252,7 +252,7 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
       {
         name: "Perception",
         description:
-          "Used by both the scout and spotter roles during hunts (see the scout and spotter role in Chapter 2 for more information).",
+          "Used by both the scout and spotter roles during hunts (see the Hunt Roles section for more information).",
       },
       {
         name: "Religion",
@@ -262,12 +262,53 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
       {
         name: "Stealth",
         description:
-          "Commonly used by the scout role during hunts (see the scout role in Chapter 2 for more information).",
+          "Commonly used by the scout role during hunts (see the Scout role in the Hunt Roles section for more information).",
       },
       {
         name: "Survival",
         description:
-          "Used by the trailblazer role during hunts (see the trailblazer role in Chapter 2 for more information).",
+          "Used by the trailblazer role during hunts (see the Trailblazer role in the Hunt Roles section for more information).",
+      },
+    ],
+  },
+  {
+    id: "hunt-roles",
+    name: "Your Role on a Hunt",
+    page: 48,
+    paragraphs: [
+      "When your party goes on a hunt or heads out on an expedition, you choose a role from the ones detailed below. Each role can be only chosen by one character, except for the spotter role.",
+      "Sometimes the party may split up. When split into groups of two the only roles available are the trailblazer and spotter.",
+      "If someone is alone, they are both the trailblazer and spotter, but they either have to choose to take disadvantage on their survival roll for finding signs or take a -4 to their passive perception.",
+    ],
+    subsections: [
+      {
+        name: "Trailblazer",
+        paragraphs: [
+          "Primary Skill: Survival",
+          "The trailblazer is the leader of the group and is the one who makes the final decision on which direction the group should go on a hunt. Whenever the group enters an area (new or old), the trailblazer rolls a survival check vs the creatures carve DC. On a failure the GM rolls a d10 on the finding signs table (found in the Going on a Hunt section in chapter 4), on a success the GM rolls a d20 instead. On a critical, the GM rolls a 2d20 and takes the highest roll, on a nat 1 the GM rolls 2d10 and takes the lowest roll.",
+        ],
+      },
+      {
+        name: "Spotter",
+        paragraphs: [
+          "Primary Skill: passive Perception",
+          "The spotter uses their passive perception to scope out for any ambushes or dangers missed initially by the scout. There can be 2 spotters, the 2nd spotter gives a +4 perception bonus to the other, but does not provide any bonus to the original spotter's passive investigation.",
+          "(Optional Rule) If your DM chooses to allow passive Investigations (10+ investigation skill bonus), then the spotter is also able to find resources in an area without needing to make an Intelligence (Investigation) to find them. A spotter is able to spot resources with their passive Investigation, only if it is higher than the investigation DC of the area they are in. Finally, a second spotter does not provide any bonus to the spotters passive Investigation.",
+        ],
+      },
+      {
+        name: "Scout",
+        paragraphs: [
+          "Primary Skill: Perception, Stealth",
+          "The scout is the initial person who enters an area, they get the lay of the land, potential resources, creatures in the area, potential hazards. When a scout notices a potential spot for an ambush it gives the spotter a +4 bonus to their perception.",
+        ],
+      },
+      {
+        name: "Artisan",
+        paragraphs: [
+          "Primary Skill: Cooking Utensils, Three highest Ability Scores",
+          "The artisan can cook a meal for the party at the start of a hunt and during a short or long rest (if they choose to), granting all who eat it a boon to help them on their hunt/journey/day.",
+        ],
       },
     ],
   },

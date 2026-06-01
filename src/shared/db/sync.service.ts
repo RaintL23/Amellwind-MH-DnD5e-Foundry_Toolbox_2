@@ -10,6 +10,7 @@ const RACE_STORE_KEY = "race";
 const SUBRACE_STORE_KEY = "subrace";
 const BACKGROUND_STORE_KEY = "background";
 const FEAT_STORE_KEY = "feat";
+const VARIANT_RULE_STORE_KEY = "variantrule";
 
 interface DataMeta {
   timestamp: number;
@@ -122,6 +123,13 @@ export async function syncData(): Promise<SyncResult> {
         }
         if (Array.isArray(json.feat)) {
           await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, json.feat);
+        }
+        if (Array.isArray(json.variantrule)) {
+          await setStoreValue(
+            "GTMH_CURRENT",
+            VARIANT_RULE_STORE_KEY,
+            json.variantrule,
+          );
         }
       },
     );
@@ -252,6 +260,31 @@ export async function getFeatsRaw(): Promise<unknown[]> {
       ? (json.feat as unknown[])
       : [];
     await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, data);
+    return data;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Returns the raw variantrule array from the GTMH JSON.
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getVariantRulesRaw(): Promise<unknown[]> {
+  const cached = await getStoreValue<unknown[]>(
+    "GTMH_CURRENT",
+    VARIANT_RULE_STORE_KEY,
+  );
+  if (cached && cached.length > 0) return cached;
+
+  try {
+    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
+    if (!response.ok) return [];
+    const json = (await response.json()) as Record<string, unknown>;
+    const data: unknown[] = Array.isArray(json.variantrule)
+      ? (json.variantrule as unknown[])
+      : [];
+    await setStoreValue("GTMH_CURRENT", VARIANT_RULE_STORE_KEY, data);
     return data;
   } catch {
     return [];

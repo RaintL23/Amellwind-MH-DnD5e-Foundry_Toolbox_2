@@ -13,3 +13,4 @@ export * from "./species.types";
 export * from "./background.types";
 export * from "./feat.types";
 export * from "./character-guide.types";
+export * from "./downtime.types";
