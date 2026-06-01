@@ -1,4 +1,8 @@
-import { Weapon, WeaponRarityRow, FEATURE_COL_KEYS } from "@/shared/types";
+import {
+  Weapon,
+  WeaponRarityRow,
+  isWeaponFeatureColumn,
+} from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,7 +54,49 @@ function findInset(entries: unknown[]): Raw | undefined {
   return undefined;
 }
 
+/** Label for nested item tables when row cells exceed colLabels (e.g. Light Bowgun ammo list). */
+function trailingUnlockLabel(colLabels: string[]): string {
+  const joined = colLabels.map((l) => l.toLowerCase()).join(" ");
+  if (joined.includes("coating")) return "Unlocked Coatings";
+  if (joined.includes("ammo") || joined.includes("available")) return "Unlocked Ammo";
+  if (joined.includes("phial")) return "Unlocked Phials";
+  if (joined.includes("note")) return "Unlocked Notes";
+  return "Unlocked";
+}
+
+function setColumnValue(
+  columns: Record<string, string | string[]>,
+  label: string,
+  values: string[],
+): void {
+  if (values.length === 0) return;
+
+  const isFeatureCol = isWeaponFeatureColumn(label);
+
+  if (!isFeatureCol && values.length === 1) {
+    columns[label] = values[0];
+    return;
+  }
+
+  const existing = columns[label];
+  if (existing) {
+    const merged = [
+      ...(Array.isArray(existing) ? existing : [existing]),
+      ...values,
+    ];
+    columns[label] = merged;
+    return;
+  }
+
+  columns[label] = values;
+}
+
 function parseRarityRows(colLabels: string[], rows: unknown[][]): WeaponRarityRow[] {
+  const extraLabel =
+    rows.some((row) => row.length > colLabels.length)
+      ? trailingUnlockLabel(colLabels)
+      : null;
+
   return rows.map((row) => {
     const rarity = String(row[0] ?? "Common");
     const slots = parseInt(String(row[1] ?? "1")) || 1;
@@ -58,18 +104,12 @@ function parseRarityRows(colLabels: string[], rows: unknown[][]): WeaponRarityRo
     const columns: Record<string, string | string[]> = {};
 
     for (let i = 2; i < colLabels.length; i++) {
-      const label = colLabels[i];
-      const cell = row[i];
-      const values = cellToStrings(cell);
-      if (values.length === 0) continue;
+      setColumnValue(columns, colLabels[i], cellToStrings(row[i]));
+    }
 
-      const isFeatureCol = FEATURE_COL_KEYS.some((k) => label.toLowerCase().includes(k));
-
-      // Feature columns → siempre array; stats de una sola palabra → string
-      if (!isFeatureCol && values.length === 1) {
-        columns[label] = values[0];
-      } else {
-        columns[label] = values;
+    if (extraLabel) {
+      for (let i = colLabels.length; i < row.length; i++) {
+        setColumnValue(columns, extraLabel, cellToStrings(row[i]));
       }
     }
 

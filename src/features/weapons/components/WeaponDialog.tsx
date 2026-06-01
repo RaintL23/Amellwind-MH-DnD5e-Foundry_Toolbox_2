@@ -14,10 +14,15 @@ import {
   PROPERTY_LABELS,
   DMG_TYPE_LABELS,
   RARITY_STYLES,
-  FEATURE_COL_KEYS,
+  isUnlockListColumn,
+  isWeaponFeatureColumn,
+  UNLOCK_COLUMN_PREFIX,
 } from "@/shared/types";
 import { formatWeaponValue } from "../services/weapon.service";
-import { getOptionalFeaturesMap } from "../services/optionalfeature.service";
+import {
+  getOptionalFeaturesMap,
+  resolveWeaponBaseFeatures,
+} from "../services/optionalfeature.service";
 import {
   getWeaponShieldAcBonusAtIndex,
 } from "../utils/shield.utils";
@@ -79,10 +84,7 @@ function buildColumnChains(rarityRows: WeaponRarityRow[]): ColumnChains[] {
 
   for (const row of rarityRows) {
     for (const label of Object.keys(row.columns)) {
-      const isFeature = FEATURE_COL_KEYS.some((k) =>
-        label.toLowerCase().includes(k),
-      );
-      if (isFeature && !colLabelSet.has(label)) {
+      if (isWeaponFeatureColumn(label) && !colLabelSet.has(label)) {
         colLabelOrder.push(label);
         colLabelSet.add(label);
       }
@@ -122,6 +124,40 @@ function buildColumnChains(rarityRows: WeaponRarityRow[]): ColumnChains[] {
   });
 }
 
+function getUnlockColumnLabels(rarityRows: WeaponRarityRow[]): string[] {
+  const labels = new Set<string>();
+  for (const row of rarityRows) {
+    for (const label of Object.keys(row.columns)) {
+      if (isUnlockListColumn(label)) labels.add(label);
+    }
+  }
+  return [...labels].sort();
+}
+
+function getAccumulatedUnlocks(
+  rarityRows: WeaponRarityRow[],
+  columnLabel: string,
+  upToIndex: number,
+): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+
+  for (let i = 0; i <= upToIndex; i++) {
+    const val = rarityRows[i]?.columns[columnLabel];
+    if (!val) continue;
+    const items = Array.isArray(val) ? val : [val];
+    for (const item of items) {
+      const key = item.toLowerCase();
+      if (!seen.has(key)) {
+        seen.add(key);
+        result.push(item);
+      }
+    }
+  }
+
+  return result;
+}
+
 // ─── Rarity dot of a specific rarity tier ─────────────────────────────────────
 
 function RarityDot({ rarity }: { rarity: string }) {
@@ -154,6 +190,8 @@ interface RaritySlideProps {
   featuresMap: Map<string, OptionalFeature>;
   /** Features that apply at ALL rarities (e.g. Melody / Single Note Melody on HH) */
   baseFeatures: OptionalFeature[];
+  /** Lowercase names already shown under Base Features (omit from rarity chains) */
+  baseFeatureNameKeys: Set<string>;
 }
 
 function RaritySlide({
@@ -163,6 +201,7 @@ function RaritySlide({
   columnChains,
   featuresMap,
   baseFeatures,
+  baseFeatureNameKeys,
 }: RaritySlideProps) {
   const style = RARITY_STYLES[row.rarity] ?? RARITY_STYLES["Common"];
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
@@ -177,16 +216,20 @@ function RaritySlide({
     });
   }
 
-  // Stat columns (non-feature): show current rarity's values
+  const unlockColumnLabels = getUnlockColumnLabels(rarityRows);
+  const unlockSections = unlockColumnLabels
+    .map((label) => ({
+      label,
+      items: getAccumulatedUnlocks(rarityRows, label, rarityIndex),
+    }))
+    .filter((s) => s.items.length > 0);
+
+  // Stat columns (non-feature, non-unlock): show current rarity's values
   const statEntries: [string, string][] = [];
   for (const [label, val] of Object.entries(row.columns)) {
-    const isFeature = FEATURE_COL_KEYS.some((k) =>
-      label.toLowerCase().includes(k),
-    );
-    if (!isFeature) {
-      const display = Array.isArray(val) ? val.join(", ") : val;
-      if (display) statEntries.push([label, display]);
-    }
+    if (isWeaponFeatureColumn(label) || isUnlockListColumn(label)) continue;
+    const display = Array.isArray(val) ? val.join(", ") : val;
+    if (display) statEntries.push([label, display]);
   }
 
   const bonusEntry = statEntries.find(([k]) => k.toLowerCase() === "bonus");
@@ -196,7 +239,15 @@ function RaritySlide({
   const visibleCols = columnChains
     .map(({ label, chains }) => ({
       label,
-      chains: chains.filter((c) => c.introducedAtIndex <= rarityIndex),
+      chains: chains
+        .filter((c) => c.introducedAtIndex <= rarityIndex)
+        .map((chain) => ({
+          ...chain,
+          features: chain.features.filter(
+            (f) => !baseFeatureNameKeys.has(f.name.toLowerCase()),
+          ),
+        }))
+        .filter((c) => c.features.length > 0),
     }))
     .filter(({ chains }) => chains.length > 0);
 
@@ -252,6 +303,51 @@ function RaritySlide({
           })}
         </div>
       )}
+
+      {/* Ammo / coatings / etc. unlocked at this rarity (includes lower tiers) */}
+      {unlockSections.map(({ label, items }) => (
+        <div key={label} className="border-t border-white/10 pt-2">
+          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
+            {label.replace(UNLOCK_COLUMN_PREFIX, "")}
+          </p>
+          <ul className="text-sm space-y-0.5">
+            {items.map((item) => {
+              const introducedAt = rarityRows.findIndex((r) => {
+                const val = r.columns[label];
+                if (!val) return false;
+                const list = Array.isArray(val) ? val : [val];
+                return list.some((v) => v.toLowerCase() === item.toLowerCase());
+              });
+              const isNew = introducedAt === rarityIndex;
+              return (
+                <li
+                  key={item}
+                  className={cn(
+                    "flex items-center gap-2 leading-snug",
+                    isNew ? "text-foreground" : "text-muted-foreground/70",
+                  )}
+                >
+                  <span className="shrink-0">•</span>
+                  <span className="flex-1">{item}</span>
+                  {introducedAt >= 0 && (
+                    <RarityDot rarity={rarityRows[introducedAt]?.rarity ?? ""} />
+                  )}
+                  {isNew && (
+                    <span
+                      className={cn(
+                        "text-[10px] font-bold uppercase tracking-wide shrink-0",
+                        style.text,
+                      )}
+                    >
+                      new
+                    </span>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      ))}
 
       {/* Base features (apply at all rarities, e.g. Melody / Single Note Melody on HH) */}
       {baseFeatures.length > 0 && (
@@ -401,11 +497,11 @@ function RaritySlide({
               </div>
             ))}
           </div>
-        ) : (
+        ) : baseFeatures.length === 0 ? (
           <p className="text-sm text-muted-foreground italic">
             No features at this rarity tier.
           </p>
-        )}
+        ) : null}
       </div>
     </div>
   );
@@ -490,13 +586,15 @@ export function WeaponDialog({
     [weapon],
   );
 
-  // Resolve base features (apply at all rarities) from the features map
   const baseFeatures = useMemo(() => {
     if (!weapon || featuresMap.size === 0) return [];
-    return weapon.baseFeatureNames
-      .map((name) => featuresMap.get(name.toLowerCase()))
-      .filter((f): f is OptionalFeature => f !== undefined);
+    return resolveWeaponBaseFeatures(weapon, featuresMap);
   }, [weapon, featuresMap]);
+
+  const baseFeatureNameKeys = useMemo(
+    () => new Set(baseFeatures.map((f) => f.name.toLowerCase())),
+    [baseFeatures],
+  );
 
   if (!weapon) return null;
 
@@ -504,10 +602,6 @@ export function WeaponDialog({
   const damageDisplay = weapon.dmg2
     ? `${weapon.dmg1} / ${weapon.dmg2}`
     : weapon.dmg1;
-  const propsLabel = weapon.properties
-    .map((p) => PROPERTY_LABELS[p] ?? p)
-    .join(", ");
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
@@ -524,8 +618,8 @@ export function WeaponDialog({
                   {damageDisplay}
                 </span>{" "}
                 <span>{dmgLabel}</span>
-                {propsLabel && (
-                  <span className="text-muted-foreground"> · {propsLabel}</span>
+                {weapon.dmg2 && (
+                  <span className="text-muted-foreground/70"> (versatile)</span>
                 )}
               </DialogDescription>
             </div>
@@ -533,6 +627,24 @@ export function WeaponDialog({
         </DialogHeader>
 
         <DialogBody>
+          {(weapon.properties.length > 0 || weapon.isFocus) && (
+            <div className="flex flex-wrap gap-1.5 mb-4">
+              {weapon.properties.map((prop) => (
+                <span
+                  key={prop}
+                  className="inline-flex items-center rounded border border-border/50 bg-muted/40 px-2 py-0.5 text-xs font-medium text-muted-foreground"
+                >
+                  {PROPERTY_LABELS[prop] ?? prop}
+                </span>
+              ))}
+              {weapon.isFocus && (
+                <span className="inline-flex items-center rounded border border-violet-700/50 bg-violet-950/40 px-2 py-0.5 text-xs font-medium text-violet-300">
+                  Focus
+                </span>
+              )}
+            </div>
+          )}
+
           {/* Quick stats */}
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4 pb-4 border-b border-border">
             <span>
@@ -561,9 +673,6 @@ export function WeaponDialog({
                   +{getWeaponShieldAcBonusAtIndex(weapon, current)} AC (integrated shield)
                 </span>
               </span>
-            )}
-            {weapon.isFocus && (
-              <span className="text-violet-400 font-medium">Arcane Focus</span>
             )}
           </div>
 
@@ -625,6 +734,7 @@ export function WeaponDialog({
                   columnChains={columnChains}
                   featuresMap={featuresMap}
                   baseFeatures={baseFeatures}
+                  baseFeatureNameKeys={baseFeatureNameKeys}
                 />
 
                 {/* Next button */}

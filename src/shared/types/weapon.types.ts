@@ -104,3 +104,16 @@ export const FEATURE_COL_KEYS = [
   "phials",
   "available",
 ];
+
+/** Item lists parsed from trailing nested tables (ammo types, coatings, etc.) */
+export const UNLOCK_COLUMN_PREFIX = "Unlocked ";
+
+export function isWeaponFeatureColumn(label: string): boolean {
+  const lower = label.toLowerCase();
+  if (lower.startsWith(UNLOCK_COLUMN_PREFIX.toLowerCase())) return false;
+  return FEATURE_COL_KEYS.some((k) => lower.includes(k));
+}
+
+export function isUnlockListColumn(label: string): boolean {
+  return label.toLowerCase().startsWith(UNLOCK_COLUMN_PREFIX.toLowerCase());
+}
