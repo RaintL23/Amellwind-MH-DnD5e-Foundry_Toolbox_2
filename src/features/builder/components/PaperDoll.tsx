@@ -11,7 +11,7 @@ import { EquipmentSlotType, RARITY_ORDER } from "@/shared/types";
 export function PaperDoll() {
   const {
     mainHand, offHand, armor, trinket1, trinket2,
-    isOffHandBlocked, hasIntegratedShield, integratedShieldAcBonus,
+    isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
     setWeaponRarity, setArmorRarity, setVersatileMode,
     equipTrinket,
   } = useCharacterBuilder();
@@ -115,7 +115,9 @@ export function PaperDoll() {
               <div className="w-20 h-20 rounded-lg border-2 border-dashed border-border/50 flex flex-col items-center justify-center gap-1 opacity-50">
                 <Lock className="h-4 w-4 text-muted-foreground" />
                 <span className="text-[9px] text-muted-foreground text-center">Blocked</span>
-                <span className="text-[8px] text-muted-foreground/70">(2H weapon)</span>
+                <span className="text-[8px] text-muted-foreground/70">
+                  {offHandBlockReason === "dual-blades" ? "(Dual Blades)" : "(2H weapon)"}
+                </span>
               </div>
             ) : (
               <EquipmentSlot

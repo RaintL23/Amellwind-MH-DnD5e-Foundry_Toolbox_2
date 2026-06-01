@@ -24,6 +24,13 @@ import {
   getWeaponShieldAcBonus,
   weaponIncludesShield,
 } from "@/features/weapons/utils/shield.utils";
+import {
+  blocksOffHand,
+  getOffHandBlockReason,
+  isDualBladesWeapon,
+  isWeaponTwoHanded,
+  OffHandBlockReason,
+} from "@/features/weapons/utils/weapon-hands.utils";
 
 // ─── Context Value ───────────────────────────────────────────────────────────
 
@@ -46,6 +53,7 @@ interface CharacterBuilderContextValue {
   // Weapon handling
   isTwoHanded: boolean;
   isOffHandBlocked: boolean;
+  offHandBlockReason: OffHandBlockReason | null;
   /** Main-hand weapon includes a shield and off-hand is occupied by it. */
   hasIntegratedShield: boolean;
   integratedShieldAcBonus: number;
@@ -115,16 +123,6 @@ function makeArmorSlot(armor: ArmorItem, rarity: string): EquippedArmor {
   };
 }
 
-/** Checks if a weapon requires or is using both hands */
-function isWeaponTwoHanded(equipped: EquippedWeapon | null): boolean {
-  if (!equipped) return false;
-  // Always two-handed (2H property)
-  if (equipped.weapon.properties.includes("2H")) return true;
-  // Versatile used in two-handed mode
-  if (equipped.weapon.properties.includes("V") && equipped.useVersatile) return true;
-  return false;
-}
-
 function showsIntegratedShield(mainHand: EquippedWeapon | null): boolean {
   if (!mainHand || !weaponIncludesShield(mainHand.weapon)) return false;
   return !isWeaponTwoHanded(mainHand);
@@ -161,10 +159,14 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       const equipped = makeWeaponSlot(weapon, rarity);
       if (slot === "mainHand") {
         setMainHand(equipped);
-        if (isWeaponTwoHanded(equipped) || weaponIncludesShield(weapon)) {
+        if (
+          isWeaponTwoHanded(equipped) ||
+          weaponIncludesShield(weapon) ||
+          isDualBladesWeapon(weapon)
+        ) {
           setOffHand(null);
         }
-      } else if (!showsIntegratedShield(mainHand)) {
+      } else if (!showsIntegratedShield(mainHand) && !blocksOffHand(mainHand)) {
         setOffHand(equipped);
       }
     },
@@ -298,7 +300,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   // ─── Computed values ─────────────────────────────────────────────────────
 
   const isTwoHanded = isWeaponTwoHanded(mainHand);
-  const isOffHandBlocked = isTwoHanded;
+  const isOffHandBlocked = blocksOffHand(mainHand);
+  const offHandBlockReason = getOffHandBlockReason(mainHand);
   const hasIntegratedShield = showsIntegratedShield(mainHand);
   const integratedShieldAcBonus = useMemo(() => {
     if (!hasIntegratedShield || !mainHand) return 0;
@@ -351,6 +354,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       trinket2,
       isTwoHanded,
       isOffHandBlocked,
+      offHandBlockReason,
       hasIntegratedShield,
       integratedShieldAcBonus,
       equipWeapon,
@@ -376,7 +380,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       character, setLevel, setAbilityScore,
       attacksPerTurnOverride, effectiveAttacksPerTurn,
       mainHand, offHand, armor, trinket1, trinket2,
-      isTwoHanded, isOffHandBlocked, hasIntegratedShield, integratedShieldAcBonus,
+      isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
       equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket,
       assignWeaponRune, removeWeaponRune, assignArmorRune, removeArmorRune,

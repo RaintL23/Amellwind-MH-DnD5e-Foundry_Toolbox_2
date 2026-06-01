@@ -1,8 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Search, Sword, Shield, Shirt } from "lucide-react";
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { useBuilderInventory } from "../context/BuilderInventoryContext";
+import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { EquipmentSlotType, Weapon, ArmorItem, RARITY_ORDER } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
@@ -16,7 +16,8 @@ interface ItemPickerDialogProps {
 export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps) {
   const [search, setSearch] = useState("");
   const [selectedRarity, setSelectedRarity] = useState<string>("Common");
-  const { weapons } = useBuilderInventory();
+  const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
+  const [weaponsLoading, setWeaponsLoading] = useState(false);
   const { equipWeapon, unequipWeapon, equipArmor, unequipArmor, equipTrinket, unequipTrinket, hasIntegratedShield } =
     useCharacterBuilder();
 
@@ -24,11 +25,19 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
   const isArmorSlot = slot === "armor";
   const isTrinketSlot = slot === "trinket1" || slot === "trinket2";
 
+  useEffect(() => {
+    if (!open || !isWeaponSlot) return;
+    setWeaponsLoading(true);
+    getAllWeapons()
+      .then(setAllWeapons)
+      .finally(() => setWeaponsLoading(false));
+  }, [open, isWeaponSlot]);
+
   const filteredWeapons = useMemo(() => {
     if (!isWeaponSlot) return [];
     const q = search.toLowerCase();
-    return weapons.filter((w) => w.name.toLowerCase().includes(q));
-  }, [weapons, search, isWeaponSlot]);
+    return allWeapons.filter((w) => w.name.toLowerCase().includes(q));
+  }, [allWeapons, search, isWeaponSlot]);
 
   const filteredArmors = useMemo(() => {
     if (!isArmorSlot) return [];
@@ -210,9 +219,15 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
               </div>
             )}
 
-            {isWeaponSlot && filteredWeapons.length === 0 && (
+            {isWeaponSlot && weaponsLoading && (
               <p className="text-sm text-muted-foreground text-center py-4">
-                No weapons in inventory. Add weapons from the Weapons page.
+                Loading weapons...
+              </p>
+            )}
+
+            {isWeaponSlot && !weaponsLoading && filteredWeapons.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-4">
+                No weapons found.
               </p>
             )}
           </div>

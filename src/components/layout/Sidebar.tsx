@@ -1,7 +1,22 @@
 import { NavLink } from "react-router-dom";
-import { Swords, Shield, Gem, ChefHat, ChevronLeft, ChevronRight, X, Hammer, Package, Store, Sword, Leaf, MapPin, User } from "lucide-react";
+import {
+  Swords,
+  Shield,
+  Gem,
+  ChefHat,
+  ChevronLeft,
+  ChevronRight,
+  X,
+  Hammer,
+  Package,
+  Store,
+  Sword,
+  Leaf,
+  MapPin,
+  User,
+} from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
+// import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 
 const NAV_ITEMS = [
   { to: "/monsters", label: "Monsters", icon: Swords },
@@ -25,20 +40,20 @@ interface SidebarProps {
   onMobileClose: () => void;
 }
 
-function BuilderBadge({ collapsed }: { collapsed: boolean }) {
-  const { totalItems } = useBuilderInventory();
-  if (totalItems === 0) return null;
-  return (
-    <span
-      className={cn(
-        "rounded-full bg-primary/80 text-[9px] font-bold text-primary-foreground min-w-[16px] h-4 flex items-center justify-center px-1",
-        collapsed ? "absolute -top-0.5 -right-0.5" : "ml-auto"
-      )}
-    >
-      {totalItems}
-    </span>
-  );
-}
+// function BuilderBadge({ collapsed }: { collapsed: boolean }) {
+//   const { totalItems } = useBuilderInventory();
+//   if (totalItems === 0) return null;
+//   return (
+//     <span
+//       className={cn(
+//         "rounded-full bg-primary/80 text-[9px] font-bold text-primary-foreground min-w-[16px] h-4 flex items-center justify-center px-1",
+//         collapsed ? "absolute -top-0.5 -right-0.5" : "ml-auto",
+//       )}
+//     >
+//       {totalItems}
+//     </span>
+//   );
+// }
 
 export function Sidebar({
   collapsed,
@@ -50,21 +65,25 @@ export function Sidebar({
     <aside
       className={cn(
         "flex flex-col h-full bg-card border-r border-border transition-all duration-300",
-        collapsed ? "w-16" : "w-60"
+        collapsed ? "w-16" : "w-60",
       )}
     >
       {/* Logo / título */}
       <div
         className={cn(
           "flex items-center border-b border-border shrink-0",
-          collapsed ? "justify-center px-2 py-5" : "gap-2 px-4 py-5"
+          collapsed ? "justify-center px-2 py-5" : "gap-2 px-4 py-5",
         )}
       >
         <Shield className="h-7 w-7 text-primary shrink-0" />
         {!collapsed && (
           <div className="flex flex-col leading-tight min-w-0">
-            <span className="text-sm font-bold text-foreground truncate">MH DnD5e</span>
-            <span className="text-xs text-muted-foreground truncate">Toolbox</span>
+            <span className="text-sm font-bold text-foreground truncate">
+              MH DnD5e
+            </span>
+            <span className="text-xs text-muted-foreground truncate">
+              Toolbox
+            </span>
           </div>
         )}
         {/* Botón cerrar en mobile */}
@@ -91,13 +110,13 @@ export function Sidebar({
                 collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2",
                 isActive
                   ? "bg-primary/20 text-primary border border-primary/30"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
               )
             }
           >
             <Icon className="h-4 w-4 shrink-0" />
             {!collapsed && label}
-            {to === "/builder" && <BuilderBadge collapsed={collapsed} />}
+            {/* {to === "/builder" && <BuilderBadge collapsed={collapsed} />} */}
           </NavLink>
         ))}
       </nav>
@@ -109,7 +128,7 @@ export function Sidebar({
           onClick={onToggleCollapse}
           className={cn(
             "hidden md:flex w-full items-center px-3 py-2.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
-            collapsed ? "justify-center" : "gap-2"
+            collapsed ? "justify-center" : "gap-2",
           )}
           aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
         >
@@ -141,7 +160,9 @@ export function Sidebar({
       <div
         className={cn(
           "fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden",
-          mobileOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          mobileOpen
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
         onClick={onMobileClose}
         aria-hidden
@@ -150,7 +171,7 @@ export function Sidebar({
       <div
         className={cn(
           "fixed inset-y-0 left-0 z-50 min-h-screen transition-transform duration-300 md:hidden",
-          mobileOpen ? "translate-x-0" : "-translate-x-full"
+          mobileOpen ? "translate-x-0" : "-translate-x-full",
         )}
       >
         {inner}

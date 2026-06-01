@@ -19,9 +19,14 @@ interface BuilderInventoryContextValue {
   totalItems: number;
 }
 
-const BuilderInventoryContext = createContext<BuilderInventoryContextValue | null>(null);
+const BuilderInventoryContext =
+  createContext<BuilderInventoryContextValue | null>(null);
 
-export function BuilderInventoryProvider({ children }: { children: ReactNode }) {
+export function BuilderInventoryProvider({
+  children,
+}: {
+  children: ReactNode;
+}) {
   const [weapons, setWeapons] = useState<Weapon[]>([]);
   const [armors, setArmors] = useState<ArmorItem[]>(BASE_ARMORS);
 
@@ -72,9 +77,9 @@ export function BuilderInventoryProvider({ children }: { children: ReactNode }) 
   );
 }
 
-export function useBuilderInventory(): BuilderInventoryContextValue {
-  const ctx = useContext(BuilderInventoryContext);
-  if (!ctx)
-    throw new Error("useBuilderInventory must be used inside BuilderInventoryProvider");
-  return ctx;
-}
+// export function useBuilderInventory(): BuilderInventoryContextValue {
+//   const ctx = useContext(BuilderInventoryContext);
+//   if (!ctx)
+//     throw new Error("useBuilderInventory must be used inside BuilderInventoryProvider");
+//   return ctx;
+// }
