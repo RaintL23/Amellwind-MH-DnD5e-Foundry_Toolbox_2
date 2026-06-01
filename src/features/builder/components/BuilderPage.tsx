@@ -1,6 +1,7 @@
 import { CharacterBuilderProvider } from "../context/CharacterBuilderContext";
 import { StatsPanel } from "./StatsPanel";
 import { PaperDoll } from "./PaperDoll";
+import { BuilderInventoryPanel } from "./BuilderInventoryPanel";
 import { CombatResultsPanel } from "./CombatResultsPanel";
 
 export function BuilderPage() {
@@ -20,15 +21,18 @@ export function BuilderPage() {
 
         {/* Main content grid */}
         <div className="flex-1 overflow-auto p-4 lg:p-6">
-          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 lg:gap-6 max-w-[960px]">
+          <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 lg:gap-6 max-w-[1200px]">
             {/* Left column: Stats + Combat Results stacked */}
             <div className="space-y-4">
               <StatsPanel />
               <CombatResultsPanel />
             </div>
 
-            {/* Right column: Paper Doll */}
-            <PaperDoll />
+            {/* Right column: Paper Doll + Inventory (separate cards) */}
+            <div className="flex flex-col xl:flex-row gap-4 min-w-0 xl:items-start">
+              <PaperDoll />
+              <BuilderInventoryPanel />
+            </div>
           </div>
         </div>
       </div>

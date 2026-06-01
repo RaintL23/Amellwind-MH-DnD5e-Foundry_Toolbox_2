@@ -4,8 +4,8 @@ import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { EquipmentSlotType, Weapon, ArmorItem, RARITY_ORDER } from "@/shared/types";
-import { cn } from "@/shared/utils/cn";
+import { EquipmentSlotType, Weapon, ArmorItem } from "@/shared/types";
+import { RarityButtonGroup } from "./RarityButtonGroup";
 
 interface ItemPickerDialogProps {
   open: boolean;
@@ -112,22 +112,10 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
 
           {/* Rarity selector for weapons */}
           {isWeaponSlot && (
-            <div className="flex gap-1 flex-wrap">
-              {RARITY_ORDER.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setSelectedRarity(r)}
-                  className={cn(
-                    "px-2 py-0.5 text-xs rounded border transition-colors",
-                    selectedRarity === r
-                      ? "border-primary bg-primary/20 text-primary"
-                      : "border-border text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
+            <RarityButtonGroup
+              value={selectedRarity}
+              onChange={setSelectedRarity}
+            />
           )}
 
           {/* Unequip button */}

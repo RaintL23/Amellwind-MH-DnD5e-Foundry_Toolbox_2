@@ -16,9 +16,15 @@ import {
   Weapon,
   ArmorItem,
   CombatCalculation,
+  CharacterSelectionRef,
 } from "@/shared/types";
 import { Character } from "../models/Character";
 import { calculateCombat } from "../utils/combat.calculator";
+import {
+  makeWeaponSlot,
+  makeArmorSlot,
+  resizeRunesForRarity,
+} from "../utils/equipment.factory";
 import { wouldViolateRule, RuleViolation } from "@/features/runes/utils/build.validation";
 import {
   getWeaponShieldAcBonus,
@@ -39,6 +45,7 @@ interface CharacterBuilderContextValue {
   character: Character;
   setLevel: (level: number) => void;
   setAbilityScore: (ability: AbilityKey, value: number) => void;
+  setAbilityScores: (abilities: Partial<AbilityScores>) => void;
   attacksPerTurnOverride: number | null;
   setAttacksPerTurnOverride: (value: number | null) => void;
   effectiveAttacksPerTurn: number;
@@ -49,6 +56,12 @@ interface CharacterBuilderContextValue {
   armor: EquippedArmor | null;
   trinket1: EquippedTrinket | null;
   trinket2: EquippedTrinket | null;
+
+  // Identity (species / background; class not yet implemented)
+  species: CharacterSelectionRef | null;
+  background: CharacterSelectionRef | null;
+  setSpecies: (selection: CharacterSelectionRef | null) => void;
+  setBackground: (selection: CharacterSelectionRef | null) => void;
 
   // Weapon handling
   isTwoHanded: boolean;
@@ -88,41 +101,6 @@ const CharacterBuilderContext = createContext<CharacterBuilderContextValue | nul
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
-const RARITY_SLOT_MAP: Record<string, number> = {
-  Common: 1,
-  Uncommon: 2,
-  Rare: 3,
-  "Very Rare": 4,
-  Legendary: 5,
-};
-
-function getRuneSlots(rarity: string): number {
-  return RARITY_SLOT_MAP[rarity] ?? 1;
-}
-
-function makeWeaponSlot(weapon: Weapon, rarity: string): EquippedWeapon {
-  const runeSlots = getRuneSlots(rarity);
-  // Two-handed weapons default to useVersatile=true; versatile weapons default to one-handed
-  const isTwoHanded = weapon.properties.includes("2H");
-  return {
-    weapon,
-    rarity,
-    runeSlots,
-    runes: new Array<Rune | null>(runeSlots).fill(null),
-    useVersatile: isTwoHanded,
-  };
-}
-
-function makeArmorSlot(armor: ArmorItem, rarity: string): EquippedArmor {
-  const runeSlots = getRuneSlots(rarity);
-  return {
-    armor,
-    rarity,
-    runeSlots,
-    runes: new Array<Rune | null>(runeSlots).fill(null),
-  };
-}
-
 function showsIntegratedShield(mainHand: EquippedWeapon | null): boolean {
   if (!mainHand || !weaponIncludesShield(mainHand.weapon)) return false;
   return !isWeaponTwoHanded(mainHand);
@@ -138,6 +116,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [armor, setArmor] = useState<EquippedArmor | null>(null);
   const [trinket1, setTrinket1] = useState<EquippedTrinket | null>(null);
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
+  const [species, setSpecies] = useState<CharacterSelectionRef | null>(null);
+  const [background, setBackground] = useState<CharacterSelectionRef | null>(null);
 
   // ─── Character mutations ─────────────────────────────────────────────────
 
@@ -149,6 +129,18 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     const clamped = Math.max(1, Math.min(30, value));
     setCharacter((prev) =>
       prev.withUpdates({ abilities: { [ability]: clamped } as Partial<AbilityScores> })
+    );
+  }, []);
+
+  const setAbilityScores = useCallback((abilities: Partial<AbilityScores>) => {
+    const clamped = Object.fromEntries(
+      Object.entries(abilities).map(([key, value]) => [
+        key,
+        Math.max(1, Math.min(30, value as number)),
+      ])
+    ) as Partial<AbilityScores>;
+    setCharacter((prev) =>
+      prev.withUpdates({ abilities: { ...prev.abilities, ...clamped } })
     );
   }, []);
 
@@ -182,13 +174,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     const setter = slot === "mainHand" ? setMainHand : setOffHand;
     setter((prev) => {
       if (!prev) return prev;
-      const newSlots = getRuneSlots(rarity);
-      // Preserve existing runes up to new slot count
-      const newRunes = new Array<Rune | null>(newSlots).fill(null);
-      for (let i = 0; i < Math.min(prev.runes.length, newSlots); i++) {
-        newRunes[i] = prev.runes[i];
-      }
-      return { ...prev, rarity, runeSlots: newSlots, runes: newRunes };
+      return { ...prev, ...resizeRunesForRarity(prev.runes, rarity) };
     });
   }, []);
 
@@ -211,12 +197,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setArmorRarity = useCallback((rarity: string) => {
     setArmor((prev) => {
       if (!prev) return prev;
-      const newSlots = getRuneSlots(rarity);
-      const newRunes = new Array<Rune | null>(newSlots).fill(null);
-      for (let i = 0; i < Math.min(prev.runes.length, newSlots); i++) {
-        newRunes[i] = prev.runes[i];
-      }
-      return { ...prev, rarity, runeSlots: newSlots, runes: newRunes };
+      return { ...prev, ...resizeRunesForRarity(prev.runes, rarity) };
     });
   }, []);
 
@@ -336,6 +317,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setArmor(null);
     setTrinket1(null);
     setTrinket2(null);
+    setSpecies(null);
+    setBackground(null);
     setAttacksPerTurnOverride(null);
   }, []);
 
@@ -344,6 +327,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       character,
       setLevel,
       setAbilityScore,
+      setAbilityScores,
       attacksPerTurnOverride,
       setAttacksPerTurnOverride,
       effectiveAttacksPerTurn,
@@ -352,6 +336,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       armor,
       trinket1,
       trinket2,
+      species,
+      background,
+      setSpecies,
+      setBackground,
       isTwoHanded,
       isOffHandBlocked,
       offHandBlockReason,
@@ -377,9 +365,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       resetBuild,
     }),
     [
-      character, setLevel, setAbilityScore,
+      character, setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn,
-      mainHand, offHand, armor, trinket1, trinket2,
+      mainHand, offHand, armor, trinket1, trinket2, species, background,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
       equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket,

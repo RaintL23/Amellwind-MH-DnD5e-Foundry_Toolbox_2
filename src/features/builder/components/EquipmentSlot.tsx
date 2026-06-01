@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Lock } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
 interface EquipmentSlotProps {
@@ -9,6 +9,8 @@ interface EquipmentSlotProps {
   onClickEquip: () => void;
   onClickDetails: () => void;
   isSelected: boolean;
+  disabled?: boolean;
+  disabledHint?: string;
 }
 
 export function EquipmentSlot({
@@ -18,7 +20,28 @@ export function EquipmentSlot({
   onClickEquip,
   onClickDetails,
   isSelected,
+  disabled = false,
+  disabledHint,
 }: Readonly<EquipmentSlotProps>) {
+  if (disabled) {
+    return (
+      <div
+        title={disabledHint ?? label}
+        className="w-20 h-20 rounded-lg border-2 border-dashed border-border/50 bg-muted/20 flex flex-col items-center justify-center gap-0.5 p-1 opacity-60 cursor-not-allowed"
+      >
+        <Lock className="h-4 w-4 text-muted-foreground" />
+        <span className="text-[10px] font-medium text-muted-foreground leading-tight text-center">
+          {label}
+        </span>
+        {disabledHint && (
+          <span className="text-[8px] text-muted-foreground/70 text-center leading-tight">
+            {disabledHint}
+          </span>
+        )}
+      </div>
+    );
+  }
+
   if (!equipped) {
     // Empty slot
     return (

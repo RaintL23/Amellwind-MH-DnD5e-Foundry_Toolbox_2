@@ -5,16 +5,17 @@ import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useRuneBuild } from "@/features/runes/context/RuneBuildContext";
 import { EquipmentSlotType, Rune } from "@/shared/types";
 import { RuleViolation } from "@/features/runes/utils/build.validation";
+import {
+  useEquippedSlot,
+  collectAssignedRuneKeys,
+} from "../hooks/useEquippedSlot";
 
 interface RuneAssignmentPanelProps {
   slot: EquipmentSlotType;
   onClose: () => void;
 }
 
-export function RuneAssignmentPanel({
-  slot,
-  onClose,
-}: RuneAssignmentPanelProps) {
+export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps) {
   const {
     mainHand,
     offHand,
@@ -29,25 +30,11 @@ export function RuneAssignmentPanel({
     removeTrinketRune,
   } = useCharacterBuilder();
   const { allBuildRunes: availableRunes } = useRuneBuild();
+  const equipped = useEquippedSlot(slot);
   const [violation, setViolation] = useState<RuleViolation | null>(null);
   const [assigningIndex, setAssigningIndex] = useState<number | null>(null);
 
-  // Determine current rune slots for this equipment slot
-  const isWeapon = slot === "mainHand" || slot === "offHand";
-  const isArmor = slot === "armor";
-  const isTrinket = slot === "trinket1" || slot === "trinket2";
-
-  const equippedItem = isWeapon
-    ? slot === "mainHand"
-      ? mainHand
-      : offHand
-    : isArmor
-      ? armor
-      : slot === "trinket1"
-        ? trinket1
-        : trinket2;
-
-  if (!equippedItem) {
+  if (equipped.kind === "empty") {
     return (
       <div className="w-full rounded-lg border border-border bg-card/50 p-3 text-center text-sm text-muted-foreground">
         No item equipped in this slot.
@@ -61,18 +48,10 @@ export function RuneAssignmentPanel({
     );
   }
 
-  // Get rune slots array
-  const runeSlots: (Rune | null)[] = isWeapon
-    ? (equippedItem as { runes: (Rune | null)[] }).runes
-    : isArmor
-      ? (equippedItem as { runes: (Rune | null)[] }).runes
-      : [(equippedItem as { rune: Rune | null }).rune];
-
-  const itemName = isWeapon
-    ? (equippedItem as { weapon: { name: string } }).weapon.name
-    : isArmor
-      ? (equippedItem as { armor: { name: string } }).armor.name
-      : (equippedItem as { name: string }).name;
+  const { runes, name } = equipped;
+  const isWeapon = equipped.kind === "weapon";
+  const isArmor = equipped.kind === "armor";
+  const isTrinket = equipped.kind === "trinket";
 
   function handleAssignRune(rune: Rune, index: number) {
     setViolation(null);
@@ -100,34 +79,25 @@ export function RuneAssignmentPanel({
     else if (isTrinket) removeTrinketRune(slot as "trinket1" | "trinket2");
   }
 
-  // Collect all runes already assigned across every equipment slot
-  const assignedKeys = new Set<string>();
-  const allEquipRunes: (Rune | null)[] = [
-    ...(mainHand?.runes ?? []),
-    ...(offHand?.runes ?? []),
-    ...(armor?.runes ?? []),
-    trinket1?.rune ?? null,
-    trinket2?.rune ?? null,
-  ];
-  for (const r of allEquipRunes) {
-    if (r) assignedKeys.add(`${r.name}||${r.monsterName}`);
-  }
+  const assignedKeys = collectAssignedRuneKeys(
+    mainHand,
+    offHand,
+    armor,
+    trinket1,
+    trinket2,
+  );
 
-  // Filter by slot type and exclude already-assigned runes
   const filteredRunes = availableRunes.filter((r) => {
     if (assignedKeys.has(`${r.name}||${r.monsterName}`)) return false;
     if (isWeapon) return r.slots.includes("W");
     if (isArmor) return r.slots.includes("A");
-    return true; // trinkets accept any
+    return true;
   });
 
   return (
     <div className="w-full min-w-0 max-w-full rounded-lg border border-border bg-card/50 p-3 space-y-3">
-      {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-xs font-semibold text-foreground">
-          Runes — {itemName}
-        </h3>
+        <h3 className="text-xs font-semibold text-foreground">Runes — {name}</h3>
         <button
           onClick={onClose}
           className="text-muted-foreground hover:text-foreground"
@@ -136,7 +106,6 @@ export function RuneAssignmentPanel({
         </button>
       </div>
 
-      {/* Violation warning */}
       {violation && (
         <div className="flex items-start gap-2 rounded-md bg-destructive/10 border border-destructive/30 p-2">
           <AlertTriangle className="h-4 w-4 text-destructive shrink-0 mt-0.5" />
@@ -149,9 +118,8 @@ export function RuneAssignmentPanel({
         </div>
       )}
 
-      {/* Rune slots */}
       <div className="flex gap-2 flex-wrap">
-        {runeSlots.map((rune, i) => (
+        {runes.map((rune, i) => (
           <div
             key={i}
             className={cn(
@@ -168,9 +136,7 @@ export function RuneAssignmentPanel({
                   role="tooltip"
                   className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1.5 text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
                 >
-                  <p className="font-medium text-foreground break-words">
-                    {rune.name}
-                  </p>
+                  <p className="font-medium text-foreground break-words">{rune.name}</p>
                   <p className="text-muted-foreground break-words whitespace-normal">
                     {isWeapon ? rune.weaponEffect : rune.armorEffect}
                   </p>
@@ -199,7 +165,6 @@ export function RuneAssignmentPanel({
         ))}
       </div>
 
-      {/* Rune picker (when assigning) */}
       {assigningIndex !== null && (
         <div className="border-t border-border pt-2 space-y-1">
           <div className="flex items-center justify-between">
@@ -216,8 +181,8 @@ export function RuneAssignmentPanel({
           <div className="w-full min-w-0 max-h-[min(40vh,320px)] overflow-y-auto space-y-1">
             {filteredRunes.length === 0 && (
               <p className="text-xs text-muted-foreground text-center py-2">
-                No hay runas en el build. Agrégalas desde la página de Runes
-                usando el Build Planner.
+                No runes in your build. Add them from the Runes page using the Build
+                Planner tool.
               </p>
             )}
             {filteredRunes.map((rune) => (

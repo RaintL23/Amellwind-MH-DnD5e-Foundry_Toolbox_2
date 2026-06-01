@@ -11,6 +11,13 @@ export type EquipmentSlotType =
   | "trinket1"
   | "trinket2";
 
+export type CharacterIdentitySlot = "species" | "background" | "class";
+
+export interface CharacterSelectionRef {
+  id: string;
+  name: string;
+}
+
 // ─── Armor (placeholder until real data source exists) ───────────────────────
 
 export type ArmorCategory = "light" | "medium" | "heavy" | "clothing";
