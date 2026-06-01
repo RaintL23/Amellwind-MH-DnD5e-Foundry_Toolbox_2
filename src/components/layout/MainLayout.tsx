@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { Sidebar } from "./Sidebar";
-import { BuildDrawer } from "@/features/runes/components/BuildDrawer";
 
 export function MainLayout() {
   const [collapsed, setCollapsed] = useState(false);
@@ -34,9 +33,6 @@ export function MainLayout() {
           <Outlet />
         </main>
       </div>
-
-      {/* Build Planner: persiste en todos los menús */}
-      <BuildDrawer />
     </div>
   );
 }

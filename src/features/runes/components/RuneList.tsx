@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { RuneDetailDialog } from "./RuneDetailDialog";
 import { RulesPanel } from "./RulesPanel";
+import { BuildDrawer } from "./BuildDrawer";
 import { useRuneBuild } from "../context/RuneBuildContext";
 import { Search, Layers } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
@@ -152,6 +153,7 @@ export function RuneList() {
   }
 
   return (
+    <>
     <div className="p-6">
       {/* Header */}
       <div className="mb-4 flex items-start justify-between gap-4">
@@ -380,5 +382,7 @@ export function RuneList() {
         onOpenChange={setDialogOpen}
       />
     </div>
+    <BuildDrawer />
+    </>
   );
 }
