@@ -4,6 +4,7 @@ import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { EquipmentSlotType, Weapon, ArmorItem } from "@/shared/types";
 import { RarityButtonGroup } from "./RarityButtonGroup";
 
@@ -20,6 +21,7 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
   const [weaponsLoading, setWeaponsLoading] = useState(false);
   const { equipWeapon, unequipWeapon, equipArmor, unequipArmor, equipTrinket, unequipTrinket, hasIntegratedShield } =
     useCharacterBuilder();
+  const { weapons: inventoryWeapons, armors: inventoryArmors } = useBuilderInventory();
 
   const isWeaponSlot = slot === "mainHand" || slot === "offHand";
   const isArmorSlot = slot === "armor";
@@ -33,17 +35,31 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
       .finally(() => setWeaponsLoading(false));
   }, [open, isWeaponSlot]);
 
-  const filteredWeapons = useMemo(() => {
-    if (!isWeaponSlot) return [];
+  const { inventoryWeaponsFiltered, catalogWeaponsFiltered } = useMemo(() => {
+    if (!isWeaponSlot) return { inventoryWeaponsFiltered: [], catalogWeaponsFiltered: [] };
     const q = search.toLowerCase();
-    return allWeapons.filter((w) => w.name.toLowerCase().includes(q));
-  }, [allWeapons, search, isWeaponSlot]);
+    const invNames = new Set(inventoryWeapons.map((w) => w.name));
+    const matches = (w: Weapon) => w.name.toLowerCase().includes(q);
+    return {
+      inventoryWeaponsFiltered: inventoryWeapons.filter(matches),
+      catalogWeaponsFiltered: allWeapons.filter(
+        (w) => matches(w) && !invNames.has(w.name),
+      ),
+    };
+  }, [allWeapons, inventoryWeapons, search, isWeaponSlot]);
 
-  const filteredArmors = useMemo(() => {
-    if (!isArmorSlot) return [];
+  const { inventoryArmorsFiltered, catalogArmorsFiltered } = useMemo(() => {
+    if (!isArmorSlot) return { inventoryArmorsFiltered: [], catalogArmorsFiltered: [] };
     const q = search.toLowerCase();
-    return BASE_ARMORS.filter((a) => a.name.toLowerCase().includes(q));
-  }, [search, isArmorSlot]);
+    const invNames = new Set(inventoryArmors.map((a) => a.name));
+    const matches = (a: ArmorItem) => a.name.toLowerCase().includes(q);
+    return {
+      inventoryArmorsFiltered: inventoryArmors.filter(matches),
+      catalogArmorsFiltered: BASE_ARMORS.filter(
+        (a) => matches(a) && !invNames.has(a.name),
+      ),
+    };
+  }, [inventoryArmors, search, isArmorSlot]);
 
   const showClothOption = useMemo(() => {
     if (!isArmorSlot) return false;
@@ -128,10 +144,37 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
 
           {/* Item list */}
           <div className="max-h-[300px] overflow-y-auto space-y-1">
+            {isWeaponSlot && inventoryWeaponsFiltered.length > 0 && (
+              <div className="space-y-1 pb-2 mb-2 border-b border-border">
+                <p className="text-[10px] uppercase tracking-wide text-primary font-medium px-1">
+                  Inventario (carrito)
+                </p>
+                {inventoryWeaponsFiltered.map((w) => (
+                  <button
+                    key={`inv-${w.name}`}
+                    type="button"
+                    onClick={() => handleSelectWeapon(w)}
+                    className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors border border-primary/20 bg-primary/5"
+                  >
+                    <Sword className="h-4 w-4 text-primary shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium text-foreground truncate">
+                        {w.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {w.dmg1} {w.dmgType} • {w.properties.join(", ")}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
             {isWeaponSlot &&
-              filteredWeapons.map((w) => (
+              catalogWeaponsFiltered.map((w) => (
                 <button
                   key={w.name}
+                  type="button"
                   onClick={() => handleSelectWeapon(w)}
                   className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors"
                 >
@@ -173,10 +216,37 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
               </div>
             )}
 
+            {isArmorSlot && inventoryArmorsFiltered.length > 0 && (
+              <div className="space-y-1 pb-2 mb-2 border-b border-border">
+                <p className="text-[10px] uppercase tracking-wide text-primary font-medium px-1">
+                  Inventario (carrito)
+                </p>
+                {inventoryArmorsFiltered.map((a) => (
+                  <button
+                    key={`inv-${a.name}`}
+                    type="button"
+                    onClick={() => handleSelectArmor(a)}
+                    className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors border border-primary/20 bg-primary/5"
+                  >
+                    <Shield className="h-4 w-4 text-primary shrink-0" />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-sm font-medium text-foreground truncate">
+                        {a.name}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        AC {a.baseAC} • {a.category} • {a.rarity}
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
             {isArmorSlot &&
-              filteredArmors.map((a) => (
+              catalogArmorsFiltered.map((a) => (
                 <button
                   key={a.name}
+                  type="button"
                   onClick={() => handleSelectArmor(a)}
                   className="w-full text-left flex items-center gap-3 px-3 py-2 rounded-md hover:bg-accent transition-colors"
                 >
@@ -213,7 +283,10 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
               </p>
             )}
 
-            {isWeaponSlot && !weaponsLoading && filteredWeapons.length === 0 && (
+            {isWeaponSlot &&
+              !weaponsLoading &&
+              inventoryWeaponsFiltered.length === 0 &&
+              catalogWeaponsFiltered.length === 0 && (
               <p className="text-sm text-muted-foreground text-center py-4">
                 No weapons found.
               </p>

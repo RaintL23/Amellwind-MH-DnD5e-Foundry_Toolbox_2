@@ -19,7 +19,7 @@ import {
   Award,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-// import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
+import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 
 const NAV_ITEMS = [
   { to: "/builder", label: "Builder", icon: User },
@@ -46,20 +46,20 @@ interface SidebarProps {
   onMobileClose: () => void;
 }
 
-// function BuilderBadge({ collapsed }: { collapsed: boolean }) {
-//   const { totalItems } = useBuilderInventory();
-//   if (totalItems === 0) return null;
-//   return (
-//     <span
-//       className={cn(
-//         "rounded-full bg-primary/80 text-[9px] font-bold text-primary-foreground min-w-[16px] h-4 flex items-center justify-center px-1",
-//         collapsed ? "absolute -top-0.5 -right-0.5" : "ml-auto",
-//       )}
-//     >
-//       {totalItems}
-//     </span>
-//   );
-// }
+function BuilderBadge({ collapsed }: { collapsed: boolean }) {
+  const { totalItems } = useBuilderInventory();
+  if (totalItems === 0) return null;
+  return (
+    <span
+      className={cn(
+        "rounded-full bg-primary/80 text-[9px] font-bold text-primary-foreground min-w-[16px] h-4 flex items-center justify-center px-1",
+        collapsed ? "absolute -top-0.5 -right-0.5" : "ml-auto",
+      )}
+    >
+      {totalItems}
+    </span>
+  );
+}
 
 export function Sidebar({
   collapsed,
@@ -122,7 +122,7 @@ export function Sidebar({
           >
             <Icon className="h-4 w-4 shrink-0" />
             {!collapsed && label}
-            {/* {to === "/builder" && <BuilderBadge collapsed={collapsed} />} */}
+            {to === "/builder" && <BuilderBadge collapsed={collapsed} />}
           </NavLink>
         ))}
       </nav>

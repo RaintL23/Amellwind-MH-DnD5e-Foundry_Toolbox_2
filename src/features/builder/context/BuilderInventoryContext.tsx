@@ -1,22 +1,31 @@
 import {
   createContext,
-  // useContext,
+  useContext,
   useState,
-  useCallback,
+  useEffect,
   ReactNode,
 } from "react";
-import { Weapon, ArmorItem } from "@/shared/types";
-import { BASE_ARMORS } from "../data/armor.placeholder";
+import { Weapon, ArmorItem, CartEntry } from "@/shared/types";
+import { useCart } from "@/features/shops/context/CartContext";
+import { getAllWeapons } from "@/features/weapons/services/weapon.service";
+import {
+  classifyCartEntry,
+  resolveEquippableFromCart,
+  type CartItemKind,
+} from "../utils/cart-equipment.resolver";
 
 interface BuilderInventoryContextValue {
+  /** Raw cart lines (source of truth from shops). */
+  cartItems: CartEntry[];
+  /** Weapons resolved from cart item names. */
   weapons: Weapon[];
+  /** Armors resolved from cart item names. */
   armors: ArmorItem[];
-  addWeapon: (weapon: Weapon) => void;
-  removeWeapon: (name: string) => void;
-  addArmor: (armor: ArmorItem) => void;
-  removeArmor: (name: string) => void;
-  clearInventory: () => void;
   totalItems: number;
+  equippableCount: number;
+  isSyncing: boolean;
+  getEntryKind: (entry: CartEntry) => CartItemKind;
+  removeFromCart: (name: string) => void;
 }
 
 const BuilderInventoryContext =
@@ -27,49 +36,60 @@ export function BuilderInventoryProvider({
 }: {
   children: ReactNode;
 }) {
+  const { items: cartItems, totalItems, removeItem } = useCart();
   const [weapons, setWeapons] = useState<Weapon[]>([]);
-  const [armors, setArmors] = useState<ArmorItem[]>(BASE_ARMORS);
+  const [armors, setArmors] = useState<ArmorItem[]>([]);
+  const [weaponCatalog, setWeaponCatalog] = useState<Weapon[]>([]);
+  const [isSyncing, setIsSyncing] = useState(true);
 
-  const addWeapon = useCallback((weapon: Weapon) => {
-    setWeapons((prev) => {
-      if (prev.some((w) => w.name === weapon.name)) return prev;
-      return [...prev, weapon];
+  useEffect(() => {
+    let cancelled = false;
+    getAllWeapons().then((catalog) => {
+      if (!cancelled) setWeaponCatalog(catalog);
     });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
-  const removeWeapon = useCallback((name: string) => {
-    setWeapons((prev) => prev.filter((w) => w.name !== name));
-  }, []);
+  useEffect(() => {
+    if (cartItems.length === 0) {
+      setWeapons([]);
+      setArmors([]);
+      setIsSyncing(false);
+      return;
+    }
 
-  const addArmor = useCallback((armor: ArmorItem) => {
-    setArmors((prev) => {
-      if (prev.some((a) => a.name === armor.name)) return prev;
-      return [...prev, armor];
-    });
-  }, []);
+    if (weaponCatalog.length === 0) {
+      setIsSyncing(true);
+      return;
+    }
 
-  const removeArmor = useCallback((name: string) => {
-    setArmors((prev) => prev.filter((a) => a.name !== name));
-  }, []);
+    const { weapons: nextWeapons, armors: nextArmors } = resolveEquippableFromCart(
+      cartItems,
+      weaponCatalog,
+    );
+    setWeapons(nextWeapons);
+    setArmors(nextArmors);
+    setIsSyncing(false);
+  }, [cartItems, weaponCatalog]);
 
-  const clearInventory = useCallback(() => {
-    setWeapons([]);
-    setArmors(BASE_ARMORS);
-  }, []);
+  const equippableCount = weapons.length + armors.length;
 
-  const totalItems = weapons.length;
+  const getEntryKind = (entry: CartEntry): CartItemKind =>
+    classifyCartEntry(entry, weaponCatalog);
 
   return (
     <BuilderInventoryContext.Provider
       value={{
+        cartItems,
         weapons,
         armors,
-        addWeapon,
-        removeWeapon,
-        addArmor,
-        removeArmor,
-        clearInventory,
         totalItems,
+        equippableCount,
+        isSyncing,
+        getEntryKind,
+        removeFromCart: removeItem,
       }}
     >
       {children}
@@ -77,9 +97,12 @@ export function BuilderInventoryProvider({
   );
 }
 
-// export function useBuilderInventory(): BuilderInventoryContextValue {
-//   const ctx = useContext(BuilderInventoryContext);
-//   if (!ctx)
-//     throw new Error("useBuilderInventory must be used inside BuilderInventoryProvider");
-//   return ctx;
-// }
+export function useBuilderInventory(): BuilderInventoryContextValue {
+  const ctx = useContext(BuilderInventoryContext);
+  if (!ctx) {
+    throw new Error(
+      "useBuilderInventory must be used inside BuilderInventoryProvider",
+    );
+  }
+  return ctx;
+}
