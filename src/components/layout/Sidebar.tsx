@@ -1,9 +1,12 @@
-import { NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import type { LucideIcon } from "lucide-react";
 import {
   Swords,
   Shield,
   Gem,
   ChefHat,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
   X,
@@ -21,20 +24,43 @@ import {
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 
-const NAV_ITEMS = [
-  { to: "/builder", label: "Builder", icon: User },
-  { to: "/species", label: "Species", icon: Users },
-  { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
-  { to: "/feats", label: "Feats", icon: Award },
-  { to: "/monsters", label: "Monsters", icon: Swords },
-  { to: "/runes", label: "Runes", icon: Gem },
-  { to: "/weapons", label: "Weapons", icon: Sword },
-  { to: "/items", label: "Items", icon: Package },
-  { to: "/shops", label: "Shops", icon: Store },
-  { to: "/cooking", label: "Cooking", icon: ChefHat },
-  { to: "/combo", label: "Combo List", icon: Hammer },
-  { to: "/environments", label: "Environments", icon: MapPin },
-  { to: "/resources", label: "Resources", icon: Leaf },
+type NavItem = { to: string; label: string; icon: LucideIcon };
+type NavGroup = { label: string; items: NavItem[] };
+
+const NAV_GROUPS: NavGroup[] = [
+  {
+    label: "Character",
+    items: [
+      { to: "/builder", label: "Builder", icon: User },
+      { to: "/species", label: "Species", icon: Users },
+      { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
+      { to: "/feats", label: "Feats", icon: Award },
+    ],
+  },
+  {
+    label: "Bestiary",
+    items: [
+      { to: "/monsters", label: "Monsters", icon: Swords },
+      { to: "/environments", label: "Environments", icon: MapPin },
+    ],
+  },
+  {
+    label: "Gear",
+    items: [
+      { to: "/runes", label: "Runes", icon: Gem },
+      { to: "/weapons", label: "Weapons", icon: Sword },
+      { to: "/items", label: "Items", icon: Package },
+    ],
+  },
+  {
+    label: "Craft & Trade",
+    items: [
+      { to: "/shops", label: "Shops", icon: Store },
+      { to: "/cooking", label: "Cooking", icon: ChefHat },
+      { to: "/combo", label: "Combo List", icon: Hammer },
+      { to: "/resources", label: "Resources", icon: Leaf },
+    ],
+  },
 ];
 
 interface SidebarProps {
@@ -58,6 +84,169 @@ function BuilderBadge({ collapsed }: { collapsed: boolean }) {
     >
       {totalItems}
     </span>
+  );
+}
+
+function isNavItemActive(pathname: string, to: string) {
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
+
+function groupHasActiveRoute(pathname: string, group: NavGroup) {
+  return group.items.some((item) => isNavItemActive(pathname, item.to));
+}
+
+function NavItemLink({
+  to,
+  label,
+  icon: Icon,
+  collapsed,
+  onMobileClose,
+}: NavItem & { collapsed: boolean; onMobileClose: () => void }) {
+  return (
+    <NavLink
+      to={to}
+      onClick={onMobileClose}
+      title={collapsed ? label : undefined}
+      className={({ isActive }) =>
+        cn(
+          "flex items-center rounded-md text-sm font-medium transition-colors relative",
+          collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2",
+          isActive
+            ? "bg-primary/20 text-primary border border-primary/30"
+            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+        )
+      }
+    >
+      <Icon className="h-4 w-4 shrink-0" />
+      {!collapsed && label}
+      {to === "/builder" && <BuilderBadge collapsed={collapsed} />}
+    </NavLink>
+  );
+}
+
+function SidebarNavGroup({
+  group,
+  collapsed,
+  open,
+  onToggle,
+  onMobileClose,
+}: {
+  group: NavGroup;
+  collapsed: boolean;
+  open: boolean;
+  onToggle: () => void;
+  onMobileClose: () => void;
+}) {
+  const { pathname } = useLocation();
+  const isActiveGroup = groupHasActiveRoute(pathname, group);
+  const panelId = `sidebar-group-${group.label.replace(/\s+/g, "-").toLowerCase()}`;
+
+  if (collapsed) {
+    return (
+      <div className="flex flex-col gap-1">
+        {group.items.map((item) => (
+          <NavItemLink
+            key={item.to}
+            {...item}
+            collapsed={collapsed}
+            onMobileClose={onMobileClose}
+          />
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col">
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={open}
+        aria-controls={panelId}
+        className={cn(
+          "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider transition-colors",
+          isActiveGroup
+            ? "text-primary"
+            : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+        )}
+      >
+        <ChevronDown
+          className={cn(
+            "h-3.5 w-3.5 shrink-0 transition-transform duration-200",
+            open && "rotate-180",
+          )}
+        />
+        <span className="flex-1 truncate">{group.label}</span>
+      </button>
+      <div
+        id={panelId}
+        className={cn(
+          "grid transition-[grid-template-rows] duration-200 ease-out",
+          open ? "grid-rows-[1fr]" : "grid-rows-[0fr]",
+        )}
+      >
+        <div className="overflow-hidden">
+          <div className="flex flex-col gap-0.5 pb-1 pl-1">
+            {group.items.map((item) => (
+              <NavItemLink
+                key={item.to}
+                {...item}
+                collapsed={collapsed}
+                onMobileClose={onMobileClose}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SidebarNav({
+  collapsed,
+  onMobileClose,
+}: {
+  collapsed: boolean;
+  onMobileClose: () => void;
+}) {
+  const { pathname } = useLocation();
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
+    Object.fromEntries(NAV_GROUPS.map((g) => [g.label, false])),
+  );
+
+  useEffect(() => {
+    const activeGroup = NAV_GROUPS.find((g) => groupHasActiveRoute(pathname, g));
+    if (!activeGroup) return;
+    setOpenGroups((prev) =>
+      prev[activeGroup.label]
+        ? prev
+        : { ...prev, [activeGroup.label]: true },
+    );
+  }, [pathname]);
+
+  const toggleGroup = (label: string) => {
+    setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+  };
+
+  return (
+    <nav className="flex flex-col gap-1 p-2 flex-1 overflow-y-auto">
+      {NAV_GROUPS.map((group, groupIndex) => (
+        <div
+          key={group.label}
+          className={cn(
+            groupIndex > 0 && (collapsed ? "pt-2 mt-1 border-t border-border" : "pt-1"),
+          )}
+        >
+          <SidebarNavGroup
+            group={group}
+            collapsed={collapsed}
+            open={openGroups[group.label] ?? false}
+            onToggle={() => toggleGroup(group.label)}
+            onMobileClose={onMobileClose}
+          />
+        </div>
+      ))}
+    </nav>
   );
 }
 
@@ -103,29 +292,7 @@ export function Sidebar({
       </div>
 
       {/* Navegación */}
-      <nav className="flex flex-col gap-1 p-2 flex-1">
-        {NAV_ITEMS.map(({ to, label, icon: Icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            onClick={onMobileClose}
-            title={collapsed ? label : undefined}
-            className={({ isActive }) =>
-              cn(
-                "flex items-center rounded-md text-sm font-medium transition-colors relative",
-                collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2",
-                isActive
-                  ? "bg-primary/20 text-primary border border-primary/30"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )
-            }
-          >
-            <Icon className="h-4 w-4 shrink-0" />
-            {!collapsed && label}
-            {to === "/builder" && <BuilderBadge collapsed={collapsed} />}
-          </NavLink>
-        ))}
-      </nav>
+      <SidebarNav collapsed={collapsed} onMobileClose={onMobileClose} />
 
       {/* Footer + botón collapse (solo desktop) */}
       <div className="border-t border-border shrink-0">
