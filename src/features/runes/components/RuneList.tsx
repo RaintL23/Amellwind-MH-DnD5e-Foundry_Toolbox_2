@@ -4,6 +4,7 @@ import { getAllRunes } from "../services/rune.service";
 import { Pagination } from "@/components/ui/pagination";
 import { RuneDetailDialog } from "./RuneDetailDialog";
 import { RulesPanel } from "./RulesPanel";
+import { ObtainMaterialsPanel } from "./ObtainmentRulesPanel";
 import { BuildDrawer } from "./BuildDrawer";
 import { RuneFilters, RuneFiltersState } from "./RuneFilters";
 import { RuneTable } from "./RuneTable";
@@ -120,6 +121,7 @@ export function RuneList() {
           )}
         </div>
 
+        <ObtainMaterialsPanel />
         <RulesPanel />
 
         <RuneFilters
