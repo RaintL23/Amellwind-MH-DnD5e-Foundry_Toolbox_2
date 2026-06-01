@@ -20,6 +20,7 @@ import {
   Users,
   ScrollText,
   Award,
+  BookOpen,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -32,6 +33,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Character",
     items: [
       { to: "/builder", label: "Builder", icon: User },
+      { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
       { to: "/species", label: "Species", icon: Users },
       { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
       { to: "/feats", label: "Feats", icon: Award },

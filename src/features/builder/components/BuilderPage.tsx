@@ -3,6 +3,7 @@ import { StatsPanel } from "./StatsPanel";
 import { PaperDoll } from "./PaperDoll";
 import { BuilderInventoryPanel } from "./BuilderInventoryPanel";
 import { CombatResultsPanel } from "./CombatResultsPanel";
+import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 
 export function BuilderPage() {
   return (
@@ -21,6 +22,9 @@ export function BuilderPage() {
 
         {/* Main content grid */}
         <div className="flex-1 overflow-auto p-4 lg:p-6">
+          <div className="max-w-[1200px] mb-4">
+            <CharacterCreationTipsPanel />
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-4 lg:gap-6 max-w-[1200px]">
             {/* Left column: Stats + Combat Results stacked */}
             <div className="space-y-4">
