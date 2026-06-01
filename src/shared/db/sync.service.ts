@@ -6,6 +6,8 @@ import {
 } from "../constants/api.constants";
 
 const OPT_FEATURES_STORE_KEY = "optfeatures";
+const RACE_STORE_KEY = "race";
+const SUBRACE_STORE_KEY = "subrace";
 
 interface DataMeta {
   timestamp: number;
@@ -18,7 +20,7 @@ interface SyncResult {
 }
 
 async function isDataFresh(
-  storeName: "MM_META" | "GTMH_META"
+  storeName: "MM_META" | "GTMH_META",
 ): Promise<boolean> {
   const meta = await getStoreValue<DataMeta>(storeName, "meta");
   if (!meta) return false;
@@ -31,13 +33,13 @@ async function fetchAndCache(
   previousStore: "MM_PREVIOUS" | "GTMH_PREVIOUS",
   metaStore: "MM_META" | "GTMH_META",
   dataKey: string,
-  onFullJson?: (json: Record<string, unknown>) => Promise<void>
+  onFullJson?: (json: Record<string, unknown>) => Promise<void>,
 ): Promise<unknown | null> {
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const json = await response.json() as Record<string, unknown>;
+    const json = (await response.json()) as Record<string, unknown>;
     const newData = json[dataKey] ?? json;
 
     // Guardar copia anterior antes de reemplazar
@@ -75,7 +77,7 @@ export async function syncData(): Promise<SyncResult> {
       "MM_CURRENT",
       "MM_PREVIOUS",
       "MM_META",
-      "monster"
+      "monster",
     );
     if (fetched !== null) {
       mmData = fetched as unknown[];
@@ -97,15 +99,24 @@ export async function syncData(): Promise<SyncResult> {
       "item",
       async (json) => {
         if (Array.isArray(json.optionalfeature)) {
-          await setStoreValue("GTMH_CURRENT", OPT_FEATURES_STORE_KEY, json.optionalfeature);
+          await setStoreValue(
+            "GTMH_CURRENT",
+            OPT_FEATURES_STORE_KEY,
+            json.optionalfeature,
+          );
         }
-      }
+        if (Array.isArray(json.race)) {
+          await setStoreValue("GTMH_CURRENT", RACE_STORE_KEY, json.race);
+        }
+        if (Array.isArray(json.subrace)) {
+          await setStoreValue("GTMH_CURRENT", SUBRACE_STORE_KEY, json.subrace);
+        }
+      },
     );
     if (fetched !== null) {
       gtmhData = fetched;
     } else {
-      gtmhData =
-        (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
+      gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
     }
   } else {
     gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
@@ -128,14 +139,17 @@ export async function getGtmhData(): Promise<unknown> {
  * If not yet cached (first load after upgrade), fetches lazily from the remote URL.
  */
 export async function getOptionalFeaturesRaw(): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", OPT_FEATURES_STORE_KEY);
+  const cached = await getStoreValue<unknown[]>(
+    "GTMH_CURRENT",
+    OPT_FEATURES_STORE_KEY,
+  );
   if (cached && cached.length > 0) return cached;
 
   // Lazy-populate for users that already have GTMH items cached but not optfeatures
   try {
     const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
     if (!response.ok) return [];
-    const json = await response.json() as Record<string, unknown>;
+    const json = (await response.json()) as Record<string, unknown>;
     const data: unknown[] = Array.isArray(json.optionalfeature)
       ? (json.optionalfeature as unknown[])
       : [];
@@ -144,4 +158,43 @@ export async function getOptionalFeaturesRaw(): Promise<unknown[]> {
   } catch {
     return [];
   }
+}
+
+async function fetchGtmhSpeciesArrays(): Promise<{
+  race: unknown[];
+  subrace: unknown[];
+}> {
+  const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
+  if (!response.ok) return { race: [], subrace: [] };
+  const json = (await response.json()) as Record<string, unknown>;
+  const race = Array.isArray(json.race) ? (json.race as unknown[]) : [];
+  const subrace = Array.isArray(json.subrace) ? (json.subrace as unknown[]) : [];
+  await setStoreValue("GTMH_CURRENT", RACE_STORE_KEY, race);
+  await setStoreValue("GTMH_CURRENT", SUBRACE_STORE_KEY, subrace);
+  return { race, subrace };
+}
+
+/**
+ * Returns raw race + subrace entries from the GTMH JSON (merged).
+ * Subraces include Dragonborn elder-dragon variants and AGMH subraces (Felyne, etc.).
+ */
+export async function getRacesRaw(): Promise<unknown[]> {
+  let race =
+    (await getStoreValue<unknown[]>("GTMH_CURRENT", RACE_STORE_KEY)) ?? [];
+  let subrace =
+    (await getStoreValue<unknown[]>("GTMH_CURRENT", SUBRACE_STORE_KEY)) ?? [];
+
+  if (race.length > 0 && subrace.length > 0) {
+    return [...race, ...subrace];
+  }
+
+  try {
+    const fetched = await fetchGtmhSpeciesArrays();
+    race = fetched.race;
+    subrace = fetched.subrace;
+  } catch {
+    // use whatever partial cache exists
+  }
+
+  return [...race, ...subrace];
 }

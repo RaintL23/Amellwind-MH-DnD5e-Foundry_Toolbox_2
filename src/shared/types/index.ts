@@ -9,3 +9,4 @@ export * from "./optionalfeature.types";
 export * from "./resource.types";
 export * from "./environment.types";
 export * from "./character.types";
+export * from "./species.types";

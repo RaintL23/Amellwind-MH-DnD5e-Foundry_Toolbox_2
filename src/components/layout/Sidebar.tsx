@@ -14,21 +14,23 @@ import {
   Leaf,
   MapPin,
   User,
+  Users,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 // import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 
 const NAV_ITEMS = [
+  { to: "/builder", label: "Builder", icon: User },
+  { to: "/species", label: "Species", icon: Users },
   { to: "/monsters", label: "Monsters", icon: Swords },
   { to: "/runes", label: "Runes", icon: Gem },
   { to: "/weapons", label: "Weapons", icon: Sword },
-  { to: "/cooking", label: "Cooking", icon: ChefHat },
-  { to: "/combo", label: "Combo List", icon: Hammer },
   { to: "/items", label: "Items", icon: Package },
   { to: "/shops", label: "Shops", icon: Store },
-  { to: "/resources", label: "Resources", icon: Leaf },
+  { to: "/cooking", label: "Cooking", icon: ChefHat },
+  { to: "/combo", label: "Combo List", icon: Hammer },
   { to: "/environments", label: "Environments", icon: MapPin },
-  { to: "/builder", label: "Builder", icon: User },
+  { to: "/resources", label: "Resources", icon: Leaf },
 ];
 
 interface SidebarProps {

@@ -13,6 +13,7 @@ import { CartProvider } from "@/features/shops/context/CartContext";
 import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { BuilderInventoryProvider } from "@/features/builder/context/BuilderInventoryContext";
 import { BuilderPage } from "@/features/builder/components/BuilderPage";
+import { SpeciesList } from "@/features/species/components/SpeciesList";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="resources" element={<ResourcePage />} />
             <Route path="environments" element={<EnvironmentList />} />
             <Route path="builder" element={<BuilderPage />} />
+            <Route path="species" element={<SpeciesList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
