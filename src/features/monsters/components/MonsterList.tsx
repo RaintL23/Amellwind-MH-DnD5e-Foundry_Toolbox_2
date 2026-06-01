@@ -159,7 +159,7 @@ export function MonsterList() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-muted-foreground animate-pulse">
-          Cargando monstruos…
+          Loading monsters...
         </div>
       </div>
     );
@@ -171,7 +171,7 @@ export function MonsterList() {
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground">Monsters</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {filtered.length} de {monsters.length} monstruos
+          {filtered.length} / {monsters.length} monsters
         </p>
       </div>
 
@@ -180,7 +180,7 @@ export function MonsterList() {
         <div className="relative col-span-2 md:col-span-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
-            placeholder="Buscar por nombre…"
+            placeholder="Search by name..."
             value={filters.name}
             onChange={(e) =>
               updateFilters({ ...filters, name: e.target.value })
@@ -193,7 +193,7 @@ export function MonsterList() {
           value={filters.cr}
           onChange={(e) => updateFilters({ ...filters, cr: e.target.value })}
         >
-          <option value="">Todos los CR</option>
+          <option value="">All CR</option>
           {uniqueCRs.map((cr) => (
             <option key={cr} value={cr}>
               CR {cr}
@@ -205,7 +205,7 @@ export function MonsterList() {
           value={filters.tier}
           onChange={(e) => updateFilters({ ...filters, tier: e.target.value })}
         >
-          <option value="">Todos los Tiers</option>
+          <option value="">All Tiers</option>
           {[0, 1, 2, 3, 4].map((t) => (
             <option key={t} value={t}>
               Tier {t}
@@ -217,7 +217,7 @@ export function MonsterList() {
           value={filters.type}
           onChange={(e) => updateFilters({ ...filters, type: e.target.value })}
         >
-          <option value="">Todos los tipos</option>
+          <option value="">All types</option>
           {uniqueTypes.map((type) => (
             <option key={type} value={type} className="capitalize">
               {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -231,7 +231,7 @@ export function MonsterList() {
             updateFilters({ ...filters, environment: e.target.value })
           }
         >
-          <option value="">Todos los entornos</option>
+          <option value="">All environments</option>
           {uniqueEnvironments.map((env) => (
             <option key={env} value={env} className="capitalize">
               {env.charAt(0).toUpperCase() + env.slice(1)}
@@ -318,7 +318,7 @@ export function MonsterList() {
                     colSpan={5}
                     className="px-4 py-10 text-center text-muted-foreground"
                   >
-                    No se encontraron monstruos con los filtros aplicados.
+                    No monsters found with the applied filters.
                   </td>
                 </tr>
               )}

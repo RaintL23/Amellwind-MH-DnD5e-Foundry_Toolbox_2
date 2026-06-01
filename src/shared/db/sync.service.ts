@@ -9,6 +9,7 @@ const OPT_FEATURES_STORE_KEY = "optfeatures";
 const RACE_STORE_KEY = "race";
 const SUBRACE_STORE_KEY = "subrace";
 const BACKGROUND_STORE_KEY = "background";
+const FEAT_STORE_KEY = "feat";
 
 interface DataMeta {
   timestamp: number;
@@ -119,6 +120,9 @@ export async function syncData(): Promise<SyncResult> {
             json.background,
           );
         }
+        if (Array.isArray(json.feat)) {
+          await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, json.feat);
+        }
       },
     );
     if (fetched !== null) {
@@ -226,6 +230,28 @@ export async function getBackgroundsRaw(): Promise<unknown[]> {
       ? (json.background as unknown[])
       : [];
     await setStoreValue("GTMH_CURRENT", BACKGROUND_STORE_KEY, data);
+    return data;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Returns the raw feat array from the GTMH JSON.
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getFeatsRaw(): Promise<unknown[]> {
+  const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", FEAT_STORE_KEY);
+  if (cached && cached.length > 0) return cached;
+
+  try {
+    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
+    if (!response.ok) return [];
+    const json = (await response.json()) as Record<string, unknown>;
+    const data: unknown[] = Array.isArray(json.feat)
+      ? (json.feat as unknown[])
+      : [];
+    await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, data);
     return data;
   } catch {
     return [];

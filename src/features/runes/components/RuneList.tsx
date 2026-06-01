@@ -97,7 +97,7 @@ export function RuneList() {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="text-muted-foreground animate-pulse">
-          Cargando runas…
+          Loading runes...
         </div>
       </div>
     );
@@ -110,13 +110,13 @@ export function RuneList() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Runes</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {filtered.length} of {runes.length} materials
+              {filtered.length} / {runes.length} materials
             </p>
           </div>
           {totalRunes > 0 && (
             <div className="flex items-center gap-1.5 rounded-md bg-amber-600/10 border border-amber-600/30 px-3 py-1.5 text-xs text-amber-400 font-medium shrink-0">
               <Layers className="h-3.5 w-3.5" />
-              {totalRunes} en build
+              {totalRunes} in your build
             </div>
           )}
         </div>

@@ -30,7 +30,7 @@ export function RuneFilters({
       <div className="relative col-span-2 md:col-span-1">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
         <Input
-          placeholder="Buscar material…"
+          placeholder="Search material..."
           value={filters.name}
           onChange={(e) => onChange({ ...filters, name: e.target.value })}
           className="pl-8"
@@ -41,7 +41,7 @@ export function RuneFilters({
         value={filters.monster}
         onChange={(e) => onChange({ ...filters, monster: e.target.value })}
       >
-        <option value="">Todos los monstruos</option>
+        <option value="">All monsters</option>
         {uniqueMonsters.map((m) => (
           <option key={m} value={m}>
             {m}
@@ -53,7 +53,7 @@ export function RuneFilters({
         value={filters.slot}
         onChange={(e) => onChange({ ...filters, slot: e.target.value })}
       >
-        <option value="">Todos los slots</option>
+        <option value="">All slots</option>
         <option value="A">Armor</option>
         <option value="W">Weapon</option>
       </Select>
@@ -62,7 +62,7 @@ export function RuneFilters({
         value={filters.obtainment}
         onChange={(e) => onChange({ ...filters, obtainment: e.target.value })}
       >
-        <option value="">Toda obtención</option>
+        <option value="">All obtainment</option>
         <option value="Carveable">Carveable</option>
         <option value="Capturable">Capturable</option>
         <option value="Ambas">Ambas</option>
@@ -72,7 +72,7 @@ export function RuneFilters({
         value={filters.tag}
         onChange={(e) => onChange({ ...filters, tag: e.target.value })}
       >
-        <option value="">Todos los tags</option>
+        <option value="">All tags</option>
         {uniqueTags.map((tag) => (
           <option key={tag} value={tag}>
             {tag}
@@ -84,7 +84,7 @@ export function RuneFilters({
         value={filters.tier}
         onChange={(e) => onChange({ ...filters, tier: e.target.value })}
       >
-        <option value="">Todos los tiers</option>
+        <option value="">All tiers</option>
         {([1, 2, 3, 4] as const).map((t) => (
           <option key={t} value={t}>
             {TIER_LABELS[t]}

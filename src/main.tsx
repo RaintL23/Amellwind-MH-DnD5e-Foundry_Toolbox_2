@@ -7,6 +7,7 @@ import { clearMonsterCache } from "@/features/monsters/services/monster.service"
 import { clearRuneCache } from "@/features/runes/services/rune.service";
 import { clearSpeciesCache } from "@/features/species/services/species.service";
 import { clearBackgroundCache } from "@/features/backgrounds/services/background.service";
+import { clearFeatCache } from "@/features/feats/services/feat.service";
 import "./index.css";
 
 async function bootstrap() {
@@ -24,6 +25,7 @@ async function bootstrap() {
     clearRuneCache();
     clearSpeciesCache();
     clearBackgroundCache();
+    clearFeatCache();
   } catch (error) {
     console.warn("[Bootstrap] Sync failed, using cached data if available:", error);
   }

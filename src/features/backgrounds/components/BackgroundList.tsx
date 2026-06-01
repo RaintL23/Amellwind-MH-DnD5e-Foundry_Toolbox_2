@@ -13,7 +13,7 @@ import { cn } from "@/shared/utils/cn";
 
 const FACTION_FILTERS: Array<{ value: "" | BackgroundFaction; label: string }> =
   [
-    { value: "", label: "Todos" },
+    { value: "", label: "All" },
     {
       value: "hunters-guild",
       label: BACKGROUND_FACTION_LABELS["hunters-guild"],

@@ -15,6 +15,7 @@ import { BuilderInventoryProvider } from "@/features/builder/context/BuilderInve
 import { BuilderPage } from "@/features/builder/components/BuilderPage";
 import { SpeciesList } from "@/features/species/components/SpeciesList";
 import { BackgroundList } from "@/features/backgrounds/components/BackgroundList";
+import { FeatList } from "@/features/feats/components/FeatList";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -38,6 +39,7 @@ export default function App() {
             <Route path="builder" element={<BuilderPage />} />
             <Route path="species" element={<SpeciesList />} />
             <Route path="backgrounds" element={<BackgroundList />} />
+            <Route path="feats" element={<FeatList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

@@ -11,3 +11,4 @@ export * from "./environment.types";
 export * from "./character.types";
 export * from "./species.types";
 export * from "./background.types";
+export * from "./feat.types";

@@ -16,6 +16,7 @@ import {
   User,
   Users,
   ScrollText,
+  Award,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 // import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -24,6 +25,7 @@ const NAV_ITEMS = [
   { to: "/builder", label: "Builder", icon: User },
   { to: "/species", label: "Species", icon: Users },
   { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
+  { to: "/feats", label: "Feats", icon: Award },
   { to: "/monsters", label: "Monsters", icon: Swords },
   { to: "/runes", label: "Runes", icon: Gem },
   { to: "/weapons", label: "Weapons", icon: Sword },
