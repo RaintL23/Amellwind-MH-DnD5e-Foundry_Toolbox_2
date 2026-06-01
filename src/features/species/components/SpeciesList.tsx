@@ -11,24 +11,27 @@ import { Input } from "@/components/ui/input";
 import { Search, Users } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
-const CATEGORY_FILTERS: Array<{ value: "" | SpeciesCategory; label: string }> = [
-  { value: "", label: "Todas" },
-  { value: "ancestry", label: SPECIES_CATEGORY_LABELS.ancestry },
-  { value: "folk", label: SPECIES_CATEGORY_LABELS.folk },
-  { value: "elder-dragon", label: SPECIES_CATEGORY_LABELS["elder-dragon"] },
-  { value: "subrace", label: SPECIES_CATEGORY_LABELS.subrace },
-  { value: "lineage", label: SPECIES_CATEGORY_LABELS.lineage },
-];
+const CATEGORY_FILTERS: Array<{ value: "" | SpeciesCategory; label: string }> =
+  [
+    { value: "", label: "All" },
+    { value: "ancestry", label: SPECIES_CATEGORY_LABELS.ancestry },
+    { value: "folk", label: SPECIES_CATEGORY_LABELS.folk },
+    { value: "elder-dragon", label: SPECIES_CATEGORY_LABELS["elder-dragon"] },
+    { value: "subrace", label: SPECIES_CATEGORY_LABELS.subrace },
+    { value: "lineage", label: SPECIES_CATEGORY_LABELS.lineage },
+  ];
 
-type ViewMode = "all" | "roots" | "subraces";
+type ViewMode = "All" | "Roots" | "Subraces";
 
 export function SpeciesList() {
   const [species, setSpecies] = useState<Species[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<"" | SpeciesCategory>("");
+  const [categoryFilter, setCategoryFilter] = useState<"" | SpeciesCategory>(
+    "",
+  );
   const [parentFilter, setParentFilter] = useState("");
-  const [viewMode, setViewMode] = useState<ViewMode>("all");
+  const [viewMode, setViewMode] = useState<ViewMode>("All");
   const [selected, setSelected] = useState<Species | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -54,8 +57,8 @@ export function SpeciesList() {
   const filtered = useMemo(() => {
     let result = species;
 
-    if (viewMode === "roots") result = result.filter((s) => !s.isSubrace);
-    if (viewMode === "subraces") result = result.filter((s) => s.isSubrace);
+    if (viewMode === "Roots") result = result.filter((s) => !s.isSubrace);
+    if (viewMode === "Subraces") result = result.filter((s) => s.isSubrace);
 
     if (search.trim()) {
       const q = search.toLowerCase();
@@ -98,7 +101,7 @@ export function SpeciesList() {
       <div className="shrink-0 border-b border-border px-6 py-5">
         <div className="flex items-center gap-3 mb-1">
           <Users className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Especies</h1>
+          <h1 className="text-xl font-bold text-foreground">Species</h1>
           {!loading && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
               {filtered.length} / {species.length}
@@ -106,9 +109,9 @@ export function SpeciesList() {
           )}
         </div>
         <p className="text-sm text-muted-foreground">
-          Razas y linajes de Amellwind&apos;s Guide to Monster Hunting (D&amp;D
-          2024: especies). Incluye ancestros, folk, dragonborn de dragones
-          ancianos y subrazas.
+          Species and lineages from Amellwind&apos;s Guide to Monster Hunting
+          (D&amp;D 2024: species). Includes ancestries, folk, elder dragonborn
+          and subraces.
         </p>
       </div>
 
@@ -119,7 +122,7 @@ export function SpeciesList() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar especie..."
+              placeholder="Search species..."
               className="pl-9 h-8 text-sm"
             />
           </div>
@@ -127,9 +130,9 @@ export function SpeciesList() {
           <div className="flex items-center gap-1">
             {(
               [
-                { value: "all", label: "Todas" },
-                { value: "roots", label: "Ancestros" },
-                { value: "subraces", label: "Subrazas" },
+                { value: "All", label: "All" },
+                { value: "Roots", label: "Roots" },
+                { value: "Subraces", label: "Subraces" },
               ] as const
             ).map(({ value, label }) => (
               <button
@@ -154,7 +157,7 @@ export function SpeciesList() {
               onChange={(e) => setParentFilter(e.target.value)}
               className="h-8 rounded-md border border-border bg-card px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
             >
-              <option value="">Todos los ancestros</option>
+              <option value="">All roots</option>
               {parentOptions.map((p) => (
                 <option key={p} value={p}>
                   {p}
@@ -188,13 +191,13 @@ export function SpeciesList() {
           <div className="flex items-center justify-center h-48">
             <div className="flex flex-col items-center gap-3 text-muted-foreground">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm">Cargando especies...</span>
+              <span className="text-sm">Loading species...</span>
             </div>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Users className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No hay especies con esos filtros.</p>
+            <p className="text-sm">No species found with those filters.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

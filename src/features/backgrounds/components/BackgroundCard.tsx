@@ -58,7 +58,7 @@ export function BackgroundCard({ background, onClick }: BackgroundCardProps) {
 
       <div className="space-y-1.5 mb-3 text-sm">
         <p className="text-muted-foreground line-clamp-2">
-          <span className="text-foreground/80 font-medium">Habilidades:</span>{" "}
+          <span className="text-foreground/80 font-medium">Skills:</span>{" "}
           {background.proficiencies.skills}
         </p>
         {background.features[0] && (

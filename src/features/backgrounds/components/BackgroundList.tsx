@@ -81,7 +81,7 @@ export function BackgroundList() {
         </div>
         <p className="text-sm text-muted-foreground">
           Trasfondos de facción de Amellwind&apos;s Guide to Monster Hunting:
-          Gremio de Cazadores, Handlers y Wycademy.
+          Hunters Guild, Handlers Guild and Wycademy.
         </p>
       </div>
 
@@ -92,7 +92,7 @@ export function BackgroundList() {
             <Input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar trasfondo..."
+              placeholder="Search background..."
               className="pl-9 h-8 text-sm"
             />
           </div>
@@ -122,13 +122,13 @@ export function BackgroundList() {
           <div className="flex items-center justify-center h-48">
             <div className="flex flex-col items-center gap-3 text-muted-foreground">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm">Cargando trasfondos...</span>
+              <span className="text-sm">Loading backgrounds...</span>
             </div>
           </div>
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <ScrollText className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No hay trasfondos con esos filtros.</p>
+            <p className="text-sm">No backgrounds found with those filters.</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

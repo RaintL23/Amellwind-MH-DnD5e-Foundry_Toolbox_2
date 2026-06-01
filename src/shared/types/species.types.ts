@@ -1,6 +1,12 @@
 import { AbilityKey, DamageType, Entry } from "./actor.types";
 
-export type SpeciesSize = "Tiny" | "Small" | "Medium" | "Large" | "Huge" | "Gargantuan";
+export type SpeciesSize =
+  | "Tiny"
+  | "Small"
+  | "Medium"
+  | "Large"
+  | "Huge"
+  | "Gargantuan";
 
 export type SpeciesCategory =
   | "ancestry"
@@ -66,9 +72,9 @@ export const ABILITY_LABELS: Record<AbilityKey, string> = {
 };
 
 export const SPECIES_CATEGORY_LABELS: Record<SpeciesCategory, string> = {
-  ancestry: "Ancestro",
+  ancestry: "Ancestry",
   folk: "Folk",
-  "elder-dragon": "Dragon Anciano",
-  subrace: "Subraza",
-  lineage: "Linaje",
+  "elder-dragon": "Elder Dragonborn",
+  subrace: "Subrace",
+  lineage: "Lineage",
 };

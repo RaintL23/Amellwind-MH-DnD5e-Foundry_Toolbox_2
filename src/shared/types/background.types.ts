@@ -1,9 +1,6 @@
 import { Entry } from "./actor.types";
 
-export type BackgroundFaction =
-  | "hunters-guild"
-  | "handlers-guild"
-  | "wycademy";
+export type BackgroundFaction = "hunters-guild" | "handlers-guild" | "wycademy";
 
 export interface BackgroundTable {
   caption?: string;
@@ -37,7 +34,7 @@ export interface Background {
 }
 
 export const BACKGROUND_FACTION_LABELS: Record<BackgroundFaction, string> = {
-  "hunters-guild": "Gremio de Cazadores",
+  "hunters-guild": "Hunters Guild",
   "handlers-guild": "Handlers",
   wycademy: "Wycademy",
 };

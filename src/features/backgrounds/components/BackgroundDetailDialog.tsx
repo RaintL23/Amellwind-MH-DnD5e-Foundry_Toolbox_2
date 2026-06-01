@@ -134,12 +134,12 @@ export function BackgroundDetailDialog({
           )}
 
           <h3 className="text-xs font-bold text-sky-400 uppercase tracking-wider mb-3">
-            Competencias
+            Competencies
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-sm">
             <div className="rounded-md border border-border bg-muted/20 px-3 py-2 sm:col-span-2">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                Habilidades
+                Skills
               </p>
               <p className="font-medium text-foreground">
                 {background.proficiencies.skills}
@@ -147,7 +147,7 @@ export function BackgroundDetailDialog({
             </div>
             <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                Herramientas
+                Tools
               </p>
               <p className="font-medium text-foreground">
                 {background.proficiencies.tools}
@@ -155,7 +155,7 @@ export function BackgroundDetailDialog({
             </div>
             <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                Idiomas
+                Languages
               </p>
               <p className="font-medium text-foreground">
                 {background.proficiencies.languages}
@@ -163,7 +163,7 @@ export function BackgroundDetailDialog({
             </div>
             <div className="rounded-md border border-border bg-muted/20 px-3 py-2 sm:col-span-2">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                Equipo inicial
+                Initial Equipment
               </p>
               <p className="font-medium text-foreground text-sm leading-relaxed">
                 {background.proficiencies.equipment}
@@ -175,7 +175,7 @@ export function BackgroundDetailDialog({
 
           <SectionBlock
             sections={background.features}
-            heading="Rasgos de trasfondo"
+            heading="Background Features"
             accentClass="text-sky-400"
           />
 
@@ -184,7 +184,7 @@ export function BackgroundDetailDialog({
               <Separator className="my-4" />
               <SectionBlock
                 sections={background.suggestedCharacteristics}
-                heading="Rasgos sugeridos"
+                heading="Suggested Characteristics"
                 accentClass="text-violet-400"
               />
             </>
