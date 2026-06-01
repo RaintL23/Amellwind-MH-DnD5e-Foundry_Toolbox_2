@@ -1,7 +1,11 @@
 import { Weapon, PROPERTY_LABELS, DMG_TYPE_LABELS, DMG_TYPE_COLOR } from "@/shared/types";
+import {
+  formatWeaponProficiencyHint,
+  getWeaponProficiencyRule,
+} from "../data/weapon-proficiencies.data";
 import { formatWeaponValue } from "../services/weapon.service";
 import { cn } from "@/shared/utils/cn";
-import { Swords, Weight, Coins } from "lucide-react";
+import { Swords, Weight, Coins, GraduationCap } from "lucide-react";
 
 const DMG_TYPE_ACCENT: Record<string, string> = {
   S: "text-red-400",
@@ -25,6 +29,10 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
   const accentText = DMG_TYPE_ACCENT[weapon.dmgType] ?? "text-primary";
   const iconBg = DMG_TYPE_ICON_BG[weapon.dmgType] ?? "bg-primary/10";
   const borderHover = DMG_TYPE_COLOR[weapon.dmgType] ?? "hover:border-primary/50";
+  const proficiencyRule = getWeaponProficiencyRule(weapon.name);
+  const proficiencyHint = proficiencyRule
+    ? formatWeaponProficiencyHint(proficiencyRule)
+    : undefined;
 
   const damageDisplay = weapon.dmg2
     ? `${weapon.dmg1} / ${weapon.dmg2}`
@@ -48,6 +56,15 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
           <h3 className="font-semibold text-foreground leading-tight truncate">{weapon.name}</h3>
           {weapon.range && (
             <p className="text-xs text-muted-foreground mt-0.5">Rango: {weapon.range}</p>
+          )}
+          {proficiencyHint && (
+            <p
+              className="flex items-start gap-1 text-[10px] text-muted-foreground/90 mt-1 leading-snug line-clamp-2"
+              title={`Compatible proficiency: ${proficiencyHint}`}
+            >
+              <GraduationCap className="h-3 w-3 shrink-0 mt-px opacity-70" aria-hidden />
+              <span>{proficiencyHint}</span>
+            </p>
           )}
         </div>
       </div>
