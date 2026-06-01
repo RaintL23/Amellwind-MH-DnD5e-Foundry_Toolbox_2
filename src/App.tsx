@@ -14,6 +14,7 @@ import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { BuilderInventoryProvider } from "@/features/builder/context/BuilderInventoryContext";
 import { BuilderPage } from "@/features/builder/components/BuilderPage";
 import { SpeciesList } from "@/features/species/components/SpeciesList";
+import { BackgroundList } from "@/features/backgrounds/components/BackgroundList";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="environments" element={<EnvironmentList />} />
             <Route path="builder" element={<BuilderPage />} />
             <Route path="species" element={<SpeciesList />} />
+            <Route path="backgrounds" element={<BackgroundList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
