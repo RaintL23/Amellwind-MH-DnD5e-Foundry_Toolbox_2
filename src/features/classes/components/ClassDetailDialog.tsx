@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import {
   Class,
   ClassFeatureEntry,
@@ -43,7 +43,7 @@ interface ClassDetailDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-function MetaRow({
+const MetaRow = memo(function MetaRow({
   label,
   value,
   differs,
@@ -72,9 +72,9 @@ function MetaRow({
       </span>
     </div>
   );
-}
+});
 
-function MetaListSection({
+const MetaListSection = memo(function MetaListSection({
   heading,
   items,
   differs,
@@ -115,21 +115,30 @@ function MetaListSection({
       </ul>
     </div>
   );
-}
+});
 
-function FeatureChip({
+/**
+ * Receives a stable `onToggle(uid)` reference — allows React.memo to skip
+ * re-renders for chips whose `enabled` state hasn't changed.
+ */
+const FeatureChip = memo(function FeatureChip({
   feature,
   enabled,
   onToggle,
 }: {
   feature: ClassFeatureEntry;
   enabled: boolean;
-  onToggle: () => void;
+  onToggle: (uid: string) => void;
 }) {
+  const handleClick = useCallback(
+    () => onToggle(feature.uid),
+    [onToggle, feature.uid],
+  );
+
   return (
     <button
       type="button"
-      onClick={onToggle}
+      onClick={handleClick}
       className={cn(
         "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px] font-medium transition-colors text-left",
         enabled
@@ -150,7 +159,7 @@ function FeatureChip({
       )}
     </button>
   );
-}
+});
 
 function getAllFeatureUids(progression: ClassLevelRow[]): string[] {
   return progression.flatMap((row) => row.features.map((feature) => feature.uid));
@@ -193,7 +202,7 @@ function nextFeatureSelection(
   return next.size === allUids.length ? allSet : next;
 }
 
-function ClassLevelTable({
+const ClassLevelTable = memo(function ClassLevelTable({
   progression,
   tableGroups,
   enabledFeatureUids,
@@ -204,7 +213,10 @@ function ClassLevelTable({
   enabledFeatureUids: Set<string>;
   onToggleFeature: (uid: string) => void;
 }) {
-  const flatLabels = tableGroups.flatMap((g) => g.colLabels);
+  const flatLabels = useMemo(
+    () => tableGroups.flatMap((g) => g.colLabels),
+    [tableGroups],
+  );
 
   return (
     <div className="overflow-x-auto rounded-md border border-border">
@@ -251,7 +263,7 @@ function ClassLevelTable({
                       key={feature.uid}
                       feature={feature}
                       enabled={enabledFeatureUids.has(feature.uid)}
-                      onToggle={() => onToggleFeature(feature.uid)}
+                      onToggle={onToggleFeature}
                     />
                   ))}
                 </div>
@@ -262,31 +274,13 @@ function ClassLevelTable({
       </table>
     </div>
   );
-}
+});
 
-function FeatureDetailsPanel({
-  features,
+const FeatureDetailPanel = memo(function FeatureDetailPanel({
+  feature,
 }: {
-  features: ClassFeatureEntry[];
+  feature: ClassFeatureEntry;
 }) {
-  if (features.length === 0) {
-    return (
-      <p className="mt-4 text-sm text-muted-foreground italic">
-        No features selected.
-      </p>
-    );
-  }
-
-  return (
-    <div className="mt-4 space-y-3">
-      {features.map((feature) => (
-        <FeatureDetailPanel key={feature.uid} feature={feature} />
-      ))}
-    </div>
-  );
-}
-
-function FeatureDetailPanel({ feature }: { feature: ClassFeatureEntry }) {
   return (
     <div className="rounded-md border border-border bg-muted/20 p-3 space-y-2">
       <div className="flex items-center gap-2 flex-wrap">
@@ -320,9 +314,31 @@ function FeatureDetailPanel({ feature }: { feature: ClassFeatureEntry }) {
       )}
     </div>
   );
-}
+});
 
-function SourceSwitcher({
+const FeatureDetailsPanel = memo(function FeatureDetailsPanel({
+  features,
+}: {
+  features: ClassFeatureEntry[];
+}) {
+  if (features.length === 0) {
+    return (
+      <p className="mt-4 text-sm text-muted-foreground italic">
+        No features selected.
+      </p>
+    );
+  }
+
+  return (
+    <div className="mt-4 space-y-3">
+      {features.map((feature) => (
+        <FeatureDetailPanel key={feature.uid} feature={feature} />
+      ))}
+    </div>
+  );
+});
+
+const SourceSwitcher = memo(function SourceSwitcher({
   variants,
   activeId,
   onSelect,
@@ -337,6 +353,8 @@ function SourceSwitcher({
 }) {
   if (variants.length <= 1) return null;
 
+  const hasDiffs = varyingFields.length > 0;
+
   return (
     <div className="space-y-1.5">
       <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
@@ -346,7 +364,7 @@ function SourceSwitcher({
         {variants.map((v) => {
           const isActive = v.id === activeId;
           const differsFromOthers =
-            varyingFields.length > 0 &&
+            hasDiffs &&
             variants.some(
               (other) =>
                 other.id !== v.id &&
@@ -385,9 +403,9 @@ function SourceSwitcher({
       </div>
     </div>
   );
-}
+});
 
-function SubclassSelector({
+const SubclassSelector = memo(function SubclassSelector({
   subclasses,
   activeSubclassId,
   onSelect,
@@ -420,7 +438,7 @@ function SubclassSelector({
       </Select>
     </div>
   );
-}
+});
 
 export function ClassDetailDialog({
   cls,
@@ -493,11 +511,23 @@ export function ClassDetailDialog({
     setEnabledFeatureUids(setAllFeatureUids(allFeatureUids));
   }, [allFeatureUids]);
 
-  function toggleFeature(uid: string) {
-    setEnabledFeatureUids((prev) =>
-      nextFeatureSelection(prev, uid, allFeatureUids),
-    );
-  }
+  const toggleFeature = useCallback(
+    (uid: string) => {
+      setEnabledFeatureUids((prev) =>
+        nextFeatureSelection(prev, uid, allFeatureUids),
+      );
+    },
+    [allFeatureUids],
+  );
+
+  const handleSourceSelect = useCallback((id: string) => {
+    setActiveId(id);
+    setActiveSubclassId("");
+  }, []);
+
+  const handleSubclassSelect = useCallback((id: string) => {
+    setActiveSubclassId(id);
+  }, []);
 
   const varyingFields = useMemo(
     () => getFieldsThatVaryAcrossVariants(variants),
@@ -561,10 +591,7 @@ export function ClassDetailDialog({
             <SourceSwitcher
               variants={variants}
               activeId={active.id}
-              onSelect={(id) => {
-                setActiveId(id);
-                setActiveSubclassId("");
-              }}
+              onSelect={handleSourceSelect}
               varyingFields={varyingFields}
               bookNames={bookNames}
             />
@@ -632,7 +659,7 @@ export function ClassDetailDialog({
           <SubclassSelector
             subclasses={variantSubclasses}
             activeSubclassId={activeSubclassId}
-            onSelect={setActiveSubclassId}
+            onSelect={handleSubclassSelect}
             subclassTitle={active.subclassTitle}
           />
 
