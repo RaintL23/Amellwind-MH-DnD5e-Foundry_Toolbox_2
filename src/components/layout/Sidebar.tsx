@@ -46,13 +46,12 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Bestiary",
     items: [
       { to: "/monsters", label: "Monsters", icon: Swords },
-      { to: "/environments", label: "Environments", icon: MapPin },
+      { to: "/runes", label: "Runes", icon: Gem },
     ],
   },
   {
     label: "Gear",
     items: [
-      { to: "/runes", label: "Runes", icon: Gem },
       { to: "/weapons", label: "Weapons", icon: Sword },
       { to: "/items", label: "Items", icon: Package },
     ],
@@ -63,6 +62,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/shops", label: "Shops", icon: Store },
       { to: "/cooking", label: "Cooking", icon: ChefHat },
       { to: "/combo", label: "Combo List", icon: Hammer },
+      { to: "/environments", label: "Environments", icon: MapPin },
       { to: "/resources", label: "Resources", icon: Leaf },
       { to: "/downtime", label: "Downtime", icon: CalendarClock },
     ],
@@ -221,12 +221,12 @@ function SidebarNav({
   );
 
   useEffect(() => {
-    const activeGroup = NAV_GROUPS.find((g) => groupHasActiveRoute(pathname, g));
+    const activeGroup = NAV_GROUPS.find((g) =>
+      groupHasActiveRoute(pathname, g),
+    );
     if (!activeGroup) return;
     setOpenGroups((prev) =>
-      prev[activeGroup.label]
-        ? prev
-        : { ...prev, [activeGroup.label]: true },
+      prev[activeGroup.label] ? prev : { ...prev, [activeGroup.label]: true },
     );
   }, [pathname]);
 
@@ -240,7 +240,8 @@ function SidebarNav({
         <div
           key={group.label}
           className={cn(
-            groupIndex > 0 && (collapsed ? "pt-2 mt-1 border-t border-border" : "pt-1"),
+            groupIndex > 0 &&
+              (collapsed ? "pt-2 mt-1 border-t border-border" : "pt-1"),
           )}
         >
           <SidebarNavGroup
