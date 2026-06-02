@@ -1,8 +1,4 @@
-import type {
-  SpellClassLookupValue,
-  SpellSourceLookup,
-  SpellSourceLookupEntry,
-} from "./spell-lookup.types";
+import type { SpellSourceLookup, SpellSourceLookupEntry } from "./spell-lookup.types";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RawSpell = Record<string, any>;
@@ -79,8 +75,6 @@ function mutateSpellSubclass(spell: RawSpell, entry: SpellSourceLookupEntry): vo
     for (const [className, sourceTo] of Object.entries(classNameTo)) {
       for (const [subclassSource, nameTo] of Object.entries(sourceTo)) {
         for (const [shortName, val] of Object.entries(nameTo)) {
-          if (val === true) continue;
-
           const exists = tgt.some(
             (it) =>
               it.class?.name === className &&
