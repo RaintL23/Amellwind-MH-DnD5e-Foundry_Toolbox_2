@@ -21,6 +21,7 @@ import { DowntimePage } from "@/features/downtime/components/DowntimePage";
 import { MonstieSidekickPage } from "@/features/monstie-sidekick/components/MonstieSidekickPage";
 import { SpellList } from "@/features/spells/components/SpellList";
 import { ClassList } from "@/features/classes/components/ClassList";
+import { ClassDetailPage } from "@/features/classes/components/ClassDetailPage";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -50,6 +51,7 @@ export default function App() {
             <Route path="downtime" element={<DowntimePage />} />
             <Route path="spells" element={<SpellList />} />
             <Route path="classes" element={<ClassList />} />
+            <Route path="classes/:classId" element={<ClassDetailPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

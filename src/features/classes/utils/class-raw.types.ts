@@ -92,9 +92,20 @@ export interface RawSubclassFeature {
 export interface RawClassTableGroup {
   title?: string;
   colLabels?: string[];
-  rows?: (number | string)[][];
-  rowsSpellProgression?: (number | string)[][];
+  rows?: ClassTableCell[][];
+  rowsSpellProgression?: ClassTableCell[][];
 }
+
+export type ClassTableCell =
+  | number
+  | string
+  | { type: "bonus"; value: number }
+  | { type: "bonusSpeed"; value: number }
+  | {
+      type: "dice";
+      toRoll: { number: number; faces: number }[];
+      rollable?: boolean;
+    };
 
 export interface RawStartingProficiencies {
   armor?: string[];

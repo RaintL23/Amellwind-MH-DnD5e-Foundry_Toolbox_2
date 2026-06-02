@@ -15,6 +15,7 @@ import type {
   ProcessedSubclass,
   RawClassDefinition,
   RawClassTableGroup,
+  ClassTableCell,
   RawMulticlassing,
   RawStartingEquipment,
   RawStartingProficiencies,
@@ -73,9 +74,25 @@ function mapFeatureEntry(
   };
 }
 
-function formatCellValue(value: number | string): string {
+function formatDiceRoll(toRoll: { number: number; faces: number }[]): string {
+  if (!toRoll?.length) return "—";
+  return toRoll.map((d) => `${d.number}d${d.faces}`).join("+");
+}
+
+function formatCellValue(value: ClassTableCell): string {
   if (typeof value === "number") return value === 0 ? "—" : String(value);
-  return parseFiveToolsMarkup(String(value));
+  if (typeof value === "string") return parseFiveToolsMarkup(value);
+
+  switch (value.type) {
+    case "bonus":
+      return value.value === 0 ? "—" : `+${value.value}`;
+    case "bonusSpeed":
+      return value.value === 0 ? "—" : `+${value.value} ft.`;
+    case "dice":
+      return formatDiceRoll(value.toRoll);
+    default:
+      return "—";
+  }
 }
 
 function mapTableGroup(group: RawClassTableGroup): ClassTableGroup {
@@ -85,9 +102,7 @@ function mapTableGroup(group: RawClassTableGroup): ClassTableGroup {
     colLabels: (group.colLabels ?? []).map((label) =>
       parseFiveToolsMarkup(String(label)),
     ),
-    rows: rows.map((row) =>
-      row.map((cell) => formatCellValue(cell as number | string)),
-    ),
+    rows: rows.map((row) => row.map((cell) => formatCellValue(cell))),
   };
 }
 

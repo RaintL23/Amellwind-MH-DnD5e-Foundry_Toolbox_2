@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Class } from "@/shared/types";
 import { getAllClasses } from "../services/class.service";
 import { getBookSourceNames } from "@/features/spells/services/book-source.service";
@@ -6,15 +7,13 @@ import {
   dedupeClassesByName,
   getClassesByName,
 } from "../utils/class-dedupe.utils";
-import { ClassDetailDialog } from "./ClassDetailDialog";
 import { ClassDataTable } from "./ClassDataTable";
 import { User } from "lucide-react";
 
 export function ClassList() {
+  const navigate = useNavigate();
   const [classes, setClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Class | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     void getBookSourceNames();
@@ -29,17 +28,11 @@ export function ClassList() {
     return Array.from(new Set(classes.map((c) => c.source))).sort();
   }, [classes]);
 
-  const selectedVariants = useMemo(() => {
-    if (!selected) return [];
-    return getClassesByName(classes, selected.name);
-  }, [selected, classes]);
-
   function handleSelect(row: Class) {
     const variants = getClassesByName(classes, row.name);
     const variant =
       variants.find((v) => v.source === row.source) ?? variants[0] ?? row;
-    setSelected(variant);
-    setDialogOpen(true);
+    navigate(`/classes/${encodeURIComponent(variant.id)}`);
   }
 
   return (
@@ -83,13 +76,6 @@ export function ClassList() {
           />
         )}
       </div>
-
-      <ClassDetailDialog
-        cls={selected}
-        variants={selectedVariants}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
     </div>
   );
 }

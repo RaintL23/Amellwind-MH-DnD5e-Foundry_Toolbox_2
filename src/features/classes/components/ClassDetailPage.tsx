@@ -1,4 +1,6 @@
 import { memo, useCallback, useEffect, useMemo, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { ArrowLeft, User } from "lucide-react";
 import {
   Class,
   ClassFeatureEntry,
@@ -6,14 +8,6 @@ import {
   ClassTableGroup,
   Subclass,
 } from "@/shared/types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogBody,
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { Select } from "@/components/ui/select";
@@ -28,20 +22,17 @@ import {
   getCasterLabel,
   mergeProgressionWithSubclass,
 } from "../mappers/class.mapper";
-import { sortClassVariants } from "../utils/class-dedupe.utils";
+import { getAllClasses, getClassById } from "../services/class.service";
+import {
+  getClassesByName,
+  sortClassVariants,
+} from "../utils/class-dedupe.utils";
 import { subclassesForClassVariant } from "../utils/class-subclass.utils";
 import {
   getFieldsDifferentFromVariant,
   getFieldsThatVaryAcrossVariants,
   type ClassVariantField,
 } from "../utils/class-variant.utils";
-
-interface ClassDetailDialogProps {
-  cls: Class | null;
-  variants?: Class[];
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
 
 const MetaRow = memo(function MetaRow({
   label,
@@ -117,10 +108,6 @@ const MetaListSection = memo(function MetaListSection({
   );
 });
 
-/**
- * Receives a stable `onToggle(uid)` reference — allows React.memo to skip
- * re-renders for chips whose `enabled` state hasn't changed.
- */
 const FeatureChip = memo(function FeatureChip({
   feature,
   enabled,
@@ -176,10 +163,6 @@ function setAllFeatureUids(allUids: string[]): Set<string> {
   return new Set(allUids);
 }
 
-/**
- * All enabled by default. Click one → focus only that chip; add more via further clicks.
- * Deselect until none → all enabled again.
- */
 function nextFeatureSelection(
   prev: Set<string>,
   uid: string,
@@ -440,20 +423,15 @@ const SubclassSelector = memo(function SubclassSelector({
   );
 });
 
-export function ClassDetailDialog({
-  cls,
-  variants: variantsProp,
-  open,
-  onOpenChange,
-}: ClassDetailDialogProps) {
-  /** One entry per class book (PHB, XPHB, …) — never the deduped table row */
-  const variants = useMemo(() => {
-    if (!cls) return [];
-    if (variantsProp && variantsProp.length > 0) {
-      return sortClassVariants(variantsProp);
-    }
-    return [cls];
-  }, [cls, variantsProp]);
+export function ClassDetailPage() {
+  const { classId: classIdParam } = useParams<{ classId: string }>();
+  const navigate = useNavigate();
+  const decodedId = classIdParam ? decodeURIComponent(classIdParam) : "";
+
+  const [cls, setCls] = useState<Class | null>(null);
+  const [allClasses, setAllClasses] = useState<Class[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
 
   const [activeId, setActiveId] = useState("");
   const [activeSubclassId, setActiveSubclassId] = useState("");
@@ -463,30 +441,54 @@ export function ClassDetailDialog({
   const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
 
   useEffect(() => {
-    if (!cls) return;
-    const match =
-      variants.find((v) => v.id === cls.id) ??
-      variants.find((v) => v.source === cls.source) ??
-      variants[0];
-    setActiveId(match?.id ?? cls.id);
-    setActiveSubclassId("");
-  }, [cls?.id, variants]);
+    if (!decodedId) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
 
-  useEffect(() => {
-    if (!open) return;
-    getBookSourceNames().then(setBookNames);
-  }, [open]);
+    let cancelled = false;
+    setLoading(true);
+    setNotFound(false);
+
+    Promise.all([getClassById(decodedId), getAllClasses(), getBookSourceNames()])
+      .then(([found, classes, names]) => {
+        if (cancelled) return;
+        if (!found) {
+          setNotFound(true);
+          setCls(null);
+          return;
+        }
+        setCls(found);
+        setAllClasses(classes);
+        setBookNames(names);
+        setActiveId(found.id);
+        setActiveSubclassId("");
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [decodedId]);
+
+  const variants = useMemo(() => {
+    if (!cls) return [];
+    const byName = getClassesByName(allClasses, cls.name);
+    return byName.length > 0 ? sortClassVariants(byName) : [cls];
+  }, [cls, allClasses]);
 
   const active = useMemo(
     () =>
       variants.find((v) => v.id === activeId) ??
-      variants.find((v) => v.source === cls?.source) ??
+      variants.find((v) => v.id === decodedId) ??
       variants[0] ??
       cls,
-    [variants, activeId, cls],
+    [variants, activeId, decodedId, cls],
   );
 
-  /** PHB vs XPHB separated; XGE/TCE/… still shown for the active class book */
   const variantSubclasses = useMemo(() => {
     if (!active) return [];
     return subclassesForClassVariant(active);
@@ -520,10 +522,14 @@ export function ClassDetailDialog({
     [allFeatureUids],
   );
 
-  const handleSourceSelect = useCallback((id: string) => {
-    setActiveId(id);
-    setActiveSubclassId("");
-  }, []);
+  const handleSourceSelect = useCallback(
+    (id: string) => {
+      setActiveId(id);
+      setActiveSubclassId("");
+      navigate(`/classes/${encodeURIComponent(id)}`, { replace: true });
+    },
+    [navigate],
+  );
 
   const handleSubclassSelect = useCallback((id: string) => {
     setActiveSubclassId(id);
@@ -551,7 +557,38 @@ export function ClassDetailDialog({
     return features;
   }, [mergedProgression, enabledFeatureUids]);
 
-  if (!cls || !active) return null;
+  if (loading) {
+    return (
+      <div className="flex flex-col h-full min-h-0">
+        <div className="flex items-center justify-center h-48">
+          <div className="flex flex-col items-center gap-3 text-muted-foreground">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
+            <span className="text-sm">Loading class...</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (notFound || !cls || !active) {
+    return (
+      <div className="flex flex-col h-full min-h-0">
+        <div className="shrink-0 border-b border-border px-6 py-5">
+          <Link
+            to="/classes"
+            className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
+          >
+            <ArrowLeft className="h-4 w-4" />
+            Back to Classes
+          </Link>
+          <h1 className="text-xl font-bold text-foreground">Class not found</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            The requested class could not be loaded.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   const hasSetupInfo =
     active.startingProficiencies.length > 0 ||
@@ -559,14 +596,21 @@ export function ClassDetailDialog({
     active.multiclassing.length > 0;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle className="text-sky-400 text-2xl">
-            {active.name}
-          </DialogTitle>
-          <DialogDescription asChild>
-            <div className="flex items-center gap-2 flex-wrap">
+    <div className="flex flex-col h-full min-h-0">
+      <div className="shrink-0 border-b border-border px-6 py-5">
+        <Link
+          to="/classes"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-sky-400 transition-colors mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Classes
+        </Link>
+
+        <div className="flex items-start gap-3">
+          <User className="h-6 w-6 text-sky-400 shrink-0 mt-1" />
+          <div className="min-w-0 flex-1">
+            <h1 className="text-2xl font-bold text-sky-400">{active.name}</h1>
+            <div className="flex items-center gap-2 flex-wrap mt-2">
               <Badge variant="secondary">{active.hitDie}</Badge>
               <Badge variant="secondary">
                 {getCasterLabel(active.casterProgression)}
@@ -583,23 +627,23 @@ export function ClassDetailDialog({
                 </span>
               )}
             </div>
-          </DialogDescription>
-        </DialogHeader>
-
-        <DialogBody>
-          <div className="space-y-4 mb-4">
-            <SourceSwitcher
-              variants={variants}
-              activeId={active.id}
-              onSelect={handleSourceSelect}
-              varyingFields={varyingFields}
-              bookNames={bookNames}
-            />
           </div>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="max-w-5xl mx-auto space-y-4">
+          <SourceSwitcher
+            variants={variants}
+            activeId={active.id}
+            onSelect={handleSourceSelect}
+            varyingFields={varyingFields}
+            bookNames={bookNames}
+          />
 
           <div
             className={cn(
-              "grid gap-3 mb-4",
+              "grid gap-3",
               hasSetupInfo ? "lg:grid-cols-2" : "grid-cols-1",
             )}
           >
@@ -663,7 +707,7 @@ export function ClassDetailDialog({
             subclassTitle={active.subclassTitle}
           />
 
-          <Separator className="my-4" />
+          <Separator />
 
           <ClassLevelTable
             progression={mergedProgression}
@@ -673,8 +717,8 @@ export function ClassDetailDialog({
           />
 
           <FeatureDetailsPanel features={enabledFeatures} />
-        </DialogBody>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </div>
   );
 }
