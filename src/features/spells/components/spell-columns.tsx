@@ -16,7 +16,7 @@ const spellGlobalFilter: FilterFn<Spell> = (row, _columnId, filterValue) => {
     spell.schoolName.toLowerCase().includes(q) ||
     spell.classNames.some((c) => c.toLowerCase().includes(q)) ||
     spell.classes.some((c) => c.toLowerCase().includes(q)) ||
-    spell.variantSources?.some((s) => s.toLowerCase().includes(q))
+    (spell.variantSources?.some((s) => s.toLowerCase().includes(q)) ?? false)
   );
 };
 
