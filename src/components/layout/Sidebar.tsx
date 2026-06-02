@@ -23,6 +23,7 @@ import {
   BookOpen,
   CalendarClock,
   PawPrint,
+  Sparkles,
   Lock,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
@@ -79,12 +80,12 @@ const NAV_GROUPS: NavGroup[] = [
   },
   {
     section: "DnD 5e",
-    label: "Compendio",
+    label: "Compendium",
     items: [
-      { label: "Spells", icon: BookOpen, disabled: true },
+      { to: "/spells", label: "Spells", icon: Sparkles },
       { label: "Classes", icon: User, disabled: true },
       { label: "Items", icon: Package, disabled: true },
-      { label: "Bestiario", icon: Swords, disabled: true },
+      { label: "Bestiary", icon: Swords, disabled: true },
     ],
   },
 ];
@@ -118,7 +119,9 @@ function isNavItemActive(pathname: string, to: string) {
 }
 
 function groupHasActiveRoute(pathname: string, group: NavGroup) {
-  return group.items.some((item) => item.to && isNavItemActive(pathname, item.to));
+  return group.items.some(
+    (item) => item.to && isNavItemActive(pathname, item.to),
+  );
 }
 
 function NavItemLink({

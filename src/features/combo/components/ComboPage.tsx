@@ -216,9 +216,7 @@ export function ComboPage() {
           </div>
 
           {/* ── REGLAS ── */}
-          {activeTab === "rules" && (
-            <RulesTab tables={tables} onTabChange={handleTabChange} />
-          )}
+          {activeTab === "rules" && <RulesTab />}
 
           {/* ── TOOL TABS ── */}
           {tables.map((table) => {
@@ -239,13 +237,7 @@ export function ComboPage() {
 
 // ── Rules Tab ─────────────────────────────────────────────────────────────
 
-function RulesTab({
-  tables,
-  onTabChange,
-}: {
-  tables: ReturnType<typeof getAllComboTables>;
-  onTabChange: (id: string) => void;
-}) {
+function RulesTab() {
   const regular = COMBO_RULES.filter((r) => !r.isInset);
   const inset = COMBO_RULES.find((r) => r.isInset);
 
@@ -289,33 +281,6 @@ function RulesTab({
           </div>
         </div>
       )}
-
-      {/* Resumen de herramientas */}
-      <div className="rounded-lg border border-border bg-card p-4">
-        <h3 className="font-semibold text-foreground mb-3">
-          Herramientas disponibles
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
-          {tables.map((t) => {
-            const Icon = TOOL_ICONS[t.id] ?? Wrench;
-            return (
-              <button
-                key={t.id}
-                onClick={() => onTabChange(t.id)}
-                className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border hover:bg-accent hover:border-primary/30 transition-colors text-center cursor-pointer"
-              >
-                <Icon className="h-5 w-5 text-primary" />
-                <span className="text-xs font-medium text-foreground leading-tight">
-                  {t.toolName}
-                </span>
-                <span className="text-xs text-muted-foreground">
-                  {t.rows.length} recetas
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
     </div>
   );
 }

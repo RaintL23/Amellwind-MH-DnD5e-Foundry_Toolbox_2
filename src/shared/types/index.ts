@@ -15,3 +15,4 @@ export * from "./feat.types";
 export * from "./character-guide.types";
 export * from "./downtime.types";
 export * from "./monstie-sidekick.types";
+export * from "./spell.types";

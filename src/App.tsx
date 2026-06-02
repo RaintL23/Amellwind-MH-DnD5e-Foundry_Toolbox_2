@@ -19,6 +19,7 @@ import { FeatList } from "@/features/feats/components/FeatList";
 import { CharacterGuidePage } from "@/features/character-guide/components/CharacterGuidePage";
 import { DowntimePage } from "@/features/downtime/components/DowntimePage";
 import { MonstieSidekickPage } from "@/features/monstie-sidekick/components/MonstieSidekickPage";
+import { SpellList } from "@/features/spells/components/SpellList";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="character-guide" element={<CharacterGuidePage />} />
             <Route path="monstie-sidekick" element={<MonstieSidekickPage />} />
             <Route path="downtime" element={<DowntimePage />} />
+            <Route path="spells" element={<SpellList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
