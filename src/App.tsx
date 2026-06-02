@@ -20,6 +20,7 @@ import { CharacterGuidePage } from "@/features/character-guide/components/Charac
 import { DowntimePage } from "@/features/downtime/components/DowntimePage";
 import { MonstieSidekickPage } from "@/features/monstie-sidekick/components/MonstieSidekickPage";
 import { SpellList } from "@/features/spells/components/SpellList";
+import { ClassList } from "@/features/classes/components/ClassList";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -48,6 +49,7 @@ export default function App() {
             <Route path="monstie-sidekick" element={<MonstieSidekickPage />} />
             <Route path="downtime" element={<DowntimePage />} />
             <Route path="spells" element={<SpellList />} />
+            <Route path="classes" element={<ClassList />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>

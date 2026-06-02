@@ -32,6 +32,7 @@ interface DataTableProps<TData, TValue> {
   pageSize?: number;
   globalFilterFn?: FilterFn<TData>;
   initialColumnVisibility?: VisibilityState;
+  initialColumnFilters?: ColumnFiltersState;
 }
 
 export function DataTable<TData, TValue>({
@@ -43,12 +44,14 @@ export function DataTable<TData, TValue>({
   pageSize = 20,
   globalFilterFn,
   initialColumnVisibility = {},
+  initialColumnFilters = [],
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "level", desc: false },
     { id: "name", desc: false },
   ]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnFilters, setColumnFilters] =
+    useState<ColumnFiltersState>(initialColumnFilters);
   const [columnVisibility, setColumnVisibility] =
     useState<VisibilityState>(initialColumnVisibility);
   const [globalFilter, setGlobalFilter] = useState("");

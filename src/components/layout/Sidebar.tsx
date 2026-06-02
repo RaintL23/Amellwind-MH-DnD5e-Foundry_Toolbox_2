@@ -83,7 +83,7 @@ const NAV_GROUPS: NavGroup[] = [
     label: "Compendium",
     items: [
       { to: "/spells", label: "Spells", icon: Sparkles },
-      { label: "Classes", icon: User, disabled: true },
+      { to: "/classes", label: "Classes", icon: User },
       { label: "Items", icon: Package, disabled: true },
       { label: "Bestiary", icon: Swords, disabled: true },
     ],
