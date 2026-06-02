@@ -1,32 +1,15 @@
-import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Class } from "@/shared/types";
-import { getAllClasses } from "../services/class.service";
-import { getBookSourceNames } from "@/features/spells/services/book-source.service";
-import {
-  dedupeClassesByName,
-  getClassesByName,
-} from "../utils/class-dedupe.utils";
+import { useClassList } from "../hooks/useClassList";
+import { getClassesByName } from "../utils/class-dedupe.utils";
 import { ClassDataTable } from "./ClassDataTable";
-import { User } from "lucide-react";
+import { ClassListHeader } from "./ClassListHeader";
+import { ClassListLoading } from "./ClassListLoading";
+import { ClassListEmpty } from "./ClassListEmpty";
 
 export function ClassList() {
   const navigate = useNavigate();
-  const [classes, setClasses] = useState<Class[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    void getBookSourceNames();
-    getAllClasses()
-      .then(setClasses)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const listClasses = useMemo(() => dedupeClassesByName(classes), [classes]);
-
-  const sourceOptions = useMemo(() => {
-    return Array.from(new Set(classes.map((c) => c.source))).sort();
-  }, [classes]);
+  const { classes, listClasses, sourceOptions, loading } = useClassList();
 
   function handleSelect(row: Class) {
     const variants = getClassesByName(classes, row.name);
@@ -37,37 +20,17 @@ export function ClassList() {
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-6 py-5">
-        <div className="flex items-center gap-3 mb-1">
-          <User className="h-6 w-6 text-sky-400" />
-          <h1 className="text-xl font-bold text-foreground">Classes (D&amp;D 5e)</h1>
-          {!loading && (
-            <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
-              {listClasses.length} classes
-              {listClasses.length < classes.length && (
-                <span className="opacity-70"> ({classes.length} entries)</span>
-              )}
-            </span>
-          )}
-        </div>
-        <p className="text-sm text-muted-foreground">
-          One row per class name; open a class to view level progression, features, and subclasses.
-        </p>
-      </div>
+      <ClassListHeader
+        loading={loading}
+        listCount={listClasses.length}
+        totalCount={classes.length}
+      />
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-sky-500 border-t-transparent" />
-              <span className="text-sm">Loading classes...</span>
-            </div>
-          </div>
+          <ClassListLoading />
         ) : listClasses.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
-            <User className="h-10 w-10 opacity-20" />
-            <p className="text-sm">No classes loaded.</p>
-          </div>
+          <ClassListEmpty />
         ) : (
           <ClassDataTable
             classes={listClasses}
