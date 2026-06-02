@@ -23,15 +23,22 @@ import {
   BookOpen,
   CalendarClock,
   PawPrint,
+  Lock,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 
-type NavItem = { to: string; label: string; icon: LucideIcon };
-type NavGroup = { label: string; items: NavItem[] };
+type NavItem = {
+  label: string;
+  icon: LucideIcon;
+  to?: string;
+  disabled?: boolean;
+};
+type NavGroup = { section: string; label: string; items: NavItem[] };
 
 const NAV_GROUPS: NavGroup[] = [
   {
+    section: "Amellwind Homebrew",
     label: "Character",
     items: [
       { to: "/builder", label: "Builder", icon: User },
@@ -43,6 +50,7 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    section: "Amellwind Homebrew",
     label: "Bestiary",
     items: [
       { to: "/monsters", label: "Monsters", icon: Swords },
@@ -50,6 +58,7 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    section: "Amellwind Homebrew",
     label: "Gear",
     items: [
       { to: "/weapons", label: "Weapons", icon: Sword },
@@ -57,6 +66,7 @@ const NAV_GROUPS: NavGroup[] = [
     ],
   },
   {
+    section: "Amellwind Homebrew",
     label: "Craft & Trade",
     items: [
       { to: "/shops", label: "Shops", icon: Store },
@@ -65,6 +75,16 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/environments", label: "Environments", icon: MapPin },
       { to: "/resources", label: "Resources", icon: Leaf },
       { to: "/downtime", label: "Downtime", icon: CalendarClock },
+    ],
+  },
+  {
+    section: "DnD 5e",
+    label: "Compendio",
+    items: [
+      { label: "Spells", icon: BookOpen, disabled: true },
+      { label: "Classes", icon: User, disabled: true },
+      { label: "Items", icon: Package, disabled: true },
+      { label: "Bestiario", icon: Swords, disabled: true },
     ],
   },
 ];
@@ -98,16 +118,38 @@ function isNavItemActive(pathname: string, to: string) {
 }
 
 function groupHasActiveRoute(pathname: string, group: NavGroup) {
-  return group.items.some((item) => isNavItemActive(pathname, item.to));
+  return group.items.some((item) => item.to && isNavItemActive(pathname, item.to));
 }
 
 function NavItemLink({
   to,
   label,
   icon: Icon,
+  disabled = false,
   collapsed,
   onMobileClose,
 }: NavItem & { collapsed: boolean; onMobileClose: () => void }) {
+  if (!to || disabled) {
+    return (
+      <div
+        title={collapsed ? `${label} (próximamente)` : undefined}
+        aria-disabled="true"
+        className={cn(
+          "flex items-center rounded-md text-sm font-medium transition-colors relative text-muted-foreground/60 cursor-not-allowed",
+          collapsed ? "justify-center px-2 py-2.5" : "gap-3 px-3 py-2",
+        )}
+      >
+        <Icon className="h-4 w-4 shrink-0" />
+        {!collapsed && (
+          <>
+            <span>{label}</span>
+            <Lock className="h-3.5 w-3.5 ml-auto" />
+          </>
+        )}
+      </div>
+    );
+  }
+
   return (
     <NavLink
       to={to}
@@ -236,23 +278,34 @@ function SidebarNav({
 
   return (
     <nav className="flex flex-col gap-1 p-2 flex-1 overflow-y-auto">
-      {NAV_GROUPS.map((group, groupIndex) => (
-        <div
-          key={group.label}
-          className={cn(
-            groupIndex > 0 &&
-              (collapsed ? "pt-2 mt-1 border-t border-border" : "pt-1"),
-          )}
-        >
-          <SidebarNavGroup
-            group={group}
-            collapsed={collapsed}
-            open={openGroups[group.label] ?? false}
-            onToggle={() => toggleGroup(group.label)}
-            onMobileClose={onMobileClose}
-          />
-        </div>
-      ))}
+      {NAV_GROUPS.map((group, groupIndex) => {
+        const previous = NAV_GROUPS[groupIndex - 1];
+        const sectionChanged = !previous || previous.section !== group.section;
+
+        return (
+          <div key={`${group.section}-${group.label}`}>
+            {sectionChanged && !collapsed && (
+              <p
+                className={cn(
+                  "px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
+                  groupIndex > 0 && "pt-3 mt-2 border-t border-border",
+                )}
+              >
+                {group.section}
+              </p>
+            )}
+            <div className={cn(!collapsed && "pt-0.5")}>
+              <SidebarNavGroup
+                group={group}
+                collapsed={collapsed}
+                open={openGroups[group.label] ?? false}
+                onToggle={() => toggleGroup(group.label)}
+                onMobileClose={onMobileClose}
+              />
+            </div>
+          </div>
+        );
+      })}
     </nav>
   );
 }
