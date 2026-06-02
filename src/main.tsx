@@ -8,6 +8,7 @@ import { clearRuneCache } from "@/features/runes/services/rune.service";
 import { clearSpeciesCache } from "@/features/species/services/species.service";
 import { clearBackgroundCache } from "@/features/backgrounds/services/background.service";
 import { clearFeatCache } from "@/features/feats/services/feat.service";
+import { clearMonstieSidekickCache } from "@/features/monstie-sidekick/services/monstie-sidekick.service";
 import "./index.css";
 
 async function bootstrap() {
@@ -26,6 +27,7 @@ async function bootstrap() {
     clearSpeciesCache();
     clearBackgroundCache();
     clearFeatCache();
+    clearMonstieSidekickCache();
   } catch (error) {
     console.warn("[Bootstrap] Sync failed, using cached data if available:", error);
   }

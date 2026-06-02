@@ -11,6 +11,8 @@ const SUBRACE_STORE_KEY = "subrace";
 const BACKGROUND_STORE_KEY = "background";
 const FEAT_STORE_KEY = "feat";
 const VARIANT_RULE_STORE_KEY = "variantrule";
+const CLASS_FEATURE_STORE_KEY = "classFeature";
+const CLASS_STORE_KEY = "class";
 
 interface DataMeta {
   timestamp: number;
@@ -130,6 +132,16 @@ export async function syncData(): Promise<SyncResult> {
             VARIANT_RULE_STORE_KEY,
             json.variantrule,
           );
+        }
+        if (Array.isArray(json.classFeature)) {
+          await setStoreValue(
+            "GTMH_CURRENT",
+            CLASS_FEATURE_STORE_KEY,
+            json.classFeature,
+          );
+        }
+        if (Array.isArray(json.class)) {
+          await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, json.class);
         }
       },
     );
@@ -270,6 +282,53 @@ export async function getFeatsRaw(): Promise<unknown[]> {
  * Returns the raw variantrule array from the GTMH JSON.
  * Lazy-populates from remote if not yet cached.
  */
+/**
+ * Returns the raw class array from the GTMH JSON.
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getClassesRaw(): Promise<unknown[]> {
+  const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", CLASS_STORE_KEY);
+  if (cached && cached.length > 0) return cached;
+
+  try {
+    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
+    if (!response.ok) return [];
+    const json = (await response.json()) as Record<string, unknown>;
+    const data: unknown[] = Array.isArray(json.class)
+      ? (json.class as unknown[])
+      : [];
+    await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, data);
+    return data;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Returns the raw classFeature array from the GTMH JSON (Monstie Sidekick features).
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getClassFeaturesRaw(): Promise<unknown[]> {
+  const cached = await getStoreValue<unknown[]>(
+    "GTMH_CURRENT",
+    CLASS_FEATURE_STORE_KEY,
+  );
+  if (cached && cached.length > 0) return cached;
+
+  try {
+    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
+    if (!response.ok) return [];
+    const json = (await response.json()) as Record<string, unknown>;
+    const data: unknown[] = Array.isArray(json.classFeature)
+      ? (json.classFeature as unknown[])
+      : [];
+    await setStoreValue("GTMH_CURRENT", CLASS_FEATURE_STORE_KEY, data);
+    return data;
+  } catch {
+    return [];
+  }
+}
+
 export async function getVariantRulesRaw(): Promise<unknown[]> {
   const cached = await getStoreValue<unknown[]>(
     "GTMH_CURRENT",

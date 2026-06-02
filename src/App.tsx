@@ -18,6 +18,7 @@ import { BackgroundList } from "@/features/backgrounds/components/BackgroundList
 import { FeatList } from "@/features/feats/components/FeatList";
 import { CharacterGuidePage } from "@/features/character-guide/components/CharacterGuidePage";
 import { DowntimePage } from "@/features/downtime/components/DowntimePage";
+import { MonstieSidekickPage } from "@/features/monstie-sidekick/components/MonstieSidekickPage";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
             <Route path="backgrounds" element={<BackgroundList />} />
             <Route path="feats" element={<FeatList />} />
             <Route path="character-guide" element={<CharacterGuidePage />} />
+            <Route path="monstie-sidekick" element={<MonstieSidekickPage />} />
             <Route path="downtime" element={<DowntimePage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
