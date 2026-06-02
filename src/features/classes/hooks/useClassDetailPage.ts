@@ -44,6 +44,19 @@ export function useClassDetailPage(classId: string) {
       return;
     }
 
+    const isSameClassVariantSwitch =
+      cls !== null &&
+      allClasses.length > 0 &&
+      allClasses.some((c) => c.id === classId && c.name === cls.name);
+
+    if (isSameClassVariantSwitch) {
+      setActiveId(classId);
+      setActiveSubclassId("");
+      setNotFound(false);
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     setNotFound(false);
@@ -69,7 +82,7 @@ export function useClassDetailPage(classId: string) {
     return () => {
       cancelled = true;
     };
-  }, [classId]);
+  }, [classId, cls, allClasses]);
 
   const variants = useMemo(() => {
     if (!cls) return [];

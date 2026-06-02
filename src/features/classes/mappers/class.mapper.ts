@@ -67,6 +67,7 @@ function mapFeatureEntry(
     uid,
     name: feature.name,
     displayName: feature.displayName,
+    level: feature.level,
     source: feature.source,
     description: parseFeatureDescription(feature.entries),
     isSubclassFeature,

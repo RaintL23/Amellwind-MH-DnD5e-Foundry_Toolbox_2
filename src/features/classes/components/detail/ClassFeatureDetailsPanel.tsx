@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { ClassFeatureEntry } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
+import { DndKeywordText } from "@/shared/components/DndKeywordText";
 
 interface ClassFeatureDetailPanelProps {
   feature: ClassFeatureEntry;
@@ -15,6 +16,9 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
         <h4 className="text-sm font-semibold text-sky-300">
           {feature.displayName}
         </h4>
+        <Badge className="bg-violet-950/60 text-violet-300 border-violet-800/50 text-[10px]">
+          Level {feature.level}
+        </Badge>
         {feature.isSubclassFeature && (
           <Badge className="bg-emerald-950/60 text-emerald-300 border-emerald-800/50 text-[10px]">
             Subclass
@@ -31,7 +35,7 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
               key={i}
               className="text-sm text-muted-foreground leading-relaxed"
             >
-              {line}
+              <DndKeywordText text={line} />
             </p>
           ))}
         </div>

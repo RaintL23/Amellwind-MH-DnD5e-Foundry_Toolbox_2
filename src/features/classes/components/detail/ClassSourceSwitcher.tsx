@@ -31,9 +31,9 @@ export const ClassSourceSwitcher = memo(function ClassSourceSwitcher({
 
   return (
     <div className="space-y-1.5">
-      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+      {/* <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
         Source
-      </p>
+      </p> */}
       <div className="flex flex-wrap gap-1.5">
         {variants.map((v) => {
           const isActive = v.id === activeId;

@@ -9,6 +9,7 @@ export interface ClassFeatureEntry {
   uid: string;
   name: string;
   displayName: string;
+  level: number;
   source: string;
   description: string[];
   isSubclassFeature?: boolean;
