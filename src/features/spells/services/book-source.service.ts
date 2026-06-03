@@ -1,4 +1,7 @@
-import { BOOKS_JSON_URL } from "@/shared/constants/api.constants";
+import {
+  ADVENTURES_JSON_URL,
+  BOOKS_JSON_URL,
+} from "@/shared/constants/api.constants";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 
 export type BookSourceNameMap = Record<string, string>;
@@ -10,17 +13,23 @@ export type SourceOption = {
 
 let cache: BookSourceNameMap | null = null;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function indexBooks(raw: any): BookSourceNameMap {
-  const map: BookSourceNameMap = {};
-  const books = Array.isArray(raw?.book) ? raw.book : [];
+type SourceCatalogEntry = {
+  name?: string;
+  source?: string;
+  id?: string;
+};
 
-  for (const book of books) {
-    const name = typeof book.name === "string" ? book.name : null;
+function indexSourceCatalog(
+  entries: SourceCatalogEntry[] | undefined,
+): BookSourceNameMap {
+  const map: BookSourceNameMap = {};
+
+  for (const entry of entries ?? []) {
+    const name = typeof entry.name === "string" ? entry.name : null;
     if (!name) continue;
 
-    const source = typeof book.source === "string" ? book.source : null;
-    const id = typeof book.id === "string" ? book.id : null;
+    const source = typeof entry.source === "string" ? entry.source : null;
+    const id = typeof entry.id === "string" ? entry.id : null;
 
     if (source) map[source] = name;
     if (id) map[id] = name;
@@ -29,16 +38,40 @@ function indexBooks(raw: any): BookSourceNameMap {
   return map;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function indexBooks(raw: any): BookSourceNameMap {
+  const books = Array.isArray(raw?.book) ? raw.book : [];
+  return indexSourceCatalog(books);
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function indexAdventures(raw: any): BookSourceNameMap {
+  const adventures = Array.isArray(raw?.adventure) ? raw.adventure : [];
+  return indexSourceCatalog(adventures);
+}
+
+function mergeSourceNameMaps(
+  ...maps: BookSourceNameMap[]
+): BookSourceNameMap {
+  return Object.assign({}, ...maps);
+}
+
 export async function getBookSourceNames(): Promise<BookSourceNameMap> {
   if (cache) return cache;
 
-  try {
-    const raw = await fetchFiveToolsJson<unknown>(BOOKS_JSON_URL, "books.json");
-    cache = indexBooks(raw);
-  } catch {
-    cache = {};
-  }
+  const [adventuresResult, booksResult] = await Promise.allSettled([
+    fetchFiveToolsJson<unknown>(ADVENTURES_JSON_URL, "adventures.json").then(
+      indexAdventures,
+    ),
+    fetchFiveToolsJson<unknown>(BOOKS_JSON_URL, "books.json").then(indexBooks),
+  ]);
 
+  const adventuresMap =
+    adventuresResult.status === "fulfilled" ? adventuresResult.value : {};
+  const booksMap =
+    booksResult.status === "fulfilled" ? booksResult.value : {};
+
+  cache = mergeSourceNameMaps(adventuresMap, booksMap);
   return cache;
 }
 

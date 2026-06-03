@@ -64,6 +64,11 @@ export function BestiaryList() {
     [availableSources, loadedSources],
   );
 
+  const unloadedSourceOptions = useMemo(
+    () => buildSourceOptions(unloadedSources, bookNames),
+    [unloadedSources, bookNames],
+  );
+
   async function handleLoadSource(source: string) {
     setLoadingSource(source);
     try {
@@ -107,20 +112,21 @@ export function BestiaryList() {
             Load additional sources ({loadedSources.length}/{availableSources.length} loaded):
           </p>
           <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-            {unloadedSources.slice(0, 40).map((source) => (
+            {unloadedSourceOptions.slice(0, 40).map(({ value, label }) => (
               <button
-                key={source}
+                key={value}
                 type="button"
-                disabled={loadingSource === source}
-                onClick={() => void handleLoadSource(source)}
+                title={value}
+                disabled={loadingSource === value}
+                onClick={() => void handleLoadSource(value)}
                 className={cn(
                   "rounded-md border px-2 py-0.5 text-[10px] font-medium transition-colors",
-                  loadingSource === source
+                  loadingSource === value
                     ? "border-amber-500/50 bg-amber-500/10 text-amber-400"
                     : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
                 )}
               >
-                {loadingSource === source ? "…" : `+ ${source}`}
+                {loadingSource === value ? "…" : `+ ${label}`}
               </button>
             ))}
             {unloadedSources.length > 40 && (

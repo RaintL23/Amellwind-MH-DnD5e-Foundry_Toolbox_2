@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { cn } from "@/shared/utils/cn";
 import {
   resolveBookSourceName,
   type BookSourceNameMap,
@@ -17,10 +18,10 @@ export function SourceBadge({ source, bookNames, className }: SourceBadgeProps) 
   return (
     <Badge
       variant="secondary"
-      className={className}
-      title={hasFullName ? fullName : undefined}
+      className={cn(hasFullName && "max-w-[14rem] truncate", className)}
+      title={hasFullName ? source : undefined}
     >
-      {source}
+      {hasFullName ? fullName : source}
     </Badge>
   );
 }
