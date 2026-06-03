@@ -47,19 +47,9 @@ export const bestiaryColumns: ColumnDef<BestiaryCreature>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => {
-      const c = row.original;
-      return (
-        <span className="font-medium text-foreground inline-flex items-center gap-1.5">
-          {c.name}
-          {(c.variantCount ?? 1) > 1 && (
-            <span className="rounded border border-violet-800/50 bg-violet-950/40 px-1.5 py-0.5 text-[10px] text-violet-400">
-              {c.variantCount} src
-            </span>
-          )}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <span className="font-medium text-foreground">{row.original.name}</span>
+    ),
   },
   {
     accessorKey: "cr",
