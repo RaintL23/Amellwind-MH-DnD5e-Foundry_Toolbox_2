@@ -50,6 +50,12 @@ export function PaperDollCanvas({
   onSelect,
   onTrinketSlot,
 }: PaperDollCanvasProps) {
+  /** First weapon always goes to main hand; off-hand only when main is already filled. */
+  function resolveWeaponEquipSlot(clicked: "mainHand" | "offHand"): "mainHand" | "offHand" {
+    if (!mainHand) return "mainHand";
+    return clicked;
+  }
+
   return (
     <div
       className="relative shrink-0"
@@ -116,14 +122,15 @@ export function PaperDollCanvas({
           isOffHandBlocked={isOffHandBlocked}
           offHandBlockReason={offHandBlockReason}
           isSelected={selectedSlot === "offHand"}
-          onEquip={() => onEquip("offHand")}
+          onEquip={() => onEquip(resolveWeaponEquipSlot("offHand"))}
           onSelect={() => onSelect("offHand")}
         />
       </DollSlotAnchor>
 
       <DollSlotAnchor className="top-[34%] right-0">
         <EquipmentSlot
-          label="Main Hand"
+          label="Add Weapon"
+          emptyTitle="Add weapon"
           icon={<Sword className={cn("h-4 w-4", mainHand && "text-red-400")} />}
           equipped={
             mainHand
@@ -136,7 +143,7 @@ export function PaperDollCanvas({
                 }
               : null
           }
-          onClickEquip={() => onEquip("mainHand")}
+          onClickEquip={() => onEquip(resolveWeaponEquipSlot("mainHand"))}
           onClickDetails={() => onSelect("mainHand")}
           isSelected={selectedSlot === "mainHand"}
         />

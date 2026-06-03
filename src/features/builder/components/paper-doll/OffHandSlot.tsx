@@ -58,7 +58,8 @@ export function OffHandSlot({
 
   return (
     <EquipmentSlot
-      label="Off Hand"
+      label="Add Weapon"
+      emptyTitle="Add weapon"
       icon={<Sword className={cn("h-4 w-4", offHand && "text-blue-400")} />}
       equipped={offHand ? { name: offHand.weapon.name, detail: offHand.weapon.dmg1 } : null}
       onClickEquip={onEquip}

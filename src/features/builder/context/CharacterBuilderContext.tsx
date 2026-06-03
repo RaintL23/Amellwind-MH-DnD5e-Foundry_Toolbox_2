@@ -166,8 +166,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   );
 
   const unequipWeapon = useCallback((slot: "mainHand" | "offHand") => {
-    if (slot === "offHand") return;
     if (slot === "mainHand") setMainHand(null);
+    else setOffHand(null);
   }, []);
 
   const setWeaponRarity = useCallback((slot: "mainHand" | "offHand", rarity: string) => {

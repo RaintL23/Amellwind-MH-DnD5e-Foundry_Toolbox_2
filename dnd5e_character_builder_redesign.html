@@ -1,0 +1,439 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.app{display:grid;grid-template-columns:260px 1fr 240px;gap:12px;padding:16px;min-height:600px;background:var(--color-background-tertiary);border-radius:var(--border-radius-lg)}
+.panel{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px}
+.panel-title{font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-secondary);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:14px}
+.stat-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:8px 10px;display:flex;flex-direction:column;align-items:center;cursor:pointer;border:0.5px solid var(--color-border-tertiary);transition:border-color .15s}
+.stat-box:hover{border-color:var(--color-border-secondary)}
+.stat-label{font-size:10px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em}
+.stat-val{font-size:20px;font-weight:500;line-height:1.2}
+.stat-mod{font-size:11px;color:var(--color-text-secondary)}
+.derived-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:13px}
+.derived-row:last-child{border-bottom:none}
+.derived-val{font-weight:500;font-size:14px}
+.dmg-card{background:#1E3A2F;border-radius:var(--border-radius-md);padding:12px;margin:12px 0;text-align:center}
+.dmg-number{font-size:32px;font-weight:500;color:#4ADE80;line-height:1}
+.dmg-label{font-size:11px;color:#86EFAC;margin-top:3px}
+.breakdown{font-size:12px;color:var(--color-text-secondary);margin-top:8px}
+.breakdown span{color:var(--color-text-primary);font-weight:500}
+.equip-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.slot{background:var(--color-background-secondary);border:0.5px dashed var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 6px;text-align:center;cursor:pointer;min-height:72px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all .15s;font-size:11px;color:var(--color-text-secondary)}
+.slot:hover{border-color:var(--color-border-primary);background:var(--color-background-tertiary)}
+.slot.filled{border-style:solid;border-color:var(--color-border-secondary);background:var(--color-background-primary)}
+.slot.filled .slot-name{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.slot.filled .slot-dice{font-size:10px;color:var(--color-text-secondary)}
+.slot.weapon{border-color:#C084FC88}
+.slot.armor{border-color:#60A5FA88}
+.rarity-dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:3px}
+.r-common{background:#9CA3AF}.r-uncommon{background:#34D399}.r-rare{background:#60A5FA}.r-veryrare{background:#C084FC}.r-legendary{background:#FBBF24}
+.tab-row{display:flex;gap:4px;margin-bottom:12px}
+.tab{padding:5px 10px;border-radius:var(--border-radius-md);font-size:12px;cursor:pointer;border:0.5px solid var(--color-border-tertiary);background:transparent;color:var(--color-text-secondary)}
+.tab.active{background:var(--color-background-secondary);color:var(--color-text-primary);border-color:var(--color-border-secondary)}
+.item-row{display:flex;align-items:center;justify-content:space-between;padding:7px 8px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-tertiary);margin-bottom:5px;font-size:12px;cursor:pointer;transition:all .15s}
+.item-row:hover{background:var(--color-background-secondary)}
+.item-row.equipped{border-color:#C084FC88;background:#C084FC11}
+.item-name{font-weight:500;display:flex;align-items:center;gap:5px}
+.item-stats{color:var(--color-text-secondary);font-size:11px}
+.badge{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:500}
+.b-uncommon{background:#D1FAE5;color:#065F46}.b-rare{background:#DBEAFE;color:#1E40AF}.b-veryrare{background:#EDE9FE;color:#5B21B6}.b-legendary{background:#FEF3C7;color:#92400E}
+.add-btn{width:100%;padding:7px;font-size:12px;border-radius:var(--border-radius-md);border:0.5px dashed var(--color-border-secondary);background:transparent;color:var(--color-text-secondary);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:5px;margin-top:4px}
+.add-btn:hover{background:var(--color-background-secondary);color:var(--color-text-primary)}
+.rune-slot{width:34px;height:34px;border-radius:var(--border-radius-md);border:0.5px dashed var(--color-border-secondary);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;color:var(--color-text-secondary);transition:all .15s}
+.rune-slot:hover{border-color:var(--color-border-primary);background:var(--color-background-secondary)}
+.rune-row{display:flex;gap:5px;margin-top:6px}
+.section-label{font-size:11px;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.05em;margin:10px 0 5px}
+.modal-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);border-radius:var(--border-radius-lg);display:none;align-items:center;justify-content:center;z-index:10}
+.modal-overlay.open{display:flex}
+.modal{background:var(--color-background-primary);border-radius:var(--border-radius-lg);border:0.5px solid var(--color-border-secondary);padding:16px;width:260px}
+.modal-title{font-size:14px;font-weight:500;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.close-btn{background:none;border:none;cursor:pointer;color:var(--color-text-secondary);font-size:18px;line-height:1}
+.input-field{width:100%;padding:7px 10px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);margin-bottom:8px}
+.select-field{width:100%;padding:7px 10px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary);margin-bottom:8px}
+.crit-bar{height:4px;border-radius:2px;background:var(--color-background-secondary);margin-top:4px}
+.crit-fill{height:100%;border-radius:2px;background:#C084FC}
+.tooltip{position:absolute;background:var(--color-background-primary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:12px;pointer-events:none;z-index:20;min-width:140px;box-shadow:none;display:none}
+</style>
+
+<h2 class="sr-only">D&D 5e Character Builder — rediseño de interfaz propuesto</h2>
+
+<div style="position:relative">
+<div class="app">
+
+<!-- LEFT: Stats -->
+<div style="display:flex;flex-direction:column;gap:10px">
+  <div class="panel">
+    <div class="panel-title"><i class="ti ti-user" aria-hidden="true"></i> Personaje</div>
+    <div style="display:flex;gap:6px;margin-bottom:12px">
+      <div style="flex:1">
+        <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:3px">Nivel</div>
+        <input type="number" id="level" min="1" max="20" value="1" style="width:100%;padding:5px 8px;font-size:16px;font-weight:500;text-align:center;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:var(--color-background-secondary);color:var(--color-text-primary)">
+      </div>
+      <div style="flex:2">
+        <div style="font-size:10px;color:var(--color-text-secondary);margin-bottom:3px">Clase</div>
+        <select id="charClass" class="select-field" style="margin:0;font-size:12px">
+          <option value="fighter">Guerrero</option>
+          <option value="rogue">Pícaro</option>
+          <option value="ranger">Explorador</option>
+          <option value="wizard">Mago</option>
+          <option value="paladin">Paladín</option>
+          <option value="barbarian">Bárbaro</option>
+        </select>
+      </div>
+    </div>
+    <div class="stat-grid" id="abilityGrid"></div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><i class="ti ti-shield" aria-hidden="true"></i> Derivados</div>
+    <div class="derived-row"><span>Competencia</span><span class="derived-val" id="profBonus">+2</span></div>
+    <div class="derived-row"><span>CA</span><span class="derived-val" id="acVal">10</span></div>
+    <div class="derived-row"><span>Iniciativa</span><span class="derived-val" id="initVal">+0</span></div>
+    <div class="derived-row"><span>Ataques/turno</span><span class="derived-val" id="attPerTurn">1</span></div>
+    <div class="derived-row"><span>Rango crítico</span><span class="derived-val" id="critRange">20</span></div>
+  </div>
+
+  <div class="panel">
+    <div class="dmg-card">
+      <div class="dmg-number" id="avgDmg">4.5</div>
+      <div class="dmg-label">daño promedio / turno</div>
+    </div>
+    <div class="section-label">Desglose</div>
+    <div id="dmgBreakdown" style="font-size:12px;display:flex;flex-direction:column;gap:4px"></div>
+    <div class="crit-bar"><div class="crit-fill" id="critFill" style="width:5%"></div></div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-top:3px">Chance de crítico: <span id="critPct" style="color:var(--color-text-primary)">5%</span></div>
+  </div>
+</div>
+
+<!-- CENTER: Equipment -->
+<div style="display:flex;flex-direction:column;gap:10px">
+  <div class="panel">
+    <div class="panel-title"><i class="ti ti-sword" aria-hidden="true"></i> Equipamiento
+      <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--color-text-secondary)">click para cambiar</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-bottom:10px">
+      <div class="slot" id="slot-head" onclick="openSlot('head')"><i class="ti ti-helmet" style="font-size:22px" aria-hidden="true"></i><span>Cabeza</span></div>
+      <div class="slot" id="slot-neck" onclick="openSlot('neck')"><i class="ti ti-diamond" style="font-size:22px" aria-hidden="true"></i><span>Cuello</span></div>
+      <div class="slot" id="slot-chest" onclick="openSlot('chest')"><i class="ti ti-shirt" style="font-size:22px" aria-hidden="true"></i><span>Pecho</span></div>
+      <div class="slot" id="slot-cloak" onclick="openSlot('cloak')"><i class="ti ti-wind" style="font-size:22px" aria-hidden="true"></i><span>Capa</span></div>
+      <div class="slot" id="slot-hands" onclick="openSlot('hands')"><i class="ti ti-hand-grab" style="font-size:22px" aria-hidden="true"></i><span>Manos</span></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+      <div class="slot weapon" id="slot-mainhand" onclick="openSlot('mainhand')"><i class="ti ti-axe" style="font-size:22px;color:#C084FC" aria-hidden="true"></i><span>M. Principal</span></div>
+      <div class="slot armor filled" id="slot-offhand" onclick="openSlot('offhand')">
+        <i class="ti ti-shield-half" style="font-size:20px;color:#60A5FA" aria-hidden="true"></i>
+        <span class="slot-name">Cloth</span>
+        <span class="slot-dice">10 + DEX</span>
+      </div>
+      <div class="slot weapon filled" id="slot-weapon2" onclick="openSlot('weapon2')">
+        <i class="ti ti-bow" style="font-size:20px;color:#C084FC" aria-hidden="true"></i>
+        <span class="slot-name">Arco</span>
+        <span class="slot-dice">1d8</span>
+      </div>
+      <div class="slot" id="slot-boots" onclick="openSlot('boots')"><i class="ti ti-boot-2" style="font-size:22px" aria-hidden="true"></i><span>Pies</span></div>
+      <div class="slot" id="slot-ring" onclick="openSlot('ring')"><i class="ti ti-circle" style="font-size:22px" aria-hidden="true"></i><span>Anillo</span></div>
+    </div>
+
+    <div style="margin-top:10px">
+      <div class="section-label">Runas activas</div>
+      <div id="runeContainer" style="display:flex;flex-wrap:wrap;gap:6px">
+        <div class="rune-slot" onclick="openRuneModal()"><i class="ti ti-plus" aria-hidden="true"></i></div>
+        <div class="rune-slot" onclick="openRuneModal()"><i class="ti ti-plus" aria-hidden="true"></i></div>
+        <div class="rune-slot" onclick="openRuneModal()"><i class="ti ti-plus" aria-hidden="true"></i></div>
+        <div class="rune-slot" onclick="openRuneModal()"><i class="ti ti-plus" aria-hidden="true"></i></div>
+        <div class="rune-slot" onclick="openRuneModal()"><i class="ti ti-plus" aria-hidden="true"></i></div>
+        <div class="rune-slot" onclick="openRuneModal()"><i class="ti ti-plus" aria-hidden="true"></i></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Item library tabs -->
+  <div class="panel" style="flex:1">
+    <div class="tab-row">
+      <button class="tab active" onclick="switchTab(this,'weapons')">Armas</button>
+      <button class="tab" onclick="switchTab(this,'armor')">Armaduras</button>
+      <button class="tab" onclick="switchTab(this,'runes')">Runas</button>
+      <button class="tab" onclick="switchTab(this,'trinkets')">Trinkets</button>
+    </div>
+    <div id="itemList"></div>
+    <button class="add-btn" onclick="sendPrompt('Quiero añadir un item personalizado a mi Character Builder de D&D 5e ↗')">
+      <i class="ti ti-plus" aria-hidden="true"></i> Añadir item personalizado ↗
+    </button>
+  </div>
+</div>
+
+<!-- RIGHT: Sim & Notes -->
+<div style="display:flex;flex-direction:column;gap:10px">
+  <div class="panel">
+    <div class="panel-title"><i class="ti ti-dice-6" aria-hidden="true"></i> Simulador</div>
+    <div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:8px">Simula rondas de combate contra un objetivo</div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px">CA del objetivo</div>
+    <input type="range" min="5" max="25" value="14" id="targetAC" step="1" style="width:100%" oninput="updateSim()">
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:8px">
+      <span>5</span><span id="targetACval" style="font-weight:500">14</span><span>25</span>
+    </div>
+    <div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:3px">Rondas</div>
+    <input type="range" min="1" max="10" value="3" id="rounds" step="1" style="width:100%" oninput="updateSim()">
+    <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:8px">
+      <span>1</span><span id="roundsVal" style="font-weight:500">3</span><span>10</span>
+    </div>
+    <div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;text-align:center">
+      <div style="font-size:11px;color:var(--color-text-secondary)">Daño esperado total</div>
+      <div id="totalExpected" style="font-size:22px;font-weight:500;color:#4ADE80">13.5</div>
+      <div style="font-size:11px;color:var(--color-text-secondary)">Chance de impactar: <span id="hitChance" style="color:var(--color-text-primary)">55%</span></div>
+    </div>
+    <button style="margin-top:8px;width:100%;padding:6px;font-size:12px;border-radius:var(--border-radius-md);border:0.5px solid var(--color-border-secondary);background:transparent;cursor:pointer;color:var(--color-text-primary)" onclick="sendPrompt('Explícame cómo mejorar el daño de mi build en D&D 5e según mis stats actuales ↗')">
+      Analizar build ↗
+    </button>
+  </div>
+
+  <div class="panel" style="flex:1">
+    <div class="panel-title"><i class="ti ti-notes" aria-hidden="true"></i> Notas de build</div>
+    <textarea id="buildNotes" style="width:100%;height:100px;font-size:12px;resize:none;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px;background:var(--color-background-secondary);color:var(--color-text-primary);font-family:var(--font-sans)" placeholder="Estrategia, combos, notas..."></textarea>
+    <div class="section-label">Historial de cambios</div>
+    <div id="changelog" style="font-size:11px;color:var(--color-text-secondary);display:flex;flex-direction:column;gap:3px;max-height:80px;overflow-y:auto">
+      <div>— Arco equipado (1d8)</div>
+      <div>— CA base: 10</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title"><i class="ti ti-star" aria-hidden="true"></i> Rareza activa</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px">
+      <span style="font-size:11px;display:flex;align-items:center;gap:3px"><span class="rarity-dot r-common"></span>Común: <b>0</b></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:3px"><span class="rarity-dot r-uncommon"></span>Poco: <b>0</b></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:3px"><span class="rarity-dot r-rare"></span>Raro: <b>0</b></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:3px"><span class="rarity-dot r-veryrare"></span>M.Raro: <b>1</b></span>
+      <span style="font-size:11px;display:flex;align-items:center;gap:3px"><span class="rarity-dot r-legendary"></span>Leg: <b>0</b></span>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- Modal: Slot selector -->
+<div class="modal-overlay" id="slotModal">
+  <div class="modal">
+    <div class="modal-title"><span id="modalTitle">Seleccionar item</span><button class="close-btn" onclick="closeModal()"><i class="ti ti-x" aria-hidden="true"></i></button></div>
+    <input type="text" class="input-field" placeholder="Buscar..." id="modalSearch" oninput="filterModal(this.value)">
+    <div id="modalItems" style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow-y:auto"></div>
+  </div>
+</div>
+
+</div><!-- /position:relative wrapper -->
+
+<script>
+const abilities=['STR','DEX','CON','INT','WIS','CHA'];
+const scores={STR:11,DEX:11,CON:11,INT:11,WIS:11,CHA:11};
+const weapons=[
+  {id:'shortsword',name:'Espada corta',dice:'1d6',stat:'STR',type:'weapon',rarity:'common'},
+  {id:'longsword',name:'Espadón',dice:'1d8',stat:'STR',type:'weapon',rarity:'uncommon'},
+  {id:'rapier',name:'Estoque',dice:'1d8',stat:'DEX',type:'weapon',rarity:'rare'},
+  {id:'bow',name:'Arco largo',dice:'1d8',stat:'DEX',type:'weapon',rarity:'veryrare'},
+  {id:'greataxe',name:'Gran hacha',dice:'1d12',stat:'STR',type:'weapon',rarity:'rare'},
+  {id:'dagger',name:'Daga',dice:'1d4',stat:'DEX',type:'weapon',rarity:'common'},
+  {id:'crossbow',name:'Ballesta',dice:'1d10',stat:'DEX',type:'weapon',rarity:'uncommon'},
+];
+const armors=[
+  {id:'cloth',name:'Cloth',bonus:0,stat:'DEX',type:'armor',rarity:'common'},
+  {id:'leather',name:'Cuero',bonus:1,stat:'DEX',type:'armor',rarity:'common'},
+  {id:'chainmail',name:'Cota de malla',bonus:4,stat:null,type:'armor',rarity:'uncommon'},
+  {id:'plate',name:'Armadura de placas',bonus:8,stat:null,type:'armor',rarity:'rare'},
+  {id:'mithril',name:'Cota de mithril',bonus:6,stat:'DEX',type:'armor',rarity:'veryrare'},
+];
+const runes=[
+  {id:'r1',name:'Runa de fuego',effect:'+1d4 daño fuego',rarity:'uncommon'},
+  {id:'r2',name:'Runa de velocidad',effect:'+1 ataque/turno',rarity:'rare'},
+  {id:'r3',name:'Runa de precisión',effect:'+1 bono ataque',rarity:'rare'},
+  {id:'r4',name:'Runa de veneno',effect:'+1d6 veneno',rarity:'veryrare'},
+];
+
+let currentTab='weapons';
+let equippedWeapon=null;
+let equippedArmor=null;
+let currentSlot=null;
+
+function mod(s){return Math.floor((scores[s]-10)/2);}
+function profBonus(lvl){return Math.floor((lvl-1)/4)+2;}
+
+function renderAbilities(){
+  const g=document.getElementById('abilityGrid');
+  g.innerHTML=abilities.map(a=>`
+    <div class="stat-box" onclick="adjustStat('${a}')">
+      <span class="stat-label">${a}</span>
+      <span class="stat-val" id="sv-${a}">${scores[a]}</span>
+      <span class="stat-mod" id="sm-${a}">${mod(a)>=0?'+':''}${mod(a)}</span>
+    </div>`).join('');
+}
+
+function adjustStat(a){
+  const v=prompt(`Valor de ${a} (1-30):`,scores[a]);
+  if(v&&!isNaN(v)&&+v>=1&&+v<=30){scores[a]=+v;updateAll();}
+}
+
+function updateDerived(){
+  const lvl=+document.getElementById('level').value||1;
+  const pb=profBonus(lvl);
+  document.getElementById('profBonus').textContent='+'+pb;
+  const armorAC=equippedArmor?(equippedArmor.stat?10+equippedArmor.bonus+mod(equippedArmor.stat):10+equippedArmor.bonus):10+mod('DEX');
+  document.getElementById('acVal').textContent=armorAC;
+  document.getElementById('initVal').textContent=(mod('DEX')>=0?'+':'')+mod('DEX');
+  const cls=document.getElementById('charClass').value;
+  const att=lvl>=5&&['fighter','ranger','paladin','barbarian'].includes(cls)?2:1;
+  document.getElementById('attPerTurn').textContent=att;
+
+  const wpn=equippedWeapon;
+  let avgHit=0,diceAvg=0,atkBonus=0;
+  if(wpn){
+    const sides=parseInt(wpn.dice.split('d')[1]);
+    diceAvg=(sides+1)/2;
+    atkBonus=pb+mod(wpn.stat||'STR');
+    avgHit=diceAvg+mod(wpn.stat||'STR');
+  }
+  const totalAvg=(avgHit*att).toFixed(1);
+  document.getElementById('avgDmg').textContent=totalAvg;
+
+  const bd=document.getElementById('dmgBreakdown');
+  if(wpn){
+    bd.innerHTML=`<div style="display:flex;justify-content:space-between"><span>${wpn.name}</span><span style="font-weight:500">${wpn.dice} (${avgHit.toFixed(1)} avg)</span></div>
+    <div style="display:flex;justify-content:space-between"><span>Bono ataque</span><span style="font-weight:500">${atkBonus>=0?'+':''}${atkBonus}</span></div>`;
+  } else {
+    bd.innerHTML=`<div style="color:var(--color-text-secondary)">Sin arma equipada</div>`;
+  }
+
+  const critDice=20-parseInt(document.getElementById('critRange')?document.getElementById('critRange').textContent:20)+1;
+  const critPct=Math.round(critDice/20*100);
+  document.getElementById('critRange').textContent=20-critDice+1||20;
+  document.getElementById('critPct').textContent=critPct+'%';
+  document.getElementById('critFill').style.width=critPct+'%';
+
+  updateSim();
+}
+
+function updateSim(){
+  const tAC=+document.getElementById('targetAC').value;
+  const rnds=+document.getElementById('rounds').value;
+  document.getElementById('targetACval').textContent=tAC;
+  document.getElementById('roundsVal').textContent=rnds;
+  const lvl=+document.getElementById('level').value||1;
+  const pb=profBonus(lvl);
+  const wpn=equippedWeapon;
+  const att=lvl>=5?2:1;
+  let avgHit=0,atkBonus=0;
+  if(wpn){
+    const sides=parseInt(wpn.dice.split('d')[1]);
+    const diceAvg=(sides+1)/2;
+    atkBonus=pb+mod(wpn.stat||'STR');
+    avgHit=diceAvg+mod(wpn.stat||'STR');
+  }
+  const hitChance=Math.max(5,Math.min(95,Math.round((21-(tAC-atkBonus))/20*100)));
+  const totalDmg=(avgHit*att*rnds*(hitChance/100)).toFixed(1);
+  document.getElementById('totalExpected').textContent=totalDmg;
+  document.getElementById('hitChance').textContent=hitChance+'%';
+}
+
+function updateAll(){
+  abilities.forEach(a=>{
+    const sv=document.getElementById('sv-'+a);
+    const sm=document.getElementById('sm-'+a);
+    if(sv)sv.textContent=scores[a];
+    if(sm)sm.textContent=(mod(a)>=0?'+':'')+mod(a);
+  });
+  updateDerived();
+}
+
+const rarityLabels={common:'Común',uncommon:'Poco común',rare:'Raro',veryrare:'Muy raro',legendary:'Legendario'};
+const rarityBadgeClass={common:'',uncommon:'b-uncommon',rare:'b-rare',veryrare:'b-veryrare',legendary:'b-legendary'};
+
+function renderItems(){
+  const list=document.getElementById('itemList');
+  const items=currentTab==='weapons'?weapons:currentTab==='armor'?armors:currentTab==='runes'?runes:[];
+  list.innerHTML=items.map(it=>`
+    <div class="item-row ${equippedWeapon&&equippedWeapon.id===it.id||equippedArmor&&equippedArmor.id===it.id?'equipped':''}" onclick="quickEquip('${it.id}','${currentTab}')">
+      <div>
+        <div class="item-name">
+          <i class="ti ti-${currentTab==='weapons'?'sword':currentTab==='armor'?'shield':'sparkles'}" style="font-size:14px" aria-hidden="true"></i>
+          ${it.name}
+          ${equippedWeapon&&equippedWeapon.id===it.id||equippedArmor&&equippedArmor.id===it.id?'<i class="ti ti-check" style="font-size:12px;color:#4ADE80" aria-hidden="true"></i>':''}
+        </div>
+        <div class="item-stats">${it.dice||('CA +'+(it.bonus||0))||it.effect||''}</div>
+      </div>
+      ${it.rarity&&rarityBadgeClass[it.rarity]?`<span class="badge ${rarityBadgeClass[it.rarity]}">${rarityLabels[it.rarity]||''}</span>`:''}
+    </div>`).join('');
+}
+
+function quickEquip(id,tab){
+  const items=tab==='weapons'?weapons:tab==='armor'?armors:runes;
+  const item=items.find(i=>i.id===id);
+  if(!item)return;
+  if(tab==='weapons'){
+    equippedWeapon=equippedWeapon&&equippedWeapon.id===id?null:item;
+    const sl=document.getElementById('slot-weapon2');
+    if(equippedWeapon){
+      sl.classList.add('filled');sl.innerHTML=`<i class="ti ti-bow" style="font-size:20px;color:#C084FC" aria-hidden="true"></i><span class="slot-name">${equippedWeapon.name}</span><span class="slot-dice">${equippedWeapon.dice}</span>`;
+    } else {sl.classList.remove('filled');sl.innerHTML=`<i class="ti ti-sword" style="font-size:22px" aria-hidden="true"></i><span>Mano 2</span>`;}
+    addLog(`${equippedWeapon?'Equipado':'Desequipado'}: ${item.name}`);
+  } else if(tab==='armor'){
+    equippedArmor=equippedArmor&&equippedArmor.id===id?null:item;
+    const sl=document.getElementById('slot-offhand');
+    if(equippedArmor){
+      sl.classList.add('filled');sl.innerHTML=`<i class="ti ti-shield" style="font-size:20px;color:#60A5FA" aria-hidden="true"></i><span class="slot-name">${equippedArmor.name}</span><span class="slot-dice">CA +${equippedArmor.bonus}</span>`;
+    } else {sl.classList.remove('filled');sl.innerHTML=`<i class="ti ti-shield-half" style="font-size:22px" aria-hidden="true"></i><span>Armadura</span>`;}
+    addLog(`${equippedArmor?'Equipado':'Desequipado'}: ${item.name}`);
+  }
+  renderItems();
+  updateAll();
+}
+
+function addLog(msg){
+  const cl=document.getElementById('changelog');
+  const d=document.createElement('div');
+  d.textContent='— '+msg;
+  cl.prepend(d);
+}
+
+function switchTab(el,tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  currentTab=tab;
+  renderItems();
+}
+
+function openRuneModal(){sendPrompt('¿Qué runas puedo agregar a mi build de D&D 5e? ↗');}
+
+let currentSlotName='';
+function openSlot(slot){
+  currentSlotName=slot;
+  const slotNames={head:'Cabeza',neck:'Cuello',chest:'Pecho',cloak:'Capa',hands:'Manos',mainhand:'Mano principal',offhand:'Mano secundaria / Armadura',weapon2:'Arma 2',boots:'Pies',ring:'Anillo'};
+  document.getElementById('modalTitle').textContent='Slot: '+slotNames[slot];
+  const items=slot==='offhand'?armors:weapons;
+  document.getElementById('modalItems').innerHTML=items.map(it=>`
+    <div class="item-row" onclick="equipFromModal('${it.id}','${slot==='offhand'?'armor':'weapons'}')" style="cursor:pointer">
+      <div><div class="item-name">${it.name}</div><div class="item-stats">${it.dice||('CA +'+(it.bonus||0))}</div></div>
+      ${it.rarity&&rarityBadgeClass[it.rarity]?`<span class="badge ${rarityBadgeClass[it.rarity]}">${rarityLabels[it.rarity]}</span>`:''}
+    </div>`).join('');
+  document.getElementById('slotModal').classList.add('open');
+}
+
+function equipFromModal(id,type){
+  quickEquip(id,type);
+  closeModal();
+}
+function closeModal(){document.getElementById('slotModal').classList.remove('open');}
+function filterModal(q){
+  document.querySelectorAll('#modalItems .item-row').forEach(row=>{
+    row.style.display=row.textContent.toLowerCase().includes(q.toLowerCase())?'':'none';
+  });
+}
+
+document.getElementById('level').addEventListener('input',updateAll);
+document.getElementById('charClass').addEventListener('change',updateAll);
+
+renderAbilities();
+renderItems();
+updateAll();
+</script>

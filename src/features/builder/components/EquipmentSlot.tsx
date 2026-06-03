@@ -11,6 +11,7 @@ interface EquipmentSlotProps {
   isSelected: boolean;
   disabled?: boolean;
   disabledHint?: string;
+  emptyTitle?: string;
 }
 
 export function EquipmentSlot({
@@ -22,6 +23,7 @@ export function EquipmentSlot({
   isSelected,
   disabled = false,
   disabledHint,
+  emptyTitle,
 }: Readonly<EquipmentSlotProps>) {
   if (disabled) {
     return (
@@ -46,8 +48,9 @@ export function EquipmentSlot({
     // Empty slot
     return (
       <button
+        type="button"
         onClick={onClickEquip}
-        title={`Equip ${label}`}
+        title={emptyTitle ?? `Equip ${label}`}
         className={cn(
           "w-20 h-20 rounded-lg border-2 border-dashed border-border",
           "flex flex-col items-center justify-center gap-1",

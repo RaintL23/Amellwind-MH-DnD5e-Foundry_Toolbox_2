@@ -101,7 +101,7 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
   }
 
   const title = isWeaponSlot
-    ? `Select Weapon — ${slot === "mainHand" ? "Main Hand" : "Off Hand"}`
+    ? "Select Weapon"
     : isArmorSlot
       ? "Select Armor"
       : `Select Trinket — ${slot === "trinket1" ? "Slot 1" : "Slot 2"}`;
@@ -136,6 +136,7 @@ export function ItemPickerDialog({ open, slot, onClose }: ItemPickerDialogProps)
 
           {/* Unequip button */}
           <button
+            type="button"
             onClick={handleUnequip}
             className="w-full text-left px-3 py-2 rounded-md border border-border/50 text-sm text-destructive hover:bg-destructive/10 transition-colors"
           >
