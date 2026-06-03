@@ -34,7 +34,7 @@ function modifierFromScore(score: number): string {
   return formatModifier(Math.floor((score - 10) / 2));
 }
 
-export function AbilityScoresSection() {
+export function AbilityScoresSection({ compact = false }: { compact?: boolean }) {
   const { character, setAbilityScore, setAbilityScores } = useCharacterBuilder();
   const [method, setMethod] = useState<GenerationMethod>("manual");
   const [pool, setPool] = useState<number[]>([...STANDARD_ARRAY]);
@@ -113,19 +113,34 @@ export function AbilityScoresSection() {
 
   return (
     <div className="space-y-2">
-      <div className="flex flex-col gap-1">
-        <label className="text-xs text-muted-foreground font-medium">Ability Scores</label>
+      {!compact && (
+        <div className="flex flex-col gap-1">
+          <label className="text-xs text-muted-foreground font-medium">Ability Scores</label>
+          <Select
+            value={method}
+            onChange={(e) => handleMethodChange(e.target.value as GenerationMethod)}
+            className="h-8 text-xs"
+          >
+            <option value="manual">Manual</option>
+            <option value="standard">Standard Array (15, 14, 13, 12, 10, 8)</option>
+            <option value="pointbuy">Point Buy (27 pts, max 15)</option>
+            <option value="dice">Roll Dice (4d6 drop lowest)</option>
+          </Select>
+        </div>
+      )}
+
+      {compact && (
         <Select
           value={method}
           onChange={(e) => handleMethodChange(e.target.value as GenerationMethod)}
-          className="h-8 text-xs"
+          className="mb-2 h-7 w-full text-[10px]"
         >
           <option value="manual">Manual</option>
-          <option value="standard">Standard Array (15, 14, 13, 12, 10, 8)</option>
-          <option value="pointbuy">Point Buy (27 pts, max 15)</option>
-          <option value="dice">Roll Dice (4d6 drop lowest)</option>
+          <option value="standard">Array estándar</option>
+          <option value="pointbuy">Point buy</option>
+          <option value="dice">Tirar dados</option>
         </Select>
-      </div>
+      )}
 
       {method === "standard" && (
         <p className="text-[10px] text-muted-foreground leading-snug">
@@ -183,7 +198,7 @@ export function AbilityScoresSection() {
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className={compact ? "grid grid-cols-2 gap-1.5" : "grid grid-cols-2 gap-2"}>
         {ABILITIES.map(({ key, label }) => {
           const score =
             method === "standard" || method === "dice"
@@ -191,6 +206,32 @@ export function AbilityScoresSection() {
               : character.abilities[key];
           const modifier =
             score !== undefined ? modifierFromScore(score) : "—";
+
+          if (compact && method === "manual") {
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => {
+                  const v = prompt(`Valor de ${label} (1-30):`, String(character.abilities[key]));
+                  if (v && !Number.isNaN(+v) && +v >= 1 && +v <= 30) {
+                    setAbilityScore(key, +v);
+                  }
+                }}
+                className="flex flex-col items-center rounded-md border border-border/60 bg-muted/30 px-2 py-1.5 transition-colors hover:border-border"
+              >
+                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                  {label}
+                </span>
+                <span className="text-xl font-medium leading-tight text-foreground">
+                  {character.abilities[key]}
+                </span>
+                <span className="text-[11px] text-muted-foreground">
+                  {formatModifier(character.getModifier(key))}
+                </span>
+              </button>
+            );
+          }
 
           if (method === "standard" || method === "dice") {
             const options = poolOptionsForAbility(key, assignments, pool);

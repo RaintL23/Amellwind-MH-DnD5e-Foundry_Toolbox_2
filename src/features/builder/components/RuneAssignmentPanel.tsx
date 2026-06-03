@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { X, Gem, AlertTriangle } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
@@ -181,8 +182,11 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
           <div className="w-full min-w-0 max-h-[min(40vh,320px)] overflow-y-auto space-y-1">
             {filteredRunes.length === 0 && (
               <p className="text-xs text-muted-foreground text-center py-2">
-                No runes in your build. Add them from the Runes page using the Build
-                Planner tool.
+                No runes in your build. Add them from the{" "}
+                <Link to="/runes" className="text-primary hover:underline">
+                  Runes page
+                </Link>{" "}
+                using the Build Planner tool.
               </p>
             )}
             {filteredRunes.map((rune) => (
