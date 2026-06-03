@@ -3,7 +3,7 @@ export interface CopyRef {
   source?: string;
   abbreviation?: string;
   _preserve?: Record<string, boolean>;
-  _mod?: Record<string, unknown[]>;
+  _mod?: Record<string, unknown[] | unknown>;
   [key: string]: unknown;
 }
 
@@ -31,22 +31,41 @@ function getEntryName(entry: unknown): string | undefined {
   return undefined;
 }
 
-function applyArrayMod(
-  baseArr: unknown[],
-  mod: {
-    mode?: string;
-    replace?: string;
-    items?: unknown;
-    index?: number;
-    names?: string | string[];
-  },
-): unknown[] {
+type ArrayMod = {
+  mode?: string;
+  replace?: string | { index?: number; name?: string };
+  items?: unknown;
+  index?: number;
+  names?: string | string[];
+};
+
+function normalizeModList(modList: unknown): unknown[] {
+  if (modList == null) return [];
+  return Array.isArray(modList) ? modList : [modList];
+}
+
+function resolveReplaceIndex(
+  arr: unknown[],
+  replace: ArrayMod["replace"],
+): number {
+  if (replace == null) return -1;
+  if (typeof replace === "string") {
+    return arr.findIndex((e) => getEntryName(e) === replace);
+  }
+  if (typeof replace.index === "number") return replace.index;
+  if (replace.name) {
+    return arr.findIndex((e) => getEntryName(e) === replace.name);
+  }
+  return -1;
+}
+
+function applyArrayMod(baseArr: unknown[], mod: ArrayMod): unknown[] {
   const arr = [...baseArr];
   const mode = mod.mode ?? "replaceArr";
 
-  if (mode === "replaceArr" && mod.replace != null) {
-    const idx = arr.findIndex((e) => getEntryName(e) === mod.replace);
-    if (idx >= 0 && mod.items !== undefined) {
+  if (mode === "replaceArr" && mod.replace != null && mod.items !== undefined) {
+    const idx = resolveReplaceIndex(arr, mod.replace);
+    if (idx >= 0) {
       const replacement = Array.isArray(mod.items) ? mod.items : [mod.items];
       arr.splice(idx, 1, ...replacement);
     }
@@ -56,6 +75,17 @@ function applyArrayMod(
   if (mode === "appendArr" && mod.items !== undefined) {
     const toAppend = Array.isArray(mod.items) ? mod.items : [mod.items];
     return [...arr, ...toAppend];
+  }
+
+  if (mode === "insertArr" && mod.items !== undefined) {
+    const toInsert = Array.isArray(mod.items) ? mod.items : [mod.items];
+    if (mod.index === undefined || mod.index === -1) {
+      return [...arr, ...toInsert];
+    }
+    const idx = mod.index < 0 ? Math.max(0, arr.length + mod.index + 1) : mod.index;
+    const result = [...arr];
+    result.splice(idx, 0, ...toInsert);
+    return result;
   }
 
   if (mode === "removeArr" && mod.names) {
@@ -74,21 +104,15 @@ function applyArrayMod(
 
 function applyCopyMods(
   merged: Record<string, unknown>,
-  mods: Record<string, unknown[]>,
+  mods: Record<string, unknown[] | unknown>,
 ): void {
   for (const [key, modList] of Object.entries(mods)) {
     const baseArr = merged[key];
     if (!Array.isArray(baseArr)) continue;
     let result = baseArr as unknown[];
-    for (const mod of modList) {
+    for (const mod of normalizeModList(modList)) {
       if (typeof mod === "object" && mod !== null) {
-        result = applyArrayMod(result, mod as {
-          mode?: string;
-          replace?: string;
-          items?: unknown;
-          index?: number;
-          names?: string | string[];
-        });
+        result = applyArrayMod(result, mod as ArrayMod);
       }
     }
     merged[key] = result;
@@ -131,7 +155,7 @@ export function resolveEntityCopies<T extends Record<string, unknown>>(
         copyRef._preserve,
       );
       if (copyRef._mod) {
-        applyCopyMods(merged as Record<string, unknown>, copyRef._mod as Record<string, unknown[]>);
+        applyCopyMods(merged as Record<string, unknown>, copyRef._mod);
       }
       delete (merged as Record<string, unknown>)._copy;
       changed = true;
