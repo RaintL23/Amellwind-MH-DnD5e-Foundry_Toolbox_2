@@ -1,4 +1,5 @@
 import {
+  DEFAULT_DND_ITEM_SOURCES,
   ITEMS_BASE_JSON_URL,
   ITEMS_JSON_URL,
   MAGIC_VARIANTS_JSON_URL,
@@ -355,11 +356,60 @@ function lightEnhanceItem(item: RawItemEntity): void {
         : "Other";
 }
 
-export async function buildRawItemList(): Promise<{
-  items: RawItemEntity[];
-  indexes: ItemBaseIndexes;
-  linkedLootTables: Record<string, unknown>;
-}> {
+interface ItemJsonBundle {
+  itemsJson: ItemsJson;
+  baseJson: ItemsBaseJson;
+  variantsJson: MagicVariantsJson;
+}
+
+let jsonBundle: ItemJsonBundle | null = null;
+let indexesCache: ItemBaseIndexes | null = null;
+let linkedLootTablesCache: Record<string, unknown> = {};
+const loadedSources = new Set<string>();
+let unfilteredPool: RawItemEntity[] | null = null;
+let itemPool: RawItemEntity[] = [];
+
+function sourceFromTypeUid(type: string | undefined): string | undefined {
+  if (!type?.includes("|")) return undefined;
+  return type.split("|")[1];
+}
+
+/** Primary book/source for filtering and catalog (items, variants, type UIDs). */
+export function getRawItemSource(item: RawItemEntity): string | undefined {
+  if (item.source) return item.source;
+  const inherits = item.inherits as { source?: string } | undefined;
+  if (inherits?.source) return inherits.source;
+  return sourceFromTypeUid(item.type);
+}
+
+function collectSourcesFromRaw(bundle: ItemJsonBundle): string[] {
+  const sources = new Set<string>();
+  for (const item of bundle.itemsJson.item ?? []) {
+    if (item.source) sources.add(item.source);
+  }
+  for (const group of bundle.itemsJson.itemGroup ?? []) {
+    if (group.source) sources.add(group.source);
+  }
+  for (const base of bundle.baseJson.baseitem ?? []) {
+    if (base.source) sources.add(base.source);
+  }
+  for (const variant of bundle.variantsJson.magicvariant ?? []) {
+    const inheritSource = variant.inherits?.source;
+    if (typeof inheritSource === "string") sources.add(inheritSource);
+    const fromType = sourceFromTypeUid(variant.type);
+    if (fromType) sources.add(fromType);
+  }
+  return Array.from(sources).sort((a, b) => a.localeCompare(b));
+}
+
+function itemMatchesLoadedSources(item: RawItemEntity): boolean {
+  const src = getRawItemSource(item);
+  return src != null && loadedSources.has(src);
+}
+
+async function ensureJsonBundle(): Promise<ItemJsonBundle> {
+  if (jsonBundle) return jsonBundle;
+
   const [itemsJson, baseJson, variantsJson] = await Promise.all([
     fetchFiveToolsJson<ItemsJson>(ITEMS_JSON_URL, "items.json"),
     fetchFiveToolsJson<ItemsBaseJson>(ITEMS_BASE_JSON_URL, "items-base.json"),
@@ -369,18 +419,27 @@ export async function buildRawItemList(): Promise<{
     ),
   ]);
 
+  jsonBundle = { itemsJson, baseJson, variantsJson };
+  linkedLootTablesCache = variantsJson.linkedLootTables ?? {};
+
+  const resolvedTypes = resolveItemTypesByAbbreviation(baseJson.itemType ?? []);
+  indexesCache = {
+    itemTypes: buildItemTypeIndex(resolvedTypes),
+    itemProperties: buildItemPropertyIndex(baseJson.itemProperty ?? []),
+  };
+
+  return jsonBundle;
+}
+
+function buildUnfilteredRawList(bundle: ItemJsonBundle): RawItemEntity[] {
+  const { itemsJson, baseJson, variantsJson } = bundle;
+
   const resolvedItems = resolveItemsByNameSource(itemsJson.item ?? []);
   const itemGroups = (itemsJson.itemGroup ?? []).map((g) => ({
     ...g,
     _isItemGroup: true,
   }));
   const resolvedGroups = resolveItemsByNameSource(itemGroups);
-
-  const resolvedTypes = resolveItemTypesByAbbreviation(baseJson.itemType ?? []);
-  const indexes: ItemBaseIndexes = {
-    itemTypes: buildItemTypeIndex(resolvedTypes),
-    itemProperties: buildItemPropertyIndex(baseJson.itemProperty ?? []),
-  };
 
   const baseItems = resolveItemsByNameSource(baseJson.baseitem ?? []).map(
     (b) => ({ ...b, _isBaseItem: true }),
@@ -401,9 +460,86 @@ export async function buildRawItemList(): Promise<{
     lightEnhanceItem(item);
   }
 
+  return allItems;
+}
+
+function rebuildItemPool(): void {
+  if (!jsonBundle) return;
+  unfilteredPool ??= buildUnfilteredRawList(jsonBundle);
+  itemPool = unfilteredPool.filter(itemMatchesLoadedSources);
+}
+
+export function getLoadedItemSources(): string[] {
+  return Array.from(loadedSources).sort((a, b) => a.localeCompare(b));
+}
+
+export function isItemSourceLoaded(source: string): boolean {
+  return loadedSources.has(source);
+}
+
+export async function getAvailableItemSources(): Promise<string[]> {
+  const bundle = await ensureJsonBundle();
+  return collectSourcesFromRaw(bundle);
+}
+
+export function getAllRawItems(): RawItemEntity[] {
+  return [...itemPool];
+}
+
+export function getItemBaseIndexes(): ItemBaseIndexes {
+  if (!indexesCache) {
+    throw new Error("Item indexes not initialized; load item sources first.");
+  }
+  return indexesCache;
+}
+
+export async function loadItemSources(sources: string[]): Promise<RawItemEntity[]> {
+  await ensureJsonBundle();
+  for (const source of sources) {
+    loadedSources.add(source);
+  }
+  rebuildItemPool();
+  return itemPool;
+}
+
+export async function loadItemSource(source: string): Promise<RawItemEntity[]> {
+  if (loadedSources.has(source)) {
+    return itemPool.filter((i) => getRawItemSource(i) === source);
+  }
+
+  try {
+    await loadItemSources([source]);
+  } catch (err) {
+    console.warn(`Failed to load item source ${source}:`, err);
+    return [];
+  }
+
+  return itemPool.filter((i) => getRawItemSource(i) === source);
+}
+
+export async function buildRawItemList(): Promise<{
+  items: RawItemEntity[];
+  indexes: ItemBaseIndexes;
+  linkedLootTables: Record<string, unknown>;
+}> {
+  if (loadedSources.size === 0) {
+    await loadItemSources([...DEFAULT_DND_ITEM_SOURCES]);
+  } else {
+    await ensureJsonBundle();
+  }
+
   return {
-    items: allItems,
-    indexes,
-    linkedLootTables: variantsJson.linkedLootTables ?? {},
+    items: getAllRawItems(),
+    indexes: getItemBaseIndexes(),
+    linkedLootTables: linkedLootTablesCache,
   };
+}
+
+export function clearItemListBuilderCache(): void {
+  jsonBundle = null;
+  indexesCache = null;
+  linkedLootTablesCache = {};
+  loadedSources.clear();
+  unfilteredPool = null;
+  itemPool = [];
 }

@@ -78,6 +78,9 @@ export const LEGENDARY_GROUPS_URL = `${BESTIARY_BASE_URL}/legendarygroups.json`;
 /** Fuentes precargadas al abrir el bestiario; el resto se cargan bajo demanda */
 export const DEFAULT_BESTIARY_SOURCES = ["MM", "VGM", "MPMM", "XMM"] as const;
 
+/** Fuentes precargadas al abrir ítems D&D (PHB/DMG 2014 y 2024); el resto bajo demanda */
+export const DEFAULT_DND_ITEM_SOURCES = ["PHB", "XPHB", "DMG", "XDMG"] as const;
+
 export const SPELL_SOURCE_FILES: Record<string, string> = {
   PHB: "spells-phb.json",
   XPHB: "spells-xphb.json",
