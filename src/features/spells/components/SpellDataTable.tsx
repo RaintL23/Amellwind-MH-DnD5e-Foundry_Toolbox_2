@@ -5,6 +5,7 @@ import { DataTable } from "@/components/data-table/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { SCHOOL_NAMES } from "../mappers/spell.mapper";
+import type { SourceOption } from "../services/book-source.service";
 import { spellColumns, spellGlobalFilter } from "./spell-columns";
 
 const LEVEL_OPTIONS = [
@@ -40,7 +41,7 @@ const SCHOOL_OPTIONS = [
 interface SpellDataTableProps {
   spells: Spell[];
   classOptions: string[];
-  sourceOptions: string[];
+  sourceOptions: SourceOption[];
   onRowClick: (spell: Spell) => void;
 }
 
@@ -51,7 +52,7 @@ function SpellDataTableToolbar({
 }: {
   table: Table<Spell>;
   classOptions: string[];
-  sourceOptions: string[];
+  sourceOptions: SourceOption[];
 }) {
   // const flagsFilter =
   //   (table.getColumn("flags")?.getFilterValue() as string) ?? "";
@@ -149,12 +150,12 @@ function SpellDataTableToolbar({
               ?.setFilterValue(e.target.value || undefined);
             table.setPageIndex(0);
           }}
-          className="h-8 w-auto min-w-[120px] text-xs"
+          className="h-8 w-auto min-w-[200px] max-w-[280px] text-xs"
         >
           <option value="">All sources</option>
-          {sourceOptions.map((source) => (
-            <option key={source} value={source}>
-              {source}
+          {sourceOptions.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
             </option>
           ))}
         </Select>

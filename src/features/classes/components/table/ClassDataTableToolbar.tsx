@@ -3,12 +3,13 @@ import { Search } from "lucide-react";
 import { Class } from "@/shared/types";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import type { SourceOption } from "@/features/spells/services/book-source.service";
 import { CASTER_OPTIONS, defaultSelectedSources } from "./class-table.constants";
 import { SourceMultiSelect } from "./SourceMultiSelect";
 
 interface ClassDataTableToolbarProps {
   table: Table<Class>;
-  sourceOptions: string[];
+  sourceOptions: SourceOption[];
 }
 
 export function ClassDataTableToolbar({
@@ -20,7 +21,7 @@ export function ClassDataTableToolbar({
 
   const selectedSources =
     (table.getColumn("source")?.getFilterValue() as string[] | undefined) ??
-    defaultSelectedSources(sourceOptions);
+    defaultSelectedSources(sourceOptions.map((option) => option.value));
 
   return (
     <div className="space-y-3">

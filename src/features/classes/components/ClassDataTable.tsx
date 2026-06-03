@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Class } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
+import type { SourceOption } from "@/features/spells/services/book-source.service";
 import { classColumns, classGlobalFilter } from "./class-columns";
 import { defaultSelectedSources } from "./table/class-table.constants";
 import { ClassDataTableToolbar } from "./table/ClassDataTableToolbar";
@@ -12,7 +13,7 @@ export {
 
 interface ClassDataTableProps {
   classes: Class[];
-  sourceOptions: string[];
+  sourceOptions: SourceOption[];
   onRowClick: (cls: Class) => void;
 }
 
@@ -22,7 +23,7 @@ export function ClassDataTable({
   onRowClick,
 }: ClassDataTableProps) {
   const initialSourceFilter = useMemo(
-    () => defaultSelectedSources(sourceOptions),
+    () => defaultSelectedSources(sourceOptions.map((option) => option.value)),
     [sourceOptions],
   );
 

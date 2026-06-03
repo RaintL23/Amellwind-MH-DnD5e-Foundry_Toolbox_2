@@ -2,7 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { DndItem } from "@/shared/types";
 import { Package } from "lucide-react";
 import { getAllDndItems } from "../services/dnd-item.service";
-import { getBookSourceNames } from "@/features/spells/services/book-source.service";
+import {
+  buildSourceOptions,
+  collectEntitySources,
+  getBookSourceNames,
+  type BookSourceNameMap,
+} from "@/features/spells/services/book-source.service";
 import {
   dedupeDndItemsByName,
   getDndItemsByName,
@@ -28,9 +33,10 @@ export function DndItemList() {
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<DndItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
 
   useEffect(() => {
-    void getBookSourceNames();
+    void getBookSourceNames().then(setBookNames);
     getAllDndItems()
       .then(setItems)
       .catch((err: unknown) => {
@@ -42,8 +48,8 @@ export function DndItemList() {
   const listItems = useMemo(() => dedupeDndItemsByName(items), [items]);
 
   const sourceOptions = useMemo(
-    () => Array.from(new Set(items.map((i) => i.source))).sort(),
-    [items],
+    () => buildSourceOptions(collectEntitySources(listItems), bookNames),
+    [listItems, bookNames],
   );
 
   const rarityOptions = useMemo(() => {

@@ -2,6 +2,11 @@ import { BOOKS_JSON_URL } from "@/shared/constants/api.constants";
 
 export type BookSourceNameMap = Record<string, string>;
 
+export type SourceOption = {
+  value: string;
+  label: string;
+};
+
 let cache: BookSourceNameMap | null = null;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -42,6 +47,32 @@ export function resolveBookSourceName(
   sourceCode: string,
 ): string {
   return map[sourceCode] ?? sourceCode;
+}
+
+export function collectEntitySources(
+  entities: Array<{ source: string; variantSources?: string[] }>,
+): string[] {
+  const sources = new Set<string>();
+  for (const entity of entities) {
+    for (const source of entity.variantSources ?? [entity.source]) {
+      sources.add(source);
+    }
+  }
+  return [...sources];
+}
+
+export function buildSourceOptions(
+  sourceCodes: Iterable<string>,
+  bookNames: BookSourceNameMap,
+): SourceOption[] {
+  return [...new Set(sourceCodes)]
+    .map((value) => ({
+      value,
+      label: resolveBookSourceName(bookNames, value),
+    }))
+    .sort((a, b) =>
+      a.label.localeCompare(b.label, undefined, { sensitivity: "base" }),
+    );
 }
 
 export function clearBookSourceCache(): void {

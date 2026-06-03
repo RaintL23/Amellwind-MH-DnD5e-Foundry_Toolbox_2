@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Spell } from "@/shared/types";
 import { getAllSpells } from "../services/spell.service";
-import { getBookSourceNames } from "../services/book-source.service";
+import {
+  buildSourceOptions,
+  collectEntitySources,
+  getBookSourceNames,
+  type BookSourceNameMap,
+} from "../services/book-source.service";
 import { SPELL_LIST_FILTER_CLASSES } from "../utils/spell-class.constants";
 import { dedupeSpellsByName, getSpellsByName } from "../utils/spell-dedupe.utils";
 import { SpellDetailDialog } from "./SpellDetailDialog";
@@ -13,9 +18,10 @@ export function SpellList() {
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Spell | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
 
   useEffect(() => {
-    void getBookSourceNames();
+    void getBookSourceNames().then(setBookNames);
     getAllSpells()
       .then(setSpells)
       .finally(() => setLoading(false));
@@ -31,9 +37,10 @@ export function SpellList() {
     return SPELL_LIST_FILTER_CLASSES.filter((name) => present.has(name));
   }, [listSpells]);
 
-  const sourceOptions = useMemo(() => {
-    return Array.from(new Set(spells.map((s) => s.source))).sort();
-  }, [spells]);
+  const sourceOptions = useMemo(
+    () => buildSourceOptions(collectEntitySources(listSpells), bookNames),
+    [listSpells, bookNames],
+  );
 
   const selectedVariants = useMemo(() => {
     if (!selected) return [];

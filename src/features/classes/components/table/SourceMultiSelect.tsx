@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown } from "lucide-react";
+import type { SourceOption } from "@/features/spells/services/book-source.service";
 import { cn } from "@/shared/utils/cn";
 
 interface SourceMultiSelectProps {
-  options: string[];
+  options: SourceOption[];
   selected: string[];
   onChange: (next: string[]) => void;
 }
@@ -45,6 +46,8 @@ export function SourceMultiSelect({
     }
   }
 
+  const optionValues = options.map((option) => option.value);
+
   return (
     <div ref={rootRef} className="relative">
       <button
@@ -65,12 +68,12 @@ export function SourceMultiSelect({
       </button>
 
       {open && (
-        <div className="absolute right-0 z-50 mt-1 max-h-64 w-56 overflow-y-auto rounded-md border border-border bg-popover p-2 shadow-md">
+        <div className="absolute right-0 z-50 mt-1 max-h-64 w-72 overflow-y-auto rounded-md border border-border bg-popover p-2 shadow-md">
           <div className="mb-2 flex gap-2 border-b border-border pb-2">
             <button
               type="button"
               className="text-[11px] text-sky-400 hover:underline"
-              onClick={() => onChange([...options])}
+              onClick={() => onChange([...optionValues])}
             >
               All
             </button>
@@ -83,18 +86,18 @@ export function SourceMultiSelect({
             </button>
           </div>
           <ul className="space-y-1">
-            {options.map((source) => {
-              const checked = selected.includes(source);
+            {options.map(({ value, label }) => {
+              const checked = selected.includes(value);
               return (
-                <li key={source}>
+                <li key={value}>
                   <label className="flex cursor-pointer items-center gap-2 rounded px-1.5 py-1 text-xs hover:bg-muted/60">
                     <input
                       type="checkbox"
                       checked={checked}
-                      onChange={() => toggleSource(source)}
+                      onChange={() => toggleSource(value)}
                       className="rounded border-border"
                     />
-                    <span className="font-mono">{source}</span>
+                    <span title={label !== value ? value : undefined}>{label}</span>
                   </label>
                 </li>
               );
