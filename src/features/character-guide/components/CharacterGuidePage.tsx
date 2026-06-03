@@ -30,7 +30,11 @@ function Paragraphs({ lines }: { lines: string[] }) {
   );
 }
 
-function GuideInset({ inset }: { inset: NonNullable<GuideSubsection["inset"]> }) {
+function GuideInset({
+  inset,
+}: {
+  inset: NonNullable<GuideSubsection["inset"]>;
+}) {
   return (
     <div className="rounded-lg border-2 border-amber-700/50 bg-amber-900/10 p-4 mt-4">
       <div className="flex items-center gap-2 mb-2">
@@ -52,7 +56,9 @@ function SubsectionBlock({
   const Heading = depth === 0 ? "h3" : depth === 1 ? "h4" : "h5";
 
   return (
-    <div className={cn(depth > 0 && "ml-0 sm:ml-2 border-l-2 border-border pl-4")}>
+    <div
+      className={cn(depth > 0 && "ml-0 sm:ml-2 border-l-2 border-border pl-4")}
+    >
       <Heading
         className={cn(
           "font-semibold text-foreground",
@@ -83,7 +89,11 @@ function SubsectionBlock({
       {subsection.inset && <GuideInset inset={subsection.inset} />}
 
       {subsection.subsections?.map((child) => (
-        <SubsectionBlock key={child.name} subsection={child} depth={depth + 1} />
+        <SubsectionBlock
+          key={child.name}
+          subsection={child}
+          depth={depth + 1}
+        />
       ))}
     </div>
   );
@@ -94,7 +104,7 @@ function SectionContent({ section }: { section: GuideSection }) {
     return (
       <div className="space-y-4">
         {section.intro && <Paragraphs lines={section.intro} />}
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-3">
           {section.skillEntries.map((skill) => (
             <div
               key={skill.name}
@@ -147,7 +157,9 @@ export function CharacterGuidePage() {
         </div>
         <p className="text-sm text-muted-foreground max-w-3xl">
           Chapter 2 recommendations from{" "}
-          <span className="text-foreground/80">Amellwind&apos;s Guide to Monster Hunting</span>
+          <span className="text-foreground/80">
+            Amellwind&apos;s Guide to Monster Hunting
+          </span>
           . All options require DM approval.
         </p>
         <p className="text-sm text-muted-foreground max-w-3xl mt-2">
@@ -156,7 +168,7 @@ export function CharacterGuidePage() {
       </div>
 
       <div className="flex-1 overflow-auto p-4 lg:p-6">
-        <div className="max-w-4xl mx-auto space-y-5">
+        <div className="mx-auto space-y-5">
           <div className="flex flex-wrap gap-1.5 border-b border-border pb-3">
             {TABS.map(({ id, label }) => (
               <button
@@ -193,7 +205,8 @@ export function CharacterGuidePage() {
 
           <div className="rounded-lg border border-border bg-card/50 p-4 flex flex-wrap items-center justify-between gap-3">
             <p className="text-sm text-muted-foreground">
-              Ready to build? Use the Character Builder to equip gear and test damage.
+              Ready to build? Use the Character Builder to equip gear and test
+              damage.
             </p>
             <Link
               to="/builder"
