@@ -23,6 +23,7 @@ import { SpellList } from "@/features/spells/components/SpellList";
 import { ClassList } from "@/features/classes/components/ClassList";
 import { ClassDetailPage } from "@/features/classes/components/ClassDetailPage";
 import { DndItemList } from "@/features/dnd-items/components/DndItemList";
+import { BestiaryList } from "@/features/bestiary/components/BestiaryList";
 import { NotFound } from "@/components/layout/NotFound";
 
 export default function App() {
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="downtime" element={<DowntimePage />} />
             <Route path="spells" element={<SpellList />} />
             <Route path="dnd-items" element={<DndItemList />} />
+            <Route path="bestiary" element={<BestiaryList />} />
             <Route path="classes" element={<ClassList />} />
             <Route path="classes/:classId" element={<ClassDetailPage />} />
             <Route path="*" element={<NotFound />} />

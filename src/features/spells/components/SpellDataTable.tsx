@@ -192,6 +192,10 @@ export function SpellDataTable({
     <DataTable
       columns={spellColumns}
       data={spells}
+      initialSorting={[
+        { id: "level", desc: false },
+        { id: "name", desc: false },
+      ]}
       onRowClick={onRowClick}
       emptyMessage="No spells found with those filters."
       pageSize={25}

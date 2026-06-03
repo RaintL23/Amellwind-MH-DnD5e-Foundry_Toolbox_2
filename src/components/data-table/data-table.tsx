@@ -33,6 +33,8 @@ interface DataTableProps<TData, TValue> {
   globalFilterFn?: FilterFn<TData>;
   initialColumnVisibility?: VisibilityState;
   initialColumnFilters?: ColumnFiltersState;
+  initialSorting?: SortingState;
+  getRowId?: (row: TData) => string;
 }
 
 export function DataTable<TData, TValue>({
@@ -45,11 +47,10 @@ export function DataTable<TData, TValue>({
   globalFilterFn,
   initialColumnVisibility = {},
   initialColumnFilters = [],
+  initialSorting = [{ id: "name", desc: false }],
+  getRowId,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: "level", desc: false },
-    { id: "name", desc: false },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>(initialSorting);
   const [columnFilters, setColumnFilters] =
     useState<ColumnFiltersState>(initialColumnFilters);
   const [columnVisibility, setColumnVisibility] =
@@ -59,6 +60,7 @@ export function DataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
+    getRowId: getRowId ? (row) => getRowId(row) : undefined,
     state: {
       sorting,
       columnFilters,

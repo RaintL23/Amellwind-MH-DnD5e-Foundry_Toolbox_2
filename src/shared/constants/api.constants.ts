@@ -70,6 +70,14 @@ export const ITEMS_BASE_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items-base.json`;
 export const MAGIC_VARIANTS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/magicvariants.json`;
 export const LOCAL_5ETOOLS_BASE = "/5etools";
 
+/** Bestiary compendium — local dev: copy backup-jsons/5etools/bestiary/ → public/5etools/bestiary/; set VITE_5ETOOLS_DATA=local. Minimum: index.json, bestiary-mm.json, legendarygroups.json */
+export const BESTIARY_BASE_URL = `${FIVETOOLS_DATA_BASE_URL}/bestiary`;
+export const BESTIARY_INDEX_URL = `${BESTIARY_BASE_URL}/index.json`;
+export const LEGENDARY_GROUPS_URL = `${BESTIARY_BASE_URL}/legendarygroups.json`;
+
+/** Fuentes precargadas al abrir el bestiario; el resto se cargan bajo demanda */
+export const DEFAULT_BESTIARY_SOURCES = ["MM", "VGM", "MPMM", "XMM"] as const;
+
 export const SPELL_SOURCE_FILES: Record<string, string> = {
   PHB: "spells-phb.json",
   XPHB: "spells-xphb.json",
