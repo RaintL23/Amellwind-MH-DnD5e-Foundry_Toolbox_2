@@ -25,7 +25,7 @@ export const ClassLevelTable = memo(function ClassLevelTable({
   );
 
   return (
-    <div className="overflow-x-auto rounded-md border border-border">
+    <div className="overflow-x-auto rounded-md border border-border px-4">
       <table className="w-full text-xs">
         <thead>
           <tr className="border-b border-border bg-muted/20">

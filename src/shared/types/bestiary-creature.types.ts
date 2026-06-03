@@ -1,4 +1,8 @@
 import type { Actor, Entry } from "./actor.types";
+import type {
+  SpellcastingSpellLine,
+  StatBlockContent,
+} from "./statblock-content.types";
 
 export interface LegendaryGroupRef {
   name: string;
@@ -8,14 +12,16 @@ export interface LegendaryGroupRef {
 export interface LegendaryGroup {
   name: string;
   source: string;
-  lairActions: string[];
-  regionalEffects: string[];
+  lairActions: StatBlockContent[];
+  regionalEffects: StatBlockContent[];
 }
 
 export interface SpellcastingBlock {
   name: string;
-  header: string[];
-  footer: string[];
+  displayAs?: string;
+  header: StatBlockContent[];
+  spellLines: SpellcastingSpellLine[];
+  footer: StatBlockContent[];
 }
 
 export interface BestiaryCreature extends Actor {
@@ -33,6 +39,7 @@ export interface BestiaryCreature extends Actor {
   legendaryGroupRef?: LegendaryGroupRef;
   legendaryGroup?: LegendaryGroup;
   hasToken?: boolean;
+  hasFluff?: boolean;
   variantCount?: number;
   variantSources?: string[];
   searchText?: string;

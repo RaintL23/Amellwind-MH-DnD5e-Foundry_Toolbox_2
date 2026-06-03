@@ -19,3 +19,4 @@ export * from "./spell.types";
 export * from "./class.types";
 export * from "./dnd-item.types";
 export * from "./bestiary-creature.types";
+export * from "./statblock-content.types";

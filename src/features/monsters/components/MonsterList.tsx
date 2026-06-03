@@ -1,4 +1,5 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { Monster } from "@/shared/types";
 import { getAllMonsters } from "../services/monster.service";
 import { getTier } from "@/shared/utils/cr.utils";
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
-import { MonsterDetailDialog } from "./MonsterDetailDialog";
+import { toMonsterId } from "../utils/monster-id.utils";
 import { Search, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -59,6 +60,7 @@ function TierBadge({ tier }: { tier: number }) {
 }
 
 export function MonsterList() {
+  const navigate = useNavigate();
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<Filters>({
@@ -74,8 +76,12 @@ export function MonsterList() {
   });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
-  const [selected, setSelected] = useState<Monster | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const handleSelect = useCallback(
+    (monster: Monster) => {
+      navigate(`/monsters/${toMonsterId(monster.name, monster.source)}`);
+    },
+    [navigate],
+  );
 
   useEffect(() => {
     getAllMonsters().then((data) => {
@@ -177,7 +183,7 @@ export function MonsterList() {
   }
 
   return (
-    <div className="p-6">
+    <div className="flex flex-col h-full min-h-0 p-6">
       {/* Header */}
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-foreground">Monsters</h1>
@@ -286,10 +292,7 @@ export function MonsterList() {
                 <tr
                   key={`${monster.source}-${monster.name}`}
                   className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
-                  onClick={() => {
-                    setSelected(monster);
-                    setDialogOpen(true);
-                  }}
+                  onClick={() => handleSelect(monster)}
                 >
                   <td className="px-4 py-3 font-medium text-foreground">
                     {monster.name}
@@ -348,13 +351,6 @@ export function MonsterList() {
         onPageSizeChange={handlePageSizeChange}
       />
 
-      {dialogOpen && selected && (
-        <MonsterDetailDialog
-          monster={selected}
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-        />
-      )}
     </div>
   );
 }

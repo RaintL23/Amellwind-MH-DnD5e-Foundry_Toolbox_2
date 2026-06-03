@@ -1,4 +1,6 @@
 import { Monster } from "@/shared/types";
+import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
+import { getEntryContent } from "@/shared/utils/entry-text.utils";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
 import { Separator } from "@/components/ui/separator";
 
@@ -115,7 +117,7 @@ function EntryBlock({ entries }: EntryBlockProps) {
         <div key={i}>
           <p className="text-sm">
             <strong className="text-foreground">{entry.name}.</strong>{" "}
-            <span className="text-muted-foreground">{entry.entries.join(" ")}</span>
+            <StatBlockContentView content={getEntryContent(entry)} />
           </p>
         </div>
       ))}

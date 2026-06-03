@@ -1,13 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link, useParams } from "react-router-dom";
+import { ArrowLeft, Swords } from "lucide-react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogBody,
-} from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
 import { getTier } from "@/shared/utils/cr.utils";
@@ -17,7 +11,11 @@ import {
   type BookSourceNameMap,
 } from "@/features/spells/services/book-source.service";
 import { SourceBadge } from "@/features/spells/components/SourceBadge";
-import { enrichCreatureWithLegendary } from "../services/bestiary.service";
+import {
+  enrichCreatureWithLegendary,
+  getBestiaryCreatureById,
+  getCreaturesByName,
+} from "../services/bestiary.service";
 import {
   formatFieldValue,
   getFieldsDifferentFromVariant,
@@ -27,94 +25,69 @@ import {
   type BestiaryVariantField,
 } from "../utils/bestiary-variant.utils";
 import { BestiaryStatBlock } from "./BestiaryStatBlock";
+import { BestiaryDetailLoading } from "./detail/BestiaryDetailLoading";
+import { BestiaryDetailNotFound } from "./detail/BestiaryDetailNotFound";
+import { LairRegionalSection, MetaRow } from "./detail/bestiary-detail.shared";
 
 type DetailTab = "statblock" | "lair";
 
-interface BestiaryDetailDialogProps {
-  creature: BestiaryCreature | null;
-  variants?: BestiaryCreature[];
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
+export function BestiaryDetailPage() {
+  const { creatureId = "" } = useParams<{ creatureId: string }>();
 
-function MetaRow({
-  label,
-  value,
-  differs,
-}: {
-  label: string;
-  value: string;
-  differs?: boolean;
-}) {
-  return (
-    <div className="flex gap-2">
-      <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide w-28 shrink-0">
-        {label}
-      </span>
-      <span
-        className={cn(
-          "text-sm",
-          differs ? "text-amber-300 font-medium" : "text-foreground",
-        )}
-      >
-        {value}
-        {differs && (
-          <span className="ml-1.5 text-[10px] font-normal text-amber-500/80">
-            (varies)
-          </span>
-        )}
-      </span>
-    </div>
-  );
-}
-
-function LairRegionalSection({ creature }: { creature: BestiaryCreature }) {
-  const group = creature.legendaryGroup;
-  if (!group) return null;
-
-  return (
-    <div className="space-y-4">
-      {group.lairActions.length > 0 && (
-        <div>
-          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider border-b border-amber-800/50 pb-1 mb-2">
-            Lair Actions
-          </h3>
-          {group.lairActions.map((line, i) => (
-            <p key={i} className="text-sm text-muted-foreground mb-2">
-              {line}
-            </p>
-          ))}
-        </div>
-      )}
-      {group.regionalEffects.length > 0 && (
-        <div>
-          <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider border-b border-amber-800/50 pb-1 mb-2">
-            Regional Effects
-          </h3>
-          {group.regionalEffects.map((line, i) => (
-            <p key={i} className="text-sm text-muted-foreground mb-2">
-              {line}
-            </p>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function BestiaryDetailDialog({
-  creature,
-  variants = [],
-  open,
-  onOpenChange,
-}: BestiaryDetailDialogProps) {
+  const [creature, setCreature] = useState<BestiaryCreature | null>(null);
+  const [variants, setVariants] = useState<BestiaryCreature[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
   const [activeSource, setActiveSource] = useState<string | null>(null);
   const [enriched, setEnriched] = useState<BestiaryCreature | null>(null);
   const [tab, setTab] = useState<DetailTab>("statblock");
   const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
 
+  useEffect(() => {
+    if (!creatureId) {
+      setNotFound(true);
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+    setNotFound(false);
+
+    void (async () => {
+      const found = await getBestiaryCreatureById(creatureId);
+      if (cancelled) return;
+      if (!found) {
+        setCreature(null);
+        setVariants([]);
+        setNotFound(true);
+        setLoading(false);
+        return;
+      }
+      const group = await getCreaturesByName(found.name);
+      if (cancelled) return;
+      setCreature(found);
+      setVariants(group);
+      setActiveSource(null);
+      setEnriched(null);
+      setTab("statblock");
+      setLoading(false);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [creatureId]);
+
+  useEffect(() => {
+    void getBookSourceNames().then(setBookNames);
+  }, []);
+
   const sortedVariants = useMemo(
-    () => sortCreatureVariants(variants.length > 0 ? variants : creature ? [creature] : []),
+    () =>
+      sortCreatureVariants(
+        variants.length > 0 ? variants : creature ? [creature] : [],
+      ),
     [variants, creature],
   );
 
@@ -140,24 +113,7 @@ export function BestiaryDetailDialog({
   const hasLairContent = !!displayCreature?.legendaryGroup;
 
   useEffect(() => {
-    if (!open) return;
-    void getBookSourceNames().then(setBookNames);
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) {
-      setActiveSource(null);
-      setTab("statblock");
-    }
-  }, [open]);
-
-  useEffect(() => {
-    setActiveSource(null);
-    setEnriched(null);
-  }, [creature?.id]);
-
-  useEffect(() => {
-    if (!open || !active) {
+    if (!active) {
       setEnriched(null);
       return;
     }
@@ -174,7 +130,7 @@ export function BestiaryDetailDialog({
     return () => {
       cancelled = true;
     };
-  }, [open, active]);
+  }, [active]);
 
   useEffect(() => {
     if (!hasLairContent && tab === "lair") {
@@ -182,7 +138,13 @@ export function BestiaryDetailDialog({
     }
   }, [hasLairContent, tab]);
 
-  if (!creature || !active || !displayCreature) return null;
+  if (loading) {
+    return <BestiaryDetailLoading />;
+  }
+
+  if (notFound || !creature || !active || !displayCreature) {
+    return <BestiaryDetailNotFound />;
+  }
 
   const tier = getTier(active.cr);
   const canonical = sortedVariants[0];
@@ -192,11 +154,24 @@ export function BestiaryDetailDialog({
       : [];
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl flex flex-col gap-0 p-0 max-h-[90vh]">
-        <DialogHeader className="shrink-0 pb-3">
-          <DialogTitle className="text-amber-400 text-2xl">{active.name}</DialogTitle>
-          <DialogDescription asChild>
+    <div className="flex flex-col h-full min-h-0">
+      <div className="shrink-0 border-b border-border px-6 py-5">
+        <Link
+          to="/bestiary"
+          className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors mb-4"
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back to Bestiary
+        </Link>
+
+        <div className="space-y-4">
+          <div className="space-y-2">
+            <div className="flex items-start gap-3">
+              <Swords className="h-6 w-6 text-amber-400 shrink-0 mt-1" />
+              <h1 className="min-w-0 flex-1 text-2xl font-bold text-amber-400">
+                {active.name}
+              </h1>
+            </div>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="outline">CR {active.crDisplay}</Badge>
               <Badge variant="secondary">Tier {tier}</Badge>
@@ -205,32 +180,27 @@ export function BestiaryDetailDialog({
               </Badge>
               <SourceBadge source={active.source} bookNames={bookNames} />
               <span className="text-xs text-muted-foreground">
-                {resolveBookSourceName(bookNames, active.source)} p.{active.page ?? "—"}
+                {resolveBookSourceName(bookNames, active.source)} p.
+                {active.page ?? "—"}
               </span>
+              {sortedVariants.length > 1 &&
+                sortedVariants.map((v) => (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={() => setActiveSource(v.source)}
+                    className={cn(
+                      "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
+                      v.source === active.source
+                        ? "border-amber-500 bg-amber-500/20 text-amber-400"
+                        : "border-border bg-card text-muted-foreground hover:bg-accent",
+                    )}
+                  >
+                    {v.source}
+                  </button>
+                ))}
             </div>
-          </DialogDescription>
-        </DialogHeader>
-
-        <div className="shrink-0 space-y-3 px-6 pb-3 border-b border-border">
-          {sortedVariants.length > 1 && (
-            <div className="flex flex-wrap gap-1.5">
-              {sortedVariants.map((v) => (
-                <button
-                  key={v.id}
-                  type="button"
-                  onClick={() => setActiveSource(v.source)}
-                  className={cn(
-                    "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                    v.source === active.source
-                      ? "border-amber-500 bg-amber-500/20 text-amber-400"
-                      : "border-border bg-card text-muted-foreground hover:bg-accent",
-                  )}
-                >
-                  {v.source}
-                </button>
-              ))}
-            </div>
-          )}
+          </div>
 
           {varyingFields.length > 0 && sortedVariants.length > 1 && (
             <div className="rounded-md border border-amber-800/30 bg-amber-950/10 px-3 py-2 text-xs text-muted-foreground">
@@ -268,8 +238,10 @@ export function BestiaryDetailDialog({
             </div>
           )}
         </div>
+      </div>
 
-        <DialogBody className="flex-1 min-h-0 max-h-none overflow-y-auto pt-4">
+      <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="w-full min-w-[18rem] space-y-4 px-20">
           {tab === "statblock" && (
             <>
               {diffFields.length > 0 && (
@@ -293,8 +265,8 @@ export function BestiaryDetailDialog({
           {tab === "lair" && hasLairContent && (
             <LairRegionalSection creature={displayCreature} />
           )}
-        </DialogBody>
-      </DialogContent>
-    </Dialog>
+        </div>
+      </div>
+    </div>
   );
 }

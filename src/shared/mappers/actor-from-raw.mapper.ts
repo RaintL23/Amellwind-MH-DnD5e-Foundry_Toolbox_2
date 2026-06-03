@@ -8,7 +8,10 @@ import type {
   Speed,
 } from "@/shared/types";
 import { SIZE_MAP, getAbilityModifier, getProficiencyBonus } from "@/shared/utils/cr.utils";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  mapStatBlockEntries,
+  statBlockContentToPlainText,
+} from "@/shared/utils/statblock-entries.mapper";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RawActor = Record<string, any>;
@@ -17,14 +20,16 @@ export function mapEntries(entries: unknown[]): Entry[] {
   if (!Array.isArray(entries)) return [];
   return entries
     .filter((e): e is RawActor => typeof e === "object" && e !== null && "name" in e)
-    .map((e) => ({
-      name: String(e.name ?? ""),
-      entries: Array.isArray(e.entries)
-        ? e.entries.map((t: unknown) =>
-            typeof t === "string" ? parseFiveToolsMarkup(t) : "",
-          )
-        : [],
-    }));
+    .map((e) => {
+      const content = Array.isArray(e.entries)
+        ? mapStatBlockEntries(e.entries as unknown[])
+        : [];
+      return {
+        name: String(e.name ?? ""),
+        entries: content.map(statBlockContentToPlainText).filter(Boolean),
+        content: content.length > 0 ? content : undefined,
+      };
+    });
 }
 
 export function mapArmorClass(ac: unknown): ArmorClass[] {

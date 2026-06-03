@@ -18,6 +18,16 @@ const MonsterList = lazy(() =>
     default: m.MonsterList,
   })),
 );
+const MonsterDetailPage = lazy(() =>
+  import("@/features/monsters/components/MonsterDetailPage").then((m) => ({
+    default: m.MonsterDetailPage,
+  })),
+);
+const MonstersOutlet = lazy(() =>
+  import("@/features/monsters/components/MonstersOutlet").then((m) => ({
+    default: m.MonstersOutlet,
+  })),
+);
 const RuneList = lazy(() =>
   import("@/features/runes/components/RuneList").then((m) => ({
     default: m.RuneList,
@@ -118,6 +128,11 @@ const BestiaryList = lazy(() =>
     default: m.BestiaryList,
   })),
 );
+const BestiaryDetailPage = lazy(() =>
+  import("@/features/bestiary/components/BestiaryDetailPage").then((m) => ({
+    default: m.BestiaryDetailPage,
+  })),
+);
 
 function PageFallback() {
   return <LoadingScreen message="Cargando…" />;
@@ -159,10 +174,27 @@ export default function App() {
               path="monsters"
               element={
                 <Suspense fallback={<PageFallback />}>
-                  <MonsterList />
+                  <MonstersOutlet />
                 </Suspense>
               }
-            />
+            >
+              <Route
+                index
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <MonsterList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path=":monsterId"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <MonsterDetailPage />
+                  </Suspense>
+                }
+              />
+            </Route>
             <Route
               path="runes"
               element={
@@ -308,6 +340,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <BestiaryList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="bestiary/:creatureId"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <BestiaryDetailPage />
                 </Suspense>
               }
             />

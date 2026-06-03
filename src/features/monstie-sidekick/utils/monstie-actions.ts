@@ -1,4 +1,5 @@
 import type { Entry, Monster } from "@/shared/types";
+import { entryToPlainText } from "@/shared/utils/entry-text.utils";
 
 const RECHARGE_PATTERN = /recharge/i;
 const LIMITED_USE_PATTERN = /\b(\d\/day|\/short rest|\/long rest|per day)\b/i;
@@ -6,7 +7,7 @@ const MULTIATTACK_PATTERN = /multiattack/i;
 const DAMAGE_ONLY_PATTERN = /\d+d\d+/;
 
 export function isSignatureAttackCandidate(entry: Entry): boolean {
-  const text = entry.entries.join(" ");
+  const text = entryToPlainText(entry);
   if (MULTIATTACK_PATTERN.test(entry.name)) return false;
   return (
     RECHARGE_PATTERN.test(text) ||
@@ -16,14 +17,14 @@ export function isSignatureAttackCandidate(entry: Entry): boolean {
 }
 
 export function isCreatureFeatureCandidate(entry: Entry): boolean {
-  const text = entry.entries.join(" ");
+  const text = entryToPlainText(entry);
   if (MULTIATTACK_PATTERN.test(entry.name)) return false;
   if (RECHARGE_PATTERN.test(text) || LIMITED_USE_PATTERN.test(text)) return false;
   return true;
 }
 
 export function isNonDamageTrait(entry: Entry): boolean {
-  const text = entry.entries.join(" ");
+  const text = entryToPlainText(entry);
   if (/legendary resistance|magic resistance/i.test(entry.name)) return false;
   if (/paragon/i.test(entry.name)) return false;
   if (DAMAGE_ONLY_PATTERN.test(text) && !/bonus|advantage|disadvantage|immune|resist/i.test(text)) {
@@ -36,7 +37,7 @@ export function getSignatureAttackOptions(monster: Monster): Entry[] {
   const fromActions = monster.actions.filter(isSignatureAttackCandidate);
   if (fromActions.length > 0) return fromActions;
   return monster.actions.filter(
-    (a) => !MULTIATTACK_PATTERN.test(a.name) && DAMAGE_ONLY_PATTERN.test(a.entries.join(" ")),
+    (a) => !MULTIATTACK_PATTERN.test(a.name) && DAMAGE_ONLY_PATTERN.test(entryToPlainText(a)),
   );
 }
 

@@ -1,5 +1,8 @@
-import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
+import type { BestiaryCreature, SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
 import type { Entry } from "@/shared/types";
+import { SpellcastingBlockView } from "@/components/statblock/SpellcastingBlockView";
+import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
+import { getEntryContent } from "@/shared/utils/entry-text.utils";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
 import { Separator } from "@/components/ui/separator";
 
@@ -107,20 +110,47 @@ function StatBlockSection({
   );
 }
 
-function EntryBlock({ entries }: { entries: Entry[] }) {
+function EntryBlock({
+  entries,
+  spellcasting = [],
+}: {
+  entries: Entry[];
+  spellcasting?: SpellcastingBlock[];
+}) {
   if (!entries || entries.length === 0) return null;
   return (
     <div className="space-y-3">
-      {entries.map((entry, i) => (
-        <div key={i}>
-          <p className="text-sm">
-            <strong className="text-foreground">{entry.name}.</strong>{" "}
-            <span className="text-muted-foreground">{entry.entries.join(" ")}</span>
-          </p>
-        </div>
-      ))}
+      {entries.map((entry, i) => {
+        const embeddedSpell = spellcasting.find(
+          (s) => s.name === entry.name || s.displayAs === entry.name.toLowerCase(),
+        );
+        return (
+          <div key={i}>
+            <p className="text-sm">
+              <strong className="text-foreground">{entry.name}.</strong>{" "}
+            </p>
+            <div className="mt-1 pl-0">
+              {embeddedSpell ? (
+                <SpellcastingBlockView block={embeddedSpell} />
+              ) : (
+                <StatBlockContentView content={getEntryContent(entry)} />
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
+}
+
+function partitionSpellcasting(spellcasting: SpellcastingBlock[] = []) {
+  return {
+    trait: spellcasting.filter((s) => s.displayAs === "trait"),
+    action: spellcasting.filter((s) => s.displayAs === "action"),
+    standalone: spellcasting.filter(
+      (s) => s.displayAs !== "trait" && s.displayAs !== "action",
+    ),
+  };
 }
 
 interface BestiaryStatBlockProps {
@@ -128,6 +158,8 @@ interface BestiaryStatBlockProps {
 }
 
 export function BestiaryStatBlock({ creature }: BestiaryStatBlockProps) {
+  const spellcastingParts = partitionSpellcasting(creature.spellcasting);
+
   return (
     <div className="font-sans text-sm">
       <p className="text-muted-foreground italic mb-3">
@@ -274,36 +306,44 @@ export function BestiaryStatBlock({ creature }: BestiaryStatBlockProps) {
         )}
       </div>
 
-      {creature.spellcasting && creature.spellcasting.length > 0 && (
+      {spellcastingParts.standalone.length > 0 && (
         <StatBlockSection title="Spellcasting">
-          {creature.spellcasting.map((block, i) => (
-            <div key={i} className="space-y-2 mb-3">
-              {block.header.map((line, j) => (
-                <p key={j} className="text-sm text-muted-foreground">
-                  {line}
-                </p>
-              ))}
-              {block.footer.map((line, j) => (
-                <p key={`f-${j}`} className="text-sm text-muted-foreground pl-3">
-                  {line}
-                </p>
-              ))}
-            </div>
+          {spellcastingParts.standalone.map((block, i) => (
+            <SpellcastingBlockView key={i} block={block} />
           ))}
         </StatBlockSection>
       )}
 
-      {creature.traits.length > 0 && (
+      {creature.traits.length > 0 || spellcastingParts.trait.length > 0 ? (
         <StatBlockSection title="Traits">
-          <EntryBlock entries={creature.traits} />
+          <EntryBlock
+            entries={creature.traits}
+            spellcasting={spellcastingParts.trait}
+          />
         </StatBlockSection>
-      )}
+      ) : null}
 
-      {creature.actions.length > 0 && (
+      {creature.actions.length > 0 || spellcastingParts.action.length > 0 ? (
         <StatBlockSection title="Actions">
-          <EntryBlock entries={creature.actions} />
+          <EntryBlock
+            entries={creature.actions}
+            spellcasting={spellcastingParts.action}
+          />
+          {spellcastingParts.action
+            .filter(
+              (block) =>
+                !creature.actions.some(
+                  (a) => a.name === block.name || a.name === block.displayAs,
+                ),
+            )
+            .map((block, i) => (
+              <div key={i} className="mt-3">
+                <p className="text-sm font-semibold text-foreground">{block.name}.</p>
+                <SpellcastingBlockView block={block} />
+              </div>
+            ))}
         </StatBlockSection>
-      )}
+      ) : null}
 
       {creature.bonusActions && creature.bonusActions.length > 0 && (
         <StatBlockSection title="Bonus Actions">

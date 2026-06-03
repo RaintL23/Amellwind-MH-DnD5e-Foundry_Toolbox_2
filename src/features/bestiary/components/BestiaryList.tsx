@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Swords } from "lucide-react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
 import { buildSourceOptions } from "@/features/spells/services/book-source.service";
@@ -8,21 +9,17 @@ import {
   collectBestiarySources,
   getAllBestiaryCreatures,
   getBestiarySourceCatalog,
-  getCreaturesByName,
   getListBestiaryCreatures,
   loadSourceOnDemand,
 } from "../services/bestiary.service";
-import { BestiaryDetailDialog } from "./BestiaryDetailDialog";
 import { BestiaryDataTable } from "./BestiaryDataTable";
 
 export function BestiaryList() {
+  const navigate = useNavigate();
   const [creatures, setCreatures] = useState<BestiaryCreature[]>([]);
   const [listCreatures, setListCreatures] = useState<BestiaryCreature[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingSource, setLoadingSource] = useState<string | null>(null);
-  const [selected, setSelected] = useState<BestiaryCreature | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState<BestiaryCreature[]>([]);
   const [availableSources, setAvailableSources] = useState<string[]>([]);
   const [loadedSources, setLoadedSources] = useState<string[]>([]);
   const bookNames = useBookSourceNames();
@@ -77,11 +74,12 @@ export function BestiaryList() {
     }
   }
 
-  const handleSelect = useCallback((row: BestiaryCreature) => {
-    setSelected(row);
-    setDialogOpen(true);
-    void getCreaturesByName(row.name).then(setSelectedVariants);
-  }, []);
+  const handleSelect = useCallback(
+    (row: BestiaryCreature) => {
+      navigate(`/bestiary/${encodeURIComponent(row.id)}`);
+    },
+    [navigate],
+  );
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -158,15 +156,6 @@ export function BestiaryList() {
         )}
       </div>
 
-      {dialogOpen && selected && (
-        <BestiaryDetailDialog
-          key={selected.id}
-          creature={selected}
-          variants={selectedVariants}
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-        />
-      )}
     </div>
   );
 }

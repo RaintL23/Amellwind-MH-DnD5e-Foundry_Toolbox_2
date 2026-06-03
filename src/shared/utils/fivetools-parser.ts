@@ -18,6 +18,17 @@ const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: stri
   [/\{@item ([^}|]+)(?:\|[^}]*)?\}/g, (_m, item) => item],
   [/\{@creature ([^}|]+)(?:\|[^}]*)?\}/g, (_m, creature) => creature],
   [/\{@action ([^}|]+)(?:\|[^}]*)?\}/g, (_m, action) => action],
+  [/\{@dice ([^}]+)\}/g, (_m, dice) => dice],
+  [/\{@adventure ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
+  [/\{@book ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
+  [/\{@quickref ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
+  [/\{@variantrule ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
+  [/\{@actSave (\w+)\}/g, (_m, save) => `${save.toUpperCase()} save`],
+  [/\{@actSaveFail\}/g, "On a failed save"],
+  [/\{@actSaveSuccess\}/g, "On a successful save"],
+  [/\{@actSaveSuccessOrFail\}/g, "Whether the save succeeds or fails"],
+  [/\{@atkr ([^}]+)\}/g, (_m, mode) => `${mode.toUpperCase()} Attack:`],
+  [/\{@chance [^}]+\}/g, ""],
   [/\{@b ([^}]+)\}/g, (_m, text) => text],
   [/\{@bold ([^}]+)\}/g, (_m, text) => text],
   [/\{@i ([^}]+)\}/g, (_m, text) => text],
@@ -45,6 +56,19 @@ export function parseEntries(entries: unknown[]): string {
         const obj = entry as Record<string, unknown>;
         if (typeof obj["text"] === "string") return parseFiveToolsMarkup(obj["text"]);
         if (Array.isArray(obj["entries"])) return parseEntries(obj["entries"] as unknown[]);
+        if (obj["type"] === "list" && Array.isArray(obj["items"])) {
+          return (obj["items"] as unknown[])
+            .map((item) =>
+              typeof item === "string"
+                ? parseFiveToolsMarkup(item)
+                : parseEntries([item]),
+            )
+            .filter(Boolean)
+            .join("; ");
+        }
+        if (obj["type"] === "table" && typeof obj["caption"] === "string") {
+          return parseFiveToolsMarkup(obj["caption"]);
+        }
       }
       return "";
     })

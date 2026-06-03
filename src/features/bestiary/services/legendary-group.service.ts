@@ -2,7 +2,7 @@ import { LEGENDARY_GROUPS_URL } from "@/shared/constants/api.constants";
 import type { LegendaryGroup } from "@/shared/types/bestiary-creature.types";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 import { resolveByNameSource } from "@/shared/utils/entity-copy.utils";
-import { parseEntries } from "@/shared/utils/fivetools-parser";
+import { mapStatBlockEntries } from "@/shared/utils/statblock-entries.mapper";
 import { toCreatureHash } from "../utils/bestiary-hash.utils";
 import type { LegendaryGroupsFile, RawLegendaryGroup } from "../utils/bestiary-raw.types";
 
@@ -13,9 +13,9 @@ function bestiaryLocalPath(fileName: string): string {
   return `bestiary/${fileName}`;
 }
 
-function mapLegendaryEntries(entries: unknown[] | undefined): string[] {
+function mapLegendaryEntries(entries: unknown[] | undefined) {
   if (!Array.isArray(entries)) return [];
-  return entries.map((e) => (typeof e === "string" ? e : parseEntries([e])));
+  return mapStatBlockEntries(entries);
 }
 
 function mapLegendaryGroup(raw: RawLegendaryGroup): LegendaryGroup {

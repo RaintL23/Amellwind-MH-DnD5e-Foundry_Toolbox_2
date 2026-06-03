@@ -12,13 +12,18 @@ import {
   loadBestiarySource,
   loadBestiarySources,
 } from "../utils/bestiary-list-builder.utils";
-import { creatureEntityKey } from "../utils/bestiary-hash.utils";
+import {
+  creatureEntityKey,
+  parseCreatureHashFromRoute,
+  toCreatureHash,
+} from "../utils/bestiary-hash.utils";
 import {
   collectCreatureSources,
   dedupeCreaturesByName,
 } from "../utils/bestiary-dedupe.utils";
 import { sortCreatureVariants } from "../utils/bestiary-variant.utils";
 import type { RawMonster } from "../utils/bestiary-raw.types";
+import { clearFluffLairCache, getLairFromFluff } from "./fluff-lair.service";
 import { clearLegendaryCache, getLegendaryGroupForMonster } from "./legendary-group.service";
 
 let cache: BestiaryCreature[] = [];
@@ -88,7 +93,24 @@ export async function loadSourceOnDemand(source: string): Promise<BestiaryCreatu
 
 export async function getBestiaryCreatureById(id: string): Promise<BestiaryCreature | undefined> {
   if (indexById === null) await getAllBestiaryCreatures();
-  return indexById?.get(id);
+
+  const direct = indexById?.get(id);
+  if (direct) return direct;
+
+  const parsed = parseCreatureHashFromRoute(id);
+  if (!parsed) return undefined;
+
+  const canonicalId = toCreatureHash(parsed.name, parsed.source);
+  const byCanonical = indexById?.get(canonicalId);
+  if (byCanonical) return byCanonical;
+
+  const group = byNameIndex?.get(parsed.name);
+  if (!group?.length) return undefined;
+
+  return (
+    group.find((c) => c.source === parsed.source) ??
+    group[0]
+  );
 }
 
 export async function getCreaturesByName(name: string): Promise<BestiaryCreature[]> {
@@ -100,9 +122,22 @@ export async function getCreaturesByName(name: string): Promise<BestiaryCreature
 export async function enrichCreatureWithLegendary(
   creature: BestiaryCreature,
 ): Promise<BestiaryCreature> {
-  if (!creature.legendaryGroupRef) return creature;
-  const group = await getLegendaryGroupForMonster(creature.legendaryGroupRef);
-  return group ? { ...creature, legendaryGroup: group } : creature;
+  if (creature.legendaryGroupRef) {
+    const group = await getLegendaryGroupForMonster(creature.legendaryGroupRef);
+    if (group) return { ...creature, legendaryGroup: group };
+  }
+
+  if (creature.hasFluff || !creature.legendaryGroupRef) {
+    const fluffGroup = await getLairFromFluff(creature);
+    if (
+      fluffGroup &&
+      (fluffGroup.lairActions.length > 0 || fluffGroup.regionalEffects.length > 0)
+    ) {
+      return { ...creature, legendaryGroup: fluffGroup };
+    }
+  }
+
+  return creature;
 }
 
 export async function getBestiarySourceCatalog(): Promise<{
@@ -133,4 +168,5 @@ export function clearBestiaryCache(): void {
   clearBestiaryBuilderCache();
   clearFiveToolsJsonCache();
   clearLegendaryCache();
+  clearFluffLairCache();
 }

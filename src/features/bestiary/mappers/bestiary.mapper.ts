@@ -5,29 +5,10 @@ import {
   mapEntries,
   type RawActor,
 } from "@/shared/mappers/actor-from-raw.mapper";
-import type { BestiaryCreature, SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
-import { parseEntries, parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
+import { mapSpellcastingBlocks } from "@/shared/utils/spellcasting.mapper";
 import { toCreatureHash } from "../utils/bestiary-hash.utils";
 import type { RawMonster } from "../utils/bestiary-raw.types";
-
-function mapSpellcasting(raw: unknown[]): SpellcastingBlock[] {
-  if (!Array.isArray(raw)) return [];
-  return raw
-    .filter((s): s is RawActor => typeof s === "object" && s !== null)
-    .map((s) => ({
-      name: String(s.name ?? "Spellcasting"),
-      header: Array.isArray(s.headerEntries)
-        ? s.headerEntries.map((e: unknown) =>
-            typeof e === "string" ? parseFiveToolsMarkup(e) : parseEntries([e]),
-          )
-        : [],
-      footer: Array.isArray(s.footerEntries)
-        ? s.footerEntries.map((e: unknown) =>
-            typeof e === "string" ? parseFiveToolsMarkup(e) : parseEntries([e]),
-          )
-        : [],
-    }));
-}
 
 export function mapBestiaryCreature(raw: RawMonster): BestiaryCreature {
   const actor = mapActorCore(raw as RawActor);
@@ -47,11 +28,12 @@ export function mapBestiaryCreature(raw: RawMonster): BestiaryCreature {
     legendaryActions: mapEntries(raw.legendary ?? []),
     bonusActions: mapEntries(raw.bonus ?? []),
     mythicActions: mapEntries(raw.mythic ?? []),
-    spellcasting: mapSpellcasting(raw.spellcasting ?? []),
+    spellcasting: mapSpellcastingBlocks(raw.spellcasting ?? []),
     legendaryGroupRef:
       raw.legendaryGroup?.name && raw.legendaryGroup?.source
         ? { name: raw.legendaryGroup.name, source: raw.legendaryGroup.source }
         : undefined,
     hasToken: raw.hasToken === true,
+    hasFluff: raw.hasFluff === true,
   };
 }

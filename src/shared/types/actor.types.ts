@@ -99,9 +99,14 @@ export type DamageEntry = DamageType | ConditionalDamage;
 
 // ─── Traits / Actions ────────────────────────────────────────────────────────
 
+import type { StatBlockContent } from "./statblock-content.types";
+
 export interface Entry {
   name: string;
+  /** Plain-text lines for search, copy, and legacy consumers */
   entries: string[];
+  /** Structured 5etools content when available (tables, lists, nested sections) */
+  content?: StatBlockContent[];
 }
 
 // ─── Actor (base class) ──────────────────────────────────────────────────────

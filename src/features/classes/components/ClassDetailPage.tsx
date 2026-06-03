@@ -74,7 +74,7 @@ export function ClassDetailPage() {
       />
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="max-w-5xl mx-auto space-y-4">
+        <div className="mx-auto space-y-4">
           <ClassDetailMetaSection
             active={active}
             variantSubclasses={variantSubclasses}
