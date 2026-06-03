@@ -5,6 +5,7 @@ import {
   SPECIES_CATEGORY_LABELS,
 } from "@/shared/types";
 import { getAllSpecies } from "../services/species.service";
+import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { SpeciesCard } from "./SpeciesCard";
 import { SpeciesDetailDialog } from "./SpeciesDetailDialog";
 import { Input } from "@/components/ui/input";
@@ -54,14 +55,16 @@ export function SpeciesList() {
     return Array.from(set).sort();
   }, [species]);
 
+  const debouncedSearch = useDebouncedValue(search);
+
   const filtered = useMemo(() => {
     let result = species;
 
     if (viewMode === "Roots") result = result.filter((s) => !s.isSubrace);
     if (viewMode === "Subraces") result = result.filter((s) => s.isSubrace);
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
       result = result.filter(
         (s) =>
           s.name.toLowerCase().includes(q) ||
@@ -89,7 +92,7 @@ export function SpeciesList() {
       if (parentCmp !== 0) return parentCmp;
       return a.name.localeCompare(b.name);
     });
-  }, [species, search, categoryFilter, parentFilter, viewMode]);
+  }, [species, debouncedSearch, categoryFilter, parentFilter, viewMode]);
 
   function handleSelect(item: Species) {
     setSelected(item);
@@ -212,11 +215,13 @@ export function SpeciesList() {
         )}
       </div>
 
-      <SpeciesDetailDialog
-        species={selected}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+      {dialogOpen && selected && (
+        <SpeciesDetailDialog
+          species={selected}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </div>
   );
 }

@@ -1,7 +1,8 @@
+import { useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Class } from "@/shared/types";
 import { useClassList } from "../hooks/useClassList";
-import { getClassesByName } from "../utils/class-dedupe.utils";
+import { getClassesByName } from "../services/class.service";
 import { ClassDataTable } from "./ClassDataTable";
 import { ClassListHeader } from "./ClassListHeader";
 import { ClassListLoading } from "./ClassListLoading";
@@ -11,12 +12,15 @@ export function ClassList() {
   const navigate = useNavigate();
   const { classes, listClasses, sourceOptions, loading } = useClassList();
 
-  function handleSelect(row: Class) {
-    const variants = getClassesByName(classes, row.name);
-    const variant =
-      variants.find((v) => v.source === row.source) ?? variants[0] ?? row;
-    navigate(`/classes/${encodeURIComponent(variant.id)}`);
-  }
+  const handleSelect = useCallback(
+    async (row: Class) => {
+      const variants = await getClassesByName(row.name);
+      const variant =
+        variants.find((v) => v.source === row.source) ?? variants[0] ?? row;
+      navigate(`/classes/${encodeURIComponent(variant.id)}`);
+    },
+    [navigate],
+  );
 
   return (
     <div className="flex flex-col h-full min-h-0">

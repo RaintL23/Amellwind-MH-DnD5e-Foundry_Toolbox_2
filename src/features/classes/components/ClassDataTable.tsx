@@ -42,8 +42,15 @@ export function ClassDataTable({
       globalFilterFn={classGlobalFilter}
       initialColumnVisibility={{ edition: false }}
       initialColumnFilters={initialColumnFilters}
-      toolbar={(table) => (
-        <ClassDataTableToolbar table={table} sourceOptions={sourceOptions} />
+      toolbar={(ctx) => (
+        <ClassDataTableToolbar
+          table={ctx.table}
+          searchValue={ctx.searchValue}
+          onSearchChange={ctx.onSearchChange}
+          filteredCount={ctx.filteredCount}
+          totalCount={ctx.totalCount}
+          sourceOptions={sourceOptions}
+        />
       )}
     />
   );

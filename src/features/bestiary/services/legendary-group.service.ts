@@ -7,6 +7,7 @@ import { toCreatureHash } from "../utils/bestiary-hash.utils";
 import type { LegendaryGroupsFile, RawLegendaryGroup } from "../utils/bestiary-raw.types";
 
 let legendaryGroups: LegendaryGroup[] | null = null;
+let legendaryByHash: Map<string, LegendaryGroup> | null = null;
 
 function bestiaryLocalPath(fileName: string): string {
   return `bestiary/${fileName}`;
@@ -36,17 +37,22 @@ export async function getLegendaryGroups(): Promise<LegendaryGroup[]> {
 
   const raw = resolveByNameSource(data.legendaryGroup ?? []) as RawLegendaryGroup[];
   legendaryGroups = raw.map(mapLegendaryGroup);
+  legendaryByHash = new Map(
+    legendaryGroups.map((g) => [toCreatureHash(g.name, g.source), g]),
+  );
   return legendaryGroups;
 }
 
 export async function getLegendaryGroupForMonster(
   ref: { name: string; source: string },
 ): Promise<LegendaryGroup | undefined> {
-  const groups = await getLegendaryGroups();
-  const hash = toCreatureHash(ref.name, ref.source);
-  return groups.find((g) => toCreatureHash(g.name, g.source) === hash);
+  if (!legendaryByHash) {
+    await getLegendaryGroups();
+  }
+  return legendaryByHash?.get(toCreatureHash(ref.name, ref.source));
 }
 
 export function clearLegendaryCache(): void {
   legendaryGroups = null;
+  legendaryByHash = null;
 }

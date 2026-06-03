@@ -140,8 +140,9 @@ export function BestiaryDetailDialog({
   const hasLairContent = !!displayCreature?.legendaryGroup;
 
   useEffect(() => {
+    if (!open) return;
     void getBookSourceNames().then(setBookNames);
-  }, []);
+  }, [open]);
 
   useEffect(() => {
     if (!open) {
@@ -156,7 +157,7 @@ export function BestiaryDetailDialog({
   }, [creature?.id]);
 
   useEffect(() => {
-    if (!active) {
+    if (!open || !active) {
       setEnriched(null);
       return;
     }
@@ -173,7 +174,7 @@ export function BestiaryDetailDialog({
     return () => {
       cancelled = true;
     };
-  }, [active]);
+  }, [open, active]);
 
   useEffect(() => {
     if (!hasLairContent && tab === "lair") {

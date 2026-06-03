@@ -1,17 +1,16 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { DndItem } from "@/shared/types";
 import { Package } from "lucide-react";
-import { getAllDndItems } from "../services/dnd-item.service";
+import {
+  getAllDndItems,
+  getDndItemsByName,
+  getListDndItems,
+} from "../services/dnd-item.service";
 import {
   buildSourceOptions,
   collectEntitySources,
-  getBookSourceNames,
-  type BookSourceNameMap,
 } from "@/features/spells/services/book-source.service";
-import {
-  dedupeDndItemsByName,
-  getDndItemsByName,
-} from "../utils/item-dedupe.utils";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { DndItemDataTable } from "./DndItemDataTable";
 import { DndItemDetailDialog } from "./DndItemDetailDialog";
 
@@ -29,23 +28,25 @@ const RARITY_ORDER = [
 
 export function DndItemList() {
   const [items, setItems] = useState<DndItem[]>([]);
+  const [listItems, setListItems] = useState<DndItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<DndItem | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
+  const [selectedVariants, setSelectedVariants] = useState<DndItem[]>([]);
+  const bookNames = useBookSourceNames();
 
   useEffect(() => {
-    void getBookSourceNames().then(setBookNames);
-    getAllDndItems()
-      .then(setItems)
+    Promise.all([getAllDndItems(), getListDndItems()])
+      .then(([all, list]) => {
+        setItems(all);
+        setListItems(list);
+      })
       .catch((err: unknown) => {
         setError(err instanceof Error ? err.message : "Failed to load items");
       })
       .finally(() => setLoading(false));
   }, []);
-
-  const listItems = useMemo(() => dedupeDndItemsByName(items), [items]);
 
   const sourceOptions = useMemo(
     () => buildSourceOptions(collectEntitySources(listItems), bookNames),
@@ -70,15 +71,11 @@ export function DndItemList() {
     [items],
   );
 
-  const selectedVariants = useMemo(() => {
-    if (!selected) return [];
-    return getDndItemsByName(items, selected.name);
-  }, [selected, items]);
-
-  function handleSelect(item: DndItem) {
+  const handleSelect = useCallback((item: DndItem) => {
     setSelected(item);
     setDialogOpen(true);
-  }
+    void getDndItemsByName(item.name).then(setSelectedVariants);
+  }, []);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -139,12 +136,15 @@ export function DndItemList() {
         )}
       </div>
 
-      <DndItemDetailDialog
-        item={selected}
-        variants={selectedVariants}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+      {dialogOpen && selected && (
+        <DndItemDetailDialog
+          key={selected.id}
+          item={selected}
+          variants={selectedVariants}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </div>
   );
 }

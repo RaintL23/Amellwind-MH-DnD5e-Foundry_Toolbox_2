@@ -4,24 +4,28 @@ import {
   CLASSES_BASE_URL,
   SUBCLASS_LOOKUP_URL,
 } from "@/shared/constants/api.constants";
+import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 import { mapClass } from "../mappers/class.mapper";
 import type {
   ClassFileDocument,
   SubclassLookup,
 } from "../utils/class-raw.types";
 import { processAllClasses } from "../utils/class-processor.utils";
+import { dedupeClassesByName } from "../utils/class-dedupe.utils";
 
 let cache: Class[] | null = null;
+let listCache: Class[] | null = null;
+let byNameIndex: Map<string, Class[]> | null = null;
 let lookupCache: SubclassLookup | null = null;
 
 async function getSubclassLookup(): Promise<SubclassLookup> {
   if (lookupCache) return lookupCache;
 
   try {
-    const res = await fetch(SUBCLASS_LOOKUP_URL);
-    if (!res.ok)
-      throw new Error(`Failed to fetch subclass lookup: ${res.status}`);
-    lookupCache = (await res.json()) as SubclassLookup;
+    lookupCache = await fetchFiveToolsJson<SubclassLookup>(
+      SUBCLASS_LOOKUP_URL,
+      "generated/gendata-subclass-lookup.json",
+    );
   } catch {
     lookupCache = {};
   }
@@ -30,21 +34,26 @@ async function getSubclassLookup(): Promise<SubclassLookup> {
 }
 
 async function loadRawClassDocuments(): Promise<ClassFileDocument[]> {
-  const urls = Object.values(CLASS_SOURCE_FILES).map(
-    (file) => `${CLASSES_BASE_URL}/${file}`,
-  );
-
   const results = await Promise.all(
-    urls.map((url) =>
-      fetch(url)
-        .then((r) => {
-          if (!r.ok) throw new Error(`Failed to fetch ${url}: ${r.status}`);
-          return r.json() as Promise<ClassFileDocument>;
-        })
-        .catch(() => ({}) as ClassFileDocument),
+    Object.values(CLASS_SOURCE_FILES).map((file) =>
+      fetchFiveToolsJson<ClassFileDocument>(
+        `${CLASSES_BASE_URL}/${file}`,
+        `class/${file}`,
+      ).catch(() => ({}) as ClassFileDocument),
     ),
   );
   return results;
+}
+
+function buildIndexes(all: Class[]): void {
+  const byName = new Map<string, Class[]>();
+  for (const cls of all) {
+    const group = byName.get(cls.name) ?? [];
+    group.push(cls);
+    byName.set(cls.name, group);
+  }
+  byNameIndex = byName;
+  listCache = dedupeClassesByName(all);
 }
 
 export async function getAllClasses(): Promise<Class[]> {
@@ -69,7 +78,18 @@ export async function getAllClasses(): Promise<Class[]> {
   );
 
   cache = processed.map(mapClass);
+  buildIndexes(cache);
   return cache;
+}
+
+export async function getListClasses(): Promise<Class[]> {
+  await getAllClasses();
+  return listCache ?? [];
+}
+
+export async function getClassesByName(name: string): Promise<Class[]> {
+  await getAllClasses();
+  return byNameIndex?.get(name) ?? [];
 }
 
 export async function getClassById(id: string): Promise<Class | undefined> {
@@ -96,5 +116,7 @@ export function resolveSubclassDisplayName(
 
 export function clearClassCache(): void {
   cache = null;
+  listCache = null;
+  byNameIndex = null;
   lookupCache = null;
 }

@@ -1,5 +1,5 @@
 import { Rune } from "@/shared/types";
-import { getMonsterData } from "@/shared/db/sync.service";
+import { getMonsterData, clearMonsterDataCache } from "@/shared/db/sync.service";
 import { mapRunesFromMonster } from "../mappers/rune.mapper";
 
 let cache: Rune[] | null = null;
@@ -9,18 +9,9 @@ export async function getAllRunes(): Promise<Rune[]> {
 
   const rawData = await getMonsterData();
   const runes: Rune[] = [];
-  let count1 = 0;
-  let count2 = 0;
   for (const rawMonster of rawData as unknown[]) {
-    count1++;
-    const monsterRunes = mapRunesFromMonster(rawMonster);
-    if (monsterRunes.length > 0) {
-      count2++;
-    }
-    runes.push(...monsterRunes);
+    runes.push(...mapRunesFromMonster(rawMonster));
   }
-  console.log(count1);
-  console.log(count2);
 
   cache = runes;
   return cache;
@@ -38,4 +29,5 @@ export async function getRuneByName(name: string): Promise<Rune | undefined> {
 
 export function clearRuneCache(): void {
   cache = null;
+  clearMonsterDataCache();
 }

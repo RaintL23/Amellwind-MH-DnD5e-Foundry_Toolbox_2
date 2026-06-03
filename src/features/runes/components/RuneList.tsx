@@ -150,11 +150,13 @@ export function RuneList() {
           onPageSizeChange={handlePageSizeChange}
         />
 
-        <RuneDetailDialog
-          rune={selected}
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-        />
+        {dialogOpen && selected && (
+          <RuneDetailDialog
+            rune={selected}
+            open={dialogOpen}
+            onOpenChange={setDialogOpen}
+          />
+        )}
       </div>
       <BuildDrawer />
     </>

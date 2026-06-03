@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Weapon } from "@/shared/types";
 import { getAllWeapons } from "../services/weapon.service";
+import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { WeaponCard } from "./WeaponCard";
 import { WeaponDialog } from "./WeaponDialog";
 import { WeaponListFilters } from "./WeaponListFilters";
@@ -21,10 +22,12 @@ export function WeaponList() {
       .finally(() => setLoading(false));
   }, []);
 
+  const debouncedSearch = useDebouncedValue(search);
+
   const filtered = useMemo(() => {
     let result = weapons;
-    if (search.trim()) {
-      const q = search.toLowerCase();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
       result = result.filter((w) => w.name.toLowerCase().includes(q));
     }
     if (dmgFilter) {
@@ -34,7 +37,7 @@ export function WeaponList() {
       result = result.filter((w) => w.properties.includes(propFilter));
     }
     return result;
-  }, [weapons, search, dmgFilter, propFilter]);
+  }, [weapons, debouncedSearch, dmgFilter, propFilter]);
 
   function handleSelect(weapon: Weapon) {
     setSelected(weapon);

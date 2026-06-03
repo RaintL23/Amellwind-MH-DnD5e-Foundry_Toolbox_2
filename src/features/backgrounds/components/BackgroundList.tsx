@@ -5,6 +5,7 @@ import {
   BACKGROUND_FACTION_LABELS,
 } from "@/shared/types";
 import { getAllBackgrounds } from "../services/background.service";
+import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { BackgroundCard } from "./BackgroundCard";
 import { BackgroundDetailDialog } from "./BackgroundDetailDialog";
 import { Input } from "@/components/ui/input";
@@ -41,11 +42,13 @@ export function BackgroundList() {
       .finally(() => setLoading(false));
   }, []);
 
+  const debouncedSearch = useDebouncedValue(search);
+
   const filtered = useMemo(() => {
     let result = backgrounds;
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
       result = result.filter(
         (b) =>
           b.name.toLowerCase().includes(q) ||
@@ -60,7 +63,7 @@ export function BackgroundList() {
     }
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [backgrounds, search, factionFilter]);
+  }, [backgrounds, debouncedSearch, factionFilter]);
 
   function handleSelect(item: Background) {
     setSelected(item);
@@ -143,11 +146,13 @@ export function BackgroundList() {
         )}
       </div>
 
-      <BackgroundDetailDialog
-        background={selected}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+      {dialogOpen && selected && (
+        <BackgroundDetailDialog
+          background={selected}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </div>
   );
 }

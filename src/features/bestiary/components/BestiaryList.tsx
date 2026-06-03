@@ -1,20 +1,15 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Swords } from "lucide-react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
-import {
-  buildSourceOptions,
-  getBookSourceNames,
-  type BookSourceNameMap,
-} from "@/features/spells/services/book-source.service";
+import { buildSourceOptions } from "@/features/spells/services/book-source.service";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { cn } from "@/shared/utils/cn";
 import {
-  collectCreatureSources,
-  dedupeCreaturesByName,
-  getCreaturesByName,
-} from "../utils/bestiary-dedupe.utils";
-import {
+  collectBestiarySources,
   getAllBestiaryCreatures,
   getBestiarySourceCatalog,
+  getCreaturesByName,
+  getListBestiaryCreatures,
   loadSourceOnDemand,
 } from "../services/bestiary.service";
 import { BestiaryDetailDialog } from "./BestiaryDetailDialog";
@@ -22,28 +17,31 @@ import { BestiaryDataTable } from "./BestiaryDataTable";
 
 export function BestiaryList() {
   const [creatures, setCreatures] = useState<BestiaryCreature[]>([]);
+  const [listCreatures, setListCreatures] = useState<BestiaryCreature[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingSource, setLoadingSource] = useState<string | null>(null);
   const [selected, setSelected] = useState<BestiaryCreature | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
+  const [selectedVariants, setSelectedVariants] = useState<BestiaryCreature[]>([]);
   const [availableSources, setAvailableSources] = useState<string[]>([]);
   const [loadedSources, setLoadedSources] = useState<string[]>([]);
+  const bookNames = useBookSourceNames();
 
   const refreshCreatures = useCallback(async () => {
-    const data = await getAllBestiaryCreatures();
-    setCreatures(data);
-    const catalog = await getBestiarySourceCatalog();
+    const [all, list, catalog] = await Promise.all([
+      getAllBestiaryCreatures(),
+      getListBestiaryCreatures(),
+      getBestiarySourceCatalog(),
+    ]);
+    setCreatures(all);
+    setListCreatures(list);
     setAvailableSources(catalog.available);
     setLoadedSources(catalog.loaded);
   }, []);
 
   useEffect(() => {
-    void getBookSourceNames().then(setBookNames);
     refreshCreatures().finally(() => setLoading(false));
   }, [refreshCreatures]);
-
-  const listCreatures = useMemo(() => dedupeCreaturesByName(creatures), [creatures]);
 
   const typeOptions = useMemo(() => {
     const types = new Set<string>();
@@ -60,14 +58,9 @@ export function BestiaryList() {
   }, [listCreatures]);
 
   const sourceOptions = useMemo(
-    () => buildSourceOptions(collectCreatureSources(listCreatures), bookNames),
+    () => buildSourceOptions(collectBestiarySources(listCreatures), bookNames),
     [listCreatures, bookNames],
   );
-
-  const selectedVariants = useMemo(() => {
-    if (!selected) return [];
-    return getCreaturesByName(creatures, selected.name);
-  }, [selected, creatures]);
 
   const unloadedSources = useMemo(
     () => availableSources.filter((s) => !loadedSources.includes(s)),
@@ -84,10 +77,11 @@ export function BestiaryList() {
     }
   }
 
-  function handleSelect(row: BestiaryCreature) {
+  const handleSelect = useCallback((row: BestiaryCreature) => {
     setSelected(row);
     setDialogOpen(true);
-  }
+    void getCreaturesByName(row.name).then(setSelectedVariants);
+  }, []);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -164,13 +158,15 @@ export function BestiaryList() {
         )}
       </div>
 
-      <BestiaryDetailDialog
-        key={selected?.id ?? "closed"}
-        creature={selected}
-        variants={selectedVariants}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+      {dialogOpen && selected && (
+        <BestiaryDetailDialog
+          key={selected.id}
+          creature={selected}
+          variants={selectedVariants}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </div>
   );
 }

@@ -1,33 +1,37 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Spell } from "@/shared/types";
-import { getAllSpells } from "../services/spell.service";
+import {
+  getAllSpells,
+  getListSpells,
+  getSpellsByName,
+} from "../services/spell.service";
 import {
   buildSourceOptions,
   collectEntitySources,
-  getBookSourceNames,
-  type BookSourceNameMap,
 } from "../services/book-source.service";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { SPELL_LIST_FILTER_CLASSES } from "../utils/spell-class.constants";
-import { dedupeSpellsByName, getSpellsByName } from "../utils/spell-dedupe.utils";
 import { SpellDetailDialog } from "./SpellDetailDialog";
 import { SpellDataTable } from "./SpellDataTable";
 import { Sparkles } from "lucide-react";
 
 export function SpellList() {
   const [spells, setSpells] = useState<Spell[]>([]);
+  const [listSpells, setListSpells] = useState<Spell[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Spell | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
+  const [selectedVariants, setSelectedVariants] = useState<Spell[]>([]);
+  const bookNames = useBookSourceNames();
 
   useEffect(() => {
-    void getBookSourceNames().then(setBookNames);
-    getAllSpells()
-      .then(setSpells)
+    Promise.all([getAllSpells(), getListSpells()])
+      .then(([all, list]) => {
+        setSpells(all);
+        setListSpells(list);
+      })
       .finally(() => setLoading(false));
   }, []);
-
-  const listSpells = useMemo(() => dedupeSpellsByName(spells), [spells]);
 
   const classOptions = useMemo(() => {
     const present = new Set<string>();
@@ -42,15 +46,11 @@ export function SpellList() {
     [listSpells, bookNames],
   );
 
-  const selectedVariants = useMemo(() => {
-    if (!selected) return [];
-    return getSpellsByName(spells, selected.name);
-  }, [selected, spells]);
-
-  function handleSelect(spell: Spell) {
+  const handleSelect = useCallback((spell: Spell) => {
     setSelected(spell);
     setDialogOpen(true);
-  }
+    void getSpellsByName(spell.name).then(setSelectedVariants);
+  }, []);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -95,12 +95,15 @@ export function SpellList() {
         )}
       </div>
 
-      <SpellDetailDialog
-        spell={selected}
-        variants={selectedVariants}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+      {dialogOpen && selected && (
+        <SpellDetailDialog
+          key={selected.id}
+          spell={selected}
+          variants={selectedVariants}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </div>
   );
 }

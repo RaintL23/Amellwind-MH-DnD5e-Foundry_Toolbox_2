@@ -1,14 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Class, ClassFeatureEntry } from "@/shared/types";
-import {
-  getBookSourceNames,
-  type BookSourceNameMap,
-} from "@/features/spells/services/book-source.service";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { mergeProgressionWithSubclass } from "../mappers/class.mapper";
-import { getAllClasses, getClassById } from "../services/class.service";
+import { getAllClasses, getClassesByName } from "../services/class.service";
 import {
-  getClassesByName,
   sortClassVariants,
 } from "../utils/class-dedupe.utils";
 import { subclassesForClassVariant } from "../utils/class-subclass.utils";
@@ -26,7 +22,7 @@ export function useClassDetailPage(classId: string) {
   const navigate = useNavigate();
 
   const [cls, setCls] = useState<Class | null>(null);
-  const [allClasses, setAllClasses] = useState<Class[]>([]);
+  const [resolvedVariants, setResolvedVariants] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
@@ -35,7 +31,7 @@ export function useClassDetailPage(classId: string) {
   const [enabledFeatureUids, setEnabledFeatureUids] = useState<Set<string>>(
     () => new Set(),
   );
-  const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
+  const bookNames = useBookSourceNames();
 
   useEffect(() => {
     if (!classId) {
@@ -46,8 +42,7 @@ export function useClassDetailPage(classId: string) {
 
     const isSameClassVariantSwitch =
       cls !== null &&
-      allClasses.length > 0 &&
-      allClasses.some((c) => c.id === classId && c.name === cls.name);
+      resolvedVariants.some((c) => c.id === classId && c.name === cls.name);
 
     if (isSameClassVariantSwitch) {
       setActiveId(classId);
@@ -61,17 +56,17 @@ export function useClassDetailPage(classId: string) {
     setLoading(true);
     setNotFound(false);
 
-    Promise.all([getClassById(classId), getAllClasses(), getBookSourceNames()])
-      .then(([found, classes, names]) => {
+    Promise.all([getAllClasses()])
+      .then(([classes]) => {
+        const found = classes.find((c) => c.id === classId);
         if (cancelled) return;
         if (!found) {
           setNotFound(true);
           setCls(null);
+          setResolvedVariants([]);
           return;
         }
         setCls(found);
-        setAllClasses(classes);
-        setBookNames(names);
         setActiveId(found.id);
         setActiveSubclassId("");
       })
@@ -82,13 +77,26 @@ export function useClassDetailPage(classId: string) {
     return () => {
       cancelled = true;
     };
-  }, [classId, cls, allClasses]);
+  }, [classId, cls, resolvedVariants]);
 
-  const variants = useMemo(() => {
-    if (!cls) return [];
-    const byName = getClassesByName(allClasses, cls.name);
-    return byName.length > 0 ? sortClassVariants(byName) : [cls];
-  }, [cls, allClasses]);
+  useEffect(() => {
+    if (!cls) {
+      setResolvedVariants([]);
+      return;
+    }
+    let cancelled = false;
+    void getClassesByName(cls.name).then((byName) => {
+      if (cancelled) return;
+      const sorted =
+        byName.length > 0 ? sortClassVariants(byName) : [cls];
+      setResolvedVariants(sorted);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [cls]);
+
+  const variants = resolvedVariants;
 
   const active = useMemo(
     () =>

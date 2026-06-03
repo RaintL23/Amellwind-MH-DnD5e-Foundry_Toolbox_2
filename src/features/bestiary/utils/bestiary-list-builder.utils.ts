@@ -15,6 +15,7 @@ import type {
 const loadedFileNames = new Set<string>();
 const loadedSources = new Set<string>();
 let indexPromise: Promise<BestiaryIndex> | null = null;
+const poolByKey = new Map<string, RawMonster>();
 let monsterPool: RawMonster[] = [];
 
 function bestiaryLocalPath(fileName: string): string {
@@ -64,13 +65,9 @@ function applyOtherSources(
 
 function mergeIntoPool(incoming: RawMonster[]): void {
   for (const m of incoming) {
-    const key = creatureEntityKey(m.name, m.source);
-    const idx = monsterPool.findIndex(
-      (existing) => creatureEntityKey(existing.name, existing.source) === key,
-    );
-    if (idx >= 0) monsterPool[idx] = m;
-    else monsterPool.push(m);
+    poolByKey.set(creatureEntityKey(m.name, m.source), m);
   }
+  monsterPool = Array.from(poolByKey.values());
 }
 
 function resolvePool(): void {
@@ -128,6 +125,7 @@ export function getAllRawMonsters(): RawMonster[] {
 export function clearBestiaryBuilderCache(): void {
   loadedFileNames.clear();
   loadedSources.clear();
+  poolByKey.clear();
   monsterPool = [];
   indexPromise = null;
 }

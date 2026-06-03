@@ -12,45 +12,89 @@ import {
   loadBestiarySource,
   loadBestiarySources,
 } from "../utils/bestiary-list-builder.utils";
+import { creatureEntityKey } from "../utils/bestiary-hash.utils";
+import {
+  collectCreatureSources,
+  dedupeCreaturesByName,
+} from "../utils/bestiary-dedupe.utils";
+import { sortCreatureVariants } from "../utils/bestiary-variant.utils";
+import type { RawMonster } from "../utils/bestiary-raw.types";
 import { clearLegendaryCache, getLegendaryGroupForMonster } from "./legendary-group.service";
 
-let cache: BestiaryCreature[] | null = null;
+let cache: BestiaryCreature[] = [];
+let listCache: BestiaryCreature[] | null = null;
+let byNameIndex: Map<string, BestiaryCreature[]> | null = null;
 let indexById: Map<string, BestiaryCreature> | null = null;
+const mappedKeys = new Set<string>();
 
-function buildIndex(creatures: BestiaryCreature[]): Map<string, BestiaryCreature> {
-  const map = new Map<string, BestiaryCreature>();
-  for (const c of creatures) map.set(c.id, c);
-  return map;
+function buildIndexes(creatures: BestiaryCreature[]): void {
+  indexById = new Map<string, BestiaryCreature>();
+  for (const c of creatures) indexById.set(c.id, c);
+
+  const byName = new Map<string, BestiaryCreature[]>();
+  for (const c of creatures) {
+    const group = byName.get(c.name) ?? [];
+    group.push(c);
+    byName.set(c.name, group);
+  }
+  byNameIndex = byName;
+  listCache = dedupeCreaturesByName(creatures);
 }
 
-function rebuildCache(): void {
-  cache = getAllRawMonsters().map(mapBestiaryCreature);
-  indexById = buildIndex(cache);
+function appendMapped(rawMonsters: RawMonster[]): void {
+  const newCreatures: BestiaryCreature[] = [];
+
+  for (const raw of rawMonsters) {
+    const key = creatureEntityKey(raw.name, raw.source);
+    if (mappedKeys.has(key)) continue;
+    mappedKeys.add(key);
+    newCreatures.push(mapBestiaryCreature(raw));
+  }
+
+  if (newCreatures.length === 0) return;
+
+  cache = [...cache, ...newCreatures];
+  buildIndexes(cache);
+}
+
+function syncCacheFromPool(): void {
+  appendMapped(getAllRawMonsters());
 }
 
 export async function getAllBestiaryCreatures(): Promise<BestiaryCreature[]> {
-  if (!cache) {
+  if (cache.length === 0) {
     await loadBestiarySources([...DEFAULT_BESTIARY_SOURCES]);
-    rebuildCache();
+    syncCacheFromPool();
   }
-  return cache!;
+  return cache;
+}
+
+export async function getListBestiaryCreatures(): Promise<BestiaryCreature[]> {
+  await getAllBestiaryCreatures();
+  return listCache ?? [];
 }
 
 export async function preloadBestiarySources(sources: string[]): Promise<BestiaryCreature[]> {
   await loadBestiarySources(sources);
-  rebuildCache();
-  return cache!;
+  syncCacheFromPool();
+  return cache;
 }
 
 export async function loadSourceOnDemand(source: string): Promise<BestiaryCreature[]> {
   await loadBestiarySource(source);
-  rebuildCache();
-  return cache!;
+  syncCacheFromPool();
+  return cache;
 }
 
 export async function getBestiaryCreatureById(id: string): Promise<BestiaryCreature | undefined> {
-  if (!indexById) await getAllBestiaryCreatures();
+  if (indexById === null) await getAllBestiaryCreatures();
   return indexById?.get(id);
+}
+
+export async function getCreaturesByName(name: string): Promise<BestiaryCreature[]> {
+  await getAllBestiaryCreatures();
+  const group = byNameIndex?.get(name) ?? [];
+  return sortCreatureVariants(group);
 }
 
 export async function enrichCreatureWithLegendary(
@@ -76,10 +120,17 @@ export function isBestiarySourceLoaded(source: string): boolean {
   return isSourceLoaded(source);
 }
 
+export function collectBestiarySources(creatures: BestiaryCreature[]): string[] {
+  return collectCreatureSources(creatures);
+}
+
 export function clearBestiaryCache(): void {
-  cache = null;
+  cache = [];
+  listCache = null;
+  byNameIndex = null;
   indexById = null;
+  mappedKeys.clear();
   clearBestiaryBuilderCache();
-  clearLegendaryCache();
   clearFiveToolsJsonCache();
+  clearLegendaryCache();
 }

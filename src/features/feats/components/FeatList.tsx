@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Feat } from "@/shared/types";
 import { getAllFeats } from "../services/feat.service";
+import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { FeatCard } from "./FeatCard";
 import { FeatDetailDialog } from "./FeatDetailDialog";
 import { Input } from "@/components/ui/input";
@@ -30,11 +31,13 @@ export function FeatList() {
       .finally(() => setLoading(false));
   }, []);
 
+  const debouncedSearch = useDebouncedValue(search);
+
   const filtered = useMemo(() => {
     let result = feats;
 
-    if (search.trim()) {
-      const q = search.toLowerCase();
+    if (debouncedSearch.trim()) {
+      const q = debouncedSearch.toLowerCase();
       result = result.filter(
         (f) =>
           f.name.toLowerCase().includes(q) ||
@@ -53,7 +56,7 @@ export function FeatList() {
     }
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [feats, search, filter]);
+  }, [feats, debouncedSearch, filter]);
 
   function handleSelect(item: Feat) {
     setSelected(item);
@@ -134,11 +137,13 @@ export function FeatList() {
         )}
       </div>
 
-      <FeatDetailDialog
-        feat={selected}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+      {dialogOpen && selected && (
+        <FeatDetailDialog
+          feat={selected}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </div>
   );
 }

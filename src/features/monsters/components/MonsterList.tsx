@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Monster } from "@/shared/types";
 import { getAllMonsters } from "../services/monster.service";
 import { getTier } from "@/shared/utils/cr.utils";
+import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -20,6 +21,24 @@ interface Filters {
   tier: string;
   type: string;
   environment: string;
+}
+
+function SortIcon({
+  col,
+  sortKey,
+  sortDir,
+}: {
+  col: SortKey;
+  sortKey: SortKey;
+  sortDir: SortDir;
+}) {
+  if (sortKey !== col)
+    return <ChevronsUpDown className="h-3 w-3 opacity-40" />;
+  return sortDir === "asc" ? (
+    <ChevronUp className="h-3 w-3" />
+  ) : (
+    <ChevronDown className="h-3 w-3" />
+  );
 }
 
 function TierBadge({ tier }: { tier: number }) {
@@ -87,13 +106,15 @@ export function MonsterList() {
     return Array.from(set).sort();
   }, [monsters]);
 
+  const debouncedName = useDebouncedValue(filters.name);
+
   // Filter + sort
   const filtered = useMemo(() => {
     let result = monsters;
 
-    if (filters.name)
+    if (debouncedName)
       result = result.filter((m) =>
-        m.name.toLowerCase().includes(filters.name.toLowerCase()),
+        m.name.toLowerCase().includes(debouncedName.toLowerCase()),
       );
     if (filters.cr) result = result.filter((m) => m.cr === filters.cr);
     if (filters.tier)
@@ -120,7 +141,7 @@ export function MonsterList() {
     });
 
     return result;
-  }, [monsters, filters, sort]);
+  }, [monsters, debouncedName, filters.cr, filters.tier, filters.type, filters.environment, sort]);
 
   // Resetear a página 1 cuando cambian filtros o sort
   function updateFilters(next: Filters) {
@@ -144,16 +165,6 @@ export function MonsterList() {
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
-
-  function SortIcon({ col }: { col: SortKey }) {
-    if (sort.key !== col)
-      return <ChevronsUpDown className="h-3 w-3 opacity-40" />;
-    return sort.dir === "asc" ? (
-      <ChevronUp className="h-3 w-3" />
-    ) : (
-      <ChevronDown className="h-3 w-3" />
-    );
-  }
 
   if (loading) {
     return (
@@ -260,7 +271,8 @@ export function MonsterList() {
                     onClick={() => toggleSort(key)}
                   >
                     <span className="flex items-center gap-1">
-                      {label} <SortIcon col={key} />
+                      {label}{" "}
+                      <SortIcon col={key} sortKey={sort.key} sortDir={sort.dir} />
                     </span>
                   </th>
                 ))}
@@ -336,12 +348,13 @@ export function MonsterList() {
         onPageSizeChange={handlePageSizeChange}
       />
 
-      {/* Dialog */}
-      <MonsterDetailDialog
-        monster={selected}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-      />
+      {dialogOpen && selected && (
+        <MonsterDetailDialog
+          monster={selected}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+        />
+      )}
     </div>
   );
 }

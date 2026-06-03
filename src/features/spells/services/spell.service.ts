@@ -4,20 +4,25 @@ import {
   SPELL_SOURCE_FILES,
   SPELL_SOURCE_LOOKUP_URL,
 } from "@/shared/constants/api.constants";
+import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 import { mapSpell } from "../mappers/spell.mapper";
 import type { SpellSourceLookup } from "../utils/spell-lookup.types";
 import { mutateSpellFromLookup } from "../utils/spell-lookup.mutator";
+import { dedupeSpellsByName } from "../utils/spell-dedupe.utils";
 
 let cache: Spell[] | null = null;
+let listCache: Spell[] | null = null;
+let byNameIndex: Map<string, Spell[]> | null = null;
 let lookupCache: SpellSourceLookup | null = null;
 
 async function getSpellSourceLookup(): Promise<SpellSourceLookup> {
   if (lookupCache) return lookupCache;
 
   try {
-    const res = await fetch(SPELL_SOURCE_LOOKUP_URL);
-    if (!res.ok) throw new Error(`Failed to fetch spell lookup: ${res.status}`);
-    lookupCache = (await res.json()) as SpellSourceLookup;
+    lookupCache = await fetchFiveToolsJson<SpellSourceLookup>(
+      SPELL_SOURCE_LOOKUP_URL,
+      "generated/gendata-spell-source-lookup.json",
+    );
   } catch {
     lookupCache = {};
   }
@@ -25,30 +30,34 @@ async function getSpellSourceLookup(): Promise<SpellSourceLookup> {
   return lookupCache;
 }
 
+function buildIndexes(all: Spell[]): void {
+  const byName = new Map<string, Spell[]>();
+  for (const spell of all) {
+    const group = byName.get(spell.name) ?? [];
+    group.push(spell);
+    byName.set(spell.name, group);
+  }
+  byNameIndex = byName;
+  listCache = dedupeSpellsByName(all);
+}
+
 export async function getAllSpells(): Promise<Spell[]> {
   if (cache) return cache;
 
   const lookup = await getSpellSourceLookup();
 
-  const urls = Object.values(SPELL_SOURCE_FILES).map(
-    (file) => `${SPELLS_BASE_URL}/${file}`,
-  );
-
   const results = await Promise.all(
-    urls.map((url) =>
-      fetch(url)
-        .then((r) => {
-          if (!r.ok) throw new Error(`Failed to fetch ${url}: ${r.status}`);
-          return r.json();
-        })
-        .catch(() => ({ spell: [] })),
+    Object.values(SPELL_SOURCE_FILES).map((file) =>
+      fetchFiveToolsJson<{ spell?: unknown[] }>(
+        `${SPELLS_BASE_URL}/${file}`,
+        `spells/${file}`,
+      ).catch(() => ({ spell: [] })),
     ),
   );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  cache = results.flatMap((data: any) =>
+  cache = results.flatMap((data) =>
     Array.isArray(data.spell)
-      ? (data.spell as unknown[]).map((raw) => {
+      ? data.spell.map((raw) => {
           const mutated = mutateSpellFromLookup(
             { ...(raw as object) },
             lookup,
@@ -58,7 +67,19 @@ export async function getAllSpells(): Promise<Spell[]> {
       : [],
   );
 
+  buildIndexes(cache);
   return cache;
+}
+
+export async function getListSpells(): Promise<Spell[]> {
+  await getAllSpells();
+  return listCache ?? [];
+}
+
+export async function getSpellsByName(name: string): Promise<Spell[]> {
+  await getAllSpells();
+  const group = byNameIndex?.get(name) ?? [];
+  return [...group].sort((a, b) => a.source.localeCompare(b.source));
 }
 
 export async function getSpellById(id: string): Promise<Spell | undefined> {
@@ -68,5 +89,7 @@ export async function getSpellById(id: string): Promise<Spell | undefined> {
 
 export function clearSpellCache(): void {
   cache = null;
+  listCache = null;
+  byNameIndex = null;
   lookupCache = null;
 }

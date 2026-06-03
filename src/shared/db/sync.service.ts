@@ -14,6 +14,9 @@ const VARIANT_RULE_STORE_KEY = "variantrule";
 const CLASS_FEATURE_STORE_KEY = "classFeature";
 const CLASS_STORE_KEY = "class";
 
+let mmRawCache: unknown[] | null = null;
+let gtmhJsonPromise: Promise<Record<string, unknown>> | null = null;
+
 interface DataMeta {
   timestamp: number;
   url: string;
@@ -22,6 +25,10 @@ interface DataMeta {
 interface SyncResult {
   mmData: unknown[] | null;
   gtmhData: unknown | null;
+  updated: {
+    mm: boolean;
+    gtmh: boolean;
+  };
 }
 
 async function isDataFresh(
@@ -74,6 +81,8 @@ export async function syncData(): Promise<SyncResult> {
 
   let mmData: unknown[] | null = null;
   let gtmhData: unknown | null = null;
+  let mmUpdated = false;
+  let gtmhUpdated = false;
 
   // Sincronizar Monster Manual
   if (!mmFresh) {
@@ -86,6 +95,7 @@ export async function syncData(): Promise<SyncResult> {
     );
     if (fetched !== null) {
       mmData = fetched as unknown[];
+      mmUpdated = true;
     } else {
       // Fallback a datos locales
       mmData = (await getStoreValue<unknown[]>("MM_CURRENT", "data")) ?? null;
@@ -147,6 +157,7 @@ export async function syncData(): Promise<SyncResult> {
     );
     if (fetched !== null) {
       gtmhData = fetched;
+      gtmhUpdated = true;
     } else {
       gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
     }
@@ -154,12 +165,50 @@ export async function syncData(): Promise<SyncResult> {
     gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
   }
 
-  return { mmData, gtmhData };
+  return { mmData, gtmhData, updated: { mm: mmUpdated, gtmh: gtmhUpdated } };
 }
 
 export async function getMonsterData(): Promise<unknown[]> {
+  if (mmRawCache) return mmRawCache;
   const data = await getStoreValue<unknown[]>("MM_CURRENT", "data");
-  return data ?? [];
+  mmRawCache = data ?? [];
+  return mmRawCache;
+}
+
+export function clearMonsterDataCache(): void {
+  mmRawCache = null;
+}
+
+async function fetchGtmhJsonOnce(): Promise<Record<string, unknown>> {
+  if (!gtmhJsonPromise) {
+    gtmhJsonPromise = fetch(GUIDE_TO_MONSTER_HUNTING_URL)
+      .then((response) =>
+        response.ok
+          ? (response.json() as Promise<Record<string, unknown>>)
+          : ({} as Record<string, unknown>),
+      )
+      .catch(() => ({} as Record<string, unknown>));
+  }
+  return gtmhJsonPromise;
+}
+
+async function ensureGtmhArrayStore(
+  jsonKey: string,
+  storeKey: string,
+): Promise<unknown[]> {
+  const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", storeKey);
+  if (cached && cached.length > 0) return cached;
+
+  try {
+    const json = await fetchGtmhJsonOnce();
+    const data: unknown[] = Array.isArray(json[jsonKey])
+      ? (json[jsonKey] as unknown[])
+      : [];
+    await setStoreValue("GTMH_CURRENT", storeKey, data);
+    return data;
+  } catch {
+    return [];
+  }
 }
 
 export async function getGtmhData(): Promise<unknown> {
@@ -171,34 +220,14 @@ export async function getGtmhData(): Promise<unknown> {
  * If not yet cached (first load after upgrade), fetches lazily from the remote URL.
  */
 export async function getOptionalFeaturesRaw(): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>(
-    "GTMH_CURRENT",
-    OPT_FEATURES_STORE_KEY,
-  );
-  if (cached && cached.length > 0) return cached;
-
-  // Lazy-populate for users that already have GTMH items cached but not optfeatures
-  try {
-    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
-    if (!response.ok) return [];
-    const json = (await response.json()) as Record<string, unknown>;
-    const data: unknown[] = Array.isArray(json.optionalfeature)
-      ? (json.optionalfeature as unknown[])
-      : [];
-    await setStoreValue("GTMH_CURRENT", OPT_FEATURES_STORE_KEY, data);
-    return data;
-  } catch {
-    return [];
-  }
+  return ensureGtmhArrayStore("optionalfeature", OPT_FEATURES_STORE_KEY);
 }
 
 async function fetchGtmhSpeciesArrays(): Promise<{
   race: unknown[];
   subrace: unknown[];
 }> {
-  const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
-  if (!response.ok) return { race: [], subrace: [] };
-  const json = (await response.json()) as Record<string, unknown>;
+  const json = await fetchGtmhJsonOnce();
   const race = Array.isArray(json.race) ? (json.race as unknown[]) : [];
   const subrace = Array.isArray(json.subrace) ? (json.subrace as unknown[]) : [];
   await setStoreValue("GTMH_CURRENT", RACE_STORE_KEY, race);
@@ -236,24 +265,7 @@ export async function getRacesRaw(): Promise<unknown[]> {
  * Lazy-populates from remote if not yet cached.
  */
 export async function getBackgroundsRaw(): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>(
-    "GTMH_CURRENT",
-    BACKGROUND_STORE_KEY,
-  );
-  if (cached && cached.length > 0) return cached;
-
-  try {
-    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
-    if (!response.ok) return [];
-    const json = (await response.json()) as Record<string, unknown>;
-    const data: unknown[] = Array.isArray(json.background)
-      ? (json.background as unknown[])
-      : [];
-    await setStoreValue("GTMH_CURRENT", BACKGROUND_STORE_KEY, data);
-    return data;
-  } catch {
-    return [];
-  }
+  return ensureGtmhArrayStore("background", BACKGROUND_STORE_KEY);
 }
 
 /**
@@ -261,21 +273,7 @@ export async function getBackgroundsRaw(): Promise<unknown[]> {
  * Lazy-populates from remote if not yet cached.
  */
 export async function getFeatsRaw(): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", FEAT_STORE_KEY);
-  if (cached && cached.length > 0) return cached;
-
-  try {
-    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
-    if (!response.ok) return [];
-    const json = (await response.json()) as Record<string, unknown>;
-    const data: unknown[] = Array.isArray(json.feat)
-      ? (json.feat as unknown[])
-      : [];
-    await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, data);
-    return data;
-  } catch {
-    return [];
-  }
+  return ensureGtmhArrayStore("feat", FEAT_STORE_KEY);
 }
 
 /**
@@ -287,21 +285,7 @@ export async function getFeatsRaw(): Promise<unknown[]> {
  * Lazy-populates from remote if not yet cached.
  */
 export async function getClassesRaw(): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", CLASS_STORE_KEY);
-  if (cached && cached.length > 0) return cached;
-
-  try {
-    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
-    if (!response.ok) return [];
-    const json = (await response.json()) as Record<string, unknown>;
-    const data: unknown[] = Array.isArray(json.class)
-      ? (json.class as unknown[])
-      : [];
-    await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, data);
-    return data;
-  } catch {
-    return [];
-  }
+  return ensureGtmhArrayStore("class", CLASS_STORE_KEY);
 }
 
 /**
@@ -309,43 +293,9 @@ export async function getClassesRaw(): Promise<unknown[]> {
  * Lazy-populates from remote if not yet cached.
  */
 export async function getClassFeaturesRaw(): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>(
-    "GTMH_CURRENT",
-    CLASS_FEATURE_STORE_KEY,
-  );
-  if (cached && cached.length > 0) return cached;
-
-  try {
-    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
-    if (!response.ok) return [];
-    const json = (await response.json()) as Record<string, unknown>;
-    const data: unknown[] = Array.isArray(json.classFeature)
-      ? (json.classFeature as unknown[])
-      : [];
-    await setStoreValue("GTMH_CURRENT", CLASS_FEATURE_STORE_KEY, data);
-    return data;
-  } catch {
-    return [];
-  }
+  return ensureGtmhArrayStore("classFeature", CLASS_FEATURE_STORE_KEY);
 }
 
 export async function getVariantRulesRaw(): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>(
-    "GTMH_CURRENT",
-    VARIANT_RULE_STORE_KEY,
-  );
-  if (cached && cached.length > 0) return cached;
-
-  try {
-    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
-    if (!response.ok) return [];
-    const json = (await response.json()) as Record<string, unknown>;
-    const data: unknown[] = Array.isArray(json.variantrule)
-      ? (json.variantrule as unknown[])
-      : [];
-    await setStoreValue("GTMH_CURRENT", VARIANT_RULE_STORE_KEY, data);
-    return data;
-  } catch {
-    return [];
-  }
+  return ensureGtmhArrayStore("variantrule", VARIANT_RULE_STORE_KEY);
 }

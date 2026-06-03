@@ -1,5 +1,5 @@
 import { Monster } from "@/shared/types";
-import { getMonsterData } from "@/shared/db/sync.service";
+import { getMonsterData, clearMonsterDataCache } from "@/shared/db/sync.service";
 import { mapMonster } from "../mappers/monster.mapper";
 
 let cache: Monster[] | null = null;
@@ -24,4 +24,5 @@ export async function getMonstersByGroup(group: string): Promise<Monster[]> {
 
 export function clearMonsterCache(): void {
   cache = null;
+  clearMonsterDataCache();
 }

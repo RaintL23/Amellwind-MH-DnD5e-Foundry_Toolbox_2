@@ -33,7 +33,7 @@ const INHERITED_PROPS_BLOCKLIST = new Set([
 ]);
 
 function copyFast<T>(obj: T): T {
-  return JSON.parse(JSON.stringify(obj)) as T;
+  return structuredClone(obj);
 }
 
 function buildItemTypeIndex(itemTypes: RawItemType[]): Map<string, ItemTypeIndexEntry> {

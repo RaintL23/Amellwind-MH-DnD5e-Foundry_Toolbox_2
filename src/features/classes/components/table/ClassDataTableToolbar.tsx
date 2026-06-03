@@ -1,3 +1,4 @@
+import { memo } from "react";
 import { Table } from "@tanstack/react-table";
 import { Search } from "lucide-react";
 import { Class } from "@/shared/types";
@@ -9,16 +10,21 @@ import { SourceMultiSelect } from "./SourceMultiSelect";
 
 interface ClassDataTableToolbarProps {
   table: Table<Class>;
+  searchValue: string;
+  onSearchChange: (value: string) => void;
+  filteredCount: number;
+  totalCount: number;
   sourceOptions: SourceOption[];
 }
 
-export function ClassDataTableToolbar({
+export const ClassDataTableToolbar = memo(function ClassDataTableToolbar({
   table,
+  searchValue,
+  onSearchChange,
+  filteredCount,
+  totalCount,
   sourceOptions,
 }: ClassDataTableToolbarProps) {
-  const filteredCount = table.getFilteredRowModel().rows.length;
-  const totalCount = table.getCoreRowModel().rows.length;
-
   const selectedSources =
     (table.getColumn("source")?.getFilterValue() as string[] | undefined) ??
     defaultSelectedSources(sourceOptions.map((option) => option.value));
@@ -32,11 +38,8 @@ export function ClassDataTableToolbar({
         <div className="relative flex-1 min-w-[200px] max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <Input
-            value={(table.getState().globalFilter as string) ?? ""}
-            onChange={(e) => {
-              table.setGlobalFilter(e.target.value);
-              table.setPageIndex(0);
-            }}
+            value={searchValue}
+            onChange={(e) => onSearchChange(e.target.value)}
             placeholder="Search name, subclass, source..."
             className="pl-9 h-8 text-sm"
           />
@@ -74,4 +77,4 @@ export function ClassDataTableToolbar({
       </div>
     </div>
   );
-}
+});

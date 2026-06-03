@@ -3,25 +3,24 @@ import { Class } from "@/shared/types";
 import {
   buildSourceOptions,
   collectEntitySources,
-  getBookSourceNames,
-  type BookSourceNameMap,
 } from "@/features/spells/services/book-source.service";
-import { getAllClasses } from "../services/class.service";
-import { dedupeClassesByName } from "../utils/class-dedupe.utils";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { getAllClasses, getListClasses } from "../services/class.service";
 
 export function useClassList() {
   const [classes, setClasses] = useState<Class[]>([]);
+  const [listClasses, setListClasses] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
-  const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
+  const bookNames = useBookSourceNames();
 
   useEffect(() => {
-    void getBookSourceNames().then(setBookNames);
-    getAllClasses()
-      .then(setClasses)
+    Promise.all([getAllClasses(), getListClasses()])
+      .then(([all, list]) => {
+        setClasses(all);
+        setListClasses(list);
+      })
       .finally(() => setLoading(false));
   }, []);
-
-  const listClasses = useMemo(() => dedupeClassesByName(classes), [classes]);
 
   const sourceOptions = useMemo(
     () => buildSourceOptions(collectEntitySources(listClasses), bookNames),

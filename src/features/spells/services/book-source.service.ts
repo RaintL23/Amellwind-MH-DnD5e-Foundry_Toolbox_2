@@ -1,4 +1,5 @@
 import { BOOKS_JSON_URL } from "@/shared/constants/api.constants";
+import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 
 export type BookSourceNameMap = Record<string, string>;
 
@@ -32,9 +33,8 @@ export async function getBookSourceNames(): Promise<BookSourceNameMap> {
   if (cache) return cache;
 
   try {
-    const res = await fetch(BOOKS_JSON_URL);
-    if (!res.ok) throw new Error(`Failed to fetch books.json: ${res.status}`);
-    cache = indexBooks(await res.json());
+    const raw = await fetchFiveToolsJson<unknown>(BOOKS_JSON_URL, "books.json");
+    cache = indexBooks(raw);
   } catch {
     cache = {};
   }
