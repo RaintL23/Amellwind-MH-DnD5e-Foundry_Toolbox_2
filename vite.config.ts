@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => ({
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+    dedupe: ["react", "react-dom"],
   },
   build: {
     rollupOptions: {
@@ -24,14 +25,16 @@ export default defineConfig(({ mode }) => ({
         manualChunks(id) {
           if (!id.includes("node_modules")) return;
 
+          // React, Radix y react-router deben compartir chunk para evitar
+          // "useLayoutEffect of undefined" en producción (dependencia circular).
           if (
             id.includes("react-dom") ||
             id.includes("react-router") ||
-            id.includes("/react/")
+            id.includes("/react/") ||
+            id.includes("@radix-ui")
           ) {
             return "vendor";
           }
-          if (id.includes("@radix-ui")) return "radix";
           if (id.includes("@tanstack/react-table")) return "table";
           if (id.includes("lucide-react")) return "icons";
         },
