@@ -72,23 +72,9 @@ export const spellColumns: ColumnDef<Spell>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Name" />
     ),
-    cell: ({ row }) => {
-      const spell = row.original;
-      const extraSources = (spell.variantCount ?? 1) - 1;
-      return (
-        <span className="font-medium text-foreground inline-flex items-center gap-1.5">
-          {spell.name}
-          {extraSources > 0 && (
-            <span
-              className="rounded border border-violet-800/50 bg-violet-950/40 px-1.5 py-0.5 text-[10px] font-semibold text-violet-400"
-              title={`${spell.variantCount} sources — open detail to compare`}
-            >
-              +{extraSources}
-            </span>
-          )}
-        </span>
-      );
-    },
+    cell: ({ row }) => (
+      <span className="font-medium text-foreground">{row.original.name}</span>
+    ),
   },
   {
     accessorKey: "level",

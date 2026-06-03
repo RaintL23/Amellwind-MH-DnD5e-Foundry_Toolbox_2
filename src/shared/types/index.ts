@@ -17,3 +17,4 @@ export * from "./downtime.types";
 export * from "./monstie-sidekick.types";
 export * from "./spell.types";
 export * from "./class.types";
+export * from "./dnd-item.types";

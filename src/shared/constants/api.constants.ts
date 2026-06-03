@@ -64,6 +64,12 @@ export const BOOKS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/books.json`;
 export const SPELL_SOURCE_LOOKUP_URL =
   "https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/generated/gendata-spell-source-lookup.json";
 
+/** 5etools item compendium (single-file + base + magic variants). Local dev: copy backup-jsons/5etools/*.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
+export const ITEMS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items.json`;
+export const ITEMS_BASE_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items-base.json`;
+export const MAGIC_VARIANTS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/magicvariants.json`;
+export const LOCAL_5ETOOLS_BASE = "/5etools";
+
 export const SPELL_SOURCE_FILES: Record<string, string> = {
   PHB: "spells-phb.json",
   XPHB: "spells-xphb.json",
