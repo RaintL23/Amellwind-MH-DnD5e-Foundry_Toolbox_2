@@ -1,10 +1,10 @@
 import type { AbilityScores, ArmorClass, HP, Speed } from "@/shared/types";
 import type { NpcHitDie, NpcTemplate } from "@/shared/types/npc.types";
-import { getAbilityModifier, getProficiencyBonus } from "@/shared/utils/cr.utils";
+import { getAbilityModifier } from "@/shared/utils/cr.utils";
+import { resolveNpcPowerProfile } from "./npc-power-scaling";
 
 export function estimateCrValue(hitDiceCount: number, templateTier: number): number {
-  const raw = hitDiceCount / 2.5 + templateTier * 0.5;
-  return Math.max(0.125, Math.min(20, raw));
+  return resolveNpcPowerProfile(templateTier, hitDiceCount).cr;
 }
 
 export function formatCrString(value: number): string {
@@ -17,8 +17,7 @@ export function formatCrString(value: number): string {
 }
 
 export function getNpcProficiencyBonus(hitDiceCount: number, tier: number): number {
-  const cr = formatCrString(estimateCrValue(hitDiceCount, tier));
-  return getProficiencyBonus(cr);
+  return resolveNpcPowerProfile(tier, hitDiceCount).proficiencyBonus;
 }
 
 export function getNpcHitPoints(
@@ -90,6 +89,8 @@ export function estimateXpFromCr(crString: string): number {
     "8": 3900,
     "9": 5000,
     "10": 5900,
+    "11": 7200,
+    "12": 8400,
   };
   return xpTable[crString] ?? 0;
 }

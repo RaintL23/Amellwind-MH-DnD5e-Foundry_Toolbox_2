@@ -34,17 +34,14 @@ export function findWeaponByName(
   return weapons.find((w) => w.name.toLowerCase() === lower);
 }
 
+import { resolveNpcPowerProfile } from "./npc-power-scaling";
+
 /** Maps NPC hit dice + template tier to a weapon rarity index (0–4). */
 export function getWeaponRarityIndex(
   hitDiceCount: number,
   tier: number,
 ): number {
-  const score = hitDiceCount + tier * 2;
-  if (score <= 4) return 0;
-  if (score <= 8) return 1;
-  if (score <= 12) return 2;
-  if (score <= 16) return 3;
-  return 4;
+  return resolveNpcPowerProfile(tier, hitDiceCount).weaponRarityIndex;
 }
 
 export function getRarityTierAtIndex(index: number): RarityTier {

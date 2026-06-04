@@ -13,17 +13,15 @@ import {
   buildNpcDescriptor,
 } from "./npc-descriptor";
 import {
-  estimateCrValue,
-  formatCrString,
   getNpcArmorClass,
   getNpcHitPoints,
   getNpcProficiencyBonus,
   parseSpeciesSpeed,
 } from "./npc-stats";
+import { resolveNpcPowerProfile } from "./npc-power-scaling";
 import { buildNpcTraits, parseBackgroundSkills } from "./npc-traits";
 import {
   getPrimaryShieldAcBonus,
-  getWeaponRarityIndex,
   type NpcWeaponContext,
 } from "./npc-weapon.utils";
 
@@ -43,8 +41,8 @@ export function buildNpcFromDraft(
     species,
   );
   const pb = getNpcProficiencyBonus(hitDiceCount, template.tier);
-  const crValue = estimateCrValue(hitDiceCount, template.tier);
-  const cr = formatCrString(crValue);
+  const powerProfile = resolveNpcPowerProfile(template.tier, hitDiceCount);
+  const cr = powerProfile.crLabel;
 
   const backgroundSkills = background
     ? parseBackgroundSkills(background.proficiencies.skills)
@@ -58,7 +56,7 @@ export function buildNpcFromDraft(
   const speed = parseSpeciesSpeed(species.speed);
 
   const damageResistances = species.resistances.map((r) => r);
-  const rarityIndex = getWeaponRarityIndex(hitDiceCount, template.tier);
+  const rarityIndex = powerProfile.weaponRarityIndex;
   const armorClass = getNpcArmorClass(template, abilities);
   const shieldBonus = getPrimaryShieldAcBonus(
     template.attacks,
@@ -70,6 +68,17 @@ export function buildNpcFromDraft(
       ...armorClass[0],
       ac: armorClass[0].ac + shieldBonus,
       from: [...(armorClass[0].from ?? []), `+${shieldBonus} MH shield`],
+    };
+  }
+
+  if (powerProfile.acBonus > 0 && armorClass[0]) {
+    armorClass[0] = {
+      ...armorClass[0],
+      ac: armorClass[0].ac + powerProfile.acBonus,
+      from: [
+        ...(armorClass[0].from ?? []),
+        `+${powerProfile.acBonus} upgraded armor (${powerProfile.weaponRarityLabel})`,
+      ],
     };
   }
 

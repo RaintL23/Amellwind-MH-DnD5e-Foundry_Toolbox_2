@@ -8,6 +8,11 @@ import type {
 } from "@/shared/types/npc.types";
 import { HIT_DIE_OPTIONS } from "@/shared/types/npc.types";
 import { NPC_TEMPLATES } from "../data/npc-templates.data";
+import {
+  clampHitDiceForTier,
+  getDefaultHitDiceForTier,
+  getHitDiceOptionsForTier,
+} from "./npc-power-scaling";
 
 const RANDOM_NAMES = [
   "Aldric",
@@ -97,13 +102,27 @@ export function randomizeNpcDraft(
     patch.attributeArray = pick(ATTRIBUTE_ARRAYS);
   }
   if (randomizeAll || field === "hitDiceCount") {
-    patch.hitDiceCount = Math.floor(Math.random() * 14) + 1;
+    const templateId = patch.templateId ?? _draft.templateId;
+    const template = NPC_TEMPLATES.find((t) => t.id === templateId);
+    const tier = template?.tier ?? 1;
+    const options = getHitDiceOptionsForTier(tier);
+    patch.hitDiceCount = pick(options.length ? options : [8]);
   }
   if (randomizeAll || field === "hitDie") {
     patch.hitDie = randomHitDie();
   }
   if (randomizeAll || field === "hideFeatures") {
     patch.hideFeatures = pick(HIDE_OPTIONS);
+  }
+
+  if (patch.templateId) {
+    const template = NPC_TEMPLATES.find((t) => t.id === patch.templateId);
+    if (template) {
+      patch.hitDiceCount = clampHitDiceForTier(
+        template.tier,
+        patch.hitDiceCount ?? _draft.hitDiceCount,
+      );
+    }
   }
 
   return patch;
@@ -119,14 +138,17 @@ export function createDefaultNpcDraft(
     species[0];
   const defaultBackground = backgrounds[0];
 
+  const defaultTemplate = NPC_TEMPLATES[0];
+  const defaultTier = defaultTemplate?.tier ?? 2;
+
   return {
     customName: "",
     gender: "random",
-    templateId: NPC_TEMPLATES[0]?.id ?? "",
+    templateId: defaultTemplate?.id ?? "",
     speciesId: defaultSpecies?.id ?? "",
     backgroundId: defaultBackground?.id ?? "",
     attributeArray: "standard",
-    hitDiceCount: 8,
+    hitDiceCount: getDefaultHitDiceForTier(defaultTier),
     hitDie: 8,
     hideFeatures: "all",
   };

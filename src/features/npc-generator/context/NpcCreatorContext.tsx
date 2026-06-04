@@ -20,6 +20,7 @@ import {
   getNpcTemplateById,
   loadNpcGeneratorData,
 } from "../services/npc-generator.service";
+import { clampHitDiceForTier } from "../utils/npc-power-scaling";
 
 interface NpcCreatorContextValue {
   loading: boolean;
@@ -77,6 +78,17 @@ export function NpcCreatorProvider({ children }: { children: ReactNode }) {
   const setDraft = useCallback((patch: Partial<NpcDraft>) => {
     setDraftState((prev) => {
       const next = { ...prev, ...patch };
+
+      if (patch.templateId !== undefined) {
+        const template = getNpcTemplateById(patch.templateId);
+        if (template) {
+          next.hitDiceCount = clampHitDiceForTier(
+            template.tier,
+            patch.hitDiceCount ?? prev.hitDiceCount,
+          );
+        }
+      }
+
       if (
         patch.attributeArray !== undefined &&
         patch.attributeArray !== prev.attributeArray

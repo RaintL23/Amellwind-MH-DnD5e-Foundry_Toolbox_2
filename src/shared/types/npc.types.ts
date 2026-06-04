@@ -60,7 +60,7 @@ export interface NpcTemplate {
   defaultAcFrom: string;
   /** Hit dice count at which multiattack is added. */
   multiattackAt: number;
-  /** 1–3, used for CR estimation. */
+  /** Power tier 0–3 (UI: Tier 1–4). Sets CR bands and MH gear scaling. */
   tier: number;
 }
 

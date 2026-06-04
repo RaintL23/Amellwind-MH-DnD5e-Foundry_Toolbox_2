@@ -16,6 +16,12 @@ import {
   type NpcTemplateCategory,
 } from "@/shared/types/npc.types";
 import { useNpcCreator } from "../context/NpcCreatorContext";
+import { NPC_TEMPLATE_TIER_LABELS } from "../data/npc-power-scaling.data";
+import {
+  formatHitDiceOptionLabel,
+  getHitDiceOptionsForTier,
+  resolveNpcPowerProfile,
+} from "../utils/npc-power-scaling";
 
 function RandomizeButton({
   onClick,
@@ -94,6 +100,11 @@ export function NpcFormFields() {
       items: backgrounds.filter((b) => b.faction === key),
     }),
   );
+
+  const selectedTemplate = templates.find((t) => t.id === draft.templateId);
+  const templateTier = selectedTemplate?.tier ?? 2;
+  const hitDiceOptions = getHitDiceOptionsForTier(templateTier);
+  const powerPreview = resolveNpcPowerProfile(templateTier, draft.hitDiceCount);
 
   return (
     <div className="space-y-4">
@@ -225,18 +236,29 @@ export function NpcFormFields() {
         label="Number of Hit Dice"
         onRandomize={() => randomizeField("hitDiceCount")}
       >
-        <Select
-          value={String(draft.hitDiceCount)}
-          onChange={(e) =>
-            setDraft({ hitDiceCount: Number(e.target.value) })
-          }
-        >
-          {Array.from({ length: 20 }, (_, i) => i + 1).map((n) => (
-            <option key={n} value={n}>
-              {n}
-            </option>
-          ))}
-        </Select>
+        <div className="space-y-1.5">
+          <Select
+            value={String(draft.hitDiceCount)}
+            onChange={(e) =>
+              setDraft({ hitDiceCount: Number(e.target.value) })
+            }
+          >
+            {hitDiceOptions.map((n) => (
+              <option key={n} value={n}>
+                {formatHitDiceOptionLabel(templateTier, n)}
+              </option>
+            ))}
+          </Select>
+          {selectedTemplate && (
+            <p className="text-[11px] text-muted-foreground leading-snug">
+              {NPC_TEMPLATE_TIER_LABELS[templateTier] ?? `Tier ${templateTier + 1}`}
+              {" · "}
+              MM baseline: {powerPreview.mmReference}
+              {" · "}
+              MH gear: {powerPreview.weaponRarityLabel}
+            </p>
+          )}
+        </div>
       </FieldRow>
 
       <FieldRow
