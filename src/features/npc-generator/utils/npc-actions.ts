@@ -10,6 +10,11 @@ import {
   type NpcWeaponContext,
   resolveAttacksWithWeapons,
 } from "./npc-weapon.utils";
+import {
+  buildVariantWeaponActions,
+  getVariantMultiattackText,
+  isVariantPrimaryWeapon,
+} from "./npc-variant-attacks";
 
 function rollAverage(dice: string): number {
   const match = dice.match(/(\d+)d(\d+)/);
@@ -73,8 +78,19 @@ export function buildNpcActions(
     primaryMhWeapon &&
     weaponContext &&
     hasRapidFireFeature(primaryMhWeapon, weaponContext.featuresMap);
+  const usesVariantPrimary =
+    primaryMhWeapon && isVariantPrimaryWeapon(primaryMhWeapon.name);
+  const variantMultiattack =
+    usesVariantPrimary && primaryMhWeapon
+      ? getVariantMultiattackText(primaryMhWeapon, roleLabel)
+      : undefined;
 
-  if (hitDiceCount >= template.multiattackAt && !rapidFire) {
+  if (variantMultiattack && hitDiceCount >= template.multiattackAt) {
+    actions.push({
+      name: "Multiattack",
+      entries: [variantMultiattack],
+    });
+  } else if (hitDiceCount >= template.multiattackAt && !rapidFire) {
     actions.push({
       name: "Multiattack",
       entries: [
@@ -90,7 +106,19 @@ export function buildNpcActions(
     });
   }
 
-  if (primaryAttack) {
+  if (usesVariantPrimary && primaryAttack && primaryMhWeapon && weaponContext) {
+    actions.push(
+      ...buildVariantWeaponActions(
+        primaryAttack,
+        primaryMhWeapon,
+        abilities,
+        pb,
+        rarityIndex,
+        roleLabel,
+        weaponContext,
+      ),
+    );
+  } else if (primaryAttack) {
     actions.push({
       name: primaryAttack.name,
       entries: [formatAttackEntry(primaryAttack, abilities, pb)],

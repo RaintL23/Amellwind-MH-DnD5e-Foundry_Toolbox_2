@@ -13,6 +13,7 @@ import {
 } from "@/features/weapons/utils/weapon-feature-chains.utils";
 import { getRaritySlideStatEntries } from "@/features/weapons/utils/rarity-slide.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { NPC_WEAPON_META_FEATURE, isVariantPrimaryWeapon } from "../data/npc-ammo-attacks.data";
 
 const DMG_TYPE_TO_NPC: Record<string, string> = {
   S: "slashing",
@@ -142,6 +143,7 @@ export function buildWeaponFeatureActions(
     if (!feat || actions.length >= maxFeatures) return;
     const key = feat.name.toLowerCase();
     if (seen.has(key)) return;
+    if (NPC_WEAPON_META_FEATURE.test(feat.name)) return;
     if (!featureAllowedAtRarity(feat, rarityIndex)) return;
     seen.add(key);
     actions.push({
@@ -222,6 +224,8 @@ export function collectPrimaryWeaponFeatureActions(
 
   const weapon = findWeaponByName(weaponContext.weapons, primary.mhWeaponName);
   if (!weapon) return [];
+
+  if (isVariantPrimaryWeapon(weapon.name)) return [];
 
   return buildWeaponFeatureActions(weapon, rarityIndex, weaponContext.featuresMap);
 }
