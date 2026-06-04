@@ -40,7 +40,7 @@ export function BuilderPage() {
             {/* Columna derecha: simulador + notas + rareza */}
             <div className="flex flex-col gap-2.5">
               <BuilderSimulatorPanel />
-              <BuilderNotesPanel />
+              {/* <BuilderNotesPanel /> */}
               <BuilderRaritySummaryPanel />
             </div>
           </div>
