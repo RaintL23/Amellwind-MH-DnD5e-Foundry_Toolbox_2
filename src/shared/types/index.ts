@@ -20,3 +20,4 @@ export * from "./class.types";
 export * from "./dnd-item.types";
 export * from "./bestiary-creature.types";
 export * from "./statblock-content.types";
+export * from "./npc.types";
