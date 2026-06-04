@@ -1,7 +1,6 @@
 import {
   Gem,
   GraduationCap,
-  Plus,
   ScrollText,
   Shield,
   Shirt,
@@ -18,7 +17,6 @@ import {
   EquippedWeapon,
   EquippedArmor,
   EquippedTrinket,
-  Rune,
 } from "@/shared/types";
 import type { OffHandBlockReason } from "@/features/weapons/utils/weapon-hands.utils";
 import type { PaperDollSelection } from "../hooks/usePaperDollSelection";
@@ -37,37 +35,6 @@ interface EquipmentGridPanelProps {
   offHandBlockReason: OffHandBlockReason | null;
   selectedSlot: PaperDollSelection;
   onSelectSlot: (slot: PaperDollSelection) => void;
-  onRuneSlotClick: (slot: PaperDollSelection) => void;
-}
-
-function collectActiveRunes(
-  mainHand: EquippedWeapon | null,
-  offHand: EquippedWeapon | null,
-  armor: EquippedArmor | null,
-  trinket1: EquippedTrinket | null,
-  trinket2: EquippedTrinket | null,
-): { rune: Rune; slot: PaperDollSelection }[] {
-  const result: { rune: Rune; slot: PaperDollSelection }[] = [];
-
-  if (mainHand) {
-    mainHand.runes.forEach((r) => {
-      if (r) result.push({ rune: r, slot: "mainHand" });
-    });
-  }
-  if (offHand) {
-    offHand.runes.forEach((r) => {
-      if (r) result.push({ rune: r, slot: "offHand" });
-    });
-  }
-  if (armor) {
-    armor.runes.forEach((r) => {
-      if (r) result.push({ rune: r, slot: "armor" });
-    });
-  }
-  if (trinket1?.rune) result.push({ rune: trinket1.rune, slot: "trinket1" });
-  if (trinket2?.rune) result.push({ rune: trinket2.rune, slot: "trinket2" });
-
-  return result;
 }
 
 export function EquipmentGridPanel({
@@ -84,19 +51,10 @@ export function EquipmentGridPanel({
   offHandBlockReason,
   selectedSlot,
   onSelectSlot,
-  onRuneSlotClick,
 }: EquipmentGridPanelProps) {
   function handleWeaponSlot(clicked: "mainHand" | "offHand") {
     onSelectSlot(!mainHand ? "mainHand" : clicked);
   }
-
-  const activeRunes = collectActiveRunes(
-    mainHand,
-    offHand,
-    armor,
-    trinket1,
-    trinket2,
-  );
 
   return (
     <div className="space-y-3">
