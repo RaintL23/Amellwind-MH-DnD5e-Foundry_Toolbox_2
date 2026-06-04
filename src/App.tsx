@@ -103,6 +103,11 @@ const MonstieSidekickPage = lazy(() =>
     (m) => ({ default: m.MonstieSidekickPage }),
   ),
 );
+const NpcGeneratorPage = lazy(() =>
+  import("@/features/npc-generator/components/NpcGeneratorPage").then((m) => ({
+    default: m.NpcGeneratorPage,
+  })),
+);
 const SpellList = lazy(() =>
   import("@/features/spells/components/SpellList").then((m) => ({
     default: m.SpellList,
@@ -308,6 +313,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <MonstieSidekickPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="npc-generator"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <NpcGeneratorPage />
                 </Suspense>
               }
             />
