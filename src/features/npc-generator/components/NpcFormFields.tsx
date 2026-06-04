@@ -256,6 +256,30 @@ export function NpcFormFields() {
               MM baseline: {powerPreview.mmReference}
               {" · "}
               MH gear: {powerPreview.weaponRarityLabel}
+              {powerPreview.statBoost > 0 && (
+                <>
+                  {" · "}
+                  +{powerPreview.statBoost} primary/Con
+                </>
+              )}
+              {powerPreview.attackHitBonus > 0 && (
+                <>
+                  {" · "}
+                  +{powerPreview.attackHitBonus} hit
+                </>
+              )}
+              {powerPreview.bonusDamageDice > 0 && (
+                <>
+                  {" · "}
+                  +{powerPreview.bonusDamageDice} damage die
+                </>
+              )}
+              {powerPreview.flatDamageBonus > 0 && (
+                <>
+                  {" · "}
+                  +{powerPreview.flatDamageBonus} damage
+                </>
+              )}
             </p>
           )}
         </div>

@@ -1,7 +1,8 @@
+import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import type { AbilityKey, AbilityScores, Entry, OptionalFeature } from "@/shared/types";
 import type { NpcAttackDefinition } from "@/shared/types/npc.types";
 import type { Weapon } from "@/shared/types";
-import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
+import { formatAttackEntry, rollAverage } from "./npc-attack.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { getAccumulatedUnlocks } from "@/features/weapons/utils/weapon-feature-chains.utils";
 import {
@@ -23,14 +24,6 @@ export function normalizeAmmoKey(rawName: string): string {
   return name.toLowerCase();
 }
 
-function rollAverage(dice: string): number {
-  const match = dice.match(/(\d+)d(\d+)/);
-  if (!match) return 0;
-  const count = Number(match[1]);
-  const sides = Number(match[2]);
-  return count * (Math.floor(sides / 2) + 1);
-}
-
 function scaleDiceAboveRare(baseDice: string, rarityIndex: number): string {
   const extraSteps = Math.max(0, rarityIndex - 2);
   if (extraSteps === 0) return baseDice;
@@ -47,16 +40,6 @@ function ammoSaveDc(abilities: AbilityScores, pb: number, ability: AbilityKey): 
   return 8 + pb + getAbilityModifier(abilities[ability]);
 }
 
-function formatDamageExpression(
-  damageDice: string,
-  abilityMod: number,
-  flatBonus: number,
-): string {
-  const totalBonus = abilityMod + flatBonus;
-  if (totalBonus === 0) return damageDice;
-  return `${damageDice}${totalBonus >= 0 ? ` + ${totalBonus}` : ` ${totalBonus}`}`;
-}
-
 function formatWeaponAttackLine(
   attack: NpcAttackDefinition,
   abilities: AbilityScores,
@@ -64,18 +47,17 @@ function formatWeaponAttackLine(
   flatBonus = 0,
   damageType?: string,
 ): string {
-  const abilityMod = getAbilityModifier(abilities[attack.ability]);
-  const hit = pb + abilityMod;
-  const flat = (attack.flatDamageBonus ?? 0) + flatBonus;
-  const dice = attack.damageDice;
-  const avgDamage = rollAverage(dice) + abilityMod + flat;
-  const attackLabel =
-    attack.kind === "mw" ? "Melee Weapon Attack" : "Ranged Weapon Attack";
-  const distanceLabel = attack.kind === "mw" ? "reach" : "range";
-  const type = damageType ?? attack.damageType;
-  const damageExpr = formatDamageExpression(dice, abilityMod, flat);
-
-  return `${attackLabel}: ${formatModifier(hit)} to hit, ${distanceLabel} ${attack.reachOrRange}, one target. Hit: ${avgDamage} (${damageExpr}) ${type} damage.`;
+  const scaled = damageType
+    ? { ...attack, damageType }
+    : attack;
+  const withFlat =
+    flatBonus !== 0
+      ? {
+          ...scaled,
+          flatDamageBonus: (scaled.flatDamageBonus ?? 0) + flatBonus,
+        }
+      : scaled;
+  return formatAttackEntry(withFlat, abilities, pb);
 }
 
 function findUnlockColumn(weapon: Weapon, pattern: RegExp): string | undefined {
@@ -318,12 +300,18 @@ export function buildVariantWeaponActions(
   weaponContext: NpcWeaponContext,
 ): Entry[] {
   const resolved = resolveNpcAttackFromWeapon(primaryAttack, weapon, rarityIndex);
+  const scaledPrimary = {
+    ...resolved,
+    damageDice: primaryAttack.damageDice,
+    flatDamageBonus: primaryAttack.flatDamageBonus,
+    extraHitBonus: primaryAttack.extraHitBonus,
+  };
   const weaponKey = weapon.name.toLowerCase();
 
   if (weaponKey === "hunting horn") {
     return buildHuntingHornActions(
       weapon,
-      resolved,
+      scaledPrimary,
       abilities,
       pb,
       rarityIndex,
@@ -335,7 +323,7 @@ export function buildVariantWeaponActions(
   if (weaponKey === "heavy bowgun" || weaponKey === "light bowgun") {
     return buildBowgunAmmoActions(
       weapon,
-      resolved,
+      scaledPrimary,
       abilities,
       pb,
       rarityIndex,

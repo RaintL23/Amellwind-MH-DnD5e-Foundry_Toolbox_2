@@ -1,11 +1,15 @@
 import type { AbilityKey, AbilityScores, Entry, SkillKey } from "@/shared/types";
-import type { NpcAttackDefinition, NpcTemplate } from "@/shared/types/npc.types";
+import type { NpcTemplate } from "@/shared/types/npc.types";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
+import {
+  formatAttackEntry,
+  scaleNpcAttacks,
+} from "./npc-attack.utils";
+import type { NpcPowerProfile } from "./npc-power-scaling";
 import {
   collectPrimaryWeaponFeatureActions,
   findWeaponByName,
   getPrimaryMhAttack,
-  getWeaponRarityIndex,
   hasRapidFireFeature,
   type NpcWeaponContext,
   resolveAttacksWithWeapons,
@@ -16,56 +20,25 @@ import {
   isVariantPrimaryWeapon,
 } from "./npc-variant-attacks";
 
-function rollAverage(dice: string): number {
-  const match = dice.match(/(\d+)d(\d+)/);
-  if (!match) return 0;
-  const count = Number(match[1]);
-  const sides = Number(match[2]);
-  return count * (Math.floor(sides / 2) + 1);
-}
-
-function formatDamageExpression(
-  damageDice: string,
-  abilityMod: number,
-  flatBonus: number,
-): string {
-  const totalBonus = abilityMod + flatBonus;
-  if (totalBonus === 0) return damageDice;
-  return `${damageDice}${totalBonus >= 0 ? ` + ${totalBonus}` : ` ${totalBonus}`}`;
-}
-
-function formatAttackEntry(
-  attack: NpcAttackDefinition,
-  abilities: AbilityScores,
-  pb: number,
-): string {
-  const abilityMod = getAbilityModifier(abilities[attack.ability]);
-  const hit = pb + abilityMod;
-  const flat = attack.flatDamageBonus ?? 0;
-  const avgDamage = rollAverage(attack.damageDice) + abilityMod + flat;
-  const attackLabel =
-    attack.kind === "mw" ? "Melee Weapon Attack" : "Ranged Weapon Attack";
-  const distanceLabel = attack.kind === "mw" ? "reach" : "range";
-  const damageExpr = formatDamageExpression(attack.damageDice, abilityMod, flat);
-
-  return `${attackLabel}: ${formatModifier(hit)} to hit, ${distanceLabel} ${attack.reachOrRange}, one target. Hit: ${avgDamage} (${damageExpr}) ${attack.damageType} damage.`;
-}
-
 export function buildNpcActions(
   template: NpcTemplate,
   abilities: AbilityScores,
   pb: number,
-  hitDiceCount: number,
+  powerProfile: NpcPowerProfile,
   weaponContext: NpcWeaponContext | null = null,
 ): Entry[] {
-  const rarityIndex = getWeaponRarityIndex(hitDiceCount, template.tier);
-  const resolvedAttacks = resolveAttacksWithWeapons(
-    template.attacks,
-    weaponContext,
-    rarityIndex,
+  const rarityIndex = powerProfile.weaponRarityIndex;
+  const resolvedAttacks = scaleNpcAttacks(
+    resolveAttacksWithWeapons(
+      template.attacks,
+      weaponContext,
+      rarityIndex,
+    ),
+    powerProfile,
   );
   const actions: Entry[] = [];
   const roleLabel = template.name.toLowerCase();
+  const hitDiceCount = powerProfile.hitDiceCount;
 
   const primaryAttack = resolvedAttacks[0];
   const secondaryAttacks = resolvedAttacks.slice(1);

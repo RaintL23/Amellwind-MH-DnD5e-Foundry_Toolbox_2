@@ -11,6 +11,14 @@ export interface NpcPowerBand {
   weaponRarityIndex: number;
   /** Flat AC bonus for upgraded armor quality at this band. */
   acBonus: number;
+  /** +N to primary ability and Con on the stat block. */
+  statBoost: number;
+  /** Flat bonus to weapon attack rolls (added to PB + ability mod). */
+  attackHitBonus: number;
+  /** Extra damage dice on the primary weapon (e.g. 1d10 → 2d10). */
+  bonusDamageDice: number;
+  /** Flat damage added to weapon attacks after ability modifier. */
+  flatDamageBonus: number;
 }
 
 export const NPC_TEMPLATE_TIER_LABELS: Record<number, string> = {
@@ -22,7 +30,7 @@ export const NPC_TEMPLATE_TIER_LABELS: Record<number, string> = {
 
 /**
  * MM-inspired power bands per template tier.
- * Hit dice pick the band; CR drives proficiency, XP, and MH gear rarity.
+ * Hit dice pick the band; CR drives proficiency, XP, MH gear rarity, and combat scaling.
  */
 export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
   0: [
@@ -33,6 +41,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Guard",
       weaponRarityIndex: 0,
       acBonus: 0,
+      statBoost: 0,
+      attackHitBonus: 0,
+      bonusDamageDice: 0,
+      flatDamageBonus: 0,
     },
     {
       hitDiceMin: 3,
@@ -41,6 +53,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Tribal Warrior",
       weaponRarityIndex: 0,
       acBonus: 0,
+      statBoost: 0,
+      attackHitBonus: 0,
+      bonusDamageDice: 0,
+      flatDamageBonus: 0,
     },
     {
       hitDiceMin: 4,
@@ -49,6 +65,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Scout",
       weaponRarityIndex: 0,
       acBonus: 0,
+      statBoost: 1,
+      attackHitBonus: 0,
+      bonusDamageDice: 0,
+      flatDamageBonus: 1,
     },
   ],
   1: [
@@ -59,6 +79,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Scout",
       weaponRarityIndex: 0,
       acBonus: 0,
+      statBoost: 1,
+      attackHitBonus: 0,
+      bonusDamageDice: 0,
+      flatDamageBonus: 1,
     },
     {
       hitDiceMin: 4,
@@ -67,6 +91,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Warrior",
       weaponRarityIndex: 1,
       acBonus: 0,
+      statBoost: 1,
+      attackHitBonus: 1,
+      bonusDamageDice: 0,
+      flatDamageBonus: 1,
     },
     {
       hitDiceMin: 5,
@@ -75,6 +103,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Thug",
       weaponRarityIndex: 1,
       acBonus: 0,
+      statBoost: 2,
+      attackHitBonus: 1,
+      bonusDamageDice: 0,
+      flatDamageBonus: 2,
     },
     {
       hitDiceMin: 7,
@@ -83,6 +115,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Berserker",
       weaponRarityIndex: 2,
       acBonus: 1,
+      statBoost: 2,
+      attackHitBonus: 1,
+      bonusDamageDice: 1,
+      flatDamageBonus: 2,
     },
   ],
   2: [
@@ -93,6 +129,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Priest / Druid",
       weaponRarityIndex: 1,
       acBonus: 0,
+      statBoost: 2,
+      attackHitBonus: 1,
+      bonusDamageDice: 0,
+      flatDamageBonus: 2,
     },
     {
       hitDiceMin: 7,
@@ -101,6 +141,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Spy",
       weaponRarityIndex: 1,
       acBonus: 0,
+      statBoost: 2,
+      attackHitBonus: 1,
+      bonusDamageDice: 0,
+      flatDamageBonus: 1,
     },
     {
       hitDiceMin: 8,
@@ -109,6 +153,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Knight / Veteran",
       weaponRarityIndex: 2,
       acBonus: 0,
+      statBoost: 2,
+      attackHitBonus: 2,
+      bonusDamageDice: 1,
+      flatDamageBonus: 1,
     },
     {
       hitDiceMin: 10,
@@ -117,6 +165,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Veteran",
       weaponRarityIndex: 2,
       acBonus: 1,
+      statBoost: 3,
+      attackHitBonus: 2,
+      bonusDamageDice: 1,
+      flatDamageBonus: 2,
     },
     {
       hitDiceMin: 11,
@@ -125,6 +177,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Gladiator",
       weaponRarityIndex: 3,
       acBonus: 1,
+      statBoost: 3,
+      attackHitBonus: 3,
+      bonusDamageDice: 1,
+      flatDamageBonus: 3,
     },
   ],
   3: [
@@ -135,6 +191,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Gladiator",
       weaponRarityIndex: 3,
       acBonus: 0,
+      statBoost: 3,
+      attackHitBonus: 3,
+      bonusDamageDice: 1,
+      flatDamageBonus: 3,
     },
     {
       hitDiceMin: 10,
@@ -143,6 +203,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Mage",
       weaponRarityIndex: 3,
       acBonus: 0,
+      statBoost: 3,
+      attackHitBonus: 3,
+      bonusDamageDice: 1,
+      flatDamageBonus: 2,
     },
     {
       hitDiceMin: 12,
@@ -151,6 +215,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Assassin",
       weaponRarityIndex: 3,
       acBonus: 0,
+      statBoost: 4,
+      attackHitBonus: 4,
+      bonusDamageDice: 1,
+      flatDamageBonus: 3,
     },
     {
       hitDiceMin: 13,
@@ -159,6 +227,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Archmage (lower)",
       weaponRarityIndex: 4,
       acBonus: 1,
+      statBoost: 4,
+      attackHitBonus: 5,
+      bonusDamageDice: 2,
+      flatDamageBonus: 3,
     },
     {
       hitDiceMin: 16,
@@ -167,6 +239,10 @@ export const NPC_TIER_POWER_BANDS: Record<number, NpcPowerBand[]> = {
       mmReference: "Archmage",
       weaponRarityIndex: 4,
       acBonus: 2,
+      statBoost: 5,
+      attackHitBonus: 5,
+      bonusDamageDice: 2,
+      flatDamageBonus: 4,
     },
   ],
 };

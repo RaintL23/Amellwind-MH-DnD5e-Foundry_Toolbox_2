@@ -41,6 +41,8 @@ export interface NpcAttackDefinition {
   damageType: string;
   /** AGMH hunter weapon to derive stats and optional features from. */
   mhWeaponName?: string;
+  /** Flat bonus to attack rolls from hit-dice power scaling. */
+  extraHitBonus?: number;
 }
 
 export interface NpcTemplate {

@@ -2,6 +2,7 @@ import type { Background, Species } from "@/shared/types";
 import type { GeneratedNpc, NpcDraft, NpcTemplate } from "@/shared/types/npc.types";
 import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import { assignAbilitiesFromArray, rollAttributeArray } from "./npc-abilities";
+import { applyAbilityPowerScaling } from "./npc-attack.utils";
 import {
   buildNpcActions,
   buildNpcReactions,
@@ -15,7 +16,6 @@ import {
 import {
   getNpcArmorClass,
   getNpcHitPoints,
-  getNpcProficiencyBonus,
   parseSpeciesSpeed,
 } from "./npc-stats";
 import { resolveNpcPowerProfile } from "./npc-power-scaling";
@@ -35,13 +35,13 @@ export function buildNpcFromDraft(
 ): GeneratedNpc {
   const hitDiceCount = Math.min(20, Math.max(1, draft.hitDiceCount));
   const scores = abilityScores ?? rollAttributeArray(draft.attributeArray);
-  const abilities = assignAbilitiesFromArray(
-    template.abilityPriority,
-    scores,
-    species,
-  );
-  const pb = getNpcProficiencyBonus(hitDiceCount, template.tier);
   const powerProfile = resolveNpcPowerProfile(template.tier, hitDiceCount);
+  const abilities = applyAbilityPowerScaling(
+    assignAbilitiesFromArray(template.abilityPriority, scores, species),
+    template.abilityPriority,
+    powerProfile,
+  );
+  const pb = powerProfile.proficiencyBonus;
   const cr = powerProfile.crLabel;
 
   const backgroundSkills = background
@@ -116,7 +116,7 @@ export function buildNpcFromDraft(
       template,
       abilities,
       pb,
-      hitDiceCount,
+      powerProfile,
       weaponContext,
     ),
     reactions: buildNpcReactions(template),
