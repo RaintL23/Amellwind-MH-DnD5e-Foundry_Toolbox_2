@@ -4,7 +4,6 @@ import { PaperDoll } from "./PaperDoll";
 import { BuilderDerivedPanel } from "./BuilderDerivedPanel";
 import { BuilderDamagePanel } from "./BuilderDamagePanel";
 import { BuilderSimulatorPanel } from "./BuilderSimulatorPanel";
-import { BuilderNotesPanel } from "./BuilderNotesPanel";
 import { BuilderRaritySummaryPanel } from "./BuilderRaritySummaryPanel";
 import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 
