@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
+import { ThemeSelector } from "@/components/layout/ThemeSelector";
 
 type NavItem = {
   label: string;
@@ -361,6 +362,7 @@ export function Sidebar({
 
       {/* Footer + botón collapse (solo desktop) */}
       <div className="border-t border-border shrink-0">
+        <ThemeSelector collapsed={collapsed} />
         {/* Botón collapse — oculto en mobile */}
         <button
           onClick={onToggleCollapse}

@@ -5,6 +5,7 @@ import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { NotFound } from "@/components/layout/NotFound";
 import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { SyncProvider } from "@/shared/context/SyncContext";
+import { ThemeProvider } from "@/shared/context/ThemeContext";
 import { syncData } from "@/shared/db/sync.service";
 import { clearMonsterCache } from "@/features/monsters/services/monster.service";
 import { clearRuneCache } from "@/features/runes/services/rune.service";
@@ -170,8 +171,9 @@ export default function App() {
   }, []);
 
   return (
-    <SyncProvider syncing={syncing}>
-      <BrowserRouter>
+    <ThemeProvider>
+      <SyncProvider syncing={syncing}>
+        <BrowserRouter>
         <Routes>
           <Route path="/" element={<MainLayout syncing={syncing} />}>
             <Route index element={<Navigate to="/monsters" replace />} />
@@ -383,7 +385,8 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
         </Routes>
-      </BrowserRouter>
-    </SyncProvider>
+        </BrowserRouter>
+      </SyncProvider>
+    </ThemeProvider>
   );
 }
