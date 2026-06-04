@@ -1,7 +1,19 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="mh">
   <head>
     <meta charset="UTF-8" />
+    <script>
+      (function () {
+        var key = "mh-toolbox-theme";
+        var stored = localStorage.getItem(key);
+        var theme =
+          stored === "light" || stored === "dark" || stored === "mh"
+            ? stored
+            : "mh";
+        document.documentElement.setAttribute("data-theme", theme);
+        if (theme !== "light") document.documentElement.classList.add("dark");
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>MH DnD5e Toolbox</title>
