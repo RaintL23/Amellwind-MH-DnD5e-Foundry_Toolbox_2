@@ -12,6 +12,8 @@ build/
 
 # ── TypeScript ────────────────────────────────────────────────
 *.tsbuildinfo
+vite.config.js
+vite.config.d.ts
 
 # ── Variables de entorno ──────────────────────────────────────
 .env
