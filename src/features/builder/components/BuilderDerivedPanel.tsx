@@ -21,22 +21,22 @@ export function BuilderDerivedPanel() {
     <BuilderPanel
       title={
         <>
-          <Shield className="h-3.5 w-3.5" aria-hidden /> Derivados
+          <Shield className="h-3.5 w-3.5" aria-hidden /> Others Stats
         </>
       }
     >
       <div className="space-y-0">
         <DerivedRow
-          label="Competencia"
+          label="Proficiency"
           value={`+${character.getProficiencyBonus()}`}
         />
         <DerivedRow label="CA" value={String(totalAC)} />
         <DerivedRow
-          label="Iniciativa"
+          label="Initiative"
           value={formatModifier(character.getModifier("dex"))}
         />
         <DerivedRow
-          label="Ataques/turno"
+          label="Attacks/turn"
           value={
             <input
               type="number"
@@ -51,22 +51,22 @@ export function BuilderDerivedPanel() {
                 );
               }}
               className="w-10 rounded border border-border bg-background px-1 py-0.5 text-right text-sm font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              title={`Por defecto: ${character.getAttacksPerTurn()} (nivel). Sobrescribe para personalizar.`}
+              title={`Default: ${character.getAttacksPerTurn()} (level). Override to customize.`}
             />
           }
         />
         <DerivedRow
-          label="Rango crítico"
+          label="Critical Range"
           value={critRange === 20 ? "20" : `${critRange}–20`}
         />
       </div>
       {attacksPerTurnOverride !== null && (
         <p className="mt-2 text-[10px] text-muted-foreground">
-          Efectivo: {effectiveAttacksPerTurn} ataques/turno (sobrescrito)
+          Effective: {effectiveAttacksPerTurn} attacks/turn (overridden)
         </p>
       )}
       <p className="mt-2 text-[10px] text-muted-foreground">
-        Chance de crítico:{" "}
+        Critical Chance:{" "}
         <span className="font-medium text-foreground">{critPct}%</span>
       </p>
     </BuilderPanel>

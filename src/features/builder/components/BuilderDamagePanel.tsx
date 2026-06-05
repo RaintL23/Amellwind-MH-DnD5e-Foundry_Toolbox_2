@@ -10,10 +10,16 @@ export function BuilderDamagePanel() {
   const critPct = Math.round(((21 - critRange) / 20) * 100);
 
   return (
-    <BuilderPanel title={<><Swords className="h-3.5 w-3.5" aria-hidden /> Daño</>}>
+    <BuilderPanel
+      title={
+        <>
+          <Swords className="h-3.5 w-3.5" aria-hidden /> Damage Calculation
+        </>
+      }
+    >
       {!hasEquipment ? (
         <p className="py-4 text-center text-xs text-muted-foreground">
-          Equipa un arma para ver el daño estimado.
+          Equip a weapon to see the estimated damage.
         </p>
       ) : (
         <>
@@ -22,15 +28,15 @@ export function BuilderDamagePanel() {
               {combat.totalDPT.toFixed(1)}
             </div>
             <div className="mt-1 text-[11px] text-emerald-300/80">
-              daño promedio / turno
+              average damage / turn
             </div>
             <div className="mt-1 text-[10px] text-muted-foreground">
-              Nivel {character.level} · {effectiveAttacksPerTurn} ataques
+              Level {character.level} · {effectiveAttacksPerTurn} attacks
             </div>
           </div>
 
           <p className="mb-1.5 mt-3 text-[11px] uppercase tracking-wide text-muted-foreground">
-            Desglose
+            Breakdown
           </p>
           <div className="flex flex-col gap-1 text-xs">
             {combat.mainHand && mainHand && (
@@ -47,7 +53,7 @@ export function BuilderDamagePanel() {
             )}
             {combat.mainHand && (
               <BreakdownLine
-                name="Bono ataque"
+                name="Attack Bonus"
                 detail={`+${combat.mainHand.attackBonus}`}
               />
             )}
@@ -60,7 +66,7 @@ export function BuilderDamagePanel() {
             />
           </div>
           <p className="mt-1 text-[11px] text-muted-foreground">
-            Chance de crítico:{" "}
+            Critical Chance:{" "}
             <span className="font-medium text-foreground">{critPct}%</span>
           </p>
         </>

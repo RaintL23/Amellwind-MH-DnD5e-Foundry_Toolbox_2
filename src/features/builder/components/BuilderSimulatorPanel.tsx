@@ -28,12 +28,18 @@ export function BuilderSimulatorPanel() {
   }, [combat, targetAC, rounds, effectiveAttacksPerTurn]);
 
   return (
-    <BuilderPanel title={<><Dice6 className="h-3.5 w-3.5" aria-hidden /> Simulador</>}>
+    <BuilderPanel
+      title={
+        <>
+          <Dice6 className="h-3.5 w-3.5" aria-hidden /> Simulator
+        </>
+      }
+    >
       <p className="mb-2 text-xs text-muted-foreground">
-        Simula rondas de combate contra un objetivo.
+        Simulate rounds of combat against a target.
       </p>
 
-      <label className="text-[11px] text-muted-foreground">CA del objetivo</label>
+      <label className="text-[11px] text-muted-foreground">Target AC</label>
       <input
         type="range"
         min={5}
@@ -49,7 +55,7 @@ export function BuilderSimulatorPanel() {
         <span>25</span>
       </div>
 
-      <label className="text-[11px] text-muted-foreground">Rondas</label>
+      <label className="text-[11px] text-muted-foreground">Rounds</label>
       <input
         type="range"
         min={1}
@@ -66,12 +72,14 @@ export function BuilderSimulatorPanel() {
       </div>
 
       <div className="rounded-md bg-muted/50 px-3 py-2.5 text-center">
-        <div className="text-[11px] text-muted-foreground">Daño esperado total</div>
+        <div className="text-[11px] text-muted-foreground">
+          Total Expected Damage
+        </div>
         <div className="text-[22px] font-medium tabular-nums text-emerald-400">
           {combat.mainHand ? totalExpected.toFixed(1) : "—"}
         </div>
         <div className="text-[11px] text-muted-foreground">
-          Chance de impactar:{" "}
+          Chance to hit:{" "}
           <span className="font-medium text-foreground">
             {combat.mainHand ? `${hitChance}%` : "—"}
           </span>

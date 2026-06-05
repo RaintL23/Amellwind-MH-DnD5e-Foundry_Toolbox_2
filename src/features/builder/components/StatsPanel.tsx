@@ -7,10 +7,18 @@ export function StatsPanel() {
   const { character, setLevel } = useCharacterBuilder();
 
   return (
-    <BuilderPanel title={<><User className="h-3.5 w-3.5" aria-hidden /> Personaje</>}>
+    <BuilderPanel
+      title={
+        <>
+          <User className="h-3.5 w-3.5" aria-hidden /> Character
+        </>
+      }
+    >
       <div className="mb-3 flex gap-1.5">
         <div className="flex-1">
-          <label className="mb-0.5 block text-[10px] text-muted-foreground">Nivel</label>
+          <label className="mb-0.5 block text-[10px] text-muted-foreground">
+            Level
+          </label>
           <input
             type="number"
             min={1}
@@ -19,16 +27,6 @@ export function StatsPanel() {
             onChange={(e) => setLevel(parseInt(e.target.value, 10) || 1)}
             className="w-full rounded-md border border-border bg-muted/30 px-2 py-1 text-center text-base font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
           />
-        </div>
-        <div className="flex-[2]">
-          <label className="mb-0.5 block text-[10px] text-muted-foreground">Clase</label>
-          <select
-            disabled
-            className="w-full rounded-md border border-border bg-muted/30 px-2 py-1.5 text-xs text-muted-foreground"
-            title="Próximamente"
-          >
-            <option>Próximamente</option>
-          </select>
         </div>
       </div>
 

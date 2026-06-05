@@ -13,11 +13,7 @@ import {
   isClothingArmor,
 } from "../data/armor.placeholder";
 import { GridEquipmentSlot } from "./GridEquipmentSlot";
-import {
-  EquippedWeapon,
-  EquippedArmor,
-  EquippedTrinket,
-} from "@/shared/types";
+import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
 import type { OffHandBlockReason } from "@/features/weapons/utils/weapon-hands.utils";
 import type { PaperDollSelection } from "../hooks/usePaperDollSelection";
 
@@ -60,7 +56,7 @@ export function EquipmentGridPanel({
     <div className="space-y-3">
       <div className="grid grid-cols-5 gap-1.5">
         <GridEquipmentSlot
-          label="Especie"
+          label="Specie"
           icon={<Users className="h-5 w-5 text-sky-400" />}
           equipped={species ? { name: species.name } : null}
           onClickEquip={() => onSelectSlot("species")}
@@ -68,7 +64,7 @@ export function EquipmentGridPanel({
           isSelected={selectedSlot === "species"}
         />
         <GridEquipmentSlot
-          label="Antecedente"
+          label="Background"
           icon={<ScrollText className="h-5 w-5 text-violet-400" />}
           equipped={background ? { name: background.name } : null}
           onClickEquip={() => onSelectSlot("background")}
@@ -76,7 +72,33 @@ export function EquipmentGridPanel({
           isSelected={selectedSlot === "background"}
         />
         <GridEquipmentSlot
-          label="Armadura"
+          label="Class"
+          icon={<GraduationCap className="h-5 w-5" />}
+          equipped={null}
+          onClickEquip={() => {}}
+          onClickDetails={() => {}}
+          isSelected={false}
+          disabled
+          disabledHint="Próximamente"
+        />
+        <GridEquipmentSlot
+          label="Trinket"
+          icon={<Gem className="h-5 w-5 text-amber-400/80" />}
+          equipped={trinket1 ? { name: trinket1.name } : null}
+          onClickEquip={() => onSelectSlot("trinket1")}
+          onClickDetails={() => onSelectSlot("trinket1")}
+          isSelected={selectedSlot === "trinket1"}
+        />
+        <GridEquipmentSlot
+          label="Trinket"
+          icon={<Gem className="h-5 w-5 text-amber-400/80" />}
+          equipped={trinket2 ? { name: trinket2.name } : null}
+          onClickEquip={() => onSelectSlot("trinket2")}
+          onClickDetails={() => onSelectSlot("trinket2")}
+          isSelected={selectedSlot === "trinket2"}
+        />
+        <GridEquipmentSlot
+          label="Armor"
           accent="armor"
           icon={
             armor && isClothingArmor(armor.armor) ? (
@@ -97,25 +119,9 @@ export function EquipmentGridPanel({
           onClickDetails={() => onSelectSlot("armor")}
           isSelected={selectedSlot === "armor"}
         />
-        <GridEquipmentSlot
-          label="Trinket 1"
-          icon={<Gem className="h-5 w-5 text-amber-400/80" />}
-          equipped={trinket1 ? { name: trinket1.name } : null}
-          onClickEquip={() => onSelectSlot("trinket1")}
-          onClickDetails={() => onSelectSlot("trinket1")}
-          isSelected={selectedSlot === "trinket1"}
-        />
-        <GridEquipmentSlot
-          label="Trinket 2"
-          icon={<Gem className="h-5 w-5 text-amber-400/80" />}
-          equipped={trinket2 ? { name: trinket2.name } : null}
-          onClickEquip={() => onSelectSlot("trinket2")}
-          onClickDetails={() => onSelectSlot("trinket2")}
-          isSelected={selectedSlot === "trinket2"}
-        />
 
         <GridEquipmentSlot
-          label="M. Principal"
+          label="Weapon"
           accent="weapon"
           icon={
             <Sword className={cn("h-5 w-5", mainHand && "text-violet-400")} />
@@ -148,7 +154,7 @@ export function EquipmentGridPanel({
           </div>
         ) : isOffHandBlocked ? (
           <GridEquipmentSlot
-            label="M. Secundaria"
+            label="Weapon"
             icon={<Sword className="h-5 w-5" />}
             equipped={null}
             onClickEquip={() => {}}
@@ -163,7 +169,7 @@ export function EquipmentGridPanel({
           />
         ) : (
           <GridEquipmentSlot
-            label="M. Secundaria"
+            label="Weapon"
             accent="weapon"
             icon={
               <Sword className={cn("h-5 w-5", offHand && "text-violet-400")} />
@@ -178,17 +184,6 @@ export function EquipmentGridPanel({
             isSelected={selectedSlot === "offHand"}
           />
         )}
-
-        <GridEquipmentSlot
-          label="Clase"
-          icon={<GraduationCap className="h-5 w-5" />}
-          equipped={null}
-          onClickEquip={() => {}}
-          onClickDetails={() => {}}
-          isSelected={false}
-          disabled
-          disabledHint="Próximamente"
-        />
         <GridEquipmentSlot
           label="—"
           icon={<span className="text-muted-foreground/40">·</span>}

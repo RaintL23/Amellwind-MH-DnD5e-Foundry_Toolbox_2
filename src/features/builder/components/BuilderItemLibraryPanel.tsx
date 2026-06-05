@@ -22,11 +22,13 @@ import { BuilderPanel } from "./BuilderPanel";
 import { RarityButtonGroup } from "./RarityButtonGroup";
 
 const RARITY_BADGE: Record<string, string> = {
-  Uncommon: "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300",
+  Uncommon:
+    "bg-emerald-100 text-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300",
   Rare: "bg-sky-100 text-sky-900 dark:bg-sky-950/50 dark:text-sky-300",
   "Very Rare":
     "bg-violet-100 text-violet-900 dark:bg-violet-950/50 dark:text-violet-300",
-  Legendary: "bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-300",
+  Legendary:
+    "bg-amber-100 text-amber-900 dark:bg-amber-950/50 dark:text-amber-300",
 };
 
 const SLOT_LABELS: Partial<Record<NonNullable<PaperDollSelection>, string>> = {
@@ -43,7 +45,9 @@ interface BuilderItemLibraryPanelProps {
   selectedSlot: PaperDollSelection;
 }
 
-export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPanelProps) {
+export function BuilderItemLibraryPanel({
+  selectedSlot,
+}: BuilderItemLibraryPanelProps) {
   const [search, setSearch] = useState("");
   const [selectedRarity, setSelectedRarity] = useState("Common");
   const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
@@ -71,11 +75,14 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
     setBackground,
     hasIntegratedShield,
   } = useCharacterBuilder();
-  const { weapons: inventoryWeapons, armors: inventoryArmors } = useBuilderInventory();
+  const { weapons: inventoryWeapons, armors: inventoryArmors } =
+    useBuilderInventory();
 
-  const isWeaponSlot = selectedSlot === "mainHand" || selectedSlot === "offHand";
+  const isWeaponSlot =
+    selectedSlot === "mainHand" || selectedSlot === "offHand";
   const isArmorSlot = selectedSlot === "armor";
-  const isTrinketSlot = selectedSlot === "trinket1" || selectedSlot === "trinket2";
+  const isTrinketSlot =
+    selectedSlot === "trinket1" || selectedSlot === "trinket2";
   const isSpeciesSlot = selectedSlot === "species";
   const isBackgroundSlot = selectedSlot === "background";
 
@@ -97,8 +104,12 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
     setIdentityOptions([]);
 
     const load = isSpeciesSlot
-      ? getAllSpecies().then((list) => list.map((s) => ({ id: s.id, name: s.name })))
-      : getAllBackgrounds().then((list) => list.map((b) => ({ id: b.id, name: b.name })));
+      ? getAllSpecies().then((list) =>
+          list.map((s) => ({ id: s.id, name: s.name })),
+        )
+      : getAllBackgrounds().then((list) =>
+          list.map((b) => ({ id: b.id, name: b.name })),
+        );
 
     load.then(setIdentityOptions).finally(() => setIdentityLoading(false));
   }, [isSpeciesSlot, isBackgroundSlot, selectedSlot]);
@@ -134,9 +145,16 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
   const showClothOption = useMemo(() => {
     if (!isArmorSlot) return false;
     if (!q) return true;
-    return ["cloth", "clothing", "robe", "tunic", "caster", "mage", "wizard", "monk"].some(
-      (term) => term.includes(q) || q.includes(term),
-    );
+    return [
+      "cloth",
+      "clothing",
+      "robe",
+      "tunic",
+      "caster",
+      "mage",
+      "wizard",
+      "monk",
+    ].some((term) => term.includes(q) || q.includes(term));
   }, [isArmorSlot, q]);
 
   const identityFiltered = useMemo(() => {
@@ -153,10 +171,18 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
         : null;
 
   const equippedTrinket =
-    selectedSlot === "trinket1" ? trinket1 : selectedSlot === "trinket2" ? trinket2 : null;
+    selectedSlot === "trinket1"
+      ? trinket1
+      : selectedSlot === "trinket2"
+        ? trinket2
+        : null;
 
   const selectedIdentity =
-    selectedSlot === "species" ? species : selectedSlot === "background" ? background : null;
+    selectedSlot === "species"
+      ? species
+      : selectedSlot === "background"
+        ? background
+        : null;
 
   function handleSelectWeapon(weapon: Weapon) {
     if (!isWeaponSlot || !selectedSlot) return;
@@ -196,8 +222,8 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
     ((isSpeciesSlot || isBackgroundSlot) && selectedIdentity);
 
   const panelTitle = selectedSlot
-    ? `Biblioteca — ${SLOT_LABELS[selectedSlot] ?? selectedSlot}`
-    : "Biblioteca";
+    ? `Library — ${SLOT_LABELS[selectedSlot] ?? selectedSlot}`
+    : "Library";
 
   return (
     <BuilderPanel
@@ -205,14 +231,14 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
       className="flex max-h-[480px] min-h-[180px] flex-col overflow-hidden"
     >
       {!selectedSlot ? (
-        <EmptyState text="Haz clic en un slot de equipamiento para ver las opciones disponibles." />
+        <EmptyState text="Click on an equipment slot to see the available options." />
       ) : (
         <div className="flex min-h-0 flex-1 flex-col">
           <div className="relative mb-2 shrink-0">
             <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Buscar..."
+              placeholder="Search..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
@@ -221,7 +247,10 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
 
           {isWeaponSlot && (
             <div className="mb-2 shrink-0">
-              <RarityButtonGroup value={selectedRarity} onChange={setSelectedRarity} />
+              <RarityButtonGroup
+                value={selectedRarity}
+                onChange={setSelectedRarity}
+              />
             </div>
           )}
 
@@ -231,7 +260,7 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
               onClick={handleUnequip}
               className="mb-2 w-full shrink-0 rounded-md border border-border/50 px-2 py-1.5 text-left text-xs text-destructive transition-colors hover:bg-destructive/10"
             >
-              Quitar del slot
+              Remove from slot
             </button>
           )}
 
@@ -280,7 +309,7 @@ export function BuilderItemLibraryPanel({ selectedSlot }: BuilderItemLibraryPane
             )}
 
             {selectedSlot === "class" && (
-              <EmptyState text="La selección de clase estará disponible próximamente." />
+              <EmptyState text="Class selection will be available soon." />
             )}
           </div>
         </div>
@@ -304,12 +333,14 @@ function WeaponList({
 }) {
   if (loading) return <EmptyState text="Cargando armas…" />;
   if (inventory.length === 0 && catalog.length === 0) {
-    return <EmptyState text="No hay armas disponibles." />;
+    return <EmptyState text="No weapons available." />;
   }
 
   return (
     <>
-      {inventory.length > 0 && <SectionLabel>Inventario (carrito)</SectionLabel>}
+      {inventory.length > 0 && (
+        <SectionLabel>Inventario (carrito)</SectionLabel>
+      )}
       {inventory.map((w) => (
         <ItemRow
           key={`inv-${w.name}`}
@@ -351,7 +382,7 @@ function ArmorList({
     <>
       {showCloth && (
         <>
-          <SectionLabel>Ropa</SectionLabel>
+          <SectionLabel>Clothing</SectionLabel>
           <ItemRow
             icon={<Shirt className="h-3.5 w-3.5 text-violet-400" />}
             name="Cloth"
@@ -361,7 +392,9 @@ function ArmorList({
           />
         </>
       )}
-      {inventory.length > 0 && <SectionLabel>Inventario (carrito)</SectionLabel>}
+      {inventory.length > 0 && (
+        <SectionLabel>Inventario (carrito)</SectionLabel>
+      )}
       {inventory.map((a) => (
         <ItemRow
           key={`inv-${a.name}`}
@@ -425,7 +458,7 @@ function IdentityList({
   onSelect: (id: string, name: string) => void;
 }) {
   if (loading) return <EmptyState text="Cargando…" />;
-  if (options.length === 0) return <EmptyState text="Sin resultados." />;
+  if (options.length === 0) return <EmptyState text="No results." />;
 
   return (
     <>
@@ -452,7 +485,9 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function EmptyState({ text }: { text: string }) {
-  return <p className="py-6 text-center text-xs text-muted-foreground">{text}</p>;
+  return (
+    <p className="py-6 text-center text-xs text-muted-foreground">{text}</p>
+  );
 }
 
 function ItemRow({
@@ -486,7 +521,9 @@ function ItemRow({
           {equipped && <Check className="h-3 w-3 shrink-0 text-emerald-400" />}
         </div>
         {stats && (
-          <div className="truncate pl-5 text-[11px] text-muted-foreground">{stats}</div>
+          <div className="truncate pl-5 text-[11px] text-muted-foreground">
+            {stats}
+          </div>
         )}
       </div>
       {rarity && RARITY_BADGE[rarity] && (

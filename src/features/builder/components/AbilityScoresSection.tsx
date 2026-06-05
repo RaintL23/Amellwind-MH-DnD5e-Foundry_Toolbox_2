@@ -34,11 +34,18 @@ function modifierFromScore(score: number): string {
   return formatModifier(Math.floor((score - 10) / 2));
 }
 
-export function AbilityScoresSection({ compact = false }: { compact?: boolean }) {
-  const { character, setAbilityScore, setAbilityScores } = useCharacterBuilder();
+export function AbilityScoresSection({
+  compact = false,
+}: {
+  compact?: boolean;
+}) {
+  const { character, setAbilityScore, setAbilityScores } =
+    useCharacterBuilder();
   const [method, setMethod] = useState<GenerationMethod>("manual");
   const [pool, setPool] = useState<number[]>([...STANDARD_ARRAY]);
-  const [assignments, setAssignments] = useState<Partial<Record<AbilityKey, number>>>({});
+  const [assignments, setAssignments] = useState<
+    Partial<Record<AbilityKey, number>>
+  >({});
   const [heroicRolls, setHeroicRolls] = useState(false);
   const [lastRolls, setLastRolls] = useState<number[] | null>(null);
 
@@ -49,7 +56,7 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
         setAbilityScores(scores);
       }
     },
-    [setAbilityScores]
+    [setAbilityScores],
   );
 
   const initStandardArray = useCallback(() => {
@@ -84,7 +91,7 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
       key,
       value,
       assignments,
-      pool
+      pool,
     );
     setAssignments(nextAssignments);
     setPool(nextPool);
@@ -115,14 +122,20 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
     <div className="space-y-2">
       {!compact && (
         <div className="flex flex-col gap-1">
-          <label className="text-xs text-muted-foreground font-medium">Ability Scores</label>
+          <label className="text-xs text-muted-foreground font-medium">
+            Ability Scores
+          </label>
           <Select
             value={method}
-            onChange={(e) => handleMethodChange(e.target.value as GenerationMethod)}
+            onChange={(e) =>
+              handleMethodChange(e.target.value as GenerationMethod)
+            }
             className="h-8 text-xs"
           >
             <option value="manual">Manual</option>
-            <option value="standard">Standard Array (15, 14, 13, 12, 10, 8)</option>
+            <option value="standard">
+              Standard Array (15, 14, 13, 12, 10, 8)
+            </option>
             <option value="pointbuy">Point Buy (27 pts, max 15)</option>
             <option value="dice">Roll Dice (4d6 drop lowest)</option>
           </Select>
@@ -132,19 +145,23 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
       {compact && (
         <Select
           value={method}
-          onChange={(e) => handleMethodChange(e.target.value as GenerationMethod)}
+          onChange={(e) =>
+            handleMethodChange(e.target.value as GenerationMethod)
+          }
           className="mb-2 h-7 w-full text-[10px]"
         >
           <option value="manual">Manual</option>
-          <option value="standard">Array estándar</option>
+          <option value="standard">
+            Standard Array (15, 14, 13, 12, 10, 8)
+          </option>
           <option value="pointbuy">Point buy</option>
-          <option value="dice">Tirar dados</option>
+          <option value="dice">Roll Dice (4d6 drop lowest)</option>
         </Select>
       )}
 
       {method === "standard" && (
         <p className="text-[10px] text-muted-foreground leading-snug">
-          Asigna cada valor del array a una característica. Disponibles:{" "}
+          Assign each value in the array to an ability. Available:{" "}
           <span className="font-medium text-foreground">{poolLabel}</span>
         </p>
       )}
@@ -152,18 +169,26 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
       {method === "pointbuy" && (
         <div className="flex items-center justify-between text-[10px]">
           <span className="text-muted-foreground">
-            Puntos:{" "}
+            Points:{" "}
             <span
               className={
-                pointsRemaining < 0 ? "text-destructive font-semibold" : "text-foreground font-medium"
+                pointsRemaining < 0
+                  ? "text-destructive font-semibold"
+                  : "text-foreground font-medium"
               }
             >
               {pointsRemaining}
             </span>
             <span className="text-muted-foreground"> / {POINT_BUY_BUDGET}</span>
           </span>
-          <Button type="button" variant="ghost" size="sm" className="h-6 px-2 text-[10px]" onClick={initPointBuy}>
-            Reset (8)
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="h-6 px-2 text-[10px]"
+            onClick={initPointBuy}
+          >
+            Reset (8 points)
           </Button>
         </div>
       )}
@@ -171,8 +196,14 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
       {method === "dice" && (
         <div className="space-y-1">
           <div className="flex items-center gap-2 flex-wrap">
-            <Button type="button" variant="outline" size="sm" className="h-7 text-xs" onClick={rollDice}>
-              Roll 6× (4d6)
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              className="h-7 text-xs"
+              onClick={rollDice}
+            >
+              Roll 6× (4d6 drop lowest)
             </Button>
             <label className="flex items-center gap-1 text-[10px] text-muted-foreground cursor-pointer">
               <input
@@ -181,31 +212,34 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
                 onChange={(e) => setHeroicRolls(e.target.checked)}
                 className="rounded border-border"
               />
-              Heroic (re-roll 1s)
+              Heroic (re-roll 1s on 1s)
             </label>
           </div>
           {lastRolls && (
             <p className="text-[10px] text-muted-foreground">
-              Resultados: {lastRolls.join(", ")} — sin asignar:{" "}
+              Results: {lastRolls.join(", ")} — unassigned:{" "}
               <span className="font-medium text-foreground">{poolLabel}</span>
             </p>
           )}
           {!lastRolls && (
             <p className="text-[10px] text-muted-foreground">
-              Lanza los dados y asigna cada resultado a una característica.
+              Roll the dice and assign each result to an ability.
             </p>
           )}
         </div>
       )}
 
-      <div className={compact ? "grid grid-cols-2 gap-1.5" : "grid grid-cols-2 gap-2"}>
+      <div
+        className={
+          compact ? "grid grid-cols-2 gap-1.5" : "grid grid-cols-2 gap-2"
+        }
+      >
         {ABILITIES.map(({ key, label }) => {
           const score =
             method === "standard" || method === "dice"
               ? assignments[key]
               : character.abilities[key];
-          const modifier =
-            score !== undefined ? modifierFromScore(score) : "—";
+          const modifier = score !== undefined ? modifierFromScore(score) : "—";
 
           if (compact && method === "manual") {
             return (
@@ -213,7 +247,10 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
                 key={key}
                 type="button"
                 onClick={() => {
-                  const v = prompt(`Valor de ${label} (1-30):`, String(character.abilities[key]));
+                  const v = prompt(
+                    `Valor de ${label} (1-30):`,
+                    String(character.abilities[key]),
+                  );
                   if (v && !Number.isNaN(+v) && +v >= 1 && +v <= 30) {
                     setAbilityScore(key, +v);
                   }
@@ -237,12 +274,18 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
             const options = poolOptionsForAbility(key, assignments, pool);
             return (
               <div key={key} className="flex items-center gap-2">
-                <span className="text-xs font-bold text-foreground w-8">{label}</span>
+                <span className="text-xs font-bold text-foreground w-8">
+                  {label}
+                </span>
                 <Select
                   value={assignments[key] ?? ""}
                   onChange={(e) => handlePoolAssign(key, e.target.value)}
                   className="h-8 w-14 px-1 text-sm text-center"
-                  disabled={method === "dice" && pool.length === 0 && assignments[key] === undefined}
+                  disabled={
+                    method === "dice" &&
+                    pool.length === 0 &&
+                    assignments[key] === undefined
+                  }
                 >
                   <option value="">—</option>
                   {options.map((v) => (
@@ -251,7 +294,9 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
                     </option>
                   ))}
                 </Select>
-                <span className="text-xs font-medium text-primary min-w-[28px]">{modifier}</span>
+                <span className="text-xs font-medium text-primary min-w-[28px]">
+                  {modifier}
+                </span>
               </div>
             );
           }
@@ -260,7 +305,9 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
             const value = character.abilities[key];
             return (
               <div key={key} className="flex items-center gap-1">
-                <span className="text-xs font-bold text-foreground w-8">{label}</span>
+                <span className="text-xs font-bold text-foreground w-8">
+                  {label}
+                </span>
                 <Button
                   type="button"
                   variant="outline"
@@ -272,7 +319,9 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
                 >
                   −
                 </Button>
-                <span className="w-8 text-center text-sm font-semibold text-foreground">{value}</span>
+                <span className="w-8 text-center text-sm font-semibold text-foreground">
+                  {value}
+                </span>
                 <Button
                   type="button"
                   variant="outline"
@@ -293,13 +342,17 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
 
           return (
             <div key={key} className="flex items-center gap-2">
-              <span className="text-xs font-bold text-foreground w-8">{label}</span>
+              <span className="text-xs font-bold text-foreground w-8">
+                {label}
+              </span>
               <input
                 type="number"
                 min={1}
                 max={30}
                 value={character.abilities[key]}
-                onChange={(e) => setAbilityScore(key, parseInt(e.target.value) || 10)}
+                onChange={(e) =>
+                  setAbilityScore(key, parseInt(e.target.value) || 10)
+                }
                 className="w-14 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground text-center focus:outline-none focus:ring-2 focus:ring-ring"
               />
               <span className="text-xs font-medium text-primary min-w-[28px]">
@@ -312,7 +365,8 @@ export function AbilityScoresSection({ compact = false }: { compact?: boolean })
 
       {method === "pointbuy" && (
         <p className="text-[10px] text-muted-foreground">
-          Gastados: {pointsSpent}/{POINT_BUY_BUDGET}. Máximo {POINT_BUY_MAX} antes de bonificadores de origen.
+          Spent: {pointsSpent}/{POINT_BUY_BUDGET}. Maximum {POINT_BUY_MAX}{" "}
+          before origin bonuses.
         </p>
       )}
     </div>

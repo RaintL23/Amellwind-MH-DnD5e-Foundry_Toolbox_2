@@ -51,11 +51,13 @@ export function PaperDoll() {
         title={
           <>
             <Sword className="h-3.5 w-3.5" aria-hidden />
-            Equipamiento
+            Equipment
           </>
         }
         action={
-          <span className="text-[11px] text-muted-foreground">clic para cambiar</span>
+          <span className="text-[11px] text-muted-foreground">
+            click to change
+          </span>
         }
       >
         <EquipmentGridPanel
@@ -88,13 +90,16 @@ export function PaperDoll() {
         />
       )}
 
-      {selectedWeapon && (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
-        <WeaponDetailPanel
-          equipped={selectedWeapon}
-          onRarityChange={(r) => setWeaponRarity(selectedSlot, r)}
-          onVersatileChange={(twoHanded) => setVersatileMode(selectedSlot, twoHanded)}
-        />
-      )}
+      {selectedWeapon &&
+        (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
+          <WeaponDetailPanel
+            equipped={selectedWeapon}
+            onRarityChange={(r) => setWeaponRarity(selectedSlot, r)}
+            onVersatileChange={(twoHanded) =>
+              setVersatileMode(selectedSlot, twoHanded)
+            }
+          />
+        )}
 
       {selectedSlot === "armor" && armor && (
         <ArmorDetailPanel armor={armor} onRarityChange={setArmorRarity} />
@@ -108,4 +113,3 @@ export function PaperDoll() {
     </div>
   );
 }
-

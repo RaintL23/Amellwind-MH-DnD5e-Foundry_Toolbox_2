@@ -14,11 +14,11 @@ const RARITY_DOT: Record<string, string> = {
 };
 
 const RARITY_SHORT: Record<string, string> = {
-  Common: "Común",
-  Uncommon: "Poco",
-  Rare: "Raro",
-  "Very Rare": "M.Raro",
-  Legendary: "Leg",
+  Common: "Common",
+  Uncommon: "Uncommon",
+  Rare: "Rare",
+  "Very Rare": "Very Rare",
+  Legendary: "Legendary",
 };
 
 export function BuilderRaritySummaryPanel() {
@@ -37,7 +37,13 @@ export function BuilderRaritySummaryPanel() {
   }, [mainHand, offHand, armor]);
 
   return (
-    <BuilderPanel title={<><Star className="h-3.5 w-3.5" aria-hidden /> Rareza activa</>}>
+    <BuilderPanel
+      title={
+        <>
+          <Star className="h-3.5 w-3.5" aria-hidden /> Active Rarity
+        </>
+      }
+    >
       <div className="flex flex-wrap gap-x-3 gap-y-1.5">
         {RARITY_ORDER.map((rarity) => (
           <span
@@ -45,7 +51,10 @@ export function BuilderRaritySummaryPanel() {
             className="flex items-center gap-1 text-[11px] text-muted-foreground"
           >
             <span
-              className={cn("inline-block h-1.5 w-1.5 rounded-full", RARITY_DOT[rarity])}
+              className={cn(
+                "inline-block h-1.5 w-1.5 rounded-full",
+                RARITY_DOT[rarity],
+              )}
             />
             {RARITY_SHORT[rarity]}:{" "}
             <b className="text-foreground">{counts[rarity]}</b>
