@@ -29,7 +29,6 @@ export function BuilderPage() {
             <div className="flex flex-col gap-2.5">
               <StatsPanel />
               <BuilderDerivedPanel />
-              <BuilderDamagePanel />
             </div>
 
             {/* Columna central: equipamiento + biblioteca */}
@@ -37,7 +36,7 @@ export function BuilderPage() {
 
             {/* Columna derecha: simulador + notas + rareza */}
             <div className="flex flex-col gap-2.5">
-              <BuilderSimulatorPanel />
+              <BuilderDamagePanel />
             </div>
           </div>
         </div>

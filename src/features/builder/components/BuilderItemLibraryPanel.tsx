@@ -19,7 +19,6 @@ import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { ArmorItem, Weapon } from "@/shared/types";
 import type { PaperDollSelection } from "../hooks/usePaperDollSelection";
 import { BuilderPanel } from "./BuilderPanel";
-import { RarityButtonGroup } from "./RarityButtonGroup";
 
 const RARITY_BADGE: Record<string, string> = {
   Uncommon:
@@ -32,13 +31,13 @@ const RARITY_BADGE: Record<string, string> = {
 };
 
 const SLOT_LABELS: Partial<Record<NonNullable<PaperDollSelection>, string>> = {
-  species: "Especie",
-  background: "Antecedente",
-  mainHand: "Mano principal",
-  offHand: "Mano secundaria",
-  armor: "Armadura",
-  trinket1: "Trinket 1",
-  trinket2: "Trinket 2",
+  species: "Species",
+  background: "Background",
+  mainHand: "Weapon",
+  offHand: "Weapon",
+  armor: "Armor",
+  trinket1: "Trinket",
+  trinket2: "Trinket",
 };
 
 interface BuilderItemLibraryPanelProps {
@@ -49,7 +48,6 @@ export function BuilderItemLibraryPanel({
   selectedSlot,
 }: BuilderItemLibraryPanelProps) {
   const [search, setSearch] = useState("");
-  const [selectedRarity, setSelectedRarity] = useState("Common");
   const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
   const [weaponsLoading, setWeaponsLoading] = useState(false);
   const [identityLoading, setIdentityLoading] = useState(false);
@@ -66,14 +64,10 @@ export function BuilderItemLibraryPanel({
     species,
     background,
     equipWeapon,
-    unequipWeapon,
     equipArmor,
-    unequipArmor,
     equipTrinket,
-    unequipTrinket,
     setSpecies,
     setBackground,
-    hasIntegratedShield,
   } = useCharacterBuilder();
   const { weapons: inventoryWeapons, armors: inventoryArmors } =
     useBuilderInventory();
@@ -186,7 +180,7 @@ export function BuilderItemLibraryPanel({
 
   function handleSelectWeapon(weapon: Weapon) {
     if (!isWeaponSlot || !selectedSlot) return;
-    equipWeapon(selectedSlot, weapon, selectedRarity);
+    equipWeapon(selectedSlot, weapon, "Common");
   }
 
   function handleSelectArmor(item: ArmorItem) {
@@ -203,23 +197,6 @@ export function BuilderItemLibraryPanel({
     if (isSpeciesSlot) setSpecies(ref);
     else if (isBackgroundSlot) setBackground(ref);
   }
-
-  function handleUnequip() {
-    if (!selectedSlot) return;
-    if (isWeaponSlot) {
-      if (selectedSlot === "offHand" && hasIntegratedShield) return;
-      unequipWeapon(selectedSlot);
-    } else if (isArmorSlot) unequipArmor();
-    else if (isTrinketSlot) unequipTrinket(selectedSlot);
-    else if (isSpeciesSlot) setSpecies(null);
-    else if (isBackgroundSlot) setBackground(null);
-  }
-
-  const canUnequip =
-    (isWeaponSlot && equippedWeapon) ||
-    (isArmorSlot && armor) ||
-    (isTrinketSlot && equippedTrinket) ||
-    ((isSpeciesSlot || isBackgroundSlot) && selectedIdentity);
 
   const panelTitle = selectedSlot
     ? `Library — ${SLOT_LABELS[selectedSlot] ?? selectedSlot}`
@@ -244,25 +221,6 @@ export function BuilderItemLibraryPanel({
               className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
             />
           </div>
-
-          {isWeaponSlot && (
-            <div className="mb-2 shrink-0">
-              <RarityButtonGroup
-                value={selectedRarity}
-                onChange={setSelectedRarity}
-              />
-            </div>
-          )}
-
-          {canUnequip && (
-            <button
-              type="button"
-              onClick={handleUnequip}
-              className="mb-2 w-full shrink-0 rounded-md border border-border/50 px-2 py-1.5 text-left text-xs text-destructive transition-colors hover:bg-destructive/10"
-            >
-              Remove from slot
-            </button>
-          )}
 
           <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-y-contain pr-1">
             {isWeaponSlot && (

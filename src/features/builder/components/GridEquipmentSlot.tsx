@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Lock, Plus } from "lucide-react";
+import { Lock, Plus, X } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
 type SlotAccent = "default" | "weapon" | "armor";
@@ -10,6 +10,7 @@ interface GridEquipmentSlotProps {
   equipped: { name: string; detail?: string } | null;
   onClickEquip: () => void;
   onClickDetails: () => void;
+  onUnequip?: () => void;
   isSelected: boolean;
   disabled?: boolean;
   disabledHint?: string;
@@ -29,6 +30,7 @@ export function GridEquipmentSlot({
   equipped,
   onClickEquip,
   onClickDetails,
+  onUnequip,
   isSelected,
   disabled = false,
   disabledHint,
@@ -70,24 +72,42 @@ export function GridEquipmentSlot({
   }
 
   return (
-    <button
-      type="button"
-      onClick={onClickDetails}
-      onDoubleClick={onClickEquip}
-      title={`${equipped.name} — clic para detalles, doble clic para cambiar`}
-      className={cn(
-        "flex min-h-[72px] flex-col items-center justify-center gap-0.5 rounded-md border border-solid border-border/70 bg-card p-2 text-center transition-all hover:border-primary/40",
-        isSelected && "border-primary bg-primary/10 ring-1 ring-primary/30",
-        ACCENT_CLASS[accent],
+    <div className="relative">
+      <button
+        type="button"
+        onClick={onClickDetails}
+        onDoubleClick={onClickEquip}
+        title={`${equipped.name} — clic para detalles, doble clic para cambiar`}
+        className={cn(
+          "flex min-h-[72px] w-full flex-col items-center justify-center gap-0.5 rounded-md border border-solid border-border/70 bg-card p-2 text-center transition-all hover:border-primary/40",
+          isSelected && "border-primary bg-primary/10 ring-1 ring-primary/30",
+          ACCENT_CLASS[accent],
+        )}
+      >
+        {icon}
+        <span className="w-full truncate text-[11px] font-medium text-foreground">
+          {equipped.name}
+        </span>
+        {equipped.detail && (
+          <span className="text-[10px] text-muted-foreground">
+            {equipped.detail}
+          </span>
+        )}
+      </button>
+      {onUnequip && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onUnequip();
+          }}
+          title={`Quitar ${label}`}
+          aria-label={`Quitar ${label}`}
+          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm transition-opacity hover:opacity-90"
+        >
+          <X className="h-2.5 w-2.5" strokeWidth={3} />
+        </button>
       )}
-    >
-      {icon}
-      <span className="w-full truncate text-[11px] font-medium text-foreground">
-        {equipped.name}
-      </span>
-      {equipped.detail && (
-        <span className="text-[10px] text-muted-foreground">{equipped.detail}</span>
-      )}
-    </button>
+    </div>
   );
 }

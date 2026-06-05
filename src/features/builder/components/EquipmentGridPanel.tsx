@@ -31,6 +31,7 @@ interface EquipmentGridPanelProps {
   offHandBlockReason: OffHandBlockReason | null;
   selectedSlot: PaperDollSelection;
   onSelectSlot: (slot: PaperDollSelection) => void;
+  onUnequipSlot: (slot: PaperDollSelection) => void;
 }
 
 export function EquipmentGridPanel({
@@ -47,6 +48,7 @@ export function EquipmentGridPanel({
   offHandBlockReason,
   selectedSlot,
   onSelectSlot,
+  onUnequipSlot,
 }: EquipmentGridPanelProps) {
   function handleWeaponSlot(clicked: "mainHand" | "offHand") {
     onSelectSlot(!mainHand ? "mainHand" : clicked);
@@ -61,6 +63,7 @@ export function EquipmentGridPanel({
           equipped={species ? { name: species.name } : null}
           onClickEquip={() => onSelectSlot("species")}
           onClickDetails={() => onSelectSlot("species")}
+          onUnequip={species ? () => onUnequipSlot("species") : undefined}
           isSelected={selectedSlot === "species"}
         />
         <GridEquipmentSlot
@@ -69,6 +72,7 @@ export function EquipmentGridPanel({
           equipped={background ? { name: background.name } : null}
           onClickEquip={() => onSelectSlot("background")}
           onClickDetails={() => onSelectSlot("background")}
+          onUnequip={background ? () => onUnequipSlot("background") : undefined}
           isSelected={selectedSlot === "background"}
         />
         <GridEquipmentSlot
@@ -87,6 +91,7 @@ export function EquipmentGridPanel({
           equipped={trinket1 ? { name: trinket1.name } : null}
           onClickEquip={() => onSelectSlot("trinket1")}
           onClickDetails={() => onSelectSlot("trinket1")}
+          onUnequip={trinket1 ? () => onUnequipSlot("trinket1") : undefined}
           isSelected={selectedSlot === "trinket1"}
         />
         <GridEquipmentSlot
@@ -95,6 +100,7 @@ export function EquipmentGridPanel({
           equipped={trinket2 ? { name: trinket2.name } : null}
           onClickEquip={() => onSelectSlot("trinket2")}
           onClickDetails={() => onSelectSlot("trinket2")}
+          onUnequip={trinket2 ? () => onUnequipSlot("trinket2") : undefined}
           isSelected={selectedSlot === "trinket2"}
         />
         <GridEquipmentSlot
@@ -117,6 +123,7 @@ export function EquipmentGridPanel({
           }
           onClickEquip={() => onSelectSlot("armor")}
           onClickDetails={() => onSelectSlot("armor")}
+          onUnequip={armor ? () => onUnequipSlot("armor") : undefined}
           isSelected={selectedSlot === "armor"}
         />
 
@@ -139,6 +146,7 @@ export function EquipmentGridPanel({
           }
           onClickEquip={() => handleWeaponSlot("mainHand")}
           onClickDetails={() => onSelectSlot("mainHand")}
+          onUnequip={mainHand ? () => onUnequipSlot("mainHand") : undefined}
           isSelected={selectedSlot === "mainHand"}
         />
 
@@ -181,6 +189,7 @@ export function EquipmentGridPanel({
             }
             onClickEquip={() => handleWeaponSlot("offHand")}
             onClickDetails={() => onSelectSlot("offHand")}
+            onUnequip={offHand ? () => onUnequipSlot("offHand") : undefined}
             isSelected={selectedSlot === "offHand"}
           />
         )}

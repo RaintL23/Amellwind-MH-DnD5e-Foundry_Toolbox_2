@@ -222,7 +222,7 @@ export function AbilityScoresSection({
           onChange={(e) =>
             handleMethodChange(e.target.value as GenerationMethod)
           }
-          className="mb-2 h-7 w-full text-[10px]"
+          className="mb-2 h-7 w-full text-[12px]"
         >
           <option value="manual">Manual</option>
           <option value="standard">
@@ -404,11 +404,7 @@ export function AbilityScoresSection({
 
             if (isPoolMethod) {
               return (
-                <AbilityStatCard
-                  key={key}
-                  label={label}
-                  modifier={modifier}
-                >
+                <AbilityStatCard key={key} label={label} modifier={modifier}>
                   {poolSelect}
                 </AbilityStatCard>
               );
