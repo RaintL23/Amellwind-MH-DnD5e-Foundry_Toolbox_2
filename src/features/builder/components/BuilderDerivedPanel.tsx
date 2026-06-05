@@ -21,7 +21,7 @@ export function BuilderDerivedPanel() {
     <BuilderPanel
       title={
         <>
-          <Shield className="h-3.5 w-3.5" aria-hidden /> Others Stats
+          <Shield className="h-3.5 w-3.5" aria-hidden /> Other Stats
         </>
       }
     >

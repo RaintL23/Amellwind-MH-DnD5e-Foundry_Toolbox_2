@@ -4,7 +4,6 @@ import { PaperDoll } from "./PaperDoll";
 import { BuilderDerivedPanel } from "./BuilderDerivedPanel";
 import { BuilderDamagePanel } from "./BuilderDamagePanel";
 import { BuilderSimulatorPanel } from "./BuilderSimulatorPanel";
-import { BuilderRaritySummaryPanel } from "./BuilderRaritySummaryPanel";
 import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 
 export function BuilderPage() {
@@ -39,7 +38,6 @@ export function BuilderPage() {
             {/* Columna derecha: simulador + notas + rareza */}
             <div className="flex flex-col gap-2.5">
               <BuilderSimulatorPanel />
-              <BuilderRaritySummaryPanel />
             </div>
           </div>
         </div>
