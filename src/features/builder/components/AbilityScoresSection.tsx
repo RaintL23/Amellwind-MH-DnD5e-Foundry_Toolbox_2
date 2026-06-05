@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, type ReactNode } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { AbilityKey } from "@/shared/types";
@@ -32,6 +32,80 @@ type GenerationMethod = "manual" | "standard" | "pointbuy" | "dice";
 
 function modifierFromScore(score: number): string {
   return formatModifier(Math.floor((score - 10) / 2));
+}
+
+const ABILITY_CARD_CLASS =
+  "flex flex-col items-center rounded-md border border-border/60 bg-muted/30 px-2 py-1.5 transition-colors";
+
+function AbilityStatCard({
+  label,
+  modifier,
+  children,
+  onClick,
+}: {
+  label: string;
+  modifier: string;
+  children: ReactNode;
+  onClick?: () => void;
+}) {
+  const labelEl = (
+    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+      {label}
+    </span>
+  );
+  const modifierEl = (
+    <span className="text-[11px] text-muted-foreground">{modifier}</span>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className={`${ABILITY_CARD_CLASS} hover:border-border`}
+      >
+        {labelEl}
+        {children}
+        {modifierEl}
+      </button>
+    );
+  }
+
+  return (
+    <div className={ABILITY_CARD_CLASS}>
+      {labelEl}
+      {children}
+      {modifierEl}
+    </div>
+  );
+}
+
+function AbilityScoreValue({ value }: { value: number | undefined }) {
+  return (
+    <span className="text-xl font-medium leading-tight text-foreground">
+      {value ?? "—"}
+    </span>
+  );
+}
+
+function AbilityStatRow({
+  label,
+  modifier,
+  children,
+}: {
+  label: string;
+  modifier: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex items-center gap-2">
+      <span className="text-xs font-bold text-foreground w-8">{label}</span>
+      {children}
+      <span className="text-xs font-medium text-primary min-w-[28px]">
+        {modifier}
+      </span>
+    </div>
+  );
 }
 
 export function AbilityScoresSection({
@@ -235,130 +309,147 @@ export function AbilityScoresSection({
         }
       >
         {ABILITIES.map(({ key, label }) => {
-          const score =
-            method === "standard" || method === "dice"
-              ? assignments[key]
-              : character.abilities[key];
-          const modifier = score !== undefined ? modifierFromScore(score) : "—";
+          const isPoolMethod = method === "standard" || method === "dice";
+          const poolScore = assignments[key];
+          const characterScore = character.abilities[key];
+          const displayScore = isPoolMethod ? poolScore : characterScore;
+          const modifier =
+            displayScore !== undefined
+              ? isPoolMethod
+                ? modifierFromScore(displayScore)
+                : formatModifier(character.getModifier(key))
+              : "—";
 
-          if (compact && method === "manual") {
-            return (
-              <button
-                key={key}
+          const poolSelect = (
+            <Select
+              value={assignments[key] ?? ""}
+              onChange={(e) => handlePoolAssign(key, e.target.value)}
+              className={
+                compact
+                  ? "h-7 w-full max-w-[4.5rem] px-1 text-sm text-center"
+                  : "h-8 w-14 px-1 text-sm text-center"
+              }
+              disabled={
+                method === "dice" &&
+                pool.length === 0 &&
+                assignments[key] === undefined
+              }
+            >
+              <option value="">—</option>
+              {poolOptionsForAbility(key, assignments, pool).map((v) => (
+                <option key={v} value={v}>
+                  {v}
+                </option>
+              ))}
+            </Select>
+          );
+
+          const pointBuyControls = (
+            <div className="flex items-center gap-0.5">
+              <Button
                 type="button"
-                onClick={() => {
-                  const v = prompt(
-                    `Valor de ${label} (1-30):`,
-                    String(character.abilities[key]),
-                  );
-                  if (v && !Number.isNaN(+v) && +v >= 1 && +v <= 30) {
-                    setAbilityScore(key, +v);
-                  }
-                }}
-                className="flex flex-col items-center rounded-md border border-border/60 bg-muted/30 px-2 py-1.5 transition-colors hover:border-border"
+                variant="outline"
+                size="icon"
+                className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"}`}
+                disabled={!canLowerPointBuy(character.abilities, key)}
+                onClick={() => adjustPointBuy(key, -1)}
+                aria-label={`Lower ${label}`}
               >
-                <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                  {label}
-                </span>
-                <span className="text-xl font-medium leading-tight text-foreground">
-                  {character.abilities[key]}
-                </span>
-                <span className="text-[11px] text-muted-foreground">
-                  {formatModifier(character.getModifier(key))}
-                </span>
-              </button>
+                −
+              </Button>
+              <span
+                className={
+                  compact
+                    ? "w-6 text-center text-xl font-medium text-foreground"
+                    : "w-8 text-center text-sm font-semibold text-foreground"
+                }
+              >
+                {characterScore}
+              </span>
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"}`}
+                disabled={!canRaisePointBuy(character.abilities, key)}
+                onClick={() => adjustPointBuy(key, 1)}
+                aria-label={`Raise ${label}`}
+              >
+                +
+              </Button>
+            </div>
+          );
+
+          if (compact) {
+            if (method === "manual") {
+              return (
+                <AbilityStatCard
+                  key={key}
+                  label={label}
+                  modifier={modifier}
+                  onClick={() => {
+                    const v = prompt(
+                      `Valor de ${label} (1-30):`,
+                      String(characterScore),
+                    );
+                    if (v && !Number.isNaN(+v) && +v >= 1 && +v <= 30) {
+                      setAbilityScore(key, +v);
+                    }
+                  }}
+                >
+                  <AbilityScoreValue value={characterScore} />
+                </AbilityStatCard>
+              );
+            }
+
+            if (isPoolMethod) {
+              return (
+                <AbilityStatCard
+                  key={key}
+                  label={label}
+                  modifier={modifier}
+                >
+                  {poolSelect}
+                </AbilityStatCard>
+              );
+            }
+
+            return (
+              <AbilityStatCard key={key} label={label} modifier={modifier}>
+                {pointBuyControls}
+              </AbilityStatCard>
             );
           }
 
-          if (method === "standard" || method === "dice") {
-            const options = poolOptionsForAbility(key, assignments, pool);
+          if (isPoolMethod) {
             return (
-              <div key={key} className="flex items-center gap-2">
-                <span className="text-xs font-bold text-foreground w-8">
-                  {label}
-                </span>
-                <Select
-                  value={assignments[key] ?? ""}
-                  onChange={(e) => handlePoolAssign(key, e.target.value)}
-                  className="h-8 w-14 px-1 text-sm text-center"
-                  disabled={
-                    method === "dice" &&
-                    pool.length === 0 &&
-                    assignments[key] === undefined
-                  }
-                >
-                  <option value="">—</option>
-                  {options.map((v) => (
-                    <option key={v} value={v}>
-                      {v}
-                    </option>
-                  ))}
-                </Select>
-                <span className="text-xs font-medium text-primary min-w-[28px]">
-                  {modifier}
-                </span>
-              </div>
+              <AbilityStatRow key={key} label={label} modifier={modifier}>
+                {poolSelect}
+              </AbilityStatRow>
             );
           }
 
           if (method === "pointbuy") {
-            const value = character.abilities[key];
             return (
-              <div key={key} className="flex items-center gap-1">
-                <span className="text-xs font-bold text-foreground w-8">
-                  {label}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="h-7 w-7 text-xs shrink-0"
-                  disabled={!canLowerPointBuy(character.abilities, key)}
-                  onClick={() => adjustPointBuy(key, -1)}
-                  aria-label={`Lower ${label}`}
-                >
-                  −
-                </Button>
-                <span className="w-8 text-center text-sm font-semibold text-foreground">
-                  {value}
-                </span>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="icon"
-                  className="h-7 w-7 text-xs shrink-0"
-                  disabled={!canRaisePointBuy(character.abilities, key)}
-                  onClick={() => adjustPointBuy(key, 1)}
-                  aria-label={`Raise ${label}`}
-                >
-                  +
-                </Button>
-                <span className="text-xs font-medium text-primary min-w-[28px]">
-                  {formatModifier(character.getModifier(key))}
-                </span>
-              </div>
+              <AbilityStatRow key={key} label={label} modifier={modifier}>
+                {pointBuyControls}
+              </AbilityStatRow>
             );
           }
 
           return (
-            <div key={key} className="flex items-center gap-2">
-              <span className="text-xs font-bold text-foreground w-8">
-                {label}
-              </span>
+            <AbilityStatRow key={key} label={label} modifier={modifier}>
               <input
                 type="number"
                 min={1}
                 max={30}
-                value={character.abilities[key]}
+                value={characterScore}
                 onChange={(e) =>
-                  setAbilityScore(key, parseInt(e.target.value) || 10)
+                  setAbilityScore(key, parseInt(e.target.value, 10) || 10)
                 }
                 className="w-14 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground text-center focus:outline-none focus:ring-2 focus:ring-ring"
               />
-              <span className="text-xs font-medium text-primary min-w-[28px]">
-                {formatModifier(character.getModifier(key))}
-              </span>
-            </div>
+            </AbilityStatRow>
           );
         })}
       </div>
