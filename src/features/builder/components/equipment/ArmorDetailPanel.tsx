@@ -1,5 +1,5 @@
 import { EquippedArmor } from "@/shared/types";
-import { RarityButtonGroup } from "../RarityButtonGroup";
+import { RarityButtonGroup } from "../shared/RarityButtonGroup";
 
 interface ArmorDetailPanelProps {
   armor: EquippedArmor;

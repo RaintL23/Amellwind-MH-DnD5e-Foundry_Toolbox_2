@@ -1,6 +1,6 @@
 import { Book, GraduationCap, ScrollText, Users } from "lucide-react";
-import { GridElementSlot } from "./GridElementSlot";
-import type { PaperDollSelection } from "../hooks/usePaperDollSelection";
+import { GridElementSlot } from "../shared/GridElementSlot";
+import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 
 interface CharacterStuffGridPanelProps {
   species: { name: string } | null;

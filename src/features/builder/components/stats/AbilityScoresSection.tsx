@@ -1,6 +1,6 @@
 import { useCallback, useState, type ReactNode } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { AbilityKey } from "@/shared/types";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -17,7 +17,7 @@ import {
   poolOptionsForAbility,
   assignFromPool,
   assignmentsToAbilityScores,
-} from "../utils/ability-scores";
+} from "../../utils/ability-scores";
 
 const ABILITIES: { key: AbilityKey; label: string }[] = [
   { key: "str", label: "STR" },

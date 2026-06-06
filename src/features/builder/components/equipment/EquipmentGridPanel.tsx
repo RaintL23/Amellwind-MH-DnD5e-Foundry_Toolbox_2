@@ -3,11 +3,11 @@ import { cn } from "@/shared/utils/cn";
 import {
   formatArmorSlotDetail,
   isClothingArmor,
-} from "../data/armor.placeholder";
-import { GridElementSlot } from "./GridElementSlot";
+} from "../../data/armor.placeholder";
+import { GridElementSlot } from "../shared/GridElementSlot";
 import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
 import type { OffHandBlockReason } from "@/features/weapons/utils/weapon-hands.utils";
-import type { PaperDollSelection } from "../hooks/usePaperDollSelection";
+import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 
 interface EquipmentGridPanelProps {
   mainHand: EquippedWeapon | null;

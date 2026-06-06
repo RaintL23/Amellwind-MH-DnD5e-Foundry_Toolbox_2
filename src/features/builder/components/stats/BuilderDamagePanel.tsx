@@ -5,8 +5,8 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { NumberStepper } from "./NumberStepper";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { NumberStepper } from "../shared/NumberStepper";
 
 export function BuilderDamagePanel() {
   const {

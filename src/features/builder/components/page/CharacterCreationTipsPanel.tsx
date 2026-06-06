@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ChevronDown, Lightbulb, ExternalLink } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { getLevelBracket } from "@/shared/utils/guide-text.utils";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
   BUILDER_WORKFLOW_STEPS,
   STARTING_ARMOR_TABLE,

@@ -1,6 +1,6 @@
 import { cn } from "@/shared/utils/cn";
 import { EquippedWeapon } from "@/shared/types";
-import { RarityButtonGroup } from "../RarityButtonGroup";
+import { RarityButtonGroup } from "../shared/RarityButtonGroup";
 
 interface WeaponDetailPanelProps {
   equipped: EquippedWeapon;

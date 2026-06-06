@@ -1,8 +1,8 @@
 import { User } from "lucide-react";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { AbilityScoresSection } from "./AbilityScoresSection";
-import { BuilderPanel } from "./BuilderPanel";
-import { NumberStepper } from "./NumberStepper";
+import { BuilderPanel } from "../shared/BuilderPanel";
+import { NumberStepper } from "../shared/NumberStepper";
 
 export function StatsPanel() {
   const { character, setLevel } = useCharacterBuilder();

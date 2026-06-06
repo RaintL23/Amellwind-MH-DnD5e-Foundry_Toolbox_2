@@ -1,8 +1,8 @@
-import { CharacterBuilderProvider } from "../context/CharacterBuilderContext";
-import { StatsPanel } from "./StatsPanel";
-import { PaperDoll } from "./PaperDoll";
-import { BuilderDerivedPanel } from "./BuilderDerivedPanel";
-import { BuilderDamagePanel } from "./BuilderDamagePanel";
+import { CharacterBuilderProvider } from "../../context/CharacterBuilderContext";
+import { StatsPanel } from "../stats/StatsPanel";
+import { PaperDoll } from "../equipment/PaperDoll";
+import { BuilderDerivedPanel } from "../stats/BuilderDerivedPanel";
+import { BuilderDamagePanel } from "../stats/BuilderDamagePanel";
 import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 
 export function BuilderPage() {

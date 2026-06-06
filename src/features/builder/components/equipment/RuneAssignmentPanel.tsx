@@ -2,14 +2,14 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { X, Gem, AlertTriangle } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useRuneBuild } from "@/features/runes/context/RuneBuildContext";
 import { EquipmentSlotType, Rune } from "@/shared/types";
 import { RuleViolation } from "@/features/runes/utils/build.validation";
 import {
   useEquippedSlot,
   collectAssignedRuneKeys,
-} from "../hooks/useEquippedSlot";
+} from "../../hooks/useEquippedSlot";
 
 interface RuneAssignmentPanelProps {
   slot: EquipmentSlotType;

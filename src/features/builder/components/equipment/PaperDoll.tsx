@@ -1,16 +1,16 @@
 import { Sword, Users } from "lucide-react";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
   usePaperDollSelection,
   type PaperDollSelection,
-} from "../hooks/usePaperDollSelection";
+} from "../../hooks/usePaperDollSelection";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
-import { WeaponDetailPanel } from "./paper-doll/WeaponDetailPanel";
-import { ArmorDetailPanel } from "./paper-doll/ArmorDetailPanel";
+import { WeaponDetailPanel } from "./WeaponDetailPanel";
+import { ArmorDetailPanel } from "./ArmorDetailPanel";
 import { CharacterStuffGridPanel } from "./CharacterStuffGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { BuilderItemLibraryPanel } from "./BuilderItemLibraryPanel";
-import { BuilderPanel } from "./BuilderPanel";
+import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function PaperDoll() {
   const {

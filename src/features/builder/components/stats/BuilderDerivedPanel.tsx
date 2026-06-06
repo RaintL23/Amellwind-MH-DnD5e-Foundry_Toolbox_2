@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { Shield } from "lucide-react";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { BuilderPanel } from "./BuilderPanel";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function BuilderDerivedPanel() {
   const { character, totalAC, combat } = useCharacterBuilder();

@@ -10,15 +10,15 @@ import {
   Users,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
+import { BASE_ARMORS, CLOTHING_ARMOR } from "../../data/armor.placeholder";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { getAllSpecies } from "@/features/species/services/species.service";
 import { getAllBackgrounds } from "@/features/backgrounds/services/background.service";
-import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { useBuilderInventory } from "../context/BuilderInventoryContext";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import { ArmorItem, Weapon } from "@/shared/types";
-import type { PaperDollSelection } from "../hooks/usePaperDollSelection";
-import { BuilderPanel } from "./BuilderPanel";
+import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import { BuilderPanel } from "../shared/BuilderPanel";
 
 const RARITY_BADGE: Record<string, string> = {
   Uncommon:

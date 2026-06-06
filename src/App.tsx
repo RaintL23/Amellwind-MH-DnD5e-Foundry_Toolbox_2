@@ -70,7 +70,7 @@ const EnvironmentList = lazy(() =>
   })),
 );
 const BuilderPage = lazy(() =>
-  import("@/features/builder/components/BuilderPage").then((m) => ({
+  import("@/features/builder/components/page/BuilderPage").then((m) => ({
     default: m.BuilderPage,
   })),
 );
