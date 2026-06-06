@@ -90,6 +90,13 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/bestiary", label: "Bestiary", icon: Swords },
     ],
   },
+  {
+    section: "DnD 5e",
+    label: "Character Tools",
+    items: [
+      { to: "/xanathar-backstory", label: "Xanathar Backstory", icon: BookOpen },
+    ],
+  },
 ];
 
 interface SidebarProps {

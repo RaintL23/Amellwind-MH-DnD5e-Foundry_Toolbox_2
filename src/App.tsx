@@ -139,6 +139,11 @@ const BestiaryDetailPage = lazy(() =>
     default: m.BestiaryDetailPage,
   })),
 );
+const XanatharBackstoryPage = lazy(() =>
+  import("@/features/xanathar-backstory/components/XanatharBackstoryPage").then((m) => ({
+    default: m.XanatharBackstoryPage,
+  })),
+);
 
 function PageFallback() {
   return <LoadingScreen message="Cargando…" />;
@@ -379,6 +384,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <ClassDetailPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="xanathar-backstory"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <XanatharBackstoryPage />
                 </Suspense>
               }
             />
