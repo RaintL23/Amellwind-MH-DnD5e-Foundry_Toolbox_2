@@ -3,7 +3,6 @@ import { NavLink, useLocation } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import {
   Swords,
-  Shield,
   Gem,
   ChefHat,
   ChevronDown,
@@ -336,7 +335,11 @@ export function Sidebar({
           collapsed ? "justify-center px-2 py-5" : "gap-2 px-4 py-5",
         )}
       >
-        <Shield className="h-7 w-7 text-primary shrink-0" />
+        <img
+          src="/icon/icon_propose_no_bg.png"
+          alt=""
+          className="h-7 w-7 shrink-0 object-contain"
+        />
         {!collapsed && (
           <div className="flex flex-col leading-tight min-w-0">
             <span className="text-sm font-bold text-foreground truncate">
