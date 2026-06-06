@@ -1,13 +1,13 @@
-import { Sword } from "lucide-react";
+import { Sword, Users } from "lucide-react";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import {
   usePaperDollSelection,
   type PaperDollSelection,
 } from "../hooks/usePaperDollSelection";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
-import { IdentityDetailBar } from "./paper-doll/IdentityDetailBar";
 import { WeaponDetailPanel } from "./paper-doll/WeaponDetailPanel";
 import { ArmorDetailPanel } from "./paper-doll/ArmorDetailPanel";
+import { CharacterStuffGridPanel } from "./CharacterStuffGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { BuilderItemLibraryPanel } from "./BuilderItemLibraryPanel";
 import { BuilderPanel } from "./BuilderPanel";
@@ -105,6 +105,28 @@ export function PaperDoll() {
       <BuilderPanel
         title={
           <>
+            <Users className="h-3.5 w-3.5" aria-hidden />
+            Character Stuff
+          </>
+        }
+        action={
+          <span className="text-[11px] text-muted-foreground">
+            click to change
+          </span>
+        }
+      >
+        <CharacterStuffGridPanel
+          species={species}
+          background={background}
+          selectedSlot={selectedSlot}
+          onSelectSlot={selectSlot}
+          onUnequipSlot={handleUnequipSlot}
+        />
+      </BuilderPanel>
+
+      <BuilderPanel
+        title={
+          <>
             <Sword className="h-3.5 w-3.5" aria-hidden />
             Equipment
           </>
@@ -121,8 +143,6 @@ export function PaperDoll() {
           armor={armor}
           trinket1={trinket1}
           trinket2={trinket2}
-          species={species}
-          background={background}
           hasIntegratedShield={hasIntegratedShield}
           integratedShieldAcBonus={integratedShieldAcBonus}
           isOffHandBlocked={isOffHandBlocked}
@@ -132,15 +152,6 @@ export function PaperDoll() {
           onUnequipSlot={handleUnequipSlot}
         />
       </BuilderPanel>
-
-      {(selectedSlot === "species" || selectedSlot === "background") && (
-        <IdentityDetailBar
-          slot={selectedSlot}
-          species={species}
-          background={background}
-          onRemove={() => handleUnequipSlot(selectedSlot)}
-        />
-      )}
 
       {selectedWeapon &&
         (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
@@ -161,9 +172,7 @@ export function PaperDoll() {
         <RuneAssignmentPanel slot={selectedSlot} onClose={clearSelection} />
       )}
 
-      {showLibrary && (
-        <BuilderItemLibraryPanel selectedSlot={selectedSlot} />
-      )}
+      {showLibrary && <BuilderItemLibraryPanel selectedSlot={selectedSlot} />}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import { cn } from "@/shared/utils/cn";
 
 type SlotAccent = "default" | "weapon" | "armor";
 
-interface GridEquipmentSlotProps {
+interface GridElementSlotProps {
   label: string;
   icon: ReactNode;
   equipped: { name: string; detail?: string } | null;
@@ -24,7 +24,7 @@ const ACCENT_CLASS: Record<SlotAccent, string> = {
   armor: "border-sky-400/50 hover:border-sky-400/80",
 };
 
-export function GridEquipmentSlot({
+export function GridElementSlot({
   label,
   icon,
   equipped,
@@ -36,7 +36,7 @@ export function GridEquipmentSlot({
   disabledHint,
   accent = "default",
   emptyTitle,
-}: Readonly<GridEquipmentSlotProps>) {
+}: Readonly<GridElementSlotProps>) {
   if (disabled) {
     return (
       <div

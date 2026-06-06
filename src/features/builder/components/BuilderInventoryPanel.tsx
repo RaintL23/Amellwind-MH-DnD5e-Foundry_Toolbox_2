@@ -59,7 +59,9 @@ export function BuilderInventoryPanel() {
       {cartItems.length === 0 ? (
         <div className="flex flex-col items-center justify-center gap-2 py-8 text-muted-foreground border border-dashed border-border rounded-lg">
           <ShoppingBag className="h-8 w-8 opacity-30" />
-          <p className="text-xs text-center px-2">Vacío — añade objetos en Shops</p>
+          <p className="text-xs text-center px-2">
+            Vacío — añade objetos en Shops
+          </p>
         </div>
       ) : (
         <ul className="space-y-2 max-h-[420px] overflow-y-auto pr-0.5">
@@ -90,7 +92,9 @@ export function BuilderInventoryPanel() {
                         {KIND_LABEL[kind]}
                       </span>
                       {entry.cost && entry.cost !== "—" && (
-                        <span className="text-[10px] text-primary">{entry.cost}</span>
+                        <span className="text-[10px] text-primary">
+                          {entry.cost}
+                        </span>
                       )}
                       {entry.quantity > 1 && (
                         <span className="text-[10px] text-muted-foreground">
@@ -104,14 +108,14 @@ export function BuilderInventoryPanel() {
                       </p>
                     )}
                   </div>
-                  <button
+                  {/* <button
                     type="button"
                     onClick={() => removeFromCart(entry.name)}
                     className="shrink-0 text-[10px] text-muted-foreground hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                     title="Quitar de la lista"
                   >
                     Quitar
-                  </button>
+                  </button> */}
                 </div>
               </li>
             );
