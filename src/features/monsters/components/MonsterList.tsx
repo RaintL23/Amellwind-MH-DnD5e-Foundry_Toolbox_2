@@ -5,7 +5,7 @@ import { getAllMonsters } from "../services/monster.service";
 import { getTier } from "@/shared/utils/cr.utils";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { Badge } from "@/components/ui/badge";
 import { Pagination } from "@/components/ui/pagination";
 import { toMonsterId } from "../utils/monster-id.utils";
@@ -18,10 +18,10 @@ type SortDir = "asc" | "desc";
 
 interface Filters {
   name: string;
-  cr: string;
-  tier: string;
-  type: string;
-  environment: string;
+  cr: string[];
+  tier: string[];
+  type: string[];
+  environment: string[];
 }
 
 function SortIcon({
@@ -65,10 +65,10 @@ export function MonsterList() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<Filters>({
     name: "",
-    cr: "",
-    tier: "",
-    type: "",
-    environment: "",
+    cr: [],
+    tier: [],
+    type: [],
+    environment: [],
   });
   const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({
     key: "cr",
@@ -122,14 +122,17 @@ export function MonsterList() {
       result = result.filter((m) =>
         m.name.toLowerCase().includes(debouncedName.toLowerCase()),
       );
-    if (filters.cr) result = result.filter((m) => m.cr === filters.cr);
-    if (filters.tier)
-      result = result.filter((m) => getTier(m.cr) === Number(filters.tier));
-    if (filters.type)
-      result = result.filter((m) => m.type.type === filters.type);
-    if (filters.environment)
+    if (filters.cr.length > 0)
+      result = result.filter((m) => filters.cr.includes(m.cr));
+    if (filters.tier.length > 0)
       result = result.filter((m) =>
-        m.environment?.includes(filters.environment),
+        filters.tier.includes(String(getTier(m.cr))),
+      );
+    if (filters.type.length > 0)
+      result = result.filter((m) => filters.type.includes(m.type.type));
+    if (filters.environment.length > 0)
+      result = result.filter((m) =>
+        m.environment?.some((env) => filters.environment.includes(env)),
       );
 
     result = [...result].sort((a, b) => {
@@ -185,7 +188,7 @@ export function MonsterList() {
   return (
     <div className="flex flex-col h-full min-h-0 p-6">
       {/* Header */}
-      <div className="mb-6">
+      <div className="mb-6 shrink-0">
         <h1 className="text-2xl font-bold text-foreground">Monsters</h1>
         <p className="text-sm text-muted-foreground mt-1">
           {filtered.length} / {monsters.length} monsters
@@ -193,7 +196,7 @@ export function MonsterList() {
       </div>
 
       {/* Filters */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6 shrink-0">
         <div className="relative col-span-2 md:col-span-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
           <Input
@@ -206,88 +209,86 @@ export function MonsterList() {
           />
         </div>
 
-        <Select
-          value={filters.cr}
-          onChange={(e) => updateFilters({ ...filters, cr: e.target.value })}
-        >
-          <option value="">All CR</option>
-          {uniqueCRs.map((cr) => (
-            <option key={cr} value={cr}>
-              CR {cr}
-            </option>
-          ))}
-        </Select>
+        <MultiSelect
+          options={uniqueCRs.map((cr) => ({
+            value: cr,
+            label: `CR ${cr}`,
+          }))}
+          selected={filters.cr}
+          onChange={(cr) => updateFilters({ ...filters, cr })}
+          emptyLabel="All CR"
+          allLabel="All CR"
+          countLabel={(count) => `${count} CR`}
+        />
 
-        <Select
-          value={filters.tier}
-          onChange={(e) => updateFilters({ ...filters, tier: e.target.value })}
-        >
-          <option value="">All Tiers</option>
-          {[0, 1, 2, 3, 4].map((t) => (
-            <option key={t} value={t}>
-              Tier {t}
-            </option>
-          ))}
-        </Select>
+        <MultiSelect
+          options={[0, 1, 2, 3, 4].map((t) => ({
+            value: String(t),
+            label: `Tier ${t}`,
+          }))}
+          selected={filters.tier}
+          onChange={(tier) => updateFilters({ ...filters, tier })}
+          emptyLabel="All Tiers"
+          allLabel="All Tiers"
+          countLabel={(count) => `${count} tiers`}
+        />
 
-        <Select
-          value={filters.type}
-          onChange={(e) => updateFilters({ ...filters, type: e.target.value })}
-        >
-          <option value="">All types</option>
-          {uniqueTypes.map((type) => (
-            <option key={type} value={type} className="capitalize">
-              {type.charAt(0).toUpperCase() + type.slice(1)}
-            </option>
-          ))}
-        </Select>
+        <MultiSelect
+          options={uniqueTypes.map((type) => ({
+            value: type,
+            label: type.charAt(0).toUpperCase() + type.slice(1),
+          }))}
+          selected={filters.type}
+          onChange={(type) => updateFilters({ ...filters, type })}
+          emptyLabel="All types"
+          allLabel="All types"
+          countLabel={(count) => `${count} types`}
+        />
 
-        <Select
-          value={filters.environment}
-          onChange={(e) =>
-            updateFilters({ ...filters, environment: e.target.value })
-          }
-        >
-          <option value="">All environments</option>
-          {uniqueEnvironments.map((env) => (
-            <option key={env} value={env} className="capitalize">
-              {env.charAt(0).toUpperCase() + env.slice(1)}
-            </option>
-          ))}
-        </Select>
+        <MultiSelect
+          options={uniqueEnvironments.map((env) => ({
+            value: env,
+            label: env.charAt(0).toUpperCase() + env.slice(1),
+          }))}
+          selected={filters.environment}
+          onChange={(environment) => updateFilters({ ...filters, environment })}
+          emptyLabel="All environments"
+          allLabel="All environments"
+          countLabel={(count) => `${count} environments`}
+        />
       </div>
 
-      {/* Table */}
-      <div className="rounded-lg border border-border overflow-hidden">
-        <div className="overflow-x-auto">
+      {/* Table — altura según contenido, con tope en el espacio disponible */}
+      <div className="flex-1 min-h-0">
+        <div className="max-h-full overflow-auto rounded-lg border border-border">
           <table className="w-full text-sm">
-            <thead>
-              <tr className="bg-muted/50 border-b border-border">
-                {(
-                  [
-                    { key: "name", label: "Name" },
-                    { key: "cr", label: "CR" },
-                    { key: "tier", label: "Tier" },
-                    { key: "type", label: "Type" },
-                  ] as Array<{ key: SortKey; label: string }>
-                ).map(({ key, label }) => (
-                  <th
-                    key={key}
-                    className="px-4 py-3 text-left font-semibold text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors"
-                    onClick={() => toggleSort(key)}
-                  >
+          <thead>
+            <tr className="border-b border-border">
+              {(
+                [
+                  { key: "name", label: "Name" },
+                  { key: "cr", label: "CR" },
+                  { key: "tier", label: "Tier" },
+                  { key: "type", label: "Type" },
+                ] as Array<{ key: SortKey; label: string }>
+              ).map(({ key, label }) => (
+                <th
+                  key={key}
+                  className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors backdrop-blur-sm"
+                  onClick={() => toggleSort(key)}
+                >
                     <span className="flex items-center gap-1">
                       {label}{" "}
                       <SortIcon col={key} sortKey={sort.key} sortDir={sort.dir} />
                     </span>
                   </th>
-                ))}
-                <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
-                  Environment
-                </th>
-              </tr>
-            </thead>
-            <tbody>
+              ))}
+              <th className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground backdrop-blur-sm">
+                Environment
+              </th>
+            </tr>
+          </thead>
+          <tbody>
               {paginated.map((monster) => (
                 <tr
                   key={`${monster.source}-${monster.name}`}
@@ -337,19 +338,21 @@ export function MonsterList() {
                   </td>
                 </tr>
               )}
-            </tbody>
+          </tbody>
           </table>
         </div>
       </div>
 
-      <Pagination
-        page={page}
-        totalPages={totalPages}
-        totalItems={filtered.length}
-        pageSize={pageSize}
-        onPageChange={setPage}
-        onPageSizeChange={handlePageSizeChange}
-      />
+      <div className="shrink-0">
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          totalItems={filtered.length}
+          pageSize={pageSize}
+          onPageChange={setPage}
+          onPageSizeChange={handlePageSizeChange}
+        />
+      </div>
 
     </div>
   );
