@@ -1,10 +1,12 @@
 # ── Dependencias ─────────────────────────────────────────────
 node_modules/
+.pnpm-store/
 
 # ── Build / output ────────────────────────────────────────────
 dist/
 dist-ssr/
 build/
+stats.html
 
 # ── Vite ──────────────────────────────────────────────────────
 *.local
@@ -28,21 +30,51 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# ── Lint / tests ──────────────────────────────────────────────
+.eslintcache
+coverage/
+
 # ── Datos de backup / referencia local ───────────────────────
+# JSONs pesados de Amellwind y mirror completo de 5etools (ver README)
 backup-jsons/
 
-# ── Editores ──────────────────────────────────────────────────
+# Mirror 5etools para desarrollo offline (VITE_5ETOOLS_DATA=local).
+# Solo el subset mínimo del repo está permitido; el resto se copia localmente.
+public/5etools/**
+!public/5etools/items.json
+!public/5etools/items-base.json
+!public/5etools/magicvariants.json
+!public/5etools/monsterfeatures.json
+!public/5etools/bestiary/
+public/5etools/bestiary/**
+!public/5etools/bestiary/index.json
+!public/5etools/bestiary/bestiary-mm.json
+!public/5etools/bestiary/legendarygroups.json
+!public/5etools/bestiary/fluff-index.json
+!public/5etools/bestiary/fluff-bestiary-mm.json
+
+# ── Editores / IDE ────────────────────────────────────────────
 .vscode/*
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea/
+.cursor/
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*~
+*.swp
 
 # ── Sistema operativo ─────────────────────────────────────────
 .DS_Store
 Thumbs.db
+ehthumbs.db
 Desktop.ini
+$RECYCLE.BIN/
+
+# OneDrive / sincronización en la nube
+*.tmp
+~$*
+*.conflict*

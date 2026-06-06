@@ -18,12 +18,14 @@ La información mostrada en esta aplicación proviene de los siguientes recursos
 | Framework          | React 18 + TypeScript                |
 | Build tool         | Vite                                 |
 | Estilos            | Tailwind CSS                         |
-| Componentes UI     | shadcn/ui                            |
-| Routing            | React Router v6                      |
-| Almacenamiento     | IndexedDB (API nativa del navegador) |
+| Componentes UI     | shadcn/ui (Radix UI)                 |
+| Tablas             | TanStack Table                       |
+| Routing            | React Router v6 (lazy + Suspense)    |
+| Almacenamiento     | IndexedDB (`idb`)                    |
 | Gestor de paquetes | pnpm                                 |
+| Node.js            | 22.x (`.nvmrc`)                      |
 
-> Toda la app es una **SPA** (Single Page Application). No hay backend propio — los datos vienen de JSONs externos cacheados en IndexedDB.
+> Toda la app es una **SPA** (Single Page Application). No hay backend propio. Los datos de **Amellwind** se cachean en IndexedDB; el **compendio D&D 5e** (spells, classes, items, bestiary) se obtiene bajo demanda desde el mirror de 5etools, con opción de mirror local (`VITE_5ETOOLS_DATA=local`).
 
 ---
 
@@ -33,76 +35,104 @@ La app usa **React Router v6** con rutas declarativas montadas en `App.tsx`. El 
 
 ### Estructura de rutas
 
+Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallback `LoadingScreen`).
+
 ```text
-/                     → Redirect a /monsters
-/monsters             → Listado de Monstruos
-/runes                → Listado de Runas (materiales de monstruo)
-/weapons              → Armas de cazador (Hunter Weapons)
-/cooking              → Sistema de Cocina Artesana
-/combo                → Combo List (crafteo de objetos)
-/items                → Catálogo de ítems (GTMH)
-/shops                → Tiendas y carrito de compra
-/resources            → Recursos de entorno (plantas, minerales, etc.)
-/environments         → Biomas y tablas de encuentro/recursos
-/builder              → Character Builder (ALPHA)
-*                     → Página 404 / Not Found
+/                          → Redirect a /monsters
+
+── Amellwind Homebrew ──
+/builder                   → Character Builder (ALPHA)
+/character-guide           → Guía de creación de personajes
+/monstie-sidekick          → Reglas y creador de Monstie Sidekick
+/npc-generator             → Generador de NPCs humanoides
+/species                   → Especies y subrazas (GTMH)
+/backgrounds               → Trasfondos (GTMH)
+/feats                     → Dotes (GTMH)
+/monsters                  → Listado de monstruos MH
+/monsters/:monsterId       → Detalle de monstruo (página dedicada)
+/runes                     → Materiales de monstruo + planificador
+/weapons                   → Hunter Weapons
+/items                     → Catálogo de ítems GTMH
+/shops                     → Tiendas y carrito
+/cooking                   → Cocina artesana
+/combo                     → Combo List
+/environments              → Biomas y tablas de cacería
+/resources                 → Recursos de campo
+/downtime                  → Actividades de downtime (GTMH)
+
+── Compendio D&D 5e ──
+/spells                    → Conjuros (5etools)
+/classes                   → Listado de clases base
+/classes/:classId          → Detalle de clase (variantes por fuente)
+/dnd-items                 → Ítems mágicos y equipo (5etools)
+/bestiary                  → Bestiario oficial
+/bestiary/:creatureId      → Detalle de criatura
+
+*                          → Página 404 / Not Found
 ```
 
 ### Implementación en `App.tsx`
 
-La app envuelve las rutas con tres providers globales de estado:
+Al montar, `App.tsx` ejecuta `syncData()` y muestra un banner de sincronización vía `SyncProvider` hasta que termina. Tras un sync exitoso invalida cachés en memoria según qué store se actualizó (monstruos/runas vs. species/backgrounds/feats/monstie).
+
+Providers globales:
+
+- **`ThemeProvider`** — temas visuales (selector en el footer del Sidebar).
+- **`SyncProvider`** — estado de sincronización inicial (`syncing`).
+- **`BrowserRouter`** + rutas lazy.
+
+Providers en **`MainLayout`** (todas las rutas con layout):
 
 - **`CartProvider`** — carrito de compras (tiendas e ítems).
-- **`RuneBuildProvider`** — planificador de runas en el drawer lateral.
-- **`BuilderInventoryProvider`** — inventario de armas guardadas para el Character Builder.
+- **`BuilderInventoryProvider`** — resuelve armas/armaduras equipables desde el carrito para el Builder.
+
+Providers **por ruta** (no globales):
+
+- **`RuneBuildProvider`** — envuelve `/runes` y `/builder` (planificador de runas).
 
 ```tsx
-<BrowserRouter>
-  <CartProvider>
-    <RuneBuildProvider>
-      <BuilderInventoryProvider>
-        <Routes>
-          <Route path="/" element={<MainLayout />}>
-            <Route index element={<Navigate to="/monsters" replace />} />
-            <Route path="monsters" element={<MonsterList />} />
-            <Route path="runes" element={<RuneList />} />
-            <Route path="cooking" element={<CookingPage />} />
-            <Route path="combo" element={<ComboPage />} />
-            <Route path="items" element={<ItemList />} />
-            <Route path="shops" element={<ShopList />} />
-            <Route path="weapons" element={<WeaponList />} />
-            <Route path="resources" element={<ResourcePage />} />
-            <Route path="environments" element={<EnvironmentList />} />
-            <Route path="builder" element={<BuilderPage />} />
-            <Route path="*" element={<NotFound />} />
+<ThemeProvider>
+  <SyncProvider syncing={syncing}>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<MainLayout syncing={syncing} />}>
+          <Route index element={<Navigate to="/monsters" replace />} />
+          {/* … rutas lazy con Suspense … */}
+          <Route path="runes" element={
+            <RuneBuildProvider><RuneList /></RuneBuildProvider>
+          } />
+          <Route path="builder" element={
+            <RuneBuildProvider><BuilderPage /></RuneBuildProvider>
+          } />
+          <Route path="monsters" element={<MonstersOutlet />}>
+            <Route index element={<MonsterList />} />
+            <Route path=":monsterId" element={<MonsterDetailPage />} />
           </Route>
-        </Routes>
-      </BuilderInventoryProvider>
-    </RuneBuildProvider>
-  </CartProvider>
-</BrowserRouter>
+          {/* … */}
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  </SyncProvider>
+</ThemeProvider>
 ```
 
 ### Sidebar y navegación
 
-El componente `Sidebar` renderiza los links con `<NavLink>`. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. El link **Builder** muestra un badge con el número de armas en el inventario del builder (`BuilderInventoryContext`).
+El `Sidebar` agrupa links en secciones colapsables bajo dos bloques: **Amellwind Homebrew** y **DnD 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer.
 
-| Link en Sidebar | Ruta destino   | Feature principal        |
-| --------------- | -------------- | ------------------------ |
-| Monsters        | `/monsters`    | `monsters`               |
-| Runes           | `/runes`       | `runes`                  |
-| Weapons         | `/weapons`     | `weapons`                |
-| Cooking         | `/cooking`     | `cooking`                |
-| Combo List      | `/combo`       | `combo`                  |
-| Items           | `/items`       | `shops` (catálogo)       |
-| Shops           | `/shops`       | `shops` (tiendas)        |
-| Resources       | `/resources`   | `resources`              |
-| Environments    | `/environments`| `environments`           |
-| Builder         | `/builder`     | `builder` (ALPHA)        |
+El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInventoryContext`), no un inventario separado: el equipo equipable del builder proviene de ítems añadidos al carrito en Shops/Items.
+
+| Grupo Sidebar   | Links principales                                              |
+| --------------- | -------------------------------------------------------------- |
+| Character       | Builder, Creation Guide, Monstie Sidekick, NPC Generator, Species, Backgrounds, Feats |
+| Bestiary        | Monsters, Runes                                                |
+| Gear            | Weapons, Items                                                 |
+| Craft & Trade   | Shops, Cooking, Combo List, Environments, Resources, Downtime  |
+| Compendium      | Spells, Classes, Items (5e), Bestiary (5e)                     |
 
 ### Layout global (`MainLayout`)
 
-Además del `Sidebar` y el `<Outlet />` de rutas, el layout monta **`BuildDrawer`** de forma persistente: el planificador de runas está disponible en cualquier pantalla sin cambiar de ruta.
+`MainLayout` monta `Sidebar`, banner de sync opcional, topbar mobile y `<Outlet />`. **No** incluye `BuildDrawer` global: el planificador de runas vive solo en **`RuneList`** (`/runes`) y el builder reutiliza `RuneBuildContext` en `/builder`.
 
 ---
 
@@ -153,11 +183,29 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 | `mm_current`    | Datos actuales del Monster Manual (array de monstruos) |
 | `mm_previous`   | Snapshot anterior del Monster Manual (para rollback)   |
 | `mm_meta`       | Timestamp del último fetch, versión, etc.              |
-| `gtmh_current`  | Datos actuales de la Guía de Caza. Clave `data`: array de ítems (`item[]`). Clave `optfeatures`: array de optional features de armas. |
+| `gtmh_current`  | Datos de la Guía de Caza (ver claves abajo)            |
 | `gtmh_previous` | Snapshot anterior de la Guía de Caza                   |
 | `gtmh_meta`     | Timestamp del último fetch, versión, etc.              |
 
-Al sincronizar el JSON de GTMH, si el payload incluye `optionalfeature[]`, se guarda por separado bajo la clave `optfeatures` en `gtmh_current` (ver `sync.service.ts`).
+#### Claves dentro de `gtmh_current`
+
+| Clave            | Origen JSON GTMH     | Uso en la app                          |
+| ---------------- | -------------------- | -------------------------------------- |
+| `data`           | `item[]`             | Ítems MH, armas (`type: "HW"`), etc.   |
+| `optfeatures`    | `optionalfeature[]`  | Optional features de armas             |
+| `race`           | `race[]`             | Especies base                          |
+| `subrace`        | `subrace[]`          | Subrazas (Felyne, Dragonborn elder, …) |
+| `background`     | `background[]`       | Trasfondos de cazador                  |
+| `feat`           | `feat[]`             | Dotes                                  |
+| `variantrule`    | `variantrule[]`      | Reglas variantes (downtime, guías)     |
+| `classFeature`   | `classFeature[]`     | Features de Monstie Sidekick           |
+| `class`          | `class[]`            | Clases MH (p. ej. Hunter)              |
+
+Al sincronizar GTMH, `sync.service.ts` persiste cada array por separado. Si una clave no está cacheada (p. ej. tras upgrade), `ensureGtmhArrayStore()` puede hacer lazy-fetch del JSON remoto.
+
+#### Datos 5etools (no en IndexedDB)
+
+Spells, classes, items y bestiary oficiales se cargan bajo demanda desde `FIVETOOLS_DATA_BASE_URL` (`api.constants.ts`). En desarrollo offline, copiar JSON a `public/5etools/` y usar `VITE_5ETOOLS_DATA=local`.
 
 ### Objetivos del sistema
 
@@ -178,18 +226,28 @@ Actor (clase base)
   └── Player  (hereda de Actor)
 
 Entidades independientes (no heredan de Actor):
-  ├── Rune          — materiales de monstruo (MM)
-  ├── Weapon        — armas de cazador (GTMH, type HW)
+  ├── Rune            — materiales de monstruo (MM)
+  ├── Weapon          — armas de cazador (GTMH, type HW)
   ├── OptionalFeature — features de arma (GTMH optionalfeature[])
-  ├── MHItem        — ítems generales (GTMH)
-  ├── Resource      — recursos de campo (datos estáticos)
-  ├── Environment   — biomas y tablas de cacería (estático)
-  └── Shop          — tiendas (estático; entradas referencian ítems por nombre)
+  ├── MHItem          — ítems generales (GTMH)
+  ├── Species         — especies/subrazas (GTMH race + subrace)
+  ├── Background      — trasfondos (GTMH)
+  ├── Feat            — dotes (GTMH)
+  ├── DowntimeActivity — actividades parseadas de variantrule
+  ├── Resource        — recursos de campo (estático)
+  ├── Environment     — biomas (estático)
+  ├── Shop            — tiendas (estático)
+  ├── Spell           — conjuros (5etools, fetch bajo demanda)
+  ├── Class           — clases 5e (5etools)
+  ├── DndItem         — ítems 5e (5etools)
+  └── BestiaryCreature — criaturas 5e (5etools bestiary)
 
 Estado de UI (no persistido en IndexedDB):
-  ├── CartEntry     — carrito de compras
+  ├── CartEntry       — carrito de compras
   ├── EquippedWeapon / EquippedArmor / EquippedTrinket — Character Builder
-  └── CharacterStats / CombatCalculation — derivados del builder
+  ├── CharacterStats / CombatCalculation — derivados del builder
+  ├── RuneBuildState  — planificador de runas (RuneBuildContext)
+  └── NpcCreatorState / MonstieCreatorState — generadores interactivos
 ```
 
 ---
@@ -708,21 +766,39 @@ A diferencia de los monstruos, los personajes tienen features como items separad
 
 Estado de cobertura del manual / features de la app:
 
+### Amellwind Homebrew — implementado
+
 - [x] **Actor** — Clase base definida.
-- [x] **Monster** — Hereda de Actor, definida con campos de MH (loot, CR, grupos).
+- [x] **Monster** — Hereda de Actor; listado, stat block, detalle en `/monsters/:id`.
 - [x] **Player** — Hereda de Actor, definida con campos de Foundry VTT dnd5e.
-- [x] **Rune (materiales de monstruo)** — Entidad, mapper, tags, listado, detalle, tier por CR, reglas de crafteo (`RulesPanel`), planificador (`BuildDrawer`).
+- [x] **Rune** — Entidad, mapper, tags, listado, detalle, tier por CR, reglas (`RulesPanel`), planificador (`BuildDrawer` en `/runes`).
+- [x] **Species** — Especies y subrazas GTMH con filtros por categoría.
+- [x] **Backgrounds** — Trasfondos GTMH con detalle parseado.
+- [x] **Feats** — Dotes GTMH con filtros y detalle.
+- [x] **Character Guide** — Guía de creación (datos estáticos, pestañas).
+- [x] **Monstie Sidekick** — Reglas, progresión, creador interactivo.
+- [x] **NPC Generator** — Stat blocks humanoides con species/background/templates.
+- [x] **Downtime** — Actividades parseadas de `variantrule[]`.
 - [x] **Cooking System** — Datos estáticos, pantalla con pestañas y tiradas.
 - [x] **Combo List** — Datos estáticos, pestañas por herramienta, búsqueda global.
-- [x] **Armas (Hunter Weapons)** — Listado desde GTMH (`type: "HW"`), tabla de rarezas, optional features, diálogo de detalle.
+- [x] **Armas (Hunter Weapons)** — Listado GTMH, rarezas, optional features, diálogo de detalle.
 - [x] **Ítems y tiendas** — Catálogo GTMH + tiendas estáticas + carrito compartido.
-- [x] **Recursos de entorno** — Tablas estáticas por categoría (Bonepiles, Fish, etc.).
-- [x] **Entornos / biomas** — Datos estáticos con DCs, clima, encuentros y tablas de recursos por nivel.
-- [x] **Planificador de runas** — Drawer global con slots por rareza de equipo, validación de reglas MH.
-- [~] **Character Builder** — ALPHA: paper doll, stats, cálculo de daño, runas en equipo; armaduras placeholder.
+- [x] **Recursos de entorno** — Tablas estáticas por categoría.
+- [x] **Entornos / biomas** — Datos estáticos con DCs, clima, encuentros y tablas de recursos.
+
+### Compendio D&D 5e — implementado
+
+- [x] **Spells** — Conjuros desde 5etools con deduplicación y filtros.
+- [x] **Classes** — Listado y detalle por variante de fuente.
+- [x] **D&D Items** — Compendio de ítems con carga por fuente.
+- [x] **Bestiary** — Criaturas oficiales con carga bajo demanda por source book.
+
+### En progreso o pendiente
+
+- [~] **Character Builder** — ALPHA: stats, paper doll, runas, DPT; inventario ligado al carrito; armaduras placeholder.
 - [ ] **Armaduras (datos reales)** — Sets completos desde GTMH; hoy el builder usa `armor.placeholder.ts`.
-- [ ] **Vista de Combate / Encuentros activos** — Gestión de combate en tiempo real (distinto de tablas de entorno).
-- [ ] **Persistencia de personajes** — Guardar/cargar builds en localStorage o export JSON.
+- [ ] **Vista de Combate / Encuentros activos** — Gestión de combate en tiempo real.
+- [ ] **Persistencia de personajes** — Guardar/cargar builds (localStorage o export JSON).
 
 ---
 
@@ -749,20 +825,28 @@ Pantalla (UI)
 | `RuneMapper`              | fluff/inset de cada monstruo en `mm_current`                 | `Rune[]` (uno por material)    |
 | `WeaponMapper`            | ítem con `type: "HW"` en `gtmh_current`                      | `Weapon`                       |
 | `OptionalFeatureMapper`   | entrada de `optionalfeature[]` en GTMH                       | `OptionalFeature`              |
+| `SpeciesMapper`           | `race[]` + `subrace[]` en GTMH                               | `Species`                      |
+| `BackgroundMapper`        | `background[]` en GTMH                                       | `Background`                   |
+| `FeatMapper`              | `feat[]` en GTMH                                             | `Feat`                         |
+| `DowntimeMapper`          | entradas de `variantrule[]` (downtime)                       | `DowntimeActivity[]`           |
+| `MonstieClassFeatureMapper` | `classFeature[]` en GTMH                                   | features de Monstie Sidekick   |
+| `SpellMapper`             | JSON de conjuros 5etools                                     | `Spell`                        |
+| `ClassMapper`             | JSON de clase 5etools                                        | `Class`                        |
 | _(inline en item.service)_ | ítems GTMH sin filtrar por tipo                                | `MHItem`                       |
+| _(bestiary / dnd-items)_  | JSON bestiary/items 5etools                                  | `BestiaryCreature`, `DndItem`  |
 
-> **Nota**: `RuneMapper` itera todos los monstruos y emite un `Rune` por fila de la tabla de loot. `RuneService.getAllRunes()` cachea el resultado en memoria hasta `clearRuneCache()` (p. ej. tras `syncData()` en el bootstrap).
+> **Nota**: `RuneService.getAllRunes()` cachea el resultado en memoria hasta `clearRuneCache()` (p. ej. tras sync de MM en `App.tsx`). Los compendios 5etools cachean en memoria por servicio hasta recarga de página.
 
 Agregar un mapper nuevo cada vez que se incorpore una entidad al esquema.
 
-### Bootstrap de la aplicación (`main.tsx`)
+### Bootstrap de la aplicación (`App.tsx`)
 
-Al arrancar:
+Al arrancar (`App.tsx`, no `main.tsx`):
 
-1. Se muestra `LoadingScreen` con mensaje de sincronización.
-2. Se ejecuta `syncData()` (fetch condicional si el caché tiene más de 24 h).
-3. Se invalidan cachés en memoria de monstruos y runas (`clearMonsterCache`, `clearRuneCache`).
-4. Se monta `<App />` con el router y providers.
+1. Se monta `ThemeProvider` y se inicia `syncData()` en un `useEffect`.
+2. Mientras sync está activo, `SyncProvider` expone `syncing=true` y `MainLayout` muestra banner “Sincronizando…”.
+3. Tras sync: si MM se actualizó → `clearMonsterCache()` + `clearRuneCache()`; si GTMH → `clearSpeciesCache()`, `clearBackgroundCache()`, `clearFeatCache()`, `clearMonstieSidekickCache()`.
+4. Las rutas lazy se montan con `<Suspense fallback={<LoadingScreen />}>`.
 
 Si el sync falla, la app sigue con datos ya presentes en IndexedDB.
 
@@ -850,7 +934,7 @@ Cada columna debe ser filtrable de forma independiente:
 
 #### Detalle del monstruo
 
-Al hacer clic en cualquier fila, se abre un **dialog** que muestra el stat block completo del monstruo en el formato visual estándar de D&D 5e:
+Al hacer clic en cualquier fila, se navega a **`/monsters/:monsterId`** (`MonsterDetailPage`) con el stat block completo en formato visual D&D 5e:
 
 - Encabezado: nombre, tamaño, tipo, alineamiento.
 - AC, HP (con fórmula), velocidades.
@@ -1250,8 +1334,8 @@ Biomas del sistema de cacería con reglas de exploración, clima y tablas por ni
 
 ### Planificador de runas (`BuildDrawer`)
 
-**Ubicación**: montado en `MainLayout`, visible en todas las rutas.
-**Estado**: `RuneBuildContext` (provider en `App.tsx`).
+**Ubicación**: montado en **`RuneList`** (`/runes`), no en `MainLayout`.
+**Estado**: `RuneBuildProvider` envuelve `/runes` y `/builder`.
 
 Permite simular un set de equipo con materiales de monstruo **sin** depender del Character Builder.
 
@@ -1284,9 +1368,28 @@ Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efec
 ### Character Builder (ALPHA)
 
 **Ruta**: `/builder`
-**Estado**: `CharacterBuilderContext` (local a la página) + `BuilderInventoryProvider` (global).
+**Estado**: `CharacterBuilderProvider` (local a la página) + `RuneBuildProvider` (runas) + `BuilderInventoryProvider` (global en MainLayout).
 
-Herramienta experimental para equipar armas/armadura/runas y estimar **daño por turno (DPT)**. Marcada como work in progress en la UI.
+Herramienta experimental para equipar armas/armadura/runas y estimar **daño por turno (DPT)**.
+
+#### Layout (`BuilderPage`)
+
+Grid de tres columnas en desktop:
+
+| Columna | Componentes |
+| ------- | ----------- |
+| Izquierda | `StatsPanel`, `BuilderDerivedPanel` |
+| Centro | `PaperDoll` (equipamiento + biblioteca) |
+| Derecha | `BuilderDamagePanel` |
+
+Encima del grid: `CharacterCreationTipsPanel` con consejos de creación.
+
+#### Inventario del builder (`BuilderInventoryContext`)
+
+- **Fuente de verdad**: líneas del **`CartContext`** (ítems comprados/añadidos en Shops/Items).
+- Resuelve nombres del carrito a `Weapon[]` y `ArmorItem[]` vía `cart-equipment.resolver`.
+- Badge en Sidebar = `totalItems` del carrito (no un inventario separado de armas).
+- Armaduras no GTMH: lista inicial desde `armor.placeholder.ts`.
 
 #### Modelo `Character` (`builder/models/Character.ts`)
 
@@ -1306,21 +1409,16 @@ Slots: `mainHand`, `offHand`, `armor`, `trinket1`, `trinket2`.
 
 Reglas de manos: armas `2H` bloquean off-hand; armas `V` (versatile) permiten modo a una o dos manos.
 
-#### Inventario del builder (`BuilderInventoryContext`)
-
-- Armas añadidas desde **WeaponList** / diálogo de arma (`addWeapon`).
-- Armaduras: lista inicial desde `armor.placeholder.ts`.
-- Badge en Sidebar = cantidad de armas en inventario.
-
 #### Componentes
 
 | Componente | Rol |
 | ---------- | --- |
-| `StatsPanel` | Nivel, abilities, AC, iniciativa, ataques/turno |
-| `PaperDoll` | Silueta con slots clicables, selector de rareza de arma |
-| `ItemPickerDialog` | Elegir arma/armadura del inventario |
+| `StatsPanel` / `AbilityScoresSection` | Nivel, ability scores, AC, iniciativa, ataques/turno |
+| `BuilderDerivedPanel` | Stats derivados (proficiency, modifiers, etc.) |
+| `PaperDoll` | Silueta con slots, paneles de detalle de arma/armadura |
+| `BuilderItemLibraryPanel` | Biblioteca de equipo desde carrito |
+| `BuilderDamagePanel` | Desglose DPT, críticos, fuentes de daño |
 | `RuneAssignmentPanel` | Asignar/quitar runas por slot con validación |
-| `CombatResultsPanel` | Desglose DPT, bonus de ataque, críticos, fuentes de daño |
 
 #### Cálculo de combate (`combat.calculator.ts`)
 
@@ -1336,44 +1434,128 @@ Reutiliza `wouldViolateRule` al asignar runas en el builder.
 
 ---
 
+### Species, Backgrounds y Feats
+
+**Rutas**: `/species`, `/backgrounds`, `/feats`
+**Fuente**: claves `race`, `subrace`, `background`, `feat` en `gtmh_current` (sync o lazy-fetch).
+
+- **Species**: grid de tarjetas con filtros por categoría (ancestry, folk, elder-dragon, subrace, lineage) y modo Roots/Subraces. Detalle en dialog.
+- **Backgrounds**: listado con búsqueda y detalle parseado (traits, features, equipment).
+- **Feats**: listado filtrable con detalle y referencias cruzadas parseadas.
+
+Servicios: `species.service.ts`, `background.service.ts`, `feat.service.ts` con caché en memoria invalidada tras sync GTMH.
+
+---
+
+### Character Guide
+
+**Ruta**: `/character-guide`
+**Fuente**: `character-guide.data.ts` (estático).
+
+Pestañas: Creating a Character, Higher Level, Skills, Hunt Roles. Renderiza secciones, tablas (`GuideTable`) e insets del manual para orientar la creación de personajes MH.
+
+---
+
+### Monstie Sidekick
+
+**Ruta**: `/monstie-sidekick`
+**Fuente**: `classFeature[]` y reglas en `variantrule[]` (GTMH).
+
+Pestañas **Rules** (progresión, class features) y **Monstie Creator** (contexto interactivo para armar un sidekick). Servicio: `monstie-sidekick.service.ts`.
+
+---
+
+### NPC Generator
+
+**Ruta**: `/npc-generator`
+**Fuente**: plantillas estáticas (`npc-templates.data.ts`, `npc-power-scaling.data.ts`) + species/backgrounds GTMH.
+
+Genera stat blocks humanoides combinando especie MH, trasfondo de gremio y template de combate escalado por hit dice. Estado en `NpcCreatorContext`.
+
+---
+
+### Downtime
+
+**Ruta**: `/downtime`
+**Fuente**: entradas de downtime en `variantrule[]` (GTMH) vía `downtime.mapper.ts`.
+
+Listado lateral de actividades con contenido parseado (pasos, tablas, reglas). Servicio: `downtime.service.ts`.
+
+---
+
+### Compendio D&D 5e (Spells, Classes, Items, Bestiary)
+
+Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar.
+
+| Feature    | Ruta           | Fuente                          | Notas |
+| ---------- | -------------- | ------------------------------- | ----- |
+| Spells     | `/spells`      | `SPELLS_BASE_URL` + lookup JSON | Dedupe por nombre; filtros clase/nivel/fuente |
+| Classes    | `/classes`     | `CLASSES_BASE_URL` + index      | Detalle en `/classes/:classId`; switcher de fuente |
+| D&D Items  | `/dnd-items`   | items.json + variants           | Carga por source book; toolbar TanStack Table |
+| Bestiary   | `/bestiary`    | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto bajo demanda |
+
+Fetch centralizado en `shared/data/fivetools-fetch.ts` con soporte `VITE_5ETOOLS_DATA=local`. Nombres de libros vía `book-source.service.ts` y hook `useBookSourceNames`.
+
+---
+
 ## Estructura del proyecto
 
 Organización por **features** bajo `src/features/` y código compartido en `src/shared/`:
 
 ```text
 src/
-├── App.tsx                 # Router + providers globales
-├── main.tsx                # Bootstrap + sync
+├── App.tsx                 # Router lazy, sync al arrancar, ThemeProvider, SyncProvider
+├── main.tsx                # Punto de entrada React (sin sync)
 ├── components/
-│   ├── layout/             # MainLayout, Sidebar, LoadingScreen, NotFound
+│   ├── layout/             # MainLayout, Sidebar, LoadingScreen, NotFound, ThemeSelector
+│   ├── data-table/         # Tabla reutilizable (TanStack Table)
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
-│   ├── monsters/           # Listado, stat block, mapper, service, hooks
-│   ├── runes/              # Listado, detalle, BuildDrawer, RuneBuildContext, validación
-│   ├── weapons/            # Listado, cards, optional features, mappers
-│   ├── cooking/            # Datos estáticos + CookingPage
-│   ├── combo/              # Datos estáticos + ComboPage
-│   ├── shops/              # Items, Shops, CartContext, shops.data
-│   ├── resources/          # ResourcePage, resource.data
-│   ├── environments/       # EnvironmentList, environment.data
-│   └── builder/            # Character Builder ALPHA, combat calculator, contexts
+│   ├── builder/            # Character Builder ALPHA
+│   ├── monsters/           # Listado + MonsterDetailPage
+│   ├── runes/              # Materiales + BuildDrawer + RuneBuildContext
+│   ├── weapons/            # Hunter Weapons + optional features
+│   ├── shops/              # Items, Shops, CartContext
+│   ├── species/            # Especies GTMH
+│   ├── backgrounds/        # Trasfondos GTMH
+│   ├── feats/              # Feats GTMH
+│   ├── character-guide/    # Guía de creación (estático)
+│   ├── monstie-sidekick/   # Sidekicks Monstie
+│   ├── npc-generator/      # Generador de NPCs
+│   ├── downtime/           # Actividades de downtime
+│   ├── cooking/            # Cocina artesana
+│   ├── combo/              # Combo List
+│   ├── resources/          # Recursos de campo
+│   ├── environments/       # Biomas
+│   ├── spells/             # Conjuros 5e
+│   ├── classes/            # Clases 5e
+│   ├── dnd-items/          # Ítems 5e
+│   └── bestiary/           # Bestiario 5e
 ├── shared/
-│   ├── types/              # Entidades tipadas exportadas desde index
+│   ├── types/              # Entidades tipadas
+│   ├── context/            # ThemeContext, SyncContext
 │   ├── db/                 # IndexedDB (idb), sync, database
-│   ├── utils/              # cn, cr.utils, fivetools-parser
-│   └── constants/          # URLs API, nombres de stores
-└── hooks/                  # useTheme, etc.
+│   ├── data/               # fivetools-fetch helper
+│   ├── utils/              # cn, cr.utils, fivetools-parser, …
+│   ├── constants/          # URLs API, stores, CLASS/SPELL source maps
+│   ├── components/         # ItemRefText, DndKeywordText
+│   ├── hooks/              # useDebouncedValue, useBookSourceNames, …
+│   └── theme/              # Definición de temas
+└── index.css               # Tailwind + variables de tema
 ```
 
-Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estático), `context/`, `hooks/` según necesidad.
+Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estático), `context/`, `hooks/` según necesidad. Subcarpetas comunes en builder: `components/stats/`, `components/equipment/`, `components/paper-doll/`, `components/combat/`.
 
 ---
 
 ## Notas de Implementación
 
-- Todas las consultas de datos dinámicos se realizan contra **IndexedDB** (MM + GTMH) o archivos **estáticos** embebidos (`*.data.ts`) según la feature.
-- Las URLs externas (ver `shared/constants/api.constants.ts`) solo intervienen en `syncData()` cuando el caché supera el TTL (24 h) o para lazy-load de `optionalfeature`.
-- Stack: **React 18 + TypeScript + Vite**, **Tailwind CSS**, **shadcn/ui** (Radix), **idb** para IndexedDB, **react-router-dom v6**, **lucide-react** para iconos.
-- Features implementadas: `monsters`, `runes`, `weapons`, `cooking`, `combo`, `shops`, `resources`, `environments`, `builder` (ALPHA).
-- Utilidades compartidas clave: `fivetools-parser.ts` (marcado `{@...}`), `cr.utils.ts` (tier/CR de monstruos), `ItemRefText` para referencias cruzadas en texto.
-- El **Character Builder** y las **armaduras reales desde GTMH** siguen siendo áreas activas de desarrollo; no asumir paridad con las reglas completas del manual hasta que salgan de ALPHA.
+- **Amellwind (MM + GTMH)**: consultas contra **IndexedDB** o sync condicional (TTL 24 h). **Compendio 5e**: fetch bajo demanda desde mirror 5etools (opcional local con `VITE_5ETOOLS_DATA=local`).
+- Contenido estático embebido en `*.data.ts`: cooking, combo, resources, environments, shops, character-guide, npc-templates.
+- Stack: **React 18 + TypeScript + Vite**, **Tailwind CSS**, **shadcn/ui** (Radix), **TanStack Table**, **idb**, **react-router-dom v6** (lazy routes), **lucide-react**, **embla-carousel**.
+- **Node.js 22.x** requerido (`package.json` engines + `.nvmrc`).
+- Rutas lazy con `<Suspense>`; sync y temas gestionados en `App.tsx` / `ThemeProvider` / `SyncProvider`.
+- `RuneBuildProvider` solo en `/runes` y `/builder`; `BuildDrawer` solo en `RuneList`.
+- Inventario del builder derivado del **carrito** (`CartContext` → `BuilderInventoryContext`).
+- Utilidades clave: `fivetools-parser.ts`, `cr.utils.ts`, `ItemRefText`, `DndKeywordText`, `fivetools-fetch.ts`.
+- El **Character Builder** y las **armaduras reales desde GTMH** siguen en desarrollo activo (ALPHA).
