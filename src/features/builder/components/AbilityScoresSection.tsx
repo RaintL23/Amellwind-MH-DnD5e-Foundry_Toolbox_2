@@ -41,50 +41,19 @@ function AbilityStatCard({
   label,
   modifier,
   children,
-  onClick,
 }: {
   label: string;
   modifier: string;
   children: ReactNode;
-  onClick?: () => void;
 }) {
-  const labelEl = (
-    <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-      {label}
-    </span>
-  );
-  const modifierEl = (
-    <span className="text-[11px] text-muted-foreground">{modifier}</span>
-  );
-
-  if (onClick) {
-    return (
-      <button
-        type="button"
-        onClick={onClick}
-        className={`${ABILITY_CARD_CLASS} hover:border-border`}
-      >
-        {labelEl}
-        {children}
-        {modifierEl}
-      </button>
-    );
-  }
-
   return (
     <div className={ABILITY_CARD_CLASS}>
-      {labelEl}
+      <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
       {children}
-      {modifierEl}
+      <span className="text-[11px] text-muted-foreground">{modifier}</span>
     </div>
-  );
-}
-
-function AbilityScoreValue({ value }: { value: number | undefined }) {
-  return (
-    <span className="text-xl font-medium leading-tight text-foreground">
-      {value ?? "—"}
-    </span>
   );
 }
 
@@ -185,6 +154,12 @@ export function AbilityScoresSection({
     const next = current + delta;
     if (delta > 0 && !canRaisePointBuy(character.abilities, key)) return;
     if (delta < 0 && !canLowerPointBuy(character.abilities, key)) return;
+    setAbilityScore(key, next);
+  };
+
+  const adjustManual = (key: AbilityKey, delta: number) => {
+    const next = character.abilities[key] + delta;
+    if (next < 1 || next > 30) return;
     setAbilityScore(key, next);
   };
 
@@ -344,15 +319,20 @@ export function AbilityScoresSection({
             </Select>
           );
 
-          const pointBuyControls = (
+          const stepperControls = (
+            canDecrease: boolean,
+            canIncrease: boolean,
+            onDecrease: () => void,
+            onIncrease: () => void,
+          ) => (
             <div className="flex items-center gap-0.5">
               <Button
                 type="button"
                 variant="outline"
                 size="icon"
                 className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"}`}
-                disabled={!canLowerPointBuy(character.abilities, key)}
-                onClick={() => adjustPointBuy(key, -1)}
+                disabled={!canDecrease}
+                onClick={onDecrease}
                 aria-label={`Lower ${label}`}
               >
                 −
@@ -371,8 +351,8 @@ export function AbilityScoresSection({
                 variant="outline"
                 size="icon"
                 className={`text-xs shrink-0 ${compact ? "h-6 w-6" : "h-7 w-7"}`}
-                disabled={!canRaisePointBuy(character.abilities, key)}
-                onClick={() => adjustPointBuy(key, 1)}
+                disabled={!canIncrease}
+                onClick={onIncrease}
                 aria-label={`Raise ${label}`}
               >
                 +
@@ -380,24 +360,25 @@ export function AbilityScoresSection({
             </div>
           );
 
+          const manualControls = stepperControls(
+            characterScore > 1,
+            characterScore < 30,
+            () => adjustManual(key, -1),
+            () => adjustManual(key, 1),
+          );
+
+          const pointBuyControls = stepperControls(
+            canLowerPointBuy(character.abilities, key),
+            canRaisePointBuy(character.abilities, key),
+            () => adjustPointBuy(key, -1),
+            () => adjustPointBuy(key, 1),
+          );
+
           if (compact) {
             if (method === "manual") {
               return (
-                <AbilityStatCard
-                  key={key}
-                  label={label}
-                  modifier={modifier}
-                  onClick={() => {
-                    const v = prompt(
-                      `Valor de ${label} (1-30):`,
-                      String(characterScore),
-                    );
-                    if (v && !Number.isNaN(+v) && +v >= 1 && +v <= 30) {
-                      setAbilityScore(key, +v);
-                    }
-                  }}
-                >
-                  <AbilityScoreValue value={characterScore} />
+                <AbilityStatCard key={key} label={label} modifier={modifier}>
+                  {manualControls}
                 </AbilityStatCard>
               );
             }

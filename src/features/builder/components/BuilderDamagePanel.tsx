@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { NumberStepper } from "./NumberStepper";
 
 export function BuilderDamagePanel() {
   const {
@@ -20,6 +21,13 @@ export function BuilderDamagePanel() {
   const hasEquipment = combat.mainHand || combat.offHand;
   const critRange = combat.mainHand?.critRange ?? 20;
   const critPct = Math.round(((21 - critRange) / 20) * 100);
+  const attacksPerTurn =
+    attacksPerTurnOverride ?? character.getAttacksPerTurn();
+
+  const adjustAttacksPerTurn = (next: number) => {
+    if (next < 1 || next > 10) return;
+    setAttacksPerTurnOverride(next);
+  };
 
   return (
     <div className="rounded-lg border border-border/60 bg-card">
@@ -56,19 +64,12 @@ export function BuilderDamagePanel() {
                 <div className="flex flex-col gap-1 text-xs">
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-muted-foreground">Attacks per turn</span>
-                    <input
-                      type="number"
+                    <NumberStepper
+                      value={attacksPerTurn}
                       min={1}
                       max={10}
-                      value={attacksPerTurnOverride ?? 1}
-                      placeholder={String(character.getAttacksPerTurn())}
-                      onChange={(e) => {
-                        const v = e.target.value;
-                        setAttacksPerTurnOverride(
-                          v === "" ? null : Math.max(1, parseInt(v) || 1),
-                        );
-                      }}
-                      className="w-14 rounded border border-border bg-background px-1 py-0.5 text-left text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                      onChange={adjustAttacksPerTurn}
+                      ariaLabel="Attacks per turn"
                       title={`Default: ${character.getAttacksPerTurn()} (level). Override to customize.`}
                     />
                   </div>
