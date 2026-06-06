@@ -98,7 +98,11 @@ export function PaperDoll() {
     selectSlot(slot);
   }
 
-  const showLibrary = selectedSlot && !isSlotOccupied(selectedSlot);
+  const showLibrary =
+    selectedSlot &&
+    (!isSlotOccupied(selectedSlot) ||
+      selectedSlot === "species" ||
+      selectedSlot === "background");
 
   return (
     <div className="flex min-w-0 flex-col gap-2.5">

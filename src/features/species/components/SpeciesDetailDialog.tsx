@@ -108,14 +108,18 @@ export function SpeciesDetailDialog({
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
                 Bonificadores
               </p>
-              <p className="font-medium text-foreground">{species.abilitySummary}</p>
+              <p className="font-medium text-foreground">
+                {species.abilitySummary}
+              </p>
             </div>
             {species.darkvision !== undefined && (
               <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
                   Visión en la oscuridad
                 </p>
-                <p className="font-medium text-foreground">{species.darkvision} ft.</p>
+                <p className="font-medium text-foreground">
+                  {species.darkvision} ft.
+                </p>
               </div>
             )}
             {(species.resistances.length > 0 || species.resistanceSummary) && (
@@ -124,10 +128,7 @@ export function SpeciesDetailDialog({
                   Resistencias
                 </p>
                 <p className="font-medium text-foreground capitalize">
-                  {[
-                    ...species.resistances,
-                    species.resistanceSummary,
-                  ]
+                  {[...species.resistances, species.resistanceSummary]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
@@ -148,7 +149,7 @@ export function SpeciesDetailDialog({
           <Separator className="my-4" />
 
           <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider mb-3">
-            Rasgos de especie
+            Species Traits
           </h3>
           <div className="space-y-4">
             {species.traits.map((trait) => (

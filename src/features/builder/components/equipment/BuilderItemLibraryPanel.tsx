@@ -12,13 +12,15 @@ import {
 import { cn } from "@/shared/utils/cn";
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../../data/armor.placeholder";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
-import { getAllSpecies } from "@/features/species/services/species.service";
-import { getAllBackgrounds } from "@/features/backgrounds/services/background.service";
+import { getAllSpecies, getSpeciesById } from "@/features/species/services/species.service";
+import { getAllBackgrounds, getBackgroundById } from "@/features/backgrounds/services/background.service";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import { ArmorItem, Weapon } from "@/shared/types";
+import type { Background, Species } from "@/shared/types";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 import { BuilderPanel } from "../shared/BuilderPanel";
+import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
 
 const RARITY_BADGE: Record<string, string> = {
   Uncommon:
@@ -44,6 +46,18 @@ interface BuilderItemLibraryPanelProps {
   selectedSlot: PaperDollSelection;
 }
 
+function isLoadedSpecies(
+  data: Species | Background | null,
+): data is Species {
+  return !!data && "traits" in data;
+}
+
+function isLoadedBackground(
+  data: Species | Background | null,
+): data is Background {
+  return !!data && "proficiencies" in data;
+}
+
 export function BuilderItemLibraryPanel({
   selectedSlot,
 }: BuilderItemLibraryPanelProps) {
@@ -54,6 +68,10 @@ export function BuilderItemLibraryPanel({
   const [identityOptions, setIdentityOptions] = useState<
     Array<{ id: string; name: string }>
   >([]);
+  const [identityDetail, setIdentityDetail] = useState<
+    Species | Background | null
+  >(null);
+  const [identityDetailLoading, setIdentityDetailLoading] = useState(false);
 
   const {
     mainHand,
@@ -178,6 +196,42 @@ export function BuilderItemLibraryPanel({
         ? background
         : null;
 
+  const showIdentityDetail =
+    (isSpeciesSlot || isBackgroundSlot) && !!selectedIdentity;
+
+  useEffect(() => {
+    if (!showIdentityDetail || !selectedIdentity) {
+      setIdentityDetail(null);
+      setIdentityDetailLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIdentityDetailLoading(true);
+    setIdentityDetail(null);
+
+    const load = isSpeciesSlot
+      ? getSpeciesById(selectedIdentity.id)
+      : getBackgroundById(selectedIdentity.id);
+
+    load
+      .then((data) => {
+        if (!cancelled) setIdentityDetail(data ?? null);
+      })
+      .finally(() => {
+        if (!cancelled) setIdentityDetailLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    showIdentityDetail,
+    selectedIdentity?.id,
+    isSpeciesSlot,
+    isBackgroundSlot,
+  ]);
+
   function handleSelectWeapon(weapon: Weapon) {
     if (!isWeaponSlot || !selectedSlot) return;
     equipWeapon(selectedSlot, weapon, "Common");
@@ -203,26 +257,25 @@ export function BuilderItemLibraryPanel({
     : "Library";
 
   return (
-    <BuilderPanel
-      title={panelTitle}
-      className="flex max-h-[480px] min-h-[180px] flex-col overflow-hidden"
-    >
+    <BuilderPanel title={panelTitle}>
       {!selectedSlot ? (
         <EmptyState text="Click on an equipment slot to see the available options." />
       ) : (
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="relative mb-2 shrink-0">
-            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-            <input
-              type="text"
-              placeholder="Search..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-            />
-          </div>
+        <>
+          {!showIdentityDetail && (
+            <div className="relative mb-2">
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+              <input
+                type="text"
+                placeholder="Search..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+              />
+            </div>
+          )}
 
-          <div className="min-h-0 flex-1 space-y-1 overflow-y-auto overscroll-y-contain pr-1">
+          <div className="max-h-[min(480px,calc(100dvh-14rem))] space-y-1 overflow-y-auto overscroll-y-contain pr-1">
             {isWeaponSlot && (
               <WeaponList
                 inventory={inventoryWeaponsFiltered}
@@ -250,27 +303,38 @@ export function BuilderItemLibraryPanel({
               />
             )}
 
-            {(isSpeciesSlot || isBackgroundSlot) && (
-              <IdentityList
-                loading={identityLoading}
-                options={identityFiltered}
-                selectedId={selectedIdentity?.id ?? null}
-                icon={
-                  isSpeciesSlot ? (
-                    <Users className="h-3.5 w-3.5 text-sky-400" />
-                  ) : (
-                    <ScrollText className="h-3.5 w-3.5 text-violet-400" />
-                  )
-                }
-                onSelect={handleSelectIdentity}
-              />
-            )}
+            {(isSpeciesSlot || isBackgroundSlot) &&
+              (showIdentityDetail ? (
+                identityDetailLoading ? (
+                  <EmptyState text="Cargando…" />
+                ) : isSpeciesSlot && isLoadedSpecies(identityDetail) ? (
+                  <IdentityLibraryDetail species={identityDetail} />
+                ) : isBackgroundSlot && isLoadedBackground(identityDetail) ? (
+                  <IdentityLibraryDetail background={identityDetail} />
+                ) : (
+                  <EmptyState text="No se encontró la información." />
+                )
+              ) : (
+                <IdentityList
+                  loading={identityLoading}
+                  options={identityFiltered}
+                  selectedId={selectedIdentity?.id ?? null}
+                  icon={
+                    isSpeciesSlot ? (
+                      <Users className="h-3.5 w-3.5 text-sky-400" />
+                    ) : (
+                      <ScrollText className="h-3.5 w-3.5 text-violet-400" />
+                    )
+                  }
+                  onSelect={handleSelectIdentity}
+                />
+              ))}
 
             {selectedSlot === "class" && (
               <EmptyState text="Class selection will be available soon." />
             )}
           </div>
-        </div>
+        </>
       )}
     </BuilderPanel>
   );

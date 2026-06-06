@@ -8,7 +8,7 @@ import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 export function BuilderPage() {
   return (
     <CharacterBuilderProvider>
-      <div className="flex h-full flex-col">
+      <div className="flex h-full min-h-0 flex-col">
         <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 lg:px-6 lg:py-4">
           <h1 className="text-lg font-bold text-foreground lg:text-xl">
             Character Builder
@@ -18,12 +18,12 @@ export function BuilderPage() {
           </p>
         </div>
 
-        <div className="flex-1 overflow-auto p-3 lg:p-4">
-          <div className="mx-auto mb-3">
+        <div className="flex min-h-0 flex-1 flex-col overflow-hidden p-3 lg:p-4">
+          <div className="mx-auto mb-3 w-full max-w-[1400px] shrink-0">
             <CharacterCreationTipsPanel />
           </div>
 
-          <div className="mx-auto grid max-w-[1400px] grid-cols-1 gap-2.5 rounded-lg bg-muted/20 p-3 lg:gap-3 lg:p-4 xl:grid-cols-[260px_minmax(0,1fr)_240px]">
+          <div className="mx-auto grid min-h-0 w-full max-w-[1400px] flex-1 grid-cols-1 gap-2.5 overflow-y-auto rounded-lg bg-muted/20 p-3 lg:gap-3 lg:p-4 xl:grid-cols-[260px_minmax(0,1fr)_240px]">
             {/* Columna izquierda: stats + derivados + daño */}
             <div className="flex flex-col gap-2.5">
               <StatsPanel />
