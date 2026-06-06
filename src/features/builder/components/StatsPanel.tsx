@@ -15,20 +15,15 @@ export function StatsPanel() {
         </>
       }
     >
-      <div className="mb-3 flex gap-1.5">
-        <div className="flex-1">
-          <label className="mb-0.5 block text-[10px] text-muted-foreground">
-            Level
-          </label>
-          <NumberStepper
-            value={character.level}
-            min={1}
-            max={20}
-            onChange={setLevel}
-            ariaLabel="Level"
-            className="justify-center"
-          />
-        </div>
+      <div className="mb-3 flex items-center gap-2">
+        <span className="text-[10px] text-muted-foreground">Level</span>
+        <NumberStepper
+          value={character.level}
+          min={1}
+          max={20}
+          onChange={setLevel}
+          ariaLabel="Level"
+        />
       </div>
 
       <AbilityScoresSection compact />
