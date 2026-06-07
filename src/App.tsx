@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { NotFound } from "@/components/layout/NotFound";
-import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { SyncProvider } from "@/shared/context/SyncContext";
 import { ThemeProvider } from "@/shared/context/ThemeContext";
 import { syncData } from "@/shared/db/sync.service";
@@ -211,9 +210,7 @@ export default function App() {
               path="runes"
               element={
                 <Suspense fallback={<PageFallback />}>
-                  <RuneBuildProvider>
-                    <RuneList />
-                  </RuneBuildProvider>
+                  <RuneList />
                 </Suspense>
               }
             />
@@ -277,9 +274,7 @@ export default function App() {
               path="builder"
               element={
                 <Suspense fallback={<PageFallback />}>
-                  <RuneBuildProvider>
-                    <BuilderPage />
-                  </RuneBuildProvider>
+                  <BuilderPage />
                 </Suspense>
               }
             />
