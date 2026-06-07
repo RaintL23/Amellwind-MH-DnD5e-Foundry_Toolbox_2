@@ -149,6 +149,11 @@ const XanatharBackstoryPage = lazy(() =>
     default: m.XanatharBackstoryPage,
   })),
 );
+const DndRaceList = lazy(() =>
+  import("@/features/dnd-races/components/DndRaceList").then((m) => ({
+    default: m.DndRaceList,
+  })),
+);
 
 function PageFallback() {
   return <LoadingScreen message="Cargando…" />;
@@ -394,6 +399,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <ClassDetailPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path="dnd-races"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <DndRaceList />
                 </Suspense>
               }
             />

@@ -67,6 +67,9 @@ export const ADVENTURES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/adventures.json`;
 export const SPELL_SOURCE_LOOKUP_URL =
   "https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/generated/gendata-spell-source-lookup.json";
 
+/** 5etools races/species compendium. Local dev: copy backup-jsons/5etools/races.json → public/5etools/races.json and set VITE_5ETOOLS_DATA=local */
+export const RACES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/races.json`;
+
 /** 5etools item compendium (single-file + base + magic variants). Local dev: copy backup-jsons/5etools/*.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
 export const ITEMS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items.json`;
 export const ITEMS_BASE_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items-base.json`;

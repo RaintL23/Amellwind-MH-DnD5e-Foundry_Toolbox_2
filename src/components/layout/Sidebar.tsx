@@ -97,6 +97,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: "/spells", label: "Spells", icon: Sparkles },
       { to: "/classes", label: "Classes", icon: User },
+      { to: "/dnd-races", label: "Races", icon: Users },
       { to: "/dnd-items", label: "Items", icon: Package },
       { to: "/bestiary", label: "Bestiary", icon: Swords },
     ],
@@ -285,8 +286,10 @@ function SidebarNav({
   onMobileClose: () => void;
 }) {
   const { pathname } = useLocation();
+  const groupKey = (g: NavGroup) => `${g.section}__${g.label}`;
+
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(NAV_GROUPS.map((g) => [g.label, false])),
+    Object.fromEntries(NAV_GROUPS.map((g) => [groupKey(g), false])),
   );
 
   useEffect(() => {
@@ -294,13 +297,14 @@ function SidebarNav({
       groupHasActiveRoute(pathname, g),
     );
     if (!activeGroup) return;
+    const key = groupKey(activeGroup);
     setOpenGroups((prev) =>
-      prev[activeGroup.label] ? prev : { ...prev, [activeGroup.label]: true },
+      prev[key] ? prev : { ...prev, [key]: true },
     );
   }, [pathname]);
 
-  const toggleGroup = (label: string) => {
-    setOpenGroups((prev) => ({ ...prev, [label]: !prev[label] }));
+  const toggleGroup = (key: string) => {
+    setOpenGroups((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   return (
@@ -325,8 +329,8 @@ function SidebarNav({
               <SidebarNavGroup
                 group={group}
                 collapsed={collapsed}
-                open={openGroups[group.label] ?? false}
-                onToggle={() => toggleGroup(group.label)}
+                open={openGroups[groupKey(group)] ?? false}
+                onToggle={() => toggleGroup(groupKey(group))}
                 onMobileClose={onMobileClose}
               />
             </div>

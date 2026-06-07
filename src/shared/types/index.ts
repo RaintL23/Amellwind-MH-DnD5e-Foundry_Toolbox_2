@@ -22,3 +22,4 @@ export * from "./bestiary-creature.types";
 export * from "./statblock-content.types";
 export * from "./npc.types";
 export * from "./material-effect.types";
+export * from "./dnd-race.types";

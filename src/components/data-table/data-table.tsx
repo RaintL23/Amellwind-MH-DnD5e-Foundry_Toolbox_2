@@ -70,6 +70,11 @@ interface DataTableProps<TData, TValue> {
 
   initialSorting?: SortingState;
 
+  /** Re-applied whenever search or column filters change (keeps grouped lists stable). */
+  lockedSorting?: SortingState;
+
+  enableMultiSort?: boolean;
+
   getRowId?: (row: TData) => string;
 
 }
@@ -98,6 +103,10 @@ export function DataTable<TData, TValue>({
 
   initialSorting = [{ id: "name", desc: false }],
 
+  lockedSorting,
+
+  enableMultiSort = true,
+
   getRowId,
 
 }: DataTableProps<TData, TValue>) {
@@ -115,6 +124,11 @@ export function DataTable<TData, TValue>({
   const [searchInput, setSearchInput] = useState("");
 
   const deferredSearch = useDeferredValue(searchInput);
+
+  const [pagination, setPagination] = useState({
+    pageIndex: 0,
+    pageSize,
+  });
 
 
 
@@ -136,6 +150,8 @@ export function DataTable<TData, TValue>({
 
       globalFilter: deferredSearch,
 
+      pagination,
+
     },
 
     onSortingChange: setSorting,
@@ -143,6 +159,8 @@ export function DataTable<TData, TValue>({
     onColumnFiltersChange: setColumnFilters,
 
     onColumnVisibilityChange: setColumnVisibility,
+
+    onPaginationChange: setPagination,
 
     getCoreRowModel: getCoreRowModel(),
 
@@ -154,13 +172,7 @@ export function DataTable<TData, TValue>({
 
     globalFilterFn,
 
-    enableMultiSort: true,
-
-    initialState: {
-
-      pagination: { pageSize },
-
-    },
+    enableMultiSort,
 
   });
 
@@ -175,8 +187,11 @@ export function DataTable<TData, TValue>({
 
 
   useEffect(() => {
-    table.setPageIndex(0);
-  }, [deferredSearch]);
+    setPagination((prev) => ({ ...prev, pageIndex: 0 }));
+    if (lockedSorting) {
+      setSorting(lockedSorting);
+    }
+  }, [deferredSearch, columnFilters, lockedSorting]);
 
 
 
@@ -236,7 +251,9 @@ export function DataTable<TData, TValue>({
 
               <TableRow key={headerGroup.id} className="bg-muted/50 hover:bg-muted/50">
 
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers
+                  .filter((header) => header.column.getIsVisible())
+                  .map((header) => (
 
                   <TableHead key={header.id}>
 

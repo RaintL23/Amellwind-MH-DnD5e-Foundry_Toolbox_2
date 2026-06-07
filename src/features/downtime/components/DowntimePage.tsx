@@ -60,7 +60,7 @@ export function DowntimePage() {
       </div>
 
       <div className="flex-1 overflow-auto p-4 lg:p-6">
-        <div className="max-w-4xl mx-auto space-y-5">
+        <div className="w-auto mx-auto space-y-5">
           <div className="flex flex-wrap gap-1.5 border-b border-border pb-3">
             {activities.map((activity) => (
               <button
