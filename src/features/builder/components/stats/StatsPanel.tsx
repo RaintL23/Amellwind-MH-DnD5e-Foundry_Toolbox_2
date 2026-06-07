@@ -1,11 +1,14 @@
-import { User } from "lucide-react";
+import { Dices, RotateCcw, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { AbilityScoresSection } from "./AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { NumberStepper } from "../shared/NumberStepper";
 
+const ICON_BUTTON_CLASS = "h-6 w-6 shrink-0";
+
 export function StatsPanel() {
-  const { character, setLevel } = useCharacterBuilder();
+  const { character, setLevel, resetBuild } = useCharacterBuilder();
 
   return (
     <BuilderPanel
@@ -24,6 +27,28 @@ export function StatsPanel() {
           onChange={setLevel}
           ariaLabel="Level"
         />
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className={ICON_BUTTON_CLASS}
+          onClick={resetBuild}
+          title="Reset character"
+          aria-label="Reset character"
+        >
+          <RotateCcw className="h-3 w-3" aria-hidden />
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          size="icon"
+          className={ICON_BUTTON_CLASS}
+          disabled
+          title="Generate random (coming soon)"
+          aria-label="Generate random (coming soon)"
+        >
+          <Dices className="h-3 w-3" aria-hidden />
+        </Button>
       </div>
 
       <AbilityScoresSection compact />

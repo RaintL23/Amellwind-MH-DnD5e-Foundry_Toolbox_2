@@ -3,9 +3,14 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   useMemo,
   ReactNode,
 } from "react";
+import {
+  loadBuilderBackstoryNotes,
+  persistBuilderBackstoryNotes,
+} from "../storage/builder-backstory.storage";
 import {
   AbilityKey,
   AbilityScores,
@@ -60,8 +65,12 @@ interface CharacterBuilderContextValue {
   // Identity (species / background; class not yet implemented)
   species: CharacterSelectionRef | null;
   background: CharacterSelectionRef | null;
+  backstoryNotes: string;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
+  setBackstoryNotes: (
+    value: string | ((current: string) => string),
+  ) => void;
 
   // Weapon handling
   isTwoHanded: boolean;
@@ -118,6 +127,20 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
   const [species, setSpecies] = useState<CharacterSelectionRef | null>(null);
   const [background, setBackground] = useState<CharacterSelectionRef | null>(null);
+  const [backstoryNotes, setBackstoryNotesState] = useState(
+    () => loadBuilderBackstoryNotes(),
+  );
+
+  useEffect(() => {
+    persistBuilderBackstoryNotes(backstoryNotes);
+  }, [backstoryNotes]);
+
+  const setBackstoryNotes = useCallback(
+    (value: string | ((current: string) => string)) => {
+      setBackstoryNotesState(value);
+    },
+    [],
+  );
 
   // ─── Character mutations ─────────────────────────────────────────────────
 
@@ -319,6 +342,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setTrinket2(null);
     setSpecies(null);
     setBackground(null);
+    setBackstoryNotesState("");
     setAttacksPerTurnOverride(null);
   }, []);
 
@@ -338,8 +362,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       trinket2,
       species,
       background,
+      backstoryNotes,
       setSpecies,
       setBackground,
+      setBackstoryNotes,
       isTwoHanded,
       isOffHandBlocked,
       offHandBlockReason,
@@ -367,7 +393,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     [
       character, setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn,
-      mainHand, offHand, armor, trinket1, trinket2, species, background,
+      mainHand, offHand, armor, trinket1, trinket2, species, background, backstoryNotes, setBackstoryNotes,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
       equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket,

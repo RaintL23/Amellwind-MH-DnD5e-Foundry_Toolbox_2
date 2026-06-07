@@ -11,7 +11,11 @@ export type EquipmentSlotType =
   | "trinket1"
   | "trinket2";
 
-export type CharacterIdentitySlot = "species" | "background" | "class";
+export type CharacterIdentitySlot =
+  | "species"
+  | "background"
+  | "backstory"
+  | "class";
 
 export interface CharacterSelectionRef {
   id: string;

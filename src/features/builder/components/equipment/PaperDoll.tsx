@@ -10,6 +10,7 @@ import { ArmorDetailPanel } from "./ArmorDetailPanel";
 import { CharacterStuffGridPanel } from "./CharacterStuffGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { BuilderItemLibraryPanel } from "./BuilderItemLibraryPanel";
+import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function PaperDoll() {
@@ -21,6 +22,7 @@ export function PaperDoll() {
     trinket2,
     species,
     background,
+    backstoryNotes,
     isOffHandBlocked,
     offHandBlockReason,
     hasIntegratedShield,
@@ -48,6 +50,7 @@ export function PaperDoll() {
     selectedSlot &&
     selectedSlot !== "species" &&
     selectedSlot !== "background" &&
+    selectedSlot !== "backstory" &&
     selectedSlot !== "class" &&
     !(selectedSlot === "offHand" && hasIntegratedShield);
 
@@ -98,8 +101,10 @@ export function PaperDoll() {
     selectSlot(slot);
   }
 
+  const showBackstoryPanel = selectedSlot === "backstory";
   const showLibrary =
     selectedSlot &&
+    selectedSlot !== "backstory" &&
     (!isSlotOccupied(selectedSlot) ||
       selectedSlot === "species" ||
       selectedSlot === "background");
@@ -122,6 +127,7 @@ export function PaperDoll() {
         <CharacterStuffGridPanel
           species={species}
           background={background}
+          backstoryNotes={backstoryNotes}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}
           onUnequipSlot={handleUnequipSlot}
@@ -175,6 +181,8 @@ export function PaperDoll() {
       {showRunePanel && selectedSlot && (
         <RuneAssignmentPanel slot={selectedSlot} onClose={clearSelection} />
       )}
+
+      {showBackstoryPanel && <BackstoryNotesPanel />}
 
       {showLibrary && <BuilderItemLibraryPanel selectedSlot={selectedSlot} />}
     </div>

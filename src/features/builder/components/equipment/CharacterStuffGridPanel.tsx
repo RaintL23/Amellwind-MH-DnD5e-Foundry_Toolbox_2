@@ -5,18 +5,27 @@ import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 interface CharacterStuffGridPanelProps {
   species: { name: string } | null;
   background: { name: string } | null;
+  backstoryNotes: string;
   selectedSlot: PaperDollSelection;
   onSelectSlot: (slot: PaperDollSelection) => void;
   onUnequipSlot: (slot: PaperDollSelection) => void;
 }
 
+function backstoryPreview(notes: string): string {
+  const line = notes.trim().split(/\r?\n/)[0] ?? "";
+  if (line.length <= 24) return line;
+  return `${line.slice(0, 24)}…`;
+}
+
 export function CharacterStuffGridPanel({
   species,
   background,
+  backstoryNotes,
   selectedSlot,
   onSelectSlot,
   onUnequipSlot,
 }: CharacterStuffGridPanelProps) {
+  const hasBackstory = backstoryNotes.trim().length > 0;
   return (
     <div className="grid grid-cols-4 gap-1.5">
       <GridElementSlot
@@ -40,11 +49,18 @@ export function CharacterStuffGridPanel({
       <GridElementSlot
         label="Backstory"
         icon={<Book className="h-5 w-5 text-blue-400" />}
-        equipped={null}
-        onClickEquip={() => {}}
-        onClickDetails={() => {}}
-        isSelected={false}
-        disabled
+        equipped={
+          hasBackstory
+            ? {
+                name: "Backstory",
+                detail: backstoryPreview(backstoryNotes),
+              }
+            : null
+        }
+        onClickEquip={() => onSelectSlot("backstory")}
+        onClickDetails={() => onSelectSlot("backstory")}
+        isSelected={selectedSlot === "backstory"}
+        emptyTitle="Escribir backstory"
       />
       <GridElementSlot
         label="Class"

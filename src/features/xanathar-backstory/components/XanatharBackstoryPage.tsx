@@ -1,32 +1,12 @@
-import { useState, useCallback } from "react";
 import { BookOpen, Dices } from "lucide-react";
-import {
-  XGE_SECTIONS,
-  TABLE_BY_ID,
-  type XgeTable,
-} from "../data/xanathar-tables.data";
-import {
-  rollOnTable,
-  selectRowOnTable,
-  extractLifestyleModifier,
-  type RollResult,
-  type RollContext,
-} from "../utils/xanathar-roll.utils";
-import {
-  cascadeDependents,
-  getCascadeLockState,
-} from "../utils/xanathar-cascade.utils";
+import { XGE_SECTIONS, type XgeTable } from "../data/xanathar-tables.data";
+import { useXanatharBackstory } from "../context/XanatharBackstoryContext";
 import { CharacterSetupBar } from "./CharacterSetupBar";
 import { BackstorySection } from "./BackstorySection";
 import { BackstorySummary } from "./BackstorySummary";
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
-
-/** Build the set of currently visible tables given the character setup */
 function getVisibleTables(
-  section: ReturnType<typeof XGE_SECTIONS[number]["tables"]["filter"]>,
+  section: ReturnType<(typeof XGE_SECTIONS)[number]["tables"]["filter"]>,
   selectedRace: string,
   selectedBackground: string,
   selectedClass: string,
@@ -46,154 +26,28 @@ function getVisibleTables(
   });
 }
 
-/** Apply a table result and cascade dependent rolls in hierarchical order. */
-function applyTableResult(
-  next: Record<string, RollResult>,
-  tableId: string,
-  result: RollResult,
-  buildContext: (results: Record<string, RollResult>) => RollContext,
-): Record<string, RollResult> {
-  next[tableId] = result;
-  cascadeDependents(next, tableId, buildContext(next));
-  return next;
-}
-
-// ---------------------------------------------------------------------------
-// Component
-// ---------------------------------------------------------------------------
-
 export function XanatharBackstoryPage() {
-  // Character setup
-  const [selectedRace, setSelectedRace] = useState("Human");
-  const [selectedBackground, setSelectedBackground] = useState("");
-  const [selectedClass, setSelectedClass] = useState("");
-  const [charismaModifier, setCharismaModifier] = useState(0);
-
-  // Roll results keyed by table id
-  const [results, setResults] = useState<Record<string, RollResult>>({});
-
-  // ---------------------------------------------------------------------------
-  // Roll context
-  // ---------------------------------------------------------------------------
-
-  const buildContext = useCallback(
-    (currentResults: Record<string, RollResult>): RollContext => {
-      const lifestyleResult = currentResults["family-lifestyle"];
-      return {
-        charismaModifier,
-        lifestyleModifier: lifestyleResult
-          ? extractLifestyleModifier(lifestyleResult.result)
-          : 0,
-        isDwarfOrElf: selectedRace === "Dwarf" || selectedRace === "Elf",
-      };
-    },
-    [charismaModifier, selectedRace],
-  );
-
-  // ---------------------------------------------------------------------------
-  // Single table roll
-  // ---------------------------------------------------------------------------
-
-  const handleRoll = useCallback(
-    (tableId: string) => {
-      const table = TABLE_BY_ID[tableId];
-      if (!table) return;
-
-      setResults((prev) => {
-        const ctx = buildContext(prev);
-        const result = rollOnTable(table, ctx);
-        const next = { ...prev };
-        return applyTableResult(next, tableId, result, buildContext);
-      });
-    },
-    [buildContext],
-  );
-
-  const handleSelect = useCallback(
-    (tableId: string, rowIndex: number) => {
-      const table = TABLE_BY_ID[tableId];
-      if (!table) return;
-
-      setResults((prev) => {
-        const result = selectRowOnTable(table, rowIndex);
-        const next = { ...prev };
-        return applyTableResult(next, tableId, result, buildContext);
-      });
-    },
-    [buildContext],
-  );
-
-  // ---------------------------------------------------------------------------
-  // Roll All
-  // ---------------------------------------------------------------------------
-
-  const handleRollAll = useCallback(() => {
-    setResults((prev) => {
-      let next = { ...prev };
-
-      const rollAndCascade = (tableId: string) => {
-        const table = TABLE_BY_ID[tableId];
-        if (!table) return;
-        next[tableId] = rollOnTable(table, buildContext(next));
-        cascadeDependents(next, tableId, buildContext(next));
-      };
-
-      // Origins — dependents cascade automatically in order
-      for (const id of [
-        "parents",
-        "birthplace",
-        "siblings-count",
-        "family",
-        "family-lifestyle",
-        "childhood-memories",
-      ]) {
-        rollAndCascade(id);
-      }
-
-      const raceTableMap: Record<string, string> = {
-        "Half-Elf": "parents-half-elf",
-        "Half-Orc": "parents-half-orc",
-        Tiefling: "parents-tiefling",
-      };
-      const raceTableId = raceTableMap[selectedRace];
-      if (raceTableId) rollAndCascade(raceTableId);
-
-      if (selectedBackground) {
-        const bgTable = XGE_SECTIONS[1].tables.find(
-          (t) => t.filterType === "background" && t.filterValue === selectedBackground,
-        );
-        if (bgTable) rollAndCascade(bgTable.id);
-      }
-
-      if (selectedClass) {
-        const clsTable = XGE_SECTIONS[1].tables.find(
-          (t) => t.filterType === "class" && t.filterValue === selectedClass,
-        );
-        if (clsTable) rollAndCascade(clsTable.id);
-      }
-
-      rollAndCascade("life-events-by-age");
-
-      return next;
-    });
-  }, [buildContext, selectedBackground, selectedClass, selectedRace]);
-
-  // ---------------------------------------------------------------------------
-  // Lock logic
-  // ---------------------------------------------------------------------------
-
-  const { rollLockedIds, selectLockedIds, reasons: lockReasons } =
-    getCascadeLockState(results);
-
-  const handleReset = () => setResults({});
-
-  // ---------------------------------------------------------------------------
-  // Render
-  // ---------------------------------------------------------------------------
+  const {
+    selectedRace,
+    selectedBackground,
+    selectedClass,
+    charismaModifier,
+    results,
+    rollLockedIds,
+    selectLockedIds,
+    lockReasons,
+    setSelectedRace,
+    setSelectedBackground,
+    setSelectedClass,
+    setCharismaModifier,
+    handleRoll,
+    handleSelect,
+    handleRollAll,
+    handleReset,
+  } = useXanatharBackstory();
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      {/* Page header */}
       <div className="shrink-0 border-b border-border px-6 py-5">
         <div className="flex items-start justify-between gap-4 flex-wrap">
           <div>
@@ -221,10 +75,8 @@ export function XanatharBackstoryPage() {
         </div>
       </div>
 
-      {/* Scrollable body */}
       <div className="flex-1 overflow-auto p-4 lg:p-6">
         <div className="max-w-7xl mx-auto space-y-4">
-          {/* Setup bar */}
           <CharacterSetupBar
             selectedRace={selectedRace}
             selectedBackground={selectedBackground}
@@ -236,9 +88,7 @@ export function XanatharBackstoryPage() {
             onCharismaChange={setCharismaModifier}
           />
 
-          {/* Main two-column layout */}
           <div className="grid grid-cols-1 xl:grid-cols-[1fr_300px] gap-4 items-start">
-            {/* Left: sections */}
             <div className="flex flex-col gap-4">
               {XGE_SECTIONS.map((section, idx) => {
                 const visibleTables = getVisibleTables(
@@ -247,7 +97,6 @@ export function XanatharBackstoryPage() {
                   selectedBackground,
                   selectedClass,
                 );
-                // Also include dynamic life-event results (life-events-2, life-events-3, …)
                 const sectionResults = { ...results };
 
                 return (
@@ -268,7 +117,6 @@ export function XanatharBackstoryPage() {
               })}
             </div>
 
-            {/* Right: summary */}
             <div className="xl:sticky xl:top-4">
               <BackstorySummary results={results} onReset={handleReset} />
             </div>
