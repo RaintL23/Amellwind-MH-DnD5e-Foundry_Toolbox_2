@@ -713,7 +713,7 @@ const SUPPLEMENTAL_TABLES: XgeTable[] = [
     dice: { count: 1, sides: 100, label: "d100" },
     rows: [
       { range: [1, 5], result: "Academic" },
-      { range: [6, 10], result: "Adventurer (roll on the Class supplemental table)" },
+      { range: [6, 10], result: "Adventurer (roll on the Class supplemental table)", subTableId: "supp-class" },
       { range: [11, 11], result: "Aristocrat" },
       { range: [12, 26], result: "Artisan or guild member" },
       { range: [27, 31], result: "Criminal" },

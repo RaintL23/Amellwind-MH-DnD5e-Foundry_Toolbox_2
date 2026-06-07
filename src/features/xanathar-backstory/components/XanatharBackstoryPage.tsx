@@ -7,11 +7,15 @@ import {
 } from "../data/xanathar-tables.data";
 import {
   rollOnTable,
-  resolveLifeEventCount,
+  selectRowOnTable,
   extractLifestyleModifier,
   type RollResult,
   type RollContext,
 } from "../utils/xanathar-roll.utils";
+import {
+  cascadeDependents,
+  getCascadeLockState,
+} from "../utils/xanathar-cascade.utils";
 import { CharacterSetupBar } from "./CharacterSetupBar";
 import { BackstorySection } from "./BackstorySection";
 import { BackstorySummary } from "./BackstorySummary";
@@ -42,17 +46,17 @@ function getVisibleTables(
   });
 }
 
-/** Tables that require another roll to be done first */
-const LOCK_DEPS: Record<string, { requiredId: string; reason: string }> = {
-  "childhood-home": {
-    requiredId: "family-lifestyle",
-    reason: "Roll Family Lifestyle first to get the modifier",
-  },
-  "life-events": {
-    requiredId: "life-events-by-age",
-    reason: "Roll Life Events by Age first to know how many times to roll",
-  },
-};
+/** Apply a table result and cascade dependent rolls in hierarchical order. */
+function applyTableResult(
+  next: Record<string, RollResult>,
+  tableId: string,
+  result: RollResult,
+  buildContext: (results: Record<string, RollResult>) => RollContext,
+): Record<string, RollResult> {
+  next[tableId] = result;
+  cascadeDependents(next, tableId, buildContext(next));
+  return next;
+}
 
 // ---------------------------------------------------------------------------
 // Component
@@ -98,25 +102,22 @@ export function XanatharBackstoryPage() {
       setResults((prev) => {
         const ctx = buildContext(prev);
         const result = rollOnTable(table, ctx);
-        const next = { ...prev, [tableId]: result };
+        const next = { ...prev };
+        return applyTableResult(next, tableId, result, buildContext);
+      });
+    },
+    [buildContext],
+  );
 
-        // Special: Life Events by Age → auto-roll Life Events N times
-        if (tableId === "life-events-by-age") {
-          const lifeEventsTable = TABLE_BY_ID["life-events"];
-          if (lifeEventsTable) {
-            const count = resolveLifeEventCount(result.result);
-            // Store them as life-events (last roll wins; we keep a list-style display)
-            for (let i = 0; i < count; i++) {
-              const evResult = rollOnTable(lifeEventsTable, buildContext(next));
-              // Use indexed keys so multiple events are preserved
-              const key = i === 0 ? "life-events" : `life-events-${i + 1}`;
-              // We store each as its own result for the summary
-              next[key] = { ...evResult, tableId: key, tableName: `Life Event ${i + 1}` };
-            }
-          }
-        }
+  const handleSelect = useCallback(
+    (tableId: string, rowIndex: number) => {
+      const table = TABLE_BY_ID[tableId];
+      if (!table) return;
 
-        return next;
+      setResults((prev) => {
+        const result = selectRowOnTable(table, rowIndex);
+        const next = { ...prev };
+        return applyTableResult(next, tableId, result, buildContext);
       });
     },
     [buildContext],
@@ -129,75 +130,49 @@ export function XanatharBackstoryPage() {
   const handleRollAll = useCallback(() => {
     setResults((prev) => {
       let next = { ...prev };
-      const ctx = () => buildContext(next);
 
-      // Origins
-      const originIds = [
+      const rollAndCascade = (tableId: string) => {
+        const table = TABLE_BY_ID[tableId];
+        if (!table) return;
+        next[tableId] = rollOnTable(table, buildContext(next));
+        cascadeDependents(next, tableId, buildContext(next));
+      };
+
+      // Origins — dependents cascade automatically in order
+      for (const id of [
         "parents",
         "birthplace",
         "siblings-count",
-        "birth-order",
         "family",
-        "absent-parent",
         "family-lifestyle",
-        "childhood-home",
         "childhood-memories",
-      ];
-      for (const id of originIds) {
-        const t = TABLE_BY_ID[id];
-        if (t) next[id] = rollOnTable(t, ctx());
+      ]) {
+        rollAndCascade(id);
       }
 
-      // Race-specific parent table
       const raceTableMap: Record<string, string> = {
         "Half-Elf": "parents-half-elf",
         "Half-Orc": "parents-half-orc",
         Tiefling: "parents-tiefling",
       };
       const raceTableId = raceTableMap[selectedRace];
-      if (raceTableId) {
-        const t = TABLE_BY_ID[raceTableId];
-        if (t) next[raceTableId] = rollOnTable(t, ctx());
-      }
+      if (raceTableId) rollAndCascade(raceTableId);
 
-      // Background
       if (selectedBackground) {
         const bgTable = XGE_SECTIONS[1].tables.find(
           (t) => t.filterType === "background" && t.filterValue === selectedBackground,
         );
-        if (bgTable) next[bgTable.id] = rollOnTable(bgTable, ctx());
+        if (bgTable) rollAndCascade(bgTable.id);
       }
 
-      // Class
       if (selectedClass) {
         const clsTable = XGE_SECTIONS[1].tables.find(
           (t) => t.filterType === "class" && t.filterValue === selectedClass,
         );
-        if (clsTable) next[clsTable.id] = rollOnTable(clsTable, ctx());
+        if (clsTable) rollAndCascade(clsTable.id);
       }
 
-      // Life Events by Age → then Life Events N times
-      const ageTable = TABLE_BY_ID["life-events-by-age"];
-      if (ageTable) {
-        const ageResult = rollOnTable(ageTable, ctx());
-        next["life-events-by-age"] = ageResult;
-        const lifeEventsTable = TABLE_BY_ID["life-events"];
-        if (lifeEventsTable) {
-          const count = resolveLifeEventCount(ageResult.result);
-          for (let i = 0; i < count; i++) {
-            const evResult = rollOnTable(lifeEventsTable, ctx());
-            const key = i === 0 ? "life-events" : `life-events-${i + 1}`;
-            next[key] = { ...evResult, tableId: key, tableName: `Life Event ${i + 1}` };
-          }
-        }
-      }
-
-      // Supplemental
-      const suppIds = ["alignment", "cause-of-death", "occupation", "relationship", "status"];
-      for (const id of suppIds) {
-        const t = TABLE_BY_ID[id];
-        if (t) next[id] = rollOnTable(t, ctx());
-      }
+      rollAndCascade("life-events-by-age");
 
       return next;
     });
@@ -207,14 +182,8 @@ export function XanatharBackstoryPage() {
   // Lock logic
   // ---------------------------------------------------------------------------
 
-  const lockedTableIds = new Set<string>();
-  const lockReasons: Record<string, string> = {};
-  for (const [tableId, dep] of Object.entries(LOCK_DEPS)) {
-    if (!results[dep.requiredId]) {
-      lockedTableIds.add(tableId);
-      lockReasons[tableId] = dep.reason;
-    }
-  }
+  const { rollLockedIds, selectLockedIds, reasons: lockReasons } =
+    getCascadeLockState(results);
 
   const handleReset = () => setResults({});
 
@@ -288,8 +257,11 @@ export function XanatharBackstoryPage() {
                     visibleTables={visibleTables}
                     results={sectionResults}
                     onRoll={handleRoll}
-                    lockedTableIds={lockedTableIds}
+                    onSelect={handleSelect}
+                    rollLockedIds={rollLockedIds}
+                    selectLockedIds={selectLockedIds}
                     lockReasons={lockReasons}
+                    allResults={results}
                     defaultOpen={idx === 0}
                   />
                 );

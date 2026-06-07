@@ -7,17 +7,27 @@ import type { RollResult } from "../utils/xanathar-roll.utils";
 interface BackstoryTableCardProps {
   table: XgeTable;
   result?: RollResult;
+  /** Auto-cascaded child results (birth orders, life events, supplementals) */
+  childResults?: RollResult[];
   onRoll: (tableId: string) => void;
-  /** If true, the Roll button is disabled (e.g. waiting for a dependency) */
-  disabled?: boolean;
+  onSelect: (tableId: string, rowIndex: number) => void;
+  rollDisabled?: boolean;
+  selectDisabled?: boolean;
   disabledReason?: string;
+}
+
+function formatResult(r: RollResult): string {
+  return r.expandedResult ? `${r.result} → ${r.expandedResult}` : r.result;
 }
 
 export function BackstoryTableCard({
   table,
   result,
+  childResults = [],
   onRoll,
-  disabled = false,
+  onSelect,
+  rollDisabled = false,
+  selectDisabled = false,
   disabledReason,
 }: BackstoryTableCardProps) {
   const [showTable, setShowTable] = useState(false);
@@ -61,11 +71,11 @@ export function BackstoryTableCard({
           <button
             type="button"
             onClick={() => onRoll(table.id)}
-            disabled={disabled}
-            title={disabled ? disabledReason : `Roll ${table.dice.label}`}
+            disabled={rollDisabled}
+            title={rollDisabled ? disabledReason : `Roll ${table.dice.label}`}
             className={cn(
               "h-7 px-3 rounded text-xs font-semibold flex items-center gap-1.5 transition-colors",
-              disabled
+              rollDisabled
                 ? "bg-muted text-muted-foreground cursor-not-allowed"
                 : "bg-primary text-primary-foreground hover:bg-primary/90",
             )}
@@ -81,9 +91,11 @@ export function BackstoryTableCard({
         <div className="mx-4 mb-3 px-3 py-2 bg-primary/10 border border-primary/20 rounded-md">
           <div className="flex items-center gap-2 flex-wrap">
             <span className="text-xs font-semibold text-primary shrink-0">
-              Roll: {result.finalValue !== result.rawRoll
-                ? `${result.rawRoll} + ${result.finalValue - result.rawRoll} = ${result.finalValue}`
-                : result.rawRoll}
+              {result.isManual
+                ? "Selected"
+                : `Roll: ${result.finalValue !== result.rawRoll
+                    ? `${result.rawRoll} + ${result.finalValue - result.rawRoll} = ${result.finalValue}`
+                    : result.rawRoll}`}
             </span>
             <span className="text-sm text-foreground leading-snug">
               {result.expandedResult
@@ -91,17 +103,31 @@ export function BackstoryTableCard({
                 : result.result}
             </span>
           </div>
-          {result.subTableId && (
-            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1">
-              Also roll on: {result.subTableId.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
-            </p>
-          )}
+        </div>
+      )}
+
+      {childResults.length > 0 && (
+        <div className="mx-4 mb-3 space-y-1.5">
+          {childResults.map((child) => (
+            <div
+              key={child.tableId}
+              className="px-3 py-2 bg-muted/50 border border-border rounded-md text-xs"
+            >
+              <span className="font-medium text-muted-foreground block">
+                ↳ {child.tableName}
+              </span>
+              <span className="text-foreground leading-snug">{formatResult(child)}</span>
+            </div>
+          ))}
         </div>
       )}
 
       {/* Collapsible table */}
       {showTable && (
         <div className="px-4 pb-4">
+          <p className="text-xs text-muted-foreground mb-2">
+            Haz clic en una fila para elegir esa opción manualmente.
+          </p>
           <div className="rounded border border-border overflow-hidden">
             <table className="w-full text-xs">
               <thead>
@@ -122,16 +148,23 @@ export function BackstoryTableCard({
                       : `${row.range[0]}–${row.range[1]}`;
                   const isActive =
                     hasResult &&
-                    result!.finalValue >= row.range[0] &&
-                    result!.finalValue <= row.range[1];
+                    (result!.selectedRowIndex === i ||
+                      (result!.selectedRowIndex === undefined &&
+                        result!.finalValue >= row.range[0] &&
+                        result!.finalValue <= row.range[1]));
                   return (
                     <tr
                       key={i}
+                      onClick={() => !selectDisabled && onSelect(table.id, i)}
+                      title={selectDisabled ? disabledReason : "Seleccionar esta opción"}
                       className={cn(
                         "border-b border-border last:border-0 transition-colors",
+                        selectDisabled
+                          ? "cursor-not-allowed opacity-60"
+                          : "cursor-pointer",
                         isActive
                           ? "bg-primary/15 font-medium text-primary"
-                          : "hover:bg-muted/40",
+                          : !selectDisabled && "hover:bg-muted/40",
                       )}
                     >
                       <td className="px-2 py-1.5 font-mono text-center">{rangeLabel}</td>

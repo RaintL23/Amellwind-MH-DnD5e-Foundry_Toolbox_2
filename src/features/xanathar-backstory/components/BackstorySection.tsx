@@ -7,22 +7,57 @@ import { BackstoryTableCard } from "./BackstoryTableCard";
 
 interface BackstorySectionProps {
   section: XgeSection;
-  /** Only the tables that should be visible (after race/bg/class filtering) */
   visibleTables: XgeTable[];
   results: Record<string, RollResult>;
+  allResults: Record<string, RollResult>;
   onRoll: (tableId: string) => void;
-  /** Ids of tables that require a prior roll first */
-  lockedTableIds: Set<string>;
+  onSelect: (tableId: string, rowIndex: number) => void;
+  rollLockedIds: Set<string>;
+  selectLockedIds: Set<string>;
   lockReasons: Record<string, string>;
   defaultOpen?: boolean;
+}
+
+function getCascadeChildResults(
+  tableId: string,
+  allResults: Record<string, RollResult>,
+): RollResult[] {
+  if (tableId === "siblings-count" || tableId === "birth-order") {
+    return Object.keys(allResults)
+      .filter((k) => k.startsWith("birth-order-"))
+      .sort((a, b) => {
+        const na = parseInt(a.replace("birth-order-", ""), 10);
+        const nb = parseInt(b.replace("birth-order-", ""), 10);
+        return na - nb;
+      })
+      .map((k) => allResults[k]);
+  }
+
+  if (tableId === "life-events-by-age" || tableId === "life-events") {
+    return Object.keys(allResults)
+      .filter((k) => k === "life-events" || /^life-events-\d+$/.test(k))
+      .sort((a, b) => {
+        const na = a === "life-events" ? 1 : parseInt(a.replace("life-events-", ""), 10);
+        const nb = b === "life-events" ? 1 : parseInt(b.replace("life-events-", ""), 10);
+        return na - nb;
+      })
+      .map((k) => allResults[k]);
+  }
+
+  return Object.keys(allResults)
+    .filter((k) => k.startsWith(`${tableId}::`))
+    .map((k) => allResults[k]);
 }
 
 export function BackstorySection({
   section,
   visibleTables,
   results,
+  allResults,
   onRoll,
-  lockedTableIds,
+  onSelect,
+  rollLockedIds,
+  selectLockedIds,
   lockReasons,
   defaultOpen = false,
 }: BackstorySectionProps) {
@@ -33,7 +68,6 @@ export function BackstorySection({
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
-      {/* Section header */}
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -67,7 +101,6 @@ export function BackstorySection({
         </span>
       </button>
 
-      {/* Tables */}
       <div
         className={cn(
           "grid transition-[grid-template-rows] duration-200 ease-out",
@@ -81,8 +114,11 @@ export function BackstorySection({
                 key={table.id}
                 table={table}
                 result={results[table.id]}
+                childResults={getCascadeChildResults(table.id, allResults)}
                 onRoll={onRoll}
-                disabled={lockedTableIds.has(table.id)}
+                onSelect={onSelect}
+                rollDisabled={rollLockedIds.has(table.id)}
+                selectDisabled={selectLockedIds.has(table.id)}
                 disabledReason={lockReasons[table.id]}
               />
             ))}

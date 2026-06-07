@@ -58,6 +58,12 @@ export type RollResult = {
   subTableId?: string;
   /** For tables like Number of Siblings where the result itself is a dice formula */
   expandedResult?: string;
+  /** True when the user picked a row manually instead of rolling */
+  isManual?: boolean;
+  /** Index of the manually selected row, for reliable highlighting */
+  selectedRowIndex?: number;
+  /** Parent table that triggered this roll (cascade / supplemental) */
+  parentTableId?: string;
 };
 
 // ---------------------------------------------------------------------------
@@ -119,6 +125,45 @@ export function rollOnTable(table: XgeTable, ctx: RollContext): RollResult {
     result,
     subTableId: row?.subTableId,
     expandedResult,
+    isManual: false,
+  };
+}
+
+/**
+ * Manually select a specific row on a table (user click).
+ * Skips dice rolling and uses the chosen outcome directly.
+ */
+export function selectRowOnTable(
+  table: XgeTable,
+  rowIndex: number,
+): RollResult {
+  const row = table.rows[rowIndex];
+  if (!row) {
+    throw new Error(`Invalid row index ${rowIndex} for table ${table.id}`);
+  }
+
+  const displayValue = row.range[0];
+
+  let expandedResult: string | undefined;
+  if (
+    table.resultIsDice &&
+    row.result !== "None" &&
+    /^\d+d\d+([+-]\d+)?$/.test(row.result.trim())
+  ) {
+    const count = evaluateDiceExpression(row.result);
+    expandedResult = `${count} sibling${count !== 1 ? "s" : ""}`;
+  }
+
+  return {
+    tableId: table.id,
+    tableName: table.name,
+    rawRoll: displayValue,
+    finalValue: displayValue,
+    result: row.result,
+    subTableId: row.subTableId,
+    expandedResult,
+    isManual: true,
+    selectedRowIndex: rowIndex,
   };
 }
 
