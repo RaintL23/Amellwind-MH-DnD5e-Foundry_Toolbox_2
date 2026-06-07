@@ -13,6 +13,7 @@ const FEAT_STORE_KEY = "feat";
 const VARIANT_RULE_STORE_KEY = "variantrule";
 const CLASS_FEATURE_STORE_KEY = "classFeature";
 const CLASS_STORE_KEY = "class";
+const BOOK_DATA_STORE_KEY = "bookData";
 
 let mmRawCache: unknown[] | null = null;
 let gtmhJsonPromise: Promise<Record<string, unknown>> | null = null;
@@ -152,6 +153,13 @@ export async function syncData(): Promise<SyncResult> {
         }
         if (Array.isArray(json.class)) {
           await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, json.class);
+        }
+        if (json.bookData && typeof json.bookData === "object") {
+          await setStoreValue(
+            "GTMH_CURRENT",
+            BOOK_DATA_STORE_KEY,
+            json.bookData,
+          );
         }
       },
     );
@@ -298,4 +306,28 @@ export async function getClassFeaturesRaw(): Promise<unknown[]> {
 
 export async function getVariantRulesRaw(): Promise<unknown[]> {
   return ensureGtmhArrayStore("variantrule", VARIANT_RULE_STORE_KEY);
+}
+
+/**
+ * Returns the raw bookData object from the GTMH JSON (chapter content).
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getBookDataRaw(): Promise<Record<string, unknown>> {
+  const cached = await getStoreValue<Record<string, unknown>>(
+    "GTMH_CURRENT",
+    BOOK_DATA_STORE_KEY,
+  );
+  if (cached && Object.keys(cached).length > 0) return cached;
+
+  try {
+    const json = await fetchGtmhJsonOnce();
+    const data =
+      json.bookData && typeof json.bookData === "object"
+        ? (json.bookData as Record<string, unknown>)
+        : {};
+    await setStoreValue("GTMH_CURRENT", BOOK_DATA_STORE_KEY, data);
+    return data;
+  } catch {
+    return {};
+  }
 }

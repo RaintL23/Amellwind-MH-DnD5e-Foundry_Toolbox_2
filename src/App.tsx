@@ -12,6 +12,7 @@ import { clearSpeciesCache } from "@/features/species/services/species.service";
 import { clearBackgroundCache } from "@/features/backgrounds/services/background.service";
 import { clearFeatCache } from "@/features/feats/services/feat.service";
 import { clearMonstieSidekickCache } from "@/features/monstie-sidekick/services/monstie-sidekick.service";
+import { clearMaterialEffectCache } from "@/features/material-effects/services/material-effect.service";
 
 const MonsterList = lazy(() =>
   import("@/features/monsters/components/MonsterList").then((m) => ({
@@ -32,6 +33,11 @@ const RuneList = lazy(() =>
   import("@/features/runes/components/RuneList").then((m) => ({
     default: m.RuneList,
   })),
+);
+const MaterialEffectList = lazy(() =>
+  import("@/features/material-effects/components/MaterialEffectList").then(
+    (m) => ({ default: m.MaterialEffectList }),
+  ),
 );
 const CookingPage = lazy(() =>
   import("@/features/cooking/components/CookingPage").then((m) => ({
@@ -163,6 +169,7 @@ export default function App() {
           clearBackgroundCache();
           clearFeatCache();
           clearMonstieSidekickCache();
+          clearMaterialEffectCache();
         }
       })
       .catch((error) => {
@@ -211,6 +218,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <RuneList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="material-effects"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <MaterialEffectList />
                 </Suspense>
               }
             />

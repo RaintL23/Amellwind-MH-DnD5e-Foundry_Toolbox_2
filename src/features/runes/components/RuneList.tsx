@@ -1,6 +1,9 @@
 import { useState, useEffect, useMemo } from "react";
 import { Rune } from "@/shared/types";
 import { getAllRunes } from "../services/rune.service";
+import { getMaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
+import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
+import { getReferencedMaterialEffectsForRune } from "@/features/material-effects/utils/material-effect-highlight.utils";
 import { Pagination } from "@/components/ui/pagination";
 import { RuneDetailDialog } from "./RuneDetailDialog";
 import { RulesPanel } from "./RulesPanel";
@@ -18,24 +21,30 @@ export function RuneList() {
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<RuneFiltersState>({
     name: "",
-    monster: "",
+    monster: [],
     slot: "",
-    obtainment: "",
-    tag: "",
-    tier: "",
+    obtainment: [],
+    tag: [],
+    monsterTier: [],
+    materialEffectTier: [],
   });
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<Rune | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [materialEffectIndex, setMaterialEffectIndex] =
+    useState<MaterialEffectNameIndex | null>(null);
 
   const { isInBuild, totalRunes } = useRuneBuild();
 
   useEffect(() => {
-    getAllRunes().then((data) => {
-      setRunes(data);
-      setLoading(false);
-    });
+    Promise.all([getAllRunes(), getMaterialEffectNameIndex()]).then(
+      ([data, index]) => {
+        setRunes(data);
+        setMaterialEffectIndex(index);
+        setLoading(false);
+      },
+    );
   }, []);
 
   const uniqueMonsters = useMemo(
@@ -55,30 +64,43 @@ export function RuneList() {
       result = result.filter((r) =>
         r.name.toLowerCase().includes(filters.name.toLowerCase()),
       );
-    if (filters.monster)
-      result = result.filter((r) => r.monsterName === filters.monster);
-    if (filters.slot) {
+    if (filters.monster.length > 0)
+      result = result.filter((r) => filters.monster.includes(r.monsterName));
+    if (filters.slot === "A" || filters.slot === "W") {
+      const slot = filters.slot;
+      result = result.filter((r) => r.slots.includes(slot));
+    }
+    if (filters.obtainment.length > 0) {
       result = result.filter((r) =>
-        r.slots.includes(filters.slot as "A" | "W"),
+        filters.obtainment.some((obtainment) => {
+          if (obtainment === "Carveable") return r.carveChance !== "-";
+          if (obtainment === "Capturable") return r.captureChance !== "-";
+          if (obtainment === "Ambas")
+            return r.carveChance !== "-" && r.captureChance !== "-";
+          return false;
+        }),
       );
     }
-    if (filters.obtainment) {
-      if (filters.obtainment === "Carveable")
-        result = result.filter((r) => r.carveChance !== "-");
-      else if (filters.obtainment === "Capturable")
-        result = result.filter((r) => r.captureChance !== "-");
-      else if (filters.obtainment === "Ambas")
-        result = result.filter(
-          (r) => r.carveChance !== "-" && r.captureChance !== "-",
-        );
+    if (filters.tag.length > 0)
+      result = result.filter((r) =>
+        filters.tag.some((tag) => r.tags.includes(tag)),
+      );
+    if (filters.monsterTier.length > 0) {
+      result = result.filter((r) =>
+        filters.monsterTier.includes(String(r.tier)),
+      );
     }
-    if (filters.tag)
-      result = result.filter((r) => r.tags.includes(filters.tag));
-    if (filters.tier)
-      result = result.filter((r) => r.tier === Number(filters.tier));
+    if (filters.materialEffectTier.length > 0 && materialEffectIndex) {
+      result = result.filter((r) => {
+        const refs = getReferencedMaterialEffectsForRune(r, materialEffectIndex);
+        return filters.materialEffectTier.some((rarity) =>
+          refs.some((ref) => ref.rarity === rarity),
+        );
+      });
+    }
 
     return result;
-  }, [runes, filters]);
+  }, [runes, filters, materialEffectIndex]);
 
   function updateFilters(next: RuneFiltersState) {
     setFilters(next);
@@ -155,6 +177,7 @@ export function RuneList() {
             rune={selected}
             open={dialogOpen}
             onOpenChange={setDialogOpen}
+            materialEffectIndex={materialEffectIndex}
           />
         )}
       </div>

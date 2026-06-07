@@ -41,12 +41,22 @@ type NavGroup = { section: string; label: string; items: NavItem[] };
 const NAV_GROUPS: NavGroup[] = [
   {
     section: "Amellwind Homebrew",
-    label: "Character",
+    label: "DM Tools",
+    items: [{ to: "/npc-generator", label: "NPC Generator", icon: UserCog }],
+  },
+  {
+    section: "Amellwind Homebrew",
+    label: "Character Tools",
     items: [
       { to: "/builder", label: "Builder", icon: User },
-      { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
       { to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
-      { to: "/npc-generator", label: "NPC Generator", icon: UserCog },
+    ],
+  },
+  {
+    section: "Amellwind Homebrew",
+    label: "Character",
+    items: [
+      { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
       { to: "/species", label: "Species", icon: Users },
       { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
       { to: "/feats", label: "Feats", icon: Award },
@@ -58,6 +68,7 @@ const NAV_GROUPS: NavGroup[] = [
     items: [
       { to: "/monsters", label: "Monsters", icon: Swords },
       { to: "/runes", label: "Runes", icon: Gem },
+      { to: "/material-effects", label: "Material Effects", icon: Sparkles },
     ],
   },
   {
@@ -94,7 +105,11 @@ const NAV_GROUPS: NavGroup[] = [
     section: "DnD 5e",
     label: "Character Tools",
     items: [
-      { to: "/xanathar-backstory", label: "Xanathar Backstory", icon: BookOpen },
+      {
+        to: "/xanathar-backstory",
+        label: "Xanathar Backstory",
+        icon: BookOpen,
+      },
     ],
   },
 ];

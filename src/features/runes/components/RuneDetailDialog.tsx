@@ -13,14 +13,16 @@ import { AddToBuildSection } from "./AddToBuildSection";
 import { EffectSection } from "./EffectSection";
 import { RuneTagsSection } from "./RuneTagsSection";
 import { TierBadge } from "./TierBadge";
+import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 
 interface RuneDetailDialogProps {
   rune: Rune | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  materialEffectIndex?: MaterialEffectNameIndex | null;
 }
 
-export function RuneDetailDialog({ rune, open, onOpenChange }: RuneDetailDialogProps) {
+export function RuneDetailDialog({ rune, open, onOpenChange, materialEffectIndex }: RuneDetailDialogProps) {
   if (!rune) return null;
 
   return (
@@ -84,10 +86,20 @@ export function RuneDetailDialog({ rune, open, onOpenChange }: RuneDetailDialogP
           <Separator className="my-4" />
 
           {rune.armorEffect && (
-            <EffectSection label="Armor Effect" text={rune.armorEffect} />
+            <EffectSection
+              label="Armor Effect"
+              text={rune.armorEffect}
+              slot="armor"
+              materialEffectIndex={materialEffectIndex}
+            />
           )}
           {rune.weaponEffect && (
-            <EffectSection label="Weapon Effect" text={rune.weaponEffect} />
+            <EffectSection
+              label="Weapon Effect"
+              text={rune.weaponEffect}
+              slot="weapon"
+              materialEffectIndex={materialEffectIndex}
+            />
           )}
 
           {rune.tags.length > 0 && (
