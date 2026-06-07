@@ -91,6 +91,15 @@ function setColumnValue(
   columns[label] = values;
 }
 
+function parseWeaponAcBonus(raw: Raw): number | undefined {
+  if (typeof raw.ac === "number") return raw.ac;
+  if (typeof raw.ac === "string") {
+    const parsed = Number.parseInt(raw.ac, 10);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  }
+  return undefined;
+}
+
 function parseRarityRows(colLabels: string[], rows: unknown[][]): WeaponRarityRow[] {
   const extraLabel =
     rows.some((row) => row.length > colLabels.length)
@@ -176,6 +185,7 @@ export function mapWeapon(raw: any): Weapon {
   const baseFeatureNames = extractBaseFeatureNames(insetTextEntries);
 
   const { description, supplementaryNotes } = parseDescriptionEntries(entries);
+  const acBonus = parseWeaponAcBonus(raw);
 
   return {
     name: String(raw.name ?? "Unknown"),
@@ -187,8 +197,8 @@ export function mapWeapon(raw: any): Weapon {
     properties: Array.isArray(raw.property) ? raw.property.map(String) : [],
     weight: typeof raw.weight === "number" ? raw.weight : 0,
     valueCp: typeof raw.value === "number" ? raw.value : 0,
-    acBonus: typeof raw.ac === "number" ? raw.ac : undefined,
-    includesShield: typeof raw.ac === "number",
+    acBonus,
+    includesShield: acBonus !== undefined,
     range: typeof raw.range === "string" ? raw.range : undefined,
     isFocus: raw.focus === true,
     description,

@@ -1,8 +1,21 @@
-import { Weapon } from "@/shared/types";
+import { EquippedWeapon, Weapon } from "@/shared/types";
 
 /** Weapons sold with an integrated shield (`ac` field in source data). */
 export function weaponIncludesShield(weapon: Weapon): boolean {
   return weapon.includesShield === true;
+}
+
+/**
+ * Integrated shield is active on any shield weapon except versatile ones
+ * wielded two-handed. Weapons with a native 2H property (Gunlance, Lance, etc.)
+ * still keep their shield AC.
+ */
+export function hasActiveIntegratedShield(
+  equipped: EquippedWeapon | null,
+): boolean {
+  if (!equipped || !weaponIncludesShield(equipped.weapon)) return false;
+  const { weapon, useVersatile } = equipped;
+  return !(weapon.properties.includes("V") && useVersatile);
 }
 
 function parseAcBonusColumn(value: string | string[] | undefined): number {
@@ -13,6 +26,15 @@ function parseAcBonusColumn(value: string | string[] | undefined): number {
   return match ? Number.parseInt(match[1], 10) : 0;
 }
 
+function findAcBonusColumnValue(
+  columns: Record<string, string | string[]>,
+): string | string[] | undefined {
+  const entry = Object.entries(columns).find(([label]) =>
+    /ac bonus/i.test(label),
+  );
+  return entry?.[1];
+}
+
 /** Total shield AC: base `ac` (+2) plus the rarity table's AC Bonus column. */
 export function getWeaponShieldAcBonus(weapon: Weapon, rarity: string): number {
   if (!weaponIncludesShield(weapon)) return 0;
@@ -21,7 +43,7 @@ export function getWeaponShieldAcBonus(weapon: Weapon, rarity: string): number {
   const row = weapon.rarityRows.find((r) => r.rarity === rarity);
   if (!row) return base;
 
-  return base + parseAcBonusColumn(row.columns["AC Bonus"]);
+  return base + parseAcBonusColumn(findAcBonusColumnValue(row.columns));
 }
 
 export function getWeaponShieldAcBonusAtIndex(weapon: Weapon, rarityIndex: number): number {

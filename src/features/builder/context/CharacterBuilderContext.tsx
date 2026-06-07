@@ -33,6 +33,7 @@ import {
 import { wouldViolateRule, RuleViolation } from "@/features/runes/utils/build.validation";
 import {
   getWeaponShieldAcBonus,
+  hasActiveIntegratedShield,
   weaponIncludesShield,
 } from "@/features/weapons/utils/shield.utils";
 import {
@@ -108,13 +109,6 @@ interface CharacterBuilderContextValue {
 
 const CharacterBuilderContext = createContext<CharacterBuilderContextValue | null>(null);
 
-// ─── Helpers ─────────────────────────────────────────────────────────────────
-
-function showsIntegratedShield(mainHand: EquippedWeapon | null): boolean {
-  if (!mainHand || !weaponIncludesShield(mainHand.weapon)) return false;
-  return !isWeaponTwoHanded(mainHand);
-}
-
 // ─── Provider ────────────────────────────────────────────────────────────────
 
 export function CharacterBuilderProvider({ children }: Readonly<{ children: ReactNode }>) {
@@ -181,7 +175,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
         ) {
           setOffHand(null);
         }
-      } else if (!showsIntegratedShield(mainHand) && !blocksOffHand(mainHand)) {
+      } else if (!hasActiveIntegratedShield(mainHand) && !blocksOffHand(mainHand)) {
         setOffHand(equipped);
       }
     },
@@ -306,7 +300,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const isTwoHanded = isWeaponTwoHanded(mainHand);
   const isOffHandBlocked = blocksOffHand(mainHand);
   const offHandBlockReason = getOffHandBlockReason(mainHand);
-  const hasIntegratedShield = showsIntegratedShield(mainHand);
+  const hasIntegratedShield = hasActiveIntegratedShield(mainHand);
   const integratedShieldAcBonus = useMemo(() => {
     if (!hasIntegratedShield || !mainHand) return 0;
     return getWeaponShieldAcBonus(mainHand.weapon, mainHand.rarity);
@@ -324,7 +318,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
         })()
       : 10 + dexMod;
     return armorAc + integratedShieldAcBonus;
-  }, [armor, character, integratedShieldAcBonus]);
+  }, [armor, character, integratedShieldAcBonus, mainHand]);
 
   const combat = useMemo(
     () => calculateCombat(character, mainHand, offHand, effectiveAttacksPerTurn),
