@@ -21,6 +21,8 @@ import type { Background, Species } from "@/shared/types";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
+import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
+import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 
 const RARITY_BADGE: Record<string, string> = {
   Uncommon:
@@ -199,6 +201,9 @@ export function BuilderItemLibraryPanel({
   const showIdentityDetail =
     (isSpeciesSlot || isBackgroundSlot) && !!selectedIdentity;
 
+  const showWeaponDetail = isWeaponSlot && !!equippedWeapon;
+  const showArmorDetail = isArmorSlot && !!armor;
+
   useEffect(() => {
     if (!showIdentityDetail || !selectedIdentity) {
       setIdentityDetail(null);
@@ -262,7 +267,7 @@ export function BuilderItemLibraryPanel({
         <EmptyState text="Click on an equipment slot to see the available options." />
       ) : (
         <>
-          {!showIdentityDetail && (
+          {!showIdentityDetail && !showWeaponDetail && !showArmorDetail && (
             <div className="relative mb-2">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -276,25 +281,31 @@ export function BuilderItemLibraryPanel({
           )}
 
           <div className="max-h-[min(480px,calc(100dvh-14rem))] space-y-1 overflow-y-auto overscroll-y-contain pr-1">
-            {isWeaponSlot && (
-              <WeaponList
-                inventory={inventoryWeaponsFiltered}
-                catalog={catalogWeaponsFiltered}
-                loading={weaponsLoading}
-                equipped={equippedWeapon?.weapon.name ?? null}
-                onSelect={handleSelectWeapon}
-              />
-            )}
+            {isWeaponSlot &&
+              (showWeaponDetail ? (
+                <WeaponLibraryDetail equipped={equippedWeapon} />
+              ) : (
+                <WeaponList
+                  inventory={inventoryWeaponsFiltered}
+                  catalog={catalogWeaponsFiltered}
+                  loading={weaponsLoading}
+                  equipped={equippedWeapon?.weapon.name ?? null}
+                  onSelect={handleSelectWeapon}
+                />
+              ))}
 
-            {isArmorSlot && (
-              <ArmorList
-                showCloth={showClothOption}
-                inventory={inventoryArmorsFiltered}
-                catalog={catalogArmorsFiltered}
-                equippedName={armor?.armor.name ?? null}
-                onSelect={handleSelectArmor}
-              />
-            )}
+            {isArmorSlot &&
+              (showArmorDetail ? (
+                <ArmorLibraryDetail equipped={armor} />
+              ) : (
+                <ArmorList
+                  showCloth={showClothOption}
+                  inventory={inventoryArmorsFiltered}
+                  catalog={catalogArmorsFiltered}
+                  equippedName={armor?.armor.name ?? null}
+                  onSelect={handleSelectArmor}
+                />
+              ))}
 
             {isTrinketSlot && (
               <TrinketList

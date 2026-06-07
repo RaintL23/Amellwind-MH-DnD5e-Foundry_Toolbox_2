@@ -107,7 +107,10 @@ export function PaperDoll() {
     selectedSlot !== "backstory" &&
     (!isSlotOccupied(selectedSlot) ||
       selectedSlot === "species" ||
-      selectedSlot === "background");
+      selectedSlot === "background" ||
+      selectedSlot === "mainHand" ||
+      selectedSlot === "offHand" ||
+      selectedSlot === "armor");
 
   return (
     <div className="flex min-w-0 flex-col gap-2.5">

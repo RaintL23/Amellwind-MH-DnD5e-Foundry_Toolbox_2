@@ -50,7 +50,10 @@ export function ExpandableFeatureRow({
       {hasDesc && isExpanded && (
         <div className="mt-1 ml-6 mb-1 border-l-2 border-border/40 pl-3 space-y-1.5">
           {paragraphs.map((p, pi) => (
-            <p key={pi} className="text-xs text-muted-foreground leading-relaxed">
+            <p
+              key={pi}
+              className="text-xs text-muted-foreground leading-relaxed"
+            >
               {p}
             </p>
           ))}
