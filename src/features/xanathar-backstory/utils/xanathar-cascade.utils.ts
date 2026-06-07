@@ -107,13 +107,11 @@ function rollSupplemental(
   parentId: string,
   subTableId: string,
   ctx: RollContext,
-  parentName?: string,
 ): void {
   const key = supplementalKey(parentId, subTableId);
   const table = TABLE_BY_ID[subTableId];
   if (!table) return;
 
-  const parentLabel = parentName ?? TABLE_BY_ID[parentId]?.name ?? parentId;
   const rolled = rollOnTable(table, ctx);
   results[key] = {
     ...rolled,
@@ -125,12 +123,12 @@ function rollSupplemental(
   // Chain: crime → punishment
   const chained = SUPPLEMENTAL_CHAINS[subTableId];
   if (chained) {
-    rollSupplemental(results, key, chained, ctx, table.name);
+    rollSupplemental(results, key, chained, ctx);
   }
 
   // Nested supplemental on the rolled result itself
   if (rolled.subTableId && rolled.subTableId !== subTableId) {
-    rollSupplemental(results, key, rolled.subTableId, ctx, table.name);
+    rollSupplemental(results, key, rolled.subTableId, ctx);
   }
 }
 
@@ -294,23 +292,6 @@ const ROOT_ORDER: string[] = [
   "family-lifestyle",
   "childhood-memories",
 ];
-
-function isRootResult(tableId: string): boolean {
-  if (ROOT_ORDER.includes(tableId)) return true;
-  if (tableId.startsWith("bg-") || tableId.startsWith("cls-")) return true;
-  if (tableId === "life-events-by-age") return true;
-  // Supplemental section roots (only if not a child)
-  const supplementalRoots = [
-    "alignment",
-    "cause-of-death",
-    "supp-class",
-    "occupation",
-    "race",
-    "relationship",
-    "status",
-  ];
-  return supplementalRoots.includes(tableId);
-}
 
 function collectChildren(
   parentId: string,
