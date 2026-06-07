@@ -20,6 +20,10 @@ import { ArmorItem, Weapon } from "@/shared/types";
 import type { Background, Species } from "@/shared/types";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 import { BuilderPanel } from "../shared/BuilderPanel";
+import {
+  IdentitySourceBadgeGroup,
+  type IdentityDataSource,
+} from "../shared/IdentitySourceBadgeGroup";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
@@ -74,6 +78,8 @@ export function BuilderItemLibraryPanel({
     Species | Background | null
   >(null);
   const [identityDetailLoading, setIdentityDetailLoading] = useState(false);
+  const [identitySource, setIdentitySource] =
+    useState<IdentityDataSource>("amellwind");
 
   const {
     mainHand,
@@ -102,6 +108,7 @@ export function BuilderItemLibraryPanel({
 
   useEffect(() => {
     setSearch("");
+    setIdentitySource("amellwind");
   }, [selectedSlot]);
 
   useEffect(() => {
@@ -126,7 +133,7 @@ export function BuilderItemLibraryPanel({
         );
 
     load.then(setIdentityOptions).finally(() => setIdentityLoading(false));
-  }, [isSpeciesSlot, isBackgroundSlot, selectedSlot]);
+  }, [isSpeciesSlot, isBackgroundSlot, selectedSlot, identitySource]);
 
   const q = search.toLowerCase().trim();
 
@@ -257,9 +264,21 @@ export function BuilderItemLibraryPanel({
     else if (isBackgroundSlot) setBackground(ref);
   }
 
-  const panelTitle = selectedSlot
-    ? `Library — ${SLOT_LABELS[selectedSlot] ?? selectedSlot}`
-    : "Library";
+  const showIdentitySourceToggle = isSpeciesSlot || isBackgroundSlot;
+
+  const panelTitle = selectedSlot ? (
+    <span className="flex min-w-0 flex-wrap items-center gap-2">
+      <span>{`Library — ${SLOT_LABELS[selectedSlot] ?? selectedSlot}`}</span>
+      {showIdentitySourceToggle && (
+        <IdentitySourceBadgeGroup
+          value={identitySource}
+          onChange={setIdentitySource}
+        />
+      )}
+    </span>
+  ) : (
+    "Library"
+  );
 
   return (
     <BuilderPanel title={panelTitle}>
