@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { DndBackground, BackgroundTable } from "@/shared/types";
+import type { DndBackground, BackgroundTable, DndFeat } from "@/shared/types";
 import { DND_BACKGROUND_EDITION_LABELS } from "@/shared/types";
 import {
   Dialog,
@@ -18,6 +18,8 @@ import {
   resolveBookSourceName,
   type BookSourceNameMap,
 } from "@/features/spells/services/book-source.service";
+import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.service";
+import { DndFeatInlineContent } from "@/features/dnd-feats/components/DndFeatDetailDialog";
 
 interface DndBackgroundDetailDialogProps {
   background: DndBackground | null;
@@ -152,6 +154,62 @@ function SectionBlock({
   );
 }
 
+function OriginFeatSection({ background }: { background: DndBackground }) {
+  const [loadedFeats, setLoadedFeats] = useState<
+    Array<{ refId: string; feat?: DndFeat; loading: boolean }>
+  >([]);
+
+  useEffect(() => {
+    if (!background.featRefs?.length) {
+      setLoadedFeats([]);
+      return;
+    }
+
+    setLoadedFeats(
+      background.featRefs.map((ref) => ({
+        refId: ref.id,
+        loading: true,
+      })),
+    );
+
+    void Promise.all(
+      background.featRefs.map(async (ref) => ({
+        refId: ref.id,
+        feat: await resolveDndFeatForRef(ref),
+        loading: false,
+      })),
+    ).then(setLoadedFeats);
+  }, [background.id, background.featRefs]);
+
+  if (!background.featSummary && !background.featRefs?.length) return null;
+
+  return (
+    <div className="sm:col-span-2 space-y-3">
+      <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
+        <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
+          Origin Feat
+        </p>
+        <p className="font-medium text-foreground">{background.featSummary}</p>
+      </div>
+
+      {loadedFeats.map((entry) => {
+        if (entry.loading) {
+          return (
+            <div
+              key={entry.refId}
+              className="rounded-md border border-border bg-muted/10 px-3 py-4 text-sm text-muted-foreground"
+            >
+              Loading feat details…
+            </div>
+          );
+        }
+        if (!entry.feat) return null;
+        return <DndFeatInlineContent key={entry.refId} feat={entry.feat} />;
+      })}
+    </div>
+  );
+}
+
 function BackgroundBody({ background }: { background: DndBackground }) {
   return (
     <>
@@ -201,13 +259,8 @@ function BackgroundBody({ background }: { background: DndBackground }) {
             <p className="font-medium text-foreground">{background.abilitySummary}</p>
           </div>
         )}
-        {background.featSummary && (
-          <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
-            <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-              Feat
-            </p>
-            <p className="font-medium text-foreground">{background.featSummary}</p>
-          </div>
+        {(background.featSummary || background.featRefs?.length) && (
+          <OriginFeatSection background={background} />
         )}
         {background.proficiencies.equipment !== "—" && (
           <div className="rounded-md border border-border bg-muted/20 px-3 py-2 sm:col-span-2">

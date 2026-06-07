@@ -4,6 +4,7 @@ import type {
   BackgroundTable,
   DndBackground,
   DndBackgroundEdition,
+  DndBackgroundFeatRef,
   AbilityBonus,
   AbilityKey,
 } from "@/shared/types";
@@ -120,7 +121,73 @@ function mapAbilityBonuses(ability: unknown): AbilityBonus[] {
   return result;
 }
 
-function mapFeatSummary(raw: Raw): string {
+function titleCaseFeatName(name: string): string {
+  return name
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function parseFeatKey(key: string): {
+  name: string;
+  source: string;
+  qualifier?: string;
+} {
+  const pipe = key.lastIndexOf("|");
+  if (pipe === -1) {
+    return { name: titleCaseFeatName(key.trim()), source: "" };
+  }
+  const beforePipe = key.slice(0, pipe).trim();
+  const source = key.slice(pipe + 1).trim().toUpperCase();
+  const semi = beforePipe.indexOf(";");
+  if (semi !== -1) {
+    return {
+      name: titleCaseFeatName(beforePipe.slice(0, semi).trim()),
+      qualifier: titleCaseFeatName(beforePipe.slice(semi + 1).trim()),
+      source,
+    };
+  }
+  return { name: titleCaseFeatName(beforePipe), source };
+}
+
+function buildFeatRef(key: string): DndBackgroundFeatRef {
+  const parsed = parseFeatKey(key);
+  const displayLabel = parsed.qualifier
+    ? `${parsed.name} (${parsed.qualifier})`
+    : parsed.name;
+  return {
+    id: `${parsed.name}::${parsed.source}`,
+    name: parsed.name,
+    source: parsed.source,
+    qualifier: parsed.qualifier,
+    displayLabel,
+  };
+}
+
+function mapFeatRefs(raw: Raw): DndBackgroundFeatRef[] {
+  const refs: DndBackgroundFeatRef[] = [];
+  const seen = new Set<string>();
+
+  if (Array.isArray(raw.feats)) {
+    for (const block of raw.feats) {
+      if (typeof block !== "object" || block === null) continue;
+      for (const [key, val] of Object.entries(block as Raw)) {
+        if (val !== true) continue;
+        const ref = buildFeatRef(key);
+        if (!seen.has(ref.id)) {
+          seen.add(ref.id);
+          refs.push(ref);
+        }
+      }
+    }
+  }
+
+  return refs;
+}
+
+function mapFeatSummary(raw: Raw, refs: DndBackgroundFeatRef[]): string {
+  if (refs.length) return refs.map((r) => r.displayLabel).join("; ");
+
   if (!Array.isArray(raw.feats)) return "";
   const parts: string[] = [];
   for (const block of raw.feats) {
@@ -132,6 +199,31 @@ function mapFeatSummary(raw: Raw): string {
     }
   }
   return parts.join("; ");
+}
+
+function parseFeatRefsFromMarkup(text: string): DndBackgroundFeatRef[] {
+  const refs: DndBackgroundFeatRef[] = [];
+  const seen = new Set<string>();
+  const pattern = /\{@feat\s+([^|}]+)(?:\|([^|}]+))?(?:\|([^}]+))?\}/gi;
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(text)) !== null) {
+    const name = titleCaseFeatName(match[1].trim());
+    const source = (match[2] ?? match[3] ?? "").trim().toUpperCase();
+    if (!source) continue;
+    const ref: DndBackgroundFeatRef = {
+      id: `${name}::${source}`,
+      name,
+      source,
+      displayLabel: name,
+    };
+    if (!seen.has(ref.id)) {
+      seen.add(ref.id);
+      refs.push(ref);
+    }
+  }
+
+  return refs;
 }
 
 function mapTable(raw: Raw): BackgroundTable {
@@ -325,10 +417,22 @@ export function mapDndBackground(raw: any): DndBackground {
   const abilityBonuses = mapAbilityBonuses(raw.ability);
   const abilityFromList = extractListField(listEntries, "ability");
   const featFromList = extractListField(listEntries, "feat");
+  const featRefsFromRaw = mapFeatRefs(raw);
+  const featRefsFromList = featFromList
+    ? parseFeatRefsFromMarkup(featFromList)
+    : [];
+  const featRefs = featRefsFromRaw.length
+    ? featRefsFromRaw
+    : featRefsFromList.length
+      ? featRefsFromList
+      : undefined;
   const abilitySummary =
     abilityFromList ||
     (abilityBonuses.length ? formatAbilitySummary(abilityBonuses) : undefined);
-  const featSummary = featFromList || mapFeatSummary(raw) || undefined;
+  const featSummary =
+    featFromList ||
+    mapFeatSummary(raw, featRefsFromRaw) ||
+    undefined;
 
   const languages =
     listProf.languages !== "—"
@@ -353,6 +457,7 @@ export function mapDndBackground(raw: any): DndBackground {
     },
     abilitySummary: abilitySummary || undefined,
     featSummary,
+    featRefs,
     features,
     suggestedCharacteristics: suggested,
   };

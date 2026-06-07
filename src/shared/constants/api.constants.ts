@@ -74,6 +74,10 @@ export const RACES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/races.json`;
 export const BACKGROUNDS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/backgrounds.json`;
 export const FLUFF_BACKGROUNDS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-backgrounds.json`;
 
+/** 5etools feats compendium. Local dev: copy backup-jsons/5etools/feats.json + fluff-feats.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
+export const FEATS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/feats.json`;
+export const FLUFF_FEATS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-feats.json`;
+
 /** 5etools item compendium (single-file + base + magic variants). Local dev: copy backup-jsons/5etools/*.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
 export const ITEMS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items.json`;
 export const ITEMS_BASE_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items-base.json`;

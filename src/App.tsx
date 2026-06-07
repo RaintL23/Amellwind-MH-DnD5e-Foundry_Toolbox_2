@@ -159,6 +159,11 @@ const DndBackgroundList = lazy(() =>
     default: m.DndBackgroundList,
   })),
 );
+const DndFeatList = lazy(() =>
+  import("@/features/dnd-feats/components/DndFeatList").then((m) => ({
+    default: m.DndFeatList,
+  })),
+);
 
 function PageFallback() {
   return <LoadingScreen message="Cargando…" />;
@@ -420,6 +425,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <DndBackgroundList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="dnd-feats"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <DndFeatList />
                 </Suspense>
               }
             />

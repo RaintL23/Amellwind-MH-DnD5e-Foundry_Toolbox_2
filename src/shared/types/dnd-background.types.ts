@@ -2,6 +2,7 @@ import type {
   BackgroundProficiencies,
   BackgroundSection,
 } from "./background.types";
+import type { DndBackgroundFeatRef } from "./dnd-feat.types";
 
 export type DndBackgroundEdition = "2014" | "2024";
 
@@ -17,6 +18,7 @@ export interface DndBackground {
   proficiencies: BackgroundProficiencies;
   abilitySummary?: string;
   featSummary?: string;
+  featRefs?: DndBackgroundFeatRef[];
   features: BackgroundSection[];
   suggestedCharacteristics: BackgroundSection[];
   /** Populated only on deduplicated list rows */
