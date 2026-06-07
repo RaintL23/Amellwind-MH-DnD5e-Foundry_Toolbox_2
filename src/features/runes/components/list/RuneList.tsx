@@ -1,17 +1,17 @@
 import { useState, useEffect, useMemo } from "react";
 import { Rune } from "@/shared/types";
-import { getAllRunes } from "../services/rune.service";
+import { getAllRunes } from "../../services/rune.service";
 import { getMaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 import { getReferencedMaterialEffectsForRune } from "@/features/material-effects/utils/material-effect-highlight.utils";
 import { Pagination } from "@/components/ui/pagination";
-import { RuneDetailDialog } from "./RuneDetailDialog";
-import { RulesPanel } from "./RulesPanel";
-import { ObtainMaterialsPanel } from "./ObtainmentRulesPanel";
-import { BuildDrawer } from "./BuildDrawer";
+import { RuneDetailDialog } from "../detail/RuneDetailDialog";
+import { RulesPanel } from "../rules/RulesPanel";
+import { ObtainMaterialsPanel } from "../rules/ObtainmentRulesPanel";
+import { BuildDrawer } from "../build/BuildDrawer";
 import { RuneFilters, RuneFiltersState } from "./RuneFilters";
 import { RuneTable } from "./RuneTable";
-import { useRuneBuild } from "../context/RuneBuildContext";
+import { useRuneBuild } from "../../context/RuneBuildContext";
 import { Layers } from "lucide-react";
 
 const DEFAULT_PAGE_SIZE = 10;

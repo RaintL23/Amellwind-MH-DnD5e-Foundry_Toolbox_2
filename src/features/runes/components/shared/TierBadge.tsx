@@ -1,4 +1,4 @@
-import { TIER_BADGE_CLASS, TIER_SHORT_LABELS } from "../constants/rune.constants";
+import { TIER_BADGE_CLASS, TIER_SHORT_LABELS } from "../../constants/rune.constants";
 import { cn } from "@/shared/utils/cn";
 
 interface TierBadgeProps {

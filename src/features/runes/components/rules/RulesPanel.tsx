@@ -7,7 +7,7 @@ import {
   TRINKET_RULES,
   WEAPON_RULES,
   WEAPON_UPGRADE_COSTS,
-} from "../constants/rules.constants";
+} from "../../constants/rules.constants";
 import { RuleSection } from "./RuleSection";
 import { UpgradeCostTable } from "./UpgradeCostTable";
 

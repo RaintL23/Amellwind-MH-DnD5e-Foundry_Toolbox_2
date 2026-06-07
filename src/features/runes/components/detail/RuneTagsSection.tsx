@@ -1,7 +1,7 @@
 import { ShieldCheck, Sword } from "lucide-react";
 import { Rune } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
-import { formatTag } from "../utils/rune-tag.utils";
+import { formatTag } from "../../utils/rune-tag.utils";
 
 interface RuneTagsSectionProps {
   rune: Rune;

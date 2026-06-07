@@ -12,7 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { AddToBuildSection } from "./AddToBuildSection";
 import { EffectSection } from "./EffectSection";
 import { RuneTagsSection } from "./RuneTagsSection";
-import { TierBadge } from "./TierBadge";
+import { TierBadge } from "../shared/TierBadge";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 
 interface RuneDetailDialogProps {

@@ -30,7 +30,7 @@ const MonstersOutlet = lazy(() =>
   })),
 );
 const RuneList = lazy(() =>
-  import("@/features/runes/components/RuneList").then((m) => ({
+  import("@/features/runes/components/list/RuneList").then((m) => ({
     default: m.RuneList,
   })),
 );

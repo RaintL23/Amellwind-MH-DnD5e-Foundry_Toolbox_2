@@ -4,7 +4,7 @@ import { Separator } from "@/components/ui/separator";
 import { Rune } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { ExpandableFeatureRow } from "@/features/weapons/components/ExpandableFeatureRow";
-import { TierBadge } from "@/features/runes/components/TierBadge";
+import { TierBadge } from "@/features/runes/components/shared/TierBadge";
 
 interface RuneFeaturesSectionProps {
   runes: (Rune | null)[];

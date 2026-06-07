@@ -1,8 +1,8 @@
 import { Layers } from "lucide-react";
 import { Rune } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
-import { TierBadge } from "./TierBadge";
-import { formatTag, tagVariant } from "../utils/rune-tag.utils";
+import { TierBadge } from "../shared/TierBadge";
+import { formatTag, tagVariant } from "../../utils/rune-tag.utils";
 import { cn } from "@/shared/utils/cn";
 
 interface RuneTableProps {

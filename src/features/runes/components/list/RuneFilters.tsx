@@ -2,7 +2,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { TIER_LABELS } from "../constants/rune.constants";
+import { TIER_LABELS } from "../../constants/rune.constants";
 import { MATERIAL_EFFECT_RARITIES } from "@/features/material-effects/constants/material-effect.constants";
 
 export type RuneSlotFilter = "" | "A" | "W";

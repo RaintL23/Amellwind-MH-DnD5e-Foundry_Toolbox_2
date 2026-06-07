@@ -8,7 +8,7 @@ import {
   CARVING_VARIANT,
   LOOT_TABLE_PDF_URL,
   OBTAINMENT_INTRO,
-} from "../constants/obtainment.constants";
+} from "../../constants/obtainment.constants";
 
 export function ObtainMaterialsPanel() {
   const [open, setOpen] = useState(false);

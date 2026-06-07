@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { AlertTriangle, Check, Gem, ShieldCheck, Sword } from "lucide-react";
 import { Rune } from "@/shared/types";
-import { useRuneBuild } from "../context/RuneBuildContext";
-import { wouldViolateRule } from "../utils/build.validation";
+import { useRuneBuild } from "../../context/RuneBuildContext";
+import { wouldViolateRule } from "../../utils/build.validation";
 import { cn } from "@/shared/utils/cn";
 
 interface AddToBuildSectionProps {
