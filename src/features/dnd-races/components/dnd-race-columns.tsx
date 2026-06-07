@@ -4,7 +4,11 @@ import { DND_RACE_KIND_LABELS } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { compareRacesForGroupedList } from "../utils/dnd-race-dedupe.utils";
 
-export const raceGlobalFilter: FilterFn<DndRace> = (row, _columnId, filterValue) => {
+export const raceGlobalFilter: FilterFn<DndRace> = (
+  row,
+  _columnId,
+  filterValue,
+) => {
   const q = String(filterValue ?? "")
     .trim()
     .toLowerCase();
@@ -59,7 +63,10 @@ export const dndRaceColumns: ColumnDef<DndRace>[] = [
       return (
         <div className={cn("flex items-center gap-1.5", isChild && "pl-5")}>
           {isChild && (
-            <span className="text-muted-foreground/50 text-xs shrink-0" aria-hidden>
+            <span
+              className="text-muted-foreground/50 text-xs shrink-0"
+              aria-hidden
+            >
               └
             </span>
           )}
@@ -100,23 +107,6 @@ export const dndRaceColumns: ColumnDef<DndRace>[] = [
     ),
   },
   {
-    accessorKey: "speed",
-    header: "Speed",
-    enableSorting: false,
-    cell: ({ row }) => {
-      const speed = row.original.speed;
-      const display = speed.length > 14 ? `${speed.slice(0, 14)}…` : speed;
-      return (
-        <span
-          className="text-muted-foreground text-xs whitespace-nowrap"
-          title={speed.length > 14 ? speed : undefined}
-        >
-          {display}
-        </span>
-      );
-    },
-  },
-  {
     accessorKey: "source",
     enableSorting: false,
     header: "Source",
@@ -124,7 +114,9 @@ export const dndRaceColumns: ColumnDef<DndRace>[] = [
       const race = row.original;
       const sources = race.variantSources ?? [race.source];
       const label =
-        sources.length <= 2 ? sources.join(", ") : `${sources[0]} +${sources.length - 1}`;
+        sources.length <= 2
+          ? sources.join(", ")
+          : `${sources[0]} +${sources.length - 1}`;
       return (
         <span
           className="text-muted-foreground text-xs whitespace-nowrap"

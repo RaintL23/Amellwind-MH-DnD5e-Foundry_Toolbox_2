@@ -98,6 +98,7 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/spells", label: "Spells", icon: Sparkles },
       { to: "/classes", label: "Classes", icon: User },
       { to: "/dnd-races", label: "Races", icon: Users },
+      { to: "/dnd-backgrounds", label: "Backgrounds", icon: ScrollText },
       { to: "/dnd-items", label: "Items", icon: Package },
       { to: "/bestiary", label: "Bestiary", icon: Swords },
     ],

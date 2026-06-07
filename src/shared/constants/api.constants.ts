@@ -70,6 +70,10 @@ export const SPELL_SOURCE_LOOKUP_URL =
 /** 5etools races/species compendium. Local dev: copy backup-jsons/5etools/races.json → public/5etools/races.json and set VITE_5ETOOLS_DATA=local */
 export const RACES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/races.json`;
 
+/** 5etools backgrounds compendium. Local dev: copy backup-jsons/5etools/backgrounds.json + fluff-backgrounds.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
+export const BACKGROUNDS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/backgrounds.json`;
+export const FLUFF_BACKGROUNDS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-backgrounds.json`;
+
 /** 5etools item compendium (single-file + base + magic variants). Local dev: copy backup-jsons/5etools/*.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
 export const ITEMS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items.json`;
 export const ITEMS_BASE_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items-base.json`;

@@ -154,6 +154,11 @@ const DndRaceList = lazy(() =>
     default: m.DndRaceList,
   })),
 );
+const DndBackgroundList = lazy(() =>
+  import("@/features/dnd-backgrounds/components/DndBackgroundList").then((m) => ({
+    default: m.DndBackgroundList,
+  })),
+);
 
 function PageFallback() {
   return <LoadingScreen message="Cargando…" />;
@@ -407,6 +412,14 @@ export default function App() {
               element={
                 <Suspense fallback={<PageFallback />}>
                   <DndRaceList />
+                </Suspense>
+              }
+            />
+            <Route
+              path="dnd-backgrounds"
+              element={
+                <Suspense fallback={<PageFallback />}>
+                  <DndBackgroundList />
                 </Suspense>
               }
             />
