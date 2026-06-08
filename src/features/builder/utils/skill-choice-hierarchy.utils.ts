@@ -87,3 +87,71 @@ export function pruneChoicesByHierarchy(
 ): SkillKey[] {
   return choices.filter((s) => !coveredByHigher.has(s));
 }
+
+export type SkillPickerScope =
+  | { type: "species" }
+  | { type: "background" }
+  | { type: "class"; grantIndex: number }
+  | { type: "feat"; slotIndex: number };
+
+export interface CrossPickerChoiceState {
+  speciesChoices: SkillKey[];
+  speciesSource: ProficiencySource;
+  backgroundChoices: SkillKey[];
+  backgroundSource: ProficiencySource;
+  classChoices: Record<number, SkillKey[]>;
+  classChooseGrants: SkillProficiencyGrant[];
+  featChoices: Record<number, SkillKey[]>;
+  featChooseGrants: SkillProficiencyGrant[];
+}
+
+/**
+ * Skills already picked in another choose/any picker (any priority).
+ * Used to disable duplicate picks across Species / Background / Class / Feat lists
+ * before proficiency is finalized.
+ */
+export function skillsChosenInOtherPickers(
+  scope: SkillPickerScope,
+  state: CrossPickerChoiceState,
+): Partial<Record<SkillKey, ProficiencySource[]>> {
+  const result: Partial<Record<SkillKey, ProficiencySource[]>> = {};
+
+  const add = (skill: SkillKey, source: ProficiencySource) => {
+    if (!result[skill]) result[skill] = [];
+    result[skill]!.push(source);
+  };
+
+  if (scope.type !== "species") {
+    for (const skill of state.speciesChoices) {
+      add(skill, state.speciesSource);
+    }
+  }
+
+  if (scope.type !== "background") {
+    for (const skill of state.backgroundChoices) {
+      add(skill, state.backgroundSource);
+    }
+  }
+
+  for (const [idx, choices] of Object.entries(state.classChoices)) {
+    const grantIndex = Number(idx);
+    if (scope.type === "class" && scope.grantIndex === grantIndex) continue;
+    const grant = state.classChooseGrants[grantIndex];
+    const source = grant?.source ?? { type: "class" as const, name: "Class" };
+    for (const skill of choices) {
+      add(skill, source);
+    }
+  }
+
+  for (const [idx, choices] of Object.entries(state.featChoices)) {
+    const slotIndex = Number(idx);
+    if (scope.type === "feat" && scope.slotIndex === slotIndex) continue;
+    const grant = state.featChooseGrants[slotIndex];
+    const source = grant?.source ?? { type: "feat" as const, name: "Feat" };
+    for (const skill of choices) {
+      add(skill, source);
+    }
+  }
+
+  return result;
+}

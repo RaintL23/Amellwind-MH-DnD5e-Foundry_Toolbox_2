@@ -14,7 +14,11 @@ import {
   getPendingChoiceGrants,
   getPendingExpertiseGrants,
 } from "../../utils/compute-character-proficiencies";
-import { skillsFromHigherPriority } from "../../utils/skill-choice-hierarchy.utils";
+import {
+  skillsChosenInOtherPickers,
+  skillsFromHigherPriority,
+  type CrossPickerChoiceState,
+} from "../../utils/skill-choice-hierarchy.utils";
 import {
   badgeStyleForSource,
   SOURCE_LABELS,
@@ -88,6 +92,20 @@ export function BuilderSkillChecksPanel() {
     flatClassSkillChoices,
   );
 
+  const speciesChooseGrant = speciesGrants[0];
+  const backgroundChooseGrant = bgGrants[0];
+  const crossPickerState: CrossPickerChoiceState = {
+    speciesChoices: speciesSkillChoices,
+    speciesSource: speciesChooseGrant?.source ?? { type: "species", name: "Species" },
+    backgroundChoices: backgroundSkillChoices,
+    backgroundSource:
+      backgroundChooseGrant?.source ?? { type: "background", name: "Background" },
+    classChoices: classSkillChoices,
+    classChooseGrants: classGrants,
+    featChoices: featSkillChoices,
+    featChooseGrants: featGrants,
+  };
+
   const pendingExpertise = getPendingExpertiseGrants(allExpertiseGrants);
 
   const advantageSkills = new Set<SkillKey>(
@@ -151,6 +169,10 @@ export function BuilderSkillChecksPanel() {
           grants={speciesGrants}
           chosen={speciesSkillChoices}
           alreadyGranted={higherThanSpecies}
+          chosenElsewhere={skillsChosenInOtherPickers(
+            { type: "species" },
+            crossPickerState,
+          )}
           onChange={setSpeciesSkillChoices}
           label="Species skills"
           pickerSourceType="species"
@@ -162,6 +184,10 @@ export function BuilderSkillChecksPanel() {
           grants={bgGrants}
           chosen={backgroundSkillChoices}
           alreadyGranted={higherThanBackground}
+          chosenElsewhere={skillsChosenInOtherPickers(
+            { type: "background" },
+            crossPickerState,
+          )}
           onChange={setBackgroundSkillChoices}
           label="Background skills"
           pickerSourceType="background"
@@ -174,6 +200,10 @@ export function BuilderSkillChecksPanel() {
           grants={[grant]}
           chosen={classSkillChoices[grantIndex] ?? []}
           alreadyGranted={higherThanClass}
+          chosenElsewhere={skillsChosenInOtherPickers(
+            { type: "class", grantIndex },
+            crossPickerState,
+          )}
           onChange={(skills) => setClassSkillChoicesAtIndex(grantIndex, skills)}
           label={
             classGrants.length > 1
@@ -190,6 +220,10 @@ export function BuilderSkillChecksPanel() {
           grants={[grant]}
           chosen={featSkillChoices[i] ?? []}
           alreadyGranted={higherThanFeat}
+          chosenElsewhere={skillsChosenInOtherPickers(
+            { type: "feat", slotIndex: i },
+            crossPickerState,
+          )}
           onChange={(skills) => setFeatSkillChoices(i, skills)}
           label={`Feat: ${grant.source.name}`}
           pickerSourceType="feat"

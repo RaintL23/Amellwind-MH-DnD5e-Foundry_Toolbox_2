@@ -18,6 +18,8 @@ interface SkillPickerProps {
   chosen: SkillKey[];
   /** Skills granted by higher-priority sources (species > background > class). */
   alreadyGranted: Partial<Record<SkillKey, ProficiencySource[]>>;
+  /** Skills already picked in another choose/any picker (any priority). */
+  chosenElsewhere?: Partial<Record<SkillKey, ProficiencySource[]>>;
   onChange: (skills: SkillKey[]) => void;
   label?: string;
   /** Source type of this picker — used for badge color on user picks. */
@@ -28,6 +30,7 @@ export function BuilderSkillPicker({
   grants,
   chosen,
   alreadyGranted,
+  chosenElsewhere = {},
   onChange,
   label,
   pickerSourceType,
@@ -57,12 +60,17 @@ export function BuilderSkillPicker({
   const remainingPicks = Math.max(0, totalCount - effectiveChosen.length);
   const canPickMore = remainingPicks > 0;
 
-  function handleClick(skill: SkillKey, isChosen: boolean, coveredByHigher: boolean) {
+  function handleClick(
+    skill: SkillKey,
+    isChosen: boolean,
+    coveredByHigher: boolean,
+    pickedElsewhere: boolean,
+  ) {
     if (isChosen) {
       onChange(chosen.filter((s) => s !== skill));
       return;
     }
-    if (!coveredByHigher && canPickMore) {
+    if (!coveredByHigher && !pickedElsewhere && canPickMore) {
       onChange([...chosen, skill]);
     }
   }
@@ -96,9 +104,12 @@ export function BuilderSkillPicker({
           const isChosen = chosen.includes(skill);
           const grantedBy = alreadyGranted[skill];
           const coveredByHigher = !!grantedBy?.length;
+          const elsewhereBy = chosenElsewhere[skill];
+          const pickedElsewhere = !!elsewhereBy?.length;
           const isDisabled =
             (coveredByHigher && !isChosen) ||
-            (!isChosen && !coveredByHigher && !canPickMore);
+            (pickedElsewhere && !isChosen) ||
+            (!isChosen && !coveredByHigher && !pickedElsewhere && !canPickMore);
 
           const badgeColor = coveredByHigher
             ? badgeStyleForSource(dominantSourceType(grantedBy!))
@@ -108,9 +119,11 @@ export function BuilderSkillPicker({
 
           const tooltip = coveredByHigher
             ? `Proficient from ${SOURCE_LABELS[dominantSourceType(grantedBy!)]} (${grantedBy!.map((s) => s.name).join(", ")}) — choose a different skill for your ${SOURCE_LABELS[pickerSourceType]} slots`
-            : isChosen
-              ? `Your ${SOURCE_LABELS[pickerSourceType]} choice`
-              : undefined;
+            : pickedElsewhere
+              ? `Already chosen for ${SOURCE_LABELS[dominantSourceType(elsewhereBy!)]} (${elsewhereBy!.map((s) => s.name).join(", ")})`
+              : isChosen
+                ? `Your ${SOURCE_LABELS[pickerSourceType]} choice`
+                : undefined;
 
           return (
             <button
@@ -118,7 +131,9 @@ export function BuilderSkillPicker({
               type="button"
               disabled={isDisabled}
               title={tooltip}
-              onClick={() => handleClick(skill, isChosen, coveredByHigher)}
+              onClick={() =>
+                handleClick(skill, isChosen, coveredByHigher, pickedElsewhere)
+              }
               className={cn(
                 "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
                 badgeColor,
