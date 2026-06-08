@@ -2,9 +2,14 @@ import { useState, useCallback } from "react";
 import {
   EquipmentSlotType,
   CharacterIdentitySlot,
+  BuilderFeatSlot,
 } from "@/shared/types";
 
-export type PaperDollSelection = EquipmentSlotType | CharacterIdentitySlot | null;
+export type PaperDollSelection =
+  | EquipmentSlotType
+  | CharacterIdentitySlot
+  | BuilderFeatSlot
+  | null;
 
 export function usePaperDollSelection() {
   const [selectedSlot, setSelectedSlot] = useState<PaperDollSelection>(null);

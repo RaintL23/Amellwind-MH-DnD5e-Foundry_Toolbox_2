@@ -15,7 +15,18 @@ export type CharacterIdentitySlot =
   | "species"
   | "background"
   | "backstory"
-  | "class";
+  | "class"
+  | "subclass";
+
+export type BuilderFeatSlot = `feat-${number}`;
+
+export type BuilderFeatSource = "asi" | "amellwind" | "dnd2014" | "dnd2024";
+
+export interface BuilderFeatSelection {
+  id: string;
+  name: string;
+  source: BuilderFeatSource;
+}
 
 export interface CharacterSelectionRef {
   id: string;

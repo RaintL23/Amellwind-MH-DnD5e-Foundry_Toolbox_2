@@ -4,6 +4,13 @@ import {
   usePaperDollSelection,
   type PaperDollSelection,
 } from "../../hooks/usePaperDollSelection";
+import { useSelectedClass } from "../../hooks/useSelectedClass";
+import {
+  isFeatSlotSelection,
+  isSubclassLevelReached,
+  parseFeatSlotIndex,
+} from "../../utils/builder-class.utils";
+import { useEffect } from "react";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
 import { WeaponDetailPanel } from "./WeaponDetailPanel";
 import { ArmorDetailPanel } from "./ArmorDetailPanel";
@@ -20,8 +27,12 @@ export function PaperDoll() {
     armor,
     trinket1,
     trinket2,
+    character,
     species,
     background,
+    class: classSelection,
+    subclass,
+    featSelections,
     backstoryNotes,
     isOffHandBlocked,
     offHandBlockReason,
@@ -32,12 +43,22 @@ export function PaperDoll() {
     setVersatileMode,
     setSpecies,
     setBackground,
+    setClass,
+    setSubclass,
+    setFeatAtIndex,
     unequipWeapon,
     unequipArmor,
     unequipTrinket,
   } = useCharacterBuilder();
 
   const { selectedSlot, selectSlot, clearSelection } = usePaperDollSelection();
+  const { classData } = useSelectedClass();
+
+  useEffect(() => {
+    if (!classData || !isSubclassLevelReached(classData, character.level)) {
+      if (subclass) setSubclass(null);
+    }
+  }, [classData, character.level, subclass, setSubclass]);
 
   const selectedWeapon =
     selectedSlot === "mainHand"
@@ -52,6 +73,8 @@ export function PaperDoll() {
     selectedSlot !== "background" &&
     selectedSlot !== "backstory" &&
     selectedSlot !== "class" &&
+    selectedSlot !== "subclass" &&
+    !isFeatSlotSelection(selectedSlot) &&
     !(selectedSlot === "offHand" && hasIntegratedShield);
 
   function isSlotOccupied(slot: PaperDollSelection): boolean {
@@ -71,7 +94,15 @@ export function PaperDoll() {
         return !!species;
       case "background":
         return !!background;
+      case "class":
+        return !!classSelection;
+      case "subclass":
+        return !!subclass;
       default:
+        if (isFeatSlotSelection(slot)) {
+          const index = parseFeatSlotIndex(slot);
+          return !!featSelections[index];
+        }
         return false;
     }
   }
@@ -97,6 +128,17 @@ export function PaperDoll() {
       case "background":
         setBackground(null);
         break;
+      case "class":
+        setClass(null);
+        break;
+      case "subclass":
+        setSubclass(null);
+        break;
+      default:
+        if (isFeatSlotSelection(slot)) {
+          setFeatAtIndex(parseFeatSlotIndex(slot), null);
+        }
+        break;
     }
     selectSlot(slot);
   }
@@ -108,6 +150,9 @@ export function PaperDoll() {
     (!isSlotOccupied(selectedSlot) ||
       selectedSlot === "species" ||
       selectedSlot === "background" ||
+      selectedSlot === "class" ||
+      selectedSlot === "subclass" ||
+      isFeatSlotSelection(selectedSlot) ||
       selectedSlot === "mainHand" ||
       selectedSlot === "offHand" ||
       selectedSlot === "armor");
@@ -130,6 +175,11 @@ export function PaperDoll() {
         <CharacterStuffGridPanel
           species={species}
           background={background}
+          classSelection={classSelection}
+          subclass={subclass}
+          classData={classData}
+          level={character.level}
+          featSelections={featSelections}
           backstoryNotes={backstoryNotes}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}

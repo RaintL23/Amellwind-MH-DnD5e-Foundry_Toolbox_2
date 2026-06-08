@@ -1,10 +1,29 @@
-import { Book, GraduationCap, ScrollText, Users } from "lucide-react";
+import {
+  Award,
+  Book,
+  GraduationCap,
+  ScrollText,
+  Sparkles,
+  Users,
+} from "lucide-react";
+import type { BuilderFeatSelection, CharacterSelectionRef } from "@/shared/types";
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import {
+  getFeatSlotLevels,
+  isSubclassLevelReached,
+  toFeatSlot,
+} from "../../utils/builder-class.utils";
+import type { Class } from "@/shared/types";
 
 interface CharacterStuffGridPanelProps {
-  species: { name: string } | null;
-  background: { name: string } | null;
+  species: CharacterSelectionRef | null;
+  background: CharacterSelectionRef | null;
+  classSelection: CharacterSelectionRef | null;
+  subclass: CharacterSelectionRef | null;
+  classData: Class | null;
+  level: number;
+  featSelections: (BuilderFeatSelection | null)[];
   backstoryNotes: string;
   selectedSlot: PaperDollSelection;
   onSelectSlot: (slot: PaperDollSelection) => void;
@@ -20,58 +39,126 @@ function backstoryPreview(notes: string): string {
 export function CharacterStuffGridPanel({
   species,
   background,
+  classSelection,
+  subclass,
+  classData,
+  level,
+  featSelections,
   backstoryNotes,
   selectedSlot,
   onSelectSlot,
   onUnequipSlot,
 }: CharacterStuffGridPanelProps) {
   const hasBackstory = backstoryNotes.trim().length > 0;
+  const showSubclass = isSubclassLevelReached(classData, level);
+  const featSlotLevels = getFeatSlotLevels(classSelection?.name ?? "", level);
+  const subclassLabel = classData?.subclassTitle ?? "Subclass";
+
   return (
-    <div className="grid grid-cols-4 gap-1.5">
-      <GridElementSlot
-        label="Specie"
-        icon={<Users className="h-5 w-5 text-sky-400" />}
-        equipped={species ? { name: species.name } : null}
-        onClickEquip={() => onSelectSlot("species")}
-        onClickDetails={() => onSelectSlot("species")}
-        onUnequip={species ? () => onUnequipSlot("species") : undefined}
-        isSelected={selectedSlot === "species"}
-      />
-      <GridElementSlot
-        label="Background"
-        icon={<ScrollText className="h-5 w-5 text-violet-400" />}
-        equipped={background ? { name: background.name } : null}
-        onClickEquip={() => onSelectSlot("background")}
-        onClickDetails={() => onSelectSlot("background")}
-        onUnequip={background ? () => onUnequipSlot("background") : undefined}
-        isSelected={selectedSlot === "background"}
-      />
-      <GridElementSlot
-        label="Backstory"
-        icon={<Book className="h-5 w-5 text-blue-400" />}
-        equipped={
-          hasBackstory
-            ? {
-                name: "Backstory",
-                detail: backstoryPreview(backstoryNotes),
-              }
-            : null
-        }
-        onClickEquip={() => onSelectSlot("backstory")}
-        onClickDetails={() => onSelectSlot("backstory")}
-        isSelected={selectedSlot === "backstory"}
-        emptyTitle="Escribir backstory"
-      />
-      <GridElementSlot
-        label="Class"
-        icon={<GraduationCap className="h-5 w-5" />}
-        equipped={null}
-        onClickEquip={() => {}}
-        onClickDetails={() => {}}
-        isSelected={false}
-        disabled
-        disabledHint="Próximamente"
-      />
+    <div className="space-y-1.5">
+      <div className="grid grid-cols-5 gap-1.5">
+        <GridElementSlot
+          label="Specie"
+          icon={<Users className="h-5 w-5 text-sky-400" />}
+          equipped={species ? { name: species.name } : null}
+          onClickEquip={() => onSelectSlot("species")}
+          onClickDetails={() => onSelectSlot("species")}
+          onUnequip={species ? () => onUnequipSlot("species") : undefined}
+          isSelected={selectedSlot === "species"}
+        />
+        <GridElementSlot
+          label="Background"
+          icon={<ScrollText className="h-5 w-5 text-violet-400" />}
+          equipped={background ? { name: background.name } : null}
+          onClickEquip={() => onSelectSlot("background")}
+          onClickDetails={() => onSelectSlot("background")}
+          onUnequip={background ? () => onUnequipSlot("background") : undefined}
+          isSelected={selectedSlot === "background"}
+        />
+        <GridElementSlot
+          label="Backstory"
+          icon={<Book className="h-5 w-5 text-blue-400" />}
+          equipped={
+            hasBackstory
+              ? {
+                  name: "Backstory",
+                  detail: backstoryPreview(backstoryNotes),
+                }
+              : null
+          }
+          onClickEquip={() => onSelectSlot("backstory")}
+          onClickDetails={() => onSelectSlot("backstory")}
+          isSelected={selectedSlot === "backstory"}
+          emptyTitle="Escribir backstory"
+        />
+        <GridElementSlot
+          label="Class"
+          icon={<GraduationCap className="h-5 w-5 text-amber-400" />}
+          equipped={classSelection ? { name: classSelection.name } : null}
+          onClickEquip={() => onSelectSlot("class")}
+          onClickDetails={() => onSelectSlot("class")}
+          onUnequip={classSelection ? () => onUnequipSlot("class") : undefined}
+          isSelected={selectedSlot === "class"}
+        />
+        {showSubclass ? (
+          <GridElementSlot
+            label={subclassLabel}
+            icon={<Sparkles className="h-5 w-5 text-emerald-400" />}
+            equipped={subclass ? { name: subclass.name } : null}
+            onClickEquip={() => onSelectSlot("subclass")}
+            onClickDetails={() => onSelectSlot("subclass")}
+            onUnequip={subclass ? () => onUnequipSlot("subclass") : undefined}
+            isSelected={selectedSlot === "subclass"}
+            disabled={!classSelection}
+            disabledHint={!classSelection ? "Elige una clase primero" : undefined}
+          />
+        ) : (
+          <div
+            aria-hidden
+            className="min-h-[72px] rounded-md border border-dashed border-transparent"
+          />
+        )}
+      </div>
+
+      {featSlotLevels.length > 0 && (
+        <div className="grid grid-cols-5 gap-1.5">
+          {featSlotLevels.map((featLevel, index) => {
+            const feat = featSelections[index] ?? null;
+            const slot = toFeatSlot(index);
+            return (
+              <GridElementSlot
+                key={slot}
+                label={`Feat (Lv ${featLevel})`}
+                icon={<Award className="h-5 w-5 text-rose-400" />}
+                equipped={
+                  feat
+                    ? {
+                        name: feat.name,
+                        detail:
+                          feat.source === "asi"
+                            ? "ASI"
+                            : feat.source === "amellwind"
+                              ? "Amellwind"
+                              : feat.source === "dnd2024"
+                                ? "D&D 2024"
+                                : "D&D 2014",
+                      }
+                    : null
+                }
+                onClickEquip={() => onSelectSlot(slot)}
+                onClickDetails={() => onSelectSlot(slot)}
+                onUnequip={feat ? () => onUnequipSlot(slot) : undefined}
+                isSelected={selectedSlot === slot}
+                disabled={!classSelection}
+                disabledHint={
+                  !classSelection ? "Elige una clase primero" : undefined
+                }
+                emptyTitle={`Elegir feat (nivel ${featLevel})`}
+              />
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

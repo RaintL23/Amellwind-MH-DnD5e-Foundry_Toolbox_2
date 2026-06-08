@@ -2,6 +2,7 @@ import { memo } from "react";
 import { ClassFeatureEntry } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
 import { DndKeywordText } from "@/shared/components/DndKeywordText";
+import { cn } from "@/shared/utils/cn";
 
 interface ClassFeatureDetailPanelProps {
   feature: ClassFeatureEntry;
@@ -50,10 +51,12 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
 
 interface ClassFeatureDetailsPanelProps {
   features: ClassFeatureEntry[];
+  className?: string;
 }
 
 export const ClassFeatureDetailsPanel = memo(function ClassFeatureDetailsPanel({
   features,
+  className,
 }: ClassFeatureDetailsPanelProps) {
   if (features.length === 0) {
     return (
@@ -64,7 +67,7 @@ export const ClassFeatureDetailsPanel = memo(function ClassFeatureDetailsPanel({
   }
 
   return (
-    <div className="mt-4 space-y-3">
+    <div className={cn("space-y-3", className ?? "mt-4")}>
       {features.map((feature) => (
         <ClassFeatureDetailPanel key={feature.uid} feature={feature} />
       ))}

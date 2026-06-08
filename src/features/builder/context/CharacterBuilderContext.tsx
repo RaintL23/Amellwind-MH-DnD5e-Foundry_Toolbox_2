@@ -22,7 +22,9 @@ import {
   ArmorItem,
   CombatCalculation,
   CharacterSelectionRef,
+  BuilderFeatSelection,
 } from "@/shared/types";
+import { getFeatSlotLevels } from "../utils/builder-class.utils";
 import { Character } from "../models/Character";
 import { calculateCombat } from "../utils/combat.calculator";
 import {
@@ -63,12 +65,18 @@ interface CharacterBuilderContextValue {
   trinket1: EquippedTrinket | null;
   trinket2: EquippedTrinket | null;
 
-  // Identity (species / background; class not yet implemented)
+  // Identity (species / background / class / subclass / feats)
   species: CharacterSelectionRef | null;
   background: CharacterSelectionRef | null;
+  class: CharacterSelectionRef | null;
+  subclass: CharacterSelectionRef | null;
+  featSelections: (BuilderFeatSelection | null)[];
   backstoryNotes: string;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
+  setClass: (selection: CharacterSelectionRef | null) => void;
+  setSubclass: (selection: CharacterSelectionRef | null) => void;
+  setFeatAtIndex: (index: number, selection: BuilderFeatSelection | null) => void;
 
   // Ability score origin bonuses (species / Tasha's Cauldron)
   useTashaOrigin: boolean;
@@ -131,6 +139,11 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
   const [species, setSpeciesState] = useState<CharacterSelectionRef | null>(null);
   const [background, setBackground] = useState<CharacterSelectionRef | null>(null);
+  const [classRef, setClassState] = useState<CharacterSelectionRef | null>(null);
+  const [subclass, setSubclassState] = useState<CharacterSelectionRef | null>(null);
+  const [featSelections, setFeatSelections] = useState<
+    (BuilderFeatSelection | null)[]
+  >([]);
   const [useTashaOrigin, setUseTashaOrigin] = useState(false);
   const [tashaPlus2, setTashaPlus2] = useState<AbilityKey | null>(null);
   const [tashaPlus1, setTashaPlus1] = useState<AbilityKey | null>(null);
@@ -162,6 +175,28 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     }
   }, []);
 
+  const setClass = useCallback((selection: CharacterSelectionRef | null) => {
+    setClassState(selection);
+    setSubclassState(null);
+    setFeatSelections([]);
+  }, []);
+
+  const setSubclass = useCallback((selection: CharacterSelectionRef | null) => {
+    setSubclassState(selection);
+  }, []);
+
+  const setFeatAtIndex = useCallback(
+    (index: number, selection: BuilderFeatSelection | null) => {
+      setFeatSelections((prev) => {
+        const next = [...prev];
+        while (next.length <= index) next.push(null);
+        next[index] = selection;
+        return next;
+      });
+    },
+    [],
+  );
+
   const setSpeciesAbilityChoice = useCallback(
     (index: number, ability: AbilityKey | null) => {
       setSpeciesAbilityChoices((prev) => {
@@ -178,7 +213,11 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
 
   const setLevel = useCallback((level: number) => {
     setCharacter((prev) => prev.withUpdates({ level }));
-  }, []);
+    setFeatSelections((prev) => {
+      const maxSlots = getFeatSlotLevels(classRef?.name ?? "", level).length;
+      return prev.slice(0, maxSlots);
+    });
+  }, [classRef?.name]);
 
   const setAbilityScore = useCallback((ability: AbilityKey, value: number) => {
     const clamped = Math.max(1, Math.min(30, value));
@@ -374,6 +413,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setTrinket2(null);
     setSpecies(null);
     setBackground(null);
+    setClassState(null);
+    setSubclassState(null);
+    setFeatSelections([]);
     setBackstoryNotesState("");
     setAttacksPerTurnOverride(null);
     setUseTashaOrigin(false);
@@ -398,9 +440,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       trinket2,
       species,
       background,
+      class: classRef,
+      subclass,
+      featSelections,
       backstoryNotes,
       setSpecies,
       setBackground,
+      setClass,
+      setSubclass,
+      setFeatAtIndex,
       setBackstoryNotes,
       useTashaOrigin,
       setUseTashaOrigin,
@@ -437,7 +485,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     [
       character, setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn,
-      mainHand, offHand, armor, trinket1, trinket2, species, background, backstoryNotes, setBackstoryNotes,
+      mainHand, offHand, armor, trinket1, trinket2,
+      species, background, classRef, subclass, featSelections, backstoryNotes,
+      setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,
       useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,

@@ -1,11 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import {
+  Award,
   Check,
   Gem,
+  GraduationCap,
   ScrollText,
   Search,
   Shield,
   Shirt,
+  Sparkles,
   Sword,
   Users,
 } from "lucide-react";
@@ -14,17 +17,46 @@ import { BASE_ARMORS, CLOTHING_ARMOR } from "../../data/armor.placeholder";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { getAllSpecies, getSpeciesById } from "@/features/species/services/species.service";
 import { getAllBackgrounds, getBackgroundById } from "@/features/backgrounds/services/background.service";
+import { getListClasses } from "@/features/classes/services/class.service";
+import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
+import { getAllFeats } from "@/features/feats/services/feat.service";
+import { getListDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
+import { useSelectedClass } from "../../hooks/useSelectedClass";
+import {
+  ABILITY_SCORE_IMPROVEMENT,
+  isFeatSlotSelection,
+  parseFeatSlotIndex,
+} from "../../utils/builder-class.utils";
 import { ArmorItem, Weapon } from "@/shared/types";
-import type { Background, Species } from "@/shared/types";
+import type {
+  Background,
+  BuilderFeatSelection,
+  DndFeat,
+  Feat,
+  Species,
+  Subclass,
+} from "@/shared/types";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import {
   IdentitySourceBadgeGroup,
   type IdentityDataSource,
 } from "../shared/IdentitySourceBadgeGroup";
+import {
+  FeatSourceBadgeGroup,
+  type FeatDataSource,
+} from "../shared/FeatSourceBadgeGroup";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
+import { ClassFeatureDetailsPanel } from "@/features/classes/components/detail/ClassFeatureDetailsPanel";
+import { ClassLibraryDetail } from "./ClassLibraryDetail";
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 
@@ -41,12 +73,22 @@ const RARITY_BADGE: Record<string, string> = {
 const SLOT_LABELS: Partial<Record<NonNullable<PaperDollSelection>, string>> = {
   species: "Species",
   background: "Background",
+  class: "Class",
+  subclass: "Subclass",
   mainHand: "Weapon",
   offHand: "Weapon",
   armor: "Armor",
   trinket1: "Trinket",
   trinket2: "Trinket",
 };
+
+function isDnd2024Feat(feat: DndFeat): boolean {
+  return (
+    feat.source === "XPHB" ||
+    feat.basicRules2024 === true ||
+    feat.srd52 === true
+  );
+}
 
 interface BuilderItemLibraryPanelProps {
   selectedSlot: PaperDollSelection;
@@ -80,8 +122,17 @@ export function BuilderItemLibraryPanel({
   const [identityDetailLoading, setIdentityDetailLoading] = useState(false);
   const [identitySource, setIdentitySource] =
     useState<IdentityDataSource>("amellwind");
+  const [classOptions, setClassOptions] = useState<
+    Array<{ id: string; name: string }>
+  >([]);
+  const [classLoading, setClassLoading] = useState(false);
+  const [featSource, setFeatSource] = useState<FeatDataSource>("amellwind");
+  const [amellwindFeats, setAmellwindFeats] = useState<Feat[]>([]);
+  const [dndFeats, setDndFeats] = useState<DndFeat[]>([]);
+  const [featsLoading, setFeatsLoading] = useState(false);
 
   const {
+    character,
     mainHand,
     offHand,
     armor,
@@ -89,12 +140,19 @@ export function BuilderItemLibraryPanel({
     trinket2,
     species,
     background,
+    class: classSelection,
+    subclass,
+    featSelections,
     equipWeapon,
     equipArmor,
     equipTrinket,
     setSpecies,
     setBackground,
+    setClass,
+    setSubclass,
+    setFeatAtIndex,
   } = useCharacterBuilder();
+  const { classData, loading: classDetailLoading } = useSelectedClass();
   const { weapons: inventoryWeapons, armors: inventoryArmors } =
     useBuilderInventory();
 
@@ -105,10 +163,18 @@ export function BuilderItemLibraryPanel({
     selectedSlot === "trinket1" || selectedSlot === "trinket2";
   const isSpeciesSlot = selectedSlot === "species";
   const isBackgroundSlot = selectedSlot === "background";
+  const isClassSlot = selectedSlot === "class";
+  const isSubclassSlot = selectedSlot === "subclass";
+  const isFeatSlot =
+    selectedSlot !== null && isFeatSlotSelection(selectedSlot);
+  const featSlotIndex = isFeatSlot
+    ? parseFeatSlotIndex(selectedSlot)
+    : null;
 
   useEffect(() => {
     setSearch("");
     setIdentitySource("amellwind");
+    setFeatSource("amellwind");
   }, [selectedSlot]);
 
   useEffect(() => {
@@ -134,6 +200,28 @@ export function BuilderItemLibraryPanel({
 
     load.then(setIdentityOptions).finally(() => setIdentityLoading(false));
   }, [isSpeciesSlot, isBackgroundSlot, selectedSlot, identitySource]);
+
+  useEffect(() => {
+    if (!isClassSlot && !isSubclassSlot) return;
+    setClassLoading(true);
+    setClassOptions([]);
+    getListClasses()
+      .then((list) =>
+        setClassOptions(list.map((c) => ({ id: c.id, name: c.name }))),
+      )
+      .finally(() => setClassLoading(false));
+  }, [isClassSlot, isSubclassSlot, selectedSlot]);
+
+  useEffect(() => {
+    if (!isFeatSlot) return;
+    setFeatsLoading(true);
+    Promise.all([getAllFeats(), getListDndFeats()])
+      .then(([amellwind, dnd]) => {
+        setAmellwindFeats(amellwind);
+        setDndFeats(dnd);
+      })
+      .finally(() => setFeatsLoading(false));
+  }, [isFeatSlot, selectedSlot]);
 
   const q = search.toLowerCase().trim();
 
@@ -184,6 +272,86 @@ export function BuilderItemLibraryPanel({
     return identityOptions.filter((o) => o.name.toLowerCase().includes(q));
   }, [identityOptions, isSpeciesSlot, isBackgroundSlot, q]);
 
+  const classFiltered = useMemo(() => {
+    if (!isClassSlot) return [];
+    if (!q) return classOptions;
+    return classOptions.filter((o) => o.name.toLowerCase().includes(q));
+  }, [classOptions, isClassSlot, q]);
+
+  const subclassOptions = useMemo(() => {
+    if (!isSubclassSlot || !classData) return [];
+    return subclassesForClassVariant(classData).map((sc) => ({
+      id: sc.id,
+      name: sc.name,
+    }));
+  }, [isSubclassSlot, classData]);
+
+  const subclassFiltered = useMemo(() => {
+    if (!q) return subclassOptions;
+    return subclassOptions.filter((o) => o.name.toLowerCase().includes(q));
+  }, [subclassOptions, q]);
+
+  const activeSubclass = useMemo(() => {
+    if (!classData || !subclass) return null;
+    return (
+      subclassesForClassVariant(classData).find((sc) => sc.id === subclass.id) ??
+      null
+    );
+  }, [classData, subclass]);
+
+  const featOptions = useMemo(() => {
+    if (!isFeatSlot) return [];
+
+    const asiOption: BuilderFeatSelection = {
+      id: ABILITY_SCORE_IMPROVEMENT.id,
+      name: ABILITY_SCORE_IMPROVEMENT.name,
+      source: "asi",
+    };
+
+    let list: Array<{ id: string; name: string; summary?: string }> = [];
+
+    if (featSource === "amellwind") {
+      list = amellwindFeats.map((f) => ({
+        id: f.id,
+        name: f.name,
+        summary: f.summary,
+      }));
+    } else if (featSource === "dnd2014") {
+      list = dndFeats
+        .filter((f) => !isDnd2024Feat(f))
+        .map((f) => ({
+          id: f.id,
+          name: f.name,
+          summary: f.summary,
+        }));
+    } else {
+      list = dndFeats
+        .filter((f) => isDnd2024Feat(f))
+        .map((f) => ({
+          id: f.id,
+          name: f.name,
+          summary: f.summary,
+        }));
+    }
+
+    const filtered = q
+      ? list.filter(
+          (f) =>
+            f.name.toLowerCase().includes(q) ||
+            (f.summary?.toLowerCase().includes(q) ?? false),
+        )
+      : list;
+
+    return [
+      asiOption,
+      ...filtered.map((f) => ({
+        id: f.id,
+        name: f.name,
+        source: featSource,
+      })),
+    ];
+  }, [isFeatSlot, featSource, amellwindFeats, dndFeats, q]);
+
   const equippedWeapon =
     selectedSlot === "mainHand"
       ? mainHand
@@ -207,6 +375,9 @@ export function BuilderItemLibraryPanel({
 
   const showIdentityDetail =
     (isSpeciesSlot || isBackgroundSlot) && !!selectedIdentity;
+
+  const showClassDetail = isClassSlot && !!classSelection && !!classData;
+  const showSubclassDetail = isSubclassSlot && !!subclass && !!activeSubclass;
 
   const showWeaponDetail = isWeaponSlot && !!equippedWeapon;
   const showArmorDetail = isArmorSlot && !!armor;
@@ -264,16 +435,41 @@ export function BuilderItemLibraryPanel({
     else if (isBackgroundSlot) setBackground(ref);
   }
 
+  function handleSelectClass(id: string, name: string) {
+    setClass({ id, name });
+  }
+
+  function handleSelectSubclass(id: string, name: string) {
+    setSubclass({ id, name });
+  }
+
+  function handleSelectFeat(selection: BuilderFeatSelection) {
+    if (featSlotIndex === null) return;
+    setFeatAtIndex(featSlotIndex, selection);
+  }
+
   const showIdentitySourceToggle = isSpeciesSlot || isBackgroundSlot;
+  const showFeatSourceToggle = isFeatSlot;
+
+  const slotLabel = useMemo(() => {
+    if (!selectedSlot) return "Library";
+    if (isFeatSlotSelection(selectedSlot)) {
+      return `Feat ${featSlotIndex !== null ? featSlotIndex + 1 : ""}`.trim();
+    }
+    return SLOT_LABELS[selectedSlot] ?? selectedSlot;
+  }, [selectedSlot, featSlotIndex]);
 
   const panelTitle = selectedSlot ? (
     <span className="flex min-w-0 flex-wrap items-center gap-2">
-      <span>{`Library — ${SLOT_LABELS[selectedSlot] ?? selectedSlot}`}</span>
+      <span>{`Library — ${slotLabel}`}</span>
       {showIdentitySourceToggle && (
         <IdentitySourceBadgeGroup
           value={identitySource}
           onChange={setIdentitySource}
         />
+      )}
+      {showFeatSourceToggle && (
+        <FeatSourceBadgeGroup value={featSource} onChange={setFeatSource} />
       )}
     </span>
   ) : (
@@ -286,7 +482,11 @@ export function BuilderItemLibraryPanel({
         <EmptyState text="Click on an equipment slot to see the available options." />
       ) : (
         <>
-          {!showIdentityDetail && !showWeaponDetail && !showArmorDetail && (
+          {!showIdentityDetail &&
+            !showClassDetail &&
+            !showSubclassDetail &&
+            !showWeaponDetail &&
+            !showArmorDetail && (
             <div className="relative mb-2">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -360,9 +560,65 @@ export function BuilderItemLibraryPanel({
                 />
               ))}
 
-            {selectedSlot === "class" && (
-              <EmptyState text="Class selection will be available soon." />
-            )}
+            {isClassSlot &&
+              (showClassDetail ? (
+                classDetailLoading ? (
+                  <EmptyState text="Cargando…" />
+                ) : classData ? (
+                  <ClassLibraryDetail
+                    classData={classData}
+                    subclass={activeSubclass}
+                    level={character.level}
+                  />
+                ) : (
+                  <EmptyState text="No se encontró la información." />
+                )
+              ) : (
+                <IdentityList
+                  loading={classLoading}
+                  options={classFiltered}
+                  selectedId={classSelection?.id ?? null}
+                  icon={
+                    <GraduationCap className="h-3.5 w-3.5 text-amber-400" />
+                  }
+                  onSelect={handleSelectClass}
+                />
+              ))}
+
+            {isSubclassSlot &&
+              (!classData ? (
+                <EmptyState text="Elige una clase primero." />
+              ) : showSubclassDetail && activeSubclass ? (
+                <SubclassLibraryDetail
+                  subclass={activeSubclass}
+                  level={character.level}
+                />
+              ) : (
+                <IdentityList
+                  loading={classDetailLoading}
+                  options={subclassFiltered}
+                  selectedId={subclass?.id ?? null}
+                  icon={
+                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
+                  }
+                  onSelect={handleSelectSubclass}
+                />
+              ))}
+
+            {isFeatSlot &&
+              (featsLoading ? (
+                <EmptyState text="Cargando feats…" />
+              ) : (
+                <FeatList
+                  options={featOptions}
+                  selectedId={
+                    featSlotIndex !== null
+                      ? (featSelections[featSlotIndex]?.id ?? null)
+                      : null
+                  }
+                  onSelect={handleSelectFeat}
+                />
+              ))}
           </div>
         </>
       )}
@@ -539,6 +795,105 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 function EmptyState({ text }: { text: string }) {
   return (
     <p className="py-6 text-center text-xs text-muted-foreground">{text}</p>
+  );
+}
+
+function SubclassLibraryDetail({
+  subclass,
+  level,
+}: {
+  subclass: Subclass;
+  level: number;
+}) {
+  const rowsWithFeatures = subclass.progression.filter(
+    (row) => row.level <= level && row.features.length > 0,
+  );
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center gap-2">
+        <Sparkles className="h-4 w-4 text-emerald-400" />
+        <h3 className="text-sm font-semibold text-foreground">{subclass.name}</h3>
+        <span className="text-[10px] text-muted-foreground">
+          {subclass.source}
+        </span>
+      </div>
+      {rowsWithFeatures.length > 0 ? (
+        <Accordion type="multiple" className="space-y-1">
+          {rowsWithFeatures.map((row) => (
+            <AccordionItem
+              key={row.level}
+              value={`subclass-level-${row.level}`}
+              className="rounded-md border border-border/60 px-2"
+            >
+              <AccordionTrigger className="gap-2 py-2 text-xs font-medium hover:no-underline">
+                <span className="shrink-0 font-semibold text-emerald-400/90">
+                  Level {row.level}
+                </span>
+                <span className="min-w-0 flex-1 truncate text-left text-[10px] font-normal text-muted-foreground">
+                  {row.features.map((f) => f.displayName).join(", ")}
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="pb-2 pt-0">
+                <ClassFeatureDetailsPanel
+                  features={row.features.map((f) => ({
+                    ...f,
+                    isSubclassFeature: true,
+                  }))}
+                  className="mt-0"
+                />
+              </AccordionContent>
+            </AccordionItem>
+          ))}
+        </Accordion>
+      ) : (
+        <p className="text-xs italic text-muted-foreground">
+          Sin rasgos de subclass disponibles para este nivel.
+        </p>
+      )}
+    </div>
+  );
+}
+
+function FeatList({
+  options,
+  selectedId,
+  onSelect,
+}: {
+  options: BuilderFeatSelection[];
+  selectedId: string | null;
+  onSelect: (selection: BuilderFeatSelection) => void;
+}) {
+  if (options.length === 0) {
+    return <EmptyState text="No feats available." />;
+  }
+
+  return (
+    <>
+      {options.map((feat) => (
+        <ItemRow
+          key={`${feat.source}-${feat.id}`}
+          icon={
+            <Award
+              className={cn(
+                "h-3.5 w-3.5",
+                feat.source === "asi"
+                  ? "text-amber-400"
+                  : "text-rose-400",
+              )}
+            />
+          }
+          name={feat.name}
+          stats={
+            feat.source === "asi"
+              ? "Mejora 2 puntos de habilidad o elige un feat"
+              : ""
+          }
+          equipped={selectedId === feat.id}
+          onClick={() => onSelect(feat)}
+        />
+      ))}
+    </>
   );
 }
 
