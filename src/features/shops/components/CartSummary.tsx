@@ -29,11 +29,11 @@ export function CartSummary({
       </div>
       {onPurchase && (
         <Button className="w-full" size="sm" onClick={onPurchase}>
-          Comprar
+          Purchase
         </Button>
       )}
       <p className="text-xs text-muted-foreground/60 italic">
-        Al comprar, los objetos se añaden al inventario del Builder.
+        When purchasing, items are added to the Builder's inventory.
       </p>
     </div>
   );

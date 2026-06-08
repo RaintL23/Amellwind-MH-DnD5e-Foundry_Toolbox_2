@@ -1136,6 +1136,23 @@ export function BuilderItemLibraryPanel({
                 ) : isBackgroundSlot && isLoadedBackground(identityDetail) ? (
                   <IdentityLibraryDetail
                     background={identityDetail}
+                    startingEquipmentOffers={
+                      identitySource === "dnd" &&
+                      identityDetail &&
+                      "startingEquipmentOffers" in identityDetail
+                        ? (identityDetail as unknown as DndBackground)
+                            .startingEquipmentOffers
+                        : undefined
+                    }
+                    startingEquipmentSource={
+                      identitySource === "dnd" && selectedIdentity
+                        ? {
+                            type: "background",
+                            id: selectedIdentity.id,
+                            name: selectedIdentity.name,
+                          }
+                        : undefined
+                    }
                     backgroundAbilitySummary={
                       identitySource === "dnd" &&
                       identityDetail &&
@@ -1347,7 +1364,7 @@ function WeaponList({
 
   return (
     <>
-      {inventory.length > 0 && <SectionLabel>Inventario</SectionLabel>}
+      {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
       {inventory.map((w) => (
         <ItemRow
           key={`inv-${w.name}`}
@@ -1399,7 +1416,7 @@ function ArmorList({
           />
         </>
       )}
-      {inventory.length > 0 && <SectionLabel>Inventario</SectionLabel>}
+      {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
       {inventory.map((a) => (
         <ItemRow
           key={`inv-${a.name}`}

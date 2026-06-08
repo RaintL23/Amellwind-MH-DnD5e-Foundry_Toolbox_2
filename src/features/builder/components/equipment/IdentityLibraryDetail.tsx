@@ -25,6 +25,12 @@ import {
   type SpeciesTrait,
 } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import type {
+  StartingEquipmentOffers,
+  StartingEquipmentSource,
+} from "@/shared/types";
+import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
+import { StartingEquipmentPicker } from "./StartingEquipmentPicker";
 
 interface IdentityLibraryDetailProps {
   species?: Species;
@@ -43,6 +49,8 @@ interface IdentityLibraryDetailProps {
   subspeciesLabel?: string | null;
   subspeciesAbilitySummary?: string | null;
   bookNames?: BookSourceNameMap;
+  startingEquipmentOffers?: StartingEquipmentOffers;
+  startingEquipmentSource?: StartingEquipmentSource;
 }
 
 function DetailTable({ caption, colLabels, rows }: SpeciesTable) {
@@ -303,10 +311,14 @@ function BackgroundDetailBody({
   background,
   abilitySummary,
   featSummary,
+  startingEquipmentOffers,
+  startingEquipmentSource,
 }: {
   background: Background;
   abilitySummary?: string | null;
   featSummary?: string | null;
+  startingEquipmentOffers?: StartingEquipmentOffers;
+  startingEquipmentSource?: StartingEquipmentSource;
 }) {
   const asiSummary =
     abilitySummary && abilitySummary !== "—" ? abilitySummary : null;
@@ -376,6 +388,17 @@ function BackgroundDetailBody({
         </div>
       )}
 
+      {startingEquipmentOffers &&
+        startingEquipmentSource &&
+        hasStartingEquipmentOffers(startingEquipmentOffers) && (
+          <div className="mb-3">
+            <StartingEquipmentPicker
+              offers={startingEquipmentOffers}
+              source={startingEquipmentSource}
+            />
+          </div>
+        )}
+
       <Separator className="my-3" />
 
       <BackgroundSectionBlock
@@ -413,6 +436,8 @@ export function IdentityLibraryDetail({
   subspeciesLabel,
   subspeciesAbilitySummary,
   bookNames = {},
+  startingEquipmentOffers,
+  startingEquipmentSource,
 }: IdentityLibraryDetailProps) {
   const isSpecies = !!species;
   const name = species?.name ?? background?.name ?? "";
@@ -505,6 +530,8 @@ export function IdentityLibraryDetail({
               background={background}
               abilitySummary={backgroundAbilitySummary}
               featSummary={backgroundFeatSummary}
+              startingEquipmentOffers={startingEquipmentOffers}
+              startingEquipmentSource={startingEquipmentSource}
             />
           )}
         </AccordionContent>

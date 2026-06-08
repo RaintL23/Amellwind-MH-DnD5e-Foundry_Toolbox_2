@@ -5,6 +5,7 @@ import type {
 import type { AbilityBonus } from "./species.types";
 import type { DndBackgroundFeatRef } from "./dnd-feat.types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
+import type { StartingEquipmentOffers } from "./starting-equipment.types";
 
 export type DndBackgroundEdition = "2014" | "2024";
 
@@ -31,6 +32,7 @@ export interface DndBackground {
   searchText?: string;
   /** Structured skill proficiency grants for the builder. */
   skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
+  startingEquipmentOffers: StartingEquipmentOffers;
 }
 
 export const DND_BACKGROUND_EDITION_LABELS: Record<DndBackgroundEdition, string> = {

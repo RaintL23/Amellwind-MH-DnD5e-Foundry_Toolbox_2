@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Package, X } from "lucide-react";
+import { Package, Trash2, X } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -20,8 +20,14 @@ const KIND_LABELS: Record<CartItemKind, string> = {
 const KIND_ORDER: CartItemKind[] = ["weapon", "armor", "other"];
 
 export function BuilderInventoryPanel() {
-  const { items, totalItems, isSyncing, getEntryKind, removeFromInventory } =
-    useBuilderInventory();
+  const {
+    items,
+    totalItems,
+    isSyncing,
+    getEntryKind,
+    removeFromInventory,
+    clearInventory,
+  } = useBuilderInventory();
 
   const grouped = KIND_ORDER.map((kind) => ({
     kind,
@@ -35,7 +41,7 @@ export function BuilderInventoryPanel() {
           <AccordionTrigger className="gap-1.5 px-3.5 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground hover:no-underline">
             <span className="flex items-center gap-1.5">
               <Package className="h-3.5 w-3.5" aria-hidden />
-              Inventario
+              Inventory
               {totalItems > 0 && (
                 <span className="rounded-full bg-primary/20 px-1.5 py-0.5 text-[10px] font-semibold normal-case tracking-normal text-primary">
                   {totalItems}
@@ -73,6 +79,14 @@ export function BuilderInventoryPanel() {
               </div>
             ) : (
               <div className="flex flex-col gap-3">
+                <button
+                  type="button"
+                  onClick={clearInventory}
+                  className="flex w-full items-center justify-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-[11px] font-medium text-destructive transition-colors hover:bg-destructive/10"
+                >
+                  <Trash2 className="h-3.5 w-3.5" aria-hidden />
+                  Vaciar inventario
+                </button>
                 {grouped.map(({ kind, entries }) => (
                   <div key={kind}>
                     <p className="mb-1.5 text-[11px] uppercase tracking-wide text-muted-foreground">
@@ -81,7 +95,7 @@ export function BuilderInventoryPanel() {
                     <ul className="flex flex-col gap-1.5">
                       {entries.map((entry) => (
                         <InventoryRow
-                          key={entry.name}
+                          key={entry.startingEquipmentId ?? entry.name}
                           entry={entry}
                           kind={kind}
                           onRemove={removeFromInventory}
@@ -139,7 +153,7 @@ function InventoryRow({
         type="button"
         onClick={() => onRemove(entry.name)}
         className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-        aria-label={`Quitar ${entry.name} del inventario`}
+        aria-label={`Remove ${entry.name} from inventory`}
       >
         <X className="h-3 w-3" />
       </button>

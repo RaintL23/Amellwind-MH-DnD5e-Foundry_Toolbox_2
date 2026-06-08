@@ -11,6 +11,8 @@ import {
 import { ClassFeatureDetailsPanel } from "@/features/classes/components/detail/ClassFeatureDetailsPanel";
 import { ClassSourceSwitcher } from "@/features/classes/components/detail/ClassSourceSwitcher";
 import { getCasterLabel } from "@/features/classes/mappers/class.mapper";
+import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
+import { StartingEquipmentPicker } from "./StartingEquipmentPicker";
 import type { BookSourceNameMap } from "@/features/spells/services/book-source.service";
 import type { ClassVariantField } from "@/features/classes/utils/class-variant.utils";
 import {
@@ -111,6 +113,17 @@ export function ClassLibraryDetail({
           Elige una {classData.subclassTitle?.toLowerCase() ?? "subclass"} para
           ver sus rasgos.
         </p>
+      )}
+
+      {hasStartingEquipmentOffers(classData.startingEquipmentOffers) && (
+        <StartingEquipmentPicker
+          offers={classData.startingEquipmentOffers}
+          source={{
+            type: "class",
+            id: classData.id,
+            name: classData.name,
+          }}
+        />
       )}
 
       <Separator />

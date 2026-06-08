@@ -45,7 +45,11 @@ interface BuilderInventoryContextValue {
   equippableCount: number;
   isSyncing: boolean;
   getEntryKind: (entry: CartEntry) => CartItemKind;
+  addToInventory: (entry: CartEntry) => void;
   removeFromInventory: (name: string) => void;
+  removeStartingEquipmentItem: (startingEquipmentId: string) => void;
+  clearStartingEquipmentForSource: (type: string, sourceId: string) => void;
+  clearInventory: () => void;
   purchaseFromCart: () => void;
 }
 
@@ -107,6 +111,40 @@ export function BuilderInventoryProvider({
     setItems((prev) => prev.filter((i) => i.name !== name));
   }, []);
 
+  const addToInventory = useCallback((entry: CartEntry) => {
+    setItems((prev) => {
+      if (entry.startingEquipmentId) {
+        if (
+          prev.some((i) => i.startingEquipmentId === entry.startingEquipmentId)
+        ) {
+          return prev;
+        }
+        return [...prev, { ...entry }];
+      }
+      return mergeCartEntries(prev, [entry]);
+    });
+  }, []);
+
+  const removeStartingEquipmentItem = useCallback((startingEquipmentId: string) => {
+    setItems((prev) =>
+      prev.filter((entry) => entry.startingEquipmentId !== startingEquipmentId),
+    );
+  }, []);
+
+  const clearStartingEquipmentForSource = useCallback(
+    (type: string, sourceId: string) => {
+      const prefix = `${type}:${sourceId}:`;
+      setItems((prev) =>
+        prev.filter((entry) => !entry.startingEquipmentId?.startsWith(prefix)),
+      );
+    },
+    [],
+  );
+
+  const clearInventory = useCallback(() => {
+    setItems([]);
+  }, []);
+
   const purchaseFromCart = useCallback(() => {
     if (cartItems.length === 0) return;
     setItems((prev) => mergeCartEntries(prev, cartItems));
@@ -123,7 +161,11 @@ export function BuilderInventoryProvider({
         equippableCount,
         isSyncing,
         getEntryKind,
+        addToInventory,
         removeFromInventory,
+        removeStartingEquipmentItem,
+        clearStartingEquipmentForSource,
+        clearInventory,
         purchaseFromCart,
       }}
     >

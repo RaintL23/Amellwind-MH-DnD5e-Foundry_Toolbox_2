@@ -17,6 +17,7 @@ import {
   parseSkillProficiencyBlocks,
   parseSaveProficiencies,
 } from "@/shared/utils/skill-proficiency.parser";
+import { parseClassStartingEquipment } from "@/shared/utils/starting-equipment.parser";
 import type {
   ProcessedSubclass,
   RawClassDefinition,
@@ -388,6 +389,7 @@ export function mapClass(raw: RawClassDefinition): Class {
     subclasses,
     startingProficiencies: mapStartingProficiencies(raw.startingProficiencies),
     startingEquipment: mapStartingEquipment(raw.startingEquipment),
+    startingEquipmentOffers: parseClassStartingEquipment(raw.startingEquipment),
     multiclassing: mapMulticlassing(raw.multiclassing),
     subclassTitle: raw.subclassTitle,
     summary: summaryParts.join(" "),

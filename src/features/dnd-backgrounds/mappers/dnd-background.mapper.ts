@@ -12,6 +12,7 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { formatAbilitySummary } from "@/features/dnd-races/mappers/dnd-race.mapper";
 import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
+import { parseBackgroundStartingEquipment } from "@/shared/utils/starting-equipment.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -512,5 +513,8 @@ export function mapDndBackground(raw: any): DndBackground {
     features,
     suggestedCharacteristics: suggested,
     skillGrants,
+    startingEquipmentOffers: parseBackgroundStartingEquipment(
+      raw.startingEquipment,
+    ),
   };
 }

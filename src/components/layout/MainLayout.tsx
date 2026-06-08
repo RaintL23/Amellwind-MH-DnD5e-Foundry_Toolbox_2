@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { CartProvider } from "@/features/shops/context/CartContext";
 import { BuilderInventoryProvider } from "@/features/builder/context/BuilderInventoryContext";
 import { CharacterBuilderProvider } from "@/features/builder/context/CharacterBuilderContext";
+import { StartingEquipmentInventorySync } from "@/features/builder/components/StartingEquipmentInventorySync";
 import { XanatharBackstoryProvider } from "@/features/xanathar-backstory/context/XanatharBackstoryContext";
 import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { Sidebar } from "./Sidebar";
@@ -16,6 +17,7 @@ export function MainLayout({ syncing = false }: { syncing?: boolean }) {
     <CartProvider>
       <BuilderInventoryProvider>
         <CharacterBuilderProvider>
+          <StartingEquipmentInventorySync />
           <XanatharBackstoryProvider>
           <RuneBuildProvider>
             <div className="flex h-screen bg-background text-foreground">

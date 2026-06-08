@@ -17,6 +17,8 @@ export interface CartEntry {
   source?: string;
   shopName?: string;
   quantity: number;
+  /** Set when the row was added from a starting-equipment badge. */
+  startingEquipmentId?: string;
 }
 
 export interface ShopEntry {

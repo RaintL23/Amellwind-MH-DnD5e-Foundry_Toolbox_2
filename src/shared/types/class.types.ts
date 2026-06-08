@@ -67,6 +67,7 @@ export interface Class {
   subclasses: Subclass[];
   startingProficiencies: ClassMetaListGroup[];
   startingEquipment: string[];
+  startingEquipmentOffers: import("./starting-equipment.types").StartingEquipmentOffers;
   multiclassing: string[];
   subclassTitle?: string;
   summary: string;
