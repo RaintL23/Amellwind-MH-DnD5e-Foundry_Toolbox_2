@@ -2,6 +2,7 @@ import {
   Actor,
   AbilityScores,
   AbilityKey,
+  SkillKey,
   HP,
   Speed,
   ArmorClass,
@@ -10,6 +11,7 @@ import {
   DamageEntry,
   Entry,
 } from "@/shared/types";
+import { SKILL_ABILITY } from "../utils/check-modifiers.utils";
 
 // ─── Proficiency Bonus by Level ──────────────────────────────────────────────
 
@@ -139,6 +141,31 @@ export class Character implements Actor {
 
   getProficiencyBonus(): number {
     return this.proficiencyBonus;
+  }
+
+  isSavingThrowProficient(ability: AbilityKey): boolean {
+    return this.savingThrows[ability] !== undefined;
+  }
+
+  getSavingThrowModifier(ability: AbilityKey): number {
+    const base = this.getModifier(ability);
+    return this.isSavingThrowProficient(ability)
+      ? base + this.proficiencyBonus
+      : base;
+  }
+
+  getSkillProficiencyLevel(skill: SkillKey): 0 | 1 | 2 {
+    return this.skills[skill] ?? 0;
+  }
+
+  getSkillModifier(skill: SkillKey): number {
+    const ability = SKILL_ABILITY[skill];
+    const level = this.getSkillProficiencyLevel(skill);
+    return this.getModifier(ability) + level * this.proficiencyBonus;
+  }
+
+  getPassiveScore(skill: SkillKey): number {
+    return 10 + this.getSkillModifier(skill);
   }
 
   getAttacksPerTurn(): number {

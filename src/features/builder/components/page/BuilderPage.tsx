@@ -1,6 +1,8 @@
 import { StatsPanel } from "../stats/StatsPanel";
 import { PaperDoll } from "../equipment/PaperDoll";
 import { BuilderDerivedPanel } from "../stats/BuilderDerivedPanel";
+import { BuilderSavingThrowsPanel } from "../stats/BuilderSavingThrowsPanel";
+import { BuilderSkillChecksPanel } from "../stats/BuilderSkillChecksPanel";
 import { BuilderDamagePanel } from "../stats/BuilderDamagePanel";
 import { BuilderInventoryPanel } from "../stats/BuilderInventoryPanel";
 import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
@@ -27,6 +29,8 @@ export function BuilderPage() {
           <div className="flex flex-col gap-2.5">
             <StatsPanel />
             <BuilderDerivedPanel />
+            <BuilderSavingThrowsPanel />
+            <BuilderSkillChecksPanel />
           </div>
 
           {/* Columna central: equipamiento + biblioteca */}
