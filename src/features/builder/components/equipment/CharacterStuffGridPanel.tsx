@@ -6,7 +6,10 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
-import type { BuilderFeatSelection, CharacterSelectionRef } from "@/shared/types";
+import type {
+  BuilderFeatSelection,
+  CharacterSelectionRef,
+} from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
@@ -113,14 +116,7 @@ export function CharacterStuffGridPanel({
         <GridElementSlot
           label="Backstory"
           icon={<Book className="h-5 w-5 text-blue-400" />}
-          equipped={
-            hasBackstory
-              ? {
-                  name: "Backstory",
-                  detail: backstoryPreview(backstoryNotes),
-                }
-              : null
-          }
+          equipped={hasBackstory ? { name: "Backstory" } : null}
           onClickEquip={() => onSelectSlot("backstory")}
           onClickDetails={() => onSelectSlot("backstory")}
           isSelected={selectedSlot === "backstory"}
@@ -145,7 +141,9 @@ export function CharacterStuffGridPanel({
             onUnequip={subclass ? () => onUnequipSlot("subclass") : undefined}
             isSelected={selectedSlot === "subclass"}
             disabled={!classSelection}
-            disabledHint={!classSelection ? "Elige una clase primero" : undefined}
+            disabledHint={
+              !classSelection ? "Elige una clase primero" : undefined
+            }
           />
         ) : (
           <div
