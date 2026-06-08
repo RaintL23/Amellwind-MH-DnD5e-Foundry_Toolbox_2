@@ -16,11 +16,14 @@ import { cn } from "@/shared/utils/cn";
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../../data/armor.placeholder";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { getAllSpecies, getSpeciesById } from "@/features/species/services/species.service";
+import { getAllDndRaces, getDndRaceById } from "@/features/dnd-races/services/dnd-race.service";
 import { getAllBackgrounds, getBackgroundById } from "@/features/backgrounds/services/background.service";
+import { getAllDndBackgrounds, getDndBackgroundById } from "@/features/dnd-backgrounds/services/dnd-background.service";
 import { getListClasses } from "@/features/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
-import { getAllFeats } from "@/features/feats/services/feat.service";
-import { getListDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
+import { getAllFeats, getFeatById } from "@/features/feats/services/feat.service";
+import { getListDndFeats, getDndFeatById } from "@/features/dnd-feats/services/dnd-feat.service";
+import { detectExpertiseGrants } from "../../utils/expertise-detection.utils";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import { useSelectedClass } from "../../hooks/useSelectedClass";
@@ -155,6 +158,8 @@ export function BuilderItemLibraryPanel({
     setClass,
     setSubclass,
     setFeatAtIndex,
+    applyIdentityGrants,
+    setFeatSkillChoices,
   } = useCharacterBuilder();
   const { classData, loading: classDetailLoading } = useSelectedClass();
   const { weapons: inventoryWeapons, armors: inventoryArmors } =
@@ -195,13 +200,16 @@ export function BuilderItemLibraryPanel({
     setIdentityLoading(true);
     setIdentityOptions([]);
 
-    const load = isSpeciesSlot
-      ? getAllSpecies().then((list) =>
-          list.map((s) => ({ id: s.id, name: s.name })),
-        )
-      : getAllBackgrounds().then((list) =>
-          list.map((b) => ({ id: b.id, name: b.name })),
-        );
+    let load: Promise<Array<{ id: string; name: string }>>;
+    if (isSpeciesSlot) {
+      load = identitySource === "dnd"
+        ? getAllDndRaces().then((list) => list.map((r) => ({ id: r.id, name: r.name })))
+        : getAllSpecies().then((list) => list.map((s) => ({ id: s.id, name: s.name })));
+    } else {
+      load = identitySource === "dnd"
+        ? getAllDndBackgrounds().then((list) => list.map((b) => ({ id: b.id, name: b.name })))
+        : getAllBackgrounds().then((list) => list.map((b) => ({ id: b.id, name: b.name })));
+    }
 
     load.then(setIdentityOptions).finally(() => setIdentityLoading(false));
   }, [isSpeciesSlot, isBackgroundSlot, selectedSlot, identitySource]);
@@ -216,6 +224,54 @@ export function BuilderItemLibraryPanel({
       )
       .finally(() => setClassLoading(false));
   }, [isClassSlot, isSubclassSlot, selectedSlot]);
+
+  // Apply feat grants whenever featSelections changes
+  useEffect(() => {
+    const activeFeatIds = featSelections
+      .filter(Boolean)
+      .filter((f) => f && !isAsiFeatSelection(f)) as import("@/shared/types").BuilderFeatSelection[];
+
+    if (!activeFeatIds.length) {
+      applyIdentityGrants({ source: "feats", skillGrants: [], expertiseGrants: [] });
+      return;
+    }
+
+    Promise.all(
+      activeFeatIds.map((f) =>
+        f.source === "dnd2014" || f.source === "dnd2024"
+          ? getDndFeatById(f.id)
+          : getFeatById(f.id),
+      ),
+    ).then((feats) => {
+      const validFeats = feats.filter(Boolean) as import("@/shared/types").Feat[];
+      const skillGrants = validFeats.flatMap((f) => f.skillGrants ?? []);
+      const expertiseGrants = validFeats.flatMap((f) => f.expertiseGrants ?? []);
+      applyIdentityGrants({ source: "feats", skillGrants, expertiseGrants });
+
+      // Reset feat skill choices for slots that have no skill grants
+      validFeats.forEach((feat, i) => {
+        if (feat && (feat.skillGrants?.length ?? 0) === 0) {
+          setFeatSkillChoices(i, []);
+        }
+      });
+    });
+  }, [featSelections, applyIdentityGrants, setFeatSkillChoices]);
+
+  // Apply class grants whenever classData or level changes
+  useEffect(() => {
+    if (!classData) {
+      applyIdentityGrants({ source: "class", skillGrants: [], saveProficiencies: [], expertiseGrants: [] });
+      return;
+    }
+    const level = character.level;
+    const expertiseGrants = detectExpertiseGrants(classData, level);
+    applyIdentityGrants({
+      source: "class",
+      skillGrants: classData.skillChoiceGrants,
+      saveProficiencies: classData.saveProficiencies,
+      expertiseGrants,
+    });
+  }, [classData, character.level, applyIdentityGrants]);
 
   useEffect(() => {
     if (!isFeatSlot) return;
@@ -434,13 +490,37 @@ export function BuilderItemLibraryPanel({
     setIdentityDetailLoading(true);
     setIdentityDetail(null);
 
-    const load = isSpeciesSlot
-      ? getSpeciesById(selectedIdentity.id)
-      : getBackgroundById(selectedIdentity.id);
+    let load: Promise<Species | import("@/shared/types").Background | import("@/shared/types").DndRace | import("@/shared/types").DndBackground | null | undefined>;
+    if (isSpeciesSlot) {
+      load = identitySource === "dnd"
+        ? getDndRaceById(selectedIdentity.id)
+        : getSpeciesById(selectedIdentity.id);
+    } else {
+      load = identitySource === "dnd"
+        ? getDndBackgroundById(selectedIdentity.id)
+        : getBackgroundById(selectedIdentity.id);
+    }
 
     load
       .then((data) => {
-        if (!cancelled) setIdentityDetail(data ?? null);
+        if (cancelled || !data) return;
+        setIdentityDetail(data as Species | import("@/shared/types").Background);
+
+        // Apply grants to builder context
+        if ("skillGrants" in data && data.skillGrants) {
+          if (isSpeciesSlot) {
+            applyIdentityGrants({
+              source: "species",
+              skillGrants: data.skillGrants,
+              skillAdvantages: "skillAdvantages" in data ? data.skillAdvantages : [],
+            });
+          } else {
+            applyIdentityGrants({
+              source: "background",
+              skillGrants: data.skillGrants,
+            });
+          }
+        }
       })
       .finally(() => {
         if (!cancelled) setIdentityDetailLoading(false);
@@ -454,6 +534,8 @@ export function BuilderItemLibraryPanel({
     selectedIdentity?.id,
     isSpeciesSlot,
     isBackgroundSlot,
+    identitySource,
+    applyIdentityGrants,
   ]);
 
   function handleSelectWeapon(weapon: Weapon) {

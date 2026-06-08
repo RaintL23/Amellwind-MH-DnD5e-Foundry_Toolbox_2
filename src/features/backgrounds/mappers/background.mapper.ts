@@ -6,6 +6,7 @@ import {
   BackgroundTable,
 } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -228,6 +229,11 @@ export function mapBackground(raw: any): Background {
   const { listEntries, features, suggested } = splitEntries(raw);
   const listProf = mapListProficiencies(listEntries);
 
+  const skillGrants = parseSkillProficiencyBlocks(
+    Array.isArray(raw.skillProficiencies) ? raw.skillProficiencies : [],
+    { type: "background", name: String(raw.name ?? "Unknown") },
+  );
+
   return {
     id: backgroundId(raw),
     name: String(raw.name ?? "Unknown"),
@@ -243,5 +249,6 @@ export function mapBackground(raw: any): Background {
     },
     features,
     suggestedCharacteristics: suggested,
+    skillGrants,
   };
 }

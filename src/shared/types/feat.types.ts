@@ -15,6 +15,10 @@ export interface Feat {
   sections: FeatSection[];
   repeatable: boolean;
   summary: string;
+  /** Structured skill proficiency grants (from 5etools data when available). */
+  skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
+  /** Expertise grants (from 5etools data when available). */
+  expertiseGrants: import("./proficiency.types").ExpertiseGrant[];
 }
 
 export interface FeatSection {

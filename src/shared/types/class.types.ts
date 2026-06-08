@@ -69,4 +69,8 @@ export interface Class {
   variantSources?: string[];
   variantCount?: number;
   searchText?: string;
+  /** Structured saving throw proficiencies (ability keys). */
+  saveProficiencies: import("./actor.types").AbilityKey[];
+  /** Structured skill choice grants for the builder. */
+  skillChoiceGrants: import("./proficiency.types").SkillProficiencyGrant[];
 }

@@ -13,6 +13,10 @@ import type {
 import { ABILITY_LABELS as LABELS } from "@/shared/types";
 import { SIZE_MAP } from "@/shared/utils/cr.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  parseSkillProficiencyBlocks,
+  parseSkillAdvantagesFromTraits,
+} from "@/shared/utils/skill-proficiency.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -196,6 +200,13 @@ function mapFluff(fluff: unknown): string {
 export function mapDndRace(raw: any): DndRace {
   const abilityBonuses = mapAbilityBonuses(raw.ability);
   const { fixed: resistances, summary: resistanceSummary } = mapResistances(raw.resist);
+  const traits = mapTraits(raw.entries);
+  const raceSource = { type: "species" as const, name: String(raw.name ?? "Unknown") };
+  const skillGrants = parseSkillProficiencyBlocks(
+    Array.isArray(raw.skillProficiencies) ? raw.skillProficiencies : [],
+    raceSource,
+  );
+  const skillAdvantages = parseSkillAdvantagesFromTraits(traits, raceSource);
 
   return {
     id: raceId(raw),
@@ -213,7 +224,9 @@ export function mapDndRace(raw: any): DndRace {
     resistances,
     resistanceSummary,
     traitTags: Array.isArray(raw.traitTags) ? raw.traitTags.map(String) : [],
-    traits: mapTraits(raw.entries),
+    traits,
     fluff: mapFluff(raw.fluff),
+    skillGrants,
+    skillAdvantages,
   };
 }

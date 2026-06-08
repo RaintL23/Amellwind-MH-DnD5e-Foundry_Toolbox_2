@@ -12,6 +12,10 @@ import {
   parseFiveToolsMarkup,
 } from "@/shared/utils/fivetools-parser";
 import { DEFAULT_CLASS_SOURCE } from "../utils/class-raw.types";
+import {
+  parseSkillProficiencyBlocks,
+  parseSaveProficiencies,
+} from "@/shared/utils/skill-proficiency.parser";
 import type {
   ProcessedSubclass,
   RawClassDefinition,
@@ -353,6 +357,16 @@ export function mapClass(raw: RawClassDefinition): Class {
     ...subclasses.map((s) => s.name),
   ];
 
+  const classSource: import("@/shared/types/proficiency.types").ProficiencySource = {
+    type: "class",
+    name: raw.name,
+  };
+  const saveProfGrant = parseSaveProficiencies(raw.proficiency ?? [], classSource);
+  const skillChoiceGrants = parseSkillProficiencyBlocks(
+    raw.startingProficiencies?.skills ?? [],
+    classSource,
+  );
+
   return {
     id: classId(raw.name, raw.source),
     name: raw.name,
@@ -374,6 +388,8 @@ export function mapClass(raw: RawClassDefinition): Class {
     multiclassing: mapMulticlassing(raw.multiclassing),
     subclassTitle: raw.subclassTitle,
     summary: summaryParts.join(" "),
+    saveProficiencies: saveProfGrant?.abilities ?? [],
+    skillChoiceGrants,
   };
 }
 

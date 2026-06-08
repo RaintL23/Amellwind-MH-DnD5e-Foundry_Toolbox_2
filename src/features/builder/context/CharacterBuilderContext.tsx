@@ -13,6 +13,7 @@ import {
 } from "../storage/builder-backstory.storage";
 import {
   AbilityKey,
+  SkillKey,
   AbilityScores,
   EquippedWeapon,
   EquippedArmor,
@@ -45,6 +46,17 @@ import {
   isWeaponTwoHanded,
   OffHandBlockReason,
 } from "@/features/weapons/utils/weapon-hands.utils";
+import type {
+  SkillProficiencyGrant,
+  ExpertiseGrant,
+  SkillAdvantageGrant,
+  ProficiencySource,
+} from "@/shared/types/proficiency.types";
+import {
+  resolveFixedGrants,
+  resolveFixedExpertiseGrants,
+  computeCharacterProficiencies,
+} from "../utils/compute-character-proficiencies";
 
 // ─── Context Value ───────────────────────────────────────────────────────────
 
@@ -123,6 +135,43 @@ interface CharacterBuilderContextValue {
 
   // Reset
   resetBuild: () => void;
+
+  // ─── Proficiency setters (called by BuilderItemLibraryPanel when identity loads) ──
+  applyIdentityGrants: (payload: {
+    skillGrants?: SkillProficiencyGrant[];
+    expertiseGrants?: ExpertiseGrant[];
+    skillAdvantages?: SkillAdvantageGrant[];
+    saveProficiencies?: AbilityKey[];
+    source: "class" | "background" | "species" | "feats";
+  }) => void;
+
+  // ─── Proficiency choices ─────────────────────────────────────────────────
+  /** All skill grants coming from selected identity (species/background/class/feats). */
+  allSkillGrants: SkillProficiencyGrant[];
+  /** All expertise grants coming from selected identity. */
+  allExpertiseGrants: ExpertiseGrant[];
+  /** All skill advantage/disadvantage grants. */
+  allSkillAdvantages: SkillAdvantageGrant[];
+  /** Save proficiency ability keys from class. */
+  saveProficiencyAbilities: AbilityKey[];
+
+  /** Player's chosen skills for each "choose/any" grant (keyed by grant index in allSkillGrants). */
+  classSkillChoices: SkillKey[];
+  backgroundSkillChoices: SkillKey[];
+  speciesSkillChoices: SkillKey[];
+  featSkillChoices: Record<number, SkillKey[]>;
+  /** Player's chosen skills for each expertise grant (keyed by grant index in allExpertiseGrants). */
+  expertiseChoices: Record<string, SkillKey[]>;
+
+  setClassSkillChoices: (choices: SkillKey[]) => void;
+  setBackgroundSkillChoices: (choices: SkillKey[]) => void;
+  setSpeciesSkillChoices: (choices: SkillKey[]) => void;
+  setFeatSkillChoices: (slotIndex: number, choices: SkillKey[]) => void;
+  setExpertiseChoices: (grantId: string, choices: SkillKey[]) => void;
+
+  /** Aggregated skill sources for tooltip display */
+  skillSources: Partial<Record<SkillKey, ProficiencySource[]>>;
+  expertiseSources: Partial<Record<SkillKey, ProficiencySource>>;
 }
 
 const CharacterBuilderContext = createContext<CharacterBuilderContextValue | null>(null);
@@ -138,7 +187,11 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [trinket1, setTrinket1] = useState<EquippedTrinket | null>(null);
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
   const [species, setSpeciesState] = useState<CharacterSelectionRef | null>(null);
-  const [background, setBackground] = useState<CharacterSelectionRef | null>(null);
+  const [backgroundRef, setBackgroundRef] = useState<CharacterSelectionRef | null>(null);
+  const setBackground = useCallback((selection: CharacterSelectionRef | null) => {
+    setBackgroundRef(selection);
+    setBackgroundSkillChoices([]);
+  }, []);
   const [classRef, setClassState] = useState<CharacterSelectionRef | null>(null);
   const [subclass, setSubclassState] = useState<CharacterSelectionRef | null>(null);
   const [featSelections, setFeatSelections] = useState<
@@ -154,6 +207,59 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     () => loadBuilderBackstoryNotes(),
   );
 
+  // ─── Proficiency state (per-source buckets) ──────────────────────────────
+  const [classSkillGrants, setClassSkillGrants] = useState<SkillProficiencyGrant[]>([]);
+  const [bgSkillGrants, setBgSkillGrants] = useState<SkillProficiencyGrant[]>([]);
+  const [speciesSkillGrants, setSpeciesSkillGrants] = useState<SkillProficiencyGrant[]>([]);
+  const [featGrantsList, setFeatGrantsList] = useState<SkillProficiencyGrant[]>([]);
+
+  const [classExpertiseGrants, setClassExpertiseGrants] = useState<ExpertiseGrant[]>([]);
+  const [featExpertiseGrants, setFeatExpertiseGrants] = useState<ExpertiseGrant[]>([]);
+
+  const [allSkillAdvantages, setAllSkillAdvantages] = useState<SkillAdvantageGrant[]>([]);
+  const [saveProficiencyAbilities, setSaveProficiencyAbilities] = useState<AbilityKey[]>([]);
+
+  const allSkillGrants = useMemo(
+    () => [...classSkillGrants, ...bgSkillGrants, ...speciesSkillGrants, ...featGrantsList],
+    [classSkillGrants, bgSkillGrants, speciesSkillGrants, featGrantsList],
+  );
+  const allExpertiseGrants = useMemo(
+    () => [...classExpertiseGrants, ...featExpertiseGrants],
+    [classExpertiseGrants, featExpertiseGrants],
+  );
+
+  const [classSkillChoices, setClassSkillChoices] = useState<SkillKey[]>([]);
+  const [backgroundSkillChoices, setBackgroundSkillChoices] = useState<SkillKey[]>([]);
+  const [speciesSkillChoices, setSpeciesSkillChoices] = useState<SkillKey[]>([]);
+  const [featSkillChoices, setFeatSkillChoicesState] = useState<Record<number, SkillKey[]>>({});
+  const [expertiseChoices, setExpertiseChoicesState] = useState<Record<string, SkillKey[]>>({});
+
+  const applyIdentityGrants = useCallback((payload: {
+    skillGrants?: SkillProficiencyGrant[];
+    expertiseGrants?: ExpertiseGrant[];
+    skillAdvantages?: SkillAdvantageGrant[];
+    saveProficiencies?: AbilityKey[];
+    source: "class" | "background" | "species" | "feats";
+  }) => {
+    const { source } = payload;
+    if (payload.skillGrants !== undefined) {
+      if (source === "class") setClassSkillGrants(payload.skillGrants);
+      else if (source === "background") setBgSkillGrants(payload.skillGrants);
+      else if (source === "species") setSpeciesSkillGrants(payload.skillGrants);
+      else setFeatGrantsList(payload.skillGrants);
+    }
+    if (payload.expertiseGrants !== undefined) {
+      if (source === "class") setClassExpertiseGrants(payload.expertiseGrants);
+      else setFeatExpertiseGrants(payload.expertiseGrants);
+    }
+    if (payload.skillAdvantages !== undefined) {
+      setAllSkillAdvantages(payload.skillAdvantages);
+    }
+    if (payload.saveProficiencies !== undefined) {
+      setSaveProficiencyAbilities(payload.saveProficiencies);
+    }
+  }, []);
+
   useEffect(() => {
     persistBuilderBackstoryNotes(backstoryNotes);
   }, [backstoryNotes]);
@@ -168,6 +274,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setSpecies = useCallback((selection: CharacterSelectionRef | null) => {
     setSpeciesState(selection);
     setSpeciesAbilityChoices([]);
+    setSpeciesSkillChoices([]);
     if (!selection) {
       setUseTashaOrigin(false);
       setTashaPlus2(null);
@@ -179,6 +286,16 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setClassState(selection);
     setSubclassState(null);
     setFeatSelections([]);
+    setClassSkillChoices([]);
+    setExpertiseChoicesState({});
+  }, []);
+
+  const setFeatSkillChoices = useCallback((slotIndex: number, choices: SkillKey[]) => {
+    setFeatSkillChoicesState((prev) => ({ ...prev, [slotIndex]: choices }));
+  }, []);
+
+  const setExpertiseChoices = useCallback((grantId: string, choices: SkillKey[]) => {
+    setExpertiseChoicesState((prev) => ({ ...prev, [grantId]: choices }));
   }, []);
 
   const setSubclass = useCallback((selection: CharacterSelectionRef | null) => {
@@ -422,7 +539,96 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setTashaPlus2(null);
     setTashaPlus1(null);
     setSpeciesAbilityChoices([]);
+    setClassSkillGrants([]);
+    setBgSkillGrants([]);
+    setSpeciesSkillGrants([]);
+    setFeatGrantsList([]);
+    setClassExpertiseGrants([]);
+    setFeatExpertiseGrants([]);
+    setAllSkillAdvantages([]);
+    setSaveProficiencyAbilities([]);
+    setClassSkillChoices([]);
+    setBackgroundSkillChoices([]);
+    setSpeciesSkillChoices([]);
+    setFeatSkillChoicesState({});
+    setExpertiseChoicesState({});
   }, []);
+
+  // ─── Aggregated proficiency computation ──────────────────────────────────
+
+  const proficiencyResult = useMemo(() => {
+    // All fixed grants (automatically applied)
+    const fixedSkills = resolveFixedGrants(allSkillGrants);
+
+    // Choices made by the player for choose/any grants
+    const chosenSkillsFromClass: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
+      classSkillChoices.map((sk) => {
+        const grant = allSkillGrants.find((g) => g.kind !== "fixed" && g.source.type === "class");
+        return { skill: sk, source: grant?.source ?? { type: "class", name: "Class" } };
+      });
+    const chosenSkillsFromBackground: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
+      backgroundSkillChoices.map((sk) => {
+        const grant = allSkillGrants.find((g) => g.kind !== "fixed" && g.source.type === "background");
+        return { skill: sk, source: grant?.source ?? { type: "background", name: "Background" } };
+      });
+    const chosenSkillsFromSpecies: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
+      speciesSkillChoices.map((sk) => {
+        const grant = allSkillGrants.find((g) => g.kind !== "fixed" && g.source.type === "species");
+        return { skill: sk, source: grant?.source ?? { type: "species", name: "Species" } };
+      });
+    const chosenSkillsFromFeats: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
+      Object.entries(featSkillChoices).flatMap(([idx, skills]) =>
+        skills.map((sk) => ({
+          skill: sk,
+          source: { type: "feat" as const, name: `Feat slot ${Number(idx) + 1}` },
+        })),
+      );
+
+    const resolvedSkillGrants = [
+      ...fixedSkills,
+      ...chosenSkillsFromClass,
+      ...chosenSkillsFromBackground,
+      ...chosenSkillsFromSpecies,
+      ...chosenSkillsFromFeats,
+    ];
+
+    // Expertise: fixed + chosen
+    const fixedExpertise = resolveFixedExpertiseGrants(allExpertiseGrants);
+    const chosenExpertise: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
+      Object.entries(expertiseChoices).flatMap(([grantId, skills]) =>
+        skills.map((sk) => ({
+          skill: sk,
+          source: { type: "feature" as const, name: grantId },
+        })),
+      );
+    const resolvedExpertiseGrants = [...fixedExpertise, ...chosenExpertise];
+
+    return computeCharacterProficiencies(
+      saveProficiencyAbilities,
+      resolvedSkillGrants,
+      resolvedExpertiseGrants,
+      allSkillAdvantages,
+    );
+  }, [
+    allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
+    classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
+    featSkillChoices, expertiseChoices,
+  ]);
+
+  // Sync Character.skills and Character.savingThrows whenever proficiencies change
+  useEffect(() => {
+    setCharacter((prev) => {
+      // Create a shallow clone so React detects the state change
+      const next = Object.assign(
+        Object.create(Object.getPrototypeOf(prev)) as Character,
+        prev,
+      );
+      next.skills = proficiencyResult.skills;
+      next.savingThrows = proficiencyResult.savingThrows;
+      next.passivePerception = 10 + next.getSkillModifier("prc");
+      return next;
+    });
+  }, [proficiencyResult]);
 
   const contextValue = useMemo(
     () => ({
@@ -439,7 +645,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       trinket1,
       trinket2,
       species,
-      background,
+      background: backgroundRef,
       class: classRef,
       subclass,
       featSelections,
@@ -481,12 +687,29 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       totalAC,
       combat,
       resetBuild,
+      applyIdentityGrants,
+      allSkillGrants,
+      allExpertiseGrants,
+      allSkillAdvantages,
+      saveProficiencyAbilities,
+      classSkillChoices,
+      backgroundSkillChoices,
+      speciesSkillChoices,
+      featSkillChoices,
+      expertiseChoices,
+      setClassSkillChoices,
+      setBackgroundSkillChoices,
+      setSpeciesSkillChoices,
+      setFeatSkillChoices,
+      setExpertiseChoices,
+      skillSources: proficiencyResult.skillSources,
+      expertiseSources: proficiencyResult.expertiseSources,
     }),
     [
       character, setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn,
       mainHand, offHand, armor, trinket1, trinket2,
-      species, background, classRef, subclass, featSelections, backstoryNotes,
+      species, backgroundRef, classRef, subclass, featSelections, backstoryNotes,
       setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,
       useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
@@ -495,6 +718,13 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       assignWeaponRune, removeWeaponRune, assignArmorRune, removeArmorRune,
       assignTrinketRune, removeTrinketRune,
       totalAC, combat, resetBuild,
+      applyIdentityGrants,
+      allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
+      classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
+      featSkillChoices, expertiseChoices,
+      setClassSkillChoices, setBackgroundSkillChoices, setSpeciesSkillChoices,
+      setFeatSkillChoices, setExpertiseChoices,
+      proficiencyResult,
     ],
   );
 

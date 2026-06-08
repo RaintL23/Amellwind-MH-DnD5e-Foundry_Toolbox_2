@@ -33,6 +33,10 @@ export interface DndRace {
   variantSources?: string[];
   variantCount?: number;
   searchText?: string;
+  /** Structured skill proficiency grants for the builder. */
+  skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
+  /** Skill advantage/disadvantage grants parsed from trait text. */
+  skillAdvantages: import("./proficiency.types").SkillAdvantageGrant[];
 }
 
 export const DND_RACE_KIND_LABELS: Record<DndRaceKind, string> = {

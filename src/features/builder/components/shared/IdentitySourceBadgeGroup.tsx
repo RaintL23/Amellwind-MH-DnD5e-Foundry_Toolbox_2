@@ -15,8 +15,6 @@ const SOURCES: Array<{
   {
     id: "dnd",
     label: "Dungeons & Dragons",
-    disabled: true,
-    disabledHint: "Datos aún no mapeados",
   },
 ];
 

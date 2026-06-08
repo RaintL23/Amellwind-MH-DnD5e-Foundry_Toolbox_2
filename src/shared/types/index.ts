@@ -25,3 +25,4 @@ export * from "./material-effect.types";
 export * from "./dnd-race.types";
 export * from "./dnd-background.types";
 export * from "./dnd-feat.types";
+export * from "./proficiency.types";

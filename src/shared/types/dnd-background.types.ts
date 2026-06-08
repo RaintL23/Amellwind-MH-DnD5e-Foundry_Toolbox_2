@@ -25,6 +25,8 @@ export interface DndBackground {
   variantSources?: string[];
   variantCount?: number;
   searchText?: string;
+  /** Structured skill proficiency grants for the builder. */
+  skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
 }
 
 export const DND_BACKGROUND_EDITION_LABELS: Record<DndBackgroundEdition, string> = {

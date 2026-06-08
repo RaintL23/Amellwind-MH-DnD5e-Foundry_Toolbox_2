@@ -12,6 +12,10 @@ import {
 import { AbilityKey, DamageType } from "@/shared/types";
 import { SIZE_MAP } from "@/shared/utils/cr.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  parseSkillProficiencyBlocks,
+  parseSkillAdvantagesFromTraits,
+} from "@/shared/utils/skill-proficiency.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -236,6 +240,16 @@ export function mapSpecies(raw: any): Species {
   const { fixed: resistances, summary: resistanceSummary } = mapResistances(
     raw.resist,
   );
+  const traits = mapTraits(raw.entries);
+  const speciesSource = {
+    type: "species" as const,
+    name: String(raw.name ?? "Unknown"),
+  };
+  const skillGrants = parseSkillProficiencyBlocks(
+    Array.isArray(raw.skillProficiencies) ? raw.skillProficiencies : [],
+    speciesSource,
+  );
+  const skillAdvantages = parseSkillAdvantagesFromTraits(traits, speciesSource);
 
   return {
     id: speciesId(raw),
@@ -254,7 +268,9 @@ export function mapSpecies(raw: any): Species {
     resistances,
     resistanceSummary,
     traitTags: Array.isArray(raw.traitTags) ? raw.traitTags.map(String) : [],
-    traits: mapTraits(raw.entries),
+    traits,
     fluff: mapFluff(raw.fluff),
+    skillGrants,
+    skillAdvantages,
   };
 }

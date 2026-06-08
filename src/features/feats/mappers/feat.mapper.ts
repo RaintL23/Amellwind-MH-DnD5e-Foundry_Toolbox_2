@@ -4,6 +4,11 @@ import {
   FeatSection,
 } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  parseSkillProficiencyBlocks,
+  parseExpertiseBlocks,
+  parseSkillToolLanguageProficiencies,
+} from "@/shared/utils/skill-proficiency.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -204,6 +209,24 @@ export function mapFeat(raw: any): Feat {
   const abilityIncreases = mapAbilityIncreases(raw);
   const repeatable = allParagraphs.some((p) => REPEATABLE_PATTERN.test(p));
 
+  const featSource = { type: "feat" as const, name: String(raw.name ?? "Unknown") };
+  const skillGrants = [
+    ...parseSkillProficiencyBlocks(
+      Array.isArray(raw.skillProficiencies) ? raw.skillProficiencies : [],
+      featSource,
+    ),
+    ...parseSkillToolLanguageProficiencies(
+      Array.isArray(raw.skillToolLanguageProficiencies)
+        ? raw.skillToolLanguageProficiencies
+        : [],
+      featSource,
+    ),
+  ];
+  const expertiseGrants = parseExpertiseBlocks(
+    Array.isArray(raw.expertise) ? raw.expertise : [],
+    featSource,
+  );
+
   return {
     id: featId(raw),
     name: String(raw.name ?? "Unknown"),
@@ -215,5 +238,7 @@ export function mapFeat(raw: any): Feat {
     sections,
     repeatable,
     summary: buildSummary(prerequisites, abilityIncreases, lead),
+    skillGrants,
+    expertiseGrants,
   };
 }
