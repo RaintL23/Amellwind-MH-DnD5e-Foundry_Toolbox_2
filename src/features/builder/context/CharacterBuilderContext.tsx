@@ -72,6 +72,7 @@ import {
 interface CharacterBuilderContextValue {
   // Character
   character: Character;
+  setName: (name: string) => void;
   setLevel: (level: number) => void;
   setAbilityScore: (ability: AbilityKey, value: number) => void;
   setAbilityScores: (abilities: Partial<AbilityScores>) => void;
@@ -401,6 +402,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   );
 
   // ─── Character mutations ─────────────────────────────────────────────────
+
+  const setName = useCallback((name: string) => {
+    setCharacter((prev) => prev.withUpdates({ name }));
+  }, []);
 
   const setLevel = useCallback((level: number) => {
     setCharacter((prev) => prev.withUpdates({ level }));
@@ -819,6 +824,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const contextValue = useMemo(
     () => ({
       character,
+      setName,
       setLevel,
       setAbilityScore,
       setAbilityScores,
@@ -894,7 +900,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       expertiseSources: proficiencyResult.expertiseSources,
     }),
     [
-      character, setLevel, setAbilityScore, setAbilityScores,
+      character, setName, setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn, useUnarmedStrike,
       mainHand, offHand, armor, trinket1, trinket2,
       species, backgroundRef, classRef, subclass, featSelections, backstoryNotes,

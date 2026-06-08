@@ -192,12 +192,18 @@ export class Character implements Actor {
    * Returns a new Character instance with updated level and abilities.
    * Immutable pattern for React state.
    */
-  withUpdates(updates: { level?: number; abilities?: Partial<AbilityScores> }): Character {
+  withUpdates(updates: {
+    level?: number;
+    abilities?: Partial<AbilityScores>;
+    name?: string;
+  }): Character {
     const newLevel = updates.level ?? this._level;
     const newAbilities = updates.abilities
       ? { ...this.abilities, ...updates.abilities }
       : this.abilities;
 
-    return new Character(newLevel, newAbilities);
+    const next = new Character(newLevel, newAbilities);
+    next.name = updates.name ?? this.name;
+    return next;
   }
 }

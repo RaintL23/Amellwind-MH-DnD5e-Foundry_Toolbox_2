@@ -125,12 +125,19 @@ function OriginBonusesPanel({ compact }: { compact: boolean }) {
           className="mt-0.5 rounded border-border"
         />
         <span className="text-[10px] leading-snug text-muted-foreground">
-          <span className="font-medium text-foreground">
+          <span
+            className="relative group font-medium text-foreground cursor-help"
+            title="Ignore the bonuses of your species and assign +2 and +1 to the attributes you choose (not the same attribute)."
+          >
             Customizing Your Origin (Tasha's Cauldron)
+            <span
+              role="tooltip"
+              className="pointer-events-none absolute bottom-full left-0 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] rounded-md border border-border bg-popover px-2 py-1.5 text-left text-[10px] font-normal leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
+            >
+              Ignore the bonuses of your species and assign +2 and +1 to the
+              attributes you choose (not the same attribute).
+            </span>
           </span>
-          {" — "}
-          Ignore the bonuses of your species and assign +2 and +1 to the
-          attributes you choose (not the same attribute).
         </span>
       </label>
 

@@ -34,9 +34,17 @@ export function BuilderDamagePanel() {
     setAttacksPerTurnOverride(next);
   };
 
+  const unarmedStrikeTooltip = [
+    "Use punches, kicks, or similar blows instead of equipped weapons.",
+    "Base damage: 1 + Strength modifier (XPHB 2024).",
+    isMonkClass(classRef?.name)
+      ? "Monk Martial Arts applies: martial arts die + Dexterity."
+      : "Useful for Monks, species like Nergigante, or unarmed builds.",
+  ].join(" ");
+
   return (
     <div className="rounded-lg border border-border/60 bg-card">
-      <Accordion type="single" collapsible defaultValue="damage">
+      <Accordion type="single" collapsible>
         <AccordionItem value="damage" className="border-0">
           <AccordionTrigger className="gap-1.5 px-3.5 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground hover:no-underline">
             <span className="flex items-center gap-1.5">
@@ -53,13 +61,18 @@ export function BuilderDamagePanel() {
                 className="mt-0.5 rounded border-border"
               />
               <span className="text-[10px] leading-snug text-muted-foreground">
-                <span className="font-medium text-foreground">Unarmed Strike</span>
-                {" — "}
-                Use punches, kicks, or similar blows instead of equipped weapons.
-                Base damage: 1 + Strength modifier (XPHB 2024).
-                {isMonkClass(classRef?.name)
-                  ? " Monk Martial Arts applies: martial arts die + Dexterity."
-                  : " Useful for Monks, species like Nergigante, or unarmed builds."}
+                <span
+                  className="relative group font-medium text-foreground cursor-help"
+                  title={unarmedStrikeTooltip}
+                >
+                  Unarmed Strike
+                  <span
+                    role="tooltip"
+                    className="pointer-events-none absolute bottom-full left-0 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] rounded-md border border-border bg-popover px-2 py-1.5 text-left text-[10px] font-normal leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
+                  >
+                    {unarmedStrikeTooltip}
+                  </span>
+                </span>
               </span>
             </label>
 
