@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Gem, ShieldCheck, Sparkles, Sword } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Gem,
+  ShieldCheck,
+  Sparkles,
+  Sword,
+} from "lucide-react";
 import { Rune } from "@/shared/types";
 import { BuildEffectBlock } from "./BuildEffectBlock";
 
@@ -18,8 +25,12 @@ export function AccumulatedEffects({
 }: AccumulatedEffectsProps) {
   const [open, setOpen] = useState(true);
 
-  const weaponFilled = weaponRunes.filter((r): r is Rune => r !== null && !!r.weaponEffect);
-  const armorFilled = armorRunes.filter((r): r is Rune => r !== null && !!r.armorEffect);
+  const weaponFilled = weaponRunes.filter(
+    (r): r is Rune => r !== null && !!r.weaponEffect,
+  );
+  const armorFilled = armorRunes.filter(
+    (r): r is Rune => r !== null && !!r.armorEffect,
+  );
 
   const hasAnyEffect =
     weaponFilled.length > 0 ||
@@ -52,7 +63,7 @@ export function AccumulatedEffects({
             <div className="space-y-1.5">
               <div className="flex items-center gap-1 text-xs text-orange-400/70 font-medium">
                 <Sword className="h-3 w-3" />
-                Arma
+                Weapon
               </div>
               {weaponFilled.map((rune, i) => (
                 <BuildEffectBlock
@@ -72,7 +83,7 @@ export function AccumulatedEffects({
             <div className="space-y-1.5">
               <div className="flex items-center gap-1 text-xs text-blue-400/70 font-medium">
                 <ShieldCheck className="h-3 w-3" />
-                Armadura
+                Armor
               </div>
               {armorFilled.map((rune, i) => (
                 <BuildEffectBlock
@@ -101,7 +112,9 @@ export function AccumulatedEffects({
                 ({ rune, label }) =>
                   rune && (
                     <div key={label} className="space-y-1">
-                      <p className="text-xs text-muted-foreground/50 italic">{label}</p>
+                      <p className="text-xs text-muted-foreground/50 italic">
+                        {label}
+                      </p>
                       {rune.weaponEffect && (
                         <BuildEffectBlock
                           runeName={rune.name}
@@ -126,7 +139,7 @@ export function AccumulatedEffects({
                   ),
               )}
               <p className="text-xs text-muted-foreground/40 italic">
-                Recuerda: solo un trinket activo a la vez.
+                Remember: only one trinket active at a time.
               </p>
             </div>
           )}

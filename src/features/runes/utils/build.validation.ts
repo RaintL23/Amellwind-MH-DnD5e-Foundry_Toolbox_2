@@ -5,35 +5,35 @@ export interface RuleViolation {
   offenders: string[];
 }
 
-/** Grupos de tags exclusivos para armadura (máx 1 por grupo) */
+/** Groups of tags exclusive to armor (max 1 per group) */
 const ARMOR_RULE_GROUPS: { tags: string[]; rule: string }[] = [
   {
     tags: ["mechanic:resistance", "mechanic:immunity"],
-    rule: "Solo 1 material con resistencia, reducción o inmunidad elemental (regla 1)",
+    rule: "Only 1 material with resistance, reduction or elemental immunity (rule 1)",
   },
   {
     tags: ["mechanic:ac"],
-    rule: "Solo 1 material que otorgue bonus de AC (regla 3)",
+    rule: "Only 1 material that grants AC bonus (rule 3)",
   },
   {
     tags: ["mechanic:rune-charges"],
-    rule: "Solo 1 material con efecto de runas (regla 4)",
+    rule: "Only 1 material with rune effect (rule 4)",
   },
 ];
 
-/** Grupos de tags exclusivos para arma (máx 1 por grupo) */
+/** Groups of tags exclusive to weapon (max 1 per group) */
 const WEAPON_RULE_GROUPS: { tags: string[]; rule: string }[] = [
   {
     tags: ["mechanic:critical"],
-    rule: "Solo 1 material con efecto al sacar un 20 natural (regla 1)",
+    rule: "Only 1 material with effect when rolling a natural 20 (rule 1)",
   },
   {
     tags: ["mechanic:extra-damage", "mechanic:condition"],
-    rule: "Solo 1 material de daño extra, condición al golpear o efecto al impactar (regla 2)",
+    rule: "Only 1 material with extra damage, condition on hit or effect on impact (rule 2)",
   },
   {
     tags: ["mechanic:rune-charges"],
-    rule: "Solo 1 material con efecto de runas (regla 3)",
+    rule: "Only 1 material with rune effect (rule 3)",
   },
 ];
 
@@ -72,7 +72,7 @@ export function getWeaponViolations(runes: (Rune | null)[]): RuleViolation[] {
   return checkGroups(runes, WEAPON_RULE_GROUPS, "weapon");
 }
 
-/** Devuelve true si agregar esta runa al slot tipo daría violación */
+/** Returns true if adding this rune to the slot type would violate a rule */
 export function wouldViolateRule(
   rune: Rune,
   existing: (Rune | null)[],

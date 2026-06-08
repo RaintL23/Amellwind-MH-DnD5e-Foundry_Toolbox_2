@@ -15,7 +15,7 @@ export function BuilderPage() {
           Character Builder
         </h1>
         <p className="mt-0.5 text-xs text-muted-foreground lg:text-sm">
-          Equipa armas, armaduras y runas para probar tu daño por turno.
+          Equip your weapons, armor, and runes to test your damage per turn.
         </p>
       </div>
 

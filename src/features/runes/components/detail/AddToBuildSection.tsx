@@ -26,9 +26,11 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
     (r) => r?.name === rune.name && r?.monsterName === rune.monsterName,
   );
   const inTrinket1 =
-    trinket1Rune?.name === rune.name && trinket1Rune?.monsterName === rune.monsterName;
+    trinket1Rune?.name === rune.name &&
+    trinket1Rune?.monsterName === rune.monsterName;
   const inTrinket2 =
-    trinket2Rune?.name === rune.name && trinket2Rune?.monsterName === rune.monsterName;
+    trinket2Rune?.name === rune.name &&
+    trinket2Rune?.monsterName === rune.monsterName;
 
   const weaponFull = weaponRunes.every((s) => s !== null);
   const armorFull = armorRunes.every((s) => s !== null);
@@ -79,7 +81,8 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
                       "weapon",
                       weaponRunes.findIndex(
                         (r) =>
-                          r?.name === rune.name && r?.monsterName === rune.monsterName,
+                          r?.name === rune.name &&
+                          r?.monsterName === rune.monsterName,
                       ),
                     )
                   : handleAdd("weapon")
@@ -134,7 +137,8 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
                       "armor",
                       armorRunes.findIndex(
                         (r) =>
-                          r?.name === rune.name && r?.monsterName === rune.monsterName,
+                          r?.name === rune.name &&
+                          r?.monsterName === rune.monsterName,
                       ),
                     )
                   : handleAdd("armor")
@@ -154,12 +158,12 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
               <ShieldCheck className="h-3.5 w-3.5" />
               {inArmor ? (
                 <>
-                  <Check className="h-3 w-3" /> En Armadura
+                  <Check className="h-3 w-3" /> Armor
                 </>
               ) : armorFull ? (
-                "Armadura llena"
+                "Armor full"
               ) : (
-                "→ Armadura"
+                "→ Armor"
               )}
             </button>
           </div>
@@ -179,7 +183,13 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
           )}
         >
           <Gem className="h-3.5 w-3.5" />
-          {inTrinket1 ? <><Check className="h-3 w-3" /> Trinket 1</> : "→ Trinket 1"}
+          {inTrinket1 ? (
+            <>
+              <Check className="h-3 w-3" /> Trinket 1
+            </>
+          ) : (
+            "→ Trinket 1"
+          )}
         </button>
         <button
           onClick={() =>
@@ -193,7 +203,13 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
           )}
         >
           <Gem className="h-3.5 w-3.5" />
-          {inTrinket2 ? <><Check className="h-3 w-3" /> Trinket 2</> : "→ Trinket 2"}
+          {inTrinket2 ? (
+            <>
+              <Check className="h-3 w-3" /> Trinket 2
+            </>
+          ) : (
+            "→ Trinket 2"
+          )}
         </button>
       </div>
 

@@ -12,9 +12,9 @@ import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import type { CartItemKind } from "../../utils/cart-equipment.resolver";
 
 const KIND_LABELS: Record<CartItemKind, string> = {
-  weapon: "Arma",
-  armor: "Armadura",
-  other: "Otro",
+  weapon: "Weapon",
+  armor: "Armor",
+  other: "Other",
 };
 
 const KIND_ORDER: CartItemKind[] = ["weapon", "armor", "other"];

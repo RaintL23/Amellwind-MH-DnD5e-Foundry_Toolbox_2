@@ -38,9 +38,9 @@ export function BuildDrawerContent({
     return (
       <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-16">
         <Layers className="h-12 w-12 text-muted-foreground/30" />
-        <p className="text-sm text-muted-foreground">Tu build está vacío.</p>
+        <p className="text-sm text-muted-foreground">Your build is empty.</p>
         <p className="text-xs text-muted-foreground/60">
-          Abre el detalle de una runa y agrégala a tu arma, armadura o trinket.
+          Open the detail of a rune and add it to your weapon, armor or trinket.
         </p>
       </div>
     );
@@ -51,16 +51,17 @@ export function BuildDrawerContent({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <RaritySelect
-            label="Arma"
+            label="Weapon"
             value={weaponRarity}
             onChange={onWeaponRarityChange}
           />
           <span className="text-xs text-muted-foreground">
-            {weaponRunes.filter(Boolean).length}/{RARITY_SLOTS[weaponRarity]} slots
+            {weaponRunes.filter(Boolean).length}/{RARITY_SLOTS[weaponRarity]}{" "}
+            slots
           </span>
         </div>
         <BuildSection
-          title="Arma"
+          title="Weapon"
           icon={<Sword className="h-3.5 w-3.5" />}
           iconColor="text-orange-400"
           runes={weaponRunes}
@@ -74,16 +75,17 @@ export function BuildDrawerContent({
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <RaritySelect
-            label="Armadura"
+            label="Armor"
             value={armorRarity}
             onChange={onArmorRarityChange}
           />
           <span className="text-xs text-muted-foreground">
-            {armorRunes.filter(Boolean).length}/{RARITY_SLOTS[armorRarity]} slots
+            {armorRunes.filter(Boolean).length}/{RARITY_SLOTS[armorRarity]}{" "}
+            slots
           </span>
         </div>
         <BuildSection
-          title="Armadura"
+          title="Armor"
           icon={<ShieldCheck className="h-3.5 w-3.5" />}
           iconColor="text-blue-400"
           runes={armorRunes}
@@ -100,11 +102,19 @@ export function BuildDrawerContent({
           Trinkets
         </div>
 
-        <TrinketSlotRow label="Trinket 1" rune={trinket1Rune} slotType="trinket1" />
-        <TrinketSlotRow label="Trinket 2" rune={trinket2Rune} slotType="trinket2" />
+        <TrinketSlotRow
+          label="Trinket 1"
+          rune={trinket1Rune}
+          slotType="trinket1"
+        />
+        <TrinketSlotRow
+          label="Trinket 2"
+          rune={trinket2Rune}
+          slotType="trinket2"
+        />
 
         <p className="text-xs text-muted-foreground/50 italic">
-          Solo un trinket activo a la vez. Puedes intercambiarlos como acción.
+          Only one trinket active at a time. You can swap them as an action.
         </p>
       </div>
 
