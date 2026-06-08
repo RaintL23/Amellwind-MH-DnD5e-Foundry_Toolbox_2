@@ -1,7 +1,7 @@
-import { useCallback, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type ReactNode } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
-import { AbilityKey } from "@/shared/types";
+import { ABILITY_LABELS, AbilityKey } from "@/shared/types";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,6 +18,16 @@ import {
   assignFromPool,
   assignmentsToAbilityScores,
 } from "../../utils/ability-scores";
+import { useSelectedSpecies } from "../../hooks/useSelectedSpecies";
+import {
+  applyBaseScores,
+  buildAbilityBonusMap,
+  effectiveModifier,
+  formatBonusTooltip,
+  formatChooseSlotLabel,
+  getSpeciesChooseSlots,
+} from "../../utils/species-ability-bonuses";
+import { AbilityScoreValue } from "./AbilityScoreValue";
 
 const ABILITIES: { key: AbilityKey; label: string }[] = [
   { key: "str", label: "STR" },
@@ -29,10 +39,6 @@ const ABILITIES: { key: AbilityKey; label: string }[] = [
 ];
 
 type GenerationMethod = "manual" | "standard" | "pointbuy" | "dice";
-
-function modifierFromScore(score: number): string {
-  return formatModifier(Math.floor((score - 10) / 2));
-}
 
 const ABILITY_CARD_CLASS =
   "flex flex-col items-center rounded-md border border-border/60 bg-muted/30 px-2 py-1.5 transition-colors";
@@ -77,13 +83,175 @@ function AbilityStatRow({
   );
 }
 
+function OriginBonusesPanel({ compact }: { compact: boolean }) {
+  const {
+    species: speciesRef,
+    useTashaOrigin,
+    setUseTashaOrigin,
+    tashaPlus2,
+    tashaPlus1,
+    setTashaPlus2,
+    setTashaPlus1,
+    speciesAbilityChoices,
+    setSpeciesAbilityChoice,
+  } = useCharacterBuilder();
+  const { species } = useSelectedSpecies();
+
+  const chooseSlots = useMemo(
+    () =>
+      species && !useTashaOrigin
+        ? getSpeciesChooseSlots(species.abilityBonuses)
+        : [],
+    [species, useTashaOrigin],
+  );
+
+  const abilityOptions = (exclude: AbilityKey[]) =>
+    ABILITIES.filter(({ key }) => !exclude.includes(key));
+
+  if (!speciesRef) return null;
+
+  return (
+    <div
+      className={`rounded-md border border-border/60 bg-muted/20 ${
+        compact ? "space-y-1.5 p-1.5" : "space-y-2 p-2"
+      }`}
+    >
+      <label className="flex items-start gap-2 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={useTashaOrigin}
+          onChange={(e) => setUseTashaOrigin(e.target.checked)}
+          className="mt-0.5 rounded border-border"
+        />
+        <span className="text-[10px] leading-snug text-muted-foreground">
+          <span className="font-medium text-foreground">
+            Customizing Your Origin (Tasha's Cauldron)
+          </span>
+          {" — "}
+          Ignore the bonuses of your species and assign +2 and +1 to the
+          attributes you choose (not the same attribute).
+        </span>
+      </label>
+
+      {useTashaOrigin && (
+        <div
+          className={`flex flex-wrap gap-2 ${compact ? "text-[10px]" : "text-xs"}`}
+        >
+          <label className="flex items-center gap-1 text-muted-foreground">
+            +2
+            <Select
+              value={tashaPlus2 ?? ""}
+              onChange={(e) =>
+                setTashaPlus2((e.target.value as AbilityKey) || null)
+              }
+              className={compact ? "h-6 w-16 text-[10px]" : "h-7 w-20 text-xs"}
+            >
+              <option value="">—</option>
+              {abilityOptions(tashaPlus1 ? [tashaPlus1] : []).map(
+                ({ key, label }) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ),
+              )}
+            </Select>
+          </label>
+          <label className="flex items-center gap-1 text-muted-foreground">
+            +1
+            <Select
+              value={tashaPlus1 ?? ""}
+              onChange={(e) =>
+                setTashaPlus1((e.target.value as AbilityKey) || null)
+              }
+              className={compact ? "h-6 w-16 text-[10px]" : "h-7 w-20 text-xs"}
+            >
+              <option value="">—</option>
+              {abilityOptions(tashaPlus2 ? [tashaPlus2] : []).map(
+                ({ key, label }) => (
+                  <option key={key} value={key}>
+                    {label}
+                  </option>
+                ),
+              )}
+            </Select>
+          </label>
+        </div>
+      )}
+
+      {!useTashaOrigin && speciesRef && species && chooseSlots.length > 0 && (
+        <div className="space-y-1">
+          <p className="text-[10px] text-muted-foreground">
+            {species.name} bonuses:
+            {species.abilitySummary ? ` (${species.abilitySummary})` : ""}:
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {chooseSlots.map((slot, index) => {
+              const taken = speciesAbilityChoices.filter(
+                (choice, i) => i !== index && choice,
+              ) as AbilityKey[];
+              const options = slot.from.filter((key) => !taken.includes(key));
+
+              return (
+                <label
+                  key={`${slot.blockIndex}-${slot.slotIndex}`}
+                  className="flex items-center gap-1 text-[10px] text-muted-foreground"
+                >
+                  {formatChooseSlotLabel(slot)}
+                  <Select
+                    value={speciesAbilityChoices[index] ?? ""}
+                    onChange={(e) =>
+                      setSpeciesAbilityChoice(
+                        index,
+                        (e.target.value as AbilityKey) || null,
+                      )
+                    }
+                    className="h-6 w-16 text-[10px]"
+                  >
+                    <option value="">—</option>
+                    {options.map((key) => (
+                      <option key={key} value={key}>
+                        {ABILITY_LABELS[key]}
+                      </option>
+                    ))}
+                  </Select>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {!useTashaOrigin &&
+        speciesRef &&
+        species &&
+        chooseSlots.length === 0 &&
+        species.abilityBonuses.length > 0 && (
+          <p className="text-[10px] text-muted-foreground">
+            {species.name} bonuses:{" "}
+            <span className="font-medium text-emerald-400">
+              {species.abilitySummary}
+            </span>
+          </p>
+        )}
+    </div>
+  );
+}
+
 export function AbilityScoresSection({
   compact = false,
 }: {
   compact?: boolean;
 }) {
-  const { character, setAbilityScore, setAbilityScores } =
-    useCharacterBuilder();
+  const {
+    character,
+    setAbilityScore,
+    setAbilityScores,
+    useTashaOrigin,
+    tashaPlus2,
+    tashaPlus1,
+    speciesAbilityChoices,
+  } = useCharacterBuilder();
+  const { species } = useSelectedSpecies();
   const [method, setMethod] = useState<GenerationMethod>("manual");
   const [pool, setPool] = useState<number[]>([...STANDARD_ARRAY]);
   const [assignments, setAssignments] = useState<
@@ -167,8 +335,32 @@ export function AbilityScoresSection({
   const pointsSpent = pointBuyTotalSpent(character.abilities);
   const poolLabel = pool.length > 0 ? pool.join(", ") : "—";
 
+  const scoreBreakdowns = useMemo(() => {
+    const bonusMap = buildAbilityBonusMap(species, {
+      useTashaOrigin,
+      tashaPlus2,
+      tashaPlus1,
+      speciesChoices: speciesAbilityChoices,
+    });
+    return applyBaseScores(bonusMap, character.abilities);
+  }, [
+    species,
+    useTashaOrigin,
+    tashaPlus2,
+    tashaPlus1,
+    speciesAbilityChoices,
+    character.abilities,
+  ]);
+
+  const getBreakdown = (key: AbilityKey, baseScore: number) => ({
+    ...scoreBreakdowns[key],
+    base: baseScore,
+    total: baseScore + scoreBreakdowns[key].bonus,
+  });
+
   return (
     <div className="space-y-2">
+      <OriginBonusesPanel compact={compact} />
       {!compact && (
         <div className="flex flex-col gap-1">
           <label className="text-xs text-muted-foreground font-medium">
@@ -287,36 +479,53 @@ export function AbilityScoresSection({
           const isPoolMethod = method === "standard" || method === "dice";
           const poolScore = assignments[key];
           const characterScore = character.abilities[key];
-          const displayScore = isPoolMethod ? poolScore : characterScore;
+          const baseScore = isPoolMethod
+            ? (poolScore ?? characterScore)
+            : characterScore;
+          const breakdown = getBreakdown(key, baseScore);
           const modifier =
-            displayScore !== undefined
-              ? isPoolMethod
-                ? modifierFromScore(displayScore)
-                : formatModifier(character.getModifier(key))
-              : "—";
+            isPoolMethod && poolScore === undefined
+              ? "—"
+              : formatModifier(effectiveModifier(baseScore, breakdown.bonus));
 
           const poolSelect = (
-            <Select
-              value={assignments[key] ?? ""}
-              onChange={(e) => handlePoolAssign(key, e.target.value)}
-              className={
-                compact
-                  ? "h-7 w-full max-w-[4.5rem] px-1 text-sm text-center"
-                  : "h-8 w-14 px-1 text-sm text-center"
-              }
-              disabled={
-                method === "dice" &&
-                pool.length === 0 &&
-                assignments[key] === undefined
-              }
-            >
-              <option value="">—</option>
-              {poolOptionsForAbility(key, assignments, pool).map((v) => (
-                <option key={v} value={v}>
-                  {v}
-                </option>
-              ))}
-            </Select>
+            <div className="flex items-center gap-1">
+              <Select
+                value={assignments[key] ?? ""}
+                onChange={(e) => handlePoolAssign(key, e.target.value)}
+                className={
+                  compact
+                    ? "h-7 w-full max-w-[4.5rem] px-1 text-sm text-center"
+                    : "h-8 w-14 px-1 text-sm text-center"
+                }
+                disabled={
+                  method === "dice" &&
+                  pool.length === 0 &&
+                  assignments[key] === undefined
+                }
+              >
+                <option value="">—</option>
+                {poolOptionsForAbility(key, assignments, pool).map((v) => (
+                  <option key={v} value={v}>
+                    {v}
+                  </option>
+                ))}
+              </Select>
+              {poolScore !== undefined && breakdown.bonus > 0 && (
+                <span
+                  className="relative group text-[10px] font-medium text-emerald-400"
+                  title={formatBonusTooltip(breakdown)}
+                >
+                  → {breakdown.total}
+                  <span
+                    role="tooltip"
+                    className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(14rem,calc(100vw-2rem))] -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1.5 text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100 whitespace-pre-line text-center"
+                  >
+                    {formatBonusTooltip(breakdown)}
+                  </span>
+                </span>
+              )}
+            </div>
           );
 
           const stepperControls = (
@@ -337,15 +546,7 @@ export function AbilityScoresSection({
               >
                 −
               </Button>
-              <span
-                className={
-                  compact
-                    ? "w-6 text-center text-xl font-medium text-foreground"
-                    : "w-8 text-center text-sm font-semibold text-foreground"
-                }
-              >
-                {characterScore}
-              </span>
+              <AbilityScoreValue breakdown={breakdown} compact={compact} />
               <Button
                 type="button"
                 variant="outline"
@@ -416,16 +617,32 @@ export function AbilityScoresSection({
 
           return (
             <AbilityStatRow key={key} label={label} modifier={modifier}>
-              <input
-                type="number"
-                min={1}
-                max={30}
-                value={characterScore}
-                onChange={(e) =>
-                  setAbilityScore(key, parseInt(e.target.value, 10) || 10)
-                }
-                className="w-14 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground text-center focus:outline-none focus:ring-2 focus:ring-ring"
-              />
+              <div className="flex items-center gap-1">
+                <input
+                  type="number"
+                  min={1}
+                  max={30}
+                  value={characterScore}
+                  onChange={(e) =>
+                    setAbilityScore(key, parseInt(e.target.value, 10) || 10)
+                  }
+                  className="w-14 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground text-center focus:outline-none focus:ring-2 focus:ring-ring"
+                />
+                {breakdown.bonus > 0 && (
+                  <span
+                    className="relative group text-[10px] font-medium text-emerald-400"
+                    title={formatBonusTooltip(breakdown)}
+                  >
+                    → {breakdown.total}
+                    <span
+                      role="tooltip"
+                      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(14rem,calc(100vw-2rem))] -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1.5 text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100 whitespace-pre-line text-center"
+                    >
+                      {formatBonusTooltip(breakdown)}
+                    </span>
+                  </span>
+                )}
+              </div>
             </AbilityStatRow>
           );
         })}

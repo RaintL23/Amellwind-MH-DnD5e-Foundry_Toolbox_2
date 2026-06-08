@@ -69,6 +69,16 @@ interface CharacterBuilderContextValue {
   backstoryNotes: string;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
+
+  // Ability score origin bonuses (species / Tasha's Cauldron)
+  useTashaOrigin: boolean;
+  setUseTashaOrigin: (value: boolean) => void;
+  tashaPlus2: AbilityKey | null;
+  tashaPlus1: AbilityKey | null;
+  setTashaPlus2: (ability: AbilityKey | null) => void;
+  setTashaPlus1: (ability: AbilityKey | null) => void;
+  speciesAbilityChoices: (AbilityKey | null)[];
+  setSpeciesAbilityChoice: (index: number, ability: AbilityKey | null) => void;
   setBackstoryNotes: (
     value: string | ((current: string) => string),
   ) => void;
@@ -119,8 +129,14 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [armor, setArmor] = useState<EquippedArmor | null>(null);
   const [trinket1, setTrinket1] = useState<EquippedTrinket | null>(null);
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
-  const [species, setSpecies] = useState<CharacterSelectionRef | null>(null);
+  const [species, setSpeciesState] = useState<CharacterSelectionRef | null>(null);
   const [background, setBackground] = useState<CharacterSelectionRef | null>(null);
+  const [useTashaOrigin, setUseTashaOrigin] = useState(false);
+  const [tashaPlus2, setTashaPlus2] = useState<AbilityKey | null>(null);
+  const [tashaPlus1, setTashaPlus1] = useState<AbilityKey | null>(null);
+  const [speciesAbilityChoices, setSpeciesAbilityChoices] = useState<
+    (AbilityKey | null)[]
+  >([]);
   const [backstoryNotes, setBackstoryNotesState] = useState(
     () => loadBuilderBackstoryNotes(),
   );
@@ -132,6 +148,28 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setBackstoryNotes = useCallback(
     (value: string | ((current: string) => string)) => {
       setBackstoryNotesState(value);
+    },
+    [],
+  );
+
+  const setSpecies = useCallback((selection: CharacterSelectionRef | null) => {
+    setSpeciesState(selection);
+    setSpeciesAbilityChoices([]);
+    if (!selection) {
+      setUseTashaOrigin(false);
+      setTashaPlus2(null);
+      setTashaPlus1(null);
+    }
+  }, []);
+
+  const setSpeciesAbilityChoice = useCallback(
+    (index: number, ability: AbilityKey | null) => {
+      setSpeciesAbilityChoices((prev) => {
+        const next = [...prev];
+        while (next.length <= index) next.push(null);
+        next[index] = ability;
+        return next;
+      });
     },
     [],
   );
@@ -338,6 +376,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBackground(null);
     setBackstoryNotesState("");
     setAttacksPerTurnOverride(null);
+    setUseTashaOrigin(false);
+    setTashaPlus2(null);
+    setTashaPlus1(null);
+    setSpeciesAbilityChoices([]);
   }, []);
 
   const contextValue = useMemo(
@@ -360,6 +402,14 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setSpecies,
       setBackground,
       setBackstoryNotes,
+      useTashaOrigin,
+      setUseTashaOrigin,
+      tashaPlus2,
+      tashaPlus1,
+      setTashaPlus2,
+      setTashaPlus1,
+      speciesAbilityChoices,
+      setSpeciesAbilityChoice,
       isTwoHanded,
       isOffHandBlocked,
       offHandBlockReason,
@@ -388,6 +438,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       character, setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn,
       mainHand, offHand, armor, trinket1, trinket2, species, background, backstoryNotes, setBackstoryNotes,
+      useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
       equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket,
