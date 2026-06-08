@@ -15,6 +15,8 @@ import {
   AbilityKey,
   SkillKey,
   AbilityScores,
+  Class,
+  Species,
   EquippedWeapon,
   EquippedArmor,
   EquippedTrinket,
@@ -25,6 +27,8 @@ import {
   CharacterSelectionRef,
   BuilderFeatSelection,
 } from "@/shared/types";
+import { getClassById } from "@/features/classes/services/class.service";
+import { getSpeciesById } from "@/features/species/services/species.service";
 import { getFeatSlotLevels } from "../utils/builder-class.utils";
 import { Character } from "../models/Character";
 import { calculateCombat } from "../utils/combat.calculator";
@@ -74,6 +78,8 @@ interface CharacterBuilderContextValue {
   attacksPerTurnOverride: number | null;
   setAttacksPerTurnOverride: (value: number | null) => void;
   effectiveAttacksPerTurn: number;
+  useUnarmedStrike: boolean;
+  setUseUnarmedStrike: (value: boolean) => void;
 
   // Equipment
   mainHand: EquippedWeapon | null;
@@ -186,12 +192,14 @@ const CharacterBuilderContext = createContext<CharacterBuilderContextValue | nul
 export function CharacterBuilderProvider({ children }: Readonly<{ children: ReactNode }>) {
   const [character, setCharacter] = useState<Character>(() => new Character());
   const [attacksPerTurnOverride, setAttacksPerTurnOverride] = useState<number | null>(null);
+  const [useUnarmedStrike, setUseUnarmedStrike] = useState(false);
   const [mainHand, setMainHand] = useState<EquippedWeapon | null>(null);
   const [offHand, setOffHand] = useState<EquippedWeapon | null>(null);
   const [armor, setArmor] = useState<EquippedArmor | null>(null);
   const [trinket1, setTrinket1] = useState<EquippedTrinket | null>(null);
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
   const [species, setSpeciesState] = useState<CharacterSelectionRef | null>(null);
+  const [selectedSpeciesData, setSelectedSpeciesData] = useState<Species | null>(null);
   const [backgroundRef, setBackgroundRef] = useState<CharacterSelectionRef | null>(null);
   const setBackground = useCallback((selection: CharacterSelectionRef | null) => {
     setBackgroundRef(selection);
@@ -200,6 +208,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBgSkillGrants([]);
   }, []);
   const [classRef, setClassState] = useState<CharacterSelectionRef | null>(null);
+  const [selectedClassData, setSelectedClassData] = useState<Class | null>(null);
   const [subclass, setSubclassState] = useState<CharacterSelectionRef | null>(null);
   const [featSelections, setFeatSelections] = useState<
     (BuilderFeatSelection | null)[]
@@ -282,6 +291,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
 
   const setSpecies = useCallback((selection: CharacterSelectionRef | null) => {
     setSpeciesState(selection);
+    setSelectedSpeciesData(null);
     setSpeciesAbilityChoices([]);
     setSpeciesSkillChoices([]);
     // Clear species grants immediately when species changes/removed
@@ -296,6 +306,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
 
   const setClass = useCallback((selection: CharacterSelectionRef | null) => {
     setClassState(selection);
+    setSelectedClassData(null);
     setSubclassState(null);
     setFeatSelections([]);
     setClassSkillChoicesState({});
@@ -305,6 +316,46 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setClassExpertiseGrants([]);
     setSaveProficiencyAbilities([]);
   }, []);
+
+  useEffect(() => {
+    if (!classRef) {
+      setSelectedClassData(null);
+      return;
+    }
+
+    let cancelled = false;
+    getClassById(classRef.id)
+      .then((data) => {
+        if (!cancelled) setSelectedClassData(data ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setSelectedClassData(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [classRef?.id]);
+
+  useEffect(() => {
+    if (!species) {
+      setSelectedSpeciesData(null);
+      return;
+    }
+
+    let cancelled = false;
+    getSpeciesById(species.id)
+      .then((data) => {
+        if (!cancelled) setSelectedSpeciesData(data ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setSelectedSpeciesData(null);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [species?.id]);
 
   const setClassSkillChoicesAtIndex = useCallback(
     (grantIndex: number, choices: SkillKey[]) => {
@@ -554,8 +605,27 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   ]);
 
   const combat = useMemo(
-    () => calculateCombat(character, mainHand, offHand, effectiveAttacksPerTurn),
-    [character, mainHand, offHand, effectiveAttacksPerTurn],
+    () =>
+      calculateCombat(
+        character,
+        mainHand,
+        offHand,
+        effectiveAttacksPerTurn,
+        useUnarmedStrike,
+        classRef?.name,
+        selectedClassData,
+        selectedSpeciesData,
+      ),
+    [
+      character,
+      mainHand,
+      offHand,
+      effectiveAttacksPerTurn,
+      useUnarmedStrike,
+      classRef?.name,
+      selectedClassData,
+      selectedSpeciesData,
+    ],
   );
 
   // ─── Reset ───────────────────────────────────────────────────────────────
@@ -568,12 +638,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setTrinket1(null);
     setTrinket2(null);
     setSpecies(null);
+    setSelectedSpeciesData(null);
     setBackground(null);
     setClassState(null);
+    setSelectedClassData(null);
     setSubclassState(null);
     setFeatSelections([]);
     setBackstoryNotesState("");
     setAttacksPerTurnOverride(null);
+    setUseUnarmedStrike(false);
     setUseTashaOrigin(false);
     setTashaPlus2(null);
     setTashaPlus1(null);
@@ -752,6 +825,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       attacksPerTurnOverride,
       setAttacksPerTurnOverride,
       effectiveAttacksPerTurn,
+      useUnarmedStrike,
+      setUseUnarmedStrike,
       mainHand,
       offHand,
       armor,
@@ -820,7 +895,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     }),
     [
       character, setLevel, setAbilityScore, setAbilityScores,
-      attacksPerTurnOverride, effectiveAttacksPerTurn,
+      attacksPerTurnOverride, effectiveAttacksPerTurn, useUnarmedStrike,
       mainHand, offHand, armor, trinket1, trinket2,
       species, backgroundRef, classRef, subclass, featSelections, backstoryNotes,
       setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,

@@ -67,6 +67,8 @@ const DND_KEYWORDS: DndKeyword[] = [
   { term: "healing", category: "combat" },
   { term: "attacks", category: "combat" },
   { term: "attack", category: "combat" },
+  { term: "unarmed attacks", category: "combat" },
+  { term: "unarmed strikes", category: "combat" },
 
   // Saves, checks & rolls
   { term: "saving throws", category: "save" },
@@ -74,6 +76,7 @@ const DND_KEYWORDS: DndKeyword[] = [
   { term: "proficiency bonus", category: "save" },
   { term: "advantage", category: "save" },
   { term: "disadvantage", category: "save" },
+  { term: "saving throw", category: "save" },
 
   // Resources & duration
   { term: "spell slots", category: "resource" },
@@ -102,6 +105,7 @@ const DND_KEYWORDS: DndKeyword[] = [
 
   // Defense & resistances
   { term: "armor class", category: "defense" },
+  { term: "AC", category: "defense" },
   { term: "nonmagical", category: "defense" },
   { term: "resistance", category: "defense" },
   { term: "immunity", category: "defense" },
@@ -116,6 +120,7 @@ const DND_KEYWORDS: DndKeyword[] = [
   { term: "blindsight", category: "movement" },
   { term: "movement", category: "movement" },
   { term: "speed", category: "movement" },
+  { term: "jump", category: "movement" },
 ];
 
 const KEYWORD_LOOKUP = new Map(

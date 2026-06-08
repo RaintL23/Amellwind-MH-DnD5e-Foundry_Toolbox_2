@@ -7,10 +7,11 @@ import type {
   Subclass,
   SubclassSpellBlock,
 } from "@/shared/types";
+import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import {
-  parseEntries,
-  parseFiveToolsMarkup,
-} from "@/shared/utils/fivetools-parser";
+  mapStatBlockEntries,
+  statBlockContentToPlainText,
+} from "@/shared/utils/statblock-entries.mapper";
 import { DEFAULT_CLASS_SOURCE } from "../utils/class-raw.types";
 import {
   parseSkillProficiencyBlocks,
@@ -55,12 +56,11 @@ function formatAbility(ab: string): string {
   return ABILITY_LABELS[ab.toLowerCase()] ?? ab.toUpperCase();
 }
 
-function parseFeatureDescription(entries: unknown[]): string[] {
-  if (!entries.length) return [];
-  const text = parseEntries(entries);
-  if (!text) return [];
-  return text
-    .split(/\n|(?<=\.) /)
+function contentToDescription(
+  content: ReturnType<typeof mapStatBlockEntries>,
+): string[] {
+  return content
+    .map(statBlockContentToPlainText)
     .map((line) => line.trim())
     .filter(Boolean);
 }
@@ -70,13 +70,15 @@ function mapFeatureEntry(
   isSubclassFeature = false,
 ): ClassFeatureEntry {
   const uid = `${feature.name}|${feature.className}|${feature.classSource}|${feature.level}|${feature.source}`;
+  const content = mapStatBlockEntries(feature.entries);
   return {
     uid,
     name: feature.name,
     displayName: feature.displayName,
     level: feature.level,
     source: feature.source,
-    description: parseFeatureDescription(feature.entries),
+    content,
+    description: contentToDescription(content),
     isSubclassFeature,
     gainSubclassFeature: feature.gainSubclassFeature,
   };

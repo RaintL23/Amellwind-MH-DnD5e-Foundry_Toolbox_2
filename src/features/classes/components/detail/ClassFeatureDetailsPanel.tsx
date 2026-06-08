@@ -1,6 +1,7 @@
 import { memo } from "react";
 import { ClassFeatureEntry } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
+import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { DndKeywordText } from "@/shared/components/DndKeywordText";
 import { cn } from "@/shared/utils/cn";
 
@@ -29,7 +30,9 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
           {feature.source}
         </Badge>
       </div>
-      {feature.description.length > 0 ? (
+      {feature.content.length > 0 ? (
+        <StatBlockContentView content={feature.content} />
+      ) : feature.description.length > 0 ? (
         <div className="space-y-1.5">
           {feature.description.map((line, i) => (
             <p

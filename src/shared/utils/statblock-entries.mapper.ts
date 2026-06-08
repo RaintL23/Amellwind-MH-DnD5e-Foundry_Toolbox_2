@@ -114,6 +114,29 @@ export function mapStatBlockEntries(entries: unknown[]): StatBlockContent[] {
       continue;
     }
 
+    if (e.type === "abilityDc") {
+      const name = typeof e.name === "string" ? parseFiveToolsMarkup(e.name) : "Save";
+      const attrs = Array.isArray(e.attributes)
+        ? e.attributes.map(String).join(" + ")
+        : "ability modifier";
+      result.push({
+        type: "paragraph",
+        text: `${name} DC = 8 + proficiency bonus + ${attrs}`,
+      });
+      continue;
+    }
+
+    if (e.type === "inset" && Array.isArray(e.entries)) {
+      const insetName =
+        typeof e.name === "string" ? parseFiveToolsMarkup(e.name).trim() : "Note";
+      result.push({
+        type: "section",
+        name: insetName,
+        children: mapStatBlockEntries(e.entries as unknown[]),
+      });
+      continue;
+    }
+
     if (e.type === "entries" || typeof e.name === "string") {
       const name =
         typeof e.name === "string" ? parseFiveToolsMarkup(e.name).trim() : "";

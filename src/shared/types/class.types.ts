@@ -11,6 +11,9 @@ export interface ClassFeatureEntry {
   displayName: string;
   level: number;
   source: string;
+  /** Structured 5etools entries (lists, tables, sections). */
+  content: import("./statblock-content.types").StatBlockContent[];
+  /** Plain-text fallback for search and legacy consumers. */
   description: string[];
   isSubclassFeature?: boolean;
   gainSubclassFeature?: boolean;

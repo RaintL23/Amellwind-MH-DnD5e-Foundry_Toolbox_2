@@ -3,6 +3,7 @@ import type {
   StatBlockContent,
   StatBlockListItem,
 } from "@/shared/types/statblock-content.types";
+import { DndKeywordText } from "@/shared/components/DndKeywordText";
 import { cn } from "@/shared/utils/cn";
 
 function ContentTable({ table }: { table: DowntimeTable }) {
@@ -61,7 +62,11 @@ function ContentTable({ table }: { table: DowntimeTable }) {
 
 function ListItemView({ item }: { item: StatBlockListItem }) {
   if (item.type === "text") {
-    return <li className="text-sm text-muted-foreground">{item.text}</li>;
+    return (
+      <li className="text-sm text-muted-foreground">
+        <DndKeywordText text={item.text} />
+      </li>
+    );
   }
 
   return (
@@ -105,10 +110,10 @@ function StatBlockContentBlock({
       <Tag
         className={cn(
           "text-sm text-muted-foreground leading-relaxed",
-          !inline && "mb-2 last:mb-0",
+          !inline && "mb-0",
         )}
       >
-        {block.text}
+        <DndKeywordText text={block.text} />
       </Tag>
     );
   }
@@ -157,7 +162,7 @@ export function StatBlockContentView({
   if (content.length === 0) return null;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {content.map((block, i) => (
         <StatBlockContentBlock key={i} block={block} />
       ))}

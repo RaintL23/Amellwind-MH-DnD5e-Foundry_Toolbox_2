@@ -15,7 +15,10 @@ const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: stri
   [/\{@condition ([^}|]+)(?:\|[^}]*)?\}/g, (_m, cond) => cond],
   [/\{@spell ([^}|]+)(?:\|[^}]*)?\}/g, (_m, spell) => spell],
   [/\{@skill ([^}|]+)(?:\|[^}]*)?\}/g, (_m, skill) => skill],
-  [/\{@item ([^}|]+)(?:\|[^}]*)?\}/g, (_m, item) => item],
+  [
+    /\{@item ([^}|]+)(?:\|([^}|]*))?(?:\|([^}|]*))?\}/g,
+    (_m, item, _source, display) => display?.trim() || item,
+  ],
   [/\{@creature ([^}|]+)(?:\|[^}]*)?\}/g, (_m, creature) => creature],
   [/\{@action ([^}|]+)(?:\|[^}]*)?\}/g, (_m, action) => action],
   [

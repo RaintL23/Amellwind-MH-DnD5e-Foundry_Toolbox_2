@@ -20,13 +20,8 @@ const KIND_LABELS: Record<CartItemKind, string> = {
 const KIND_ORDER: CartItemKind[] = ["weapon", "armor", "other"];
 
 export function BuilderInventoryPanel() {
-  const {
-    items,
-    totalItems,
-    isSyncing,
-    getEntryKind,
-    removeFromInventory,
-  } = useBuilderInventory();
+  const { items, totalItems, isSyncing, getEntryKind, removeFromInventory } =
+    useBuilderInventory();
 
   const grouped = KIND_ORDER.map((kind) => ({
     kind,
@@ -51,29 +46,29 @@ export function BuilderInventoryPanel() {
           <AccordionContent className="px-3.5 pb-3.5">
             {isSyncing ? (
               <p className="py-4 text-center text-xs text-muted-foreground">
-                Cargando inventario…
+                Loading inventory…
               </p>
             ) : items.length === 0 ? (
               <div className="py-4 text-center">
                 <p className="text-xs text-muted-foreground">
-                  El inventario está vacío.
+                  The inventory is empty.
                 </p>
                 <p className="mt-1 text-[11px] text-muted-foreground/70">
-                  Añade objetos desde{" "}
+                  Add items from{" "}
                   <Link
                     to="/shops"
                     className="font-medium text-primary hover:underline"
                   >
-                    Tiendas
+                    Shops
                   </Link>{" "}
-                  o{" "}
+                  and{" "}
                   <Link
                     to="/items"
                     className="font-medium text-primary hover:underline"
                   >
-                    Objetos
+                    Items
                   </Link>{" "}
-                  y pulsa Comprar.
+                  and press <kbd className="text-[10px] font-medium">Buy</kbd>.
                 </p>
               </div>
             ) : (
@@ -134,9 +129,7 @@ function InventoryRow({
                 : entry.cost}
             </span>
           )}
-          {entry.weight && entry.weight !== "—" && (
-            <span>{entry.weight}</span>
-          )}
+          {entry.weight && entry.weight !== "—" && <span>{entry.weight}</span>}
           {kind === "other" && entry.shopName && (
             <span className="italic opacity-70">{entry.shopName}</span>
           )}

@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { isMonkClass } from "../../utils/unarmed-strike.utils";
 import { NumberStepper } from "../shared/NumberStepper";
 
 export function BuilderDamagePanel() {
@@ -15,10 +16,14 @@ export function BuilderDamagePanel() {
     effectiveAttacksPerTurn,
     attacksPerTurnOverride,
     setAttacksPerTurnOverride,
+    useUnarmedStrike,
+    setUseUnarmedStrike,
+    class: classRef,
     mainHand,
     offHand,
   } = useCharacterBuilder();
-  const hasEquipment = combat.mainHand || combat.offHand;
+  const hasEquippedWeapons = Boolean(mainHand || offHand);
+  const showDamage = useUnarmedStrike || hasEquippedWeapons;
   const critRange = combat.mainHand?.critRange ?? 20;
   const critPct = Math.round(((21 - critRange) / 20) * 100);
   const attacksPerTurn =
@@ -40,9 +45,27 @@ export function BuilderDamagePanel() {
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-3.5 pb-3.5">
-            {!hasEquipment ? (
+            <label className="mb-3 flex items-start gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={useUnarmedStrike}
+                onChange={(e) => setUseUnarmedStrike(e.target.checked)}
+                className="mt-0.5 rounded border-border"
+              />
+              <span className="text-[10px] leading-snug text-muted-foreground">
+                <span className="font-medium text-foreground">Unarmed Strike</span>
+                {" — "}
+                Use punches, kicks, or similar blows instead of equipped weapons.
+                Base damage: 1 + Strength modifier (XPHB 2024).
+                {isMonkClass(classRef?.name)
+                  ? " Monk Martial Arts applies: martial arts die + Dexterity."
+                  : " Useful for Monks, species like Nergigante, or unarmed builds."}
+              </span>
+            </label>
+
+            {!showDamage ? (
               <p className="py-4 text-center text-xs text-muted-foreground">
-                Equip a weapon to see the estimated damage.
+                Equip a weapon or enable Unarmed Strike to see estimated damage.
               </p>
             ) : (
               <>
@@ -55,6 +78,7 @@ export function BuilderDamagePanel() {
                   </div>
                   <div className="mt-1 text-[10px] text-muted-foreground">
                     Level {character.level}
+                    {useUnarmedStrike ? " · Unarmed Strike" : ""}
                   </div>
                 </div>
 
@@ -73,13 +97,22 @@ export function BuilderDamagePanel() {
                       title={`Default: ${character.getAttacksPerTurn()} (level). Override to customize.`}
                     />
                   </div>
-                  {combat.mainHand && mainHand && (
+                  {useUnarmedStrike && combat.mainHand && (
+                    <BreakdownLine
+                      name={
+                        combat.mainHand.sources.find((s) => s.type === "weapon")
+                          ?.source ?? "Unarmed Strike"
+                      }
+                      detail={`${combat.mainHand.diceExpression} (${combat.mainHand.totalPerHit.toFixed(1)} avg)`}
+                    />
+                  )}
+                  {!useUnarmedStrike && combat.mainHand && mainHand && (
                     <BreakdownLine
                       name={mainHand.weapon.name}
                       detail={`${combat.mainHand.diceExpression} (${combat.mainHand.totalPerHit.toFixed(1)} avg)`}
                     />
                   )}
-                  {combat.offHand && offHand && (
+                  {!useUnarmedStrike && combat.offHand && offHand && (
                     <BreakdownLine
                       name={`${offHand.weapon.name} (bonus)`}
                       detail={`${combat.offHand.diceExpression} (${combat.offHand.totalPerHit.toFixed(1)} avg)`}

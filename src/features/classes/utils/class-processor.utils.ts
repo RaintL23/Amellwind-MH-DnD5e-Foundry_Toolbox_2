@@ -14,6 +14,7 @@ import {
   unpackClassFeatureUid,
   unpackSubclassFeatureUid,
 } from "./class-uids.utils";
+import { resolveFeatureEntries } from "./class-feature-entries.utils";
 
 /** Expand 5etools `_copy` stubs (e.g. XPHB links to PHB subclass data). */
 export function resolveSubclassCopies(
@@ -126,16 +127,19 @@ export function buildSubclassFeatureIndex(
 
 function toResolvedFeature(
   feature: RawClassFeature | RawSubclassFeature,
+  featureIndex: Map<string, RawClassFeature>,
   meta?: { gainSubclassFeature?: boolean; tableDisplayName?: string },
 ): ResolvedFeature {
   const classSource = feature.classSource || DEFAULT_CLASS_SOURCE;
+  const rawEntries = feature.entries ?? [];
+  const entries = resolveFeatureEntries(rawEntries, featureIndex);
   return {
     name: feature.name,
     source: feature.source,
     className: feature.className,
     classSource,
     level: feature.level,
-    entries: feature.entries ?? [],
+    entries,
     displayName: meta?.tableDisplayName ?? feature.name,
     gainSubclassFeature: meta?.gainSubclassFeature,
     tableDisplayName: meta?.tableDisplayName,
@@ -172,7 +176,7 @@ export function dereferenceClassFeatures(
             tableDisplayName: ref.tableDisplayName,
           };
 
-    resolved.push(toResolvedFeature(feature, meta));
+    resolved.push(toResolvedFeature(feature, featureIndex, meta));
   }
 
   return {
@@ -200,7 +204,7 @@ export function dereferenceSubclassFeatures(
             tableDisplayName: ref.tableDisplayName,
           };
 
-    resolved.push(toResolvedFeature(feature, meta));
+    resolved.push(toResolvedFeature(feature, new Map(), meta));
   }
 
   return {

@@ -1,5 +1,15 @@
-import { DiceRoll, DamageBreakdown, DamageSource, CombatCalculation, EquippedWeapon, CritRune } from "@/shared/types";
+import {
+  Class,
+  DiceRoll,
+  DamageBreakdown,
+  DamageSource,
+  CombatCalculation,
+  EquippedWeapon,
+  CritRune,
+  Species,
+} from "@/shared/types";
 import { Character } from "../models/Character";
+import { getUnarmedStrikeProfile } from "./unarmed-strike.utils";
 
 /**
  * Parses a dice notation string like "1d8", "2d6", "1d12" into structured data.
@@ -196,6 +206,102 @@ function canDualWield(mainHand: EquippedWeapon | null, offHand: EquippedWeapon |
 }
 
 /**
+ * Calculates damage for an Unarmed Strike.
+ * Base (XPHB 2024): 1 + Strength modifier.
+ * Monk Martial Arts: martial arts die + Dexterity modifier.
+ */
+function calculateUnarmedStrikeDamage(
+  character: Character,
+  attacksPerTurn: number,
+  className?: string | null,
+  classData?: Class | null,
+  speciesData?: Species | null,
+): DamageBreakdown {
+  const profile = getUnarmedStrikeProfile(
+    character.level,
+    character.abilities,
+    className,
+    classData,
+    speciesData,
+  );
+  const abilityUsed = profile.abilityUsed;
+  const abilityModifier = character.getModifier(abilityUsed);
+  const attackBonus = character.getAttackBonus(abilityUsed);
+
+  let weaponDice: DiceRoll;
+  const sources: DamageSource[] = [];
+
+  if (profile.diceSides > 0) {
+    const average = profile.diceCount * ((profile.diceSides + 1) / 2);
+    const notation =
+      profile.diceCount === 1
+        ? `1d${profile.diceSides}`
+        : `${profile.diceCount}d${profile.diceSides}`;
+    weaponDice = {
+      count: profile.diceCount,
+      sides: profile.diceSides,
+      average,
+      notation,
+    };
+    sources.push({
+      source: profile.label,
+      type: "weapon",
+      dice: weaponDice,
+      flatBonus: 0,
+      average: weaponDice.average,
+    });
+  } else {
+    weaponDice = {
+      count: 0,
+      sides: 0,
+      average: profile.flatBase,
+      notation: String(profile.flatBase),
+    };
+    sources.push({
+      source: profile.label,
+      type: "weapon",
+      dice: null,
+      flatBonus: profile.flatBase,
+      average: profile.flatBase,
+    });
+  }
+
+  if (abilityModifier !== 0) {
+    sources.push({
+      source: `${abilityUsed.toUpperCase()} modifier`,
+      type: "ability",
+      dice: null,
+      flatBonus: abilityModifier,
+      average: abilityModifier,
+    });
+  }
+
+  const totalPerHit = weaponDice.average + abilityModifier;
+  const totalPerTurn = totalPerHit * attacksPerTurn;
+
+  const parts: string[] = [weaponDice.notation];
+  if (abilityModifier !== 0) {
+    parts.push(abilityModifier > 0 ? `+${abilityModifier}` : `${abilityModifier}`);
+  }
+  const diceExpression = parts.join(" ");
+
+  return {
+    weaponDice,
+    abilityModifier,
+    abilityUsed,
+    runeDice: [],
+    totalPerHit,
+    attacksPerTurn,
+    attackBonus,
+    totalPerTurn,
+    diceExpression,
+    sources,
+    critRange: 20,
+    critRunes: [],
+  };
+}
+
+/**
  * Calculates full combat DPS for the character's current equipment.
  */
 export function calculateCombat(
@@ -203,7 +309,26 @@ export function calculateCombat(
   mainHand: EquippedWeapon | null,
   offHand: EquippedWeapon | null,
   attacksPerTurn: number,
+  useUnarmedStrike = false,
+  className?: string | null,
+  classData?: Class | null,
+  speciesData?: Species | null,
 ): CombatCalculation {
+  if (useUnarmedStrike) {
+    const unarmedBreakdown = calculateUnarmedStrikeDamage(
+      character,
+      attacksPerTurn,
+      className,
+      classData,
+      speciesData,
+    );
+    return {
+      mainHand: unarmedBreakdown,
+      offHand: null,
+      totalDPT: unarmedBreakdown.totalPerTurn,
+    };
+  }
+
   let mainHandBreakdown: DamageBreakdown | null = null;
   let offHandBreakdown: DamageBreakdown | null = null;
 
