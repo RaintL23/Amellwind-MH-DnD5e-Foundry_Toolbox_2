@@ -6,7 +6,7 @@ function useLocalFiveToolsData(): boolean {
   return import.meta.env.VITE_5ETOOLS_DATA === "local";
 }
 
-/** Resolve remote 5etools URL vs Vite-served backup JSON in public/5etools/. */
+/** Production default: remote GitHub mirror. Local public/5etools only when VITE_5ETOOLS_DATA=local. */
 export function resolveFiveToolsUrl(
   remoteUrl: string,
   localFileName: string,

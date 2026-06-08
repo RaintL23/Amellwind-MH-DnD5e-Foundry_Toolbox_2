@@ -38,8 +38,9 @@ coverage/
 # JSONs pesados de Amellwind y mirror completo de 5etools (ver README)
 backup-jsons/
 
-# Mirror 5etools para desarrollo offline (VITE_5ETOOLS_DATA=local).
-# Solo el subset mínimo del repo está permitido; el resto se copia localmente.
+# Mirror 5etools — solo subset para dev offline (VITE_5ETOOLS_DATA=local).
+# Producción (Vercel): compendio vía GitHub; no commitear JSON extra aquí.
+# races, backgrounds, feats, spells, classes, etc. → remote en prod (ver README).
 public/5etools/**
 !public/5etools/items.json
 !public/5etools/items-base.json
@@ -52,6 +53,7 @@ public/5etools/bestiary/**
 !public/5etools/bestiary/legendarygroups.json
 !public/5etools/bestiary/fluff-index.json
 !public/5etools/bestiary/fluff-bestiary-mm.json
+# Copia local opcional (gitignored): races.json, backgrounds.json, feats.json, …
 
 # ── Editores / IDE ────────────────────────────────────────────
 .vscode/*

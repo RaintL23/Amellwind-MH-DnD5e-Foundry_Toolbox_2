@@ -36,8 +36,11 @@ Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son
 | ------------ | ----------------------------- | ------------------------------------------------ |
 | **Spells**   | `/spells`                     | Conjuros con filtros por clase, nivel y fuente   |
 | **Classes**  | `/classes`, `/classes/:id`    | Clases base con página de detalle por variante   |
-| **Items**    | `/dnd-items`                  | Ítems mágicos y equipo del PHB/DMG y otras fuentes |
-| **Bestiary** | `/bestiary`, `/bestiary/:id`  | Criaturas del MM y otras fuentes, con carga bajo demanda |
+| **Items**        | `/dnd-items`                  | Ítems mágicos y equipo del PHB/DMG y otras fuentes |
+| **Bestiary**     | `/bestiary`, `/bestiary/:id`  | Criaturas del MM y otras fuentes, con carga bajo demanda |
+| **Races**        | `/dnd-races`                  | Especies, linajes y subrazas oficiales 5e               |
+| **Backgrounds**  | `/dnd-backgrounds`            | Trasfondos oficiales 5e (2014 / 2024)                   |
+| **Feats**        | `/dnd-feats`                  | Dotes oficiales 5e                                      |
 
 ## Stack tecnológico
 
@@ -87,15 +90,26 @@ pnpm build:analyze
 
 Al abrir la app por primera vez (o cuando la caché tiene más de 24 horas), se sincronizan automáticamente los JSONs de Amellwind desde 5etools. Si la red falla, la app sigue funcionando con los datos ya guardados en IndexedDB.
 
-### Datos 5etools en local (opcional)
+### Compendio 5etools: producción vs. desarrollo offline
 
-Para desarrollo offline del compendio D&D 5e (spells, classes, items, bestiary), copia los JSON de respaldo a `public/5etools/` y define:
+| Entorno | Configuración | Origen de datos |
+| ------- | ------------- | --------------- |
+| **Vercel / producción** | Sin variables de entorno | Mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) vía `raw.githubusercontent.com` |
+| **Desarrollo (por defecto)** | Igual que producción | Remoto |
+| **Desarrollo offline** | `VITE_5ETOOLS_DATA=local` en `.env.local` | JSON en `public/5etools/` |
 
-```bash
-VITE_5ETOOLS_DATA=local
-```
+En producción **no hace falta** commitear `races.json`, `backgrounds.json`, `feats.json` ni el resto del mirror: spells, classes, races, backgrounds, feats, items y bestiary se resuelven en runtime desde GitHub. Los JSON en `public/5etools/` que sí están en el repo son solo un subset para probar items/bestiary sin red.
 
-Ver comentarios en `src/shared/constants/api.constants.ts` para las rutas exactas.
+**No configures `VITE_5ETOOLS_DATA=local` en Vercel** — spells y classes requieren cientos de archivos que no van en el repo.
+
+Para desarrollo offline, copia los JSON desde `backup-jsons/5etools/` a `public/5etools/` y crea `.env.local` a partir de [`.env.example`](./.env.example). Ver comentarios en `src/shared/constants/api.constants.ts` para las rutas exactas.
+
+### Deploy en Vercel
+
+- **Build:** `pnpm build` (definido en `vercel.json`)
+- **Output:** `dist`
+- **Variables de entorno:** ninguna obligatoria
+- **Node:** 22.x (`.nvmrc` / `package.json`)
 
 ## Fuentes de datos
 
@@ -114,7 +128,7 @@ Recursos, entornos, tiendas, combo, cocina, guía de creación de personajes y p
 
 ### Compendio D&D 5e
 
-Spells, classes, items y bestiary se cargan desde el mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) (`raw.githubusercontent.com`), con precarga de fuentes habituales (MM, PHB, DMG, etc.) y carga bajo demanda del resto.
+Spells, classes, items, bestiary, races, backgrounds y feats se cargan desde el mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) (`raw.githubusercontent.com`), con precarga de fuentes habituales (MM, PHB, DMG, etc.) y carga bajo demanda del resto.
 
 ## Estructura del proyecto
 
