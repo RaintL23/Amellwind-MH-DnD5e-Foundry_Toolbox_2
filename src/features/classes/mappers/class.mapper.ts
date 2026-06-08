@@ -323,6 +323,7 @@ function mapSubclass(sc: ProcessedSubclass): Subclass {
     shortName: sc.shortName,
     source: sc.source,
     classSource: sc.classSource || DEFAULT_CLASS_SOURCE,
+    edition: sc.edition,
     page: sc.page,
     progression: mapProgression(sc.subclassFeaturesByLevel, tableGroups),
     additionalSpells: mapAdditionalSpells(sc.additionalSpells),

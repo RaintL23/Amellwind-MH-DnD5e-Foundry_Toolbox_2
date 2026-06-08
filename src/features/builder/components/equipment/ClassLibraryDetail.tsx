@@ -9,7 +9,10 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { ClassFeatureDetailsPanel } from "@/features/classes/components/detail/ClassFeatureDetailsPanel";
+import { ClassSourceSwitcher } from "@/features/classes/components/detail/ClassSourceSwitcher";
 import { getCasterLabel } from "@/features/classes/mappers/class.mapper";
+import type { BookSourceNameMap } from "@/features/spells/services/book-source.service";
+import type { ClassVariantField } from "@/features/classes/utils/class-variant.utils";
 import {
   getFeaturesUpToLevel,
   getSubclassGainLevel,
@@ -19,6 +22,10 @@ interface ClassLibraryDetailProps {
   classData: Class;
   subclass: Subclass | null;
   level: number;
+  variants?: Class[];
+  varyingFields?: ClassVariantField[];
+  bookNames?: BookSourceNameMap;
+  onSourceSelect?: (id: string) => void;
 }
 
 function groupFeaturesByLevel(
@@ -41,6 +48,10 @@ export function ClassLibraryDetail({
   classData,
   subclass,
   level,
+  variants = [],
+  varyingFields = [],
+  bookNames = {},
+  onSourceSelect,
 }: ClassLibraryDetailProps) {
   const features = getFeaturesUpToLevel(classData, subclass, level);
   const byLevel = groupFeaturesByLevel(features);
@@ -55,10 +66,25 @@ export function ClassLibraryDetail({
         <Badge variant="secondary" className="text-[10px]">
           {classData.source}
         </Badge>
+        {classData.edition && (
+          <Badge variant="secondary" className="text-[10px]">
+            {classData.edition === "one" ? "2024" : "2014"}
+          </Badge>
+        )}
         <Badge className="bg-sky-950/60 text-sky-300 border-sky-800/50 text-[10px]">
           Level {level}
         </Badge>
       </div>
+
+      {onSourceSelect && variants.length > 1 && (
+        <ClassSourceSwitcher
+          variants={variants}
+          activeId={classData.id}
+          onSelect={onSourceSelect}
+          varyingFields={varyingFields}
+          bookNames={bookNames}
+        />
+      )}
 
       <div className="grid grid-cols-2 gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
         <span>

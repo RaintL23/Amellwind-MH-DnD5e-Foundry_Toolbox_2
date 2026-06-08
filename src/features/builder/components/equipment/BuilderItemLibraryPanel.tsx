@@ -12,20 +12,41 @@ import {
   Sword,
   Users,
 } from "lucide-react";
+import { resolveBookSourceName } from "@/features/spells/services/book-source.service";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { cn } from "@/shared/utils/cn";
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../../data/armor.placeholder";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
-import { getAllSpecies, getSpeciesById } from "@/features/species/services/species.service";
-import { getAllDndRaces, getDndRaceById } from "@/features/dnd-races/services/dnd-race.service";
-import { getAllBackgrounds, getBackgroundById } from "@/features/backgrounds/services/background.service";
-import { getAllDndBackgrounds, getDndBackgroundById } from "@/features/dnd-backgrounds/services/dnd-background.service";
+import {
+  getAllSpecies,
+  getSpeciesById,
+} from "@/features/species/services/species.service";
+import {
+  getAllDndRaces,
+  getDndRaceById,
+} from "@/features/dnd-races/services/dnd-race.service";
+import {
+  getAllBackgrounds,
+  getBackgroundById,
+} from "@/features/backgrounds/services/background.service";
+import {
+  getAllDndBackgrounds,
+  getDndBackgroundById,
+} from "@/features/dnd-backgrounds/services/dnd-background.service";
 import { getListClasses } from "@/features/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
-import { getAllFeats, getFeatById } from "@/features/feats/services/feat.service";
-import { getListDndFeats, getDndFeatById } from "@/features/dnd-feats/services/dnd-feat.service";
+import {
+  getAllFeats,
+  getFeatById,
+} from "@/features/feats/services/feat.service";
+import {
+  getListDndFeats,
+  getDndFeatById,
+} from "@/features/dnd-feats/services/dnd-feat.service";
 import { detectExpertiseGrants } from "../../utils/expertise-detection.utils";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
+import { useClassVariants } from "../../hooks/useClassVariants";
 import { useSelectedClass } from "../../hooks/useSelectedClass";
 import {
   ABILITY_SCORE_IMPROVEMENT,
@@ -100,9 +121,7 @@ interface BuilderItemLibraryPanelProps {
   selectedSlot: PaperDollSelection;
 }
 
-function isLoadedSpecies(
-  data: Species | Background | null,
-): data is Species {
+function isLoadedSpecies(data: Species | Background | null): data is Species {
   return !!data && "traits" in data;
 }
 
@@ -162,6 +181,8 @@ export function BuilderItemLibraryPanel({
     setFeatSkillChoices,
   } = useCharacterBuilder();
   const { classData, loading: classDetailLoading } = useSelectedClass();
+  const { variants: classVariants, varyingFields, bookNames } =
+    useClassVariants(classData);
   const { weapons: inventoryWeapons, armors: inventoryArmors } =
     useBuilderInventory();
 
@@ -174,11 +195,8 @@ export function BuilderItemLibraryPanel({
   const isBackgroundSlot = selectedSlot === "background";
   const isClassSlot = selectedSlot === "class";
   const isSubclassSlot = selectedSlot === "subclass";
-  const isFeatSlot =
-    selectedSlot !== null && isFeatSlotSelection(selectedSlot);
-  const featSlotIndex = isFeatSlot
-    ? parseFeatSlotIndex(selectedSlot)
-    : null;
+  const isFeatSlot = selectedSlot !== null && isFeatSlotSelection(selectedSlot);
+  const featSlotIndex = isFeatSlot ? parseFeatSlotIndex(selectedSlot) : null;
 
   useEffect(() => {
     setSearch("");
@@ -202,13 +220,23 @@ export function BuilderItemLibraryPanel({
 
     let load: Promise<Array<{ id: string; name: string }>>;
     if (isSpeciesSlot) {
-      load = identitySource === "dnd"
-        ? getAllDndRaces().then((list) => list.map((r) => ({ id: r.id, name: r.name })))
-        : getAllSpecies().then((list) => list.map((s) => ({ id: s.id, name: s.name })));
+      load =
+        identitySource === "dnd"
+          ? getAllDndRaces().then((list) =>
+              list.map((r) => ({ id: r.id, name: r.name })),
+            )
+          : getAllSpecies().then((list) =>
+              list.map((s) => ({ id: s.id, name: s.name })),
+            );
     } else {
-      load = identitySource === "dnd"
-        ? getAllDndBackgrounds().then((list) => list.map((b) => ({ id: b.id, name: b.name })))
-        : getAllBackgrounds().then((list) => list.map((b) => ({ id: b.id, name: b.name })));
+      load =
+        identitySource === "dnd"
+          ? getAllDndBackgrounds().then((list) =>
+              list.map((b) => ({ id: b.id, name: b.name })),
+            )
+          : getAllBackgrounds().then((list) =>
+              list.map((b) => ({ id: b.id, name: b.name })),
+            );
     }
 
     load.then(setIdentityOptions).finally(() => setIdentityLoading(false));
@@ -220,7 +248,11 @@ export function BuilderItemLibraryPanel({
     setClassOptions([]);
     getListClasses()
       .then((list) =>
-        setClassOptions(list.map((c) => ({ id: c.id, name: c.name }))),
+        setClassOptions(
+          list
+            .filter((c) => !c.isSidekick)
+            .map((c) => ({ id: c.id, name: c.name })),
+        ),
       )
       .finally(() => setClassLoading(false));
   }, [isClassSlot, isSubclassSlot, selectedSlot]);
@@ -229,10 +261,16 @@ export function BuilderItemLibraryPanel({
   useEffect(() => {
     const activeFeatIds = featSelections
       .filter(Boolean)
-      .filter((f) => f && !isAsiFeatSelection(f)) as import("@/shared/types").BuilderFeatSelection[];
+      .filter(
+        (f) => f && !isAsiFeatSelection(f),
+      ) as import("@/shared/types").BuilderFeatSelection[];
 
     if (!activeFeatIds.length) {
-      applyIdentityGrants({ source: "feats", skillGrants: [], expertiseGrants: [] });
+      applyIdentityGrants({
+        source: "feats",
+        skillGrants: [],
+        expertiseGrants: [],
+      });
       return;
     }
 
@@ -243,9 +281,13 @@ export function BuilderItemLibraryPanel({
           : getFeatById(f.id),
       ),
     ).then((feats) => {
-      const validFeats = feats.filter(Boolean) as import("@/shared/types").Feat[];
+      const validFeats = feats.filter(
+        Boolean,
+      ) as import("@/shared/types").Feat[];
       const skillGrants = validFeats.flatMap((f) => f.skillGrants ?? []);
-      const expertiseGrants = validFeats.flatMap((f) => f.expertiseGrants ?? []);
+      const expertiseGrants = validFeats.flatMap(
+        (f) => f.expertiseGrants ?? [],
+      );
       applyIdentityGrants({ source: "feats", skillGrants, expertiseGrants });
 
       // Reset feat skill choices for slots that have no skill grants
@@ -260,7 +302,12 @@ export function BuilderItemLibraryPanel({
   // Apply class grants whenever classData or level changes
   useEffect(() => {
     if (!classData) {
-      applyIdentityGrants({ source: "class", skillGrants: [], saveProficiencies: [], expertiseGrants: [] });
+      applyIdentityGrants({
+        source: "class",
+        skillGrants: [],
+        saveProficiencies: [],
+        expertiseGrants: [],
+      });
       return;
     }
     const level = character.level;
@@ -272,6 +319,14 @@ export function BuilderItemLibraryPanel({
       expertiseGrants,
     });
   }, [classData, character.level, applyIdentityGrants]);
+
+  useEffect(() => {
+    if (!classData || !subclass) return;
+    const isValid = subclassesForClassVariant(classData).some(
+      (sc) => sc.id === subclass.id,
+    );
+    if (!isValid) setSubclass(null);
+  }, [classData, subclass, setSubclass]);
 
   useEffect(() => {
     if (!isFeatSlot) return;
@@ -344,6 +399,7 @@ export function BuilderItemLibraryPanel({
     return subclassesForClassVariant(classData).map((sc) => ({
       id: sc.id,
       name: sc.name,
+      source: sc.source,
     }));
   }, [isSubclassSlot, classData]);
 
@@ -355,8 +411,9 @@ export function BuilderItemLibraryPanel({
   const activeSubclass = useMemo(() => {
     if (!classData || !subclass) return null;
     return (
-      subclassesForClassVariant(classData).find((sc) => sc.id === subclass.id) ??
-      null
+      subclassesForClassVariant(classData).find(
+        (sc) => sc.id === subclass.id,
+      ) ?? null
     );
   }, [classData, subclass]);
 
@@ -374,9 +431,7 @@ export function BuilderItemLibraryPanel({
   useEffect(() => {
     if (!isFeatSlot) return;
     const feat =
-      featSlotIndex !== null
-        ? (featSelections[featSlotIndex] ?? null)
-        : null;
+      featSlotIndex !== null ? (featSelections[featSlotIndex] ?? null) : null;
     setShowFeatList(!feat || !isAsiFeatSelection(feat));
   }, [isFeatSlot, featSlotIndex, featSelections]);
 
@@ -485,7 +540,11 @@ export function BuilderItemLibraryPanel({
       setIdentityDetail(null);
       setIdentityDetailLoading(false);
       if (isSpeciesSlot) {
-        applyIdentityGrants({ source: "species", skillGrants: [], skillAdvantages: [] });
+        applyIdentityGrants({
+          source: "species",
+          skillGrants: [],
+          skillAdvantages: [],
+        });
       } else if (isBackgroundSlot) {
         applyIdentityGrants({ source: "background", skillGrants: [] });
       }
@@ -500,7 +559,11 @@ export function BuilderItemLibraryPanel({
 
     // Clear previous grants while new identity loads
     if (isSpeciesSlot) {
-      applyIdentityGrants({ source: "species", skillGrants: [], skillAdvantages: [] });
+      applyIdentityGrants({
+        source: "species",
+        skillGrants: [],
+        skillAdvantages: [],
+      });
     } else {
       applyIdentityGrants({ source: "background", skillGrants: [] });
     }
@@ -509,21 +572,32 @@ export function BuilderItemLibraryPanel({
     setIdentityDetailLoading(true);
     setIdentityDetail(null);
 
-    let load: Promise<Species | import("@/shared/types").Background | import("@/shared/types").DndRace | import("@/shared/types").DndBackground | null | undefined>;
+    let load: Promise<
+      | Species
+      | import("@/shared/types").Background
+      | import("@/shared/types").DndRace
+      | import("@/shared/types").DndBackground
+      | null
+      | undefined
+    >;
     if (isSpeciesSlot) {
-      load = identitySource === "dnd"
-        ? getDndRaceById(selectedIdentity.id)
-        : getSpeciesById(selectedIdentity.id);
+      load =
+        identitySource === "dnd"
+          ? getDndRaceById(selectedIdentity.id)
+          : getSpeciesById(selectedIdentity.id);
     } else {
-      load = identitySource === "dnd"
-        ? getDndBackgroundById(selectedIdentity.id)
-        : getBackgroundById(selectedIdentity.id);
+      load =
+        identitySource === "dnd"
+          ? getDndBackgroundById(selectedIdentity.id)
+          : getBackgroundById(selectedIdentity.id);
     }
 
     load
       .then((data) => {
         if (cancelled || !data) return;
-        setIdentityDetail(data as Species | import("@/shared/types").Background);
+        setIdentityDetail(
+          data as Species | import("@/shared/types").Background,
+        );
 
         // Apply grants to builder context
         if ("skillGrants" in data && data.skillGrants) {
@@ -531,7 +605,8 @@ export function BuilderItemLibraryPanel({
             applyIdentityGrants({
               source: "species",
               skillGrants: data.skillGrants,
-              skillAdvantages: "skillAdvantages" in data ? data.skillAdvantages : [],
+              skillAdvantages:
+                "skillAdvantages" in data ? data.skillAdvantages : [],
             });
           } else {
             applyIdentityGrants({
@@ -578,6 +653,14 @@ export function BuilderItemLibraryPanel({
 
   function handleSelectClass(id: string, name: string) {
     setClass({ id, name });
+    setSubclass(null);
+  }
+
+  function handleClassSourceSelect(id: string) {
+    const variant = classVariants.find((v) => v.id === id);
+    if (!variant) return;
+    setClass({ id: variant.id, name: variant.name });
+    setSubclass(null);
   }
 
   function handleSelectSubclass(id: string, name: string) {
@@ -618,9 +701,7 @@ export function BuilderItemLibraryPanel({
 
   const panelTitle = selectedSlot ? (
     <span className="flex min-w-0 flex-wrap items-center gap-2">
-      <span>
-        {showAsiPanel ? "ASI" : `Library — ${slotLabel}`}
-      </span>
+      <span>{showAsiPanel ? "ASI" : `Library — ${slotLabel}`}</span>
       {showIdentitySourceToggle && (
         <IdentitySourceBadgeGroup
           value={identitySource}
@@ -647,17 +728,17 @@ export function BuilderItemLibraryPanel({
             !showWeaponDetail &&
             !showArmorDetail &&
             !showAsiPanel && (
-            <div className="relative mb-2">
-              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
-              />
-            </div>
-          )}
+              <div className="relative mb-2">
+                <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  placeholder="Search..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                />
+              </div>
+            )}
 
           <div className="max-h-[min(480px,calc(100dvh-14rem))] space-y-1 overflow-y-auto overscroll-y-contain pr-1">
             {isWeaponSlot &&
@@ -729,6 +810,10 @@ export function BuilderItemLibraryPanel({
                     classData={classData}
                     subclass={activeSubclass}
                     level={character.level}
+                    variants={classVariants}
+                    varyingFields={varyingFields}
+                    bookNames={bookNames}
+                    onSourceSelect={handleClassSourceSelect}
                   />
                 ) : (
                   <EmptyState text="No se encontró la información." />
@@ -758,9 +843,7 @@ export function BuilderItemLibraryPanel({
                   loading={classDetailLoading}
                   options={subclassFiltered}
                   selectedId={subclass?.id ?? null}
-                  icon={
-                    <Sparkles className="h-3.5 w-3.5 text-emerald-400" />
-                  }
+                  icon={<Sparkles className="h-3.5 w-3.5 text-emerald-400" />}
                   onSelect={handleSelectSubclass}
                 />
               ))}
@@ -768,7 +851,9 @@ export function BuilderItemLibraryPanel({
             {isFeatSlot &&
               (showAsiPanel && selectedFeat ? (
                 <AsiLibraryPanel
-                  choices={selectedFeat.asiChoices ?? { ...DEFAULT_ASI_CHOICES }}
+                  choices={
+                    selectedFeat.asiChoices ?? { ...DEFAULT_ASI_CHOICES }
+                  }
                   onChange={handleUpdateAsiChoices}
                   onBack={() => setShowFeatList(true)}
                 />
@@ -808,9 +893,7 @@ function WeaponList({
 
   return (
     <>
-      {inventory.length > 0 && (
-        <SectionLabel>Inventario</SectionLabel>
-      )}
+      {inventory.length > 0 && <SectionLabel>Inventario</SectionLabel>}
       {inventory.map((w) => (
         <ItemRow
           key={`inv-${w.name}`}
@@ -862,9 +945,7 @@ function ArmorList({
           />
         </>
       )}
-      {inventory.length > 0 && (
-        <SectionLabel>Inventario</SectionLabel>
-      )}
+      {inventory.length > 0 && <SectionLabel>Inventario</SectionLabel>}
       {inventory.map((a) => (
         <ItemRow
           key={`inv-${a.name}`}
@@ -922,26 +1003,40 @@ function IdentityList({
   onSelect,
 }: {
   loading: boolean;
-  options: Array<{ id: string; name: string }>;
+  options: Array<{ id: string; name: string; source?: string }>;
   selectedId: string | null;
   icon: React.ReactNode;
   onSelect: (id: string, name: string) => void;
 }) {
+  const bookNames = useBookSourceNames();
+
   if (loading) return <EmptyState text="Cargando…" />;
   if (options.length === 0) return <EmptyState text="No results." />;
 
   return (
     <>
-      {options.map((o) => (
-        <ItemRow
-          key={o.id}
-          icon={icon}
-          name={o.name}
-          stats=""
-          equipped={selectedId === o.id}
-          onClick={() => onSelect(o.id, o.name)}
-        />
-      ))}
+      {options.map((o) => {
+        const sourceLabel = o.source
+          ? resolveBookSourceName(bookNames, o.source)
+          : undefined;
+
+        return (
+          <ItemRow
+            key={o.id}
+            icon={icon}
+            name={o.name}
+            stats=""
+            trailing={sourceLabel}
+            trailingTitle={
+              sourceLabel && o.source && sourceLabel !== o.source
+                ? o.source
+                : undefined
+            }
+            equipped={selectedId === o.id}
+            onClick={() => onSelect(o.id, o.name)}
+          />
+        );
+      })}
     </>
   );
 }
@@ -975,7 +1070,9 @@ function SubclassLibraryDetail({
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
         <Sparkles className="h-4 w-4 text-emerald-400" />
-        <h3 className="text-sm font-semibold text-foreground">{subclass.name}</h3>
+        <h3 className="text-sm font-semibold text-foreground">
+          {subclass.name}
+        </h3>
         <span className="text-[10px] text-muted-foreground">
           {subclass.source}
         </span>
@@ -1039,9 +1136,7 @@ function FeatList({
             <Award
               className={cn(
                 "h-3.5 w-3.5",
-                isAsiFeatSelection(feat)
-                  ? "text-amber-400"
-                  : "text-rose-400",
+                isAsiFeatSelection(feat) ? "text-amber-400" : "text-rose-400",
               )}
             />
           }
@@ -1064,6 +1159,8 @@ function ItemRow({
   name,
   stats,
   rarity,
+  trailing,
+  trailingTitle,
   equipped = false,
   onClick,
 }: {
@@ -1071,6 +1168,8 @@ function ItemRow({
   name: string;
   stats: string;
   rarity?: string;
+  trailing?: string;
+  trailingTitle?: string;
   equipped?: boolean;
   onClick: () => void;
 }) {
@@ -1095,16 +1194,26 @@ function ItemRow({
           </div>
         )}
       </div>
-      {rarity && RARITY_BADGE[rarity] && (
-        <span
-          className={cn(
-            "ml-2 shrink-0 rounded px-1.5 py-0.5 text-[10px] font-medium",
-            RARITY_BADGE[rarity],
-          )}
-        >
-          {rarity}
-        </span>
-      )}
+      <div className="ml-2 flex shrink-0 items-center gap-1.5">
+        {trailing && (
+          <span
+            className="max-w-[16rem] text-[10px] text-muted-foreground"
+            title={trailingTitle ?? trailing}
+          >
+            {trailing}
+          </span>
+        )}
+        {rarity && RARITY_BADGE[rarity] && (
+          <span
+            className={cn(
+              "rounded px-1.5 py-0.5 text-[10px] font-medium",
+              RARITY_BADGE[rarity],
+            )}
+          >
+            {rarity}
+          </span>
+        )}
+      </div>
     </button>
   );
 }

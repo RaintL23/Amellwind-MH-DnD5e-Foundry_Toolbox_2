@@ -37,6 +37,7 @@ export interface Subclass {
   source: string;
   /** Parent class book this subclass is linked to (e.g. PHB, XPHB) */
   classSource: string;
+  edition?: "classic" | "one";
   page?: number;
   progression: ClassLevelRow[];
   additionalSpells?: SubclassSpellBlock[];
