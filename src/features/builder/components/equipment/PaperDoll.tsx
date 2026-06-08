@@ -58,8 +58,11 @@ export function PaperDoll() {
   const { classData } = useSelectedClass();
 
   useEffect(() => {
-    if (!classData || !isSubclassLevelReached(classData, character.level)) {
-      if (subclass) setSubclass(null);
+    // Wait until class data loads — clearing while classData is null would
+    // wipe a valid subclass when returning from another route.
+    if (!classData) return;
+    if (!isSubclassLevelReached(classData, character.level) && subclass) {
+      setSubclass(null);
     }
   }, [classData, character.level, subclass, setSubclass]);
 
