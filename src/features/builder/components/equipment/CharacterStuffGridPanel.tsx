@@ -62,7 +62,15 @@ export function CharacterStuffGridPanel({
         <GridElementSlot
           label="Specie"
           icon={<Users className="h-5 w-5 text-sky-400" />}
-          equipped={species ? { name: species.name } : null}
+          equipped={
+            species
+              ? {
+                  name: species.subraceName
+                    ? `${species.name} (${species.subraceName})`
+                    : species.name,
+                }
+              : null
+          }
           onClickEquip={() => onSelectSlot("species")}
           onClickDetails={() => onSelectSlot("species")}
           onUnequip={species ? () => onUnequipSlot("species") : undefined}

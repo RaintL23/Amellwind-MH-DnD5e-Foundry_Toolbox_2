@@ -24,20 +24,30 @@ export function useResolvedSpecies(): ResolvedSpeciesData | null {
     Promise.all([
       getSpeciesById(speciesRef.id),
       getDndRaceById(speciesRef.id),
-    ]).then(([mhSpecies, dndRace]) => {
+      speciesRef.subraceId ? getDndRaceById(speciesRef.subraceId) : Promise.resolve(undefined),
+    ]).then(([mhSpecies, dndRace, dndSubrace]) => {
       if (cancelled) return;
       const resolved = mhSpecies ?? dndRace;
       if (!resolved) {
         setData(null);
         return;
       }
-      setData({ name: resolved.name, traits: resolved.traits });
+
+      const displayName = speciesRef.subraceName
+        ? `${resolved.name} (${speciesRef.subraceName})`
+        : resolved.name;
+      const traits = [
+        ...resolved.traits,
+        ...(dndSubrace?.traits ?? []),
+      ];
+
+      setData({ name: displayName, traits });
     });
 
     return () => {
       cancelled = true;
     };
-  }, [speciesRef?.id]);
+  }, [speciesRef?.id, speciesRef?.subraceId, speciesRef?.subraceName]);
 
   return data;
 }

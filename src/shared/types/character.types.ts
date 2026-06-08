@@ -41,6 +41,9 @@ export interface BuilderFeatSelection {
 export interface CharacterSelectionRef {
   id: string;
   name: string;
+  /** D&D subrace/subspecies variant linked to the base species entry. */
+  subraceId?: string | null;
+  subraceName?: string | null;
 }
 
 // ─── Armor (placeholder until real data source exists) ───────────────────────

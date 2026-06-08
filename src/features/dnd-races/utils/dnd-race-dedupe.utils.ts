@@ -87,3 +87,62 @@ export function dedupeDndRacesByName(races: DndRace[]): DndRace[] {
 
   return sortRacesForGroupedList(list);
 }
+
+function buildBuilderSearchText(rootName: string, allRaces: DndRace[]): string {
+  const parts: string[] = [rootName];
+  for (const race of allRaces) {
+    if (race.name === rootName && !race.parentName) {
+      parts.push(race.source, ...(race.traitTags ?? []));
+    }
+    if (race.parentName === rootName) {
+      parts.push(race.name, race.source);
+    }
+  }
+  return parts.join(" ").toLowerCase();
+}
+
+/**
+ * Builder library: one row per root species (subraces excluded from the list).
+ */
+export function dedupeDndRootRacesForBuilderList(races: DndRace[]): DndRace[] {
+  const roots = races.filter((r) => !r.parentName);
+  const byName = new Map<string, DndRace[]>();
+
+  for (const race of roots) {
+    const group = byName.get(race.name) ?? [];
+    group.push(race);
+    byName.set(race.name, group);
+  }
+
+  return Array.from(byName.values())
+    .map((group) => {
+      const canonical = pickCanonicalRace(group);
+      const variantSources = [...new Set(group.map((r) => r.source))].sort(
+        (a, b) => a.localeCompare(b),
+      );
+      return {
+        ...canonical,
+        variantCount: group.length,
+        variantSources,
+        searchText: buildBuilderSearchText(canonical.name, races),
+      };
+    })
+    .sort((a, b) =>
+      a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
+    );
+}
+
+export function filterDndSubracesForParent(
+  races: DndRace[],
+  parentName: string,
+  parentSource: string,
+): DndRace[] {
+  return races
+    .filter(
+      (r) =>
+        r.parentName === parentName &&
+        r.parentSource === parentSource &&
+        r.kind !== "species",
+    )
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+}

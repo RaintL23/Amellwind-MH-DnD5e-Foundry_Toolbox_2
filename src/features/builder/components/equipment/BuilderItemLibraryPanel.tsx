@@ -12,7 +12,6 @@ import {
   Sword,
   Users,
 } from "lucide-react";
-import { resolveBookSourceName } from "@/features/spells/services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { cn } from "@/shared/utils/cn";
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../../data/armor.placeholder";
@@ -22,16 +21,19 @@ import {
   getSpeciesById,
 } from "@/features/species/services/species.service";
 import {
-  getAllDndRaces,
+  getBuilderListDndRaces,
   getDndRaceById,
+  getDndRacesByName,
+  getDndSubracesForParent,
 } from "@/features/dnd-races/services/dnd-race.service";
 import {
   getAllBackgrounds,
   getBackgroundById,
 } from "@/features/backgrounds/services/background.service";
 import {
-  getAllDndBackgrounds,
   getDndBackgroundById,
+  getDndBackgroundsByName,
+  getListDndBackgrounds,
 } from "@/features/dnd-backgrounds/services/dnd-background.service";
 import { getListClasses } from "@/features/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
@@ -40,8 +42,9 @@ import {
   getFeatById,
 } from "@/features/feats/services/feat.service";
 import {
-  getListDndFeats,
   getDndFeatById,
+  getDndFeatsByName,
+  getListDndFeats,
 } from "@/features/dnd-feats/services/dnd-feat.service";
 import { detectExpertiseGrants } from "../../utils/expertise-detection.utils";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
@@ -60,11 +63,14 @@ import { ArmorItem, Weapon } from "@/shared/types";
 import type {
   Background,
   BuilderFeatSelection,
+  DndBackground,
   DndFeat,
+  DndRace,
   Feat,
   Species,
   Subclass,
 } from "@/shared/types";
+import type { BookSourceNameMap } from "@/features/spells/services/book-source.service";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 import {
   Accordion,
@@ -81,7 +87,19 @@ import {
   FeatSourceBadgeGroup,
   type FeatDataSource,
 } from "../shared/FeatSourceBadgeGroup";
+import type { NamedVariant } from "../shared/NamedVariantSwitcher";
+import { LibraryList } from "../shared/LibraryList";
+import { SourceVariantSwitcher } from "../shared/SourceVariantSwitcher";
+import { useLibraryVariants } from "../../hooks/useLibraryVariants";
+import {
+  dedupeByNameToListOptions,
+  entityToLibraryOption,
+  filterLibraryOptions,
+  type LibraryListOption,
+  type SourceVariant,
+} from "../../utils/library-variant.utils";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
+import { FeatLibraryDetail } from "./FeatLibraryDetail";
 import { ClassFeatureDetailsPanel } from "@/features/classes/components/detail/ClassFeatureDetailsPanel";
 import { ClassLibraryDetail } from "./ClassLibraryDetail";
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
@@ -138,19 +156,24 @@ export function BuilderItemLibraryPanel({
   const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
   const [weaponsLoading, setWeaponsLoading] = useState(false);
   const [identityLoading, setIdentityLoading] = useState(false);
-  const [identityOptions, setIdentityOptions] = useState<
-    Array<{ id: string; name: string }>
-  >([]);
+  const [identityOptions, setIdentityOptions] = useState<LibraryListOption[]>(
+    [],
+  );
   const [identityDetail, setIdentityDetail] = useState<
     Species | Background | null
   >(null);
+  const [identitySubraceDetail, setIdentitySubraceDetail] =
+    useState<DndRace | null>(null);
+  const [dndSubraceOptions, setDndSubraceOptions] = useState<NamedVariant[]>(
+    [],
+  );
   const [identityDetailLoading, setIdentityDetailLoading] = useState(false);
   const [identitySource, setIdentitySource] =
     useState<IdentityDataSource>("amellwind");
-  const [classOptions, setClassOptions] = useState<
-    Array<{ id: string; name: string }>
-  >([]);
+  const [classOptions, setClassOptions] = useState<LibraryListOption[]>([]);
   const [classLoading, setClassLoading] = useState(false);
+  const [featDetail, setFeatDetail] = useState<Feat | DndFeat | null>(null);
+  const [featDetailLoading, setFeatDetailLoading] = useState(false);
   const [featSource, setFeatSource] = useState<FeatDataSource>("amellwind");
   const [showFeatList, setShowFeatList] = useState(true);
   const [amellwindFeats, setAmellwindFeats] = useState<Feat[]>([]);
@@ -181,8 +204,12 @@ export function BuilderItemLibraryPanel({
     setFeatSkillChoices,
   } = useCharacterBuilder();
   const { classData, loading: classDetailLoading } = useSelectedClass();
-  const { variants: classVariants, varyingFields, bookNames } =
-    useClassVariants(classData);
+  const {
+    variants: classVariants,
+    varyingFields,
+    bookNames,
+  } = useClassVariants(classData);
+  const identityBookNames = useBookSourceNames();
   const { weapons: inventoryWeapons, armors: inventoryArmors } =
     useBuilderInventory();
 
@@ -218,12 +245,12 @@ export function BuilderItemLibraryPanel({
     setIdentityLoading(true);
     setIdentityOptions([]);
 
-    let load: Promise<Array<{ id: string; name: string }>>;
+    let load: Promise<LibraryListOption[]>;
     if (isSpeciesSlot) {
       load =
         identitySource === "dnd"
-          ? getAllDndRaces().then((list) =>
-              list.map((r) => ({ id: r.id, name: r.name })),
+          ? getBuilderListDndRaces().then((list) =>
+              list.map(entityToLibraryOption),
             )
           : getAllSpecies().then((list) =>
               list.map((s) => ({ id: s.id, name: s.name })),
@@ -231,8 +258,8 @@ export function BuilderItemLibraryPanel({
     } else {
       load =
         identitySource === "dnd"
-          ? getAllDndBackgrounds().then((list) =>
-              list.map((b) => ({ id: b.id, name: b.name })),
+          ? getListDndBackgrounds().then((list) =>
+              list.map(entityToLibraryOption),
             )
           : getAllBackgrounds().then((list) =>
               list.map((b) => ({ id: b.id, name: b.name })),
@@ -249,9 +276,7 @@ export function BuilderItemLibraryPanel({
     getListClasses()
       .then((list) =>
         setClassOptions(
-          list
-            .filter((c) => !c.isSidekick)
-            .map((c) => ({ id: c.id, name: c.name })),
+          list.filter((c) => !c.isSidekick).map(entityToLibraryOption),
         ),
       )
       .finally(() => setClassLoading(false));
@@ -384,28 +409,21 @@ export function BuilderItemLibraryPanel({
 
   const identityFiltered = useMemo(() => {
     if (!isSpeciesSlot && !isBackgroundSlot) return [];
-    if (!q) return identityOptions;
-    return identityOptions.filter((o) => o.name.toLowerCase().includes(q));
+    return filterLibraryOptions(identityOptions, q);
   }, [identityOptions, isSpeciesSlot, isBackgroundSlot, q]);
 
   const classFiltered = useMemo(() => {
     if (!isClassSlot) return [];
-    if (!q) return classOptions;
-    return classOptions.filter((o) => o.name.toLowerCase().includes(q));
+    return filterLibraryOptions(classOptions, q);
   }, [classOptions, isClassSlot, q]);
 
   const subclassOptions = useMemo(() => {
     if (!isSubclassSlot || !classData) return [];
-    return subclassesForClassVariant(classData).map((sc) => ({
-      id: sc.id,
-      name: sc.name,
-      source: sc.source,
-    }));
+    return dedupeByNameToListOptions(subclassesForClassVariant(classData));
   }, [isSubclassSlot, classData]);
 
   const subclassFiltered = useMemo(() => {
-    if (!q) return subclassOptions;
-    return subclassOptions.filter((o) => o.name.toLowerCase().includes(q));
+    return filterLibraryOptions(subclassOptions, q);
   }, [subclassOptions, q]);
 
   const activeSubclass = useMemo(() => {
@@ -435,73 +453,49 @@ export function BuilderItemLibraryPanel({
     setShowFeatList(!feat || !isAsiFeatSelection(feat));
   }, [isFeatSlot, featSlotIndex, featSelections]);
 
-  const featOptions = useMemo(() => {
+  const featListOptions = useMemo((): LibraryListOption[] => {
     if (!isFeatSlot) return [];
 
-    const asiOption: BuilderFeatSelection = {
+    const asiOption: LibraryListOption = {
       id: ABILITY_SCORE_IMPROVEMENT.id,
       name: ABILITY_SCORE_IMPROVEMENT.name,
-      source: "asi",
     };
 
     const dnd2024Asi = dndFeats.find(
       (f) => isDnd2024Feat(f) && f.name === ABILITY_SCORE_IMPROVEMENT.name,
     );
 
-    let list: Array<{ id: string; name: string; summary?: string }> = [];
-
     if (featSource === "amellwind") {
-      list = amellwindFeats.map((f) => ({
-        id: f.id,
-        name: f.name,
-        summary: f.summary,
-      }));
-    } else if (featSource === "dnd2014") {
-      list = dndFeats
-        .filter((f) => !isDnd2024Feat(f))
+      const list = amellwindFeats
+        .filter((f) => f.name !== ABILITY_SCORE_IMPROVEMENT.name)
         .map((f) => ({
           id: f.id,
           name: f.name,
-          summary: f.summary,
+          searchText: f.name.toLowerCase(),
         }));
-    } else {
-      list = dndFeats
-        .filter((f) => isDnd2024Feat(f))
-        .map((f) => ({
-          id: f.id,
-          name: f.name,
-          summary: f.summary,
-        }));
+      const filtered = filterLibraryOptions(list, q);
+      return [asiOption, ...filtered];
     }
 
-    list = list.filter((f) => f.name !== ABILITY_SCORE_IMPROVEMENT.name);
+    const editionFeats =
+      featSource === "dnd2014"
+        ? dndFeats.filter((f) => !isDnd2024Feat(f))
+        : dndFeats.filter((f) => isDnd2024Feat(f));
 
-    const filtered = q
-      ? list.filter(
-          (f) =>
-            f.name.toLowerCase().includes(q) ||
-            (f.summary?.toLowerCase().includes(q) ?? false),
-        )
-      : list;
+    const deduped = dedupeByNameToListOptions(editionFeats, (group) =>
+      group
+        .flatMap((f) => [f.name, f.source, f.summary, ...f.prerequisites])
+        .join(" ")
+        .toLowerCase(),
+    ).filter((f) => f.name !== ABILITY_SCORE_IMPROVEMENT.name);
 
-    const mapped = filtered.map((f) => ({
-      id: f.id,
-      name: f.name,
-      source: featSource,
-    }));
+    const filtered = filterLibraryOptions(deduped, q);
 
     if (featSource === "dnd2024" && dnd2024Asi) {
-      return [
-        {
-          id: dnd2024Asi.id,
-          name: dnd2024Asi.name,
-          source: "dnd2024" as const,
-        },
-        ...mapped,
-      ];
+      return [entityToLibraryOption(dnd2024Asi), ...filtered];
     }
 
-    return [asiOption, ...mapped];
+    return [asiOption, ...filtered];
   }, [isFeatSlot, featSource, amellwindFeats, dndFeats, q]);
 
   const equippedWeapon =
@@ -534,10 +528,61 @@ export function BuilderItemLibraryPanel({
   const showWeaponDetail = isWeaponSlot && !!equippedWeapon;
   const showArmorDetail = isArmorSlot && !!armor;
 
+  const showFeatDetail =
+    isFeatSlot &&
+    !!selectedFeat &&
+    !showAsiPanel &&
+    !isAsiFeatSelection(selectedFeat);
+
+  const dndRaceSourceVariants = useLibraryVariants<DndRace>(
+    identitySource === "dnd" && isSpeciesSlot && !!selectedIdentity?.name,
+    selectedIdentity?.name,
+    identitySource === "dnd" && isSpeciesSlot ? getDndRacesByName : null,
+  );
+
+  const dndBackgroundSourceVariants = useLibraryVariants<DndBackground>(
+    identitySource === "dnd" && isBackgroundSlot && !!selectedIdentity?.name,
+    selectedIdentity?.name,
+    identitySource === "dnd" && isBackgroundSlot
+      ? getDndBackgroundsByName
+      : null,
+  );
+
+  const dndIdentitySourceVariants: SourceVariant[] = isSpeciesSlot
+    ? dndRaceSourceVariants
+    : dndBackgroundSourceVariants;
+
+  const isDndFeatSelection =
+    selectedFeat?.source === "dnd2014" || selectedFeat?.source === "dnd2024";
+
+  const dndFeatVariantsRaw = useLibraryVariants<DndFeat>(
+    isDndFeatSelection && !!selectedFeat?.name,
+    selectedFeat?.name,
+    getDndFeatsByName,
+  );
+
+  const dndFeatSourceVariants = useMemo((): SourceVariant[] => {
+    if (!isDndFeatSelection) return [];
+    const filtered =
+      selectedFeat?.source === "dnd2024"
+        ? dndFeatVariantsRaw.filter(isDnd2024Feat)
+        : dndFeatVariantsRaw.filter((f) => !isDnd2024Feat(f));
+    return filtered;
+  }, [dndFeatVariantsRaw, isDndFeatSelection, selectedFeat?.source]);
+
+  const subclassSourceVariants = useMemo((): SourceVariant[] => {
+    if (!subclass?.name || !classData) return [];
+    return subclassesForClassVariant(classData)
+      .filter((sc) => sc.name === subclass.name)
+      .sort((a, b) => a.source.localeCompare(b.source));
+  }, [classData, subclass?.name]);
+
   useEffect(() => {
     // Clear grants immediately when identity is removed or slot changes
     if (!selectedIdentity) {
       setIdentityDetail(null);
+      setIdentitySubraceDetail(null);
+      setDndSubraceOptions([]);
       setIdentityDetailLoading(false);
       if (isSpeciesSlot) {
         applyIdentityGrants({
@@ -553,11 +598,12 @@ export function BuilderItemLibraryPanel({
 
     if (!isSpeciesSlot && !isBackgroundSlot) {
       setIdentityDetail(null);
+      setIdentitySubraceDetail(null);
+      setDndSubraceOptions([]);
       setIdentityDetailLoading(false);
       return;
     }
 
-    // Clear previous grants while new identity loads
     if (isSpeciesSlot) {
       applyIdentityGrants({
         source: "species",
@@ -571,65 +617,128 @@ export function BuilderItemLibraryPanel({
     let cancelled = false;
     setIdentityDetailLoading(true);
     setIdentityDetail(null);
+    setIdentitySubraceDetail(null);
+    setDndSubraceOptions([]);
 
-    let load: Promise<
-      | Species
-      | import("@/shared/types").Background
-      | import("@/shared/types").DndRace
-      | import("@/shared/types").DndBackground
-      | null
-      | undefined
-    >;
-    if (isSpeciesSlot) {
-      load =
-        identitySource === "dnd"
-          ? getDndRaceById(selectedIdentity.id)
-          : getSpeciesById(selectedIdentity.id);
-    } else {
-      load =
-        identitySource === "dnd"
-          ? getDndBackgroundById(selectedIdentity.id)
-          : getBackgroundById(selectedIdentity.id);
-    }
+    async function loadIdentityDetail() {
+      if (isSpeciesSlot && identitySource === "dnd") {
+        const base = await getDndRaceById(selectedIdentity!.id);
+        if (cancelled || !base) return;
 
-    load
-      .then((data) => {
-        if (cancelled || !data) return;
-        setIdentityDetail(
-          data as Species | import("@/shared/types").Background,
+        setIdentityDetail(base as unknown as Species);
+
+        const subraces = await getDndSubracesForParent(base.name, base.source);
+        if (cancelled) return;
+
+        setDndSubraceOptions(
+          subraces.map((subrace) => ({ id: subrace.id, name: subrace.name })),
         );
 
-        // Apply grants to builder context
-        if ("skillGrants" in data && data.skillGrants) {
-          if (isSpeciesSlot) {
-            applyIdentityGrants({
-              source: "species",
-              skillGrants: data.skillGrants,
-              skillAdvantages:
-                "skillAdvantages" in data ? data.skillAdvantages : [],
-            });
-          } else {
-            applyIdentityGrants({
-              source: "background",
-              skillGrants: data.skillGrants,
-            });
-          }
+        const selectedSubrace = selectedIdentity!.subraceId
+          ? subraces.find(
+              (subrace) => subrace.id === selectedIdentity!.subraceId,
+            )
+          : undefined;
+
+        if (selectedIdentity!.subraceId && !selectedSubrace) {
+          setSpecies({
+            id: selectedIdentity!.id,
+            name: selectedIdentity!.name,
+            subraceId: null,
+            subraceName: null,
+          });
         }
-      })
-      .finally(() => {
-        if (!cancelled) setIdentityDetailLoading(false);
-      });
+
+        if (selectedSubrace) {
+          setIdentitySubraceDetail(selectedSubrace);
+        }
+
+        applyIdentityGrants({
+          source: "species",
+          skillGrants: [
+            ...base.skillGrants,
+            ...(selectedSubrace?.skillGrants ?? []),
+          ],
+          skillAdvantages: [
+            ...base.skillAdvantages,
+            ...(selectedSubrace?.skillAdvantages ?? []),
+          ],
+        });
+        return;
+      }
+
+      const data = isSpeciesSlot
+        ? await getSpeciesById(selectedIdentity!.id)
+        : identitySource === "dnd"
+          ? await getDndBackgroundById(selectedIdentity!.id)
+          : await getBackgroundById(selectedIdentity!.id);
+
+      if (cancelled || !data) return;
+
+      setIdentityDetail(data as Species | Background);
+
+      if ("skillGrants" in data) {
+        if (isSpeciesSlot) {
+          applyIdentityGrants({
+            source: "species",
+            skillGrants: data.skillGrants,
+            skillAdvantages:
+              "skillAdvantages" in data ? data.skillAdvantages : [],
+          });
+        } else {
+          applyIdentityGrants({
+            source: "background",
+            skillGrants: data.skillGrants,
+          });
+        }
+      }
+    }
+
+    void loadIdentityDetail().finally(() => {
+      if (!cancelled) setIdentityDetailLoading(false);
+    });
 
     return () => {
       cancelled = true;
     };
   }, [
     selectedIdentity?.id,
+    selectedIdentity?.subraceId,
     isSpeciesSlot,
     isBackgroundSlot,
     identitySource,
     applyIdentityGrants,
+    setSpecies,
   ]);
+
+  useEffect(() => {
+    if (!showFeatDetail || !selectedFeat) {
+      setFeatDetail(null);
+      setFeatDetailLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setFeatDetailLoading(true);
+    setFeatDetail(null);
+
+    const load =
+      selectedFeat.source === "amellwind"
+        ? getFeatById(selectedFeat.id)
+        : getDndFeatById(selectedFeat.id);
+
+    load
+      .then((data) => {
+        if (!cancelled && data) setFeatDetail(data);
+      })
+      .finally(() => {
+        if (!cancelled) setFeatDetailLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showFeatDetail, selectedFeat?.id, selectedFeat?.source]);
 
   function handleSelectWeapon(weapon: Weapon) {
     if (!isWeaponSlot || !selectedSlot) return;
@@ -646,7 +755,12 @@ export function BuilderItemLibraryPanel({
   }
 
   function handleSelectIdentity(id: string, name: string) {
-    const ref = { id, name };
+    const ref = {
+      id,
+      name,
+      subraceId: null,
+      subraceName: null,
+    };
     if (isSpeciesSlot) setSpecies(ref);
     else if (isBackgroundSlot) setBackground(ref);
   }
@@ -663,8 +777,89 @@ export function BuilderItemLibraryPanel({
     setSubclass(null);
   }
 
+  function handleDndIdentitySourceSelect(id: string) {
+    if (!selectedIdentity) return;
+
+    if (isSpeciesSlot) {
+      const variant = dndRaceSourceVariants.find((v) => v.id === id);
+      if (!variant) return;
+      setSpecies({
+        id: variant.id,
+        name: variant.name,
+        subraceId: null,
+        subraceName: null,
+      });
+      return;
+    }
+
+    if (isBackgroundSlot) {
+      const variant = dndBackgroundSourceVariants.find((v) => v.id === id);
+      if (!variant) return;
+      setBackground({ id: variant.id, name: variant.name });
+    }
+  }
+
+  function handleSubspeciesSelect(subraceId: string | null) {
+    if (!selectedIdentity || !isSpeciesSlot) return;
+    if (!subraceId) {
+      setSpecies({
+        id: selectedIdentity.id,
+        name: selectedIdentity.name,
+        subraceId: null,
+        subraceName: null,
+      });
+      return;
+    }
+    const option = dndSubraceOptions.find((entry) => entry.id === subraceId);
+    if (!option) return;
+    setSpecies({
+      id: selectedIdentity.id,
+      name: selectedIdentity.name,
+      subraceId: option.id,
+      subraceName: option.name,
+    });
+  }
+
   function handleSelectSubclass(id: string, name: string) {
     setSubclass({ id, name });
+  }
+
+  function handleSubclassSourceSelect(id: string) {
+    const variant = subclassSourceVariants.find((v) => v.id === id);
+    if (!variant || !subclass) return;
+    setSubclass({ id: variant.id, name: subclass.name });
+  }
+
+  function handleSelectFeatOption(id: string, name: string) {
+    if (featSlotIndex === null) return;
+
+    if (id === ABILITY_SCORE_IMPROVEMENT.id && featSource !== "dnd2024") {
+      handleSelectFeat({
+        id,
+        name,
+        source: "asi",
+      });
+      return;
+    }
+
+    const source =
+      featSource === "amellwind"
+        ? ("amellwind" as const)
+        : featSource === "dnd2024"
+          ? ("dnd2024" as const)
+          : ("dnd2014" as const);
+
+    handleSelectFeat({ id, name, source });
+  }
+
+  function handleDndFeatSourceSelect(id: string) {
+    const variant = dndFeatSourceVariants.find((v) => v.id === id);
+    if (!variant || featSlotIndex === null || !selectedFeat) return;
+    setFeatAtIndex(featSlotIndex, {
+      id: variant.id,
+      name: selectedFeat.name,
+      source: selectedFeat.source,
+    });
   }
 
   function handleSelectFeat(selection: BuilderFeatSelection) {
@@ -727,6 +922,7 @@ export function BuilderItemLibraryPanel({
             !showSubclassDetail &&
             !showWeaponDetail &&
             !showArmorDetail &&
+            !showFeatDetail &&
             !showAsiPanel && (
               <div className="relative mb-2">
                 <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -740,7 +936,7 @@ export function BuilderItemLibraryPanel({
               </div>
             )}
 
-          <div className="max-h-[min(480px,calc(100dvh-14rem))] space-y-1 overflow-y-auto overscroll-y-contain pr-1">
+          <div className="h-auto space-y-1 overflow-y-auto overscroll-y-contain pr-1">
             {isWeaponSlot &&
               (showWeaponDetail ? (
                 <WeaponLibraryDetail equipped={equippedWeapon} />
@@ -779,17 +975,64 @@ export function BuilderItemLibraryPanel({
                 identityDetailLoading ? (
                   <EmptyState text="Cargando…" />
                 ) : isSpeciesSlot && isLoadedSpecies(identityDetail) ? (
-                  <IdentityLibraryDetail species={identityDetail} />
+                  <IdentityLibraryDetail
+                    species={identityDetail}
+                    sourceVariants={
+                      identitySource === "dnd"
+                        ? dndIdentitySourceVariants
+                        : undefined
+                    }
+                    activeSourceId={selectedIdentity?.id}
+                    onSourceSelect={
+                      identitySource === "dnd"
+                        ? handleDndIdentitySourceSelect
+                        : undefined
+                    }
+                    subspeciesOptions={
+                      identitySource === "dnd" ? dndSubraceOptions : undefined
+                    }
+                    activeSubspeciesId={selectedIdentity?.subraceId ?? null}
+                    onSubspeciesSelect={
+                      identitySource === "dnd"
+                        ? handleSubspeciesSelect
+                        : undefined
+                    }
+                    subspeciesTraits={identitySubraceDetail?.traits ?? []}
+                    subspeciesAbilitySummary={
+                      identitySubraceDetail?.abilitySummary ?? null
+                    }
+                    subspeciesLabel={selectedIdentity?.subraceName ?? null}
+                    bookNames={identityBookNames}
+                  />
                 ) : isBackgroundSlot && isLoadedBackground(identityDetail) ? (
-                  <IdentityLibraryDetail background={identityDetail} />
+                  <IdentityLibraryDetail
+                    background={identityDetail}
+                    sourceVariants={
+                      identitySource === "dnd"
+                        ? dndIdentitySourceVariants
+                        : undefined
+                    }
+                    activeSourceId={selectedIdentity?.id}
+                    onSourceSelect={
+                      identitySource === "dnd"
+                        ? handleDndIdentitySourceSelect
+                        : undefined
+                    }
+                    bookNames={identityBookNames}
+                  />
                 ) : (
                   <EmptyState text="No se encontró la información." />
                 )
               ) : (
-                <IdentityList
+                <LibraryList
                   loading={identityLoading}
                   options={identityFiltered}
                   selectedId={selectedIdentity?.id ?? null}
+                  selectedName={
+                    identitySource === "dnd"
+                      ? (selectedIdentity?.name ?? null)
+                      : null
+                  }
                   icon={
                     isSpeciesSlot ? (
                       <Users className="h-3.5 w-3.5 text-sky-400" />
@@ -819,10 +1062,11 @@ export function BuilderItemLibraryPanel({
                   <EmptyState text="No se encontró la información." />
                 )
               ) : (
-                <IdentityList
+                <LibraryList
                   loading={classLoading}
                   options={classFiltered}
                   selectedId={classSelection?.id ?? null}
+                  selectedName={classSelection?.name ?? null}
                   icon={
                     <GraduationCap className="h-3.5 w-3.5 text-amber-400" />
                   }
@@ -837,12 +1081,17 @@ export function BuilderItemLibraryPanel({
                 <SubclassLibraryDetail
                   subclass={activeSubclass}
                   level={character.level}
+                  sourceVariants={subclassSourceVariants}
+                  activeSourceId={subclass?.id}
+                  onSourceSelect={handleSubclassSourceSelect}
+                  bookNames={identityBookNames}
                 />
               ) : (
-                <IdentityList
+                <LibraryList
                   loading={classDetailLoading}
                   options={subclassFiltered}
                   selectedId={subclass?.id ?? null}
+                  selectedName={subclass?.name ?? null}
                   icon={<Sparkles className="h-3.5 w-3.5 text-emerald-400" />}
                   onSelect={handleSelectSubclass}
                 />
@@ -857,13 +1106,34 @@ export function BuilderItemLibraryPanel({
                   onChange={handleUpdateAsiChoices}
                   onBack={() => setShowFeatList(true)}
                 />
+              ) : showFeatDetail ? (
+                featDetailLoading ? (
+                  <EmptyState text="Cargando…" />
+                ) : featDetail ? (
+                  <FeatLibraryDetail
+                    feat={featDetail}
+                    sourceVariants={
+                      isDndFeatSelection ? dndFeatSourceVariants : undefined
+                    }
+                    activeSourceId={selectedFeat?.id}
+                    onSourceSelect={
+                      isDndFeatSelection ? handleDndFeatSourceSelect : undefined
+                    }
+                    bookNames={identityBookNames}
+                  />
+                ) : (
+                  <EmptyState text="No se encontró la información." />
+                )
               ) : featsLoading ? (
                 <EmptyState text="Cargando feats…" />
               ) : (
                 <FeatList
-                  options={featOptions}
+                  options={featListOptions}
                   selectedId={selectedFeat?.id ?? null}
-                  onSelect={handleSelectFeat}
+                  selectedName={
+                    isDndFeatSelection ? (selectedFeat?.name ?? null) : null
+                  }
+                  onSelect={handleSelectFeatOption}
                 />
               ))}
           </div>
@@ -995,52 +1265,6 @@ function TrinketList({
   );
 }
 
-function IdentityList({
-  loading,
-  options,
-  selectedId,
-  icon,
-  onSelect,
-}: {
-  loading: boolean;
-  options: Array<{ id: string; name: string; source?: string }>;
-  selectedId: string | null;
-  icon: React.ReactNode;
-  onSelect: (id: string, name: string) => void;
-}) {
-  const bookNames = useBookSourceNames();
-
-  if (loading) return <EmptyState text="Cargando…" />;
-  if (options.length === 0) return <EmptyState text="No results." />;
-
-  return (
-    <>
-      {options.map((o) => {
-        const sourceLabel = o.source
-          ? resolveBookSourceName(bookNames, o.source)
-          : undefined;
-
-        return (
-          <ItemRow
-            key={o.id}
-            icon={icon}
-            name={o.name}
-            stats=""
-            trailing={sourceLabel}
-            trailingTitle={
-              sourceLabel && o.source && sourceLabel !== o.source
-                ? o.source
-                : undefined
-            }
-            equipped={selectedId === o.id}
-            onClick={() => onSelect(o.id, o.name)}
-          />
-        );
-      })}
-    </>
-  );
-}
-
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <p className="px-1 pb-1 text-[10px] font-medium uppercase tracking-wide text-primary">
@@ -1058,9 +1282,17 @@ function EmptyState({ text }: { text: string }) {
 function SubclassLibraryDetail({
   subclass,
   level,
+  sourceVariants,
+  activeSourceId,
+  onSourceSelect,
+  bookNames = {},
 }: {
   subclass: Subclass;
   level: number;
+  sourceVariants?: SourceVariant[];
+  activeSourceId?: string;
+  onSourceSelect?: (id: string) => void;
+  bookNames?: BookSourceNameMap;
 }) {
   const rowsWithFeatures = subclass.progression.filter(
     (row) => row.level <= level && row.features.length > 0,
@@ -1077,6 +1309,17 @@ function SubclassLibraryDetail({
           {subclass.source}
         </span>
       </div>
+
+      {sourceVariants && onSourceSelect && (
+        <SourceVariantSwitcher
+          variants={sourceVariants}
+          activeId={activeSourceId}
+          onSelect={onSourceSelect}
+          bookNames={bookNames}
+          accent="emerald"
+        />
+      )}
+
       {rowsWithFeatures.length > 0 ? (
         <Accordion type="multiple" className="space-y-1">
           {rowsWithFeatures.map((row) => (
@@ -1117,40 +1360,32 @@ function SubclassLibraryDetail({
 function FeatList({
   options,
   selectedId,
+  selectedName = null,
   onSelect,
 }: {
-  options: BuilderFeatSelection[];
+  options: LibraryListOption[];
   selectedId: string | null;
-  onSelect: (selection: BuilderFeatSelection) => void;
+  selectedName?: string | null;
+  onSelect: (id: string, name: string) => void;
 }) {
   if (options.length === 0) {
     return <EmptyState text="No feats available." />;
   }
 
   return (
-    <>
-      {options.map((feat) => (
-        <ItemRow
-          key={`${feat.source}-${feat.id}`}
-          icon={
-            <Award
-              className={cn(
-                "h-3.5 w-3.5",
-                isAsiFeatSelection(feat) ? "text-amber-400" : "text-rose-400",
-              )}
-            />
-          }
-          name={feat.name}
-          stats={
-            isAsiFeatSelection(feat)
-              ? "Mejora 2 puntos de habilidad o elige un feat"
-              : ""
-          }
-          equipped={selectedId === feat.id}
-          onClick={() => onSelect(feat)}
-        />
-      ))}
-    </>
+    <LibraryList
+      loading={false}
+      options={options}
+      selectedId={selectedId}
+      selectedName={selectedName}
+      icon={<Award className="h-3.5 w-3.5 text-rose-400" />}
+      stats={(option) =>
+        option.id === ABILITY_SCORE_IMPROVEMENT.id
+          ? "Mejora 2 puntos de habilidad o elige un feat"
+          : ""
+      }
+      onSelect={onSelect}
+    />
   );
 }
 
