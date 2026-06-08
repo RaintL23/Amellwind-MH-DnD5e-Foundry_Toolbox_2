@@ -1,4 +1,5 @@
 import { AbilityKey, DamageType, Entry } from "./actor.types";
+import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 
 export type SpeciesSize =
   | "Tiny"
@@ -64,6 +65,8 @@ export interface Species {
   skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
   /** Skill advantage/disadvantage grants parsed from trait text. */
   skillAdvantages: import("./proficiency.types").SkillAdvantageGrant[];
+  /** Origin / species feat grant (D&D 2024 Versatile, etc.). */
+  originFeatGrant?: OriginFeatGrant | null;
 }
 
 export const ABILITY_LABELS: Record<AbilityKey, string> = {

@@ -23,6 +23,7 @@ import {
   badgeStyleForSource,
   SOURCE_LABELS,
 } from "../../utils/proficiency-source-styles";
+import { ORIGIN_FEAT_SOURCE_NAME } from "../../utils/origin-feat.constants";
 
 export function BuilderSkillChecksPanel() {
   const {
@@ -34,6 +35,7 @@ export function BuilderSkillChecksPanel() {
     backgroundSkillChoices,
     speciesSkillChoices,
     featSkillChoices,
+    originFeatSkillChoices,
     expertiseChoices,
     skillSources,
     expertiseSources,
@@ -41,6 +43,7 @@ export function BuilderSkillChecksPanel() {
     setBackgroundSkillChoices,
     setSpeciesSkillChoices,
     setFeatSkillChoices,
+    setOriginFeatSkillChoices,
     setExpertiseChoices,
   } = useCharacterBuilder();
 
@@ -52,7 +55,14 @@ export function BuilderSkillChecksPanel() {
   const speciesGrants = pending.filter((g) => g.source.type === "species");
   const bgGrants = pending.filter((g) => g.source.type === "background");
   const classGrants = pending.filter((g) => g.source.type === "class");
-  const featGrants = pending.filter((g) => g.source.type === "feat");
+  const originFeatGrants = pending.filter(
+    (g) =>
+      g.source.type === "feat" && g.source.name === ORIGIN_FEAT_SOURCE_NAME,
+  );
+  const classFeatGrants = pending.filter(
+    (g) =>
+      g.source.type === "feat" && g.source.name !== ORIGIN_FEAT_SOURCE_NAME,
+  );
 
   const higherThanSpecies = skillsFromHigherPriority(
     "species",
@@ -102,8 +112,11 @@ export function BuilderSkillChecksPanel() {
       backgroundChooseGrant?.source ?? { type: "background", name: "Background" },
     classChoices: classSkillChoices,
     classChooseGrants: classGrants,
+    originFeatChoices: originFeatSkillChoices,
+    originFeatSource:
+      originFeatGrants[0]?.source ?? { type: "feat", name: ORIGIN_FEAT_SOURCE_NAME },
     featChoices: featSkillChoices,
-    featChooseGrants: featGrants,
+    featChooseGrants: classFeatGrants,
   };
 
   const pendingExpertise = getPendingExpertiseGrants(allExpertiseGrants);
@@ -139,7 +152,8 @@ export function BuilderSkillChecksPanel() {
     speciesGrants.length > 0 ||
     bgGrants.length > 0 ||
     classGrants.length > 0 ||
-    featGrants.length > 0;
+    originFeatGrants.length > 0 ||
+    classFeatGrants.length > 0;
 
   return (
     <BuilderPanel
@@ -214,7 +228,22 @@ export function BuilderSkillChecksPanel() {
         />
       ))}
 
-      {featGrants.map((grant, i) => (
+      {originFeatGrants.length > 0 && (
+        <BuilderSkillPicker
+          grants={originFeatGrants}
+          chosen={originFeatSkillChoices}
+          alreadyGranted={higherThanFeat}
+          chosenElsewhere={skillsChosenInOtherPickers(
+            { type: "origin-feat" },
+            crossPickerState,
+          )}
+          onChange={setOriginFeatSkillChoices}
+          label="Origin Feat skills"
+          pickerSourceType="feat"
+        />
+      )}
+
+      {classFeatGrants.map((grant, i) => (
         <BuilderSkillPicker
           key={`feat-${i}`}
           grants={[grant]}

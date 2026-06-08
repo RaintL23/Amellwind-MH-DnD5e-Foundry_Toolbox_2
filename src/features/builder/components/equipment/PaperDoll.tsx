@@ -33,6 +33,8 @@ export function PaperDoll() {
     class: classSelection,
     subclass,
     featSelections,
+    speciesOriginFeatGrant,
+    speciesOriginFeat,
     backstoryNotes,
     isOffHandBlocked,
     offHandBlockReason,
@@ -46,6 +48,7 @@ export function PaperDoll() {
     setClass,
     setSubclass,
     setFeatAtIndex,
+    setSpeciesOriginFeat,
     unequipWeapon,
     unequipArmor,
     unequipTrinket,
@@ -74,6 +77,7 @@ export function PaperDoll() {
     selectedSlot !== "backstory" &&
     selectedSlot !== "class" &&
     selectedSlot !== "subclass" &&
+    selectedSlot !== "origin-feat" &&
     !isFeatSlotSelection(selectedSlot) &&
     !(selectedSlot === "offHand" && hasIntegratedShield);
 
@@ -98,6 +102,11 @@ export function PaperDoll() {
         return !!classSelection;
       case "subclass":
         return !!subclass;
+      case "origin-feat":
+        return (
+          !!speciesOriginFeat ||
+          speciesOriginFeatGrant?.kind === "fixed"
+        );
       default:
         if (isFeatSlotSelection(slot)) {
           const index = parseFeatSlotIndex(slot);
@@ -134,6 +143,11 @@ export function PaperDoll() {
       case "subclass":
         setSubclass(null);
         break;
+      case "origin-feat":
+        if (speciesOriginFeatGrant?.kind === "choose") {
+          setSpeciesOriginFeat(null);
+        }
+        break;
       default:
         if (isFeatSlotSelection(slot)) {
           setFeatAtIndex(parseFeatSlotIndex(slot), null);
@@ -152,6 +166,7 @@ export function PaperDoll() {
       selectedSlot === "background" ||
       selectedSlot === "class" ||
       selectedSlot === "subclass" ||
+      selectedSlot === "origin-feat" ||
       isFeatSlotSelection(selectedSlot) ||
       selectedSlot === "mainHand" ||
       selectedSlot === "offHand" ||
@@ -180,6 +195,8 @@ export function PaperDoll() {
           classData={classData}
           level={character.level}
           featSelections={featSelections}
+          speciesOriginFeatGrant={speciesOriginFeatGrant}
+          speciesOriginFeat={speciesOriginFeat}
           backstoryNotes={backstoryNotes}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}

@@ -16,7 +16,8 @@ export type CharacterIdentitySlot =
   | "background"
   | "backstory"
   | "class"
-  | "subclass";
+  | "subclass"
+  | "origin-feat";
 
 export type BuilderFeatSlot = `feat-${number}`;
 

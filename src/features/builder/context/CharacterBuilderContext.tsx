@@ -29,7 +29,11 @@ import {
 } from "@/shared/types";
 import { getClassById } from "@/features/classes/services/class.service";
 import { getSpeciesById } from "@/features/species/services/species.service";
+import { getDndRaceById } from "@/features/dnd-races/services/dnd-race.service";
+import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.service";
+import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { getFeatSlotLevels } from "../utils/builder-class.utils";
+import { ORIGIN_FEAT_SOURCE_NAME } from "../utils/origin-feat.constants";
 import { Character } from "../models/Character";
 import { calculateCombat } from "../utils/combat.calculator";
 import {
@@ -95,12 +99,17 @@ interface CharacterBuilderContextValue {
   class: CharacterSelectionRef | null;
   subclass: CharacterSelectionRef | null;
   featSelections: (BuilderFeatSelection | null)[];
+  /** Species-granted origin feat (D&D 2024 Human Versatile, etc.). */
+  speciesOriginFeatGrant: OriginFeatGrant | null;
+  speciesOriginFeat: BuilderFeatSelection | null;
+  originFeatSkillChoices: SkillKey[];
   backstoryNotes: string;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
   setClass: (selection: CharacterSelectionRef | null) => void;
   setSubclass: (selection: CharacterSelectionRef | null) => void;
   setFeatAtIndex: (index: number, selection: BuilderFeatSelection | null) => void;
+  setSpeciesOriginFeat: (selection: BuilderFeatSelection | null) => void;
 
   // Ability score origin bonuses (species / Tasha's Cauldron)
   useTashaOrigin: boolean;
@@ -179,6 +188,7 @@ interface CharacterBuilderContextValue {
   setBackgroundSkillChoices: (choices: SkillKey[]) => void;
   setSpeciesSkillChoices: (choices: SkillKey[]) => void;
   setFeatSkillChoices: (slotIndex: number, choices: SkillKey[]) => void;
+  setOriginFeatSkillChoices: (choices: SkillKey[]) => void;
   setExpertiseChoices: (grantId: string, choices: SkillKey[]) => void;
 
   /** Aggregated skill sources for tooltip display */
@@ -251,6 +261,11 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [backgroundSkillChoices, setBackgroundSkillChoices] = useState<SkillKey[]>([]);
   const [speciesSkillChoices, setSpeciesSkillChoices] = useState<SkillKey[]>([]);
   const [featSkillChoices, setFeatSkillChoicesState] = useState<Record<number, SkillKey[]>>({});
+  const [originFeatSkillChoices, setOriginFeatSkillChoicesState] = useState<SkillKey[]>([]);
+  const [speciesOriginFeatGrant, setSpeciesOriginFeatGrant] =
+    useState<OriginFeatGrant | null>(null);
+  const [speciesOriginFeat, setSpeciesOriginFeatState] =
+    useState<BuilderFeatSelection | null>(null);
   const [expertiseChoices, setExpertiseChoicesState] = useState<Record<string, SkillKey[]>>({});
 
   const applyIdentityGrants = useCallback((payload: {
@@ -295,6 +310,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setSelectedSpeciesData(null);
     setSpeciesAbilityChoices([]);
     setSpeciesSkillChoices([]);
+    setSpeciesOriginFeatGrant(null);
+    setSpeciesOriginFeatState(null);
+    setOriginFeatSkillChoicesState([]);
     // Clear species grants immediately when species changes/removed
     setSpeciesSkillGrants([]);
     setAllSkillAdvantages([]);
@@ -303,6 +321,11 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setTashaPlus2(null);
       setTashaPlus1(null);
     }
+  }, []);
+
+  const setSpeciesOriginFeat = useCallback((selection: BuilderFeatSelection | null) => {
+    setSpeciesOriginFeatState(selection);
+    if (!selection)     setOriginFeatSkillChoicesState([]);
   }, []);
 
   const setClass = useCallback((selection: CharacterSelectionRef | null) => {
@@ -358,6 +381,64 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     };
   }, [species?.id]);
 
+  useEffect(() => {
+    if (!species) {
+      setSpeciesOriginFeatGrant(null);
+      setSpeciesOriginFeatState(null);
+      setOriginFeatSkillChoicesState([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadOriginFeatGrant() {
+      const [mhSpecies, dndRace, dndSubrace] = await Promise.all([
+        getSpeciesById(species!.id),
+        getDndRaceById(species!.id),
+        species!.subraceId
+          ? getDndRaceById(species!.subraceId)
+          : Promise.resolve(null),
+      ]);
+      if (cancelled) return;
+
+      const base = mhSpecies ?? dndRace;
+      const grant =
+        base?.originFeatGrant ?? dndSubrace?.originFeatGrant ?? null;
+      setSpeciesOriginFeatGrant(grant);
+
+      if (!grant) {
+        setSpeciesOriginFeatState(null);
+        setOriginFeatSkillChoicesState([]);
+        return;
+      }
+
+      if (grant.kind === "fixed" && grant.featRefs[0]) {
+        const feat = await resolveDndFeatForRef(grant.featRefs[0]);
+        if (cancelled || !feat) return;
+        setSpeciesOriginFeatState({
+          id: feat.id,
+          name: feat.name,
+          source:
+            feat.source === "XPHB" || feat.basicRules2024 || feat.srd52
+              ? "dnd2024"
+              : "dnd2014",
+        });
+        return;
+      }
+
+      if (grant.kind === "choose") {
+        setSpeciesOriginFeatState(null);
+        setOriginFeatSkillChoicesState([]);
+      }
+    }
+
+    void loadOriginFeatGrant();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [species?.id, species?.subraceId]);
+
   const setClassSkillChoicesAtIndex = useCallback(
     (grantIndex: number, choices: SkillKey[]) => {
       setClassSkillChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
@@ -367,6 +448,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
 
   const setFeatSkillChoices = useCallback((slotIndex: number, choices: SkillKey[]) => {
     setFeatSkillChoicesState((prev) => ({ ...prev, [slotIndex]: choices }));
+  }, []);
+
+  const setOriginFeatSkillChoices = useCallback((choices: SkillKey[]) => {
+    setOriginFeatSkillChoicesState(choices);
   }, []);
 
   const setExpertiseChoices = useCallback((grantId: string, choices: SkillKey[]) => {
@@ -668,6 +753,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBackgroundSkillChoices([]);
     setSpeciesSkillChoices([]);
     setFeatSkillChoicesState({});
+    setOriginFeatSkillChoicesState([]);
+    setSpeciesOriginFeatGrant(null);
+    setSpeciesOriginFeatState(null);
     setExpertiseChoicesState({});
   }, []);
 
@@ -774,12 +862,18 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
           source: { type: "feat" as const, name: `Feat slot ${Number(idx) + 1}` },
         })),
       );
+    const chosenSkillsFromOriginFeat: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
+      originFeatSkillChoices.map((sk) => ({
+        skill: sk,
+        source: { type: "feat" as const, name: ORIGIN_FEAT_SOURCE_NAME },
+      }));
 
     const resolvedSkillGrants = [
       ...fixedSkills,
       ...chosenSkillsFromClass,
       ...chosenSkillsFromBackground,
       ...chosenSkillsFromSpecies,
+      ...chosenSkillsFromOriginFeat,
       ...chosenSkillsFromFeats,
     ];
 
@@ -803,7 +897,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   }, [
     allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
     classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
-    featSkillChoices, expertiseChoices,
+    originFeatSkillChoices, featSkillChoices, expertiseChoices,
   ]);
 
   // Sync Character.skills and Character.savingThrows whenever proficiencies change
@@ -843,12 +937,16 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       class: classRef,
       subclass,
       featSelections,
+      speciesOriginFeatGrant,
+      speciesOriginFeat,
+      originFeatSkillChoices,
       backstoryNotes,
       setSpecies,
       setBackground,
       setClass,
       setSubclass,
       setFeatAtIndex,
+      setSpeciesOriginFeat,
       setBackstoryNotes,
       useTashaOrigin,
       setUseTashaOrigin,
@@ -895,6 +993,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setBackgroundSkillChoices,
       setSpeciesSkillChoices,
       setFeatSkillChoices,
+      setOriginFeatSkillChoices,
       setExpertiseChoices,
       skillSources: proficiencyResult.skillSources,
       expertiseSources: proficiencyResult.expertiseSources,
@@ -903,8 +1002,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       character, setName, setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn, useUnarmedStrike,
       mainHand, offHand, armor, trinket1, trinket2,
-      species, backgroundRef, classRef, subclass, featSelections, backstoryNotes,
-      setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,
+      species, backgroundRef, classRef, subclass, featSelections,
+      speciesOriginFeatGrant, speciesOriginFeat, originFeatSkillChoices,
+      backstoryNotes, setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,
+      setSpeciesOriginFeat,
       useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
@@ -915,9 +1016,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       applyIdentityGrants,
       allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
       classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
-      featSkillChoices, expertiseChoices,
+      featSkillChoices, originFeatSkillChoices, expertiseChoices,
       setClassSkillChoicesAtIndex, setBackgroundSkillChoices, setSpeciesSkillChoices,
-      setFeatSkillChoices, setExpertiseChoices,
+      setFeatSkillChoices, setOriginFeatSkillChoices, setExpertiseChoices,
       proficiencyResult,
     ],
   );

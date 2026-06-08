@@ -92,6 +92,7 @@ export type SkillPickerScope =
   | { type: "species" }
   | { type: "background" }
   | { type: "class"; grantIndex: number }
+  | { type: "origin-feat" }
   | { type: "feat"; slotIndex: number };
 
 export interface CrossPickerChoiceState {
@@ -101,6 +102,8 @@ export interface CrossPickerChoiceState {
   backgroundSource: ProficiencySource;
   classChoices: Record<number, SkillKey[]>;
   classChooseGrants: SkillProficiencyGrant[];
+  originFeatChoices: SkillKey[];
+  originFeatSource: ProficiencySource;
   featChoices: Record<number, SkillKey[]>;
   featChooseGrants: SkillProficiencyGrant[];
 }
@@ -140,6 +143,12 @@ export function skillsChosenInOtherPickers(
     const source = grant?.source ?? { type: "class" as const, name: "Class" };
     for (const skill of choices) {
       add(skill, source);
+    }
+  }
+
+  if (scope.type !== "origin-feat") {
+    for (const skill of state.originFeatChoices) {
+      add(skill, state.originFeatSource);
     }
   }
 

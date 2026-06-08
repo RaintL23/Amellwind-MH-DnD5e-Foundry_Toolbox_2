@@ -13,15 +13,20 @@ import {
 } from "../utils/character-hit-points";
 
 export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
-  const { character, featSelections } = useCharacterBuilder();
+  const { character, featSelections, speciesOriginFeat } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const [featBonuses, setFeatBonuses] = useState<FeatHitPointBonus[]>([]);
 
   useEffect(() => {
-    const activeFeats = featSelections.filter(
-      (feat): feat is NonNullable<typeof feat> =>
-        feat !== null && !isAsiFeatSelection(feat),
-    );
+    const activeFeats = [
+      ...(speciesOriginFeat && !isAsiFeatSelection(speciesOriginFeat)
+        ? [speciesOriginFeat]
+        : []),
+      ...featSelections.filter(
+        (feat): feat is NonNullable<typeof feat> =>
+          feat !== null && !isAsiFeatSelection(feat),
+      ),
+    ];
 
     if (!activeFeats.length) {
       setFeatBonuses([]);
@@ -50,7 +55,7 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
     return () => {
       cancelled = true;
     };
-  }, [featSelections, character.level]);
+  }, [featSelections, speciesOriginFeat, character.level]);
 
   return useMemo(() => {
     if (!classData?.hitDie) return null;

@@ -16,6 +16,7 @@ import {
   parseSkillProficiencyBlocks,
   parseSkillAdvantagesFromTraits,
 } from "@/shared/utils/skill-proficiency.parser";
+import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -272,5 +273,6 @@ export function mapSpecies(raw: any): Species {
     fluff: mapFluff(raw.fluff),
     skillGrants,
     skillAdvantages,
+    originFeatGrant: parseOriginFeatGrant(raw.feats),
   };
 }

@@ -7,6 +7,7 @@ import {
   Users,
 } from "lucide-react";
 import type { BuilderFeatSelection, CharacterSelectionRef } from "@/shared/types";
+import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 import {
@@ -26,6 +27,8 @@ interface CharacterStuffGridPanelProps {
   classData: Class | null;
   level: number;
   featSelections: (BuilderFeatSelection | null)[];
+  speciesOriginFeatGrant: OriginFeatGrant | null;
+  speciesOriginFeat: BuilderFeatSelection | null;
   backstoryNotes: string;
   selectedSlot: PaperDollSelection;
   onSelectSlot: (slot: PaperDollSelection) => void;
@@ -46,6 +49,8 @@ export function CharacterStuffGridPanel({
   classData,
   level,
   featSelections,
+  speciesOriginFeatGrant,
+  speciesOriginFeat,
   backstoryNotes,
   selectedSlot,
   onSelectSlot,
@@ -55,6 +60,26 @@ export function CharacterStuffGridPanel({
   const showSubclass = isSubclassLevelReached(classData, level);
   const featSlotLevels = getFeatSlotLevels(classSelection?.name ?? "", level);
   const subclassLabel = classData?.subclassTitle ?? "Subclass";
+  const showOriginFeat = !!species && !!speciesOriginFeatGrant;
+  const originFeatCanChange = speciesOriginFeatGrant?.kind === "choose";
+  const originFeatEquipped = speciesOriginFeat
+    ? {
+        name: speciesOriginFeat.name,
+        detail:
+          speciesOriginFeat.source === "dnd2024"
+            ? "D&D 2024"
+            : speciesOriginFeat.source === "dnd2014"
+              ? "D&D 2014"
+              : "Species",
+      }
+    : speciesOriginFeatGrant?.kind === "fixed"
+      ? {
+          name:
+            speciesOriginFeatGrant.featRefs[0]?.displayLabel ??
+            speciesOriginFeatGrant.summary,
+          detail: "Species",
+        }
+      : null;
 
   return (
     <div className="space-y-1.5">
@@ -130,8 +155,26 @@ export function CharacterStuffGridPanel({
         )}
       </div>
 
-      {featSlotLevels.length > 0 && (
+      {(showOriginFeat || featSlotLevels.length > 0) && (
         <div className="grid grid-cols-5 gap-1.5">
+          {showOriginFeat && (
+            <GridElementSlot
+              label="Origin Feat"
+              icon={<Award className="h-5 w-5 text-emerald-400" />}
+              equipped={originFeatEquipped}
+              onClickEquip={() => onSelectSlot("origin-feat")}
+              onClickDetails={() => onSelectSlot("origin-feat")}
+              onUnequip={
+                originFeatCanChange && speciesOriginFeat
+                  ? () => onUnequipSlot("origin-feat")
+                  : undefined
+              }
+              isSelected={selectedSlot === "origin-feat"}
+              disabled={!species}
+              disabledHint={!species ? "Elige una specie primero" : undefined}
+              emptyTitle="Elegir Origin Feat"
+            />
+          )}
           {featSlotLevels.map((featLevel, index) => {
             const feat = featSelections[index] ?? null;
             const slot = toFeatSlot(index);

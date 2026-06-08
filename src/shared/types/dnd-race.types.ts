@@ -1,4 +1,5 @@
 import type { AbilityBonus, SpeciesTrait } from "./species.types";
+import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import type { DamageType } from "./actor.types";
 
 export type DndRaceKind = "species" | "subrace" | "lineage";
@@ -37,6 +38,8 @@ export interface DndRace {
   skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
   /** Skill advantage/disadvantage grants parsed from trait text. */
   skillAdvantages: import("./proficiency.types").SkillAdvantageGrant[];
+  /** Origin feat from species traits (e.g. Human Versatile). */
+  originFeatGrant?: OriginFeatGrant | null;
 }
 
 export const DND_RACE_KIND_LABELS: Record<DndRaceKind, string> = {

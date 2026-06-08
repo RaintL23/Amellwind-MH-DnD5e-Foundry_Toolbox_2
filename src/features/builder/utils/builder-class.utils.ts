@@ -98,3 +98,9 @@ export function parseFeatSlotIndex(slot: BuilderFeatSlot): number {
 export function toFeatSlot(index: number): BuilderFeatSlot {
   return `feat-${index}`;
 }
+
+export function isOriginFeatSlot(
+  slot: string | null,
+): slot is "origin-feat" {
+  return slot === "origin-feat";
+}
