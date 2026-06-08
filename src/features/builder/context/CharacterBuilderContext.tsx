@@ -57,6 +57,10 @@ import {
   resolveFixedExpertiseGrants,
   computeCharacterProficiencies,
 } from "../utils/compute-character-proficiencies";
+import {
+  pruneChoicesByHierarchy,
+  skillsFromHigherPriority,
+} from "../utils/skill-choice-hierarchy.utils";
 
 // ─── Context Value ───────────────────────────────────────────────────────────
 
@@ -155,15 +159,15 @@ interface CharacterBuilderContextValue {
   /** Save proficiency ability keys from class. */
   saveProficiencyAbilities: AbilityKey[];
 
-  /** Player's chosen skills for each "choose/any" grant (keyed by grant index in allSkillGrants). */
-  classSkillChoices: SkillKey[];
+  /** Class skill picks keyed by choose-grant index (supports multiple grants and count > 2). */
+  classSkillChoices: Record<number, SkillKey[]>;
   backgroundSkillChoices: SkillKey[];
   speciesSkillChoices: SkillKey[];
   featSkillChoices: Record<number, SkillKey[]>;
   /** Player's chosen skills for each expertise grant (keyed by grant index in allExpertiseGrants). */
   expertiseChoices: Record<string, SkillKey[]>;
 
-  setClassSkillChoices: (choices: SkillKey[]) => void;
+  setClassSkillChoicesAtIndex: (grantIndex: number, choices: SkillKey[]) => void;
   setBackgroundSkillChoices: (choices: SkillKey[]) => void;
   setSpeciesSkillChoices: (choices: SkillKey[]) => void;
   setFeatSkillChoices: (slotIndex: number, choices: SkillKey[]) => void;
@@ -191,6 +195,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setBackground = useCallback((selection: CharacterSelectionRef | null) => {
     setBackgroundRef(selection);
     setBackgroundSkillChoices([]);
+    // Clear background grants immediately when background changes/removed
+    setBgSkillGrants([]);
   }, []);
   const [classRef, setClassState] = useState<CharacterSelectionRef | null>(null);
   const [subclass, setSubclassState] = useState<CharacterSelectionRef | null>(null);
@@ -228,7 +234,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     [classExpertiseGrants, featExpertiseGrants],
   );
 
-  const [classSkillChoices, setClassSkillChoices] = useState<SkillKey[]>([]);
+  const [classSkillChoices, setClassSkillChoicesState] = useState<
+    Record<number, SkillKey[]>
+  >({});
   const [backgroundSkillChoices, setBackgroundSkillChoices] = useState<SkillKey[]>([]);
   const [speciesSkillChoices, setSpeciesSkillChoices] = useState<SkillKey[]>([]);
   const [featSkillChoices, setFeatSkillChoicesState] = useState<Record<number, SkillKey[]>>({});
@@ -275,6 +283,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setSpeciesState(selection);
     setSpeciesAbilityChoices([]);
     setSpeciesSkillChoices([]);
+    // Clear species grants immediately when species changes/removed
+    setSpeciesSkillGrants([]);
+    setAllSkillAdvantages([]);
     if (!selection) {
       setUseTashaOrigin(false);
       setTashaPlus2(null);
@@ -286,9 +297,20 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setClassState(selection);
     setSubclassState(null);
     setFeatSelections([]);
-    setClassSkillChoices([]);
+    setClassSkillChoicesState({});
     setExpertiseChoicesState({});
+    // Clear class grants immediately
+    setClassSkillGrants([]);
+    setClassExpertiseGrants([]);
+    setSaveProficiencyAbilities([]);
   }, []);
+
+  const setClassSkillChoicesAtIndex = useCallback(
+    (grantIndex: number, choices: SkillKey[]) => {
+      setClassSkillChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
+    },
+    [],
+  );
 
   const setFeatSkillChoices = useCallback((slotIndex: number, choices: SkillKey[]) => {
     setFeatSkillChoicesState((prev) => ({ ...prev, [slotIndex]: choices }));
@@ -547,12 +569,77 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setFeatExpertiseGrants([]);
     setAllSkillAdvantages([]);
     setSaveProficiencyAbilities([]);
-    setClassSkillChoices([]);
+    setClassSkillChoicesState({});
     setBackgroundSkillChoices([]);
     setSpeciesSkillChoices([]);
     setFeatSkillChoicesState({});
     setExpertiseChoicesState({});
   }, []);
+
+  // ─── Hierarchy: Species → Background → Class ─────────────────────────────
+
+  const higherThanBackground = useMemo(
+    () =>
+      skillsFromHigherPriority(
+        "background",
+        speciesSkillGrants,
+        speciesSkillChoices,
+        [],
+        [],
+        [],
+        [],
+      ),
+    [speciesSkillGrants, speciesSkillChoices],
+  );
+
+  const higherThanClass = useMemo(
+    () =>
+      skillsFromHigherPriority(
+        "class",
+        speciesSkillGrants,
+        speciesSkillChoices,
+        bgSkillGrants,
+        backgroundSkillChoices,
+        [],
+        [],
+      ),
+    [
+      speciesSkillGrants,
+      speciesSkillChoices,
+      bgSkillGrants,
+      backgroundSkillChoices,
+    ],
+  );
+
+  useEffect(() => {
+    const covered = new Set(Object.keys(higherThanBackground) as SkillKey[]);
+    setBackgroundSkillChoices((prev) => {
+      const next = pruneChoicesByHierarchy(prev, covered);
+      if (next.length === prev.length && next.every((s, i) => s === prev[i])) {
+        return prev;
+      }
+      return next;
+    });
+  }, [higherThanBackground]);
+
+  useEffect(() => {
+    const covered = new Set(Object.keys(higherThanClass) as SkillKey[]);
+    setClassSkillChoicesState((prev) => {
+      let changed = false;
+      const next: Record<number, SkillKey[]> = {};
+      for (const [idx, choices] of Object.entries(prev)) {
+        const pruned = pruneChoicesByHierarchy(choices, covered);
+        next[Number(idx)] = pruned;
+        if (
+          pruned.length !== choices.length ||
+          pruned.some((s, i) => s !== choices[i])
+        ) {
+          changed = true;
+        }
+      }
+      return changed ? next : prev;
+    });
+  }, [higherThanClass]);
 
   // ─── Aggregated proficiency computation ──────────────────────────────────
 
@@ -561,11 +648,20 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     const fixedSkills = resolveFixedGrants(allSkillGrants);
 
     // Choices made by the player for choose/any grants
+    const classChooseGrants = allSkillGrants.filter(
+      (g) => g.kind !== "fixed" && g.source.type === "class",
+    );
     const chosenSkillsFromClass: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
-      classSkillChoices.map((sk) => {
-        const grant = allSkillGrants.find((g) => g.kind !== "fixed" && g.source.type === "class");
-        return { skill: sk, source: grant?.source ?? { type: "class", name: "Class" } };
-      });
+      Object.entries(classSkillChoices).flatMap(([idx, skills]) =>
+        skills.map((sk) => ({
+          skill: sk,
+          source:
+            classChooseGrants[Number(idx)]?.source ?? {
+              type: "class" as const,
+              name: "Class",
+            },
+        })),
+      );
     const chosenSkillsFromBackground: Array<{ skill: SkillKey; source: import("@/shared/types/proficiency.types").ProficiencySource }> =
       backgroundSkillChoices.map((sk) => {
         const grant = allSkillGrants.find((g) => g.kind !== "fixed" && g.source.type === "background");
@@ -697,7 +793,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       speciesSkillChoices,
       featSkillChoices,
       expertiseChoices,
-      setClassSkillChoices,
+      setClassSkillChoicesAtIndex,
       setBackgroundSkillChoices,
       setSpeciesSkillChoices,
       setFeatSkillChoices,
@@ -722,7 +818,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
       classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
       featSkillChoices, expertiseChoices,
-      setClassSkillChoices, setBackgroundSkillChoices, setSpeciesSkillChoices,
+      setClassSkillChoicesAtIndex, setBackgroundSkillChoices, setSpeciesSkillChoices,
       setFeatSkillChoices, setExpertiseChoices,
       proficiencyResult,
     ],

@@ -16,7 +16,8 @@ const ABILITY_FULL: Record<string, string> = {
 };
 
 export function BuilderSavingThrowsPanel() {
-  const { character, saveProficiencyAbilities } = useCharacterBuilder();
+  const { character, saveProficiencyAbilities, class: classRef } =
+    useCharacterBuilder();
 
   return (
     <BuilderPanel
@@ -29,8 +30,16 @@ export function BuilderSavingThrowsPanel() {
       <div className="space-y-0">
         {ABILITY_ORDER.map((ability) => {
           const proficient = character.isSavingThrowProficient(ability);
+          const saveSources = proficient
+            ? [
+                {
+                  type: "class" as const,
+                  name: classRef?.name ?? "Class",
+                },
+              ]
+            : undefined;
           const tooltip = proficient
-            ? `Proficient (${ABILITY_FULL[ability]})`
+            ? `${ABILITY_FULL[ability]} save`
             : undefined;
           return (
             <BuilderStatRow
@@ -38,6 +47,7 @@ export function BuilderSavingThrowsPanel() {
               label={ABILITY_LABELS[ability]}
               value={formatModifier(character.getSavingThrowModifier(ability))}
               proficient={proficient}
+              proficiencySources={saveSources}
               sourcesTooltip={tooltip}
             />
           );

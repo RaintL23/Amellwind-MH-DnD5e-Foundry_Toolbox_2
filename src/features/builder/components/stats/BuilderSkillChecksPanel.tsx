@@ -14,6 +14,11 @@ import {
   getPendingChoiceGrants,
   getPendingExpertiseGrants,
 } from "../../utils/compute-character-proficiencies";
+import { skillsFromHigherPriority } from "../../utils/skill-choice-hierarchy.utils";
+import {
+  badgeStyleForSource,
+  SOURCE_LABELS,
+} from "../../utils/proficiency-source-styles";
 
 export function BuilderSkillChecksPanel() {
   const {
@@ -28,24 +33,63 @@ export function BuilderSkillChecksPanel() {
     expertiseChoices,
     skillSources,
     expertiseSources,
-    setClassSkillChoices,
+    setClassSkillChoicesAtIndex,
     setBackgroundSkillChoices,
     setSpeciesSkillChoices,
     setFeatSkillChoices,
     setExpertiseChoices,
   } = useCharacterBuilder();
 
-  // Pending choose/any grants that need player input
+  const speciesGrantList = allSkillGrants.filter((g) => g.source.type === "species");
+  const bgGrantList = allSkillGrants.filter((g) => g.source.type === "background");
+  const classGrantList = allSkillGrants.filter((g) => g.source.type === "class");
+
   const pending = getPendingChoiceGrants(allSkillGrants);
-  const classGrants = pending.filter((g) => g.source.type === "class");
-  const bgGrants = pending.filter((g) => g.source.type === "background");
   const speciesGrants = pending.filter((g) => g.source.type === "species");
+  const bgGrants = pending.filter((g) => g.source.type === "background");
+  const classGrants = pending.filter((g) => g.source.type === "class");
   const featGrants = pending.filter((g) => g.source.type === "feat");
 
-  // Pending expertise
+  const higherThanSpecies = skillsFromHigherPriority(
+    "species",
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+  );
+  const higherThanBackground = skillsFromHigherPriority(
+    "background",
+    speciesGrantList,
+    speciesSkillChoices,
+    [],
+    [],
+    [],
+    [],
+  );
+  const higherThanClass = skillsFromHigherPriority(
+    "class",
+    speciesGrantList,
+    speciesSkillChoices,
+    bgGrantList,
+    backgroundSkillChoices,
+    [],
+    [],
+  );
+  const flatClassSkillChoices = Object.values(classSkillChoices).flat();
+  const higherThanFeat = skillsFromHigherPriority(
+    "feat",
+    speciesGrantList,
+    speciesSkillChoices,
+    bgGrantList,
+    backgroundSkillChoices,
+    classGrantList,
+    flatClassSkillChoices,
+  );
+
   const pendingExpertise = getPendingExpertiseGrants(allExpertiseGrants);
 
-  // Build advantage set for quick lookup
   const advantageSkills = new Set<SkillKey>(
     allSkillAdvantages.filter((a) => a.kind === "advantage").map((a) => a.skill),
   );
@@ -56,9 +100,7 @@ export function BuilderSkillChecksPanel() {
   function buildTooltip(skill: SkillKey): string | undefined {
     const sources = skillSources[skill];
     const expSource = expertiseSources[skill];
-    const advGrants = allSkillAdvantages.filter(
-      (a) => a.skill === skill,
-    );
+    const advGrants = allSkillAdvantages.filter((a) => a.skill === skill);
 
     const parts: string[] = [];
     if (sources?.length) {
@@ -75,6 +117,12 @@ export function BuilderSkillChecksPanel() {
     return parts.length ? parts.join("\n") : undefined;
   }
 
+  const hasPickers =
+    speciesGrants.length > 0 ||
+    bgGrants.length > 0 ||
+    classGrants.length > 0 ||
+    featGrants.length > 0;
+
   return (
     <BuilderPanel
       title={
@@ -83,52 +131,71 @@ export function BuilderSkillChecksPanel() {
         </>
       }
     >
-      {/* Class skill picker */}
-      {classGrants.length > 0 && (
-        <BuilderSkillPicker
-          grants={classGrants}
-          chosen={classSkillChoices}
-          alreadyGranted={skillSources}
-          onChange={setClassSkillChoices}
-          label="Class skills"
-        />
+      {hasPickers && (
+        <div className="mb-2 flex flex-wrap gap-2 text-[9px] text-muted-foreground">
+          {(["species", "background", "class", "feat"] as const).map((type) => (
+            <span key={type} className="flex items-center gap-1">
+              <span
+                className={`inline-block h-2 w-2 rounded-full border ${badgeStyleForSource(type)}`}
+                aria-hidden
+              />
+              {SOURCE_LABELS[type]}
+            </span>
+          ))}
+        </div>
       )}
 
-      {/* Background skill picker */}
-      {bgGrants.length > 0 && (
-        <BuilderSkillPicker
-          grants={bgGrants}
-          chosen={backgroundSkillChoices}
-          alreadyGranted={skillSources}
-          onChange={setBackgroundSkillChoices}
-          label="Background skills"
-        />
-      )}
-
-      {/* Species skill picker */}
+      {/* Species → Background → Class (priority order) */}
       {speciesGrants.length > 0 && (
         <BuilderSkillPicker
           grants={speciesGrants}
           chosen={speciesSkillChoices}
-          alreadyGranted={skillSources}
+          alreadyGranted={higherThanSpecies}
           onChange={setSpeciesSkillChoices}
           label="Species skills"
+          pickerSourceType="species"
         />
       )}
 
-      {/* Feat skill pickers */}
+      {bgGrants.length > 0 && (
+        <BuilderSkillPicker
+          grants={bgGrants}
+          chosen={backgroundSkillChoices}
+          alreadyGranted={higherThanBackground}
+          onChange={setBackgroundSkillChoices}
+          label="Background skills"
+          pickerSourceType="background"
+        />
+      )}
+
+      {classGrants.map((grant, grantIndex) => (
+        <BuilderSkillPicker
+          key={`class-grant-${grantIndex}`}
+          grants={[grant]}
+          chosen={classSkillChoices[grantIndex] ?? []}
+          alreadyGranted={higherThanClass}
+          onChange={(skills) => setClassSkillChoicesAtIndex(grantIndex, skills)}
+          label={
+            classGrants.length > 1
+              ? `Class skills (${grantIndex + 1}/${classGrants.length})`
+              : "Class skills"
+          }
+          pickerSourceType="class"
+        />
+      ))}
+
       {featGrants.map((grant, i) => (
         <BuilderSkillPicker
           key={`feat-${i}`}
           grants={[grant]}
           chosen={featSkillChoices[i] ?? []}
-          alreadyGranted={skillSources}
+          alreadyGranted={higherThanFeat}
           onChange={(skills) => setFeatSkillChoices(i, skills)}
           label={`Feat: ${grant.source.name}`}
+          pickerSourceType="feat"
         />
       ))}
 
-      {/* Expertise picker */}
       {pendingExpertise.length > 0 && (
         <BuilderExpertisePicker
           grants={pendingExpertise}
@@ -137,7 +204,6 @@ export function BuilderSkillChecksPanel() {
         />
       )}
 
-      {/* Skill list */}
       <div className="mt-2 space-y-0">
         {SKILL_ORDER.map((skill) => {
           const level = character.getSkillProficiencyLevel(skill);
@@ -151,6 +217,7 @@ export function BuilderSkillChecksPanel() {
               expertise={level === 2}
               advantage={advantageSkills.has(skill)}
               disadvantage={disadvantageSkills.has(skill)}
+              proficiencySources={skillSources[skill]}
               sourcesTooltip={buildTooltip(skill)}
             />
           );

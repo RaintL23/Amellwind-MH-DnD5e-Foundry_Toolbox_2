@@ -118,7 +118,7 @@ function SpeciesDetailBody({ species }: { species: Species }) {
         {species.abilitySummary && (
           <div className="rounded-md border border-border bg-muted/20 px-2 py-1.5">
             <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-              Bonificadores
+              Bonuses
             </p>
             <p className="font-medium text-foreground">
               {species.abilitySummary}
@@ -202,7 +202,7 @@ function BackgroundDetailBody({ background }: { background: Background }) {
       )}
 
       <h3 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-sky-400">
-        Competencies
+        Proficiencies
       </h3>
       <div className="mb-3 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
         <div className="rounded-md border border-border bg-muted/20 px-2 py-1.5 sm:col-span-2">

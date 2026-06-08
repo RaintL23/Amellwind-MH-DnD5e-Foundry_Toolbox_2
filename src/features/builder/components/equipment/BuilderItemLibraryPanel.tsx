@@ -480,10 +480,29 @@ export function BuilderItemLibraryPanel({
   const showArmorDetail = isArmorSlot && !!armor;
 
   useEffect(() => {
-    if (!showIdentityDetail || !selectedIdentity) {
+    // Clear grants immediately when identity is removed or slot changes
+    if (!selectedIdentity) {
+      setIdentityDetail(null);
+      setIdentityDetailLoading(false);
+      if (isSpeciesSlot) {
+        applyIdentityGrants({ source: "species", skillGrants: [], skillAdvantages: [] });
+      } else if (isBackgroundSlot) {
+        applyIdentityGrants({ source: "background", skillGrants: [] });
+      }
+      return;
+    }
+
+    if (!isSpeciesSlot && !isBackgroundSlot) {
       setIdentityDetail(null);
       setIdentityDetailLoading(false);
       return;
+    }
+
+    // Clear previous grants while new identity loads
+    if (isSpeciesSlot) {
+      applyIdentityGrants({ source: "species", skillGrants: [], skillAdvantages: [] });
+    } else {
+      applyIdentityGrants({ source: "background", skillGrants: [] });
     }
 
     let cancelled = false;
@@ -530,7 +549,6 @@ export function BuilderItemLibraryPanel({
       cancelled = true;
     };
   }, [
-    showIdentityDetail,
     selectedIdentity?.id,
     isSpeciesSlot,
     isBackgroundSlot,

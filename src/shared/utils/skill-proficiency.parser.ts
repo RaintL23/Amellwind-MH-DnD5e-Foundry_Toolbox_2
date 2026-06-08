@@ -52,6 +52,22 @@ const ABILITY_NAME_TO_KEY: Record<string, AbilityKey> = {
   cha: "cha",
 };
 
+/** Read pick count from 5etools choose blocks (`count` or `amount`). */
+function parseChooseCount(choose: Raw): number {
+  if (typeof choose.count === "number") return choose.count;
+  if (typeof choose.amount === "number") return choose.amount;
+  return 1;
+}
+
+/** Sum of all choose/any counts in a grant list (e.g. class may grant 3, or 2+1). */
+export function sumChooseGrantCounts(
+  grants: SkillProficiencyGrant[],
+): number {
+  return grants
+    .filter((g) => g.kind === "choose" || g.kind === "any")
+    .reduce((sum, g) => sum + g.count, 0);
+}
+
 function toSkillKey(name: string): SkillKey | null {
   const normalized = name.trim().toLowerCase().replace(/[{}@|]/g, "");
   // strip 5etools markup like "{@skill Acrobatics|XPHB}"
@@ -106,7 +122,7 @@ export function parseSkillProficiencyBlocks(
           grants.push({
             kind: "choose",
             from,
-            count: typeof choose.count === "number" ? choose.count : 1,
+            count: parseChooseCount(choose),
             source,
           });
         }
@@ -116,7 +132,7 @@ export function parseSkillProficiencyBlocks(
       ) {
         grants.push({
           kind: "any",
-          count: typeof choose.count === "number" ? choose.count : 1,
+          count: parseChooseCount(choose),
           source,
         });
       }

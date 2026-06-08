@@ -1,5 +1,11 @@
 import { ReactNode } from "react";
 import { cn } from "@/shared/utils/cn";
+import type { ProficiencySource } from "@/shared/types/proficiency.types";
+import {
+  dominantSourceType,
+  dotStyleForSource,
+  formatProficiencyTooltip,
+} from "../../utils/proficiency-source-styles";
 
 interface BuilderStatRowProps {
   label: ReactNode;
@@ -9,6 +15,8 @@ interface BuilderStatRowProps {
   expertise?: boolean;
   advantage?: boolean;
   disadvantage?: boolean;
+  /** Sources that grant proficiency (for dot color and tooltip). */
+  proficiencySources?: ProficiencySource[];
   /** Tooltip shown on the label area (plain string for native title). */
   sourcesTooltip?: string;
 }
@@ -21,8 +29,16 @@ export function BuilderStatRow({
   expertise,
   advantage,
   disadvantage,
+  proficiencySources,
   sourcesTooltip,
 }: BuilderStatRowProps) {
+  const proficiencyDotStyle =
+    proficiencySources?.length
+      ? dotStyleForSource(dominantSourceType(proficiencySources))
+      : "text-primary";
+  const proficiencyTitle = proficiencySources?.length
+    ? formatProficiencyTooltip(proficiencySources)
+    : "Proficient";
   return (
     <div
       className={cn(
@@ -63,7 +79,10 @@ export function BuilderStatRow({
           </span>
         )}
         {proficient && !expertise && (
-          <span className="text-[9px] text-primary" title="Proficient">
+          <span
+            className={cn("text-[9px] font-bold", proficiencyDotStyle)}
+            title={proficiencyTitle}
+          >
             ●
           </span>
         )}
