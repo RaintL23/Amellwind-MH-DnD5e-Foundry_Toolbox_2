@@ -2,6 +2,7 @@ import type {
   BackgroundProficiencies,
   BackgroundSection,
 } from "./background.types";
+import type { AbilityBonus } from "./species.types";
 import type { DndBackgroundFeatRef } from "./dnd-feat.types";
 
 export type DndBackgroundEdition = "2014" | "2024";
@@ -16,6 +17,7 @@ export interface DndBackground {
   basicRules?: boolean;
   fluff: string;
   proficiencies: BackgroundProficiencies;
+  abilityBonuses: AbilityBonus[];
   abilitySummary?: string;
   featSummary?: string;
   featRefs?: DndBackgroundFeatRef[];

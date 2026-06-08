@@ -89,27 +89,38 @@ function mapLanguageSummary(raw: Raw): string {
   return parts.length ? parts.join("; ") : "—";
 }
 
+function formatWeightsLabel(weights: number[]): string {
+  return weights.map((w) => `+${w}`).join("/");
+}
+
+function sameAbilitySet(a: AbilityKey[], b: AbilityKey[]): boolean {
+  return a.length === b.length && a.every((key, index) => key === b[index]);
+}
+
 function mapAbilityBonuses(ability: unknown): AbilityBonus[] {
   if (!Array.isArray(ability)) return [];
+
+  const weightedBlocks: Array<{ from: AbilityKey[]; weights: number[] }> = [];
   const result: AbilityBonus[] = [];
+
   for (const block of ability) {
     if (typeof block !== "object" || block === null) continue;
     const b = block as Raw;
     const choose = b.choose as Raw | undefined;
+
     if (choose?.weighted) {
       const weighted = choose.weighted as Raw;
-      result.push({
-        kind: "choose",
+      weightedBlocks.push({
         from: (Array.isArray(weighted.from) ? weighted.from : []).map(
           String,
         ) as AbilityKey[],
-        amount: 1,
-        count: Array.isArray(weighted.weights)
-          ? weighted.weights.filter((w: unknown) => w === 2).length || undefined
-          : undefined,
+        weights: Array.isArray(weighted.weights)
+          ? weighted.weights.map((weight) => Number(weight))
+          : [],
       });
       continue;
     }
+
     if (choose && Array.isArray(choose.from)) {
       result.push({
         kind: "choose",
@@ -119,6 +130,37 @@ function mapAbilityBonuses(ability: unknown): AbilityBonus[] {
       });
     }
   }
+
+  if (weightedBlocks.length >= 2) {
+    const from = weightedBlocks[0].from;
+    if (
+      from.length > 0 &&
+      weightedBlocks.every((block) => sameAbilitySet(block.from, from))
+    ) {
+      return [
+        {
+          kind: "weightedDistribution",
+          from,
+          modes: weightedBlocks.map((block) => ({
+            weights: block.weights,
+            label: formatWeightsLabel(block.weights),
+          })),
+        },
+      ];
+    }
+  }
+
+  for (const block of weightedBlocks) {
+    const plusTwoCount = block.weights.filter((weight) => weight === 2).length;
+    const plusOneCount = block.weights.filter((weight) => weight === 1).length;
+    result.push({
+      kind: "choose",
+      from: block.from,
+      amount: 1,
+      count: plusTwoCount > 0 ? plusTwoCount + plusOneCount : plusOneCount,
+    });
+  }
+
   return result;
 }
 
@@ -461,6 +503,7 @@ export function mapDndBackground(raw: any): DndBackground {
       languages: languages !== "—" ? languages : "—",
       equipment: listProf.equipment,
     },
+    abilityBonuses,
     abilitySummary: abilitySummary || undefined,
     featSummary,
     featRefs,

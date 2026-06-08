@@ -91,6 +91,11 @@ export function formatAbilitySummary(bonuses: AbilityBonus[]): string {
           .map(([k, v]) => `${LABELS[k as AbilityKey]} +${v}`)
           .join(", ");
       }
+      if (b.kind === "weightedDistribution") {
+        const opts = b.from.map((k) => LABELS[k]).join(" / ");
+        const modes = b.modes.map((mode) => mode.label).join(" or ");
+        return `${opts}: ${modes}`;
+      }
       const opts = b.from.map((k) => LABELS[k]).join(" / ");
       const count = b.count && b.count > 1 ? `${b.count}× ` : "";
       return `${count}+${b.amount} ${opts}`;

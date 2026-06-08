@@ -1,4 +1,11 @@
-import type { AbilityBonus, AbilityKey, AbilityScores, Species } from "@/shared/types";
+import type {
+  AbilityBonus,
+  AbilityBonusWeightedDistribution,
+  AbilityKey,
+  AbilityScores,
+  BackgroundAsiMode,
+  Species,
+} from "@/shared/types";
 import { ABILITY_LABELS } from "@/shared/types";
 
 export interface AbilityBonusSource {
@@ -20,6 +27,11 @@ export interface SpeciesChooseSlot {
   amount: number;
 }
 
+export interface BackgroundAsiOptions {
+  name: string;
+  abilityBonuses: AbilityBonus[];
+}
+
 const EMPTY_BONUSES: Record<AbilityKey, number> = {
   str: 0,
   dex: 0,
@@ -28,6 +40,20 @@ const EMPTY_BONUSES: Record<AbilityKey, number> = {
   wis: 0,
   cha: 0,
 };
+
+export function getWeightedDistributionBonus(
+  bonuses: AbilityBonus[],
+): AbilityBonusWeightedDistribution | null {
+  const match = bonuses.find(
+    (bonus): bonus is AbilityBonusWeightedDistribution =>
+      bonus.kind === "weightedDistribution",
+  );
+  return match ?? null;
+}
+
+export function hasBackgroundAsi(bonuses: AbilityBonus[]): boolean {
+  return getWeightedDistributionBonus(bonuses) !== null;
+}
 
 export function getSpeciesChooseSlots(bonuses: AbilityBonus[]): SpeciesChooseSlot[] {
   const slots: SpeciesChooseSlot[] = [];
@@ -53,6 +79,10 @@ export function buildAbilityBonusMap(
     tashaPlus2: AbilityKey | null;
     tashaPlus1: AbilityKey | null;
     speciesChoices: (AbilityKey | null)[];
+    background?: BackgroundAsiOptions | null;
+    backgroundAsiMode?: BackgroundAsiMode | null;
+    backgroundAsiPlus2?: AbilityKey | null;
+    backgroundAsiPlus1?: AbilityKey | null;
   },
 ): Record<AbilityKey, AbilityScoreBreakdown> {
   const result = Object.fromEntries(
@@ -66,6 +96,27 @@ export function buildAbilityBonusMap(
     result[key].bonus += amount;
     result[key].sources.push({ label, amount });
   };
+
+  const backgroundAsi = options.background
+    ? getWeightedDistributionBonus(options.background.abilityBonuses)
+    : null;
+
+  if (backgroundAsi && options.background) {
+    const label = options.background.name;
+    if (options.backgroundAsiMode === "plus1each") {
+      for (const key of backgroundAsi.from) {
+        addBonus(key, 1, `${label} (+1)`);
+      }
+    } else if (options.backgroundAsiMode === "plus2plus1") {
+      if (options.backgroundAsiPlus2) {
+        addBonus(options.backgroundAsiPlus2, 2, `${label} (+2)`);
+      }
+      if (options.backgroundAsiPlus1) {
+        addBonus(options.backgroundAsiPlus1, 1, `${label} (+1)`);
+      }
+    }
+    return result;
+  }
 
   if (options.useTashaOrigin && species) {
     if (options.tashaPlus2) {
@@ -93,6 +144,8 @@ export function buildAbilityBonusMap(
       }
       continue;
     }
+
+    if (bonus.kind !== "choose") continue;
 
     const count = bonus.count ?? 1;
     for (let slotIndex = 0; slotIndex < count; slotIndex++) {

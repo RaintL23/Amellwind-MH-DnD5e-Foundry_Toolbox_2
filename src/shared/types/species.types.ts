@@ -28,7 +28,20 @@ export interface AbilityBonusChoose {
   count?: number;
 }
 
-export type AbilityBonus = AbilityBonusFixed | AbilityBonusChoose;
+/** D&D 2024 background ASI: +2/+1 or +1/+1/+1 across a fixed set of abilities. */
+export interface AbilityBonusWeightedDistribution {
+  kind: "weightedDistribution";
+  from: AbilityKey[];
+  modes: Array<{ weights: number[]; label: string }>;
+}
+
+export type AbilityBonus =
+  | AbilityBonusFixed
+  | AbilityBonusChoose
+  | AbilityBonusWeightedDistribution;
+
+/** Distribution mode for 2024 background ability score increases. */
+export type BackgroundAsiMode = "plus2plus1" | "plus1each";
 
 export interface SpeciesTable {
   caption?: string;

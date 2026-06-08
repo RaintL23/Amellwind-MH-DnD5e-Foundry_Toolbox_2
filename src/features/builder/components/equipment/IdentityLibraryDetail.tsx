@@ -29,6 +29,8 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 interface IdentityLibraryDetailProps {
   species?: Species;
   background?: Background;
+  /** D&D 2024 background ASI summary (shown below proficiencies). */
+  backgroundAbilitySummary?: string | null;
   sourceVariants?: SourceVariant[];
   activeSourceId?: string;
   onSourceSelect?: (id: string) => void;
@@ -188,8 +190,7 @@ function SpeciesBonuses({
   baseSummary?: string;
   subspeciesSummary?: string | null;
 }) {
-  const base =
-    baseSummary && baseSummary !== "—" ? baseSummary : null;
+  const base = baseSummary && baseSummary !== "—" ? baseSummary : null;
   const sub =
     subspeciesSummary && subspeciesSummary !== "—" ? subspeciesSummary : null;
 
@@ -296,7 +297,16 @@ function SpeciesDetailBody({
   );
 }
 
-function BackgroundDetailBody({ background }: { background: Background }) {
+function BackgroundDetailBody({
+  background,
+  abilitySummary,
+}: {
+  background: Background;
+  abilitySummary?: string | null;
+}) {
+  const asiSummary =
+    abilitySummary && abilitySummary !== "—" ? abilitySummary : null;
+
   return (
     <>
       {background.fluff && (
@@ -310,6 +320,14 @@ function BackgroundDetailBody({ background }: { background: Background }) {
       </h3>
       <div className="mb-3 grid grid-cols-1 gap-2 text-xs sm:grid-cols-2">
         <div className="rounded-md border border-border bg-muted/20 px-2 py-1.5 sm:col-span-2">
+          {asiSummary && (
+            <div className="mb-3">
+              <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+                Ability Scores
+              </p>
+              <p className="font-medium text-foreground">{asiSummary}</p>
+            </div>
+          )}
           <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
             Skills
           </p>
@@ -368,6 +386,7 @@ function BackgroundDetailBody({ background }: { background: Background }) {
 export function IdentityLibraryDetail({
   species,
   background,
+  backgroundAbilitySummary,
   sourceVariants,
   activeSourceId,
   onSourceSelect,
@@ -465,7 +484,12 @@ export function IdentityLibraryDetail({
               subspeciesAbilitySummary={subspeciesAbilitySummary}
             />
           )}
-          {background && <BackgroundDetailBody background={background} />}
+          {background && (
+            <BackgroundDetailBody
+              background={background}
+              abilitySummary={backgroundAbilitySummary}
+            />
+          )}
         </AccordionContent>
       </AccordionItem>
     </Accordion>

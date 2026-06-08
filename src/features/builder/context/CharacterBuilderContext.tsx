@@ -17,6 +17,7 @@ import {
   AbilityScores,
   Class,
   Species,
+  BackgroundAsiMode,
   EquippedWeapon,
   EquippedArmor,
   EquippedTrinket,
@@ -111,7 +112,7 @@ interface CharacterBuilderContextValue {
   setFeatAtIndex: (index: number, selection: BuilderFeatSelection | null) => void;
   setSpeciesOriginFeat: (selection: BuilderFeatSelection | null) => void;
 
-  // Ability score origin bonuses (species / Tasha's Cauldron)
+  // Ability score origin bonuses (species / Tasha's Cauldron / 2024 background)
   useTashaOrigin: boolean;
   setUseTashaOrigin: (value: boolean) => void;
   tashaPlus2: AbilityKey | null;
@@ -120,6 +121,12 @@ interface CharacterBuilderContextValue {
   setTashaPlus1: (ability: AbilityKey | null) => void;
   speciesAbilityChoices: (AbilityKey | null)[];
   setSpeciesAbilityChoice: (index: number, ability: AbilityKey | null) => void;
+  backgroundAsiMode: BackgroundAsiMode | null;
+  setBackgroundAsiMode: (mode: BackgroundAsiMode | null) => void;
+  backgroundAsiPlus2: AbilityKey | null;
+  backgroundAsiPlus1: AbilityKey | null;
+  setBackgroundAsiPlus2: (ability: AbilityKey | null) => void;
+  setBackgroundAsiPlus1: (ability: AbilityKey | null) => void;
   setBackstoryNotes: (
     value: string | ((current: string) => string),
   ) => void;
@@ -215,6 +222,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setBackground = useCallback((selection: CharacterSelectionRef | null) => {
     setBackgroundRef(selection);
     setBackgroundSkillChoices([]);
+    setBackgroundAsiMode(null);
+    setBackgroundAsiPlus2(null);
+    setBackgroundAsiPlus1(null);
     // Clear background grants immediately when background changes/removed
     setBgSkillGrants([]);
   }, []);
@@ -230,6 +240,12 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [speciesAbilityChoices, setSpeciesAbilityChoices] = useState<
     (AbilityKey | null)[]
   >([]);
+  const [backgroundAsiMode, setBackgroundAsiMode] =
+    useState<BackgroundAsiMode | null>(null);
+  const [backgroundAsiPlus2, setBackgroundAsiPlus2] =
+    useState<AbilityKey | null>(null);
+  const [backgroundAsiPlus1, setBackgroundAsiPlus1] =
+    useState<AbilityKey | null>(null);
   const [backstoryNotes, setBackstoryNotesState] = useState(
     () => loadBuilderBackstoryNotes(),
   );
@@ -741,6 +757,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setTashaPlus2(null);
     setTashaPlus1(null);
     setSpeciesAbilityChoices([]);
+    setBackgroundAsiMode(null);
+    setBackgroundAsiPlus2(null);
+    setBackgroundAsiPlus1(null);
     setClassSkillGrants([]);
     setBgSkillGrants([]);
     setSpeciesSkillGrants([]);
@@ -956,6 +975,12 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setTashaPlus1,
       speciesAbilityChoices,
       setSpeciesAbilityChoice,
+      backgroundAsiMode,
+      setBackgroundAsiMode,
+      backgroundAsiPlus2,
+      backgroundAsiPlus1,
+      setBackgroundAsiPlus2,
+      setBackgroundAsiPlus1,
       isTwoHanded,
       isOffHandBlocked,
       offHandBlockReason,
@@ -1007,6 +1032,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       backstoryNotes, setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,
       setSpeciesOriginFeat,
       useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,
+      backgroundAsiMode, backgroundAsiPlus2, backgroundAsiPlus1,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
       equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket,

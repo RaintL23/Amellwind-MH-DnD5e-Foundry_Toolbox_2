@@ -1119,6 +1119,14 @@ export function BuilderItemLibraryPanel({
                 ) : isBackgroundSlot && isLoadedBackground(identityDetail) ? (
                   <IdentityLibraryDetail
                     background={identityDetail}
+                    backgroundAbilitySummary={
+                      identitySource === "dnd" &&
+                      identityDetail &&
+                      "abilitySummary" in identityDetail &&
+                      typeof identityDetail.abilitySummary === "string"
+                        ? identityDetail.abilitySummary
+                        : null
+                    }
                     sourceVariants={
                       identitySource === "dnd"
                         ? dndIdentitySourceVariants

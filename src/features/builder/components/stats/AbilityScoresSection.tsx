@@ -19,6 +19,7 @@ import {
   assignmentsToAbilityScores,
 } from "../../utils/ability-scores";
 import { useSelectedSpecies } from "../../hooks/useSelectedSpecies";
+import { useSelectedDndBackground } from "../../hooks/useSelectedDndBackground";
 import {
   applyBaseScores,
   buildAbilityBonusMap,
@@ -26,6 +27,7 @@ import {
   formatBonusTooltip,
   formatChooseSlotLabel,
   getSpeciesChooseSlots,
+  getWeightedDistributionBonus,
 } from "../../utils/species-ability-bonuses";
 import { applyFeatAsiBonuses } from "../../utils/feat-asi-bonuses";
 import { AbilityScoreValue } from "./AbilityScoreValue";
@@ -84,6 +86,129 @@ function AbilityStatRow({
   );
 }
 
+function BackgroundAsiPanel({ compact }: { compact: boolean }) {
+  const {
+    background: backgroundRef,
+    backgroundAsiMode,
+    setBackgroundAsiMode,
+    backgroundAsiPlus2,
+    backgroundAsiPlus1,
+    setBackgroundAsiPlus2,
+    setBackgroundAsiPlus1,
+  } = useCharacterBuilder();
+  const { dndBackground } = useSelectedDndBackground();
+
+  const weightedAsi = dndBackground
+    ? getWeightedDistributionBonus(dndBackground.abilityBonuses)
+    : null;
+
+  if (!backgroundRef || !dndBackground || !weightedAsi) return null;
+
+  const abilityOptions = (exclude: AbilityKey[]) =>
+    weightedAsi.from
+      .filter((key) => !exclude.includes(key))
+      .map((key) => ({ key, label: ABILITY_LABELS[key] }));
+
+  return (
+    <div
+      className={`rounded-md border border-border/60 bg-muted/20 ${
+        compact ? "space-y-1.5 p-1.5" : "space-y-2 p-2"
+      }`}
+    >
+      <p className="text-[10px] leading-snug text-muted-foreground">
+        <span className="font-medium text-foreground">
+          {dndBackground.name} (2024)
+        </span>
+        : assign +2/+1 or +1/+1/+1 among{" "}
+        {weightedAsi.from.map((key) => ABILITY_LABELS[key]).join(", ")}.
+      </p>
+
+      <div
+        className={`flex flex-wrap gap-2 ${compact ? "text-[10px]" : "text-xs"}`}
+      >
+        {weightedAsi.modes.map((mode) => {
+          const modeKey =
+            mode.weights.some((weight) => weight === 2)
+              ? "plus2plus1"
+              : "plus1each";
+          return (
+            <label
+              key={mode.label}
+              className="flex items-center gap-1 cursor-pointer text-muted-foreground"
+            >
+              <input
+                type="radio"
+                name="background-asi-mode"
+                checked={backgroundAsiMode === modeKey}
+                onChange={() => {
+                  setBackgroundAsiMode(modeKey);
+                  if (modeKey === "plus1each") {
+                    setBackgroundAsiPlus2(null);
+                    setBackgroundAsiPlus1(null);
+                  }
+                }}
+                className="rounded border-border"
+              />
+              {mode.label}
+            </label>
+          );
+        })}
+      </div>
+
+      {backgroundAsiMode === "plus2plus1" && (
+        <div
+          className={`flex flex-wrap gap-2 ${compact ? "text-[10px]" : "text-xs"}`}
+        >
+          <label className="flex items-center gap-1 text-muted-foreground">
+            +2
+            <Select
+              value={backgroundAsiPlus2 ?? ""}
+              onChange={(e) =>
+                setBackgroundAsiPlus2((e.target.value as AbilityKey) || null)
+              }
+              className={compact ? "h-6 w-16 text-[10px]" : "h-7 w-20 text-xs"}
+            >
+              <option value="">—</option>
+              {abilityOptions(
+                backgroundAsiPlus1 ? [backgroundAsiPlus1] : [],
+              ).map(({ key, label }) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+          </label>
+          <label className="flex items-center gap-1 text-muted-foreground">
+            +1
+            <Select
+              value={backgroundAsiPlus1 ?? ""}
+              onChange={(e) =>
+                setBackgroundAsiPlus1((e.target.value as AbilityKey) || null)
+              }
+              className={compact ? "h-6 w-16 text-[10px]" : "h-7 w-20 text-xs"}
+            >
+              <option value="">—</option>
+              {abilityOptions(
+                backgroundAsiPlus2 ? [backgroundAsiPlus2] : [],
+              ).map(({ key, label }) => (
+                <option key={key} value={key}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+          </label>
+        </div>
+      )}
+
+      {backgroundAsiMode === "plus1each" && (
+        <p className="text-[10px] text-emerald-400">
+          +1 to {weightedAsi.from.map((key) => ABILITY_LABELS[key]).join(", ")}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function OriginBonusesPanel({ compact }: { compact: boolean }) {
   const {
     species: speciesRef,
@@ -97,17 +222,26 @@ function OriginBonusesPanel({ compact }: { compact: boolean }) {
     setSpeciesAbilityChoice,
   } = useCharacterBuilder();
   const { species } = useSelectedSpecies();
+  const { dndBackground } = useSelectedDndBackground();
+
+  const hasBackgroundAsi = dndBackground
+    ? getWeightedDistributionBonus(dndBackground.abilityBonuses) !== null
+    : false;
 
   const chooseSlots = useMemo(
     () =>
-      species && !useTashaOrigin
+      species && !useTashaOrigin && !hasBackgroundAsi
         ? getSpeciesChooseSlots(species.abilityBonuses)
         : [],
-    [species, useTashaOrigin],
+    [species, useTashaOrigin, hasBackgroundAsi],
   );
 
   const abilityOptions = (exclude: AbilityKey[]) =>
     ABILITIES.filter(({ key }) => !exclude.includes(key));
+
+  if (hasBackgroundAsi) {
+    return <BackgroundAsiPanel compact={compact} />;
+  }
 
   if (!speciesRef) return null;
 
@@ -260,8 +394,12 @@ export function AbilityScoresSection({
     tashaPlus2,
     tashaPlus1,
     speciesAbilityChoices,
+    backgroundAsiMode,
+    backgroundAsiPlus2,
+    backgroundAsiPlus1,
   } = useCharacterBuilder();
   const { species } = useSelectedSpecies();
+  const { dndBackground } = useSelectedDndBackground();
   const [method, setMethod] = useState<GenerationMethod>("manual");
   const [pool, setPool] = useState<number[]>([...STANDARD_ARRAY]);
   const [assignments, setAssignments] = useState<
@@ -351,6 +489,15 @@ export function AbilityScoresSection({
       tashaPlus2,
       tashaPlus1,
       speciesChoices: speciesAbilityChoices,
+      background: dndBackground
+        ? {
+            name: dndBackground.name,
+            abilityBonuses: dndBackground.abilityBonuses,
+          }
+        : null,
+      backgroundAsiMode,
+      backgroundAsiPlus2,
+      backgroundAsiPlus1,
     });
     applyFeatAsiBonuses(
       bonusMap,
@@ -365,6 +512,10 @@ export function AbilityScoresSection({
     tashaPlus2,
     tashaPlus1,
     speciesAbilityChoices,
+    dndBackground,
+    backgroundAsiMode,
+    backgroundAsiPlus2,
+    backgroundAsiPlus1,
     featSelections,
     classSelection?.name,
     character.abilities,
