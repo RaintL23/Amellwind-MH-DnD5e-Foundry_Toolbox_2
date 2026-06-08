@@ -57,6 +57,7 @@ import {
   resolveFixedExpertiseGrants,
   computeCharacterProficiencies,
 } from "../utils/compute-character-proficiencies";
+import { getCharacterAcBreakdown } from "../utils/character-armor-class";
 import {
   pruneChoicesByHierarchy,
   skillsFromHigherPriority,
@@ -525,16 +526,32 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const effectiveAttacksPerTurn = attacksPerTurnOverride ?? character.getAttacksPerTurn();
 
   const totalAC = useMemo(() => {
-    const dexMod = character.getModifier("dex");
-    const armorAc = armor
-      ? (() => {
-          const { baseAC, maxDexBonus } = armor.armor;
-          const dexBonus = maxDexBonus === null ? dexMod : Math.min(dexMod, maxDexBonus);
-          return baseAC + dexBonus;
-        })()
-      : 10 + dexMod;
-    return armorAc + integratedShieldAcBonus;
-  }, [armor, character, integratedShieldAcBonus, mainHand]);
+    const modifiers = {
+      str: character.getModifier("str"),
+      dex: character.getModifier("dex"),
+      con: character.getModifier("con"),
+      int: character.getModifier("int"),
+      wis: character.getModifier("wis"),
+      cha: character.getModifier("cha"),
+    };
+
+    return getCharacterAcBreakdown({
+      modifiers,
+      level: character.level,
+      armor,
+      integratedShieldAcBonus,
+      classData: null,
+      className: classRef?.name,
+      subclass: null,
+      speciesName: species?.name,
+    }).total;
+  }, [
+    armor,
+    character,
+    integratedShieldAcBonus,
+    classRef?.name,
+    species?.name,
+  ]);
 
   const combat = useMemo(
     () => calculateCombat(character, mainHand, offHand, effectiveAttacksPerTurn),

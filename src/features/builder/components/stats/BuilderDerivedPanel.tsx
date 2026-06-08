@@ -2,12 +2,14 @@ import { ReactNode } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { Shield } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { useCharacterArmorClass } from "../../hooks/useCharacterArmorClass";
 import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
 import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function BuilderDerivedPanel() {
-  const { character, totalAC, combat } = useCharacterBuilder();
+  const { character, combat } = useCharacterBuilder();
   const hitPointStats = useCharacterHitPoints();
+  const armorClass = useCharacterArmorClass();
 
   const critRange = combat.mainHand?.critRange ?? 20;
   const critPct = Math.round(((21 - critRange) / 20) * 100);
@@ -30,11 +32,12 @@ export function BuilderDerivedPanel() {
           value={hitPointStats ? String(hitPointStats.max) : "—"}
           valueTooltip={hitPointStats?.tooltip}
         />
+        <DerivedRow label="Hit Dice" value={hitPointStats?.hitDice ?? "—"} />
         <DerivedRow
-          label="Hit Dice"
-          value={hitPointStats?.hitDice ?? "—"}
+          label="AC"
+          value={String(armorClass.total)}
+          valueTooltip={armorClass.tooltip}
         />
-        <DerivedRow label="CA" value={String(totalAC)} />
         <DerivedRow
           label="Initiative"
           value={formatModifier(character.getModifier("dex"))}
