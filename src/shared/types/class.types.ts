@@ -42,6 +42,11 @@ export interface Subclass {
   additionalSpells?: SubclassSpellBlock[];
 }
 
+export interface ClassMetaListGroup {
+  label: string;
+  items: string[];
+}
+
 export interface Class {
   id: string;
   name: string;
@@ -56,7 +61,7 @@ export interface Class {
   spellProgression: ClassTableGroup[];
   progression: ClassLevelRow[];
   subclasses: Subclass[];
-  startingProficiencies: string[];
+  startingProficiencies: ClassMetaListGroup[];
   startingEquipment: string[];
   multiclassing: string[];
   subclassTitle?: string;

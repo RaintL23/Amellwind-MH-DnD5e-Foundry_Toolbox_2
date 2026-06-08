@@ -13,7 +13,11 @@ import type {
 import { processAllClasses } from "../utils/class-processor.utils";
 import { dedupeClassesByName } from "../utils/class-dedupe.utils";
 
+/** Bump when mapped Class shape changes so in-memory cache is rebuilt. */
+const CLASS_CACHE_VERSION = 3;
+
 let cache: Class[] | null = null;
+let cacheVersion: number | null = null;
 let listCache: Class[] | null = null;
 let byNameIndex: Map<string, Class[]> | null = null;
 let lookupCache: SubclassLookup | null = null;
@@ -57,7 +61,7 @@ function buildIndexes(all: Class[]): void {
 }
 
 export async function getAllClasses(): Promise<Class[]> {
-  if (cache) return cache;
+  if (cache && cacheVersion === CLASS_CACHE_VERSION) return cache;
 
   await getSubclassLookup();
 
@@ -78,6 +82,7 @@ export async function getAllClasses(): Promise<Class[]> {
   );
 
   cache = processed.map(mapClass);
+  cacheVersion = CLASS_CACHE_VERSION;
   buildIndexes(cache);
   return cache;
 }
@@ -116,6 +121,7 @@ export function resolveSubclassDisplayName(
 
 export function clearClassCache(): void {
   cache = null;
+  cacheVersion = null;
   listCache = null;
   byNameIndex = null;
   lookupCache = null;

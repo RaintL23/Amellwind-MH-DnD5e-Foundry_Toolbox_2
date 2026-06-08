@@ -107,16 +107,40 @@ export type ClassTableCell =
       rollable?: boolean;
     };
 
+export type RawWeaponProficiency =
+  | string
+  | { proficiency?: string; optional?: boolean };
+
+export interface RawProficiencyBlock {
+  choose?: {
+    from?: string[];
+    count?: number;
+    weighted?: { from?: string[] };
+  };
+  anyArtisansTool?: number;
+  anyArtisanTool?: number;
+  [key: string]: unknown;
+}
+
+export type RawProficiencyEntry =
+  | string
+  | RawWeaponProficiency
+  | RawProficiencyBlock
+  | { choose?: { from?: unknown[]; count?: number } }
+  | { any?: number };
+
 export interface RawStartingProficiencies {
-  armor?: string[];
-  weapons?: string[];
+  armor?: RawProficiencyEntry[];
+  weapons?: RawProficiencyEntry[];
   tools?: string[];
-  skills?: Array<{ choose?: { from?: string[]; count?: number } } | string>;
-  languages?: string[];
+  toolProficiencies?: RawProficiencyBlock[];
+  skills?: RawProficiencyEntry[];
+  languages?: RawProficiencyEntry[];
 }
 
 export interface RawStartingEquipment {
   default?: string[];
+  entries?: string[];
   goldAlternative?: string;
   additionalFromBackground?: boolean;
 }

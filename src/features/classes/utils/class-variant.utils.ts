@@ -1,5 +1,14 @@
-import { Class } from "@/shared/types";
+import { Class, ClassMetaListGroup } from "@/shared/types";
 import { getCasterLabel } from "../mappers/class.mapper";
+import { normalizeClassMetaGroups } from "./class-meta-list.utils";
+
+function serializeProficiencyGroups(
+  groups: ClassMetaListGroup[] | string[] | undefined,
+): string {
+  return normalizeClassMetaGroups(groups)
+    .map((group) => `${group.label}:${group.items.join(",")}`)
+    .join("\n");
+}
 
 export type ClassVariantField =
   | "hitDie"
@@ -37,7 +46,7 @@ function fieldValue(cls: Class, field: ClassVariantField): string {
     case "subclassCount":
       return String(cls.subclasses.length);
     case "startingProficiencies":
-      return cls.startingProficiencies.join("\n");
+      return serializeProficiencyGroups(cls.startingProficiencies);
     case "startingEquipment":
       return cls.startingEquipment.join("\n");
     case "multiclassing":

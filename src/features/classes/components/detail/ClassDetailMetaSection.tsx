@@ -1,6 +1,7 @@
 import { Class, Subclass } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { getCasterLabel } from "../../mappers/class.mapper";
+import { hasClassMetaListContent } from "../../utils/class-meta-list.utils";
 import { type ClassVariantField } from "../../utils/class-variant.utils";
 import { ClassMetaRow } from "./ClassMetaRow";
 import { ClassMetaListSection } from "./ClassMetaListSection";
@@ -17,8 +18,8 @@ export function ClassDetailMetaSection({
   differs,
 }: ClassDetailMetaSectionProps) {
   const hasSetupInfo =
-    active.startingProficiencies.length > 0 ||
-    active.startingEquipment.length > 0 ||
+    hasClassMetaListContent(active.startingProficiencies) ||
+    hasClassMetaListContent(undefined, active.startingEquipment) ||
     active.multiclassing.length > 0;
 
   return (
@@ -69,7 +70,7 @@ export function ClassDetailMetaSection({
         <div className="space-y-4 p-3 rounded-md border border-border bg-muted/20">
           <ClassMetaListSection
             heading="Starting Proficiencies"
-            items={active.startingProficiencies}
+            groups={active.startingProficiencies}
             differs={differs("startingProficiencies")}
           />
           <ClassMetaListSection
