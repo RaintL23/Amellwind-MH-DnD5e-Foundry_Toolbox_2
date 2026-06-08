@@ -1,7 +1,14 @@
 import { CartEntry } from "@/shared/types";
+import { Button } from "@/components/ui/button";
 import { formatTotalGp, parseCostGp } from "../utils/cost.utils";
 
-export function CartSummary({ items }: { items: CartEntry[] }) {
+export function CartSummary({
+  items,
+  onPurchase,
+}: {
+  items: CartEntry[];
+  onPurchase?: () => void;
+}) {
   const totalItems = items.reduce((sum, entry) => sum + entry.quantity, 0);
   const totalGp = items.reduce(
     (sum, entry) => sum + parseCostGp(entry.cost) * entry.quantity,
@@ -20,8 +27,13 @@ export function CartSummary({ items }: { items: CartEntry[] }) {
           {formatTotalGp(totalGp)}
         </span>
       </div>
+      {onPurchase && (
+        <Button className="w-full" size="sm" onClick={onPurchase}>
+          Comprar
+        </Button>
+      )}
       <p className="text-xs text-muted-foreground/60 italic">
-        This list is for reference only during the current session.
+        Al comprar, los objetos se añaden al inventario del Builder.
       </p>
     </div>
   );

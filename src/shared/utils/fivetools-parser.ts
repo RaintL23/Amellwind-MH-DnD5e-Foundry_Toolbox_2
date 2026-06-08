@@ -18,7 +18,14 @@ const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: stri
   [/\{@item ([^}|]+)(?:\|[^}]*)?\}/g, (_m, item) => item],
   [/\{@creature ([^}|]+)(?:\|[^}]*)?\}/g, (_m, creature) => creature],
   [/\{@action ([^}|]+)(?:\|[^}]*)?\}/g, (_m, action) => action],
-  [/\{@dice ([^}]+)\}/g, (_m, dice) => dice],
+  [
+    /\{@dice ([^}|]+)(?:\|([^}|]*))?(?:\|([^}|]*))?\}/g,
+    (_m, roll, display, label) => {
+      const shown = (display?.trim() || roll?.trim()) ?? "";
+      return label?.trim() ? `${label.trim()}: ${shown}` : shown;
+    },
+  ],
+  [/\{@filter ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
   [/\{@adventure ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
   [/\{@book ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
   [/\{@quickref ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],

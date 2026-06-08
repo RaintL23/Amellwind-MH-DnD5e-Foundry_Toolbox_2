@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ShoppingCart, X, Trash2 } from "lucide-react";
+import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 import { useCart } from "../context/CartContext";
 import { cn } from "@/shared/utils/cn";
 import { CartFloatingButton } from "./CartFloatingButton";
@@ -10,6 +11,12 @@ export function CartDrawer() {
   const [open, setOpen] = useState(false);
   const { items, totalItems, removeItem, updateQuantity, clearCart } =
     useCart();
+  const { purchaseFromCart } = useBuilderInventory();
+
+  const handlePurchase = () => {
+    purchaseFromCart();
+    setOpen(false);
+  };
 
   return (
     <>
@@ -90,7 +97,9 @@ export function CartDrawer() {
           )}
         </div>
 
-        {items.length > 0 && <CartSummary items={items} />}
+        {items.length > 0 && (
+          <CartSummary items={items} onPurchase={handlePurchase} />
+        )}
       </div>
     </>
   );

@@ -3,6 +3,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useCallback,
   ReactNode,
 } from "react";
 import { Weapon, ArmorItem, CartEntry } from "@/shared/types";
@@ -14,18 +15,38 @@ import {
   type CartItemKind,
 } from "../utils/cart-equipment.resolver";
 
+function mergeCartEntries(
+  existing: CartEntry[],
+  incoming: CartEntry[],
+): CartEntry[] {
+  const map = new Map<string, CartEntry>();
+  for (const entry of existing) {
+    map.set(entry.name, { ...entry });
+  }
+  for (const entry of incoming) {
+    const prev = map.get(entry.name);
+    if (prev) {
+      map.set(entry.name, {
+        ...prev,
+        quantity: prev.quantity + entry.quantity,
+      });
+    } else {
+      map.set(entry.name, { ...entry });
+    }
+  }
+  return Array.from(map.values());
+}
+
 interface BuilderInventoryContextValue {
-  /** Raw cart lines (source of truth from shops). */
-  cartItems: CartEntry[];
-  /** Weapons resolved from cart item names. */
+  items: CartEntry[];
   weapons: Weapon[];
-  /** Armors resolved from cart item names. */
   armors: ArmorItem[];
   totalItems: number;
   equippableCount: number;
   isSyncing: boolean;
   getEntryKind: (entry: CartEntry) => CartItemKind;
-  removeFromCart: (name: string) => void;
+  removeFromInventory: (name: string) => void;
+  purchaseFromCart: () => void;
 }
 
 const BuilderInventoryContext =
@@ -36,7 +57,8 @@ export function BuilderInventoryProvider({
 }: {
   children: ReactNode;
 }) {
-  const { items: cartItems, totalItems, removeItem } = useCart();
+  const { items: cartItems, clearCart } = useCart();
+  const [items, setItems] = useState<CartEntry[]>([]);
   const [weapons, setWeapons] = useState<Weapon[]>([]);
   const [armors, setArmors] = useState<ArmorItem[]>([]);
   const [weaponCatalog, setWeaponCatalog] = useState<Weapon[]>([]);
@@ -53,7 +75,7 @@ export function BuilderInventoryProvider({
   }, []);
 
   useEffect(() => {
-    if (cartItems.length === 0) {
+    if (items.length === 0) {
       setWeapons([]);
       setArmors([]);
       setIsSyncing(false);
@@ -65,31 +87,44 @@ export function BuilderInventoryProvider({
       return;
     }
 
-    const { weapons: nextWeapons, armors: nextArmors } = resolveEquippableFromCart(
-      cartItems,
-      weaponCatalog,
-    );
+    const { weapons: nextWeapons, armors: nextArmors } =
+      resolveEquippableFromCart(items, weaponCatalog);
     setWeapons(nextWeapons);
     setArmors(nextArmors);
     setIsSyncing(false);
-  }, [cartItems, weaponCatalog]);
+  }, [items, weaponCatalog]);
 
+  const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
   const equippableCount = weapons.length + armors.length;
 
-  const getEntryKind = (entry: CartEntry): CartItemKind =>
-    classifyCartEntry(entry, weaponCatalog);
+  const getEntryKind = useCallback(
+    (entry: CartEntry): CartItemKind =>
+      classifyCartEntry(entry, weaponCatalog),
+    [weaponCatalog],
+  );
+
+  const removeFromInventory = useCallback((name: string) => {
+    setItems((prev) => prev.filter((i) => i.name !== name));
+  }, []);
+
+  const purchaseFromCart = useCallback(() => {
+    if (cartItems.length === 0) return;
+    setItems((prev) => mergeCartEntries(prev, cartItems));
+    clearCart();
+  }, [cartItems, clearCart]);
 
   return (
     <BuilderInventoryContext.Provider
       value={{
-        cartItems,
+        items,
         weapons,
         armors,
         totalItems,
         equippableCount,
         isSyncing,
         getEntryKind,
-        removeFromCart: removeItem,
+        removeFromInventory,
+        purchaseFromCart,
       }}
     >
       {children}

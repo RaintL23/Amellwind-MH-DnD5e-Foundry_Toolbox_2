@@ -391,7 +391,7 @@ function WeaponList({
   return (
     <>
       {inventory.length > 0 && (
-        <SectionLabel>Inventario (carrito)</SectionLabel>
+        <SectionLabel>Inventario</SectionLabel>
       )}
       {inventory.map((w) => (
         <ItemRow
@@ -445,7 +445,7 @@ function ArmorList({
         </>
       )}
       {inventory.length > 0 && (
-        <SectionLabel>Inventario (carrito)</SectionLabel>
+        <SectionLabel>Inventario</SectionLabel>
       )}
       {inventory.map((a) => (
         <ItemRow
