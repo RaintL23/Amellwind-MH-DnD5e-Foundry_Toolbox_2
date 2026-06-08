@@ -27,6 +27,7 @@ import {
   formatChooseSlotLabel,
   getSpeciesChooseSlots,
 } from "../../utils/species-ability-bonuses";
+import { applyFeatAsiBonuses } from "../../utils/feat-asi-bonuses";
 import { AbilityScoreValue } from "./AbilityScoreValue";
 
 const ABILITIES: { key: AbilityKey; label: string }[] = [
@@ -246,6 +247,8 @@ export function AbilityScoresSection({
     character,
     setAbilityScore,
     setAbilityScores,
+    class: classSelection,
+    featSelections,
     useTashaOrigin,
     tashaPlus2,
     tashaPlus1,
@@ -342,6 +345,12 @@ export function AbilityScoresSection({
       tashaPlus1,
       speciesChoices: speciesAbilityChoices,
     });
+    applyFeatAsiBonuses(
+      bonusMap,
+      featSelections,
+      classSelection?.name ?? "",
+      character.level,
+    );
     return applyBaseScores(bonusMap, character.abilities);
   }, [
     species,
@@ -349,7 +358,10 @@ export function AbilityScoresSection({
     tashaPlus2,
     tashaPlus1,
     speciesAbilityChoices,
+    featSelections,
+    classSelection?.name,
     character.abilities,
+    character.level,
   ]);
 
   const getBreakdown = (key: AbilityKey, baseScore: number) => ({

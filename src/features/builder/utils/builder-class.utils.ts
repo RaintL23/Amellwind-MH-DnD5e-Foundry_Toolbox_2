@@ -1,4 +1,10 @@
-import type { Class, ClassFeatureEntry, Subclass } from "@/shared/types";
+import type {
+  BuilderAsiChoices,
+  BuilderFeatSelection,
+  Class,
+  ClassFeatureEntry,
+  Subclass,
+} from "@/shared/types";
 import type { BuilderFeatSlot } from "@/shared/types";
 import { mergeProgressionWithSubclass } from "@/features/classes/mappers/class.mapper";
 
@@ -9,6 +15,31 @@ export const ABILITY_SCORE_IMPROVEMENT = {
   id: "asi",
   name: "Ability Score Improvement",
 } as const;
+
+export const DEFAULT_ASI_CHOICES: BuilderAsiChoices = {
+  mode: "plus2",
+  plus2: null,
+  plus1a: null,
+  plus1b: null,
+};
+
+export function isAsiFeatSelection(selection: BuilderFeatSelection): boolean {
+  return (
+    selection.source === "asi" ||
+    selection.name === ABILITY_SCORE_IMPROVEMENT.name
+  );
+}
+
+export function formatAsiChoicesSummary(choices: BuilderAsiChoices | undefined): string {
+  if (!choices) return "Sin asignar";
+  if (choices.mode === "plus2") {
+    return choices.plus2 ? `+2 ${choices.plus2.toUpperCase()}` : "Sin asignar";
+  }
+  const parts: string[] = [];
+  if (choices.plus1a) parts.push(`+1 ${choices.plus1a.toUpperCase()}`);
+  if (choices.plus1b) parts.push(`+1 ${choices.plus1b.toUpperCase()}`);
+  return parts.length > 0 ? parts.join(", ") : "Sin asignar";
+}
 
 export function getSubclassGainLevel(classData: Class): number | null {
   for (const row of classData.progression) {

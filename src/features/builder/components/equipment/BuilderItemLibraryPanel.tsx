@@ -26,9 +26,12 @@ import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import { useSelectedClass } from "../../hooks/useSelectedClass";
 import {
   ABILITY_SCORE_IMPROVEMENT,
+  DEFAULT_ASI_CHOICES,
+  isAsiFeatSelection,
   isFeatSlotSelection,
   parseFeatSlotIndex,
 } from "../../utils/builder-class.utils";
+import { AsiLibraryPanel } from "./AsiLibraryPanel";
 import { ArmorItem, Weapon } from "@/shared/types";
 import type {
   Background,
@@ -127,6 +130,7 @@ export function BuilderItemLibraryPanel({
   >([]);
   const [classLoading, setClassLoading] = useState(false);
   const [featSource, setFeatSource] = useState<FeatDataSource>("amellwind");
+  const [showFeatList, setShowFeatList] = useState(true);
   const [amellwindFeats, setAmellwindFeats] = useState<Feat[]>([]);
   const [dndFeats, setDndFeats] = useState<DndFeat[]>([]);
   const [featsLoading, setFeatsLoading] = useState(false);
@@ -175,6 +179,7 @@ export function BuilderItemLibraryPanel({
     setSearch("");
     setIdentitySource("amellwind");
     setFeatSource("amellwind");
+    setShowFeatList(true);
   }, [selectedSlot]);
 
   useEffect(() => {
@@ -299,6 +304,26 @@ export function BuilderItemLibraryPanel({
     );
   }, [classData, subclass]);
 
+  const selectedFeat =
+    isFeatSlot && featSlotIndex !== null
+      ? (featSelections[featSlotIndex] ?? null)
+      : null;
+
+  const showAsiPanel =
+    isFeatSlot &&
+    !!selectedFeat &&
+    isAsiFeatSelection(selectedFeat) &&
+    !showFeatList;
+
+  useEffect(() => {
+    if (!isFeatSlot) return;
+    const feat =
+      featSlotIndex !== null
+        ? (featSelections[featSlotIndex] ?? null)
+        : null;
+    setShowFeatList(!feat || !isAsiFeatSelection(feat));
+  }, [isFeatSlot, featSlotIndex, featSelections]);
+
   const featOptions = useMemo(() => {
     if (!isFeatSlot) return [];
 
@@ -307,6 +332,10 @@ export function BuilderItemLibraryPanel({
       name: ABILITY_SCORE_IMPROVEMENT.name,
       source: "asi",
     };
+
+    const dnd2024Asi = dndFeats.find(
+      (f) => isDnd2024Feat(f) && f.name === ABILITY_SCORE_IMPROVEMENT.name,
+    );
 
     let list: Array<{ id: string; name: string; summary?: string }> = [];
 
@@ -334,6 +363,8 @@ export function BuilderItemLibraryPanel({
         }));
     }
 
+    list = list.filter((f) => f.name !== ABILITY_SCORE_IMPROVEMENT.name);
+
     const filtered = q
       ? list.filter(
           (f) =>
@@ -342,14 +373,24 @@ export function BuilderItemLibraryPanel({
         )
       : list;
 
-    return [
-      asiOption,
-      ...filtered.map((f) => ({
-        id: f.id,
-        name: f.name,
-        source: featSource,
-      })),
-    ];
+    const mapped = filtered.map((f) => ({
+      id: f.id,
+      name: f.name,
+      source: featSource,
+    }));
+
+    if (featSource === "dnd2024" && dnd2024Asi) {
+      return [
+        {
+          id: dnd2024Asi.id,
+          name: dnd2024Asi.name,
+          source: "dnd2024" as const,
+        },
+        ...mapped,
+      ];
+    }
+
+    return [asiOption, ...mapped];
   }, [isFeatSlot, featSource, amellwindFeats, dndFeats, q]);
 
   const equippedWeapon =
@@ -445,11 +486,27 @@ export function BuilderItemLibraryPanel({
 
   function handleSelectFeat(selection: BuilderFeatSelection) {
     if (featSlotIndex === null) return;
-    setFeatAtIndex(featSlotIndex, selection);
+    const next: BuilderFeatSelection = isAsiFeatSelection(selection)
+      ? {
+          ...selection,
+          asiChoices: selection.asiChoices ?? { ...DEFAULT_ASI_CHOICES },
+        }
+      : selection;
+    setFeatAtIndex(featSlotIndex, next);
+    if (isAsiFeatSelection(next)) {
+      setShowFeatList(false);
+    }
+  }
+
+  function handleUpdateAsiChoices(
+    choices: NonNullable<BuilderFeatSelection["asiChoices"]>,
+  ) {
+    if (featSlotIndex === null || !selectedFeat) return;
+    setFeatAtIndex(featSlotIndex, { ...selectedFeat, asiChoices: choices });
   }
 
   const showIdentitySourceToggle = isSpeciesSlot || isBackgroundSlot;
-  const showFeatSourceToggle = isFeatSlot;
+  const showFeatSourceToggle = isFeatSlot && !showAsiPanel;
 
   const slotLabel = useMemo(() => {
     if (!selectedSlot) return "Library";
@@ -461,7 +518,9 @@ export function BuilderItemLibraryPanel({
 
   const panelTitle = selectedSlot ? (
     <span className="flex min-w-0 flex-wrap items-center gap-2">
-      <span>{`Library — ${slotLabel}`}</span>
+      <span>
+        {showAsiPanel ? "ASI" : `Library — ${slotLabel}`}
+      </span>
       {showIdentitySourceToggle && (
         <IdentitySourceBadgeGroup
           value={identitySource}
@@ -486,7 +545,8 @@ export function BuilderItemLibraryPanel({
             !showClassDetail &&
             !showSubclassDetail &&
             !showWeaponDetail &&
-            !showArmorDetail && (
+            !showArmorDetail &&
+            !showAsiPanel && (
             <div className="relative mb-2">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
               <input
@@ -606,16 +666,18 @@ export function BuilderItemLibraryPanel({
               ))}
 
             {isFeatSlot &&
-              (featsLoading ? (
+              (showAsiPanel && selectedFeat ? (
+                <AsiLibraryPanel
+                  choices={selectedFeat.asiChoices ?? { ...DEFAULT_ASI_CHOICES }}
+                  onChange={handleUpdateAsiChoices}
+                  onBack={() => setShowFeatList(true)}
+                />
+              ) : featsLoading ? (
                 <EmptyState text="Cargando feats…" />
               ) : (
                 <FeatList
                   options={featOptions}
-                  selectedId={
-                    featSlotIndex !== null
-                      ? (featSelections[featSlotIndex]?.id ?? null)
-                      : null
-                  }
+                  selectedId={selectedFeat?.id ?? null}
                   onSelect={handleSelectFeat}
                 />
               ))}
@@ -877,7 +939,7 @@ function FeatList({
             <Award
               className={cn(
                 "h-3.5 w-3.5",
-                feat.source === "asi"
+                isAsiFeatSelection(feat)
                   ? "text-amber-400"
                   : "text-rose-400",
               )}
@@ -885,7 +947,7 @@ function FeatList({
           }
           name={feat.name}
           stats={
-            feat.source === "asi"
+            isAsiFeatSelection(feat)
               ? "Mejora 2 puntos de habilidad o elige un feat"
               : ""
           }

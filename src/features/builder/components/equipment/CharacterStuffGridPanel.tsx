@@ -10,7 +10,9 @@ import type { BuilderFeatSelection, CharacterSelectionRef } from "@/shared/types
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 import {
+  formatAsiChoicesSummary,
   getFeatSlotLevels,
+  isAsiFeatSelection,
   isSubclassLevelReached,
   toFeatSlot,
 } from "../../utils/builder-class.utils";
@@ -134,14 +136,13 @@ export function CharacterStuffGridPanel({
                   feat
                     ? {
                         name: feat.name,
-                        detail:
-                          feat.source === "asi"
-                            ? "ASI"
-                            : feat.source === "amellwind"
-                              ? "Amellwind"
-                              : feat.source === "dnd2024"
-                                ? "D&D 2024"
-                                : "D&D 2014",
+                        detail: isAsiFeatSelection(feat)
+                          ? formatAsiChoicesSummary(feat.asiChoices)
+                          : feat.source === "amellwind"
+                            ? "Amellwind"
+                            : feat.source === "dnd2024"
+                              ? "D&D 2024"
+                              : "D&D 2014",
                       }
                     : null
                 }

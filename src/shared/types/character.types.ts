@@ -22,10 +22,20 @@ export type BuilderFeatSlot = `feat-${number}`;
 
 export type BuilderFeatSource = "asi" | "amellwind" | "dnd2014" | "dnd2024";
 
+export type AsiDistributionMode = "plus2" | "plus1plus1";
+
+export interface BuilderAsiChoices {
+  mode: AsiDistributionMode;
+  plus2: AbilityKey | null;
+  plus1a: AbilityKey | null;
+  plus1b: AbilityKey | null;
+}
+
 export interface BuilderFeatSelection {
   id: string;
   name: string;
   source: BuilderFeatSource;
+  asiChoices?: BuilderAsiChoices;
 }
 
 export interface CharacterSelectionRef {
