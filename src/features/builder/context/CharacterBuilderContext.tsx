@@ -31,8 +31,10 @@ import {
 import { getClassById } from "@/features/classes/services/class.service";
 import { getSpeciesById } from "@/features/species/services/species.service";
 import { getDndRaceById } from "@/features/dnd-races/services/dnd-race.service";
+import { getDndBackgroundById } from "@/features/dnd-backgrounds/services/dnd-background.service";
 import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.service";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
+import { dndFeatToBuilderSelection } from "../utils/origin-feat.utils";
 import { getFeatSlotLevels } from "../utils/builder-class.utils";
 import { ORIGIN_FEAT_SOURCE_NAME } from "../utils/origin-feat.constants";
 import { Character } from "../models/Character";
@@ -103,6 +105,9 @@ interface CharacterBuilderContextValue {
   /** Species-granted origin feat (D&D 2024 Human Versatile, etc.). */
   speciesOriginFeatGrant: OriginFeatGrant | null;
   speciesOriginFeat: BuilderFeatSelection | null;
+  /** Background-granted origin feat (D&D 2024 backgrounds). */
+  backgroundOriginFeatGrant: OriginFeatGrant | null;
+  backgroundOriginFeat: BuilderFeatSelection | null;
   originFeatSkillChoices: SkillKey[];
   backstoryNotes: string;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
@@ -225,6 +230,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBackgroundAsiMode(null);
     setBackgroundAsiPlus2(null);
     setBackgroundAsiPlus1(null);
+    setBackgroundOriginFeatGrant(null);
+    setBackgroundOriginFeatState(null);
     // Clear background grants immediately when background changes/removed
     setBgSkillGrants([]);
   }, []);
@@ -281,6 +288,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [speciesOriginFeatGrant, setSpeciesOriginFeatGrant] =
     useState<OriginFeatGrant | null>(null);
   const [speciesOriginFeat, setSpeciesOriginFeatState] =
+    useState<BuilderFeatSelection | null>(null);
+  const [backgroundOriginFeatGrant, setBackgroundOriginFeatGrant] =
+    useState<OriginFeatGrant | null>(null);
+  const [backgroundOriginFeat, setBackgroundOriginFeatState] =
     useState<BuilderFeatSelection | null>(null);
   const [expertiseChoices, setExpertiseChoicesState] = useState<Record<string, SkillKey[]>>({});
 
@@ -431,14 +442,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       if (grant.kind === "fixed" && grant.featRefs[0]) {
         const feat = await resolveDndFeatForRef(grant.featRefs[0]);
         if (cancelled || !feat) return;
-        setSpeciesOriginFeatState({
-          id: feat.id,
-          name: feat.name,
-          source:
-            feat.source === "XPHB" || feat.basicRules2024 || feat.srd52
-              ? "dnd2024"
-              : "dnd2014",
-        });
+        setSpeciesOriginFeatState(dndFeatToBuilderSelection(feat));
         return;
       }
 
@@ -454,6 +458,47 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       cancelled = true;
     };
   }, [species?.id, species?.subraceId]);
+
+  useEffect(() => {
+    if (!backgroundRef) {
+      setBackgroundOriginFeatGrant(null);
+      setBackgroundOriginFeatState(null);
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadBackgroundOriginFeat() {
+      const dndBackground = await getDndBackgroundById(backgroundRef!.id);
+      if (cancelled) return;
+
+      const grant = dndBackground?.originFeatGrant ?? null;
+      setBackgroundOriginFeatGrant(grant);
+
+      if (!grant) {
+        setBackgroundOriginFeatState(null);
+        return;
+      }
+
+      if (grant.kind === "fixed" && grant.featRefs[0]) {
+        const feat = await resolveDndFeatForRef(grant.featRefs[0]);
+        if (cancelled || !feat) return;
+        setBackgroundOriginFeatState({
+          ...dndFeatToBuilderSelection(feat),
+          name: grant.featRefs[0].displayLabel,
+        });
+        return;
+      }
+
+      setBackgroundOriginFeatState(null);
+    }
+
+    void loadBackgroundOriginFeat();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [backgroundRef?.id]);
 
   const setClassSkillChoicesAtIndex = useCallback(
     (grantIndex: number, choices: SkillKey[]) => {
@@ -760,6 +805,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBackgroundAsiMode(null);
     setBackgroundAsiPlus2(null);
     setBackgroundAsiPlus1(null);
+    setBackgroundOriginFeatGrant(null);
+    setBackgroundOriginFeatState(null);
     setClassSkillGrants([]);
     setBgSkillGrants([]);
     setSpeciesSkillGrants([]);
@@ -958,6 +1005,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       featSelections,
       speciesOriginFeatGrant,
       speciesOriginFeat,
+      backgroundOriginFeatGrant,
+      backgroundOriginFeat,
       originFeatSkillChoices,
       backstoryNotes,
       setSpecies,
@@ -1028,7 +1077,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       attacksPerTurnOverride, effectiveAttacksPerTurn, useUnarmedStrike,
       mainHand, offHand, armor, trinket1, trinket2,
       species, backgroundRef, classRef, subclass, featSelections,
-      speciesOriginFeatGrant, speciesOriginFeat, originFeatSkillChoices,
+      speciesOriginFeatGrant, speciesOriginFeat, backgroundOriginFeatGrant,
+      backgroundOriginFeat, originFeatSkillChoices,
       backstoryNotes, setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,
       setSpeciesOriginFeat,
       useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,

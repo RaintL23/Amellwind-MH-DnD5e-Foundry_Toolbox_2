@@ -10,6 +10,7 @@ import type {
 } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { formatAbilitySummary } from "@/features/dnd-races/mappers/dnd-race.mapper";
+import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -507,6 +508,7 @@ export function mapDndBackground(raw: any): DndBackground {
     abilitySummary: abilitySummary || undefined,
     featSummary,
     featRefs,
+    originFeatGrant: parseOriginFeatGrant(raw.feats),
     features,
     suggestedCharacteristics: suggested,
     skillGrants,

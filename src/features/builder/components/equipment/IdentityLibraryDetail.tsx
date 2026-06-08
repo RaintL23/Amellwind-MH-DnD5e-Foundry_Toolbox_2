@@ -31,6 +31,8 @@ interface IdentityLibraryDetailProps {
   background?: Background;
   /** D&D 2024 background ASI summary (shown below proficiencies). */
   backgroundAbilitySummary?: string | null;
+  /** D&D 2024 background origin feat summary. */
+  backgroundFeatSummary?: string | null;
   sourceVariants?: SourceVariant[];
   activeSourceId?: string;
   onSourceSelect?: (id: string) => void;
@@ -300,12 +302,16 @@ function SpeciesDetailBody({
 function BackgroundDetailBody({
   background,
   abilitySummary,
+  featSummary,
 }: {
   background: Background;
   abilitySummary?: string | null;
+  featSummary?: string | null;
 }) {
   const asiSummary =
     abilitySummary && abilitySummary !== "—" ? abilitySummary : null;
+  const originFeatSummary =
+    featSummary && featSummary !== "—" ? featSummary : null;
 
   return (
     <>
@@ -361,6 +367,15 @@ function BackgroundDetailBody({
         </div>
       </div>
 
+      {originFeatSummary && (
+        <div className="mb-3 rounded-md border border-border bg-muted/20 px-2 py-1.5 text-xs">
+          <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
+            Origin Feat
+          </p>
+          <p className="font-medium text-foreground">{originFeatSummary}</p>
+        </div>
+      )}
+
       <Separator className="my-3" />
 
       <BackgroundSectionBlock
@@ -387,6 +402,7 @@ export function IdentityLibraryDetail({
   species,
   background,
   backgroundAbilitySummary,
+  backgroundFeatSummary,
   sourceVariants,
   activeSourceId,
   onSourceSelect,
@@ -488,6 +504,7 @@ export function IdentityLibraryDetail({
             <BackgroundDetailBody
               background={background}
               abilitySummary={backgroundAbilitySummary}
+              featSummary={backgroundFeatSummary}
             />
           )}
         </AccordionContent>

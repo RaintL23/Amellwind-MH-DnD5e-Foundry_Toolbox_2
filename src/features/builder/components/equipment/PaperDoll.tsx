@@ -35,6 +35,8 @@ export function PaperDoll() {
     featSelections,
     speciesOriginFeatGrant,
     speciesOriginFeat,
+    backgroundOriginFeatGrant,
+    backgroundOriginFeat,
     backstoryNotes,
     isOffHandBlocked,
     offHandBlockReason,
@@ -108,7 +110,9 @@ export function PaperDoll() {
       case "origin-feat":
         return (
           !!speciesOriginFeat ||
-          speciesOriginFeatGrant?.kind === "fixed"
+          !!backgroundOriginFeat ||
+          speciesOriginFeatGrant?.kind === "fixed" ||
+          backgroundOriginFeatGrant?.kind === "fixed"
         );
       default:
         if (isFeatSlotSelection(slot)) {
@@ -200,6 +204,8 @@ export function PaperDoll() {
           featSelections={featSelections}
           speciesOriginFeatGrant={speciesOriginFeatGrant}
           speciesOriginFeat={speciesOriginFeat}
+          backgroundOriginFeatGrant={backgroundOriginFeatGrant}
+          backgroundOriginFeat={backgroundOriginFeat}
           backstoryNotes={backstoryNotes}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}

@@ -4,6 +4,7 @@ import type {
 } from "./background.types";
 import type { AbilityBonus } from "./species.types";
 import type { DndBackgroundFeatRef } from "./dnd-feat.types";
+import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 
 export type DndBackgroundEdition = "2014" | "2024";
 
@@ -21,6 +22,7 @@ export interface DndBackground {
   abilitySummary?: string;
   featSummary?: string;
   featRefs?: DndBackgroundFeatRef[];
+  originFeatGrant?: OriginFeatGrant | null;
   features: BackgroundSection[];
   suggestedCharacteristics: BackgroundSection[];
   /** Populated only on deduplicated list rows */

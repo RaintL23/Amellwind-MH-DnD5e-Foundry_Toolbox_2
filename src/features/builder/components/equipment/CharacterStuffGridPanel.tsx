@@ -32,6 +32,8 @@ interface CharacterStuffGridPanelProps {
   featSelections: (BuilderFeatSelection | null)[];
   speciesOriginFeatGrant: OriginFeatGrant | null;
   speciesOriginFeat: BuilderFeatSelection | null;
+  backgroundOriginFeatGrant: OriginFeatGrant | null;
+  backgroundOriginFeat: BuilderFeatSelection | null;
   backstoryNotes: string;
   selectedSlot: PaperDollSelection;
   onSelectSlot: (slot: PaperDollSelection) => void;
@@ -54,6 +56,8 @@ export function CharacterStuffGridPanel({
   featSelections,
   speciesOriginFeatGrant,
   speciesOriginFeat,
+  backgroundOriginFeatGrant,
+  backgroundOriginFeat,
   backstoryNotes,
   selectedSlot,
   onSelectSlot,
@@ -63,7 +67,7 @@ export function CharacterStuffGridPanel({
   const showSubclass = isSubclassLevelReached(classData, level);
   const featSlotLevels = getFeatSlotLevels(classSelection?.name ?? "", level);
   const subclassLabel = classData?.subclassTitle ?? "Subclass";
-  const showOriginFeat = !!species && !!speciesOriginFeatGrant;
+  const showOriginFeat = !!(speciesOriginFeatGrant || backgroundOriginFeatGrant);
   const originFeatCanChange = speciesOriginFeatGrant?.kind === "choose";
   const originFeatEquipped = speciesOriginFeat
     ? {
@@ -75,14 +79,26 @@ export function CharacterStuffGridPanel({
               ? "D&D 2014"
               : "Species",
       }
-    : speciesOriginFeatGrant?.kind === "fixed"
+    : backgroundOriginFeat
       ? {
-          name:
-            speciesOriginFeatGrant.featRefs[0]?.displayLabel ??
-            speciesOriginFeatGrant.summary,
-          detail: "Species",
+          name: backgroundOriginFeat.name,
+          detail: "Background",
         }
-      : null;
+      : speciesOriginFeatGrant?.kind === "fixed"
+        ? {
+            name:
+              speciesOriginFeatGrant.featRefs[0]?.displayLabel ??
+              speciesOriginFeatGrant.summary,
+            detail: "Species",
+          }
+        : backgroundOriginFeatGrant?.kind === "fixed"
+          ? {
+              name:
+                backgroundOriginFeatGrant.featRefs[0]?.displayLabel ??
+                backgroundOriginFeatGrant.summary,
+              detail: "Background",
+            }
+          : null;
 
   return (
     <div className="space-y-1.5">
@@ -168,8 +184,12 @@ export function CharacterStuffGridPanel({
                   : undefined
               }
               isSelected={selectedSlot === "origin-feat"}
-              disabled={!species}
-              disabledHint={!species ? "Elige una specie primero" : undefined}
+              disabled={!species && !background}
+              disabledHint={
+                !species && !background
+                  ? "Elige specie o background primero"
+                  : undefined
+              }
               emptyTitle="Elegir Origin Feat"
             />
           )}

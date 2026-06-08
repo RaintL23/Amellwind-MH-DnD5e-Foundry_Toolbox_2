@@ -29,11 +29,22 @@ function parseFeatKey(key: string): {
   source: string;
   qualifier?: string;
 } {
-  const [beforePipe, afterPipe] = key.split("|");
-  const name = titleCaseFeatName(beforePipe.trim());
-  const source = (afterPipe ?? "").trim().toUpperCase();
+  const pipe = key.lastIndexOf("|");
+  const beforePipe = pipe === -1 ? key.trim() : key.slice(0, pipe).trim();
+  const source = (pipe === -1 ? "" : key.slice(pipe + 1)).trim().toUpperCase();
+  const semi = beforePipe.indexOf(";");
+  if (semi !== -1) {
+    return {
+      name: titleCaseFeatName(beforePipe.slice(0, semi).trim()),
+      qualifier: titleCaseFeatName(beforePipe.slice(semi + 1).trim()),
+      source,
+    };
+  }
   const qualifierMatch = beforePipe.match(/\(([^)]+)\)\s*$/);
   const qualifier = qualifierMatch?.[1];
+  const name = qualifier
+    ? titleCaseFeatName(beforePipe.slice(0, qualifierMatch!.index).trim())
+    : titleCaseFeatName(beforePipe);
   return { name, source, qualifier };
 }
 

@@ -111,6 +111,21 @@ export async function resolveDndFeatForRef(
   const exact = await getDndFeatById(ref.id);
   if (exact) return exact;
 
+  if (ref.qualifier) {
+    const variantName = `${ref.name}; ${ref.qualifier}`;
+    const variantExact = await getDndFeatById(`${variantName}::${ref.source}`);
+    if (variantExact) return variantExact;
+
+    const variantGroup = await getDndFeatsByName(variantName);
+    if (variantGroup.length > 0) {
+      return (
+        variantGroup.find((f) => f.source === ref.source) ??
+        variantGroup.find((f) => f.source === "XPHB") ??
+        variantGroup[0]
+      );
+    }
+  }
+
   const variants = await getDndFeatsByName(ref.name);
   if (variants.length === 0) return undefined;
 
