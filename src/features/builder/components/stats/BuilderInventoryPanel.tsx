@@ -1,15 +1,20 @@
 import { Link } from "react-router-dom";
-import { Package, Trash2, X } from "lucide-react";
+import { Check, Package, Trash2, X } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { CartEntry } from "@/shared/types";
+import { ArmorItem, CartEntry } from "@/shared/types";
 import { formatTotalGp, parseCostGp } from "@/features/shops/utils/cost.utils";
+import { cn } from "@/shared/utils/cn";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
-import type { CartItemKind } from "../../utils/cart-equipment.resolver";
+import {
+  findArmorByCartName,
+  type CartItemKind,
+} from "../../utils/cart-equipment.resolver";
 
 const KIND_LABELS: Record<CartItemKind, string> = {
   weapon: "Weapon",
@@ -28,6 +33,8 @@ export function BuilderInventoryPanel() {
     removeFromInventory,
     clearInventory,
   } = useBuilderInventory();
+  const { armor, equipArmor } = useCharacterBuilder();
+  const equippedArmorName = armor?.armor.name ?? null;
 
   const grouped = KIND_ORDER.map((kind) => ({
     kind,
@@ -57,10 +64,7 @@ export function BuilderInventoryPanel() {
             ) : items.length === 0 ? (
               <div className="py-4 text-center">
                 <p className="text-xs text-muted-foreground">
-                  The inventory is empty.
-                </p>
-                <p className="mt-1 text-[11px] text-muted-foreground/70">
-                  Add items from{" "}
+                  The inventory is empty. Add items from{" "}
                   <Link
                     to="/shops"
                     className="font-medium text-primary hover:underline"
@@ -85,7 +89,7 @@ export function BuilderInventoryPanel() {
                   className="flex w-full items-center justify-center gap-1.5 rounded-md border border-destructive/30 bg-destructive/5 px-2.5 py-2 text-[11px] font-medium text-destructive transition-colors hover:bg-destructive/10"
                 >
                   <Trash2 className="h-3.5 w-3.5" aria-hidden />
-                  Vaciar inventario
+                  Clear inventory
                 </button>
                 {grouped.map(({ kind, entries }) => (
                   <div key={kind}>
@@ -98,6 +102,8 @@ export function BuilderInventoryPanel() {
                           key={entry.startingEquipmentId ?? entry.name}
                           entry={entry}
                           kind={kind}
+                          equippedArmorName={equippedArmorName}
+                          onEquipArmor={equipArmor}
                           onRemove={removeFromInventory}
                         />
                       ))}
@@ -116,13 +122,19 @@ export function BuilderInventoryPanel() {
 function InventoryRow({
   entry,
   kind,
+  equippedArmorName,
+  onEquipArmor,
   onRemove,
 }: {
   entry: CartEntry;
   kind: CartItemKind;
+  equippedArmorName: string | null;
+  onEquipArmor: (armor: ArmorItem) => void;
   onRemove: (name: string) => void;
 }) {
   const lineCost = parseCostGp(entry.cost) * entry.quantity;
+  const armorItem = kind === "armor" ? findArmorByCartName(entry.name) : null;
+  const isEquipped = !!armorItem && equippedArmorName === armorItem.name;
 
   return (
     <li className="flex items-start justify-between gap-2 rounded-md border border-border/50 bg-muted/20 px-2.5 py-2">
@@ -149,14 +161,43 @@ function InventoryRow({
           )}
         </div>
       </div>
-      <button
-        type="button"
-        onClick={() => onRemove(entry.name)}
-        className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
-        aria-label={`Remove ${entry.name} from inventory`}
-      >
-        <X className="h-3 w-3" />
-      </button>
+      <div className="flex shrink-0 items-center gap-1">
+        {armorItem && (
+          <button
+            type="button"
+            onClick={() => onEquipArmor(armorItem)}
+            disabled={isEquipped}
+            title={
+              isEquipped
+                ? `${armorItem.name} is already equipped`
+                : `Equipar ${armorItem.name}`
+            }
+            className={cn(
+              "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium transition-colors",
+              isEquipped
+                ? "cursor-default border-emerald-700/40 bg-emerald-950/30 text-emerald-300"
+                : "border-sky-700/40 bg-sky-950/20 text-sky-200 hover:bg-sky-950/40",
+            )}
+          >
+            {isEquipped ? (
+              <>
+                <Check className="h-3 w-3" aria-hidden />
+                Equipped
+              </>
+            ) : (
+              "Equip"
+            )}
+          </button>
+        )}
+        <button
+          type="button"
+          onClick={() => onRemove(entry.name)}
+          className="rounded p-0.5 text-muted-foreground transition-colors hover:bg-destructive/10 hover:text-destructive"
+          aria-label={`Remove ${entry.name} from inventory`}
+        >
+          <X className="h-3 w-3" />
+        </button>
+      </div>
     </li>
   );
 }
