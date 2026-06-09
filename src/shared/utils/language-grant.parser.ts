@@ -3,7 +3,7 @@
  */
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import type { NamedProficiencyGrant, ProficiencySource } from "@/shared/types/proficiency.types";
-import { CHOOSEABLE_LANGUAGES } from "@/shared/data/chooseable-languages";
+import { getChooseableLanguages } from "@/shared/data/chooseable-languages";
 
 const NUMBER_WORDS: Record<string, number> = {
   one: 1,
@@ -88,7 +88,7 @@ function pushChooseGrant(
 export function parseLanguageText(
   text: string,
   source: ProficiencySource,
-  chooseableLanguages: readonly string[] = CHOOSEABLE_LANGUAGES,
+  chooseableLanguages: readonly string[] = getChooseableLanguages(),
 ): NamedProficiencyGrant[] {
   const grants: NamedProficiencyGrant[] = [];
   const plain = parseFiveToolsMarkup(text).trim();
@@ -140,7 +140,7 @@ export function parseLanguageText(
 export function parseLanguageGrantsFromFeatureText(
   text: string,
   source: ProficiencySource,
-  chooseableLanguages: readonly string[] = CHOOSEABLE_LANGUAGES,
+  chooseableLanguages: readonly string[] = getChooseableLanguages(),
 ): NamedProficiencyGrant[] {
   const grants: NamedProficiencyGrant[] = [];
   const plain = parseFiveToolsMarkup(text);
@@ -172,7 +172,7 @@ export function parseLanguageGrantsFromFeatureText(
 export function parseLanguageGrantsFromTraits(
   traits: Array<{ name: string; entries: string[] }>,
   source: ProficiencySource,
-  chooseableLanguages: readonly string[] = CHOOSEABLE_LANGUAGES,
+  chooseableLanguages: readonly string[] = getChooseableLanguages(),
 ): NamedProficiencyGrant[] {
   const langTrait = traits.find((t) => /^languages?$/i.test(t.name.trim()));
   if (!langTrait?.entries.length) return [];

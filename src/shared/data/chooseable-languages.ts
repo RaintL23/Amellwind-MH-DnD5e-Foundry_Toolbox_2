@@ -2,7 +2,8 @@
  * Language names for builder pickers — sourced from 5etools languages.json
  * plus Monster Hunter–specific species languages.
  */
-import languagesRaw from "../../../backup-jsons/5etools/languages.json";
+import { LANGUAGES_JSON_URL } from "@/shared/constants/api.constants";
+import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 
 /** MH ancestries / species languages not always present in 5etools. */
 const MONSTER_HUNTER_LANGUAGES = [
@@ -63,6 +64,10 @@ export interface LanguageSourceGroup {
   languages: string[];
 }
 
+let languageSourceGroups: LanguageSourceGroup[] | null = null;
+let flatLanguageNames: readonly string[] = [];
+let loadPromise: Promise<void> | null = null;
+
 function resolveSourceLabel(sourceCode: string): string {
   return BOOK_SOURCE_LABELS[sourceCode] ?? sourceCode;
 }
@@ -80,8 +85,9 @@ function sortLanguageGroups(groups: LanguageSourceGroup[]): LanguageSourceGroup[
   });
 }
 
-function collectLanguageSourceGroups(): LanguageSourceGroup[] {
-  const raw = languagesRaw as { language?: LanguageEntry[] };
+function collectLanguageSourceGroups(raw: {
+  language?: LanguageEntry[];
+}): LanguageSourceGroup[] {
   const bySource = new Map<string, Set<string>>();
 
   for (const entry of raw.language ?? []) {
@@ -111,15 +117,31 @@ function collectFlatLanguageNames(groups: LanguageSourceGroup[]): string[] {
   return [...names].sort((a, b) => a.localeCompare(b));
 }
 
-const LANGUAGE_SOURCE_GROUPS = collectLanguageSourceGroups();
+/** Fetch and cache language data from 5etools (idempotent). */
+export async function loadChooseableLanguages(): Promise<void> {
+  if (languageSourceGroups) return;
+  if (!loadPromise) {
+    loadPromise = (async () => {
+      const raw = await fetchFiveToolsJson<{ language?: LanguageEntry[] }>(
+        LANGUAGES_JSON_URL,
+        "languages.json",
+      );
+      languageSourceGroups = collectLanguageSourceGroups(raw);
+      flatLanguageNames = collectFlatLanguageNames(languageSourceGroups);
+    })();
+  }
+  await loadPromise;
+}
 
 /** Languages grouped by book / adventure source (for accordion pickers). */
-export const LANGUAGE_GROUPS_BY_SOURCE: readonly LanguageSourceGroup[] =
-  LANGUAGE_SOURCE_GROUPS;
+export function getLanguageGroupsBySource(): readonly LanguageSourceGroup[] {
+  return languageSourceGroups ?? [];
+}
 
 /** Flat deduplicated list (parser + legacy consumers). */
-export const CHOOSEABLE_LANGUAGES: readonly string[] =
-  collectFlatLanguageNames(LANGUAGE_SOURCE_GROUPS);
+export function getChooseableLanguages(): readonly string[] {
+  return flatLanguageNames;
+}
 
 /** PHB-style standard set (used when data only says "standard language"). */
 export const STANDARD_LANGUAGES: readonly string[] = [
@@ -142,11 +164,13 @@ export function filterLanguageGroups(
     allowed instanceof Set ? allowed : new Set(allowed);
   const excludedLower = new Set(excluded.map((l) => l.toLowerCase()));
 
-  return LANGUAGE_GROUPS_BY_SOURCE.map((group) => ({
-    ...group,
-    languages: group.languages.filter(
-      (name) =>
-        allowedSet.has(name) && !excludedLower.has(name.toLowerCase()),
-    ),
-  })).filter((group) => group.languages.length > 0);
+  return getLanguageGroupsBySource()
+    .map((group) => ({
+      ...group,
+      languages: group.languages.filter(
+        (name) =>
+          allowedSet.has(name) && !excludedLower.has(name.toLowerCase()),
+      ),
+    }))
+    .filter((group) => group.languages.length > 0);
 }

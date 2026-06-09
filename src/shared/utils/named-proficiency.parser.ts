@@ -5,11 +5,11 @@
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import type { NamedProficiencyGrant, ProficiencySource } from "@/shared/types/proficiency.types";
 import {
-  CHOOSEABLE_LANGUAGES,
+  getChooseableLanguages,
   STANDARD_LANGUAGES,
 } from "@/shared/data/chooseable-languages";
 
-export { STANDARD_LANGUAGES, CHOOSEABLE_LANGUAGES };
+export { STANDARD_LANGUAGES, getChooseableLanguages };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -74,7 +74,7 @@ function parseProficiencyBlock(
 
     if (key === "any" && typeof value === "number") {
       pushAnyGrant(grants, value, `Language${value > 1 ? "s" : ""}`, source, [
-        ...CHOOSEABLE_LANGUAGES,
+        ...getChooseableLanguages(),
       ]);
       continue;
     }

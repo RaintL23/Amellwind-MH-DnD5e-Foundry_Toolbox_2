@@ -5,6 +5,7 @@ import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { NotFound } from "@/components/layout/NotFound";
 import { SyncProvider } from "@/shared/context/SyncContext";
 import { ThemeProvider } from "@/shared/context/ThemeContext";
+import { loadChooseableLanguages } from "@/shared/data/chooseable-languages";
 import { syncData } from "@/shared/db/sync.service";
 import { clearMonsterCache } from "@/features/monsters/services/monster.service";
 import { clearRuneCache } from "@/features/runes/services/rune.service";
@@ -177,8 +178,13 @@ export default function App() {
   const [syncing, setSyncing] = useState(true);
 
   useEffect(() => {
-    syncData()
-      .then((result) => {
+    Promise.all([
+      syncData(),
+      loadChooseableLanguages().catch((error) => {
+        console.warn("[Bootstrap] Failed to load languages:", error);
+      }),
+    ])
+      .then(([result]) => {
         if (result.updated.mm) {
           clearMonsterCache();
           clearRuneCache();
