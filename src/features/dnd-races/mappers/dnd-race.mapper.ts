@@ -17,6 +17,12 @@ import {
   parseSkillProficiencyBlocks,
   parseSkillAdvantagesFromTraits,
 } from "@/shared/utils/skill-proficiency.parser";
+import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
+import {
+  mergeLanguageGrants,
+  parseLanguageGrantsFromTraits,
+} from "@/shared/utils/language-grant.parser";
+import { parseDefenseBlocks } from "@/shared/utils/defense-grant.parser";
 import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -213,6 +219,25 @@ export function mapDndRace(raw: any): DndRace {
     raceSource,
   );
   const skillAdvantages = parseSkillAdvantagesFromTraits(traits, raceSource);
+  const languageGrants = mergeLanguageGrants(
+    parseNamedProficiencyBlocks(
+      Array.isArray(raw.languageProficiencies) ? raw.languageProficiencies : [],
+      raceSource,
+    ),
+    parseLanguageGrantsFromTraits(traits, raceSource),
+  );
+  const defenseGrants = [
+    ...parseDefenseBlocks(
+      Array.isArray(raw.resist) ? raw.resist : [],
+      "resistance",
+      raceSource,
+    ),
+    ...parseDefenseBlocks(
+      Array.isArray(raw.immune) ? raw.immune : [],
+      "immunity",
+      raceSource,
+    ),
+  ];
 
   return {
     id: raceId(raw),
@@ -235,5 +260,7 @@ export function mapDndRace(raw: any): DndRace {
     skillGrants,
     skillAdvantages,
     originFeatGrant: parseOriginFeatGrant(raw.feats),
+    languageGrants,
+    defenseGrants,
   };
 }

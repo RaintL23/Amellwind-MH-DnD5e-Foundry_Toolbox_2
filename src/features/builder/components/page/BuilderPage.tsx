@@ -3,6 +3,9 @@ import { PaperDoll } from "../equipment/PaperDoll";
 import { BuilderDerivedPanel } from "../stats/BuilderDerivedPanel";
 import { BuilderSavingThrowsPanel } from "../stats/BuilderSavingThrowsPanel";
 import { BuilderSkillChecksPanel } from "../stats/BuilderSkillChecksPanel";
+import { BuilderOtherProficienciesPanel } from "../stats/BuilderOtherProficienciesPanel";
+import { BuilderLanguagesPanel } from "../stats/BuilderLanguagesPanel";
+import { BuilderDefensesPanel } from "../stats/BuilderDefensesPanel";
 import { BuilderDamagePanel } from "../stats/BuilderDamagePanel";
 import { BuilderInventoryPanel } from "../stats/BuilderInventoryPanel";
 import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
@@ -28,7 +31,6 @@ export function BuilderPage() {
           {/* Columna izquierda: stats + derivados + daño */}
           <div className="flex flex-col gap-2.5">
             <StatsPanel />
-            <BuilderDerivedPanel />
             <BuilderSavingThrowsPanel />
             <BuilderSkillChecksPanel />
           </div>
@@ -38,8 +40,12 @@ export function BuilderPage() {
 
           {/* Columna derecha: simulador + notas + rareza */}
           <div className="flex flex-col gap-2.5">
+            <BuilderDerivedPanel />
             <BuilderDamagePanel />
             <BuilderInventoryPanel />
+            <BuilderOtherProficienciesPanel />
+            <BuilderLanguagesPanel />
+            <BuilderDefensesPanel />
           </div>
         </div>
       </div>

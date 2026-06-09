@@ -145,9 +145,11 @@ const BestiaryDetailPage = lazy(() =>
   })),
 );
 const XanatharBackstoryPage = lazy(() =>
-  import("@/features/xanathar-backstory/components/XanatharBackstoryPage").then((m) => ({
-    default: m.XanatharBackstoryPage,
-  })),
+  import("@/features/xanathar-backstory/components/XanatharBackstoryPage").then(
+    (m) => ({
+      default: m.XanatharBackstoryPage,
+    }),
+  ),
 );
 const DndRaceList = lazy(() =>
   import("@/features/dnd-races/components/DndRaceList").then((m) => ({
@@ -155,9 +157,11 @@ const DndRaceList = lazy(() =>
   })),
 );
 const DndBackgroundList = lazy(() =>
-  import("@/features/dnd-backgrounds/components/DndBackgroundList").then((m) => ({
-    default: m.DndBackgroundList,
-  })),
+  import("@/features/dnd-backgrounds/components/DndBackgroundList").then(
+    (m) => ({
+      default: m.DndBackgroundList,
+    }),
+  ),
 );
 const DndFeatList = lazy(() =>
   import("@/features/dnd-feats/components/DndFeatList").then((m) => ({
@@ -166,7 +170,7 @@ const DndFeatList = lazy(() =>
 );
 
 function PageFallback() {
-  return <LoadingScreen message="Cargando…" />;
+  return <LoadingScreen message="Loading..." />;
 }
 
 export default function App() {
@@ -200,253 +204,253 @@ export default function App() {
     <ThemeProvider>
       <SyncProvider syncing={syncing}>
         <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<MainLayout syncing={syncing} />}>
-            <Route index element={<Navigate to="/monsters" replace />} />
-            <Route
-              path="monsters"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <MonstersOutlet />
-                </Suspense>
-              }
-            >
+          <Routes>
+            <Route path="/" element={<MainLayout syncing={syncing} />}>
+              <Route index element={<Navigate to="/monsters" replace />} />
               <Route
-                index
+                path="monsters"
                 element={
                   <Suspense fallback={<PageFallback />}>
-                    <MonsterList />
+                    <MonstersOutlet />
+                  </Suspense>
+                }
+              >
+                <Route
+                  index
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <MonsterList />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path=":monsterId"
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <MonsterDetailPage />
+                    </Suspense>
+                  }
+                />
+              </Route>
+              <Route
+                path="runes"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <RuneList />
                   </Suspense>
                 }
               />
               <Route
-                path=":monsterId"
+                path="material-effects"
                 element={
                   <Suspense fallback={<PageFallback />}>
-                    <MonsterDetailPage />
+                    <MaterialEffectList />
                   </Suspense>
                 }
               />
+              <Route
+                path="cooking"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <CookingPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="combo"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ComboPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="items"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ItemList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="shops"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ShopList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="weapons"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <WeaponList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="resources"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ResourcePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="environments"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <EnvironmentList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="builder"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <BuilderPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="species"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <SpeciesList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="backgrounds"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <BackgroundList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="feats"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <FeatList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="character-guide"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <CharacterGuidePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="monstie-sidekick"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <MonstieSidekickPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="npc-generator"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <NpcGeneratorPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="downtime"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DowntimePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="spells"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <SpellList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="dnd-items"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DndItemList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="bestiary"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <BestiaryList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="bestiary/:creatureId"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <BestiaryDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="classes"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ClassList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="classes/:classId"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ClassDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="dnd-races"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DndRaceList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="dnd-backgrounds"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DndBackgroundList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="dnd-feats"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DndFeatList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="xanathar-backstory"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <XanatharBackstoryPage />
+                  </Suspense>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
             </Route>
-            <Route
-              path="runes"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <RuneList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="material-effects"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <MaterialEffectList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="cooking"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <CookingPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="combo"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <ComboPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="items"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <ItemList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="shops"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <ShopList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="weapons"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <WeaponList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="resources"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <ResourcePage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="environments"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <EnvironmentList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="builder"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <BuilderPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="species"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <SpeciesList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="backgrounds"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <BackgroundList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="feats"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <FeatList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="character-guide"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <CharacterGuidePage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="monstie-sidekick"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <MonstieSidekickPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="npc-generator"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <NpcGeneratorPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="downtime"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <DowntimePage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="spells"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <SpellList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="dnd-items"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <DndItemList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="bestiary"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <BestiaryList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="bestiary/:creatureId"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <BestiaryDetailPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="classes"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <ClassList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="classes/:classId"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <ClassDetailPage />
-                </Suspense>
-              }
-            />
-            <Route
-              path="dnd-races"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <DndRaceList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="dnd-backgrounds"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <DndBackgroundList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="dnd-feats"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <DndFeatList />
-                </Suspense>
-              }
-            />
-            <Route
-              path="xanathar-backstory"
-              element={
-                <Suspense fallback={<PageFallback />}>
-                  <XanatharBackstoryPage />
-                </Suspense>
-              }
-            />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Routes>
+          </Routes>
         </BrowserRouter>
       </SyncProvider>
     </ThemeProvider>

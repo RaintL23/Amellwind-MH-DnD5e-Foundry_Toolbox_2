@@ -17,6 +17,7 @@ import {
   parseSkillProficiencyBlocks,
   parseSaveProficiencies,
 } from "@/shared/utils/skill-proficiency.parser";
+import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 import { parseClassStartingEquipment } from "@/shared/utils/starting-equipment.parser";
 import type {
   ProcessedSubclass,
@@ -370,6 +371,15 @@ export function mapClass(raw: RawClassDefinition): Class {
     raw.startingProficiencies?.skills ?? [],
     classSource,
   );
+  const toolBlocks = [
+    ...(raw.startingProficiencies?.toolProficiencies ?? []),
+    ...(raw.startingProficiencies?.tools ?? []),
+  ];
+  const toolGrants = parseNamedProficiencyBlocks(toolBlocks, classSource);
+  const languageGrants = parseNamedProficiencyBlocks(
+    raw.startingProficiencies?.languages ?? [],
+    classSource,
+  );
 
   return {
     id: classId(raw.name, raw.source),
@@ -395,6 +405,8 @@ export function mapClass(raw: RawClassDefinition): Class {
     summary: summaryParts.join(" "),
     saveProficiencies: saveProfGrant?.abilities ?? [],
     skillChoiceGrants,
+    toolGrants,
+    languageGrants,
   };
 }
 

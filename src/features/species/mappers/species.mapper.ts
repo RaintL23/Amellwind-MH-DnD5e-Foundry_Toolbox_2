@@ -16,6 +16,12 @@ import {
   parseSkillProficiencyBlocks,
   parseSkillAdvantagesFromTraits,
 } from "@/shared/utils/skill-proficiency.parser";
+import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
+import {
+  mergeLanguageGrants,
+  parseLanguageGrantsFromTraits,
+} from "@/shared/utils/language-grant.parser";
+import { parseDefenseBlocks } from "@/shared/utils/defense-grant.parser";
 import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -256,6 +262,25 @@ export function mapSpecies(raw: any): Species {
     speciesSource,
   );
   const skillAdvantages = parseSkillAdvantagesFromTraits(traits, speciesSource);
+  const languageGrants = mergeLanguageGrants(
+    parseNamedProficiencyBlocks(
+      Array.isArray(raw.languageProficiencies) ? raw.languageProficiencies : [],
+      speciesSource,
+    ),
+    parseLanguageGrantsFromTraits(traits, speciesSource),
+  );
+  const defenseGrants = [
+    ...parseDefenseBlocks(
+      Array.isArray(raw.resist) ? raw.resist : [],
+      "resistance",
+      speciesSource,
+    ),
+    ...parseDefenseBlocks(
+      Array.isArray(raw.immune) ? raw.immune : [],
+      "immunity",
+      speciesSource,
+    ),
+  ];
 
   return {
     id: speciesId(raw),
@@ -279,5 +304,7 @@ export function mapSpecies(raw: any): Species {
     skillGrants,
     skillAdvantages,
     originFeatGrant: parseOriginFeatGrant(raw.feats),
+    languageGrants,
+    defenseGrants,
   };
 }

@@ -116,7 +116,7 @@ export function MonstieCreatorPanel() {
   if (loading) {
     return (
       <p className="text-sm text-muted-foreground py-8">
-        Cargando monstruos y reglas de Monstie Sidekick…
+        Loading monsters and Monstie Sidekick rules...
       </p>
     );
   }
@@ -127,7 +127,7 @@ export function MonstieCreatorPanel() {
         <div className="flex flex-wrap gap-2">
           <Button type="button" size="sm" onClick={generateRandom}>
             <Dices className="h-4 w-4 mr-1.5" />
-            Generar aleatorio
+            Generate random
           </Button>
           <Button
             type="button"
@@ -136,26 +136,26 @@ export function MonstieCreatorPanel() {
             onClick={resetDraft}
           >
             <RotateCcw className="h-4 w-4 mr-1.5" />
-            Reiniciar
+            Reset
           </Button>
         </div>
 
         <div className="rounded-lg border border-border bg-card p-4 space-y-4">
           <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
-            Configuración
+            Configuration
           </h3>
 
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1.5">
               <span className="text-xs font-medium text-muted-foreground">
-                Monstruo base (MHMM)
+                Base monster (MHMM)
               </span>
               <Select
                 value={draft.baseMonsterName}
                 onChange={(e) => selectBaseMonster(e.target.value)}
               >
-                <option value="">— Elegir monstruo —</option>
+                <option value="">— Choose monster —</option>
                 {eligibleMonsters.map((m) => (
                   <option key={m.name} value={m.name}>
                     {m.name}
@@ -164,25 +164,25 @@ export function MonstieCreatorPanel() {
                 ))}
               </Select>
               <p className="text-[11px] text-muted-foreground">
-                {eligibleMonsters.length} monstruos elegibles (sin Elder Dragon
-                ni Paragon).
+                {eligibleMonsters.length} eligible monsters (without Elder
+                Dragon ni Paragon).
               </p>
             </label>
 
             <label className="space-y-1.5">
               <span className="text-xs font-medium text-muted-foreground">
-                Nombre del Monstie
+                Monstie name
               </span>
               <Input
                 value={draft.customName}
                 onChange={(e) => setDraft({ customName: e.target.value })}
-                placeholder="Ej. Rajang Monstie"
+                placeholder="Example: Rajang Monstie"
               />
             </label>
 
             <label className="space-y-1.5">
               <span className="text-xs font-medium text-muted-foreground">
-                Nivel (1–20)
+                Level (1–20)
               </span>
               <Select
                 value={String(draft.level)}
@@ -190,7 +190,8 @@ export function MonstieCreatorPanel() {
               >
                 {Array.from({ length: 20 }, (_, i) => i + 1).map((lvl) => (
                   <option key={lvl} value={lvl}>
-                    Nivel {lvl} (PB +{getSidekickProficiencyBonus(lvl)})
+                    Level {lvl} (Proficiency Bonus +
+                    {getSidekickProficiencyBonus(lvl)})
                   </option>
                 ))}
               </Select>
@@ -207,7 +208,7 @@ export function MonstieCreatorPanel() {
                 }
                 disabled={!baseMonster}
               >
-                <option value="">— Seleccionar —</option>
+                <option value="">— Choose —</option>
                 {signatureOptions.map((a) => (
                   <option key={a.name} value={a.name}>
                     {a.name}

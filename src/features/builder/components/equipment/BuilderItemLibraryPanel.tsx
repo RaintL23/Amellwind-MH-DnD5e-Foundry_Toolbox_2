@@ -47,6 +47,7 @@ import {
   getListDndFeats,
 } from "@/features/dnd-feats/services/dnd-feat.service";
 import { detectExpertiseGrants } from "../../utils/expertise-detection.utils";
+import { buildClassLanguageGrants } from "../../utils/class-language-grants.utils";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import { useClassVariants } from "../../hooks/useClassVariants";
@@ -61,7 +62,12 @@ import {
 } from "../../utils/builder-class.utils";
 import { ORIGIN_FEAT_SOURCE_NAME } from "../../utils/origin-feat.constants";
 import { AsiLibraryPanel } from "./AsiLibraryPanel";
-import { ArmorItem, Weapon, DMG_TYPE_LABELS, PROPERTY_LABELS } from "@/shared/types";
+import {
+  ArmorItem,
+  Weapon,
+  DMG_TYPE_LABELS,
+  PROPERTY_LABELS,
+} from "@/shared/types";
 import type {
   Background,
   BuilderFeatSelection,
@@ -398,27 +404,6 @@ export function BuilderItemLibraryPanel({
     setOriginFeatSkillChoices,
   ]);
 
-  // Apply class grants whenever classData or level changes
-  useEffect(() => {
-    if (!classData) {
-      applyIdentityGrants({
-        source: "class",
-        skillGrants: [],
-        saveProficiencies: [],
-        expertiseGrants: [],
-      });
-      return;
-    }
-    const level = character.level;
-    const expertiseGrants = detectExpertiseGrants(classData, level);
-    applyIdentityGrants({
-      source: "class",
-      skillGrants: classData.skillChoiceGrants,
-      saveProficiencies: classData.saveProficiencies,
-      expertiseGrants,
-    });
-  }, [classData, character.level, applyIdentityGrants]);
-
   useEffect(() => {
     if (!classData || !subclass) return;
     const isValid = subclassesForClassVariant(classData).some(
@@ -510,6 +495,35 @@ export function BuilderItemLibraryPanel({
       ) ?? null
     );
   }, [classData, subclass]);
+
+  // Apply class grants whenever classData, level, or subclass changes
+  useEffect(() => {
+    if (!classData) {
+      applyIdentityGrants({
+        source: "class",
+        skillGrants: [],
+        saveProficiencies: [],
+        expertiseGrants: [],
+        toolGrants: [],
+        languageGrants: [],
+      });
+      return;
+    }
+    const level = character.level;
+    const expertiseGrants = detectExpertiseGrants(classData, level);
+    applyIdentityGrants({
+      source: "class",
+      skillGrants: classData.skillChoiceGrants,
+      saveProficiencies: classData.saveProficiencies,
+      expertiseGrants,
+      toolGrants: classData.toolGrants,
+      languageGrants: buildClassLanguageGrants(
+        classData,
+        level,
+        activeSubclass,
+      ),
+    });
+  }, [classData, character.level, activeSubclass, applyIdentityGrants]);
 
   const selectedFeat = isOriginFeatSlotSelected
     ? (speciesOriginFeat ?? backgroundOriginFeat)
@@ -705,9 +719,17 @@ export function BuilderItemLibraryPanel({
           source: "species",
           skillGrants: [],
           skillAdvantages: [],
+          toolGrants: [],
+          languageGrants: [],
+          defenseGrants: [],
         });
       } else if (isBackgroundSlot) {
-        applyIdentityGrants({ source: "background", skillGrants: [] });
+        applyIdentityGrants({
+          source: "background",
+          skillGrants: [],
+          toolGrants: [],
+          languageGrants: [],
+        });
       }
       return;
     }
@@ -725,9 +747,17 @@ export function BuilderItemLibraryPanel({
         source: "species",
         skillGrants: [],
         skillAdvantages: [],
+        toolGrants: [],
+        languageGrants: [],
+        defenseGrants: [],
       });
     } else {
-      applyIdentityGrants({ source: "background", skillGrants: [] });
+      applyIdentityGrants({
+        source: "background",
+        skillGrants: [],
+        toolGrants: [],
+        languageGrants: [],
+      });
     }
 
     let cancelled = false;
@@ -779,6 +809,14 @@ export function BuilderItemLibraryPanel({
             ...base.skillAdvantages,
             ...(selectedSubrace?.skillAdvantages ?? []),
           ],
+          languageGrants: [
+            ...base.languageGrants,
+            ...(selectedSubrace?.languageGrants ?? []),
+          ],
+          defenseGrants: [
+            ...base.defenseGrants,
+            ...(selectedSubrace?.defenseGrants ?? []),
+          ],
         });
         return;
       }
@@ -800,11 +838,16 @@ export function BuilderItemLibraryPanel({
             skillGrants: data.skillGrants,
             skillAdvantages:
               "skillAdvantages" in data ? data.skillAdvantages : [],
+            toolGrants: "toolGrants" in data ? data.toolGrants : [],
+            languageGrants: "languageGrants" in data ? data.languageGrants : [],
+            defenseGrants: "defenseGrants" in data ? data.defenseGrants : [],
           });
         } else {
           applyIdentityGrants({
             source: "background",
             skillGrants: data.skillGrants,
+            toolGrants: "toolGrants" in data ? data.toolGrants : [],
+            languageGrants: "languageGrants" in data ? data.languageGrants : [],
           });
         }
       }
@@ -1120,7 +1163,7 @@ export function BuilderItemLibraryPanel({
             {(isSpeciesSlot || isBackgroundSlot) &&
               (showIdentityDetail ? (
                 identityDetailLoading ? (
-                  <EmptyState text="Cargando…" />
+                  <EmptyState text="Loading..." />
                 ) : isSpeciesSlot && isLoadedSpecies(identityDetail) ? (
                   <IdentityLibraryDetail
                     species={identityDetail}
@@ -1227,7 +1270,7 @@ export function BuilderItemLibraryPanel({
             {isClassSlot &&
               (showClassDetail ? (
                 classDetailLoading ? (
-                  <EmptyState text="Cargando…" />
+                  <EmptyState text="Loading..." />
                 ) : classData ? (
                   <ClassLibraryDetail
                     classData={classData}
@@ -1239,7 +1282,7 @@ export function BuilderItemLibraryPanel({
                     onSourceSelect={handleClassSourceSelect}
                   />
                 ) : (
-                  <EmptyState text="No se encontró la información." />
+                  <EmptyState text="Information not found." />
                 )
               ) : (
                 <LibraryList
@@ -1256,7 +1299,7 @@ export function BuilderItemLibraryPanel({
 
             {isSubclassSlot &&
               (!classData ? (
-                <EmptyState text="Elige una clase primero." />
+                <EmptyState text="Choose a class first." />
               ) : showSubclassDetail && activeSubclass ? (
                 <SubclassLibraryDetail
                   subclass={activeSubclass}
@@ -1287,7 +1330,7 @@ export function BuilderItemLibraryPanel({
               !!(speciesOriginFeatGrant || backgroundOriginFeatGrant) &&
               (showFeatDetail ? (
                 featDetailLoading ? (
-                  <EmptyState text="Cargando…" />
+                  <EmptyState text="Loading..." />
                 ) : featDetail ? (
                   <FeatLibraryDetail
                     feat={featDetail}
@@ -1303,10 +1346,10 @@ export function BuilderItemLibraryPanel({
                     bookNames={identityBookNames}
                   />
                 ) : (
-                  <EmptyState text="No se encontró la información." />
+                  <EmptyState text="Information not found." />
                 )
               ) : featsLoading ? (
-                <EmptyState text="Cargando feats…" />
+                <EmptyState text="Loading feats..." />
               ) : (
                 <FeatList
                   options={featListOptions}
@@ -1327,7 +1370,7 @@ export function BuilderItemLibraryPanel({
                 />
               ) : showFeatDetail ? (
                 featDetailLoading ? (
-                  <EmptyState text="Cargando…" />
+                  <EmptyState text="Loading..." />
                 ) : featDetail ? (
                   <FeatLibraryDetail
                     feat={featDetail}
@@ -1341,10 +1384,10 @@ export function BuilderItemLibraryPanel({
                     bookNames={identityBookNames}
                   />
                 ) : (
-                  <EmptyState text="No se encontró la información." />
+                  <EmptyState text="Information not found." />
                 )
               ) : featsLoading ? (
-                <EmptyState text="Cargando feats…" />
+                <EmptyState text="Loading feats..." />
               ) : (
                 <FeatList
                   options={featListOptions}
@@ -1385,7 +1428,9 @@ function LibraryItemBadge({
 
 function LibraryItemBadgeRow({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex flex-wrap items-center gap-1 pl-5 pt-1">{children}</div>
+    <div className="flex flex-wrap items-center gap-1 pl-5 pt-1">
+      {children}
+    </div>
   );
 }
 
@@ -1428,7 +1473,7 @@ function WeaponList({
   onSelect: (w: Weapon) => void;
   getDisabledReason?: (weapon: Weapon) => string | null;
 }) {
-  if (loading) return <EmptyState text="Cargando armas…" />;
+  if (loading) return <EmptyState text="Loading weapons..." />;
   if (inventory.length === 0 && catalog.length === 0) {
     return <EmptyState text="No weapons available." />;
   }
@@ -1719,9 +1764,7 @@ function ItemRow({
       className={cn(
         "mb-1 flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors",
         equipped ? "border-violet-400/40 bg-violet-400/5" : "border-border/60",
-        disabled
-          ? "cursor-not-allowed opacity-40"
-          : "hover:bg-muted/50",
+        disabled ? "cursor-not-allowed opacity-40" : "hover:bg-muted/50",
       )}
     >
       <div className="min-w-0 flex-1">

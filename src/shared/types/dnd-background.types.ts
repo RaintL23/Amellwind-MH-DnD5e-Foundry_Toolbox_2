@@ -32,6 +32,8 @@ export interface DndBackground {
   searchText?: string;
   /** Structured skill proficiency grants for the builder. */
   skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
+  toolGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
   startingEquipmentOffers: StartingEquipmentOffers;
 }
 

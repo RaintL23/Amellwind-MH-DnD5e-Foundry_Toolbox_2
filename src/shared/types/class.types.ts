@@ -78,4 +78,8 @@ export interface Class {
   saveProficiencies: import("./actor.types").AbilityKey[];
   /** Structured skill choice grants for the builder. */
   skillChoiceGrants: import("./proficiency.types").SkillProficiencyGrant[];
+  /** Tool / gaming set proficiencies for the builder. */
+  toolGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  /** Language proficiencies for the builder. */
+  languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
 }

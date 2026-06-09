@@ -33,6 +33,8 @@ export interface Background {
   suggestedCharacteristics: BackgroundSection[];
   /** Structured skill proficiency grants for the builder. */
   skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
+  toolGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
 }
 
 export const BACKGROUND_FACTION_LABELS: Record<BackgroundFaction, string> = {

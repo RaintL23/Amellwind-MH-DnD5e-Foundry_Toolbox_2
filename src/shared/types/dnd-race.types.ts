@@ -40,6 +40,8 @@ export interface DndRace {
   skillAdvantages: import("./proficiency.types").SkillAdvantageGrant[];
   /** Origin feat from species traits (e.g. Human Versatile). */
   originFeatGrant?: OriginFeatGrant | null;
+  languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  defenseGrants: import("./proficiency.types").DefenseGrant[];
 }
 
 export const DND_RACE_KIND_LABELS: Record<DndRaceKind, string> = {

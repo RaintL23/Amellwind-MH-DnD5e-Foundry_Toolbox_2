@@ -33,7 +33,7 @@ export function LibraryList({
 }) {
   const bookNames = useBookSourceNames();
 
-  if (loading) return <EmptyState text="Cargando…" />;
+  if (loading) return <EmptyState text="Loading..." />;
   if (options.length === 0) return <EmptyState text="No results." />;
 
   return (
@@ -79,9 +79,7 @@ export function LibraryList({
                 className="ml-2 max-w-[16rem] shrink-0 text-[10px] text-muted-foreground"
                 title={
                   variantTrailing?.title ??
-                  (sourceLabel &&
-                  option.source &&
-                  sourceLabel !== option.source
+                  (sourceLabel && option.source && sourceLabel !== option.source
                     ? option.source
                     : undefined)
                 }

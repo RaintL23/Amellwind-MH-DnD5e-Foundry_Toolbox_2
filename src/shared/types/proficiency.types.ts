@@ -34,3 +34,35 @@ export type SaveProficiencyGrant = {
   abilities: AbilityKey[];
   source: ProficiencySource;
 };
+
+/** Tool, language, gaming set, and similar non-skill proficiencies. */
+export type NamedProficiencyGrant =
+  | { kind: "fixed"; items: string[]; source: ProficiencySource }
+  | { kind: "choose"; from: string[]; count: number; source: ProficiencySource }
+  | {
+      kind: "any";
+      count: number;
+      /** Display label, e.g. "Standard language" or "Artisan's tool". */
+      label: string;
+      /** When set, player picks from this list; otherwise freeform entry. */
+      options?: string[];
+      source: ProficiencySource;
+    };
+
+export type DefenseKind = "resistance" | "immunity";
+
+/** Damage resistance or immunity from species, class features, etc. */
+export type DefenseGrant =
+  | {
+      kind: "fixed";
+      types: import("./actor.types").DamageType[];
+      defenseKind: DefenseKind;
+      source: ProficiencySource;
+    }
+  | {
+      kind: "choose";
+      from: import("./actor.types").DamageType[];
+      count: number;
+      defenseKind: DefenseKind;
+      source: ProficiencySource;
+    };

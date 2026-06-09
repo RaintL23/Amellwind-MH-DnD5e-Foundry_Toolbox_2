@@ -4,7 +4,9 @@ interface LoadingScreenProps {
   message?: string;
 }
 
-export function LoadingScreen({ message = "Cargando datos…" }: LoadingScreenProps) {
+export function LoadingScreen({
+  message = "Loading data...",
+}: LoadingScreenProps) {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="flex flex-col items-center gap-4 text-center">

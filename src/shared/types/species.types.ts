@@ -80,6 +80,8 @@ export interface Species {
   skillAdvantages: import("./proficiency.types").SkillAdvantageGrant[];
   /** Origin / species feat grant (D&D 2024 Versatile, etc.). */
   originFeatGrant?: OriginFeatGrant | null;
+  languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  defenseGrants: import("./proficiency.types").DefenseGrant[];
 }
 
 export const ABILITY_LABELS: Record<AbilityKey, string> = {

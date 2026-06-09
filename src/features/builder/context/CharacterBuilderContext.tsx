@@ -63,12 +63,18 @@ import type {
   ExpertiseGrant,
   SkillAdvantageGrant,
   ProficiencySource,
+  NamedProficiencyGrant,
+  DefenseGrant,
+  DefenseKind,
 } from "@/shared/types/proficiency.types";
+import type { DamageType } from "@/shared/types";
 import {
   resolveFixedGrants,
   resolveFixedExpertiseGrants,
   computeCharacterProficiencies,
 } from "../utils/compute-character-proficiencies";
+import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
+import { resolveFixedDefenseGrants } from "@/shared/utils/defense-grant.parser";
 import { getCharacterAcBreakdown } from "../utils/character-armor-class";
 import {
   pruneChoicesByHierarchy,
@@ -176,6 +182,9 @@ interface CharacterBuilderContextValue {
     expertiseGrants?: ExpertiseGrant[];
     skillAdvantages?: SkillAdvantageGrant[];
     saveProficiencies?: AbilityKey[];
+    toolGrants?: NamedProficiencyGrant[];
+    languageGrants?: NamedProficiencyGrant[];
+    defenseGrants?: DefenseGrant[];
     source: "class" | "background" | "species" | "feats";
   }) => void;
 
@@ -207,6 +216,33 @@ interface CharacterBuilderContextValue {
   /** Aggregated skill sources for tooltip display */
   skillSources: Partial<Record<SkillKey, ProficiencySource[]>>;
   expertiseSources: Partial<Record<SkillKey, ProficiencySource>>;
+
+  allToolGrants: NamedProficiencyGrant[];
+  allLanguageGrants: NamedProficiencyGrant[];
+  allDefenseGrants: DefenseGrant[];
+  classToolChoices: Record<number, string[]>;
+  backgroundToolChoices: string[];
+  speciesToolChoices: string[];
+  classLanguageChoices: Record<number, string[]>;
+  backgroundLanguageChoices: string[];
+  speciesLanguageChoices: string[];
+  speciesDefenseChoices: Record<number, DamageType[]>;
+  setClassToolChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
+  setBackgroundToolChoices: (choices: string[]) => void;
+  setSpeciesToolChoices: (choices: string[]) => void;
+  setClassLanguageChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
+  setBackgroundLanguageChoices: (choices: string[]) => void;
+  setSpeciesLanguageChoices: (choices: string[]) => void;
+  setSpeciesDefenseChoicesAtIndex: (grantIndex: number, choices: DamageType[]) => void;
+  toolSources: Partial<Record<string, ProficiencySource[]>>;
+  languageSources: Partial<Record<string, ProficiencySource[]>>;
+  defenseSources: Partial<
+    Record<string, Array<{ source: ProficiencySource; defenseKind: DefenseKind }>>
+  >;
+  resolvedToolItems: string[];
+  resolvedLanguageItems: string[];
+  resolvedResistances: DamageType[];
+  resolvedImmunities: DamageType[];
 }
 
 const CharacterBuilderContext = createContext<CharacterBuilderContextValue | null>(null);
@@ -228,6 +264,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setBackground = useCallback((selection: CharacterSelectionRef | null) => {
     setBackgroundRef(selection);
     setBackgroundSkillChoices([]);
+    setBackgroundToolChoices([]);
+    setBackgroundLanguageChoices([]);
     setBackgroundAsiMode(null);
     setBackgroundAsiPlus2(null);
     setBackgroundAsiPlus1(null);
@@ -235,6 +273,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBackgroundOriginFeatState(null);
     // Clear background grants immediately when background changes/removed
     setBgSkillGrants([]);
+    setBgToolGrants([]);
+    setBgLanguageGrants([]);
   }, []);
   const [classRef, setClassState] = useState<CharacterSelectionRef | null>(null);
   const [selectedClassData, setSelectedClassData] = useState<Class | null>(null);
@@ -264,6 +304,14 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [speciesSkillGrants, setSpeciesSkillGrants] = useState<SkillProficiencyGrant[]>([]);
   const [featGrantsList, setFeatGrantsList] = useState<SkillProficiencyGrant[]>([]);
 
+  const [classToolGrants, setClassToolGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [bgToolGrants, setBgToolGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [speciesToolGrants, setSpeciesToolGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [classLanguageGrants, setClassLanguageGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [bgLanguageGrants, setBgLanguageGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [speciesLanguageGrants, setSpeciesLanguageGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [speciesDefenseGrants, setSpeciesDefenseGrants] = useState<DefenseGrant[]>([]);
+
   const [classExpertiseGrants, setClassExpertiseGrants] = useState<ExpertiseGrant[]>([]);
   const [featExpertiseGrants, setFeatExpertiseGrants] = useState<ExpertiseGrant[]>([]);
 
@@ -273,6 +321,18 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const allSkillGrants = useMemo(
     () => [...classSkillGrants, ...bgSkillGrants, ...speciesSkillGrants, ...featGrantsList],
     [classSkillGrants, bgSkillGrants, speciesSkillGrants, featGrantsList],
+  );
+  const allToolGrants = useMemo(
+    () => [...classToolGrants, ...bgToolGrants, ...speciesToolGrants],
+    [classToolGrants, bgToolGrants, speciesToolGrants],
+  );
+  const allLanguageGrants = useMemo(
+    () => [...classLanguageGrants, ...bgLanguageGrants, ...speciesLanguageGrants],
+    [classLanguageGrants, bgLanguageGrants, speciesLanguageGrants],
+  );
+  const allDefenseGrants = useMemo(
+    () => [...speciesDefenseGrants],
+    [speciesDefenseGrants],
   );
   const allExpertiseGrants = useMemo(
     () => [...classExpertiseGrants, ...featExpertiseGrants],
@@ -296,11 +356,24 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     useState<BuilderFeatSelection | null>(null);
   const [expertiseChoices, setExpertiseChoicesState] = useState<Record<string, SkillKey[]>>({});
 
+  const [classToolChoices, setClassToolChoicesState] = useState<Record<number, string[]>>({});
+  const [backgroundToolChoices, setBackgroundToolChoices] = useState<string[]>([]);
+  const [speciesToolChoices, setSpeciesToolChoices] = useState<string[]>([]);
+  const [classLanguageChoices, setClassLanguageChoicesState] = useState<Record<number, string[]>>({});
+  const [backgroundLanguageChoices, setBackgroundLanguageChoices] = useState<string[]>([]);
+  const [speciesLanguageChoices, setSpeciesLanguageChoices] = useState<string[]>([]);
+  const [speciesDefenseChoices, setSpeciesDefenseChoicesState] = useState<
+    Record<number, DamageType[]>
+  >({});
+
   const applyIdentityGrants = useCallback((payload: {
     skillGrants?: SkillProficiencyGrant[];
     expertiseGrants?: ExpertiseGrant[];
     skillAdvantages?: SkillAdvantageGrant[];
     saveProficiencies?: AbilityKey[];
+    toolGrants?: NamedProficiencyGrant[];
+    languageGrants?: NamedProficiencyGrant[];
+    defenseGrants?: DefenseGrant[];
     source: "class" | "background" | "species" | "feats";
   }) => {
     const { source } = payload;
@@ -320,6 +393,19 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     if (payload.saveProficiencies !== undefined) {
       setSaveProficiencyAbilities(payload.saveProficiencies);
     }
+    if (payload.toolGrants !== undefined) {
+      if (source === "class") setClassToolGrants(payload.toolGrants);
+      else if (source === "background") setBgToolGrants(payload.toolGrants);
+      else if (source === "species") setSpeciesToolGrants(payload.toolGrants);
+    }
+    if (payload.languageGrants !== undefined) {
+      if (source === "class") setClassLanguageGrants(payload.languageGrants);
+      else if (source === "background") setBgLanguageGrants(payload.languageGrants);
+      else if (source === "species") setSpeciesLanguageGrants(payload.languageGrants);
+    }
+    if (payload.defenseGrants !== undefined && source === "species") {
+      setSpeciesDefenseGrants(payload.defenseGrants);
+    }
   }, []);
 
   useEffect(() => {
@@ -338,11 +424,17 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setSelectedSpeciesData(null);
     setSpeciesAbilityChoices([]);
     setSpeciesSkillChoices([]);
+    setSpeciesToolChoices([]);
+    setSpeciesLanguageChoices([]);
+    setSpeciesDefenseChoicesState({});
     setSpeciesOriginFeatGrant(null);
     setSpeciesOriginFeatState(null);
     setOriginFeatSkillChoicesState([]);
     // Clear species grants immediately when species changes/removed
     setSpeciesSkillGrants([]);
+    setSpeciesToolGrants([]);
+    setSpeciesLanguageGrants([]);
+    setSpeciesDefenseGrants([]);
     setAllSkillAdvantages([]);
     if (!selection) {
       setUseTashaOrigin(false);
@@ -367,6 +459,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setClassSkillGrants([]);
     setClassExpertiseGrants([]);
     setSaveProficiencyAbilities([]);
+    setClassToolGrants([]);
+    setClassLanguageGrants([]);
+    setClassToolChoicesState({});
+    setClassLanguageChoicesState({});
   }, []);
 
   useEffect(() => {
@@ -519,6 +615,24 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setExpertiseChoices = useCallback((grantId: string, choices: SkillKey[]) => {
     setExpertiseChoicesState((prev) => ({ ...prev, [grantId]: choices }));
   }, []);
+
+  const setClassToolChoicesAtIndex = useCallback((grantIndex: number, choices: string[]) => {
+    setClassToolChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
+  }, []);
+
+  const setClassLanguageChoicesAtIndex = useCallback(
+    (grantIndex: number, choices: string[]) => {
+      setClassLanguageChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
+    },
+    [],
+  );
+
+  const setSpeciesDefenseChoicesAtIndex = useCallback(
+    (grantIndex: number, choices: DamageType[]) => {
+      setSpeciesDefenseChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
+    },
+    [],
+  );
 
   const setSubclass = useCallback((selection: CharacterSelectionRef | null) => {
     setSubclassState(selection);
@@ -828,6 +942,20 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setSpeciesOriginFeatGrant(null);
     setSpeciesOriginFeatState(null);
     setExpertiseChoicesState({});
+    setClassToolGrants([]);
+    setBgToolGrants([]);
+    setSpeciesToolGrants([]);
+    setClassLanguageGrants([]);
+    setBgLanguageGrants([]);
+    setSpeciesLanguageGrants([]);
+    setSpeciesDefenseGrants([]);
+    setClassToolChoicesState({});
+    setBackgroundToolChoices([]);
+    setSpeciesToolChoices([]);
+    setClassLanguageChoicesState({});
+    setBackgroundLanguageChoices([]);
+    setSpeciesLanguageChoices([]);
+    setSpeciesDefenseChoicesState({});
   }, []);
 
   // ─── Hierarchy: Species → Background → Class ─────────────────────────────
@@ -971,6 +1099,117 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     originFeatSkillChoices, featSkillChoices, expertiseChoices,
   ]);
 
+  const identityGrantsResult = useMemo(() => {
+    function resolveNamedWithChoices(
+      grants: NamedProficiencyGrant[],
+      classChoices: Record<number, string[]>,
+      backgroundChoices: string[],
+      speciesChoices: string[],
+    ) {
+      const fixed = resolveFixedNamedGrants(grants);
+      const classChooseGrants = grants.filter(
+        (g) => g.kind !== "fixed" && g.source.type === "class",
+      );
+      const fromClass = Object.entries(classChoices).flatMap(([idx, items]) =>
+        items.map((item) => ({
+          item,
+          source:
+            classChooseGrants[Number(idx)]?.source ?? {
+              type: "class" as const,
+              name: "Class",
+            },
+        })),
+      );
+      const bgGrant = grants.find((g) => g.kind !== "fixed" && g.source.type === "background");
+      const fromBackground = backgroundChoices.map((item) => ({
+        item,
+        source: bgGrant?.source ?? { type: "background" as const, name: "Background" },
+      }));
+      const speciesGrant = grants.find((g) => g.kind !== "fixed" && g.source.type === "species");
+      const fromSpecies = speciesChoices.map((item) => ({
+        item,
+        source: speciesGrant?.source ?? { type: "species" as const, name: "Species" },
+      }));
+
+      const all = [...fixed, ...fromClass, ...fromBackground, ...fromSpecies];
+      const sources: Partial<Record<string, ProficiencySource[]>> = {};
+      for (const { item, source } of all) {
+        const key = item.toLowerCase();
+        if (!sources[key]) sources[key] = [];
+        if (!sources[key]!.some((s) => s.type === source.type && s.name === source.name)) {
+          sources[key]!.push(source);
+        }
+      }
+      const items = [...new Set(all.map((e) => e.item))];
+      return { items, sources };
+    }
+
+    const tools = resolveNamedWithChoices(
+      allToolGrants,
+      classToolChoices,
+      backgroundToolChoices,
+      speciesToolChoices,
+    );
+    const languages = resolveNamedWithChoices(
+      allLanguageGrants,
+      classLanguageChoices,
+      backgroundLanguageChoices,
+      speciesLanguageChoices,
+    );
+
+    const fixedDefenses = resolveFixedDefenseGrants(allDefenseGrants);
+    const chooseDefenseGrants = allDefenseGrants.filter((g) => g.kind === "choose");
+    const chosenDefenses = Object.entries(speciesDefenseChoices).flatMap(([idx, types]) =>
+      types.map((type) => ({
+        type,
+        defenseKind:
+          chooseDefenseGrants[Number(idx)]?.defenseKind ?? ("resistance" as DefenseKind),
+        source:
+          chooseDefenseGrants[Number(idx)]?.source ?? {
+            type: "species" as const,
+            name: "Species",
+          },
+      })),
+    );
+    const allDefenses = [...fixedDefenses, ...chosenDefenses];
+    const defenseSources: Partial<
+      Record<string, Array<{ source: ProficiencySource; defenseKind: DefenseKind }>>
+    > = {};
+    for (const entry of allDefenses) {
+      const key = entry.type;
+      if (!defenseSources[key]) defenseSources[key] = [];
+      defenseSources[key]!.push({
+        source: entry.source,
+        defenseKind: entry.defenseKind,
+      });
+    }
+
+    return {
+      tools: tools.items,
+      toolSources: tools.sources,
+      languages: languages.items,
+      languageSources: languages.sources,
+      resistances: allDefenses
+        .filter((d) => d.defenseKind === "resistance")
+        .map((d) => d.type),
+      immunities: allDefenses
+        .filter((d) => d.defenseKind === "immunity")
+        .map((d) => d.type),
+      defenseSources,
+    };
+  }, [
+    allToolGrants,
+    allLanguageGrants,
+    allDefenseGrants,
+    classToolChoices,
+    backgroundToolChoices,
+    speciesToolChoices,
+    classLanguageChoices,
+    backgroundLanguageChoices,
+    speciesLanguageChoices,
+    speciesDefenseChoices,
+  ]);
+
   // Sync Character.skills and Character.savingThrows whenever proficiencies change
   useEffect(() => {
     setCharacter((prev) => {
@@ -982,9 +1221,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       next.skills = proficiencyResult.skills;
       next.savingThrows = proficiencyResult.savingThrows;
       next.passivePerception = 10 + next.getSkillModifier("prc");
+      next.languages =
+        identityGrantsResult.languages.length > 0
+          ? identityGrantsResult.languages
+          : ["Common"];
+      next.damageResistances = identityGrantsResult.resistances;
+      next.damageImmunities = identityGrantsResult.immunities;
       return next;
     });
-  }, [proficiencyResult]);
+  }, [proficiencyResult, identityGrantsResult]);
 
   const contextValue = useMemo(
     () => ({
@@ -1076,6 +1321,30 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setExpertiseChoices,
       skillSources: proficiencyResult.skillSources,
       expertiseSources: proficiencyResult.expertiseSources,
+      allToolGrants,
+      allLanguageGrants,
+      allDefenseGrants,
+      classToolChoices,
+      backgroundToolChoices,
+      speciesToolChoices,
+      classLanguageChoices,
+      backgroundLanguageChoices,
+      speciesLanguageChoices,
+      speciesDefenseChoices,
+      setClassToolChoicesAtIndex,
+      setBackgroundToolChoices,
+      setSpeciesToolChoices,
+      setClassLanguageChoicesAtIndex,
+      setBackgroundLanguageChoices,
+      setSpeciesLanguageChoices,
+      setSpeciesDefenseChoicesAtIndex,
+      toolSources: identityGrantsResult.toolSources,
+      languageSources: identityGrantsResult.languageSources,
+      defenseSources: identityGrantsResult.defenseSources,
+      resolvedToolItems: identityGrantsResult.tools,
+      resolvedLanguageItems: identityGrantsResult.languages,
+      resolvedResistances: identityGrantsResult.resistances,
+      resolvedImmunities: identityGrantsResult.immunities,
     }),
     [
       character, setName, setLevel, setAbilityScore, setAbilityScores,
@@ -1101,6 +1370,14 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setClassSkillChoicesAtIndex, setBackgroundSkillChoices, setSpeciesSkillChoices,
       setFeatSkillChoices, setOriginFeatSkillChoices, setExpertiseChoices,
       proficiencyResult,
+      allToolGrants, allLanguageGrants, allDefenseGrants,
+      classToolChoices, backgroundToolChoices, speciesToolChoices,
+      classLanguageChoices, backgroundLanguageChoices, speciesLanguageChoices,
+      speciesDefenseChoices,
+      setClassToolChoicesAtIndex, setBackgroundToolChoices, setSpeciesToolChoices,
+      setClassLanguageChoicesAtIndex, setBackgroundLanguageChoices,
+      setSpeciesLanguageChoices, setSpeciesDefenseChoicesAtIndex,
+      identityGrantsResult,
     ],
   );
 

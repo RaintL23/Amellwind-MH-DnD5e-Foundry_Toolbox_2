@@ -12,6 +12,7 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { formatAbilitySummary } from "@/features/dnd-races/mappers/dnd-race.mapper";
 import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
+import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 import { parseBackgroundStartingEquipment } from "@/shared/utils/starting-equipment.parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -484,9 +485,18 @@ export function mapDndBackground(raw: any): DndBackground {
       ? listProf.languages
       : mapLanguageSummary(raw);
 
+  const bgSource = { type: "background" as const, name: String(raw.name ?? "Unknown") };
   const skillGrants = parseSkillProficiencyBlocks(
     Array.isArray(raw.skillProficiencies) ? raw.skillProficiencies : [],
-    { type: "background", name: String(raw.name ?? "Unknown") },
+    bgSource,
+  );
+  const toolGrants = parseNamedProficiencyBlocks(
+    Array.isArray(raw.toolProficiencies) ? raw.toolProficiencies : [],
+    bgSource,
+  );
+  const languageGrants = parseNamedProficiencyBlocks(
+    Array.isArray(raw.languageProficiencies) ? raw.languageProficiencies : [],
+    bgSource,
   );
 
   return {
@@ -513,6 +523,8 @@ export function mapDndBackground(raw: any): DndBackground {
     features,
     suggestedCharacteristics: suggested,
     skillGrants,
+    toolGrants,
+    languageGrants,
     startingEquipmentOffers: parseBackgroundStartingEquipment(
       raw.startingEquipment,
     ),
