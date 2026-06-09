@@ -98,11 +98,8 @@ export function WeaponProficiencyInfo({
             aria-hidden
           />
           <div className="min-w-0 space-y-2.5">
-            <ProficiencySection title="D&D Category" compact>
+            <ProficiencySection title="D&D Weapon Category" compact>
               <WeaponCategoryBadges weaponName={weaponName} size="xs" />
-              <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
-                {category}
-              </p>
             </ProficiencySection>
 
             <ProficiencySection title="Compatible Proficiency" compact>

@@ -38,6 +38,10 @@ type NavItem = {
 };
 type NavGroup = { section: string; label: string; items: NavItem[] };
 
+const STANDALONE_NAV_ITEMS: NavItem[] = [
+  { to: "/builder", label: "Builder", icon: User },
+];
+
 const NAV_GROUPS: NavGroup[] = [
   {
     section: "Amellwind Homebrew",
@@ -47,10 +51,7 @@ const NAV_GROUPS: NavGroup[] = [
   {
     section: "Amellwind Homebrew",
     label: "Character Tools",
-    items: [
-      { to: "/builder", label: "Builder", icon: User },
-      { to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
-    ],
+    items: [{ to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint }],
   },
   {
     section: "Amellwind Homebrew",
@@ -311,6 +312,16 @@ function SidebarNav({
 
   return (
     <nav className="flex flex-col gap-1 p-2 flex-1 overflow-y-auto">
+      <div className={cn("flex flex-col gap-0.5", !collapsed && "pb-2 mb-1 border-b border-border")}>
+        {STANDALONE_NAV_ITEMS.map((item) => (
+          <NavItemLink
+            key={item.to}
+            {...item}
+            collapsed={collapsed}
+            onMobileClose={onMobileClose}
+          />
+        ))}
+      </div>
       {NAV_GROUPS.map((group, groupIndex) => {
         const previous = NAV_GROUPS[groupIndex - 1];
         const sectionChanged = !previous || previous.section !== group.section;
