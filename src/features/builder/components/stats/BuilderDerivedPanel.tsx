@@ -7,12 +7,9 @@ import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
 import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function BuilderDerivedPanel() {
-  const { character, combat } = useCharacterBuilder();
+  const { character } = useCharacterBuilder();
   const hitPointStats = useCharacterHitPoints();
   const armorClass = useCharacterArmorClass();
-
-  const critRange = combat.mainHand?.critRange ?? 20;
-  const critPct = Math.round(((21 - critRange) / 20) * 100);
 
   return (
     <BuilderPanel
@@ -42,15 +39,7 @@ export function BuilderDerivedPanel() {
           label="Initiative"
           value={formatModifier(character.getModifier("dex"))}
         />
-        <DerivedRow
-          label="Critical Range"
-          value={critRange === 20 ? "20" : `${critRange}–20`}
-        />
       </div>
-      <p className="mt-2 text-[10px] text-muted-foreground">
-        Critical Chance:{" "}
-        <span className="font-medium text-foreground">{critPct}%</span>
-      </p>
     </BuilderPanel>
   );
 }

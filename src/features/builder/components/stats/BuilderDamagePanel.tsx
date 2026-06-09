@@ -137,6 +137,12 @@ export function BuilderDamagePanel() {
                       detail={`+${combat.mainHand.attackBonus}`}
                     />
                   )}
+                  {combat.mainHand && (
+                    <BreakdownLine
+                      name="Critical Range"
+                      detail={critRange === 20 ? "20" : `${critRange}–20`}
+                    />
+                  )}
                 </div>
 
                 <div className="mt-2 h-1 overflow-hidden rounded-full bg-muted">
