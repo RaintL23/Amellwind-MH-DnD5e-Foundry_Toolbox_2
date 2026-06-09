@@ -109,6 +109,10 @@ import {
   getWeaponCategoryBadges,
   getWeaponProficiencyRule,
 } from "@/features/weapons/data/weapon-proficiencies.data";
+import {
+  getOffHandWeaponBlockLabel,
+  getOffHandWeaponBlockReason,
+} from "@/features/weapons/utils/weapon-hands.utils";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 
 const RARITY_BADGE: Record<string, string> = {
@@ -1080,6 +1084,16 @@ export function BuilderItemLibraryPanel({
                   loading={weaponsLoading}
                   equipped={equippedWeapon?.weapon.name ?? null}
                   onSelect={handleSelectWeapon}
+                  getDisabledReason={
+                    selectedSlot === "offHand"
+                      ? (weapon) => {
+                          const reason = getOffHandWeaponBlockReason(weapon);
+                          return reason
+                            ? getOffHandWeaponBlockLabel(reason)
+                            : null;
+                        }
+                      : undefined
+                  }
                 />
               ))}
 
@@ -1405,41 +1419,51 @@ function WeaponList({
   loading,
   equipped,
   onSelect,
+  getDisabledReason,
 }: {
   inventory: Weapon[];
   catalog: Weapon[];
   loading: boolean;
   equipped: string | null;
   onSelect: (w: Weapon) => void;
+  getDisabledReason?: (weapon: Weapon) => string | null;
 }) {
   if (loading) return <EmptyState text="Cargando armas…" />;
   if (inventory.length === 0 && catalog.length === 0) {
     return <EmptyState text="No weapons available." />;
   }
 
+  function renderWeaponRow(w: Weapon, key: string, iconMuted: boolean) {
+    const isEquipped = equipped === w.name;
+    const disabledReason =
+      !isEquipped && getDisabledReason ? getDisabledReason(w) : null;
+
+    return (
+      <ItemRow
+        key={key}
+        icon={
+          <Sword
+            className={cn(
+              "h-3.5 w-3.5",
+              iconMuted ? "text-muted-foreground" : "text-primary",
+            )}
+          />
+        }
+        name={w.name}
+        meta={<WeaponListBadges weapon={w} />}
+        equipped={isEquipped}
+        disabled={!!disabledReason}
+        disabledHint={disabledReason ?? undefined}
+        onClick={() => onSelect(w)}
+      />
+    );
+  }
+
   return (
     <>
       {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
-      {inventory.map((w) => (
-        <ItemRow
-          key={`inv-${w.name}`}
-          icon={<Sword className="h-3.5 w-3.5 text-primary" />}
-          name={w.name}
-          meta={<WeaponListBadges weapon={w} />}
-          equipped={equipped === w.name}
-          onClick={() => onSelect(w)}
-        />
-      ))}
-      {catalog.map((w) => (
-        <ItemRow
-          key={w.name}
-          icon={<Sword className="h-3.5 w-3.5 text-muted-foreground" />}
-          name={w.name}
-          meta={<WeaponListBadges weapon={w} />}
-          equipped={equipped === w.name}
-          onClick={() => onSelect(w)}
-        />
-      ))}
+      {inventory.map((w) => renderWeaponRow(w, `inv-${w.name}`, false))}
+      {catalog.map((w) => renderWeaponRow(w, w.name, true))}
     </>
   );
 }
@@ -1671,6 +1695,8 @@ function ItemRow({
   trailing,
   trailingTitle,
   equipped = false,
+  disabled = false,
+  disabledHint,
   onClick,
 }: {
   icon: React.ReactNode;
@@ -1680,15 +1706,22 @@ function ItemRow({
   trailing?: string;
   trailingTitle?: string;
   equipped?: boolean;
+  disabled?: boolean;
+  disabledHint?: string;
   onClick: () => void;
 }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      disabled={disabled}
+      title={disabled ? disabledHint : undefined}
       className={cn(
-        "mb-1 flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors hover:bg-muted/50",
+        "mb-1 flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors",
         equipped ? "border-violet-400/40 bg-violet-400/5" : "border-border/60",
+        disabled
+          ? "cursor-not-allowed opacity-40"
+          : "hover:bg-muted/50",
       )}
     >
       <div className="min-w-0 flex-1">

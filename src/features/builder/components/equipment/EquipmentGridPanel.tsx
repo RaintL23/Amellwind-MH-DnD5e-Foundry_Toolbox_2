@@ -125,10 +125,10 @@ export function EquipmentGridPanel({
           onClickEquip={() => {}}
           onClickDetails={() => {}}
           isSelected={false}
-          disabled
+          disabled={true}
           disabledHint={
-            offHandBlockReason === "dual-blades"
-              ? "Dual Blades"
+            offHandBlockReason === "both-grip"
+              ? (mainHand?.weapon.name ?? "Ocupa ambas manos")
               : "Arma a 2 manos"
           }
         />
@@ -145,6 +145,7 @@ export function EquipmentGridPanel({
               : null
           }
           onClickEquip={() => handleWeaponSlot("offHand")}
+          disabled={true}
           onClickDetails={() => onSelectSlot("offHand")}
           onUnequip={offHand ? () => onUnequipSlot("offHand") : undefined}
           isSelected={selectedSlot === "offHand"}

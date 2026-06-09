@@ -52,8 +52,9 @@ import {
 } from "@/features/weapons/utils/shield.utils";
 import {
   blocksOffHand,
+  canEquipInOffHand,
   getOffHandBlockReason,
-  isDualBladesWeapon,
+  occupiesBothGripSlots,
   isWeaponTwoHanded,
   OffHandBlockReason,
 } from "@/features/weapons/utils/weapon-hands.utils";
@@ -590,11 +591,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
         if (
           isWeaponTwoHanded(equipped) ||
           weaponIncludesShield(weapon) ||
-          isDualBladesWeapon(weapon)
+          occupiesBothGripSlots(weapon)
         ) {
           setOffHand(null);
         }
-      } else if (!hasActiveIntegratedShield(mainHand) && !blocksOffHand(mainHand)) {
+      } else if (
+        !hasActiveIntegratedShield(mainHand) &&
+        !blocksOffHand(mainHand) &&
+        canEquipInOffHand(weapon)
+      ) {
         setOffHand(equipped);
       }
     },
