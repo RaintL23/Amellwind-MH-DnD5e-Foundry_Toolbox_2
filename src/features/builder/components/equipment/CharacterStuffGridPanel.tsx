@@ -40,12 +40,6 @@ interface CharacterStuffGridPanelProps {
   onUnequipSlot: (slot: PaperDollSelection) => void;
 }
 
-function backstoryPreview(notes: string): string {
-  const line = notes.trim().split(/\r?\n/)[0] ?? "";
-  if (line.length <= 24) return line;
-  return `${line.slice(0, 24)}…`;
-}
-
 export function CharacterStuffGridPanel({
   species,
   background,
@@ -67,7 +61,9 @@ export function CharacterStuffGridPanel({
   const showSubclass = isSubclassLevelReached(classData, level);
   const featSlotLevels = getFeatSlotLevels(classSelection?.name ?? "", level);
   const subclassLabel = classData?.subclassTitle ?? "Subclass";
-  const showOriginFeat = !!(speciesOriginFeatGrant || backgroundOriginFeatGrant);
+  const showOriginFeat = !!(
+    speciesOriginFeatGrant || backgroundOriginFeatGrant
+  );
   const originFeatCanChange = speciesOriginFeatGrant?.kind === "choose";
   const originFeatEquipped = speciesOriginFeat
     ? {
