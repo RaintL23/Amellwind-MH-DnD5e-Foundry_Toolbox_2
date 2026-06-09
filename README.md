@@ -1,59 +1,61 @@
 # Amellwind Monster Hunter DnD5e Toolbox
 
-Toolkit web para Dungeon Masters que usan el homebrew de **Amellwind**, que combina **Monster Hunter** con **Dungeons & Dragons 5e**. Consulta monstruos, runas, armas, personajes, cocina, tiendas y más desde una sola aplicación, con datos cacheados localmente para uso offline entre sesiones.
+Toolkit web para **Dungeon Masters** y jugadores del homebrew de **Amellwind**, que combina **Monster Hunter** con **Dungeons & Dragons 5e**. Monstruos, runas, armas, character builder, cocina, tiendas y más en una sola aplicación, con datos cacheados en el navegador para consultar offline entre sesiones.
 
-> **Estado:** v0.1.0 — el Character Builder está en fase **ALPHA**.
+Nació en mi mesa de rol: juego con amigos más entusiasmados con D&D que con Monster Hunter, y al usar el homebrew de Amellwind tropezamos una y otra vez buscando reglas y opciones de personaje. Es un sistema con poco material centralizado — casi sin wikis ni referencias cómodas — así que armé esta herramienta para que cualquiera pueda explorar el contenido de Amellwind y preparar personajes sin saltar entre PDFs y pestañas sueltas.
+
+> **Estado:** v0.1.23 — el Character Builder está en fase **ALPHA**.
 
 ## Características
 
 ### Amellwind Homebrew
 
-| Sección              | Ruta                 | Descripción                                                                 |
-| -------------------- | -------------------- | --------------------------------------------------------------------------- |
-| **Builder**          | `/builder`           | Character Builder — equipamiento, runas y cálculo de daño por turno _(ALPHA)_ |
-| **Creation Guide**   | `/character-guide`   | Guía de creación de personajes del manual (species, roles, skills, etc.)    |
-| **Monstie Sidekick** | `/monstie-sidekick`  | Reglas y creador de sidekicks Monstie                                       |
-| **NPC Generator**    | `/npc-generator`     | Generador de stat blocks para NPCs humanoides                               |
-| **Species**          | `/species`           | Especies y subrazas de la Guía de Caza                                      |
-| **Backgrounds**      | `/backgrounds`       | Trasfondos de cazador del manual                                            |
-| **Feats**            | `/feats`             | Dotes (feats) del manual                                                    |
-| **Monsters**         | `/monsters`          | Bestiario MH con stat blocks, detalle y página dedicada por monstruo        |
-| **Runes**            | `/runes`             | Materiales de monstruo y planificador de builds (drawer lateral)            |
-| **Weapons**          | `/weapons`           | Armas de cazador (Hunter Weapons) y optional features                       |
-| **Items**            | `/items`             | Catálogo de ítems de la Guía de Caza                                        |
-| **Shops**            | `/shops`             | Tiendas con carrito de compra                                               |
-| **Cooking**          | `/cooking`           | Sistema de cocina artesana                                                  |
-| **Combo List**       | `/combo`             | Crafteo y combinaciones de objetos                                          |
-| **Environments**     | `/environments`      | Biomas y tablas de encuentro/recursos                                       |
-| **Resources**        | `/resources`         | Recursos de entorno (plantas, minerales, etc.)                              |
-| **Downtime**         | `/downtime`          | Actividades de tiempo libre del manual                                      |
+| Sección              | Ruta                | Descripción                                                                   |
+| -------------------- | ------------------- | ----------------------------------------------------------------------------- |
+| **Builder**          | `/builder`          | Character Builder — equipamiento, runas y cálculo de daño por turno _(ALPHA)_ |
+| **Creation Guide**   | `/character-guide`  | Guía de creación de personajes del manual (species, roles, skills, etc.)      |
+| **Monstie Sidekick** | `/monstie-sidekick` | Reglas y creador de sidekicks Monstie                                         |
+| **NPC Generator**    | `/npc-generator`    | Generador de stat blocks para NPCs humanoides                                 |
+| **Species**          | `/species`          | Especies y subrazas de la Guía de Caza                                        |
+| **Backgrounds**      | `/backgrounds`      | Trasfondos de cazador del manual                                              |
+| **Feats**            | `/feats`            | Dotes (feats) del manual                                                      |
+| **Monsters**         | `/monsters`         | Bestiario MH con stat blocks, detalle y página dedicada por monstruo          |
+| **Runes**            | `/runes`            | Materiales de monstruo y planificador de builds (drawer lateral)              |
+| **Weapons**          | `/weapons`          | Armas de cazador (Hunter Weapons) y optional features                         |
+| **Items**            | `/items`            | Catálogo de ítems de la Guía de Caza                                          |
+| **Shops**            | `/shops`            | Tiendas con carrito de compra                                                 |
+| **Cooking**          | `/cooking`          | Sistema de cocina artesana                                                    |
+| **Combo List**       | `/combo`            | Crafteo y combinaciones de objetos                                            |
+| **Environments**     | `/environments`     | Biomas y tablas de encuentro/recursos                                         |
+| **Resources**        | `/resources`        | Recursos de entorno (plantas, minerales, etc.)                                |
+| **Downtime**         | `/downtime`         | Actividades de tiempo libre del manual                                        |
 
 ### Compendio D&D 5e
 
 Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son homebrew de Amellwind):
 
-| Sección      | Ruta                          | Descripción                                      |
-| ------------ | ----------------------------- | ------------------------------------------------ |
-| **Spells**   | `/spells`                     | Conjuros con filtros por clase, nivel y fuente   |
-| **Classes**  | `/classes`, `/classes/:id`    | Clases base con página de detalle por variante   |
-| **Items**        | `/dnd-items`                  | Ítems mágicos y equipo del PHB/DMG y otras fuentes |
-| **Bestiary**     | `/bestiary`, `/bestiary/:id`  | Criaturas del MM y otras fuentes, con carga bajo demanda |
-| **Races**        | `/dnd-races`                  | Especies, linajes y subrazas oficiales 5e               |
-| **Backgrounds**  | `/dnd-backgrounds`            | Trasfondos oficiales 5e (2014 / 2024)                   |
-| **Feats**        | `/dnd-feats`                  | Dotes oficiales 5e                                      |
+| Sección         | Ruta                         | Descripción                                              |
+| --------------- | ---------------------------- | -------------------------------------------------------- |
+| **Spells**      | `/spells`                    | Conjuros con filtros por clase, nivel y fuente           |
+| **Classes**     | `/classes`, `/classes/:id`   | Clases base con página de detalle por variante           |
+| **Items**       | `/dnd-items`                 | Ítems mágicos y equipo del PHB/DMG y otras fuentes       |
+| **Bestiary**    | `/bestiary`, `/bestiary/:id` | Criaturas del MM y otras fuentes, con carga bajo demanda |
+| **Races**       | `/dnd-races`                 | Especies, linajes y subrazas oficiales 5e                |
+| **Backgrounds** | `/dnd-backgrounds`           | Trasfondos oficiales 5e (2014 / 2024)                    |
+| **Feats**       | `/dnd-feats`                 | Dotes oficiales 5e                                       |
 
 ## Stack tecnológico
 
-| Capa           | Tecnología                          |
-| -------------- | ----------------------------------- |
-| Framework      | React 18 + TypeScript               |
-| Build          | Vite                                |
-| Estilos        | Tailwind CSS                        |
-| Componentes UI | shadcn/ui (Radix UI)                |
-| Tablas         | TanStack Table                      |
-| Routing        | React Router v6 (lazy + Suspense)   |
-| Almacenamiento | IndexedDB (`idb`)                   |
-| Paquetes       | pnpm                                |
+| Capa           | Tecnología                        |
+| -------------- | --------------------------------- |
+| Framework      | React 18 + TypeScript             |
+| Build          | Vite                              |
+| Estilos        | Tailwind CSS                      |
+| Componentes UI | shadcn/ui (Radix UI)              |
+| Tablas         | TanStack Table                    |
+| Routing        | React Router v6 (lazy + Suspense) |
+| Almacenamiento | IndexedDB (`idb`)                 |
+| Paquetes       | pnpm                              |
 
 La app es una **SPA** sin backend propio. Los datos de Amellwind se sincronizan y cachean en el navegador; el compendio D&D 5e se obtiene bajo demanda desde el mirror de 5etools.
 
@@ -92,11 +94,11 @@ Al abrir la app por primera vez (o cuando la caché tiene más de 24 horas), se 
 
 ### Compendio 5etools: producción vs. desarrollo offline
 
-| Entorno | Configuración | Origen de datos |
-| ------- | ------------- | --------------- |
-| **Vercel / producción** | Sin variables de entorno | Mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) vía `raw.githubusercontent.com` |
-| **Desarrollo (por defecto)** | Igual que producción | Remoto |
-| **Desarrollo offline** | `VITE_5ETOOLS_DATA=local` en `.env.local` | JSON en `public/5etools/` |
+| Entorno                      | Configuración                             | Origen de datos                                                                                          |
+| ---------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| **Vercel / producción**      | Sin variables de entorno                  | Mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) vía `raw.githubusercontent.com` |
+| **Desarrollo (por defecto)** | Igual que producción                      | Remoto                                                                                                   |
+| **Desarrollo offline**       | `VITE_5ETOOLS_DATA=local` en `.env.local` | JSON en `public/5etools/`                                                                                |
 
 En producción **no hace falta** commitear `races.json`, `backgrounds.json`, `feats.json` ni el resto del mirror: spells, classes, races, backgrounds, feats, items y bestiary se resuelven en runtime desde GitHub. Los JSON en `public/5etools/` que sí están en el repo son solo un subset para probar items/bestiary sin red.
 
@@ -177,6 +179,10 @@ El archivo [`instrucctions.md`](./instrucctions.md) contiene la documentación t
 
 ## Aviso legal
 
-Este proyecto es una herramienta fan-made para facilitar el uso del homebrew de Amellwind. **Monster Hunter** es propiedad de Capcom y **Dungeons & Dragons** es propiedad de Wizards of the Coast. No está afiliado ni respaldado por ninguna de estas marcas ni por el autor del homebrew.
+Este proyecto es una herramienta fan-made para facilitar el uso del homebrew de **Amellwind** (_Monster Hunter D&D 5e_). Todo el contenido, reglas y diseño de ese homebrew son obra de Amellwind; este repositorio **no crea ni modifica** ese material: solo organiza y presenta información que ya está **publicada en internet** (por ejemplo en [5etools](https://5e.tools) y fuentes relacionadas).
+
+La fuente oficial y el trabajo completo del autor están en su Patreon: [patreon.com/cw/amellwind](https://www.patreon.com/cw/amellwind).
+
+**Monster Hunter** es propiedad de Capcom y **Dungeons & Dragons** es propiedad de Wizards of the Coast. Este proyecto no está afiliado ni respaldado por Capcom, Wizards of the Coast, Amellwind ni por ninguna otra marca o autor mencionado.
 
 Los derechos del contenido homebrew corresponden a sus respectivos autores. Consulta las licencias originales en [5etools](https://5e.tools) y en los repositorios fuente.
