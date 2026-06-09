@@ -97,6 +97,7 @@ import {
 } from "../shared/FeatSourceBadgeGroup";
 import type { NamedVariant } from "../shared/NamedVariantSwitcher";
 import { LibraryList } from "../shared/LibraryList";
+import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";
 import { SourceVariantSwitcher } from "../shared/SourceVariantSwitcher";
 import { useLibraryVariants } from "../../hooks/useLibraryVariants";
 import {
@@ -1116,7 +1117,7 @@ export function BuilderItemLibraryPanel({
               </div>
             )}
 
-          <div className="h-auto max-h-[1400px] space-y-1 overflow-y-auto overscroll-y-contain pr-1">
+          <ScrollableWhenNeeded>
             {isWeaponSlot &&
               (showWeaponDetail ? (
                 <WeaponLibraryDetail equipped={equippedWeapon} />
@@ -1398,7 +1399,7 @@ export function BuilderItemLibraryPanel({
                   onSelect={handleSelectFeatOption}
                 />
               ))}
-          </div>
+          </ScrollableWhenNeeded>
         </>
       )}
     </BuilderPanel>
