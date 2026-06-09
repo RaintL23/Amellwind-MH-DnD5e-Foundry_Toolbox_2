@@ -1,6 +1,7 @@
 import { Weapon, PROPERTY_LABELS } from "@/shared/types";
 import { formatWeaponValue } from "../services/weapon.service";
 import { getWeaponShieldAcBonusAtIndex } from "../utils/shield.utils";
+import { WeaponProficiencyInfo } from "./WeaponProficiencyInfo";
 import { Shield } from "lucide-react";
 
 interface WeaponDialogMetaProps {
@@ -64,6 +65,8 @@ export function WeaponDialogMeta({
           {weapon.description}
         </p>
       )}
+
+      <WeaponProficiencyInfo weaponName={weapon.name} className="mb-4" />
 
       {weapon.includesShield && (
         <div className="flex items-start gap-2 rounded-md border border-teal-800/40 bg-teal-950/20 px-3 py-2.5 mb-4">

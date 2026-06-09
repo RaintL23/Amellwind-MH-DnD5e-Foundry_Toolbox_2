@@ -16,6 +16,7 @@ import {
   UNLOCK_COLUMN_PREFIX,
 } from "@/shared/types";
 import { ExpandableFeatureRow } from "@/features/weapons/components/ExpandableFeatureRow";
+import { WeaponProficiencyInfo } from "@/features/weapons/components/WeaponProficiencyInfo";
 import { RarityDot } from "@/features/weapons/components/RarityDot";
 import { useWeaponDialog } from "@/features/weapons/hooks/useWeaponDialog";
 import { formatWeaponValue } from "@/features/weapons/services/weapon.service";
@@ -268,6 +269,12 @@ export function WeaponLibraryDetail({ equipped }: WeaponLibraryDetailProps) {
               {weapon.description}
             </p>
           )}
+
+          <WeaponProficiencyInfo
+            weaponName={weapon.name}
+            compact
+            className="mb-3"
+          />
 
           <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
             <StatBox

@@ -61,7 +61,7 @@ import {
 } from "../../utils/builder-class.utils";
 import { ORIGIN_FEAT_SOURCE_NAME } from "../../utils/origin-feat.constants";
 import { AsiLibraryPanel } from "./AsiLibraryPanel";
-import { ArmorItem, Weapon } from "@/shared/types";
+import { ArmorItem, Weapon, DMG_TYPE_LABELS, PROPERTY_LABELS } from "@/shared/types";
 import type {
   Background,
   BuilderFeatSelection,
@@ -105,6 +105,10 @@ import { FeatLibraryDetail } from "./FeatLibraryDetail";
 import { ClassFeatureDetailsPanel } from "@/features/classes/components/detail/ClassFeatureDetailsPanel";
 import { ClassLibraryDetail } from "./ClassLibraryDetail";
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
+import {
+  getWeaponCategoryBadges,
+  getWeaponProficiencyRule,
+} from "@/features/weapons/data/weapon-proficiencies.data";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 
 const RARITY_BADGE: Record<string, string> = {
@@ -1344,6 +1348,57 @@ export function BuilderItemLibraryPanel({
   );
 }
 
+function LibraryItemBadge({
+  children,
+  variant = "default",
+}: {
+  children: React.ReactNode;
+  variant?: "default" | "category";
+}) {
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium",
+        variant === "category"
+          ? "border-amber-700/40 bg-amber-950/30 text-amber-200/90"
+          : "border-border/50 bg-muted/40 text-muted-foreground",
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+function LibraryItemBadgeRow({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex flex-wrap items-center gap-1 pl-5 pt-1">{children}</div>
+  );
+}
+
+function WeaponListBadges({ weapon }: { weapon: Weapon }) {
+  const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
+  const rule = getWeaponProficiencyRule(weapon.name);
+  const categoryBadges = rule ? getWeaponCategoryBadges(rule) : [];
+
+  return (
+    <LibraryItemBadgeRow>
+      <LibraryItemBadge>
+        {weapon.dmg1} {dmgLabel}
+      </LibraryItemBadge>
+      {weapon.properties.map((prop) => (
+        <LibraryItemBadge key={prop}>
+          {PROPERTY_LABELS[prop] ?? prop}
+        </LibraryItemBadge>
+      ))}
+      {categoryBadges.map((badge) => (
+        <LibraryItemBadge key={badge} variant="category">
+          {badge}
+        </LibraryItemBadge>
+      ))}
+    </LibraryItemBadgeRow>
+  );
+}
+
 function WeaponList({
   inventory,
   catalog,
@@ -1370,7 +1425,7 @@ function WeaponList({
           key={`inv-${w.name}`}
           icon={<Sword className="h-3.5 w-3.5 text-primary" />}
           name={w.name}
-          stats={`${w.dmg1} ${w.dmgType} • ${w.properties.join(", ")}`}
+          meta={<WeaponListBadges weapon={w} />}
           equipped={equipped === w.name}
           onClick={() => onSelect(w)}
         />
@@ -1380,7 +1435,7 @@ function WeaponList({
           key={w.name}
           icon={<Sword className="h-3.5 w-3.5 text-muted-foreground" />}
           name={w.name}
-          stats={`${w.dmg1} ${w.dmgType} • ${w.properties.join(", ")}`}
+          meta={<WeaponListBadges weapon={w} />}
           equipped={equipped === w.name}
           onClick={() => onSelect(w)}
         />
@@ -1410,7 +1465,12 @@ function ArmorList({
           <ItemRow
             icon={<Shirt className="h-3.5 w-3.5 text-violet-400" />}
             name="Cloth"
-            stats={`10 + DEX • ${CLOTHING_ARMOR.rarity}`}
+            meta={
+              <LibraryItemBadgeRow>
+                <LibraryItemBadge>10 + DEX</LibraryItemBadge>
+                <LibraryItemBadge>{CLOTHING_ARMOR.rarity}</LibraryItemBadge>
+              </LibraryItemBadgeRow>
+            }
             equipped={equippedName === CLOTHING_ARMOR.name}
             onClick={() => onSelect(CLOTHING_ARMOR)}
           />
@@ -1422,7 +1482,12 @@ function ArmorList({
           key={`inv-${a.name}`}
           icon={<Shield className="h-3.5 w-3.5 text-primary" />}
           name={a.name}
-          stats={`CA ${a.baseAC} • ${a.category}`}
+          meta={
+            <LibraryItemBadgeRow>
+              <LibraryItemBadge>CA {a.baseAC}</LibraryItemBadge>
+              <LibraryItemBadge>{a.category}</LibraryItemBadge>
+            </LibraryItemBadgeRow>
+          }
           rarity={a.rarity}
           equipped={equippedName === a.name}
           onClick={() => onSelect(a)}
@@ -1433,8 +1498,12 @@ function ArmorList({
           key={a.name}
           icon={<Shield className="h-3.5 w-3.5 text-muted-foreground" />}
           name={a.name}
-          stats={`CA ${a.baseAC} • ${a.category}`}
-          rarity={a.rarity}
+          meta={
+            <LibraryItemBadgeRow>
+              <LibraryItemBadge>CA {a.baseAC}</LibraryItemBadge>
+              <LibraryItemBadge>{a.category}</LibraryItemBadge>
+            </LibraryItemBadgeRow>
+          }
           equipped={equippedName === a.name}
           onClick={() => onSelect(a)}
         />
@@ -1457,7 +1526,11 @@ function TrinketList({
           key={name}
           icon={<Gem className="h-3.5 w-3.5 text-muted-foreground" />}
           name={name}
-          stats="Placeholder"
+          meta={
+            <LibraryItemBadgeRow>
+              <LibraryItemBadge>Placeholder</LibraryItemBadge>
+            </LibraryItemBadgeRow>
+          }
           equipped={equippedName === name}
           onClick={() => onSelect(name)}
         />
@@ -1593,7 +1666,7 @@ function FeatList({
 function ItemRow({
   icon,
   name,
-  stats,
+  meta,
   rarity,
   trailing,
   trailingTitle,
@@ -1602,7 +1675,7 @@ function ItemRow({
 }: {
   icon: React.ReactNode;
   name: string;
-  stats: string;
+  meta?: React.ReactNode;
   rarity?: string;
   trailing?: string;
   trailingTitle?: string;
@@ -1624,11 +1697,7 @@ function ItemRow({
           <span className="truncate">{name}</span>
           {equipped && <Check className="h-3 w-3 shrink-0 text-emerald-400" />}
         </div>
-        {stats && (
-          <div className="truncate pl-5 text-[11px] text-muted-foreground">
-            {stats}
-          </div>
-        )}
+        {meta}
       </div>
       <div className="ml-2 flex shrink-0 items-center gap-1.5">
         {trailing && (

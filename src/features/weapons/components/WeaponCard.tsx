@@ -1,8 +1,10 @@
 import { Weapon, PROPERTY_LABELS, DMG_TYPE_LABELS, DMG_TYPE_COLOR } from "@/shared/types";
 import {
+  formatWeaponCategory,
   formatWeaponProficiencyHint,
   getWeaponProficiencyRule,
 } from "../data/weapon-proficiencies.data";
+import { WeaponCategoryBadges } from "./WeaponCategoryBadges";
 import { formatWeaponValue } from "../services/weapon.service";
 import { cn } from "@/shared/utils/cn";
 import { Swords, Weight, Coins, GraduationCap } from "lucide-react";
@@ -33,6 +35,9 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
   const proficiencyHint = proficiencyRule
     ? formatWeaponProficiencyHint(proficiencyRule)
     : undefined;
+  const categoryLabel = proficiencyRule
+    ? formatWeaponCategory(proficiencyRule)
+    : undefined;
 
   const damageDisplay = weapon.dmg2
     ? `${weapon.dmg1} / ${weapon.dmg2}`
@@ -57,10 +62,11 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
           {weapon.range && (
             <p className="text-xs text-muted-foreground mt-0.5">Rango: {weapon.range}</p>
           )}
+          <WeaponCategoryBadges weaponName={weapon.name} size="xs" className="mt-1" />
           {proficiencyHint && (
             <p
               className="flex items-start gap-1 text-[10px] text-muted-foreground/90 mt-1 leading-snug line-clamp-2"
-              title={`Compatible proficiency: ${proficiencyHint}`}
+              title={`${categoryLabel ?? ""}${categoryLabel ? " · " : ""}Compatible proficiency: ${proficiencyHint}`}
             >
               <GraduationCap className="h-3 w-3 shrink-0 mt-px opacity-70" aria-hidden />
               <span>{proficiencyHint}</span>
