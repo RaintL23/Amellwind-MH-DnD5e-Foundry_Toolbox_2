@@ -106,6 +106,16 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
     /wyvernfire|dragonpiercer|Guard AC|Mighty Weapon/i,
     "mechanic:class-feature",
   ],
+  // Regeneración de extremidades / partes del cuerpo (efecto de curación mayor distinto del HP)
+  [/(?:regrow|missing part.*grow|body part.*grow|limb.*regrow)/i, "mechanic:regeneration"],
+  // Spell condicionado a un tipo de daño elemental específico
+  [
+    /(?:cast|spell)\b[^.]*\bdeals?\s+(?:fire|lightning|thunder|cold|acid|poison|radiant|necrotic|psychic|force|bludgeoning|piercing|slashing)\s+damage/i,
+    "mechanic:spell-element",
+  ],
+  // Recarga o uso ligado a descansos
+  [/\bshort(?:\s+or\s+long)?\s+rest\b|\{@rest\s+short\}/i, "mechanic:short-rest"],
+  [/\b(?:short\s+or\s+)?long\s+rest\b|\{@rest\s+long\}/i, "mechanic:long-rest"],
 ];
 
 // ─── Scaled sub-tag extractors ────────────────────────────────────────────────
@@ -133,9 +143,14 @@ function extraDamageTag(text: string): string | null {
 
 /**
  * mechanic:healing:minor → 1d4 – 1d6 o cantidad fija ≤ 10
- * mechanic:healing:major → 1d8+ / 2d6+ o cantidad fija > 10
+ * mechanic:healing:major → 1d8+ / 2d6+ o cantidad fija > 10,
+ *                          o cualquier efecto de regeneración de extremidades
  */
 function healingTag(text: string): string | null {
+  // Regeneración de partes del cuerpo: aunque el HP sea bajo, es un efecto major
+  if (/(?:regrow|missing part.*grow|body part.*grow|limb.*regrow)/i.test(text)) {
+    return "mechanic:healing:major";
+  }
   if (!/(?:regain|restore)\s+\d+.*hit points/i.test(text)) return null;
   const diceScore = parseLargestDiceScore(text);
   if (diceScore > 0) {
@@ -145,6 +160,31 @@ function healingTag(text: string): string | null {
   const fixed = text.match(/(?:regain|restore)\s+(\d+)\s+(?:hit points|hp)/i);
   const amount = fixed ? parseInt(fixed[1]) : 0;
   return amount > 10 ? "mechanic:healing:major" : "mechanic:healing:minor";
+}
+
+/**
+ * mechanic:spell-buff:damage → bonus/advantage a spell attack rolls o daño de hechizos
+ * mechanic:spell-buff:save   → bonus/incremento al spell save DC
+ */
+function spellBuffTags(text: string): string[] {
+  const tags: string[] = [];
+  const hasBuffLanguage =
+    /\+\d+\s*bonus|\badvantage\b|increase(?:s|d)?\s+by/i.test(text);
+
+  if (!hasBuffLanguage) return tags;
+
+  const targetsSaveDc =
+    /spell save\s+DC/i.test(text) ||
+    (/when you cast a spell/i.test(text) && /save\s+DC/i.test(text));
+
+  const targetsDamageOrAttack =
+    /spell attack\s+roll|spell damage|damage roll/i.test(text) ||
+    (/when you cast a spell/i.test(text) && !/save\s+DC/i.test(text));
+
+  if (targetsSaveDc) tags.push("mechanic:spell-buff:save");
+  if (targetsDamageOrAttack) tags.push("mechanic:spell-buff:damage");
+
+  return tags;
 }
 
 /**
@@ -183,6 +223,10 @@ function extractTags(effectText: string): string[] {
 
   const spell = spellTag(effectText);
   if (spell) tags.add(spell);
+
+  for (const buffTag of spellBuffTags(effectText)) {
+    tags.add(buffTag);
+  }
 
   return Array.from(tags);
 }

@@ -96,6 +96,8 @@ export function RuneFilters({
         emptyLabel="All tags"
         allLabel="All tags"
         countLabel={(count) => `${count} tags`}
+        searchable
+        searchPlaceholder="Search tags..."
       />
 
       <div className="col-span-2 flex gap-2">

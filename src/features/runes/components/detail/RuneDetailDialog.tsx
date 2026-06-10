@@ -11,7 +11,6 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { AddToBuildSection } from "./AddToBuildSection";
 import { EffectSection } from "./EffectSection";
-import { RuneTagsSection } from "./RuneTagsSection";
 import { TierBadge } from "../shared/TierBadge";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 
@@ -22,7 +21,12 @@ interface RuneDetailDialogProps {
   materialEffectIndex?: MaterialEffectNameIndex | null;
 }
 
-export function RuneDetailDialog({ rune, open, onOpenChange, materialEffectIndex }: RuneDetailDialogProps) {
+export function RuneDetailDialog({
+  rune,
+  open,
+  onOpenChange,
+  materialEffectIndex,
+}: RuneDetailDialogProps) {
   if (!rune) return null;
 
   return (
@@ -42,9 +46,7 @@ export function RuneDetailDialog({ rune, open, onOpenChange, materialEffectIndex
                 )}
               </span>
               <TierBadge tier={rune.tier} variant="full" />
-              {rune.slots.includes("A") && (
-                <Badge variant="blue">Armor</Badge>
-              )}
+              {rune.slots.includes("A") && <Badge variant="blue">Armor</Badge>}
               {rune.slots.includes("W") && (
                 <Badge variant="orange">Weapon</Badge>
               )}
@@ -60,7 +62,9 @@ export function RuneDetailDialog({ rune, open, onOpenChange, materialEffectIndex
               </p>
               <p className="text-lg font-semibold text-foreground">
                 {rune.carveChance === "-" ? (
-                  <span className="text-muted-foreground text-sm">No carveable</span>
+                  <span className="text-muted-foreground text-sm">
+                    No carveable
+                  </span>
                 ) : (
                   rune.carveChance
                 )}
@@ -72,7 +76,9 @@ export function RuneDetailDialog({ rune, open, onOpenChange, materialEffectIndex
               </p>
               <p className="text-lg font-semibold text-foreground">
                 {rune.captureChance === "-" ? (
-                  <span className="text-muted-foreground text-sm">No capturable</span>
+                  <span className="text-muted-foreground text-sm">
+                    No capturable
+                  </span>
                 ) : (
                   rune.captureChance
                 )}
@@ -90,6 +96,7 @@ export function RuneDetailDialog({ rune, open, onOpenChange, materialEffectIndex
               label="Armor Effect"
               text={rune.armorEffect}
               slot="armor"
+              tags={rune.armorTags}
               materialEffectIndex={materialEffectIndex}
             />
           )}
@@ -98,15 +105,9 @@ export function RuneDetailDialog({ rune, open, onOpenChange, materialEffectIndex
               label="Weapon Effect"
               text={rune.weaponEffect}
               slot="weapon"
+              tags={rune.weaponTags}
               materialEffectIndex={materialEffectIndex}
             />
-          )}
-
-          {rune.tags.length > 0 && (
-            <>
-              <Separator className="my-4" />
-              <RuneTagsSection rune={rune} />
-            </>
           )}
 
           <Separator className="my-4" />

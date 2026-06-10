@@ -4,12 +4,15 @@ import { RESOURCE_RARITY_STYLES } from "@/shared/types";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 import { MaterialEffectHighlightText } from "@/features/material-effects/components/MaterialEffectHighlightText";
 import { getReferencedMaterialEffectsForText } from "@/features/material-effects/utils/material-effect-highlight.utils";
+import { Badge } from "@/components/ui/badge";
+import { formatTag, tagVariant } from "../../utils/rune-tag.utils";
 import { cn } from "@/shared/utils/cn";
 
 interface EffectSectionProps {
   label: string;
   text: string;
   slot: MaterialEffectSlot;
+  tags?: string[];
   materialEffectIndex?: MaterialEffectNameIndex | null;
 }
 
@@ -30,6 +33,7 @@ export function EffectSection({
   label,
   text,
   slot,
+  tags = [],
   materialEffectIndex,
 }: EffectSectionProps) {
   const rarityLabel = useMemo(
@@ -47,7 +51,7 @@ export function EffectSection({
       <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">
         {label}
       </h4>
-      <p className="mt-1 mb-2">
+      <div className="mt-1 mb-2 flex flex-wrap items-center gap-1.5">
         <span
           className={cn(
             "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold",
@@ -56,7 +60,12 @@ export function EffectSection({
         >
           {rarityLabel}
         </span>
-      </p>
+        {tags.map((tag) => (
+          <Badge key={tag} variant={tagVariant(tag)} className="rounded-md text-[11px]">
+            {formatTag(tag)}
+          </Badge>
+        ))}
+      </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
         <MaterialEffectHighlightText
           text={text}
