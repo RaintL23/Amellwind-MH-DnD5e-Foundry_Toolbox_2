@@ -149,3 +149,21 @@ export interface CombatCalculation {
   offHand: DamageBreakdown | null;
   totalDPT: number;
 }
+
+// ─── Spellcasting ─────────────────────────────────────────────────────────────
+
+/** Identifies a spell-level slot in the spellcasting grid. "spell-level-0" = cantrips. */
+export type SpellLevelSlot = `spell-level-${number}`;
+
+export interface BuilderSpellSelection {
+  id: string;
+  name: string;
+  level: number;
+  source: string;
+  school?: string;
+  /** Damage notation extracted from spell entries, e.g. "8d6" */
+  damageRoll?: string;
+}
+
+/** Spell selections keyed by spell level (0 = cantrips, 1–9 = spell levels). */
+export type BuilderSpellSelections = Record<number, BuilderSpellSelection[]>;

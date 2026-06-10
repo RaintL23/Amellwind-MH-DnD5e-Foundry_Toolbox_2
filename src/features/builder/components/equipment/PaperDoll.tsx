@@ -1,8 +1,9 @@
-import { Sword, Users } from "lucide-react";
+import { Sparkles, Sword, Users } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
   usePaperDollSelection,
   type PaperDollSelection,
+  isSpellLevelSlot,
 } from "../../hooks/usePaperDollSelection";
 import { useSelectedClass } from "../../hooks/useSelectedClass";
 import {
@@ -16,10 +17,15 @@ import { WeaponDetailPanel } from "./WeaponDetailPanel";
 import { ArmorDetailPanel } from "./ArmorDetailPanel";
 import { CharacterStuffGridPanel } from "./CharacterStuffGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
+import { SpellcastingGridPanel } from "./SpellcastingGridPanel";
+import { SpellLibraryPanel } from "./SpellLibraryPanel";
 import { BuilderItemLibraryPanel } from "./BuilderItemLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.utils";
+import { useSpellcasting } from "../../hooks/useSpellcasting";
+import { useSelectedSubclass } from "../../hooks/useSelectedSubclass";
+import { useSpellCatalog } from "../../hooks/useSpellCatalog";
 
 export function PaperDoll() {
   const {
@@ -58,10 +64,22 @@ export function PaperDoll() {
     unequipArmor,
     unequipShield,
     unequipTrinket,
+    spellSelections,
+    addSpell,
+    removeSpell,
   } = useCharacterBuilder();
 
   const { selectedSlot, selectSlot, clearSelection } = usePaperDollSelection();
   const { classData } = useSelectedClass();
+  const subclassData = useSelectedSubclass();
+  const { allSpells, loading: spellsLoading, spellLevelByName } = useSpellCatalog();
+  const spellcastingInfo = useSpellcasting(
+    classData,
+    subclassData,
+    character.level,
+    character.abilities,
+    spellSelections ?? {},
+  );
 
   useEffect(() => {
     // Wait until class data loads — clearing while classData is null would
@@ -88,6 +106,7 @@ export function PaperDoll() {
     selectedSlot !== "subclass" &&
     selectedSlot !== "origin-feat" &&
     !isFeatSlotSelection(selectedSlot) &&
+    !isSpellLevelSlot(selectedSlot) &&
     !(
       selectedSlot === "offHand" &&
       (hasIntegratedShield || equippedShield)
@@ -179,9 +198,13 @@ export function PaperDoll() {
   }
 
   const showBackstoryPanel = selectedSlot === "backstory";
+  const showSpellLibrary =
+    selectedSlot !== null && isSpellLevelSlot(selectedSlot);
+
   const showLibrary =
     selectedSlot &&
     selectedSlot !== "backstory" &&
+    !isSpellLevelSlot(selectedSlot) &&
     (!isSlotOccupied(selectedSlot) ||
       selectedSlot === "species" ||
       selectedSlot === "background" ||
@@ -258,6 +281,55 @@ export function PaperDoll() {
         />
       </BuilderPanel>
 
+      {spellcastingInfo.isSpellcaster && classSelection && (
+        <BuilderPanel
+          title={
+            <>
+              <Sparkles className="h-3.5 w-3.5" aria-hidden />
+              Spellcasting: {classSelection.name}
+            </>
+          }
+          action={
+            spellcastingInfo.maxPreparedOrKnown > 0 ? (
+              <span className="flex items-center gap-2 text-[11px]">
+                <span
+                  className={
+                    spellcastingInfo.selectedSpellCount >=
+                    spellcastingInfo.maxPreparedOrKnown
+                      ? "text-rose-400"
+                      : "text-emerald-400"
+                  }
+                >
+                  {spellcastingInfo.isPreparedCaster ? "Prepared" : "Known"}{" "}
+                  {spellcastingInfo.selectedSpellCount}/
+                  {spellcastingInfo.maxPreparedOrKnown}
+                </span>
+                {spellcastingInfo.subclassAlwaysPrepared.length > 0 && (
+                  <span className="text-emerald-400/80">
+                    + {spellcastingInfo.subclassAlwaysPrepared.length} siempre
+                    prep.
+                  </span>
+                )}
+              </span>
+            ) : (
+              <span className="text-[11px] text-muted-foreground">
+                click to select
+              </span>
+            )
+          }
+        >
+          <SpellcastingGridPanel
+            className={classSelection.name}
+            spellcastingInfo={spellcastingInfo}
+            spellSelections={spellSelections}
+            spellLevelByName={spellLevelByName}
+            spellsByName={allSpells}
+            selectedSlot={selectedSlot}
+            onSelectSlot={selectSlot}
+          />
+        </BuilderPanel>
+      )}
+
       {selectedWeapon &&
         (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
           <WeaponDetailPanel
@@ -278,6 +350,21 @@ export function PaperDoll() {
       )}
 
       {showBackstoryPanel && <BackstoryNotesPanel />}
+
+      {showSpellLibrary && isSpellLevelSlot(selectedSlot) && classSelection && (
+        <SpellLibraryPanel
+          selectedSlot={selectedSlot}
+          className={classSelection.name}
+          characterLevel={character.level}
+          spellcastingInfo={spellcastingInfo}
+          spellSelections={spellSelections}
+          allSpells={allSpells}
+          spellsLoading={spellsLoading}
+          spellLevelByName={spellLevelByName}
+          onAddSpell={addSpell}
+          onRemoveSpell={removeSpell}
+        />
+      )}
 
       {showLibrary && <BuilderItemLibraryPanel selectedSlot={selectedSlot} />}
     </div>

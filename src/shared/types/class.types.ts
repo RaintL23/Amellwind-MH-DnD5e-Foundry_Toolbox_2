@@ -62,6 +62,14 @@ export interface Class {
   proficiencies: string[];
   casterProgression?: string;
   spellcastingAbility?: string;
+  /** Cantrips known per character level (index 0 = level 1). Length 20. */
+  cantripProgression?: number[];
+  /** Formula string for prepared-spell count, e.g. "<$level$> + <$int_mod$>" */
+  preparedSpells?: string;
+  /** Fixed prepared-spell count per character level (2024 rules). Length 20. */
+  preparedSpellsProgression?: number[];
+  /** Fixed spells-known count per character level for known casters. Length 20. */
+  spellsKnownProgressionFixed?: number[];
   spellProgression: ClassTableGroup[];
   progression: ClassLevelRow[];
   subclasses: Subclass[];

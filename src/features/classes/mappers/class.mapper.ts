@@ -107,6 +107,35 @@ function formatCellValue(value: ClassTableCell): string {
   }
 }
 
+/**
+ * Extracts the "Spells Known" column from classTableGroups for known-casters
+ * (Bard, Sorcerer, Warlock, Ranger). Returns an array of 20 numbers or undefined.
+ */
+function extractSpellsKnownFixed(
+  raw: RawClassDefinition,
+): number[] | undefined {
+  if (!raw.classTableGroups) return undefined;
+  for (const group of raw.classTableGroups) {
+    const labels = group.colLabels ?? [];
+    const rows = group.rows ?? [];
+    const idx = labels.findIndex((l) =>
+      String(l).toLowerCase().includes("spells known"),
+    );
+    if (idx === -1) continue;
+    const values = rows.slice(0, 20).map((row) => {
+      const cell = row[idx];
+      if (typeof cell === "number") return cell;
+      if (typeof cell === "string") {
+        const n = parseInt(cell, 10);
+        return isNaN(n) ? 0 : n;
+      }
+      return 0;
+    });
+    if (values.length > 0) return values;
+  }
+  return undefined;
+}
+
 function mapTableGroup(group: RawClassTableGroup): ClassTableGroup {
   const rows = group.rows ?? group.rowsSpellProgression ?? [];
   return {
@@ -402,6 +431,10 @@ export function mapClass(raw: RawClassDefinition): Class {
     spellcastingAbility: raw.spellcastingAbility
       ? formatAbility(raw.spellcastingAbility)
       : undefined,
+    cantripProgression: raw.cantripProgression,
+    preparedSpells: raw.preparedSpells,
+    preparedSpellsProgression: raw.preparedSpellsProgression,
+    spellsKnownProgressionFixed: extractSpellsKnownFixed(raw),
     spellProgression,
     progression,
     subclasses,

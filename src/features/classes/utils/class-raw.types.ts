@@ -22,6 +22,8 @@ export interface RawClassDefinition {
   spellcastingAbility?: string;
   cantripProgression?: number[];
   preparedSpells?: string;
+  /** Fixed prepared-spell count per character level (2024 rules). Length 20. */
+  preparedSpellsProgression?: number[];
   classTableGroups?: RawClassTableGroup[];
   startingProficiencies?: RawStartingProficiencies;
   startingEquipment?: RawStartingEquipment;

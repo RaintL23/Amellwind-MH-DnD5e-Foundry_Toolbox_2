@@ -27,6 +27,8 @@ import {
   CombatCalculation,
   CharacterSelectionRef,
   BuilderFeatSelection,
+  BuilderSpellSelections,
+  BuilderSpellSelection,
 } from "@/shared/types";
 import { getClassById } from "@/features/classes/services/class.service";
 import { getSpeciesById } from "@/features/species/services/species.service";
@@ -196,6 +198,12 @@ interface CharacterBuilderContextValue {
   totalAC: number;
   combat: CombatCalculation;
 
+  // Spellcasting
+  spellSelections: BuilderSpellSelections;
+  addSpell: (level: number, spell: BuilderSpellSelection) => void;
+  removeSpell: (level: number, spellId: string) => void;
+  clearSpells: () => void;
+
   // Reset
   resetBuild: () => void;
 
@@ -314,6 +322,30 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [featSelections, setFeatSelections] = useState<
     (BuilderFeatSelection | null)[]
   >([]);
+  const [spellSelections, setSpellSelections] = useState<BuilderSpellSelections>({});
+
+  const addSpell = useCallback((level: number, spell: BuilderSpellSelection) => {
+    setSpellSelections((prev) => {
+      const base = prev ?? {};
+      const existing = base[level] ?? [];
+      if (existing.some((s) => s.id === spell.id)) return base;
+      return { ...base, [level]: [...existing, spell] };
+    });
+  }, []);
+
+  const removeSpell = useCallback((level: number, spellId: string) => {
+    setSpellSelections((prev) => {
+      const base = prev ?? {};
+      const existing = base[level] ?? [];
+      const filtered = existing.filter((s) => s.id !== spellId);
+      return { ...base, [level]: filtered };
+    });
+  }, []);
+
+  const clearSpells = useCallback(() => {
+    setSpellSelections({});
+  }, []);
+
   const [useTashaOrigin, setUseTashaOrigin] = useState(false);
   const [tashaPlus2, setTashaPlus2] = useState<AbilityKey | null>(null);
   const [tashaPlus1, setTashaPlus1] = useState<AbilityKey | null>(null);
@@ -497,6 +529,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setFeatSelections([]);
     setClassSkillChoicesState({});
     setExpertiseChoicesState({});
+    setSpellSelections({});
     // Clear class grants immediately
     setClassSkillGrants([]);
     setClassExpertiseGrants([]);
@@ -1073,6 +1106,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBackgroundLanguageChoices([]);
     setSpeciesLanguageChoices([]);
     setSpeciesDefenseChoicesState({});
+    setSpellSelections({});
     clearInventory();
   }, [clearInventory]);
 
@@ -1452,6 +1486,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       totalAC,
       combat,
       resetBuild,
+      spellSelections,
+      addSpell,
+      removeSpell,
+      clearSpells,
       applyIdentityGrants,
       allSkillGrants,
       allExpertiseGrants,
@@ -1519,6 +1557,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       assignWeaponRune, removeWeaponRune, assignArmorRune, removeArmorRune,
       assignTrinketRune, removeTrinketRune,
       totalAC, combat, resetBuild,
+      spellSelections, addSpell, removeSpell, clearSpells,
       applyIdentityGrants,
       allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
       classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
