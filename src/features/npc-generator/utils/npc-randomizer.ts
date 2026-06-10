@@ -7,7 +7,6 @@ import type {
   NpcHideFeatures,
   NpcHitDie,
 } from "@/shared/types/npc.types";
-import { HIT_DIE_OPTIONS } from "@/shared/types/npc.types";
 import { PLAYABLE_HIT_DIES } from "./npc-size.utils";
 import { NPC_TEMPLATES } from "../data/npc-templates.data";
 import {
