@@ -41,15 +41,15 @@ export function isCharacterSpellcaster(
   if (classData?.casterProgression && classData.casterProgression !== "none") {
     return true;
   }
-  if (subclassData?.additionalSpells) {
-    const { prepared, known, expanded } = subclassData.additionalSpells;
-    if (
-      (prepared && Object.keys(prepared).length > 0) ||
-      (known && Object.keys(known).length > 0) ||
-      (expanded && Object.keys(expanded).length > 0)
-    ) {
-      return true;
-    }
+  if (
+    subclassData?.additionalSpells?.some(
+      ({ prepared, known, expanded }) =>
+        (prepared && Object.keys(prepared).length > 0) ||
+        (known && Object.keys(known).length > 0) ||
+        (expanded && Object.keys(expanded).length > 0),
+    )
+  ) {
+    return true;
   }
   return false;
 }
