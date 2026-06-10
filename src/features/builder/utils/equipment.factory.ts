@@ -1,4 +1,5 @@
 import { EquippedWeapon, EquippedArmor, Rune, Weapon, ArmorItem } from "@/shared/types";
+import { hasWeaponSwitchModes } from "@/features/weapons/utils/weapon-mode.utils";
 
 const RARITY_SLOT_MAP: Record<string, number> = {
   Common: 1,
@@ -20,7 +21,7 @@ export function makeWeaponSlot(weapon: Weapon, rarity: string): EquippedWeapon {
     rarity,
     runeSlots,
     runes: new Array<Rune | null>(runeSlots).fill(null),
-    useVersatile: isTwoHanded,
+    useVersatile: hasWeaponSwitchModes(weapon) ? false : isTwoHanded,
   };
 }
 

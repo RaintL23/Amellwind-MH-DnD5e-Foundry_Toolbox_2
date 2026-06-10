@@ -1,4 +1,8 @@
 import { EquippedWeapon, Weapon } from "@/shared/types";
+import {
+  doesSwitchModeHaveShield,
+  hasWeaponSwitchModes,
+} from "./weapon-mode.utils";
 
 /** Weapons sold with an integrated shield (`ac` field in source data). */
 export function weaponIncludesShield(weapon: Weapon): boolean {
@@ -15,6 +19,9 @@ export function hasActiveIntegratedShield(
 ): boolean {
   if (!equipped || !weaponIncludesShield(equipped.weapon)) return false;
   const { weapon, useVersatile } = equipped;
+  if (hasWeaponSwitchModes(weapon)) {
+    return doesSwitchModeHaveShield(equipped);
+  }
   return !(weapon.properties.includes("V") && useVersatile);
 }
 

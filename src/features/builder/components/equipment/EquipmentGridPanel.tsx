@@ -7,6 +7,7 @@ import {
 import { GridElementSlot } from "../shared/GridElementSlot";
 import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
 import type { OffHandBlockReason } from "@/features/weapons/utils/weapon-hands.utils";
+import { getActiveWeaponDamage } from "@/features/weapons/utils/weapon-mode.utils";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 
 interface EquipmentGridPanelProps {
@@ -95,10 +96,7 @@ export function EquipmentGridPanel({
           mainHand
             ? {
                 name: mainHand.weapon.name,
-                detail:
-                  mainHand.useVersatile && mainHand.weapon.dmg2
-                    ? mainHand.weapon.dmg2
-                    : mainHand.weapon.dmg1,
+                detail: getActiveWeaponDamage(mainHand),
               }
             : null
         }

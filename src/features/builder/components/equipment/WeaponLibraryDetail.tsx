@@ -27,11 +27,20 @@ import {
 } from "@/features/weapons/utils/rarity-slide.utils";
 import { RuneFeaturesSection } from "./RuneFeaturesSection";
 import { DndRichText } from "@/shared/components/DndRichText";
+import { WeaponModeToggle } from "@/features/weapons/components/WeaponModeToggle";
+import {
+  getActiveWeaponDamage,
+  getActiveWeaponDamageLabel,
+  getActiveWeaponSwitchMode,
+  hasWeaponSwitchModes,
+  isVersatileGripWeapon,
+} from "@/features/weapons/utils/weapon-mode.utils";
 import { getWeaponEffectiveTierLabel } from "../../utils/equipment-proficiency.utils";
 
 interface WeaponLibraryDetailProps {
   equipped: EquippedWeapon;
   weaponProficiencies?: string[];
+  onModeChange?: (useSecondaryMode: boolean) => void;
 }
 
 function getRarityIndex(equipped: EquippedWeapon): number {
@@ -217,6 +226,7 @@ function WeaponFeatureSection({
 export function WeaponLibraryDetail({
   equipped,
   weaponProficiencies = [],
+  onModeChange,
 }: WeaponLibraryDetailProps) {
   const { weapon, useVersatile, rarity } = equipped;
   const rarityIndex = useMemo(() => getRarityIndex(equipped), [equipped]);
@@ -226,7 +236,14 @@ export function WeaponLibraryDetail({
     weaponProficiencies,
   );
 
-  const activeDamage = useVersatile && weapon.dmg2 ? weapon.dmg2 : weapon.dmg1;
+  const activeDamage = getActiveWeaponDamage(equipped);
+  const damageModeLabel = getActiveWeaponDamageLabel(equipped);
+  const activeSwitchMode = getActiveWeaponSwitchMode(equipped);
+  const showModeToggle =
+    onModeChange &&
+    (hasWeaponSwitchModes(weapon) || isVersatileGripWeapon(weapon));
+  const showIntegratedShield =
+    activeSwitchMode?.hasShield ?? weapon.includesShield;
 
   if (!row) {
     return (
@@ -237,7 +254,7 @@ export function WeaponLibraryDetail({
   }
 
   const { bonus, otherStats } = getRaritySlideStatEntries(row);
-  const shieldAc = weapon.includesShield
+  const shieldAc = showIntegratedShield
     ? getWeaponShieldAcBonusAtIndex(weapon, rarityIndex)
     : null;
 
@@ -292,9 +309,22 @@ export function WeaponLibraryDetail({
             </p>
           )}
 
+          {showModeToggle && (
+            <WeaponModeToggle
+              weapon={weapon}
+              useSecondaryMode={useVersatile}
+              onChange={onModeChange}
+              className="mb-3"
+            />
+          )}
+
           <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
             <StatBox
-              label="Damage"
+              label={
+                damageModeLabel === "Damage"
+                  ? "Damage"
+                  : `Damage (${damageModeLabel})`
+              }
               value={`${activeDamage} ${weapon.dmgType}`}
             />
             {bonus && (
@@ -315,11 +345,13 @@ export function WeaponLibraryDetail({
             )}
           </div>
 
-          {weapon.includesShield && (
+          {showIntegratedShield && (
             <div className="mb-3 flex items-start gap-2 rounded-md border border-teal-800/40 bg-teal-950/20 px-2 py-2">
               <Shield className="h-3.5 w-3.5 shrink-0 text-teal-400 mt-0.5" />
               <p className="text-[11px] leading-relaxed text-teal-100/90">
-                It includes an integrated shield that occupies the off-hand.
+                {activeSwitchMode
+                  ? `In ${activeSwitchMode.label} mode, the integrated shield occupies the off-hand.`
+                  : "It includes an integrated shield that occupies the off-hand."}
               </p>
             </div>
           )}

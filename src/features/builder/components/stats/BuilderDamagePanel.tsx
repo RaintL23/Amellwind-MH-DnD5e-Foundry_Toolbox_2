@@ -6,6 +6,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { formatDamagePerTurnTooltip } from "../../utils/combat.calculator";
 import { isMonkClass } from "../../utils/unarmed-strike.utils";
 import { NumberStepper } from "../shared/NumberStepper";
 
@@ -33,6 +34,8 @@ export function BuilderDamagePanel() {
     if (next < 1 || next > 10) return;
     setAttacksPerTurnOverride(next);
   };
+
+  const damagePerTurnTooltip = formatDamagePerTurnTooltip(combat);
 
   const unarmedStrikeTooltip = [
     "Use punches, kicks, or similar blows instead of equipped weapons.",
@@ -86,8 +89,14 @@ export function BuilderDamagePanel() {
                   <div className="text-[32px] font-medium leading-none text-emerald-400 tabular-nums">
                     {combat.totalDPT.toFixed(1)}
                   </div>
-                  <div className="mt-1 text-[11px] text-emerald-300/80">
-                    average damage per turn
+                  <div className="relative group mt-1 inline-block cursor-help text-[11px] text-emerald-300/80">
+                    <span title={damagePerTurnTooltip}>average damage per turn</span>
+                    <span
+                      role="tooltip"
+                      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 whitespace-pre-line rounded-md border border-border bg-popover px-2.5 py-2 text-left text-[10px] font-normal leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
+                    >
+                      {damagePerTurnTooltip}
+                    </span>
                   </div>
                   <div className="mt-1 text-[10px] text-muted-foreground">
                     Level {character.level}

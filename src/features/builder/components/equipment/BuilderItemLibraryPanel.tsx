@@ -229,6 +229,7 @@ export function BuilderItemLibraryPanel({
     subclass,
     featSelections,
     equipWeapon,
+    setVersatileMode,
     equipArmor,
     equipTrinket,
     setSpecies,
@@ -1241,6 +1242,11 @@ export function BuilderItemLibraryPanel({
                 <WeaponLibraryDetail
                   equipped={equippedWeapon}
                   weaponProficiencies={resolvedWeaponItems}
+                  onModeChange={(useSecondaryMode) => {
+                    if (selectedSlot === "mainHand" || selectedSlot === "offHand") {
+                      setVersatileMode(selectedSlot, useSecondaryMode);
+                    }
+                  }}
                 />
               ) : (
                 <WeaponList

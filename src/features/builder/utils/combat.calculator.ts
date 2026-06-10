@@ -9,6 +9,10 @@ import {
   Species,
 } from "@/shared/types";
 import { Character } from "../models/Character";
+import {
+  getActiveWeaponDamage,
+  getActiveWeaponDamageLabel,
+} from "@/features/weapons/utils/weapon-mode.utils";
 import { getUnarmedStrikeProfile } from "./unarmed-strike.utils";
 
 /**
@@ -97,9 +101,8 @@ function calculateWeaponDamage(
   attacksPerTurn: number,
   isOffHand: boolean,
 ): DamageBreakdown {
-  // Use versatile (dmg2) dice if weapon is in two-handed mode and has dmg2
-  const useTwoHandedDice = equipped.useVersatile && equipped.weapon.dmg2;
-  const diceNotation = useTwoHandedDice ? equipped.weapon.dmg2! : equipped.weapon.dmg1;
+  const diceNotation = getActiveWeaponDamage(equipped);
+  const damageModeLabel = getActiveWeaponDamageLabel(equipped);
   const weaponDice = parseDiceNotation(diceNotation);
 
   const abilityUsed = character.getAttackAbility(equipped.weapon.properties);
@@ -112,7 +115,9 @@ function calculateWeaponDamage(
 
   // Source: weapon dice
   sources.push({
-    source: equipped.weapon.name + (useTwoHandedDice ? " (two-handed)" : ""),
+    source:
+      equipped.weapon.name +
+      (damageModeLabel !== "Damage" ? ` (${damageModeLabel})` : ""),
     type: "weapon",
     dice: weaponDice,
     flatBonus: 0,
@@ -348,4 +353,84 @@ export function calculateCombat(
     offHand: offHandBreakdown,
     totalDPT,
   };
+}
+
+function formatSourceContribution(source: DamageSource): string {
+  if (source.dice) {
+    return `${source.dice.notation} (${source.average.toFixed(1)})`;
+  }
+
+  const sign = source.flatBonus >= 0 ? "+" : "";
+  return `${sign}${source.flatBonus} ${source.source}`;
+}
+
+function formatBreakdownSection(
+  breakdown: DamageBreakdown,
+  label: string,
+  offHandNote?: string,
+): string[] {
+  const contribution = breakdown.sources.map(formatSourceContribution).join(" + ");
+  const lines = [
+    `${label}:`,
+    `  ${contribution} = ${breakdown.totalPerHit.toFixed(1)} avg/hit`,
+  ];
+
+  if (offHandNote) {
+    lines.push(`  ${offHandNote}`);
+  } else {
+    const attackLabel = breakdown.attacksPerTurn === 1 ? "attack" : "attacks";
+    lines.push(
+      `  ${breakdown.totalPerTurn.toFixed(1)} avg/turn (${breakdown.totalPerHit.toFixed(1)} × ${breakdown.attacksPerTurn} ${attackLabel})`,
+    );
+  }
+
+  return lines;
+}
+
+/** Explains how {@link CombatCalculation.totalDPT} was derived. */
+export function formatDamagePerTurnTooltip(combat: CombatCalculation): string {
+  if (!combat.mainHand && !combat.offHand) {
+    return "Equip a weapon or enable Unarmed Strike to estimate damage.";
+  }
+
+  const lines = ["Damage per turn calculation", ""];
+  const segmentTotals: string[] = [];
+
+  if (combat.mainHand) {
+    const weaponSource = combat.mainHand.sources.find((s) => s.type === "weapon");
+    lines.push(
+      ...formatBreakdownSection(
+        combat.mainHand,
+        weaponSource?.source ?? "Main hand",
+      ),
+    );
+    segmentTotals.push(combat.mainHand.totalPerTurn.toFixed(1));
+    lines.push("");
+  }
+
+  if (combat.offHand) {
+    const weaponSource = combat.offHand.sources.find((s) => s.type === "weapon");
+    lines.push(
+      ...formatBreakdownSection(
+        combat.offHand,
+        `${weaponSource?.source ?? "Off hand"} (bonus)`,
+        `${combat.offHand.totalPerTurn.toFixed(1)} avg/turn (1 bonus attack, no ability modifier to damage)`,
+      ),
+    );
+    segmentTotals.push(combat.offHand.totalPerTurn.toFixed(1));
+    lines.push("");
+  }
+
+  if (segmentTotals.length > 1) {
+    lines.push(
+      `Total: ${segmentTotals.join(" + ")} = ${combat.totalDPT.toFixed(1)} avg/turn`,
+    );
+    lines.push("");
+  }
+
+  lines.push(
+    "Dice averages use (sides + 1) ÷ 2 per die. Critical hits are not included.",
+  );
+
+  return lines.join("\n");
 }
