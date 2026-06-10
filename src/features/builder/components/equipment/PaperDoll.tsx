@@ -19,6 +19,7 @@ import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { BuilderItemLibraryPanel } from "./BuilderItemLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
+import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.utils";
 
 export function PaperDoll() {
   const {
@@ -42,6 +43,8 @@ export function PaperDoll() {
     offHandBlockReason,
     hasIntegratedShield,
     integratedShieldAcBonus,
+    equippedShield,
+    standaloneShieldAcBonus,
     setWeaponRarity,
     setArmorRarity,
     setVersatileMode,
@@ -53,6 +56,7 @@ export function PaperDoll() {
     setSpeciesOriginFeat,
     unequipWeapon,
     unequipArmor,
+    unequipShield,
     unequipTrinket,
   } = useCharacterBuilder();
 
@@ -84,7 +88,10 @@ export function PaperDoll() {
     selectedSlot !== "subclass" &&
     selectedSlot !== "origin-feat" &&
     !isFeatSlotSelection(selectedSlot) &&
-    !(selectedSlot === "offHand" && hasIntegratedShield);
+    !(
+      selectedSlot === "offHand" &&
+      (hasIntegratedShield || equippedShield)
+    );
 
   function isSlotOccupied(slot: PaperDollSelection): boolean {
     if (!slot) return false;
@@ -92,7 +99,11 @@ export function PaperDoll() {
       case "mainHand":
         return !!mainHand;
       case "offHand":
-        return !!offHand;
+        return isOffHandSlotOccupied(
+          offHand,
+          equippedShield,
+          hasIntegratedShield,
+        );
       case "armor":
         return !!armor;
       case "trinket1":
@@ -127,9 +138,12 @@ export function PaperDoll() {
     if (!slot) return;
     switch (slot) {
       case "mainHand":
+        unequipWeapon("mainHand");
+        break;
       case "offHand":
-        if (slot === "offHand" && hasIntegratedShield) return;
-        unequipWeapon(slot);
+        if (hasIntegratedShield) return;
+        if (equippedShield) unequipShield();
+        else unequipWeapon("offHand");
         break;
       case "armor":
         unequipArmor();
@@ -234,6 +248,8 @@ export function PaperDoll() {
           trinket2={trinket2}
           hasIntegratedShield={hasIntegratedShield}
           integratedShieldAcBonus={integratedShieldAcBonus}
+          equippedShield={equippedShield}
+          standaloneShieldAcBonus={standaloneShieldAcBonus}
           isOffHandBlocked={isOffHandBlocked}
           offHandBlockReason={offHandBlockReason}
           selectedSlot={selectedSlot}

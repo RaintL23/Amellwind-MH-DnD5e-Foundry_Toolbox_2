@@ -1,3 +1,4 @@
+import type { StandaloneShieldItem } from "@/features/builder/data/shield.placeholder";
 import { EquippedWeapon, Weapon } from "@/shared/types";
 import {
   doesSwitchModeBlockOffHand,
@@ -76,4 +77,25 @@ export function getOffHandWeaponBlockLabel(
   reason: OffHandWeaponBlockReason,
 ): string {
   return OFF_HAND_WEAPON_BLOCK_LABELS[reason];
+}
+
+/** Whether the off-hand is taken by a weapon, standalone shield, or integrated shield. */
+export function isOffHandSlotOccupied(
+  offHand: EquippedWeapon | null,
+  equippedShield: StandaloneShieldItem | null,
+  hasIntegratedShield: boolean,
+): boolean {
+  return !!offHand || !!equippedShield || hasIntegratedShield;
+}
+
+/** Off-hand can show the weapon picker (empty or only a replaceable standalone shield). */
+export function isOffHandWeaponPickerAvailable(
+  offHand: EquippedWeapon | null,
+  _equippedShield: StandaloneShieldItem | null,
+  hasIntegratedShield: boolean,
+  isOffHandBlocked: boolean,
+): boolean {
+  // Standalone shields are replaceable from the weapon picker; they do not block it.
+  if (hasIntegratedShield || isOffHandBlocked || offHand) return false;
+  return true;
 }

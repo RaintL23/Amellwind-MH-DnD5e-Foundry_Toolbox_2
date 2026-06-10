@@ -101,10 +101,18 @@ function getUnarmoredDefenseRule(
   return null;
 }
 
+function shieldSubline(integratedBonus: number, standaloneBonus: number): string {
+  if (integratedBonus > 0) return "  Integrated shield";
+  if (standaloneBonus > 0) return "  Shield";
+  return "";
+}
+
 function buildNaturalArmorCandidate(
   rule: NaturalArmorRule,
   dexMod: number,
   shieldBonus: number,
+  integratedShieldBonus: number,
+  standaloneShieldBonus: number,
   wearingArmor: boolean,
   armor: EquippedArmor | null,
 ): AcCandidate {
@@ -130,7 +138,7 @@ function buildNaturalArmorCandidate(
   if (shieldBonus > 0 && rule.allowsShield) {
     total += shieldBonus;
     lines.push(`Shield: +${shieldBonus}`);
-    lines.push("  Integrated shield");
+    lines.push(shieldSubline(integratedShieldBonus, standaloneShieldBonus));
   } else if (shieldBonus > 0) {
     lines.push("Shield: inactive (Natural Armor)");
   }
@@ -144,6 +152,8 @@ function buildUnarmoredDefenseCandidate(
   modifiers: Record<AbilityKey, number>,
   dexMod: number,
   shieldBonus: number,
+  integratedShieldBonus: number,
+  standaloneShieldBonus: number,
   hasShieldEquipped: boolean,
 ): AcCandidate {
   const bonusMod = modifiers[rule.bonusAbility];
@@ -158,7 +168,7 @@ function buildUnarmoredDefenseCandidate(
   if (hasShieldEquipped && rule.allowsShield) {
     total += shieldBonus;
     lines.push(`Shield: +${shieldBonus}`);
-    lines.push("  Integrated shield");
+    lines.push(shieldSubline(integratedShieldBonus, standaloneShieldBonus));
   }
 
   return { total, lines };
@@ -168,6 +178,8 @@ function buildArmorCandidate(
   armor: EquippedArmor,
   dexMod: number,
   shieldBonus: number,
+  integratedShieldBonus: number,
+  standaloneShieldBonus: number,
 ): AcCandidate {
   const { baseAC, maxDexBonus } = armor.armor;
   const dexBonus =
@@ -182,7 +194,7 @@ function buildArmorCandidate(
 
   if (shieldBonus > 0) {
     lines.push(`Shield: +${shieldBonus}`);
-    lines.push("  Integrated shield");
+    lines.push(shieldSubline(integratedShieldBonus, standaloneShieldBonus));
   }
 
   return { total, lines };
@@ -191,13 +203,15 @@ function buildArmorCandidate(
 function buildDefaultUnarmoredCandidate(
   dexMod: number,
   shieldBonus: number,
+  integratedShieldBonus: number,
+  standaloneShieldBonus: number,
 ): AcCandidate {
   const total = 10 + dexMod + shieldBonus;
   const lines = [`Unarmored: 10 + Dex (${formatModifier(dexMod)})`];
 
   if (shieldBonus > 0) {
     lines.push(`Shield: +${shieldBonus}`);
-    lines.push("  Integrated shield");
+    lines.push(shieldSubline(integratedShieldBonus, standaloneShieldBonus));
   }
 
   return { total, lines };
@@ -214,6 +228,7 @@ export function getCharacterAcBreakdown(input: {
   level: number;
   armor: EquippedArmor | null;
   integratedShieldAcBonus: number;
+  standaloneShieldAcBonus?: number;
   classData: Class | null;
   className?: string | null;
   subclass: Subclass | null;
@@ -225,6 +240,7 @@ export function getCharacterAcBreakdown(input: {
     level,
     armor,
     integratedShieldAcBonus,
+    standaloneShieldAcBonus = 0,
     classData,
     className,
     subclass,
@@ -234,7 +250,7 @@ export function getCharacterAcBreakdown(input: {
 
   const dexMod = modifiers.dex;
   const wearingArmor = isWearingArmor(armor);
-  const shieldBonus = integratedShieldAcBonus;
+  const shieldBonus = integratedShieldAcBonus + standaloneShieldAcBonus;
   const hasShieldEquipped = shieldBonus > 0;
   const classLabel = classData?.name ?? className ?? "Class";
 
@@ -263,6 +279,8 @@ export function getCharacterAcBreakdown(input: {
       naturalArmor,
       dexMod,
       shieldBonus,
+      integratedShieldAcBonus,
+      standaloneShieldAcBonus,
       wearingArmor,
       armor,
     );
@@ -271,7 +289,13 @@ export function getCharacterAcBreakdown(input: {
       inactiveNotes.push("Unarmored Defense: inactive (using Natural Armor)");
     }
   } else if (wearingArmor && armor) {
-    winner = buildArmorCandidate(armor, dexMod, shieldBonus);
+    winner = buildArmorCandidate(
+      armor,
+      dexMod,
+      shieldBonus,
+      integratedShieldAcBonus,
+      standaloneShieldAcBonus,
+    );
 
     if (naturalArmor) {
       inactiveNotes.push("Natural Armor: inactive (armor equipped)");
@@ -281,7 +305,12 @@ export function getCharacterAcBreakdown(input: {
     }
   } else {
     const candidates: AcCandidate[] = [
-      buildDefaultUnarmoredCandidate(dexMod, shieldBonus),
+      buildDefaultUnarmoredCandidate(
+        dexMod,
+        shieldBonus,
+        integratedShieldAcBonus,
+        standaloneShieldAcBonus,
+      ),
     ];
 
     if (naturalArmor) {
@@ -290,6 +319,8 @@ export function getCharacterAcBreakdown(input: {
           naturalArmor,
           dexMod,
           shieldBonus,
+          integratedShieldAcBonus,
+          standaloneShieldAcBonus,
           false,
           null,
         ),
@@ -304,6 +335,8 @@ export function getCharacterAcBreakdown(input: {
           modifiers,
           dexMod,
           shieldBonus,
+          integratedShieldAcBonus,
+          standaloneShieldAcBonus,
           hasShieldEquipped,
         ),
       );

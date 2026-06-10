@@ -124,6 +124,7 @@ import {
 import {
   getOffHandWeaponBlockLabel,
   getOffHandWeaponBlockReason,
+  isOffHandWeaponPickerAvailable,
 } from "@/features/weapons/utils/weapon-hands.utils";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 import {
@@ -220,6 +221,9 @@ export function BuilderItemLibraryPanel({
     character,
     mainHand,
     offHand,
+    equippedShield,
+    hasIntegratedShield,
+    isOffHandBlocked,
     armor,
     trinket1,
     trinket2,
@@ -560,6 +564,19 @@ export function BuilderItemLibraryPanel({
       }
 
       if (selectedSlot === "offHand") {
+        if (hasIntegratedShield) {
+          return "La mano secundaria está ocupada por el escudo integrado";
+        }
+        if (
+          !isOffHandWeaponPickerAvailable(
+            offHand,
+            equippedShield,
+            hasIntegratedShield,
+            isOffHandBlocked,
+          )
+        ) {
+          return "La mano secundaria no está disponible";
+        }
         const offHandReason = getOffHandWeaponBlockReason(weapon);
         if (offHandReason) {
           return getOffHandWeaponBlockLabel(offHandReason);
@@ -573,6 +590,10 @@ export function BuilderItemLibraryPanel({
       resolvedArmorItems,
       resolvedWeaponItems,
       selectedSlot,
+      hasIntegratedShield,
+      offHand,
+      equippedShield,
+      isOffHandBlocked,
     ],
   );
 
@@ -751,6 +772,15 @@ export function BuilderItemLibraryPanel({
         ? offHand
         : null;
 
+  const showOffHandWeaponPicker =
+    selectedSlot === "offHand" &&
+    isOffHandWeaponPickerAvailable(
+      offHand,
+      equippedShield,
+      hasIntegratedShield,
+      isOffHandBlocked,
+    );
+
   const equippedTrinket =
     selectedSlot === "trinket1"
       ? trinket1
@@ -771,7 +801,10 @@ export function BuilderItemLibraryPanel({
   const showClassDetail = isClassSlot && !!classSelection && !!classData;
   const showSubclassDetail = isSubclassSlot && !!subclass && !!activeSubclass;
 
-  const showWeaponDetail = isWeaponSlot && !!equippedWeapon;
+  const showWeaponDetail =
+    isWeaponSlot &&
+    !!equippedWeapon &&
+    !(selectedSlot === "offHand" && showOffHandWeaponPicker);
   const showArmorDetail = isArmorSlot && !!armor;
 
   const showFeatDetail =

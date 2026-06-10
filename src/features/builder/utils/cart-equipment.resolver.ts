@@ -1,7 +1,10 @@
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
+import { findShieldByCartName } from "../data/shield.placeholder";
 import { isKnownTrinket } from "../data/trinket.placeholder";
 import { isTrinketEntry } from "./equipment-inventory.utils";
 import { ArmorItem, CartEntry, Weapon } from "@/shared/types";
+
+export { findShieldByCartName };
 
 const ARMOR_CATALOG: ArmorItem[] = [...BASE_ARMORS, CLOTHING_ARMOR];
 
@@ -40,6 +43,7 @@ export function classifyCartEntry(
   weaponCatalog: Weapon[],
 ): CartItemKind {
   if (findWeaponByCartName(entry.name, weaponCatalog)) return "weapon";
+  if (findShieldByCartName(entry.name)) return "armor";
   if (findArmorByCartName(entry.name)) return "armor";
   if (isTrinketEntry(entry) || isKnownTrinket(entry.name)) return "trinket";
   return "other";

@@ -6,6 +6,10 @@ import {
   TRINKET_WEIGHT_LB,
   isKnownTrinket,
 } from "../data/trinket.placeholder";
+import {
+  StandaloneShieldItem,
+  STANDALONE_SHIELD,
+} from "../data/shield.placeholder";
 import { ArmorItem, CartEntry, ShopEntry, Weapon } from "@/shared/types";
 
 const DEFAULT_AMMO_BY_WEAPON: Record<string, string> = {
@@ -119,6 +123,23 @@ export function armorToCartEntry(armor: ArmorItem): CartEntry {
     weight: `${armor.weight} lb.`,
     quantity: 1,
   };
+}
+
+export function shieldToCartEntry(
+  shield: StandaloneShieldItem = STANDALONE_SHIELD,
+): CartEntry {
+  return {
+    name: shield.name,
+    cost: "—",
+    weight: `${shield.weight} lb.`,
+    quantity: 1,
+  };
+}
+
+export function buildShieldInventoryBundle(
+  shield: StandaloneShieldItem = STANDALONE_SHIELD,
+): CartEntry[] {
+  return [shieldToCartEntry(shield)];
 }
 
 export function buildWeaponInventoryBundle(weapon: Weapon): CartEntry[] {

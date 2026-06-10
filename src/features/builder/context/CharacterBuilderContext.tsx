@@ -45,6 +45,7 @@ import {
   type LawChaosAxis,
 } from "../utils/alignment.utils";
 import { calculateCombat } from "../utils/combat.calculator";
+import type { StandaloneShieldItem } from "../data/shield.placeholder";
 import {
   makeWeaponSlot,
   makeArmorSlot,
@@ -159,6 +160,11 @@ interface CharacterBuilderContextValue {
   /** Main-hand weapon includes a shield and off-hand is occupied by it. */
   hasIntegratedShield: boolean;
   integratedShieldAcBonus: number;
+  /** Standalone shield (e.g. PHB Shield) equipped in the off-hand. */
+  equippedShield: StandaloneShieldItem | null;
+  standaloneShieldAcBonus: number;
+  /** Combined shield AC from integrated and/or standalone sources. */
+  shieldAcBonus: number;
 
   equipWeapon: (slot: "mainHand" | "offHand", weapon: Weapon, rarity: string) => void;
   unequipWeapon: (slot: "mainHand" | "offHand") => void;
@@ -166,6 +172,8 @@ interface CharacterBuilderContextValue {
   setVersatileMode: (slot: "mainHand" | "offHand", twoHanded: boolean) => void;
   equipArmor: (armor: ArmorItem) => void;
   unequipArmor: () => void;
+  equipShield: (shield: StandaloneShieldItem) => void;
+  unequipShield: () => void;
   setArmorRarity: (rarity: string) => void;
   equipTrinket: (slot: "trinket1" | "trinket2", name: string) => void;
   unequipTrinket: (slot: "trinket1" | "trinket2") => void;
@@ -271,6 +279,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [useUnarmedStrike, setUseUnarmedStrike] = useState(false);
   const [mainHand, setMainHand] = useState<EquippedWeapon | null>(null);
   const [offHand, setOffHand] = useState<EquippedWeapon | null>(null);
+  const [equippedShield, setEquippedShield] =
+    useState<StandaloneShieldItem | null>(null);
   const [armor, setArmor] = useState<EquippedArmor | null>(null);
   const [trinket1, setTrinket1] = useState<EquippedTrinket | null>(null);
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
@@ -758,12 +768,14 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
           occupiesBothGripSlots(weapon)
         ) {
           setOffHand(null);
+          setEquippedShield(null);
         }
       } else if (
         !hasActiveIntegratedShield(mainHand) &&
         !blocksOffHand(mainHand) &&
         canEquipInOffHand(weapon)
       ) {
+        setEquippedShield(null);
         setOffHand(equipped);
       }
     },
@@ -772,7 +784,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
 
   const unequipWeapon = useCallback((slot: "mainHand" | "offHand") => {
     if (slot === "mainHand") setMainHand(null);
-    else setOffHand(null);
+    else {
+      setOffHand(null);
+      setEquippedShield(null);
+    }
   }, []);
 
   const setWeaponRarity = useCallback((slot: "mainHand" | "offHand", rarity: string) => {
@@ -790,8 +805,22 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       return { ...prev, useVersatile: twoHanded };
     });
     // If switching to two-handed on main hand, clear off-hand
-    if (slot === "mainHand" && twoHanded) setOffHand(null);
+    if (slot === "mainHand" && twoHanded) {
+      setOffHand(null);
+      setEquippedShield(null);
+    }
   }, []);
+
+  const equipShield = useCallback(
+    (shield: StandaloneShieldItem) => {
+      if (hasActiveIntegratedShield(mainHand) || blocksOffHand(mainHand)) return;
+      setOffHand(null);
+      setEquippedShield(shield);
+    },
+    [mainHand],
+  );
+
+  const unequipShield = useCallback(() => setEquippedShield(null), []);
 
   const equipArmor = useCallback((armorItem: ArmorItem) => {
     setArmor(makeArmorSlot(armorItem, armorItem.rarity));
@@ -820,6 +849,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const clearEquipment = useCallback(() => {
     setMainHand(null);
     setOffHand(null);
+    setEquippedShield(null);
     setArmor(null);
     setTrinket1(null);
     setTrinket2(null);
@@ -902,6 +932,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     return getWeaponShieldAcBonus(mainHand.weapon, mainHand.rarity);
   }, [hasIntegratedShield, mainHand]);
 
+  const standaloneShieldAcBonus = equippedShield?.acBonus ?? 0;
+  const shieldAcBonus = integratedShieldAcBonus + standaloneShieldAcBonus;
+
   const effectiveAttacksPerTurn = attacksPerTurnOverride ?? character.getAttacksPerTurn();
 
   const totalAC = useMemo(() => {
@@ -919,6 +952,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       level: character.level,
       armor,
       integratedShieldAcBonus,
+      standaloneShieldAcBonus,
       classData: null,
       className: classRef?.name,
       subclass: null,
@@ -928,6 +962,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     armor,
     character,
     integratedShieldAcBonus,
+    standaloneShieldAcBonus,
     classRef?.name,
     species?.name,
   ]);
@@ -962,6 +997,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setCharacter(new Character());
     setMainHand(null);
     setOffHand(null);
+    setEquippedShield(null);
     setArmor(null);
     setTrinket1(null);
     setTrinket2(null);
@@ -1370,12 +1406,17 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       offHandBlockReason,
       hasIntegratedShield,
       integratedShieldAcBonus,
+      equippedShield,
+      standaloneShieldAcBonus,
+      shieldAcBonus,
       equipWeapon,
       unequipWeapon,
       setWeaponRarity,
       setVersatileMode,
       equipArmor,
       unequipArmor,
+      equipShield,
+      unequipShield,
       setArmorRarity,
       equipTrinket,
       unequipTrinket,
@@ -1440,7 +1481,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       character, setName, setCreatureSize, setLawChaosAlignment, setGoodEvilAlignment,
       setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn, useUnarmedStrike,
-      mainHand, offHand, armor, trinket1, trinket2,
+      mainHand, offHand, equippedShield, armor, trinket1, trinket2,
       species, backgroundRef, classRef, subclass, featSelections,
       speciesOriginFeatGrant, speciesOriginFeat, backgroundOriginFeatGrant,
       backgroundOriginFeat, originFeatSkillChoices,
@@ -1448,9 +1489,11 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setSpeciesOriginFeat,
       useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,
       backgroundAsiMode, backgroundAsiPlus2, backgroundAsiPlus1,
-      isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
+      isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield,
+      integratedShieldAcBonus, standaloneShieldAcBonus, shieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
-      equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket, clearEquipment,
+      equipArmor, unequipArmor, equipShield, unequipShield, setArmorRarity,
+      equipTrinket, unequipTrinket, clearEquipment,
       assignWeaponRune, removeWeaponRune, assignArmorRune, removeArmorRune,
       assignTrinketRune, removeTrinketRune,
       totalAC, combat, resetBuild,

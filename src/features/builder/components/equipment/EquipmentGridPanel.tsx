@@ -5,6 +5,7 @@ import {
   isClothingArmor,
 } from "../../data/armor.placeholder";
 import { GridElementSlot } from "../shared/GridElementSlot";
+import type { StandaloneShieldItem } from "../../data/shield.placeholder";
 import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
 import type { OffHandBlockReason } from "@/features/weapons/utils/weapon-hands.utils";
 import { getActiveWeaponDamage } from "@/features/weapons/utils/weapon-mode.utils";
@@ -18,6 +19,8 @@ interface EquipmentGridPanelProps {
   trinket2: EquippedTrinket | null;
   hasIntegratedShield: boolean;
   integratedShieldAcBonus: number;
+  equippedShield: StandaloneShieldItem | null;
+  standaloneShieldAcBonus: number;
   isOffHandBlocked: boolean;
   offHandBlockReason: OffHandBlockReason | null;
   selectedSlot: PaperDollSelection;
@@ -33,6 +36,8 @@ export function EquipmentGridPanel({
   trinket2,
   hasIntegratedShield,
   integratedShieldAcBonus,
+  equippedShield,
+  standaloneShieldAcBonus,
   isOffHandBlocked,
   offHandBlockReason,
   selectedSlot,
@@ -115,6 +120,20 @@ export function EquipmentGridPanel({
             +{integratedShieldAcBonus} CA
           </span>
         </div>
+      ) : equippedShield ? (
+        <GridElementSlot
+          label="Shield"
+          accent="armor"
+          icon={<Shield className="h-5 w-5 text-sky-400" />}
+          equipped={{
+            name: equippedShield.name,
+            detail: `+${standaloneShieldAcBonus} CA`,
+          }}
+          onClickEquip={() => handleWeaponSlot("offHand")}
+          onClickDetails={() => onSelectSlot("offHand")}
+          onUnequip={() => onUnequipSlot("offHand")}
+          isSelected={selectedSlot === "offHand"}
+        />
       ) : isOffHandBlocked ? (
         <GridElementSlot
           label="Weapon"

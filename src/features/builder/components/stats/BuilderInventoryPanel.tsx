@@ -18,9 +18,11 @@ import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import {
   findArmorByCartName,
+  findShieldByCartName,
   findWeaponByCartName,
   type CartItemKind,
 } from "../../utils/cart-equipment.resolver";
+import type { StandaloneShieldItem } from "../../data/shield.placeholder";
 import {
   formatCarryingCapacityCalcTooltip,
   formatCarryingCapacityRuleTooltip,
@@ -103,6 +105,9 @@ export function BuilderInventoryPanel() {
     unequipWeapon,
     equipArmor,
     unequipArmor,
+    equippedShield,
+    equipShield,
+    unequipShield,
     trinket1,
     trinket2,
     equipTrinket,
@@ -111,6 +116,7 @@ export function BuilderInventoryPanel() {
   } = useCharacterBuilder();
 
   const equippedArmorName = armor?.armor.name ?? null;
+  const equippedShieldName = equippedShield?.name ?? null;
   const carriedWeight = sumInventoryWeightLb(items);
   const creatureSize = normalizeBuilderCreatureSize(character.size);
   const capacity = getCarryingCapacity(character.abilities.str, creatureSize);
@@ -192,6 +198,15 @@ export function BuilderInventoryPanel() {
     if (slot) unequipTrinket(slot);
   }
 
+  function handleEquipShield(shield: StandaloneShieldItem) {
+    if (equippedShieldName === shield.name) return;
+    equipShield(shield);
+  }
+
+  function handleUnequipShield() {
+    unequipShield();
+  }
+
   function handleClearInventory() {
     clearEquipment();
     clearInventory();
@@ -211,6 +226,10 @@ export function BuilderInventoryPanel() {
 
     if (kind === "armor" && equippedArmorName === entry.name) {
       unequipArmor();
+    }
+
+    if (kind === "armor" && equippedShieldName === entry.name) {
+      handleUnequipShield();
     }
 
     if (kind === "trinket" || isTrinketEntry(entry)) {
@@ -314,6 +333,7 @@ export function BuilderInventoryPanel() {
                           kind={kind}
                           weaponCatalog={weaponCatalog}
                           equippedArmorName={equippedArmorName}
+                          equippedShieldName={equippedShieldName}
                           weaponSlot={getWeaponEquippedSlot(entry.name)}
                           trinketSlot={getTrinketEquippedSlot(entry.name)}
                           shieldParentEquipped={(() => {
@@ -346,6 +366,8 @@ export function BuilderInventoryPanel() {
                           onUnequipWeapon={handleUnequipWeapon}
                           onEquipArmor={equipArmor}
                           onUnequipArmor={unequipArmor}
+                          onEquipShield={handleEquipShield}
+                          onUnequipShield={handleUnequipShield}
                           onEquipTrinket={handleEquipTrinket}
                           onUnequipTrinket={handleUnequipTrinket}
                           onRemove={() => handleRemove(entry, kind)}
@@ -368,6 +390,7 @@ function InventoryRow({
   kind,
   weaponCatalog,
   equippedArmorName,
+  equippedShieldName,
   weaponSlot,
   trinketSlot,
   shieldParentEquipped,
@@ -376,6 +399,8 @@ function InventoryRow({
   onUnequipWeapon,
   onEquipArmor,
   onUnequipArmor,
+  onEquipShield,
+  onUnequipShield,
   onEquipTrinket,
   onUnequipTrinket,
   onRemove,
@@ -384,6 +409,7 @@ function InventoryRow({
   kind: CartItemKind;
   weaponCatalog: Weapon[];
   equippedArmorName: string | null;
+  equippedShieldName: string | null;
   weaponSlot: WeaponEquippedSlot | null;
   trinketSlot: TrinketEquippedSlot | null;
   shieldParentEquipped: boolean;
@@ -392,21 +418,29 @@ function InventoryRow({
   onUnequipWeapon: (weaponName: string) => void;
   onEquipArmor: (armor: ArmorItem) => void;
   onUnequipArmor: () => void;
+  onEquipShield: (shield: StandaloneShieldItem) => void;
+  onUnequipShield: () => void;
   onEquipTrinket: (name: string) => void;
   onUnequipTrinket: (name: string) => void;
   onRemove: () => void;
 }) {
   const lineCost = parseCostGp(entry.cost) * entry.quantity;
-  const armorItem = kind === "armor" ? findArmorByCartName(entry.name) : null;
+  const shieldItem =
+    kind === "armor" ? findShieldByCartName(entry.name) : null;
+  const armorItem =
+    kind === "armor" && !shieldItem ? findArmorByCartName(entry.name) : null;
   const weaponItem =
     kind === "weapon" ? findWeaponByCartName(entry.name, weaponCatalog) : null;
   const isTrinketItem = kind === "trinket" || isTrinketEntry(entry);
   const isArmorEquipped = !!armorItem && equippedArmorName === armorItem.name;
+  const isShieldEquipped =
+    !!shieldItem && equippedShieldName === shieldItem.name;
   const isWeaponEquipped = weaponSlot !== null;
   const isTrinketEquipped = trinketSlot !== null;
   const isCompanionEquipped = shieldParentEquipped || ammoParentEquipped;
   const isEquipped =
     isArmorEquipped ||
+    isShieldEquipped ||
     isWeaponEquipped ||
     isTrinketEquipped ||
     isCompanionEquipped;
@@ -415,6 +449,7 @@ function InventoryRow({
 
   const equippedLabel = (() => {
     if (isArmorEquipped) return "Equipped";
+    if (isShieldEquipped) return "Equipped (Off)";
     if (weaponSlot === "mainHand") return "Equipped (Main)";
     if (weaponSlot === "offHand") return "Equipped (Off)";
     if (trinketSlot === "trinket1") return "Equipped (T1)";
@@ -425,6 +460,12 @@ function InventoryRow({
   })();
 
   function handleEquipToggle() {
+    if (shieldItem) {
+      if (isShieldEquipped) onUnequipShield();
+      else onEquipShield(shieldItem);
+      return;
+    }
+
     if (armorItem) {
       if (isArmorEquipped) onUnequipArmor();
       else onEquipArmor(armorItem);
@@ -474,7 +515,7 @@ function InventoryRow({
         </div>
       </div>
       <div className="flex shrink-0 items-center gap-1">
-        {(armorItem || weaponItem || isTrinketItem) && (
+        {(armorItem || shieldItem || weaponItem || isTrinketItem) && (
           <button
             type="button"
             onClick={handleEquipToggle}
