@@ -4,12 +4,14 @@ import { Shield } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useCharacterArmorClass } from "../../hooks/useCharacterArmorClass";
 import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
+import { useCharacterSpeed } from "../../hooks/useCharacterSpeed";
 import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function BuilderDerivedPanel() {
   const { character } = useCharacterBuilder();
   const hitPointStats = useCharacterHitPoints();
   const armorClass = useCharacterArmorClass();
+  const speedStats = useCharacterSpeed();
 
   return (
     <BuilderPanel
@@ -34,6 +36,11 @@ export function BuilderDerivedPanel() {
           label="AC"
           value={String(armorClass.total)}
           valueTooltip={armorClass.tooltip}
+        />
+        <DerivedRow
+          label="Speed"
+          value={speedStats.display}
+          valueTooltip={speedStats.tooltip}
         />
         <DerivedRow
           label="Initiative"
