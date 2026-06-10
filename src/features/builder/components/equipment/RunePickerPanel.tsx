@@ -15,7 +15,7 @@ import {
   getRuneMaterialEffectText,
 } from "@/features/runes/utils/rune-compatibility.utils";
 import { formatTag, tagVariant } from "@/features/runes/utils/rune-tag.utils";
-import { DndRichText } from "@/shared/components/DndRichText";
+import { RuneEffectText } from "@/features/runes/components/shared/RuneEffectText";
 
 interface RunePickerPanelProps {
   /** Runes available for selection. In "build" mode these are the build runes; in "catalog" all runes. */
@@ -303,7 +303,11 @@ function RuneList({
   return (
     <div className="w-full min-w-0 max-h-[1000px] overflow-y-auto space-y-1">
       {entries.map(({ rune, materialEffectKind }) => {
-        const reason = getRuneIneligibilityReason(rune, compatibilityCtx);
+        const reason = getRuneIneligibilityReason(
+          rune,
+          compatibilityCtx,
+          slotKind === "trinket" ? materialEffectKind : undefined,
+        );
         const effectText = getRuneMaterialEffectText(rune, materialEffectKind);
         const effectLabel = MATERIAL_EFFECT_SLOT_LABELS[materialEffectKind];
         const EffectIcon = materialEffectKind === "weapon" ? Sword : ShieldCheck;
@@ -350,10 +354,9 @@ function RuneList({
                 </span>
               </div>
               {effectText && (
-                <DndRichText
-                  text={effectText}
-                  className="text-[10px] text-muted-foreground break-words whitespace-normal leading-relaxed"
-                />
+                <div className="text-[10px] text-muted-foreground break-words whitespace-normal leading-relaxed">
+                  <RuneEffectText text={effectText} />
+                </div>
               )}
               {reason && (
                 <div className="text-[10px] text-amber-500/80 mt-0.5">

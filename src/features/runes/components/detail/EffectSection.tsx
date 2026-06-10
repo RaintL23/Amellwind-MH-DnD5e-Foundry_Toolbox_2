@@ -7,6 +7,7 @@ import { getReferencedMaterialEffectsForText } from "@/features/material-effects
 import { Badge } from "@/components/ui/badge";
 import { formatTag, tagVariant } from "../../utils/rune-tag.utils";
 import { cn } from "@/shared/utils/cn";
+import { splitDisplayTextLines } from "@/shared/utils/fivetools-parser";
 
 interface EffectSectionProps {
   label: string;
@@ -46,6 +47,8 @@ export function EffectSection({
       ? "bg-muted/40 text-muted-foreground border-border"
       : RESOURCE_RARITY_STYLES[rarityLabel].badge;
 
+  const lines = splitDisplayTextLines(text);
+
   return (
     <div className="mt-4">
       <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">
@@ -66,13 +69,20 @@ export function EffectSection({
           </Badge>
         ))}
       </div>
-      <p className="text-sm text-muted-foreground leading-relaxed">
-        <MaterialEffectHighlightText
-          text={text}
-          slot={slot}
-          index={materialEffectIndex}
-        />
-      </p>
+      <div className="space-y-1.5 text-sm text-muted-foreground leading-relaxed">
+        {lines.map((line, index) => (
+          <p
+            key={index}
+            className={cn(line.startsWith("•") && "pl-3")}
+          >
+            <MaterialEffectHighlightText
+              text={line.startsWith("•") ? line.replace(/^•\s*/, "") : line}
+              slot={slot}
+              index={materialEffectIndex}
+            />
+          </p>
+        ))}
+      </div>
     </div>
   );
 }

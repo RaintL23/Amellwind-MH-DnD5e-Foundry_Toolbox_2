@@ -13,7 +13,7 @@ import { getAllRunes } from "@/features/runes/services/rune.service";
 import { useRuneCompatibilityContext } from "../../hooks/useRuneCompatibilityContext";
 import { getRuneMaterialEffectText } from "@/features/runes/utils/rune-compatibility.utils";
 import { RunePickerPanel } from "./RunePickerPanel";
-import { DndRichText } from "@/shared/components/DndRichText";
+import { RuneEffectText } from "@/features/runes/components/shared/RuneEffectText";
 
 interface RuneAssignmentPanelProps {
   slot: EquipmentSlotType;
@@ -168,8 +168,8 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
                   className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1.5 text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <p className="font-medium text-foreground break-words">{rune.name}</p>
-                  <p className="text-muted-foreground break-words whitespace-normal">
-                    <DndRichText
+                  <div className="text-muted-foreground break-words whitespace-normal">
+                    <RuneEffectText
                       text={
                         isWeapon
                           ? (rune.weaponEffect ?? "")
@@ -181,7 +181,7 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
                               )
                       }
                     />
-                  </p>
+                  </div>
                 </div>
                 <Gem className="h-3.5 w-3.5 text-primary" />
                 <span className="text-[8px] text-foreground text-center leading-tight px-0.5 truncate w-full">

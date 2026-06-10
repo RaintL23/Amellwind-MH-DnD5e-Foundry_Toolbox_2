@@ -85,3 +85,52 @@ export function parseEntries(entries: unknown[]): string {
     .filter(Boolean)
     .join(" ");
 }
+
+/**
+ * Flattens 5etools entry arrays into multiline display text while preserving
+ * {@…} markup for DndRichText. List items are emitted as bullet lines.
+ */
+export function flattenEntriesForDisplay(entries: unknown[]): string {
+  const lines: string[] = [];
+
+  function append(entry: unknown): void {
+    if (typeof entry === "string") {
+      if (entry.trim()) lines.push(entry);
+      return;
+    }
+    if (typeof entry !== "object" || entry === null) return;
+
+    const obj = entry as Record<string, unknown>;
+
+    if (typeof obj.text === "string") {
+      if (obj.text.trim()) lines.push(obj.text);
+      return;
+    }
+
+    if (obj.type === "list" && Array.isArray(obj.items)) {
+      for (const item of obj.items) {
+        if (typeof item === "string") {
+          lines.push(`• ${item}`);
+          continue;
+        }
+        const nested = flattenEntriesForDisplay([item]);
+        if (nested) lines.push(`• ${nested.replace(/\n/g, "\n  ")}`);
+      }
+      return;
+    }
+
+    if (Array.isArray(obj.entries)) {
+      for (const nested of obj.entries) append(nested);
+    }
+  }
+
+  for (const entry of entries) append(entry);
+  return lines.join("\n");
+}
+
+export function splitDisplayTextLines(text: string): string[] {
+  return text
+    .split(/\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+}

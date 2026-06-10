@@ -80,15 +80,38 @@ function getEffectTags(rune: Rune, slotKind: "weapon" | "armor" | "trinket"): st
   return rune.tags;
 }
 
+const TRINKET_INELIGIBLE_PATTERN = /cannot be placed in a trinket/i;
+
+/** True when the effect text explicitly forbids trinket placement. */
+export function isEffectTrinketIneligible(effectText: string | null): boolean {
+  return effectText !== null && TRINKET_INELIGIBLE_PATTERN.test(effectText);
+}
+
 /**
  * Returns a human-readable reason why a rune is ineligible for the character/slot,
  * or null if the rune is fully compatible.
+ *
+ * For trinket pickers, pass `materialEffectKind` so restrictions apply to the
+ * specific weapon/armor effect row being selected.
  */
 export function getRuneIneligibilityReason(
   rune: Rune,
   ctx: RuneCompatibilityContext,
+  materialEffectKind?: MaterialEffectSlot,
 ): string | null {
-  const effectTags = getEffectTags(rune, ctx.slotKind);
+  if (ctx.slotKind === "trinket" && materialEffectKind) {
+    const effectText = getRuneMaterialEffectText(rune, materialEffectKind);
+    if (isEffectTrinketIneligible(effectText)) {
+      return "Cannot be placed in a trinket";
+    }
+  }
+
+  const effectTags =
+    ctx.slotKind === "trinket" && materialEffectKind
+      ? materialEffectKind === "weapon"
+        ? rune.weaponTags
+        : rune.armorTags
+      : getEffectTags(rune, ctx.slotKind);
 
   for (const tag of effectTags.filter((t) => t.startsWith("class:"))) {
     const requirement = tag.slice("class:".length);

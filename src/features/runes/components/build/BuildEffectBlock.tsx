@@ -1,4 +1,4 @@
-import { DndRichText } from "@/shared/components/DndRichText";
+import { RuneEffectText } from "@/features/runes/components/shared/RuneEffectText";
 import { cn } from "@/shared/utils/cn";
 
 interface BuildEffectBlockProps {
@@ -24,9 +24,9 @@ export function BuildEffectBlock({
         <span className={cn("text-xs font-semibold", accentColor)}>{runeName}</span>
         <span className="text-xs text-muted-foreground/50 truncate shrink-0">{monsterName}</span>
       </div>
-      <p className="text-xs text-muted-foreground leading-relaxed">
-        <DndRichText text={effect} />
-      </p>
+      <div className="text-xs text-muted-foreground leading-relaxed">
+        <RuneEffectText text={effect} />
+      </div>
     </div>
   );
 }

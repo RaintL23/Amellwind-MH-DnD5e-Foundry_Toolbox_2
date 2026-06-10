@@ -1,4 +1,5 @@
 import { Rune, RuneSlot, RuneTier } from "@/shared/types";
+import { flattenEntriesForDisplay } from "@/shared/utils/fivetools-parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -42,10 +43,7 @@ function indexEffectsByName(items: unknown[]): Record<string, string> {
     const i = item as Raw;
     const name = String(i.name ?? "");
     const entries = Array.isArray(i.entries) ? i.entries : [];
-    index[name] = entries
-      .map((e: unknown) => (typeof e === "string" ? e : ""))
-      .filter(Boolean)
-      .join(" ");
+    index[name] = flattenEntriesForDisplay(entries);
   }
   return index;
 }
