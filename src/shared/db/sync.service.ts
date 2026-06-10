@@ -14,8 +14,11 @@ const VARIANT_RULE_STORE_KEY = "variantrule";
 const CLASS_FEATURE_STORE_KEY = "classFeature";
 const CLASS_STORE_KEY = "class";
 const BOOK_DATA_STORE_KEY = "bookData";
+const CONDITION_STORE_KEY = "condition";
+const DISEASE_STORE_KEY = "disease";
 
 let mmRawCache: unknown[] | null = null;
+let mmJsonPromise: Promise<Record<string, unknown>> | null = null;
 let gtmhJsonPromise: Promise<Record<string, unknown>> | null = null;
 
 interface DataMeta {
@@ -93,6 +96,18 @@ export async function syncData(): Promise<SyncResult> {
       "MM_PREVIOUS",
       "MM_META",
       "monster",
+      async (json) => {
+        if (Array.isArray(json.condition)) {
+          await setStoreValue(
+            "MM_CURRENT",
+            CONDITION_STORE_KEY,
+            json.condition,
+          );
+        }
+        if (Array.isArray(json.disease)) {
+          await setStoreValue("MM_CURRENT", DISEASE_STORE_KEY, json.disease);
+        }
+      },
     );
     if (fetched !== null) {
       mmData = fetched as unknown[];
@@ -185,6 +200,56 @@ export async function getMonsterData(): Promise<unknown[]> {
 
 export function clearMonsterDataCache(): void {
   mmRawCache = null;
+}
+
+async function fetchMmJsonOnce(): Promise<Record<string, unknown>> {
+  if (!mmJsonPromise) {
+    mmJsonPromise = fetch(MONSTER_MANUAL_URL)
+      .then((response) =>
+        response.ok
+          ? (response.json() as Promise<Record<string, unknown>>)
+          : ({} as Record<string, unknown>),
+      )
+      .catch(() => ({} as Record<string, unknown>));
+  }
+  return mmJsonPromise;
+}
+
+async function ensureMmArrayStore(
+  jsonKey: string,
+  storeKey: string,
+): Promise<unknown[]> {
+  const cached = await getStoreValue<unknown[]>("MM_CURRENT", storeKey);
+  if (cached && cached.length > 0) return cached;
+
+  try {
+    const json = await fetchMmJsonOnce();
+    const data: unknown[] = Array.isArray(json[jsonKey])
+      ? (json[jsonKey] as unknown[])
+      : [];
+    if (data.length > 0) {
+      await setStoreValue("MM_CURRENT", storeKey, data);
+    }
+    return data;
+  } catch {
+    return [];
+  }
+}
+
+/**
+ * Returns the raw condition array from the MHMM JSON.
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getConditionsRaw(): Promise<unknown[]> {
+  return ensureMmArrayStore("condition", CONDITION_STORE_KEY);
+}
+
+/**
+ * Returns the raw disease array from the MHMM JSON.
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getDiseasesRaw(): Promise<unknown[]> {
+  return ensureMmArrayStore("disease", DISEASE_STORE_KEY);
 }
 
 async function fetchGtmhJsonOnce(): Promise<Record<string, unknown>> {

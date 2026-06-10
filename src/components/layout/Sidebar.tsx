@@ -3,6 +3,8 @@ import { NavLink, useLocation } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import {
   Swords,
+  AlertTriangle,
+  Biohazard,
   Gem,
   ChefHat,
   ChevronDown,
@@ -70,6 +72,8 @@ const NAV_GROUPS: NavGroup[] = [
       { to: "/monsters", label: "Monsters", icon: Swords },
       { to: "/runes", label: "Runes", icon: Gem },
       { to: "/material-effects", label: "Material Effects", icon: Sparkles },
+      { to: "/conditions", label: "Conditions", icon: AlertTriangle },
+      { to: "/diseases", label: "Diseases", icon: Biohazard },
     ],
   },
   {

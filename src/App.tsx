@@ -15,6 +15,8 @@ import { clearBackgroundCache } from "@/features/backgrounds/services/background
 import { clearFeatCache } from "@/features/feats/services/feat.service";
 import { clearMonstieSidekickCache } from "@/features/monstie-sidekick/services/monstie-sidekick.service";
 import { clearMaterialEffectCache } from "@/features/material-effects/services/material-effect.service";
+import { clearConditionCache } from "@/features/conditions/services/condition.service";
+import { clearDiseaseCache } from "@/features/diseases/services/disease.service";
 
 const MonsterList = lazy(() =>
   import("@/features/monsters/components/MonsterList").then((m) => ({
@@ -40,6 +42,16 @@ const MaterialEffectList = lazy(() =>
   import("@/features/material-effects/components/MaterialEffectList").then(
     (m) => ({ default: m.MaterialEffectList }),
   ),
+);
+const ConditionList = lazy(() =>
+  import("@/features/conditions/components/ConditionList").then((m) => ({
+    default: m.ConditionList,
+  })),
+);
+const DiseaseList = lazy(() =>
+  import("@/features/diseases/components/DiseaseList").then((m) => ({
+    default: m.DiseaseList,
+  })),
 );
 const CookingPage = lazy(() =>
   import("@/features/cooking/components/CookingPage").then((m) => ({
@@ -192,6 +204,8 @@ export default function App() {
         if (result.updated.mm) {
           clearMonsterCache();
           clearRuneCache();
+          clearConditionCache();
+          clearDiseaseCache();
         }
         if (result.updated.gtmh) {
           clearSpeciesCache();
@@ -255,6 +269,22 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <MaterialEffectList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="conditions"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ConditionList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="diseases"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DiseaseList />
                   </Suspense>
                 }
               />
