@@ -87,6 +87,7 @@ import {
   pruneChoicesByHierarchy,
   skillsFromHigherPriority,
 } from "../utils/skill-choice-hierarchy.utils";
+import { useBuilderInventory } from "./BuilderInventoryContext";
 
 // ─── Context Value ───────────────────────────────────────────────────────────
 
@@ -274,6 +275,7 @@ const CharacterBuilderContext = createContext<CharacterBuilderContextValue | nul
 // ─── Provider ────────────────────────────────────────────────────────────────
 
 export function CharacterBuilderProvider({ children }: Readonly<{ children: ReactNode }>) {
+  const { clearInventory } = useBuilderInventory();
   const [character, setCharacter] = useState<Character>(() => new Character());
   const [attacksPerTurnOverride, setAttacksPerTurnOverride] = useState<number | null>(null);
   const [useUnarmedStrike, setUseUnarmedStrike] = useState(false);
@@ -1052,7 +1054,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setBackgroundLanguageChoices([]);
     setSpeciesLanguageChoices([]);
     setSpeciesDefenseChoicesState({});
-  }, []);
+    clearInventory();
+  }, [clearInventory]);
 
   // ─── Hierarchy: Species → Background → Class ─────────────────────────────
 
