@@ -117,15 +117,40 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   ],
   // Regeneración de extremidades / partes del cuerpo (efecto de curación mayor distinto del HP)
   [/(?:regrow|missing part.*grow|body part.*grow|limb.*regrow)/i, "mechanic:regeneration"],
-  // Spell condicionado a un tipo de daño elemental específico
-  [
-    /(?:cast|spell)\b[^.]*\bdeals?\s+(?:fire|lightning|thunder|cold|acid|poison|radiant|necrotic|psychic|force|bludgeoning|piercing|slashing)\s+damage/i,
-    "mechanic:spell-element",
-  ],
   // Recarga o uso ligado a descansos
   [/\bshort(?:\s+or\s+long)?\s+rest\b|\{@rest\s+short\}/i, "mechanic:short-rest"],
   [/\b(?:short\s+or\s+)?long\s+rest\b|\{@rest\s+long\}/i, "mechanic:long-rest"],
 ];
+
+const DAMAGE_TYPES = [
+  "acid",
+  "bludgeoning",
+  "cold",
+  "fire",
+  "force",
+  "lightning",
+  "necrotic",
+  "piercing",
+  "poison",
+  "psychic",
+  "radiant",
+  "slashing",
+  "thunder",
+] as const;
+
+/** damage:fire, damage:cold, etc. — cualquier mención explícita del tipo de daño. */
+function damageTypeTags(text: string): string[] {
+  const tags: string[] = [];
+  for (const type of DAMAGE_TYPES) {
+    const mentionsType =
+      new RegExp(`\\b${type}\\s+damage\\b`, "i").test(text) ||
+      new RegExp(`resistance to\\s+${type}\\b`, "i").test(text) ||
+      new RegExp(`immune(?:ity)? to\\s+${type}\\b`, "i").test(text) ||
+      new RegExp(`vulnerab(?:le|ility) to\\s+${type}\\b`, "i").test(text);
+    if (mentionsType) tags.push(`damage:${type}`);
+  }
+  return tags;
+}
 
 // ─── Scaled sub-tag extractors ────────────────────────────────────────────────
 
@@ -289,6 +314,10 @@ function extractTags(effectText: string): string[] {
 
   for (const typeTag of typeTags(effectText)) {
     tags.add(typeTag);
+  }
+
+  for (const damageTag of damageTypeTags(effectText)) {
+    tags.add(damageTag);
   }
 
   return Array.from(tags);

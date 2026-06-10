@@ -34,6 +34,8 @@ const TAG_VARIANT_CLASSES: Record<string, string> = {
   red: "bg-red-950/60 text-red-300 border-red-800/50 hover:bg-red-900/70",
 };
 
+type TagFilterMode = "and" | "or";
+
 const TAG_VARIANT_DISABLED: Record<string, string> = {
   blue: "bg-sky-950/20 text-sky-600 border-sky-900/30",
   orange: "bg-orange-950/20 text-orange-600 border-orange-900/30",
@@ -51,7 +53,11 @@ export function RunePickerPanel({
   onSelect,
   onCancel,
 }: RunePickerPanelProps) {
-  const [selectedTag, setSelectedTag] = useState<string | null>(null);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [showFilteredList, setShowFilteredList] = useState(false);
+  const [tagFilterMode, setTagFilterMode] = useState<TagFilterMode | null>(
+    null,
+  );
 
   const uniqueTags = useMemo(() => {
     const tagSet = new Set<string>();
@@ -63,24 +69,45 @@ export function RunePickerPanel({
     return Array.from(tagSet).sort();
   }, [runes, slotKind]);
 
-  const tagFilteredRunes = useMemo(() => {
-    if (!selectedTag) return [];
-    return runes.filter((r) =>
-      getRuneEffectTags(r, slotKind).includes(selectedTag),
+  const andFilteredRunes = useMemo(() => {
+    if (selectedTags.length === 0) return [];
+    return runes.filter((r) => {
+      const runeTags = getRuneEffectTags(r, slotKind);
+      return selectedTags.every((tag) => runeTags.includes(tag));
+    });
+  }, [runes, selectedTags, slotKind]);
+
+  const orFilteredRunes = useMemo(() => {
+    if (selectedTags.length === 0) return [];
+    return runes.filter((r) => {
+      const runeTags = getRuneEffectTags(r, slotKind);
+      return selectedTags.some((tag) => runeTags.includes(tag));
+    });
+  }, [runes, selectedTags, slotKind]);
+
+  const displayedRunes =
+    tagFilterMode === "or" ? orFilteredRunes : andFilteredRunes;
+
+  const toggleTag = (tag: string) => {
+    setSelectedTags((prev) =>
+      prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag],
     );
-  }, [runes, selectedTag, slotKind]);
+  };
 
   return (
     <div className="border-t border-border pt-2 space-y-2">
       {/* Header */}
       <div className="flex items-center justify-between">
-        {selectedTag && mode === "catalog" ? (
+        {showFilteredList && mode === "catalog" ? (
           <button
-            onClick={() => setSelectedTag(null)}
+            onClick={() => {
+              setShowFilteredList(false);
+              setTagFilterMode(null);
+            }}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground"
           >
             <ChevronLeft className="h-3 w-3" />
-            Change tag
+            Change tags
           </button>
         ) : (
           <span className="text-xs text-muted-foreground">{slotLabel}</span>
@@ -119,21 +146,27 @@ export function RunePickerPanel({
       )}
 
       {/* Catalog mode: tag grid → rune list */}
-      {mode === "catalog" && !selectedTag && (
+      {mode === "catalog" && !showFilteredList && (
         <div className="space-y-1.5">
           <p className="text-[11px] text-muted-foreground">
-            Select a tag to browse runes:
+            Select one or more tags to browse runes:
           </p>
           <div className="flex flex-wrap gap-1.5">
             {uniqueTags.map((tag) => {
               const variant = tagVariant(tag);
-              const ineligibilityReason = getTagIneligibilityReasons(tag, runes, compatibilityCtx);
+              const ineligibilityReason = getTagIneligibilityReasons(
+                tag,
+                runes,
+                compatibilityCtx,
+              );
               const disabled = ineligibilityReason !== null;
+              const isSelected = selectedTags.includes(tag);
               return (
                 <button
                   key={tag}
                   disabled={disabled}
-                  onClick={() => setSelectedTag(tag)}
+                  onClick={() => toggleTag(tag)}
+                  aria-pressed={isSelected}
                   className={cn(
                     "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium transition-colors",
                     disabled
@@ -141,7 +174,11 @@ export function RunePickerPanel({
                           "cursor-not-allowed opacity-50",
                           TAG_VARIANT_DISABLED[variant],
                         )
-                      : TAG_VARIANT_CLASSES[variant],
+                      : cn(
+                          TAG_VARIANT_CLASSES[variant],
+                          isSelected &&
+                            "ring-2 ring-primary/60 ring-offset-1 ring-offset-background",
+                        ),
                   )}
                   title={ineligibilityReason ?? undefined}
                 >
@@ -155,24 +192,67 @@ export function RunePickerPanel({
               </p>
             )}
           </div>
+          {uniqueTags.length > 0 && (
+            <div className="flex gap-2">
+              <button
+                disabled={selectedTags.length === 0}
+                onClick={() => {
+                  setTagFilterMode("and");
+                  setShowFilteredList(true);
+                }}
+                className={cn(
+                  "flex-1 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+                  selectedTags.length === 0
+                    ? "border-border text-muted-foreground/50 cursor-not-allowed"
+                    : "border-primary/40 bg-primary/10 text-primary hover:bg-primary/20",
+                )}
+                title="Runes that have every selected tag on the same rune"
+              >
+                All tags in one rune ({andFilteredRunes.length})
+              </button>
+              <button
+                disabled={selectedTags.length === 0}
+                onClick={() => {
+                  setTagFilterMode("or");
+                  setShowFilteredList(true);
+                }}
+                className={cn(
+                  "flex-1 rounded-md border px-3 py-1.5 text-xs font-medium transition-colors",
+                  selectedTags.length === 0
+                    ? "border-border text-muted-foreground/50 cursor-not-allowed"
+                    : "border-border bg-muted/30 text-foreground hover:bg-muted/50",
+                )}
+                title="Runes that have at least one of the selected tags"
+              >
+                Any selected tag ({orFilteredRunes.length})
+              </button>
+            </div>
+          )}
         </div>
       )}
 
-      {mode === "catalog" && selectedTag && (
+      {mode === "catalog" && showFilteredList && (
         <div className="space-y-1">
-          <div className="flex items-center gap-1.5 mb-1">
-            <span className="text-[11px] text-muted-foreground">Tag:</span>
-            <span
-              className={cn(
-                "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium",
-                TAG_VARIANT_CLASSES[tagVariant(selectedTag)],
-              )}
-            >
-              {formatTag(selectedTag)}
+          <div className="flex flex-wrap items-center gap-1.5 mb-1">
+            <span className="text-[11px] text-muted-foreground">
+              {tagFilterMode === "or"
+                ? "Runes with any of:"
+                : "Runes with all of:"}
             </span>
+            {selectedTags.map((tag) => (
+              <span
+                key={tag}
+                className={cn(
+                  "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-medium",
+                  TAG_VARIANT_CLASSES[tagVariant(tag)],
+                )}
+              >
+                {formatTag(tag)}
+              </span>
+            ))}
           </div>
           <RuneList
-            runes={tagFilteredRunes}
+            runes={displayedRunes}
             isWeapon={isWeapon}
             compatibilityCtx={compatibilityCtx}
             onSelect={onSelect}
