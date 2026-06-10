@@ -10,6 +10,8 @@ export interface MHItem {
   entries: unknown[];
 }
 
+export type CartInventoryRole = "integrated-shield" | "default-ammo" | "trinket";
+
 export interface CartEntry {
   name: string;
   cost: string;
@@ -19,6 +21,9 @@ export interface CartEntry {
   quantity: number;
   /** Set when the row was added from a starting-equipment badge. */
   startingEquipmentId?: string;
+  /** Companion rows auto-added when equipping a weapon (shield, default ammo). */
+  linkedWeaponName?: string;
+  inventoryRole?: CartInventoryRole;
 }
 
 export interface ShopEntry {

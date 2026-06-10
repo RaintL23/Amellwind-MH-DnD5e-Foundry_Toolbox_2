@@ -169,6 +169,7 @@ interface CharacterBuilderContextValue {
   setArmorRarity: (rarity: string) => void;
   equipTrinket: (slot: "trinket1" | "trinket2", name: string) => void;
   unequipTrinket: (slot: "trinket1" | "trinket2") => void;
+  clearEquipment: () => void;
 
   // Rune management
   assignWeaponRune: (slot: "mainHand" | "offHand", index: number, rune: Rune) => RuleViolation | null;
@@ -816,6 +817,14 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     else setTrinket2(null);
   }, []);
 
+  const clearEquipment = useCallback(() => {
+    setMainHand(null);
+    setOffHand(null);
+    setArmor(null);
+    setTrinket1(null);
+    setTrinket2(null);
+  }, []);
+
   // ─── Rune mutations ──────────────────────────────────────────────────────
 
   const assignWeaponRune = useCallback(
@@ -1370,6 +1379,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setArmorRarity,
       equipTrinket,
       unequipTrinket,
+      clearEquipment,
       assignWeaponRune,
       removeWeaponRune,
       assignArmorRune,
@@ -1440,7 +1450,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       backgroundAsiMode, backgroundAsiPlus2, backgroundAsiPlus1,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield, integratedShieldAcBonus,
       equipWeapon, unequipWeapon, setWeaponRarity, setVersatileMode,
-      equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket,
+      equipArmor, unequipArmor, setArmorRarity, equipTrinket, unequipTrinket, clearEquipment,
       assignWeaponRune, removeWeaponRune, assignArmorRune, removeArmorRune,
       assignTrinketRune, removeTrinketRune,
       totalAC, combat, resetBuild,

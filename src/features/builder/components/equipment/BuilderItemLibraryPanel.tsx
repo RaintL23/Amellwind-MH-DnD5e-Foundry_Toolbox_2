@@ -132,6 +132,12 @@ import {
   getClassEquipmentConflictReason,
   getWeaponEffectiveTierLabel,
 } from "../../utils/equipment-proficiency.utils";
+import { PLACEHOLDER_TRINKETS } from "../../data/trinket.placeholder";
+import {
+  buildArmorInventoryBundle,
+  buildTrinketInventoryBundle,
+  buildWeaponInventoryBundle,
+} from "../../utils/equipment-inventory.utils";
 
 const RARITY_BADGE: Record<string, string> = {
   Uncommon:
@@ -248,8 +254,12 @@ export function BuilderItemLibraryPanel({
     bookNames,
   } = useClassVariants(classData);
   const identityBookNames = useBookSourceNames();
-  const { weapons: inventoryWeapons, armors: inventoryArmors } =
-    useBuilderInventory();
+  const {
+    weapons: inventoryWeapons,
+    armors: inventoryArmors,
+    trinkets: inventoryTrinkets,
+    addEquipmentBundle,
+  } = useBuilderInventory();
 
   const isWeaponSlot =
     selectedSlot === "mainHand" || selectedSlot === "offHand";
@@ -468,6 +478,19 @@ export function BuilderItemLibraryPanel({
       (a) => a.name.toLowerCase().includes(q) && !invNames.has(a.name),
     );
   }, [inventoryArmors, isArmorSlot, q]);
+
+  const inventoryTrinketsFiltered = useMemo(() => {
+    if (!isTrinketSlot) return [];
+    return inventoryTrinkets.filter((name) => name.toLowerCase().includes(q));
+  }, [inventoryTrinkets, isTrinketSlot, q]);
+
+  const catalogTrinketsFiltered = useMemo(() => {
+    if (!isTrinketSlot) return [];
+    const invNames = new Set(inventoryTrinkets);
+    return PLACEHOLDER_TRINKETS.filter(
+      (name) => name.toLowerCase().includes(q) && !invNames.has(name),
+    );
+  }, [inventoryTrinkets, isTrinketSlot, q]);
 
   const showClothOption = useMemo(() => {
     if (!isArmorSlot) return false;
@@ -995,15 +1018,18 @@ export function BuilderItemLibraryPanel({
   function handleSelectWeapon(weapon: Weapon) {
     if (!isWeaponSlot || !selectedSlot) return;
     equipWeapon(selectedSlot, weapon, "Common");
+    addEquipmentBundle(buildWeaponInventoryBundle(weapon));
   }
 
   function handleSelectArmor(item: ArmorItem) {
     equipArmor(item);
+    addEquipmentBundle(buildArmorInventoryBundle(item));
   }
 
   function handleSelectTrinket(name: string) {
     if (!isTrinketSlot || !selectedSlot) return;
     equipTrinket(selectedSlot, name);
+    addEquipmentBundle(buildTrinketInventoryBundle(name));
   }
 
   function handleSelectIdentity(id: string, name: string) {
@@ -1244,6 +1270,8 @@ export function BuilderItemLibraryPanel({
 
             {isTrinketSlot && (
               <TrinketList
+                inventory={inventoryTrinketsFiltered}
+                catalog={catalogTrinketsFiltered}
                 equippedName={equippedTrinket?.name ?? null}
                 onSelect={handleSelectTrinket}
               />
@@ -1707,28 +1735,49 @@ function ArmorList({
 }
 
 function TrinketList({
+  inventory,
+  catalog,
   equippedName,
   onSelect,
 }: {
+  inventory: string[];
+  catalog: string[];
   equippedName: string | null;
   onSelect: (name: string) => void;
 }) {
+  if (inventory.length === 0 && catalog.length === 0) {
+    return <EmptyState text="No trinkets available." />;
+  }
+
+  function renderTrinketRow(name: string, key: string, iconMuted: boolean) {
+    return (
+      <ItemRow
+        key={key}
+        icon={
+          <Gem
+            className={cn(
+              "h-3.5 w-3.5",
+              iconMuted ? "text-muted-foreground" : "text-primary",
+            )}
+          />
+        }
+        name={name}
+        meta={
+          <LibraryItemBadgeRow>
+            <LibraryItemBadge>Placeholder</LibraryItemBadge>
+          </LibraryItemBadgeRow>
+        }
+        equipped={equippedName === name}
+        onClick={() => onSelect(name)}
+      />
+    );
+  }
+
   return (
     <>
-      {["Rune Holder A", "Rune Holder B", "Rune Holder C"].map((name) => (
-        <ItemRow
-          key={name}
-          icon={<Gem className="h-3.5 w-3.5 text-muted-foreground" />}
-          name={name}
-          meta={
-            <LibraryItemBadgeRow>
-              <LibraryItemBadge>Placeholder</LibraryItemBadge>
-            </LibraryItemBadgeRow>
-          }
-          equipped={equippedName === name}
-          onClick={() => onSelect(name)}
-        />
-      ))}
+      {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
+      {inventory.map((name) => renderTrinketRow(name, `inv-${name}`, false))}
+      {catalog.map((name) => renderTrinketRow(name, name, true))}
     </>
   );
 }

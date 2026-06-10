@@ -1,9 +1,11 @@
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
+import { isKnownTrinket } from "../data/trinket.placeholder";
+import { isTrinketEntry } from "./equipment-inventory.utils";
 import { ArmorItem, CartEntry, Weapon } from "@/shared/types";
 
 const ARMOR_CATALOG: ArmorItem[] = [...BASE_ARMORS, CLOTHING_ARMOR];
 
-export type CartItemKind = "weapon" | "armor" | "other";
+export type CartItemKind = "weapon" | "armor" | "trinket" | "other";
 
 function normalizeName(name: string): string {
   return name.trim().toLowerCase();
@@ -39,17 +41,20 @@ export function classifyCartEntry(
 ): CartItemKind {
   if (findWeaponByCartName(entry.name, weaponCatalog)) return "weapon";
   if (findArmorByCartName(entry.name)) return "armor";
+  if (isTrinketEntry(entry) || isKnownTrinket(entry.name)) return "trinket";
   return "other";
 }
 
 export function resolveEquippableFromCart(
   cartItems: CartEntry[],
   weaponCatalog: Weapon[],
-): { weapons: Weapon[]; armors: ArmorItem[] } {
+): { weapons: Weapon[]; armors: ArmorItem[]; trinkets: string[] } {
   const weapons: Weapon[] = [];
   const armors: ArmorItem[] = [];
+  const trinkets: string[] = [];
   const seenWeapons = new Set<string>();
   const seenArmors = new Set<string>();
+  const seenTrinkets = new Set<string>();
 
   for (const entry of cartItems) {
     const weapon = findWeaponByCartName(entry.name, weaponCatalog);
@@ -63,8 +68,17 @@ export function resolveEquippableFromCart(
     if (armor && !seenArmors.has(armor.name)) {
       seenArmors.add(armor.name);
       armors.push(armor);
+      continue;
+    }
+
+    if (
+      (isTrinketEntry(entry) || isKnownTrinket(entry.name)) &&
+      !seenTrinkets.has(entry.name)
+    ) {
+      seenTrinkets.add(entry.name);
+      trinkets.push(entry.name);
     }
   }
 
-  return { weapons, armors };
+  return { weapons, armors, trinkets };
 }

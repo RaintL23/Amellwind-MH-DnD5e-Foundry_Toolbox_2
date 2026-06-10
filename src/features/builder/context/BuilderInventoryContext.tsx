@@ -14,6 +14,7 @@ import {
   resolveEquippableFromCart,
   type CartItemKind,
 } from "../utils/cart-equipment.resolver";
+import { getLinkedInventoryNames } from "../utils/equipment-inventory.utils";
 
 function mergeCartEntries(
   existing: CartEntry[],
@@ -41,12 +42,15 @@ interface BuilderInventoryContextValue {
   items: CartEntry[];
   weapons: Weapon[];
   armors: ArmorItem[];
+  trinkets: string[];
   totalItems: number;
   equippableCount: number;
   isSyncing: boolean;
   getEntryKind: (entry: CartEntry) => CartItemKind;
   addToInventory: (entry: CartEntry) => void;
+  addEquipmentBundle: (entries: CartEntry[]) => void;
   removeFromInventory: (name: string) => void;
+  removeWeaponInventoryBundle: (weaponName: string) => void;
   removeStartingEquipmentItem: (startingEquipmentId: string) => void;
   clearStartingEquipmentForSource: (type: string, sourceId: string) => void;
   clearInventory: () => void;
@@ -65,6 +69,7 @@ export function BuilderInventoryProvider({
   const [items, setItems] = useState<CartEntry[]>([]);
   const [weapons, setWeapons] = useState<Weapon[]>([]);
   const [armors, setArmors] = useState<ArmorItem[]>([]);
+  const [trinkets, setTrinkets] = useState<string[]>([]);
   const [weaponCatalog, setWeaponCatalog] = useState<Weapon[]>([]);
   const [isSyncing, setIsSyncing] = useState(true);
 
@@ -82,6 +87,7 @@ export function BuilderInventoryProvider({
     if (items.length === 0) {
       setWeapons([]);
       setArmors([]);
+      setTrinkets([]);
       setIsSyncing(false);
       return;
     }
@@ -91,10 +97,11 @@ export function BuilderInventoryProvider({
       return;
     }
 
-    const { weapons: nextWeapons, armors: nextArmors } =
+    const { weapons: nextWeapons, armors: nextArmors, trinkets: nextTrinkets } =
       resolveEquippableFromCart(items, weaponCatalog);
     setWeapons(nextWeapons);
     setArmors(nextArmors);
+    setTrinkets(nextTrinkets);
     setIsSyncing(false);
   }, [items, weaponCatalog]);
 
@@ -109,6 +116,22 @@ export function BuilderInventoryProvider({
 
   const removeFromInventory = useCallback((name: string) => {
     setItems((prev) => prev.filter((i) => i.name !== name));
+  }, []);
+
+  const removeWeaponInventoryBundle = useCallback((weaponName: string) => {
+    const linkedNames = new Set(getLinkedInventoryNames(weaponName));
+    setItems((prev) =>
+      prev.filter(
+        (entry) =>
+          !linkedNames.has(entry.name) &&
+          entry.linkedWeaponName !== weaponName,
+      ),
+    );
+  }, []);
+
+  const addEquipmentBundle = useCallback((entries: CartEntry[]) => {
+    if (entries.length === 0) return;
+    setItems((prev) => mergeCartEntries(prev, entries));
   }, []);
 
   const addToInventory = useCallback((entry: CartEntry) => {
@@ -157,12 +180,15 @@ export function BuilderInventoryProvider({
         items,
         weapons,
         armors,
+        trinkets,
         totalItems,
         equippableCount,
         isSyncing,
         getEntryKind,
         addToInventory,
+        addEquipmentBundle,
         removeFromInventory,
+        removeWeaponInventoryBundle,
         removeStartingEquipmentItem,
         clearStartingEquipmentForSource,
         clearInventory,
