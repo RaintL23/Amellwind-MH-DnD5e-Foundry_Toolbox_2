@@ -90,6 +90,15 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/critical/i, "mechanic:critical"],
   [/resistance to\s+\w/i, "mechanic:resistance"],
   [/immune to|immunity to/i, "mechanic:immunity"],
+  [
+    /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i,
+    "mechanic:damage-reduction",
+  ],
+  [/damage (?:you take )?is reduced (?:by|to)/i, "mechanic:damage-reduction"],
+  [
+    /when you (?:take|would take)(?: \w+)* damage[^.]*reduce/i,
+    "mechanic:damage-reduction",
+  ],
   [/bonus action/i, "mechanic:bonus-action"],
   [/\breaction\b/i, "mechanic:reaction"],
   [
@@ -201,6 +210,56 @@ function spellTag(text: string): string | null {
   return "mechanic:spell:lvl1-2";
 }
 
+/**
+ * type:offensive  → más daño (extra damage, críticos, buffs de ataque/daño)
+ * type:defensive  → menos daño recibido o bonus de AC
+ * type:support    → ayuda a aliados o menciona criaturas willing
+ */
+function typeTags(text: string): string[] {
+  const tags: string[] = [];
+
+  if (/willing creature/i.test(text)) {
+    tags.push("type:support");
+  } else if (
+    /(?:another|friendly|allied|ally|allies)\s+(?:creature|target)/i.test(text) &&
+    /(?:regain|restore|grant|give|heal|advantage on|temporary hit points)/i.test(
+      text,
+    )
+  ) {
+    tags.push("type:support");
+  }
+
+  const isDefensive =
+    /\bAC\b|armor class/i.test(text) ||
+    /resistance to\s+\w/i.test(text) ||
+    /immune to|immunity to/i.test(text) ||
+    /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i.test(
+      text,
+    ) ||
+    /damage (?:you take )?is reduced (?:by|to)/i.test(text) ||
+    /when you (?:take|would take)(?: \w+)* damage[^.]*reduce/i.test(text) ||
+    /Guard AC/i.test(text) ||
+    (/saving throw/i.test(text) &&
+      /\badvantage\b/i.test(text) &&
+      !/\bdisadvantage\b/i.test(text));
+
+  if (isDefensive) tags.push("type:defensive");
+
+  const isOffensive =
+    /extra (?:\{@damage|\d+d\d+)/i.test(text) ||
+    /\bcritical\b/i.test(text) ||
+    /\+\d+\s*bonus.*(?:attack|damage)/i.test(text) ||
+    /(?:attack|damage) roll.*\+\d+/i.test(text) ||
+    /spell attack\s+roll|spell damage|damage roll/i.test(text) ||
+    (/\{@condition/i.test(text) && /(?:hit|attack|strike|on a hit)/i.test(text)) ||
+    /(?:deals?|extra)\s+(?:\{@damage|\d+d\d+)/i.test(text) ||
+    (/\{@spell/i.test(text) && /deals?\s+\w+\s+damage/i.test(text));
+
+  if (isOffensive) tags.push("type:offensive");
+
+  return tags;
+}
+
 function extractTags(effectText: string): string[] {
   const tags = new Set<string>();
 
@@ -226,6 +285,10 @@ function extractTags(effectText: string): string[] {
 
   for (const buffTag of spellBuffTags(effectText)) {
     tags.add(buffTag);
+  }
+
+  for (const typeTag of typeTags(effectText)) {
+    tags.add(typeTag);
   }
 
   return Array.from(tags);

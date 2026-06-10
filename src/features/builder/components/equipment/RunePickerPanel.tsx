@@ -31,12 +31,14 @@ const TAG_VARIANT_CLASSES: Record<string, string> = {
     "bg-orange-950/60 text-orange-300 border-orange-800/50 hover:bg-orange-900/70",
   green:
     "bg-emerald-950/60 text-emerald-300 border-emerald-800/50 hover:bg-emerald-900/70",
+  red: "bg-red-950/60 text-red-300 border-red-800/50 hover:bg-red-900/70",
 };
 
 const TAG_VARIANT_DISABLED: Record<string, string> = {
   blue: "bg-sky-950/20 text-sky-600 border-sky-900/30",
   orange: "bg-orange-950/20 text-orange-600 border-orange-900/30",
   green: "bg-emerald-950/20 text-emerald-600 border-emerald-900/30",
+  red: "bg-red-950/20 text-red-600 border-red-900/30",
 };
 
 export function RunePickerPanel({

@@ -8,7 +8,7 @@ export interface RuleViolation {
 /** Groups of tags exclusive to armor (max 1 per group) */
 const ARMOR_RULE_GROUPS: { tags: string[]; rule: string }[] = [
   {
-    tags: ["mechanic:resistance", "mechanic:immunity"],
+    tags: ["mechanic:resistance", "mechanic:immunity", "mechanic:damage-reduction"],
     rule: "Only 1 material with resistance, reduction or elemental immunity (rule 1)",
   },
   {

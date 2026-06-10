@@ -12,6 +12,7 @@ export function RuneTagsSection({ rune }: RuneTagsSectionProps) {
 
   const classTags = rune.tags.filter((t) => t.startsWith("class:"));
   const weaponTypeTags = rune.tags.filter((t) => t.startsWith("weapon-type:"));
+  const typeTags = rune.tags.filter((t) => t.startsWith("type:"));
   const weaponMechanicTags = rune.weaponTags.filter((t) => t.startsWith("mechanic:"));
   const armorMechanicTags = rune.armorTags.filter((t) => t.startsWith("mechanic:"));
 
@@ -36,6 +37,16 @@ export function RuneTagsSection({ rune }: RuneTagsSectionProps) {
             <span className="text-xs text-muted-foreground w-24">Weapon type:</span>
             {weaponTypeTags.map((t) => (
               <Badge key={t} variant="orange">
+                {formatTag(t)}
+              </Badge>
+            ))}
+          </div>
+        )}
+        {typeTags.length > 0 && (
+          <div className="flex flex-wrap gap-1 items-center">
+            <span className="text-xs text-muted-foreground w-24">Type:</span>
+            {typeTags.map((t) => (
+              <Badge key={t} variant="red">
                 {formatTag(t)}
               </Badge>
             ))}
