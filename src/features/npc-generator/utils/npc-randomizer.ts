@@ -3,6 +3,7 @@ import type {
   NpcAttributeArray,
   NpcDraft,
   NpcGender,
+  NpcHideFeatureKind,
   NpcHideFeatures,
   NpcHitDie,
 } from "@/shared/types/npc.types";
@@ -50,12 +51,13 @@ const RANDOM_NAMES = [
 
 const GENDERS: NpcGender[] = ["male", "female"];
 const ATTRIBUTE_ARRAYS: NpcAttributeArray[] = ["standard", "heroic", "random"];
-const HIDE_OPTIONS: NpcHideFeatures[] = [
-  "all",
-  "racial",
-  "template",
-  "background",
-];
+const HIDE_KINDS: NpcHideFeatureKind[] = ["racial", "template", "background"];
+
+function randomHideFeatures(): NpcHideFeatures {
+  const count = Math.floor(Math.random() * (HIDE_KINDS.length + 1));
+  const shuffled = [...HIDE_KINDS].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, count);
+}
 
 function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -113,7 +115,7 @@ export function randomizeNpcDraft(
     patch.hitDie = randomHitDie();
   }
   if (randomizeAll || field === "hideFeatures") {
-    patch.hideFeatures = pick(HIDE_OPTIONS);
+    patch.hideFeatures = randomHideFeatures();
   }
 
   if (patch.templateId) {
@@ -151,6 +153,6 @@ export function createDefaultNpcDraft(
     attributeArray: "standard",
     hitDiceCount: getDefaultHitDiceForTier(defaultTier),
     hitDie: 8,
-    hideFeatures: "all",
+    hideFeatures: [],
   };
 }

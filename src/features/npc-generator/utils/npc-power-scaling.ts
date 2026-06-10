@@ -62,17 +62,20 @@ export function resolveNpcPowerProfile(
   };
 }
 
-/** Distinct hit-dice anchors offered in the form for a template tier. */
+/** Every hit-dice count offered in the form for a template tier. */
 export function getHitDiceOptionsForTier(templateTier: number): number[] {
   const bands = getBandsForTier(templateTier);
-  const values = new Set<number>();
+  if (bands.length === 0) return [8];
 
-  for (const band of bands) {
-    values.add(band.hitDiceMin);
-    values.add(band.hitDiceMax);
+  const min = bands[0].hitDiceMin;
+  const max = bands[bands.length - 1].hitDiceMax;
+  const options: number[] = [];
+
+  for (let hd = min; hd <= max; hd++) {
+    options.push(hd);
   }
 
-  return [...values].sort((a, b) => a - b);
+  return options;
 }
 
 export function clampHitDiceForTier(

@@ -17,6 +17,10 @@ interface MultiSelectProps {
   allLabel?: string;
   /** Shown when some but not all options are selected, e.g. "3 selected". */
   countLabel?: (count: number) => string;
+  /** Label for the clear-all shortcut inside the dropdown. Defaults to "None". */
+  clearLabel?: string;
+  /** Label for the select-all shortcut inside the dropdown. Defaults to "All". */
+  selectAllLabel?: string;
   className?: string;
 }
 
@@ -27,6 +31,8 @@ export function MultiSelect({
   emptyLabel,
   allLabel,
   countLabel = (count) => `${count} selected`,
+  clearLabel = "None",
+  selectAllLabel = "All",
   className,
 }: MultiSelectProps) {
   const [open, setOpen] = useState(false);
@@ -91,14 +97,14 @@ export function MultiSelect({
               className="text-xs text-sky-400 hover:underline"
               onClick={() => onChange([...optionValues])}
             >
-              All
+              {selectAllLabel}
             </button>
             <button
               type="button"
               className="text-xs text-muted-foreground hover:underline"
               onClick={() => onChange([])}
             >
-              None
+              {clearLabel}
             </button>
           </div>
           <ul className="space-y-1">

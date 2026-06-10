@@ -1,6 +1,7 @@
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { Select } from "@/components/ui/select";
 import type { NpcDraft } from "@/shared/types/npc.types";
 import {
@@ -12,6 +13,7 @@ import {
   NPC_ATTRIBUTE_ARRAY_LABELS,
   NPC_GENDER_LABELS,
   NPC_HIDE_FEATURES_LABELS,
+  type NpcHideFeatureKind,
   NPC_TEMPLATE_CATEGORY_LABELS,
   type NpcTemplateCategory,
 } from "@/shared/types/npc.types";
@@ -256,6 +258,12 @@ export function NpcFormFields() {
               MM baseline: {powerPreview.mmReference}
               {" · "}
               MH gear: {powerPreview.weaponRarityLabel}
+              {powerPreview.skillBoost > 0 && (
+                <>
+                  {" · "}
+                  +{powerPreview.skillBoost} skills
+                </>
+              )}
               {powerPreview.statBoost > 0 && (
                 <>
                   {" · "}
@@ -307,20 +315,24 @@ export function NpcFormFields() {
         label="Hide Features"
         onRandomize={() => randomizeField("hideFeatures")}
       >
-        <Select
-          value={draft.hideFeatures}
-          onChange={(e) =>
+        <MultiSelect
+          options={Object.entries(NPC_HIDE_FEATURES_LABELS).map(
+            ([value, label]) => ({ value, label }),
+          )}
+          selected={draft.hideFeatures}
+          onChange={(hideFeatures) =>
             setDraft({
-              hideFeatures: e.target.value as NpcDraft["hideFeatures"],
+              hideFeatures: hideFeatures as NpcHideFeatureKind[],
             })
           }
-        >
-          {Object.entries(NPC_HIDE_FEATURES_LABELS).map(([value, label]) => (
-            <option key={value} value={value}>
-              {label}
-            </option>
-          ))}
-        </Select>
+          emptyLabel="Show All Features"
+          allLabel="Hide All Features"
+          clearLabel="Show All"
+          selectAllLabel="Hide All"
+          countLabel={(count) =>
+            count === 1 ? "1 feature hidden" : `${count} features hidden`
+          }
+        />
       </FieldRow>
     </div>
   );

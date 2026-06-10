@@ -2,7 +2,7 @@ import type { Entry, SkillKey } from "@/shared/types";
 import type { Background } from "@/shared/types";
 import type { Species } from "@/shared/types";
 import type { NpcHideFeatures, NpcTemplate } from "@/shared/types/npc.types";
-import { toNpcFeatureText } from "./npc-feature-text.utils";
+import { getTemplateRoleNouns, toNpcFeatureText } from "./npc-feature-text.utils";
 
 const SKIP_SPECIES_TRAIT_NAMES = new Set([
   "Age",
@@ -55,17 +55,21 @@ export function buildNpcTraits(
   subjectRef = "the creature",
 ): Entry[] {
   const traits: Entry[] = [];
+  const roleNouns = getTemplateRoleNouns(template);
 
-  if (hideFeatures !== "template") {
+  if (!hideFeatures.includes("template")) {
     for (const t of template.traits) {
       // Skip the static Spellcasting trait — it will be replaced by the
       // structured SpellcastingBlock generated separately.
       if (t.name === "Spellcasting") continue;
-      traits.push({ name: t.name, entries: t.entries });
+      traits.push({
+        name: t.name,
+        entries: t.entries.map((e) => toNpcFeatureText(e, subjectRef, roleNouns)),
+      });
     }
   }
 
-  if (hideFeatures !== "racial") {
+  if (!hideFeatures.includes("racial")) {
     for (const trait of species.traits) {
       if (SKIP_SPECIES_TRAIT_NAMES.has(trait.name)) continue;
       traits.push({
@@ -86,7 +90,7 @@ export function buildNpcTraits(
     }
   }
 
-  if (hideFeatures !== "background" && background) {
+  if (!hideFeatures.includes("background") && background) {
     const feature =
       background.features.find(
         (f) =>

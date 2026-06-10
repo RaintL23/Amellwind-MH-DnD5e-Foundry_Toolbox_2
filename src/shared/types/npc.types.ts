@@ -20,8 +20,10 @@ export type NpcGender = "male" | "female" | "random";
 
 export type NpcAttributeArray = "standard" | "heroic" | "random";
 
-/** What to hide in the stat block traits section. `all` = show everything. */
-export type NpcHideFeatures = "all" | "racial" | "template" | "background";
+export type NpcHideFeatureKind = "racial" | "template" | "background";
+
+/** Feature kinds hidden from the stat block traits section. Empty = show everything. */
+export type NpcHideFeatures = NpcHideFeatureKind[];
 
 export type NpcHitDie = 4 | 6 | 8 | 10 | 12 | 20;
 
@@ -96,8 +98,7 @@ export const NPC_GENDER_LABELS: Record<Exclude<NpcGender, "random">, string> = {
   female: "Female",
 };
 
-export const NPC_HIDE_FEATURES_LABELS: Record<NpcHideFeatures, string> = {
-  all: "Show All Features",
+export const NPC_HIDE_FEATURES_LABELS: Record<NpcHideFeatureKind, string> = {
   racial: "Hide Racial Features",
   template: "Hide Template Features",
   background: "Hide Background Features",

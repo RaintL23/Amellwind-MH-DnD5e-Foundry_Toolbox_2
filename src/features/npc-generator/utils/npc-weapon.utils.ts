@@ -12,7 +12,7 @@ import {
   getBaseFeatureName,
 } from "@/features/weapons/utils/weapon-feature-chains.utils";
 import { getRaritySlideStatEntries } from "@/features/weapons/utils/rarity-slide.utils";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { toNpcFeatureText } from "./npc-feature-text.utils";
 import { NPC_WEAPON_META_FEATURE, isVariantPrimaryWeapon } from "../data/npc-ammo-attacks.data";
 
 const DMG_TYPE_TO_NPC: Record<string, string> = {
@@ -131,6 +131,7 @@ export function buildWeaponFeatureActions(
   weapon: Weapon,
   rarityIndex: number,
   featuresMap: Map<string, OptionalFeature>,
+  subjectRef = "the creature",
 ): Entry[] {
   const maxFeatures = maxFeaturesForRarity(rarityIndex);
   const actions: Entry[] = [];
@@ -145,7 +146,7 @@ export function buildWeaponFeatureActions(
     seen.add(key);
     actions.push({
       name: feat.name,
-      entries: feat.paragraphs.map((p) => parseFiveToolsMarkup(p)),
+      entries: feat.paragraphs.map((p) => toNpcFeatureText(p, subjectRef)),
     });
   };
 
@@ -213,6 +214,7 @@ export function collectPrimaryWeaponFeatureActions(
   attacks: NpcAttackDefinition[],
   weaponContext: NpcWeaponContext | null,
   rarityIndex: number,
+  subjectRef = "the creature",
 ): Entry[] {
   if (!weaponContext) return [];
 
@@ -224,7 +226,12 @@ export function collectPrimaryWeaponFeatureActions(
 
   if (isVariantPrimaryWeapon(weapon.name)) return [];
 
-  return buildWeaponFeatureActions(weapon, rarityIndex, weaponContext.featuresMap);
+  return buildWeaponFeatureActions(
+    weapon,
+    rarityIndex,
+    weaponContext.featuresMap,
+    subjectRef,
+  );
 }
 
 /** @deprecated Use collectPrimaryWeaponFeatureActions */

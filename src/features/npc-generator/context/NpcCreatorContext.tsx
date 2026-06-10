@@ -55,7 +55,7 @@ export function NpcCreatorProvider({ children }: { children: ReactNode }) {
     attributeArray: "standard",
     hitDiceCount: 8,
     hitDie: 8,
-    hideFeatures: "all",
+    hideFeatures: [],
   });
   const [abilityScores, setAbilityScores] = useState<number[]>(() =>
     rollAttributeArray("standard"),

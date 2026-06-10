@@ -2,6 +2,19 @@ import type { Species } from "@/shared/types";
 import type { NpcTemplate } from "@/shared/types/npc.types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Capitalize subject ref when it starts a sentence. */
+export function formatSubjectAtSentenceStart(subjectRef: string): string {
+  if (!subjectRef) return subjectRef;
+  if (subjectRef.startsWith("the ")) {
+    return `T${subjectRef.slice(1)}`;
+  }
+  return subjectRef.charAt(0).toUpperCase() + subjectRef.slice(1);
+}
+
 /**
  * Build the pronoun-replacement subject reference for a generated NPC.
  *
@@ -17,15 +30,72 @@ export function buildNpcSubjectRef(
   return `the ${species.name} ${template.name.toLowerCase()}`;
 }
 
+const TEMPLATE_ROLE_NOUN_PATTERN =
+  /\b[Tt]he ([a-z]+(?:\s+[a-z]+)?)\s+(?:has|is|are|can|adds|knows|deals|must|makes|casts|utter)\b/g;
+
+/** Role nouns used in template trait/reaction prose (e.g. "knight", "war chanter"). */
+export function getTemplateRoleNouns(template: NpcTemplate): string[] {
+  const nouns = new Set<string>();
+
+  const srdName = template.srdReference.split("|")[0]?.trim();
+  if (srdName) nouns.add(srdName.toLowerCase());
+
+  const lastWord = template.name.split(/\s+/).pop()?.toLowerCase();
+  if (lastWord) nouns.add(lastWord);
+
+  const texts: string[] = [];
+  for (const trait of template.traits) texts.push(...trait.entries);
+  for (const reaction of template.reactions ?? []) texts.push(...reaction.entries);
+
+  for (const text of texts) {
+    for (const match of text.matchAll(TEMPLATE_ROLE_NOUN_PATTERN)) {
+      nouns.add(match[1].toLowerCase());
+    }
+  }
+
+  return [...nouns];
+}
+
+function replaceTemplateRoleNouns(
+  text: string,
+  subjectRef: string,
+  roleNouns: string[],
+): string {
+  const sorted = [...roleNouns].sort((a, b) => b.length - a.length);
+
+  let result = text;
+  for (const noun of sorted) {
+    const escaped = escapeRegex(noun);
+    result = result.replace(
+      new RegExp(`\\bThe ${escaped}\\b`, "g"),
+      formatSubjectAtSentenceStart(subjectRef),
+    );
+    result = result.replace(
+      new RegExp(`\\bthe ${escaped}\\b`, "g"),
+      subjectRef,
+    );
+  }
+  return result;
+}
+
 /**
- * Rewrite feature text sourced from species/background data (which uses
- * second-person "you/your") into third-person NPC prose.
+ * Rewrite feature text sourced from species/background/template/weapon data
+ * into third-person NPC prose for the generated stat block.
  *
- * E.g. "You can breathe fire" → "Kael can breathe fire"
- *      "Your AC is 17"       → "The Kushala Daora warden's AC is 17"
+ * E.g. "You can breathe fire"     → "Kael can breathe fire"
+ *      "The knight has advantage" → "Fiora has advantage"
+ *      "{@condition frightened}"  → "frightened"
  */
-export function toNpcFeatureText(text: string, subjectRef: string): string {
+export function toNpcFeatureText(
+  text: string,
+  subjectRef: string,
+  roleNouns: string[] = [],
+): string {
   let result = parseFiveToolsMarkup(text);
+
+  if (roleNouns.length > 0) {
+    result = replaceTemplateRoleNouns(result, subjectRef, roleNouns);
+  }
 
   // Multi-word phrases first (order matters to avoid partial replacements)
   result = result.replace(/\byou and all allies\b/gi, `${subjectRef} and each ally`);

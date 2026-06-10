@@ -1,11 +1,11 @@
 import type { AbilityKey, AbilityScores, Entry, SkillKey } from "@/shared/types";
 import type { NpcTemplate } from "@/shared/types/npc.types";
+import type { NpcPowerProfile } from "./npc-power-scaling";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
 import {
   formatAttackEntry,
   scaleNpcAttacks,
 } from "./npc-attack.utils";
-import type { NpcPowerProfile } from "./npc-power-scaling";
 import {
   collectPrimaryWeaponFeatureActions,
   findWeaponByName,
@@ -19,6 +19,11 @@ import {
   getVariantMultiattackText,
   isVariantPrimaryWeapon,
 } from "./npc-variant-attacks";
+import {
+  formatSubjectAtSentenceStart,
+  getTemplateRoleNouns,
+  toNpcFeatureText,
+} from "./npc-feature-text.utils";
 
 export function buildNpcActions(
   template: NpcTemplate,
@@ -26,6 +31,7 @@ export function buildNpcActions(
   pb: number,
   powerProfile: NpcPowerProfile,
   weaponContext: NpcWeaponContext | null = null,
+  subjectRef = "the creature",
 ): Entry[] {
   const rarityIndex = powerProfile.weaponRarityIndex;
   const resolvedAttacks = scaleNpcAttacks(
@@ -38,6 +44,7 @@ export function buildNpcActions(
   );
   const actions: Entry[] = [];
   const roleLabel = template.name.toLowerCase();
+  const subject = formatSubjectAtSentenceStart(subjectRef);
   const hitDiceCount = powerProfile.hitDiceCount;
 
   const primaryAttack = resolvedAttacks[0];
@@ -67,14 +74,14 @@ export function buildNpcActions(
     actions.push({
       name: "Multiattack",
       entries: [
-        `The ${roleLabel} makes two attacks with its ${primaryAttack.name.toLowerCase()}.`,
+        `${subject} makes two attacks with its ${primaryAttack.name.toLowerCase()}.`,
       ],
     });
   } else if (rapidFire && primaryAttack) {
     actions.push({
       name: "Multiattack",
       entries: [
-        `The ${roleLabel} makes two ranged attacks with its ${primaryAttack.name.toLowerCase()}.`,
+        `${subject} makes two ranged attacks with its ${primaryAttack.name.toLowerCase()}.`,
       ],
     });
   }
@@ -110,6 +117,7 @@ export function buildNpcActions(
       template.attacks,
       weaponContext,
       rarityIndex,
+      subjectRef,
     ),
   );
 
@@ -118,10 +126,12 @@ export function buildNpcActions(
 
 export function buildNpcReactions(
   template: NpcTemplate,
+  subjectRef = "the creature",
 ): Entry[] {
+  const roleNouns = getTemplateRoleNouns(template);
   return (template.reactions ?? []).map((r) => ({
     name: r.name,
-    entries: r.entries,
+    entries: r.entries.map((e) => toNpcFeatureText(e, subjectRef, roleNouns)),
   }));
 }
 
@@ -151,16 +161,18 @@ export function buildNpcSkills(
   abilities: AbilityScores,
   pb: number,
   backgroundSkillKeys: SkillKey[],
+  powerProfile?: NpcPowerProfile,
 ): Partial<Record<SkillKey, number>> {
   const allSkills = new Set<SkillKey>([
     ...template.skillProficiencies,
     ...backgroundSkillKeys,
   ]);
   const skills: Partial<Record<SkillKey, number>> = {};
+  const skillBoost = powerProfile?.skillBoost ?? 0;
 
   for (const key of allSkills) {
     const abilityKey = SKILL_ABILITY[key] ?? "wis";
-    skills[key] = getAbilityModifier(abilities[abilityKey]) + pb;
+    skills[key] = getAbilityModifier(abilities[abilityKey]) + pb + skillBoost;
   }
 
   return skills;

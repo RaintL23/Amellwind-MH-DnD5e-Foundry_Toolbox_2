@@ -55,7 +55,13 @@ export function buildNpcFromDraft(
     ? parseBackgroundSkills(background.proficiencies.skills)
     : [];
 
-  const skills = buildNpcSkills(template, abilities, pb, backgroundSkills);
+  const skills = buildNpcSkills(
+    template,
+    abilities,
+    pb,
+    backgroundSkills,
+    powerProfile,
+  );
   const prcMod = skills.prc ?? getAbilityModifier(abilities.wis);
   const passivePerception = 10 + prcMod;
 
@@ -129,8 +135,9 @@ export function buildNpcFromDraft(
       pb,
       powerProfile,
       weaponContext,
+      subjectRef,
     ),
-    reactions: buildNpcReactions(template),
+    reactions: buildNpcReactions(template, subjectRef),
     spellcasting: spellcasting.length > 0 ? spellcasting : undefined,
     source: "AGMH",
     cr,
