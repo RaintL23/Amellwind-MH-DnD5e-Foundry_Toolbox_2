@@ -173,6 +173,15 @@ export function parseNamedProficiencyBlocks(
       continue;
     }
 
+    if (typeof raw.proficiency === "string") {
+      const name = formatLabel(raw.proficiency);
+      if (name) {
+        const label = raw.optional ? `${name} (optional)` : name;
+        grants.push({ kind: "fixed", items: [label], source });
+      }
+      continue;
+    }
+
     const choose = raw.choose as Raw | undefined;
     if (choose && Array.isArray(choose.from) && choose.from.length) {
       const from = (choose.from as unknown[])

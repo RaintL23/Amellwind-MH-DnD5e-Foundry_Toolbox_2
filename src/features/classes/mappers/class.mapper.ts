@@ -376,6 +376,14 @@ export function mapClass(raw: RawClassDefinition): Class {
     ...(raw.startingProficiencies?.tools ?? []),
   ];
   const toolGrants = parseNamedProficiencyBlocks(toolBlocks, classSource);
+  const armorGrants = parseNamedProficiencyBlocks(
+    raw.startingProficiencies?.armor ?? [],
+    classSource,
+  );
+  const weaponGrants = parseNamedProficiencyBlocks(
+    raw.startingProficiencies?.weapons ?? [],
+    classSource,
+  );
   const languageGrants = parseNamedProficiencyBlocks(
     raw.startingProficiencies?.languages ?? [],
     classSource,
@@ -406,6 +414,8 @@ export function mapClass(raw: RawClassDefinition): Class {
     saveProficiencies: saveProfGrant?.abilities ?? [],
     skillChoiceGrants,
     toolGrants,
+    armorGrants,
+    weaponGrants,
     languageGrants,
   };
 }

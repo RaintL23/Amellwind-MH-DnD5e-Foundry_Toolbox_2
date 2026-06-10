@@ -183,6 +183,8 @@ interface CharacterBuilderContextValue {
     skillAdvantages?: SkillAdvantageGrant[];
     saveProficiencies?: AbilityKey[];
     toolGrants?: NamedProficiencyGrant[];
+    armorGrants?: NamedProficiencyGrant[];
+    weaponGrants?: NamedProficiencyGrant[];
     languageGrants?: NamedProficiencyGrant[];
     defenseGrants?: DefenseGrant[];
     source: "class" | "background" | "species" | "feats";
@@ -240,6 +242,10 @@ interface CharacterBuilderContextValue {
     Record<string, Array<{ source: ProficiencySource; defenseKind: DefenseKind }>>
   >;
   resolvedToolItems: string[];
+  resolvedArmorItems: string[];
+  resolvedWeaponItems: string[];
+  armorSources: Partial<Record<string, ProficiencySource[]>>;
+  weaponSources: Partial<Record<string, ProficiencySource[]>>;
   resolvedLanguageItems: string[];
   resolvedResistances: DamageType[];
   resolvedImmunities: DamageType[];
@@ -305,6 +311,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [featGrantsList, setFeatGrantsList] = useState<SkillProficiencyGrant[]>([]);
 
   const [classToolGrants, setClassToolGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [classArmorGrants, setClassArmorGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [classWeaponGrants, setClassWeaponGrants] = useState<NamedProficiencyGrant[]>([]);
   const [bgToolGrants, setBgToolGrants] = useState<NamedProficiencyGrant[]>([]);
   const [speciesToolGrants, setSpeciesToolGrants] = useState<NamedProficiencyGrant[]>([]);
   const [classLanguageGrants, setClassLanguageGrants] = useState<NamedProficiencyGrant[]>([]);
@@ -372,6 +380,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     skillAdvantages?: SkillAdvantageGrant[];
     saveProficiencies?: AbilityKey[];
     toolGrants?: NamedProficiencyGrant[];
+    armorGrants?: NamedProficiencyGrant[];
+    weaponGrants?: NamedProficiencyGrant[];
     languageGrants?: NamedProficiencyGrant[];
     defenseGrants?: DefenseGrant[];
     source: "class" | "background" | "species" | "feats";
@@ -397,6 +407,12 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       if (source === "class") setClassToolGrants(payload.toolGrants);
       else if (source === "background") setBgToolGrants(payload.toolGrants);
       else if (source === "species") setSpeciesToolGrants(payload.toolGrants);
+    }
+    if (payload.armorGrants !== undefined && source === "class") {
+      setClassArmorGrants(payload.armorGrants);
+    }
+    if (payload.weaponGrants !== undefined && source === "class") {
+      setClassWeaponGrants(payload.weaponGrants);
     }
     if (payload.languageGrants !== undefined) {
       if (source === "class") setClassLanguageGrants(payload.languageGrants);
@@ -460,6 +476,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setClassExpertiseGrants([]);
     setSaveProficiencyAbilities([]);
     setClassToolGrants([]);
+    setClassArmorGrants([]);
+    setClassWeaponGrants([]);
     setClassLanguageGrants([]);
     setClassToolChoicesState({});
     setClassLanguageChoicesState({});
@@ -943,6 +961,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setSpeciesOriginFeatState(null);
     setExpertiseChoicesState({});
     setClassToolGrants([]);
+    setClassArmorGrants([]);
+    setClassWeaponGrants([]);
     setBgToolGrants([]);
     setSpeciesToolGrants([]);
     setClassLanguageGrants([]);
@@ -1100,6 +1120,20 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   ]);
 
   const identityGrantsResult = useMemo(() => {
+    function resolveFixedGrantList(grants: NamedProficiencyGrant[]) {
+      const fixed = resolveFixedNamedGrants(grants);
+      const sources: Partial<Record<string, ProficiencySource[]>> = {};
+      for (const { item, source } of fixed) {
+        const key = item.toLowerCase();
+        if (!sources[key]) sources[key] = [];
+        if (!sources[key]!.some((s) => s.type === source.type && s.name === source.name)) {
+          sources[key]!.push(source);
+        }
+      }
+      const items = [...new Set(fixed.map((entry) => entry.item))];
+      return { items, sources };
+    }
+
     function resolveNamedWithChoices(
       grants: NamedProficiencyGrant[],
       classChoices: Record<number, string[]>,
@@ -1150,6 +1184,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       backgroundToolChoices,
       speciesToolChoices,
     );
+    const armor = resolveFixedGrantList(classArmorGrants);
+    const weapons = resolveFixedGrantList(classWeaponGrants);
     const languages = resolveNamedWithChoices(
       allLanguageGrants,
       classLanguageChoices,
@@ -1187,6 +1223,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     return {
       tools: tools.items,
       toolSources: tools.sources,
+      armor: armor.items,
+      armorSources: armor.sources,
+      weapons: weapons.items,
+      weaponSources: weapons.sources,
       languages: languages.items,
       languageSources: languages.sources,
       resistances: allDefenses
@@ -1199,6 +1239,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     };
   }, [
     allToolGrants,
+    classArmorGrants,
+    classWeaponGrants,
     allLanguageGrants,
     allDefenseGrants,
     classToolChoices,
@@ -1342,6 +1384,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       languageSources: identityGrantsResult.languageSources,
       defenseSources: identityGrantsResult.defenseSources,
       resolvedToolItems: identityGrantsResult.tools,
+      resolvedArmorItems: identityGrantsResult.armor,
+      resolvedWeaponItems: identityGrantsResult.weapons,
+      armorSources: identityGrantsResult.armorSources,
+      weaponSources: identityGrantsResult.weaponSources,
       resolvedLanguageItems: identityGrantsResult.languages,
       resolvedResistances: identityGrantsResult.resistances,
       resolvedImmunities: identityGrantsResult.immunities,

@@ -506,6 +506,8 @@ export function BuilderItemLibraryPanel({
         saveProficiencies: [],
         expertiseGrants: [],
         toolGrants: [],
+        armorGrants: [],
+        weaponGrants: [],
         languageGrants: [],
       });
       return;
@@ -518,6 +520,8 @@ export function BuilderItemLibraryPanel({
       saveProficiencies: classData.saveProficiencies,
       expertiseGrants,
       toolGrants: classData.toolGrants,
+      armorGrants: classData.armorGrants,
+      weaponGrants: classData.weaponGrants,
       languageGrants: buildClassLanguageGrants(
         classData,
         level,

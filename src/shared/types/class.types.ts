@@ -80,6 +80,10 @@ export interface Class {
   skillChoiceGrants: import("./proficiency.types").SkillProficiencyGrant[];
   /** Tool / gaming set proficiencies for the builder. */
   toolGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  /** Armor proficiencies for the builder (from startingProficiencies.armor). */
+  armorGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  /** Weapon proficiencies for the builder (from startingProficiencies.weapons). */
+  weaponGrants: import("./proficiency.types").NamedProficiencyGrant[];
   /** Language proficiencies for the builder. */
   languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
 }
