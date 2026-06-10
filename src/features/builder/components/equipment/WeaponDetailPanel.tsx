@@ -1,9 +1,6 @@
 import { EquippedWeapon } from "@/shared/types";
 import { WeaponModeToggle } from "@/features/weapons/components/WeaponModeToggle";
-import {
-  hasWeaponSwitchModes,
-  isVersatileGripWeapon,
-} from "@/features/weapons/utils/weapon-mode.utils";
+import { hasWeaponGripModes } from "@/features/weapons/utils/weapon-mode.utils";
 import { RarityButtonGroup } from "../shared/RarityButtonGroup";
 
 interface WeaponDetailPanelProps {
@@ -17,9 +14,7 @@ export function WeaponDetailPanel({
   onRarityChange,
   onVersatileChange,
 }: WeaponDetailPanelProps) {
-  const showModeToggle =
-    hasWeaponSwitchModes(equipped.weapon) ||
-    isVersatileGripWeapon(equipped.weapon);
+  const showModeToggle = hasWeaponGripModes(equipped.weapon);
 
   return (
     <div className="w-full rounded-md border border-border bg-background/50 p-3 space-y-2">

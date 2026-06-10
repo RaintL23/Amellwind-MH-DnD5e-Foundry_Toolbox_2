@@ -8,7 +8,10 @@ import { GridElementSlot } from "../shared/GridElementSlot";
 import type { StandaloneShieldItem } from "../../data/shield.placeholder";
 import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
 import type { OffHandBlockReason } from "@/features/weapons/utils/weapon-hands.utils";
-import { getActiveWeaponDamage } from "@/features/weapons/utils/weapon-mode.utils";
+import {
+  getActiveWeaponDamage,
+  getActiveWeaponDamageLabel,
+} from "@/features/weapons/utils/weapon-mode.utils";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
 
 interface EquipmentGridPanelProps {
@@ -101,7 +104,13 @@ export function EquipmentGridPanel({
           mainHand
             ? {
                 name: mainHand.weapon.name,
-                detail: getActiveWeaponDamage(mainHand),
+                detail: (() => {
+                  const damage = getActiveWeaponDamage(mainHand);
+                  const modeLabel = getActiveWeaponDamageLabel(mainHand);
+                  return modeLabel === "Damage"
+                    ? damage
+                    : `${modeLabel} · ${damage}`;
+                })(),
               }
             : null
         }

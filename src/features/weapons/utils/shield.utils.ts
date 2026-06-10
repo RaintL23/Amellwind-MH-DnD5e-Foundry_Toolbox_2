@@ -1,8 +1,5 @@
 import { EquippedWeapon, Weapon } from "@/shared/types";
-import {
-  doesSwitchModeHaveShield,
-  hasWeaponSwitchModes,
-} from "./weapon-mode.utils";
+import { doesGripModeHaveShield, hasWeaponGripModes } from "./weapon-mode.utils";
 
 /** Weapons sold with an integrated shield (`ac` field in source data). */
 export function weaponIncludesShield(weapon: Weapon): boolean {
@@ -10,19 +7,17 @@ export function weaponIncludesShield(weapon: Weapon): boolean {
 }
 
 /**
- * Integrated shield is active on any shield weapon except versatile ones
- * wielded two-handed. Weapons with a native 2H property (Gunlance, Lance, etc.)
- * still keep their shield AC.
+ * Integrated shield is active when the current grip mode includes a shield
+ * (e.g. Lance one-hand, Charge Blade sword mode).
  */
 export function hasActiveIntegratedShield(
   equipped: EquippedWeapon | null,
 ): boolean {
   if (!equipped || !weaponIncludesShield(equipped.weapon)) return false;
-  const { weapon, useVersatile } = equipped;
-  if (hasWeaponSwitchModes(weapon)) {
-    return doesSwitchModeHaveShield(equipped);
+  if (hasWeaponGripModes(equipped.weapon)) {
+    return doesGripModeHaveShield(equipped);
   }
-  return !(weapon.properties.includes("V") && useVersatile);
+  return true;
 }
 
 function parseAcBonusColumn(value: string | string[] | undefined): number {

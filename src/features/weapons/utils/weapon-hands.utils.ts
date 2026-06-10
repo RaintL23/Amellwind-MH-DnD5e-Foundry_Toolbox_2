@@ -1,9 +1,9 @@
 import type { StandaloneShieldItem } from "@/features/builder/data/shield.placeholder";
 import { EquippedWeapon, Weapon } from "@/shared/types";
 import {
-  doesSwitchModeBlockOffHand,
-  hasWeaponSwitchModes,
-  isSwitchModeTwoHanded,
+  doesGripModeBlockOffHand,
+  hasWeaponGripModes,
+  isGripModeTwoHanded,
 } from "./weapon-mode.utils";
 
 /** Weapons that occupy both grip slots without the native 2H property. */
@@ -21,18 +21,17 @@ export const isDualBladesWeapon = isDualGripWeapon;
 
 export function isWeaponTwoHanded(equipped: EquippedWeapon | null): boolean {
   if (!equipped) return false;
-  if (hasWeaponSwitchModes(equipped.weapon)) {
-    return isSwitchModeTwoHanded(equipped);
+  if (hasWeaponGripModes(equipped.weapon)) {
+    return isGripModeTwoHanded(equipped);
   }
   if (equipped.weapon.properties.includes("2H")) return true;
-  if (equipped.weapon.properties.includes("V") && equipped.useVersatile) return true;
   return false;
 }
 
 export function blocksOffHand(mainHand: EquippedWeapon | null): boolean {
   if (!mainHand) return false;
-  if (hasWeaponSwitchModes(mainHand.weapon)) {
-    return doesSwitchModeBlockOffHand(mainHand) || occupiesBothGripSlots(mainHand.weapon);
+  if (hasWeaponGripModes(mainHand.weapon)) {
+    return doesGripModeBlockOffHand(mainHand) || occupiesBothGripSlots(mainHand.weapon);
   }
   return isWeaponTwoHanded(mainHand) || occupiesBothGripSlots(mainHand.weapon);
 }

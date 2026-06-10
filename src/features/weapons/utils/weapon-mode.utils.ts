@@ -1,6 +1,6 @@
 import { EquippedWeapon, Weapon } from "@/shared/types";
 
-export interface WeaponSwitchMode {
+export interface WeaponGripMode {
   label: string;
   damageKey: "dmg1" | "dmg2";
   hasShield: boolean;
@@ -8,11 +8,17 @@ export interface WeaponSwitchMode {
   blocksOffHand: boolean;
 }
 
-export interface WeaponSwitchModeDefinition {
-  modes: [WeaponSwitchMode, WeaponSwitchMode];
+/** @deprecated Use {@link WeaponGripMode} */
+export type WeaponSwitchMode = WeaponGripMode;
+
+export interface WeaponGripModeDefinition {
+  modes: [WeaponGripMode, WeaponGripMode];
 }
 
-const SWITCH_MODE_WEAPONS: Record<string, WeaponSwitchModeDefinition> = {
+/** @deprecated Use {@link WeaponGripModeDefinition} */
+export type WeaponSwitchModeDefinition = WeaponGripModeDefinition;
+
+const SWITCH_MODE_WEAPONS: Record<string, WeaponGripModeDefinition> = {
   "Charge Blade": {
     modes: [
       {
@@ -69,6 +75,28 @@ const SWITCH_MODE_WEAPONS: Record<string, WeaponSwitchModeDefinition> = {
   },
 };
 
+function buildVersatileGripModes(weapon: Weapon): [WeaponGripMode, WeaponGripMode] {
+  const hasShield = weapon.includesShield === true;
+  const oneHandLabel = hasShield ? "One-hand + Shield" : "One-hand";
+
+  return [
+    {
+      label: oneHandLabel,
+      damageKey: "dmg1",
+      hasShield,
+      isTwoHanded: false,
+      blocksOffHand: hasShield,
+    },
+    {
+      label: "Two-hand",
+      damageKey: "dmg2",
+      hasShield: false,
+      isTwoHanded: true,
+      blocksOffHand: true,
+    },
+  ];
+}
+
 /** MH weapons with Switch Mode (dmg2) that are not PHB versatile (V). */
 export function hasWeaponSwitchModes(weapon: Weapon): boolean {
   return !!weapon.dmg2 && !weapon.properties.includes("V") && !!SWITCH_MODE_WEAPONS[weapon.name];
@@ -76,7 +104,7 @@ export function hasWeaponSwitchModes(weapon: Weapon): boolean {
 
 export function getWeaponSwitchModeDefinition(
   weapon: Weapon,
-): WeaponSwitchModeDefinition | undefined {
+): WeaponGripModeDefinition | undefined {
   if (!hasWeaponSwitchModes(weapon)) return undefined;
   return SWITCH_MODE_WEAPONS[weapon.name];
 }
@@ -85,53 +113,85 @@ export function isVersatileGripWeapon(weapon: Weapon): boolean {
   return weapon.properties.includes("V") && !!weapon.dmg2;
 }
 
+export function hasWeaponGripModes(weapon: Weapon): boolean {
+  return hasWeaponSwitchModes(weapon) || isVersatileGripWeapon(weapon);
+}
+
+export function getWeaponGripModeDefinition(
+  weapon: Weapon,
+): WeaponGripModeDefinition | undefined {
+  const switchDefinition = getWeaponSwitchModeDefinition(weapon);
+  if (switchDefinition) return switchDefinition;
+
+  if (!isVersatileGripWeapon(weapon)) return undefined;
+  return { modes: buildVersatileGripModes(weapon) };
+}
+
 export function getWeaponModeIndex(equipped: EquippedWeapon): 0 | 1 {
   return equipped.useVersatile ? 1 : 0;
 }
 
-export function getActiveWeaponSwitchMode(
+export function getActiveWeaponGripMode(
   equipped: EquippedWeapon,
-): WeaponSwitchMode | undefined {
-  const definition = getWeaponSwitchModeDefinition(equipped.weapon);
+): WeaponGripMode | undefined {
+  const definition = getWeaponGripModeDefinition(equipped.weapon);
   if (!definition) return undefined;
   return definition.modes[getWeaponModeIndex(equipped)];
 }
 
-export function getActiveWeaponDamage(equipped: EquippedWeapon): string {
-  const switchMode = getActiveWeaponSwitchMode(equipped);
-  if (switchMode) {
-    return equipped.weapon[switchMode.damageKey] ?? equipped.weapon.dmg1;
-  }
+/** @deprecated Use {@link getActiveWeaponGripMode} */
+export function getActiveWeaponSwitchMode(
+  equipped: EquippedWeapon,
+): WeaponGripMode | undefined {
+  return getActiveWeaponGripMode(equipped);
+}
 
-  if (equipped.useVersatile && equipped.weapon.dmg2) {
-    return equipped.weapon.dmg2;
+export function getActiveWeaponDamage(equipped: EquippedWeapon): string {
+  const gripMode = getActiveWeaponGripMode(equipped);
+  if (gripMode) {
+    return equipped.weapon[gripMode.damageKey] ?? equipped.weapon.dmg1;
   }
 
   return equipped.weapon.dmg1;
 }
 
 export function getActiveWeaponDamageLabel(equipped: EquippedWeapon): string {
-  const switchMode = getActiveWeaponSwitchMode(equipped);
-  if (switchMode) return switchMode.label;
-
-  if (isVersatileGripWeapon(equipped.weapon)) {
-    return equipped.useVersatile ? "Two-hand" : "One-hand";
-  }
-
-  return "Damage";
+  return getActiveWeaponGripMode(equipped)?.label ?? "Damage";
 }
 
+export function getWeaponGripModeHint(mode: WeaponGripMode): string {
+  if (mode.hasShield) return "Escudo integrado en mano secundaria";
+  if (mode.isTwoHanded) return "Requiere ambas manos";
+  return "Mano secundaria libre";
+}
+
+export function isGripModeTwoHanded(equipped: EquippedWeapon): boolean {
+  const mode = getActiveWeaponGripMode(equipped);
+  if (mode) return mode.isTwoHanded;
+  return equipped.weapon.properties.includes("2H");
+}
+
+/** @deprecated Use {@link isGripModeTwoHanded} */
 export function isSwitchModeTwoHanded(equipped: EquippedWeapon): boolean {
-  const mode = getActiveWeaponSwitchMode(equipped);
-  return mode?.isTwoHanded ?? false;
+  return isGripModeTwoHanded(equipped);
 }
 
-export function doesSwitchModeBlockOffHand(equipped: EquippedWeapon): boolean {
-  const mode = getActiveWeaponSwitchMode(equipped);
+export function doesGripModeBlockOffHand(equipped: EquippedWeapon): boolean {
+  const mode = getActiveWeaponGripMode(equipped);
   return mode?.blocksOffHand ?? false;
 }
 
-export function doesSwitchModeHaveShield(equipped: EquippedWeapon): boolean {
-  const mode = getActiveWeaponSwitchMode(equipped);
+/** @deprecated Use {@link doesGripModeBlockOffHand} */
+export function doesSwitchModeBlockOffHand(equipped: EquippedWeapon): boolean {
+  return doesGripModeBlockOffHand(equipped);
+}
+
+export function doesGripModeHaveShield(equipped: EquippedWeapon): boolean {
+  const mode = getActiveWeaponGripMode(equipped);
   return mode?.hasShield ?? false;
+}
+
+/** @deprecated Use {@link doesGripModeHaveShield} */
+export function doesSwitchModeHaveShield(equipped: EquippedWeapon): boolean {
+  return doesGripModeHaveShield(equipped);
 }

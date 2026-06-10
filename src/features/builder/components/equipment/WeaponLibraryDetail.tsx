@@ -31,9 +31,9 @@ import { WeaponModeToggle } from "@/features/weapons/components/WeaponModeToggle
 import {
   getActiveWeaponDamage,
   getActiveWeaponDamageLabel,
-  getActiveWeaponSwitchMode,
-  hasWeaponSwitchModes,
-  isVersatileGripWeapon,
+  getActiveWeaponGripMode,
+  getWeaponGripModeHint,
+  hasWeaponGripModes,
 } from "@/features/weapons/utils/weapon-mode.utils";
 import { getWeaponEffectiveTierLabel } from "../../utils/equipment-proficiency.utils";
 
@@ -238,12 +238,9 @@ export function WeaponLibraryDetail({
 
   const activeDamage = getActiveWeaponDamage(equipped);
   const damageModeLabel = getActiveWeaponDamageLabel(equipped);
-  const activeSwitchMode = getActiveWeaponSwitchMode(equipped);
-  const showModeToggle =
-    onModeChange &&
-    (hasWeaponSwitchModes(weapon) || isVersatileGripWeapon(weapon));
-  const showIntegratedShield =
-    activeSwitchMode?.hasShield ?? weapon.includesShield;
+  const activeGripMode = getActiveWeaponGripMode(equipped);
+  const showModeToggle = onModeChange && hasWeaponGripModes(weapon);
+  const showIntegratedShield = activeGripMode?.hasShield ?? false;
 
   if (!row) {
     return (
@@ -345,13 +342,27 @@ export function WeaponLibraryDetail({
             )}
           </div>
 
+          {activeGripMode && (
+            <div className="mb-3 rounded-md border border-border/60 bg-muted/10 px-2 py-2">
+              <p className="text-[10px] uppercase tracking-wider text-muted-foreground">
+                Active grip
+              </p>
+              <p className="mt-0.5 text-[11px] font-medium text-foreground">
+                {activeGripMode.label} · {activeDamage} {weapon.dmgType}
+              </p>
+              <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
+                {getWeaponGripModeHint(activeGripMode)}
+              </p>
+            </div>
+          )}
+
           {showIntegratedShield && (
             <div className="mb-3 flex items-start gap-2 rounded-md border border-teal-800/40 bg-teal-950/20 px-2 py-2">
               <Shield className="h-3.5 w-3.5 shrink-0 text-teal-400 mt-0.5" />
               <p className="text-[11px] leading-relaxed text-teal-100/90">
-                {activeSwitchMode
-                  ? `In ${activeSwitchMode.label} mode, the integrated shield occupies the off-hand.`
-                  : "It includes an integrated shield that occupies the off-hand."}
+                {activeGripMode
+                  ? `En modo ${activeGripMode.label}, el escudo integrado ocupa la mano secundaria.`
+                  : "Incluye un escudo integrado que ocupa la mano secundaria."}
               </p>
             </div>
           )}

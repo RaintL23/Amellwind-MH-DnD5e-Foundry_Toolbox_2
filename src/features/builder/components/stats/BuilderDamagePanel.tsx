@@ -7,6 +7,7 @@ import {
 } from "@/components/ui/accordion";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { formatDamagePerTurnTooltip } from "../../utils/combat.calculator";
+import { getActiveWeaponDamageLabel } from "@/features/weapons/utils/weapon-mode.utils";
 import { isMonkClass } from "../../utils/unarmed-strike.utils";
 import { NumberStepper } from "../shared/NumberStepper";
 
@@ -130,7 +131,12 @@ export function BuilderDamagePanel() {
                   )}
                   {!useUnarmedStrike && combat.mainHand && mainHand && (
                     <BreakdownLine
-                      name={mainHand.weapon.name}
+                      name={(() => {
+                        const modeLabel = getActiveWeaponDamageLabel(mainHand);
+                        return modeLabel === "Damage"
+                          ? mainHand.weapon.name
+                          : `${mainHand.weapon.name} (${modeLabel})`;
+                      })()}
                       detail={`${combat.mainHand.diceExpression} (${combat.mainHand.totalPerHit.toFixed(1)} avg)`}
                     />
                   )}
