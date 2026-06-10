@@ -105,7 +105,7 @@ const DND_KEYWORDS: DndKeyword[] = [
 
   // Defense & resistances
   { term: "armor class", category: "defense" },
-  { term: "AC", category: "defense" },
+  { term: " AC ", category: "defense" },
   { term: "nonmagical", category: "defense" },
   { term: "resistance", category: "defense" },
   { term: "immunity", category: "defense" },

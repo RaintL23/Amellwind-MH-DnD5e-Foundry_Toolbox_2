@@ -49,23 +49,35 @@ export function formatAttackEntry(
   return `${attackLabel}: ${formatModifier(hit)} to hit, ${distanceLabel} ${attack.reachOrRange}, one target. Hit: ${avgDamage} (${damageExpr}) ${attack.damageType} damage.`;
 }
 
+/**
+ * Returns a flat exponential boost applied on top of the band's statBoost when
+ * the NPC's CR exceeds 3. Keeps Standard Array viable for low-CR NPCs while
+ * producing appropriately high stats at CR 8–12.
+ *
+ * CR 4 → +1, CR 8 → +3, CR 12 → +6
+ */
+function calcExponentialBoost(crNumeric: number): number {
+  if (crNumeric <= 3) return 0;
+  return Math.round(Math.pow(crNumeric - 3, 1.25));
+}
+
 export function applyAbilityPowerScaling(
   abilities: AbilityScores,
   abilityPriority: AbilityKey[],
   profile: NpcPowerProfile,
 ): AbilityScores {
-  const boost = profile.statBoost;
-  if (boost <= 0) return abilities;
+  const totalBoost = profile.statBoost + calcExponentialBoost(profile.crNumeric);
+  if (totalBoost <= 0) return abilities;
 
   const result = { ...abilities };
   const primary = abilityPriority[0];
   const secondary = abilityPriority[1];
 
-  result[primary] = Math.min(30, result[primary] + boost);
-  result.con = Math.min(30, result.con + boost);
+  result[primary] = Math.min(30, result[primary] + totalBoost);
+  result.con = Math.min(30, result.con + totalBoost);
 
-  if (boost >= 2 && secondary) {
-    result[secondary] = Math.min(30, result[secondary] + Math.floor(boost / 2));
+  if (totalBoost >= 2 && secondary) {
+    result[secondary] = Math.min(30, result[secondary] + Math.floor(totalBoost / 2));
   }
 
   return result;

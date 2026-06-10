@@ -13,13 +13,20 @@ import {
   buildNpcDisplayName,
   buildNpcDescriptor,
 } from "./npc-descriptor";
+import { buildNpcSubjectRef } from "./npc-feature-text.utils";
+import { buildNpcSpellcasting } from "./npc-spellcasting";
 import {
-  getNpcArmorClass,
   getNpcHitPoints,
   parseSpeciesSpeed,
 } from "./npc-stats";
 import { resolveNpcPowerProfile } from "./npc-power-scaling";
 import { buildNpcTraits, parseBackgroundSkills } from "./npc-traits";
+import { resolveNpcSize } from "./npc-size.utils";
+import {
+  resolveNpcArmorClass,
+  resolveNpcDamageResistances,
+  resolveNpcDamageImmunities,
+} from "./npc-armor.utils";
 import {
   getPrimaryShieldAcBonus,
   type NpcWeaponContext,
@@ -37,7 +44,7 @@ export function buildNpcFromDraft(
   const scores = abilityScores ?? rollAttributeArray(draft.attributeArray);
   const powerProfile = resolveNpcPowerProfile(template.tier, hitDiceCount);
   const abilities = applyAbilityPowerScaling(
-    assignAbilitiesFromArray(template.abilityPriority, scores, species),
+    assignAbilitiesFromArray(template.abilityPriority, scores, species, draft.hitDie),
     template.abilityPriority,
     powerProfile,
   );
@@ -52,35 +59,33 @@ export function buildNpcFromDraft(
   const prcMod = skills.prc ?? getAbilityModifier(abilities.wis);
   const passivePerception = 10 + prcMod;
 
-  const size = species.sizes[0] ?? "Medium";
+  const size = resolveNpcSize(draft.hitDie, species);
   const speed = parseSpeciesSpeed(species.speed);
 
-  const damageResistances = species.resistances.map((r) => r);
   const rarityIndex = powerProfile.weaponRarityIndex;
-  const armorClass = getNpcArmorClass(template, abilities);
   const shieldBonus = getPrimaryShieldAcBonus(
     template.attacks,
     weaponContext,
     rarityIndex,
   );
-  if (shieldBonus && armorClass[0]) {
-    armorClass[0] = {
-      ...armorClass[0],
-      ac: armorClass[0].ac + shieldBonus,
-      from: [...(armorClass[0].from ?? []), `+${shieldBonus} MH shield`],
-    };
-  }
+  const armorClass = resolveNpcArmorClass(
+    template,
+    abilities,
+    species,
+    shieldBonus,
+    powerProfile.acBonus,
+  );
+  const damageResistances = resolveNpcDamageResistances(species);
+  const damageImmunities = resolveNpcDamageImmunities(species);
 
-  if (powerProfile.acBonus > 0 && armorClass[0]) {
-    armorClass[0] = {
-      ...armorClass[0],
-      ac: armorClass[0].ac + powerProfile.acBonus,
-      from: [
-        ...(armorClass[0].from ?? []),
-        `+${powerProfile.acBonus} upgraded armor (${powerProfile.weaponRarityLabel})`,
-      ],
-    };
-  }
+  const subjectRef = buildNpcSubjectRef(draft.customName, species, template);
+  const spellcasting = buildNpcSpellcasting(
+    template,
+    abilities,
+    pb,
+    powerProfile,
+    subjectRef,
+  );
 
   return {
     name: buildNpcDisplayName(draft.customName, species, template),
@@ -106,12 +111,18 @@ export function buildNpcFromDraft(
     skills: skills as GeneratedNpc["skills"],
     passivePerception,
     senses: species.darkvision ? { darkvision: species.darkvision } : {},
-    damageImmunities: [],
+    damageImmunities,
     damageResistances,
     damageVulnerabilities: [],
     conditionImmunities: [],
     languages: ["Common"],
-    traits: buildNpcTraits(template, species, background, draft.hideFeatures),
+    traits: buildNpcTraits(
+      template,
+      species,
+      background,
+      draft.hideFeatures,
+      subjectRef,
+    ),
     actions: buildNpcActions(
       template,
       abilities,
@@ -120,6 +131,7 @@ export function buildNpcFromDraft(
       weaponContext,
     ),
     reactions: buildNpcReactions(template),
+    spellcasting: spellcasting.length > 0 ? spellcasting : undefined,
     source: "AGMH",
     cr,
     group: background ? [background.faction] : undefined,

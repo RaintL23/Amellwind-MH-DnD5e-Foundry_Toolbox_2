@@ -6,7 +6,7 @@ import { NPC_GENDER_LABELS } from "@/shared/types/npc.types";
 
 export function resolveGender(gender: NpcGender): Exclude<NpcGender, "random"> {
   if (gender !== "random") return gender;
-  const options: Exclude<NpcGender, "random">[] = ["male", "female", "other"];
+  const options: Exclude<NpcGender, "random">[] = ["male", "female"];
   return options[Math.floor(Math.random() * options.length)];
 }
 

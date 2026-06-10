@@ -2,6 +2,7 @@ import type { Entry, SkillKey } from "@/shared/types";
 import type { Background } from "@/shared/types";
 import type { Species } from "@/shared/types";
 import type { NpcHideFeatures, NpcTemplate } from "@/shared/types/npc.types";
+import { toNpcFeatureText } from "./npc-feature-text.utils";
 
 const SKIP_SPECIES_TRAIT_NAMES = new Set([
   "Age",
@@ -50,11 +51,16 @@ export function buildNpcTraits(
   species: Species,
   background: Background | null,
   hideFeatures: NpcHideFeatures,
+  /** Used to rewrite second-person trait text to third-person NPC prose. */
+  subjectRef = "the creature",
 ): Entry[] {
   const traits: Entry[] = [];
 
   if (hideFeatures !== "template") {
     for (const t of template.traits) {
+      // Skip the static Spellcasting trait — it will be replaced by the
+      // structured SpellcastingBlock generated separately.
+      if (t.name === "Spellcasting") continue;
       traits.push({ name: t.name, entries: t.entries });
     }
   }
@@ -64,31 +70,34 @@ export function buildNpcTraits(
       if (SKIP_SPECIES_TRAIT_NAMES.has(trait.name)) continue;
       traits.push({
         name: trait.name,
-        entries: trait.entries,
+        entries: trait.entries.map((e) => toNpcFeatureText(e, subjectRef)),
         content: trait.content,
       });
     }
 
     if (species.resistances.length > 0) {
+      const resistText =
+        species.resistanceSummary ||
+        `${subjectRef.charAt(0).toUpperCase() + subjectRef.slice(1)} is resistant to ${species.resistances.join(", ")} damage.`;
       traits.push({
         name: "Damage Resistance",
-        entries: [
-          species.resistanceSummary ||
-            `Resistant to ${species.resistances.join(", ")} damage.`,
-        ],
+        entries: [resistText],
       });
     }
   }
 
   if (hideFeatures !== "background" && background) {
-    const feature = background.features.find((f) =>
-      /feature:/i.test(f.name) || /guild membership|patron|feature/i.test(f.name),
-    ) ?? background.features[0];
+    const feature =
+      background.features.find(
+        (f) =>
+          /feature:/i.test(f.name) ||
+          /guild membership|patron|feature/i.test(f.name),
+      ) ?? background.features[0];
 
     if (feature) {
       traits.push({
         name: feature.name.replace(/^Feature:\s*/i, ""),
-        entries: feature.entries,
+        entries: feature.entries.map((e) => toNpcFeatureText(e, subjectRef)),
         content: feature.content,
       });
     }

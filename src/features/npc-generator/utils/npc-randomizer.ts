@@ -7,6 +7,7 @@ import type {
   NpcHitDie,
 } from "@/shared/types/npc.types";
 import { HIT_DIE_OPTIONS } from "@/shared/types/npc.types";
+import { PLAYABLE_HIT_DIES } from "./npc-size.utils";
 import { NPC_TEMPLATES } from "../data/npc-templates.data";
 import {
   clampHitDiceForTier,
@@ -47,7 +48,7 @@ const RANDOM_NAMES = [
   "Hojo",
 ];
 
-const GENDERS: NpcGender[] = ["male", "female", "other"];
+const GENDERS: NpcGender[] = ["male", "female"];
 const ATTRIBUTE_ARRAYS: NpcAttributeArray[] = ["standard", "heroic", "random"];
 const HIDE_OPTIONS: NpcHideFeatures[] = [
   "all",
@@ -69,7 +70,7 @@ export function randomGender(): NpcGender {
 }
 
 export function randomHitDie(): NpcHitDie {
-  return pick(HIT_DIE_OPTIONS).die;
+  return pick(PLAYABLE_HIT_DIES);
 }
 
 export function randomizeNpcDraft(

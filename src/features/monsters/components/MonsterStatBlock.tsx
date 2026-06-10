@@ -1,8 +1,10 @@
 import { Monster } from "@/shared/types";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
+import { SpellcastingBlockView } from "@/components/statblock/SpellcastingBlockView";
 import { getEntryContent } from "@/shared/utils/entry-text.utils";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
 import { Separator } from "@/components/ui/separator";
+import type { SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
 
 const ABILITY_LABELS: Array<[keyof Monster["abilities"], string]> = [
   ["str", "STR"],
@@ -105,22 +107,41 @@ function StatBlockSection({ title, children }: StatBlockSectionProps) {
   );
 }
 
-interface EntryBlockProps {
-  entries: Monster["traits"];
+function partitionSpellcasting(spellcasting: SpellcastingBlock[] = []) {
+  return {
+    trait: spellcasting.filter((s) => s.displayAs === "trait"),
+    action: spellcasting.filter((s) => s.displayAs === "action"),
+  };
 }
 
-function EntryBlock({ entries }: EntryBlockProps) {
+interface EntryBlockProps {
+  entries: Monster["traits"];
+  spellcasting?: SpellcastingBlock[];
+}
+
+function EntryBlock({ entries, spellcasting = [] }: EntryBlockProps) {
   if (!entries || entries.length === 0) return null;
   return (
     <div className="space-y-3">
-      {entries.map((entry, i) => (
-        <div key={i}>
-          <p className="text-sm">
-            <strong className="text-foreground">{entry.name}.</strong>{" "}
-            <StatBlockContentView content={getEntryContent(entry)} />
-          </p>
-        </div>
-      ))}
+      {entries.map((entry, i) => {
+        const embeddedSpell = spellcasting.find(
+          (s) => s.name === entry.name || s.displayAs === entry.name.toLowerCase(),
+        );
+        return (
+          <div key={i}>
+            <p className="text-sm">
+              <strong className="text-foreground">{entry.name}.</strong>{" "}
+            </p>
+            <div className="mt-1 pl-0">
+              {embeddedSpell ? (
+                <SpellcastingBlockView block={embeddedSpell} />
+              ) : (
+                <StatBlockContentView content={getEntryContent(entry)} />
+              )}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -130,6 +151,8 @@ interface MonsterStatBlockProps {
 }
 
 export function MonsterStatBlock({ monster }: MonsterStatBlockProps) {
+  const spellcastingParts = partitionSpellcasting(monster.spellcasting);
+
   return (
     <div className="font-sans text-sm">
       {/* Tipo y tamaño */}
@@ -269,16 +292,22 @@ export function MonsterStatBlock({ monster }: MonsterStatBlockProps) {
       </div>
 
       {/* Traits */}
-      {monster.traits.length > 0 && (
+      {(monster.traits.length > 0 || spellcastingParts.trait.length > 0) && (
         <StatBlockSection title="Traits">
-          <EntryBlock entries={monster.traits} />
+          <EntryBlock entries={monster.traits} spellcasting={spellcastingParts.trait} />
+          {spellcastingParts.trait.map((block, i) => (
+            <SpellcastingBlockView key={i} block={block} />
+          ))}
         </StatBlockSection>
       )}
 
       {/* Actions */}
-      {monster.actions.length > 0 && (
+      {(monster.actions.length > 0 || spellcastingParts.action.length > 0) && (
         <StatBlockSection title="Actions">
-          <EntryBlock entries={monster.actions} />
+          <EntryBlock entries={monster.actions} spellcasting={spellcastingParts.action} />
+          {spellcastingParts.action.map((block, i) => (
+            <SpellcastingBlockView key={i} block={block} />
+          ))}
         </StatBlockSection>
       )}
 

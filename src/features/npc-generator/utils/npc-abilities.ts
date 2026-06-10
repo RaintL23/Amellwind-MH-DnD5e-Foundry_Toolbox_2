@@ -1,5 +1,5 @@
 import type { AbilityKey, AbilityScores } from "@/shared/types";
-import type { NpcAttributeArray } from "@/shared/types/npc.types";
+import type { NpcAttributeArray, NpcHitDie } from "@/shared/types/npc.types";
 import {
   STANDARD_ARRAY,
   rollSixAbilityScores,
@@ -26,6 +26,7 @@ export function assignAbilitiesFromArray(
   priority: AbilityKey[],
   scores: number[],
   species: Species,
+  hitDie?: NpcHitDie,
 ): AbilityScores {
   const orderedKeys = [
     ...priority,
@@ -45,7 +46,31 @@ export function assignAbilitiesFromArray(
     if (i < pool.length) base[key] = pool[i];
   });
 
-  return applySpeciesBonuses(base, species);
+  const withBonuses = applySpeciesBonuses(base, species);
+
+  // Large creatures (d10 hit die) should have above-average CON. Swap CON with
+  // the third-highest assigned value (after the primary and secondary stats) so
+  // it sits at least at the 3rd slot of the priority order.
+  if (hitDie === 10) {
+    const primaryKey = orderedKeys[0];
+    const secondaryKey = orderedKeys[1];
+    const conKey = "con";
+
+    if (conKey !== primaryKey && conKey !== secondaryKey) {
+      // Find the index of CON in the ordered assignment
+      const conIndex = orderedKeys.indexOf(conKey);
+      // Swap CON with whichever of slots 2 or 3 gives the better value
+      const swapIndex = conIndex > 2 ? 2 : conIndex;
+      if (swapIndex < conIndex) {
+        const swapKey = orderedKeys[swapIndex];
+        const temp = withBonuses[conKey];
+        withBonuses[conKey] = withBonuses[swapKey];
+        withBonuses[swapKey] = temp;
+      }
+    }
+  }
+
+  return withBonuses;
 }
 
 function applySpeciesBonuses(

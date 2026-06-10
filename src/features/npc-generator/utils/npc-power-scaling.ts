@@ -6,6 +6,8 @@ import {
 
 export interface NpcPowerProfile extends NpcPowerBand {
   hitDiceCount: number;
+  /** Numeric CR value (e.g. 0.5, 1, 4, 12). Use for exponential stat scaling. */
+  crNumeric: number;
   crLabel: string;
   weaponRarityLabel: string;
   proficiencyBonus: number;
@@ -53,6 +55,7 @@ export function resolveNpcPowerProfile(
   return {
     ...band,
     hitDiceCount,
+    crNumeric: band.cr,
     crLabel,
     weaponRarityLabel: getRarityLabel(band.weaponRarityIndex),
     proficiencyBonus,

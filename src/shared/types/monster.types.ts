@@ -1,4 +1,5 @@
 import { Actor, Entry } from "./actor.types";
+import type { SpellcastingBlock } from "./bestiary-creature.types";
 
 export interface MonsterLoot {
   rolls: number;
@@ -13,4 +14,5 @@ export interface Monster extends Actor {
   legendaryActions?: Entry[];
   loot?: MonsterLoot;
   fluff?: string;
+  spellcasting?: SpellcastingBlock[];
 }

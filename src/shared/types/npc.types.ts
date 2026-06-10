@@ -16,7 +16,7 @@ export const NPC_TEMPLATE_CATEGORY_LABELS: Record<NpcTemplateCategory, string> =
   support: "Support",
 };
 
-export type NpcGender = "male" | "female" | "other" | "random";
+export type NpcGender = "male" | "female" | "random";
 
 export type NpcAttributeArray = "standard" | "heroic" | "random";
 
@@ -83,18 +83,17 @@ export interface GeneratedNpc extends Monster {
 }
 
 export const HIT_DIE_OPTIONS: Array<{ die: NpcHitDie; label: string }> = [
-  { die: 4, label: "d4 (Tiny Creature)" },
-  { die: 6, label: "d6 (Small Creature)" },
-  { die: 8, label: "d8 (Medium Creature)" },
-  { die: 10, label: "d10 (Large Creature)" },
-  { die: 12, label: "d12 (Huge Creature)" },
-  { die: 20, label: "d20 (Gargantuan Creature)" },
+  { die: 4, label: "d4 (Tiny — uncommon)" },
+  { die: 6, label: "d6 (Small)" },
+  { die: 8, label: "d8 (Medium)" },
+  { die: 10, label: "d10 (Large)" },
+  { die: 12, label: "d12 (Huge — uncommon)" },
+  { die: 20, label: "d20 (Gargantuan — uncommon)" },
 ];
 
 export const NPC_GENDER_LABELS: Record<Exclude<NpcGender, "random">, string> = {
   male: "Male",
   female: "Female",
-  other: "Other",
 };
 
 export const NPC_HIDE_FEATURES_LABELS: Record<NpcHideFeatures, string> = {
