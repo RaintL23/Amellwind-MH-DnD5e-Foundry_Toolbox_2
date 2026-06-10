@@ -21,6 +21,7 @@ export function LibraryList({
   selectedName = null,
   icon,
   stats,
+  getDisabledReason,
   onSelect,
 }: {
   loading: boolean;
@@ -29,6 +30,7 @@ export function LibraryList({
   selectedName?: string | null;
   icon: React.ReactNode;
   stats?: (option: LibraryListOption) => string;
+  getDisabledReason?: (option: LibraryListOption) => string | null;
   onSelect: (id: string, name: string) => void;
 }) {
   const bookNames = useBookSourceNames();
@@ -47,17 +49,31 @@ export function LibraryList({
             ? resolveBookSourceName(bookNames, option.source)
             : undefined;
         const rowStats = stats?.(option) ?? "";
+        const isSelected = isLibraryOptionSelected(
+          option,
+          selectedId,
+          selectedName,
+        );
+        const disabledReason =
+          !isSelected && getDisabledReason
+            ? getDisabledReason(option)
+            : null;
 
         return (
           <button
             key={option.id}
             type="button"
+            disabled={!!disabledReason}
+            title={disabledReason ?? undefined}
             onClick={() => onSelect(option.id, option.name)}
             className={cn(
-              "mb-1 flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors hover:bg-muted/50",
-              isLibraryOptionSelected(option, selectedId, selectedName)
+              "mb-1 flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors",
+              isSelected
                 ? "border-violet-400/40 bg-violet-400/5"
                 : "border-border/60",
+              disabledReason
+                ? "cursor-not-allowed opacity-40"
+                : "hover:bg-muted/50",
             )}
           >
             <div className="min-w-0 flex-1">

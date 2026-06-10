@@ -26,9 +26,11 @@ import {
   getRaritySlideUnlockSections,
 } from "@/features/weapons/utils/rarity-slide.utils";
 import { RuneFeaturesSection } from "./RuneFeaturesSection";
+import { getWeaponEffectiveTierLabel } from "../../utils/equipment-proficiency.utils";
 
 interface WeaponLibraryDetailProps {
   equipped: EquippedWeapon;
+  weaponProficiencies?: string[];
 }
 
 function getRarityIndex(equipped: EquippedWeapon): number {
@@ -211,10 +213,17 @@ function WeaponFeatureSection({
   );
 }
 
-export function WeaponLibraryDetail({ equipped }: WeaponLibraryDetailProps) {
+export function WeaponLibraryDetail({
+  equipped,
+  weaponProficiencies = [],
+}: WeaponLibraryDetailProps) {
   const { weapon, useVersatile, rarity } = equipped;
   const rarityIndex = useMemo(() => getRarityIndex(equipped), [equipped]);
   const row = weapon.rarityRows[rarityIndex];
+  const simpleModeLabel = getWeaponEffectiveTierLabel(
+    weapon.name,
+    weaponProficiencies,
+  );
 
   const activeDamage = useVersatile && weapon.dmg2 ? weapon.dmg2 : weapon.dmg1;
 
@@ -275,6 +284,12 @@ export function WeaponLibraryDetail({ equipped }: WeaponLibraryDetailProps) {
             compact
             className="mb-3"
           />
+          {simpleModeLabel && (
+            <p className="mb-3 rounded-md border border-amber-700/40 bg-amber-950/20 px-2.5 py-2 text-[11px] leading-relaxed text-amber-100/90">
+              This weapon is treated as a <strong>Simple</strong> weapon for your
+              class because you only have Simple weapon proficiency.
+            </p>
+          )}
 
           <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
             <StatBox

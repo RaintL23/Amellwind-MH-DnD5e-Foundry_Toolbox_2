@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Award,
   Check,
@@ -14,7 +14,11 @@ import {
 } from "lucide-react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { cn } from "@/shared/utils/cn";
-import { BASE_ARMORS, CLOTHING_ARMOR } from "../../data/armor.placeholder";
+import {
+  BASE_ARMORS,
+  CLOTHING_ARMOR,
+  isClothingArmor,
+} from "../../data/armor.placeholder";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import {
   getAllSpecies,
@@ -71,6 +75,7 @@ import {
 import type {
   Background,
   BuilderFeatSelection,
+  Class,
   DndBackground,
   DndFeat,
   DndRace,
@@ -121,6 +126,12 @@ import {
   getOffHandWeaponBlockReason,
 } from "@/features/weapons/utils/weapon-hands.utils";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
+import {
+  checkArmorProficiency,
+  checkWeaponProficiency,
+  getClassEquipmentConflictReason,
+  getWeaponEffectiveTierLabel,
+} from "../../utils/equipment-proficiency.utils";
 
 const RARITY_BADGE: Record<string, string> = {
   Uncommon:
@@ -189,6 +200,7 @@ export function BuilderItemLibraryPanel({
   const [identitySource, setIdentitySource] =
     useState<IdentityDataSource>("amellwind");
   const [classOptions, setClassOptions] = useState<LibraryListOption[]>([]);
+  const [classCatalog, setClassCatalog] = useState<Class[]>([]);
   const [classLoading, setClassLoading] = useState(false);
   const [featDetail, setFeatDetail] = useState<Feat | DndFeat | null>(null);
   const [featDetailLoading, setFeatDetailLoading] = useState(false);
@@ -226,6 +238,8 @@ export function BuilderItemLibraryPanel({
     applyIdentityGrants,
     setFeatSkillChoices,
     setOriginFeatSkillChoices,
+    resolvedArmorItems,
+    resolvedWeaponItems,
   } = useCharacterBuilder();
   const { classData, loading: classDetailLoading } = useSelectedClass();
   const {
@@ -304,12 +318,13 @@ export function BuilderItemLibraryPanel({
     if (!isClassSlot && !isSubclassSlot) return;
     setClassLoading(true);
     setClassOptions([]);
+    setClassCatalog([]);
     getListClasses()
-      .then((list) =>
-        setClassOptions(
-          list.filter((c) => !c.isSidekick).map(entityToLibraryOption),
-        ),
-      )
+      .then((list) => {
+        const playable = list.filter((c) => !c.isSidekick);
+        setClassCatalog(playable);
+        setClassOptions(playable.map(entityToLibraryOption));
+      })
       .finally(() => setClassLoading(false));
   }, [isClassSlot, isSubclassSlot, selectedSlot]);
 
@@ -478,6 +493,79 @@ export function BuilderItemLibraryPanel({
     if (!isClassSlot) return [];
     return filterLibraryOptions(classOptions, q);
   }, [classOptions, isClassSlot, q]);
+
+  const classById = useMemo(() => {
+    return new Map(classCatalog.map((cls) => [cls.id, cls]));
+  }, [classCatalog]);
+
+  const equippedArmorItem = armor?.armor ?? null;
+
+  const getClassDisabledReason = useCallback(
+    (option: LibraryListOption): string | null => {
+      const hasEquippedGear =
+        !!mainHand ||
+        !!offHand ||
+        (!!equippedArmorItem && !isClothingArmor(equippedArmorItem));
+      if (!hasEquippedGear) return null;
+
+      const cls = classById.get(option.id);
+      if (!cls) return null;
+
+      return getClassEquipmentConflictReason(
+        mainHand?.weapon.name ?? null,
+        offHand?.weapon.name ?? null,
+        equippedArmorItem,
+        cls.armorGrants,
+        cls.weaponGrants,
+      );
+    },
+    [classById, mainHand, offHand, equippedArmorItem],
+  );
+
+  const getWeaponDisabledReason = useCallback(
+    (weapon: Weapon): string | null => {
+      if (!classSelection) return null;
+
+      const proficiencyCheck = checkWeaponProficiency(
+        weapon.name,
+        resolvedWeaponItems,
+        resolvedArmorItems,
+      );
+      if (!proficiencyCheck.allowed) {
+        return proficiencyCheck.reason ?? "Your class is not proficient with this weapon.";
+      }
+
+      if (selectedSlot === "offHand") {
+        const offHandReason = getOffHandWeaponBlockReason(weapon);
+        if (offHandReason) {
+          return getOffHandWeaponBlockLabel(offHandReason);
+        }
+      }
+
+      return null;
+    },
+    [
+      classSelection,
+      resolvedArmorItems,
+      resolvedWeaponItems,
+      selectedSlot,
+    ],
+  );
+
+  const getArmorDisabledReason = useCallback(
+    (armorItem: ArmorItem): string | null => {
+      if (!classSelection) return null;
+
+      const proficiencyCheck = checkArmorProficiency(
+        armorItem,
+        resolvedArmorItems,
+      );
+      return proficiencyCheck.allowed
+        ? null
+        : (proficiencyCheck.reason ?? "Your class is not proficient with this armor.");
+    },
+    [classSelection, resolvedArmorItems],
+  );
 
   const subclassOptions = useMemo(() => {
     if (!isSubclassSlot || !classData) return [];
@@ -1124,24 +1212,19 @@ export function BuilderItemLibraryPanel({
           <ScrollableWhenNeeded>
             {isWeaponSlot &&
               (showWeaponDetail ? (
-                <WeaponLibraryDetail equipped={equippedWeapon} />
+                <WeaponLibraryDetail
+                  equipped={equippedWeapon}
+                  weaponProficiencies={resolvedWeaponItems}
+                />
               ) : (
                 <WeaponList
                   inventory={inventoryWeaponsFiltered}
                   catalog={catalogWeaponsFiltered}
                   loading={weaponsLoading}
                   equipped={equippedWeapon?.weapon.name ?? null}
+                  weaponProficiencies={resolvedWeaponItems}
                   onSelect={handleSelectWeapon}
-                  getDisabledReason={
-                    selectedSlot === "offHand"
-                      ? (weapon) => {
-                          const reason = getOffHandWeaponBlockReason(weapon);
-                          return reason
-                            ? getOffHandWeaponBlockLabel(reason)
-                            : null;
-                        }
-                      : undefined
-                  }
+                  getDisabledReason={getWeaponDisabledReason}
                 />
               ))}
 
@@ -1155,6 +1238,7 @@ export function BuilderItemLibraryPanel({
                   catalog={catalogArmorsFiltered}
                   equippedName={armor?.armor.name ?? null}
                   onSelect={handleSelectArmor}
+                  getDisabledReason={getArmorDisabledReason}
                 />
               ))}
 
@@ -1298,6 +1382,7 @@ export function BuilderItemLibraryPanel({
                   icon={
                     <GraduationCap className="h-3.5 w-3.5 text-amber-400" />
                   }
+                  getDisabledReason={getClassDisabledReason}
                   onSelect={handleSelectClass}
                 />
               ))}
@@ -1439,9 +1524,19 @@ function LibraryItemBadgeRow({ children }: { children: React.ReactNode }) {
   );
 }
 
-function WeaponListBadges({ weapon }: { weapon: Weapon }) {
+function WeaponListBadges({
+  weapon,
+  weaponProficiencies,
+}: {
+  weapon: Weapon;
+  weaponProficiencies: string[];
+}) {
   const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
   const rule = getWeaponProficiencyRule(weapon.name);
+  const simpleModeLabel = getWeaponEffectiveTierLabel(
+    weapon.name,
+    weaponProficiencies,
+  );
   const categoryBadges = rule ? getWeaponCategoryBadges(rule) : [];
 
   return (
@@ -1459,6 +1554,13 @@ function WeaponListBadges({ weapon }: { weapon: Weapon }) {
           {badge}
         </LibraryItemBadge>
       ))}
+      {simpleModeLabel && (
+        <span
+          title="Your class only grants Simple weapon proficiency, so this martial-or-simple weapon counts as Simple."
+        >
+          <LibraryItemBadge variant="category">{simpleModeLabel}</LibraryItemBadge>
+        </span>
+      )}
     </LibraryItemBadgeRow>
   );
 }
@@ -1468,6 +1570,7 @@ function WeaponList({
   catalog,
   loading,
   equipped,
+  weaponProficiencies,
   onSelect,
   getDisabledReason,
 }: {
@@ -1475,6 +1578,7 @@ function WeaponList({
   catalog: Weapon[];
   loading: boolean;
   equipped: string | null;
+  weaponProficiencies: string[];
   onSelect: (w: Weapon) => void;
   getDisabledReason?: (weapon: Weapon) => string | null;
 }) {
@@ -1500,7 +1604,12 @@ function WeaponList({
           />
         }
         name={w.name}
-        meta={<WeaponListBadges weapon={w} />}
+        meta={
+          <WeaponListBadges
+            weapon={w}
+            weaponProficiencies={weaponProficiencies}
+          />
+        }
         equipped={isEquipped}
         disabled={!!disabledReason}
         disabledHint={disabledReason ?? undefined}
@@ -1524,13 +1633,53 @@ function ArmorList({
   catalog,
   equippedName,
   onSelect,
+  getDisabledReason,
 }: {
   showCloth: boolean;
   inventory: ArmorItem[];
   catalog: ArmorItem[];
   equippedName: string | null;
   onSelect: (a: ArmorItem) => void;
+  getDisabledReason?: (armor: ArmorItem) => string | null;
 }) {
+  function renderArmorRow(
+    armorItem: ArmorItem,
+    key: string,
+    iconMuted: boolean,
+  ) {
+    const isEquipped = equippedName === armorItem.name;
+    const disabledReason =
+      !isEquipped && getDisabledReason
+        ? getDisabledReason(armorItem)
+        : null;
+
+    return (
+      <ItemRow
+        key={key}
+        icon={
+          <Shield
+            className={cn(
+              "h-3.5 w-3.5",
+              iconMuted ? "text-muted-foreground" : "text-primary",
+            )}
+          />
+        }
+        name={armorItem.name}
+        meta={
+          <LibraryItemBadgeRow>
+            <LibraryItemBadge>CA {armorItem.baseAC}</LibraryItemBadge>
+            <LibraryItemBadge>{armorItem.category}</LibraryItemBadge>
+          </LibraryItemBadgeRow>
+        }
+        rarity={armorItem.rarity}
+        equipped={isEquipped}
+        disabled={!!disabledReason}
+        disabledHint={disabledReason ?? undefined}
+        onClick={() => onSelect(armorItem)}
+      />
+    );
+  }
+
   return (
     <>
       {showCloth && (
@@ -1551,37 +1700,8 @@ function ArmorList({
         </>
       )}
       {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
-      {inventory.map((a) => (
-        <ItemRow
-          key={`inv-${a.name}`}
-          icon={<Shield className="h-3.5 w-3.5 text-primary" />}
-          name={a.name}
-          meta={
-            <LibraryItemBadgeRow>
-              <LibraryItemBadge>CA {a.baseAC}</LibraryItemBadge>
-              <LibraryItemBadge>{a.category}</LibraryItemBadge>
-            </LibraryItemBadgeRow>
-          }
-          rarity={a.rarity}
-          equipped={equippedName === a.name}
-          onClick={() => onSelect(a)}
-        />
-      ))}
-      {catalog.map((a) => (
-        <ItemRow
-          key={a.name}
-          icon={<Shield className="h-3.5 w-3.5 text-muted-foreground" />}
-          name={a.name}
-          meta={
-            <LibraryItemBadgeRow>
-              <LibraryItemBadge>CA {a.baseAC}</LibraryItemBadge>
-              <LibraryItemBadge>{a.category}</LibraryItemBadge>
-            </LibraryItemBadgeRow>
-          }
-          equipped={equippedName === a.name}
-          onClick={() => onSelect(a)}
-        />
-      ))}
+      {inventory.map((a) => renderArmorRow(a, `inv-${a.name}`, false))}
+      {catalog.map((a) => renderArmorRow(a, a.name, true))}
     </>
   );
 }
