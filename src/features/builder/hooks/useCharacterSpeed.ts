@@ -11,6 +11,7 @@ import {
   collectEquippedRuneSpeedBonuses,
   detectFeatSpeedBonuses,
   getCharacterSpeedBreakdown,
+  normalizeBuilderCreatureSize,
   type CharacterSpeedBreakdown,
   type SpeedBonus,
 } from "../utils/character-speed";
@@ -94,6 +95,7 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
   return useMemo(
     () =>
       getCharacterSpeedBreakdown({
+        creatureSize: normalizeBuilderCreatureSize(character.size),
         speciesSpeedText: species?.speed,
         speciesName: species?.name,
         classData,
@@ -103,6 +105,7 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
         runeBonuses,
       }),
     [
+      character.size,
       species?.speed,
       species?.name,
       classData,

@@ -29,6 +29,34 @@ export interface CharacterSpeedBreakdown {
 const SPEED_TYPES = ["walk", "fly", "swim", "climb", "burrow"] as const;
 type SpeedType = (typeof SPEED_TYPES)[number];
 
+export type BuilderCreatureSize = "M" | "S";
+
+export function getBaseWalkSpeedForSize(size: BuilderCreatureSize): number {
+  return size === "S" ? 25 : 30;
+}
+
+export function normalizeBuilderCreatureSize(size: string): BuilderCreatureSize {
+  return size === "S" ? "S" : "M";
+}
+
+function getBaseSpeedFromCreatureSize(creatureSize: BuilderCreatureSize): Speed {
+  return { walk: getBaseWalkSpeedForSize(creatureSize) };
+}
+
+function mergeSpeciesSpeedWithSizeBase(
+  speciesSpeedText: string | null | undefined,
+  creatureSize: BuilderCreatureSize,
+): Speed {
+  const base = getBaseSpeedFromCreatureSize(creatureSize);
+  if (!speciesSpeedText) return base;
+
+  const parsed = parseSpeciesSpeedText(speciesSpeedText);
+  return {
+    ...parsed,
+    walk: base.walk,
+  };
+}
+
 export function parseSpeciesSpeedText(speedText: string): Speed {
   const walkMatch = speedText.match(/(?:walk\s+)?(\d+)\s*ft/i);
   const flyMatch = speedText.match(/fly\s+(\d+)\s*ft/i);
@@ -82,7 +110,7 @@ function parseWalkBonusFromText(
   const normalized = text.toLowerCase();
 
   const walkIncrease = normalized.match(
-    /(?:base )?walking speed (?:is )?increased by (\d+) feet/,
+    /(?:your )?(?:base )?walking speed (?:is )?increas(?:ed|es) by (\d+) feet/,
   );
   if (walkIncrease) {
     const note = /while you are not wearing heavy armor/.test(normalized)
@@ -149,8 +177,14 @@ function parseGrantedSpeedFromText(
   }
 
   const typedIncreases: Array<{ regex: RegExp; type: SpeedType }> = [
-    { regex: /swim(?:ming)? speed (?:is )?increased by (\d+) feet/, type: "swim" },
-    { regex: /climb(?:ing)? speed (?:is )?increased by (\d+) feet/, type: "climb" },
+    {
+      regex: /swim(?:ming)? speed (?:is )?increas(?:ed|es) by (\d+) feet/,
+      type: "swim",
+    },
+    {
+      regex: /climb(?:ing)? speed (?:is )?increas(?:ed|es) by (\d+) feet/,
+      type: "climb",
+    },
   ];
 
   for (const { regex, type } of typedIncreases) {
@@ -278,10 +312,10 @@ export function collectEquippedRuneSpeedBonuses(options: {
     addFromRune(rune, rune?.weaponEffect ?? null);
   }
 
-  const activeTrinket = trinket1?.rune ? trinket1 : trinket2?.rune ? trinket2 : null;
-  if (activeTrinket?.rune) {
-    addFromRune(activeTrinket.rune, activeTrinket.rune.armorEffect);
-    addFromRune(activeTrinket.rune, activeTrinket.rune.weaponEffect);
+  for (const trinket of [trinket1, trinket2]) {
+    if (!trinket?.rune) continue;
+    addFromRune(trinket.rune, trinket.rune.armorEffect);
+    addFromRune(trinket.rune, trinket.rune.weaponEffect);
   }
 
   return dedupeSpeedBonuses(bonuses);
@@ -440,17 +474,21 @@ function formatBonusLine(bonus: SpeedBonus): string {
   return `${bonus.label}: ${bonus.type} ${amount}${note}`;
 }
 
+function formatCreatureSizeLabel(creatureSize: BuilderCreatureSize): string {
+  return creatureSize === "S" ? "Small" : "Medium";
+}
+
 function formatSpeedTooltip(parts: {
-  speciesLabel: string;
+  baseLabel: string;
   base: Speed;
   classBonuses: SpeedBonus[];
   featBonuses: SpeedBonus[];
   runeBonuses: SpeedBonus[];
   total: Speed;
 }): string {
-  const { speciesLabel, base, classBonuses, featBonuses, runeBonuses, total } =
+  const { baseLabel, base, classBonuses, featBonuses, runeBonuses, total } =
     parts;
-  const lines = [`Species (${speciesLabel}): ${formatSpeedDisplay(base)}`];
+  const lines = [`${baseLabel}: ${formatSpeedDisplay(base)}`];
 
   for (const bonus of classBonuses) {
     lines.push(`Class (${bonus.source}): ${formatBonusLine(bonus)}`);
@@ -469,6 +507,7 @@ function formatSpeedTooltip(parts: {
 }
 
 export function getCharacterSpeedBreakdown(options: {
+  creatureSize?: BuilderCreatureSize;
   speciesSpeedText?: string | null;
   speciesName?: string | null;
   classData: Class | null;
@@ -478,6 +517,7 @@ export function getCharacterSpeedBreakdown(options: {
   runeBonuses?: SpeedBonus[];
 }): CharacterSpeedBreakdown {
   const {
+    creatureSize = "M",
     speciesSpeedText,
     speciesName,
     classData,
@@ -487,20 +527,22 @@ export function getCharacterSpeedBreakdown(options: {
     runeBonuses = [],
   } = options;
 
-  const base = speciesSpeedText
-    ? parseSpeciesSpeedText(speciesSpeedText)
-    : { walk: 30 };
+  const base = mergeSpeciesSpeedWithSizeBase(speciesSpeedText, creatureSize);
   const classBonuses = detectClassSpeedBonuses(classData, subclass, level);
   const total = applyBonuses(
     applyBonuses(applyBonuses(base, classBonuses), featBonuses),
     runeBonuses,
   );
+  const sizeLabel = formatCreatureSizeLabel(creatureSize);
+  const baseLabel = speciesName
+    ? `Size (${sizeLabel}) + ${speciesName}`
+    : `Size (${sizeLabel})`;
 
   return {
     speed: total,
     display: formatSpeedDisplay(total),
     tooltip: formatSpeedTooltip({
-      speciesLabel: speciesName ?? "Medium (default)",
+      baseLabel,
       base,
       classBonuses,
       featBonuses,

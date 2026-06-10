@@ -196,6 +196,8 @@ export class Character implements Actor {
     level?: number;
     abilities?: Partial<AbilityScores>;
     name?: string;
+    size?: string;
+    alignment?: string[];
   }): Character {
     const newLevel = updates.level ?? this._level;
     const newAbilities = updates.abilities
@@ -204,6 +206,8 @@ export class Character implements Actor {
 
     const next = new Character(newLevel, newAbilities);
     next.name = updates.name ?? this.name;
+    next.size = updates.size ?? this.size;
+    next.alignment = updates.alignment ?? this.alignment;
     return next;
   }
 }

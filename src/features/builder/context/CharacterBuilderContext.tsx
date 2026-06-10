@@ -38,6 +38,12 @@ import { dndFeatToBuilderSelection } from "../utils/origin-feat.utils";
 import { getFeatSlotLevels } from "../utils/builder-class.utils";
 import { ORIGIN_FEAT_SOURCE_NAME } from "../utils/origin-feat.constants";
 import { Character } from "../models/Character";
+import {
+  composeAlignment,
+  parseAlignmentAxes,
+  type GoodEvilAxis,
+  type LawChaosAxis,
+} from "../utils/alignment.utils";
 import { calculateCombat } from "../utils/combat.calculator";
 import {
   makeWeaponSlot,
@@ -87,6 +93,9 @@ interface CharacterBuilderContextValue {
   // Character
   character: Character;
   setName: (name: string) => void;
+  setCreatureSize: (size: "M" | "S") => void;
+  setLawChaosAlignment: (axis: "L" | "N" | "C") => void;
+  setGoodEvilAlignment: (axis: "G" | "N" | "E") => void;
   setLevel: (level: number) => void;
   setAbilityScore: (ability: AbilityKey, value: number) => void;
   setAbilityScores: (abilities: Partial<AbilityScores>) => void;
@@ -686,6 +695,28 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setCharacter((prev) => prev.withUpdates({ name }));
   }, []);
 
+  const setCreatureSize = useCallback((size: "M" | "S") => {
+    setCharacter((prev) => prev.withUpdates({ size }));
+  }, []);
+
+  const setLawChaosAlignment = useCallback((lawChaos: LawChaosAxis) => {
+    setCharacter((prev) => {
+      const { goodEvil } = parseAlignmentAxes(prev.alignment);
+      return prev.withUpdates({
+        alignment: composeAlignment(lawChaos, goodEvil),
+      });
+    });
+  }, []);
+
+  const setGoodEvilAlignment = useCallback((goodEvil: GoodEvilAxis) => {
+    setCharacter((prev) => {
+      const { lawChaos } = parseAlignmentAxes(prev.alignment);
+      return prev.withUpdates({
+        alignment: composeAlignment(lawChaos, goodEvil),
+      });
+    });
+  }, []);
+
   const setLevel = useCallback((level: number) => {
     setCharacter((prev) => prev.withUpdates({ level }));
     setFeatSelections((prev) => {
@@ -1277,6 +1308,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     () => ({
       character,
       setName,
+      setCreatureSize,
+      setLawChaosAlignment,
+      setGoodEvilAlignment,
       setLevel,
       setAbilityScore,
       setAbilityScores,
@@ -1393,7 +1427,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       resolvedImmunities: identityGrantsResult.immunities,
     }),
     [
-      character, setName, setLevel, setAbilityScore, setAbilityScores,
+      character, setName, setCreatureSize, setLawChaosAlignment, setGoodEvilAlignment,
+      setLevel, setAbilityScore, setAbilityScores,
       attacksPerTurnOverride, effectiveAttacksPerTurn, useUnarmedStrike,
       mainHand, offHand, armor, trinket1, trinket2,
       species, backgroundRef, classRef, subclass, featSelections,
