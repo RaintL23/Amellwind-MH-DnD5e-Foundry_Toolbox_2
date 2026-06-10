@@ -48,9 +48,8 @@ export function BuilderNamedPicker({
   for (const g of grants) {
     if (g.kind === "choose") {
       g.from.forEach((item) => allowedSet.add(item));
-    } else if (g.options?.length) {
-      g.options.forEach((item) => allowedSet.add(item));
-    } else {
+    } else if (g.kind === "any") {
+      g.options?.forEach((item) => allowedSet.add(item));
       freeformAny = true;
     }
   }

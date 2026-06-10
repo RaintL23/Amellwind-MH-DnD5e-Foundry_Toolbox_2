@@ -8,6 +8,7 @@ import {
   getChooseableLanguages,
   STANDARD_LANGUAGES,
 } from "@/shared/data/chooseable-languages";
+import { getChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
 
 export { STANDARD_LANGUAGES, getChooseableLanguages };
 
@@ -98,6 +99,7 @@ function parseProficiencyBlock(
         value,
         `Musical instrument${value > 1 ? "s" : ""}`,
         source,
+        [...getChooseableMusicalInstruments()],
       );
       continue;
     }

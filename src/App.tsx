@@ -6,6 +6,7 @@ import { NotFound } from "@/components/layout/NotFound";
 import { SyncProvider } from "@/shared/context/SyncContext";
 import { ThemeProvider } from "@/shared/context/ThemeContext";
 import { loadChooseableLanguages } from "@/shared/data/chooseable-languages";
+import { loadChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
 import { syncData } from "@/shared/db/sync.service";
 import { clearMonsterCache } from "@/features/monsters/services/monster.service";
 import { clearRuneCache } from "@/features/runes/services/rune.service";
@@ -182,6 +183,9 @@ export default function App() {
       syncData(),
       loadChooseableLanguages().catch((error) => {
         console.warn("[Bootstrap] Failed to load languages:", error);
+      }),
+      loadChooseableMusicalInstruments().catch((error) => {
+        console.warn("[Bootstrap] Failed to load musical instruments:", error);
       }),
     ])
       .then(([result]) => {
