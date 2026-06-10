@@ -314,8 +314,14 @@ export function collectEquippedRuneSpeedBonuses(options: {
 
   for (const trinket of [trinket1, trinket2]) {
     if (!trinket?.rune) continue;
-    addFromRune(trinket.rune, trinket.rune.armorEffect);
-    addFromRune(trinket.rune, trinket.rune.weaponEffect);
+    if (trinket.runeMaterialEffect === "weapon") {
+      addFromRune(trinket.rune, trinket.rune.weaponEffect);
+    } else if (trinket.runeMaterialEffect === "armor") {
+      addFromRune(trinket.rune, trinket.rune.armorEffect);
+    } else {
+      addFromRune(trinket.rune, trinket.rune.armorEffect);
+      addFromRune(trinket.rune, trinket.rune.weaponEffect);
+    }
   }
 
   return dedupeSpeedBonuses(bonuses);

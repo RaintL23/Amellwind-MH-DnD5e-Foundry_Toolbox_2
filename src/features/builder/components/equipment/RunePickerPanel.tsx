@@ -1,13 +1,18 @@
 import { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { Gem, ChevronLeft, Info } from "lucide-react";
+import { Gem, ChevronLeft, Info, ShieldCheck, Sword } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import type { Rune } from "@/shared/types";
+import type { MaterialEffectSlot, Rune } from "@/shared/types";
+import { MATERIAL_EFFECT_SLOT_LABELS } from "@/shared/types/material-effect.types";
 import {
   type RuneCompatibilityContext,
+  type TagFilterMode,
   getRuneIneligibilityReason,
   getTagIneligibilityReasons,
   getRuneEffectTags,
+  runeMatchesTagFilter,
+  expandRunesForPicker,
+  getRuneMaterialEffectText,
 } from "@/features/runes/utils/rune-compatibility.utils";
 import { formatTag, tagVariant } from "@/features/runes/utils/rune-tag.utils";
 import { DndRichText } from "@/shared/components/DndRichText";
@@ -18,10 +23,8 @@ interface RunePickerPanelProps {
   mode: "build" | "catalog";
   slotLabel: string;
   slotKind: "weapon" | "armor" | "trinket";
-  /** If true, show weapon effects; otherwise armor effects. */
-  isWeapon: boolean;
   compatibilityCtx: RuneCompatibilityContext;
-  onSelect: (rune: Rune) => void;
+  onSelect: (rune: Rune, materialEffectKind?: MaterialEffectSlot) => void;
   onCancel: () => void;
 }
 
@@ -33,8 +36,6 @@ const TAG_VARIANT_CLASSES: Record<string, string> = {
     "bg-emerald-950/60 text-emerald-300 border-emerald-800/50 hover:bg-emerald-900/70",
   red: "bg-red-950/60 text-red-300 border-red-800/50 hover:bg-red-900/70",
 };
-
-type TagFilterMode = "and" | "or";
 
 const TAG_VARIANT_DISABLED: Record<string, string> = {
   blue: "bg-sky-950/20 text-sky-600 border-sky-900/30",
@@ -48,7 +49,6 @@ export function RunePickerPanel({
   mode,
   slotLabel,
   slotKind,
-  isWeapon,
   compatibilityCtx,
   onSelect,
   onCancel,
@@ -71,22 +71,36 @@ export function RunePickerPanel({
 
   const andFilteredRunes = useMemo(() => {
     if (selectedTags.length === 0) return [];
-    return runes.filter((r) => {
-      const runeTags = getRuneEffectTags(r, slotKind);
-      return selectedTags.every((tag) => runeTags.includes(tag));
-    });
+    return runes.filter((r) =>
+      runeMatchesTagFilter(r, selectedTags, "and", slotKind),
+    );
   }, [runes, selectedTags, slotKind]);
 
   const orFilteredRunes = useMemo(() => {
     if (selectedTags.length === 0) return [];
-    return runes.filter((r) => {
-      const runeTags = getRuneEffectTags(r, slotKind);
-      return selectedTags.some((tag) => runeTags.includes(tag));
-    });
+    return runes.filter((r) =>
+      runeMatchesTagFilter(r, selectedTags, "or", slotKind),
+    );
   }, [runes, selectedTags, slotKind]);
 
   const displayedRunes =
     tagFilterMode === "or" ? orFilteredRunes : andFilteredRunes;
+
+  const buildListEntries = useMemo(
+    () => expandRunesForPicker(runes, slotKind, [], null),
+    [runes, slotKind],
+  );
+
+  const filteredListEntries = useMemo(
+    () =>
+      expandRunesForPicker(
+        displayedRunes,
+        slotKind,
+        selectedTags,
+        tagFilterMode,
+      ),
+    [displayedRunes, slotKind, selectedTags, tagFilterMode],
+  );
 
   const toggleTag = (tag: string) => {
     setSelectedTags((prev) =>
@@ -138,8 +152,8 @@ export function RunePickerPanel({
       {/* Build mode: flat list */}
       {mode === "build" && (
         <RuneList
-          runes={runes}
-          isWeapon={isWeapon}
+          entries={buildListEntries}
+          slotKind={slotKind}
           compatibilityCtx={compatibilityCtx}
           onSelect={onSelect}
         />
@@ -252,8 +266,8 @@ export function RunePickerPanel({
             ))}
           </div>
           <RuneList
-            runes={displayedRunes}
-            isWeapon={isWeapon}
+            entries={filteredListEntries}
+            slotKind={slotKind}
             compatibilityCtx={compatibilityCtx}
             onSelect={onSelect}
           />
@@ -266,19 +280,19 @@ export function RunePickerPanel({
 // ─── Internal list component ──────────────────────────────────────────────────
 
 interface RuneListProps {
-  runes: Rune[];
-  isWeapon: boolean;
+  entries: Array<{ rune: Rune; materialEffectKind: MaterialEffectSlot }>;
+  slotKind: "weapon" | "armor" | "trinket";
   compatibilityCtx: RuneCompatibilityContext;
-  onSelect: (rune: Rune) => void;
+  onSelect: (rune: Rune, materialEffectKind?: MaterialEffectSlot) => void;
 }
 
 function RuneList({
-  runes,
-  isWeapon,
+  entries,
+  slotKind,
   compatibilityCtx,
   onSelect,
 }: RuneListProps) {
-  if (runes.length === 0) {
+  if (entries.length === 0) {
     return (
       <p className="text-xs text-muted-foreground text-center py-3">
         No runes available.
@@ -288,16 +302,22 @@ function RuneList({
 
   return (
     <div className="w-full min-w-0 max-h-[1000px] overflow-y-auto space-y-1">
-      {runes.map((rune) => {
+      {entries.map(({ rune, materialEffectKind }) => {
         const reason = getRuneIneligibilityReason(rune, compatibilityCtx);
-        const effectText =
-          (isWeapon ? rune.weaponEffect : rune.armorEffect) ?? "";
+        const effectText = getRuneMaterialEffectText(rune, materialEffectKind);
+        const effectLabel = MATERIAL_EFFECT_SLOT_LABELS[materialEffectKind];
+        const EffectIcon = materialEffectKind === "weapon" ? Sword : ShieldCheck;
 
         return (
           <button
-            key={`${rune.name}-${rune.monsterName}`}
+            key={`${rune.name}-${rune.monsterName}-${materialEffectKind}`}
             disabled={reason !== null}
-            onClick={() => onSelect(rune)}
+            onClick={() =>
+              onSelect(
+                rune,
+                slotKind === "trinket" ? materialEffectKind : undefined,
+              )
+            }
             className={cn(
               "w-full min-w-0 text-left flex items-start gap-2 px-2 py-1.5 rounded transition-colors",
               reason !== null
@@ -313,8 +333,21 @@ function RuneList({
               )}
             />
             <div className="min-w-0 flex-1">
-              <div className="text-xs font-medium text-foreground break-words">
-                {rune.name}
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="text-xs font-medium text-foreground break-words">
+                  {rune.name}
+                </span>
+                <span
+                  className={cn(
+                    "inline-flex items-center gap-0.5 rounded border px-1.5 py-0 text-[9px] font-medium uppercase tracking-wide",
+                    materialEffectKind === "weapon"
+                      ? "border-orange-800/50 bg-orange-950/40 text-orange-300"
+                      : "border-sky-800/50 bg-sky-950/40 text-sky-300",
+                  )}
+                >
+                  <EffectIcon className="h-2.5 w-2.5" />
+                  {effectLabel}
+                </span>
               </div>
               {effectText && (
                 <DndRichText

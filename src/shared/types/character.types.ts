@@ -83,6 +83,8 @@ export interface EquippedArmor {
 export interface EquippedTrinket {
   name: string;
   rune: Rune | null;
+  /** Which material effect the trinket rune applies (weapon or armor). */
+  runeMaterialEffect?: "weapon" | "armor";
 }
 
 // ─── Character Stats ─────────────────────────────────────────────────────────

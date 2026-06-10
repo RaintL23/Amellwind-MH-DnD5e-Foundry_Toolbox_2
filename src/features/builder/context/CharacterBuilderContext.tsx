@@ -185,7 +185,11 @@ interface CharacterBuilderContextValue {
   removeWeaponRune: (slot: "mainHand" | "offHand", index: number) => void;
   assignArmorRune: (index: number, rune: Rune) => RuleViolation | null;
   removeArmorRune: (index: number) => void;
-  assignTrinketRune: (slot: "trinket1" | "trinket2", rune: Rune) => void;
+  assignTrinketRune: (
+    slot: "trinket1" | "trinket2",
+    rune: Rune,
+    materialEffectKind?: "weapon" | "armor",
+  ) => void;
   removeTrinketRune: (slot: "trinket1" | "trinket2") => void;
 
   // Computed
@@ -913,10 +917,25 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     });
   }, []);
 
-  const assignTrinketRune = useCallback((slot: "trinket1" | "trinket2", rune: Rune) => {
-    const setter = slot === "trinket1" ? setTrinket1 : setTrinket2;
-    setter((prev) => (prev ? { ...prev, rune } : prev));
-  }, []);
+  const assignTrinketRune = useCallback(
+    (
+      slot: "trinket1" | "trinket2",
+      rune: Rune,
+      materialEffectKind?: "weapon" | "armor",
+    ) => {
+      const setter = slot === "trinket1" ? setTrinket1 : setTrinket2;
+      setter((prev) =>
+        prev
+          ? {
+              ...prev,
+              rune,
+              runeMaterialEffect: materialEffectKind ?? prev.runeMaterialEffect,
+            }
+          : prev,
+      );
+    },
+    [],
+  );
 
   const removeTrinketRune = useCallback((slot: "trinket1" | "trinket2") => {
     const setter = slot === "trinket1" ? setTrinket1 : setTrinket2;

@@ -11,6 +11,7 @@ import {
 } from "../../hooks/useEquippedSlot";
 import { getAllRunes } from "@/features/runes/services/rune.service";
 import { useRuneCompatibilityContext } from "../../hooks/useRuneCompatibilityContext";
+import { getRuneMaterialEffectText } from "@/features/runes/utils/rune-compatibility.utils";
 import { RunePickerPanel } from "./RunePickerPanel";
 import { DndRichText } from "@/shared/components/DndRichText";
 
@@ -70,7 +71,11 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
   const isArmor = equipped.kind === "armor";
   const isTrinket = equipped.kind === "trinket";
 
-  function handleAssignRune(rune: Rune, index: number) {
+  function handleAssignRune(
+    rune: Rune,
+    index: number,
+    materialEffectKind?: "weapon" | "armor",
+  ) {
     setViolation(null);
     let result: RuleViolation | null = null;
 
@@ -79,7 +84,11 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
     } else if (isArmor) {
       result = assignArmorRune(index, rune);
     } else if (isTrinket) {
-      assignTrinketRune(slot as "trinket1" | "trinket2", rune);
+      assignTrinketRune(
+        slot as "trinket1" | "trinket2",
+        rune,
+        materialEffectKind,
+      );
     }
 
     if (result) {
@@ -161,7 +170,16 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
                   <p className="font-medium text-foreground break-words">{rune.name}</p>
                   <p className="text-muted-foreground break-words whitespace-normal">
                     <DndRichText
-                      text={(isWeapon ? rune.weaponEffect : rune.armorEffect) ?? ""}
+                      text={
+                        isWeapon
+                          ? (rune.weaponEffect ?? "")
+                          : isArmor
+                            ? (rune.armorEffect ?? "")
+                            : getRuneMaterialEffectText(
+                                rune,
+                                equipped.item.runeMaterialEffect ?? "armor",
+                              )
+                      }
                     />
                   </p>
                 </div>
@@ -202,9 +220,10 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
               mode={useCatalog ? "catalog" : "build"}
               slotLabel={`Select rune for slot ${assigningIndex + 1}`}
               slotKind={equipped.kind === "weapon" ? "weapon" : equipped.kind === "armor" ? "armor" : "trinket"}
-              isWeapon={isWeapon}
               compatibilityCtx={compatibilityCtx}
-              onSelect={(rune) => handleAssignRune(rune, assigningIndex)}
+              onSelect={(rune, materialEffectKind) =>
+                handleAssignRune(rune, assigningIndex, materialEffectKind)
+              }
               onCancel={() => setAssigningIndex(null)}
             />
           )}

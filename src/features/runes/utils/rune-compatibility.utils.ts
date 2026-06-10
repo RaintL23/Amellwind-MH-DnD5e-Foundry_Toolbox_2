@@ -1,4 +1,4 @@
-import type { Rune } from "@/shared/types";
+import type { MaterialEffectSlot, Rune } from "@/shared/types";
 import type { Class, Subclass, Weapon } from "@/shared/types";
 import { getWeaponProficiencyRule } from "@/features/weapons/data/weapon-proficiencies.data";
 
@@ -162,4 +162,92 @@ export function getRuneEffectTags(
   slotKind: "weapon" | "armor" | "trinket",
 ): string[] {
   return getEffectTags(rune, slotKind);
+}
+
+export type TagFilterMode = "and" | "or";
+
+function tagsMatchFilter(
+  effectTags: string[],
+  selectedTags: string[],
+  mode: TagFilterMode,
+): boolean {
+  if (selectedTags.length === 0) return true;
+  return mode === "and"
+    ? selectedTags.every((tag) => effectTags.includes(tag))
+    : selectedTags.some((tag) => effectTags.includes(tag));
+}
+
+/** Which material-effect sides of a rune satisfy the active tag filter. */
+export function getMatchingMaterialEffectKinds(
+  rune: Rune,
+  selectedTags: string[],
+  mode: TagFilterMode,
+): MaterialEffectSlot[] {
+  const kinds: MaterialEffectSlot[] = [];
+  if (
+    rune.weaponEffect &&
+    tagsMatchFilter(rune.weaponTags, selectedTags, mode)
+  ) {
+    kinds.push("weapon");
+  }
+  if (rune.armorEffect && tagsMatchFilter(rune.armorTags, selectedTags, mode)) {
+    kinds.push("armor");
+  }
+  return kinds;
+}
+
+/** True when the rune matches the tag filter for the current equipment slot. */
+export function runeMatchesTagFilter(
+  rune: Rune,
+  selectedTags: string[],
+  mode: TagFilterMode,
+  slotKind: "weapon" | "armor" | "trinket",
+): boolean {
+  if (selectedTags.length === 0) return false;
+
+  if (slotKind === "weapon") {
+    return tagsMatchFilter(rune.weaponTags, selectedTags, mode);
+  }
+  if (slotKind === "armor") {
+    return tagsMatchFilter(rune.armorTags, selectedTags, mode);
+  }
+
+  return getMatchingMaterialEffectKinds(rune, selectedTags, mode).length > 0;
+}
+
+export function getRuneMaterialEffectText(
+  rune: Rune,
+  kind: MaterialEffectSlot,
+): string {
+  return (kind === "weapon" ? rune.weaponEffect : rune.armorEffect) ?? "";
+}
+
+/** Expands runes into one row per applicable material effect for picker lists. */
+export function expandRunesForPicker(
+  runes: Rune[],
+  slotKind: "weapon" | "armor" | "trinket",
+  selectedTags: string[],
+  tagFilterMode: TagFilterMode | null,
+): Array<{ rune: Rune; materialEffectKind: MaterialEffectSlot }> {
+  if (slotKind === "weapon") {
+    return runes.map((rune) => ({ rune, materialEffectKind: "weapon" }));
+  }
+  if (slotKind === "armor") {
+    return runes.map((rune) => ({ rune, materialEffectKind: "armor" }));
+  }
+
+  if (tagFilterMode && selectedTags.length > 0) {
+    return runes.flatMap((rune) =>
+      getMatchingMaterialEffectKinds(rune, selectedTags, tagFilterMode).map(
+        (materialEffectKind) => ({ rune, materialEffectKind }),
+      ),
+    );
+  }
+
+  return runes.flatMap((rune) => {
+    const kinds: MaterialEffectSlot[] = [];
+    if (rune.weaponEffect) kinds.push("weapon");
+    if (rune.armorEffect) kinds.push("armor");
+    return kinds.map((materialEffectKind) => ({ rune, materialEffectKind }));
+  });
 }
