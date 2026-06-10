@@ -24,7 +24,7 @@ import {
   type SpeciesTable,
   type SpeciesTrait,
 } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { DndRichText } from "@/shared/components/DndRichText";
 import type {
   StartingEquipmentOffers,
   StartingEquipmentSource,
@@ -138,7 +138,7 @@ function TraitList({
                   bodyClass,
                 )}
               >
-                {parseFiveToolsMarkup(paragraph)}
+                <DndRichText text={paragraph} />
               </p>
             ))}
             {trait.tables?.map((table, i) => (
@@ -180,7 +180,7 @@ function BackgroundSectionBlock({
                 key={i}
                 className="mb-1 text-xs leading-relaxed text-muted-foreground"
               >
-                {parseFiveToolsMarkup(paragraph)}
+                <DndRichText text={paragraph} />
               </p>
             ))}
             {section.tables?.map((table, i) => (

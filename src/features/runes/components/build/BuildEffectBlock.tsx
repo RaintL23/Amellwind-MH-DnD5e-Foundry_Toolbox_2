@@ -1,4 +1,4 @@
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
 
 interface BuildEffectBlockProps {
@@ -25,7 +25,7 @@ export function BuildEffectBlock({
         <span className="text-xs text-muted-foreground/50 truncate shrink-0">{monsterName}</span>
       </div>
       <p className="text-xs text-muted-foreground leading-relaxed">
-        {parseFiveToolsMarkup(effect)}
+        <DndRichText text={effect} />
       </p>
     </div>
   );

@@ -1,28 +1,8 @@
 import type { FeatSection } from "@/shared/types";
+import { DescriptionLines } from "@/shared/components/DescriptionLines";
 
 export function FeatParagraphList({ lines }: { lines: string[] }) {
-  return (
-    <div className="space-y-1.5">
-      {lines.map((line, i) => {
-        const isInset = line.startsWith("»");
-        const isBullet = line.startsWith("•");
-        return (
-          <p
-            key={i}
-            className={
-              isInset
-                ? "text-sm text-amber-200/80 italic border-l-2 border-amber-800/40 pl-3 py-1"
-                : isBullet
-                  ? "text-sm text-muted-foreground leading-relaxed pl-2"
-                  : "text-sm text-muted-foreground leading-relaxed"
-            }
-          >
-            {line}
-          </p>
-        );
-      })}
-    </div>
-  );
+  return <DescriptionLines lines={lines} />;
 }
 
 export function FeatSectionBlock({ section }: { section: FeatSection }) {

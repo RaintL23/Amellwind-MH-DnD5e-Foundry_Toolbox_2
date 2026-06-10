@@ -9,36 +9,12 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { DescriptionLines } from "@/shared/components/DescriptionLines";
 
 interface FeatDetailDialogProps {
   feat: Feat | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-}
-
-function ParagraphList({ lines }: { lines: string[] }) {
-  return (
-    <div className="space-y-1.5">
-      {lines.map((line, i) => {
-        const isInset = line.startsWith("»");
-        const isBullet = line.startsWith("•");
-        return (
-          <p
-            key={i}
-            className={
-              isInset
-                ? "text-sm text-amber-200/80 italic border-l-2 border-amber-800/40 pl-3 py-1"
-                : isBullet
-                  ? "text-sm text-muted-foreground leading-relaxed pl-2"
-                  : "text-sm text-muted-foreground leading-relaxed"
-            }
-          >
-            {line}
-          </p>
-        );
-      })}
-    </div>
-  );
 }
 
 function SectionBlock({ section }: { section: FeatSection }) {
@@ -49,7 +25,7 @@ function SectionBlock({ section }: { section: FeatSection }) {
           {section.name}
         </h4>
       )}
-      <ParagraphList lines={section.paragraphs} />
+      <DescriptionLines lines={section.paragraphs} />
     </div>
   );
 }
@@ -113,7 +89,7 @@ export function FeatDetailDialog({
           <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">
             Descripción
           </h3>
-          <ParagraphList lines={feat.paragraphs} />
+          <DescriptionLines lines={feat.paragraphs} />
           {feat.sections.map((section, i) => (
             <SectionBlock key={section.name ?? i} section={section} />
           ))}

@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 interface ExpandableFeatureRowProps {
   name: string;
@@ -54,7 +55,7 @@ export function ExpandableFeatureRow({
               key={pi}
               className="text-xs text-muted-foreground leading-relaxed"
             >
-              {p}
+              <DndRichText text={p} />
             </p>
           ))}
         </div>

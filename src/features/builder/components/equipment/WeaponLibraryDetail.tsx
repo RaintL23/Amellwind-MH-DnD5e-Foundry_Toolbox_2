@@ -26,6 +26,7 @@ import {
   getRaritySlideUnlockSections,
 } from "@/features/weapons/utils/rarity-slide.utils";
 import { RuneFeaturesSection } from "./RuneFeaturesSection";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { getWeaponEffectiveTierLabel } from "../../utils/equipment-proficiency.utils";
 
 interface WeaponLibraryDetailProps {
@@ -275,7 +276,7 @@ export function WeaponLibraryDetail({
 
           {weapon.description && (
             <p className="mb-3 border-l-2 border-violet-800/40 pl-2 text-xs italic leading-relaxed text-muted-foreground">
-              {weapon.description}
+              <DndRichText text={weapon.description} />
             </p>
           )}
 

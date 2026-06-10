@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
 import { getAllItems } from "@/features/shops/services/item.service";
 import { ItemRefText } from "@/shared/components/ItemRefText";
+import { DndRichText } from "@/shared/components/DndRichText";
 import {
   Hammer,
   BookOpen,
@@ -257,7 +258,7 @@ function RulesTab() {
                   key={i}
                   className="text-sm text-muted-foreground leading-relaxed"
                 >
-                  {line}
+                  <DndRichText text={line} />
                 </p>
               ))}
             </div>
@@ -275,7 +276,7 @@ function RulesTab() {
           <div className="space-y-2">
             {inset.content.map((line, i) => (
               <p key={i} className="text-sm text-amber-100/80 leading-relaxed">
-                {line}
+                <DndRichText text={line} />
               </p>
             ))}
           </div>

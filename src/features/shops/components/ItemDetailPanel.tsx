@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatValueGp } from "../services/item.service";
 import { useCart } from "../context/CartContext";
 import { RarityBadge } from "./RarityBadge";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 export function ItemDetailPanel({
   item,
@@ -63,7 +64,7 @@ export function ItemDetailPanel({
           <div className="space-y-2">
             {textEntries.map((text, i) => (
               <p key={i} className="text-sm text-muted-foreground leading-relaxed">
-                {text}
+                <DndRichText text={text} />
               </p>
             ))}
           </div>

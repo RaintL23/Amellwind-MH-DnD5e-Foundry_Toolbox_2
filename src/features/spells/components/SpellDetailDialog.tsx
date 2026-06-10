@@ -25,6 +25,8 @@ import {
   type BookSourceNameMap,
 } from "../services/book-source.service";
 import { SourceBadge } from "./SourceBadge";
+import { DescriptionLines } from "@/shared/components/DescriptionLines";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 interface SpellDetailDialogProps {
   spell: Spell | null;
@@ -60,40 +62,6 @@ function MetaRow({
           </span>
         )}
       </span>
-    </div>
-  );
-}
-
-function DescriptionBlock({ lines }: { lines: string[] }) {
-  return (
-    <div className="space-y-2">
-      {lines.map((line, i) => {
-        const isInset = line.startsWith("»");
-        const isBullet = line.startsWith("•");
-        const isBold = /^\*\*.+\*\*/.test(line);
-        if (isBold) {
-          const text = line.replace(/\*\*/g, "");
-          return (
-            <p key={i} className="text-sm font-semibold text-foreground mt-3 mb-1">
-              {text}
-            </p>
-          );
-        }
-        return (
-          <p
-            key={i}
-            className={
-              isInset
-                ? "text-sm text-violet-200/80 italic border-l-2 border-violet-800/40 pl-3 py-1"
-                : isBullet
-                  ? "text-sm text-muted-foreground leading-relaxed pl-3"
-                  : "text-sm text-muted-foreground leading-relaxed"
-            }
-          >
-            {line}
-          </p>
-        );
-      })}
     </div>
   );
 }
@@ -383,7 +351,7 @@ export function SpellDetailDialog({
                   </span>
                 )}
               </h3>
-              <DescriptionBlock lines={active.description} />
+              <DescriptionLines lines={active.description} insetAccent="violet" />
             </>
           )}
 
@@ -404,7 +372,7 @@ export function SpellDetailDialog({
                 )}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {active.higherLevel}
+                <DndRichText text={active.higherLevel} />
               </p>
             </>
           )}

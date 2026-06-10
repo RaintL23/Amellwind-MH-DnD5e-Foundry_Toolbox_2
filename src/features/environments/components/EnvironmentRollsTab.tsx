@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Environment } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { Dice6, Package } from "lucide-react";
 import {
   findEncounterByRoll,
@@ -327,7 +328,7 @@ export function EnvironmentRollsTab({
                 selectedEnvironment.specialRules.map((rule) => (
                   <li key={rule.name} className="text-xs text-foreground">
                     <span className="font-semibold">{rule.name}:</span>{" "}
-                    {rule.description}
+                    <DndRichText text={rule.description} />
                   </li>
                 ))
               ) : (

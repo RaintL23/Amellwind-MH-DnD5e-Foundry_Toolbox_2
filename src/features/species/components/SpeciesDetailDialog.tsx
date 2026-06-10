@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 interface SpeciesDetailDialogProps {
   species: Species | null;
@@ -162,7 +162,7 @@ export function SpeciesDetailDialog({
                     key={i}
                     className="text-sm text-muted-foreground leading-relaxed mb-1"
                   >
-                    {parseFiveToolsMarkup(paragraph)}
+                    <DndRichText text={paragraph} />
                   </p>
                 ))}
                 {trait.tables?.map((table, i) => (

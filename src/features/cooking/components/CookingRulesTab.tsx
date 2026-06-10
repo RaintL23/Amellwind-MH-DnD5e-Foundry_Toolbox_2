@@ -1,6 +1,7 @@
 import type { MealTable } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { COOKING_RULES } from "../data/cooking.data";
 import { RANK_COLORS } from "../constants/cooking.constants";
 import type { CookingActiveTab } from "@/shared/types";
@@ -27,7 +28,7 @@ export function CookingRulesTab({
                   key={i}
                   className="text-sm text-muted-foreground leading-relaxed"
                 >
-                  {line}
+                  <DndRichText text={line} />
                 </p>
               ))}
             </div>

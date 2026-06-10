@@ -1,6 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { X, Gem, AlertTriangle } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Gem, AlertTriangle, Loader2 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useRuneBuild } from "@/features/runes/context/RuneBuildContext";
@@ -10,6 +9,10 @@ import {
   useEquippedSlot,
   collectAssignedRuneKeys,
 } from "../../hooks/useEquippedSlot";
+import { getAllRunes } from "@/features/runes/services/rune.service";
+import { useRuneCompatibilityContext } from "../../hooks/useRuneCompatibilityContext";
+import { RunePickerPanel } from "./RunePickerPanel";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 interface RuneAssignmentPanelProps {
   slot: EquipmentSlotType;
@@ -34,6 +37,19 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
   const equipped = useEquippedSlot(slot);
   const [violation, setViolation] = useState<RuleViolation | null>(null);
   const [assigningIndex, setAssigningIndex] = useState<number | null>(null);
+  const [catalogRunes, setCatalogRunes] = useState<Rune[]>([]);
+  const [catalogLoading, setCatalogLoading] = useState(false);
+  const compatibilityCtx = useRuneCompatibilityContext(equipped);
+
+  const useCatalog = assigningIndex !== null && availableRunes.length === 0;
+
+  useEffect(() => {
+    if (!useCatalog || catalogRunes.length > 0) return;
+    setCatalogLoading(true);
+    getAllRunes()
+      .then(setCatalogRunes)
+      .finally(() => setCatalogLoading(false));
+  }, [useCatalog, catalogRunes.length]);
 
   if (equipped.kind === "empty") {
     return (
@@ -88,12 +104,17 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
     trinket2,
   );
 
-  const filteredRunes = availableRunes.filter((r) => {
-    if (assignedKeys.has(`${r.name}||${r.monsterName}`)) return false;
-    if (isWeapon) return r.slots.includes("W");
-    if (isArmor) return r.slots.includes("A");
-    return true;
-  });
+  function filterBySlot(source: Rune[]): Rune[] {
+    return source.filter((r) => {
+      if (assignedKeys.has(`${r.name}||${r.monsterName}`)) return false;
+      if (isWeapon) return r.slots.includes("W");
+      if (isArmor) return r.slots.includes("A");
+      return true;
+    });
+  }
+
+  const filteredRunes = filterBySlot(availableRunes);
+  const filteredCatalogRunes = filterBySlot(catalogRunes);
 
   return (
     <div className="w-full min-w-0 max-w-full rounded-lg border border-border bg-card/50 p-3 space-y-3">
@@ -139,7 +160,9 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
                 >
                   <p className="font-medium text-foreground break-words">{rune.name}</p>
                   <p className="text-muted-foreground break-words whitespace-normal">
-                    {isWeapon ? rune.weaponEffect : rune.armorEffect}
+                    <DndRichText
+                      text={(isWeapon ? rune.weaponEffect : rune.armorEffect) ?? ""}
+                    />
                   </p>
                 </div>
                 <Gem className="h-3.5 w-3.5 text-primary" />
@@ -167,47 +190,25 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
       </div>
 
       {assigningIndex !== null && (
-        <div className="border-t border-border pt-2 space-y-1">
-          <div className="flex items-center justify-between">
-            <span className="text-xs text-muted-foreground">
-              Select rune for slot {assigningIndex + 1}
-            </span>
-            <button
-              onClick={() => setAssigningIndex(null)}
-              className="text-xs text-muted-foreground hover:text-foreground"
-            >
-              Cancel
-            </button>
-          </div>
-          <div className="w-full min-w-0 max-h-[min(40vh,320px)] overflow-y-auto space-y-1">
-            {filteredRunes.length === 0 && (
-              <p className="text-xs text-muted-foreground text-center py-2">
-                No runes in your build. Add them from the{" "}
-                <Link to="/runes" className="text-primary hover:underline">
-                  Runes page
-                </Link>{" "}
-                using the Build Planner tool.
-              </p>
-            )}
-            {filteredRunes.map((rune) => (
-              <button
-                key={`${rune.name}-${rune.monsterName}`}
-                onClick={() => handleAssignRune(rune, assigningIndex)}
-                className="w-full min-w-0 text-left flex items-start gap-2 px-2 py-1.5 rounded hover:bg-accent transition-colors"
-              >
-                <Gem className="h-3 w-3 text-primary shrink-0 mt-0.5" />
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-medium text-foreground break-words">
-                    {rune.name}
-                  </div>
-                  <div className="text-[10px] text-muted-foreground break-words whitespace-normal leading-relaxed">
-                    {isWeapon ? rune.weaponEffect : rune.armorEffect}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
-        </div>
+        <>
+          {catalogLoading ? (
+            <div className="border-t border-border pt-3 flex items-center justify-center gap-2 text-xs text-muted-foreground py-4">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+              Loading runes…
+            </div>
+          ) : (
+            <RunePickerPanel
+              runes={useCatalog ? filteredCatalogRunes : filteredRunes}
+              mode={useCatalog ? "catalog" : "build"}
+              slotLabel={`Select rune for slot ${assigningIndex + 1}`}
+              slotKind={equipped.kind === "weapon" ? "weapon" : equipped.kind === "armor" ? "armor" : "trinket"}
+              isWeapon={isWeapon}
+              compatibilityCtx={compatibilityCtx}
+              onSelect={(rune) => handleAssignRune(rune, assigningIndex)}
+              onCancel={() => setAssigningIndex(null)}
+            />
+          )}
+        </>
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Package, Scissors, Target } from "lucide-react";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { DndRichText } from "@/shared/components/DndRichText";
 import {
   CAPTURING_RULES,
   CARVING_RULE_AFTER_LINK,
@@ -72,7 +72,7 @@ export function ObtainMaterialsPanel() {
                       : "text-muted-foreground"
                   }`}
                 >
-                  {entry}
+                  <DndRichText text={entry} />
                 </p>
               ))}
             </div>
@@ -92,7 +92,7 @@ export function ObtainMaterialsPanel() {
                     : "text-muted-foreground"
                 }`}
               >
-                {parseFiveToolsMarkup(rule)}
+                <DndRichText text={rule} />
               </p>
             ))}
           </section>

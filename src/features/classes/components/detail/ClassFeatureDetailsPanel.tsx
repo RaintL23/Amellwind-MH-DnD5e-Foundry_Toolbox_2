@@ -2,7 +2,7 @@ import { memo } from "react";
 import { ClassFeatureEntry } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
-import { DndKeywordText } from "@/shared/components/DndKeywordText";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
 
 interface ClassFeatureDetailPanelProps {
@@ -39,7 +39,7 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
               key={i}
               className="text-sm text-muted-foreground leading-relaxed"
             >
-              <DndKeywordText text={line} />
+              <DndRichText text={line} />
             </p>
           ))}
         </div>

@@ -8,6 +8,7 @@ import {
   CHARACTER_GUIDE_SECTIONS,
 } from "../data/character-guide.data";
 import { GuideTable } from "./GuideTable";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 type TabId = "creating" | "higher-level" | "skills" | "hunt-roles";
 
@@ -23,7 +24,7 @@ function Paragraphs({ lines }: { lines: string[] }) {
     <div className="space-y-2">
       {lines.map((line, i) => (
         <p key={i} className="text-sm text-muted-foreground leading-relaxed">
-          {line}
+          <DndRichText text={line} />
         </p>
       ))}
     </div>
@@ -114,7 +115,7 @@ function SectionContent({ section }: { section: GuideSection }) {
                 {skill.name}
               </h4>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                {skill.description}
+                <DndRichText text={skill.description} />
               </p>
             </div>
           ))}

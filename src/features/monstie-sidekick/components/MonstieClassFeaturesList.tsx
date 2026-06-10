@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { MonstieClassFeature } from "@/shared/types";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
 import { ChevronDown } from "lucide-react";
 
@@ -92,7 +93,7 @@ export function MonstieClassFeaturesList({
                             key={i}
                             className="text-sm text-muted-foreground leading-relaxed"
                           >
-                            {line}
+                            <DndRichText text={line} />
                           </p>
                         ))}
                       </div>

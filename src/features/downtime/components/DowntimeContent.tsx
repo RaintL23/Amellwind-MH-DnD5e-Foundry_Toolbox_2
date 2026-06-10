@@ -1,12 +1,13 @@
 import type { DowntimeContent, DowntimeTable } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 function ActivityTable({ table }: { table: DowntimeTable }) {
   return (
     <div className="overflow-x-auto rounded-md border border-border">
       {table.caption && (
         <p className="px-3 py-2 text-xs font-semibold text-amber-400/90 border-b border-border bg-muted/30">
-          {table.caption}
+          <DndRichText text={table.caption} />
         </p>
       )}
       <table className="w-full text-sm">
@@ -36,7 +37,7 @@ function ActivityTable({ table }: { table: DowntimeTable }) {
                     cellIndex === 0 && "font-medium whitespace-nowrap",
                   )}
                 >
-                  {cell}
+                  <DndRichText text={cell} />
                 </td>
               ))}
             </tr>
@@ -48,7 +49,7 @@ function ActivityTable({ table }: { table: DowntimeTable }) {
           key={i}
           className="px-3 py-2 text-xs italic text-muted-foreground border-t border-border bg-muted/20"
         >
-          {note}
+          <DndRichText text={note} />
         </p>
       ))}
     </div>
@@ -65,7 +66,7 @@ function ContentBlock({
   if (block.type === "paragraph") {
     return (
       <p className="text-sm text-muted-foreground leading-relaxed">
-        {block.text}
+        <DndRichText text={block.text} />
       </p>
     );
   }

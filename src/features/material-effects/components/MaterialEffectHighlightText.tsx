@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import type { MaterialEffectSlot } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 import {
   findMatchingMaterialEffectNames,
   splitMaterialEffectRefs,
@@ -33,7 +34,7 @@ export function MaterialEffectHighlightText({
   const parsed = useMemo(() => parseFiveToolsMarkup(text), [text]);
 
   const segments = useMemo(() => {
-    if (!index) return [{ idx: 0, text: parsed, isMaterialEffect: false as const }];
+    if (!index) return null;
 
     const candidateNames = findMatchingMaterialEffectNames(
       parsed,
@@ -43,8 +44,8 @@ export function MaterialEffectHighlightText({
     return splitMaterialEffectRefs(parsed, candidateNames, index.byKey, slot);
   }, [parsed, index, slot]);
 
-  if (!index || segments.every((segment) => !segment.isMaterialEffect)) {
-    return <span className={className}>{parsed}</span>;
+  if (!index || !segments || segments.every((segment) => !segment.isMaterialEffect)) {
+    return <DndRichText text={text} className={className} />;
   }
 
   return (
@@ -59,7 +60,7 @@ export function MaterialEffectHighlightText({
             {segment.text}
           </span>
         ) : (
-          <span key={segment.idx}>{segment.text}</span>
+          <DndRichText key={segment.idx} text={segment.text} />
         ),
       )}
     </span>

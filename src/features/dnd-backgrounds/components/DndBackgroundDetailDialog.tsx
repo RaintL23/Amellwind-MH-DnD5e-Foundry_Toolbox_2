@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/shared/utils/cn";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { DndRichText } from "@/shared/components/DndRichText";
 import {
   getBookSourceNames,
   resolveBookSourceName,
@@ -141,7 +141,7 @@ function SectionBlock({
                 key={i}
                 className="text-sm text-muted-foreground leading-relaxed mb-1"
               >
-                {parseFiveToolsMarkup(paragraph)}
+                <DndRichText text={paragraph} />
               </p>
             ))}
             {section.tables?.map((table, i) => (

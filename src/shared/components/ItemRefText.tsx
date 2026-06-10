@@ -1,4 +1,5 @@
 import { useState, useRef, useMemo } from "react";
+import { DndRichText } from "./DndRichText";
 
 type TooltipState = { x: number; y: number; text: string } | null;
 
@@ -62,13 +63,13 @@ export function ItemRefText({
     [text, matchingNames],
   );
 
-  if (!matchingNames.length) return <>{text}</>;
+  if (!matchingNames.length) return <DndRichText text={text} />;
 
   return (
     <>
       <TooltipPopover tooltip={tooltip} />
       {segments.map((seg) => {
-        if (!seg.isItem) return <span key={seg.idx}>{seg.text}</span>;
+        if (!seg.isItem) return <DndRichText key={seg.idx} text={seg.text} />;
 
         const canonicalKey = Object.keys(itemDescMap).find(
           (n) => n.toLowerCase() === seg.text.toLowerCase(),

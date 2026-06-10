@@ -1,4 +1,5 @@
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 interface RuleSectionProps {
   title: string;
@@ -20,7 +21,9 @@ export function RuleSection({ title, icon, rules, accentColor }: RuleSectionProp
             <span className={cn("shrink-0 font-semibold mt-0.5", accentColor)}>
               {i + 1}.
             </span>
-            <span>{rule}</span>
+            <span>
+              <DndRichText text={rule} />
+            </span>
           </li>
         ))}
       </ol>

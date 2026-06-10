@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/shared/utils/cn";
-import { DndKeywordText } from "@/shared/components/DndKeywordText";
+import { DescriptionLines } from "@/shared/components/DescriptionLines";
 import { SourceBadge } from "@/features/spells/components/SourceBadge";
 import {
   getBookSourceNames,
@@ -63,40 +63,6 @@ function MetaRow({
           </span>
         )}
       </span>
-    </div>
-  );
-}
-
-function DescriptionBlock({ lines }: { lines: string[] }) {
-  return (
-    <div className="space-y-2">
-      {lines.map((line, i) => {
-        const isInset = line.startsWith("»");
-        const isBullet = line.startsWith("•");
-        const isBold = /^\*\*.+\*\*/.test(line);
-        if (isBold) {
-          const text = line.replace(/\*\*/g, "");
-          return (
-            <p key={i} className="text-sm font-semibold text-foreground mt-3 mb-1">
-              <DndKeywordText text={text} />
-            </p>
-          );
-        }
-        return (
-          <p
-            key={i}
-            className={
-              isInset
-                ? "text-sm text-amber-200/80 italic border-l-2 border-amber-800/40 pl-3 py-1"
-                : isBullet
-                  ? "text-sm text-muted-foreground leading-relaxed pl-3"
-                  : "text-sm text-muted-foreground leading-relaxed"
-            }
-          >
-            <DndKeywordText text={line.replace(/^[»•]\s*/, "")} />
-          </p>
-        );
-      })}
     </div>
   );
 }
@@ -394,7 +360,7 @@ export function DndItemDetailDialog({
                   </span>
                 )}
               </h3>
-              <DescriptionBlock lines={active.description} />
+              <DescriptionLines lines={active.description} />
             </>
           )}
         </DialogBody>

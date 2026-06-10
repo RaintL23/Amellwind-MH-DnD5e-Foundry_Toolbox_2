@@ -3,7 +3,7 @@ import type {
   StatBlockContent,
   StatBlockListItem,
 } from "@/shared/types/statblock-content.types";
-import { DndKeywordText } from "@/shared/components/DndKeywordText";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
 
 function ContentTable({ table }: { table: DowntimeTable }) {
@@ -11,7 +11,7 @@ function ContentTable({ table }: { table: DowntimeTable }) {
     <div className="overflow-x-auto rounded-md border border-border my-2">
       {table.caption && (
         <p className="px-3 py-2 text-xs font-semibold text-amber-400/90 border-b border-border bg-muted/30">
-          {table.caption}
+          <DndRichText text={table.caption} />
         </p>
       )}
       <table className="w-full text-sm">
@@ -41,7 +41,7 @@ function ContentTable({ table }: { table: DowntimeTable }) {
                     cellIndex === 0 && "font-medium whitespace-nowrap",
                   )}
                 >
-                  {cell}
+                  <DndRichText text={cell} />
                 </td>
               ))}
             </tr>
@@ -53,7 +53,7 @@ function ContentTable({ table }: { table: DowntimeTable }) {
           key={i}
           className="px-3 py-2 text-xs italic text-muted-foreground border-t border-border bg-muted/20"
         >
-          {note}
+          <DndRichText text={note} />
         </p>
       ))}
     </div>
@@ -64,7 +64,7 @@ function ListItemView({ item }: { item: StatBlockListItem }) {
   if (item.type === "text") {
     return (
       <li className="text-sm text-muted-foreground">
-        <DndKeywordText text={item.text} />
+        <DndRichText text={item.text} />
       </li>
     );
   }
@@ -113,7 +113,7 @@ function StatBlockContentBlock({
           !inline && "mb-0",
         )}
       >
-        <DndKeywordText text={block.text} />
+        <DndRichText text={block.text} />
       </Tag>
     );
   }

@@ -3,6 +3,7 @@ import { formatWeaponValue } from "../services/weapon.service";
 import { getWeaponShieldAcBonusAtIndex } from "../utils/shield.utils";
 import { WeaponProficiencyInfo } from "./WeaponProficiencyInfo";
 import { Shield } from "lucide-react";
+import { DndRichText } from "@/shared/components/DndRichText";
 
 interface WeaponDialogMetaProps {
   weapon: Weapon;
@@ -62,7 +63,7 @@ export function WeaponDialogMeta({
 
       {weapon.description && (
         <p className="text-sm text-muted-foreground italic mb-3 leading-relaxed">
-          {weapon.description}
+          <DndRichText text={weapon.description} />
         </p>
       )}
 

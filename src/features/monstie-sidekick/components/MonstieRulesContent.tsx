@@ -1,5 +1,6 @@
 import type { MonstieRulesContent } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { MonsterStatBlock } from "@/features/monsters/components/MonsterStatBlock";
 function RulesBlock({
   block,
@@ -19,7 +20,9 @@ function RulesBlock({
 
   if (block.type === "paragraph") {
     return (
-      <p className="text-sm text-muted-foreground leading-relaxed">{block.text}</p>
+      <p className="text-sm text-muted-foreground leading-relaxed">
+        <DndRichText text={block.text} />
+      </p>
     );
   }
 
@@ -47,7 +50,7 @@ function RulesBlock({
               >
                 {row.map((cell, cellIndex) => (
                   <td key={cellIndex} className="px-3 py-2 text-foreground align-top">
-                    {cell}
+                    <DndRichText text={cell} />
                   </td>
                 ))}
               </tr>

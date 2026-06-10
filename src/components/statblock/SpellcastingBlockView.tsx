@@ -1,4 +1,5 @@
 import type { SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { StatBlockContentView } from "./StatBlockContentView";
 
 export function SpellcastingBlockView({ block }: { block: SpellcastingBlock }) {
@@ -10,7 +11,9 @@ export function SpellcastingBlockView({ block }: { block: SpellcastingBlock }) {
           {block.spellLines.map((line) => (
             <div key={line.label} className="text-sm">
               <span className="font-medium text-foreground">{line.label}:</span>{" "}
-              <span className="text-muted-foreground">{line.spells.join(", ")}</span>
+              <span className="text-muted-foreground">
+                <DndRichText text={line.spells.join(", ")} />
+              </span>
             </div>
           ))}
         </div>

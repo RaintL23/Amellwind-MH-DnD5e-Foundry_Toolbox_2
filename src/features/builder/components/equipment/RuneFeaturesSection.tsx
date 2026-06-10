@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Gem } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Rune } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { ExpandableFeatureRow } from "@/features/weapons/components/ExpandableFeatureRow";
 import { TierBadge } from "@/features/runes/components/shared/TierBadge";
 
@@ -16,12 +15,11 @@ function runeKey(rune: Rune): string {
 }
 
 function effectToParagraphs(effect: string): string[] {
-  const parsed = parseFiveToolsMarkup(effect);
-  const parts = parsed
+  const parts = effect
     .split(/\n+/)
     .map((part) => part.trim())
     .filter(Boolean);
-  return parts.length > 0 ? parts : [parsed];
+  return parts.length > 0 ? parts : [effect];
 }
 
 export function RuneFeaturesSection({

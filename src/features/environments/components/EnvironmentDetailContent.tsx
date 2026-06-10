@@ -1,6 +1,7 @@
 import { ENVIRONMENT_COLORS, type Environment } from "@/shared/types";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/shared/utils/cn";
+import { DndRichText } from "@/shared/components/DndRichText";
 import {
   Compass,
   MapPin,
@@ -80,7 +81,7 @@ export function EnvironmentDetailContent({
                   {rule.name}
                 </p>
                 <p className="text-xs text-muted-foreground leading-relaxed">
-                  {rule.description}
+                  <DndRichText text={rule.description} />
                 </p>
               </div>
             ))}

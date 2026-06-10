@@ -1,37 +1,11 @@
-import { useMemo } from "react";
-import { cn } from "@/shared/utils/cn";
-import {
-  DND_KEYWORD_CLASS,
-  splitDndKeywords,
-} from "@/shared/utils/dnd-keywords.utils";
+import { DndRichText } from "./DndRichText";
 
 interface DndKeywordTextProps {
   text: string;
   className?: string;
 }
 
+/** Highlights common D&D terms in plain or 5etools-marked text. */
 export function DndKeywordText({ text, className }: DndKeywordTextProps) {
-  const segments = useMemo(() => splitDndKeywords(text), [text]);
-  const hasKeywords = segments.some((segment) => segment.category != null);
-
-  if (!hasKeywords) {
-    return <>{text}</>;
-  }
-
-  return (
-    <>
-      {segments.map((segment, index) =>
-        segment.category ? (
-          <span
-            key={index}
-            className={cn(DND_KEYWORD_CLASS[segment.category], className)}
-          >
-            {segment.text}
-          </span>
-        ) : (
-          <span key={index}>{segment.text}</span>
-        ),
-      )}
-    </>
-  );
+  return <DndRichText text={text} className={className} highlightKeywords />;
 }
