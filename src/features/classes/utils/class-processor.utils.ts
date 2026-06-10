@@ -14,7 +14,10 @@ import {
   unpackClassFeatureUid,
   unpackSubclassFeatureUid,
 } from "./class-uids.utils";
-import { resolveFeatureEntries } from "./class-feature-entries.utils";
+import {
+  collectDirectRefSubclassFeatureUids,
+  resolveFeatureEntries,
+} from "./class-feature-entries.utils";
 
 /** Expand 5etools `_copy` stubs (e.g. XPHB links to PHB subclass data). */
 export function resolveSubclassCopies(
@@ -129,10 +132,15 @@ function toResolvedFeature(
   feature: RawClassFeature | RawSubclassFeature,
   featureIndex: Map<string, RawClassFeature>,
   meta?: { gainSubclassFeature?: boolean; tableDisplayName?: string },
+  subclassFeatureIndex?: Map<string, RawSubclassFeature>,
+  skipRefSubclassFeature = false,
 ): ResolvedFeature {
   const classSource = feature.classSource || DEFAULT_CLASS_SOURCE;
   const rawEntries = feature.entries ?? [];
-  const entries = resolveFeatureEntries(rawEntries, featureIndex);
+  const entries = resolveFeatureEntries(rawEntries, featureIndex, {
+    subclassFeatureIndex,
+    skipRefSubclassFeature,
+  });
   return {
     name: feature.name,
     source: feature.source,
@@ -190,6 +198,35 @@ export function dereferenceSubclassFeatures(
   featureIndex: Map<string, RawSubclassFeature>,
 ) {
   const resolved: ResolvedFeature[] = [];
+  const addedKeys = new Set<string>();
+
+  const addResolvedFeature = (
+    feature: RawSubclassFeature,
+    meta?: { gainSubclassFeature?: boolean; tableDisplayName?: string },
+    skipRefSubclassFeature = false,
+  ) => {
+    const key = subclassFeatureKey({
+      name: feature.name,
+      className: feature.className,
+      classSource: feature.classSource || DEFAULT_CLASS_SOURCE,
+      subclassShortName: feature.subclassShortName,
+      subclassSource: feature.subclassSource || DEFAULT_CLASS_SOURCE,
+      level: feature.level,
+      source: feature.source,
+    });
+    if (addedKeys.has(key)) return;
+    addedKeys.add(key);
+
+    resolved.push(
+      toResolvedFeature(
+        feature,
+        new Map(),
+        meta,
+        featureIndex,
+        skipRefSubclassFeature,
+      ),
+    );
+  };
 
   for (const ref of sc.subclassFeatures ?? []) {
     const uid = typeof ref === "string" ? ref : ref.subclassFeature;
@@ -204,7 +241,14 @@ export function dereferenceSubclassFeatures(
             tableDisplayName: ref.tableDisplayName,
           };
 
-    resolved.push(toResolvedFeature(feature, new Map(), meta));
+    addResolvedFeature(feature, meta, true);
+
+    for (const childUid of collectDirectRefSubclassFeatureUids(
+      feature.entries ?? [],
+    )) {
+      const child = matchSubclassFeature(featureIndex, childUid);
+      if (child) addResolvedFeature(child);
+    }
   }
 
   return {
