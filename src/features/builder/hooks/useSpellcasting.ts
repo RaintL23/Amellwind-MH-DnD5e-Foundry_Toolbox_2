@@ -55,6 +55,9 @@ export interface SpellcastingInfo {
   /** Expanded spell list filters from subclass (e.g. Lore Bard, EK). */
   expandedSpellFilters: ExpandedSpellFilter[];
   subclassName: string | null;
+  subclassShortName: string | null;
+  /** True when spell slots/progression come from a caster subclass (EK, AT, …). */
+  spellcastingFromSubclass: boolean;
 }
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
@@ -265,6 +268,8 @@ export function useSpellcasting(
       optionalFeatureGranted: [],
       expandedSpellFilters: [],
       subclassName: null,
+      subclassShortName: null,
+      spellcastingFromSubclass: false,
     };
 
     if (!classData) return none;
@@ -334,6 +339,8 @@ export function useSpellcasting(
         optionalFeatureGranted: optionalFeatureSpellGrants,
         expandedSpellFilters: subclassSpells.expandedFilters,
         subclassName: subclassData?.name ?? null,
+        subclassShortName: subclassData?.shortName ?? null,
+        spellcastingFromSubclass: effective.fromSubclass,
       };
     }
 
@@ -403,6 +410,8 @@ export function useSpellcasting(
       optionalFeatureGranted: optionalFeatureSpellGrants,
       expandedSpellFilters: subclassSpells.expandedFilters,
       subclassName: subclassData?.name ?? null,
+      subclassShortName: subclassData?.shortName ?? null,
+      spellcastingFromSubclass: effective.fromSubclass,
     };
   }, [
     classData,

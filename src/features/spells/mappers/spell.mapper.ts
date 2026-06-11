@@ -176,7 +176,6 @@ function mapSpellClassLists(raw: Raw): { classNames: string[]; classes: string[]
   for (const c of fromClassListVariant) {
     const name = typeof c.name === "string" ? c.name : null;
     if (!name) continue;
-    addName(name);
     const definedIn =
       typeof c.definedInSource === "string" ? c.definedInSource : undefined;
     addLabel(definedIn ? `${name} (${definedIn})` : `${name} (variant)`);
@@ -188,7 +187,6 @@ function mapSpellClassLists(raw: Raw): { classNames: string[]; classes: string[]
     const subclassName =
       typeof sc.subclass?.name === "string" ? sc.subclass.name : null;
     if (className) {
-      addName(className);
       addLabel(
         subclassName ? `${className} (${subclassName})` : className,
       );

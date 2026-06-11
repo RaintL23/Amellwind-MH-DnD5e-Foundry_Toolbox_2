@@ -1,4 +1,4 @@
-import type { Subclass } from "@/shared/types";
+import type { Subclass, SubclassSpellEntry } from "@/shared/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -98,28 +98,18 @@ function isFilterUnlocked(
 
 // ─── Expanded filter parsing ──────────────────────────────────────────────────
 
-function parseExpandedFilterEntry(
-  entry: unknown,
-  unlockKey: string,
-): ExpandedSpellFilter | null {
-  if (typeof entry === "string") {
-    // Plain spell name in expanded list — treat as explicit addition at unlock level
-    const unlock = parseUnlockKey(unlockKey);
-    return {
-      spellLevels: [],
-      classNames: [],
-      sources: [],
-      explicitSpellName: normalizeSpellRef(entry),
-      unlockedAtCharacterLevel: unlock.characterLevel,
-      unlockedAtSpellSlotLevel: unlock.spellSlotLevel,
-    };
-  }
-
+function extractFilterString(entry: unknown): string | null {
   if (typeof entry !== "object" || entry === null) return null;
   const obj = entry as Record<string, unknown>;
-  const all = typeof obj.all === "string" ? obj.all : null;
-  if (!all) return null;
+  if (typeof obj.choose === "string") return obj.choose;
+  if (typeof obj.all === "string") return obj.all;
+  return null;
+}
 
+function parseFilterString(
+  filterString: string,
+  unlockKey: string,
+): ExpandedSpellFilter {
   const unlock = parseUnlockKey(unlockKey);
   const filter: ExpandedSpellFilter = {
     spellLevels: [],
@@ -129,7 +119,7 @@ function parseExpandedFilterEntry(
     unlockedAtSpellSlotLevel: unlock.spellSlotLevel,
   };
 
-  for (const part of all.split("|")) {
+  for (const part of filterString.split("|")) {
     const eq = part.indexOf("=");
     if (eq === -1) continue;
     const key = part.slice(0, eq).trim().toLowerCase();
@@ -150,8 +140,30 @@ function parseExpandedFilterEntry(
   return filter;
 }
 
+function parseExpandedFilterEntry(
+  entry: unknown,
+  unlockKey: string,
+): ExpandedSpellFilter | null {
+  if (typeof entry === "string") {
+    // Plain spell name in expanded list — treat as explicit addition at unlock level
+    const unlock = parseUnlockKey(unlockKey);
+    return {
+      spellLevels: [],
+      classNames: [],
+      sources: [],
+      explicitSpellName: normalizeSpellRef(entry),
+      unlockedAtCharacterLevel: unlock.characterLevel,
+      unlockedAtSpellSlotLevel: unlock.spellSlotLevel,
+    };
+  }
+
+  const filterString = extractFilterString(entry);
+  if (!filterString) return null;
+  return parseFilterString(filterString, unlockKey);
+}
+
 function collectNameGrants(
-  map: Record<string, string[]> | undefined,
+  map: Record<string, SubclassSpellEntry[]> | undefined,
   grantType: SubclassSpellGrantType,
   characterLevel: number,
 ): SubclassSpellGrant[] {
@@ -168,6 +180,7 @@ function collectNameGrants(
     if (unlock.spellSlotLevel !== undefined) continue;
 
     for (const ref of spells) {
+      if (typeof ref !== "string") continue;
       const name = normalizeSpellRef(ref);
       const dedupeKey = `${grantType}:${name.toLowerCase()}`;
       if (seen.has(dedupeKey)) continue;
@@ -181,6 +194,33 @@ function collectNameGrants(
   }
 
   return grants;
+}
+
+function collectChooseFiltersFromSpellMap(
+  map: Record<string, SubclassSpellEntry[]> | undefined,
+  characterLevel: number,
+): ExpandedSpellFilter[] {
+  if (!map) return [];
+  const filters: ExpandedSpellFilter[] = [];
+
+  for (const [key, entries] of Object.entries(map)) {
+    const unlock = parseUnlockKey(key);
+    if (
+      unlock.characterLevel !== undefined &&
+      characterLevel < unlock.characterLevel
+    ) {
+      continue;
+    }
+    if (unlock.spellSlotLevel !== undefined) continue;
+
+    for (const entry of entries) {
+      const filterString = extractFilterString(entry);
+      if (!filterString) continue;
+      filters.push(parseFilterString(filterString, key));
+    }
+  }
+
+  return filters;
 }
 
 function collectExpandedFilters(
@@ -226,6 +266,12 @@ export function resolveSubclassSpells(
       ...collectNameGrants(block.known, "bonus-known", characterLevel),
     );
     expandedFilters.push(...collectExpandedFilters(block.expanded));
+    expandedFilters.push(
+      ...collectChooseFiltersFromSpellMap(block.prepared, characterLevel),
+    );
+    expandedFilters.push(
+      ...collectChooseFiltersFromSpellMap(block.known, characterLevel),
+    );
   }
 
   return {
@@ -274,8 +320,145 @@ export function grantsForSpellLevel(
   });
 }
 
+export interface CharacterSpellListContext {
+  className: string;
+  subclassName?: string | null;
+  subclassShortName?: string | null;
+  expandedFilters: ExpandedSpellFilter[];
+  characterLevel: number;
+  availableSpellSlotLevels: number[];
+  selectedSpellLevel: number;
+  /** Warlock pact pool — spell level comes from the spell row, not the slot. */
+  isPactPool: boolean;
+  /** Third-caster subclasses (EK, AT) use expanded/variant lists instead of the base class list. */
+  spellcastingFromSubclass?: boolean;
+}
+
+type SpellListEntry = {
+  level: number;
+  classNames: string[];
+  classes?: string[];
+  source: string;
+  name: string;
+};
+
+function isBareClassLabel(label: string, className: string): boolean {
+  return label.toLowerCase() === className.toLowerCase();
+}
+
+function isSubclassLabelForClass(label: string, className: string): boolean {
+  return label.toLowerCase().startsWith(`${className.toLowerCase()} (`);
+}
+
+function normalizeLabelToken(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
+function matchesSelectedSubclass(
+  label: string,
+  className: string,
+  subclassName?: string | null,
+  subclassShortName?: string | null,
+): boolean {
+  const prefix = `${className} (`;
+  if (!label.toLowerCase().startsWith(prefix.toLowerCase())) return false;
+
+  const content = label.slice(prefix.length).replace(/\)\s*$/, "").trim();
+  const targets = [subclassName, subclassShortName].filter(
+    (value): value is string => !!value,
+  );
+  if (targets.length === 0) return false;
+
+  return targets.some((target) => {
+    if (content.toLowerCase() === target.toLowerCase()) return true;
+    if (content.toLowerCase().startsWith(`${target.toLowerCase()} `)) {
+      return true;
+    }
+    return normalizeLabelToken(content) === normalizeLabelToken(target);
+  });
+}
+
+/** Spell is on the standard class list (not subclass/variant-only). */
+export function spellOnBaseClassList(
+  spell: Pick<SpellListEntry, "classes">,
+  className: string,
+): boolean {
+  return (spell.classes ?? []).some((label) =>
+    isBareClassLabel(label, className),
+  );
+}
+
+/** Spell is granted only to a specific subclass of the class. */
+export function spellOnSubclassList(
+  spell: Pick<SpellListEntry, "classes">,
+  className: string,
+  subclassName?: string | null,
+  subclassShortName?: string | null,
+): boolean {
+  return (spell.classes ?? []).some(
+    (label) =>
+      isSubclassLabelForClass(label, className) &&
+      matchesSelectedSubclass(
+        label,
+        className,
+        subclassName,
+        subclassShortName,
+      ),
+  );
+}
+
+function spellMatchesFilterClass(spell: SpellListEntry, filterClass: string): boolean {
+  if (spell.classes?.length) {
+    return spellOnBaseClassList(spell, filterClass);
+  }
+  return spell.classNames.some(
+    (className) => className.toLowerCase() === filterClass.toLowerCase(),
+  );
+}
+
+/**
+ * Whether a spell belongs to the selected class spell lists for manual selection.
+ *
+ * Uses `sources.json` semantics via mapped labels:
+ * - Base list: bare class name in `classes` (e.g. "Bard").
+ * - Subclass tags like "Bard (College of Lore)" are metadata only; access comes
+ *   from unlocked `additionalSpells` expanded/choose filters (e.g. Magical
+ *   Discoveries at level 6), not from picking the subclass alone.
+ */
+export function spellMatchesCharacterSpellList(
+  spell: SpellListEntry,
+  ctx: CharacterSpellListContext,
+): boolean {
+  const selectedLevel = ctx.isPactPool ? spell.level : ctx.selectedSpellLevel;
+  const unlockedFilters = getUnlockedExpandedFilters(
+    ctx.expandedFilters,
+    ctx.characterLevel,
+    ctx.availableSpellSlotLevels,
+  );
+
+  if (
+    unlockedFilters.some((filter) =>
+      spellMatchesExpandedFilter(
+        spell,
+        filter,
+        ctx.characterLevel,
+        ctx.availableSpellSlotLevels,
+        selectedLevel,
+      ),
+    )
+  ) {
+    return true;
+  }
+
+  if (ctx.spellcastingFromSubclass) {
+    return false;
+  }
+
+  return spellOnBaseClassList(spell, ctx.className);
+}
+
 export function spellMatchesExpandedFilter(
-  spell: { level: number; classNames: string[]; source: string; name: string },
+  spell: SpellListEntry,
   filter: ExpandedSpellFilter,
   characterLevel: number,
   availableSpellSlotLevels: number[],
@@ -300,9 +483,7 @@ export function spellMatchesExpandedFilter(
 
   if (
     filter.classNames.length > 0 &&
-    !filter.classNames.some((cn) =>
-      spell.classNames.some((sc) => sc.toLowerCase() === cn.toLowerCase()),
-    )
+    !filter.classNames.some((cn) => spellMatchesFilterClass(spell, cn))
   ) {
     return false;
   }

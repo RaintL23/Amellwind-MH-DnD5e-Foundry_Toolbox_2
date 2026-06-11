@@ -63,9 +63,9 @@ function extractSpellsFromEntries(entries: string[]): string[] {
 
 function collectFromBlock(
   block: {
-    prepared?: Record<string, string[]>;
-    known?: Record<string, string[]>;
-    expanded?: Record<string, string[]>;
+    prepared?: Record<string, unknown[]>;
+    known?: Record<string, unknown[]>;
+    expanded?: Record<string, unknown[]>;
   },
   sourceName: string,
   characterLevel: number,
@@ -73,7 +73,7 @@ function collectFromBlock(
   seen: Set<string>,
 ): void {
   const maps: Array<{
-    data: Record<string, string[]> | undefined;
+    data: Record<string, unknown[]> | undefined;
     grantType: SubclassSpellGrant["grantType"];
   }> = [
     { data: block.prepared, grantType: "always-prepared" },
@@ -87,6 +87,7 @@ function collectFromBlock(
       if (unlockLevel > characterLevel) continue;
 
       for (const ref of spellRefs) {
+        if (typeof ref !== "string") continue;
         const name = normalizeSpellRef(ref);
         const dedupeKey = `${grantType}:${name.toLowerCase()}:${sourceName}`;
         if (seen.has(dedupeKey)) continue;

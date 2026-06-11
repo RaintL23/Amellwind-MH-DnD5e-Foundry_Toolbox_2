@@ -24,8 +24,7 @@ import { cn } from "@/shared/utils/cn";
 import { SpellExpandedDetails } from "@/features/spells/components/SpellExpandedDetails";
 import {
   grantsForSpellLevel,
-  getUnlockedExpandedFilters,
-  spellMatchesExpandedFilter,
+  spellMatchesCharacterSpellList,
   spellNamesMatch,
   type SubclassSpellGrant,
 } from "../../utils/subclass-spells.utils";
@@ -468,44 +467,34 @@ export function SpellLibraryPanel({
     [q],
   );
 
-  const unlockedExpandedFilters = useMemo(
-    () =>
-      getUnlockedExpandedFilters(
-        spellcastingInfo.expandedSpellFilters,
-        characterLevel,
-        spellcastingInfo.availableSpellSlotLevels,
-      ),
-    [
-      spellcastingInfo.expandedSpellFilters,
+  const spellListContext = useMemo(
+    () => ({
+      className,
+      subclassName: spellcastingInfo.subclassName,
+      subclassShortName: spellcastingInfo.subclassShortName,
+      expandedFilters: spellcastingInfo.expandedSpellFilters,
       characterLevel,
+      availableSpellSlotLevels: spellcastingInfo.availableSpellSlotLevels,
+      selectedSpellLevel: isPactPool ? 0 : spellLevel!,
+      isPactPool,
+      spellcastingFromSubclass: spellcastingInfo.spellcastingFromSubclass,
+    }),
+    [
+      className,
+      spellcastingInfo.subclassName,
+      spellcastingInfo.subclassShortName,
+      spellcastingInfo.expandedSpellFilters,
       spellcastingInfo.availableSpellSlotLevels,
+      spellcastingInfo.spellcastingFromSubclass,
+      characterLevel,
+      isPactPool,
+      spellLevel,
     ],
   );
 
   const spellMatchesClassList = useCallback(
-    (spell: Spell) => {
-      const onClassList = spell.classNames.some(
-        (cn) => cn.toLowerCase() === className.toLowerCase(),
-      );
-      if (onClassList) return true;
-      return unlockedExpandedFilters.some((filter) =>
-        spellMatchesExpandedFilter(
-          spell,
-          filter,
-          characterLevel,
-          spellcastingInfo.availableSpellSlotLevels,
-          isPactPool ? spell.level : spellLevel!,
-        ),
-      );
-    },
-    [
-      className,
-      unlockedExpandedFilters,
-      characterLevel,
-      spellcastingInfo.availableSpellSlotLevels,
-      isPactPool,
-      spellLevel,
-    ],
+    (spell: Spell) => spellMatchesCharacterSpellList(spell, spellListContext),
+    [spellListContext],
   );
 
   const availableSpells = useMemo(() => {

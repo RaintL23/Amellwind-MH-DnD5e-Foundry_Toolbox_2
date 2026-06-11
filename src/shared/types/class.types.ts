@@ -30,10 +30,13 @@ export interface ClassLevelRow {
   tableCells: string[];
 }
 
+/** String spell ref or 5etools `{ choose: "level=1|class=Wizard" }` filter object. */
+export type SubclassSpellEntry = string | { choose?: string; all?: string };
+
 export interface SubclassSpellBlock {
-  prepared?: Record<string, string[]>;
-  known?: Record<string, string[]>;
-  expanded?: Record<string, string[]>;
+  prepared?: Record<string, SubclassSpellEntry[]>;
+  known?: Record<string, SubclassSpellEntry[]>;
+  expanded?: Record<string, unknown[]>;
 }
 
 export interface Subclass {
