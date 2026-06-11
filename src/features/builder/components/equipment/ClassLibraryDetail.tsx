@@ -11,6 +11,7 @@ import {
 import { ClassFeatureDetailsPanel } from "@/features/classes/components/detail/ClassFeatureDetailsPanel";
 import { ClassSourceSwitcher } from "@/features/classes/components/detail/ClassSourceSwitcher";
 import { getCasterLabel } from "@/features/classes/mappers/class.mapper";
+import { getSpellcastingSectionLabel } from "../../utils/spellcasting-label.utils";
 import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
 import { StartingEquipmentPicker } from "./StartingEquipmentPicker";
 import type { BookSourceNameMap } from "@/features/spells/services/book-source.service";
@@ -94,7 +95,9 @@ export function ClassLibraryDetail({
           {classData.hitDie}
         </span>
         <span>
-          <span className="font-medium text-foreground/80">Spellcasting:</span>{" "}
+          <span className="font-medium text-foreground/80">
+            {getSpellcastingSectionLabel(classData)}:
+          </span>{" "}
           {getCasterLabel(classData.casterProgression)}
         </span>
       </div>

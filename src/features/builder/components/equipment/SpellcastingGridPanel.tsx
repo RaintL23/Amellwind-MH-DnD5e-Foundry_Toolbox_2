@@ -1,6 +1,11 @@
 import { Sparkles } from "lucide-react";
 import type { BuilderSpellSelections } from "@/shared/types";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
+import {
+  grantsForPactPool,
+  PACT_SPELL_POOL_LEVEL,
+  PACT_SPELL_SLOT,
+} from "../../utils/pact-magic.utils";
 import { grantsForSpellLevel } from "../../utils/subclass-spells.utils";
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
@@ -46,6 +51,134 @@ const SPELL_LEVEL_COLORS: Record<number, string> = {
   9: "text-fuchsia-400",
 };
 
+function getCantripEquipped(
+  spellSelections: BuilderSpellSelections,
+  spellcastingInfo: SpellcastingInfo,
+  spellLevelByName: Map<string, number>,
+  spellsByName: Array<{ name: string; level: number }>,
+): { name: string; detail?: string } | null {
+  const selected = (spellSelections ?? {})[0] ?? [];
+  const alwaysPreparedGrants = grantsForSpellLevel(
+    spellcastingInfo.subclassAlwaysPrepared,
+    0,
+    spellLevelByName,
+    spellsByName,
+  );
+  const bonusKnownGrants = grantsForSpellLevel(
+    spellcastingInfo.subclassBonusKnown,
+    0,
+    spellLevelByName,
+    spellsByName,
+  );
+  const optionalFeatureGrants = grantsForSpellLevel(
+    spellcastingInfo.optionalFeatureGranted,
+    0,
+    spellLevelByName,
+    spellsByName,
+  );
+  const subclassCount =
+    alwaysPreparedGrants.length +
+    bonusKnownGrants.length +
+    optionalFeatureGrants.length;
+
+  if (selected.length === 0 && subclassCount === 0) return null;
+
+  const summaryParts: string[] = [];
+  if (selected.length > 0) {
+    summaryParts.push(
+      `${selected.length} cantrip${selected.length !== 1 ? "s" : ""}`,
+    );
+  }
+  if (subclassCount > 0) {
+    summaryParts.push(`${subclassCount} subclase`);
+  }
+  const subclassNames = [
+    ...alwaysPreparedGrants,
+    ...bonusKnownGrants,
+    ...optionalFeatureGrants,
+  ]
+    .map((g) => g.name)
+    .join(", ");
+  const selectedNames = selected.map((s) => s.name).join(", ");
+  const nameDetail = [subclassNames, selectedNames].filter(Boolean).join(" · ");
+  const detail = nameDetail
+    ? `${summaryParts.join(" + ")} — ${nameDetail}`
+    : summaryParts.join(" + ");
+  return { name: SPELL_LEVEL_LABELS[0], detail };
+}
+
+function getPactPoolEquipped(
+  spellSelections: BuilderSpellSelections,
+  spellcastingInfo: SpellcastingInfo,
+  spellLevelByName: Map<string, number>,
+  spellsByName: Array<{ name: string; level: number }>,
+): { name: string; detail?: string } | null {
+  const selected = (spellSelections ?? {})[PACT_SPELL_POOL_LEVEL] ?? [];
+  const maxLevel = spellcastingInfo.pactMaxSpellLevel;
+
+  const alwaysPreparedGrants = grantsForPactPool(
+    spellcastingInfo.subclassAlwaysPrepared,
+    maxLevel,
+    spellLevelByName,
+    spellsByName,
+  );
+  const bonusKnownGrants = grantsForPactPool(
+    spellcastingInfo.subclassBonusKnown,
+    maxLevel,
+    spellLevelByName,
+    spellsByName,
+  );
+  const optionalFeatureGrants = grantsForPactPool(
+    spellcastingInfo.optionalFeatureGranted,
+    maxLevel,
+    spellLevelByName,
+    spellsByName,
+  );
+  const subclassCount =
+    alwaysPreparedGrants.length +
+    bonusKnownGrants.length +
+    optionalFeatureGrants.length;
+
+  if (selected.length === 0 && subclassCount === 0) return null;
+
+  const summaryParts: string[] = [];
+  if (selected.length > 0) {
+    summaryParts.push(
+      `${selected.length}/${spellcastingInfo.maxPreparedOrKnown} ${
+        spellcastingInfo.isPreparedCaster ? "prep." : "conoc."
+      }`,
+    );
+  }
+  if (subclassCount > 0) {
+    summaryParts.push(`${subclassCount} subclase/feature`);
+  }
+  if (spellcastingInfo.pactSlotCount > 0 && spellcastingInfo.pactMaxSpellLevel > 0) {
+    summaryParts.push(
+      `${spellcastingInfo.pactSlotCount} slot${spellcastingInfo.pactSlotCount !== 1 ? "s" : ""} (niv. ${spellcastingInfo.pactMaxSpellLevel})`,
+    );
+  }
+
+  const subclassNames = [
+    ...alwaysPreparedGrants,
+    ...bonusKnownGrants,
+    ...optionalFeatureGrants,
+  ]
+    .map((g) => g.name)
+    .join(", ");
+  const selectedNames = selected.map((s) => s.name).join(", ");
+  const nameDetail = [subclassNames, selectedNames].filter(Boolean).join(" · ");
+  const detail = nameDetail
+    ? `${summaryParts.join(" · ")} — ${nameDetail}`
+    : summaryParts.join(" · ");
+
+  return {
+    name: spellcastingInfo.isPreparedCaster
+      ? "Prepared Spells"
+      : "Spells Known",
+    detail,
+  };
+}
+
 function getSlotEquipped(
   level: number,
   levelLabel: string,
@@ -67,28 +200,24 @@ function getSlotEquipped(
     spellLevelByName,
     spellsByName,
   );
-  const subclassCount = alwaysPreparedGrants.length + bonusKnownGrants.length;
+  const optionalFeatureGrants = grantsForSpellLevel(
+    spellcastingInfo.optionalFeatureGranted,
+    level,
+    spellLevelByName,
+    spellsByName,
+  );
+  const subclassCount =
+    alwaysPreparedGrants.length +
+    bonusKnownGrants.length +
+    optionalFeatureGrants.length;
 
   if (level === 0) {
-    if (selected.length === 0 && subclassCount === 0) return null;
-    const summaryParts: string[] = [];
-    if (selected.length > 0) {
-      summaryParts.push(
-        `${selected.length} cantrip${selected.length !== 1 ? "s" : ""}`,
-      );
-    }
-    if (subclassCount > 0) {
-      summaryParts.push(`${subclassCount} subclase`);
-    }
-    const subclassNames = [...alwaysPreparedGrants, ...bonusKnownGrants]
-      .map((g) => g.name)
-      .join(", ");
-    const selectedNames = selected.map((s) => s.name).join(", ");
-    const nameDetail = [subclassNames, selectedNames].filter(Boolean).join(" · ");
-    const detail = nameDetail
-      ? `${summaryParts.join(" + ")} — ${nameDetail}`
-      : summaryParts.join(" + ");
-    return { name: levelLabel, detail };
+    return getCantripEquipped(
+      spellSelections,
+      spellcastingInfo,
+      spellLevelByName,
+      spellsByName,
+    );
   }
 
   if (selected.length === 0 && subclassCount === 0) return null;
@@ -105,8 +234,15 @@ function getSlotEquipped(
   if (bonusKnownGrants.length > 0) {
     summaryParts.push(`${bonusKnownGrants.length} bonus`);
   }
+  if (optionalFeatureGrants.length > 0) {
+    summaryParts.push(`${optionalFeatureGrants.length} feature`);
+  }
 
-  const subclassNames = [...alwaysPreparedGrants, ...bonusKnownGrants]
+  const subclassNames = [
+    ...alwaysPreparedGrants,
+    ...bonusKnownGrants,
+    ...optionalFeatureGrants,
+  ]
     .map((g) => g.name)
     .join(", ");
   const selectedNames = selected.map((s) => s.name).join(", ");
@@ -127,25 +263,69 @@ export function SpellcastingGridPanel({
   selectedSlot,
   onSelectSlot,
 }: SpellcastingGridPanelProps) {
-  const { availableSpellLevels } = spellcastingInfo;
+  const { availableSpellLevels, usesUnifiedPactPool } = spellcastingInfo;
 
-  if (availableSpellLevels.length === 0) return null;
+  if (
+    availableSpellLevels.length === 0 &&
+    !usesUnifiedPactPool
+  ) {
+    return null;
+  }
 
-  // Break spell levels into rows of up to 5
-  const rows: number[][] = [];
-  for (let i = 0; i < availableSpellLevels.length; i += 5) {
-    rows.push(availableSpellLevels.slice(i, i + 5));
+  const gridSlots: Array<
+    | { kind: "level"; level: number }
+    | { kind: "pact" }
+  > = [];
+
+  if (availableSpellLevels.includes(0)) {
+    gridSlots.push({ kind: "level", level: 0 });
+  }
+  if (usesUnifiedPactPool) {
+    gridSlots.push({ kind: "pact" });
+  } else {
+    for (const level of availableSpellLevels) {
+      if (level === 0) continue;
+      gridSlots.push({ kind: "level", level });
+    }
+  }
+
+  const rows: (typeof gridSlots)[] = [];
+  for (let i = 0; i < gridSlots.length; i += 5) {
+    rows.push(gridSlots.slice(i, i + 5));
   }
 
   return (
     <div className="space-y-1.5">
       {rows.map((row, rowIdx) => (
-        <div
-          key={rowIdx}
-          className="grid gap-1.5"
-          style={{ gridTemplateColumns: `repeat(${row.length}, minmax(0, 1fr))` }}
-        >
-          {row.map((level) => {
+        <div key={rowIdx} className="grid grid-cols-5 gap-1.5">
+          {row.map((entry) => {
+            if (entry.kind === "pact") {
+              const equipped = getPactPoolEquipped(
+                spellSelections,
+                spellcastingInfo,
+                spellLevelByName,
+                spellsByName,
+              );
+              const label = spellcastingInfo.isPreparedCaster
+                ? "Prepared Spells"
+                : "Spells Known";
+              return (
+                <GridElementSlot
+                  key={PACT_SPELL_SLOT}
+                  label={label}
+                  icon={
+                    <Sparkles className="h-5 w-5 text-violet-400" />
+                  }
+                  equipped={equipped}
+                  onClickEquip={() => onSelectSlot(PACT_SPELL_SLOT)}
+                  onClickDetails={() => onSelectSlot(PACT_SPELL_SLOT)}
+                  isSelected={selectedSlot === PACT_SPELL_SLOT}
+                  emptyTitle={`Elegir hechizos de Pact Magic (1–${spellcastingInfo.pactMaxSpellLevel})`}
+                />
+              );
+            }
+
+            const level = entry.level;
             const slot = toSpellLevelSlot(level);
             const label = SPELL_LEVEL_LABELS[level] ?? `Nivel ${level}`;
             const isSelected =
@@ -159,7 +339,8 @@ export function SpellcastingGridPanel({
               spellLevelByName,
               spellsByName,
             );
-            const colorClass = SPELL_LEVEL_COLORS[level] ?? "text-muted-foreground";
+            const colorClass =
+              SPELL_LEVEL_COLORS[level] ?? "text-muted-foreground";
 
             return (
               <GridElementSlot

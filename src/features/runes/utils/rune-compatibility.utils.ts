@@ -42,6 +42,12 @@ export function isCharacterSpellcaster(
     return true;
   }
   if (
+    subclassData?.casterProgression &&
+    subclassData.casterProgression !== "none"
+  ) {
+    return true;
+  }
+  if (
     subclassData?.additionalSpells?.some(
       ({ prepared, known, expanded }) =>
         (prepared && Object.keys(prepared).length > 0) ||

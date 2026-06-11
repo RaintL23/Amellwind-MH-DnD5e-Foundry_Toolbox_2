@@ -1,0 +1,97 @@
+import { Wand2 } from "lucide-react";
+import type { BuilderOptionalFeatureSelections } from "@/shared/types";
+import { GridElementSlot } from "../shared/GridElementSlot";
+import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import {
+  getProgressionPicks,
+  isOptionalFeatureSlot,
+  progressionDisplayName,
+  toOptionalFeatureSlot,
+  type ResolvedOptionalFeatureProgression,
+} from "../../utils/class-optional-features.utils";
+
+interface OptionalFeatureGridPanelProps {
+  progressions: ResolvedOptionalFeatureProgression[];
+  selections: BuilderOptionalFeatureSelections;
+  selectedSlot: PaperDollSelection;
+  onSelectSlot: (slot: PaperDollSelection) => void;
+  onUnequipSlot: (slot: PaperDollSelection) => void;
+}
+
+const PROGRESSION_COLORS: Record<string, string> = {
+  EI: "text-violet-400",
+  MM: "text-fuchsia-400",
+  "MV:B": "text-orange-400",
+  PB: "text-indigo-400",
+};
+
+function progressionColor(featureTypes: string[]): string {
+  for (const type of featureTypes) {
+    const color = PROGRESSION_COLORS[type];
+    if (color) return color;
+  }
+  return "text-amber-400";
+}
+
+export function OptionalFeatureGridPanel({
+  progressions,
+  selections,
+  selectedSlot,
+  onSelectSlot,
+  onUnequipSlot,
+}: OptionalFeatureGridPanelProps) {
+  if (progressions.length === 0) return null;
+
+  const rows: ResolvedOptionalFeatureProgression[][] = [];
+  for (let i = 0; i < progressions.length; i += 5) {
+    rows.push(progressions.slice(i, i + 5));
+  }
+
+  return (
+    <div className="space-y-1.5">
+      {rows.map((row, rowIdx) => (
+        <div
+          key={rowIdx}
+          className="grid gap-1.5"
+          style={{
+            gridTemplateColumns: `repeat(${row.length}, minmax(0, 1fr))`,
+          }}
+        >
+          {row.map(({ progression, slotCount }) => {
+            const slot = toOptionalFeatureSlot(progression.id);
+            const label = progressionDisplayName(progression.name);
+            const colorClass = progressionColor(progression.featureTypes);
+            const picks = getProgressionPicks(selections, progression.id);
+            const pickedCount = picks.length;
+            // const namesSummary = picks.map((p) => p.name).join(", ");
+            const countDetail = `${pickedCount}/${slotCount}`;
+            // const detail = namesSummary
+            //   ? `${countDetail} — ${namesSummary}`
+            //   : countDetail;
+            const isSelected =
+              isOptionalFeatureSlot(selectedSlot) && selectedSlot === slot;
+
+            return (
+              <GridElementSlot
+                key={slot}
+                label={label}
+                icon={<Wand2 className={`h-5 w-5 ${colorClass}`} />}
+                equipped={{
+                  name: label,
+                  detail: `${pickedCount}/${slotCount}`,
+                }}
+                onClickEquip={() => onSelectSlot(slot)}
+                onClickDetails={() => onSelectSlot(slot)}
+                onUnequip={
+                  pickedCount > 0 ? () => onUnequipSlot(slot) : undefined
+                }
+                isSelected={isSelected}
+                emptyTitle={`Elegir ${progression.name} (${countDetail})`}
+              />
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}

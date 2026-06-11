@@ -104,3 +104,25 @@ export function isOriginFeatSlot(
 ): slot is "origin-feat" {
   return slot === "origin-feat";
 }
+
+export function isOptionalOriginFeatSlot(
+  slot: string | null,
+): slot is import("@/shared/types").BuilderOptionalOriginFeatSlot {
+  return typeof slot === "string" && /^origin-feat-opt-\d+$/.test(slot);
+}
+
+export function parseOptionalOriginFeatSlotIndex(
+  slot: import("@/shared/types").BuilderOptionalOriginFeatSlot,
+): number {
+  return Number(slot.replace("origin-feat-opt-", ""));
+}
+
+export function toOptionalOriginFeatSlot(
+  index: number,
+): import("@/shared/types").BuilderOptionalOriginFeatSlot {
+  return `origin-feat-opt-${index}`;
+}
+
+export function isAnyOriginFeatSlot(slot: string | null): boolean {
+  return isOriginFeatSlot(slot) || isOptionalOriginFeatSlot(slot);
+}

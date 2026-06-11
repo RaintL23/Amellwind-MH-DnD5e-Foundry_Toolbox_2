@@ -30,6 +30,7 @@ export interface RawClassDefinition {
   multiclassing?: RawMulticlassing;
   classFeatures?: (string | ClassFeatureRef)[];
   subclassTitle?: string;
+  optionalfeatureProgression?: RawOptionalFeatureProgression[];
   /** Filled after processing */
   subclasses?: ProcessedSubclass[];
   classFeaturesByLevel?: ResolvedFeature[][];
@@ -56,9 +57,16 @@ export interface RawSubclassDefinition {
   page?: number;
   edition?: "classic" | "one";
   reprintedAs?: string[];
+  spellcastingAbility?: string;
+  casterProgression?: string;
+  cantripProgression?: number[];
+  spellsKnownProgression?: number[];
+  preparedSpells?: string;
+  preparedSpellsProgression?: number[];
   additionalSpells?: SubclassSpellBlockRaw[];
   subclassTableGroups?: RawClassTableGroup[];
   subclassFeatures?: (string | SubclassFeatureRef)[];
+  optionalfeatureProgression?: RawOptionalFeatureProgression[];
   isReprinted?: boolean;
   _copy?: Record<string, unknown>;
 }
@@ -151,6 +159,12 @@ export interface RawMulticlassing {
   requirements?: Record<string, number>;
   proficienciesGained?: RawStartingProficiencies;
   prerequisites?: unknown[];
+}
+
+export interface RawOptionalFeatureProgression {
+  name: string;
+  featureType?: string[];
+  progression?: number[] | Record<string, number>;
 }
 
 export interface ResolvedFeature {

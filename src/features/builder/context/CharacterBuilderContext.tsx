@@ -29,6 +29,8 @@ import {
   BuilderFeatSelection,
   BuilderSpellSelections,
   BuilderSpellSelection,
+  BuilderOptionalFeatureSelection,
+  BuilderOptionalFeatureSelections,
 } from "@/shared/types";
 import { getClassById } from "@/features/classes/services/class.service";
 import { getSpeciesById } from "@/features/species/services/species.service";
@@ -38,7 +40,17 @@ import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.ser
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { dndFeatToBuilderSelection } from "../utils/origin-feat.utils";
 import { getFeatSlotLevels } from "../utils/builder-class.utils";
-import { ORIGIN_FEAT_SOURCE_NAME } from "../utils/origin-feat.constants";
+import { resolveOptionalFeatureProgressions, getProgressionPicks } from "../utils/class-optional-features.utils";
+import {
+  ORIGIN_FEAT_SOURCE_NAME,
+  formatInvocationOriginFeatSourceName,
+} from "../utils/origin-feat.constants";
+import {
+  resolveOptionalFeatureOriginFeatSlots,
+  type OptionalFeatureOriginFeatSlot,
+} from "../utils/optional-feature-feat-grants.utils";
+import { PACT_SPELL_POOL_LEVEL } from "../utils/pact-magic.utils";
+import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
 import { Character } from "../models/Character";
 import {
   composeAlignment,
@@ -129,6 +141,10 @@ interface CharacterBuilderContextValue {
   backgroundOriginFeatGrant: OriginFeatGrant | null;
   backgroundOriginFeat: BuilderFeatSelection | null;
   originFeatSkillChoices: SkillKey[];
+  /** Origin Feats granted by optional features (e.g. Lessons of the First Ones). */
+  optionalFeatureOriginFeatSlots: OptionalFeatureOriginFeatSlot[];
+  optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];
+  optionalFeatureOriginFeatSkillChoices: Record<number, SkillKey[]>;
   backstoryNotes: string;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
@@ -136,6 +152,10 @@ interface CharacterBuilderContextValue {
   setSubclass: (selection: CharacterSelectionRef | null) => void;
   setFeatAtIndex: (index: number, selection: BuilderFeatSelection | null) => void;
   setSpeciesOriginFeat: (selection: BuilderFeatSelection | null) => void;
+  setOptionalFeatureOriginFeatAtIndex: (
+    index: number,
+    selection: BuilderFeatSelection | null,
+  ) => void;
 
   // Ability score origin bonuses (species / Tasha's Cauldron / 2024 background)
   useTashaOrigin: boolean;
@@ -204,6 +224,14 @@ interface CharacterBuilderContextValue {
   removeSpell: (level: number, spellId: string) => void;
   clearSpells: () => void;
 
+  // Optional class features (EI, Metamagic, Maneuvers, …)
+  optionalFeatureSelections: BuilderOptionalFeatureSelections;
+  setOptionalFeaturesForProgression: (
+    progressionId: string,
+    picks: BuilderOptionalFeatureSelection[],
+  ) => void;
+  clearOptionalFeatureProgression: (progressionId: string) => void;
+
   // Reset
   resetBuild: () => void;
 
@@ -244,6 +272,10 @@ interface CharacterBuilderContextValue {
   setSpeciesSkillChoices: (choices: SkillKey[]) => void;
   setFeatSkillChoices: (slotIndex: number, choices: SkillKey[]) => void;
   setOriginFeatSkillChoices: (choices: SkillKey[]) => void;
+  setOptionalFeatureOriginFeatSkillChoicesAtIndex: (
+    slotIndex: number,
+    choices: SkillKey[],
+  ) => void;
   setExpertiseChoices: (grantId: string, choices: SkillKey[]) => void;
 
   /** Aggregated skill sources for tooltip display */
@@ -323,6 +355,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     (BuilderFeatSelection | null)[]
   >([]);
   const [spellSelections, setSpellSelections] = useState<BuilderSpellSelections>({});
+  const [optionalFeatureSelections, setOptionalFeatureSelections] =
+    useState<BuilderOptionalFeatureSelections>({});
+  const [optionalFeatureOriginFeatSlots, setOptionalFeatureOriginFeatSlots] =
+    useState<OptionalFeatureOriginFeatSlot[]>([]);
+  const [optionalFeatureOriginFeats, setOptionalFeatureOriginFeats] = useState<
+    (BuilderFeatSelection | null)[]
+  >([]);
+  const [optionalFeatureOriginFeatSkillChoices, setOptionalFeatureOriginFeatSkillChoicesState] =
+    useState<Record<number, SkillKey[]>>({});
 
   const addSpell = useCallback((level: number, spell: BuilderSpellSelection) => {
     setSpellSelections((prev) => {
@@ -530,6 +571,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setClassSkillChoicesState({});
     setExpertiseChoicesState({});
     setSpellSelections({});
+    setOptionalFeatureSelections({});
     // Clear class grants immediately
     setClassSkillGrants([]);
     setClassExpertiseGrants([]);
@@ -674,6 +716,41 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     };
   }, [backgroundRef?.id]);
 
+  useEffect(() => {
+    if (!selectedClassData) return;
+    const subclassData = subclass
+      ? (selectedClassData.subclasses.find((sc) => sc.id === subclass.id) ??
+        null)
+      : null;
+    const resolved = resolveOptionalFeatureProgressions(
+      selectedClassData,
+      subclassData,
+      character.level,
+    );
+    setOptionalFeatureSelections((prev) => {
+      const next = { ...prev };
+      let changed = false;
+      const validIds = new Set(resolved.map((r) => r.progression.id));
+
+      for (const key of Object.keys(next)) {
+        if (!validIds.has(key)) {
+          delete next[key];
+          changed = true;
+        }
+      }
+
+      for (const { progression, slotCount } of resolved) {
+        const current = getProgressionPicks(next, progression.id);
+        if (current.length > slotCount) {
+          next[progression.id] = current.slice(0, slotCount);
+          changed = true;
+        }
+      }
+
+      return changed ? next : prev;
+    });
+  }, [selectedClassData, subclass?.id, character.level]);
+
   const setClassSkillChoicesAtIndex = useCallback(
     (grantIndex: number, choices: SkillKey[]) => {
       setClassSkillChoicesState((prev) => ({ ...prev, [grantIndex]: choices }));
@@ -688,6 +765,16 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const setOriginFeatSkillChoices = useCallback((choices: SkillKey[]) => {
     setOriginFeatSkillChoicesState(choices);
   }, []);
+
+  const setOptionalFeatureOriginFeatSkillChoicesAtIndex = useCallback(
+    (slotIndex: number, choices: SkillKey[]) => {
+      setOptionalFeatureOriginFeatSkillChoicesState((prev) => ({
+        ...prev,
+        [slotIndex]: choices,
+      }));
+    },
+    [],
+  );
 
   const setExpertiseChoices = useCallback((grantId: string, choices: SkillKey[]) => {
     setExpertiseChoicesState((prev) => ({ ...prev, [grantId]: choices }));
@@ -713,7 +800,116 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
 
   const setSubclass = useCallback((selection: CharacterSelectionRef | null) => {
     setSubclassState(selection);
+    setOptionalFeatureSelections((prev) => {
+      const next: BuilderOptionalFeatureSelections = { ...prev };
+      for (const key of Object.keys(next)) {
+        if (key.startsWith("subclass_")) {
+          delete next[key];
+        }
+      }
+      return next;
+    });
   }, []);
+
+  const setOptionalFeaturesForProgression = useCallback(
+    (progressionId: string, picks: BuilderOptionalFeatureSelection[]) => {
+      setOptionalFeatureSelections((prev) => ({
+        ...prev,
+        [progressionId]: picks,
+      }));
+    },
+    [],
+  );
+
+  const clearOptionalFeatureProgression = useCallback((progressionId: string) => {
+    setOptionalFeatureSelections((prev) => {
+      if (!(progressionId in prev)) return prev;
+      const next = { ...prev };
+      delete next[progressionId];
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    getAllDndOptionalFeatures().then((catalog) => {
+      if (cancelled) return;
+      const slots = resolveOptionalFeatureOriginFeatSlots(
+        catalog,
+        optionalFeatureSelections,
+      );
+      setOptionalFeatureOriginFeatSlots(slots);
+      setOptionalFeatureOriginFeats((prev) => {
+        if (prev.length === slots.length) return prev;
+        if (prev.length > slots.length) return prev.slice(0, slots.length);
+        return [
+          ...prev,
+          ...Array.from({ length: slots.length - prev.length }, () => null),
+        ];
+      });
+      setOptionalFeatureOriginFeatSkillChoicesState((prev) => {
+        const next: Record<number, SkillKey[]> = {};
+        for (let i = 0; i < slots.length; i++) {
+          if (prev[i]) next[i] = prev[i];
+        }
+        return next;
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [optionalFeatureSelections]);
+
+  useEffect(() => {
+    if (selectedClassData?.casterProgression !== "pact") return;
+    setSpellSelections((prev) => {
+      const existingPact = prev[PACT_SPELL_POOL_LEVEL] ?? [];
+      let hasLegacy = false;
+      const merged = [...existingPact];
+      const seen = new Set(merged.map((s) => s.id));
+      for (const [key, spells] of Object.entries(prev)) {
+        const lvl = Number(key);
+        if (lvl <= 0 || lvl === PACT_SPELL_POOL_LEVEL) continue;
+        if ((spells?.length ?? 0) > 0) hasLegacy = true;
+        for (const s of spells ?? []) {
+          if (!seen.has(s.id)) {
+            merged.push(s);
+            seen.add(s.id);
+          }
+        }
+      }
+      if (!hasLegacy && existingPact.length === merged.length) return prev;
+      const next: BuilderSpellSelections = {
+        ...prev,
+        [PACT_SPELL_POOL_LEVEL]: merged,
+      };
+      for (const key of Object.keys(next)) {
+        const lvl = Number(key);
+        if (lvl > 0) delete next[lvl];
+      }
+      return next;
+    });
+  }, [selectedClassData?.id, selectedClassData?.casterProgression]);
+
+  const setOptionalFeatureOriginFeatAtIndex = useCallback(
+    (index: number, selection: BuilderFeatSelection | null) => {
+      setOptionalFeatureOriginFeats((prev) => {
+        const next = [...prev];
+        while (next.length <= index) next.push(null);
+        next[index] = selection;
+        return next;
+      });
+      if (!selection) {
+        setOptionalFeatureOriginFeatSkillChoicesState((prev) => {
+          if (!(index in prev)) return prev;
+          const next = { ...prev };
+          delete next[index];
+          return next;
+        });
+      }
+    },
+    [],
+  );
 
   const setFeatAtIndex = useCallback(
     (index: number, selection: BuilderFeatSelection | null) => {
@@ -1107,6 +1303,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setSpeciesLanguageChoices([]);
     setSpeciesDefenseChoicesState({});
     setSpellSelections({});
+    setOptionalFeatureSelections({});
+    setOptionalFeatureOriginFeatSlots([]);
+    setOptionalFeatureOriginFeats([]);
+    setOptionalFeatureOriginFeatSkillChoicesState({});
     clearInventory();
   }, [clearInventory]);
 
@@ -1218,6 +1418,24 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
         skill: sk,
         source: { type: "feat" as const, name: ORIGIN_FEAT_SOURCE_NAME },
       }));
+    const chosenSkillsFromInvocationOriginFeats: Array<{
+      skill: SkillKey;
+      source: import("@/shared/types/proficiency.types").ProficiencySource;
+    }> = Object.entries(optionalFeatureOriginFeatSkillChoices).flatMap(
+      ([slotIndex, skills]) => {
+        const slot = optionalFeatureOriginFeatSlots[Number(slotIndex)];
+        const sourceName = slot
+          ? formatInvocationOriginFeatSourceName(
+              slot.sourceFeatureName,
+              slot.duplicateIndex,
+            )
+          : ORIGIN_FEAT_SOURCE_NAME;
+        return skills.map((sk) => ({
+          skill: sk,
+          source: { type: "feat" as const, name: sourceName },
+        }));
+      },
+    );
 
     const resolvedSkillGrants = [
       ...fixedSkills,
@@ -1225,6 +1443,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       ...chosenSkillsFromBackground,
       ...chosenSkillsFromSpecies,
       ...chosenSkillsFromOriginFeat,
+      ...chosenSkillsFromInvocationOriginFeats,
       ...chosenSkillsFromFeats,
     ];
 
@@ -1249,6 +1468,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
     classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
     originFeatSkillChoices, featSkillChoices, expertiseChoices,
+    optionalFeatureOriginFeatSlots, optionalFeatureOriginFeatSkillChoices,
   ]);
 
   const identityGrantsResult = useMemo(() => {
@@ -1435,6 +1655,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       backgroundOriginFeatGrant,
       backgroundOriginFeat,
       originFeatSkillChoices,
+      optionalFeatureOriginFeatSlots,
+      optionalFeatureOriginFeats,
+      optionalFeatureOriginFeatSkillChoices,
       backstoryNotes,
       setSpecies,
       setBackground,
@@ -1442,6 +1665,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setSubclass,
       setFeatAtIndex,
       setSpeciesOriginFeat,
+      setOptionalFeatureOriginFeatAtIndex,
       setBackstoryNotes,
       useTashaOrigin,
       setUseTashaOrigin,
@@ -1490,6 +1714,9 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       addSpell,
       removeSpell,
       clearSpells,
+      optionalFeatureSelections,
+      setOptionalFeaturesForProgression,
+      clearOptionalFeatureProgression,
       applyIdentityGrants,
       allSkillGrants,
       allExpertiseGrants,
@@ -1505,6 +1732,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setSpeciesSkillChoices,
       setFeatSkillChoices,
       setOriginFeatSkillChoices,
+      setOptionalFeatureOriginFeatSkillChoicesAtIndex,
       setExpertiseChoices,
       skillSources: proficiencyResult.skillSources,
       expertiseSources: proficiencyResult.expertiseSources,
@@ -1545,8 +1773,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       species, backgroundRef, classRef, subclass, featSelections,
       speciesOriginFeatGrant, speciesOriginFeat, backgroundOriginFeatGrant,
       backgroundOriginFeat, originFeatSkillChoices,
+      optionalFeatureOriginFeatSlots, optionalFeatureOriginFeats,
+      optionalFeatureOriginFeatSkillChoices,
       backstoryNotes, setBackstoryNotes, setClass, setSubclass, setFeatAtIndex,
-      setSpeciesOriginFeat,
+      setSpeciesOriginFeat, setOptionalFeatureOriginFeatAtIndex,
       useTashaOrigin, tashaPlus2, tashaPlus1, speciesAbilityChoices, setSpeciesAbilityChoice,
       backgroundAsiMode, backgroundAsiPlus2, backgroundAsiPlus1,
       isTwoHanded, isOffHandBlocked, offHandBlockReason, hasIntegratedShield,
@@ -1558,12 +1788,15 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       assignTrinketRune, removeTrinketRune,
       totalAC, combat, resetBuild,
       spellSelections, addSpell, removeSpell, clearSpells,
+      optionalFeatureSelections, setOptionalFeaturesForProgression, clearOptionalFeatureProgression,
       applyIdentityGrants,
       allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
       classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
       featSkillChoices, originFeatSkillChoices, expertiseChoices,
       setClassSkillChoicesAtIndex, setBackgroundSkillChoices, setSpeciesSkillChoices,
-      setFeatSkillChoices, setOriginFeatSkillChoices, setExpertiseChoices,
+      setFeatSkillChoices, setOriginFeatSkillChoices,
+      setOptionalFeatureOriginFeatSkillChoicesAtIndex,
+      setExpertiseChoices,
       proficiencyResult,
       allToolGrants, allLanguageGrants, allDefenseGrants,
       classToolChoices, backgroundToolChoices, speciesToolChoices,

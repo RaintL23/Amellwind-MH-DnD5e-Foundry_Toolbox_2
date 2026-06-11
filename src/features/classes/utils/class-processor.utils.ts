@@ -44,8 +44,21 @@ export function resolveSubclassCopies(
         overrides.subclassFeatures ?? base.subclassFeatures,
       additionalSpells:
         overrides.additionalSpells ?? base.additionalSpells,
+      optionalfeatureProgression:
+        overrides.optionalfeatureProgression ?? base.optionalfeatureProgression,
       subclassTableGroups:
         overrides.subclassTableGroups ?? base.subclassTableGroups,
+      casterProgression:
+        overrides.casterProgression ?? base.casterProgression,
+      spellcastingAbility:
+        overrides.spellcastingAbility ?? base.spellcastingAbility,
+      cantripProgression:
+        overrides.cantripProgression ?? base.cantripProgression,
+      spellsKnownProgression:
+        overrides.spellsKnownProgression ?? base.spellsKnownProgression,
+      preparedSpells: overrides.preparedSpells ?? base.preparedSpells,
+      preparedSpellsProgression:
+        overrides.preparedSpellsProgression ?? base.preparedSpellsProgression,
     };
     delete merged._copy;
     return merged;

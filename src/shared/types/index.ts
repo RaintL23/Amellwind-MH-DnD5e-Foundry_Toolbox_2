@@ -29,3 +29,4 @@ export * from "./dnd-background.types";
 export * from "./dnd-feat.types";
 export * from "./proficiency.types";
 export * from "./starting-equipment.types";
+export * from "./dnd-optionalfeature.types";

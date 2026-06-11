@@ -3,15 +3,23 @@ import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
   usePaperDollSelection,
   type PaperDollSelection,
-  isSpellLevelSlot,
+  isSpellPickerSlot,
 } from "../../hooks/usePaperDollSelection";
 import { useSelectedClass } from "../../hooks/useSelectedClass";
 import {
   isFeatSlotSelection,
+  isOptionalOriginFeatSlot,
   isSubclassLevelReached,
   parseFeatSlotIndex,
+  parseOptionalOriginFeatSlotIndex,
 } from "../../utils/builder-class.utils";
-import { useEffect } from "react";
+import {
+  getProgressionPicks,
+  isOptionalFeatureSlot,
+  parseOptionalFeatureSlot,
+  resolveOptionalFeatureProgressions,
+} from "../../utils/class-optional-features.utils";
+import { useEffect, useMemo } from "react";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
 import { WeaponDetailPanel } from "./WeaponDetailPanel";
 import { ArmorDetailPanel } from "./ArmorDetailPanel";
@@ -19,12 +27,14 @@ import { CharacterStuffGridPanel } from "./CharacterStuffGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { SpellcastingGridPanel } from "./SpellcastingGridPanel";
 import { SpellLibraryPanel } from "./SpellLibraryPanel";
+import { OptionalFeatureLibraryPanel } from "./OptionalFeatureLibraryPanel";
 import { BuilderItemLibraryPanel } from "./BuilderItemLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.utils";
 import { useSpellcasting } from "../../hooks/useSpellcasting";
 import { useSelectedSubclass } from "../../hooks/useSelectedSubclass";
+import { useOptionalFeatureSpellGrants } from "../../hooks/useOptionalFeatureSpellGrants";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
 
 export function PaperDoll() {
@@ -60,6 +70,9 @@ export function PaperDoll() {
     setSubclass,
     setFeatAtIndex,
     setSpeciesOriginFeat,
+    setOptionalFeatureOriginFeatAtIndex,
+    optionalFeatureOriginFeatSlots,
+    optionalFeatureOriginFeats,
     unequipWeapon,
     unequipArmor,
     unequipShield,
@@ -67,18 +80,37 @@ export function PaperDoll() {
     spellSelections,
     addSpell,
     removeSpell,
+    optionalFeatureSelections,
+    setOptionalFeaturesForProgression,
+    clearOptionalFeatureProgression,
   } = useCharacterBuilder();
 
   const { selectedSlot, selectSlot, clearSelection } = usePaperDollSelection();
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
   const { allSpells, loading: spellsLoading, spellLevelByName } = useSpellCatalog();
+  const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
+    optionalFeatureSelections ?? {},
+    character.level,
+  );
   const spellcastingInfo = useSpellcasting(
     classData,
     subclassData,
     character.level,
     character.abilities,
     spellSelections ?? {},
+    optionalFeatureSelections ?? {},
+    optionalFeatureSpellGrants,
+  );
+
+  const optionalProgressions = useMemo(
+    () =>
+      resolveOptionalFeatureProgressions(
+        classData,
+        subclassData,
+        character.level,
+      ),
+    [classData, subclassData, character.level],
   );
 
   useEffect(() => {
@@ -105,8 +137,10 @@ export function PaperDoll() {
     selectedSlot !== "class" &&
     selectedSlot !== "subclass" &&
     selectedSlot !== "origin-feat" &&
+    !isOptionalOriginFeatSlot(selectedSlot) &&
     !isFeatSlotSelection(selectedSlot) &&
-    !isSpellLevelSlot(selectedSlot) &&
+    !isOptionalFeatureSlot(selectedSlot) &&
+    !isSpellPickerSlot(selectedSlot) &&
     !(
       selectedSlot === "offHand" &&
       (hasIntegratedShield || equippedShield)
@@ -145,9 +179,19 @@ export function PaperDoll() {
           backgroundOriginFeatGrant?.kind === "fixed"
         );
       default:
+        if (isOptionalOriginFeatSlot(slot)) {
+          const index = parseOptionalOriginFeatSlotIndex(slot);
+          return !!optionalFeatureOriginFeats[index];
+        }
         if (isFeatSlotSelection(slot)) {
           const index = parseFeatSlotIndex(slot);
           return !!featSelections[index];
+        }
+        if (isOptionalFeatureSlot(slot)) {
+          const parsed = parseOptionalFeatureSlot(slot);
+          if (!parsed) return false;
+          return getProgressionPicks(optionalFeatureSelections, parsed.progressionId)
+            .length > 0;
         }
         return false;
     }
@@ -189,8 +233,16 @@ export function PaperDoll() {
         }
         break;
       default:
-        if (isFeatSlotSelection(slot)) {
+        if (isOptionalOriginFeatSlot(slot)) {
+          setOptionalFeatureOriginFeatAtIndex(
+            parseOptionalOriginFeatSlotIndex(slot),
+            null,
+          );
+        } else if (isFeatSlotSelection(slot)) {
           setFeatAtIndex(parseFeatSlotIndex(slot), null);
+        } else if (isOptionalFeatureSlot(slot)) {
+          const parsed = parseOptionalFeatureSlot(slot);
+          if (parsed) clearOptionalFeatureProgression(parsed.progressionId);
         }
         break;
     }
@@ -199,18 +251,22 @@ export function PaperDoll() {
 
   const showBackstoryPanel = selectedSlot === "backstory";
   const showSpellLibrary =
-    selectedSlot !== null && isSpellLevelSlot(selectedSlot);
+    selectedSlot !== null && isSpellPickerSlot(selectedSlot);
+  const showOptionalFeatureLibrary =
+    selectedSlot !== null && isOptionalFeatureSlot(selectedSlot);
 
   const showLibrary =
     selectedSlot &&
     selectedSlot !== "backstory" &&
-    !isSpellLevelSlot(selectedSlot) &&
+    !isSpellPickerSlot(selectedSlot) &&
+    !isOptionalFeatureSlot(selectedSlot) &&
     (!isSlotOccupied(selectedSlot) ||
       selectedSlot === "species" ||
       selectedSlot === "background" ||
       selectedSlot === "class" ||
       selectedSlot === "subclass" ||
       selectedSlot === "origin-feat" ||
+      isOptionalOriginFeatSlot(selectedSlot) ||
       isFeatSlotSelection(selectedSlot) ||
       selectedSlot === "mainHand" ||
       selectedSlot === "offHand" ||
@@ -237,12 +293,16 @@ export function PaperDoll() {
           classSelection={classSelection}
           subclass={subclass}
           classData={classData}
+          subclassData={subclassData}
           level={character.level}
           featSelections={featSelections}
+          optionalFeatureSelections={optionalFeatureSelections}
           speciesOriginFeatGrant={speciesOriginFeatGrant}
           speciesOriginFeat={speciesOriginFeat}
           backgroundOriginFeatGrant={backgroundOriginFeatGrant}
           backgroundOriginFeat={backgroundOriginFeat}
+          optionalFeatureOriginFeatSlots={optionalFeatureOriginFeatSlots}
+          optionalFeatureOriginFeats={optionalFeatureOriginFeats}
           backstoryNotes={backstoryNotes}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}
@@ -286,7 +346,7 @@ export function PaperDoll() {
           title={
             <>
               <Sparkles className="h-3.5 w-3.5" aria-hidden />
-              Spellcasting: {classSelection.name}
+              {spellcastingInfo.sectionLabel}: {classSelection.name}
             </>
           }
           action={
@@ -300,9 +360,22 @@ export function PaperDoll() {
                       : "text-emerald-400"
                   }
                 >
-                  {spellcastingInfo.isPreparedCaster ? "Prepared" : "Known"}{" "}
+                  {spellcastingInfo.isPreparedCaster
+                    ? "Prepared"
+                    : spellcastingInfo.usesUnifiedPactPool
+                      ? "Pact known"
+                      : "Known"}{" "}
                   {spellcastingInfo.selectedSpellCount}/
                   {spellcastingInfo.maxPreparedOrKnown}
+                  {spellcastingInfo.usesUnifiedPactPool &&
+                    spellcastingInfo.pactSlotCount > 0 && (
+                      <span className="text-muted-foreground">
+                        {" "}
+                        · {spellcastingInfo.pactSlotCount} slot
+                        {spellcastingInfo.pactSlotCount !== 1 ? "s" : ""} (niv.{" "}
+                        {spellcastingInfo.pactMaxSpellLevel})
+                      </span>
+                    )}
                 </span>
                 {spellcastingInfo.subclassAlwaysPrepared.length > 0 && (
                   <span className="text-emerald-400/80">
@@ -351,7 +424,7 @@ export function PaperDoll() {
 
       {showBackstoryPanel && <BackstoryNotesPanel />}
 
-      {showSpellLibrary && isSpellLevelSlot(selectedSlot) && classSelection && (
+      {showSpellLibrary && selectedSlot && classSelection && (
         <SpellLibraryPanel
           selectedSlot={selectedSlot}
           className={classSelection.name}
@@ -365,6 +438,20 @@ export function PaperDoll() {
           onRemoveSpell={removeSpell}
         />
       )}
+
+      {showOptionalFeatureLibrary &&
+        isOptionalFeatureSlot(selectedSlot) &&
+        classData && (
+          <OptionalFeatureLibraryPanel
+            selectedSlot={selectedSlot}
+            progressions={optionalProgressions}
+            classData={classData}
+            subclass={subclassData}
+            level={character.level}
+            selections={optionalFeatureSelections}
+            onSetSelections={setOptionalFeaturesForProgression}
+          />
+        )}
 
       {showLibrary && <BuilderItemLibraryPanel selectedSlot={selectedSlot} />}
     </div>

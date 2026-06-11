@@ -16,8 +16,8 @@ import type {
   BuilderSpellSelections,
 } from "@/shared/types";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
-import { parseSpellLevel } from "../../hooks/usePaperDollSelection";
-import type { SpellLevelSlot } from "@/shared/types";
+import { parseSpellLevel, isPactSpellSlot } from "../../hooks/usePaperDollSelection";
+import type { SpellLevelSlot, BuilderPactSpellSlot } from "@/shared/types";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";
 import { cn } from "@/shared/utils/cn";
@@ -29,6 +29,10 @@ import {
   spellNamesMatch,
   type SubclassSpellGrant,
 } from "../../utils/subclass-spells.utils";
+import {
+  grantsForPactPool,
+  PACT_SPELL_POOL_LEVEL,
+} from "../../utils/pact-magic.utils";
 
 // ─── Damage parsing ───────────────────────────────────────────────────────────
 
@@ -325,7 +329,7 @@ function AvailableSpellRow({
 // ─── Main panel ───────────────────────────────────────────────────────────────
 
 interface SpellLibraryPanelProps {
-  selectedSlot: SpellLevelSlot;
+  selectedSlot: SpellLevelSlot | BuilderPactSpellSlot;
   className: string;
   characterLevel: number;
   spellcastingInfo: SpellcastingInfo;
@@ -349,7 +353,9 @@ export function SpellLibraryPanel({
   onAddSpell,
   onRemoveSpell,
 }: SpellLibraryPanelProps) {
-  const spellLevel = parseSpellLevel(selectedSlot);
+  const isPactPool = isPactSpellSlot(selectedSlot);
+  const spellLevel = isPactPool ? null : parseSpellLevel(selectedSlot);
+  const selectionLevel = isPactPool ? PACT_SPELL_POOL_LEVEL : spellLevel!;
   const loading = spellsLoading;
   const [search, setSearch] = useState("");
 
@@ -358,8 +364,8 @@ export function SpellLibraryPanel({
   }, [selectedSlot]);
 
   const selectedAtLevel = useMemo(
-    () => (spellSelections ?? {})[spellLevel] ?? [],
-    [spellSelections, spellLevel],
+    () => (spellSelections ?? {})[selectionLevel] ?? [],
+    [spellSelections, selectionLevel],
   );
 
   const selectedIds = useMemo(
@@ -367,8 +373,7 @@ export function SpellLibraryPanel({
     [selectedAtLevel],
   );
 
-  // For capacity checks
-  const isCantrip = spellLevel === 0;
+  const isCantrip = !isPactPool && spellLevel === 0;
   const atCantripCapacity =
     isCantrip && selectedAtLevel.length >= spellcastingInfo.cantripCount;
   const atSpellCapacity =
@@ -379,38 +384,79 @@ export function SpellLibraryPanel({
   const isAtCapacity = isCantrip ? atCantripCapacity : atSpellCapacity;
 
   const q = search.toLowerCase().trim();
+  const pactMaxLevel = spellcastingInfo.pactMaxSpellLevel;
 
-  const alwaysPreparedAtLevel = useMemo(
-    () =>
-      grantsForSpellLevel(
+  const alwaysPreparedAtLevel = useMemo(() => {
+    if (isPactPool) {
+      return grantsForPactPool(
         spellcastingInfo.subclassAlwaysPrepared,
-        spellLevel,
+        pactMaxLevel,
         spellLevelByName,
         allSpells,
-      ),
-    [
+      );
+    }
+    return grantsForSpellLevel(
       spellcastingInfo.subclassAlwaysPrepared,
-      spellLevel,
+      spellLevel!,
       spellLevelByName,
       allSpells,
-    ],
-  );
+    );
+  }, [
+    isPactPool,
+    pactMaxLevel,
+    spellcastingInfo.subclassAlwaysPrepared,
+    spellLevel,
+    spellLevelByName,
+    allSpells,
+  ]);
 
-  const bonusKnownAtLevel = useMemo(
-    () =>
-      grantsForSpellLevel(
+  const bonusKnownAtLevel = useMemo(() => {
+    if (isPactPool) {
+      return grantsForPactPool(
         spellcastingInfo.subclassBonusKnown,
-        spellLevel,
+        pactMaxLevel,
         spellLevelByName,
         allSpells,
-      ),
-    [
+      );
+    }
+    return grantsForSpellLevel(
       spellcastingInfo.subclassBonusKnown,
-      spellLevel,
+      spellLevel!,
       spellLevelByName,
       allSpells,
-    ],
-  );
+    );
+  }, [
+    isPactPool,
+    pactMaxLevel,
+    spellcastingInfo.subclassBonusKnown,
+    spellLevel,
+    spellLevelByName,
+    allSpells,
+  ]);
+
+  const optionalFeatureAtLevel = useMemo(() => {
+    if (isPactPool) {
+      return grantsForPactPool(
+        spellcastingInfo.optionalFeatureGranted,
+        pactMaxLevel,
+        spellLevelByName,
+        allSpells,
+      );
+    }
+    return grantsForSpellLevel(
+      spellcastingInfo.optionalFeatureGranted,
+      spellLevel!,
+      spellLevelByName,
+      allSpells,
+    );
+  }, [
+    isPactPool,
+    pactMaxLevel,
+    spellcastingInfo.optionalFeatureGranted,
+    spellLevel,
+    spellLevelByName,
+    allSpells,
+  ]);
 
   const subclassGrantsAtLevel = useMemo(
     () => [...alwaysPreparedAtLevel, ...bonusKnownAtLevel],
@@ -448,7 +494,7 @@ export function SpellLibraryPanel({
           filter,
           characterLevel,
           spellcastingInfo.availableSpellSlotLevels,
-          spellLevel,
+          isPactPool ? spell.level : spellLevel!,
         ),
       );
     },
@@ -457,18 +503,25 @@ export function SpellLibraryPanel({
       unlockedExpandedFilters,
       characterLevel,
       spellcastingInfo.availableSpellSlotLevels,
+      isPactPool,
       spellLevel,
     ],
   );
 
-  // Filter: class/expanded match + level match + not selected + not subclass grant
   const availableSpells = useMemo(() => {
     if (isAtCapacity) return [];
     return allSpells.filter((s) => {
-      if (s.level !== spellLevel) return false;
+      if (isPactPool) {
+        if (s.level < 1 || s.level > pactMaxLevel) return false;
+      } else if (s.level !== spellLevel) {
+        return false;
+      }
       if (!spellMatchesClassList(s)) return false;
       if (selectedIds.has(s.id)) return false;
       if (subclassGrantsAtLevel.some((g) => spellNamesMatch(s.name, g.name))) {
+        return false;
+      }
+      if (optionalFeatureAtLevel.some((g) => spellNamesMatch(s.name, g.name))) {
         return false;
       }
       if (q && !s.name.toLowerCase().includes(q)) return false;
@@ -476,9 +529,12 @@ export function SpellLibraryPanel({
     });
   }, [
     allSpells,
+    isPactPool,
+    pactMaxLevel,
     spellLevel,
     selectedIds,
     subclassGrantsAtLevel,
+    optionalFeatureAtLevel,
     q,
     spellMatchesClassList,
     isAtCapacity,
@@ -486,22 +542,54 @@ export function SpellLibraryPanel({
 
   const handleSelect = useCallback(
     (spell: Spell) => {
-      onAddSpell(spellLevel, spellToSelection(spell));
+      onAddSpell(selectionLevel, spellToSelection(spell));
     },
-    [onAddSpell, spellLevel],
+    [onAddSpell, selectionLevel],
   );
 
-  const levelLabel = spellLevel === 0 ? "Cantrips" : `Nivel ${spellLevel}`;
+  const levelLabel = isPactPool
+    ? spellcastingInfo.isPreparedCaster
+      ? `Prepared Spells (1–${pactMaxLevel})`
+      : `Spells Known (1–${pactMaxLevel})`
+    : spellLevel === 0
+      ? "Cantrips"
+      : `Nivel ${spellLevel}`;
 
   const capacityHint = isCantrip
     ? `${selectedAtLevel.length}/${spellcastingInfo.cantripCount} cantrips available`
-    : spellcastingInfo.maxPreparedOrKnown > 0
-      ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${spellcastingInfo.isPreparedCaster ? "prepared" : "known"}`
-      : null;
+    : isPactPool
+      ? spellcastingInfo.maxPreparedOrKnown > 0
+        ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${
+            spellcastingInfo.isPreparedCaster
+              ? "prepared"
+              : "pact spells known"
+          } · ${spellcastingInfo.pactSlotCount} slot${
+            spellcastingInfo.pactSlotCount !== 1 ? "s" : ""
+          } (niv. ${pactMaxLevel})`
+        : null
+      : spellcastingInfo.maxPreparedOrKnown > 0
+        ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${spellcastingInfo.isPreparedCaster ? "prepared" : "known"}`
+        : null;
 
   const disabledHint = isCantrip
     ? `Cantrip limit reached (${spellcastingInfo.cantripCount})`
-    : `Limit ${spellcastingInfo.isPreparedCaster ? "of preparation" : "of known spells"} reached (${spellcastingInfo.maxPreparedOrKnown})`;
+    : isPactPool
+      ? `Pact Magic prepared limit reached (${spellcastingInfo.maxPreparedOrKnown})`
+      : spellcastingInfo.isPreparedCaster
+        ? `Limit of preparation reached (${spellcastingInfo.maxPreparedOrKnown})`
+        : `Limit of known spells reached (${spellcastingInfo.maxPreparedOrKnown})`;
+
+  const selectedSectionLabel = isCantrip
+    ? "Cantrips"
+    : isPactPool
+      ? spellcastingInfo.isPreparedCaster
+        ? "Prepared Spells"
+        : "Spells Known"
+      : spellcastingInfo.isPreparedCaster
+        ? "Prepared"
+        : spellcastingInfo.isPactMagic
+          ? "Pact spells known"
+          : "Known";
 
   return (
     <BuilderPanel
@@ -510,7 +598,10 @@ export function SpellLibraryPanel({
           <BookOpen className="h-3.5 w-3.5" aria-hidden />
           <span>Library — {levelLabel}</span>
           <span className="text-[11px] font-normal text-muted-foreground">
-            {className}
+            {spellcastingInfo.sectionLabel} · {className}
+            {spellcastingInfo.spellcastingAbility
+              ? ` · ${spellcastingInfo.spellcastingAbility}`
+              : ""}
           </span>
           {capacityHint && (
             <span
@@ -576,18 +667,34 @@ export function SpellLibraryPanel({
           </div>
         )}
 
+        {optionalFeatureAtLevel.filter(filterGrantBySearch).length > 0 && (
+          <div className="mb-3">
+            <SectionLabel>Granted by optional features</SectionLabel>
+            {optionalFeatureAtLevel.filter(filterGrantBySearch).map((grant) => (
+              <SubclassGrantRow
+                key={`opt-${grant.name}`}
+                grant={grant}
+                spell={findSpellByName(allSpells, grant.name)}
+                badge={
+                  grant.grantType === "bonus-known"
+                    ? "Bonus known (feature)"
+                    : "Granted by feature"
+                }
+              />
+            ))}
+          </div>
+        )}
+
         {/* Selected spells */}
         {selectedAtLevel.length > 0 && (
           <div className="mb-3">
-            <SectionLabel>
-              {spellcastingInfo.isPreparedCaster ? "Prepared" : "Known"}
-            </SectionLabel>
+            <SectionLabel>{selectedSectionLabel}</SectionLabel>
             {selectedAtLevel.map((spell) => (
               <SelectedSpellRow
                 key={spell.id}
                 spell={spell}
                 fullSpell={allSpells.find((s) => s.id === spell.id)}
-                onRemove={() => onRemoveSpell(spellLevel, spell.id)}
+                onRemove={() => onRemoveSpell(selectionLevel, spell.id)}
               />
             ))}
           </div>

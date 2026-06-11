@@ -1,4 +1,4 @@
-import type { Subclass, SubclassSpellBlock } from "@/shared/types";
+import type { Subclass } from "@/shared/types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

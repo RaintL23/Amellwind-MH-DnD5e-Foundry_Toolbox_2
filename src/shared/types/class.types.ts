@@ -5,6 +5,8 @@ export interface ClassTableGroup {
   rows: string[][];
 }
 
+import type { DndOptionalFeatureRef } from "./dnd-optionalfeature.types";
+
 export interface ClassFeatureEntry {
   uid: string;
   name: string;
@@ -17,6 +19,8 @@ export interface ClassFeatureEntry {
   description: string[];
   isSubclassFeature?: boolean;
   gainSubclassFeature?: boolean;
+  /** Explicit optional-feature refs from {@code options} blocks in this feature. */
+  optionalFeatureRefs?: DndOptionalFeatureRef[];
 }
 
 export interface ClassLevelRow {
@@ -43,7 +47,16 @@ export interface Subclass {
   edition?: "classic" | "one";
   page?: number;
   progression: ClassLevelRow[];
+  /** Third-caster progression (e.g. Eldritch Knight, Arcane Trickster). */
+  casterProgression?: string;
+  spellcastingAbility?: string;
+  cantripProgression?: number[];
+  preparedSpells?: string;
+  preparedSpellsProgression?: number[];
+  spellsKnownProgressionFixed?: number[];
+  spellProgression?: ClassTableGroup[];
   additionalSpells?: SubclassSpellBlock[];
+  optionalFeatureProgressions?: import("./dnd-optionalfeature.types").OptionalFeatureProgression[];
 }
 
 export interface ClassMetaListGroup {
@@ -94,4 +107,5 @@ export interface Class {
   weaponGrants: import("./proficiency.types").NamedProficiencyGrant[];
   /** Language proficiencies for the builder. */
   languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  optionalFeatureProgressions?: import("./dnd-optionalfeature.types").OptionalFeatureProgression[];
 }

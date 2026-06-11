@@ -78,6 +78,9 @@ export const FLUFF_BACKGROUNDS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-back
 export const FEATS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/feats.json`;
 export const FLUFF_FEATS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-feats.json`;
 
+/** 5etools optional features (EI, Metamagic, Maneuvers, …). Local dev: copy optionalfeatures.json → public/5etools/ */
+export const OPTIONALFEATURES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/optionalfeatures.json`;
+
 /** 5etools languages compendium. Local dev: copy backup-jsons/5etools/languages.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
 export const LANGUAGES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/languages.json`;
 

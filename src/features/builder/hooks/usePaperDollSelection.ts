@@ -4,19 +4,38 @@ import {
   CharacterIdentitySlot,
   BuilderFeatSlot,
   SpellLevelSlot,
+  BuilderPactSpellSlot,
+  BuilderOptionalFeatureSlot,
+  BuilderOptionalOriginFeatSlot,
 } from "@/shared/types";
+import { PACT_SPELL_SLOT } from "../utils/pact-magic.utils";
 
 export type PaperDollSelection =
   | EquipmentSlotType
   | CharacterIdentitySlot
   | BuilderFeatSlot
   | SpellLevelSlot
+  | BuilderPactSpellSlot
+  | BuilderOptionalFeatureSlot
+  | BuilderOptionalOriginFeatSlot
   | null;
 
 export function isSpellLevelSlot(
   slot: PaperDollSelection,
 ): slot is SpellLevelSlot {
   return typeof slot === "string" && slot.startsWith("spell-level-");
+}
+
+export function isPactSpellSlot(
+  slot: PaperDollSelection,
+): slot is BuilderPactSpellSlot {
+  return slot === PACT_SPELL_SLOT;
+}
+
+export function isSpellPickerSlot(
+  slot: PaperDollSelection,
+): slot is SpellLevelSlot | BuilderPactSpellSlot {
+  return isSpellLevelSlot(slot) || isPactSpellSlot(slot);
 }
 
 export function parseSpellLevel(slot: SpellLevelSlot): number {

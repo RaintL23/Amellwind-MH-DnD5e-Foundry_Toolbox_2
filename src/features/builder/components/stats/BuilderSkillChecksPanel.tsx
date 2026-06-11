@@ -23,7 +23,11 @@ import {
   badgeStyleForSource,
   SOURCE_LABELS,
 } from "../../utils/proficiency-source-styles";
-import { ORIGIN_FEAT_SOURCE_NAME } from "../../utils/origin-feat.constants";
+import {
+  ORIGIN_FEAT_SOURCE_NAME,
+  formatInvocationOriginFeatSourceName,
+  isInvocationOriginFeatSourceName,
+} from "../../utils/origin-feat.constants";
 
 export function BuilderSkillChecksPanel() {
   const {
@@ -36,6 +40,8 @@ export function BuilderSkillChecksPanel() {
     speciesSkillChoices,
     featSkillChoices,
     originFeatSkillChoices,
+    optionalFeatureOriginFeatSlots,
+    optionalFeatureOriginFeatSkillChoices,
     expertiseChoices,
     skillSources,
     expertiseSources,
@@ -44,6 +50,7 @@ export function BuilderSkillChecksPanel() {
     setSpeciesSkillChoices,
     setFeatSkillChoices,
     setOriginFeatSkillChoices,
+    setOptionalFeatureOriginFeatSkillChoicesAtIndex,
     setExpertiseChoices,
   } = useCharacterBuilder();
 
@@ -59,9 +66,15 @@ export function BuilderSkillChecksPanel() {
     (g) =>
       g.source.type === "feat" && g.source.name === ORIGIN_FEAT_SOURCE_NAME,
   );
+  const invocationOriginFeatGrants = pending.filter(
+    (g) =>
+      g.source.type === "feat" && isInvocationOriginFeatSourceName(g.source.name),
+  );
   const classFeatGrants = pending.filter(
     (g) =>
-      g.source.type === "feat" && g.source.name !== ORIGIN_FEAT_SOURCE_NAME,
+      g.source.type === "feat" &&
+      g.source.name !== ORIGIN_FEAT_SOURCE_NAME &&
+      !isInvocationOriginFeatSourceName(g.source.name),
   );
 
   const higherThanSpecies = skillsFromHigherPriority(
@@ -153,6 +166,7 @@ export function BuilderSkillChecksPanel() {
     bgGrants.length > 0 ||
     classGrants.length > 0 ||
     originFeatGrants.length > 0 ||
+    invocationOriginFeatGrants.length > 0 ||
     classFeatGrants.length > 0;
 
   return (
@@ -242,6 +256,37 @@ export function BuilderSkillChecksPanel() {
           pickerSourceType="feat"
         />
       )}
+
+      {optionalFeatureOriginFeatSlots.map((slotMeta) => {
+        const sourceName = formatInvocationOriginFeatSourceName(
+          slotMeta.sourceFeatureName,
+          slotMeta.duplicateIndex,
+        );
+        const grants = invocationOriginFeatGrants.filter(
+          (g) => g.source.name === sourceName,
+        );
+        if (!grants.length) return null;
+        return (
+          <BuilderSkillPicker
+            key={sourceName}
+            grants={grants}
+            chosen={optionalFeatureOriginFeatSkillChoices[slotMeta.slotIndex] ?? []}
+            alreadyGranted={higherThanFeat}
+            chosenElsewhere={skillsChosenInOtherPickers(
+              { type: "origin-feat" },
+              crossPickerState,
+            )}
+            onChange={(skills) =>
+              setOptionalFeatureOriginFeatSkillChoicesAtIndex(
+                slotMeta.slotIndex,
+                skills,
+              )
+            }
+            label={`${sourceName} skills`}
+            pickerSourceType="feat"
+          />
+        );
+      })}
 
       {classFeatGrants.map((grant, i) => (
         <BuilderSkillPicker

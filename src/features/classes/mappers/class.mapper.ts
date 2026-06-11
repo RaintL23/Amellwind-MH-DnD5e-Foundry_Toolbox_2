@@ -19,6 +19,10 @@ import {
 } from "@/shared/utils/skill-proficiency.parser";
 import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 import { parseClassStartingEquipment } from "@/shared/utils/starting-equipment.parser";
+import {
+  extractOptionalFeatureRefs,
+  mapOptionalFeatureProgressions,
+} from "../utils/optional-feature-progression.utils";
 import type {
   ProcessedSubclass,
   RawClassDefinition,
@@ -47,6 +51,7 @@ const CASTER_LABELS: Record<string, string> = {
   "1/2": "Half caster",
   "1/3": "Third caster",
   artificer: "Artificer",
+  pact: "Pact Magic",
   none: "None",
 };
 
@@ -72,6 +77,7 @@ function mapFeatureEntry(
   isSubclassFeature = false,
 ): ClassFeatureEntry {
   const uid = `${feature.name}|${feature.className}|${feature.classSource}|${feature.level}|${feature.source}`;
+  const optionalFeatureRefs = extractOptionalFeatureRefs(feature.entries);
   const content = mapStatBlockEntries(feature.entries);
   return {
     uid,
@@ -83,6 +89,9 @@ function mapFeatureEntry(
     description: contentToDescription(content),
     isSubclassFeature,
     gainSubclassFeature: feature.gainSubclassFeature,
+    optionalFeatureRefs: optionalFeatureRefs.length
+      ? optionalFeatureRefs
+      : undefined,
   };
 }
 
@@ -108,14 +117,14 @@ function formatCellValue(value: ClassTableCell): string {
 }
 
 /**
- * Extracts the "Spells Known" column from classTableGroups for known-casters
- * (Bard, Sorcerer, Warlock, Ranger). Returns an array of 20 numbers or undefined.
+ * Extracts the "Spells Known" column from spell progression tables for known-casters.
+ * Returns an array of 20 numbers or undefined.
  */
-function extractSpellsKnownFixed(
-  raw: RawClassDefinition,
+function extractSpellsKnownFromTableGroups(
+  tableGroups?: RawClassTableGroup[],
 ): number[] | undefined {
-  if (!raw.classTableGroups) return undefined;
-  for (const group of raw.classTableGroups) {
+  if (!tableGroups?.length) return undefined;
+  for (const group of tableGroups) {
     const labels = group.colLabels ?? [];
     const rows = group.rows ?? [];
     const idx = labels.findIndex((l) =>
@@ -134,6 +143,12 @@ function extractSpellsKnownFixed(
     if (values.length > 0) return values;
   }
   return undefined;
+}
+
+function extractSpellsKnownFixed(
+  raw: RawClassDefinition,
+): number[] | undefined {
+  return extractSpellsKnownFromTableGroups(raw.classTableGroups);
 }
 
 function mapTableGroup(group: RawClassTableGroup): ClassTableGroup {
@@ -359,7 +374,24 @@ function mapSubclass(sc: ProcessedSubclass): Subclass {
     edition: sc.edition,
     page: sc.page,
     progression: mapProgression(sc.subclassFeaturesByLevel, tableGroups),
+    casterProgression: sc.casterProgression,
+    spellcastingAbility: sc.spellcastingAbility
+      ? formatAbility(sc.spellcastingAbility)
+      : undefined,
+    cantripProgression: sc.cantripProgression,
+    preparedSpells: sc.preparedSpells,
+    preparedSpellsProgression: sc.preparedSpellsProgression,
+    spellsKnownProgressionFixed:
+      sc.spellsKnownProgression ??
+      extractSpellsKnownFromTableGroups(sc.subclassTableGroups),
+    spellProgression: tableGroups.length ? tableGroups : undefined,
     additionalSpells: mapAdditionalSpells(sc.additionalSpells),
+    optionalFeatureProgressions: mapOptionalFeatureProgressions(
+      sc.optionalfeatureProgression,
+      "subclass",
+      sc.name,
+      sc.source,
+    ),
   };
 }
 
@@ -450,6 +482,12 @@ export function mapClass(raw: RawClassDefinition): Class {
     armorGrants,
     weaponGrants,
     languageGrants,
+    optionalFeatureProgressions: mapOptionalFeatureProgressions(
+      raw.optionalfeatureProgression,
+      "class",
+      raw.name,
+      raw.source,
+    ),
   };
 }
 

@@ -61,10 +61,15 @@ import {
   DEFAULT_ASI_CHOICES,
   isAsiFeatSelection,
   isFeatSlotSelection,
+  isOptionalOriginFeatSlot,
   isOriginFeatSlot,
   parseFeatSlotIndex,
+  parseOptionalOriginFeatSlotIndex,
 } from "../../utils/builder-class.utils";
-import { ORIGIN_FEAT_SOURCE_NAME } from "../../utils/origin-feat.constants";
+import {
+  ORIGIN_FEAT_SOURCE_NAME,
+} from "../../utils/origin-feat.constants";
+import { optionalFeatureOriginFeatSourceName } from "../../utils/optional-feature-feat-grants.utils";
 import { AsiLibraryPanel } from "./AsiLibraryPanel";
 import {
   ArmorItem,
@@ -246,9 +251,13 @@ export function BuilderItemLibraryPanel({
     backgroundOriginFeatGrant,
     backgroundOriginFeat,
     setSpeciesOriginFeat,
+    optionalFeatureOriginFeatSlots,
+    optionalFeatureOriginFeats,
+    setOptionalFeatureOriginFeatAtIndex,
     applyIdentityGrants,
     setFeatSkillChoices,
     setOriginFeatSkillChoices,
+    setOptionalFeatureOriginFeatSkillChoicesAtIndex,
     resolvedArmorItems,
     resolvedWeaponItems,
   } = useCharacterBuilder();
@@ -277,8 +286,15 @@ export function BuilderItemLibraryPanel({
   const isSubclassSlot = selectedSlot === "subclass";
   const isOriginFeatSlotSelected =
     selectedSlot !== null && isOriginFeatSlot(selectedSlot);
+  const isInvocationOriginFeatSlotSelected =
+    selectedSlot !== null && isOptionalOriginFeatSlot(selectedSlot);
+  const invocationOriginFeatIndex = isInvocationOriginFeatSlotSelected
+    ? parseOptionalOriginFeatSlotIndex(selectedSlot)
+    : null;
   const isFeatSlot = selectedSlot !== null && isFeatSlotSelection(selectedSlot);
   const featSlotIndex = isFeatSlot ? parseFeatSlotIndex(selectedSlot) : null;
+  const isAnyOriginFeatSlotSelected =
+    isOriginFeatSlotSelected || isInvocationOriginFeatSlotSelected;
   const originFeatLocked =
     speciesOriginFeatGrant?.kind === "choose"
       ? false
@@ -363,6 +379,7 @@ export function BuilderItemLibraryPanel({
       selection: import("@/shared/types").BuilderFeatSelection;
       isOrigin: boolean;
       classSlotIndex: number | null;
+      invocationOriginIndex: number | null;
     }> = [];
 
     originFeatSelections.forEach((selection) => {
@@ -370,11 +387,27 @@ export function BuilderItemLibraryPanel({
         selection,
         isOrigin: true,
         classSlotIndex: null,
+        invocationOriginIndex: null,
+      });
+    });
+
+    optionalFeatureOriginFeats.forEach((selection, invocationOriginIndex) => {
+      if (!selection || isAsiFeatSelection(selection)) return;
+      activeEntries.push({
+        selection,
+        isOrigin: false,
+        classSlotIndex: null,
+        invocationOriginIndex,
       });
     });
 
     classFeatSelections.forEach((selection, classSlotIndex) => {
-      activeEntries.push({ selection, isOrigin: false, classSlotIndex });
+      activeEntries.push({
+        selection,
+        isOrigin: false,
+        classSlotIndex,
+        invocationOriginIndex: null,
+      });
     });
 
     if (!activeEntries.length) {
@@ -401,9 +434,15 @@ export function BuilderItemLibraryPanel({
       feats.forEach((feat, i) => {
         if (!feat) return;
         const entry = activeEntries[i];
+        const slotMeta =
+          entry.invocationOriginIndex !== null
+            ? optionalFeatureOriginFeatSlots[entry.invocationOriginIndex]
+            : null;
         const sourceName = entry.isOrigin
           ? ORIGIN_FEAT_SOURCE_NAME
-          : `Feat slot ${(entry.classSlotIndex ?? 0) + 1}`;
+          : entry.invocationOriginIndex !== null && slotMeta
+            ? optionalFeatureOriginFeatSourceName(slotMeta)
+            : `Feat slot ${(entry.classSlotIndex ?? 0) + 1}`;
         const tagSource = {
           type: "feat" as const,
           name: sourceName,
@@ -418,7 +457,12 @@ export function BuilderItemLibraryPanel({
 
         if ((feat.skillGrants?.length ?? 0) === 0) {
           if (entry.isOrigin) setOriginFeatSkillChoices([]);
-          else if (entry.classSlotIndex !== null) {
+          else if (entry.invocationOriginIndex !== null) {
+            setOptionalFeatureOriginFeatSkillChoicesAtIndex(
+              entry.invocationOriginIndex,
+              [],
+            );
+          } else if (entry.classSlotIndex !== null) {
             setFeatSkillChoices(entry.classSlotIndex, []);
           }
         }
@@ -430,9 +474,12 @@ export function BuilderItemLibraryPanel({
     featSelections,
     speciesOriginFeat,
     backgroundOriginFeat,
+    optionalFeatureOriginFeats,
+    optionalFeatureOriginFeatSlots,
     applyIdentityGrants,
     setFeatSkillChoices,
     setOriginFeatSkillChoices,
+    setOptionalFeatureOriginFeatSkillChoicesAtIndex,
   ]);
 
   useEffect(() => {
@@ -443,7 +490,8 @@ export function BuilderItemLibraryPanel({
     if (!isValid) setSubclass(null);
   }, [classData, subclass, setSubclass]);
 
-  const isFeatPickerSlot = isFeatSlot || isOriginFeatSlotSelected;
+  const isFeatPickerSlot =
+    isFeatSlot || isAnyOriginFeatSlotSelected;
 
   useEffect(() => {
     if (!isFeatPickerSlot) return;
@@ -663,11 +711,14 @@ export function BuilderItemLibraryPanel({
     });
   }, [classData, character.level, activeSubclass, applyIdentityGrants]);
 
-  const selectedFeat = isOriginFeatSlotSelected
-    ? (speciesOriginFeat ?? backgroundOriginFeat)
-    : isFeatSlot && featSlotIndex !== null
-      ? (featSelections[featSlotIndex] ?? null)
-      : null;
+  const selectedFeat = isInvocationOriginFeatSlotSelected &&
+    invocationOriginFeatIndex !== null
+    ? (optionalFeatureOriginFeats[invocationOriginFeatIndex] ?? null)
+    : isOriginFeatSlotSelected
+      ? (speciesOriginFeat ?? backgroundOriginFeat)
+      : isFeatSlot && featSlotIndex !== null
+        ? (featSelections[featSlotIndex] ?? null)
+        : null;
 
   const showAsiPanel =
     isFeatSlot &&
@@ -677,6 +728,11 @@ export function BuilderItemLibraryPanel({
 
   useEffect(() => {
     if (!isFeatPickerSlot) return;
+    if (isInvocationOriginFeatSlotSelected) {
+      setFeatSource("dnd2024");
+      setShowFeatList(!selectedFeat);
+      return;
+    }
     if (isOriginFeatSlotSelected) {
       setFeatSource("dnd2024");
       setShowFeatList(
@@ -692,6 +748,8 @@ export function BuilderItemLibraryPanel({
   }, [
     isFeatPickerSlot,
     isOriginFeatSlotSelected,
+    isInvocationOriginFeatSlotSelected,
+    selectedFeat,
     originFeatLocked,
     speciesOriginFeatGrant,
     speciesOriginFeat,
@@ -701,7 +759,7 @@ export function BuilderItemLibraryPanel({
   ]);
 
   const featListOptions = useMemo((): LibraryListOption[] => {
-    if (isOriginFeatSlotSelected) {
+    if (isAnyOriginFeatSlotSelected) {
       const originFeats = dndFeats.filter(
         (f) => isDnd2024Feat(f) && f.isOriginFeat,
       );
@@ -758,7 +816,7 @@ export function BuilderItemLibraryPanel({
     return [asiOption, ...filtered];
   }, [
     isFeatSlot,
-    isOriginFeatSlotSelected,
+    isAnyOriginFeatSlotSelected,
     featSource,
     amellwindFeats,
     dndFeats,
@@ -812,7 +870,11 @@ export function BuilderItemLibraryPanel({
     !!selectedFeat &&
     !showAsiPanel &&
     !isAsiFeatSelection(selectedFeat) &&
-    (isOriginFeatSlotSelected ? originFeatLocked || !showFeatList : true);
+    (isOriginFeatSlotSelected
+      ? originFeatLocked || !showFeatList
+      : isInvocationOriginFeatSlotSelected
+        ? !showFeatList
+        : true);
 
   const dndRaceSourceVariants = useLibraryVariants<DndRace>(
     identitySource === "dnd" && isSpeciesSlot && !!selectedIdentity?.name,
@@ -1167,6 +1229,14 @@ export function BuilderItemLibraryPanel({
   function handleDndFeatSourceSelect(id: string) {
     const variant = dndFeatSourceVariants.find((v) => v.id === id);
     if (!variant || !selectedFeat) return;
+    if (isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null) {
+      setOptionalFeatureOriginFeatAtIndex(invocationOriginFeatIndex, {
+        id: variant.id,
+        name: selectedFeat.name,
+        source: selectedFeat.source,
+      });
+      return;
+    }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
       setSpeciesOriginFeat({
@@ -1185,6 +1255,11 @@ export function BuilderItemLibraryPanel({
   }
 
   function handleSelectFeat(selection: BuilderFeatSelection) {
+    if (isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null) {
+      setOptionalFeatureOriginFeatAtIndex(invocationOriginFeatIndex, selection);
+      setShowFeatList(false);
+      return;
+    }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
       setSpeciesOriginFeat(selection);
@@ -1217,15 +1292,27 @@ export function BuilderItemLibraryPanel({
 
   const showIdentitySourceToggle = isSpeciesSlot || isBackgroundSlot;
   const showFeatSourceToggle =
-    isFeatSlot && !showAsiPanel && !isOriginFeatSlotSelected;
+    isFeatSlot && !showAsiPanel && !isAnyOriginFeatSlotSelected;
 
   const slotLabel = useMemo(() => {
     if (!selectedSlot) return "Library";
+    if (isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null) {
+      const slotMeta = optionalFeatureOriginFeatSlots[invocationOriginFeatIndex];
+      return slotMeta
+        ? `Origin Feat · ${slotMeta.sourceFeatureName}`
+        : "Origin Feat";
+    }
     if (isFeatSlotSelection(selectedSlot)) {
       return `Feat ${featSlotIndex !== null ? featSlotIndex + 1 : ""}`.trim();
     }
     return SLOT_LABELS[selectedSlot] ?? selectedSlot;
-  }, [selectedSlot, featSlotIndex]);
+  }, [
+    selectedSlot,
+    featSlotIndex,
+    isInvocationOriginFeatSlotSelected,
+    invocationOriginFeatIndex,
+    optionalFeatureOriginFeatSlots,
+  ]);
 
   const panelTitle = selectedSlot ? (
     <span className="flex min-w-0 flex-wrap items-center gap-2">
@@ -1474,6 +1561,36 @@ export function BuilderItemLibraryPanel({
                   selectedName={subclass?.name ?? null}
                   icon={<Sparkles className="h-3.5 w-3.5 text-emerald-400" />}
                   onSelect={handleSelectSubclass}
+                />
+              ))}
+
+            {isInvocationOriginFeatSlotSelected &&
+              (showFeatDetail ? (
+                featDetailLoading ? (
+                  <EmptyState text="Loading..." />
+                ) : featDetail ? (
+                  <FeatLibraryDetail
+                    feat={featDetail}
+                    sourceVariants={
+                      isDndFeatSelection ? dndFeatSourceVariants : undefined
+                    }
+                    activeSourceId={selectedFeat?.id}
+                    onSourceSelect={
+                      isDndFeatSelection ? handleDndFeatSourceSelect : undefined
+                    }
+                    bookNames={identityBookNames}
+                  />
+                ) : (
+                  <EmptyState text="Information not found." />
+                )
+              ) : featsLoading ? (
+                <EmptyState text="Loading feats..." />
+              ) : (
+                <FeatList
+                  options={featListOptions}
+                  selectedId={selectedFeat?.id ?? null}
+                  selectedName={selectedFeat?.name ?? null}
+                  onSelect={handleSelectOriginFeatOption}
                 />
               ))}
 

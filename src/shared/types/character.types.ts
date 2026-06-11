@@ -19,6 +19,9 @@ export type CharacterIdentitySlot =
   | "subclass"
   | "origin-feat";
 
+/** Origin Feat granted by an optional feature (e.g. Eldritch Invocation). */
+export type BuilderOptionalOriginFeatSlot = `origin-feat-opt-${number}`;
+
 export type BuilderFeatSlot = `feat-${number}`;
 
 export type BuilderFeatSource = "asi" | "amellwind" | "dnd2014" | "dnd2024";
@@ -155,6 +158,9 @@ export interface CombatCalculation {
 /** Identifies a spell-level slot in the spellcasting grid. "spell-level-0" = cantrips. */
 export type SpellLevelSlot = `spell-level-${number}`;
 
+/** Unified Warlock pact spell list (all levels 1–slot level in one pool). */
+export type BuilderPactSpellSlot = "spell-pact";
+
 export interface BuilderSpellSelection {
   id: string;
   name: string;
@@ -165,5 +171,15 @@ export interface BuilderSpellSelection {
   damageRoll?: string;
 }
 
-/** Spell selections keyed by spell level (0 = cantrips, 1–9 = spell levels). */
+/** Spell selections keyed by level (0 = cantrips; -1 = Warlock pact pool; 1–9 = normal casters). */
 export type BuilderSpellSelections = Record<number, BuilderSpellSelection[]>;
+
+// ─── Optional class features (EI, Metamagic, Maneuvers, …) ─────────────────
+
+/** Slot id: opt-{progressionId} — one grid slot per progression. */
+export type BuilderOptionalFeatureSlot = `opt-${string}`;
+
+export type {
+  BuilderOptionalFeatureSelection,
+  BuilderOptionalFeatureSelections,
+} from "./dnd-optionalfeature.types";

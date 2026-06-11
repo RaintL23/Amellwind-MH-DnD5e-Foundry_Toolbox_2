@@ -19,8 +19,13 @@ import {
   isAsiFeatSelection,
   isSubclassLevelReached,
   toFeatSlot,
+  toOptionalOriginFeatSlot,
 } from "../../utils/builder-class.utils";
+import { resolveOptionalFeatureProgressions } from "../../utils/class-optional-features.utils";
 import type { Class } from "@/shared/types";
+import type { BuilderOptionalFeatureSelections } from "@/shared/types";
+import type { OptionalFeatureOriginFeatSlot } from "../../utils/optional-feature-feat-grants.utils";
+import { OptionalFeatureGridPanel } from "./OptionalFeatureGridPanel";
 
 interface CharacterStuffGridPanelProps {
   species: CharacterSelectionRef | null;
@@ -28,12 +33,16 @@ interface CharacterStuffGridPanelProps {
   classSelection: CharacterSelectionRef | null;
   subclass: CharacterSelectionRef | null;
   classData: Class | null;
+  subclassData: import("@/shared/types").Subclass | null;
   level: number;
   featSelections: (BuilderFeatSelection | null)[];
+  optionalFeatureSelections: BuilderOptionalFeatureSelections;
   speciesOriginFeatGrant: OriginFeatGrant | null;
   speciesOriginFeat: BuilderFeatSelection | null;
   backgroundOriginFeatGrant: OriginFeatGrant | null;
   backgroundOriginFeat: BuilderFeatSelection | null;
+  optionalFeatureOriginFeatSlots: OptionalFeatureOriginFeatSlot[];
+  optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];
   backstoryNotes: string;
   selectedSlot: PaperDollSelection;
   onSelectSlot: (slot: PaperDollSelection) => void;
@@ -46,12 +55,16 @@ export function CharacterStuffGridPanel({
   classSelection,
   subclass,
   classData,
+  subclassData,
   level,
   featSelections,
+  optionalFeatureSelections,
   speciesOriginFeatGrant,
   speciesOriginFeat,
   backgroundOriginFeatGrant,
   backgroundOriginFeat,
+  optionalFeatureOriginFeatSlots,
+  optionalFeatureOriginFeats,
   backstoryNotes,
   selectedSlot,
   onSelectSlot,
@@ -95,6 +108,12 @@ export function CharacterStuffGridPanel({
               detail: "Background",
             }
           : null;
+
+  const optionalProgressions = resolveOptionalFeatureProgressions(
+    classData,
+    subclassData,
+    level,
+  );
 
   return (
     <div className="space-y-1.5">
@@ -163,9 +182,20 @@ export function CharacterStuffGridPanel({
             className="min-h-[72px] rounded-md border border-dashed border-transparent"
           />
         )}
+        {optionalProgressions.length > 0 && (
+          <OptionalFeatureGridPanel
+            progressions={optionalProgressions}
+            selections={optionalFeatureSelections}
+            selectedSlot={selectedSlot}
+            onSelectSlot={onSelectSlot}
+            onUnequipSlot={onUnequipSlot}
+          />
+        )}
       </div>
 
-      {(showOriginFeat || featSlotLevels.length > 0) && (
+      {(showOriginFeat ||
+        optionalFeatureOriginFeatSlots.length > 0 ||
+        featSlotLevels.length > 0) && (
         <div className="grid grid-cols-5 gap-1.5">
           {showOriginFeat && (
             <GridElementSlot
@@ -189,6 +219,32 @@ export function CharacterStuffGridPanel({
               emptyTitle="Elegir Origin Feat"
             />
           )}
+          {optionalFeatureOriginFeatSlots.map((slotMeta) => {
+            const slotId = toOptionalOriginFeatSlot(slotMeta.slotIndex);
+            const feat = optionalFeatureOriginFeats[slotMeta.slotIndex] ?? null;
+            return (
+              <GridElementSlot
+                key={slotId}
+                label="Origin Feat"
+                icon={<Award className="h-5 w-5 text-teal-400" />}
+                equipped={
+                  feat
+                    ? {
+                        name: feat.name,
+                        detail: slotMeta.sourceFeatureName,
+                      }
+                    : null
+                }
+                onClickEquip={() => onSelectSlot(slotId)}
+                onClickDetails={() => onSelectSlot(slotId)}
+                onUnequip={
+                  feat ? () => onUnequipSlot(slotId) : undefined
+                }
+                isSelected={selectedSlot === slotId}
+                emptyTitle={`Elegir Origin Feat (${slotMeta.sourceFeatureName})`}
+              />
+            );
+          })}
           {featSlotLevels.map((featLevel, index) => {
             const feat = featSelections[index] ?? null;
             const slot = toFeatSlot(index);
