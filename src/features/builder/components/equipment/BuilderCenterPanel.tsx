@@ -85,10 +85,15 @@ export function BuilderCenterPanel() {
     clearOptionalFeatureProgression,
   } = useCharacterBuilder();
 
-  const { selectedSlot, selectSlot, clearSelection } = useBuilderSlotSelection();
+  const { selectedSlot, selectSlot, clearSelection } =
+    useBuilderSlotSelection();
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
-  const { allSpells, loading: spellsLoading, spellLevelByName } = useSpellCatalog();
+  const {
+    allSpells,
+    loading: spellsLoading,
+    spellLevelByName,
+  } = useSpellCatalog();
   const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
     optionalFeatureSelections ?? {},
     character.level,
@@ -141,10 +146,7 @@ export function BuilderCenterPanel() {
     !isFeatSlotSelection(selectedSlot) &&
     !isOptionalFeatureSlot(selectedSlot) &&
     !isSpellPickerSlot(selectedSlot) &&
-    !(
-      selectedSlot === "offHand" &&
-      (hasIntegratedShield || equippedShield)
-    );
+    !(selectedSlot === "offHand" && (hasIntegratedShield || equippedShield));
 
   function isSlotOccupied(slot: BuilderSlotSelection): boolean {
     if (!slot) return false;
@@ -190,8 +192,10 @@ export function BuilderCenterPanel() {
         if (isOptionalFeatureSlot(slot)) {
           const parsed = parseOptionalFeatureSlot(slot);
           if (!parsed) return false;
-          return getProgressionPicks(optionalFeatureSelections, parsed.progressionId)
-            .length > 0;
+          return (
+            getProgressionPicks(optionalFeatureSelections, parsed.progressionId)
+              .length > 0
+          );
         }
         return false;
     }
@@ -372,15 +376,16 @@ export function BuilderCenterPanel() {
                       <span className="text-muted-foreground">
                         {" "}
                         · {spellcastingInfo.pactSlotCount} slot
-                        {spellcastingInfo.pactSlotCount !== 1 ? "s" : ""} (niv.{" "}
-                        {spellcastingInfo.pactMaxSpellLevel})
+                        {spellcastingInfo.pactSlotCount !== 1
+                          ? "s"
+                          : ""} (niv. {spellcastingInfo.pactMaxSpellLevel})
                       </span>
                     )}
                 </span>
                 {spellcastingInfo.subclassAlwaysPrepared.length > 0 && (
                   <span className="text-emerald-400/80">
-                    + {spellcastingInfo.subclassAlwaysPrepared.length} siempre
-                    prep.
+                    + {spellcastingInfo.subclassAlwaysPrepared.length} always
+                    prepared
                   </span>
                 )}
               </span>
