@@ -154,6 +154,3 @@ export const BASE_ARMORS: ArmorItem[] = [
     weight: 65,
   },
 ];
-
-/** @deprecated Use BASE_ARMORS */
-export const PLACEHOLDER_ARMORS = BASE_ARMORS;

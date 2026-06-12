@@ -1,4 +1,4 @@
-import type { StandaloneShieldItem } from "@/features/builder/data/shield.placeholder";
+import type { StandaloneShieldItem } from "@/features/builder/data/shield.data";
 import { EquippedWeapon, Weapon } from "@/shared/types";
 import {
   doesGripModeBlockOffHand,

@@ -8,12 +8,12 @@ import {
 } from "../../utils/pact-magic.utils";
 import { grantsForSpellLevel } from "../../utils/subclass-spells.utils";
 import { GridElementSlot } from "../shared/GridElementSlot";
-import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import {
   isSpellLevelSlot,
   parseSpellLevel,
   toSpellLevelSlot,
-} from "../../hooks/usePaperDollSelection";
+} from "../../hooks/useBuilderSlotSelection";
 
 interface SpellcastingGridPanelProps {
   className: string;
@@ -21,8 +21,8 @@ interface SpellcastingGridPanelProps {
   spellSelections: BuilderSpellSelections;
   spellLevelByName: Map<string, number>;
   spellsByName: Array<{ name: string; level: number }>;
-  selectedSlot: PaperDollSelection;
-  onSelectSlot: (slot: PaperDollSelection) => void;
+  selectedSlot: BuilderSlotSelection;
+  onSelectSlot: (slot: BuilderSlotSelection) => void;
 }
 
 const SPELL_LEVEL_LABELS: Record<number, string> = {
@@ -152,7 +152,10 @@ function getPactPoolEquipped(
   if (subclassCount > 0) {
     summaryParts.push(`${subclassCount} subclase/feature`);
   }
-  if (spellcastingInfo.pactSlotCount > 0 && spellcastingInfo.pactMaxSpellLevel > 0) {
+  if (
+    spellcastingInfo.pactSlotCount > 0 &&
+    spellcastingInfo.pactMaxSpellLevel > 0
+  ) {
     summaryParts.push(
       `${spellcastingInfo.pactSlotCount} slot${spellcastingInfo.pactSlotCount !== 1 ? "s" : ""} (niv. ${spellcastingInfo.pactMaxSpellLevel})`,
     );
@@ -225,17 +228,17 @@ function getSlotEquipped(
   const summaryParts: string[] = [];
   if (selected.length > 0) {
     summaryParts.push(
-      `${selected.length} ${spellcastingInfo.isPreparedCaster ? "prep." : "conoc."}`,
+      `${selected.length} ${spellcastingInfo.isPreparedCaster ? "prepared" : "known"}`,
     );
   }
   if (alwaysPreparedGrants.length > 0) {
-    summaryParts.push(`${alwaysPreparedGrants.length} siempre prep.`);
+    summaryParts.push(`${alwaysPreparedGrants.length} always prepared`);
   }
   if (bonusKnownGrants.length > 0) {
-    summaryParts.push(`${bonusKnownGrants.length} bonus`);
+    summaryParts.push(`${bonusKnownGrants.length} bonus known`);
   }
   if (optionalFeatureGrants.length > 0) {
-    summaryParts.push(`${optionalFeatureGrants.length} feature`);
+    summaryParts.push(`${optionalFeatureGrants.length} optional known feature`);
   }
 
   const subclassNames = [
@@ -265,17 +268,12 @@ export function SpellcastingGridPanel({
 }: SpellcastingGridPanelProps) {
   const { availableSpellLevels, usesUnifiedPactPool } = spellcastingInfo;
 
-  if (
-    availableSpellLevels.length === 0 &&
-    !usesUnifiedPactPool
-  ) {
+  if (availableSpellLevels.length === 0 && !usesUnifiedPactPool) {
     return null;
   }
 
-  const gridSlots: Array<
-    | { kind: "level"; level: number }
-    | { kind: "pact" }
-  > = [];
+  const gridSlots: Array<{ kind: "level"; level: number } | { kind: "pact" }> =
+    [];
 
   if (availableSpellLevels.includes(0)) {
     gridSlots.push({ kind: "level", level: 0 });
@@ -313,9 +311,7 @@ export function SpellcastingGridPanel({
                 <GridElementSlot
                   key={PACT_SPELL_SLOT}
                   label={label}
-                  icon={
-                    <Sparkles className="h-5 w-5 text-violet-400" />
-                  }
+                  icon={<Sparkles className="h-5 w-5 text-violet-400" />}
                   equipped={equipped}
                   onClickEquip={() => onSelectSlot(PACT_SPELL_SLOT)}
                   onClickDetails={() => onSelectSlot(PACT_SPELL_SLOT)}

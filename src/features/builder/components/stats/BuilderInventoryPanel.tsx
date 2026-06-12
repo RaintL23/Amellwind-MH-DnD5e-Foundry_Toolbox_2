@@ -22,7 +22,7 @@ import {
   findWeaponByCartName,
   type CartItemKind,
 } from "../../utils/cart-equipment.resolver";
-import type { StandaloneShieldItem } from "../../data/shield.placeholder";
+import type { StandaloneShieldItem } from "../../data/shield.data";
 import {
   formatCarryingCapacityCalcTooltip,
   formatCarryingCapacityRuleTooltip,

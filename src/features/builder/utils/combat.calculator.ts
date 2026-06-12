@@ -18,7 +18,7 @@ import { getUnarmedStrikeProfile } from "./unarmed-strike.utils";
 /**
  * Parses a dice notation string like "1d8", "2d6", "1d12" into structured data.
  */
-export function parseDiceNotation(notation: string): DiceRoll {
+function parseDiceNotation(notation: string): DiceRoll {
   const match = notation.match(/^(\d+)d(\d+)$/i);
   if (!match) {
     return { count: 0, sides: 0, average: 0, notation };

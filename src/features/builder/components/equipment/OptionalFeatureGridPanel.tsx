@@ -1,7 +1,7 @@
 import { Wand2 } from "lucide-react";
 import type { BuilderOptionalFeatureSelections } from "@/shared/types";
 import { GridElementSlot } from "../shared/GridElementSlot";
-import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import {
   getProgressionPicks,
   isOptionalFeatureSlot,
@@ -13,9 +13,9 @@ import {
 interface OptionalFeatureGridPanelProps {
   progressions: ResolvedOptionalFeatureProgression[];
   selections: BuilderOptionalFeatureSelections;
-  selectedSlot: PaperDollSelection;
-  onSelectSlot: (slot: PaperDollSelection) => void;
-  onUnequipSlot: (slot: PaperDollSelection) => void;
+  selectedSlot: BuilderSlotSelection;
+  onSelectSlot: (slot: BuilderSlotSelection) => void;
+  onUnequipSlot: (slot: BuilderSlotSelection) => void;
 }
 
 const PROGRESSION_COLORS: Record<string, string> = {

@@ -6,7 +6,7 @@ import type {
   Subclass,
 } from "@/shared/types";
 import { formatModifier } from "@/shared/utils/cr.utils";
-import { isClothingArmor } from "../data/armor.placeholder";
+import { isClothingArmor } from "../data/armor.data";
 import { getFeaturesUpToLevel } from "./builder-class.utils";
 import {
   detectNaturalArmorFromTraits,

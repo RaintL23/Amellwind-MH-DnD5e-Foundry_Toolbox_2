@@ -5,11 +5,11 @@ import { getRaritySlideUnlockSections } from "@/features/weapons/utils/rarity-sl
 import {
   TRINKET_WEIGHT_LB,
   isKnownTrinket,
-} from "../data/trinket.placeholder";
+} from "../data/trinket.data";
 import {
   StandaloneShieldItem,
   STANDALONE_SHIELD,
-} from "../data/shield.placeholder";
+} from "../data/shield.data";
 import { ArmorItem, CartEntry, ShopEntry, Weapon } from "@/shared/types";
 
 const DEFAULT_AMMO_BY_WEAPON: Record<string, string> = {

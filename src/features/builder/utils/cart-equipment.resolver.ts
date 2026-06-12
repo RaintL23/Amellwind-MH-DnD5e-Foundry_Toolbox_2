@@ -1,6 +1,6 @@
-import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.placeholder";
-import { findShieldByCartName } from "../data/shield.placeholder";
-import { isKnownTrinket } from "../data/trinket.placeholder";
+import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.data";
+import { findShieldByCartName } from "../data/shield.data";
+import { isKnownTrinket } from "../data/trinket.data";
 import { isTrinketEntry } from "./equipment-inventory.utils";
 import { ArmorItem, CartEntry, Weapon } from "@/shared/types";
 

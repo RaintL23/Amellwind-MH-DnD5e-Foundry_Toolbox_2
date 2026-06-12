@@ -11,15 +11,15 @@ import {
 import { ClassFeatureDetailsPanel } from "@/features/classes/components/detail/ClassFeatureDetailsPanel";
 import { ClassSourceSwitcher } from "@/features/classes/components/detail/ClassSourceSwitcher";
 import { getCasterLabel } from "@/features/classes/mappers/class.mapper";
-import { getSpellcastingSectionLabel } from "../../utils/spellcasting-label.utils";
+import { getSpellcastingSectionLabel } from "../../../utils/spellcasting-label.utils";
 import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
-import { StartingEquipmentPicker } from "./StartingEquipmentPicker";
+import { StartingEquipmentPicker } from "../StartingEquipmentPicker";
 import type { BookSourceNameMap } from "@/features/spells/services/book-source.service";
 import type { ClassVariantField } from "@/features/classes/utils/class-variant.utils";
 import {
   getFeaturesUpToLevel,
   getSubclassGainLevel,
-} from "../../utils/builder-class.utils";
+} from "../../../utils/builder-class.utils";
 
 interface ClassLibraryDetailProps {
   classData: Class;

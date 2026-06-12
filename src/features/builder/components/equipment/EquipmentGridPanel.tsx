@@ -3,16 +3,16 @@ import { cn } from "@/shared/utils/cn";
 import {
   formatArmorSlotDetail,
   isClothingArmor,
-} from "../../data/armor.placeholder";
+} from "../../data/armor.data";
 import { GridElementSlot } from "../shared/GridElementSlot";
-import type { StandaloneShieldItem } from "../../data/shield.placeholder";
+import type { StandaloneShieldItem } from "../../data/shield.data";
 import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
 import type { OffHandBlockReason } from "@/features/weapons/utils/weapon-hands.utils";
 import {
   getActiveWeaponDamage,
   getActiveWeaponDamageLabel,
 } from "@/features/weapons/utils/weapon-mode.utils";
-import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 
 interface EquipmentGridPanelProps {
   mainHand: EquippedWeapon | null;
@@ -26,9 +26,9 @@ interface EquipmentGridPanelProps {
   standaloneShieldAcBonus: number;
   isOffHandBlocked: boolean;
   offHandBlockReason: OffHandBlockReason | null;
-  selectedSlot: PaperDollSelection;
-  onSelectSlot: (slot: PaperDollSelection) => void;
-  onUnequipSlot: (slot: PaperDollSelection) => void;
+  selectedSlot: BuilderSlotSelection;
+  onSelectSlot: (slot: BuilderSlotSelection) => void;
+  onUnequipSlot: (slot: BuilderSlotSelection) => void;
 }
 
 export function EquipmentGridPanel({

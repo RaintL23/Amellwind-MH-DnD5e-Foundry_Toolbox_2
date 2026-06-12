@@ -12,7 +12,7 @@ import type {
 } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { GridElementSlot } from "../shared/GridElementSlot";
-import type { PaperDollSelection } from "../../hooks/usePaperDollSelection";
+import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import {
   formatAsiChoicesSummary,
   getFeatSlotLevels,
@@ -27,7 +27,7 @@ import type { BuilderOptionalFeatureSelections } from "@/shared/types";
 import type { OptionalFeatureOriginFeatSlot } from "../../utils/optional-feature-feat-grants.utils";
 import { OptionalFeatureGridPanel } from "./OptionalFeatureGridPanel";
 
-interface CharacterStuffGridPanelProps {
+interface IdentityGridPanelProps {
   species: CharacterSelectionRef | null;
   background: CharacterSelectionRef | null;
   classSelection: CharacterSelectionRef | null;
@@ -44,12 +44,12 @@ interface CharacterStuffGridPanelProps {
   optionalFeatureOriginFeatSlots: OptionalFeatureOriginFeatSlot[];
   optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];
   backstoryNotes: string;
-  selectedSlot: PaperDollSelection;
-  onSelectSlot: (slot: PaperDollSelection) => void;
-  onUnequipSlot: (slot: PaperDollSelection) => void;
+  selectedSlot: BuilderSlotSelection;
+  onSelectSlot: (slot: BuilderSlotSelection) => void;
+  onUnequipSlot: (slot: BuilderSlotSelection) => void;
 }
 
-export function CharacterStuffGridPanel({
+export function IdentityGridPanel({
   species,
   background,
   classSelection,
@@ -69,7 +69,7 @@ export function CharacterStuffGridPanel({
   selectedSlot,
   onSelectSlot,
   onUnequipSlot,
-}: CharacterStuffGridPanelProps) {
+}: IdentityGridPanelProps) {
   const hasBackstory = backstoryNotes.trim().length > 0;
   const showSubclass = isSubclassLevelReached(classData, level);
   const featSlotLevels = getFeatSlotLevels(classSelection?.name ?? "", level);

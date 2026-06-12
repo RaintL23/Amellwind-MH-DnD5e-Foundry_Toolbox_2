@@ -1,6 +1,6 @@
 import type { ArmorItem } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
-import { isClothingArmor } from "@/features/builder/data/armor.placeholder";
+import { isClothingArmor } from "@/features/builder/data/armor.data";
 import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
 import {
   getWeaponProficiencyRule,

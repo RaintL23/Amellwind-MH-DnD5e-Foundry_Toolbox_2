@@ -10,8 +10,8 @@ import { EquippedArmor } from "@/shared/types";
 import {
   formatArmorSlotDetail,
   isClothingArmor,
-} from "../../data/armor.placeholder";
-import { RuneFeaturesSection } from "./RuneFeaturesSection";
+} from "../../../data/armor.data";
+import { RuneFeaturesSection } from "../RuneFeaturesSection";
 
 interface ArmorLibraryDetailProps {
   equipped: EquippedArmor;

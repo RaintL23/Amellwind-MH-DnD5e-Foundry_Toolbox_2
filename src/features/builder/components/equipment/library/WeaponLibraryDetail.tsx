@@ -25,7 +25,7 @@ import {
   getRaritySlideStatEntries,
   getRaritySlideUnlockSections,
 } from "@/features/weapons/utils/rarity-slide.utils";
-import { RuneFeaturesSection } from "./RuneFeaturesSection";
+import { RuneFeaturesSection } from "../RuneFeaturesSection";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { WeaponModeToggle } from "@/features/weapons/components/WeaponModeToggle";
 import {
@@ -35,7 +35,7 @@ import {
   getWeaponGripModeHint,
   hasWeaponGripModes,
 } from "@/features/weapons/utils/weapon-mode.utils";
-import { getWeaponEffectiveTierLabel } from "../../utils/equipment-proficiency.utils";
+import { getWeaponEffectiveTierLabel } from "../../../utils/equipment-proficiency.utils";
 
 interface WeaponLibraryDetailProps {
   equipped: EquippedWeapon;

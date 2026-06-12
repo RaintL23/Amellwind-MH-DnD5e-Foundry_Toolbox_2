@@ -1,10 +1,10 @@
 import { Sparkles, Sword, Users } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
-  usePaperDollSelection,
-  type PaperDollSelection,
+  useBuilderSlotSelection,
+  type BuilderSlotSelection,
   isSpellPickerSlot,
-} from "../../hooks/usePaperDollSelection";
+} from "../../hooks/useBuilderSlotSelection";
 import { useSelectedClass } from "../../hooks/useSelectedClass";
 import {
   isFeatSlotSelection,
@@ -23,12 +23,12 @@ import { useEffect, useMemo } from "react";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
 import { WeaponDetailPanel } from "./WeaponDetailPanel";
 import { ArmorDetailPanel } from "./ArmorDetailPanel";
-import { CharacterStuffGridPanel } from "./CharacterStuffGridPanel";
+import { IdentityGridPanel } from "./IdentityGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { SpellcastingGridPanel } from "./SpellcastingGridPanel";
 import { SpellLibraryPanel } from "./SpellLibraryPanel";
 import { OptionalFeatureLibraryPanel } from "./OptionalFeatureLibraryPanel";
-import { BuilderItemLibraryPanel } from "./BuilderItemLibraryPanel";
+import { BuilderLibraryPanel } from "./library/BuilderLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.utils";
@@ -37,7 +37,7 @@ import { useSelectedSubclass } from "../../hooks/useSelectedSubclass";
 import { useOptionalFeatureSpellGrants } from "../../hooks/useOptionalFeatureSpellGrants";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
 
-export function PaperDoll() {
+export function BuilderCenterPanel() {
   const {
     mainHand,
     offHand,
@@ -85,7 +85,7 @@ export function PaperDoll() {
     clearOptionalFeatureProgression,
   } = useCharacterBuilder();
 
-  const { selectedSlot, selectSlot, clearSelection } = usePaperDollSelection();
+  const { selectedSlot, selectSlot, clearSelection } = useBuilderSlotSelection();
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
   const { allSpells, loading: spellsLoading, spellLevelByName } = useSpellCatalog();
@@ -146,7 +146,7 @@ export function PaperDoll() {
       (hasIntegratedShield || equippedShield)
     );
 
-  function isSlotOccupied(slot: PaperDollSelection): boolean {
+  function isSlotOccupied(slot: BuilderSlotSelection): boolean {
     if (!slot) return false;
     switch (slot) {
       case "mainHand":
@@ -197,7 +197,7 @@ export function PaperDoll() {
     }
   }
 
-  function handleUnequipSlot(slot: PaperDollSelection) {
+  function handleUnequipSlot(slot: BuilderSlotSelection) {
     if (!slot) return;
     switch (slot) {
       case "mainHand":
@@ -287,7 +287,7 @@ export function PaperDoll() {
           </span>
         }
       >
-        <CharacterStuffGridPanel
+        <IdentityGridPanel
           species={species}
           background={background}
           classSelection={classSelection}
@@ -453,7 +453,7 @@ export function PaperDoll() {
           />
         )}
 
-      {showLibrary && <BuilderItemLibraryPanel selectedSlot={selectedSlot} />}
+      {showLibrary && <BuilderLibraryPanel selectedSlot={selectedSlot} />}
     </div>
   );
 }

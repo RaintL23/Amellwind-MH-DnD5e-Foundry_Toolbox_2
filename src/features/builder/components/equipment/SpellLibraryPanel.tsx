@@ -16,7 +16,7 @@ import type {
   BuilderSpellSelections,
 } from "@/shared/types";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
-import { parseSpellLevel, isPactSpellSlot } from "../../hooks/usePaperDollSelection";
+import { parseSpellLevel, isPactSpellSlot } from "../../hooks/useBuilderSlotSelection";
 import type { SpellLevelSlot, BuilderPactSpellSlot } from "@/shared/types";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";

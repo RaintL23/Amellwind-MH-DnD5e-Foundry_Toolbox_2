@@ -30,7 +30,7 @@ import type {
   StartingEquipmentSource,
 } from "@/shared/types";
 import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
-import { StartingEquipmentPicker } from "./StartingEquipmentPicker";
+import { StartingEquipmentPicker } from "../StartingEquipmentPicker";
 
 interface IdentityLibraryDetailProps {
   species?: Species;

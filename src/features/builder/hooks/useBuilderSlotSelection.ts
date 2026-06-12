@@ -10,7 +10,7 @@ import {
 } from "@/shared/types";
 import { PACT_SPELL_SLOT } from "../utils/pact-magic.utils";
 
-export type PaperDollSelection =
+export type BuilderSlotSelection =
   | EquipmentSlotType
   | CharacterIdentitySlot
   | BuilderFeatSlot
@@ -21,19 +21,19 @@ export type PaperDollSelection =
   | null;
 
 export function isSpellLevelSlot(
-  slot: PaperDollSelection,
+  slot: BuilderSlotSelection,
 ): slot is SpellLevelSlot {
   return typeof slot === "string" && slot.startsWith("spell-level-");
 }
 
 export function isPactSpellSlot(
-  slot: PaperDollSelection,
+  slot: BuilderSlotSelection,
 ): slot is BuilderPactSpellSlot {
   return slot === PACT_SPELL_SLOT;
 }
 
 export function isSpellPickerSlot(
-  slot: PaperDollSelection,
+  slot: BuilderSlotSelection,
 ): slot is SpellLevelSlot | BuilderPactSpellSlot {
   return isSpellLevelSlot(slot) || isPactSpellSlot(slot);
 }
@@ -46,10 +46,10 @@ export function toSpellLevelSlot(level: number): SpellLevelSlot {
   return `spell-level-${level}`;
 }
 
-export function usePaperDollSelection() {
-  const [selectedSlot, setSelectedSlot] = useState<PaperDollSelection>(null);
+export function useBuilderSlotSelection() {
+  const [selectedSlot, setSelectedSlot] = useState<BuilderSlotSelection>(null);
 
-  const selectSlot = useCallback((slot: PaperDollSelection) => {
+  const selectSlot = useCallback((slot: BuilderSlotSelection) => {
     setSelectedSlot(slot);
   }, []);
 
