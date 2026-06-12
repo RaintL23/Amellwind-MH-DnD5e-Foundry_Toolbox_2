@@ -173,6 +173,8 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     if (isFeatSlotSelection(selectedSlot)) {
       return `Feat ${featSlotIndex !== null ? featSlotIndex + 1 : ""}`.trim();
     }
+    if (!useAmellwindHomebrew && selectedSlot === "mainHand") return "Main Hand";
+    if (!useAmellwindHomebrew && selectedSlot === "offHand") return "Off Hand";
     return SLOT_LABELS[selectedSlot] ?? selectedSlot;
   }, [
     selectedSlot,
@@ -180,6 +182,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     isInvocationOriginFeatSlotSelected,
     invocationOriginFeatIndex,
     optionalFeatureOriginFeatSlots,
+    useAmellwindHomebrew,
   ]);
 
   const panelTitle = selectedSlot ? (

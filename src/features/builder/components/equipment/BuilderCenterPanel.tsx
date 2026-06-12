@@ -345,6 +345,7 @@ export function BuilderCenterPanel() {
       >
         <EquipmentGridPanel
           showTrinkets={useAmellwindHomebrew}
+          useAmellwindHomebrew={useAmellwindHomebrew}
           mainHand={mainHand}
           offHand={offHand}
           armor={armor}

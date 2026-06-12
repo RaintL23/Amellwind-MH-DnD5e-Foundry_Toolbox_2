@@ -1,9 +1,6 @@
 import { Gem, Shield, Shirt, Sword } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import {
-  formatArmorSlotDetail,
-  isClothingArmor,
-} from "../../data/armor.data";
+import { formatArmorSlotDetail, isClothingArmor } from "../../data/armor.data";
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { StandaloneShieldItem } from "../../data/shield.data";
 import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
@@ -14,8 +11,28 @@ import {
 } from "@/features/weapons/utils/weapon-mode.utils";
 import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 
+function formatWeaponSlotDetail(
+  equipped: EquippedWeapon,
+  options?: { offHand?: boolean },
+): string {
+  const damage = getActiveWeaponDamage(equipped);
+  const modeLabel = getActiveWeaponDamageLabel(equipped);
+  const base =
+    modeLabel === "Damage" ? damage : `${modeLabel} · ${damage}`;
+  return options?.offHand ? `${base} · bonus` : base;
+}
+
+function getWeaponSlotLabel(
+  slot: "mainHand" | "offHand",
+  useAmellwindHomebrew: boolean,
+): string {
+  if (useAmellwindHomebrew) return "Weapon";
+  return slot === "mainHand" ? "Main Hand" : "Off Hand";
+}
+
 interface EquipmentGridPanelProps {
   showTrinkets?: boolean;
+  useAmellwindHomebrew?: boolean;
   mainHand: EquippedWeapon | null;
   offHand: EquippedWeapon | null;
   armor: EquippedArmor | null;
@@ -34,6 +51,7 @@ interface EquipmentGridPanelProps {
 
 export function EquipmentGridPanel({
   showTrinkets = true,
+  useAmellwindHomebrew = true,
   mainHand,
   offHand,
   armor,
@@ -106,7 +124,7 @@ export function EquipmentGridPanel({
         isSelected={selectedSlot === "armor"}
       />
       <GridElementSlot
-        label="Weapon"
+        label={getWeaponSlotLabel("mainHand", useAmellwindHomebrew)}
         accent="weapon"
         icon={
           <Sword className={cn("h-5 w-5", mainHand && "text-violet-400")} />
@@ -115,13 +133,7 @@ export function EquipmentGridPanel({
           mainHand
             ? {
                 name: mainHand.weapon.name,
-                detail: (() => {
-                  const damage = getActiveWeaponDamage(mainHand);
-                  const modeLabel = getActiveWeaponDamageLabel(mainHand);
-                  return modeLabel === "Damage"
-                    ? damage
-                    : `${modeLabel} · ${damage}`;
-                })(),
+                detail: formatWeaponSlotDetail(mainHand),
               }
             : null
         }
@@ -134,10 +146,10 @@ export function EquipmentGridPanel({
         <div className="flex min-h-[72px] flex-col items-center justify-center gap-0.5 rounded-md border border-solid border-teal-700/40 bg-teal-950/20 p-2 text-center">
           <Shield className="h-5 w-5 text-teal-400" />
           <span className="text-[11px] font-medium text-foreground">
-            Escudo
+            Shield
           </span>
           <span className="text-[10px] text-teal-300">
-            +{integratedShieldAcBonus} CA
+            +{integratedShieldAcBonus} AC
           </span>
         </div>
       ) : equippedShield ? (
@@ -156,7 +168,7 @@ export function EquipmentGridPanel({
         />
       ) : isOffHandBlocked ? (
         <GridElementSlot
-          label="Weapon"
+          label={getWeaponSlotLabel("offHand", useAmellwindHomebrew)}
           icon={<Sword className="h-5 w-5" />}
           equipped={null}
           onClickEquip={() => {}}
@@ -171,18 +183,21 @@ export function EquipmentGridPanel({
         />
       ) : (
         <GridElementSlot
-          label="Weapon"
+          label={getWeaponSlotLabel("offHand", useAmellwindHomebrew)}
           accent="weapon"
           icon={
             <Sword className={cn("h-5 w-5", offHand && "text-violet-400")} />
           }
           equipped={
             offHand
-              ? { name: offHand.weapon.name, detail: offHand.weapon.dmg1 }
+              ? {
+                  name: offHand.weapon.name,
+                  detail: formatWeaponSlotDetail(offHand, { offHand: true }),
+                }
               : null
           }
           onClickEquip={() => handleWeaponSlot("offHand")}
-          disabled={true}
+          disabled={useAmellwindHomebrew}
           onClickDetails={() => onSelectSlot("offHand")}
           onUnequip={offHand ? () => onUnequipSlot("offHand") : undefined}
           isSelected={selectedSlot === "offHand"}

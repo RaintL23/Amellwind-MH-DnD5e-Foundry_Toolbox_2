@@ -53,15 +53,28 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     clearSubclassOptionalFeatures: () => {},
   });
 
+  const onSpeciesChange = useCallback(() => {
+    proficiencyResetRef.current.resetOnSpeciesChange();
+  }, []);
+
+  const onBackgroundChange = useCallback(() => {
+    proficiencyResetRef.current.resetOnBackgroundChange();
+  }, []);
+
+  const onClassChange = useCallback(() => {
+    proficiencyResetRef.current.resetOnClassChange();
+    spellResetRef.current.resetOnClassChange();
+  }, []);
+
+  const clearSubclassOptionalFeatures = useCallback(() => {
+    spellResetRef.current.clearSubclassOptionalFeatures();
+  }, []);
+
   const identity = useIdentitySlice({
-    onSpeciesChange: () => proficiencyResetRef.current.resetOnSpeciesChange(),
-    onBackgroundChange: () => proficiencyResetRef.current.resetOnBackgroundChange(),
-    onClassChange: () => {
-      proficiencyResetRef.current.resetOnClassChange();
-      spellResetRef.current.resetOnClassChange();
-    },
-    clearSubclassOptionalFeatures: () =>
-      spellResetRef.current.clearSubclassOptionalFeatures(),
+    onSpeciesChange,
+    onBackgroundChange,
+    onClassChange,
+    clearSubclassOptionalFeatures,
   });
 
   const spell = useSpellSlice({

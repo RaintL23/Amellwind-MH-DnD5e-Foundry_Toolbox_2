@@ -38,6 +38,16 @@ export interface ProficiencySliceInput {
   optionalFeatureOriginFeatSkillChoices: Record<number, SkillKey[]>;
 }
 
+function nextGrantList<T>(prev: T[], next: T[]): T[] {
+  if (
+    prev.length === next.length &&
+    prev.every((item, index) => item === next[index])
+  ) {
+    return prev;
+  }
+  return next;
+}
+
 export function useProficiencySlice({
   setCharacter,
   originFeatSkillChoices,
@@ -118,39 +128,61 @@ export function useProficiencySlice({
   }) => {
     const { source } = payload;
     if (payload.skillGrants !== undefined) {
-      if (source === "class") setClassSkillGrants(payload.skillGrants);
-      else if (source === "background") setBgSkillGrants(payload.skillGrants);
-      else if (source === "species") setSpeciesSkillGrants(payload.skillGrants);
-      else setFeatGrantsList(payload.skillGrants);
+      const next = payload.skillGrants;
+      if (source === "class") {
+        setClassSkillGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "background") {
+        setBgSkillGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "species") {
+        setSpeciesSkillGrants((prev) => nextGrantList(prev, next));
+      } else {
+        setFeatGrantsList((prev) => nextGrantList(prev, next));
+      }
     }
     if (payload.expertiseGrants !== undefined) {
-      if (source === "class") setClassExpertiseGrants(payload.expertiseGrants);
-      else setFeatExpertiseGrants(payload.expertiseGrants);
+      const next = payload.expertiseGrants;
+      if (source === "class") {
+        setClassExpertiseGrants((prev) => nextGrantList(prev, next));
+      } else {
+        setFeatExpertiseGrants((prev) => nextGrantList(prev, next));
+      }
     }
     if (payload.skillAdvantages !== undefined) {
-      setAllSkillAdvantages(payload.skillAdvantages);
+      setAllSkillAdvantages((prev) => nextGrantList(prev, payload.skillAdvantages!));
     }
     if (payload.saveProficiencies !== undefined) {
-      setSaveProficiencyAbilities(payload.saveProficiencies);
+      setSaveProficiencyAbilities((prev) =>
+        nextGrantList(prev, payload.saveProficiencies!),
+      );
     }
     if (payload.toolGrants !== undefined) {
-      if (source === "class") setClassToolGrants(payload.toolGrants);
-      else if (source === "background") setBgToolGrants(payload.toolGrants);
-      else if (source === "species") setSpeciesToolGrants(payload.toolGrants);
+      const next = payload.toolGrants;
+      if (source === "class") {
+        setClassToolGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "background") {
+        setBgToolGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "species") {
+        setSpeciesToolGrants((prev) => nextGrantList(prev, next));
+      }
     }
     if (payload.armorGrants !== undefined && source === "class") {
-      setClassArmorGrants(payload.armorGrants);
+      setClassArmorGrants((prev) => nextGrantList(prev, payload.armorGrants!));
     }
     if (payload.weaponGrants !== undefined && source === "class") {
-      setClassWeaponGrants(payload.weaponGrants);
+      setClassWeaponGrants((prev) => nextGrantList(prev, payload.weaponGrants!));
     }
     if (payload.languageGrants !== undefined) {
-      if (source === "class") setClassLanguageGrants(payload.languageGrants);
-      else if (source === "background") setBgLanguageGrants(payload.languageGrants);
-      else if (source === "species") setSpeciesLanguageGrants(payload.languageGrants);
+      const next = payload.languageGrants;
+      if (source === "class") {
+        setClassLanguageGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "background") {
+        setBgLanguageGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "species") {
+        setSpeciesLanguageGrants((prev) => nextGrantList(prev, next));
+      }
     }
     if (payload.defenseGrants !== undefined && source === "species") {
-      setSpeciesDefenseGrants(payload.defenseGrants);
+      setSpeciesDefenseGrants((prev) => nextGrantList(prev, payload.defenseGrants!));
     }
   }, []);
 
@@ -543,17 +575,60 @@ export function useProficiencySlice({
 
   useEffect(() => {
     setCharacter((prev) => {
+      const languages =
+        identityGrantsResult.languages.length > 0
+          ? identityGrantsResult.languages
+          : ["Common"];
+
+      const skillsUnchanged =
+        prev.skills === proficiencyResult.skills ||
+        (Object.keys(prev.skills).length ===
+          Object.keys(proficiencyResult.skills).length &&
+          (Object.keys(proficiencyResult.skills) as SkillKey[]).every(
+            (key) => prev.skills[key] === proficiencyResult.skills[key],
+          ));
+      const savesUnchanged =
+        prev.savingThrows === proficiencyResult.savingThrows ||
+        (Object.keys(prev.savingThrows).length ===
+          Object.keys(proficiencyResult.savingThrows).length &&
+          (Object.keys(proficiencyResult.savingThrows) as AbilityKey[]).every(
+            (key) => prev.savingThrows[key] === proficiencyResult.savingThrows[key],
+          ));
+      const languagesUnchanged =
+        prev.languages.length === languages.length &&
+        prev.languages.every((lang, index) => lang === languages[index]);
+      const resistancesUnchanged =
+        prev.damageResistances.length ===
+          identityGrantsResult.resistances.length &&
+        prev.damageResistances.every(
+          (type, index) => type === identityGrantsResult.resistances[index],
+        );
+      const immunitiesUnchanged =
+        prev.damageImmunities.length === identityGrantsResult.immunities.length &&
+        prev.damageImmunities.every(
+          (type, index) => type === identityGrantsResult.immunities[index],
+        );
+      const nextPassive = 10 + prev.getSkillModifier("prc");
+
+      if (
+        skillsUnchanged &&
+        savesUnchanged &&
+        languagesUnchanged &&
+        resistancesUnchanged &&
+        immunitiesUnchanged &&
+        prev.passivePerception === nextPassive
+      ) {
+        return prev;
+      }
+
       const next = Object.assign(
         Object.create(Object.getPrototypeOf(prev)) as Character,
         prev,
       );
       next.skills = proficiencyResult.skills;
       next.savingThrows = proficiencyResult.savingThrows;
-      next.passivePerception = 10 + next.getSkillModifier("prc");
-      next.languages =
-        identityGrantsResult.languages.length > 0
-          ? identityGrantsResult.languages
-          : ["Common"];
+      next.passivePerception = nextPassive;
+      next.languages = languages;
       next.damageResistances = identityGrantsResult.resistances;
       next.damageImmunities = identityGrantsResult.immunities;
       return next;

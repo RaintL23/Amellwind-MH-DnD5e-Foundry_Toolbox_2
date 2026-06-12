@@ -13,7 +13,12 @@ import {
   getActiveWeaponDamage,
   getActiveWeaponDamageLabel,
 } from "@/features/weapons/utils/weapon-mode.utils";
+import { blocksOffHand } from "@/features/weapons/utils/weapon-hands.utils";
 import { getUnarmedStrikeProfile } from "./unarmed-strike.utils";
+
+function hasLightProperty(equipped: EquippedWeapon): boolean {
+  return equipped.weapon.properties.includes("L");
+}
 
 /**
  * Parses a dice notation string like "1d8", "2d6", "1d12" into structured data.
@@ -203,14 +208,22 @@ function calculateWeaponDamage(
 }
 
 /**
- * Checks if dual-wielding is valid (both weapons must have Light property).
+ * Whether off-hand weapon damage should be included in DPT.
+ * Amellwind: both weapons must be Light.
+ * D&D: any equipped off-hand weapon when main hand does not block the slot.
  */
-function canDualWield(mainHand: EquippedWeapon | null, offHand: EquippedWeapon | null): boolean {
+function canIncludeOffHandDamage(
+  mainHand: EquippedWeapon | null,
+  offHand: EquippedWeapon | null,
+  useAmellwindHomebrew: boolean,
+): boolean {
   if (!mainHand || !offHand) return false;
-  return (
-    mainHand.weapon.properties.includes("L") &&
-    offHand.weapon.properties.includes("L")
-  );
+
+  if (useAmellwindHomebrew) {
+    return hasLightProperty(mainHand) && hasLightProperty(offHand);
+  }
+
+  return !blocksOffHand(mainHand);
 }
 
 /**
@@ -351,7 +364,7 @@ export function calculateCombat(
     );
   }
 
-  if (offHand && canDualWield(mainHand, offHand)) {
+  if (offHand && canIncludeOffHandDamage(mainHand, offHand, useAmellwindHomebrew)) {
     offHandBreakdown = calculateWeaponDamage(
       character,
       offHand,
