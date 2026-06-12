@@ -13,6 +13,7 @@ export const RARITY_BADGE: Record<string, string> = {
 export const SLOT_LABELS: Partial<Record<NonNullable<BuilderSlotSelection>, string>> = {
   species: "Species",
   background: "Background",
+  faction: "Faction",
   class: "Class",
   subclass: "Subclass",
   "origin-feat": "Origin Feat",

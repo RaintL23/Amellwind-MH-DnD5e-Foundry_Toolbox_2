@@ -2,16 +2,18 @@ import { ReactNode } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { Shield } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { getAttunementInfo } from "../../utils/attunement.utils";
 import { useCharacterArmorClass } from "../../hooks/useCharacterArmorClass";
 import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
 import { useCharacterSpeed } from "../../hooks/useCharacterSpeed";
 import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function BuilderDerivedPanel() {
-  const { character } = useCharacterBuilder();
+  const { character, class: classSelection } = useCharacterBuilder();
   const hitPointStats = useCharacterHitPoints();
   const armorClass = useCharacterArmorClass();
   const speedStats = useCharacterSpeed();
+  const attunement = getAttunementInfo(classSelection?.name, character.level);
 
   return (
     <BuilderPanel
@@ -46,6 +48,18 @@ export function BuilderDerivedPanel() {
           label="Initiative"
           value={formatModifier(character.getModifier("dex"))}
         />
+        <DerivedRow
+          label="Attunement"
+          value={`${attunement.attunementSlots} slots`}
+          valueTooltip={attunement.tooltip}
+        />
+        {attunement.isArtificer && attunement.artificerBonusMaterialSlots > 0 && (
+          <DerivedRow
+            label="Bonus Material Slots"
+            value={`+${attunement.artificerBonusMaterialSlots} (weapon & armor)`}
+            valueTooltip={attunement.tooltip}
+          />
+        )}
       </div>
     </BuilderPanel>
   );

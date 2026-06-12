@@ -30,6 +30,7 @@ import { SpellLibraryPanel } from "./SpellLibraryPanel";
 import { OptionalFeatureLibraryPanel } from "./OptionalFeatureLibraryPanel";
 import { BuilderLibraryPanel } from "./library/BuilderLibraryPanel";
 import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
+import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.utils";
 import { useSpellcasting } from "../../hooks/useSpellcasting";
@@ -55,6 +56,8 @@ export function BuilderCenterPanel() {
     backgroundOriginFeatGrant,
     backgroundOriginFeat,
     backstoryNotes,
+    faction,
+    setFaction,
     isOffHandBlocked,
     offHandBlockReason,
     hasIntegratedShield,
@@ -106,6 +109,7 @@ export function BuilderCenterPanel() {
     spellSelections ?? {},
     optionalFeatureSelections ?? {},
     optionalFeatureSpellGrants,
+    faction,
   );
 
   const optionalProgressions = useMemo(
@@ -138,6 +142,7 @@ export function BuilderCenterPanel() {
     selectedSlot &&
     selectedSlot !== "species" &&
     selectedSlot !== "background" &&
+    selectedSlot !== "faction" &&
     selectedSlot !== "backstory" &&
     selectedSlot !== "class" &&
     selectedSlot !== "subclass" &&
@@ -169,6 +174,8 @@ export function BuilderCenterPanel() {
         return !!species;
       case "background":
         return !!background;
+      case "faction":
+        return !!faction;
       case "class":
         return !!classSelection;
       case "subclass":
@@ -225,6 +232,9 @@ export function BuilderCenterPanel() {
       case "background":
         setBackground(null);
         break;
+      case "faction":
+        setFaction(null);
+        break;
       case "class":
         setClass(null);
         break;
@@ -254,6 +264,7 @@ export function BuilderCenterPanel() {
   }
 
   const showBackstoryPanel = selectedSlot === "backstory";
+  const showFactionPanel = selectedSlot === "faction";
   const showSpellLibrary =
     selectedSlot !== null && isSpellPickerSlot(selectedSlot);
   const showOptionalFeatureLibrary =
@@ -262,6 +273,7 @@ export function BuilderCenterPanel() {
   const showLibrary =
     selectedSlot &&
     selectedSlot !== "backstory" &&
+    selectedSlot !== "faction" &&
     !isSpellPickerSlot(selectedSlot) &&
     !isOptionalFeatureSlot(selectedSlot) &&
     (!isSlotOccupied(selectedSlot) ||
@@ -308,6 +320,7 @@ export function BuilderCenterPanel() {
           optionalFeatureOriginFeatSlots={optionalFeatureOriginFeatSlots}
           optionalFeatureOriginFeats={optionalFeatureOriginFeats}
           backstoryNotes={backstoryNotes}
+          faction={faction}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}
           onUnequipSlot={handleUnequipSlot}
@@ -428,6 +441,8 @@ export function BuilderCenterPanel() {
       )}
 
       {showBackstoryPanel && <BackstoryNotesPanel />}
+
+      {showFactionPanel && <FactionLibraryPanel />}
 
       {showSpellLibrary && selectedSlot && classSelection && (
         <SpellLibraryPanel

@@ -22,6 +22,7 @@ import { BuilderPanel } from "../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";
 import { cn } from "@/shared/utils/cn";
 import { SpellExpandedDetails } from "@/features/spells/components/SpellExpandedDetails";
+import { SpellMetaBadges } from "./SpellMetaBadges";
 import {
   grantsForSpellLevel,
   spellMatchesCharacterSpellList,
@@ -165,6 +166,7 @@ function SubclassGrantRow({
         <span className="shrink-0 rounded border border-emerald-700/40 bg-emerald-950/40 px-1 py-0 text-[9px] font-medium text-emerald-300">
           {badge}
         </span>
+        {spell && <SpellMetaBadges spell={spell} />}
         {spell && <SourceBadge source={spell.source} />}
         {spell && (
           <SpellInfoToggleButton
@@ -226,6 +228,7 @@ function SelectedSpellRow({
         <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
           {spell.name}
         </span>
+        {fullSpell && <SpellMetaBadges spell={fullSpell} />}
         {spell.source && <SourceBadge source={spell.source} />}
         {fullSpell && (
           <SpellInfoToggleButton
@@ -310,6 +313,7 @@ function AvailableSpellRow({
           <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
             {spell.name}
           </span>
+          <SpellMetaBadges spell={spell} />
           <SourceBadge source={spell.source} />
           <span className="shrink-0 text-[10px] text-muted-foreground">
             {spell.schoolName}

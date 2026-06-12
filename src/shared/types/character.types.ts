@@ -14,6 +14,7 @@ export type EquipmentSlotType =
 export type CharacterIdentitySlot =
   | "species"
   | "background"
+  | "faction"
   | "backstory"
   | "class"
   | "subclass"

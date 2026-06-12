@@ -1,5 +1,6 @@
 import { Sparkles } from "lucide-react";
-import type { BuilderSpellSelections } from "@/shared/types";
+import type { BuilderSpellSelections, Spell } from "@/shared/types";
+import { formatSpellNameWithMeta } from "./SpellMetaBadges";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
 import {
   grantsForPactPool,
@@ -20,7 +21,7 @@ interface SpellcastingGridPanelProps {
   spellcastingInfo: SpellcastingInfo;
   spellSelections: BuilderSpellSelections;
   spellLevelByName: Map<string, number>;
-  spellsByName: Array<{ name: string; level: number }>;
+  spellsByName: Spell[];
   selectedSlot: BuilderSlotSelection;
   onSelectSlot: (slot: BuilderSlotSelection) => void;
 }
@@ -51,11 +52,18 @@ const SPELL_LEVEL_COLORS: Record<number, string> = {
   9: "text-fuchsia-400",
 };
 
+function formatSpellListName(name: string, spellsByName: Spell[]): string {
+  const spell = spellsByName.find(
+    (s) => s.name.toLowerCase() === name.toLowerCase(),
+  );
+  return formatSpellNameWithMeta(name, spell);
+}
+
 function getCantripEquipped(
   spellSelections: BuilderSpellSelections,
   spellcastingInfo: SpellcastingInfo,
   spellLevelByName: Map<string, number>,
-  spellsByName: Array<{ name: string; level: number }>,
+  spellsByName: Spell[],
 ): { name: string; detail?: string } | null {
   const selected = (spellSelections ?? {})[0] ?? [];
   const alwaysPreparedGrants = grantsForSpellLevel(
@@ -97,9 +105,11 @@ function getCantripEquipped(
     ...bonusKnownGrants,
     ...optionalFeatureGrants,
   ]
-    .map((g) => g.name)
+    .map((g) => formatSpellListName(g.name, spellsByName))
     .join(", ");
-  const selectedNames = selected.map((s) => s.name).join(", ");
+  const selectedNames = selected
+    .map((s) => formatSpellListName(s.name, spellsByName))
+    .join(", ");
   const nameDetail = [subclassNames, selectedNames].filter(Boolean).join(" · ");
   const detail = nameDetail
     ? `${summaryParts.join(" + ")} — ${nameDetail}`
@@ -111,7 +121,7 @@ function getPactPoolEquipped(
   spellSelections: BuilderSpellSelections,
   spellcastingInfo: SpellcastingInfo,
   spellLevelByName: Map<string, number>,
-  spellsByName: Array<{ name: string; level: number }>,
+  spellsByName: Spell[],
 ): { name: string; detail?: string } | null {
   const selected = (spellSelections ?? {})[PACT_SPELL_POOL_LEVEL] ?? [];
   const maxLevel = spellcastingInfo.pactMaxSpellLevel;
@@ -166,9 +176,11 @@ function getPactPoolEquipped(
     ...bonusKnownGrants,
     ...optionalFeatureGrants,
   ]
-    .map((g) => g.name)
+    .map((g) => formatSpellListName(g.name, spellsByName))
     .join(", ");
-  const selectedNames = selected.map((s) => s.name).join(", ");
+  const selectedNames = selected
+    .map((s) => formatSpellListName(s.name, spellsByName))
+    .join(", ");
   const nameDetail = [subclassNames, selectedNames].filter(Boolean).join(" · ");
   const detail = nameDetail
     ? `${summaryParts.join(" · ")} — ${nameDetail}`
@@ -188,7 +200,7 @@ function getSlotEquipped(
   spellSelections: BuilderSpellSelections,
   spellcastingInfo: SpellcastingInfo,
   spellLevelByName: Map<string, number>,
-  spellsByName: Array<{ name: string; level: number }>,
+  spellsByName: Spell[],
 ): { name: string; detail?: string } | null {
   const selected = (spellSelections ?? {})[level] ?? [];
   const alwaysPreparedGrants = grantsForSpellLevel(
@@ -246,9 +258,11 @@ function getSlotEquipped(
     ...bonusKnownGrants,
     ...optionalFeatureGrants,
   ]
-    .map((g) => g.name)
+    .map((g) => formatSpellListName(g.name, spellsByName))
     .join(", ");
-  const selectedNames = selected.map((s) => s.name).join(", ");
+  const selectedNames = selected
+    .map((s) => formatSpellListName(s.name, spellsByName))
+    .join(", ");
   const nameDetail = [subclassNames, selectedNames].filter(Boolean).join(" · ");
   const detail = nameDetail
     ? `${summaryParts.join(" + ")} — ${nameDetail}`

@@ -2,6 +2,7 @@ import type {
   AbilityKey,
   SkillKey,
   AbilityScores,
+  BackgroundFaction,
   Class,
   Species,
   BackgroundAsiMode,
@@ -35,6 +36,7 @@ import type {
 } from "@/shared/types/proficiency.types";
 import type { DamageType } from "@/shared/types";
 import type { Character } from "../models/Character";
+import type { BuilderPersonality } from "../storage/builder-personality.storage";
 
 export interface CharacterBuilderContextValue {
   // Character
@@ -74,6 +76,8 @@ export interface CharacterBuilderContextValue {
   optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];
   optionalFeatureOriginFeatSkillChoices: Record<number, SkillKey[]>;
   backstoryNotes: string;
+  personality: BuilderPersonality;
+  faction: BackgroundFaction | null;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
   setClass: (selection: CharacterSelectionRef | null) => void;
@@ -106,6 +110,11 @@ export interface CharacterBuilderContextValue {
   backgroundAsiPlus1: AbilityKey | null;
   setBackgroundAsiPlus2: (ability: AbilityKey | null) => void;
   setBackgroundAsiPlus1: (ability: AbilityKey | null) => void;
+  setPersonality: (
+    value: BuilderPersonality | ((current: BuilderPersonality) => BuilderPersonality),
+  ) => void;
+  setPersonalityField: (field: keyof BuilderPersonality, value: string) => void;
+  setFaction: (faction: BackgroundFaction | null) => void;
   setBackstoryNotes: (
     value: string | ((current: string) => string),
   ) => void;

@@ -1,5 +1,6 @@
 import { useMemo } from "react";
-import type { Class, ClassTableGroup, Subclass } from "@/shared/types";
+import type { BackgroundFaction, Class, ClassTableGroup, Subclass } from "@/shared/types";
+import { resolveFactionExpandedSpellFilters } from "../data/faction-spells.data";
 import type { AbilityScores } from "@/shared/types";
 import type { BuilderSpellSelections, BuilderOptionalFeatureSelections } from "@/shared/types";
 import {
@@ -246,6 +247,7 @@ export function useSpellcasting(
   spellSelections: BuilderSpellSelections = {},
   optionalFeatureSelections: BuilderOptionalFeatureSelections = {},
   optionalFeatureSpellGrants: SubclassSpellGrant[] = [],
+  faction: BackgroundFaction | null = null,
 ): SpellcastingInfo {
   return useMemo((): SpellcastingInfo => {
     const none: SpellcastingInfo = {
@@ -283,6 +285,11 @@ export function useSpellcasting(
       !effective.fromSubclass && isPactMagicClass(classData);
     const sectionLabel = getSpellcastingSectionLabel(classData);
     const subclassSpells = resolveSubclassSpells(subclassData, level);
+    const factionSpellFilters = resolveFactionExpandedSpellFilters(faction);
+    const expandedSpellFilters = [
+      ...subclassSpells.expandedFilters,
+      ...factionSpellFilters,
+    ];
     const {
       spellProgression,
       cantripProgression,
@@ -337,7 +344,7 @@ export function useSpellcasting(
         subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
         subclassBonusKnown: subclassSpells.bonusKnown,
         optionalFeatureGranted: optionalFeatureSpellGrants,
-        expandedSpellFilters: subclassSpells.expandedFilters,
+        expandedSpellFilters,
         subclassName: subclassData?.name ?? null,
         subclassShortName: subclassData?.shortName ?? null,
         spellcastingFromSubclass: effective.fromSubclass,
@@ -408,7 +415,7 @@ export function useSpellcasting(
       subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
       subclassBonusKnown: subclassSpells.bonusKnown,
       optionalFeatureGranted: optionalFeatureSpellGrants,
-      expandedSpellFilters: subclassSpells.expandedFilters,
+      expandedSpellFilters,
       subclassName: subclassData?.name ?? null,
       subclassShortName: subclassData?.shortName ?? null,
       spellcastingFromSubclass: effective.fromSubclass,
@@ -421,6 +428,7 @@ export function useSpellcasting(
     spellSelections,
     optionalFeatureSelections,
     optionalFeatureSpellGrants,
+    faction,
   ]);
 }
 

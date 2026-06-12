@@ -1,4 +1,5 @@
-import { Dices, RotateCcw, User } from "lucide-react";
+import { Dices, FileDown, RotateCcw, User } from "lucide-react";
+import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -20,6 +21,8 @@ export function StatsPanel() {
     setLevel,
     resetBuild,
   } = useCharacterBuilder();
+  const { exportSheet, exporting, error: exportError } =
+    useCharacterSheetExport();
   const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
 
   return (
@@ -116,7 +119,22 @@ export function StatsPanel() {
           >
             <Dices className="h-3 w-3" aria-hidden />
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className={ICON_BUTTON_CLASS}
+            onClick={() => void exportSheet()}
+            disabled={exporting}
+            title="Export D&D 2024 character sheet (PDF)"
+            aria-label="Export D&D 2024 character sheet"
+          >
+            <FileDown className="h-3 w-3" aria-hidden />
+          </Button>
         </div>
+        {exportError && (
+          <p className="text-[10px] text-destructive">{exportError}</p>
+        )}
       </div>
 
       <AbilityScoresSection compact />

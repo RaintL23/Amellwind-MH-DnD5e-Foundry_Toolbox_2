@@ -5,9 +5,11 @@ import type {
   Class,
   Species,
   BackgroundAsiMode,
+  BackgroundFaction,
   CharacterSelectionRef,
   BuilderFeatSelection,
 } from "@/shared/types";
+import { getBackgroundById } from "@/features/backgrounds/services/background.service";
 import { getClassById } from "@/features/classes/services/class.service";
 import { getSpeciesById } from "@/features/species/services/species.service";
 import { getDndRaceById } from "@/features/dnd-races/services/dnd-race.service";
@@ -21,6 +23,12 @@ import {
   loadBuilderBackstoryNotes,
   persistBuilderBackstoryNotes,
 } from "../../storage/builder-backstory.storage";
+import {
+  EMPTY_BUILDER_PERSONALITY,
+  loadBuilderPersonality,
+  persistBuilderPersonality,
+  type BuilderPersonality,
+} from "../../storage/builder-personality.storage";
 
 export interface IdentitySliceInput {
   onSpeciesChange: () => void;
@@ -62,6 +70,10 @@ export function useIdentitySlice({
   const [backstoryNotes, setBackstoryNotesState] = useState(
     () => loadBuilderBackstoryNotes(),
   );
+  const [personality, setPersonalityState] = useState<BuilderPersonality>(
+    () => loadBuilderPersonality(),
+  );
+  const [faction, setFactionState] = useState<BackgroundFaction | null>(null);
 
   const [originFeatSkillChoices, setOriginFeatSkillChoicesState] = useState<SkillKey[]>([]);
   const [speciesOriginFeatGrant, setSpeciesOriginFeatGrant] =
@@ -77,6 +89,10 @@ export function useIdentitySlice({
     persistBuilderBackstoryNotes(backstoryNotes);
   }, [backstoryNotes]);
 
+  useEffect(() => {
+    persistBuilderPersonality(personality);
+  }, [personality]);
+
   const setBackstoryNotes = useCallback(
     (value: string | ((current: string) => string)) => {
       setBackstoryNotesState(value);
@@ -91,8 +107,29 @@ export function useIdentitySlice({
     setBackgroundAsiPlus1(null);
     setBackgroundOriginFeatGrant(null);
     setBackgroundOriginFeatState(null);
+    if (!selection) {
+      setFactionState(null);
+    }
     onBackgroundChange();
   }, [onBackgroundChange]);
+
+  const setFaction = useCallback((value: BackgroundFaction | null) => {
+    setFactionState(value);
+  }, []);
+
+  const setPersonality = useCallback(
+    (value: BuilderPersonality | ((current: BuilderPersonality) => BuilderPersonality)) => {
+      setPersonalityState(value);
+    },
+    [],
+  );
+
+  const setPersonalityField = useCallback(
+    (field: keyof BuilderPersonality, value: string) => {
+      setPersonalityState((prev) => ({ ...prev, [field]: value }));
+    },
+    [],
+  );
 
   const setSpecies = useCallback((selection: CharacterSelectionRef | null) => {
     setSpeciesState(selection);
@@ -302,8 +339,15 @@ export function useIdentitySlice({
     let cancelled = false;
 
     async function loadBackgroundOriginFeat() {
-      const dndBackground = await getDndBackgroundById(backgroundRef!.id);
+      const [dndBackground, mhBackground] = await Promise.all([
+        getDndBackgroundById(backgroundRef!.id),
+        getBackgroundById(backgroundRef!.id),
+      ]);
       if (cancelled) return;
+
+      if (mhBackground?.faction) {
+        setFactionState(mhBackground.faction);
+      }
 
       const grant = dndBackground?.originFeatGrant ?? null;
       setBackgroundOriginFeatGrant(grant);
@@ -344,6 +388,8 @@ export function useIdentitySlice({
     setSubclassState(null);
     setFeatSelections([]);
     setBackstoryNotesState("");
+    setPersonalityState({ ...EMPTY_BUILDER_PERSONALITY });
+    setFactionState(null);
     setUseTashaOrigin(false);
     setTashaPlus2(null);
     setTashaPlus1(null);
@@ -374,6 +420,8 @@ export function useIdentitySlice({
     backgroundOriginFeat,
     originFeatSkillChoices,
     backstoryNotes,
+    personality,
+    faction,
     useTashaOrigin,
     tashaPlus2,
     tashaPlus1,
@@ -388,6 +436,9 @@ export function useIdentitySlice({
     setFeatAtIndex,
     setSpeciesOriginFeat,
     setBackstoryNotes,
+    setPersonality,
+    setPersonalityField,
+    setFaction,
     setUseTashaOrigin,
     setTashaPlus2,
     setTashaPlus1,

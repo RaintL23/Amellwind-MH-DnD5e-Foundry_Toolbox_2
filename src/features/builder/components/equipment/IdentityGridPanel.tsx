@@ -3,9 +3,11 @@ import {
   Book,
   GraduationCap,
   ScrollText,
+  Shield,
   Sparkles,
   Users,
 } from "lucide-react";
+import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 import type {
   BuilderFeatSelection,
   CharacterSelectionRef,
@@ -30,6 +32,7 @@ import { OptionalFeatureGridPanel } from "./OptionalFeatureGridPanel";
 interface IdentityGridPanelProps {
   species: CharacterSelectionRef | null;
   background: CharacterSelectionRef | null;
+  faction: import("@/shared/types/background.types").BackgroundFaction | null;
   classSelection: CharacterSelectionRef | null;
   subclass: CharacterSelectionRef | null;
   classData: Class | null;
@@ -52,6 +55,7 @@ interface IdentityGridPanelProps {
 export function IdentityGridPanel({
   species,
   background,
+  faction,
   classSelection,
   subclass,
   classData,
@@ -143,6 +147,20 @@ export function IdentityGridPanel({
           onClickDetails={() => onSelectSlot("background")}
           onUnequip={background ? () => onUnequipSlot("background") : undefined}
           isSelected={selectedSlot === "background"}
+        />
+        <GridElementSlot
+          label="Faction"
+          icon={<Shield className="h-5 w-5 text-emerald-400" />}
+          equipped={
+            faction
+              ? { name: BACKGROUND_FACTION_LABELS[faction] }
+              : null
+          }
+          onClickEquip={() => onSelectSlot("faction")}
+          onClickDetails={() => onSelectSlot("faction")}
+          onUnequip={faction ? () => onUnequipSlot("faction") : undefined}
+          isSelected={selectedSlot === "faction"}
+          emptyTitle="Elegir facción de Amellwind"
         />
         <GridElementSlot
           label="Backstory"
