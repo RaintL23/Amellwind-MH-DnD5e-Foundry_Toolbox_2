@@ -13,23 +13,32 @@ export function getRuneSlotsForRarity(rarity: string): number {
   return RARITY_SLOT_MAP[rarity] ?? 1;
 }
 
+const DND_FIXED_RARITY = "Standard";
+
 export function makeWeaponSlot(weapon: Weapon, rarity: string): EquippedWeapon {
-  const runeSlots = getRuneSlotsForRarity(rarity);
+  const isDnd = weapon.contentSource === "dnd";
+  const effectiveRarity = isDnd ? DND_FIXED_RARITY : rarity;
+  const runeSlots = isDnd ? 0 : getRuneSlotsForRarity(rarity);
   const isTwoHanded = weapon.properties.includes("2H");
   return {
     weapon,
-    rarity,
+    rarity: effectiveRarity,
     runeSlots,
     runes: new Array<Rune | null>(runeSlots).fill(null),
     useVersatile: hasWeaponSwitchModes(weapon) ? false : isTwoHanded,
   };
 }
 
-export function makeArmorSlot(armor: ArmorItem, rarity: string): EquippedArmor {
-  const runeSlots = getRuneSlotsForRarity(rarity);
+export function makeArmorSlot(
+  armor: ArmorItem,
+  rarity: string,
+  homebrewEnabled = true,
+): EquippedArmor {
+  const effectiveRarity = homebrewEnabled ? rarity : DND_FIXED_RARITY;
+  const runeSlots = homebrewEnabled ? getRuneSlotsForRarity(rarity) : 0;
   return {
     armor,
-    rarity,
+    rarity: effectiveRarity,
     runeSlots,
     runes: new Array<Rune | null>(runeSlots).fill(null),
   };

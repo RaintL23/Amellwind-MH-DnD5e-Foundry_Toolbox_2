@@ -100,6 +100,7 @@ function calculateWeaponDamage(
   equipped: EquippedWeapon,
   attacksPerTurn: number,
   isOffHand: boolean,
+  useAmellwindHomebrew = true,
 ): DamageBreakdown {
   const diceNotation = getActiveWeaponDamage(equipped);
   const damageModeLabel = getActiveWeaponDamageLabel(equipped);
@@ -139,7 +140,9 @@ function calculateWeaponDamage(
   const runeDice: DiceRoll[] = [];
   const critRunes: CritRune[] = [];
 
-  for (const rune of equipped.runes) {
+  const runesToApply = useAmellwindHomebrew ? equipped.runes : [];
+
+  for (const rune of runesToApply) {
     if (rune) {
       const dice = extractRuneDamageDice(rune.weaponEffect);
       for (const d of dice) {
@@ -318,6 +321,7 @@ export function calculateCombat(
   className?: string | null,
   classData?: Class | null,
   speciesData?: Species | null,
+  useAmellwindHomebrew = true,
 ): CombatCalculation {
   if (useUnarmedStrike) {
     const unarmedBreakdown = calculateUnarmedStrikeDamage(
@@ -338,11 +342,23 @@ export function calculateCombat(
   let offHandBreakdown: DamageBreakdown | null = null;
 
   if (mainHand) {
-    mainHandBreakdown = calculateWeaponDamage(character, mainHand, attacksPerTurn, false);
+    mainHandBreakdown = calculateWeaponDamage(
+      character,
+      mainHand,
+      attacksPerTurn,
+      false,
+      useAmellwindHomebrew,
+    );
   }
 
   if (offHand && canDualWield(mainHand, offHand)) {
-    offHandBreakdown = calculateWeaponDamage(character, offHand, 1, true);
+    offHandBreakdown = calculateWeaponDamage(
+      character,
+      offHand,
+      1,
+      true,
+      useAmellwindHomebrew,
+    );
   }
 
   const totalDPT =

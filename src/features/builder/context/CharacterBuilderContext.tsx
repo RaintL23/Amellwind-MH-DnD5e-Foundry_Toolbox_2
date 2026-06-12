@@ -5,8 +5,13 @@ import {
   useCallback,
   useMemo,
   useRef,
+  useEffect,
   ReactNode,
 } from "react";
+import {
+  loadUseAmellwindHomebrew,
+  persistUseAmellwindHomebrew,
+} from "../storage/builder-homebrew.storage";
 import type { AbilityKey, AbilityScores } from "@/shared/types";
 import {
   composeAlignment,
@@ -31,6 +36,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [character, setCharacter] = useState<Character>(() => new Character());
   const [attacksPerTurnOverride, setAttacksPerTurnOverride] = useState<number | null>(null);
   const [useUnarmedStrike, setUseUnarmedStrike] = useState(false);
+  const [useAmellwindHomebrew, setUseAmellwindHomebrewState] = useState(
+    () => loadUseAmellwindHomebrew(),
+  );
+  const prevHomebrewRef = useRef(useAmellwindHomebrew);
 
   const proficiencyResetRef = useRef({
     resetOnSpeciesChange: () => {},
@@ -76,7 +85,27 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     speciesData: identity.speciesData,
     attacksPerTurnOverride,
     useUnarmedStrike,
+    useAmellwindHomebrew,
   });
+
+  useEffect(() => {
+    if (prevHomebrewRef.current && !useAmellwindHomebrew) {
+      equipment.clearHomebrewEquipment();
+      void identity.clearAmellwindIdentity();
+      spell.clearAmellwindOptionalOriginFeats();
+    }
+    prevHomebrewRef.current = useAmellwindHomebrew;
+  }, [
+    useAmellwindHomebrew,
+    equipment.clearHomebrewEquipment,
+    identity.clearAmellwindIdentity,
+    spell.clearAmellwindOptionalOriginFeats,
+  ]);
+
+  const setUseAmellwindHomebrew = useCallback((value: boolean) => {
+    setUseAmellwindHomebrewState(value);
+    persistUseAmellwindHomebrew(value);
+  }, []);
 
   proficiencyResetRef.current = {
     resetOnSpeciesChange: proficiency.resetOnSpeciesChange,
@@ -175,6 +204,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       effectiveAttacksPerTurn: equipment.effectiveAttacksPerTurn,
       useUnarmedStrike,
       setUseUnarmedStrike,
+      useAmellwindHomebrew,
+      setUseAmellwindHomebrew,
       mainHand: equipment.mainHand,
       offHand: equipment.offHand,
       armor: equipment.armor,
@@ -321,6 +352,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setAbilityScores,
       attacksPerTurnOverride,
       useUnarmedStrike,
+      useAmellwindHomebrew,
+      setUseAmellwindHomebrew,
       resetBuild,
       identity,
       spell,

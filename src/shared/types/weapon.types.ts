@@ -5,9 +5,15 @@ export interface WeaponRarityRow {
   columns: Record<string, string | string[]>;
 }
 
+export type WeaponContentSource = "amellwind" | "dnd";
+
 export interface Weapon {
   name: string;
   source: string;
+  /** Defaults to Amellwind MH when omitted (legacy GTMH weapons). */
+  contentSource?: WeaponContentSource;
+  /** D&D 5e simple/martial category from items-base.json. */
+  weaponCategory?: "simple" | "martial";
   page?: number;
   dmg1: string;
   dmg2?: string;

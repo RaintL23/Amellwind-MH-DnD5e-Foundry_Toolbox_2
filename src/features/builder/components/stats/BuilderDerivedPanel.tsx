@@ -9,7 +9,8 @@ import { useCharacterSpeed } from "../../hooks/useCharacterSpeed";
 import { BuilderPanel } from "../shared/BuilderPanel";
 
 export function BuilderDerivedPanel() {
-  const { character, class: classSelection } = useCharacterBuilder();
+  const { character, class: classSelection, useAmellwindHomebrew } =
+    useCharacterBuilder();
   const hitPointStats = useCharacterHitPoints();
   const armorClass = useCharacterArmorClass();
   const speedStats = useCharacterSpeed();
@@ -53,7 +54,9 @@ export function BuilderDerivedPanel() {
           value={`${attunement.attunementSlots} slots`}
           valueTooltip={attunement.tooltip}
         />
-        {attunement.isArtificer && attunement.artificerBonusMaterialSlots > 0 && (
+        {useAmellwindHomebrew &&
+          attunement.isArtificer &&
+          attunement.artificerBonusMaterialSlots > 0 && (
           <DerivedRow
             label="Bonus Material Slots"
             value={`+${attunement.artificerBonusMaterialSlots} (weapon & armor)`}

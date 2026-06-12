@@ -15,15 +15,21 @@ const SOURCES: Array<{
 interface FeatSourceBadgeGroupProps {
   value: FeatDataSource;
   onChange: (source: FeatDataSource) => void;
+  hideAmellwind?: boolean;
 }
 
 export function FeatSourceBadgeGroup({
   value,
   onChange,
+  hideAmellwind = false,
 }: FeatSourceBadgeGroupProps) {
+  const visibleSources = hideAmellwind
+    ? SOURCES.filter((source) => source.id !== "amellwind")
+    : SOURCES;
+
   return (
     <div className="flex flex-wrap gap-1 normal-case">
-      {SOURCES.map((source) => {
+      {visibleSources.map((source) => {
         const isSelected = value === source.id;
         return (
           <button

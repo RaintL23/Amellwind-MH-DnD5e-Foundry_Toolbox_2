@@ -27,6 +27,7 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
     armor,
     trinket1,
     trinket2,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const { species } = useSelectedSpecies();
@@ -82,14 +83,16 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
 
   const runeBonuses = useMemo(
     () =>
-      collectEquippedRuneSpeedBonuses({
-        mainHand,
-        offHand,
-        armor,
-        trinket1,
-        trinket2,
-      }),
-    [mainHand, offHand, armor, trinket1, trinket2],
+      useAmellwindHomebrew
+        ? collectEquippedRuneSpeedBonuses({
+            mainHand,
+            offHand,
+            armor,
+            trinket1,
+            trinket2,
+          })
+        : [],
+    [mainHand, offHand, armor, trinket1, trinket2, useAmellwindHomebrew],
   );
 
   return useMemo(

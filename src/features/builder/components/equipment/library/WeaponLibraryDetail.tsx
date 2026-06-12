@@ -40,6 +40,7 @@ import { getWeaponEffectiveTierLabel } from "../../../utils/equipment-proficienc
 interface WeaponLibraryDetailProps {
   equipped: EquippedWeapon;
   weaponProficiencies?: string[];
+  showHomebrewDetails?: boolean;
   onModeChange?: (useSecondaryMode: boolean) => void;
 }
 
@@ -226,21 +227,81 @@ function WeaponFeatureSection({
 export function WeaponLibraryDetail({
   equipped,
   weaponProficiencies = [],
+  showHomebrewDetails = true,
   onModeChange,
 }: WeaponLibraryDetailProps) {
-  const { weapon, useVersatile, rarity } = equipped;
+  const { weapon, useVersatile } = equipped;
+  const isDndWeapon = weapon.contentSource === "dnd" || !showHomebrewDetails;
   const rarityIndex = useMemo(() => getRarityIndex(equipped), [equipped]);
-  const row = weapon.rarityRows[rarityIndex];
-  const simpleModeLabel = getWeaponEffectiveTierLabel(
-    weapon.name,
-    weaponProficiencies,
-  );
 
   const activeDamage = getActiveWeaponDamage(equipped);
   const damageModeLabel = getActiveWeaponDamageLabel(equipped);
   const activeGripMode = getActiveWeaponGripMode(equipped);
   const showModeToggle = onModeChange && hasWeaponGripModes(weapon);
   const showIntegratedShield = activeGripMode?.hasShield ?? false;
+
+  if (isDndWeapon) {
+    return (
+      <Accordion type="single" collapsible defaultValue="weapon-details">
+        <AccordionItem value="weapon-details" className="border-0">
+          <AccordionTrigger className="gap-1.5 py-2 text-xs font-medium hover:no-underline">
+            <span className="flex min-w-0 items-center gap-1.5 text-violet-400">
+              <Sword className="h-3.5 w-3.5 shrink-0" aria-hidden />
+              <span className="truncate">{weapon.name}</span>
+            </span>
+          </AccordionTrigger>
+          <AccordionContent className="pb-1 pt-0">
+            <div className="mb-2 flex flex-wrap items-center gap-1.5">
+              {weapon.weaponCategory && (
+                <Badge variant="secondary" className="text-[10px] capitalize">
+                  {weapon.weaponCategory}
+                </Badge>
+              )}
+              {weapon.properties.map((prop) => (
+                <Badge key={prop} variant="outline" className="text-[10px]">
+                  {PROPERTY_LABELS[prop] ?? prop}
+                </Badge>
+              ))}
+              <span className="text-[10px] text-muted-foreground">
+                {weapon.source}
+                {weapon.page !== undefined ? ` p.${weapon.page}` : ""}
+              </span>
+            </div>
+
+            {showModeToggle && (
+              <WeaponModeToggle
+                weapon={weapon}
+                useSecondaryMode={useVersatile}
+                onChange={onModeChange}
+                className="mb-3"
+              />
+            )}
+
+            <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
+              <StatBox
+                label={
+                  damageModeLabel === "Damage"
+                    ? "Damage"
+                    : `Damage (${damageModeLabel})`
+                }
+                value={`${activeDamage} ${weapon.dmgType}`}
+              />
+              <StatBox label="Weight" value={`${weapon.weight} lb`} />
+              <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
+              {weapon.range && <StatBox label="Range" value={weapon.range} />}
+            </div>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
+    );
+  }
+
+  const row = weapon.rarityRows[rarityIndex];
+  const simpleModeLabel = getWeaponEffectiveTierLabel(
+    weapon.name,
+    weaponProficiencies,
+  );
+  const { rarity } = equipped;
 
   if (!row) {
     return (

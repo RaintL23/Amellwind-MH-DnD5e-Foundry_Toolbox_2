@@ -29,6 +29,11 @@ import {
   persistBuilderPersonality,
   type BuilderPersonality,
 } from "../../storage/builder-personality.storage";
+import {
+  clearAmellwindFeats,
+  isAmellwindBackgroundSelection,
+  isAmellwindSpeciesSelection,
+} from "../../utils/homebrew-cleanup.utils";
 
 export interface IdentitySliceInput {
   onSpeciesChange: () => void;
@@ -377,6 +382,38 @@ export function useIdentitySlice({
     };
   }, [backgroundRef?.id]);
 
+  const clearAmellwindIdentity = useCallback(async () => {
+    setFactionState(null);
+    setFeatSelections((prev) => clearAmellwindFeats(prev));
+    setSpeciesOriginFeatState((prev) =>
+      prev?.source === "amellwind" ? null : prev,
+    );
+    setBackgroundOriginFeatState((prev) =>
+      prev?.source === "amellwind" ? null : prev,
+    );
+
+    if (species && (await isAmellwindSpeciesSelection(species))) {
+      setSpeciesState(null);
+      setSpeciesData(null);
+      setSpeciesAbilityChoices([]);
+      setSpeciesOriginFeatGrant(null);
+      setSpeciesOriginFeatState(null);
+      setOriginFeatSkillChoicesState([]);
+      setUseTashaOrigin(false);
+      setTashaPlus2(null);
+      setTashaPlus1(null);
+    }
+
+    if (backgroundRef && (await isAmellwindBackgroundSelection(backgroundRef))) {
+      setBackgroundRef(null);
+      setBackgroundAsiMode(null);
+      setBackgroundAsiPlus2(null);
+      setBackgroundAsiPlus1(null);
+      setBackgroundOriginFeatGrant(null);
+      setBackgroundOriginFeatState(null);
+    }
+  }, [species, backgroundRef]);
+
   const resetIdentitySlice = useCallback(() => {
     setSpeciesState(null);
     setSpeciesData(null);
@@ -449,5 +486,6 @@ export function useIdentitySlice({
     setOriginFeatSkillChoices,
     trimFeatSelectionsForLevel,
     resetIdentitySlice,
+    clearAmellwindIdentity,
   };
 }

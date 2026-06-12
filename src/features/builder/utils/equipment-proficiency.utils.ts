@@ -1,4 +1,4 @@
-import type { ArmorItem } from "@/shared/types";
+import type { ArmorItem, Weapon } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
 import { isClothingArmor } from "@/features/builder/data/armor.data";
 import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
@@ -189,11 +189,46 @@ export function resolveProficiencyItems(
   return [...new Set(resolveFixedNamedGrants(grants).map((entry) => entry.item))];
 }
 
+function checkDndWeaponCategoryProficiency(
+  weapon: Weapon,
+  weaponProficiencies: string[],
+): WeaponProficiencyCheckResult {
+  const category = weapon.weaponCategory;
+  if (!category) return { allowed: true };
+
+  const hasSimple = hasSimpleProficiency(weaponProficiencies);
+  const hasMartial = hasMartialProficiency(weaponProficiencies);
+  const nameKey = normalizeProficiencyKey(weapon.name);
+
+  if (hasProficiency(weaponProficiencies, weapon.name)) {
+    return { allowed: true, effectiveTier: category };
+  }
+
+  if (category === "simple" && (hasSimple || SIMPLE_WEAPON_NAMES.has(nameKey))) {
+    return { allowed: true, effectiveTier: "simple" };
+  }
+
+  if (category === "martial" && (hasMartial || MARTIAL_WEAPON_NAMES.has(nameKey))) {
+    return { allowed: true, effectiveTier: "martial" };
+  }
+
+  const label = category === "simple" ? "Simple" : "Martial";
+  return {
+    allowed: false,
+    reason: `Requires ${label} weapon proficiency to use ${weapon.name}.`,
+  };
+}
+
 export function checkWeaponProficiency(
   weaponName: string,
   weaponProficiencies: string[],
   armorProficiencies: string[],
+  weapon?: Weapon,
 ): WeaponProficiencyCheckResult {
+  if (weapon?.contentSource === "dnd") {
+    return checkDndWeaponCategoryProficiency(weapon, weaponProficiencies);
+  }
+
   const rule = getWeaponProficiencyRule(weaponName);
   if (!rule) return { allowed: true };
 

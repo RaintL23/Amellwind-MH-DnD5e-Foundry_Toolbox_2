@@ -53,6 +53,8 @@ export interface CharacterBuilderContextValue {
   effectiveAttacksPerTurn: number;
   useUnarmedStrike: boolean;
   setUseUnarmedStrike: (value: boolean) => void;
+  useAmellwindHomebrew: boolean;
+  setUseAmellwindHomebrew: (value: boolean) => void;
 
   // Equipment
   mainHand: EquippedWeapon | null;

@@ -27,6 +27,7 @@ export function ArmorLibraryPanel({ selectedSlot, q }: ArmorLibraryPanelProps) {
     equipArmor,
     equipTrinket,
     resolvedArmorItems,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
 
   const {
@@ -37,7 +38,8 @@ export function ArmorLibraryPanel({ selectedSlot, q }: ArmorLibraryPanelProps) {
 
   const isArmorSlot = selectedSlot === "armor";
   const isTrinketSlot =
-    selectedSlot === "trinket1" || selectedSlot === "trinket2";
+    useAmellwindHomebrew &&
+    (selectedSlot === "trinket1" || selectedSlot === "trinket2");
 
   const inventoryArmorsFiltered = useMemo(() => {
     if (!isArmorSlot) return [];

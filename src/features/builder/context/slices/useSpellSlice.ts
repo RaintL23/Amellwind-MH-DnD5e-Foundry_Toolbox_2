@@ -16,6 +16,7 @@ import {
   type OptionalFeatureOriginFeatSlot,
 } from "../../utils/optional-feature-feat-grants.utils";
 import { PACT_SPELL_POOL_LEVEL } from "../../utils/pact-magic.utils";
+import { clearAmellwindFeats } from "../../utils/homebrew-cleanup.utils";
 
 export interface SpellSliceInput {
   classData: Class | null;
@@ -230,6 +231,10 @@ export function useSpellSlice({
     });
   }, [classData?.id, classData?.casterProgression]);
 
+  const clearAmellwindOptionalOriginFeats = useCallback(() => {
+    setOptionalFeatureOriginFeats((prev) => clearAmellwindFeats(prev));
+  }, []);
+
   return {
     spellSelections,
     optionalFeatureSelections,
@@ -246,5 +251,6 @@ export function useSpellSlice({
     clearSubclassOptionalFeatures,
     resetOnClassChange,
     resetSpellSlice,
+    clearAmellwindOptionalOriginFeats,
   };
 }

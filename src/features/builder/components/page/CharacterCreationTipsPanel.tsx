@@ -19,7 +19,7 @@ function findTableRow(table: { rows: string[][] }, bracket: string) {
 
 export function CharacterCreationTipsPanel() {
   const [open, setOpen] = useState(false);
-  const { character } = useCharacterBuilder();
+  const { character, useAmellwindHomebrew } = useCharacterBuilder();
   const levelBracket = getLevelBracket(character.level);
 
   const levelRecommendations = useMemo(() => {
@@ -29,6 +29,8 @@ export function CharacterCreationTipsPanel() {
     const materials = findTableRow(STARTING_MATERIALS_TABLE, levelBracket);
     return { wealth, weapons, armor, materials };
   }, [levelBracket]);
+
+  if (!useAmellwindHomebrew) return null;
 
   return (
     <div className="rounded-lg border border-primary/20 bg-primary/5 overflow-hidden">

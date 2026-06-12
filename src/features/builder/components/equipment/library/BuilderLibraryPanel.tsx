@@ -69,6 +69,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     class: classSelection,
     subclass,
     optionalFeatureOriginFeatSlots,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
 
   const { classData } = useSelectedClass();
@@ -92,11 +93,18 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     isOriginFeatSlotSelected || isInvocationOriginFeatSlotSelected;
 
   useEffect(() => {
-    setIdentitySource("amellwind");
-    setFeatSource("amellwind");
+    setIdentitySource(useAmellwindHomebrew ? "amellwind" : "dnd");
+    setFeatSource(useAmellwindHomebrew ? "amellwind" : "dnd2024");
     setShowAsiPanel(false);
     setFeatSearchHidden(false);
-  }, [selectedSlot]);
+  }, [selectedSlot, useAmellwindHomebrew]);
+
+  useEffect(() => {
+    if (!useAmellwindHomebrew) {
+      setIdentitySource("dnd");
+      setFeatSource("dnd2024");
+    }
+  }, [useAmellwindHomebrew]);
 
   useEffect(() => {
     if (!isFeatPicker) return;
@@ -149,7 +157,8 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     showArmorDetail ||
     featSearchHidden;
 
-  const showIdentitySourceToggle = isSpeciesSlot || isBackgroundSlot;
+  const showIdentitySourceToggle =
+    useAmellwindHomebrew && (isSpeciesSlot || isBackgroundSlot);
   const showFeatSourceToggle =
     isFeatSlot && !showAsiPanel && !isAnyOriginFeatSlotSelected;
 
@@ -183,7 +192,11 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
         />
       )}
       {showFeatSourceToggle && (
-        <FeatSourceBadgeGroup value={featSource} onChange={setFeatSource} />
+        <FeatSourceBadgeGroup
+          value={featSource}
+          onChange={setFeatSource}
+          hideAmellwind={!useAmellwindHomebrew}
+        />
       )}
     </span>
   ) : (

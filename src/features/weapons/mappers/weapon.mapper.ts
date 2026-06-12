@@ -190,6 +190,7 @@ export function mapWeapon(raw: any): Weapon {
   return {
     name: String(raw.name ?? "Unknown"),
     source: String(raw.source ?? "AGMH"),
+    contentSource: "amellwind",
     page: typeof raw.page === "number" ? raw.page : undefined,
     dmg1: String(raw.dmg1 ?? ""),
     dmg2: raw.dmg2 ? String(raw.dmg2) : undefined,

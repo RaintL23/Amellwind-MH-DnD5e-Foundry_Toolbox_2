@@ -1,9 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
+import { getDndBuilderWeapons } from "@/features/builder/services/dnd-weapon.service";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
 import { checkWeaponProficiency } from "@/features/builder/utils/equipment-proficiency.utils";
+import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
 import {
   getOffHandWeaponBlockLabel,
   getOffHandWeaponBlockReason,
@@ -34,20 +36,25 @@ export function WeaponLibraryPanel({ selectedSlot, q }: WeaponLibraryPanelProps)
     setVersatileMode,
     resolvedWeaponItems,
     resolvedArmorItems,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
 
+  const { classData } = useSelectedClass();
   const { weapons: inventoryWeapons, addEquipmentBundle } = useBuilderInventory();
 
   const isWeaponSlot =
     selectedSlot === "mainHand" || selectedSlot === "offHand";
 
+  const prefer2024 = classData?.source === "XPHB";
+
   useEffect(() => {
     if (!isWeaponSlot) return;
     setWeaponsLoading(true);
-    getAllWeapons()
-      .then(setAllWeapons)
-      .finally(() => setWeaponsLoading(false));
-  }, [isWeaponSlot, selectedSlot]);
+    const load = useAmellwindHomebrew
+      ? getAllWeapons()
+      : getDndBuilderWeapons(prefer2024);
+    load.then(setAllWeapons).finally(() => setWeaponsLoading(false));
+  }, [isWeaponSlot, selectedSlot, useAmellwindHomebrew, prefer2024]);
 
   const inventoryWeaponsFiltered = useMemo(() => {
     if (!isWeaponSlot) return [];
@@ -91,6 +98,7 @@ export function WeaponLibraryPanel({ selectedSlot, q }: WeaponLibraryPanelProps)
         weapon.name,
         resolvedWeaponItems,
         resolvedArmorItems,
+        weapon,
       );
       if (!proficiencyCheck.allowed) {
         return proficiencyCheck.reason ?? "Your class is not proficient with this weapon.";
@@ -143,6 +151,7 @@ export function WeaponLibraryPanel({ selectedSlot, q }: WeaponLibraryPanelProps)
       <WeaponLibraryDetail
         equipped={equippedWeapon}
         weaponProficiencies={resolvedWeaponItems}
+        showHomebrewDetails={useAmellwindHomebrew}
         onModeChange={(useSecondaryMode) => {
           if (selectedSlot === "mainHand" || selectedSlot === "offHand") {
             setVersatileMode(selectedSlot, useSecondaryMode);

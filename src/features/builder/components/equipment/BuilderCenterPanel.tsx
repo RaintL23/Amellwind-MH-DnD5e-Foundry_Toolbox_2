@@ -86,6 +86,7 @@ export function BuilderCenterPanel() {
     optionalFeatureSelections,
     setOptionalFeaturesForProgression,
     clearOptionalFeatureProgression,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
 
   const { selectedSlot, selectSlot, clearSelection } =
@@ -139,6 +140,7 @@ export function BuilderCenterPanel() {
         : null;
 
   const showRunePanel =
+    useAmellwindHomebrew &&
     selectedSlot &&
     selectedSlot !== "species" &&
     selectedSlot !== "background" &&
@@ -321,6 +323,7 @@ export function BuilderCenterPanel() {
           optionalFeatureOriginFeats={optionalFeatureOriginFeats}
           backstoryNotes={backstoryNotes}
           faction={faction}
+          showFaction={useAmellwindHomebrew}
           selectedSlot={selectedSlot}
           onSelectSlot={selectSlot}
           onUnequipSlot={handleUnequipSlot}
@@ -341,6 +344,7 @@ export function BuilderCenterPanel() {
         }
       >
         <EquipmentGridPanel
+          showTrinkets={useAmellwindHomebrew}
           mainHand={mainHand}
           offHand={offHand}
           armor={armor}
@@ -425,6 +429,7 @@ export function BuilderCenterPanel() {
         (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
           <WeaponDetailPanel
             equipped={selectedWeapon}
+            showHomebrewDetails={useAmellwindHomebrew}
             onRarityChange={(r) => setWeaponRarity(selectedSlot, r)}
             onVersatileChange={(twoHanded) =>
               setVersatileMode(selectedSlot, twoHanded)
@@ -433,7 +438,11 @@ export function BuilderCenterPanel() {
         )}
 
       {selectedSlot === "armor" && armor && (
-        <ArmorDetailPanel armor={armor} onRarityChange={setArmorRarity} />
+        <ArmorDetailPanel
+          armor={armor}
+          showHomebrewDetails={useAmellwindHomebrew}
+          onRarityChange={setArmorRarity}
+        />
       )}
 
       {showRunePanel && selectedSlot && (
@@ -442,7 +451,7 @@ export function BuilderCenterPanel() {
 
       {showBackstoryPanel && <BackstoryNotesPanel />}
 
-      {showFactionPanel && <FactionLibraryPanel />}
+      {useAmellwindHomebrew && showFactionPanel && <FactionLibraryPanel />}
 
       {showSpellLibrary && selectedSlot && classSelection && (
         <SpellLibraryPanel

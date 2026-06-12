@@ -15,6 +15,7 @@ import {
 import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 
 interface EquipmentGridPanelProps {
+  showTrinkets?: boolean;
   mainHand: EquippedWeapon | null;
   offHand: EquippedWeapon | null;
   armor: EquippedArmor | null;
@@ -32,6 +33,7 @@ interface EquipmentGridPanelProps {
 }
 
 export function EquipmentGridPanel({
+  showTrinkets = true,
   mainHand,
   offHand,
   armor,
@@ -52,25 +54,34 @@ export function EquipmentGridPanel({
   }
 
   return (
-    <div className="grid grid-cols-5 gap-1.5">
-      <GridElementSlot
-        label="Trinket"
-        icon={<Gem className="h-5 w-5 text-amber-400/80" />}
-        equipped={trinket1 ? { name: trinket1.name } : null}
-        onClickEquip={() => onSelectSlot("trinket1")}
-        onClickDetails={() => onSelectSlot("trinket1")}
-        onUnequip={trinket1 ? () => onUnequipSlot("trinket1") : undefined}
-        isSelected={selectedSlot === "trinket1"}
-      />
-      <GridElementSlot
-        label="Trinket"
-        icon={<Gem className="h-5 w-5 text-amber-400/80" />}
-        equipped={trinket2 ? { name: trinket2.name } : null}
-        onClickEquip={() => onSelectSlot("trinket2")}
-        onClickDetails={() => onSelectSlot("trinket2")}
-        onUnequip={trinket2 ? () => onUnequipSlot("trinket2") : undefined}
-        isSelected={selectedSlot === "trinket2"}
-      />
+    <div
+      className={cn(
+        "grid gap-1.5",
+        showTrinkets ? "grid-cols-5" : "grid-cols-3",
+      )}
+    >
+      {showTrinkets && (
+        <>
+          <GridElementSlot
+            label="Trinket"
+            icon={<Gem className="h-5 w-5 text-amber-400/80" />}
+            equipped={trinket1 ? { name: trinket1.name } : null}
+            onClickEquip={() => onSelectSlot("trinket1")}
+            onClickDetails={() => onSelectSlot("trinket1")}
+            onUnequip={trinket1 ? () => onUnequipSlot("trinket1") : undefined}
+            isSelected={selectedSlot === "trinket1"}
+          />
+          <GridElementSlot
+            label="Trinket"
+            icon={<Gem className="h-5 w-5 text-amber-400/80" />}
+            equipped={trinket2 ? { name: trinket2.name } : null}
+            onClickEquip={() => onSelectSlot("trinket2")}
+            onClickDetails={() => onSelectSlot("trinket2")}
+            onUnequip={trinket2 ? () => onUnequipSlot("trinket2") : undefined}
+            isSelected={selectedSlot === "trinket2"}
+          />
+        </>
+      )}
       <GridElementSlot
         label="Armor"
         accent="armor"

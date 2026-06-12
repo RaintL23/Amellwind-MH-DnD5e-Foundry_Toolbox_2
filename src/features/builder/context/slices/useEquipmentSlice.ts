@@ -33,6 +33,11 @@ import {
   isWeaponTwoHanded,
 } from "@/features/weapons/utils/weapon-hands.utils";
 import type { Character } from "../../models/Character";
+import {
+  isAmellwindWeapon,
+  stripRunesFromArmor,
+  stripRunesFromWeapon,
+} from "../../utils/homebrew-cleanup.utils";
 
 export interface EquipmentSliceInput {
   character: Character;
@@ -42,6 +47,7 @@ export interface EquipmentSliceInput {
   speciesData: Species | null;
   attacksPerTurnOverride: number | null;
   useUnarmedStrike: boolean;
+  useAmellwindHomebrew: boolean;
 }
 
 export function useEquipmentSlice({
@@ -52,6 +58,7 @@ export function useEquipmentSlice({
   speciesData,
   attacksPerTurnOverride,
   useUnarmedStrike,
+  useAmellwindHomebrew,
 }: EquipmentSliceInput) {
   const [mainHand, setMainHand] = useState<EquippedWeapon | null>(null);
   const [offHand, setOffHand] = useState<EquippedWeapon | null>(null);
@@ -125,9 +132,12 @@ export function useEquipmentSlice({
 
   const unequipShield = useCallback(() => setEquippedShield(null), []);
 
-  const equipArmor = useCallback((armorItem: ArmorItem) => {
-    setArmor(makeArmorSlot(armorItem, armorItem.rarity));
-  }, []);
+  const equipArmor = useCallback(
+    (armorItem: ArmorItem) => {
+      setArmor(makeArmorSlot(armorItem, armorItem.rarity, useAmellwindHomebrew));
+    },
+    [useAmellwindHomebrew],
+  );
 
   const unequipArmor = useCallback(() => setArmor(null), []);
 
@@ -292,6 +302,7 @@ export function useEquipmentSlice({
         classRef?.name,
         classData,
         speciesData,
+        useAmellwindHomebrew,
       ),
     [
       character,
@@ -302,12 +313,29 @@ export function useEquipmentSlice({
       classRef?.name,
       classData,
       speciesData,
+      useAmellwindHomebrew,
     ],
   );
 
   const resetEquipment = useCallback(() => {
     clearEquipment();
   }, [clearEquipment]);
+
+  const clearHomebrewEquipment = useCallback(() => {
+    setTrinket1(null);
+    setTrinket2(null);
+    setMainHand((prev) => {
+      if (!prev) return null;
+      if (isAmellwindWeapon(prev.weapon)) return null;
+      return stripRunesFromWeapon(prev);
+    });
+    setOffHand((prev) => {
+      if (!prev) return null;
+      if (isAmellwindWeapon(prev.weapon)) return null;
+      return stripRunesFromWeapon(prev);
+    });
+    setArmor((prev) => (prev ? stripRunesFromArmor(prev) : null));
+  }, []);
 
   return {
     mainHand,
@@ -345,5 +373,6 @@ export function useEquipmentSlice({
     assignTrinketRune,
     removeTrinketRune,
     resetEquipment,
+    clearHomebrewEquipment,
   };
 }

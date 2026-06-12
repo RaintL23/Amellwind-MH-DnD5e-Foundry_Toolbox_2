@@ -47,6 +47,7 @@ interface IdentityGridPanelProps {
   optionalFeatureOriginFeatSlots: OptionalFeatureOriginFeatSlot[];
   optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];
   backstoryNotes: string;
+  showFaction?: boolean;
   selectedSlot: BuilderSlotSelection;
   onSelectSlot: (slot: BuilderSlotSelection) => void;
   onUnequipSlot: (slot: BuilderSlotSelection) => void;
@@ -70,6 +71,7 @@ export function IdentityGridPanel({
   optionalFeatureOriginFeatSlots,
   optionalFeatureOriginFeats,
   backstoryNotes,
+  showFaction = true,
   selectedSlot,
   onSelectSlot,
   onUnequipSlot,
@@ -121,7 +123,9 @@ export function IdentityGridPanel({
 
   return (
     <div className="space-y-1.5">
-      <div className="grid grid-cols-5 gap-1.5">
+      <div
+        className={`grid gap-1.5 ${showFaction ? "grid-cols-5" : "grid-cols-4"}`}
+      >
         <GridElementSlot
           label="Specie"
           icon={<Users className="h-5 w-5 text-sky-400" />}
@@ -148,20 +152,22 @@ export function IdentityGridPanel({
           onUnequip={background ? () => onUnequipSlot("background") : undefined}
           isSelected={selectedSlot === "background"}
         />
-        <GridElementSlot
-          label="Faction"
-          icon={<Shield className="h-5 w-5 text-emerald-400" />}
-          equipped={
-            faction
-              ? { name: BACKGROUND_FACTION_LABELS[faction] }
-              : null
-          }
-          onClickEquip={() => onSelectSlot("faction")}
-          onClickDetails={() => onSelectSlot("faction")}
-          onUnequip={faction ? () => onUnequipSlot("faction") : undefined}
-          isSelected={selectedSlot === "faction"}
-          emptyTitle="Elegir facción de Amellwind"
-        />
+        {showFaction && (
+          <GridElementSlot
+            label="Faction"
+            icon={<Shield className="h-5 w-5 text-emerald-400" />}
+            equipped={
+              faction
+                ? { name: BACKGROUND_FACTION_LABELS[faction] }
+                : null
+            }
+            onClickEquip={() => onSelectSlot("faction")}
+            onClickDetails={() => onSelectSlot("faction")}
+            onUnequip={faction ? () => onUnequipSlot("faction") : undefined}
+            isSelected={selectedSlot === "faction"}
+            emptyTitle="Elegir facción de Amellwind"
+          />
+        )}
         <GridElementSlot
           label="Backstory"
           icon={<Book className="h-5 w-5 text-blue-400" />}
