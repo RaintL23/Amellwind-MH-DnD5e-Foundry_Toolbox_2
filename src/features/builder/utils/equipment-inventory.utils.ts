@@ -14,10 +14,66 @@ import { ArmorItem, CartEntry, ShopEntry, Weapon } from "@/shared/types";
 
 const DEFAULT_AMMO_BY_WEAPON: Record<string, string> = {
   Bow: "Arrows (20)",
+  Longbow: "Arrows (20)",
+  Shortbow: "Arrows (20)",
+  "Light Crossbow": "Crossbow Bolts (20)",
+  "Hand Crossbow": "Crossbow Bolts (20)",
+  "Heavy Crossbow": "Crossbow Bolts (20)",
   "Light Bowgun": "Normal Ammo (20)",
   "Heavy Bowgun": "Normal Ammo (20)",
   "Dual Repeaters": "Normal Ammo (20)",
 };
+
+const DND_AMMO_BY_TYPE: Record<string, string> = {
+  "arrow|phb": "Arrows (20)",
+  "arrow|xphb": "Arrows (20)",
+  "crossbow bolt|phb": "Crossbow Bolts (20)",
+  "bolt|xphb": "Crossbow Bolts (20)",
+  "sling bullet|phb": "Sling Bullets (20)",
+  "bullet|xphb": "Sling Bullets (20)",
+  "blowgun needle|phb": "Blowgun Needles (50)",
+  "needle|xphb": "Blowgun Needles (50)",
+};
+
+const DND_AMMO_FALLBACK: Record<string, { name: string; cost: string; weight: string }> = {
+  "Arrows (20)": { name: "Arrows (20)", cost: "1 gp", weight: "1 lb." },
+  "Crossbow Bolts (20)": {
+    name: "Crossbow Bolts (20)",
+    cost: "1 gp",
+    weight: "1.5 lb.",
+  },
+  "Sling Bullets (20)": {
+    name: "Sling Bullets (20)",
+    cost: "4 cp",
+    weight: "1.5 lb.",
+  },
+  "Blowgun Needles (50)": {
+    name: "Blowgun Needles (50)",
+    cost: "1 gp",
+    weight: "1 lb.",
+  },
+};
+
+function resolveDndDefaultAmmoName(weapon: Weapon): string | null {
+  if (weapon.ammoType) {
+    const direct = DND_AMMO_BY_TYPE[weapon.ammoType.toLowerCase()];
+    if (direct) return direct;
+
+    const normalized = weapon.ammoType.toLowerCase();
+    if (normalized.includes("crossbow") || normalized.includes("bolt")) {
+      return "Crossbow Bolts (20)";
+    }
+    if (normalized.includes("arrow")) return "Arrows (20)";
+    if (normalized.includes("sling") || normalized.includes("bullet")) {
+      return "Sling Bullets (20)";
+    }
+    if (normalized.includes("blowgun") || normalized.includes("needle")) {
+      return "Blowgun Needles (50)";
+    }
+  }
+
+  return DEFAULT_AMMO_BY_WEAPON[weapon.name] ?? null;
+}
 
 function integratedShieldName(weaponName: string): string {
   return `Integrated Shield (${weaponName})`;
@@ -82,15 +138,18 @@ function resolveDefaultAmmoEntry(weapon: Weapon): CartEntry | null {
   if (!weapon.properties.includes("A")) return null;
 
   const preferredName =
-    DEFAULT_AMMO_BY_WEAPON[weapon.name] ?? getFirstUnlockedAmmoName(weapon);
+    weapon.contentSource === "dnd"
+      ? resolveDndDefaultAmmoName(weapon)
+      : (DEFAULT_AMMO_BY_WEAPON[weapon.name] ?? getFirstUnlockedAmmoName(weapon));
   if (!preferredName) return null;
 
   const shopEntry = findShopAmmoForWeapon(weapon.name, preferredName);
   if (!shopEntry) {
+    const fallback = DND_AMMO_FALLBACK[preferredName];
     return {
       name: preferredName,
-      cost: "—",
-      weight: "—",
+      cost: fallback?.cost ?? "—",
+      weight: fallback?.weight ?? "—",
       quantity: 1,
       linkedWeaponName: weapon.name,
       inventoryRole: "default-ammo",

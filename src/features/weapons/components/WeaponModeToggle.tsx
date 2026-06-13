@@ -4,6 +4,7 @@ import {
   getWeaponGripModeDefinition,
   getWeaponGripModeHint,
   hasWeaponSwitchModes,
+  type WeaponGripMode,
 } from "../utils/weapon-mode.utils";
 
 interface WeaponModeToggleProps {
@@ -11,6 +12,8 @@ interface WeaponModeToggleProps {
   useSecondaryMode: boolean;
   onChange: (useSecondaryMode: boolean) => void;
   className?: string;
+  isModeDisabled?: (mode: WeaponGripMode, modeIndex: number) => boolean;
+  getModeDisabledHint?: (mode: WeaponGripMode, modeIndex: number) => string | undefined;
 }
 
 export function WeaponModeToggle({
@@ -18,6 +21,8 @@ export function WeaponModeToggle({
   useSecondaryMode,
   onChange,
   className,
+  isModeDisabled,
+  getModeDisabledHint,
 }: WeaponModeToggleProps) {
   const gripDefinition = getWeaponGripModeDefinition(weapon);
   if (!gripDefinition) return null;
@@ -34,17 +39,23 @@ export function WeaponModeToggle({
           const isActive = useSecondaryMode === (index === 1);
           const damage = weapon[mode.damageKey];
           const hint = getWeaponGripModeHint(mode);
+          const disabled = isModeDisabled?.(mode, index) ?? false;
+          const disabledHint = getModeDisabledHint?.(mode, index);
 
           return (
             <button
               key={mode.label}
               type="button"
+              disabled={disabled}
+              title={disabled ? disabledHint : undefined}
               onClick={() => onChange(index === 1)}
               className={cn(
                 "rounded-md border px-2.5 py-1.5 text-left transition-colors",
+                disabled && "cursor-not-allowed opacity-40",
                 isActive
                   ? "border-primary bg-primary/20 text-primary"
                   : "border-border bg-muted/20 text-muted-foreground hover:text-foreground",
+                !disabled && !isActive && "hover:text-foreground",
               )}
             >
               <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">

@@ -15,9 +15,16 @@ export function getRuneSlotsForRarity(rarity: string): number {
 
 const DND_FIXED_RARITY = "Standard";
 
+function resolveDndEquippedRarity(weapon: Weapon, rarity: string): string {
+  if (weapon.itemRarityLabel && weapon.itemRarityLabel !== "Standard") {
+    return weapon.itemRarityLabel;
+  }
+  return rarity === "Standard" || rarity === "Common" ? DND_FIXED_RARITY : rarity;
+}
+
 export function makeWeaponSlot(weapon: Weapon, rarity: string): EquippedWeapon {
   const isDnd = weapon.contentSource === "dnd";
-  const effectiveRarity = isDnd ? DND_FIXED_RARITY : rarity;
+  const effectiveRarity = isDnd ? resolveDndEquippedRarity(weapon, rarity) : rarity;
   const runeSlots = isDnd ? 0 : getRuneSlotsForRarity(rarity);
   const isTwoHanded = weapon.properties.includes("2H");
   return {
@@ -34,7 +41,12 @@ export function makeArmorSlot(
   rarity: string,
   homebrewEnabled = true,
 ): EquippedArmor {
-  const effectiveRarity = homebrewEnabled ? rarity : DND_FIXED_RARITY;
+  const isDnd = armor.contentSource === "dnd";
+  const dndRarity =
+    armor.itemRarityLabel && armor.itemRarityLabel !== "Standard"
+      ? armor.itemRarityLabel
+      : DND_FIXED_RARITY;
+  const effectiveRarity = isDnd ? dndRarity : homebrewEnabled ? rarity : DND_FIXED_RARITY;
   const runeSlots = homebrewEnabled ? getRuneSlotsForRarity(rarity) : 0;
   return {
     armor,

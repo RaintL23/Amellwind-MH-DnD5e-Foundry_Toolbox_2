@@ -1,5 +1,6 @@
 import type { StandaloneShieldItem } from "@/features/builder/data/shield.data";
 import { EquippedWeapon, Weapon } from "@/shared/types";
+import type { WeaponGripMode } from "./weapon-mode.utils";
 import {
   doesGripModeBlockOffHand,
   hasWeaponGripModes,
@@ -97,4 +98,33 @@ export function isOffHandWeaponPickerAvailable(
   // Standalone shields are replaceable from the weapon picker; they do not block it.
   if (hasIntegratedShield || isOffHandBlocked || offHand) return false;
   return true;
+}
+
+const OFF_HAND_GRIP_BLOCK_HINT = "La mano secundaria está ocupada";
+const MAIN_HAND_GRIP_BLOCK_HINT = "La mano principal está ocupada";
+
+export interface GripModeSlotContext {
+  weaponSlot: "mainHand" | "offHand";
+  offHandOccupied: boolean;
+  mainHandOccupied: boolean;
+}
+
+export function isGripModeBlockedByOccupiedHand(
+  mode: WeaponGripMode,
+  context: GripModeSlotContext,
+): boolean {
+  if (!mode.isTwoHanded) return false;
+  if (context.weaponSlot === "mainHand" && context.offHandOccupied) return true;
+  if (context.weaponSlot === "offHand" && context.mainHandOccupied) return true;
+  return false;
+}
+
+export function getGripModeOccupiedHandHint(
+  mode: WeaponGripMode,
+  context: GripModeSlotContext,
+): string | undefined {
+  if (!isGripModeBlockedByOccupiedHand(mode, context)) return undefined;
+  return context.weaponSlot === "mainHand"
+    ? OFF_HAND_GRIP_BLOCK_HINT
+    : MAIN_HAND_GRIP_BLOCK_HINT;
 }

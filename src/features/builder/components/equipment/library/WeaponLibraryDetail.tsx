@@ -34,13 +34,26 @@ import {
   getActiveWeaponGripMode,
   getWeaponGripModeHint,
   hasWeaponGripModes,
+  type WeaponGripMode,
 } from "@/features/weapons/utils/weapon-mode.utils";
+import {
+  getGripModeOccupiedHandHint,
+  isGripModeBlockedByOccupiedHand,
+  type GripModeSlotContext,
+} from "@/features/weapons/utils/weapon-hands.utils";
 import { getWeaponEffectiveTierLabel } from "../../../utils/equipment-proficiency.utils";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { SourceVariantSwitcher } from "@/features/builder/components/shared/SourceVariantSwitcher";
+import type { SourceVariant } from "@/features/builder/utils/library-variant.utils";
 
 interface WeaponLibraryDetailProps {
   equipped: EquippedWeapon;
+  gripContext?: GripModeSlotContext;
   weaponProficiencies?: string[];
   showHomebrewDetails?: boolean;
+  sourceVariants?: SourceVariant[];
+  activeSourceId?: string;
+  onSourceChange?: (id: string) => void;
   onModeChange?: (useSecondaryMode: boolean) => void;
 }
 
@@ -226,13 +239,25 @@ function WeaponFeatureSection({
 
 export function WeaponLibraryDetail({
   equipped,
+  gripContext,
   weaponProficiencies = [],
   showHomebrewDetails = true,
+  sourceVariants,
+  activeSourceId,
+  onSourceChange,
   onModeChange,
 }: WeaponLibraryDetailProps) {
+  const bookNames = useBookSourceNames();
   const { weapon, useVersatile } = equipped;
   const isDndWeapon = weapon.contentSource === "dnd" || !showHomebrewDetails;
   const rarityIndex = useMemo(() => getRarityIndex(equipped), [equipped]);
+
+  const gripModeDisabled = (mode: WeaponGripMode) =>
+    gripContext
+      ? isGripModeBlockedByOccupiedHand(mode, gripContext)
+      : false;
+  const gripModeDisabledHint = (mode: WeaponGripMode) =>
+    gripContext ? getGripModeOccupiedHandHint(mode, gripContext) : undefined;
 
   const activeDamage = getActiveWeaponDamage(equipped);
   const damageModeLabel = getActiveWeaponDamageLabel(equipped);
@@ -251,6 +276,18 @@ export function WeaponLibraryDetail({
             </span>
           </AccordionTrigger>
           <AccordionContent className="pb-1 pt-0">
+            {sourceVariants && onSourceChange && (
+              <div className="mb-3">
+                <SourceVariantSwitcher
+                  variants={sourceVariants}
+                  activeId={activeSourceId ?? weapon.id}
+                  onSelect={onSourceChange}
+                  bookNames={bookNames}
+                  accent="sky"
+                />
+              </div>
+            )}
+
             <div className="mb-2 flex flex-wrap items-center gap-1.5">
               {weapon.weaponCategory && (
                 <Badge variant="secondary" className="text-[10px] capitalize">
@@ -262,10 +299,12 @@ export function WeaponLibraryDetail({
                   {PROPERTY_LABELS[prop] ?? prop}
                 </Badge>
               ))}
-              <span className="text-[10px] text-muted-foreground">
-                {weapon.source}
-                {weapon.page !== undefined ? ` p.${weapon.page}` : ""}
-              </span>
+              {!(sourceVariants && onSourceChange) && (
+                <span className="text-[10px] text-muted-foreground">
+                  {weapon.source}
+                  {weapon.page !== undefined ? ` p.${weapon.page}` : ""}
+                </span>
+              )}
             </div>
 
             {showModeToggle && (
@@ -274,6 +313,8 @@ export function WeaponLibraryDetail({
                 useSecondaryMode={useVersatile}
                 onChange={onModeChange}
                 className="mb-3"
+                isModeDisabled={gripModeDisabled}
+                getModeDisabledHint={gripModeDisabledHint}
               />
             )}
 
@@ -290,6 +331,12 @@ export function WeaponLibraryDetail({
               <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
               {weapon.range && <StatBox label="Range" value={weapon.range} />}
             </div>
+
+            {weapon.description && (
+              <div className="text-xs text-muted-foreground">
+                <DndRichText text={weapon.description} />
+              </div>
+            )}
           </AccordionContent>
         </AccordionItem>
       </Accordion>
@@ -373,6 +420,8 @@ export function WeaponLibraryDetail({
               useSecondaryMode={useVersatile}
               onChange={onModeChange}
               className="mb-3"
+              isModeDisabled={gripModeDisabled}
+              getModeDisabledHint={gripModeDisabledHint}
             />
           )}
 

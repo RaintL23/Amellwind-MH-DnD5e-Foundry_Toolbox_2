@@ -8,6 +8,8 @@ export interface WeaponRarityRow {
 export type WeaponContentSource = "amellwind" | "dnd";
 
 export interface Weapon {
+  /** Stable id for D&D catalog variants (`name|source`). */
+  id?: string;
   name: string;
   source: string;
   /** Defaults to Amellwind MH when omitted (legacy GTMH weapons). */
@@ -36,6 +38,12 @@ export interface Weapon {
    * Single Note Melody on the Hunting Horn).
    */
   baseFeatureNames: string[];
+  /** 5etools ammoType uid, e.g. arrow|phb */
+  ammoType?: string;
+  /** Normalized rarity label for D&D filters and badges. */
+  itemRarityLabel?: string;
+  /** Set on grouped catalog rows when the same name exists in multiple sources. */
+  variantSources?: string[];
 }
 
 export const PROPERTY_LABELS: Record<string, string> = {

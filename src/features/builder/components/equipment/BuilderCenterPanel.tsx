@@ -139,6 +139,21 @@ export function BuilderCenterPanel() {
         ? offHand
         : null;
 
+  const offHandOccupied = isOffHandSlotOccupied(
+    offHand,
+    equippedShield,
+    hasIntegratedShield,
+  );
+
+  const weaponGripContext =
+    selectedSlot === "mainHand" || selectedSlot === "offHand"
+      ? {
+          weaponSlot: selectedSlot,
+          offHandOccupied,
+          mainHandOccupied: !!mainHand,
+        }
+      : null;
+
   const showRunePanel =
     useAmellwindHomebrew &&
     selectedSlot &&
@@ -427,9 +442,11 @@ export function BuilderCenterPanel() {
       )}
 
       {selectedWeapon &&
+        useAmellwindHomebrew &&
         (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
           <WeaponDetailPanel
             equipped={selectedWeapon}
+            gripContext={weaponGripContext!}
             showHomebrewDetails={useAmellwindHomebrew}
             onRarityChange={(r) => setWeaponRarity(selectedSlot, r)}
             onVersatileChange={(twoHanded) =>

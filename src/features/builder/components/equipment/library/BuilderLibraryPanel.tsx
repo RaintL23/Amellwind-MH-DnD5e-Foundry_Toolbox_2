@@ -38,6 +38,8 @@ import {
 import { FeatLibraryPanel, isFeatPickerSlot } from "./FeatLibraryPanel";
 import { SLOT_LABELS } from "./constants";
 import { EmptyState } from "./shared/LibraryUi";
+import { EquipmentRarityFilterGroup } from "../../shared/EquipmentRarityFilterGroup";
+import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 import { useLibrarySearch } from "./hooks/useLibrarySearch";
 import { useClassGrantSync } from "./hooks/useClassGrantSync";
 import { useFeatGrantSync } from "./hooks/useFeatGrantSync";
@@ -53,6 +55,8 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   const [featSource, setFeatSource] = useState<FeatDataSource>("amellwind");
   const [showAsiPanel, setShowAsiPanel] = useState(false);
   const [featSearchHidden, setFeatSearchHidden] = useState(false);
+  const [equipmentRarity, setEquipmentRarity] =
+    useState<EquipmentRarityFilter>("Standard");
 
   useClassGrantSync();
   useFeatGrantSync();
@@ -97,6 +101,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     setFeatSource(useAmellwindHomebrew ? "amellwind" : "dnd2024");
     setShowAsiPanel(false);
     setFeatSearchHidden(false);
+    setEquipmentRarity("Standard");
   }, [selectedSlot, useAmellwindHomebrew]);
 
   useEffect(() => {
@@ -161,6 +166,11 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     useAmellwindHomebrew && (isSpeciesSlot || isBackgroundSlot);
   const showFeatSourceToggle =
     isFeatSlot && !showAsiPanel && !isAnyOriginFeatSlotSelected;
+  const showEquipmentRarityToggle =
+    !useAmellwindHomebrew &&
+    (isWeaponSlot || isArmorSlot) &&
+    !showWeaponDetail &&
+    !showArmorDetail;
 
   const slotLabel = useMemo(() => {
     if (!selectedSlot) return "Library";
@@ -201,6 +211,12 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
           hideAmellwind={!useAmellwindHomebrew}
         />
       )}
+      {showEquipmentRarityToggle && (
+        <EquipmentRarityFilterGroup
+          value={equipmentRarity}
+          onChange={setEquipmentRarity}
+        />
+      )}
     </span>
   ) : (
     "Library"
@@ -226,8 +242,16 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
           )}
 
           <ScrollableWhenNeeded>
-            <WeaponLibraryPanel selectedSlot={selectedSlot} q={q} />
-            <ArmorLibraryPanel selectedSlot={selectedSlot} q={q} />
+            <WeaponLibraryPanel
+              selectedSlot={selectedSlot}
+              q={q}
+              rarityFilter={equipmentRarity}
+            />
+            <ArmorLibraryPanel
+              selectedSlot={selectedSlot}
+              q={q}
+              rarityFilter={equipmentRarity}
+            />
             <IdentityLibraryPanel
               selectedSlot={selectedSlot}
               q={q}

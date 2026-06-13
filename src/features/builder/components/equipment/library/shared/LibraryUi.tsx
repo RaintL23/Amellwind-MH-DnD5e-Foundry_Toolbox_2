@@ -50,6 +50,7 @@ export function ItemRow({
   name,
   meta,
   rarity,
+  source,
   trailing,
   trailingTitle,
   equipped = false,
@@ -61,6 +62,7 @@ export function ItemRow({
   name: string;
   meta?: React.ReactNode;
   rarity?: string;
+  source?: { code: string; title: string };
   trailing?: string;
   trailingTitle?: string;
   equipped?: boolean;
@@ -105,6 +107,14 @@ export function ItemRow({
             )}
           >
             {rarity}
+          </span>
+        )}
+        {source && (
+          <span
+            className="rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+            title={source.title}
+          >
+            {source.code}
           </span>
         )}
       </div>

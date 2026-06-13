@@ -1,5 +1,7 @@
 import { Award, Gem, Shield, Shirt, Sword } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import { resolveBookSourceName } from "@/features/spells/services/book-source.service";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import {
   ArmorItem,
   DMG_TYPE_LABELS,
@@ -15,6 +17,7 @@ import { getWeaponEffectiveTierLabel } from "@/features/builder/utils/equipment-
 import { CLOTHING_ARMOR } from "@/features/builder/data/armor.data";
 import { ABILITY_SCORE_IMPROVEMENT } from "@/features/builder/utils/builder-class.utils";
 import type { LibraryListOption } from "@/features/builder/utils/library-variant.utils";
+import { formatVariantSourcesLabel } from "@/features/builder/utils/library-variant.utils";
 import {
   EmptyState,
   ItemRow,
@@ -22,6 +25,17 @@ import {
   LibraryItemBadgeRow,
   SectionLabel,
 } from "./LibraryUi";
+
+function buildLibrarySourceBadge(
+  bookNames: ReturnType<typeof useBookSourceNames>,
+  source?: string,
+) {
+  if (!source) return undefined;
+  return {
+    code: source,
+    title: resolveBookSourceName(bookNames, source),
+  };
+}
 
 function WeaponListBadges({
   weapon,
@@ -79,6 +93,8 @@ export function WeaponList({
   onSelect: (w: Weapon) => void;
   getDisabledReason?: (weapon: Weapon) => string | null;
 }) {
+  const bookNames = useBookSourceNames();
+
   if (loading) return <EmptyState text="Loading weapons..." />;
   if (inventory.length === 0 && catalog.length === 0) {
     return <EmptyState text="No weapons available." />;
@@ -88,6 +104,11 @@ export function WeaponList({
     const isEquipped = equipped === w.name;
     const disabledReason =
       !isEquipped && getDisabledReason ? getDisabledReason(w) : null;
+    const rarityLabel =
+      w.contentSource === "dnd" ? w.itemRarityLabel : undefined;
+    const variantTrailing = w.variantSources?.length
+      ? formatVariantSourcesLabel(w.variantSources)
+      : null;
 
     return (
       <ItemRow
@@ -107,6 +128,14 @@ export function WeaponList({
             weaponProficiencies={weaponProficiencies}
           />
         }
+        rarity={rarityLabel !== "Standard" ? rarityLabel : undefined}
+        source={
+          variantTrailing
+            ? undefined
+            : buildLibrarySourceBadge(bookNames, w.source)
+        }
+        trailing={variantTrailing?.label}
+        trailingTitle={variantTrailing?.title}
         equipped={isEquipped}
         disabled={!!disabledReason}
         disabledHint={disabledReason ?? undefined}
@@ -139,6 +168,8 @@ export function ArmorList({
   onSelect: (a: ArmorItem) => void;
   getDisabledReason?: (armor: ArmorItem) => string | null;
 }) {
+  const bookNames = useBookSourceNames();
+
   function renderArmorRow(
     armorItem: ArmorItem,
     key: string,
@@ -168,7 +199,14 @@ export function ArmorList({
             <LibraryItemBadge>{armorItem.category}</LibraryItemBadge>
           </LibraryItemBadgeRow>
         }
-        rarity={armorItem.rarity}
+        rarity={
+          armorItem.itemRarityLabel !== "Standard"
+            ? (armorItem.itemRarityLabel ?? armorItem.rarity)
+            : armorItem.contentSource === "dnd"
+              ? undefined
+              : armorItem.rarity
+        }
+        source={buildLibrarySourceBadge(bookNames, armorItem.source)}
         equipped={isEquipped}
         disabled={!!disabledReason}
         disabledHint={disabledReason ?? undefined}

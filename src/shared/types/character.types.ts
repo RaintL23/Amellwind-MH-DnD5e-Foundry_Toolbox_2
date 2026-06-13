@@ -64,6 +64,11 @@ export interface ArmorItem {
   runeSlots: number;
   stealthDisadvantage: boolean;
   weight: number;
+  /** D&D catalog items from items-base / magic variants. */
+  contentSource?: "dnd";
+  /** Normalized rarity label for D&D filters and badges. */
+  itemRarityLabel?: string;
+  source?: string;
 }
 
 // ─── Equipped Items ──────────────────────────────────────────────────────────

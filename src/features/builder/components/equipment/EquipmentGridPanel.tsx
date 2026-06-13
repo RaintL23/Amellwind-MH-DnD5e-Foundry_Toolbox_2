@@ -17,8 +17,7 @@ function formatWeaponSlotDetail(
 ): string {
   const damage = getActiveWeaponDamage(equipped);
   const modeLabel = getActiveWeaponDamageLabel(equipped);
-  const base =
-    modeLabel === "Damage" ? damage : `${modeLabel} · ${damage}`;
+  const base = modeLabel === "Damage" ? damage : `${modeLabel} · ${damage}`;
   return options?.offHand ? `${base} · bonus` : base;
 }
 
@@ -177,8 +176,8 @@ export function EquipmentGridPanel({
           disabled={true}
           disabledHint={
             offHandBlockReason === "both-grip"
-              ? (mainHand?.weapon.name ?? "Ocupa ambas manos")
-              : "Arma a 2 manos"
+              ? (mainHand?.weapon.name ?? "Both hands occupied")
+              : "Two-handed weapon"
           }
         />
       ) : (
