@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => ({
           }
           if (id.includes("@tanstack/react-table")) return "table";
           if (id.includes("lucide-react")) return "icons";
+          if (id.includes("pdf-lib")) return "pdf";
         },
       },
     },

@@ -1,4 +1,4 @@
-import { PDFDocument } from "pdf-lib";
+import type { PDFDocument } from "pdf-lib";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
 
 const TEMPLATE_URL = "/character-sheet/dnd-2024-character-sheet.pdf";
@@ -25,6 +25,7 @@ export async function exportCharacterSheetPdf(
   }
 
   const templateBytes = await response.arrayBuffer();
+  const { PDFDocument } = await import("pdf-lib");
   const pdfDoc = await PDFDocument.load(templateBytes);
   const form = pdfDoc.getForm();
 

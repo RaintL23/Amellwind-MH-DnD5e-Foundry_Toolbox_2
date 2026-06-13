@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { lazy, Suspense, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ChevronDown, Lightbulb, ExternalLink } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
@@ -11,7 +11,11 @@ import {
   STARTING_WEALTH_TABLE,
   STARTING_WEAPONS_TABLE,
 } from "@/features/character-guide/data/character-guide.data";
-import { GuideTable } from "@/features/character-guide/components/GuideTable";
+const GuideTable = lazy(() =>
+  import("@/features/character-guide/components/GuideTable").then((m) => ({
+    default: m.GuideTable,
+  })),
+);
 
 function findTableRow(table: { rows: string[][] }, bracket: string) {
   return table.rows.find((row) => row[0] === bracket);
@@ -143,10 +147,12 @@ export function CharacterCreationTipsPanel() {
                   </div>
                 </div>
                 <div className="mt-3">
-                  <GuideTable
-                    table={STARTING_WEAPONS_TABLE}
-                    highlightRow={levelBracket}
-                  />
+                  <Suspense fallback={null}>
+                    <GuideTable
+                      table={STARTING_WEAPONS_TABLE}
+                      highlightRow={levelBracket}
+                    />
+                  </Suspense>
                 </div>
               </div>
             )}
