@@ -253,9 +253,7 @@ export function WeaponLibraryDetail({
   const rarityIndex = useMemo(() => getRarityIndex(equipped), [equipped]);
 
   const gripModeDisabled = (mode: WeaponGripMode) =>
-    gripContext
-      ? isGripModeBlockedByOccupiedHand(mode, gripContext)
-      : false;
+    gripContext ? isGripModeBlockedByOccupiedHand(mode, gripContext) : false;
   const gripModeDisabledHint = (mode: WeaponGripMode) =>
     gripContext ? getGripModeOccupiedHandHint(mode, gripContext) : undefined;
 
@@ -328,7 +326,10 @@ export function WeaponLibraryDetail({
                 value={`${activeDamage} ${weapon.dmgType}`}
               />
               <StatBox label="Weight" value={`${weapon.weight} lb`} />
-              <StatBox label="Value" value={formatWeaponValue(weapon.valueCp)} />
+              <StatBox
+                label="Value"
+                value={formatWeaponValue(weapon.valueCp)}
+              />
               {weapon.range && <StatBox label="Range" value={weapon.range} />}
             </div>
 
@@ -409,8 +410,8 @@ export function WeaponLibraryDetail({
           />
           {simpleModeLabel && (
             <p className="mb-3 rounded-md border border-amber-700/40 bg-amber-950/20 px-2.5 py-2 text-[11px] leading-relaxed text-amber-100/90">
-              This weapon is treated as a <strong>Simple</strong> weapon for your
-              class because you only have Simple weapon proficiency.
+              This weapon is treated as a <strong>Simple</strong> weapon for
+              your class because you only have Simple weapon proficiency.
             </p>
           )}
 
@@ -471,8 +472,8 @@ export function WeaponLibraryDetail({
               <Shield className="h-3.5 w-3.5 shrink-0 text-teal-400 mt-0.5" />
               <p className="text-[11px] leading-relaxed text-teal-100/90">
                 {activeGripMode
-                  ? `En modo ${activeGripMode.label}, el escudo integrado ocupa la mano secundaria.`
-                  : "Incluye un escudo integrado que ocupa la mano secundaria."}
+                  ? `In ${activeGripMode.label} mode, the integrated shield occupies the off-hand.`
+                  : "Includes an integrated shield that occupies the off-hand."}
               </p>
             </div>
           )}

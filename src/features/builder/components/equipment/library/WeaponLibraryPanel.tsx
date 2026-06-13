@@ -207,7 +207,7 @@ export function WeaponLibraryPanel({
 
       if (selectedSlot === "offHand") {
         if (hasIntegratedShield) {
-          return "La mano secundaria está ocupada por el escudo integrado";
+          return "The off-hand is occupied by the integrated shield";
         }
 
         if (
@@ -221,7 +221,7 @@ export function WeaponLibraryPanel({
             isOffHandBlocked,
           )
         ) {
-          return "La mano secundaria no está disponible";
+          return "The off-hand is not available";
         }
 
         const offHandReason = getOffHandWeaponBlockReason(weapon);

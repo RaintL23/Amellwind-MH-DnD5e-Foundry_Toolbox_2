@@ -32,7 +32,10 @@ export function isWeaponTwoHanded(equipped: EquippedWeapon | null): boolean {
 export function blocksOffHand(mainHand: EquippedWeapon | null): boolean {
   if (!mainHand) return false;
   if (hasWeaponGripModes(mainHand.weapon)) {
-    return doesGripModeBlockOffHand(mainHand) || occupiesBothGripSlots(mainHand.weapon);
+    return (
+      doesGripModeBlockOffHand(mainHand) ||
+      occupiesBothGripSlots(mainHand.weapon)
+    );
   }
   return isWeaponTwoHanded(mainHand) || occupiesBothGripSlots(mainHand.weapon);
 }
@@ -68,9 +71,9 @@ export function getOffHandWeaponBlockReason(
 }
 
 const OFF_HAND_WEAPON_BLOCK_LABELS: Record<OffHandWeaponBlockReason, string> = {
-  "two-handed": "Arma a dos manos",
-  "both-grip": "Ocupa ambas manos",
-  "integrated-shield": "Escudo integrado ocupa la mano secundaria",
+  "two-handed": "Two-handed weapon",
+  "both-grip": "Both hands occupied",
+  "integrated-shield": "Integrated shield occupies the off-hand",
 };
 
 export function getOffHandWeaponBlockLabel(
@@ -100,8 +103,8 @@ export function isOffHandWeaponPickerAvailable(
   return true;
 }
 
-const OFF_HAND_GRIP_BLOCK_HINT = "La mano secundaria está ocupada";
-const MAIN_HAND_GRIP_BLOCK_HINT = "La mano principal está ocupada";
+const OFF_HAND_GRIP_BLOCK_HINT = "The off-hand is occupied";
+const MAIN_HAND_GRIP_BLOCK_HINT = "The main hand is occupied";
 
 export interface GripModeSlotContext {
   weaponSlot: "mainHand" | "offHand";
