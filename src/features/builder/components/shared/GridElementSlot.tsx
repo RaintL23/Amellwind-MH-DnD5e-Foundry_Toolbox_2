@@ -41,7 +41,7 @@ export function GridElementSlot({
     return (
       <div
         title={disabledHint ?? label}
-        className="flex min-h-[72px] cursor-not-allowed flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border/40 bg-muted/20 p-2 text-center opacity-50"
+        className="flex min-h-[72px] w-full cursor-not-allowed flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border/40 bg-muted/20 p-2 text-center opacity-50"
       >
         <Lock className="h-4 w-4 text-muted-foreground" />
         <span className="text-[11px] text-muted-foreground">{label}</span>
@@ -61,7 +61,7 @@ export function GridElementSlot({
         onClick={onClickEquip}
         title={emptyTitle ?? `Equipar ${label}`}
         className={cn(
-          "flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border/70 bg-muted/20 p-2 text-[11px] text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground",
+          "flex min-h-[72px] w-full flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border/70 bg-muted/20 p-2 text-[11px] text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground",
           ACCENT_CLASS[accent],
         )}
       >
@@ -72,7 +72,7 @@ export function GridElementSlot({
   }
 
   return (
-    <div className="relative">
+    <div className="relative w-full">
       <button
         type="button"
         onClick={onClickDetails}

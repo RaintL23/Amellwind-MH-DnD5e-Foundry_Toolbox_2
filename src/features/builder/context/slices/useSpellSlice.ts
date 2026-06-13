@@ -10,7 +10,7 @@ import type {
   BuilderOptionalFeatureSelections,
 } from "@/shared/types";
 import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
-import { resolveOptionalFeatureProgressions, getProgressionPicks } from "../../utils/class-optional-features.utils";
+import { resolveOptionalFeatureProgressions, getProgressionPicks, getAutoGrantSelections } from "../../utils/class-optional-features.utils";
 import {
   resolveOptionalFeatureOriginFeatSlots,
   type OptionalFeatureOriginFeatSlot,
@@ -115,7 +115,7 @@ export function useSpellSlice({
     setOptionalFeatureSelections((prev) => {
       const next: BuilderOptionalFeatureSelections = { ...prev };
       for (const key of Object.keys(next)) {
-        if (key.startsWith("subclass_")) {
+        if (key.startsWith("subclass_") || key.startsWith("fc_subclass_")) {
           delete next[key];
         }
       }
@@ -163,6 +163,20 @@ export function useSpellSlice({
         if (current.length > slotCount) {
           next[progression.id] = current.slice(0, slotCount);
           changed = true;
+        }
+
+        if (
+          progression.catalog === "feature-choice" &&
+          progression.pickMode === "all"
+        ) {
+          const auto = getAutoGrantSelections(progression);
+          if (
+            auto.length > 0 &&
+            current.length < auto.length
+          ) {
+            next[progression.id] = auto;
+            changed = true;
+          }
         }
       }
 

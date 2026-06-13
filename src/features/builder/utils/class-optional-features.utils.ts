@@ -6,6 +6,7 @@ import type {
   DndFeat,
   DndOptionalFeature,
   DndOptionalFeatureRef,
+  FeatureChoiceOption,
   OptionalFeatureProgression,
   Subclass,
 } from "@/shared/types";
@@ -211,12 +212,55 @@ export function dndFeatToSelection(
   };
 }
 
+export function isFeatureChoiceProgression(
+  progression: OptionalFeatureProgression,
+): boolean {
+  return progression.catalog === "feature-choice";
+}
+
+export function featureChoiceToCatalogItem(
+  option: FeatureChoiceOption,
+): OptionalFeatureCatalogItem {
+  return {
+    id: option.id,
+    name: option.name,
+    source: option.source,
+    catalog: "feature-choice",
+    entries: option.entries,
+    featureTypes: [],
+  };
+}
+
+export function featureChoiceToSelection(
+  option: FeatureChoiceOption,
+  progressionId: string,
+): BuilderOptionalFeatureSelection {
+  return {
+    id: option.id,
+    name: option.name,
+    source: option.source,
+    progressionId,
+    featureTypes: [],
+  };
+}
+
+export function getAutoGrantSelections(
+  progression: OptionalFeatureProgression,
+): BuilderOptionalFeatureSelection[] {
+  if (progression.catalog !== "feature-choice" || progression.pickMode !== "all") {
+    return [];
+  }
+  return (progression.choiceOptions ?? []).map((opt) =>
+    featureChoiceToSelection(opt, progression.id),
+  );
+}
+
 export interface OptionalFeatureCatalogItem {
   id: string;
   name: string;
   source: string;
   page?: number;
-  catalog: "optionalfeature" | "feat";
+  catalog: "optionalfeature" | "feat" | "feature-choice";
   entries: string[];
   featureTypes: string[];
   category?: string;

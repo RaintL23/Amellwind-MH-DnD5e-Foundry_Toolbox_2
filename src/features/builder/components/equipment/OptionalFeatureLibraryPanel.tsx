@@ -18,13 +18,16 @@ import {
   dndFeatToCatalogItem,
   dndFeatToSelection,
   dndOptionalFeatureToSelection,
+  featureChoiceToCatalogItem,
+  featureChoiceToSelection,
   filterCatalogForProgression,
   filterFeatsForProgression,
   getFeatCategoryLabel,
   getOtherFightingStylePicks,
+  getProgressionPicks,
+  isFeatureChoiceProgression,
   isFightingStyleProgression,
   optionalFeatureToCatalogItem,
-  getProgressionPicks,
   parseOptionalFeatureSlot,
   type OptionalFeatureCatalogItem,
   type ResolvedOptionalFeatureProgression,
@@ -89,6 +92,13 @@ export function OptionalFeatureLibraryPanel({
   }, [parsed, progressions]);
 
   const usesFeatCatalog = activeProgression?.progression.catalog === "feat";
+  const isFeatureChoice = activeProgression
+    ? isFeatureChoiceProgression(activeProgression.progression)
+    : false;
+  const isPickOneFeatureChoice =
+    isFeatureChoice && activeProgression?.progression.pickMode === "one";
+  const isGrantAllFeatureChoice =
+    isFeatureChoice && activeProgression?.progression.pickMode === "all";
 
   useEffect(() => {
     setSearch("");
@@ -96,6 +106,10 @@ export function OptionalFeatureLibraryPanel({
   }, [selectedSlot]);
 
   useEffect(() => {
+    if (isFeatureChoice) {
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     const loaders: Promise<void>[] = [
       getAllDndOptionalFeatures().then(setOptionalCatalog).then(() => undefined),
@@ -104,7 +118,7 @@ export function OptionalFeatureLibraryPanel({
       loaders.push(getAllDndFeats().then(setFeatCatalog).then(() => undefined));
     }
     Promise.all(loaders).finally(() => setLoading(false));
-  }, [usesFeatCatalog]);
+  }, [usesFeatCatalog, isFeatureChoice]);
 
   const picked = useMemo(() => {
     if (!parsed) return [];
@@ -128,6 +142,11 @@ export function OptionalFeatureLibraryPanel({
     if (!activeProgression || !parsed) return [];
 
     const progression = activeProgression.progression;
+
+    if (progression.catalog === "feature-choice") {
+      return (progression.choiceOptions ?? []).map(featureChoiceToCatalogItem);
+    }
+
     const poolRefs = collectOptionPoolRefs(
       classData,
       subclass,
@@ -183,8 +202,13 @@ export function OptionalFeatureLibraryPanel({
 
   const canAdd = useCallback(
     (item: OptionalFeatureCatalogItem) => {
+      if (isGrantAllFeatureChoice) return false;
       if (isPicked(item)) return true;
       if (atCapacity) return false;
+
+      if (item.catalog === "feature-choice") {
+        return true;
+      }
 
       if (item.catalog === "feat") {
         return isFightingStyleFeatAvailable(
@@ -215,6 +239,7 @@ export function OptionalFeatureLibraryPanel({
     [
       isPicked,
       atCapacity,
+      isGrantAllFeatureChoice,
       optionalCatalog,
       otherFightingStylePicks,
       activeProgression,
@@ -241,6 +266,19 @@ export function OptionalFeatureLibraryPanel({
 
       if (!canAdd(item)) return;
 
+      if (item.catalog === "feature-choice") {
+        const option = activeProgression!.progression.choiceOptions?.find(
+          (o) => o.id === item.id,
+        );
+        if (!option) return;
+        const selection = featureChoiceToSelection(option, parsed.progressionId);
+        onSetSelections(
+          parsed.progressionId,
+          isPickOneFeatureChoice ? [selection] : [...picked, selection],
+        );
+        return;
+      }
+
       const selection =
         item.catalog === "feat"
           ? dndFeatToSelection(
@@ -262,24 +300,26 @@ export function OptionalFeatureLibraryPanel({
       onSetSelections,
       featCatalog,
       optionalCatalog,
+      activeProgression,
+      isPickOneFeatureChoice,
     ],
   );
 
   const handleRemove = useCallback(
     (selection: BuilderOptionalFeatureSelection) => {
-      if (!parsed) return;
+      if (!parsed || isGrantAllFeatureChoice) return;
       onSetSelections(
         parsed.progressionId,
         picked.filter((p) => p.id !== selection.id),
       );
     },
-    [parsed, picked, onSetSelections],
+    [parsed, picked, onSetSelections, isGrantAllFeatureChoice],
   );
 
   const handleClearAll = useCallback(() => {
-    if (!parsed) return;
+    if (!parsed || isGrantAllFeatureChoice) return;
     onSetSelections(parsed.progressionId, []);
-  }, [parsed, onSetSelections]);
+  }, [parsed, onSetSelections, isGrantAllFeatureChoice]);
 
   if (!parsed || !activeProgression) {
     return (
@@ -329,7 +369,7 @@ export function OptionalFeatureLibraryPanel({
         </>
       }
       action={
-        picked.length > 0 ? (
+        picked.length > 0 && !isGrantAllFeatureChoice ? (
           <button
             type="button"
             onClick={handleClearAll}
@@ -355,12 +395,17 @@ export function OptionalFeatureLibraryPanel({
           {picked.length}/{slotCount}
         </span>{" "}
         opciones elegidas
-        {isFightingStyle && (
+        {isGrantAllFeatureChoice ? (
+          <span className="text-muted-foreground/80">
+            {" "}
+            · habilidades otorgadas automáticamente
+          </span>
+        ) : isFightingStyle ? (
           <span className="text-muted-foreground/80">
             {" "}
             · no puedes repetir el mismo estilo
           </span>
-        )}
+        ) : null}
       </p>
 
       {picked.length > 0 && (

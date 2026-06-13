@@ -9,6 +9,7 @@ import {
 } from "../../utils/pact-magic.utils";
 import { grantsForSpellLevel } from "../../utils/subclass-spells.utils";
 import { GridElementSlot } from "../shared/GridElementSlot";
+import { BuilderSlotGrid } from "../shared/BuilderSlotGrid";
 import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import {
   isSpellLevelSlot,
@@ -301,76 +302,67 @@ export function SpellcastingGridPanel({
     }
   }
 
-  const rows: (typeof gridSlots)[] = [];
-  for (let i = 0; i < gridSlots.length; i += 5) {
-    rows.push(gridSlots.slice(i, i + 5));
-  }
-
   return (
-    <div className="space-y-1.5">
-      {rows.map((row, rowIdx) => (
-        <div key={rowIdx} className="grid grid-cols-5 gap-1.5">
-          {row.map((entry) => {
-            if (entry.kind === "pact") {
-              const equipped = getPactPoolEquipped(
-                spellSelections,
-                spellcastingInfo,
-                spellLevelByName,
-                spellsByName,
-              );
-              const label = spellcastingInfo.isPreparedCaster
-                ? "Prepared Spells"
-                : "Spells Known";
-              return (
-                <GridElementSlot
-                  key={PACT_SPELL_SLOT}
-                  label={label}
-                  icon={<Sparkles className="h-5 w-5 text-violet-400" />}
-                  equipped={equipped}
-                  onClickEquip={() => onSelectSlot(PACT_SPELL_SLOT)}
-                  onClickDetails={() => onSelectSlot(PACT_SPELL_SLOT)}
-                  isSelected={selectedSlot === PACT_SPELL_SLOT}
-                  emptyTitle={`Elegir hechizos de Pact Magic (1–${spellcastingInfo.pactMaxSpellLevel})`}
-                />
-              );
+    <BuilderSlotGrid>
+      {gridSlots.map((entry) => {
+        if (entry.kind === "pact") {
+          const equipped = getPactPoolEquipped(
+            spellSelections,
+            spellcastingInfo,
+            spellLevelByName,
+            spellsByName,
+          );
+          const label = spellcastingInfo.isPreparedCaster
+            ? "Prepared Spells"
+            : "Spells Known";
+          return (
+            <GridElementSlot
+              key={PACT_SPELL_SLOT}
+              label={label}
+              icon={<Sparkles className="h-5 w-5 text-violet-400" />}
+              equipped={equipped}
+              onClickEquip={() => onSelectSlot(PACT_SPELL_SLOT)}
+              onClickDetails={() => onSelectSlot(PACT_SPELL_SLOT)}
+              isSelected={selectedSlot === PACT_SPELL_SLOT}
+              emptyTitle={`Elegir hechizos de Pact Magic (1–${spellcastingInfo.pactMaxSpellLevel})`}
+            />
+          );
+        }
+
+        const level = entry.level;
+        const slot = toSpellLevelSlot(level);
+        const label = SPELL_LEVEL_LABELS[level] ?? `Nivel ${level}`;
+        const isSelected =
+          isSpellLevelSlot(selectedSlot) &&
+          parseSpellLevel(selectedSlot) === level;
+        const equipped = getSlotEquipped(
+          level,
+          label,
+          spellSelections,
+          spellcastingInfo,
+          spellLevelByName,
+          spellsByName,
+        );
+        const colorClass =
+          SPELL_LEVEL_COLORS[level] ?? "text-muted-foreground";
+
+        return (
+          <GridElementSlot
+            key={slot}
+            label={label}
+            icon={<Sparkles className={`h-5 w-5 ${colorClass}`} />}
+            equipped={equipped}
+            onClickEquip={() => onSelectSlot(slot)}
+            onClickDetails={() => onSelectSlot(slot)}
+            isSelected={isSelected}
+            emptyTitle={
+              level === 0
+                ? `Elegir cantrips de ${className}`
+                : `Elegir hechizos de nivel ${level} de ${className}`
             }
-
-            const level = entry.level;
-            const slot = toSpellLevelSlot(level);
-            const label = SPELL_LEVEL_LABELS[level] ?? `Nivel ${level}`;
-            const isSelected =
-              isSpellLevelSlot(selectedSlot) &&
-              parseSpellLevel(selectedSlot) === level;
-            const equipped = getSlotEquipped(
-              level,
-              label,
-              spellSelections,
-              spellcastingInfo,
-              spellLevelByName,
-              spellsByName,
-            );
-            const colorClass =
-              SPELL_LEVEL_COLORS[level] ?? "text-muted-foreground";
-
-            return (
-              <GridElementSlot
-                key={slot}
-                label={label}
-                icon={<Sparkles className={`h-5 w-5 ${colorClass}`} />}
-                equipped={equipped}
-                onClickEquip={() => onSelectSlot(slot)}
-                onClickDetails={() => onSelectSlot(slot)}
-                isSelected={isSelected}
-                emptyTitle={
-                  level === 0
-                    ? `Elegir cantrips de ${className}`
-                    : `Elegir hechizos de nivel ${level} de ${className}`
-                }
-              />
-            );
-          })}
-        </div>
-      ))}
-    </div>
+          />
+        );
+      })}
+    </BuilderSlotGrid>
   );
 }

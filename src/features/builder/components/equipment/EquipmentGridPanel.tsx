@@ -1,6 +1,7 @@
 import { Gem, Shield, Shirt, Sword } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { formatArmorSlotDetail, isClothingArmor } from "../../data/armor.data";
+import { BuilderSlotGrid } from "../shared/BuilderSlotGrid";
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { StandaloneShieldItem } from "../../data/shield.data";
 import { EquippedWeapon, EquippedArmor, EquippedTrinket } from "@/shared/types";
@@ -71,12 +72,7 @@ export function EquipmentGridPanel({
   }
 
   return (
-    <div
-      className={cn(
-        "grid gap-1.5",
-        showTrinkets ? "grid-cols-5" : "grid-cols-3",
-      )}
-    >
+    <BuilderSlotGrid>
       {showTrinkets && (
         <>
           <GridElementSlot
@@ -142,7 +138,7 @@ export function EquipmentGridPanel({
         isSelected={selectedSlot === "mainHand"}
       />
       {hasIntegratedShield ? (
-        <div className="flex min-h-[72px] flex-col items-center justify-center gap-0.5 rounded-md border border-solid border-teal-700/40 bg-teal-950/20 p-2 text-center">
+        <div className="flex min-h-[72px] w-full flex-col items-center justify-center gap-0.5 rounded-md border border-solid border-teal-700/40 bg-teal-950/20 p-2 text-center">
           <Shield className="h-5 w-5 text-teal-400" />
           <span className="text-[11px] font-medium text-foreground">
             Shield
@@ -202,6 +198,6 @@ export function EquipmentGridPanel({
           isSelected={selectedSlot === "offHand"}
         />
       )}
-    </div>
+    </BuilderSlotGrid>
   );
 }

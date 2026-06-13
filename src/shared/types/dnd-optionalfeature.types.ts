@@ -6,7 +6,21 @@ export interface DndOptionalFeatureRef {
   source: string;
 }
 
-export type OptionalFeatureCatalog = "optionalfeature" | "feat";
+export type OptionalFeatureCatalog =
+  | "optionalfeature"
+  | "feat"
+  | "feature-choice";
+
+/** How many options the player picks from a feature-choice progression. */
+export type FeatureChoicePickMode = "one" | "all";
+
+/** A single pickable option extracted from a class/subclass feature {@code options} block. */
+export interface FeatureChoiceOption {
+  id: string;
+  name: string;
+  source: string;
+  entries: string[];
+}
 
 /** Progression of pickable optional features (EI, MM, MV:B, Fighting Style, etc.). */
 export interface OptionalFeatureProgression {
@@ -19,6 +33,10 @@ export interface OptionalFeatureProgression {
   catalog?: OptionalFeatureCatalog;
   /** Feat categories for catalog === "feat" (FS, FS:R, FS:P, …). */
   featCategories?: string[];
+  /** Resolved options when catalog === "feature-choice". */
+  choiceOptions?: FeatureChoiceOption[];
+  /** Whether the player picks one option or receives all listed options. */
+  pickMode?: FeatureChoicePickMode;
   scope: "class" | "subclass";
   /** Class or subclass entity id this progression belongs to. */
   ownerId: string;

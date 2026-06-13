@@ -24,6 +24,11 @@ import {
   extractOptionalFeatureRefs,
   mergeOptionalFeatureProgressions,
 } from "../utils/optional-feature-progression.utils";
+import {
+  extractClassFeatureChoiceProgressions,
+  extractSubclassFeatureChoiceProgressions,
+  mergeFeatureChoiceProgressions,
+} from "../utils/feature-choice-progression.utils";
 import type {
   ProcessedSubclass,
   RawClassDefinition,
@@ -366,8 +371,34 @@ function mapAdditionalSpells(
   }));
 }
 
-function mapSubclass(sc: ProcessedSubclass): Subclass {
+function mapSubclass(
+  sc: ProcessedSubclass,
+  allClassFeatures: import("../utils/class-raw.types").RawClassFeature[],
+  allSubclassFeatures: import("../utils/class-raw.types").RawSubclassFeature[],
+): Subclass {
   const tableGroups = (sc.subclassTableGroups ?? []).map(mapTableGroup);
+  const baseProgressions = mergeOptionalFeatureProgressions(
+    sc.optionalfeatureProgression,
+    sc.featProgression,
+    "subclass",
+    sc.name,
+    sc.source,
+  );
+  const optionalProgressionNames = [
+    ...(sc.optionalfeatureProgression ?? []).map((p) => p.name ?? ""),
+    ...(sc.featProgression ?? []).map((p) => p.name ?? ""),
+  ];
+  const featureChoices = extractSubclassFeatureChoiceProgressions(
+    sc.name,
+    sc.source,
+    sc.className,
+    sc.classSource || DEFAULT_CLASS_SOURCE,
+    sc.shortName,
+    allClassFeatures,
+    allSubclassFeatures,
+    optionalProgressionNames,
+  );
+
   return {
     id: classId(sc.name, sc.source),
     name: sc.name,
@@ -389,12 +420,9 @@ function mapSubclass(sc: ProcessedSubclass): Subclass {
       extractSpellsKnownFromTableGroups(sc.subclassTableGroups),
     spellProgression: tableGroups.length ? tableGroups : undefined,
     additionalSpells: mapAdditionalSpells(sc.additionalSpells),
-    optionalFeatureProgressions: mergeOptionalFeatureProgressions(
-      sc.optionalfeatureProgression,
-      sc.featProgression,
-      "subclass",
-      sc.name,
-      sc.source,
+    optionalFeatureProgressions: mergeFeatureChoiceProgressions(
+      baseProgressions,
+      featureChoices,
     ),
   };
 }
@@ -405,7 +433,11 @@ function formatHitDie(raw: RawClassDefinition): string {
   return "—";
 }
 
-export function mapClass(raw: RawClassDefinition): Class {
+export function mapClass(
+  raw: RawClassDefinition,
+  allClassFeatures: import("../utils/class-raw.types").RawClassFeature[] = [],
+  allSubclassFeatures: import("../utils/class-raw.types").RawSubclassFeature[] = [],
+): Class {
   const spellProgression = (raw.classTableGroups ?? []).map(mapTableGroup);
   const proficiencies = (raw.proficiency ?? []).map(formatAbility);
   const hitDie = formatHitDie(raw);
@@ -413,7 +445,26 @@ export function mapClass(raw: RawClassDefinition): Class {
   const progression = mapProgression(raw.classFeaturesByLevel, spellProgression);
 
   const subclasses = (raw.subclasses ?? []).map((sc) =>
-    mapSubclass(sc as ProcessedSubclass),
+    mapSubclass(sc as ProcessedSubclass, allClassFeatures, allSubclassFeatures),
+  );
+
+  const baseClassProgressions = mergeOptionalFeatureProgressions(
+    raw.optionalfeatureProgression,
+    raw.featProgression,
+    "class",
+    raw.name,
+    raw.source,
+  );
+  const classOptionalProgressionNames = [
+    ...(raw.optionalfeatureProgression ?? []).map((p) => p.name ?? ""),
+    ...(raw.featProgression ?? []).map((p) => p.name ?? ""),
+  ];
+  const classFeatureChoices = extractClassFeatureChoiceProgressions(
+    raw.name,
+    raw.source,
+    allClassFeatures,
+    allSubclassFeatures,
+    classOptionalProgressionNames,
   );
 
   const casterLabel = raw.casterProgression
@@ -486,12 +537,9 @@ export function mapClass(raw: RawClassDefinition): Class {
     armorGrants,
     weaponGrants,
     languageGrants,
-    optionalFeatureProgressions: mergeOptionalFeatureProgressions(
-      raw.optionalfeatureProgression,
-      raw.featProgression,
-      "class",
-      raw.name,
-      raw.source,
+    optionalFeatureProgressions: mergeFeatureChoiceProgressions(
+      baseClassProgressions,
+      classFeatureChoices,
     ),
   };
 }

@@ -14,7 +14,7 @@ import { processAllClasses } from "../utils/class-processor.utils";
 import { dedupeClassesByName } from "../utils/class-dedupe.utils";
 
 /** Bump when mapped Class shape changes so in-memory cache is rebuilt. */
-const CLASS_CACHE_VERSION = 11;
+const CLASS_CACHE_VERSION = 14;
 
 let cache: Class[] | null = null;
 let cacheVersion: number | null = null;
@@ -81,7 +81,9 @@ export async function getAllClasses(): Promise<Class[]> {
     subclassFeatures,
   );
 
-  cache = processed.map(mapClass);
+  cache = processed.map((c) =>
+    mapClass(c, classFeatures, subclassFeatures),
+  );
   cacheVersion = CLASS_CACHE_VERSION;
   buildIndexes(cache);
   return cache;
