@@ -95,6 +95,7 @@ export function BuilderInventoryPanel() {
     addEquipmentBundle,
     clearInventory,
     weapons: weaponCatalog,
+    armorCatalog,
   } = useBuilderInventory();
   const {
     character,
@@ -332,6 +333,7 @@ export function BuilderInventoryPanel() {
                           entry={entry}
                           kind={kind}
                           weaponCatalog={weaponCatalog}
+                          armorCatalog={armorCatalog}
                           equippedArmorName={equippedArmorName}
                           equippedShieldName={equippedShieldName}
                           weaponSlot={getWeaponEquippedSlot(entry.name)}
@@ -389,6 +391,7 @@ function InventoryRow({
   entry,
   kind,
   weaponCatalog,
+  armorCatalog,
   equippedArmorName,
   equippedShieldName,
   weaponSlot,
@@ -408,6 +411,7 @@ function InventoryRow({
   entry: CartEntry;
   kind: CartItemKind;
   weaponCatalog: Weapon[];
+  armorCatalog: ArmorItem[];
   equippedArmorName: string | null;
   equippedShieldName: string | null;
   weaponSlot: WeaponEquippedSlot | null;
@@ -428,7 +432,9 @@ function InventoryRow({
   const shieldItem =
     kind === "armor" ? findShieldByCartName(entry.name) : null;
   const armorItem =
-    kind === "armor" && !shieldItem ? findArmorByCartName(entry.name) : null;
+    kind === "armor" && !shieldItem
+      ? findArmorByCartName(entry.name, armorCatalog)
+      : null;
   const weaponItem =
     kind === "weapon" ? findWeaponByCartName(entry.name, weaponCatalog) : null;
   const isTrinketItem = kind === "trinket" || isTrinketEntry(entry);

@@ -6,7 +6,7 @@ import { ArmorItem, CartEntry, Weapon } from "@/shared/types";
 
 export { findShieldByCartName };
 
-const ARMOR_CATALOG: ArmorItem[] = [...BASE_ARMORS, CLOTHING_ARMOR];
+export const MH_ARMOR_CATALOG: ArmorItem[] = [...BASE_ARMORS, CLOTHING_ARMOR];
 
 export type CartItemKind = "weapon" | "armor" | "trinket" | "other";
 
@@ -14,14 +14,17 @@ function normalizeName(name: string): string {
   return name.trim().toLowerCase();
 }
 
-export function findArmorByCartName(name: string): ArmorItem | null {
+export function findArmorByCartName(
+  name: string,
+  armorCatalog: ArmorItem[] = MH_ARMOR_CATALOG,
+): ArmorItem | null {
   const normalized = normalizeName(name);
-  const exact = ARMOR_CATALOG.find((a) => normalizeName(a.name) === normalized);
+  const exact = armorCatalog.find((a) => normalizeName(a.name) === normalized);
   if (exact) return exact;
 
   const withoutArmorSuffix = name.replace(/\s+armor$/i, "").trim();
   if (withoutArmorSuffix !== name) {
-    const match = ARMOR_CATALOG.find(
+    const match = armorCatalog.find(
       (a) => normalizeName(a.name) === normalizeName(withoutArmorSuffix),
     );
     if (match) return match;
@@ -41,10 +44,11 @@ export function findWeaponByCartName(
 export function classifyCartEntry(
   entry: CartEntry,
   weaponCatalog: Weapon[],
+  armorCatalog: ArmorItem[] = MH_ARMOR_CATALOG,
 ): CartItemKind {
   if (findWeaponByCartName(entry.name, weaponCatalog)) return "weapon";
   if (findShieldByCartName(entry.name)) return "armor";
-  if (findArmorByCartName(entry.name)) return "armor";
+  if (findArmorByCartName(entry.name, armorCatalog)) return "armor";
   if (isTrinketEntry(entry) || isKnownTrinket(entry.name)) return "trinket";
   return "other";
 }
@@ -52,6 +56,7 @@ export function classifyCartEntry(
 export function resolveEquippableFromCart(
   cartItems: CartEntry[],
   weaponCatalog: Weapon[],
+  armorCatalog: ArmorItem[] = MH_ARMOR_CATALOG,
 ): { weapons: Weapon[]; armors: ArmorItem[]; trinkets: string[] } {
   const weapons: Weapon[] = [];
   const armors: ArmorItem[] = [];
@@ -68,7 +73,7 @@ export function resolveEquippableFromCart(
       continue;
     }
 
-    const armor = findArmorByCartName(entry.name);
+    const armor = findArmorByCartName(entry.name, armorCatalog);
     if (armor && !seenArmors.has(armor.name)) {
       seenArmors.add(armor.name);
       armors.push(armor);
