@@ -6,13 +6,19 @@ export interface DndOptionalFeatureRef {
   source: string;
 }
 
-/** Progression of pickable optional features (EI, MM, MV:B, etc.). */
+export type OptionalFeatureCatalog = "optionalfeature" | "feat";
+
+/** Progression of pickable optional features (EI, MM, MV:B, Fighting Style, etc.). */
 export interface OptionalFeatureProgression {
   /** Stable key for builder state, e.g. class_Warlock_XPHB_EI */
   id: string;
   /** Display label, e.g. "Eldritch Invocations" */
   name: string;
   featureTypes: string[];
+  /** When set, picks come from feats.json instead of optionalfeatures.json. */
+  catalog?: OptionalFeatureCatalog;
+  /** Feat categories for catalog === "feat" (FS, FS:R, FS:P, …). */
+  featCategories?: string[];
   scope: "class" | "subclass";
   /** Class or subclass entity id this progression belongs to. */
   ownerId: string;

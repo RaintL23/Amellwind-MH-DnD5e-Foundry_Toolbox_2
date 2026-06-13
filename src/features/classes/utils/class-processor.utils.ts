@@ -46,6 +46,8 @@ export function resolveSubclassCopies(
         overrides.additionalSpells ?? base.additionalSpells,
       optionalfeatureProgression:
         overrides.optionalfeatureProgression ?? base.optionalfeatureProgression,
+      featProgression:
+        overrides.featProgression ?? base.featProgression,
       subclassTableGroups:
         overrides.subclassTableGroups ?? base.subclassTableGroups,
       casterProgression:

@@ -2,7 +2,10 @@ import type {
   DndOptionalFeatureRef,
   OptionalFeatureProgression,
 } from "@/shared/types";
-import type { RawOptionalFeatureProgression } from "./class-raw.types";
+import type {
+  RawClassFeatProgression,
+  RawOptionalFeatureProgression,
+} from "./class-raw.types";
 
 function classId(name: string, source: string): string {
   return `${source}::${name}`;
@@ -21,6 +24,22 @@ export function parseOptionalFeatureRef(raw: string): DndOptionalFeatureRef {
     name: trimmed.slice(0, pipe).trim(),
     source: trimmed.slice(pipe + 1).trim() || "PHB",
   };
+}
+
+export const parseFeatRef = parseOptionalFeatureRef;
+
+export function isFightingStyleCategory(category: string): boolean {
+  const upper = category.toUpperCase();
+  return upper === "FS" || upper.startsWith("FS:");
+}
+
+export function isFightingStyleProgression(
+  progression: OptionalFeatureProgression,
+): boolean {
+  if (progression.catalog === "feat") return true;
+  if (progression.featCategories?.some(isFightingStyleCategory)) return true;
+  if (progression.featureTypes.some(isFightingStyleCategory)) return true;
+  return /fighting style/i.test(progression.name);
 }
 
 export function optionalFeatureRefKey(ref: DndOptionalFeatureRef): string {
@@ -55,11 +74,55 @@ export function mapOptionalFeatureProgressions(
         id: buildProgressionId(scope, ownerId, featureTypes),
         name: entry.name,
         featureTypes,
+        catalog: "optionalfeature",
         scope,
         ownerId,
         progression: entry.progression!,
       };
     });
+}
+
+export function mapClassFeatProgressions(
+  rawList: RawClassFeatProgression[] | undefined,
+  scope: "class" | "subclass",
+  ownerName: string,
+  ownerSource: string,
+): OptionalFeatureProgression[] {
+  if (!rawList?.length) return [];
+
+  const ownerId = classId(ownerName, ownerSource);
+
+  return rawList
+    .filter(
+      (entry) =>
+        entry.category?.some(isFightingStyleCategory) && entry.progression,
+    )
+    .map((entry) => {
+      const featCategories = entry.category!.filter(isFightingStyleCategory);
+      return {
+        id: buildProgressionId(scope, ownerId, featCategories),
+        name: entry.name,
+        featureTypes: [],
+        catalog: "feat",
+        featCategories,
+        scope,
+        ownerId,
+        progression: entry.progression!,
+      };
+    });
+}
+
+export function mergeOptionalFeatureProgressions(
+  optionalRaw: RawOptionalFeatureProgression[] | undefined,
+  featRaw: RawClassFeatProgression[] | undefined,
+  scope: "class" | "subclass",
+  ownerName: string,
+  ownerSource: string,
+): OptionalFeatureProgression[] {
+  return [
+    ...mapOptionalFeatureProgressions(optionalRaw, scope, ownerName, ownerSource),
+    ...mapClassFeatProgressions(featRaw, scope, ownerName, ownerSource),
+  ];
 }
 
 /**
@@ -107,6 +170,42 @@ export function extractOptionalFeatureRefs(
         typeof obj.optionalfeature === "string"
       ) {
         const ref = parseOptionalFeatureRef(obj.optionalfeature);
+        const key = optionalFeatureRefKey(ref);
+        if (!seen.has(key)) {
+          seen.add(key);
+          refs.push(ref);
+        }
+      }
+
+      if (Array.isArray(obj.entries)) {
+        walk(obj.entries as unknown[]);
+      }
+      if (obj.type === "options" && Array.isArray(obj.entries)) {
+        walk(obj.entries as unknown[]);
+      }
+    }
+  };
+
+  walk(entries);
+  return refs;
+}
+
+/** Collect {@code refFeat} refs from raw 5etools entry trees. */
+export function extractFeatRefs(
+  entries: unknown[] | undefined,
+): DndOptionalFeatureRef[] {
+  if (!entries?.length) return [];
+
+  const refs: DndOptionalFeatureRef[] = [];
+  const seen = new Set<string>();
+
+  const walk = (nodes: unknown[]) => {
+    for (const node of nodes) {
+      if (typeof node !== "object" || node === null) continue;
+      const obj = node as Raw;
+
+      if (obj.type === "refFeat" && typeof obj.feat === "string") {
+        const ref = parseFeatRef(obj.feat);
         const key = optionalFeatureRefKey(ref);
         if (!seen.has(key)) {
           seen.add(key);

@@ -21,6 +21,8 @@ export interface ClassFeatureEntry {
   gainSubclassFeature?: boolean;
   /** Explicit optional-feature refs from {@code options} blocks in this feature. */
   optionalFeatureRefs?: DndOptionalFeatureRef[];
+  /** Explicit feat refs from {@code refFeat} blocks (e.g. Blessed Warrior). */
+  featRefs?: DndOptionalFeatureRef[];
 }
 
 export interface ClassLevelRow {

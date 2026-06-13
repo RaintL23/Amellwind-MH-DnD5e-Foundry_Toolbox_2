@@ -31,6 +31,7 @@ export interface RawClassDefinition {
   classFeatures?: (string | ClassFeatureRef)[];
   subclassTitle?: string;
   optionalfeatureProgression?: RawOptionalFeatureProgression[];
+  featProgression?: RawClassFeatProgression[];
   /** Filled after processing */
   subclasses?: ProcessedSubclass[];
   classFeaturesByLevel?: ResolvedFeature[][];
@@ -67,6 +68,7 @@ export interface RawSubclassDefinition {
   subclassTableGroups?: RawClassTableGroup[];
   subclassFeatures?: (string | SubclassFeatureRef)[];
   optionalfeatureProgression?: RawOptionalFeatureProgression[];
+  featProgression?: RawClassFeatProgression[];
   isReprinted?: boolean;
   _copy?: Record<string, unknown>;
 }
@@ -164,6 +166,12 @@ export interface RawMulticlassing {
 export interface RawOptionalFeatureProgression {
   name: string;
   featureType?: string[];
+  progression?: number[] | Record<string, number>;
+}
+
+export interface RawClassFeatProgression {
+  name: string;
+  category?: string[];
   progression?: number[] | Record<string, number>;
 }
 

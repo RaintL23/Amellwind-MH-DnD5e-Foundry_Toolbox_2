@@ -20,8 +20,9 @@ import {
 import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 import { parseClassStartingEquipment } from "@/shared/utils/starting-equipment.parser";
 import {
+  extractFeatRefs,
   extractOptionalFeatureRefs,
-  mapOptionalFeatureProgressions,
+  mergeOptionalFeatureProgressions,
 } from "../utils/optional-feature-progression.utils";
 import type {
   ProcessedSubclass,
@@ -78,6 +79,7 @@ function mapFeatureEntry(
 ): ClassFeatureEntry {
   const uid = `${feature.name}|${feature.className}|${feature.classSource}|${feature.level}|${feature.source}`;
   const optionalFeatureRefs = extractOptionalFeatureRefs(feature.entries);
+  const featRefs = extractFeatRefs(feature.entries);
   const content = mapStatBlockEntries(feature.entries);
   return {
     uid,
@@ -92,6 +94,7 @@ function mapFeatureEntry(
     optionalFeatureRefs: optionalFeatureRefs.length
       ? optionalFeatureRefs
       : undefined,
+    featRefs: featRefs.length ? featRefs : undefined,
   };
 }
 
@@ -386,8 +389,9 @@ function mapSubclass(sc: ProcessedSubclass): Subclass {
       extractSpellsKnownFromTableGroups(sc.subclassTableGroups),
     spellProgression: tableGroups.length ? tableGroups : undefined,
     additionalSpells: mapAdditionalSpells(sc.additionalSpells),
-    optionalFeatureProgressions: mapOptionalFeatureProgressions(
+    optionalFeatureProgressions: mergeOptionalFeatureProgressions(
       sc.optionalfeatureProgression,
+      sc.featProgression,
       "subclass",
       sc.name,
       sc.source,
@@ -482,8 +486,9 @@ export function mapClass(raw: RawClassDefinition): Class {
     armorGrants,
     weaponGrants,
     languageGrants,
-    optionalFeatureProgressions: mapOptionalFeatureProgressions(
+    optionalFeatureProgressions: mergeOptionalFeatureProgressions(
       raw.optionalfeatureProgression,
+      raw.featProgression,
       "class",
       raw.name,
       raw.source,

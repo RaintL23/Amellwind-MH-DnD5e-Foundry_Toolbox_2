@@ -1,9 +1,10 @@
-import { Wand2 } from "lucide-react";
+import { Swords, Wand2 } from "lucide-react";
 import type { BuilderOptionalFeatureSelections } from "@/shared/types";
 import { GridElementSlot } from "../shared/GridElementSlot";
 import type { BuilderSlotSelection } from "../../hooks/useBuilderSlotSelection";
 import {
   getProgressionPicks,
+  isFightingStyleProgression,
   isOptionalFeatureSlot,
   progressionDisplayName,
   toOptionalFeatureSlot,
@@ -23,14 +24,36 @@ const PROGRESSION_COLORS: Record<string, string> = {
   MM: "text-fuchsia-400",
   "MV:B": "text-orange-400",
   PB: "text-indigo-400",
+  FS: "text-amber-400",
+  "FS:F": "text-amber-400",
+  "FS:R": "text-amber-300",
+  "FS:P": "text-amber-200",
+  "FS:B": "text-amber-300",
 };
 
-function progressionColor(featureTypes: string[]): string {
-  for (const type of featureTypes) {
+function progressionColor(progression: ResolvedOptionalFeatureProgression["progression"]): string {
+  if (isFightingStyleProgression(progression)) {
+    return "text-amber-400";
+  }
+  for (const type of progression.featureTypes) {
     const color = PROGRESSION_COLORS[type];
     if (color) return color;
   }
+  for (const cat of progression.featCategories ?? []) {
+    const color = PROGRESSION_COLORS[cat];
+    if (color) return color;
+  }
   return "text-amber-400";
+}
+
+function progressionIcon(
+  progression: ResolvedOptionalFeatureProgression["progression"],
+  colorClass: string,
+) {
+  if (isFightingStyleProgression(progression)) {
+    return <Swords className={`h-5 w-5 ${colorClass}`} />;
+  }
+  return <Wand2 className={`h-5 w-5 ${colorClass}`} />;
 }
 
 export function OptionalFeatureGridPanel({
@@ -60,14 +83,14 @@ export function OptionalFeatureGridPanel({
           {row.map(({ progression, slotCount }) => {
             const slot = toOptionalFeatureSlot(progression.id);
             const label = progressionDisplayName(progression.name);
-            const colorClass = progressionColor(progression.featureTypes);
+            const colorClass = progressionColor(progression);
             const picks = getProgressionPicks(selections, progression.id);
             const pickedCount = picks.length;
-            // const namesSummary = picks.map((p) => p.name).join(", ");
+            const pickedNames = picks.map((p) => p.name).join(", ");
             const countDetail = `${pickedCount}/${slotCount}`;
-            // const detail = namesSummary
-            //   ? `${countDetail} — ${namesSummary}`
-            //   : countDetail;
+            const detail = pickedNames
+              ? `${countDetail} — ${pickedNames}`
+              : countDetail;
             const isSelected =
               isOptionalFeatureSlot(selectedSlot) && selectedSlot === slot;
 
@@ -75,11 +98,15 @@ export function OptionalFeatureGridPanel({
               <GridElementSlot
                 key={slot}
                 label={label}
-                icon={<Wand2 className={`h-5 w-5 ${colorClass}`} />}
-                equipped={{
-                  name: label,
-                  detail: `${pickedCount}/${slotCount}`,
-                }}
+                icon={progressionIcon(progression, colorClass)}
+                equipped={
+                  pickedCount > 0
+                    ? {
+                        name: picks[0]?.name ?? label,
+                        detail,
+                      }
+                    : null
+                }
                 onClickEquip={() => onSelectSlot(slot)}
                 onClickDetails={() => onSelectSlot(slot)}
                 onUnequip={

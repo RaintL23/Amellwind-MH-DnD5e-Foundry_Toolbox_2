@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, Wand2, X } from "lucide-react";
-import type { Class, DndOptionalFeature, Subclass } from "@/shared/types";
+import { Search, Swords, X } from "lucide-react";
+import type { Class, DndFeat, DndOptionalFeature, Subclass } from "@/shared/types";
 import type {
   BuilderOptionalFeatureSelection,
   BuilderOptionalFeatureSelections,
@@ -10,18 +10,37 @@ import { BuilderPanel } from "../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";
 import { cn } from "@/shared/utils/cn";
 import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
+import { getAllDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { resolveBookSourceName } from "@/features/spells/services/book-source.service";
 import {
   collectOptionPoolRefs,
+  dndFeatToCatalogItem,
+  dndFeatToSelection,
   dndOptionalFeatureToSelection,
   filterCatalogForProgression,
+  filterFeatsForProgression,
+  getFeatCategoryLabel,
+  getOtherFightingStylePicks,
+  isFightingStyleProgression,
+  optionalFeatureToCatalogItem,
   getProgressionPicks,
   parseOptionalFeatureSlot,
+  type OptionalFeatureCatalogItem,
   type ResolvedOptionalFeatureProgression,
 } from "../../utils/class-optional-features.utils";
 import {
+  getFeatPrerequisiteSummary,
   getPrerequisiteSummary,
+  isFightingStyleFeatAvailable,
   isOptionalFeatureAvailable,
 } from "../../utils/optional-feature-prerequisites.utils";
+import {
+  ItemRow,
+  LibraryItemBadge,
+  LibraryItemBadgeRow,
+} from "./library/shared/LibraryUi";
+import { OptionalFeatureLibraryDetail } from "./library/OptionalFeatureLibraryDetail";
 
 interface OptionalFeatureLibraryPanelProps {
   selectedSlot: BuilderOptionalFeatureSlot;
@@ -50,9 +69,16 @@ export function OptionalFeatureLibraryPanel({
   onSetSelections,
 }: OptionalFeatureLibraryPanelProps) {
   const parsed = parseOptionalFeatureSlot(selectedSlot);
-  const [catalog, setCatalog] = useState<DndOptionalFeature[]>([]);
+  const bookNames = useBookSourceNames();
+  const [optionalCatalog, setOptionalCatalog] = useState<DndOptionalFeature[]>(
+    [],
+  );
+  const [featCatalog, setFeatCatalog] = useState<DndFeat[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [detailItem, setDetailItem] = useState<OptionalFeatureCatalogItem | null>(
+    null,
+  );
 
   const activeProgression = useMemo(() => {
     if (!parsed) return null;
@@ -62,55 +88,123 @@ export function OptionalFeatureLibraryPanel({
     );
   }, [parsed, progressions]);
 
+  const usesFeatCatalog = activeProgression?.progression.catalog === "feat";
+
   useEffect(() => {
     setSearch("");
+    setDetailItem(null);
   }, [selectedSlot]);
 
   useEffect(() => {
     setLoading(true);
-    getAllDndOptionalFeatures()
-      .then(setCatalog)
-      .finally(() => setLoading(false));
-  }, []);
+    const loaders: Promise<void>[] = [
+      getAllDndOptionalFeatures().then(setOptionalCatalog).then(() => undefined),
+    ];
+    if (usesFeatCatalog) {
+      loaders.push(getAllDndFeats().then(setFeatCatalog).then(() => undefined));
+    }
+    Promise.all(loaders).finally(() => setLoading(false));
+  }, [usesFeatCatalog]);
 
   const picked = useMemo(() => {
     if (!parsed) return [];
     return getProgressionPicks(selections, parsed.progressionId);
   }, [parsed, selections]);
 
+  const otherFightingStylePicks = useMemo(() => {
+    if (!parsed || !activeProgression) return [];
+    if (!isFightingStyleProgression(activeProgression.progression)) return [];
+    return getOtherFightingStylePicks(
+      selections,
+      progressions,
+      parsed.progressionId,
+    );
+  }, [parsed, activeProgression, selections, progressions]);
+
   const slotCount = activeProgression?.slotCount ?? 0;
   const atCapacity = picked.length >= slotCount;
 
-  const catalogOptions = useMemo(() => {
+  const catalogOptions = useMemo((): OptionalFeatureCatalogItem[] => {
     if (!activeProgression || !parsed) return [];
-    const poolRefs = collectOptionPoolRefs(classData, subclass, level);
-    return filterCatalogForProgression(
-      catalog,
-      poolRefs,
-      activeProgression.progression.featureTypes,
+
+    const progression = activeProgression.progression;
+    const poolRefs = collectOptionPoolRefs(
+      classData,
+      subclass,
+      level,
+      progression.catalog ?? "optionalfeature",
     );
-  }, [activeProgression, parsed, catalog, classData, subclass, level]);
+
+    if (progression.catalog === "feat") {
+      const feats = filterFeatsForProgression(
+        featCatalog,
+        poolRefs,
+        progression.featCategories ?? ["FS"],
+      );
+      return feats.map((feat) =>
+        dndFeatToCatalogItem(feat, getFeatPrerequisiteSummary(feat)),
+      );
+    }
+
+    const options = filterCatalogForProgression(
+      optionalCatalog,
+      poolRefs,
+      progression.featureTypes,
+    );
+    return options.map((feature) =>
+      optionalFeatureToCatalogItem(feature, getPrerequisiteSummary(feature)),
+    );
+  }, [
+    activeProgression,
+    parsed,
+    optionalCatalog,
+    featCatalog,
+    classData,
+    subclass,
+    level,
+  ]);
 
   const q = search.trim().toLowerCase();
   const filteredOptions = useMemo(() => {
     if (!q) return catalogOptions;
     return catalogOptions.filter(
-      (f) =>
-        f.name.toLowerCase().includes(q) ||
-        f.entries.some((e) => e.toLowerCase().includes(q)),
+      (item) =>
+        item.name.toLowerCase().includes(q) ||
+        item.entries.some((e) => e.toLowerCase().includes(q)) ||
+        item.source.toLowerCase().includes(q),
     );
   }, [catalogOptions, q]);
 
   const isPicked = useCallback(
-    (feature: DndOptionalFeature) =>
-      picked.some((p) => normalizeName(p.name) === normalizeName(feature.name)),
+    (item: OptionalFeatureCatalogItem) =>
+      picked.some((p) => normalizeName(p.name) === normalizeName(item.name)),
     [picked],
   );
 
   const canAdd = useCallback(
-    (feature: DndOptionalFeature) => {
-      if (isPicked(feature)) return true;
+    (item: OptionalFeatureCatalogItem) => {
+      if (isPicked(item)) return true;
       if (atCapacity) return false;
+
+      if (item.catalog === "feat") {
+        return isFightingStyleFeatAvailable(
+          { name: item.name } as DndFeat,
+          otherFightingStylePicks,
+        );
+      }
+
+      const feature = optionalCatalog.find((f) => f.id === item.id);
+      if (!feature) return false;
+
+      if (
+        isFightingStyleProgression(activeProgression!.progression) &&
+        otherFightingStylePicks.some(
+          (p) => normalizeName(p.name) === normalizeName(item.name),
+        )
+      ) {
+        return false;
+      }
+
       return isOptionalFeatureAvailable(feature, {
         className: classData.name,
         classLevel: level,
@@ -118,48 +212,56 @@ export function OptionalFeatureLibraryPanel({
         progressionId: parsed!.progressionId,
       });
     },
-    [isPicked, atCapacity, classData.name, level, picked, parsed],
+    [
+      isPicked,
+      atCapacity,
+      optionalCatalog,
+      otherFightingStylePicks,
+      activeProgression,
+      classData.name,
+      level,
+      picked,
+      parsed,
+    ],
   );
 
   const handleToggle = useCallback(
-    (feature: DndOptionalFeature) => {
+    (item: OptionalFeatureCatalogItem) => {
       if (!parsed) return;
 
-      if (isPicked(feature)) {
+      if (isPicked(item)) {
         onSetSelections(
           parsed.progressionId,
           picked.filter(
-            (p) => normalizeName(p.name) !== normalizeName(feature.name),
+            (p) => normalizeName(p.name) !== normalizeName(item.name),
           ),
         );
         return;
       }
 
-      if (atCapacity) return;
-      if (
-        !isOptionalFeatureAvailable(feature, {
-          className: classData.name,
-          classLevel: level,
-          selectedFeatures: picked,
-          progressionId: parsed.progressionId,
-        })
-      ) {
-        return;
-      }
+      if (!canAdd(item)) return;
 
-      onSetSelections(parsed.progressionId, [
-        ...picked,
-        dndOptionalFeatureToSelection(feature, parsed.progressionId),
-      ]);
+      const selection =
+        item.catalog === "feat"
+          ? dndFeatToSelection(
+              featCatalog.find((f) => f.id === item.id)!,
+              parsed.progressionId,
+            )
+          : dndOptionalFeatureToSelection(
+              optionalCatalog.find((f) => f.id === item.id)!,
+              parsed.progressionId,
+            );
+
+      onSetSelections(parsed.progressionId, [...picked, selection]);
     },
     [
       parsed,
       isPicked,
-      atCapacity,
+      canAdd,
       picked,
       onSetSelections,
-      classData.name,
-      level,
+      featCatalog,
+      optionalCatalog,
     ],
   );
 
@@ -189,12 +291,41 @@ export function OptionalFeatureLibraryPanel({
     );
   }
 
+  const progressionLabel = activeProgression.progression.name;
+  const isFightingStyle = isFightingStyleProgression(
+    activeProgression.progression,
+  );
+
+  if (detailItem) {
+    return (
+      <BuilderPanel
+        title={
+          <>
+            <Swords className="h-3.5 w-3.5" aria-hidden />
+            {progressionLabel}
+          </>
+        }
+        action={
+          <button
+            type="button"
+            onClick={() => setDetailItem(null)}
+            className="text-[11px] text-muted-foreground hover:text-foreground"
+          >
+            Volver a la lista
+          </button>
+        }
+      >
+        <OptionalFeatureLibraryDetail item={detailItem} bookNames={bookNames} />
+      </BuilderPanel>
+    );
+  }
+
   return (
     <BuilderPanel
       title={
         <>
-          <Wand2 className="h-3.5 w-3.5" aria-hidden />
-          {activeProgression.progression.name}
+          <Swords className="h-3.5 w-3.5" aria-hidden />
+          {progressionLabel}
         </>
       }
       action={
@@ -223,7 +354,13 @@ export function OptionalFeatureLibraryPanel({
         >
           {picked.length}/{slotCount}
         </span>{" "}
-        opciones elegidas · elige de la lista (crece con tu nivel)
+        opciones elegidas
+        {isFightingStyle && (
+          <span className="text-muted-foreground/80">
+            {" "}
+            · no puedes repetir el mismo estilo
+          </span>
+        )}
       </p>
 
       {picked.length > 0 && (
@@ -233,10 +370,11 @@ export function OptionalFeatureLibraryPanel({
               key={selection.id}
               type="button"
               onClick={() => handleRemove(selection)}
-              className="inline-flex items-center gap-1 rounded-md border border-violet-700/50 bg-violet-950/30 px-1.5 py-0.5 text-[10px] text-violet-200 hover:border-rose-600/50 hover:bg-rose-950/30 hover:text-rose-200"
+              className="inline-flex items-center gap-1 rounded-md border border-amber-700/50 bg-amber-950/30 px-1.5 py-0.5 text-[10px] text-amber-200 hover:border-rose-600/50 hover:bg-rose-950/30 hover:text-rose-200"
               title="Quitar"
             >
               {selection.name}
+              <span className="text-amber-400/70">({selection.source})</span>
               <X className="h-2.5 w-2.5" />
             </button>
           ))}
@@ -249,7 +387,7 @@ export function OptionalFeatureLibraryPanel({
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder={`Buscar ${activeProgression.progression.name.toLowerCase()}…`}
+          placeholder={`Buscar ${progressionLabel.toLowerCase()}…`}
           className="h-8 w-full rounded-md border border-border/70 bg-background/60 pl-7 pr-2 text-xs"
         />
       </div>
@@ -264,44 +402,76 @@ export function OptionalFeatureLibraryPanel({
             No hay opciones en el catálogo para esta progresión.
           </p>
         ) : (
-          <ul className="space-y-1">
-            {filteredOptions.map((feature) => {
-              const selected = isPicked(feature);
-              const addable = canAdd(feature);
-              const prereq = getPrerequisiteSummary(feature);
+          <ul className="space-y-0.5">
+            {filteredOptions.map((item) => {
+              const selected = isPicked(item);
+              const addable = canAdd(item);
+              const sourceBadge = {
+                code: item.source,
+                title: resolveBookSourceName(bookNames, item.source),
+              };
+              const categoryLabel =
+                item.catalog === "feat"
+                  ? getFeatCategoryLabel(item.category)
+                  : item.featureTypes[0];
+
               return (
-                <li key={feature.id}>
+                <li key={item.id}>
+                  <ItemRow
+                    icon={
+                      <Swords
+                        className={cn(
+                          "h-3.5 w-3.5",
+                          selected ? "text-amber-400" : "text-muted-foreground",
+                        )}
+                      />
+                    }
+                    name={item.name}
+                    source={sourceBadge}
+                    equipped={selected}
+                    disabled={!selected && !addable}
+                    disabledHint={
+                      !addable && !selected
+                        ? isFightingStyle &&
+                          otherFightingStylePicks.some(
+                            (p) =>
+                              normalizeName(p.name) === normalizeName(item.name),
+                          )
+                          ? "Ya elegiste este estilo en otro slot"
+                          : "No disponible"
+                        : undefined
+                    }
+                    onClick={() => handleToggle(item)}
+                    meta={
+                      <LibraryItemBadgeRow>
+                        {categoryLabel && (
+                          <LibraryItemBadge variant="category">
+                            {categoryLabel}
+                          </LibraryItemBadge>
+                        )}
+                        {item.consumes && (
+                          <LibraryItemBadge>{item.consumes}</LibraryItemBadge>
+                        )}
+                        {item.isRepeatable && (
+                          <LibraryItemBadge>Repetible</LibraryItemBadge>
+                        )}
+                        {usesFeatCatalog ? (
+                          <LibraryItemBadge variant="category">Feat</LibraryItemBadge>
+                        ) : (
+                          <LibraryItemBadge variant="category">
+                            Optional Feature
+                          </LibraryItemBadge>
+                        )}
+                      </LibraryItemBadgeRow>
+                    }
+                    trailing={selected ? "Elegida" : undefined}
+                  />
                   <button
                     type="button"
-                    disabled={!selected && !addable}
-                    onClick={() => handleToggle(feature)}
-                    className={cn(
-                      "w-full rounded-md border px-2 py-1.5 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-45",
-                      selected
-                        ? "border-violet-500/60 bg-violet-950/30"
-                        : addable
-                          ? "border-border/60 hover:border-violet-500/40 hover:bg-muted/30"
-                          : "border-border/40 bg-muted/10",
-                    )}
+                    onClick={() => setDetailItem(item)}
+                    className="mb-1 ml-5 text-[10px] text-muted-foreground hover:text-foreground"
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs font-medium text-foreground">
-                        {feature.name}
-                      </span>
-                      <span className="shrink-0 text-[9px] text-muted-foreground">
-                        {selected ? "Elegida" : feature.source}
-                      </span>
-                    </div>
-                    {prereq && !selected && (
-                      <p className="mt-0.5 text-[10px] text-amber-300/80">
-                        {prereq}
-                      </p>
-                    )}
-                    {feature.entries[0] && (
-                      <p className="mt-0.5 line-clamp-2 text-[10px] text-muted-foreground">
-                        {feature.entries[0]}
-                      </p>
-                    )}
+                    Ver detalle
                   </button>
                 </li>
               );
