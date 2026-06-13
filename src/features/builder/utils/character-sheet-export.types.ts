@@ -47,13 +47,19 @@ export interface CharacterSheetExportData {
   toolProficiencies: string;
   feats: string;
   classFeatures: string;
+  classFeatures2?: string;
   speciesTraits: string;
   equipment: string;
   attunementSlots: string[];
   weapons: CharacterSheetWeaponExport[];
   spells: CharacterSheetSpellExport[];
   spellcastingAbility?: string;
+  spellcastingMod?: string;
   spellSaveDc?: string;
   spellAttackBonus?: string;
+  spellSlotTotals?: Record<number, number>;
+  hasShield?: boolean;
+  alignmentCheckbox?: string;
+  goldPieces?: string;
   personality: BuilderPersonality & { notes: string };
 }

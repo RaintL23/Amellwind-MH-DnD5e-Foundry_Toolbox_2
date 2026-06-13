@@ -16,6 +16,19 @@ function setText(
   }
 }
 
+function setCheckbox(
+  form: ReturnType<PDFDocument["getForm"]>,
+  fieldName: string,
+  checked: boolean | undefined,
+) {
+  if (!checked) return;
+  try {
+    form.getCheckBox(fieldName).check();
+  } catch {
+    /* field may not exist on all template revisions */
+  }
+}
+
 export async function exportCharacterSheetPdf(
   data: CharacterSheetExportData,
 ): Promise<Uint8Array> {
@@ -101,8 +114,12 @@ export async function exportCharacterSheetPdf(
   setText(form, "TOOL PROF", data.toolProficiencies);
   setText(form, "FEATS", data.feats);
   setText(form, "CLASS FEATURES 1", data.classFeatures);
+  setText(form, "CLASS FEATURES 2", data.classFeatures2);
   setText(form, "SPECIES TRAITS", data.speciesTraits);
   setText(form, "EQUIPMENT", data.equipment);
+  setCheckbox(form, "shield chk", data.hasShield);
+  setCheckbox(form, data.alignmentCheckbox ?? "", true);
+  setText(form, "GP", data.goldPieces);
 
   data.attunementSlots.forEach((slot, index) => {
     setText(form, `ATTUNMENT ${index + 1}`, slot);
@@ -126,8 +143,16 @@ export async function exportCharacterSheetPdf(
 
   if (data.spellcastingAbility) {
     setText(form, "SPELLCASTING ABILITY", data.spellcastingAbility);
+    setText(form, "SPELLCASTING MOD", data.spellcastingMod);
     setText(form, "SPELL SAVE DC", data.spellSaveDc);
     setText(form, "SPELL ATTACK BONUS", data.spellAttackBonus);
+  }
+
+  if (data.spellSlotTotals) {
+    for (let level = 1; level <= 9; level++) {
+      const total = data.spellSlotTotals[level];
+      if (total) setText(form, `LVL${level} TOTAL`, total);
+    }
   }
 
   const personalityLines = [

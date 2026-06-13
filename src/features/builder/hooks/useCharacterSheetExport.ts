@@ -3,6 +3,7 @@ import { formatModifier } from "@/shared/utils/cr.utils";
 import { SKILL_ORDER } from "../utils/check-modifiers.utils";
 import type { AbilityKey } from "@/shared/types";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
+import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { useCharacterArmorClass } from "./useCharacterArmorClass";
 import { useCharacterHitPoints } from "./useCharacterHitPoints";
 import { useCharacterSpeed } from "./useCharacterSpeed";
@@ -18,6 +19,17 @@ import {
   exportCharacterSheetPdf,
 } from "../services/character-sheet-export.service";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
+import {
+  buildEquipmentExport,
+  buildWeaponsAndCantripsExport,
+  formatGoldPiecesForPdf,
+  getAlignmentCheckboxField,
+  getClassFeaturesExport,
+  getSpeciesTraitsExport,
+  getSpellSlotTotals,
+  hasShieldEquipped,
+  sumInventoryGoldGp,
+} from "../utils/character-sheet-export.utils";
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 
 function formatAbilityExport(
@@ -32,6 +44,7 @@ function formatAbilityExport(
 
 export function useCharacterSheetExport() {
   const builder = useCharacterBuilder();
+  const inventory = useBuilderInventory();
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
   const hitPoints = useCharacterHitPoints();
@@ -59,15 +72,44 @@ export function useCharacterSheetExport() {
     const { character } = builder;
     const attunement = getAttunementInfo(builder.class?.name, character.level);
 
-    const weapons = [];
-    if (builder.mainHand) {
-      const combat = builder.combat?.mainHand;
-      weapons.push({
-        name: builder.mainHand.weapon.name,
-        attackBonus: combat ? formatModifier(combat.attackBonus) : "",
-        damage: combat?.diceExpression ?? "",
-      });
-    }
+    const abilityNameMap: Record<string, AbilityKey> = {
+      strength: "str",
+      dexterity: "dex",
+      constitution: "con",
+      intelligence: "int",
+      wisdom: "wis",
+      charisma: "cha",
+    };
+    const spellKey = spellcasting.spellcastingAbility
+      ? (abilityNameMap[spellcasting.spellcastingAbility.toLowerCase()] ?? null)
+      : null;
+    const spellMod = spellKey ? character.getModifier(spellKey) : 0;
+    const prof = character.getProficiencyBonus();
+    const spellSaveDc =
+      spellKey !== null ? String(8 + prof + spellMod) : undefined;
+    const spellAttackBonus =
+      spellKey !== null ? formatModifier(prof + spellMod) : undefined;
+
+    const combatMainHand = builder.combat?.mainHand;
+    const unarmedWeaponSource = combatMainHand?.sources.find(
+      (source) => source.type === "weapon",
+    );
+
+    const weapons = buildWeaponsAndCantripsExport({
+      character,
+      mainHand: builder.mainHand,
+      offHand: builder.offHand,
+      inventoryWeapons: inventory.weapons,
+      spellSelections: builder.spellSelections ?? {},
+      spellcasting,
+      allSpells,
+      spellSaveDc,
+      spellAttackBonus,
+      useAmellwindHomebrew: builder.useAmellwindHomebrew,
+      useUnarmedStrike: builder.useUnarmedStrike,
+      combatMainHandLabel: unarmedWeaponSource?.source,
+      combatMainHandBreakdown: builder.useUnarmedStrike ? combatMainHand : null,
+    });
 
     const spellList = Object.values(builder.spellSelections ?? {})
       .flat()
@@ -93,27 +135,11 @@ export function useCharacterSheetExport() {
       ...builder.featSelections.map((f) => f?.name).filter(Boolean),
     ].filter(Boolean) as string[];
 
-    const equipmentLines = [
-      builder.mainHand?.weapon.name,
-      builder.offHand?.weapon.name,
-      builder.armor?.armor.name,
-      builder.trinket1?.name,
-      builder.trinket2?.name,
-    ].filter(Boolean);
-
-    const abilityNameMap: Record<string, AbilityKey> = {
-      strength: "str",
-      dexterity: "dex",
-      constitution: "con",
-      intelligence: "int",
-      wisdom: "wis",
-      charisma: "cha",
-    };
-    const spellKey = spellcasting.spellcastingAbility
-      ? abilityNameMap[spellcasting.spellcastingAbility.toLowerCase()] ?? null
-      : null;
-    const spellMod = spellKey ? character.getModifier(spellKey) : 0;
-    const prof = character.getProficiencyBonus();
+    const classFeatures = getClassFeaturesExport(
+      classData,
+      subclassData,
+      character.level,
+    );
 
     const savingThrows: Record<string, string> = {};
     for (const key of ["str", "dex", "con", "int", "wis", "cha"] as const) {
@@ -163,9 +189,18 @@ export function useCharacterSheetExport() {
       armorProficiencies: builder.resolvedArmorItems.join(", "),
       toolProficiencies: builder.resolvedToolItems.join(", "),
       feats: feats.join("\n"),
-      classFeatures: classData?.name ?? "",
-      speciesTraits: builder.speciesData?.name ?? "",
-      equipment: equipmentLines.join("\n"),
+      classFeatures: classFeatures.line1,
+      classFeatures2: classFeatures.line2,
+      speciesTraits: getSpeciesTraitsExport(builder.speciesData),
+      equipment: buildEquipmentExport({
+        items: inventory.items,
+        mainHandName: builder.mainHand?.weapon.name,
+        offHandName: builder.offHand?.weapon.name,
+        armorName: builder.armor?.armor.name,
+        shieldName: builder.equippedShield?.name,
+        trinket1Name: builder.trinket1?.name,
+        trinket2Name: builder.trinket2?.name,
+      }),
       attunementSlots: Array.from(
         { length: attunement.attunementSlots },
         (_, i) => `Slot ${i + 1}`,
@@ -173,10 +208,21 @@ export function useCharacterSheetExport() {
       weapons,
       spells: spellList,
       spellcastingAbility: spellcasting.spellcastingAbility ?? undefined,
-      spellSaveDc:
-        spellKey !== null ? String(8 + prof + spellMod) : undefined,
-      spellAttackBonus:
-        spellKey !== null ? formatModifier(prof + spellMod) : undefined,
+      spellcastingMod: spellKey !== null ? formatModifier(spellMod) : undefined,
+      spellSaveDc,
+      spellAttackBonus,
+      spellSlotTotals: getSpellSlotTotals(
+        classData,
+        subclassData,
+        character.level,
+        spellcasting,
+      ),
+      hasShield: hasShieldEquipped({
+        equippedShield: builder.equippedShield,
+        mainHand: builder.mainHand,
+      }),
+      alignmentCheckbox: getAlignmentCheckboxField(character.alignment),
+      goldPieces: formatGoldPiecesForPdf(sumInventoryGoldGp(inventory.items)),
       personality: {
         ...builder.personality,
         notes: builder.backstoryNotes,
@@ -186,10 +232,13 @@ export function useCharacterSheetExport() {
     allSpells,
     armorClass.total,
     builder,
-    classData?.name,
+    classData,
     hitPoints,
+    inventory.items,
+    inventory.weapons,
+    spellcasting,
+    subclassData,
     speed.display,
-    spellcasting.spellcastingAbility,
   ]);
 
   const exportSheet = useCallback(async () => {

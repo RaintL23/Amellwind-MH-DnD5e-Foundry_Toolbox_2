@@ -322,6 +322,22 @@ function calculateUnarmedStrikeDamage(
   };
 }
 
+/** Attack/damage breakdown for a single weapon (export, stat blocks, etc.). */
+export function getWeaponAttackBreakdown(
+  character: Character,
+  equipped: EquippedWeapon,
+  isOffHand: boolean,
+  useAmellwindHomebrew = true,
+): DamageBreakdown {
+  return calculateWeaponDamage(
+    character,
+    equipped,
+    1,
+    isOffHand,
+    useAmellwindHomebrew,
+  );
+}
+
 /**
  * Calculates full combat DPS for the character's current equipment.
  */
