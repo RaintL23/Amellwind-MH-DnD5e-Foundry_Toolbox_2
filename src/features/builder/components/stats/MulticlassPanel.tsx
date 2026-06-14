@@ -19,7 +19,6 @@ export function MulticlassPanel() {
     multiclassEntries,
     multiclassClassData,
     primaryClassLevel,
-    setPrimaryClassLevel,
     setMulticlassEntryLevel,
     addMulticlassEntry,
     removeMulticlassEntry,

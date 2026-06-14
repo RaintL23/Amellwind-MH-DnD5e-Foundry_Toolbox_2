@@ -20,7 +20,16 @@ import { parseSpellLevel, isPactSpellSlot } from "../../hooks/useBuilderSlotSele
 import type { SpellLevelSlot, BuilderPactSpellSlot } from "@/shared/types";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";
+import { RpgbotRatingBadge } from "../shared/RpgbotRatingBadge";
 import { cn } from "@/shared/utils/cn";
+import {
+  resolveSpellGuideKey,
+  slugifyRpgbotKey,
+  sortByRpgbotRating,
+  toRpgbotClassSlug,
+} from "@/features/builder/data/rpgbot-ratings.utils";
+import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
+import type { RpgbotRatingLookupEntry } from "@/features/builder/data/rpgbot-ratings.types";
 import { SpellExpandedDetails } from "@/features/spells/components/SpellExpandedDetails";
 import { SpellMetaBadges } from "./SpellMetaBadges";
 import {
@@ -280,11 +289,13 @@ function AvailableSpellRow({
   spell,
   disabled,
   disabledHint,
+  rpgbotRating,
   onSelect,
 }: {
   spell: Spell;
   disabled: boolean;
   disabledHint?: string;
+  rpgbotRating?: RpgbotRatingLookupEntry | null;
   onSelect: () => void;
 }) {
   const [showDetails, setShowDetails] = useState(false);
@@ -313,6 +324,7 @@ function AvailableSpellRow({
           <span className="min-w-0 flex-1 truncate text-xs font-medium text-foreground">
             {spell.name}
           </span>
+          {rpgbotRating && <RpgbotRatingBadge rating={rpgbotRating} />}
           <SpellMetaBadges spell={spell} />
           <SourceBadge source={spell.source} />
           <span className="shrink-0 text-[10px] text-muted-foreground">
@@ -388,6 +400,26 @@ export function SpellLibraryPanel({
 
   const q = search.toLowerCase().trim();
   const pactMaxLevel = spellcastingInfo.pactMaxSpellLevel;
+
+  const subclassSlug = useMemo(() => {
+    const raw =
+      spellcastingInfo.subclassShortName ?? spellcastingInfo.subclassName;
+    return raw ? slugifyRpgbotKey(raw) : null;
+  }, [spellcastingInfo.subclassName, spellcastingInfo.subclassShortName]);
+
+  const rpgbotSpellContext = useMemo(() => {
+    const classSlug = toRpgbotClassSlug(className);
+    if (!classSlug) return null;
+    return {
+      classSlug,
+      guideKey: resolveSpellGuideKey(classSlug, subclassSlug),
+      category: "spell",
+    };
+  }, [className, subclassSlug]);
+
+  const { lookup: rpgbotSpellLookup } = useRpgbotRatingsLookup(
+    rpgbotSpellContext,
+  );
 
   const alwaysPreparedAtLevel = useMemo(() => {
     if (isPactPool) {
@@ -503,7 +535,7 @@ export function SpellLibraryPanel({
 
   const availableSpells = useMemo(() => {
     if (isAtCapacity) return [];
-    return allSpells.filter((s) => {
+    const spells = allSpells.filter((s) => {
       if (isPactPool) {
         if (s.level < 1 || s.level > pactMaxLevel) return false;
       } else if (s.level !== spellLevel) {
@@ -520,6 +552,12 @@ export function SpellLibraryPanel({
       if (q && !s.name.toLowerCase().includes(q)) return false;
       return true;
     });
+
+    return sortByRpgbotRating(
+      spells,
+      (s) => rpgbotSpellLookup?.(s.name, s.source) ?? null,
+      (s) => s.name,
+    );
   }, [
     allSpells,
     isPactPool,
@@ -531,6 +569,7 @@ export function SpellLibraryPanel({
     q,
     spellMatchesClassList,
     isAtCapacity,
+    rpgbotSpellLookup,
   ]);
 
   const handleSelect = useCallback(
@@ -710,6 +749,7 @@ export function SpellLibraryPanel({
                 key={spell.id}
                 spell={spell}
                 disabled={false}
+                rpgbotRating={rpgbotSpellLookup?.(spell.name, spell.source)}
                 onSelect={() => handleSelect(spell)}
               />
             ))}

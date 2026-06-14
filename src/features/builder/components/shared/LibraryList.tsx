@@ -1,12 +1,15 @@
 import { resolveBookSourceName } from "@/features/spells/services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { Check } from "lucide-react";
+import { useMemo } from "react";
 import { cn } from "@/shared/utils/cn";
 import {
   formatVariantSourcesLabel,
   isLibraryOptionSelected,
+  sortLibraryOptionsByRpgbot,
   type LibraryListOption,
 } from "../../utils/library-variant.utils";
+import { RpgbotRatingBadge } from "./RpgbotRatingBadge";
 
 function EmptyState({ text }: { text: string }) {
   return (
@@ -34,13 +37,17 @@ export function LibraryList({
   onSelect: (id: string, name: string) => void;
 }) {
   const bookNames = useBookSourceNames();
+  const sortedOptions = useMemo(
+    () => sortLibraryOptionsByRpgbot(options),
+    [options],
+  );
 
   if (loading) return <EmptyState text="Loading..." />;
-  if (options.length === 0) return <EmptyState text="No results." />;
+  if (sortedOptions.length === 0) return <EmptyState text="No results." />;
 
   return (
     <>
-      {options.map((option) => {
+      {sortedOptions.map((option) => {
         const variantTrailing = option.variantSources?.length
           ? formatVariantSourcesLabel(option.variantSources)
           : null;
@@ -80,6 +87,7 @@ export function LibraryList({
               <div className="flex items-center gap-1 font-medium text-foreground">
                 {icon}
                 <span className="truncate">{option.name}</span>
+                {option.rpgbot && <RpgbotRatingBadge rating={option.rpgbot} />}
                 {isLibraryOptionSelected(option, selectedId, selectedName) && (
                   <Check className="h-3 w-3 shrink-0 text-emerald-400" />
                 )}

@@ -25,10 +25,12 @@ import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSl
 import { useLibraryVariants } from "@/features/builder/hooks/useLibraryVariants";
 import {
   entityToLibraryOption,
-  filterLibraryOptions,
+  prepareLibraryListOptions,
   type LibraryListOption,
   type SourceVariant,
 } from "@/features/builder/utils/library-variant.utils";
+import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
+import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import type { IdentityDataSource } from "@/features/builder/components/shared/IdentitySourceBadgeGroup";
 import type { NamedVariant } from "@/features/builder/components/shared/NamedVariantSwitcher";
 import { LibraryList } from "@/features/builder/components/shared/LibraryList";
@@ -81,6 +83,7 @@ export function IdentityLibraryPanel({
   const {
     species,
     background,
+    class: classSelection,
     setSpecies,
     setBackground,
     applyIdentityGrants,
@@ -120,10 +123,27 @@ export function IdentityLibraryPanel({
     load.then(setIdentityOptions).finally(() => setIdentityLoading(false));
   }, [isSpeciesSlot, isBackgroundSlot, selectedSlot, identitySource]);
 
+  const rpgbotContext = useMemo(() => {
+    if (identitySource !== "dnd") return null;
+    return resolveRpgbotContext({
+      className: classSelection?.name,
+      guideKey: "class",
+      category: isSpeciesSlot ? "species" : "background",
+    });
+  }, [identitySource, classSelection?.name, isSpeciesSlot]);
+
+  const { lookup: rpgbotLookup } = useRpgbotRatingsLookup(rpgbotContext);
+
   const identityFiltered = useMemo(() => {
     if (!isSpeciesSlot && !isBackgroundSlot) return [];
-    return filterLibraryOptions(identityOptions, q);
-  }, [identityOptions, isSpeciesSlot, isBackgroundSlot, q]);
+    return prepareLibraryListOptions(identityOptions, q, rpgbotLookup);
+  }, [
+    identityOptions,
+    isSpeciesSlot,
+    isBackgroundSlot,
+    q,
+    rpgbotLookup,
+  ]);
 
   const selectedIdentity =
     selectedSlot === "species"

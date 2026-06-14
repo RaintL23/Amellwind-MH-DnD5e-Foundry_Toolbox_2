@@ -21,6 +21,8 @@ import {
 } from "@/features/builder/utils/equipment-inventory.utils";
 import { blocksOffHand } from "@/features/weapons/utils/weapon-hands.utils";
 import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
+import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
+import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import type { ArmorItem } from "@/shared/types";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 import { ArmorList, TrinketList } from "./shared/LibraryLists";
@@ -73,6 +75,19 @@ export function ArmorLibraryPanel({
     (selectedSlot === "trinket1" || selectedSlot === "trinket2");
 
   const prefer2024 = classData?.source === "XPHB";
+
+  const rpgbotArmorContext = useMemo(() => {
+    if (useAmellwindHomebrew) return null;
+    return resolveRpgbotContext({
+      className: classSelection?.name,
+      guideKey: "class",
+      category: "armor",
+    });
+  }, [useAmellwindHomebrew, classSelection?.name]);
+
+  const { lookup: rpgbotArmorLookup } = useRpgbotRatingsLookup(
+    rpgbotArmorContext,
+  );
 
   useEffect(() => {
     if (!isArmorSlot || useAmellwindHomebrew) return;
@@ -221,6 +236,7 @@ export function ArmorLibraryPanel({
           equippedShieldName={equippedShield?.name ?? null}
           onSelect={handleSelectArmor}
           getDisabledReason={getArmorDisabledReason}
+          rpgbotLookup={rpgbotArmorLookup}
         />
       </>
     );

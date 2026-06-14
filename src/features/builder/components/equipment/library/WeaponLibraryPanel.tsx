@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
-
 import { getDndBuilderWeapons } from "@/features/builder/services/dnd-weapon.service";
+import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
+import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import { weaponsToSourceVariants } from "@/features/builder/mappers/dnd-weapon.mapper";
 import { useDndWeaponVariants } from "@/features/builder/hooks/useDndWeaponVariants";
 
@@ -91,6 +92,19 @@ export function WeaponLibraryPanel({
     selectedSlot === "mainHand" || selectedSlot === "offHand";
 
   const prefer2024 = classData?.source === "XPHB";
+
+  const rpgbotWeaponContext = useMemo(() => {
+    if (useAmellwindHomebrew) return null;
+    return resolveRpgbotContext({
+      className: classSelection?.name,
+      guideKey: "class",
+      category: "weapon",
+    });
+  }, [useAmellwindHomebrew, classSelection?.name]);
+
+  const { lookup: rpgbotWeaponLookup } = useRpgbotRatingsLookup(
+    rpgbotWeaponContext,
+  );
 
   useEffect(() => {
     if (!isWeaponSlot) return;
@@ -308,6 +322,7 @@ export function WeaponLibraryPanel({
       weaponProficiencies={resolvedWeaponItems}
       onSelect={handleSelectWeapon}
       getDisabledReason={getWeaponDisabledReason}
+      rpgbotLookup={rpgbotWeaponLookup}
     />
   );
 }

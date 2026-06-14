@@ -26,9 +26,12 @@ import {
   dedupeByNameToListOptions,
   entityToLibraryOption,
   filterLibraryOptions,
+  prepareLibraryListOptions,
   type LibraryListOption,
   type SourceVariant,
 } from "@/features/builder/utils/library-variant.utils";
+import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
+import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import type { FeatDataSource } from "@/features/builder/components/shared/FeatSourceBadgeGroup";
 import type {
   BuilderFeatSelection,
@@ -74,6 +77,7 @@ export function FeatLibraryPanel({
 
   const {
     featSelections,
+    class: classSelection,
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
     speciesOriginFeat,
@@ -104,6 +108,23 @@ export function FeatLibraryPanel({
         speciesOriginFeatGrant?.kind === "fixed";
 
   const isFeatPickerSlot = isFeatSlot || isAnyOriginFeatSlotSelected;
+
+  const rpgbotFeatContext = useMemo(() => {
+    const useDnd2024 =
+      isAnyOriginFeatSlotSelected || featSource === "dnd2024";
+    if (!useDnd2024) return null;
+    return resolveRpgbotContext({
+      className: classSelection?.name,
+      guideKey: "class",
+      category: "feat",
+    });
+  }, [
+    isAnyOriginFeatSlotSelected,
+    featSource,
+    classSelection?.name,
+  ]);
+
+  const { lookup: rpgbotFeatLookup } = useRpgbotRatingsLookup(rpgbotFeatContext);
 
   useEffect(() => {
     if (!isFeatPickerSlot) return;
@@ -195,7 +216,7 @@ export function FeatLibraryPanel({
           .join(" ")
           .toLowerCase(),
       );
-      return filterLibraryOptions(deduped, q);
+      return prepareLibraryListOptions(deduped, q, rpgbotFeatLookup);
     }
 
     if (!isFeatSlot) return [];
@@ -233,13 +254,17 @@ export function FeatLibraryPanel({
         .toLowerCase(),
     ).filter((f) => f.name !== ABILITY_SCORE_IMPROVEMENT.name);
 
-    const filtered = filterLibraryOptions(deduped, q);
+    const prepared = prepareLibraryListOptions(
+      deduped,
+      q,
+      featSource === "dnd2024" ? rpgbotFeatLookup : null,
+    );
 
     if (featSource === "dnd2024" && dnd2024Asi) {
-      return [entityToLibraryOption(dnd2024Asi), ...filtered];
+      return [entityToLibraryOption(dnd2024Asi), ...prepared];
     }
 
-    return [asiOption, ...filtered];
+    return [asiOption, ...prepared];
   }, [
     isFeatSlot,
     isAnyOriginFeatSlotSelected,
@@ -247,6 +272,7 @@ export function FeatLibraryPanel({
     amellwindFeats,
     dndFeats,
     q,
+    rpgbotFeatLookup,
   ]);
 
   const isDndFeatSelection =

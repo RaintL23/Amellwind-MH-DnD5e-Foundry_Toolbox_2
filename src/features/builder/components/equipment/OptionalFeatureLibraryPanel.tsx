@@ -44,6 +44,11 @@ import {
   LibraryItemBadgeRow,
 } from "./library/shared/LibraryUi";
 import { OptionalFeatureLibraryDetail } from "./library/OptionalFeatureLibraryDetail";
+import {
+  resolveOptionalFeatureRpgbotContext,
+  sortByRpgbotRating,
+} from "@/features/builder/data/rpgbot-ratings.utils";
+import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 
 interface OptionalFeatureLibraryPanelProps {
   selectedSlot: BuilderOptionalFeatureSlot;
@@ -183,16 +188,42 @@ export function OptionalFeatureLibraryPanel({
     level,
   ]);
 
+  const isFightingStyle = activeProgression
+    ? isFightingStyleProgression(activeProgression.progression)
+    : false;
+
+  const rpgbotOptionalContext = useMemo(() => {
+    if (!activeProgression) return null;
+    return resolveOptionalFeatureRpgbotContext({
+      className: classData.name,
+      progressionName: activeProgression.progression.name,
+      featureTypes: activeProgression.progression.featureTypes,
+      catalog: activeProgression.progression.catalog,
+      isFightingStyle,
+    });
+  }, [activeProgression, classData.name, isFightingStyle]);
+
+  const { lookup: rpgbotOptionalLookup } = useRpgbotRatingsLookup(
+    rpgbotOptionalContext,
+  );
+
   const q = search.trim().toLowerCase();
   const filteredOptions = useMemo(() => {
-    if (!q) return catalogOptions;
-    return catalogOptions.filter(
-      (item) =>
-        item.name.toLowerCase().includes(q) ||
-        item.entries.some((e) => e.toLowerCase().includes(q)) ||
-        item.source.toLowerCase().includes(q),
+    const base = !q
+      ? catalogOptions
+      : catalogOptions.filter(
+          (item) =>
+            item.name.toLowerCase().includes(q) ||
+            item.entries.some((e) => e.toLowerCase().includes(q)) ||
+            item.source.toLowerCase().includes(q),
+        );
+
+    return sortByRpgbotRating(
+      base,
+      (item) => rpgbotOptionalLookup?.(item.name, item.source) ?? null,
+      (item) => item.name,
     );
-  }, [catalogOptions, q]);
+  }, [catalogOptions, q, rpgbotOptionalLookup]);
 
   const isPicked = useCallback(
     (item: OptionalFeatureCatalogItem) =>
@@ -332,9 +363,6 @@ export function OptionalFeatureLibraryPanel({
   }
 
   const progressionLabel = activeProgression.progression.name;
-  const isFightingStyle = isFightingStyleProgression(
-    activeProgression.progression,
-  );
 
   if (detailItem) {
     return (
@@ -459,6 +487,7 @@ export function OptionalFeatureLibraryPanel({
                 item.catalog === "feat"
                   ? getFeatCategoryLabel(item.category)
                   : item.featureTypes[0];
+              const rpgbotRating = rpgbotOptionalLookup?.(item.name, item.source);
 
               return (
                 <li key={item.id}>
@@ -472,6 +501,7 @@ export function OptionalFeatureLibraryPanel({
                       />
                     }
                     name={item.name}
+                    rpgbotRating={rpgbotRating}
                     source={sourceBadge}
                     equipped={selected}
                     disabled={!selected && !addable}

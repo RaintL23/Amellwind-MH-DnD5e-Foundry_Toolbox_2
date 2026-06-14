@@ -23,9 +23,12 @@ import {
   dedupeByNameToListOptions,
   entityToLibraryOption,
   filterLibraryOptions,
+  prepareLibraryListOptions,
   type LibraryListOption,
   type SourceVariant,
 } from "@/features/builder/utils/library-variant.utils";
+import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
+import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import { LibraryList } from "@/features/builder/components/shared/LibraryList";
 import type { Class } from "@/shared/types";
 import { ClassLibraryDetail } from "./ClassLibraryDetail";
@@ -77,6 +80,34 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
     : null;
   const isMulticlassClassPicker = multiclassClassIndex !== null;
   const isMulticlassSubclassPicker = multiclassSubclassIndex !== null;
+
+  const subclassContextClassName = useMemo(() => {
+    if (isSubclassSlot) return classSelection?.name ?? null;
+    if (isMulticlassSubclassPicker && multiclassSubclassIndex !== null) {
+      return multiclassEntries[multiclassSubclassIndex]?.classRef?.name ?? null;
+    }
+    return null;
+  }, [
+    isSubclassSlot,
+    isMulticlassSubclassPicker,
+    multiclassSubclassIndex,
+    classSelection?.name,
+    multiclassEntries,
+  ]);
+
+  const rpgbotSubclassContext = useMemo(
+    () =>
+      resolveRpgbotContext({
+        className: subclassContextClassName,
+        guideKey: "subclasses",
+        category: "subclass",
+      }),
+    [subclassContextClassName],
+  );
+
+  const { lookup: rpgbotSubclassLookup } = useRpgbotRatingsLookup(
+    rpgbotSubclassContext,
+  );
 
   useEffect(() => {
     if (
@@ -209,8 +240,8 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
   ]);
 
   const subclassFiltered = useMemo(() => {
-    return filterLibraryOptions(subclassOptions, q);
-  }, [subclassOptions, q]);
+    return prepareLibraryListOptions(subclassOptions, q, rpgbotSubclassLookup);
+  }, [subclassOptions, q, rpgbotSubclassLookup]);
 
   const activeSubclass = useMemo(() => {
     if (!classData || !subclass) return null;

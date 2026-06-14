@@ -18,6 +18,8 @@ import { CLOTHING_ARMOR, formatArmorSlotDetail, isShieldArmor } from "@/features
 import { ABILITY_SCORE_IMPROVEMENT } from "@/features/builder/utils/builder-class.utils";
 import type { LibraryListOption } from "@/features/builder/utils/library-variant.utils";
 import { formatVariantSourcesLabel } from "@/features/builder/utils/library-variant.utils";
+import type { RpgbotLookupFn } from "@/features/builder/data/rpgbot-ratings.utils";
+import { sortByRpgbotRating } from "@/features/builder/data/rpgbot-ratings.utils";
 import {
   EmptyState,
   ItemRow,
@@ -84,6 +86,7 @@ export function WeaponList({
   weaponProficiencies,
   onSelect,
   getDisabledReason,
+  rpgbotLookup = null,
 }: {
   inventory: Weapon[];
   catalog: Weapon[];
@@ -92,11 +95,23 @@ export function WeaponList({
   weaponProficiencies: string[];
   onSelect: (w: Weapon) => void;
   getDisabledReason?: (weapon: Weapon) => string | null;
+  rpgbotLookup?: RpgbotLookupFn | null;
 }) {
   const bookNames = useBookSourceNames();
 
+  const sortedInventory = sortByRpgbotRating(
+    inventory,
+    (w) => rpgbotLookup?.(w.name, w.source, w.variantSources) ?? null,
+    (w) => w.name,
+  );
+  const sortedCatalog = sortByRpgbotRating(
+    catalog,
+    (w) => rpgbotLookup?.(w.name, w.source, w.variantSources) ?? null,
+    (w) => w.name,
+  );
+
   if (loading) return <EmptyState text="Loading weapons..." />;
-  if (inventory.length === 0 && catalog.length === 0) {
+  if (sortedInventory.length === 0 && sortedCatalog.length === 0) {
     return <EmptyState text="No weapons available." />;
   }
 
@@ -109,6 +124,7 @@ export function WeaponList({
     const variantTrailing = w.variantSources?.length
       ? formatVariantSourcesLabel(w.variantSources)
       : null;
+    const rpgbotRating = rpgbotLookup?.(w.name, w.source, w.variantSources);
 
     return (
       <ItemRow
@@ -122,6 +138,7 @@ export function WeaponList({
           />
         }
         name={w.name}
+        rpgbotRating={rpgbotRating}
         meta={
           <WeaponListBadges
             weapon={w}
@@ -146,9 +163,9 @@ export function WeaponList({
 
   return (
     <>
-      {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
-      {inventory.map((w) => renderWeaponRow(w, `inv-${w.name}`, false))}
-      {catalog.map((w) => renderWeaponRow(w, w.name, true))}
+      {sortedInventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
+      {sortedInventory.map((w) => renderWeaponRow(w, `inv-${w.name}`, false))}
+      {sortedCatalog.map((w) => renderWeaponRow(w, w.name, true))}
     </>
   );
 }
@@ -161,6 +178,7 @@ export function ArmorList({
   equippedShieldName = null,
   onSelect,
   getDisabledReason,
+  rpgbotLookup = null,
 }: {
   showCloth: boolean;
   inventory: ArmorItem[];
@@ -169,8 +187,20 @@ export function ArmorList({
   equippedShieldName?: string | null;
   onSelect: (a: ArmorItem) => void;
   getDisabledReason?: (armor: ArmorItem) => string | null;
+  rpgbotLookup?: RpgbotLookupFn | null;
 }) {
   const bookNames = useBookSourceNames();
+
+  const sortedInventory = sortByRpgbotRating(
+    inventory,
+    (a) => rpgbotLookup?.(a.name, a.source) ?? null,
+    (a) => a.name,
+  );
+  const sortedCatalog = sortByRpgbotRating(
+    catalog,
+    (a) => rpgbotLookup?.(a.name, a.source) ?? null,
+    (a) => a.name,
+  );
 
   function renderArmorRow(
     armorItem: ArmorItem,
@@ -184,6 +214,7 @@ export function ArmorList({
       !isEquipped && getDisabledReason
         ? getDisabledReason(armorItem)
         : null;
+    const rpgbotRating = rpgbotLookup?.(armorItem.name, armorItem.source);
 
     return (
       <ItemRow
@@ -197,6 +228,7 @@ export function ArmorList({
           />
         }
         name={armorItem.name}
+        rpgbotRating={rpgbotRating}
         meta={
           <LibraryItemBadgeRow>
             <LibraryItemBadge>
@@ -242,9 +274,9 @@ export function ArmorList({
           />
         </>
       )}
-      {inventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
-      {inventory.map((a) => renderArmorRow(a, `inv-${a.name}`, false))}
-      {catalog.map((a) => renderArmorRow(a, a.name, true))}
+      {sortedInventory.length > 0 && <SectionLabel>Inventory</SectionLabel>}
+      {sortedInventory.map((a) => renderArmorRow(a, `inv-${a.name}`, false))}
+      {sortedCatalog.map((a) => renderArmorRow(a, a.name, true))}
     </>
   );
 }

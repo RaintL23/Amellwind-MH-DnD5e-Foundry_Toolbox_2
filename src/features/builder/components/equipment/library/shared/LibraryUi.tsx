@@ -1,5 +1,7 @@
 import { Check } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import type { RpgbotRatingLookupEntry } from "@/features/builder/data/rpgbot-ratings.types";
+import { RpgbotRatingBadge } from "@/features/builder/components/shared/RpgbotRatingBadge";
 import { RARITY_BADGE } from "../constants";
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -56,6 +58,7 @@ export function ItemRow({
   equipped = false,
   disabled = false,
   disabledHint,
+  rpgbotRating,
   onClick,
 }: {
   icon: React.ReactNode;
@@ -68,6 +71,7 @@ export function ItemRow({
   equipped?: boolean;
   disabled?: boolean;
   disabledHint?: string;
+  rpgbotRating?: RpgbotRatingLookupEntry | null;
   onClick: () => void;
 }) {
   return (
@@ -86,6 +90,7 @@ export function ItemRow({
         <div className="flex items-center gap-1 font-medium text-foreground">
           {icon}
           <span className="truncate">{name}</span>
+          {rpgbotRating && <RpgbotRatingBadge rating={rpgbotRating} />}
           {equipped && <Check className="h-3 w-3 shrink-0 text-emerald-400" />}
         </div>
         {meta}

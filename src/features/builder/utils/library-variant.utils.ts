@@ -1,3 +1,10 @@
+import type { RpgbotRatingLookupEntry } from "@/features/builder/data/rpgbot-ratings.types";
+import type { RpgbotLookupFn } from "@/features/builder/data/rpgbot-ratings.utils";
+import {
+  compareRpgbotScore,
+  sortByRpgbotRating,
+} from "@/features/builder/data/rpgbot-ratings.utils";
+
 export interface SourceVariant {
   id: string;
   source: string;
@@ -10,6 +17,7 @@ export interface LibraryListOption {
   source?: string;
   variantSources?: string[];
   searchText?: string;
+  rpgbot?: RpgbotRatingLookupEntry | null;
 }
 
 export function formatVariantSourcesLabel(sources: string[]): {
@@ -101,3 +109,36 @@ export function isLibraryOptionSelected(
   if (selectedName) return option.name === selectedName;
   return selectedId === option.id;
 }
+
+export function enrichLibraryOptionsWithRpgbot(
+  options: LibraryListOption[],
+  lookup: RpgbotLookupFn | null,
+): LibraryListOption[] {
+  if (!lookup) return options;
+  return options.map((option) => ({
+    ...option,
+    rpgbot: lookup(option.name, option.source, option.variantSources),
+  }));
+}
+
+export function sortLibraryOptionsByRpgbot(
+  options: LibraryListOption[],
+): LibraryListOption[] {
+  return sortByRpgbotRating(
+    options,
+    (option) => option.rpgbot,
+    (option) => option.name,
+  );
+}
+
+export function prepareLibraryListOptions(
+  options: LibraryListOption[],
+  query: string,
+  lookup: RpgbotLookupFn | null,
+): LibraryListOption[] {
+  const filtered = filterLibraryOptions(options, query);
+  const enriched = enrichLibraryOptionsWithRpgbot(filtered, lookup);
+  return sortLibraryOptionsByRpgbot(enriched);
+}
+
+export { compareRpgbotScore };
