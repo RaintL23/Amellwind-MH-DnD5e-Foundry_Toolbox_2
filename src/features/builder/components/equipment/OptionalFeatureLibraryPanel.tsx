@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Search, Swords, X } from "lucide-react";
-import type { Class, DndFeat, DndOptionalFeature, Subclass } from "@/shared/types";
+import type {
+  Class,
+  DndFeat,
+  DndOptionalFeature,
+  Subclass,
+} from "@/shared/types";
 import type {
   BuilderOptionalFeatureSelection,
   BuilderOptionalFeatureSelections,
@@ -84,9 +89,8 @@ export function OptionalFeatureLibraryPanel({
   const [featCatalog, setFeatCatalog] = useState<DndFeat[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
-  const [detailItem, setDetailItem] = useState<OptionalFeatureCatalogItem | null>(
-    null,
-  );
+  const [detailItem, setDetailItem] =
+    useState<OptionalFeatureCatalogItem | null>(null);
 
   const activeProgression = useMemo(() => {
     if (!parsed) return null;
@@ -117,10 +121,16 @@ export function OptionalFeatureLibraryPanel({
     }
     setLoading(true);
     const loaders: Promise<void>[] = [
-      getAllDndOptionalFeatures().then(setOptionalCatalog).then(() => undefined),
+      getAllDndOptionalFeatures()
+        .then(setOptionalCatalog)
+        .then(() => undefined),
     ];
     if (usesFeatCatalog) {
-      loaders.push(getAllDndFeats().then(setFeatCatalog).then(() => undefined));
+      loaders.push(
+        getAllDndFeats()
+          .then(setFeatCatalog)
+          .then(() => undefined),
+      );
     }
     Promise.all(loaders).finally(() => setLoading(false));
   }, [usesFeatCatalog, isFeatureChoice]);
@@ -302,7 +312,10 @@ export function OptionalFeatureLibraryPanel({
           (o) => o.id === item.id,
         );
         if (!option) return;
-        const selection = featureChoiceToSelection(option, parsed.progressionId);
+        const selection = featureChoiceToSelection(
+          option,
+          parsed.progressionId,
+        );
         onSetSelections(
           parsed.progressionId,
           isPickOneFeatureChoice ? [selection] : [...picked, selection],
@@ -408,7 +421,7 @@ export function OptionalFeatureLibraryPanel({
           </button>
         ) : (
           <span className="text-[11px] text-muted-foreground">
-            {picked.length}/{slotCount} elegidas
+            {picked.length}/{slotCount} selected
           </span>
         )
       }
@@ -422,16 +435,16 @@ export function OptionalFeatureLibraryPanel({
         >
           {picked.length}/{slotCount}
         </span>{" "}
-        opciones elegidas
+        selected options
         {isGrantAllFeatureChoice ? (
           <span className="text-muted-foreground/80">
             {" "}
-            · habilidades otorgadas automáticamente
+            · automatically granted abilities
           </span>
         ) : isFightingStyle ? (
           <span className="text-muted-foreground/80">
             {" "}
-            · no puedes repetir el mismo estilo
+            · you can't repeat the same fighting style
           </span>
         ) : null}
       </p>
@@ -444,7 +457,7 @@ export function OptionalFeatureLibraryPanel({
               type="button"
               onClick={() => handleRemove(selection)}
               className="inline-flex items-center gap-1 rounded-md border border-amber-700/50 bg-amber-950/30 px-1.5 py-0.5 text-[10px] text-amber-200 hover:border-rose-600/50 hover:bg-rose-950/30 hover:text-rose-200"
-              title="Quitar"
+              title="Remove"
             >
               {selection.name}
               <span className="text-amber-400/70">({selection.source})</span>
@@ -468,11 +481,11 @@ export function OptionalFeatureLibraryPanel({
       <ScrollableWhenNeeded className="max-h-[1200px]">
         {loading ? (
           <p className="py-4 text-center text-xs text-muted-foreground">
-            Cargando opciones…
+            Loading options…
           </p>
         ) : filteredOptions.length === 0 ? (
           <p className="py-4 text-center text-xs italic text-muted-foreground">
-            No hay opciones en el catálogo para esta progresión.
+            No options in the catalog for this progression.
           </p>
         ) : (
           <ul className="space-y-0.5">
@@ -487,7 +500,10 @@ export function OptionalFeatureLibraryPanel({
                 item.catalog === "feat"
                   ? getFeatCategoryLabel(item.category)
                   : item.featureTypes[0];
-              const rpgbotRating = rpgbotOptionalLookup?.(item.name, item.source);
+              const rpgbotRating = rpgbotOptionalLookup?.(
+                item.name,
+                item.source,
+              );
 
               return (
                 <li key={item.id}>
@@ -510,10 +526,11 @@ export function OptionalFeatureLibraryPanel({
                         ? isFightingStyle &&
                           otherFightingStylePicks.some(
                             (p) =>
-                              normalizeName(p.name) === normalizeName(item.name),
+                              normalizeName(p.name) ===
+                              normalizeName(item.name),
                           )
-                          ? "Ya elegiste este estilo en otro slot"
-                          : "No disponible"
+                          ? "You already selected this fighting style in another slot"
+                          : "Not available"
                         : undefined
                     }
                     onClick={() => handleToggle(item)}
@@ -528,10 +545,12 @@ export function OptionalFeatureLibraryPanel({
                           <LibraryItemBadge>{item.consumes}</LibraryItemBadge>
                         )}
                         {item.isRepeatable && (
-                          <LibraryItemBadge>Repetible</LibraryItemBadge>
+                          <LibraryItemBadge>Repeatable</LibraryItemBadge>
                         )}
                         {usesFeatCatalog ? (
-                          <LibraryItemBadge variant="category">Feat</LibraryItemBadge>
+                          <LibraryItemBadge variant="category">
+                            Feat
+                          </LibraryItemBadge>
                         ) : (
                           <LibraryItemBadge variant="category">
                             Optional Feature
@@ -539,14 +558,14 @@ export function OptionalFeatureLibraryPanel({
                         )}
                       </LibraryItemBadgeRow>
                     }
-                    trailing={selected ? "Elegida" : undefined}
+                    trailing={selected ? "Selected" : undefined}
                   />
                   <button
                     type="button"
                     onClick={() => setDetailItem(item)}
                     className="mb-1 ml-5 text-[10px] text-muted-foreground hover:text-foreground"
                   >
-                    Ver detalle
+                    View detail
                   </button>
                 </li>
               );

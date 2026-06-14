@@ -117,7 +117,9 @@ export function enrichLibraryOptionsWithRpgbot(
   if (!lookup) return options;
   return options.map((option) => ({
     ...option,
-    rpgbot: lookup(option.name, option.source, option.variantSources),
+    rpgbot: option.name
+      ? lookup(option.name, option.source, option.variantSources)
+      : null,
   }));
 }
 

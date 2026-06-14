@@ -28,8 +28,9 @@ export interface RpgbotLookupContext {
   category: string;
 }
 
-export function slugifyRpgbotKey(text: string): string {
-  return text
+export function slugifyRpgbotKey(text: string | null | undefined): string {
+  if (text == null || text === "") return "";
+  return String(text)
     .toLowerCase()
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
@@ -37,7 +38,10 @@ export function slugifyRpgbotKey(text: string): string {
     .replace(/^-|-$/g, "");
 }
 
-export function toRpgbotClassSlug(className: string): string | null {
+export function toRpgbotClassSlug(
+  className: string | null | undefined,
+): string | null {
+  if (!className) return null;
   const slug = slugifyRpgbotKey(className);
   return RPGBOT_CLASS_SLUGS.has(slug) ? slug : null;
 }
@@ -69,12 +73,12 @@ export function resolveRpgbotContext(params: {
 
 function collectSources(
   source?: string | null,
-  variantSources?: string[],
+  variantSources?: Array<string | null | undefined>,
 ): string[] {
   const sources = new Set<string>();
   if (source) sources.add(source);
   for (const variant of variantSources ?? []) {
-    sources.add(variant);
+    if (variant) sources.add(variant);
   }
   return [...sources];
 }
@@ -82,10 +86,12 @@ function collectSources(
 export function findRpgbotRating(
   byClass: RpgbotRatingsData["byClass"],
   context: RpgbotLookupContext,
-  name: string,
+  name: string | null | undefined,
   source?: string | null,
-  variantSources?: string[],
+  variantSources?: Array<string | null | undefined>,
 ): RpgbotRatingLookupEntry | null {
+  if (!name) return null;
+
   const classGuides = byClass[context.classSlug];
   if (!classGuides) return null;
 
@@ -96,10 +102,17 @@ export function findRpgbotRating(
   if (!categoryBucket) return null;
 
   const nameKey = slugifyRpgbotKey(name);
+  if (!nameKey) return null;
+
   const sources = collectSources(source, variantSources);
 
   for (const src of sources) {
     const key = `${nameKey}|${slugifyRpgbotKey(src)}`;
+    if (categoryBucket[key]) return categoryBucket[key];
+  }
+
+  if (sources.length === 0) {
+    const key = `${nameKey}|unknown`;
     if (categoryBucket[key]) return categoryBucket[key];
   }
 
@@ -108,16 +121,16 @@ export function findRpgbotRating(
   }
 
   for (const entry of Object.values(categoryBucket)) {
-    if (slugifyRpgbotKey(entry.name) === nameKey) return entry;
+    if (entry.name && slugifyRpgbotKey(entry.name) === nameKey) return entry;
   }
 
   return null;
 }
 
 export type RpgbotLookupFn = (
-  name: string,
+  name: string | null | undefined,
   source?: string | null,
-  variantSources?: string[],
+  variantSources?: Array<string | null | undefined>,
 ) => RpgbotRatingLookupEntry | null;
 
 export function createRpgbotLookupFn(
@@ -125,8 +138,10 @@ export function createRpgbotLookupFn(
   context: RpgbotLookupContext | null,
 ): RpgbotLookupFn | null {
   if (!data || !context) return null;
-  return (name, source, variantSources) =>
-    findRpgbotRating(data.byClass, context, name, source, variantSources);
+  return (name, source, variantSources) => {
+    if (!name) return null;
+    return findRpgbotRating(data.byClass, context, name, source, variantSources);
+  };
 }
 
 export function compareRpgbotScore(
@@ -144,12 +159,17 @@ export function compareRpgbotScore(
 export function sortByRpgbotRating<T>(
   items: T[],
   getRating: (item: T) => Pick<RpgbotRatingLookupEntry, "score"> | null | undefined,
-  getName: (item: T) => string,
+  getName: (item: T) => string | null | undefined,
 ): T[] {
   return [...items].sort((a, b) => {
     const ratingA = getRating(a);
     const ratingB = getRating(b);
-    return compareRpgbotScore(ratingA?.score, ratingB?.score, getName(a), getName(b));
+    return compareRpgbotScore(
+      ratingA?.score,
+      ratingB?.score,
+      getName(a) ?? "",
+      getName(b) ?? "",
+    );
   });
 }
 
