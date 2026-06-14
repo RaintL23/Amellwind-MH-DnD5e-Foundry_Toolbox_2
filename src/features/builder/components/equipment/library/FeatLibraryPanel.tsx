@@ -33,11 +33,7 @@ import {
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import type { FeatDataSource } from "@/features/builder/components/shared/FeatSourceBadgeGroup";
-import type {
-  BuilderFeatSelection,
-  DndFeat,
-  Feat,
-} from "@/shared/types";
+import type { BuilderFeatSelection, DndFeat, Feat } from "@/shared/types";
 import { AsiLibraryPanel } from "../AsiLibraryPanel";
 import { FeatLibraryDetail } from "./FeatLibraryDetail";
 import { FeatList } from "./shared/LibraryLists";
@@ -110,21 +106,17 @@ export function FeatLibraryPanel({
   const isFeatPickerSlot = isFeatSlot || isAnyOriginFeatSlotSelected;
 
   const rpgbotFeatContext = useMemo(() => {
-    const useDnd2024 =
-      isAnyOriginFeatSlotSelected || featSource === "dnd2024";
+    const useDnd2024 = isAnyOriginFeatSlotSelected || featSource === "dnd2024";
     if (!useDnd2024) return null;
     return resolveRpgbotContext({
       className: classSelection?.name,
       guideKey: "class",
       category: "feat",
     });
-  }, [
-    isAnyOriginFeatSlotSelected,
-    featSource,
-    classSelection?.name,
-  ]);
+  }, [isAnyOriginFeatSlotSelected, featSource, classSelection?.name]);
 
-  const { lookup: rpgbotFeatLookup } = useRpgbotRatingsLookup(rpgbotFeatContext);
+  const { lookup: rpgbotFeatLookup, ready: rpgbotFeatReady } =
+    useRpgbotRatingsLookup(rpgbotFeatContext);
 
   useEffect(() => {
     if (!isFeatPickerSlot) return;
@@ -141,14 +133,14 @@ export function FeatLibraryPanel({
     setShowFeatList(true);
   }, [selectedSlot]);
 
-  const selectedFeat = isInvocationOriginFeatSlotSelected &&
-    invocationOriginFeatIndex !== null
-    ? (optionalFeatureOriginFeats[invocationOriginFeatIndex] ?? null)
-    : isOriginFeatSlotSelected
-      ? (speciesOriginFeat ?? backgroundOriginFeat)
-      : isFeatSlot && featSlotIndex !== null
-        ? (featSelections[featSlotIndex] ?? null)
-        : null;
+  const selectedFeat =
+    isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null
+      ? (optionalFeatureOriginFeats[invocationOriginFeatIndex] ?? null)
+      : isOriginFeatSlotSelected
+        ? (speciesOriginFeat ?? backgroundOriginFeat)
+        : isFeatSlot && featSlotIndex !== null
+          ? (featSelections[featSlotIndex] ?? null)
+          : null;
 
   const showAsiPanel =
     isFeatSlot &&
@@ -216,7 +208,12 @@ export function FeatLibraryPanel({
           .join(" ")
           .toLowerCase(),
       );
-      return prepareLibraryListOptions(deduped, q, rpgbotFeatLookup);
+      return prepareLibraryListOptions(
+        deduped,
+        q,
+        rpgbotFeatLookup,
+        rpgbotFeatReady,
+      );
     }
 
     if (!isFeatSlot) return [];
@@ -258,6 +255,7 @@ export function FeatLibraryPanel({
       deduped,
       q,
       featSource === "dnd2024" ? rpgbotFeatLookup : null,
+      rpgbotFeatReady,
     );
 
     if (featSource === "dnd2024" && dnd2024Asi) {
@@ -273,6 +271,7 @@ export function FeatLibraryPanel({
     dndFeats,
     q,
     rpgbotFeatLookup,
+    rpgbotFeatReady,
   ]);
 
   const isDndFeatSelection =
@@ -347,7 +346,10 @@ export function FeatLibraryPanel({
   function handleDndFeatSourceSelect(id: string) {
     const variant = dndFeatSourceVariants.find((v) => v.id === id);
     if (!variant || !selectedFeat) return;
-    if (isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null) {
+    if (
+      isInvocationOriginFeatSlotSelected &&
+      invocationOriginFeatIndex !== null
+    ) {
       setOptionalFeatureOriginFeatAtIndex(invocationOriginFeatIndex, {
         id: variant.id,
         name: selectedFeat.name,
@@ -373,7 +375,10 @@ export function FeatLibraryPanel({
   }
 
   function handleSelectFeat(selection: BuilderFeatSelection) {
-    if (isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null) {
+    if (
+      isInvocationOriginFeatSlotSelected &&
+      invocationOriginFeatIndex !== null
+    ) {
       setOptionalFeatureOriginFeatAtIndex(invocationOriginFeatIndex, selection);
       setShowFeatList(false);
       return;
@@ -454,7 +459,7 @@ export function FeatLibraryPanel({
   if (isOriginFeatSlotSelected) {
     if (!speciesOriginFeatGrant && !backgroundOriginFeatGrant) {
       return (
-        <EmptyState text="El background y la specie no otorgan un Origin Feat." />
+        <EmptyState text="The background and species do not grant an Origin Feat." />
       );
     }
 
@@ -499,9 +504,7 @@ export function FeatLibraryPanel({
       <FeatList
         options={featListOptions}
         selectedId={selectedFeat?.id ?? null}
-        selectedName={
-          isDndFeatSelection ? (selectedFeat?.name ?? null) : null
-        }
+        selectedName={isDndFeatSelection ? (selectedFeat?.name ?? null) : null}
         onSelect={handleSelectFeatOption}
       />
     );

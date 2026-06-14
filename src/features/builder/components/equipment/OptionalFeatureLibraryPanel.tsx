@@ -213,9 +213,8 @@ export function OptionalFeatureLibraryPanel({
     });
   }, [activeProgression, classData.name, isFightingStyle]);
 
-  const { lookup: rpgbotOptionalLookup } = useRpgbotRatingsLookup(
-    rpgbotOptionalContext,
-  );
+  const { lookup: rpgbotOptionalLookup, ready: rpgbotOptionalReady } =
+    useRpgbotRatingsLookup(rpgbotOptionalContext);
 
   const q = search.trim().toLowerCase();
   const filteredOptions = useMemo(() => {
@@ -230,10 +229,13 @@ export function OptionalFeatureLibraryPanel({
 
     return sortByRpgbotRating(
       base,
-      (item) => rpgbotOptionalLookup?.(item.name, item.source) ?? null,
+      (item) =>
+        rpgbotOptionalReady
+          ? (rpgbotOptionalLookup?.(item.name, item.source) ?? null)
+          : null,
       (item) => item.name,
     );
-  }, [catalogOptions, q, rpgbotOptionalLookup]);
+  }, [catalogOptions, q, rpgbotOptionalLookup, rpgbotOptionalReady]);
 
   const isPicked = useCallback(
     (item: OptionalFeatureCatalogItem) =>
@@ -500,10 +502,10 @@ export function OptionalFeatureLibraryPanel({
                 item.catalog === "feat"
                   ? getFeatCategoryLabel(item.category)
                   : item.featureTypes[0];
-              const rpgbotRating = rpgbotOptionalLookup?.(
-                item.name,
-                item.source,
-              );
+              const rpgbotRating =
+                rpgbotOptionalReady
+                  ? (rpgbotOptionalLookup?.(item.name, item.source) ?? null)
+                  : null;
 
               return (
                 <li key={item.id}>

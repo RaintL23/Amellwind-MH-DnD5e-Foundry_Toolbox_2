@@ -2,6 +2,7 @@ import { Check } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import type { RpgbotRatingLookupEntry } from "@/features/builder/data/rpgbot-ratings.types";
 import { RpgbotRatingBadge } from "@/features/builder/components/shared/RpgbotRatingBadge";
+import { RPGBOT_ROW_ACCENT } from "@/features/builder/utils/library-variant.utils";
 import { RARITY_BADGE } from "../constants";
 
 export function SectionLabel({ children }: { children: React.ReactNode }) {
@@ -81,7 +82,10 @@ export function ItemRow({
       disabled={disabled}
       title={disabled ? disabledHint : undefined}
       className={cn(
-        "mb-1 flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors",
+        "mb-1 flex w-full items-center justify-between rounded-md border border-l-2 px-2 py-1.5 text-left text-xs transition-colors",
+        rpgbotRating
+          ? RPGBOT_ROW_ACCENT[rpgbotRating.rating]
+          : "border-l-transparent",
         equipped ? "border-violet-400/40 bg-violet-400/5" : "border-border/60",
         disabled ? "cursor-not-allowed opacity-40" : "hover:bg-muted/50",
       )}

@@ -31,6 +31,7 @@ import {
 } from "@/features/builder/utils/library-variant.utils";
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
+import { RpgbotLoadingHint } from "@/features/builder/components/shared/RpgbotLoadingHint";
 import type { IdentityDataSource } from "@/features/builder/components/shared/IdentitySourceBadgeGroup";
 import type { NamedVariant } from "@/features/builder/components/shared/NamedVariantSwitcher";
 import { LibraryList } from "@/features/builder/components/shared/LibraryList";
@@ -132,17 +133,25 @@ export function IdentityLibraryPanel({
     });
   }, [identitySource, classSelection?.name, isSpeciesSlot]);
 
-  const { lookup: rpgbotLookup } = useRpgbotRatingsLookup(rpgbotContext);
+  const { lookup: rpgbotLookup, ready: rpgbotReady } = useRpgbotRatingsLookup(
+    rpgbotContext,
+  );
 
   const identityFiltered = useMemo(() => {
     if (!isSpeciesSlot && !isBackgroundSlot) return [];
-    return prepareLibraryListOptions(identityOptions, q, rpgbotLookup);
+    return prepareLibraryListOptions(
+      identityOptions,
+      q,
+      rpgbotLookup,
+      rpgbotReady,
+    );
   }, [
     identityOptions,
     isSpeciesSlot,
     isBackgroundSlot,
     q,
     rpgbotLookup,
+    rpgbotReady,
   ]);
 
   const selectedIdentity =
@@ -479,9 +488,11 @@ export function IdentityLibraryPanel({
   }
 
   return (
-    <LibraryList
-      loading={identityLoading}
-      options={identityFiltered}
+    <>
+      {rpgbotContext && !rpgbotReady && <RpgbotLoadingHint />}
+      <LibraryList
+        loading={identityLoading}
+        options={identityFiltered}
       selectedId={selectedIdentity?.id ?? null}
       selectedName={
         identitySource === "dnd" ? (selectedIdentity?.name ?? null) : null
@@ -495,6 +506,7 @@ export function IdentityLibraryPanel({
       }
       onSelect={handleSelectIdentity}
     />
+    </>
   );
 }
 

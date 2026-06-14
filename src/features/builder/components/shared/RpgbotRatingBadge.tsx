@@ -6,10 +6,10 @@ import {
 } from "@/features/builder/data/rpgbot-ratings.utils";
 
 const RATING_STYLES = {
-  blue: "border-sky-500/50 bg-sky-950/50 text-sky-200",
-  green: "border-emerald-500/50 bg-emerald-950/50 text-emerald-200",
-  orange: "border-amber-500/50 bg-amber-950/50 text-amber-200",
-  red: "border-rose-500/50 bg-rose-950/50 text-rose-200",
+  blue: "bg-sky-500 text-white shadow-sm shadow-sky-500/30",
+  green: "bg-emerald-500 text-white shadow-sm shadow-emerald-500/30",
+  orange: "bg-amber-500 text-white shadow-sm shadow-amber-500/30",
+  red: "bg-rose-500 text-white shadow-sm shadow-rose-500/30",
 } as const;
 
 export function RpgbotRatingBadge({
@@ -26,7 +26,7 @@ export function RpgbotRatingBadge({
   return (
     <span
       className={cn(
-        "inline-flex h-4 min-w-4 items-center justify-center rounded border px-1 text-[9px] font-bold leading-none",
+        "inline-flex h-4 min-w-[1.1rem] shrink-0 items-center justify-center rounded px-1 text-[9px] font-bold leading-none",
         RATING_STYLES[rating.rating],
         className,
       )}

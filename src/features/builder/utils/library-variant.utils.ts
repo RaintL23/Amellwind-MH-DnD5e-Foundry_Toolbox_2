@@ -1,4 +1,7 @@
-import type { RpgbotRatingLookupEntry } from "@/features/builder/data/rpgbot-ratings.types";
+import type {
+  RpgbotRating,
+  RpgbotRatingLookupEntry,
+} from "@/features/builder/data/rpgbot-ratings.types";
 import type { RpgbotLookupFn } from "@/features/builder/data/rpgbot-ratings.utils";
 import {
   compareRpgbotScore,
@@ -137,10 +140,19 @@ export function prepareLibraryListOptions(
   options: LibraryListOption[],
   query: string,
   lookup: RpgbotLookupFn | null,
+  ready = true,
 ): LibraryListOption[] {
   const filtered = filterLibraryOptions(options, query);
+  if (!ready || !lookup) return sortLibraryOptionsByRpgbot(filtered);
   const enriched = enrichLibraryOptionsWithRpgbot(filtered, lookup);
   return sortLibraryOptionsByRpgbot(enriched);
 }
+
+export const RPGBOT_ROW_ACCENT: Record<RpgbotRating, string> = {
+  blue: "border-l-sky-400",
+  green: "border-l-emerald-400",
+  orange: "border-l-amber-400",
+  red: "border-l-rose-400",
+};
 
 export { compareRpgbotScore };

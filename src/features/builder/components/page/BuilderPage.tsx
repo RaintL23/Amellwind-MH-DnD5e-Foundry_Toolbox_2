@@ -11,11 +11,14 @@ import { BuilderInventoryPanel } from "../stats/BuilderInventoryPanel";
 import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 import { HomebrewModeToggle } from "../shared/HomebrewModeToggle";
 import { BuildCompletenessProvider } from "../../context/BuildCompletenessContext";
+import { RpgbotRatingsProvider } from "../../context/RpgbotRatingsContext";
 
 export function BuilderPage() {
   return (
     <BuildCompletenessProvider>
-      <BuilderPageContent />
+      <RpgbotRatingsProvider>
+        <BuilderPageContent />
+      </RpgbotRatingsProvider>
     </BuildCompletenessProvider>
   );
 }

@@ -7,7 +7,10 @@ export function loadRpgbotRatings(): Promise<RpgbotRatingsData> {
   if (cached) return Promise.resolve(cached);
   if (!loadPromise) {
     loadPromise = import("../data/rpgbot-ratings.json").then((mod) => {
-      cached = mod.default as RpgbotRatingsData;
+      const loaded =
+        (mod as { default?: RpgbotRatingsData }).default ??
+        (mod as unknown as RpgbotRatingsData);
+      cached = loaded;
       return cached;
     });
   }

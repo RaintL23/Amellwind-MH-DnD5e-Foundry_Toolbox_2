@@ -49,6 +49,10 @@ import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.
 import { useLibrarySearch } from "./hooks/useLibrarySearch";
 import { useClassGrantSync } from "./hooks/useClassGrantSync";
 import { useFeatGrantSync } from "./hooks/useFeatGrantSync";
+import { toRpgbotClassSlug } from "@/features/builder/data/rpgbot-ratings.utils";
+import { RpgbotLegend } from "../../shared/RpgbotLegend";
+import { RpgbotLoadingHint } from "../../shared/RpgbotLoadingHint";
+import { useRpgbotRatingsContext } from "@/features/builder/context/RpgbotRatingsContext";
 
 interface BuilderLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -56,8 +60,8 @@ interface BuilderLibraryPanelProps {
 
 export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) {
   const { search, setSearch, q } = useLibrarySearch(selectedSlot);
-  const [identitySource, setIdentitySource] =
-    useState<IdentityDataSource>("amellwind");
+  const [identitySourceOverride, setIdentitySourceOverride] =
+    useState<IdentityDataSource | null>(null);
   const [featSource, setFeatSource] = useState<FeatDataSource>("amellwind");
   const [showAsiPanel, setShowAsiPanel] = useState(false);
   const [featSearchHidden, setFeatSearchHidden] = useState(false);
@@ -82,6 +86,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   } = useCharacterBuilder();
 
   const { classData } = useSelectedClass();
+  const { ready: rpgbotReady } = useRpgbotRatingsContext();
 
   const isSpeciesSlot = selectedSlot === "species";
   const isBackgroundSlot = selectedSlot === "background";
@@ -101,17 +106,42 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   const isAnyOriginFeatSlotSelected =
     isOriginFeatSlotSelected || isInvocationOriginFeatSlotSelected;
 
+  const rpgbotClassSlug = classSelection?.name
+    ? toRpgbotClassSlug(classSelection.name)
+    : null;
+
   useEffect(() => {
-    setIdentitySource(useAmellwindHomebrew ? "amellwind" : "dnd");
-    setFeatSource(useAmellwindHomebrew ? "amellwind" : "dnd2024");
+    setIdentitySourceOverride(null);
+  }, [selectedSlot, classSelection?.name]);
+
+  const identitySource = useMemo((): IdentityDataSource => {
+    if (!useAmellwindHomebrew) return "dnd";
+    if (identitySourceOverride) return identitySourceOverride;
+    const isIdentitySlot =
+      selectedSlot === "species" || selectedSlot === "background";
+    if (isIdentitySlot && rpgbotClassSlug) return "dnd";
+    return "amellwind";
+  }, [
+    useAmellwindHomebrew,
+    identitySourceOverride,
+    selectedSlot,
+    rpgbotClassSlug,
+  ]);
+
+  useEffect(() => {
     setShowAsiPanel(false);
     setFeatSearchHidden(false);
     setEquipmentRarity("Standard");
-  }, [selectedSlot, useAmellwindHomebrew]);
+
+    if (!useAmellwindHomebrew) {
+      setFeatSource("dnd2024");
+      return;
+    }
+    setFeatSource("amellwind");
+  }, [selectedSlot, useAmellwindHomebrew, classSelection?.name]);
 
   useEffect(() => {
     if (!useAmellwindHomebrew) {
-      setIdentitySource("dnd");
       setFeatSource("dnd2024");
     }
   }, [useAmellwindHomebrew]);
@@ -173,6 +203,13 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     (isWeaponSlot || isArmorSlot) &&
     !showWeaponDetail;
 
+  const showRpgbotLegend =
+    !!rpgbotClassSlug &&
+    !hideSearch &&
+    selectedSlot !== null &&
+    selectedSlot !== "class" &&
+    !isMulticlassClassSlot(selectedSlot);
+
   const slotLabel = useMemo(() => {
     if (!selectedSlot) return "Library";
     if (isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null) {
@@ -208,7 +245,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
       {showIdentitySourceToggle && (
         <IdentitySourceBadgeGroup
           value={identitySource}
-          onChange={setIdentitySource}
+          onChange={setIdentitySourceOverride}
         />
       )}
       {showFeatSourceToggle && (
@@ -249,6 +286,12 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
           )}
 
           <ScrollableWhenNeeded>
+            {showRpgbotLegend && (
+              <>
+                {!rpgbotReady && <RpgbotLoadingHint />}
+                <RpgbotLegend />
+              </>
+            )}
             <WeaponLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
@@ -263,7 +306,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
               selectedSlot={selectedSlot}
               q={q}
               identitySource={identitySource}
-              onIdentitySourceChange={setIdentitySource}
+              onIdentitySourceChange={setIdentitySourceOverride}
             />
             <ClassLibraryPanel selectedSlot={selectedSlot} q={q} />
             <FeatLibraryPanel

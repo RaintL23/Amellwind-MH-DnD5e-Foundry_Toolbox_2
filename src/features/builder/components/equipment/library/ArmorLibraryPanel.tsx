@@ -85,9 +85,8 @@ export function ArmorLibraryPanel({
     });
   }, [useAmellwindHomebrew, classSelection?.name]);
 
-  const { lookup: rpgbotArmorLookup } = useRpgbotRatingsLookup(
-    rpgbotArmorContext,
-  );
+  const { lookup: rpgbotArmorLookup, ready: rpgbotArmorReady } =
+    useRpgbotRatingsLookup(rpgbotArmorContext);
 
   useEffect(() => {
     if (!isArmorSlot || useAmellwindHomebrew) return;
@@ -236,7 +235,7 @@ export function ArmorLibraryPanel({
           equippedShieldName={equippedShield?.name ?? null}
           onSelect={handleSelectArmor}
           getDisabledReason={getArmorDisabledReason}
-          rpgbotLookup={rpgbotArmorLookup}
+          rpgbotLookup={rpgbotArmorReady ? rpgbotArmorLookup : null}
         />
       </>
     );

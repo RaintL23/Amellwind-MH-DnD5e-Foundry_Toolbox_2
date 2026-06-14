@@ -417,9 +417,8 @@ export function SpellLibraryPanel({
     };
   }, [className, subclassSlug]);
 
-  const { lookup: rpgbotSpellLookup } = useRpgbotRatingsLookup(
-    rpgbotSpellContext,
-  );
+  const { lookup: rpgbotSpellLookup, ready: rpgbotSpellReady } =
+    useRpgbotRatingsLookup(rpgbotSpellContext);
 
   const alwaysPreparedAtLevel = useMemo(() => {
     if (isPactPool) {
@@ -555,7 +554,10 @@ export function SpellLibraryPanel({
 
     return sortByRpgbotRating(
       spells,
-      (s) => rpgbotSpellLookup?.(s.name, s.source) ?? null,
+      (s) =>
+        rpgbotSpellReady
+          ? (rpgbotSpellLookup?.(s.name, s.source) ?? null)
+          : null,
       (s) => s.name,
     );
   }, [
@@ -570,6 +572,7 @@ export function SpellLibraryPanel({
     spellMatchesClassList,
     isAtCapacity,
     rpgbotSpellLookup,
+    rpgbotSpellReady,
   ]);
 
   const handleSelect = useCallback(
@@ -749,7 +752,11 @@ export function SpellLibraryPanel({
                 key={spell.id}
                 spell={spell}
                 disabled={false}
-                rpgbotRating={rpgbotSpellLookup?.(spell.name, spell.source)}
+                rpgbotRating={
+                  rpgbotSpellReady
+                    ? (rpgbotSpellLookup?.(spell.name, spell.source) ?? null)
+                    : null
+                }
                 onSelect={() => handleSelect(spell)}
               />
             ))}

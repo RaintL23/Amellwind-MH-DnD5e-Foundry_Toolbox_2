@@ -140,7 +140,13 @@ export function createRpgbotLookupFn(
   if (!data || !context) return null;
   return (name, source, variantSources) => {
     if (!name) return null;
-    return findRpgbotRating(data.byClass, context, name, source, variantSources);
+    return findRpgbotRating(
+      data.byClass,
+      context,
+      name,
+      source,
+      variantSources,
+    );
   };
 }
 
@@ -158,7 +164,9 @@ export function compareRpgbotScore(
 
 export function sortByRpgbotRating<T>(
   items: T[],
-  getRating: (item: T) => Pick<RpgbotRatingLookupEntry, "score"> | null | undefined,
+  getRating: (
+    item: T,
+  ) => Pick<RpgbotRatingLookupEntry, "score"> | null | undefined,
   getName: (item: T) => string | null | undefined,
 ): T[] {
   return [...items].sort((a, b) => {
@@ -174,17 +182,17 @@ export function sortByRpgbotRating<T>(
 }
 
 export const RPGBOT_RATING_LABELS: Record<RpgbotRating, string> = {
-  blue: "Excelente",
-  green: "Buena",
-  orange: "Aceptable",
-  red: "Débil",
+  blue: "Excellent",
+  green: "Good",
+  orange: "Acceptable",
+  red: "Weak",
 };
 
 export const RPGBOT_RATING_SHORT: Record<RpgbotRating, string> = {
-  blue: "S",
-  green: "A",
-  orange: "B",
-  red: "C",
+  blue: "E",
+  green: "G",
+  orange: "A",
+  red: "W",
 };
 
 export function resolveOptionalFeatureRpgbotContext(params: {

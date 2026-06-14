@@ -102,9 +102,8 @@ export function WeaponLibraryPanel({
     });
   }, [useAmellwindHomebrew, classSelection?.name]);
 
-  const { lookup: rpgbotWeaponLookup } = useRpgbotRatingsLookup(
-    rpgbotWeaponContext,
-  );
+  const { lookup: rpgbotWeaponLookup, ready: rpgbotWeaponReady } =
+    useRpgbotRatingsLookup(rpgbotWeaponContext);
 
   useEffect(() => {
     if (!isWeaponSlot) return;
@@ -322,7 +321,7 @@ export function WeaponLibraryPanel({
       weaponProficiencies={resolvedWeaponItems}
       onSelect={handleSelectWeapon}
       getDisabledReason={getWeaponDisabledReason}
-      rpgbotLookup={rpgbotWeaponLookup}
+      rpgbotLookup={rpgbotWeaponReady ? rpgbotWeaponLookup : null}
     />
   );
 }

@@ -161,7 +161,7 @@ export function IdentityGridPanel({
     <BuilderSlotGrid>
       <HighlightedGridSlot
         highlightKey="species"
-        label="Specie"
+        label="Species"
         icon={<Users className="h-5 w-5 text-sky-400" />}
         equipped={
           species
@@ -198,7 +198,7 @@ export function IdentityGridPanel({
           onClickDetails={() => onSelectSlot("faction")}
           onUnequip={faction ? () => onUnequipSlot("faction") : undefined}
           isSelected={selectedSlot === "faction"}
-          emptyTitle="Elegir facción de Amellwind"
+          emptyTitle="Choose Amellwind faction"
         />
       )}
       <GridElementSlot
@@ -208,7 +208,7 @@ export function IdentityGridPanel({
         onClickEquip={() => onSelectSlot("backstory")}
         onClickDetails={() => onSelectSlot("backstory")}
         isSelected={selectedSlot === "backstory"}
-        emptyTitle="Escribir backstory"
+        emptyTitle="Write backstory"
       />
       <HighlightedGridSlot
         highlightKey="class"
@@ -257,7 +257,7 @@ export function IdentityGridPanel({
                   entry.classRef ? () => onUnequipSlot(classSlot) : undefined
                 }
                 isSelected={selectedSlot === classSlot}
-                emptyTitle="Elegir clase adicional"
+                emptyTitle="Choose additional class"
               />
               {showEntrySubclass && (
                 <HighlightedGridSlot
@@ -292,9 +292,7 @@ export function IdentityGridPanel({
           onUnequip={subclass ? () => onUnequipSlot("subclass") : undefined}
           isSelected={selectedSlot === "subclass"}
           disabled={!classSelection}
-          disabledHint={
-            !classSelection ? "Elige una clase primero" : undefined
-          }
+          disabledHint={!classSelection ? "Elige una clase primero" : undefined}
         />
       )}
       <OptionalFeatureGridPanel
@@ -321,10 +319,10 @@ export function IdentityGridPanel({
           disabled={!species && !background}
           disabledHint={
             !species && !background
-              ? "Elige specie o background primero"
+              ? "Choose species or background first"
               : undefined
           }
-          emptyTitle="Elegir Origin Feat"
+          emptyTitle="Choose Origin Feat"
         />
       )}
       {optionalFeatureOriginFeatSlots.map((slotMeta) => {
@@ -348,7 +346,7 @@ export function IdentityGridPanel({
             onClickDetails={() => onSelectSlot(slotId)}
             onUnequip={feat ? () => onUnequipSlot(slotId) : undefined}
             isSelected={selectedSlot === slotId}
-            emptyTitle={`Elegir Origin Feat (${slotMeta.sourceFeatureName})`}
+            emptyTitle={`Choose Origin Feat (${slotMeta.sourceFeatureName})`}
           />
         );
       })}
@@ -380,14 +378,11 @@ export function IdentityGridPanel({
             onUnequip={feat ? () => onUnequipSlot(slot) : undefined}
             isSelected={selectedSlot === slot}
             disabled={!classSelection}
-            disabledHint={
-              !classSelection ? "Elige una clase primero" : undefined
-            }
-            emptyTitle={`Elegir feat (nivel ${featLevel})`}
+            disabledHint={!classSelection ? "Choose a class first" : undefined}
+            emptyTitle={`Choose feat (level ${featLevel})`}
           />
         );
       })}
     </BuilderSlotGrid>
   );
 }
-

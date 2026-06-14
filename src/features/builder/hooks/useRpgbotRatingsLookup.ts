@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import type { RpgbotRatingLookupEntry } from "../data/rpgbot-ratings.types";
-import {
-  createRpgbotLookupFn,
-  type RpgbotLookupContext,
-  type RpgbotLookupFn,
+import type {
+  RpgbotLookupContext,
+  RpgbotLookupFn,
 } from "../data/rpgbot-ratings.utils";
-import { loadRpgbotRatings } from "../services/rpgbot-ratings.service";
+import { useRpgbotRatingsContext } from "../context/RpgbotRatingsContext";
 
 function contextKey(context: RpgbotLookupContext | null): string | null {
   if (!context) return null;
@@ -14,33 +13,16 @@ function contextKey(context: RpgbotLookupContext | null): string | null {
 
 export function useRpgbotRatingsLookup(
   context: RpgbotLookupContext | null,
-): { lookup: RpgbotLookupFn | null } {
-  const [lookup, setLookup] = useState<RpgbotLookupFn | null>(null);
+): { lookup: RpgbotLookupFn | null; ready: boolean } {
+  const { ready, createLookup } = useRpgbotRatingsContext();
   const key = contextKey(context);
 
-  useEffect(() => {
-    if (!context || !key) {
-      setLookup(null);
-      return;
-    }
+  const lookup = useMemo(() => {
+    if (!key || !context) return null;
+    return createLookup(context);
+  }, [createLookup, key, context]);
 
-    let cancelled = false;
-    loadRpgbotRatings()
-      .then((data) => {
-        if (!cancelled) {
-          setLookup(createRpgbotLookupFn(data, context));
-        }
-      })
-      .catch(() => {
-        if (!cancelled) setLookup(null);
-      });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [context, key]);
-
-  return { lookup };
+  return { lookup, ready };
 }
 
 export type { RpgbotRatingLookupEntry };

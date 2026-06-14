@@ -6,6 +6,7 @@ import { cn } from "@/shared/utils/cn";
 import {
   formatVariantSourcesLabel,
   isLibraryOptionSelected,
+  RPGBOT_ROW_ACCENT,
   sortLibraryOptionsByRpgbot,
   type LibraryListOption,
 } from "../../utils/library-variant.utils";
@@ -74,7 +75,10 @@ export function LibraryList({
             title={disabledReason ?? undefined}
             onClick={() => onSelect(option.id, option.name)}
             className={cn(
-              "mb-1 flex w-full items-center justify-between rounded-md border px-2 py-1.5 text-left text-xs transition-colors",
+              "mb-1 flex w-full items-center justify-between rounded-md border border-l-2 px-2 py-1.5 text-left text-xs transition-colors",
+              option.rpgbot
+                ? RPGBOT_ROW_ACCENT[option.rpgbot.rating]
+                : "border-l-transparent",
               isSelected
                 ? "border-violet-400/40 bg-violet-400/5"
                 : "border-border/60",

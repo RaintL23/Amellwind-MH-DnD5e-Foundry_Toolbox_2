@@ -105,9 +105,8 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
     [subclassContextClassName],
   );
 
-  const { lookup: rpgbotSubclassLookup } = useRpgbotRatingsLookup(
-    rpgbotSubclassContext,
-  );
+  const { lookup: rpgbotSubclassLookup, ready: rpgbotSubclassReady } =
+    useRpgbotRatingsLookup(rpgbotSubclassContext);
 
   useEffect(() => {
     if (
@@ -240,8 +239,13 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
   ]);
 
   const subclassFiltered = useMemo(() => {
-    return prepareLibraryListOptions(subclassOptions, q, rpgbotSubclassLookup);
-  }, [subclassOptions, q, rpgbotSubclassLookup]);
+    return prepareLibraryListOptions(
+      subclassOptions,
+      q,
+      rpgbotSubclassLookup,
+      rpgbotSubclassReady,
+    );
+  }, [subclassOptions, q, rpgbotSubclassLookup, rpgbotSubclassReady]);
 
   const activeSubclass = useMemo(() => {
     if (!classData || !subclass) return null;
