@@ -1,4 +1,5 @@
-import { Book, ClipboardPaste } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Book, ClipboardPaste, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
@@ -77,22 +78,35 @@ export function BackstoryNotesPanel() {
         </>
       }
       action={
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          className="h-7 gap-1.5 text-[11px]"
-          disabled={!canImport}
-          onClick={handleImportFromXanathar}
-          title={
-            canImport
-              ? "Paste the Xanathar Backstory summary"
-              : "No results in Xanathar Backstory yet"
-          }
-        >
-          <ClipboardPaste className="h-3.5 w-3.5" aria-hidden />
-          Import from Xanathar
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Link
+            to="/xanathar-backstory"
+            className={cn(
+              "inline-flex h-7 items-center gap-1.5 rounded-md border border-input bg-background px-2.5 text-[11px] font-medium shadow-sm",
+              "hover:bg-accent hover:text-accent-foreground",
+            )}
+            title="Open the Xanathar Backstory Helper to roll tables"
+          >
+            <ExternalLink className="h-3.5 w-3.5" aria-hidden />
+            Xanathar Helper
+          </Link>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-7 gap-1.5 text-[11px]"
+            disabled={!canImport}
+            onClick={handleImportFromXanathar}
+            title={
+              canImport
+                ? "Paste the Xanathar Backstory summary"
+                : "No results in Xanathar Backstory yet"
+            }
+          >
+            <ClipboardPaste className="h-3.5 w-3.5" aria-hidden />
+            Import from Xanathar
+          </Button>
+        </div>
       }
     >
       <div className="space-y-3">
