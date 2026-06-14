@@ -1,5 +1,6 @@
 import { Dices, FileDown, FileJson, RotateCcw, User } from "lucide-react";
 import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
+import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -7,6 +8,7 @@ import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { parseAlignmentAxes } from "../../utils/alignment.utils";
 import { AbilityScoresSection } from "./AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
+import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { NumberStepper } from "../shared/NumberStepper";
 
 const ICON_BUTTON_CLASS = "h-6 w-6 shrink-0";
@@ -23,7 +25,19 @@ export function StatsPanel() {
   } = useCharacterBuilder();
   const { exportSheet, exporting, error: exportError } =
     useCharacterSheetExport();
+  const { evaluate, activateHighlight, clearHighlight, highlightActive, issues } =
+    useBuildCompleteness();
   const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
+
+  async function handleExportPdf() {
+    const result = evaluate();
+    if (result.shouldBlockExport) {
+      activateHighlight();
+      return;
+    }
+    clearHighlight();
+    await exportSheet();
+  }
 
   return (
     <BuilderPanel
@@ -40,7 +54,7 @@ export function StatsPanel() {
             variant="outline"
             size="sm"
             className="h-auto min-w-0 flex-1 gap-1.5 px-2 py-1.5 text-[10px] leading-tight"
-            onClick={() => void exportSheet()}
+            onClick={() => void handleExportPdf()}
             disabled={exporting}
             aria-label="Download Character Sheet 2024 PDF"
           >
@@ -60,6 +74,9 @@ export function StatsPanel() {
             Foundry VTT JSON
           </Button>
         </div>
+        {highlightActive && issues.length > 0 && (
+          <CompletenessHighlightBanner issues={issues} />
+        )}
         {exportError && (
           <p className="text-[10px] text-destructive">{exportError}</p>
         )}
@@ -131,7 +148,10 @@ export function StatsPanel() {
             variant="outline"
             size="icon"
             className={ICON_BUTTON_CLASS}
-            onClick={resetBuild}
+            onClick={() => {
+              clearHighlight();
+              resetBuild();
+            }}
             title="Reset character"
             aria-label="Reset character"
           >

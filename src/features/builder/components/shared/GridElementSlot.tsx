@@ -16,6 +16,7 @@ interface GridElementSlotProps {
   disabledHint?: string;
   accent?: SlotAccent;
   emptyTitle?: string;
+  highlighted?: boolean;
 }
 
 const ACCENT_CLASS: Record<SlotAccent, string> = {
@@ -36,6 +37,7 @@ export function GridElementSlot({
   disabledHint,
   accent = "default",
   emptyTitle,
+  highlighted = false,
 }: Readonly<GridElementSlotProps>) {
   if (disabled) {
     return (
@@ -61,7 +63,10 @@ export function GridElementSlot({
         onClick={onClickEquip}
         title={emptyTitle ?? `Equipar ${label}`}
         className={cn(
-          "flex min-h-[72px] w-full flex-col items-center justify-center gap-1 rounded-md border border-dashed border-border/70 bg-muted/20 p-2 text-[11px] text-muted-foreground transition-all hover:border-border hover:bg-muted/40 hover:text-foreground",
+          "flex min-h-[72px] w-full flex-col items-center justify-center gap-1 rounded-md border border-dashed p-2 text-[11px] text-muted-foreground transition-all hover:text-foreground",
+          highlighted
+            ? "border-amber-500/70 bg-amber-500/10 ring-1 ring-amber-500/40 hover:border-amber-500 hover:bg-amber-500/15"
+            : "border-border/70 bg-muted/20 hover:border-border hover:bg-muted/40",
           ACCENT_CLASS[accent],
         )}
       >
@@ -79,7 +84,10 @@ export function GridElementSlot({
         onDoubleClick={onClickEquip}
         title={`${equipped.name} — clic para detalles, doble clic para cambiar`}
         className={cn(
-          "flex min-h-[72px] w-full flex-col items-center justify-center gap-0.5 rounded-md border border-solid border-border/70 bg-card p-2 text-center transition-all hover:border-primary/40",
+          "flex min-h-[72px] w-full flex-col items-center justify-center gap-0.5 rounded-md border border-solid p-2 text-center transition-all",
+          highlighted
+            ? "border-amber-500/70 bg-amber-500/10 ring-1 ring-amber-500/40 hover:border-amber-500"
+            : "border-border/70 bg-card hover:border-primary/40",
           isSelected && "border-primary bg-primary/10 ring-1 ring-primary/30",
           ACCENT_CLASS[accent],
         )}

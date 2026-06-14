@@ -5,6 +5,8 @@ import {
   SKILL_LABELS,
   SKILL_ORDER,
 } from "../../utils/check-modifiers.utils";
+import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
+import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { BuilderStatRow } from "./BuilderStatRow";
 import { BuilderSkillPicker } from "./BuilderSkillPicker";
@@ -133,6 +135,8 @@ export function BuilderSkillChecksPanel() {
   };
 
   const pendingExpertise = getPendingExpertiseGrants(allExpertiseGrants);
+  const { highlighted, issues: skillIssues } =
+    useSectionCompletenessHighlight("skills");
 
   const advantageSkills = new Set<SkillKey>(
     allSkillAdvantages.filter((a) => a.kind === "advantage").map((a) => a.skill),
@@ -171,12 +175,14 @@ export function BuilderSkillChecksPanel() {
 
   return (
     <BuilderPanel
+      highlighted={highlighted}
       title={
         <>
           <ListChecks className="h-3.5 w-3.5" aria-hidden /> Skill Checks
         </>
       }
     >
+      {highlighted && <CompletenessHighlightBanner issues={skillIssues} />}
       {hasPickers && (
         <div className="mb-2 flex flex-wrap gap-2 text-[9px] text-muted-foreground">
           {(["species", "background", "class", "feat"] as const).map((type) => (

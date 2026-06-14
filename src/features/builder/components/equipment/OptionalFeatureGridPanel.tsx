@@ -11,6 +11,7 @@ import {
   toOptionalFeatureSlot,
   type ResolvedOptionalFeatureProgression,
 } from "../../utils/class-optional-features.utils";
+import { useSlotCompletenessHighlight } from "../../context/BuildCompletenessContext";
 
 interface OptionalFeatureGridPanelProps {
   progressions: ResolvedOptionalFeatureProgression[];
@@ -65,6 +66,63 @@ function progressionColor(
   return "text-amber-400";
 }
 
+function OptionalFeatureGridSlot({
+  progression,
+  slotCount,
+  selections,
+  selectedSlot,
+  onSelectSlot,
+  onUnequipSlot,
+}: {
+  progression: ResolvedOptionalFeatureProgression["progression"];
+  slotCount: number;
+  selections: BuilderOptionalFeatureSelections;
+  selectedSlot: BuilderSlotSelection;
+  onSelectSlot: (slot: BuilderSlotSelection) => void;
+  onUnequipSlot: (slot: BuilderSlotSelection) => void;
+}) {
+  const slot = toOptionalFeatureSlot(progression.id);
+  const label = progressionDisplayName(progression.name);
+  const colorClass = progressionColor(progression);
+  const picks = getProgressionPicks(selections, progression.id);
+  const pickedCount = picks.length;
+  const pickedNames = picks.map((p) => p.name).join(", ");
+  const countDetail = `${pickedCount}/${slotCount}`;
+  const detail = pickedNames ? `${countDetail} — ${pickedNames}` : countDetail;
+  const isSelected =
+    isOptionalFeatureSlot(selectedSlot) && selectedSlot === slot;
+  const { highlighted } = useSlotCompletenessHighlight(slot);
+
+  return (
+    <GridElementSlot
+      label={label}
+      icon={progressionIcon(progression, colorClass)}
+      equipped={
+        pickedCount > 0
+          ? {
+              name: picks[0]?.name ?? label,
+              detail,
+            }
+          : null
+      }
+      onClickEquip={() => onSelectSlot(slot)}
+      onClickDetails={() => onSelectSlot(slot)}
+      onUnequip={
+        pickedCount > 0 &&
+        !(
+          isFeatureChoiceProgression(progression) &&
+          progression.pickMode === "all"
+        )
+          ? () => onUnequipSlot(slot)
+          : undefined
+      }
+      isSelected={isSelected}
+      highlighted={highlighted}
+      emptyTitle={`Elegir ${progression.name} (${countDetail})`}
+    />
+  );
+}
+
 /** Renders optional-feature slots as grid children (no wrapper). */
 export function OptionalFeatureGridPanel({
   progressions,
@@ -77,49 +135,17 @@ export function OptionalFeatureGridPanel({
 
   return (
     <>
-      {progressions.map(({ progression, slotCount }) => {
-        const slot = toOptionalFeatureSlot(progression.id);
-        const label = progressionDisplayName(progression.name);
-        const colorClass = progressionColor(progression);
-        const picks = getProgressionPicks(selections, progression.id);
-        const pickedCount = picks.length;
-        const pickedNames = picks.map((p) => p.name).join(", ");
-        const countDetail = `${pickedCount}/${slotCount}`;
-        const detail = pickedNames
-          ? `${countDetail} — ${pickedNames}`
-          : countDetail;
-        const isSelected =
-          isOptionalFeatureSlot(selectedSlot) && selectedSlot === slot;
-
-        return (
-          <GridElementSlot
-            key={slot}
-            label={label}
-            icon={progressionIcon(progression, colorClass)}
-            equipped={
-              pickedCount > 0
-                ? {
-                    name: picks[0]?.name ?? label,
-                    detail,
-                  }
-                : null
-            }
-            onClickEquip={() => onSelectSlot(slot)}
-            onClickDetails={() => onSelectSlot(slot)}
-            onUnequip={
-              pickedCount > 0 &&
-              !(
-                isFeatureChoiceProgression(progression) &&
-                progression.pickMode === "all"
-              )
-                ? () => onUnequipSlot(slot)
-                : undefined
-            }
-            isSelected={isSelected}
-            emptyTitle={`Elegir ${progression.name} (${countDetail})`}
-          />
-        );
-      })}
+      {progressions.map(({ progression, slotCount }) => (
+        <OptionalFeatureGridSlot
+          key={toOptionalFeatureSlot(progression.id)}
+          progression={progression}
+          slotCount={slotCount}
+          selections={selections}
+          selectedSlot={selectedSlot}
+          onSelectSlot={onSelectSlot}
+          onUnequipSlot={onUnequipSlot}
+        />
+      ))}
     </>
   );
 }

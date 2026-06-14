@@ -1,6 +1,9 @@
 import { useMemo } from "react";
+import { cn } from "@/shared/utils/cn";
 import { ABILITY_LABELS, AbilityKey } from "@/shared/types";
 import { Select } from "@/components/ui/select";
+import { useSectionCompletenessHighlight } from "../../../context/BuildCompletenessContext";
+import { CompletenessHighlightBanner } from "../../shared/CompletenessHighlightBanner";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
 import { useSelectedSpecies } from "../../../hooks/useSelectedSpecies";
 import { useSelectedDndBackground } from "../../../hooks/useSelectedDndBackground";
@@ -160,22 +163,39 @@ export function OriginBonusesPanel({ compact }: { compact: boolean }) {
         : [],
     [species, useTashaOrigin, hasBackgroundAsi],
   );
+  const { highlighted, issues: abilityIssues } =
+    useSectionCompletenessHighlight("ability-scores");
 
   const abilityOptions = (exclude: AbilityKey[]) =>
     ABILITIES.filter(({ key }) => !exclude.includes(key));
 
+  const highlightWrapperClass = cn(
+    highlighted &&
+      "rounded-md border border-amber-500/60 bg-amber-500/10 ring-1 ring-amber-500/30",
+  );
+
   if (hasBackgroundAsi) {
-    return <BackgroundAsiPanel compact={compact} />;
+    return (
+      <div className={highlightWrapperClass}>
+        {highlighted && <CompletenessHighlightBanner issues={abilityIssues} />}
+        <BackgroundAsiPanel compact={compact} />
+      </div>
+    );
   }
 
   if (!speciesRef) return null;
 
   return (
     <div
-      className={`rounded-md border border-border/60 bg-muted/20 ${
-        compact ? "space-y-1.5 p-1.5" : "space-y-2 p-2"
-      }`}
+      className={cn(
+        `rounded-md border border-border/60 bg-muted/20 ${
+          compact ? "space-y-1.5 p-1.5" : "space-y-2 p-2"
+        }`,
+        highlighted &&
+          "border-amber-500/60 bg-amber-500/10 ring-1 ring-amber-500/30",
+      )}
     >
+      {highlighted && <CompletenessHighlightBanner issues={abilityIssues} />}
       <label className="flex items-start gap-2 cursor-pointer">
         <input
           type="checkbox"

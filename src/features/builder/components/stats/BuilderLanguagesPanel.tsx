@@ -1,4 +1,7 @@
 import { Languages } from "lucide-react";
+import { cn } from "@/shared/utils/cn";
+import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
+import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import {
   Accordion,
   AccordionContent,
@@ -97,6 +100,8 @@ export function BuilderLanguagesPanel() {
   const bgGrants = pending.filter((g) => g.source.type === "background");
   const classGrants = pending.filter((g) => g.source.type === "class");
   const hasPickers = pending.length > 0;
+  const { highlighted, issues: languageIssues } =
+    useSectionCompletenessHighlight("languages");
 
   const speciesFixed = fixedLanguagesFromGrants(allLanguageGrants, "species");
   const backgroundFixed = fixedLanguagesFromGrants(allLanguageGrants, "background");
@@ -114,7 +119,13 @@ export function BuilderLanguagesPanel() {
   );
 
   return (
-    <div className="rounded-lg border border-border/60 bg-card">
+    <div
+      className={cn(
+        "rounded-lg border border-border/60 bg-card",
+        highlighted &&
+          "border-amber-500/60 bg-amber-500/5 ring-1 ring-amber-500/30",
+      )}
+    >
       <Accordion type="single" collapsible>
         <AccordionItem value="languages" className="border-0">
           <AccordionTrigger className="gap-1.5 px-3.5 py-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground hover:no-underline">
@@ -129,6 +140,7 @@ export function BuilderLanguagesPanel() {
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-3.5 pb-3.5">
+            {highlighted && <CompletenessHighlightBanner issues={languageIssues} />}
             {hasPickers && <BuilderSourceLegend />}
 
             {speciesGrants.length > 0 && (
