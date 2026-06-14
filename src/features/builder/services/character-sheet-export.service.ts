@@ -1,5 +1,6 @@
 import type { PDFDocument } from "pdf-lib";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
+import { sanitizeTextForPdf } from "../utils/character-sheet-export.utils";
 
 const TEMPLATE_URL = "/character-sheet/dnd-2024-character-sheet.pdf";
 
@@ -10,7 +11,7 @@ function setText(
 ) {
   if (value === undefined || value === null || value === "") return;
   try {
-    form.getTextField(fieldName).setText(String(value));
+    form.getTextField(fieldName).setText(sanitizeTextForPdf(String(value)));
   } catch {
     /* field may not exist on all template revisions */
   }
