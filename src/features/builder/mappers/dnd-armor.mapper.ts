@@ -4,10 +4,15 @@ import { mapDndRarityLabel } from "../utils/dnd-rarity.utils";
 
 function parseArmorCategory(type?: string): ArmorCategory | null {
   const abbrev = type?.split("|")[0]?.toUpperCase();
+  if (abbrev === "S") return "shield";
   if (abbrev === "LA") return "light";
   if (abbrev === "MA") return "medium";
   if (abbrev === "HA") return "heavy";
   return null;
+}
+
+function isDndShieldType(type?: string): boolean {
+  return type?.split("|")[0]?.toUpperCase() === "S";
 }
 
 function maxDexForCategory(category: ArmorCategory): number | null {
@@ -24,10 +29,10 @@ function parseBonusAc(raw: RawItemEntity): number {
 }
 
 export function isBuilderDndArmor(raw: RawItemEntity): boolean {
-  if (raw.armor !== true) return false;
-  const abbrev = String(raw.type ?? "").split("|")[0].toUpperCase();
-  if (abbrev === "S") return false;
   if (!raw._isBaseItem && !raw._variantName) return false;
+  const type = typeof raw.type === "string" ? raw.type : undefined;
+  if (isDndShieldType(type)) return true;
+  if (raw.armor !== true) return false;
   return true;
 }
 
@@ -37,11 +42,30 @@ export function mapDndBaseItemToArmor(raw: RawItemEntity): ArmorItem | null {
   );
   if (!category) return null;
 
-  const baseAc =
-    (typeof raw.ac === "number" ? raw.ac : 10) + parseBonusAc(raw);
   const itemRarityLabel = mapDndRarityLabel(
     typeof raw.rarity === "string" ? raw.rarity : undefined,
   );
+
+  if (category === "shield") {
+    const acBonus =
+      (typeof raw.ac === "number" ? raw.ac : 2) + parseBonusAc(raw);
+    return {
+      name: String(raw.name ?? "Shield"),
+      category,
+      baseAC: acBonus,
+      maxDexBonus: null,
+      rarity: itemRarityLabel,
+      runeSlots: 0,
+      stealthDisadvantage: false,
+      weight: typeof raw.weight === "number" ? raw.weight : 6,
+      contentSource: "dnd",
+      itemRarityLabel,
+      source: String(raw.source ?? "PHB"),
+    };
+  }
+
+  const baseAc =
+    (typeof raw.ac === "number" ? raw.ac : 10) + parseBonusAc(raw);
 
   return {
     name: String(raw.name ?? "Unknown"),

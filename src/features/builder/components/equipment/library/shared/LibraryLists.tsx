@@ -14,7 +14,7 @@ import {
   getWeaponProficiencyRule,
 } from "@/features/weapons/data/weapon-proficiencies.data";
 import { getWeaponEffectiveTierLabel } from "@/features/builder/utils/equipment-proficiency.utils";
-import { CLOTHING_ARMOR } from "@/features/builder/data/armor.data";
+import { CLOTHING_ARMOR, formatArmorSlotDetail, isShieldArmor } from "@/features/builder/data/armor.data";
 import { ABILITY_SCORE_IMPROVEMENT } from "@/features/builder/utils/builder-class.utils";
 import type { LibraryListOption } from "@/features/builder/utils/library-variant.utils";
 import { formatVariantSourcesLabel } from "@/features/builder/utils/library-variant.utils";
@@ -158,6 +158,7 @@ export function ArmorList({
   inventory,
   catalog,
   equippedName,
+  equippedShieldName = null,
   onSelect,
   getDisabledReason,
 }: {
@@ -165,6 +166,7 @@ export function ArmorList({
   inventory: ArmorItem[];
   catalog: ArmorItem[];
   equippedName: string | null;
+  equippedShieldName?: string | null;
   onSelect: (a: ArmorItem) => void;
   getDisabledReason?: (armor: ArmorItem) => string | null;
 }) {
@@ -175,7 +177,9 @@ export function ArmorList({
     key: string,
     iconMuted: boolean,
   ) {
-    const isEquipped = equippedName === armorItem.name;
+    const isEquipped =
+      equippedName === armorItem.name ||
+      equippedShieldName === armorItem.name;
     const disabledReason =
       !isEquipped && getDisabledReason
         ? getDisabledReason(armorItem)
@@ -195,8 +199,12 @@ export function ArmorList({
         name={armorItem.name}
         meta={
           <LibraryItemBadgeRow>
-            <LibraryItemBadge>CA {armorItem.baseAC}</LibraryItemBadge>
-            <LibraryItemBadge>{armorItem.category}</LibraryItemBadge>
+            <LibraryItemBadge>
+              {formatArmorSlotDetail(armorItem)}
+            </LibraryItemBadge>
+            <LibraryItemBadge>
+              {isShieldArmor(armorItem) ? "shield" : armorItem.category}
+            </LibraryItemBadge>
           </LibraryItemBadgeRow>
         }
         rarity={

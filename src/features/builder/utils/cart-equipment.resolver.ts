@@ -1,5 +1,5 @@
 import { BASE_ARMORS, CLOTHING_ARMOR } from "../data/armor.data";
-import { findShieldByCartName } from "../data/shield.data";
+import { findShieldByCartName, standaloneShieldToArmorItem } from "../data/shield.data";
 import { isKnownTrinket } from "../data/trinket.data";
 import { isTrinketEntry } from "./equipment-inventory.utils";
 import { ArmorItem, CartEntry, Weapon } from "@/shared/types";
@@ -70,6 +70,13 @@ export function resolveEquippableFromCart(
     if (weapon && !seenWeapons.has(weapon.name)) {
       seenWeapons.add(weapon.name);
       weapons.push(weapon);
+      continue;
+    }
+
+    const shield = findShieldByCartName(entry.name);
+    if (shield && !seenArmors.has(shield.name)) {
+      seenArmors.add(shield.name);
+      armors.push(standaloneShieldToArmorItem(shield));
       continue;
     }
 

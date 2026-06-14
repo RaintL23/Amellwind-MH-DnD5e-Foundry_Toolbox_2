@@ -19,8 +19,14 @@ export function isClothingArmor(armor: ArmorItem): boolean {
   return armor.category === "clothing";
 }
 
+export function isShieldArmor(armor: ArmorItem): boolean {
+  return armor.category === "shield";
+}
+
 export function formatArmorSlotDetail(armor: ArmorItem): string {
-  return isClothingArmor(armor) ? "10 + DEX" : `AC ${armor.baseAC}`;
+  if (isClothingArmor(armor)) return "10 + DEX";
+  if (isShieldArmor(armor)) return `+${armor.baseAC} AC`;
+  return `AC ${armor.baseAC}`;
 }
 
 /**

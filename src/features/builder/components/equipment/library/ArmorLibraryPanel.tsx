@@ -1,5 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { BASE_ARMORS } from "@/features/builder/data/armor.data";
+import {
+  armorItemToStandaloneShield,
+  isShieldArmorItem,
+  standaloneShieldToArmorItem,
+  STANDALONE_SHIELD,
+} from "@/features/builder/data/shield.data";
 import { PLACEHOLDER_TRINKETS } from "@/features/builder/data/trinket.data";
 import { getDndBuilderArmors } from "@/features/builder/services/dnd-armor.service";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
@@ -10,8 +16,10 @@ import { matchesEquipmentRarityFilter } from "@/features/builder/utils/dnd-rarit
 import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 import {
   buildArmorInventoryBundle,
+  buildShieldInventoryBundle,
   buildTrinketInventoryBundle,
 } from "@/features/builder/utils/equipment-inventory.utils";
+import { blocksOffHand } from "@/features/weapons/utils/weapon-hands.utils";
 import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
 import type { ArmorItem } from "@/shared/types";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
@@ -37,8 +45,13 @@ export function ArmorLibraryPanel({
     armor,
     trinket1,
     trinket2,
+    mainHand,
+    equippedShield,
+    hasIntegratedShield,
+    isOffHandBlocked,
     class: classSelection,
     equipArmor,
+    equipShield,
     equipTrinket,
     resolvedArmorItems,
     useAmellwindHomebrew,
@@ -69,7 +82,12 @@ export function ArmorLibraryPanel({
       .finally(() => setArmorsLoading(false));
   }, [isArmorSlot, useAmellwindHomebrew, prefer2024]);
 
-  const catalogArmors = useAmellwindHomebrew ? BASE_ARMORS : dndArmors;
+  const catalogArmors = useMemo(() => {
+    if (useAmellwindHomebrew) {
+      return [...BASE_ARMORS, standaloneShieldToArmorItem(STANDALONE_SHIELD)];
+    }
+    return dndArmors;
+  }, [useAmellwindHomebrew, dndArmors]);
 
   const matchesRarity = useCallback(
     (armorItem: ArmorItem) => {
@@ -143,6 +161,15 @@ export function ArmorLibraryPanel({
     (armorItem: ArmorItem): string | null => {
       if (!classSelection) return null;
 
+      if (isShieldArmorItem(armorItem)) {
+        if (hasIntegratedShield) {
+          return "The off-hand is occupied by the integrated shield";
+        }
+        if (isOffHandBlocked || blocksOffHand(mainHand)) {
+          return "The off-hand is not available";
+        }
+      }
+
       const proficiencyCheck = checkArmorProficiency(
         armorItem,
         resolvedArmorItems,
@@ -151,10 +178,23 @@ export function ArmorLibraryPanel({
         ? null
         : (proficiencyCheck.reason ?? "Your class is not proficient with this armor.");
     },
-    [classSelection, resolvedArmorItems],
+    [
+      classSelection,
+      resolvedArmorItems,
+      hasIntegratedShield,
+      isOffHandBlocked,
+      mainHand,
+    ],
   );
 
   function handleSelectArmor(item: ArmorItem) {
+    if (isShieldArmorItem(item)) {
+      const shield = armorItemToStandaloneShield(item);
+      equipShield(shield);
+      addEquipmentBundle(buildShieldInventoryBundle(shield));
+      return;
+    }
+
     equipArmor(item);
     addEquipmentBundle(buildArmorInventoryBundle(item));
   }
@@ -166,23 +206,23 @@ export function ArmorLibraryPanel({
   }
 
   if (isArmorSlot) {
-    if (showArmorDetail) {
-      return <ArmorLibraryDetail equipped={armor} />;
-    }
-
     if (armorsLoading && !useAmellwindHomebrew) {
       return <EmptyState text="Loading armors..." />;
     }
 
     return (
-      <ArmorList
-        showCloth={showClothOption}
-        inventory={inventoryArmorsFiltered}
-        catalog={catalogArmorsFiltered}
-        equippedName={armor?.armor.name ?? null}
-        onSelect={handleSelectArmor}
-        getDisabledReason={getArmorDisabledReason}
-      />
+      <>
+        {showArmorDetail && <ArmorLibraryDetail equipped={armor} />}
+        <ArmorList
+          showCloth={showClothOption}
+          inventory={inventoryArmorsFiltered}
+          catalog={catalogArmorsFiltered}
+          equippedName={armor?.armor.name ?? null}
+          equippedShieldName={equippedShield?.name ?? null}
+          onSelect={handleSelectArmor}
+          getDisabledReason={getArmorDisabledReason}
+        />
+      </>
     );
   }
 

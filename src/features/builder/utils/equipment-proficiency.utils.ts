@@ -1,6 +1,6 @@
 import type { ArmorItem, Weapon } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
-import { isClothingArmor } from "@/features/builder/data/armor.data";
+import { isClothingArmor, isShieldArmor } from "@/features/builder/data/armor.data";
 import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
 import {
   getWeaponProficiencyRule,
@@ -276,6 +276,24 @@ export function checkArmorProficiency(
 ): ArmorProficiencyCheckResult {
   if (isClothingArmor(armor)) {
     return { allowed: true };
+  }
+
+  if (isShieldArmor(armor)) {
+    if (hasShieldProficiency(armorProficiencies)) {
+      return { allowed: true };
+    }
+
+    if (!armorProficiencies.length) {
+      return {
+        allowed: false,
+        reason: "Your class does not grant Shield proficiency.",
+      };
+    }
+
+    return {
+      allowed: false,
+      reason: "Requires Shield proficiency.",
+    };
   }
 
   const requiredCategory = ARMOR_CATEGORY_LABELS[armor.category];

@@ -53,7 +53,7 @@ export interface CharacterSelectionRef {
 
 // ─── Armor (placeholder until real data source exists) ───────────────────────
 
-export type ArmorCategory = "light" | "medium" | "heavy" | "clothing";
+export type ArmorCategory = "light" | "medium" | "heavy" | "clothing" | "shield";
 
 export interface ArmorItem {
   name: string;

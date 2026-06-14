@@ -1,4 +1,4 @@
-import { Dices, FileDown, RotateCcw, User } from "lucide-react";
+import { Dices, FileDown, FileJson, RotateCcw, User } from "lucide-react";
 import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,6 +34,35 @@ export function StatsPanel() {
       }
     >
       <div className="mb-3 space-y-2">
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-auto min-w-0 flex-1 gap-1.5 px-2 py-1.5 text-[10px] leading-tight"
+            onClick={() => void exportSheet()}
+            disabled={exporting}
+            aria-label="Download Character Sheet 2024 PDF"
+          >
+            <FileDown className="h-3 w-3 shrink-0" aria-hidden />
+            Character Sheet 2024 PDF
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="h-auto min-w-0 flex-1 gap-1.5 px-2 py-1.5 text-[10px] leading-tight"
+            disabled
+            title="Foundry VTT export (coming soon)"
+            aria-label="Download Foundry VTT JSON (coming soon)"
+          >
+            <FileJson className="h-3 w-3 shrink-0" aria-hidden />
+            Foundry VTT JSON
+          </Button>
+        </div>
+        {exportError && (
+          <p className="text-[10px] text-destructive">{exportError}</p>
+        )}
         <div className="flex items-end gap-2">
           <div className="min-w-0 flex-1 space-y-1">
             <span className="text-[10px] text-muted-foreground">Name</span>
@@ -119,22 +148,7 @@ export function StatsPanel() {
           >
             <Dices className="h-3 w-3" aria-hidden />
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className={ICON_BUTTON_CLASS}
-            onClick={() => void exportSheet()}
-            disabled={exporting}
-            title="Export D&D 2024 character sheet (PDF)"
-            aria-label="Export D&D 2024 character sheet"
-          >
-            <FileDown className="h-3 w-3" aria-hidden />
-          </Button>
         </div>
-        {exportError && (
-          <p className="text-[10px] text-destructive">{exportError}</p>
-        )}
       </div>
 
       <AbilityScoresSection compact />

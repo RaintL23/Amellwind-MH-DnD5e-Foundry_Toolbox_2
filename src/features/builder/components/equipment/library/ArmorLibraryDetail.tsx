@@ -33,6 +33,7 @@ const CATEGORY_LABELS: Record<string, string> = {
   medium: "Medium Armor",
   heavy: "Heavy Armor",
   clothing: "Clothing",
+  shield: "Shield",
 };
 
 export function ArmorLibraryDetail({ equipped }: ArmorLibraryDetailProps) {

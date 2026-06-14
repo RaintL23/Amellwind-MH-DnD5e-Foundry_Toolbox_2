@@ -67,7 +67,6 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     equippedShield,
     hasIntegratedShield,
     isOffHandBlocked,
-    armor,
     species,
     background,
     class: classSelection,
@@ -152,14 +151,11 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     !!equippedWeapon &&
     !(selectedSlot === "offHand" && showOffHandWeaponPicker);
 
-  const showArmorDetail = isArmorSlot && !!armor;
-
   const hideSearch =
     isIdentityDetailVisible(selectedSlot, species, background) ||
     isClassDetailVisible(selectedSlot, classSelection, classData) ||
     isSubclassDetailVisible(selectedSlot, subclass, activeSubclass) ||
     showWeaponDetail ||
-    showArmorDetail ||
     featSearchHidden;
 
   const showIdentitySourceToggle =
@@ -169,8 +165,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   const showEquipmentRarityToggle =
     !useAmellwindHomebrew &&
     (isWeaponSlot || isArmorSlot) &&
-    !showWeaponDetail &&
-    !showArmorDetail;
+    !showWeaponDetail;
 
   const slotLabel = useMemo(() => {
     if (!selectedSlot) return "Library";
