@@ -44,10 +44,12 @@ export interface RpgbotRatingsData {
     entryCount: number;
     ratingScale: Record<RpgbotRating, number>;
     ratingLegend: Record<RpgbotRating, string>;
-    urls: string[];
-    errors: Array<{ url: string; error: string }>;
+    urls?: string[];
+    errors?: Array<{ url: string; error: string }>;
+    bundleNote?: string;
   };
-  pages: RpgbotRatingsPage[];
+  /** Present in full scrape output; omitted in runtime bundle. */
+  pages?: RpgbotRatingsPage[];
   byClass: Record<
     string,
     Record<string, Record<string, Record<string, RpgbotRatingLookupEntry>>>
