@@ -6,6 +6,10 @@ import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useSelectedClass } from "./useSelectedClass";
 import { isAsiFeatSelection } from "../utils/builder-class.utils";
 import {
+  buildClassLevelEntries,
+  getMulticlassHitPointBreakdown,
+} from "../utils/multiclass.utils";
+import {
   detectFeatHitPointBonus,
   getCharacterHitPointBreakdown,
   type CharacterHitPointBreakdown,
@@ -13,7 +17,17 @@ import {
 } from "../utils/character-hit-points";
 
 export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
-  const { character, featSelections, speciesOriginFeat } = useCharacterBuilder();
+  const {
+    character,
+    featSelections,
+    speciesOriginFeat,
+    class: classSelection,
+    subclass,
+    multiclassEnabled,
+    multiclassEntries,
+    multiclassClassData,
+    primaryClassLevel,
+  } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const [featBonuses, setFeatBonuses] = useState<FeatHitPointBonus[]>([]);
 
@@ -60,6 +74,22 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
   return useMemo(() => {
     if (!classData?.hitDie) return null;
 
+    if (multiclassEnabled && multiclassEntries.some((e) => e.classRef)) {
+      const classEntries = buildClassLevelEntries(
+        classSelection,
+        classData,
+        primaryClassLevel,
+        subclass,
+        multiclassEntries,
+        multiclassClassData,
+      );
+      return getMulticlassHitPointBreakdown(
+        classEntries,
+        character.getModifier("con"),
+        featBonuses,
+      );
+    }
+
     return getCharacterHitPointBreakdown(
       character.level,
       character.getModifier("con"),
@@ -70,6 +100,12 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
   }, [
     classData?.hitDie,
     classData?.name,
+    classSelection,
+    subclass,
+    multiclassEnabled,
+    multiclassEntries,
+    multiclassClassData,
+    primaryClassLevel,
     character.level,
     character.abilities.con,
     featBonuses,

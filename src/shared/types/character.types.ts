@@ -20,6 +20,18 @@ export type CharacterIdentitySlot =
   | "subclass"
   | "origin-feat";
 
+/** Additional class slot when multiclassing (index 0 = second class). */
+export type BuilderMulticlassClassSlot = `multiclass-class-${number}`;
+
+/** Subclass slot for an additional multiclass entry. */
+export type BuilderMulticlassSubclassSlot = `multiclass-subclass-${number}`;
+
+export interface BuilderMulticlassEntry {
+  classRef: CharacterSelectionRef | null;
+  level: number;
+  subclass: CharacterSelectionRef | null;
+}
+
 /** Origin Feat granted by an optional feature (e.g. Eldritch Invocation). */
 export type BuilderOptionalOriginFeatSlot = `origin-feat-opt-${number}`;
 

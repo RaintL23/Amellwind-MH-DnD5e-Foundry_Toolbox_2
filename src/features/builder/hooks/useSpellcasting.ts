@@ -16,6 +16,12 @@ import {
   getPactMagicProgression,
   pactPoolSelectedCount,
 } from "../utils/pact-magic.utils";
+import type { BuilderClassLevelEntry } from "../utils/multiclass.utils";
+import {
+  getMulticlassCasterLevel,
+  getMulticlassSpellSlotLevels,
+  hasMultipleSpellcastingClasses,
+} from "../utils/multiclass.utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -248,6 +254,8 @@ export function useSpellcasting(
   optionalFeatureSelections: BuilderOptionalFeatureSelections = {},
   optionalFeatureSpellGrants: SubclassSpellGrant[] = [],
   faction: BackgroundFaction | null = null,
+  classLevelForProgression?: number,
+  multiclassClassEntries?: BuilderClassLevelEntry[],
 ): SpellcastingInfo {
   return useMemo((): SpellcastingInfo => {
     const none: SpellcastingInfo = {
@@ -279,12 +287,13 @@ export function useSpellcasting(
     const effective = resolveEffectiveSpellcasting(classData, subclassData);
     if (!effective) return none;
 
-    const rowIndex = level - 1;
+    const progressionLevel = classLevelForProgression ?? level;
+    const rowIndex = progressionLevel - 1;
     const selections = spellSelections ?? {};
     const isPactMagic =
       !effective.fromSubclass && isPactMagicClass(classData);
     const sectionLabel = getSpellcastingSectionLabel(classData);
-    const subclassSpells = resolveSubclassSpells(subclassData, level);
+    const subclassSpells = resolveSubclassSpells(subclassData, progressionLevel);
     const factionSpellFilters = resolveFactionExpandedSpellFilters(faction);
     const expandedSpellFilters = [
       ...subclassSpells.expandedFilters,
@@ -355,7 +364,15 @@ export function useSpellcasting(
       cantripProgression?.[rowIndex] ??
       getCantripCountFromTable(spellProgression, rowIndex);
 
-    const slotLevels = getAvailableSlotLevels(spellProgression, level);
+    let slotLevels = getAvailableSlotLevels(spellProgression, progressionLevel);
+
+    if (
+      multiclassClassEntries &&
+      hasMultipleSpellcastingClasses(multiclassClassEntries)
+    ) {
+      const casterLevel = getMulticlassCasterLevel(multiclassClassEntries);
+      slotLevels = getMulticlassSpellSlotLevels(casterLevel);
+    }
 
     const availableSpellLevels: number[] = [];
     if (cantripCount > 0) availableSpellLevels.push(0);
@@ -377,7 +394,7 @@ export function useSpellcasting(
       if (preparedSpells) {
         maxPreparedOrKnown = evaluatePreparedFormula(
           preparedSpells,
-          level,
+          progressionLevel,
           abilities,
         );
       } else if (preparedSpellsProgression) {
@@ -424,6 +441,8 @@ export function useSpellcasting(
     classData,
     subclassData,
     level,
+    classLevelForProgression,
+    multiclassClassEntries,
     abilities,
     spellSelections,
     optionalFeatureSelections,

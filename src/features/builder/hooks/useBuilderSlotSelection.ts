@@ -7,12 +7,16 @@ import {
   BuilderPactSpellSlot,
   BuilderOptionalFeatureSlot,
   BuilderOptionalOriginFeatSlot,
+  BuilderMulticlassClassSlot,
+  BuilderMulticlassSubclassSlot,
 } from "@/shared/types";
 import { PACT_SPELL_SLOT } from "../utils/pact-magic.utils";
 
 export type BuilderSlotSelection =
   | EquipmentSlotType
   | CharacterIdentitySlot
+  | BuilderMulticlassClassSlot
+  | BuilderMulticlassSubclassSlot
   | BuilderFeatSlot
   | SpellLevelSlot
   | BuilderPactSpellSlot

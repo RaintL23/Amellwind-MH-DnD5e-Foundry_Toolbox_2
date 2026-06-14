@@ -8,6 +8,7 @@ import type {
   BackgroundFaction,
   CharacterSelectionRef,
   BuilderFeatSelection,
+  BuilderMulticlassEntry,
 } from "@/shared/types";
 import { getBackgroundById } from "@/features/backgrounds/services/background.service";
 import { getClassById } from "@/features/classes/services/class.service";
@@ -19,6 +20,13 @@ import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.ser
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { dndFeatToBuilderSelection } from "../../utils/origin-feat.utils";
 import { getFeatSlotLevels } from "../../utils/builder-class.utils";
+import {
+  createEmptyMulticlassEntry,
+  getFeatSlotLevelsForBuild,
+  getPrimaryClassLevel,
+  buildClassLevelEntries,
+  MAX_MULTICLASS_ENTRIES,
+} from "../../utils/multiclass.utils";
 import {
   loadBuilderBackstoryNotes,
   persistBuilderBackstoryNotes,
@@ -58,6 +66,13 @@ export function useIdentitySlice({
   const [subclass, setSubclassState] = useState<CharacterSelectionRef | null>(null);
   const [featSelections, setFeatSelections] = useState<
     (BuilderFeatSelection | null)[]
+  >([]);
+  const [multiclassEnabled, setMulticlassEnabledState] = useState(false);
+  const [multiclassEntries, setMulticlassEntries] = useState<
+    BuilderMulticlassEntry[]
+  >([]);
+  const [multiclassClassData, setMulticlassClassData] = useState<
+    (Class | null)[]
   >([]);
 
   const [useTashaOrigin, setUseTashaOrigin] = useState(false);
@@ -183,10 +198,99 @@ export function useIdentitySlice({
 
   const trimFeatSelectionsForLevel = useCallback((level: number) => {
     setFeatSelections((prev) => {
-      const maxSlots = getFeatSlotLevels(classRef?.name ?? "", level).length;
+      const maxSlots = multiclassEnabled
+        ? getFeatSlotLevelsForBuild(
+            buildClassLevelEntries(
+              classRef,
+              classData,
+              getPrimaryClassLevel(level, multiclassEntries),
+              subclass,
+              multiclassEntries,
+              multiclassClassData,
+            ),
+            level,
+          ).length
+        : getFeatSlotLevels(classRef?.name ?? "", level).length;
       return prev.slice(0, maxSlots);
     });
-  }, [classRef?.name]);
+  }, [
+    classRef?.name,
+    classData,
+    subclass,
+    multiclassEnabled,
+    multiclassEntries,
+    multiclassClassData,
+  ]);
+
+  const setMulticlassEnabled = useCallback((enabled: boolean) => {
+    setMulticlassEnabledState(enabled);
+    if (!enabled) {
+      setMulticlassEntries([]);
+      setMulticlassClassData([]);
+    }
+  }, []);
+
+  const addMulticlassEntry = useCallback(() => {
+    setMulticlassEntries((prev) => {
+      if (prev.length >= MAX_MULTICLASS_ENTRIES) return prev;
+      return [...prev, createEmptyMulticlassEntry()];
+    });
+  }, []);
+
+  const removeMulticlassEntry = useCallback((index: number) => {
+    setMulticlassEntries((prev) => prev.filter((_, i) => i !== index));
+    setMulticlassClassData((prev) => prev.filter((_, i) => i !== index));
+  }, []);
+
+  const setMulticlassEntryClass = useCallback(
+    (index: number, selection: CharacterSelectionRef | null) => {
+      setMulticlassEntries((prev) => {
+        const next = [...prev];
+        if (!next[index]) return prev;
+        next[index] = {
+          ...next[index],
+          classRef: selection,
+          subclass: null,
+        };
+        return next;
+      });
+      onClassChange();
+    },
+    [onClassChange],
+  );
+
+  const setMulticlassEntryLevel = useCallback(
+    (index: number, level: number) => {
+      setMulticlassEntries((prev) => {
+        const next = [...prev];
+        if (!next[index]) return prev;
+        next[index] = { ...next[index], level: Math.max(0, level) };
+        return next;
+      });
+    },
+    [],
+  );
+
+  const setMulticlassEntrySubclass = useCallback(
+    (index: number, selection: CharacterSelectionRef | null) => {
+      setMulticlassEntries((prev) => {
+        const next = [...prev];
+        if (!next[index]) return prev;
+        next[index] = { ...next[index], subclass: selection };
+        return next;
+      });
+      clearSubclassOptionalFeatures();
+    },
+    [clearSubclassOptionalFeatures],
+  );
+
+  const setPrimaryClassLevel = useCallback(
+    (primaryLevel: number) => {
+      const additional = multiclassEntries.reduce((s, e) => s + e.level, 0);
+      return Math.min(20, Math.max(1 + additional, primaryLevel + additional));
+    },
+    [multiclassEntries],
+  );
 
   const setSpeciesAbilityChoice = useCallback(
     (index: number, ability: AbilityKey | null) => {
@@ -229,6 +333,33 @@ export function useIdentitySlice({
       cancelled = true;
     };
   }, [classRef?.id]);
+
+  useEffect(() => {
+    if (!multiclassEntries.length) {
+      setMulticlassClassData([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    Promise.all(
+      multiclassEntries.map((entry) =>
+        entry.classRef?.id
+          ? getClassById(entry.classRef.id).then((cls) => cls ?? null)
+          : Promise.resolve(null),
+      ),
+    )
+      .then((results) => {
+        if (!cancelled) setMulticlassClassData(results);
+      })
+      .catch(() => {
+        if (!cancelled) setMulticlassClassData(multiclassEntries.map(() => null));
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [multiclassEntries.map((e) => e.classRef?.id ?? "").join("|")]);
 
   useEffect(() => {
     if (!species) {
@@ -424,6 +555,9 @@ export function useIdentitySlice({
     setClassDataLoading(false);
     setSubclassState(null);
     setFeatSelections([]);
+    setMulticlassEnabledState(false);
+    setMulticlassEntries([]);
+    setMulticlassClassData([]);
     setBackstoryNotesState("");
     setPersonalityState({ ...EMPTY_BUILDER_PERSONALITY });
     setFactionState(null);
@@ -466,6 +600,9 @@ export function useIdentitySlice({
     backgroundAsiMode,
     backgroundAsiPlus2,
     backgroundAsiPlus1,
+    multiclassEnabled,
+    multiclassEntries,
+    multiclassClassData,
     setSpecies,
     setBackground,
     setClass,
@@ -484,6 +621,13 @@ export function useIdentitySlice({
     setBackgroundAsiPlus2,
     setBackgroundAsiPlus1,
     setOriginFeatSkillChoices,
+    setMulticlassEnabled,
+    addMulticlassEntry,
+    removeMulticlassEntry,
+    setMulticlassEntryClass,
+    setMulticlassEntryLevel,
+    setMulticlassEntrySubclass,
+    setPrimaryClassLevel,
     trimFeatSelectionsForLevel,
     resetIdentitySlice,
     clearAmellwindIdentity,

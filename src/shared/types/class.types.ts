@@ -95,6 +95,17 @@ export interface Class {
   startingEquipment: string[];
   startingEquipmentOffers: import("./starting-equipment.types").StartingEquipmentOffers;
   multiclassing: string[];
+  /** Ability score minimums to multiclass into this class (e.g. str: 13). */
+  multiclassRequirements?: Partial<
+    Record<import("./actor.types").AbilityKey, number>
+  >;
+  /** Proficiencies gained when multiclassing into this class (not first class). */
+  multiclassProficiencies?: {
+    armorGrants: import("./proficiency.types").NamedProficiencyGrant[];
+    weaponGrants: import("./proficiency.types").NamedProficiencyGrant[];
+    toolGrants: import("./proficiency.types").NamedProficiencyGrant[];
+    skillChoiceGrants: import("./proficiency.types").SkillProficiencyGrant[];
+  };
   subclassTitle?: string;
   summary: string;
   variantSources?: string[];

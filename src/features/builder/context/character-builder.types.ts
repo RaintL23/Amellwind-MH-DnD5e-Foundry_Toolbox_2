@@ -20,6 +20,9 @@ import type {
   BuilderOptionalFeatureSelection,
   BuilderOptionalFeatureSelections,
 } from "@/shared/types";
+import type {
+  BuilderMulticlassEntry,
+} from "@/shared/types/character.types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import type { OptionalFeatureOriginFeatSlot } from "../utils/optional-feature-feat-grants.utils";
 import type { StandaloneShieldItem } from "../data/shield.data";
@@ -85,6 +88,26 @@ export interface CharacterBuilderContextValue {
   setClass: (selection: CharacterSelectionRef | null) => void;
   setSubclass: (selection: CharacterSelectionRef | null) => void;
   setFeatAtIndex: (index: number, selection: BuilderFeatSelection | null) => void;
+
+  // Multiclassing
+  multiclassEnabled: boolean;
+  multiclassEntries: BuilderMulticlassEntry[];
+  multiclassClassData: (Class | null)[];
+  primaryClassLevel: number;
+  setMulticlassEnabled: (enabled: boolean) => void;
+  addMulticlassEntry: () => void;
+  removeMulticlassEntry: (index: number) => void;
+  setMulticlassEntryClass: (
+    index: number,
+    selection: CharacterSelectionRef | null,
+  ) => void;
+  setMulticlassEntryLevel: (index: number, level: number) => void;
+  setMulticlassEntrySubclass: (
+    index: number,
+    selection: CharacterSelectionRef | null,
+  ) => void;
+  setPrimaryClassLevel: (level: number) => void;
+
   setSpeciesOriginFeat: (selection: BuilderFeatSelection | null) => void;
   setOptionalFeatureOriginFeatAtIndex: (
     index: number,

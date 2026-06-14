@@ -7,6 +7,7 @@ import type {
   Subclass,
   SubclassSpellBlock,
 } from "@/shared/types";
+import type { AbilityKey } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import {
   mapStatBlockEntries,
@@ -360,6 +361,52 @@ function mapMulticlassing(raw?: RawMulticlassing): string[] {
   return lines;
 }
 
+function mapMulticlassRequirements(
+  raw?: RawMulticlassing,
+): Partial<Record<AbilityKey, number>> | undefined {
+  if (!raw?.requirements) return undefined;
+  const result: Partial<Record<AbilityKey, number>> = {};
+  for (const [ab, val] of Object.entries(raw.requirements)) {
+    const key = ab.toLowerCase() as AbilityKey;
+    if (key in ABILITY_LABELS) result[key] = val;
+  }
+  return Object.keys(result).length ? result : undefined;
+}
+
+function mapMulticlassProficiencyGrants(
+  raw: RawMulticlassing | undefined,
+  classSource: import("@/shared/types/proficiency.types").ProficiencySource,
+) {
+  if (!raw?.proficienciesGained) return undefined;
+  const gained = raw.proficienciesGained;
+  const armorGrants = parseNamedProficiencyBlocks(
+    gained.armor ?? [],
+    classSource,
+  );
+  const weaponGrants = parseNamedProficiencyBlocks(
+    gained.weapons ?? [],
+    classSource,
+  );
+  const toolBlocks = [
+    ...(gained.toolProficiencies ?? []),
+    ...(gained.tools ?? []),
+  ];
+  const toolGrants = parseNamedProficiencyBlocks(toolBlocks, classSource);
+  const skillChoiceGrants = parseSkillProficiencyBlocks(
+    gained.skills ?? [],
+    classSource,
+  );
+  if (
+    !armorGrants.length &&
+    !weaponGrants.length &&
+    !toolGrants.length &&
+    !skillChoiceGrants.length
+  ) {
+    return undefined;
+  }
+  return { armorGrants, weaponGrants, toolGrants, skillChoiceGrants };
+}
+
 function mapAdditionalSpells(
   blocks?: SubclassSpellBlockRaw[],
 ): SubclassSpellBlock[] | undefined {
@@ -529,6 +576,11 @@ export function mapClass(
     startingEquipment: mapStartingEquipment(raw.startingEquipment),
     startingEquipmentOffers: parseClassStartingEquipment(raw.startingEquipment),
     multiclassing: mapMulticlassing(raw.multiclassing),
+    multiclassRequirements: mapMulticlassRequirements(raw.multiclassing),
+    multiclassProficiencies: mapMulticlassProficiencyGrants(
+      raw.multiclassing,
+      classSource,
+    ),
     subclassTitle: raw.subclassTitle,
     summary: summaryParts.join(" "),
     saveProficiencies: saveProfGrant?.abilities ?? [],

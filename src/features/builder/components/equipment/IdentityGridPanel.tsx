@@ -10,6 +10,7 @@ import {
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 import type {
   BuilderFeatSelection,
+  BuilderMulticlassEntry,
   CharacterSelectionRef,
 } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
@@ -24,6 +25,12 @@ import {
   toFeatSlot,
   toOptionalOriginFeatSlot,
 } from "../../utils/builder-class.utils";
+import {
+  buildClassLevelEntries,
+  getFeatSlotLevelsForBuild,
+  toMulticlassClassSlot,
+  toMulticlassSubclassSlot,
+} from "../../utils/multiclass.utils";
 import { resolveOptionalFeatureProgressions } from "../../utils/class-optional-features.utils";
 import type { Class } from "@/shared/types";
 import type { BuilderOptionalFeatureSelections } from "@/shared/types";
@@ -49,6 +56,10 @@ interface IdentityGridPanelProps {
   classData: Class | null;
   subclassData: import("@/shared/types").Subclass | null;
   level: number;
+  primaryClassLevel: number;
+  multiclassEnabled: boolean;
+  multiclassEntries: BuilderMulticlassEntry[];
+  multiclassClassData: (Class | null)[];
   featSelections: (BuilderFeatSelection | null)[];
   optionalFeatureSelections: BuilderOptionalFeatureSelections;
   speciesOriginFeatGrant: OriginFeatGrant | null;
@@ -73,6 +84,10 @@ export function IdentityGridPanel({
   classData,
   subclassData,
   level,
+  primaryClassLevel,
+  multiclassEnabled,
+  multiclassEntries,
+  multiclassClassData,
   featSelections,
   optionalFeatureSelections,
   speciesOriginFeatGrant,
@@ -88,8 +103,18 @@ export function IdentityGridPanel({
   onUnequipSlot,
 }: IdentityGridPanelProps) {
   const hasBackstory = backstoryNotes.trim().length > 0;
-  const showSubclass = isSubclassLevelReached(classData, level);
-  const featSlotLevels = getFeatSlotLevels(classSelection?.name ?? "", level);
+  const showSubclass = isSubclassLevelReached(classData, primaryClassLevel);
+  const classEntries = buildClassLevelEntries(
+    classSelection,
+    classData,
+    primaryClassLevel,
+    subclass,
+    multiclassEntries,
+    multiclassClassData,
+  );
+  const featSlotLevels = multiclassEnabled
+    ? getFeatSlotLevelsForBuild(classEntries, level)
+    : getFeatSlotLevels(classSelection?.name ?? "", level);
   const subclassLabel = classData?.subclassTitle ?? "Subclass";
   const showOriginFeat = !!(
     speciesOriginFeatGrant || backgroundOriginFeatGrant
@@ -129,7 +154,7 @@ export function IdentityGridPanel({
   const optionalProgressions = resolveOptionalFeatureProgressions(
     classData,
     subclassData,
-    level,
+    primaryClassLevel,
   );
 
   return (
@@ -187,14 +212,75 @@ export function IdentityGridPanel({
       />
       <HighlightedGridSlot
         highlightKey="class"
-        label="Class"
+        label={multiclassEnabled ? "Class 1" : "Class"}
         icon={<GraduationCap className="h-5 w-5 text-amber-400" />}
-        equipped={classSelection ? { name: classSelection.name } : null}
+        equipped={
+          classSelection
+            ? {
+                name: multiclassEnabled
+                  ? `${classSelection.name} (${primaryClassLevel})`
+                  : classSelection.name,
+              }
+            : null
+        }
         onClickEquip={() => onSelectSlot("class")}
         onClickDetails={() => onSelectSlot("class")}
         onUnequip={classSelection ? () => onUnequipSlot("class") : undefined}
         isSelected={selectedSlot === "class"}
       />
+      {multiclassEnabled &&
+        multiclassEntries.map((entry, index) => {
+          const classSlot = toMulticlassClassSlot(index);
+          const subclassSlot = toMulticlassSubclassSlot(index);
+          const entryClassData = multiclassClassData[index] ?? null;
+          const showEntrySubclass =
+            entry.classRef &&
+            entryClassData &&
+            isSubclassLevelReached(entryClassData, entry.level);
+
+          return (
+            <div key={classSlot} className="contents">
+              <HighlightedGridSlot
+                highlightKey={classSlot}
+                label={`Class ${index + 2}`}
+                icon={<GraduationCap className="h-5 w-5 text-orange-400" />}
+                equipped={
+                  entry.classRef
+                    ? {
+                        name: `${entry.classRef.name} (${entry.level})`,
+                      }
+                    : null
+                }
+                onClickEquip={() => onSelectSlot(classSlot)}
+                onClickDetails={() => onSelectSlot(classSlot)}
+                onUnequip={
+                  entry.classRef ? () => onUnequipSlot(classSlot) : undefined
+                }
+                isSelected={selectedSlot === classSlot}
+                emptyTitle="Elegir clase adicional"
+              />
+              {showEntrySubclass && (
+                <HighlightedGridSlot
+                  highlightKey={subclassSlot}
+                  label={entryClassData?.subclassTitle ?? "Subclass"}
+                  icon={<Sparkles className="h-5 w-5 text-teal-400" />}
+                  equipped={
+                    entry.subclass ? { name: entry.subclass.name } : null
+                  }
+                  onClickEquip={() => onSelectSlot(subclassSlot)}
+                  onClickDetails={() => onSelectSlot(subclassSlot)}
+                  onUnequip={
+                    entry.subclass
+                      ? () => onUnequipSlot(subclassSlot)
+                      : undefined
+                  }
+                  isSelected={selectedSlot === subclassSlot}
+                  disabled={!entry.classRef}
+                />
+              )}
+            </div>
+          );
+        })}
       {showSubclass && (
         <HighlightedGridSlot
           highlightKey="subclass"

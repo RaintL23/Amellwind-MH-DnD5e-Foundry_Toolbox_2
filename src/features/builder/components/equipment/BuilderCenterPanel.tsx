@@ -14,6 +14,13 @@ import {
   parseOptionalOriginFeatSlotIndex,
 } from "../../utils/builder-class.utils";
 import {
+  isMulticlassClassSlot,
+  isMulticlassSubclassSlot,
+  parseMulticlassClassSlotIndex,
+  parseMulticlassSubclassSlotIndex,
+  buildClassLevelEntries,
+} from "../../utils/multiclass.utils";
+import {
   getProgressionPicks,
   isOptionalFeatureSlot,
   parseOptionalFeatureSlot,
@@ -72,6 +79,12 @@ export function BuilderCenterPanel() {
     setClass,
     setSubclass,
     setFeatAtIndex,
+    multiclassEnabled,
+    multiclassEntries,
+    multiclassClassData,
+    primaryClassLevel,
+    setMulticlassEntryClass,
+    setMulticlassEntrySubclass,
     setSpeciesOriginFeat,
     setOptionalFeatureOriginFeatAtIndex,
     optionalFeatureOriginFeatSlots,
@@ -111,6 +124,17 @@ export function BuilderCenterPanel() {
     optionalFeatureSelections ?? {},
     optionalFeatureSpellGrants,
     faction,
+    primaryClassLevel,
+    multiclassEnabled
+      ? buildClassLevelEntries(
+          classSelection,
+          classData,
+          primaryClassLevel,
+          subclass,
+          multiclassEntries,
+          multiclassClassData,
+        )
+      : undefined,
   );
 
   const optionalProgressions = useMemo(
@@ -118,19 +142,17 @@ export function BuilderCenterPanel() {
       resolveOptionalFeatureProgressions(
         classData,
         subclassData,
-        character.level,
+        primaryClassLevel,
       ),
-    [classData, subclassData, character.level],
+    [classData, subclassData, primaryClassLevel],
   );
 
   useEffect(() => {
-    // Wait until class data loads — clearing while classData is null would
-    // wipe a valid subclass when returning from another route.
     if (!classData) return;
-    if (!isSubclassLevelReached(classData, character.level) && subclass) {
+    if (!isSubclassLevelReached(classData, primaryClassLevel) && subclass) {
       setSubclass(null);
     }
-  }, [classData, character.level, subclass, setSubclass]);
+  }, [classData, primaryClassLevel, subclass, setSubclass]);
 
   const selectedWeapon =
     selectedSlot === "mainHand"
@@ -163,6 +185,8 @@ export function BuilderCenterPanel() {
     selectedSlot !== "backstory" &&
     selectedSlot !== "class" &&
     selectedSlot !== "subclass" &&
+    !isMulticlassClassSlot(selectedSlot) &&
+    !isMulticlassSubclassSlot(selectedSlot) &&
     selectedSlot !== "origin-feat" &&
     !isOptionalOriginFeatSlot(selectedSlot) &&
     !isFeatSlotSelection(selectedSlot) &&
@@ -198,13 +222,16 @@ export function BuilderCenterPanel() {
       case "subclass":
         return !!subclass;
       case "origin-feat":
-        return (
-          !!speciesOriginFeat ||
-          !!backgroundOriginFeat ||
-          speciesOriginFeatGrant?.kind === "fixed" ||
-          backgroundOriginFeatGrant?.kind === "fixed"
-        );
+        return isOriginFeatOccupied();
       default:
+        if (isMulticlassClassSlot(slot)) {
+          const index = parseMulticlassClassSlotIndex(slot);
+          return !!multiclassEntries[index]?.classRef;
+        }
+        if (isMulticlassSubclassSlot(slot)) {
+          const index = parseMulticlassSubclassSlotIndex(slot);
+          return !!multiclassEntries[index]?.subclass;
+        }
         if (isOptionalOriginFeatSlot(slot)) {
           const index = parseOptionalOriginFeatSlotIndex(slot);
           return !!optionalFeatureOriginFeats[index];
@@ -223,6 +250,15 @@ export function BuilderCenterPanel() {
         }
         return false;
     }
+  }
+
+  function isOriginFeatOccupied(): boolean {
+    return (
+      !!speciesOriginFeat ||
+      !!backgroundOriginFeat ||
+      speciesOriginFeatGrant?.kind === "fixed" ||
+      backgroundOriginFeatGrant?.kind === "fixed"
+    );
   }
 
   function handleUnequipSlot(slot: BuilderSlotSelection) {
@@ -264,7 +300,14 @@ export function BuilderCenterPanel() {
         }
         break;
       default:
-        if (isOptionalOriginFeatSlot(slot)) {
+        if (isMulticlassClassSlot(slot)) {
+          setMulticlassEntryClass(parseMulticlassClassSlotIndex(slot), null);
+        } else if (isMulticlassSubclassSlot(slot)) {
+          setMulticlassEntrySubclass(
+            parseMulticlassSubclassSlotIndex(slot),
+            null,
+          );
+        } else if (isOptionalOriginFeatSlot(slot)) {
           setOptionalFeatureOriginFeatAtIndex(
             parseOptionalOriginFeatSlotIndex(slot),
             null,
@@ -298,6 +341,8 @@ export function BuilderCenterPanel() {
       selectedSlot === "background" ||
       selectedSlot === "class" ||
       selectedSlot === "subclass" ||
+      isMulticlassClassSlot(selectedSlot) ||
+      isMulticlassSubclassSlot(selectedSlot) ||
       selectedSlot === "origin-feat" ||
       isOptionalOriginFeatSlot(selectedSlot) ||
       isFeatSlotSelection(selectedSlot) ||
@@ -328,6 +373,10 @@ export function BuilderCenterPanel() {
           classData={classData}
           subclassData={subclassData}
           level={character.level}
+          primaryClassLevel={primaryClassLevel}
+          multiclassEnabled={multiclassEnabled}
+          multiclassEntries={multiclassEntries}
+          multiclassClassData={multiclassClassData}
           featSelections={featSelections}
           optionalFeatureSelections={optionalFeatureSelections}
           speciesOriginFeatGrant={speciesOriginFeatGrant}

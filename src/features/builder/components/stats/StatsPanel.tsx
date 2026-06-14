@@ -9,6 +9,7 @@ import { parseAlignmentAxes } from "../../utils/alignment.utils";
 import { AbilityScoresSection } from "./AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
+import { MulticlassPanel } from "./MulticlassPanel";
 import { NumberStepper } from "../shared/NumberStepper";
 
 const ICON_BUTTON_CLASS = "h-6 w-6 shrink-0";
@@ -22,6 +23,8 @@ export function StatsPanel() {
     setGoodEvilAlignment,
     setLevel,
     resetBuild,
+    multiclassEnabled,
+    setMulticlassEnabled,
   } = useCharacterBuilder();
   const { exportSheet, exporting, error: exportError } =
     useCharacterSheetExport();
@@ -135,14 +138,27 @@ export function StatsPanel() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-[10px] text-muted-foreground">Level</span>
+          <span className="text-[10px] text-muted-foreground">
+            {multiclassEnabled ? "Total Level" : "Level"}
+          </span>
           <NumberStepper
             value={character.level}
             min={1}
             max={20}
             onChange={setLevel}
             ariaLabel="Level"
+            disabled={multiclassEnabled}
           />
+          <label className="flex cursor-pointer items-center gap-1 text-[10px] text-muted-foreground">
+            <input
+              type="checkbox"
+              checked={multiclassEnabled}
+              onChange={(e) => setMulticlassEnabled(e.target.checked)}
+              className="h-3 w-3 rounded border-border"
+              aria-label="Activar multiclase"
+            />
+            Multiclase
+          </label>
           <Button
             type="button"
             variant="outline"
@@ -169,6 +185,7 @@ export function StatsPanel() {
             <Dices className="h-3 w-3" aria-hidden />
           </Button>
         </div>
+        <MulticlassPanel />
       </div>
 
       <AbilityScoresSection compact />

@@ -7,6 +7,16 @@ import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilder
 import { useClassVariants } from "@/features/builder/hooks/useClassVariants";
 import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
+import {
+  isMulticlassClassSlot,
+  isMulticlassSubclassSlot,
+  parseMulticlassClassSlotIndex,
+  parseMulticlassSubclassSlotIndex,
+  buildCurrentClassesForMulticlassPicker,
+  getMulticlassCandidatePrerequisiteFailures,
+  formatPrerequisiteFailureReason,
+} from "@/features/builder/utils/multiclass.utils";
+import { useEffectiveAbilityScores } from "@/features/builder/hooks/useEffectiveAbilityScores";
 import { isClothingArmor } from "@/features/builder/data/armor.data";
 import { getClassEquipmentConflictReason } from "@/features/builder/utils/equipment-proficiency.utils";
 import {
@@ -39,11 +49,17 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
     armor,
     class: classSelection,
     subclass,
+    multiclassEntries,
+    multiclassClassData,
+    primaryClassLevel,
     setClass,
     setSubclass,
+    setMulticlassEntryClass,
+    setMulticlassEntrySubclass,
   } = useCharacterBuilder();
 
   const { classData, loading: classDetailLoading } = useSelectedClass();
+  const effectiveAbilityScores = useEffectiveAbilityScores();
   const {
     variants: classVariants,
     varyingFields,
@@ -53,9 +69,24 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
 
   const isClassSlot = selectedSlot === "class";
   const isSubclassSlot = selectedSlot === "subclass";
+  const multiclassClassIndex = isMulticlassClassSlot(selectedSlot)
+    ? parseMulticlassClassSlotIndex(selectedSlot)
+    : null;
+  const multiclassSubclassIndex = isMulticlassSubclassSlot(selectedSlot)
+    ? parseMulticlassSubclassSlotIndex(selectedSlot)
+    : null;
+  const isMulticlassClassPicker = multiclassClassIndex !== null;
+  const isMulticlassSubclassPicker = multiclassSubclassIndex !== null;
 
   useEffect(() => {
-    if (!isClassSlot && !isSubclassSlot) return;
+    if (
+      !isClassSlot &&
+      !isSubclassSlot &&
+      !isMulticlassClassPicker &&
+      !isMulticlassSubclassPicker
+    ) {
+      return;
+    }
     setClassLoading(true);
     setClassOptions([]);
     setClassCatalog([]);
@@ -77,9 +108,26 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
   }, [classData, subclass, setSubclass]);
 
   const classFiltered = useMemo(() => {
-    if (!isClassSlot) return [];
-    return filterLibraryOptions(classOptions, q);
-  }, [classOptions, isClassSlot, q]);
+    if (!isClassSlot && !isMulticlassClassPicker) return [];
+    let options = filterLibraryOptions(classOptions, q);
+    if (isMulticlassClassPicker) {
+      const takenIds = new Set(
+        [
+          classSelection?.id,
+          ...multiclassEntries.map((e) => e.classRef?.id),
+        ].filter(Boolean),
+      );
+      options = options.filter((o) => !takenIds.has(o.id));
+    }
+    return options;
+  }, [
+    classOptions,
+    isClassSlot,
+    isMulticlassClassPicker,
+    q,
+    classSelection?.id,
+    multiclassEntries,
+  ]);
 
   const classById = useMemo(() => {
     return new Map(classCatalog.map((cls) => [cls.id, cls]));
@@ -89,13 +137,34 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
 
   const getClassDisabledReason = useCallback(
     (option: LibraryListOption): string | null => {
+      const cls = classById.get(option.id);
+
+      if (isMulticlassClassPicker && cls && multiclassClassIndex !== null) {
+        const currentEntries = buildCurrentClassesForMulticlassPicker(
+          classSelection,
+          classData,
+          primaryClassLevel,
+          subclass,
+          multiclassEntries,
+          multiclassClassData,
+          multiclassClassIndex,
+        );
+        const failures = getMulticlassCandidatePrerequisiteFailures(
+          cls,
+          currentEntries,
+          effectiveAbilityScores,
+        );
+        if (failures.length > 0) {
+          return formatPrerequisiteFailureReason(failures);
+        }
+      }
+
       const hasEquippedGear =
         !!mainHand ||
         !!offHand ||
         (!!equippedArmorItem && !isClothingArmor(equippedArmorItem));
       if (!hasEquippedGear) return null;
 
-      const cls = classById.get(option.id);
       if (!cls) return null;
 
       return getClassEquipmentConflictReason(
@@ -106,13 +175,38 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
         cls.weaponGrants,
       );
     },
-    [classById, mainHand, offHand, equippedArmorItem],
+    [
+      classById,
+      isMulticlassClassPicker,
+      multiclassClassIndex,
+      classSelection,
+      classData,
+      primaryClassLevel,
+      subclass,
+      multiclassEntries,
+      multiclassClassData,
+      effectiveAbilityScores,
+      mainHand,
+      offHand,
+      equippedArmorItem,
+    ],
   );
 
   const subclassOptions = useMemo(() => {
-    if (!isSubclassSlot || !classData) return [];
-    return dedupeByNameToListOptions(subclassesForClassVariant(classData));
-  }, [isSubclassSlot, classData]);
+    if (!isSubclassSlot && !isMulticlassSubclassPicker) return [];
+    const sourceClassData =
+      isMulticlassSubclassPicker && multiclassSubclassIndex !== null
+        ? multiclassClassData[multiclassSubclassIndex]
+        : classData;
+    if (!sourceClassData) return [];
+    return dedupeByNameToListOptions(subclassesForClassVariant(sourceClassData));
+  }, [
+    isSubclassSlot,
+    isMulticlassSubclassPicker,
+    multiclassSubclassIndex,
+    classData,
+    multiclassClassData,
+  ]);
 
   const subclassFiltered = useMemo(() => {
     return filterLibraryOptions(subclassOptions, q);
@@ -218,6 +312,58 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
         selectedName={subclass?.name ?? null}
         icon={<Sparkles className="h-3.5 w-3.5 text-emerald-400" />}
         onSelect={handleSelectSubclass}
+      />
+    );
+  }
+
+  function handleSelectMulticlassClass(id: string, name: string) {
+    if (multiclassClassIndex === null) return;
+    setMulticlassEntryClass(multiclassClassIndex, { id, name });
+  }
+
+  function handleSelectMulticlassSubclass(id: string, name: string) {
+    if (multiclassSubclassIndex === null) return;
+    setMulticlassEntrySubclass(multiclassSubclassIndex, { id, name });
+  }
+
+  if (isMulticlassClassPicker) {
+    return (
+      <LibraryList
+        loading={classLoading}
+        options={classFiltered}
+        selectedId={multiclassEntries[multiclassClassIndex!]?.classRef?.id ?? null}
+        selectedName={
+          multiclassEntries[multiclassClassIndex!]?.classRef?.name ?? null
+        }
+        icon={<GraduationCap className="h-3.5 w-3.5 text-orange-400" />}
+        getDisabledReason={getClassDisabledReason}
+        onSelect={handleSelectMulticlassClass}
+      />
+    );
+  }
+
+  if (isMulticlassSubclassPicker) {
+    const entryClassData =
+      multiclassSubclassIndex !== null
+        ? multiclassClassData[multiclassSubclassIndex]
+        : null;
+    const entrySubclass =
+      multiclassSubclassIndex !== null
+        ? multiclassEntries[multiclassSubclassIndex]?.subclass
+        : null;
+
+    if (!entryClassData) {
+      return <EmptyState text="Elige la clase adicional primero." />;
+    }
+
+    return (
+      <LibraryList
+        loading={classDetailLoading}
+        options={subclassFiltered}
+        selectedId={entrySubclass?.id ?? null}
+        selectedName={entrySubclass?.name ?? null}
+        icon={<Sparkles className="h-3.5 w-3.5 text-teal-400" />}
+        onSelect={handleSelectMulticlassSubclass}
       />
     );
   }

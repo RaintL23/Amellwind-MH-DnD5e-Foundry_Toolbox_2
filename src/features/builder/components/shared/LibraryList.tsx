@@ -89,6 +89,11 @@ export function LibraryList({
                   {rowStats}
                 </div>
               )}
+              {disabledReason && (
+                <div className="pl-5 text-[10px] leading-snug text-amber-500">
+                  {disabledReason}
+                </div>
+              )}
             </div>
             {(variantTrailing?.label ?? sourceLabel) && (
               <span

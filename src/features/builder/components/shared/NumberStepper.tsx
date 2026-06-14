@@ -9,6 +9,7 @@ export function NumberStepper({
   className = "",
   ariaLabel,
   title,
+  disabled = false,
 }: {
   value: number;
   onChange: (value: number) => void;
@@ -18,6 +19,7 @@ export function NumberStepper({
   className?: string;
   ariaLabel?: string;
   title?: string;
+  disabled?: boolean;
 }) {
   const buttonClass = size === "sm" ? "h-6 w-6 text-xs" : "h-7 w-7 text-xs";
   const valueClass =
@@ -32,7 +34,7 @@ export function NumberStepper({
         variant="outline"
         size="icon"
         className={`shrink-0 ${buttonClass}`}
-        disabled={value <= min}
+        disabled={disabled || value <= min}
         onClick={() => onChange(value - 1)}
         aria-label={ariaLabel ? `Lower ${ariaLabel}` : "Decrease"}
       >
@@ -44,7 +46,7 @@ export function NumberStepper({
         variant="outline"
         size="icon"
         className={`shrink-0 ${buttonClass}`}
-        disabled={value >= max}
+        disabled={disabled || value >= max}
         onClick={() => onChange(value + 1)}
         aria-label={ariaLabel ? `Raise ${ariaLabel}` : "Increase"}
       >

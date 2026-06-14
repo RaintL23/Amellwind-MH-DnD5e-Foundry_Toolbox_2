@@ -14,7 +14,7 @@ import { processAllClasses } from "../utils/class-processor.utils";
 import { dedupeClassesByName } from "../utils/class-dedupe.utils";
 
 /** Bump when mapped Class shape changes so in-memory cache is rebuilt. */
-const CLASS_CACHE_VERSION = 14;
+const CLASS_CACHE_VERSION = 15;
 
 let cache: Class[] | null = null;
 let cacheVersion: number | null = null;

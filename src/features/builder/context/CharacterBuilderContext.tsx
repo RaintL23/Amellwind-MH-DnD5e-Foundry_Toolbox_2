@@ -20,6 +20,7 @@ import {
   type LawChaosAxis,
 } from "../utils/alignment.utils";
 import { Character } from "../models/Character";
+import { getPrimaryClassLevel } from "../utils/multiclass.utils";
 import { useBuilderInventory } from "./BuilderInventoryContext";
 import type { CharacterBuilderContextValue } from "./character-builder.types";
 import { useIdentitySlice } from "./slices/useIdentitySlice";
@@ -158,13 +159,89 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     });
   }, []);
 
-  const setLevel = useCallback(
-    (level: number) => {
-      setCharacter((prev) => prev.withUpdates({ level }));
-      identity.trimFeatSelectionsForLevel(level);
+  const syncTotalLevel = useCallback(
+    (primaryLevel: number, entries: typeof identity.multiclassEntries) => {
+      const additional = entries.reduce((sum, e) => sum + e.level, 0);
+      const total = Math.min(20, Math.max(1, primaryLevel + additional));
+      setCharacter((prev) => prev.withUpdates({ level: total }));
+      identity.trimFeatSelectionsForLevel(total);
+      return total;
     },
     [identity.trimFeatSelectionsForLevel],
   );
+
+  const setLevel = useCallback(
+    (level: number) => {
+      if (identity.multiclassEnabled) {
+        const additional = identity.multiclassEntries.reduce(
+          (sum, e) => sum + e.level,
+          0,
+        );
+        const primaryLevel = Math.max(1, level - additional);
+        syncTotalLevel(primaryLevel, identity.multiclassEntries);
+        return;
+      }
+      setCharacter((prev) => prev.withUpdates({ level }));
+      identity.trimFeatSelectionsForLevel(level);
+    },
+    [
+      identity.multiclassEnabled,
+      identity.multiclassEntries,
+      identity.trimFeatSelectionsForLevel,
+      syncTotalLevel,
+    ],
+  );
+
+  const setPrimaryClassLevel = useCallback(
+    (primaryLevel: number) => {
+      syncTotalLevel(primaryLevel, identity.multiclassEntries);
+    },
+    [identity.multiclassEntries, syncTotalLevel],
+  );
+
+  const setMulticlassEntryLevel = useCallback(
+    (index: number, level: number) => {
+      const clamped = Math.max(0, Math.min(19, level));
+      const entries = identity.multiclassEntries.map((entry, i) =>
+        i === index ? { ...entry, level: clamped } : entry,
+      );
+      identity.setMulticlassEntryLevel(index, clamped);
+      const primaryLevel = getPrimaryClassLevel(
+        character.level,
+        identity.multiclassEntries,
+      );
+      const newTotal = Math.min(
+        20,
+        primaryLevel + entries.reduce((sum, e) => sum + e.level, 0),
+      );
+      setCharacter((prev) => prev.withUpdates({ level: newTotal }));
+      identity.trimFeatSelectionsForLevel(newTotal);
+    },
+    [
+      character.level,
+      identity.multiclassEntries,
+      identity.setMulticlassEntryLevel,
+      identity.trimFeatSelectionsForLevel,
+    ],
+  );
+
+  const setMulticlassEnabled = useCallback(
+    (enabled: boolean) => {
+      identity.setMulticlassEnabled(enabled);
+      if (enabled && identity.multiclassEntries.length === 0) {
+        identity.addMulticlassEntry();
+      }
+    },
+    [
+      identity.setMulticlassEnabled,
+      identity.multiclassEntries.length,
+      identity.addMulticlassEntry,
+    ],
+  );
+
+  const primaryClassLevel = identity.multiclassEnabled
+    ? getPrimaryClassLevel(character.level, identity.multiclassEntries)
+    : character.level;
 
   const setAbilityScore = useCallback((ability: AbilityKey, value: number) => {
     const clamped = Math.max(1, Math.min(30, value));
@@ -245,6 +322,17 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setClass: identity.setClass,
       setSubclass: identity.setSubclass,
       setFeatAtIndex: identity.setFeatAtIndex,
+      multiclassEnabled: identity.multiclassEnabled,
+      multiclassEntries: identity.multiclassEntries,
+      multiclassClassData: identity.multiclassClassData,
+      primaryClassLevel,
+      setMulticlassEnabled,
+      addMulticlassEntry: identity.addMulticlassEntry,
+      removeMulticlassEntry: identity.removeMulticlassEntry,
+      setMulticlassEntryClass: identity.setMulticlassEntryClass,
+      setMulticlassEntryLevel,
+      setMulticlassEntrySubclass: identity.setMulticlassEntrySubclass,
+      setPrimaryClassLevel,
       setSpeciesOriginFeat: identity.setSpeciesOriginFeat,
       setOptionalFeatureOriginFeatAtIndex: spell.setOptionalFeatureOriginFeatAtIndex,
       classData: identity.classData,

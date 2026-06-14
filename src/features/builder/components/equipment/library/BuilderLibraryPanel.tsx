@@ -14,6 +14,12 @@ import {
   isOffHandWeaponPickerAvailable,
 } from "@/features/weapons/utils/weapon-hands.utils";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
+import {
+  isMulticlassClassSlot,
+  isMulticlassSubclassSlot,
+  parseMulticlassClassSlotIndex,
+  parseMulticlassSubclassSlotIndex,
+} from "@/features/builder/utils/multiclass.utils";
 import { BuilderPanel } from "../../shared/BuilderPanel";
 import {
   IdentitySourceBadgeGroup,
@@ -180,6 +186,12 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     }
     if (!useAmellwindHomebrew && selectedSlot === "mainHand") return "Main Hand";
     if (!useAmellwindHomebrew && selectedSlot === "offHand") return "Off Hand";
+    if (isMulticlassClassSlot(selectedSlot)) {
+      return `Class ${parseMulticlassClassSlotIndex(selectedSlot) + 2}`;
+    }
+    if (isMulticlassSubclassSlot(selectedSlot)) {
+      return `Subclass ${parseMulticlassSubclassSlotIndex(selectedSlot) + 2}`;
+    }
     return SLOT_LABELS[selectedSlot] ?? selectedSlot;
   }, [
     selectedSlot,
