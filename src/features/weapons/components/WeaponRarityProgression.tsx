@@ -12,6 +12,7 @@ interface WeaponRarityProgressionProps {
   onNext: () => void;
   columnChains: ColumnChains[];
   featuresMap: Map<string, OptionalFeature>;
+  mhItemEffectsMap: Map<string, string>;
   baseFeatures: OptionalFeature[];
   baseFeatureNameKeys: Set<string>;
 }
@@ -24,6 +25,7 @@ export function WeaponRarityProgression({
   onNext,
   columnChains,
   featuresMap,
+  mhItemEffectsMap,
   baseFeatures,
   baseFeatureNameKeys,
 }: WeaponRarityProgressionProps) {
@@ -52,6 +54,7 @@ export function WeaponRarityProgression({
           rarityRows={weapon.rarityRows}
           columnChains={columnChains}
           featuresMap={featuresMap}
+          mhItemEffectsMap={mhItemEffectsMap}
           baseFeatures={baseFeatures}
           baseFeatureNameKeys={baseFeatureNameKeys}
         />

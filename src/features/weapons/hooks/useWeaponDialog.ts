@@ -4,6 +4,7 @@ import {
   getOptionalFeaturesMap,
   resolveWeaponBaseFeatures,
 } from "../services/optionalfeature.service";
+import { getMhItemEffectsMap } from "../services/mh-item-effects.service";
 import { buildColumnChains } from "../utils/weapon-feature-chains.utils";
 
 export function useWeaponDialog(weapon: Weapon | null, open: boolean) {
@@ -11,9 +12,13 @@ export function useWeaponDialog(weapon: Weapon | null, open: boolean) {
   const [featuresMap, setFeaturesMap] = useState<Map<string, OptionalFeature>>(
     new Map(),
   );
+  const [mhItemEffectsMap, setMhItemEffectsMap] = useState<
+    Map<string, string>
+  >(new Map());
 
   useEffect(() => {
     getOptionalFeaturesMap().then(setFeaturesMap);
+    getMhItemEffectsMap().then(setMhItemEffectsMap);
   }, []);
 
   useEffect(() => {
@@ -50,6 +55,7 @@ export function useWeaponDialog(weapon: Weapon | null, open: boolean) {
     setCurrent,
     total,
     featuresMap,
+    mhItemEffectsMap,
     columnChains,
     baseFeatures,
     baseFeatureNameKeys,

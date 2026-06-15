@@ -20,6 +20,7 @@ interface RaritySlideProps {
   rarityRows: WeaponRarityRow[];
   columnChains: ColumnChains[];
   featuresMap: Map<string, OptionalFeature>;
+  mhItemEffectsMap: Map<string, string>;
   baseFeatures: OptionalFeature[];
   baseFeatureNameKeys: Set<string>;
 }
@@ -30,6 +31,7 @@ export function RaritySlide({
   rarityRows,
   columnChains,
   featuresMap,
+  mhItemEffectsMap,
   baseFeatures,
   baseFeatureNameKeys,
 }: RaritySlideProps) {
@@ -58,6 +60,7 @@ export function RaritySlide({
         rarityRows={rarityRows}
         rarityIndex={rarityIndex}
         styleText={style.text}
+        mhItemEffectsMap={mhItemEffectsMap}
       />
 
       <RaritySlideFeatureChains
@@ -65,6 +68,7 @@ export function RaritySlide({
         rarityRows={rarityRows}
         columnChains={columnChains}
         featuresMap={featuresMap}
+        mhItemEffectsMap={mhItemEffectsMap}
         baseFeatures={baseFeatures}
         baseFeatureNameKeys={baseFeatureNameKeys}
         styleText={style.text}

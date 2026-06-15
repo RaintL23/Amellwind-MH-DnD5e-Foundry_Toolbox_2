@@ -24,6 +24,7 @@ export function WeaponDialog({
     current,
     setCurrent,
     featuresMap,
+    mhItemEffectsMap,
     columnChains,
     baseFeatures,
     baseFeatureNameKeys,
@@ -49,6 +50,7 @@ export function WeaponDialog({
             onNext={handleNext}
             columnChains={columnChains}
             featuresMap={featuresMap}
+            mhItemEffectsMap={mhItemEffectsMap}
             baseFeatures={baseFeatures}
             baseFeatureNameKeys={baseFeatureNameKeys}
           />

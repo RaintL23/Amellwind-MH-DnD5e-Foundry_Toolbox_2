@@ -2,7 +2,7 @@
  * Parser for 5etools-style toolProficiencies, languageProficiencies,
  * and class startingProficiencies (tools/languages).
  */
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { canonicalizeWeaponProficiencyLabel } from "@/shared/utils/weapon-proficiency-name.utils";
 import type { NamedProficiencyGrant, ProficiencySource } from "@/shared/types/proficiency.types";
 import {
   getChooseableLanguages,
@@ -15,17 +15,10 @@ export { STANDARD_LANGUAGES, getChooseableLanguages };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
-function titleCase(value: string): string {
-  return value
-    .split(" ")
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-    .join(" ");
-}
-
 function formatLabel(value: string): string {
   const trimmed = value.trim();
   if (!trimmed) return "";
-  return trimmed.includes("{@") ? parseFiveToolsMarkup(trimmed) : titleCase(trimmed);
+  return canonicalizeWeaponProficiencyLabel(trimmed);
 }
 
 function parseChooseCount(choose: Raw): number {

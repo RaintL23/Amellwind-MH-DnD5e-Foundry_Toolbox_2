@@ -2,6 +2,7 @@ import { useState } from "react";
 import { OptionalFeature, WeaponRarityRow } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { ColumnChains } from "../utils/weapon-feature-chains.utils";
+import { resolveMhItemParagraphs } from "../services/mh-item-effects.service";
 import { ExpandableFeatureRow } from "./ExpandableFeatureRow";
 import { RarityDot } from "./RarityDot";
 
@@ -10,6 +11,7 @@ interface RaritySlideFeatureChainsProps {
   rarityRows: WeaponRarityRow[];
   columnChains: ColumnChains[];
   featuresMap: Map<string, OptionalFeature>;
+  mhItemEffectsMap: Map<string, string>;
   baseFeatures: OptionalFeature[];
   baseFeatureNameKeys: Set<string>;
   styleText: string;
@@ -20,6 +22,7 @@ export function RaritySlideFeatureChains({
   rarityRows,
   columnChains,
   featuresMap,
+  mhItemEffectsMap,
   baseFeatures,
   baseFeatureNameKeys,
   styleText,
@@ -99,7 +102,13 @@ export function RaritySlideFeatureChains({
                           const feature = featuresMap.get(
                             feat.name.toLowerCase(),
                           );
-                          const paragraphs = feature?.paragraphs ?? [];
+                          const paragraphs =
+                            feature?.paragraphs?.length
+                              ? feature.paragraphs
+                              : resolveMhItemParagraphs(
+                                  feat.name,
+                                  mhItemEffectsMap,
+                                );
 
                           return (
                             <ExpandableFeatureRow

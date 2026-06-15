@@ -2,6 +2,7 @@ import type { ArmorItem, Weapon } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
 import { isClothingArmor, isShieldArmor } from "@/features/builder/data/armor.data";
 import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
+import { normalizeWeaponProficiencyKey } from "@/shared/utils/weapon-proficiency-name.utils";
 import {
   getWeaponProficiencyRule,
   type WeaponProficiencyTier,
@@ -59,12 +60,15 @@ const MARTIAL_WEAPON_NAMES = new Set([
   "blowgun",
   "crossbow hand",
   "hand crossbow",
+  "handcrossbow",
   "crossbow heavy",
   "heavy crossbow",
+  "heavycrossbow",
   "longbow",
   "shortbow",
   "net",
   "firearms",
+  "firearm",
 ]);
 
 const ARMOR_CATEGORY_LABELS: Record<string, string> = {
@@ -74,12 +78,7 @@ const ARMOR_CATEGORY_LABELS: Record<string, string> = {
 };
 
 function normalizeProficiencyKey(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/'/g, "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .replace(/s$/, "");
+  return normalizeWeaponProficiencyKey(value);
 }
 
 function proficiencyKeys(proficiencies: string[]): Set<string> {
