@@ -396,13 +396,16 @@ export function useCharacterRandomizer() {
             if (backgroundTools.length > 0) {
               setBackgroundToolChoices(backgroundTools);
             }
-            const speciesLanguageExclude = collectResolvedNamedItems(
-              randomizedSpeciesDetail?.languageGrants ?? [],
+            const backgroundLanguageExclude = collectResolvedNamedItems(
+              [
+                ...(randomizedSpeciesDetail?.languageGrants ?? []),
+                ...backgroundDetail.languageGrants,
+              ],
               speciesLanguageChoices,
             );
             const backgroundLanguages = pickNamedChoicesFromGrants(
               backgroundDetail.languageGrants,
-              speciesLanguageExclude,
+              backgroundLanguageExclude,
               dnd2024Languages,
             );
             backgroundLanguageChoices = backgroundLanguages;

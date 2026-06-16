@@ -28,6 +28,7 @@ import {
   ORIGIN_FEAT_SOURCE_NAME,
   formatInvocationOriginFeatSourceName,
 } from "../../utils/origin-feat.constants";
+import { ensureCommonLanguage } from "@/shared/utils/language-resolution.utils";
 import type { OptionalFeatureOriginFeatSlot } from "../../utils/optional-feature-feat-grants.utils";
 import type { Character } from "../../models/Character";
 
@@ -575,10 +576,7 @@ export function useProficiencySlice({
 
   useEffect(() => {
     setCharacter((prev) => {
-      const languages =
-        identityGrantsResult.languages.length > 0
-          ? identityGrantsResult.languages
-          : ["Common"];
+      const languages = ensureCommonLanguage(identityGrantsResult.languages);
 
       const skillsUnchanged =
         prev.skills === proficiencyResult.skills ||

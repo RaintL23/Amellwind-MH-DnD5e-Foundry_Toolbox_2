@@ -134,9 +134,10 @@ export function pickNamedChoicesFromGrants(
   exclude: Set<string> = new Set(),
   languagePool?: readonly string[],
 ): string[] {
+  const excluded = new Set([...exclude, ...collectResolvedNamedItems(grants, [])]);
   return pickAllNamedChoices(
     getPendingNamedChoiceGrants(grants),
-    exclude,
+    excluded,
     languagePool,
   );
 }

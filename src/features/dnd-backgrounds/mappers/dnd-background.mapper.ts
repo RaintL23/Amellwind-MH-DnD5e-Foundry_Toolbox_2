@@ -14,6 +14,11 @@ import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
 import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
 import { parseBackgroundStartingEquipment } from "@/shared/utils/starting-equipment.parser";
+import {
+  applyDnd2024BackgroundLanguageGrants,
+  DND_2024_BACKGROUND_LANGUAGE_SUMMARY,
+  isDnd2024Background,
+} from "@/features/dnd-backgrounds/utils/dnd-2024-background-language.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -494,17 +499,30 @@ export function mapDndBackground(raw: any): DndBackground {
     Array.isArray(raw.toolProficiencies) ? raw.toolProficiencies : [],
     bgSource,
   );
-  const languageGrants = parseNamedProficiencyBlocks(
+  let languageGrants = parseNamedProficiencyBlocks(
     Array.isArray(raw.languageProficiencies) ? raw.languageProficiencies : [],
     bgSource,
   );
+  const edition = inferEdition(raw);
+  let languagesDisplay = languages;
+
+  if (isDnd2024Background(edition)) {
+    const applied = applyDnd2024BackgroundLanguageGrants(
+      languageGrants,
+      bgSource,
+    );
+    languageGrants = applied.grants;
+    if (applied.appliedDefaults && languagesDisplay === "—") {
+      languagesDisplay = DND_2024_BACKGROUND_LANGUAGE_SUMMARY;
+    }
+  }
 
   return {
     id: backgroundId(raw),
     name: String(raw.name ?? "Unknown"),
     source: String(raw.source ?? "PHB"),
     page: typeof raw.page === "number" ? raw.page : undefined,
-    edition: inferEdition(raw),
+    edition,
     srd: raw.srd === true,
     basicRules: raw.basicRules === true,
     fluff: mapFluff(raw.fluff),
@@ -512,7 +530,7 @@ export function mapDndBackground(raw: any): DndBackground {
       skills:
         listProf.skills !== "—" ? listProf.skills : mapSkillSummary(raw),
       tools: listProf.tools !== "—" ? listProf.tools : mapToolSummary(raw),
-      languages: languages !== "—" ? languages : "—",
+      languages: languagesDisplay !== "—" ? languagesDisplay : "—",
       equipment: listProf.equipment,
     },
     abilityBonuses,
