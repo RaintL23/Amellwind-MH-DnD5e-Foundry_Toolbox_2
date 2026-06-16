@@ -11,7 +11,10 @@ import {
   getDndBackgroundById,
   getListDndBackgrounds,
 } from "@/features/dnd-backgrounds/services/dnd-background.service";
-import { getListDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
+import {
+  getDndFeatById,
+  getListDndFeats,
+} from "@/features/dnd-feats/services/dnd-feat.service";
 import { getListSpells } from "@/features/spells/services/spell.service";
 import {
   resolveRpgbotContext,
@@ -37,9 +40,15 @@ import {
 } from "@/features/builder/utils/randomizer/ability-randomizer.utils";
 import { resolveClassAbilityPriority } from "@/features/builder/utils/randomizer/class-ability-priority.utils";
 import {
-  pickIndexedSkillChoices,
+  alreadyGrantedSkillsForFeatPicker,
+  collectProficientSkillsFromChoices,
   pickAllSkillChoices,
+  pickExpertiseChoicesForGrants,
+  pickIndexedSkillChoices,
+  pickPendingSkillGrants,
 } from "@/features/builder/utils/randomizer/skill-randomizer.utils";
+import { detectExpertiseGrants } from "@/features/builder/utils/expertise-detection.utils";
+import { ORIGIN_FEAT_SOURCE_NAME } from "@/features/builder/utils/origin-feat.constants";
 import {
   buildFeatSelectionsForLevel,
   pickRandomOriginFeat,
@@ -49,7 +58,8 @@ import { buildRandomStartingEquipmentEntries } from "@/features/builder/utils/ra
 import { generateXanatharBackstoryNotes } from "@/features/builder/utils/randomizer/backstory-randomizer.utils";
 import { buildSpeciesLineageSpellSelectionsFromCatalog } from "@/features/builder/utils/species-spell-grants.utils";
 import type { AbilityBonus } from "@/shared/types/species.types";
-import type { DndRace } from "@/shared/types";
+import type { BuilderFeatSelection, DndRace, SkillKey } from "@/shared/types";
+import type { SkillProficiencyGrant } from "@/shared/types/proficiency.types";
 
 function toSelectionRef(id: string, name: string): CharacterSelectionRef {
   return { id, name, subraceId: null, subraceName: null };
@@ -131,6 +141,9 @@ export function useCharacterRandomizer() {
     clearSpells,
     setBackstoryNotes,
     setSpeciesSpellGroupChoice,
+    setOriginFeatSkillChoices,
+    setFeatSkillChoices,
+    setExpertiseChoices,
   } = builder;
 
   const randomize = useCallback(async () => {
@@ -237,6 +250,12 @@ export function useCharacterRandomizer() {
       let backgroundName = "";
       let randomizedSpeciesDetail: DndRace | null = null;
       let randomizedSpeciesLineageChoice: string | null = null;
+      let speciesGrants: SkillProficiencyGrant[] = [];
+      let speciesSkillChoices: SkillKey[] = [];
+      let backgroundGrants: SkillProficiencyGrant[] = [];
+      let backgroundSkillChoices: SkillKey[] = [];
+      let speciesOriginFeatSelection: BuilderFeatSelection | null = null;
+      let backgroundOriginFeatSelection: BuilderFeatSelection | null = null;
 
       if (useAmellwindHomebrew) {
         const pickedSpecies = pickAmellwindSpecies(
@@ -271,6 +290,7 @@ export function useCharacterRandomizer() {
           setSpecies(toSelectionRef(pickedSpecies.id, pickedSpecies.name));
           const speciesDetail = await getDndRaceById(pickedSpecies.id);
           if (speciesDetail) {
+            speciesGrants = speciesDetail.skillGrants;
             assignSpeciesAbilityChoices(
               speciesDetail.abilityBonuses,
               abilityPriority,
@@ -280,6 +300,7 @@ export function useCharacterRandomizer() {
               speciesDetail.skillGrants,
               speciesLookup,
             );
+            speciesSkillChoices = speciesSkills;
             if (speciesSkills.length > 0) {
               setSpeciesSkillChoices(speciesSkills);
             }
@@ -290,6 +311,7 @@ export function useCharacterRandomizer() {
             );
             if (originFeat && speciesDetail.originFeatGrant?.kind === "choose") {
               setSpeciesOriginFeat(originFeat);
+              speciesOriginFeatSelection = originFeat;
             }
 
             // Pick a random lineage (Fiendish Legacy, Gnomish Lineage, etc.)
@@ -320,6 +342,7 @@ export function useCharacterRandomizer() {
             pickedBackground.id,
           );
           if (backgroundDetail) {
+            backgroundGrants = backgroundDetail.skillGrants;
             assignBackgroundAsi(
               backgroundDetail.abilityBonuses,
               abilityPriority,
@@ -331,6 +354,7 @@ export function useCharacterRandomizer() {
               backgroundDetail.skillGrants,
               backgroundLookup,
             );
+            backgroundSkillChoices = backgroundSkills;
             if (backgroundSkills.length > 0) {
               setBackgroundSkillChoices(backgroundSkills);
             }
@@ -344,6 +368,7 @@ export function useCharacterRandomizer() {
               backgroundDetail.originFeatGrant?.kind === "choose"
             ) {
               setBackgroundOriginFeat(originFeat);
+              backgroundOriginFeatSelection = originFeat;
             }
           }
         }
@@ -357,6 +382,50 @@ export function useCharacterRandomizer() {
       );
       for (const [index, choices] of Object.entries(classSkillChoices)) {
         setClassSkillChoicesAtIndex(Number(index), choices);
+      }
+
+      const flatClassSkillChoices = Object.values(classSkillChoices).flat();
+      const featPickerExclude = alreadyGrantedSkillsForFeatPicker(
+        speciesGrants,
+        speciesSkillChoices,
+        backgroundGrants,
+        backgroundSkillChoices,
+        classData.skillChoiceGrants,
+        flatClassSkillChoices,
+      );
+
+      let originFeatSkillChoices: SkillKey[] = [];
+      const activeOriginFeats = [
+        backgroundOriginFeatSelection,
+        speciesOriginFeatSelection,
+      ].filter((feat): feat is BuilderFeatSelection => !!feat);
+
+      if (activeOriginFeats.length > 0) {
+        const pendingOriginFeatGrants: Array<
+          Extract<SkillProficiencyGrant, { kind: "choose" | "any" }>
+        > = [];
+
+        for (const selection of activeOriginFeats) {
+          const feat = await getDndFeatById(selection.id);
+          if (!feat) continue;
+          for (const grant of feat.skillGrants ?? []) {
+            if (grant.kind === "choose" || grant.kind === "any") {
+              pendingOriginFeatGrants.push({
+                ...grant,
+                source: { type: "feat", name: ORIGIN_FEAT_SOURCE_NAME },
+              });
+            }
+          }
+        }
+
+        if (pendingOriginFeatGrants.length > 0) {
+          originFeatSkillChoices = pickPendingSkillGrants(
+            pendingOriginFeatGrants,
+            featLookup,
+            featPickerExclude,
+          );
+          setOriginFeatSkillChoices(originFeatSkillChoices);
+        }
       }
 
       clearSpells();
@@ -398,6 +467,56 @@ export function useCharacterRandomizer() {
       featSelections.forEach((selection, index) => {
         if (selection) setFeatAtIndex(index, selection);
       });
+
+      const featSkillChoicesMap: Record<number, SkillKey[]> = {};
+      const featSkillExclude = new Set(featPickerExclude);
+      for (const skill of originFeatSkillChoices) featSkillExclude.add(skill);
+
+      for (const [index, selection] of featSelections.entries()) {
+        if (!selection) continue;
+        const feat = await getDndFeatById(selection.id);
+        if (!feat) continue;
+
+        const pendingFeatGrants = (feat.skillGrants ?? [])
+          .filter((grant) => grant.kind === "choose" || grant.kind === "any")
+          .map((grant) => ({
+            ...grant,
+            source: {
+              type: "feat" as const,
+              name: `Feat slot ${index + 1}`,
+            },
+          }));
+
+        if (pendingFeatGrants.length === 0) continue;
+
+        const choices = pickPendingSkillGrants(
+          pendingFeatGrants,
+          featLookup,
+          featSkillExclude,
+        );
+        featSkillChoicesMap[index] = choices;
+        setFeatSkillChoices(index, choices);
+        for (const skill of choices) featSkillExclude.add(skill);
+      }
+
+      const expertiseGrants = detectExpertiseGrants(classData, preservedLevel);
+      const proficientSkills = collectProficientSkillsFromChoices({
+        speciesGrants,
+        speciesChoices: speciesSkillChoices,
+        backgroundGrants,
+        backgroundChoices: backgroundSkillChoices,
+        classGrants: classData.skillChoiceGrants,
+        classChoices: classSkillChoices,
+        originFeatChoices: originFeatSkillChoices,
+        featChoices: featSkillChoicesMap,
+      });
+      const expertiseChoices = pickExpertiseChoicesForGrants(
+        expertiseGrants,
+        proficientSkills,
+      );
+      for (const [grantId, choices] of Object.entries(expertiseChoices)) {
+        setExpertiseChoices(grantId, choices);
+      }
 
       const classEquipment = buildRandomStartingEquipmentEntries(
         classData.startingEquipmentOffers,
@@ -469,6 +588,9 @@ export function useCharacterRandomizer() {
     clearSpells,
     setBackstoryNotes,
     setSpeciesSpellGroupChoice,
+    setOriginFeatSkillChoices,
+    setFeatSkillChoices,
+    setExpertiseChoices,
     rpgbotData,
     createLookup,
     addEquipmentBundle,
