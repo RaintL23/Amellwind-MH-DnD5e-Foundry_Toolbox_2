@@ -51,7 +51,7 @@ import { detectExpertiseGrants } from "@/features/builder/utils/expertise-detect
 import { ORIGIN_FEAT_SOURCE_NAME } from "@/features/builder/utils/origin-feat.constants";
 import {
   buildFeatSelectionsForLevel,
-  pickRandomOriginFeat,
+  resolveOriginFeatSelectionForGrant,
 } from "@/features/builder/utils/randomizer/feat-randomizer.utils";
 import { buildRandomSpellSelections } from "@/features/builder/utils/randomizer/spell-randomizer.utils";
 import { buildRandomStartingEquipmentEntries } from "@/features/builder/utils/randomizer/starting-equipment-randomizer.utils";
@@ -59,10 +59,17 @@ import { generateXanatharBackstoryNotes } from "@/features/builder/utils/randomi
 import { buildSpeciesLineageSpellSelectionsFromCatalog } from "@/features/builder/utils/species-spell-grants.utils";
 import {
   collectResolvedNamedItems,
+  pickIndexedNamedChoicesForSource,
   pickNamedChoicesFromGrants,
 } from "@/features/builder/utils/randomizer/named-proficiency-randomizer.utils";
+import { buildClassLanguageGrants } from "@/features/builder/utils/class-language-grants.utils";
+import {
+  getDnd2024LanguageNames,
+  loadChooseableLanguages,
+} from "@/shared/data/chooseable-languages";
 import type { AbilityBonus } from "@/shared/types/species.types";
 import type { BuilderFeatSelection, DndRace, SkillKey } from "@/shared/types";
+import type { DndBackground } from "@/shared/types/dnd-background.types";
 import type { SkillProficiencyGrant } from "@/shared/types/proficiency.types";
 
 function toSelectionRef(id: string, name: string): CharacterSelectionRef {
@@ -151,6 +158,7 @@ export function useCharacterRandomizer() {
     setBackgroundToolChoices,
     setBackgroundLanguageChoices,
     setSpeciesLanguageChoices,
+    setClassLanguageChoicesAtIndex,
   } = builder;
 
   const randomize = useCallback(async () => {
@@ -186,7 +194,10 @@ export function useCharacterRandomizer() {
         useAmellwindHomebrew ? getAllBackgrounds() : Promise.resolve([]),
         getListDndFeats(),
         getListSpells(),
+        loadChooseableLanguages(),
       ]);
+
+      const dnd2024Languages = getDnd2024LanguageNames();
 
       const pickedClass = pickRandomClass(classes, rpgbotData);
       if (!pickedClass) return;
@@ -264,6 +275,8 @@ export function useCharacterRandomizer() {
       let speciesOriginFeatSelection: BuilderFeatSelection | null = null;
       let backgroundOriginFeatSelection: BuilderFeatSelection | null = null;
       let speciesLanguageChoices: string[] = [];
+      let backgroundLanguageChoices: string[] = [];
+      let randomizedBackgroundDetail: DndBackground | null = null;
 
       if (useAmellwindHomebrew) {
         const pickedSpecies = pickAmellwindSpecies(
@@ -314,19 +327,22 @@ export function useCharacterRandomizer() {
             }
             const speciesLanguages = pickNamedChoicesFromGrants(
               speciesDetail.languageGrants,
+              new Set(),
+              dnd2024Languages,
             );
             speciesLanguageChoices = speciesLanguages;
             if (speciesLanguages.length > 0) {
               setSpeciesLanguageChoices(speciesLanguages);
             }
-            const originFeat = pickRandomOriginFeat(
+            const resolvedSpeciesOriginFeat = await resolveOriginFeatSelectionForGrant(
+              speciesDetail.originFeatGrant,
               dndFeats,
               rpgbotData,
               classData.name,
             );
-            if (originFeat && speciesDetail.originFeatGrant?.kind === "choose") {
-              setSpeciesOriginFeat(originFeat);
-              speciesOriginFeatSelection = originFeat;
+            if (resolvedSpeciesOriginFeat) {
+              setSpeciesOriginFeat(resolvedSpeciesOriginFeat);
+              speciesOriginFeatSelection = resolvedSpeciesOriginFeat;
             }
 
             // Pick a random lineage (Fiendish Legacy, Gnomish Lineage, etc.)
@@ -357,6 +373,7 @@ export function useCharacterRandomizer() {
             pickedBackground.id,
           );
           if (backgroundDetail) {
+            randomizedBackgroundDetail = backgroundDetail;
             backgroundGrants = backgroundDetail.skillGrants;
             assignBackgroundAsi(
               backgroundDetail.abilityBonuses,
@@ -386,27 +403,50 @@ export function useCharacterRandomizer() {
             const backgroundLanguages = pickNamedChoicesFromGrants(
               backgroundDetail.languageGrants,
               speciesLanguageExclude,
+              dnd2024Languages,
             );
+            backgroundLanguageChoices = backgroundLanguages;
             if (backgroundLanguages.length > 0) {
               setBackgroundLanguageChoices(backgroundLanguages);
             }
-            const originFeat = pickRandomOriginFeat(
-              dndFeats,
-              rpgbotData,
-              classData.name,
-            );
-            if (
-              originFeat &&
-              backgroundDetail.originFeatGrant?.kind === "choose"
-            ) {
-              setBackgroundOriginFeat(originFeat);
-              backgroundOriginFeatSelection = originFeat;
+            const resolvedBackgroundOriginFeat =
+              await resolveOriginFeatSelectionForGrant(
+                backgroundDetail.originFeatGrant,
+                dndFeats,
+                rpgbotData,
+                classData.name,
+              );
+            if (resolvedBackgroundOriginFeat) {
+              setBackgroundOriginFeat(resolvedBackgroundOriginFeat);
+              backgroundOriginFeatSelection = resolvedBackgroundOriginFeat;
             }
           }
         }
       }
 
       await delay();
+
+      const languageExclude = collectResolvedNamedItems(
+        [
+          ...(randomizedSpeciesDetail?.languageGrants ?? []),
+          ...(randomizedBackgroundDetail?.languageGrants ?? []),
+        ],
+        [...speciesLanguageChoices, ...backgroundLanguageChoices],
+      );
+      const classLanguageGrants = buildClassLanguageGrants(
+        classData,
+        preservedLevel,
+        pickedSubclass,
+      );
+      const classLanguageChoices = pickIndexedNamedChoicesForSource(
+        classLanguageGrants,
+        "class",
+        languageExclude,
+        dnd2024Languages,
+      );
+      for (const [index, choices] of Object.entries(classLanguageChoices)) {
+        setClassLanguageChoicesAtIndex(Number(index), choices);
+      }
 
       const classSkillChoices = pickIndexedSkillChoices(
         classData.skillChoiceGrants,
@@ -554,20 +594,13 @@ export function useCharacterRandomizer() {
         classData.startingEquipmentOffers,
         { type: "class", id: classData.id, name: classData.name },
       );
-      const backgroundDetail = backgroundName
-        ? await getDndBackgroundById(
-            builder.background?.id ??
-              dndBackgrounds.find((bg) => bg.name === backgroundName)?.id ??
-              "",
-          )
-        : undefined;
-      const backgroundEquipment = backgroundDetail
+      const backgroundEquipment = randomizedBackgroundDetail
         ? buildRandomStartingEquipmentEntries(
-            backgroundDetail.startingEquipmentOffers,
+            randomizedBackgroundDetail.startingEquipmentOffers,
             {
               type: "background",
-              id: backgroundDetail.id,
-              name: backgroundDetail.name,
+              id: randomizedBackgroundDetail.id,
+              name: randomizedBackgroundDetail.name,
             },
           )
         : [];
@@ -595,7 +628,6 @@ export function useCharacterRandomizer() {
     character.name,
     character.alignment,
     character.abilities,
-    builder.background?.id,
     resetBuild,
     setLevel,
     setName,
@@ -626,6 +658,7 @@ export function useCharacterRandomizer() {
     setBackgroundToolChoices,
     setBackgroundLanguageChoices,
     setSpeciesLanguageChoices,
+    setClassLanguageChoicesAtIndex,
     rpgbotData,
     createLookup,
     addEquipmentBundle,

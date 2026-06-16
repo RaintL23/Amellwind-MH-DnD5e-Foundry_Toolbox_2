@@ -111,10 +111,7 @@ export function StartingEquipmentPicker({
       return;
     }
 
-    if (
-      optionKey &&
-      isItemDisabled(group, optionKey, selectedIds, source)
-    ) {
+    if (optionKey && isItemDisabled(group, optionKey, selectedIds, source)) {
       return;
     }
 
@@ -134,9 +131,7 @@ export function StartingEquipmentPicker({
       optionKey !== null &&
       isItemDisabled(group, optionKey, selectedIds, source);
 
-    const label = optionKey
-      ? `(${optionKey}) ${item.name}`
-      : item.name;
+    const label = optionKey ? `(${optionKey}) ${item.name}` : item.name;
 
     return (
       <button
@@ -154,10 +149,10 @@ export function StartingEquipmentPicker({
         aria-pressed={isSelected}
         title={
           disabled
-            ? "Desmarca los objetos de la otra opción para elegir esta"
+            ? "Unmark the items from the other option to choose this"
             : isSelected
-              ? "Quitar del inventario"
-              : "Agregar al inventario"
+              ? "Remove from inventory"
+              : "Add to inventory"
         }
       >
         {isSelected && <Check className="h-3 w-3 shrink-0" aria-hidden />}
@@ -185,8 +180,8 @@ export function StartingEquipmentPicker({
       </div>
 
       <p className="mb-2 text-[10px] text-muted-foreground/80">
-        Haz clic en cada objeto para agregarlo al inventario. Las opciones
-        marcadas con letras son excluyentes entre sí.
+        Click on each item to add it to your inventory. The options marked with
+        letters are mutually exclusive.
       </p>
 
       <div className="space-y-3">
@@ -200,9 +195,7 @@ export function StartingEquipmentPicker({
 
             {group.guaranteed && group.guaranteed.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
-                {group.guaranteed.map((item) =>
-                  renderBadge(group, null, item),
-                )}
+                {group.guaranteed.map((item) => renderBadge(group, null, item))}
               </div>
             )}
 
@@ -210,7 +203,7 @@ export function StartingEquipmentPicker({
               <div key={`${group.id}-${option.key}`} className="space-y-1">
                 {group.options!.length > 1 && !group.label && (
                   <Badge variant="outline" className="text-[9px] font-normal">
-                    Opción {option.key.toUpperCase()}
+                    Option {option.key.toUpperCase()}
                   </Badge>
                 )}
                 <div className="flex flex-wrap gap-1.5">
@@ -226,13 +219,13 @@ export function StartingEquipmentPicker({
 
       {offers.goldAlternative && (
         <p className="mt-2 text-[10px] text-muted-foreground/70">
-          Alternativa de oro: {offers.goldAlternative}
+          Gold alternative: {offers.goldAlternative}
         </p>
       )}
 
       {offers.additionalFromBackground && (
         <p className="mt-1 text-[10px] text-muted-foreground/70">
-          Más el equipo del background.
+          Plus the equipment from the background.
         </p>
       )}
     </div>

@@ -4,6 +4,8 @@ import type {
   Class,
 } from "@/shared/types";
 import type { RpgbotRatingsData } from "@/features/builder/data/rpgbot-ratings.types";
+import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.service";
+import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import {
   findRpgbotRating,
   toRpgbotClassSlug,
@@ -47,6 +49,31 @@ export function pickRandomOriginFeat(
     : pool[Math.floor(Math.random() * pool.length)];
 
   return picked ? dndFeatToBuilderSelection(picked) : null;
+}
+
+/** Resolve the builder selection for a species/background origin-feat grant (fixed or choose). */
+export async function resolveOriginFeatSelectionForGrant(
+  grant: OriginFeatGrant | null | undefined,
+  feats: DndFeat[],
+  rpgbotData: RpgbotRatingsData | null,
+  className: string,
+): Promise<BuilderFeatSelection | null> {
+  if (!grant) return null;
+
+  if (grant.kind === "choose") {
+    return pickRandomOriginFeat(feats, rpgbotData, className);
+  }
+
+  if (grant.kind === "fixed" && grant.featRefs[0]) {
+    const feat = await resolveDndFeatForRef(grant.featRefs[0]);
+    if (!feat) return null;
+    return {
+      ...dndFeatToBuilderSelection(feat),
+      name: grant.featRefs[0].displayLabel,
+    };
+  }
+
+  return null;
 }
 
 export function pickRandomClassFeat(

@@ -21,23 +21,28 @@ import {
 } from "../utils/cart-equipment.resolver";
 import { getLinkedInventoryNames } from "../utils/equipment-inventory.utils";
 
+function cartEntryKey(entry: CartEntry): string {
+  return entry.startingEquipmentId ?? entry.name;
+}
+
 function mergeCartEntries(
   existing: CartEntry[],
   incoming: CartEntry[],
 ): CartEntry[] {
   const map = new Map<string, CartEntry>();
   for (const entry of existing) {
-    map.set(entry.name, { ...entry });
+    map.set(cartEntryKey(entry), { ...entry });
   }
   for (const entry of incoming) {
-    const prev = map.get(entry.name);
+    const key = cartEntryKey(entry);
+    const prev = map.get(key);
     if (prev) {
-      map.set(entry.name, {
+      map.set(key, {
         ...prev,
         quantity: prev.quantity + entry.quantity,
       });
     } else {
-      map.set(entry.name, { ...entry });
+      map.set(key, { ...entry });
     }
   }
   return Array.from(map.values());

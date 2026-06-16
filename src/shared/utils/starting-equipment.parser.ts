@@ -32,7 +32,10 @@ function parseItemKey(key: string): { name: string; source: string } {
   }
   return {
     name: titleCaseItemName(trimmed.slice(0, pipe).trim()),
-    source: trimmed.slice(pipe + 1).trim().toUpperCase(),
+    source: trimmed
+      .slice(pipe + 1)
+      .trim()
+      .toUpperCase(),
   };
 }
 
@@ -78,7 +81,12 @@ function parseRawItem(
     const qty = typeof obj.quantity === "number" ? obj.quantity : 1;
     const name = qty > 1 ? `${obj.special} (×${qty})` : obj.special;
     return {
-      id: buildItemId(ctx.groupIndex, ctx.optionKey, ctx.itemIndex, obj.special),
+      id: buildItemId(
+        ctx.groupIndex,
+        ctx.optionKey,
+        ctx.itemIndex,
+        obj.special,
+      ),
       name,
       quantity: qty,
     };
@@ -86,7 +94,8 @@ function parseRawItem(
 
   if (typeof obj.equipmentType === "string") {
     const label =
-      EQUIPMENT_TYPE_LABELS[obj.equipmentType] ?? titleCaseItemName(obj.equipmentType);
+      EQUIPMENT_TYPE_LABELS[obj.equipmentType] ??
+      titleCaseItemName(obj.equipmentType);
     const qty = typeof obj.quantity === "number" ? obj.quantity : 1;
     return {
       id: buildItemId(
@@ -141,9 +150,9 @@ function parseGroupObject(
 
   const label =
     options.length > 1
-      ? `Elige una opción (${options.map((option) => option.key.toUpperCase()).join(", ")})`
+      ? `Choose an option (${options.map((option) => option.key.toUpperCase()).join(", ")})`
       : options.length === 1
-        ? `Opción ${options[0].key.toUpperCase()}`
+        ? `Option ${options[0].key.toUpperCase()}`
         : undefined;
 
   return {

@@ -155,6 +155,18 @@ export const STANDARD_LANGUAGES: readonly string[] = [
   "Orc",
 ] as const;
 
+/** Book sources treated as D&D 2024 for random language picks. */
+export const DND_2024_LANGUAGE_SOURCES = ["XPHB"] as const;
+
+/** Standard languages listed in the 2024 Player's Handbook (XPHB). */
+export function getDnd2024LanguageNames(): readonly string[] {
+  const fromXphb = getLanguageGroupsBySource().find(
+    (group) => group.sourceCode === "XPHB",
+  );
+  if (fromXphb?.languages.length) return fromXphb.languages;
+  return STANDARD_LANGUAGES;
+}
+
 /** Filter source groups to languages allowed for this picker. */
 export function filterLanguageGroups(
   allowed: ReadonlySet<string> | readonly string[],
