@@ -1,3 +1,10 @@
+import type { ArmorCategory } from "@/shared/types";
+import type { WeaponContentSource } from "@/shared/types/weapon.types";
+import {
+  lookupBestRpgbotRating,
+  resolveAmellwindArmorFallbackNames,
+  resolveAmellwindWeaponFallbackNames,
+} from "@/features/builder/utils/amellwind-rpgbot.utils";
 import type {
   RpgbotRating,
   RpgbotRatingLookupEntry,
@@ -138,6 +145,8 @@ export interface EquipmentRpgbotLookupItem {
   source?: string;
   variantSources?: string[];
   baseName?: string;
+  contentSource?: WeaponContentSource;
+  armorCategory?: ArmorCategory;
 }
 
 /** Resolve RPGBOT rating for equipment, inheriting from the base item when present. */
@@ -146,8 +155,23 @@ export function lookupEquipmentRpgbotRating(
   item: EquipmentRpgbotLookupItem,
 ): RpgbotRatingLookupEntry | null {
   if (!lookup) return null;
+
   const lookupName = item.baseName?.trim() || item.name;
-  return lookup(lookupName, item.source, item.variantSources);
+  const direct = lookup(lookupName, item.source, item.variantSources);
+  if (direct) return direct;
+
+  if (item.contentSource === "dnd") return null;
+
+  const fallbackNames = item.armorCategory
+    ? resolveAmellwindArmorFallbackNames(item.name, item.armorCategory)
+    : resolveAmellwindWeaponFallbackNames(item.name);
+
+  return lookupBestRpgbotRating(
+    lookup,
+    fallbackNames,
+    item.source,
+    item.variantSources,
+  );
 }
 
 export function createRpgbotLookupFn(

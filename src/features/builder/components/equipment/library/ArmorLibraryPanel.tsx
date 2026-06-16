@@ -76,14 +76,15 @@ export function ArmorLibraryPanel({
 
   const prefer2024 = classData?.source === "XPHB";
 
-  const rpgbotArmorContext = useMemo(() => {
-    if (useAmellwindHomebrew) return null;
-    return resolveRpgbotContext({
-      className: classSelection?.name,
-      guideKey: "class",
-      category: "armor",
-    });
-  }, [useAmellwindHomebrew, classSelection?.name]);
+  const rpgbotArmorContext = useMemo(
+    () =>
+      resolveRpgbotContext({
+        className: classSelection?.name,
+        guideKey: "class",
+        category: "armor",
+      }),
+    [classSelection?.name],
+  );
 
   const { lookup: rpgbotArmorLookup, ready: rpgbotArmorReady } =
     useRpgbotRatingsLookup(rpgbotArmorContext);

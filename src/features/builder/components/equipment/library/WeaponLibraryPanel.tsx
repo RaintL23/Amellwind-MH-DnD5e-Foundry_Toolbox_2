@@ -93,14 +93,15 @@ export function WeaponLibraryPanel({
 
   const prefer2024 = classData?.source === "XPHB";
 
-  const rpgbotWeaponContext = useMemo(() => {
-    if (useAmellwindHomebrew) return null;
-    return resolveRpgbotContext({
-      className: classSelection?.name,
-      guideKey: "class",
-      category: "weapon",
-    });
-  }, [useAmellwindHomebrew, classSelection?.name]);
+  const rpgbotWeaponContext = useMemo(
+    () =>
+      resolveRpgbotContext({
+        className: classSelection?.name,
+        guideKey: "class",
+        category: "weapon",
+      }),
+    [classSelection?.name],
+  );
 
   const { lookup: rpgbotWeaponLookup, ready: rpgbotWeaponReady } =
     useRpgbotRatingsLookup(rpgbotWeaponContext);

@@ -179,7 +179,10 @@ function SourceSwitcher({
                 <span className="ml-1 opacity-70">p.{v.page}</span>
               )}
               {!isActive && differsFromOthers && (
-                <span className="ml-1 text-amber-400" title="Differs from other sources">
+                <span
+                  className="ml-1 text-amber-400"
+                  title="Differs from other sources"
+                >
                   •
                 </span>
               )}
@@ -258,7 +261,9 @@ export function DndItemDetailDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle className="text-amber-400 text-2xl">{active.name}</DialogTitle>
+          <DialogTitle className="text-amber-400 text-2xl">
+            {active.name}
+          </DialogTitle>
           <DialogDescription asChild>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="secondary">
@@ -271,7 +276,9 @@ export function DndItemDetailDialog({
                 </Badge>
               )}
               {active.page !== undefined && (
-                <span className="text-xs text-muted-foreground">p. {active.page}</span>
+                <span className="text-xs text-muted-foreground">
+                  p. {active.page}
+                </span>
               )}
             </div>
           </DialogDescription>
@@ -295,11 +302,27 @@ export function DndItemDetailDialog({
           </div>
 
           <div className="space-y-1.5 mb-4 p-3 rounded-md border border-border bg-muted/20">
-            <MetaRow label="Category" value={active.category} differs={differs("category")} />
-            <MetaRow label="Value" value={active.valueGp ?? "—"} differs={differs("valueGp")} />
-            <MetaRow label="Weight" value={active.weight ?? "—"} differs={differs("weight")} />
+            <MetaRow
+              label="Category"
+              value={active.category}
+              differs={differs("category")}
+            />
+            <MetaRow
+              label="Value"
+              value={active.valueGp ?? "—"}
+              differs={differs("valueGp")}
+            />
+            <MetaRow
+              label="Weight"
+              value={active.weight ?? "—"}
+              differs={differs("weight")}
+            />
             {active.damage && (
-              <MetaRow label="Damage" value={active.damage} differs={differs("damage")} />
+              <MetaRow
+                label="Damage"
+                value={active.damage}
+                differs={differs("damage")}
+              />
             )}
             {active.properties && (
               <MetaRow
@@ -316,7 +339,11 @@ export function DndItemDetailDialog({
               />
             )}
             {active.bonusAc && (
-              <MetaRow label="AC Bonus" value={active.bonusAc} differs={differs("bonusAc")} />
+              <MetaRow
+                label="AC Bonus"
+                value={active.bonusAc}
+                differs={differs("bonusAc")}
+              />
             )}
             {active.baseName && (
               <MetaRow
@@ -329,26 +356,30 @@ export function DndItemDetailDialog({
             )}
           </div>
 
-          {active.isItemGroup && active.groupItemRefs && active.groupItemRefs.length > 0 && (
-            <>
-              <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
-                Group variants ({active.groupItemRefs.length})
-              </h3>
-              <ul className="mb-4 space-y-1 text-sm text-muted-foreground">
-                {(groupMembers.length > 0
-                  ? groupMembers.map((m) => (
-                      <li key={m.id}>
-                        <span className="text-foreground font-medium">{m.name}</span>
-                        <span className="ml-2 text-xs">({m.source})</span>
-                      </li>
-                    ))
-                  : active.groupItemRefs.map((ref) => (
-                      <li key={ref}>{ref}</li>
-                    )))}
-              </ul>
-              <Separator className="my-4" />
-            </>
-          )}
+          {active.isItemGroup &&
+            active.groupItemRefs &&
+            active.groupItemRefs.length > 0 && (
+              <>
+                <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+                  Group variants ({active.groupItemRefs.length})
+                </h3>
+                <ul className="mb-4 space-y-1 text-sm text-muted-foreground">
+                  {groupMembers.length > 0
+                    ? groupMembers.map((m) => (
+                        <li key={m.id}>
+                          <span className="text-foreground font-medium">
+                            {m.name}
+                          </span>
+                          <span className="ml-2 text-xs">({m.source})</span>
+                        </li>
+                      ))
+                    : active.groupItemRefs.map((ref) => (
+                        <li key={ref}>{ref}</li>
+                      ))}
+                </ul>
+                <Separator className="my-4" />
+              </>
+            )}
 
           {active.description.length > 0 && (
             <>

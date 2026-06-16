@@ -104,12 +104,26 @@ export function WeaponList({
 
   const sortedInventory = sortByRpgbotRating(
     inventory,
-    (w) => lookupEquipmentRpgbotRating(rpgbotLookup, w),
+    (w) =>
+      lookupEquipmentRpgbotRating(rpgbotLookup, {
+        name: w.name,
+        source: w.source,
+        variantSources: w.variantSources,
+        baseName: w.baseName,
+        contentSource: w.contentSource,
+      }),
     (w) => w.baseName ?? w.name,
   );
   const sortedCatalog = sortByRpgbotRating(
     catalog,
-    (w) => lookupEquipmentRpgbotRating(rpgbotLookup, w),
+    (w) =>
+      lookupEquipmentRpgbotRating(rpgbotLookup, {
+        name: w.name,
+        source: w.source,
+        variantSources: w.variantSources,
+        baseName: w.baseName,
+        contentSource: w.contentSource,
+      }),
     (w) => w.baseName ?? w.name,
   );
 
@@ -127,7 +141,13 @@ export function WeaponList({
     const variantTrailing = w.variantSources?.length
       ? formatVariantSourcesLabel(w.variantSources)
       : null;
-    const rpgbotRating = lookupEquipmentRpgbotRating(rpgbotLookup, w);
+    const rpgbotRating = lookupEquipmentRpgbotRating(rpgbotLookup, {
+      name: w.name,
+      source: w.source,
+      variantSources: w.variantSources,
+      baseName: w.baseName,
+      contentSource: w.contentSource,
+    });
 
     return (
       <ItemRow
@@ -196,12 +216,26 @@ export function ArmorList({
 
   const sortedInventory = sortByRpgbotRating(
     inventory,
-    (a) => lookupEquipmentRpgbotRating(rpgbotLookup, a),
+    (a) =>
+      lookupEquipmentRpgbotRating(rpgbotLookup, {
+        name: a.name,
+        source: a.source,
+        baseName: a.baseName,
+        contentSource: a.contentSource,
+        armorCategory: a.category,
+      }),
     (a) => a.baseName ?? a.name,
   );
   const sortedCatalog = sortByRpgbotRating(
     catalog,
-    (a) => lookupEquipmentRpgbotRating(rpgbotLookup, a),
+    (a) =>
+      lookupEquipmentRpgbotRating(rpgbotLookup, {
+        name: a.name,
+        source: a.source,
+        baseName: a.baseName,
+        contentSource: a.contentSource,
+        armorCategory: a.category,
+      }),
     (a) => a.baseName ?? a.name,
   );
 
@@ -217,7 +251,13 @@ export function ArmorList({
       !isEquipped && getDisabledReason
         ? getDisabledReason(armorItem)
         : null;
-    const rpgbotRating = lookupEquipmentRpgbotRating(rpgbotLookup, armorItem);
+    const rpgbotRating = lookupEquipmentRpgbotRating(rpgbotLookup, {
+      name: armorItem.name,
+      source: armorItem.source,
+      baseName: armorItem.baseName,
+      contentSource: armorItem.contentSource,
+      armorCategory: armorItem.category,
+    });
 
     return (
       <ItemRow
