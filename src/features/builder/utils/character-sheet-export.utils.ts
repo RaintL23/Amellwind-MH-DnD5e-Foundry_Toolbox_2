@@ -17,6 +17,7 @@ import type { CharacterSheetWeaponExport } from "./character-sheet-export.types"
 import type { SpellcastingInfo } from "../hooks/useSpellcasting";
 import type { SubclassSpellGrant } from "./subclass-spells.utils";
 import { hasActiveIntegratedShield } from "@/features/weapons/utils/shield.utils";
+import { isDamageCantrip, DAMAGE_TYPE_NAMES } from "./spell-damage.utils";
 
 /** pdf-lib form fields use WinAnsi (Windows-1252); strip/replace unsupported Unicode. */
 const PDF_TEXT_REPLACEMENTS: ReadonlyArray<[string, string]> = [
@@ -69,9 +70,6 @@ export const PDF_ALIGNMENT_CHECKBOX: Record<string, string> = {
   NE: "Check Box54",
   CE: "Check Box57",
 };
-
-const DAMAGE_TYPE_NAMES =
-  "acid|bludgeoning|cold|fire|force|lightning|necrotic|piercing|poison|psychic|radiant|slashing|thunder";
 
 function cellToNumber(val: string): number {
   if (!val || val === "—") return 0;
@@ -170,18 +168,6 @@ function scaleDiceNotation(notation: string, multiplier: number): string {
   const match = notation.match(/^(\d+)d(\d+)$/i);
   if (!match || multiplier <= 1) return notation;
   return `${parseInt(match[1], 10) * multiplier}d${match[2]}`;
-}
-
-export function isDamageCantrip(spell: Spell): boolean {
-  if (spell.level !== 0) return false;
-  const text = [...spell.description, spell.higherLevel ?? ""].join(" ");
-  const damagePattern = new RegExp(
-    `\\d+d\\d+[^.]{0,48}(?:${DAMAGE_TYPE_NAMES})\\s+damage`,
-    "i",
-  );
-  if (damagePattern.test(text)) return true;
-  if (/spell attack/i.test(text) && /damage/i.test(text)) return true;
-  return /saving throw/i.test(text) && /\d+d\d+/.test(text);
 }
 
 function extractCantripDamageText(spell: Spell, characterLevel: number): string {

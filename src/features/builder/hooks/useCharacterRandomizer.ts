@@ -57,6 +57,10 @@ import { buildRandomSpellSelections } from "@/features/builder/utils/randomizer/
 import { buildRandomStartingEquipmentEntries } from "@/features/builder/utils/randomizer/starting-equipment-randomizer.utils";
 import { generateXanatharBackstoryNotes } from "@/features/builder/utils/randomizer/backstory-randomizer.utils";
 import { buildSpeciesLineageSpellSelectionsFromCatalog } from "@/features/builder/utils/species-spell-grants.utils";
+import {
+  collectResolvedNamedItems,
+  pickNamedChoicesFromGrants,
+} from "@/features/builder/utils/randomizer/named-proficiency-randomizer.utils";
 import type { AbilityBonus } from "@/shared/types/species.types";
 import type { BuilderFeatSelection, DndRace, SkillKey } from "@/shared/types";
 import type { SkillProficiencyGrant } from "@/shared/types/proficiency.types";
@@ -144,6 +148,9 @@ export function useCharacterRandomizer() {
     setOriginFeatSkillChoices,
     setFeatSkillChoices,
     setExpertiseChoices,
+    setBackgroundToolChoices,
+    setBackgroundLanguageChoices,
+    setSpeciesLanguageChoices,
   } = builder;
 
   const randomize = useCallback(async () => {
@@ -256,6 +263,7 @@ export function useCharacterRandomizer() {
       let backgroundSkillChoices: SkillKey[] = [];
       let speciesOriginFeatSelection: BuilderFeatSelection | null = null;
       let backgroundOriginFeatSelection: BuilderFeatSelection | null = null;
+      let speciesLanguageChoices: string[] = [];
 
       if (useAmellwindHomebrew) {
         const pickedSpecies = pickAmellwindSpecies(
@@ -303,6 +311,13 @@ export function useCharacterRandomizer() {
             speciesSkillChoices = speciesSkills;
             if (speciesSkills.length > 0) {
               setSpeciesSkillChoices(speciesSkills);
+            }
+            const speciesLanguages = pickNamedChoicesFromGrants(
+              speciesDetail.languageGrants,
+            );
+            speciesLanguageChoices = speciesLanguages;
+            if (speciesLanguages.length > 0) {
+              setSpeciesLanguageChoices(speciesLanguages);
             }
             const originFeat = pickRandomOriginFeat(
               dndFeats,
@@ -357,6 +372,23 @@ export function useCharacterRandomizer() {
             backgroundSkillChoices = backgroundSkills;
             if (backgroundSkills.length > 0) {
               setBackgroundSkillChoices(backgroundSkills);
+            }
+            const backgroundTools = pickNamedChoicesFromGrants(
+              backgroundDetail.toolGrants,
+            );
+            if (backgroundTools.length > 0) {
+              setBackgroundToolChoices(backgroundTools);
+            }
+            const speciesLanguageExclude = collectResolvedNamedItems(
+              randomizedSpeciesDetail?.languageGrants ?? [],
+              speciesLanguageChoices,
+            );
+            const backgroundLanguages = pickNamedChoicesFromGrants(
+              backgroundDetail.languageGrants,
+              speciesLanguageExclude,
+            );
+            if (backgroundLanguages.length > 0) {
+              setBackgroundLanguageChoices(backgroundLanguages);
             }
             const originFeat = pickRandomOriginFeat(
               dndFeats,
@@ -591,6 +623,9 @@ export function useCharacterRandomizer() {
     setOriginFeatSkillChoices,
     setFeatSkillChoices,
     setExpertiseChoices,
+    setBackgroundToolChoices,
+    setBackgroundLanguageChoices,
+    setSpeciesLanguageChoices,
     rpgbotData,
     createLookup,
     addEquipmentBundle,
