@@ -79,6 +79,9 @@ function tokenizeFiveToolsMarkup(text: string): RichTextSegment[] {
       case "damage":
         segments.push({ kind: "damage", content });
         break;
+      case "dice":
+        segments.push({ kind: "text", content });
+        break;
       case "skill":
         segments.push({ kind: "skill", content });
         break;

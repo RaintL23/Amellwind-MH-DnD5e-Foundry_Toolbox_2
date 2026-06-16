@@ -5,7 +5,9 @@ export type DndKeywordCategory =
   | "condition"
   | "resource"
   | "defense"
-  | "movement";
+  | "movement"
+  | "distance"
+  | "dice";
 
 export const DND_KEYWORD_CLASS: Record<DndKeywordCategory, string> = {
   action: "text-sky-400 font-medium",
@@ -15,6 +17,8 @@ export const DND_KEYWORD_CLASS: Record<DndKeywordCategory, string> = {
   resource: "text-emerald-400 font-medium",
   defense: "text-orange-400 font-medium",
   movement: "text-teal-400 font-medium",
+  distance: "text-cyan-400 font-medium",
+  dice: "font-mono text-fuchsia-400 font-semibold",
 };
 
 interface DndKeyword {
@@ -25,6 +29,7 @@ interface DndKeyword {
 /** Common D&D 5e terms, longest first for safe overlapping matches. */
 const DND_KEYWORDS: DndKeyword[] = [
   // Action economy
+  { term: "action bonus", category: "action" },
   { term: "bonus actions", category: "action" },
   { term: "bonus action", category: "action" },
   { term: "opportunity attacks", category: "action" },
@@ -67,6 +72,7 @@ const DND_KEYWORDS: DndKeyword[] = [
   { term: "healing", category: "combat" },
   { term: "attacks", category: "combat" },
   { term: "attack", category: "combat" },
+  { term: "attacker", category: "combat" },
   { term: "unarmed attacks", category: "combat" },
   { term: "unarmed strikes", category: "combat" },
 
@@ -121,6 +127,33 @@ const DND_KEYWORDS: DndKeyword[] = [
   { term: "movement", category: "movement" },
   { term: "speed", category: "movement" },
   { term: "jump", category: "movement" },
+
+  // Distance, range & area (static phrases; numeric measures use DISTANCE_PATTERN)
+  { term: "line of sight", category: "distance" },
+  { term: "point of origin", category: "distance" },
+  { term: "area of effect", category: "distance" },
+  { term: "hemisphere", category: "distance" },
+  { term: "emanation", category: "distance" },
+  { term: "cylinder", category: "distance" },
+  { term: "diameter", category: "distance" },
+  { term: "spreads", category: "distance" },
+  { term: "spread", category: "distance" },
+  { term: "bursts", category: "distance" },
+  { term: "burst", category: "distance" },
+  { term: "spheres", category: "distance" },
+  { term: "sphere", category: "distance" },
+  { term: "cylinders", category: "distance" },
+  { term: "cones", category: "distance" },
+  { term: "cone", category: "distance" },
+  { term: "cubes", category: "distance" },
+  { term: "cube", category: "distance" },
+  { term: "radius", category: "distance" },
+  { term: "miles", category: "distance" },
+  { term: "mile", category: "distance" },
+  { term: "reach", category: "distance" },
+  { term: "range", category: "distance" },
+  { term: "ranged", category: "distance" },
+  { term: "melee", category: "distance" },
 ];
 
 const KEYWORD_LOOKUP = new Map(
@@ -139,6 +172,63 @@ const KEYWORD_REGEX = new RegExp(
   "gi",
 );
 
+/**
+ * Numeric distances and hyphenated measures common in 5e text
+ * (e.g. "30-foot", "60 feet", "5 ft.", "1 mile", "20-foot radius").
+ */
+const DISTANCE_PATTERN = new RegExp(
+  [
+    "\\d+(?:\\s*[-–]\\s*|\\s+)(?:foot|feet|ft\\.?)(?:\\s+(?:radius|cube|cone|cylinder|sphere|line|emanation|hemisphere|diameter|square|long|wide|high|deep))?",
+    "\\d+(?:\\s*[-–]\\s*|\\s+)(?:mile|miles)\\b",
+    "\\b\\d+\\s*[-–]\\s*(?:foot|feet)\\b",
+  ].join("|"),
+  "gi",
+);
+
+/**
+ * Dice notation in plain text (e.g. "1d10", "2d6+3", "8d6", "d20", "d%").
+ */
+const DICE_PATTERN =
+  /\d+d\d+(?:\s*[-+×x]\s*\d+)?|\bd\d+\b|d%/gi;
+
+function splitByPattern(
+  text: string,
+  pattern: RegExp,
+  category: DndKeywordCategory,
+): DndTextSegment[] {
+  if (!text) return [];
+
+  const segments: DndTextSegment[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  pattern.lastIndex = 0;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({
+        text: text.slice(lastIndex, match.index),
+        category: null,
+      });
+    }
+    segments.push({ text: match[0], category });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ text: text.slice(lastIndex), category: null });
+  }
+
+  return segments.length > 0 ? segments : [{ text, category: null }];
+}
+
+function splitDistancePatterns(text: string): DndTextSegment[] {
+  return splitByPattern(text, DISTANCE_PATTERN, "distance");
+}
+
+function splitDicePatterns(text: string): DndTextSegment[] {
+  return splitByPattern(text, DICE_PATTERN, "dice");
+}
+
 export interface DndTextSegment {
   text: string;
   category: DndKeywordCategory | null;
@@ -147,11 +237,31 @@ export interface DndTextSegment {
 export function splitDndKeywords(text: string): DndTextSegment[] {
   if (!text) return [];
 
-  return text
-    .split(KEYWORD_REGEX)
-    .filter((part) => part.length > 0)
-    .map((part) => ({
-      text: part,
-      category: KEYWORD_LOOKUP.get(part.toLowerCase()) ?? null,
-    }));
+  const result: DndTextSegment[] = [];
+
+  for (const distanceSegment of splitDistancePatterns(text)) {
+    if (distanceSegment.category) {
+      result.push(distanceSegment);
+      continue;
+    }
+
+    for (const diceSegment of splitDicePatterns(distanceSegment.text)) {
+      if (diceSegment.category) {
+        result.push(diceSegment);
+        continue;
+      }
+
+      const keywordParts = diceSegment.text
+        .split(KEYWORD_REGEX)
+        .filter((part) => part.length > 0)
+        .map((part) => ({
+          text: part,
+          category: KEYWORD_LOOKUP.get(part.toLowerCase()) ?? null,
+        }));
+
+      result.push(...keywordParts);
+    }
+  }
+
+  return result;
 }
