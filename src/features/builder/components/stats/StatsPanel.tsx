@@ -4,7 +4,9 @@ import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { useCharacterRandomizer } from "../../hooks/useCharacterRandomizer";
 import { parseAlignmentAxes } from "../../utils/alignment.utils";
 import { AbilityScoresSection } from "./AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
@@ -25,7 +27,9 @@ export function StatsPanel() {
     resetBuild,
     multiclassEnabled,
     setMulticlassEnabled,
+    useAmellwindHomebrew,
   } = useCharacterBuilder();
+  const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
   const { exportSheet, exporting, error: exportError } =
     useCharacterSheetExport();
   const { evaluate, activateHighlight, clearHighlight, highlightActive, issues } =
@@ -178,11 +182,26 @@ export function StatsPanel() {
             variant="outline"
             size="icon"
             className={ICON_BUTTON_CLASS}
-            disabled
-            title="Generate random (coming soon)"
-            aria-label="Generate random (coming soon)"
+            disabled={!canRandomize || isRandomizing}
+            onClick={() => {
+              clearHighlight();
+              void randomize();
+            }}
+            title={
+              useAmellwindHomebrew
+                ? "Random only available in D&D mode"
+                : "Randomize character"
+            }
+            aria-label={
+              useAmellwindHomebrew
+                ? "Random only available in D&D mode"
+                : "Randomize character"
+            }
           >
-            <Dices className="h-3 w-3" aria-hidden />
+            <Dices
+              className={cn("h-3 w-3", isRandomizing && "animate-spin")}
+              aria-hidden
+            />
           </Button>
         </div>
         <MulticlassPanel />

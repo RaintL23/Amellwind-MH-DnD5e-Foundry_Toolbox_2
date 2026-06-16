@@ -1,0 +1,124 @@
+import type {
+  AbilityKey,
+  Background,
+  DndBackground,
+  DndRace,
+  Species,
+} from "@/shared/types";
+import type { AbilityBonus } from "@/shared/types/species.types";
+import type { RpgbotRatingsData } from "@/features/builder/data/rpgbot-ratings.types";
+import {
+  findRpgbotRating,
+  toRpgbotClassSlug,
+  type RpgbotLookupContext,
+} from "@/features/builder/data/rpgbot-ratings.utils";
+import { pickByRpgbot, pickRandom, prefer2024Edition } from "./character-randomizer.utils";
+
+const HUNTER_INITIATE_PATTERN = /hunter['']?s?\s+initiate/i;
+
+function speciesMatchesSaveProficiencies(
+  abilityBonuses: AbilityBonus[],
+  saveProficiencies: AbilityKey[],
+): boolean {
+  if (saveProficiencies.length === 0) return true;
+
+  const boosted = new Set<AbilityKey>();
+  for (const bonus of abilityBonuses) {
+    if (bonus.kind === "fixed") {
+      for (const key of Object.keys(bonus.bonuses) as AbilityKey[]) {
+        if (bonus.bonuses[key]) boosted.add(key);
+      }
+    } else if (bonus.kind === "choose") {
+      for (const key of bonus.from) boosted.add(key);
+    } else if (bonus.kind === "weightedDistribution") {
+      for (const key of bonus.from) boosted.add(key);
+    }
+  }
+
+  return saveProficiencies.some((ability) => boosted.has(ability));
+}
+
+export function pickDndSpecies(
+  races: DndRace[],
+  rpgbotData: RpgbotRatingsData | null,
+  className: string,
+): DndRace | null {
+  const rootRaces = prefer2024Edition(
+    races.filter((race) => !race.parentName && race.kind !== "subrace"),
+  );
+  if (rootRaces.length === 0) return null;
+
+  const classSlug = toRpgbotClassSlug(className);
+  if (!classSlug || !rpgbotData) {
+    return pickRandom(rootRaces);
+  }
+
+  const context: RpgbotLookupContext = {
+    classSlug,
+    guideKey: "class",
+    category: "species",
+  };
+
+  return pickByRpgbot(rootRaces, (race) =>
+    findRpgbotRating(
+      rpgbotData.byClass,
+      context,
+      race.name,
+      race.source,
+      race.variantSources,
+    ),
+  );
+}
+
+export function pickAmellwindSpecies(
+  speciesList: Species[],
+  saveProficiencies: AbilityKey[],
+): Species | null {
+  const roots = speciesList.filter((species) => !species.isSubrace);
+  if (roots.length === 0) return null;
+
+  const matching = roots.filter((species) =>
+    speciesMatchesSaveProficiencies(species.abilityBonuses, saveProficiencies),
+  );
+
+  return pickRandom(matching.length > 0 ? matching : roots);
+}
+
+export function pickDndBackground(
+  backgrounds: DndBackground[],
+  rpgbotData: RpgbotRatingsData | null,
+  className: string,
+): DndBackground | null {
+  const preferred = prefer2024Edition(backgrounds);
+  if (preferred.length === 0) return null;
+
+  const classSlug = toRpgbotClassSlug(className);
+  if (!classSlug || !rpgbotData) {
+    return pickRandom(preferred);
+  }
+
+  const context: RpgbotLookupContext = {
+    classSlug,
+    guideKey: "class",
+    category: "background",
+  };
+
+  return pickByRpgbot(preferred, (background) =>
+    findRpgbotRating(
+      rpgbotData.byClass,
+      context,
+      background.name,
+      background.source,
+      background.variantSources,
+    ),
+  );
+}
+
+export function pickAmellwindBackground(
+  backgrounds: Background[],
+): Background | null {
+  const hunterInitiate = backgrounds.find((bg) =>
+    HUNTER_INITIATE_PATTERN.test(bg.name),
+  );
+  return hunterInitiate ?? null;
+}

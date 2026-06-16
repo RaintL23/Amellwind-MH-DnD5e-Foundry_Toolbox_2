@@ -80,6 +80,62 @@ export const STARTING_ARMOR_TABLE: GuideTable = {
   ],
 };
 
+/** XPHB 2024 — Starting Equipment at Higher Levels (DM guide). */
+export const DND_STARTING_EQUIPMENT_TABLE: GuideTable = {
+  colLabels: ["Starting Level", "Equipment and Money", "Magic Items"],
+  rows: [
+    ["2-4", "Normal starting equipment", "1 Common"],
+    [
+      "5-10",
+      "500 gp plus 1d10 × 25 gp plus normal starting equipment",
+      "1 Common, 1 Uncommon",
+    ],
+    [
+      "11-16",
+      "5,000 gp plus 1d10 × 250 gp plus normal starting equipment",
+      "2 Common, 3 Uncommon, 1 Rare",
+    ],
+    [
+      "17-20",
+      "20,000 gp plus 1d10 × 250 gp plus normal starting equipment",
+      "2 Common, 4 Uncommon, 3 Rare, 1 Very Rare",
+    ],
+  ],
+};
+
+export const DND_BUILDER_WORKFLOW_STEPS: BuilderWorkflowStep[] = [
+  {
+    step: 1,
+    title: "Choose Class & Subclass",
+    description:
+      "Pick your class first — it drives species, background, spells, and feat recommendations.",
+  },
+  {
+    step: 2,
+    title: "Set Level & Ability Scores",
+    description:
+      "Set your level and assign ability scores. For levels above 1, consult the XPHB starting equipment table.",
+  },
+  {
+    step: 3,
+    title: "Species & Background",
+    description:
+      "Choose a species and background. Use RPGBOT ratings when available for stronger builds.",
+  },
+  {
+    step: 4,
+    title: "Spells & Feats",
+    description:
+      "Select spells for casters and feats at ASI levels. Subclass options unlock at the appropriate level.",
+  },
+  {
+    step: 5,
+    title: "Starting Equipment",
+    description:
+      "Pick class and background starting equipment packages from the library detail panels.",
+  },
+];
+
 export const STARTING_MATERIALS_TABLE: GuideTable = {
   colLabels: ["Character Level", "Starting Materials"],
   rows: [
