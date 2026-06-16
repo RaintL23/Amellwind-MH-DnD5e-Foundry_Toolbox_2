@@ -21,6 +21,7 @@ import {
 } from "../utils/alignment.utils";
 import { Character } from "../models/Character";
 import { getPrimaryClassLevel } from "../utils/multiclass.utils";
+import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
 import { useBuilderInventory } from "./BuilderInventoryContext";
 import type { CharacterBuilderContextValue } from "./character-builder.types";
 import { useIdentitySlice } from "./slices/useIdentitySlice";
@@ -40,6 +41,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const [useAmellwindHomebrew, setUseAmellwindHomebrewState] = useState(
     () => loadUseAmellwindHomebrew(),
   );
+  const [abilityScoreMethod, setAbilityScoreMethod] =
+    useState<AbilityScoreGenerationMethod>("manual");
   const prevHomebrewRef = useRef(useAmellwindHomebrew);
 
   const proficiencyResetRef = useRef({
@@ -266,6 +269,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setCharacter(new Character());
     setAttacksPerTurnOverride(null);
     setUseUnarmedStrike(false);
+    setAbilityScoreMethod("manual");
     identity.resetIdentitySlice();
     proficiency.resetProficiencySlice();
     spell.resetSpellSlice();
@@ -289,6 +293,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setLevel,
       setAbilityScore,
       setAbilityScores,
+      abilityScoreMethod,
+      setAbilityScoreMethod,
       attacksPerTurnOverride,
       setAttacksPerTurnOverride,
       effectiveAttacksPerTurn: equipment.effectiveAttacksPerTurn,
@@ -454,6 +460,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setLevel,
       setAbilityScore,
       setAbilityScores,
+      abilityScoreMethod,
+      setAbilityScoreMethod,
       attacksPerTurnOverride,
       useUnarmedStrike,
       useAmellwindHomebrew,

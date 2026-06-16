@@ -33,13 +33,18 @@ export function pickSkillsFromGrant(
   grant: SkillProficiencyGrant,
   lookup: RpgbotLookupFn | null,
   exclude: Set<SkillKey>,
+  /** Skills from higher-priority sources — do not count toward this picker's quota. */
+  alreadyGranted: Set<SkillKey> = new Set(),
 ): SkillKey[] {
   if (grant.kind === "fixed") return [];
 
+  const isAvailable = (skill: SkillKey) =>
+    !exclude.has(skill) && !alreadyGranted.has(skill);
+
   const pool =
     grant.kind === "choose"
-      ? grant.from.filter((skill) => !exclude.has(skill))
-      : ALL_SKILL_KEYS.filter((skill) => !exclude.has(skill));
+      ? grant.from.filter(isAvailable)
+      : ALL_SKILL_KEYS.filter(isAvailable);
 
   const picked = pickMultipleByRpgbot(
     pool,
@@ -72,15 +77,20 @@ export function pickAllSkillChoices(
 export function pickIndexedSkillChoices(
   grants: SkillProficiencyGrant[],
   lookup: RpgbotLookupFn | null,
+  initialExclude: Set<SkillKey> = new Set(),
+  alreadyGranted: Set<SkillKey> = new Set(),
 ): Record<number, SkillKey[]> {
-  const exclude = new Set<SkillKey>();
+  const exclude = new Set(initialExclude);
   const result: Record<number, SkillKey[]> = {};
+  let grantIndex = 0;
 
-  grants.forEach((grant, index) => {
-    if (grant.kind === "choose" || grant.kind === "any") {
-      result[index] = pickSkillsFromGrant(grant, lookup, exclude);
-    }
-  });
+  for (const grant of grants) {
+    if (grant.kind !== "choose" && grant.kind !== "any") continue;
+
+    const picked = pickSkillsFromGrant(grant, lookup, exclude, alreadyGranted);
+    result[grantIndex] = picked;
+    grantIndex += 1;
+  }
 
   return result;
 }

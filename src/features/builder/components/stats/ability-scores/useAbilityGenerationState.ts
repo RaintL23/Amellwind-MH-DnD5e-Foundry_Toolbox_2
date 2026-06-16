@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AbilityKey } from "@/shared/types";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
 import {
@@ -15,15 +15,26 @@ import {
 import type { GenerationMethod } from "./constants";
 
 export function useAbilityGenerationState() {
-  const { character, setAbilityScore, setAbilityScores } =
-    useCharacterBuilder();
-  const [method, setMethod] = useState<GenerationMethod>("manual");
+  const {
+    character,
+    setAbilityScore,
+    setAbilityScores,
+    abilityScoreMethod: method,
+    setAbilityScoreMethod,
+  } = useCharacterBuilder();
   const [pool, setPool] = useState<number[]>([...STANDARD_ARRAY]);
   const [assignments, setAssignments] = useState<
     Partial<Record<AbilityKey, number>>
   >({});
   const [heroicRolls, setHeroicRolls] = useState(false);
   const [lastRolls, setLastRolls] = useState<number[] | null>(null);
+
+  useEffect(() => {
+    if (method !== "pointbuy") return;
+    setPool([]);
+    setAssignments({});
+    setLastRolls(null);
+  }, [method]);
 
   const syncAssignmentsToCharacter = useCallback(
     (next: Partial<Record<AbilityKey, number>>) => {
@@ -50,7 +61,7 @@ export function useAbilityGenerationState() {
   }, [setAbilityScores]);
 
   const handleMethodChange = (next: GenerationMethod) => {
-    setMethod(next);
+    setAbilityScoreMethod(next);
     if (next === "standard") initStandardArray();
     else if (next === "pointbuy") initPointBuy();
     else if (next === "dice") {

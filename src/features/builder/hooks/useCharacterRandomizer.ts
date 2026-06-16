@@ -36,9 +36,10 @@ import {
 } from "@/features/builder/utils/randomizer/identity-randomizer.utils";
 import {
   abilityModifier,
-  rollAndAssignAbilityScores,
+  buildClassPointBuyScores,
 } from "@/features/builder/utils/randomizer/ability-randomizer.utils";
 import { resolveClassAbilityPriority } from "@/features/builder/utils/randomizer/class-ability-priority.utils";
+import { skillsFromHigherPriority } from "@/features/builder/utils/skill-choice-hierarchy.utils";
 import {
   alreadyGrantedSkillsForFeatPicker,
   collectProficientSkillsFromChoices,
@@ -138,6 +139,7 @@ export function useCharacterRandomizer() {
     setSpecies,
     setBackground,
     setAbilityScores,
+    setAbilityScoreMethod,
     setClassSkillChoicesAtIndex,
     setBackgroundSkillChoices,
     setSpeciesSkillChoices,
@@ -222,7 +224,8 @@ export function useCharacterRandomizer() {
         classData,
         pickedSubclass,
       );
-      const abilityScores = rollAndAssignAbilityScores(abilityPriority);
+      setAbilityScoreMethod("pointbuy");
+      const abilityScores = buildClassPointBuyScores(abilityPriority);
       setAbilityScores(abilityScores);
       const primaryMod = abilityModifier(
         abilityScores[abilityPriority[0] ?? "cha"] ??
@@ -451,9 +454,28 @@ export function useCharacterRandomizer() {
         setClassLanguageChoicesAtIndex(Number(index), choices);
       }
 
+      const higherThanClass = skillsFromHigherPriority(
+        "class",
+        speciesGrants,
+        speciesSkillChoices,
+        backgroundGrants,
+        backgroundSkillChoices,
+        [],
+        [],
+      );
+      const alreadyGrantedClassSkills = new Set(
+        Object.keys(higherThanClass) as SkillKey[],
+      );
+      const classSkillExclude = new Set<SkillKey>([
+        ...speciesSkillChoices,
+        ...backgroundSkillChoices,
+        ...alreadyGrantedClassSkills,
+      ]);
       const classSkillChoices = pickIndexedSkillChoices(
         classData.skillChoiceGrants,
         featLookup,
+        classSkillExclude,
+        alreadyGrantedClassSkills,
       );
       for (const [index, choices] of Object.entries(classSkillChoices)) {
         setClassSkillChoicesAtIndex(Number(index), choices);
@@ -641,6 +663,7 @@ export function useCharacterRandomizer() {
     setSpecies,
     setBackground,
     setAbilityScores,
+    setAbilityScoreMethod,
     setClassSkillChoicesAtIndex,
     setBackgroundSkillChoices,
     setSpeciesSkillChoices,

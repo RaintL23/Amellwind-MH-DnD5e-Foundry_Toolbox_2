@@ -1,5 +1,11 @@
 import { AbilityKey, AbilityScores } from "@/shared/types";
 
+export type AbilityScoreGenerationMethod =
+  | "manual"
+  | "standard"
+  | "pointbuy"
+  | "dice";
+
 export const STANDARD_ARRAY = [15, 14, 13, 12, 10, 8] as const;
 
 export const POINT_BUY_BUDGET = 27;

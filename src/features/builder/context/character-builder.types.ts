@@ -40,6 +40,7 @@ import type {
 import type { DamageType } from "@/shared/types";
 import type { Character } from "../models/Character";
 import type { BuilderPersonality } from "../storage/builder-personality.storage";
+import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
 
 export interface CharacterBuilderContextValue {
   // Character
@@ -51,6 +52,8 @@ export interface CharacterBuilderContextValue {
   setLevel: (level: number) => void;
   setAbilityScore: (ability: AbilityKey, value: number) => void;
   setAbilityScores: (abilities: Partial<AbilityScores>) => void;
+  abilityScoreMethod: AbilityScoreGenerationMethod;
+  setAbilityScoreMethod: (method: AbilityScoreGenerationMethod) => void;
   attacksPerTurnOverride: number | null;
   setAttacksPerTurnOverride: (value: number | null) => void;
   effectiveAttacksPerTurn: number;
