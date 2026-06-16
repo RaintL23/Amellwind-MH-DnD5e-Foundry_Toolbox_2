@@ -1,6 +1,7 @@
 import type { DndItem, DndItemRarity } from "@/shared/types/dnd-item.types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import type { ItemBaseIndexes, RawItemEntity } from "../utils/item-raw.types";
+import { formatDndItemProperties } from "../utils/item-property.utils";
 import { itemId, unpackItemTypeUid } from "../utils/item-uids.utils";
 
 const RARITY_LABELS: Record<string, string> = {
@@ -181,8 +182,9 @@ export function mapDndItem(
       typeof raw.bonusWeapon === "string" ? raw.bonusWeapon : undefined,
     bonusAc: typeof raw.bonusAc === "string" ? raw.bonusAc : undefined,
     damage: mapDamage(raw),
-    properties: Array.isArray(raw.property)
-      ? (raw.property as unknown[]).map(String).join(", ")
-      : null,
+    properties: formatDndItemProperties(
+      Array.isArray(raw.property) ? raw.property : undefined,
+      indexes,
+    ),
   };
 }

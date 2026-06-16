@@ -59,6 +59,7 @@ export const PROPERTY_LABELS: Record<string, string> = {
   S: "Special",
   T: "Thrown",
   MHL: "Movable Heavy Load",
+  LD: "Loading",
 };
 
 export const DMG_TYPE_LABELS: Record<string, string> = {

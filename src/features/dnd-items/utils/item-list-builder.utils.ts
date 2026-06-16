@@ -49,8 +49,29 @@ function buildItemTypeIndex(itemTypes: RawItemType[]): Map<string, ItemTypeIndex
   return map;
 }
 
+function extractItemPropertyDisplayName(property: {
+  name?: string;
+  entries?: unknown[];
+}): string | undefined {
+  if (property.name) return property.name;
+  if (!Array.isArray(property.entries)) return undefined;
+
+  for (const entry of property.entries) {
+    if (typeof entry !== "object" || entry === null) continue;
+    const name = (entry as { name?: string }).name;
+    if (typeof name === "string" && name.trim()) return name;
+  }
+
+  return undefined;
+}
+
 function buildItemPropertyIndex(
-  itemProperties: { abbreviation: string; source?: string; name?: string }[],
+  itemProperties: {
+    abbreviation: string;
+    source?: string;
+    name?: string;
+    entries?: unknown[];
+  }[],
 ): Map<string, ItemPropertyIndexEntry> {
   const map = new Map<string, ItemPropertyIndexEntry>();
   for (const p of itemProperties) {
@@ -60,7 +81,7 @@ function buildItemPropertyIndex(
     map.set(key, {
       abbreviation: p.abbreviation,
       source: p.source,
-      name: p.name,
+      name: extractItemPropertyDisplayName(p),
     });
   }
   return map;
