@@ -12,6 +12,7 @@ import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 import { HomebrewModeToggle } from "../shared/HomebrewModeToggle";
 import { BuildCompletenessProvider } from "../../context/BuildCompletenessContext";
 import { RpgbotRatingsProvider } from "../../context/RpgbotRatingsContext";
+import { BuilderGrantSync } from "../BuilderGrantSync";
 
 export function BuilderPage() {
   return (
@@ -26,6 +27,7 @@ export function BuilderPage() {
 function BuilderPageContent() {
   return (
     <div className="flex h-full min-h-0 flex-col">
+      <BuilderGrantSync />
       <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 lg:px-6 lg:py-4">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>

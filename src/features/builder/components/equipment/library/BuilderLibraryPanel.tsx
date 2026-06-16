@@ -47,9 +47,6 @@ import { EmptyState } from "./shared/LibraryUi";
 import { EquipmentRarityFilterGroup } from "../../shared/EquipmentRarityFilterGroup";
 import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 import { useLibrarySearch } from "./hooks/useLibrarySearch";
-import { useClassGrantSync } from "./hooks/useClassGrantSync";
-import { useFeatGrantSync } from "./hooks/useFeatGrantSync";
-import { useSpeciesSpellGrantSync } from "./hooks/useSpeciesSpellGrantSync";
 import { toRpgbotClassSlug } from "@/features/builder/data/rpgbot-ratings.utils";
 import { RpgbotLegend } from "../../shared/RpgbotLegend";
 import { RpgbotLoadingHint } from "../../shared/RpgbotLoadingHint";
@@ -68,10 +65,6 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   const [featSearchHidden, setFeatSearchHidden] = useState(false);
   const [equipmentRarity, setEquipmentRarity] =
     useState<EquipmentRarityFilter>("Standard");
-
-  useClassGrantSync();
-  useFeatGrantSync();
-  useSpeciesSpellGrantSync();
 
   const {
     mainHand,
