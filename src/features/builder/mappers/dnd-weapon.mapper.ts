@@ -73,6 +73,8 @@ export function mapDndBaseItemToWeapon(raw: RawItemEntity): Weapon {
     rarityRows: [],
     baseFeatureNames: [],
     itemRarityLabel,
+    baseName:
+      typeof raw._baseName === "string" ? raw._baseName : undefined,
   };
 }
 

@@ -133,6 +133,23 @@ export type RpgbotLookupFn = (
   variantSources?: Array<string | null | undefined>,
 ) => RpgbotRatingLookupEntry | null;
 
+export interface EquipmentRpgbotLookupItem {
+  name: string;
+  source?: string;
+  variantSources?: string[];
+  baseName?: string;
+}
+
+/** Resolve RPGBOT rating for equipment, inheriting from the base item when present. */
+export function lookupEquipmentRpgbotRating(
+  lookup: RpgbotLookupFn | null | undefined,
+  item: EquipmentRpgbotLookupItem,
+): RpgbotRatingLookupEntry | null {
+  if (!lookup) return null;
+  const lookupName = item.baseName?.trim() || item.name;
+  return lookup(lookupName, item.source, item.variantSources);
+}
+
 export function createRpgbotLookupFn(
   data: RpgbotRatingsData | null,
   context: RpgbotLookupContext | null,

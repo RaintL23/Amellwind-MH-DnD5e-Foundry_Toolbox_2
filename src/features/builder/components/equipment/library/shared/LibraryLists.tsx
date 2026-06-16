@@ -19,7 +19,10 @@ import { ABILITY_SCORE_IMPROVEMENT } from "@/features/builder/utils/builder-clas
 import type { LibraryListOption } from "@/features/builder/utils/library-variant.utils";
 import { formatVariantSourcesLabel } from "@/features/builder/utils/library-variant.utils";
 import type { RpgbotLookupFn } from "@/features/builder/data/rpgbot-ratings.utils";
-import { sortByRpgbotRating } from "@/features/builder/data/rpgbot-ratings.utils";
+import {
+  lookupEquipmentRpgbotRating,
+  sortByRpgbotRating,
+} from "@/features/builder/data/rpgbot-ratings.utils";
 import {
   EmptyState,
   ItemRow,
@@ -101,13 +104,13 @@ export function WeaponList({
 
   const sortedInventory = sortByRpgbotRating(
     inventory,
-    (w) => rpgbotLookup?.(w.name, w.source, w.variantSources) ?? null,
-    (w) => w.name,
+    (w) => lookupEquipmentRpgbotRating(rpgbotLookup, w),
+    (w) => w.baseName ?? w.name,
   );
   const sortedCatalog = sortByRpgbotRating(
     catalog,
-    (w) => rpgbotLookup?.(w.name, w.source, w.variantSources) ?? null,
-    (w) => w.name,
+    (w) => lookupEquipmentRpgbotRating(rpgbotLookup, w),
+    (w) => w.baseName ?? w.name,
   );
 
   if (loading) return <EmptyState text="Loading weapons..." />;
@@ -124,7 +127,7 @@ export function WeaponList({
     const variantTrailing = w.variantSources?.length
       ? formatVariantSourcesLabel(w.variantSources)
       : null;
-    const rpgbotRating = rpgbotLookup?.(w.name, w.source, w.variantSources);
+    const rpgbotRating = lookupEquipmentRpgbotRating(rpgbotLookup, w);
 
     return (
       <ItemRow
@@ -193,13 +196,13 @@ export function ArmorList({
 
   const sortedInventory = sortByRpgbotRating(
     inventory,
-    (a) => rpgbotLookup?.(a.name, a.source) ?? null,
-    (a) => a.name,
+    (a) => lookupEquipmentRpgbotRating(rpgbotLookup, a),
+    (a) => a.baseName ?? a.name,
   );
   const sortedCatalog = sortByRpgbotRating(
     catalog,
-    (a) => rpgbotLookup?.(a.name, a.source) ?? null,
-    (a) => a.name,
+    (a) => lookupEquipmentRpgbotRating(rpgbotLookup, a),
+    (a) => a.baseName ?? a.name,
   );
 
   function renderArmorRow(
@@ -214,7 +217,7 @@ export function ArmorList({
       !isEquipped && getDisabledReason
         ? getDisabledReason(armorItem)
         : null;
-    const rpgbotRating = rpgbotLookup?.(armorItem.name, armorItem.source);
+    const rpgbotRating = lookupEquipmentRpgbotRating(rpgbotLookup, armorItem);
 
     return (
       <ItemRow

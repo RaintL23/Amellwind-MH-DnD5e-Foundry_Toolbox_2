@@ -60,6 +60,8 @@ export function mapDndBaseItemToArmor(raw: RawItemEntity): ArmorItem | null {
       weight: typeof raw.weight === "number" ? raw.weight : 6,
       contentSource: "dnd",
       itemRarityLabel,
+      baseName:
+        typeof raw._baseName === "string" ? raw._baseName : undefined,
       source: String(raw.source ?? "PHB"),
     };
   }
@@ -78,6 +80,8 @@ export function mapDndBaseItemToArmor(raw: RawItemEntity): ArmorItem | null {
     weight: typeof raw.weight === "number" ? raw.weight : 0,
     contentSource: "dnd",
     itemRarityLabel,
+    baseName:
+      typeof raw._baseName === "string" ? raw._baseName : undefined,
     source: String(raw.source ?? "PHB"),
   };
 }

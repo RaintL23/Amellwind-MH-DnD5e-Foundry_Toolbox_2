@@ -42,6 +42,8 @@ export interface Weapon {
   ammoType?: string;
   /** Normalized rarity label for D&D filters and badges. */
   itemRarityLabel?: string;
+  /** Base item name for magic variants (e.g. Glaive for Silvered Glaive). */
+  baseName?: string;
   /** Set on grouped catalog rows when the same name exists in multiple sources. */
   variantSources?: string[];
 }

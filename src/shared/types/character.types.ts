@@ -80,6 +80,8 @@ export interface ArmorItem {
   contentSource?: "dnd";
   /** Normalized rarity label for D&D filters and badges. */
   itemRarityLabel?: string;
+  /** Base item name for magic variants (e.g. Breastplate for Adamantine Breastplate). */
+  baseName?: string;
   source?: string;
 }
 
