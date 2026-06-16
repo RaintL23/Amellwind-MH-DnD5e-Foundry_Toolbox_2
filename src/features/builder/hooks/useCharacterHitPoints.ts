@@ -21,6 +21,7 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
     character,
     featSelections,
     speciesOriginFeat,
+    backgroundOriginFeat,
     class: classSelection,
     subclass,
     multiclassEnabled,
@@ -35,6 +36,9 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
     const activeFeats = [
       ...(speciesOriginFeat && !isAsiFeatSelection(speciesOriginFeat)
         ? [speciesOriginFeat]
+        : []),
+      ...(backgroundOriginFeat && !isAsiFeatSelection(backgroundOriginFeat)
+        ? [backgroundOriginFeat]
         : []),
       ...featSelections.filter(
         (feat): feat is NonNullable<typeof feat> =>
@@ -69,7 +73,7 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
     return () => {
       cancelled = true;
     };
-  }, [featSelections, speciesOriginFeat, character.level]);
+  }, [featSelections, speciesOriginFeat, backgroundOriginFeat, character.level]);
 
   return useMemo(() => {
     if (!classData?.hitDie) return null;

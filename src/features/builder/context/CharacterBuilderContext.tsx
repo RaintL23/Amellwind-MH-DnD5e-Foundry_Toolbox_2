@@ -334,6 +334,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setMulticlassEntrySubclass: identity.setMulticlassEntrySubclass,
       setPrimaryClassLevel,
       setSpeciesOriginFeat: identity.setSpeciesOriginFeat,
+      setBackgroundOriginFeat: identity.setBackgroundOriginFeat,
       setOptionalFeatureOriginFeatAtIndex: spell.setOptionalFeatureOriginFeatAtIndex,
       classData: identity.classData,
       classDataLoading: identity.classDataLoading,

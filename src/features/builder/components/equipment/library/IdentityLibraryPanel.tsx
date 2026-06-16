@@ -470,7 +470,12 @@ export function IdentityLibraryPanel({
             "featSummary" in identityDetail &&
             typeof identityDetail.featSummary === "string"
               ? identityDetail.featSummary
-              : null
+              : identitySource === "amellwind" &&
+                  identityDetail &&
+                  "originFeatGrant" in identityDetail &&
+                  identityDetail.originFeatGrant?.summary
+                ? identityDetail.originFeatGrant.summary
+                : null
           }
           sourceVariants={
             identitySource === "dnd" ? dndIdentitySourceVariants : undefined

@@ -26,6 +26,7 @@ import {
   parseOptionalFeatureSlot,
   resolveOptionalFeatureProgressions,
 } from "../../utils/class-optional-features.utils";
+import { resolveOriginFeatChooseTarget } from "../../utils/origin-feat.constants";
 import { useEffect, useMemo } from "react";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
 import { WeaponDetailPanel } from "./WeaponDetailPanel";
@@ -86,6 +87,7 @@ export function BuilderCenterPanel() {
     setMulticlassEntryClass,
     setMulticlassEntrySubclass,
     setSpeciesOriginFeat,
+    setBackgroundOriginFeat,
     setOptionalFeatureOriginFeatAtIndex,
     optionalFeatureOriginFeatSlots,
     optionalFeatureOriginFeats,
@@ -294,11 +296,18 @@ export function BuilderCenterPanel() {
       case "subclass":
         setSubclass(null);
         break;
-      case "origin-feat":
-        if (speciesOriginFeatGrant?.kind === "choose") {
+      case "origin-feat": {
+        const chooseTarget = resolveOriginFeatChooseTarget(
+          speciesOriginFeatGrant,
+          backgroundOriginFeatGrant,
+        );
+        if (chooseTarget === "species") {
           setSpeciesOriginFeat(null);
+        } else if (chooseTarget === "background") {
+          setBackgroundOriginFeat(null);
         }
         break;
+      }
       default:
         if (isMulticlassClassSlot(slot)) {
           setMulticlassEntryClass(parseMulticlassClassSlotIndex(slot), null);

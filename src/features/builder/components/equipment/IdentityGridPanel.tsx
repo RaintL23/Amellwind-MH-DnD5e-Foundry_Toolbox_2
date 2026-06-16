@@ -32,6 +32,7 @@ import {
   toMulticlassSubclassSlot,
 } from "../../utils/multiclass.utils";
 import { resolveOptionalFeatureProgressions } from "../../utils/class-optional-features.utils";
+import { hasOriginFeatChooseGrant } from "../../utils/origin-feat.constants";
 import type { Class } from "@/shared/types";
 import type { BuilderOptionalFeatureSelections } from "@/shared/types";
 import type { OptionalFeatureOriginFeatSlot } from "../../utils/optional-feature-feat-grants.utils";
@@ -119,7 +120,10 @@ export function IdentityGridPanel({
   const showOriginFeat = !!(
     speciesOriginFeatGrant || backgroundOriginFeatGrant
   );
-  const originFeatCanChange = speciesOriginFeatGrant?.kind === "choose";
+  const originFeatCanChange = hasOriginFeatChooseGrant(
+    speciesOriginFeatGrant,
+    backgroundOriginFeatGrant,
+  );
   const originFeatEquipped = speciesOriginFeat
     ? {
         name: speciesOriginFeat.name,
@@ -133,7 +137,12 @@ export function IdentityGridPanel({
     : backgroundOriginFeat
       ? {
           name: backgroundOriginFeat.name,
-          detail: "Background",
+          detail:
+            backgroundOriginFeat.source === "dnd2024"
+              ? "D&D 2024"
+              : backgroundOriginFeat.source === "dnd2014"
+                ? "D&D 2014"
+                : "Background",
         }
       : speciesOriginFeatGrant?.kind === "fixed"
         ? {
@@ -311,7 +320,7 @@ export function IdentityGridPanel({
           onClickEquip={() => onSelectSlot("origin-feat")}
           onClickDetails={() => onSelectSlot("origin-feat")}
           onUnequip={
-            originFeatCanChange && speciesOriginFeat
+            originFeatCanChange && (speciesOriginFeat || backgroundOriginFeat)
               ? () => onUnequipSlot("origin-feat")
               : undefined
           }

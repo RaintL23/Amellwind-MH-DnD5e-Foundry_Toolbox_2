@@ -8,6 +8,7 @@ import {
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
 import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
+import { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "@/features/builder/utils/origin-feat.constants";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -262,5 +263,6 @@ export function mapBackground(raw: any): Background {
     skillGrants,
     toolGrants,
     languageGrants,
+    originFeatGrant: AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
   };
 }

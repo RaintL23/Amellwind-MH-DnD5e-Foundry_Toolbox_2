@@ -23,6 +23,9 @@ import {
   parseOptionalOriginFeatSlotIndex,
 } from "@/features/builder/utils/builder-class.utils";
 import {
+  resolveOriginFeatChooseTarget,
+} from "@/features/builder/utils/origin-feat.constants";
+import {
   dedupeByNameToListOptions,
   entityToLibraryOption,
   filterLibraryOptions,
@@ -81,6 +84,7 @@ export function FeatLibraryPanel({
     optionalFeatureOriginFeats,
     setFeatAtIndex,
     setSpeciesOriginFeat,
+    setBackgroundOriginFeat,
     setOptionalFeatureOriginFeatAtIndex,
   } = useCharacterBuilder();
 
@@ -97,8 +101,12 @@ export function FeatLibraryPanel({
   const featSlotIndex = isFeatSlot ? parseFeatSlotIndex(selectedSlot) : null;
   const isAnyOriginFeatSlotSelected =
     isOriginFeatSlotSelected || isInvocationOriginFeatSlotSelected;
+  const originFeatChooseTarget = resolveOriginFeatChooseTarget(
+    speciesOriginFeatGrant,
+    backgroundOriginFeatGrant,
+  );
   const originFeatLocked =
-    speciesOriginFeatGrant?.kind === "choose"
+    originFeatChooseTarget !== null
       ? false
       : backgroundOriginFeatGrant?.kind === "fixed" ||
         speciesOriginFeatGrant?.kind === "fixed";
@@ -156,9 +164,11 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       setShowFeatList(
-        speciesOriginFeatGrant?.kind === "choose"
+        originFeatChooseTarget === "species"
           ? !speciesOriginFeat
-          : !(speciesOriginFeat ?? backgroundOriginFeat) || originFeatLocked,
+          : originFeatChooseTarget === "background"
+            ? !backgroundOriginFeat
+            : !(speciesOriginFeat ?? backgroundOriginFeat) || originFeatLocked,
       );
       return;
     }
@@ -171,6 +181,7 @@ export function FeatLibraryPanel({
     isInvocationOriginFeatSlotSelected,
     selectedFeat,
     originFeatLocked,
+    originFeatChooseTarget,
     speciesOriginFeatGrant,
     speciesOriginFeat,
     backgroundOriginFeat,
@@ -343,6 +354,14 @@ export function FeatLibraryPanel({
     handleSelectFeat({ id, name, source });
   }
 
+  function setOriginFeatSelection(selection: BuilderFeatSelection | null) {
+    if (originFeatChooseTarget === "background") {
+      setBackgroundOriginFeat(selection);
+      return;
+    }
+    setSpeciesOriginFeat(selection);
+  }
+
   function handleDndFeatSourceSelect(id: string) {
     const variant = dndFeatSourceVariants.find((v) => v.id === id);
     if (!variant || !selectedFeat) return;
@@ -359,7 +378,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
-      setSpeciesOriginFeat({
+      setOriginFeatSelection({
         id: variant.id,
         name: selectedFeat.name,
         source: selectedFeat.source,
@@ -385,7 +404,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
-      setSpeciesOriginFeat(selection);
+      setOriginFeatSelection(selection);
       setShowFeatList(false);
       return;
     }

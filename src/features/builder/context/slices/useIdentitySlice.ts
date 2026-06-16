@@ -19,6 +19,9 @@ import { getDndBackgroundById } from "@/features/dnd-backgrounds/services/dnd-ba
 import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.service";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { dndFeatToBuilderSelection } from "../../utils/origin-feat.utils";
+import {
+  AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
+} from "../../utils/origin-feat.constants";
 import { getFeatSlotLevels } from "../../utils/builder-class.utils";
 import {
   createEmptyMulticlassEntry,
@@ -170,6 +173,14 @@ export function useIdentitySlice({
     setSpeciesOriginFeatState(selection);
     if (!selection) setOriginFeatSkillChoicesState([]);
   }, []);
+
+  const setBackgroundOriginFeat = useCallback(
+    (selection: BuilderFeatSelection | null) => {
+      setBackgroundOriginFeatState(selection);
+      if (!selection) setOriginFeatSkillChoicesState([]);
+    },
+    [],
+  );
 
   const setClass = useCallback((selection: CharacterSelectionRef | null) => {
     setClassState(selection);
@@ -485,7 +496,10 @@ export function useIdentitySlice({
         setFactionState(mhBackground.faction);
       }
 
-      const grant = dndBackground?.originFeatGrant ?? null;
+      const grant =
+        dndBackground?.originFeatGrant ??
+        mhBackground?.originFeatGrant ??
+        (mhBackground ? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT : null);
       setBackgroundOriginFeatGrant(grant);
 
       if (!grant) {
@@ -609,6 +623,7 @@ export function useIdentitySlice({
     setSubclass,
     setFeatAtIndex,
     setSpeciesOriginFeat,
+    setBackgroundOriginFeat,
     setBackstoryNotes,
     setPersonality,
     setPersonalityField,

@@ -1,5 +1,7 @@
 import { Entry } from "./actor.types";
 
+import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
+
 export type BackgroundFaction = "hunters-guild" | "handlers-guild" | "wycademy";
 
 export interface BackgroundTable {
@@ -35,6 +37,8 @@ export interface Background {
   skillGrants: import("./proficiency.types").SkillProficiencyGrant[];
   toolGrants: import("./proficiency.types").NamedProficiencyGrant[];
   languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
+  /** D&D 2024-style origin feat grant (all AGMH backgrounds). */
+  originFeatGrant?: OriginFeatGrant | null;
 }
 
 export const BACKGROUND_FACTION_LABELS: Record<BackgroundFaction, string> = {

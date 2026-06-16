@@ -46,6 +46,7 @@ import type { OptionalFeatureOriginFeatSlot } from "./optional-feature-feat-gran
 import {
   ORIGIN_FEAT_SOURCE_NAME,
   formatInvocationOriginFeatSourceName,
+  hasOriginFeatChooseGrant,
   isInvocationOriginFeatSourceName,
 } from "./origin-feat.constants";
 import {
@@ -338,7 +339,10 @@ export function evaluateBuildCompleteness(
   }
 
   if (
-    input.speciesOriginFeatGrant?.kind === "choose" &&
+    hasOriginFeatChooseGrant(
+      input.speciesOriginFeatGrant,
+      input.backgroundOriginFeatGrant,
+    ) &&
     !input.speciesOriginFeat &&
     !input.backgroundOriginFeat
   ) {

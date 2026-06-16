@@ -21,6 +21,7 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
     character,
     featSelections,
     speciesOriginFeat,
+    backgroundOriginFeat,
     subclass,
     mainHand,
     offHand,
@@ -46,6 +47,9 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
     const activeFeats = [
       ...(speciesOriginFeat && !isAsiFeatSelection(speciesOriginFeat)
         ? [speciesOriginFeat]
+        : []),
+      ...(backgroundOriginFeat && !isAsiFeatSelection(backgroundOriginFeat)
+        ? [backgroundOriginFeat]
         : []),
       ...featSelections.filter(
         (feat): feat is NonNullable<typeof feat> =>
@@ -79,7 +83,7 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
     return () => {
       cancelled = true;
     };
-  }, [featSelections, speciesOriginFeat]);
+  }, [featSelections, speciesOriginFeat, backgroundOriginFeat]);
 
   const runeBonuses = useMemo(
     () =>

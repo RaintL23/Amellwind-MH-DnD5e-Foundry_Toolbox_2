@@ -109,6 +109,7 @@ export interface CharacterBuilderContextValue {
   setPrimaryClassLevel: (level: number) => void;
 
   setSpeciesOriginFeat: (selection: BuilderFeatSelection | null) => void;
+  setBackgroundOriginFeat: (selection: BuilderFeatSelection | null) => void;
   setOptionalFeatureOriginFeatAtIndex: (
     index: number,
     selection: BuilderFeatSelection | null,
