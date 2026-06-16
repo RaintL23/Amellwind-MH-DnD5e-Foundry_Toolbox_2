@@ -38,6 +38,48 @@ function speciesMatchesSaveProficiencies(
   return saveProficiencies.some((ability) => boosted.has(ability));
 }
 
+function abilityBonusesIncludeAny(
+  abilityBonuses: AbilityBonus[],
+  abilities: AbilityKey[],
+): boolean {
+  if (abilities.length === 0) return true;
+  const supported = new Set<AbilityKey>();
+  for (const bonus of abilityBonuses) {
+    if (bonus.kind === "fixed") {
+      for (const key of Object.keys(bonus.bonuses) as AbilityKey[]) {
+        if (bonus.bonuses[key]) supported.add(key);
+      }
+      continue;
+    }
+    for (const key of bonus.from) supported.add(key);
+  }
+  return abilities.some((ability) => supported.has(ability));
+}
+
+function filterBackgroundsByClassAbilities(
+  backgrounds: DndBackground[],
+  preferredAbilities: AbilityKey[],
+): DndBackground[] {
+  if (backgrounds.length === 0 || preferredAbilities.length === 0) {
+    return backgrounds;
+  }
+
+  const [primary] = preferredAbilities;
+  if (primary) {
+    const primaryMatches = backgrounds.filter((background) =>
+      abilityBonusesIncludeAny(background.abilityBonuses, [primary]),
+    );
+    if (primaryMatches.length > 0) return primaryMatches;
+  }
+
+  const topThreeMatches = backgrounds.filter((background) =>
+    abilityBonusesIncludeAny(background.abilityBonuses, preferredAbilities.slice(0, 3)),
+  );
+  if (topThreeMatches.length > 0) return topThreeMatches;
+
+  return backgrounds;
+}
+
 export function pickDndSpecies(
   races: DndRace[],
   rpgbotData: RpgbotRatingsData | null,
@@ -72,13 +114,14 @@ export function pickDndSpecies(
 
 export function pickAmellwindSpecies(
   speciesList: Species[],
-  saveProficiencies: AbilityKey[],
+  preferredAbilities: AbilityKey[],
 ): Species | null {
   const roots = speciesList.filter((species) => !species.isSubrace);
   if (roots.length === 0) return null;
 
+  const relevant = preferredAbilities.slice(0, 3);
   const matching = roots.filter((species) =>
-    speciesMatchesSaveProficiencies(species.abilityBonuses, saveProficiencies),
+    speciesMatchesSaveProficiencies(species.abilityBonuses, relevant),
   );
 
   return pickRandom(matching.length > 0 ? matching : roots);
@@ -88,13 +131,18 @@ export function pickDndBackground(
   backgrounds: DndBackground[],
   rpgbotData: RpgbotRatingsData | null,
   className: string,
+  preferredAbilities: AbilityKey[] = [],
 ): DndBackground | null {
   const preferred = prefer2024Edition(backgrounds);
   if (preferred.length === 0) return null;
+  const compatible = filterBackgroundsByClassAbilities(
+    preferred,
+    preferredAbilities,
+  );
 
   const classSlug = toRpgbotClassSlug(className);
   if (!classSlug || !rpgbotData) {
-    return pickRandom(preferred);
+    return pickRandom(compatible);
   }
 
   const context: RpgbotLookupContext = {
@@ -103,7 +151,7 @@ export function pickDndBackground(
     category: "background",
   };
 
-  return pickByRpgbot(preferred, (background) =>
+  return pickByRpgbot(compatible, (background) =>
     findRpgbotRating(
       rpgbotData.byClass,
       context,

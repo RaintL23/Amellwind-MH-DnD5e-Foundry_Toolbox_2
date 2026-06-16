@@ -4,6 +4,19 @@ import type { DamageType } from "./actor.types";
 
 export type DndRaceKind = "species" | "subrace" | "lineage";
 
+/**
+ * A named spell-group choice offered by a species trait (e.g. Tiefling Fiendish Legacy).
+ * The player must pick one group; each group grants different cantrips and a specific resistance.
+ */
+export interface SpeciesNamedSpellGroup {
+  /** Display name (e.g. "Abyssal", "Chthonic", "Infernal"). */
+  name: string;
+  /** Cantrips granted specifically by this group (display names, e.g. "Poison Spray"). */
+  cantrips: string[];
+  /** Damage resistance linked to this group (e.g. "poison"). */
+  resistance?: DamageType;
+}
+
 export type DndRaceSize =
   | "Tiny"
   | "Small"
@@ -42,6 +55,17 @@ export interface DndRace {
   originFeatGrant?: OriginFeatGrant | null;
   languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
   defenseGrants: import("./proficiency.types").DefenseGrant[];
+  /**
+   * Mutually-exclusive named spell groups the player must choose from
+   * (e.g. Tiefling Fiendish Legacy: Abyssal / Chthonic / Infernal).
+   * Only present when the species has 2+ named additionalSpells entries.
+   */
+  namedSpellGroups?: SpeciesNamedSpellGroup[];
+  /**
+   * Cantrips always granted regardless of group choice
+   * (e.g. Thaumaturgy from Tiefling's Otherworldly Presence).
+   */
+  universalCantrips?: string[];
 }
 
 export const DND_RACE_KIND_LABELS: Record<DndRaceKind, string> = {

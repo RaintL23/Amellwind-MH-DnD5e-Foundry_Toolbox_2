@@ -81,6 +81,7 @@ export function useIdentitySlice({
   const [useTashaOrigin, setUseTashaOrigin] = useState(false);
   const [tashaPlus2, setTashaPlus2] = useState<AbilityKey | null>(null);
   const [tashaPlus1, setTashaPlus1] = useState<AbilityKey | null>(null);
+  const [speciesSpellGroupChoice, setSpeciesSpellGroupChoiceState] = useState<string | null>(null);
   const [speciesAbilityChoices, setSpeciesAbilityChoices] = useState<
     (AbilityKey | null)[]
   >([]);
@@ -154,6 +155,10 @@ export function useIdentitySlice({
     [],
   );
 
+  const setSpeciesSpellGroupChoice = useCallback((name: string | null) => {
+    setSpeciesSpellGroupChoiceState(name);
+  }, []);
+
   const setSpecies = useCallback((selection: CharacterSelectionRef | null) => {
     setSpeciesState(selection);
     setSpeciesData(null);
@@ -161,6 +166,7 @@ export function useIdentitySlice({
     setSpeciesOriginFeatGrant(null);
     setSpeciesOriginFeatState(null);
     setOriginFeatSkillChoicesState([]);
+    setSpeciesSpellGroupChoiceState(null);
     onSpeciesChange();
     if (!selection) {
       setUseTashaOrigin(false);
@@ -547,6 +553,7 @@ export function useIdentitySlice({
       setUseTashaOrigin(false);
       setTashaPlus2(null);
       setTashaPlus1(null);
+      setSpeciesSpellGroupChoiceState(null);
     }
 
     if (backgroundRef && (await isAmellwindBackgroundSelection(backgroundRef))) {
@@ -587,6 +594,7 @@ export function useIdentitySlice({
     setOriginFeatSkillChoicesState([]);
     setSpeciesOriginFeatGrant(null);
     setSpeciesOriginFeatState(null);
+    setSpeciesSpellGroupChoiceState(null);
   }, []);
 
   return {
@@ -631,6 +639,8 @@ export function useIdentitySlice({
     setUseTashaOrigin,
     setTashaPlus2,
     setTashaPlus1,
+    speciesSpellGroupChoice,
+    setSpeciesSpellGroupChoice,
     setSpeciesAbilityChoice,
     setBackgroundAsiMode,
     setBackgroundAsiPlus2,

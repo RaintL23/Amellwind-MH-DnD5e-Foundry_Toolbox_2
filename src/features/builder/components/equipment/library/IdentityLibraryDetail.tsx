@@ -1,4 +1,4 @@
-import { ScrollText, Users } from "lucide-react";
+import { ScrollText, Sparkles, Users } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -24,6 +24,7 @@ import {
   type SpeciesTable,
   type SpeciesTrait,
 } from "@/shared/types";
+import type { SpeciesNamedSpellGroup } from "@/shared/types/dnd-race.types";
 import { DndRichText } from "@/shared/components/DndRichText";
 import type {
   StartingEquipmentOffers,
@@ -51,6 +52,14 @@ interface IdentityLibraryDetailProps {
   bookNames?: BookSourceNameMap;
   startingEquipmentOffers?: StartingEquipmentOffers;
   startingEquipmentSource?: StartingEquipmentSource;
+  /** Named spell-group choices (e.g. Tiefling Fiendish Legacy). */
+  namedSpellGroups?: SpeciesNamedSpellGroup[];
+  /** Currently selected legacy group name. */
+  activeLegacyId?: string | null;
+  /** Called when the user selects (or deselects) a legacy. */
+  onLegacySelect?: (name: string | null) => void;
+  /** Cantrips always granted regardless of group choice. */
+  universalCantrips?: string[];
 }
 
 function DetailTable({ caption, colLabels, rows }: SpeciesTable) {
@@ -220,20 +229,74 @@ function SpeciesBonuses({
   );
 }
 
+function SpeciesGrantedCantrips({
+  universalCantrips,
+  namedSpellGroups,
+  activeLegacyId,
+}: {
+  universalCantrips?: string[];
+  namedSpellGroups?: SpeciesNamedSpellGroup[];
+  activeLegacyId?: string | null;
+}) {
+  const activeLegacy = namedSpellGroups?.find(
+    (g) => g.name.toLowerCase() === (activeLegacyId ?? "").toLowerCase(),
+  );
+
+  const legacyCantrips = activeLegacy?.cantrips ?? [];
+  const allCantrips = [
+    ...(universalCantrips ?? []),
+    ...legacyCantrips,
+  ];
+
+  if (allCantrips.length === 0) return null;
+
+  return (
+    <div className="mt-2 rounded-md border border-amber-500/20 bg-amber-500/5 px-2 py-1.5">
+      <p className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-amber-400">
+        <Sparkles className="h-3 w-3" aria-hidden />
+        Cantrips otorgados por especie
+      </p>
+      <div className="flex flex-wrap gap-1">
+        {allCantrips.map((cantrip) => (
+          <Badge
+            key={cantrip}
+            variant="outline"
+            className="border-amber-500/40 text-[10px] text-amber-300"
+          >
+            {cantrip}
+          </Badge>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function SpeciesDetailBody({
   species,
   subspeciesTraits = [],
   subspeciesLabel,
   subspeciesAbilitySummary,
+  namedSpellGroups,
+  universalCantrips,
+  activeLegacyId,
 }: {
   species: Species;
   subspeciesTraits?: SpeciesTrait[];
   subspeciesLabel?: string | null;
   subspeciesAbilitySummary?: string | null;
+  namedSpellGroups?: SpeciesNamedSpellGroup[];
+  universalCantrips?: string[];
+  activeLegacyId?: string | null;
 }) {
   const resistances = species.resistances ?? [];
   const traitTags = species.traitTags ?? [];
   const traits = species.traits ?? [];
+
+  // Resistance from chosen legacy (overrides the "choose" summary from species data)
+  const activeLegacy = namedSpellGroups?.find(
+    (g) => g.name.toLowerCase() === (activeLegacyId ?? "").toLowerCase(),
+  );
+  const legacyResistance = activeLegacy?.resistance;
 
   return (
     <>
@@ -258,19 +321,27 @@ function SpeciesDetailBody({
             </p>
           </div>
         )}
-        {(resistances.length > 0 || species.resistanceSummary) && (
+        {(resistances.length > 0 || legacyResistance || species.resistanceSummary) && (
           <div className="col-span-2 rounded-md border border-border bg-muted/20 px-2 py-1.5">
             <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
               Resistencias
             </p>
             <p className="font-medium capitalize text-foreground">
-              {[...resistances, species.resistanceSummary]
-                .filter(Boolean)
-                .join(" · ")}
+              {legacyResistance
+                ? legacyResistance
+                : [...resistances, species.resistanceSummary]
+                    .filter(Boolean)
+                    .join(" · ")}
             </p>
           </div>
         )}
       </div>
+
+      <SpeciesGrantedCantrips
+        universalCantrips={universalCantrips}
+        namedSpellGroups={namedSpellGroups}
+        activeLegacyId={activeLegacyId}
+      />
 
       {traitTags.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-1">
@@ -438,6 +509,10 @@ export function IdentityLibraryDetail({
   bookNames = {},
   startingEquipmentOffers,
   startingEquipmentSource,
+  namedSpellGroups,
+  activeLegacyId = null,
+  onLegacySelect,
+  universalCantrips,
 }: IdentityLibraryDetailProps) {
   const isSpecies = !!species;
   const name = species?.name ?? background?.name ?? "";
@@ -472,6 +547,17 @@ export function IdentityLibraryDetail({
               activeId={activeSubspeciesId}
               onSelect={onSubspeciesSelect}
               accent="sky"
+              className="mb-2"
+            />
+          )}
+          {namedSpellGroups && namedSpellGroups.length > 0 && onLegacySelect && (
+            <NamedVariantSwitcher
+              label="Fiendish Legacy"
+              options={namedSpellGroups.map((g) => ({ id: g.name, name: g.name }))}
+              activeId={activeLegacyId}
+              onSelect={onLegacySelect}
+              accent="violet"
+              includeBaseOption={false}
               className="mb-2"
             />
           )}
@@ -523,6 +609,9 @@ export function IdentityLibraryDetail({
               subspeciesTraits={subspeciesTraits}
               subspeciesLabel={subspeciesLabel}
               subspeciesAbilitySummary={subspeciesAbilitySummary}
+              namedSpellGroups={namedSpellGroups}
+              universalCantrips={universalCantrips}
+              activeLegacyId={activeLegacyId}
             />
           )}
           {background && (

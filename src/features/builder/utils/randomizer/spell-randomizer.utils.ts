@@ -15,6 +15,7 @@ import {
   type CharacterSpellListContext,
 } from "../subclass-spells.utils";
 import { pickByRpgbot, pickMultipleByRpgbot } from "./character-randomizer.utils";
+import { filterSpellsForClassFit } from "./spell-class-fit.utils";
 
 function parseSpellDamageRoll(description: string[]): string | undefined {
   const text = description.join(" ");
@@ -76,8 +77,10 @@ function filterEligibleSpells(
   allSpells: Spell[],
   ctx: CharacterSpellListContext,
   spellLevel: number,
+  classData: Class,
+  subclass: Subclass | null,
 ): Spell[] {
-  return allSpells.filter(
+  const eligible = allSpells.filter(
     (spell) =>
       spell.level === spellLevel &&
       spellMatchesCharacterSpellList(spell, {
@@ -85,6 +88,7 @@ function filterEligibleSpells(
         selectedSpellLevel: spellLevel,
       }),
   );
+  return filterSpellsForClassFit(eligible, classData, subclass);
 }
 
 export function buildRandomSpellSelections(params: {
@@ -139,7 +143,13 @@ export function buildRandomSpellSelections(params: {
       isPact,
       spellcastingFromSubclass,
     );
-    const cantrips = filterEligibleSpells(allSpells, ctx, 0);
+    const cantrips = filterEligibleSpells(
+      allSpells,
+      ctx,
+      0,
+      classData,
+      subclass,
+    );
     const picked = pickMultipleByRpgbot(
       cantrips,
       cantripCount,
@@ -167,15 +177,19 @@ export function buildRandomSpellSelections(params: {
       true,
       spellcastingFromSubclass,
     );
-    const pool = allSpells.filter(
-      (spell) =>
-        spell.level > 0 &&
-        spell.level <= (availableSpellSlotLevels[0] ?? 1) &&
-        spellMatchesCharacterSpellList(spell, {
-          ...ctx,
-          selectedSpellLevel: spell.level,
-          isPactPool: true,
-        }),
+    const pool = filterSpellsForClassFit(
+      allSpells.filter(
+        (spell) =>
+          spell.level > 0 &&
+          spell.level <= (availableSpellSlotLevels[0] ?? 1) &&
+          spellMatchesCharacterSpellList(spell, {
+            ...ctx,
+            selectedSpellLevel: spell.level,
+            isPactPool: true,
+          }),
+      ),
+      classData,
+      subclass,
     );
     const picked = pickMultipleByRpgbot(
       pool,
@@ -201,7 +215,13 @@ export function buildRandomSpellSelections(params: {
       false,
       spellcastingFromSubclass,
     );
-    const pool = filterEligibleSpells(allSpells, ctx, spellLevel);
+    const pool = filterEligibleSpells(
+      allSpells,
+      ctx,
+      spellLevel,
+      classData,
+      subclass,
+    );
     const perLevel = Math.max(1, Math.ceil(remaining / availableSpellSlotLevels.length));
     const picked = pickMultipleByRpgbot(
       pool,

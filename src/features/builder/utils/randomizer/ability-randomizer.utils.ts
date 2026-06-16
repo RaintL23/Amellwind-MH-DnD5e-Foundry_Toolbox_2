@@ -1,16 +1,19 @@
 import type { AbilityKey, AbilityScores } from "@/shared/types";
 import { ABILITY_KEYS, rollSixAbilityScores } from "../ability-scores";
 
-/** Assign rolled scores prioritizing class saving-throw abilities. */
+/**
+ * Assign rolled scores using explicit priority order.
+ * The highest roll goes to priority[0] (primary stat), then descending.
+ */
 export function assignRolledAbilityScores(
   rolled: number[],
-  saveProficiencies: AbilityKey[],
+  abilityPriority: AbilityKey[],
 ): Partial<AbilityScores> {
   const sorted = [...rolled].sort((a, b) => b - a);
-  const priority: AbilityKey[] = [
-    ...saveProficiencies,
-    ...ABILITY_KEYS.filter((key) => !saveProficiencies.includes(key)),
-  ];
+  const priority =
+    abilityPriority.length > 0
+      ? abilityPriority
+      : [...ABILITY_KEYS];
 
   const result: Partial<AbilityScores> = {};
   priority.forEach((ability, index) => {
@@ -22,12 +25,12 @@ export function assignRolledAbilityScores(
 }
 
 export function rollAndAssignAbilityScores(
-  saveProficiencies: AbilityKey[],
+  abilityPriority: AbilityKey[],
   heroic = false,
 ): Partial<AbilityScores> {
   return assignRolledAbilityScores(
     rollSixAbilityScores(heroic),
-    saveProficiencies,
+    abilityPriority,
   );
 }
 

@@ -35,6 +35,7 @@ import {
   abilityModifier,
   rollAndAssignAbilityScores,
 } from "@/features/builder/utils/randomizer/ability-randomizer.utils";
+import { resolveClassAbilityPriority } from "@/features/builder/utils/randomizer/class-ability-priority.utils";
 import {
   pickIndexedSkillChoices,
   pickAllSkillChoices,
@@ -54,14 +55,14 @@ function toSelectionRef(id: string, name: string): CharacterSelectionRef {
 
 function assignSpeciesAbilityChoices(
   bonuses: AbilityBonus[],
-  saveProficiencies: AbilityKey[],
+  abilityPriority: AbilityKey[],
   setChoice: (index: number, ability: AbilityKey | null) => void,
 ): void {
   let index = 0;
   for (const bonus of bonuses) {
     if (bonus.kind !== "choose") continue;
     const preferred =
-      saveProficiencies.find((ability) => bonus.from.includes(ability)) ??
+      abilityPriority.find((ability) => bonus.from.includes(ability)) ??
       bonus.from[0] ??
       null;
     setChoice(index, preferred);
@@ -71,7 +72,7 @@ function assignSpeciesAbilityChoices(
 
 function assignBackgroundAsi(
   bonuses: AbilityBonus[],
-  saveProficiencies: AbilityKey[],
+  abilityPriority: AbilityKey[],
   setMode: (mode: "plus2plus1" | "plus1each" | null) => void,
   setPlus2: (ability: AbilityKey | null) => void,
   setPlus1: (ability: AbilityKey | null) => void,
@@ -79,9 +80,14 @@ function assignBackgroundAsi(
   const weighted = bonuses.find((bonus) => bonus.kind === "weightedDistribution");
   if (!weighted || weighted.kind !== "weightedDistribution") return;
 
-  const primary = saveProficiencies[0] ?? weighted.from[0] ?? null;
+  const primary =
+    abilityPriority.find((ability) => weighted.from.includes(ability)) ??
+    weighted.from[0] ??
+    null;
   const secondary =
-    saveProficiencies.find((ability) => ability !== primary) ??
+    abilityPriority.find(
+      (ability) => ability !== primary && weighted.from.includes(ability),
+    ) ??
     weighted.from.find((ability) => ability !== primary) ??
     null;
 
@@ -122,6 +128,7 @@ export function useCharacterRandomizer() {
     addSpell,
     clearSpells,
     setBackstoryNotes,
+    setSpeciesSpellGroupChoice,
   } = builder;
 
   const randomize = useCallback(async () => {
@@ -178,11 +185,16 @@ export function useCharacterRandomizer() {
       }
       await delay();
 
-      const abilityScores = rollAndAssignAbilityScores(
-        classData.saveProficiencies,
+      const abilityPriority = resolveClassAbilityPriority(
+        classData,
+        pickedSubclass,
       );
+      const abilityScores = rollAndAssignAbilityScores(abilityPriority);
       setAbilityScores(abilityScores);
-      const chaMod = abilityModifier(abilityScores.cha ?? character.abilities.cha);
+      const primaryMod = abilityModifier(
+        abilityScores[abilityPriority[0] ?? "cha"] ??
+          character.abilities[abilityPriority[0] ?? "cha"],
+      );
 
       const classSlug = toRpgbotClassSlug(classData.name);
       const speciesLookup = createLookup(
@@ -225,14 +237,14 @@ export function useCharacterRandomizer() {
       if (useAmellwindHomebrew) {
         const pickedSpecies = pickAmellwindSpecies(
           amellwindSpecies,
-          classData.saveProficiencies,
+          abilityPriority,
         );
         if (pickedSpecies) {
           speciesName = pickedSpecies.name;
           setSpecies(toSelectionRef(pickedSpecies.id, pickedSpecies.name));
           assignSpeciesAbilityChoices(
             pickedSpecies.abilityBonuses,
-            classData.saveProficiencies,
+            abilityPriority,
             setSpeciesAbilityChoice,
           );
         }
@@ -257,7 +269,7 @@ export function useCharacterRandomizer() {
           if (speciesDetail) {
             assignSpeciesAbilityChoices(
               speciesDetail.abilityBonuses,
-              classData.saveProficiencies,
+              abilityPriority,
               setSpeciesAbilityChoice,
             );
             const speciesSkills = pickAllSkillChoices(
@@ -275,6 +287,27 @@ export function useCharacterRandomizer() {
             if (originFeat && speciesDetail.originFeatGrant?.kind === "choose") {
               setSpeciesOriginFeat(originFeat);
             }
+
+            // Pick a random Fiendish Legacy (or similar named spell group)
+            if (speciesDetail.namedSpellGroups && speciesDetail.namedSpellGroups.length > 0) {
+              const randomIndex = Math.floor(Math.random() * speciesDetail.namedSpellGroups.length);
+              const chosenGroup = speciesDetail.namedSpellGroups[randomIndex];
+              if (chosenGroup) {
+                setSpeciesSpellGroupChoice(chosenGroup.name);
+              }
+            }
+
+            // Pre-select universal cantrips granted by the species (e.g. Thaumaturgy for Tiefling)
+            if (speciesDetail.universalCantrips && speciesDetail.universalCantrips.length > 0) {
+              for (const cantripName of speciesDetail.universalCantrips) {
+                addSpell(0, {
+                  id: cantripName.toLowerCase().replace(/\s+/g, "-"),
+                  name: cantripName,
+                  level: 0,
+                  source: speciesDetail.source,
+                });
+              }
+            }
           }
         }
 
@@ -282,6 +315,7 @@ export function useCharacterRandomizer() {
           dndBackgrounds,
           rpgbotData,
           classData.name,
+          abilityPriority,
         );
         if (pickedBackground) {
           backgroundName = pickedBackground.name;
@@ -294,7 +328,7 @@ export function useCharacterRandomizer() {
           if (backgroundDetail) {
             assignBackgroundAsi(
               backgroundDetail.abilityBonuses,
-              classData.saveProficiencies,
+              abilityPriority,
               setBackgroundAsiMode,
               setBackgroundAsiPlus2,
               setBackgroundAsiPlus1,
@@ -389,7 +423,7 @@ export function useCharacterRandomizer() {
         raceName: speciesName,
         backgroundName,
         className: classData.name,
-        charismaModifier: chaMod,
+        charismaModifier: primaryMod,
       });
       if (backstory) {
         setBackstoryNotes(backstory);
@@ -428,6 +462,7 @@ export function useCharacterRandomizer() {
     addSpell,
     clearSpells,
     setBackstoryNotes,
+    setSpeciesSpellGroupChoice,
     rpgbotData,
     createLookup,
     addEquipmentBundle,

@@ -109,6 +109,9 @@ export interface CharacterBuilderContextValue {
   setPrimaryClassLevel: (level: number) => void;
 
   setSpeciesOriginFeat: (selection: BuilderFeatSelection | null) => void;
+  /** Name of the chosen named-spell-group (e.g. "Abyssal" for Tiefling). Null = not chosen yet. */
+  speciesSpellGroupChoice: string | null;
+  setSpeciesSpellGroupChoice: (name: string | null) => void;
   setBackgroundOriginFeat: (selection: BuilderFeatSelection | null) => void;
   setOptionalFeatureOriginFeatAtIndex: (
     index: number,

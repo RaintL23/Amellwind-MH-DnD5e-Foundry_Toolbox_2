@@ -9,6 +9,7 @@ import type {
   DndRace,
   DndRaceKind,
   DndRaceSize,
+  SpeciesNamedSpellGroup,
 } from "@/shared/types";
 import { ABILITY_LABELS as LABELS } from "@/shared/types";
 import { SIZE_MAP } from "@/shared/utils/cr.utils";
@@ -186,6 +187,92 @@ function mapResistances(resist: unknown): { fixed: DamageType[]; summary: string
   return { fixed, summary };
 }
 
+/** Strip 5etools markup from a spell entry: "thaumaturgy|xphb#c" → "Thaumaturgy" */
+function extractSpellName(raw: string): string {
+  const base = raw.split("|")[0].split("#")[0].trim().toLowerCase();
+  return base.replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Extract cantrip names (entries ending with "#c") from a `known.1` list. */
+function extractCantripsFromKnown(known: unknown): string[] {
+  if (typeof known !== "object" || known === null) return [];
+  const k = known as Raw;
+  const level1 = k["1"];
+  if (!Array.isArray(level1)) return [];
+  return (level1 as unknown[])
+    .filter((entry) => typeof entry === "string" && entry.includes("#c"))
+    .map((entry) => extractSpellName(String(entry)));
+}
+
+/**
+ * Build a map of legacy name → resistance from _versions metadata.
+ * _versions items have names like "Tiefling; Abyssal Legacy" and carry their own `resist` array.
+ */
+function buildVersionResistanceMap(versions: unknown): Map<string, DamageType> {
+  const map = new Map<string, DamageType>();
+  if (!Array.isArray(versions)) return map;
+  for (const v of versions) {
+    if (typeof v !== "object" || v === null) continue;
+    const ver = v as Raw;
+    const fullName = String(ver.name ?? "");
+    const resist = ver.resist;
+    if (!Array.isArray(resist) || resist.length === 0) continue;
+    const firstResist = String(resist[0]) as DamageType;
+    // Match like "Tiefling; Abyssal Legacy" → key "abyssal"
+    const semicolonPart = fullName.includes(";") ? fullName.split(";")[1] : fullName;
+    const legacyName = semicolonPart.replace(/legacy/i, "").trim().toLowerCase();
+    if (legacyName) map.set(legacyName, firstResist);
+  }
+  return map;
+}
+
+interface ParsedAdditionalSpells {
+  namedSpellGroups: SpeciesNamedSpellGroup[];
+  universalCantrips: string[];
+}
+
+function parseAdditionalSpells(additionalSpells: unknown, versions: unknown): ParsedAdditionalSpells {
+  if (!Array.isArray(additionalSpells) || additionalSpells.length === 0) {
+    return { namedSpellGroups: [], universalCantrips: [] };
+  }
+
+  const versionResistMap = buildVersionResistanceMap(versions);
+
+  // Multiple entries with a `name` field → player must choose one group
+  const namedEntries = (additionalSpells as Raw[]).filter(
+    (entry) => typeof entry === "object" && entry !== null && typeof entry.name === "string",
+  );
+
+  if (namedEntries.length < 2) {
+    // Single unnamed entry — extract universal cantrips only
+    const single = additionalSpells[0] as Raw;
+    return {
+      namedSpellGroups: [],
+      universalCantrips: extractCantripsFromKnown(single?.known),
+    };
+  }
+
+  // Multiple named entries: find cantrips common to ALL groups (universal)
+  const cantripSets = namedEntries.map((entry) =>
+    new Set(extractCantripsFromKnown(entry.known)),
+  );
+  const allCantrips = [...cantripSets[0]];
+  const universalCantrips = allCantrips.filter((c) =>
+    cantripSets.every((set) => set.has(c)),
+  );
+  const universalSet = new Set(universalCantrips);
+
+  const namedSpellGroups: SpeciesNamedSpellGroup[] = namedEntries.map((entry) => {
+    const groupName = String(entry.name);
+    const allGroupCantrips = extractCantripsFromKnown(entry.known);
+    const uniqueCantrips = allGroupCantrips.filter((c) => !universalSet.has(c));
+    const resistance = versionResistMap.get(groupName.toLowerCase());
+    return { name: groupName, cantrips: uniqueCantrips, resistance };
+  });
+
+  return { namedSpellGroups, universalCantrips };
+}
+
 function mapFluff(fluff: unknown): string {
   if (typeof fluff !== "object" || fluff === null) return "";
   const f = fluff as Raw;
@@ -239,6 +326,11 @@ export function mapDndRace(raw: any): DndRace {
     ),
   ];
 
+  const { namedSpellGroups, universalCantrips } = parseAdditionalSpells(
+    raw.additionalSpells,
+    raw._versions,
+  );
+
   return {
     id: raceId(raw),
     name: String(raw.name ?? "Unknown"),
@@ -262,5 +354,7 @@ export function mapDndRace(raw: any): DndRace {
     originFeatGrant: parseOriginFeatGrant(raw.feats),
     languageGrants,
     defenseGrants,
+    namedSpellGroups: namedSpellGroups.length > 0 ? namedSpellGroups : undefined,
+    universalCantrips: universalCantrips.length > 0 ? universalCantrips : undefined,
   };
 }

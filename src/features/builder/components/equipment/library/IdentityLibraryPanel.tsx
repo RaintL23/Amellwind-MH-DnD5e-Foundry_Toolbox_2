@@ -41,6 +41,7 @@ import type {
   DndRace,
   Species,
 } from "@/shared/types";
+import type { DefenseGrant } from "@/shared/types/proficiency.types";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
 import { EmptyState } from "./shared/LibraryUi";
 
@@ -53,6 +54,41 @@ interface IdentityLibraryPanelProps {
 
 function isLoadedSpecies(data: Species | Background | null): data is Species {
   return !!data && "traits" in data;
+}
+
+/**
+ * Build the defenseGrants to apply for a DndRace, resolving named spell group
+ * choices into fixed resistance grants when applicable.
+ */
+function resolveSpeciesDefenseGrants(
+  base: DndRace,
+  subrace: DndRace | null,
+  groupChoice: string | null,
+): DefenseGrant[] {
+  const raceSource = { type: "species" as const, name: base.name };
+
+  // If the species has named spell groups (e.g. Tiefling Fiendish Legacy)
+  // and one is chosen, replace any "choose" resistance grant with a fixed one.
+  if (base.namedSpellGroups && base.namedSpellGroups.length > 0 && groupChoice) {
+    const chosen = base.namedSpellGroups.find(
+      (g) => g.name.toLowerCase() === groupChoice.toLowerCase(),
+    );
+    if (chosen?.resistance) {
+      const fixedGrant: DefenseGrant = {
+        kind: "fixed",
+        types: [chosen.resistance],
+        defenseKind: "resistance",
+        source: raceSource,
+      };
+      // Only use the fixed grant; drop the "choose" grant from base
+      return [fixedGrant, ...(subrace?.defenseGrants ?? [])];
+    }
+  }
+
+  return [
+    ...base.defenseGrants,
+    ...(subrace?.defenseGrants ?? []),
+  ];
 }
 
 function isLoadedBackground(
@@ -76,6 +112,7 @@ export function IdentityLibraryPanel({
   >(null);
   const [identitySubraceDetail, setIdentitySubraceDetail] =
     useState<DndRace | null>(null);
+  const [loadedDndRaceBase, setLoadedDndRaceBase] = useState<DndRace | null>(null);
   const [dndSubraceOptions, setDndSubraceOptions] = useState<NamedVariant[]>(
     [],
   );
@@ -88,6 +125,8 @@ export function IdentityLibraryPanel({
     setSpecies,
     setBackground,
     applyIdentityGrants,
+    speciesSpellGroupChoice,
+    setSpeciesSpellGroupChoice,
   } = useCharacterBuilder();
 
   const identityBookNames = useBookSourceNames();
@@ -186,6 +225,7 @@ export function IdentityLibraryPanel({
     if (!selectedIdentity) {
       setIdentityDetail(null);
       setIdentitySubraceDetail(null);
+      setLoadedDndRaceBase(null);
       setDndSubraceOptions([]);
       setIdentityDetailLoading(false);
       if (isSpeciesSlot) {
@@ -238,6 +278,7 @@ export function IdentityLibraryPanel({
     setIdentityDetailLoading(true);
     setIdentityDetail(null);
     setIdentitySubraceDetail(null);
+    setLoadedDndRaceBase(null);
     setDndSubraceOptions([]);
 
     async function loadIdentityDetail() {
@@ -246,6 +287,7 @@ export function IdentityLibraryPanel({
         if (cancelled || !base) return;
 
         setIdentityDetail(base as unknown as Species);
+        setLoadedDndRaceBase(base);
 
         const subraces = await getDndSubracesForParent(base.name, base.source);
         if (cancelled) return;
@@ -287,10 +329,11 @@ export function IdentityLibraryPanel({
             ...base.languageGrants,
             ...(selectedSubrace?.languageGrants ?? []),
           ],
-          defenseGrants: [
-            ...base.defenseGrants,
-            ...(selectedSubrace?.defenseGrants ?? []),
-          ],
+          defenseGrants: resolveSpeciesDefenseGrants(
+            base,
+            selectedSubrace ?? null,
+            speciesSpellGroupChoice,
+          ),
         });
         return;
       }
@@ -342,7 +385,34 @@ export function IdentityLibraryPanel({
     identitySource,
     applyIdentityGrants,
     setSpecies,
+    speciesSpellGroupChoice,
   ]);
+
+  // Re-apply defense grants when the legacy choice changes (species already loaded)
+  useEffect(() => {
+    if (!loadedDndRaceBase || !isSpeciesSlot) return;
+    applyIdentityGrants({
+      source: "species",
+      skillGrants: [
+        ...loadedDndRaceBase.skillGrants,
+        ...(identitySubraceDetail?.skillGrants ?? []),
+      ],
+      skillAdvantages: [
+        ...loadedDndRaceBase.skillAdvantages,
+        ...(identitySubraceDetail?.skillAdvantages ?? []),
+      ],
+      languageGrants: [
+        ...loadedDndRaceBase.languageGrants,
+        ...(identitySubraceDetail?.languageGrants ?? []),
+      ],
+      defenseGrants: resolveSpeciesDefenseGrants(
+        loadedDndRaceBase,
+        identitySubraceDetail,
+        speciesSpellGroupChoice,
+      ),
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [speciesSpellGroupChoice]);
 
   function handleSelectIdentity(id: string, name: string) {
     const ref = {
@@ -377,6 +447,10 @@ export function IdentityLibraryPanel({
     }
   }
 
+  function handleLegacySelect(groupName: string | null) {
+    setSpeciesSpellGroupChoice(groupName);
+  }
+
   function handleSubspeciesSelect(subraceId: string | null) {
     if (!selectedIdentity || !isSpeciesSlot) return;
     if (!subraceId) {
@@ -406,6 +480,11 @@ export function IdentityLibraryPanel({
     }
 
     if (isSpeciesSlot && isLoadedSpecies(identityDetail)) {
+      const dndBase = loadedDndRaceBase;
+      const legacyOptions = dndBase?.namedSpellGroups?.map((g) => ({
+        id: g.name,
+        name: g.name,
+      }));
       return (
         <IdentityLibraryDetail
           species={identityDetail}
@@ -431,6 +510,10 @@ export function IdentityLibraryPanel({
           }
           subspeciesLabel={selectedIdentity?.subraceName ?? null}
           bookNames={identityBookNames}
+          namedSpellGroups={dndBase?.namedSpellGroups}
+          universalCantrips={dndBase?.universalCantrips}
+          activeLegacyId={speciesSpellGroupChoice}
+          onLegacySelect={legacyOptions ? handleLegacySelect : undefined}
         />
       );
     }
