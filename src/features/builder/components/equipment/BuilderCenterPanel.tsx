@@ -5,7 +5,7 @@ import {
   type BuilderSlotSelection,
   isSpellPickerSlot,
 } from "../../hooks/useBuilderSlotSelection";
-import { useSelectedClass } from "../../hooks/useSelectedClass";
+import { useSelectedClass, useSelectedSubclass } from "../../hooks/useBuilderSelections";
 import {
   isFeatSlotSelection,
   isOptionalOriginFeatSlot,
@@ -42,7 +42,6 @@ import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.utils";
 import { useSpellcasting } from "../../hooks/useSpellcasting";
-import { useSelectedSubclass } from "../../hooks/useSelectedSubclass";
 import { useOptionalFeatureSpellGrants } from "../../hooks/useOptionalFeatureSpellGrants";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
 

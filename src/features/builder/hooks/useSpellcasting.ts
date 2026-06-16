@@ -11,7 +11,7 @@ import {
 import {
   getSpellcastingSectionLabel,
   isPactMagicClass,
-} from "../utils/spellcasting-label.utils";
+} from "../utils/builder-class.utils";
 import {
   getPactMagicProgression,
   pactPoolSelectedCount,

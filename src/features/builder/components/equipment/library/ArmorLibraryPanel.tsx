@@ -20,7 +20,7 @@ import {
   buildTrinketInventoryBundle,
 } from "@/features/builder/utils/equipment-inventory.utils";
 import { blocksOffHand } from "@/features/weapons/utils/weapon-hands.utils";
-import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
+import { useSelectedClass } from "@/features/builder/hooks/useBuilderSelections";
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import type { ArmorItem } from "@/shared/types";

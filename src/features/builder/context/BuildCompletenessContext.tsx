@@ -9,9 +9,7 @@ import {
 } from "react";
 import { useCharacterBuilder } from "./CharacterBuilderContext";
 import { useBuilderInventory } from "./BuilderInventoryContext";
-import { useSelectedClass } from "../hooks/useSelectedClass";
-import { useSelectedSubclass } from "../hooks/useSelectedSubclass";
-import { useSelectedSpecies } from "../hooks/useSelectedSpecies";
+import { useSelectedClass, useSelectedSubclass, useSelectedSpecies } from "../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../hooks/useSelectedDndBackground";
 import { useOptionalFeatureSpellGrants } from "../hooks/useOptionalFeatureSpellGrants";
 import { useSpellcasting } from "../hooks/useSpellcasting";

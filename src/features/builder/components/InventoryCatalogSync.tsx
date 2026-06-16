@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
-import { useSelectedClass } from "../hooks/useSelectedClass";
+import { useSelectedClass } from "../hooks/useBuilderSelections";
 
 /** Keeps inventory weapon/armor catalogs aligned with builder mode and class source. */
 export function InventoryCatalogSync() {

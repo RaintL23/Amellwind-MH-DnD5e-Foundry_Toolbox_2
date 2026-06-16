@@ -3,7 +3,7 @@ import type { AbilityKey } from "@/shared/types";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useResolvedSpecies } from "./useResolvedSpecies";
-import { useSelectedClass } from "./useSelectedClass";
+import { useSelectedClass } from "./useBuilderSelections";
 import {
   getCharacterAcBreakdown,
   type CharacterAcBreakdown,

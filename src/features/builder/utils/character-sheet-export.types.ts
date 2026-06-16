@@ -1,4 +1,4 @@
-import type { BuilderPersonality } from "../storage/builder-personality.storage";
+import type { BuilderPersonality } from "../storage/builder.storage";
 
 export interface CharacterSheetWeaponExport {
   name: string;

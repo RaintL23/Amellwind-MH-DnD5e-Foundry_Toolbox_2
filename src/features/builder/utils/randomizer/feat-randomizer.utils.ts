@@ -11,7 +11,7 @@ import {
   toRpgbotClassSlug,
 } from "@/features/builder/data/rpgbot-ratings.utils";
 import { getFeatSlotLevels } from "../builder-class.utils";
-import { dndFeatToBuilderSelection } from "../origin-feat.utils";
+import { dndFeatToBuilderSelection } from "../origin-feat.constants";
 import { pickByRpgbot, prefer2024Edition } from "./character-randomizer.utils";
 
 function isDnd2024Feat(feat: DndFeat): boolean {
@@ -22,12 +22,12 @@ function isDnd2024Feat(feat: DndFeat): boolean {
   );
 }
 
-export function filterOriginFeats(feats: DndFeat[]): DndFeat[] {
+function filterOriginFeats(feats: DndFeat[]): DndFeat[] {
   const origin = prefer2024Edition(feats.filter((feat) => feat.category === "O"));
   return origin.length > 0 ? origin : prefer2024Edition(feats);
 }
 
-export function pickRandomOriginFeat(
+function pickRandomOriginFeat(
   feats: DndFeat[],
   rpgbotData: RpgbotRatingsData | null,
   className: string,
@@ -76,7 +76,7 @@ export async function resolveOriginFeatSelectionForGrant(
   return null;
 }
 
-export function pickRandomClassFeat(
+function pickRandomClassFeat(
   feats: DndFeat[],
   rpgbotData: RpgbotRatingsData | null,
   className: string,

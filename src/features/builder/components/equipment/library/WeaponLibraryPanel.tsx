@@ -15,7 +15,7 @@ import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSl
 
 import { checkWeaponProficiency } from "@/features/builder/utils/equipment-proficiency.utils";
 
-import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
+import { useSelectedClass } from "@/features/builder/hooks/useBuilderSelections";
 
 import {
   getOffHandWeaponBlockLabel,

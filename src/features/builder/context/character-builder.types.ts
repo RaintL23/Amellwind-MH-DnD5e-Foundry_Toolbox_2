@@ -39,7 +39,7 @@ import type {
 } from "@/shared/types/proficiency.types";
 import type { DamageType } from "@/shared/types";
 import type { Character } from "../models/Character";
-import type { BuilderPersonality } from "../storage/builder-personality.storage";
+import type { BuilderPersonality } from "../storage/builder.storage";
 import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
 
 export interface CharacterBuilderContextValue {

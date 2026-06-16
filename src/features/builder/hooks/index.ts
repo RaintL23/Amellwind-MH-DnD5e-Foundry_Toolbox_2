@@ -8,9 +8,7 @@ export {
   toSpellLevelSlot,
 } from "./useBuilderSlotSelection";
 
-export { useSelectedClass } from "./useSelectedClass";
-export { useSelectedSubclass } from "./useSelectedSubclass";
-export { useSelectedSpecies } from "./useSelectedSpecies";
+export { useSelectedClass, useSelectedSpecies, useSelectedSubclass } from "./useBuilderSelections";
 export { useSelectedDndBackground } from "./useSelectedDndBackground";
 export { useResolvedSpecies } from "./useResolvedSpecies";
 export type { ResolvedSpeciesData } from "./useResolvedSpecies";

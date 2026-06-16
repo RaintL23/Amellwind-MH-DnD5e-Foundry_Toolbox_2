@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { useSelectedClass } from "./useSelectedClass";
+import { useSelectedClass } from "./useBuilderSelections";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
 import {
   type RuneCompatibilityContext,

@@ -7,7 +7,7 @@ import { useXanatharBackstory } from "@/features/xanathar-backstory/context/Xana
 import { useSelectedDndBackground } from "../../hooks/useSelectedDndBackground";
 import { useSelectedBackground } from "../../hooks/useSelectedBackground";
 import { BuilderPanel } from "../shared/BuilderPanel";
-import type { BuilderPersonality } from "../../storage/builder-personality.storage";
+import type { BuilderPersonality } from "../../storage/builder.storage";
 
 const PERSONALITY_FIELDS: Array<{
   key: keyof BuilderPersonality;

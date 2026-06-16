@@ -1,8 +1,23 @@
 import { useMemo } from "react";
-import type { Subclass } from "@/shared/types";
+import type { Class, Species, Subclass } from "@/shared/types";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { useSelectedClass } from "./useSelectedClass";
+
+export function useSelectedClass(): {
+  classData: Class | null;
+  loading: boolean;
+} {
+  const { classData, classDataLoading } = useCharacterBuilder();
+  return { classData, loading: classDataLoading };
+}
+
+export function useSelectedSpecies(): {
+  species: Species | null;
+  loading: boolean;
+} {
+  const { speciesData, speciesDataLoading } = useCharacterBuilder();
+  return { species: speciesData, loading: speciesDataLoading };
+}
 
 export function useSelectedSubclass(): Subclass | null {
   const { subclass } = useCharacterBuilder();

@@ -5,7 +5,7 @@ import { getListClasses } from "@/features/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
 import { useClassVariants } from "@/features/builder/hooks/useClassVariants";
-import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
+import { useSelectedClass } from "@/features/builder/hooks/useBuilderSelections";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
 import {
   isMulticlassClassSlot,

@@ -30,8 +30,3 @@ export async function getDndBuilderArmors(
   cachePrefer2024 = prefer2024;
   return cache;
 }
-
-export function clearDndBuilderArmorsCache(): void {
-  cache = null;
-  cachePrefer2024 = null;
-}

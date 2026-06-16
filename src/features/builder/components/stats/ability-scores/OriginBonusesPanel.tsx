@@ -5,7 +5,7 @@ import { Select } from "@/components/ui/select";
 import { useSectionCompletenessHighlight } from "../../../context/BuildCompletenessContext";
 import { CompletenessHighlightBanner } from "../../shared/CompletenessHighlightBanner";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
-import { useSelectedSpecies } from "../../../hooks/useSelectedSpecies";
+import { useSelectedSpecies } from "../../../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../../../hooks/useSelectedDndBackground";
 import {
   formatChooseSlotLabel,

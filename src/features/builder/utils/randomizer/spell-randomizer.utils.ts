@@ -7,7 +7,7 @@ import type {
   AbilityScores,
 } from "@/shared/types";
 import type { RpgbotLookupFn } from "@/features/builder/data/rpgbot-ratings.utils";
-import { isPactMagicClass } from "../spellcasting-label.utils";
+import { isPactMagicClass } from "../builder-class.utils";
 import { getPactMagicProgression } from "../pact-magic.utils";
 import {
   resolveSubclassSpells,
@@ -313,13 +313,4 @@ export function buildRandomSpellSelections(params: {
 
   ensureAtLeastOneDamageSpell(rawSelections, eligiblePools, rpgbotLookup);
   return toBuilderSelections(rawSelections);
-}
-
-export function pickRandomSpellAtLevel(
-  spells: Spell[],
-  level: number,
-  lookup: RpgbotLookupFn | null,
-): Spell | null {
-  const pool = spells.filter((spell) => spell.level === level);
-  return pickByRpgbot(pool, (spell) => lookup?.(spell.name, spell.source) ?? null);
 }

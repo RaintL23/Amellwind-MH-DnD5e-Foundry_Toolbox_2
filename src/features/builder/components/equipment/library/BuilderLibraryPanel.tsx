@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
-import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
+import { useSelectedClass } from "@/features/builder/hooks/useBuilderSelections";
 import {
   isOriginFeatSlot,
   isFeatSlotSelection,

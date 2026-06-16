@@ -4,8 +4,7 @@ import { subclassesForClassVariant } from "@/features/classes/utils/class-subcla
 import { getFeatById } from "@/features/feats/services/feat.service";
 import { getDndFeatById } from "@/features/dnd-feats/services/dnd-feat.service";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { useSelectedClass } from "./useSelectedClass";
-import { useSelectedSpecies } from "./useSelectedSpecies";
+import { useSelectedClass, useSelectedSpecies } from "./useBuilderSelections";
 import { isAsiFeatSelection } from "../utils/builder-class.utils";
 import {
   collectEquippedRuneSpeedBonuses,

@@ -8,7 +8,7 @@ import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useCharacterRandomizer } from "../../hooks/useCharacterRandomizer";
 import { parseAlignmentAxes } from "../../utils/alignment.utils";
-import { AbilityScoresSection } from "./AbilityScoresSection";
+import { AbilityScoresSection } from "./ability-scores/AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { MulticlassPanel } from "./MulticlassPanel";

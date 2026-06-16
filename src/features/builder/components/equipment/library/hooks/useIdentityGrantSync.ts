@@ -8,7 +8,33 @@ import {
   isAmellwindBackgroundSelection,
   isAmellwindSpeciesSelection,
 } from "@/features/builder/utils/homebrew-cleanup.utils";
-import { resolveSpeciesDefenseGrants } from "@/features/builder/utils/species-defense-grants.utils";
+import type { DndRace } from "@/shared/types";
+import type { DefenseGrant } from "@/shared/types/proficiency.types";
+
+function resolveSpeciesDefenseGrants(
+  base: DndRace,
+  subrace: DndRace | null,
+  groupChoice: string | null,
+): DefenseGrant[] {
+  const raceSource = { type: "species" as const, name: base.name };
+
+  if (base.namedSpellGroups && base.namedSpellGroups.length > 0 && groupChoice) {
+    const chosen = base.namedSpellGroups.find(
+      (group) => group.name.toLowerCase() === groupChoice.toLowerCase(),
+    );
+    if (chosen?.resistance) {
+      const fixedGrant: DefenseGrant = {
+        kind: "fixed",
+        types: [chosen.resistance],
+        defenseKind: "resistance",
+        source: raceSource,
+      };
+      return [fixedGrant, ...(subrace?.defenseGrants ?? [])];
+    }
+  }
+
+  return [...base.defenseGrants, ...(subrace?.defenseGrants ?? [])];
+}
 
 const EMPTY_SPECIES_GRANTS = {
   source: "species" as const,

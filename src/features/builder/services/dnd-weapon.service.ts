@@ -46,9 +46,3 @@ export async function getDndBuilderWeaponVariantsByName(
     .filter((weapon) => weapon.name === name)
     .sort((a, b) => a.source.localeCompare(b.source));
 }
-
-export function clearDndBuilderWeaponsCache(): void {
-  allWeaponsCache = null;
-  catalogCache = null;
-  cachePrefer2024 = null;
-}

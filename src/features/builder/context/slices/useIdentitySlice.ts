@@ -18,9 +18,9 @@ import { formatAbilitySummary } from "@/features/dnd-races/mappers/dnd-race.mapp
 import { getDndBackgroundById } from "@/features/dnd-backgrounds/services/dnd-background.service";
 import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.service";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
-import { dndFeatToBuilderSelection } from "../../utils/origin-feat.utils";
 import {
   AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
+  dndFeatToBuilderSelection,
 } from "../../utils/origin-feat.constants";
 import { getFeatSlotLevels } from "../../utils/builder-class.utils";
 import {
@@ -31,15 +31,13 @@ import {
   MAX_MULTICLASS_ENTRIES,
 } from "../../utils/multiclass.utils";
 import {
-  loadBuilderBackstoryNotes,
-  persistBuilderBackstoryNotes,
-} from "../../storage/builder-backstory.storage";
-import {
   EMPTY_BUILDER_PERSONALITY,
+  loadBuilderBackstoryNotes,
   loadBuilderPersonality,
+  persistBuilderBackstoryNotes,
   persistBuilderPersonality,
   type BuilderPersonality,
-} from "../../storage/builder-personality.storage";
+} from "../../storage/builder.storage";
 import {
   clearAmellwindFeats,
   isAmellwindBackgroundSelection,

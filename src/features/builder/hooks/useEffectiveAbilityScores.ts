@@ -1,11 +1,9 @@
-import { useMemo } from "react";
-import type { AbilityKey } from "@/shared/types";
+import { useEffect, useMemo, useState } from "react";
+import type { AbilityKey, Class } from "@/shared/types";
+import { getClassById } from "@/features/classes/services/class.service";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
-import { useSelectedClass } from "./useSelectedClass";
-import { useMulticlassClassData } from "./useMulticlassClassData";
-import { useSelectedSpecies } from "./useSelectedSpecies";
-import { useSelectedDndBackground } from "./useSelectedDndBackground";
-import {
+import { useSelectedClass, useSelectedSpecies } from "./useBuilderSelections";
+import { useSelectedDndBackground } from "./useSelectedDndBackground";import {
   applyBaseScores,
   buildAbilityBonusMap,
 } from "../utils/species-ability-bonuses";
@@ -15,8 +13,51 @@ import {
   getPrimaryClassLevel,
 } from "../utils/multiclass.utils";
 
-/** Effective ability scores including origin bonuses and feat ASIs. */
-export function useEffectiveAbilityScores(): Record<AbilityKey, number> {
+function useMulticlassClassData(
+  entries: ReturnType<typeof useCharacterBuilder>["multiclassEntries"],
+): { data: (Class | null)[]; loading: boolean } {
+  const [data, setData] = useState<(Class | null)[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const entryIds = entries.map((e) => e.classRef?.id ?? "").join("|");
+
+  useEffect(() => {
+    const activeEntries = entries.filter((e) => e.classRef?.id);
+    if (!activeEntries.length) {
+      setData(entries.map(() => null));
+      setLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setLoading(true);
+
+    Promise.all(
+      entries.map((entry) =>
+        entry.classRef?.id
+          ? getClassById(entry.classRef.id).then((cls) => cls ?? null)
+          : Promise.resolve(null),
+      ),
+    )
+      .then((results) => {
+        if (!cancelled) setData(results);
+      })
+      .catch(() => {
+        if (!cancelled) setData(entries.map(() => null));
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [entryIds, entries.length]);
+
+  return { data, loading };
+}
+
+/** Effective ability scores including origin bonuses and feat ASIs. */export function useEffectiveAbilityScores(): Record<AbilityKey, number> {
   const {
     character,
     class: classSelection,

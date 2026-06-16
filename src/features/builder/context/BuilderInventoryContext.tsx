@@ -12,7 +12,7 @@ import { useCart } from "@/features/shops/context/CartContext";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { getDndBuilderWeapons } from "../services/dnd-weapon.service";
 import { getDndBuilderArmors } from "../services/dnd-armor.service";
-import { loadUseAmellwindHomebrew } from "../storage/builder-homebrew.storage";
+import { loadUseAmellwindHomebrew } from "../storage/builder.storage";
 import {
   classifyCartEntry,
   MH_ARMOR_CATALOG,

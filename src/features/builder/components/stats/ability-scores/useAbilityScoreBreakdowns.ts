@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { AbilityKey } from "@/shared/types";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
-import { useSelectedSpecies } from "../../../hooks/useSelectedSpecies";
+import { useSelectedSpecies } from "../../../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../../../hooks/useSelectedDndBackground";
 import {
   applyBaseScores,

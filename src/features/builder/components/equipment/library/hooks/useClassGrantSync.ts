@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
-import { useSelectedClass } from "@/features/builder/hooks/useSelectedClass";
+import { useSelectedClass } from "@/features/builder/hooks/useBuilderSelections";
 import { detectExpertiseGrants } from "@/features/builder/utils/expertise-detection.utils";
 import { buildClassLanguageGrants } from "@/features/builder/utils/class-language-grants.utils";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
