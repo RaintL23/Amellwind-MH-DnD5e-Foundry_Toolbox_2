@@ -1,4 +1,5 @@
 import type { DndItem, DndItemRarity } from "@/shared/types/dnd-item.types";
+import { DMG_TYPE_LABELS } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import type { ItemBaseIndexes, RawItemEntity } from "../utils/item-raw.types";
 import { formatDndItemProperties } from "../utils/item-property.utils";
@@ -109,8 +110,25 @@ function mapDamage(raw: RawItemEntity): string | null {
   const parts: string[] = [];
   if (raw.dmg1) parts.push(String(raw.dmg1));
   if (raw.dmg2) parts.push(String(raw.dmg2));
-  if (raw.dmgType) parts.push(String(raw.dmgType));
+  if (raw.dmgType) {
+    const typeKey = String(raw.dmgType);
+    parts.push(DMG_TYPE_LABELS[typeKey] ?? typeKey);
+  }
   return parts.length ? parts.join(" ") : null;
+}
+
+function parseWeaponCategory(
+  raw: RawItemEntity,
+): "simple" | "martial" | undefined {
+  const category = raw.weaponCategory;
+  if (category === "simple" || category === "martial") return category;
+  return undefined;
+}
+
+function formatWeaponCategoryLabel(
+  category: "simple" | "martial",
+): string {
+  return category === "martial" ? "Martial" : "Simple";
 }
 
 export function mapDndItem(
@@ -135,10 +153,12 @@ export function mapDndItem(
         : null;
 
   const typeLabel = resolveTypeLabel(typeCode, indexes);
+  const weaponCategory = parseWeaponCategory(raw);
   const searchText = [
     name,
     source,
     typeLabel,
+    weaponCategory ? formatWeaponCategoryLabel(weaponCategory) : null,
     rarity,
     description.join(" "),
     raw._baseName,
@@ -186,5 +206,6 @@ export function mapDndItem(
       Array.isArray(raw.property) ? raw.property : undefined,
       indexes,
     ),
+    weaponCategory,
   };
 }

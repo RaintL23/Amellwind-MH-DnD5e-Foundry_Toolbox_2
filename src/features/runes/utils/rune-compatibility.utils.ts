@@ -17,6 +17,7 @@ export interface RuneCompatibilityContext {
 // Explicit map from MH weapon names to their specific weapon-type tags (beyond melee/ranged).
 const WEAPON_NAME_TO_SPECIFIC_TAGS: Record<string, string[]> = {
   "Great Sword": ["weapon-type:greatsword", "weapon-type:bladed"],
+  Greatsword: ["weapon-type:greatsword", "weapon-type:bladed"],
   Gunlance: ["weapon-type:gunlance"],
   "Insect Glaive": ["weapon-type:insect-glaive", "weapon-type:bladed"],
   "Charge Blade": ["weapon-type:charge-blade", "weapon-type:bladed"],
@@ -31,6 +32,49 @@ const WEAPON_NAME_TO_SPECIFIC_TAGS: Record<string, string[]> = {
   "Sword and Shield": ["weapon-type:bladed"],
   "Magnet Spike": ["weapon-type:bladed"],
 };
+
+/** Tags implied by AGMH-compatible D&D weapon proficiencies. */
+const DND_WEAPON_PROFICIENCY_TAGS: Record<string, string[]> = {
+  greatsword: ["weapon-type:greatsword", "weapon-type:bladed"],
+  greataxe: ["weapon-type:bladed"],
+  battleaxe: ["weapon-type:bladed"],
+  longsword: ["weapon-type:bladed"],
+  shortsword: ["weapon-type:bladed"],
+  scimitar: ["weapon-type:bladed"],
+  rapier: ["weapon-type:bladed"],
+  lance: ["weapon-type:lance"],
+  halberd: ["weapon-type:insect-glaive", "weapon-type:bladed"],
+  glaive: ["weapon-type:insect-glaive", "weapon-type:bladed"],
+  trident: ["weapon-type:insect-glaive", "weapon-type:bladed"],
+  warhammer: ["weapon-type:hammer"],
+  maul: ["weapon-type:hammer"],
+  shortbow: ["weapon-type:bow", "weapon-type:ranged"],
+  longbow: ["weapon-type:bow", "weapon-type:ranged"],
+  "light crossbow": ["weapon-type:ranged"],
+  "heavy crossbow": ["weapon-type:ranged"],
+  "hand crossbow": ["weapon-type:ranged"],
+};
+
+function normalizeWeaponProficiencyKey(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function appendTagsFromCompatibleProficiencies(
+  tags: string[],
+  compatible: string[],
+): void {
+  for (const proficiency of compatible) {
+    const key = normalizeWeaponProficiencyKey(proficiency);
+    const profTags = DND_WEAPON_PROFICIENCY_TAGS[key];
+    if (profTags) tags.push(...profTags);
+
+    for (const [mhName, mhTags] of Object.entries(WEAPON_NAME_TO_SPECIFIC_TAGS)) {
+      if (normalizeWeaponProficiencyKey(mhName) === key) {
+        tags.push(...mhTags);
+      }
+    }
+  }
+}
 
 /** Returns true if the character can cast spells — either from their class progression
  *  or from a spellcasting subclass (e.g. Eldritch Knight, Arcane Trickster). */
@@ -67,6 +111,7 @@ export function getWeaponTypeTagsForWeapon(weapon: Weapon): string[] {
   const rule = getWeaponProficiencyRule(weapon.name);
   if (rule) {
     tags.push(`weapon-type:${rule.range}`);
+    appendTagsFromCompatibleProficiencies(tags, rule.compatible);
   }
 
   const specificTags = WEAPON_NAME_TO_SPECIFIC_TAGS[weapon.name] ?? [];
@@ -78,6 +123,25 @@ export function getWeaponTypeTagsForWeapon(weapon: Weapon): string[] {
   }
 
   return [...new Set(tags)];
+}
+
+function formatWeaponTypeRequirementLabel(tag: string): string {
+  return tag.slice("weapon-type:".length);
+}
+
+/** True when the equipped weapon satisfies at least one weapon-type requirement. */
+function satisfiesWeaponTypeRequirements(
+  weaponTypeTags: string[],
+  requirements: string[],
+): boolean {
+  if (requirements.length === 0) return true;
+  return requirements.some((tag) => weaponTypeTags.includes(tag));
+}
+
+function formatWeaponTypeRequirementReason(requirements: string[]): string {
+  const labels = requirements.map(formatWeaponTypeRequirementLabel);
+  if (labels.length === 1) return `Requires ${labels[0]} weapon`;
+  return `Requires ${labels.join(" or ")} weapon`;
 }
 
 function getEffectTags(rune: Rune, slotKind: "weapon" | "armor" | "trinket"): string[] {
@@ -137,11 +201,14 @@ export function getRuneIneligibilityReason(
   }
 
   if (ctx.slotKind === "weapon") {
-    for (const tag of effectTags.filter((t) => t.startsWith("weapon-type:"))) {
-      if (!ctx.weaponTypeTags.includes(tag)) {
-        const typeName = tag.slice("weapon-type:".length);
-        return `Requires ${typeName} weapon`;
-      }
+    const weaponTypeRequirements = effectTags.filter((t) =>
+      t.startsWith("weapon-type:"),
+    );
+    if (
+      weaponTypeRequirements.length > 0 &&
+      !satisfiesWeaponTypeRequirements(ctx.weaponTypeTags, weaponTypeRequirements)
+    ) {
+      return formatWeaponTypeRequirementReason(weaponTypeRequirements);
     }
   }
 

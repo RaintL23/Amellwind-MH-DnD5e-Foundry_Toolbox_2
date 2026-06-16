@@ -39,6 +39,8 @@ export interface RawItemEntity {
   bonusWeapon?: string;
   bonusAc?: string;
   armor?: boolean;
+  weapon?: boolean;
+  weaponCategory?: "simple" | "martial";
   wondrous?: boolean;
   [key: string]: unknown;
 }

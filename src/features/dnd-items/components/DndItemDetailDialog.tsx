@@ -324,6 +324,15 @@ export function DndItemDetailDialog({
                 differs={differs("damage")}
               />
             )}
+            {active.weaponCategory && (
+              <MetaRow
+                label="Proficiency"
+                value={
+                  active.weaponCategory === "martial" ? "Martial" : "Simple"
+                }
+                differs={differs("weaponCategory")}
+              />
+            )}
             {active.properties && (
               <MetaRow
                 label="Properties"

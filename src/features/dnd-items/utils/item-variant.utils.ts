@@ -9,6 +9,7 @@ export type DndItemVariantField =
   | "attunement"
   | "damage"
   | "properties"
+  | "weaponCategory"
   | "bonusWeapon"
   | "bonusAc"
   | "description";
@@ -22,6 +23,7 @@ const FIELD_LABELS: Record<DndItemVariantField, string> = {
   attunement: "Attunement",
   damage: "Damage",
   properties: "Properties",
+  weaponCategory: "Proficiency",
   bonusWeapon: "Weapon bonus",
   bonusAc: "AC bonus",
   description: "Description",
@@ -45,6 +47,8 @@ function fieldValue(item: DndItem, field: DndItemVariantField): string {
       return item.damage ?? "";
     case "properties":
       return item.properties ?? "";
+    case "weaponCategory":
+      return item.weaponCategory ?? "";
     case "bonusWeapon":
       return item.bonusWeapon ?? "";
     case "bonusAc":
@@ -91,6 +95,12 @@ export function formatFieldValue(
         : "—";
     case "attunement":
       return item.attunement ?? "—";
+    case "weaponCategory":
+      return item.weaponCategory === "martial"
+        ? "Martial"
+        : item.weaponCategory === "simple"
+          ? "Simple"
+          : "—";
     default:
       return fieldValue(item, field) || "—";
   }

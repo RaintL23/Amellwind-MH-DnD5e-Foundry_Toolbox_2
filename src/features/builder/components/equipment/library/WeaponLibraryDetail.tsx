@@ -9,6 +9,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import {
+  DMG_TYPE_LABELS,
   EquippedWeapon,
   PROPERTY_LABELS,
   RARITY_ORDER,
@@ -259,6 +260,7 @@ export function WeaponLibraryDetail({
 
   const activeDamage = getActiveWeaponDamage(equipped);
   const damageModeLabel = getActiveWeaponDamageLabel(equipped);
+  const damageTypeLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
   const activeGripMode = getActiveWeaponGripMode(equipped);
   const showModeToggle = onModeChange && hasWeaponGripModes(weapon);
   const showIntegratedShield = activeGripMode?.hasShield ?? false;
@@ -323,7 +325,7 @@ export function WeaponLibraryDetail({
                     ? "Damage"
                     : `Damage (${damageModeLabel})`
                 }
-                value={`${activeDamage} ${weapon.dmgType}`}
+                value={`${activeDamage} ${damageTypeLabel}`}
               />
               <StatBox label="Weight" value={`${weapon.weight} lb`} />
               <StatBox
@@ -433,7 +435,7 @@ export function WeaponLibraryDetail({
                   ? "Damage"
                   : `Damage (${damageModeLabel})`
               }
-              value={`${activeDamage} ${weapon.dmgType}`}
+              value={`${activeDamage} ${damageTypeLabel}`}
             />
             {bonus && (
               <StatBox label="Attack Bonus" value={`${bonus} to hit`} />
@@ -459,7 +461,7 @@ export function WeaponLibraryDetail({
                 Active grip
               </p>
               <p className="mt-0.5 text-[11px] font-medium text-foreground">
-                {activeGripMode.label} · {activeDamage} {weapon.dmgType}
+                {activeGripMode.label} · {activeDamage} {damageTypeLabel}
               </p>
               <p className="mt-0.5 text-[10px] leading-relaxed text-muted-foreground">
                 {getWeaponGripModeHint(activeGripMode)}

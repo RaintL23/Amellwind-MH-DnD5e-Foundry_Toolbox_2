@@ -40,6 +40,8 @@ export interface DndItem {
   bonusAc?: string;
   damage?: string | null;
   properties?: string | null;
+  /** simple / martial from items-base (weapons only). */
+  weaponCategory?: "simple" | "martial";
   /** Fuentes adicionales con el mismo nombre (solo en lista deduplicada) */
   variantSources?: string[];
   variantCount?: number;
