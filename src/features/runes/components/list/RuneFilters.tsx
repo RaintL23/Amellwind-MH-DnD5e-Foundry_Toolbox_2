@@ -51,7 +51,7 @@ export function RuneFilters({
       <div className="relative col-span-2 md:col-span-1">
         <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
         <Input
-          placeholder="Search material..."
+          placeholder="Search name, monster, effect..."
           value={filters.name}
           onChange={(e) => onChange({ ...filters, name: e.target.value })}
           className="pl-8"

@@ -12,6 +12,7 @@ import { BuildDrawer } from "../build/BuildDrawer";
 import { RuneFilters, RuneFiltersState } from "./RuneFilters";
 import { RuneTable } from "./RuneTable";
 import { useRuneBuild } from "../../context/RuneBuildContext";
+import { matchesRuneSearchQuery } from "../../utils/rune-search.utils";
 import { Layers } from "lucide-react";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -60,10 +61,15 @@ export function RuneList() {
   const filtered = useMemo(() => {
     let result = runes;
 
-    if (filters.name)
+    if (filters.name.trim()) {
       result = result.filter((r) =>
-        r.name.toLowerCase().includes(filters.name.toLowerCase()),
+        matchesRuneSearchQuery(r, filters.name, materialEffectIndex, {
+          slot: filters.slot,
+          tags: filters.tag,
+          materialEffectTier: filters.materialEffectTier,
+        }),
       );
+    }
     if (filters.monster.length > 0)
       result = result.filter((r) => filters.monster.includes(r.monsterName));
     if (filters.slot === "A" || filters.slot === "W") {
