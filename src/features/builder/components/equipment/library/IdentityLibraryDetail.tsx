@@ -54,6 +54,8 @@ interface IdentityLibraryDetailProps {
   startingEquipmentSource?: StartingEquipmentSource;
   /** Named spell-group choices (e.g. Tiefling Fiendish Legacy). */
   namedSpellGroups?: SpeciesNamedSpellGroup[];
+  /** Trait label for the lineage picker (e.g. "Fiendish Legacy"). */
+  namedSpellGroupsLabel?: string;
   /** Currently selected legacy group name. */
   activeLegacyId?: string | null;
   /** Called when the user selects (or deselects) a legacy. */
@@ -229,6 +231,30 @@ function SpeciesBonuses({
   );
 }
 
+function SpeciesLineageDescription({
+  activeLegacy,
+}: {
+  activeLegacy?: SpeciesNamedSpellGroup | null;
+}) {
+  if (!activeLegacy?.entries?.length) return null;
+
+  return (
+    <div className="mt-3 rounded-md border border-border bg-muted/20 px-2 py-1.5">
+      <h4 className="mb-1 text-xs font-semibold text-violet-300">
+        {activeLegacy.name}
+      </h4>
+      {activeLegacy.entries.map((paragraph, index) => (
+        <p
+          key={index}
+          className="mb-1 text-xs leading-relaxed text-muted-foreground last:mb-0"
+        >
+          <DndRichText text={paragraph} />
+        </p>
+      ))}
+    </div>
+  );
+}
+
 function SpeciesGrantedCantrips({
   universalCantrips,
   namedSpellGroups,
@@ -243,27 +269,30 @@ function SpeciesGrantedCantrips({
   );
 
   const legacyCantrips = activeLegacy?.cantrips ?? [];
-  const allCantrips = [
+  const legacyInnateSpells =
+    activeLegacy?.innateSpells?.map((spell) => spell.name) ?? [];
+  const allSpells = [
     ...(universalCantrips ?? []),
     ...legacyCantrips,
+    ...legacyInnateSpells,
   ];
 
-  if (allCantrips.length === 0) return null;
+  if (allSpells.length === 0) return null;
 
   return (
     <div className="mt-2 rounded-md border border-amber-500/20 bg-amber-500/5 px-2 py-1.5">
       <p className="mb-1 flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide text-amber-400">
         <Sparkles className="h-3 w-3" aria-hidden />
-        Cantrips otorgados por especie
+        Spells granted by lineage
       </p>
       <div className="flex flex-wrap gap-1">
-        {allCantrips.map((cantrip) => (
+        {allSpells.map((spellName) => (
           <Badge
-            key={cantrip}
+            key={spellName}
             variant="outline"
             className="border-amber-500/40 text-[10px] text-amber-300"
           >
-            {cantrip}
+            {spellName}
           </Badge>
         ))}
       </div>
@@ -314,17 +343,19 @@ function SpeciesDetailBody({
         {species.darkvision !== undefined && (
           <div className="rounded-md border border-border bg-muted/20 px-2 py-1.5">
             <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-              Visión en la oscuridad
+              Darkvision
             </p>
             <p className="font-medium text-foreground">
               {species.darkvision} ft.
             </p>
           </div>
         )}
-        {(resistances.length > 0 || legacyResistance || species.resistanceSummary) && (
+        {(resistances.length > 0 ||
+          legacyResistance ||
+          species.resistanceSummary) && (
           <div className="col-span-2 rounded-md border border-border bg-muted/20 px-2 py-1.5">
             <p className="mb-0.5 text-[10px] uppercase tracking-wider text-muted-foreground">
-              Resistencias
+              Resistances
             </p>
             <p className="font-medium capitalize text-foreground">
               {legacyResistance
@@ -343,6 +374,8 @@ function SpeciesDetailBody({
         activeLegacyId={activeLegacyId}
       />
 
+      <SpeciesLineageDescription activeLegacy={activeLegacy} />
+
       {traitTags.length > 0 && (
         <div className="mb-3 flex flex-wrap gap-1">
           {traitTags.map((tag) => (
@@ -355,7 +388,7 @@ function SpeciesDetailBody({
 
       <TraitList
         traits={traits}
-        heading="Species Traits"
+        heading="Traits"
         headingClass="text-emerald-400"
         traitNameClass="text-foreground"
       />
@@ -365,8 +398,8 @@ function SpeciesDetailBody({
           traits={subspeciesTraits}
           heading={
             subspeciesLabel
-              ? `Subspecies Traits — ${subspeciesLabel}`
-              : "Subspecies Traits"
+              ? `Lineage Traits — ${subspeciesLabel}`
+              : "Lineage Traits"
           }
           headingClass="text-sky-400"
           traitNameClass="text-sky-300"
@@ -510,6 +543,7 @@ export function IdentityLibraryDetail({
   startingEquipmentOffers,
   startingEquipmentSource,
   namedSpellGroups,
+  namedSpellGroupsLabel,
   activeLegacyId = null,
   onLegacySelect,
   universalCantrips,
@@ -550,17 +584,22 @@ export function IdentityLibraryDetail({
               className="mb-2"
             />
           )}
-          {namedSpellGroups && namedSpellGroups.length > 0 && onLegacySelect && (
-            <NamedVariantSwitcher
-              label="Fiendish Legacy"
-              options={namedSpellGroups.map((g) => ({ id: g.name, name: g.name }))}
-              activeId={activeLegacyId}
-              onSelect={onLegacySelect}
-              accent="violet"
-              includeBaseOption={false}
-              className="mb-2"
-            />
-          )}
+          {namedSpellGroups &&
+            namedSpellGroups.length > 0 &&
+            onLegacySelect && (
+              <NamedVariantSwitcher
+                label={namedSpellGroupsLabel ?? "Lineage"}
+                options={namedSpellGroups.map((g) => ({
+                  id: g.name,
+                  name: g.name,
+                }))}
+                activeId={activeLegacyId}
+                onSelect={onLegacySelect}
+                accent="violet"
+                includeBaseOption={false}
+                className="mb-2"
+              />
+            )}
           <div className="mb-2 flex flex-wrap items-center gap-1.5">
             {species && (
               <>

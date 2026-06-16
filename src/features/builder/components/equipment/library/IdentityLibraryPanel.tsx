@@ -511,6 +511,7 @@ export function IdentityLibraryPanel({
           subspeciesLabel={selectedIdentity?.subraceName ?? null}
           bookNames={identityBookNames}
           namedSpellGroups={dndBase?.namedSpellGroups}
+          namedSpellGroupsLabel={dndBase?.namedSpellGroupsLabel}
           universalCantrips={dndBase?.universalCantrips}
           activeLegacyId={speciesSpellGroupChoice}
           onLegacySelect={legacyOptions ? handleLegacySelect : undefined}

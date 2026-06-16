@@ -49,6 +49,7 @@ import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.
 import { useLibrarySearch } from "./hooks/useLibrarySearch";
 import { useClassGrantSync } from "./hooks/useClassGrantSync";
 import { useFeatGrantSync } from "./hooks/useFeatGrantSync";
+import { useSpeciesSpellGrantSync } from "./hooks/useSpeciesSpellGrantSync";
 import { toRpgbotClassSlug } from "@/features/builder/data/rpgbot-ratings.utils";
 import { RpgbotLegend } from "../../shared/RpgbotLegend";
 import { RpgbotLoadingHint } from "../../shared/RpgbotLoadingHint";
@@ -70,6 +71,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
 
   useClassGrantSync();
   useFeatGrantSync();
+  useSpeciesSpellGrantSync();
 
   const {
     mainHand,

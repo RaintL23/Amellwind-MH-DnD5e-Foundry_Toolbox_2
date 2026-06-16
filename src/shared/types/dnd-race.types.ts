@@ -8,6 +8,13 @@ export type DndRaceKind = "species" | "subrace" | "lineage";
  * A named spell-group choice offered by a species trait (e.g. Tiefling Fiendish Legacy).
  * The player must pick one group; each group grants different cantrips and a specific resistance.
  */
+export interface SpeciesLineageInnateSpell {
+  /** Display name (e.g. "Speak with Animals"). */
+  name: string;
+  /** Character level at which this innate spell unlocks. */
+  unlockedAtCharacterLevel: number;
+}
+
 export interface SpeciesNamedSpellGroup {
   /** Display name (e.g. "Abyssal", "Chthonic", "Infernal"). */
   name: string;
@@ -15,6 +22,10 @@ export interface SpeciesNamedSpellGroup {
   cantrips: string[];
   /** Damage resistance linked to this group (e.g. "poison"). */
   resistance?: DamageType;
+  /** Always-prepared innate spells (e.g. Speak with Animals for Forest Gnome). */
+  innateSpells?: SpeciesLineageInnateSpell[];
+  /** Parsed trait text for this lineage option (5etools markup already resolved). */
+  entries?: string[];
 }
 
 export type DndRaceSize =
@@ -61,6 +72,8 @@ export interface DndRace {
    * Only present when the species has 2+ named additionalSpells entries.
    */
   namedSpellGroups?: SpeciesNamedSpellGroup[];
+  /** Trait label for the lineage picker (e.g. "Fiendish Legacy", "Gnomish Lineage"). */
+  namedSpellGroupsLabel?: string;
   /**
    * Cantrips always granted regardless of group choice
    * (e.g. Thaumaturgy from Tiefling's Otherworldly Presence).

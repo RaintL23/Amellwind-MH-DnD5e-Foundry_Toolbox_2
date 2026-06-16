@@ -47,7 +47,9 @@ import {
 import { buildRandomSpellSelections } from "@/features/builder/utils/randomizer/spell-randomizer.utils";
 import { buildRandomStartingEquipmentEntries } from "@/features/builder/utils/randomizer/starting-equipment-randomizer.utils";
 import { generateXanatharBackstoryNotes } from "@/features/builder/utils/randomizer/backstory-randomizer.utils";
+import { buildSpeciesLineageSpellSelectionsFromCatalog } from "@/features/builder/utils/species-spell-grants.utils";
 import type { AbilityBonus } from "@/shared/types/species.types";
+import type { DndRace } from "@/shared/types";
 
 function toSelectionRef(id: string, name: string): CharacterSelectionRef {
   return { id, name, subraceId: null, subraceName: null };
@@ -233,6 +235,8 @@ export function useCharacterRandomizer() {
 
       let speciesName = "";
       let backgroundName = "";
+      let randomizedSpeciesDetail: DndRace | null = null;
+      let randomizedSpeciesLineageChoice: string | null = null;
 
       if (useAmellwindHomebrew) {
         const pickedSpecies = pickAmellwindSpecies(
@@ -288,26 +292,16 @@ export function useCharacterRandomizer() {
               setSpeciesOriginFeat(originFeat);
             }
 
-            // Pick a random Fiendish Legacy (or similar named spell group)
+            // Pick a random lineage (Fiendish Legacy, Gnomish Lineage, etc.)
             if (speciesDetail.namedSpellGroups && speciesDetail.namedSpellGroups.length > 0) {
               const randomIndex = Math.floor(Math.random() * speciesDetail.namedSpellGroups.length);
               const chosenGroup = speciesDetail.namedSpellGroups[randomIndex];
               if (chosenGroup) {
+                randomizedSpeciesLineageChoice = chosenGroup.name;
                 setSpeciesSpellGroupChoice(chosenGroup.name);
               }
             }
-
-            // Pre-select universal cantrips granted by the species (e.g. Thaumaturgy for Tiefling)
-            if (speciesDetail.universalCantrips && speciesDetail.universalCantrips.length > 0) {
-              for (const cantripName of speciesDetail.universalCantrips) {
-                addSpell(0, {
-                  id: cantripName.toLowerCase().replace(/\s+/g, "-"),
-                  name: cantripName,
-                  level: 0,
-                  source: speciesDetail.source,
-                });
-              }
-            }
+            randomizedSpeciesDetail = speciesDetail;
           }
         }
 
@@ -380,6 +374,18 @@ export function useCharacterRandomizer() {
       for (const [levelKey, spells] of Object.entries(spellSelections)) {
         for (const spell of spells) {
           addSpell(Number(levelKey), spell);
+        }
+      }
+
+      if (randomizedSpeciesDetail) {
+        const lineageSpells = buildSpeciesLineageSpellSelectionsFromCatalog(
+          randomizedSpeciesDetail,
+          randomizedSpeciesLineageChoice,
+          preservedLevel,
+          allSpells,
+        );
+        for (const spell of lineageSpells) {
+          addSpell(spell.level, spell);
         }
       }
 
