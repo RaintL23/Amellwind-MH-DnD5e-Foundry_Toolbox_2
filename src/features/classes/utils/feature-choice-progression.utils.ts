@@ -123,6 +123,26 @@ function collectProse(entries: unknown[] | undefined): string {
   return parts.join(" ");
 }
 
+/** Prose on a single entries node (name + direct string children only). */
+function collectLocalProse(node: Raw): string {
+  const parts: string[] = [];
+  if (typeof node.name === "string" && node.name.trim()) {
+    parts.push(node.name);
+  }
+  if (!Array.isArray(node.entries)) return parts.join(" ");
+  for (const entry of node.entries as unknown[]) {
+    if (typeof entry === "string") parts.push(entry);
+  }
+  return parts.join(" ");
+}
+
+const INLINE_CHOICE_PROSE =
+  /\b(?:choose one of the following(?: options)?|one of the following options|following feature options|choose one)\b/i;
+
+function proseIndicatesFeatureChoice(prose: string): boolean {
+  return INLINE_CHOICE_PROSE.test(prose);
+}
+
 function isCatalogListingBlock(
   block: ParsedOptionsBlock,
   featureName: string,
@@ -243,15 +263,11 @@ function findOptionsBlocks(
   return blocks;
 }
 
-/** Named {@code entries} siblings when prose says "choose one of the following" (2024 style). */
+/** Named {@code entries} siblings when the parent block prose indicates a pick. */
 function findInlineChoiceBlocks(
   entries: unknown[] | undefined,
 ): ParsedOptionsBlock[] {
   if (!entries?.length) return [];
-  const prose = collectProse(entries);
-  if (!/\b(one of the following|following feature options|choose one)\b/i.test(prose)) {
-    return [];
-  }
 
   const blocks: ParsedOptionsBlock[] = [];
 
@@ -261,13 +277,17 @@ function findInlineChoiceBlocks(
       const obj = node as Raw;
 
       if (obj.type === "entries" && Array.isArray(obj.entries)) {
+        const localProse = collectLocalProse(obj);
         const namedChildren = (obj.entries as Raw[]).filter(
           (child) =>
             child.type === "entries" &&
             typeof child.name === "string" &&
             child.name.length > 0,
         );
-        if (namedChildren.length >= 2) {
+        if (
+          namedChildren.length >= 2 &&
+          proseIndicatesFeatureChoice(localProse)
+        ) {
           blocks.push({
             pickCount: 1,
             pickMode: "one",

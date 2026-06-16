@@ -90,6 +90,17 @@ export function resolveOptionalFeatureProgressions(
   return results;
 }
 
+function featureHostsOptionalCatalog(feature: {
+  name: string;
+  optionalFeatureRefs?: DndOptionalFeatureRef[];
+  featRefs?: DndOptionalFeatureRef[];
+}): boolean {
+  if (/ options$/i.test(feature.name)) return true;
+  if ((feature.optionalFeatureRefs?.length ?? 0) > 0) return true;
+  if ((feature.featRefs?.length ?? 0) > 0) return true;
+  return false;
+}
+
 export function collectOptionPoolRefs(
   classData: Class,
   subclass: Subclass | null,
@@ -101,6 +112,8 @@ export function collectOptionPoolRefs(
   const seen = new Set<string>();
 
   for (const feature of features) {
+    if (!featureHostsOptionalCatalog(feature)) continue;
+
     const sourceRefs =
       catalog === "feat"
         ? (feature.featRefs ?? [])

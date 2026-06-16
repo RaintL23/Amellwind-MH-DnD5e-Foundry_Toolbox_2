@@ -553,6 +553,10 @@ export function OptionalFeatureLibraryPanel({
                           <LibraryItemBadge variant="category">
                             Feat
                           </LibraryItemBadge>
+                        ) : item.catalog === "feature-choice" ? (
+                          <LibraryItemBadge variant="category">
+                            Class Feature
+                          </LibraryItemBadge>
                         ) : (
                           <LibraryItemBadge variant="category">
                             Optional Feature

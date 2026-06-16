@@ -151,7 +151,7 @@ export function getOptionalFeatureCountAtLevel(
   return max;
 }
 
-/** Collect {@code refOptionalfeature} refs from raw 5etools entry trees. */
+/** Collect {@code refOptionalfeature} refs from {@code options} blocks only. */
 export function extractOptionalFeatureRefs(
   entries: unknown[] | undefined,
 ): DndOptionalFeatureRef[] {
@@ -160,12 +160,18 @@ export function extractOptionalFeatureRefs(
   const refs: DndOptionalFeatureRef[] = [];
   const seen = new Set<string>();
 
-  const walk = (nodes: unknown[]) => {
+  const walk = (nodes: unknown[], insideOptionsBlock: boolean) => {
     for (const node of nodes) {
       if (typeof node !== "object" || node === null) continue;
       const obj = node as Raw;
 
+      if (obj.type === "options" && Array.isArray(obj.entries)) {
+        walk(obj.entries as unknown[], true);
+        continue;
+      }
+
       if (
+        insideOptionsBlock &&
         obj.type === "refOptionalfeature" &&
         typeof obj.optionalfeature === "string"
       ) {
@@ -178,19 +184,16 @@ export function extractOptionalFeatureRefs(
       }
 
       if (Array.isArray(obj.entries)) {
-        walk(obj.entries as unknown[]);
-      }
-      if (obj.type === "options" && Array.isArray(obj.entries)) {
-        walk(obj.entries as unknown[]);
+        walk(obj.entries as unknown[], insideOptionsBlock);
       }
     }
   };
 
-  walk(entries);
+  walk(entries, false);
   return refs;
 }
 
-/** Collect {@code refFeat} refs from raw 5etools entry trees. */
+/** Collect {@code refFeat} refs from {@code options} blocks only. */
 export function extractFeatRefs(
   entries: unknown[] | undefined,
 ): DndOptionalFeatureRef[] {
@@ -199,12 +202,21 @@ export function extractFeatRefs(
   const refs: DndOptionalFeatureRef[] = [];
   const seen = new Set<string>();
 
-  const walk = (nodes: unknown[]) => {
+  const walk = (nodes: unknown[], insideOptionsBlock: boolean) => {
     for (const node of nodes) {
       if (typeof node !== "object" || node === null) continue;
       const obj = node as Raw;
 
-      if (obj.type === "refFeat" && typeof obj.feat === "string") {
+      if (obj.type === "options" && Array.isArray(obj.entries)) {
+        walk(obj.entries as unknown[], true);
+        continue;
+      }
+
+      if (
+        insideOptionsBlock &&
+        obj.type === "refFeat" &&
+        typeof obj.feat === "string"
+      ) {
         const ref = parseFeatRef(obj.feat);
         const key = optionalFeatureRefKey(ref);
         if (!seen.has(key)) {
@@ -214,15 +226,12 @@ export function extractFeatRefs(
       }
 
       if (Array.isArray(obj.entries)) {
-        walk(obj.entries as unknown[]);
-      }
-      if (obj.type === "options" && Array.isArray(obj.entries)) {
-        walk(obj.entries as unknown[]);
+        walk(obj.entries as unknown[], insideOptionsBlock);
       }
     }
   };
 
-  walk(entries);
+  walk(entries, false);
   return refs;
 }
 
