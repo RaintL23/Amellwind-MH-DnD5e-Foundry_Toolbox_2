@@ -178,6 +178,7 @@ function collectNameGrants(
     }
     // Spell-slot keys (s6, etc.) don't apply to prepared/known name lists
     if (unlock.spellSlotLevel !== undefined) continue;
+    if (!Array.isArray(spells)) continue;
 
     for (const ref of spells) {
       if (typeof ref !== "string") continue;
@@ -212,6 +213,7 @@ function collectChooseFiltersFromSpellMap(
       continue;
     }
     if (unlock.spellSlotLevel !== undefined) continue;
+    if (!Array.isArray(entries)) continue;
 
     for (const entry of entries) {
       const filterString = extractFilterString(entry);
