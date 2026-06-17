@@ -36,6 +36,7 @@ const PDF_TEXT_REPLACEMENTS: ReadonlyArray<[string, string]> = [
   ["\u2265", ">="],
   ["\u2260", "!="],
   ["\u2212", "-"],
+  ["\u2022", "-"],
 ];
 
 export function sanitizeTextForPdf(text: string): string {
@@ -400,7 +401,7 @@ export function getClassFeaturesExport(
   subclassData: Subclass | null,
   level: number,
 ): { line1: string; line2: string } {
-  const features: string[] = [];
+  const entries: string[] = [];
 
   if (classData) {
     for (let i = 0; i < level; i++) {
@@ -408,7 +409,9 @@ export function getClassFeaturesExport(
       if (!row) continue;
       for (const feature of row.features) {
         if (feature.isSubclassFeature || feature.gainSubclassFeature) continue;
-        features.push(feature.displayName || feature.name);
+        const name = feature.displayName || feature.name;
+        const desc = feature.description.join(" ").trim();
+        entries.push(desc ? `- ${name}: ${desc}` : `- ${name}`);
       }
     }
   }
@@ -418,25 +421,37 @@ export function getClassFeaturesExport(
       const row = subclassData.progression[i];
       if (!row) continue;
       for (const feature of row.features) {
-        features.push(feature.displayName || feature.name);
+        const name = feature.displayName || feature.name;
+        const desc = feature.description.join(" ").trim();
+        entries.push(desc ? `- ${name}: ${desc}` : `- ${name}`);
       }
     }
   }
 
-  if (features.length === 0) {
+  if (entries.length === 0) {
     return { line1: classData?.name ?? "", line2: "" };
   }
 
-  const midpoint = Math.ceil(features.length / 2);
+  const combined = entries.join("\n\n");
+  const mid = Math.floor(combined.length / 2);
+  const splitIdx = combined.indexOf("\n\n", mid);
+  if (splitIdx === -1) {
+    return { line1: combined, line2: "" };
+  }
   return {
-    line1: features.slice(0, midpoint).join(", "),
-    line2: features.slice(midpoint).join(", "),
+    line1: combined.slice(0, splitIdx).trim(),
+    line2: combined.slice(splitIdx).trim(),
   };
 }
 
 export function getSpeciesTraitsExport(speciesData: Species | null): string {
   if (!speciesData?.traits.length) return speciesData?.name ?? "";
-  return speciesData.traits.map((trait) => trait.name).join(", ");
+  return speciesData.traits
+    .map((trait) => {
+      const desc = trait.entries.join(" ").trim();
+      return desc ? `- ${trait.name}: ${desc}` : `- ${trait.name}`;
+    })
+    .join("\n\n");
 }
 
 export function buildEquipmentExport(options: {
