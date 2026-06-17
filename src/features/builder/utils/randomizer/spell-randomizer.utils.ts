@@ -1,5 +1,4 @@
 import type {
-  BuilderSpellSelection,
   BuilderSpellSelections,
   Class,
   Spell,
@@ -18,22 +17,7 @@ import { pickByRpgbot, pickMultipleByRpgbot } from "./character-randomizer.utils
 import { filterSpellsForClassFit } from "./spell-class-fit.utils";
 import { isDamageSpell } from "../spell-damage.utils";
 
-function parseSpellDamageRoll(description: string[]): string | undefined {
-  const text = description.join(" ");
-  const match = text.match(/\b(\d+d\d+)(?:\s*\+\s*\d+)?\b/i);
-  return match?.[1];
-}
-
-function spellToSelection(spell: Spell): BuilderSpellSelection {
-  return {
-    id: spell.id,
-    name: spell.name,
-    level: spell.level,
-    source: spell.source,
-    school: spell.schoolName,
-    damageRoll: parseSpellDamageRoll(spell.description),
-  };
-}
+import { spellToSelection } from "../spell-selection.utils";
 
 function getCantripCount(classData: Class, level: number): number {
   const rowIndex = level - 1;
