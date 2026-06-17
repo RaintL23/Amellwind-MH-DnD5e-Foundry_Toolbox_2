@@ -273,8 +273,19 @@ export function useCharacterSheetExport() {
     try {
       const data = buildExportData();
       const bytes = await exportCharacterSheetPdf(data);
-      const safeName = data.name.trim() || "character";
-      downloadPdf(bytes, `${safeName}-sheet.pdf`);
+      const sanitize = (s: string) =>
+        s
+          .trim()
+          .replace(/[\s/\\:*?"<>|]+/g, "_")
+          .replace(/^_+|_+$/g, "");
+      const filenameParts = [
+        sanitize(data.name) || "Character",
+        sanitize(data.species ?? ""),
+        sanitize(data.className ?? ""),
+        sanitize(data.subclass ?? ""),
+        `Level${data.level}`,
+      ].filter(Boolean);
+      downloadPdf(bytes, `${filenameParts.join("_")}.pdf`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export failed");
     } finally {
