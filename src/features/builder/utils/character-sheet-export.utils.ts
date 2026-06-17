@@ -396,6 +396,29 @@ export function getSpellSlotTotals(
   return totals;
 }
 
+/**
+ * Approximate character capacity per CLASS FEATURES field at each font size.
+ * Conservative estimates: the D&D 2024 sheet field is roughly 200×300pt.
+ * These are intentionally conservative to avoid text overflow.
+ */
+const CLASS_FEATURES_CAPACITY: Record<number, number> = {
+  11: 380,
+  10: 480,
+  9:  600,
+};
+
+/**
+ * Returns the smallest font size (≥9) that fits the combined CLASS FEATURES text
+ * within two fields. Falls back to 9 if even that isn't enough.
+ */
+export function getClassFeaturesFontSize(line1: string, line2: string): number {
+  const totalLen = (line1?.length ?? 0) + (line2?.length ?? 0);
+  for (const size of [11, 10, 9] as const) {
+    if (totalLen <= CLASS_FEATURES_CAPACITY[size] * 2) return size;
+  }
+  return 9;
+}
+
 export function getClassFeaturesExport(
   classData: Class | null,
   subclassData: Subclass | null,
@@ -433,6 +456,13 @@ export function getClassFeaturesExport(
   }
 
   const combined = entries.join("\n\n");
+
+  // Only split across two fields when the text is too long for one field at
+  // the minimum font size (9). Otherwise keep everything in line1.
+  if (combined.length <= CLASS_FEATURES_CAPACITY[9]) {
+    return { line1: combined, line2: "" };
+  }
+
   const mid = Math.floor(combined.length / 2);
   const splitIdx = combined.indexOf("\n\n", mid);
   if (splitIdx === -1) {

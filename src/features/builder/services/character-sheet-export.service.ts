@@ -1,6 +1,9 @@
 import type { PDFDocument } from "pdf-lib";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
-import { sanitizeTextForPdf } from "../utils/character-sheet-export.utils";
+import {
+  sanitizeTextForPdf,
+  getClassFeaturesFontSize,
+} from "../utils/character-sheet-export.utils";
 
 const TEMPLATE_URL = "/character-sheet/dnd-2024-character-sheet.pdf";
 
@@ -8,10 +11,25 @@ function setText(
   form: ReturnType<PDFDocument["getForm"]>,
   fieldName: string,
   value: string | number | undefined | null,
+  fontSize?: number,
 ) {
   if (value === undefined || value === null || value === "") return;
   try {
-    form.getTextField(fieldName).setText(sanitizeTextForPdf(String(value)));
+    const field = form.getTextField(fieldName);
+    if (fontSize !== undefined) {
+      // Update the field-level DA (AcroField)
+      field.setFontSize(fontSize);
+      // Also patch each widget's own /DA (widget-level DA takes precedence
+      // over the field-level DA in PDF spec, so we must update both)
+      for (const widget of field.acroField.getWidgets()) {
+        const da = widget.getDefaultAppearance();
+        if (da) {
+          const patched = da.replace(/\d+(?:\.\d+)?\s+Tf/, `${fontSize} Tf`);
+          if (patched !== da) widget.setDefaultAppearance(patched);
+        }
+      }
+    }
+    field.setText(sanitizeTextForPdf(String(value)));
   } catch {
     /* field may not exist on all template revisions */
   }
@@ -109,15 +127,19 @@ export async function exportCharacterSheetPdf(
     setText(form, field, data.skills[key]);
   }
 
-  setText(form, "LANGUAGES", data.languages);
+  setText(form, "LANGUAGES", data.languages, 12);
   setText(form, "WEAPON PROF", data.weaponProficiencies);
   setText(form, "ARMOR", data.armorProficiencies);
   setText(form, "TOOL PROF", data.toolProficiencies);
   setText(form, "FEATS", data.feats);
-  setText(form, "CLASS FEATURES 1", data.classFeatures);
-  setText(form, "CLASS FEATURES 2", data.classFeatures2);
+  const cfFontSize = getClassFeaturesFontSize(
+    data.classFeatures ?? "",
+    data.classFeatures2 ?? "",
+  );
+  setText(form, "CLASS FEATURES 1", data.classFeatures, cfFontSize);
+  setText(form, "CLASS FEATURES 2", data.classFeatures2, cfFontSize);
   setText(form, "SPECIES TRAITS", data.speciesTraits);
-  setText(form, "EQUIPMENT", data.equipment);
+  setText(form, "EQUIPMENT", data.equipment, 12);
   setCheckbox(form, "shield chk", data.hasShield);
   setCheckbox(form, data.alignmentCheckbox ?? "", true);
   setText(form, "GP", data.goldPieces);
