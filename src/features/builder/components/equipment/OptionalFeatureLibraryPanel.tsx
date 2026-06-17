@@ -394,7 +394,7 @@ export function OptionalFeatureLibraryPanel({
             onClick={() => setDetailItem(null)}
             className="text-[11px] text-muted-foreground hover:text-foreground"
           >
-            Volver a la lista
+            Back to list
           </button>
         }
       >
@@ -419,7 +419,7 @@ export function OptionalFeatureLibraryPanel({
             className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground"
           >
             <X className="h-3 w-3" />
-            Quitar todas
+            Remove all
           </button>
         ) : (
           <span className="text-[11px] text-muted-foreground">
@@ -446,7 +446,7 @@ export function OptionalFeatureLibraryPanel({
         ) : isFightingStyle ? (
           <span className="text-muted-foreground/80">
             {" "}
-            · you can't repeat the same fighting style
+            · you can't select the same fighting style in another slot
           </span>
         ) : null}
       </p>
@@ -502,10 +502,9 @@ export function OptionalFeatureLibraryPanel({
                 item.catalog === "feat"
                   ? getFeatCategoryLabel(item.category)
                   : item.featureTypes[0];
-              const rpgbotRating =
-                rpgbotOptionalReady
-                  ? (rpgbotOptionalLookup?.(item.name, item.source) ?? null)
-                  : null;
+              const rpgbotRating = rpgbotOptionalReady
+                ? (rpgbotOptionalLookup?.(item.name, item.source) ?? null)
+                : null;
 
               return (
                 <li key={item.id}>

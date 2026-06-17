@@ -12,7 +12,56 @@ import {
   toRpgbotClassSlug,
   type RpgbotLookupContext,
 } from "@/features/builder/data/rpgbot-ratings.utils";
+import type {
+  GoodEvilAxis,
+  LawChaosAxis,
+} from "@/features/builder/utils/alignment.utils";
 import { pickByRpgbot, pickRandom, prefer2024Edition } from "./character-randomizer.utils";
+
+const RANDOM_CHARACTER_NAMES = [
+  "Aldric",
+  "Bruna",
+  "Cedric",
+  "Diana",
+  "Erik",
+  "Fiora",
+  "Gareth",
+  "Helena",
+  "Ivan",
+  "Jade",
+  "Kael",
+  "Luna",
+  "Magnus",
+  "Nadia",
+  "Orin",
+  "Petra",
+  "Quinn",
+  "Rhea",
+  "Soren",
+  "Talia",
+  "Ulric",
+  "Vera",
+  "Wren",
+  "Yuri",
+  "Zara",
+];
+
+const LAW_CHAOS_AXES: LawChaosAxis[] = ["L", "N", "C"];
+const GOOD_EVIL_AXES: GoodEvilAxis[] = ["G", "N", "E"];
+
+export function pickRandomCharacterName(): string {
+  return pickRandom(RANDOM_CHARACTER_NAMES) ?? "Adventurer";
+}
+
+export function pickRandomAlignmentAxes(): {
+  lawChaos: LawChaosAxis;
+  goodEvil: GoodEvilAxis;
+} {
+  return {
+    lawChaos: pickRandom(LAW_CHAOS_AXES) ?? "N",
+    goodEvil: pickRandom(GOOD_EVIL_AXES) ?? "N",
+  };
+}
 
 const HUNTER_INITIATE_PATTERN = /hunter['']?s?\s+initiate/i;
 

@@ -24,7 +24,6 @@ import {
 import { useRpgbotRatingsContext } from "@/features/builder/context/RpgbotRatingsContext";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
-import { parseAlignmentAxes } from "@/features/builder/utils/alignment.utils";
 import { isSubclassLevelReached } from "@/features/builder/utils/builder-class.utils";
 import { delay } from "@/features/builder/utils/randomizer/character-randomizer.utils";
 import { pickRandomClass, pickBestSubclass } from "@/features/builder/utils/randomizer/class-randomizer.utils";
@@ -33,6 +32,8 @@ import {
   pickAmellwindSpecies,
   pickDndBackground,
   pickDndSpecies,
+  pickRandomAlignmentAxes,
+  pickRandomCharacterName,
 } from "@/features/builder/utils/randomizer/identity-randomizer.utils";
 import {
   abilityModifier,
@@ -169,13 +170,12 @@ export function useCharacterRandomizer() {
     setIsRandomizing(true);
 
     const preservedLevel = character.level;
-    const preservedName = character.name;
-    const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
+    const { lawChaos, goodEvil } = pickRandomAlignmentAxes();
 
     try {
       resetBuild();
       setLevel(preservedLevel);
-      if (preservedName) setName(preservedName);
+      setName(pickRandomCharacterName());
       setLawChaosAlignment(lawChaos);
       setGoodEvilAlignment(goodEvil);
       await delay();
@@ -650,8 +650,6 @@ export function useCharacterRandomizer() {
     useAmellwindHomebrew,
     isRandomizing,
     character.level,
-    character.name,
-    character.alignment,
     character.abilities,
     resetBuild,
     setLevel,
