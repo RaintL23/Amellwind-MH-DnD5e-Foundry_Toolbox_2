@@ -256,6 +256,7 @@ export function useSpellcasting(
   faction: BackgroundFaction | null = null,
   classLevelForProgression?: number,
   multiclassClassEntries?: BuilderClassLevelEntry[],
+  cantripBonus: number = 0,
 ): SpellcastingInfo {
   return useMemo((): SpellcastingInfo => {
     const none: SpellcastingInfo = {
@@ -325,7 +326,7 @@ export function useSpellcasting(
           usesPreparedSpells: !!preparedSpellsProgression?.length,
         } satisfies import("../utils/pact-magic.utils").PactMagicProgression);
 
-      const cantripCount = pact.cantripCount;
+      const cantripCount = pact.cantripCount + cantripBonus;
       const maxPreparedOrKnown = pact.preparedSpellCount;
       const availableSpellLevels: number[] = [];
       if (cantripCount > 0) availableSpellLevels.push(0);
@@ -361,8 +362,8 @@ export function useSpellcasting(
     }
 
     const cantripCount =
-      cantripProgression?.[rowIndex] ??
-      getCantripCountFromTable(spellProgression, rowIndex);
+      (cantripProgression?.[rowIndex] ??
+      getCantripCountFromTable(spellProgression, rowIndex)) + cantripBonus;
 
     let slotLevels = getAvailableSlotLevels(spellProgression, progressionLevel);
 
@@ -448,6 +449,7 @@ export function useSpellcasting(
     optionalFeatureSelections,
     optionalFeatureSpellGrants,
     faction,
+    cantripBonus,
   ]);
 }
 

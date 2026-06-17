@@ -16,8 +16,11 @@ import {
   getListDndFeats,
 } from "@/features/dnd-feats/services/dnd-feat.service";
 import { getListSpells } from "@/features/spells/services/spell.service";
+import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
+import { getAllDndFeats as getAllDndFeatsForFightingStyles } from "@/features/dnd-feats/services/dnd-feat.service";
 import {
   resolveRpgbotContext,
+  resolveOptionalFeatureRpgbotContext,
   resolveSpellGuideKey,
   toRpgbotClassSlug,
 } from "@/features/builder/data/rpgbot-ratings.utils";
@@ -69,8 +72,16 @@ import {
   getDnd2024LanguageNames,
   loadChooseableLanguages,
 } from "@/shared/data/chooseable-languages";
+import { computeFeatureChoiceGrants } from "@/features/builder/utils/feature-choice-grants.utils";
+import {
+  resolveOptionalFeatureProgressions,
+} from "@/features/builder/utils/class-optional-features.utils";
+import {
+  detectIncompleteProgressions,
+  randomizeAllOptionalFeatureProgressions,
+} from "@/features/builder/utils/randomizer/optional-feature-randomizer.utils";
 import type { AbilityBonus } from "@/shared/types/species.types";
-import type { BuilderFeatSelection, DndRace, SkillKey } from "@/shared/types";
+import type { BuilderFeatSelection, BuilderOptionalFeatureSelections, DndRace, SkillKey } from "@/shared/types";
 import type { DndBackground } from "@/shared/types/dnd-background.types";
 import type { SkillProficiencyGrant } from "@/shared/types/proficiency.types";
 
@@ -162,6 +173,7 @@ export function useCharacterRandomizer() {
     setBackgroundLanguageChoices,
     setSpeciesLanguageChoices,
     setClassLanguageChoicesAtIndex,
+    setOptionalFeaturesForProgression,
   } = builder;
 
   const randomize = useCallback(async () => {
@@ -188,6 +200,9 @@ export function useCharacterRandomizer() {
         amellwindBackgrounds,
         dndFeats,
         allSpells,
+        /* loadChooseableLanguages — loaded for side-effects only */,
+        allOptionalFeatures,
+        allFeatCatalog,
       ] = await Promise.all([
         getListClasses(),
         getBuilderListDndRaces(),
@@ -197,6 +212,8 @@ export function useCharacterRandomizer() {
         getListDndFeats(),
         getListSpells(),
         loadChooseableLanguages(),
+        getAllDndOptionalFeatures(),
+        getAllDndFeatsForFightingStyles(),
       ]);
 
       const dnd2024Languages = getDnd2024LanguageNames();
@@ -219,6 +236,54 @@ export function useCharacterRandomizer() {
         setSubclass(null);
       }
       await delay();
+
+      // Resolve all optional-feature progressions for this class + subclass + level
+      const activeProgressions = resolveOptionalFeatureProgressions(
+        classData,
+        pickedSubclass
+          ? (classData.subclasses.find((sc) => sc.id === pickedSubclass.id) ?? null)
+          : null,
+        preservedLevel,
+      );
+
+      const optionalFeatureCtx = {
+        classData,
+        subclass: pickedSubclass
+          ? (classData.subclasses.find((sc) => sc.id === pickedSubclass.id) ?? null)
+          : null,
+        classLevel: preservedLevel,
+        optionalCatalog: allOptionalFeatures,
+        featCatalog: allFeatCatalog,
+        createLookup: (rpgCtx: ReturnType<typeof resolveOptionalFeatureRpgbotContext>) =>
+          createLookup(rpgCtx),
+      };
+
+      // Pass 1: randomize all progressions (feature-choice, optionalfeature, feat/fighting-styles)
+      let randomFeatureChoiceSelections: BuilderOptionalFeatureSelections =
+        randomizeAllOptionalFeatureProgressions(
+          activeProgressions,
+          {},
+          optionalFeatureCtx,
+          setOptionalFeaturesForProgression,
+        );
+
+      // Passes 2 & 3: completeness check — fill any progressions that are still short
+      // (can happen when prerequisites depend on picks from the same pass)
+      const MAX_FILL_PASSES = 2;
+      for (let pass = 0; pass < MAX_FILL_PASSES; pass++) {
+        const incomplete = detectIncompleteProgressions(
+          activeProgressions,
+          randomFeatureChoiceSelections,
+        );
+        if (incomplete.length === 0) break;
+
+        randomFeatureChoiceSelections = randomizeAllOptionalFeatureProgressions(
+          incomplete,
+          randomFeatureChoiceSelections,
+          optionalFeatureCtx,
+          setOptionalFeaturesForProgression,
+        );
+      }
 
       const abilityPriority = resolveClassAbilityPriority(
         classData,
@@ -526,6 +591,11 @@ export function useCharacterRandomizer() {
       }
 
       clearSpells();
+      const activeProgressionsList = activeProgressions.map((r) => r.progression);
+      const featureChoiceGrantsForSpells = computeFeatureChoiceGrants(
+        randomFeatureChoiceSelections,
+        activeProgressionsList,
+      );
       const spellSelections = buildRandomSpellSelections({
         allSpells,
         classData,
@@ -536,6 +606,7 @@ export function useCharacterRandomizer() {
           ...abilityScores,
         },
         rpgbotLookup: spellLookup,
+        cantripBonus: featureChoiceGrantsForSpells.cantripBonus,
       });
       for (const [levelKey, spells] of Object.entries(spellSelections)) {
         for (const spell of spells) {
@@ -683,6 +754,7 @@ export function useCharacterRandomizer() {
     setBackgroundLanguageChoices,
     setSpeciesLanguageChoices,
     setClassLanguageChoicesAtIndex,
+    setOptionalFeaturesForProgression,
     rpgbotData,
     createLookup,
     addEquipmentBundle,

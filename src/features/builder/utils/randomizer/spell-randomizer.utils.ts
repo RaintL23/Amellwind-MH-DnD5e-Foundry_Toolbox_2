@@ -151,8 +151,9 @@ export function buildRandomSpellSelections(params: {
   level: number;
   abilities: AbilityScores;
   rpgbotLookup: RpgbotLookupFn | null;
+  cantripBonus?: number;
 }): BuilderSpellSelections {
-  const { allSpells, classData, subclass, level, rpgbotLookup } = params;
+  const { allSpells, classData, subclass, level, rpgbotLookup, cantripBonus = 0 } = params;
   const rawSelections: Record<number, Spell[]> = {};
   const eligiblePools: Spell[][] = [];
 
@@ -182,10 +183,10 @@ export function buildRandomSpellSelections(params: {
     }
   }
 
-  const cantripCount = isPact
+  const cantripCount = (isPact
     ? (getPactMagicProgression(classData.spellProgression, rowIndex)
         ?.cantripCount ?? getCantripCount(classData, level))
-    : getCantripCount(classData, level);
+    : getCantripCount(classData, level)) + cantripBonus;
 
   if (cantripCount > 0) {
     const ctx = buildSpellListContext(

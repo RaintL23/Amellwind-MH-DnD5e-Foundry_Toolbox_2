@@ -44,6 +44,7 @@ import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.uti
 import { useSpellcasting } from "../../hooks/useSpellcasting";
 import { useOptionalFeatureSpellGrants } from "../../hooks/useOptionalFeatureSpellGrants";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
+import { computeFeatureChoiceGrants } from "../../utils/feature-choice-grants.utils";
 
 export function BuilderCenterPanel() {
   const {
@@ -116,6 +117,14 @@ export function BuilderCenterPanel() {
     optionalFeatureSelections ?? {},
     character.level,
   );
+  const optionalProgressionsList = useMemo(
+    () => resolveOptionalFeatureProgressions(classData, subclassData, primaryClassLevel).map((r) => r.progression),
+    [classData, subclassData, primaryClassLevel],
+  );
+  const cantripBonus = useMemo(
+    () => computeFeatureChoiceGrants(optionalFeatureSelections ?? {}, optionalProgressionsList).cantripBonus,
+    [optionalFeatureSelections, optionalProgressionsList],
+  );
   const spellcastingInfo = useSpellcasting(
     classData,
     subclassData,
@@ -136,6 +145,7 @@ export function BuilderCenterPanel() {
           multiclassClassData,
         )
       : undefined,
+    cantripBonus,
   );
 
   const optionalProgressions = useMemo(
