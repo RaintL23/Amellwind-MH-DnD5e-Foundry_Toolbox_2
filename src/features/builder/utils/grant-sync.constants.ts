@@ -29,4 +29,7 @@ export const EMPTY_FEAT_GRANTS = {
   source: "feats" as const,
   skillGrants: [],
   expertiseGrants: [],
+  armorGrants: [],
+  weaponGrants: [],
+  toolGrants: [],
 };

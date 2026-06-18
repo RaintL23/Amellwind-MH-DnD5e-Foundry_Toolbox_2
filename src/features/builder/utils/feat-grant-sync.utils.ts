@@ -3,6 +3,7 @@ import { getDndFeatById } from "@/features/dnd-feats/services/dnd-feat.service";
 import type { BuilderFeatSelection } from "@/shared/types";
 import type {
   ExpertiseGrant,
+  NamedProficiencyGrant,
   SkillProficiencyGrant,
 } from "@/shared/types/proficiency.types";
 import { isAsiFeatSelection } from "./builder-class.utils";
@@ -10,6 +11,7 @@ import { ORIGIN_FEAT_SOURCE_NAME } from "./origin-feat.constants";
 import { optionalFeatureOriginFeatSourceName } from "./optional-feature-feat-grants.utils";
 import type { OptionalFeatureOriginFeatSlot } from "./optional-feature-feat-grants.utils";
 import { EMPTY_FEAT_GRANTS } from "./grant-sync.constants";
+import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
 
 interface ActiveFeatEntry {
   selection: BuilderFeatSelection;
@@ -83,6 +85,9 @@ export async function loadFeatGrantPayload(
 
   const skillGrants: SkillProficiencyGrant[] = [];
   const expertiseGrants: ExpertiseGrant[] = [];
+  const armorGrants: NamedProficiencyGrant[] = [];
+  const weaponGrants: NamedProficiencyGrant[] = [];
+  const toolGrants: NamedProficiencyGrant[] = [];
   const skillChoiceResets: Array<{
     isOrigin: boolean;
     classSlotIndex: number | null;
@@ -113,6 +118,11 @@ export async function loadFeatGrantPayload(
       expertiseGrants.push({ ...grant, source: tagSource });
     }
 
+    const textGrants = parseEntriesProficiencyGrants(feat.paragraphs ?? [], tagSource);
+    armorGrants.push(...textGrants.armorGrants);
+    weaponGrants.push(...textGrants.weaponGrants);
+    toolGrants.push(...textGrants.toolGrants);
+
     if ((feat.skillGrants?.length ?? 0) === 0) {
       skillChoiceResets.push({
         isOrigin: entry.isOrigin,
@@ -123,7 +133,14 @@ export async function loadFeatGrantPayload(
   });
 
   return {
-    payload: { source: "feats" as const, skillGrants, expertiseGrants },
+    payload: {
+      source: "feats" as const,
+      skillGrants,
+      expertiseGrants,
+      armorGrants,
+      weaponGrants,
+      toolGrants,
+    },
     skillChoiceResets,
   };
 }

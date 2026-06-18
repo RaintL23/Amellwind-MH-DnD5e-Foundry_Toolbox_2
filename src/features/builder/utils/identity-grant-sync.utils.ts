@@ -9,6 +9,34 @@ import {
 } from "./homebrew-cleanup.utils";
 import { EMPTY_BACKGROUND_GRANTS, EMPTY_SPECIES_GRANTS } from "./grant-sync.constants";
 import { resolveSpeciesDefenseGrants } from "./species-defense-grants.utils";
+import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
+
+import type { SpeciesTrait } from "@/shared/types";
+import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
+
+function collectTraitTextProficiencyGrants(
+  traits: SpeciesTrait[],
+  sourceType: "species",
+  sourceName: string,
+): {
+  armorGrants: NamedProficiencyGrant[];
+  weaponGrants: NamedProficiencyGrant[];
+  toolGrants: NamedProficiencyGrant[];
+} {
+  const armorGrants: NamedProficiencyGrant[] = [];
+  const weaponGrants: NamedProficiencyGrant[] = [];
+  const toolGrants: NamedProficiencyGrant[] = [];
+
+  for (const trait of traits) {
+    const source = { type: sourceType, name: `${sourceName} — ${trait.name}` };
+    const parsed = parseEntriesProficiencyGrants(trait.entries, source);
+    armorGrants.push(...parsed.armorGrants);
+    weaponGrants.push(...parsed.weaponGrants);
+    toolGrants.push(...parsed.toolGrants);
+  }
+
+  return { armorGrants, weaponGrants, toolGrants };
+}
 
 export async function loadSpeciesGrantPayload(
   species: CharacterSelectionRef & { subraceId?: string | null },
@@ -50,6 +78,11 @@ export async function loadSpeciesGrantPayload(
           subrace ?? null,
           speciesSpellGroupChoice,
         ),
+        ...collectTraitTextProficiencyGrants(
+          [...base.traits, ...(subrace?.traits ?? [])],
+          "species",
+          subrace?.name ?? base.name,
+        ),
       },
       invalidSubrace: false,
     };
@@ -65,6 +98,7 @@ export async function loadSpeciesGrantPayload(
       skillAdvantages: data.skillAdvantages ?? [],
       languageGrants: data.languageGrants ?? [],
       defenseGrants: data.defenseGrants ?? [],
+      ...collectTraitTextProficiencyGrants(data.traits ?? [], "species", data.name),
     },
     invalidSubrace: false,
   };

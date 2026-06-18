@@ -63,6 +63,11 @@ export function useProficiencySlice({
   const [classToolGrants, setClassToolGrants] = useState<NamedProficiencyGrant[]>([]);
   const [classArmorGrants, setClassArmorGrants] = useState<NamedProficiencyGrant[]>([]);
   const [classWeaponGrants, setClassWeaponGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [featArmorGrants, setFeatArmorGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [featWeaponGrants, setFeatWeaponGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [featToolGrants, setFeatToolGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [speciesArmorGrants, setSpeciesArmorGrants] = useState<NamedProficiencyGrant[]>([]);
+  const [speciesWeaponGrants, setSpeciesWeaponGrants] = useState<NamedProficiencyGrant[]>([]);
   const [bgToolGrants, setBgToolGrants] = useState<NamedProficiencyGrant[]>([]);
   const [speciesToolGrants, setSpeciesToolGrants] = useState<NamedProficiencyGrant[]>([]);
   const [classLanguageGrants, setClassLanguageGrants] = useState<NamedProficiencyGrant[]>([]);
@@ -81,8 +86,16 @@ export function useProficiencySlice({
     [classSkillGrants, bgSkillGrants, speciesSkillGrants, featGrantsList],
   );
   const allToolGrants = useMemo(
-    () => [...classToolGrants, ...bgToolGrants, ...speciesToolGrants],
-    [classToolGrants, bgToolGrants, speciesToolGrants],
+    () => [...classToolGrants, ...bgToolGrants, ...speciesToolGrants, ...featToolGrants],
+    [classToolGrants, bgToolGrants, speciesToolGrants, featToolGrants],
+  );
+  const allArmorGrants = useMemo(
+    () => [...classArmorGrants, ...featArmorGrants, ...speciesArmorGrants],
+    [classArmorGrants, featArmorGrants, speciesArmorGrants],
+  );
+  const allWeaponGrants = useMemo(
+    () => [...classWeaponGrants, ...featWeaponGrants, ...speciesWeaponGrants],
+    [classWeaponGrants, featWeaponGrants, speciesWeaponGrants],
   );
   const allLanguageGrants = useMemo(
     () => [...classLanguageGrants, ...bgLanguageGrants, ...speciesLanguageGrants],
@@ -164,13 +177,29 @@ export function useProficiencySlice({
         setBgToolGrants((prev) => nextGrantList(prev, next));
       } else if (source === "species") {
         setSpeciesToolGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "feats") {
+        setFeatToolGrants((prev) => nextGrantList(prev, next));
       }
     }
-    if (payload.armorGrants !== undefined && source === "class") {
-      setClassArmorGrants((prev) => nextGrantList(prev, payload.armorGrants!));
+    if (payload.armorGrants !== undefined) {
+      const next = payload.armorGrants;
+      if (source === "class") {
+        setClassArmorGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "feats") {
+        setFeatArmorGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "species") {
+        setSpeciesArmorGrants((prev) => nextGrantList(prev, next));
+      }
     }
-    if (payload.weaponGrants !== undefined && source === "class") {
-      setClassWeaponGrants((prev) => nextGrantList(prev, payload.weaponGrants!));
+    if (payload.weaponGrants !== undefined) {
+      const next = payload.weaponGrants;
+      if (source === "class") {
+        setClassWeaponGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "feats") {
+        setFeatWeaponGrants((prev) => nextGrantList(prev, next));
+      } else if (source === "species") {
+        setSpeciesWeaponGrants((prev) => nextGrantList(prev, next));
+      }
     }
     if (payload.languageGrants !== undefined) {
       const next = payload.languageGrants;
@@ -229,6 +258,8 @@ export function useProficiencySlice({
     setSpeciesToolGrants([]);
     setSpeciesLanguageGrants([]);
     setSpeciesDefenseGrants([]);
+    setSpeciesArmorGrants([]);
+    setSpeciesWeaponGrants([]);
     setAllSkillAdvantages([]);
   }, []);
 
@@ -272,8 +303,13 @@ export function useProficiencySlice({
     setClassToolGrants([]);
     setClassArmorGrants([]);
     setClassWeaponGrants([]);
+    setFeatArmorGrants([]);
+    setFeatWeaponGrants([]);
+    setFeatToolGrants([]);
     setBgToolGrants([]);
     setSpeciesToolGrants([]);
+    setSpeciesArmorGrants([]);
+    setSpeciesWeaponGrants([]);
     setClassLanguageGrants([]);
     setBgLanguageGrants([]);
     setSpeciesLanguageGrants([]);
@@ -506,8 +542,8 @@ export function useProficiencySlice({
       backgroundToolChoices,
       speciesToolChoices,
     );
-    const armor = resolveFixedGrantList(classArmorGrants);
-    const weapons = resolveFixedGrantList(classWeaponGrants);
+    const armor = resolveFixedGrantList(allArmorGrants);
+    const weapons = resolveFixedGrantList(allWeaponGrants);
     const languages = resolveNamedWithChoices(
       allLanguageGrants,
       classLanguageChoices,
@@ -561,8 +597,8 @@ export function useProficiencySlice({
     };
   }, [
     allToolGrants,
-    classArmorGrants,
-    classWeaponGrants,
+    allArmorGrants,
+    allWeaponGrants,
     allLanguageGrants,
     allDefenseGrants,
     classToolChoices,

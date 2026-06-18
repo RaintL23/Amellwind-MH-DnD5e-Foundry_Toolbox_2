@@ -1,14 +1,23 @@
-import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
 import type {
+  BuilderOptionalFeatureSelection,
   BuilderOptionalFeatureSelections,
+  Class,
+  DndFeat,
+  DndOptionalFeature,
   OptionalFeatureProgression,
+  Subclass,
 } from "@/shared/types";
+import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
+import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
+import { statBlockContentToPlainText } from "@/shared/utils/statblock-entries.mapper";
+import { getFeaturesUpToLevel } from "./builder-class.utils";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
 export interface FeatureChoiceGrants {
   armorGrants?: NamedProficiencyGrant[];
   weaponGrants?: NamedProficiencyGrant[];
+  toolGrants?: NamedProficiencyGrant[];
   /** Extra cantrips granted by this option. */
   cantripBonus?: number;
 }
@@ -16,30 +25,11 @@ export interface FeatureChoiceGrants {
 export interface AggregatedFeatureChoiceGrants {
   armorGrants: NamedProficiencyGrant[];
   weaponGrants: NamedProficiencyGrant[];
+  toolGrants: NamedProficiencyGrant[];
   cantripBonus: number;
 }
 
 // ─── Patterns ────────────────────────────────────────────────────────────────
-
-/** Armor category keywords to detect in plain-text entries. */
-const ARMOR_PATTERNS: Array<{ re: RegExp; item: string }> = [
-  { re: /\bheavy\s+armor\b/i, item: "Heavy" },
-  { re: /\bmedium\s+armor\b/i, item: "Medium" },
-  { re: /\blight\s+armor\b/i, item: "Light" },
-];
-
-/** Weapon category keywords to detect in plain-text entries. */
-const WEAPON_PATTERNS: Array<{ re: RegExp; item: string }> = [
-  { re: /\bmartial\s+weapons?\b/i, item: "Martial" },
-  { re: /\bsimple\s+weapons?\b/i, item: "Simple" },
-];
-
-/**
- * Shield: only grant if the text explicitly conveys proficiency/training with
- * shields (avoids false positives like "equip a shield").
- */
-const SHIELD_GRANT_RE =
-  /\bshield(?:s)?\b.{0,60}(?:proficiency|trained|training)\b|\b(?:proficiency|trained|training)\b.{0,60}\bshield(?:s)?\b/i;
 
 /**
  * Cantrip bonus: "one extra cantrip", "one additional cantrip",
@@ -50,81 +40,219 @@ const CANTRIP_BONUS_RE =
 
 // ─── Parser ──────────────────────────────────────────────────────────────────
 
-/**
- * Infers mechanical grants by scanning the plain-text `entries` of a
- * feature-choice option.  No hardcoded IDs — works for any class.
- */
+function normalizeSelectionName(value: string): string {
+  return value.trim().toLowerCase();
+}
+
 function detectGrantsFromEntries(
   entries: string[],
   sourceName: string,
 ): FeatureChoiceGrants {
-  const text = entries.join(" ");
   const grants: FeatureChoiceGrants = {};
+  const source = { type: "class" as const, name: sourceName };
+  const parsed = parseEntriesProficiencyGrants(entries, source);
 
-  const armorItems: string[] = [];
-  for (const { re, item } of ARMOR_PATTERNS) {
-    if (re.test(text)) armorItems.push(item);
-  }
-  if (SHIELD_GRANT_RE.test(text)) armorItems.push("Shield");
-  if (armorItems.length > 0) {
-    grants.armorGrants = [
-      { kind: "fixed", items: armorItems, source: { type: "class", name: sourceName } },
-    ];
-  }
+  if (parsed.armorGrants.length) grants.armorGrants = parsed.armorGrants;
+  if (parsed.weaponGrants.length) grants.weaponGrants = parsed.weaponGrants;
+  if (parsed.toolGrants.length) grants.toolGrants = parsed.toolGrants;
 
-  const weaponItems: string[] = [];
-  for (const { re, item } of WEAPON_PATTERNS) {
-    if (re.test(text)) weaponItems.push(item);
-  }
-  if (weaponItems.length > 0) {
-    grants.weaponGrants = [
-      { kind: "fixed", items: weaponItems, source: { type: "class", name: sourceName } },
-    ];
-  }
-
-  if (CANTRIP_BONUS_RE.test(text)) {
+  if (CANTRIP_BONUS_RE.test(entries.join(" "))) {
     grants.cantripBonus = 1;
   }
 
   return grants;
 }
 
+function mergeGrants(
+  target: AggregatedFeatureChoiceGrants,
+  grants: FeatureChoiceGrants,
+): void {
+  if (grants.armorGrants?.length) target.armorGrants.push(...grants.armorGrants);
+  if (grants.weaponGrants?.length) target.weaponGrants.push(...grants.weaponGrants);
+  if (grants.toolGrants?.length) target.toolGrants.push(...grants.toolGrants);
+  if (grants.cantripBonus) target.cantripBonus += grants.cantripBonus;
+}
+
+function resolveFeatureChoiceEntries(
+  pick: BuilderOptionalFeatureSelection,
+  progression: OptionalFeatureProgression,
+): string[] {
+  const option = progression.choiceOptions?.find(
+    (candidate) =>
+      candidate.id === pick.id ||
+      normalizeSelectionName(candidate.name) === normalizeSelectionName(pick.name),
+  );
+  return option?.entries ?? [];
+}
+
+function resolveOptionalFeatureEntries(
+  pick: BuilderOptionalFeatureSelection,
+  catalog: DndOptionalFeature[],
+): string[] {
+  const feature = catalog.find(
+    (candidate) =>
+      candidate.id === pick.id ||
+      (normalizeSelectionName(candidate.name) === normalizeSelectionName(pick.name) &&
+        normalizeSelectionName(candidate.source) === normalizeSelectionName(pick.source)),
+  );
+  return feature?.entries ?? [];
+}
+
+function resolveFeatEntries(
+  pick: BuilderOptionalFeatureSelection,
+  catalog: DndFeat[],
+): string[] {
+  const feat = catalog.find(
+    (candidate) =>
+      candidate.id === pick.id ||
+      normalizeSelectionName(candidate.name) === normalizeSelectionName(pick.name),
+  );
+  return feat?.paragraphs ?? [];
+}
+
+function resolveSelectionEntries(
+  pick: BuilderOptionalFeatureSelection,
+  progression: OptionalFeatureProgression,
+  optionalCatalog: DndOptionalFeature[],
+  featCatalog: DndFeat[],
+): string[] {
+  if (progression.catalog === "feature-choice") {
+    return resolveFeatureChoiceEntries(pick, progression);
+  }
+  if (progression.catalog === "feat") {
+    return resolveFeatEntries(pick, featCatalog);
+  }
+  return resolveOptionalFeatureEntries(pick, optionalCatalog);
+}
+
 // ─── Public API ──────────────────────────────────────────────────────────────
 
 /**
- * Aggregates mechanical grants for the currently selected feature-choice
- * options by parsing each option's plain-text entries.
- *
- * Pass the active `progressions` so the function can look up the full option
- * data (including entries) for each selection.
+ * Aggregates armor/weapon/tool grants from selected optional features by parsing
+ * plain-text entries for proficiency language ("you gain proficiency with …").
  */
 export function computeFeatureChoiceGrants(
   optionalFeatureSelections: BuilderOptionalFeatureSelections,
   progressions: OptionalFeatureProgression[],
+  optionalCatalog: DndOptionalFeature[] = [],
+  featCatalog: DndFeat[] = [],
 ): AggregatedFeatureChoiceGrants {
   const result: AggregatedFeatureChoiceGrants = {
     armorGrants: [],
     weaponGrants: [],
+    toolGrants: [],
     cantripBonus: 0,
   };
 
   for (const progression of progressions) {
-    if (progression.catalog !== "feature-choice") continue;
     const picks = optionalFeatureSelections[progression.id] ?? [];
 
     for (const pick of picks) {
       if (!pick) continue;
-      const option = progression.choiceOptions?.find((o) => o.id === pick.id);
-      if (!option?.entries?.length) continue;
 
-      const sourceName = `${progression.name}: ${option.name}`;
-      const grants = detectGrantsFromEntries(option.entries, sourceName);
+      const entries = resolveSelectionEntries(
+        pick,
+        progression,
+        optionalCatalog,
+        featCatalog,
+      );
+      if (!entries.length) continue;
 
-      if (grants.armorGrants?.length) result.armorGrants.push(...grants.armorGrants);
-      if (grants.weaponGrants?.length) result.weaponGrants.push(...grants.weaponGrants);
-      if (grants.cantripBonus) result.cantripBonus += grants.cantripBonus;
+      const sourceName = `${progression.name}: ${pick.name}`;
+      mergeGrants(result, detectGrantsFromEntries(entries, sourceName));
     }
   }
 
   return result;
+}
+
+function emptyAggregatedGrants(): AggregatedFeatureChoiceGrants {
+  return {
+    armorGrants: [],
+    weaponGrants: [],
+    toolGrants: [],
+    cantripBonus: 0,
+  };
+}
+
+/**
+ * Parses fixed proficiencies from class/subclass features granted by level
+ * (excluding feature-choice parents and optional-feature catalog hosts).
+ */
+export function computeGrantedFeatureEquipmentGrants(
+  classData: Class | null,
+  subclass: Subclass | null,
+  level: number,
+  progressions: OptionalFeatureProgression[],
+): AggregatedFeatureChoiceGrants {
+  if (!classData) return emptyAggregatedGrants();
+
+  const featureChoiceNames = new Set(
+    progressions
+      .filter((progression) => progression.catalog === "feature-choice")
+      .map((progression) => progression.name.trim().toLowerCase()),
+  );
+
+  const result = emptyAggregatedGrants();
+  const features = getFeaturesUpToLevel(classData, subclass, level);
+
+  for (const feature of features) {
+    const featureName = feature.name.trim().toLowerCase();
+    if (featureChoiceNames.has(featureName)) continue;
+    if (/ options$/i.test(feature.name)) continue;
+    if ((feature.optionalFeatureRefs?.length ?? 0) > 0) continue;
+    if ((feature.featRefs?.length ?? 0) > 0) continue;
+
+    const entries = [
+      ...feature.description,
+      ...feature.content
+        .map(statBlockContentToPlainText)
+        .map((line) => line.trim())
+        .filter(Boolean),
+    ];
+    if (!entries.length) continue;
+
+    const sourceName = feature.isSubclassFeature
+      ? `${subclass?.name ?? "Subclass"}: ${feature.name}`
+      : `${classData.name}: ${feature.name}`;
+    mergeGrants(result, detectGrantsFromEntries(entries, sourceName));
+  }
+
+  return result;
+}
+
+export function computeAllClassEquipmentGrants(
+  optionalFeatureSelections: BuilderOptionalFeatureSelections,
+  progressions: OptionalFeatureProgression[],
+  classData: Class | null,
+  subclass: Subclass | null,
+  level: number,
+  optionalCatalog: DndOptionalFeature[] = [],
+  featCatalog: DndFeat[] = [],
+): AggregatedFeatureChoiceGrants {
+  const selectionGrants = computeFeatureChoiceGrants(
+    optionalFeatureSelections,
+    progressions,
+    optionalCatalog,
+    featCatalog,
+  );
+  const grantedFeatureGrants = computeGrantedFeatureEquipmentGrants(
+    classData,
+    subclass,
+    level,
+    progressions,
+  );
+
+  return {
+    armorGrants: [
+      ...selectionGrants.armorGrants,
+      ...grantedFeatureGrants.armorGrants,
+    ],
+    weaponGrants: [
+      ...selectionGrants.weaponGrants,
+      ...grantedFeatureGrants.weaponGrants,
+    ],
+    toolGrants: [...selectionGrants.toolGrants, ...grantedFeatureGrants.toolGrants],
+    cantripBonus: selectionGrants.cantripBonus + grantedFeatureGrants.cantripBonus,
+  };
 }

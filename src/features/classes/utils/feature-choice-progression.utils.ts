@@ -339,15 +339,27 @@ function resolveOptionRef(
 
   if (ref.kind === "class" && ref.uid) {
     const u = unpackClassFeatureUid(ref.uid);
-    const feature = ctx.classFeatureIndex.get(
-      classFeatureKey({
-        name: u.name,
-        className: u.className,
-        classSource: u.classSource,
-        level: u.level,
-        source: u.source,
-      }),
-    );
+    const exactKey = classFeatureKey({
+      name: u.name,
+      className: u.className,
+      classSource: u.classSource,
+      level: u.level,
+      source: u.source,
+    });
+    let feature = ctx.classFeatureIndex.get(exactKey);
+    if (!feature) {
+      for (const candidate of ctx.classFeatureIndex.values()) {
+        if (
+          candidate.name === u.name &&
+          candidate.className === u.className &&
+          candidate.level === u.level &&
+          (candidate.classSource || DEFAULT_CLASS_SOURCE) === u.classSource
+        ) {
+          feature = candidate;
+          break;
+        }
+      }
+    }
     if (!feature) {
       return {
         id: `class::${ref.uid}`,
