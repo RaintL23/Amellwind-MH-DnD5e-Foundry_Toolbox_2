@@ -18,6 +18,7 @@ import {
 } from "../utils/pact-magic.utils";
 import type { BuilderClassLevelEntry } from "../utils/multiclass.utils";
 import type { CantripPoolDefinition } from "../utils/cantrip-pools.utils";
+import { countClassCantripSelections } from "../utils/cantrip-pools.utils";
 import {
   getMulticlassCasterLevel,
   getMulticlassSpellSlotLevels,
@@ -58,6 +59,8 @@ export interface SpellcastingInfo {
   selectedSpellCount: number;
   /** Selected cantrips count. */
   selectedCantripCount: number;
+  /** Class cantrips in slot 0 (excludes species lineage). */
+  classCantripsSelected: number;
   /** Spell slot levels available at the current character level (1–9). */
   availableSpellSlotLevels: number[];
   /** Subclass spells always prepared — do not count toward preparation limit. */
@@ -290,6 +293,7 @@ export function useSpellcasting(
       pactSlotCount: 0,
       selectedSpellCount: 0,
       selectedCantripCount: 0,
+      classCantripsSelected: 0,
       availableSpellSlotLevels: [],
       subclassAlwaysPrepared: [],
       subclassBonusKnown: [],
@@ -357,7 +361,7 @@ export function useSpellcasting(
         return none;
       }
 
-      const classCantripsSelected = (selections[0] ?? []).length;
+      const classCantripsSelected = countClassCantripSelections(selections[0]);
       const bonusCantripsSelected = bonusPools.reduce(
         (sum, pool) => sum + pool.selectedCount,
         0,
@@ -378,6 +382,7 @@ export function useSpellcasting(
         pactSlotCount: pact.pactSlotCount,
         selectedSpellCount: pactPoolSelectedCount(selections),
         selectedCantripCount: classCantripsSelected + bonusCantripsSelected,
+        classCantripsSelected,
         availableSpellSlotLevels:
           pact.pactSlotLevel > 0 ? [pact.pactSlotLevel] : [],
         subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
@@ -439,7 +444,7 @@ export function useSpellcasting(
       maxPreparedOrKnown = getSpellsKnownFromTable(spellProgression, rowIndex);
     }
 
-    const classCantripsSelected = (selections[0] ?? []).length;
+    const classCantripsSelected = countClassCantripSelections(selections[0]);
     const bonusCantripsSelected = bonusPools.reduce(
       (sum, pool) => sum + pool.selectedCount,
       0,
@@ -463,6 +468,7 @@ export function useSpellcasting(
       pactSlotCount: 0,
       selectedSpellCount,
       selectedCantripCount: classCantripsSelected + bonusCantripsSelected,
+      classCantripsSelected,
       availableSpellSlotLevels: slotLevels,
       subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
       subclassBonusKnown: subclassSpells.bonusKnown,

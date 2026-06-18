@@ -17,6 +17,7 @@ import {
 } from "../../utils/optional-feature-feat-grants.utils";
 import { PACT_SPELL_POOL_LEVEL } from "../../utils/pact-magic.utils";
 import { clearAmellwindFeats } from "../../utils/homebrew-cleanup.utils";
+import { isSpeciesLineageSpell } from "../../utils/species-spell-grants.utils";
 
 export interface SpellSliceInput {
   classData: Class | null;
@@ -53,6 +54,8 @@ export function useSpellSlice({
     setSpellSelections((prev) => {
       const base = prev ?? {};
       const existing = base[level] ?? [];
+      const target = existing.find((s) => s.id === spellId);
+      if (target && isSpeciesLineageSpell(target)) return base;
       const filtered = existing.filter((s) => s.id !== spellId);
       return { ...base, [level]: filtered };
     });

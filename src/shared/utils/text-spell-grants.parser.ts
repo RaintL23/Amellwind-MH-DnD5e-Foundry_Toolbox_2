@@ -9,7 +9,7 @@ const WORD_NUMBERS: Record<string, number> = {
 };
 
 const CANTRIP_BONUS_PATTERNS: RegExp[] = [
-  /\b(?:you|your character)\s+(?:also\s+)?know(?:s)?\s+(?:(?<word>a|an|one|two|three|four|five|\d+)\s+)?(?:(?:extra|additional|more|another)\s+)?cantrips?\b/gi,
+  /\b(?:you|your character)\s+(?:also\s+)?know(?:s)?\s+(?:(?<word>a|an|one|two|three|four|five|\d+)\s+)?(?:(?:extra|additional|more|another)\s+)cantrips?\b/gi,
   /\b(?:gain|gains|learn(?:s)?|get(?:s)?)\s+(?:(?<word>a|an|one|two|three|four|five|\d+)\s+)?(?:(?:extra|additional|more|another)\s+)?cantrips?\b/gi,
   /\b(?:(?<word>a|an|one|two|three|four|five|\d+)\s+)?(?:extra|additional|more|another)\s+cantrips?\b/gi,
   /\bcantrips?\b.{0,40}\b(?:extra|additional|more|another)\b/gi,
@@ -73,47 +73,21 @@ export function parseSpellListClassFromText(text: string): string | null {
   return null;
 }
 
-/** Parses individual cantrip grants from feature/feat text. */
+/** Parses cantrip choose grants from feature/feat text (one pool per passage). */
 export function parseCantripGrantsFromText(
   text: string,
   fallbackClassName?: string | null,
 ): ParsedCantripGrant[] {
   if (!text.trim()) return [];
 
-  const grants: ParsedCantripGrant[] = [];
-  for (const pattern of CANTRIP_BONUS_PATTERNS) {
-    pattern.lastIndex = 0;
-    for (const match of text.matchAll(pattern)) {
-      const groups = match.groups as { word?: string } | undefined;
-      const count = parseCount(groups?.word);
-      if (count <= 0) continue;
-      const localText = text.slice(
-        Math.max(0, match.index! - 80),
-        match.index! + match[0].length + 120,
-      );
-      grants.push({
-        count,
-        spellListClassName:
-          parseSpellListClassFromText(localText) ??
-          parseSpellListClassFromText(text) ??
-          fallbackClassName ??
-          null,
-      });
-    }
-  }
+  const count = parseCantripBonusFromText(text);
+  if (count <= 0) return [];
 
-  if (grants.length > 0) return grants;
+  const spellListClassName =
+    parseSpellListClassFromText(text) ?? fallbackClassName ?? null;
+  if (!spellListClassName) return [];
 
-  const total = parseCantripBonusFromText(text);
-  if (total <= 0) return [];
-
-  return [
-    {
-      count: total,
-      spellListClassName:
-        parseSpellListClassFromText(text) ?? fallbackClassName ?? null,
-    },
-  ];
+  return [{ count, spellListClassName }];
 }
 
 export function parseCantripGrantsFromEntries(

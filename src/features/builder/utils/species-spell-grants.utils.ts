@@ -5,6 +5,33 @@ import { normalizeSpellRef } from "./subclass-spells.utils";
 
 export const SPECIES_LINEAGE_SPELL_SOURCE = "species-lineage";
 
+export function isSpeciesLineageSpell(
+  selection: Pick<BuilderSpellSelection, "id" | "source">,
+): boolean {
+  return (
+    selection.source === SPECIES_LINEAGE_SPELL_SOURCE ||
+    selection.id.startsWith("species-lineage-")
+  );
+}
+
+export function partitionSpellSelections(
+  selections: BuilderSpellSelection[] | undefined,
+): {
+  speciesLineage: BuilderSpellSelection[];
+  chosen: BuilderSpellSelection[];
+} {
+  const speciesLineage: BuilderSpellSelection[] = [];
+  const chosen: BuilderSpellSelection[] = [];
+  for (const selection of selections ?? []) {
+    if (isSpeciesLineageSpell(selection)) {
+      speciesLineage.push(selection);
+    } else {
+      chosen.push(selection);
+    }
+  }
+  return { speciesLineage, chosen };
+}
+
 function toSpellId(name: string): string {
   return normalizeSpellRef(name).toLowerCase().replace(/[^a-z0-9]+/g, "-");
 }

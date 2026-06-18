@@ -14,6 +14,7 @@ import {
   SectionLabel,
 } from "../library/shared/LibraryUi";
 import { findSpellByName } from "@/features/builder/utils/spell-selection.utils";
+import { isSpeciesLineageSpell } from "@/features/builder/utils/species-spell-grants.utils";
 import { AvailableSpellRow } from "./AvailableSpellRow";
 import { SelectedSpellRow } from "./SelectedSpellRow";
 import { SubclassGrantRow } from "./SubclassGrantRow";
@@ -22,6 +23,7 @@ import { useSpellLibraryPanelState } from "./useSpellLibraryPanelState";
 export interface SpellLibraryPanelProps {
   selectedSlot: SpellLevelSlot | BuilderPactSpellSlot;
   className: string;
+  speciesName?: string | null;
   characterLevel: number;
   spellcastingInfo: SpellcastingInfo;
   spellSelections: BuilderSpellSelections;
@@ -35,6 +37,7 @@ export interface SpellLibraryPanelProps {
 export function SpellLibraryPanel({
   selectedSlot,
   className,
+  speciesName,
   characterLevel,
   spellcastingInfo,
   spellSelections,
@@ -49,6 +52,8 @@ export function SpellLibraryPanel({
     setSearch,
     selectionLevel,
     selectedAtLevel,
+    chosenAtLevel,
+    speciesLineageAtLevel,
     isAtCapacity,
     levelLabel,
     capacityHint,
@@ -166,15 +171,36 @@ export function SpellLibraryPanel({
           </div>
         )}
 
-        {selectedAtLevel.length > 0 && (
+        {speciesLineageAtLevel.length > 0 && (
+          <div className="mb-3">
+            <SectionLabel>
+              Granted by species
+              {speciesName ? ` (${speciesName})` : ""}
+            </SectionLabel>
+            {speciesLineageAtLevel.map((spell) => (
+              <SelectedSpellRow
+                key={spell.id}
+                spell={spell}
+                fullSpell={
+                  allSpells.find((s) => s.id === spell.id) ??
+                  findSpellByName(allSpells, spell.name)
+                }
+                removable={false}
+              />
+            ))}
+          </div>
+        )}
+
+        {chosenAtLevel.length > 0 && (
           <div className="mb-3">
             <SectionLabel>{selectedSectionLabel}</SectionLabel>
-            {selectedAtLevel.map((spell) => (
+            {chosenAtLevel.map((spell) => (
               <SelectedSpellRow
                 key={spell.id}
                 spell={spell}
                 fullSpell={allSpells.find((s) => s.id === spell.id)}
                 onRemove={() => onRemoveSpell(selectionLevel, spell.id)}
+                removable={!isSpeciesLineageSpell(spell)}
               />
             ))}
           </div>

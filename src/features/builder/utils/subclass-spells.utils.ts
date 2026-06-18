@@ -409,7 +409,7 @@ export function spellOnSubclassList(
   );
 }
 
-function spellMatchesFilterClass(spell: SpellListEntry, filterClass: string): boolean {
+export function spellMatchesFilterClass(spell: SpellListEntry, filterClass: string): boolean {
   if (spell.classes?.length) {
     return spellOnBaseClassList(spell, filterClass);
   }

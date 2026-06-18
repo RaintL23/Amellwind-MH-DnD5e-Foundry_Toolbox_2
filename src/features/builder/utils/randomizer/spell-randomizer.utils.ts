@@ -15,7 +15,7 @@ import {
 import {
   resolveSubclassSpells,
   spellMatchesCharacterSpellList,
-  spellOnBaseClassList,
+  spellMatchesFilterClass,
   type CharacterSpellListContext,
 } from "../subclass-spells.utils";
 import { pickByRpgbot, pickMultipleByRpgbot } from "./character-randomizer.utils";
@@ -163,6 +163,8 @@ export function buildRandomSpellSelections(params: {
   abilities: AbilityScores;
   rpgbotLookup: RpgbotLookupFn | null;
   bonusCantripPools?: CantripPoolDefinition[];
+  /** Cantrip names already granted by species (avoid duplicate class picks). */
+  excludedCantripNames?: string[];
 }): BuilderSpellSelections {
   const {
     allSpells,
@@ -171,6 +173,7 @@ export function buildRandomSpellSelections(params: {
     level,
     rpgbotLookup,
     bonusCantripPools = [],
+    excludedCantripNames = [],
   } = params;
   const rawSelections: Record<number, Spell[]> = {};
   const eligiblePools: Spell[][] = [];
@@ -207,6 +210,9 @@ export function buildRandomSpellSelections(params: {
     : getCantripCount(classData, level);
 
   const pickedCantripIds = new Set<string>();
+  const excludedCantripNameSet = new Set(
+    excludedCantripNames.map((name) => name.toLowerCase()),
+  );
 
   if (cantripCount > 0) {
     const ctx = buildSpellListContext(
@@ -224,6 +230,8 @@ export function buildRandomSpellSelections(params: {
       0,
       classData,
       subclass,
+    ).filter(
+      (spell) => !excludedCantripNameSet.has(spell.name.toLowerCase()),
     );
     eligiblePools.push(cantrips);
     const picked = pickMultipleByRpgbot(
@@ -243,7 +251,7 @@ export function buildRandomSpellSelections(params: {
       allSpells.filter(
         (spell) =>
           spell.level === 0 &&
-          spellOnBaseClassList(spell, bonusPool.spellListClassName) &&
+          spellMatchesFilterClass(spell, bonusPool.spellListClassName) &&
           !pickedCantripIds.has(spell.id),
       ),
       classData,

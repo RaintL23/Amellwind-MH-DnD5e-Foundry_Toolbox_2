@@ -606,6 +606,15 @@ export function useCharacterRandomizer() {
         backgroundOriginFeatGrant:
           randomizedBackgroundDetail?.originFeatGrant ?? null,
       });
+      const lineageSpells = randomizedSpeciesDetail
+        ? buildSpeciesLineageSpellSelectionsFromCatalog(
+            randomizedSpeciesDetail,
+            randomizedSpeciesLineageChoice,
+            preservedLevel,
+            allSpells,
+          )
+        : [];
+
       const spellSelections = buildRandomSpellSelections({
         allSpells,
         classData,
@@ -617,6 +626,9 @@ export function useCharacterRandomizer() {
         },
         rpgbotLookup: spellLookup,
         bonusCantripPools,
+        excludedCantripNames: lineageSpells
+          .filter((spell) => spell.level === 0)
+          .map((spell) => spell.name),
       });
       for (const [levelKey, spells] of Object.entries(spellSelections)) {
         for (const spell of spells) {
@@ -624,16 +636,8 @@ export function useCharacterRandomizer() {
         }
       }
 
-      if (randomizedSpeciesDetail) {
-        const lineageSpells = buildSpeciesLineageSpellSelectionsFromCatalog(
-          randomizedSpeciesDetail,
-          randomizedSpeciesLineageChoice,
-          preservedLevel,
-          allSpells,
-        );
-        for (const spell of lineageSpells) {
-          addSpell(spell.level, spell);
-        }
+      for (const spell of lineageSpells) {
+        addSpell(spell.level, spell);
       }
 
       const featSelections = buildFeatSelectionsForLevel(

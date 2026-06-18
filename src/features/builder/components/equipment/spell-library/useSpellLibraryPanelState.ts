@@ -10,12 +10,15 @@ import { parseSpellLevel, isPactSpellSlot } from "@/features/builder/hooks/useBu
 import {
   findCantripPoolBySlot,
   isBonusCantripSlot,
+  BONUS_CANTRIP_POOL_BASE,
+  countClassCantripSelections,
 } from "@/features/builder/utils/cantrip-pools.utils";
+import { partitionSpellSelections } from "@/features/builder/utils/species-spell-grants.utils";
 import {
   grantsForSpellLevel,
   spellMatchesCharacterSpellList,
+  spellMatchesFilterClass,
   spellNamesMatch,
-  spellOnBaseClassList,
   type SubclassSpellGrant,
 } from "@/features/builder/utils/subclass-spells.utils";
 import {
@@ -83,13 +86,21 @@ export function useSpellLibraryPanelState({
         selectedSlot as BuilderBonusCantripSlot,
       )
     : undefined;
-  const spellLevel = isPactPool || isBonusCantripPool
+  const spellLevel =
+    isPactPool || isBonusCantripPool
+      ? null
+      : parseSpellLevel(selectedSlot);
+  const isClassCantrip =
+    !isPactPool && !isBonusCantripPool && spellLevel === 0;
+  const effectiveSpellLevel = isPactPool
     ? null
-    : parseSpellLevel(selectedSlot);
+    : isBonusCantripPool || isClassCantrip
+      ? 0
+      : spellLevel;
   const selectionLevel = isPactPool
     ? PACT_SPELL_POOL_LEVEL
     : isBonusCantripPool
-      ? activeBonusPool?.selectionLevel ?? 0
+      ? (activeBonusPool?.selectionLevel ?? BONUS_CANTRIP_POOL_BASE)
       : spellLevel!;
   const [search, setSearch] = useState("");
 
@@ -102,15 +113,35 @@ export function useSpellLibraryPanelState({
     [spellSelections, selectionLevel],
   );
 
+  const { speciesLineage: speciesLineageAtLevel, chosen: chosenAtLevel } =
+    useMemo(
+      () => partitionSpellSelections(selectedAtLevel),
+      [selectedAtLevel],
+    );
+
   const selectedIds = useMemo(
-    () => new Set(selectedAtLevel.map((s) => s.id)),
-    [selectedAtLevel],
+    () => new Set(chosenAtLevel.map((s) => s.id)),
+    [chosenAtLevel],
   );
 
-  const isClassCantrip = !isPactPool && !isBonusCantripPool && spellLevel === 0;
+  const classCantripsSelected = useMemo(
+    () => countClassCantripSelections(chosenAtLevel),
+    [chosenAtLevel],
+  );
+
+  const speciesGrantedCantripNames = useMemo(
+    () =>
+      new Set(
+        speciesLineageAtLevel
+          .filter((spell) => spell.level === 0)
+          .map((spell) => spell.name.toLowerCase()),
+      ),
+    [speciesLineageAtLevel],
+  );
+
   const atClassCantripCapacity =
     isClassCantrip &&
-    selectedAtLevel.length >= spellcastingInfo.cantripCount;
+    classCantripsSelected >= spellcastingInfo.cantripCount;
   const atBonusCantripCapacity =
     isBonusCantripPool &&
     !!activeBonusPool &&
@@ -149,7 +180,7 @@ export function useSpellLibraryPanelState({
   const grantArgs = [
     isPactPool,
     pactMaxLevel,
-    spellLevel,
+    effectiveSpellLevel,
     spellLevelByName,
     allSpells,
   ] as const;
@@ -259,7 +290,7 @@ export function useSpellLibraryPanelState({
   const spellMatchesClassList = useCallback(
     (spell: Spell) => {
       if (isBonusCantripPool) {
-        return spellOnBaseClassList(spell, spellListClassName);
+        return spellMatchesFilterClass(spell, spellListClassName);
       }
       return spellMatchesCharacterSpellList(spell, spellListContext);
     },
@@ -271,10 +302,16 @@ export function useSpellLibraryPanelState({
     const spells = allSpells.filter((s) => {
       if (isPactPool) {
         if (s.level < 1 || s.level > pactMaxLevel) return false;
-      } else if (s.level !== spellLevel) {
+      } else if (effectiveSpellLevel !== null && s.level !== effectiveSpellLevel) {
         return false;
       }
       if (!spellMatchesClassList(s)) return false;
+      if (
+        isClassCantrip &&
+        speciesGrantedCantripNames.has(s.name.toLowerCase())
+      ) {
+        return false;
+      }
       if (allSelectedCantripIds.has(s.id) && !selectedIds.has(s.id)) return false;
       if (selectedIds.has(s.id)) return false;
       if (subclassGrantsAtLevel.some((g) => spellNamesMatch(s.name, g.name))) {
@@ -299,13 +336,15 @@ export function useSpellLibraryPanelState({
     allSpells,
     isPactPool,
     pactMaxLevel,
-    spellLevel,
+    effectiveSpellLevel,
     selectedIds,
     allSelectedCantripIds,
     subclassGrantsAtLevel,
     optionalFeatureAtLevel,
     q,
     spellMatchesClassList,
+    isClassCantrip,
+    speciesGrantedCantripNames,
     isAtCapacity,
     rpgbotSpellLookup,
     rpgbotSpellReady,
@@ -313,9 +352,21 @@ export function useSpellLibraryPanelState({
 
   const handleSelect = useCallback(
     (spell: Spell) => {
+      if (
+        isClassCantrip &&
+        classCantripsSelected >= spellcastingInfo.cantripCount
+      ) {
+        return;
+      }
       onAddSpell(selectionLevel, spellToSelection(spell));
     },
-    [onAddSpell, selectionLevel],
+    [
+      onAddSpell,
+      selectionLevel,
+      isClassCantrip,
+      classCantripsSelected,
+      spellcastingInfo.cantripCount,
+    ],
   );
 
   const levelLabel = isPactPool
@@ -329,7 +380,7 @@ export function useSpellLibraryPanelState({
         : `Nivel ${spellLevel}`;
 
   const capacityHint = isClassCantrip
-    ? `${selectedAtLevel.length}/${spellcastingInfo.cantripCount} cantrips de clase`
+    ? `${classCantripsSelected}/${spellcastingInfo.cantripCount} cantrips de clase`
     : isBonusCantripPool && activeBonusPool
       ? `${selectedAtLevel.length}/${activeBonusPool.maxCount} · lista ${activeBonusPool.spellListClassName}`
     : isPactPool
@@ -375,6 +426,8 @@ export function useSpellLibraryPanelState({
     setSearch,
     selectionLevel,
     selectedAtLevel,
+    chosenAtLevel,
+    speciesLineageAtLevel,
     isAtCapacity,
     levelLabel,
     capacityHint,

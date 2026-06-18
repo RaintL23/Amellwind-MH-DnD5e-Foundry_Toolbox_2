@@ -5,6 +5,8 @@ import { useSectionCompletenessHighlight } from "../../context/BuildCompleteness
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { formatSpellNameWithMeta } from "./SpellMetaBadges";
 import type { SpellcastingInfo } from "../../hooks/useSpellcasting";
+import { countClassCantripSelections } from "../../utils/cantrip-pools.utils";
+import { isSpeciesLineageSpell } from "../../utils/species-spell-grants.utils";
 import {
   grantsForPactPool,
   PACT_SPELL_POOL_LEVEL,
@@ -73,13 +75,27 @@ function getClassCantripEquipped(
   const selected = (spellSelections ?? {})[0] ?? [];
   if (selected.length === 0 && cantripCount === 0) return null;
 
-  const selectedNames = selected
+  const classSelected = countClassCantripSelections(selected);
+  const classNames = selected
+    .filter((s) => !isSpeciesLineageSpell(s))
     .map((s) => formatSpellListName(s.name, spellsByName))
     .join(", ");
-  const detail =
-    selected.length > 0
-      ? `${selected.length}/${cantripCount} — ${selectedNames}`
-      : `0/${cantripCount}`;
+  const speciesNames = selected
+    .filter((s) => isSpeciesLineageSpell(s))
+    .map((s) => formatSpellListName(s.name, spellsByName))
+    .join(", ");
+  const detailParts: string[] = [];
+  if (classSelected > 0 || cantripCount > 0) {
+    detailParts.push(
+      classNames
+        ? `${classSelected}/${cantripCount} — ${classNames}`
+        : `${classSelected}/${cantripCount}`,
+    );
+  }
+  if (speciesNames) {
+    detailParts.push(`linaje: ${speciesNames}`);
+  }
+  const detail = detailParts.join(" · ") || `0/${cantripCount}`;
   return { name: `Cantrips (${className})`, detail };
 }
 

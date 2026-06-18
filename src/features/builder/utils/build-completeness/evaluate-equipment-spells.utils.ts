@@ -37,12 +37,7 @@ export function evaluateEquipmentAndSpellsCompleteness(
 
   const spellcasting = input.spellcasting;
   if (spellcasting?.isSpellcaster) {
-    const bonusCantripsSelected = spellcasting.bonusCantripPools.reduce(
-      (sum, pool) => sum + pool.selectedCount,
-      0,
-    );
-    const classCantripsSelected =
-      spellcasting.selectedCantripCount - bonusCantripsSelected;
+    const classCantripsSelected = spellcasting.classCantripsSelected;
 
     if (
       spellcasting.cantripCount > 0 &&
@@ -53,6 +48,18 @@ export function evaluateEquipmentAndSpellsCompleteness(
         id: "spells-cantrips-class",
         section: "spells",
         message: `Choose ${missing} more class cantrip${missing === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
+        slot: "spell-level-0",
+        highlightKey: "cantrips",
+      });
+    } else if (
+      spellcasting.cantripCount > 0 &&
+      classCantripsSelected > spellcasting.cantripCount
+    ) {
+      const excess = classCantripsSelected - spellcasting.cantripCount;
+      issues.push({
+        id: "spells-cantrips-class-excess",
+        section: "spells",
+        message: `Remove ${excess} extra class cantrip${excess === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
         slot: "spell-level-0",
         highlightKey: "cantrips",
       });

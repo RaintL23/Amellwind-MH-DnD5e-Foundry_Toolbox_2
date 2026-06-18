@@ -549,6 +549,7 @@ export function BuilderCenterPanel() {
         <SpellLibraryPanel
           selectedSlot={selectedSlot}
           className={classSelection.name}
+          speciesName={species?.name}
           characterLevel={character.level}
           spellcastingInfo={spellcastingInfo}
           spellSelections={spellSelections}

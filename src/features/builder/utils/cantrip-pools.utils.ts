@@ -2,6 +2,7 @@ import type {
   BuilderFeatSelection,
   BuilderOptionalFeatureSelection,
   BuilderOptionalFeatureSelections,
+  BuilderSpellSelection,
   BuilderSpellSelections,
   Class,
   DndFeat,
@@ -13,6 +14,16 @@ import type {
 } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { parseCantripGrantsFromEntries } from "@/shared/utils/text-spell-grants.parser";
+import { isSpeciesLineageSpell } from "./species-spell-grants.utils";
+
+/** Cantrips chosen for the class list in slot 0 (excludes species lineage grants). */
+export function countClassCantripSelections(
+  selections: BuilderSpellSelection[] | undefined,
+): number {
+  return (selections ?? []).filter(
+    (selection) => selection.level === 0 && !isSpeciesLineageSpell(selection),
+  ).length;
+}
 
 /** Internal keys in BuilderSpellSelections for bonus cantrip pools (-100, -101, …). */
 export const BONUS_CANTRIP_POOL_BASE = -100;
@@ -134,9 +145,10 @@ function pushPool(
   },
 ): void {
   if (params.maxCount <= 0) return;
-  const key = `${params.poolId}:${params.spellListClassName}:${params.maxCount}`;
-  if (seen.has(key)) return;
-  seen.add(key);
+  const labelKey = normalizeSelectionName(params.label);
+  if (seen.has(params.poolId) || seen.has(`label:${labelKey}`)) return;
+  seen.add(params.poolId);
+  seen.add(`label:${labelKey}`);
 
   const index = pools.length;
   pools.push({
@@ -210,10 +222,10 @@ function pushPoolsFromText(
   fallbackClassName: string,
 ): void {
   const grants = parseCantripGrantsFromEntries(entries, fallbackClassName);
-  for (const [index, grant] of grants.entries()) {
+  for (const grant of grants) {
     if (!grant.spellListClassName) continue;
     pushPool(pools, seen, {
-      poolId: grants.length > 1 ? `${poolId}-${index}` : poolId,
+      poolId,
       label,
       maxCount: grant.count,
       spellListClassName: grant.spellListClassName,
@@ -428,7 +440,7 @@ export function countSelectedCantrips(
   totalSelected: number;
   totalRequired: number;
 } {
-  const classSelected = (spellSelections[0] ?? []).length;
+  const classSelected = countClassCantripSelections(spellSelections[0]);
   const bonusSelected = bonusPools.reduce(
     (sum, pool) => sum + (spellSelections[pool.selectionLevel] ?? []).length,
     0,
