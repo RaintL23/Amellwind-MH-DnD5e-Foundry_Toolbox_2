@@ -21,7 +21,7 @@ import { SubclassGrantRow } from "./SubclassGrantRow";
 import { useSpellLibraryPanelState } from "./useSpellLibraryPanelState";
 
 export interface SpellLibraryPanelProps {
-  selectedSlot: SpellLevelSlot | BuilderPactSpellSlot;
+  selectedSlot: SpellLevelSlot | BuilderPactSpellSlot | BuilderBonusCantripSlot;
   className: string;
   speciesName?: string | null;
   characterLevel: number;
@@ -51,7 +51,6 @@ export function SpellLibraryPanel({
     search,
     setSearch,
     selectionLevel,
-    selectedAtLevel,
     chosenAtLevel,
     speciesLineageAtLevel,
     isAtCapacity,

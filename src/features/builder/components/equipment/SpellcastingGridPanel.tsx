@@ -69,7 +69,6 @@ function getClassCantripEquipped(
   spellSelections: BuilderSpellSelections,
   className: string,
   cantripCount: number,
-  spellLevelByName: Map<string, number>,
   spellsByName: Spell[],
 ): { name: string; detail?: string } | null {
   const selected = (spellSelections ?? {})[0] ?? [];
@@ -389,7 +388,6 @@ export function SpellcastingGridPanel({
               spellSelections,
               className,
               spellcastingInfo.cantripCount,
-              spellLevelByName,
               spellsByName,
             );
             const slot = toSpellLevelSlot(0);

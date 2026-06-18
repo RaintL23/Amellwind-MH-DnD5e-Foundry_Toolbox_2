@@ -332,8 +332,6 @@ export function resolveBonusCantripPools(params: {
     optionalCatalog,
     featCatalog,
     classData,
-    subclass,
-    level,
     speciesOriginFeat,
     backgroundOriginFeat,
     speciesOriginFeatGrant,
