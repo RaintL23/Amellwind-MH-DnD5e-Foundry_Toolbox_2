@@ -1,5 +1,6 @@
 import type { BuilderPersonality } from "../storage/builder.storage";
 import type { SkillKey, AbilityKey } from "@/shared/types";
+import type { ArmorTrainingCategory } from "./character-sheet-export.utils";
 
 export interface CharacterSheetWeaponExport {
   name: string;
@@ -48,7 +49,7 @@ export interface CharacterSheetExportData {
   skills: Record<string, string>;
   languages: string;
   weaponProficiencies: string;
-  armorProficiencies: string;
+  armorTrainingProficiencies?: Partial<Record<ArmorTrainingCategory, boolean>>;
   toolProficiencies: string;
   feats: string;
   classFeatures: string;

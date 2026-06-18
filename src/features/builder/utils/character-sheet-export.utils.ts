@@ -72,6 +72,32 @@ export const PDF_ALIGNMENT_CHECKBOX: Record<string, string> = {
   CE: "Check Box57",
 };
 
+/** D&D 2024 sheet armor training row (Light → Shields, left to right). */
+export const PDF_ARMOR_TRAINING_CHECKBOXES = {
+  light: "Check Box33",
+  medium: "Check Box34",
+  heavy: "Check Box35",
+  shields: "Check Box36",
+} as const;
+
+export type ArmorTrainingCategory = keyof typeof PDF_ARMOR_TRAINING_CHECKBOXES;
+
+function normalizeArmorTrainingKey(value: string): string {
+  return value.trim().toLowerCase().replace(/\s+armor$/, "");
+}
+
+export function getArmorTrainingProficiencies(
+  armorItems: string[],
+): Partial<Record<ArmorTrainingCategory, boolean>> {
+  const keys = new Set(armorItems.map(normalizeArmorTrainingKey));
+  const result: Partial<Record<ArmorTrainingCategory, boolean>> = {};
+  if (keys.has("light")) result.light = true;
+  if (keys.has("medium")) result.medium = true;
+  if (keys.has("heavy")) result.heavy = true;
+  if (keys.has("shield") || keys.has("shields")) result.shields = true;
+  return result;
+}
+
 function cellToNumber(val: string): number {
   if (!val || val === "—") return 0;
   const n = parseInt(val, 10);

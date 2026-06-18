@@ -84,6 +84,9 @@ export const OPTIONALFEATURES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/optionalfea
 /** 5etools languages compendium. Local dev: copy backup-jsons/5etools/languages.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
 export const LANGUAGES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/languages.json`;
 
+/** 5etools species name tables (XGE). Local dev: copy backup-jsons/5etools/names.json → public/5etools/ */
+export const NAMES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/names.json`;
+
 /** 5etools item compendium (single-file + base + magic variants). Local dev: copy backup-jsons/5etools/*.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
 export const ITEMS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items.json`;
 export const ITEMS_BASE_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items-base.json`;

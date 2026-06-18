@@ -5,6 +5,7 @@ import { getAllSpecies } from "@/features/species/services/species.service";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { getOptionalFeaturesMap } from "@/features/weapons/services/optionalfeature.service";
 import type { NpcWeaponContext } from "../utils/npc-weapon.utils";
+import { loadDndNameTables } from "@/shared/utils/dnd-name-randomizer.utils";
 import { NPC_TEMPLATES } from "../data/npc-templates.data";
 import { NPC_TEMPLATE_PRIMARY_WEAPON } from "../data/npc-template-weapons.data";
 
@@ -34,6 +35,7 @@ export async function loadNpcGeneratorData(): Promise<{
     getAllBackgrounds(),
     getAllWeapons(),
     getOptionalFeaturesMap(),
+    loadDndNameTables(),
   ]);
 
   return {

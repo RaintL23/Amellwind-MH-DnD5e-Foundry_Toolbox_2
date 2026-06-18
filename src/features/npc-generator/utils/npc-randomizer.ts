@@ -7,6 +7,7 @@ import type {
   NpcHideFeatures,
   NpcHitDie,
 } from "@/shared/types/npc.types";
+import { pickRandomDndName } from "@/shared/utils/dnd-name-randomizer.utils";
 import { PLAYABLE_HIT_DIES } from "./npc-size.utils";
 import { NPC_TEMPLATES } from "../data/npc-templates.data";
 import {
@@ -14,39 +15,6 @@ import {
   getDefaultHitDiceForTier,
   getHitDiceOptionsForTier,
 } from "./npc-power-scaling";
-
-const RANDOM_NAMES = [
-  "Aldric",
-  "Bruna",
-  "Cedric",
-  "Diana",
-  "Erik",
-  "Fiora",
-  "Gareth",
-  "Helena",
-  "Ivan",
-  "Jade",
-  "Kael",
-  "Luna",
-  "Magnus",
-  "Nadia",
-  "Orin",
-  "Petra",
-  "Quinn",
-  "Rhea",
-  "Soren",
-  "Talia",
-  "Ulric",
-  "Vera",
-  "Wren",
-  "Yuri",
-  "Zara",
-  "Kokoto",
-  "Moga",
-  "Jumbo",
-  "Trenya",
-  "Hojo",
-];
 
 const GENDERS: NpcGender[] = ["male", "female"];
 const ATTRIBUTE_ARRAYS: NpcAttributeArray[] = ["standard", "heroic", "random"];
@@ -62,8 +30,24 @@ function pick<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
 }
 
-export function randomNpcName(): string {
-  return pick(RANDOM_NAMES);
+function resolveNpcNameGender(gender: NpcGender): "male" | "female" | "random" {
+  if (gender === "male" || gender === "female") return gender;
+  return pick(GENDERS);
+}
+
+export async function randomNpcName(
+  species: Species[],
+  options: {
+    speciesId?: string;
+    gender?: NpcGender;
+  } = {},
+): Promise<string> {
+  const speciesEntry = species.find((entry) => entry.id === options.speciesId);
+  const gender = resolveNpcNameGender(options.gender ?? "random");
+  return pickRandomDndName({
+    speciesName: speciesEntry?.name ?? null,
+    gender,
+  });
 }
 
 export function randomGender(): NpcGender {
@@ -74,19 +58,16 @@ export function randomHitDie(): NpcHitDie {
   return pick(PLAYABLE_HIT_DIES);
 }
 
-export function randomizeNpcDraft(
+export async function randomizeNpcDraft(
   _draft: NpcDraft,
   species: Species[],
   backgrounds: Background[],
   field?: keyof NpcDraft,
-): Partial<NpcDraft> {
+): Promise<Partial<NpcDraft>> {
   const patch: Partial<NpcDraft> = {};
 
   const randomizeAll = !field;
 
-  if (randomizeAll || field === "customName") {
-    patch.customName = randomNpcName();
-  }
   if (randomizeAll || field === "gender") {
     patch.gender = randomGender();
   }
@@ -115,6 +96,13 @@ export function randomizeNpcDraft(
   }
   if (randomizeAll || field === "hideFeatures") {
     patch.hideFeatures = randomHideFeatures();
+  }
+
+  if (randomizeAll || field === "customName") {
+    patch.customName = await randomNpcName(species, {
+      speciesId: patch.speciesId ?? _draft.speciesId,
+      gender: patch.gender ?? _draft.gender,
+    });
   }
 
   if (patch.templateId) {

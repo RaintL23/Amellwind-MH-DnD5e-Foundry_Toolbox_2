@@ -17,40 +17,19 @@ import type {
   LawChaosAxis,
 } from "@/features/builder/utils/alignment.utils";
 import { pickByRpgbot, pickRandom, prefer2024Edition } from "./character-randomizer.utils";
-
-const RANDOM_CHARACTER_NAMES = [
-  "Aldric",
-  "Bruna",
-  "Cedric",
-  "Diana",
-  "Erik",
-  "Fiora",
-  "Gareth",
-  "Helena",
-  "Ivan",
-  "Jade",
-  "Kael",
-  "Luna",
-  "Magnus",
-  "Nadia",
-  "Orin",
-  "Petra",
-  "Quinn",
-  "Rhea",
-  "Soren",
-  "Talia",
-  "Ulric",
-  "Vera",
-  "Wren",
-  "Yuri",
-  "Zara",
-];
+import {
+  loadDndNameTables,
+  pickRandomDndName,
+} from "@/shared/utils/dnd-name-randomizer.utils";
 
 const LAW_CHAOS_AXES: LawChaosAxis[] = ["L", "N", "C"];
 const GOOD_EVIL_AXES: GoodEvilAxis[] = ["G", "N", "E"];
 
-export function pickRandomCharacterName(): string {
-  return pickRandom(RANDOM_CHARACTER_NAMES) ?? "Adventurer";
+export async function pickRandomCharacterName(
+  speciesName?: string | null,
+): Promise<string> {
+  await loadDndNameTables();
+  return pickRandomDndName({ speciesName });
 }
 
 export function pickRandomAlignmentAxes(): {

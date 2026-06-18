@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -60,6 +61,8 @@ export function NpcCreatorProvider({ children }: { children: ReactNode }) {
   const [abilityScores, setAbilityScores] = useState<number[]>(() =>
     rollAttributeArray("standard"),
   );
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
 
   useEffect(() => {
     loadNpcGeneratorData()
@@ -101,27 +104,40 @@ export function NpcCreatorProvider({ children }: { children: ReactNode }) {
 
   const randomizeField = useCallback(
     (field: keyof NpcDraft) => {
-      setDraftState((prev) => {
-        const patch = randomizeNpcDraft(prev, species, backgrounds, field);
-        const next = { ...prev, ...patch };
-        if (field === "attributeArray" && patch.attributeArray) {
-          setAbilityScores(rollAttributeArray(patch.attributeArray));
-        }
-        return next;
-      });
+      void (async () => {
+        const patch = await randomizeNpcDraft(
+          draftRef.current,
+          species,
+          backgrounds,
+          field,
+        );
+        setDraftState((prev) => {
+          const next = { ...prev, ...patch };
+          if (field === "attributeArray" && patch.attributeArray) {
+            setAbilityScores(rollAttributeArray(patch.attributeArray));
+          }
+          return next;
+        });
+      })();
     },
     [species, backgrounds],
   );
 
   const randomizeAll = useCallback(() => {
-    setDraftState((prev) => {
-      const patch = randomizeNpcDraft(prev, species, backgrounds);
-      const next = { ...prev, ...patch };
-      if (patch.attributeArray) {
-        setAbilityScores(rollAttributeArray(patch.attributeArray));
-      }
-      return next;
-    });
+    void (async () => {
+      const patch = await randomizeNpcDraft(
+        draftRef.current,
+        species,
+        backgrounds,
+      );
+      setDraftState((prev) => {
+        const next = { ...prev, ...patch };
+        if (patch.attributeArray) {
+          setAbilityScores(rollAttributeArray(patch.attributeArray));
+        }
+        return next;
+      });
+    })();
   }, [species, backgrounds]);
 
   const resetDraft = useCallback(() => {

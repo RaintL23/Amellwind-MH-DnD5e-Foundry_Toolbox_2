@@ -1,6 +1,10 @@
 import type { PDFDocument } from "pdf-lib";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
-import { sanitizeTextForPdf } from "../utils/character-sheet-export.utils";
+import {
+  PDF_ARMOR_TRAINING_CHECKBOXES,
+  sanitizeTextForPdf,
+  type ArmorTrainingCategory,
+} from "../utils/character-sheet-export.utils";
 
 const TEMPLATE_URL = "/character-sheet/dnd-2024-character-sheet.pdf";
 
@@ -151,7 +155,13 @@ export async function exportCharacterSheetPdf(
 
   setText(form, "LANGUAGES", data.languages, 12);
   setText(form, "WEAPON PROF", data.weaponProficiencies);
-  setText(form, "ARMOR", data.armorProficiencies);
+  if (data.armorTrainingProficiencies) {
+    for (const [category, checked] of Object.entries(data.armorTrainingProficiencies)) {
+      const cbName =
+        PDF_ARMOR_TRAINING_CHECKBOXES[category as ArmorTrainingCategory];
+      if (cbName) setCheckbox(form, cbName, checked);
+    }
+  }
   setText(form, "TOOL PROF", data.toolProficiencies);
   setText(form, "FEATS", data.feats);
   setText(form, "CLASS FEATURES 1", data.classFeatures, 7);

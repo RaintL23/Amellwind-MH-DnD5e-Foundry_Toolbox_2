@@ -23,6 +23,7 @@ import {
   buildWeaponsAndCantripsExport,
   formatGoldPiecesForPdf,
   getAlignmentCheckboxField,
+  getArmorTrainingProficiencies,
   getClassFeaturesExport,
   getSpeciesTraitsExport,
   getSpellSlotTotals,
@@ -281,7 +282,9 @@ export function useCharacterSheetExport() {
       skills,
       languages: builder.resolvedLanguageItems.join(", "),
       weaponProficiencies: builder.resolvedWeaponItems.join(", "),
-      armorProficiencies: builder.resolvedArmorItems.join(", "),
+      armorTrainingProficiencies: getArmorTrainingProficiencies(
+        builder.resolvedArmorItems,
+      ),
       toolProficiencies: builder.resolvedToolItems.join(", "),
       feats: featLines.join("\n"),
       classFeatures: classFeatures.line1,

@@ -187,7 +187,6 @@ export function useCharacterRandomizer() {
     try {
       resetBuild();
       setLevel(preservedLevel);
-      setName(pickRandomCharacterName());
       setLawChaosAlignment(lawChaos);
       setGoodEvilAlignment(goodEvil);
       await delay();
@@ -494,6 +493,8 @@ export function useCharacterRandomizer() {
           }
         }
       }
+
+      setName(await pickRandomCharacterName(speciesName || null));
 
       await delay();
 
