@@ -397,54 +397,28 @@ export function getSpellSlotTotals(
 }
 
 /**
- * Approximate character capacity per CLASS FEATURES field at each font size.
- * Conservative estimates: the D&D 2024 sheet field is roughly 200×300pt.
- * These are intentionally conservative to avoid text overflow.
+ * Features whose content is handled elsewhere (spell list, spell slots) and
+ * should be omitted from the CLASS FEATURES text fields.
  */
-const CLASS_FEATURES_CAPACITY: Record<number, number> = {
-  11: 380,
-  10: 480,
-  9:  600,
-  8:  750,
-  7:  930,
-  6: 1150,
-  5: 1430,
-};
+const OMITTED_FEATURE_NAMES = new Set([
+  "spellcasting",
+  "pact magic",
+]);
 
-const CLASS_FEATURES_FONT_SIZES = [11, 10, 9, 8, 7, 6, 5] as const;
+function isOmittedFeature(name: string): boolean {
+  return OMITTED_FEATURE_NAMES.has(name.toLowerCase().trim());
+}
 
-/**
- * Returns the smallest font size (≥5) that fits the combined CLASS FEATURES text
- * within two fields. Falls back to 5 if even that isn't enough.
- */
-export function getClassFeaturesFontSize(line1: string, line2: string): number {
-  const totalLen = (line1?.length ?? 0) + (line2?.length ?? 0);
-  for (const size of CLASS_FEATURES_FONT_SIZES) {
-    if (totalLen <= CLASS_FEATURES_CAPACITY[size] * 2) return size;
-  }
-  return 5;
+function formatFeatureEntry(name: string, description: string[]): string {
+  const desc = description.join("\n").trim();
+  return desc ? `${name}\n${desc}` : name;
 }
 
 /**
- * Summarizes a feature description to its first meaningful sentence (≤ MAX_DESC_CHARS).
- * This keeps the most essential info while ensuring the text fits in the PDF fields.
+ * Approximate character capacity for one CLASS FEATURES field at font size 7.
+ * Used to decide where to cascade text from field 1 into field 2.
  */
-const MAX_DESC_CHARS = 130;
-
-function summarizeFeatureDesc(desc: string): string {
-  if (desc.length <= MAX_DESC_CHARS) return desc;
-
-  // Try to end on the first sentence boundary within the limit
-  const sentenceMatch = desc.slice(0, MAX_DESC_CHARS + 40).match(/^.+?[.!?](?=\s|$)/);
-  if (sentenceMatch && sentenceMatch[0].length <= MAX_DESC_CHARS) {
-    return sentenceMatch[0];
-  }
-
-  // Fall back to the last word boundary within MAX_DESC_CHARS
-  const truncated = desc.slice(0, MAX_DESC_CHARS);
-  const lastSpace = truncated.lastIndexOf(" ");
-  return (lastSpace > 0 ? truncated.slice(0, lastSpace) : truncated) + "...";
-}
+const FIELD_CHAR_CAPACITY = 1200;
 
 export function getClassFeaturesExport(
   classData: Class | null,
@@ -460,8 +434,8 @@ export function getClassFeaturesExport(
       for (const feature of row.features) {
         if (feature.isSubclassFeature || feature.gainSubclassFeature) continue;
         const name = feature.displayName || feature.name;
-        const desc = summarizeFeatureDesc(feature.description.join(" ").trim());
-        entries.push(desc ? `- ${name}: ${desc}` : `- ${name}`);
+        if (isOmittedFeature(name)) continue;
+        entries.push(formatFeatureEntry(name, feature.description));
       }
     }
   }
@@ -472,8 +446,8 @@ export function getClassFeaturesExport(
       if (!row) continue;
       for (const feature of row.features) {
         const name = feature.displayName || feature.name;
-        const desc = summarizeFeatureDesc(feature.description.join(" ").trim());
-        entries.push(desc ? `- ${name}: ${desc}` : `- ${name}`);
+        if (isOmittedFeature(name)) continue;
+        entries.push(formatFeatureEntry(name, feature.description));
       }
     }
   }
@@ -484,44 +458,37 @@ export function getClassFeaturesExport(
 
   const combined = entries.join("\n\n");
 
-  // Only split across two fields when the text is too long for one field at
-  // the minimum font size (5). Otherwise keep everything in line1.
-  if (combined.length <= CLASS_FEATURES_CAPACITY[5]) {
+  if (combined.length <= FIELD_CHAR_CAPACITY) {
     return { line1: combined, line2: "" };
   }
 
-  const mid = Math.floor(combined.length / 2);
-
-  // Prefer splitting on a feature boundary (\n\n) near the midpoint.
-  const featureSplitIdx = combined.indexOf("\n\n", mid);
-  if (featureSplitIdx !== -1) {
+  // Prefer splitting at a feature boundary (double newline) near the capacity limit.
+  const searchFrom = Math.max(0, FIELD_CHAR_CAPACITY - 300);
+  const featureBoundary = combined.indexOf("\n\n", searchFrom);
+  if (featureBoundary !== -1 && featureBoundary <= FIELD_CHAR_CAPACITY + 300) {
     return {
-      line1: combined.slice(0, featureSplitIdx).trim(),
-      line2: combined.slice(featureSplitIdx).trim(),
+      line1: combined.slice(0, featureBoundary).trim(),
+      line2: combined.slice(featureBoundary).trim(),
     };
   }
 
-  // Fallback: single long feature – split on the nearest word boundary
-  // (space or newline) before/at the midpoint so text wraps cleanly.
-  let wordBoundary = mid;
-  while (wordBoundary > 0 && combined[wordBoundary] !== " " && combined[wordBoundary] !== "\n") {
-    wordBoundary--;
+  // A single feature is longer than the field: cascade at the nearest word boundary.
+  let splitIdx = FIELD_CHAR_CAPACITY;
+  while (splitIdx > 0 && combined[splitIdx] !== " " && combined[splitIdx] !== "\n") {
+    splitIdx--;
   }
-  if (wordBoundary <= 0) wordBoundary = mid; // hard split if no space found
+  if (splitIdx <= 0) splitIdx = FIELD_CHAR_CAPACITY;
 
   return {
-    line1: combined.slice(0, wordBoundary).trim(),
-    line2: combined.slice(wordBoundary).trim(),
+    line1: combined.slice(0, splitIdx).trim(),
+    line2: combined.slice(splitIdx).trim(),
   };
 }
 
 export function getSpeciesTraitsExport(speciesData: Species | null): string {
   if (!speciesData?.traits.length) return speciesData?.name ?? "";
   return speciesData.traits
-    .map((trait) => {
-      const desc = trait.entries.join(" ").trim();
-      return desc ? `- ${trait.name}: ${desc}` : `- ${trait.name}`;
-    })
+    .map((trait) => formatFeatureEntry(trait.name, trait.entries))
     .join("\n\n");
 }
 

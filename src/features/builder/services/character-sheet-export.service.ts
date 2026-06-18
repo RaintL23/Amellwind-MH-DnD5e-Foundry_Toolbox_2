@@ -1,9 +1,6 @@
 import type { PDFDocument } from "pdf-lib";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
-import {
-  sanitizeTextForPdf,
-  getClassFeaturesFontSize,
-} from "../utils/character-sheet-export.utils";
+import { sanitizeTextForPdf } from "../utils/character-sheet-export.utils";
 
 const TEMPLATE_URL = "/character-sheet/dnd-2024-character-sheet.pdf";
 
@@ -96,7 +93,7 @@ export async function exportCharacterSheetPdf(
     DEX: "DEX SAVE",
     CON: "CON SAVE",
     INT: "INT SAVE",
-    WIS: "WIS SAVE",
+    WIS: "Text Field71", // PDF field for WIS saving throw (non-standard name)
     CHA: "CHA SAVE",
   };
   for (const [key, field] of Object.entries(saveMap)) {
@@ -127,18 +124,39 @@ export async function exportCharacterSheetPdf(
     setText(form, field, data.skills[key]);
   }
 
+  // Skill proficiency checkboxes (the circle "O" next to each skill/save)
+  const SKILL_PROF_CHECKBOXES: Record<string, string> = {
+    acr: "Check Box8",   ath: "Check Box19",  slt: "Check Box9",   ste: "Check Box10",
+    ani: "Check Box15",  ins: "Check Box13",  med: "Check Box12",  prc: "Check Box14",
+    sur: "Check Box16",  arc: "Check Box24",  his: "Check Box20",  inv: "Check Box21",
+    nat: "Check Box22",  rel: "Check Box23",  dec: "Check Box5",   itm: "Check Box4",
+    per: "Check Box2",   prf: "Check Box3",
+  };
+  const SAVE_PROF_CHECKBOXES: Record<string, string> = {
+    str: "Check Box18",  dex: "Check Box11",  con: "Check Box7",
+    int: "Check Box25",  wis: "Check Box17",  cha: "Check Box6",
+  };
+  if (data.skillProficiencies) {
+    for (const [key, proficient] of Object.entries(data.skillProficiencies)) {
+      const cbName = SKILL_PROF_CHECKBOXES[key];
+      if (cbName) setCheckbox(form, cbName, proficient);
+    }
+  }
+  if (data.saveProficiencies) {
+    for (const [key, proficient] of Object.entries(data.saveProficiencies)) {
+      const cbName = SAVE_PROF_CHECKBOXES[key];
+      if (cbName) setCheckbox(form, cbName, proficient);
+    }
+  }
+
   setText(form, "LANGUAGES", data.languages, 12);
   setText(form, "WEAPON PROF", data.weaponProficiencies);
   setText(form, "ARMOR", data.armorProficiencies);
   setText(form, "TOOL PROF", data.toolProficiencies);
   setText(form, "FEATS", data.feats);
-  const cfFontSize = getClassFeaturesFontSize(
-    data.classFeatures ?? "",
-    data.classFeatures2 ?? "",
-  );
-  setText(form, "CLASS FEATURES 1", data.classFeatures, cfFontSize);
-  setText(form, "CLASS FEATURES 2", data.classFeatures2, cfFontSize);
-  setText(form, "SPECIES TRAITS", data.speciesTraits);
+  setText(form, "CLASS FEATURES 1", data.classFeatures, 7);
+  setText(form, "CLASS FEATURES 2", data.classFeatures2, 7);
+  setText(form, "SPECIES TRAITS", data.speciesTraits, 7);
   setText(form, "EQUIPMENT", data.equipment, 12);
   setCheckbox(form, "shield chk", data.hasShield);
   setCheckbox(form, data.alignmentCheckbox ?? "", true);
@@ -156,12 +174,41 @@ export async function exportCharacterSheetPdf(
     setText(form, `NOTES - WEAPON ${n}`, weapon.notes);
   });
 
+  // C / R / M checkboxes per spell row, ordered top-to-bottom (index 0–28).
+  const SPELL_C_CHECKBOXES = [
+    "Check Box0",   "Check Box64",  "Check Box67",  "Check Box70",  "Check Box73",
+    "Check Box76",  "Check Box79",  "Check Box85",  "Check Box82",  "Check Box88",
+    "Check Box91",  "Check Box94",  "Check Box97",  "Check Box100", "Check Box103",
+    "Check Box106", "Check Box109", "Check Box112", "Check Box115", "Check Box118",
+    "Check Box121", "Check Box124", "Check Box127", "Check Box130", "Check Box133",
+    "Check Box136", "Check Box139", "Check Box142", "Check Box145",
+  ] as const;
+  const SPELL_R_CHECKBOXES = [
+    "Check Box59",  "Check Box65",  "Check Box68",  "Check Box71",  "Check Box74",
+    "Check Box77",  "Check Box80",  "Check Box86",  "Check Box83",  "Check Box89",
+    "Check Box92",  "Check Box95",  "Check Box98",  "Check Box101", "Check Box104",
+    "Check Box107", "Check Box110", "Check Box113", "Check Box116", "Check Box119",
+    "Check Box122", "Check Box125", "Check Box128", "Check Box131", "Check Box134",
+    "Check Box137", "Check Box140", "Check Box143", "Check Box146",
+  ] as const;
+  const SPELL_M_CHECKBOXES = [
+    "Check Box60",  "Check Box66",  "Check Box69",  "Check Box72",  "Check Box75",
+    "Check Box78",  "Check Box81",  "Check Box87",  "Check Box84",  "Check Box90",
+    "Check Box93",  "Check Box96",  "Check Box99",  "Check Box102", "Check Box105",
+    "Check Box108", "Check Box111", "Check Box114", "Check Box117", "Check Box120",
+    "Check Box123", "Check Box126", "Check Box129", "Check Box132", "Check Box135",
+    "Check Box138", "Check Box141", "Check Box144", "Check Box147",
+  ] as const;
+
   data.spells.slice(0, 29).forEach((spell, index) => {
     setText(form, `SPELL NAME${index}`, spell.name);
     setText(form, `SPELL LEVEL${index}`, spell.level);
     setText(form, `RANGE${index}`, spell.range);
     setText(form, `CASTING TIME${index}`, spell.castingTime);
-    setText(form, `SPELL NOTES${index}`, spell.notes);
+    setText(form, `SPELL NOTES${index}`, spell.materialNotes);
+    setCheckbox(form, SPELL_C_CHECKBOXES[index], spell.isConcentration);
+    setCheckbox(form, SPELL_R_CHECKBOXES[index], spell.isRitual);
+    setCheckbox(form, SPELL_M_CHECKBOXES[index], spell.hasMaterial);
   });
 
   if (data.spellcastingAbility) {

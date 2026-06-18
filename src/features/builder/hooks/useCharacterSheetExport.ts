@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
-import { SKILL_ORDER } from "../utils/check-modifiers.utils";
-import type { AbilityKey } from "@/shared/types";
+import { SKILL_ORDER, SKILL_LABELS } from "../utils/check-modifiers.utils";
+import type { AbilityKey, SkillKey } from "@/shared/types";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { useCharacterArmorClass } from "./useCharacterArmorClass";
@@ -141,25 +141,75 @@ export function useCharacterSheetExport() {
       .flat()
       .map((selection) => {
         const spell = allSpells.find((s) => s.id === selection.id);
+        const material = spell?.components.m ?? null;
+        const hasCostlyMaterial =
+          material !== null && /\d+\s*(?:gp|sp|cp|pp)/i.test(material);
         return {
           name: selection.name,
           level: selection.level,
           range: spell?.range,
           castingTime: spell?.castingTime,
-          notes: [
-            spell?.isConcentration ? "C" : null,
-            spell?.isRitual ? "R" : null,
-          ]
-            .filter(Boolean)
-            .join(", "),
+          isConcentration: spell?.isConcentration ?? false,
+          isRitual: spell?.isRitual ?? false,
+          hasMaterial: material !== null,
+          materialNotes: hasCostlyMaterial ? material : undefined,
         };
       });
 
-    const feats = [
-      builder.speciesOriginFeat?.name,
-      builder.backgroundOriginFeat?.name,
-      ...builder.featSelections.map((f) => f?.name).filter(Boolean),
-    ].filter(Boolean) as string[];
+    function formatSkillChoices(keys: SkillKey[]): string {
+      return keys.map((k) => SKILL_LABELS[k] ?? k).join(", ");
+    }
+
+    const featLines: string[] = [];
+
+    const originSkillText =
+      builder.originFeatSkillChoices.length > 0
+        ? `: ${formatSkillChoices(builder.originFeatSkillChoices)}`
+        : "";
+
+    if (builder.speciesOriginFeat) {
+      featLines.push(
+        `${builder.speciesOriginFeat.name} [Origin Feat]${originSkillText}`,
+      );
+    }
+    if (builder.backgroundOriginFeat) {
+      // If species already claimed the origin skill choices, don't repeat them
+      const bgSkills = builder.speciesOriginFeat ? "" : originSkillText;
+      featLines.push(
+        `${builder.backgroundOriginFeat.name} [Origin Feat]${bgSkills}`,
+      );
+    }
+    builder.optionalFeatureOriginFeats.forEach((feat, idx) => {
+      if (!feat) return;
+      const choices = builder.optionalFeatureOriginFeatSkillChoices[idx] ?? [];
+      const skillsText =
+        choices.length > 0 ? `: ${formatSkillChoices(choices)}` : "";
+      featLines.push(`${feat.name} [Origin Feat]${skillsText}`);
+    });
+    builder.featSelections.forEach((feat, idx) => {
+      if (!feat) return;
+      const choices = builder.featSkillChoices[idx] ?? [];
+      if (choices.length > 0) {
+        featLines.push(`${feat.name}: ${formatSkillChoices(choices)}`);
+      } else {
+        featLines.push(feat.name);
+      }
+    });
+
+    // Skill / save proficiency flags for PDF checkboxes
+    const skillProficiencies: Partial<Record<SkillKey, boolean>> = {};
+    for (const key of SKILL_ORDER) {
+      if (
+        (builder.skillSources[key]?.length ?? 0) > 0 ||
+        builder.expertiseSources[key] !== undefined
+      ) {
+        skillProficiencies[key] = true;
+      }
+    }
+    const saveProficiencies: Partial<Record<AbilityKey, boolean>> = {};
+    for (const abilityKey of builder.saveProficiencyAbilities) {
+      saveProficiencies[abilityKey] = true;
+    }
 
     const classFeatures = getClassFeaturesExport(
       classData,
@@ -214,7 +264,7 @@ export function useCharacterSheetExport() {
       weaponProficiencies: builder.resolvedWeaponItems.join(", "),
       armorProficiencies: builder.resolvedArmorItems.join(", "),
       toolProficiencies: builder.resolvedToolItems.join(", "),
-      feats: feats.join("\n"),
+      feats: featLines.join("\n"),
       classFeatures: classFeatures.line1,
       classFeatures2: classFeatures.line2,
       speciesTraits: getSpeciesTraitsExport(builder.speciesData),
@@ -253,6 +303,8 @@ export function useCharacterSheetExport() {
         ...builder.personality,
         notes: builder.backstoryNotes,
       },
+      skillProficiencies,
+      saveProficiencies,
     };
   }, [
     allSpells,

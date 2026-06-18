@@ -1,4 +1,5 @@
 import type { BuilderPersonality } from "../storage/builder.storage";
+import type { SkillKey, AbilityKey } from "@/shared/types";
 
 export interface CharacterSheetWeaponExport {
   name: string;
@@ -12,7 +13,11 @@ export interface CharacterSheetSpellExport {
   level: number;
   range?: string;
   castingTime?: string;
-  notes?: string;
+  isConcentration?: boolean;
+  isRitual?: boolean;
+  hasMaterial?: boolean;
+  /** Populated only when the material component has a monetary cost. */
+  materialNotes?: string;
 }
 
 export interface CharacterSheetExportData {
@@ -62,4 +67,6 @@ export interface CharacterSheetExportData {
   alignmentCheckbox?: string;
   goldPieces?: string;
   personality: BuilderPersonality & { notes: string };
+  skillProficiencies?: Partial<Record<SkillKey, boolean>>;
+  saveProficiencies?: Partial<Record<AbilityKey, boolean>>;
 }
