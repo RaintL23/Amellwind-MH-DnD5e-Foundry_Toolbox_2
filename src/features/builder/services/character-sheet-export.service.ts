@@ -247,7 +247,6 @@ export async function exportCharacterSheetPdf(
     .join("\n");
   setText(form, "PERSONALITY", personalityLines);
 
-  form.flatten();
   return pdfDoc.save();
 }
 
