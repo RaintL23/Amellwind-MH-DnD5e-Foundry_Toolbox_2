@@ -63,6 +63,44 @@ function formatSpellListName(name: string, spellsByName: Spell[]): string {
   return formatSpellNameWithMeta(name, spell);
 }
 
+function getClassCantripEquipped(
+  spellSelections: BuilderSpellSelections,
+  className: string,
+  cantripCount: number,
+  spellLevelByName: Map<string, number>,
+  spellsByName: Spell[],
+): { name: string; detail?: string } | null {
+  const selected = (spellSelections ?? {})[0] ?? [];
+  if (selected.length === 0 && cantripCount === 0) return null;
+
+  const selectedNames = selected
+    .map((s) => formatSpellListName(s.name, spellsByName))
+    .join(", ");
+  const detail =
+    selected.length > 0
+      ? `${selected.length}/${cantripCount} — ${selectedNames}`
+      : `0/${cantripCount}`;
+  return { name: `Cantrips (${className})`, detail };
+}
+
+function getBonusCantripPoolEquipped(
+  spellSelections: BuilderSpellSelections,
+  pool: import("@/features/builder/hooks/useSpellcasting").CantripPoolInfo,
+  spellsByName: Spell[],
+): { name: string; detail?: string } | null {
+  const selected = (spellSelections ?? {})[pool.selectionLevel] ?? [];
+  if (selected.length === 0 && pool.maxCount === 0) return null;
+
+  const selectedNames = selected
+    .map((s) => formatSpellListName(s.name, spellsByName))
+    .join(", ");
+  const detail =
+    selected.length > 0
+      ? `${selected.length}/${pool.maxCount} · ${pool.spellListClassName} list — ${selectedNames}`
+      : `${selected.length}/${pool.maxCount} · ${pool.spellListClassName} list`;
+  return { name: pool.label, detail };
+}
+
 function getCantripEquipped(
   spellSelections: BuilderSpellSelections,
   spellcastingInfo: SpellcastingInfo,
@@ -288,15 +326,27 @@ export function SpellcastingGridPanel({
   const { highlighted, issues: spellIssues } =
     useSectionCompletenessHighlight("spells");
 
-  if (availableSpellLevels.length === 0 && !usesUnifiedPactPool) {
+  if (
+    availableSpellLevels.length === 0 &&
+    !usesUnifiedPactPool &&
+    spellcastingInfo.cantripCount === 0 &&
+    spellcastingInfo.bonusCantripPools.length === 0
+  ) {
     return null;
   }
 
-  const gridSlots: Array<{ kind: "level"; level: number } | { kind: "pact" }> =
-    [];
+  const gridSlots: Array<
+    | { kind: "class-cantrip" }
+    | { kind: "bonus-cantrip"; pool: SpellcastingInfo["bonusCantripPools"][number] }
+    | { kind: "level"; level: number }
+    | { kind: "pact" }
+  > = [];
 
-  if (availableSpellLevels.includes(0)) {
-    gridSlots.push({ kind: "level", level: 0 });
+  if (spellcastingInfo.cantripCount > 0) {
+    gridSlots.push({ kind: "class-cantrip" });
+  }
+  for (const pool of spellcastingInfo.bonusCantripPools) {
+    gridSlots.push({ kind: "bonus-cantrip", pool });
   }
   if (usesUnifiedPactPool) {
     gridSlots.push({ kind: "pact" });
@@ -318,6 +368,52 @@ export function SpellcastingGridPanel({
       {highlighted && <CompletenessHighlightBanner issues={spellIssues} />}
       <BuilderSlotGrid>
         {gridSlots.map((entry) => {
+          if (entry.kind === "class-cantrip") {
+            const equipped = getClassCantripEquipped(
+              spellSelections,
+              className,
+              spellcastingInfo.cantripCount,
+              spellLevelByName,
+              spellsByName,
+            );
+            const slot = toSpellLevelSlot(0);
+            return (
+              <GridElementSlot
+                key={slot}
+                label={`Cantrips (${className})`}
+                icon={<Sparkles className="h-5 w-5 text-sky-400" />}
+                equipped={equipped}
+                onClickEquip={() => onSelectSlot(slot)}
+                onClickDetails={() => onSelectSlot(slot)}
+                isSelected={selectedSlot === slot}
+                highlighted={highlighted}
+                emptyTitle={`Elegir cantrips de ${className}`}
+              />
+            );
+          }
+
+          if (entry.kind === "bonus-cantrip") {
+            const pool = entry.pool;
+            const equipped = getBonusCantripPoolEquipped(
+              spellSelections,
+              pool,
+              spellsByName,
+            );
+            return (
+              <GridElementSlot
+                key={pool.slot}
+                label={pool.label}
+                icon={<Sparkles className="h-5 w-5 text-cyan-400" />}
+                equipped={equipped}
+                onClickEquip={() => onSelectSlot(pool.slot)}
+                onClickDetails={() => onSelectSlot(pool.slot)}
+                isSelected={selectedSlot === pool.slot}
+                highlighted={highlighted}
+                emptyTitle={`Elegir cantrip — lista de ${pool.spellListClassName}`}
+              />
+            );
+          }
+
           if (entry.kind === "pact") {
             const equipped = getPactPoolEquipped(
               spellSelections,

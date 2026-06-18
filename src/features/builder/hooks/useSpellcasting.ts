@@ -17,6 +17,7 @@ import {
   pactPoolSelectedCount,
 } from "../utils/pact-magic.utils";
 import type { BuilderClassLevelEntry } from "../utils/multiclass.utils";
+import type { CantripPoolDefinition } from "../utils/cantrip-pools.utils";
 import {
   getMulticlassCasterLevel,
   getMulticlassSpellSlotLevels,
@@ -25,13 +26,19 @@ import {
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+export interface CantripPoolInfo extends CantripPoolDefinition {
+  selectedCount: number;
+}
+
 export interface SpellcastingInfo {
   /** Whether the class can cast spells at all. */
   isSpellcaster: boolean;
   /** Spell levels the class has access to at the current character level (0 = cantrips). */
   availableSpellLevels: number[];
-  /** Max cantrips known at the current level. */
+  /** Max cantrips from class progression only (excludes feature/feat bonus pools). */
   cantripCount: number;
+  /** Extra cantrip pools from features, feats, origin feats, etc. */
+  bonusCantripPools: CantripPoolInfo[];
   /** Total prepared or known spell count across all non-cantrip levels. */
   maxPreparedOrKnown: number;
   /** True for Wizard/Cleric/Druid/Paladin (formula-based preparation). */
@@ -256,13 +263,23 @@ export function useSpellcasting(
   faction: BackgroundFaction | null = null,
   classLevelForProgression?: number,
   multiclassClassEntries?: BuilderClassLevelEntry[],
-  cantripBonus: number = 0,
+  bonusCantripPools: CantripPoolDefinition[] = [],
 ): SpellcastingInfo {
   return useMemo((): SpellcastingInfo => {
+    const bonusPools: CantripPoolInfo[] = bonusCantripPools.map((pool) => ({
+      ...pool,
+      selectedCount: (spellSelections ?? {})[pool.selectionLevel]?.length ?? 0,
+    }));
+    const bonusCantripTotal = bonusPools.reduce(
+      (sum, pool) => sum + pool.maxCount,
+      0,
+    );
+
     const none: SpellcastingInfo = {
       isSpellcaster: false,
       availableSpellLevels: [],
       cantripCount: 0,
+      bonusCantripPools: [],
       maxPreparedOrKnown: 0,
       isPreparedCaster: false,
       spellcastingAbility: null,
@@ -326,19 +343,31 @@ export function useSpellcasting(
           usesPreparedSpells: !!preparedSpellsProgression?.length,
         } satisfies import("../utils/pact-magic.utils").PactMagicProgression);
 
-      const cantripCount = pact.cantripCount + cantripBonus;
+      const cantripCount = pact.cantripCount;
       const maxPreparedOrKnown = pact.preparedSpellCount;
       const availableSpellLevels: number[] = [];
-      if (cantripCount > 0) availableSpellLevels.push(0);
+      if (cantripCount > 0 || bonusCantripTotal > 0) availableSpellLevels.push(0);
 
-      if (cantripCount === 0 && maxPreparedOrKnown === 0 && pact.pactSlotLevel === 0) {
+      if (
+        cantripCount === 0 &&
+        bonusCantripTotal === 0 &&
+        maxPreparedOrKnown === 0 &&
+        pact.pactSlotLevel === 0
+      ) {
         return none;
       }
+
+      const classCantripsSelected = (selections[0] ?? []).length;
+      const bonusCantripsSelected = bonusPools.reduce(
+        (sum, pool) => sum + pool.selectedCount,
+        0,
+      );
 
       return {
         isSpellcaster: true,
         availableSpellLevels,
         cantripCount,
+        bonusCantripPools: bonusPools,
         maxPreparedOrKnown,
         isPreparedCaster: pact.usesPreparedSpells,
         spellcastingAbility,
@@ -348,7 +377,7 @@ export function useSpellcasting(
         pactMaxSpellLevel: pact.pactSlotLevel,
         pactSlotCount: pact.pactSlotCount,
         selectedSpellCount: pactPoolSelectedCount(selections),
-        selectedCantripCount: (selections[0] ?? []).length,
+        selectedCantripCount: classCantripsSelected + bonusCantripsSelected,
         availableSpellSlotLevels:
           pact.pactSlotLevel > 0 ? [pact.pactSlotLevel] : [],
         subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
@@ -362,8 +391,8 @@ export function useSpellcasting(
     }
 
     const cantripCount =
-      (cantripProgression?.[rowIndex] ??
-      getCantripCountFromTable(spellProgression, rowIndex)) + cantripBonus;
+      cantripProgression?.[rowIndex] ??
+      getCantripCountFromTable(spellProgression, rowIndex);
 
     let slotLevels = getAvailableSlotLevels(spellProgression, progressionLevel);
 
@@ -376,7 +405,7 @@ export function useSpellcasting(
     }
 
     const availableSpellLevels: number[] = [];
-    if (cantripCount > 0) availableSpellLevels.push(0);
+    if (cantripCount > 0 || bonusCantripTotal > 0) availableSpellLevels.push(0);
     availableSpellLevels.push(...slotLevels);
 
     if (availableSpellLevels.length === 0) return none;
@@ -410,7 +439,11 @@ export function useSpellcasting(
       maxPreparedOrKnown = getSpellsKnownFromTable(spellProgression, rowIndex);
     }
 
-    const selectedCantripCount = (selections[0] ?? []).length;
+    const classCantripsSelected = (selections[0] ?? []).length;
+    const bonusCantripsSelected = bonusPools.reduce(
+      (sum, pool) => sum + pool.selectedCount,
+      0,
+    );
     const selectedSpellCount = Object.entries(selections)
       .filter(([lvl]) => Number(lvl) > 0)
       .reduce((sum, [, spells]) => sum + spells.length, 0);
@@ -419,6 +452,7 @@ export function useSpellcasting(
       isSpellcaster: true,
       availableSpellLevels,
       cantripCount,
+      bonusCantripPools: bonusPools,
       maxPreparedOrKnown,
       isPreparedCaster,
       spellcastingAbility,
@@ -428,7 +462,7 @@ export function useSpellcasting(
       pactMaxSpellLevel: 0,
       pactSlotCount: 0,
       selectedSpellCount,
-      selectedCantripCount,
+      selectedCantripCount: classCantripsSelected + bonusCantripsSelected,
       availableSpellSlotLevels: slotLevels,
       subclassAlwaysPrepared: subclassSpells.alwaysPrepared,
       subclassBonusKnown: subclassSpells.bonusKnown,
@@ -449,7 +483,7 @@ export function useSpellcasting(
     optionalFeatureSelections,
     optionalFeatureSpellGrants,
     faction,
-    cantripBonus,
+    bonusCantripPools,
   ]);
 }
 

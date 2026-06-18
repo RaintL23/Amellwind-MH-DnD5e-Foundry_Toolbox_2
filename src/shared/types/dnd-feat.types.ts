@@ -7,6 +7,8 @@ export interface DndFeat extends Feat {
   isOriginFeat: boolean;
   srd52?: boolean;
   basicRules2024?: boolean;
+  /** Structured spell grants (e.g. Magic Initiate choose blocks). */
+  additionalSpells?: import("./class.types").SubclassSpellBlock[];
   /** Populated only on deduplicated list rows */
   variantSources?: string[];
   variantCount?: number;

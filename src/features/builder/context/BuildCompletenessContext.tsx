@@ -12,6 +12,7 @@ import { useBuilderInventory } from "./BuilderInventoryContext";
 import { useSelectedClass, useSelectedSubclass, useSelectedSpecies } from "../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../hooks/useSelectedDndBackground";
 import { useOptionalFeatureSpellGrants } from "../hooks/useOptionalFeatureSpellGrants";
+import { useCantripPools } from "../hooks/useCantripPools";
 import { useSpellcasting } from "../hooks/useSpellcasting";
 import {
   evaluateBuildCompleteness,
@@ -47,6 +48,21 @@ export function BuildCompletenessProvider({
   const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
     builder.optionalFeatureSelections ?? {},
     builder.character.level,
+    classData,
+    subclassData,
+  );
+  const { bonusPools: bonusCantripPools } = useCantripPools(
+    builder.optionalFeatureSelections ?? {},
+    classData,
+    subclassData,
+    builder.character.level,
+    {
+      speciesOriginFeat: builder.speciesOriginFeat,
+      backgroundOriginFeat: builder.backgroundOriginFeat,
+      speciesOriginFeatGrant: builder.speciesOriginFeatGrant,
+      backgroundOriginFeatGrant: builder.backgroundOriginFeatGrant,
+      featSelections: builder.featSelections,
+    },
   );
   const spellcasting = useSpellcasting(
     classData,
@@ -57,6 +73,9 @@ export function BuildCompletenessProvider({
     builder.optionalFeatureSelections ?? {},
     optionalFeatureSpellGrants,
     builder.faction,
+    builder.character.level,
+    undefined,
+    bonusCantripPools,
   );
 
   const input = useMemo(

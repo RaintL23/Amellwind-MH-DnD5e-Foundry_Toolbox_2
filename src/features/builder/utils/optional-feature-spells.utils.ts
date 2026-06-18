@@ -1,11 +1,101 @@
 import type {
   BuilderOptionalFeatureSelection,
+  BuilderOptionalFeatureSelections,
   DndOptionalFeature,
+  OptionalFeatureProgression,
 } from "@/shared/types";
+import {
+  extractFixedSpellNamesFromEntries,
+} from "@/shared/utils/text-spell-grants.parser";
 import {
   normalizeSpellRef,
   type SubclassSpellGrant,
 } from "./subclass-spells.utils";
+
+function normalizeSelectionName(value: string): string {
+  return value.trim().toLowerCase();
+}
+
+function resolveFeatureChoiceEntries(
+  pick: BuilderOptionalFeatureSelection,
+  progression: OptionalFeatureProgression,
+): string[] {
+  const option = progression.choiceOptions?.find(
+    (candidate) =>
+      candidate.id === pick.id ||
+      normalizeSelectionName(candidate.name) === normalizeSelectionName(pick.name),
+  );
+  return option?.entries ?? [];
+}
+
+function resolveOptionalFeatureEntries(
+  pick: BuilderOptionalFeatureSelection,
+  catalog: DndOptionalFeature[],
+): string[] {
+  const feature = catalog.find(
+    (candidate) =>
+      candidate.id === pick.id ||
+      (normalizeSelectionName(candidate.name) === normalizeSelectionName(pick.name) &&
+        normalizeSelectionName(candidate.source) === normalizeSelectionName(pick.source)),
+  );
+  return feature?.entries ?? [];
+}
+
+function resolveSelectionEntriesForSpells(
+  pick: BuilderOptionalFeatureSelection,
+  progression: OptionalFeatureProgression,
+  optionalCatalog: DndOptionalFeature[],
+): string[] {
+  if (progression.catalog === "feature-choice") {
+    return resolveFeatureChoiceEntries(pick, progression);
+  }
+  return resolveOptionalFeatureEntries(pick, optionalCatalog);
+}
+
+export function resolveFeatureChoiceSpellGrants(
+  optionalFeatureSelections: BuilderOptionalFeatureSelections,
+  progressions: OptionalFeatureProgression[],
+  optionalCatalog: DndOptionalFeature[] = [],
+  characterLevel: number,
+): SubclassSpellGrant[] {
+  const grants: SubclassSpellGrant[] = [];
+  const seen = new Set<string>();
+
+  for (const progression of progressions) {
+    const picks = optionalFeatureSelections[progression.id] ?? [];
+
+    for (const pick of picks) {
+      if (!pick) continue;
+
+      const entries = resolveSelectionEntriesForSpells(
+        pick,
+        progression,
+        optionalCatalog,
+      );
+      if (!entries.length) continue;
+
+      const sourceName = `${progression.name}: ${pick.name}`;
+      const spellNames = [
+        ...extractSpellsFromEntries(entries),
+        ...extractFixedSpellNamesFromEntries(entries),
+      ];
+
+      for (const spellName of spellNames) {
+        const name = normalizeSpellRef(spellName);
+        const dedupeKey = `always-prepared:${name.toLowerCase()}:${sourceName}`;
+        if (seen.has(dedupeKey)) continue;
+        seen.add(dedupeKey);
+        grants.push({
+          name,
+          grantType: "always-prepared",
+          unlockedAtLevel: characterLevel,
+        });
+      }
+    }
+  }
+
+  return grants;
+}
 
 export function resolveOptionalFeatureSpells(
   features: DndOptionalFeature[],
@@ -42,7 +132,7 @@ export function resolveOptionalFeatureSpells(
 
 const SPELL_TAG = /\{@spell\s+([^}|#]+)/gi;
 
-function extractSpellsFromEntries(entries: string[]): string[] {
+export function extractSpellsFromEntries(entries: string[]): string[] {
   const names: string[] = [];
   const seen = new Set<string>();
 

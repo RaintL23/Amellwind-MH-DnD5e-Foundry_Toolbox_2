@@ -10,6 +10,7 @@ import { useCharacterSpeed } from "./useCharacterSpeed";
 import { useSpellcasting } from "./useSpellcasting";
 import { useSelectedClass, useSelectedSubclass } from "./useBuilderSelections";
 import { useOptionalFeatureSpellGrants } from "./useOptionalFeatureSpellGrants";
+import { useCantripPools } from "./useCantripPools";
 import { useSpellCatalog } from "./useSpellCatalog";
 import { getAttunementInfo } from "../utils/attunement.utils";
 import {
@@ -80,6 +81,21 @@ export function useCharacterSheetExport() {
   const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
     builder.optionalFeatureSelections ?? {},
     builder.character.level,
+    classData,
+    subclassData,
+  );
+  const { bonusPools: bonusCantripPools } = useCantripPools(
+    builder.optionalFeatureSelections ?? {},
+    classData,
+    subclassData,
+    builder.character.level,
+    {
+      speciesOriginFeat: builder.speciesOriginFeat,
+      backgroundOriginFeat: builder.backgroundOriginFeat,
+      speciesOriginFeatGrant: builder.speciesOriginFeatGrant,
+      backgroundOriginFeatGrant: builder.backgroundOriginFeatGrant,
+      featSelections: builder.featSelections,
+    },
   );
   const spellcasting = useSpellcasting(
     classData,
@@ -90,6 +106,9 @@ export function useCharacterSheetExport() {
     builder.optionalFeatureSelections ?? {},
     optionalFeatureSpellGrants,
     builder.faction,
+    builder.character.level,
+    undefined,
+    bonusCantripPools,
   );
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);

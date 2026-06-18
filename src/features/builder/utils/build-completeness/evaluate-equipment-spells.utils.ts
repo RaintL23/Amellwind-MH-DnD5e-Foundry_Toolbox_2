@@ -37,15 +37,35 @@ export function evaluateEquipmentAndSpellsCompleteness(
 
   const spellcasting = input.spellcasting;
   if (spellcasting?.isSpellcaster) {
+    const bonusCantripsSelected = spellcasting.bonusCantripPools.reduce(
+      (sum, pool) => sum + pool.selectedCount,
+      0,
+    );
+    const classCantripsSelected =
+      spellcasting.selectedCantripCount - bonusCantripsSelected;
+
     if (
       spellcasting.cantripCount > 0 &&
-      spellcasting.selectedCantripCount < spellcasting.cantripCount
+      classCantripsSelected < spellcasting.cantripCount
     ) {
+      const missing = spellcasting.cantripCount - classCantripsSelected;
       issues.push({
-        id: "spells-cantrips",
+        id: "spells-cantrips-class",
         section: "spells",
-        message: `Choose ${spellcasting.cantripCount - spellcasting.selectedCantripCount} more cantrip${spellcasting.cantripCount - spellcasting.selectedCantripCount === 1 ? "" : "s"} (${spellcasting.selectedCantripCount}/${spellcasting.cantripCount})`,
+        message: `Choose ${missing} more class cantrip${missing === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
         slot: "spell-level-0",
+        highlightKey: "cantrips",
+      });
+    }
+
+    for (const pool of spellcasting.bonusCantripPools) {
+      if (pool.selectedCount >= pool.maxCount) continue;
+      const missing = pool.maxCount - pool.selectedCount;
+      issues.push({
+        id: `spells-cantrips-${pool.poolId}`,
+        section: "spells",
+        message: `Choose ${missing} more cantrip${missing === 1 ? "" : "s"} for ${pool.label} (${pool.selectedCount}/${pool.maxCount})`,
+        slot: pool.slot,
         highlightKey: "cantrips",
       });
     }

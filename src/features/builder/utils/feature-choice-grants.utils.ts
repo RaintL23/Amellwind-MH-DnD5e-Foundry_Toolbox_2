@@ -9,6 +9,7 @@ import type {
 } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
 import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
+import { parseCantripBonusFromEntries } from "@/shared/utils/text-spell-grants.parser";
 import { statBlockContentToPlainText } from "@/shared/utils/statblock-entries.mapper";
 import { getFeaturesUpToLevel } from "./builder-class.utils";
 
@@ -29,15 +30,6 @@ export interface AggregatedFeatureChoiceGrants {
   cantripBonus: number;
 }
 
-// ─── Patterns ────────────────────────────────────────────────────────────────
-
-/**
- * Cantrip bonus: "one extra cantrip", "one additional cantrip",
- * "know one more cantrip", "one extra cantrip from", etc.
- */
-const CANTRIP_BONUS_RE =
-  /\b(?:one\s+)?(?:extra|additional|more)\s+cantrip\b|\bcantrip\b.{0,50}\b(?:extra|additional|more)\b/i;
-
 // ─── Parser ──────────────────────────────────────────────────────────────────
 
 function normalizeSelectionName(value: string): string {
@@ -56,9 +48,8 @@ function detectGrantsFromEntries(
   if (parsed.weaponGrants.length) grants.weaponGrants = parsed.weaponGrants;
   if (parsed.toolGrants.length) grants.toolGrants = parsed.toolGrants;
 
-  if (CANTRIP_BONUS_RE.test(entries.join(" "))) {
-    grants.cantripBonus = 1;
-  }
+  const cantripBonus = parseCantripBonusFromEntries(entries);
+  if (cantripBonus > 0) grants.cantripBonus = cantripBonus;
 
   return grants;
 }

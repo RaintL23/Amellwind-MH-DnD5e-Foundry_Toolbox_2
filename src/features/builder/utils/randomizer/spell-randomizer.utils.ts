@@ -7,10 +7,15 @@ import type {
 } from "@/shared/types";
 import type { RpgbotLookupFn } from "@/features/builder/data/rpgbot-ratings.utils";
 import { isPactMagicClass } from "../builder-class.utils";
-import { getPactMagicProgression } from "../pact-magic.utils";
+import type { CantripPoolDefinition } from "../cantrip-pools.utils";
+import {
+  getPactMagicProgression,
+  PACT_SPELL_POOL_LEVEL,
+} from "../pact-magic.utils";
 import {
   resolveSubclassSpells,
   spellMatchesCharacterSpellList,
+  spellOnBaseClassList,
   type CharacterSpellListContext,
 } from "../subclass-spells.utils";
 import { pickByRpgbot, pickMultipleByRpgbot } from "./character-randomizer.utils";
@@ -92,6 +97,7 @@ function ensureAtLeastOneDamageSpell(
   selections: Record<number, Spell[]>,
   eligiblePools: Spell[][],
   rpgbotLookup: RpgbotLookupFn | null,
+  pactPoolLevel: number | null = null,
 ): void {
   const flat: Array<{ level: number; indexInBucket: number; spell: Spell }> = [];
   for (const [levelKey, spells] of Object.entries(selections)) {
@@ -107,17 +113,23 @@ function ensureAtLeastOneDamageSpell(
   const allEligible = [
     ...new Map(eligiblePools.flat().map((spell) => [spell.id, spell])).values(),
   ];
-  const representedLevels = new Set(flat.map(({ level }) => level));
+  const representedLevels = new Set(
+    flat.map(({ level, spell }) =>
+      level === pactPoolLevel ? spell.level : level,
+    ),
+  );
   const getRating = (spell: Spell) =>
     rpgbotLookup?.(spell.name, spell.source) ?? null;
 
   for (let i = flat.length - 1; i >= 0; i--) {
-    const { level, indexInBucket } = flat[i];
+    const { level, indexInBucket, spell } = flat[i];
     const sameLevelCandidates = allEligible.filter(
-      (spell) =>
-        isDamageSpell(spell) &&
-        spell.level === level &&
-        !pickedIds.has(spell.id),
+      (candidate) =>
+        isDamageSpell(candidate) &&
+        (level === pactPoolLevel
+          ? candidate.level === spell.level
+          : candidate.level === level) &&
+        !pickedIds.has(candidate.id),
     );
     const replacement = pickByRpgbot(sameLevelCandidates, getRating);
     if (!replacement) continue;
@@ -138,10 +150,9 @@ function ensureAtLeastOneDamageSpell(
   const { level, indexInBucket } = flat[flat.length - 1]!;
   selections[level]!.splice(indexInBucket, 1);
   if (selections[level]!.length === 0) delete selections[level];
-  selections[replacement.level] = [
-    ...(selections[replacement.level] ?? []),
-    replacement,
-  ];
+  const targetLevel =
+    level === pactPoolLevel ? pactPoolLevel : replacement.level;
+  selections[targetLevel] = [...(selections[targetLevel] ?? []), replacement];
 }
 
 export function buildRandomSpellSelections(params: {
@@ -151,9 +162,16 @@ export function buildRandomSpellSelections(params: {
   level: number;
   abilities: AbilityScores;
   rpgbotLookup: RpgbotLookupFn | null;
-  cantripBonus?: number;
+  bonusCantripPools?: CantripPoolDefinition[];
 }): BuilderSpellSelections {
-  const { allSpells, classData, subclass, level, rpgbotLookup, cantripBonus = 0 } = params;
+  const {
+    allSpells,
+    classData,
+    subclass,
+    level,
+    rpgbotLookup,
+    bonusCantripPools = [],
+  } = params;
   const rawSelections: Record<number, Spell[]> = {};
   const eligiblePools: Spell[][] = [];
 
@@ -183,10 +201,12 @@ export function buildRandomSpellSelections(params: {
     }
   }
 
-  const cantripCount = (isPact
+  const cantripCount = isPact
     ? (getPactMagicProgression(classData.spellProgression, rowIndex)
         ?.cantripCount ?? getCantripCount(classData, level))
-    : getCantripCount(classData, level)) + cantripBonus;
+    : getCantripCount(classData, level);
+
+  const pickedCantripIds = new Set<string>();
 
   if (cantripCount > 0) {
     const ctx = buildSpellListContext(
@@ -213,6 +233,31 @@ export function buildRandomSpellSelections(params: {
     );
     if (picked.length > 0) {
       rawSelections[0] = picked;
+      for (const spell of picked) pickedCantripIds.add(spell.id);
+    }
+  }
+
+  for (const bonusPool of bonusCantripPools) {
+    if (bonusPool.maxCount <= 0) continue;
+    const poolSpells = filterSpellsForClassFit(
+      allSpells.filter(
+        (spell) =>
+          spell.level === 0 &&
+          spellOnBaseClassList(spell, bonusPool.spellListClassName) &&
+          !pickedCantripIds.has(spell.id),
+      ),
+      classData,
+      subclass,
+    );
+    eligiblePools.push(poolSpells);
+    const picked = pickMultipleByRpgbot(
+      poolSpells,
+      bonusPool.maxCount,
+      (spell) => rpgbotLookup?.(spell.name, spell.source) ?? null,
+    );
+    if (picked.length > 0) {
+      rawSelections[bonusPool.selectionLevel] = picked;
+      for (const spell of picked) pickedCantripIds.add(spell.id);
     }
   }
 
@@ -221,8 +266,15 @@ export function buildRandomSpellSelections(params: {
         ?.preparedSpellCount ?? getMaxSpellsKnown(classData, level))
     : getMaxSpellsKnown(classData, level);
 
+  const pactPoolLevel = isPact ? PACT_SPELL_POOL_LEVEL : null;
+
   if (maxSpells <= 0) {
-    ensureAtLeastOneDamageSpell(rawSelections, eligiblePools, rpgbotLookup);
+    ensureAtLeastOneDamageSpell(
+      rawSelections,
+      eligiblePools,
+      rpgbotLookup,
+      pactPoolLevel,
+    );
     return toBuilderSelections(rawSelections);
   }
 
@@ -256,11 +308,15 @@ export function buildRandomSpellSelections(params: {
       maxSpells,
       (spell) => rpgbotLookup?.(spell.name, spell.source) ?? null,
     );
-    for (const spell of picked) {
-      const bucket = rawSelections[spell.level] ?? [];
-      rawSelections[spell.level] = [...bucket, spell];
+    if (picked.length > 0) {
+      rawSelections[PACT_SPELL_POOL_LEVEL] = picked;
     }
-    ensureAtLeastOneDamageSpell(rawSelections, eligiblePools, rpgbotLookup);
+    ensureAtLeastOneDamageSpell(
+      rawSelections,
+      eligiblePools,
+      rpgbotLookup,
+      pactPoolLevel,
+    );
     return toBuilderSelections(rawSelections);
   }
 
@@ -296,6 +352,11 @@ export function buildRandomSpellSelections(params: {
     }
   }
 
-  ensureAtLeastOneDamageSpell(rawSelections, eligiblePools, rpgbotLookup);
+  ensureAtLeastOneDamageSpell(
+    rawSelections,
+    eligiblePools,
+    rpgbotLookup,
+    pactPoolLevel,
+  );
   return toBuilderSelections(rawSelections);
 }

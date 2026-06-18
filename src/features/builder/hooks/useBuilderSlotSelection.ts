@@ -5,12 +5,14 @@ import {
   BuilderFeatSlot,
   SpellLevelSlot,
   BuilderPactSpellSlot,
+  BuilderBonusCantripSlot,
   BuilderOptionalFeatureSlot,
   BuilderOptionalOriginFeatSlot,
   BuilderMulticlassClassSlot,
   BuilderMulticlassSubclassSlot,
 } from "@/shared/types";
 import { PACT_SPELL_SLOT } from "../utils/pact-magic.utils";
+import { isBonusCantripSlot } from "../utils/cantrip-pools.utils";
 
 export type BuilderSlotSelection =
   | EquipmentSlotType
@@ -20,6 +22,7 @@ export type BuilderSlotSelection =
   | BuilderFeatSlot
   | SpellLevelSlot
   | BuilderPactSpellSlot
+  | BuilderBonusCantripSlot
   | BuilderOptionalFeatureSlot
   | BuilderOptionalOriginFeatSlot
   | null;
@@ -38,8 +41,12 @@ export function isPactSpellSlot(
 
 export function isSpellPickerSlot(
   slot: BuilderSlotSelection,
-): slot is SpellLevelSlot | BuilderPactSpellSlot {
-  return isSpellLevelSlot(slot) || isPactSpellSlot(slot);
+): slot is SpellLevelSlot | BuilderPactSpellSlot | BuilderBonusCantripSlot {
+  return (
+    isSpellLevelSlot(slot) ||
+    isPactSpellSlot(slot) ||
+    (typeof slot === "string" && isBonusCantripSlot(slot))
+  );
 }
 
 export function parseSpellLevel(slot: SpellLevelSlot): number {

@@ -36,6 +36,8 @@ export interface ClassLevelRow {
 export type SubclassSpellEntry = string | { choose?: string; all?: string };
 
 export interface SubclassSpellBlock {
+  /** Named variant inside feats (e.g. "Cleric Spells" for Magic Initiate). */
+  name?: string;
   prepared?: Record<string, SubclassSpellEntry[]>;
   known?: Record<string, SubclassSpellEntry[]>;
   expanded?: Record<string, unknown[]>;

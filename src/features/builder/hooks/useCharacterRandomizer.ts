@@ -59,6 +59,7 @@ import {
   resolveOriginFeatSelectionForGrant,
 } from "@/features/builder/utils/randomizer/feat-randomizer.utils";
 import { buildRandomSpellSelections } from "@/features/builder/utils/randomizer/spell-randomizer.utils";
+import { resolveBonusCantripPools } from "@/features/builder/utils/cantrip-pools.utils";
 import { buildRandomStartingEquipmentEntries } from "@/features/builder/utils/randomizer/starting-equipment-randomizer.utils";
 import { generateXanatharBackstoryNotes } from "@/features/builder/utils/randomizer/backstory-randomizer.utils";
 import { buildSpeciesLineageSpellSelectionsFromCatalog } from "@/features/builder/utils/species-spell-grants.utils";
@@ -72,7 +73,6 @@ import {
   getDnd2024LanguageNames,
   loadChooseableLanguages,
 } from "@/shared/data/chooseable-languages";
-import { computeFeatureChoiceGrants } from "@/features/builder/utils/feature-choice-grants.utils";
 import {
   resolveOptionalFeatureProgressions,
 } from "@/features/builder/utils/class-optional-features.utils";
@@ -592,10 +592,20 @@ export function useCharacterRandomizer() {
 
       clearSpells();
       const activeProgressionsList = activeProgressions.map((r) => r.progression);
-      const featureChoiceGrantsForSpells = computeFeatureChoiceGrants(
-        randomFeatureChoiceSelections,
-        activeProgressionsList,
-      );
+      const bonusCantripPools = resolveBonusCantripPools({
+        optionalFeatureSelections: randomFeatureChoiceSelections,
+        progressions: activeProgressionsList,
+        optionalCatalog: allOptionalFeatures,
+        featCatalog: allFeatCatalog,
+        classData,
+        subclass: pickedSubclass,
+        level: preservedLevel,
+        speciesOriginFeat: speciesOriginFeatSelection,
+        backgroundOriginFeat: backgroundOriginFeatSelection,
+        speciesOriginFeatGrant: randomizedSpeciesDetail?.originFeatGrant ?? null,
+        backgroundOriginFeatGrant:
+          randomizedBackgroundDetail?.originFeatGrant ?? null,
+      });
       const spellSelections = buildRandomSpellSelections({
         allSpells,
         classData,
@@ -606,7 +616,7 @@ export function useCharacterRandomizer() {
           ...abilityScores,
         },
         rpgbotLookup: spellLookup,
-        cantripBonus: featureChoiceGrantsForSpells.cantripBonus,
+        bonusCantripPools,
       });
       for (const [levelKey, spells] of Object.entries(spellSelections)) {
         for (const spell of spells) {

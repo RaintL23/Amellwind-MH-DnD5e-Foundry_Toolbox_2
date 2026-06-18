@@ -181,6 +181,9 @@ export type SpellLevelSlot = `spell-level-${number}`;
 /** Unified Warlock pact spell list (all levels 1–slot level in one pool). */
 export type BuilderPactSpellSlot = "spell-pact";
 
+/** Bonus cantrip pool from a feature, feat, or origin feat. */
+export type BuilderBonusCantripSlot = `spell-cantrip-${string}`;
+
 export interface BuilderSpellSelection {
   id: string;
   name: string;

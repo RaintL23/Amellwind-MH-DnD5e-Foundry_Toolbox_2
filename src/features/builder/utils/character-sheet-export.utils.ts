@@ -224,6 +224,12 @@ function collectCantripNames(
     names.add(selection.name);
   }
 
+  for (const pool of spellcasting.bonusCantripPools) {
+    for (const selection of spellSelections[pool.selectionLevel] ?? []) {
+      names.add(selection.name);
+    }
+  }
+
   const cantripGrants: SubclassSpellGrant[] = [
     ...spellcasting.subclassAlwaysPrepared,
     ...spellcasting.subclassBonusKnown,

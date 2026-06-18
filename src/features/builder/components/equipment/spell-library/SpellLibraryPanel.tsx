@@ -4,7 +4,7 @@ import type {
   BuilderSpellSelection,
   BuilderSpellSelections,
 } from "@/shared/types";
-import type { SpellLevelSlot, BuilderPactSpellSlot } from "@/shared/types";
+import type { SpellLevelSlot, BuilderPactSpellSlot, BuilderBonusCantripSlot } from "@/shared/types";
 import type { SpellcastingInfo } from "@/features/builder/hooks/useSpellcasting";
 import { BuilderPanel } from "../../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
