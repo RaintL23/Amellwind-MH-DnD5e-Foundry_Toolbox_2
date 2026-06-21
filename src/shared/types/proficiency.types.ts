@@ -20,7 +20,13 @@ export type SkillProficiencyGrant =
 
 export type ExpertiseGrant =
   | { kind: "fixed"; skills: SkillKey[]; source: ProficiencySource }
-  | { kind: "chooseProficient"; count: number; source: ProficiencySource };
+  | {
+      kind: "chooseProficient";
+      count: number;
+      /** When set, only these skills are eligible (must also be proficient). */
+      from?: SkillKey[];
+      source: ProficiencySource;
+    };
 
 export interface SkillAdvantageGrant {
   skill: SkillKey;

@@ -19,16 +19,23 @@ export function BuilderExpertisePicker({
 
   if (!grants.length) return null;
 
-  // Skills the character is currently proficient in
   const proficientSkills = (Object.keys(SKILL_LABELS) as SkillKey[]).filter(
     (sk) => character.getSkillProficiencyLevel(sk) >= 1,
   );
+
+  function eligibleSkillsForGrant(
+    grant: Extract<ExpertiseGrant, { kind: "chooseProficient" }>,
+  ): SkillKey[] {
+    if (!grant.from?.length) return proficientSkills;
+    return proficientSkills.filter((skill) => grant.from!.includes(skill));
+  }
 
   return (
     <div className="mt-2 space-y-2">
       {grants.map((grant, i) => {
         const grantId = `${grant.source.name}-${i}`;
         const chosen = expertiseChoices[grantId] ?? [];
+        const eligibleSkills = eligibleSkillsForGrant(grant);
 
         function toggle(skill: SkillKey) {
           if (chosen.includes(skill)) {
@@ -46,13 +53,15 @@ export function BuilderExpertisePicker({
             <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-violet-600 dark:text-violet-400">
               {grant.source.name} — Expertise (choose {grant.count})
             </p>
-            {proficientSkills.length === 0 ? (
+            {eligibleSkills.length === 0 ? (
               <p className="text-[10px] text-muted-foreground">
-                No proficient skills yet.
+                {grant.from?.length
+                  ? "Pick class skills first — none of the listed options are proficient yet."
+                  : "No proficient skills yet."}
               </p>
             ) : (
               <div className="flex flex-wrap gap-1">
-                {proficientSkills.map((skill) => {
+                {eligibleSkills.map((skill) => {
                   const isChosen = chosen.includes(skill);
                   const isDisabled = !isChosen && chosen.length >= grant.count;
                   const sources = skillSources[skill];

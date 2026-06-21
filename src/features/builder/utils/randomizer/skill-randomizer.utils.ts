@@ -181,7 +181,11 @@ export function pickExpertiseChoicesForGrants(
 
   pending.forEach((grant, index) => {
     const grantId = `${grant.source.name}-${index}`;
-    const pool = proficientSkills.filter((skill) => !used.has(skill));
+    const pool = proficientSkills.filter((skill) => {
+      if (used.has(skill)) return false;
+      if (grant.from?.length && !grant.from.includes(skill)) return false;
+      return true;
+    });
     const picked = shuffle(pool).slice(0, Math.min(grant.count, pool.length));
     for (const skill of picked) used.add(skill);
     result[grantId] = picked;
