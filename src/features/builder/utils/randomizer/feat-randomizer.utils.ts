@@ -31,8 +31,9 @@ function pickRandomOriginFeat(
   feats: DndFeat[],
   rpgbotData: RpgbotRatingsData | null,
   className: string,
+  excludeIds: ReadonlySet<string> = new Set(),
 ): BuilderFeatSelection | null {
-  const pool = filterOriginFeats(feats);
+  const pool = filterOriginFeats(feats).filter((feat) => !excludeIds.has(feat.id));
   if (pool.length === 0) return null;
 
   const classSlug = toRpgbotClassSlug(className);
@@ -57,11 +58,12 @@ export async function resolveOriginFeatSelectionForGrant(
   feats: DndFeat[],
   rpgbotData: RpgbotRatingsData | null,
   className: string,
+  excludeIds: ReadonlySet<string> = new Set(),
 ): Promise<BuilderFeatSelection | null> {
   if (!grant) return null;
 
   if (grant.kind === "choose") {
-    return pickRandomOriginFeat(feats, rpgbotData, className);
+    return pickRandomOriginFeat(feats, rpgbotData, className, excludeIds);
   }
 
   if (grant.kind === "fixed" && grant.featRefs[0]) {

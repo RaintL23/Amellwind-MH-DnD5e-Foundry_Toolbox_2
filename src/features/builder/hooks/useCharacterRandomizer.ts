@@ -53,11 +53,15 @@ import {
   pickPendingSkillGrants,
 } from "@/features/builder/utils/randomizer/skill-randomizer.utils";
 import { detectExpertiseGrants } from "@/features/builder/utils/expertise-detection.utils";
-import { ORIGIN_FEAT_SOURCE_NAME } from "@/features/builder/utils/origin-feat.constants";
+import {
+  ORIGIN_FEAT_SOURCE_NAME,
+  formatInvocationOriginFeatSourceName,
+} from "@/features/builder/utils/origin-feat.constants";
 import {
   buildFeatSelectionsForLevel,
   resolveOriginFeatSelectionForGrant,
 } from "@/features/builder/utils/randomizer/feat-randomizer.utils";
+import { resolveOptionalFeatureOriginFeatSlots } from "@/features/builder/utils/optional-feature-feat-grants.utils";
 import { buildRandomSpellSelections } from "@/features/builder/utils/randomizer/spell-randomizer.utils";
 import { resolveBonusCantripPools } from "@/features/builder/utils/cantrip-pools.utils";
 import { buildRandomStartingEquipmentEntries } from "@/features/builder/utils/randomizer/starting-equipment-randomizer.utils";
@@ -169,6 +173,8 @@ export function useCharacterRandomizer() {
     setOriginFeatSkillChoices,
     setFeatSkillChoices,
     setExpertiseChoices,
+    setOptionalFeatureOriginFeatAtIndex,
+    setOptionalFeatureOriginFeatSkillChoicesAtIndex,
     setBackgroundToolChoices,
     setBackgroundLanguageChoices,
     setSpeciesLanguageChoices,
@@ -494,6 +500,31 @@ export function useCharacterRandomizer() {
         }
       }
 
+      const invocationOriginFeatSlots = resolveOptionalFeatureOriginFeatSlots(
+        allOptionalFeatures,
+        randomFeatureChoiceSelections,
+      );
+      const usedOriginFeatIds = new Set(
+        [speciesOriginFeatSelection, backgroundOriginFeatSelection]
+          .filter((feat): feat is BuilderFeatSelection => !!feat)
+          .map((feat) => feat.id),
+      );
+      const invocationOriginFeatBySlot = new Map<number, BuilderFeatSelection>();
+
+      for (const slot of invocationOriginFeatSlots) {
+        const selection = await resolveOriginFeatSelectionForGrant(
+          slot.grant,
+          dndFeats,
+          rpgbotData,
+          classData.name,
+          usedOriginFeatIds,
+        );
+        if (!selection) continue;
+        setOptionalFeatureOriginFeatAtIndex(slot.slotIndex, selection);
+        usedOriginFeatIds.add(selection.id);
+        invocationOriginFeatBySlot.set(slot.slotIndex, selection);
+      }
+
       setName(await pickRandomCharacterName(speciesName || null));
 
       await delay();
@@ -591,6 +622,41 @@ export function useCharacterRandomizer() {
         }
       }
 
+      const featSkillExclude = new Set(featPickerExclude);
+      for (const skill of originFeatSkillChoices) featSkillExclude.add(skill);
+
+      for (const slotMeta of invocationOriginFeatSlots) {
+        const selection = invocationOriginFeatBySlot.get(slotMeta.slotIndex);
+        if (!selection) continue;
+
+        const feat = await getDndFeatById(selection.id);
+        if (!feat) continue;
+
+        const sourceName = formatInvocationOriginFeatSourceName(
+          slotMeta.sourceFeatureName,
+          slotMeta.duplicateIndex,
+        );
+        const pendingInvocationGrants = (feat.skillGrants ?? [])
+          .filter((grant) => grant.kind === "choose" || grant.kind === "any")
+          .map((grant) => ({
+            ...grant,
+            source: { type: "feat" as const, name: sourceName },
+          }));
+
+        if (pendingInvocationGrants.length === 0) continue;
+
+        const choices = pickPendingSkillGrants(
+          pendingInvocationGrants,
+          featLookup,
+          featSkillExclude,
+        );
+        setOptionalFeatureOriginFeatSkillChoicesAtIndex(
+          slotMeta.slotIndex,
+          choices,
+        );
+        for (const skill of choices) featSkillExclude.add(skill);
+      }
+
       clearSpells();
       const activeProgressionsList = activeProgressions.map((r) => r.progression);
       const bonusCantripPools = resolveBonusCantripPools({
@@ -652,8 +718,7 @@ export function useCharacterRandomizer() {
       });
 
       const featSkillChoicesMap: Record<number, SkillKey[]> = {};
-      const featSkillExclude = new Set(featPickerExclude);
-      for (const skill of originFeatSkillChoices) featSkillExclude.add(skill);
+      const classFeatSkillExclude = new Set(featSkillExclude);
 
       for (const [index, selection] of featSelections.entries()) {
         if (!selection) continue;
@@ -675,11 +740,11 @@ export function useCharacterRandomizer() {
         const choices = pickPendingSkillGrants(
           pendingFeatGrants,
           featLookup,
-          featSkillExclude,
+          classFeatSkillExclude,
         );
         featSkillChoicesMap[index] = choices;
         setFeatSkillChoices(index, choices);
-        for (const skill of choices) featSkillExclude.add(skill);
+        for (const skill of choices) classFeatSkillExclude.add(skill);
       }
 
       const expertiseGrants = detectExpertiseGrants(classData, preservedLevel);
@@ -765,6 +830,8 @@ export function useCharacterRandomizer() {
     setOriginFeatSkillChoices,
     setFeatSkillChoices,
     setExpertiseChoices,
+    setOptionalFeatureOriginFeatAtIndex,
+    setOptionalFeatureOriginFeatSkillChoicesAtIndex,
     setBackgroundToolChoices,
     setBackgroundLanguageChoices,
     setSpeciesLanguageChoices,

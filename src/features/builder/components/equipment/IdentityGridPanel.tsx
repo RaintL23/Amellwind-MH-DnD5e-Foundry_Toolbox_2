@@ -126,7 +126,7 @@ export function IdentityGridPanel({
   );
   const originFeatEquipped = speciesOriginFeat
     ? {
-        name: speciesOriginFeat.name,
+        name: "Origin Feat: " + speciesOriginFeat.name,
         detail:
           speciesOriginFeat.source === "dnd2024"
             ? "D&D 2024"
@@ -136,7 +136,7 @@ export function IdentityGridPanel({
       }
     : backgroundOriginFeat
       ? {
-          name: backgroundOriginFeat.name,
+          name: "Origin Feat: " + backgroundOriginFeat.name,
           detail:
             backgroundOriginFeat.source === "dnd2024"
               ? "D&D 2024"
@@ -147,14 +147,16 @@ export function IdentityGridPanel({
       : speciesOriginFeatGrant?.kind === "fixed"
         ? {
             name:
-              speciesOriginFeatGrant.featRefs[0]?.displayLabel ??
+              "Origin Feat: " +
+              (speciesOriginFeatGrant.featRefs[0]?.displayLabel ?? "") +
               speciesOriginFeatGrant.summary,
             detail: "Species",
           }
         : backgroundOriginFeatGrant?.kind === "fixed"
           ? {
               name:
-                backgroundOriginFeatGrant.featRefs[0]?.displayLabel ??
+                "Origin Feat: " +
+                (backgroundOriginFeatGrant.featRefs[0]?.displayLabel ?? "") +
                 backgroundOriginFeatGrant.summary,
               detail: "Background",
             }
@@ -190,7 +192,9 @@ export function IdentityGridPanel({
         highlightKey="background"
         label="Background"
         icon={<ScrollText className="h-5 w-5 text-violet-400" />}
-        equipped={background ? { name: background.name } : null}
+        equipped={
+          background ? { name: "Background: " + background.name } : null
+        }
         onClickEquip={() => onSelectSlot("background")}
         onClickDetails={() => onSelectSlot("background")}
         onUnequip={background ? () => onUnequipSlot("background") : undefined}
@@ -201,7 +205,9 @@ export function IdentityGridPanel({
           label="Faction"
           icon={<Shield className="h-5 w-5 text-emerald-400" />}
           equipped={
-            faction ? { name: BACKGROUND_FACTION_LABELS[faction] } : null
+            faction
+              ? { name: "Faction: " + BACKGROUND_FACTION_LABELS[faction] }
+              : null
           }
           onClickEquip={() => onSelectSlot("faction")}
           onClickDetails={() => onSelectSlot("faction")}

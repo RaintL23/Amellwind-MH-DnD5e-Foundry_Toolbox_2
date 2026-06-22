@@ -100,7 +100,7 @@ function OptionalFeatureGridSlot({
       equipped={
         pickedCount > 0
           ? {
-              name: picks[0]?.name ?? label,
+              name: label,
               detail,
             }
           : null
@@ -118,7 +118,7 @@ function OptionalFeatureGridSlot({
       }
       isSelected={isSelected}
       highlighted={highlighted}
-      emptyTitle={`Elegir ${progression.name} (${countDetail})`}
+      emptyTitle={`Choose ${progression.name} (${countDetail})`}
     />
   );
 }
