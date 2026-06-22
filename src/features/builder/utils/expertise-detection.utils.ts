@@ -12,20 +12,52 @@ interface ExpertiseRule {
 /** Fallback expertise rules indexed by `${classNameLower}::${source}` */
 const EXPERTISE_TABLE: Record<string, ExpertiseRule[]> = {
   "rogue::phb": [
-    { level: 1, count: 2, source: { type: "feature", name: "Expertise (Rogue)" } },
-    { level: 6, count: 2, source: { type: "feature", name: "Expertise (Rogue, lvl 6)" } },
+    {
+      level: 1,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Rogue)" },
+    },
+    {
+      level: 6,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Rogue, lvl 6)" },
+    },
   ],
   "rogue::xphb": [
-    { level: 1, count: 2, source: { type: "feature", name: "Expertise (Rogue)" } },
-    { level: 6, count: 2, source: { type: "feature", name: "Expertise (Rogue, lvl 6)" } },
+    {
+      level: 1,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Rogue)" },
+    },
+    {
+      level: 6,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Rogue, lvl 6)" },
+    },
   ],
   "bard::phb": [
-    { level: 3, count: 2, source: { type: "feature", name: "Expertise (Bard)" } },
-    { level: 10, count: 2, source: { type: "feature", name: "Expertise (Bard, lvl 10)" } },
+    {
+      level: 3,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Bard)" },
+    },
+    {
+      level: 10,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Bard, lvl 10)" },
+    },
   ],
   "bard::xphb": [
-    { level: 2, count: 2, source: { type: "feature", name: "Expertise (Bard)" } },
-    { level: 9, count: 2, source: { type: "feature", name: "Expertise (Bard, lvl 9)" } },
+    {
+      level: 2,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Bard)" },
+    },
+    {
+      level: 9,
+      count: 2,
+      source: { type: "feature", name: "Expertise (Bard, lvl 9)" },
+    },
   ],
 };
 
@@ -51,19 +83,42 @@ const COUNT_WORDS: Record<string, number> = {
 };
 
 function toSkillKey(name: string): SkillKey | null {
-  const normalized = name.trim().toLowerCase().replace(/[{}@|]/g, "");
+  const normalized = name
+    .trim()
+    .toLowerCase()
+    .replace(/[{}@|]/g, "");
   const clean = normalized.replace(/skill\s+/i, "").trim();
   return SKILL_NAME_TO_KEY[clean] ?? SKILL_NAME_TO_KEY[normalized] ?? null;
 }
 
 function extractSkillsFromText(text: string): SkillKey[] {
   const found = new Set<SkillKey>();
+
   const skillMarkupRegex = /\{@skill\s+([\w\s]+?)(?:\|[^}]*)?\}/gi;
   let match: RegExpExecArray | null;
   while ((match = skillMarkupRegex.exec(text)) !== null) {
     const skill = toSkillKey(match[1]);
     if (skill) found.add(skill);
   }
+  if (found.size > 0) return [...found];
+
+  // Plain text (feature.description strips 5etools markup to "Arcana, History, ...").
+  const listMatch = text.match(
+    /following skills?(?:\s+in which you have proficiency)?(?:\s+of your choice)?[:\s]+([^.]+)/i,
+  );
+  if (!listMatch) return [];
+
+  const segment = listMatch[1]
+    .replace(/\s+or\s+/gi, ", ")
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  for (const part of segment) {
+    const skill = toSkillKey(part);
+    if (skill) found.add(skill);
+  }
+
   return [...found];
 }
 
@@ -75,7 +130,10 @@ function parseCountFromText(text: string): number | null {
   return null;
 }
 
-function featureSourceName(feature: ClassFeatureEntry, className: string): string {
+function featureSourceName(
+  feature: ClassFeatureEntry,
+  className: string,
+): string {
   const label = feature.displayName?.trim() || feature.name.trim();
   return `${label} (${className}, lvl ${feature.level})`;
 }
