@@ -218,6 +218,47 @@ function checkDndWeaponCategoryProficiency(
   };
 }
 
+function checkPhbCategoryWeaponProficiency(
+  weaponName: string,
+  category: "simple" | "martial",
+  weaponProficiencies: string[],
+): WeaponProficiencyCheckResult {
+  if (hasProficiency(weaponProficiencies, weaponName)) {
+    return { allowed: true, effectiveTier: category };
+  }
+
+  if (category === "simple") {
+    if (hasSimpleProficiency(weaponProficiencies)) {
+      return { allowed: true, effectiveTier: "simple" };
+    }
+    return {
+      allowed: false,
+      reason: `Requires Simple weapon proficiency to use ${weaponName}.`,
+    };
+  }
+
+  if (hasMartialProficiency(weaponProficiencies)) {
+    return { allowed: true, effectiveTier: "martial" };
+  }
+
+  return {
+    allowed: false,
+    reason: `Requires Martial weapon proficiency to use ${weaponName}.`,
+  };
+}
+
+export function checkPhbWeaponNameProficiency(
+  weaponName: string,
+  category: "simple" | "martial",
+  weaponProficiencies: string[],
+): WeaponProficiencyCheckResult {
+  return checkPhbCategoryWeaponProficiency(
+    weaponName,
+    category,
+    weaponProficiencies,
+  );
+}
+
 export function checkWeaponProficiency(
   weaponName: string,
   weaponProficiencies: string[],

@@ -325,6 +325,15 @@ export function getFeatCategoryLabel(category?: string): string | undefined {
 
 export { isFightingStyleProgression };
 
+export function isWeaponMasteryProgression(
+  progression: OptionalFeatureProgression,
+): boolean {
+  return (
+    progression.name === "Weapon Mastery" ||
+    progression.id.startsWith("wm-")
+  );
+}
+
 export function dndOptionalFeatureToSelection(
   feature: DndOptionalFeature,
   progressionId: string,

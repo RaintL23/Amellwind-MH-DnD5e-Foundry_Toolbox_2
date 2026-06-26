@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Search, Swords, X } from "lucide-react";
+import { Check, Search, Swords, X } from "lucide-react";
 import type {
   Class,
   DndFeat,
@@ -32,6 +32,7 @@ import {
   getProgressionPicks,
   isFeatureChoiceProgression,
   isFightingStyleProgression,
+  isWeaponMasteryProgression,
   optionalFeatureToCatalogItem,
   parseOptionalFeatureSlot,
   type OptionalFeatureCatalogItem,
@@ -54,6 +55,13 @@ import {
   sortByRpgbotRating,
 } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
+import {
+  getWeaponMasteryAvailability,
+  getWeaponMasteryWeapon,
+  isMeleeOnlyWeaponMasteryClass,
+  WEAPON_MASTERY_GROUPS,
+  WEAPON_MASTERY_OPTIONS,
+} from "../../data/weapon-mastery.data";
 
 interface OptionalFeatureLibraryPanelProps {
   selectedSlot: BuilderOptionalFeatureSlot;
@@ -66,6 +74,7 @@ interface OptionalFeatureLibraryPanelProps {
     progressionId: string,
     picks: BuilderOptionalFeatureSelection[],
   ) => void;
+  weaponProficiencies: string[];
 }
 
 function normalizeName(name: string): string {
@@ -80,6 +89,7 @@ export function OptionalFeatureLibraryPanel({
   level,
   selections,
   onSetSelections,
+  weaponProficiencies,
 }: OptionalFeatureLibraryPanelProps) {
   const parsed = parseOptionalFeatureSlot(selectedSlot);
   const bookNames = useBookSourceNames();
@@ -202,6 +212,44 @@ export function OptionalFeatureLibraryPanel({
     ? isFightingStyleProgression(activeProgression.progression)
     : false;
 
+  const isWeaponMastery = activeProgression
+    ? isWeaponMasteryProgression(activeProgression.progression)
+    : false;
+
+  const weaponMasteryOptionById = useMemo(
+    () => new Map(WEAPON_MASTERY_OPTIONS.map((option) => [option.id, option])),
+    [],
+  );
+
+  const meleeOnlyWeaponMastery = useMemo(() => {
+    if (!classData) return false;
+    const descriptions: string[] = [];
+    for (const row of classData.progression) {
+      for (const feature of row.features) {
+        if (feature.name === "Weapon Mastery") {
+          descriptions.push(...feature.description);
+        }
+      }
+    }
+    return isMeleeOnlyWeaponMasteryClass(descriptions);
+  }, [classData]);
+
+  const filteredWeaponMasteryGroups = useMemo(() => {
+    if (!isWeaponMastery) return [];
+    const query = search.trim().toLowerCase();
+    if (!query) return WEAPON_MASTERY_GROUPS;
+
+    return WEAPON_MASTERY_GROUPS.map((group) => ({
+      ...group,
+      weapons: group.weapons.filter(
+        (weapon) =>
+          group.mastery.toLowerCase().includes(query) ||
+          group.description.toLowerCase().includes(query) ||
+          weapon.name.toLowerCase().includes(query),
+      ),
+    })).filter((group) => group.weapons.length > 0);
+  }, [isWeaponMastery, search]);
+
   const rpgbotOptionalContext = useMemo(() => {
     if (!activeProgression) return null;
     return resolveOptionalFeatureRpgbotContext({
@@ -318,9 +366,14 @@ export function OptionalFeatureLibraryPanel({
           option,
           parsed.progressionId,
         );
+        // Single-slot progressions (pickMode:"one", slotCount:1) replace the
+        // existing pick. Multi-slot progressions (e.g. Weapon Mastery with 3
+        // slots) accumulate picks up to the capacity limit.
         onSetSelections(
           parsed.progressionId,
-          isPickOneFeatureChoice ? [selection] : [...picked, selection],
+          isPickOneFeatureChoice && slotCount <= 1
+            ? [selection]
+            : [...picked, selection],
         );
         return;
       }
@@ -348,6 +401,7 @@ export function OptionalFeatureLibraryPanel({
       optionalCatalog,
       activeProgression,
       isPickOneFeatureChoice,
+      slotCount,
     ],
   );
 
@@ -443,6 +497,11 @@ export function OptionalFeatureLibraryPanel({
             {" "}
             · automatically granted abilities
           </span>
+        ) : isWeaponMastery ? (
+          <span className="text-muted-foreground/80">
+            {" "}
+            · click a weapon badge under each mastery property
+          </span>
         ) : isFightingStyle ? (
           <span className="text-muted-foreground/80">
             {" "}
@@ -475,7 +534,11 @@ export function OptionalFeatureLibraryPanel({
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder={`Buscar ${progressionLabel.toLowerCase()}…`}
+          placeholder={
+            isWeaponMastery
+              ? "Buscar mastery o arma…"
+              : `Buscar ${progressionLabel.toLowerCase()}…`
+          }
           className="h-8 w-full rounded-md border border-border/70 bg-background/60 pl-7 pr-2 text-xs"
         />
       </div>
@@ -485,6 +548,80 @@ export function OptionalFeatureLibraryPanel({
           <p className="py-4 text-center text-xs text-muted-foreground">
             Loading options…
           </p>
+        ) : isWeaponMastery ? (
+          filteredWeaponMasteryGroups.length === 0 ? (
+            <p className="py-4 text-center text-xs italic text-muted-foreground">
+              No mastery properties match your search.
+            </p>
+          ) : (
+            <ul className="space-y-2">
+              {filteredWeaponMasteryGroups.map((group) => (
+                <li
+                  key={group.mastery}
+                  className="rounded-md border border-border/60 px-2 py-2"
+                >
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-foreground">
+                    <Swords className="h-3.5 w-3.5 shrink-0 text-orange-400" />
+                    <span>{group.mastery}</span>
+                  </div>
+                  <p className="mt-1 pl-5 text-[10px] leading-relaxed text-muted-foreground">
+                    {group.description}
+                  </p>
+                  <div className="mt-1.5 flex flex-wrap gap-1 pl-5">
+                    {group.weapons.map((weapon) => {
+                      const option = weaponMasteryOptionById.get(weapon.id);
+                      if (!option) return null;
+                      const item = featureChoiceToCatalogItem(option);
+                      const selected = isPicked(item);
+                      const addable = canAdd(item);
+                      const weaponEntry = getWeaponMasteryWeapon(weapon.id);
+                      const availability = weaponEntry
+                        ? getWeaponMasteryAvailability(
+                            weaponEntry,
+                            weaponProficiencies,
+                            { meleeOnly: meleeOnlyWeaponMastery },
+                          )
+                        : { allowed: false, reason: "Unknown weapon." };
+                      const disabled =
+                        !selected && (!addable || !availability.allowed);
+
+                      return (
+                        <button
+                          key={weapon.id}
+                          type="button"
+                          onClick={() => handleToggle(item)}
+                          disabled={disabled}
+                          title={
+                            disabled
+                              ? !availability.allowed
+                                ? availability.reason
+                                : atCapacity
+                                  ? "Maximum weapon selections reached"
+                                  : "Not available"
+                              : selected
+                                ? `Remove ${weapon.name}`
+                                : `Select ${weapon.name}`
+                          }
+                          className={cn(
+                            "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[10px] font-medium transition-colors",
+                            selected
+                              ? "border-violet-400/50 bg-violet-400/10 text-violet-100"
+                              : "border-border/50 bg-muted/40 text-muted-foreground hover:border-orange-500/40 hover:bg-orange-950/20 hover:text-orange-100",
+                            disabled && "cursor-not-allowed opacity-40",
+                          )}
+                        >
+                          {weapon.name}
+                          {selected && (
+                            <Check className="h-2.5 w-2.5 shrink-0 text-emerald-400" />
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          )
         ) : filteredOptions.length === 0 ? (
           <p className="py-4 text-center text-xs italic text-muted-foreground">
             No options in the catalog for this progression.

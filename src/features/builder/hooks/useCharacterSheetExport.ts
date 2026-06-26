@@ -29,8 +29,11 @@ import {
   getSpellSlotTotals,
   hasShieldEquipped,
   sumInventoryGoldGp,
+  type OptionalFeatureDescMap,
 } from "../utils/character-sheet-export.utils";
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
+import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
+import { getAllDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
 
 /** Minimum XP to reach each character level (D&D 2024). */
 const XP_BY_LEVEL: Record<number, number> = {
@@ -114,7 +117,11 @@ export function useCharacterSheetExport() {
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const buildExportData = useCallback((): CharacterSheetExportData => {
+  const buildExportData = useCallback(
+    (
+      optDescMap: OptionalFeatureDescMap,
+      featDescMap: Map<string, string[]>,
+    ): CharacterSheetExportData => {
     const { character } = builder;
     const attunement = getAttunementInfo(builder.class?.name, character.level);
 
@@ -187,33 +194,39 @@ export function useCharacterSheetExport() {
         ? `: ${formatSkillChoices(builder.originFeatSkillChoices)}`
         : "";
 
+    function formatFeatLine(
+      featName: string,
+      featId: string,
+      suffix: string,
+    ): string {
+      const desc = featDescMap.get(featId) ?? [];
+      const shortDesc = desc.slice(0, 2).join(" ").trim();
+      const headline = `${featName}${suffix}`;
+      return shortDesc ? `${headline}\n${shortDesc}` : headline;
+    }
+
     if (builder.speciesOriginFeat) {
-      featLines.push(
-        `${builder.speciesOriginFeat.name} [Origin Feat]${originSkillText}`,
-      );
+      const f = builder.speciesOriginFeat;
+      featLines.push(formatFeatLine(f.name, f.id, ` [Origin Feat]${originSkillText}`));
     }
     if (builder.backgroundOriginFeat) {
-      // If species already claimed the origin skill choices, don't repeat them
+      const f = builder.backgroundOriginFeat;
       const bgSkills = builder.speciesOriginFeat ? "" : originSkillText;
-      featLines.push(
-        `${builder.backgroundOriginFeat.name} [Origin Feat]${bgSkills}`,
-      );
+      featLines.push(formatFeatLine(f.name, f.id, ` [Origin Feat]${bgSkills}`));
     }
     builder.optionalFeatureOriginFeats.forEach((feat, idx) => {
       if (!feat) return;
       const choices = builder.optionalFeatureOriginFeatSkillChoices[idx] ?? [];
       const skillsText =
         choices.length > 0 ? `: ${formatSkillChoices(choices)}` : "";
-      featLines.push(`${feat.name} [Origin Feat]${skillsText}`);
+      featLines.push(formatFeatLine(feat.name, feat.id, ` [Origin Feat]${skillsText}`));
     });
     builder.featSelections.forEach((feat, idx) => {
       if (!feat) return;
       const choices = builder.featSkillChoices[idx] ?? [];
-      if (choices.length > 0) {
-        featLines.push(`${feat.name}: ${formatSkillChoices(choices)}`);
-      } else {
-        featLines.push(feat.name);
-      }
+      const suffix =
+        choices.length > 0 ? `: ${formatSkillChoices(choices)}` : "";
+      featLines.push(formatFeatLine(feat.name, feat.id, suffix));
     });
 
     // Skill / save proficiency flags for PDF checkboxes
@@ -235,6 +248,8 @@ export function useCharacterSheetExport() {
       classData,
       subclassData,
       character.level,
+      builder.optionalFeatureSelections ?? {},
+      optDescMap,
     );
 
     const savingThrows: Record<string, string> = {};
@@ -345,7 +360,23 @@ export function useCharacterSheetExport() {
     setExporting(true);
     setError(null);
     try {
-      const data = buildExportData();
+      // Load catalogs needed to enrich descriptions in the PDF.
+      const [allOptFeatures, allFeats] = await Promise.all([
+        getAllDndOptionalFeatures(),
+        getAllDndFeats(),
+      ]);
+
+      // Build id → description map for optional features (Fighting Style, etc.)
+      const optDescMap: OptionalFeatureDescMap = new Map(
+        allOptFeatures.map((f) => [f.id, f.entries]),
+      );
+
+      // Build id → description map for feats
+      const featDescMap: Map<string, string[]> = new Map(
+        allFeats.map((f) => [f.id, f.paragraphs]),
+      );
+
+      const data = buildExportData(optDescMap, featDescMap);
       const bytes = await exportCharacterSheetPdf(data);
       const sanitize = (s: string) =>
         s

@@ -34,6 +34,13 @@ pnpm-debug.log*
 .eslintcache
 coverage/
 
+# ── RPG Cards (generadas por script) ─────────────────────────
+public/rpg-cards/
+
+# ── Scripts (solo scrape-rpgbot.mjs versionado) ──────────────
+scripts/*
+!scripts/scrape-rpgbot.mjs
+
 # ── Datos de backup / referencia local ───────────────────────
 # JSONs pesados de Amellwind y mirror completo de 5etools (ver README)
 backup-jsons/

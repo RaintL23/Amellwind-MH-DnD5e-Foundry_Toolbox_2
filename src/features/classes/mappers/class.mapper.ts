@@ -4,6 +4,7 @@ import type {
   ClassLevelRow,
   ClassMetaListGroup,
   ClassTableGroup,
+  OptionalFeatureProgression,
   Subclass,
   SubclassSpellBlock,
 } from "@/shared/types";
@@ -30,9 +31,11 @@ import {
   extractSubclassFeatureChoiceProgressions,
   mergeFeatureChoiceProgressions,
 } from "../utils/feature-choice-progression.utils";
+import { WEAPON_MASTERY_OPTIONS } from "@/features/builder/data/weapon-mastery.data";
 import type {
   ProcessedSubclass,
   RawClassDefinition,
+  RawClassFeature,
   RawClassTableGroup,
   ClassTableCell,
   RawMulticlassing,
@@ -480,6 +483,150 @@ function formatHitDie(raw: RawClassDefinition): string {
   return "—";
 }
 
+const WEAPON_MASTERY_COUNT_WORDS: Record<string, number> = {
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+  six: 6,
+  seven: 7,
+  eight: 8,
+  nine: 9,
+  ten: 10,
+};
+
+function progressionFromTableColumn(
+  tableGroups: RawClassTableGroup[],
+): Record<string, number> | null {
+  for (const group of tableGroups) {
+    const colLabels = group.colLabels ?? [];
+    const idx = colLabels.findIndex(
+      (l) =>
+        typeof l === "string" &&
+        l.toLowerCase().replace(/\s+/g, " ").includes("weapon mastery"),
+    );
+    if (idx === -1) continue;
+
+    const rows = group.rows ?? group.rowsSpellProgression ?? [];
+    const progression: Record<string, number> = {};
+    let prev = 0;
+
+    for (let i = 0; i < rows.length && i < 20; i++) {
+      const cell = rows[i]?.[idx];
+      const val =
+        typeof cell === "number"
+          ? cell
+          : typeof cell === "string"
+            ? parseInt(cell, 10)
+            : NaN;
+      if (!Number.isNaN(val) && val > prev) {
+        progression[String(i + 1)] = val;
+        prev = val;
+      }
+    }
+
+    if (Object.keys(progression).length > 0) return progression;
+  }
+
+  return null;
+}
+
+/** Parses "two kinds of … weapons" from raw 5etools feature entries. */
+function parseWeaponMasteryCountFromEntries(
+  entries: unknown[] | undefined,
+): number | null {
+  if (!entries?.length) return null;
+
+  const text = entries
+    .filter((entry): entry is string => typeof entry === "string")
+    .join(" ")
+    .toLowerCase();
+
+  if (!/weapon mastery|mastery properties/.test(text)) return null;
+
+  const wordMatch = text.match(
+    /\b(one|two|three|four|five|six|seven|eight|nine|ten)\s+kinds?\s+of\b/,
+  );
+  if (wordMatch) {
+    return WEAPON_MASTERY_COUNT_WORDS[wordMatch[1]] ?? null;
+  }
+
+  const digitMatch = text.match(/\b(\d+)\s+kinds?\s+of\b/);
+  if (digitMatch) {
+    const count = parseInt(digitMatch[1], 10);
+    return Number.isNaN(count) ? null : count;
+  }
+
+  return null;
+}
+
+function findWeaponMasteryClassFeature(
+  className: string,
+  classSource: string,
+  classFeatures: RawClassFeature[],
+): RawClassFeature | null {
+  return (
+    classFeatures.find(
+      (feature) =>
+        feature.name === "Weapon Mastery" &&
+        feature.className === className &&
+        (feature.classSource || DEFAULT_CLASS_SOURCE) === classSource,
+    ) ?? null
+  );
+}
+
+function makeWeaponMasteryProgression(
+  className: string,
+  classSource: string,
+  progression: Record<string, number>,
+): OptionalFeatureProgression {
+  return {
+    id: `wm-${className.toLowerCase()}-${classSource.toLowerCase()}`,
+    name: "Weapon Mastery",
+    featureTypes: [],
+    catalog: "feature-choice",
+    pickMode: "one",
+    choiceOptions: WEAPON_MASTERY_OPTIONS,
+    scope: "class",
+    ownerId: classId(className, classSource),
+    progression,
+  };
+}
+
+/**
+ * Builds a Weapon Mastery pick progression from the class table column when
+ * present (Fighter, Barbarian), or from the level-1 feature text when the
+ * count is fixed in prose (Ranger, Paladin: "two kinds of weapons …").
+ */
+function buildWeaponMasteryProgression(
+  className: string,
+  classSource: string,
+  tableGroups: RawClassTableGroup[] | undefined,
+  classFeatures: RawClassFeature[],
+): OptionalFeatureProgression | null {
+  const fromTable = tableGroups?.length
+    ? progressionFromTableColumn(tableGroups)
+    : null;
+  if (fromTable) {
+    return makeWeaponMasteryProgression(className, classSource, fromTable);
+  }
+
+  const feature = findWeaponMasteryClassFeature(
+    className,
+    classSource,
+    classFeatures,
+  );
+  if (!feature) return null;
+
+  const count = parseWeaponMasteryCountFromEntries(feature.entries);
+  if (!count || count < 1) return null;
+
+  return makeWeaponMasteryProgression(className, classSource, {
+    [String(feature.level)]: count,
+  });
+}
+
 export function mapClass(
   raw: RawClassDefinition,
   allClassFeatures: import("../utils/class-raw.types").RawClassFeature[] = [],
@@ -502,9 +649,18 @@ export function mapClass(
     raw.name,
     raw.source,
   );
+  const weaponMasteryProgression = buildWeaponMasteryProgression(
+    raw.name,
+    raw.source,
+    raw.classTableGroups,
+    allClassFeatures,
+  );
   const classOptionalProgressionNames = [
     ...(raw.optionalfeatureProgression ?? []).map((p) => p.name ?? ""),
     ...(raw.featProgression ?? []).map((p) => p.name ?? ""),
+    // Prevent the plain "Weapon Mastery" class feature from being processed
+    // as a feature-choice — it is handled by the dedicated progression above.
+    ...(weaponMasteryProgression ? ["Weapon Mastery"] : []),
   ];
   const classFeatureChoices = extractClassFeatureChoiceProgressions(
     raw.name,
@@ -590,8 +746,8 @@ export function mapClass(
     weaponGrants,
     languageGrants,
     optionalFeatureProgressions: mergeFeatureChoiceProgressions(
-      baseClassProgressions,
-      classFeatureChoices,
+      mergeFeatureChoiceProgressions(baseClassProgressions, classFeatureChoices),
+      weaponMasteryProgression ? [weaponMasteryProgression] : [],
     ),
   };
 }

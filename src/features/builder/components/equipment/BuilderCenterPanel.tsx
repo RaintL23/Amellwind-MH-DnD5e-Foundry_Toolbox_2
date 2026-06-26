@@ -102,6 +102,7 @@ export function BuilderCenterPanel() {
     setOptionalFeaturesForProgression,
     clearOptionalFeatureProgression,
     useAmellwindHomebrew,
+    resolvedWeaponItems,
   } = useCharacterBuilder();
 
   const { selectedSlot, selectSlot, clearSelection } =
@@ -572,6 +573,7 @@ export function BuilderCenterPanel() {
             level={character.level}
             selections={optionalFeatureSelections}
             onSetSelections={setOptionalFeaturesForProgression}
+            weaponProficiencies={resolvedWeaponItems}
           />
         )}
 

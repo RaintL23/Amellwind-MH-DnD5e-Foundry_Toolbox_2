@@ -7,6 +7,7 @@ import {
   isFeatureChoiceProgression,
   isFightingStyleProgression,
   isOptionalFeatureSlot,
+  isWeaponMasteryProgression,
   progressionDisplayName,
   toOptionalFeatureSlot,
   type ResolvedOptionalFeatureProgression,
@@ -38,7 +39,11 @@ function progressionIcon(
   colorClass: string,
 ) {
   if (isFeatureChoiceProgression(progression)) {
-    return <GitBranch className={`h-5 w-5 ${colorClass}`} />;
+    return isWeaponMasteryProgression(progression) ? (
+      <Swords className={`h-5 w-5 ${colorClass}`} />
+    ) : (
+      <GitBranch className={`h-5 w-5 ${colorClass}`} />
+    );
   }
   if (isFightingStyleProgression(progression)) {
     return <Swords className={`h-5 w-5 ${colorClass}`} />;
@@ -50,7 +55,9 @@ function progressionColor(
   progression: ResolvedOptionalFeatureProgression["progression"],
 ): string {
   if (isFeatureChoiceProgression(progression)) {
-    return "text-teal-400";
+    return isWeaponMasteryProgression(progression)
+      ? "text-orange-400"
+      : "text-teal-400";
   }
   if (isFightingStyleProgression(progression)) {
     return "text-amber-400";
