@@ -8,6 +8,7 @@ import {
   CritRune,
   Species,
 } from "@/shared/types";
+import { formatModifier } from "@/shared/utils/cr.utils";
 import { Character } from "../models/Character";
 import {
   getActiveWeaponDamage,
@@ -18,6 +19,13 @@ import { getUnarmedStrikeProfile } from "./unarmed-strike.utils";
 
 function hasLightProperty(equipped: EquippedWeapon): boolean {
   return equipped.weapon.properties.includes("L");
+}
+
+/** e.g. ["1d10"], 3 → "1d10 +3" (avoids "1d10 + +3" from join artifacts). */
+function buildDiceExpression(diceParts: string[], flatModifier: number): string {
+  const parts = diceParts.filter(Boolean);
+  if (flatModifier !== 0) parts.push(formatModifier(flatModifier));
+  return parts.join(" ");
 }
 
 /**
@@ -181,15 +189,10 @@ function calculateWeaponDamage(
   const effectiveAttacks = isOffHand ? 1 : attacksPerTurn;
   const totalPerTurn = totalPerHit * effectiveAttacks;
 
-  // Build dice expression
-  const parts: string[] = [weaponDice.notation];
-  if (runeDice.length > 0) {
-    parts.push(...runeDice.map((d) => d.notation));
-  }
-  if (abilityModifier !== 0) {
-    parts.push(abilityModifier > 0 ? `+${abilityModifier}` : `${abilityModifier}`);
-  }
-  const diceExpression = parts.join(" + ");
+  const diceExpression = buildDiceExpression(
+    [weaponDice.notation, ...runeDice.map((d) => d.notation)],
+    abilityModifier,
+  );
 
   return {
     weaponDice,
@@ -300,11 +303,10 @@ function calculateUnarmedStrikeDamage(
   const totalPerHit = weaponDice.average + abilityModifier;
   const totalPerTurn = totalPerHit * attacksPerTurn;
 
-  const parts: string[] = [weaponDice.notation];
-  if (abilityModifier !== 0) {
-    parts.push(abilityModifier > 0 ? `+${abilityModifier}` : `${abilityModifier}`);
-  }
-  const diceExpression = parts.join(" ");
+  const diceExpression = buildDiceExpression(
+    [weaponDice.notation],
+    abilityModifier,
+  );
 
   return {
     weaponDice,

@@ -1,6 +1,7 @@
 import type { PDFDocument } from "pdf-lib";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
 import {
+  estimatePdfFontSize,
   PDF_ARMOR_TRAINING_CHECKBOXES,
   sanitizeTextForPdf,
   type ArmorTrainingCategory,
@@ -8,31 +9,79 @@ import {
 
 const TEMPLATE_URL = "/character-sheet/dnd-2024-character-sheet.pdf";
 
+type SetTextOptions = {
+  fontSize?: number;
+  autoFit?: { maxSize: number; minSize: number };
+  disableScroll?: boolean;
+  /** When true, writes an empty string to clear template placeholder values. */
+  allowEmpty?: boolean;
+};
+
+function applyFieldFontSize(
+  field: ReturnType<ReturnType<PDFDocument["getForm"]>["getTextField"]>,
+  fontSize: number,
+) {
+  field.setFontSize(fontSize);
+  for (const widget of field.acroField.getWidgets()) {
+    const da = widget.getDefaultAppearance();
+    if (da) {
+      const patched = da.replace(/\d+(?:\.\d+)?\s+Tf/, `${fontSize} Tf`);
+      if (patched !== da) widget.setDefaultAppearance(patched);
+    }
+  }
+}
+
 function setText(
   form: ReturnType<PDFDocument["getForm"]>,
   fieldName: string,
   value: string | number | undefined | null,
-  fontSize?: number,
+  options?: number | SetTextOptions,
 ) {
-  if (value === undefined || value === null || value === "") return;
+  if (value === undefined || value === null) return;
+
+  const opts: SetTextOptions =
+    typeof options === "number" ? { fontSize: options } : (options ?? {});
+  const text = sanitizeTextForPdf(String(value));
+  if (!text && !opts.allowEmpty) return;
+
   try {
     const field = form.getTextField(fieldName);
-    if (fontSize !== undefined) {
-      // Update the field-level DA (AcroField)
-      field.setFontSize(fontSize);
-      // Also patch each widget's own /DA (widget-level DA takes precedence
-      // over the field-level DA in PDF spec, so we must update both)
-      for (const widget of field.acroField.getWidgets()) {
-        const da = widget.getDefaultAppearance();
-        if (da) {
-          const patched = da.replace(/\d+(?:\.\d+)?\s+Tf/, `${fontSize} Tf`);
-          if (patched !== da) widget.setDefaultAppearance(patched);
-        }
+
+    if (opts.disableScroll && field.isMultiline() && field.isScrollable()) {
+      field.disableScrolling();
+    }
+
+    let fontSize = opts.fontSize;
+    if (opts.autoFit && text) {
+      const widget = field.acroField.getWidgets()[0];
+      const rect = widget?.getRectangle();
+      if (rect) {
+        fontSize = estimatePdfFontSize(
+          text,
+          rect.width,
+          rect.height,
+          field.isMultiline(),
+          opts.autoFit.maxSize,
+          opts.autoFit.minSize,
+        );
       }
     }
-    field.setText(sanitizeTextForPdf(String(value)));
+
+    if (fontSize !== undefined) {
+      applyFieldFontSize(field, fontSize);
+    }
+
+    field.setText(text);
   } catch {
     /* field may not exist on all template revisions */
+  }
+}
+
+function clearWeaponRows(form: ReturnType<PDFDocument["getForm"]>) {
+  for (let n = 1; n <= 6; n++) {
+    for (const suffix of ["NAME", "BONUS/DC", "DAMAGE/TYPE", "NOTES"]) {
+      setText(form, `${suffix} - WEAPON ${n}`, "", { allowEmpty: true });
+    }
   }
 }
 
@@ -58,7 +107,7 @@ export async function exportCharacterSheetPdf(
   }
 
   const templateBytes = await response.arrayBuffer();
-  const { PDFDocument } = await import("pdf-lib");
+  const { PDFDocument, StandardFonts } = await import("pdf-lib");
   const pdfDoc = await PDFDocument.load(templateBytes);
   const form = pdfDoc.getForm();
 
@@ -163,11 +212,26 @@ export async function exportCharacterSheetPdf(
     }
   }
   setText(form, "TOOL PROF", data.toolProficiencies);
-  setText(form, "FEATS", data.feats);
-  setText(form, "CLASS FEATURES 1", data.classFeatures, 7);
-  setText(form, "CLASS FEATURES 2", data.classFeatures2, 7);
-  setText(form, "SPECIES TRAITS", data.speciesTraits, 7);
-  setText(form, "EQUIPMENT", data.equipment, 12);
+  setText(form, "FEATS", data.feats, {
+    autoFit: { maxSize: 7, minSize: 4 },
+    disableScroll: true,
+  });
+  setText(form, "CLASS FEATURES 1", data.classFeatures, {
+    autoFit: { maxSize: 7, minSize: 4 },
+    disableScroll: true,
+  });
+  setText(form, "CLASS FEATURES 2", data.classFeatures2, {
+    autoFit: { maxSize: 7, minSize: 4 },
+    disableScroll: true,
+  });
+  setText(form, "SPECIES TRAITS", data.speciesTraits, {
+    autoFit: { maxSize: 7, minSize: 4 },
+    disableScroll: true,
+  });
+  setText(form, "EQUIPMENT", data.equipment, {
+    autoFit: { maxSize: 12, minSize: 6 },
+    disableScroll: true,
+  });
   setCheckbox(form, "shield chk", data.hasShield);
   setCheckbox(form, data.alignmentCheckbox ?? "", true);
   setText(form, "GP", data.goldPieces);
@@ -176,12 +240,22 @@ export async function exportCharacterSheetPdf(
     setText(form, `ATTUNMENT ${index + 1}`, slot);
   });
 
+  clearWeaponRows(form);
+
   data.weapons.slice(0, 6).forEach((weapon, index) => {
     const n = index + 1;
-    setText(form, `NAME - WEAPON ${n}`, weapon.name);
-    setText(form, `BONUS/DC - WEAPON ${n}`, weapon.attackBonus);
-    setText(form, `DAMAGE/TYPE - WEAPON ${n}`, weapon.damage);
-    setText(form, `NOTES - WEAPON ${n}`, weapon.notes);
+    setText(form, `NAME - WEAPON ${n}`, weapon.name, {
+      autoFit: { maxSize: 8, minSize: 5 },
+    });
+    setText(form, `BONUS/DC - WEAPON ${n}`, weapon.attackBonus, {
+      autoFit: { maxSize: 8, minSize: 5 },
+    });
+    setText(form, `DAMAGE/TYPE - WEAPON ${n}`, weapon.damage, {
+      autoFit: { maxSize: 8, minSize: 5 },
+    });
+    setText(form, `NOTES - WEAPON ${n}`, weapon.notes, {
+      autoFit: { maxSize: 8, minSize: 5 },
+    });
   });
 
   // C / R / M checkboxes per spell row, ordered top-to-bottom (index 0–28).
@@ -245,7 +319,15 @@ export async function exportCharacterSheetPdf(
   ]
     .filter(Boolean)
     .join("\n");
-  setText(form, "PERSONALITY", personalityLines);
+  setText(form, "PERSONALITY", personalityLines, {
+    autoFit: { maxSize: 8, minSize: 5 },
+    disableScroll: true,
+  });
+
+  // Regenerate appearance streams so viewers show the same text when focused
+  // and unfocused (avoids "blank field on click" with long multiline content).
+  const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  form.updateFieldAppearances(font);
 
   return pdfDoc.save();
 }
