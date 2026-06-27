@@ -19,8 +19,10 @@ import {
 } from "../services/character-sheet-export.service";
 import type { CharacterSheetExportData } from "../utils/character-sheet-export.types";
 import {
+  buildFeatExportDescLookup,
   buildEquipmentExport,
   buildWeaponsAndCantripsExport,
+  formatFeatExportLine,
   formatGoldPiecesForPdf,
   getAlignmentCheckboxField,
   getArmorTrainingProficiencies,
@@ -120,7 +122,7 @@ export function useCharacterSheetExport() {
   const buildExportData = useCallback(
     (
       optDescMap: OptionalFeatureDescMap,
-      featDescMap: Map<string, string[]>,
+      featDescLookup: ReturnType<typeof buildFeatExportDescLookup>,
     ): CharacterSheetExportData => {
     const { character } = builder;
     const attunement = getAttunementInfo(builder.class?.name, character.level);
@@ -199,10 +201,7 @@ export function useCharacterSheetExport() {
       featId: string,
       suffix: string,
     ): string {
-      const desc = featDescMap.get(featId) ?? [];
-      const shortDesc = desc.slice(0, 2).join(" ").trim();
-      const headline = `${featName}${suffix}`;
-      return shortDesc ? `${headline}\n${shortDesc}` : headline;
+      return formatFeatExportLine(featName, featId, suffix, featDescLookup);
     }
 
     if (builder.speciesOriginFeat) {
@@ -371,12 +370,10 @@ export function useCharacterSheetExport() {
         allOptFeatures.map((f) => [f.id, f.entries]),
       );
 
-      // Build id → description map for feats
-      const featDescMap: Map<string, string[]> = new Map(
-        allFeats.map((f) => [f.id, f.paragraphs]),
-      );
+      // Build lookup for feat descriptions (paragraphs + sections + ASI).
+      const featDescLookup = buildFeatExportDescLookup(allFeats);
 
-      const data = buildExportData(optDescMap, featDescMap);
+      const data = buildExportData(optDescMap, featDescLookup);
       const bytes = await exportCharacterSheetPdf(data);
       const sanitize = (s: string) =>
         s
