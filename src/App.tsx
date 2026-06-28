@@ -165,6 +165,13 @@ const XanatharBackstoryPage = lazy(() =>
     }),
   ),
 );
+const DamageCalculatorPage = lazy(() =>
+  import("@/features/damage-calculator/components/DamageCalculatorPage").then(
+    (m) => ({
+      default: m.DamageCalculatorPage,
+    }),
+  ),
+);
 const DndRaceList = lazy(() =>
   import("@/features/dnd-races/components/DndRaceList").then((m) => ({
     default: m.DndRaceList,
@@ -477,6 +484,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <DndFeatList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="damage-calculator"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DamageCalculatorPage />
                   </Suspense>
                 }
               />

@@ -27,6 +27,7 @@ import {
   PawPrint,
   Sparkles,
   Lock,
+  Crosshair,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -53,7 +54,9 @@ const NAV_GROUPS: NavGroup[] = [
   {
     section: "Amellwind Homebrew",
     label: "Character Tools",
-    items: [{ to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint }],
+    items: [{ to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
+      { to: "/damage-calculator", label: "Damage Calculator", icon: Crosshair },
+    ],
   },
   {
     section: "Amellwind Homebrew",
@@ -117,6 +120,11 @@ const NAV_GROUPS: NavGroup[] = [
         to: "/xanathar-backstory",
         label: "Xanathar Backstory",
         icon: BookOpen,
+      },
+      {
+        to: "/damage-calculator",
+        label: "Damage Calculator",
+        icon: Crosshair,
       },
     ],
   },
