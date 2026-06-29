@@ -4,17 +4,25 @@ import type {
   AttackResolution,
   DamageCalculatorState,
   DiceGroup,
+  FlatBonus,
   RollMode,
   WeaponSetup,
 } from "../types/damage-calculator.types";
+import type { DamageType } from "@/shared/types";
 import {
   calcWeaponDamage,
   createDefaultAttack,
+  createDefaultFlatBonus,
   createDefaultWeapon,
   newId,
 } from "../utils/damage-math.utils";
 
 const STORAGE_KEY = "damage-calculator-state";
+
+type LegacyAttack = AttackDamageConfig & {
+  flatBonus?: number;
+  targetSaveBonus?: number;
+};
 
 type LegacyWeaponSetup = WeaponSetup & {
   rollMode?: RollMode;
@@ -22,33 +30,53 @@ type LegacyWeaponSetup = WeaponSetup & {
   saveDC?: number;
   targetSaveBonus?: number;
   halfDamageOnSave?: boolean;
+  damageResistances?: DamageType[];
+  damageImmunities?: DamageType[];
+  attacks: LegacyAttack[];
 };
+
+function normalizeFlatBonuses(attack: LegacyAttack): FlatBonus[] {
+  if (attack.flatBonuses?.length) return attack.flatBonuses;
+  if (typeof attack.flatBonus === "number") {
+    return [createDefaultFlatBonus(attack.flatBonus)];
+  }
+  return [createDefaultFlatBonus()];
+}
 
 function normalizeWeapon(weapon: LegacyWeaponSetup): WeaponSetup {
   const legacyRollMode = weapon.rollMode ?? "normal";
   const legacyResolution = weapon.resolution ?? "attack-roll";
   const legacySaveDC = weapon.saveDC ?? 13;
-  const legacyTargetSaveBonus = weapon.targetSaveBonus ?? 2;
+  const legacyTargetSaveBonus =
+    weapon.targetSaveBonus ?? weapon.attacks[0]?.targetSaveBonus ?? 2;
   const legacyHalfDamageOnSave = weapon.halfDamageOnSave ?? true;
   const {
     rollMode: _rollMode,
     resolution: _resolution,
     saveDC: _saveDC,
-    targetSaveBonus: _targetSaveBonus,
+    targetSaveBonus: _legacyTargetSaveBonus,
     halfDamageOnSave: _halfDamageOnSave,
     ...rest
   } = weapon;
 
   return {
     ...rest,
-    attacks: weapon.attacks.map((attack) => ({
-      ...attack,
-      rollMode: attack.rollMode ?? legacyRollMode,
-      resolution: attack.resolution ?? legacyResolution,
-      saveDC: attack.saveDC ?? legacySaveDC,
-      targetSaveBonus: attack.targetSaveBonus ?? legacyTargetSaveBonus,
-      halfDamageOnSave: attack.halfDamageOnSave ?? legacyHalfDamageOnSave,
-    })),
+    targetSaveBonus: legacyTargetSaveBonus,
+    damageResistances: weapon.damageResistances ?? [],
+    damageImmunities: weapon.damageImmunities ?? [],
+    attacks: weapon.attacks.map((attack) => {
+      const legacyAttack = attack as LegacyAttack;
+      const { flatBonus: _flatBonus, targetSaveBonus: _attackSaveBonus, ...attackRest } =
+        legacyAttack;
+      return {
+        ...attackRest,
+        flatBonuses: normalizeFlatBonuses(legacyAttack),
+        rollMode: attack.rollMode ?? legacyRollMode,
+        resolution: attack.resolution ?? legacyResolution,
+        saveDC: attack.saveDC ?? legacySaveDC,
+        halfDamageOnSave: attack.halfDamageOnSave ?? legacyHalfDamageOnSave,
+      };
+    }),
   };
 }
 
@@ -148,6 +176,7 @@ export function useDamageCalculator() {
           ...a,
           id: newId(),
           diceGroups: a.diceGroups.map((d) => ({ ...d, id: newId() })),
+          flatBonuses: a.flatBonuses.map((b) => ({ ...b, id: newId() })),
         })),
       };
       return {
@@ -280,6 +309,77 @@ export function useDamageCalculator() {
     [],
   );
 
+  const addFlatBonus = useCallback((weaponId: string, attackId: string) => {
+    setState((prev) => ({
+      ...prev,
+      weapons: prev.weapons.map((w) => {
+        if (w.id !== weaponId) return w;
+        return {
+          ...w,
+          attacks: w.attacks.map((a) => {
+            if (a.id !== attackId) return a;
+            return {
+              ...a,
+              flatBonuses: [...a.flatBonuses, createDefaultFlatBonus()],
+            };
+          }),
+        };
+      }),
+    }));
+  }, []);
+
+  const updateFlatBonus = useCallback(
+    (
+      weaponId: string,
+      attackId: string,
+      bonusId: string,
+      patch: Partial<FlatBonus>,
+    ) => {
+      setState((prev) => ({
+        ...prev,
+        weapons: prev.weapons.map((w) => {
+          if (w.id !== weaponId) return w;
+          return {
+            ...w,
+            attacks: w.attacks.map((a) => {
+              if (a.id !== attackId) return a;
+              return {
+                ...a,
+                flatBonuses: a.flatBonuses.map((b) =>
+                  b.id === bonusId ? { ...b, ...patch } : b,
+                ),
+              };
+            }),
+          };
+        }),
+      }));
+    },
+    [],
+  );
+
+  const removeFlatBonus = useCallback(
+    (weaponId: string, attackId: string, bonusId: string) => {
+      setState((prev) => ({
+        ...prev,
+        weapons: prev.weapons.map((w) => {
+          if (w.id !== weaponId) return w;
+          return {
+            ...w,
+            attacks: w.attacks.map((a) => {
+              if (a.id !== attackId) return a;
+              if (a.flatBonuses.length <= 1) return a;
+              return {
+                ...a,
+                flatBonuses: a.flatBonuses.filter((b) => b.id !== bonusId),
+              };
+            }),
+          };
+        }),
+      }));
+    },
+    [],
+  );
+
   return {
     weapons: state.weapons,
     selectedWeapon,
@@ -296,5 +396,8 @@ export function useDamageCalculator() {
     addDiceGroup,
     updateDiceGroup,
     removeDiceGroup,
+    addFlatBonus,
+    updateFlatBonus,
+    removeFlatBonus,
   };
 }

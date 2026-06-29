@@ -1,13 +1,31 @@
+import type { DamageType } from "@/shared/types";
 import type {
   AttackDamageConfig,
   AttackDamageResult,
   DiceGroup,
+  FlatBonus,
   RollMode,
   WeaponDamageResult,
   WeaponSetup,
 } from "../types/damage-calculator.types";
 
 export const COMMON_DICE_SIDES = [4, 6, 8, 10, 12] as const;
+
+export const ALL_DAMAGE_TYPES: DamageType[] = [
+  "acid",
+  "bludgeoning",
+  "cold",
+  "fire",
+  "force",
+  "lightning",
+  "necrotic",
+  "piercing",
+  "poison",
+  "psychic",
+  "radiant",
+  "slashing",
+  "thunder",
+];
 
 export function newId(): string {
   return crypto.randomUUID();
@@ -21,18 +39,74 @@ export function totalDiceAverage(groups: DiceGroup[]): number {
   return groups.reduce((sum, g) => sum + averageDiceGroup(g.count, g.sides), 0);
 }
 
+export function sumFlatBonuses(flatBonuses: FlatBonus[]): number {
+  return flatBonuses.reduce((sum, b) => sum + b.value, 0);
+}
+
+function formatBrackets(
+  damageType?: DamageType,
+  comment?: string,
+): string {
+  let suffix = "";
+  if (damageType) suffix += `[${damageType}]`;
+  const trimmed = comment?.trim();
+  if (trimmed) suffix += `[${trimmed}]`;
+  return suffix;
+}
+
+function formatDiceGroup(group: DiceGroup): string {
+  if (group.count <= 0) return "";
+  return `${group.count}d${group.sides}${formatBrackets(group.damageType, group.comment)}`;
+}
+
+function formatFlatBonusPart(bonus: FlatBonus): string {
+  if (bonus.value === 0) return "";
+  const sign = bonus.value > 0 ? "+" : "−";
+  return `${sign}${Math.abs(bonus.value)}${formatBrackets(bonus.damageType, bonus.comment)}`;
+}
+
 export function formatDiceExpression(
   groups: DiceGroup[],
-  flatBonus: number,
+  flatBonuses: FlatBonus[],
 ): string {
-  const dicePart = groups
-    .filter((g) => g.count > 0)
-    .map((g) => `${g.count}d${g.sides}`)
-    .join(" + ");
-  if (!dicePart && flatBonus === 0) return "0";
-  if (flatBonus === 0) return dicePart;
-  const sign = flatBonus > 0 ? " + " : " − ";
-  return dicePart ? `${dicePart}${sign}${Math.abs(flatBonus)}` : `${flatBonus}`;
+  const parts = [
+    ...groups.map(formatDiceGroup).filter(Boolean),
+    ...flatBonuses.map(formatFlatBonusPart).filter(Boolean),
+  ];
+  if (parts.length === 0) return "0";
+  return parts.join(" ");
+}
+
+function damageMultiplier(
+  damageType: DamageType | undefined,
+  resistances: DamageType[],
+  immunities: DamageType[],
+): number {
+  if (!damageType) return 1;
+  if (immunities.includes(damageType)) return 0;
+  if (resistances.includes(damageType)) return 0.5;
+  return 1;
+}
+
+function weightedDiceAverage(
+  groups: DiceGroup[],
+  resistances: DamageType[],
+  immunities: DamageType[],
+): number {
+  return groups.reduce((sum, g) => {
+    const avg = averageDiceGroup(g.count, g.sides);
+    return sum + avg * damageMultiplier(g.damageType, resistances, immunities);
+  }, 0);
+}
+
+function weightedFlatBonus(
+  flatBonuses: FlatBonus[],
+  resistances: DamageType[],
+  immunities: DamageType[],
+): number {
+  return flatBonuses.reduce((sum, b) => {
+    return sum + b.value * damageMultiplier(b.damageType, resistances, immunities);
+  }, 0);
 }
 
 function d20Outcomes(mode: RollMode): number[][] {
@@ -101,50 +175,80 @@ export function calcSaveSuccessChance(
   return successes / 20;
 }
 
+/** P(at least one attack-roll attack hits during the turn). */
+export function calcTurnHitChance(
+  weapon: WeaponSetup,
+  attacks: AttackDamageResult[],
+): number {
+  let missAll = 1;
+  let hasAttackRoll = false;
+  weapon.attacks.forEach((attack, index) => {
+    if ((attack.resolution ?? "attack-roll") !== "attack-roll") return;
+    hasAttackRoll = true;
+    missAll *= 1 - attacks[index].hitChance;
+  });
+  return hasAttackRoll ? 1 - missAll : 0;
+}
+
 function resolveAttackDamage(
   attack: AttackDamageConfig,
   firstAttack: AttackDamageConfig,
-): { groups: DiceGroup[]; flatBonus: number } {
+): { groups: DiceGroup[]; flatBonuses: FlatBonus[] } {
   if (attack.useFirstAttackDamage && attack.id !== firstAttack.id) {
     return {
       groups: firstAttack.diceGroups,
-      flatBonus: firstAttack.flatBonus,
+      flatBonuses: firstAttack.flatBonuses,
     };
   }
-  return { groups: attack.diceGroups, flatBonus: attack.flatBonus };
+  return { groups: attack.diceGroups, flatBonuses: attack.flatBonuses };
 }
 
 function calcBrutalCritBonus(
   groups: DiceGroup[],
   extraDice: number,
+  resistances: DamageType[],
+  immunities: DamageType[],
 ): number {
   if (extraDice <= 0 || groups.length === 0) return 0;
   const primary = groups[0];
-  return averageDiceGroup(extraDice, primary.sides);
+  const avg = averageDiceGroup(extraDice, primary.sides);
+  return avg * damageMultiplier(primary.damageType, resistances, immunities);
 }
 
 function calcAttackAverages(
   groups: DiceGroup[],
-  flatBonus: number,
+  flatBonuses: FlatBonus[],
   brutalCritExtraDice: number,
+  resistances: DamageType[],
+  immunities: DamageType[],
 ): { averageHit: number; averageCrit: number; averageWithCrit: number } {
-  const diceAvg = totalDiceAverage(groups);
-  const averageHit = diceAvg + flatBonus;
-  const brutalBonus = calcBrutalCritBonus(groups, brutalCritExtraDice);
-  const averageCrit = diceAvg * 2 + brutalBonus + flatBonus;
+  const diceAvg = weightedDiceAverage(groups, resistances, immunities);
+  const flatAvg = weightedFlatBonus(flatBonuses, resistances, immunities);
+  const averageHit = diceAvg + flatAvg;
+  const brutalBonus = calcBrutalCritBonus(
+    groups,
+    brutalCritExtraDice,
+    resistances,
+    immunities,
+  );
+  const averageCrit = diceAvg * 2 + brutalBonus + flatAvg;
   return { averageHit, averageCrit, averageWithCrit: averageHit };
 }
 
 export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
   const firstAttack = weapon.attacks[0];
+  const resistances = weapon.damageResistances ?? [];
+  const immunities = weapon.damageImmunities ?? [];
 
   const attacks: AttackDamageResult[] = weapon.attacks.map((attack, index) => {
-    const { groups, flatBonus } = resolveAttackDamage(attack, firstAttack);
+    const { groups, flatBonuses } = resolveAttackDamage(attack, firstAttack);
     const brutalExtra = weapon.useBrutalCrit ? weapon.brutalCritExtraDice : 0;
     const { averageHit, averageCrit } = calcAttackAverages(
       groups,
-      flatBonus,
+      flatBonuses,
       brutalExtra,
+      resistances,
+      immunities,
     );
 
     const resolution = attack.resolution ?? "attack-roll";
@@ -164,7 +268,7 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
         : 0;
     const saveSuccessChance =
       resolution === "save"
-        ? calcSaveSuccessChance(attack.saveDC, attack.targetSaveBonus)
+        ? calcSaveSuccessChance(attack.saveDC, weapon.targetSaveBonus)
         : 0;
     const saveFailChance = 1 - saveSuccessChance;
 
@@ -185,7 +289,7 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
 
     return {
       label: attack.label || `Attack ${index + 1}`,
-      diceExpression: formatDiceExpression(groups, flatBonus),
+      diceExpression: formatDiceExpression(groups, flatBonuses),
       averageHit,
       averageCrit,
       averageWithCrit,
@@ -205,6 +309,7 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
     (sum, a) => sum + a.averageCrit,
     0,
   );
+  const turnHitChance = calcTurnHitChance(weapon, attacks);
 
   return {
     weaponId: weapon.id,
@@ -213,6 +318,7 @@ export function calcWeaponDamage(weapon: WeaponSetup): WeaponDamageResult {
     totalExpectedPerTurn,
     totalAveragePerTurn,
     totalCritAveragePerTurn,
+    turnHitChance,
   };
 }
 
@@ -224,17 +330,20 @@ export function createDefaultDiceGroup(sides = 8): DiceGroup {
   return { id: newId(), count: 1, sides };
 }
 
+export function createDefaultFlatBonus(value = 0): FlatBonus {
+  return { id: newId(), value };
+}
+
 export function createDefaultAttack(index: number): AttackDamageConfig {
   return {
     id: newId(),
     label: `Attack ${index + 1}`,
     useFirstAttackDamage: index > 0,
     diceGroups: [createDefaultDiceGroup()],
-    flatBonus: 0,
+    flatBonuses: [createDefaultFlatBonus()],
     rollMode: "normal",
     resolution: "attack-roll",
     saveDC: 13,
-    targetSaveBonus: 2,
     halfDamageOnSave: true,
   };
 }
@@ -248,6 +357,9 @@ export function createDefaultWeapon(name = "Weapon 1"): WeaponSetup {
     useBrutalCrit: false,
     brutalCritExtraDice: 1,
     targetAC: 15,
+    targetSaveBonus: 2,
+    damageResistances: [],
+    damageImmunities: [],
     attacks: [createDefaultAttack(0)],
   };
 }

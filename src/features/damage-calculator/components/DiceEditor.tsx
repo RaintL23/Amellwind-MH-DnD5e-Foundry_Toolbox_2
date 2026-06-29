@@ -1,14 +1,22 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { NumberStepper } from "@/features/builder/components/shared/NumberStepper";
-import { COMMON_DICE_SIDES } from "../utils/damage-math.utils";
-import type { DiceGroup } from "../types/damage-calculator.types";
+import { formatDamageTypeLabel } from "@/shared/utils/defense-grant.parser";
+import type { DamageType } from "@/shared/types";
+import {
+  ALL_DAMAGE_TYPES,
+  COMMON_DICE_SIDES,
+} from "../utils/damage-math.utils";
+import type { DiceGroup, FlatBonus } from "../types/damage-calculator.types";
 
 interface DiceEditorProps {
   groups: DiceGroup[];
-  flatBonus: number;
+  flatBonuses: FlatBonus[];
   disabled?: boolean;
-  onFlatBonusChange: (value: number) => void;
+  onFlatBonusChange: (bonusId: string, patch: Partial<FlatBonus>) => void;
+  onAddFlatBonus: () => void;
+  onRemoveFlatBonus: (bonusId: string) => void;
   onDiceChange: (diceId: string, patch: Partial<DiceGroup>) => void;
   onAddDice: (sides: number) => void;
   onRemoveDice: (diceId: string) => void;
@@ -16,15 +24,33 @@ interface DiceEditorProps {
 
 export function DiceEditor({
   groups,
-  flatBonus,
+  flatBonuses,
   disabled = false,
   onFlatBonusChange,
+  onAddFlatBonus,
+  onRemoveFlatBonus,
   onDiceChange,
   onAddDice,
   onRemoveDice,
 }: DiceEditorProps) {
   return (
     <div className="space-y-2">
+      {!disabled && (
+        <div className="flex items-center gap-1.5 pt-1">
+          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
+            Add damage dice
+          </span>
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            className="h-7 gap-1 px-2 text-xs"
+            onClick={() => onAddDice(4)}
+          >
+            <Plus className="h-3 w-3" />
+          </Button>
+        </div>
+      )}
       {groups.map((group) => (
         <div
           key={group.id}
@@ -54,12 +80,28 @@ export function DiceEditor({
               </Button>
             ))}
           </div>
+          <DamageTypeSelect
+            value={group.damageType}
+            disabled={disabled}
+            onChange={(damageType) =>
+              onDiceChange(group.id, { damageType: damageType || undefined })
+            }
+          />
+          <Input
+            value={group.comment ?? ""}
+            disabled={disabled}
+            placeholder="Comment"
+            className="h-7 min-w-[100px] flex-1 text-xs"
+            onChange={(e) =>
+              onDiceChange(group.id, { comment: e.target.value })
+            }
+          />
           {groups.length > 1 && !disabled && (
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className="ml-auto h-7 w-7 text-muted-foreground hover:text-destructive"
+              className="ml-auto h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
               onClick={() => onRemoveDice(group.id)}
               aria-label="Remove dice group"
             >
@@ -69,35 +111,94 @@ export function DiceEditor({
         </div>
       ))}
 
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="space-y-2">
         <span className="text-xs text-muted-foreground">
-          Bonus Damage (Flat)
+          BONUS DAMAGE (FLAT)
         </span>
-        <NumberStepper
-          value={flatBonus}
-          min={-20}
-          disabled={disabled}
-          ariaLabel="Flat damage bonus"
-          onChange={onFlatBonusChange}
-        />
-      </div>
-
-      {!disabled && (
-        <div className="flex items-center gap-1.5 pt-1">
-          <span className="text-[10px] uppercase tracking-wide text-muted-foreground">
-            Add damage dice
-          </span>
+        {!disabled && (
           <Button
             type="button"
             size="sm"
             variant="outline"
             className="h-7 gap-1 px-2 text-xs"
-            onClick={() => onAddDice(4)}
+            onClick={onAddFlatBonus}
           >
             <Plus className="h-3 w-3" />
+            Flat bonus
           </Button>
-        </div>
-      )}
+        )}
+        {flatBonuses.map((bonus) => (
+          <div
+            key={bonus.id}
+            className="flex flex-wrap items-center gap-2 rounded-md border border-border/50 bg-muted/30 px-2.5 py-2"
+          >
+            <NumberStepper
+              value={bonus.value}
+              min={-20}
+              disabled={disabled}
+              ariaLabel="Flat damage bonus"
+              onChange={(value) => onFlatBonusChange(bonus.id, { value })}
+            />
+            <DamageTypeSelect
+              value={bonus.damageType}
+              disabled={disabled}
+              onChange={(damageType) =>
+                onFlatBonusChange(bonus.id, {
+                  damageType: damageType || undefined,
+                })
+              }
+            />
+            <Input
+              value={bonus.comment ?? ""}
+              disabled={disabled}
+              placeholder="Comment"
+              className="h-7 min-w-[100px] flex-1 text-xs"
+              onChange={(e) =>
+                onFlatBonusChange(bonus.id, { comment: e.target.value })
+              }
+            />
+            {flatBonuses.length > 1 && !disabled && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="ml-auto h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
+                onClick={() => onRemoveFlatBonus(bonus.id)}
+                aria-label="Remove flat bonus"
+              >
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        ))}
+      </div>
     </div>
+  );
+}
+
+function DamageTypeSelect({
+  value,
+  disabled,
+  onChange,
+}: {
+  value?: DamageType;
+  disabled?: boolean;
+  onChange: (type: DamageType | "") => void;
+}) {
+  return (
+    <select
+      value={value ?? ""}
+      disabled={disabled}
+      onChange={(e) => onChange(e.target.value as DamageType | "")}
+      className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground disabled:opacity-50"
+      aria-label="Damage type"
+    >
+      <option value="">Type (optional)</option>
+      {ALL_DAMAGE_TYPES.map((type) => (
+        <option key={type} value={type}>
+          {formatDamageTypeLabel(type)}
+        </option>
+      ))}
+    </select>
   );
 }

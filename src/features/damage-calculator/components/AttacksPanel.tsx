@@ -1,4 +1,4 @@
-import { Plus, Trash2 } from "lucide-react";
+import { Info, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NumberStepper } from "@/features/builder/components/shared/NumberStepper";
 import { DiceEditor } from "./DiceEditor";
@@ -6,6 +6,7 @@ import { calcSaveSuccessChance, formatPercent } from "../utils/damage-math.utils
 import type {
   AttackDamageConfig,
   AttackDamageResult,
+  FlatBonus,
   WeaponSetup,
 } from "../types/damage-calculator.types";
 
@@ -22,6 +23,13 @@ interface AttacksPanelProps {
     patch: Partial<AttackDamageConfig["diceGroups"][number]>,
   ) => void;
   onRemoveDice: (attackId: string, diceId: string) => void;
+  onAddFlatBonus: (attackId: string) => void;
+  onUpdateFlatBonus: (
+    attackId: string,
+    bonusId: string,
+    patch: Partial<FlatBonus>,
+  ) => void;
+  onRemoveFlatBonus: (attackId: string, bonusId: string) => void;
 }
 
 export function AttacksPanel({
@@ -33,6 +41,9 @@ export function AttacksPanel({
   onAddDice,
   onUpdateDice,
   onRemoveDice,
+  onAddFlatBonus,
+  onUpdateFlatBonus,
+  onRemoveFlatBonus,
 }: AttacksPanelProps) {
   const firstAttack = weapon.attacks[0];
 
@@ -62,13 +73,13 @@ export function AttacksPanel({
           const effectiveGroups = usesFirst
             ? firstAttack.diceGroups
             : attack.diceGroups;
-          const effectiveFlat = usesFirst
-            ? firstAttack.flatBonus
-            : attack.flatBonus;
+          const effectiveFlatBonuses = usesFirst
+            ? firstAttack.flatBonuses
+            : attack.flatBonuses;
           const resolution = attack.resolution ?? "attack-roll";
           const saveSuccessChance = calcSaveSuccessChance(
             attack.saveDC,
-            attack.targetSaveBonus,
+            weapon.targetSaveBonus,
           );
 
           return (
@@ -109,10 +120,14 @@ export function AttacksPanel({
 
               <DiceEditor
                 groups={effectiveGroups}
-                flatBonus={effectiveFlat}
+                flatBonuses={effectiveFlatBonuses}
                 disabled={usesFirst}
-                onFlatBonusChange={(flatBonus) =>
-                  onUpdateAttack(attack.id, { flatBonus })
+                onFlatBonusChange={(bonusId, patch) =>
+                  onUpdateFlatBonus(attack.id, bonusId, patch)
+                }
+                onAddFlatBonus={() => onAddFlatBonus(attack.id)}
+                onRemoveFlatBonus={(bonusId) =>
+                  onRemoveFlatBonus(attack.id, bonusId)
                 }
                 onDiceChange={(diceId, patch) =>
                   onUpdateDice(attack.id, diceId, patch)
@@ -189,17 +204,6 @@ export function AttacksPanel({
                         }
                       />
                     </SettingRow>
-                    <SettingRow label="Target save bonus">
-                      <NumberStepper
-                        value={attack.targetSaveBonus}
-                        min={-5}
-                        max={15}
-                        ariaLabel="Target saving throw bonus"
-                        onChange={(targetSaveBonus) =>
-                          onUpdateAttack(attack.id, { targetSaveBonus })
-                        }
-                      />
-                    </SettingRow>
                     <label className="flex items-center gap-2 text-xs text-muted-foreground">
                       <input
                         type="checkbox"
@@ -228,42 +232,10 @@ export function AttacksPanel({
               </div>
 
               {result && (
-                <div className="mt-3 grid gap-1.5 rounded-md bg-muted/30 px-2.5 py-2 text-xs">
-                  <Row label="Expression" value={result.diceExpression} />
-                  <Row
-                    label="Avg. on hit"
-                    value={result.averageHit.toFixed(1)}
-                    highlight
-                  />
-                  {resolution === "attack-roll" && (
-                    <Row
-                      label="Avg. on crit"
-                      value={result.averageCrit.toFixed(1)}
-                    />
-                  )}
-                  <Row
-                    label="Expected"
-                    value={result.expectedDamage.toFixed(1)}
-                    highlight
-                  />
-                  {resolution === "attack-roll" ? (
-                    <>
-                      <Row
-                        label="Hit chance"
-                        value={formatPercent(result.hitChance)}
-                      />
-                      <Row
-                        label="Crit chance"
-                        value={formatPercent(result.critChance)}
-                      />
-                    </>
-                  ) : (
-                    <Row
-                      label="Target fails save"
-                      value={formatPercent(result.saveFailChance)}
-                    />
-                  )}
-                </div>
+                <AttackResultPanel
+                  result={result}
+                  resolution={resolution}
+                />
               )}
             </div>
           );
@@ -271,6 +243,86 @@ export function AttacksPanel({
       </div>
     </div>
   );
+}
+
+function AttackResultPanel({
+  result,
+  resolution,
+}: {
+  result: AttackDamageResult;
+  resolution: "attack-roll" | "save";
+}) {
+  const descriptions = getStatDescriptions(resolution);
+
+  return (
+    <div className="mt-3 grid gap-1.5 rounded-md bg-muted/30 px-2.5 py-2 text-xs">
+      <Row
+        label="Expression"
+        value={result.diceExpression}
+        description={descriptions.expression}
+      />
+      <Row
+        label="Avg. on hit"
+        value={result.averageHit.toFixed(1)}
+        description={descriptions.averageHit}
+        highlight
+      />
+      {resolution === "attack-roll" && (
+        <Row
+          label="Avg. on crit"
+          value={result.averageCrit.toFixed(1)}
+          description={descriptions.averageCrit}
+        />
+      )}
+      <Row
+        label="Expected"
+        value={result.expectedDamage.toFixed(1)}
+        description={descriptions.expected}
+        highlight
+      />
+      {resolution === "attack-roll" ? (
+        <>
+          <Row
+            label="Hit chance"
+            value={formatPercent(result.hitChance)}
+            description={descriptions.hitChance}
+          />
+          <Row
+            label="Crit chance"
+            value={formatPercent(result.critChance)}
+            description={descriptions.critChance}
+          />
+        </>
+      ) : (
+        <Row
+          label="Target fails save"
+          value={formatPercent(result.saveFailChance)}
+          description={descriptions.saveFailChance}
+        />
+      )}
+    </div>
+  );
+}
+
+function getStatDescriptions(resolution: "attack-roll" | "save") {
+  return {
+    expression:
+      "Fórmula de dados y bonos planos del ataque, incluyendo tipo de daño y comentarios entre corchetes.",
+    averageHit:
+      "Daño medio si el ataque conecta como golpe normal (sin crítico). No incluye la probabilidad de fallar.",
+    averageCrit:
+      "Daño medio en un golpe crítico: dados duplicados, bonos planos y dados extra de Brutal Critical si aplica.",
+    expected:
+      resolution === "attack-roll"
+        ? "Daño medio por intento de ataque, ponderando fallos (0), golpes normales y críticos."
+        : "Daño medio por uso del efecto, ponderando si el objetivo falla o supera la tirada de salvación.",
+    hitChance:
+      "Probabilidad de que el ataque impacte al objetivo (incluye golpes críticos).",
+    critChance:
+      "Probabilidad de obtener un golpe crítico en este ataque, según el rango de crítico configurado.",
+    saveFailChance:
+      "Probabilidad de que el objetivo falle la tirada de salvación contra el DC del ataque.",
+  };
 }
 
 function SettingRow({
@@ -339,15 +391,29 @@ function RollModeButton({
 function Row({
   label,
   value,
+  description,
   highlight = false,
 }: {
   label: string;
   value: string;
+  description: string;
   highlight?: boolean;
 }) {
   return (
     <div className="flex items-center justify-between gap-2">
-      <span className="text-muted-foreground">{label}</span>
+      <span className="group relative inline-flex items-center gap-1 text-muted-foreground">
+        {label}
+        <Info
+          className="h-3 w-3 shrink-0 text-muted-foreground/60"
+          aria-hidden
+        />
+        <span
+          role="tooltip"
+          className="pointer-events-none absolute bottom-full left-0 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] rounded-md border border-border bg-popover px-2 py-1.5 text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
+        >
+          {description}
+        </span>
+      </span>
       <span
         className={
           highlight

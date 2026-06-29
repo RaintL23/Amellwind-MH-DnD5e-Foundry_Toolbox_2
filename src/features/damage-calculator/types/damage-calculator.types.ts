@@ -1,20 +1,30 @@
+import type { DamageType } from "@/shared/types";
+
 export interface DiceGroup {
   id: string;
   count: number;
   sides: number;
+  damageType?: DamageType;
+  comment?: string;
+}
+
+export interface FlatBonus {
+  id: string;
+  value: number;
+  damageType?: DamageType;
+  comment?: string;
 }
 
 export interface AttackDamageConfig {
   id: string;
   label: string;
-  /** When true, copies dice and flat bonus from the first attack. */
+  /** When true, copies dice and flat bonuses from the first attack. */
   useFirstAttackDamage: boolean;
   diceGroups: DiceGroup[];
-  flatBonus: number;
+  flatBonuses: FlatBonus[];
   rollMode: RollMode;
   resolution: AttackResolution;
   saveDC: number;
-  targetSaveBonus: number;
   halfDamageOnSave: boolean;
 }
 
@@ -32,6 +42,9 @@ export interface WeaponSetup {
   /** Extra weapon damage dice rolled on a critical hit (Brutal Critical). */
   brutalCritExtraDice: number;
   targetAC: number;
+  targetSaveBonus: number;
+  damageResistances: DamageType[];
+  damageImmunities: DamageType[];
   attacks: AttackDamageConfig[];
 }
 
@@ -54,6 +67,8 @@ export interface WeaponDamageResult {
   totalExpectedPerTurn: number;
   totalAveragePerTurn: number;
   totalCritAveragePerTurn: number;
+  /** P(at least one attack-roll attack hits) for the full turn. */
+  turnHitChance: number;
 }
 
 export interface DamageCalculatorState {

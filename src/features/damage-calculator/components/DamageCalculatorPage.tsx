@@ -21,6 +21,9 @@ export function DamageCalculatorPage() {
     addDiceGroup,
     updateDiceGroup,
     removeDiceGroup,
+    addFlatBonus,
+    updateFlatBonus,
+    removeFlatBonus,
   } = useDamageCalculator();
 
   if (!selectedWeapon || !selectedResult) return null;
@@ -70,6 +73,13 @@ export function DamageCalculatorPage() {
             }
             onRemoveDice={(attackId, diceId) =>
               removeDiceGroup(weaponId, attackId, diceId)
+            }
+            onAddFlatBonus={(attackId) => addFlatBonus(weaponId, attackId)}
+            onUpdateFlatBonus={(attackId, bonusId, patch) =>
+              updateFlatBonus(weaponId, attackId, bonusId, patch)
+            }
+            onRemoveFlatBonus={(attackId, bonusId) =>
+              removeFlatBonus(weaponId, attackId, bonusId)
             }
           />
 
