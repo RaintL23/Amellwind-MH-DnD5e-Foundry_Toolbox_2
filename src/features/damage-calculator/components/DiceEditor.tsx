@@ -76,7 +76,6 @@ export function DiceEditor({
         <NumberStepper
           value={flatBonus}
           min={-20}
-          max={30}
           disabled={disabled}
           ariaLabel="Flat damage bonus"
           onChange={onFlatBonusChange}
