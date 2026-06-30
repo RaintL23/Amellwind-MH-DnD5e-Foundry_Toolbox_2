@@ -1,5 +1,8 @@
-import { Dices, FileDown, FileJson, RotateCcw, User } from "lucide-react";
+import { useRef, type ChangeEvent } from "react";
+import { Dices, FileDown, FileJson, RotateCcw, Upload, User } from "lucide-react";
 import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
+import { useFoundryExport } from "../../hooks/useFoundryExport";
+import { useFoundryImport } from "../../hooks/useFoundryImport";
 import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,6 +35,19 @@ export function StatsPanel() {
   const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
   const { exportSheet, exporting, error: exportError } =
     useCharacterSheetExport();
+  const {
+    exportFoundry,
+    exporting: exportingFoundry,
+    error: foundryError,
+  } = useFoundryExport();
+  const {
+    importFromFile,
+    importing: importingFoundry,
+    error: foundryImportError,
+    summary: foundryImportSummary,
+    clearResult: clearFoundryImport,
+  } = useFoundryImport();
+  const foundryFileInputRef = useRef<HTMLInputElement>(null);
   const { evaluate, activateHighlight, clearHighlight, highlightActive, issues } =
     useBuildCompleteness();
   const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
@@ -44,6 +60,26 @@ export function StatsPanel() {
     }
     clearHighlight();
     await exportSheet();
+  }
+
+  function handleExportFoundry() {
+    const result = evaluate();
+    if (result.shouldBlockExport) {
+      activateHighlight();
+      return;
+    }
+    clearHighlight();
+    void exportFoundry();
+  }
+
+  function handleFoundryFileSelected(
+    event: ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    clearHighlight();
+    void importFromFile(file);
   }
 
   return (
@@ -73,19 +109,76 @@ export function StatsPanel() {
             variant="outline"
             size="sm"
             className="h-auto min-w-0 flex-1 gap-1.5 px-2 py-1.5 text-[10px] leading-tight"
-            disabled
-            title="Foundry VTT export (coming soon)"
-            aria-label="Download Foundry VTT JSON (coming soon)"
+            onClick={() => handleExportFoundry()}
+            disabled={exportingFoundry}
+            title="Export a Foundry VTT v12 (dnd5e) actor JSON"
+            aria-label="Download Foundry VTT JSON"
           >
             <FileJson className="h-3 w-3 shrink-0" aria-hidden />
             Foundry VTT JSON
           </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className={ICON_BUTTON_CLASS}
+            onClick={() => foundryFileInputRef.current?.click()}
+            disabled={importingFoundry}
+            title="Subir un JSON de actor de Foundry VTT para rellenar el Builder"
+            aria-label="Upload Foundry VTT JSON"
+          >
+            <Upload className="h-3 w-3" aria-hidden />
+          </Button>
+          <input
+            ref={foundryFileInputRef}
+            type="file"
+            accept="application/json,.json"
+            className="hidden"
+            onChange={handleFoundryFileSelected}
+            aria-hidden
+          />
         </div>
         {highlightActive && issues.length > 0 && (
           <CompletenessHighlightBanner issues={issues} />
         )}
         {exportError && (
           <p className="text-[10px] text-destructive">{exportError}</p>
+        )}
+        {foundryError && (
+          <p className="text-[10px] text-destructive">{foundryError}</p>
+        )}
+        {importingFoundry && (
+          <p className="text-[10px] text-muted-foreground">
+            Importando Foundry VTT JSON…
+          </p>
+        )}
+        {foundryImportError && (
+          <p className="text-[10px] text-destructive">{foundryImportError}</p>
+        )}
+        {foundryImportSummary && (
+          <div className="space-y-1 rounded border border-border bg-muted/40 p-2 text-[10px]">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-medium text-foreground">
+                Importado: {foundryImportSummary.matched.length} elemento(s)
+                {foundryImportSummary.unmatched.length > 0 &&
+                  ` · ${foundryImportSummary.unmatched.length} sin coincidencia`}
+              </span>
+              <button
+                type="button"
+                className="text-muted-foreground underline-offset-2 hover:underline"
+                onClick={clearFoundryImport}
+              >
+                Cerrar
+              </button>
+            </div>
+            {foundryImportSummary.unmatched.length > 0 && (
+              <ul className="list-disc pl-4 text-muted-foreground">
+                {foundryImportSummary.unmatched.map((entry) => (
+                  <li key={entry}>{entry}</li>
+                ))}
+              </ul>
+            )}
+          </div>
         )}
         <div className="flex items-end gap-2">
           <div className="min-w-0 flex-1 space-y-1">

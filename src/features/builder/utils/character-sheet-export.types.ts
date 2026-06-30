@@ -70,4 +70,6 @@ export interface CharacterSheetExportData {
   personality: BuilderPersonality & { notes: string };
   skillProficiencies?: Partial<Record<SkillKey, boolean>>;
   saveProficiencies?: Partial<Record<AbilityKey, boolean>>;
+  /** Base64 data URL for the character portrait, placed in the sheet's portrait box. */
+  portraitImage?: string | null;
 }

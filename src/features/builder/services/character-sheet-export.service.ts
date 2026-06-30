@@ -98,6 +98,42 @@ function setCheckbox(
   }
 }
 
+/** Decodes a base64 data URL into its raw bytes and mime type. */
+function decodeDataUrl(
+  dataUrl: string,
+): { bytes: Uint8Array; mime: string } | null {
+  const match = /^data:([^;,]+)?(?:;base64)?,(.*)$/s.exec(dataUrl);
+  if (!match) return null;
+  const mime = match[1] ?? "image/png";
+  try {
+    const binary = atob(match[2]);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+    return { bytes, mime };
+  } catch {
+    return null;
+  }
+}
+
+/** Places the character portrait into the sheet's "Character Portrait" button field. */
+async function setPortrait(
+  pdfDoc: PDFDocument,
+  form: ReturnType<PDFDocument["getForm"]>,
+  portraitImage: string | null | undefined,
+) {
+  if (!portraitImage) return;
+  const decoded = decodeDataUrl(portraitImage);
+  if (!decoded) return;
+  try {
+    const image = /png/i.test(decoded.mime)
+      ? await pdfDoc.embedPng(decoded.bytes)
+      : await pdfDoc.embedJpg(decoded.bytes);
+    form.getButton("Character Portrait").setImage(image);
+  } catch {
+    /* unsupported image format or missing field — skip silently */
+  }
+}
+
 export async function exportCharacterSheetPdf(
   data: CharacterSheetExportData,
 ): Promise<Uint8Array> {
@@ -328,6 +364,10 @@ export async function exportCharacterSheetPdf(
   // and unfocused (avoids "blank field on click" with long multiline content).
   const font = await pdfDoc.embedFont(StandardFonts.Helvetica);
   form.updateFieldAppearances(font);
+
+  // Set the portrait after appearance regeneration so the button image is not
+  // overwritten by the text appearance provider.
+  await setPortrait(pdfDoc, form, data.portraitImage);
 
   return pdfDoc.save();
 }

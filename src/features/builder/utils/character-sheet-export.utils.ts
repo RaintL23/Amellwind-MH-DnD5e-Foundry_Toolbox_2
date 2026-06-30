@@ -22,6 +22,8 @@ import type { SpellcastingInfo } from "../hooks/useSpellcasting";
 import type { SubclassSpellGrant } from "./subclass-spells.utils";
 import { hasActiveIntegratedShield } from "@/features/weapons/utils/shield.utils";
 import { isDamageCantrip, DAMAGE_TYPE_NAMES } from "./spell-damage.utils";
+import { getAllDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
+import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
 
 /** pdf-lib form fields use WinAnsi (Windows-1252); strip/replace unsupported Unicode. */
 const PDF_TEXT_REPLACEMENTS: ReadonlyArray<[string, string]> = [
@@ -809,4 +811,55 @@ export function formatFeatExportLine(
   const headline = `${featName}${suffix}`;
   const body = formatFeatExportBody(lines);
   return body ? `${headline}\n${body}` : headline;
+}
+
+/** Minimum XP to reach each character level (D&D 2024). */
+const XP_BY_LEVEL: Record<number, number> = {
+  1: 0,
+  2: 300,
+  3: 900,
+  4: 2700,
+  5: 6500,
+  6: 14000,
+  7: 23000,
+  8: 34000,
+  9: 48000,
+  10: 64000,
+  11: 85000,
+  12: 100000,
+  13: 120000,
+  14: 140000,
+  15: 165000,
+  16: 195000,
+  17: 225000,
+  18: 265000,
+  19: 305000,
+  20: 355000,
+};
+
+/** Returns the minimum XP for the given level, clamped to levels 1-20. */
+export function getXpForLevel(level: number): number {
+  return XP_BY_LEVEL[Math.max(1, Math.min(20, level))] ?? 0;
+}
+
+/** Description lookups needed by the character-sheet and Foundry exports. */
+export interface FeatExportLookups {
+  optDescMap: OptionalFeatureDescMap;
+  featDescLookup: FeatExportDescLookup;
+}
+
+/**
+ * Loads the full feat + optional-feature catalogs and builds the id→description
+ * map (optional features) and feat description lookup used by both export paths.
+ */
+export async function loadFeatExportLookups(): Promise<FeatExportLookups> {
+  const [allFeats, allOptFeatures] = await Promise.all([
+    getAllDndFeats(),
+    getAllDndOptionalFeatures(),
+  ]);
+  const optDescMap: OptionalFeatureDescMap = new Map(
+    allOptFeatures.map((f) => [f.id, f.entries]),
+  );
+  const featDescLookup = buildFeatExportDescLookup(allFeats);
+  return { optDescMap, featDescLookup };
 }

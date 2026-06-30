@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 import { formatModifier } from "@/shared/utils/cr.utils";
-import { SKILL_ORDER, SKILL_LABELS } from "../utils/check-modifiers.utils";
+import { SKILL_ORDER, SKILL_LABELS, ABILITY_KEYS, toAbilityKey } from "@/shared/constants/dnd";
 import type { AbilityKey, SkillKey } from "@/shared/types";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
@@ -29,41 +29,13 @@ import {
   getClassFeaturesExport,
   getSpeciesTraitsExport,
   getSpellSlotTotals,
+  getXpForLevel,
   hasShieldEquipped,
+  loadFeatExportLookups,
   sumInventoryGoldGp,
   type OptionalFeatureDescMap,
 } from "../utils/character-sheet-export.utils";
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
-import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
-import { getAllDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
-
-/** Minimum XP to reach each character level (D&D 2024). */
-const XP_BY_LEVEL: Record<number, number> = {
-  1: 0,
-  2: 300,
-  3: 900,
-  4: 2700,
-  5: 6500,
-  6: 14000,
-  7: 23000,
-  8: 34000,
-  9: 48000,
-  10: 64000,
-  11: 85000,
-  12: 100000,
-  13: 120000,
-  14: 140000,
-  15: 165000,
-  16: 195000,
-  17: 225000,
-  18: 265000,
-  19: 305000,
-  20: 355000,
-};
-
-function getXpForLevel(level: number): number {
-  return XP_BY_LEVEL[Math.max(1, Math.min(20, level))] ?? 0;
-}
 
 function formatAbilityExport(
   character: ReturnType<typeof useCharacterBuilder>["character"],
@@ -127,17 +99,7 @@ export function useCharacterSheetExport() {
     const { character } = builder;
     const attunement = getAttunementInfo(builder.class?.name, character.level);
 
-    const abilityNameMap: Record<string, AbilityKey> = {
-      strength: "str",
-      dexterity: "dex",
-      constitution: "con",
-      intelligence: "int",
-      wisdom: "wis",
-      charisma: "cha",
-    };
-    const spellKey = spellcasting.spellcastingAbility
-      ? (abilityNameMap[spellcasting.spellcastingAbility.toLowerCase()] ?? null)
-      : null;
+    const spellKey = toAbilityKey(spellcasting.spellcastingAbility);
     const spellMod = spellKey ? character.getModifier(spellKey) : 0;
     const prof = character.getProficiencyBonus();
     const spellSaveDc =
@@ -252,7 +214,7 @@ export function useCharacterSheetExport() {
     );
 
     const savingThrows: Record<string, string> = {};
-    for (const key of ["str", "dex", "con", "int", "wis", "cha"] as const) {
+    for (const key of ABILITY_KEYS) {
       savingThrows[key.toUpperCase()] = formatModifier(
         character.getSavingThrowModifier(key),
       );
@@ -341,6 +303,7 @@ export function useCharacterSheetExport() {
       },
       skillProficiencies,
       saveProficiencies,
+      portraitImage: builder.portraitImage,
     };
   }, [
     allSpells,
@@ -360,18 +323,7 @@ export function useCharacterSheetExport() {
     setError(null);
     try {
       // Load catalogs needed to enrich descriptions in the PDF.
-      const [allOptFeatures, allFeats] = await Promise.all([
-        getAllDndOptionalFeatures(),
-        getAllDndFeats(),
-      ]);
-
-      // Build id → description map for optional features (Fighting Style, etc.)
-      const optDescMap: OptionalFeatureDescMap = new Map(
-        allOptFeatures.map((f) => [f.id, f.entries]),
-      );
-
-      // Build lookup for feat descriptions (paragraphs + sections + ASI).
-      const featDescLookup = buildFeatExportDescLookup(allFeats);
+      const { optDescMap, featDescLookup } = await loadFeatExportLookups();
 
       const data = buildExportData(optDescMap, featDescLookup);
       const bytes = await exportCharacterSheetPdf(data);
