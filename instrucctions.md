@@ -25,7 +25,7 @@ La información mostrada en esta aplicación proviene de los siguientes recursos
 | Gestor de paquetes | pnpm                                 |
 | Node.js            | 22.x (`.nvmrc`)                      |
 
-> Toda la app es una **SPA** (Single Page Application). No hay backend propio. Los datos de **Amellwind** se cachean en IndexedDB; el **compendio D&D 5e** (spells, classes, items, bestiary) se obtiene bajo demanda desde el mirror de 5etools, con opción de mirror local (`VITE_5ETOOLS_DATA=local`).
+> Toda la app es una **SPA** (Single Page Application). No hay backend propio. Los datos de **Amellwind** se cachean en IndexedDB; el **compendio D&D 5e** (spells, classes, races, backgrounds, feats, items, bestiary) se obtiene bajo demanda desde el mirror de 5etools, con opción de mirror local (`VITE_5ETOOLS_DATA=local`). El **Character Builder** exporta/importa personajes en formato **Foundry VTT (dnd5e)**.
 
 ---
 
@@ -41,7 +41,8 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /                          → Redirect a /monsters
 
 ── Amellwind Homebrew ──
-/builder                   → Character Builder (ALPHA)
+/builder                   → Character Builder (ALPHA, export/import Foundry VTT)
+/damage-calculator         → Calculadora de daño por turno
 /character-guide           → Guía de creación de personajes
 /monstie-sidekick          → Reglas y creador de Monstie Sidekick
 /npc-generator             → Generador de NPCs humanoides
@@ -51,6 +52,9 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /monsters                  → Listado de monstruos MH
 /monsters/:monsterId       → Detalle de monstruo (página dedicada)
 /runes                     → Materiales de monstruo + planificador
+/material-effects          → Efectos de materiales (armadura/arma)
+/conditions                → Condiciones (GTMH)
+/diseases                  → Enfermedades (GTMH)
 /weapons                   → Hunter Weapons
 /items                     → Catálogo de ítems GTMH
 /shops                     → Tiendas y carrito
@@ -64,9 +68,13 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /spells                    → Conjuros (5etools)
 /classes                   → Listado de clases base
 /classes/:classId          → Detalle de clase (variantes por fuente)
+/dnd-races                 → Especies oficiales 5e
+/dnd-backgrounds           → Trasfondos oficiales 5e
+/dnd-feats                 → Dotes oficiales 5e
 /dnd-items                 → Ítems mágicos y equipo (5etools)
 /bestiary                  → Bestiario oficial
 /bestiary/:creatureId      → Detalle de criatura
+/xanathar-backstory        → Generador de trasfondo (XGE)
 
 *                          → Página 404 / Not Found
 ```
@@ -118,17 +126,21 @@ Providers **por ruta** (no globales):
 
 ### Sidebar y navegación
 
-El `Sidebar` agrupa links en secciones colapsables bajo dos bloques: **Amellwind Homebrew** y **DnD 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer.
+El `Sidebar` agrupa links en grupos colapsables organizados bajo dos secciones: **Amellwind Homebrew** y **DnD 5e**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_GROUPS` (`Sidebar.tsx`); cada grupo tiene `section` + `label` + `items`.
 
 El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInventoryContext`), no un inventario separado: el equipo equipable del builder proviene de ítems añadidos al carrito en Shops/Items.
 
-| Grupo Sidebar   | Links principales                                              |
-| --------------- | -------------------------------------------------------------- |
-| Character       | Builder, Creation Guide, Monstie Sidekick, NPC Generator, Species, Backgrounds, Feats |
-| Bestiary        | Monsters, Runes                                                |
-| Gear            | Weapons, Items                                                 |
-| Craft & Trade   | Shops, Cooking, Combo List, Environments, Resources, Downtime  |
-| Compendium      | Spells, Classes, Items (5e), Bestiary (5e)                     |
+| Sección           | Grupo Sidebar   | Links principales                                              |
+| ----------------- | --------------- | -------------------------------------------------------------- |
+| Amellwind Homebrew | _(suelto)_     | Builder                                                        |
+| Amellwind Homebrew | DM Tools        | NPC Generator                                                 |
+| Amellwind Homebrew | Character Tools | Monstie Sidekick, Damage Calculator                          |
+| Amellwind Homebrew | Character       | Creation Guide, Species, Backgrounds, Feats                  |
+| Amellwind Homebrew | Bestiary        | Monsters, Runes, Material Effects, Conditions, Diseases      |
+| Amellwind Homebrew | Gear            | Weapons, Items                                                |
+| Amellwind Homebrew | Craft & Trade   | Shops, Cooking, Combo List, Environments, Resources, Downtime |
+| DnD 5e            | Compendium      | Spells, Classes, Races, Backgrounds, Feats, Items, Bestiary  |
+| DnD 5e            | Character Tools | Xanathar Backstory, Damage Calculator                        |
 
 ### Layout global (`MainLayout`)
 
@@ -785,20 +797,25 @@ Estado de cobertura del manual / features de la app:
 - [x] **Ítems y tiendas** — Catálogo GTMH + tiendas estáticas + carrito compartido.
 - [x] **Recursos de entorno** — Tablas estáticas por categoría.
 - [x] **Entornos / biomas** — Datos estáticos con DCs, clima, encuentros y tablas de recursos.
+- [x] **Material Effects / Conditions / Diseases** — Listados de referencia derivados del homebrew.
+- [x] **Damage Calculator** — Calculadora de daño por turno persistida en `localStorage`.
 
 ### Compendio D&D 5e — implementado
 
 - [x] **Spells** — Conjuros desde 5etools con deduplicación y filtros.
 - [x] **Classes** — Listado y detalle por variante de fuente.
-- [x] **D&D Items** — Compendio de ítems con carga por fuente.
+- [x] **Races / Backgrounds / Feats** — Compendios 5e con dedupe por nombre y variantes por fuente.
+- [x] **D&D Items** — Compendio de ítems con carga por fuente (+ catálogo de equipo del builder).
 - [x] **Bestiary** — Criaturas oficiales con carga bajo demanda por source book.
+- [x] **Xanathar Backstory** — Generador de trasfondo con tablas de XGE.
 
 ### En progreso o pendiente
 
-- [~] **Character Builder** — ALPHA: stats, paper doll, runas, DPT; inventario ligado al carrito; armaduras placeholder.
+- [~] **Character Builder** — ALPHA: stats, paper doll, runas, DPT, retrato/token y export/import Foundry VTT; inventario ligado al carrito; armaduras placeholder.
+- [x] **Export/Import Foundry VTT** — Actor `character` dnd5e v12 con _matching_ contra catálogos de la app.
 - [ ] **Armaduras (datos reales)** — Sets completos desde GTMH; hoy el builder usa `armor.placeholder.ts`.
 - [ ] **Vista de Combate / Encuentros activos** — Gestión de combate en tiempo real.
-- [ ] **Persistencia de personajes** — Guardar/cargar builds (localStorage o export JSON).
+- [ ] **Persistencia de personajes (interna)** — Guardar/cargar builds en la propia app (hoy la persistencia es vía export/import Foundry JSON).
 
 ---
 
@@ -830,8 +847,16 @@ Pantalla (UI)
 | `FeatMapper`              | `feat[]` en GTMH                                             | `Feat`                         |
 | `DowntimeMapper`          | entradas de `variantrule[]` (downtime)                       | `DowntimeActivity[]`           |
 | `MonstieClassFeatureMapper` | `classFeature[]` en GTMH                                   | features de Monstie Sidekick   |
+| `MaterialEffectMapper`    | efectos de material derivados de `mm_current`                | `MaterialEffect[]`             |
+| `ConditionMapper`         | condiciones homebrew en GTMH                                  | `Condition[]`                  |
+| `DiseaseMapper`           | enfermedades homebrew en GTMH                                | `Disease[]`                    |
 | `SpellMapper`             | JSON de conjuros 5etools                                     | `Spell`                        |
 | `ClassMapper`             | JSON de clase 5etools                                        | `Class`                        |
+| `DndRaceMapper`           | `race[]` / `subrace[]` 5etools                              | `DndRace`                      |
+| `DndBackgroundMapper`     | `background[]` 5etools                                       | `DndBackground`                |
+| `DndFeatMapper`           | `feat[]` 5etools                                            | `DndFeat`                      |
+| `DndOptionalFeatureMapper`| `optionalfeature[]` 5etools                                 | `OptionalFeature` (sin ruta)   |
+| `mapDndBaseItemToWeapon` / `mapDndBaseItemToArmor` | ítems base 5etools (`dnd-items`)          | `Weapon` / `ArmorItem` (equipo builder) |
 | _(inline en item.service)_ | ítems GTMH sin filtrar por tipo                                | `MHItem`                       |
 | _(bestiary / dnd-items)_  | JSON bestiary/items 5etools                                  | `BestiaryCreature`, `DndItem`  |
 
@@ -845,7 +870,7 @@ Al arrancar (`App.tsx`, no `main.tsx`):
 
 1. Se monta `ThemeProvider` y se inicia `syncData()` en un `useEffect`.
 2. Mientras sync está activo, `SyncProvider` expone `syncing=true` y `MainLayout` muestra banner “Sincronizando…”.
-3. Tras sync: si MM se actualizó → `clearMonsterCache()` + `clearRuneCache()`; si GTMH → `clearSpeciesCache()`, `clearBackgroundCache()`, `clearFeatCache()`, `clearMonstieSidekickCache()`.
+3. Tras sync: si MM se actualizó → `clearMonsterCache()` + `clearRuneCache()` + `clearMaterialEffectCache()` + `clearConditionCache()` + `clearDiseaseCache()`; si GTMH → `clearSpeciesCache()`, `clearBackgroundCache()`, `clearFeatCache()`, `clearMonstieSidekickCache()` (y demás cachés derivadas de GTMH).
 4. Las rutas lazy se montan con `<Suspense fallback={<LoadingScreen />}>`.
 
 Si el sync falla, la app sigue con datos ya presentes en IndexedDB.
@@ -868,6 +893,18 @@ Cada service debe encargarse de:
 - Invocar al mapper sobre cada objeto leído.
 - Exponer métodos de consulta útiles para la UI: `getAll()`, `getById(id)`, `getByGroup(group)`, etc.
 - No contener lógica de presentación.
+
+### Factory de servicios y utilidades compartidas
+
+Para evitar boilerplate repetido por feature, gran parte de los services del compendio se construyen con un **factory centralizado** y comparten utilidades transversales:
+
+- **`shared/services/create-entity-service.ts`** — `createEntityService<TRaw, TMapped>(config)` devuelve la superficie estándar `{ getAll, getList, getById, getByName, clearCache }` con caché en módulo, índices por nombre/id, dedupe y promesa _in-flight_ compartida. También exporta el comparador `bySource`.
+- **`shared/utils/dedupe-by-name.utils.ts`** — `dedupeByNameWithVariants(items, config)` colapsa múltiples impresiones (por fuente) de una misma entrada en una fila canónica (según `sourcePriority`) agregando `variantSources`, `variantCount` y `searchText`.
+- **`shared/utils/fluff.utils.ts`** — `buildFluffIndex`, `attachFluff`, `attachFluffEntries` para fusionar el _fluff_ de 5etools con cada entidad por `name|source`.
+- **`shared/constants/dnd/`** — constantes del sistema D&D centralizadas: `abilities.constants.ts` (`ABILITY_KEYS`, `ABILITY_NAMES`, `toAbilityKey`, …) y `skills.constants.ts` (`SKILL_ABILITY`, `SKILL_LABELS`, `SKILL_NAME_TO_KEY`, …).
+- **`shared/components/StatBlockSection.tsx`** — sección titulada reutilizable (heading ámbar + regla) compartida por los stat blocks de monstruos y bestiario.
+
+> El catálogo de **equipo del builder** (armas/armaduras D&D) se movió de `builder/services/` a la feature **`dnd-items`** (`dnd-equipment.service.ts` + `mappers/dnd-weapon.mapper.ts`, `dnd-armor.mapper.ts`, `utils/dnd-equipment-rarity.utils.ts`), exponiendo `getDndWeapons`, `getDndWeaponVariantsByName`, `getDndArmors` y `clearDndEquipmentCache`. El import de Foundry consume estos métodos.
 
 ---
 
@@ -1003,6 +1040,18 @@ Al hacer clic en cualquier fila, se abre un **dialog** con la información compl
 
 - Lista completa de todos los tags, agrupados por categoría.
 - Cada tag se muestra como un badge con color diferente según su categoría: clase (azul), tipo de arma (naranja), mecánica (verde).
+
+### Material Effects, Conditions y Diseases
+
+Tres listados de referencia derivados del homebrew Amellwind, con caché en memoria invalidada tras sync de MM/GTMH:
+
+| Feature           | Ruta                | Fuente / servicio                          | Contenido |
+| ----------------- | ------------------- | ------------------------------------------ | --------- |
+| Material Effects  | `/material-effects` | `material-effect.service.ts` (`MaterialEffectList`) | Efectos de materiales de monstruo (slots armadura/arma) consultables sin pasar por la tabla de runas |
+| Conditions        | `/conditions`       | `condition.service.ts` (`ConditionList`)   | Condiciones del manual con texto parseado |
+| Diseases          | `/diseases`         | `disease.service.ts` (`DiseaseList`)       | Enfermedades del manual con texto parseado |
+
+Sus cachés se limpian en el bootstrap (`clearMaterialEffectCache`, `clearConditionCache`, `clearDiseaseCache`).
 
 ### Cooking System (Artisan Cooking)
 
@@ -1378,9 +1427,9 @@ Grid de tres columnas en desktop:
 
 | Columna | Componentes |
 | ------- | ----------- |
-| Izquierda | `StatsPanel`, `BuilderDerivedPanel` |
-| Centro | `PaperDoll` (equipamiento + biblioteca) |
-| Derecha | `BuilderDamagePanel` |
+| Izquierda | `StatsPanel`, `BuilderImagePanel`, `BuilderSavingThrowsPanel`, `BuilderSkillChecksPanel` |
+| Centro | `BuilderCenterPanel` (paper doll, equipamiento + biblioteca) |
+| Derecha | `BuilderDerivedPanel`, `BuilderDamagePanel`, `BuilderInventoryPanel`, `BuilderOtherProficienciesPanel`, `BuilderLanguagesPanel`, `BuilderDefensesPanel` |
 
 Encima del grid: `CharacterCreationTipsPanel` con consejos de creación.
 
@@ -1413,12 +1462,28 @@ Reglas de manos: armas `2H` bloquean off-hand; armas `V` (versatile) permiten mo
 
 | Componente | Rol |
 | ---------- | --- |
-| `StatsPanel` / `AbilityScoresSection` | Nivel, ability scores, AC, iniciativa, ataques/turno |
+| `StatsPanel` / `AbilityScoresSection` | Nivel, ability scores, AC, iniciativa, ataques/turno; botones de export/import Foundry |
+| `BuilderImagePanel` | Sube retrato y token (base64 data URL) que alimentan el export de Foundry |
+| `BuilderSavingThrowsPanel` / `BuilderSkillChecksPanel` | Saving throws y skills con competencia/expertise |
 | `BuilderDerivedPanel` | Stats derivados (proficiency, modifiers, etc.) |
-| `PaperDoll` | Silueta con slots, paneles de detalle de arma/armadura |
+| `BuilderCenterPanel` / `PaperDoll` | Silueta con slots, paneles de detalle de arma/armadura |
 | `BuilderItemLibraryPanel` | Biblioteca de equipo desde carrito |
 | `BuilderDamagePanel` | Desglose DPT, críticos, fuentes de daño |
+| `BuilderInventoryPanel` | Inventario derivado del carrito (overflow de equipo) |
+| `BuilderOtherProficienciesPanel` / `BuilderLanguagesPanel` / `BuilderDefensesPanel` | Competencias varias, idiomas, resistencias/inmunidades |
 | `RuneAssignmentPanel` | Asignar/quitar runas por slot con validación |
+
+#### Resolución de especie y dotes
+
+- **`useResolvedSpecies` / `resolveSpeciesParts`** — resuelven la especie seleccionada contra los catálogos de species MH y razas D&D (con subraza opcional), con precedencia `mhSpecies ?? dndRace`, y exponen nombre de display y traits fusionados.
+- **`useActiveResolvedFeats`** — resuelve las dotes activas no-ASI (origin feats de especie/trasfondo + slots elegidos) a objetos `Feat` completos; fuente única para los hooks derivados de HP/velocidad.
+
+#### Export / Import a Foundry VTT
+
+El builder puede **exportar** el personaje a un actor `character` de **Foundry VTT (sistema dnd5e v12)** e **importar** de vuelta un JSON de actor. Botones en el `StatsPanel`.
+
+- **Export** (`foundry-export/`, hook `useFoundryExport`): `buildFoundryActor(input)` ensambla el bloque `system` (abilities, skills, tools, traits, attributes, details, conjuros/slots, currency) más `items[]` y `prototypeToken`. Sub-builders por pieza (`item.builders.ts`: clase, subclase, raza, trasfondo, dotes, armas, armadura, trinkets, loot, conjuros), `advancement.builders.ts` (HP, item grants, scale values, size, traits), `effect.builders.ts` (active effects), `foundry-id.utils.ts` (IDs/stats/token) y `mappings.ts` (label→clave Foundry). `downloadFoundryActor` descarga el JSON con nombre `Name_Class_LevelN.json` e incluye retrato/token base64.
+- **Import** (`foundry-import/`, hook `useFoundryImport`): `parseFoundryActor(raw)` valida `type === "character"`, recorre `items[]` y extrae clase/subclase/raza/trasfondo, dotes, conjuros, armas, armadura/escudos, trinkets y loot, además de abilities, tamaño, alineamiento, nivel y biografía. `applyParsed` resetea el build y hace _matching_ contra los catálogos de la app (`getClassesByName`, `getAllDndRaces`, `getListDndBackgrounds`, `getDndFeatsByName`, `getSpellsByName`, `getDndWeapons`/`getDndArmors` + homebrew Amellwind), equipa hasta dos armas/trinkets y una armadura (resto al inventario) y devuelve un resumen `{ matched, unmatched }`.
 
 #### Cálculo de combate (`combat.calculator.ts`)
 
@@ -1431,6 +1496,20 @@ Produce `CombatCalculation` con `DamageBreakdown` por mano:
 - `totalDPT` = suma main + off × ataques por turno.
 
 Reutiliza `wouldViolateRule` al asignar runas en el builder.
+
+---
+
+### Damage Calculator
+
+**Ruta**: `/damage-calculator`
+**Estado**: persistido en `localStorage` (`"damage-calculator-state"`).
+
+Calculadora independiente del builder para estimar el **daño esperado por turno** comparando varias builds de armas (ataques extra, dados de bonificación, críticos y efectos con tirada de salvación).
+
+- **Componentes**: `DamageCalculatorPage` con paneles `WeaponList`, `AttacksPanel`, `WeaponSettingsPanel`, `DiceEditor`.
+- **Hook**: `useDamageCalculator` (CRUD de armas/ataques/grupos de dados/bonos planos + normalización de estado legacy).
+- **Matemática** (`utils/damage-math.utils.ts`): `calcWeaponDamage`, `calcHitChance`, `calcCritChance`, `calcSaveSuccessChance`, `calcTurnHitChance`, medias de dados y `ALL_DAMAGE_TYPES`.
+- **Tipos** (`types/damage-calculator.types.ts`): `WeaponSetup`, `AttackDamageConfig`, `DiceGroup`, `FlatBonus`, `RollMode`, `AttackResolution`, `DamageCalculatorState`.
 
 ---
 
@@ -1483,18 +1562,29 @@ Listado lateral de actividades con contenido parseado (pasos, tablas, reglas). S
 
 ---
 
-### Compendio D&D 5e (Spells, Classes, Items, Bestiary)
+### Compendio D&D 5e (Spells, Classes, Races, Backgrounds, Feats, Items, Bestiary)
 
-Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar.
+Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar. Varias se construyen con `createEntityService` y comparten `dedupeByNameWithVariants` + `attachFluff`.
 
-| Feature    | Ruta           | Fuente                          | Notas |
-| ---------- | -------------- | ------------------------------- | ----- |
-| Spells     | `/spells`      | `SPELLS_BASE_URL` + lookup JSON | Dedupe por nombre; filtros clase/nivel/fuente |
-| Classes    | `/classes`     | `CLASSES_BASE_URL` + index      | Detalle en `/classes/:classId`; switcher de fuente |
-| D&D Items  | `/dnd-items`   | items.json + variants           | Carga por source book; toolbar TanStack Table |
-| Bestiary   | `/bestiary`    | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto bajo demanda |
+| Feature        | Ruta               | Fuente                          | Notas |
+| -------------- | ------------------ | ------------------------------- | ----- |
+| Spells         | `/spells`          | `SPELLS_BASE_URL` + lookup JSON | Dedupe por nombre; filtros clase/nivel/fuente |
+| Classes        | `/classes`         | `CLASSES_BASE_URL` + index      | Detalle en `/classes/:classId`; switcher de fuente |
+| Races          | `/dnd-races`       | `race`/`subrace` 5etools        | Dedupe por nombre con variantes por fuente (2014/2024) |
+| Backgrounds    | `/dnd-backgrounds` | `background` 5etools            | Dedupe por nombre con variantes |
+| Feats          | `/dnd-feats`       | `feat` 5etools                  | Dedupe por nombre con variantes |
+| D&D Items      | `/dnd-items`       | items.json + variants           | Carga por source book; toolbar TanStack Table; expone catálogo de equipo del builder |
+| Bestiary       | `/bestiary`        | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto bajo demanda |
 
 Fetch centralizado en `shared/data/fivetools-fetch.ts` con soporte `VITE_5ETOOLS_DATA=local`. Nombres de libros vía `book-source.service.ts` y hook `useBookSourceNames`.
+
+---
+
+### Xanathar Backstory
+
+**Ruta**: `/xanathar-backstory`
+
+Generador de trasfondo de personaje basado en las tablas aleatorias de _Xanathar's Guide to Everything_ (origen, familia, eventos de vida, etc.). Herramienta de personaje del bloque DnD 5e. Componente `XanatharBackstoryPage`.
 
 ---
 
@@ -1511,9 +1601,13 @@ src/
 │   ├── data-table/         # Tabla reutilizable (TanStack Table)
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
-│   ├── builder/            # Character Builder ALPHA
+│   ├── builder/            # Character Builder ALPHA (+ foundry-export/, foundry-import/)
+│   ├── damage-calculator/  # Calculadora de daño por turno (localStorage)
 │   ├── monsters/           # Listado + MonsterDetailPage
 │   ├── runes/              # Materiales + BuildDrawer + RuneBuildContext
+│   ├── material-effects/   # Efectos de materiales (armadura/arma)
+│   ├── conditions/         # Condiciones Amellwind
+│   ├── diseases/           # Enfermedades Amellwind
 │   ├── weapons/            # Hunter Weapons + optional features
 │   ├── shops/              # Items, Shops, CartContext
 │   ├── species/            # Especies GTMH
@@ -1529,22 +1623,28 @@ src/
 │   ├── environments/       # Biomas
 │   ├── spells/             # Conjuros 5e
 │   ├── classes/            # Clases 5e
-│   ├── dnd-items/          # Ítems 5e
+│   ├── dnd-items/          # Ítems 5e + catálogo de equipo del builder
+│   ├── dnd-races/          # Especies 5e
+│   ├── dnd-backgrounds/    # Trasfondos 5e
+│   ├── dnd-feats/          # Dotes 5e
+│   ├── dnd-optionalfeatures/ # Optional features 5e (sin ruta)
+│   ├── xanathar-backstory/ # Generador de trasfondo (XGE)
 │   └── bestiary/           # Bestiario 5e
 ├── shared/
 │   ├── types/              # Entidades tipadas
 │   ├── context/            # ThemeContext, SyncContext
 │   ├── db/                 # IndexedDB (idb), sync, database
 │   ├── data/               # fivetools-fetch helper
-│   ├── utils/              # cn, cr.utils, fivetools-parser, …
-│   ├── constants/          # URLs API, stores, CLASS/SPELL source maps
-│   ├── components/         # ItemRefText, DndKeywordText
+│   ├── services/           # create-entity-service (factory)
+│   ├── utils/              # cn, cr.utils, fivetools-parser, dedupe-by-name, fluff, …
+│   ├── constants/          # URLs API, stores, source maps, dnd/ (abilities, skills)
+│   ├── components/         # ItemRefText, DndKeywordText, StatBlockSection
 │   ├── hooks/              # useDebouncedValue, useBookSourceNames, …
 │   └── theme/              # Definición de temas
 └── index.css               # Tailwind + variables de tema
 ```
 
-Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estático), `context/`, `hooks/` según necesidad. Subcarpetas comunes en builder: `components/stats/`, `components/equipment/`, `components/paper-doll/`, `components/combat/`.
+Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estático), `context/`, `hooks/` según necesidad. Subcarpetas comunes en builder: `components/stats/`, `components/equipment/`, `components/paper-doll/`, `components/combat/`, `foundry-export/`, `foundry-import/`.
 
 ---
 
@@ -1557,5 +1657,8 @@ Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estát
 - Rutas lazy con `<Suspense>`; sync y temas gestionados en `App.tsx` / `ThemeProvider` / `SyncProvider`.
 - `RuneBuildProvider` solo en `/runes` y `/builder`; `BuildDrawer` solo en `RuneList`.
 - Inventario del builder derivado del **carrito** (`CartContext` → `BuilderInventoryContext`).
-- Utilidades clave: `fivetools-parser.ts`, `cr.utils.ts`, `ItemRefText`, `DndKeywordText`, `fivetools-fetch.ts`.
+- Utilidades clave: `fivetools-parser.ts`, `cr.utils.ts`, `ItemRefText`, `DndKeywordText`, `fivetools-fetch.ts`, `dedupe-by-name.utils.ts`, `fluff.utils.ts`.
+- Services del compendio 5e creados con el factory `createEntityService` (`shared/services/`); constantes D&D centralizadas en `shared/constants/dnd/`.
+- **Export/Import Foundry VTT** en `builder/foundry-export/` y `foundry-import/` (actor `character` dnd5e v12), con botones en `StatsPanel`.
+- Catálogo de equipo D&D del builder en `dnd-items/dnd-equipment.service.ts` (`getDndWeapons`, `getDndArmors`, …).
 - El **Character Builder** y las **armaduras reales desde GTMH** siguen en desarrollo activo (ALPHA).

@@ -1,6 +1,6 @@
 # Amellwind Monster Hunter DnD5e Toolbox
 
-Toolkit web para **Dungeon Masters** y jugadores del homebrew de **Amellwind**, que combina **Monster Hunter** con **Dungeons & Dragons 5e**. Monstruos, runas, armas, character builder, cocina, tiendas y más en una sola aplicación, con datos cacheados en el navegador para consultar offline entre sesiones.
+Toolkit web para **Dungeon Masters** y jugadores del homebrew de **Amellwind**, que combina **Monster Hunter** con **Dungeons & Dragons 5e**. Monstruos, runas, armas, character builder con **export/import a Foundry VTT**, calculadora de daño, cocina, tiendas y más en una sola aplicación, con datos cacheados en el navegador para consultar offline entre sesiones.
 
 Nació en mi mesa de rol: juego con amigos más entusiasmados con D&D que con Monster Hunter, y al usar el homebrew de Amellwind tropezamos una y otra vez buscando reglas y opciones de personaje. Es un sistema con poco material centralizado — casi sin wikis ni referencias cómodas — así que armé esta herramienta para que cualquiera pueda explorar el contenido de Amellwind y preparar personajes sin saltar entre PDFs y pestañas sueltas.
 
@@ -12,7 +12,8 @@ Nació en mi mesa de rol: juego con amigos más entusiasmados con D&D que con Mo
 
 | Sección              | Ruta                | Descripción                                                                   |
 | -------------------- | ------------------- | ----------------------------------------------------------------------------- |
-| **Builder**          | `/builder`          | Character Builder — equipamiento, runas y cálculo de daño por turno _(ALPHA)_ |
+| **Builder**          | `/builder`          | Character Builder — stats, equipamiento, runas, DPT y **export/import Foundry VTT** _(ALPHA)_ |
+| **Damage Calculator**| `/damage-calculator`| Calculadora de daño esperado por turno comparando builds de armas (persistida) |
 | **Creation Guide**   | `/character-guide`  | Guía de creación de personajes del manual (species, roles, skills, etc.)      |
 | **Monstie Sidekick** | `/monstie-sidekick` | Reglas y creador de sidekicks Monstie                                         |
 | **NPC Generator**    | `/npc-generator`    | Generador de stat blocks para NPCs humanoides                                 |
@@ -21,6 +22,9 @@ Nació en mi mesa de rol: juego con amigos más entusiasmados con D&D que con Mo
 | **Feats**            | `/feats`            | Dotes (feats) del manual                                                      |
 | **Monsters**         | `/monsters`         | Bestiario MH con stat blocks, detalle y página dedicada por monstruo          |
 | **Runes**            | `/runes`            | Materiales de monstruo y planificador de builds (drawer lateral)              |
+| **Material Effects** | `/material-effects` | Efectos de materiales de monstruo (armadura/arma) en listado consultable      |
+| **Conditions**       | `/conditions`       | Condiciones del homebrew Amellwind                                            |
+| **Diseases**         | `/diseases`         | Enfermedades del homebrew Amellwind                                           |
 | **Weapons**          | `/weapons`          | Armas de cazador (Hunter Weapons) y optional features                         |
 | **Items**            | `/items`            | Catálogo de ítems de la Guía de Caza                                          |
 | **Shops**            | `/shops`            | Tiendas con carrito de compra                                                 |
@@ -43,6 +47,11 @@ Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son
 | **Races**       | `/dnd-races`                 | Especies, linajes y subrazas oficiales 5e                |
 | **Backgrounds** | `/dnd-backgrounds`           | Trasfondos oficiales 5e (2014 / 2024)                    |
 | **Feats**       | `/dnd-feats`                 | Dotes oficiales 5e                                       |
+| **Xanathar Backstory** | `/xanathar-backstory` | Generador de trasfondo aleatorio con las tablas de Xanathar (XGE) |
+
+### Integración con Foundry VTT
+
+El **Character Builder** puede **exportar** el personaje a un actor `character` de **Foundry VTT (sistema dnd5e v12)** listo para importar, e **importar** de vuelta un JSON de actor de Foundry para reconstruir el build dentro de la app. El export genera un único archivo JSON con clase/subclase, especie, trasfondo, dotes, conjuros, armas/armadura/trinkets, advancements y retrato/token; el import hace _matching_ de cada entidad contra los catálogos de la app (clases, especies, trasfondos, dotes, conjuros y equipo). Ambos flujos viven en `src/features/builder/foundry-export/` y `foundry-import/`, con botones en el `StatsPanel` del builder.
 
 ## Stack tecnológico
 
@@ -142,9 +151,13 @@ src/
 │   ├── data-table/         # Tabla reutilizable (TanStack Table)
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
-│   ├── builder/            # Character Builder (ALPHA)
+│   ├── builder/            # Character Builder (ALPHA) + export/import Foundry VTT
+│   ├── damage-calculator/  # Calculadora de daño por turno (persistida en localStorage)
 │   ├── monsters/           # Listado + detalle de monstruos MH
 │   ├── runes/              # Materiales + planificador (BuildDrawer)
+│   ├── material-effects/   # Efectos de materiales (armadura/arma)
+│   ├── conditions/         # Condiciones Amellwind
+│   ├── diseases/           # Enfermedades Amellwind
 │   ├── weapons/            # Hunter Weapons
 │   ├── shops/              # Items, tiendas, carrito
 │   ├── species/            # Especies GTMH
@@ -160,14 +173,21 @@ src/
 │   ├── environments/       # Biomas
 │   ├── spells/             # Compendio de conjuros 5e
 │   ├── classes/            # Compendio de clases 5e
-│   ├── dnd-items/          # Compendio de ítems 5e
+│   ├── dnd-items/          # Compendio de ítems 5e (+ catálogo de equipo del builder)
+│   ├── dnd-races/          # Especies oficiales 5e
+│   ├── dnd-backgrounds/    # Trasfondos oficiales 5e
+│   ├── dnd-feats/          # Dotes oficiales 5e
+│   ├── dnd-optionalfeatures/ # Optional features 5e (sin ruta; consumido por el builder)
+│   ├── xanathar-backstory/ # Generador de trasfondo (XGE)
 │   └── bestiary/           # Bestiario 5e
 └── shared/
-    ├── constants/          # URLs de API e IndexedDB
+    ├── constants/          # URLs de API, IndexedDB y constantes D&D (abilities, skills)
     ├── context/            # ThemeContext, SyncContext
     ├── db/                 # IndexedDB y sincronización
     ├── types/              # Tipos compartidos
-    ├── utils/              # Parser 5etools, CR, etc.
+    ├── services/           # create-entity-service (factory de services)
+    ├── components/         # ItemRefText, DndKeywordText, StatBlockSection
+    ├── utils/              # Parser 5etools, CR, dedupe-by-name, fluff, etc.
     └── data/               # fetch helper para JSON 5etools
 ```
 
