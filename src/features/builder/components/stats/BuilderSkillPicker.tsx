@@ -1,7 +1,7 @@
 import { cn } from "@/shared/utils/cn";
 import type { SkillKey, SkillProficiencyGrant, ProficiencySource } from "@/shared/types";
 import type { ProficiencySourceType } from "@/shared/types/proficiency.types";
-import { SKILL_LABELS } from "../../utils/check-modifiers.utils";
+import { SKILL_LABELS } from "@/shared/constants/dnd";
 import {
   badgeStyleForSource,
   dominantSourceType,

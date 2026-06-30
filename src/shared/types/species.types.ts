@@ -84,14 +84,7 @@ export interface Species {
   defenseGrants: import("./proficiency.types").DefenseGrant[];
 }
 
-export const ABILITY_LABELS: Record<AbilityKey, string> = {
-  str: "STR",
-  dex: "DEX",
-  con: "CON",
-  int: "INT",
-  wis: "WIS",
-  cha: "CHA",
-};
+export { ABILITY_ABBREVIATIONS as ABILITY_LABELS } from "@/shared/constants/dnd";
 
 export const SPECIES_CATEGORY_LABELS: Record<SpeciesCategory, string> = {
   ancestry: "Ancestry",

@@ -4,6 +4,7 @@ import {
   FeatSection,
 } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { ABILITY_ABBREVIATIONS } from "@/shared/constants/dnd";
 import {
   parseSkillProficiencyBlocks,
   parseExpertiseBlocks,
@@ -13,14 +14,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
-const ABILITY_LABELS: Record<string, string> = {
-  str: "STR",
-  dex: "DEX",
-  con: "CON",
-  int: "INT",
-  wis: "WIS",
-  cha: "CHA",
-};
+const ABILITY_LABELS: Record<string, string> = ABILITY_ABBREVIATIONS;
 
 function featId(raw: Raw): string {
   return `${raw.name}::${raw.source}`;

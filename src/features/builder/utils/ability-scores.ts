@@ -125,4 +125,4 @@ export function assignmentsToAbilityScores(
   return result;
 }
 
-export const ABILITY_KEYS: AbilityKey[] = ["str", "dex", "con", "int", "wis", "cha"];
+export { ABILITY_KEYS } from "@/shared/constants/dnd";

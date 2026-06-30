@@ -4,7 +4,7 @@ import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
   SKILL_LABELS,
   SKILL_ORDER,
-} from "../../utils/check-modifiers.utils";
+} from "@/shared/constants/dnd";
 import { useSectionCompletenessHighlight } from "../../context/BuildCompletenessContext";
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { BuilderPanel } from "../shared/BuilderPanel";

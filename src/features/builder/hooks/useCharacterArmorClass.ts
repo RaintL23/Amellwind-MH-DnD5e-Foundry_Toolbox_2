@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import type { AbilityKey } from "@/shared/types";
+import { ABILITY_KEYS } from "@/shared/constants/dnd";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useResolvedSpecies } from "./useResolvedSpecies";
@@ -8,15 +9,6 @@ import {
   getCharacterAcBreakdown,
   type CharacterAcBreakdown,
 } from "../utils/character-armor-class";
-
-const ABILITY_KEYS: AbilityKey[] = [
-  "str",
-  "dex",
-  "con",
-  "int",
-  "wis",
-  "cha",
-];
 
 export function useCharacterArmorClass(): CharacterAcBreakdown {
   const {

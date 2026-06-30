@@ -6,21 +6,13 @@ import type {
   Subclass,
 } from "@/shared/types";
 import { formatModifier } from "@/shared/utils/cr.utils";
+import { ABILITY_SHORT_LABELS as ABILITY_LABELS } from "@/shared/constants/dnd";
 import { isClothingArmor } from "../data/armor.data";
 import { getFeaturesUpToLevel } from "./builder-class.utils";
 import {
   detectNaturalArmorFromTraits,
   type NaturalArmorRule,
 } from "./species-natural-armor";
-
-const ABILITY_LABELS: Record<AbilityKey, string> = {
-  str: "Str",
-  dex: "Dex",
-  con: "Con",
-  int: "Int",
-  wis: "Wis",
-  cha: "Cha",
-};
 
 interface UnarmoredDefenseRule {
   featureName: string;

@@ -1,20 +1,5 @@
 import type { AbilityKey, Class, Subclass } from "@/shared/types";
-import { ABILITY_KEYS } from "../ability-scores";
-
-const ABILITY_NAME_TO_KEY: Record<string, AbilityKey> = {
-  strength: "str",
-  dexterity: "dex",
-  constitution: "con",
-  intelligence: "int",
-  wisdom: "wis",
-  charisma: "cha",
-  str: "str",
-  dex: "dex",
-  con: "con",
-  int: "int",
-  wis: "wis",
-  cha: "cha",
-};
+import { ABILITY_KEYS, ABILITY_NAME_TO_KEY } from "@/shared/constants/dnd";
 
 /** Maps a class spellcasting label (e.g. "Charisma") or raw key to an ability key. */
 export function parseSpellcastingAbilityKey(

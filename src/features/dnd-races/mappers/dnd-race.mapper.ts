@@ -12,6 +12,7 @@ import type {
   SpeciesNamedSpellGroup,
 } from "@/shared/types";
 import { ABILITY_LABELS as LABELS } from "@/shared/types";
+import { ABILITY_KEYS } from "@/shared/constants/dnd";
 import { SIZE_MAP } from "@/shared/utils/cr.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import {
@@ -70,7 +71,7 @@ function mapAbilityBonuses(ability: unknown): AbilityBonus[] {
     if (typeof block !== "object" || block === null) continue;
     const b = block as Raw;
     const fixed: Partial<Record<AbilityKey, number>> = {};
-    for (const key of ["str", "dex", "con", "int", "wis", "cha"] as AbilityKey[]) {
+    for (const key of ABILITY_KEYS) {
       if (typeof b[key] === "number") fixed[key] = b[key];
     }
     if (Object.keys(fixed).length) {

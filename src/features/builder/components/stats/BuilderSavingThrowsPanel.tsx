@@ -2,18 +2,9 @@ import { formatModifier } from "@/shared/utils/cr.utils";
 import { ABILITY_LABELS } from "@/shared/types";
 import { ShieldCheck } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
-import { ABILITY_ORDER } from "../../utils/check-modifiers.utils";
+import { ABILITY_ORDER, ABILITY_NAMES } from "@/shared/constants/dnd";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { BuilderStatRow } from "./BuilderStatRow";
-
-const ABILITY_FULL: Record<string, string> = {
-  str: "Strength",
-  dex: "Dexterity",
-  con: "Constitution",
-  int: "Intelligence",
-  wis: "Wisdom",
-  cha: "Charisma",
-};
 
 export function BuilderSavingThrowsPanel() {
   const { character, saveProficiencyAbilities, class: classRef } =
@@ -39,7 +30,7 @@ export function BuilderSavingThrowsPanel() {
               ]
             : undefined;
           const tooltip = proficient
-            ? `${ABILITY_FULL[ability]} save`
+            ? `${ABILITY_NAMES[ability]} save`
             : undefined;
           return (
             <BuilderStatRow

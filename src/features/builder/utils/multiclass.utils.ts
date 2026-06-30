@@ -13,6 +13,7 @@ import {
   type FeatHitPointBonus,
 } from "./character-hit-points";
 import { formatModifier } from "@/shared/utils/cr.utils";
+import { ABILITY_NAMES } from "@/shared/constants/dnd";
 
 const STANDARD_ASI_LEVELS = [4, 8, 12, 16, 19] as const;
 const FIGHTER_BONUS_ASI_CLASS_LEVELS = [6, 14] as const;
@@ -48,14 +49,7 @@ const THIRD_CASTER_SUBCLASSES = new Set([
   "arcane trickster",
 ]);
 
-const ABILITY_LABELS: Record<AbilityKey, string> = {
-  str: "Strength",
-  dex: "Dexterity",
-  con: "Constitution",
-  int: "Intelligence",
-  wis: "Wisdom",
-  cha: "Charisma",
-};
+const ABILITY_LABELS: Record<AbilityKey, string> = ABILITY_NAMES;
 
 export interface BuilderClassLevelEntry {
   classRef: CharacterSelectionRef | null;

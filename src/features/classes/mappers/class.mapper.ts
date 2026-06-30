@@ -9,6 +9,7 @@ import type {
   SubclassSpellBlock,
 } from "@/shared/types";
 import type { AbilityKey } from "@/shared/types";
+import { ABILITY_NAMES } from "@/shared/constants/dnd";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import {
   mapStatBlockEntries,
@@ -47,14 +48,7 @@ import type {
   SubclassSpellBlockRaw,
 } from "../utils/class-raw.types";
 
-const ABILITY_LABELS: Record<string, string> = {
-  str: "Strength",
-  dex: "Dexterity",
-  con: "Constitution",
-  int: "Intelligence",
-  wis: "Wisdom",
-  cha: "Charisma",
-};
+const ABILITY_LABELS: Record<string, string> = ABILITY_NAMES;
 
 const CASTER_LABELS: Record<string, string> = {
   full: "Full caster",

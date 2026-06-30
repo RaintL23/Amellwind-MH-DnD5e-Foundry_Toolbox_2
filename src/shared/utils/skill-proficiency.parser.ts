@@ -3,6 +3,10 @@
  * Used by class, background, species, dnd-race, and feat mappers.
  */
 import type { AbilityKey, SkillKey } from "@/shared/types";
+import {
+  ABILITY_NAME_TO_KEY,
+  SKILL_NAME_TO_KEY,
+} from "@/shared/constants/dnd";
 import type {
   SkillProficiencyGrant,
   ExpertiseGrant,
@@ -11,46 +15,13 @@ import type {
   SkillAdvantageGrant,
 } from "@/shared/types/proficiency.types";
 
+// Re-exported for existing importers (e.g. expertise-detection.utils).
+export { SKILL_NAME_TO_KEY };
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
-export const SKILL_NAME_TO_KEY: Record<string, SkillKey> = {
-  acrobatics: "acr",
-  "animal handling": "ani",
-  arcana: "arc",
-  athletics: "ath",
-  deception: "dec",
-  history: "his",
-  insight: "ins",
-  intimidation: "itm",
-  investigation: "inv",
-  medicine: "med",
-  nature: "nat",
-  perception: "prc",
-  performance: "prf",
-  persuasion: "per",
-  religion: "rel",
-  "sleight of hand": "slt",
-  stealth: "ste",
-  survival: "sur",
-};
-
 const ALL_SKILL_KEYS = Object.values(SKILL_NAME_TO_KEY) as SkillKey[];
-
-const ABILITY_NAME_TO_KEY: Record<string, AbilityKey> = {
-  strength: "str",
-  dexterity: "dex",
-  constitution: "con",
-  intelligence: "int",
-  wisdom: "wis",
-  charisma: "cha",
-  str: "str",
-  dex: "dex",
-  con: "con",
-  int: "int",
-  wis: "wis",
-  cha: "cha",
-};
 
 /** Read pick count from 5etools choose blocks (`count` or `amount`). */
 function parseChooseCount(choose: Raw): number {

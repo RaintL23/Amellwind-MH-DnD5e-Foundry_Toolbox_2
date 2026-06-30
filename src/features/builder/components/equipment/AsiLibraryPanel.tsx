@@ -2,7 +2,7 @@ import { ArrowLeft, TrendingUp } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { ABILITY_LABELS, type AbilityKey, type BuilderAsiChoices } from "@/shared/types";
 import { Select } from "@/components/ui/select";
-import { ABILITY_ORDER } from "../../utils/check-modifiers.utils";
+import { ABILITY_ORDER } from "@/shared/constants/dnd";
 
 const ABILITY_OPTIONS = ABILITY_ORDER.map((key) => ({
   key,
