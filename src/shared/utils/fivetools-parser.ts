@@ -134,3 +134,107 @@ export function splitDisplayTextLines(text: string): string[] {
     .map((line) => line.trim())
     .filter(Boolean);
 }
+
+export interface RenderEntriesOptions {
+  /** Bullet prefix for plain string list items. */
+  bullet?: string;
+  /** Render `{type:"item", name, entry}` list children as `• **name**: entry`. */
+  renderItemObjects?: boolean;
+  /** Emit a bold `**name**` heading for named `type:"entries"` blocks. */
+  boldNamedEntries?: boolean;
+  /** Emit a bold `**caption**` line for `type:"table"` blocks. */
+  renderTableCaption?: boolean;
+  /** Prefix added to each line produced by a `type:"inset"` block (null = none). */
+  insetPrefix?: string | null;
+}
+
+/**
+ * Canonical 5etools entries → display-paragraph renderer.
+ *
+ * Replaces the near-identical `renderEntries` helpers that several mappers
+ * (items, spells, optional features…) used to hand-roll. The richest behavior
+ * (used by items/spells) is the default; simpler consumers opt out of the
+ * extra node handling via {@link RenderEntriesOptions} so their output is
+ * preserved exactly.
+ */
+export function renderFiveToolsEntries(
+  entries: unknown[],
+  options: RenderEntriesOptions = {},
+  depth = 0,
+): string[] {
+  const {
+    bullet = "• ",
+    renderItemObjects = true,
+    boldNamedEntries = true,
+    renderTableCaption = true,
+    insetPrefix = "» ",
+  } = options;
+
+  const result: string[] = [];
+
+  for (const entry of entries) {
+    if (typeof entry === "string") {
+      const text = parseFiveToolsMarkup(entry).trim();
+      if (text) result.push(text);
+      continue;
+    }
+    if (typeof entry !== "object" || entry === null) continue;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const obj = entry as Record<string, any>;
+
+    if (obj.type === "list" && Array.isArray(obj.items)) {
+      for (const item of obj.items as unknown[]) {
+        if (typeof item === "string") {
+          const text = parseFiveToolsMarkup(item).trim();
+          if (text) result.push(`${bullet}${text}`);
+        } else if (
+          renderItemObjects &&
+          typeof item === "object" &&
+          item !== null
+        ) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const subObj = item as Record<string, any>;
+          if (subObj.type === "item" && subObj.name) {
+            result.push(
+              `${bullet}**${parseFiveToolsMarkup(String(subObj.name))}**: ${parseFiveToolsMarkup(String(subObj.entry ?? "")).trim()}`,
+            );
+          }
+        }
+      }
+    } else if (boldNamedEntries && obj.type === "entries" && obj.name) {
+      result.push(`**${parseFiveToolsMarkup(String(obj.name))}**`);
+      if (Array.isArray(obj.entries)) {
+        result.push(
+          ...renderFiveToolsEntries(obj.entries as unknown[], options, depth + 1),
+        );
+      }
+    } else if (renderTableCaption && obj.type === "table" && obj.caption) {
+      result.push(`**${parseFiveToolsMarkup(String(obj.caption))}**`);
+    } else if (obj.type === "inset" && Array.isArray(obj.entries)) {
+      const inset = renderFiveToolsEntries(
+        obj.entries as unknown[],
+        options,
+        depth,
+      );
+      result.push(...(insetPrefix ? inset.map((l) => `${insetPrefix}${l}`) : inset));
+    } else if (Array.isArray(obj.entries)) {
+      result.push(
+        ...renderFiveToolsEntries(obj.entries as unknown[], options, depth),
+      );
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Preset for mappers that only flatten strings, string list items and nested
+ * `entries`/`inset` blocks (no bold headings, tables, item objects or inset
+ * prefixes). Matches the legacy optional-feature renderers.
+ */
+export const PLAIN_ENTRY_OPTIONS: RenderEntriesOptions = {
+  renderItemObjects: false,
+  boldNamedEntries: false,
+  renderTableCaption: false,
+  insetPrefix: null,
+};
