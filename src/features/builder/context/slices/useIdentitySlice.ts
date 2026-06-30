@@ -12,8 +12,7 @@ import type {
 } from "@/shared/types";
 import { getBackgroundById } from "@/features/backgrounds/services/background.service";
 import { getClassById } from "@/features/classes/services/class.service";
-import { getSpeciesById } from "@/features/species/services/species.service";
-import { getDndRaceById } from "@/features/dnd-races/services/dnd-race.service";
+import { resolveSpeciesParts } from "../../utils/species-resolution.utils";
 import { formatAbilitySummary } from "@/features/dnd-races/mappers/dnd-race.mapper";
 import { getDndBackgroundById } from "@/features/dnd-backgrounds/services/dnd-background.service";
 import { resolveDndFeatForRef } from "@/features/dnd-feats/services/dnd-feat.service";
@@ -386,17 +385,10 @@ export function useIdentitySlice({
     let cancelled = false;
     setSpeciesDataLoading(true);
 
-    Promise.all([
-      getSpeciesById(species.id),
-      getDndRaceById(species.id),
-      species.subraceId
-        ? getDndRaceById(species.subraceId)
-        : Promise.resolve(undefined),
-    ])
-      .then(([mhSpecies, dndRace, dndSubrace]) => {
+    resolveSpeciesParts(species)
+      .then(({ base, dndSubrace }) => {
         if (cancelled) return;
 
-        const base = mhSpecies ?? dndRace;
         if (!base) {
           setSpeciesData(null);
           return;
@@ -440,16 +432,9 @@ export function useIdentitySlice({
     let cancelled = false;
 
     async function loadOriginFeatGrant() {
-      const [mhSpecies, dndRace, dndSubrace] = await Promise.all([
-        getSpeciesById(species!.id),
-        getDndRaceById(species!.id),
-        species!.subraceId
-          ? getDndRaceById(species!.subraceId)
-          : Promise.resolve(null),
-      ]);
+      const { base, dndSubrace } = await resolveSpeciesParts(species!);
       if (cancelled) return;
 
-      const base = mhSpecies ?? dndRace;
       const grant =
         base?.originFeatGrant ?? dndSubrace?.originFeatGrant ?? null;
       setSpeciesOriginFeatGrant(grant);

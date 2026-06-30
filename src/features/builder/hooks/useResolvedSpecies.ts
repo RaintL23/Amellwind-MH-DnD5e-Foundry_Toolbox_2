@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import type { SpeciesTrait } from "@/shared/types";
-import { getDndRaceById } from "@/features/dnd-races/services/dnd-race.service";
-import { getSpeciesById } from "@/features/species/services/species.service";
+import { resolveSpeciesParts } from "../utils/species-resolution.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 
 export interface ResolvedSpeciesData {
@@ -21,23 +20,18 @@ export function useResolvedSpecies(): ResolvedSpeciesData | null {
 
     let cancelled = false;
 
-    Promise.all([
-      getSpeciesById(speciesRef.id),
-      getDndRaceById(speciesRef.id),
-      speciesRef.subraceId ? getDndRaceById(speciesRef.subraceId) : Promise.resolve(undefined),
-    ]).then(([mhSpecies, dndRace, dndSubrace]) => {
+    resolveSpeciesParts(speciesRef).then(({ base, dndSubrace }) => {
       if (cancelled) return;
-      const resolved = mhSpecies ?? dndRace;
-      if (!resolved) {
+      if (!base) {
         setData(null);
         return;
       }
 
       const displayName = speciesRef.subraceName
-        ? `${resolved.name} (${speciesRef.subraceName})`
-        : resolved.name;
+        ? `${base.name} (${speciesRef.subraceName})`
+        : base.name;
       const traits = [
-        ...resolved.traits,
+        ...base.traits,
         ...(dndSubrace?.traits ?? []),
       ];
 
