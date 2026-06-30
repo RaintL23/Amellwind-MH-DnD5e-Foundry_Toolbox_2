@@ -11,7 +11,7 @@ import {
   DamageEntry,
   Entry,
 } from "@/shared/types";
-import { SKILL_ABILITY } from "../utils/check-modifiers.utils";
+import { SKILL_ABILITY } from "@/shared/constants/dnd";
 
 // ─── Proficiency Bonus by Level ──────────────────────────────────────────────
 
@@ -89,16 +89,15 @@ export class Character implements Actor {
     this.proficiencyBonus = PROFICIENCY_TABLE[this._level];
     this.initiative = this.getModifier("dex");
 
-    // HP: d10 hit die (fighter-like for testing)
-    const conMod = this.getModifier("con");
-    const hpAvg = 10 + conMod + (this._level - 1) * (6 + conMod);
-    this.hp = { average: hpAvg, current: hpAvg };
-
-    // AC: default 10 + DEX (unarmored)
-    this.armorClass = [{ ac: 10 + this.getModifier("dex") }];
-
-    // Speed
-    this.speed = { walk: 30 };
+    // Combat stats (HP / AC / Speed) are derived from the full build — class,
+    // species, feats, equipment, runes — by the dedicated selector hooks
+    // (useCharacterHitPoints / useCharacterArmorClass / useCharacterSpeed),
+    // which are the single source of truth. These fields are neutral
+    // placeholders to satisfy the Actor contract and are intentionally NOT
+    // computed here (doing so duplicated, and diverged from, that layer).
+    this.hp = {};
+    this.armorClass = [];
+    this.speed = {};
 
     // Saving throws (none proficient by default)
     this.savingThrows = {};

@@ -1,11 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
-import type { Feat } from "@/shared/types";
+import { useMemo } from "react";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
-import { getFeatById } from "@/features/feats/services/feat.service";
-import { getDndFeatById } from "@/features/dnd-feats/services/dnd-feat.service";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useSelectedClass, useSelectedSpecies } from "./useBuilderSelections";
-import { isAsiFeatSelection } from "../utils/builder-class.utils";
+import { useActiveResolvedFeats } from "./useActiveResolvedFeats";
 import {
   collectEquippedRuneSpeedBonuses,
   detectFeatSpeedBonuses,
@@ -18,9 +15,6 @@ import {
 export function useCharacterSpeed(): CharacterSpeedBreakdown {
   const {
     character,
-    featSelections,
-    speciesOriginFeat,
-    backgroundOriginFeat,
     subclass,
     mainHand,
     offHand,
@@ -31,7 +25,12 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
   } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const { species } = useSelectedSpecies();
-  const [featBonuses, setFeatBonuses] = useState<SpeedBonus[]>([]);
+  const activeFeats = useActiveResolvedFeats();
+
+  const featBonuses = useMemo<SpeedBonus[]>(
+    () => activeFeats.flatMap((feat) => detectFeatSpeedBonuses(feat)),
+    [activeFeats],
+  );
 
   const subclassData = useMemo(() => {
     if (!classData || !subclass) return null;
@@ -41,48 +40,6 @@ export function useCharacterSpeed(): CharacterSpeedBreakdown {
       ) ?? null
     );
   }, [classData, subclass]);
-
-  useEffect(() => {
-    const activeFeats = [
-      ...(speciesOriginFeat && !isAsiFeatSelection(speciesOriginFeat)
-        ? [speciesOriginFeat]
-        : []),
-      ...(backgroundOriginFeat && !isAsiFeatSelection(backgroundOriginFeat)
-        ? [backgroundOriginFeat]
-        : []),
-      ...featSelections.filter(
-        (feat): feat is NonNullable<typeof feat> =>
-          feat !== null && !isAsiFeatSelection(feat),
-      ),
-    ];
-
-    if (!activeFeats.length) {
-      setFeatBonuses([]);
-      return;
-    }
-
-    let cancelled = false;
-
-    Promise.all(
-      activeFeats.map((feat) =>
-        feat.source === "dnd2014" || feat.source === "dnd2024"
-          ? getDndFeatById(feat.id)
-          : getFeatById(feat.id),
-      ),
-    ).then((feats) => {
-      if (cancelled) return;
-
-      const bonuses = feats
-        .filter((feat): feat is Feat => feat !== undefined)
-        .flatMap((feat) => detectFeatSpeedBonuses(feat));
-
-      setFeatBonuses(bonuses);
-    });
-
-    return () => {
-      cancelled = true;
-    };
-  }, [featSelections, speciesOriginFeat, backgroundOriginFeat]);
 
   const runeBonuses = useMemo(
     () =>
