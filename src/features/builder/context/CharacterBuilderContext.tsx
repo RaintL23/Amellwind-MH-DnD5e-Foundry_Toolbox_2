@@ -43,6 +43,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   );
   const [abilityScoreMethod, setAbilityScoreMethod] =
     useState<AbilityScoreGenerationMethod>("manual");
+  const [portraitImage, setPortraitImage] = useState<string | null>(null);
+  const [tokenImage, setTokenImage] = useState<string | null>(null);
   const prevHomebrewRef = useRef(useAmellwindHomebrew);
 
   const proficiencyResetRef = useRef({
@@ -270,6 +272,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     setAttacksPerTurnOverride(null);
     setUseUnarmedStrike(false);
     setAbilityScoreMethod("manual");
+    setPortraitImage(null);
+    setTokenImage(null);
     identity.resetIdentitySlice();
     proficiency.resetProficiencySlice();
     spell.resetSpellSlice();
@@ -302,6 +306,10 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setUseUnarmedStrike,
       useAmellwindHomebrew,
       setUseAmellwindHomebrew,
+      portraitImage,
+      setPortraitImage,
+      tokenImage,
+      setTokenImage,
       mainHand: equipment.mainHand,
       offHand: equipment.offHand,
       armor: equipment.armor,
@@ -466,6 +474,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       useUnarmedStrike,
       useAmellwindHomebrew,
       setUseAmellwindHomebrew,
+      portraitImage,
+      tokenImage,
       resetBuild,
       identity,
       spell,

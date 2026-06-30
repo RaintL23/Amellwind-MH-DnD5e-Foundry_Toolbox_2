@@ -62,6 +62,12 @@ export interface CharacterBuilderContextValue {
   useAmellwindHomebrew: boolean;
   setUseAmellwindHomebrew: (value: boolean) => void;
 
+  // Character art (transient — not persisted). Data URLs.
+  portraitImage: string | null;
+  setPortraitImage: (dataUrl: string | null) => void;
+  tokenImage: string | null;
+  setTokenImage: (dataUrl: string | null) => void;
+
   // Equipment
   mainHand: EquippedWeapon | null;
   offHand: EquippedWeapon | null;

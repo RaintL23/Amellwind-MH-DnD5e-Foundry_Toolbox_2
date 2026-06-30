@@ -1,4 +1,5 @@
 import { StatsPanel } from "../stats/StatsPanel";
+import { BuilderImagePanel } from "../stats/BuilderImagePanel";
 import { BuilderCenterPanel } from "../equipment/BuilderCenterPanel";
 import { BuilderDerivedPanel } from "../stats/BuilderDerivedPanel";
 import { BuilderSavingThrowsPanel } from "../stats/BuilderSavingThrowsPanel";
@@ -52,6 +53,7 @@ function BuilderPageContent() {
           {/* Columna izquierda: stats + derivados + daño */}
           <div className="flex flex-col gap-2.5">
             <StatsPanel />
+            <BuilderImagePanel />
             <BuilderSavingThrowsPanel />
             <BuilderSkillChecksPanel />
           </div>
