@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Weapon } from "@/shared/types";
-import { getDndBuilderWeaponVariantsByName } from "../services/dnd-weapon.service";
+import { getDndWeaponVariantsByName } from "@/features/dnd-items/services/dnd-equipment.service";
 
 export function useDndWeaponVariants(
   enabled: boolean,
@@ -15,7 +15,7 @@ export function useDndWeaponVariants(
     }
 
     let cancelled = false;
-    void getDndBuilderWeaponVariantsByName(weaponName).then((result) => {
+    void getDndWeaponVariantsByName(weaponName).then((result) => {
       if (!cancelled) setVariants(result);
     });
 

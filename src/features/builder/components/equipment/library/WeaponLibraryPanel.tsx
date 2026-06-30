@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
-import { getDndBuilderWeapons } from "@/features/builder/services/dnd-weapon.service";
+import { getDndWeapons } from "@/features/dnd-items/services/dnd-equipment.service";
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
-import { weaponsToSourceVariants } from "@/features/builder/mappers/dnd-weapon.mapper";
+import { weaponsToSourceVariants } from "@/features/dnd-items/mappers/dnd-weapon.mapper";
 import { useDndWeaponVariants } from "@/features/builder/hooks/useDndWeaponVariants";
 
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
@@ -113,7 +113,7 @@ export function WeaponLibraryPanel({
 
     const load = useAmellwindHomebrew
       ? getAllWeapons()
-      : getDndBuilderWeapons(prefer2024);
+      : getDndWeapons(prefer2024);
 
     load.then(setAllWeapons).finally(() => setWeaponsLoading(false));
   }, [isWeaponSlot, selectedSlot, useAmellwindHomebrew, prefer2024]);

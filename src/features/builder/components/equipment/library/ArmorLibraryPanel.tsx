@@ -7,7 +7,7 @@ import {
   STANDALONE_SHIELD,
 } from "@/features/builder/data/shield.data";
 import { PLACEHOLDER_TRINKETS } from "@/features/builder/data/trinket.data";
-import { getDndBuilderArmors } from "@/features/builder/services/dnd-armor.service";
+import { getDndArmors } from "@/features/dnd-items/services/dnd-equipment.service";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
@@ -92,7 +92,7 @@ export function ArmorLibraryPanel({
   useEffect(() => {
     if (!isArmorSlot || useAmellwindHomebrew) return;
     setArmorsLoading(true);
-    getDndBuilderArmors(prefer2024)
+    getDndArmors(prefer2024)
       .then(setDndArmors)
       .finally(() => setArmorsLoading(false));
   }, [isArmorSlot, useAmellwindHomebrew, prefer2024]);

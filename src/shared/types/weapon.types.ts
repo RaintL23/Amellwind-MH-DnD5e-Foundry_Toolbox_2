@@ -40,6 +40,8 @@ export interface Weapon {
   baseFeatureNames: string[];
   /** 5etools ammoType uid, e.g. arrow|phb */
   ammoType?: string;
+  /** Foundry weapon mastery key (e.g. "vex", "topple"); from 2024 base weapons. */
+  mastery?: string;
   /** Normalized rarity label for D&D filters and badges. */
   itemRarityLabel?: string;
   /** Base item name for magic variants (e.g. Glaive for Silvered Glaive). */

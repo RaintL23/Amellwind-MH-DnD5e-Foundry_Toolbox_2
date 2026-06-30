@@ -10,8 +10,10 @@ import {
 import { Weapon, ArmorItem, CartEntry } from "@/shared/types";
 import { useCart } from "@/features/shops/context/CartContext";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
-import { getDndBuilderWeapons } from "../services/dnd-weapon.service";
-import { getDndBuilderArmors } from "../services/dnd-armor.service";
+import {
+  getDndArmors,
+  getDndWeapons,
+} from "@/features/dnd-items/services/dnd-equipment.service";
 import { loadUseAmellwindHomebrew } from "../storage/builder.storage";
 import {
   classifyCartEntry,
@@ -103,8 +105,8 @@ export function BuilderInventoryProvider({
             armors: MH_ARMOR_CATALOG,
           }))
         : Promise.all([
-            getDndBuilderWeapons(prefer2024),
-            getDndBuilderArmors(prefer2024),
+            getDndWeapons(prefer2024),
+            getDndArmors(prefer2024),
           ]).then(([weapons, armors]) => ({ weapons, armors }));
 
       load

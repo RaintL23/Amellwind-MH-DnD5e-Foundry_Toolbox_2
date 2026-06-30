@@ -76,6 +76,8 @@ export interface ArmorItem {
   runeSlots: number;
   stealthDisadvantage: boolean;
   weight: number;
+  /** Rendered item description (from 5etools entries), if available. */
+  description?: string;
   /** D&D catalog items from items-base / magic variants. */
   contentSource?: "dnd";
   /** Normalized rarity label for D&D filters and badges. */
