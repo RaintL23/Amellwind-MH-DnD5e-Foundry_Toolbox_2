@@ -1,45 +1,40 @@
 import { Species, SpeciesCategory } from "@/shared/types";
 import { getRacesRaw } from "@/shared/db/sync.service";
+import { createEntityService } from "@/shared/services/create-entity-service";
 import { mapSpecies } from "../mappers/species.mapper";
 
-let cache: Species[] | null = null;
+type RawSpeciesEntry = unknown;
 
-export async function getAllSpecies(): Promise<Species[]> {
-  if (cache) return cache;
-  const rawData = await getRacesRaw();
-  cache = (rawData as unknown[]).map((raw) => mapSpecies(raw));
-  return cache;
-}
+const service = createEntityService<RawSpeciesEntry, Species>({
+  loadRaw: async () => (await getRacesRaw()) as unknown[],
+  map: (raw) => mapSpecies(raw),
+  idOf: (species) => species.id,
+});
 
-export async function getSpeciesById(id: string): Promise<Species | undefined> {
-  const all = await getAllSpecies();
-  return all.find((s) => s.id === id);
-}
+export const getAllSpecies = service.getAll;
+export const getSpeciesById = service.getById;
+export const clearSpeciesCache = service.clearCache;
 
 export async function getSpeciesByName(name: string): Promise<Species[]> {
-  const all = await getAllSpecies();
+  const all = await service.getAll();
   return all.filter((s) => s.name.toLowerCase() === name.toLowerCase());
 }
 
 export async function getSpeciesByCategory(
   category: SpeciesCategory,
 ): Promise<Species[]> {
-  const all = await getAllSpecies();
+  const all = await service.getAll();
   return all.filter((s) => s.category === category);
 }
 
 export async function getSubracesOf(parentName: string): Promise<Species[]> {
-  const all = await getAllSpecies();
+  const all = await service.getAll();
   return all.filter(
     (s) => s.parentSpecies?.toLowerCase() === parentName.toLowerCase(),
   );
 }
 
 export async function getRootSpecies(): Promise<Species[]> {
-  const all = await getAllSpecies();
+  const all = await service.getAll();
   return all.filter((s) => !s.isSubrace);
-}
-
-export function clearSpeciesCache(): void {
-  cache = null;
 }

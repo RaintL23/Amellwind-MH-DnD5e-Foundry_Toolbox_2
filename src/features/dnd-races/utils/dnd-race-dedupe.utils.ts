@@ -1,4 +1,5 @@
 import type { DndRace, DndRaceKind } from "@/shared/types";
+import { dedupeByNameWithVariants } from "@/shared/utils/dedupe-by-name.utils";
 
 const CANONICAL_SOURCE_PRIORITY = ["XPHB", "PHB", "MPMM", "VGM", "EEPC", "EGW"];
 
@@ -31,23 +32,6 @@ export function compareRacesForGroupedList(a: DndRace, b: DndRace): number {
   return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
 }
 
-function sortRacesForGroupedList(races: DndRace[]): DndRace[] {
-  return [...races].sort(compareRacesForGroupedList);
-}
-
-function sourcePriority(source: string): number {
-  const index = CANONICAL_SOURCE_PRIORITY.indexOf(source);
-  return index === -1 ? CANONICAL_SOURCE_PRIORITY.length : index;
-}
-
-function pickCanonicalRace(group: DndRace[]): DndRace {
-  return [...group].sort((a, b) => {
-    const byPriority = sourcePriority(a.source) - sourcePriority(b.source);
-    if (byPriority !== 0) return byPriority;
-    return a.source.localeCompare(b.source);
-  })[0];
-}
-
 function buildSearchText(group: DndRace[]): string {
   const parts: string[] = [];
   for (const race of group) {
@@ -65,27 +49,11 @@ function buildSearchText(group: DndRace[]): string {
  * One row per race name. Aggregates variant sources for filtering and dialog.
  */
 export function dedupeDndRacesByName(races: DndRace[]): DndRace[] {
-  const byName = new Map<string, DndRace[]>();
-  for (const race of races) {
-    const group = byName.get(race.name) ?? [];
-    group.push(race);
-    byName.set(race.name, group);
-  }
-
-  const list = Array.from(byName.values()).map((group) => {
-    const canonical = pickCanonicalRace(group);
-    const variantSources = [...new Set(group.map((r) => r.source))].sort((a, b) =>
-      a.localeCompare(b),
-    );
-    return {
-      ...canonical,
-      variantCount: group.length,
-      variantSources,
-      searchText: buildSearchText(group),
-    };
+  return dedupeByNameWithVariants(races, {
+    sourcePriority: CANONICAL_SOURCE_PRIORITY,
+    buildSearchText,
+    sort: compareRacesForGroupedList,
   });
-
-  return sortRacesForGroupedList(list);
 }
 
 function buildBuilderSearchText(rootName: string, allRaces: DndRace[]): string {
@@ -106,30 +74,12 @@ function buildBuilderSearchText(rootName: string, allRaces: DndRace[]): string {
  */
 export function dedupeDndRootRacesForBuilderList(races: DndRace[]): DndRace[] {
   const roots = races.filter((r) => !r.parentName);
-  const byName = new Map<string, DndRace[]>();
-
-  for (const race of roots) {
-    const group = byName.get(race.name) ?? [];
-    group.push(race);
-    byName.set(race.name, group);
-  }
-
-  return Array.from(byName.values())
-    .map((group) => {
-      const canonical = pickCanonicalRace(group);
-      const variantSources = [...new Set(group.map((r) => r.source))].sort(
-        (a, b) => a.localeCompare(b),
-      );
-      return {
-        ...canonical,
-        variantCount: group.length,
-        variantSources,
-        searchText: buildBuilderSearchText(canonical.name, races),
-      };
-    })
-    .sort((a, b) =>
+  return dedupeByNameWithVariants(roots, {
+    sourcePriority: CANONICAL_SOURCE_PRIORITY,
+    buildSearchText: (group) => buildBuilderSearchText(group[0].name, races),
+    sort: (a, b) =>
       a.name.localeCompare(b.name, undefined, { sensitivity: "base" }),
-    );
+  });
 }
 
 export function filterDndSubracesForParent(

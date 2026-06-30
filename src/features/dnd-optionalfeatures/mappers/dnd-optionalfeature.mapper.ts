@@ -4,7 +4,7 @@ import type {
   OptionalFeatureFeatProgression,
   SubclassSpellBlock,
 } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { parseFiveToolsMarkup, PLAIN_ENTRY_OPTIONS, renderFiveToolsEntries } from "@/shared/utils/fivetools-parser";
 
 function classId(name: string, source: string): string {
   return `${source}::${name}`;
@@ -14,30 +14,7 @@ function classId(name: string, source: string): string {
 type Raw = Record<string, any>;
 
 function renderEntries(entries: unknown[]): string[] {
-  const result: string[] = [];
-
-  for (const entry of entries) {
-    if (typeof entry === "string") {
-      const text = parseFiveToolsMarkup(entry).trim();
-      if (text) result.push(text);
-      continue;
-    }
-    if (typeof entry !== "object" || entry === null) continue;
-    const obj = entry as Raw;
-
-    if (obj.type === "list" && Array.isArray(obj.items)) {
-      for (const item of obj.items as unknown[]) {
-        if (typeof item === "string") {
-          const text = parseFiveToolsMarkup(item).trim();
-          if (text) result.push(`• ${text}`);
-        }
-      }
-    } else if (Array.isArray(obj.entries)) {
-      result.push(...renderEntries(obj.entries as unknown[]));
-    }
-  }
-
-  return result;
+  return renderFiveToolsEntries(entries, PLAIN_ENTRY_OPTIONS);
 }
 
 function mapAdditionalSpells(raw: unknown): SubclassSpellBlock[] | undefined {

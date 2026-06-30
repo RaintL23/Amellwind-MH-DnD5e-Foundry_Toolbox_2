@@ -1,23 +1,14 @@
 import { Background } from "@/shared/types";
 import { getBackgroundsRaw } from "@/shared/db/sync.service";
+import { createEntityService } from "@/shared/services/create-entity-service";
 import { mapBackground } from "../mappers/background.mapper";
 
-let cache: Background[] | null = null;
+const service = createEntityService<unknown, Background>({
+  loadRaw: async () => (await getBackgroundsRaw()) as unknown[],
+  map: (raw) => mapBackground(raw),
+  idOf: (background) => background.id,
+});
 
-export async function getAllBackgrounds(): Promise<Background[]> {
-  if (cache) return cache;
-  const rawData = await getBackgroundsRaw();
-  cache = (rawData as unknown[]).map((raw) => mapBackground(raw));
-  return cache;
-}
-
-export async function getBackgroundById(
-  id: string,
-): Promise<Background | undefined> {
-  const all = await getAllBackgrounds();
-  return all.find((b) => b.id === id);
-}
-
-export function clearBackgroundCache(): void {
-  cache = null;
-}
+export const getAllBackgrounds = service.getAll;
+export const getBackgroundById = service.getById;
+export const clearBackgroundCache = service.clearCache;

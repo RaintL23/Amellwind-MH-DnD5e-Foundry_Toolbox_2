@@ -1,25 +1,21 @@
 import { Weapon } from "@/shared/types";
-import { mapWeapon } from "../mappers/weapon.mapper";
 import { getGtmhData } from "@/shared/db/sync.service";
+import { createEntityService } from "@/shared/services/create-entity-service";
+import { mapWeapon } from "../mappers/weapon.mapper";
 
-let cache: Weapon[] | null = null;
+type RawWeaponEntry = Record<string, unknown>;
 
-export async function getAllWeapons(): Promise<Weapon[]> {
-  if (cache) return cache;
+const service = createEntityService<RawWeaponEntry, Weapon>({
+  loadRaw: async () => {
+    const raw = await getGtmhData();
+    if (!raw || !Array.isArray(raw)) return [];
+    return (raw as RawWeaponEntry[]).filter((item) => item.type === "HW");
+  },
+  map: (raw) => mapWeapon(raw),
+});
 
-  const raw = await getGtmhData();
-  if (!raw || !Array.isArray(raw)) return [];
-
-  cache = (raw as Record<string, unknown>[])
-    .filter((item) => item.type === "HW")
-    .map(mapWeapon);
-
-  return cache;
-}
-
-export function clearWeaponCache(): void {
-  cache = null;
-}
+export const getAllWeapons = service.getAll;
+export const clearWeaponCache = service.clearCache;
 
 export function formatWeaponValue(valueCp: number): string {
   const gp = valueCp / 100;

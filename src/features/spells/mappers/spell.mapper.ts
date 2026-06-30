@@ -1,5 +1,8 @@
 import { Spell, SpellComponents, SpellSchool } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  parseFiveToolsMarkup,
+  renderFiveToolsEntries,
+} from "@/shared/utils/fivetools-parser";
 import { isSpellListFilterClass } from "../utils/spell-class.constants";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -95,43 +98,8 @@ function mapDuration(raw: Raw): { text: string; isConcentration: boolean } {
   return { text: type.charAt(0).toUpperCase() + type.slice(1), isConcentration };
 }
 
-function renderEntries(entries: unknown[], depth = 0): string[] {
-  const result: string[] = [];
-  for (const entry of entries) {
-    if (typeof entry === "string") {
-      const text = parseFiveToolsMarkup(entry).trim();
-      if (text) result.push(text);
-      continue;
-    }
-    if (typeof entry !== "object" || entry === null) continue;
-    const obj = entry as Raw;
-
-    if (obj.type === "list" && Array.isArray(obj.items)) {
-      for (const item of obj.items as unknown[]) {
-        if (typeof item === "string") {
-          result.push(`• ${parseFiveToolsMarkup(item).trim()}`);
-        } else if (typeof item === "object" && item !== null) {
-          const subObj = item as Raw;
-          if (subObj.type === "item" && subObj.name) {
-            result.push(`• **${parseFiveToolsMarkup(String(subObj.name))}**: ${parseFiveToolsMarkup(String(subObj.entry ?? "")).trim()}`);
-          }
-        }
-      }
-    } else if (obj.type === "entries" && obj.name) {
-      const name = parseFiveToolsMarkup(String(obj.name));
-      result.push(`**${name}**`);
-      if (Array.isArray(obj.entries)) {
-        result.push(...renderEntries(obj.entries as unknown[], depth + 1));
-      }
-    } else if (obj.type === "table") {
-      if (obj.caption) result.push(`**${parseFiveToolsMarkup(String(obj.caption))}**`);
-    } else if (obj.type === "inset" && Array.isArray(obj.entries)) {
-      result.push(...renderEntries(obj.entries as unknown[], depth).map((l) => `» ${l}`));
-    } else if (Array.isArray(obj.entries)) {
-      result.push(...renderEntries(obj.entries as unknown[], depth));
-    }
-  }
-  return result;
+function renderEntries(entries: unknown[]): string[] {
+  return renderFiveToolsEntries(entries);
 }
 
 function mapSpellClassLists(raw: Raw): { classNames: string[]; classes: string[] } {

@@ -1,6 +1,6 @@
 import type { DndItem, DndItemRarity } from "@/shared/types/dnd-item.types";
 import { DMG_TYPE_LABELS } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { renderFiveToolsEntries } from "@/shared/utils/fivetools-parser";
 import type { ItemBaseIndexes, RawItemEntity } from "../utils/item-raw.types";
 import { formatDndItemProperties } from "../utils/item-property.utils";
 import { itemId, unpackItemTypeUid } from "../utils/item-uids.utils";
@@ -18,52 +18,6 @@ const RARITY_LABELS: Record<string, string> = {
 };
 
 const GENERIC_VARIANT_ABBREV = "GV";
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Raw = Record<string, any>;
-
-function renderEntries(entries: unknown[], depth = 0): string[] {
-  const result: string[] = [];
-  for (const entry of entries) {
-    if (typeof entry === "string") {
-      const text = parseFiveToolsMarkup(entry).trim();
-      if (text) result.push(text);
-      continue;
-    }
-    if (typeof entry !== "object" || entry === null) continue;
-    const obj = entry as Raw;
-
-    if (obj.type === "list" && Array.isArray(obj.items)) {
-      for (const item of obj.items as unknown[]) {
-        if (typeof item === "string") {
-          result.push(`• ${parseFiveToolsMarkup(item).trim()}`);
-        } else if (typeof item === "object" && item !== null) {
-          const subObj = item as Raw;
-          if (subObj.type === "item" && subObj.name) {
-            result.push(
-              `• **${parseFiveToolsMarkup(String(subObj.name))}**: ${parseFiveToolsMarkup(String(subObj.entry ?? "")).trim()}`,
-            );
-          }
-        }
-      }
-    } else if (obj.type === "entries" && obj.name) {
-      const name = parseFiveToolsMarkup(String(obj.name));
-      result.push(`**${name}**`);
-      if (Array.isArray(obj.entries)) {
-        result.push(...renderEntries(obj.entries as unknown[], depth + 1));
-      }
-    } else if (obj.type === "table" && obj.caption) {
-      result.push(`**${parseFiveToolsMarkup(String(obj.caption))}**`);
-    } else if (obj.type === "inset" && Array.isArray(obj.entries)) {
-      result.push(
-        ...renderEntries(obj.entries as unknown[], depth).map((l) => `» ${l}`),
-      );
-    } else if (Array.isArray(obj.entries)) {
-      result.push(...renderEntries(obj.entries as unknown[], depth));
-    }
-  }
-  return result;
-}
 
 function formatValueGp(valueCp: number | null | undefined): string {
   if (valueCp == null || valueCp === undefined) return "—";
@@ -117,7 +71,7 @@ function mapDamage(raw: RawItemEntity): string | null {
   return parts.length ? parts.join(" ") : null;
 }
 
-function parseWeaponCategory(
+export function parseWeaponCategory(
   raw: RawItemEntity,
 ): "simple" | "martial" | undefined {
   const category = raw.weaponCategory;
@@ -138,7 +92,7 @@ export function mapDndItem(
   const rarity = (raw.rarity ?? "none") as DndItemRarity;
   const isMundane = rarity === "none";
   const typeCode = raw.type != null ? String(raw.type) : undefined;
-  const description = renderEntries([
+  const description = renderFiveToolsEntries([
     ...(Array.isArray(raw.entries) ? raw.entries : []),
     ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
   ]);

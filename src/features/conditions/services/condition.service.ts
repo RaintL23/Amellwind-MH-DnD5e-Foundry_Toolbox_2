@@ -1,23 +1,14 @@
 import type { MhCondition } from "@/shared/types";
 import { getConditionsRaw } from "@/shared/db/sync.service";
+import { createEntityService } from "@/shared/services/create-entity-service";
 import { mapCondition } from "../mappers/condition.mapper";
 
-let cache: MhCondition[] | null = null;
+const service = createEntityService<unknown, MhCondition>({
+  loadRaw: async () => (await getConditionsRaw()) as unknown[],
+  map: (raw) => mapCondition(raw),
+  idOf: (condition) => condition.id,
+});
 
-export async function getAllConditions(): Promise<MhCondition[]> {
-  if (cache) return cache;
-  const rawData = await getConditionsRaw();
-  cache = (rawData as unknown[]).map((raw) => mapCondition(raw));
-  return cache;
-}
-
-export async function getConditionById(
-  id: string,
-): Promise<MhCondition | undefined> {
-  const all = await getAllConditions();
-  return all.find((condition) => condition.id === id);
-}
-
-export function clearConditionCache(): void {
-  cache = null;
-}
+export const getAllConditions = service.getAll;
+export const getConditionById = service.getById;
+export const clearConditionCache = service.clearCache;

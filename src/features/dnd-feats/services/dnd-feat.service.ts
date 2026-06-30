@@ -5,118 +5,62 @@ import {
 } from "@/shared/constants/api.constants";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 import { resolveByNameSource } from "@/shared/utils/entity-copy.utils";
+import { attachFluffEntries } from "@/shared/utils/fluff.utils";
+import {
+  bySource,
+  createEntityService,
+} from "@/shared/services/create-entity-service";
 import { mapDndFeat } from "../mappers/dnd-feat.mapper";
 import { dedupeDndFeatsByName } from "../utils/dnd-feat-dedupe.utils";
 
-let cache: DndFeat[] | null = null;
-let listCache: DndFeat[] | null = null;
-let byNameIndex: Map<string, DndFeat[]> | null = null;
-let byIdIndex: Map<string, DndFeat> | null = null;
-
-function buildIndexes(all: DndFeat[]): void {
-  byIdIndex = new Map(all.map((f) => [f.id, f]));
-
-  const byName = new Map<string, DndFeat[]>();
-  for (const feat of all) {
-    const group = byName.get(feat.name) ?? [];
-    group.push(feat);
-    byName.set(feat.name, group);
-  }
-  byNameIndex = byName;
-  listCache = dedupeDndFeatsByName(all);
-}
-
 type RawFeatEntry = Record<string, unknown>;
 
-function buildFluffIndex(
-  fluffEntries: RawFeatEntry[],
-): Map<string, RawFeatEntry> {
-  const index = new Map<string, RawFeatEntry>();
-  for (const entry of fluffEntries) {
-    const name = entry.name;
-    const source = entry.source;
-    if (typeof name === "string" && typeof source === "string") {
-      index.set(`${name}|${source}`.toLowerCase(), entry);
-    }
-  }
-  return index;
-}
+const service = createEntityService<RawFeatEntry, DndFeat>({
+  loadRaw: async () => {
+    const [data, fluffData] = await Promise.all([
+      fetchFiveToolsJson<{ feat?: RawFeatEntry[] }>(FEATS_JSON_URL, "feats.json"),
+      fetchFiveToolsJson<{ featFluff?: RawFeatEntry[] }>(
+        FLUFF_FEATS_JSON_URL,
+        "fluff-feats.json",
+      ),
+    ]);
 
-function attachFluff(
-  raw: RawFeatEntry,
-  fluffIndex: Map<string, RawFeatEntry>,
-): RawFeatEntry {
-  const name = raw.name;
-  const source = raw.source;
-  if (typeof name !== "string" || typeof source !== "string") return raw;
-  if (raw.fluff) return raw;
+    const rawFeats = Array.isArray(data.feat) ? data.feat : [];
+    const fluffEntries = Array.isArray(fluffData.featFluff)
+      ? fluffData.featFluff
+      : [];
 
-  const fluffEntry = fluffIndex.get(`${name}|${source}`.toLowerCase());
-  if (fluffEntry && raw.hasFluff !== false) {
-    return { ...raw, fluff: fluffEntry };
-  }
-  return raw;
-}
+    const withFluff = attachFluffEntries(rawFeats, fluffEntries);
 
-export async function getAllDndFeats(): Promise<DndFeat[]> {
-  if (cache) return cache;
+    return resolveByNameSource(
+      withFluff as (RawFeatEntry & { name: string; source: string })[],
+    );
+  },
+  map: (raw) => mapDndFeat(raw),
+  idOf: (feat) => feat.id,
+  nameOf: (feat) => feat.name,
+  dedupe: dedupeDndFeatsByName,
+  sortVariants: bySource,
+});
 
-  const [data, fluffData] = await Promise.all([
-    fetchFiveToolsJson<{ feat?: RawFeatEntry[] }>(
-      FEATS_JSON_URL,
-      "feats.json",
-    ),
-    fetchFiveToolsJson<{ featFluff?: RawFeatEntry[] }>(
-      FLUFF_FEATS_JSON_URL,
-      "fluff-feats.json",
-    ),
-  ]);
-
-  const rawFeats = Array.isArray(data.feat) ? data.feat : [];
-  const fluffEntries = Array.isArray(fluffData.featFluff)
-    ? fluffData.featFluff
-    : [];
-  const fluffIndex = buildFluffIndex(fluffEntries);
-
-  const withFluff = rawFeats.map((raw) => attachFluff(raw, fluffIndex));
-
-  const resolved = resolveByNameSource(
-    withFluff as (RawFeatEntry & { name: string; source: string })[],
-  );
-
-  cache = resolved.map((raw) => mapDndFeat(raw));
-  buildIndexes(cache);
-  return cache;
-}
-
-export async function getListDndFeats(): Promise<DndFeat[]> {
-  await getAllDndFeats();
-  return listCache ?? [];
-}
-
-export async function getDndFeatsByName(name: string): Promise<DndFeat[]> {
-  await getAllDndFeats();
-  const group = byNameIndex?.get(name) ?? [];
-  return [...group].sort((a, b) => a.source.localeCompare(b.source));
-}
-
-export async function getDndFeatById(id: string): Promise<DndFeat | undefined> {
-  await getAllDndFeats();
-  return byIdIndex?.get(id);
-}
+export const getAllDndFeats = service.getAll;
+export const getListDndFeats = service.getList;
+export const getDndFeatsByName = service.getByName;
+export const getDndFeatById = service.getById;
+export const clearDndFeatCache = service.clearCache;
 
 export async function resolveDndFeatForRef(
   ref: DndBackgroundFeatRef,
 ): Promise<DndFeat | undefined> {
-  const exact = await getDndFeatById(ref.id);
+  const exact = await service.getById(ref.id);
   if (exact) return exact;
 
   if (ref.qualifier) {
     const variantName = `${ref.name}; ${ref.qualifier}`;
-    const variantExact = await getDndFeatById(`${variantName}::${ref.source}`);
+    const variantExact = await service.getById(`${variantName}::${ref.source}`);
     if (variantExact) return variantExact;
 
-    const variantGroup = await getDndFeatsByName(variantName);
+    const variantGroup = await service.getByName(variantName);
     if (variantGroup.length > 0) {
       return (
         variantGroup.find((f) => f.source === ref.source) ??
@@ -126,7 +70,7 @@ export async function resolveDndFeatForRef(
     }
   }
 
-  const variants = await getDndFeatsByName(ref.name);
+  const variants = await service.getByName(ref.name);
   if (variants.length === 0) return undefined;
 
   return (
@@ -134,11 +78,4 @@ export async function resolveDndFeatForRef(
     variants.find((f) => f.source === "XPHB") ??
     variants[0]
   );
-}
-
-export function clearDndFeatCache(): void {
-  cache = null;
-  listCache = null;
-  byNameIndex = null;
-  byIdIndex = null;
 }

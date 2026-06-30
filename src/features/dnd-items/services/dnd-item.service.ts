@@ -2,6 +2,7 @@ import type { DndItem } from "@/shared/types/dnd-item.types";
 import { DEFAULT_DND_ITEM_SOURCES } from "@/shared/constants/api.constants";
 import { clearFiveToolsJsonCache } from "@/shared/data/fivetools-fetch";
 import { mapDndItem } from "../mappers/item.mapper";
+import { clearDndEquipmentCache } from "./dnd-equipment.service";
 import {
   clearItemListBuilderCache,
   getAllRawItems,
@@ -136,5 +137,6 @@ export function clearDndItemCache(): void {
   indexesCache = null;
   mappedKeys.clear();
   clearItemListBuilderCache();
+  clearDndEquipmentCache();
   clearFiveToolsJsonCache();
 }

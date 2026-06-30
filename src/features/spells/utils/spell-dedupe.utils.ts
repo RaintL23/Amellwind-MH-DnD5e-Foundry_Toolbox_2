@@ -1,5 +1,6 @@
 import { Spell } from "@/shared/types";
 import { SPELL_SOURCE_FILES } from "@/shared/constants/api.constants";
+import { dedupeByNameWithVariants } from "@/shared/utils/dedupe-by-name.utils";
 
 /** Preferencia al elegir la fila visible en la lista */
 const CANONICAL_SOURCE_PRIORITY = [
@@ -9,19 +10,6 @@ const CANONICAL_SOURCE_PRIORITY = [
     ...Object.keys(SPELL_SOURCE_FILES),
   ]),
 ];
-
-function sourcePriority(source: string): number {
-  const index = CANONICAL_SOURCE_PRIORITY.indexOf(source);
-  return index === -1 ? CANONICAL_SOURCE_PRIORITY.length : index;
-}
-
-function pickCanonicalSpell(group: Spell[]): Spell {
-  return [...group].sort((a, b) => {
-    const bySource = sourcePriority(a.source) - sourcePriority(b.source);
-    if (bySource !== 0) return bySource;
-    return a.source.localeCompare(b.source);
-  })[0];
-}
 
 function mergeClassNames(group: Spell[]): string[] {
   const names = new Set<string>();
@@ -58,28 +46,13 @@ function buildSearchText(group: Spell[]): string {
  * Una fila por nombre de hechizo. Metadatos de variantes para filtros y diálogo.
  */
 export function dedupeSpellsByName(spells: Spell[]): Spell[] {
-  const byName = new Map<string, Spell[]>();
-
-  for (const spell of spells) {
-    const group = byName.get(spell.name) ?? [];
-    group.push(spell);
-    byName.set(spell.name, group);
-  }
-
-  return Array.from(byName.values()).map((group) => {
-    const canonical = pickCanonicalSpell(group);
-    const variantSources = [...new Set(group.map((s) => s.source))].sort((a, b) =>
-      a.localeCompare(b),
-    );
-
-    return {
-      ...canonical,
+  return dedupeByNameWithVariants(spells, {
+    sourcePriority: CANONICAL_SOURCE_PRIORITY,
+    buildSearchText,
+    mergeExtra: (group) => ({
       classNames: mergeClassNames(group),
       classes: mergeClassLabels(group),
-      variantCount: group.length,
-      variantSources,
-      searchText: buildSearchText(group),
-    };
+    }),
   });
 }
 

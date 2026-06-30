@@ -1,6 +1,6 @@
 import { DndItem } from "@/shared/types";
 
-const CANONICAL_SOURCE_PRIORITY = [
+export const CANONICAL_SOURCE_PRIORITY = [
   "XDMG",
   "DMG",
   "XPHB",
@@ -25,6 +25,43 @@ const CANONICAL_SOURCE_PRIORITY = [
 function sourcePriority(source: string): number {
   const index = CANONICAL_SOURCE_PRIORITY.indexOf(source);
   return index === -1 ? CANONICAL_SOURCE_PRIORITY.length : index;
+}
+
+/**
+ * Canonical source priority, optionally biased toward 2014 books (PHB/DMG
+ * before their 2024 XPHB/XDMG counterparts). Shared by the D&D equipment
+ * catalogs (weapons/armor) so they no longer hard-code their own 2-entry lists.
+ */
+export function buildEquipmentSourcePriority(prefer2024: boolean): string[] {
+  const priority = [...CANONICAL_SOURCE_PRIORITY];
+  if (prefer2024) return priority;
+
+  const swap = (a: string, b: string) => {
+    const ia = priority.indexOf(a);
+    const ib = priority.indexOf(b);
+    if (ia >= 0 && ib >= 0) {
+      [priority[ia], priority[ib]] = [priority[ib], priority[ia]];
+    }
+  };
+  swap("XDMG", "DMG");
+  swap("XPHB", "PHB");
+  return priority;
+}
+
+/** Picks the highest-priority entry of a same-named group by its `source`. */
+export function pickPreferredBySource<T extends { source?: string }>(
+  group: T[],
+  priority: string[],
+): T {
+  const rank = (source?: string): number => {
+    const index = priority.indexOf(source ?? "");
+    return index === -1 ? priority.length : index;
+  };
+  return [...group].sort((a, b) => {
+    const byRank = rank(a.source) - rank(b.source);
+    if (byRank !== 0) return byRank;
+    return (a.source ?? "").localeCompare(b.source ?? "");
+  })[0];
 }
 
 function pickCanonicalItem(group: DndItem[]): DndItem {

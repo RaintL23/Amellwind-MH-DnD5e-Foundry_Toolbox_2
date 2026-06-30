@@ -1,23 +1,14 @@
 import type { MhDisease } from "@/shared/types";
 import { getDiseasesRaw } from "@/shared/db/sync.service";
+import { createEntityService } from "@/shared/services/create-entity-service";
 import { mapDisease } from "../mappers/disease.mapper";
 
-let cache: MhDisease[] | null = null;
+const service = createEntityService<unknown, MhDisease>({
+  loadRaw: async () => (await getDiseasesRaw()) as unknown[],
+  map: (raw) => mapDisease(raw),
+  idOf: (disease) => disease.id,
+});
 
-export async function getAllDiseases(): Promise<MhDisease[]> {
-  if (cache) return cache;
-  const rawData = await getDiseasesRaw();
-  cache = (rawData as unknown[]).map((raw) => mapDisease(raw));
-  return cache;
-}
-
-export async function getDiseaseById(
-  id: string,
-): Promise<MhDisease | undefined> {
-  const all = await getAllDiseases();
-  return all.find((disease) => disease.id === id);
-}
-
-export function clearDiseaseCache(): void {
-  cache = null;
-}
+export const getAllDiseases = service.getAll;
+export const getDiseaseById = service.getById;
+export const clearDiseaseCache = service.clearCache;
