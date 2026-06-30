@@ -17,27 +17,7 @@ import {
   getMaxSkillSlots,
 } from "./monstie-stats";
 import { getSignatureAttackOptions } from "./monstie-actions";
-
-const SKILL_LABELS: Record<string, string> = {
-  acr: "Acrobatics",
-  ani: "Animal Handling",
-  arc: "Arcana",
-  ath: "Athletics",
-  dec: "Deception",
-  his: "History",
-  ins: "Insight",
-  itm: "Intimidation",
-  inv: "Investigation",
-  med: "Medicine",
-  nat: "Nature",
-  prc: "Perception",
-  prf: "Performance",
-  per: "Persuasion",
-  rel: "Religion",
-  slt: "Sleight of Hand",
-  ste: "Stealth",
-  sur: "Survival",
-};
+import { SKILL_ABILITY, SKILL_LABELS } from "@/shared/constants/dnd";
 
 export function buildMonstieFromDraft(
   draft: MonstieDraft,
@@ -50,30 +30,9 @@ export function buildMonstieFromDraft(
   const maxSkills = getMaxSkillSlots(level, Object.keys(base.skills).length);
   const selectedSkills = draft.selectedSkills.slice(0, maxSkills);
 
-  const skillAbility: Partial<Record<SkillKey, keyof typeof abilities>> = {
-    ath: "str",
-    acr: "dex",
-    slt: "dex",
-    ste: "dex",
-    arc: "int",
-    his: "int",
-    inv: "int",
-    rel: "int",
-    dec: "cha",
-    itm: "cha",
-    per: "cha",
-    prf: "cha",
-    prc: "wis",
-    ins: "wis",
-    med: "wis",
-    sur: "wis",
-    ani: "wis",
-    nat: "int",
-  };
-
   const skills: Monster["skills"] = {};
   for (const key of selectedSkills) {
-    const abilityKey = skillAbility[key] ?? "wis";
+    const abilityKey = SKILL_ABILITY[key] ?? "wis";
     const total = getAbilityModifier(abilities[abilityKey]) + pb;
     skills[key] = total as unknown as 0 | 1 | 2;
   }
@@ -168,7 +127,7 @@ export function formatSkillsForDisplay(monstie: MonstieSidekick): string {
   if (entries.length === 0) return "—";
   return entries
     .map(([k, v]) => {
-      const label = SKILL_LABELS[k] ?? k;
+      const label = SKILL_LABELS[k as SkillKey] ?? k;
       const mod = typeof v === "number" ? formatModifier(v) : String(v);
       return `${label} ${mod}`;
     })

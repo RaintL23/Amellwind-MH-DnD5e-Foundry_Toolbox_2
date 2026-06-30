@@ -3,6 +3,7 @@ import type { Background } from "@/shared/types";
 import type { Species } from "@/shared/types";
 import type { NpcHideFeatures, NpcTemplate } from "@/shared/types/npc.types";
 import { getTemplateRoleNouns, toNpcFeatureText } from "./npc-feature-text.utils";
+import { SKILL_NAME_TO_KEY } from "@/shared/constants/dnd";
 
 const SKIP_SPECIES_TRAIT_NAMES = new Set([
   "Age",
@@ -13,27 +14,6 @@ const SKIP_SPECIES_TRAIT_NAMES = new Set([
   "Ability Scores",
   "Ability Modifiers",
 ]);
-
-const SKILL_NAME_TO_KEY: Record<string, SkillKey> = {
-  acrobatics: "acr",
-  "animal handling": "ani",
-  arcana: "arc",
-  athletics: "ath",
-  deception: "dec",
-  history: "his",
-  insight: "ins",
-  intimidation: "itm",
-  investigation: "inv",
-  medicine: "med",
-  nature: "nat",
-  perception: "prc",
-  performance: "prf",
-  persuasion: "per",
-  religion: "rel",
-  "sleight of hand": "slt",
-  stealth: "ste",
-  survival: "sur",
-};
 
 export function parseBackgroundSkills(summary: string): SkillKey[] {
   const keys = new Set<SkillKey>();

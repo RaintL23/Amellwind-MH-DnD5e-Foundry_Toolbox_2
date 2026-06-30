@@ -1,4 +1,5 @@
 import type { AbilityKey, AbilityScores, Entry, SkillKey } from "@/shared/types";
+import { SKILL_ABILITY } from "@/shared/constants/dnd";
 import type { NpcTemplate } from "@/shared/types/npc.types";
 import type { NpcPowerProfile } from "./npc-power-scaling";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
@@ -134,27 +135,6 @@ export function buildNpcReactions(
     entries: r.entries.map((e) => toNpcFeatureText(e, subjectRef, roleNouns)),
   }));
 }
-
-const SKILL_ABILITY: Record<SkillKey, AbilityKey> = {
-  ath: "str",
-  acr: "dex",
-  slt: "dex",
-  ste: "dex",
-  arc: "int",
-  his: "int",
-  inv: "int",
-  rel: "int",
-  nat: "int",
-  dec: "cha",
-  itm: "cha",
-  per: "cha",
-  prf: "cha",
-  prc: "wis",
-  ins: "wis",
-  med: "wis",
-  sur: "wis",
-  ani: "wis",
-};
 
 export function buildNpcSkills(
   template: NpcTemplate,

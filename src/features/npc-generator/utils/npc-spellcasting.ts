@@ -5,19 +5,13 @@ import type { NpcTemplate } from "@/shared/types/npc.types";
 import type { NpcPowerProfile } from "./npc-power-scaling";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { ABILITY_NAMES as CANONICAL_ABILITY_NAMES } from "@/shared/constants/dnd";
 import {
   NPC_SPELLCASTING_BY_TEMPLATE,
   type NpcSpellcastingDefinition,
 } from "../data/npc-spellcasting.data";
 
-const ABILITY_NAMES: Record<string, string> = {
-  str: "Strength",
-  dex: "Dexterity",
-  con: "Constitution",
-  int: "Intelligence",
-  wis: "Wisdom",
-  cha: "Charisma",
-};
+const ABILITY_NAMES: Record<string, string> = CANONICAL_ABILITY_NAMES;
 
 const ORDINALS: Record<number, string> = {
   1: "1st",

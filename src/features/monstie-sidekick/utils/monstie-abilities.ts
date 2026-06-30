@@ -1,5 +1,6 @@
-import type { AbilityKey, AbilityScores } from "@/shared/types";
+import type { AbilityScores } from "@/shared/types";
 import { STANDARD_ARRAY, ABILITY_KEYS } from "@/features/builder/utils/ability-scores";
+import { ABILITY_ABBREVIATIONS } from "@/shared/constants/dnd";
 
 /** Maps the original monster's ability order onto the sidekick standard array (15,14,13,12,10,8). */
 export function mapAbilitiesFromOriginal(original: AbilityScores): AbilityScores {
@@ -13,13 +14,7 @@ export function mapAbilitiesFromOriginal(original: AbilityScores): AbilityScores
 }
 
 export function formatAbilityScoresLine(abilities: AbilityScores): string {
-  const labels: Record<AbilityKey, string> = {
-    str: "STR",
-    dex: "DEX",
-    con: "CON",
-    int: "INT",
-    wis: "WIS",
-    cha: "CHA",
-  };
-  return ABILITY_KEYS.map((k) => `${labels[k]} ${abilities[k]}`).join(", ");
+  return ABILITY_KEYS.map(
+    (k) => `${ABILITY_ABBREVIATIONS[k]} ${abilities[k]}`,
+  ).join(", ");
 }

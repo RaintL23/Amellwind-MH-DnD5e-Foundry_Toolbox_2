@@ -16,27 +16,9 @@ import {
   getTraitOptions,
 } from "../utils/monstie-actions";
 import { getSidekickProficiencyBonus } from "../utils/monstie-stats";
+import { SKILL_LABELS as CANONICAL_SKILL_LABELS } from "@/shared/constants/dnd";
 
-const SKILL_LABELS: Record<string, string> = {
-  acr: "Acrobatics",
-  ani: "Animal Handling",
-  arc: "Arcana",
-  ath: "Athletics",
-  dec: "Deception",
-  his: "History",
-  ins: "Insight",
-  itm: "Intimidation",
-  inv: "Investigation",
-  med: "Medicine",
-  nat: "Nature",
-  prc: "Perception",
-  prf: "Performance",
-  per: "Persuasion",
-  rel: "Religion",
-  slt: "Sleight of Hand",
-  ste: "Stealth",
-  sur: "Survival",
-};
+const SKILL_LABELS: Record<string, string> = CANONICAL_SKILL_LABELS;
 
 function OptionChip({
   label,
