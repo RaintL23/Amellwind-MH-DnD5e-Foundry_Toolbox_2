@@ -1,40 +1,21 @@
 import { Monster } from "@/shared/types";
+import type { SkillKey } from "@/shared/types";
+import {
+  ABILITY_KEYS,
+  ABILITY_ABBREVIATIONS,
+  SKILL_LABELS,
+} from "@/shared/constants/dnd";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { SpellcastingBlockView } from "@/components/statblock/SpellcastingBlockView";
 import { getEntryContent } from "@/shared/utils/entry-text.utils";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
 import { Separator } from "@/components/ui/separator";
+import { StatBlockSection } from "@/shared/components/StatBlockSection";
 import type { SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
 
-const ABILITY_LABELS: Array<[keyof Monster["abilities"], string]> = [
-  ["str", "STR"],
-  ["dex", "DEX"],
-  ["con", "CON"],
-  ["int", "INT"],
-  ["wis", "WIS"],
-  ["cha", "CHA"],
-];
-
-const SKILL_LABELS: Record<string, string> = {
-  acr: "Acrobatics",
-  ani: "Animal Handling",
-  arc: "Arcana",
-  ath: "Athletics",
-  dec: "Deception",
-  his: "History",
-  ins: "Insight",
-  itm: "Intimidation",
-  inv: "Investigation",
-  med: "Medicine",
-  nat: "Nature",
-  prc: "Perception",
-  prf: "Performance",
-  per: "Persuasion",
-  rel: "Religion",
-  slt: "Sleight of Hand",
-  ste: "Stealth",
-  sur: "Survival",
-};
+const ABILITY_LABELS = ABILITY_KEYS.map(
+  (key) => [key, ABILITY_ABBREVIATIONS[key]] as const,
+);
 
 function formatSpeed(speed: Monster["speed"]): string {
   const parts: string[] = [];
@@ -89,22 +70,6 @@ function formatDamage(items: Monster["damageImmunities"]): string {
     })
     .filter(Boolean)
     .join("; ") || "—";
-}
-
-interface StatBlockSectionProps {
-  title: string;
-  children: React.ReactNode;
-}
-
-function StatBlockSection({ title, children }: StatBlockSectionProps) {
-  return (
-    <div className="mt-4">
-      <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider border-b border-amber-800/50 pb-1 mb-2">
-        {title}
-      </h3>
-      {children}
-    </div>
-  );
 }
 
 function partitionSpellcasting(spellcasting: SpellcastingBlock[] = []) {
@@ -230,7 +195,7 @@ export function MonsterStatBlock({ monster }: MonsterStatBlockProps) {
             <strong className="text-amber-400">Skills</strong>{" "}
             <span className="text-foreground">
               {Object.entries(monster.skills)
-                .map(([k, v]) => `${SKILL_LABELS[k] ?? k} ${v ? formatModifier(Number(v)) : ""}`)
+                .map(([k, v]) => `${SKILL_LABELS[k as SkillKey] ?? k} ${v ? formatModifier(Number(v)) : ""}`)
                 .join(", ")}
             </span>
           </p>

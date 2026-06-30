@@ -1,40 +1,20 @@
 import type { BestiaryCreature, SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
-import type { Entry } from "@/shared/types";
+import type { Entry, SkillKey } from "@/shared/types";
 import { SpellcastingBlockView } from "@/components/statblock/SpellcastingBlockView";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { getEntryContent } from "@/shared/utils/entry-text.utils";
 import { getAbilityModifier, formatModifier } from "@/shared/utils/cr.utils";
 import { Separator } from "@/components/ui/separator";
+import { StatBlockSection } from "@/shared/components/StatBlockSection";
+import {
+  ABILITY_KEYS,
+  ABILITY_ABBREVIATIONS,
+  SKILL_LABELS,
+} from "@/shared/constants/dnd";
 
-const ABILITY_LABELS: Array<[keyof BestiaryCreature["abilities"], string]> = [
-  ["str", "STR"],
-  ["dex", "DEX"],
-  ["con", "CON"],
-  ["int", "INT"],
-  ["wis", "WIS"],
-  ["cha", "CHA"],
-];
-
-const SKILL_LABELS: Record<string, string> = {
-  acr: "Acrobatics",
-  ani: "Animal Handling",
-  arc: "Arcana",
-  ath: "Athletics",
-  dec: "Deception",
-  his: "History",
-  ins: "Insight",
-  itm: "Intimidation",
-  inv: "Investigation",
-  med: "Medicine",
-  nat: "Nature",
-  prc: "Perception",
-  prf: "Performance",
-  per: "Persuasion",
-  rel: "Religion",
-  slt: "Sleight of Hand",
-  ste: "Stealth",
-  sur: "Survival",
-};
+const ABILITY_LABELS = ABILITY_KEYS.map(
+  (key) => [key, ABILITY_ABBREVIATIONS[key]] as const,
+);
 
 function formatSpeed(speed: BestiaryCreature["speed"]): string {
   const parts: string[] = [];
@@ -90,23 +70,6 @@ function formatDamage(items: BestiaryCreature["damageImmunities"]): string {
       })
       .filter(Boolean)
       .join("; ") || "—"
-  );
-}
-
-function StatBlockSection({
-  title,
-  children,
-}: {
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="mt-4">
-      <h3 className="text-sm font-bold text-amber-400 uppercase tracking-wider border-b border-amber-800/50 pb-1 mb-2">
-        {title}
-      </h3>
-      {children}
-    </div>
   );
 }
 
@@ -234,7 +197,7 @@ export function BestiaryStatBlock({ creature }: BestiaryStatBlockProps) {
             <span className="text-foreground">
               {Object.entries(creature.skills)
                 .map(([k, v]) =>
-                  `${SKILL_LABELS[k] ?? k} ${v ? formatModifier(Number(v)) : ""}`,
+                  `${SKILL_LABELS[k as SkillKey] ?? k} ${v ? formatModifier(Number(v)) : ""}`,
                 )
                 .join(", ")}
             </span>
