@@ -3,9 +3,9 @@ export type AppTheme = "light" | "dark" | "mh";
 export const THEME_STORAGE_KEY = "mh-toolbox-theme";
 
 export const THEME_LABELS: Record<AppTheme, string> = {
-  light: "Claro",
-  dark: "Oscuro",
-  mh: "Azul MH",
+  light: "Light",
+  dark: "Dark",
+  mh: "MH Blue",
 };
 
 export const THEME_ORDER: AppTheme[] = ["light", "dark", "mh"];

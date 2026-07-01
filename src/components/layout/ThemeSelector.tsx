@@ -25,8 +25,8 @@ export function ThemeSelector({ collapsed }: ThemeSelectorProps) {
       <button
         type="button"
         onClick={cycleTheme}
-        title={`Tema: ${THEME_LABELS[theme]} (clic para cambiar)`}
-        aria-label={`Tema actual: ${THEME_LABELS[theme]}. Clic para cambiar.`}
+        title={`Theme: ${THEME_LABELS[theme]} (click to change)`}
+        aria-label={`Current theme: ${THEME_LABELS[theme]}. Click to change.`}
         className="flex w-full items-center justify-center px-2 py-2.5 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors"
       >
         <Icon className="h-4 w-4" />
@@ -40,7 +40,7 @@ export function ThemeSelector({ collapsed }: ThemeSelectorProps) {
         htmlFor="theme-select"
         className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground"
       >
-        Tema
+        Theme
       </label>
       <div className="relative">
         <Icon className="pointer-events-none absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
@@ -49,7 +49,7 @@ export function ThemeSelector({ collapsed }: ThemeSelectorProps) {
           value={theme}
           onChange={(e) => setTheme(e.target.value as AppTheme)}
           className={cn("h-8 pl-8 text-xs")}
-          aria-label="Seleccionar tema de la página"
+          aria-label="Select page theme"
         >
           {THEME_ORDER.map((t) => (
             <option key={t} value={t}>
