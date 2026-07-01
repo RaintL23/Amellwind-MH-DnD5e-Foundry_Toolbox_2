@@ -1,5 +1,6 @@
 import { Spell } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { Card } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 
 interface SpellCardProps {
@@ -24,15 +25,11 @@ function LevelBadge({ level }: { level: number }) {
 
 export function SpellCard({ spell, onClick }: SpellCardProps) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "w-full text-left rounded-lg border border-border bg-card p-4 transition-all duration-200",
-        "hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        "hover:border-violet-500/40",
-      )}
+    <Card
+      asChild
+      className="w-full text-left p-4 transition-all duration-200 hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:border-violet-500/40"
     >
+      <button type="button" onClick={onClick}>
       <div className="flex items-start gap-3 mb-3">
         <div className="rounded-md p-2 shrink-0 bg-violet-950/60">
           <Sparkles className="h-5 w-5 text-violet-400" />
@@ -76,6 +73,7 @@ export function SpellCard({ spell, onClick }: SpellCardProps) {
         <span>{spell.source}</span>
         {spell.page !== undefined && <span>p. {spell.page}</span>}
       </div>
-    </button>
+      </button>
+    </Card>
   );
 }

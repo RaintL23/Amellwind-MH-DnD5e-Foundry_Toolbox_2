@@ -3,6 +3,7 @@ import {
   SPECIES_CATEGORY_LABELS,
 } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { Card } from "@/components/ui/card";
 import { Users, Eye, Shield } from "lucide-react";
 
 const CATEGORY_ACCENT: Record<string, string> = {
@@ -31,15 +32,11 @@ export function SpeciesCard({ species, onClick }: SpeciesCardProps) {
   const iconBg = CATEGORY_BG[species.category] ?? "bg-primary/10";
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "w-full text-left rounded-lg border border-border bg-card p-4 transition-all duration-200",
-        "hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        "hover:border-primary/40",
-      )}
+    <Card
+      asChild
+      className="w-full text-left p-4 transition-all duration-200 hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:border-primary/40"
     >
+      <button type="button" onClick={onClick}>
       <div className="flex items-start gap-3 mb-3">
         <div className={cn("rounded-md p-2 shrink-0", iconBg)}>
           <Users className={cn("h-5 w-5", accent)} />
@@ -114,6 +111,7 @@ export function SpeciesCard({ species, onClick }: SpeciesCardProps) {
         <span>{species.source}</span>
         {species.page !== undefined && <span>p. {species.page}</span>}
       </div>
-    </button>
+      </button>
+    </Card>
   );
 }

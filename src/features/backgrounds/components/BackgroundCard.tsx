@@ -4,6 +4,7 @@ import {
   BackgroundFaction,
 } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { Card } from "@/components/ui/card";
 import { ScrollText } from "lucide-react";
 
 const FACTION_ACCENT: Record<BackgroundFaction, string> = {
@@ -28,15 +29,11 @@ export function BackgroundCard({ background, onClick }: BackgroundCardProps) {
   const iconBg = FACTION_BG[background.faction];
 
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      className={cn(
-        "w-full text-left rounded-lg border border-border bg-card p-4 transition-all duration-200",
-        "hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        "hover:border-primary/40",
-      )}
+    <Card
+      asChild
+      className="w-full text-left p-4 transition-all duration-200 hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:border-primary/40"
     >
+      <button type="button" onClick={onClick}>
       <div className="flex items-start gap-3 mb-3">
         <div className={cn("rounded-md p-2 shrink-0", iconBg)}>
           <ScrollText className={cn("h-5 w-5", accent)} />
@@ -78,6 +75,7 @@ export function BackgroundCard({ background, onClick }: BackgroundCardProps) {
         <span>{background.source}</span>
         {background.page !== undefined && <span>p. {background.page}</span>}
       </div>
-    </button>
+      </button>
+    </Card>
   );
 }

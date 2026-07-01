@@ -7,6 +7,7 @@ import {
 import { WeaponCategoryBadges } from "./WeaponCategoryBadges";
 import { formatWeaponValue } from "../services/weapon.service";
 import { cn } from "@/shared/utils/cn";
+import { Card } from "@/components/ui/card";
 import { Swords, Weight, Coins, GraduationCap } from "lucide-react";
 
 const DMG_TYPE_ACCENT: Record<string, string> = {
@@ -44,14 +45,14 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
     : weapon.dmg1;
 
   return (
-    <button
-      onClick={onClick}
+    <Card
+      asChild
       className={cn(
-        "w-full text-left rounded-lg border border-border bg-card p-4 transition-all duration-200",
-        "hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-        borderHover
+        "w-full text-left p-4 transition-all duration-200 hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        borderHover,
       )}
     >
+      <button onClick={onClick}>
       {/* Header: icono + nombre */}
       <div className="flex items-start gap-3 mb-3">
         <div className={cn("rounded-md p-2 shrink-0", iconBg)}>
@@ -119,6 +120,7 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
           </span>
         )}
       </div>
-    </button>
+      </button>
+    </Card>
   );
 }
