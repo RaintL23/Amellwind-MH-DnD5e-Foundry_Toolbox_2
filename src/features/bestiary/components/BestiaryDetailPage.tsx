@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Swords } from "lucide-react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +32,7 @@ import { LairRegionalSection, MetaRow } from "./detail/bestiary-detail.shared";
 type DetailTab = "statblock" | "lair";
 
 export function BestiaryDetailPage() {
+  const navigate = useNavigate();
   const { creatureId = "" } = useParams<{ creatureId: string }>();
 
   const [creature, setCreature] = useState<BestiaryCreature | null>(null);
@@ -156,13 +157,13 @@ export function BestiaryDetailPage() {
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="shrink-0 border-b border-border px-6 py-5">
-        <Link
-          to="/bestiary"
+        <button
+          onClick={() => navigate(-1)}
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors mb-4"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Bestiary
-        </Link>
+        </button>
 
         <div className="space-y-4">
           <div className="space-y-2">

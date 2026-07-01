@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Monster } from "@/shared/types";
 import { getAllMonsters } from "../services/monster.service";
 import { getTier } from "@/shared/utils/cr.utils";
@@ -61,21 +61,114 @@ function TierBadge({ tier }: { tier: number }) {
 
 export function MonsterList() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<Filters>({
-    name: "",
-    cr: [],
-    tier: [],
-    type: [],
-    environment: [],
-  });
-  const [sort, setSort] = useState<{ key: SortKey; dir: SortDir }>({
-    key: "cr",
-    dir: "asc",
-  });
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
+
+  // Derive all filter/sort/pagination state from the URL so it survives navigation
+  const filters = useMemo<Filters>(
+    () => ({
+      name: searchParams.get("name") ?? "",
+      cr: searchParams.getAll("cr"),
+      tier: searchParams.getAll("tier"),
+      type: searchParams.getAll("type"),
+      environment: searchParams.getAll("environment"),
+    }),
+    [searchParams],
+  );
+
+  const sort = useMemo(
+    () => ({
+      key: (searchParams.get("sortKey") ?? "cr") as SortKey,
+      dir: (searchParams.get("sortDir") ?? "asc") as SortDir,
+    }),
+    [searchParams],
+  );
+
+  const page = useMemo(
+    () => parseInt(searchParams.get("page") ?? "1", 10),
+    [searchParams],
+  );
+
+  const pageSize = useMemo(
+    () =>
+      parseInt(
+        searchParams.get("pageSize") ?? String(DEFAULT_PAGE_SIZE),
+        10,
+      ),
+    [searchParams],
+  );
+
+  // Merge a partial patch into the URL params. Uses replace:true so every
+  // filter keystroke doesn't create a new history entry.
+  function patchParams(
+    patch: Partial<{
+      name: string;
+      cr: string[];
+      tier: string[];
+      type: string[];
+      environment: string[];
+      sortKey: SortKey;
+      sortDir: SortDir;
+      page: number;
+      pageSize: number;
+    }>,
+  ) {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams();
+
+        const name =
+          "name" in patch ? (patch.name ?? "") : (prev.get("name") ?? "");
+        const cr = "cr" in patch ? (patch.cr ?? []) : prev.getAll("cr");
+        const tier =
+          "tier" in patch ? (patch.tier ?? []) : prev.getAll("tier");
+        const type =
+          "type" in patch ? (patch.type ?? []) : prev.getAll("type");
+        const environment =
+          "environment" in patch
+            ? (patch.environment ?? [])
+            : prev.getAll("environment");
+        const sortKey = (
+          "sortKey" in patch
+            ? (patch.sortKey ?? "cr")
+            : (prev.get("sortKey") ?? "cr")
+        ) as SortKey;
+        const sortDir = (
+          "sortDir" in patch
+            ? (patch.sortDir ?? "asc")
+            : (prev.get("sortDir") ?? "asc")
+        ) as SortDir;
+        const pageNum =
+          "page" in patch
+            ? (patch.page ?? 1)
+            : parseInt(prev.get("page") ?? "1", 10);
+        const pageSizeNum =
+          "pageSize" in patch
+            ? (patch.pageSize ?? DEFAULT_PAGE_SIZE)
+            : parseInt(
+                prev.get("pageSize") ?? String(DEFAULT_PAGE_SIZE),
+                10,
+              );
+
+        // Only write non-default values to keep URLs clean
+        if (name) next.set("name", name);
+        for (const v of cr) next.append("cr", v);
+        for (const v of tier) next.append("tier", v);
+        for (const v of type) next.append("type", v);
+        for (const v of environment) next.append("environment", v);
+        if (sortKey !== "cr") next.set("sortKey", sortKey);
+        if (sortDir !== "asc") next.set("sortDir", sortDir);
+        if (pageNum !== 1) next.set("page", String(pageNum));
+        if (pageSizeNum !== DEFAULT_PAGE_SIZE)
+          next.set("pageSize", String(pageSizeNum));
+
+        return next;
+      },
+      { replace: true },
+    );
+  }
+
   const handleSelect = useCallback(
     (monster: Monster) => {
       navigate(`/monsters/${toMonsterId(monster.name, monster.source)}`);
@@ -154,22 +247,20 @@ export function MonsterList() {
 
   // Resetear a página 1 cuando cambian filtros o sort
   function updateFilters(next: Filters) {
-    setFilters(next);
-    setPage(1);
+    patchParams({ ...next, page: 1 });
   }
 
   function toggleSort(key: SortKey) {
-    setSort((prev) =>
-      prev.key === key
-        ? { key, dir: prev.dir === "asc" ? "desc" : "asc" }
-        : { key, dir: "asc" },
-    );
-    setPage(1);
+    patchParams({
+      sortKey: key,
+      sortDir:
+        sort.key === key ? (sort.dir === "asc" ? "desc" : "asc") : "asc",
+      page: 1,
+    });
   }
 
   function handlePageSizeChange(size: number) {
-    setPageSize(size);
-    setPage(1);
+    patchParams({ pageSize: size, page: 1 });
   }
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -349,7 +440,7 @@ export function MonsterList() {
           totalPages={totalPages}
           totalItems={filtered.length}
           pageSize={pageSize}
-          onPageChange={setPage}
+          onPageChange={(p) => patchParams({ page: p })}
           onPageSizeChange={handlePageSizeChange}
         />
       </div>

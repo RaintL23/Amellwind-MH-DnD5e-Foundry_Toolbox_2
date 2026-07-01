@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Swords } from "lucide-react";
 import { Monster } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
@@ -9,17 +9,18 @@ interface MonsterDetailHeaderProps {
 }
 
 export function MonsterDetailHeader({ monster }: MonsterDetailHeaderProps) {
+  const navigate = useNavigate();
   const tier = getTier(monster.cr);
 
   return (
     <div className="shrink-0 border-b border-border px-6 py-5">
-      <Link
-        to="/monsters"
+      <button
+        onClick={() => navigate(-1)}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-amber-400 transition-colors mb-4"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Monsters
-      </Link>
+      </button>
 
       <div className="space-y-2">
         <div className="flex items-start gap-3">

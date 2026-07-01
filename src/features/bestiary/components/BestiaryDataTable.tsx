@@ -1,12 +1,14 @@
 import { useMemo } from "react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
 import { DataTable } from "@/components/data-table/data-table";
+import type { DataTableFilterState } from "@/components/data-table/data-table.types";
 import type { SourceOption } from "@/features/spells/services/book-source.service";
 import {
   bestiaryColumns,
   bestiaryGlobalFilter,
 } from "./bestiary-columns";
 import { BestiaryDataTableToolbar } from "./BestiaryDataTableToolbar";
+import type { ColumnFiltersState } from "@tanstack/react-table";
 
 interface BestiaryDataTableProps {
   creatures: BestiaryCreature[];
@@ -14,6 +16,9 @@ interface BestiaryDataTableProps {
   environmentOptions: string[];
   sourceOptions: SourceOption[];
   onRowClick: (creature: BestiaryCreature) => void;
+  initialSearch?: string;
+  initialColumnFilters?: ColumnFiltersState;
+  onFilterStateChange?: (state: DataTableFilterState) => void;
 }
 
 export function BestiaryDataTable({
@@ -22,6 +27,9 @@ export function BestiaryDataTable({
   environmentOptions,
   sourceOptions,
   onRowClick,
+  initialSearch,
+  initialColumnFilters,
+  onFilterStateChange,
 }: BestiaryDataTableProps) {
   const toolbarProps = useMemo(
     () => ({ typeOptions, environmentOptions, sourceOptions }),
@@ -38,6 +46,9 @@ export function BestiaryDataTable({
       pageSize={25}
       globalFilterFn={bestiaryGlobalFilter}
       initialColumnVisibility={{ environment: false }}
+      initialSearch={initialSearch}
+      initialColumnFilters={initialColumnFilters}
+      onFilterStateChange={onFilterStateChange}
       toolbar={(ctx) => (
         <BestiaryDataTableToolbar
           table={ctx.table}

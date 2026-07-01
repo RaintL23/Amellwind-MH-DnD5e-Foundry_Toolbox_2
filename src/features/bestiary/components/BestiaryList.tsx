@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { Swords } from "lucide-react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
 import { buildSourceOptions } from "@/features/spells/services/book-source.service";
@@ -13,9 +13,12 @@ import {
   loadSourceOnDemand,
 } from "../services/bestiary.service";
 import { BestiaryDataTable } from "./BestiaryDataTable";
+import type { DataTableFilterState } from "@/components/data-table/data-table.types";
+import type { ColumnFiltersState } from "@tanstack/react-table";
 
 export function BestiaryList() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [creatures, setCreatures] = useState<BestiaryCreature[]>([]);
   const [listCreatures, setListCreatures] = useState<BestiaryCreature[]>([]);
   const [loading, setLoading] = useState(true);
@@ -23,6 +26,52 @@ export function BestiaryList() {
   const [availableSources, setAvailableSources] = useState<string[]>([]);
   const [loadedSources, setLoadedSources] = useState<string[]>([]);
   const bookNames = useBookSourceNames();
+
+  // Restore initial DataTable state from URL params
+  const initialSearch = searchParams.get("q") ?? "";
+  const initialColumnFilters = useMemo<ColumnFiltersState>(() => {
+    const filters: ColumnFiltersState = [];
+    const cr = searchParams.get("cr");
+    const sz = searchParams.get("sz");
+    const type = searchParams.get("type");
+    const env = searchParams.get("env");
+    const src = searchParams.get("src");
+    if (cr) filters.push({ id: "cr", value: cr });
+    if (sz) filters.push({ id: "size", value: sz });
+    if (type) filters.push({ id: "creatureType", value: type });
+    if (env) filters.push({ id: "environment", value: env });
+    if (src) filters.push({ id: "source", value: src });
+    return filters;
+  // Only run on mount; searchParams object changes on every URL update
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist DataTable filter/search/page state to URL (replace to avoid history noise)
+  const handleFilterStateChange = useCallback(
+    (state: DataTableFilterState) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams();
+          if (state.search) next.set("q", state.search);
+          for (const f of state.columnFilters) {
+            const v = f.value as string;
+            if (!v) continue;
+            if (f.id === "cr") next.set("cr", v);
+            else if (f.id === "size") next.set("sz", v);
+            else if (f.id === "creatureType") next.set("type", v);
+            else if (f.id === "environment") next.set("env", v);
+            else if (f.id === "source") next.set("src", v);
+          }
+          // Preserve any unloaded-source-load params that live alongside filter params
+          const loaded = prev.getAll("loaded");
+          for (const l of loaded) next.append("loaded", l);
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
 
   const refreshCreatures = useCallback(async () => {
     const [all, list, catalog] = await Promise.all([
@@ -158,6 +207,9 @@ export function BestiaryList() {
             environmentOptions={environmentOptions}
             sourceOptions={sourceOptions}
             onRowClick={handleSelect}
+            initialSearch={initialSearch}
+            initialColumnFilters={initialColumnFilters}
+            onFilterStateChange={handleFilterStateChange}
           />
         )}
       </div>

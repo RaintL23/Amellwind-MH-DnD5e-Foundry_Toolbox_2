@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { ArrowLeft, User } from "lucide-react";
 import { Class } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
@@ -23,15 +23,16 @@ export function ClassDetailHeader({
   bookNames,
   onSourceSelect,
 }: ClassDetailHeaderProps) {
+  const navigate = useNavigate();
   return (
     <div className="shrink-0 border-b border-border px-6 py-5">
-      <Link
-        to="/classes"
+      <button
+        onClick={() => navigate(-1)}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-sky-400 transition-colors mb-4"
       >
         <ArrowLeft className="h-4 w-4" />
         Back to Classes
-      </Link>
+      </button>
 
       <div className="flex items-start gap-3">
         <User className="h-6 w-6 text-sky-400 shrink-0 mt-1" />

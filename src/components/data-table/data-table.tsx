@@ -44,7 +44,7 @@ import {
 
 import { Pagination } from "@/components/ui/pagination";
 
-import type { DataTableToolbarContext } from "./data-table.types";
+import type { DataTableFilterState, DataTableToolbarContext } from "./data-table.types";
 
 
 
@@ -76,6 +76,12 @@ interface DataTableProps<TData, TValue> {
   enableMultiSort?: boolean;
 
   getRowId?: (row: TData) => string;
+
+  /** Initial search text to restore (e.g. from URL params). */
+  initialSearch?: string;
+
+  /** Fires whenever search, column filters, or page index change, so callers can persist state. */
+  onFilterStateChange?: (state: DataTableFilterState) => void;
 
 }
 
@@ -109,6 +115,10 @@ export function DataTable<TData, TValue>({
 
   getRowId,
 
+  initialSearch = "",
+
+  onFilterStateChange,
+
 }: DataTableProps<TData, TValue>) {
 
   const [sorting, setSorting] = useState<SortingState>(initialSorting);
@@ -121,7 +131,7 @@ export function DataTable<TData, TValue>({
 
     useState<VisibilityState>(initialColumnVisibility);
 
-  const [searchInput, setSearchInput] = useState("");
+  const [searchInput, setSearchInput] = useState(initialSearch);
 
   const deferredSearch = useDeferredValue(searchInput);
 
@@ -192,6 +202,17 @@ export function DataTable<TData, TValue>({
       setSorting(lockedSorting);
     }
   }, [deferredSearch, columnFilters, lockedSorting]);
+
+
+
+  useEffect(() => {
+    onFilterStateChange?.({
+      search: deferredSearch,
+      columnFilters,
+      pageIndex: pagination.pageIndex,
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deferredSearch, columnFilters, pagination.pageIndex]);
 
 
 

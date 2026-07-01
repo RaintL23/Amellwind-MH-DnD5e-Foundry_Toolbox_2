@@ -1,4 +1,4 @@
-import type { Table as TanstackTable } from "@tanstack/react-table";
+import type { ColumnFiltersState, Table as TanstackTable } from "@tanstack/react-table";
 
 export interface DataTableToolbarContext<TData> {
   table: TanstackTable<TData>;
@@ -6,4 +6,10 @@ export interface DataTableToolbarContext<TData> {
   onSearchChange: (value: string) => void;
   filteredCount: number;
   totalCount: number;
+}
+
+export interface DataTableFilterState {
+  search: string;
+  columnFilters: ColumnFiltersState;
+  pageIndex: number;
 }
