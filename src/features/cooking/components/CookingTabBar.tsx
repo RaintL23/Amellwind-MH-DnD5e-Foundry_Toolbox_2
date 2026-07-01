@@ -1,8 +1,11 @@
 import type { ReactNode } from "react";
 import { BookOpen, Dices, Star } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { COOKING_TAB_CONFIG } from "../constants/cooking.constants";
 import type { CookingActiveTab } from "@/shared/types";
+
+const TAB_TRIGGER_CLASS =
+  "gap-1.5 px-3 py-1.5 h-auto rounded-md border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/30 data-[state=active]:shadow-none";
 
 const TAB_ICONS: Partial<Record<CookingActiveTab, ReactNode>> = {
   rules: <BookOpen className="h-3.5 w-3.5" />,
@@ -21,22 +24,20 @@ export function CookingTabBar({
   onTabChange: (tab: CookingActiveTab) => void;
 }) {
   return (
-    <div className="flex flex-wrap gap-1.5 mb-6 border-b border-border pb-3">
-      {COOKING_TAB_CONFIG.map(({ id, label }) => (
-        <button
-          key={id}
-          onClick={() => onTabChange(id)}
-          className={cn(
-            "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-            activeTab === id
-              ? "bg-primary/20 text-primary border border-primary/30"
-              : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-          )}
-        >
-          {TAB_ICONS[id]}
-          {label}
-        </button>
-      ))}
-    </div>
+    <Tabs
+      value={activeTab}
+      onValueChange={(value) => onTabChange(value as CookingActiveTab)}
+      className="mb-6 border-b border-border pb-3"
+    >
+      <TabsList className="flex flex-wrap justify-start gap-1.5 h-auto rounded-none bg-transparent p-0 text-muted-foreground">
+        {COOKING_TAB_CONFIG.map(({ id, label }) => (
+          <TabsTrigger key={id} value={id} className={TAB_TRIGGER_CLASS}>
+            {TAB_ICONS[id]}
+            {label}
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
   );
 }
+
