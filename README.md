@@ -53,6 +53,8 @@ Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son
 
 El **Character Builder** puede **exportar** el personaje a un actor `character` de **Foundry VTT (sistema dnd5e v12)** listo para importar, e **importar** de vuelta un JSON de actor de Foundry para reconstruir el build dentro de la app. El export genera un único archivo JSON con clase/subclase, especie, trasfondo, dotes, conjuros, armas/armadura/trinkets, advancements y retrato/token; el import hace _matching_ de cada entidad contra los catálogos de la app (clases, especies, trasfondos, dotes, conjuros y equipo). Ambos flujos viven en `src/features/builder/foundry-export/` y `foundry-import/`, con botones en el `StatsPanel` del builder.
 
+El export además **enriquece los items con automatización Midi-QoL / DAE** (Active Effects con flags de `midi-qol`/`dae`), replicando el comportamiento que añadiría el importador de **Plutonium**: el actor se comporta como si hubiera pasado por *Plutonium Addon: Automation*, siempre que el mundo destino tenga **Midi QoL + DAE + Times Up** activos. Los overlays de automatización (`foundry-export/automation.data.ts`) están portados como datos de referencia desde los repos de [TheGiddyLimit](https://github.com/TheGiddyLimit) — ver [Fuentes de datos](#fuentes-de-datos).
+
 ## Stack tecnológico
 
 | Capa           | Tecnología                        |
@@ -140,6 +142,16 @@ Recursos, entornos, tiendas, combo, cocina, guía de creación de personajes y p
 ### Compendio D&D 5e
 
 Spells, classes, items, bestiary, races, backgrounds y feats se cargan desde el mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) (`raw.githubusercontent.com`), con precarga de fuentes habituales (MM, PHB, DMG, etc.) y carga bajo demanda del resto.
+
+### Automatización Foundry (Midi-QoL / Plutonium)
+
+La automatización que el export inyecta en los items (Active Effects con flags de `midi-qol`/`dae`, en `src/features/builder/foundry-export/automation.data.ts` y `automation.builders.ts`) usa como **información de referencia** los siguientes repositorios, para operar esa sección del código igual que lo haría el importador de Plutonium:
+
+- [TheGiddyLimit/plutonium-addon-automation](https://github.com/TheGiddyLimit/plutonium-addon-automation) — formato de overlays de automatización y datos de effects por entidad (dotes, features, items mágicos, conjuros). _MIT License, © TheGiddyLimit._
+- [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew) — formato de homebrew 5etools de referencia para el matching por nombre/fuente.
+- [tposney/midi-qol](https://github.com/tposney/midi-qol) y [DAE](https://foundryvtt.com/packages/dae) — claves de flags (`flags.midi-qol.*`, `flags.dae.*`) y semántica de duraciones especiales que consumen los Active Effects generados.
+
+El código **no incluye** el módulo ni sus datos completos: solo reproduce el formato mecánico de los effects para un set curado de entidades, ampliable por nombre. Requiere Midi QoL + DAE + Times Up activos en el mundo destino.
 
 ## Estructura del proyecto
 

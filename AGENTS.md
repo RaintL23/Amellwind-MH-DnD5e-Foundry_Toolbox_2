@@ -37,7 +37,8 @@ pnpm build:analyze    # build con visualizer del bundle
 - **Alias de import:** usa `@/...` para todo dentro de `src/` (configurado en `tsconfig.app.json` → `paths`). Evita rutas relativas largas (`../../..`).
 - **TypeScript estricto:** sin `any` salvo justificación; tipa props, services y mappers.
 - **Estilos:** Tailwind + componentes de `src/components/ui/` (shadcn). No añadas librerías de UI nuevas; reutiliza Radix/shadcn ya presentes.
-- **Idioma:** la UI y la documentación están en español; mantén ese idioma en textos visibles y comentarios de dominio. Identificadores de código en inglés.
+- **Preferencia de componentes UI:** antes de implementar cualquier elemento visual (botones, diálogos, selects, tooltips, tablas, formularios, badges, etc.), **verifica primero si shadcn/ui ya ofrece un componente adecuado** en `src/components/ui/`. Si existe o puede adaptarse con props/clases de Tailwind, úsalo obligatoriamente. Solo recurre a implementación custom cuando shadcn no tenga equivalente funcional para el caso.
+- **Idioma:** el idioma preferido para **todo** (UI, textos visibles, comentarios de dominio, documentación e identificadores de código) es el **inglés**. Usa inglés por defecto en cualquier texto nuevo que se agregue al proyecto.
 - **Comentarios:** solo donde aclaran lógica no obvia (mira el header de `create-entity-service.ts` como referencia de estilo).
 
 ## Arquitectura por features
