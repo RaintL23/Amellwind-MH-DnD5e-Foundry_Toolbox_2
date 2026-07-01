@@ -5,6 +5,8 @@ import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { NotFound } from "@/components/layout/NotFound";
 import { SyncProvider } from "@/shared/context/SyncContext";
 import { ThemeProvider } from "@/shared/context/ThemeContext";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 import { loadChooseableLanguages } from "@/shared/data/chooseable-languages";
 import { loadChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
 import { syncData } from "@/shared/db/sync.service";
@@ -43,14 +45,9 @@ const MaterialEffectList = lazy(() =>
     (m) => ({ default: m.MaterialEffectList }),
   ),
 );
-const ConditionList = lazy(() =>
-  import("@/features/conditions/components/ConditionList").then((m) => ({
-    default: m.ConditionList,
-  })),
-);
-const DiseaseList = lazy(() =>
-  import("@/features/diseases/components/DiseaseList").then((m) => ({
-    default: m.DiseaseList,
+const ConditionsDiseasesPage = lazy(() =>
+  import("@/features/conditions/components/ConditionsDiseasesPage").then((m) => ({
+    default: m.ConditionsDiseasesPage,
   })),
 );
 const CookingPage = lazy(() =>
@@ -189,6 +186,11 @@ const DndFeatList = lazy(() =>
     default: m.DndFeatList,
   })),
 );
+const HomePage = lazy(() =>
+  import("@/features/home/components/HomePage").then((m) => ({
+    default: m.HomePage,
+  })),
+);
 
 function PageFallback() {
   return <LoadingScreen message="Loading..." />;
@@ -234,10 +236,18 @@ export default function App() {
   return (
     <ThemeProvider>
       <SyncProvider syncing={syncing}>
-        <BrowserRouter>
+        <TooltipProvider delayDuration={200}>
+          <BrowserRouter>
           <Routes>
             <Route path="/" element={<MainLayout syncing={syncing} />}>
-              <Route index element={<Navigate to="/monsters" replace />} />
+              <Route
+                index
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <HomePage />
+                  </Suspense>
+                }
+              />
               <Route
                 path="monsters"
                 element={
@@ -283,17 +293,13 @@ export default function App() {
                 path="conditions"
                 element={
                   <Suspense fallback={<PageFallback />}>
-                    <ConditionList />
+                    <ConditionsDiseasesPage />
                   </Suspense>
                 }
               />
               <Route
                 path="diseases"
-                element={
-                  <Suspense fallback={<PageFallback />}>
-                    <DiseaseList />
-                  </Suspense>
-                }
+                element={<Navigate to="/conditions" replace />}
               />
               <Route
                 path="cooking"
@@ -505,8 +511,10 @@ export default function App() {
               />
               <Route path="*" element={<NotFound />} />
             </Route>
-          </Routes>
-        </BrowserRouter>
+            </Routes>
+          </BrowserRouter>
+          <Toaster />
+        </TooltipProvider>
       </SyncProvider>
     </ThemeProvider>
   );

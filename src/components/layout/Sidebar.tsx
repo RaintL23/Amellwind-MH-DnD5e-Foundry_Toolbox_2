@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
 import {
   Swords,
   AlertTriangle,
-  Biohazard,
   Gem,
   ChefHat,
   ChevronDown,
@@ -39,92 +38,95 @@ type NavItem = {
   to?: string;
   disabled?: boolean;
 };
-type NavGroup = { section: string; label: string; items: NavItem[] };
 
-const STANDALONE_NAV_ITEMS: NavItem[] = [
+type NavGroup = {
+  label: string;
+  items: NavItem[];
+};
+
+type NavSection = {
+  id: string;
+  label: string;
+  groups: NavGroup[];
+};
+
+/** Herramientas principales — siempre visibles en la parte superior */
+const TOP_TOOLS: NavItem[] = [
   { to: "/builder", label: "Builder", icon: User },
+  { to: "/damage-calculator", label: "Damage Calculator", icon: Crosshair },
 ];
 
-const NAV_GROUPS: NavGroup[] = [
+const NAV_SECTIONS: NavSection[] = [
   {
-    section: "Amellwind Homebrew",
-    label: "DM Tools",
-    items: [{ to: "/npc-generator", label: "NPC Generator", icon: UserCog }],
-  },
-  {
-    section: "Amellwind Homebrew",
-    label: "Character Tools",
-    items: [{ to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
-      { to: "/damage-calculator", label: "Damage Calculator", icon: Crosshair },
-    ],
-  },
-  {
-    section: "Amellwind Homebrew",
-    label: "Character",
-    items: [
-      { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
-      { to: "/species", label: "Species", icon: Users },
-      { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
-      { to: "/feats", label: "Feats", icon: Award },
-    ],
-  },
-  {
-    section: "Amellwind Homebrew",
-    label: "Bestiary",
-    items: [
-      { to: "/monsters", label: "Monsters", icon: Swords },
-      { to: "/runes", label: "Runes", icon: Gem },
-      { to: "/material-effects", label: "Material Effects", icon: Sparkles },
-      { to: "/conditions", label: "Conditions", icon: AlertTriangle },
-      { to: "/diseases", label: "Diseases", icon: Biohazard },
-    ],
-  },
-  {
-    section: "Amellwind Homebrew",
-    label: "Gear",
-    items: [
-      { to: "/weapons", label: "Weapons", icon: Sword },
-      { to: "/items", label: "Items", icon: Package },
-    ],
-  },
-  {
-    section: "Amellwind Homebrew",
-    label: "Craft & Trade",
-    items: [
-      { to: "/shops", label: "Shops", icon: Store },
-      { to: "/cooking", label: "Cooking", icon: ChefHat },
-      { to: "/combo", label: "Combo List", icon: Hammer },
-      { to: "/environments", label: "Environments", icon: MapPin },
-      { to: "/resources", label: "Resources", icon: Leaf },
-      { to: "/downtime", label: "Downtime", icon: CalendarClock },
-    ],
-  },
-  {
-    section: "DnD 5e",
-    label: "Compendium",
-    items: [
-      { to: "/spells", label: "Spells", icon: Sparkles },
-      { to: "/classes", label: "Classes", icon: User },
-      { to: "/dnd-races", label: "Races", icon: Users },
-      { to: "/dnd-backgrounds", label: "Backgrounds", icon: ScrollText },
-      { to: "/dnd-feats", label: "Feats", icon: Award },
-      { to: "/dnd-items", label: "Items", icon: Package },
-      { to: "/bestiary", label: "Bestiary", icon: Swords },
-    ],
-  },
-  {
-    section: "DnD 5e",
-    label: "Character Tools",
-    items: [
+    id: "amellwind",
+    label: "Amellwind Homebrew",
+    groups: [
       {
-        to: "/xanathar-backstory",
-        label: "Xanathar Backstory",
-        icon: BookOpen,
+        label: "Tools",
+        items: [
+          { to: "/npc-generator", label: "NPC Generator", icon: UserCog },
+          { to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
+        ],
       },
       {
-        to: "/damage-calculator",
-        label: "Damage Calculator",
-        icon: Crosshair,
+        label: "Character",
+        items: [
+          { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
+          { to: "/species", label: "Species", icon: Users },
+          { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
+          { to: "/feats", label: "Feats", icon: Award },
+        ],
+      },
+      {
+        label: "Bestiary",
+        items: [
+          { to: "/monsters", label: "Monsters", icon: Swords },
+          { to: "/runes", label: "Runes", icon: Gem },
+          { to: "/material-effects", label: "Material Effects", icon: Sparkles },
+          { to: "/conditions", label: "Conditions & Diseases", icon: AlertTriangle },
+        ],
+      },
+      {
+        label: "Gear",
+        items: [
+          { to: "/weapons", label: "Weapons", icon: Sword },
+          { to: "/items", label: "Items", icon: Package },
+        ],
+      },
+      {
+        label: "Craft & Trade",
+        items: [
+          { to: "/shops", label: "Shops", icon: Store },
+          { to: "/cooking", label: "Cooking", icon: ChefHat },
+          { to: "/combo", label: "Combo List", icon: Hammer },
+          { to: "/environments", label: "Environments", icon: MapPin },
+          { to: "/resources", label: "Resources", icon: Leaf },
+          { to: "/downtime", label: "Downtime", icon: CalendarClock },
+        ],
+      },
+    ],
+  },
+  {
+    id: "dnd5e",
+    label: "D&D 5e",
+    groups: [
+      {
+        label: "Compendium",
+        items: [
+          { to: "/spells", label: "Spells", icon: Sparkles },
+          { to: "/classes", label: "Classes", icon: User },
+          { to: "/dnd-races", label: "Races", icon: Users },
+          { to: "/dnd-backgrounds", label: "Backgrounds", icon: ScrollText },
+          { to: "/dnd-feats", label: "Feats", icon: Award },
+          { to: "/dnd-items", label: "Items", icon: Package },
+          { to: "/bestiary", label: "Bestiary", icon: Swords },
+        ],
+      },
+      {
+        label: "Character Tools",
+        items: [
+          { to: "/xanathar-backstory", label: "Xanathar Backstory", icon: BookOpen },
+        ],
       },
     ],
   },
@@ -159,9 +161,7 @@ function isNavItemActive(pathname: string, to: string) {
 }
 
 function groupHasActiveRoute(pathname: string, group: NavGroup) {
-  return group.items.some(
-    (item) => item.to && isNavItemActive(pathname, item.to),
-  );
+  return group.items.some((item) => item.to && isNavItemActive(pathname, item.to));
 }
 
 function NavItemLink({
@@ -216,12 +216,14 @@ function NavItemLink({
 }
 
 function SidebarNavGroup({
+  sectionId,
   group,
   collapsed,
   open,
   onToggle,
   onMobileClose,
 }: {
+  sectionId: string;
   group: NavGroup;
   collapsed: boolean;
   open: boolean;
@@ -230,14 +232,14 @@ function SidebarNavGroup({
 }) {
   const { pathname } = useLocation();
   const isActiveGroup = groupHasActiveRoute(pathname, group);
-  const panelId = `sidebar-group-${group.label.replace(/\s+/g, "-").toLowerCase()}`;
+  const panelId = `sidebar-group-${sectionId}-${group.label.replace(/\s+/g, "-").toLowerCase()}`;
 
   if (collapsed) {
     return (
       <div className="flex flex-col gap-1">
         {group.items.map((item) => (
           <NavItemLink
-            key={item.to}
+            key={item.to ?? item.label}
             {...item}
             collapsed={collapsed}
             onMobileClose={onMobileClose}
@@ -255,7 +257,7 @@ function SidebarNavGroup({
         aria-expanded={open}
         aria-controls={panelId}
         className={cn(
-          "flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-xs font-semibold uppercase tracking-wider transition-colors",
+          "flex w-full items-center gap-2 rounded-md px-3 py-1.5 text-left text-xs font-semibold uppercase tracking-wider transition-colors",
           isActiveGroup
             ? "text-primary"
             : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
@@ -280,7 +282,7 @@ function SidebarNavGroup({
           <div className="flex flex-col gap-0.5 pb-1 pl-1">
             {group.items.map((item) => (
               <NavItemLink
-                key={item.to}
+                key={item.to ?? item.label}
                 {...item}
                 collapsed={collapsed}
                 onMobileClose={onMobileClose}
@@ -301,21 +303,25 @@ function SidebarNav({
   onMobileClose: () => void;
 }) {
   const { pathname } = useLocation();
-  const groupKey = (g: NavGroup) => `${g.section}__${g.label}`;
+  const groupKey = (sectionId: string, groupLabel: string) => `${sectionId}__${groupLabel}`;
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() =>
-    Object.fromEntries(NAV_GROUPS.map((g) => [groupKey(g), false])),
+    Object.fromEntries(
+      NAV_SECTIONS.flatMap((s) =>
+        s.groups.map((g) => [groupKey(s.id, g.label), false]),
+      ),
+    ),
   );
 
   useEffect(() => {
-    const activeGroup = NAV_GROUPS.find((g) =>
-      groupHasActiveRoute(pathname, g),
-    );
-    if (!activeGroup) return;
-    const key = groupKey(activeGroup);
-    setOpenGroups((prev) =>
-      prev[key] ? prev : { ...prev, [key]: true },
-    );
+    NAV_SECTIONS.forEach((section) => {
+      section.groups.forEach((group) => {
+        if (groupHasActiveRoute(pathname, group)) {
+          const key = groupKey(section.id, group.label);
+          setOpenGroups((prev) => (prev[key] ? prev : { ...prev, [key]: true }));
+        }
+      });
+    });
   }, [pathname]);
 
   const toggleGroup = (key: string) => {
@@ -324,8 +330,14 @@ function SidebarNav({
 
   return (
     <nav className="flex flex-col gap-1 p-2 flex-1 overflow-y-auto">
+      {/* Herramientas principales: Builder + Damage Calculator */}
       <div className={cn("flex flex-col gap-0.5", !collapsed && "pb-2 mb-1 border-b border-border")}>
-        {STANDALONE_NAV_ITEMS.map((item) => (
+        {!collapsed && (
+          <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+            Tools
+          </p>
+        )}
+        {TOP_TOOLS.map((item) => (
           <NavItemLink
             key={item.to}
             {...item}
@@ -334,34 +346,38 @@ function SidebarNav({
           />
         ))}
       </div>
-      {NAV_GROUPS.map((group, groupIndex) => {
-        const previous = NAV_GROUPS[groupIndex - 1];
-        const sectionChanged = !previous || previous.section !== group.section;
 
-        return (
-          <div key={`${group.section}-${group.label}`}>
-            {sectionChanged && !collapsed && (
-              <p
-                className={cn(
-                  "px-3 pb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground",
-                  groupIndex > 0 && "pt-3 mt-2 border-t border-border",
-                )}
-              >
-                {group.section}
-              </p>
-            )}
-            <div className={cn(!collapsed && "pt-0.5")}>
-              <SidebarNavGroup
-                group={group}
-                collapsed={collapsed}
-                open={openGroups[groupKey(group)] ?? false}
-                onToggle={() => toggleGroup(groupKey(group))}
-                onMobileClose={onMobileClose}
-              />
-            </div>
+      {/* Secciones con grupos colapsables */}
+      {NAV_SECTIONS.map((section, sectionIndex) => (
+        <div key={section.id} className={cn(sectionIndex > 0 && "mt-1")}>
+          {!collapsed && (
+            <p
+              className={cn(
+                "px-3 pb-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60",
+                sectionIndex > 0 && "pt-3 mt-1 border-t border-border",
+              )}
+            >
+              {section.label}
+            </p>
+          )}
+          <div className="flex flex-col gap-0.5">
+            {section.groups.map((group) => {
+              const key = groupKey(section.id, group.label);
+              return (
+                <SidebarNavGroup
+                  key={key}
+                  sectionId={section.id}
+                  group={group}
+                  collapsed={collapsed}
+                  open={openGroups[key] ?? false}
+                  onToggle={() => toggleGroup(key)}
+                  onMobileClose={onMobileClose}
+                />
+              );
+            })}
           </div>
-        );
-      })}
+        </div>
+      ))}
     </nav>
   );
 }
@@ -386,6 +402,14 @@ export function Sidebar({
           collapsed ? "justify-center px-2 py-5" : "gap-2 px-4 py-5",
         )}
       >
+        <Link
+          to="/"
+          className={cn(
+            "flex items-center min-w-0 hover:opacity-80 transition-opacity",
+            collapsed ? "" : "gap-2 flex-1",
+          )}
+          aria-label="Ir al inicio"
+        >
         <img
           src="/icon/icon_propose_no_bg.png"
           alt=""
@@ -401,6 +425,7 @@ export function Sidebar({
             </span>
           </div>
         )}
+        </Link>
         {/* Botón cerrar en mobile */}
         <button
           onClick={onMobileClose}
@@ -424,14 +449,14 @@ export function Sidebar({
             "hidden md:flex w-full items-center px-3 py-2.5 text-xs text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-colors",
             collapsed ? "justify-center" : "gap-2",
           )}
-          aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}
+          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
           {collapsed ? (
             <ChevronRight className="h-4 w-4" />
           ) : (
             <>
               <ChevronLeft className="h-4 w-4" />
-              <span>Colapsar</span>
+              <span>Collapse</span>
             </>
           )}
         </button>
