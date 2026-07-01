@@ -1,4 +1,6 @@
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import {
   POINT_BUY_BUDGET,
   POINT_BUY_MAX,
@@ -93,15 +95,19 @@ export function MethodHintPanels({
             >
               Roll 6× (4d6 drop lowest)
             </Button>
-            <label className="flex items-center gap-1 text-[10px] text-muted-foreground cursor-pointer">
-              <input
-                type="checkbox"
+            <div className="flex items-center gap-1">
+              <Checkbox
+                id="heroic-rolls"
                 checked={heroicRolls}
-                onChange={(e) => onHeroicRollsChange(e.target.checked)}
-                className="rounded border-border"
+                onCheckedChange={(c) => onHeroicRollsChange(c === true)}
               />
-              Heroic (re-roll 1s on 1s)
-            </label>
+              <Label
+                htmlFor="heroic-rolls"
+                className="cursor-pointer text-[10px] font-normal text-muted-foreground"
+              >
+                Heroic (re-roll 1s on 1s)
+              </Label>
+            </div>
           </div>
           {lastRolls && (
             <p className="text-[10px] text-muted-foreground">

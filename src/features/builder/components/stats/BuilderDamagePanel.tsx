@@ -10,6 +10,9 @@ import { formatDamagePerTurnTooltip } from "../../utils/combat.calculator";
 import { getActiveWeaponDamageLabel } from "@/features/weapons/utils/weapon-mode.utils";
 import { isMonkClass } from "../../utils/unarmed-strike.utils";
 import { NumberStepper } from "../shared/NumberStepper";
+import { HintTooltip } from "@/shared/components/HintTooltip";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 
 export function BuilderDamagePanel() {
   const {
@@ -57,28 +60,28 @@ export function BuilderDamagePanel() {
             </span>
           </AccordionTrigger>
           <AccordionContent className="px-3.5 pb-3.5">
-            <label className="mb-3 flex items-start gap-2 cursor-pointer">
-              <input
-                type="checkbox"
+            <div className="mb-3 flex items-start gap-2">
+              <Checkbox
+                id="unarmed-strike"
                 checked={useUnarmedStrike}
-                onChange={(e) => setUseUnarmedStrike(e.target.checked)}
-                className="mt-0.5 rounded border-border"
+                onCheckedChange={(c) => setUseUnarmedStrike(c === true)}
+                className="mt-0.5"
               />
-              <span className="text-[10px] leading-snug text-muted-foreground">
-                <span
-                  className="relative group font-medium text-foreground cursor-help"
-                  title={unarmedStrikeTooltip}
+              <Label
+                htmlFor="unarmed-strike"
+                className="text-[10px] font-normal leading-snug text-muted-foreground"
+              >
+                <HintTooltip
+                  content={unarmedStrikeTooltip}
+                  align="start"
+                  className="text-left font-normal"
                 >
-                  Unarmed Strike
-                  <span
-                    role="tooltip"
-                    className="pointer-events-none absolute bottom-full left-0 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] rounded-md border border-border bg-popover px-2 py-1.5 text-left text-[10px] font-normal leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    {unarmedStrikeTooltip}
+                  <span className="cursor-help font-medium text-foreground">
+                    Unarmed Strike
                   </span>
-                </span>
-              </span>
-            </label>
+                </HintTooltip>
+              </Label>
+            </div>
 
             {!showDamage ? (
               <p className="py-4 text-center text-xs text-muted-foreground">
@@ -90,14 +93,13 @@ export function BuilderDamagePanel() {
                   <div className="text-[32px] font-medium leading-none text-emerald-400 tabular-nums">
                     {combat.totalDPT.toFixed(1)}
                   </div>
-                  <div className="relative group mt-1 inline-block cursor-help text-[11px] text-emerald-300/80">
-                    <span title={damagePerTurnTooltip}>average damage per turn</span>
-                    <span
-                      role="tooltip"
-                      className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(18rem,calc(100vw-2rem))] -translate-x-1/2 whitespace-pre-line rounded-md border border-border bg-popover px-2.5 py-2 text-left text-[10px] font-normal leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
+                  <div className="mt-1 inline-block text-[11px] text-emerald-300/80">
+                    <HintTooltip
+                      content={damagePerTurnTooltip}
+                      className="max-w-[18rem] text-left font-normal"
                     >
-                      {damagePerTurnTooltip}
-                    </span>
+                      <span className="cursor-help">average damage per turn</span>
+                    </HintTooltip>
                   </div>
                   <div className="mt-1 text-[10px] text-muted-foreground">
                     Level {character.level}

@@ -13,6 +13,7 @@ import {
 } from "../../../utils/species-ability-bonuses";
 import { AbilityScoreValue } from "../AbilityScoreValue";
 import { AbilityStatCard, AbilityStatRow } from "./AbilityStatLayouts";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 import { ABILITIES, type GenerationMethod } from "./constants";
 import type { useAbilityScoreBreakdowns } from "./useAbilityScoreBreakdowns";
 import type { useAbilityGenerationState } from "./useAbilityGenerationState";
@@ -89,18 +90,14 @@ export function AbilityScoreGrid({
               ))}
             </Select>
             {poolScore !== undefined && breakdown.bonus > 0 && (
-              <span
-                className="relative group text-[10px] font-medium text-emerald-400"
-                title={formatBonusTooltip(breakdown)}
+              <HintTooltip
+                content={formatBonusTooltip(breakdown)}
+                className="max-w-[14rem] text-center"
               >
-                → {breakdown.total}
-                <span
-                  role="tooltip"
-                  className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(14rem,calc(100vw-2rem))] -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1.5 text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100 whitespace-pre-line text-center"
-                >
-                  {formatBonusTooltip(breakdown)}
+                <span className="cursor-help text-[10px] font-medium text-emerald-400">
+                  → {breakdown.total}
                 </span>
-              </span>
+              </HintTooltip>
             )}
           </div>
         );
@@ -206,18 +203,14 @@ export function AbilityScoreGrid({
                 className="w-14 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground text-center focus:outline-none focus:ring-2 focus:ring-ring"
               />
               {breakdown.bonus > 0 && (
-                <span
-                  className="relative group text-[10px] font-medium text-emerald-400"
-                  title={formatBonusTooltip(breakdown)}
+                <HintTooltip
+                  content={formatBonusTooltip(breakdown)}
+                  className="max-w-[14rem] text-center"
                 >
-                  → {breakdown.total}
-                  <span
-                    role="tooltip"
-                    className="pointer-events-none absolute bottom-full left-1/2 z-20 mb-1 w-max max-w-[min(14rem,calc(100vw-2rem))] -translate-x-1/2 rounded-md border border-border bg-popover px-2 py-1.5 text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100 whitespace-pre-line text-center"
-                  >
-                    {formatBonusTooltip(breakdown)}
+                  <span className="cursor-help text-[10px] font-medium text-emerald-400">
+                    → {breakdown.total}
                   </span>
-                </span>
+                </HintTooltip>
               )}
             </div>
           </AbilityStatRow>

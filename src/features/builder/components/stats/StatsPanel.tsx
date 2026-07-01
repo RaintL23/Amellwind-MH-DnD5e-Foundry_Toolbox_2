@@ -1,5 +1,5 @@
 import { useRef, type ChangeEvent } from "react";
-import { Dices, FileDown, FileJson, RotateCcw, Upload, User } from "lucide-react";
+import { ChevronDown, Dices, FileDown, FileJson, FileUp, RotateCcw, User } from "lucide-react";
 import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
 import { useFoundryExport } from "../../hooks/useFoundryExport";
 import { useFoundryImport } from "../../hooks/useFoundryImport";
@@ -7,6 +7,13 @@ import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useCharacterRandomizer } from "../../hooks/useCharacterRandomizer";
@@ -104,31 +111,42 @@ export function StatsPanel() {
             <FileDown className="h-3 w-3 shrink-0" aria-hidden />
             Character Sheet 2024 PDF
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-auto min-w-0 flex-1 gap-1.5 px-2 py-1.5 text-[10px] leading-tight"
-            onClick={() => handleExportFoundry()}
-            disabled={exportingFoundry}
-            title="Export a Foundry VTT v12 (dnd5e) actor JSON"
-            aria-label="Download Foundry VTT JSON"
-          >
-            <FileJson className="h-3 w-3 shrink-0" aria-hidden />
-            Foundry VTT JSON
-          </Button>
-          <Button
-            type="button"
-            variant="outline"
-            size="icon"
-            className={ICON_BUTTON_CLASS}
-            onClick={() => foundryFileInputRef.current?.click()}
-            disabled={importingFoundry}
-            title="Subir un JSON de actor de Foundry VTT para rellenar el Builder"
-            aria-label="Upload Foundry VTT JSON"
-          >
-            <Upload className="h-3 w-3" aria-hidden />
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-auto min-w-0 flex-1 gap-1.5 px-2 py-1.5 text-[10px] leading-tight"
+                disabled={exportingFoundry || importingFoundry}
+                title="Foundry VTT v12 (dnd5e) JSON"
+                aria-label="Foundry VTT JSON options"
+              >
+                <FileJson className="h-3 w-3 shrink-0" aria-hidden />
+                Foundry VTT JSON
+                <ChevronDown className="h-3 w-3 shrink-0" aria-hidden />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="text-xs">
+              <DropdownMenuItem
+                className="gap-2 text-xs"
+                onSelect={() => handleExportFoundry()}
+                disabled={exportingFoundry}
+              >
+                <FileDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                Descargar JSON
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="gap-2 text-xs"
+                onSelect={() => foundryFileInputRef.current?.click()}
+                disabled={importingFoundry}
+              >
+                <FileUp className="h-3.5 w-3.5 shrink-0" aria-hidden />
+                Subir JSON
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <input
             ref={foundryFileInputRef}
             type="file"

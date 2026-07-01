@@ -2,8 +2,12 @@ import { useMemo } from "react";
 import { cn } from "@/shared/utils/cn";
 import { ABILITY_LABELS, AbilityKey } from "@/shared/types";
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSectionCompletenessHighlight } from "../../../context/BuildCompletenessContext";
 import { CompletenessHighlightBanner } from "../../shared/CompletenessHighlightBanner";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 import { useCharacterBuilder } from "../../../context/CharacterBuilderContext";
 import { useSelectedSpecies } from "../../../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../../../hooks/useSelectedDndBackground";
@@ -51,7 +55,16 @@ function BackgroundAsiPanel({ compact }: { compact: boolean }) {
         {weightedAsi.from.map((key) => ABILITY_LABELS[key]).join(", ")}.
       </p>
 
-      <div
+      <RadioGroup
+        value={backgroundAsiMode}
+        onValueChange={(v) => {
+          const modeKey = v as "plus2plus1" | "plus1each";
+          setBackgroundAsiMode(modeKey);
+          if (modeKey === "plus1each") {
+            setBackgroundAsiPlus2(null);
+            setBackgroundAsiPlus1(null);
+          }
+        }}
         className={`flex flex-wrap gap-2 ${compact ? "text-[10px]" : "text-xs"}`}
       >
         {weightedAsi.modes.map((mode) => {
@@ -59,29 +72,20 @@ function BackgroundAsiPanel({ compact }: { compact: boolean }) {
             mode.weights.some((weight) => weight === 2)
               ? "plus2plus1"
               : "plus1each";
+          const id = `background-asi-${modeKey}`;
           return (
-            <label
-              key={mode.label}
-              className="flex items-center gap-1 cursor-pointer text-muted-foreground"
-            >
-              <input
-                type="radio"
-                name="background-asi-mode"
-                checked={backgroundAsiMode === modeKey}
-                onChange={() => {
-                  setBackgroundAsiMode(modeKey);
-                  if (modeKey === "plus1each") {
-                    setBackgroundAsiPlus2(null);
-                    setBackgroundAsiPlus1(null);
-                  }
-                }}
-                className="rounded border-border"
-              />
-              {mode.label}
-            </label>
+            <div key={mode.label} className="flex items-center gap-1">
+              <RadioGroupItem id={id} value={modeKey} />
+              <Label
+                htmlFor={id}
+                className="cursor-pointer font-normal text-muted-foreground"
+              >
+                {mode.label}
+              </Label>
+            </div>
           );
         })}
-      </div>
+      </RadioGroup>
 
       {backgroundAsiMode === "plus2plus1" && (
         <div
@@ -196,29 +200,28 @@ export function OriginBonusesPanel({ compact }: { compact: boolean }) {
       )}
     >
       {highlighted && <CompletenessHighlightBanner issues={abilityIssues} />}
-      <label className="flex items-start gap-2 cursor-pointer">
-        <input
-          type="checkbox"
+      <div className="flex items-start gap-2">
+        <Checkbox
+          id="tasha-origin"
           checked={useTashaOrigin}
-          onChange={(e) => setUseTashaOrigin(e.target.checked)}
-          className="mt-0.5 rounded border-border"
+          onCheckedChange={(c) => setUseTashaOrigin(c === true)}
+          className="mt-0.5"
         />
-        <span className="text-[10px] leading-snug text-muted-foreground">
-          <span
-            className="relative group font-medium text-foreground cursor-help"
-            title="Ignore the bonuses of your species and assign +2 and +1 to the attributes you choose (not the same attribute)."
+        <Label
+          htmlFor="tasha-origin"
+          className="text-[10px] font-normal leading-snug text-muted-foreground"
+        >
+          <HintTooltip
+            content="Ignore the bonuses of your species and assign +2 and +1 to the attributes you choose (not the same attribute)."
+            align="start"
+            className="text-left font-normal"
           >
-            Customizing Your Origin (Tasha's Cauldron)
-            <span
-              role="tooltip"
-              className="pointer-events-none absolute bottom-full left-0 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] rounded-md border border-border bg-popover px-2 py-1.5 text-left text-[10px] font-normal leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100"
-            >
-              Ignore the bonuses of your species and assign +2 and +1 to the
-              attributes you choose (not the same attribute).
+            <span className="cursor-help font-medium text-foreground">
+              Customizing Your Origin (Tasha's Cauldron)
             </span>
-          </span>
-        </span>
-      </label>
+          </HintTooltip>
+        </Label>
+      </div>
 
       {useTashaOrigin && (
         <div

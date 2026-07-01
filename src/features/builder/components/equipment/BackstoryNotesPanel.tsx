@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { Book, ClipboardPaste, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useXanatharBackstory } from "@/features/xanathar-backstory/context/XanatharBackstoryContext";
@@ -112,18 +115,15 @@ export function BackstoryNotesPanel() {
       <div className="space-y-3">
         {PERSONALITY_FIELDS.map(({ key, label, placeholder }) => (
           <div key={key} className="space-y-1">
-            <label className="text-[10px] font-medium text-muted-foreground">
+            <Label className="text-[10px] text-muted-foreground">
               {label}
-            </label>
-            <input
+            </Label>
+            <Input
               type="text"
               value={personality[key]}
               onChange={(e) => setPersonalityField(key, e.target.value)}
               placeholder={placeholder}
-              className={cn(
-                "w-full rounded-md border border-input bg-background px-2.5 py-1.5 text-xs text-foreground shadow-sm",
-                "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-              )}
+              className="h-auto px-2.5 py-1.5 text-xs"
             />
           </div>
         ))}
@@ -145,9 +145,11 @@ export function BackstoryNotesPanel() {
                     <ul className="mt-1 space-y-0.5">
                       {table.rows.map((row, rowIdx) => (
                         <li key={rowIdx}>
-                          <button
+                          <Button
                             type="button"
-                            className="w-full rounded px-1 py-0.5 text-left text-[10px] text-foreground hover:bg-muted/60"
+                            variant="ghost"
+                            size="sm"
+                            className="h-auto w-full justify-start rounded px-1 py-0.5 text-left text-[10px] font-normal text-foreground hover:bg-muted/60"
                             onClick={() => {
                               const text = row[1] ?? row[0] ?? "";
                               if (!text) return;
@@ -174,7 +176,7 @@ export function BackstoryNotesPanel() {
                             }}
                           >
                             {row[1] ?? row[0]}
-                          </button>
+                          </Button>
                         </li>
                       ))}
                     </ul>
@@ -186,18 +188,15 @@ export function BackstoryNotesPanel() {
         )}
 
         <div className="space-y-1">
-          <label className="text-[10px] font-medium text-muted-foreground">
+          <Label className="text-[10px] text-muted-foreground">
             Free-form notes
-          </label>
-          <textarea
+          </Label>
+          <Textarea
             value={backstoryNotes}
             onChange={(e) => setBackstoryNotes(e.target.value)}
             placeholder="Connections, history, roleplaying hooks…"
             rows={8}
-            className={cn(
-              "w-full resize-y rounded-md border border-input bg-background px-3 py-2 text-sm leading-relaxed text-foreground shadow-sm",
-              "placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
-            )}
+            className="resize-y leading-relaxed"
             aria-label="Character's backstory notes"
           />
         </div>

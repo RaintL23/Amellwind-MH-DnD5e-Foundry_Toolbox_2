@@ -7,6 +7,7 @@ import { useCharacterArmorClass } from "../../hooks/useCharacterArmorClass";
 import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
 import { useCharacterSpeed } from "../../hooks/useCharacterSpeed";
 import { BuilderPanel } from "../shared/BuilderPanel";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 
 export function BuilderDerivedPanel() {
   const { character, class: classSelection, useAmellwindHomebrew } =
@@ -80,22 +81,15 @@ function DerivedRow({
   return (
     <div className="flex items-center justify-between border-b border-border/40 py-1.5 text-[13px] last:border-b-0">
       <span className="text-muted-foreground">{label}</span>
-      <span
-        className={`relative text-sm font-medium text-foreground ${
-          valueTooltip ? "group cursor-help" : ""
-        }`}
-        title={valueTooltip}
-      >
-        {value}
-        {valueTooltip && (
-          <span
-            role="tooltip"
-            className="pointer-events-none absolute bottom-full right-0 z-20 mb-1 w-max max-w-[min(16rem,calc(100vw-2rem))] rounded-md border border-border bg-popover px-2 py-1.5 text-left text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100 whitespace-pre-line"
-          >
-            {valueTooltip}
+      {valueTooltip ? (
+        <HintTooltip content={valueTooltip} align="end" className="text-left">
+          <span className="cursor-help text-sm font-medium text-foreground">
+            {value}
           </span>
-        )}
-      </span>
+        </HintTooltip>
+      ) : (
+        <span className="text-sm font-medium text-foreground">{value}</span>
+      )}
     </div>
   );
 }

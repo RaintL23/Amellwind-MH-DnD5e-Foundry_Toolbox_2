@@ -14,6 +14,7 @@ import {
 } from "@/features/weapons/utils/weapon-hands.utils";
 import { hasActiveIntegratedShield } from "@/features/weapons/utils/shield.utils";
 import { cn } from "@/shared/utils/cn";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
 import {
@@ -66,21 +67,19 @@ function TooltipValue({
   className?: string;
 }) {
   return (
-    <span
-      className={cn("group relative cursor-help", className)}
-      title={ruleTooltip}
-    >
-      {value}
-      {ruleTooltip && (
-        <span
-          role="tooltip"
-          className="pointer-events-none absolute bottom-full right-0 z-20 mb-1 w-max max-w-[min(18rem,calc(100vw-2rem))] rounded-md border border-border bg-popover px-2 py-1.5 text-left text-[10px] leading-relaxed text-popover-foreground shadow-md opacity-0 transition-opacity group-hover:opacity-100 whitespace-pre-line"
+    <>
+      {ruleTooltip ? (
+        <HintTooltip
+          content={calcTooltip ? `${ruleTooltip}\n\n${calcTooltip}` : ruleTooltip}
+          align="end"
+          className="max-w-[18rem] text-left"
         >
-          {ruleTooltip}
-          {calcTooltip ? `\n\n${calcTooltip}` : ""}
-        </span>
+          <span className={cn("cursor-help", className)}>{value}</span>
+        </HintTooltip>
+      ) : (
+        <span className={cn("cursor-help", className)}>{value}</span>
       )}
-    </span>
+    </>
   );
 }
 
