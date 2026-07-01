@@ -9,6 +9,7 @@ import { COMBO_RULES } from "../data/combo.data";
 import { ComboRow } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAllItems } from "@/features/shops/services/item.service";
 import { ItemRefText } from "@/shared/components/ItemRefText";
 import { DndRichText } from "@/shared/components/DndRichText";
@@ -198,23 +199,24 @@ export function ComboPage() {
       ) : (
         <>
           {/* Tabs */}
-          <div className="flex flex-wrap gap-1.5 mb-6 border-b border-border pb-3">
-            {TABS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => handleTabChange(id)}
-                className={cn(
-                  "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                  activeTab === id
-                    ? "bg-primary/20 text-primary border border-primary/30"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
-                <Icon className="h-3.5 w-3.5 shrink-0" />
-                <span className="truncate max-w-[120px]">{label}</span>
-              </button>
-            ))}
-          </div>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => handleTabChange(value as ActiveTab)}
+            className="mb-6 border-b border-border pb-3"
+          >
+            <TabsList className="flex flex-wrap justify-start gap-1.5 h-auto rounded-none bg-transparent p-0 text-muted-foreground">
+              {TABS.map(({ id, label, icon: Icon }) => (
+                <TabsTrigger
+                  key={id}
+                  value={id}
+                  className="gap-1.5 px-3 py-1.5 h-auto rounded-md border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/30 data-[state=active]:shadow-none"
+                >
+                  <Icon className="h-3.5 w-3.5 shrink-0" />
+                  <span className="truncate max-w-[120px]">{label}</span>
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
 
           {/* ── REGLAS ── */}
           {activeTab === "rules" && <RulesTab />}

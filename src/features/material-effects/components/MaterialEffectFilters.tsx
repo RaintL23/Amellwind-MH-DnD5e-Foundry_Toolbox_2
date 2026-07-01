@@ -38,19 +38,19 @@ export function MaterialEffectFilters({
   }
 
   return (
-    <div className="space-y-3 mb-4">
-      <div className="relative max-w-xs">
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-2 mb-4">
+      <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
         <Input
           value={filters.name}
           onChange={(e) => onChange({ ...filters, name: e.target.value })}
           placeholder="Search effect name or text..."
-          className="pl-9 h-8 text-sm"
+          className="pl-9 h-8 text-sm w-64"
         />
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs text-muted-foreground mr-1">Slot:</span>
+        <span className="text-xs text-muted-foreground">Slot:</span>
         {SLOT_OPTIONS.map(({ value, label }) => {
           const active = filters.slot.includes(value);
           return (
@@ -74,7 +74,7 @@ export function MaterialEffectFilters({
       </div>
 
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-xs text-muted-foreground mr-1">Rarity:</span>
+        <span className="text-xs text-muted-foreground">Rarity:</span>
         {MATERIAL_EFFECT_RARITIES.map((rarity) => {
           const active = filters.rarity.includes(rarity);
           return (
@@ -93,16 +93,17 @@ export function MaterialEffectFilters({
             </button>
           );
         })}
-        {(filters.slot.length > 0 || filters.rarity.length > 0) && (
-          <Badge
-            variant="secondary"
-            className="cursor-pointer text-xs"
-            onClick={() => onChange({ ...filters, slot: [], rarity: [] })}
-          >
-            Clear filters
-          </Badge>
-        )}
       </div>
+
+      {(filters.slot.length > 0 || filters.rarity.length > 0) && (
+        <Badge
+          variant="secondary"
+          className="cursor-pointer text-xs"
+          onClick={() => onChange({ ...filters, slot: [], rarity: [] })}
+        >
+          Clear filters
+        </Badge>
+      )}
     </div>
   );
 }

@@ -188,47 +188,50 @@ export function AttacksPanel({
                   </div>
                 )}
 
-                <div>
-                  <p className="mb-2 text-[10px] uppercase tracking-wide text-muted-foreground">
-                    Saving throw
-                  </p>
-                  <div className="space-y-2">
-                    <SettingRow label="Save DC">
-                      <NumberStepper
-                        value={attack.saveDC}
-                        min={5}
-                        max={30}
-                        ariaLabel="Save DC"
-                        onChange={(saveDC) =>
-                          onUpdateAttack(attack.id, { saveDC })
-                        }
-                      />
-                    </SettingRow>
-                    <label className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <input
-                        type="checkbox"
-                        checked={attack.halfDamageOnSave}
-                        onChange={(e) =>
-                          onUpdateAttack(attack.id, {
-                            halfDamageOnSave: e.target.checked,
-                          })
-                        }
-                        className="rounded border-border"
-                      />
-                      Half damage on successful save
-                    </label>
-                    <div className="rounded-md bg-muted/40 px-2 py-1.5 text-xs">
-                      <div className="flex justify-between">
-                        <span className="text-muted-foreground">
-                          Target succeeds
-                        </span>
-                        <span className="font-medium tabular-nums">
-                          {formatPercent(saveSuccessChance)}
-                        </span>
+                {resolution === "save" && (
+                  <div>
+                    <p className="mb-2 text-[10px] uppercase tracking-wide text-muted-foreground">
+                      Saving throw
+                    </p>
+                    <div className="space-y-2">
+                      <SettingRow label="Save DC">
+                        <NumberStepper
+                          value={attack.saveDC}
+                          min={5}
+                          max={30}
+                          ariaLabel="Save DC"
+                          onChange={(saveDC) =>
+                            onUpdateAttack(attack.id, { saveDC })
+                          }
+                        />
+                      </SettingRow>
+                      <label className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <input
+                          type="checkbox"
+                          checked={attack.halfDamageOnSave}
+                          onChange={(e) =>
+                            onUpdateAttack(attack.id, {
+                              halfDamageOnSave: e.target.checked,
+                            })
+                          }
+                          className="rounded border-border"
+                        />
+                        Half damage on successful save
+                      </label>
+                      <div className="rounded-md bg-muted/40 px-2 py-1.5 text-xs">
+                        <div className="flex justify-between">
+                          <span className="text-muted-foreground">
+                            Target succeeds
+                          </span>
+                          <span className="font-medium tabular-nums">
+                            {formatPercent(saveSuccessChance)}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
+
               </div>
 
               {result && (

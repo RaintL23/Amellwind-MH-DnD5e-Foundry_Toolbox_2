@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { BookOpen, Lightbulb } from "lucide-react";
 import type { GuideSection, GuideSubsection } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   CHARACTER_GUIDE_INTRO,
   CHARACTER_GUIDE_SECTIONS,
@@ -170,23 +171,23 @@ export function CharacterGuidePage() {
 
       <div className="flex-1 overflow-auto p-4 lg:p-6">
         <div className="mx-auto space-y-5">
-          <div className="flex flex-wrap gap-1.5 border-b border-border pb-3">
-            {TABS.map(({ id, label }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveTab(id)}
-                className={cn(
-                  "px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                  activeTab === id
-                    ? "bg-primary/20 text-primary border border-primary/30"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as TabId)}
+            className="border-b border-border pb-3"
+          >
+            <TabsList className="flex flex-wrap justify-start gap-1.5 h-auto rounded-none bg-transparent p-0 text-muted-foreground">
+              {TABS.map(({ id, label }) => (
+                <TabsTrigger
+                  key={id}
+                  value={id}
+                  className="px-3 py-1.5 h-auto rounded-md border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/30 data-[state=active]:shadow-none"
+                >
+                  {label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
 
           {activeSection && (
             <div>

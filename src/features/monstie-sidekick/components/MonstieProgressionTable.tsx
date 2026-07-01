@@ -1,5 +1,13 @@
 import type { MonstieSidekickClass } from "@/shared/types";
 import { getSidekickProficiencyBonus } from "../utils/monstie-stats";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface MonstieProgressionTableProps {
   sidekickClass: MonstieSidekickClass;
@@ -29,43 +37,43 @@ export function MonstieProgressionTable({
         level.
       </p>
       <div className="overflow-x-auto rounded-md border border-border">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border bg-muted/40">
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground w-20">
+        <Table className="text-sm">
+          <TableHeader>
+            <TableRow className="border-b border-border bg-muted/40 hover:bg-transparent">
+              <TableHead className="h-auto w-20 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Level
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground w-16">
+              </TableHead>
+              <TableHead className="h-auto w-16 px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 PB
-              </th>
-              <th className="px-3 py-2 text-left text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              </TableHead>
+              <TableHead className="h-auto px-3 py-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                 Features
-              </th>
-            </tr>
-          </thead>
-          <tbody>
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {progression.map(({ level, features }) => (
-              <tr
+              <TableRow
                 key={level}
-                className="border-b border-border/60 last:border-0"
+                className="border-b border-border/60 last:border-0 hover:bg-transparent"
               >
-                <td className="px-3 py-2 font-semibold text-primary align-top">
+                <TableCell className="px-3 py-2 font-semibold text-primary align-top">
                   {level}
-                </td>
-                <td className="px-3 py-2 text-muted-foreground align-top whitespace-nowrap">
+                </TableCell>
+                <TableCell className="px-3 py-2 text-muted-foreground align-top whitespace-nowrap">
                   +{getSidekickProficiencyBonus(level)}
-                </td>
-                <td className="px-3 py-2 text-foreground align-top">
+                </TableCell>
+                <TableCell className="px-3 py-2 text-foreground align-top">
                   <ul className="list-disc list-inside space-y-0.5">
                     {features.map((f) => (
                       <li key={f}>{f}</li>
                     ))}
                   </ul>
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

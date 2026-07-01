@@ -1,4 +1,6 @@
 import { NumberStepper } from "@/features/builder/components/shared/NumberStepper";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { formatDamageTypeLabel } from "@/shared/utils/defense-grant.parser";
 import type { DamageType } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
@@ -90,15 +92,19 @@ export function WeaponSettingsPanel({
           <p className="text-[10px] text-muted-foreground">
             Natural {weapon.critRange === 20 ? "20" : `${weapon.critRange}–20`}
           </p>
-          <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            <input
-              type="checkbox"
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="brutal-crit"
               checked={weapon.useBrutalCrit}
-              onChange={(e) => onUpdate({ useBrutalCrit: e.target.checked })}
-              className="rounded border-border"
+              onCheckedChange={(c) => onUpdate({ useBrutalCrit: c === true })}
             />
-            Brutal Critical (extra weapon dice on crit)
-          </label>
+            <Label
+              htmlFor="brutal-crit"
+              className="cursor-pointer text-xs font-normal text-muted-foreground"
+            >
+              Brutal Critical (extra weapon dice on crit)
+            </Label>
+          </div>
           {weapon.useBrutalCrit && (
             <SettingRow label="Extra dice on crit">
               <NumberStepper

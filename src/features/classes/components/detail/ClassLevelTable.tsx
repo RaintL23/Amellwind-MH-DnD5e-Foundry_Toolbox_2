@@ -5,6 +5,14 @@ import {
   ClassTableGroup,
 } from "@/shared/types";
 import { ClassFeatureChip } from "./ClassFeatureChip";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface ClassLevelTableProps {
   progression: ClassLevelRow[];
@@ -26,43 +34,43 @@ export const ClassLevelTable = memo(function ClassLevelTable({
 
   return (
     <div className="overflow-x-auto rounded-md border border-border px-4">
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="border-b border-border bg-muted/20">
-            <th className="px-2 py-2 text-left font-semibold text-muted-foreground w-10">
+      <Table className="text-xs">
+        <TableHeader>
+          <TableRow className="border-b border-border bg-muted/20 hover:bg-transparent">
+            <TableHead className="h-auto w-10 px-2 py-2 font-semibold text-muted-foreground">
               Lvl
-            </th>
+            </TableHead>
             {flatLabels.map((label, i) => (
-              <th
+              <TableHead
                 key={`${label}-${i}`}
-                className="px-2 py-2 text-center font-semibold text-muted-foreground whitespace-nowrap"
+                className="h-auto px-2 py-2 text-center font-semibold text-muted-foreground whitespace-nowrap"
               >
                 {label}
-              </th>
+              </TableHead>
             ))}
-            <th className="px-2 py-2 text-left font-semibold text-muted-foreground min-w-[180px]">
+            <TableHead className="h-auto min-w-[180px] px-2 py-2 font-semibold text-muted-foreground">
               Features
-            </th>
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {progression.map((row) => (
-            <tr
+            <TableRow
               key={row.level}
-              className="border-b border-border/50 last:border-0"
+              className="border-b border-border/50 last:border-0 hover:bg-transparent"
             >
-              <td className="px-2 py-2 font-medium text-foreground align-top">
+              <TableCell className="px-2 py-2 font-medium text-foreground align-top">
                 {row.level}
-              </td>
+              </TableCell>
               {row.tableCells.map((cell, j) => (
-                <td
+                <TableCell
                   key={j}
                   className="px-2 py-2 text-center text-muted-foreground align-top"
                 >
                   {cell}
-                </td>
+                </TableCell>
               ))}
-              <td className="px-2 py-2 align-top">
+              <TableCell className="px-2 py-2 align-top">
                 <div className="flex flex-wrap gap-1">
                   {row.features.map((feature: ClassFeatureEntry) => (
                     <ClassFeatureChip
@@ -73,11 +81,11 @@ export const ClassLevelTable = memo(function ClassLevelTable({
                     />
                   ))}
                 </div>
-              </td>
-            </tr>
+              </TableCell>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 });

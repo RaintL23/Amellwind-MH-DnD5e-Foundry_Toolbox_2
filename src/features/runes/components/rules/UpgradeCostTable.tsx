@@ -1,4 +1,12 @@
 import { cn } from "@/shared/utils/cn";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 interface UpgradeRow {
   rarity: string;
@@ -29,30 +37,33 @@ export function UpgradeCostTable({
         {title}
       </div>
       <div className="overflow-x-auto rounded-md border border-border">
-        <table className="w-full text-xs">
-          <thead>
-            <tr className="border-b border-border bg-muted/30 text-muted-foreground">
-              <th className="px-2 py-1.5 text-left font-medium">Rarity</th>
-              <th className="px-2 py-1.5 text-left font-medium">Resource</th>
-              <th className="px-2 py-1.5 text-center font-medium">Amt.</th>
-              <th className="px-2 py-1.5 text-right font-medium">Cost</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Table className="text-xs">
+          <TableHeader>
+            <TableRow className="border-b border-border bg-muted/30 text-muted-foreground hover:bg-transparent">
+              <TableHead className="h-auto px-2 py-1.5 font-medium">Rarity</TableHead>
+              <TableHead className="h-auto px-2 py-1.5 font-medium">Resource</TableHead>
+              <TableHead className="h-auto px-2 py-1.5 text-center font-medium">Amt.</TableHead>
+              <TableHead className="h-auto px-2 py-1.5 text-right font-medium">Cost</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
             {rows.map((row) => (
-              <tr key={row.rarity} className="border-b border-border/50 last:border-0">
-                <td className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">
+              <TableRow
+                key={row.rarity}
+                className="border-b border-border/50 last:border-0 hover:bg-transparent"
+              >
+                <TableCell className="px-2 py-1.5 font-medium text-foreground whitespace-nowrap">
                   {row.rarity}
-                </td>
-                <td className="px-2 py-1.5 text-muted-foreground">{row.resource}</td>
-                <td className="px-2 py-1.5 text-center text-foreground">{row.amount}</td>
-                <td className="px-2 py-1.5 text-right text-amber-400/90 font-medium whitespace-nowrap">
+                </TableCell>
+                <TableCell className="px-2 py-1.5 text-muted-foreground">{row.resource}</TableCell>
+                <TableCell className="px-2 py-1.5 text-center text-foreground">{row.amount}</TableCell>
+                <TableCell className="px-2 py-1.5 text-right text-amber-400/90 font-medium whitespace-nowrap">
                   {row.cost}
-                </td>
-              </tr>
+                </TableCell>
+              </TableRow>
             ))}
-          </tbody>
-        </table>
+          </TableBody>
+        </Table>
       </div>
       <p className="text-[10px] text-muted-foreground/80 leading-relaxed italic">
         {materialFootnote}

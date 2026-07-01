@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { PawPrint, BookOpen, Wand2 } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { MonstieSidekickGuide } from "@/shared/types";
 import { getMonstieSidekickGuide } from "../services/monstie-sidekick.service";
 import { MonstieCreatorProvider } from "../context/MonstieCreatorContext";
@@ -46,24 +46,24 @@ export function MonstieSidekickPage() {
 
       <div className="flex-1 overflow-auto p-4 lg:p-6">
         <div className="max-w-6xl mx-auto space-y-5">
-          <div className="flex flex-wrap gap-1.5 border-b border-border pb-3">
-            {TABS.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => setActiveTab(id)}
-                className={cn(
-                  "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                  activeTab === id
-                    ? "bg-primary/20 text-primary border border-primary/30"
-                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </button>
-            ))}
-          </div>
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) => setActiveTab(value as TabId)}
+            className="border-b border-border pb-3"
+          >
+            <TabsList className="flex flex-wrap justify-start gap-1.5 h-auto rounded-none bg-transparent p-0 text-muted-foreground">
+              {TABS.map(({ id, label, icon: Icon }) => (
+                <TabsTrigger
+                  key={id}
+                  value={id}
+                  className="gap-1.5 px-3 py-1.5 h-auto rounded-md border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/30 data-[state=active]:shadow-none"
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </TabsTrigger>
+              ))}
+            </TabsList>
+          </Tabs>
 
           {activeTab === "rules" && (
             <div className="max-w-4xl space-y-6">

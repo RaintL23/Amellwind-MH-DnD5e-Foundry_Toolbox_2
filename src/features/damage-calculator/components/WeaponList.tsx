@@ -121,7 +121,19 @@ export function WeaponList({
                   key={r.weaponId}
                   className="flex items-center justify-between text-xs"
                 >
-                  <span className="truncate text-muted-foreground">{r.weaponName}</span>
+                  <span className="truncate text-muted-foreground">
+                    {r.weaponName} -{" "}
+                    {(() => {
+                      const weapon = weapons.find((w) => w.id === r.weaponId);
+                      if (!weapon) return `${r.attacks.length} attack${r.attacks.length !== 1 ? "s" : ""}`;
+                      const attackCount = weapon.attacks.filter((a) => a.resolution === "attack-roll").length;
+                      const saveCount = weapon.attacks.filter((a) => a.resolution === "save").length;
+                      const parts: string[] = [];
+                      if (attackCount > 0) parts.push(`${attackCount} attack${attackCount !== 1 ? "s" : ""}`);
+                      if (saveCount > 0) parts.push(`${saveCount} save${saveCount !== 1 ? "s" : ""}`);
+                      return parts.join(" and ");
+                    })()}
+                  </span>
                   <span className="shrink-0 font-medium tabular-nums text-foreground">
                     {r.totalExpectedPerTurn.toFixed(1)}
                   </span>

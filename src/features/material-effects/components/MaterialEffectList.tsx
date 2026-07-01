@@ -11,7 +11,7 @@ import { MaterialEffectFilters } from "./MaterialEffectFilters";
 import { MaterialEffectCard } from "./MaterialEffectCard";
 import { MaterialEffectDetailDialog } from "./MaterialEffectDetailDialog";
 
-const DEFAULT_PAGE_SIZE = 24;
+const DEFAULT_PAGE_SIZE = 10;
 
 export function MaterialEffectList() {
   const [effects, setEffects] = useState<MaterialEffect[]>([]);

@@ -1,6 +1,14 @@
 import { RESOURCE_CATEGORY_ICONS, type LevelTier } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { EnvironmentColors } from "../constants/environment.constants";
 
 export function ResourceTable({
@@ -12,16 +20,16 @@ export function ResourceTable({
 }) {
   return (
     <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="w-full text-xs">
-        <thead>
-          <tr className="bg-card/80">
-            <th className="px-2 py-1.5 text-left text-muted-foreground font-medium w-8">
+      <Table className="text-xs">
+        <TableHeader>
+          <TableRow className="bg-card/80 hover:bg-transparent">
+            <TableHead className="h-auto w-8 px-2 py-1.5 font-medium text-muted-foreground">
               d6
-            </th>
+            </TableHead>
             {tier.resources.columns.map((col) => (
-              <th
+              <TableHead
                 key={col.category}
-                className="px-2 py-1.5 text-center text-muted-foreground font-medium"
+                className="h-auto px-2 py-1.5 text-center font-medium text-muted-foreground"
               >
                 <div className="flex flex-col items-center gap-0.5">
                   <span>{RESOURCE_CATEGORY_ICONS[col.category]}</span>
@@ -33,28 +41,28 @@ export function ResourceTable({
                     DC {col.dc}
                   </Badge>
                 </div>
-              </th>
+              </TableHead>
             ))}
-          </tr>
-        </thead>
-        <tbody>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {tier.resources.rows.map((row) => (
-            <tr
+            <TableRow
               key={row.roll}
               className="border-t border-border/50 hover:bg-accent/20 transition-colors"
             >
-              <td className="px-2 py-1.5 text-center font-bold text-muted-foreground">
+              <TableCell className="px-2 py-1.5 text-center font-bold text-muted-foreground">
                 {row.roll}
-              </td>
+              </TableCell>
               {row.items.map((item, i) => (
-                <td key={i} className="px-2 py-1.5 text-center text-foreground">
+                <TableCell key={i} className="px-2 py-1.5 text-center text-foreground">
                   {item}
-                </td>
+                </TableCell>
               ))}
-            </tr>
+            </TableRow>
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 }

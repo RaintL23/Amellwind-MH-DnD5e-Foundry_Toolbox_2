@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ENVIRONMENT_COLORS, type Environment } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BookOpen, Dice6, MapPin } from "lucide-react";
 import { getAllEnvironments } from "../services/environment.service";
 import { BIOME_ICONS } from "../constants/environment.constants";
@@ -55,59 +56,55 @@ export function EnvironmentList() {
         <SearchResultsPanel environments={filtered} onSelect={handleSelect} />
       ) : (
         <>
-          <div className="flex flex-wrap gap-1.5 mb-6 border-b border-border pb-3">
-            <button
-              onClick={() => setActiveTab("rules")}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                activeTab === "rules"
-                  ? "bg-primary/20 text-primary border border-primary/30"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-            >
-              <BookOpen className="h-3.5 w-3.5 shrink-0" />
-              Location Rules
-            </button>
-            <button
-              onClick={() => setActiveTab("rolls")}
-              className={cn(
-                "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors",
-                activeTab === "rolls"
-                  ? "bg-primary/20 text-primary border border-primary/30"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-            >
-              <Dice6 className="h-3.5 w-3.5 shrink-0" />
-              Rolls in an Environment
-            </button>
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="mb-6 border-b border-border pb-3"
+          >
+            <TabsList className="flex flex-wrap justify-start gap-1.5 h-auto rounded-none bg-transparent p-0 text-muted-foreground">
+              <TabsTrigger
+                value="rules"
+                className="gap-1.5 px-3 py-1.5 h-auto rounded-md border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/30 data-[state=active]:shadow-none"
+              >
+                <BookOpen className="h-3.5 w-3.5 shrink-0" />
+                Location Rules
+              </TabsTrigger>
+              <TabsTrigger
+                value="rolls"
+                className="gap-1.5 px-3 py-1.5 h-auto rounded-md border border-transparent text-muted-foreground hover:bg-accent hover:text-accent-foreground data-[state=active]:bg-primary/20 data-[state=active]:text-primary data-[state=active]:border-primary/30 data-[state=active]:shadow-none"
+              >
+                <Dice6 className="h-3.5 w-3.5 shrink-0" />
+                Rolls in an Environment
+              </TabsTrigger>
 
-            {allEnvironments.map((env) => {
-              const colors =
-                ENVIRONMENT_COLORS[env.name] ??
-                ENVIRONMENT_COLORS["Verdant Hills"];
-              const isActive = activeTab === env.name;
-              return (
-                <button
-                  key={env.name}
-                  onClick={() => setActiveTab(env.name)}
-                  className={cn(
-                    "flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors border",
-                    isActive
-                      ? cn(colors.bg, colors.border, colors.accent)
-                      : "text-muted-foreground border-transparent hover:bg-accent hover:text-accent-foreground",
-                  )}
-                >
-                  <span className="text-base leading-none">
-                    {BIOME_ICONS[env.name] ?? "🗺️"}
-                  </span>
-                  <span className="truncate max-w-[110px]">{env.name}</span>
-                </button>
-              );
-            })}
-          </div>
+              {allEnvironments.map((env) => {
+                const colors =
+                  ENVIRONMENT_COLORS[env.name] ??
+                  ENVIRONMENT_COLORS["Verdant Hills"];
+                const isActive = activeTab === env.name;
+                return (
+                  <TabsTrigger
+                    key={env.name}
+                    value={env.name}
+                    className={cn(
+                      "gap-1.5 px-3 py-1.5 h-auto rounded-md border",
+                      isActive
+                        ? cn(colors.bg, colors.border, colors.accent)
+                        : "text-muted-foreground border-transparent hover:bg-accent hover:text-accent-foreground",
+                    )}
+                  >
+                    <span className="text-base leading-none">
+                      {BIOME_ICONS[env.name] ?? "🗺️"}
+                    </span>
+                    <span className="truncate max-w-[110px]">{env.name}</span>
+                  </TabsTrigger>
+                );
+              })}
+            </TabsList>
+          </Tabs>
 
           {activeTab === "rules" && (
-            <RulesTab environments={allEnvironments} onSelect={handleSelect} />
+            <RulesTab/>
           )}
           {activeTab === "rolls" && (
             <EnvironmentRollsTab environments={allEnvironments} />

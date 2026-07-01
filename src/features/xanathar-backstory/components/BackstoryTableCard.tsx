@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { Dices, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import type { XgeTable } from "../data/xanathar-tables.data";
 import type { RollResult } from "../utils/xanathar-roll.utils";
 
@@ -129,18 +137,18 @@ export function BackstoryTableCard({
             Haz clic en una fila para elegir esa opción manualmente.
           </p>
           <div className="rounded border border-border overflow-hidden">
-            <table className="w-full text-xs">
-              <thead>
-                <tr className="bg-muted/60 border-b border-border">
-                  <th className="text-left px-2 py-1.5 font-semibold text-muted-foreground w-16 shrink-0">
+            <Table className="text-xs">
+              <TableHeader>
+                <TableRow className="bg-muted/60 border-b border-border hover:bg-transparent">
+                  <TableHead className="h-auto w-16 px-2 py-1.5 font-semibold text-muted-foreground">
                     {table.dice.label ?? `${table.dice.count}d${table.dice.sides}`}
-                  </th>
-                  <th className="text-left px-2 py-1.5 font-semibold text-muted-foreground">
+                  </TableHead>
+                  <TableHead className="h-auto px-2 py-1.5 font-semibold text-muted-foreground">
                     Result
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
                 {table.rows.map((row, i) => {
                   const rangeLabel =
                     row.range[0] === row.range[1]
@@ -153,27 +161,27 @@ export function BackstoryTableCard({
                         result!.finalValue >= row.range[0] &&
                         result!.finalValue <= row.range[1]));
                   return (
-                    <tr
+                    <TableRow
                       key={i}
                       onClick={() => !selectDisabled && onSelect(table.id, i)}
                       title={selectDisabled ? disabledReason : "Seleccionar esta opción"}
                       className={cn(
                         "border-b border-border last:border-0 transition-colors",
                         selectDisabled
-                          ? "cursor-not-allowed opacity-60"
+                          ? "cursor-not-allowed opacity-60 hover:bg-transparent"
                           : "cursor-pointer",
                         isActive
-                          ? "bg-primary/15 font-medium text-primary"
+                          ? "bg-primary/15 font-medium text-primary hover:bg-primary/15"
                           : !selectDisabled && "hover:bg-muted/40",
                       )}
                     >
-                      <td className="px-2 py-1.5 font-mono text-center">{rangeLabel}</td>
-                      <td className="px-2 py-1.5">{row.result}</td>
-                    </tr>
+                      <TableCell className="px-2 py-1.5 font-mono text-center">{rangeLabel}</TableCell>
+                      <TableCell className="px-2 py-1.5">{row.result}</TableCell>
+                    </TableRow>
                   );
                 })}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </div>
       )}
