@@ -10,6 +10,8 @@ import type {
 } from "@/shared/types";
 import { SKILL_ABILITY, ABILITY_KEYS } from "@/shared/constants/dnd";
 import type { FoundryActor, FoundryItem } from "./foundry.types";
+import type { BuilderChoiceSnapshot } from "./builder-snapshot";
+import { toBuilderSnapshotFlags } from "./builder-snapshot";
 import {
   buildStats,
   buildPrototypeToken,
@@ -36,6 +38,7 @@ import {
   buildSizeAdvancement,
   buildTraitAdvancement,
 } from "./advancement.builders";
+import { applyItemAutomation } from "./automation.builders";
 import {
   FULL_CASTER_SLOTS,
   effectiveCasterLevel,
@@ -146,6 +149,8 @@ export interface FoundryExportInput {
   tokenImage?: string | null;
   /** Lookup (lowercased item name → HTML/plain description) for armor/trinket/loot. */
   itemDescriptions?: Record<string, string>;
+  /** Lossless builder choice snapshot embedded as a namespaced actor flag. */
+  builderSnapshot?: BuilderChoiceSnapshot;
 }
 
 // ─── Feature item helpers ────────────────────────────────────────────────────
@@ -331,6 +336,11 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   // Spells
   for (const spell of input.spells) {
     items.push(buildSpellItem(spell));
+  }
+
+  // Enrich items with Midi-QoL / DAE automation (Plutonium-style overlays).
+  for (const item of items) {
+    applyItemAutomation(item);
   }
 
   // ── system.abilities ──
@@ -545,7 +555,7 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
     folder: null,
     sort: 0,
     ownership: { ...DEFAULT_OWNERSHIP },
-    flags: {},
+    flags: input.builderSnapshot ? toBuilderSnapshotFlags(input.builderSnapshot) : {},
     _stats: buildStats(),
   };
 }

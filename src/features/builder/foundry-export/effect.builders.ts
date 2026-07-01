@@ -3,6 +3,29 @@ import { buildStats, foundryId } from "./foundry-id.utils";
 
 const DEFAULT_ICON = "systems/dnd5e/icons/svg/items/equipment.svg";
 
+/**
+ * ActiveEffect change modes (Foundry `CONST.ACTIVE_EFFECT_MODES`). Exposed so
+ * the automation registry can author changes with readable mode names.
+ */
+export const EFFECT_MODE = {
+  CUSTOM: 0,
+  MULTIPLY: 1,
+  ADD: 2,
+  DOWNGRADE: 3,
+  UPGRADE: 4,
+  OVERRIDE: 5,
+} as const;
+
+const DEFAULT_DURATION: Record<string, unknown> = {
+  startTime: null,
+  seconds: null,
+  combat: null,
+  rounds: null,
+  turns: null,
+  startRound: null,
+  startTurn: null,
+};
+
 interface BuildEffectOptions {
   name: string;
   changes: FoundryEffectChange[];
@@ -11,6 +34,10 @@ interface BuildEffectOptions {
   transfer?: boolean;
   disabled?: boolean;
   statuses?: string[];
+  /** Partial duration merged over the empty default (e.g. `{ seconds: 60 }`). */
+  duration?: Record<string, unknown>;
+  /** Extra effect flags (e.g. `dae.specialDuration`, `core.statusId`). */
+  flags?: Record<string, unknown>;
 }
 
 /** Builds a Foundry v12 ActiveEffect document (dnd5e 4.x shape). */
@@ -22,15 +49,7 @@ export function buildEffect(opts: BuildEffectOptions): FoundryActiveEffect {
     description: opts.description ?? "",
     changes: opts.changes,
     disabled: opts.disabled ?? false,
-    duration: {
-      startTime: null,
-      seconds: null,
-      combat: null,
-      rounds: null,
-      turns: null,
-      startRound: null,
-      startTurn: null,
-    },
+    duration: { ...DEFAULT_DURATION, ...(opts.duration ?? {}) },
     origin: null,
     transfer: opts.transfer ?? true,
     statuses: opts.statuses ?? [],
@@ -38,117 +57,17 @@ export function buildEffect(opts: BuildEffectOptions): FoundryActiveEffect {
     system: {},
     tint: "#ffffff",
     sort: 0,
-    flags: {},
+    flags: opts.flags ?? {},
     _stats: buildStats(),
   };
 }
-
-const ADD = 2;
-const OVERRIDE = 5;
 
 /** AC calculation override (e.g. Unarmored Defense → "unarmoredMonk"). */
 export function acCalcEffect(name: string, calc: string): FoundryActiveEffect {
   return buildEffect({
     name,
     changes: [
-      { key: "system.attributes.ac.calc", mode: OVERRIDE, value: calc, priority: 20 },
+      { key: "system.attributes.ac.calc", mode: EFFECT_MODE.OVERRIDE, value: calc, priority: 20 },
     ],
   });
-}
-
-/**
- * Known magic items whose mechanical bonuses can be reconstructed as Active
- * Effects from the item name alone (the builder only stores names for inventory
- * magic items). Keyed by normalized lowercase name.
- */
-const KNOWN_ITEM_EFFECTS: Record<
-  string,
-  (img: string) => FoundryActiveEffect[]
-> = {
-  "cloak of protection": (img) => [
-    buildEffect({
-      name: "Bonus AC",
-      img,
-      changes: [
-        { key: "system.attributes.ac.bonus", mode: ADD, value: "+1", priority: 20 },
-      ],
-    }),
-    buildEffect({
-      name: "Saving Throw Bonus",
-      img,
-      changes: [
-        { key: "system.bonuses.abilities.save", mode: ADD, value: "+1", priority: 20 },
-      ],
-    }),
-  ],
-  "ring of protection": (img) => [
-    buildEffect({
-      name: "Bonus AC",
-      img,
-      changes: [
-        { key: "system.attributes.ac.bonus", mode: ADD, value: "+1", priority: 20 },
-      ],
-    }),
-    buildEffect({
-      name: "Saving Throw Bonus",
-      img,
-      changes: [
-        { key: "system.bonuses.abilities.save", mode: ADD, value: "+1", priority: 20 },
-      ],
-    }),
-  ],
-  "bracers of defense": (img) => [
-    buildEffect({
-      name: "Bonus AC",
-      img,
-      changes: [
-        { key: "system.attributes.ac.bonus", mode: ADD, value: "+2", priority: 20 },
-      ],
-    }),
-  ],
-  "amulet of health": (img) => [
-    buildEffect({
-      name: "Constitution 19",
-      img,
-      changes: [
-        { key: "system.abilities.con.value", mode: OVERRIDE, value: "19", priority: 20 },
-      ],
-    }),
-  ],
-  "headband of intellect": (img) => [
-    buildEffect({
-      name: "Intelligence 19",
-      img,
-      changes: [
-        { key: "system.abilities.int.value", mode: OVERRIDE, value: "19", priority: 20 },
-      ],
-    }),
-  ],
-  "gauntlets of ogre power": (img) => [
-    buildEffect({
-      name: "Strength 19",
-      img,
-      changes: [
-        { key: "system.abilities.str.value", mode: OVERRIDE, value: "19", priority: 20 },
-      ],
-    }),
-  ],
-  "belt of giant strength (hill)": (img) => [
-    buildEffect({
-      name: "Strength 21",
-      img,
-      changes: [
-        { key: "system.abilities.str.value", mode: OVERRIDE, value: "21", priority: 20 },
-      ],
-    }),
-  ],
-};
-
-/** Returns reconstructed Active Effects for a known magic item, by name. */
-export function knownItemEffects(
-  itemName: string,
-  img: string,
-): FoundryActiveEffect[] {
-  const fn = KNOWN_ITEM_EFFECTS[itemName.trim().toLowerCase()];
-  return fn ? fn(img) : [];
 }

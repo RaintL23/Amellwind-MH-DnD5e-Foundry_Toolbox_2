@@ -1,9 +1,16 @@
 import type { AbilityScores } from "@/shared/types";
+import type { BuilderChoiceSnapshot } from "../foundry-export/builder-snapshot";
 
 /** A weapon item extracted from a Foundry actor JSON. */
 export interface ParsedFoundryWeapon {
   name: string;
   equipped: boolean;
+  /** dnd5e weapon property keys (e.g. "fin", "ver", "mgc"), preserved as tags. */
+  properties: string[];
+  /** dnd5e rarity key (e.g. "uncommon"), or "" when mundane. */
+  rarity: string;
+  /** Weapon mastery key (e.g. "sap"), or "" when none. */
+  mastery: string;
 }
 
 /** An armor/shield equipment item extracted from a Foundry actor JSON. */
@@ -11,6 +18,10 @@ export interface ParsedFoundryArmor {
   name: string;
   equipped: boolean;
   isShield: boolean;
+  /** dnd5e equipment property keys (e.g. "mgc", "stealthDisadvantage"). */
+  properties: string[];
+  /** dnd5e rarity key (e.g. "rare"), or "" when mundane. */
+  rarity: string;
 }
 
 /** A spell item extracted from a Foundry actor JSON. */
@@ -53,6 +64,11 @@ export interface ParsedFoundryActor {
   portraitImage: string | null;
   /** Base64 data URL for the token texture, or null when only a built-in icon is set. */
   tokenImage: string | null;
+  /**
+   * Lossless builder-choice snapshot recovered from the actor's module flag,
+   * when the JSON was produced by this app. Null for Foundry-authored actors.
+   */
+  builderSnapshot: BuilderChoiceSnapshot | null;
 }
 
 /** Summary of what the import was (or was not) able to map back into the Builder. */

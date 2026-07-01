@@ -1,6 +1,16 @@
 export { buildFoundryActor } from "./actor.builder";
 export type { FoundryExportInput, FeatureInput } from "./actor.builder";
 export type { FoundryActor } from "./foundry.types";
+export {
+  TOOLBOX_FLAG_NAMESPACE,
+  BUILDER_SNAPSHOT_VERSION,
+  readBuilderSnapshot,
+  toBuilderSnapshotFlags,
+} from "./builder-snapshot";
+export type {
+  BuilderChoiceSnapshot,
+  BuilderSnapshotEquipment,
+} from "./builder-snapshot";
 
 /** Serializes and downloads a Foundry actor JSON in the browser. */
 export function downloadFoundryActor(

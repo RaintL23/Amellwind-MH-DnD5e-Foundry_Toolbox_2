@@ -1,5 +1,6 @@
 import type { AbilityScores } from "@/shared/types";
 import { ABILITY_KEYS } from "@/shared/constants/dnd";
+import { readBuilderSnapshot } from "../foundry-export/builder-snapshot";
 import type {
   ParsedFoundryActor,
   ParsedFoundryArmor,
@@ -10,6 +11,13 @@ import type {
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null;
+}
+
+/** Reads a `system.properties` array of string tags from a Foundry item. */
+function parseProperties(item: unknown): string[] {
+  const value = getPath(item, "system.properties");
+  if (!Array.isArray(value)) return [];
+  return value.filter((entry): entry is string => typeof entry === "string");
 }
 
 /** Safely reads a nested path (e.g. "system.details.alignment") from an object. */
@@ -127,6 +135,9 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
         weapons.push({
           name,
           equipped: getPath(item, "system.equipped") === true,
+          properties: parseProperties(item),
+          rarity: asString(getPath(item, "system.rarity")),
+          mastery: asString(getPath(item, "system.mastery")),
         });
         break;
       case "equipment": {
@@ -138,6 +149,8 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
             name,
             equipped: getPath(item, "system.equipped") === true,
             isShield: equipKind === "shield",
+            properties: parseProperties(item),
+            rarity: asString(getPath(item, "system.rarity")),
           });
         }
         break;
@@ -177,5 +190,6 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
     loot,
     portraitImage: dataUrlOnly(raw.img),
     tokenImage: dataUrlOnly(getPath(raw, "prototypeToken.texture.src")),
+    builderSnapshot: readBuilderSnapshot(raw.flags),
   };
 }

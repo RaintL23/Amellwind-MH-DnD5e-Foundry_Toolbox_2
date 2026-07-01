@@ -13,7 +13,6 @@ import {
   parseWeaponRange,
   slugify,
 } from "./mappings";
-import { knownItemEffects } from "./effect.builders";
 
 // ─── Shared helpers ──────────────────────────────────────────────────────────
 
@@ -340,7 +339,6 @@ export function buildTrinketItem(name: string, description?: string): FoundryIte
     type: "equipment",
     img: "icons/commodities/treasure/token-gold-gems.webp",
     system,
-    effects: knownItemEffects(name, "icons/commodities/treasure/token-gold-gems.webp"),
   });
 }
 
@@ -388,7 +386,6 @@ export function buildLootItem(entry: CartEntry, description?: string): FoundryIt
     type: "loot",
     img,
     system,
-    effects: knownItemEffects(entry.name, img),
   });
 }
 

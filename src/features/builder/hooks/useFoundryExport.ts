@@ -26,7 +26,12 @@ import type {
   Subclass,
 } from "@/shared/types";
 import { buildFoundryActor, downloadFoundryActor } from "../foundry-export";
-import type { FeatureInput, FoundryExportInput } from "../foundry-export";
+import type {
+  FeatureInput,
+  FoundryExportInput,
+  BuilderChoiceSnapshot,
+} from "../foundry-export";
+import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export";
 import { kebab, mapAbilityLabel, mapCasterProgression } from "../foundry-export/mappings";
 import { getAllDndItems } from "@/features/dnd-items/services/dnd-item.service";
 import type { DndItem } from "@/shared/types/dnd-item.types";
@@ -105,6 +110,68 @@ function resolveOptionalDescription(
     return opt?.entries ?? [];
   }
   return optDescMap.get(pickId) ?? [];
+}
+
+/**
+ * Gathers the lossless builder-choice snapshot embedded as a Foundry actor flag
+ * so that optional selections and equipment metadata survive a re-import.
+ */
+function gatherBuilderSnapshot(
+  builder: ReturnType<typeof useCharacterBuilder>,
+  inventory: ReturnType<typeof useBuilderInventory>,
+): BuilderChoiceSnapshot {
+  return {
+    version: BUILDER_SNAPSHOT_VERSION,
+    useAmellwindHomebrew: builder.useAmellwindHomebrew,
+    abilityScoreMethod: builder.abilityScoreMethod,
+    useUnarmedStrike: builder.useUnarmedStrike,
+    attacksPerTurnOverride: builder.attacksPerTurnOverride,
+    faction: builder.faction,
+    personality: builder.personality,
+
+    featSelections: builder.featSelections,
+    speciesOriginFeat: builder.speciesOriginFeat,
+    backgroundOriginFeat: builder.backgroundOriginFeat,
+    optionalFeatureOriginFeats: builder.optionalFeatureOriginFeats,
+    originFeatSkillChoices: builder.originFeatSkillChoices,
+    optionalFeatureOriginFeatSkillChoices:
+      builder.optionalFeatureOriginFeatSkillChoices,
+    optionalFeatureSelections: builder.optionalFeatureSelections ?? {},
+    speciesSpellGroupChoice: builder.speciesSpellGroupChoice,
+
+    useTashaOrigin: builder.useTashaOrigin,
+    tashaPlus2: builder.tashaPlus2,
+    tashaPlus1: builder.tashaPlus1,
+    speciesAbilityChoices: builder.speciesAbilityChoices,
+    backgroundAsiMode: builder.backgroundAsiMode,
+    backgroundAsiPlus2: builder.backgroundAsiPlus2,
+    backgroundAsiPlus1: builder.backgroundAsiPlus1,
+
+    classSkillChoices: builder.classSkillChoices,
+    backgroundSkillChoices: builder.backgroundSkillChoices,
+    speciesSkillChoices: builder.speciesSkillChoices,
+    featSkillChoices: builder.featSkillChoices,
+    expertiseChoices: builder.expertiseChoices,
+    classToolChoices: builder.classToolChoices,
+    backgroundToolChoices: builder.backgroundToolChoices,
+    speciesToolChoices: builder.speciesToolChoices,
+    classLanguageChoices: builder.classLanguageChoices,
+    backgroundLanguageChoices: builder.backgroundLanguageChoices,
+    speciesLanguageChoices: builder.speciesLanguageChoices,
+    speciesDefenseChoices: builder.speciesDefenseChoices,
+
+    spellSelections: builder.spellSelections ?? {},
+
+    equipment: {
+      mainHand: builder.mainHand,
+      offHand: builder.offHand,
+      armor: builder.armor,
+      shield: builder.equippedShield,
+      trinket1: builder.trinket1,
+      trinket2: builder.trinket2,
+      inventory: inventory.items,
+    },
+  };
 }
 
 export function useFoundryExport() {
@@ -320,11 +387,13 @@ export function useFoundryExport() {
         const key = pick.name.toLowerCase();
         if (featNameSeen.has(key)) continue;
         featNameSeen.add(key);
+        const baseDescription = joinDescription(
+          resolveOptionalDescription(progression, pick.id, optDescMap),
+        );
+        const marker = `<p><em>Toolbox choice: selected for "${progression.name}".</em></p>`;
         feats.push({
           name: pick.name,
-          description: joinDescription(
-            resolveOptionalDescription(progression, pick.id, optDescMap),
-          ),
+          description: `${baseDescription ?? ""}${marker}`,
           subtype: "feat",
           level: 0,
         });
@@ -461,6 +530,7 @@ export function useFoundryExport() {
       portraitImage: builder.portraitImage,
       tokenImage: builder.tokenImage,
       itemDescriptions,
+      builderSnapshot: gatherBuilderSnapshot(builder, inventory),
     };
   }, [
     allSpells,
