@@ -1,7 +1,7 @@
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import type { Weapon } from "@/shared/types";
 import type { RawItemEntity } from "@/features/dnd-items/utils/item-raw.types";
-import { mapDndRarityLabel } from "../utils/dnd-rarity.utils";
+import { mapDndRarityLabel } from "@/features/dnd-items/utils/dnd-equipment-rarity.utils";
 
 function normalizeProperty(prop: unknown): string {
   const raw = String(prop);

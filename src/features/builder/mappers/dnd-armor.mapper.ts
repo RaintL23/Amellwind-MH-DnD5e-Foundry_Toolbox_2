@@ -1,6 +1,6 @@
 import type { ArmorCategory, ArmorItem } from "@/shared/types";
 import type { RawItemEntity } from "@/features/dnd-items/utils/item-raw.types";
-import { mapDndRarityLabel } from "../utils/dnd-rarity.utils";
+import { mapDndRarityLabel } from "@/features/dnd-items/utils/dnd-equipment-rarity.utils";
 
 function parseArmorCategory(type?: string): ArmorCategory | null {
   const abbrev = type?.split("|")[0]?.toUpperCase();
