@@ -3,7 +3,7 @@ import { Rune } from "@/shared/types";
 import { getAllRunes } from "../../services/rune.service";
 import { getMaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
-import { getReferencedMaterialEffectsForRune } from "@/features/material-effects/utils/material-effect-highlight.utils";
+import { runeMatchesMaterialEffectTierFilter } from "@/features/material-effects/utils/material-effect-highlight.utils";
 import { Pagination } from "@/components/ui/pagination";
 import { RuneDetailDialog } from "../detail/RuneDetailDialog";
 import { RulesPanel } from "../rules/RulesPanel";
@@ -97,12 +97,13 @@ export function RuneList() {
       );
     }
     if (filters.materialEffectTier.length > 0 && materialEffectIndex) {
-      result = result.filter((r) => {
-        const refs = getReferencedMaterialEffectsForRune(r, materialEffectIndex);
-        return filters.materialEffectTier.some((rarity) =>
-          refs.some((ref) => ref.rarity === rarity),
-        );
-      });
+      result = result.filter((r) =>
+        runeMatchesMaterialEffectTierFilter(
+          r,
+          materialEffectIndex,
+          filters.materialEffectTier,
+        ),
+      );
     }
 
     return result;

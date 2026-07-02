@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { TIER_LABELS } from "../../constants/rune.constants";
-import { MATERIAL_EFFECT_RARITIES } from "@/features/material-effects/constants/material-effect.constants";
+import { MATERIAL_EFFECT_TIER_FILTER_OPTIONS } from "@/features/material-effects/constants/material-effect.constants";
 
 export type RuneSlotFilter = "" | "A" | "W";
 
@@ -35,10 +35,12 @@ const MONSTER_TIER_OPTIONS = ([1, 2, 3, 4] as const).map((tier) => ({
   label: TIER_LABELS[tier],
 }));
 
-const MATERIAL_EFFECT_TIER_OPTIONS = MATERIAL_EFFECT_RARITIES.map((rarity) => ({
-  value: rarity,
-  label: rarity,
-}));
+const MATERIAL_EFFECT_TIER_OPTIONS = MATERIAL_EFFECT_TIER_FILTER_OPTIONS.map(
+  (tier) => ({
+    value: tier,
+    label: tier,
+  }),
+);
 
 export function RuneFilters({
   filters,

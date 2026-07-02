@@ -1,5 +1,9 @@
 import type { MaterialEffect, MaterialEffectSlot } from "@/shared/types";
 import type { Rune } from "@/shared/types";
+import {
+  UNKNOWN_MATERIAL_EFFECT_TIER,
+  type MaterialEffectTierFilter,
+} from "@/features/material-effects/constants/material-effect.constants";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 
 export interface MaterialEffectNameIndex {
@@ -102,6 +106,38 @@ export function getReferencedMaterialEffectsForText(
     if (effect) found.set(effect.id, effect);
   }
   return [...found.values()];
+}
+
+export function getMaterialEffectTierForText(
+  text: string,
+  slot: MaterialEffectSlot,
+  index: MaterialEffectNameIndex,
+): MaterialEffectTierFilter {
+  const refs = getReferencedMaterialEffectsForText(text, slot, index);
+  if (refs.length === 0) return UNKNOWN_MATERIAL_EFFECT_TIER;
+  return refs[0].rarity;
+}
+
+export function getMaterialEffectTiersForRune(
+  rune: Rune,
+  index: MaterialEffectNameIndex,
+): MaterialEffectTierFilter[] {
+  return [
+    getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
+    getMaterialEffectTierForText(rune.weaponEffect ?? "", "weapon", index),
+  ];
+}
+
+export function runeMatchesMaterialEffectTierFilter(
+  rune: Rune,
+  index: MaterialEffectNameIndex,
+  selectedTiers: string[],
+): boolean {
+  if (selectedTiers.length === 0) return true;
+  const runeTiers = getMaterialEffectTiersForRune(rune, index);
+  return selectedTiers.some((tier) =>
+    runeTiers.includes(tier as MaterialEffectTierFilter),
+  );
 }
 
 export function getReferencedMaterialEffectsForRune(
