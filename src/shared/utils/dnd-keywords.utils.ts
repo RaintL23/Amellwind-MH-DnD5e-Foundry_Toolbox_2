@@ -1,3 +1,6 @@
+import { ABILITY_NAMES, SKILL_LABELS } from "@/shared/constants/dnd";
+import type { DamageType } from "@/shared/types";
+
 export type DndKeywordCategory =
   | "action"
   | "combat"
@@ -26,8 +29,28 @@ interface DndKeyword {
   category: DndKeywordCategory;
 }
 
+const DAMAGE_TYPES: DamageType[] = [
+  "acid",
+  "bludgeoning",
+  "cold",
+  "fire",
+  "force",
+  "lightning",
+  "necrotic",
+  "piercing",
+  "poison",
+  "psychic",
+  "radiant",
+  "slashing",
+  "thunder",
+];
+
+function formatDamageTypeTerm(type: DamageType): string {
+  return type.charAt(0).toUpperCase() + type.slice(1);
+}
+
 /** Common D&D 5e terms, longest first for safe overlapping matches. */
-const DND_KEYWORDS: DndKeyword[] = [
+const STATIC_DND_KEYWORDS: DndKeyword[] = [
   // Action economy
   { term: "action bonus", category: "action" },
   { term: "bonus actions", category: "action" },
@@ -83,6 +106,14 @@ const DND_KEYWORDS: DndKeyword[] = [
   { term: "advantage", category: "save" },
   { term: "disadvantage", category: "save" },
   { term: "saving throw", category: "save" },
+  { term: " DC ", category: "save" },
+  { term: " dc ", category: "save" },
+  { term: "dc bonus", category: "save" },
+  { term: " check rolls bonus", category: "save" },
+  { term: " check roll ", category: "save" },
+  { term: " check ", category: "save" },
+  { term: " checks ", category: "save" },
+  { term: " check ", category: "save" },
 
   // Resources & duration
   { term: "spell slots", category: "resource" },
@@ -156,6 +187,22 @@ const DND_KEYWORDS: DndKeyword[] = [
   { term: "melee", category: "distance" },
 ];
 
+const DND_KEYWORDS: DndKeyword[] = [
+  ...STATIC_DND_KEYWORDS,
+  ...Object.values(ABILITY_NAMES).map((term) => ({
+    term,
+    category: "save" as const,
+  })),
+  ...Object.values(SKILL_LABELS).map((term) => ({
+    term,
+    category: "save" as const,
+  })),
+  ...DAMAGE_TYPES.map((type) => ({
+    term: formatDamageTypeTerm(type),
+    category: "combat" as const,
+  })),
+];
+
 const KEYWORD_LOOKUP = new Map(
   DND_KEYWORDS.map((kw) => [kw.term.toLowerCase(), kw.category]),
 );
@@ -188,8 +235,7 @@ const DISTANCE_PATTERN = new RegExp(
 /**
  * Dice notation in plain text (e.g. "1d10", "2d6+3", "8d6", "d20", "d%").
  */
-const DICE_PATTERN =
-  /\d+d\d+(?:\s*[-+×x]\s*\d+)?|\bd\d+\b|d%/gi;
+const DICE_PATTERN = /\d+d\d+(?:\s*[-+×x]\s*\d+)?|\bd\d+\b|d%/gi;
 
 function splitByPattern(
   text: string,
