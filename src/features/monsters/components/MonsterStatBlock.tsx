@@ -289,15 +289,6 @@ export function MonsterStatBlock({ monster }: MonsterStatBlockProps) {
           <EntryBlock entries={monster.legendaryActions} />
         </StatBlockSection>
       )}
-
-      {/* Loot */}
-      {monster.loot && monster.loot.rolls > 0 && (
-        <StatBlockSection title="Loot">
-          <p className="text-sm text-muted-foreground">
-            <strong className="text-foreground">Carves / Capture:</strong> {monster.loot.rolls} rolls on the material table.
-          </p>
-        </StatBlockSection>
-      )}
     </div>
   );
 }

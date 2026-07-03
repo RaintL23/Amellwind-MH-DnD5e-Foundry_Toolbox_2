@@ -28,6 +28,11 @@ export function getProficiencyBonus(cr: string): number {
   return Math.ceil(value / 4) + 1;
 }
 
+/** Carve DC = 10 + half the creature's CR (rounded down). */
+export function getCarveDc(cr: string): number {
+  return 10 + Math.floor(parseCR(cr) / 2);
+}
+
 export const SIZE_MAP: Record<string, string> = {
   T: "Tiny",
   S: "Small",

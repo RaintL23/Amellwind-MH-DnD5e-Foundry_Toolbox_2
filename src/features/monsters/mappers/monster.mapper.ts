@@ -5,6 +5,7 @@ import {
   mapEntries,
   type RawActor,
 } from "@/shared/mappers/actor-from-raw.mapper";
+import { mapStatBlockEntries } from "@/shared/utils/statblock-entries.mapper";
 
 function mapFluffText(fluff: unknown): string {
   if (typeof fluff !== "object" || fluff === null) return "";
@@ -13,6 +14,29 @@ function mapFluffText(fluff: unknown): string {
   return f.entries
     .filter((e: unknown) => typeof e === "string")
     .join(" ");
+}
+
+function mapMonsterBio(fluff: unknown) {
+  if (typeof fluff !== "object" || fluff === null) return undefined;
+  const f = fluff as RawActor;
+  if (!Array.isArray(f.entries)) return undefined;
+
+  const bioEntries = f.entries.filter((entry: unknown) => {
+    if (typeof entry === "string") return true;
+    if (typeof entry !== "object" || entry === null) return false;
+    return (entry as RawActor).type !== "inset";
+  });
+
+  if (bioEntries.length === 0) return undefined;
+  const content = mapStatBlockEntries(bioEntries);
+  return content.length > 0 ? content : undefined;
+}
+
+function mapLairCr(raw: RawActor): string | undefined {
+  if (typeof raw.cr === "object" && raw.cr !== null && raw.cr.lair != null) {
+    return String(raw.cr.lair);
+  }
+  return undefined;
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,6 +54,8 @@ export function mapMonster(raw: any): Monster {
     legendaryActions: mapEntries(raw.legendary ?? []),
     loot: raw.fluff ? { rolls: extractRolls(raw.fluff) } : undefined,
     fluff: mapFluffText(raw.fluff),
+    bio: mapMonsterBio(raw.fluff),
+    lairCr: mapLairCr(raw as RawActor),
   };
 }
 
