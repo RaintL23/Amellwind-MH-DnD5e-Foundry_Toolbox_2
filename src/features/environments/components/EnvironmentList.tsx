@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useMemo, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { ENVIRONMENT_COLORS, type Environment } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -9,14 +10,34 @@ import { EnvironmentDetailContent } from "./EnvironmentDetailContent";
 import { EnvironmentRollsTab } from "./EnvironmentRollsTab";
 import { RulesTab } from "./RulesTab";
 import { SearchResultsPanel } from "./SearchResultsPanel";
+import { setIfPresent } from "@/shared/utils/list-url-params.utils";
 
 type ActiveTab = "rules" | "rolls" | string;
 
 export function EnvironmentList() {
-  const [activeTab, setActiveTab] = useState<ActiveTab>("rules");
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const search = searchParams.get("q") ?? "";
+  const activeTab = (searchParams.get("tab") ?? "rules") as ActiveTab;
 
   const allEnvironments = getAllEnvironments();
+
+  const patchUrl = useCallback(
+    (patch: { q?: string; tab?: ActiveTab }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams();
+          const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
+          const tab =
+            "tab" in patch ? (patch.tab ?? "rules") : (prev.get("tab") ?? "rules");
+          setIfPresent(next, "q", q);
+          if (tab && tab !== "rules") next.set("tab", tab);
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
 
   const isSearching = search.trim().length > 0;
   const filtered = useMemo(() => {
@@ -35,8 +56,7 @@ export function EnvironmentList() {
 
   function handleSelect(nameOrEnv: string | Environment) {
     const name = typeof nameOrEnv === "string" ? nameOrEnv : nameOrEnv.name;
-    setActiveTab(name);
-    setSearch("");
+    patchUrl({ tab: name, q: "" });
   }
 
   return (
@@ -58,7 +78,7 @@ export function EnvironmentList() {
         <>
           <Tabs
             value={activeTab}
-            onValueChange={setActiveTab}
+            onValueChange={(tab) => patchUrl({ tab })}
             className="mb-6 border-b border-border pb-3"
           >
             <TabsList className="flex flex-wrap justify-start gap-1.5 h-auto rounded-none bg-transparent p-0 text-muted-foreground">
@@ -103,9 +123,7 @@ export function EnvironmentList() {
             </TabsList>
           </Tabs>
 
-          {activeTab === "rules" && (
-            <RulesTab/>
-          )}
+          {activeTab === "rules" && <RulesTab />}
           {activeTab === "rolls" && (
             <EnvironmentRollsTab environments={allEnvironments} />
           )}

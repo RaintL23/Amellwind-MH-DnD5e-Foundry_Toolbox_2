@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { MhCondition } from "@/shared/types";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { Input } from "@/components/ui/input";
 import { AlertTriangle, Search } from "lucide-react";
 import { getAllConditions } from "../services/condition.service";
@@ -8,9 +9,10 @@ import { ConditionCard } from "./ConditionCard";
 import { ConditionDetailDialog } from "./ConditionDetailDialog";
 
 export function ConditionList() {
+  const { getString, setString } = useListUrlState();
   const [conditions, setConditions] = useState<MhCondition[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const search = getString("q");
   const [selected, setSelected] = useState<MhCondition | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -68,7 +70,7 @@ export function ConditionList() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <Input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setString("q", e.target.value)}
             placeholder="Search condition..."
             className="pl-9 h-8 text-sm"
           />

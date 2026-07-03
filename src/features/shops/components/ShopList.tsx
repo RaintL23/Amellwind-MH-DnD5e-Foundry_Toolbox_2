@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Store } from "lucide-react";
 import { SHOPS } from "../data/shops.data";
 import { useItemDescMap } from "../hooks/useItemDescMap";
@@ -8,19 +9,41 @@ import { SearchInput } from "./SearchInput";
 import { ShopSearchResultsPanel } from "./ShopSearchResultsPanel";
 import { ShopTab } from "./ShopTab";
 import { ShopTabBar } from "./ShopTabBar";
+import { setIfPresent } from "@/shared/utils/list-url-params.utils";
 
 export function ShopList() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const itemDescMap = useItemDescMap();
-  const [activeTab, setActiveTab] = useState<string>(SHOPS[0]?.id ?? "");
-  const [search, setSearch] = useState("");
+  const defaultShopId = SHOPS[0]?.id ?? "";
+  const activeTab = searchParams.get("shop") ?? defaultShopId;
+  const search = searchParams.get("q") ?? "";
+
+  const patchUrl = useCallback(
+    (patch: { q?: string; shop?: string }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams();
+          const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
+          const shop =
+            "shop" in patch
+              ? (patch.shop ?? defaultShopId)
+              : (prev.get("shop") ?? defaultShopId);
+          setIfPresent(next, "q", q);
+          if (shop && shop !== defaultShopId) next.set("shop", shop);
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams, defaultShopId],
+  );
 
   const isSearching = search.trim().length > 0;
   const searchGroups = useShopSearch(search);
   const activeShop = SHOPS.find((shop) => shop.id === activeTab) ?? SHOPS[0];
 
   const handleTabChange = (id: string) => {
-    setActiveTab(id);
-    setSearch("");
+    patchUrl({ shop: id, q: "" });
   };
 
   return (
@@ -38,7 +61,7 @@ export function ShopList() {
 
       <SearchInput
         value={search}
-        onChange={setSearch}
+        onChange={(q) => patchUrl({ q })}
         placeholder="Search items across all shops…"
       />
 

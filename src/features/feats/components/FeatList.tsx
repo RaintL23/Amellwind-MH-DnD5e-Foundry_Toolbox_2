@@ -2,26 +2,36 @@ import { useEffect, useMemo, useState } from "react";
 import { Feat } from "@/shared/types";
 import { getAllFeats } from "../services/feat.service";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { ListSearchWithFilters } from "@/shared/components/list-filters";
+import type { ListFilterValues } from "@/shared/components/list-filters";
 import { FeatCard } from "./FeatCard";
 import { FeatDetailDialog } from "./FeatDetailDialog";
-import { Input } from "@/components/ui/input";
-import { Search, Award } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { Award } from "lucide-react";
 
 type FeatFilter = "" | "repeatable" | "ability" | "prerequisite";
 
-const FILTERS: Array<{ value: FeatFilter; label: string }> = [
-  { value: "", label: "All" },
+const FEAT_FILTER_OPTIONS = [
   { value: "repeatable", label: "Repeatable" },
   { value: "ability", label: "With ability increases" },
   { value: "prerequisite", label: "With prerequisites" },
 ];
 
+const FEAT_FILTER_SECTIONS = [
+  {
+    id: "filter",
+    title: "Feat Type",
+    mode: "single" as const,
+    options: FEAT_FILTER_OPTIONS,
+  },
+];
+
 export function FeatList() {
+  const { getString, setString, patchFields } = useListUrlState();
   const [feats, setFeats] = useState<Feat[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<FeatFilter>("");
+  const search = getString("q");
+  const filter = getString("filter") as FeatFilter;
   const [selected, setSelected] = useState<Feat | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -63,6 +73,12 @@ export function FeatList() {
     setDialogOpen(true);
   }
 
+  function applyDialogFilters(values: ListFilterValues) {
+    const nextFilter =
+      typeof values.filter === "string" ? values.filter : "";
+    patchFields({ filter: nextFilter });
+  }
+
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="shrink-0 border-b border-border px-6 py-5">
@@ -81,34 +97,18 @@ export function FeatList() {
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3 space-y-3">
-        <div className="relative flex-1 min-w-[200px] max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search feat..."
-            className="pl-9 h-8 text-sm"
-          />
-        </div>
-
-        <div className="flex flex-wrap gap-1">
-          {FILTERS.map(({ value, label }) => (
-            <button
-              key={value || "all"}
-              type="button"
-              onClick={() => setFilter(value)}
-              className={cn(
-                "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                filter === value
-                  ? "border-amber-500 bg-amber-500/20 text-amber-400"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <ListSearchWithFilters
+          searchValue={search}
+          onSearchChange={(q) => setString("q", q)}
+          searchPlaceholder="Search feat..."
+          inputClassName="h-8 text-sm"
+          sections={FEAT_FILTER_SECTIONS}
+          filterValues={{ filter }}
+          onFiltersApply={applyDialogFilters}
+          dialogTitle="Feat Filters"
+          dialogDescription="Filter feats by type and requirements."
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">

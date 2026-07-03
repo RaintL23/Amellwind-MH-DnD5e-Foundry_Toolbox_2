@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Package } from "lucide-react";
 import { MHItem } from "@/shared/types";
 import { useItems } from "../hooks/useItems";
@@ -9,18 +10,33 @@ import { ItemSearchResultsPanel } from "./ItemSearchResultsPanel";
 import { ItemsTab } from "./ItemsTab";
 import { ItemTabBar } from "./ItemTabBar";
 import { SearchInput } from "./SearchInput";
+import { setIfPresent } from "@/shared/utils/list-url-params.utils";
 
 export function ItemList() {
   const { items, loading, uniqueTypes } = useItems();
-  const [activeTab, setActiveTab] = useState("");
-  const [search, setSearch] = useState("");
+  const [searchParams, setSearchParams] = useSearchParams();
   const [selected, setSelected] = useState<MHItem | null>(null);
 
-  useEffect(() => {
-    if (uniqueTypes.length > 0 && !activeTab) {
-      setActiveTab(uniqueTypes[0]);
-    }
-  }, [uniqueTypes, activeTab]);
+  const search = searchParams.get("q") ?? "";
+  const defaultType = uniqueTypes[0] ?? "";
+  const activeTab = searchParams.get("type") ?? defaultType;
+
+  const patchUrl = (patch: { q?: string; type?: string }) => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams();
+        const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
+        const type =
+          "type" in patch
+            ? (patch.type ?? defaultType)
+            : (prev.get("type") ?? defaultType);
+        setIfPresent(next, "q", q);
+        if (type && type !== defaultType) next.set("type", type);
+        return next;
+      },
+      { replace: true },
+    );
+  };
 
   const isSearching = search.trim().length > 0;
   const searchResults = useItemSearch(items, search);
@@ -31,8 +47,7 @@ export function ItemList() {
   );
 
   const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    setSearch("");
+    patchUrl({ type: tab, q: "" });
     setSelected(null);
   };
 
@@ -58,7 +73,7 @@ export function ItemList() {
 
       <SearchInput
         value={search}
-        onChange={setSearch}
+        onChange={(q) => patchUrl({ q })}
         placeholder="Search items by name…"
       />
 

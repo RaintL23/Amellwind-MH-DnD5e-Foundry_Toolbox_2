@@ -6,33 +6,33 @@ import {
 } from "@/shared/types";
 import { getAllSpecies } from "../services/species.service";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { ListSearchWithFilters } from "@/shared/components/list-filters";
+import type { ListFilterValues } from "@/shared/components/list-filters";
 import { SpeciesCard } from "./SpeciesCard";
 import { SpeciesDetailDialog } from "./SpeciesDetailDialog";
-import { Input } from "@/components/ui/input";
-import { Search, Users } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
-
-const CATEGORY_FILTERS: Array<{ value: "" | SpeciesCategory; label: string }> =
-  [
-    { value: "", label: "All" },
-    { value: "ancestry", label: SPECIES_CATEGORY_LABELS.ancestry },
-    { value: "folk", label: SPECIES_CATEGORY_LABELS.folk },
-    { value: "elder-dragon", label: SPECIES_CATEGORY_LABELS["elder-dragon"] },
-    { value: "subrace", label: SPECIES_CATEGORY_LABELS.subrace },
-    { value: "lineage", label: SPECIES_CATEGORY_LABELS.lineage },
-  ];
+import { Users } from "lucide-react";
 
 type ViewMode = "All" | "Roots" | "Subraces";
 
+const VIEW_OPTIONS = [
+  { value: "All", label: "All" },
+  { value: "Roots", label: "Roots" },
+  { value: "Subraces", label: "Subraces" },
+];
+
+const CATEGORY_OPTIONS = (
+  Object.entries(SPECIES_CATEGORY_LABELS) as Array<[SpeciesCategory, string]>
+).map(([value, label]) => ({ value, label }));
+
 export function SpeciesList() {
+  const { getString, setString, patchFields } = useListUrlState();
   const [species, setSpecies] = useState<Species[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState<"" | SpeciesCategory>(
-    "",
-  );
-  const [parentFilter, setParentFilter] = useState("");
-  const [viewMode, setViewMode] = useState<ViewMode>("All");
+  const search = getString("q");
+  const categoryFilter = getString("category") as "" | SpeciesCategory;
+  const parentFilter = getString("parent");
+  const viewMode = (getString("view", "All") || "All") as ViewMode;
   const [selected, setSelected] = useState<Species | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -54,6 +54,28 @@ export function SpeciesList() {
     }
     return Array.from(set).sort();
   }, [species]);
+
+  const filterSections = useMemo(
+    () => [
+      { id: "view", title: "View", mode: "single" as const, options: VIEW_OPTIONS },
+      {
+        id: "category",
+        title: "Category",
+        mode: "single" as const,
+        options: CATEGORY_OPTIONS,
+      },
+      {
+        id: "parent",
+        title: "Parent Species",
+        mode: "single" as const,
+        options: parentOptions.map((parent) => ({
+          value: parent,
+          label: parent,
+        })),
+      },
+    ],
+    [parentOptions],
+  );
 
   const debouncedSearch = useDebouncedValue(search);
 
@@ -99,6 +121,16 @@ export function SpeciesList() {
     setDialogOpen(true);
   }
 
+  function applyDialogFilters(values: ListFilterValues) {
+    const view =
+      typeof values.view === "string" && values.view !== "All"
+        ? values.view
+        : "";
+    const category = typeof values.category === "string" ? values.category : "";
+    const parent = typeof values.parent === "string" ? values.parent : "";
+    patchFields({ view, category, parent });
+  }
+
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="shrink-0 border-b border-border px-6 py-5">
@@ -118,75 +150,22 @@ export function SpeciesList() {
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3 space-y-3">
-        <div className="flex flex-wrap gap-3 items-center">
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search species..."
-              className="pl-9 h-8 text-sm"
-            />
-          </div>
-
-          <div className="flex items-center gap-1">
-            {(
-              [
-                { value: "All", label: "All" },
-                { value: "Roots", label: "Roots" },
-                { value: "Subraces", label: "Subraces" },
-              ] as const
-            ).map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                onClick={() => setViewMode(value)}
-                className={cn(
-                  "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                  viewMode === value
-                    ? "border-primary bg-primary/20 text-primary"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent",
-                )}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-
-          {parentOptions.length > 0 && (
-            <select
-              value={parentFilter}
-              onChange={(e) => setParentFilter(e.target.value)}
-              className="h-8 rounded-md border border-border bg-card px-2 text-xs text-foreground focus:outline-none focus:ring-2 focus:ring-ring"
-            >
-              <option value="">All roots</option>
-              {parentOptions.map((p) => (
-                <option key={p} value={p}>
-                  {p}
-                </option>
-              ))}
-            </select>
-          )}
-        </div>
-
-        <div className="flex flex-wrap gap-1">
-          {CATEGORY_FILTERS.map(({ value, label }) => (
-            <button
-              key={value || "all"}
-              type="button"
-              onClick={() => setCategoryFilter(value)}
-              className={cn(
-                "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                categoryFilter === value
-                  ? "border-primary bg-primary/20 text-primary"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <ListSearchWithFilters
+          searchValue={search}
+          onSearchChange={(q) => setString("q", q)}
+          searchPlaceholder="Search species..."
+          inputClassName="h-8 text-sm"
+          sections={filterSections}
+          filterValues={{
+            view: viewMode,
+            category: categoryFilter,
+            parent: parentFilter,
+          }}
+          onFiltersApply={applyDialogFilters}
+          dialogTitle="Species Filters"
+          dialogDescription="Filter by view mode, category, and parent species."
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">

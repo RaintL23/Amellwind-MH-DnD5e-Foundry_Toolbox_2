@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import type { MhDisease } from "@/shared/types";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { Input } from "@/components/ui/input";
 import { Biohazard, Search } from "lucide-react";
 import { getAllDiseases } from "../services/disease.service";
@@ -8,9 +9,10 @@ import { DiseaseCard } from "./DiseaseCard";
 import { DiseaseDetailDialog } from "./DiseaseDetailDialog";
 
 export function DiseaseList() {
+  const { getString, setString } = useListUrlState();
   const [diseases, setDiseases] = useState<MhDisease[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const search = getString("q");
   const [selected, setSelected] = useState<MhDisease | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -68,7 +70,7 @@ export function DiseaseList() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <Input
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setString("q", e.target.value)}
             placeholder="Search disease..."
             className="pl-9 h-8 text-sm"
           />

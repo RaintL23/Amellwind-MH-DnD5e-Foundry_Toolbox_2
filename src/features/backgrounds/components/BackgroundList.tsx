@@ -6,33 +6,34 @@ import {
 } from "@/shared/types";
 import { getAllBackgrounds } from "../services/background.service";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { ListSearchWithFilters } from "@/shared/components/list-filters";
+import type { ListFilterValues } from "@/shared/components/list-filters";
 import { BackgroundCard } from "./BackgroundCard";
 import { BackgroundDetailDialog } from "./BackgroundDetailDialog";
-import { Input } from "@/components/ui/input";
-import { Search, ScrollText } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { ScrollText } from "lucide-react";
 
-const FACTION_FILTERS: Array<{ value: "" | BackgroundFaction; label: string }> =
-  [
-    { value: "", label: "All" },
-    {
-      value: "hunters-guild",
-      label: BACKGROUND_FACTION_LABELS["hunters-guild"],
-    },
-    {
-      value: "handlers-guild",
-      label: BACKGROUND_FACTION_LABELS["handlers-guild"],
-    },
-    { value: "wycademy", label: BACKGROUND_FACTION_LABELS.wycademy },
-  ];
+const FACTION_OPTIONS = (
+  Object.entries(BACKGROUND_FACTION_LABELS) as Array<
+    [BackgroundFaction, string]
+  >
+).map(([value, label]) => ({ value, label }));
+
+const BACKGROUND_FILTER_SECTIONS = [
+  {
+    id: "faction",
+    title: "Guild",
+    mode: "single" as const,
+    options: FACTION_OPTIONS,
+  },
+];
 
 export function BackgroundList() {
+  const { getString, setString, patchFields } = useListUrlState();
   const [backgrounds, setBackgrounds] = useState<Background[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [factionFilter, setFactionFilter] = useState<"" | BackgroundFaction>(
-    "",
-  );
+  const search = getString("q");
+  const factionFilter = getString("faction") as "" | BackgroundFaction;
   const [selected, setSelected] = useState<Background | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -70,6 +71,12 @@ export function BackgroundList() {
     setDialogOpen(true);
   }
 
+  function applyDialogFilters(values: ListFilterValues) {
+    const faction =
+      typeof values.faction === "string" ? values.faction : "";
+    patchFields({ faction });
+  }
+
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="shrink-0 border-b border-border px-6 py-5">
@@ -88,36 +95,18 @@ export function BackgroundList() {
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3 space-y-3">
-        <div className="flex flex-wrap gap-3 items-center">
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search background..."
-              className="pl-9 h-8 text-sm"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-wrap gap-1">
-          {FACTION_FILTERS.map(({ value, label }) => (
-            <button
-              key={value || "all"}
-              type="button"
-              onClick={() => setFactionFilter(value)}
-              className={cn(
-                "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                factionFilter === value
-                  ? "border-primary bg-primary/20 text-primary"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <ListSearchWithFilters
+          searchValue={search}
+          onSearchChange={(q) => setString("q", q)}
+          searchPlaceholder="Search background..."
+          inputClassName="h-8 text-sm"
+          sections={BACKGROUND_FILTER_SECTIONS}
+          filterValues={{ faction: factionFilter }}
+          onFiltersApply={applyDialogFilters}
+          dialogTitle="Background Filters"
+          dialogDescription="Filter backgrounds by guild affiliation."
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
