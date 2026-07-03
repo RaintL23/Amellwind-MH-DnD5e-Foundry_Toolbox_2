@@ -75,7 +75,7 @@ export function BackgroundList() {
       <div className="shrink-0 border-b border-border px-6 py-5">
         <div className="flex items-center gap-3 mb-1">
           <ScrollText className="h-6 w-6 text-primary" />
-          <h1 className="text-xl font-bold text-foreground">Trasfondos</h1>
+          <h1 className="text-xl font-bold text-foreground">Backgrounds</h1>
           {!loading && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
               {filtered.length} / {backgrounds.length}
@@ -83,8 +83,8 @@ export function BackgroundList() {
           )}
         </div>
         <p className="text-sm text-muted-foreground">
-          Trasfondos de facción de Amellwind&apos;s Guide to Monster Hunting:
-          Hunters Guild, Handlers Guild and Wycademy.
+          Backgrounds from Amellwind&apos;s Guide to Monster Hunting: Hunters
+          Guild, Handlers Guild and Wycademy.
         </p>
       </div>
 
