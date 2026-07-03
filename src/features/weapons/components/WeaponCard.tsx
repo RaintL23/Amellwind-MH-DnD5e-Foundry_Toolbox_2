@@ -16,7 +16,20 @@ import { cn } from "@/shared/utils/cn";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { HintTooltip } from "@/shared/components/HintTooltip";
-import { Weight, Coins, GraduationCap } from "lucide-react";
+import { Weight, Coins } from "lucide-react";
+
+const BADGE_SIZE_XS =
+  "rounded px-1 py-px text-[9px] font-medium";
+
+const PROFICIENCY_BADGE_CLASSES = cn(
+  BADGE_SIZE_XS,
+  "border-sky-700/40 bg-sky-950/30 text-sky-200/90",
+);
+
+const PROPERTY_BADGE_CLASSES = cn(
+  BADGE_SIZE_XS,
+  "border-border/50 bg-muted/40 text-muted-foreground",
+);
 
 const DMG_TYPE_ACCENT: Record<string, string> = {
   S: "text-red-400",
@@ -42,12 +55,17 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
   const borderHover =
     DMG_TYPE_COLOR[weapon.dmgType] ?? "hover:border-primary/50";
   const proficiencyRule = getWeaponProficiencyRule(weapon.name);
-  const proficiencyHint = proficiencyRule
-    ? formatWeaponProficiencyHint(proficiencyRule)
-    : undefined;
   const categoryLabel = proficiencyRule
     ? formatWeaponCategory(proficiencyRule)
     : undefined;
+  const proficiencyTooltip = proficiencyRule
+    ? `${categoryLabel ?? ""}${categoryLabel ? " · " : ""}Compatible proficiency: ${formatWeaponProficiencyHint(proficiencyRule)}`
+    : undefined;
+
+  const showBadgeRow =
+    proficiencyRule != null ||
+    weapon.properties.length > 0 ||
+    weapon.isFocus;
 
   const damageDisplay = weapon.dmg2
     ? `${weapon.dmg1} / ${weapon.dmg2}`
@@ -84,23 +102,51 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
                 Range: {weapon.range}
               </p>
             )}
-            <WeaponCategoryBadges
-              weaponName={weapon.name}
-              size="xs"
-              className="mt-1"
-            />
-            {proficiencyHint && (
-              <HintTooltip
-                content={`${categoryLabel ?? ""}${categoryLabel ? " · " : ""}Compatible proficiency: ${proficiencyHint}`}
-              >
-                <p className="flex items-start gap-1 text-[10px] text-muted-foreground/90 mt-1 leading-snug line-clamp-2 cursor-help">
-                  <GraduationCap
-                    className="h-3 w-3 shrink-0 mt-px opacity-70"
-                    aria-hidden
-                  />
-                  <span>{proficiencyHint}</span>
-                </p>
-              </HintTooltip>
+            {showBadgeRow && (
+              <div className="flex flex-wrap items-center gap-1 mt-1">
+                <WeaponCategoryBadges
+                  weaponName={weapon.name}
+                  size="xs"
+                  inline
+                />
+                {proficiencyRule?.requiresShield && proficiencyTooltip && (
+                  <HintTooltip content={proficiencyTooltip}>
+                    <Badge variant="outline" className={PROFICIENCY_BADGE_CLASSES}>
+                      Shield
+                    </Badge>
+                  </HintTooltip>
+                )}
+                {proficiencyRule?.compatible.map((proficiency) => (
+                  <HintTooltip
+                    key={proficiency}
+                    content={proficiencyTooltip ?? proficiency}
+                  >
+                    <Badge variant="outline" className={PROFICIENCY_BADGE_CLASSES}>
+                      {proficiency}
+                    </Badge>
+                  </HintTooltip>
+                ))}
+                {weapon.properties.map((prop) => (
+                  <Badge
+                    key={prop}
+                    variant="outline"
+                    className={PROPERTY_BADGE_CLASSES}
+                  >
+                    {PROPERTY_LABELS[prop] ?? prop}
+                  </Badge>
+                ))}
+                {weapon.isFocus && (
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      BADGE_SIZE_XS,
+                      "border-violet-700/50 bg-violet-950/40 text-violet-300",
+                    )}
+                  >
+                    Focus
+                  </Badge>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -117,29 +163,6 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
             </span>
           )}
         </div>
-
-        {/* Properties badges */}
-        {(weapon.properties.length > 0 || weapon.isFocus) && (
-          <div className="flex flex-wrap gap-1 mb-3">
-            {weapon.properties.map((prop) => (
-              <Badge
-                key={prop}
-                variant="outline"
-                className="rounded border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
-              >
-                {PROPERTY_LABELS[prop] ?? prop}
-              </Badge>
-            ))}
-            {weapon.isFocus && (
-              <Badge
-                variant="outline"
-                className="rounded border-violet-700/50 bg-violet-950/40 px-1.5 py-0.5 text-[10px] font-medium text-violet-300"
-              >
-                Focus
-              </Badge>
-            )}
-          </div>
-        )}
 
         {/* Footer: peso + valor */}
         <div className="flex items-center gap-4 text-xs text-muted-foreground border-t border-border/50 pt-2.5 mt-2">

@@ -37,10 +37,10 @@ export function WeaponDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
-        <WeaponDialogHeader weapon={weapon} />
+        <WeaponDialogHeader weapon={weapon} currentRarityIndex={current} />
 
         <DialogBody>
-          <WeaponDialogMeta weapon={weapon} currentRarityIndex={current} />
+          <WeaponDialogMeta weapon={weapon} />
 
           <WeaponRarityProgression
             weapon={weapon}

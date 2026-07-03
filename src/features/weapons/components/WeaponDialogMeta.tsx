@@ -1,66 +1,15 @@
-import { Weapon, PROPERTY_LABELS } from "@/shared/types";
-import { formatWeaponValue } from "../services/weapon.service";
-import { getWeaponShieldAcBonusAtIndex } from "../utils/shield.utils";
+import { Weapon } from "@/shared/types";
 import { WeaponProficiencyInfo } from "./WeaponProficiencyInfo";
 import { Shield } from "lucide-react";
 import { DndRichText } from "@/shared/components/DndRichText";
 
 interface WeaponDialogMetaProps {
   weapon: Weapon;
-  currentRarityIndex: number;
 }
 
-export function WeaponDialogMeta({
-  weapon,
-  currentRarityIndex,
-}: WeaponDialogMetaProps) {
+export function WeaponDialogMeta({ weapon }: WeaponDialogMetaProps) {
   return (
     <>
-      {(weapon.properties.length > 0 || weapon.isFocus) && (
-        <div className="flex flex-wrap gap-1.5 mb-4">
-          {weapon.properties.map((prop) => (
-            <span
-              key={prop}
-              className="inline-flex items-center rounded border border-border/50 bg-muted/40 px-2 py-0.5 text-xs font-medium text-muted-foreground"
-            >
-              {PROPERTY_LABELS[prop] ?? prop}
-            </span>
-          ))}
-          {weapon.isFocus && (
-            <span className="inline-flex items-center rounded border border-violet-700/50 bg-violet-950/40 px-2 py-0.5 text-xs font-medium text-violet-300">
-              Focus
-            </span>
-          )}
-        </div>
-      )}
-
-      <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4 pb-4 border-b border-border">
-        <span>
-          <span className="text-foreground font-medium">{weapon.weight}</span>{" "}
-          lb
-        </span>
-        <span>
-          <span className="text-foreground font-medium">
-            {formatWeaponValue(weapon.valueCp)}
-          </span>
-        </span>
-        {weapon.range && (
-          <span>
-            Range:{" "}
-            <span className="text-foreground font-medium">{weapon.range}</span>
-          </span>
-        )}
-        {weapon.includesShield && weapon.acBonus !== undefined && (
-          <span className="flex items-center gap-1 text-teal-400">
-            <Shield className="h-3.5 w-3.5" />
-            <span className="font-semibold">
-              +{getWeaponShieldAcBonusAtIndex(weapon, currentRarityIndex)} AC
-              (integrated shield)
-            </span>
-          </span>
-        )}
-      </div>
-
       {weapon.description && (
         <p className="text-sm text-muted-foreground italic mb-3 leading-relaxed">
           <DndRichText text={weapon.description} />

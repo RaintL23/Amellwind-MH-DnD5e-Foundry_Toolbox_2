@@ -1,6 +1,5 @@
 import { GraduationCap, Shield } from "lucide-react";
 import {
-  formatWeaponCategory,
   getWeaponProficiencyRule,
   type WeaponProficiencyRule,
 } from "../data/weapon-proficiencies.data";
@@ -82,8 +81,6 @@ export function WeaponProficiencyInfo({
   const rule = getWeaponProficiencyRule(weaponName);
   if (!rule) return null;
 
-  const category = formatWeaponCategory(rule);
-
   if (compact) {
     return (
       <div
@@ -97,7 +94,7 @@ export function WeaponProficiencyInfo({
             className="mt-px h-3.5 w-3.5 shrink-0 text-amber-400"
             aria-hidden
           />
-          <div className="min-w-0 space-y-2.5">
+          <div className="min-w-0 flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
             <ProficiencySection title="D&D Weapon Category" compact>
               <WeaponCategoryBadges weaponName={weaponName} size="xs" />
             </ProficiencySection>
@@ -127,10 +124,9 @@ export function WeaponProficiencyInfo({
         className="mt-0.5 h-4 w-4 shrink-0 text-amber-400"
         aria-hidden
       />
-      <div className="min-w-0 space-y-2.5 text-xs leading-relaxed">
+      <div className="min-w-0 flex items-start gap-6 text-xs leading-relaxed">
         <ProficiencySection title="D&D Weapon Category">
           <WeaponCategoryBadges weaponName={weaponName} size="sm" />
-          <p className="mt-1 text-amber-100/90">{category}</p>
         </ProficiencySection>
 
         <ProficiencySection title="Compatible Proficiency">
