@@ -7,7 +7,7 @@ import type {
   Senses,
   Speed,
 } from "@/shared/types";
-import { SIZE_MAP, getAbilityModifier, getProficiencyBonus } from "@/shared/utils/cr.utils";
+import { SIZE_MAP, getAbilityModifier, getBaseCr, formatCrDisplay, getProficiencyBonus } from "@/shared/utils/cr.utils";
 import {
   mapStatBlockEntries,
   statBlockContentToPlainText,
@@ -109,21 +109,11 @@ export function mapPassivePerception(raw: RawActor, abilities: AbilityScores): n
 }
 
 export function mapCrString(raw: RawActor): string {
-  if (typeof raw.cr === "object" && raw.cr !== null) {
-    return String(raw.cr.cr ?? "0");
-  }
-  return String(raw.cr ?? "0");
+  return getBaseCr(raw.cr);
 }
 
 export function mapCrDisplay(raw: RawActor): string {
-  if (typeof raw.cr === "object" && raw.cr !== null) {
-    const parts: string[] = [];
-    if (raw.cr.cr != null) parts.push(String(raw.cr.cr));
-    if (raw.cr.lair) parts.push(`${raw.cr.lair} (lair)`);
-    if (raw.cr.coven) parts.push(`${raw.cr.coven} (coven)`);
-    return parts.join(" / ") || "0";
-  }
-  return String(raw.cr ?? "0");
+  return formatCrDisplay(raw.cr);
 }
 
 export function mapSize(raw: RawActor): string {

@@ -1,3 +1,48 @@
+interface CrObject {
+  cr?: string | number;
+  lair?: string | number;
+  coven?: string | number;
+}
+
+function isCrObject(cr: unknown): cr is CrObject {
+  return (
+    typeof cr === "object" &&
+    cr !== null &&
+    ("cr" in cr || "lair" in cr || "coven" in cr)
+  );
+}
+
+/** All challenge ratings represented by a creature entry (base, lair, coven). */
+export function getCrValues(cr: unknown): string[] {
+  if (isCrObject(cr)) {
+    const values: string[] = [];
+    if (cr.cr != null && String(cr.cr) !== "") values.push(String(cr.cr));
+    if (cr.lair != null && String(cr.lair) !== "") values.push(String(cr.lair));
+    if (cr.coven != null && String(cr.coven) !== "")
+      values.push(String(cr.coven));
+    return values.length > 0 ? values : ["0"];
+  }
+  if (cr == null || cr === "") return ["0"];
+  return [String(cr)];
+}
+
+/** Primary CR used for tier calculations and simple labels. */
+export function getBaseCr(cr: unknown): string {
+  return getCrValues(cr)[0] ?? "0";
+}
+
+/** Human-readable CR label, including lair/coven variants when present. */
+export function formatCrDisplay(cr: unknown): string {
+  if (isCrObject(cr)) {
+    const parts: string[] = [];
+    if (cr.cr != null) parts.push(String(cr.cr));
+    if (cr.lair) parts.push(`${cr.lair} (lair)`);
+    if (cr.coven) parts.push(`${cr.coven} (coven)`);
+    return parts.join(" / ") || "0";
+  }
+  return String(cr ?? "0");
+}
+
 export function parseCR(cr: string): number {
   if (cr.includes("/")) {
     const [num, den] = cr.split("/").map(Number);
