@@ -4,6 +4,6 @@
   "buildCommand": "pnpm build",
   "outputDirectory": "dist",
   "rewrites": [
-    { "source": "/((?!assets/|5etools/|icon/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|5etools/|icon/|mh-icons/).*)", "destination": "/index.html" }
   ]
 }
