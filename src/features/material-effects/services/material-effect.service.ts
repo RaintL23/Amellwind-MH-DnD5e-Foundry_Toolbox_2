@@ -1,9 +1,11 @@
 import type { MaterialEffect } from "@/shared/types";
 import { getBookDataRaw } from "@/shared/db/sync.service";
 import { createEntityService } from "@/shared/services/create-entity-service";
+import { getAllRunes } from "@/features/runes/services/rune.service";
 import { mapMaterialEffectsFromBookData } from "../mappers/material-effect.mapper";
 import {
   buildMaterialEffectNameIndex,
+  supplementIndexWithRuneEffectNames,
   type MaterialEffectNameIndex,
 } from "../utils/material-effect-highlight.utils";
 
@@ -20,8 +22,14 @@ export const getAllMaterialEffects = service.getAll;
 
 export async function getMaterialEffectNameIndex(): Promise<MaterialEffectNameIndex> {
   if (nameIndexCache) return nameIndexCache;
-  const effects = await service.getAll();
-  nameIndexCache = buildMaterialEffectNameIndex(effects);
+  const [effects, runes] = await Promise.all([
+    service.getAll(),
+    getAllRunes(),
+  ]);
+  nameIndexCache = supplementIndexWithRuneEffectNames(
+    buildMaterialEffectNameIndex(effects),
+    runes,
+  );
   return nameIndexCache;
 }
 

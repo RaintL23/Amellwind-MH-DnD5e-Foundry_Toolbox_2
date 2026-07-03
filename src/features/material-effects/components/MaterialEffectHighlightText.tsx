@@ -36,10 +36,7 @@ export function MaterialEffectHighlightText({
   const segments = useMemo(() => {
     if (!index) return null;
 
-    const candidateNames = findMatchingMaterialEffectNames(
-      parsed,
-      index.bySlot[slot],
-    );
+    const candidateNames = findMatchingMaterialEffectNames(parsed, index.all);
 
     return splitMaterialEffectRefs(parsed, candidateNames, index.byKey, slot);
   }, [parsed, index, slot]);
