@@ -1,23 +1,19 @@
 import { Rune, RuneSlot, RuneTier } from "@/shared/types";
 import { flattenEntriesForDisplay } from "@/shared/utils/fivetools-parser";
+import {
+  formatCrDisplay,
+  getBaseCr,
+  getCrValues,
+  parseCR,
+} from "@/shared/utils/cr.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
 // ─── CR / Tier helpers ────────────────────────────────────────────────────────
 
-function parseCr(cr: unknown): number {
-  if (typeof cr === "number") return cr;
-  const s = String(cr ?? "0").trim();
-  if (s.includes("/")) {
-    const [num, den] = s.split("/").map(Number);
-    return den ? num / den : 0;
-  }
-  return parseFloat(s) || 0;
-}
-
 function crToTier(cr: unknown): RuneTier {
-  const n = parseCr(cr);
+  const n = parseCR(getBaseCr(cr));
   if (n <= 4) return 1;
   if (n <= 10) return 2;
   if (n <= 16) return 3;
@@ -398,7 +394,8 @@ export function mapRunesFromMonster(rawMonster: any): Rune[] {
       name,
       monsterName: String(rawMonster.name ?? ""),
       monsterSource: String(rawMonster.source ?? ""),
-      monsterCr: String(rawMonster.cr ?? "0"),
+      monsterCr: formatCrDisplay(rawMonster.cr),
+      monsterCrs: getCrValues(rawMonster.cr),
       tier: crToTier(rawMonster.cr),
       carveChance,
       captureChance,
