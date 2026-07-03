@@ -26,6 +26,7 @@ import {
   PawPrint,
   Bot,
   ImportIcon,
+  Crosshair,
 } from "lucide-react";
 import {
   Card,
@@ -78,6 +79,13 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
         route: "/monsters",
         description: "Complete bestiary of Monster Hunter with stat blocks.",
         icon: <Skull className="h-5 w-5" />,
+      },
+      {
+        label: "Hunt Planner",
+        route: "/hunt",
+        description:
+          "Plan and simulate a monster hunt with tracking rolls and resource tables.",
+        icon: <Crosshair className="h-5 w-5" />,
       },
       {
         label: "Conditions & Diseases",

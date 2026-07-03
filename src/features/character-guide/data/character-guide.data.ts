@@ -333,6 +333,7 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
     page: 48,
     paragraphs: [
       "When your party goes on a hunt or heads out on an expedition, you choose a role from the ones detailed below. Each role can be only chosen by one character, except for the spotter role.",
+      "Roles are meant to fire at different moments in the same area. Think of the flow as scout first (ahead), trailblazer second (party enters and tracks the quarry), spotter third (passive safety net while everyone else acts). Overlap feels redundant when every player rolls the same skills; the rules assume one person owns each step.",
       "Sometimes the party may split up. When split into groups of two the only roles available are the trailblazer and spotter.",
       "If someone is alone, they are both the trailblazer and spotter, but they either have to choose to take disadvantage on their survival roll for finding signs or take a -4 to their passive perception.",
     ],
@@ -343,13 +344,16 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
           "Primary Skill: Survival",
           "The trailblazer is the leader of the group and is the one who makes the final decision on which direction the group should go on a hunt. Whenever the group enters an area (new or old), the trailblazer rolls a survival check vs the creatures carve DC. On a failure the GM rolls a d10 on the finding signs table (found in the Going on a Hunt section in chapter 4), on a success the GM rolls a d20 instead. On a critical, the GM rolls a 2d20 and takes the highest roll, on a nat 1 the GM rolls 2d10 and takes the lowest roll.",
         ],
-      },
-      {
-        name: "Spotter",
-        paragraphs: [
-          "Primary Skill: passive Perception",
-          "The spotter uses their passive perception to scope out for any ambushes or dangers missed initially by the scout. There can be 2 spotters, the 2nd spotter gives a +4 perception bonus to the other, but does not provide any bonus to the original spotter's passive investigation.",
-          "(Optional Rule) If your DM chooses to allow passive Investigations (10+ investigation skill bonus), then the spotter is also able to find resources in an area without needing to make an Intelligence (Investigation) to find them. A spotter is able to spot resources with their passive Investigation, only if it is higher than the investigation DC of the area they are in. Finally, a second spotter does not provide any bonus to the spotters passive Investigation.",
+        inset: {
+          name: "Example",
+          paragraphs: [
+            "The party leaves basecamp and enters the grassy fields toward Area 1. The Trailblazer rolls Survival vs the Yian Kut-ku's Carve DC and succeeds. The GM rolls a d20 on the Finding Signs Table (hidden) and gets an 11: the party finds a broken kut-ku scale plus a minor challenge (four Velociprey feeding on an Aptonoth).",
+          ],
+        },
+        orderedList: [
+          "Only the Trailblazer rolls Survival to advance the hunt. That roll determines whether the GM uses a d10 or d20 on the Finding Signs Table — this is how signs, challenges, and benefits are generated.",
+          "Why the Scout should not replace this: the Scout goes ahead alone and reports what they see. They do not roll Survival vs the quarry's Carve DC for the whole party, and their Stealth/Perception does not move the sign counter.",
+          "Why the Spotter should not replace this: passive Perception does not trigger Finding Signs. The Spotter catches what was missed; they do not choose the route or resolve hunt progress.",
         ],
       },
       {
@@ -358,12 +362,52 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
           "Primary Skill: Perception, Stealth",
           "The scout is the initial person who enters an area, they get the lay of the land, potential resources, creatures in the area, potential hazards. When a scout notices a potential spot for an ambush it gives the spotter a +4 bonus to their perception.",
         ],
+        inset: {
+          name: "Example",
+          paragraphs: [
+            "Before the party enters Area 1, the Scout moves ahead and rolls Stealth (18) and Perception (12). They spot Velociprey on an Aptonoth carcass but miss the kut-ku scale in the grass. They return and brief the group so the party can approach with a plan.",
+          ],
+        },
+        orderedList: [
+          "The Scout acts before or at the edge of the area with active Stealth and Perception — tactical intel, not hunt-track progress.",
+          "Why the Trailblazer should not replace this: the Trailblazer is with the main group and rolls Survival when the party enters the area. They do not quietly preview threats alone without splitting the party's action economy.",
+          "Why the Spotter should not replace this: the Spotter uses passive Perception while others work. They do not advance into the area first, and they do not grant the +4 ambush warning unless the Scout flagged a danger zone.",
+        ],
+      },
+      {
+        name: "Spotter",
+        paragraphs: [
+          "Primary Skill: passive Perception",
+          "The spotter uses their passive perception to scope out for any ambushes or dangers missed initially by the scout. There can be 2 spotters, the 2nd spotter gives a +4 perception bonus to the other, but does not provide any bonus to the original spotter's passive investigation.",
+          "(Optional Rule) If your DM chooses to allow passive Investigations (10+ investigation skill bonus), then the spotter is also able to find resources in an area without needing to make an Intelligence (Investigation) to find them. A spotter is able to spot resources with their passive Investigation, only if it is higher than the investigation DC of the area they are in. Finally, a second spotter does not provide any bonus to the spotters passive Investigation.",
+        ],
+        inset: {
+          name: "Example",
+          paragraphs: [
+            "While the party deals with the Velociprey, the Spotter keeps watch with passive Perception and notices the broken kut-ku scale the Scout walked past. With the optional passive Investigation rule, a Spotter with Investigation +10 might also spot gatherable plants without spending an action to search.",
+          ],
+        },
+        orderedList: [
+          "The Spotter is the passive safety net: ambushes, missed details, and (optionally) resources — without rolling every turn.",
+          "Why the Scout should not replace this: the Scout is forward and focused on active recon. Once they return, someone still needs to watch the rear and flanks while others carve, negotiate, or heal.",
+          "Why the Trailblazer should not replace this: the Trailblazer owns route and Survival for signs. Splitting attention would mean choosing disadvantage on Survival or -4 passive Perception when alone — the rules explicitly punish doing both jobs at once.",
+        ],
       },
       {
         name: "Artisan",
         paragraphs: [
           "Primary Skill: Cooking Utensils, Three highest Ability Scores",
           "The artisan can cook a meal for the party at the start of a hunt and during a short or long rest (if they choose to), granting all who eat it a boon to help them on their hunt/journey/day.",
+        ],
+        inset: {
+          name: "Example",
+          paragraphs: [
+            "At basecamp before leaving Area A, the Artisan cooks a meal. On a successful cooking check, everyone gains a boon (such as inspiration) before the Trailblazer leads the party toward the first hunting ground.",
+          ],
+        },
+        orderedList: [
+          "The Artisan sets the party's buff layer at hunt start and rests. No other role grants meal boons by default.",
+          "Why combat-focused roles should not skip a dedicated Artisan: without them, the party loses a repeatable, action-free boost tied to short/long rests on long hunts.",
         ],
       },
     ],

@@ -1,12 +1,12 @@
 import { ExternalLink } from "lucide-react";
 
-interface RuleSegment {
+export interface RuleSegment {
   type: "text" | "bold" | "link";
   content: string;
   href?: string;
 }
 
-function parseRuleText(raw: string): RuleSegment[] {
+export function parseRuleText(raw: string): RuleSegment[] {
   const segments: RuleSegment[] = [];
   const regex =
     /\{@b ([^}]+)\}|\{@link ([^|]+)\|([^}]+)\}|\{@[a-zA-Z]+ ([^}|]+)(?:\|[^}]*)?\}/g;

@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { BookOpen, Lightbulb } from "lucide-react";
 import type { GuideSection, GuideSubsection } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
@@ -19,6 +19,15 @@ const TABS: Array<{ id: TabId; label: string }> = [
   { id: "skills", label: "Skills" },
   { id: "hunt-roles", label: "Hunt Roles" },
 ];
+
+const VALID_TAB_IDS = new Set<TabId>(TABS.map((tab) => tab.id));
+
+function parseTabId(value: string | null): TabId {
+  if (value && VALID_TAB_IDS.has(value as TabId)) {
+    return value as TabId;
+  }
+  return "creating";
+}
 
 function Paragraphs({ lines }: { lines: string[] }) {
   return (
@@ -141,12 +150,36 @@ function SectionContent({ section }: { section: GuideSection }) {
 }
 
 export function CharacterGuidePage() {
-  const [activeTab, setActiveTab] = useState<TabId>("creating");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [activeTab, setActiveTab] = useState<TabId>(() =>
+    parseTabId(searchParams.get("tab")),
+  );
+
+  useEffect(() => {
+    setActiveTab(parseTabId(searchParams.get("tab")));
+  }, [searchParams]);
 
   const activeSection = useMemo(
     () => CHARACTER_GUIDE_SECTIONS.find((s) => s.id === activeTab),
     [activeTab],
   );
+
+  function handleTabChange(value: string) {
+    const tab = parseTabId(value);
+    setActiveTab(tab);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (tab === "creating") {
+          next.delete("tab");
+        } else {
+          next.set("tab", tab);
+        }
+        return next;
+      },
+      { replace: true },
+    );
+  }
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -173,7 +206,7 @@ export function CharacterGuidePage() {
         <div className="mx-auto space-y-5">
           <Tabs
             value={activeTab}
-            onValueChange={(value) => setActiveTab(value as TabId)}
+            onValueChange={handleTabChange}
             className="border-b border-border pb-3"
           >
             <TabsList className="flex flex-wrap justify-start gap-1.5 h-auto rounded-none bg-transparent p-0 text-muted-foreground">

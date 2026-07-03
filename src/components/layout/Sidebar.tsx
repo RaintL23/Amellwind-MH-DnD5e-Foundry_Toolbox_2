@@ -31,6 +31,7 @@ import {
   Wand2,
   LibraryBig,
   Map,
+  Crosshair,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -94,6 +95,7 @@ const NAV_SECTIONS: NavSection[] = [
       {
         label: "World and Exploration",
         items: [
+          { to: "/hunt", label: "Hunt Planner", icon: Crosshair },
           { to: "/environments", label: "Environments", icon: TreePine },
           { to: "/resources", label: "Resources", icon: Leaf },
           { to: "/shops", label: "Shops", icon: ShoppingBag },

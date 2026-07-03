@@ -85,6 +85,11 @@ const EnvironmentList = lazy(() =>
     default: m.EnvironmentList,
   })),
 );
+const HuntPage = lazy(() =>
+  import("@/features/hunt/components/HuntPage").then((m) => ({
+    default: m.HuntPage,
+  })),
+);
 const BuilderPage = lazy(() =>
   import("@/features/builder/components/page/BuilderPage").then((m) => ({
     default: m.BuilderPage,
@@ -354,6 +359,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <EnvironmentList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="hunt"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <HuntPage />
                   </Suspense>
                 }
               />
