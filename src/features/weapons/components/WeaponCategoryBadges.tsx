@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import {
   getWeaponCategoryBadges,
   getWeaponProficiencyRule,
@@ -28,15 +29,16 @@ export function WeaponCategoryBadges({
   return (
     <div className={cn("flex flex-wrap items-center gap-1", className)}>
       {badges.map((badge) => (
-        <span
+        <Badge
           key={badge}
+          variant="outline"
           className={cn(
-            "inline-flex items-center rounded border border-amber-700/40 bg-amber-950/30 font-medium text-amber-200/90",
+            "rounded border-amber-700/40 bg-amber-950/30 font-medium text-amber-200/90",
             SIZE_CLASSES[size],
           )}
         >
           {badge}
-        </span>
+        </Badge>
       ))}
     </div>
   );

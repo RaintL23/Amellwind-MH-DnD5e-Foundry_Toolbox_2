@@ -7,7 +7,9 @@ import {
 import { WeaponCategoryBadges } from "./WeaponCategoryBadges";
 import { formatWeaponValue } from "../services/weapon.service";
 import { cn } from "@/shared/utils/cn";
+import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 import { Swords, Weight, Coins, GraduationCap } from "lucide-react";
 
 const DMG_TYPE_ACCENT: Record<string, string> = {
@@ -52,7 +54,7 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
         borderHover,
       )}
     >
-      <button onClick={onClick}>
+      <button type="button" onClick={onClick}>
       {/* Header: icono + nombre */}
       <div className="flex items-start gap-3 mb-3">
         <div className={cn("rounded-md p-2 shrink-0", iconBg)}>
@@ -65,13 +67,14 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
           )}
           <WeaponCategoryBadges weaponName={weapon.name} size="xs" className="mt-1" />
           {proficiencyHint && (
-            <p
-              className="flex items-start gap-1 text-[10px] text-muted-foreground/90 mt-1 leading-snug line-clamp-2"
-              title={`${categoryLabel ?? ""}${categoryLabel ? " · " : ""}Compatible proficiency: ${proficiencyHint}`}
+            <HintTooltip
+              content={`${categoryLabel ?? ""}${categoryLabel ? " · " : ""}Compatible proficiency: ${proficiencyHint}`}
             >
-              <GraduationCap className="h-3 w-3 shrink-0 mt-px opacity-70" aria-hidden />
-              <span>{proficiencyHint}</span>
-            </p>
+              <p className="flex items-start gap-1 text-[10px] text-muted-foreground/90 mt-1 leading-snug line-clamp-2 cursor-help">
+                <GraduationCap className="h-3 w-3 shrink-0 mt-px opacity-70" aria-hidden />
+                <span>{proficiencyHint}</span>
+              </p>
+            </HintTooltip>
           )}
         </div>
       </div>
@@ -86,20 +89,24 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
       </div>
 
       {/* Properties badges */}
-      {weapon.properties.length > 0 && (
+      {(weapon.properties.length > 0 || weapon.isFocus) && (
         <div className="flex flex-wrap gap-1 mb-3">
           {weapon.properties.map((prop) => (
-            <span
+            <Badge
               key={prop}
-              className="inline-flex items-center rounded border border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
+              variant="outline"
+              className="rounded border-border/50 bg-muted/40 px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground"
             >
               {PROPERTY_LABELS[prop] ?? prop}
-            </span>
+            </Badge>
           ))}
           {weapon.isFocus && (
-            <span className="inline-flex items-center rounded border border-violet-700/50 bg-violet-950/40 px-1.5 py-0.5 text-[10px] font-medium text-violet-300">
+            <Badge
+              variant="outline"
+              className="rounded border-violet-700/50 bg-violet-950/40 px-1.5 py-0.5 text-[10px] font-medium text-violet-300"
+            >
               Focus
-            </span>
+            </Badge>
           )}
         </div>
       )}
