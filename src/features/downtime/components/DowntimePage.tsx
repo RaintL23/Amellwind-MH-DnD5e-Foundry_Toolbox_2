@@ -4,6 +4,7 @@ import type { DowntimeActivity } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { getAllDowntimeActivities } from "../services/downtime.service";
 import { DowntimeContentView } from "./DowntimeContent";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 
 export function DowntimePage() {
   const [activities, setActivities] = useState<DowntimeActivity[]>([]);
@@ -23,22 +24,6 @@ export function DowntimePage() {
     () => activities.find((a) => a.id === activeId) ?? activities[0] ?? null,
     [activities, activeId],
   );
-
-  if (loading) {
-    return (
-      <div className="p-6 text-sm text-muted-foreground">
-        Loading downtime activities…
-      </div>
-    );
-  }
-
-  if (!activities.length) {
-    return (
-      <div className="p-6 text-sm text-muted-foreground">
-        No downtime activities found in the guide data.
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -60,6 +45,13 @@ export function DowntimePage() {
       </div>
 
       <div className="flex-1 overflow-auto p-4 lg:p-6">
+        {loading ? (
+          <ListAreaLoading message="Loading downtime activities…" />
+        ) : !activities.length ? (
+          <p className="text-sm text-muted-foreground">
+            No downtime activities found in the guide data.
+          </p>
+        ) : (
         <div className="w-auto mx-auto space-y-5">
           <div className="flex flex-wrap gap-1.5 border-b border-border pb-3">
             {activities.map((activity) => (
@@ -95,6 +87,7 @@ export function DowntimePage() {
             </div>
           )}
         </div>
+        )}
       </div>
     </div>
   );

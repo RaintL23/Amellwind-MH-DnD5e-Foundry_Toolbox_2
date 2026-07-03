@@ -4,29 +4,33 @@ import type { LucideIcon } from "lucide-react";
 import {
   Swords,
   AlertTriangle,
-  Gem,
-  ChefHat,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   X,
-  Hammer,
-  Package,
-  Store,
   Sword,
   Leaf,
-  MapPin,
-  User,
-  UserCog,
   Users,
   ScrollText,
-  Award,
   BookOpen,
-  CalendarClock,
   PawPrint,
   Sparkles,
   Lock,
-  Crosshair,
+  Skull,
+  Calculator,
+  UserRound,
+  Shield,
+  Layers,
+  TreePine,
+  ShoppingBag,
+  UtensilsCrossed,
+  FlaskConical,
+  Clock,
+  Bot,
+  Flame,
+  Wand2,
+  LibraryBig,
+  Map,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -50,82 +54,94 @@ type NavSection = {
   groups: NavGroup[];
 };
 
-/** Herramientas principales — siempre visibles en la parte superior */
-const TOP_TOOLS: NavItem[] = [
-  { to: "/builder", label: "Builder", icon: User },
-  { to: "/damage-calculator", label: "Damage Calculator", icon: Crosshair },
-];
-
 const NAV_SECTIONS: NavSection[] = [
   {
     id: "amellwind",
     label: "Amellwind Homebrew",
     groups: [
       {
-        label: "Tools",
-        items: [
-          { to: "/npc-generator", label: "NPC Generator", icon: UserCog },
-          { to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
-        ],
-      },
-      {
         label: "Character",
         items: [
+          { to: "/builder", label: "Builder", icon: UserRound },
+          { to: "/damage-calculator", label: "Damage Calculator", icon: Calculator },
           { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
-          { to: "/species", label: "Species", icon: Users },
-          { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
-          { to: "/feats", label: "Feats", icon: Award },
         ],
       },
       {
-        label: "Bestiary",
+        label: "Bestiary and Rules",
         items: [
-          { to: "/monsters", label: "Monsters", icon: Swords },
-          { to: "/runes", label: "Runes", icon: Gem },
-          { to: "/material-effects", label: "Material Effects", icon: Sparkles },
+          { to: "/monsters", label: "Monsters", icon: Skull },
           { to: "/conditions", label: "Conditions & Diseases", icon: AlertTriangle },
         ],
       },
       {
-        label: "Gear",
+        label: "Species and Character Options",
         items: [
-          { to: "/weapons", label: "Weapons", icon: Sword },
-          { to: "/items", label: "Items", icon: Package },
+          { to: "/species", label: "Species", icon: Users },
+          { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
+          { to: "/feats", label: "Feats", icon: Sparkles },
         ],
       },
       {
-        label: "Craft & Trade",
+        label: "Weapons, Runes, and Equipment",
         items: [
-          { to: "/shops", label: "Shops", icon: Store },
-          { to: "/cooking", label: "Cooking", icon: ChefHat },
-          { to: "/combo", label: "Combo List", icon: Hammer },
-          { to: "/environments", label: "Environments", icon: MapPin },
+          { to: "/weapons", label: "Weapons", icon: Sword },
+          { to: "/runes", label: "Runes", icon: Flame },
+          { to: "/material-effects", label: "Material Effects", icon: Shield },
+          { to: "/items", label: "Items", icon: Layers },
+        ],
+      },
+      {
+        label: "World and Exploration",
+        items: [
+          { to: "/environments", label: "Environments", icon: TreePine },
           { to: "/resources", label: "Resources", icon: Leaf },
-          { to: "/downtime", label: "Downtime", icon: CalendarClock },
+          { to: "/shops", label: "Shops", icon: ShoppingBag },
+          { to: "/cooking", label: "Cooking", icon: UtensilsCrossed },
+          { to: "/combo", label: "Combo List", icon: FlaskConical },
+          { to: "/downtime", label: "Downtime", icon: Clock },
+        ],
+      },
+      {
+        label: "NPCs and Companions",
+        items: [
+          { to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
+          { to: "/npc-generator", label: "NPC Generator", icon: Bot },
         ],
       },
     ],
   },
   {
     id: "dnd5e",
-    label: "D&D 5e",
+    label: "D&D 5e Compendium",
     groups: [
       {
-        label: "Compendium",
+        label: "Spells and Classes",
         items: [
-          { to: "/spells", label: "Spells", icon: Sparkles },
-          { to: "/classes", label: "Classes", icon: User },
+          { to: "/spells", label: "Spells", icon: Wand2 },
+          { to: "/classes", label: "Classes", icon: Swords },
+        ],
+      },
+      {
+        label: "Character Options",
+        items: [
           { to: "/dnd-races", label: "Races", icon: Users },
           { to: "/dnd-backgrounds", label: "Backgrounds", icon: ScrollText },
-          { to: "/dnd-feats", label: "Feats", icon: Award },
-          { to: "/dnd-items", label: "Items", icon: Package },
-          { to: "/bestiary", label: "Bestiary", icon: Swords },
+          { to: "/dnd-feats", label: "Feats", icon: Sparkles },
         ],
+      },
+      {
+        label: "Bestiary",
+        items: [{ to: "/bestiary", label: "Bestiary", icon: Skull }],
+      },
+      {
+        label: "Equipment",
+        items: [{ to: "/dnd-items", label: "Items", icon: LibraryBig }],
       },
       {
         label: "Character Tools",
         items: [
-          { to: "/xanathar-backstory", label: "Xanathar Backstory", icon: BookOpen },
+          { to: "/xanathar-backstory", label: "Xanathar Backstory", icon: Map },
         ],
       },
     ],
@@ -330,24 +346,6 @@ function SidebarNav({
 
   return (
     <nav className="flex flex-col gap-1 p-2 flex-1 overflow-y-auto">
-      {/* Herramientas principales: Builder + Damage Calculator */}
-      <div className={cn("flex flex-col gap-0.5", !collapsed && "pb-2 mb-1 border-b border-border")}>
-        {!collapsed && (
-          <p className="px-3 pb-1 pt-1 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-            Tools
-          </p>
-        )}
-        {TOP_TOOLS.map((item) => (
-          <NavItemLink
-            key={item.to}
-            {...item}
-            collapsed={collapsed}
-            onMobileClose={onMobileClose}
-          />
-        ))}
-      </div>
-
-      {/* Secciones con grupos colapsables */}
       {NAV_SECTIONS.map((section, sectionIndex) => (
         <div key={section.id} className={cn(sectionIndex > 0 && "mt-1")}>
           {!collapsed && (
@@ -361,20 +359,31 @@ function SidebarNav({
             </p>
           )}
           <div className="flex flex-col gap-0.5">
-            {section.groups.map((group) => {
-              const key = groupKey(section.id, group.label);
-              return (
-                <SidebarNavGroup
-                  key={key}
-                  sectionId={section.id}
-                  group={group}
+            {section.groups.length === 1 ? (
+              section.groups[0].items.map((item) => (
+                <NavItemLink
+                  key={item.to ?? item.label}
+                  {...item}
                   collapsed={collapsed}
-                  open={openGroups[key] ?? false}
-                  onToggle={() => toggleGroup(key)}
                   onMobileClose={onMobileClose}
                 />
-              );
-            })}
+              ))
+            ) : (
+              section.groups.map((group) => {
+                const key = groupKey(section.id, group.label);
+                return (
+                  <SidebarNavGroup
+                    key={key}
+                    sectionId={section.id}
+                    group={group}
+                    collapsed={collapsed}
+                    open={openGroups[key] ?? false}
+                    onToggle={() => toggleGroup(key)}
+                    onMobileClose={onMobileClose}
+                  />
+                );
+              })
+            )}
           </div>
         </div>
       ))}

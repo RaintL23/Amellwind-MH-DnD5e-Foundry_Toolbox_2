@@ -19,6 +19,7 @@ import {
   buildRuneListSearchParams,
   parseRuneListUrlState,
 } from "./rune-list-url.utils";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { Layers } from "lucide-react";
 
 export function RuneList() {
@@ -172,16 +173,6 @@ export function RuneList() {
     safePage * pageSize,
   );
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground animate-pulse">
-          Loading runes...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="p-6">
@@ -189,7 +180,11 @@ export function RuneList() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Runes</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {filtered.length} / {runes.length} materials
+              {!loading && (
+                <>
+                  {filtered.length} / {runes.length} materials
+                </>
+              )}
             </p>
           </div>
           {totalRunes > 0 && (
@@ -211,24 +206,30 @@ export function RuneList() {
           onChange={updateFilters}
         />
 
-        <RuneTable
-          runes={paginated}
-          totalFiltered={filtered.length}
-          isInBuild={isInBuild}
-          onSelect={(rune) => {
-            setSelected(rune);
-            setDialogOpen(true);
-          }}
-        />
+        {loading ? (
+          <ListAreaLoading message="Loading runes..." accentClassName="border-amber-500" />
+        ) : (
+          <>
+            <RuneTable
+              runes={paginated}
+              totalFiltered={filtered.length}
+              isInBuild={isInBuild}
+              onSelect={(rune) => {
+                setSelected(rune);
+                setDialogOpen(true);
+              }}
+            />
 
-        <Pagination
-          page={safePage}
-          totalPages={totalPages}
-          totalItems={filtered.length}
-          pageSize={pageSize}
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
-        />
+            <Pagination
+              page={safePage}
+              totalPages={totalPages}
+              totalItems={filtered.length}
+              pageSize={pageSize}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </>
+        )}
 
         {dialogOpen && selected && (
           <RuneDetailDialog

@@ -11,6 +11,7 @@ import { ItemsTab } from "./ItemsTab";
 import { ItemTabBar } from "./ItemTabBar";
 import { SearchInput } from "./SearchInput";
 import { setIfPresent } from "@/shared/utils/list-url-params.utils";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 
 export function ItemList() {
   const { items, loading, uniqueTypes } = useItems();
@@ -51,14 +52,6 @@ export function ItemList() {
     setSelected(null);
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground animate-pulse">Loading items…</div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-6 mx-auto">
       <div className="mb-6">
@@ -67,7 +60,11 @@ export function ItemList() {
           <h1 className="text-2xl font-bold text-foreground">Items</h1>
         </div>
         <p className="text-sm text-muted-foreground">
-          {items.length} AGMH items across {uniqueTypes.length} types.
+          {!loading && (
+            <>
+              {items.length} AGMH items across {uniqueTypes.length} types.
+            </>
+          )}
         </p>
       </div>
 
@@ -77,7 +74,9 @@ export function ItemList() {
         placeholder="Search items by name…"
       />
 
-      {isSearching ? (
+      {loading ? (
+        <ListAreaLoading message="Loading items…" />
+      ) : isSearching ? (
         <ItemSearchResultsPanel
           results={searchResults}
           query={search}

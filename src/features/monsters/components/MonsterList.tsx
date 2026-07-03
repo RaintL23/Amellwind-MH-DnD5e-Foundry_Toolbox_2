@@ -10,6 +10,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { toMonsterId } from "../utils/monster-id.utils";
 import { buildMonsterFilterSections } from "../utils/monster-filter-sections";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -283,23 +284,17 @@ export function MonsterList() {
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-muted-foreground animate-pulse">
-          Loading monsters...
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-full min-h-0 p-6">
       {/* Header */}
       <div className="mb-6 shrink-0">
         <h1 className="text-2xl font-bold text-foreground">Monsters</h1>
         <p className="text-sm text-muted-foreground mt-1">
-          {filtered.length} / {monsters.length} monsters
+          {!loading && (
+            <>
+              {filtered.length} / {monsters.length} monsters
+            </>
+          )}
         </p>
       </div>
 
@@ -320,6 +315,10 @@ export function MonsterList() {
         dialogDescription="Filter by CR, tier, type, and environment. Changes apply when you save."
       />
 
+      {loading ? (
+        <ListAreaLoading message="Loading monsters..." accentClassName="border-amber-500" />
+      ) : (
+        <>
       {/* Table — altura según contenido, con tope en el espacio disponible */}
       <div className="flex-1 min-h-0">
         <div className="max-h-full overflow-auto rounded-lg border border-border">
@@ -415,6 +414,8 @@ export function MonsterList() {
           onPageSizeChange={handlePageSizeChange}
         />
       </div>
+        </>
+      )}
 
     </div>
   );
