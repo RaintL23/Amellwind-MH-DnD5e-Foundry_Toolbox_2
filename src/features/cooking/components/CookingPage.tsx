@@ -7,10 +7,7 @@ import {
 import { COOKING_RANK_TABS } from "../constants/cooking.constants";
 import { useCookingRoll } from "../hooks/useCookingRoll";
 import { useItemDescMap } from "@/features/shops/hooks/useItemDescMap";
-import {
-  type CookingActiveTab,
-  cookingRankFromTab,
-} from "@/shared/types";
+import { type CookingActiveTab, cookingRankFromTab } from "@/shared/types";
 import { CookingDailyTab } from "./CookingDailyTab";
 import { CookingRankTab } from "./CookingRankTab";
 import { CookingRulesTab } from "./CookingRulesTab";
@@ -45,12 +42,7 @@ export function CookingPage() {
 
       <CookingTabBar activeTab={activeTab} onTabChange={handleTabChange} />
 
-      {activeTab === "rules" && (
-        <CookingRulesTab
-          mealTables={mealTables}
-          onSelectRank={handleTabChange}
-        />
-      )}
+      {activeTab === "rules" && <CookingRulesTab />}
 
       {COOKING_RANK_TABS.map((tabId) => {
         if (activeTab !== tabId) return null;
