@@ -34,7 +34,7 @@ export function BuildDrawer() {
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-amber-600 px-4 py-3 text-white shadow-lg hover:bg-amber-500 transition-colors"
-        aria-label="Abrir Build Planner"
+        aria-label="Abrir Rune Planner"
       >
         <Layers className="h-5 w-5" />
         {totalRunes > 0 && (
@@ -50,7 +50,9 @@ export function BuildDrawer() {
       <div
         className={cn(
           "fixed inset-0 z-40 bg-black/60 backdrop-blur-sm transition-opacity duration-300",
-          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+          open
+            ? "opacity-100 pointer-events-auto"
+            : "opacity-0 pointer-events-none",
         )}
         onClick={() => setOpen(false)}
         aria-hidden

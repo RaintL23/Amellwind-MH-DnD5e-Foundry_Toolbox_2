@@ -82,7 +82,8 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
       {
         label: "Conditions & Diseases",
         route: "/conditions",
-        description: "Blight conditions, afflictions and infectious diseases from Amellwind.",
+        description:
+          "Blight conditions, afflictions and infectious diseases from Amellwind.",
         icon: <AlertTriangle className="h-5 w-5" />,
       },
     ],
@@ -122,8 +123,7 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
       {
         label: "Runes",
         route: "/runes",
-        description:
-          "Monster materials and visual build planner for runes.",
+        description: "Monster materials and visual Rune Planner for runes.",
         icon: <Flame className="h-5 w-5" />,
       },
       {
@@ -240,7 +240,8 @@ const dndSections: SectionItem[] = [
   {
     label: "Items",
     route: "/dnd-items",
-    description: "Magic items and equipment from the PHB, DMG, and other sources.",
+    description:
+      "Magic items and equipment from the PHB, DMG, and other sources.",
     icon: <LibraryBig className="h-5 w-5" />,
   },
   {
@@ -286,11 +287,15 @@ export function HomePage() {
           </h1>
         </div>
         <p className="text-muted-foreground text-sm max-w-3xl leading-relaxed">
-          Web toolkit for <span className="text-foreground font-medium">Dungeon Masters</span> and
-          players of the <span className="text-foreground font-medium">Amellwind</span> homebrew,
-          combining <span className="text-foreground font-medium">Monster Hunter</span> with{" "}
-          <span className="text-foreground font-medium">D&amp;D 5e</span>. All data is
-          synchronized and cached in your browser for offline access between sessions.
+          Web toolkit for{" "}
+          <span className="text-foreground font-medium">Dungeon Masters</span>{" "}
+          and players of the{" "}
+          <span className="text-foreground font-medium">Amellwind</span>{" "}
+          homebrew, combining{" "}
+          <span className="text-foreground font-medium">Monster Hunter</span>{" "}
+          with <span className="text-foreground font-medium">D&amp;D 5e</span>.
+          All data is synchronized and cached in your browser for offline access
+          between sessions.
         </p>
         <div className="flex flex-wrap gap-2 pt-1">
           <Badge variant="secondary">
@@ -309,7 +314,8 @@ export function HomePage() {
         <div>
           <h2 className="text-lg font-semibold">Amellwind Homebrew</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            Exclusive content from the Amellwind Monster Hunter D&amp;D 5e system.
+            Exclusive content from the Amellwind Monster Hunter D&amp;D 5e
+            system.
           </p>
         </div>
 
@@ -365,7 +371,8 @@ export function HomePage() {
         >
           Amellwind
         </a>
-        . Monster Hunter is property of Capcom; D&amp;D is property of Wizards of the Coast.
+        . Monster Hunter is property of Capcom; D&amp;D is property of Wizards
+        of the Coast.
       </p>
     </div>
   );

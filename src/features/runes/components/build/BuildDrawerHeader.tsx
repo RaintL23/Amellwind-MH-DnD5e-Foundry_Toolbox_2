@@ -17,7 +17,7 @@ export function BuildDrawerHeader({
     <div className="flex items-center justify-between border-b border-border px-5 py-4 shrink-0">
       <div className="flex items-center gap-2">
         <Layers className="h-5 w-5 text-amber-400" />
-        <h2 className="text-base font-bold text-foreground">Build Planner</h2>
+        <h2 className="text-base font-bold text-foreground">Rune Planner</h2>
         {totalRunes > 0 && (
           <span className="rounded-full bg-amber-600/20 text-amber-400 border border-amber-600/30 px-2 py-0.5 text-xs font-semibold">
             {totalRunes}

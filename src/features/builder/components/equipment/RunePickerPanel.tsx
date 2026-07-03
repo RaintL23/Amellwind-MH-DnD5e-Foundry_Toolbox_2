@@ -144,7 +144,7 @@ export function RunePickerPanel({
             <Link to="/runes" className="underline hover:text-blue-200">
               Runes page
             </Link>{" "}
-            Build Planner.
+            Rune Planner.
           </p>
         </div>
       )}
@@ -310,7 +310,8 @@ function RuneList({
         );
         const effectText = getRuneMaterialEffectText(rune, materialEffectKind);
         const effectLabel = MATERIAL_EFFECT_SLOT_LABELS[materialEffectKind];
-        const EffectIcon = materialEffectKind === "weapon" ? Sword : ShieldCheck;
+        const EffectIcon =
+          materialEffectKind === "weapon" ? Sword : ShieldCheck;
 
         return (
           <button

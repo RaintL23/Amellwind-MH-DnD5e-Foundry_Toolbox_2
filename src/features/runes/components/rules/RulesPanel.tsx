@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp, Gem, Info, ShieldCheck, Sword } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Gem,
+  Info,
+  ShieldCheck,
+  Sword,
+} from "lucide-react";
 import {
   ARMOR_RULES,
   ARMOR_UPGRADE_COSTS,
@@ -49,15 +56,21 @@ export function RulesPanel() {
                   key={rarity}
                   className="rounded-md border border-border bg-muted/20 px-2 py-2"
                 >
-                  <div className="text-xs font-medium text-foreground">{rarity}</div>
-                  <div className="text-lg font-bold text-amber-400 mt-0.5">{slots}</div>
-                  <div className="text-xs text-muted-foreground">slot{slots > 1 ? "s" : ""}</div>
+                  <div className="text-xs font-medium text-foreground">
+                    {rarity}
+                  </div>
+                  <div className="text-lg font-bold text-amber-400 mt-0.5">
+                    {slots}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    slot{slots > 1 ? "s" : ""}
+                  </div>
                 </div>
               ))}
             </div>
             <p className="text-[10px] text-muted-foreground/80">
-              Increasing rarity does not increase AC; it only adds material slots. Smithy upgrades
-              take one week to complete.
+              Increasing rarity does not increase AC; it only adds material
+              slots. Smithy upgrades take one week to complete.
             </p>
           </div>
 
@@ -106,8 +119,8 @@ export function RulesPanel() {
           </div>
 
           <p className="text-xs text-muted-foreground/60 italic border-t border-border pt-3">
-            The Build Planner applies these rules automatically and shows warnings when your build
-            has conflicts.
+            The Rune Planner applies these rules automatically and shows
+            warnings when your build has conflicts.
           </p>
         </div>
       )}

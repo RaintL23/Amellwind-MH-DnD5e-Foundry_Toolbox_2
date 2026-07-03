@@ -53,7 +53,7 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
   return (
     <div className="space-y-2 mt-4">
       <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-        Agregar al Build Planner
+        Agregar al Rune Planner
       </h4>
 
       <div className="flex flex-wrap gap-2">
