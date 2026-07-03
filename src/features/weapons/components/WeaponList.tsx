@@ -1,20 +1,25 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useCallback, useState } from "react";
 import { Weapon } from "@/shared/types";
 import { getAllWeapons } from "../services/weapon.service";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { WeaponCard } from "./WeaponCard";
 import { WeaponDialog } from "./WeaponDialog";
 import { WeaponListFilters } from "./WeaponListFilters";
+import { weaponMatchesCompatibleProficiency } from "../data/weapon-proficiencies.data";
 import { Swords } from "lucide-react";
 
 export function WeaponList() {
+  const { getString, setString, patchFields } = useListUrlState();
   const [weapons, setWeapons] = useState<Weapon[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [dmgFilter, setDmgFilter] = useState("");
-  const [propFilter, setPropFilter] = useState("");
   const [selected, setSelected] = useState<Weapon | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const search = getString("q");
+  const dmgFilter = getString("dmg");
+  const propFilter = getString("prop");
+  const compatFilter = getString("compat");
 
   useEffect(() => {
     getAllWeapons()
@@ -36,19 +41,32 @@ export function WeaponList() {
     if (propFilter) {
       result = result.filter((w) => w.properties.includes(propFilter));
     }
+    if (compatFilter) {
+      result = result.filter((w) =>
+        weaponMatchesCompatibleProficiency(w.name, compatFilter),
+      );
+    }
     return result;
-  }, [weapons, debouncedSearch, dmgFilter, propFilter]);
+  }, [weapons, debouncedSearch, dmgFilter, propFilter, compatFilter]);
 
-  function handleSelect(weapon: Weapon) {
+  const handleSelect = useCallback((weapon: Weapon) => {
     setSelected(weapon);
     setDialogOpen(true);
-  }
+  }, []);
 
-  function clearFilters() {
-    setSearch("");
-    setDmgFilter("");
-    setPropFilter("");
-  }
+  const clearFilters = useCallback(() => {
+    setString("q", "");
+    setString("dmg", "");
+    setString("prop", "");
+    setString("compat", "");
+  }, [setString]);
+
+  const applyWeaponFilters = useCallback(
+    (dmg: string, prop: string, compat: string) => {
+      patchFields({ dmg, prop, compat });
+    },
+    [patchFields],
+  );
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -69,11 +87,9 @@ export function WeaponList() {
       </div>
 
       <WeaponListFilters
-        filters={{ search, dmgFilter, propFilter }}
-        onSearchChange={setSearch}
-        onDmgFilterChange={setDmgFilter}
-        onPropFilterChange={setPropFilter}
-        onClear={clearFilters}
+        filters={{ search, dmgFilter, propFilter, compatFilter }}
+        onSearchChange={(v) => setString("q", v)}
+        onFiltersApply={applyWeaponFilters}
       />
 
       <div className="flex-1 overflow-y-auto px-6 py-6">

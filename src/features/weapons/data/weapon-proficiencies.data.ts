@@ -92,6 +92,21 @@ export function getWeaponProficiencyRule(weaponName: string): WeaponProficiencyR
   return WEAPON_PROFICIENCIES[weaponName];
 }
 
+/** Unique D&D weapon proficiencies referenced across all MH weapon rules (for filters). */
+export const COMPATIBLE_PROFICIENCY_OPTIONS: string[] = [
+  ...new Set(
+    Object.values(WEAPON_PROFICIENCIES).flatMap((rule) => rule.compatible),
+  ),
+].sort((a, b) => a.localeCompare(b));
+
+export function weaponMatchesCompatibleProficiency(
+  weaponName: string,
+  proficiency: string,
+): boolean {
+  const rule = getWeaponProficiencyRule(weaponName);
+  return rule?.compatible.includes(proficiency) ?? false;
+}
+
 const TIER_LABELS: Record<WeaponProficiencyTier, string> = {
   martial: "Martial",
   simple: "Simple",
