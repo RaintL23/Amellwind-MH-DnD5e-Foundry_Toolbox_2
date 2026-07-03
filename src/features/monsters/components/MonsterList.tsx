@@ -4,12 +4,13 @@ import { Monster } from "@/shared/types";
 import { getAllMonsters } from "../services/monster.service";
 import { getTier } from "@/shared/utils/cr.utils";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
-import { Input } from "@/components/ui/input";
-import { MultiSelect } from "@/components/ui/multi-select";
-import { Badge } from "@/components/ui/badge";
+import { ListSearchWithFilters, pickFilterValues } from "@/shared/components/list-filters";
+import type { ListFilterValues } from "@/shared/components/list-filters";
 import { Pagination } from "@/components/ui/pagination";
+import { Badge } from "@/components/ui/badge";
 import { toMonsterId } from "../utils/monster-id.utils";
-import { Search, ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
+import { buildMonsterFilterSections } from "../utils/monster-filter-sections";
+import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const DEFAULT_PAGE_SIZE = 10;
 
@@ -205,6 +206,12 @@ export function MonsterList() {
     return Array.from(set).sort();
   }, [monsters]);
 
+  const filterSections = useMemo(
+    () =>
+      buildMonsterFilterSections(uniqueCRs, uniqueTypes, uniqueEnvironments),
+    [uniqueCRs, uniqueTypes, uniqueEnvironments],
+  );
+
   const debouncedName = useDebouncedValue(filters.name);
 
   // Filter + sort
@@ -263,6 +270,16 @@ export function MonsterList() {
     patchParams({ pageSize: size, page: 1 });
   }
 
+  function applyDialogFilters(values: ListFilterValues) {
+    updateFilters({
+      ...filters,
+      cr: (values.cr as string[]) ?? [],
+      tier: (values.tier as string[]) ?? [],
+      type: (values.type as string[]) ?? [],
+      environment: (values.environment as string[]) ?? [],
+    });
+  }
+
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
@@ -286,68 +303,22 @@ export function MonsterList() {
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6 shrink-0">
-        <div className="relative col-span-2 md:col-span-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
-          <Input
-            placeholder="Search by name..."
-            value={filters.name}
-            onChange={(e) =>
-              updateFilters({ ...filters, name: e.target.value })
-            }
-            className="pl-8"
-          />
-        </div>
-
-        <MultiSelect
-          options={uniqueCRs.map((cr) => ({
-            value: cr,
-            label: `CR ${cr}`,
-          }))}
-          selected={filters.cr}
-          onChange={(cr) => updateFilters({ ...filters, cr })}
-          emptyLabel="All CR"
-          allLabel="All CR"
-          countLabel={(count) => `${count} CR`}
-        />
-
-        <MultiSelect
-          options={[0, 1, 2, 3, 4].map((t) => ({
-            value: String(t),
-            label: `Tier ${t}`,
-          }))}
-          selected={filters.tier}
-          onChange={(tier) => updateFilters({ ...filters, tier })}
-          emptyLabel="All Tiers"
-          allLabel="All Tiers"
-          countLabel={(count) => `${count} tiers`}
-        />
-
-        <MultiSelect
-          options={uniqueTypes.map((type) => ({
-            value: type,
-            label: type.charAt(0).toUpperCase() + type.slice(1),
-          }))}
-          selected={filters.type}
-          onChange={(type) => updateFilters({ ...filters, type })}
-          emptyLabel="All types"
-          allLabel="All types"
-          countLabel={(count) => `${count} types`}
-        />
-
-        <MultiSelect
-          options={uniqueEnvironments.map((env) => ({
-            value: env,
-            label: env.charAt(0).toUpperCase() + env.slice(1),
-          }))}
-          selected={filters.environment}
-          onChange={(environment) => updateFilters({ ...filters, environment })}
-          emptyLabel="All environments"
-          allLabel="All environments"
-          countLabel={(count) => `${count} environments`}
-        />
-      </div>
+      <ListSearchWithFilters
+        className="mb-6 shrink-0"
+        searchValue={filters.name}
+        onSearchChange={(name) => updateFilters({ ...filters, name })}
+        searchPlaceholder="Search by name..."
+        sections={filterSections}
+        filterValues={pickFilterValues(filters, [
+          "cr",
+          "tier",
+          "type",
+          "environment",
+        ])}
+        onFiltersApply={applyDialogFilters}
+        dialogTitle="Monster Filters"
+        dialogDescription="Filter by CR, tier, type, and environment. Changes apply when you save."
+      />
 
       {/* Table — altura según contenido, con tope en el espacio disponible */}
       <div className="flex-1 min-h-0">

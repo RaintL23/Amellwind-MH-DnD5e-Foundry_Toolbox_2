@@ -1,4 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { MaterialEffect } from "@/shared/types";
 import { Pagination } from "@/components/ui/pagination";
 import { Sparkles } from "lucide-react";
@@ -10,21 +11,75 @@ import {
 import { MaterialEffectFilters } from "./MaterialEffectFilters";
 import { MaterialEffectCard } from "./MaterialEffectCard";
 import { MaterialEffectDetailDialog } from "./MaterialEffectDetailDialog";
+import {
+  appendAll,
+  parsePositiveInt,
+  setIfPresent,
+  setIntIfNotDefault,
+} from "@/shared/utils/list-url-params.utils";
 
 const DEFAULT_PAGE_SIZE = 10;
 
+function parseMaterialEffectListUrl(searchParams: URLSearchParams) {
+  return {
+    filters: {
+      name: searchParams.get("q") ?? "",
+      slot: searchParams.getAll("slot") as MaterialEffectFiltersState["slot"],
+      rarity: searchParams.getAll("rarity") as MaterialEffectFiltersState["rarity"],
+    } satisfies MaterialEffectFiltersState,
+    page: parsePositiveInt(searchParams.get("page"), 1),
+    pageSize: parsePositiveInt(searchParams.get("pageSize"), DEFAULT_PAGE_SIZE),
+  };
+}
+
+function buildMaterialEffectListUrl(
+  filters: MaterialEffectFiltersState,
+  page: number,
+  pageSize: number,
+): URLSearchParams {
+  const next = new URLSearchParams();
+  setIfPresent(next, "q", filters.name);
+  appendAll(next, "slot", filters.slot);
+  appendAll(next, "rarity", filters.rarity);
+  setIntIfNotDefault(next, "page", page, 1);
+  setIntIfNotDefault(next, "pageSize", pageSize, DEFAULT_PAGE_SIZE);
+  return next;
+}
+
 export function MaterialEffectList() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [effects, setEffects] = useState<MaterialEffect[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<MaterialEffectFiltersState>({
-    name: "",
-    slot: [],
-    rarity: [],
-  });
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<MaterialEffect | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+
+  const { filters, page, pageSize } = useMemo(
+    () => parseMaterialEffectListUrl(searchParams),
+    [searchParams],
+  );
+
+  const patchListState = useCallback(
+    (
+      patch: Partial<{
+        filters: MaterialEffectFiltersState;
+        page: number;
+        pageSize: number;
+      }>,
+    ) => {
+      setSearchParams(
+        (prev) => {
+          const current = parseMaterialEffectListUrl(prev);
+          return buildMaterialEffectListUrl(
+            patch.filters ?? current.filters,
+            patch.page ?? current.page,
+            patch.pageSize ?? current.pageSize,
+          );
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
 
   useEffect(() => {
     getAllMaterialEffects()
@@ -55,18 +110,29 @@ export function MaterialEffectList() {
     return result;
   }, [effects, filters]);
 
-  function updateFilters(next: MaterialEffectFiltersState) {
-    setFilters(next);
-    setPage(1);
-  }
+  const updateFilters = useCallback(
+    (next: MaterialEffectFiltersState) => {
+      patchListState({ filters: next, page: 1 });
+    },
+    [patchListState],
+  );
 
-  function handlePageSizeChange(size: number) {
-    setPageSize(size);
-    setPage(1);
-  }
+  const handlePageChange = useCallback(
+    (nextPage: number) => patchListState({ page: nextPage }),
+    [patchListState],
+  );
+
+  const handlePageSizeChange = useCallback(
+    (size: number) => patchListState({ pageSize: size, page: 1 }),
+    [patchListState],
+  );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice(
+    (safePage - 1) * pageSize,
+    safePage * pageSize,
+  );
 
   const weaponCount = effects.filter((e) => e.slot === "weapon").length;
   const armorCount = effects.filter((e) => e.slot === "armor").length;
@@ -126,11 +192,11 @@ export function MaterialEffectList() {
             </div>
 
             <Pagination
-              page={page}
+              page={safePage}
               totalPages={totalPages}
               totalItems={filtered.length}
               pageSize={pageSize}
-              onPageChange={setPage}
+              onPageChange={handlePageChange}
               onPageSizeChange={handlePageSizeChange}
             />
           </>

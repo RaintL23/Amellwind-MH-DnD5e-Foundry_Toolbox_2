@@ -1,5 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Rune } from "@/shared/types";
+import { parseCR } from "@/shared/utils/cr.utils";
 import { getAllRunes } from "../../services/rune.service";
 import { getMaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
@@ -9,34 +11,54 @@ import { RuneDetailDialog } from "../detail/RuneDetailDialog";
 import { RulesPanel } from "../rules/RulesPanel";
 import { ObtainMaterialsPanel } from "../rules/ObtainmentRulesPanel";
 import { BuildDrawer } from "../build/BuildDrawer";
-import { RuneFilters, RuneFiltersState } from "./RuneFilters";
+import { RuneFilters, type RuneFiltersState } from "./RuneFilters";
 import { RuneTable } from "./RuneTable";
 import { useRuneBuild } from "../../context/RuneBuildContext";
 import { matchesRuneSearchQuery } from "../../utils/rune-search.utils";
+import {
+  buildRuneListSearchParams,
+  parseRuneListUrlState,
+} from "./rune-list-url.utils";
 import { Layers } from "lucide-react";
 
-const DEFAULT_PAGE_SIZE = 10;
-
 export function RuneList() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [runes, setRunes] = useState<Rune[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filters, setFilters] = useState<RuneFiltersState>({
-    name: "",
-    monster: [],
-    slot: "",
-    obtainment: [],
-    tag: [],
-    monsterTier: [],
-    materialEffectTier: [],
-  });
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(DEFAULT_PAGE_SIZE);
   const [selected, setSelected] = useState<Rune | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [materialEffectIndex, setMaterialEffectIndex] =
     useState<MaterialEffectNameIndex | null>(null);
 
   const { isInBuild, totalRunes } = useRuneBuild();
+
+  const { filters, page, pageSize } = useMemo(
+    () => parseRuneListUrlState(searchParams),
+    [searchParams],
+  );
+
+  const patchListState = useCallback(
+    (
+      patch: Partial<{
+        filters: RuneFiltersState;
+        page: number;
+        pageSize: number;
+      }>,
+    ) => {
+      setSearchParams(
+        (prev) => {
+          const current = parseRuneListUrlState(prev);
+          return buildRuneListSearchParams(
+            patch.filters ?? current.filters,
+            patch.page ?? current.page,
+            patch.pageSize ?? current.pageSize,
+          );
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
 
   useEffect(() => {
     Promise.all([getAllRunes(), getMaterialEffectNameIndex()]).then(
@@ -50,6 +72,14 @@ export function RuneList() {
 
   const uniqueMonsters = useMemo(
     () => Array.from(new Set(runes.map((r) => r.monsterName))).sort(),
+    [runes],
+  );
+
+  const uniqueMonsterCrs = useMemo(
+    () =>
+      Array.from(
+        new Set(runes.flatMap((r) => r.monsterCrs).filter(Boolean)),
+      ).sort((a, b) => parseCR(a) - parseCR(b)),
     [runes],
   );
 
@@ -72,6 +102,11 @@ export function RuneList() {
     }
     if (filters.monster.length > 0)
       result = result.filter((r) => filters.monster.includes(r.monsterName));
+    if (filters.monsterCr.length > 0) {
+      result = result.filter((r) =>
+        r.monsterCrs.some((cr) => filters.monsterCr.includes(cr)),
+      );
+    }
     if (filters.slot === "A" || filters.slot === "W") {
       const slot = filters.slot;
       result = result.filter((r) => r.slots.includes(slot));
@@ -109,18 +144,33 @@ export function RuneList() {
     return result;
   }, [runes, filters, materialEffectIndex]);
 
-  function updateFilters(next: RuneFiltersState) {
-    setFilters(next);
-    setPage(1);
-  }
+  const updateFilters = useCallback(
+    (next: RuneFiltersState) => {
+      patchListState({ filters: next, page: 1 });
+    },
+    [patchListState],
+  );
 
-  function handlePageSizeChange(size: number) {
-    setPageSize(size);
-    setPage(1);
-  }
+  const handlePageChange = useCallback(
+    (nextPage: number) => {
+      patchListState({ page: nextPage });
+    },
+    [patchListState],
+  );
+
+  const handlePageSizeChange = useCallback(
+    (size: number) => {
+      patchListState({ pageSize: size, page: 1 });
+    },
+    [patchListState],
+  );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
+  const safePage = Math.min(page, totalPages);
+  const paginated = filtered.slice(
+    (safePage - 1) * pageSize,
+    safePage * pageSize,
+  );
 
   if (loading) {
     return (
@@ -156,6 +206,7 @@ export function RuneList() {
         <RuneFilters
           filters={filters}
           uniqueMonsters={uniqueMonsters}
+          uniqueMonsterCrs={uniqueMonsterCrs}
           uniqueTags={uniqueTags}
           onChange={updateFilters}
         />
@@ -171,11 +222,11 @@ export function RuneList() {
         />
 
         <Pagination
-          page={page}
+          page={safePage}
           totalPages={totalPages}
           totalItems={filtered.length}
           pageSize={pageSize}
-          onPageChange={setPage}
+          onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
         />
 
