@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import type { ColumnFiltersState } from "@tanstack/react-table";
 import { Spell } from "@/shared/types";
 import { DataTable } from "@/components/data-table/data-table";
+import type { DataTableFilterState } from "@/components/data-table/data-table.types";
 import type { SourceOption } from "../services/book-source.service";
 import { spellColumns, spellGlobalFilter } from "./spell-columns";
 import { SpellDataTableToolbar } from "./SpellDataTableToolbar";
@@ -10,6 +12,9 @@ interface SpellDataTableProps {
   classOptions: string[];
   sourceOptions: SourceOption[];
   onRowClick: (spell: Spell) => void;
+  initialSearch?: string;
+  initialColumnFilters?: ColumnFiltersState;
+  onFilterStateChange?: (state: DataTableFilterState) => void;
 }
 
 export function SpellDataTable({
@@ -17,6 +22,9 @@ export function SpellDataTable({
   classOptions,
   sourceOptions,
   onRowClick,
+  initialSearch,
+  initialColumnFilters,
+  onFilterStateChange,
 }: SpellDataTableProps) {
   const toolbarProps = useMemo(
     () => ({ classOptions, sourceOptions }),
@@ -36,6 +44,9 @@ export function SpellDataTable({
       pageSize={25}
       globalFilterFn={spellGlobalFilter}
       initialColumnVisibility={{ classNames: false }}
+      initialSearch={initialSearch}
+      initialColumnFilters={initialColumnFilters}
+      onFilterStateChange={onFilterStateChange}
       toolbar={(ctx) => (
         <SpellDataTableToolbar
           table={ctx.table}

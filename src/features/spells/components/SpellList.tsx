@@ -10,6 +10,8 @@ import {
   collectEntitySources,
 } from "../services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useDataTableUrlState } from "@/shared/hooks/useDataTableUrlState";
+import { SPELL_COLUMN_URL_MAP } from "./spell-list-url.constants";
 import { SPELL_LIST_FILTER_CLASSES } from "../utils/spell-class.constants";
 import { SpellDetailDialog } from "./SpellDetailDialog";
 import { SpellDataTable } from "./SpellDataTable";
@@ -23,6 +25,8 @@ export function SpellList() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState<Spell[]>([]);
   const bookNames = useBookSourceNames();
+  const { initialSearch, initialColumnFilters, handleFilterStateChange } =
+    useDataTableUrlState(SPELL_COLUMN_URL_MAP);
 
   useEffect(() => {
     Promise.all([getAllSpells(), getListSpells()])
@@ -91,6 +95,9 @@ export function SpellList() {
             classOptions={classOptions}
             sourceOptions={sourceOptions}
             onRowClick={handleSelect}
+            initialSearch={initialSearch}
+            initialColumnFilters={initialColumnFilters}
+            onFilterStateChange={handleFilterStateChange}
           />
         )}
       </div>

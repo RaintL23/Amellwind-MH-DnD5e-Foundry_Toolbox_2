@@ -11,6 +11,8 @@ import {
   collectEntitySources,
 } from "@/features/spells/services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useDataTableUrlState } from "@/shared/hooks/useDataTableUrlState";
+import { DND_BACKGROUND_COLUMN_URL_MAP } from "./dnd-background-list-url.constants";
 import { DndBackgroundDataTable } from "./DndBackgroundDataTable";
 import { DndBackgroundDetailDialog } from "./DndBackgroundDetailDialog";
 
@@ -22,6 +24,8 @@ export function DndBackgroundList() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedVariants, setSelectedVariants] = useState<DndBackground[]>([]);
   const bookNames = useBookSourceNames();
+  const { initialSearch, initialColumnFilters, handleFilterStateChange } =
+    useDataTableUrlState(DND_BACKGROUND_COLUMN_URL_MAP);
 
   useEffect(() => {
     Promise.all([getAllDndBackgrounds(), getListDndBackgrounds()])
@@ -86,6 +90,9 @@ export function DndBackgroundList() {
             backgrounds={listBackgrounds}
             sourceOptions={sourceOptions}
             onRowClick={handleSelect}
+            initialSearch={initialSearch}
+            initialColumnFilters={initialColumnFilters}
+            onFilterStateChange={handleFilterStateChange}
           />
         )}
       </div>

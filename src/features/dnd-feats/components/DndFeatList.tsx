@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import type { DndFeat } from "@/shared/types";
 import {
   getAllDndFeats,
@@ -6,17 +7,17 @@ import {
   getListDndFeats,
 } from "../services/dnd-feat.service";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { ListSearchWithFilters } from "@/shared/components/list-filters";
+import type { ListFilterValues } from "@/shared/components/list-filters";
 import { DndFeatCard } from "./DndFeatCard";
 import { DndFeatDetailDialog } from "./DndFeatDetailDialog";
-import { Input } from "@/components/ui/input";
-import { MultiSelect } from "@/components/ui/multi-select";
-import { Search, Award } from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { Award } from "lucide-react";
 import {
   buildSourceOptions,
   collectEntitySources,
 } from "@/features/spells/services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { appendAll, setIfPresent } from "@/shared/utils/list-url-params.utils";
 
 type DndFeatFilter =
   | ""
@@ -25,8 +26,7 @@ type DndFeatFilter =
   | "ability"
   | "prerequisite";
 
-const FILTERS: Array<{ value: DndFeatFilter; label: string }> = [
-  { value: "", label: "All" },
+const FEAT_TYPE_OPTIONS = [
   { value: "origin", label: "Origin Feats" },
   { value: "repeatable", label: "Repeatable" },
   { value: "ability", label: "With ability increases" },
@@ -34,12 +34,13 @@ const FILTERS: Array<{ value: DndFeatFilter; label: string }> = [
 ];
 
 export function DndFeatList() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [feats, setFeats] = useState<DndFeat[]>([]);
   const [listFeats, setListFeats] = useState<DndFeat[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState<DndFeatFilter>("");
-  const [sourceFilter, setSourceFilter] = useState<string[]>([]);
+  const search = searchParams.get("q") ?? "";
+  const filter = (searchParams.get("filter") ?? "") as DndFeatFilter;
+  const sourceFilter = searchParams.getAll("src");
   const [selected, setSelected] = useState<DndFeat | null>(null);
   const [selectedVariants, setSelectedVariants] = useState<DndFeat[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -56,9 +57,50 @@ export function DndFeatList() {
 
   const debouncedSearch = useDebouncedValue(search);
 
+  const patchFilters = useCallback(
+    (patch: { q?: string; filter?: DndFeatFilter; src?: string[] }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams();
+          const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
+          const nextFilter =
+            "filter" in patch
+              ? (patch.filter ?? "")
+              : (prev.get("filter") ?? "");
+          const src =
+            "src" in patch ? (patch.src ?? []) : prev.getAll("src");
+          setIfPresent(next, "q", q);
+          setIfPresent(next, "filter", nextFilter);
+          appendAll(next, "src", src);
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
   const sourceOptions = useMemo(
     () => buildSourceOptions(collectEntitySources(listFeats), bookNames),
     [listFeats, bookNames],
+  );
+
+  const filterSections = useMemo(
+    () => [
+      {
+        id: "filter",
+        title: "Feat Type",
+        mode: "single" as const,
+        options: FEAT_TYPE_OPTIONS,
+      },
+      {
+        id: "src",
+        title: "Source",
+        mode: "multi" as const,
+        options: sourceOptions,
+      },
+    ],
+    [sourceOptions],
   );
 
   const filtered = useMemo(() => {
@@ -102,6 +144,15 @@ export function DndFeatList() {
     void getDndFeatsByName(item.name).then(setSelectedVariants);
   }, []);
 
+  function applyDialogFilters(values: ListFilterValues) {
+    patchFilters({
+      filter: (typeof values.filter === "string"
+        ? values.filter
+        : "") as DndFeatFilter,
+      src: Array.isArray(values.src) ? values.src : [],
+    });
+  }
+
   return (
     <div className="flex flex-col h-full min-h-0">
       <div className="shrink-0 border-b border-border px-6 py-5">
@@ -123,48 +174,18 @@ export function DndFeatList() {
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3 space-y-3">
-        <div className="flex flex-wrap gap-2 items-center">
-          <div className="relative flex-1 min-w-[200px] max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-            <Input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search feat..."
-              className="pl-9 h-8 text-sm"
-            />
-          </div>
-
-          {sourceOptions.length > 1 && (
-            <MultiSelect
-              options={sourceOptions}
-              selected={sourceFilter}
-              onChange={setSourceFilter}
-              emptyLabel="All sources"
-              allLabel="All sources"
-              countLabel={(count) => `${count} sources`}
-              className="w-auto min-w-[180px] max-w-[260px] [&>button]:h-8 [&>button]:text-xs"
-            />
-          )}
-        </div>
-
-        <div className="flex flex-wrap gap-1">
-          {FILTERS.map(({ value, label }) => (
-            <button
-              key={value || "all"}
-              type="button"
-              onClick={() => setFilter(value)}
-              className={cn(
-                "rounded-md border px-2.5 py-1 text-xs font-medium transition-colors",
-                filter === value
-                  ? "border-amber-500 bg-amber-500/20 text-amber-400"
-                  : "border-border bg-card text-muted-foreground hover:bg-accent",
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <ListSearchWithFilters
+          searchValue={search}
+          onSearchChange={(q) => patchFilters({ q })}
+          searchPlaceholder="Search feat..."
+          inputClassName="h-8 text-sm"
+          sections={filterSections}
+          filterValues={{ filter, src: sourceFilter }}
+          onFiltersApply={applyDialogFilters}
+          dialogTitle="Feat Filters"
+          dialogDescription="Filter official feats by type and sourcebook."
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">

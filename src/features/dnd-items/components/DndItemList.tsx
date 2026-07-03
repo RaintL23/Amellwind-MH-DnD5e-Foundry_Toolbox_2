@@ -13,6 +13,8 @@ import {
   collectEntitySources,
 } from "@/features/spells/services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useDataTableUrlState } from "@/shared/hooks/useDataTableUrlState";
+import { DND_ITEM_COLUMN_URL_MAP } from "./dnd-item-list-url.constants";
 import { cn } from "@/shared/utils/cn";
 import { DndItemDataTable } from "./DndItemDataTable";
 import { DndItemDetailDialog } from "./DndItemDetailDialog";
@@ -44,6 +46,8 @@ export function DndItemList() {
   const [selectedVariants, setSelectedVariants] = useState<DndItem[]>([]);
   const [showAllUnloadedSources, setShowAllUnloadedSources] = useState(false);
   const bookNames = useBookSourceNames();
+  const { initialSearch, initialColumnFilters, handleFilterStateChange } =
+    useDataTableUrlState(DND_ITEM_COLUMN_URL_MAP);
 
   const refreshItems = useCallback(async () => {
     const [all, list, catalog] = await Promise.all([
@@ -228,6 +232,9 @@ export function DndItemList() {
             rarityOptions={rarityOptions}
             typeOptions={typeOptions}
             onRowClick={handleSelect}
+            initialSearch={initialSearch}
+            initialColumnFilters={initialColumnFilters}
+            onFilterStateChange={handleFilterStateChange}
           />
         )}
       </div>
