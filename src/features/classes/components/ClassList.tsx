@@ -26,7 +26,6 @@ export function ClassList() {
     if (srcRaw) filters.push({ id: "source", value: srcRaw.split(",") });
     return filters;
   // Only run on mount
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFilterStateChange = useCallback(

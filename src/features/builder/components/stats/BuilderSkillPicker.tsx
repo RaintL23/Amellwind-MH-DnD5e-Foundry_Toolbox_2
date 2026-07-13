@@ -1,4 +1,3 @@
-import { cn } from "@/shared/utils/cn";
 import type { SkillKey, SkillProficiencyGrant, ProficiencySource } from "@/shared/types";
 import type { ProficiencySourceType } from "@/shared/types/proficiency.types";
 import { SKILL_LABELS } from "@/shared/constants/dnd";
@@ -7,13 +6,17 @@ import {
   dominantSourceType,
   SOURCE_LABELS,
 } from "../../utils/proficiency-source-styles";
+import {
+  PICKER_CONTAINER_CLASS,
+  pickerPillClassName,
+  pickerQuota,
+  type AnyGrant,
+  type ChooseGrant,
+} from "./picker-shared";
 
 interface SkillPickerProps {
   /** Grants that require player input (kind = choose | any). */
-  grants: Array<
-    | { kind: "choose"; from: SkillKey[]; count: number; source: ProficiencySource }
-    | { kind: "any"; count: number; source: ProficiencySource }
-  >;
+  grants: Array<ChooseGrant<SkillKey> | AnyGrant>;
   /** Currently selected skills by the player in this picker. */
   chosen: SkillKey[];
   /** Skills granted by higher-priority sources (species > background > class). */
@@ -37,7 +40,6 @@ export function BuilderSkillPicker({
 }: SkillPickerProps) {
   if (!grants.length) return null;
 
-  const totalCount = grants.reduce((acc, g) => acc + g.count, 0);
   const allowedSet = new Set<SkillKey>();
   for (const g of grants) {
     if (g.kind === "choose") g.from.forEach((s) => allowedSet.add(s));
@@ -57,8 +59,10 @@ export function BuilderSkillPicker({
   const coveredInList = allowed.filter((skill) => !!alreadyGranted[skill]?.length);
   /** Picks made in this picker that count toward its quota. */
   const effectiveChosen = chosen.filter((s) => !alreadyGranted[s]?.length);
-  const remainingPicks = Math.max(0, totalCount - effectiveChosen.length);
-  const canPickMore = remainingPicks > 0;
+  const { totalCount, remainingPicks, canPickMore, grantSourceName } = pickerQuota(
+    grants,
+    effectiveChosen.length,
+  );
 
   function handleClick(
     skill: SkillKey,
@@ -75,11 +79,10 @@ export function BuilderSkillPicker({
     }
   }
 
-  const grantSourceName = grants[0]?.source.name ?? "";
   const pickerColor = badgeStyleForSource(pickerSourceType);
 
   return (
-    <div className="mt-2 rounded-md border border-border/50 bg-muted/30 p-2">
+    <div className={PICKER_CONTAINER_CLASS}>
       <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
         {label ?? grantSourceName} — choose {totalCount}
         {coveredInList.length > 0 && (
@@ -134,15 +137,11 @@ export function BuilderSkillPicker({
               onClick={() =>
                 handleClick(skill, isChosen, coveredByHigher, pickedElsewhere)
               }
-              className={cn(
-                "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
+              className={pickerPillClassName({
                 badgeColor,
-                coveredByHigher && !isChosen && "cursor-default",
-                !badgeColor && !isDisabled &&
-                  "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50 hover:text-foreground",
-                !badgeColor && isDisabled &&
-                  "cursor-not-allowed border-border/40 text-muted-foreground/40",
-              )}
+                isDisabled,
+                cursorDefault: coveredByHigher && !isChosen,
+              })}
             >
               {SKILL_LABELS[skill]}
             </button>

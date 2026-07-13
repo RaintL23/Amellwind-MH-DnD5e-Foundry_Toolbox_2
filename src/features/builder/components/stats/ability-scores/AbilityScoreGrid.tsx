@@ -2,6 +2,7 @@ import { formatModifier } from "@/shared/utils/cr.utils";
 import { AbilityKey } from "@/shared/types";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   canRaisePointBuy,
   canLowerPointBuy,
@@ -192,7 +193,7 @@ export function AbilityScoreGrid({
         return (
           <AbilityStatRow key={key} label={label} modifier={modifier}>
             <div className="flex items-center gap-1">
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={30}
@@ -200,7 +201,7 @@ export function AbilityScoreGrid({
                 onChange={(e) =>
                   setAbilityScore(key, parseInt(e.target.value, 10) || 10)
                 }
-                className="w-14 rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground text-center focus:outline-none focus:ring-2 focus:ring-ring"
+                className="h-8 w-14 text-center"
               />
               {breakdown.bonus > 0 && (
                 <HintTooltip

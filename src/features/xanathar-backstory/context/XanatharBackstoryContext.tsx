@@ -140,7 +140,7 @@ export function XanatharBackstoryProvider({
 
   const handleRollAll = useCallback(() => {
     setResults((prev) => {
-      let next = { ...prev };
+      const next = { ...prev };
 
       const rollAndCascade = (tableId: string) => {
         const table = TABLE_BY_ID[tableId];

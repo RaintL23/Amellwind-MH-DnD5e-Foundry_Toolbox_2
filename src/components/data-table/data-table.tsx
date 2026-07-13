@@ -211,7 +211,6 @@ export function DataTable<TData, TValue>({
       columnFilters,
       pageIndex: pagination.pageIndex,
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deferredSearch, columnFilters, pagination.pageIndex]);
 
 

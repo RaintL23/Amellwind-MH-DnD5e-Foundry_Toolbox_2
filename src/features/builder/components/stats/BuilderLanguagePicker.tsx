@@ -1,4 +1,3 @@
-import { cn } from "@/shared/utils/cn";
 import {
   Accordion,
   AccordionContent,
@@ -18,24 +17,15 @@ import {
   dominantSourceType,
   SOURCE_LABELS,
 } from "../../utils/proficiency-source-styles";
-
-type ChooseGrant = {
-  kind: "choose";
-  from: string[];
-  count: number;
-  source: ProficiencySource;
-};
-
-type AnyGrant = {
-  kind: "any";
-  count: number;
-  label: string;
-  options?: string[];
-  source: ProficiencySource;
-};
+import {
+  PICKER_CONTAINER_CLASS,
+  pickerPillClassName,
+  pickerQuota,
+  type PickerGrant,
+} from "./picker-shared";
 
 interface BuilderLanguagePickerProps {
-  grants: Array<ChooseGrant | AnyGrant>;
+  grants: PickerGrant[];
   chosen: string[];
   onChange: (items: string[]) => void;
   label?: string;
@@ -57,7 +47,6 @@ export function BuilderLanguagePicker({
 }: BuilderLanguagePickerProps) {
   if (!grants.length) return null;
 
-  const totalCount = grants.reduce((acc, g) => acc + g.count, 0);
   const allowedSet = new Set<string>();
 
   for (const g of grants) {
@@ -75,9 +64,10 @@ export function BuilderLanguagePicker({
   }
 
   const effectiveChosen = chosen.filter((item) => !grantedSources(item)?.length);
-  const remainingPicks = Math.max(0, totalCount - effectiveChosen.length);
-  const canPickMore = remainingPicks > 0;
-  const grantSourceName = grants[0]?.source.name ?? "";
+  const { totalCount, remainingPicks, canPickMore, grantSourceName } = pickerQuota(
+    grants,
+    effectiveChosen.length,
+  );
   const pickerColor = badgeStyleForSource(pickerSourceType);
 
   const defaultOpen = DEFAULT_OPEN_LANGUAGE_SOURCES.filter((code) =>
@@ -99,7 +89,7 @@ export function BuilderLanguagePicker({
   }
 
   return (
-    <div className="mt-2 rounded-md border border-border/50 bg-muted/30 p-2">
+    <div className={PICKER_CONTAINER_CLASS}>
       <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
         {label ?? grantSourceName} — choose {totalCount}
         {remainingPicks > 0 && remainingPicks < totalCount && (
@@ -125,10 +115,10 @@ export function BuilderLanguagePicker({
                 type="button"
                 title={`Remove ${item}`}
                 onClick={() => onChange(chosen.filter((s) => s !== item))}
-                className={cn(
-                  "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
-                  pickerColor,
-                )}
+                className={pickerPillClassName({
+                  badgeColor: pickerColor,
+                  isDisabled: false,
+                })}
               >
                 {item}
               </button>
@@ -191,17 +181,11 @@ export function BuilderLanguagePicker({
                           onClick={() =>
                             handleToggle(item, isChosen, coveredByHigher)
                           }
-                          className={cn(
-                            "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
+                          className={pickerPillClassName({
                             badgeColor,
-                            coveredByHigher && "cursor-default",
-                            !badgeColor &&
-                              !isDisabled &&
-                              "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50 hover:text-foreground",
-                            !badgeColor &&
-                              isDisabled &&
-                              "cursor-not-allowed border-border/40 text-muted-foreground/40",
-                          )}
+                            isDisabled,
+                            cursorDefault: coveredByHigher,
+                          })}
                         >
                           {item}
                         </button>

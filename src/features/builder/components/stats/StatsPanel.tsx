@@ -6,6 +6,8 @@ import { useFoundryImport } from "../../hooks/useFoundryImport";
 import { useBuildCompleteness } from "../../context/BuildCompletenessContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { Select } from "@/components/ui/select";
 import {
   DropdownMenu,
@@ -264,16 +266,21 @@ export function StatsPanel() {
             ariaLabel="Level"
             disabled={multiclassEnabled}
           />
-          <label className="flex cursor-pointer items-center gap-1 text-[10px] text-muted-foreground">
-            <input
-              type="checkbox"
+          <div className="flex items-center gap-1.5">
+            <Checkbox
+              id="multiclass-toggle"
               checked={multiclassEnabled}
-              onChange={(e) => setMulticlassEnabled(e.target.checked)}
-              className="h-3 w-3 rounded border-border"
+              onCheckedChange={(checked) => setMulticlassEnabled(checked === true)}
+              className="h-3.5 w-3.5"
               aria-label="Activar multiclase"
             />
-            Multiclase
-          </label>
+            <Label
+              htmlFor="multiclass-toggle"
+              className="cursor-pointer text-[10px] font-normal text-muted-foreground"
+            >
+              Multiclase
+            </Label>
+          </div>
           <Button
             type="button"
             variant="outline"

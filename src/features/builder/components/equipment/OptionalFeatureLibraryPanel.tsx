@@ -13,6 +13,7 @@ import type {
 } from "@/shared/types";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";
+import { Input } from "@/components/ui/input";
 import { cn } from "@/shared/utils/cn";
 import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
 import { getAllDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
@@ -530,7 +531,7 @@ export function OptionalFeatureLibraryPanel({
 
       <div className="relative mb-2">
         <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <input
+        <Input
           type="search"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
@@ -539,7 +540,7 @@ export function OptionalFeatureLibraryPanel({
               ? "Buscar mastery o arma…"
               : `Buscar ${progressionLabel.toLowerCase()}…`
           }
-          className="h-8 w-full rounded-md border border-border/70 bg-background/60 pl-7 pr-2 text-xs"
+          className="h-8 pl-7 text-xs"
         />
       </div>
 

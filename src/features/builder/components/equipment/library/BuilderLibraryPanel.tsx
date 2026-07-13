@@ -30,6 +30,7 @@ import {
   type FeatDataSource,
 } from "../../shared/FeatSourceBadgeGroup";
 import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
+import { Input } from "@/components/ui/input";
 import { ArmorLibraryPanel } from "./ArmorLibraryPanel";
 import { WeaponLibraryPanel } from "./WeaponLibraryPanel";
 import {
@@ -270,12 +271,12 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
           {!hideSearch && (
             <div className="relative mb-2">
               <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-              <input
+              <Input
                 type="text"
                 placeholder="Search..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-md border border-border bg-background py-1.5 pl-8 pr-2 text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring"
+                className="h-8 pl-8 text-xs"
               />
             </div>
           )}

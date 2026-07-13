@@ -6,15 +6,15 @@ import {
   badgeStyleForSource,
   SOURCE_LABELS,
 } from "../../utils/proficiency-source-styles";
+import {
+  PICKER_CONTAINER_CLASS,
+  pickerPillClassName,
+  pickerQuota,
+  type ChooseGrant,
+} from "./picker-shared";
 
 interface BuilderDefensePickerProps {
-  grants: Array<{
-    kind: "choose";
-    from: DamageType[];
-    count: number;
-    defenseKind: DefenseKind;
-    source: ProficiencySource;
-  }>;
+  grants: Array<ChooseGrant<DamageType> & { defenseKind: DefenseKind }>;
   chosen: DamageType[];
   onChange: (types: DamageType[]) => void;
   label?: string;
@@ -30,13 +30,11 @@ export function BuilderDefensePicker({
 }: BuilderDefensePickerProps) {
   if (!grants.length) return null;
 
-  const totalCount = grants.reduce((acc, g) => acc + g.count, 0);
+  const { totalCount, remainingPicks, canPickMore, grantSourceName } =
+    pickerQuota(grants, chosen.length);
   const allowed = [...new Set(grants.flatMap((g) => g.from))].sort((a, b) =>
     formatDamageTypeLabel(a).localeCompare(formatDamageTypeLabel(b)),
   );
-  const remainingPicks = Math.max(0, totalCount - chosen.length);
-  const canPickMore = remainingPicks > 0;
-  const grantSourceName = grants[0]?.source.name ?? "";
   const defenseKind = grants[0]?.defenseKind ?? "resistance";
   const pickerColor = badgeStyleForSource(pickerSourceType);
   const prefix = defenseKind === "immunity" ? "Immunity" : "Resistance";
@@ -52,7 +50,7 @@ export function BuilderDefensePicker({
   }
 
   return (
-    <div className="mt-2 rounded-md border border-border/50 bg-muted/30 p-2">
+    <div className={PICKER_CONTAINER_CLASS}>
       <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
         {label ?? grantSourceName} — {prefix.toLowerCase()} choose {totalCount}
         {remainingPicks > 0 && remainingPicks < totalCount && (
@@ -76,16 +74,10 @@ export function BuilderDefensePicker({
                 isChosen ? `Your ${SOURCE_LABELS[pickerSourceType]} choice` : undefined
               }
               onClick={() => handleToggle(type, isChosen)}
-              className={cn(
-                "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
-                isChosen
-                  ? pickerColor
-                  : !isDisabled &&
-                      "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50 hover:text-foreground",
-                !isChosen &&
-                  isDisabled &&
-                  "cursor-not-allowed border-border/40 text-muted-foreground/40",
-              )}
+              className={pickerPillClassName({
+                badgeColor: isChosen ? pickerColor : undefined,
+                isDisabled,
+              })}
             >
               {formatDamageTypeLabel(type)}
             </button>

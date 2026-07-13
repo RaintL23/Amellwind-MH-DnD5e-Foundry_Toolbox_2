@@ -2,7 +2,7 @@ import { LOCAL_5ETOOLS_BASE } from "@/shared/constants/api.constants";
 
 const jsonCache = new Map<string, unknown>();
 
-function useLocalFiveToolsData(): boolean {
+function isLocalFiveToolsData(): boolean {
   return import.meta.env.VITE_5ETOOLS_DATA === "local";
 }
 
@@ -11,7 +11,7 @@ export function resolveFiveToolsUrl(
   remoteUrl: string,
   localFileName: string,
 ): string {
-  if (useLocalFiveToolsData()) {
+  if (isLocalFiveToolsData()) {
     return `${LOCAL_5ETOOLS_BASE}/${localFileName}`;
   }
   return remoteUrl;

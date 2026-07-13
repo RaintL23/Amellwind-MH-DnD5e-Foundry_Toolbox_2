@@ -79,7 +79,7 @@ function mapDuration(raw: Raw): { text: string; isConcentration: boolean } {
   }
   const d = raw.duration[0] as Raw;
   const type = String(d.type ?? "");
-  let isConcentration = d.concentration === true;
+  const isConcentration = d.concentration === true;
 
   if (type === "instant") return { text: "Instantaneous", isConcentration: false };
   if (type === "permanent") {

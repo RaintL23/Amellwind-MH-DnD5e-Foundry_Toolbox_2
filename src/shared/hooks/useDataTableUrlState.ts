@@ -29,7 +29,6 @@ export function useDataTableUrlState(
     }
     return filters;
   // Restore once on mount; subsequent updates flow through onFilterStateChange.
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleFilterStateChange = useCallback(

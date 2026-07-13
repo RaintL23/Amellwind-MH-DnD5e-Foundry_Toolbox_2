@@ -1,29 +1,22 @@
 import { useState } from "react";
 import { cn } from "@/shared/utils/cn";
-import type { ProficiencySource, ProficiencySourceType } from "@/shared/types/proficiency.types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import type { ProficiencySourceType } from "@/shared/types/proficiency.types";
 import {
   badgeStyleForSource,
   dominantSourceType,
   SOURCE_LABELS,
 } from "../../utils/proficiency-source-styles";
-
-type ChooseGrant = {
-  kind: "choose";
-  from: string[];
-  count: number;
-  source: ProficiencySource;
-};
-
-type AnyGrant = {
-  kind: "any";
-  count: number;
-  label: string;
-  options?: string[];
-  source: ProficiencySource;
-};
+import {
+  PICKER_CONTAINER_CLASS,
+  pickerPillClassName,
+  pickerQuota,
+  type PickerGrant,
+} from "./picker-shared";
 
 interface BuilderNamedPickerProps {
-  grants: Array<ChooseGrant | AnyGrant>;
+  grants: PickerGrant[];
   chosen: string[];
   onChange: (items: string[]) => void;
   label?: string;
@@ -41,7 +34,6 @@ export function BuilderNamedPicker({
 
   if (!grants.length) return null;
 
-  const totalCount = grants.reduce((acc, g) => acc + g.count, 0);
   const allowedSet = new Set<string>();
   let freeformAny = false;
 
@@ -55,9 +47,10 @@ export function BuilderNamedPicker({
   }
 
   const allowed = [...allowedSet].sort((a, b) => a.localeCompare(b));
-  const remainingPicks = Math.max(0, totalCount - chosen.length);
-  const canPickMore = remainingPicks > 0;
-  const grantSourceName = grants[0]?.source.name ?? "";
+  const { totalCount, remainingPicks, canPickMore, grantSourceName } = pickerQuota(
+    grants,
+    chosen.length,
+  );
   const pickerColor = badgeStyleForSource(pickerSourceType);
 
   function handleToggle(item: string, isChosen: boolean) {
@@ -78,7 +71,7 @@ export function BuilderNamedPicker({
   }
 
   return (
-    <div className="mt-2 rounded-md border border-border/50 bg-muted/30 p-2">
+    <div className={PICKER_CONTAINER_CLASS}>
       <p className="mb-1.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
         {label ?? grantSourceName} — choose {totalCount}
         {remainingPicks > 0 && remainingPicks < totalCount && (
@@ -109,16 +102,10 @@ export function BuilderNamedPicker({
                     : undefined
                 }
                 onClick={() => handleToggle(item, isChosen)}
-                className={cn(
-                  "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
-                  isChosen
-                    ? pickerColor
-                    : !isDisabled &&
-                        "border-border text-muted-foreground hover:border-primary/50 hover:bg-muted/50 hover:text-foreground",
-                  !isChosen &&
-                    isDisabled &&
-                    "cursor-not-allowed border-border/40 text-muted-foreground/40",
-                )}
+                className={pickerPillClassName({
+                  badgeColor: isChosen ? pickerColor : undefined,
+                  isDisabled,
+                })}
               >
                 {item}
               </button>
@@ -136,17 +123,17 @@ export function BuilderNamedPicker({
                 key={item}
                 type="button"
                 onClick={() => onChange(chosen.filter((s) => s !== item))}
-                className={cn(
-                  "rounded-full border px-2 py-0.5 text-[10px] font-medium transition-colors",
-                  pickerColor,
-                )}
+                className={pickerPillClassName({
+                  badgeColor: pickerColor,
+                  isDisabled: false,
+                })}
               >
                 {item}
               </button>
             ))}
           {canPickMore && (
             <>
-              <input
+              <Input
                 type="text"
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
@@ -157,16 +144,18 @@ export function BuilderNamedPicker({
                   }
                 }}
                 placeholder={grants.find((g) => g.kind === "any")?.label ?? "Custom"}
-                className="h-6 min-w-[7rem] flex-1 rounded border border-border/60 bg-background px-2 text-[10px] text-foreground"
+                className="h-6 min-w-[7rem] flex-1 px-2 text-[10px]"
               />
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={handleAddCustom}
                 disabled={!customInput.trim()}
-                className="rounded border border-border/60 px-2 py-0.5 text-[10px] font-medium text-muted-foreground hover:bg-muted/50 disabled:opacity-40"
+                className="h-6 px-2 text-[10px]"
               >
                 Add
-              </button>
+              </Button>
             </>
           )}
         </div>

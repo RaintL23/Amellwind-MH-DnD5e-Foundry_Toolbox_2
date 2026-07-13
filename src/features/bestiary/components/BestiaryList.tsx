@@ -43,7 +43,6 @@ export function BestiaryList() {
     if (src) filters.push({ id: "source", value: src });
     return filters;
   // Only run on mount; searchParams object changes on every URL update
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Persist DataTable filter/search/page state to URL (replace to avoid history noise)

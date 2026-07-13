@@ -1,11 +1,11 @@
 import { DEFAULT_CLASS_SOURCE } from "./class-raw.types";
 
 export function unpackClassFeatureUid(uid: string) {
-  let [name, className, classSource, levelStr, source] = uid
+  const [name, className, rawClassSource, levelStr, rawSource] = uid
     .split("|")
     .map((s) => s.trim());
-  classSource = classSource || DEFAULT_CLASS_SOURCE;
-  source = source || classSource;
+  const classSource = rawClassSource || DEFAULT_CLASS_SOURCE;
+  const source = rawSource || classSource;
   return {
     name,
     className,
@@ -16,18 +16,18 @@ export function unpackClassFeatureUid(uid: string) {
 }
 
 export function unpackSubclassFeatureUid(uid: string) {
-  let [
+  const [
     name,
     className,
-    classSource,
+    rawClassSource,
     subclassShortName,
-    subclassSource,
+    rawSubclassSource,
     levelStr,
-    source,
+    rawSource,
   ] = uid.split("|").map((s) => s.trim());
-  classSource = classSource || DEFAULT_CLASS_SOURCE;
-  subclassSource = subclassSource || DEFAULT_CLASS_SOURCE;
-  source = source || subclassSource;
+  const classSource = rawClassSource || DEFAULT_CLASS_SOURCE;
+  const subclassSource = rawSubclassSource || DEFAULT_CLASS_SOURCE;
+  const source = rawSource || subclassSource;
   return {
     name,
     className,

@@ -7,6 +7,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/shared/utils/cn";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 
@@ -39,14 +40,15 @@ function ImageUploadButton({
   const inputRef = useRef<HTMLInputElement>(null);
   return (
     <>
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={() => inputRef.current?.click()}
-        className="flex w-full items-center justify-center gap-1.5 rounded-md border border-border bg-muted/20 px-2.5 py-2 text-[11px] font-medium text-foreground transition-colors hover:bg-muted/40"
+        className="h-auto w-full gap-1.5 bg-muted/20 py-2 text-[11px] hover:bg-muted/40"
       >
         <Upload className="h-3.5 w-3.5" aria-hidden />
         {label}
-      </button>
+      </Button>
       <input
         ref={inputRef}
         type="file"
