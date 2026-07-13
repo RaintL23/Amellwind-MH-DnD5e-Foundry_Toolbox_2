@@ -33,6 +33,7 @@ import type {
 } from "../foundry-export";
 import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export";
 import { kebab, mapAbilityLabel, mapCasterProgression } from "../foundry-export/mappings";
+import { downloadCharacterImages } from "../utils/image-download.utils";
 import { getAllDndItems } from "@/features/dnd-items/services/dnd-item.service";
 import type { DndItem } from "@/shared/types/dnd-item.types";
 
@@ -572,7 +573,9 @@ export function useFoundryExport() {
         sanitize(builder.class?.name ?? ""),
         `Level${input.level}`,
       ].filter(Boolean);
-      downloadFoundryActor(actor, `${parts.join("_")}.json`);
+      const filenameBase = parts.join("_");
+      downloadFoundryActor(actor, `${filenameBase}.json`);
+      downloadCharacterImages(filenameBase, builder.portraitImage, builder.tokenImage);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Foundry export failed");
     } finally {

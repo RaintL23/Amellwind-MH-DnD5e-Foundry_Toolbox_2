@@ -36,6 +36,7 @@ import {
   type OptionalFeatureDescMap,
 } from "../utils/character-sheet-export.utils";
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
+import { downloadCharacterImages } from "../utils/image-download.utils";
 
 function formatAbilityExport(
   character: ReturnType<typeof useCharacterBuilder>["character"],
@@ -339,7 +340,9 @@ export function useCharacterSheetExport() {
         sanitize(data.subclass ?? ""),
         `Level${data.level}`,
       ].filter(Boolean);
-      downloadPdf(bytes, `${filenameParts.join("_")}.pdf`);
+      const filenameBase = filenameParts.join("_");
+      downloadPdf(bytes, `${filenameBase}.pdf`);
+      downloadCharacterImages(filenameBase, builder.portraitImage, builder.tokenImage);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Export failed");
     } finally {
