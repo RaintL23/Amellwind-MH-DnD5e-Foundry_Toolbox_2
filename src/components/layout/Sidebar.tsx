@@ -32,6 +32,7 @@ import {
   LibraryBig,
   Map,
   Crosshair,
+  Hammer,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -87,6 +88,11 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Weapons, Runes, and Equipment",
         items: [
           { to: "/weapons", label: "Weapons", icon: Sword },
+          {
+            to: "/weapon-forge",
+            label: "Weapon Forge (RaintDM)",
+            icon: Hammer,
+          },
           { to: "/runes", label: "Runes", icon: Flame },
           { to: "/material-effects", label: "Material Effects", icon: Shield },
           { to: "/items", label: "Items", icon: Layers },
