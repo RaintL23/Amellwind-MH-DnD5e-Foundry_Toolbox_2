@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 
 export function useLibrarySearch(selectedSlot: BuilderSlotSelection) {
-  const [search, setSearch] = useState("");
+  const [committed, setCommitted] = useState("");
+  const { searchDraft, setSearchDraft, appliedSearch, commitSearch } =
+    useDebouncedListSearch(committed, setCommitted);
 
   useEffect(() => {
-    setSearch("");
-  }, [selectedSlot]);
+    commitSearch("");
+  }, [selectedSlot, commitSearch]);
 
-  const q = search.toLowerCase().trim();
+  const q = appliedSearch.toLowerCase().trim();
 
-  return { search, setSearch, q };
+  return { search: searchDraft, setSearch: setSearchDraft, q };
 }

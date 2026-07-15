@@ -14,6 +14,7 @@ import {
   countClassCantripSelections,
 } from "@/features/builder/utils/cantrip-pools.utils";
 import { partitionSpellSelections } from "@/features/builder/utils/species-spell-grants.utils";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import {
   grantsForSpellLevel,
   spellMatchesCharacterSpellList,
@@ -102,11 +103,17 @@ export function useSpellLibraryPanelState({
     : isBonusCantripPool
       ? (activeBonusPool?.selectionLevel ?? BONUS_CANTRIP_POOL_BASE)
       : spellLevel!;
-  const [search, setSearch] = useState("");
+  const [committedSearch, setCommittedSearch] = useState("");
+  const {
+    searchDraft: search,
+    setSearchDraft: setSearch,
+    appliedSearch,
+    commitSearch,
+  } = useDebouncedListSearch(committedSearch, setCommittedSearch);
 
   useEffect(() => {
-    setSearch("");
-  }, [selectedSlot]);
+    commitSearch("");
+  }, [selectedSlot, commitSearch]);
 
   const selectedAtLevel = useMemo(
     () => (spellSelections ?? {})[selectionLevel] ?? [],
@@ -155,7 +162,7 @@ export function useSpellLibraryPanelState({
     spellcastingInfo.selectedSpellCount >= spellcastingInfo.maxPreparedOrKnown;
 
   const isAtCapacity = atCantripCapacity || atSpellCapacity;
-  const q = search.toLowerCase().trim();
+  const q = appliedSearch.toLowerCase().trim();
   const pactMaxLevel = spellcastingInfo.pactMaxSpellLevel;
 
   const subclassSlug = useMemo(() => {
