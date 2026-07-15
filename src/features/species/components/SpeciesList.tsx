@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Species,
   SpeciesCategory,
   SPECIES_CATEGORY_LABELS,
 } from "@/shared/types";
 import { getAllSpecies } from "../services/species.service";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
@@ -29,7 +30,13 @@ export function SpeciesList() {
   const { getString, setString, patchFields } = useListUrlState();
   const [species, setSpecies] = useState<Species[]>([]);
   const [loading, setLoading] = useState(true);
-  const search = getString("q");
+  const urlSearch = getString("q");
+  const commitSearchToUrl = useCallback(
+    (q: string) => setString("q", q),
+    [setString],
+  );
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(urlSearch, commitSearchToUrl);
   const categoryFilter = getString("category") as "" | SpeciesCategory;
   const parentFilter = getString("parent");
   const viewMode = (getString("view", "All") || "All") as ViewMode;
@@ -77,16 +84,14 @@ export function SpeciesList() {
     [parentOptions],
   );
 
-  const debouncedSearch = useDebouncedValue(search);
-
   const filtered = useMemo(() => {
     let result = species;
 
     if (viewMode === "Roots") result = result.filter((s) => !s.isSubrace);
     if (viewMode === "Subraces") result = result.filter((s) => s.isSubrace);
 
-    if (debouncedSearch.trim()) {
-      const q = debouncedSearch.toLowerCase();
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
       result = result.filter(
         (s) =>
           s.name.toLowerCase().includes(q) ||
@@ -114,7 +119,7 @@ export function SpeciesList() {
       if (parentCmp !== 0) return parentCmp;
       return a.name.localeCompare(b.name);
     });
-  }, [species, debouncedSearch, categoryFilter, parentFilter, viewMode]);
+  }, [species, appliedSearch, categoryFilter, parentFilter, viewMode]);
 
   function handleSelect(item: Species) {
     setSelected(item);
@@ -152,8 +157,8 @@ export function SpeciesList() {
 
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
         <ListSearchWithFilters
-          searchValue={search}
-          onSearchChange={(q) => setString("q", q)}
+          searchValue={searchDraft}
+          onSearchChange={setSearchDraft}
           searchPlaceholder="Search species..."
           inputClassName="h-8 text-sm"
           sections={filterSections}
@@ -169,13 +174,8 @@ export function SpeciesList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm">Loading species...</span>
-            </div>
-          </div>
+        {loading || isSearchPending ? (
+          <ListAreaLoading variant="cards" />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Users className="h-10 w-10 opacity-20" />

@@ -1,7 +1,8 @@
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useEffect, useMemo, useCallback, useState } from "react";
 import { Weapon } from "@/shared/types";
 import { getAllWeapons } from "../services/weapon.service";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { WeaponCard } from "./WeaponCard";
 import { WeaponDialog } from "./WeaponDialog";
@@ -16,7 +17,13 @@ export function WeaponList() {
   const [selected, setSelected] = useState<Weapon | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const search = getString("q");
+  const urlSearch = getString("q");
+  const commitSearchToUrl = useCallback(
+    (q: string) => setString("q", q),
+    [setString],
+  );
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending, commitSearch } =
+    useDebouncedListSearch(urlSearch, commitSearchToUrl);
   const dmgFilter = getString("dmg");
   const propFilter = getString("prop");
   const compatFilter = getString("compat");
@@ -27,12 +34,10 @@ export function WeaponList() {
       .finally(() => setLoading(false));
   }, []);
 
-  const debouncedSearch = useDebouncedValue(search);
-
   const filtered = useMemo(() => {
     let result = weapons;
-    if (debouncedSearch.trim()) {
-      const q = debouncedSearch.toLowerCase();
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
       result = result.filter((w) => w.name.toLowerCase().includes(q));
     }
     if (dmgFilter) {
@@ -47,7 +52,7 @@ export function WeaponList() {
       );
     }
     return result;
-  }, [weapons, debouncedSearch, dmgFilter, propFilter, compatFilter]);
+  }, [weapons, appliedSearch, dmgFilter, propFilter, compatFilter]);
 
   const handleSelect = useCallback((weapon: Weapon) => {
     setSelected(weapon);
@@ -55,11 +60,11 @@ export function WeaponList() {
   }, []);
 
   const clearFilters = useCallback(() => {
-    setString("q", "");
+    commitSearch("");
     setString("dmg", "");
     setString("prop", "");
     setString("compat", "");
-  }, [setString]);
+  }, [commitSearch, setString]);
 
   const applyWeaponFilters = useCallback(
     (dmg: string, prop: string, compat: string) => {
@@ -87,19 +92,14 @@ export function WeaponList() {
       </div>
 
       <WeaponListFilters
-        filters={{ search, dmgFilter, propFilter, compatFilter }}
-        onSearchChange={(v) => setString("q", v)}
+        filters={{ search: searchDraft, dmgFilter, propFilter, compatFilter }}
+        onSearchChange={setSearchDraft}
         onFiltersApply={applyWeaponFilters}
       />
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm">Loading weapons...</span>
-            </div>
-          </div>
+        {loading || isSearchPending ? (
+          <ListAreaLoading variant="cards" />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Swords className="h-10 w-10 opacity-20" />

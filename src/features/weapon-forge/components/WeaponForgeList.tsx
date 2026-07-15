@@ -11,7 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useWeaponForge } from "../hooks/useWeaponForge";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { weaponToFormValues } from "../types/weapon-forge.types";
@@ -39,7 +40,8 @@ export function WeaponForgeList() {
 
   const [tab, setTab] = useState<"catalog" | "mine">("mine");
   const [search, setSearch] = useState("");
-  const debouncedSearch = useDebouncedValue(search);
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(search, setSearch);
 
   const [selected, setSelected] = useState<CustomWeapon | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -50,11 +52,11 @@ export function WeaponForgeList() {
 
   const filterList = useCallback(
     (list: CustomWeapon[]) => {
-      const q = debouncedSearch.trim().toLowerCase();
+      const q = appliedSearch.trim().toLowerCase();
       if (!q) return list;
       return list.filter((w) => w.name.toLowerCase().includes(q));
     },
-    [debouncedSearch],
+    [appliedSearch],
   );
 
   const filteredCurated = useMemo(
@@ -194,8 +196,8 @@ export function WeaponForgeList() {
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchDraft}
+            onChange={(e) => setSearchDraft(e.target.value)}
             placeholder="Search weapons…"
             className="max-w-xs h-9"
           />
@@ -259,8 +261,8 @@ export function WeaponForgeList() {
           </TabsList>
 
           <TabsContent value="catalog" className="mt-4">
-            {loading ? (
-              <p className="text-sm text-muted-foreground">Loading catalog…</p>
+            {loading || isSearchPending ? (
+              <ListAreaLoading variant="cards" count={8} />
             ) : filteredCurated.length === 0 ? (
               <EmptyState
                 title="No curated weapons yet"
@@ -298,8 +300,8 @@ export function WeaponForgeList() {
               </Button>
             </div>
 
-            {loading ? (
-              <p className="text-sm text-muted-foreground">Loading…</p>
+            {loading || isSearchPending ? (
+              <ListAreaLoading variant="cards" count={4} />
             ) : filteredUser.length === 0 ? (
               <EmptyState
                 title="No custom weapons yet"

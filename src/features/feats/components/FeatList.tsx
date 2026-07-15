@@ -1,7 +1,8 @@
-import { useEffect, useMemo, useState } from "react";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Feat } from "@/shared/types";
 import { getAllFeats } from "../services/feat.service";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
@@ -30,7 +31,13 @@ export function FeatList() {
   const { getString, setString, patchFields } = useListUrlState();
   const [feats, setFeats] = useState<Feat[]>([]);
   const [loading, setLoading] = useState(true);
-  const search = getString("q");
+  const urlSearch = getString("q");
+  const commitSearchToUrl = useCallback(
+    (q: string) => setString("q", q),
+    [setString],
+  );
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(urlSearch, commitSearchToUrl);
   const filter = getString("filter") as FeatFilter;
   const [selected, setSelected] = useState<Feat | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -41,13 +48,11 @@ export function FeatList() {
       .finally(() => setLoading(false));
   }, []);
 
-  const debouncedSearch = useDebouncedValue(search);
-
   const filtered = useMemo(() => {
     let result = feats;
 
-    if (debouncedSearch.trim()) {
-      const q = debouncedSearch.toLowerCase();
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
       result = result.filter(
         (f) =>
           f.name.toLowerCase().includes(q) ||
@@ -66,7 +71,7 @@ export function FeatList() {
     }
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [feats, debouncedSearch, filter]);
+  }, [feats, appliedSearch, filter]);
 
   function handleSelect(item: Feat) {
     setSelected(item);
@@ -99,8 +104,8 @@ export function FeatList() {
 
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
         <ListSearchWithFilters
-          searchValue={search}
-          onSearchChange={(q) => setString("q", q)}
+          searchValue={searchDraft}
+          onSearchChange={setSearchDraft}
           searchPlaceholder="Search feat..."
           inputClassName="h-8 text-sm"
           sections={FEAT_FILTER_SECTIONS}
@@ -112,13 +117,8 @@ export function FeatList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
-              <span className="text-sm">Loading feats...</span>
-            </div>
-          </div>
+        {loading || isSearchPending ? (
+          <ListAreaLoading variant="cards" />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Award className="h-10 w-10 opacity-20" />

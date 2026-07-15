@@ -1,7 +1,8 @@
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useEffect, useMemo, useState } from "react";
 import type { MhCondition } from "@/shared/types";
 import type { MhDisease } from "@/shared/types";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AlertTriangle, Biohazard, Search } from "lucide-react";
@@ -17,6 +18,8 @@ export function ConditionsDiseasesPage() {
   const [diseases, setDiseases] = useState<MhDisease[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(search, setSearch);
   const [selectedCondition, setSelectedCondition] = useState<MhCondition | null>(null);
   const [selectedDisease, setSelectedDisease] = useState<MhDisease | null>(null);
   const [conditionDialogOpen, setConditionDialogOpen] = useState(false);
@@ -31,10 +34,8 @@ export function ConditionsDiseasesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const debouncedSearch = useDebouncedValue(search);
-
   const filteredConditions = useMemo(() => {
-    const q = debouncedSearch.trim().toLowerCase();
+    const q = appliedSearch.trim().toLowerCase();
     const result = q
       ? conditions.filter(
           (c) =>
@@ -43,10 +44,10 @@ export function ConditionsDiseasesPage() {
         )
       : conditions;
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [conditions, debouncedSearch]);
+  }, [conditions, appliedSearch]);
 
   const filteredDiseases = useMemo(() => {
-    const q = debouncedSearch.trim().toLowerCase();
+    const q = appliedSearch.trim().toLowerCase();
     const result = q
       ? diseases.filter(
           (d) =>
@@ -55,7 +56,7 @@ export function ConditionsDiseasesPage() {
         )
       : diseases;
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [diseases, debouncedSearch]);
+  }, [diseases, appliedSearch]);
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -80,8 +81,8 @@ export function ConditionsDiseasesPage() {
         <div className="relative max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <Input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchDraft}
+            onChange={(e) => setSearchDraft(e.target.value)}
             placeholder="Search conditions or diseases..."
             className="pl-9 h-8 text-sm"
           />
@@ -114,13 +115,8 @@ export function ConditionsDiseasesPage() {
 
           {/* Conditions tab */}
           <TabsContent value="conditions">
-            {loading ? (
-              <div className="flex items-center justify-center h-48">
-                <div className="flex flex-col items-center gap-3 text-muted-foreground">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-rose-500 border-t-transparent" />
-                  <span className="text-sm">Loading conditions...</span>
-                </div>
-              </div>
+            {loading || isSearchPending ? (
+              <ListAreaLoading variant="cards" />
             ) : filteredConditions.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
                 <AlertTriangle className="h-10 w-10 opacity-20" />
@@ -144,13 +140,8 @@ export function ConditionsDiseasesPage() {
 
           {/* Diseases tab */}
           <TabsContent value="diseases">
-            {loading ? (
-              <div className="flex items-center justify-center h-48">
-                <div className="flex flex-col items-center gap-3 text-muted-foreground">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
-                  <span className="text-sm">Loading diseases...</span>
-                </div>
-              </div>
+            {loading || isSearchPending ? (
+              <ListAreaLoading variant="cards" />
             ) : filteredDiseases.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
                 <Biohazard className="h-10 w-10 opacity-20" />

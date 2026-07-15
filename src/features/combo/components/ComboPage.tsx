@@ -13,6 +13,8 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAllItems } from "@/features/shops/services/item.service";
 import { ItemRefText } from "@/shared/components/ItemRefText";
 import { DndRichText } from "@/shared/components/DndRichText";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import {
   Hammer,
   BookOpen,
@@ -117,6 +119,13 @@ const TOOL_ICONS: Record<string, React.ElementType> = {
 export function ComboPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("rules");
   const [search, setSearch] = useState("");
+  const {
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    commitSearch,
+  } = useDebouncedListSearch(search, setSearch);
   const [itemDescMap, setItemDescMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -135,10 +144,10 @@ export function ComboPage() {
 
   const tables = getAllComboTables();
   const searchResults = useMemo(
-    () => (search.trim() ? searchAllComboRows(search) : []),
-    [search],
+    () => (appliedSearch.trim() ? searchAllComboRows(appliedSearch) : []),
+    [appliedSearch],
   );
-  const isSearching = search.trim().length > 0;
+  const isSearching = appliedSearch.trim().length > 0;
 
   const TABS: { id: ActiveTab; label: string; icon: React.ElementType }[] = [
     { id: "rules", label: "Reglas", icon: BookOpen },
@@ -151,7 +160,7 @@ export function ComboPage() {
 
   const handleTabChange = (tab: ActiveTab) => {
     setActiveTab(tab);
-    setSearch("");
+    commitSearch("");
   };
 
   return (
@@ -173,14 +182,14 @@ export function ComboPage() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         <input
           type="text"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchDraft}
+          onChange={(e) => setSearchDraft(e.target.value)}
           placeholder="Search by name, ingredient or category..."
           className="w-full pl-9 pr-9 py-2 rounded-lg border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
         />
-        {search && (
+        {searchDraft && (
           <button
-            onClick={() => setSearch("")}
+            onClick={() => commitSearch("")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Clear search"
           >
@@ -190,10 +199,12 @@ export function ComboPage() {
       </div>
 
       {/* ── MODO BÚSQUEDA ── */}
-      {isSearching ? (
+      {isSearchPending ? (
+        <ListAreaLoading />
+      ) : isSearching ? (
         <SearchResultsPanel
           results={searchResults}
-          query={search}
+          query={appliedSearch}
           itemDescMap={itemDescMap}
         />
       ) : (

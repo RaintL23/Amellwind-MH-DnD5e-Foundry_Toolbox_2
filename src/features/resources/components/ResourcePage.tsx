@@ -13,6 +13,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/shared/utils/cn";
 import { Search, Hammer } from "lucide-react";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 
 const CATEGORIES: ResourceCategory[] = ["Bonepiles", "Fish", "Insects", "Minerals", "Mushrooms", "Plants"];
 const RARITIES: ResourceRarity[] = ["Common", "Uncommon", "Rare", "Very Rare", "Legendary"];
@@ -106,18 +108,22 @@ export function ResourcePage() {
   const [activeRarity, setActiveRarity] = useState<ResourceRarity | "all">("all");
   const [craftingOnly, setCraftingOnly] = useState(false);
   const [search, setSearch] = useState("");
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(search, setSearch);
   const [selected, setSelected] = useState<Resource | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const allTables = getAllResourceTables();
 
   const filteredResources = useMemo(() => {
-    let list = search ? searchResources(search) : allTables.flatMap((t) => t.resources);
+    let list = appliedSearch
+      ? searchResources(appliedSearch)
+      : allTables.flatMap((t) => t.resources);
     if (activeCategory !== "all") list = list.filter((r) => r.category === activeCategory);
     if (activeRarity !== "all") list = list.filter((r) => r.rarity === activeRarity);
     if (craftingOnly) list = list.filter((r) => r.isCraftingMaterial);
     return list;
-  }, [allTables, search, activeCategory, activeRarity, craftingOnly]);
+  }, [allTables, appliedSearch, activeCategory, activeRarity, craftingOnly]);
 
   const footnotes = useMemo(() => {
     if (activeCategory === "all") return [];
@@ -154,8 +160,8 @@ export function ResourcePage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search resources..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchDraft}
+            onChange={(e) => setSearchDraft(e.target.value)}
             className="pl-9"
           />
         </div>
@@ -244,7 +250,9 @@ export function ResourcePage() {
           </div>
         )}
 
-        {filteredResources.length === 0 ? (
+        {isSearchPending ? (
+          <ListAreaLoading variant="cards" />
+        ) : filteredResources.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
             <p className="text-sm">No resources found.</p>
           </div>

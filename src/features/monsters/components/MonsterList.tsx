@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { Monster } from "@/shared/types";
 import { getAllMonsters } from "../services/monster.service";
 import { getTier } from "@/shared/utils/cr.utils";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { ListSearchWithFilters, pickFilterValues } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import { Pagination } from "@/components/ui/pagination";
@@ -213,15 +213,39 @@ export function MonsterList() {
     [uniqueCRs, uniqueTypes, uniqueEnvironments],
   );
 
-  const debouncedName = useDebouncedValue(filters.name);
+  const commitName = useCallback(
+    (name: string) => {
+      setSearchParams(
+        (prev) => {
+          const currentName = prev.get("name") ?? "";
+          if (currentName === name) return prev;
+          const next = new URLSearchParams(prev);
+          if (name) next.set("name", name);
+          else next.delete("name");
+          next.delete("page");
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
+  const {
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    commitSearch,
+  } = useDebouncedListSearch(filters.name, commitName);
 
   // Filter + sort
   const filtered = useMemo(() => {
     let result = monsters;
 
-    if (debouncedName)
+    if (appliedSearch)
       result = result.filter((m) =>
-        m.name.toLowerCase().includes(debouncedName.toLowerCase()),
+        m.name.toLowerCase().includes(appliedSearch.toLowerCase()),
       );
     if (filters.cr.length > 0)
       result = result.filter((m) => filters.cr.includes(m.cr));
@@ -251,7 +275,7 @@ export function MonsterList() {
     });
 
     return result;
-  }, [monsters, debouncedName, filters.cr, filters.tier, filters.type, filters.environment, sort]);
+  }, [monsters, appliedSearch, filters.cr, filters.tier, filters.type, filters.environment, sort]);
 
   // Resetear a página 1 cuando cambian filtros o sort
   function updateFilters(next: Filters) {
@@ -272,8 +296,10 @@ export function MonsterList() {
   }
 
   function applyDialogFilters(values: ListFilterValues) {
+    commitSearch(searchDraft);
     updateFilters({
       ...filters,
+      name: searchDraft,
       cr: (values.cr as string[]) ?? [],
       tier: (values.tier as string[]) ?? [],
       type: (values.type as string[]) ?? [],
@@ -300,8 +326,8 @@ export function MonsterList() {
 
       <ListSearchWithFilters
         className="mb-6 shrink-0"
-        searchValue={filters.name}
-        onSearchChange={(name) => updateFilters({ ...filters, name })}
+        searchValue={searchDraft}
+        onSearchChange={setSearchDraft}
         searchPlaceholder="Search by name..."
         sections={filterSections}
         filterValues={pickFilterValues(filters, [
@@ -315,8 +341,8 @@ export function MonsterList() {
         dialogDescription="Filter by CR, tier, type, and environment. Changes apply when you save."
       />
 
-      {loading ? (
-        <ListAreaLoading message="Loading monsters..." accentClassName="border-amber-500" />
+      {loading || isSearchPending ? (
+        <ListAreaLoading />
       ) : (
         <>
       {/* Table — altura según contenido, con tope en el espacio disponible */}

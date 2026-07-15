@@ -1,6 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { MhDisease } from "@/shared/types";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { Input } from "@/components/ui/input";
 import { Biohazard, Search } from "lucide-react";
@@ -12,7 +13,13 @@ export function DiseaseList() {
   const { getString, setString } = useListUrlState();
   const [diseases, setDiseases] = useState<MhDisease[]>([]);
   const [loading, setLoading] = useState(true);
-  const search = getString("q");
+  const urlSearch = getString("q");
+  const commitSearchToUrl = useCallback(
+    (q: string) => setString("q", q),
+    [setString],
+  );
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(urlSearch, commitSearchToUrl);
   const [selected, setSelected] = useState<MhDisease | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -22,13 +29,11 @@ export function DiseaseList() {
       .finally(() => setLoading(false));
   }, []);
 
-  const debouncedSearch = useDebouncedValue(search);
-
   const filtered = useMemo(() => {
     let result = diseases;
 
-    if (debouncedSearch.trim()) {
-      const q = debouncedSearch.toLowerCase();
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
       result = result.filter(
         (disease) =>
           disease.name.toLowerCase().includes(q) ||
@@ -37,7 +42,7 @@ export function DiseaseList() {
     }
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [diseases, debouncedSearch]);
+  }, [diseases, appliedSearch]);
 
   function handleSelect(item: MhDisease) {
     setSelected(item);
@@ -69,8 +74,8 @@ export function DiseaseList() {
         <div className="relative flex-1 min-w-[200px] max-w-xs">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
           <Input
-            value={search}
-            onChange={(e) => setString("q", e.target.value)}
+            value={searchDraft}
+            onChange={(e) => setSearchDraft(e.target.value)}
             placeholder="Search disease..."
             className="pl-9 h-8 text-sm"
           />
@@ -78,13 +83,8 @@ export function DiseaseList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-purple-500 border-t-transparent" />
-              <span className="text-sm">Loading diseases...</span>
-            </div>
-          </div>
+        {loading || isSearchPending ? (
+          <ListAreaLoading variant="cards" />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Biohazard className="h-10 w-10 opacity-20" />

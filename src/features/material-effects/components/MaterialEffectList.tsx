@@ -1,3 +1,5 @@
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { MaterialEffect } from "@/shared/types";
@@ -81,6 +83,32 @@ export function MaterialEffectList() {
     [setSearchParams],
   );
 
+  const commitName = useCallback(
+    (name: string) => {
+      setSearchParams(
+        (prev) => {
+          const current = parseMaterialEffectListUrl(prev);
+          if (current.filters.name === name) return prev;
+          return buildMaterialEffectListUrl(
+            { ...current.filters, name },
+            1,
+            current.pageSize,
+          );
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
+  const {
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    commitSearch,
+  } = useDebouncedListSearch(filters.name, commitName);
+
   useEffect(() => {
     getAllMaterialEffects()
       .then(setEffects)
@@ -90,8 +118,8 @@ export function MaterialEffectList() {
   const filtered = useMemo(() => {
     let result = effects;
 
-    if (filters.name.trim()) {
-      const q = filters.name.toLowerCase();
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
       result = result.filter(
         (effect) =>
           effect.name.toLowerCase().includes(q) ||
@@ -108,13 +136,14 @@ export function MaterialEffectList() {
     }
 
     return result;
-  }, [effects, filters]);
+  }, [effects, appliedSearch, filters.slot, filters.rarity]);
 
   const updateFilters = useCallback(
     (next: MaterialEffectFiltersState) => {
+      commitSearch(next.name);
       patchListState({ filters: next, page: 1 });
     },
-    [patchListState],
+    [patchListState, commitSearch],
   );
 
   const handlePageChange = useCallback(
@@ -160,17 +189,16 @@ export function MaterialEffectList() {
       </div>
 
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
-        <MaterialEffectFilters filters={filters} onChange={updateFilters} />
+        <MaterialEffectFilters
+          filters={{ ...filters, name: searchDraft }}
+          onSearchChange={setSearchDraft}
+          onChange={updateFilters}
+        />
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
-              <span className="text-sm">Loading material effects...</span>
-            </div>
-          </div>
+        {loading || isSearchPending ? (
+          <ListAreaLoading variant="cards" />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Sparkles className="h-10 w-10 opacity-20" />

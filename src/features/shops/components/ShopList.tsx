@@ -4,12 +4,14 @@ import { Store } from "lucide-react";
 import { SHOPS } from "../data/shops.data";
 import { useItemDescMap } from "../hooks/useItemDescMap";
 import { countShopItems, useShopSearch } from "../hooks/useShopSearch";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { CartDrawer } from "./CartDrawer";
 import { SearchInput } from "./SearchInput";
 import { ShopSearchResultsPanel } from "./ShopSearchResultsPanel";
 import { ShopTab } from "./ShopTab";
 import { ShopTabBar } from "./ShopTabBar";
 import { setIfPresent } from "@/shared/utils/list-url-params.utils";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 
 export function ShopList() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -38,11 +40,25 @@ export function ShopList() {
     [setSearchParams, defaultShopId],
   );
 
-  const isSearching = search.trim().length > 0;
-  const searchGroups = useShopSearch(search);
+  const commitSearchQuery = useCallback(
+    (q: string) => patchUrl({ q }),
+    [patchUrl],
+  );
+
+  const {
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    commitSearch,
+  } = useDebouncedListSearch(search, commitSearchQuery);
+
+  const isSearching = appliedSearch.trim().length > 0;
+  const searchGroups = useShopSearch(appliedSearch);
   const activeShop = SHOPS.find((shop) => shop.id === activeTab) ?? SHOPS[0];
 
   const handleTabChange = (id: string) => {
+    commitSearch("");
     patchUrl({ shop: id, q: "" });
   };
 
@@ -60,15 +76,17 @@ export function ShopList() {
       </div>
 
       <SearchInput
-        value={search}
-        onChange={(q) => patchUrl({ q })}
+        value={searchDraft}
+        onChange={setSearchDraft}
         placeholder="Search items across all shops…"
       />
 
-      {isSearching ? (
+      {isSearchPending ? (
+        <ListAreaLoading />
+      ) : isSearching ? (
         <ShopSearchResultsPanel
           groups={searchGroups}
-          query={search}
+          query={appliedSearch}
           itemDescMap={itemDescMap}
         />
       ) : (

@@ -11,6 +11,8 @@ import {
 interface MaterialEffectFiltersProps {
   filters: MaterialEffectFiltersState;
   onChange: (next: MaterialEffectFiltersState) => void;
+  /** Immediate search draft; when set, typing does not push filters until the parent commits. */
+  onSearchChange?: (name: string) => void;
 }
 
 const SLOT_OPTIONS: Array<{ value: MaterialEffectSlot; label: string }> = [
@@ -39,6 +41,7 @@ const MATERIAL_EFFECT_FILTER_SECTIONS = [
 export function MaterialEffectFilters({
   filters,
   onChange,
+  onSearchChange,
 }: MaterialEffectFiltersProps) {
   const filterValues = useMemo(
     () => ({
@@ -59,7 +62,11 @@ export function MaterialEffectFilters({
   return (
     <ListSearchWithFilters
       searchValue={filters.name}
-      onSearchChange={(name) => onChange({ ...filters, name })}
+      onSearchChange={(name) =>
+        onSearchChange
+          ? onSearchChange(name)
+          : onChange({ ...filters, name })
+      }
       searchPlaceholder="Search effect name or text..."
       inputClassName="h-8 text-sm"
       sections={MATERIAL_EFFECT_FILTER_SECTIONS}

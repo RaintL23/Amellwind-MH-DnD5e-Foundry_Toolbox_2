@@ -1,3 +1,4 @@
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { DndFeat } from "@/shared/types";
@@ -6,7 +7,7 @@ import {
   getDndFeatsByName,
   getListDndFeats,
 } from "../services/dnd-feat.service";
-import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import { DndFeatCard } from "./DndFeatCard";
@@ -38,7 +39,7 @@ export function DndFeatList() {
   const [feats, setFeats] = useState<DndFeat[]>([]);
   const [listFeats, setListFeats] = useState<DndFeat[]>([]);
   const [loading, setLoading] = useState(true);
-  const search = searchParams.get("q") ?? "";
+  const urlSearch = searchParams.get("q") ?? "";
   const filter = (searchParams.get("filter") ?? "") as DndFeatFilter;
   const sourceFilter = searchParams.getAll("src");
   const [selected, setSelected] = useState<DndFeat | null>(null);
@@ -54,8 +55,6 @@ export function DndFeatList() {
       })
       .finally(() => setLoading(false));
   }, []);
-
-  const debouncedSearch = useDebouncedValue(search);
 
   const patchFilters = useCallback(
     (patch: { q?: string; filter?: DndFeatFilter; src?: string[] }) => {
@@ -79,6 +78,13 @@ export function DndFeatList() {
     },
     [setSearchParams],
   );
+
+  const commitSearchToUrl = useCallback(
+    (q: string) => patchFilters({ q }),
+    [patchFilters],
+  );
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(urlSearch, commitSearchToUrl);
 
   const sourceOptions = useMemo(
     () => buildSourceOptions(collectEntitySources(listFeats), bookNames),
@@ -106,8 +112,8 @@ export function DndFeatList() {
   const filtered = useMemo(() => {
     let result = listFeats;
 
-    if (debouncedSearch.trim()) {
-      const q = debouncedSearch.toLowerCase();
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
       result = result.filter(
         (f) =>
           f.name.toLowerCase().includes(q) ||
@@ -136,7 +142,7 @@ export function DndFeatList() {
     }
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [listFeats, debouncedSearch, filter, sourceFilter]);
+  }, [listFeats, appliedSearch, filter, sourceFilter]);
 
   const handleSelect = useCallback((item: DndFeat) => {
     setSelected(item);
@@ -176,8 +182,8 @@ export function DndFeatList() {
 
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
         <ListSearchWithFilters
-          searchValue={search}
-          onSearchChange={(q) => patchFilters({ q })}
+          searchValue={searchDraft}
+          onSearchChange={setSearchDraft}
           searchPlaceholder="Search feat..."
           inputClassName="h-8 text-sm"
           sections={filterSections}
@@ -189,13 +195,8 @@ export function DndFeatList() {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
-              <span className="text-sm">Loading feats...</span>
-            </div>
-          </div>
+        {loading || isSearchPending ? (
+          <ListAreaLoading variant="cards" />
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <Award className="h-10 w-10 opacity-20" />

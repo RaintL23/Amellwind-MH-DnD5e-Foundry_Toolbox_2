@@ -14,6 +14,8 @@ interface RuneFiltersProps {
   uniqueMonsterCrs: string[];
   uniqueTags: string[];
   onChange: (filters: RuneFiltersState) => void;
+  /** Immediate search draft; when set, typing does not push filters until the parent commits. */
+  onSearchChange?: (name: string) => void;
 }
 
 export function RuneFilters({
@@ -22,6 +24,7 @@ export function RuneFilters({
   uniqueMonsterCrs,
   uniqueTags,
   onChange,
+  onSearchChange,
 }: RuneFiltersProps) {
   const sections = useMemo(
     () =>
@@ -51,7 +54,11 @@ export function RuneFilters({
     <ListSearchWithFilters
       className="mb-6"
       searchValue={filters.name}
-      onSearchChange={(name) => onChange({ ...filters, name })}
+      onSearchChange={(name) =>
+        onSearchChange
+          ? onSearchChange(name)
+          : onChange({ ...filters, name })
+      }
       searchPlaceholder="Search name, monster, effect..."
       sections={sections}
       filterValues={pickFilterValues(filters, sectionIds)}

@@ -20,6 +20,7 @@ import {
   parseRuneListUrlState,
 } from "./rune-list-url.utils";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { Layers } from "lucide-react";
 
 export function RuneList() {
@@ -37,6 +38,32 @@ export function RuneList() {
     () => parseRuneListUrlState(searchParams),
     [searchParams],
   );
+
+  const commitName = useCallback(
+    (name: string) => {
+      setSearchParams(
+        (prev) => {
+          const current = parseRuneListUrlState(prev);
+          if (current.filters.name === name) return prev;
+          return buildRuneListSearchParams(
+            { ...current.filters, name },
+            1,
+            current.pageSize,
+          );
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+
+  const {
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    commitSearch,
+  } = useDebouncedListSearch(filters.name, commitName);
 
   const patchListState = useCallback(
     (
@@ -92,9 +119,9 @@ export function RuneList() {
   const filtered = useMemo(() => {
     let result = runes;
 
-    if (filters.name.trim()) {
+    if (appliedSearch.trim()) {
       result = result.filter((r) =>
-        matchesRuneSearchQuery(r, filters.name, materialEffectIndex, {
+        matchesRuneSearchQuery(r, appliedSearch, materialEffectIndex, {
           slot: filters.slot,
           tags: filters.tag,
           materialEffectTier: filters.materialEffectTier,
@@ -143,13 +170,27 @@ export function RuneList() {
     }
 
     return result;
-  }, [runes, filters, materialEffectIndex]);
+  }, [
+    runes,
+    appliedSearch,
+    filters.monster,
+    filters.monsterCr,
+    filters.slot,
+    filters.obtainment,
+    filters.tag,
+    filters.monsterTier,
+    filters.materialEffectTier,
+    materialEffectIndex,
+  ]);
+
+  const isListRefreshing = loading || isSearchPending;
 
   const updateFilters = useCallback(
     (next: RuneFiltersState) => {
+      commitSearch(next.name);
       patchListState({ filters: next, page: 1 });
     },
-    [patchListState],
+    [patchListState, commitSearch],
   );
 
   const handlePageChange = useCallback(
@@ -180,7 +221,7 @@ export function RuneList() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Runes</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {!loading && (
+              {!isListRefreshing && (
                 <>
                   {filtered.length} / {runes.length} materials
                 </>
@@ -199,15 +240,16 @@ export function RuneList() {
         <RulesPanel />
 
         <RuneFilters
-          filters={filters}
+          filters={{ ...filters, name: searchDraft }}
           uniqueMonsters={uniqueMonsters}
           uniqueMonsterCrs={uniqueMonsterCrs}
           uniqueTags={uniqueTags}
+          onSearchChange={setSearchDraft}
           onChange={updateFilters}
         />
 
-        {loading ? (
-          <ListAreaLoading message="Loading runes..." accentClassName="border-amber-500" />
+        {isListRefreshing ? (
+          <ListAreaLoading />
         ) : (
           <>
             <RuneTable

@@ -1,9 +1,10 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Package } from "lucide-react";
 import { MHItem } from "@/shared/types";
 import { useItems } from "../hooks/useItems";
 import { useItemSearch } from "../hooks/useItemSearch";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { CartDrawer } from "./CartDrawer";
 import { ItemDetailPanel } from "./ItemDetailPanel";
 import { ItemSearchResultsPanel } from "./ItemSearchResultsPanel";
@@ -22,25 +23,41 @@ export function ItemList() {
   const defaultType = uniqueTypes[0] ?? "";
   const activeTab = searchParams.get("type") ?? defaultType;
 
-  const patchUrl = (patch: { q?: string; type?: string }) => {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams();
-        const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
-        const type =
-          "type" in patch
-            ? (patch.type ?? defaultType)
-            : (prev.get("type") ?? defaultType);
-        setIfPresent(next, "q", q);
-        if (type && type !== defaultType) next.set("type", type);
-        return next;
-      },
-      { replace: true },
-    );
-  };
+  const patchUrl = useCallback(
+    (patch: { q?: string; type?: string }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams();
+          const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
+          const type =
+            "type" in patch
+              ? (patch.type ?? defaultType)
+              : (prev.get("type") ?? defaultType);
+          setIfPresent(next, "q", q);
+          if (type && type !== defaultType) next.set("type", type);
+          return next;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams, defaultType],
+  );
 
-  const isSearching = search.trim().length > 0;
-  const searchResults = useItemSearch(items, search);
+  const commitSearchQuery = useCallback(
+    (q: string) => patchUrl({ q }),
+    [patchUrl],
+  );
+
+  const {
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    commitSearch,
+  } = useDebouncedListSearch(search, commitSearchQuery);
+
+  const isSearching = appliedSearch.trim().length > 0;
+  const searchResults = useItemSearch(items, appliedSearch);
 
   const tabItems = useMemo(
     () => items.filter((item) => item.typeLabel === activeTab),
@@ -48,6 +65,7 @@ export function ItemList() {
   );
 
   const handleTabChange = (tab: string) => {
+    commitSearch("");
     patchUrl({ type: tab, q: "" });
     setSelected(null);
   };
@@ -69,17 +87,17 @@ export function ItemList() {
       </div>
 
       <SearchInput
-        value={search}
-        onChange={(q) => patchUrl({ q })}
+        value={searchDraft}
+        onChange={setSearchDraft}
         placeholder="Search items by name…"
       />
 
-      {loading ? (
-        <ListAreaLoading message="Loading items…" />
+      {loading || isSearchPending ? (
+        <ListAreaLoading />
       ) : isSearching ? (
         <ItemSearchResultsPanel
           results={searchResults}
-          query={search}
+          query={appliedSearch}
           selected={selected}
           onSelect={setSelected}
         />
