@@ -35,7 +35,7 @@ La app usa **React Router v6** con rutas declarativas montadas en `App.tsx`. El 
 
 ### Estructura de rutas
 
-Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallback `LoadingScreen`).
+Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallback `LoadingScreen` con skeletons).
 
 ```text
 /                          → Redirect a /monsters
@@ -871,7 +871,7 @@ Al arrancar (`App.tsx`, no `main.tsx`):
 1. Se monta `ThemeProvider` y se inicia `syncData()` en un `useEffect`.
 2. Mientras sync está activo, `SyncProvider` expone `syncing=true` y `MainLayout` muestra banner “Sincronizando…”.
 3. Tras sync: si MM se actualizó → `clearMonsterCache()` + `clearRuneCache()` + `clearMaterialEffectCache()` + `clearConditionCache()` + `clearDiseaseCache()`; si GTMH → `clearSpeciesCache()`, `clearBackgroundCache()`, `clearFeatCache()`, `clearMonstieSidekickCache()` (y demás cachés derivadas de GTMH).
-4. Las rutas lazy se montan con `<Suspense fallback={<LoadingScreen />}>`.
+4. Las rutas lazy se montan con `<Suspense fallback={<LoadingScreen />}>` (skeletons). Los listados usan `ListAreaLoading` (`rows` / `cards` / `detail`).
 
 Si el sync falla, la app sigue con datos ya presentes en IndexedDB.
 
@@ -1645,7 +1645,7 @@ src/
 │   ├── utils/              # cn, cr.utils, fivetools-parser, dedupe-by-name, fluff, …
 │   ├── constants/          # URLs API, stores, source maps, dnd/ (abilities, skills)
 │   ├── components/         # ItemRefText, DndKeywordText, StatBlockSection
-│   ├── hooks/              # useDebouncedValue, useBookSourceNames, …
+│   ├── hooks/              # useDebouncedListSearch, useDebouncedValue, useBookSourceNames, …
 │   └── theme/              # Definición de temas
 └── index.css               # Tailwind + variables de tema
 ```
