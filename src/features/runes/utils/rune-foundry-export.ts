@@ -7,28 +7,57 @@ import {
 import {
   slugify,
   kebab,
+  mapRarity,
 } from "@/features/builder/foundry-export/mappings";
 import type { FoundryItem } from "@/features/builder/foundry-export/foundry.types";
+import { UNKNOWN_MATERIAL_EFFECT_TIER } from "@/features/material-effects/constants/material-effect.constants";
+import {
+  getMaterialEffectNameIndex,
+  type MaterialEffectNameIndex,
+} from "@/features/material-effects/services/material-effect.service";
+import { getMaterialEffectTierForText } from "@/features/material-effects/utils/material-effect-highlight.utils";
 
 export type RuneSlotContext = "Weapon" | "Armor" | "Trinket";
 
 let _itemSort = 0;
 
-function buildRuneDescription(rune: Rune, slotContext: RuneSlotContext): string {
+function resolveRuneMaterialEffectRarity(
+  rune: Rune,
+  slotContext: RuneSlotContext,
+  index: MaterialEffectNameIndex,
+): string {
+  if (slotContext === "Weapon") {
+    return getMaterialEffectTierForText(
+      rune.weaponEffect ?? "",
+      "weapon",
+      index,
+    );
+  }
+  if (slotContext === "Armor") {
+    return getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index);
+  }
+
+  const weaponTier = getMaterialEffectTierForText(
+    rune.weaponEffect ?? "",
+    "weapon",
+    index,
+  );
+  if (weaponTier !== UNKNOWN_MATERIAL_EFFECT_TIER) return weaponTier;
+
+  return getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index);
+}
+
+function buildRuneDescription(
+  rune: Rune,
+  slotContext: RuneSlotContext,
+): string {
   const parts: string[] = [];
 
-  parts.push(`<h3>Source Monster</h3>`);
-  parts.push(`<p><strong>Monster:</strong> ${rune.monsterName}</p>`);
-  if (rune.monsterSource) {
-    parts.push(`<p><strong>Source:</strong> ${rune.monsterSource}</p>`);
-  }
-  parts.push(`<p><strong>CR:</strong> ${rune.monsterCr}</p>`);
-  parts.push(`<p><strong>Tier:</strong> ${rune.tier}</p>`);
+  parts.push(`<h4>Source Monster</h4>`);
+  parts.push(
+    `<p><strong>Monster:</strong> ${rune.monsterName} | CR: ${rune.monsterCr} | Tier: ${rune.tier}</p>`,
+  );
 
-  parts.push(`<h3>Rune Extraction</h3>`);
-  parts.push(`<p><strong>Carve Chance:</strong> ${rune.carveChance}</p>`);
-  parts.push(`<p><strong>Capture Chance:</strong> ${rune.captureChance}</p>`);
-  parts.push(`<p><strong>Rolls:</strong> ${rune.rolls}</p>`);
   const slotsLabel = rune.slots
     .map((s) => (s === "W" ? "Weapon" : "Armor"))
     .join(", ");
@@ -57,7 +86,9 @@ function buildRuneDescription(rune: Rune, slotContext: RuneSlotContext): string 
   }
 
   if (rune.tags.length > 0) {
-    parts.push(`<p><em><strong>Tags:</strong> ${rune.tags.join(", ")}</em></p>`);
+    parts.push(
+      `<p><em><strong>Tags:</strong> ${rune.tags.join(", ")}</em></p>`,
+    );
   }
 
   return parts.join("\n");
@@ -66,9 +97,14 @@ function buildRuneDescription(rune: Rune, slotContext: RuneSlotContext): string 
 export function buildRuneFoundryItem(
   rune: Rune,
   slotContext: RuneSlotContext,
+  materialEffectIndex?: MaterialEffectNameIndex | null,
 ): FoundryItem {
   const itemName = `${rune.name} Rune (${slotContext})`;
   _itemSort += 100000;
+
+  const materialRarity = materialEffectIndex
+    ? resolveRuneMaterialEffectRarity(rune, slotContext, materialEffectIndex)
+    : "";
 
   const system: Record<string, unknown> = {
     source: {
@@ -85,12 +121,16 @@ export function buildRuneFoundryItem(
     },
     identifier: slugify(itemName),
     quantity: 1,
-    weight: { value: 0, units: "lb" },
+    weight: { value: 0.1, units: "lb" },
     price: { value: 0, denomination: "gp" },
     attuned: false,
     attunement: "",
     equipped: false,
-    rarity: "",
+    rarity: mapRarity(
+      materialRarity === UNKNOWN_MATERIAL_EFFECT_TIER
+        ? undefined
+        : materialRarity,
+    ),
     identified: true,
     type: { value: "trinket", baseItem: "" },
     armor: { value: null, dex: null, magicalBonus: null },
@@ -109,7 +149,7 @@ export function buildRuneFoundryItem(
     _id: foundryId(),
     name: itemName,
     type: "equipment",
-    img: "icons/commodities/treasure/rune-carved-stone-tan.webp",
+    img: "mh-icons/material-rune.png",
     system,
     effects: [],
     folder: null,
@@ -133,12 +173,14 @@ function triggerJsonDownload(item: FoundryItem, filename: string): void {
   URL.revokeObjectURL(url);
 }
 
-export function downloadAllBuildRuneJsons(
+export async function downloadAllBuildRuneJsons(
   weaponRunes: (Rune | null)[],
   armorRunes: (Rune | null)[],
   trinket1Rune: Rune | null,
   trinket2Rune: Rune | null,
-): void {
+): Promise<void> {
+  const materialEffectIndex = await getMaterialEffectNameIndex();
+
   const entries: { rune: Rune; slotContext: RuneSlotContext }[] = [
     ...weaponRunes
       .filter((r): r is Rune => r !== null)
@@ -155,7 +197,7 @@ export function downloadAllBuildRuneJsons(
   ];
 
   entries.forEach(({ rune, slotContext }, index) => {
-    const item = buildRuneFoundryItem(rune, slotContext);
+    const item = buildRuneFoundryItem(rune, slotContext, materialEffectIndex);
     const filename = `${kebab(rune.monsterName)}-${kebab(rune.name)}-rune-${slotContext.toLowerCase()}.json`;
     // Stagger downloads slightly so browsers don't block them
     setTimeout(() => triggerJsonDownload(item, filename), index * 150);

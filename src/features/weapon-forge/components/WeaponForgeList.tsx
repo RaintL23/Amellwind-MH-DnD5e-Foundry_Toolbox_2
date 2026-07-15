@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Download,
   GitCompare,
@@ -12,17 +13,14 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { useWeaponForge } from "../hooks/useWeaponForge";
-import type {
-  CustomWeapon,
-  WeaponForgeFormValues,
-} from "../types/weapon-forge.types";
+import type { CustomWeapon } from "../types/weapon-forge.types";
 import { weaponToFormValues } from "../types/weapon-forge.types";
 import { WeaponForgeCard } from "./WeaponForgeCard";
 import { WeaponForgeDialog } from "./WeaponForgeDialog";
-import { WeaponForgeForm } from "./WeaponForgeForm";
 import { WeaponComparePanel } from "./WeaponComparePanel";
 
 export function WeaponForgeList() {
+  const navigate = useNavigate();
   const {
     curated,
     userWeapons,
@@ -45,8 +43,6 @@ export function WeaponForgeList() {
 
   const [selected, setSelected] = useState<CustomWeapon | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
-  const [formOpen, setFormOpen] = useState(false);
-  const [editing, setEditing] = useState<CustomWeapon | null>(null);
   const [compareMode, setCompareMode] = useState(false);
   const [compareOpen, setCompareOpen] = useState(false);
 
@@ -71,13 +67,11 @@ export function WeaponForgeList() {
   );
 
   function openCreate() {
-    setEditing(null);
-    setFormOpen(true);
+    navigate("/weapon-forge/new");
   }
 
   function openEdit(weapon: CustomWeapon) {
-    setEditing(weapon);
-    setFormOpen(true);
+    navigate(`/weapon-forge/edit/${encodeURIComponent(weapon.id)}`);
   }
 
   function openDetail(weapon: CustomWeapon) {
@@ -87,11 +81,6 @@ export function WeaponForgeList() {
     }
     setSelected(weapon);
     setDetailOpen(true);
-  }
-
-  function handleSave(values: WeaponForgeFormValues, existing?: CustomWeapon) {
-    const saved = saveFromForm(values, existing);
-    setSelected(saved);
   }
 
   function handleDelete(weapon: CustomWeapon) {
@@ -350,14 +339,6 @@ export function WeaponForgeList() {
         onEdit={openEdit}
         onExport={exportOne}
         onDelete={handleDelete}
-      />
-
-      <WeaponForgeForm
-        open={formOpen}
-        onOpenChange={setFormOpen}
-        initial={editing}
-        amellwindWeapons={amellwindWeapons}
-        onSave={handleSave}
       />
     </div>
   );

@@ -1,21 +1,15 @@
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
   WeaponRarityRow,
-  RARITY_STYLES,
+  RARITY_ORDER,
   isWeaponFeatureColumn,
+  type RarityTier,
 } from "@/shared/types";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Select } from "@/components/ui/select";
-import {
-  ArrowUpRight,
-  Pencil,
-  Plus,
-  Trash2,
-} from "lucide-react";
-import { cn } from "@/shared/utils/cn";
+import { ArrowUpRight, Pencil, Plus, Trash2 } from "lucide-react";
 import type { WeaponForgeFeatureDef } from "../types/weapon-forge.types";
 import { createFeatureDef } from "../types/weapon-forge.types";
 import {
@@ -28,6 +22,12 @@ import {
   suggestUpgradeName,
 } from "../utils/weapon-forge-features.utils";
 import { FeatureEditDialog } from "./FeatureEditDialog";
+
+const RARITY_OPTIONS: readonly string[] = RARITY_ORDER;
+
+function isRarityTier(value: string): value is RarityTier {
+  return (RARITY_OPTIONS as readonly string[]).includes(value);
+}
 
 interface WeaponRarityEditorProps {
   rows: WeaponRarityRow[];
@@ -42,6 +42,7 @@ interface RarityRowItemProps {
   row: WeaponRarityRow;
   index: number;
   rowCount: number;
+  usedRarities: ReadonlySet<string>;
   customFeatures: WeaponForgeFeatureDef[];
   priorOptions: { name: string; rarity: string }[];
   extras: string[];
@@ -60,6 +61,7 @@ const RarityRowItem = memo(function RarityRowItem({
   row,
   index,
   rowCount,
+  usedRarities,
   customFeatures,
   priorOptions,
   extras,
@@ -69,12 +71,16 @@ const RarityRowItem = memo(function RarityRowItem({
   onOpenAddFeature,
   onOpenEditFeature,
   onRemoveFeatureFromRarity,
-  onDeleteFeatureEverywhere,
   onAddUpgrade,
   onSetUpgradePickForIndex,
 }: RarityRowItemProps) {
-  const style = RARITY_STYLES[row.rarity];
   const featureNames = getFeaturesColumnNames(row);
+  const rarityOptions = [
+    ...(!isRarityTier(row.rarity) ? [row.rarity] : []),
+    ...RARITY_OPTIONS.filter(
+      (rarity) => rarity === row.rarity || !usedRarities.has(rarity),
+    ),
+  ];
 
   return (
     <div
@@ -84,21 +90,19 @@ const RarityRowItem = memo(function RarityRowItem({
       <div className="flex flex-wrap items-start gap-3">
         <div className="space-y-1 min-w-[140px] flex-1">
           <Label className="text-xs text-muted-foreground">Rarity</Label>
-          <Input
+          <Select
             value={row.rarity}
             onChange={(e) =>
               onUpdateRow(index, { ...row, rarity: e.target.value })
             }
             className="h-8"
-          />
-          {style && (
-            <Badge
-              variant="outline"
-              className={cn("text-[10px]", style.badge)}
-            >
-              {row.rarity}
-            </Badge>
-          )}
+          >
+            {rarityOptions.map((rarity) => (
+              <option key={rarity} value={rarity}>
+                {rarity}
+              </option>
+            ))}
+          </Select>
         </div>
         <div className="space-y-1 w-20">
           <Label className="text-xs text-muted-foreground">Slots</Label>
@@ -148,9 +152,7 @@ const RarityRowItem = memo(function RarityRowItem({
               : String(val ?? "");
             return (
               <div key={label} className="space-y-1">
-                <Label className="text-xs text-muted-foreground">
-                  {label}
-                </Label>
+                <Label className="text-xs text-muted-foreground">{label}</Label>
                 <Input
                   value={text}
                   onChange={(e) => {
@@ -186,8 +188,8 @@ const RarityRowItem = memo(function RarityRowItem({
               <Plus className="h-3 w-3 mr-1" />
               Add
             </Button>
-            {priorOptions.length > 0 && (
-              upgradePickForIndex === index ? (
+            {priorOptions.length > 0 &&
+              (upgradePickForIndex === index ? (
                 <div className="flex items-center gap-1">
                   <Select
                     className="h-7 w-[200px] text-xs"
@@ -228,8 +230,7 @@ const RarityRowItem = memo(function RarityRowItem({
                   <ArrowUpRight className="h-3 w-3 mr-1" />
                   Upgrade previous
                 </Button>
-              )
-            )}
+              ))}
           </div>
         </div>
 
@@ -293,15 +294,6 @@ const RarityRowItem = memo(function RarityRowItem({
                       </Button>
                     </div>
                   </div>
-                  {def && (
-                    <button
-                      type="button"
-                      className="mt-1 text-[10px] text-muted-foreground hover:text-destructive underline-offset-2 hover:underline"
-                      onClick={() => onDeleteFeatureEverywhere(def)}
-                    >
-                      Delete feature entirely
-                    </button>
-                  )}
                 </li>
               );
             })}
@@ -415,11 +407,16 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
       if (targetIndex != null) {
         const row = rowsRef.current[targetIndex];
         const names = getFeaturesColumnNames(row);
-        if (!names.some((n) => n.toLowerCase() === feature.name.toLowerCase())) {
+        if (
+          !names.some((n) => n.toLowerCase() === feature.name.toLowerCase())
+        ) {
           onChangeRows(
             rowsRef.current.map((r, i) =>
               i === targetIndex
-                ? setFeaturesColumnNames(r, [...getFeaturesColumnNames(r), feature.name])
+                ? setFeaturesColumnNames(r, [
+                    ...getFeaturesColumnNames(r),
+                    feature.name,
+                  ])
                 : r,
             ),
           );
@@ -492,7 +489,10 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
       onChangeRows(
         currentRows.map((r, i) =>
           i === rarityIndex
-            ? setFeaturesColumnNames(r, [...getFeaturesColumnNames(r), feature.name])
+            ? setFeaturesColumnNames(r, [
+                ...getFeaturesColumnNames(r),
+                feature.name,
+              ])
             : r,
         ),
       );
@@ -505,10 +505,13 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
   );
 
   const addRow = useCallback(() => {
+    const used = new Set(rowsRef.current.map((r) => r.rarity));
+    const nextRarity = RARITY_ORDER.find((rarity) => !used.has(rarity));
+    if (!nextRarity) return;
     onChangeRows([
       ...rowsRef.current,
       {
-        rarity: "Custom",
+        rarity: nextRarity,
         slots: 1,
         columns: { Bonus: "", Features: [] },
       },
@@ -525,9 +528,19 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
 
   // priorOptions per row (memoized to avoid recomputing on unrelated state changes)
   const priorOptionsPerRow = useMemo(
-    () => rows.map((_, index) => collectPriorFeatureOptions(rows, index, customFeatures)),
+    () =>
+      rows.map((_, index) =>
+        collectPriorFeatureOptions(rows, index, customFeatures),
+      ),
     [rows, customFeatures],
   );
+
+  const usedRarities = useMemo(
+    () => new Set(rows.map((row) => row.rarity)),
+    [rows],
+  );
+
+  const canAddRarity = RARITY_ORDER.some((rarity) => !usedRarities.has(rarity));
 
   return (
     <div className="space-y-3">
@@ -539,7 +552,16 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
             their own name and description.
           </p>
         </div>
-        <Button type="button" variant="outline" size="sm" onClick={addRow}>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={addRow}
+          disabled={!canAddRarity}
+          title={
+            canAddRarity ? "Add rarity" : "All rarities are already in use"
+          }
+        >
           <Plus className="h-3.5 w-3.5 mr-1" />
           Rarity
         </Button>
@@ -552,6 +574,7 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
             row={row}
             index={index}
             rowCount={rows.length}
+            usedRarities={usedRarities}
             customFeatures={customFeatures}
             priorOptions={priorOptionsPerRow[index]}
             extras={extras}

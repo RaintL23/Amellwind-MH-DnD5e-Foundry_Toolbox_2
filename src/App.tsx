@@ -80,6 +80,11 @@ const WeaponForgeList = lazy(() =>
     default: m.WeaponForgeList,
   })),
 );
+const WeaponForgeForm = lazy(() =>
+  import("@/features/weapon-forge/components/WeaponForgeForm").then((m) => ({
+    default: m.WeaponForgeForm,
+  })),
+);
 const ResourcePage = lazy(() =>
   import("@/features/resources/components/ResourcePage").then((m) => ({
     default: m.ResourcePage,
@@ -356,6 +361,22 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <WeaponForgeList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="weapon-forge/new"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <WeaponForgeForm />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="weapon-forge/edit/:weaponId"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <WeaponForgeForm />
                   </Suspense>
                 }
               />
