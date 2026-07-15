@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 
 export function BestiaryDetailLoading() {
   const navigate = useNavigate();
@@ -14,12 +15,7 @@ export function BestiaryDetailLoading() {
           Back to Bestiary
         </button>
       </div>
-      <div className="flex items-center justify-center h-48">
-        <div className="flex flex-col items-center gap-3 text-muted-foreground">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
-          <span className="text-sm">Loading creature...</span>
-        </div>
-      </div>
+      <ListAreaLoading variant="detail" />
     </div>
   );
 }

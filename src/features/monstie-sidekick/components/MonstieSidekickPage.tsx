@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { PawPrint, BookOpen, Wand2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { MonstieSidekickGuide } from "@/shared/types";
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { getMonstieSidekickGuide } from "../services/monstie-sidekick.service";
 import { MonstieCreatorProvider } from "../context/MonstieCreatorContext";
 import { MonstieCreatorPanel } from "./MonstieCreatorPanel";
@@ -68,9 +69,7 @@ export function MonstieSidekickPage() {
           {activeTab === "rules" && (
             <div className="max-w-4xl space-y-6">
               {loading ? (
-                <p className="text-sm text-muted-foreground">
-                  Loading rules...
-                </p>
+                <ListAreaLoading variant="detail" className="p-0" />
               ) : !guide ? (
                 <p className="text-sm text-muted-foreground">
                   No data found. Sync the AGMH guide.

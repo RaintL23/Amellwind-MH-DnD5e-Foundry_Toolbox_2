@@ -46,7 +46,7 @@ export function DowntimePage() {
 
       <div className="flex-1 overflow-auto p-4 lg:p-6">
         {loading ? (
-          <ListAreaLoading message="Loading downtime activities…" />
+          <ListAreaLoading variant="cards" />
         ) : !activities.length ? (
           <p className="text-sm text-muted-foreground">
             No downtime activities found in the guide data.

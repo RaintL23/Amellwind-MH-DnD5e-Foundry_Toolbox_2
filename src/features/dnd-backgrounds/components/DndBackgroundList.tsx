@@ -1,3 +1,4 @@
+import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { DndBackground } from "@/shared/types";
 import { ScrollText } from "lucide-react";
@@ -74,12 +75,7 @@ export function DndBackgroundList() {
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {loading ? (
-          <div className="flex items-center justify-center h-48">
-            <div className="flex flex-col items-center gap-3 text-muted-foreground">
-              <div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" />
-              <span className="text-sm">Loading backgrounds...</span>
-            </div>
-          </div>
+          <ListAreaLoading />
         ) : listBackgrounds.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
             <ScrollText className="h-10 w-10 opacity-20" />

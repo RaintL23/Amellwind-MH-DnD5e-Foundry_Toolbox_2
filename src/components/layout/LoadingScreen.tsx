@@ -1,17 +1,28 @@
-import { Shield } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 
-interface LoadingScreenProps {
-  message?: string;
-}
-
-export function LoadingScreen({
-  message = "Loading data...",
-}: LoadingScreenProps) {
+/** Full-page placeholder used as Suspense fallback for lazy routes. */
+export function LoadingScreen() {
   return (
-    <div className="flex h-full min-h-48 flex-1 items-center justify-center p-6">
-      <div className="flex flex-col items-center gap-4 text-center">
-        <Shield className="h-10 w-10 text-primary animate-pulse" />
-        <p className="text-muted-foreground text-sm">{message}</p>
+    <div
+      className="flex h-full min-h-48 flex-1 flex-col gap-6 p-6"
+      aria-busy="true"
+      aria-label="Loading"
+    >
+      <div className="space-y-2 shrink-0">
+        <Skeleton className="h-8 w-48" />
+        <Skeleton className="h-4 w-72 max-w-full" />
+      </div>
+
+      <div className="flex flex-wrap gap-3 shrink-0">
+        <Skeleton className="h-9 w-64 max-w-full" />
+        <Skeleton className="h-9 w-24" />
+      </div>
+
+      <div className="flex-1 space-y-3 min-h-0">
+        <Skeleton className="h-10 w-full" />
+        {Array.from({ length: 8 }, (_, i) => (
+          <Skeleton key={i} className="h-12 w-full" />
+        ))}
       </div>
     </div>
   );

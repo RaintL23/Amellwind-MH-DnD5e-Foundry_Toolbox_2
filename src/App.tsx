@@ -208,7 +208,7 @@ const HomePage = lazy(() =>
 );
 
 function PageFallback() {
-  return <LoadingScreen message="Loading..." />;
+  return <LoadingScreen />;
 }
 
 export default function App() {
