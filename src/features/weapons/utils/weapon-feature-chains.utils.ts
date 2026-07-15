@@ -25,6 +25,68 @@ export function getBaseFeatureName(name: string): string {
   return name.replace(/\s+Upgrade\b.*/i, "").trim();
 }
 
+function isUpgradeFeatureName(name: string): boolean {
+  return /\bUpgrade\b/i.test(name);
+}
+
+/**
+ * Match key so "Power Phial Upgrade" and "Power Phial (Costs 2)" resolve
+ * to the same chain across Features vs Phials/Ammo/Coatings columns.
+ */
+export function normalizeFeatureMatchKey(name: string): string {
+  return getBaseFeatureName(name)
+    .replace(/\s*\(Costs\s+\d+\)\s*$/i, "")
+    .trim()
+    .toLowerCase();
+}
+
+/**
+ * Moves upgrade-only chains onto a host chain in another column when names
+ * match (e.g. Power Phial Upgrade under Power Phial in the Phials column).
+ */
+function reparentCrossColumnUpgrades(
+  columnChains: ColumnChains[],
+): ColumnChains[] {
+  type HostRef = { colIndex: number; chain: FeatureChain };
+
+  const hosts = new Map<string, HostRef>();
+  for (let ci = 0; ci < columnChains.length; ci++) {
+    for (const chain of columnChains[ci].chains) {
+      const first = chain.features[0];
+      if (!first || isUpgradeFeatureName(first.name)) continue;
+      const key = normalizeFeatureMatchKey(chain.baseName);
+      if (!hosts.has(key)) {
+        hosts.set(key, { colIndex: ci, chain });
+      }
+    }
+  }
+
+  return columnChains.map((col, ci) => {
+    const chains: FeatureChain[] = [];
+
+    for (const chain of col.chains) {
+      const first = chain.features[0];
+      const key = normalizeFeatureMatchKey(chain.baseName);
+      const host = hosts.get(key);
+
+      if (
+        host &&
+        host.colIndex !== ci &&
+        first &&
+        isUpgradeFeatureName(first.name)
+      ) {
+        host.chain.features.push(...chain.features);
+        host.chain.features.sort((a, b) => a.rarityIndex - b.rarityIndex);
+        continue;
+      }
+
+      chains.push(chain);
+    }
+
+    return { ...col, chains };
+  });
+}
+
 export function buildColumnChains(rarityRows: WeaponRarityRow[]): ColumnChains[] {
   const colLabelOrder: string[] = [];
   const colLabelSet = new Set<string>();
@@ -38,7 +100,7 @@ export function buildColumnChains(rarityRows: WeaponRarityRow[]): ColumnChains[]
     }
   }
 
-  return colLabelOrder.map((colLabel) => {
+  const columnChains = colLabelOrder.map((colLabel) => {
     const chainMap = new Map<string, FeatureChain>();
 
     for (let i = 0; i < rarityRows.length; i++) {
@@ -69,6 +131,8 @@ export function buildColumnChains(rarityRows: WeaponRarityRow[]): ColumnChains[]
 
     return { label: colLabel, chains };
   });
+
+  return reparentCrossColumnUpgrades(columnChains);
 }
 
 export function getUnlockColumnLabels(rarityRows: WeaponRarityRow[]): string[] {
