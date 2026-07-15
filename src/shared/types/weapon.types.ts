@@ -60,8 +60,14 @@ export const PROPERTY_LABELS: Record<string, string> = {
   A: "Ammunition",
   S: "Special",
   T: "Thrown",
-  MHL: "Movable Heavy Load",
+  /** AGMH bowgun property — replaces the standard 5e Loading property. */
+  MHL: "Loading",
   LD: "Loading",
+};
+
+/** Descriptions for MH-specific weapon properties (from GTMH `itemProperty`). */
+export const PROPERTY_DESCRIPTIONS: Record<string, string> = {
+  MHL: "As a bonus action you switch the ammo your bowgun is using with another. This replaces the standard 5e loading property.",
 };
 
 export const DMG_TYPE_LABELS: Record<string, string> = {

@@ -1,5 +1,5 @@
 import type { MonstieRulesContent } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { parseFiveToolsMarkup, formatAbilityDcText } from "@/shared/utils/fivetools-parser";
 import type { DowntimeTable } from "@/shared/types";
 import { mapMonster } from "@/features/monsters/mappers/monster.mapper";
 
@@ -124,12 +124,9 @@ function mapEntries(entries: unknown[]): MonstieRulesContent[] {
 
     if (e.type === "abilityDc") {
       const name = typeof e.name === "string" ? e.name : "Monstie";
-      const attrs = Array.isArray(e.attributes)
-        ? e.attributes.map(String).join(", ")
-        : "ability modifier";
       result.push({
         type: "paragraph",
-        text: `${name} save DC = 8 + proficiency bonus + ${attrs}`,
+        text: formatAbilityDcText(name, e.attributes),
       });
       continue;
     }

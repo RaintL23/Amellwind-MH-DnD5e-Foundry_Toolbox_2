@@ -1,43 +1,11 @@
 import { OptionalFeature } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  PLAIN_ENTRY_OPTIONS,
+  renderFiveToolsEntries,
+} from "@/shared/utils/fivetools-parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
-
-/**
- * Renders a 5etools entries array to a flat list of display paragraphs.
- * Handles: plain strings, list objects, inset objects, nested entries objects.
- */
-function renderEntries(entries: unknown[]): string[] {
-  const result: string[] = [];
-
-  for (const entry of entries) {
-    if (typeof entry === "string") {
-      const text = parseFiveToolsMarkup(entry).trim();
-      if (text) result.push(text);
-      continue;
-    }
-
-    if (typeof entry !== "object" || entry === null) continue;
-    const obj = entry as Raw;
-
-    if (obj.type === "list" && Array.isArray(obj.items)) {
-      for (const item of obj.items as unknown[]) {
-        if (typeof item === "string") {
-          const text = parseFiveToolsMarkup(item).trim();
-          if (text) result.push(`• ${text}`);
-        }
-      }
-    } else if (
-      (obj.type === "inset" || obj.type === "entries") &&
-      Array.isArray(obj.entries)
-    ) {
-      result.push(...renderEntries(obj.entries as unknown[]));
-    }
-  }
-
-  return result;
-}
 
 /**
  * Parses prerequisite.otherSummary.entry strings like:
@@ -70,6 +38,6 @@ export function mapOptionalFeature(raw: any): OptionalFeature {
       : [],
     weaponName,
     prerequisiteRarity: rarity,
-    paragraphs: renderEntries(entries),
+    paragraphs: renderFiveToolsEntries(entries, PLAIN_ENTRY_OPTIONS),
   };
 }

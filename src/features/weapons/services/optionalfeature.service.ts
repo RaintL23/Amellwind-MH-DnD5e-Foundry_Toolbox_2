@@ -1,4 +1,10 @@
-import { OptionalFeature, Weapon, isWeaponFeatureColumn } from "@/shared/types";
+import {
+  OptionalFeature,
+  PROPERTY_DESCRIPTIONS,
+  PROPERTY_LABELS,
+  Weapon,
+  isWeaponFeatureColumn,
+} from "@/shared/types";
 import { mapOptionalFeature } from "../mappers/optionalfeature.mapper";
 import { getOptionalFeaturesRaw } from "@/shared/db/sync.service";
 
@@ -21,6 +27,7 @@ function collectColumnFeatureNames(weapon: Weapon): Set<string> {
 
 /**
  * Resolves optional features that apply at every rarity for a weapon:
+ * - MH-specific weapon properties with descriptions (e.g. MHL → Loading)
  * - {@optfeature} references in the weapon inset text (baseFeatureNames)
  * - optional features whose prerequisite is the weapon name with no rarity suffix
  *   (e.g. Rapid Fire / Overheat on Light Bowgun)
@@ -43,6 +50,18 @@ export function resolveWeaponBaseFeatures(
     seen.add(key);
     result.push(feat);
   };
+
+  for (const prop of weapon.properties) {
+    const description = PROPERTY_DESCRIPTIONS[prop];
+    if (!description) continue;
+    add({
+      name: PROPERTY_LABELS[prop] ?? prop,
+      source: weapon.source,
+      featureType: [],
+      weaponName: weapon.name,
+      paragraphs: [description],
+    });
+  }
 
   for (const name of weapon.baseFeatureNames) {
     add(featuresMap.get(name.toLowerCase()));

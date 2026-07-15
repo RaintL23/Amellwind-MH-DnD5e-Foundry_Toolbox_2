@@ -3,7 +3,7 @@ import type {
   StatBlockListItem,
 } from "@/shared/types/statblock-content.types";
 import type { DowntimeTable } from "@/shared/types/downtime.types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { parseFiveToolsMarkup, formatAbilityDcText } from "@/shared/utils/fivetools-parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -116,12 +116,9 @@ export function mapStatBlockEntries(entries: unknown[]): StatBlockContent[] {
 
     if (e.type === "abilityDc") {
       const name = typeof e.name === "string" ? parseFiveToolsMarkup(e.name) : "Save";
-      const attrs = Array.isArray(e.attributes)
-        ? e.attributes.map(String).join(" + ")
-        : "ability modifier";
       result.push({
         type: "paragraph",
-        text: `${name} DC = 8 + proficiency bonus + ${attrs}`,
+        text: formatAbilityDcText(name, e.attributes),
       });
       continue;
     }

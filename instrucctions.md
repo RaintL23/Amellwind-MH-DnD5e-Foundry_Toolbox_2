@@ -1254,7 +1254,7 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 | `name`, `source`, `page` | Identificación 5etools |
 | `dmg1`, `dmg2`     | Notación de daño (ej. `1d8`, `2d6` en modo versatile) |
 | `dmgType`          | `S` / `P` / `B` (Slashing, Piercing, Bludgeoning) |
-| `properties`       | Códigos MH/D&D: `H`, `2H`, `F`, `L`, `R`, `V`, `A`, `S`, `T`, `MHL` |
+| `properties`       | Códigos MH/D&D: `H`, `2H`, `F`, `L`, `R`, `V`, `A`, `S`, `T`, `MHL` (`MHL` → label **Loading**, descripción en `PROPERTY_DESCRIPTIONS`) |
 | `weight`, `valueCp`| Peso y valor en copper pieces |
 | `acBonus`, `range`, `isFocus` | Campos opcionales según el arma |
 | `description`      | Texto superior parseado sin marcado 5etools |
@@ -1262,6 +1262,8 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 | `baseFeatureNames` | Nombres de `{@optfeature ...}` en la descripción (features que aplican a todas las rarezas) |
 
 `FEATURE_COL_KEYS` identifica columnas de tipo feature: `features`, `single features`, `splint features`, `notes`, `ammo`, `coatings`, `phials`, `available`.
+
+`resolveWeaponBaseFeatures` también inyecta properties MH con descripción (p. ej. **Loading** desde `MHL`) junto a las `{@optfeature}` base. Los bloques 5etools `{ type: "abilityDc" }` (Ammo/Coating save DC) se renderizan vía `formatAbilityDcText` en `fivetools-parser.ts`.
 
 #### Entidad `OptionalFeature`
 

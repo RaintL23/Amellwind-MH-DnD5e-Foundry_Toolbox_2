@@ -3,6 +3,33 @@
  * Convierte las etiquetas de 5etools en texto legible.
  */
 
+import { ABILITY_NAMES, toAbilityKey } from "@/shared/constants/dnd/abilities.constants";
+
+/**
+ * Formats a 5etools `{ type: "abilityDc", name, attributes }` block into book-style text.
+ * Example: `Ammo save DC = 8 + your proficiency bonus + your Dexterity modifier`
+ */
+export function formatAbilityDcText(
+  name: string,
+  attributes: unknown,
+): string {
+  const attrKeys = Array.isArray(attributes)
+    ? attributes
+        .map((attr) => toAbilityKey(String(attr)))
+        .filter((key): key is NonNullable<typeof key> => key != null)
+    : [];
+
+  const abilityPart =
+    attrKeys.length === 0
+      ? "your ability modifier"
+      : attrKeys.length === 1
+        ? `your ${ABILITY_NAMES[attrKeys[0]]} modifier`
+        : `your ${attrKeys.map((key) => ABILITY_NAMES[key]).join(" or ")} modifier`;
+
+  const label = name.trim() || "Save";
+  return `${label} save DC = 8 + your proficiency bonus + ${abilityPart}`;
+}
+
 const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: string[]) => string)]> = [
   [/\{@atk mw\}/g, "Melee Weapon Attack:"],
   [/\{@atk rw\}/g, "Ranged Weapon Attack:"],
@@ -76,6 +103,12 @@ export function parseEntries(entries: unknown[]): string {
             .filter(Boolean)
             .join("; ");
         }
+        if (obj["type"] === "abilityDc") {
+          return formatAbilityDcText(
+            typeof obj["name"] === "string" ? obj["name"] : "Save",
+            obj["attributes"],
+          );
+        }
         if (obj["type"] === "table" && typeof obj["caption"] === "string") {
           return parseFiveToolsMarkup(obj["caption"]);
         }
@@ -116,6 +149,16 @@ export function flattenEntriesForDisplay(entries: unknown[]): string {
         const nested = flattenEntriesForDisplay([item]);
         if (nested) lines.push(`• ${nested.replace(/\n/g, "\n  ")}`);
       }
+      return;
+    }
+
+    if (obj.type === "abilityDc") {
+      lines.push(
+        formatAbilityDcText(
+          typeof obj.name === "string" ? obj.name : "Save",
+          obj.attributes,
+        ),
+      );
       return;
     }
 
@@ -210,6 +253,12 @@ export function renderFiveToolsEntries(
       }
     } else if (renderTableCaption && obj.type === "table" && obj.caption) {
       result.push(`**${parseFiveToolsMarkup(String(obj.caption))}**`);
+    } else if (obj.type === "abilityDc") {
+      const text = formatAbilityDcText(
+        typeof obj.name === "string" ? obj.name : "Save",
+        obj.attributes,
+      );
+      if (text) result.push(text);
     } else if (obj.type === "inset" && Array.isArray(obj.entries)) {
       const inset = renderFiveToolsEntries(
         obj.entries as unknown[],
