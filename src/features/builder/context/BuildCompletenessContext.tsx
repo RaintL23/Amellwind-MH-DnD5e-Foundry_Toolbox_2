@@ -134,14 +134,25 @@ export function BuildCompletenessProvider({
     [builder, classData, subclassData, speciesData, dndBackground, inventory.items, spellcasting],
   );
 
-  const currentResult = useMemo(
+  const computeResult = useCallback(
     () => evaluateBuildCompleteness(input),
     [input],
   );
 
-  const issues = highlightActive ? currentResult.issues : [];
+  // Only run the (non-trivial) completeness evaluation while the highlight is
+  // active. Otherwise defer it to on-demand `evaluate()` calls, so routine
+  // builder edits don't pay for a full evaluation on every render.
+  const currentResult = useMemo(
+    () => (highlightActive ? computeResult() : null),
+    [highlightActive, computeResult],
+  );
 
-  const evaluate = useCallback(() => currentResult, [currentResult]);
+  const issues = currentResult ? currentResult.issues : [];
+
+  const evaluate = useCallback(
+    () => currentResult ?? computeResult(),
+    [currentResult, computeResult],
+  );
 
   const activateHighlight = useCallback(() => {
     setHighlightActive(true);
@@ -152,10 +163,10 @@ export function BuildCompletenessProvider({
   }, []);
 
   useEffect(() => {
-    if (highlightActive && currentResult.issues.length === 0) {
+    if (highlightActive && currentResult && currentResult.issues.length === 0) {
       setHighlightActive(false);
     }
-  }, [highlightActive, currentResult.issues.length]);
+  }, [highlightActive, currentResult]);
 
   const value = useMemo(
     () => ({

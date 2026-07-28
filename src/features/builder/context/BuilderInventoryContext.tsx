@@ -4,6 +4,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
   useRef,
   ReactNode,
 } from "react";
@@ -219,29 +220,51 @@ export function BuilderInventoryProvider({
     clearCart();
   }, [cartItems, clearCart]);
 
+  const contextValue = useMemo<BuilderInventoryContextValue>(
+    () => ({
+      items,
+      weapons,
+      armors,
+      armorCatalog,
+      trinkets,
+      totalItems,
+      equippableCount,
+      isSyncing,
+      getEntryKind,
+      syncEquipmentCatalogs,
+      addToInventory,
+      addEquipmentBundle,
+      removeFromInventory,
+      removeWeaponInventoryBundle,
+      removeStartingEquipmentItem,
+      clearStartingEquipmentForSource,
+      clearInventory,
+      purchaseFromCart,
+    }),
+    [
+      items,
+      weapons,
+      armors,
+      armorCatalog,
+      trinkets,
+      totalItems,
+      equippableCount,
+      isSyncing,
+      getEntryKind,
+      syncEquipmentCatalogs,
+      addToInventory,
+      addEquipmentBundle,
+      removeFromInventory,
+      removeWeaponInventoryBundle,
+      removeStartingEquipmentItem,
+      clearStartingEquipmentForSource,
+      clearInventory,
+      purchaseFromCart,
+    ],
+  );
+
   return (
-    <BuilderInventoryContext.Provider
-      value={{
-        items,
-        weapons,
-        armors,
-        armorCatalog,
-        trinkets,
-        totalItems,
-        equippableCount,
-        isSyncing,
-        getEntryKind,
-        syncEquipmentCatalogs,
-        addToInventory,
-        addEquipmentBundle,
-        removeFromInventory,
-        removeWeaponInventoryBundle,
-        removeStartingEquipmentItem,
-        clearStartingEquipmentForSource,
-        clearInventory,
-        purchaseFromCart,
-      }}
-    >
+    <BuilderInventoryContext.Provider value={contextValue}>
       {children}
     </BuilderInventoryContext.Provider>
   );

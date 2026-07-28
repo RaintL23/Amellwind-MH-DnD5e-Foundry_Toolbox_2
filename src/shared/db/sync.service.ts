@@ -80,16 +80,23 @@ async function fetchAndCache(
 }
 
 export async function syncData(): Promise<SyncResult> {
-  const mmFresh = await isDataFresh("MM_META");
-  const gtmhFresh = await isDataFresh("GTMH_META");
+  const [mmFresh, gtmhFresh] = await Promise.all([
+    isDataFresh("MM_META"),
+    isDataFresh("GTMH_META"),
+  ]);
 
   let mmData: unknown[] | null = null;
   let gtmhData: unknown | null = null;
   let mmUpdated = false;
   let gtmhUpdated = false;
 
-  // Sincronizar Monster Manual
-  if (!mmFresh) {
+  // Monster Manual y Guía de Caza son descargas remotas independientes →
+  // se sincronizan en paralelo (antes eran secuenciales, duplicando el tiempo
+  // de arranque en frío).
+  await Promise.all([
+    (async () => {
+      // Sincronizar Monster Manual
+      if (!mmFresh) {
     const fetched = await fetchAndCache(
       MONSTER_MANUAL_URL,
       "MM_CURRENT",
@@ -116,12 +123,13 @@ export async function syncData(): Promise<SyncResult> {
       // Fallback a datos locales
       mmData = (await getStoreValue<unknown[]>("MM_CURRENT", "data")) ?? null;
     }
-  } else {
-    mmData = (await getStoreValue<unknown[]>("MM_CURRENT", "data")) ?? null;
-  }
-
-  // Sincronizar Guía de Caza
-  if (!gtmhFresh) {
+      } else {
+        mmData = (await getStoreValue<unknown[]>("MM_CURRENT", "data")) ?? null;
+      }
+    })(),
+    (async () => {
+      // Sincronizar Guía de Caza
+      if (!gtmhFresh) {
     const fetched = await fetchAndCache(
       GUIDE_TO_MONSTER_HUNTING_URL,
       "GTMH_CURRENT",
@@ -184,9 +192,11 @@ export async function syncData(): Promise<SyncResult> {
     } else {
       gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
     }
-  } else {
-    gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
-  }
+      } else {
+        gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
+      }
+    })(),
+  ]);
 
   return { mmData, gtmhData, updated: { mm: mmUpdated, gtmh: gtmhUpdated } };
 }
