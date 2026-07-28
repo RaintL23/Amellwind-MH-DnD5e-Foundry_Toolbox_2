@@ -3,6 +3,7 @@
   "description": "Homebrew MH weapons catalog — one JSON file per weapon.",
   "weapons": [
     "dual-blades.json",
-    "great-sword.json"
+    "great-sword.json",
+    "hammer.json"
   ]
 }

@@ -1,0 +1,175 @@
+{
+  "name": "Hammer",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 10,
+  "value": 3500,
+  "property": [
+    "H",
+    "2H"
+  ],
+  "dmg1": "2d6",
+  "dmgType": "B",
+  "entries": [
+    "The hammer is a powerful blunt weapon with a surprising amount of mobility. It's also possible to stun monsters by delivering a hammer attack to the head.",
+    {
+      "type": "inset",
+      "name": "Hammer",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Common",
+              "1",
+              "--",
+              "Mastery Property (Topple)"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "Power Charge, Mighty Weapon"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "Charge Upgrade I, Upswing / Spinning Bludgeon"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "Offset Smash, Stun Upgrade, Charge Upgrade II"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "Big Bang Combo, Charge Upgrade III"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "6d9a502b-9b30-40a8-82f0-1e555386998f",
+        "name": "Mighty Weapon",
+        "description": "When you hit a creature that is Large or smaller with this weapon, you can choose to have it make a Constitution saving throw against a DC of 8 + your proficiency + your Strength modifier. On a failed save the creature is stunned until the end of your next turn. Once used, you can't use this property again until you finish a short or long rest."
+      },
+      {
+        "id": "5755d8f7-497e-4e54-bfc7-7c92b7ce0e53",
+        "name": "Charge (H)",
+        "description": "If you move 20 feet in a straight line towards a creature without taking damage, your first attack against it with your hammer deals an extra 1d4 bludgeoning damage."
+      },
+      {
+        "id": "e05d33ee-fa3a-4c48-9086-345a762da2b6",
+        "name": "Mighty Weapon Upgrade I",
+        "description": "You can use your Mighty Weapon one additional time between rests (2 total) and you regain all expended uses when you finish a short or long rest. Additionally, when you hit any creature with this weapon, you can choose to have it make the Strength saving throw or be stunned. A Huge or larger creature has advantage on the saving throw."
+      },
+      {
+        "id": "3f54e5c0-c8dd-4d27-b85e-14f6bce845f3",
+        "name": "Charge Upgrade I (H)",
+        "description": "Your charge (h) now deals an extra 2d4 bludgeoning damage."
+      },
+      {
+        "id": "41611daf-a72d-45ae-817d-f52c41a83d71",
+        "name": "Mighty Weapon Upgrade II",
+        "description": "You can use your Mighty Weapon one additional time between rests (3 total).."
+      },
+      {
+        "id": "ea75ee67-98ab-4400-9092-d7b0b94d2069",
+        "name": "Charge Upgrade II (H)",
+        "description": "Your charge (h) now deals an extra 3d4 bludgeoning damage."
+      },
+      {
+        "id": "2f8eda31-d0b1-4335-820f-5d1533e93ea8",
+        "name": "Mighty Weapon Upgrade III",
+        "description": "You can use your Mighty Weapon one additional time between rests (4 total) and Huge or larger creatures no longer have advantage on its saving throw against this property."
+      },
+      {
+        "id": "ab7814cc-a12f-405a-96e1-aa7ea71ab848",
+        "name": "Charge Upgrade III (H)",
+        "description": "Your charge (h) now deals an extra 4d4 bludgeoning damage."
+      },
+      {
+        "id": "78cbfc61-2797-42e8-b187-f237592b8201",
+        "name": "Mastery Property (Topple)",
+        "description": "If you hit a creature, you can force it to make a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). On a failed save, the creature has the Prone condition."
+      },
+      {
+        "id": "f62e6856-0906-4c27-8fbb-fd1bf07f7d07",
+        "name": "Power Charge",
+        "description": "As a Bonus Action, you begin winding up the hammer. The weapon remains charged for 1 minute, until you hit with an attack using it, until you are knocked Prone or your are incapacitated. While charged, your walking speed increases by 5 feet, and your next successful attack with this weapon deals an extra 1d6 bludgeoning damage."
+      },
+      {
+        "id": "1a2f2359-c476-43f5-a290-273d19e437a7",
+        "name": "Power Charge",
+        "description": "As a Bonus Action, you begin winding up the hammer. The weapon remains charged for 1 minute, until you hit with an attack using it, until you are knocked Prone or your are incapacitated. While charged, your walking speed increases by 5 feet, and your next successful attack with this weapon deals an extra 1d6 bludgeoning damage."
+      },
+      {
+        "id": "b0901bd5-bed2-4835-af81-84e46d182f3f",
+        "name": "Mighty Weapon",
+        "description": "One per turn when you hit a creature in the head (or just hit it) with a charged attack, you can unleash the built-up kinetic energy to rattle their brain. The target must make a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). On a failed save, the creature is Stunned until the end of your next turn, a Huge or larger creature has advantage on the saving throw. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest."
+      },
+      {
+        "id": "1037f3c3-d322-4174-9962-7830d8534f45",
+        "name": "Upswing / Spinning Bludgeon",
+        "description": "Your charged attacks gain tactical versatility. When you hit a creature with an attack empowered by your Power Charge, you can choose one of the following additional effects:  \n\nUpswing: The target is pushed 10 feet away from you. If they hit a solid object (like a wall or another creature), they take an additional 1d6 bludgeoning damage.  \n\nSpinning Bludgeon: You carry the momentum into a spin. Choose a second creature within 5 feet of the original target; you can immediately make one melee weapon attack against the second creature (this second attack does not benefit from the charge's extra damage).",
+        "upgradesFromId": "f62e6856-0906-4c27-8fbb-fd1bf07f7d07"
+      },
+      {
+        "id": "65ea21d0-d29d-4fe3-bd2b-5c94fe17e5bc",
+        "name": "Charge Upgrade I",
+        "description": "Your Power Charge now deals an extra 2d6 bludgeoning damage on a hit.",
+        "upgradesFromId": "f62e6856-0906-4c27-8fbb-fd1bf07f7d07"
+      },
+      {
+        "id": "73ed4ad6-eb3f-4bff-9315-bdcb6528b5f7",
+        "name": "Upswing / Spinning Bludgeon",
+        "description": "Your charged attacks gain tactical versatility. When you hit a creature with an attack empowered by your Power Charge, you can choose one of the following additional effects:  \n\nUpswing: The target is pushed 10 feet away from you. If they hit a solid object (like a wall or another creature), they take an additional 1d6 bludgeoning damage.  \n\nSpinning Bludgeon: You carry the momentum into a spin. Choose a second creature within 5 feet of the original target; you can immediately make one melee weapon attack against the second creature (this second attack does not benefit from the charge's extra damage)."
+      },
+      {
+        "id": "8ee8f455-5ea1-4bd9-9f0e-e81287529d2f",
+        "name": "Offset Smash",
+        "description": "You can use the hammer's momentum to power through an enemy's guard. If a creature within your reach misses you with a melee attack, you can use your Reaction to immediately make one attack against them. If your weapon was affected by Power Charge, this reaction attack gains the charge's benefits and you have Advantage on the attack roll."
+      },
+      {
+        "id": "3882481c-d16c-4455-9519-59aa9655198d",
+        "name": "Stun Upgrade",
+        "description": "Creatures of Huge or Gargantuan size no longer have Advantage on the saving throw against your Concussive Blow.",
+        "upgradesFromId": "6d9a502b-9b30-40a8-82f0-1e555386998f"
+      },
+      {
+        "id": "bc81a1c1-cd60-4f14-975c-a8336e9f619a",
+        "name": "Charge Upgrade II",
+        "description": "Your Power Charge now deals an extra 3d6 bludgeoning damage on a hit.",
+        "upgradesFromId": "65ea21d0-d29d-4fe3-bd2b-5c94fe17e5bc"
+      },
+      {
+        "id": "72f16b00-c028-4f9e-b119-8614d4eabe0c",
+        "name": "Big Bang Combo",
+        "description": "You mercilessly exploit downed prey. When you make a melee attack with this weapon against a creature that is Prone or Stunned, the weapon deals an additional 2d6 bludgeoning damage. If you hit a Prone or Stunned creature with a Power Charge attack, you roll the charge's extra damage dice twice."
+      },
+      {
+        "id": "469098b4-e1c9-4ecd-a618-4742982ffd82",
+        "name": "Charge Upgrade III",
+        "description": "Your Power Charge now deals an extra 4d6 bludgeoning damage on a hit.",
+        "upgradesFromId": "bc81a1c1-cd60-4f14-975c-a8336e9f619a"
+      }
+    ]
+  }
+}
