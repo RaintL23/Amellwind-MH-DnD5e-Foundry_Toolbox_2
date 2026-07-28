@@ -13,6 +13,11 @@ export default defineConfig(({ mode }) => ({
         gzipSize: true,
       }),
   ].filter(Boolean),
+  // Emit large JSON imports as `JSON.parse("…")` instead of a JS object literal.
+  // Parsing a string is significantly faster than evaluating a big object literal
+  // (matters for the 1.6MB rpgbot-ratings.json loaded on /builder). This disables
+  // named imports from JSON, which the codebase does not use.
+  json: { stringify: true },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
