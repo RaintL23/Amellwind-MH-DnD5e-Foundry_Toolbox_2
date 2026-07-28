@@ -4,13 +4,14 @@ import {
   getWeaponGripModeDefinition,
   getWeaponGripModeHint,
   hasWeaponSwitchModes,
+  resolveGripModeDamage,
   type WeaponGripMode,
 } from "../utils/weapon-mode.utils";
 
 interface WeaponModeToggleProps {
   weapon: Weapon;
-  useSecondaryMode: boolean;
-  onChange: (useSecondaryMode: boolean) => void;
+  activeModeIndex: number;
+  onChange: (modeIndex: number) => void;
   className?: string;
   isModeDisabled?: (mode: WeaponGripMode, modeIndex: number) => boolean;
   getModeDisabledHint?: (mode: WeaponGripMode, modeIndex: number) => string | undefined;
@@ -18,7 +19,7 @@ interface WeaponModeToggleProps {
 
 export function WeaponModeToggle({
   weapon,
-  useSecondaryMode,
+  activeModeIndex,
   onChange,
   className,
   isModeDisabled,
@@ -36,19 +37,19 @@ export function WeaponModeToggle({
       </span>
       <div className="flex flex-col gap-1.5">
         {gripDefinition.modes.map((mode, index) => {
-          const isActive = useSecondaryMode === (index === 1);
-          const damage = weapon[mode.damageKey];
+          const isActive = activeModeIndex === index;
+          const damage = resolveGripModeDamage(weapon, mode);
           const hint = getWeaponGripModeHint(mode);
           const disabled = isModeDisabled?.(mode, index) ?? false;
           const disabledHint = getModeDisabledHint?.(mode, index);
 
           return (
             <button
-              key={mode.label}
+              key={`${mode.label}-${index}`}
               type="button"
               disabled={disabled}
               title={disabled ? disabledHint : undefined}
-              onClick={() => onChange(index === 1)}
+              onClick={() => onChange(index)}
               className={cn(
                 "rounded-md border px-2.5 py-1.5 text-left transition-colors",
                 disabled && "cursor-not-allowed opacity-40",

@@ -70,6 +70,14 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
   const damageDisplay = weapon.dmg2
     ? `${weapon.dmg1} / ${weapon.dmg2}`
     : weapon.dmg1;
+  const isVersatile = weapon.properties.includes("V") && !!weapon.dmg2;
+  const modeHint = isVersatile
+    ? "(versatile)"
+    : weapon.dmg2
+      ? weapon.modes && weapon.modes.length >= 2
+        ? `(${weapon.modes.map((m) => m.label).join(" / ")})`
+        : "(modes)"
+      : null;
 
   return (
     <Card
@@ -157,9 +165,9 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
             {damageDisplay}
           </span>
           <span className="text-sm text-muted-foreground">{dmgLabel}</span>
-          {weapon.dmg2 && (
+          {modeHint && (
             <span className="text-xs text-muted-foreground/60">
-              (versatile)
+              {modeHint}
             </span>
           )}
         </div>

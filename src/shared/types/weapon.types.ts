@@ -7,6 +7,18 @@ export interface WeaponRarityRow {
 
 export type WeaponContentSource = "amellwind" | "dnd";
 
+/**
+ * Alternate combat stance for MH switch weapons (Switch Axe, Charge Blade, etc.).
+ * Distinct from PHB Versatile (`V` + `dmg2`): modes have their own labels and grip rules.
+ */
+export interface WeaponModeDef {
+  label: string;
+  damage: string;
+  hasShield?: boolean;
+  isTwoHanded?: boolean;
+  blocksOffHand?: boolean;
+}
+
 export interface Weapon {
   /** Stable id for D&D catalog variants (`name|source`). */
   id?: string;
@@ -19,6 +31,11 @@ export interface Weapon {
   page?: number;
   dmg1: string;
   dmg2?: string;
+  /**
+   * Named combat modes (Switch Axe axe/sword, Charge Blade, etc.).
+   * When set, overrides hardcoded switch-mode tables. Not used for Versatile (V).
+   */
+  modes?: WeaponModeDef[];
   dmgType: string;
   properties: string[];
   weight: number;

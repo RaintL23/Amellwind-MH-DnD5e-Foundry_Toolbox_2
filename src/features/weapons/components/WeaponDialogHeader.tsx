@@ -24,6 +24,9 @@ export function WeaponDialogHeader({
   const damageDisplay = weapon.dmg2
     ? `${weapon.dmg1} / ${weapon.dmg2}`
     : weapon.dmg1;
+  const isVersatile = weapon.properties.includes("V") && !!weapon.dmg2;
+  const hasModes =
+    !!weapon.dmg2 && !isVersatile && (weapon.modes?.length ?? 0) >= 2;
 
   return (
     <DialogHeader>
@@ -42,8 +45,19 @@ export function WeaponDialogHeader({
               {damageDisplay}
             </span>{" "}
             <span>{dmgLabel}</span>
-            {weapon.dmg2 && (
+            {isVersatile && (
               <span className="text-muted-foreground/70"> (versatile)</span>
+            )}
+            {hasModes && (
+              <span className="text-muted-foreground/70">
+                {" "}
+                (
+                {weapon.modes!.map((m) => m.label).join(" / ")}
+                )
+              </span>
+            )}
+            {!isVersatile && !hasModes && weapon.dmg2 && (
+              <span className="text-muted-foreground/70"> (modes)</span>
             )}
           </DialogDescription>
 

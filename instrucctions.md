@@ -1253,6 +1253,7 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 | ------------------ | ----------- |
 | `name`, `source`, `page` | Identificación 5etools |
 | `dmg1`, `dmg2`     | Notación de daño (ej. `1d8`, `2d6` en modo versatile) |
+| `modes`            | Modos de combate MH (Switch Axe, Charge Blade…): `{ label, damage, isTwoHanded?, blocksOffHand?, hasShield? }[]`. Distinto de Versatile (`V`+`dmg2`). Preferido sobre tablas hardcodeadas por nombre. |
 | `dmgType`          | `S` / `P` / `B` (Slashing, Piercing, Bludgeoning) |
 | `properties`       | Códigos MH/D&D: `H`, `2H`, `F`, `L`, `R`, `V`, `A`, `S`, `T`, `MHL` (`MHL` → label **Loading**, descripción en `PROPERTY_DESCRIPTIONS`) |
 | `weight`, `valueCp`| Peso y valor en copper pieces |
