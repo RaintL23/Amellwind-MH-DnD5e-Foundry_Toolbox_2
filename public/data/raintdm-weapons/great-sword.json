@@ -6,10 +6,7 @@
   "rarity": "none",
   "weight": 6,
   "value": 5000,
-  "property": [
-    "H",
-    "2H"
-  ],
+  "property": ["H", "2H"],
   "dmg1": "2d6",
   "dmgType": "S",
   "entries": [
@@ -27,20 +24,8 @@
             "Features"
           ],
           "rows": [
-            [
-              "Common",
-              "1",
-              "--",
-              "--",
-              "Mastery Property (Graze)"
-            ],
-            [
-              "Uncommon",
-              "2",
-              "--",
-              "--",
-              "Charged Slash"
-            ],
+            ["Common", "1", "--", "--", "Mastery Property (Graze)"],
+            ["Uncommon", "2", "--", "--", "Charged Slash"],
             [
               "Rare",
               "3",
@@ -48,13 +33,7 @@
               "+1",
               "True Charged Slash, Emergency Guard, Dull the Blade"
             ],
-            [
-              "Very Rare",
-              "4",
-              "+2",
-              "+2",
-              "Offset Strike, Charge Upgrade"
-            ],
+            ["Very Rare", "4", "+2", "+2", "Offset Strike, Charge Upgrade"],
             [
               "Legendary",
               "5",
@@ -103,7 +82,7 @@
       {
         "id": "a75cb310-7408-4dd8-8ca7-989ebf3b649c",
         "name": "Mastery Property (Graze)",
-        "description": "If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll. This perfectly simulates the sheer weight of the weapon—even if you miss the direct hit, the momentum still causes damage."
+        "description": "If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll."
       },
       {
         "id": "ba7725b1-f4b7-4d4f-addf-85455a3595a1",
