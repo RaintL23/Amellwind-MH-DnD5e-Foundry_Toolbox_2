@@ -1,6 +1,12 @@
+import { useMemo } from "react";
 import { OptionalFeature, Weapon } from "@/shared/types";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { ColumnChains } from "../utils/weapon-feature-chains.utils";
+import type { WeaponForgeFeatureDef } from "@/features/weapon-forge/types/weapon-forge.types";
+import {
+  buildColumnChains,
+  ColumnChains,
+  type FeatureUpgradeLink,
+} from "../utils/weapon-feature-chains.utils";
 import { RaritySlide } from "./RaritySlide";
 import { RarityDots } from "./RarityDots";
 
@@ -17,6 +23,25 @@ interface WeaponRarityProgressionProps {
   baseFeatureNameKeys: Set<string>;
 }
 
+function toUpgradeLinks(
+  customFeatures: WeaponForgeFeatureDef[] | undefined,
+): FeatureUpgradeLink[] | undefined {
+  if (!customFeatures?.length) return undefined;
+  return customFeatures
+    .filter((f) => f.name.trim())
+    .map((f) => ({
+      id: f.id,
+      name: f.name,
+      upgradesFromId: f.upgradesFromId,
+    }));
+}
+
+function hasExplicitUpgradeLinks(
+  links: FeatureUpgradeLink[] | undefined,
+): boolean {
+  return Boolean(links?.some((link) => link.upgradesFromId));
+}
+
 export function WeaponRarityProgression({
   weapon,
   current,
@@ -30,6 +55,19 @@ export function WeaponRarityProgression({
   baseFeatureNameKeys,
 }: WeaponRarityProgressionProps) {
   const total = weapon.rarityRows.length;
+
+  const resolvedColumnChains = useMemo(() => {
+    const customFeatures = (weapon as { customFeatures?: WeaponForgeFeatureDef[] })
+      .customFeatures;
+    const upgradeLinks = toUpgradeLinks(customFeatures);
+
+    if (hasExplicitUpgradeLinks(upgradeLinks)) {
+      return buildColumnChains(weapon.rarityRows, { upgradeLinks });
+    }
+
+    return columnChains;
+  }, [weapon, columnChains]);
+
   if (total === 0) return null;
 
   return (
@@ -52,7 +90,7 @@ export function WeaponRarityProgression({
           row={weapon.rarityRows[current]}
           rarityIndex={current}
           rarityRows={weapon.rarityRows}
-          columnChains={columnChains}
+          columnChains={resolvedColumnChains}
           featuresMap={featuresMap}
           mhItemEffectsMap={mhItemEffectsMap}
           baseFeatures={baseFeatures}

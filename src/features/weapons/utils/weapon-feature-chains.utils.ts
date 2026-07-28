@@ -20,6 +20,17 @@ export interface ColumnChains {
   chains: FeatureChain[];
 }
 
+/** Optional explicit upgrade parent links (RaintDM forge customFeatures). */
+export interface FeatureUpgradeLink {
+  id: string;
+  name: string;
+  upgradesFromId?: string;
+}
+
+export interface BuildColumnChainsOptions {
+  upgradeLinks?: FeatureUpgradeLink[];
+}
+
 /** Strips " Upgrade [Roman/number]" suffixes to get the base feature name. */
 export function getBaseFeatureName(name: string): string {
   return name.replace(/\s+Upgrade\b.*/i, "").trim();
@@ -27,6 +38,55 @@ export function getBaseFeatureName(name: string): string {
 
 function isUpgradeFeatureName(name: string): boolean {
   return /\bUpgrade\b/i.test(name);
+}
+
+function buildUpgradeLinkIndexes(upgradeLinks: FeatureUpgradeLink[] | undefined): {
+  byNameLower: Map<string, FeatureUpgradeLink>;
+  byId: Map<string, FeatureUpgradeLink>;
+} {
+  const byNameLower = new Map<string, FeatureUpgradeLink>();
+  const byId = new Map<string, FeatureUpgradeLink>();
+
+  if (!upgradeLinks) return { byNameLower, byId };
+
+  for (const link of upgradeLinks) {
+    const trimmed = link.name.trim();
+    if (!trimmed) continue;
+    byNameLower.set(trimmed.toLowerCase(), link);
+    byId.set(link.id, link);
+  }
+
+  return { byNameLower, byId };
+}
+
+/**
+ * Resolves which chain a feature belongs to.
+ * Prefers explicit upgradesFromId links; falls back to Amellwind name heuristics.
+ */
+export function resolveFeatureChainKey(
+  name: string,
+  indexes: {
+    byNameLower: Map<string, FeatureUpgradeLink>;
+    byId: Map<string, FeatureUpgradeLink>;
+  },
+  visiting: Set<string> = new Set(),
+): string {
+  const link = indexes.byNameLower.get(name.toLowerCase());
+  if (link?.upgradesFromId && !visiting.has(link.id)) {
+    const parent = indexes.byId.get(link.upgradesFromId);
+    if (parent?.name.trim()) {
+      visiting.add(link.id);
+      const parentKey = resolveFeatureChainKey(
+        parent.name,
+        indexes,
+        visiting,
+      );
+      visiting.delete(link.id);
+      return parentKey;
+    }
+  }
+
+  return getBaseFeatureName(name);
 }
 
 /**
@@ -87,7 +147,13 @@ function reparentCrossColumnUpgrades(
   });
 }
 
-export function buildColumnChains(rarityRows: WeaponRarityRow[]): ColumnChains[] {
+export function buildColumnChains(
+  rarityRows: WeaponRarityRow[],
+  options: BuildColumnChainsOptions = {},
+): ColumnChains[] {
+  const upgradeIndexes = buildUpgradeLinkIndexes(options.upgradeLinks);
+  const hasExplicitLinks = upgradeIndexes.byId.size > 0;
+
   const colLabelOrder: string[] = [];
   const colLabelSet = new Set<string>();
 
@@ -111,18 +177,26 @@ export function buildColumnChains(rarityRows: WeaponRarityRow[]): ColumnChains[]
 
       for (const name of items) {
         if (!name) continue;
-        const baseName = getBaseFeatureName(name);
+        const chainKey = hasExplicitLinks
+          ? resolveFeatureChainKey(name, upgradeIndexes)
+          : getBaseFeatureName(name);
 
-        if (!chainMap.has(baseName)) {
-          chainMap.set(baseName, {
-            baseName,
+        if (!chainMap.has(chainKey)) {
+          chainMap.set(chainKey, {
+            baseName: chainKey,
             features: [{ name, rarityIndex: i }],
             introducedAtIndex: i,
           });
         } else {
-          chainMap.get(baseName)!.features.push({ name, rarityIndex: i });
+          const chain = chainMap.get(chainKey)!;
+          chain.features.push({ name, rarityIndex: i });
+          chain.introducedAtIndex = Math.min(chain.introducedAtIndex, i);
         }
       }
+    }
+
+    for (const chain of chainMap.values()) {
+      chain.features.sort((a, b) => a.rarityIndex - b.rarityIndex);
     }
 
     const chains = Array.from(chainMap.values()).sort(

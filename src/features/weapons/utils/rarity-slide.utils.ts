@@ -18,8 +18,13 @@ export function getRaritySlideStatEntries(
     if (display) statEntries.push([label, display]);
   }
 
-  const bonusEntry = statEntries.find(([k]) => k.toLowerCase() === "bonus");
-  const otherStats = statEntries.filter(([k]) => k.toLowerCase() !== "bonus");
+  const bonusEntry =
+    statEntries.find(([k]) => k.toLowerCase() === "bonus to hit") ??
+    statEntries.find(([k]) => k.toLowerCase() === "bonus");
+  const otherStats = statEntries.filter(([k]) => {
+    const lower = k.toLowerCase();
+    return lower !== "bonus" && lower !== "bonus to hit";
+  });
 
   return {
     bonus: bonusEntry?.[1],
