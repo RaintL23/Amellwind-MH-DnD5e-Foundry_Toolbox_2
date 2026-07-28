@@ -10,6 +10,7 @@ import type {
   WeaponForgeFormValues,
 } from "../types/weapon-forge.types";
 import {
+  BONUS_COLUMN_KEYS,
   createFeatureDef,
   featureDefsFromRarityRows,
 } from "../types/weapon-forge.types";
@@ -54,6 +55,7 @@ export function toCustomWeapon(
     isCustom: boolean;
     createdAt?: string;
     updatedAt?: string;
+    author?: string;
     customFeatures?: WeaponForgeFeatureDef[];
   },
 ): CustomWeapon {
@@ -63,12 +65,15 @@ export function toCustomWeapon(
     (weapon as CustomWeapon).customFeatures ??
     featureDefsFromRarityRows(weapon.rarityRows);
 
+  const existingAuthor = (weapon as CustomWeapon).author;
+
   return {
     ...weapon,
     id: options.id ?? newId(),
     createdAt: options.createdAt ?? now,
     updatedAt: options.updatedAt ?? now,
     isCustom: options.isCustom,
+    author: options.author ?? existingAuthor ?? "RaintDM",
     source: weapon.source || "RAINTDM",
     contentSource: "amellwind",
     customFeatures,
@@ -161,9 +166,12 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
     entries: insetEntries,
   });
 
+  const custom = weapon as CustomWeapon;
+
   const raw: Record<string, unknown> = {
     name: weapon.name,
     source: weapon.source || "RAINTDM",
+    author: custom.author?.trim() || "RaintDM",
     type: "HW",
     rarity: "none",
     weight: weapon.weight,
@@ -180,9 +188,9 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
   if (weapon.isFocus) raw.focus = true;
   if (weapon.page != null) raw.page = weapon.page;
 
-  const custom = weapon as CustomWeapon;
   if (custom.customFeatures && custom.customFeatures.length > 0) {
     raw._raintdm = {
+      author: custom.author?.trim() || "RaintDM",
       customFeatures: custom.customFeatures.map((f) => ({
         id: f.id,
         name: f.name,
@@ -190,6 +198,8 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
         upgradesFromId: f.upgradesFromId,
       })),
     };
+  } else if (custom.author?.trim()) {
+    raw._raintdm = { author: custom.author.trim() };
   }
 
   return raw;
@@ -199,8 +209,13 @@ function buildColLabels(rows: WeaponRarityRow[]): string[] {
   const labels = ["Rarity", "Slots"];
   const seen = new Set<string>();
 
-  // Prefer Bonus early when present
-  const preferOrder = ["Bonus", "Features"];
+  const preferOrder = [
+    BONUS_COLUMN_KEYS.toHit,
+    BONUS_COLUMN_KEYS.ac,
+    BONUS_COLUMN_KEYS.damage,
+    "Bonus",
+    "Features",
+  ];
   for (const preferred of preferOrder) {
     if (rows.some((r) => preferred in r.columns) && !seen.has(preferred)) {
       labels.push(preferred);
@@ -218,7 +233,7 @@ function buildColLabels(rows: WeaponRarityRow[]): string[] {
   }
 
   if (labels.length === 2) {
-    labels.push("Bonus", "Features");
+    labels.push(BONUS_COLUMN_KEYS.toHit, "Features");
   }
 
   return labels;
@@ -238,6 +253,17 @@ function parseCustomFeatures(raw: unknown): WeaponForgeFeatureDef[] | undefined 
       }),
     )
     .filter((f) => f.name.trim());
+}
+
+function parseAuthor(raw: Record<string, unknown>): string | undefined {
+  if (typeof raw.author === "string" && raw.author.trim()) {
+    return raw.author.trim();
+  }
+  const raintdm = isRecord(raw._raintdm) ? raw._raintdm : undefined;
+  if (typeof raintdm?.author === "string" && raintdm.author.trim()) {
+    return raintdm.author.trim();
+  }
+  return undefined;
 }
 
 function parseDomainWeapon(
@@ -274,6 +300,7 @@ function parseDomainWeapon(
       isCustom,
       createdAt: typeof raw.createdAt === "string" ? raw.createdAt : undefined,
       updatedAt: typeof raw.updatedAt === "string" ? raw.updatedAt : undefined,
+      author: parseAuthor(raw),
       customFeatures,
     },
   );
@@ -291,7 +318,11 @@ function parseSingleEntry(entry: unknown, isCustom: boolean): CustomWeapon {
     const record = entry as Record<string, unknown>;
     const raintdm = isRecord(record._raintdm) ? record._raintdm : undefined;
     const customFeatures = parseCustomFeatures(raintdm?.customFeatures);
-    return toCustomWeapon(mapped, { isCustom, customFeatures });
+    return toCustomWeapon(mapped, {
+      isCustom,
+      author: parseAuthor(record),
+      customFeatures,
+    });
   }
   throw new Error("Unrecognized weapon JSON shape");
 }

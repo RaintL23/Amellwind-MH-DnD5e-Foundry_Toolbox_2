@@ -55,6 +55,7 @@ export function useWeaponForge() {
         id: existing?.id,
         isCustom: true,
         createdAt: existing?.createdAt,
+        author: values.author.trim() || "RaintDM",
         customFeatures: values.customFeatures,
       });
       const next = saveUserWeapon(weapon);

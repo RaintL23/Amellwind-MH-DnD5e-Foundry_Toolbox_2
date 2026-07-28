@@ -154,6 +154,7 @@ export function useWeaponForgeForm() {
         id: existing?.id,
         isCustom: true,
         createdAt: existing?.createdAt,
+        author: current.author.trim() || "RaintDM",
         customFeatures: current.customFeatures,
       });
       saveUserWeapon(weapon);

@@ -88,6 +88,11 @@ export function WeaponForgeCard({
           >
             {weapon.isCustom ? "Custom" : "Curated"}
           </Badge>
+          {weapon.author && (
+            <Badge variant="outline" className={cn(BADGE_SIZE_XS, "text-muted-foreground")}>
+              {weapon.author}
+            </Badge>
+          )}
           <Badge variant="outline" className={BADGE_SIZE_XS}>
             {damageDisplay} {dmgLabel}
           </Badge>

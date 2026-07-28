@@ -5,6 +5,7 @@ import { WeaponForgeBasicsFields } from "./WeaponForgeBasicsFields";
 import { WeaponForgeFormActions } from "./WeaponForgeFormActions";
 import { WeaponForgeFormHeader } from "./WeaponForgeFormHeader";
 import { WeaponRarityEditor } from "./WeaponRarityEditor";
+import { WeaponResourcesEditor } from "./WeaponResourcesEditor";
 
 export function WeaponForgeForm() {
   const {
@@ -68,6 +69,15 @@ export function WeaponForgeForm() {
             customFeatures={values.customFeatures}
             onChangeRows={handleChangeRows}
             onChangeFeatures={handleChangeFeatures}
+          />
+
+          <WeaponResourcesEditor
+            rows={values.rarityRows}
+            resourceColumns={values.resourceColumns}
+            onChangeRows={handleChangeRows}
+            onChangeResourceColumns={(columns) =>
+              patch("resourceColumns", columns)
+            }
           />
 
           <WeaponForgeFormActions isEdit={isEdit} onCancel={goBack} />

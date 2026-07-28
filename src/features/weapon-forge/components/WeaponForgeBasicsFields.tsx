@@ -41,6 +41,18 @@ export function WeaponForgeBasicsFields({
         />
       </div>
       <div className="space-y-1.5">
+        <Label htmlFor="wf-author">Author</Label>
+        <Input
+          id="wf-author"
+          value={values.author}
+          onChange={(e) => onPatch("author", e.target.value)}
+          placeholder="e.g. RaintDM"
+        />
+        <p className="text-[11px] text-muted-foreground">
+          Who created this variant (RaintDM, community author, etc.).
+        </p>
+      </div>
+      <div className="space-y-1.5">
         <Label>Properties</Label>
         <MultiSelect
           options={PROPERTY_OPTIONS}
