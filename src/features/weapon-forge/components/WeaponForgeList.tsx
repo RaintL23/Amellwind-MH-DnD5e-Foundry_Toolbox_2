@@ -266,7 +266,7 @@ export function WeaponForgeList() {
             ) : filteredCurated.length === 0 ? (
               <EmptyState
                 title="No curated weapons yet"
-                description="RaintDM updates this catalog by shipping a new raintdm-weapons.json with the app. You can still create weapons under My Weapons."
+                description="Curated weapons load from public/data/raintdm-weapons/ (one JSON per weapon). Add a file and rebuild, or create weapons under My Weapons."
               />
             ) : (
               <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

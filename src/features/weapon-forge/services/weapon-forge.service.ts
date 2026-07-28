@@ -8,7 +8,14 @@ import {
 } from "../mappers/weapon-forge.mapper";
 
 const STORAGE_KEY = "weapon_forge_custom";
-const CATALOG_URL = "/data/raintdm-weapons.json";
+const MANIFEST_URL = "/data/raintdm-weapons/manifest.json";
+const WEAPONS_BASE = "/data/raintdm-weapons";
+
+interface RaintdmManifest {
+  version?: string;
+  description?: string;
+  weapons: string[];
+}
 
 let curatedCache: CustomWeapon[] | null = null;
 
@@ -34,23 +41,42 @@ function writeUserWeapons(weapons: CustomWeapon[]): void {
   }
 }
 
+async function loadCuratedFromManifest(): Promise<CustomWeapon[]> {
+  const manifestRes = await fetch(MANIFEST_URL);
+  if (!manifestRes.ok) {
+    throw new Error(`Manifest not found (${manifestRes.status})`);
+  }
+
+  const manifest = (await manifestRes.json()) as RaintdmManifest;
+  const files = Array.isArray(manifest.weapons) ? manifest.weapons : [];
+  if (files.length === 0) return [];
+
+  const payloads = await Promise.all(
+    files.map(async (file) => {
+      const safeName = file.replace(/^\/+/, "");
+      const res = await fetch(`${WEAPONS_BASE}/${safeName}`);
+      if (!res.ok) {
+        console.warn(`Failed to load curated weapon: ${safeName}`);
+        return null;
+      }
+      return (await res.json()) as unknown;
+    }),
+  );
+
+  return parseImportedWeapons(payloads.filter((p) => p != null), {
+    isCustom: false,
+  }).map((w) => ({
+    ...w,
+    isCustom: false,
+    source: w.source || "RAINTDM",
+  }));
+}
+
 export async function getCuratedWeapons(): Promise<CustomWeapon[]> {
   if (curatedCache) return curatedCache;
 
   try {
-    const response = await fetch(CATALOG_URL);
-    if (!response.ok) {
-      curatedCache = [];
-      return curatedCache;
-    }
-    const data = (await response.json()) as RaintdmWeaponsCatalog | unknown;
-    curatedCache = parseImportedWeapons(data, { isCustom: false }).map(
-      (w) => ({
-        ...w,
-        isCustom: false,
-        source: w.source || "RAINTDM",
-      }),
-    );
+    curatedCache = await loadCuratedFromManifest();
     return curatedCache;
   } catch {
     curatedCache = [];
@@ -137,10 +163,9 @@ export function exportAllUserWeaponsJson(weapons: CustomWeapon[]): void {
   downloadJson(
     {
       version: "1.0",
-      author: "RaintDM",
-      description: "MH Weapons — Amellwind Format by RaintDM (user export)",
+      description: "MH Weapons — user export (drop each weapon JSON into public/data/raintdm-weapons/)",
       weapons: weapons.map((w) => weaponToRawExport(w)),
-    },
+    } satisfies RaintdmWeaponsCatalog,
     "raintdm-custom-weapons.json",
   );
 }

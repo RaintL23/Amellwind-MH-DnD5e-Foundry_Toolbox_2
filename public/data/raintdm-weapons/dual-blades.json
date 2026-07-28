@@ -1,0 +1,148 @@
+{
+  "name": "Dual Blades",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 4,
+  "value": 30,
+  "property": [
+    "F",
+    "L"
+  ],
+  "dmg1": "1d6",
+  "dmgType": "S",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Dual Blades",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Damage",
+            "Bonus",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery Property (Nick)"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Demon Mode, Demon Dodge"
+            ],
+            [
+              "Rare",
+              "3",
+              "1",
+              "1",
+              "Perfect Evade, Archdemon Mode"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "2",
+              "2",
+              "Dual Mastery, Demon Upgrade"
+            ],
+            [
+              "Legendary",
+              "5",
+              "3",
+              "3",
+              "Demon Dance, Heavenly Blade Dance"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "01c67489-9ebd-408c-a450-1c15488c05fe",
+        "name": "Mastery Property (Nick)",
+        "description": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action. This is essential to keep your Bonus Action free for your class features and weapon abilities."
+      },
+      {
+        "id": "14c618e5-6c38-4875-980a-377a7fab13df",
+        "name": "Demon Mode",
+        "description": "As a Bonus Action, you envelop yourself in an aura of boundless stamina for 1 minute (or until you are Incapacitated). You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest. While active, you gain the following benefits:\n\n- Your walking speed increases by 10 feet.\n- The extra attack you make using the weapon's Light property deals an additional 1d4 slashing damage on a hit."
+      },
+      {
+        "id": "8387250b-8303-4467-863b-bac65872d350",
+        "name": "Demon Dodge",
+        "description": "While Demon Mode is active, if you are hit by a melee attack from a creature you can see, you can use your Reaction to add your Proficiency Bonus to your AC against that attack, potentially causing it to miss. If the attack misses, you can immediately move 5 feet without provoking Opportunity Attacks."
+      },
+      {
+        "id": "c3ee28c5-a0f0-49fa-ad2d-405ce8155eb7",
+        "name": "Perfect Evade (Demon Dodge Upgrade I)",
+        "description": "Upgrades Demon Dodge.\n\nYour Demon Dodge improves. If you use your Reaction to increase your AC and successfully cause the triggering attack to miss, you can make one melee weapon attack against the attacker immediately after your 5-foot movement, as part of the same Reaction.",
+        "upgradesFromId": "be07ad62-cbc6-40c7-a66a-4419a3bfd6bb"
+      },
+      {
+        "id": "dc187db9-2fe2-40ea-90ad-f496af129f34",
+        "name": "Archdemon Mode",
+        "description": "The relentless combat charges your blades. When your Demon Mode ends (either because the duration expires or you end it early as a Bonus Action), you enter Archdemon Mode for 1 minute. You lose the movement speed bonus and Demon Dodge features, but you retain the extra 1d4 damage on your extra attack from the Light property.",
+        "upgradesFromId": "14c618e5-6c38-4875-980a-377a7fab13df"
+      },
+      {
+        "id": "17d5c2c9-d8bf-4576-be5a-1472dbdfd497",
+        "name": "Dual Mastery",
+        "description": "You are a whirlwind of blades. This weapon now possesses both the Nick and Vex Mastery properties simultaneously. (With Vex, if you hit a creature and deal damage to it, you have Advantage on your next attack roll against that creature before the end of your next turn).",
+        "upgradesFromId": "01c67489-9ebd-408c-a450-1c15488c05fe"
+      },
+      {
+        "id": "5b03d510-df0f-49eb-9a15-3a82ec136a55",
+        "name": "Perfect Evade (Demon Dodge Upgrade I",
+        "description": "Upgrades Perfect Evade (Demon Dodge Upgrade I).\n\nUpgrades Demon Dodge.\n\nYour Demon Dodge improves. If you use your Reaction to increase your AC and successfully cause the triggering attack to miss, you can make one melee weapon attack against the attacker immediately after your 5-foot movement, as part of the same Reaction.",
+        "upgradesFromId": "c3ee28c5-a0f0-49fa-ad2d-405ce8155eb7"
+      },
+      {
+        "id": "8a89fd7f-04c5-42e5-b641-e2c3d2524d99",
+        "name": "Demon Mode Upgrade I",
+        "description": "Upgrades Demon Mode.\n\nDemon Mode's walking speed bonus increases to 15 feet, and the extra damage on your Light property attack increases to 1d6.",
+        "upgradesFromId": "774e28db-1a31-4287-9d85-7e316fd32910"
+      },
+      {
+        "id": "a02f4d84-4626-4b06-aebd-b798f1482c73",
+        "name": "Demon Dance",
+        "description": "While Demon Mode is active, you can use your Action to plant your feet and unleash a devastating, high-commitment flurry against a single foe. Make four melee weapon attacks against a creature within your reach with advantage. Because of the intense focus required, your speed becomes 0 until the end of your current turn. If all attacks hit, you severely expose the target's weak points, inflicting an additional 4d6 slashing damage as bonus damage on your last attack. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest."
+      },
+      {
+        "id": "de721b58-971c-4be6-b96b-d747bef8eae2",
+        "name": "Heavenly Blade Dance",
+        "description": "You expertly maneuver around massive foes, performing mid-air spins along their bodies. You can move through the space of any Large or Larger creature, and doing so does not provoke Opportunity Attacks. Once per turn, when you move through a hostile creature's space and hit it with an attack using this weapon, you slice along its immense form, dealing an additional 2d6 slashing damage."
+      },
+      {
+        "id": "acfdd1cc-781f-4486-b38e-23a2b9975fb3",
+        "name": "Perfect Evade",
+        "description": "Your Demon Dodge improves. If you use your Reaction to increase your AC and successfully cause the triggering attack to miss, you can make one melee weapon attack against the attacker immediately after your 5-foot movement, as part of the same Reaction.",
+        "upgradesFromId": "8387250b-8303-4467-863b-bac65872d350"
+      },
+      {
+        "id": "f7412648-0d3a-438b-a950-2c8dfc0620a8",
+        "name": "Demon Upgrade",
+        "description": "Demon Mode's walking speed bonus increases to 15 feet, and the extra damage on your Light property attack increases to 1d6.",
+        "upgradesFromId": "14c618e5-6c38-4875-980a-377a7fab13df"
+      },
+      {
+        "id": "b3fd21f2-5417-4b88-ba45-419bff532662",
+        "name": "Mastery Property (Nick) Upgrade I",
+        "description": "Upgrades Mastery Property (Nick).\n\nWhen you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action. This is essential to keep your Bonus Action free for your class features and weapon abilities.",
+        "upgradesFromId": "01c67489-9ebd-408c-a450-1c15488c05fe"
+      }
+    ]
+  }
+}

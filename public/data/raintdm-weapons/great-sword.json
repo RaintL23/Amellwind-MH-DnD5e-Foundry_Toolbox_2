@@ -1,0 +1,159 @@
+{
+  "name": "Great Sword",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 6,
+  "value": 5000,
+  "property": [
+    "H",
+    "2H"
+  ],
+  "dmg1": "2d6",
+  "dmgType": "S",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Great Sword",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Damage",
+            "Bonus",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery Property (Graze)"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Charged Slash"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "True Charged Slash, Emergency Guard, Dull the Blade"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Offset Strike, Charge Upgrade"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "Focus Strike, Divine True Charged Slash"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "afb3ba50-b2c1-434d-a2c8-9750d23975b3",
+        "name": "Charged Slash",
+        "description": "As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.\n\nWhen you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage; you can forgo this advantage and all other advantages you gain on this turn to gain 1 extra charge to expend on this attack.\n\nOn hit the weapon deals an extra 1d6 + your Strength modifier as weapon damage + the weapon's extra damage material (if it has one) for each charge expended in this way, plus an extra 3 damage if you expended 2 charges, or 6 damage if you expended 3 charges."
+      },
+      {
+        "id": "6ba06695-c1e3-4152-8db2-c4e2602b5c77",
+        "name": "Guard (GS)",
+        "description": "As a reaction, you add 2 AC against one melee attack that would hit you. To do so, you must see the attacker and be wielding the greatsword. You have disadvantage on attacks until the end of your next turn."
+      },
+      {
+        "id": "0e0f0ff0-04b0-4837-87dd-068ec8ead2b8",
+        "name": "Charged Slash Upgrade I",
+        "description": "Your charged slash now deals an extra 1d8 + your Strength modifier as weapon damage + the weapon's extra damage material (if it has one) for each charge expended in this way, plus an extra 3 damage if you expended 2 charges, or 6 damage if you expended 3 charges."
+      },
+      {
+        "id": "a74c8f59-6356-41cf-9adf-0a36d68f8ded",
+        "name": "Guard Upgrade I (GS)",
+        "description": "You now gain a +3 bonus to your AC when you use guard."
+      },
+      {
+        "id": "65b51c18-c796-4d09-8305-5213797ea550",
+        "name": "Charged Slash Upgrade II",
+        "description": "Your charged slash now deals an extra 1d10 + your Strength modifier as weapon damage + the weapon's extra damage material (if it has one) for each charge expended in this way, plus an extra 3 damage if you expended 2 charges, or 6 damage if you expended 3 charges."
+      },
+      {
+        "id": "428edb16-013d-4be6-a0f6-fa9b986958ea",
+        "name": "Guard Upgrade II (GS)",
+        "description": "You now gain a +4 bonus to your AC when you use guard."
+      },
+      {
+        "id": "a75cb310-7408-4dd8-8ca7-989ebf3b649c",
+        "name": "Mastery Property (Graze)",
+        "description": "If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll. This perfectly simulates the sheer weight of the weapon—even if you miss the direct hit, the momentum still causes damage."
+      },
+      {
+        "id": "ba7725b1-f4b7-4d4f-addf-85455a3595a1",
+        "name": "Charged Slash",
+        "description": "As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.\n\nWhen you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage\n\nOn hit the weapon deals an extra 3d6 slashing damage for each charge expended in this way."
+      },
+      {
+        "id": "3086f3e2-88c8-487e-9c8e-85a26f52f4a5",
+        "name": "True Charged Slash",
+        "description": "Your charge becomes deadlier. Your charged slash now deals an extra 4d6 slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.",
+        "upgradesFromId": "afb3ba50-b2c1-434d-a2c8-9750d23975b3"
+      },
+      {
+        "id": "da92d966-ddc5-43eb-bf55-6eef1f3022e3",
+        "name": "Emergency Guard",
+        "description": "As a Reaction when you are hit by a melee attack, you can position the broad side of the blade to protect yourself, gaining a +3 bonus to your AC against that attack. If the attack still hits, you reduce the damage by 1d10 + your Strength modifier."
+      },
+      {
+        "id": "cd172876-167a-44b5-80f1-880a64bd4a15",
+        "name": "Dull the Blade",
+        "description": "Using a weapon as a shield ruins its edge. After using this Emergency Guard, the weapon loses its Graze Mastery property until you finish a Short or Long Rest, or spend 1 minute sharpening it with a whetstone."
+      },
+      {
+        "id": "0996d65e-5ebe-409d-a23c-85c0fda028dc",
+        "name": "Offset Strike",
+        "description": "If a creature moves into your reach and makes a melee attack against you, you can use your Reaction to swing simultaneously. Make an attack roll with the Greatsword. If your roll is higher than the attacker's roll, their attack misses, your attack hits automatically, and you deal your normal weapon damage plus an extra 2d6."
+      },
+      {
+        "id": "93cd58af-c56f-4eef-86fa-7dfa870a5e5e",
+        "name": "Charge Upgrade",
+        "description": "Your charged slash now deals an extra 5d6 slashing damage for each charge expended in this way.",
+        "upgradesFromId": "3086f3e2-88c8-487e-9c8e-85a26f52f4a5"
+      },
+      {
+        "id": "b6eb4f59-8b79-4dfa-9754-f26b31e85542",
+        "name": "Charge Upgrade",
+        "description": "Your charged slash now deals an extra 5d6 slashing damage for each charge expended in this way.",
+        "upgradesFromId": "3086f3e2-88c8-487e-9c8e-85a26f52f4a5"
+      },
+      {
+        "id": "d54dbdd3-2cee-4716-9373-6ec8639e55ff",
+        "name": "Focus Strike",
+        "description": "You master the flow of combat. You can now use your Bonus Action to grant your next attack 1 Charge without needing to forgo an attack from your Attack action."
+      },
+      {
+        "id": "eca73bb0-faa0-46fd-9260-705b9aba31b1",
+        "name": "Divine True Charged Slash",
+        "description": "Your charged slash now deals an extra 6d6 slashing damage for each charge expended in this way and the creature is Stunned until the start of your next turn from the sheer concussive force.",
+        "upgradesFromId": "93cd58af-c56f-4eef-86fa-7dfa870a5e5e"
+      }
+    ]
+  }
+}
