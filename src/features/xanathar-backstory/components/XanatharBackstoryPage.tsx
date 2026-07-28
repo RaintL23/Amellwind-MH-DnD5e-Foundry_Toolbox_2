@@ -1,6 +1,9 @@
 import { BookOpen, Dices } from "lucide-react";
 import { XGE_SECTIONS, type XgeTable } from "../data/xanathar-tables.data";
-import { useXanatharBackstory } from "../context/XanatharBackstoryContext";
+import {
+  XanatharBackstoryProvider,
+  useXanatharBackstory,
+} from "../context/XanatharBackstoryContext";
 import { CharacterSetupBar } from "./CharacterSetupBar";
 import { BackstorySection } from "./BackstorySection";
 import { BackstorySummary } from "./BackstorySummary";
@@ -27,6 +30,14 @@ function getVisibleTables(
 }
 
 export function XanatharBackstoryPage() {
+  return (
+    <XanatharBackstoryProvider>
+      <XanatharBackstoryPageContent />
+    </XanatharBackstoryProvider>
+  );
+}
+
+function XanatharBackstoryPageContent() {
   const {
     selectedRace,
     selectedBackground,

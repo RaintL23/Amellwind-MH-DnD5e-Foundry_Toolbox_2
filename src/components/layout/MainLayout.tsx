@@ -6,7 +6,6 @@ import { BuilderInventoryProvider } from "@/features/builder/context/BuilderInve
 import { CharacterBuilderProvider } from "@/features/builder/context/CharacterBuilderContext";
 import { StartingEquipmentInventorySync } from "@/features/builder/components/StartingEquipmentInventorySync";
 import { InventoryCatalogSync } from "@/features/builder/components/InventoryCatalogSync";
-import { XanatharBackstoryProvider } from "@/features/xanathar-backstory/context/XanatharBackstoryContext";
 import { RuneBuildProvider } from "@/features/runes/context/RuneBuildContext";
 import { Sidebar } from "./Sidebar";
 
@@ -20,7 +19,6 @@ export function MainLayout({ syncing = false }: { syncing?: boolean }) {
         <CharacterBuilderProvider>
           <StartingEquipmentInventorySync />
           <InventoryCatalogSync />
-          <XanatharBackstoryProvider>
           <RuneBuildProvider>
             <div className="flex h-screen bg-background text-foreground">
               <Sidebar
@@ -55,8 +53,7 @@ export function MainLayout({ syncing = false }: { syncing?: boolean }) {
                 </main>
               </div>
             </div>
-          </RuneBuildProvider>
-          </XanatharBackstoryProvider>
+        </RuneBuildProvider>
         </CharacterBuilderProvider>
       </BuilderInventoryProvider>
     </CartProvider>

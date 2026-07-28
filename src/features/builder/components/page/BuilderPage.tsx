@@ -13,13 +13,16 @@ import { CharacterCreationTipsPanel } from "./CharacterCreationTipsPanel";
 import { HomebrewModeToggle } from "../shared/HomebrewModeToggle";
 import { BuildCompletenessProvider } from "../../context/BuildCompletenessContext";
 import { RpgbotRatingsProvider } from "../../context/RpgbotRatingsContext";
+import { XanatharBackstoryProvider } from "@/features/xanathar-backstory/context/XanatharBackstoryContext";
 import { BuilderGrantSync } from "../BuilderGrantSync";
 
 export function BuilderPage() {
   return (
     <BuildCompletenessProvider>
       <RpgbotRatingsProvider>
-        <BuilderPageContent />
+        <XanatharBackstoryProvider>
+          <BuilderPageContent />
+        </XanatharBackstoryProvider>
       </RpgbotRatingsProvider>
     </BuildCompletenessProvider>
   );
