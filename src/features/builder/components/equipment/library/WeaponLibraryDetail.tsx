@@ -55,7 +55,7 @@ interface WeaponLibraryDetailProps {
   sourceVariants?: SourceVariant[];
   activeSourceId?: string;
   onSourceChange?: (id: string) => void;
-  onModeChange?: (useSecondaryMode: boolean) => void;
+  onModeChange?: (modeIndex: number) => void;
 }
 
 function getRarityIndex(equipped: EquippedWeapon): number {
@@ -249,7 +249,7 @@ export function WeaponLibraryDetail({
   onModeChange,
 }: WeaponLibraryDetailProps) {
   const bookNames = useBookSourceNames();
-  const { weapon, useVersatile } = equipped;
+  const { weapon, activeModeIndex } = equipped;
   const isDndWeapon = weapon.contentSource === "dnd" || !showHomebrewDetails;
   const rarityIndex = useMemo(() => getRarityIndex(equipped), [equipped]);
 
@@ -310,7 +310,7 @@ export function WeaponLibraryDetail({
             {showModeToggle && (
               <WeaponModeToggle
                 weapon={weapon}
-                useSecondaryMode={useVersatile}
+                activeModeIndex={activeModeIndex}
                 onChange={onModeChange}
                 className="mb-3"
                 isModeDisabled={gripModeDisabled}
@@ -420,7 +420,7 @@ export function WeaponLibraryDetail({
           {showModeToggle && (
             <WeaponModeToggle
               weapon={weapon}
-              useSecondaryMode={useVersatile}
+              activeModeIndex={activeModeIndex}
               onChange={onModeChange}
               className="mb-3"
               isModeDisabled={gripModeDisabled}

@@ -170,6 +170,8 @@ export interface CharacterBuilderContextValue {
   equipWeapon: (slot: "mainHand" | "offHand", weapon: Weapon, rarity: string) => void;
   unequipWeapon: (slot: "mainHand" | "offHand") => void;
   setWeaponRarity: (slot: "mainHand" | "offHand", rarity: string) => void;
+  setWeaponMode: (slot: "mainHand" | "offHand", modeIndex: number) => void;
+  /** @deprecated Prefer {@link setWeaponMode} */
   setVersatileMode: (slot: "mainHand" | "offHand", twoHanded: boolean) => void;
   equipArmor: (armor: ArmorItem) => void;
   unequipArmor: () => void;

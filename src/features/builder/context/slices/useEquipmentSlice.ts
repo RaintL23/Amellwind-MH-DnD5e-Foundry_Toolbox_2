@@ -26,6 +26,9 @@ import {
   weaponIncludesShield,
 } from "@/features/weapons/utils/shield.utils";
 import {
+  getWeaponGripModeDefinition,
+} from "@/features/weapons/utils/weapon-mode.utils";
+import {
   blocksOffHand,
   canEquipInOffHand,
   getOffHandBlockReason,
@@ -109,17 +112,34 @@ export function useEquipmentSlice({
     });
   }, []);
 
-  const setVersatileMode = useCallback((slot: "mainHand" | "offHand", twoHanded: boolean) => {
-    const setter = slot === "mainHand" ? setMainHand : setOffHand;
-    setter((prev) => {
-      if (!prev) return prev;
-      return { ...prev, useVersatile: twoHanded };
-    });
-    if (slot === "mainHand" && twoHanded) {
-      setOffHand(null);
-      setEquippedShield(null);
-    }
-  }, []);
+  const setWeaponMode = useCallback(
+    (slot: "mainHand" | "offHand", modeIndex: number) => {
+      const current = slot === "mainHand" ? mainHand : offHand;
+      if (!current) return;
+
+      const mode = getWeaponGripModeDefinition(current.weapon)?.modes[modeIndex];
+      const setter = slot === "mainHand" ? setMainHand : setOffHand;
+      setter({ ...current, activeModeIndex: modeIndex });
+
+      if (
+        slot === "mainHand" &&
+        mode &&
+        (mode.isTwoHanded || mode.blocksOffHand)
+      ) {
+        setOffHand(null);
+        setEquippedShield(null);
+      }
+    },
+    [mainHand, offHand],
+  );
+
+  /** @deprecated Prefer {@link setWeaponMode} */
+  const setVersatileMode = useCallback(
+    (slot: "mainHand" | "offHand", twoHanded: boolean) => {
+      setWeaponMode(slot, twoHanded ? 1 : 0);
+    },
+    [setWeaponMode],
+  );
 
   const equipShield = useCallback(
     (shield: StandaloneShieldItem) => {
@@ -357,6 +377,7 @@ export function useEquipmentSlice({
     equipWeapon,
     unequipWeapon,
     setWeaponRarity,
+    setWeaponMode,
     setVersatileMode,
     equipArmor,
     unequipArmor,

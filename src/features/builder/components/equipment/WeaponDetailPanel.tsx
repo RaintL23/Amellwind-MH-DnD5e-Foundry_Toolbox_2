@@ -13,7 +13,7 @@ interface WeaponDetailPanelProps {
   gripContext: GripModeSlotContext;
   showHomebrewDetails?: boolean;
   onRarityChange: (rarity: string) => void;
-  onVersatileChange: (twoHanded: boolean) => void;
+  onModeChange: (modeIndex: number) => void;
 }
 
 export function WeaponDetailPanel({
@@ -21,9 +21,9 @@ export function WeaponDetailPanel({
   gripContext,
   showHomebrewDetails = true,
   onRarityChange,
-  onVersatileChange,
+  onModeChange,
 }: WeaponDetailPanelProps) {
-  const { weapon, useVersatile } = equipped;
+  const { weapon, activeModeIndex } = equipped;
   const showModeToggle = hasWeaponGripModes(weapon);
   const isDndWeapon =
     equipped.weapon.contentSource === "dnd" || !showHomebrewDetails;
@@ -39,8 +39,8 @@ export function WeaponDetailPanel({
       {showModeToggle && (
         <WeaponModeToggle
           weapon={weapon}
-          useSecondaryMode={useVersatile}
-          onChange={onVersatileChange}
+          activeModeIndex={activeModeIndex}
+          onChange={onModeChange}
           isModeDisabled={(mode) =>
             isGripModeBlockedByOccupiedHand(mode, gripContext)
           }

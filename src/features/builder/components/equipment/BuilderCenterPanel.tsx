@@ -74,7 +74,7 @@ export function BuilderCenterPanel() {
     standaloneShieldAcBonus,
     setWeaponRarity,
     setArmorRarity,
-    setVersatileMode,
+    setWeaponMode,
     setSpecies,
     setBackground,
     setClass,
@@ -524,8 +524,8 @@ export function BuilderCenterPanel() {
             gripContext={weaponGripContext!}
             showHomebrewDetails={useAmellwindHomebrew}
             onRarityChange={(r) => setWeaponRarity(selectedSlot, r)}
-            onVersatileChange={(twoHanded) =>
-              setVersatileMode(selectedSlot, twoHanded)
+            onModeChange={(modeIndex) =>
+              setWeaponMode(selectedSlot, modeIndex)
             }
           />
         )}

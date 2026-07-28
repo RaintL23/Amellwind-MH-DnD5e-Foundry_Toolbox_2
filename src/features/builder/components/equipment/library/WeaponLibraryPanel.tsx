@@ -74,7 +74,7 @@ export function WeaponLibraryPanel({
 
     equipWeapon,
 
-    setVersatileMode,
+    setWeaponMode,
 
     resolvedWeaponItems,
 
@@ -304,9 +304,9 @@ export function WeaponLibraryPanel({
         sourceVariants={!useAmellwindHomebrew ? dndSourceVariants : undefined}
         activeSourceId={equippedWeapon.weapon.id}
         onSourceChange={!useAmellwindHomebrew ? handleSourceChange : undefined}
-        onModeChange={(useSecondaryMode) => {
+        onModeChange={(modeIndex) => {
           if (selectedSlot === "mainHand" || selectedSlot === "offHand") {
-            setVersatileMode(selectedSlot, useSecondaryMode);
+            setWeaponMode(selectedSlot, modeIndex);
           }
         }}
       />

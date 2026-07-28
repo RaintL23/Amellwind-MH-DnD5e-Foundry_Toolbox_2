@@ -1,5 +1,8 @@
 import { EquippedWeapon, EquippedArmor, Rune, Weapon, ArmorItem } from "@/shared/types";
-import { hasWeaponSwitchModes } from "@/features/weapons/utils/weapon-mode.utils";
+import {
+  hasWeaponSwitchModes,
+  isVersatileGripWeapon,
+} from "@/features/weapons/utils/weapon-mode.utils";
 
 const RARITY_SLOT_MAP: Record<string, number> = {
   Common: 1,
@@ -27,12 +30,20 @@ export function makeWeaponSlot(weapon: Weapon, rarity: string): EquippedWeapon {
   const effectiveRarity = isDnd ? resolveDndEquippedRarity(weapon, rarity) : rarity;
   const runeSlots = isDnd ? 0 : getRuneSlotsForRarity(rarity);
   const isTwoHanded = weapon.properties.includes("2H");
+  // Switch modes start in primary stance; versatile/2H default to two-hand die when applicable.
+  const activeModeIndex = hasWeaponSwitchModes(weapon)
+    ? 0
+    : isVersatileGripWeapon(weapon)
+      ? 0
+      : isTwoHanded
+        ? 1
+        : 0;
   return {
     weapon,
     rarity: effectiveRarity,
     runeSlots,
     runes: new Array<Rune | null>(runeSlots).fill(null),
-    useVersatile: hasWeaponSwitchModes(weapon) ? false : isTwoHanded,
+    activeModeIndex,
   };
 }
 

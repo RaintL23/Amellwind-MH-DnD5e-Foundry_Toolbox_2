@@ -149,7 +149,14 @@ export function useFoundryImport() {
       ) => {
         if (!entry) return;
         builder.equipWeapon(slot, entry.weapon, entry.rarity);
-        if (entry.useVersatile) builder.setVersatileMode(slot, true);
+        const legacy = entry as EquippedWeapon & { useVersatile?: boolean };
+        const modeIndex =
+          typeof entry.activeModeIndex === "number"
+            ? entry.activeModeIndex
+            : legacy.useVersatile
+              ? 1
+              : 0;
+        if (modeIndex > 0) builder.setWeaponMode(slot, modeIndex);
         entry.runes.forEach((rune, index) => {
           if (rune) builder.assignWeaponRune(slot, index, rune);
         });

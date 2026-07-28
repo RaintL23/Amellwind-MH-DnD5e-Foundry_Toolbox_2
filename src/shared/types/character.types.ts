@@ -94,8 +94,11 @@ export interface EquippedWeapon {
   rarity: string;
   runeSlots: number;
   runes: (Rune | null)[];
-  /** Whether the weapon is wielded two-handed (for versatile weapons) */
-  useVersatile: boolean;
+  /**
+   * Active grip/switch mode index (0 = primary).
+   * For PHB Versatile, 0 = one-hand (`dmg1`), 1 = two-hand (`dmg2`).
+   */
+  activeModeIndex: number;
 }
 
 export interface EquippedArmor {

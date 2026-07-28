@@ -423,7 +423,7 @@ export function useFoundryExport() {
           rarity: weapon.itemRarityLabel ?? "",
           runeSlots: 0,
           runes: [],
-          useVersatile: false,
+          activeModeIndex: 0,
         },
         isEquipped: false,
       });
