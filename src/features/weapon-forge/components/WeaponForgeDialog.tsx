@@ -18,6 +18,8 @@ interface WeaponForgeDialogProps {
   weapon: CustomWeapon | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialRarityIndex?: number;
+  onRarityChange?: (index: number) => void;
   onEdit?: (weapon: CustomWeapon) => void;
   onExport?: (weapon: CustomWeapon) => void;
   onDelete?: (weapon: CustomWeapon) => void;
@@ -27,6 +29,8 @@ export function WeaponForgeDialog({
   weapon,
   open,
   onOpenChange,
+  initialRarityIndex = 0,
+  onRarityChange,
   onEdit,
   onExport,
   onDelete,
@@ -41,7 +45,7 @@ export function WeaponForgeDialog({
     baseFeatureNameKeys,
     handlePrev,
     handleNext,
-  } = useWeaponDialog(weapon, open);
+  } = useWeaponDialog(weapon, open, { initialRarityIndex, onRarityChange });
 
   const mergedFeaturesMap = useMemo(() => {
     if (!weapon) return featuresMap;

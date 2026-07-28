@@ -13,12 +13,16 @@ interface WeaponDialogProps {
   weapon: Weapon | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  initialRarityIndex?: number;
+  onRarityChange?: (index: number) => void;
 }
 
 export function WeaponDialog({
   weapon,
   open,
   onOpenChange,
+  initialRarityIndex = 0,
+  onRarityChange,
 }: WeaponDialogProps) {
   const {
     current,
@@ -30,7 +34,7 @@ export function WeaponDialog({
     baseFeatureNameKeys,
     handlePrev,
     handleNext,
-  } = useWeaponDialog(weapon, open);
+  } = useWeaponDialog(weapon, open, { initialRarityIndex, onRarityChange });
 
   if (!weapon) return null;
 

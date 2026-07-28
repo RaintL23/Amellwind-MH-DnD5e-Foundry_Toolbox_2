@@ -4,6 +4,8 @@ import { Weapon } from "@/shared/types";
 import { getAllWeapons } from "../services/weapon.service";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { useWeaponDialogUrlSync } from "../hooks/useWeaponDialogUrlSync";
+import { findWeaponByUrlKey } from "../utils/weapon-dialog-url.utils";
 import { WeaponCard } from "./WeaponCard";
 import { WeaponDialog } from "./WeaponDialog";
 import { WeaponListFilters } from "./WeaponListFilters";
@@ -12,6 +14,8 @@ import { Swords } from "lucide-react";
 
 export function WeaponList() {
   const { getString, setString, patchFields } = useListUrlState();
+  const { urlWeaponKey, syncOpen, syncClose, syncRarity, resolveRarityIndex } =
+    useWeaponDialogUrlSync();
   const [weapons, setWeapons] = useState<Weapon[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Weapon | null>(null);
@@ -34,6 +38,21 @@ export function WeaponList() {
       .finally(() => setLoading(false));
   }, []);
 
+  useEffect(() => {
+    if (!urlWeaponKey) {
+      setDialogOpen(false);
+      setSelected(null);
+      return;
+    }
+    if (loading) return;
+
+    const found = findWeaponByUrlKey(weapons, urlWeaponKey);
+    if (found) {
+      setSelected(found);
+      setDialogOpen(true);
+    }
+  }, [urlWeaponKey, weapons, loading]);
+
   const filtered = useMemo(() => {
     let result = weapons;
     if (appliedSearch.trim()) {
@@ -54,10 +73,32 @@ export function WeaponList() {
     return result;
   }, [weapons, appliedSearch, dmgFilter, propFilter, compatFilter]);
 
-  const handleSelect = useCallback((weapon: Weapon) => {
-    setSelected(weapon);
-    setDialogOpen(true);
-  }, []);
+  const handleSelect = useCallback(
+    (weapon: Weapon) => {
+      setSelected(weapon);
+      setDialogOpen(true);
+      syncOpen(weapon, 0);
+    },
+    [syncOpen],
+  );
+
+  const handleDialogOpenChange = useCallback(
+    (open: boolean) => {
+      setDialogOpen(open);
+      if (!open) {
+        setSelected(null);
+        syncClose();
+      }
+    },
+    [syncClose],
+  );
+
+  const handleRarityChange = useCallback(
+    (index: number) => {
+      if (selected) syncRarity(selected, index);
+    },
+    [selected, syncRarity],
+  );
 
   const clearFilters = useCallback(() => {
     commitSearch("");
@@ -127,7 +168,11 @@ export function WeaponList() {
       <WeaponDialog
         weapon={selected}
         open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        onOpenChange={handleDialogOpenChange}
+        initialRarityIndex={
+          selected ? resolveRarityIndex(selected.rarityRows) : 0
+        }
+        onRarityChange={handleRarityChange}
       />
     </div>
   );

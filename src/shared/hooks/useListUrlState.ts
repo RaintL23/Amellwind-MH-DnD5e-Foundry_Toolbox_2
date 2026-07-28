@@ -59,8 +59,8 @@ export function useListUrlState() {
       replaceParams((prev) => {
         const next = new URLSearchParams(prev);
         for (const [key, value] of Object.entries(fields)) {
-          if (value === undefined) continue;
           next.delete(key);
+          if (value === undefined) continue;
           if (Array.isArray(value)) {
             for (const item of value) {
               if (item) next.append(key, item);

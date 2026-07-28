@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Download,
@@ -13,6 +13,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useWeaponDialogUrlSync } from "@/features/weapons/hooks/useWeaponDialogUrlSync";
+import { findWeaponByUrlKey } from "@/features/weapons/utils/weapon-dialog-url.utils";
 import { useWeaponForge } from "../hooks/useWeaponForge";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { weaponToFormValues } from "../types/weapon-forge.types";
@@ -37,6 +39,9 @@ export function WeaponForgeList() {
     clearCompare,
     resolveCompareWeapons,
   } = useWeaponForge();
+
+  const { urlWeaponKey, syncOpen, syncClose, syncRarity, resolveRarityIndex } =
+    useWeaponDialogUrlSync();
 
   const [tab, setTab] = useState<"catalog" | "mine">("mine");
   const [search, setSearch] = useState("");
@@ -68,6 +73,27 @@ export function WeaponForgeList() {
     [userWeapons, filterList],
   );
 
+  const allDetailWeapons = useMemo(
+    () => [...curated, ...userWeapons],
+    [curated, userWeapons],
+  );
+
+  useEffect(() => {
+    if (!urlWeaponKey) {
+      setDetailOpen(false);
+      setSelected(null);
+      return;
+    }
+    if (loading) return;
+
+    const found = findWeaponByUrlKey(allDetailWeapons, urlWeaponKey);
+    if (found) {
+      setSelected(found);
+      setDetailOpen(true);
+      setTab(found.isCustom ? "mine" : "catalog");
+    }
+  }, [urlWeaponKey, allDetailWeapons, loading]);
+
   function openCreate() {
     navigate("/weapon-forge/new");
   }
@@ -83,7 +109,26 @@ export function WeaponForgeList() {
     }
     setSelected(weapon);
     setDetailOpen(true);
+    syncOpen(weapon, 0);
   }
+
+  const handleDetailOpenChange = useCallback(
+    (open: boolean) => {
+      setDetailOpen(open);
+      if (!open) {
+        setSelected(null);
+        syncClose();
+      }
+    },
+    [syncClose],
+  );
+
+  const handleRarityChange = useCallback(
+    (index: number) => {
+      if (selected) syncRarity(selected, index);
+    },
+    [selected, syncRarity],
+  );
 
   function handleDelete(weapon: CustomWeapon) {
     if (!window.confirm(`Delete "${weapon.name}"? This cannot be undone.`)) {
@@ -91,8 +136,7 @@ export function WeaponForgeList() {
     }
     removeWeapon(weapon.id);
     if (selected?.id === weapon.id) {
-      setDetailOpen(false);
-      setSelected(null);
+      handleDetailOpenChange(false);
     }
   }
 
@@ -337,7 +381,11 @@ export function WeaponForgeList() {
       <WeaponForgeDialog
         weapon={selected}
         open={detailOpen}
-        onOpenChange={setDetailOpen}
+        onOpenChange={handleDetailOpenChange}
+        initialRarityIndex={
+          selected ? resolveRarityIndex(selected.rarityRows) : 0
+        }
+        onRarityChange={handleRarityChange}
         onEdit={openEdit}
         onExport={exportOne}
         onDelete={handleDelete}
