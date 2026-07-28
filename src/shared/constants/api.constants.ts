@@ -8,7 +8,10 @@ export const GUIDE_TO_MONSTER_HUNTING_URL =
 export const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const DB_NAME = "mh-dnd5e-toolbox";
-export const DB_VERSION = 1;
+// v2: añade el store aditivo `fivetools_cache` (persistencia del compendio 5etools).
+// El upgrade solo crea stores ausentes, por lo que los datos mm_*/gtmh_* previos
+// se conservan intactos al migrar de v1 → v2.
+export const DB_VERSION = 2;
 
 export const STORES = {
   MM_CURRENT: "mm_current",
@@ -17,6 +20,8 @@ export const STORES = {
   GTMH_CURRENT: "gtmh_current",
   GTMH_PREVIOUS: "gtmh_previous",
   GTMH_META: "gtmh_meta",
+  /** Read-through cache (con TTL) del compendio 5etools para arranque offline. */
+  FIVETOOLS_CACHE: "fivetools_cache",
 } as const;
 
 export const FIVETOOLS_DATA_BASE_URL =

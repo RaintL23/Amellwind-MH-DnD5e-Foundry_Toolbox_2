@@ -8,6 +8,7 @@ interface ToolboxDBSchema extends DBSchema {
   gtmh_current: { key: string; value: unknown };
   gtmh_previous: { key: string; value: unknown };
   gtmh_meta: { key: string; value: unknown };
+  fivetools_cache: { key: string; value: unknown };
 }
 
 let dbPromise: Promise<IDBPDatabase<ToolboxDBSchema>> | null = null;
