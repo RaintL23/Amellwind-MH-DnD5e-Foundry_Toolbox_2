@@ -1,0 +1,12 @@
+# Only index application source. Root docs can be added explicitly:
+#   graphify extract ./src ./AGENTS.md ./instrucctions.md ./README.md
+# .gitignore is also respected (public/5etools, backup_jsons, dist, etc.).
+
+*
+!src/
+!src/**
+
+# Project docs (opt-in when not using --code-only)
+!AGENTS.md
+!instrucctions.md
+!README.md

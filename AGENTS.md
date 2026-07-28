@@ -9,8 +9,30 @@ Guía operativa para agentes de IA que trabajan en **Amellwind MH DnD5e Toolbox*
 | `README.md` | Visión de producto, rutas/features, deploy en Vercel, fuentes de datos. |
 | `instrucctions.md` | **Fuente de verdad técnica** (91 KB): arquitectura de datos, entidades de dominio, mapeos 5etools → Foundry, reglas de negocio y convenciones. Búscalo con `grep` por encabezado, no lo leas entero. |
 | Este `AGENTS.md` | Comandos, convenciones de trabajo y mapa de zonas complejas. |
+| `graphify-out/` | Grafo de código (AST) para orientación estructural. Complementa, no sustituye, `instrucctions.md`. |
 
 > Antes de implementar algo no trivial, haz `grep` por su sección en `instrucctions.md` (encabezados `##`/`###`). Casi todo el dominio ya está documentado ahí.
+
+## Graphify (mapa estructural del código)
+
+Knowledge graph local generado con [Graphify](https://github.com/Graphify-Labs/graphify). Indexa solo `src/` (ver `.graphifyignore`). No es dependencia de la app.
+
+```bash
+# Rebuild (AST only, no API key)
+graphify extract . --code-only
+# Optional HTML viz
+graphify cluster-only . --no-label
+
+# Queries útiles
+graphify query "what connects foundry export to character builder?"
+graphify path "parse-foundry-actor" "createEntityService"
+graphify explain "CharacterBuilderContext"
+```
+
+- Skill versionada: `.agents/skills/graphify/`
+- Regla Cursor local: `.cursor/rules/graphify.mdc` (carpeta `.cursor/` está en `.gitignore`)
+- `graphify-out/` está en `.gitignore` (regenerable; no hace falta API key con `--code-only`)
+- Dominio Amellwind / 5etools / Foundry schema → sigue siendo `instrucctions.md`
 
 ## Stack y datos en una línea
 

@@ -89,3 +89,7 @@ $RECYCLE.BIN/
 *.tmp
 ~$*
 *.conflict*
+
+# ── Graphify (knowledge graph for AI assistants) ─────────────
+# Regenerable in ~25s with: graphify extract . --code-only && graphify cluster-only . --no-label
+graphify-out/
