@@ -17,14 +17,18 @@ import {
   createFeatureDef,
 } from "../types/weapon-forge.types";
 import {
+  addFeatureNameToRow,
   collectAssignedUpgradeCandidates,
   collectPriorFeatureOptions,
   findFeatureDef,
   findFeatureDefById,
   findFeatureMinRarityIndex,
-  getFeaturesColumnNames,
+  getAllAssignedFeatureNames,
+  getAssignedFeaturesForRow,
   getTypedBonusValue,
-  setFeaturesColumnNames,
+  reassignFeatureColumnInRows,
+  removeFeatureNameFromRow,
+  renameFeatureInRow,
   setTypedBonusValue,
   suggestUpgradeName,
 } from "../utils/weapon-forge-features.utils";
@@ -78,7 +82,7 @@ const RarityRowItem = memo(function RarityRowItem({
   onAddUpgrade,
   onSetUpgradePickForIndex,
 }: RarityRowItemProps) {
-  const featureNames = getFeaturesColumnNames(row);
+  const assigned = getAssignedFeaturesForRow(row);
   const rarityStyle = RARITY_STYLES[row.rarity] ?? RARITY_STYLES.Common;
   const rarityOptions = [
     ...(!isRarityTier(row.rarity) ? [row.rarity] : []),
@@ -125,7 +129,7 @@ const RarityRowItem = memo(function RarityRowItem({
           />
         </div>
         <div className="space-y-1 w-[88px]">
-          <Label className="text-xs text-muted-foreground">To hit</Label>
+          <Label className="text-xs text-muted-foreground">To Hit</Label>
           <Input
             value={getTypedBonusValue(row, "toHit")}
             onChange={(e) =>
@@ -179,7 +183,7 @@ const RarityRowItem = memo(function RarityRowItem({
       <div className="space-y-2">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <Label className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-            Features ({featureNames.length})
+            Features ({assigned.length})
           </Label>
           <div className="flex flex-wrap gap-1.5">
             <Button
@@ -223,25 +227,37 @@ const RarityRowItem = memo(function RarityRowItem({
                     Cancel
                   </Button>
                 </div>
-              ) : null)}
+              ) : (
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-7"
+                  onClick={() => onSetUpgradePickForIndex(index)}
+                >
+                  Upgrade
+                </Button>
+              ))}
           </div>
         </div>
 
-        {featureNames.length === 0 ? (
+        {assigned.length === 0 ? (
           <p className="text-xs text-muted-foreground italic py-1">
             No features at this rarity yet.
           </p>
         ) : (
           <ul className="space-y-2">
-            {featureNames.map((name) => {
-              const def = findFeatureDef(customFeatures, name);
+            {assigned.map((ref) => {
+              const def = findFeatureDef(customFeatures, ref.name);
+              const resourceColumn =
+                def?.resourceColumn ?? ref.resourceColumn;
               const descPreview = def?.description?.trim();
               const upgradeSource = def?.upgradesFromId
                 ? findFeatureDefById(customFeatures, def.upgradesFromId)
                 : undefined;
               return (
                 <li
-                  key={name}
+                  key={ref.name}
                   className={cn(
                     "rounded-md border px-2.5 py-2 bg-gradient-to-br",
                     rarityStyle.border,
@@ -250,14 +266,21 @@ const RarityRowItem = memo(function RarityRowItem({
                 >
                   <div className="flex items-start gap-2">
                     <div className="min-w-0 flex-1">
-                      <p
-                        className={cn(
-                          "text-sm font-medium truncate",
-                          rarityStyle.text,
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <p
+                          className={cn(
+                            "text-sm font-medium truncate",
+                            rarityStyle.text,
+                          )}
+                        >
+                          {ref.name}
+                        </p>
+                        {resourceColumn && (
+                          <span className="text-[10px] font-semibold uppercase tracking-wide rounded px-1.5 py-0.5 bg-muted text-muted-foreground">
+                            {resourceColumn}
+                          </span>
                         )}
-                      >
-                        {name}
-                      </p>
+                      </div>
                       {upgradeSource && (
                         <p className="text-[11px] text-muted-foreground mt-0.5">
                           Upgrades: {upgradeSource.name}
@@ -283,8 +306,9 @@ const RarityRowItem = memo(function RarityRowItem({
                           onOpenEditFeature(
                             def ??
                               createFeatureDef({
-                                name,
+                                name: ref.name,
                                 description: "",
+                                resourceColumn,
                               }),
                           )
                         }
@@ -297,7 +321,9 @@ const RarityRowItem = memo(function RarityRowItem({
                         variant="ghost"
                         size="icon"
                         className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                        onClick={() => onRemoveFeatureFromRarity(index, name)}
+                        onClick={() =>
+                          onRemoveFeatureFromRarity(index, ref.name)
+                        }
                         title="Remove from this rarity"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
@@ -332,7 +358,6 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
     null,
   );
 
-  // Refs so stable callbacks can always read the latest values.
   const rowsRef = useRef(rows);
   rowsRef.current = rows;
   const customFeaturesRef = useRef(customFeatures);
@@ -341,8 +366,6 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
   editingFeatureRef.current = editingFeature;
   const editTargetRarityIndexRef = useRef(editTargetRarityIndex);
   editTargetRarityIndexRef.current = editTargetRarityIndex;
-
-  // ── stable callbacks (deps only on the stable onChangeRows/onChangeFeatures) ──
 
   const updateRow = useCallback(
     (index: number, nextRow: WeaponRarityRow) => {
@@ -354,26 +377,36 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
   );
 
   const upsertFeatureDef = useCallback(
-    (feature: WeaponForgeFeatureDef) => {
+    (feature: WeaponForgeFeatureDef, previous?: WeaponForgeFeatureDef) => {
       const features = customFeaturesRef.current;
       const existingIdx = features.findIndex((f) => f.id === feature.id);
-      if (existingIdx >= 0) {
-        const prev = features[existingIdx];
-        const renamed = prev.name !== feature.name;
-        const nextFeatures = features.map((f, i) =>
-          i === existingIdx ? feature : f,
-        );
-        if (renamed) {
-          onChangeRows(
-            rowsRef.current.map((row) => {
-              const names = getFeaturesColumnNames(row).map((n) =>
-                n.toLowerCase() === prev.name.toLowerCase() ? feature.name : n,
-              );
-              return setFeaturesColumnNames(row, names);
-            }),
+
+      let nextRows = rowsRef.current;
+      if (previous) {
+        if (previous.name !== feature.name) {
+          nextRows = nextRows.map((row) =>
+            renameFeatureInRow(row, previous.name, feature.name),
           );
         }
-        onChangeFeatures(nextFeatures);
+        const prevCol = previous.resourceColumn || undefined;
+        const nextCol = feature.resourceColumn || undefined;
+        if (prevCol !== nextCol) {
+          nextRows = reassignFeatureColumnInRows(
+            nextRows,
+            feature.name,
+            prevCol,
+            nextCol,
+          );
+        }
+        if (nextRows !== rowsRef.current) {
+          onChangeRows(nextRows);
+        }
+      }
+
+      if (existingIdx >= 0) {
+        onChangeFeatures(
+          features.map((f, i) => (i === existingIdx ? feature : f)),
+        );
         return;
       }
       onChangeFeatures([...features, feature]);
@@ -394,26 +427,17 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
   }, []);
 
   const handleSaveFeature = useCallback(
-    (feature: WeaponForgeFeatureDef) => {
-      upsertFeatureDef(feature);
+    (feature: WeaponForgeFeatureDef, previous?: WeaponForgeFeatureDef) => {
+      upsertFeatureDef(feature, previous);
       const targetIndex = editTargetRarityIndexRef.current;
       if (targetIndex != null) {
-        const row = rowsRef.current[targetIndex];
-        const names = getFeaturesColumnNames(row);
-        if (
-          !names.some((n) => n.toLowerCase() === feature.name.toLowerCase())
-        ) {
-          onChangeRows(
-            rowsRef.current.map((r, i) =>
-              i === targetIndex
-                ? setFeaturesColumnNames(r, [
-                    ...getFeaturesColumnNames(r),
-                    feature.name,
-                  ])
-                : r,
-            ),
-          );
-        }
+        onChangeRows(
+          rowsRef.current.map((r, i) =>
+            i === targetIndex
+              ? addFeatureNameToRow(r, feature.name, feature.resourceColumn)
+              : r,
+          ),
+        );
       }
     },
     [upsertFeatureDef, onChangeRows],
@@ -421,13 +445,9 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
 
   const removeFeatureFromRarity = useCallback(
     (rarityIndex: number, featureName: string) => {
-      const row = rowsRef.current[rarityIndex];
-      const names = getFeaturesColumnNames(row).filter(
-        (n) => n.toLowerCase() !== featureName.toLowerCase(),
-      );
       onChangeRows(
         rowsRef.current.map((r, i) =>
-          i === rarityIndex ? setFeaturesColumnNames(r, names) : r,
+          i === rarityIndex ? removeFeatureNameFromRow(r, featureName) : r,
         ),
       );
     },
@@ -443,10 +463,10 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
         findFeatureDef(features, sourceFeatureId);
       if (!sourceDef) return;
 
-      const allNames = features.map((f) => f.name);
-      for (const row of currentRows) {
-        allNames.push(...getFeaturesColumnNames(row));
-      }
+      const allNames = [
+        ...features.map((f) => f.name),
+        ...getAllAssignedFeatureNames(currentRows),
+      ];
       const upgradeName = suggestUpgradeName(sourceDef.name, allNames);
       const feature = createFeatureDef({
         name: upgradeName,
@@ -454,16 +474,14 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
           ? `Upgrades ${sourceDef.name}.\n\n${sourceDef.description}`
           : `Upgrades ${sourceDef.name}.`,
         upgradesFromId: sourceDef.id,
+        resourceColumn: sourceDef.resourceColumn,
       });
 
       onChangeFeatures([...features, feature]);
       onChangeRows(
         currentRows.map((r, i) =>
           i === rarityIndex
-            ? setFeaturesColumnNames(r, [
-                ...getFeaturesColumnNames(r),
-                feature.name,
-              ])
+            ? addFeatureNameToRow(r, feature.name, feature.resourceColumn)
             : r,
         ),
       );
@@ -500,7 +518,6 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
     [onChangeRows],
   );
 
-  // priorOptions per row (memoized to avoid recomputing on unrelated state changes)
   const priorOptionsPerRow = useMemo(
     () =>
       rows.map((_, index) =>
@@ -536,7 +553,8 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
           <Label className="text-sm font-medium">Rarity progression</Label>
           <p className="text-xs text-muted-foreground mt-0.5">
             Edit each rarity&apos;s slots, bonuses (to hit / AC / damage), and
-            features. Upgrades link to a source feature by ID, not by name.
+            features. Mark a feature as a weapon resource to place it under
+            Phials, Coatings, Ammo, or Notes.
           </p>
         </div>
         <Button
@@ -602,22 +620,7 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
               }
             : feature;
 
-          if (previousName && previousName !== saved.name) {
-            onChangeRows(
-              rowsRef.current.map((row) =>
-                setFeaturesColumnNames(
-                  row,
-                  getFeaturesColumnNames(row).map((n) =>
-                    n.toLowerCase() === previousName.toLowerCase()
-                      ? saved.name
-                      : n,
-                  ),
-                ),
-              ),
-            );
-          }
-
-          handleSaveFeature(saved);
+          handleSaveFeature(saved, existing);
         }}
       />
     </div>

@@ -97,12 +97,30 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
     .map((s) => s.trim())
     .filter(Boolean);
 
+  const isVersatile = values.properties.includes("V");
+  const modes =
+    !isVersatile && values.modes.length >= 2
+      ? values.modes.map((m) => ({
+          label: m.label.trim() || "Mode",
+          damage: m.damage.trim() || "1d8",
+          hasShield: m.hasShield === true,
+          isTwoHanded: m.isTwoHanded === true,
+          blocksOffHand: m.blocksOffHand === true,
+        }))
+      : undefined;
+
+  const dmg1 = modes?.[0]?.damage ?? values.dmg1.trim();
+  const dmg2 = modes
+    ? modes[1]?.damage
+    : values.dmg2.trim() || undefined;
+
   return {
     name: values.name.trim() || "Untitled Weapon",
     source: "RAINTDM",
     contentSource: "amellwind",
-    dmg1: values.dmg1.trim(),
-    dmg2: values.dmg2.trim() || undefined,
+    dmg1,
+    dmg2,
+    modes,
     dmgType: values.dmgType,
     properties: [...values.properties],
     weight: Number.isFinite(values.weight) ? values.weight : 0,
@@ -188,18 +206,30 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
   if (weapon.isFocus) raw.focus = true;
   if (weapon.page != null) raw.page = weapon.page;
 
+  const raintdmPayload: Record<string, unknown> = {};
+  if (custom.author?.trim()) {
+    raintdmPayload.author = custom.author.trim();
+  }
   if (custom.customFeatures && custom.customFeatures.length > 0) {
-    raw._raintdm = {
-      author: custom.author?.trim() || "RaintDM",
-      customFeatures: custom.customFeatures.map((f) => ({
-        id: f.id,
-        name: f.name,
-        description: f.description,
-        upgradesFromId: f.upgradesFromId,
-      })),
-    };
-  } else if (custom.author?.trim()) {
-    raw._raintdm = { author: custom.author.trim() };
+    raintdmPayload.customFeatures = custom.customFeatures.map((f) => ({
+      id: f.id,
+      name: f.name,
+      description: f.description,
+      upgradesFromId: f.upgradesFromId,
+      resourceColumn: f.resourceColumn,
+    }));
+  }
+  if (weapon.modes && weapon.modes.length >= 2) {
+    raintdmPayload.modes = weapon.modes.map((m) => ({
+      label: m.label,
+      damage: m.damage,
+      hasShield: m.hasShield === true ? true : undefined,
+      isTwoHanded: m.isTwoHanded === true ? true : undefined,
+      blocksOffHand: m.blocksOffHand === true ? true : undefined,
+    }));
+  }
+  if (Object.keys(raintdmPayload).length > 0) {
+    raw._raintdm = raintdmPayload;
   }
 
   return raw;
@@ -250,6 +280,10 @@ function parseCustomFeatures(raw: unknown): WeaponForgeFeatureDef[] | undefined 
         description: String(f.description ?? ""),
         upgradesFromId:
           typeof f.upgradesFromId === "string" ? f.upgradesFromId : undefined,
+        resourceColumn:
+          typeof f.resourceColumn === "string" && f.resourceColumn.trim()
+            ? f.resourceColumn.trim()
+            : undefined,
       }),
     )
     .filter((f) => f.name.trim());
@@ -264,6 +298,29 @@ function parseAuthor(raw: Record<string, unknown>): string | undefined {
     return raintdm.author.trim();
   }
   return undefined;
+}
+
+function parseModes(raw: unknown): import("@/shared/types").WeaponModeDef[] | undefined {
+  if (!Array.isArray(raw) || raw.length < 2) return undefined;
+  const modes = raw
+    .filter(isRecord)
+    .map((m) => ({
+      label: String(m.label ?? "").trim() || "Mode",
+      damage: String(m.damage ?? "").trim() || "1d8",
+      hasShield: m.hasShield === true,
+      isTwoHanded: m.isTwoHanded === true,
+      blocksOffHand: m.blocksOffHand === true,
+    }));
+  return modes.length >= 2 ? modes : undefined;
+}
+
+function parseModesFromRecord(
+  raw: Record<string, unknown>,
+): import("@/shared/types").WeaponModeDef[] | undefined {
+  const fromTop = parseModes(raw.modes);
+  if (fromTop) return fromTop;
+  const raintdm = isRecord(raw._raintdm) ? raw._raintdm : undefined;
+  return parseModes(raintdm?.modes);
 }
 
 function parseDomainWeapon(
@@ -294,6 +351,7 @@ function parseDomainWeapon(
       source: String(weapon.source ?? "RAINTDM"),
       weight: typeof weapon.weight === "number" ? weapon.weight : 0,
       valueCp: typeof weapon.valueCp === "number" ? weapon.valueCp : 0,
+      modes: parseModesFromRecord(raw) ?? weapon.modes,
     },
     {
       id: typeof raw.id === "string" ? raw.id : undefined,
@@ -318,11 +376,18 @@ function parseSingleEntry(entry: unknown, isCustom: boolean): CustomWeapon {
     const record = entry as Record<string, unknown>;
     const raintdm = isRecord(record._raintdm) ? record._raintdm : undefined;
     const customFeatures = parseCustomFeatures(raintdm?.customFeatures);
-    return toCustomWeapon(mapped, {
-      isCustom,
-      author: parseAuthor(record),
-      customFeatures,
-    });
+    const modes = parseModesFromRecord(record);
+    return toCustomWeapon(
+      {
+        ...mapped,
+        modes: modes ?? mapped.modes,
+      },
+      {
+        isCustom,
+        author: parseAuthor(record),
+        customFeatures,
+      },
+    );
   }
   throw new Error("Unrecognized weapon JSON shape");
 }

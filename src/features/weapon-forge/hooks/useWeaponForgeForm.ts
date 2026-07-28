@@ -16,7 +16,7 @@ import {
   mergeCopiedRarities,
   toCustomWeapon,
 } from "../mappers/weapon-forge.mapper";
-import { getFeaturesColumnNames } from "../utils/weapon-forge-features.utils";
+import { getAssignedFeaturesForRow } from "../utils/weapon-forge-features.utils";
 import {
   getUserWeapons,
   saveUserWeapon,
@@ -81,6 +81,10 @@ export function useWeaponForgeForm() {
     setValues((prev) => ({ ...prev, [key]: value }));
   }, []);
 
+  const patchMany = useCallback((partial: Partial<WeaponForgeFormValues>) => {
+    setValues((prev) => ({ ...prev, ...partial }));
+  }, []);
+
   const handleChangeRows = useCallback(
     (rows: WeaponForgeFormValues["rarityRows"]) => patch("rarityRows", rows),
     [patch],
@@ -106,15 +110,16 @@ export function useWeaponForgeForm() {
         const seen = new Set<string>();
 
         for (const row of baseValues.rarityRows) {
-          for (const name of getFeaturesColumnNames(row)) {
-            const key = name.toLowerCase();
+          for (const ref of getAssignedFeaturesForRow(row)) {
+            const key = ref.name.toLowerCase();
             if (seen.has(key)) continue;
             seen.add(key);
             const opt = map.get(key);
             defs.push(
               createFeatureDef({
-                name,
+                name: ref.name,
                 description: opt?.paragraphs.join("\n\n") ?? "",
+                resourceColumn: ref.resourceColumn,
               }),
             );
           }
@@ -170,6 +175,7 @@ export function useWeaponForgeForm() {
     loading,
     notFound,
     patch,
+    patchMany,
     handleChangeRows,
     handleChangeFeatures,
     applyBase,

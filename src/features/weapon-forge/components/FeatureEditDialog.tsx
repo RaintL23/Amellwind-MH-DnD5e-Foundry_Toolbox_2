@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Dialog,
   DialogBody,
@@ -12,8 +13,13 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import type { WeaponForgeFeatureDef } from "../types/weapon-forge.types";
-import { createFeatureDef } from "../types/weapon-forge.types";
+import {
+  RESOURCE_COLUMN_PRESETS,
+  createFeatureDef,
+} from "../types/weapon-forge.types";
 import { findFeatureDefById } from "../utils/weapon-forge-features.utils";
+
+const CUSTOM_COLUMN_VALUE = "__custom__";
 
 interface FeatureEditDialogProps {
   open: boolean;
@@ -36,25 +42,61 @@ export function FeatureEditDialog({
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [upgradesFromId, setUpgradesFromId] = useState("");
+  const [isWeaponResource, setIsWeaponResource] = useState(false);
+  const [resourcePreset, setResourcePreset] = useState<string>(
+    RESOURCE_COLUMN_PRESETS[0],
+  );
+  const [customResourceColumn, setCustomResourceColumn] = useState("");
 
   useEffect(() => {
     if (!open) return;
     setName(initial?.name ?? "");
     setDescription(initial?.description ?? "");
     setUpgradesFromId(initial?.upgradesFromId ?? "");
+
+    const column = initial?.resourceColumn?.trim() ?? "";
+    if (column) {
+      setIsWeaponResource(true);
+      const isPreset = (RESOURCE_COLUMN_PRESETS as readonly string[]).includes(
+        column,
+      );
+      if (isPreset) {
+        setResourcePreset(column);
+        setCustomResourceColumn("");
+      } else {
+        setResourcePreset(CUSTOM_COLUMN_VALUE);
+        setCustomResourceColumn(column);
+      }
+    } else {
+      setIsWeaponResource(false);
+      setResourcePreset(RESOURCE_COLUMN_PRESETS[0]);
+      setCustomResourceColumn("");
+    }
   }, [open, initial]);
 
   const candidates = upgradeCandidates.filter((f) => f.id !== initial?.id);
 
+  function resolveResourceColumn(): string | undefined {
+    if (!isWeaponResource) return undefined;
+    if (resourcePreset === CUSTOM_COLUMN_VALUE) {
+      return customResourceColumn.trim() || undefined;
+    }
+    return resourcePreset.trim() || undefined;
+  }
+
   function handleSave() {
     const trimmed = name.trim();
     if (!trimmed) return;
+    const resourceColumn = resolveResourceColumn();
+    if (isWeaponResource && !resourceColumn) return;
+
     onSave(
       createFeatureDef({
         id: initial?.id,
         name: trimmed,
         description: description.trim(),
         upgradesFromId: upgradesFromId || undefined,
+        resourceColumn,
       }),
     );
     onOpenChange(false);
@@ -63,6 +105,12 @@ export function FeatureEditDialog({
   const selectedSource = upgradesFromId
     ? findFeatureDefById(upgradeCandidates, upgradesFromId)
     : undefined;
+
+  const resourceColumnValid =
+    !isWeaponResource ||
+    (resourcePreset === CUSTOM_COLUMN_VALUE
+      ? customResourceColumn.trim().length > 0
+      : true);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -112,6 +160,52 @@ export function FeatureEditDialog({
               </div>
             )}
 
+            <div className="space-y-2 rounded-md border border-border/70 p-3">
+              <label className="flex items-start gap-2 cursor-pointer">
+                <Checkbox
+                  checked={isWeaponResource}
+                  onCheckedChange={(checked) =>
+                    setIsWeaponResource(checked === true)
+                  }
+                  className="mt-0.5"
+                />
+                <span>
+                  <span className="text-sm font-medium">Weapon resource</span>
+                  <span className="block text-xs text-muted-foreground mt-0.5">
+                    Unlock under Phials, Coatings, Ammo, Notes, or a custom
+                    column instead of Features.
+                  </span>
+                </span>
+              </label>
+
+              {isWeaponResource && (
+                <div className="space-y-2 pl-6">
+                  <Label htmlFor="feat-resource-type">Resource type</Label>
+                  <Select
+                    id="feat-resource-type"
+                    value={resourcePreset}
+                    onChange={(e) => setResourcePreset(e.target.value)}
+                    className="h-9"
+                  >
+                    {RESOURCE_COLUMN_PRESETS.map((preset) => (
+                      <option key={preset} value={preset}>
+                        {preset}
+                      </option>
+                    ))}
+                    <option value={CUSTOM_COLUMN_VALUE}>Custom…</option>
+                  </Select>
+                  {resourcePreset === CUSTOM_COLUMN_VALUE && (
+                    <Input
+                      value={customResourceColumn}
+                      onChange={(e) => setCustomResourceColumn(e.target.value)}
+                      placeholder="e.g. Available"
+                      className="h-9"
+                    />
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="space-y-1.5">
               <Label htmlFor="feat-desc">Description</Label>
               <Textarea
@@ -130,7 +224,11 @@ export function FeatureEditDialog({
               >
                 Cancel
               </Button>
-              <Button type="button" onClick={handleSave} disabled={!name.trim()}>
+              <Button
+                type="button"
+                onClick={handleSave}
+                disabled={!name.trim() || !resourceColumnValid}
+              >
                 Save feature
               </Button>
             </div>

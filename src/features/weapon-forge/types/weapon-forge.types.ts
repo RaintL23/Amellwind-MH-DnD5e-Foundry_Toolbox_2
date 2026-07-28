@@ -2,7 +2,9 @@ import {
   Weapon,
   WeaponRarityRow,
   RARITY_ORDER,
+  type WeaponModeDef,
 } from "@/shared/types";
+import { resolveWeaponModeDefs, createDefaultForgeModes } from "@/features/weapons/utils/weapon-mode.utils";
 
 /** Rarity-table bonus column labels (replaces legacy single "Bonus"). */
 export const BONUS_COLUMN_KEYS = {
@@ -70,6 +72,11 @@ export interface WeaponForgeFeatureDef {
   description: string;
   /** Feature this one upgrades, if any. */
   upgradesFromId?: string;
+  /**
+   * When set, this unlock is a weapon resource under that rarity-table column
+   * (Phials, Coatings, Ammo, Notes, …) instead of Features.
+   */
+  resourceColumn?: string;
 }
 
 export interface CustomWeapon extends Weapon {
@@ -100,6 +107,8 @@ export interface WeaponForgeFormValues {
   author: string;
   dmg1: string;
   dmg2: string;
+  /** Switch/stance modes (not Versatile). Empty when using Versatile (V) only. */
+  modes: WeaponModeDef[];
   dmgType: string;
   properties: string[];
   weight: number;
@@ -112,8 +121,6 @@ export interface WeaponForgeFormValues {
   baseFeatureNames: string;
   rarityRows: WeaponRarityRow[];
   customFeatures: WeaponForgeFeatureDef[];
-  /** Resource column labels enabled for this weapon (Phials, Coatings, etc.). */
-  resourceColumns: string[];
 }
 
 export function emptyRarityRows(): WeaponRarityRow[] {
@@ -133,6 +140,7 @@ export function emptyFormValues(): WeaponForgeFormValues {
     author: "RaintDM",
     dmg1: "1d8",
     dmg2: "",
+    modes: [],
     dmgType: "S",
     properties: [],
     weight: 0,
@@ -145,7 +153,6 @@ export function emptyFormValues(): WeaponForgeFormValues {
     baseFeatureNames: "",
     rarityRows: emptyRarityRows(),
     customFeatures: [],
-    resourceColumns: [],
   };
 }
 
@@ -156,33 +163,92 @@ function newFeatureId(): string {
   return `feat-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
-/** Build feature defs from rarity rows when importing weapons that lack customFeatures. */
+function columnNamesFromValue(val: string | string[] | undefined): string[] {
+  if (Array.isArray(val)) {
+    return val.map(String).filter((n) => n && n !== "--" && n !== "-");
+  }
+  if (typeof val === "string" && val.trim() && val !== "--") {
+    return val
+      .split(/,\s*/)
+      .map((n) => n.trim())
+      .filter(Boolean);
+  }
+  return [];
+}
+
+/**
+ * Build feature defs from rarity rows when importing weapons that lack
+ * customFeatures. Also backfills `resourceColumn` when a name only appears
+ * under a resource column (Phials, Coatings, …).
+ */
 export function featureDefsFromRarityRows(
   rows: WeaponRarityRow[],
   existing: WeaponForgeFeatureDef[] = [],
 ): WeaponForgeFeatureDef[] {
-  const byName = new Map(
-    existing.map((f) => [f.name.toLowerCase(), f] as const),
+  const byName = new Map<string, WeaponForgeFeatureDef>(
+    existing.map((f) => [f.name.toLowerCase(), { ...f }]),
   );
 
-  for (const row of rows) {
-    const featuresVal = row.columns.Features ?? row.columns.features;
-    const names = Array.isArray(featuresVal)
-      ? featuresVal
-      : typeof featuresVal === "string" && featuresVal.trim()
-        ? [featuresVal]
-        : [];
+  /** nameLower → first resource column label seen (if any). */
+  const resourceColumnByName = new Map<string, string>();
+  const combatNames = new Set<string>();
 
-    for (const name of names) {
-      const trimmed = name.trim();
-      if (!trimmed || trimmed === "--" || trimmed === "-") continue;
-      const key = trimmed.toLowerCase();
-      if (byName.has(key)) continue;
-      byName.set(key, {
-        id: newFeatureId(),
-        name: trimmed,
-        description: "",
-      });
+  for (const row of rows) {
+    for (const [label, val] of Object.entries(row.columns)) {
+      const names = columnNamesFromValue(val);
+      if (names.length === 0) continue;
+
+      if (isResourceColumnLabel(label)) {
+        for (const name of names) {
+          const key = name.toLowerCase();
+          if (!resourceColumnByName.has(key)) {
+            resourceColumnByName.set(key, label);
+          }
+        }
+        continue;
+      }
+
+      if (isPrimaryFeaturesColumn(label) || label.toLowerCase() === "features") {
+        for (const name of names) {
+          combatNames.add(name.toLowerCase());
+        }
+      }
+    }
+  }
+
+  for (const row of rows) {
+    for (const [label, val] of Object.entries(row.columns)) {
+      if (
+        !isPrimaryFeaturesColumn(label) &&
+        label.toLowerCase() !== "features" &&
+        !isResourceColumnLabel(label)
+      ) {
+        continue;
+      }
+      for (const name of columnNamesFromValue(val)) {
+        const key = name.toLowerCase();
+        const existingDef = byName.get(key);
+        if (existingDef) {
+          if (
+            !existingDef.resourceColumn &&
+            resourceColumnByName.has(key) &&
+            !combatNames.has(key)
+          ) {
+            existingDef.resourceColumn = resourceColumnByName.get(key);
+          }
+          continue;
+        }
+        const resourceColumn =
+          !combatNames.has(key) && resourceColumnByName.has(key)
+            ? resourceColumnByName.get(key)
+            : undefined;
+        byName.set(key, {
+          id: newFeatureId(),
+          name,
+          description: "",
+          resourceColumn,
+        });
+      }
     }
   }
 
@@ -205,12 +271,19 @@ export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
     : [];
 
   const customWeapon = custom as CustomWeapon;
+  const resolvedModes = resolveWeaponModeDefs(weapon);
+  const modes =
+    resolvedModes ??
+    (weapon.dmg2 && !weapon.properties.includes("V")
+      ? createDefaultForgeModes(weapon.dmg1, weapon.dmg2)
+      : []);
 
   return {
     name: weapon.name,
     author: customWeapon.author?.trim() || "RaintDM",
     dmg1: weapon.dmg1 || "1d8",
     dmg2: weapon.dmg2 ?? "",
+    modes: modes.map((m) => ({ ...m })),
     dmgType: weapon.dmgType || "S",
     properties: [...weapon.properties],
     weight: weapon.weight,
@@ -223,17 +296,18 @@ export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
     baseFeatureNames: weapon.baseFeatureNames.join(", "),
     rarityRows: rows,
     customFeatures: featureDefsFromRarityRows(rows, existingFeatures),
-    resourceColumns: detectResourceColumns(rows),
   };
 }
 
 export function createFeatureDef(
   partial: Omit<WeaponForgeFeatureDef, "id"> & { id?: string },
 ): WeaponForgeFeatureDef {
+  const resourceColumn = partial.resourceColumn?.trim() || undefined;
   return {
     id: partial.id ?? newFeatureId(),
     name: partial.name,
     description: partial.description,
     upgradesFromId: partial.upgradesFromId,
+    resourceColumn,
   };
 }

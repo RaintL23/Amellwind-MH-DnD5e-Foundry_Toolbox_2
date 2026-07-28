@@ -3,8 +3,15 @@ import { type WeaponRarityRow } from "@/shared/types";
 import type { WeaponForgeFeatureDef } from "../types/weapon-forge.types";
 import {
   BONUS_COLUMN_KEYS,
+  isResourceColumnLabel,
   type BonusColumnKey,
 } from "../types/weapon-forge.types";
+
+export interface AssignedFeatureRef {
+  name: string;
+  /** Undefined = Features (combat) column. */
+  resourceColumn?: string;
+}
 
 const ROMANS = ["I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X"];
 
@@ -82,6 +89,154 @@ export function setResourceColumnNames(
     columns[columnLabel] = names;
   }
   return { ...row, columns };
+}
+
+/** Combat Features + resource-column unlocks assigned on a rarity row. */
+export function getAssignedFeaturesForRow(
+  row: WeaponRarityRow,
+): AssignedFeatureRef[] {
+  const result: AssignedFeatureRef[] = [];
+  const seen = new Set<string>();
+
+  for (const name of getFeaturesColumnNames(row)) {
+    const key = name.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    result.push({ name });
+  }
+
+  for (const label of Object.keys(row.columns)) {
+    if (!isResourceColumnLabel(label)) continue;
+    for (const name of getResourceColumnNames(row, label)) {
+      const key = name.toLowerCase();
+      if (seen.has(key)) continue;
+      seen.add(key);
+      result.push({ name, resourceColumn: label });
+    }
+  }
+
+  return result;
+}
+
+export function getAllAssignedFeatureNames(rows: WeaponRarityRow[]): string[] {
+  const names: string[] = [];
+  for (const row of rows) {
+    for (const ref of getAssignedFeaturesForRow(row)) {
+      names.push(ref.name);
+    }
+  }
+  return names;
+}
+
+function removeNameFromColumn(
+  row: WeaponRarityRow,
+  columnLabel: string | undefined,
+  featureName: string,
+): WeaponRarityRow {
+  const key = featureName.toLowerCase();
+  if (!columnLabel) {
+    return setFeaturesColumnNames(
+      row,
+      getFeaturesColumnNames(row).filter((n) => n.toLowerCase() !== key),
+    );
+  }
+  return setResourceColumnNames(
+    row,
+    columnLabel,
+    getResourceColumnNames(row, columnLabel).filter(
+      (n) => n.toLowerCase() !== key,
+    ),
+  );
+}
+
+function addNameToColumn(
+  row: WeaponRarityRow,
+  columnLabel: string | undefined,
+  featureName: string,
+): WeaponRarityRow {
+  const key = featureName.toLowerCase();
+  if (!columnLabel) {
+    const names = getFeaturesColumnNames(row);
+    if (names.some((n) => n.toLowerCase() === key)) return row;
+    return setFeaturesColumnNames(row, [...names, featureName]);
+  }
+  const names = getResourceColumnNames(row, columnLabel);
+  if (names.some((n) => n.toLowerCase() === key)) return row;
+  return setResourceColumnNames(row, columnLabel, [...names, featureName]);
+}
+
+/** Add a feature name to the correct column for this rarity row. */
+export function addFeatureNameToRow(
+  row: WeaponRarityRow,
+  featureName: string,
+  resourceColumn?: string,
+): WeaponRarityRow {
+  return addNameToColumn(row, resourceColumn || undefined, featureName);
+}
+
+/** Remove a feature name from Features and all resource columns on a row. */
+export function removeFeatureNameFromRow(
+  row: WeaponRarityRow,
+  featureName: string,
+): WeaponRarityRow {
+  let next = removeNameFromColumn(row, undefined, featureName);
+  for (const label of Object.keys(next.columns)) {
+    if (!isResourceColumnLabel(label)) continue;
+    next = removeNameFromColumn(next, label, featureName);
+  }
+  return next;
+}
+
+/** Rename a feature across Features and all resource columns. */
+export function renameFeatureInRow(
+  row: WeaponRarityRow,
+  previousName: string,
+  nextName: string,
+): WeaponRarityRow {
+  const prevKey = previousName.toLowerCase();
+  let next = setFeaturesColumnNames(
+    row,
+    getFeaturesColumnNames(row).map((n) =>
+      n.toLowerCase() === prevKey ? nextName : n,
+    ),
+  );
+  for (const label of Object.keys(next.columns)) {
+    if (!isResourceColumnLabel(label)) continue;
+    next = setResourceColumnNames(
+      next,
+      label,
+      getResourceColumnNames(next, label).map((n) =>
+        n.toLowerCase() === prevKey ? nextName : n,
+      ),
+    );
+  }
+  return next;
+}
+
+/**
+ * Move a feature between Features and a resource column (or between resource
+ * columns) on every rarity row where it appears.
+ */
+export function reassignFeatureColumnInRows(
+  rows: WeaponRarityRow[],
+  featureName: string,
+  previousColumn: string | undefined,
+  nextColumn: string | undefined,
+): WeaponRarityRow[] {
+  const prev = previousColumn || undefined;
+  const next = nextColumn || undefined;
+  if (prev === next) return rows;
+
+  const key = featureName.toLowerCase();
+  return rows.map((row) => {
+    const inPrev = prev
+      ? getResourceColumnNames(row, prev).some((n) => n.toLowerCase() === key)
+      : getFeaturesColumnNames(row).some((n) => n.toLowerCase() === key);
+    if (!inPrev) return row;
+    let updated = removeNameFromColumn(row, prev, featureName);
+    updated = addNameToColumn(updated, next, featureName);
+    return updated;
+  });
 }
 
 function readBonusCell(row: WeaponRarityRow, label: string): string {
@@ -198,14 +353,14 @@ export function collectPriorFeatureOptions(
 
   for (let i = 0; i < currentIndex; i++) {
     const row = rows[i];
-    for (const name of getFeaturesColumnNames(row)) {
-      const def = findFeatureDef(customFeatures, name);
-      const id = def?.id ?? name;
+    for (const ref of getAssignedFeaturesForRow(row)) {
+      const def = findFeatureDef(customFeatures, ref.name);
+      const id = def?.id ?? ref.name;
       if (seen.has(id)) continue;
       seen.add(id);
       options.push({
         id,
-        name,
+        name: ref.name,
         rarity: row.rarity,
       });
     }
@@ -228,8 +383,8 @@ export function collectAssignedUpgradeCandidates(
   for (let i = 0; i < options.beforeRarityIndex; i++) {
     const row = rows[i];
     if (!row) continue;
-    for (const name of getFeaturesColumnNames(row)) {
-      assignedNames.add(name.toLowerCase());
+    for (const ref of getAssignedFeaturesForRow(row)) {
+      assignedNames.add(ref.name.toLowerCase());
     }
   }
 
@@ -255,8 +410,8 @@ export function findFeatureMinRarityIndex(
   const key = featureName.toLowerCase();
   for (let i = 0; i < rows.length; i++) {
     if (
-      getFeaturesColumnNames(rows[i]).some(
-        (name) => name.toLowerCase() === key,
+      getAssignedFeaturesForRow(rows[i]).some(
+        (ref) => ref.name.toLowerCase() === key,
       )
     ) {
       return i;

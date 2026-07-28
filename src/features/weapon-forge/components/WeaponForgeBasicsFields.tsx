@@ -3,9 +3,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@/components/ui/button";
 import { MultiSelect } from "@/components/ui/multi-select";
 import { Select } from "@/components/ui/select";
+import {
+  createDefaultForgeModes,
+  syncDamageFromModes,
+} from "@/features/weapons/utils/weapon-mode.utils";
 import type { WeaponForgeFormValues } from "../types/weapon-forge.types";
+import { WeaponModesEditor } from "./WeaponModesEditor";
 
 const PROPERTY_OPTIONS = Object.entries(PROPERTY_LABELS).map(
   ([value, label]) => ({ value, label: `${label} (${value})` }),
@@ -22,12 +28,53 @@ interface WeaponForgeBasicsFieldsProps {
     key: K,
     value: WeaponForgeFormValues[K],
   ) => void;
+  onPatchMany: (partial: Partial<WeaponForgeFormValues>) => void;
 }
 
 export function WeaponForgeBasicsFields({
   values,
   onPatch,
+  onPatchMany,
 }: WeaponForgeBasicsFieldsProps) {
+  const isVersatile = values.properties.includes("V");
+  const hasModes = !isVersatile && values.modes.length >= 2;
+
+  const handlePropertiesChange = (next: string[]) => {
+    const nextIsVersatile = next.includes("V");
+    if (nextIsVersatile && values.modes.length > 0) {
+      onPatchMany({ properties: next, modes: [] });
+      return;
+    }
+    onPatch("properties", next);
+  };
+
+  const enableModes = () => {
+    const seeded = createDefaultForgeModes(
+      values.dmg1 || "1d8",
+      values.dmg2 || values.dmg1 || "1d8",
+    );
+    const synced = syncDamageFromModes(seeded);
+    onPatchMany({
+      modes: seeded,
+      dmg1: synced.dmg1,
+      dmg2: synced.dmg2 ?? "",
+      properties: values.properties.filter((p) => p !== "V"),
+    });
+  };
+
+  const clearModes = () => {
+    onPatchMany({ modes: [], dmg2: "" });
+  };
+
+  const handleModesChange = (modes: WeaponForgeFormValues["modes"]) => {
+    const synced = syncDamageFromModes(modes);
+    onPatchMany({
+      modes,
+      dmg1: synced.dmg1,
+      dmg2: synced.dmg2 ?? "",
+    });
+  };
+
   return (
     <div className="grid gap-4 sm:grid-cols-3">
       <div className="sm:col-span-2 space-y-1.5">
@@ -57,31 +104,64 @@ export function WeaponForgeBasicsFields({
         <MultiSelect
           options={PROPERTY_OPTIONS}
           selected={values.properties}
-          onChange={(next) => onPatch("properties", next)}
+          onChange={handlePropertiesChange}
           emptyLabel="No properties"
           allLabel="All properties"
         />
       </div>
 
-      <div className="space-y-1.5">
-        <Label htmlFor="wf-dmg1">Damage die</Label>
-        <Input
-          id="wf-dmg1"
-          value={values.dmg1}
-          onChange={(e) => onPatch("dmg1", e.target.value)}
-          placeholder="1d8"
-        />
-      </div>
+      {isVersatile ? (
+        <>
+          <div className="space-y-1.5">
+            <Label htmlFor="wf-dmg1">Damage die (one-hand)</Label>
+            <Input
+              id="wf-dmg1"
+              value={values.dmg1}
+              onChange={(e) => onPatch("dmg1", e.target.value)}
+              placeholder="1d8"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="wf-dmg2">Versatile die (two-hand)</Label>
+            <Input
+              id="wf-dmg2"
+              value={values.dmg2}
+              onChange={(e) => onPatch("dmg2", e.target.value)}
+              placeholder="1d10"
+            />
+          </div>
+        </>
+      ) : hasModes ? (
+        <WeaponModesEditor modes={values.modes} onChange={handleModesChange} />
+      ) : (
+        <>
+          <div className="space-y-1.5">
+            <Label htmlFor="wf-dmg1">Damage die</Label>
+            <Input
+              id="wf-dmg1"
+              value={values.dmg1}
+              onChange={(e) => onPatch("dmg1", e.target.value)}
+              placeholder="1d8"
+            />
+          </div>
+          <div className="sm:col-span-2 flex flex-wrap items-end gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={enableModes}>
+              Add weapon modes
+            </Button>
+            <p className="text-[11px] text-muted-foreground">
+              For Switch Axe, Charge Blade, etc. (not Versatile).
+            </p>
+          </div>
+        </>
+      )}
 
-      <div className="space-y-1.5">
-        <Label htmlFor="wf-dmg2">Versatile die (optional)</Label>
-        <Input
-          id="wf-dmg2"
-          value={values.dmg2}
-          onChange={(e) => onPatch("dmg2", e.target.value)}
-          placeholder="1d10"
-        />
-      </div>
+      {hasModes && (
+        <div className="sm:col-span-3">
+          <Button type="button" variant="ghost" size="sm" onClick={clearModes}>
+            Remove modes (single damage die)
+          </Button>
+        </div>
+      )}
 
       <div className="space-y-1.5">
         <Label>Damage type</Label>
