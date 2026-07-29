@@ -1245,7 +1245,7 @@ La búsqueda global filtra simultáneamente por nombre del objeto, ingredientes 
 **Ruta**: `/weapons`
 **Fuente de datos**: store `gtmh_current` → ítems con `type === "HW"` → `WeaponMapper`.
 
-Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a **Legendary** mediante una tabla de rarezas embebida en un bloque `inset` dentro de `entries[]`.
+Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a **Legendary** mediante una tabla de rarezas embebida en un bloque `inset` dentro de `entries[]`. La UI de armas / Weapon Forge añade una tier previa **Base** (`WEAPON_RARITY_ORDER`: Base → Common → … → Legendary) para features que aplican a todas las rarezas (Switch Mode, Melody, Loading, …). `RARITY_ORDER` (sin Base) sigue usándose en builder/runas/NPC.
 
 #### Entidad `Weapon`
 
@@ -1259,14 +1259,14 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 | `weight`, `valueCp`| Peso y valor en copper pieces |
 | `acBonus`, `range`, `isFocus` | Campos opcionales según el arma |
 | `description`      | Texto superior parseado sin marcado 5etools |
-| `rarityRows`       | Filas de la tabla inset: rareza, slots de runa, columnas dinámicas (stats, features, ammo, phials, etc.) |
-| `baseFeatureNames` | Nombres de `{@optfeature ...}` en la descripción (features que aplican a todas las rarezas) |
+| `rarityRows`       | Filas de la tabla inset: rareza (incl. opcional **Base**), slots de runa, columnas dinámicas (stats, features, ammo, phials, etc.) |
+| `baseFeatureNames` | Nombres de `{@optfeature ...}` en la descripción (features que aplican a todas las rarezas); en forge se sincronizan con la fila **Base** |
 
 `FEATURE_COL_KEYS` identifica columnas de tipo feature: `features`, `single features`, `splint features`, `notes`, `ammo`, `coatings`, `phials`, `available`.
 
 `buildColumnChains` agrupa por rareza y anida upgrades (`Foo Upgrade I`) bajo su base. Si un upgrade vive en **Features** pero el ítem base está en otra columna (**Phials**, Ammo, Coatings…), p. ej. `Power Phial Upgrade` ↔ `Power Phial (Costs 2)`, se reparenta a esa cadena (`normalizeFeatureMatchKey`).
 
-`resolveWeaponBaseFeatures` también inyecta properties MH con descripción (p. ej. **Loading** desde `MHL`) junto a las `{@optfeature}` base. Los bloques 5etools `{ type: "abilityDc" }` (Ammo/Coating save DC) se renderizan vía `formatAbilityDcText` en `fivetools-parser.ts`.
+`resolveWeaponBaseFeatures` también inyecta properties MH con descripción (p. ej. **Loading** desde `MHL`) junto a las `{@optfeature}` base. En el diálogo, si no hay fila **Base**, se inyecta una con esas features (`weapon-base-rarity.utils.ts`); si ya existe, la sección legacy “Base Features” se omite y el contenido vive en esa tier. Los bloques 5etools `{ type: "abilityDc" }` (Ammo/Coating save DC) se renderizan vía `formatAbilityDcText` en `fivetools-parser.ts`.
 
 #### Entidad `OptionalFeature`
 
