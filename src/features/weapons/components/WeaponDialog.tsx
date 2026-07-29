@@ -14,7 +14,8 @@ interface WeaponDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialRarityIndex?: number;
-  onRarityChange?: (index: number) => void;
+  initialRarity?: string | null;
+  onRarityChange?: (rarity: string) => void;
 }
 
 export function WeaponDialog({
@@ -22,11 +23,13 @@ export function WeaponDialog({
   open,
   onOpenChange,
   initialRarityIndex = 0,
+  initialRarity = null,
   onRarityChange,
 }: WeaponDialogProps) {
   const {
     current,
     setCurrent,
+    displayWeapon,
     featuresMap,
     mhItemEffectsMap,
     columnChains,
@@ -34,20 +37,27 @@ export function WeaponDialog({
     baseFeatureNameKeys,
     handlePrev,
     handleNext,
-  } = useWeaponDialog(weapon, open, { initialRarityIndex, onRarityChange });
+  } = useWeaponDialog(weapon, open, {
+    initialRarityIndex,
+    initialRarity,
+    onRarityChange,
+  });
 
-  if (!weapon) return null;
+  if (!weapon || !displayWeapon) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
-        <WeaponDialogHeader weapon={weapon} currentRarityIndex={current} />
+        <WeaponDialogHeader
+          weapon={displayWeapon}
+          currentRarityIndex={current}
+        />
 
         <DialogBody>
-          <WeaponDialogMeta weapon={weapon} />
+          <WeaponDialogMeta weapon={displayWeapon} />
 
           <WeaponRarityProgression
-            weapon={weapon}
+            weapon={displayWeapon}
             current={current}
             onSelect={setCurrent}
             onPrev={handlePrev}

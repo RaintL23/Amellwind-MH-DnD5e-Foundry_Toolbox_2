@@ -14,7 +14,7 @@ import { Swords } from "lucide-react";
 
 export function WeaponList() {
   const { getString, setString, patchFields } = useListUrlState();
-  const { urlWeaponKey, syncOpen, syncClose, syncRarity, resolveRarityIndex } =
+  const { urlWeaponKey, urlRarityParam, syncOpen, syncClose, syncRarity } =
     useWeaponDialogUrlSync();
   const [weapons, setWeapons] = useState<Weapon[]>([]);
   const [loading, setLoading] = useState(true);
@@ -94,10 +94,10 @@ export function WeaponList() {
   );
 
   const handleRarityChange = useCallback(
-    (index: number) => {
-      if (selected) syncRarity(selected, index);
+    (rarity: string) => {
+      syncRarity(rarity);
     },
-    [selected, syncRarity],
+    [syncRarity],
   );
 
   const clearFilters = useCallback(() => {
@@ -169,9 +169,7 @@ export function WeaponList() {
         weapon={selected}
         open={dialogOpen}
         onOpenChange={handleDialogOpenChange}
-        initialRarityIndex={
-          selected ? resolveRarityIndex(selected.rarityRows) : 0
-        }
+        initialRarity={urlRarityParam || null}
         onRarityChange={handleRarityChange}
       />
     </div>

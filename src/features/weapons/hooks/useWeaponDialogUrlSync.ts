@@ -33,10 +33,9 @@ export function useWeaponDialogUrlSync() {
   }, [patchFields]);
 
   const syncRarity = useCallback(
-    (weapon: Weapon, index: number) => {
+    (rarity: string) => {
       patchFields({
-        [WEAPON_DIALOG_URL_KEYS.rarity]:
-          rarityIndexToParam(weapon.rarityRows, index) || undefined,
+        [WEAPON_DIALOG_URL_KEYS.rarity]: rarity || undefined,
       });
     },
     [patchFields],
@@ -50,6 +49,7 @@ export function useWeaponDialogUrlSync() {
 
   return {
     urlWeaponKey,
+    urlRarityParam,
     syncOpen,
     syncClose,
     syncRarity,

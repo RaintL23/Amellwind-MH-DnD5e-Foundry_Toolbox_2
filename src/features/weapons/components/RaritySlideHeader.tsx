@@ -1,4 +1,4 @@
-import { WeaponRarityRow, RARITY_STYLES } from "@/shared/types";
+import { WeaponRarityRow, RARITY_STYLES, isBaseRarity } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { Layers } from "lucide-react";
 
@@ -14,6 +14,7 @@ export function RaritySlideHeader({
   styleText,
 }: RaritySlideHeaderProps) {
   const style = RARITY_STYLES[row.rarity] ?? RARITY_STYLES["Common"];
+  const baseTier = isBaseRarity(row.rarity);
 
   return (
     <div className="flex items-center justify-between">
@@ -26,15 +27,22 @@ export function RaritySlideHeader({
         {row.rarity}
       </span>
       <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        {attackBonus && (
+        {!baseTier && attackBonus && (
           <span className={cn("font-bold text-base", styleText)}>
             {attackBonus} to hit
           </span>
         )}
-        <span className="flex items-center gap-1">
-          <Layers className="h-3.5 w-3.5" />
-          {row.slots} slot{row.slots !== 1 ? "s" : ""}
-        </span>
+        {!baseTier && (
+          <span className="flex items-center gap-1">
+            <Layers className="h-3.5 w-3.5" />
+            {row.slots} slot{row.slots !== 1 ? "s" : ""}
+          </span>
+        )}
+        {baseTier && (
+          <span className="text-xs uppercase tracking-wide">
+            Applies at all rarities
+          </span>
+        )}
       </div>
     </div>
   );
