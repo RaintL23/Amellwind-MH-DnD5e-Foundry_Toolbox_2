@@ -16,6 +16,11 @@ interface UseWeaponDialogOptions {
   onRarityChange?: (rarity: string) => void;
   /** Extra optional features (e.g. forge customFeatures) merged over the catalog. */
   extraFeaturesMap?: Map<string, OptionalFeature>;
+  /**
+   * When false, do not pull Amellwind/catalog optional features by weapon-name
+   * prerequisite (forge/RaintDM JSON is the source of truth). Default true.
+   */
+  includePrerequisiteMatches?: boolean;
 }
 
 export function useWeaponDialog(
@@ -28,6 +33,7 @@ export function useWeaponDialog(
     initialRarity = null,
     onRarityChange,
     extraFeaturesMap,
+    includePrerequisiteMatches = true,
   } = options;
   const [current, setCurrentState] = useState(0);
   const [catalogFeaturesMap, setCatalogFeaturesMap] = useState<
@@ -55,8 +61,10 @@ export function useWeaponDialog(
 
   const resolvedBaseFeatures = useMemo(() => {
     if (!weapon || featuresMap.size === 0) return [];
-    return resolveWeaponBaseFeatures(weapon, featuresMap);
-  }, [weapon, featuresMap]);
+    return resolveWeaponBaseFeatures(weapon, featuresMap, {
+      includePrerequisiteMatches,
+    });
+  }, [weapon, featuresMap, includePrerequisiteMatches]);
 
   const displayWeapon = useMemo(() => {
     if (!weapon) return null;

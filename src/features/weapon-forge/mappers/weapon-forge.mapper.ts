@@ -405,7 +405,7 @@ function parseSingleEntry(entry: unknown, isCustom: boolean): CustomWeapon {
 /** Convert forge feature defs into OptionalFeature-compatible entries for the viewer. */
 export function customFeaturesToOptionalMap(
   features: WeaponForgeFeatureDef[] | undefined,
-  weaponName: string,
+  _weaponName: string,
 ): Map<string, import("@/shared/types").OptionalFeature> {
   const map = new Map<string, import("@/shared/types").OptionalFeature>();
   if (!features) return map;
@@ -414,7 +414,9 @@ export function customFeaturesToOptionalMap(
       name: feat.name,
       source: "RAINTDM",
       featureType: ["HW"],
-      weaponName,
+      // Empty weaponName so these never match resolveWeaponBaseFeatures'
+      // prerequisite scan (only rarity-table / Base row should list them).
+      weaponName: "",
       paragraphs: descriptionToParagraphs(feat.description),
     });
   }

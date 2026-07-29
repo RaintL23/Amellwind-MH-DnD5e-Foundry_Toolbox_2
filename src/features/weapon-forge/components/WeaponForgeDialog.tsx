@@ -62,6 +62,9 @@ export function WeaponForgeDialog({
     initialRarity,
     onRarityChange,
     extraFeaturesMap,
+    // Forge JSON (rarity rows + customFeatures) is authoritative — do not inject
+    // Amellwind optional features matched only by weapon name.
+    includePrerequisiteMatches: false,
   });
 
   if (!weapon || !displayWeapon) return null;

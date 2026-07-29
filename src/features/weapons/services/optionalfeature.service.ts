@@ -30,7 +30,7 @@ function collectColumnFeatureNames(weapon: Weapon): Set<string> {
  * - MH-specific weapon properties with descriptions (e.g. MHL → Loading)
  * - {@optfeature} references in the weapon inset text (baseFeatureNames)
  * - optional features whose prerequisite is the weapon name with no rarity suffix
- *   (e.g. Rapid Fire / Overheat on Light Bowgun)
+ *   (e.g. Rapid Fire / Overheat on Light Bowgun) — skip for forge/RaintDM weapons
  *
  * Features listed in rarity-table columns (e.g. Hunting Horn notes) are excluded
  * unless they are global ammo rules (Ammo (LBG), Ammo (HBG), …).
@@ -38,7 +38,9 @@ function collectColumnFeatureNames(weapon: Weapon): Set<string> {
 export function resolveWeaponBaseFeatures(
   weapon: Weapon,
   featuresMap: Map<string, OptionalFeature>,
+  options: { includePrerequisiteMatches?: boolean } = {},
 ): OptionalFeature[] {
+  const includePrerequisiteMatches = options.includePrerequisiteMatches !== false;
   const columnNames = collectColumnFeatureNames(weapon);
   const seen = new Set<string>();
   const result: OptionalFeature[] = [];
@@ -67,14 +69,16 @@ export function resolveWeaponBaseFeatures(
     add(featuresMap.get(name.toLowerCase()));
   }
 
-  for (const feat of featuresMap.values()) {
-    if (feat.weaponName.toLowerCase() !== weapon.name.toLowerCase()) continue;
-    if (feat.prerequisiteRarity) continue;
+  if (includePrerequisiteMatches) {
+    for (const feat of featuresMap.values()) {
+      if (feat.weaponName.toLowerCase() !== weapon.name.toLowerCase()) continue;
+      if (feat.prerequisiteRarity) continue;
 
-    const key = feat.name.toLowerCase();
-    if (columnNames.has(key) && !GLOBAL_AMMO_FEATURE.test(feat.name)) continue;
+      const key = feat.name.toLowerCase();
+      if (columnNames.has(key) && !GLOBAL_AMMO_FEATURE.test(feat.name)) continue;
 
-    add(feat);
+      add(feat);
+    }
   }
 
   return result.sort(
