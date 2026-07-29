@@ -106,14 +106,15 @@ export function RaritySlideFeatureChains({
                             feature?.paragraphs?.length
                               ? feature.paragraphs
                               : resolveMhItemParagraphs(
-                                  feat.name,
+                                  feature?.name ?? feat.name,
                                   mhItemEffectsMap,
                                 );
+                          const displayName = feature?.name ?? feat.name;
 
                           return (
                             <ExpandableFeatureRow
                               key={`${feat.name}-${feat.rarityIndex}`}
-                              name={feat.name}
+                              name={displayName}
                               paragraphs={paragraphs}
                               isExpanded={expanded.has(
                                 feat.name.toLowerCase(),

@@ -21,7 +21,7 @@ import {
   createFeatureDef,
   featureDefsFromRarityRows,
 } from "../types/weapon-forge.types";
-import { descriptionToParagraphs } from "../utils/weapon-forge-features.utils";
+import { descriptionToParagraphs, rarityRowsWithFeatureDisplayNames } from "../utils/weapon-forge-features.utils";
 
 function newId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -151,8 +151,13 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
  * so it can be re-imported and read outside the app.
  */
 export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
-  const colLabels = buildColLabels(weapon.rarityRows);
-  const rows = weapon.rarityRows.map((row) => {
+  const custom = weapon as CustomWeapon;
+  const exportRows = rarityRowsWithFeatureDisplayNames(
+    weapon.rarityRows,
+    custom.customFeatures ?? [],
+  );
+  const colLabels = buildColLabels(exportRows);
+  const rows = exportRows.map((row) => {
     const cells: unknown[] = [row.rarity, String(row.slots)];
     for (let i = 2; i < colLabels.length; i++) {
       const label = colLabels[i];
@@ -193,8 +198,6 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
     name: weapon.name,
     entries: insetEntries,
   });
-
-  const custom = weapon as CustomWeapon;
 
   const raw: Record<string, unknown> = {
     name: weapon.name,
@@ -410,7 +413,7 @@ export function customFeaturesToOptionalMap(
   const map = new Map<string, import("@/shared/types").OptionalFeature>();
   if (!features) return map;
   for (const feat of features) {
-    map.set(feat.name.toLowerCase(), {
+    const optional: import("@/shared/types").OptionalFeature = {
       name: feat.name,
       source: "RAINTDM",
       featureType: ["HW"],
@@ -418,7 +421,12 @@ export function customFeaturesToOptionalMap(
       // prerequisite scan (only rarity-table / Base row should list them).
       weaponName: "",
       paragraphs: descriptionToParagraphs(feat.description),
-    });
+    };
+    // Index by id so duplicate display names remain distinct when rows store ids.
+    if (feat.id) map.set(feat.id.toLowerCase(), optional);
+    // First name wins — matches findFeatureDef / resolveFeatureDef name fallback.
+    const nameKey = feat.name.toLowerCase();
+    if (!map.has(nameKey)) map.set(nameKey, optional);
   }
   return map;
 }

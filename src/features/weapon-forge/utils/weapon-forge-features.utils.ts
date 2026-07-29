@@ -3,12 +3,18 @@ import { type WeaponRarityRow } from "@/shared/types";
 import type { WeaponForgeFeatureDef } from "../types/weapon-forge.types";
 import {
   BONUS_COLUMN_KEYS,
+  isPrimaryFeaturesColumn,
   isResourceColumnLabel,
   type BonusColumnKey,
 } from "../types/weapon-forge.types";
 
 export interface AssignedFeatureRef {
+  /** Value stored in the rarity column (feature id when known, else display name). */
+  token: string;
+  /** Display name resolved from customFeatures when possible. */
   name: string;
+  /** Stable feature id when the token resolves to a def. */
+  id?: string;
   /** Undefined = Features (combat) column. */
   resourceColumn?: string;
 }
@@ -91,123 +97,188 @@ export function setResourceColumnNames(
   return { ...row, columns };
 }
 
+/** Resolve a rarity-column token to a feature def (id first, then name). */
+export function resolveFeatureDef(
+  features: WeaponForgeFeatureDef[],
+  tokenOrName: string,
+): WeaponForgeFeatureDef | undefined {
+  const trimmed = tokenOrName.trim();
+  if (!trimmed) return undefined;
+  const byId = findFeatureDefById(features, trimmed);
+  if (byId) return byId;
+  return findFeatureDef(features, trimmed);
+}
+
+/** Display label for a rarity-column token. */
+export function featureDisplayName(
+  features: WeaponForgeFeatureDef[],
+  tokenOrName: string,
+): string {
+  return resolveFeatureDef(features, tokenOrName)?.name ?? tokenOrName;
+}
+
+/** Token stored in rarity columns — prefer stable id so duplicate names stay distinct. */
+export function featureStorageToken(feature: WeaponForgeFeatureDef): string {
+  return feature.id || feature.name;
+}
+
+function tokensMatchFeature(
+  token: string,
+  featureNameOrToken: string,
+  featureId?: string,
+): boolean {
+  const key = token.toLowerCase();
+  if (featureId && key === featureId.toLowerCase()) return true;
+  return key === featureNameOrToken.toLowerCase();
+}
+
 /** Combat Features + resource-column unlocks assigned on a rarity row. */
 export function getAssignedFeaturesForRow(
   row: WeaponRarityRow,
+  features: WeaponForgeFeatureDef[] = [],
 ): AssignedFeatureRef[] {
   const result: AssignedFeatureRef[] = [];
   const seen = new Set<string>();
 
-  for (const name of getFeaturesColumnNames(row)) {
-    const key = name.toLowerCase();
-    if (seen.has(key)) continue;
+  const pushToken = (token: string, resourceColumn?: string) => {
+    const key = token.toLowerCase();
+    if (seen.has(key)) return;
     seen.add(key);
-    result.push({ name });
+    const def = resolveFeatureDef(features, token);
+    result.push({
+      token,
+      name: def?.name ?? token,
+      id: def?.id,
+      resourceColumn: def?.resourceColumn ?? resourceColumn,
+    });
+  };
+
+  for (const token of getFeaturesColumnNames(row)) {
+    pushToken(token);
   }
 
   for (const label of Object.keys(row.columns)) {
     if (!isResourceColumnLabel(label)) continue;
-    for (const name of getResourceColumnNames(row, label)) {
-      const key = name.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      result.push({ name, resourceColumn: label });
+    for (const token of getResourceColumnNames(row, label)) {
+      pushToken(token, label);
     }
   }
 
   return result;
 }
 
-export function getAllAssignedFeatureNames(rows: WeaponRarityRow[]): string[] {
+export function getAllAssignedFeatureNames(
+  rows: WeaponRarityRow[],
+  features: WeaponForgeFeatureDef[] = [],
+): string[] {
   const names: string[] = [];
   for (const row of rows) {
-    for (const ref of getAssignedFeaturesForRow(row)) {
+    for (const ref of getAssignedFeaturesForRow(row, features)) {
       names.push(ref.name);
     }
   }
   return names;
 }
 
-function removeNameFromColumn(
+function removeTokenFromColumn(
   row: WeaponRarityRow,
   columnLabel: string | undefined,
-  featureName: string,
+  featureNameOrToken: string,
+  featureId?: string,
 ): WeaponRarityRow {
-  const key = featureName.toLowerCase();
+  const matches = (token: string) =>
+    tokensMatchFeature(token, featureNameOrToken, featureId);
+
   if (!columnLabel) {
     return setFeaturesColumnNames(
       row,
-      getFeaturesColumnNames(row).filter((n) => n.toLowerCase() !== key),
+      getFeaturesColumnNames(row).filter((n) => !matches(n)),
     );
   }
   return setResourceColumnNames(
     row,
     columnLabel,
-    getResourceColumnNames(row, columnLabel).filter(
-      (n) => n.toLowerCase() !== key,
-    ),
+    getResourceColumnNames(row, columnLabel).filter((n) => !matches(n)),
   );
 }
 
-function addNameToColumn(
+function addTokenToColumn(
   row: WeaponRarityRow,
   columnLabel: string | undefined,
-  featureName: string,
+  token: string,
 ): WeaponRarityRow {
-  const key = featureName.toLowerCase();
+  const key = token.toLowerCase();
   if (!columnLabel) {
     const names = getFeaturesColumnNames(row);
     if (names.some((n) => n.toLowerCase() === key)) return row;
-    return setFeaturesColumnNames(row, [...names, featureName]);
+    return setFeaturesColumnNames(row, [...names, token]);
   }
   const names = getResourceColumnNames(row, columnLabel);
   if (names.some((n) => n.toLowerCase() === key)) return row;
-  return setResourceColumnNames(row, columnLabel, [...names, featureName]);
+  return setResourceColumnNames(row, columnLabel, [...names, token]);
 }
 
-/** Add a feature name to the correct column for this rarity row. */
+/** Add a feature to the correct column for this rarity row (stores id when present). */
 export function addFeatureNameToRow(
   row: WeaponRarityRow,
   featureName: string,
   resourceColumn?: string,
 ): WeaponRarityRow {
-  return addNameToColumn(row, resourceColumn || undefined, featureName);
+  return addTokenToColumn(row, resourceColumn || undefined, featureName);
 }
 
-/** Remove a feature name from Features and all resource columns on a row. */
+/** Add a feature def to a rarity row, storing its id so duplicate names stay distinct. */
+export function addFeatureToRow(
+  row: WeaponRarityRow,
+  feature: WeaponForgeFeatureDef,
+  resourceColumn?: string,
+): WeaponRarityRow {
+  return addTokenToColumn(
+    row,
+    resourceColumn || feature.resourceColumn || undefined,
+    featureStorageToken(feature),
+  );
+}
+
+/** Remove a feature from Features and all resource columns on a row. */
 export function removeFeatureNameFromRow(
   row: WeaponRarityRow,
   featureName: string,
+  featureId?: string,
 ): WeaponRarityRow {
-  let next = removeNameFromColumn(row, undefined, featureName);
+  let next = removeTokenFromColumn(row, undefined, featureName, featureId);
   for (const label of Object.keys(next.columns)) {
     if (!isResourceColumnLabel(label)) continue;
-    next = removeNameFromColumn(next, label, featureName);
+    next = removeTokenFromColumn(next, label, featureName, featureId);
   }
   return next;
 }
 
-/** Rename a feature across Features and all resource columns. */
+/**
+ * Rename a feature across Features and all resource columns.
+ * Only rewrites legacy name tokens; id tokens stay stable when the label changes.
+ */
 export function renameFeatureInRow(
   row: WeaponRarityRow,
   previousName: string,
   nextName: string,
+  featureId?: string,
 ): WeaponRarityRow {
   const prevKey = previousName.toLowerCase();
+  const rewrite = (token: string) => {
+    if (featureId && token === featureId) return token;
+    return token.toLowerCase() === prevKey ? nextName : token;
+  };
   let next = setFeaturesColumnNames(
     row,
-    getFeaturesColumnNames(row).map((n) =>
-      n.toLowerCase() === prevKey ? nextName : n,
-    ),
+    getFeaturesColumnNames(row).map(rewrite),
   );
   for (const label of Object.keys(next.columns)) {
     if (!isResourceColumnLabel(label)) continue;
     next = setResourceColumnNames(
       next,
       label,
-      getResourceColumnNames(next, label).map((n) =>
-        n.toLowerCase() === prevKey ? nextName : n,
-      ),
+      getResourceColumnNames(next, label).map(rewrite),
     );
   }
   return next;
@@ -222,19 +293,23 @@ export function reassignFeatureColumnInRows(
   featureName: string,
   previousColumn: string | undefined,
   nextColumn: string | undefined,
+  featureId?: string,
 ): WeaponRarityRow[] {
   const prev = previousColumn || undefined;
   const next = nextColumn || undefined;
   if (prev === next) return rows;
 
-  const key = featureName.toLowerCase();
+  const matches = (token: string) =>
+    tokensMatchFeature(token, featureName, featureId);
+  const storageToken = featureId || featureName;
+
   return rows.map((row) => {
     const inPrev = prev
-      ? getResourceColumnNames(row, prev).some((n) => n.toLowerCase() === key)
-      : getFeaturesColumnNames(row).some((n) => n.toLowerCase() === key);
+      ? getResourceColumnNames(row, prev).some(matches)
+      : getFeaturesColumnNames(row).some(matches);
     if (!inPrev) return row;
-    let updated = removeNameFromColumn(row, prev, featureName);
-    updated = addNameToColumn(updated, next, featureName);
+    let updated = removeTokenFromColumn(row, prev, featureName, featureId);
+    updated = addTokenToColumn(updated, next, storageToken);
     return updated;
   });
 }
@@ -333,7 +408,14 @@ export function findFeatureDef(
   name: string,
 ): WeaponForgeFeatureDef | undefined {
   const key = name.toLowerCase();
-  return features.find((f) => f.name.toLowerCase() === key);
+  const matches = features.filter((f) => f.name.toLowerCase() === key);
+  if (matches.length <= 1) return matches[0];
+
+  // Prefer the variant that later upgrades point at (canonical progression root).
+  const upgradedIds = new Set(
+    features.map((f) => f.upgradesFromId).filter(Boolean),
+  );
+  return matches.find((f) => upgradedIds.has(f.id)) ?? matches[0];
 }
 
 export function findFeatureDefById(
@@ -353,14 +435,14 @@ export function collectPriorFeatureOptions(
 
   for (let i = 0; i < currentIndex; i++) {
     const row = rows[i];
-    for (const ref of getAssignedFeaturesForRow(row)) {
-      const def = findFeatureDef(customFeatures, ref.name);
-      const id = def?.id ?? ref.name;
+    for (const ref of getAssignedFeaturesForRow(row, customFeatures)) {
+      const def = resolveFeatureDef(customFeatures, ref.token);
+      const id = def?.id ?? ref.token;
       if (seen.has(id)) continue;
       seen.add(id);
       options.push({
         id,
-        name: ref.name,
+        name: def?.name ?? ref.name,
         rarity: row.rarity,
       });
     }
@@ -378,22 +460,27 @@ export function collectAssignedUpgradeCandidates(
     excludeFeatureId?: string;
   },
 ): WeaponForgeFeatureDef[] {
-  const assignedNames = new Set<string>();
+  const assignedTokens = new Set<string>();
 
   for (let i = 0; i < options.beforeRarityIndex; i++) {
     const row = rows[i];
     if (!row) continue;
-    for (const ref of getAssignedFeaturesForRow(row)) {
-      assignedNames.add(ref.name.toLowerCase());
+    for (const ref of getAssignedFeaturesForRow(row, customFeatures)) {
+      assignedTokens.add(ref.token.toLowerCase());
+      if (ref.id) assignedTokens.add(ref.id.toLowerCase());
+      assignedTokens.add(ref.name.toLowerCase());
     }
   }
 
   const seen = new Set<string>();
   const result: WeaponForgeFeatureDef[] = [];
 
-  for (const key of assignedNames) {
-    const def = customFeatures.find((f) => f.name.toLowerCase() === key);
-    if (!def) continue;
+  for (const def of customFeatures) {
+    const idKey = def.id.toLowerCase();
+    const nameKey = def.name.toLowerCase();
+    const assigned =
+      assignedTokens.has(idKey) || assignedTokens.has(nameKey);
+    if (!assigned) continue;
     if (def.id === options.excludeFeatureId) continue;
     if (seen.has(def.id)) continue;
     seen.add(def.id);
@@ -406,18 +493,53 @@ export function collectAssignedUpgradeCandidates(
 export function findFeatureMinRarityIndex(
   rows: WeaponRarityRow[],
   featureName: string,
+  featureId?: string,
 ): number {
-  const key = featureName.toLowerCase();
   for (let i = 0; i < rows.length; i++) {
     if (
-      getAssignedFeaturesForRow(rows[i]).some(
-        (ref) => ref.name.toLowerCase() === key,
+      getAssignedFeaturesForRow(rows[i]).some((ref) =>
+        tokensMatchFeature(ref.token, featureName, featureId),
       )
     ) {
       return i;
     }
   }
   return rows.length;
+}
+
+/** Rewrite rarity-column feature tokens to display names (for JSON export). */
+export function rarityRowsWithFeatureDisplayNames(
+  rows: WeaponRarityRow[],
+  features: WeaponForgeFeatureDef[],
+): WeaponRarityRow[] {
+  if (features.length === 0) return rows;
+
+  return rows.map((row) => {
+    const columns: WeaponRarityRow["columns"] = {};
+    for (const [label, val] of Object.entries(row.columns)) {
+      const isFeatureCol =
+        isPrimaryFeaturesColumn(label) ||
+        label.toLowerCase() === "features" ||
+        isResourceColumnLabel(label);
+
+      if (!isFeatureCol) {
+        columns[label] = val;
+        continue;
+      }
+
+      const tokens = Array.isArray(val)
+        ? val.map(String)
+        : val
+          ? [String(val)]
+          : [];
+      const names = tokens
+        .map((t) => t.trim())
+        .filter((t) => t && t !== "--" && t !== "-")
+        .map((t) => featureDisplayName(features, t));
+      columns[label] = Array.isArray(val) ? names : (names[0] ?? val);
+    }
+    return { ...row, columns };
+  });
 }
 
 export function descriptionToParagraphs(description: string): string[] {

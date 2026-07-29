@@ -17,7 +17,7 @@ import { ChevronDown, ChevronRight, X } from "lucide-react";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import {
   descriptionToParagraphs,
-  findFeatureDef,
+  resolveFeatureDef,
 } from "../utils/weapon-forge-features.utils";
 
 type CompareWeapon = CustomWeapon | Weapon;
@@ -56,18 +56,29 @@ function featureNamesFromValue(value: string | string[] | undefined): string[] {
 
 function resolveFeatureParagraphs(
   weapon: CompareWeapon,
-  featureName: string,
+  featureToken: string,
   optionalMap: Map<string, OptionalFeature>,
-): string[] {
+): { name: string; paragraphs: string[] } {
   if (isCustomWeapon(weapon) && weapon.customFeatures?.length) {
-    const def = findFeatureDef(weapon.customFeatures, featureName);
+    const def = resolveFeatureDef(weapon.customFeatures, featureToken);
     if (def?.description.trim()) {
-      return descriptionToParagraphs(def.description);
+      return {
+        name: def.name,
+        paragraphs: descriptionToParagraphs(def.description),
+      };
+    }
+    if (def) {
+      return { name: def.name, paragraphs: [] };
     }
   }
 
-  const fromOptional = optionalMap.get(featureName.toLowerCase());
-  return fromOptional?.paragraphs ?? [];
+  const fromOptional =
+    optionalMap.get(featureToken.toLowerCase()) ??
+    optionalMap.get(featureToken);
+  return {
+    name: fromOptional?.name ?? featureToken,
+    paragraphs: fromOptional?.paragraphs ?? [],
+  };
 }
 
 export function WeaponComparePanel({
@@ -178,7 +189,7 @@ export function WeaponComparePanel({
       if (!row) continue;
       for (const label of featureColumnLabels) {
         for (const name of featureNamesFromValue(row.columns[label])) {
-          const paragraphs = resolveFeatureParagraphs(
+          const { paragraphs } = resolveFeatureParagraphs(
             weapon,
             name,
             optionalMap,
@@ -431,17 +442,17 @@ export function WeaponComparePanel({
                                             {label}
                                           </p>
                                           <div className="space-y-1">
-                                            {names.map((name) => {
-                                              const paragraphs =
+                                            {names.map((token) => {
+                                              const { name, paragraphs } =
                                                 resolveFeatureParagraphs(
                                                   weapon,
-                                                  name,
+                                                  token,
                                                   optionalMap,
                                                 );
-                                              const expandKey = `${weaponKey(weapon)}::${rarity}::${name.toLowerCase()}`;
+                                              const expandKey = `${weaponKey(weapon)}::${rarity}::${token.toLowerCase()}`;
                                               return (
                                                 <ExpandableFeatureRow
-                                                  key={name}
+                                                  key={token}
                                                   name={name}
                                                   paragraphs={paragraphs}
                                                   isExpanded={expanded.has(

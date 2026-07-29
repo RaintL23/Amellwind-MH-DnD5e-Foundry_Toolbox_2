@@ -52,8 +52,21 @@ function buildUpgradeLinkIndexes(upgradeLinks: FeatureUpgradeLink[] | undefined)
   for (const link of upgradeLinks) {
     const trimmed = link.name.trim();
     if (!trimmed) continue;
-    byNameLower.set(trimmed.toLowerCase(), link);
     byId.set(link.id, link);
+    // First name wins; upgraded roots overwrite below.
+    if (!byNameLower.has(trimmed.toLowerCase())) {
+      byNameLower.set(trimmed.toLowerCase(), link);
+    }
+  }
+
+  const upgradedIds = new Set(
+    upgradeLinks.map((l) => l.upgradesFromId).filter(Boolean),
+  );
+  for (const link of upgradeLinks) {
+    if (!upgradedIds.has(link.id)) continue;
+    const trimmed = link.name.trim();
+    if (!trimmed) continue;
+    byNameLower.set(trimmed.toLowerCase(), link);
   }
 
   return { byNameLower, byId };
@@ -71,7 +84,8 @@ export function resolveFeatureChainKey(
   },
   visiting: Set<string> = new Set(),
 ): string {
-  const link = indexes.byNameLower.get(name.toLowerCase());
+  const link =
+    indexes.byId.get(name) ?? indexes.byNameLower.get(name.toLowerCase());
   if (link?.upgradesFromId && !visiting.has(link.id)) {
     const parent = indexes.byId.get(link.upgradesFromId);
     if (parent?.name.trim()) {
@@ -84,6 +98,12 @@ export function resolveFeatureChainKey(
       visiting.delete(link.id);
       return parentKey;
     }
+  }
+
+  // If the rarity token is a feature id, use the display name for chain grouping.
+  const self = indexes.byId.get(name);
+  if (self?.name.trim()) {
+    return getBaseFeatureName(self.name);
   }
 
   return getBaseFeatureName(name);

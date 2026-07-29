@@ -50,36 +50,6 @@
     "author": "RaintDM",
     "customFeatures": [
       {
-        "id": "afb3ba50-b2c1-434d-a2c8-9750d23975b3",
-        "name": "Charged Slash",
-        "description": "As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.\n\nWhen you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage; you can forgo this advantage and all other advantages you gain on this turn to gain 1 extra charge to expend on this attack.\n\nOn hit the weapon deals an extra 1d6 + your Strength modifier as weapon damage + the weapon's extra damage material (if it has one) for each charge expended in this way, plus an extra 3 damage if you expended 2 charges, or 6 damage if you expended 3 charges."
-      },
-      {
-        "id": "6ba06695-c1e3-4152-8db2-c4e2602b5c77",
-        "name": "Guard (GS)",
-        "description": "As a reaction, you add 2 AC against one melee attack that would hit you. To do so, you must see the attacker and be wielding the greatsword. You have disadvantage on attacks until the end of your next turn."
-      },
-      {
-        "id": "0e0f0ff0-04b0-4837-87dd-068ec8ead2b8",
-        "name": "Charged Slash Upgrade I",
-        "description": "Your charged slash now deals an extra 1d8 + your Strength modifier as weapon damage + the weapon's extra damage material (if it has one) for each charge expended in this way, plus an extra 3 damage if you expended 2 charges, or 6 damage if you expended 3 charges."
-      },
-      {
-        "id": "a74c8f59-6356-41cf-9adf-0a36d68f8ded",
-        "name": "Guard Upgrade I (GS)",
-        "description": "You now gain a +3 bonus to your AC when you use guard."
-      },
-      {
-        "id": "65b51c18-c796-4d09-8305-5213797ea550",
-        "name": "Charged Slash Upgrade II",
-        "description": "Your charged slash now deals an extra 1d10 + your Strength modifier as weapon damage + the weapon's extra damage material (if it has one) for each charge expended in this way, plus an extra 3 damage if you expended 2 charges, or 6 damage if you expended 3 charges."
-      },
-      {
-        "id": "428edb16-013d-4be6-a0f6-fa9b986958ea",
-        "name": "Guard Upgrade II (GS)",
-        "description": "You now gain a +4 bonus to your AC when you use guard."
-      },
-      {
         "id": "a75cb310-7408-4dd8-8ca7-989ebf3b649c",
         "name": "Mastery Property (Graze)",
         "description": "If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll."

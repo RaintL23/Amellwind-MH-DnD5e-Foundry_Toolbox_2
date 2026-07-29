@@ -188,14 +188,23 @@ function columnNamesFromValue(val: string | string[] | undefined): string[] {
  * Build feature defs from rarity rows when importing weapons that lack
  * customFeatures. Also backfills `resourceColumn` when a name only appears
  * under a resource column (Phials, Coatings, …).
+ * Preserves every existing def by id so duplicate display names stay distinct.
  */
 export function featureDefsFromRarityRows(
   rows: WeaponRarityRow[],
   existing: WeaponForgeFeatureDef[] = [],
 ): WeaponForgeFeatureDef[] {
-  const byName = new Map<string, WeaponForgeFeatureDef>(
-    existing.map((f) => [f.name.toLowerCase(), { ...f }]),
+  const byId = new Map<string, WeaponForgeFeatureDef>(
+    existing.map((f) => [f.id, { ...f }]),
   );
+  /** nameLower → defs with that display name (may be multiple). */
+  const byName = new Map<string, WeaponForgeFeatureDef[]>();
+  for (const def of byId.values()) {
+    const key = def.name.toLowerCase();
+    const list = byName.get(key) ?? [];
+    list.push(def);
+    byName.set(key, list);
+  }
 
   /** nameLower → first resource column label seen (if any). */
   const resourceColumnByName = new Map<string, string>();
@@ -224,6 +233,8 @@ export function featureDefsFromRarityRows(
     }
   }
 
+  const claimedIds = new Set<string>();
+
   for (const row of rows) {
     for (const [label, val] of Object.entries(row.columns)) {
       if (
@@ -233,34 +244,58 @@ export function featureDefsFromRarityRows(
       ) {
         continue;
       }
-      for (const name of columnNamesFromValue(val)) {
-        const key = name.toLowerCase();
-        const existingDef = byName.get(key);
-        if (existingDef) {
+      for (const token of columnNamesFromValue(val)) {
+        const byIdHit = byId.get(token);
+        if (byIdHit) {
+          claimedIds.add(byIdHit.id);
           if (
-            !existingDef.resourceColumn &&
-            resourceColumnByName.has(key) &&
-            !combatNames.has(key)
+            !byIdHit.resourceColumn &&
+            resourceColumnByName.has(byIdHit.name.toLowerCase()) &&
+            !combatNames.has(byIdHit.name.toLowerCase())
           ) {
-            existingDef.resourceColumn = resourceColumnByName.get(key);
+            byIdHit.resourceColumn = resourceColumnByName.get(
+              byIdHit.name.toLowerCase(),
+            );
           }
           continue;
         }
+
+        const key = token.toLowerCase();
+        const nameMatches = byName.get(key) ?? [];
+        const unclaimed = nameMatches.find((d) => !claimedIds.has(d.id));
+        if (unclaimed) {
+          claimedIds.add(unclaimed.id);
+          if (
+            !unclaimed.resourceColumn &&
+            resourceColumnByName.has(key) &&
+            !combatNames.has(key)
+          ) {
+            unclaimed.resourceColumn = resourceColumnByName.get(key);
+          }
+          continue;
+        }
+
         const resourceColumn =
           !combatNames.has(key) && resourceColumnByName.has(key)
             ? resourceColumnByName.get(key)
             : undefined;
-        byName.set(key, {
+        const created = {
           id: newFeatureId(),
-          name,
+          name: token,
           description: "",
           resourceColumn,
-        });
+        };
+        byId.set(created.id, created);
+        claimedIds.add(created.id);
+        const list = byName.get(key) ?? [];
+        list.push(created);
+        byName.set(key, list);
       }
     }
   }
 
-  return [...byName.values()];
+  // Keep existing defs even if not currently assigned (orphans / duplicates).
+  return [...byId.values()];
 }
 
 export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
