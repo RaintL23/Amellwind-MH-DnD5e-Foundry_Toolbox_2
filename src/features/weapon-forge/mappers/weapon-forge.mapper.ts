@@ -1,9 +1,16 @@
 import {
-  RARITY_ORDER,
+  BASE_RARITY,
+  WEAPON_RARITY_ORDER,
   Weapon,
   WeaponRarityRow,
+  defaultSlotsForWeaponRarity,
+  isBaseRarity,
 } from "@/shared/types";
 import { mapWeapon } from "@/features/weapons/mappers/weapon.mapper";
+import {
+  getBaseRarityFeatureNames,
+  sortWeaponRarityRows,
+} from "@/features/weapons/utils/weapon-base-rarity.utils";
 import type {
   CustomWeapon,
   WeaponForgeFeatureDef,
@@ -87,10 +94,13 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
   const acBonus =
     acParsed !== undefined && Number.isFinite(acParsed) ? acParsed : undefined;
 
-  const baseFeatureNames = values.baseFeatureNames
+  const fromField = values.baseFeatureNames
     .split(/[,\n]/)
     .map((s) => s.trim())
     .filter(Boolean);
+  const fromBaseRow = getBaseRarityFeatureNames(values.rarityRows);
+  const baseFeatureNames =
+    fromBaseRow.length > 0 ? fromBaseRow : fromField;
 
   const supplementaryNotes = values.supplementaryNotes
     .split(/\n\s*\n/)
@@ -131,7 +141,7 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
     isFocus: values.isFocus,
     description: values.description.trim(),
     supplementaryNotes,
-    rarityRows: normalizeRarityRows(values.rarityRows),
+    rarityRows: sortWeaponRarityRows(normalizeRarityRows(values.rarityRows)),
     baseFeatureNames,
   };
 }
@@ -448,27 +458,30 @@ export function mergeCopiedRarities(
       .map((r) => [r.rarity, r] as const),
   );
 
-  // Keep Amellwind order when possible
-  const ordered = RARITY_ORDER.filter((r) => byRarity.has(r)).map(
-    (r) => byRarity.get(r)!,
-  );
+  const ordered: WeaponRarityRow[] = [];
+  for (const rarity of WEAPON_RARITY_ORDER) {
+    const row = byRarity.get(rarity);
+    if (row) ordered.push(row);
+  }
   for (const [rarity, row] of byRarity) {
-    if (!RARITY_ORDER.includes(rarity as (typeof RARITY_ORDER)[number])) {
+    if (!ordered.some((r) => r.rarity === rarity)) {
       ordered.push(row);
     }
   }
 
   if (ordered.length === 0) {
-    return RARITY_ORDER.map((rarity) => ({
+    return WEAPON_RARITY_ORDER.map((rarity) => ({
       rarity,
-      slots: 1,
-      columns: {},
+      slots: defaultSlotsForWeaponRarity(rarity),
+      columns: { Features: [] },
     }));
   }
 
-  return ordered.map((row) => ({
-    rarity: row.rarity,
-    slots: row.slots,
+  const rows = ordered.map((row) => ({
+    rarity: isBaseRarity(row.rarity) ? BASE_RARITY : row.rarity,
+    slots: isBaseRarity(row.rarity) ? 0 : row.slots,
     columns: { ...row.columns },
   }));
+
+  return sortWeaponRarityRows(rows);
 }

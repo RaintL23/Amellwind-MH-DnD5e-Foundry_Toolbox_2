@@ -19,7 +19,8 @@ interface WeaponForgeDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   initialRarityIndex?: number;
-  onRarityChange?: (index: number) => void;
+  initialRarity?: string | null;
+  onRarityChange?: (rarity: string) => void;
   onEdit?: (weapon: CustomWeapon) => void;
   onExport?: (weapon: CustomWeapon) => void;
   onDelete?: (weapon: CustomWeapon) => void;
@@ -30,14 +31,25 @@ export function WeaponForgeDialog({
   open,
   onOpenChange,
   initialRarityIndex = 0,
+  initialRarity = null,
   onRarityChange,
   onEdit,
   onExport,
   onDelete,
 }: WeaponForgeDialogProps) {
+  const extraFeaturesMap = useMemo(() => {
+    if (!weapon) return undefined;
+    const map = customFeaturesToOptionalMap(
+      weapon.customFeatures,
+      weapon.name,
+    );
+    return map.size > 0 ? map : undefined;
+  }, [weapon]);
+
   const {
     current,
     setCurrent,
+    displayWeapon,
     featuresMap,
     mhItemEffectsMap,
     columnChains,
@@ -45,28 +57,22 @@ export function WeaponForgeDialog({
     baseFeatureNameKeys,
     handlePrev,
     handleNext,
-  } = useWeaponDialog(weapon, open, { initialRarityIndex, onRarityChange });
+  } = useWeaponDialog(weapon, open, {
+    initialRarityIndex,
+    initialRarity,
+    onRarityChange,
+    extraFeaturesMap,
+  });
 
-  const mergedFeaturesMap = useMemo(() => {
-    if (!weapon) return featuresMap;
-    const customMap = customFeaturesToOptionalMap(
-      weapon.customFeatures,
-      weapon.name,
-    );
-    if (customMap.size === 0) return featuresMap;
-    const merged = new Map(featuresMap);
-    for (const [key, feat] of customMap) {
-      merged.set(key, feat);
-    }
-    return merged;
-  }, [featuresMap, weapon]);
-
-  if (!weapon) return null;
+  if (!weapon || !displayWeapon) return null;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
-        <WeaponDialogHeader weapon={weapon} currentRarityIndex={current} />
+        <WeaponDialogHeader
+          weapon={displayWeapon}
+          currentRarityIndex={current}
+        />
 
         <DialogBody>
           <div className="flex flex-wrap items-center gap-2 mb-4">
@@ -126,16 +132,16 @@ export function WeaponForgeDialog({
             </div>
           </div>
 
-          <WeaponDialogMeta weapon={weapon} />
+          <WeaponDialogMeta weapon={displayWeapon} />
 
           <WeaponRarityProgression
-            weapon={weapon}
+            weapon={displayWeapon}
             current={current}
             onSelect={setCurrent}
             onPrev={handlePrev}
             onNext={handleNext}
             columnChains={columnChains}
-            featuresMap={mergedFeaturesMap}
+            featuresMap={featuresMap}
             mhItemEffectsMap={mhItemEffectsMap}
             baseFeatures={baseFeatures}
             baseFeatureNameKeys={baseFeatureNameKeys}

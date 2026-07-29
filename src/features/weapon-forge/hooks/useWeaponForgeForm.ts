@@ -2,7 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import type { Weapon } from "@/shared/types";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
-import { getOptionalFeaturesMap } from "@/features/weapons/services/optionalfeature.service";
+import {
+  getOptionalFeaturesMap,
+  resolveWeaponBaseFeatures,
+} from "@/features/weapons/services/optionalfeature.service";
+import { populateBaseRarityFeatures } from "@/features/weapons/utils/weapon-base-rarity.utils";
 import {
   createFeatureDef,
   emptyFormValues,
@@ -106,10 +110,20 @@ export function useWeaponForgeForm() {
       });
 
       void getOptionalFeaturesMap().then((map) => {
+        const resolvedBase = resolveWeaponBaseFeatures(weapon, map);
+        const baseNames = [
+          ...weapon.baseFeatureNames,
+          ...resolvedBase.map((f) => f.name),
+        ];
+        const rarityRows = populateBaseRarityFeatures(
+          baseValues.rarityRows,
+          baseNames,
+        );
+
         const defs: WeaponForgeFeatureDef[] = [];
         const seen = new Set<string>();
 
-        for (const row of baseValues.rarityRows) {
+        for (const row of rarityRows) {
           for (const ref of getAssignedFeaturesForRow(row)) {
             const key = ref.name.toLowerCase();
             if (seen.has(key)) continue;
@@ -125,20 +139,24 @@ export function useWeaponForgeForm() {
           }
         }
 
-        for (const name of weapon.baseFeatureNames) {
-          const key = name.toLowerCase();
+        for (const feat of resolvedBase) {
+          const key = feat.name.toLowerCase();
           if (seen.has(key)) continue;
           seen.add(key);
-          const opt = map.get(key);
           defs.push(
             createFeatureDef({
-              name,
-              description: opt?.paragraphs.join("\n\n") ?? "",
+              name: feat.name,
+              description: feat.paragraphs.join("\n\n"),
             }),
           );
         }
 
-        setValues((prev) => ({ ...prev, customFeatures: defs }));
+        setValues((prev) => ({
+          ...prev,
+          rarityRows,
+          baseFeatureNames: baseNames.join(", "),
+          customFeatures: defs,
+        }));
       });
     },
     [],

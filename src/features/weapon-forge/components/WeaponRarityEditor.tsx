@@ -1,9 +1,12 @@
 import { memo, useCallback, useMemo, useRef, useState } from "react";
 import {
   WeaponRarityRow,
-  RARITY_ORDER,
+  WEAPON_RARITY_ORDER,
   RARITY_STYLES,
-  type RarityTier,
+  defaultSlotsForWeaponRarity,
+  isBaseRarity,
+  isWeaponRarityTier,
+  type WeaponRarityTier,
 } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { Input } from "@/components/ui/input";
@@ -34,10 +37,10 @@ import {
 } from "../utils/weapon-forge-features.utils";
 import { FeatureEditDialog } from "./FeatureEditDialog";
 
-const RARITY_OPTIONS: readonly string[] = RARITY_ORDER;
+const RARITY_OPTIONS: readonly string[] = WEAPON_RARITY_ORDER;
 
-function isRarityTier(value: string): value is RarityTier {
-  return (RARITY_OPTIONS as readonly string[]).includes(value);
+function isRarityTier(value: string): value is WeaponRarityTier {
+  return isWeaponRarityTier(value);
 }
 
 interface WeaponRarityEditorProps {
@@ -84,6 +87,7 @@ const RarityRowItem = memo(function RarityRowItem({
 }: RarityRowItemProps) {
   const assigned = getAssignedFeaturesForRow(row);
   const rarityStyle = RARITY_STYLES[row.rarity] ?? RARITY_STYLES.Common;
+  const baseTier = isBaseRarity(row.rarity);
   const rarityOptions = [
     ...(!isRarityTier(row.rarity) ? [row.rarity] : []),
     ...RARITY_OPTIONS.filter(
@@ -102,7 +106,11 @@ const RarityRowItem = memo(function RarityRowItem({
           <Select
             value={row.rarity}
             onChange={(e) =>
-              onUpdateRow(index, { ...row, rarity: e.target.value })
+              onUpdateRow(index, {
+                ...row,
+                rarity: e.target.value,
+                slots: defaultSlotsForWeaponRarity(e.target.value),
+              })
             }
             className="h-8"
           >
@@ -112,61 +120,73 @@ const RarityRowItem = memo(function RarityRowItem({
               </option>
             ))}
           </Select>
+          {baseTier && (
+            <p className="text-[11px] text-muted-foreground">
+              Weapon-wide features (Switch Mode, Melody, …). Editable here.
+            </p>
+          )}
         </div>
-        <div className="space-y-1 w-20">
-          <Label className="text-xs text-muted-foreground">Slots</Label>
-          <Input
-            type="number"
-            min={0}
-            value={row.slots}
-            onChange={(e) =>
-              onUpdateRow(index, {
-                ...row,
-                slots: Number.parseInt(e.target.value, 10) || 0,
-              })
-            }
-            className="h-8"
-          />
-        </div>
-        <div className="space-y-1 w-[88px]">
-          <Label className="text-xs text-muted-foreground">To Hit</Label>
-          <Input
-            value={getTypedBonusValue(row, "toHit")}
-            onChange={(e) =>
-              onUpdateRow(
-                index,
-                setTypedBonusValue(row, "toHit", e.target.value),
-              )
-            }
-            placeholder="--"
-            className="h-8"
-          />
-        </div>
-        <div className="space-y-1 w-[88px]">
-          <Label className="text-xs text-muted-foreground">AC</Label>
-          <Input
-            value={getTypedBonusValue(row, "ac")}
-            onChange={(e) =>
-              onUpdateRow(index, setTypedBonusValue(row, "ac", e.target.value))
-            }
-            placeholder="--"
-            className="h-8"
-          />
-        </div>
-        <div className="space-y-1 w-[88px]">
-          <Label className="text-xs text-muted-foreground">Damage</Label>
-          <Input
-            value={getTypedBonusValue(row, "damage")}
-            onChange={(e) =>
-              onUpdateRow(
-                index,
-                setTypedBonusValue(row, "damage", e.target.value),
-              )
-            }
-            placeholder="--"
-            className="h-8"
-          />
-        </div>
+        {!baseTier && (
+          <>
+            <div className="space-y-1 w-20">
+              <Label className="text-xs text-muted-foreground">Slots</Label>
+              <Input
+                type="number"
+                min={0}
+                value={row.slots}
+                onChange={(e) =>
+                  onUpdateRow(index, {
+                    ...row,
+                    slots: Number.parseInt(e.target.value, 10) || 0,
+                  })
+                }
+                className="h-8"
+              />
+            </div>
+            <div className="space-y-1 w-[88px]">
+              <Label className="text-xs text-muted-foreground">To Hit</Label>
+              <Input
+                value={getTypedBonusValue(row, "toHit")}
+                onChange={(e) =>
+                  onUpdateRow(
+                    index,
+                    setTypedBonusValue(row, "toHit", e.target.value),
+                  )
+                }
+                placeholder="--"
+                className="h-8"
+              />
+            </div>
+            <div className="space-y-1 w-[88px]">
+              <Label className="text-xs text-muted-foreground">AC</Label>
+              <Input
+                value={getTypedBonusValue(row, "ac")}
+                onChange={(e) =>
+                  onUpdateRow(
+                    index,
+                    setTypedBonusValue(row, "ac", e.target.value),
+                  )
+                }
+                placeholder="--"
+                className="h-8"
+              />
+            </div>
+            <div className="space-y-1 w-[88px]">
+              <Label className="text-xs text-muted-foreground">Damage</Label>
+              <Input
+                value={getTypedBonusValue(row, "damage")}
+                onChange={(e) =>
+                  onUpdateRow(
+                    index,
+                    setTypedBonusValue(row, "damage", e.target.value),
+                  )
+                }
+                placeholder="--"
+                className="h-8"
+              />
+            </div>
+          </>
+        )}
         <Button
           type="button"
           variant="ghost"
@@ -495,17 +515,19 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
 
   const addRow = useCallback(() => {
     const used = new Set(rowsRef.current.map((r) => r.rarity));
-    const nextRarity = RARITY_ORDER.find((rarity) => !used.has(rarity));
+    const nextRarity = WEAPON_RARITY_ORDER.find((rarity) => !used.has(rarity));
     if (!nextRarity) return;
     onChangeRows([
       ...rowsRef.current,
       {
         rarity: nextRarity,
-        slots: 1,
-        columns: {
-          [BONUS_COLUMN_KEYS.toHit]: "",
-          Features: [],
-        },
+        slots: defaultSlotsForWeaponRarity(nextRarity),
+        columns: isBaseRarity(nextRarity)
+          ? { Features: [] }
+          : {
+              [BONUS_COLUMN_KEYS.toHit]: "",
+              Features: [],
+            },
       },
     ]);
   }, [onChangeRows]);
@@ -531,7 +553,7 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
     [rows],
   );
 
-  const canAddRarity = RARITY_ORDER.some((rarity) => !usedRarities.has(rarity));
+  const canAddRarity = WEAPON_RARITY_ORDER.some((rarity) => !usedRarities.has(rarity));
 
   const upgradeCandidatesForDialog = useMemo(() => {
     const beforeRarityIndex =

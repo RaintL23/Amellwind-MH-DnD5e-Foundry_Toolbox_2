@@ -4,6 +4,7 @@ import {
   DMG_TYPE_LABELS,
   PROPERTY_LABELS,
   RARITY_STYLES,
+  WEAPON_RARITY_ORDER,
   isWeaponFeatureColumn,
 } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
@@ -115,6 +116,18 @@ export function WeaponComparePanel({
         }
       }
     }
+
+    const order = new Map(
+      WEAPON_RARITY_ORDER.map((rarity, index) => [rarity, index]),
+    );
+    rarities.sort((a, b) => {
+      const ai = order.get(a as (typeof WEAPON_RARITY_ORDER)[number]);
+      const bi = order.get(b as (typeof WEAPON_RARITY_ORDER)[number]);
+      if (ai != null && bi != null) return ai - bi;
+      if (ai != null) return -1;
+      if (bi != null) return 1;
+      return a.localeCompare(b);
+    });
 
     // Prefer Bonus first among non-feature columns
     const others = [...otherCols];

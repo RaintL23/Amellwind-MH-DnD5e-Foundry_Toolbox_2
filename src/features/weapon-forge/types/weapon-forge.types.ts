@@ -1,10 +1,13 @@
 import {
   Weapon,
   WeaponRarityRow,
-  RARITY_ORDER,
+  WEAPON_RARITY_ORDER,
+  defaultSlotsForWeaponRarity,
+  isBaseRarity,
   type WeaponModeDef,
 } from "@/shared/types";
 import { resolveWeaponModeDefs, createDefaultForgeModes } from "@/features/weapons/utils/weapon-mode.utils";
+import { ensureFormBaseRarityRow } from "@/features/weapons/utils/weapon-base-rarity.utils";
 
 /** Rarity-table bonus column labels (replaces legacy single "Bonus"). */
 export const BONUS_COLUMN_KEYS = {
@@ -124,14 +127,19 @@ export interface WeaponForgeFormValues {
 }
 
 export function emptyRarityRows(): WeaponRarityRow[] {
-  return RARITY_ORDER.map((rarity) => ({
-    rarity,
-    slots: rarity === "Common" ? 1 : RARITY_ORDER.indexOf(rarity) + 1,
-    columns: {
-      [BONUS_COLUMN_KEYS.toHit]: rarity === "Common" ? "--" : "",
-      Features: [],
-    },
-  }));
+  return WEAPON_RARITY_ORDER.map((rarity) => {
+    const columns: Record<string, string | string[]> = {
+      Features: [] as string[],
+    };
+    if (!isBaseRarity(rarity)) {
+      columns[BONUS_COLUMN_KEYS.toHit] = rarity === "Common" ? "--" : "";
+    }
+    return {
+      rarity,
+      slots: defaultSlotsForWeaponRarity(rarity),
+      columns,
+    };
+  });
 }
 
 export function emptyFormValues(): WeaponForgeFormValues {
@@ -259,11 +267,13 @@ export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
   const custom = weapon as CustomWeapon;
   const rows =
     weapon.rarityRows.length > 0
-      ? weapon.rarityRows.map((row) => ({
-          rarity: row.rarity,
-          slots: row.slots,
-          columns: { ...row.columns },
-        }))
+      ? ensureFormBaseRarityRow(
+          weapon.rarityRows.map((row) => ({
+            rarity: row.rarity,
+            slots: row.slots,
+            columns: { ...row.columns },
+          })),
+        )
       : emptyRarityRows();
 
   const existingFeatures = Array.isArray(custom.customFeatures)

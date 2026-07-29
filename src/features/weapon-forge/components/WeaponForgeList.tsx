@@ -40,7 +40,7 @@ export function WeaponForgeList() {
     resolveCompareWeapons,
   } = useWeaponForge();
 
-  const { urlWeaponKey, syncOpen, syncClose, syncRarity, resolveRarityIndex } =
+  const { urlWeaponKey, urlRarityParam, syncOpen, syncClose, syncRarity } =
     useWeaponDialogUrlSync();
 
   const [tab, setTab] = useState<"catalog" | "mine">("mine");
@@ -124,10 +124,10 @@ export function WeaponForgeList() {
   );
 
   const handleRarityChange = useCallback(
-    (index: number) => {
-      if (selected) syncRarity(selected, index);
+    (rarity: string) => {
+      syncRarity(rarity);
     },
-    [selected, syncRarity],
+    [syncRarity],
   );
 
   function handleDelete(weapon: CustomWeapon) {
@@ -382,9 +382,7 @@ export function WeaponForgeList() {
         weapon={selected}
         open={detailOpen}
         onOpenChange={handleDetailOpenChange}
-        initialRarityIndex={
-          selected ? resolveRarityIndex(selected.rarityRows) : 0
-        }
+        initialRarity={urlRarityParam || null}
         onRarityChange={handleRarityChange}
         onEdit={openEdit}
         onExport={exportOne}
