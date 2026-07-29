@@ -1,0 +1,212 @@
+{
+  "name": "Switch Axe",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 7,
+  "value": 3000,
+  "property": [
+    "H",
+    "2H",
+    "R"
+  ],
+  "dmg1": "1d8",
+  "dmgType": "S",
+  "entries": [
+    "Axe Mode - Properties: Heavy, Two-Handed, Reach.\nSword Mode - Properties: Heavy, Two-Handed.",
+    {
+      "type": "inset",
+      "name": "Switch Axe",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features",
+            "Phials"
+          ],
+          "rows": [
+            [
+              "Base",
+              "0",
+              "--",
+              "--",
+              "--",
+              "--"
+            ],
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery (Cleave) (Axe Mode), Mastery (Vex) (Sword), Fluid Morph",
+              "--"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Phial Gauge, Kinetic Generator, Phial Discharge, Zero Sum Discharge (ZSD)",
+              "Power Phial, Element Phial"
+            ],
+            [
+              "Rare",
+              "3",
+              "1",
+              "1",
+              "Expanded Gauge I, Zero Sum Discharge Splash",
+              "Exhaust Phial, Poison Phial"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "2",
+              "2",
+              "Expanded Gauge II, Offset Morph, Elemental Awakening",
+              "--"
+            ],
+            [
+              "Legendary",
+              "5",
+              "3",
+              "3",
+              "Maximum Gauge, True Zero Sum Discharge",
+              "Dragon Phial"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "dmg2": "2d6",
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "5a97822b-fac2-417d-9237-42d29cfeb191",
+        "name": "Mastery (Cleave) (Axe Mode)",
+        "description": "If you hit a creature with a melee attack, you can make an attack roll against a second creature within 5 feet of the first that is also within your reach."
+      },
+      {
+        "id": "53b90fe6-8782-43c2-bc20-d7be329f7352",
+        "name": "Mastery (Vex) (Sword)",
+        "description": "If you hit a creature and deal damage to it, you have Advantage on your next attack roll against that creature before the end of your next turn."
+      },
+      {
+        "id": "77e6373e-f729-4925-a65d-d8857c26e629",
+        "name": "Fluid Morph",
+        "description": "You can switch the weapon between its Axe and Sword modes as a Bonus Action. Additionally, once per turn, you can switch modes freely immediately after you finish taking the Attack action."
+      },
+      {
+        "id": "a6398e06-4e5d-4274-91ed-ceb5de518e0d",
+        "name": "Phial Gauge",
+        "description": "The weapon can hold a maximum of 5 Phial Charges. The gauge starts at 0 after a Long Rest. When you finish a Long Rest, you choose one Phial Type to install: Power or Element."
+      },
+      {
+        "id": "7268bae9-8baf-409b-a4fe-dc38ac24b586",
+        "name": "Kinetic Generator",
+        "description": "When you hit a creature with an attack in Axe mode, the weapon gains 1 Phial Charge (or 2 charges if it was a Critical Hit)."
+      },
+      {
+        "id": "d07b5b0c-5e7b-484e-beda-526dff5b766e",
+        "name": "Phial Discharge",
+        "description": "When you hit a creature with an attack in Sword mode, you must expend 1 Phial Charge to activate your installed Phial. If you have 0 charges, you cannot attack in Sword mode and the weapon reverts to Axe mode."
+      },
+      {
+        "id": "ec54a32a-1825-4b6c-ad4e-3c4aab0d8263",
+        "name": "Power Phial",
+        "description": "Deals an extra 1d6 Slashing damage.",
+        "resourceColumn": "Phials"
+      },
+      {
+        "id": "b899b695-aa23-46df-82c2-ae168d96dafe",
+        "name": "Element Phial",
+        "description": "Deals an extra 1d8 Acid, Cold, Fire, or Lightning damage, chosen during your Long Rest.",
+        "resourceColumn": "Phials"
+      },
+      {
+        "id": "739b81c7-dcdc-4744-a635-c6b02d82ec5c",
+        "name": "Zero Sum Discharge (ZSD)",
+        "description": "While in Sword mode with at least 2 Phial Charges, you can use your Action to thrust the blade into a creature and overheat its core. Make one melee weapon attack with Advantage against a target within your reach. On a hit, you deal the weapon's normal damage and expend all remaining Phial Charges, dealing an extra 1d10 damage of your installed Phial's type for each charge expended. Regardless of whether the attack hits or misses, the explosive recoil pushes you 5 feet away from the target without provoking Opportunity Attacks, and the weapon immediately reverts to Axe mode with 0 charges."
+      },
+      {
+        "id": "05d148e8-a569-4cbb-aac6-007eab1e0f8a",
+        "name": "Expanded Gauge I",
+        "description": "The weapon can now hold a maximum of 7 Phial Charges.",
+        "upgradesFromId": "a6398e06-4e5d-4274-91ed-ceb5de518e0d"
+      },
+      {
+        "id": "603eeb23-209e-464e-9bc4-da0f59a4e588",
+        "name": "Exhaust Phial",
+        "description": "Deals 1d6 extra Bludgeoning damage, and the target's speed is reduced by 10 feet and it cannot take Reactions until the start of its next turn.",
+        "resourceColumn": "Phials"
+      },
+      {
+        "id": "d4c09351-df35-4c20-b826-ed4f468dfd68",
+        "name": "Poison Phial",
+        "description": "Deals 1d6 extra Poison damage. Target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be Poisoned until the end of its next turn.",
+        "resourceColumn": "Phials"
+      },
+      {
+        "id": "ef270ce7-e009-4461-a950-72e0e8ae6092",
+        "name": "Zero Sum Discharge Splash",
+        "description": "The explosion of your Zero Sum Discharge becomes massive. When you use ZSD even if you miss, any  creature within 5 feet of the target must succeed on a Dexterity saving throw or take half of the total Phial damage dealt.",
+        "upgradesFromId": "739b81c7-dcdc-4744-a635-c6b02d82ec5c"
+      },
+      {
+        "id": "1dbba3e1-6a21-4cc6-9456-b06593411434",
+        "name": "Expanded Gauge II",
+        "description": "The weapon can now hold a maximum of 9 Phial Charges.",
+        "upgradesFromId": "05d148e8-a569-4cbb-aac6-007eab1e0f8a"
+      },
+      {
+        "id": "c40bca6b-af44-4a6e-ab27-ac6cc59f530c",
+        "name": "Offset Morph",
+        "description": "As a Reaction when a creature you can see makes a melee attack against you, you can expend 1 Phial Charge to morph the weapon and attempt a clash. You add your Phial die to your AC against that attack. If this causes the attack to miss, you can immediately make one weapon attack against the attacker using the weapon's newly morphed mode."
+      },
+      {
+        "id": "bf633b4e-9b9f-4944-afea-814d4626bbfb",
+        "name": "Elemental Awakening",
+        "description": "Damage dealt by your Element Phial (including during a ZSD) ignores Resistance to that damage type.",
+        "upgradesFromId": "b899b695-aa23-46df-82c2-ae168d96dafe"
+      },
+      {
+        "id": "de61bb4b-d0ac-4636-bf6c-378eda76f8c9",
+        "name": "Maximum Gauge",
+        "description": "The weapon can now hold a maximum of 10 Phial Charges.",
+        "upgradesFromId": "1dbba3e1-6a21-4cc6-9456-b06593411434"
+      },
+      {
+        "id": "bc86080f-669e-4cd6-b792-a7d7a8259700",
+        "name": "True Zero Sum Discharge",
+        "description": "When you hit with your ZSD, you add your Strength modifier to the damage of each Phial Charge expended (e.g., expending 10 charges adds your Strength modifier 10 times to the total explosion damage).",
+        "upgradesFromId": "ef270ce7-e009-4461-a950-72e0e8ae6092"
+      },
+      {
+        "id": "43918845-6923-4937-b073-4e412b0eff0e",
+        "name": "Dragon Phial",
+        "description": "You can install a Dragon Phial, which acts as an Element Phial but deals 1d10 Necrotic damage.",
+        "resourceColumn": "Phials"
+      }
+    ],
+    "modes": [
+      {
+        "label": "Axe",
+        "damage": "1d8",
+        "isTwoHanded": true,
+        "blocksOffHand": true
+      },
+      {
+        "label": "Sword",
+        "damage": "2d6",
+        "isTwoHanded": true,
+        "blocksOffHand": true
+      }
+    ]
+  }
+}

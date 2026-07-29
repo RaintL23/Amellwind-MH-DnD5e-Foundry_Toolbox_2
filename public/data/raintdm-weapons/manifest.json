@@ -4,6 +4,7 @@
   "weapons": [
     "dual-blades.json",
     "great-sword.json",
-    "hammer.json"
+    "hammer.json",
+    "switch-axe.json"
   ]
 }
