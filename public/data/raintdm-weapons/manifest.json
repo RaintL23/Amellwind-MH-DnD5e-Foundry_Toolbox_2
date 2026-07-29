@@ -4,10 +4,10 @@
   "weapons": [
     "dual-blades.json",
     "great-sword.json",
+    "gunlance.json",
     "hammer.json",
     "lance.json",
-    "switch-axe.json",
     "magus-staff.json",
-    "gunlance.json"
+    "switch-axe.json"
   ]
 }
