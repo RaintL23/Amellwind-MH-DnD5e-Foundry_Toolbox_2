@@ -1,0 +1,139 @@
+{
+  "name": "Lance",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 6,
+  "value": 2000,
+  "property": [
+    "H",
+    "R"
+  ],
+  "dmg1": "1d8",
+  "dmgType": "P",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Lance",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus AC",
+            "Bonus to Damage",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Base",
+              "1",
+              "--",
+              "--",
+              "--",
+              "--"
+            ],
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "--",
+              "Mastery (Sap):"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "--",
+              "Counter-Thrust, Guard Dash"
+            ],
+            [
+              "Rare",
+              "3",
+              "--",
+              "+1",
+              "--",
+              "Shielding Presence, Anchor Rage"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+1",
+              "+2",
+              "+1",
+              "Perfect Offset, Leaping Thrust"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+2",
+              "+3",
+              "+2",
+              "Absolute Defense, Spiral Thrust"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "ac": 2,
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "9f8f6754-74de-4879-a128-dfb48b4a8803",
+        "name": "Mastery (Sap):",
+        "description": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+      },
+      {
+        "id": "c38b2293-d0d7-4c74-8f0b-9603d796808a",
+        "name": "Counter-Thrust",
+        "description": "As a Reaction when a creature you can see hits you or an ally within your reach with an attack, you can raise your shield to intervene. Roll 1d8 and add it to the target's AC against that attack, potentially causing it to miss. If this causes a melee attack to miss, you can immediately make one Lance attack against the attacker as part of the same Reaction."
+      },
+      {
+        "id": "81385314-08fa-4ed7-8d18-72963344075f",
+        "name": "Guard Dash",
+        "description": "The lance is heavy, but you use your shield's momentum to push forward. As a Bonus Action, you can move up to 15 feet in any direction without provoking Opportunity Attacks, keeping your guard raised as you reposition."
+      },
+      {
+        "id": "849c2cd2-458c-4b0f-955b-f69369627089",
+        "name": "Shielding Presence",
+        "description": "You become a walking barricade. Allies within 5 feet of you gain the benefits of Half Cover (+2 bonus to AC and Dexterity saving throws) as long as you are conscious and actively wielding the shield."
+      },
+      {
+        "id": "540e33d8-7e5a-4cd2-8a22-f973f53fc288",
+        "name": "Anchor Rage",
+        "description": "Blocking heavy blows empowers your strikes. Whenever you successfully cause an attack to miss using your Counter-Thrust, your weapon absorbs the kinetic energy. Until the end of your next turn, your next successful Lance attack deals an extra 1d6 piercing damage."
+      },
+      {
+        "id": "124d9222-8811-4ed9-8bfe-62d1cbcbb955",
+        "name": "Perfect Offset",
+        "description": "Your Counter-Thrust die increases to 1d10. Additionally, if an enemy's melee attack still hits an ally despite your Counter-Thrust, you can choose to physically step in the way. You take the damage instead of your ally, and you reduce the bludgeoning, piercing, or slashing damage taken by an amount equal to your total Armor Class.",
+        "upgradesFromId": "c38b2293-d0d7-4c74-8f0b-9603d796808a"
+      },
+      {
+        "id": "914157f0-c3c1-48a6-acfa-dc18463f2a1e",
+        "name": "Leaping Thrust",
+        "description": "When you use your Guard Dash Bonus Action, you can make one Lance attack at the end of the movement as part of the same Bonus Action.",
+        "upgradesFromId": "81385314-08fa-4ed7-8d18-72963344075f"
+      },
+      {
+        "id": "bef6c94f-d0bf-4123-8e8a-fb40d968cc7a",
+        "name": "Absolute Defense",
+        "description": "Your Counter-Thrust die increases to 1d12. While you are conscious and wielding this weapon set, you are immune to being knocked Prone or moved against your will.",
+        "upgradesFromId": "124d9222-8811-4ed9-8bfe-62d1cbcbb955"
+      },
+      {
+        "id": "e1cf31b4-b354-4f18-8ce8-a96c74b11469",
+        "name": "Spiral Thrust",
+        "description": "When you trigger your Anchor Rage feature, the extra piercing damage increases to 2d6 and applies to the next two successful attacks before the end of your next turn.",
+        "upgradesFromId": "540e33d8-7e5a-4cd2-8a22-f973f53fc288"
+      }
+    ]
+  }
+}

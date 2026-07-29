@@ -36,7 +36,7 @@ export function RaritySlide({
   baseFeatureNameKeys,
 }: RaritySlideProps) {
   const style = RARITY_STYLES[row.rarity] ?? RARITY_STYLES["Common"];
-  const { bonus, otherStats } = getRaritySlideStatEntries(row);
+  const { headerBonuses, otherStats } = getRaritySlideStatEntries(row);
   const unlockSections = getRaritySlideUnlockSections(rarityRows, rarityIndex);
 
   return (
@@ -49,7 +49,7 @@ export function RaritySlide({
     >
       <RaritySlideHeader
         row={row}
-        attackBonus={bonus}
+        headerBonuses={headerBonuses}
         styleText={style.text}
       />
 

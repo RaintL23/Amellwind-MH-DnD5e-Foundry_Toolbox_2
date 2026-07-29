@@ -4,17 +4,18 @@ import { Layers } from "lucide-react";
 
 interface RaritySlideHeaderProps {
   row: WeaponRarityRow;
-  attackBonus?: string;
+  headerBonuses: string[];
   styleText: string;
 }
 
 export function RaritySlideHeader({
   row,
-  attackBonus,
+  headerBonuses,
   styleText,
 }: RaritySlideHeaderProps) {
   const style = RARITY_STYLES[row.rarity] ?? RARITY_STYLES["Common"];
   const baseTier = isBaseRarity(row.rarity);
+  const bonusLine = headerBonuses.join(" | ");
 
   return (
     <div className="flex items-center justify-between">
@@ -27,10 +28,8 @@ export function RaritySlideHeader({
         {row.rarity}
       </span>
       <div className="flex items-center gap-3 text-sm text-muted-foreground">
-        {!baseTier && attackBonus && (
-          <span className={cn("font-bold text-base", styleText)}>
-            {attackBonus} to hit
-          </span>
+        {!baseTier && bonusLine && (
+          <span className={cn("font-bold text-base", styleText)}>{bonusLine}</span>
         )}
         {!baseTier && (
           <span className="flex items-center gap-1">

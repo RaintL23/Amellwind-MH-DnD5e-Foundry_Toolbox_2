@@ -361,7 +361,8 @@ export function WeaponLibraryDetail({
     );
   }
 
-  const { bonus, otherStats } = getRaritySlideStatEntries(row);
+  const { headerBonuses, otherStats } = getRaritySlideStatEntries(row);
+  const bonusLine = headerBonuses.join(" | ");
   const shieldAc = showIntegratedShield
     ? getWeaponShieldAcBonusAtIndex(weapon, rarityIndex)
     : null;
@@ -437,8 +438,8 @@ export function WeaponLibraryDetail({
               }
               value={`${activeDamage} ${damageTypeLabel}`}
             />
-            {bonus && (
-              <StatBox label="Attack Bonus" value={`${bonus} to hit`} />
+            {bonusLine && (
+              <StatBox label="Bonuses" value={bonusLine} />
             )}
             <StatBox
               label="Rune Slots"

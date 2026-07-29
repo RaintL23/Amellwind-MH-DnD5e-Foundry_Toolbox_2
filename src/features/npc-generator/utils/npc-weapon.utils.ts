@@ -11,7 +11,7 @@ import {
   buildColumnChains,
   getBaseFeatureName,
 } from "@/features/weapons/utils/weapon-feature-chains.utils";
-import { getRaritySlideStatEntries } from "@/features/weapons/utils/rarity-slide.utils";
+import { getRarityToHitBonus } from "@/features/weapons/utils/rarity-slide.utils";
 import { toNpcFeatureText } from "./npc-feature-text.utils";
 import { NPC_WEAPON_META_FEATURE, isVariantPrimaryWeapon } from "../data/npc-ammo-attacks.data";
 
@@ -62,8 +62,8 @@ export function resolveNpcAttackFromWeapon(
   const row =
     weapon.rarityRows[rarityIndex] ??
     weapon.rarityRows[weapon.rarityRows.length - 1];
-  const { bonus } = getRaritySlideStatEntries(row);
-  const flatFromRarity = parseFlatBonus(bonus);
+  const toHitBonus = getRarityToHitBonus(row);
+  const flatFromRarity = parseFlatBonus(toHitBonus);
   const isRanged = Boolean(weapon.range?.trim());
   const ability: AbilityKey =
     weapon.properties.includes("F") && !weapon.properties.includes("2H")
