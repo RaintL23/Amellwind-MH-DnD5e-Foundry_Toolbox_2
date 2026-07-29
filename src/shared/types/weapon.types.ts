@@ -97,7 +97,36 @@ export const RARITY_ORDER = ["Common", "Uncommon", "Rare", "Very Rare", "Legenda
 
 export type RarityTier = (typeof RARITY_ORDER)[number];
 
+/** Pre-rarity tier for weapon-wide features (Switch Mode, Melody, Loading, …). */
+export const BASE_RARITY = "Base";
+
+/** Weapon progression including Base, then Amellwind D&D rarities. */
+export const WEAPON_RARITY_ORDER = [BASE_RARITY, ...RARITY_ORDER] as const;
+
+export type WeaponRarityTier = (typeof WEAPON_RARITY_ORDER)[number];
+
+export function isBaseRarity(rarity: string): boolean {
+  return rarity.trim().toLowerCase() === BASE_RARITY.toLowerCase();
+}
+
+export function isWeaponRarityTier(value: string): value is WeaponRarityTier {
+  return (WEAPON_RARITY_ORDER as readonly string[]).includes(value);
+}
+
+export function defaultSlotsForWeaponRarity(rarity: string): number {
+  if (isBaseRarity(rarity)) return 0;
+  const idx = RARITY_ORDER.indexOf(rarity as RarityTier);
+  if (idx >= 0) return idx + 1;
+  return 1;
+}
+
 export const RARITY_STYLES: Record<string, { border: string; bg: string; text: string; badge: string }> = {
+  Base: {
+    border: "border-slate-500",
+    bg: "from-slate-950 to-slate-900",
+    text: "text-slate-100",
+    badge: "bg-slate-800/70 text-slate-200 border-slate-500",
+  },
   Common: {
     border: "border-gray-600",
     bg: "from-gray-900 to-gray-800",
