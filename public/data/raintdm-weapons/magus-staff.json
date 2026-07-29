@@ -1,0 +1,153 @@
+{
+  "name": "Magus Staff",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 3,
+  "value": 3000,
+  "property": [
+    "V"
+  ],
+  "dmg1": "1d6",
+  "dmgType": "B",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Magus Staff",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Base",
+              "0",
+              "--",
+              "--"
+            ],
+            [
+              "Common",
+              "1",
+              "--",
+              "Mastery (Sap)"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "Spell Core Gauge, Harvest Magic, Arcane Discharge"
+            ],
+            [
+              "Rare",
+              "3",
+              "--",
+              "Improve Casting, Expanded Gauge, Offset Ward"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "--",
+              "Improve Casting Upgrade I, Expanded Gauge Upgrade I, Discharge Upgrade I, Zero Sum Spell"
+            ],
+            [
+              "Legendary",
+              "5",
+              "--",
+              "Improve Casting Upgrade II, Expanded Gauge Upgrade II, Discharge Upgrade II"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "dmg2": "1d10",
+  "focus": true,
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "6d752643-7476-48c7-8d80-cc733a9a177f",
+        "name": "Mastery (Sap)",
+        "description": "If you hit a creature with a melee weapon attack using this staff, that creature has Disadvantage on its next attack roll before the start of your next turn."
+      },
+      {
+        "id": "900417be-ec92-45ac-92ef-599df54518e3",
+        "name": "Spell Core Gauge",
+        "description": "You awaken its internal Spell Core, allowing you to siphon magical energy from your enemies to empower your own spells. The staff can hold a maximum of 3 Spell Counters. It loses all counters when you finish a Short or Long Rest."
+      },
+      {
+        "id": "3a3149db-53c5-4563-9940-aa728540c557",
+        "name": "Harvest Magic",
+        "description": "When you deal damage to a hostile creature with a Cantrip, the staff absorbs residual magic and gains 1 Spell Counter. If the target of your Cantrip is within 15 feet of you, the staff absorbs energy faster, gaining 2 Spell Counters instead."
+      },
+      {
+        "id": "d8c61708-efd3-41c5-9706-b33b01c4739b",
+        "name": "Arcane Discharge",
+        "description": "When you cast a leveled spell with a duration of Instantaneous that deals damage, you can expend any number of Spell Counters from the staff. For each counter expended, one target affected by the spell takes an extra 1d6 damage of the spell's type."
+      },
+      {
+        "id": "eec60999-077d-48e6-97a6-5ce0e06ba7c3",
+        "name": "Improve Casting",
+        "description": "You gain a +1 bonus to Spell Attack rolls and Spell Save DCs while holding this magic weapon."
+      },
+      {
+        "id": "4687357e-a169-46ac-b8ca-10390f1f08e2",
+        "name": "Expanded Gauge",
+        "description": "The staff can now hold a maximum of 5 Spell Counters.",
+        "upgradesFromId": "900417be-ec92-45ac-92ef-599df54518e3"
+      },
+      {
+        "id": "6b10ee52-cbc0-4c1f-9055-9cd5ab805b29",
+        "name": "Offset Ward",
+        "description": "You learn to parry attacks using raw magical discharge. As a Reaction when you are hit by a melee attack, you can expend 2 Spell Counters to project a brief, intense barrier, granting you a +5 bonus to your AC against that attack. If this causes the attack to miss, you can immediately cast a Cantrip spell-attack with a casting time of 1 Action targeting the attacker as part of the same Reaction."
+      },
+      {
+        "id": "01202c61-826e-47f7-b5bb-5a88fee4a599",
+        "name": "Improve Casting Upgrade I",
+        "description": "You gain a +2 bonus to Spell Attack rolls and Spell Save DCs while holding this magic weapon.",
+        "upgradesFromId": "eec60999-077d-48e6-97a6-5ce0e06ba7c3"
+      },
+      {
+        "id": "7845631e-86df-41a2-b973-121fcaf2e738",
+        "name": "Expanded Gauge Upgrade I",
+        "description": "The staff can now hold a maximum of 7 Spell Counters.",
+        "upgradesFromId": "4687357e-a169-46ac-b8ca-10390f1f08e2"
+      },
+      {
+        "id": "46bfd186-e642-4a48-88c9-102b4448049a",
+        "name": "Discharge Upgrade I",
+        "description": "The extra damage from your Arcane Discharge increases to 1d8 per counter.",
+        "upgradesFromId": "d8c61708-efd3-41c5-9706-b33b01c4739b"
+      },
+      {
+        "id": "867f6530-51f7-4ac0-bc34-6c7190046284",
+        "name": "Zero Sum Spell",
+        "description": "You can overload the Spell Core for a devastating close-range blast. As an Action, you can expend all remaining Spell Counters in the staff (minimum of 3 counters required) to make a melee spell attack against a creature within your reach. On a hit, the target takes 1d12 Force damage for each counter expended, and is pushed 15 feet away from you. On a miss, the energy dissipates harmlessly. In both cases, the staff drops to 0 counters."
+      },
+      {
+        "id": "176f42e1-33cb-40ab-af4a-772577f6caf9",
+        "name": "Improve Casting Upgrade II",
+        "description": "You gain a +3 bonus to Spell Attack rolls and Spell Save DCs while holding this magic weapon.",
+        "upgradesFromId": "01202c61-826e-47f7-b5bb-5a88fee4a599"
+      },
+      {
+        "id": "a7636a96-616a-46c2-87d6-e1ce29fe9604",
+        "name": "Expanded Gauge Upgrade II",
+        "description": "The staff can now hold a maximum of 10 Spell Counters.",
+        "upgradesFromId": "7845631e-86df-41a2-b973-121fcaf2e738"
+      },
+      {
+        "id": "5d92b1ce-f56a-4bdb-8cdd-3cff9773560f",
+        "name": "Discharge Upgrade II",
+        "description": "The extra damage from your Arcane Discharge increases to 1d10 per counter and the entire spell ignores Resistance to its damage type.",
+        "upgradesFromId": "46bfd186-e642-4a48-88c9-102b4448049a"
+      }
+    ]
+  }
+}

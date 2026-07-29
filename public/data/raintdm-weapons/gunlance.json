@@ -1,0 +1,147 @@
+{
+  "name": "Gunlance",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 6,
+  "value": 3000,
+  "property": [
+    "R"
+  ],
+  "dmg1": "1d8",
+  "dmgType": "P",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Gunlance",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus AC",
+            "Bonus to Damage",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Base",
+              "0",
+              "--",
+              "--",
+              "--",
+              "--"
+            ],
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "--",
+              "Mastery (Push)"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "--",
+              "Artillery Shells, Shelling Strike, Guard Reload"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "+1",
+              "Blast Dash, Full Burst"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "+2",
+              "Shelling Upgrade, Wyvern's Fire"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "+3",
+              "Wyrmstake Cannon, Artillery Expert, Wyvern's Fire Upgrade"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "35e093a5-a780-4ea4-b174-eeff37619940",
+        "name": "Mastery (Push)",
+        "description": "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from you."
+      },
+      {
+        "id": "d9c9bfe9-d319-412b-836e-7a307adf98ee",
+        "name": "Artillery Shells",
+        "description": "The weapon holds up to 4 shells. You can use a Bonus Action to quickly reload all expended shells."
+      },
+      {
+        "id": "66c21a09-968d-4e1f-83ed-57787c526fc3",
+        "name": "Shelling Strike",
+        "description": "The gunlance isn't meant for long-range sniping; it's for point-blank destruction. When you hit a creature with a melee attack using this weapon, you can expend 1 shell to trigger an explosion inside their guard. The target takes an extra 1d6 Thunder damage."
+      },
+      {
+        "id": "0848df51-c301-445a-9454-f0c5c239c082",
+        "name": "Guard Reload",
+        "description": "When a creature misses you with a melee attack while you are wielding the shield, you can use your Reaction to brace yourself and instantly reload up to 2 expended shells."
+      },
+      {
+        "id": "e196aa78-1794-4808-b9fc-64fbee261bc3",
+        "name": "Blast Dash",
+        "description": "You can use the weapon's recoil for extreme mobility. As a Bonus Action, you can expend 1 shell to propel yourself up to 20 feet in a straight line. This movement does not provoke Opportunity Attacks. If you end this movement within reach of a hostile creature, you can make one melee weapon attack against it as part of the same Bonus Action."
+      },
+      {
+        "id": "991b1bf3-1f3a-4ff2-a3c2-aca716d9528d",
+        "name": "Full Burst",
+        "description": "When you use your Shelling Strike, you can choose to expend up to 3 shells at once instead of just 1. The attack deals an extra 1d8 Thunder damage for each shell expended this way.",
+        "upgradesFromId": "66c21a09-968d-4e1f-83ed-57787c526fc3"
+      },
+      {
+        "id": "8a101b39-2bba-415e-a432-df98b9172fcd",
+        "name": "Shelling Upgrade",
+        "description": "Your weapon can now hold up to 5 shells. Additionally, all Thunder damage dealt by your Gunlance shells ignores Resistance to Thunder damage.",
+        "upgradesFromId": "d9c9bfe9-d319-412b-836e-7a307adf98ee"
+      },
+      {
+        "id": "9ff9f7b4-9c65-4785-96ea-c593640366c7",
+        "name": "Wyvern's Fire",
+        "description": "You can overheat the core for a massive payload. As an Action, you can expend 4 shells to unleash a devastating blast of fire and concussive force. Creatures in a 30-foot cone must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). They take 4d6 Fire damage and 4d6 Thunder damage on a failed save, or half as much on a successful one. Once you use this feature, you cannot use it again until you finish a Short or Long Rest."
+      },
+      {
+        "id": "3fb43997-b630-4f39-a813-cb7668714ea0",
+        "name": "Wyrmstake Cannon",
+        "description": "When you score a Critical Hit with a melee attack using this weapon, or when you hit a Prone creature, you can expend 1 shell to inject an explosive stake directly into the target's flesh. The target takes the normal damage of the attack, and at the start of its next turn, the stake detonates, dealing an unavoidable 4d10 Thunder damage."
+      },
+      {
+        "id": "37239849-9e19-40e9-90b8-2e24db57407f",
+        "name": "Artillery Expert",
+        "description": "Your weapon can now hold a maximum of 6 shells, and the damage die of your Shelling Strike increases to 1d10 Thunder damage per shell.",
+        "upgradesFromId": "8a101b39-2bba-415e-a432-df98b9172fcd"
+      },
+      {
+        "id": "0e600885-54d6-4ecc-9f0c-754c19e22638",
+        "name": "Wyvern's Fire Upgrade",
+        "description": "Your Wyvern's Fire now deals 5d6 Fire damage and 5d6 Thunder damage.",
+        "upgradesFromId": "9ff9f7b4-9c65-4785-96ea-c593640366c7"
+      }
+    ]
+  }
+}
