@@ -142,6 +142,12 @@
         "description": "Your Wyvern's Fire now deals 5d6 Fire damage and 5d6 Thunder damage.",
         "upgradesFromId": "9ff9f7b4-9c65-4785-96ea-c593640366c7"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Lance", "Halberd"],
+      "requiresShield": true,
+      "tier": "martial",
+      "range": "melee"
+    }
   }
 }

@@ -134,6 +134,12 @@
         "description": "When you trigger your Anchor Rage feature, the extra piercing damage increases to 2d6 and applies to the next two successful attacks before the end of your next turn.",
         "upgradesFromId": "540e33d8-7e5a-4cd2-8a22-f973f53fc288"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Lance", "Halberd"],
+      "requiresShield": true,
+      "tier": "martial",
+      "range": "melee"
+    }
   }
 }

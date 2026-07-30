@@ -195,6 +195,11 @@
         "isTwoHanded": true,
         "blocksOffHand": true
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Greataxe", "Greatsword"],
+      "tier": "martial",
+      "range": "melee"
+    }
   }
 }

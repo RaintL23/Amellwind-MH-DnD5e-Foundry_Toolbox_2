@@ -170,6 +170,11 @@
         "description": "Your Power Charge now deals an extra 4d6 bludgeoning damage on a hit.",
         "upgradesFromId": "bc81a1c1-cd60-4f14-975c-a8336e9f619a"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Warhammer", "Maul"],
+      "tier": "martial",
+      "range": "melee"
+    }
   }
 }

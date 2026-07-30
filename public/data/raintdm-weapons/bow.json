@@ -203,6 +203,11 @@
         "description": "The quiver can now hold up to 12 Coating Charges.",
         "upgradesFromId": "8f6bdf6e-3ebe-4550-9bc1-ae5a99a58cd3"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Shortbow", "Longbow"],
+      "tier": "martial-or-simple",
+      "range": "ranged"
+    }
   }
 }

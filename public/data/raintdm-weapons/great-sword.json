@@ -103,6 +103,11 @@
         "description": "Your charged slash now deals an extra 6d6 slashing damage for each charge expended in this way and the creature is Stunned until the start of your next turn from the sheer concussive force.",
         "upgradesFromId": "93cd58af-c56f-4eef-86fa-7dfa870a5e5e"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Greatsword"],
+      "tier": "martial",
+      "range": "melee"
+    }
   }
 }

@@ -1,0 +1,139 @@
+{
+  "name": "Wire Knuckles",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 2,
+  "value": 3000,
+  "property": [
+    "L"
+  ],
+  "dmg1": "1d4",
+  "dmgType": "B",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Wire Knuckles",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Base",
+              "0",
+              "--",
+              "--",
+              "--"
+            ],
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery: Push"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Wirebug Gauge, Wire-Dash, Wire-Fall"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Silkbind Tether, Silkbind Grapple"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Wyvern Ride"
+            ],
+            [
+              "Legendary",
+              "5",
+              "--",
+              "--",
+              "Wirebug Whisperer, Punishing Ride, Fierce Ram"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "36b37910-4783-4c53-91e7-c9707a9c6d82",
+        "name": "Mastery: Push",
+        "description": "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller."
+      },
+      {
+        "id": "46348121-0e21-4250-b5ff-d027b48fd949",
+        "name": "Wirebug Gauge",
+        "description": "our gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest."
+      },
+      {
+        "id": "4695089f-7741-4e30-8819-4bcc11d3ca96",
+        "name": "Wire-Dash",
+        "description": "When you take damage, you can expend 1 Wirebug to immediately move up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks."
+      },
+      {
+        "id": "2a6e0ae8-fde3-4c0b-942c-f93274e772e7",
+        "name": "Wire-Fall",
+        "description": "When you fall, you can expend 1 Wirebug to arrest your momentum, stopping your descent in mid-air until the start of your next turn and taking no fall damage from the previous drop."
+      },
+      {
+        "id": "cd0033dc-9e6f-43a2-9bb4-ddb160a4f080",
+        "name": "Silkbind Tether",
+        "description": "You can use ironsilk to restrict a monster's movement. When you hit a creature with this weapon, you can expend 1 Wirebug to embed a thread of ironsilk into it. The creature is Tethered to the ground at its current location. It cannot move more than 15 feet away from that center point.\n\nAt the start of its turns, the creature can make a Strength saving throw (DC 8 + your Proficiency Bonus + your Dexterity or Strength modifier) to snap the silk and end the effect."
+      },
+      {
+        "id": "547d1738-ea50-4ef0-8b14-6596d5c076ec",
+        "name": "Silkbind Grapple",
+        "description": "While a creature is Tethered by your Silkbind, you can attempt to Grapple it even if it is up to two size categories larger than you."
+      },
+      {
+        "id": "60f533e1-644e-4a39-80bc-8d31a0612195",
+        "name": "Wyvern Ride",
+        "description": "You can manipulate the ironsilk to puppeteer colossal beasts. As an Action, while you are Grappling a Tethered creature that is at least one size category larger than you, you can force the creature to make a Strength saving throw against your Silkbind DC. On a failed save, you forcefully ride the creature and choose one of the following effects:\n\n• Forced Movement: The creature immediately moves up to its speed in a direction of your choice.\n• Directed Attack: The creature immediately makes one of its basic melee attacks against a target of your choice within its reach.\n• Ramming Maneuver: The creature uses its movement to violently crash into a wall, tree, or another creature. The mounted creature takes 3d10 Bludgeoning damage, and if it crashed into another creature, that second creature must succeed on a Dexterity saving throw or take the same damage.\n\nAfter resolving the chosen effect, the Silkbind snaps, the grapple ends, and both you and the creature fall Prone."
+      },
+      {
+        "id": "7b57feaa-ddba-4f03-a82f-e660ac38096a",
+        "name": "Wirebug Whisperer",
+        "description": "Your gauntlets can now house up to 4 Wirebugs. Additionally, whenever you roll a 20 on an attack roll with this weapon, you immediately regain 1 expended Wirebug.",
+        "upgradesFromId": "46348121-0e21-4250-b5ff-d027b48fd949"
+      },
+      {
+        "id": "ecc773eb-27dd-4854-8619-1905c28e740e",
+        "name": "Punishing Ride",
+        "description": "When you use your Wyvern Ride feature, the creature has Disadvantage on the saving throw. If it fails, the Silkbind does not snap after the effect is resolved, you do not fall Prone, and you maintain the Grapple (though you cannot use Wyvern Ride on the same creature again on the same turn).",
+        "upgradesFromId": "60f533e1-644e-4a39-80bc-8d31a0612195"
+      },
+      {
+        "id": "47a6bdb1-2174-4213-9072-5615373a27b2",
+        "name": "Fierce Ram",
+        "description": "The damage of your Ramming Maneuver increases to 5d10.",
+        "upgradesFromId": "60f533e1-644e-4a39-80bc-8d31a0612195"
+      }
+    ],
+    "proficiency": {
+      "compatible": [],
+      "tier": "simple",
+      "range": "melee"
+    }
+  }
+}

@@ -148,6 +148,11 @@
         "description": "The extra damage from your Arcane Discharge increases to 1d10 per counter and the entire spell ignores Resistance to its damage type.",
         "upgradesFromId": "46bfd186-e642-4a48-88c9-102b4448049a"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Quarterstaff"],
+      "tier": "simple",
+      "range": "melee"
+    }
   }
 }

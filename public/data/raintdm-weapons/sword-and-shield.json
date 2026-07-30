@@ -102,6 +102,18 @@
         "description": "Your Item Efficiency improves. Whenever you use a consumable item that restores hit points or deals damage, you do not roll the dice; you automatically use the maximum possible value for those dice.",
         "upgradesFromId": "3d3578a9-a3c9-4cc6-aa20-40f3c36bed84"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": [
+        "Shortsword",
+        "Longsword",
+        "Scimitar",
+        "Light Hammer",
+        "Mace"
+      ],
+      "requiresShield": true,
+      "tier": "martial-or-simple",
+      "range": "melee"
+    }
   }
 }

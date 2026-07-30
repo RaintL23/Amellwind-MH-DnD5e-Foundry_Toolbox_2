@@ -143,6 +143,11 @@
         "description": "Upgrades Mastery Property (Nick).\n\nWhen you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action. This is essential to keep your Bonus Action free for your class features and weapon abilities.",
         "upgradesFromId": "01c67489-9ebd-408c-a450-1c15488c05fe"
       }
-    ]
+    ],
+    "proficiency": {
+      "compatible": ["Longsword", "Scimitar", "Shortsword"],
+      "tier": "martial",
+      "range": "melee"
+    }
   }
 }
