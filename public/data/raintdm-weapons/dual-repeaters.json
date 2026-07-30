@@ -1,0 +1,218 @@
+{
+  "name": "Dual Repeaters",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 5,
+  "value": 2500,
+  "property": [
+    "A",
+    "L"
+  ],
+  "dmg1": "1d6",
+  "dmgType": "P",
+  "entries": [
+    "Ammo save DC = 8 + your proficiency bonus + your Dexterity modifier or your Strength Modifier",
+    {
+      "type": "inset",
+      "name": "Dual Repeaters",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features",
+            "Magazines"
+          ],
+          "rows": [
+            [
+              "Base",
+              "0",
+              "--",
+              "--",
+              "--",
+              "--"
+            ],
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery (Nick), Magazines",
+              "Normal Magazine"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Empowered Reload, Magazines Upgrade I",
+              "Blaze Magazine, Cryo Magazine, Storm Magazine, Slime Magazine"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Magazines Upgrade II",
+              "Blaze Magazine Upgrade I, Cryo Magazine Upgrade I, Storm Magazine Upgrade I, Slime Magazine Upgrade I, Dawnstar Magazine, Twilight Magazine"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Magazines Upgrade III, Tactical Modifications",
+              "--"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "Perfect Empowerment, Capacitive Frame",
+              "--"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "range": "30/90",
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "c0b2ce36-5d92-4bf1-b834-fcd92af8d78b",
+        "name": "Mastery (Nick)",
+        "description": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action."
+      },
+      {
+        "id": "4686217c-c47b-448f-bfbc-e74f67ccbb34",
+        "name": "Magazines",
+        "description": "You load both repeaters simultaneously. A single reload fills both chambers, giving you 6 Volleys (each volley allows you to fire both the main hand and the Nick off-hand attack)."
+      },
+      {
+        "id": "1a95561c-8b13-4db1-9c11-ea66f3b7f5df",
+        "name": "Empowered Reload",
+        "description": "The core mechanic of the weapon. As a Bonus Action, you can reload your repeaters. If you perform this reload while there is a hostile creature within 15 feet of you, the weapons siphon the combat tension, becoming Empowered until you reload again.\n\nWhile Empowered Your attacks with these weapons deal an extra 1d4 damage of the ammo's type."
+      },
+      {
+        "id": "6422433f-90b1-4b01-a00e-54d0fa07045c",
+        "name": "Normal Magazine",
+        "description": "Deals normal weapon damage.",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "fb9e0ba4-93f8-46db-a3ae-8488e81f72e3",
+        "name": "Magazines Upgrade I",
+        "description": "You can carry up to 3 Specialty Magazines in your pouch at a time. When you reload, you can expend one to change all damage dealt by the repeaters until you reload again.",
+        "upgradesFromId": "4686217c-c47b-448f-bfbc-e74f67ccbb34"
+      },
+      {
+        "id": "cbffabe5-583a-482d-8f1d-12319ec66a5f",
+        "name": "Blaze Magazine",
+        "description": "Your attacks with this ammo deal fire damage instead of piercing.",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "0c7b9a9b-4e3c-4940-81fc-c7b16694d68b",
+        "name": "Cryo Magazine",
+        "description": "Your attacks with this ammo deal cold damage instead of piercing.",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "aa77084d-c39f-4306-bd56-f01dd290e66c",
+        "name": "Storm Magazine",
+        "description": "Your attacks with this ammo deal lightning damage instead of piercing.",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "ca3adc27-efe6-4e76-a473-e54e6957af33",
+        "name": "Slime Magazine",
+        "description": "Your attacks with this ammo deal acid damage instead of piercing.",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "b4c0dc48-41a7-47df-8f08-b3eebe19abeb",
+        "name": "Blaze Magazine Upgrade I",
+        "description": "The target takes an extra 1d6 fire damage.",
+        "upgradesFromId": "cbffabe5-583a-482d-8f1d-12319ec66a5f",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "8a63915d-8983-4585-9b0d-3822db468162",
+        "name": "Cryo Magazine Upgrade I",
+        "description": "The target's Speed is reduced by 10 feet until the start of your next turn. This effect do not stack.",
+        "upgradesFromId": "0c7b9a9b-4e3c-4940-81fc-c7b16694d68b",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "bed3251e-62ce-4741-b47c-79f8e50bbf35",
+        "name": "Storm Magazine Upgrade I",
+        "description": "The target cannot take Reactions until the start of your next turn.",
+        "upgradesFromId": "aa77084d-c39f-4306-bd56-f01dd290e66c",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "b38f9b06-b0b6-49f9-9a4f-52a5a44dff37",
+        "name": "Slime Magazine Upgrade I",
+        "description": "The next attack roll made against the target before the end of your next turn has Advantage.",
+        "upgradesFromId": "ca3adc27-efe6-4e76-a473-e54e6957af33",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "49cfc554-1845-49c4-b95d-2ae2dd920d69",
+        "name": "Magazines Upgrade II",
+        "description": "You can now carry up to 5 Specialty Magazines.",
+        "upgradesFromId": "fb9e0ba4-93f8-46db-a3ae-8488e81f72e3"
+      },
+      {
+        "id": "fefb82fb-1f00-45fe-8331-a2f5710eeaf0",
+        "name": "Dawnstar Magazine",
+        "description": "Undead take an extra 1d6 damage. Invisible creatures hit by this ammo lose their invisibility until the end of your next turn.",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "57b13faa-09f3-450e-9208-69f78dc06ae4",
+        "name": "Twilight Magazine",
+        "description": "A creature hit by this ammo cannot regain hit points until the start of your next turn.",
+        "resourceColumn": "Magazines"
+      },
+      {
+        "id": "0f4d46e2-358d-4f77-928a-1544a3130766",
+        "name": "Magazines Upgrade III",
+        "description": "You can carry up to 7 Specialty Magazines.",
+        "upgradesFromId": "49cfc554-1845-49c4-b95d-2ae2dd920d69"
+      },
+      {
+        "id": "dc3f172a-94f4-4f43-9cce-d39372c309e7",
+        "name": "Tactical Modifications",
+        "description": "As part of a Short Rest, you can tinker with the frames of your repeaters to grant them one of the following benefits:\n\n• Scoped Sights: Your range increases to 60/180.\n• Lightweight Frame: Your walking speed increases by 10 feet.\n• Tactician's Chamber: If you roll Initiative and have no ammo in your chambers, you automatically perform an Empowered Reload for free."
+      },
+      {
+        "id": "f471c5ca-0d89-41a9-af01-71294d5cbcf9",
+        "name": "Perfect Empowerment",
+        "description": "Your Empowered extra damage increases from 1d4 to 1d6. Additionally, you no longer need to be within 15 feet to trigger an Empowered Reload; you only need to be within your normal attack range (30 feet, or 60 feet if scoped).",
+        "upgradesFromId": "1a95561c-8b13-4db1-9c11-ea66f3b7f5df"
+      },
+      {
+        "id": "d4d4cfd9-a60e-455e-941a-4f928c338532",
+        "name": "Capacitive Frame",
+        "description": "Whenever you score a Critical Hit with these weapons, the residual energy instantly synthesizes ammo, reloading your current magazine to full without requiring an action."
+      }
+    ],
+    "proficiency": {
+      "compatible": [
+        "Firearms",
+        "Hand Crossbow"
+      ],
+      "tier": "martial",
+      "range": "ranged"
+    }
+  }
+}

@@ -6,10 +6,7 @@
   "rarity": "none",
   "weight": 8,
   "value": 5000,
-  "property": [
-    "2H",
-    "H"
-  ],
+  "property": ["2H", "H"],
   "dmg1": "1d12",
   "dmgType": "B",
   "entries": [
@@ -29,29 +26,15 @@
             "Melodies"
           ],
           "rows": [
-            [
-              "Base",
-              "0",
-              "--",
-              "--",
-              "--",
-              "--"
-            ],
-            [
-              "Common",
-              "1",
-              "--",
-              "--",
-              "Mastery (Topple)",
-              "--"
-            ],
+            ["Base", "0", "--", "--", "--", "--"],
+            ["Common", "1", "--", "--", "Mastery (Topple)", "--"],
             [
               "Uncommon",
               "2",
               "--",
               "--",
               "Instrument of War (The Bard Fix), Recital, Songbook",
-              "Melody of Might, Melody of Warding, Melody of Swiftness"
+              "Melody of Might, Melody of Swiftness"
             ],
             [
               "Rare",
@@ -59,7 +42,7 @@
               "+1",
               "+1",
               "Encore, Expanded Songbook",
-              "Melody of the Elements"
+              "Melody of Warding, Melody of the Harmful Elements"
             ],
             [
               "Very Rare",
@@ -67,7 +50,7 @@
               "+2",
               "+2",
               "Magnificent Trio, Expanded Songbook II, Earthshaker",
-              "Melody of Clarity, Melody of Vigor"
+              "Melody of Clarity, Melody of Vigor, Melody of the Resistant Elements"
             ],
             [
               "Legendary",
@@ -112,12 +95,6 @@
         "resourceColumn": "Melodies"
       },
       {
-        "id": "e0d39518-da15-4d5b-ba46-1bdd2bfd1732",
-        "name": "Melody of Warding",
-        "description": "Allies in the aura gain a +1 bonus to their Armor Class.",
-        "resourceColumn": "Melodies"
-      },
-      {
         "id": "bbe15f56-852e-47ae-918a-a0478ef54959",
         "name": "Melody of Swiftness",
         "description": "Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.",
@@ -134,12 +111,6 @@
         "name": "Expanded Songbook",
         "description": "You know three Melodies.",
         "upgradesFromId": "77cb6fb5-35ab-40ad-821c-fd8a0d557d43"
-      },
-      {
-        "id": "fc6fd82e-7d0b-4f96-ab0a-aec8341b1f64",
-        "name": "Melody of the Elements",
-        "description": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura gain Resistance to the chosen damage type, and their attacks deal an extra 1d4 damage of that type.",
-        "resourceColumn": "Melodies"
       },
       {
         "id": "db28bdc2-0ae6-4261-974a-9b272778ce3f",
@@ -180,14 +151,28 @@
         "name": "Songbook Mastery",
         "description": "You know all available Melodies and can switch which ones are active every time you hit a creature and use your Bonus Action.",
         "upgradesFromId": "7d046740-6c83-4d29-952c-c43f4e3fa588"
+      },
+      {
+        "id": "9c6cc752-69a3-45fd-ba1e-71f4f80d82f8",
+        "name": "Melody of Warding",
+        "description": "Allies in the aura gain a +1 bonus to their Armor Class.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "9547ddf0-9003-4c35-849c-2eb374924c5d",
+        "name": "Melody of the Harmful Elements",
+        "description": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura deal an extra 1d4 damage of that type.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "33849d8b-80ca-4401-9da3-14fb733a68c1",
+        "name": "Melody of the Resistant Elements",
+        "description": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura gain Resistance to the chosen damage type.",
+        "resourceColumn": "Melodies"
       }
     ],
     "proficiency": {
-      "compatible": [
-        "Musical Instrument",
-        "Maul",
-        "Warhammer"
-      ],
+      "compatible": ["Musical Instrument", "Maul", "Warhammer"],
       "tier": "martial",
       "range": "melee"
     }

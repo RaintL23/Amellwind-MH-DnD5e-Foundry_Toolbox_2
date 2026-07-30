@@ -4,6 +4,7 @@
   "weapons": [
     "bow.json",
     "dual-blades.json",
+    "dual-repeaters.json",
     "great-sword.json",
     "gunlance.json",
     "hammer.json",
