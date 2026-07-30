@@ -163,20 +163,6 @@ const RarityRowItem = memo(function RarityRowItem({
               />
             </div>
             <div className="space-y-1 w-[88px]">
-              <Label className="text-xs text-muted-foreground">AC</Label>
-              <Input
-                value={getTypedBonusValue(row, "ac")}
-                onChange={(e) =>
-                  onUpdateRow(
-                    index,
-                    setTypedBonusValue(row, "ac", e.target.value),
-                  )
-                }
-                placeholder="--"
-                className="h-8"
-              />
-            </div>
-            <div className="space-y-1 w-[88px]">
               <Label className="text-xs text-muted-foreground">Damage</Label>
               <Input
                 value={getTypedBonusValue(row, "damage")}
@@ -184,6 +170,20 @@ const RarityRowItem = memo(function RarityRowItem({
                   onUpdateRow(
                     index,
                     setTypedBonusValue(row, "damage", e.target.value),
+                  )
+                }
+                placeholder="--"
+                className="h-8"
+              />
+            </div>
+            <div className="space-y-1 w-[88px]">
+              <Label className="text-xs text-muted-foreground">AC</Label>
+              <Input
+                value={getTypedBonusValue(row, "ac")}
+                onChange={(e) =>
+                  onUpdateRow(
+                    index,
+                    setTypedBonusValue(row, "ac", e.target.value),
                   )
                 }
                 placeholder="--"
@@ -252,17 +252,7 @@ const RarityRowItem = memo(function RarityRowItem({
                     Cancel
                   </Button>
                 </div>
-              ) : (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  className="h-7"
-                  onClick={() => onSetUpgradePickForIndex(index)}
-                >
-                  Upgrade
-                </Button>
-              ))}
+              ) : null)}
           </div>
         </div>
 
@@ -274,8 +264,7 @@ const RarityRowItem = memo(function RarityRowItem({
           <ul className="space-y-2">
             {assigned.map((ref) => {
               const def = resolveFeatureDef(customFeatures, ref.token);
-              const resourceColumn =
-                def?.resourceColumn ?? ref.resourceColumn;
+              const resourceColumn = def?.resourceColumn ?? ref.resourceColumn;
               const descPreview = def?.description?.trim();
               const upgradeSource = def?.upgradesFromId
                 ? findFeatureDefById(customFeatures, def.upgradesFromId)
@@ -412,12 +401,7 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
       if (previous) {
         if (previous.name !== feature.name) {
           nextRows = nextRows.map((row) =>
-            renameFeatureInRow(
-              row,
-              previous.name,
-              feature.name,
-              feature.id,
-            ),
+            renameFeatureInRow(row, previous.name, feature.name, feature.id),
           );
         }
         const prevCol = previous.resourceColumn || undefined;
@@ -589,7 +573,9 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
     [rows],
   );
 
-  const canAddRarity = WEAPON_RARITY_ORDER.some((rarity) => !usedRarities.has(rarity));
+  const canAddRarity = WEAPON_RARITY_ORDER.some(
+    (rarity) => !usedRarities.has(rarity),
+  );
 
   const upgradeCandidatesForDialog = useMemo(() => {
     const beforeRarityIndex =
