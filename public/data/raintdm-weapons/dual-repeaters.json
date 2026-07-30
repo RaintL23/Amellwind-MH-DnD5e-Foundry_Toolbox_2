@@ -6,10 +6,7 @@
   "rarity": "none",
   "weight": 5,
   "value": 2500,
-  "property": [
-    "A",
-    "L"
-  ],
+  "property": ["A", "L"],
   "dmg1": "1d6",
   "dmgType": "P",
   "entries": [
@@ -29,14 +26,7 @@
             "Magazines"
           ],
           "rows": [
-            [
-              "Base",
-              "0",
-              "--",
-              "--",
-              "--",
-              "--"
-            ],
+            ["Base", "0", "--", "--", "--", "--"],
             [
               "Common",
               "1",
@@ -94,7 +84,7 @@
       {
         "id": "4686217c-c47b-448f-bfbc-e74f67ccbb34",
         "name": "Magazines",
-        "description": "You load both repeaters simultaneously. A single reload fills both chambers, giving you 6 Volleys (each volley allows you to fire both the main hand and the Nick off-hand attack)."
+        "description": "Using your bonus action, you can load both repeaters simultaneously. A single reload fills both chambers, giving you 6 Volleys (each volley allows you to fire both the main hand and the Nick off-hand attack)."
       },
       {
         "id": "1a95561c-8b13-4db1-9c11-ea66f3b7f5df",
@@ -207,10 +197,7 @@
       }
     ],
     "proficiency": {
-      "compatible": [
-        "Firearms",
-        "Hand Crossbow"
-      ],
+      "compatible": ["Firearms", "Hand Crossbow"],
       "tier": "martial",
       "range": "ranged"
     }
