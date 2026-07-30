@@ -460,31 +460,25 @@ export function collectAssignedUpgradeCandidates(
     excludeFeatureId?: string;
   },
 ): WeaponForgeFeatureDef[] {
-  const assignedTokens = new Set<string>();
+  const seen = new Set<string>();
+  const result: WeaponForgeFeatureDef[] = [];
 
+  // Resolve each row assignment to a single def. Do not re-scan all
+  // customFeatures by display name — orphans / duplicate names would ghost in.
   for (let i = 0; i < options.beforeRarityIndex; i++) {
     const row = rows[i];
     if (!row) continue;
     for (const ref of getAssignedFeaturesForRow(row, customFeatures)) {
-      assignedTokens.add(ref.token.toLowerCase());
-      if (ref.id) assignedTokens.add(ref.id.toLowerCase());
-      assignedTokens.add(ref.name.toLowerCase());
+      const def =
+        (ref.id
+          ? findFeatureDefById(customFeatures, ref.id)
+          : undefined) ?? resolveFeatureDef(customFeatures, ref.token);
+      if (!def) continue;
+      if (def.id === options.excludeFeatureId) continue;
+      if (seen.has(def.id)) continue;
+      seen.add(def.id);
+      result.push(def);
     }
-  }
-
-  const seen = new Set<string>();
-  const result: WeaponForgeFeatureDef[] = [];
-
-  for (const def of customFeatures) {
-    const idKey = def.id.toLowerCase();
-    const nameKey = def.name.toLowerCase();
-    const assigned =
-      assignedTokens.has(idKey) || assignedTokens.has(nameKey);
-    if (!assigned) continue;
-    if (def.id === options.excludeFeatureId) continue;
-    if (seen.has(def.id)) continue;
-    seen.add(def.id);
-    result.push(def);
   }
 
   return result;

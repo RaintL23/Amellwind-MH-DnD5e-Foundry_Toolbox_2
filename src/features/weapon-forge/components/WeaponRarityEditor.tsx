@@ -476,15 +476,40 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
 
   const removeFeatureFromRarity = useCallback(
     (rarityIndex: number, featureToken: string, featureId?: string) => {
-      onChangeRows(
-        rowsRef.current.map((r, i) =>
-          i === rarityIndex
-            ? removeFeatureNameFromRow(r, featureToken, featureId)
-            : r,
+      const nextRows = rowsRef.current.map((r, i) =>
+        i === rarityIndex
+          ? removeFeatureNameFromRow(r, featureToken, featureId)
+          : r,
+      );
+      onChangeRows(nextRows);
+
+      // Drop the def when it is no longer assigned on any rarity so it cannot
+      // linger in upgrade-candidate lists (or as a same-name ghost).
+      const removedId =
+        featureId ??
+        resolveFeatureDef(customFeaturesRef.current, featureToken)?.id;
+      if (!removedId) return;
+
+      const stillAssigned = nextRows.some((row) =>
+        getAssignedFeaturesForRow(row, customFeaturesRef.current).some(
+          (ref) =>
+            ref.id === removedId ||
+            ref.token.toLowerCase() === removedId.toLowerCase(),
         ),
       );
+      if (stillAssigned) return;
+
+      onChangeFeatures(
+        customFeaturesRef.current
+          .filter((f) => f.id !== removedId)
+          .map((f) =>
+            f.upgradesFromId === removedId
+              ? { ...f, upgradesFromId: undefined }
+              : f,
+          ),
+      );
     },
-    [onChangeRows],
+    [onChangeRows, onChangeFeatures],
   );
 
   const addUpgrade = useCallback(
@@ -577,10 +602,24 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
           )
         : rows.length);
 
-    return collectAssignedUpgradeCandidates(rows, customFeatures, {
+    const candidates = collectAssignedUpgradeCandidates(rows, customFeatures, {
       beforeRarityIndex,
       excludeFeatureId: editingFeature?.id,
     });
+
+    // If the linked source is no longer assigned earlier, still expose it so
+    // the editor can show and clear the upgrade link.
+    const sourceId = editingFeature?.upgradesFromId;
+    if (
+      sourceId &&
+      sourceId !== editingFeature?.id &&
+      !candidates.some((c) => c.id === sourceId)
+    ) {
+      const source = findFeatureDefById(customFeatures, sourceId);
+      if (source) return [...candidates, source];
+    }
+
+    return candidates;
   }, [rows, customFeatures, editTargetRarityIndex, editingFeature]);
 
   return (
@@ -648,12 +687,13 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
             : undefined;
           const existing = existingById ?? existingByName;
 
+          // Prefer dialog fields over the previous def so clearing
+          // upgradesFromId (undefined) actually persists.
           const saved = existing
             ? {
+                ...existing,
                 ...feature,
                 id: existing.id,
-                upgradesFromId:
-                  feature.upgradesFromId ?? existing.upgradesFromId,
               }
             : feature;
 

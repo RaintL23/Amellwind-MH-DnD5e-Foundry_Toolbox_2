@@ -132,7 +132,7 @@ export function FeatureEditDialog({
               />
             </div>
 
-            {candidates.length > 0 && (
+            {(candidates.length > 0 || upgradesFromId) && (
               <div className="space-y-1.5">
                 <Label htmlFor="feat-upgrade">Upgrades feature (optional)</Label>
                 <Select
@@ -147,6 +147,12 @@ export function FeatureEditDialog({
                       {feat.name}
                     </option>
                   ))}
+                  {upgradesFromId &&
+                    !candidates.some((f) => f.id === upgradesFromId) && (
+                      <option value={upgradesFromId}>
+                        {selectedSource?.name ?? "Removed feature"}
+                      </option>
+                    )}
                 </Select>
                 {selectedSource && (
                   <p className="text-xs text-muted-foreground">
