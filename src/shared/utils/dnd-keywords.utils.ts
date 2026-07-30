@@ -85,8 +85,11 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "attack roll", category: "combat" },
   { term: "spell attacks", category: "combat" },
   { term: "spell attack", category: "combat" },
+  { term: "spell-attack", category: "combat" },
+  { term: "spell-attacks", category: "combat" },
   { term: "weapon attacks", category: "combat" },
   { term: "weapon attack", category: "combat" },
+  { term: "weapon-attacks", category: "combat" },
   { term: "unarmed strikes", category: "combat" },
   { term: "unarmed strike", category: "combat" },
   { term: "hit points", category: "combat" },
@@ -100,6 +103,8 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "unarmed strikes", category: "combat" },
 
   // Saves, checks & rolls
+  { term: "spell save DC", category: "save" },
+  { term: "spell save", category: "save" },
   { term: "saving throws", category: "save" },
   { term: "saving throw", category: "save" },
   { term: "proficiency bonus", category: "save" },
@@ -119,9 +124,15 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "spell slots", category: "resource" },
   { term: "spell slot", category: "resource" },
   { term: "short rest", category: "resource" },
+  { term: "short rests", category: "resource" },
   { term: "long rest", category: "resource" },
+  { term: "long rests", category: "resource" },
   { term: "concentration", category: "resource" },
   { term: "duration", category: "resource" },
+  { term: "bonus", category: "resource" },
+  { term: "bonuses", category: "resource" },
+  { term: "charges", category: "resource" },
+  { term: "charge", category: "resource" },
 
   // Conditions
   { term: "incapacitated", category: "condition" },
