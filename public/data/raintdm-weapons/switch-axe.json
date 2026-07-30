@@ -31,7 +31,7 @@
               "1",
               "--",
               "--",
-              "Mastery (Cleave) (Axe Mode), Mastery (Vex) (Sword), Fluid Morph",
+              "Mastery (Cleave) (Axe Mode), Mastery (Graze) (Sword), Fluid Morph",
               "--"
             ],
             [
@@ -82,8 +82,8 @@
       },
       {
         "id": "53b90fe6-8782-43c2-bc20-d7be329f7352",
-        "name": "Mastery (Vex) (Sword)",
-        "description": "If you hit a creature and deal damage to it, you have Advantage on your next attack roll against that creature before the end of your next turn."
+        "name": "Mastery (Graze) (Sword)",
+        "description": "If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll."
       },
       {
         "id": "77e6373e-f729-4925-a65d-d8857c26e629",
@@ -93,7 +93,7 @@
       {
         "id": "a6398e06-4e5d-4274-91ed-ceb5de518e0d",
         "name": "Phial Gauge",
-        "description": "The weapon can hold a maximum of 5 Phial Charges. The gauge starts at 0 after a Long Rest. When you finish a Long Rest, you choose one Phial Type to install: Power or Element."
+        "description": "The weapon can hold a maximum of 5 Phial Charges. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. The gauge resets to 0 after a Long Rest. When you finish a Long Rest, you choose one Phial Type to install: Power or Element."
       },
       {
         "id": "7268bae9-8baf-409b-a4fe-dc38ac24b586",

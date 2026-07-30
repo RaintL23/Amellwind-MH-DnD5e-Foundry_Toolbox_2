@@ -2,6 +2,7 @@
   "version": "1.0",
   "description": "Homebrew MH weapons catalog — one JSON file per weapon.",
   "weapons": [
+    "bow.json",
     "dual-blades.json",
     "great-sword.json",
     "gunlance.json",

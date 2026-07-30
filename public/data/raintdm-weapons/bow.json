@@ -1,0 +1,208 @@
+{
+  "name": "Bow",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 2,
+  "value": 3000,
+  "property": ["2H"],
+  "dmg1": "1d8",
+  "dmgType": "P",
+  "range": "150/600",
+  "entries": [
+    "Bow Save DC: 8 + your Proficiency Bonus + your Dexterity modifier",
+    {
+      "type": "inset",
+      "name": "Bow",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features",
+            "Coatings"
+          ],
+          "rows": [
+            ["Base", "0", "--", "--", "--", "--"],
+            ["Common", "1", "--", "--", "Mastery (Slow)", "--"],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Charging Sidestep, Coating Charges",
+              "Power Coating, Close Range Coating"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Elemental Coatings, Dragonpiercer, Gauge Upgrade I",
+              "Acid Coating, Cold Coating, Fire Coating, Lightning Coating"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Gauge Upgrade II",
+              "Blast Coating (Cost: 1 Charge), Poison Coating (Cost: 2 Charges), Paralysis Coating (Cost: 2 Charges), Sleep Coating (Cost: 2 Charges), Power Coating Upgrade I"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "Elemental Coatings Upgrade I, True Dragonpiercer, Gauge Upgrade III",
+              "Power Coating Upgrade II"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "106bed3a-0d2f-46da-b5f9-6571e0fdf469",
+        "name": "Mastery (Slow)",
+        "description": "If you hit a creature with this weapon and deal damage to it, the creature's Speed is reduced by 10 feet until the start of your next turn."
+      },
+      {
+        "id": "a20e3b13-b3dc-488d-820e-8c7f17f37385",
+        "name": "Charging Sidestep",
+        "description": "As a Bonus Action, you can leap up to 15 feet in any direction and generate 1 Coating Charge. This movement does not provoke Opportunity Attacks. If you make a ranged weapon attack with this bow immediately after using this Bonus Action, the attack deals an extra 1d4 piercing damage on a hit."
+      },
+      {
+        "id": "9486362d-a4d6-4331-bc81-4ab9675db446",
+        "name": "Coating Charges",
+        "description": "The bow's magical quiver generates its own specialized coatings. It holds a maximum of 5 Coating Charges, regaining all expended charges when you finish a Short or Long Rest. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. The gauge resets to 0 after a Long Rest. As a Bonus Action, you can generate 2 Coating Charges. When you hit a creature with an attack, you can expend 1 charge to instantly apply a coating to the arrow."
+      },
+      {
+        "id": "065c61f8-07a2-472c-8ebe-8ba9bebd73a9",
+        "name": "Power Coating",
+        "description": "The attack deals an extra 1d6 Piercing damage.",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "250e5959-34c4-4c88-9638-44329f1ab97a",
+        "name": "Close Range Coating",
+        "description": "You can use this coating before you make the attack roll. You do not suffer Disadvantage for making this ranged attack while a hostile creature is within 5 feet of you.",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "89138dbe-4200-42ed-8b18-501b2a988b26",
+        "name": "Elemental Coatings",
+        "description": "Your quiver adapts to exploit monster vulnerabilities. When you expend a charge to apply a coating on a hit, you can choose to apply an Element Coating."
+      },
+      {
+        "id": "6679cc11-0f49-4f96-896d-631ed75da476",
+        "name": "Acid Coating",
+        "description": "The attack deals an extra 1d6 Acid damage",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "eb58a62b-60ca-47ba-8f01-7f4848137c72",
+        "name": "Cold Coating",
+        "description": "The attack deals an extra 1d6 Cold damage",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "3b175e3c-565e-4499-9fd5-f6b2ce2625ea",
+        "name": "Fire Coating",
+        "description": "The attack deals an extra 1d6 Fire damage",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "5edc9cec-adb2-4a64-8a43-de1af56145d5",
+        "name": "Lightning Coating",
+        "description": "The attack deals an extra 1d6 Lightning damage",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "9a2fe2b7-585f-499a-ad7a-6141d7efa932",
+        "name": "Dragonpiercer",
+        "description": "As an Action, you plant your feet and fire a penetrating shot. You fire an arrow in a 30-foot line that is 5 feet wide. Each creature in that line must make a Dexterity saving throw. A creature takes 4d6 piercing damage on a failed save, or half as much on a successful one. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses on a Long Rest."
+      },
+      {
+        "id": "ae68eb34-3b65-4fb1-a656-140055db1a65",
+        "name": "Gauge Upgrade I",
+        "description": "The quiver can now hold up to 7 Coating Charges.",
+        "upgradesFromId": "9486362d-a4d6-4331-bc81-4ab9675db446"
+      },
+      {
+        "id": "0871e929-06c5-42bd-b15b-f20dc75201d2",
+        "name": "Advanced Coatings",
+        "description": "You unlock devastating alchemical mixtures."
+      },
+      {
+        "id": "023a6727-0688-4564-b105-0866fd7d2486",
+        "name": "Blast Coating (Cost: 1 Charge)",
+        "description": "The attack deals its normal damage, and every creature within 5 feet of the target must succeed on a Dexterity saving or take 1d8 Fire damage.",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "a0c2f807-461c-42e9-8266-c05defa58050",
+        "name": "Poison Coating (Cost: 2 Charges)",
+        "description": "The attack deals an extra 1d4 Poison Damage and the target is Poisoned for 1 minute. It can repeat the save at the end of each of its turns.",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "7a18d146-00da-46fa-8c30-6866c11a96ef",
+        "name": "Paralysis Coating (Cost: 2 Charges)",
+        "description": "The attack deals an extra 1d4 Lightning damage and the target is Paralyzed until the end of its next turn. Once a creature succeeds on this save, it is immune to your Paralysis Coating for 24 hours.",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "efc0ce14-9831-4aaa-9318-4e625bec0af0",
+        "name": "Sleep Coating (Cost: 2 Charges)",
+        "description": "The target falls Unconscious for 1 minute, or until it takes damage or someone uses an action to shake it awake.",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "e54e0b63-af1a-4521-a35d-94b03620a103",
+        "name": "Power Coating Upgrade I",
+        "description": "When you use your Power Shot Coating, you can now expend up to 2 Coating Charges at once. You roll one additional weapon damage die (1d6) for each charge expended this way, allowing for massive bursts of physical damage.",
+        "upgradesFromId": "065c61f8-07a2-472c-8ebe-8ba9bebd73a9",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "8f6bdf6e-3ebe-4550-9bc1-ae5a99a58cd3",
+        "name": "Gauge Upgrade II",
+        "description": "The quiver can now hold up to 9 Coating Charges.",
+        "upgradesFromId": "ae68eb34-3b65-4fb1-a656-140055db1a65"
+      },
+      {
+        "id": "645d467a-2899-49a1-aa41-41b556be22cb",
+        "name": "Power Coating Upgrade II",
+        "description": "You can now expend up to 3 Coating Charges at once.",
+        "upgradesFromId": "e54e0b63-af1a-4521-a35d-94b03620a103",
+        "resourceColumn": "Coatings"
+      },
+      {
+        "id": "7bab6931-15dc-4260-b04a-900adb3ce145",
+        "name": "Elemental Coatings Upgrade I",
+        "description": "Elemental dice damage increases to 2d6.",
+        "upgradesFromId": "89138dbe-4200-42ed-8b18-501b2a988b26"
+      },
+      {
+        "id": "6c5ffecb-ea2f-426d-92e9-720c377bf69b",
+        "name": "True Dragonpiercer",
+        "description": "Your Dragonpiercer damage increases to 6d6. Additionally, the shot is so powerful it ignores half and three-quarters cover.",
+        "upgradesFromId": "9a2fe2b7-585f-499a-ad7a-6141d7efa932"
+      },
+      {
+        "id": "772e1b29-1817-4ce3-8399-2cfcbdc666de",
+        "name": "Gauge Upgrade III",
+        "description": "The quiver can now hold up to 12 Coating Charges.",
+        "upgradesFromId": "8f6bdf6e-3ebe-4550-9bc1-ae5a99a58cd3"
+      }
+    ]
+  }
+}
