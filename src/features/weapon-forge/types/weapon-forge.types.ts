@@ -5,9 +5,12 @@ import {
   defaultSlotsForWeaponRarity,
   isBaseRarity,
   type WeaponModeDef,
+  type WeaponProficiencyRange,
+  type WeaponProficiencyTier,
 } from "@/shared/types";
 import { resolveWeaponModeDefs, createDefaultForgeModes } from "@/features/weapons/utils/weapon-mode.utils";
 import { ensureFormBaseRarityRow } from "@/features/weapons/utils/weapon-base-rarity.utils";
+import { resolveWeaponProficiency } from "@/features/weapons/data/weapon-proficiencies.data";
 
 /** Rarity-table bonus column labels (replaces legacy single "Bonus"). */
 export const BONUS_COLUMN_KEYS = {
@@ -117,6 +120,16 @@ export interface WeaponForgeFormValues {
   weight: number;
   valueCp: number;
   acBonus: string;
+  /** Integrated shield (sets `includesShield` + optional base AC). */
+  includesShield: boolean;
+  /** D&D weapon category: melee / ranged. */
+  proficiencyRange: WeaponProficiencyRange;
+  /** D&D weapon category: martial / simple / martial-or-simple. */
+  proficiencyTier: WeaponProficiencyTier;
+  /** PHB weapon (or tool) proficiencies that grant use of this MH weapon. */
+  compatibleProficiencies: string[];
+  /** Also requires Shield proficiency. */
+  requiresShieldProficiency: boolean;
   range: string;
   isFocus: boolean;
   description: string;
@@ -154,6 +167,11 @@ export function emptyFormValues(): WeaponForgeFormValues {
     weight: 0,
     valueCp: 0,
     acBonus: "",
+    includesShield: false,
+    proficiencyRange: "melee",
+    proficiencyTier: "martial",
+    compatibleProficiencies: [],
+    requiresShieldProficiency: false,
     range: "",
     isFocus: false,
     description: "",
@@ -323,6 +341,10 @@ export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
       ? createDefaultForgeModes(weapon.dmg1, weapon.dmg2)
       : []);
 
+  const proficiency = resolveWeaponProficiency(weapon);
+  const includesShield =
+    weapon.includesShield === true || weapon.acBonus != null;
+
   return {
     name: weapon.name,
     author: customWeapon.author?.trim() || "RaintDM",
@@ -334,6 +356,13 @@ export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
     weight: weapon.weight,
     valueCp: weapon.valueCp,
     acBonus: weapon.acBonus != null ? String(weapon.acBonus) : "",
+    includesShield,
+    proficiencyRange: proficiency?.range ?? "melee",
+    proficiencyTier: proficiency?.tier ?? "martial",
+    compatibleProficiencies: proficiency?.compatible
+      ? [...proficiency.compatible]
+      : [],
+    requiresShieldProficiency: proficiency?.requiresShield === true,
     range: weapon.range ?? "",
     isFocus: weapon.isFocus === true,
     description: weapon.description,

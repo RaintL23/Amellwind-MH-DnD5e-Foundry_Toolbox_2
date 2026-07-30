@@ -5,6 +5,7 @@ import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser
 import { normalizeWeaponProficiencyKey } from "@/shared/utils/weapon-proficiency-name.utils";
 import {
   getWeaponProficiencyRule,
+  resolveWeaponProficiency,
   type WeaponProficiencyTier,
 } from "@/features/weapons/data/weapon-proficiencies.data";
 
@@ -269,7 +270,9 @@ export function checkWeaponProficiency(
     return checkDndWeaponCategoryProficiency(weapon, weaponProficiencies);
   }
 
-  const rule = getWeaponProficiencyRule(weaponName);
+  const rule = weapon
+    ? resolveWeaponProficiency(weapon)
+    : getWeaponProficiencyRule(weaponName);
   if (!rule) return { allowed: true };
 
   if (rule.requiresShield && !hasShieldProficiency(armorProficiencies)) {
@@ -395,14 +398,18 @@ export function getClassEquipmentConflictReason(
 export function getWeaponEffectiveTierLabel(
   weaponName: string,
   weaponProficiencies: string[],
+  weapon?: Weapon,
 ): string | null {
-  const rule = getWeaponProficiencyRule(weaponName);
+  const rule = weapon
+    ? resolveWeaponProficiency(weapon)
+    : getWeaponProficiencyRule(weaponName);
   if (!rule || rule.tier !== "martial-or-simple") return null;
 
   const check = checkWeaponProficiency(
     weaponName,
     weaponProficiencies,
     [],
+    weapon,
   );
   if (!check.allowed || check.effectiveTier !== "simple") return null;
 

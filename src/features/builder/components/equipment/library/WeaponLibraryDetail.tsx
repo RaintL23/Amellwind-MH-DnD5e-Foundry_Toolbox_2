@@ -350,6 +350,7 @@ export function WeaponLibraryDetail({
   const simpleModeLabel = getWeaponEffectiveTierLabel(
     weapon.name,
     weaponProficiencies,
+    weapon,
   );
   const { rarity } = equipped;
 
@@ -407,7 +408,7 @@ export function WeaponLibraryDetail({
           )}
 
           <WeaponProficiencyInfo
-            weaponName={weapon.name}
+            weapon={weapon}
             compact
             className="mb-3"
           />

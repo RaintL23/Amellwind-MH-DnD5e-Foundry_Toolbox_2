@@ -16,7 +16,7 @@ export function WeaponDialogMeta({ weapon }: WeaponDialogMetaProps) {
         </p>
       )}
 
-      <WeaponProficiencyInfo weaponName={weapon.name} className="mb-4" />
+      <WeaponProficiencyInfo weapon={weapon} className="mb-4" />
 
       {weapon.includesShield && (
         <div className="flex items-start gap-2 rounded-md border border-teal-800/40 bg-teal-950/20 px-3 py-2.5 mb-4">

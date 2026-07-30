@@ -2,19 +2,18 @@
  * D&D weapon proficiencies compatible with each Monster Hunter weapon.
  * Source: AGMH "Weapon Proficiencies" table (Player's Guide).
  */
-export type WeaponProficiencyTier = "martial" | "simple" | "martial-or-simple";
-export type WeaponProficiencyRange = "melee" | "ranged";
+import type {
+  Weapon,
+  WeaponProficiencyRange,
+  WeaponProficiencyRule,
+  WeaponProficiencyTier,
+} from "@/shared/types";
 
-export interface WeaponProficiencyRule {
-  /** Any one of these PHB proficiencies grants MH weapon proficiency. */
-  compatible: string[];
-  /** Also requires shield proficiency (integrated shield weapons). */
-  requiresShield?: boolean;
-  /** Martial / Simple classification from the Player's Guide table. */
-  tier: WeaponProficiencyTier;
-  /** Melee vs ranged classification from the Player's Guide table. */
-  range: WeaponProficiencyRange;
-}
+export type {
+  WeaponProficiencyRange,
+  WeaponProficiencyRule,
+  WeaponProficiencyTier,
+};
 
 export const WEAPON_PROFICIENCIES: Record<string, WeaponProficiencyRule> = {
   "Accel Axe": { compatible: ["Battleaxe", "Greataxe"], tier: "martial", range: "melee" },
@@ -90,6 +89,15 @@ export const WEAPON_PROFICIENCIES: Record<string, WeaponProficiencyRule> = {
 
 export function getWeaponProficiencyRule(weaponName: string): WeaponProficiencyRule | undefined {
   return WEAPON_PROFICIENCIES[weaponName];
+}
+
+/**
+ * Prefer an explicit rule on the weapon (forge / curated JSON), else AGMH name table.
+ */
+export function resolveWeaponProficiency(
+  weapon: Pick<Weapon, "name" | "proficiency">,
+): WeaponProficiencyRule | undefined {
+  return weapon.proficiency ?? WEAPON_PROFICIENCIES[weapon.name];
 }
 
 /** Unique D&D weapon proficiencies referenced across all MH weapon rules (for filters). */

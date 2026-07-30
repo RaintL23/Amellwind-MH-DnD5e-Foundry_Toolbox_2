@@ -206,16 +206,6 @@ export function WeaponForgeBasicsFields({
       </div>
 
       <div className="space-y-1.5">
-        <Label htmlFor="wf-ac">AC bonus (shield weapons)</Label>
-        <Input
-          id="wf-ac"
-          value={values.acBonus}
-          onChange={(e) => onPatch("acBonus", e.target.value)}
-          placeholder="e.g. 2"
-        />
-      </div>
-
-      <div className="space-y-1.5">
         <Label htmlFor="wf-range">Range</Label>
         <Input
           id="wf-range"

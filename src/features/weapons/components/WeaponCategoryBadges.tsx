@@ -1,12 +1,13 @@
 import { Badge } from "@/components/ui/badge";
 import {
   getWeaponCategoryBadges,
-  getWeaponProficiencyRule,
+  resolveWeaponProficiency,
 } from "../data/weapon-proficiencies.data";
 import { cn } from "@/shared/utils/cn";
+import type { Weapon } from "@/shared/types";
 
 interface WeaponCategoryBadgesProps {
-  weaponName: string;
+  weapon: Pick<Weapon, "name" | "proficiency">;
   size?: "xs" | "sm";
   className?: string;
   /** Render badges without a wrapper so they can share a row with sibling badges. */
@@ -19,12 +20,12 @@ const SIZE_CLASSES = {
 };
 
 export function WeaponCategoryBadges({
-  weaponName,
+  weapon,
   size = "sm",
   className,
   inline = false,
 }: WeaponCategoryBadgesProps) {
-  const rule = getWeaponProficiencyRule(weaponName);
+  const rule = resolveWeaponProficiency(weapon);
   if (!rule) return null;
 
   const badges = getWeaponCategoryBadges(rule);

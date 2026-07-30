@@ -7,6 +7,26 @@ export interface WeaponRarityRow {
 
 export type WeaponContentSource = "amellwind" | "dnd";
 
+/** Martial / Simple classification from the AGMH Player's Guide table. */
+export type WeaponProficiencyTier = "martial" | "simple" | "martial-or-simple";
+/** Melee vs ranged classification from the Player's Guide table. */
+export type WeaponProficiencyRange = "melee" | "ranged";
+
+/**
+ * D&D weapon proficiencies compatible with an MH / forge weapon.
+ * When set on a Weapon, overrides the static name lookup in WEAPON_PROFICIENCIES.
+ */
+export interface WeaponProficiencyRule {
+  /** Any one of these PHB proficiencies grants MH weapon proficiency. */
+  compatible: string[];
+  /** Also requires shield proficiency (integrated shield weapons). */
+  requiresShield?: boolean;
+  /** Martial / Simple classification from the Player's Guide table. */
+  tier: WeaponProficiencyTier;
+  /** Melee vs ranged classification from the Player's Guide table. */
+  range: WeaponProficiencyRange;
+}
+
 /**
  * Alternate combat stance for MH switch weapons (Switch Axe, Charge Blade, etc.).
  * Distinct from PHB Versatile (`V` + `dmg2`): modes have their own labels and grip rules.
@@ -43,6 +63,11 @@ export interface Weapon {
   acBonus?: number;
   /** Weapon includes an integrated shield (source `ac` field). */
   includesShield?: boolean;
+  /**
+   * Compatible D&D proficiency rule (Weapon Forge / curated `_raintdm.proficiency`).
+   * When absent, UI falls back to the static AGMH name table.
+   */
+  proficiency?: WeaponProficiencyRule;
   range?: string;
   isFocus?: boolean;
   description: string;

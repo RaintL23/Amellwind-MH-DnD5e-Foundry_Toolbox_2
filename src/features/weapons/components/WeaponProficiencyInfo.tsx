@@ -1,13 +1,14 @@
 import { GraduationCap, Shield } from "lucide-react";
 import {
-  getWeaponProficiencyRule,
+  resolveWeaponProficiency,
   type WeaponProficiencyRule,
 } from "../data/weapon-proficiencies.data";
 import { WeaponCategoryBadges } from "./WeaponCategoryBadges";
 import { cn } from "@/shared/utils/cn";
+import type { Weapon } from "@/shared/types";
 
 interface WeaponProficiencyInfoProps {
-  weaponName: string;
+  weapon: Pick<Weapon, "name" | "proficiency">;
   className?: string;
   compact?: boolean;
 }
@@ -74,12 +75,24 @@ function ProficiencySection({
 }
 
 export function WeaponProficiencyInfo({
-  weaponName,
+  weapon,
   className,
   compact = false,
 }: WeaponProficiencyInfoProps) {
-  const rule = getWeaponProficiencyRule(weaponName);
+  const rule = resolveWeaponProficiency(weapon);
   if (!rule) return null;
+
+  const hasCompatible = rule.compatible.length > 0;
+  const showCompatibleSection = hasCompatible || rule.requiresShield === true;
+  const helperText = !hasCompatible
+    ? null
+    : rule.requiresShield
+      ? compact
+        ? "Requires Shield and any one weapon above."
+        : "Requires Shield proficiency and proficiency in one of the weapons above."
+      : compact
+        ? "Requires proficiency in any one weapon above."
+        : "Requires proficiency in one of the weapons above.";
 
   if (compact) {
     return (
@@ -96,17 +109,19 @@ export function WeaponProficiencyInfo({
           />
           <div className="min-w-0 flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
             <ProficiencySection title="D&D Weapon Category" compact>
-              <WeaponCategoryBadges weaponName={weaponName} size="xs" />
+              <WeaponCategoryBadges weapon={weapon} size="xs" />
             </ProficiencySection>
 
-            <ProficiencySection title="Compatible Proficiency" compact>
-              <CompatibleProficiencyChips rule={rule} />
-              <p className="mt-1 text-[10px] italic leading-snug text-muted-foreground/80">
-                {rule.requiresShield
-                  ? "Requires Shield and any one weapon above."
-                  : "Requires proficiency in any one weapon above."}
-              </p>
-            </ProficiencySection>
+            {showCompatibleSection && (
+              <ProficiencySection title="Compatible Proficiency" compact>
+                <CompatibleProficiencyChips rule={rule} />
+                {helperText && (
+                  <p className="mt-1 text-[10px] italic leading-snug text-muted-foreground/80">
+                    {helperText}
+                  </p>
+                )}
+              </ProficiencySection>
+            )}
           </div>
         </div>
       </div>
@@ -126,17 +141,17 @@ export function WeaponProficiencyInfo({
       />
       <div className="min-w-0 flex items-start gap-6 text-xs leading-relaxed">
         <ProficiencySection title="D&D Weapon Category">
-          <WeaponCategoryBadges weaponName={weaponName} size="sm" />
+          <WeaponCategoryBadges weapon={weapon} size="sm" />
         </ProficiencySection>
 
-        <ProficiencySection title="Compatible Proficiency">
-          <CompatibleProficiencyChips rule={rule} />
-          <p className="mt-1.5 text-amber-100/80">
-            {rule.requiresShield
-              ? "Requires Shield proficiency and proficiency in one of the weapons above."
-              : "Requires proficiency in one of the weapons above."}
-          </p>
-        </ProficiencySection>
+        {showCompatibleSection && (
+          <ProficiencySection title="Compatible Proficiency">
+            <CompatibleProficiencyChips rule={rule} />
+            {helperText && (
+              <p className="mt-1.5 text-amber-100/80">{helperText}</p>
+            )}
+          </ProficiencySection>
+        )}
       </div>
     </div>
   );

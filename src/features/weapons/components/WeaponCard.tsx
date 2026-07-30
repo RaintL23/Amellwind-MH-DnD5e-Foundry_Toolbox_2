@@ -7,7 +7,7 @@ import {
 import {
   formatWeaponCategory,
   formatWeaponProficiencyHint,
-  getWeaponProficiencyRule,
+  resolveWeaponProficiency,
 } from "../data/weapon-proficiencies.data";
 import { WeaponCategoryBadges } from "./WeaponCategoryBadges";
 import { WeaponIcon } from "./WeaponIcon";
@@ -54,7 +54,7 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
   const iconBg = DMG_TYPE_ICON_BG[weapon.dmgType] ?? "bg-primary/10";
   const borderHover =
     DMG_TYPE_COLOR[weapon.dmgType] ?? "hover:border-primary/50";
-  const proficiencyRule = getWeaponProficiencyRule(weapon.name);
+  const proficiencyRule = resolveWeaponProficiency(weapon);
   const categoryLabel = proficiencyRule
     ? formatWeaponCategory(proficiencyRule)
     : undefined;
@@ -113,7 +113,7 @@ export function WeaponCard({ weapon, onClick }: WeaponCardProps) {
             {showBadgeRow && (
               <div className="flex flex-wrap items-center gap-1 mt-1">
                 <WeaponCategoryBadges
-                  weaponName={weapon.name}
+                  weapon={weapon}
                   size="xs"
                   inline
                 />

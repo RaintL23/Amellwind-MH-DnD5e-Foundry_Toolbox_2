@@ -1,6 +1,6 @@
 import type { MaterialEffectSlot, Rune } from "@/shared/types";
 import type { Class, Subclass, Weapon } from "@/shared/types";
-import { getWeaponProficiencyRule } from "@/features/weapons/data/weapon-proficiencies.data";
+import { resolveWeaponProficiency } from "@/features/weapons/data/weapon-proficiencies.data";
 
 export interface RuneCompatibilityContext {
   /** Name of the selected class (e.g. "Fighter"), or null if none. */
@@ -108,7 +108,7 @@ export function isCharacterSpellcaster(
 export function getWeaponTypeTagsForWeapon(weapon: Weapon): string[] {
   const tags: string[] = [];
 
-  const rule = getWeaponProficiencyRule(weapon.name);
+  const rule = resolveWeaponProficiency(weapon);
   if (rule) {
     tags.push(`weapon-type:${rule.range}`);
     appendTagsFromCompatibleProficiencies(tags, rule.compatible);

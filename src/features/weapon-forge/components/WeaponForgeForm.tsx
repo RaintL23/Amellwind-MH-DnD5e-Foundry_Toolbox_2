@@ -4,6 +4,7 @@ import { WeaponBaseSelector } from "./WeaponBaseSelector";
 import { WeaponForgeBasicsFields } from "./WeaponForgeBasicsFields";
 import { WeaponForgeFormActions } from "./WeaponForgeFormActions";
 import { WeaponForgeFormHeader } from "./WeaponForgeFormHeader";
+import { WeaponForgeProficiencyFields } from "./WeaponForgeProficiencyFields";
 import { WeaponRarityEditor } from "./WeaponRarityEditor";
 
 export function WeaponForgeForm() {
@@ -63,6 +64,12 @@ export function WeaponForgeForm() {
           <WeaponBaseSelector weapons={amellwindWeapons} onApply={applyBase} />
 
           <WeaponForgeBasicsFields
+            values={values}
+            onPatch={patch}
+            onPatchMany={patchMany}
+          />
+
+          <WeaponForgeProficiencyFields
             values={values}
             onPatch={patch}
             onPatchMany={patchMany}

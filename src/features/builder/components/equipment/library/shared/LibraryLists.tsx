@@ -11,7 +11,7 @@ import {
 import { LibraryList } from "@/features/builder/components/shared/LibraryList";
 import {
   getWeaponCategoryBadges,
-  getWeaponProficiencyRule,
+  resolveWeaponProficiency,
 } from "@/features/weapons/data/weapon-proficiencies.data";
 import { getWeaponEffectiveTierLabel } from "@/features/builder/utils/equipment-proficiency.utils";
 import { CLOTHING_ARMOR, formatArmorSlotDetail, isShieldArmor } from "@/features/builder/data/armor.data";
@@ -50,10 +50,11 @@ function WeaponListBadges({
   weaponProficiencies: string[];
 }) {
   const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
-  const rule = getWeaponProficiencyRule(weapon.name);
+  const rule = resolveWeaponProficiency(weapon);
   const simpleModeLabel = getWeaponEffectiveTierLabel(
     weapon.name,
     weaponProficiencies,
+    weapon,
   );
   const categoryBadges = rule ? getWeaponCategoryBadges(rule) : [];
 

@@ -5,6 +5,9 @@ import {
   WeaponRarityRow,
   defaultSlotsForWeaponRarity,
   isBaseRarity,
+  type WeaponProficiencyRange,
+  type WeaponProficiencyRule,
+  type WeaponProficiencyTier,
 } from "@/shared/types";
 import { mapWeapon } from "@/features/weapons/mappers/weapon.mapper";
 import {
@@ -88,11 +91,15 @@ export function toCustomWeapon(
 }
 
 export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
+  const includesShield = values.includesShield;
   const acParsed = values.acBonus.trim()
     ? Number.parseInt(values.acBonus, 10)
     : undefined;
-  const acBonus =
-    acParsed !== undefined && Number.isFinite(acParsed) ? acParsed : undefined;
+  const acBonus = includesShield
+    ? acParsed !== undefined && Number.isFinite(acParsed)
+      ? acParsed
+      : 2
+    : undefined;
 
   const fromField = values.baseFeatureNames
     .split(/[,\n]/)
@@ -124,6 +131,16 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
     ? modes[1]?.damage
     : values.dmg2.trim() || undefined;
 
+  const compatible = values.compatibleProficiencies
+    .map((s) => s.trim())
+    .filter(Boolean);
+  const proficiency: WeaponProficiencyRule = {
+    compatible,
+    requiresShield: values.requiresShieldProficiency || undefined,
+    tier: values.proficiencyTier,
+    range: values.proficiencyRange,
+  };
+
   return {
     name: values.name.trim() || "Untitled Weapon",
     source: "RAINTDM",
@@ -136,7 +153,8 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
     weight: Number.isFinite(values.weight) ? values.weight : 0,
     valueCp: Number.isFinite(values.valueCp) ? values.valueCp : 0,
     acBonus,
-    includesShield: acBonus !== undefined,
+    includesShield: includesShield || undefined,
+    proficiency,
     range: values.range.trim() || undefined,
     isFocus: values.isFocus,
     description: values.description.trim(),
@@ -241,6 +259,14 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
       blocksOffHand: m.blocksOffHand === true ? true : undefined,
     }));
   }
+  if (weapon.proficiency) {
+    raintdmPayload.proficiency = {
+      compatible: [...weapon.proficiency.compatible],
+      requiresShield: weapon.proficiency.requiresShield === true ? true : undefined,
+      tier: weapon.proficiency.tier,
+      range: weapon.proficiency.range,
+    };
+  }
   if (Object.keys(raintdmPayload).length > 0) {
     raw._raintdm = raintdmPayload;
   }
@@ -336,6 +362,40 @@ function parseModesFromRecord(
   return parseModes(raintdm?.modes);
 }
 
+const PROFICIENCY_TIERS: ReadonlySet<string> = new Set([
+  "martial",
+  "simple",
+  "martial-or-simple",
+]);
+const PROFICIENCY_RANGES: ReadonlySet<string> = new Set(["melee", "ranged"]);
+
+function parseProficiencyRule(raw: unknown): WeaponProficiencyRule | undefined {
+  if (!isRecord(raw)) return undefined;
+  const tier = String(raw.tier ?? "");
+  const range = String(raw.range ?? "");
+  if (!PROFICIENCY_TIERS.has(tier) || !PROFICIENCY_RANGES.has(range)) {
+    return undefined;
+  }
+  const compatible = Array.isArray(raw.compatible)
+    ? raw.compatible.map(String).map((s) => s.trim()).filter(Boolean)
+    : [];
+  return {
+    compatible,
+    requiresShield: raw.requiresShield === true,
+    tier: tier as WeaponProficiencyTier,
+    range: range as WeaponProficiencyRange,
+  };
+}
+
+function parseProficiencyFromRecord(
+  raw: Record<string, unknown>,
+): WeaponProficiencyRule | undefined {
+  const fromTop = parseProficiencyRule(raw.proficiency);
+  if (fromTop) return fromTop;
+  const raintdm = isRecord(raw._raintdm) ? raw._raintdm : undefined;
+  return parseProficiencyRule(raintdm?.proficiency);
+}
+
 function parseDomainWeapon(
   raw: Record<string, unknown>,
   isCustom: boolean,
@@ -346,6 +406,8 @@ function parseDomainWeapon(
     parseCustomFeatures(
       isRecord(raw._raintdm) ? raw._raintdm.customFeatures : undefined,
     );
+  const proficiency =
+    parseProficiencyFromRecord(raw) ?? weapon.proficiency;
 
   return toCustomWeapon(
     {
@@ -365,6 +427,7 @@ function parseDomainWeapon(
       weight: typeof weapon.weight === "number" ? weapon.weight : 0,
       valueCp: typeof weapon.valueCp === "number" ? weapon.valueCp : 0,
       modes: parseModesFromRecord(raw) ?? weapon.modes,
+      proficiency,
     },
     {
       id: typeof raw.id === "string" ? raw.id : undefined,
@@ -390,10 +453,12 @@ function parseSingleEntry(entry: unknown, isCustom: boolean): CustomWeapon {
     const raintdm = isRecord(record._raintdm) ? record._raintdm : undefined;
     const customFeatures = parseCustomFeatures(raintdm?.customFeatures);
     const modes = parseModesFromRecord(record);
+    const proficiency = parseProficiencyFromRecord(record);
     return toCustomWeapon(
       {
         ...mapped,
         modes: modes ?? mapped.modes,
+        proficiency: proficiency ?? mapped.proficiency,
       },
       {
         isCustom,
