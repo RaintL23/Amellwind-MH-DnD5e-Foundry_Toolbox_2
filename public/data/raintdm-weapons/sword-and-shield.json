@@ -1,0 +1,107 @@
+{
+  "name": "Sword and Shield",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 2,
+  "value": 2000,
+  "property": ["F", "L"],
+  "dmg1": "1d6",
+  "dmgType": "S",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Sword and Shield",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus AC",
+            "Bonus to Damage",
+            "Features"
+          ],
+          "rows": [
+            ["Base", "0", "--", "--", "--", "--"],
+            ["Common", "1", "--", "--", "--", "Mastery (Nick)"],
+            ["Uncommon", "2", "--", "--", "--", "Shield Bash, Item Prodigy"],
+            ["Rare", "3", "+1", "+1", "+1", "Alchemical Rend, Advancing Slash"],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "+2",
+              "Perfect Rush, Item Efficiency"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "+3",
+              "True Perfect Rush, Master Crafter's Touch"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "ac": 2,
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "3fe7fdb4-3638-4939-989d-a675822bd252",
+        "name": "Mastery (Nick)",
+        "description": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action."
+      },
+      {
+        "id": "fe875ab2-88b5-4d1b-a1f0-1369d65402fe",
+        "name": "Shield Bash",
+        "description": "You learn to seamlessly weave your shield into your attack forms. While equipped, the shield functions as a Martial Melee weapon that deals 1d4 Bludgeoning damage and has the Light property."
+      },
+      {
+        "id": "a2ac631b-e5ed-4b38-b78a-fb84b039f835",
+        "name": "Item Prodigy",
+        "description": "The hallmark of the weapon. You can take the Utilize action (such as drinking a potion, throwing alchemist's fire, or setting a trap) as a Bonus Action. You can do this even while holding both the sword and the shield."
+      },
+      {
+        "id": "24109c57-9788-4546-8d54-e3807e94f563",
+        "name": "Alchemical Rend",
+        "description": "You use your rapid strikes to create openings for your items and spells. When you hit a creature with this weapon, that creature has Disadvantage on the next saving throw it makes against an item (like a bomb, poison, or caltrops) or a spell before the end of your next turn."
+      },
+      {
+        "id": "06fc58e2-804b-4278-afbf-cabda88af2f0",
+        "name": "Perfect Rush",
+        "description": "You unlock the weapon's most devastating combo. Once per turn, if you hit the same creature with both your Sword and your Shield Bash during the same Attack action, you can unleash a flurry of follow-up strikes. The creature takes an extra 3d6 Slashing or Bludgeoning damage, and its Speed is reduced to 0 until the start of its next turn."
+      },
+      {
+        "id": "3d3578a9-a3c9-4cc6-aa20-40f3c36bed84",
+        "name": "Item Efficiency",
+        "description": "Whenever you roll dice to determine the healing or damage of an item you use with your Utilize action (such as a Potion of Healing or a Bomb), you can reroll any 1s or 2s, but you must use the new roll.",
+        "upgradesFromId": "a2ac631b-e5ed-4b38-b78a-fb84b039f835"
+      },
+      {
+        "id": "7c787801-f0af-4a8d-90f8-044e58ac3c1e",
+        "name": "True Perfect Rush",
+        "description": "our mastery over the weapon's ultimate combo is absolute. The extra damage from your Perfect Rush increases to 5d6. Additionally, the target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Dexterity or Strength modifier) or be Stunned until the start of its next turn.",
+        "upgradesFromId": "06fc58e2-804b-4278-afbf-cabda88af2f0"
+      },
+      {
+        "id": "71770de3-c3ed-4680-aa70-bd890bbce758",
+        "name": "Advancing Slash",
+        "description": "Your mobility in combat increases. When you use your Item Prodigy feature to take the Utilize action, you can immediately move up to 10 feet without provoking Opportunity Attacks."
+      },
+      {
+        "id": "30cec74b-b280-4a09-92b5-ceb4f1547496",
+        "name": "Master Crafter's Touch",
+        "description": "Your Item Efficiency improves. Whenever you use a consumable item that restores hit points or deals damage, you do not roll the dice; you automatically use the maximum possible value for those dice.",
+        "upgradesFromId": "3d3578a9-a3c9-4cc6-aa20-40f3c36bed84"
+      }
+    ]
+  }
+}
