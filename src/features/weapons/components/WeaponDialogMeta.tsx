@@ -11,7 +11,7 @@ export function WeaponDialogMeta({ weapon }: WeaponDialogMetaProps) {
   return (
     <>
       {weapon.description && (
-        <p className="text-sm text-muted-foreground italic mb-3 leading-relaxed">
+        <p className="text-sm text-muted-foreground italic mb-3 leading-relaxed whitespace-pre-line">
           <DndRichText text={weapon.description} />
         </p>
       )}
@@ -36,7 +36,10 @@ export function WeaponDialogMeta({ weapon }: WeaponDialogMetaProps) {
       {weapon.supplementaryNotes.length > 0 && (
         <div className="space-y-2 mb-5">
           {weapon.supplementaryNotes.map((note, i) => (
-            <p key={i} className="text-sm text-muted-foreground leading-relaxed">
+            <p
+              key={i}
+              className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line"
+            >
               {note}
             </p>
           ))}

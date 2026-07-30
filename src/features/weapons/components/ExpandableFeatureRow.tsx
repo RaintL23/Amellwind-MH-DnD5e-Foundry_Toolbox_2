@@ -53,7 +53,7 @@ export function ExpandableFeatureRow({
           {paragraphs.map((p, pi) => (
             <p
               key={pi}
-              className="text-xs text-muted-foreground leading-relaxed"
+              className="text-xs text-muted-foreground leading-relaxed whitespace-pre-line"
             >
               <DndRichText text={p} />
             </p>

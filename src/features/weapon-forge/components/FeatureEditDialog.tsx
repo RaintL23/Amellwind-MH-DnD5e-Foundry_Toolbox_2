@@ -219,7 +219,7 @@ export function FeatureEditDialog({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 rows={6}
-                placeholder="Rules text for this feature. Separate paragraphs with a blank line."
+                placeholder="Rules text for this feature. Line breaks and bullet lists are preserved in the weapon dialog."
               />
             </div>
             <div className="flex justify-end gap-2">

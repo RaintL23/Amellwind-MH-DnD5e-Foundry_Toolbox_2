@@ -536,9 +536,10 @@ export function rarityRowsWithFeatureDisplayNames(
   });
 }
 
+/** Split feature description into display lines (preserves editor line breaks / bullets). */
 export function descriptionToParagraphs(description: string): string[] {
   return description
-    .split(/\n\s*\n/)
+    .split(/\n/)
     .map((p) => p.trim())
     .filter(Boolean);
 }
