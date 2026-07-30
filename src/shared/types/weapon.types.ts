@@ -190,6 +190,7 @@ export const DMG_TYPE_COLOR: Record<string, string> = {
   B: "border-orange-800/60 hover:border-orange-700",
 };
 
+/** Known feature / resource unlock column name fragments (legacy detection). */
 export const FEATURE_COL_KEYS = [
   "features",
   "single features",
@@ -204,10 +205,16 @@ export const FEATURE_COL_KEYS = [
 /** Item lists parsed from trailing nested tables (ammo types, coatings, etc.) */
 export const UNLOCK_COLUMN_PREFIX = "Unlocked ";
 
+/**
+ * Feature and weapon-resource unlock columns on a rarity row.
+ * Excludes Bonus* stats and nested "Unlocked …" lists. Any other column
+ * (including custom forge resource names) is treated as a feature list.
+ */
 export function isWeaponFeatureColumn(label: string): boolean {
   const lower = label.toLowerCase();
   if (lower.startsWith(UNLOCK_COLUMN_PREFIX.toLowerCase())) return false;
-  return FEATURE_COL_KEYS.some((k) => lower.includes(k));
+  if (lower === "bonus" || lower.startsWith("bonus ")) return false;
+  return true;
 }
 
 export function isUnlockListColumn(label: string): boolean {

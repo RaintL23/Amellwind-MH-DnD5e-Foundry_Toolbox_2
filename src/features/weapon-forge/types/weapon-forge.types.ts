@@ -29,27 +29,38 @@ export const RESOURCE_COLUMN_PRESETS = [
   "Notes",
 ] as const;
 
-const RESOURCE_COLUMN_HINTS = [
-  "phials",
-  "coatings",
-  "ammo",
-  "notes",
-  "available",
-] as const;
-
-export function isResourceColumnLabel(label: string): boolean {
+/** Combat Features column labels (not weapon-resource unlocks). */
+function isCombatFeaturesLabel(label: string): boolean {
   const lower = label.toLowerCase();
-  return RESOURCE_COLUMN_HINTS.some((hint) => lower.includes(hint));
-}
-
-export function isPrimaryFeaturesColumn(label: string): boolean {
-  const lower = label.toLowerCase();
-  if (isResourceColumnLabel(label)) return false;
   return (
     lower === "features" ||
     lower.includes("single features") ||
     lower.includes("splint features")
   );
+}
+
+export function isBonusColumnLabel(label: string): boolean {
+  const lower = label.toLowerCase();
+  if (lower === "bonus") return true;
+  return (Object.values(BONUS_COLUMN_KEYS) as readonly string[]).some(
+    (key) => key.toLowerCase() === lower,
+  );
+}
+
+/**
+ * Weapon-resource unlock columns (Phials, Coatings, custom names, …).
+ * Rarity rows only store Features, Bonus*, and resource unlocks — so any
+ * non-Features / non-Bonus column is treated as a resource column. This lets
+ * Custom… resource types work without a fixed hint list.
+ */
+export function isResourceColumnLabel(label: string): boolean {
+  if (isCombatFeaturesLabel(label)) return false;
+  if (isBonusColumnLabel(label)) return false;
+  return true;
+}
+
+export function isPrimaryFeaturesColumn(label: string): boolean {
+  return isCombatFeaturesLabel(label);
 }
 
 export function detectResourceColumns(rows: WeaponRarityRow[]): string[] {
