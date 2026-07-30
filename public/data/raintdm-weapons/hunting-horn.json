@@ -1,0 +1,195 @@
+{
+  "name": "Hunting Horn",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 8,
+  "value": 5000,
+  "property": [
+    "2H",
+    "H"
+  ],
+  "dmg1": "1d12",
+  "dmgType": "B",
+  "entries": [
+    "I'm not hiding (RaintDM), this change is also purely intentional so that the Bard can use this weapon. It seems to me that, conceptually, a weapon that buffs your allies in combat using music is entirely Bardic, but Amellwind's homebrew takes the weapon purely as MH presents it, which is fine. However, I'm taking the creative liberty of making some changes so that it's possible for a Bard to use it.",
+    {
+      "type": "inset",
+      "name": "Hunting Horn",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features",
+            "Melodies"
+          ],
+          "rows": [
+            [
+              "Base",
+              "0",
+              "--",
+              "--",
+              "--",
+              "--"
+            ],
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery (Topple)",
+              "--"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Instrument of War (The Bard Fix), Recital, Songbook",
+              "Melody of Might, Melody of Warding, Melody of Swiftness"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Encore, Expanded Songbook",
+              "Melody of the Elements"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Magnificent Trio, Expanded Songbook II, Earthshaker",
+              "Melody of Clarity, Melody of Vigor"
+            ],
+            [
+              "Legendary",
+              "5",
+              "--",
+              "--",
+              "Infernal Melody, Songbook Mastery",
+              "--"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "1ddd49a9-73cb-47f3-a743-cd4f4937f81c",
+        "name": "Mastery (Topple)",
+        "description": "If you hit a creature with this weapon, you can force it to make a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength or Charisma modifier). On a failed save, the creature has the Prone condition."
+      },
+      {
+        "id": "45c6e965-9f50-4e8c-9fdb-c082d56b6e23",
+        "name": "Instrument of War (The Bard Fix)",
+        "description": "This weapon doubles as a musical instrument and a spellcasting focus. If you have the Bardic Inspiration feature, you gain proficiency with this weapon, it loses the Heavy property for you (allowing Small races to wield it comfortably), and you can use your Charisma modifier instead of Strength for its attack and damage rolls."
+      },
+      {
+        "id": "29f84662-52e6-49e2-8876-cdbf5c806d4d",
+        "name": "Recital",
+        "description": "The horn relies on the momentum of combat to generate its magic. When you hit a creature with this weapon on your turn, you can use your Bonus Action to perform a Recital. You activate one Melody from your Songbook (see below). The Melody emits a 15-foot aura centered on you that lasts for 1 minute, until you are Incapacitated, or until you activate a different Melody."
+      },
+      {
+        "id": "77cb6fb5-35ab-40ad-821c-fd8a0d557d43",
+        "name": "Songbook",
+        "description": "You know two Melodies of your choice. You can change your known Melodies whenever you finish a Long Rest."
+      },
+      {
+        "id": "f140cdc0-8a66-4294-907e-e8dbfd19a848",
+        "name": "Melody of Might",
+        "description": "Allies in the aura (including you) can add 1d4 to the damage rolls.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "e0d39518-da15-4d5b-ba46-1bdd2bfd1732",
+        "name": "Melody of Warding",
+        "description": "Allies in the aura gain a +1 bonus to their Armor Class.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "bbe15f56-852e-47ae-918a-a0478ef54959",
+        "name": "Melody of Swiftness",
+        "description": "Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "06377a55-bdb6-4a9d-b1f5-ea5a31ddab16",
+        "name": "Encore",
+        "description": "Your mastery over the horn's acoustics improves. When you use your Bonus Action to perform a Recital, you can have two different Melodies active at the same time.",
+        "upgradesFromId": "29f84662-52e6-49e2-8876-cdbf5c806d4d"
+      },
+      {
+        "id": "0fda71cf-e724-436a-a087-254306ea3879",
+        "name": "Expanded Songbook",
+        "description": "You know three Melodies.",
+        "upgradesFromId": "77cb6fb5-35ab-40ad-821c-fd8a0d557d43"
+      },
+      {
+        "id": "fc6fd82e-7d0b-4f96-ab0a-aec8341b1f64",
+        "name": "Melody of the Elements",
+        "description": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura gain Resistance to the chosen damage type, and their attacks deal an extra 1d4 damage of that type.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "db28bdc2-0ae6-4261-974a-9b272778ce3f",
+        "name": "Magnificent Trio",
+        "description": "You can now have up to three different Melodies active at the same time when you perform a Recital.",
+        "upgradesFromId": "06377a55-bdb6-4a9d-b1f5-ea5a31ddab16"
+      },
+      {
+        "id": "7d046740-6c83-4d29-952c-c43f4e3fa588",
+        "name": "Expanded Songbook II",
+        "description": "You know four Melodies.",
+        "upgradesFromId": "0fda71cf-e724-436a-a087-254306ea3879"
+      },
+      {
+        "id": "7c51ade6-e002-4fe7-8901-e96883634ab2",
+        "name": "Melody of Clarity",
+        "description": "Allies in the aura have Advantage on saving throws against being Charmed, Frightened, Paralyzed, or Stunned.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "3e476238-a409-463a-8a38-b22c3eae43a6",
+        "name": "Melody of Vigor",
+        "description": "At the start of each of their turns, allies in the aura gain Temporary Hit Points equal to your Charisma or Strength modifier (minimum of 1).",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "39badac0-df92-418e-9ff5-8816452200e4",
+        "name": "Earthshaker",
+        "description": "As an Action, you slam the horn into the ground to release a devastating shockwave. Every hostile creature within a 20-foot radius must make a Constitution saving throw against a DC equal to 8 + your Proficiency Bonus + your Strength or Charisma modifier. On a failed save, a creature takes 4d8 Thunder damage and is Deafened for 1 minute. On a successful save, it takes half as much damage.\n\nOnce you use this feature, you cannot do so again until you finish a Short or Long Rest. Alternatively, if you have the Spellcasting or Bardic Inspiration features, you can bypass this restriction by expending a spell slot of 2nd level or higher, or 2 uses of your Bardic Inspiration."
+      },
+      {
+        "id": "20a384bd-f16b-45e5-b4e9-2550f20a0006",
+        "name": "Infernal Melody",
+        "description": "Once per Long Rest, when you hit a creature, you can use your Bonus Action to play the ultimate song. For the next minute, your aura radius expands to 30 feet, and whenever an ally in the aura scores a hit with an attack, they deal maximum damage with their weapon's base damage dice (for example, a 1d8 longsword automatically rolls an 8)."
+      },
+      {
+        "id": "02e9abf8-e7ff-4096-850f-c9c15a122ca0",
+        "name": "Songbook Mastery",
+        "description": "You know all available Melodies and can switch which ones are active every time you hit a creature and use your Bonus Action.",
+        "upgradesFromId": "7d046740-6c83-4d29-952c-c43f4e3fa588"
+      }
+    ],
+    "proficiency": {
+      "compatible": [
+        "Musical Instrument",
+        "Maul",
+        "Warhammer"
+      ],
+      "tier": "martial",
+      "range": "melee"
+    }
+  }
+}
