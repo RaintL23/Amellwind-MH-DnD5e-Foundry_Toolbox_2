@@ -6,9 +6,7 @@
   "rarity": "none",
   "weight": 3,
   "value": 3000,
-  "property": [
-    "V"
-  ],
+  "property": ["V"],
   "dmg1": "1d6",
   "dmgType": "B",
   "entries": [
@@ -18,37 +16,16 @@
       "entries": [
         {
           "type": "table",
-          "colLabels": [
-            "Rarity",
-            "Slots",
-            "Bonus to Hit",
-            "Features"
-          ],
+          "colLabels": ["Rarity", "Slots", "Bonus to Hit", "Features"],
           "rows": [
-            [
-              "Base",
-              "0",
-              "--",
-              "--"
-            ],
-            [
-              "Common",
-              "1",
-              "--",
-              "Mastery (Sap)"
-            ],
+            ["Common", "1", "--", "Mastery (Sap)"],
             [
               "Uncommon",
               "2",
               "--",
               "Spell Core Gauge, Harvest Magic, Arcane Discharge"
             ],
-            [
-              "Rare",
-              "3",
-              "--",
-              "Improve Casting, Expanded Gauge, Offset Ward"
-            ],
+            ["Rare", "3", "--", "Improve Casting, Expanded Gauge, Offset Ward"],
             [
               "Very Rare",
               "4",

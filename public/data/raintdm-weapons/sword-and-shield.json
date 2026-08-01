@@ -25,7 +25,6 @@
             "Features"
           ],
           "rows": [
-            ["Base", "0", "--", "--", "--", "--"],
             ["Common", "1", "--", "--", "--", "Mastery (Nick)"],
             ["Uncommon", "2", "--", "--", "--", "Shield Bash, Item Prodigy"],
             ["Rare", "3", "+1", "+1", "+1", "Alchemical Rend, Advancing Slash"],

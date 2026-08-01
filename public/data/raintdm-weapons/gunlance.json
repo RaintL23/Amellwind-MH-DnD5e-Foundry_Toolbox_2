@@ -6,9 +6,7 @@
   "rarity": "none",
   "weight": 6,
   "value": 3000,
-  "property": [
-    "R"
-  ],
+  "property": ["R"],
   "dmg1": "1d8",
   "dmgType": "P",
   "entries": [
@@ -27,22 +25,7 @@
             "Features"
           ],
           "rows": [
-            [
-              "Base",
-              "0",
-              "--",
-              "--",
-              "--",
-              "--"
-            ],
-            [
-              "Common",
-              "1",
-              "--",
-              "--",
-              "--",
-              "Mastery (Push)"
-            ],
+            ["Common", "1", "--", "--", "--", "Mastery (Push)"],
             [
               "Uncommon",
               "2",
@@ -51,14 +34,7 @@
               "--",
               "Artillery Shells, Shelling Strike, Guard Reload"
             ],
-            [
-              "Rare",
-              "3",
-              "+1",
-              "+1",
-              "+1",
-              "Blast Dash, Full Burst"
-            ],
+            ["Rare", "3", "+1", "+1", "+1", "Blast Dash, Full Burst"],
             [
               "Very Rare",
               "4",

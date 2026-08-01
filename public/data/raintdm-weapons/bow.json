@@ -27,7 +27,6 @@
             "Coatings"
           ],
           "rows": [
-            ["Base", "0", "--", "--", "--", "--"],
             ["Common", "1", "--", "--", "Mastery (Slow)", "--"],
             [
               "Uncommon",

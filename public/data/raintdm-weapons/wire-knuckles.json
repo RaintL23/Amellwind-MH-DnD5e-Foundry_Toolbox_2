@@ -6,9 +6,7 @@
   "rarity": "none",
   "weight": 2,
   "value": 3000,
-  "property": [
-    "L"
-  ],
+  "property": ["L"],
   "dmg1": "1d4",
   "dmgType": "B",
   "entries": [
@@ -26,20 +24,7 @@
             "Features"
           ],
           "rows": [
-            [
-              "Base",
-              "0",
-              "--",
-              "--",
-              "--"
-            ],
-            [
-              "Common",
-              "1",
-              "--",
-              "--",
-              "Mastery: Push"
-            ],
+            ["Common", "1", "--", "--", "Mastery: Push"],
             [
               "Uncommon",
               "2",
@@ -47,20 +32,8 @@
               "--",
               "Wirebug Gauge, Wire-Dash, Wire-Fall"
             ],
-            [
-              "Rare",
-              "3",
-              "+1",
-              "+1",
-              "Silkbind Tether, Silkbind Grapple"
-            ],
-            [
-              "Very Rare",
-              "4",
-              "+2",
-              "+2",
-              "Wyvern Ride"
-            ],
+            ["Rare", "3", "+1", "+1", "Silkbind Tether, Silkbind Grapple"],
+            ["Very Rare", "4", "+2", "+2", "Wyvern Ride"],
             [
               "Legendary",
               "5",
