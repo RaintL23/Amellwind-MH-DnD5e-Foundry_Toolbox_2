@@ -90,6 +90,7 @@ features/<x>/
 ### Capa de datos (clave para no romper nada)
 
 - **Services se construyen con `createEntityService`** (`src/shared/services/create-entity-service.ts`): provee `getAll/getList/getById/getByName/clearCache`, con caché en memoria, dedupe e índices. Para una nueva entidad, **declara un service con esa factory** en vez de hand-rollear caché. Vistas extra (`getXByType`, filtros) son wrappers finos sobre `getAll`.
+- **Filtros de lista vs URL:** usa `useListSessionFilters` (sessionStorage por pestaña) para búsqueda/filtros; no vuelques `src=` ni facets a la query. Para el ítem abierto usa `useListItemUrlParam` (p. ej. `?spell=Fireball`) o una ruta de detalle.
 - **IndexedDB** (`src/shared/db/database.ts` + `sync.service.ts`): stores `mm_*` (Monster Manual) y `gtmh_*` (Guía de Caza), con esquema current/previous/meta. La sincronización corre al arrancar en `App.tsx`; tras un sync exitoso se invalidan cachés en memoria. No accedas a IndexedDB directamente desde componentes: pasa por services.
 - **Flujo:** raw JSON (5etools / IndexedDB) → `mapper` → modelo de dominio → `service` (cachea) → `hook` → `component`.
 

@@ -215,9 +215,13 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 
 Al sincronizar GTMH, `sync.service.ts` persiste cada array por separado. Si una clave no está cacheada (p. ej. tras upgrade), `ensureGtmhArrayStore()` puede hacer lazy-fetch del JSON remoto.
 
-#### Datos 5etools (no en IndexedDB)
+#### Datos 5etools (persistidos en IndexedDB)
 
-Spells, classes, items y bestiary oficiales se cargan bajo demanda desde `FIVETOOLS_DATA_BASE_URL` (`api.constants.ts`). En desarrollo offline, copiar JSON a `public/5etools/` y usar `VITE_5ETOOLS_DATA=local`.
+Spells, classes, races, backgrounds, feats, items y bestiary oficiales se cargan bajo demanda desde `FIVETOOLS_DATA_BASE_URL` (`api.constants.ts`) y se **persisten en IndexedDB** (store `fivetools_cache`), que es la fuente de verdad en runtime. Spells/classes usan sus `index.json` dinámicos (no whitelists fijas). El acceso es offline-first (*stale-while-revalidate*): se sirve lo guardado y, si está viejo (TTL 24 h), se refresca en segundo plano.
+
+**Unearthed Arcana / prerelease** se carga desde `TheGiddyLimit/unearthed-arcana` (`VITE_UA_MIRROR` / `VITE_UA_REF`) vía el mismo cache IndexedDB. **Partnered** (p. ej. D&D Beyond Drops, Tal'Dorei Reborn — el mismo set que 5etools `search/index-partnered.json`) se indexa desde `TheGiddyLimit/homebrew` (`_generated`, meta `p: 1`) y se descarga on-demand desde ese repo. En el Filter dialog, Sources se agrupan por año de publicación; por defecto solo están preseleccionadas las fuentes **oficiales**. UA, residuales tipo D&D Beyond del feed UA (p. ej. `WGE`) y partnered se pueden activar y se mergean on-demand.
+
+En desarrollo offline, copiar JSON a `public/5etools/` (y opcionalmente `public/5etools/ua/`) y usar `VITE_5ETOOLS_DATA=local`.
 
 ### Objetivos del sistema
 
@@ -1575,15 +1579,17 @@ Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar. 
 
 | Feature        | Ruta               | Fuente                          | Notas |
 | -------------- | ------------------ | ------------------------------- | ----- |
-| Spells         | `/spells`          | `SPELLS_BASE_URL` + lookup JSON | Dedupe por nombre; filtros clase/nivel/fuente |
-| Classes        | `/classes`         | `CLASSES_BASE_URL` + index      | Detalle en `/classes/:classId`; switcher de fuente |
-| Races          | `/dnd-races`       | `race`/`subrace` 5etools        | Dedupe por nombre con variantes por fuente (2014/2024) |
-| Backgrounds    | `/dnd-backgrounds` | `background` 5etools            | Dedupe por nombre con variantes |
-| Feats          | `/dnd-feats`       | `feat` 5etools                  | Dedupe por nombre con variantes |
-| D&D Items      | `/dnd-items`       | items.json + variants           | Carga por source book; toolbar TanStack Table; expone catálogo de equipo del builder |
-| Bestiary       | `/bestiary`        | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto bajo demanda |
+| Spells         | `/spells`          | `spells/index.json` + UA/partnered | Dedupe por nombre; Filter dialog (nivel/escuela/clase/flags/sources) |
+| Classes        | `/classes`         | `class/index.json` + UA/partnered  | Detalle en `/classes/:classId`; Filter dialog (caster/sources) |
+| Races          | `/dnd-races`       | `race`/`subrace` + UA/partnered    | Dedupe por nombre; Filter dialog (kind/size/sources) |
+| Backgrounds    | `/dnd-backgrounds` | `background` 5etools            | Dedupe por nombre; Filter dialog (edition/sources) |
+| Feats          | `/dnd-feats`       | `feat` + UA/partnered              | Dedupe por nombre; Filter dialog (tipo/sources) |
+| D&D Items      | `/dnd-items`       | items.json + variants           | Precarga PHB/DMG; resto al seleccionar Sources; Filter dialog |
+| Bestiary       | `/bestiary`        | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto al seleccionar Sources |
 
-Fetch centralizado en `shared/data/fivetools-fetch.ts` con soporte `VITE_5ETOOLS_DATA=local`. Nombres de libros vía `book-source.service.ts` y hook `useBookSourceNames`.
+Fetch centralizado en `shared/data/fivetools-fetch.ts` (offline-first *stale-while-revalidate*: memoria → IndexedDB `fivetools_cache` → red; refresco en segundo plano si está viejo) con soporte `VITE_5ETOOLS_DATA=local`. Catálogo de sources (oficial + UA + partnered homebrew) en `shared/services/source-catalog.service.ts`; UI compartida `ListSearchWithFilters` / `ListFiltersDialog` (Sources agrupadas por año).
+
+**URL vs session (listas):** los filtros de búsqueda/sources viven en `sessionStorage` vía `useListSessionFilters` (por pestaña; no hinchan la query string). La URL solo destaca el ítem abierto: query (`?spell=`, `?feat=`, `?item=`, `?race=`, `?background=`, `?weapon=`) o ruta de detalle (`/classes/:id`, `/bestiary/:id`). Hooks: `useListSessionFilters`, `useListItemUrlParam`.
 
 ---
 

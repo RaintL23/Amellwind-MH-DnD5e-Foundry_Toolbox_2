@@ -101,7 +101,7 @@ pnpm lint
 pnpm build:analyze
 ```
 
-Al abrir la app por primera vez (o cuando la caché tiene más de 24 horas), se sincronizan automáticamente los JSONs de Amellwind desde 5etools. Si la red falla, la app sigue funcionando con los datos ya guardados en IndexedDB.
+La app almacena todos los datos en **IndexedDB**, que es su **fuente de verdad** en runtime. GitHub actúa solo como *feed de actualización* (modelo offline-first): al arrancar, si ya hay datos guardados se muestran de inmediato y, si superan las 24 h, se refrescan en segundo plano; solo el primer arranque (sin datos aún) espera a la descarga. Si la red falla, la app sigue funcionando con lo ya guardado en IndexedDB.
 
 ### Compendio 5etools: producción vs. desarrollo offline
 
@@ -126,6 +126,8 @@ Para desarrollo offline, copia los JSON desde `backup-jsons/5etools/` a `public/
 
 ## Fuentes de datos
 
+> **Modelo de datos:** la app guarda todo en **IndexedDB**, su fuente de verdad en runtime. Los repositorios de GitHub de abajo son solo *feeds de actualización*: se consultan para refrescar las bases internas (offline-first, con TTL de 24 h) y no son una dependencia dura en cada carga. Los slugs de mirror/homebrew/UA y su rama son configurables por entorno (`VITE_5ETOOLS_MIRROR`, `VITE_5ETOOLS_REF`, `VITE_HOMEBREW_MIRROR`, `VITE_HOMEBREW_REF`, `VITE_UA_MIRROR`, `VITE_UA_REF`), útil si un mirror de 5etools rota (p. ej. `-3` → `-4`) o para usar un fork.
+
 ### Homebrew Amellwind
 
 La información principal proviene de los recursos homebrew de Amellwind en el repositorio de [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew):
@@ -141,7 +143,9 @@ Recursos, entornos, tiendas, combo, cocina, guía de creación de personajes y p
 
 ### Compendio D&D 5e
 
-Spells, classes, items, bestiary, races, backgrounds y feats se cargan desde el mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) (`raw.githubusercontent.com`), con precarga de fuentes habituales (MM, PHB, DMG, etc.) y carga bajo demanda del resto.
+Spells, classes, items, bestiary, races, backgrounds y feats se cargan desde el mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) (`raw.githubusercontent.com`), con precarga de fuentes habituales (MM, PHB, DMG, etc.) y carga bajo demanda del resto vía el Filter dialog (Sources agrupadas por año; por defecto solo oficiales).
+
+Material de playtest / Unearthed Arcana se obtiene del feed [TheGiddyLimit/unearthed-arcana](https://github.com/TheGiddyLimit/unearthed-arcana) (`VITE_UA_MIRROR` / `VITE_UA_REF`) cuando el usuario selecciona esas sources. Residuales tipo D&D Beyond presentes en ese feed (p. ej. Wayfinder's Guide to Eberron / `WGE`) se tratan igual; no se scrapea D&D Beyond.
 
 ### Automatización Foundry (Midi-QoL / Plutonium)
 
