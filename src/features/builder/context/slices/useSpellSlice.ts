@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo } from "react";
 import type {
   SkillKey,
   Class,
@@ -252,22 +252,42 @@ export function useSpellSlice({
     setOptionalFeatureOriginFeats((prev) => clearAmellwindFeats(prev));
   }, []);
 
-  return {
-    spellSelections,
-    optionalFeatureSelections,
-    optionalFeatureOriginFeatSlots,
-    optionalFeatureOriginFeats,
-    optionalFeatureOriginFeatSkillChoices,
-    addSpell,
-    removeSpell,
-    clearSpells,
-    setOptionalFeaturesForProgression,
-    clearOptionalFeatureProgression,
-    setOptionalFeatureOriginFeatAtIndex,
-    setOptionalFeatureOriginFeatSkillChoicesAtIndex,
-    clearSubclassOptionalFeatures,
-    resetOnClassChange,
-    resetSpellSlice,
-    clearAmellwindOptionalOriginFeats,
-  };
+  return useMemo(
+    () => ({
+      spellSelections,
+      optionalFeatureSelections,
+      optionalFeatureOriginFeatSlots,
+      optionalFeatureOriginFeats,
+      optionalFeatureOriginFeatSkillChoices,
+      addSpell,
+      removeSpell,
+      clearSpells,
+      setOptionalFeaturesForProgression,
+      clearOptionalFeatureProgression,
+      setOptionalFeatureOriginFeatAtIndex,
+      setOptionalFeatureOriginFeatSkillChoicesAtIndex,
+      clearSubclassOptionalFeatures,
+      resetOnClassChange,
+      resetSpellSlice,
+      clearAmellwindOptionalOriginFeats,
+    }),
+    [
+      spellSelections,
+      optionalFeatureSelections,
+      optionalFeatureOriginFeatSlots,
+      optionalFeatureOriginFeats,
+      optionalFeatureOriginFeatSkillChoices,
+      addSpell,
+      removeSpell,
+      clearSpells,
+      setOptionalFeaturesForProgression,
+      clearOptionalFeatureProgression,
+      setOptionalFeatureOriginFeatAtIndex,
+      setOptionalFeatureOriginFeatSkillChoicesAtIndex,
+      clearSubclassOptionalFeatures,
+      resetOnClassChange,
+      resetSpellSlice,
+      clearAmellwindOptionalOriginFeats,
+    ],
+  );
 }

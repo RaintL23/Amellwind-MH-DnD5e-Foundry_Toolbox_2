@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Award, Gem, Shield, Shirt, Sword } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { resolveBookSourceName } from "@/features/spells/services/book-source.service";
@@ -103,29 +104,37 @@ export function WeaponList({
 }) {
   const bookNames = useBookSourceNames();
 
-  const sortedInventory = sortByRpgbotRating(
-    inventory,
-    (w) =>
-      lookupEquipmentRpgbotRating(rpgbotLookup, {
-        name: w.name,
-        source: w.source,
-        variantSources: w.variantSources,
-        baseName: w.baseName,
-        contentSource: w.contentSource,
-      }),
-    (w) => w.baseName ?? w.name,
+  const sortedInventory = useMemo(
+    () =>
+      sortByRpgbotRating(
+        inventory,
+        (w) =>
+          lookupEquipmentRpgbotRating(rpgbotLookup, {
+            name: w.name,
+            source: w.source,
+            variantSources: w.variantSources,
+            baseName: w.baseName,
+            contentSource: w.contentSource,
+          }),
+        (w) => w.baseName ?? w.name,
+      ),
+    [inventory, rpgbotLookup],
   );
-  const sortedCatalog = sortByRpgbotRating(
-    catalog,
-    (w) =>
-      lookupEquipmentRpgbotRating(rpgbotLookup, {
-        name: w.name,
-        source: w.source,
-        variantSources: w.variantSources,
-        baseName: w.baseName,
-        contentSource: w.contentSource,
-      }),
-    (w) => w.baseName ?? w.name,
+  const sortedCatalog = useMemo(
+    () =>
+      sortByRpgbotRating(
+        catalog,
+        (w) =>
+          lookupEquipmentRpgbotRating(rpgbotLookup, {
+            name: w.name,
+            source: w.source,
+            variantSources: w.variantSources,
+            baseName: w.baseName,
+            contentSource: w.contentSource,
+          }),
+        (w) => w.baseName ?? w.name,
+      ),
+    [catalog, rpgbotLookup],
   );
 
   if (loading) return <EmptyState text="Loading weapons..." />;
@@ -215,29 +224,37 @@ export function ArmorList({
 }) {
   const bookNames = useBookSourceNames();
 
-  const sortedInventory = sortByRpgbotRating(
-    inventory,
-    (a) =>
-      lookupEquipmentRpgbotRating(rpgbotLookup, {
-        name: a.name,
-        source: a.source,
-        baseName: a.baseName,
-        contentSource: a.contentSource,
-        armorCategory: a.category,
-      }),
-    (a) => a.baseName ?? a.name,
+  const sortedInventory = useMemo(
+    () =>
+      sortByRpgbotRating(
+        inventory,
+        (a) =>
+          lookupEquipmentRpgbotRating(rpgbotLookup, {
+            name: a.name,
+            source: a.source,
+            baseName: a.baseName,
+            contentSource: a.contentSource,
+            armorCategory: a.category,
+          }),
+        (a) => a.baseName ?? a.name,
+      ),
+    [inventory, rpgbotLookup],
   );
-  const sortedCatalog = sortByRpgbotRating(
-    catalog,
-    (a) =>
-      lookupEquipmentRpgbotRating(rpgbotLookup, {
-        name: a.name,
-        source: a.source,
-        baseName: a.baseName,
-        contentSource: a.contentSource,
-        armorCategory: a.category,
-      }),
-    (a) => a.baseName ?? a.name,
+  const sortedCatalog = useMemo(
+    () =>
+      sortByRpgbotRating(
+        catalog,
+        (a) =>
+          lookupEquipmentRpgbotRating(rpgbotLookup, {
+            name: a.name,
+            source: a.source,
+            baseName: a.baseName,
+            contentSource: a.contentSource,
+            armorCategory: a.category,
+          }),
+        (a) => a.baseName ?? a.name,
+      ),
+    [catalog, rpgbotLookup],
   );
 
   function renderArmorRow(

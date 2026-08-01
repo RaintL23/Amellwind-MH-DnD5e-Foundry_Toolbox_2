@@ -4,9 +4,16 @@ import type {
   BuilderSpellSelection,
   BuilderSpellSelections,
 } from "@/shared/types";
-import type { SpellLevelSlot, BuilderPactSpellSlot, BuilderBonusCantripSlot } from "@/shared/types";
+import type {
+  SpellLevelSlot,
+  BuilderPactSpellSlot,
+  BuilderBonusCantripSlot,
+} from "@/shared/types";
 import type { SpellcastingInfo } from "@/features/builder/hooks/useSpellcasting";
-import { parseSpellLevel, isPactSpellSlot } from "@/features/builder/hooks/useBuilderSlotSelection";
+import {
+  parseSpellLevel,
+  isPactSpellSlot,
+} from "@/features/builder/hooks/useBuilderSlotSelection";
 import {
   findCantripPoolBySlot,
   isBonusCantripSlot,
@@ -44,19 +51,9 @@ function resolveGrantsAtLevel(
   allSpells: Spell[],
 ): SubclassSpellGrant[] {
   if (isPactPool) {
-    return grantsForPactPool(
-      grants,
-      pactMaxLevel,
-      spellLevelByName,
-      allSpells,
-    );
+    return grantsForPactPool(grants, pactMaxLevel, spellLevelByName, allSpells);
   }
-  return grantsForSpellLevel(
-    grants,
-    spellLevel!,
-    spellLevelByName,
-    allSpells,
-  );
+  return grantsForSpellLevel(grants, spellLevel!, spellLevelByName, allSpells);
 }
 
 export function useSpellLibraryPanelState({
@@ -88,11 +85,8 @@ export function useSpellLibraryPanelState({
       )
     : undefined;
   const spellLevel =
-    isPactPool || isBonusCantripPool
-      ? null
-      : parseSpellLevel(selectedSlot);
-  const isClassCantrip =
-    !isPactPool && !isBonusCantripPool && spellLevel === 0;
+    isPactPool || isBonusCantripPool ? null : parseSpellLevel(selectedSlot);
+  const isClassCantrip = !isPactPool && !isBonusCantripPool && spellLevel === 0;
   const effectiveSpellLevel = isPactPool
     ? null
     : isBonusCantripPool || isClassCantrip
@@ -121,10 +115,7 @@ export function useSpellLibraryPanelState({
   );
 
   const { speciesLineage: speciesLineageAtLevel, chosen: chosenAtLevel } =
-    useMemo(
-      () => partitionSpellSelections(selectedAtLevel),
-      [selectedAtLevel],
-    );
+    useMemo(() => partitionSpellSelections(selectedAtLevel), [selectedAtLevel]);
 
   const selectedIds = useMemo(
     () => new Set(chosenAtLevel.map((s) => s.id)),
@@ -147,8 +138,7 @@ export function useSpellLibraryPanelState({
   );
 
   const atClassCantripCapacity =
-    isClassCantrip &&
-    classCantripsSelected >= spellcastingInfo.cantripCount;
+    isClassCantrip && classCantripsSelected >= spellcastingInfo.cantripCount;
   const atBonusCantripCapacity =
     isBonusCantripPool &&
     !!activeBonusPool &&
@@ -258,8 +248,7 @@ export function useSpellLibraryPanelState({
     return ids;
   }, [spellSelections, spellcastingInfo.bonusCantripPools]);
 
-  const spellListClassName =
-    activeBonusPool?.spellListClassName ?? className;
+  const spellListClassName = activeBonusPool?.spellListClassName ?? className;
 
   const spellListContext = useMemo(
     () => ({
@@ -309,7 +298,10 @@ export function useSpellLibraryPanelState({
     const spells = allSpells.filter((s) => {
       if (isPactPool) {
         if (s.level < 1 || s.level > pactMaxLevel) return false;
-      } else if (effectiveSpellLevel !== null && s.level !== effectiveSpellLevel) {
+      } else if (
+        effectiveSpellLevel !== null &&
+        s.level !== effectiveSpellLevel
+      ) {
         return false;
       }
       if (!spellMatchesClassList(s)) return false;
@@ -319,7 +311,8 @@ export function useSpellLibraryPanelState({
       ) {
         return false;
       }
-      if (allSelectedCantripIds.has(s.id) && !selectedIds.has(s.id)) return false;
+      if (allSelectedCantripIds.has(s.id) && !selectedIds.has(s.id))
+        return false;
       if (selectedIds.has(s.id)) return false;
       if (subclassGrantsAtLevel.some((g) => spellNamesMatch(s.name, g.name))) {
         return false;
@@ -387,46 +380,46 @@ export function useSpellLibraryPanelState({
         : `Nivel ${spellLevel}`;
 
   const capacityHint = isClassCantrip
-    ? `${classCantripsSelected}/${spellcastingInfo.cantripCount} cantrips de clase`
+    ? `${classCantripsSelected}/${spellcastingInfo.cantripCount} class cantrips`
     : isBonusCantripPool && activeBonusPool
       ? `${selectedAtLevel.length}/${activeBonusPool.maxCount} · lista ${activeBonusPool.spellListClassName}`
-    : isPactPool
-      ? spellcastingInfo.maxPreparedOrKnown > 0
-        ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${
-            spellcastingInfo.isPreparedCaster
-              ? "prepared"
-              : "pact spells known"
-          } · ${spellcastingInfo.pactSlotCount} slot${
-            spellcastingInfo.pactSlotCount !== 1 ? "s" : ""
-          } (niv. ${pactMaxLevel})`
-        : null
-      : spellcastingInfo.maxPreparedOrKnown > 0
-        ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${spellcastingInfo.isPreparedCaster ? "prepared" : "known"}`
-        : null;
+      : isPactPool
+        ? spellcastingInfo.maxPreparedOrKnown > 0
+          ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${
+              spellcastingInfo.isPreparedCaster
+                ? "prepared"
+                : "pact spells known"
+            } · ${spellcastingInfo.pactSlotCount} slot${
+              spellcastingInfo.pactSlotCount !== 1 ? "s" : ""
+            } (niv. ${pactMaxLevel})`
+          : null
+        : spellcastingInfo.maxPreparedOrKnown > 0
+          ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${spellcastingInfo.isPreparedCaster ? "prepared" : "known"}`
+          : null;
 
   const disabledHint = isClassCantrip
-    ? `Límite de cantrips de clase (${spellcastingInfo.cantripCount})`
+    ? `Class cantrip limit reached (${spellcastingInfo.cantripCount})`
     : isBonusCantripPool && activeBonusPool
-      ? `Límite alcanzado (${activeBonusPool.maxCount})`
-    : isPactPool
-      ? `Pact Magic prepared limit reached (${spellcastingInfo.maxPreparedOrKnown})`
-      : spellcastingInfo.isPreparedCaster
-        ? `Limit of preparation reached (${spellcastingInfo.maxPreparedOrKnown})`
-        : `Limit of known spells reached (${spellcastingInfo.maxPreparedOrKnown})`;
+      ? `Bonus cantrip limit reached (${activeBonusPool.maxCount})`
+      : isPactPool
+        ? `Pact Magic prepared limit reached (${spellcastingInfo.maxPreparedOrKnown})`
+        : spellcastingInfo.isPreparedCaster
+          ? `Limit of preparation reached (${spellcastingInfo.maxPreparedOrKnown})`
+          : `Limit of known spells reached (${spellcastingInfo.maxPreparedOrKnown})`;
 
   const selectedSectionLabel = isClassCantrip
     ? `Cantrips (${className})`
     : isBonusCantripPool
-      ? activeBonusPool?.label ?? "Bonus cantrips"
-    : isPactPool
-      ? spellcastingInfo.isPreparedCaster
-        ? "Prepared Spells"
-        : "Spells Known"
-      : spellcastingInfo.isPreparedCaster
-        ? "Prepared"
-        : spellcastingInfo.isPactMagic
-          ? "Pact spells known"
-          : "Known";
+      ? (activeBonusPool?.label ?? "Bonus cantrips")
+      : isPactPool
+        ? spellcastingInfo.isPreparedCaster
+          ? "Prepared Spells"
+          : "Spells Known"
+        : spellcastingInfo.isPreparedCaster
+          ? "Prepared"
+          : spellcastingInfo.isPactMagic
+            ? "Pact spells known"
+            : "Known";
 
   return {
     search,

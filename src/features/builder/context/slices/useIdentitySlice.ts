@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import type {
   AbilityKey,
   SkillKey,
@@ -37,6 +37,7 @@ import {
   persistBuilderPersonality,
   type BuilderPersonality,
 } from "../../storage/builder.storage";
+import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import {
   clearAmellwindFeats,
   isAmellwindBackgroundSelection,
@@ -106,13 +107,31 @@ export function useIdentitySlice({
   const [backgroundOriginFeat, setBackgroundOriginFeatState] =
     useState<BuilderFeatSelection | null>(null);
 
+  // Persist backstory/personality with a debounce instead of on every keystroke;
+  // a final flush on unmount avoids dropping the last edit during fast navigation.
+  const debouncedBackstoryNotes = useDebouncedValue(backstoryNotes, 500);
   useEffect(() => {
-    persistBuilderBackstoryNotes(backstoryNotes);
-  }, [backstoryNotes]);
+    persistBuilderBackstoryNotes(debouncedBackstoryNotes);
+  }, [debouncedBackstoryNotes]);
 
+  const debouncedPersonality = useDebouncedValue(personality, 500);
   useEffect(() => {
-    persistBuilderPersonality(personality);
-  }, [personality]);
+    persistBuilderPersonality(debouncedPersonality);
+  }, [debouncedPersonality]);
+
+  const latestIdentityNotesRef = useRef({ backstoryNotes, personality });
+  useEffect(() => {
+    latestIdentityNotesRef.current = { backstoryNotes, personality };
+  }, [backstoryNotes, personality]);
+  useEffect(
+    () => () => {
+      persistBuilderBackstoryNotes(
+        latestIdentityNotesRef.current.backstoryNotes,
+      );
+      persistBuilderPersonality(latestIdentityNotesRef.current.personality);
+    },
+    [],
+  );
 
   const setBackstoryNotes = useCallback(
     (value: string | ((current: string) => string)) => {
@@ -580,64 +599,126 @@ export function useIdentitySlice({
     setSpeciesSpellGroupChoiceState(null);
   }, []);
 
-  return {
-    species,
-    background: backgroundRef,
-    class: classRef,
-    subclass,
-    featSelections,
-    classData,
-    classDataLoading,
-    speciesData,
-    speciesDataLoading,
-    speciesOriginFeatGrant,
-    speciesOriginFeat,
-    backgroundOriginFeatGrant,
-    backgroundOriginFeat,
-    originFeatSkillChoices,
-    backstoryNotes,
-    personality,
-    faction,
-    useTashaOrigin,
-    tashaPlus2,
-    tashaPlus1,
-    speciesAbilityChoices,
-    backgroundAsiMode,
-    backgroundAsiPlus2,
-    backgroundAsiPlus1,
-    multiclassEnabled,
-    multiclassEntries,
-    multiclassClassData,
-    setSpecies,
-    setBackground,
-    setClass,
-    setSubclass,
-    setFeatAtIndex,
-    setSpeciesOriginFeat,
-    setBackgroundOriginFeat,
-    setBackstoryNotes,
-    setPersonality,
-    setPersonalityField,
-    setFaction,
-    setUseTashaOrigin,
-    setTashaPlus2,
-    setTashaPlus1,
-    speciesSpellGroupChoice,
-    setSpeciesSpellGroupChoice,
-    setSpeciesAbilityChoice,
-    setBackgroundAsiMode,
-    setBackgroundAsiPlus2,
-    setBackgroundAsiPlus1,
-    setOriginFeatSkillChoices,
-    setMulticlassEnabled,
-    addMulticlassEntry,
-    removeMulticlassEntry,
-    setMulticlassEntryClass,
-    setMulticlassEntryLevel,
-    setMulticlassEntrySubclass,
-    setPrimaryClassLevel,
-    trimFeatSelectionsForLevel,
-    resetIdentitySlice,
-    clearAmellwindIdentity,
-  };
+  return useMemo(
+    () => ({
+      species,
+      background: backgroundRef,
+      class: classRef,
+      subclass,
+      featSelections,
+      classData,
+      classDataLoading,
+      speciesData,
+      speciesDataLoading,
+      speciesOriginFeatGrant,
+      speciesOriginFeat,
+      backgroundOriginFeatGrant,
+      backgroundOriginFeat,
+      originFeatSkillChoices,
+      backstoryNotes,
+      personality,
+      faction,
+      useTashaOrigin,
+      tashaPlus2,
+      tashaPlus1,
+      speciesAbilityChoices,
+      backgroundAsiMode,
+      backgroundAsiPlus2,
+      backgroundAsiPlus1,
+      multiclassEnabled,
+      multiclassEntries,
+      multiclassClassData,
+      setSpecies,
+      setBackground,
+      setClass,
+      setSubclass,
+      setFeatAtIndex,
+      setSpeciesOriginFeat,
+      setBackgroundOriginFeat,
+      setBackstoryNotes,
+      setPersonality,
+      setPersonalityField,
+      setFaction,
+      setUseTashaOrigin,
+      setTashaPlus2,
+      setTashaPlus1,
+      speciesSpellGroupChoice,
+      setSpeciesSpellGroupChoice,
+      setSpeciesAbilityChoice,
+      setBackgroundAsiMode,
+      setBackgroundAsiPlus2,
+      setBackgroundAsiPlus1,
+      setOriginFeatSkillChoices,
+      setMulticlassEnabled,
+      addMulticlassEntry,
+      removeMulticlassEntry,
+      setMulticlassEntryClass,
+      setMulticlassEntryLevel,
+      setMulticlassEntrySubclass,
+      setPrimaryClassLevel,
+      trimFeatSelectionsForLevel,
+      resetIdentitySlice,
+      clearAmellwindIdentity,
+    }),
+    [
+      species,
+      backgroundRef,
+      classRef,
+      subclass,
+      featSelections,
+      classData,
+      classDataLoading,
+      speciesData,
+      speciesDataLoading,
+      speciesOriginFeatGrant,
+      speciesOriginFeat,
+      backgroundOriginFeatGrant,
+      backgroundOriginFeat,
+      originFeatSkillChoices,
+      backstoryNotes,
+      personality,
+      faction,
+      useTashaOrigin,
+      tashaPlus2,
+      tashaPlus1,
+      speciesAbilityChoices,
+      backgroundAsiMode,
+      backgroundAsiPlus2,
+      backgroundAsiPlus1,
+      multiclassEnabled,
+      multiclassEntries,
+      multiclassClassData,
+      setSpecies,
+      setBackground,
+      setClass,
+      setSubclass,
+      setFeatAtIndex,
+      setSpeciesOriginFeat,
+      setBackgroundOriginFeat,
+      setBackstoryNotes,
+      setPersonality,
+      setPersonalityField,
+      setFaction,
+      setUseTashaOrigin,
+      setTashaPlus2,
+      setTashaPlus1,
+      speciesSpellGroupChoice,
+      setSpeciesSpellGroupChoice,
+      setSpeciesAbilityChoice,
+      setBackgroundAsiMode,
+      setBackgroundAsiPlus2,
+      setBackgroundAsiPlus1,
+      setOriginFeatSkillChoices,
+      setMulticlassEnabled,
+      addMulticlassEntry,
+      removeMulticlassEntry,
+      setMulticlassEntryClass,
+      setMulticlassEntryLevel,
+      setMulticlassEntrySubclass,
+      setPrimaryClassLevel,
+      trimFeatSelectionsForLevel,
+      resetIdentitySlice,
+      clearAmellwindIdentity,
+    ],
+  );
 }
