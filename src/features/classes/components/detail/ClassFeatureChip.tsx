@@ -18,21 +18,25 @@ export const ClassFeatureChip = memo(function ClassFeatureChip({
     [onToggle, feature.uid],
   );
 
+  const isSubclass = Boolean(feature.isSubclassFeature);
+
   return (
     <button
       type="button"
       onClick={handleClick}
       className={cn(
         "inline-flex items-center gap-1 rounded border px-1.5 py-0.5 text-[11px] font-medium transition-colors text-left",
-        enabled
-          ? "border-sky-500 bg-sky-500/20 text-sky-200"
-          : feature.isSubclassFeature
-            ? "border-emerald-800/50 bg-emerald-950/30 text-emerald-300/50 hover:bg-emerald-950/50"
+        isSubclass
+          ? enabled
+            ? "border-emerald-500 bg-emerald-500/20 text-emerald-200"
+            : "border-emerald-700/60 bg-emerald-950/40 text-emerald-400/80 hover:bg-emerald-950/60"
+          : enabled
+            ? "border-sky-500 bg-sky-500/20 text-sky-200"
             : "border-border bg-muted/30 text-muted-foreground hover:bg-muted/50",
       )}
     >
       {feature.displayName}
-      {feature.isSubclassFeature && (
+      {isSubclass && (
         <span className="text-[9px] opacity-70">SC</span>
       )}
       {feature.source !== feature.name && feature.source && (
