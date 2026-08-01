@@ -1,16 +1,52 @@
-export const MONSTER_MANUAL_URL =
-  "https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json";
+/**
+ * Upstream update feeds (GitHub).
+ *
+ * IMPORTANT: GitHub is only an *update feed*. At runtime the app's own
+ * IndexedDB stores are the source of truth; these URLs are used solely to
+ * refresh those stores in the background (see `fivetools-fetch.ts` and
+ * `sync.service.ts`). See README → "Fuentes de datos".
+ *
+ * The mirror/homebrew repo slug and git ref are overridable via env vars, so a
+ * 5etools mirror rotation (e.g. `5etools-mirror-3` → `-4`) or a fork can be
+ * pointed at without touching source — just set the var and redeploy.
+ */
+const GITHUB_RAW = "https://raw.githubusercontent.com";
 
-export const GUIDE_TO_MONSTER_HUNTING_URL =
-  "https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json";
+/** 5etools compendium mirror. Override: VITE_5ETOOLS_MIRROR / VITE_5ETOOLS_REF. */
+const FIVETOOLS_MIRROR =
+  import.meta.env.VITE_5ETOOLS_MIRROR ?? "5etools-mirror-3/5etools-src";
+const FIVETOOLS_REF = import.meta.env.VITE_5ETOOLS_REF ?? "main";
 
-/** Tiempo de caché en milisegundos: 24 horas */
+/** Amellwind homebrew feed. Override: VITE_HOMEBREW_MIRROR / VITE_HOMEBREW_REF. */
+const HOMEBREW_MIRROR =
+  import.meta.env.VITE_HOMEBREW_MIRROR ?? "TheGiddyLimit/homebrew";
+const HOMEBREW_REF = import.meta.env.VITE_HOMEBREW_REF ?? "master";
+
+/** Unearthed Arcana / prerelease feed. Override: VITE_UA_MIRROR / VITE_UA_REF. */
+const UA_MIRROR =
+  import.meta.env.VITE_UA_MIRROR ?? "TheGiddyLimit/unearthed-arcana";
+const UA_REF = import.meta.env.VITE_UA_REF ?? "master";
+
+export const HOMEBREW_BASE_URL = `${GITHUB_RAW}/${HOMEBREW_MIRROR}/${HOMEBREW_REF}`;
+const HOMEBREW_COLLECTION_BASE = `${HOMEBREW_BASE_URL}/collection`;
+export const UA_BASE_URL = `${GITHUB_RAW}/${UA_MIRROR}/${UA_REF}`;
+
+/** Amellwind Monster Hunter Monster Manual (homebrew). */
+export const MONSTER_MANUAL_URL = `${HOMEBREW_COLLECTION_BASE}/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json`;
+
+/** Amellwind's Guide to Monster Hunting (homebrew): items, species, backgrounds, feats, MH classes, class features, weapon optional features and variant rules. */
+export const GUIDE_TO_MONSTER_HUNTING_URL = `${HOMEBREW_COLLECTION_BASE}/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json`;
+
+/**
+ * Cache freshness window (ms): 24h. Past this, stored data is still served
+ * immediately (offline-first) and refreshed from the feed in the background.
+ */
 export const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
 
 export const DB_NAME = "mh-dnd5e-toolbox";
-// v2: añade el store aditivo `fivetools_cache` (persistencia del compendio 5etools).
-// El upgrade solo crea stores ausentes, por lo que los datos mm_*/gtmh_* previos
-// se conservan intactos al migrar de v1 → v2.
+// v2: adds the additive `fivetools_cache` store (persists the 5etools compendium).
+// The upgrade only creates missing stores, so existing mm_*/gtmh_* data is
+// preserved intact when migrating v1 → v2.
 export const DB_VERSION = 2;
 
 export const STORES = {
@@ -20,45 +56,37 @@ export const STORES = {
   GTMH_CURRENT: "gtmh_current",
   GTMH_PREVIOUS: "gtmh_previous",
   GTMH_META: "gtmh_meta",
-  /** Read-through cache (con TTL) del compendio 5etools para arranque offline. */
+  /** Read-through cache for the 5etools compendium (source of truth for offline use). */
   FIVETOOLS_CACHE: "fivetools_cache",
 } as const;
 
-export const FIVETOOLS_DATA_BASE_URL =
-  "https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data";
+export const FIVETOOLS_DATA_BASE_URL = `${GITHUB_RAW}/${FIVETOOLS_MIRROR}/${FIVETOOLS_REF}/data`;
 
 export const SPELLS_BASE_URL = `${FIVETOOLS_DATA_BASE_URL}/spells`;
+export const SPELL_INDEX_URL = `${SPELLS_BASE_URL}/index.json`;
 
 /**
- * 5etools class JSONs live under data/class/ in the repo:
- * https://github.com/5etools-mirror-3/5etools-src/tree/main/data/class
- *
- * For fetch() we use raw.githubusercontent.com (not github.com/tree or /blob URLs).
- * Example: CLASSES_BASE_URL + "/class-artificer.json"
- *   → https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/class/class-artificer.json
+ * 5etools class JSONs live under data/class/ in the mirror, one file per base
+ * class. Fetched via raw.githubusercontent.com (derived from
+ * FIVETOOLS_DATA_BASE_URL). Example: `${CLASSES_BASE_URL}/class-artificer.json`.
  */
 export const CLASSES_BASE_URL = `${FIVETOOLS_DATA_BASE_URL}/class`;
 
-/** Mirrors data/class/index.json — one JSON file per base class */
-export const CLASS_SOURCE_FILES: Record<string, string> = {
-  artificer: "class-artificer.json",
-  barbarian: "class-barbarian.json",
-  bard: "class-bard.json",
-  cleric: "class-cleric.json",
-  druid: "class-druid.json",
-  fighter: "class-fighter.json",
-  monk: "class-monk.json",
-  mystic: "class-mystic.json",
-  paladin: "class-paladin.json",
-  ranger: "class-ranger.json",
-  rogue: "class-rogue.json",
-  sidekick: "class-sidekick.json",
-  sorcerer: "class-sorcerer.json",
-  warlock: "class-warlock.json",
-  wizard: "class-wizard.json",
-};
-
 export const CLASS_INDEX_URL = `${CLASSES_BASE_URL}/index.json`;
+
+/** UA/prerelease generated indexes (TheGiddyLimit/unearthed-arcana). */
+export const UA_INDEX_SOURCES_URL = `${UA_BASE_URL}/_generated/index-sources.json`;
+export const UA_INDEX_META_URL = `${UA_BASE_URL}/_generated/index-meta.json`;
+export const UA_INDEX_TIMESTAMPS_URL = `${UA_BASE_URL}/_generated/index-timestamps.json`;
+
+/**
+ * Partnered 3rd-party brew indexes (TheGiddyLimit/homebrew).
+ * Meta flag `p: 1` marks partnered sources (same set as 5etools
+ * `search/index-partnered.json`).
+ */
+export const HOMEBREW_INDEX_SOURCES_URL = `${HOMEBREW_BASE_URL}/_generated/index-sources.json`;
+export const HOMEBREW_INDEX_META_URL = `${HOMEBREW_BASE_URL}/_generated/index-meta.json`;
+export const HOMEBREW_INDEX_TIMESTAMPS_URL = `${HOMEBREW_BASE_URL}/_generated/index-timestamps.json`;
 
 /** Generated by 5etools for subclass display names and reprints */
 export const SUBCLASS_LOOKUP_URL = `${FIVETOOLS_DATA_BASE_URL}/generated/gendata-subclass-lookup.json`;
@@ -69,8 +97,7 @@ export const BOOKS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/books.json`;
 export const ADVENTURES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/adventures.json`;
 
 /** Generated by 5etools from spells/sources.json + class additionalSpells */
-export const SPELL_SOURCE_LOOKUP_URL =
-  "https://raw.githubusercontent.com/5etools-mirror-3/5etools-src/main/data/generated/gendata-spell-source-lookup.json";
+export const SPELL_SOURCE_LOOKUP_URL = `${FIVETOOLS_DATA_BASE_URL}/generated/gendata-spell-source-lookup.json`;
 
 /** 5etools races/species compendium. Local dev: copy backup-jsons/5etools/races.json → public/5etools/races.json and set VITE_5ETOOLS_DATA=local */
 export const RACES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/races.json`;
@@ -103,28 +130,11 @@ export const BESTIARY_BASE_URL = `${FIVETOOLS_DATA_BASE_URL}/bestiary`;
 export const BESTIARY_INDEX_URL = `${BESTIARY_BASE_URL}/index.json`;
 export const LEGENDARY_GROUPS_URL = `${BESTIARY_BASE_URL}/legendarygroups.json`;
 
-/** Fuentes precargadas al abrir el bestiario; el resto se cargan bajo demanda */
+/** Sources preloaded when the bestiary opens; the rest load on demand. */
 export const DEFAULT_BESTIARY_SOURCES = ["MM", "VGM", "MPMM", "XMM"] as const;
 
-/** Fuentes precargadas al abrir ítems D&D (PHB/DMG 2014 y 2024); el resto bajo demanda */
+/** Sources preloaded when D&D items open (PHB/DMG 2014 and 2024); the rest on demand. */
 export const DEFAULT_DND_ITEM_SOURCES = ["PHB", "XPHB", "DMG", "XDMG"] as const;
 
-export const SPELL_SOURCE_FILES: Record<string, string> = {
-  PHB: "spells-phb.json",
-  XPHB: "spells-xphb.json",
-  XGE: "spells-xge.json",
-  TCE: "spells-tce.json",
-  FRHoF: "spells-frhof.json",
-  EGW: "spells-egw.json",
-  FTD: "spells-ftd.json",
-  AI: "spells-ai.json",
-  SCC: "spells-scc.json",
-  LLK: "spells-llk.json",
-  BMT: "spells-bmt.json",
-  "AitFR-AVT": "spells-aitfr-avt.json",
-  AAG: "spells-aag.json",
-  GGR: "spells-ggr.json",
-  IDRotF: "spells-idrotf.json",
-  SatO: "spells-sato.json",
-  EFA: "spells-efa.json",
-};
+/** D&D Beyond exclusive residual that ships in the UA feed (not scraped from DDB). */
+export const DDB_SOURCE_CODES = ["WGE"] as const;

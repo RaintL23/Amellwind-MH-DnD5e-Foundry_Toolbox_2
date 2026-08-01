@@ -10,15 +10,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { loadChooseableLanguages } from "@/shared/data/chooseable-languages";
 import { loadChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
 import { syncData } from "@/shared/db/sync.service";
-import { clearMonsterCache } from "@/features/monsters/services/monster.service";
-import { clearRuneCache } from "@/features/runes/services/rune.service";
-import { clearSpeciesCache } from "@/features/species/services/species.service";
-import { clearBackgroundCache } from "@/features/backgrounds/services/background.service";
-import { clearFeatCache } from "@/features/feats/services/feat.service";
-import { clearMonstieSidekickCache } from "@/features/monstie-sidekick/services/monstie-sidekick.service";
-import { clearMaterialEffectCache } from "@/features/material-effects/services/material-effect.service";
-import { clearConditionCache } from "@/features/conditions/services/condition.service";
-import { clearDiseaseCache } from "@/features/diseases/services/disease.service";
 
 const MonsterList = lazy(() =>
   import("@/features/monsters/components/MonsterList").then((m) => ({
@@ -211,12 +202,63 @@ function PageFallback() {
   return <LoadingScreen />;
 }
 
+async function clearMonsterManualDerivedCaches(): Promise<void> {
+  // Cache-clearers are imported on demand so their service + mapper modules
+  // stay out of the initial `index` chunk (loaded on every page); they only
+  // load when a refresh actually replaces the underlying data.
+  const [
+    { clearMonsterCache },
+    { clearRuneCache },
+    { clearConditionCache },
+    { clearDiseaseCache },
+  ] = await Promise.all([
+    import("@/features/monsters/services/monster.service"),
+    import("@/features/runes/services/rune.service"),
+    import("@/features/conditions/services/condition.service"),
+    import("@/features/diseases/services/disease.service"),
+  ]);
+  clearMonsterCache();
+  clearRuneCache();
+  clearConditionCache();
+  clearDiseaseCache();
+}
+
+async function clearGuideDerivedCaches(): Promise<void> {
+  const [
+    { clearSpeciesCache },
+    { clearBackgroundCache },
+    { clearFeatCache },
+    { clearMonstieSidekickCache },
+    { clearMaterialEffectCache },
+  ] = await Promise.all([
+    import("@/features/species/services/species.service"),
+    import("@/features/backgrounds/services/background.service"),
+    import("@/features/feats/services/feat.service"),
+    import("@/features/monstie-sidekick/services/monstie-sidekick.service"),
+    import("@/features/material-effects/services/material-effect.service"),
+  ]);
+  clearSpeciesCache();
+  clearBackgroundCache();
+  clearFeatCache();
+  clearMonstieSidekickCache();
+  clearMaterialEffectCache();
+}
+
+/**
+ * Invalidate in-memory caches derived from the Amellwind stores when a sync (or
+ * a later background refresh) lands new data, so the next navigation renders it.
+ */
+function handleDataUpdated(updated: { mm: boolean; gtmh: boolean }): void {
+  if (updated.mm) void clearMonsterManualDerivedCaches();
+  if (updated.gtmh) void clearGuideDerivedCaches();
+}
+
 export default function App() {
   const [syncing, setSyncing] = useState(true);
 
   useEffect(() => {
     Promise.all([
-      syncData(),
+      syncData({ onUpdated: handleDataUpdated }),
       loadChooseableLanguages().catch((error) => {
         console.warn("[Bootstrap] Failed to load languages:", error);
       }),
@@ -224,21 +266,6 @@ export default function App() {
         console.warn("[Bootstrap] Failed to load musical instruments:", error);
       }),
     ])
-      .then(([result]) => {
-        if (result.updated.mm) {
-          clearMonsterCache();
-          clearRuneCache();
-          clearConditionCache();
-          clearDiseaseCache();
-        }
-        if (result.updated.gtmh) {
-          clearSpeciesCache();
-          clearBackgroundCache();
-          clearFeatCache();
-          clearMonstieSidekickCache();
-          clearMaterialEffectCache();
-        }
-      })
       .catch((error) => {
         console.warn(
           "[Bootstrap] Sync failed, using cached data if available:",

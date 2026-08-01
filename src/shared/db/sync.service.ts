@@ -58,7 +58,7 @@ async function fetchAndCache(
     const json = (await response.json()) as Record<string, unknown>;
     const newData = json[dataKey] ?? json;
 
-    // Guardar copia anterior antes de reemplazar
+    // Keep the previous copy before overwriting.
     const current = await getStoreValue(currentStore, "data");
     if (current !== undefined) {
       await setStoreValue(previousStore, "data", current);
@@ -79,8 +79,134 @@ async function fetchAndCache(
   }
 }
 
-export async function syncData(): Promise<SyncResult> {
-  const [mmFresh, gtmhFresh] = await Promise.all([
+/** Persist the derived MM sub-collections (conditions, diseases) from the full JSON. */
+async function writeMmDerivedStores(
+  json: Record<string, unknown>,
+): Promise<void> {
+  if (Array.isArray(json.condition)) {
+    await setStoreValue("MM_CURRENT", CONDITION_STORE_KEY, json.condition);
+  }
+  if (Array.isArray(json.disease)) {
+    await setStoreValue("MM_CURRENT", DISEASE_STORE_KEY, json.disease);
+  }
+}
+
+/** Persist the derived GTMH sub-collections (species, backgrounds, feats, MH classes, …). */
+async function writeGtmhDerivedStores(
+  json: Record<string, unknown>,
+): Promise<void> {
+  if (Array.isArray(json.optionalfeature)) {
+    await setStoreValue(
+      "GTMH_CURRENT",
+      OPT_FEATURES_STORE_KEY,
+      json.optionalfeature,
+    );
+  }
+  if (Array.isArray(json.race)) {
+    await setStoreValue("GTMH_CURRENT", RACE_STORE_KEY, json.race);
+  }
+  if (Array.isArray(json.subrace)) {
+    await setStoreValue("GTMH_CURRENT", SUBRACE_STORE_KEY, json.subrace);
+  }
+  if (Array.isArray(json.background)) {
+    await setStoreValue("GTMH_CURRENT", BACKGROUND_STORE_KEY, json.background);
+  }
+  if (Array.isArray(json.feat)) {
+    await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, json.feat);
+  }
+  if (Array.isArray(json.variantrule)) {
+    await setStoreValue("GTMH_CURRENT", VARIANT_RULE_STORE_KEY, json.variantrule);
+  }
+  if (Array.isArray(json.classFeature)) {
+    await setStoreValue(
+      "GTMH_CURRENT",
+      CLASS_FEATURE_STORE_KEY,
+      json.classFeature,
+    );
+  }
+  if (Array.isArray(json.class)) {
+    await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, json.class);
+  }
+  if (json.bookData && typeof json.bookData === "object") {
+    await setStoreValue("GTMH_CURRENT", BOOK_DATA_STORE_KEY, json.bookData);
+  }
+}
+
+type OnDataUpdated = (updated: { mm: boolean; gtmh: boolean }) => void;
+
+export interface SyncOptions {
+  /**
+   * Invoked when a feed lands new data — on a cold-start fetch or when a
+   * background refresh completes (possibly AFTER `syncData` has resolved). Use
+   * it to invalidate in-memory caches derived from the refreshed stores.
+   */
+  onUpdated?: OnDataUpdated;
+}
+
+// Guards so React StrictMode's double-invoke or overlapping bootstraps don't
+// launch duplicate background refreshes for the same feed.
+let mmRefreshInFlight = false;
+let gtmhRefreshInFlight = false;
+
+/** Background refresh of the Monster Manual feed; updates the stores for the next load. */
+async function refreshMonsterManual(onUpdated?: OnDataUpdated): Promise<void> {
+  if (mmRefreshInFlight) return;
+  mmRefreshInFlight = true;
+  try {
+    const fetched = await fetchAndCache(
+      MONSTER_MANUAL_URL,
+      "MM_CURRENT",
+      "MM_PREVIOUS",
+      "MM_META",
+      "monster",
+      writeMmDerivedStores,
+    );
+    if (fetched !== null) {
+      mmRawCache = null;
+      onUpdated?.({ mm: true, gtmh: false });
+    }
+  } finally {
+    mmRefreshInFlight = false;
+  }
+}
+
+/** Background refresh of the Guide to Monster Hunting feed; updates the stores for the next load. */
+async function refreshGuideToMonsterHunting(
+  onUpdated?: OnDataUpdated,
+): Promise<void> {
+  if (gtmhRefreshInFlight) return;
+  gtmhRefreshInFlight = true;
+  try {
+    const fetched = await fetchAndCache(
+      GUIDE_TO_MONSTER_HUNTING_URL,
+      "GTMH_CURRENT",
+      "GTMH_PREVIOUS",
+      "GTMH_META",
+      "item",
+      writeGtmhDerivedStores,
+    );
+    if (fetched !== null) {
+      onUpdated?.({ mm: false, gtmh: true });
+    }
+  } finally {
+    gtmhRefreshInFlight = false;
+  }
+}
+
+/**
+ * Offline-first sync of the Amellwind homebrew feeds (Monster Manual + Guide to
+ * Monster Hunting). Stored IndexedDB data is the source of truth and is served
+ * immediately; GitHub is only used to refresh those stores:
+ *   - Stored data present → return it now; if stale, refresh in the background
+ *     and notify via `onUpdated` when the new data lands.
+ *   - Nothing stored (cold start) → fetch from the feed before returning.
+ */
+export async function syncData(options: SyncOptions = {}): Promise<SyncResult> {
+  const { onUpdated } = options;
+
+  const [mmStored, gtmhStored, mmFresh, gtmhFresh] = await Promise.all([
+    getStoreValue<unknown[]>("MM_CURRENT", "data"),
+    getStoreValue<unknown>("GTMH_CURRENT", "data"),
     isDataFresh("MM_META"),
     isDataFresh("GTMH_META"),
   ]);
@@ -90,110 +216,47 @@ export async function syncData(): Promise<SyncResult> {
   let mmUpdated = false;
   let gtmhUpdated = false;
 
-  // Monster Manual y Guía de Caza son descargas remotas independientes →
-  // se sincronizan en paralelo (antes eran secuenciales, duplicando el tiempo
-  // de arranque en frío).
+  // The two feeds are independent downloads → resolve them in parallel.
   await Promise.all([
     (async () => {
-      // Sincronizar Monster Manual
-      if (!mmFresh) {
-    const fetched = await fetchAndCache(
-      MONSTER_MANUAL_URL,
-      "MM_CURRENT",
-      "MM_PREVIOUS",
-      "MM_META",
-      "monster",
-      async (json) => {
-        if (Array.isArray(json.condition)) {
-          await setStoreValue(
-            "MM_CURRENT",
-            CONDITION_STORE_KEY,
-            json.condition,
-          );
-        }
-        if (Array.isArray(json.disease)) {
-          await setStoreValue("MM_CURRENT", DISEASE_STORE_KEY, json.disease);
-        }
-      },
-    );
-    if (fetched !== null) {
-      mmData = fetched as unknown[];
-      mmUpdated = true;
-    } else {
-      // Fallback a datos locales
-      mmData = (await getStoreValue<unknown[]>("MM_CURRENT", "data")) ?? null;
-    }
+      if (mmStored !== undefined) {
+        mmData = mmStored;
+        if (!mmFresh) void refreshMonsterManual(onUpdated);
       } else {
-        mmData = (await getStoreValue<unknown[]>("MM_CURRENT", "data")) ?? null;
+        const fetched = await fetchAndCache(
+          MONSTER_MANUAL_URL,
+          "MM_CURRENT",
+          "MM_PREVIOUS",
+          "MM_META",
+          "monster",
+          writeMmDerivedStores,
+        );
+        if (fetched !== null) {
+          mmData = fetched as unknown[];
+          mmUpdated = true;
+          mmRawCache = null;
+          onUpdated?.({ mm: true, gtmh: false });
+        }
       }
     })(),
     (async () => {
-      // Sincronizar Guía de Caza
-      if (!gtmhFresh) {
-    const fetched = await fetchAndCache(
-      GUIDE_TO_MONSTER_HUNTING_URL,
-      "GTMH_CURRENT",
-      "GTMH_PREVIOUS",
-      "GTMH_META",
-      "item",
-      async (json) => {
-        if (Array.isArray(json.optionalfeature)) {
-          await setStoreValue(
-            "GTMH_CURRENT",
-            OPT_FEATURES_STORE_KEY,
-            json.optionalfeature,
-          );
-        }
-        if (Array.isArray(json.race)) {
-          await setStoreValue("GTMH_CURRENT", RACE_STORE_KEY, json.race);
-        }
-        if (Array.isArray(json.subrace)) {
-          await setStoreValue("GTMH_CURRENT", SUBRACE_STORE_KEY, json.subrace);
-        }
-        if (Array.isArray(json.background)) {
-          await setStoreValue(
-            "GTMH_CURRENT",
-            BACKGROUND_STORE_KEY,
-            json.background,
-          );
-        }
-        if (Array.isArray(json.feat)) {
-          await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, json.feat);
-        }
-        if (Array.isArray(json.variantrule)) {
-          await setStoreValue(
-            "GTMH_CURRENT",
-            VARIANT_RULE_STORE_KEY,
-            json.variantrule,
-          );
-        }
-        if (Array.isArray(json.classFeature)) {
-          await setStoreValue(
-            "GTMH_CURRENT",
-            CLASS_FEATURE_STORE_KEY,
-            json.classFeature,
-          );
-        }
-        if (Array.isArray(json.class)) {
-          await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, json.class);
-        }
-        if (json.bookData && typeof json.bookData === "object") {
-          await setStoreValue(
-            "GTMH_CURRENT",
-            BOOK_DATA_STORE_KEY,
-            json.bookData,
-          );
-        }
-      },
-    );
-    if (fetched !== null) {
-      gtmhData = fetched;
-      gtmhUpdated = true;
-    } else {
-      gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
-    }
+      if (gtmhStored !== undefined) {
+        gtmhData = gtmhStored;
+        if (!gtmhFresh) void refreshGuideToMonsterHunting(onUpdated);
       } else {
-        gtmhData = (await getStoreValue<unknown>("GTMH_CURRENT", "data")) ?? null;
+        const fetched = await fetchAndCache(
+          GUIDE_TO_MONSTER_HUNTING_URL,
+          "GTMH_CURRENT",
+          "GTMH_PREVIOUS",
+          "GTMH_META",
+          "item",
+          writeGtmhDerivedStores,
+        );
+        if (fetched !== null) {
+          gtmhData = fetched;
+          gtmhUpdated = true;
+          onUpdated?.({ mm: false, gtmh: true });
+        }
       }
     })(),
   ]);
