@@ -6,6 +6,10 @@ import {
   parseImportedWeapons,
   weaponToRawExport,
 } from "../mappers/weapon-forge.mapper";
+import {
+  buildWeaponFoundryItem,
+  foundryItemFilename,
+} from "../mappers/weapon-forge-foundry.export";
 
 const STORAGE_KEY = "weapon_forge_custom";
 const MANIFEST_URL = "/data/raintdm-weapons/manifest.json";
@@ -157,6 +161,14 @@ export function exportWeaponJson(weapon: CustomWeapon): void {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
   downloadJson(raw, `${safeName || "weapon"}.json`);
+}
+
+export function exportWeaponFoundryJson(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): void {
+  const item = buildWeaponFoundryItem(weapon, rarityIndex);
+  downloadJson(item, foundryItemFilename(weapon, rarityIndex));
 }
 
 export function exportAllUserWeaponsJson(weapons: CustomWeapon[]): void {

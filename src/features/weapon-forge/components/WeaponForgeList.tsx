@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Download, GitCompare, Hammer, Plus, Upload } from "lucide-react";
 import {
-  Download,
-  GitCompare,
-  Hammer,
-  Plus,
-  Upload,
-} from "lucide-react";
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -33,6 +33,7 @@ export function WeaponForgeList() {
     removeWeapon,
     importFromJson,
     exportOne,
+    exportOneFoundry,
     exportAll,
     compareSelection,
     toggleCompare,
@@ -43,7 +44,7 @@ export function WeaponForgeList() {
   const { urlWeaponKey, urlRarityParam, syncOpen, syncClose, syncRarity } =
     useWeaponDialogUrlSync();
 
-  const [tab, setTab] = useState<"catalog" | "mine">("mine");
+  const [tab, setTab] = useState<"catalog" | "mine">("catalog");
   const [search, setSearch] = useState("");
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
     useDebouncedListSearch(search, setSearch);
@@ -186,7 +187,7 @@ export function WeaponForgeList() {
 
           <div className="flex flex-wrap gap-2">
             <Button type="button" onClick={openCreate}>
-              <Plus className="h-4 w-4 mr-1" />
+              <Plus className="h-3 w-3 mr-1" />
               New weapon
             </Button>
             <Button
@@ -194,7 +195,7 @@ export function WeaponForgeList() {
               variant="outline"
               onClick={() => fileInputRef.current?.click()}
             >
-              <Upload className="h-4 w-4 mr-1" />
+              <Upload className="h-3 w-3 mr-1" />
               Import JSON
             </Button>
             <input
@@ -219,24 +220,32 @@ export function WeaponForgeList() {
                 }
               }}
             >
-              <GitCompare className="h-4 w-4 mr-1" />
+              <GitCompare className="h-3 w-3 mr-1" />
               Compare
             </Button>
           </div>
         </div>
 
-        <div className="mt-4 rounded-md border border-amber-800/40 bg-amber-950/20 px-3 py-2.5 text-xs text-amber-100/90 leading-relaxed max-w-3xl">
-          <p className="font-medium text-amber-200 mb-1">Important</p>
-          <p>
-            Creating a weapon here does <strong>not</strong> publish it to the
-            shared Catalog automatically. Weapons in <em>My Weapons</em> are
-            stored in this browser only — clearing site data can remove them,
-            so download a JSON backup if you care about keeping them. To have
-            your weapon appear in the Catalog for everyone, download the JSON
-            and send it to <strong>RaintDM</strong> so it can be shipped with
-            the app.
-          </p>
-        </div>
+        <Accordion
+          type="single"
+          collapsible
+          className="mt-4 max-w-3xl rounded-md border border-amber-800/40 bg-amber-950/20 px-3"
+        >
+          <AccordionItem value="important" className="border-b-0">
+            <AccordionTrigger className="py-2.5 text-xs font-medium text-amber-200 hover:no-underline">
+              Important
+            </AccordionTrigger>
+            <AccordionContent className="text-xs text-amber-100/90 leading-relaxed">
+              Creating a weapon here does <strong>not</strong> publish it to the
+              shared Catalog automatically. Weapons in <em>My Weapons</em> are
+              stored in this browser only — clearing site data can remove them,
+              so download a JSON backup if you care about keeping them. To have
+              your weapon appear in the Catalog for everyone, download the JSON
+              and send it to <strong>RaintDM</strong> so it can be shipped with
+              the app.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
           <Input
@@ -322,7 +331,8 @@ export function WeaponForgeList() {
                     compareMode={compareMode}
                     selectedForCompare={compareSelection.includes(weapon.id)}
                     onToggleCompare={() => toggleCompare(weapon.id)}
-                    onExport={() => exportOne(weapon)}
+                    onExportAmellwind={exportOne}
+                    onExportFoundry={exportOneFoundry}
                     onClone={() => cloneToMine(weapon)}
                   />
                 ))}
@@ -368,7 +378,8 @@ export function WeaponForgeList() {
                     selectedForCompare={compareSelection.includes(weapon.id)}
                     onToggleCompare={() => toggleCompare(weapon.id)}
                     onEdit={() => openEdit(weapon)}
-                    onExport={() => exportOne(weapon)}
+                    onExportAmellwind={exportOne}
+                    onExportFoundry={exportOneFoundry}
                     onDelete={() => handleDelete(weapon)}
                   />
                 ))}
@@ -385,7 +396,8 @@ export function WeaponForgeList() {
         initialRarity={urlRarityParam || null}
         onRarityChange={handleRarityChange}
         onEdit={openEdit}
-        onExport={exportOne}
+        onExportAmellwind={exportOne}
+        onExportFoundry={exportOneFoundry}
         onDelete={handleDelete}
       />
     </div>

@@ -10,14 +10,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "@/components/ui/button";
 import {
   Copy,
-  Download,
   Pencil,
   Trash2,
   Weight,
   Coins,
 } from "lucide-react";
 import { formatWeaponValue } from "@/features/weapons/services/weapon.service";
+import { WeaponIcon } from "@/features/weapons/components/WeaponIcon";
 import type { CustomWeapon } from "../types/weapon-forge.types";
+import { WeaponForgeExportMenu } from "./WeaponForgeExportMenu";
 
 const BADGE_SIZE_XS = "rounded px-1 py-px text-[9px] font-medium";
 
@@ -29,7 +30,8 @@ interface WeaponForgeCardProps {
   onToggleCompare?: () => void;
   onEdit?: () => void;
   onClone?: () => void;
-  onExport?: () => void;
+  onExportAmellwind?: (weapon: CustomWeapon) => void;
+  onExportFoundry?: (weapon: CustomWeapon, rarityIndex: number) => void;
   onDelete?: () => void;
 }
 
@@ -41,7 +43,8 @@ export function WeaponForgeCard({
   onToggleCompare,
   onEdit,
   onClone,
-  onExport,
+  onExportAmellwind,
+  onExportFoundry,
   onDelete,
 }: WeaponForgeCardProps) {
   const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
@@ -70,8 +73,16 @@ export function WeaponForgeCard({
       )}
 
       <button type="button" onClick={onClick} className="w-full text-left">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-semibold text-foreground leading-tight truncate pr-6">
+        <div className="flex items-start gap-3 mb-2">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-border bg-muted/40">
+            <WeaponIcon
+              weaponName={weapon.name}
+              img={weapon.img}
+              className="h-6 w-6"
+              fallbackClassName="h-4 w-4 text-muted-foreground"
+            />
+          </div>
+          <h3 className="font-semibold text-foreground leading-tight truncate pr-6 pt-1">
             {weapon.name}
           </h3>
         </div>
@@ -123,22 +134,15 @@ export function WeaponForgeCard({
         </div>
       </button>
 
-      {!compareMode && (onEdit || onClone || onExport || onDelete) && (
+      {!compareMode &&
+        (onEdit || onClone || onExportAmellwind || onDelete) && (
         <div className="mt-3 flex gap-1 border-t border-border/60 pt-2">
-          {onExport && (
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              className="h-7 px-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                onExport();
-              }}
-            >
-              <Download className="h-3.5 w-3.5 mr-1" />
-              JSON
-            </Button>
+          {onExportAmellwind && onExportFoundry && (
+            <WeaponForgeExportMenu
+              weapon={weapon}
+              onExportAmellwind={onExportAmellwind}
+              onExportFoundry={onExportFoundry}
+            />
           )}
           {onClone && !weapon.isCustom && (
             <Button

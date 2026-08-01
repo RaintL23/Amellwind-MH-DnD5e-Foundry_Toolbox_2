@@ -1251,13 +1251,15 @@ La búsqueda global filtra simultáneamente por nombre del objeto, ingredientes 
 
 Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a **Legendary** mediante una tabla de rarezas embebida en un bloque `inset` dentro de `entries[]`. La UI de armas / Weapon Forge añade una tier previa **Base** (`WEAPON_RARITY_ORDER`: Base → Common → … → Legendary) para features que aplican a todas las rarezas (Switch Mode, Melody, Loading, …). `RARITY_ORDER` (sin Base) sigue usándose en builder/runas/NPC.
 
+**Weapon Forge — export Foundry VTT**: desde la lista/dialog de `/weapon-forge` se puede descargar el JSON Amellwind completo o un **Item** `weapon` standalone (Core **12.331** / dnd5e **4.4.4**) por rareza seleccionada (`weapon-forge-foundry.export.ts`). El item incluye attack **activities** (una por modo de switch si aplica; Versatile PHB usa `damage.versatile`), descripción HTML con features agrupadas por cadenas de upgrade (`buildColumnChains`), `midiProperties` por activity para Midi-QOL 12.4.x, y `applyItemAutomation` si existe overlay por nombre.
+
 #### Entidad `Weapon`
 
 | Campo              | Descripción |
 | ------------------ | ----------- |
 | `name`, `source`, `page` | Identificación 5etools |
 | `dmg1`, `dmg2`     | Notación de daño (ej. `1d8`, `2d6` en modo versatile) |
-| `modes`            | Modos de combate MH (Switch Axe, Charge Blade…): `{ label, damage, isTwoHanded?, blocksOffHand?, hasShield? }[]`. Distinto de Versatile (`V`+`dmg2`). Preferido sobre tablas hardcodeadas por nombre. |
+| `modes`            | Modos de combate MH (Switch Axe, Charge Blade…): `{ label, damage, dmgType?, isTwoHanded?, blocksOffHand?, hasShield? }[]`. Distinto de Versatile (`V`+`dmg2`). Preferido sobre tablas hardcodeadas por nombre. `dmgType` por modo opcional; si falta, hereda el `dmgType` del arma. |
 | `dmgType`          | `S` / `P` / `B` (Slashing, Piercing, Bludgeoning) |
 | `properties`       | Códigos MH/D&D: `H`, `2H`, `F`, `L`, `R`, `V`, `A`, `S`, `T`, `MHL` (`MHL` → label **Loading**, descripción en `PROPERTY_DESCRIPTIONS`) |
 | `weight`, `valueCp`| Peso y valor en copper pieces |

@@ -6,13 +6,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Download, Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { useWeaponDialog } from "@/features/weapons/hooks/useWeaponDialog";
 import { WeaponDialogHeader } from "@/features/weapons/components/WeaponDialogHeader";
 import { WeaponDialogMeta } from "@/features/weapons/components/WeaponDialogMeta";
 import { WeaponRarityProgression } from "@/features/weapons/components/WeaponRarityProgression";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { customFeaturesToOptionalMap } from "../mappers/weapon-forge.mapper";
+import { WeaponForgeExportMenu } from "./WeaponForgeExportMenu";
 
 interface WeaponForgeDialogProps {
   weapon: CustomWeapon | null;
@@ -22,7 +23,8 @@ interface WeaponForgeDialogProps {
   initialRarity?: string | null;
   onRarityChange?: (rarity: string) => void;
   onEdit?: (weapon: CustomWeapon) => void;
-  onExport?: (weapon: CustomWeapon) => void;
+  onExportAmellwind?: (weapon: CustomWeapon) => void;
+  onExportFoundry?: (weapon: CustomWeapon, rarityIndex: number) => void;
   onDelete?: (weapon: CustomWeapon) => void;
 }
 
@@ -34,7 +36,8 @@ export function WeaponForgeDialog({
   initialRarity = null,
   onRarityChange,
   onEdit,
-  onExport,
+  onExportAmellwind,
+  onExportFoundry,
   onDelete,
 }: WeaponForgeDialogProps) {
   const extraFeaturesMap = useMemo(() => {
@@ -92,16 +95,16 @@ export function WeaponForgeDialog({
             <Badge variant="outline">{weapon.source}</Badge>
 
             <div className="ml-auto flex gap-1">
-              {onExport && (
-                <Button
-                  type="button"
+              {onExportAmellwind && onExportFoundry && (
+                <WeaponForgeExportMenu
+                  weapon={weapon}
+                  foundryRarityIndex={current}
                   variant="outline"
                   size="sm"
-                  onClick={() => onExport(weapon)}
-                >
-                  <Download className="h-3.5 w-3.5 mr-1" />
-                  Download JSON
-                </Button>
+                  triggerLabel="Download JSON"
+                  onExportAmellwind={onExportAmellwind}
+                  onExportFoundry={onExportFoundry}
+                />
               )}
               {onEdit && weapon.isCustom && (
                 <Button
