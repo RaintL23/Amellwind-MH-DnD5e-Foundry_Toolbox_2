@@ -21,6 +21,7 @@ import type { CharacterSheetWeaponExport } from "./character-sheet-export.types"
 import type { SpellcastingInfo } from "../hooks/useSpellcasting";
 import type { SubclassSpellGrant } from "./subclass-spells.utils";
 import { hasActiveIntegratedShield } from "@/features/weapons/utils/shield.utils";
+import { getActiveWeaponDamageType } from "@/features/weapons/utils/weapon-mode.utils";
 import { isDamageCantrip, DAMAGE_TYPE_NAMES } from "./spell-damage.utils";
 import { getAllDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
 import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
@@ -183,10 +184,11 @@ export function formatGoldPiecesForPdf(gp: number): string | undefined {
 }
 
 function formatWeaponDamageWithType(
-  weapon: Weapon,
+  equipped: EquippedWeapon,
   diceExpression: string,
 ): string {
-  const typeLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
+  const dmgType = getActiveWeaponDamageType(equipped);
+  const typeLabel = DMG_TYPE_LABELS[dmgType] ?? dmgType;
   return `${diceExpression} ${typeLabel}`.trim();
 }
 
@@ -205,10 +207,7 @@ function buildEquippedWeaponExport(
   return {
     name: equipped.weapon.name,
     attackBonus: formatModifier(breakdown.attackBonus),
-    damage: formatWeaponDamageWithType(
-      equipped.weapon,
-      breakdown.diceExpression,
-    ),
+    damage: formatWeaponDamageWithType(equipped, breakdown.diceExpression),
   };
 }
 

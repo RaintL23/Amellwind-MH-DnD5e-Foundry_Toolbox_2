@@ -6,6 +6,8 @@ export interface WeaponGripMode {
   damage?: string;
   /** Legacy key into weapon.dmg1 / dmg2 when `damage` is omitted. */
   damageKey?: "dmg1" | "dmg2";
+  /** Override weapon-level damage type when set. */
+  dmgType?: string;
   hasShield: boolean;
   isTwoHanded: boolean;
   blocksOffHand: boolean;
@@ -85,6 +87,7 @@ function modeDefsToGripModes(
       label: def.label,
       damage: def.damage.trim() || fromKey,
       damageKey,
+      dmgType: def.dmgType?.trim() || weapon.dmgType,
       hasShield: def.hasShield === true,
       isTwoHanded: def.isTwoHanded === true,
       blocksOffHand: def.blocksOffHand === true,
@@ -101,6 +104,7 @@ function buildVersatileGripModes(weapon: Weapon): WeaponGripMode[] {
       label: oneHandLabel,
       damageKey: "dmg1",
       damage: weapon.dmg1,
+      dmgType: weapon.dmgType,
       hasShield,
       isTwoHanded: false,
       blocksOffHand: hasShield,
@@ -109,6 +113,7 @@ function buildVersatileGripModes(weapon: Weapon): WeaponGripMode[] {
       label: "Two-hand",
       damageKey: "dmg2",
       damage: weapon.dmg2 ?? weapon.dmg1,
+      dmgType: weapon.dmgType,
       hasShield: false,
       isTwoHanded: true,
       blocksOffHand: true,
@@ -136,6 +141,7 @@ export function resolveWeaponModeDefs(weapon: Weapon): WeaponModeDef[] | undefin
     return weapon.modes.map((m) => ({
       label: m.label,
       damage: m.damage.trim() || weapon.dmg1,
+      dmgType: m.dmgType?.trim() || weapon.dmgType,
       hasShield: m.hasShield,
       isTwoHanded: m.isTwoHanded,
       blocksOffHand: m.blocksOffHand,
@@ -223,6 +229,13 @@ export function getActiveWeaponDamage(equipped: EquippedWeapon): string {
   return equipped.weapon.dmg1;
 }
 
+export function getActiveWeaponDamageType(equipped: EquippedWeapon): string {
+  const gripMode = getActiveWeaponGripMode(equipped);
+  const fromMode = gripMode?.dmgType?.trim();
+  if (fromMode) return fromMode;
+  return equipped.weapon.dmgType;
+}
+
 export function getActiveWeaponDamageLabel(equipped: EquippedWeapon): string {
   return getActiveWeaponGripMode(equipped)?.label ?? "Damage";
 }
@@ -264,26 +277,30 @@ export function doesSwitchModeHaveShield(equipped: EquippedWeapon): boolean {
   return doesGripModeHaveShield(equipped);
 }
 
-/** Sync dmg1 / dmg2 from a modes list for 5etools compatibility. */
+/** Sync dmg1 / dmg2 / primary dmgType from a modes list for 5etools compatibility. */
 export function syncDamageFromModes(modes: WeaponModeDef[]): {
   dmg1: string;
   dmg2: string | undefined;
+  dmgType: string | undefined;
 } {
   const dmg1 = modes[0]?.damage.trim() || "1d8";
   const dmg2 =
     modes.length >= 2 ? modes[1]?.damage.trim() || undefined : undefined;
-  return { dmg1, dmg2 };
+  const dmgType = modes[0]?.dmgType?.trim() || undefined;
+  return { dmg1, dmg2, dmgType };
 }
 
 /** Default two-mode seed for forge when enabling switch modes. */
 export function createDefaultForgeModes(
   dmg1 = "1d8",
   dmg2 = "1d8",
+  dmgType = "S",
 ): WeaponModeDef[] {
   return [
     {
       label: "Mode A",
       damage: dmg1,
+      dmgType,
       isTwoHanded: true,
       blocksOffHand: true,
       hasShield: false,
@@ -291,6 +308,7 @@ export function createDefaultForgeModes(
     {
       label: "Mode B",
       damage: dmg2 || dmg1,
+      dmgType,
       isTwoHanded: false,
       blocksOffHand: false,
       hasShield: false,

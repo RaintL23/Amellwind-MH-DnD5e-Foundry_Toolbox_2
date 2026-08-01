@@ -34,6 +34,8 @@ export interface WeaponProficiencyRule {
 export interface WeaponModeDef {
   label: string;
   damage: string;
+  /** Override weapon-level `dmgType` for this stance (`S` / `P` / `B`). */
+  dmgType?: string;
   hasShield?: boolean;
   isTwoHanded?: boolean;
   blocksOffHand?: boolean;
