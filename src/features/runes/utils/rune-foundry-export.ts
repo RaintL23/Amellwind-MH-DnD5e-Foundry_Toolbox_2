@@ -149,7 +149,7 @@ export function buildRuneFoundryItem(
     _id: foundryId(),
     name: itemName,
     type: "equipment",
-    img: "mh-icons/material-rune.png",
+    img: "mh-icons/material-rune.webp",
     system,
     effects: [],
     folder: null,

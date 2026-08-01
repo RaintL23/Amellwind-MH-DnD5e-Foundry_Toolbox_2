@@ -1,7 +1,7 @@
 const WEAPON_ICON_PREFIXES = ["weapon_"] as const;
-const WEAPON_ICON_EXTENSIONS = [".png", ".webp", ".jpg", ".jpeg"] as const;
+const WEAPON_ICON_EXTENSIONS = [".webp", ".png", ".jpg", ".jpeg"] as const;
 
-/** e.g. "Accel Axe" -> "AccelAxe" (matches weapon_AccelAxe.png on disk) */
+/** e.g. "Accel Axe" -> "AccelAxe" (matches weapon_AccelAxe.webp on disk) */
 function weaponNameToFileSlug(weaponName: string): string {
   return weaponName
     .trim()
@@ -32,4 +32,30 @@ export function getWeaponIconUrlCandidates(weaponName: string): string[] {
       buildWeaponIconPaths(prefix, slug, extension),
     ),
   );
+}
+
+/** First catalog candidate for a weapon name (SPA public path). */
+export function resolveCatalogIconForWeaponName(
+  weaponName: string,
+): string | null {
+  return getWeaponIconUrlCandidates(weaponName)[0] ?? null;
+}
+
+/**
+ * Map an app-relative icon path (`/mh-icons/...`) to a Foundry-friendly img string.
+ * Absolute http(s) URLs and already-namespaced Foundry paths pass through.
+ */
+export function toFoundryImgPath(path: string): string | null {
+  const trimmed = path.trim();
+  if (!trimmed) return null;
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("icons/")) {
+    return trimmed;
+  }
+  if (trimmed.startsWith("/mh-icons/")) {
+    return `modules/mh-icons${trimmed}`;
+  }
+  if (trimmed.startsWith("mh-icons/")) {
+    return `modules/${trimmed}`;
+  }
+  return trimmed.replace(/^\//, "");
 }

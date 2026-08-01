@@ -41,6 +41,7 @@ public/rpg-cards/
 scripts/*
 !scripts/scrape-rpgbot.mjs
 !scripts/generate-raintdm-manifest.mjs
+!scripts/optimize-mh-icons.mjs
 
 # ── Datos de backup / referencia local ───────────────────────
 # JSONs pesados de Amellwind y mirror completo de 5etools (ver README)
