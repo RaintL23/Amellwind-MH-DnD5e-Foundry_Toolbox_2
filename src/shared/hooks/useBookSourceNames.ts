@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import {
   getBookSourceNames,
   type BookSourceNameMap,
-} from "@/features/spells/services/book-source.service";
+} from "@/shared/services/source-catalog.service";
 
 let cachedNames: BookSourceNameMap | null = null;
 let loadPromise: Promise<BookSourceNameMap> | null = null;
