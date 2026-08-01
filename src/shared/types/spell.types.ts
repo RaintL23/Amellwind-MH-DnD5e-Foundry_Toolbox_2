@@ -29,9 +29,9 @@ export interface Spell {
   duration: string;
   isRitual: boolean;
   isConcentration: boolean;
-  /** Nombres base de clase para filtrar (Bard, Wizard, Fighter, …) */
+  /** Base class names for filtering (Bard, Wizard, Fighter, …) */
   classNames: string[];
-  /** Etiquetas para mostrar (incluye subclases y variantes) */
+  /** Labels to display (includes subclasses and variants) */
   classes: string[];
   description: string[];
   higherLevel?: string;
@@ -41,4 +41,15 @@ export interface Spell {
   variantCount?: number;
   /** Texto agregado de todas las variantes para búsqueda en tabla */
   searchText?: string;
+
+  /** 5etools-style filter facets (components, miscTags, ritual, …). */
+  filterTags: string[];
+  damageTypes: string[];
+  conditions: string[];
+  spellAttack: string[];
+  savingThrows: string[];
+  castTimeUnits: string[];
+  durationBucket: string;
+  rangeBucket: string;
+  areaStyles: string[];
 }

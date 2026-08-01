@@ -98,6 +98,120 @@ function mapDuration(raw: Raw): { text: string; isConcentration: boolean } {
   return { text: type.charAt(0).toUpperCase() + type.slice(1), isConcentration };
 }
 
+function mapDurationBucket(raw: Raw): string {
+  if (!Array.isArray(raw.duration) || raw.duration.length === 0) return "Special";
+  const fDur = raw.duration[0] as Raw;
+  switch (String(fDur.type ?? "")) {
+    case "instant":
+      return "Instant";
+    case "timed": {
+      const unit = String(fDur.duration?.type ?? "");
+      const amt = typeof fDur.duration?.amount === "number" ? fDur.duration.amount : 0;
+      if (unit === "turn" || unit === "round") return "1 Round";
+      if (unit === "minute") {
+        if (amt <= 1) return "1 Minute";
+        if (amt <= 10) return "10 Minutes";
+        if (amt <= 60) return "1 Hour";
+        if (amt <= 8 * 60) return "8 Hours";
+        return "24+ Hours";
+      }
+      if (unit === "hour") {
+        if (amt <= 1) return "1 Hour";
+        if (amt <= 8) return "8 Hours";
+        return "24+ Hours";
+      }
+      if (unit === "day" || unit === "week" || unit === "month" || unit === "year") {
+        return "24+ Hours";
+      }
+      return "Special";
+    }
+    case "permanent":
+      return "Permanent";
+    default:
+      return "Special";
+  }
+}
+
+function mapRangeBucket(raw: Raw): string {
+  const r = raw.range as Raw | undefined;
+  if (!r) return "Special";
+  const type = String(r.type ?? "");
+  if (type === "special") return "Special";
+  if (type === "point") {
+    const distType = String((r.distance as Raw | undefined)?.type ?? "");
+    if (distType === "self") return "Self";
+    if (distType === "touch") return "Touch";
+    return "Point";
+  }
+  if (
+    type === "radius" ||
+    type === "cone" ||
+    type === "line" ||
+    type === "cube" ||
+    type === "hemisphere" ||
+    type === "sphere" ||
+    type === "cylinder" ||
+    type === "emanation"
+  ) {
+    return "Self (Area)";
+  }
+  return "Special";
+}
+
+function stringArrayField(raw: Raw, key: string): string[] {
+  const value = raw[key];
+  if (!Array.isArray(value)) return [];
+  return value
+    .map((v) => (typeof v === "string" ? v : null))
+    .filter((v): v is string => Boolean(v));
+}
+
+function mapFilterTags(raw: Raw, isRitual: boolean, isConcentration: boolean): string[] {
+  const tags = new Set<string>();
+  if (isConcentration) tags.add("Concentration");
+  if (isRitual) tags.add("Ritual");
+
+  const c = raw.components as Raw | undefined;
+  if (c?.v === true) tags.add("Verbal");
+  if (c?.s === true) tags.add("Somatic");
+  if (c?.m) tags.add("Material");
+  if (c?.r === true) tags.add("Royalty");
+  if (c?.m && typeof c.m === "object") {
+    if (c.m.cost) tags.add("Material with Cost");
+    if (c.m.consume === "optional") tags.add("Material is Optionally Consumed");
+    else if (c.m.consume) tags.add("Material is Consumed");
+  }
+
+  for (const tag of stringArrayField(raw, "miscTags")) tags.add(tag);
+
+  const durations = Array.isArray(raw.duration) ? (raw.duration as Raw[]) : [];
+  if (
+    !tags.has("PRM") &&
+    durations.some((d) => String(d.type ?? "") === "permanent")
+  ) {
+    tags.add("PRM");
+  }
+  if (
+    !tags.has("SCL") &&
+    Array.isArray(raw.entriesHigherLevel) &&
+    raw.entriesHigherLevel.length > 0
+  ) {
+    tags.add("SCL");
+  }
+
+  return [...tags];
+}
+
+function mapCastTimeUnits(raw: Raw): string[] {
+  if (!Array.isArray(raw.time)) return [];
+  const units = new Set<string>();
+  for (const t of raw.time as Raw[]) {
+    const unit = typeof t.unit === "string" ? t.unit : "";
+    if (unit) units.add(unit);
+  }
+  return [...units];
+}
+
 function renderEntries(entries: unknown[]): string[] {
   return renderFiveToolsEntries(entries);
 }
@@ -184,6 +298,9 @@ export function mapSpell(raw: any): Spell {
     ? firstParagraph.slice(0, 150) + (firstParagraph.length > 150 ? "…" : "")
     : "";
 
+  const isRitual = raw.meta?.ritual === true;
+  const classLists = mapSpellClassLists(raw);
+
   return {
     id: spellId(raw),
     name: String(raw.name ?? "Unknown"),
@@ -196,11 +313,25 @@ export function mapSpell(raw: any): Spell {
     range: mapRange(raw),
     components: mapComponents(raw),
     duration,
-    isRitual: raw.meta?.ritual === true,
+    isRitual,
     isConcentration,
-    ...mapSpellClassLists(raw),
+    ...classLists,
     description,
     higherLevel,
     summary,
+    filterTags: mapFilterTags(raw, isRitual, isConcentration),
+    damageTypes: stringArrayField(raw, "damageInflict"),
+    conditions: stringArrayField(raw, "conditionInflict").map((c) => {
+      const name = c.split("|")[0] ?? c;
+      return name.toLowerCase();
+    }),
+    spellAttack: stringArrayField(raw, "spellAttack"),
+    savingThrows: stringArrayField(raw, "savingThrow").map((s) =>
+      s.toLowerCase(),
+    ),
+    castTimeUnits: mapCastTimeUnits(raw),
+    durationBucket: mapDurationBucket(raw),
+    rangeBucket: mapRangeBucket(raw),
+    areaStyles: stringArrayField(raw, "areaTags"),
   };
 }

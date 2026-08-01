@@ -1,14 +1,15 @@
 import { Spell } from "@/shared/types";
-import { SPELL_SOURCE_FILES } from "@/shared/constants/api.constants";
 import { dedupeByNameWithVariants } from "@/shared/utils/dedupe-by-name.utils";
 
 /** Preferencia al elegir la fila visible en la lista */
 const CANONICAL_SOURCE_PRIORITY = [
-  ...new Set([
-    "XPHB",
-    "PHB",
-    ...Object.keys(SPELL_SOURCE_FILES),
-  ]),
+  "XPHB",
+  "PHB",
+  "XGE",
+  "TCE",
+  "EGW",
+  "FTD",
+  "GGR",
 ];
 
 function mergeClassNames(group: Spell[]): string[] {
@@ -27,6 +28,14 @@ function mergeClassLabels(group: Spell[]): string[] {
   return Array.from(labels).sort((a, b) => a.localeCompare(b));
 }
 
+function mergeStringLists(group: Spell[], pick: (s: Spell) => string[]): string[] {
+  const values = new Set<string>();
+  for (const spell of group) {
+    for (const value of pick(spell)) values.add(value);
+  }
+  return Array.from(values).sort((a, b) => a.localeCompare(b));
+}
+
 function buildSearchText(group: Spell[]): string {
   const parts: string[] = [];
   for (const spell of group) {
@@ -37,6 +46,8 @@ function buildSearchText(group: Spell[]): string {
       spell.source,
       ...spell.classNames,
       ...spell.classes,
+      ...spell.filterTags,
+      ...spell.damageTypes,
     );
   }
   return parts.join(" ").toLowerCase();
@@ -52,6 +63,16 @@ export function dedupeSpellsByName(spells: Spell[]): Spell[] {
     mergeExtra: (group) => ({
       classNames: mergeClassNames(group),
       classes: mergeClassLabels(group),
+      filterTags: mergeStringLists(group, (s) => s.filterTags),
+      damageTypes: mergeStringLists(group, (s) => s.damageTypes),
+      conditions: mergeStringLists(group, (s) => s.conditions),
+      spellAttack: mergeStringLists(group, (s) => s.spellAttack),
+      savingThrows: mergeStringLists(group, (s) => s.savingThrows),
+      castTimeUnits: mergeStringLists(group, (s) => s.castTimeUnits),
+      areaStyles: mergeStringLists(group, (s) => s.areaStyles),
+      // Prefer primary variant's buckets; union not meaningful for single-select semantics
+      durationBucket: group[0]?.durationBucket ?? "Special",
+      rangeBucket: group[0]?.rangeBucket ?? "Special",
     }),
   });
 }
