@@ -5,6 +5,7 @@ import type {
   CartEntry,
   DamageType,
   EquippedWeapon,
+  Rune,
   SkillKey,
   Speed,
 } from "@/shared/types";
@@ -39,6 +40,8 @@ import {
   buildTraitAdvancement,
 } from "./advancement.builders";
 import { applyItemAutomation } from "./automation.builders";
+import { ensureActivityMidiProperties } from "./midi.utils";
+import { buildRuneFoundryItem } from "@/features/runes/utils/rune-foundry-export";
 import {
   FULL_CASTER_SLOTS,
   effectiveCasterLevel,
@@ -143,6 +146,8 @@ export interface FoundryExportInput {
   trinkets: string[];
   loot: CartEntry[];
   spells: SpellItemInput[];
+  /** Rune items to embed on the actor (from equipped weapon/armor/trinket slots). */
+  runes: { rune: Rune; slotContext: "Weapon" | "Armor" | "Trinket" }[];
   /** Base64 data URL for the actor's main art (system img). */
   portraitImage?: string | null;
   /** Base64 data URL for the prototype token texture. Falls back to portraitImage. */
@@ -308,12 +313,20 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
 
   // Weapons
   for (const w of input.weapons) {
-    items.push(
-      buildWeaponItem(w.equipped, {
-        equipped: w.isEquipped,
-        attackAbility: w.attackAbility,
-      }),
-    );
+    const weaponItem = buildWeaponItem(w.equipped, {
+      equipped: w.isEquipped,
+      attackAbility: w.attackAbility,
+      description: w.equipped.weapon.description,
+    });
+    const magical =
+      Number(
+        (weaponItem.system as Record<string, unknown>).magicalBonus ?? 0,
+      ) > 0;
+    ensureActivityMidiProperties(weaponItem, {
+      magicDamage: magical,
+      magicEffect: magical,
+    });
+    items.push(weaponItem);
   }
 
   // Armor / shields
@@ -331,6 +344,14 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   // Inventory loot
   for (const entry of input.loot) {
     items.push(buildLootItem(entry, descFor(entry.name)));
+  }
+
+  // Embedded runes (equipment trinkets with AE)
+  for (const entry of input.runes ?? []) {
+    const runeItem = buildRuneFoundryItem(entry.rune, entry.slotContext);
+    // Mark as equipped so transfer AE apply when the actor is imported.
+    (runeItem.system as Record<string, unknown>).equipped = true;
+    items.push(runeItem);
   }
 
   // Spells

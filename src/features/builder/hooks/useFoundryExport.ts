@@ -1,5 +1,5 @@
 import { useCallback, useState } from "react";
-import type { CartEntry, EquippedWeapon, SkillKey } from "@/shared/types";
+import type { CartEntry, EquippedWeapon, Rune, SkillKey } from "@/shared/types";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { useSelectedClass, useSelectedSubclass } from "./useBuilderSelections";
@@ -53,9 +53,8 @@ function formatAlignment(codes: string[] | undefined): string {
 
 function joinDescription(lines: string[] | undefined): string | undefined {
   if (!lines || lines.length === 0) return undefined;
-  return lines
-    .map((line) => `<p>${line}</p>`)
-    .join("");
+  // Keep raw 5etools tags; foundry-export description enrichers convert them.
+  return lines.join("\n\n");
 }
 
 /** Extracts class/subclass feature items up to a character level for advancement grants. */
@@ -473,8 +472,41 @@ export function useFoundryExport() {
           level: selection.level,
           ability: spellAbilityKey || undefined,
           description: spell ? joinDescription(spell.description) : undefined,
+          source: spell?.source,
+          school: spell?.school,
+          castingTime: spell?.castingTime,
+          range: spell?.range,
+          duration: spell?.duration,
+          isRitual: spell?.isRitual,
+          isConcentration: spell?.isConcentration,
+          components: spell?.components,
+          spellAttack: spell?.spellAttack,
+          savingThrows: spell?.savingThrows,
+          damageTypes: spell?.damageTypes,
         };
       });
+
+    // ── Runes from equipped gear ──
+    const runes: { rune: Rune; slotContext: "Weapon" | "Armor" | "Trinket" }[] =
+      [];
+    const pushRunes = (
+      list: (Rune | null)[] | undefined,
+      slotContext: "Weapon" | "Armor" | "Trinket",
+    ) => {
+      if (!list) return;
+      for (const rune of list) {
+        if (rune) runes.push({ rune, slotContext });
+      }
+    };
+    pushRunes(builder.mainHand?.runes, "Weapon");
+    pushRunes(builder.offHand?.runes, "Weapon");
+    pushRunes(builder.armor?.runes, "Armor");
+    if (builder.trinket1?.rune) {
+      runes.push({ rune: builder.trinket1.rune, slotContext: "Trinket" });
+    }
+    if (builder.trinket2?.rune) {
+      runes.push({ rune: builder.trinket2.rune, slotContext: "Trinket" });
+    }
 
     // ── Currency ──
     const goldGp = inventory.items.reduce((sum, entry) => {
@@ -528,6 +560,7 @@ export function useFoundryExport() {
       trinkets,
       loot,
       spells,
+      runes,
       portraitImage: builder.portraitImage,
       tokenImage: builder.tokenImage,
       itemDescriptions,
