@@ -1,5 +1,6 @@
 export type {
   ListFilterOption,
+  ListFilterOptionGroup,
   ListFilterSectionConfig,
   ListFilterSectionMode,
   ListFilterValues,
@@ -10,9 +11,12 @@ export {
   buildDefaultFilterValues,
   countActiveListFilters,
   getSectionSelected,
+  isFilterOptionSelected,
   isFilterSectionActive,
+  optionFilterValues,
   pickFilterValues,
   setSectionSelected,
+  toggleMultiFilterOption,
   toggleMultiFilterValue,
 } from "./list-filter.utils";
 
