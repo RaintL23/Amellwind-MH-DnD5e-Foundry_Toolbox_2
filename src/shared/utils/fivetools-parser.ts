@@ -181,7 +181,7 @@ export function splitDisplayTextLines(text: string): string[] {
 export interface RenderEntriesOptions {
   /** Bullet prefix for plain string list items. */
   bullet?: string;
-  /** Render `{type:"item", name, entry}` list children as `• **name**: entry`. */
+  /** Render `{type:"item", name, entry|entries}` list children as `• **name**: body`. */
   renderItemObjects?: boolean;
   /** Emit a bold `**name**` heading for named `type:"entries"` blocks. */
   boldNamedEntries?: boolean;
@@ -189,6 +189,23 @@ export interface RenderEntriesOptions {
   renderTableCaption?: boolean;
   /** Prefix added to each line produced by a `type:"inset"` block (null = none). */
   insetPrefix?: string | null;
+}
+
+/** Resolve body text for a `{type:"item"}` from singular `entry` or `entries[]`. */
+function resolveItemBody(
+  item: Record<string, unknown>,
+  options: RenderEntriesOptions,
+  depth: number,
+): string {
+  if (typeof item.entry === "string") {
+    return parseFiveToolsMarkup(item.entry).trim();
+  }
+  if (Array.isArray(item.entries)) {
+    return renderFiveToolsEntries(item.entries as unknown[], options, depth + 1)
+      .join(" ")
+      .trim();
+  }
+  return "";
 }
 
 /**
@@ -237,9 +254,12 @@ export function renderFiveToolsEntries(
         ) {
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const subObj = item as Record<string, any>;
+          // 5etools uses either singular `entry` (string) or `entries` (array).
           if (subObj.type === "item" && subObj.name) {
+            const name = parseFiveToolsMarkup(String(subObj.name)).trim();
+            const body = resolveItemBody(subObj, options, depth);
             result.push(
-              `${bullet}**${parseFiveToolsMarkup(String(subObj.name))}**: ${parseFiveToolsMarkup(String(subObj.entry ?? "")).trim()}`,
+              body ? `${bullet}**${name}**: ${body}` : `${bullet}**${name}**`,
             );
           }
         }

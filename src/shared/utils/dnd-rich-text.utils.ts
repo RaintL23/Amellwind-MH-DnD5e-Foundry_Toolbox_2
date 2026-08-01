@@ -43,6 +43,32 @@ export const RICH_TEXT_MARKUP_CLASS: Record<Exclude<RichTextMarkupKind, "text">,
 
 export { DND_KEYWORD_CLASS };
 
+// ─── Markdown bold tokenizer ────────────────────────────────────────────────
+// renderFiveToolsEntries emits `**name**` after stripping {@b}/{@bold} tags.
+
+const MD_BOLD_RE = /\*\*(.+?)\*\*/g;
+
+function tokenizeMarkdownBold(text: string): RichTextSegment[] {
+  const segments: RichTextSegment[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  MD_BOLD_RE.lastIndex = 0;
+  while ((match = MD_BOLD_RE.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ kind: "text", content: text.slice(lastIndex, match.index) });
+    }
+    segments.push({ kind: "bold", content: match[1] });
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ kind: "text", content: text.slice(lastIndex) });
+  }
+
+  return segments.length > 0 ? segments : [{ kind: "text", content: text }];
+}
+
 // ─── 5etools markup tokenizer ───────────────────────────────────────────────
 
 const TAG_RE = /\{@(\w+)\s+([^}|]+)(?:\|[^}]*)?\}|\{@(\w+)\}/g;
@@ -126,15 +152,26 @@ function tokenizeFiveToolsMarkup(text: string): RichTextSegment[] {
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 /**
- * Parses text that may contain 5etools markup ({@spell …}, {@i …}, etc.) and
- * optionally highlights common D&D terms in plain-text segments.
+ * Parses text that may contain 5etools markup ({@spell …}, {@i …}, etc.),
+ * markdown `**bold**`, and optionally highlights common D&D terms in
+ * plain-text segments.
  */
 export function parseRichText(
   text: string,
   options: ParseRichTextOptions = {},
 ): RichTextSegment[] {
   const { highlightKeywords = true } = options;
-  const markupSegments = tokenizeFiveToolsMarkup(text);
+
+  // 5etools tags first (paths that preserve {@…}), then markdown bold on
+  // remaining plain text (renderFiveToolsEntries emits `**…**`).
+  const markupSegments: RichTextSegment[] = [];
+  for (const seg of tokenizeFiveToolsMarkup(text)) {
+    if (seg.kind === "text") {
+      markupSegments.push(...tokenizeMarkdownBold(seg.content));
+    } else {
+      markupSegments.push(seg);
+    }
+  }
 
   if (!highlightKeywords) return markupSegments;
 

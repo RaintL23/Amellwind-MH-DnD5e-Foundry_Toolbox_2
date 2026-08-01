@@ -28,16 +28,17 @@ export function DescriptionLines({
       {lines.map((line, i) => {
         const isInset = line.startsWith("»");
         const isBullet = line.startsWith("•");
-        const isBold = /^\*\*.+\*\*/.test(line);
+        // Heading-only lines (`**Name**`) get section spacing; inline `**…**`
+        // inside bullets/paragraphs is handled by DndRichText.
+        const isBoldHeading = /^\*\*[^*]+\*\*\s*$/.test(line);
 
-        if (isBold) {
-          const text = line.replace(/\*\*/g, "");
+        if (isBoldHeading) {
           return (
             <p
               key={i}
               className={cn(sizeClass, "font-semibold text-foreground mt-3 mb-1")}
             >
-              <DndRichText text={text} />
+              <DndRichText text={line} />
             </p>
           );
         }
