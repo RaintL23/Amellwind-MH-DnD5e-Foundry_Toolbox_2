@@ -7,6 +7,14 @@ import { foundryId } from "@/features/builder/foundry-export/foundry-id.utils";
 import { mapDamageType } from "@/features/builder/foundry-export/mappings";
 import type { FoundryItem } from "@/features/builder/foundry-export/foundry.types";
 import {
+  escapeHtml,
+  foundryDividerHtml,
+  foundryRarityTitleHtml,
+  toFoundryDescriptionHtml,
+} from "@/features/builder/foundry-export/description.enrichers";
+import { defaultMidiProperties } from "@/features/builder/foundry-export/midi.utils";
+import { buildEffect, EFFECT_MODE } from "@/features/builder/foundry-export/effect.builders";
+import {
   resolveCatalogIconForWeaponName,
   toFoundryImgPath,
 } from "@/features/weapons/utils/weapon-icon.utils";
@@ -18,9 +26,13 @@ import {
 } from "@/features/weapons/utils/weapon-mode.utils";
 import {
   buildColumnChains,
+  type ColumnChains,
   type FeatureUpgradeLink,
 } from "@/features/weapons/utils/weapon-feature-chains.utils";
-import type { CustomWeapon } from "../types/weapon-forge.types";
+import {
+  isPrimaryFeaturesColumn,
+  type CustomWeapon,
+} from "../types/weapon-forge.types";
 import {
   getTypedBonusValue,
   resolveFeatureDef,
@@ -28,14 +40,6 @@ import {
 
 const DEFAULT_FOUNDRY_WEAPON_IMG =
   "icons/weapons/swords/sword-broad-steel.webp";
-
-function escapeHtml(text: string): string {
-  return text
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;");
-}
 
 function parseBonusNumber(raw: string): number {
   const match = raw.trim().match(/([+-]?\d+)/);
@@ -101,39 +105,6 @@ function damageFieldFromFormula(
   };
 }
 
-export function defaultMidiProperties(
-  overrides: Record<string, unknown> = {},
-): Record<string, unknown> {
-  return {
-    ignoreTraits: [],
-    triggeredActivityId: "none",
-    triggeredActivityConditionText: "",
-    triggeredActivityTargets: "targets",
-    triggeredActivityRollAs: "self",
-    autoConsume: false,
-    forceConsumeDialog: "default",
-    forceRollDialog: "default",
-    forceDamageDialog: "default",
-    confirmTargets: "default",
-    autoTargetType: "any",
-    autoTargetAction: "default",
-    automationOnly: false,
-    otherActivityCompatible: true,
-    identifier: "",
-    displayActivityName: false,
-    rollMode: "default",
-    chooseEffects: false,
-    toggleEffect: false,
-    ignoreFullCover: false,
-    removeChatButtons: "default",
-    magicEffect: false,
-    magicDamage: false,
-    noConcentrationCheck: false,
-    autoCEEffects: "default",
-    ...overrides,
-  };
-}
-
 function buildAttackActivityBase(opts: {
   id: string;
   name: string;
@@ -189,35 +160,29 @@ function appendFeatureDescription(
   name: string,
   description: string | undefined,
   nested: boolean,
+  rarityLabel: string | undefined,
 ): void {
   if (nested) parts.push("<blockquote>");
-  parts.push(`<p><strong>${escapeHtml(name)}</strong></p>`);
+  parts.push(`<p>${foundryRarityTitleHtml(name, rarityLabel)}</p>`);
   if (description?.trim()) {
-    for (const para of description.split(/\n\s*\n/)) {
+    const enriched = toFoundryDescriptionHtml(description, { wrapHtml: false });
+    for (const para of enriched.split(/\n\s*\n/)) {
       const trimmed = para.trim();
       if (!trimmed) continue;
-      parts.push(
-        `<p>${escapeHtml(trimmed).replace(/\n/g, "<br/>")}</p>`,
-      );
+      if (trimmed.startsWith("<")) {
+        parts.push(trimmed);
+      } else {
+        parts.push(`<p>${trimmed.replace(/\n/g, "<br/>")}</p>`);
+      }
     }
   }
   if (nested) parts.push("</blockquote>");
 }
 
-function buildFoundryDescriptionHtml(
+function resolveVisibleColumnChains(
   weapon: CustomWeapon,
   rarityIndex: number,
-): string {
-  const parts: string[] = [];
-  if (weapon.description.trim()) {
-    parts.push(`<p>${escapeHtml(weapon.description.trim())}</p>`);
-  }
-  for (const note of weapon.supplementaryNotes) {
-    if (note.trim()) {
-      parts.push(`<p>${escapeHtml(note.trim())}</p>`);
-    }
-  }
-
+): ColumnChains[] {
   const features = weapon.customFeatures ?? [];
   const upgradeLinks: FeatureUpgradeLink[] = features.map((f) => ({
     id: f.id,
@@ -229,7 +194,7 @@ function buildFoundryDescriptionHtml(
     upgradeLinks: upgradeLinks.length > 0 ? upgradeLinks : undefined,
   });
 
-  const visibleCols = columnChains
+  return columnChains
     .map(({ label, chains }) => ({
       label,
       chains: chains
@@ -241,26 +206,141 @@ function buildFoundryDescriptionHtml(
         .filter((c) => c.features.length > 0),
     }))
     .filter(({ chains }) => chains.length > 0);
+}
 
+function appendWeaponIntroHtml(
+  parts: string[],
+  weapon: CustomWeapon,
+  options: { includeFiveToolsLink: boolean },
+): void {
+  if (weapon.description.trim()) {
+    parts.push(
+      toFoundryDescriptionHtml(weapon.description.trim(), {
+        fiveToolsItemName: options.includeFiveToolsLink
+          ? weapon.name
+          : undefined,
+        fiveToolsLinkLabel: options.includeFiveToolsLink
+          ? `Open ${weapon.name} filters on 5e.tools`
+          : undefined,
+      }),
+    );
+  }
+  for (const note of weapon.supplementaryNotes) {
+    if (note.trim()) {
+      parts.push(toFoundryDescriptionHtml(note.trim()));
+    }
+  }
+}
+
+function buildFoundryDescriptionHtml(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): string {
+  const parts: string[] = [];
+  appendWeaponIntroHtml(parts, weapon, { includeFiveToolsLink: true });
+
+  const features = weapon.customFeatures ?? [];
+  const visibleCols = resolveVisibleColumnChains(weapon, rarityIndex);
   if (visibleCols.length === 0) return parts.join("");
 
+  if (parts.length > 0) {
+    parts.push(foundryDividerHtml());
+  }
+
+  let featureBlockIndex = 0;
   for (const { label, chains } of visibleCols) {
     parts.push(`<h3>${escapeHtml(label)}</h3>`);
     for (const chain of chains) {
+      if (featureBlockIndex > 0) {
+        parts.push(foundryDividerHtml());
+      }
+      featureBlockIndex += 1;
       chain.features.forEach((feat, fi) => {
         const def = resolveFeatureDef(features, feat.name);
         const displayName = def?.name ?? feat.name;
+        const rarityLabel = weapon.rarityRows[feat.rarityIndex]?.rarity;
         appendFeatureDescription(
           parts,
           displayName,
           def?.description,
           fi > 0,
+          rarityLabel,
         );
       });
     }
   }
 
   return parts.join("");
+}
+
+/**
+ * Condensed Foundry chat card: base weapon text + combat feature names
+ * (with upgrades). Resource columns (Phials, Coatings, …) are omitted.
+ */
+function buildFoundryChatDescriptionHtml(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): string {
+  const parts: string[] = [];
+  appendWeaponIntroHtml(parts, weapon, { includeFiveToolsLink: false });
+
+  const features = weapon.customFeatures ?? [];
+  const featureCols = resolveVisibleColumnChains(weapon, rarityIndex).filter(
+    ({ label }) => isPrimaryFeaturesColumn(label),
+  );
+  if (featureCols.length === 0) return parts.join("");
+
+  if (parts.length > 0) {
+    parts.push(foundryDividerHtml());
+  }
+
+  let featureBlockIndex = 0;
+  for (const { chains } of featureCols) {
+    for (const chain of chains) {
+      if (featureBlockIndex > 0) {
+        parts.push(foundryDividerHtml());
+      }
+      featureBlockIndex += 1;
+      chain.features.forEach((feat, fi) => {
+        const def = resolveFeatureDef(features, feat.name);
+        const displayName = def?.name ?? feat.name;
+        const rarityLabel = weapon.rarityRows[feat.rarityIndex]?.rarity;
+        const title = foundryRarityTitleHtml(displayName, rarityLabel);
+        if (fi === 0) {
+          parts.push(`<p>${title}</p>`);
+        } else {
+          parts.push(`<blockquote><p>${title}</p></blockquote>`);
+        }
+      });
+    }
+  }
+
+  return parts.join("");
+}
+
+/** Passive AE for typed AC bonuses on the selected rarity row. */
+function buildRarityPassiveEffects(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): FoundryItem["effects"] {
+  const row = weapon.rarityRows[rarityIndex];
+  if (!row) return [];
+  const acBonus = parseBonusNumber(getTypedBonusValue(row, "ac"));
+  if (acBonus <= 0) return [];
+  return [
+    buildEffect({
+      name: `${weapon.name} AC`,
+      transfer: true,
+      changes: [
+        {
+          key: "system.attributes.ac.bonus",
+          mode: EFFECT_MODE.ADD,
+          value: String(acBonus),
+          priority: 20,
+        },
+      ],
+    }),
+  ];
 }
 
 function resolveWeaponImg(weapon: CustomWeapon): string {
@@ -396,6 +476,7 @@ export function buildWeaponFoundryItem(
   const item = buildWeaponItem(equipped, {
     equipped: false,
     description: buildFoundryDescriptionHtml(weapon, clamped),
+    chatDescription: buildFoundryChatDescriptionHtml(weapon, clamped),
   });
 
   item.img = resolveWeaponImg(weapon);
@@ -429,6 +510,24 @@ export function buildWeaponFoundryItem(
   }
 
   applyItemAutomation(item);
+
+  const passiveEffects = buildRarityPassiveEffects(weapon, clamped);
+  if (passiveEffects.length > 0) {
+    item.effects.push(...passiveEffects);
+  }
+
+  // Canonical English name helps Automated Animations / CPR name matching.
+  item.flags = {
+    ...item.flags,
+    "amellwind-toolbox": {
+      ...(typeof item.flags["amellwind-toolbox"] === "object" &&
+      item.flags["amellwind-toolbox"] !== null
+        ? (item.flags["amellwind-toolbox"] as Record<string, unknown>)
+        : {}),
+      baseWeaponName: weapon.name,
+      exportKind: "weapon-forge",
+    },
+  };
 
   return item;
 }
