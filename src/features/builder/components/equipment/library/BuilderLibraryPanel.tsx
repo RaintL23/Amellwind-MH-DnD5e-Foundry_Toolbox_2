@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from "react";
-import { Search } from "lucide-react";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
 import { useSelectedClass } from "@/features/builder/hooks/useBuilderSelections";
 import {
@@ -10,9 +9,7 @@ import {
   parseOptionalOriginFeatSlotIndex,
 } from "@/features/builder/utils/builder-class.utils";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
-import {
-  isOffHandWeaponPickerAvailable,
-} from "@/features/weapons/utils/weapon-hands.utils";
+import { isOffHandWeaponPickerAvailable } from "@/features/weapons/utils/weapon-hands.utils";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
 import {
   isMulticlassClassSlot,
@@ -30,7 +27,11 @@ import {
   type FeatDataSource,
 } from "../../shared/FeatSourceBadgeGroup";
 import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
-import { Input } from "@/components/ui/input";
+import {
+  ListSearchWithFilters,
+  type ListFilterSectionConfig,
+  type ListFilterValues,
+} from "@/shared/components/list-filters";
 import { ArmorLibraryPanel } from "./ArmorLibraryPanel";
 import { WeaponLibraryPanel } from "./WeaponLibraryPanel";
 import {
@@ -52,6 +53,14 @@ import { toRpgbotClassSlug } from "@/features/builder/data/rpgbot-ratings.utils"
 import { RpgbotLegend } from "../../shared/RpgbotLegend";
 import { RpgbotLoadingHint } from "../../shared/RpgbotLoadingHint";
 import { useRpgbotRatingsContext } from "@/features/builder/context/RpgbotRatingsContext";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
+import {
+  ARMOR_LIBRARY_FILTER_SECTIONS,
+  FEAT_LIBRARY_FILTER_SECTIONS,
+  WEAPON_LIBRARY_FILTER_SECTIONS,
+  buildLibrarySourceFilterSections,
+} from "@/features/builder/utils/builder-library-filters";
 
 interface BuilderLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -66,6 +75,10 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   const [featSearchHidden, setFeatSearchHidden] = useState(false);
   const [equipmentRarity, setEquipmentRarity] =
     useState<EquipmentRarityFilter>("Standard");
+  const [filterValues, setFilterValues] = useState<ListFilterValues>({});
+
+  const bookNames = useBookSourceNames();
+  const catalog = useSourceCatalog();
 
   const {
     mainHand,
@@ -101,6 +114,13 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     selectedSlot !== null && isOriginFeatSlot(selectedSlot);
   const isAnyOriginFeatSlotSelected =
     isOriginFeatSlotSelected || isInvocationOriginFeatSlotSelected;
+  const isIdentityOrClassSlot =
+    isSpeciesSlot ||
+    isBackgroundSlot ||
+    selectedSlot === "class" ||
+    selectedSlot === "subclass" ||
+    (selectedSlot !== null && isMulticlassClassSlot(selectedSlot)) ||
+    (selectedSlot !== null && isMulticlassSubclassSlot(selectedSlot));
 
   const rpgbotClassSlug = classSelection?.name
     ? toRpgbotClassSlug(classSelection.name)
@@ -128,6 +148,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     setShowAsiPanel(false);
     setFeatSearchHidden(false);
     setEquipmentRarity("Standard");
+    setFilterValues({});
 
     if (!useAmellwindHomebrew) {
       setFeatSource("dnd2024");
@@ -206,6 +227,27 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     selectedSlot !== "class" &&
     !isMulticlassClassSlot(selectedSlot);
 
+  const filterSections = useMemo((): ListFilterSectionConfig[] => {
+    if (isWeaponSlot) return WEAPON_LIBRARY_FILTER_SECTIONS;
+    if (isArmorSlot) return ARMOR_LIBRARY_FILTER_SECTIONS;
+    if (isFeatPicker) return FEAT_LIBRARY_FILTER_SECTIONS;
+    if (isIdentityOrClassSlot) {
+      return buildLibrarySourceFilterSections(
+        catalog.keys(),
+        catalog,
+        bookNames,
+      );
+    }
+    return [];
+  }, [
+    isWeaponSlot,
+    isArmorSlot,
+    isFeatPicker,
+    isIdentityOrClassSlot,
+    catalog,
+    bookNames,
+  ]);
+
   const slotLabel = useMemo(() => {
     if (!selectedSlot) return "Library";
     if (isInvocationOriginFeatSlotSelected && invocationOriginFeatIndex !== null) {
@@ -262,6 +304,14 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     "Library"
   );
 
+  const dialogTitle = isWeaponSlot
+    ? "Weapon Filters"
+    : isArmorSlot
+      ? "Armor Filters"
+      : isFeatPicker
+        ? "Feat Filters"
+        : "Library Filters";
+
   return (
     <BuilderPanel title={panelTitle}>
       {!selectedSlot ? (
@@ -269,14 +319,17 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
       ) : (
         <>
           {!hideSearch && (
-            <div className="relative mb-2">
-              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                type="text"
-                placeholder="Search..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="h-8 pl-8 text-xs"
+            <div className="mb-2">
+              <ListSearchWithFilters
+                compact
+                searchValue={search}
+                onSearchChange={setSearch}
+                searchPlaceholder="Search..."
+                sections={filterSections}
+                filterValues={filterValues}
+                onFiltersApply={setFilterValues}
+                dialogTitle={dialogTitle}
+                dialogDescription="Narrow the library list. Changes apply when you save."
               />
             </div>
           )}
@@ -292,19 +345,26 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
               selectedSlot={selectedSlot}
               q={q}
               rarityFilter={equipmentRarity}
+              listFilters={filterValues}
             />
             <ArmorLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
               rarityFilter={equipmentRarity}
+              listFilters={filterValues}
             />
             <IdentityLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
               identitySource={identitySource}
               onIdentitySourceChange={setIdentitySourceOverride}
+              listFilters={filterValues}
             />
-            <ClassLibraryPanel selectedSlot={selectedSlot} q={q} />
+            <ClassLibraryPanel
+              selectedSlot={selectedSlot}
+              q={q}
+              listFilters={filterValues}
+            />
             <FeatLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
@@ -312,6 +372,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
               onFeatSourceChange={setFeatSource}
               onShowAsiPanelChange={setShowAsiPanel}
               onSearchHiddenChange={setFeatSearchHidden}
+              listFilters={filterValues}
             />
           </ScrollableWhenNeeded>
         </>

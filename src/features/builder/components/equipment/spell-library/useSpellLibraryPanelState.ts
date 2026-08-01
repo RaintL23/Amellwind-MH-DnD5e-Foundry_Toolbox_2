@@ -41,6 +41,24 @@ import {
   toRpgbotClassSlug,
 } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
+import type { ListFilterValues } from "@/shared/components/list-filters";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
+import {
+  buildSourcesFilterSection,
+  entityMatchesSourceFilter,
+} from "@/shared/utils/compendium-source-filter.utils";
+import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
+import {
+  ensureSpellUaSourcesLoaded,
+  getListSpells,
+  getSpellFilterSourceCodes,
+} from "@/features/spells/services/spell.service";
+import {
+  buildSpellFacetFilterSections,
+  collectSpellPresentFacets,
+  spellMatchesFacetFilters,
+} from "@/features/spells/utils/spell-list-filters";
 
 function resolveGrantsAtLevel(
   grants: SubclassSpellGrant[],
@@ -98,6 +116,11 @@ export function useSpellLibraryPanelState({
       ? (activeBonusPool?.selectionLevel ?? BONUS_CANTRIP_POOL_BASE)
       : spellLevel!;
   const [committedSearch, setCommittedSearch] = useState("");
+  const [filterValues, setFilterValues] = useState<ListFilterValues>({});
+  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
+  const [spellPool, setSpellPool] = useState<Spell[]>(allSpells);
+  const bookNames = useBookSourceNames();
+  const catalog = useSourceCatalog();
   const {
     searchDraft: search,
     setSearchDraft: setSearch,
@@ -107,7 +130,49 @@ export function useSpellLibraryPanelState({
 
   useEffect(() => {
     commitSearch("");
+    setFilterValues({});
   }, [selectedSlot, commitSearch]);
+
+  useEffect(() => {
+    setSpellPool(allSpells);
+  }, [allSpells]);
+
+  useEffect(() => {
+    void getSpellFilterSourceCodes().then(setFilterSourceCodes);
+  }, []);
+
+  useEffect(() => {
+    if (catalog.size === 0 || filterSourceCodes.length === 0) return;
+    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
+    if (defaults.length === 0) return;
+    setFilterValues((prev) => {
+      const src = prev.src;
+      const hasSrc = Array.isArray(src) ? src.length > 0 : !!src;
+      if (hasSrc) return prev;
+      return { ...prev, src: defaults };
+    });
+  }, [catalog, filterSourceCodes, selectedSlot]);
+
+  useEffect(() => {
+    const selectedSources = Array.isArray(filterValues.src)
+      ? filterValues.src
+      : typeof filterValues.src === "string" && filterValues.src
+        ? [filterValues.src]
+        : [];
+    if (selectedSources.length === 0) return;
+
+    let cancelled = false;
+    void (async () => {
+      await ensureSpellUaSourcesLoaded(selectedSources);
+      if (cancelled) return;
+      const list = await getListSpells();
+      if (!cancelled) setSpellPool(list);
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [filterValues.src]);
 
   const selectedAtLevel = useMemo(
     () => (spellSelections ?? {})[selectionLevel] ?? [],
@@ -179,7 +244,7 @@ export function useSpellLibraryPanelState({
     pactMaxLevel,
     effectiveSpellLevel,
     spellLevelByName,
-    allSpells,
+    spellPool,
   ] as const;
 
   const alwaysPreparedAtLevel = useMemo(
@@ -194,7 +259,7 @@ export function useSpellLibraryPanelState({
       pactMaxLevel,
       spellLevel,
       spellLevelByName,
-      allSpells,
+      spellPool,
     ],
   );
 
@@ -207,7 +272,7 @@ export function useSpellLibraryPanelState({
       pactMaxLevel,
       spellLevel,
       spellLevelByName,
-      allSpells,
+      spellPool,
     ],
   );
 
@@ -223,7 +288,7 @@ export function useSpellLibraryPanelState({
       pactMaxLevel,
       spellLevel,
       spellLevelByName,
-      allSpells,
+      spellPool,
     ],
   );
 
@@ -293,9 +358,9 @@ export function useSpellLibraryPanelState({
     [isBonusCantripPool, spellListClassName, spellListContext],
   );
 
-  const availableSpells = useMemo(() => {
+  const slotEligibleSpells = useMemo(() => {
     if (isAtCapacity) return [];
-    const spells = allSpells.filter((s) => {
+    return spellPool.filter((s) => {
       if (isPactPool) {
         if (s.level < 1 || s.level > pactMaxLevel) return false;
       } else if (
@@ -320,8 +385,48 @@ export function useSpellLibraryPanelState({
       if (optionalFeatureAtLevel.some((g) => spellNamesMatch(s.name, g.name))) {
         return false;
       }
-      if (q && !s.name.toLowerCase().includes(q)) return false;
       return true;
+    });
+  }, [
+    spellPool,
+    isPactPool,
+    pactMaxLevel,
+    effectiveSpellLevel,
+    selectedIds,
+    allSelectedCantripIds,
+    subclassGrantsAtLevel,
+    optionalFeatureAtLevel,
+    spellMatchesClassList,
+    isClassCantrip,
+    speciesGrantedCantripNames,
+    isAtCapacity,
+  ]);
+
+  const presentFacets = useMemo(
+    () => collectSpellPresentFacets(slotEligibleSpells),
+    [slotEligibleSpells],
+  );
+
+  const sourceSection = useMemo(
+    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
+    [filterSourceCodes, catalog, bookNames],
+  );
+
+  const filterSections = useMemo(
+    () =>
+      buildSpellFacetFilterSections(presentFacets, {
+        sourceSection,
+      }),
+    [presentFacets, sourceSection],
+  );
+
+  const availableSpells = useMemo(() => {
+    const spells = slotEligibleSpells.filter((s) => {
+      if (q && !s.name.toLowerCase().includes(q)) return false;
+      return spellMatchesFacetFilters(s, filterValues, {
+        sourceMatcher: (spell, selected) =>
+          entityMatchesSourceFilter(spell, selected, catalog, bookNames),
+      });
     });
 
     return sortByRpgbotRating(
@@ -333,19 +438,11 @@ export function useSpellLibraryPanelState({
       (s) => s.name,
     );
   }, [
-    allSpells,
-    isPactPool,
-    pactMaxLevel,
-    effectiveSpellLevel,
-    selectedIds,
-    allSelectedCantripIds,
-    subclassGrantsAtLevel,
-    optionalFeatureAtLevel,
+    slotEligibleSpells,
     q,
-    spellMatchesClassList,
-    isClassCantrip,
-    speciesGrantedCantripNames,
-    isAtCapacity,
+    filterValues,
+    catalog,
+    bookNames,
     rpgbotSpellLookup,
     rpgbotSpellReady,
   ]);
@@ -424,6 +521,10 @@ export function useSpellLibraryPanelState({
   return {
     search,
     setSearch,
+    filterValues,
+    setFilterValues,
+    filterSections,
+    spellPool,
     selectionLevel,
     selectedAtLevel,
     chosenAtLevel,

@@ -41,6 +41,12 @@ import type {
   DndRace,
   Species,
 } from "@/shared/types";
+import type { ListFilterValues } from "@/shared/components/list-filters";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
+import {
+  asFilterStringArray,
+  libraryOptionMatchesSourceFilter,
+} from "@/features/builder/utils/builder-library-filters";
 import { IdentityLibraryDetail } from "./IdentityLibraryDetail";
 import { EmptyState } from "./shared/LibraryUi";
 
@@ -49,6 +55,7 @@ interface IdentityLibraryPanelProps {
   q: string;
   identitySource: IdentityDataSource;
   onIdentitySourceChange: (source: IdentityDataSource) => void;
+  listFilters?: ListFilterValues;
 }
 
 function isLoadedSpecies(data: Species | Background | null): data is Species {
@@ -66,7 +73,12 @@ export function IdentityLibraryPanel({
   q,
   identitySource,
   onIdentitySourceChange: _onIdentitySourceChange,
+  listFilters = {},
 }: IdentityLibraryPanelProps) {
+  const identityBookNames = useBookSourceNames();
+  const catalog = useSourceCatalog();
+  const sourceFilter = asFilterStringArray(listFilters.src);
+
   const [identityLoading, setIdentityLoading] = useState(false);
   const [identityOptions, setIdentityOptions] = useState<LibraryListOption[]>(
     [],
@@ -91,8 +103,6 @@ export function IdentityLibraryPanel({
     speciesSpellGroupChoice,
     setSpeciesSpellGroupChoice,
   } = useCharacterBuilder();
-
-  const identityBookNames = useBookSourceNames();
 
   const isSpeciesSlot = selectedSlot === "species";
   const isBackgroundSlot = selectedSlot === "background";
@@ -141,11 +151,20 @@ export function IdentityLibraryPanel({
 
   const identityFiltered = useMemo(() => {
     if (!isSpeciesSlot && !isBackgroundSlot) return [];
-    return prepareLibraryListOptions(
+    const prepared = prepareLibraryListOptions(
       identityOptions,
       q,
       rpgbotLookup,
       rpgbotReady,
+    );
+    if (sourceFilter.length === 0) return prepared;
+    return prepared.filter((option) =>
+      libraryOptionMatchesSourceFilter(
+        option,
+        sourceFilter,
+        catalog,
+        identityBookNames,
+      ),
     );
   }, [
     identityOptions,
@@ -154,6 +173,9 @@ export function IdentityLibraryPanel({
     q,
     rpgbotLookup,
     rpgbotReady,
+    sourceFilter,
+    catalog,
+    identityBookNames,
   ]);
 
   const selectedIdentity =

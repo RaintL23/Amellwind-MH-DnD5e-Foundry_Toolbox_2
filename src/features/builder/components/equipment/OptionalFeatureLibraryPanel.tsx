@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Check, Search, Swords, X } from "lucide-react";
+import { Check, Swords, X } from "lucide-react";
 import type {
   Class,
   DndFeat,
@@ -13,11 +13,16 @@ import type {
 } from "@/shared/types";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../shared/ScrollableWhenNeeded";
-import { Input } from "@/components/ui/input";
+import { ListSearchWithFilters } from "@/shared/components/list-filters";
+import type {
+  ListFilterSectionConfig,
+  ListFilterValues,
+} from "@/shared/components/list-filters";
 import { cn } from "@/shared/utils/cn";
 import { getAllDndOptionalFeatures } from "@/features/dnd-optionalfeatures/services/dnd-optionalfeature.service";
 import { getAllDndFeats } from "@/features/dnd-feats/services/dnd-feat.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import { resolveBookSourceName } from "@/features/spells/services/book-source.service";
 import {
   collectOptionPoolRefs,
@@ -63,6 +68,14 @@ import {
   WEAPON_MASTERY_GROUPS,
   WEAPON_MASTERY_OPTIONS,
 } from "../../data/weapon-mastery.data";
+import {
+  asFilterString,
+  asFilterStringArray,
+  buildLibrarySourceFilterSections,
+  dndFeatMatchesTypeFilter,
+  FEAT_LIBRARY_FILTER_SECTIONS,
+} from "@/features/builder/utils/builder-library-filters";
+import { entityMatchesSourceFilter } from "@/shared/utils/compendium-source-filter.utils";
 
 interface OptionalFeatureLibraryPanelProps {
   selectedSlot: BuilderOptionalFeatureSlot;
@@ -94,12 +107,14 @@ export function OptionalFeatureLibraryPanel({
 }: OptionalFeatureLibraryPanelProps) {
   const parsed = parseOptionalFeatureSlot(selectedSlot);
   const bookNames = useBookSourceNames();
+  const catalog = useSourceCatalog();
   const [optionalCatalog, setOptionalCatalog] = useState<DndOptionalFeature[]>(
     [],
   );
   const [featCatalog, setFeatCatalog] = useState<DndFeat[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
+  const [filterValues, setFilterValues] = useState<ListFilterValues>({});
   const [detailItem, setDetailItem] =
     useState<OptionalFeatureCatalogItem | null>(null);
 
@@ -122,6 +137,7 @@ export function OptionalFeatureLibraryPanel({
 
   useEffect(() => {
     setSearch("");
+    setFilterValues({});
     setDetailItem(null);
   }, [selectedSlot]);
 
@@ -266,15 +282,45 @@ export function OptionalFeatureLibraryPanel({
     useRpgbotRatingsLookup(rpgbotOptionalContext);
 
   const q = search.trim().toLowerCase();
+  const sourceFilter = asFilterStringArray(filterValues.src);
+  const featTypeFilter = asFilterString(filterValues.filter);
+
+  const filterSections = useMemo((): ListFilterSectionConfig[] => {
+    const codes = new Set<string>();
+    for (const item of catalogOptions) codes.add(item.source);
+    const sections = buildLibrarySourceFilterSections(codes, catalog, bookNames);
+    if (usesFeatCatalog) {
+      return [...FEAT_LIBRARY_FILTER_SECTIONS, ...sections];
+    }
+    return sections;
+  }, [catalogOptions, catalog, bookNames, usesFeatCatalog]);
+
   const filteredOptions = useMemo(() => {
-    const base = !q
-      ? catalogOptions
-      : catalogOptions.filter(
-          (item) =>
-            item.name.toLowerCase().includes(q) ||
-            item.entries.some((e) => e.toLowerCase().includes(q)) ||
-            item.source.toLowerCase().includes(q),
-        );
+    const base = catalogOptions.filter((item) => {
+      if (
+        q &&
+        !(
+          item.name.toLowerCase().includes(q) ||
+          item.entries.some((e) => e.toLowerCase().includes(q)) ||
+          item.source.toLowerCase().includes(q)
+        )
+      ) {
+        return false;
+      }
+      if (
+        sourceFilter.length > 0 &&
+        !entityMatchesSourceFilter(item, sourceFilter, catalog, bookNames)
+      ) {
+        return false;
+      }
+      if (usesFeatCatalog && featTypeFilter) {
+        const feat = featCatalog.find((f) => f.id === item.id);
+        if (feat && !dndFeatMatchesTypeFilter(feat, featTypeFilter)) {
+          return false;
+        }
+      }
+      return true;
+    });
 
     return sortByRpgbotRating(
       base,
@@ -284,7 +330,18 @@ export function OptionalFeatureLibraryPanel({
           : null,
       (item) => item.name,
     );
-  }, [catalogOptions, q, rpgbotOptionalLookup, rpgbotOptionalReady]);
+  }, [
+    catalogOptions,
+    q,
+    sourceFilter,
+    catalog,
+    bookNames,
+    usesFeatCatalog,
+    featTypeFilter,
+    featCatalog,
+    rpgbotOptionalLookup,
+    rpgbotOptionalReady,
+  ]);
 
   const isPicked = useCallback(
     (item: OptionalFeatureCatalogItem) =>
@@ -529,18 +586,21 @@ export function OptionalFeatureLibraryPanel({
         </div>
       )}
 
-      <div className="relative mb-2">
-        <Search className="pointer-events-none absolute left-2 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="search"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          placeholder={
+      <div className="mb-2">
+        <ListSearchWithFilters
+          compact
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder={
             isWeaponMastery
-              ? "Buscar mastery o arma…"
-              : `Buscar ${progressionLabel.toLowerCase()}…`
+              ? "Search mastery or weapon…"
+              : `Search ${progressionLabel.toLowerCase()}…`
           }
-          className="h-8 pl-7 text-xs"
+          sections={filterSections}
+          filterValues={filterValues}
+          onFiltersApply={setFilterValues}
+          dialogTitle="Library Filters"
+          dialogDescription="Filter optional feature options by source and type."
         />
       </div>
 

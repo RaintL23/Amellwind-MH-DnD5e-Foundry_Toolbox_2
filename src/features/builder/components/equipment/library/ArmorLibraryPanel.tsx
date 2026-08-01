@@ -14,6 +14,7 @@ import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSl
 import { checkArmorProficiency } from "@/features/builder/utils/equipment-proficiency.utils";
 import { matchesEquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
+import { armorMatchesLibraryFilters } from "@/features/builder/utils/builder-library-filters";
 import {
   buildArmorInventoryBundle,
   buildShieldInventoryBundle,
@@ -23,6 +24,7 @@ import { blocksOffHand } from "@/features/weapons/utils/weapon-hands.utils";
 import { useSelectedClass } from "@/features/builder/hooks/useBuilderSelections";
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
+import type { ListFilterValues } from "@/shared/components/list-filters";
 import type { ArmorItem } from "@/shared/types";
 import { ArmorLibraryDetail } from "./ArmorLibraryDetail";
 import { ArmorList, TrinketList } from "./shared/LibraryLists";
@@ -32,6 +34,7 @@ interface ArmorLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
   q: string;
   rarityFilter?: EquipmentRarityFilter;
+  listFilters?: ListFilterValues;
 }
 
 function getArmorRarityLabel(armor: ArmorItem): string {
@@ -42,6 +45,7 @@ export function ArmorLibraryPanel({
   selectedSlot,
   q,
   rarityFilter = "Standard",
+  listFilters = {},
 }: ArmorLibraryPanelProps) {
   const {
     armor,
@@ -120,9 +124,10 @@ export function ArmorLibraryPanel({
     return inventoryArmors.filter(
       (a) =>
         a.name.toLowerCase().includes(q) &&
-        matchesRarity(a),
+        matchesRarity(a) &&
+        armorMatchesLibraryFilters(a, listFilters),
     );
-  }, [inventoryArmors, isArmorSlot, q, matchesRarity]);
+  }, [inventoryArmors, isArmorSlot, q, matchesRarity, listFilters]);
 
   const catalogArmorsFiltered = useMemo(() => {
     if (!isArmorSlot) return [];
@@ -131,9 +136,17 @@ export function ArmorLibraryPanel({
       (a) =>
         a.name.toLowerCase().includes(q) &&
         !invNames.has(a.name) &&
-        matchesRarity(a),
+        matchesRarity(a) &&
+        armorMatchesLibraryFilters(a, listFilters),
     );
-  }, [catalogArmors, inventoryArmors, isArmorSlot, q, matchesRarity]);
+  }, [
+    catalogArmors,
+    inventoryArmors,
+    isArmorSlot,
+    q,
+    matchesRarity,
+    listFilters,
+  ]);
 
   const inventoryTrinketsFiltered = useMemo(() => {
     if (!isTrinketSlot) return [];

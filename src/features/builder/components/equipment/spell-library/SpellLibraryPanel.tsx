@@ -1,19 +1,20 @@
-import { BookOpen, Search } from "lucide-react";
+import { BookOpen } from "lucide-react";
 import type { Spell } from "@/shared/types";
 import type {
   BuilderSpellSelection,
   BuilderSpellSelections,
 } from "@/shared/types";
-import type { SpellLevelSlot, BuilderPactSpellSlot, BuilderBonusCantripSlot } from "@/shared/types";
+import type {
+  SpellLevelSlot,
+  BuilderPactSpellSlot,
+  BuilderBonusCantripSlot,
+} from "@/shared/types";
 import type { SpellcastingInfo } from "@/features/builder/hooks/useSpellcasting";
 import { BuilderPanel } from "../../shared/BuilderPanel";
 import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
-import { Input } from "@/components/ui/input";
+import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import { cn } from "@/shared/utils/cn";
-import {
-  EmptyState,
-  SectionLabel,
-} from "../library/shared/LibraryUi";
+import { EmptyState, SectionLabel } from "../library/shared/LibraryUi";
 import { findSpellByName } from "@/features/builder/utils/spell-selection.utils";
 import { isSpeciesLineageSpell } from "@/features/builder/utils/species-spell-grants.utils";
 import { AvailableSpellRow } from "./AvailableSpellRow";
@@ -51,6 +52,10 @@ export function SpellLibraryPanel({
   const {
     search,
     setSearch,
+    filterValues,
+    setFilterValues,
+    filterSections,
+    spellPool,
     selectionLevel,
     chosenAtLevel,
     speciesLineageAtLevel,
@@ -78,6 +83,12 @@ export function SpellLibraryPanel({
     onAddSpell,
   });
 
+  const hasActiveQueryOrFilters =
+    !!search.trim() ||
+    Object.values(filterValues).some((v) =>
+      Array.isArray(v) ? v.length > 0 : !!v,
+    );
+
   return (
     <BuilderPanel
       title={
@@ -103,14 +114,17 @@ export function SpellLibraryPanel({
         </span>
       }
     >
-      <div className="relative mb-2">
-        <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          type="text"
-          placeholder="Search spell name..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          className="h-8 pl-8 text-xs"
+      <div className="mb-2">
+        <ListSearchWithFilters
+          compact
+          searchValue={search}
+          onSearchChange={setSearch}
+          searchPlaceholder="Search spell name..."
+          sections={filterSections}
+          filterValues={filterValues}
+          onFiltersApply={setFilterValues}
+          dialogTitle="Spell Filters"
+          dialogDescription="Filter by school, components, damage, saves, cast time, sources, and more. Select Sources to include UA and partnered books."
         />
       </div>
 
@@ -127,7 +141,7 @@ export function SpellLibraryPanel({
               <SubclassGrantRow
                 key={`prepared-${grant.name}`}
                 grant={grant}
-                spell={findSpellByName(allSpells, grant.name)}
+                spell={findSpellByName(spellPool, grant.name)}
                 badge="Always prepared spells by subclass"
               />
             ))}
@@ -146,7 +160,7 @@ export function SpellLibraryPanel({
               <SubclassGrantRow
                 key={`known-${grant.name}`}
                 grant={grant}
-                spell={findSpellByName(allSpells, grant.name)}
+                spell={findSpellByName(spellPool, grant.name)}
                 badge="Bonus known spells by subclass"
               />
             ))}
@@ -160,7 +174,7 @@ export function SpellLibraryPanel({
               <SubclassGrantRow
                 key={`opt-${grant.name}`}
                 grant={grant}
-                spell={findSpellByName(allSpells, grant.name)}
+                spell={findSpellByName(spellPool, grant.name)}
                 badge={
                   grant.grantType === "bonus-known"
                     ? "Bonus known (feature)"
@@ -182,8 +196,8 @@ export function SpellLibraryPanel({
                 key={spell.id}
                 spell={spell}
                 fullSpell={
-                  allSpells.find((s) => s.id === spell.id) ??
-                  findSpellByName(allSpells, spell.name)
+                  spellPool.find((s) => s.id === spell.id) ??
+                  findSpellByName(spellPool, spell.name)
                 }
                 removable={false}
               />
@@ -198,7 +212,7 @@ export function SpellLibraryPanel({
               <SelectedSpellRow
                 key={spell.id}
                 spell={spell}
-                fullSpell={allSpells.find((s) => s.id === spell.id)}
+                fullSpell={spellPool.find((s) => s.id === spell.id)}
                 onRemove={() => onRemoveSpell(selectionLevel, spell.id)}
                 removable={!isSpeciesLineageSpell(spell)}
               />
@@ -210,9 +224,9 @@ export function SpellLibraryPanel({
           <EmptyState text="Loading spells..." />
         ) : isAtCapacity ? (
           <EmptyState text={disabledHint} />
-        ) : availableSpells.length === 0 && !search.trim() ? (
+        ) : availableSpells.length === 0 && !hasActiveQueryOrFilters ? (
           <EmptyState text={`No spells of ${levelLabel} for ${className}.`} />
-        ) : availableSpells.length === 0 && search.trim() ? (
+        ) : availableSpells.length === 0 && hasActiveQueryOrFilters ? (
           <EmptyState text="No results." />
         ) : (
           <>

@@ -37,6 +37,11 @@ import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.uti
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import type { FeatDataSource } from "@/features/builder/components/shared/FeatSourceBadgeGroup";
 import type { BuilderFeatSelection, DndFeat, Feat } from "@/shared/types";
+import type { ListFilterValues } from "@/shared/components/list-filters";
+import {
+  asFilterString,
+  dndFeatMatchesTypeFilter,
+} from "@/features/builder/utils/builder-library-filters";
 import { AsiLibraryPanel } from "../AsiLibraryPanel";
 import { FeatLibraryDetail } from "./FeatLibraryDetail";
 import { FeatList } from "./shared/LibraryLists";
@@ -57,6 +62,7 @@ interface FeatLibraryPanelProps {
   onFeatSourceChange: (source: FeatDataSource) => void;
   onShowAsiPanelChange?: (show: boolean) => void;
   onSearchHiddenChange?: (hidden: boolean) => void;
+  listFilters?: ListFilterValues;
 }
 
 export function FeatLibraryPanel({
@@ -66,6 +72,7 @@ export function FeatLibraryPanel({
   onFeatSourceChange: _onFeatSourceChange,
   onShowAsiPanelChange,
   onSearchHiddenChange,
+  listFilters = {},
 }: FeatLibraryPanelProps) {
   const [featDetail, setFeatDetail] = useState<Feat | DndFeat | null>(null);
   const [featDetailLoading, setFeatDetailLoading] = useState(false);
@@ -208,10 +215,15 @@ export function FeatLibraryPanel({
     onSearchHiddenChange?.(showAsiPanel || showFeatDetail);
   }, [showAsiPanel, showFeatDetail, onSearchHiddenChange]);
 
+  const featTypeFilter = asFilterString(listFilters.filter);
+
   const featListOptions = useMemo((): LibraryListOption[] => {
     if (isAnyOriginFeatSlotSelected) {
       const originFeats = dndFeats.filter(
-        (f) => isDnd2024Feat(f) && f.isOriginFeat,
+        (f) =>
+          isDnd2024Feat(f) &&
+          f.isOriginFeat &&
+          dndFeatMatchesTypeFilter(f, featTypeFilter),
       );
       const deduped = dedupeByNameToListOptions(originFeats, (group) =>
         group
@@ -239,6 +251,7 @@ export function FeatLibraryPanel({
     );
 
     if (featSource === "amellwind") {
+      // Amellwind feats lack D&D feat-type facets; ignore type filter.
       const list = amellwindFeats
         .filter((f) => f.name !== ABILITY_SCORE_IMPROVEMENT.name)
         .map((f) => ({
@@ -252,8 +265,14 @@ export function FeatLibraryPanel({
 
     const editionFeats =
       featSource === "dnd2014"
-        ? dndFeats.filter((f) => !isDnd2024Feat(f))
-        : dndFeats.filter((f) => isDnd2024Feat(f));
+        ? dndFeats.filter(
+            (f) =>
+              !isDnd2024Feat(f) && dndFeatMatchesTypeFilter(f, featTypeFilter),
+          )
+        : dndFeats.filter(
+            (f) =>
+              isDnd2024Feat(f) && dndFeatMatchesTypeFilter(f, featTypeFilter),
+          );
 
     const deduped = dedupeByNameToListOptions(editionFeats, (group) =>
       group
@@ -283,6 +302,7 @@ export function FeatLibraryPanel({
     q,
     rpgbotFeatLookup,
     rpgbotFeatReady,
+    featTypeFilter,
   ]);
 
   const isDndFeatSelection =

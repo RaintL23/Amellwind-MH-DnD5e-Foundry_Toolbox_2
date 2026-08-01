@@ -31,6 +31,12 @@ import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.uti
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import { LibraryList } from "@/features/builder/components/shared/LibraryList";
 import type { Class } from "@/shared/types";
+import type { ListFilterValues } from "@/shared/components/list-filters";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
+import {
+  asFilterStringArray,
+  libraryOptionMatchesSourceFilter,
+} from "@/features/builder/utils/builder-library-filters";
 import { ClassLibraryDetail } from "./ClassLibraryDetail";
 import { SubclassLibraryDetail } from "./shared/SubclassLibraryDetail";
 import { EmptyState } from "./shared/LibraryUi";
@@ -38,9 +44,14 @@ import { EmptyState } from "./shared/LibraryUi";
 interface ClassLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
   q: string;
+  listFilters?: ListFilterValues;
 }
 
-export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
+export function ClassLibraryPanel({
+  selectedSlot,
+  q,
+  listFilters = {},
+}: ClassLibraryPanelProps) {
   const [classOptions, setClassOptions] = useState<LibraryListOption[]>([]);
   const [classCatalog, setClassCatalog] = useState<Class[]>([]);
   const [classLoading, setClassLoading] = useState(false);
@@ -69,6 +80,8 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
     bookNames,
   } = useClassVariants(classData);
   const identityBookNames = useBookSourceNames();
+  const catalog = useSourceCatalog();
+  const sourceFilter = asFilterStringArray(listFilters.src);
 
   const isClassSlot = selectedSlot === "class";
   const isSubclassSlot = selectedSlot === "subclass";
@@ -149,6 +162,16 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
       );
       options = options.filter((o) => !takenIds.has(o.id));
     }
+    if (sourceFilter.length > 0) {
+      options = options.filter((option) =>
+        libraryOptionMatchesSourceFilter(
+          option,
+          sourceFilter,
+          catalog,
+          identityBookNames,
+        ),
+      );
+    }
     return options;
   }, [
     classOptions,
@@ -157,6 +180,9 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
     q,
     classSelection?.id,
     multiclassEntries,
+    sourceFilter,
+    catalog,
+    identityBookNames,
   ]);
 
   const classById = useMemo(() => {
@@ -239,13 +265,30 @@ export function ClassLibraryPanel({ selectedSlot, q }: ClassLibraryPanelProps) {
   ]);
 
   const subclassFiltered = useMemo(() => {
-    return prepareLibraryListOptions(
+    const prepared = prepareLibraryListOptions(
       subclassOptions,
       q,
       rpgbotSubclassLookup,
       rpgbotSubclassReady,
     );
-  }, [subclassOptions, q, rpgbotSubclassLookup, rpgbotSubclassReady]);
+    if (sourceFilter.length === 0) return prepared;
+    return prepared.filter((option) =>
+      libraryOptionMatchesSourceFilter(
+        option,
+        sourceFilter,
+        catalog,
+        identityBookNames,
+      ),
+    );
+  }, [
+    subclassOptions,
+    q,
+    rpgbotSubclassLookup,
+    rpgbotSubclassReady,
+    sourceFilter,
+    catalog,
+    identityBookNames,
+  ]);
 
   const activeSubclass = useMemo(() => {
     if (!classData || !subclass) return null;

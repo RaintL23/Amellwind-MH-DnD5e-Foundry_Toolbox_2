@@ -32,6 +32,7 @@ import { WeaponModeToggle } from "@/features/weapons/components/WeaponModeToggle
 import {
   getActiveWeaponDamage,
   getActiveWeaponDamageLabel,
+  getActiveWeaponDamageType,
   getActiveWeaponGripMode,
   getWeaponGripModeHint,
   hasWeaponGripModes,
@@ -260,7 +261,8 @@ export function WeaponLibraryDetail({
 
   const activeDamage = getActiveWeaponDamage(equipped);
   const damageModeLabel = getActiveWeaponDamageLabel(equipped);
-  const damageTypeLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
+  const activeDamageType = getActiveWeaponDamageType(equipped);
+  const damageTypeLabel = DMG_TYPE_LABELS[activeDamageType] ?? activeDamageType;
   const activeGripMode = getActiveWeaponGripMode(equipped);
   const showModeToggle = onModeChange && hasWeaponGripModes(weapon);
   const showIntegratedShield = activeGripMode?.hasShield ?? false;

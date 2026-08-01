@@ -1,5 +1,13 @@
 import { useRef, type ChangeEvent } from "react";
-import { ChevronDown, Dices, FileDown, FileJson, FileUp, RotateCcw, User } from "lucide-react";
+import {
+  ChevronDown,
+  Dices,
+  FileDown,
+  FileJson,
+  FileUp,
+  RotateCcw,
+  User,
+} from "lucide-react";
 import { useCharacterSheetExport } from "../../hooks/useCharacterSheetExport";
 import { useFoundryExport } from "../../hooks/useFoundryExport";
 import { useFoundryImport } from "../../hooks/useFoundryImport";
@@ -42,8 +50,11 @@ export function StatsPanel() {
     useAmellwindHomebrew,
   } = useCharacterBuilder();
   const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
-  const { exportSheet, exporting, error: exportError } =
-    useCharacterSheetExport();
+  const {
+    exportSheet,
+    exporting,
+    error: exportError,
+  } = useCharacterSheetExport();
   const {
     exportFoundry,
     exporting: exportingFoundry,
@@ -57,8 +68,13 @@ export function StatsPanel() {
     clearResult: clearFoundryImport,
   } = useFoundryImport();
   const foundryFileInputRef = useRef<HTMLInputElement>(null);
-  const { evaluate, activateHighlight, clearHighlight, highlightActive, issues } =
-    useBuildCompleteness();
+  const {
+    evaluate,
+    activateHighlight,
+    clearHighlight,
+    highlightActive,
+    issues,
+  } = useBuildCompleteness();
   const { lawChaos, goodEvil } = parseAlignmentAxes(character.alignment);
 
   async function handleExportPdf() {
@@ -81,9 +97,7 @@ export function StatsPanel() {
     void exportFoundry();
   }
 
-  function handleFoundryFileSelected(
-    event: ChangeEvent<HTMLInputElement>,
-  ) {
+  function handleFoundryFileSelected(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     event.target.value = "";
     if (!file) return;
@@ -270,15 +284,17 @@ export function StatsPanel() {
             <Checkbox
               id="multiclass-toggle"
               checked={multiclassEnabled}
-              onCheckedChange={(checked) => setMulticlassEnabled(checked === true)}
+              onCheckedChange={(checked) =>
+                setMulticlassEnabled(checked === true)
+              }
               className="h-3.5 w-3.5"
-              aria-label="Activar multiclase"
+              aria-label="Activate multiclass"
             />
             <Label
               htmlFor="multiclass-toggle"
               className="cursor-pointer text-[10px] font-normal text-muted-foreground"
             >
-              Multiclase
+              Multiclass
             </Label>
           </div>
           <Button

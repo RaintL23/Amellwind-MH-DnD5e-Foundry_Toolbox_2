@@ -29,6 +29,8 @@ import { buildWeaponInventoryBundle } from "@/features/builder/utils/equipment-i
 import { matchesEquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 
 import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
+import { weaponMatchesLibraryFilters } from "@/features/builder/utils/builder-library-filters";
+import type { ListFilterValues } from "@/shared/components/list-filters";
 
 import type { Weapon } from "@/shared/types";
 
@@ -42,6 +44,8 @@ interface WeaponLibraryPanelProps {
   q: string;
 
   rarityFilter?: EquipmentRarityFilter;
+
+  listFilters?: ListFilterValues;
 }
 
 function getWeaponRarityLabel(weapon: Weapon): string {
@@ -54,6 +58,8 @@ export function WeaponLibraryPanel({
   q,
 
   rarityFilter = "Standard",
+
+  listFilters = {},
 }: WeaponLibraryPanelProps) {
   const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
 
@@ -136,9 +142,12 @@ export function WeaponLibraryPanel({
     if (!isWeaponSlot) return [];
 
     return inventoryWeapons.filter(
-      (w) => w.name.toLowerCase().includes(q) && matchesRarity(w),
+      (w) =>
+        w.name.toLowerCase().includes(q) &&
+        matchesRarity(w) &&
+        weaponMatchesLibraryFilters(w, listFilters),
     );
-  }, [inventoryWeapons, isWeaponSlot, q, matchesRarity]);
+  }, [inventoryWeapons, isWeaponSlot, q, matchesRarity, listFilters]);
 
   const catalogWeaponsFiltered = useMemo(() => {
     if (!isWeaponSlot) return [];
@@ -149,9 +158,17 @@ export function WeaponLibraryPanel({
       (w) =>
         w.name.toLowerCase().includes(q) &&
         !invNames.has(w.name) &&
-        matchesRarity(w),
+        matchesRarity(w) &&
+        weaponMatchesLibraryFilters(w, listFilters),
     );
-  }, [allWeapons, inventoryWeapons, isWeaponSlot, q, matchesRarity]);
+  }, [
+    allWeapons,
+    inventoryWeapons,
+    isWeaponSlot,
+    q,
+    matchesRarity,
+    listFilters,
+  ]);
 
   const equippedWeapon =
     selectedSlot === "mainHand"

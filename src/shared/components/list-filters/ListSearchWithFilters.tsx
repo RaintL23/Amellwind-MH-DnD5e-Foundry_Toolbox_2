@@ -23,6 +23,8 @@ interface ListSearchWithFiltersProps {
   dialogDescription?: string;
   className?: string;
   inputClassName?: string;
+  /** Narrow layouts (builder library): always horizontal, smaller controls. */
+  compact?: boolean;
 }
 
 export function ListSearchWithFilters({
@@ -36,6 +38,7 @@ export function ListSearchWithFilters({
   dialogDescription,
   className,
   inputClassName,
+  compact = false,
 }: ListSearchWithFiltersProps) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const defaults = buildDefaultFilterValues(sections);
@@ -52,17 +55,28 @@ export function ListSearchWithFilters({
     <>
       <div
         className={cn(
-          "flex flex-col sm:flex-row gap-2",
+          compact ? "flex flex-row gap-2" : "flex flex-col sm:flex-row gap-2",
           className,
         )}
       >
         <div className="relative flex-1 min-w-0">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground pointer-events-none" />
+          <Search
+            className={cn(
+              "absolute left-2.5 text-muted-foreground pointer-events-none",
+              compact
+                ? "top-1/2 h-3.5 w-3.5 -translate-y-1/2"
+                : "top-2.5 h-4 w-4",
+            )}
+          />
           <Input
             placeholder={searchPlaceholder}
             value={searchValue}
             onChange={(e) => onSearchChange(e.target.value)}
-            className={cn("pl-8", inputClassName)}
+            className={cn(
+              "pl-8",
+              compact && "h-8 text-xs",
+              inputClassName,
+            )}
           />
         </div>
 
@@ -70,10 +84,15 @@ export function ListSearchWithFilters({
           <Button
             type="button"
             variant="outline"
-            className="shrink-0 gap-2"
+            className={cn(
+              "shrink-0 gap-2",
+              compact && "h-8 px-2.5 text-xs",
+            )}
             onClick={() => setDialogOpen(true)}
           >
-            <SlidersHorizontal className="h-4 w-4" />
+            <SlidersHorizontal
+              className={cn(compact ? "h-3.5 w-3.5" : "h-4 w-4")}
+            />
             Filters
             {activeFilterCount > 0 && (
               <Badge
