@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/shared/utils/cn";
 import type { CustomWeapon } from "../types/weapon-forge.types";
+import { FoundryModuleRequirementsNotice } from "@/features/builder/foundry-export/FoundryModuleRequirementsNotice";
 
 interface WeaponForgeExportMenuProps {
   weapon: CustomWeapon;
@@ -99,6 +100,9 @@ export function WeaponForgeExportMenu({
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         )}
+        <div className="max-w-[16rem] border-t border-border px-2 py-1.5">
+          <FoundryModuleRequirementsNotice kind="weapon" compact />
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -33,6 +33,7 @@ import { BuilderPanel } from "../shared/BuilderPanel";
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { MulticlassPanel } from "./MulticlassPanel";
 import { NumberStepper } from "../shared/NumberStepper";
+import { FoundryModuleRequirementsNotice } from "../../foundry-export/FoundryModuleRequirementsNotice";
 
 const ICON_BUTTON_CLASS = "h-6 w-6 shrink-0";
 
@@ -181,6 +182,7 @@ export function StatsPanel() {
         {foundryError && (
           <p className="text-[10px] text-destructive">{foundryError}</p>
         )}
+        <FoundryModuleRequirementsNotice kind="actor" compact className="px-0.5" />
         {importingFoundry && (
           <p className="text-[10px] text-muted-foreground">
             Importando Foundry VTT JSON…

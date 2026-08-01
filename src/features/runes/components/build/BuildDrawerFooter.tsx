@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRuneBuild } from "../../context/RuneBuildContext";
 import { downloadAllBuildRuneJsons } from "../../utils/rune-foundry-export";
+import { FoundryModuleRequirementsNotice } from "@/features/builder/foundry-export/FoundryModuleRequirementsNotice";
 
 interface BuildDrawerFooterProps {
   totalRunes: number;
@@ -43,6 +44,7 @@ export function BuildDrawerFooter({ totalRunes, totalViolations }: BuildDrawerFo
       <p className="mt-1 text-xs text-muted-foreground/60 italic">
         Los cambios no se guardan entre sesiones.
       </p>
+      <FoundryModuleRequirementsNotice kind="rune" compact className="mt-2" />
       <Button
         onClick={handleDownload}
         variant="outline"
