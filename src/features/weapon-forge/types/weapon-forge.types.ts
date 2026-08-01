@@ -105,6 +105,8 @@ export interface CustomWeapon extends Weapon {
   isCustom: boolean;
   /** Homebrew author (e.g. RaintDM, community variant author). */
   author?: string;
+  /** Optional Foundry/app icon path override. */
+  img?: string;
   /** Custom feature definitions with descriptions (RaintDM forge). */
   customFeatures?: WeaponForgeFeatureDef[];
 }
