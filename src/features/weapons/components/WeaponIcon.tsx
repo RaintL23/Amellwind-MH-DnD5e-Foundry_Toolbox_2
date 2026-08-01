@@ -1,30 +1,37 @@
 import { useEffect, useMemo, useState } from "react";
 import { Swords } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { getWeaponIconUrlCandidates } from "../utils/weapon-icon.utils";
+import {
+  getWeaponIconUrlCandidates,
+  normalizeMhIconPath,
+} from "../utils/weapon-icon.utils";
 
 interface WeaponIconProps {
   weaponName: string;
+  /** Explicit icon path override (e.g. `/mh-icons/weapon_greatsword.webp`). */
+  img?: string | null;
   className?: string;
   fallbackClassName?: string;
 }
 
 export function WeaponIcon({
   weaponName,
+  img,
   className,
   fallbackClassName,
 }: WeaponIconProps) {
-  const candidates = useMemo(
-    () => getWeaponIconUrlCandidates(weaponName),
-    [weaponName],
-  );
+  const candidates = useMemo(() => {
+    const explicit = normalizeMhIconPath(img);
+    if (explicit) return [explicit];
+    return getWeaponIconUrlCandidates(weaponName);
+  }, [img, weaponName]);
   const [candidateIndex, setCandidateIndex] = useState(0);
   const [failed, setFailed] = useState(false);
 
   useEffect(() => {
     setCandidateIndex(0);
     setFailed(false);
-  }, [weaponName]);
+  }, [img, weaponName]);
 
   const iconUrl = candidates[candidateIndex];
 
