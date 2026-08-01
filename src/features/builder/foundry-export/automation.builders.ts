@@ -1,6 +1,7 @@
 import type { FoundryItem } from "./foundry.types";
 import { buildEffect } from "./effect.builders";
 import { lookupAutomation } from "./automation.data";
+import { linkNonTransferEffectsToActivities } from "./midi.utils";
 
 function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
@@ -54,4 +55,6 @@ export function applyItemAutomation(item: FoundryItem, source?: string): void {
   if (overlay.flags) {
     item.flags = deepMerge(item.flags, overlay.flags);
   }
+
+  linkNonTransferEffectsToActivities(item);
 }

@@ -439,7 +439,16 @@ const AUTOMATIONS: Record<string, AutomationOverlay> = {
 /** Returns the automation overlay for an item name, if one exists. */
 export function lookupAutomation(
   name: string,
-  _source?: string,
+  source?: string,
 ): AutomationOverlay | undefined {
-  return AUTOMATIONS[name.trim().toLowerCase()];
+  const overlay = AUTOMATIONS[name.trim().toLowerCase()];
+  if (!overlay) return undefined;
+  if (
+    source &&
+    overlay.source &&
+    overlay.source.trim().toLowerCase() !== source.trim().toLowerCase()
+  ) {
+    return overlay;
+  }
+  return overlay;
 }
