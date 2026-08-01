@@ -11,6 +11,8 @@ import {
   syncDamageFromModes,
 } from "@/features/weapons/utils/weapon-mode.utils";
 import type { WeaponForgeFormValues } from "../types/weapon-forge.types";
+import { WeaponForgeProficiencyFields } from "./WeaponForgeProficiencyFields";
+import { WeaponIconPicker } from "./WeaponIconPicker";
 import { WeaponModesEditor } from "./WeaponModesEditor";
 
 const PROPERTY_OPTIONS = Object.entries(PROPERTY_LABELS).map(
@@ -21,6 +23,24 @@ const DMG_OPTIONS = Object.entries(DMG_TYPE_LABELS).map(([value, label]) => ({
   value,
   label,
 }));
+
+function shieldPatchFromModes(
+  modes: WeaponForgeFormValues["modes"],
+  currentAcBonus: string,
+  previouslyIncludedShield: boolean,
+): Partial<WeaponForgeFormValues> {
+  const anyShield = modes.some((m) => m.hasShield === true);
+  const patch: Partial<WeaponForgeFormValues> = {
+    includesShield: anyShield,
+    acBonus: anyShield ? currentAcBonus.trim() || "2" : "",
+  };
+  if (anyShield && !previouslyIncludedShield) {
+    patch.requiresShieldProficiency = true;
+  } else if (!anyShield) {
+    patch.requiresShieldProficiency = false;
+  }
+  return patch;
+}
 
 interface WeaponForgeBasicsFieldsProps {
   values: WeaponForgeFormValues;
@@ -49,16 +69,31 @@ export function WeaponForgeBasicsFields({
   };
 
   const enableModes = () => {
-    const seeded = createDefaultForgeModes(
+    let seeded = createDefaultForgeModes(
       values.dmg1 || "1d8",
       values.dmg2 || values.dmg1 || "1d8",
+      values.dmgType || "S",
     );
+    if (values.includesShield) {
+      seeded = seeded.map((mode, index) =>
+        index === 0
+          ? {
+              ...mode,
+              hasShield: true,
+              blocksOffHand: true,
+              isTwoHanded: false,
+            }
+          : mode,
+      );
+    }
     const synced = syncDamageFromModes(seeded);
     onPatchMany({
       modes: seeded,
       dmg1: synced.dmg1,
       dmg2: synced.dmg2 ?? "",
+      dmgType: synced.dmgType || values.dmgType,
       properties: values.properties.filter((p) => p !== "V"),
+      ...shieldPatchFromModes(seeded, values.acBonus, values.includesShield),
     });
   };
 
@@ -72,12 +107,14 @@ export function WeaponForgeBasicsFields({
       modes,
       dmg1: synced.dmg1,
       dmg2: synced.dmg2 ?? "",
+      ...(synced.dmgType ? { dmgType: synced.dmgType } : {}),
+      ...shieldPatchFromModes(modes, values.acBonus, values.includesShield),
     });
   };
 
   return (
     <div className="grid gap-4 sm:grid-cols-3">
-      <div className="sm:col-span-2 space-y-1.5">
+      <div className="sm:col-span-1 space-y-1.5">
         <Label htmlFor="wf-name">Name</Label>
         <Input
           id="wf-name"
@@ -99,6 +136,11 @@ export function WeaponForgeBasicsFields({
           Who created this variant (RaintDM, community author, etc.).
         </p>
       </div>
+      <WeaponIconPicker
+        value={values.img}
+        weaponName={values.name}
+        onChange={(path) => onPatch("img", path)}
+      />
       <div className="space-y-1.5">
         <Label>Properties</Label>
         <MultiSelect
@@ -130,9 +172,18 @@ export function WeaponForgeBasicsFields({
               placeholder="1d10"
             />
           </div>
+          <DamageTypeField
+            value={values.dmgType}
+            onChange={(v) => onPatch("dmgType", v)}
+          />
         </>
       ) : hasModes ? (
-        <WeaponModesEditor modes={values.modes} onChange={handleModesChange} />
+        <WeaponModesEditor
+          modes={values.modes}
+          defaultDmgType={values.dmgType || "S"}
+          onChange={handleModesChange}
+          onClearModes={clearModes}
+        />
       ) : (
         <>
           <div className="space-y-1.5">
@@ -144,8 +195,17 @@ export function WeaponForgeBasicsFields({
               placeholder="1d8"
             />
           </div>
-          <div className="sm:col-span-2 flex flex-wrap items-end gap-2">
-            <Button type="button" variant="outline" size="sm" onClick={enableModes}>
+          <DamageTypeField
+            value={values.dmgType}
+            onChange={(v) => onPatch("dmgType", v)}
+          />
+          <div className="sm:col-span-3 flex flex-wrap items-center gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={enableModes}
+            >
               Add weapon modes
             </Button>
             <p className="text-[11px] text-muted-foreground">
@@ -155,26 +215,13 @@ export function WeaponForgeBasicsFields({
         </>
       )}
 
-      {hasModes && (
-        <div className="sm:col-span-3">
-          <Button type="button" variant="ghost" size="sm" onClick={clearModes}>
-            Remove modes (single damage die)
-          </Button>
-        </div>
-      )}
-
-      <div className="space-y-1.5">
-        <Label>Damage type</Label>
-        <Select
-          value={values.dmgType}
-          onChange={(e) => onPatch("dmgType", e.target.value)}
-        >
-          {DMG_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </Select>
+      <div className="sm:col-span-3">
+        <WeaponForgeProficiencyFields
+          values={values}
+          onPatch={onPatch}
+          onPatchMany={onPatchMany}
+          hasModes={hasModes}
+        />
       </div>
 
       <div className="space-y-1.5">
@@ -226,27 +273,50 @@ export function WeaponForgeBasicsFields({
         </Label>
       </div>
 
-      <div className="sm:col-span-3 space-y-1.5">
-        <Label htmlFor="wf-desc">Description</Label>
-        <Textarea
-          id="wf-desc"
-          value={values.description}
-          onChange={(e) => onPatch("description", e.target.value)}
-          rows={3}
-        />
-      </div>
+      <div className="sm:col-span-3 grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <div className="space-y-1.5">
+          <Label htmlFor="wf-desc">Description</Label>
+          <Textarea
+            id="wf-desc"
+            value={values.description}
+            onChange={(e) => onPatch("description", e.target.value)}
+            rows={3}
+          />
+        </div>
 
-      <div className="sm:col-span-3 space-y-1.5">
-        <Label htmlFor="wf-notes">
-          Supplementary notes (paragraphs separated by blank lines)
-        </Label>
-        <Textarea
-          id="wf-notes"
-          value={values.supplementaryNotes}
-          onChange={(e) => onPatch("supplementaryNotes", e.target.value)}
-          rows={3}
-        />
+        <div className="space-y-1.5">
+          <Label htmlFor="wf-notes">
+            Supplementary notes (paragraphs separated by blank lines)
+          </Label>
+          <Textarea
+            id="wf-notes"
+            value={values.supplementaryNotes}
+            onChange={(e) => onPatch("supplementaryNotes", e.target.value)}
+            rows={3}
+          />
+        </div>
       </div>
+    </div>
+  );
+}
+
+function DamageTypeField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label>Damage type</Label>
+      <Select value={value} onChange={(e) => onChange(e.target.value)}>
+        {DMG_OPTIONS.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </Select>
     </div>
   );
 }

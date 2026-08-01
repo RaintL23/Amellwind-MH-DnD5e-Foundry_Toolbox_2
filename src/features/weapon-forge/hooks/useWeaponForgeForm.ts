@@ -106,6 +106,7 @@ export function useWeaponForgeForm() {
       baseValues.rarityRows = mergeCopiedRarities(weapon, rarities);
       setValues((prev) => {
         if (prev.name.trim()) baseValues.name = prev.name;
+        if (prev.img.trim()) baseValues.img = prev.img;
         return baseValues;
       });
 
@@ -178,6 +179,7 @@ export function useWeaponForgeForm() {
         isCustom: true,
         createdAt: existing?.createdAt,
         author: current.author.trim() || "RaintDM",
+        img: current.img,
         customFeatures: current.customFeatures,
       });
       saveUserWeapon(weapon);

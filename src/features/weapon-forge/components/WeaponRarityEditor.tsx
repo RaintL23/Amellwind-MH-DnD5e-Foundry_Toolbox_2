@@ -103,7 +103,7 @@ const RarityRowItem = memo(function RarityRowItem({
   return (
     <div
       key={`${row.rarity}-${index}`}
-      className="rounded-md border border-border bg-card/40 p-3 space-y-3"
+      className="min-w-0 h-full rounded-md border border-border bg-card/40 p-3 space-y-3"
     >
       <div className="flex flex-wrap items-start gap-3">
         <div className="space-y-1 min-w-[140px] flex-1">
@@ -634,7 +634,7 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
         </Button>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {rows.map((row, index) => (
           <RarityRowItem
             key={`${row.rarity}-${index}`}

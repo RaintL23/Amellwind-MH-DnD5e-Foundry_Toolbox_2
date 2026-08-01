@@ -5,6 +5,7 @@ import type { CustomWeapon } from "../types/weapon-forge.types";
 import {
   deleteUserWeapon,
   exportAllUserWeaponsJson,
+  exportWeaponFoundryJson,
   exportWeaponJson,
   getCuratedWeapons,
   getUserWeapons,
@@ -56,6 +57,7 @@ export function useWeaponForge() {
         isCustom: true,
         createdAt: existing?.createdAt,
         author: values.author.trim() || "RaintDM",
+        img: values.img,
         customFeatures: values.customFeatures,
       });
       const next = saveUserWeapon(weapon);
@@ -79,6 +81,13 @@ export function useWeaponForge() {
   const exportOne = useCallback((weapon: CustomWeapon) => {
     exportWeaponJson(weapon);
   }, []);
+
+  const exportOneFoundry = useCallback(
+    (weapon: CustomWeapon, rarityIndex: number) => {
+      exportWeaponFoundryJson(weapon, rarityIndex);
+    },
+    [],
+  );
 
   const exportAll = useCallback(() => {
     exportAllUserWeaponsJson(userWeapons);
@@ -120,6 +129,7 @@ export function useWeaponForge() {
     removeWeapon,
     importFromJson,
     exportOne,
+    exportOneFoundry,
     exportAll,
     compareSelection,
     toggleCompare,

@@ -66,6 +66,7 @@ export function toCustomWeapon(
     createdAt?: string;
     updatedAt?: string;
     author?: string;
+    img?: string;
     customFeatures?: WeaponForgeFeatureDef[];
   },
 ): CustomWeapon {
@@ -76,6 +77,11 @@ export function toCustomWeapon(
     featureDefsFromRarityRows(weapon.rarityRows);
 
   const existingAuthor = (weapon as CustomWeapon).author;
+  const existingImg = (weapon as CustomWeapon).img;
+  const img =
+    options.img !== undefined
+      ? options.img.trim() || undefined
+      : existingImg?.trim() || undefined;
 
   return {
     ...weapon,
@@ -87,6 +93,7 @@ export function toCustomWeapon(
     source: weapon.source || "RAINTDM",
     contentSource: "amellwind",
     customFeatures,
+    ...(img ? { img } : {}),
   };
 }
 
@@ -120,6 +127,7 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
       ? values.modes.map((m) => ({
           label: m.label.trim() || "Mode",
           damage: m.damage.trim() || "1d8",
+          dmgType: (m.dmgType?.trim() || values.dmgType || "S") as string,
           hasShield: m.hasShield === true,
           isTwoHanded: m.isTwoHanded === true,
           blocksOffHand: m.blocksOffHand === true,
@@ -130,6 +138,7 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
   const dmg2 = modes
     ? modes[1]?.damage
     : values.dmg2.trim() || undefined;
+  const dmgType = modes?.[0]?.dmgType ?? values.dmgType;
 
   const compatible = values.compatibleProficiencies
     .map((s) => s.trim())
@@ -148,7 +157,7 @@ export function formValuesToWeapon(values: WeaponForgeFormValues): Weapon {
     dmg1,
     dmg2,
     modes,
-    dmgType: values.dmgType,
+    dmgType,
     properties: [...values.properties],
     weight: Number.isFinite(values.weight) ? values.weight : 0,
     valueCp: Number.isFinite(values.valueCp) ? values.valueCp : 0,
@@ -236,6 +245,7 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
   if (weapon.range) raw.range = weapon.range;
   if (weapon.isFocus) raw.focus = true;
   if (weapon.page != null) raw.page = weapon.page;
+  if (custom.img?.trim()) raw.img = custom.img.trim();
 
   const raintdmPayload: Record<string, unknown> = {};
   if (custom.author?.trim()) {
@@ -254,6 +264,7 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
     raintdmPayload.modes = weapon.modes.map((m) => ({
       label: m.label,
       damage: m.damage,
+      dmgType: m.dmgType?.trim() || undefined,
       hasShield: m.hasShield === true ? true : undefined,
       isTwoHanded: m.isTwoHanded === true ? true : undefined,
       blocksOffHand: m.blocksOffHand === true ? true : undefined,
@@ -346,6 +357,10 @@ function parseModes(raw: unknown): import("@/shared/types").WeaponModeDef[] | un
     .map((m) => ({
       label: String(m.label ?? "").trim() || "Mode",
       damage: String(m.damage ?? "").trim() || "1d8",
+      dmgType:
+        typeof m.dmgType === "string" && m.dmgType.trim()
+          ? m.dmgType.trim()
+          : undefined,
       hasShield: m.hasShield === true,
       isTwoHanded: m.isTwoHanded === true,
       blocksOffHand: m.blocksOffHand === true,
@@ -409,6 +424,9 @@ function parseDomainWeapon(
   const proficiency =
     parseProficiencyFromRecord(raw) ?? weapon.proficiency;
 
+  const img =
+    typeof raw.img === "string" && raw.img.trim() ? raw.img.trim() : undefined;
+
   return toCustomWeapon(
     {
       ...weapon,
@@ -435,6 +453,7 @@ function parseDomainWeapon(
       createdAt: typeof raw.createdAt === "string" ? raw.createdAt : undefined,
       updatedAt: typeof raw.updatedAt === "string" ? raw.updatedAt : undefined,
       author: parseAuthor(raw),
+      img,
       customFeatures,
     },
   );
@@ -454,6 +473,11 @@ function parseSingleEntry(entry: unknown, isCustom: boolean): CustomWeapon {
     const customFeatures = parseCustomFeatures(raintdm?.customFeatures);
     const modes = parseModesFromRecord(record);
     const proficiency = parseProficiencyFromRecord(record);
+    const img =
+      typeof record.img === "string" && record.img.trim()
+        ? record.img.trim()
+        : undefined;
+
     return toCustomWeapon(
       {
         ...mapped,
@@ -463,6 +487,7 @@ function parseSingleEntry(entry: unknown, isCustom: boolean): CustomWeapon {
       {
         isCustom,
         author: parseAuthor(record),
+        img,
         customFeatures,
       },
     );

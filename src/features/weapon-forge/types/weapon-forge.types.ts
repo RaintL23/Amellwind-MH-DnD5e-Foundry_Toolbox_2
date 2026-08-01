@@ -124,6 +124,8 @@ export type WeaponForgeTab = "catalog" | "mine";
 export interface WeaponForgeFormValues {
   name: string;
   author: string;
+  /** Optional `/mh-icons/...` path; empty = resolve from weapon name. */
+  img: string;
   dmg1: string;
   dmg2: string;
   /** Switch/stance modes (not Versatile). Empty when using Versatile (V) only. */
@@ -172,6 +174,7 @@ export function emptyFormValues(): WeaponForgeFormValues {
   return {
     name: "",
     author: "RaintDM",
+    img: "",
     dmg1: "1d8",
     dmg2: "",
     modes: [],
@@ -351,7 +354,7 @@ export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
   const modes =
     resolvedModes ??
     (weapon.dmg2 && !weapon.properties.includes("V")
-      ? createDefaultForgeModes(weapon.dmg1, weapon.dmg2)
+      ? createDefaultForgeModes(weapon.dmg1, weapon.dmg2, weapon.dmgType || "S")
       : []);
 
   const proficiency = resolveWeaponProficiency(weapon);
@@ -361,9 +364,13 @@ export function weaponToFormValues(weapon: Weapon): WeaponForgeFormValues {
   return {
     name: weapon.name,
     author: customWeapon.author?.trim() || "RaintDM",
+    img: customWeapon.img?.trim() || "",
     dmg1: weapon.dmg1 || "1d8",
     dmg2: weapon.dmg2 ?? "",
-    modes: modes.map((m) => ({ ...m })),
+    modes: modes.map((m) => ({
+      ...m,
+      dmgType: m.dmgType?.trim() || weapon.dmgType || "S",
+    })),
     dmgType: weapon.dmgType || "S",
     properties: [...weapon.properties],
     weight: weapon.weight,

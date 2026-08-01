@@ -36,13 +36,19 @@ interface WeaponForgeProficiencyFieldsProps {
     value: WeaponForgeFormValues[K],
   ) => void;
   onPatchMany: (partial: Partial<WeaponForgeFormValues>) => void;
+  /** When true, integrated shield is configured per mode — hide the weapon-wide toggle. */
+  hasModes?: boolean;
 }
 
 export function WeaponForgeProficiencyFields({
   values,
   onPatch,
   onPatchMany,
+  hasModes = false,
 }: WeaponForgeProficiencyFieldsProps) {
+  const modesWithShield = values.modes.filter((m) => m.hasShield === true);
+  const anyModeHasShield = modesWithShield.length > 0;
+
   const handleIncludesShield = (checked: boolean) => {
     if (checked) {
       onPatchMany({
@@ -160,40 +166,101 @@ export function WeaponForgeProficiencyFields({
             aria-hidden
           />
           <div className="min-w-0 flex-1 space-y-3">
-            <div className="flex items-center gap-2">
-              <Checkbox
-                id="wf-includes-shield"
-                checked={values.includesShield}
-                onCheckedChange={(checked) =>
-                  handleIncludesShield(checked === true)
-                }
-              />
-              <Label htmlFor="wf-includes-shield" className="font-medium text-teal-200">
-                Includes an integrated shield
-                {values.includesShield && values.acBonus.trim()
-                  ? ` (+${values.acBonus.trim()} AC base)`
-                  : ""}
-              </Label>
-            </div>
-
-            {values.includesShield && (
+            {hasModes ? (
               <>
-                <div className="max-w-[10rem] space-y-1">
-                  <Label htmlFor="wf-ac" className="text-xs font-normal">
-                    Base AC bonus
-                  </Label>
-                  <Input
-                    id="wf-ac"
-                    value={values.acBonus}
-                    onChange={(e) => onPatch("acBonus", e.target.value)}
-                    placeholder="2"
-                    inputMode="numeric"
-                  />
+                <div>
+                  <p className="font-medium text-teal-200">
+                    Integrated shield (per mode)
+                    {anyModeHasShield && values.acBonus.trim()
+                      ? ` (+${values.acBonus.trim()} AC base)`
+                      : ""}
+                  </p>
+                  <p className="mt-1 text-xs text-teal-100/80 leading-relaxed">
+                    Each mode can include a shield independently — e.g. Charge
+                    Blade Sword has one, Axe mode does not. Toggle{" "}
+                    <span className="font-medium text-teal-100">
+                      Integrated shield
+                    </span>{" "}
+                    on the mode cards above.
+                  </p>
+                  {anyModeHasShield ? (
+                    <p className="mt-1.5 text-[11px] text-teal-200/90">
+                      Active on:{" "}
+                      {modesWithShield
+                        .map((m) => m.label.trim() || "Unnamed mode")
+                        .join(", ")}
+                    </p>
+                  ) : (
+                    <p className="mt-1.5 text-[11px] text-muted-foreground">
+                      No mode currently includes a shield.
+                    </p>
+                  )}
                 </div>
-                <p className="text-xs text-teal-100/80 leading-relaxed">
-                  The shield occupies your off-hand and cannot be swapped separately.
-                  Extra AC from the rarity table applies while the shield is equipped.
-                </p>
+
+                {anyModeHasShield && (
+                  <>
+                    <div className="max-w-[10rem] space-y-1">
+                      <Label htmlFor="wf-ac" className="text-xs font-normal">
+                        Base AC bonus
+                      </Label>
+                      <Input
+                        id="wf-ac"
+                        value={values.acBonus}
+                        onChange={(e) => onPatch("acBonus", e.target.value)}
+                        placeholder="2"
+                        inputMode="numeric"
+                      />
+                    </div>
+                    <p className="text-xs text-teal-100/80 leading-relaxed">
+                      While a shield mode is active, the shield occupies your
+                      off-hand and cannot be swapped separately. Extra AC from
+                      the rarity table applies while the shield is equipped.
+                    </p>
+                  </>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    id="wf-includes-shield"
+                    checked={values.includesShield}
+                    onCheckedChange={(checked) =>
+                      handleIncludesShield(checked === true)
+                    }
+                  />
+                  <Label
+                    htmlFor="wf-includes-shield"
+                    className="font-medium text-teal-200"
+                  >
+                    Includes an integrated shield
+                    {values.includesShield && values.acBonus.trim()
+                      ? ` (+${values.acBonus.trim()} AC base)`
+                      : ""}
+                  </Label>
+                </div>
+
+                {values.includesShield && (
+                  <>
+                    <div className="max-w-[10rem] space-y-1">
+                      <Label htmlFor="wf-ac" className="text-xs font-normal">
+                        Base AC bonus
+                      </Label>
+                      <Input
+                        id="wf-ac"
+                        value={values.acBonus}
+                        onChange={(e) => onPatch("acBonus", e.target.value)}
+                        placeholder="2"
+                        inputMode="numeric"
+                      />
+                    </div>
+                    <p className="text-xs text-teal-100/80 leading-relaxed">
+                      The shield occupies your off-hand and cannot be swapped
+                      separately. Extra AC from the rarity table applies while
+                      the shield is equipped.
+                    </p>
+                  </>
+                )}
               </>
             )}
           </div>
