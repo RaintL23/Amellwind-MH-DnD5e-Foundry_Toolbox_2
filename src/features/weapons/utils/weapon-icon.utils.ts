@@ -107,8 +107,9 @@ export function resolveCatalogIconForWeaponName(
 }
 
 /**
- * Map an app-relative icon path (`/mh-icons/...`) to a Foundry-friendly img string.
- * Absolute http(s) URLs and already-namespaced Foundry paths pass through.
+ * Map an app-relative icon path (`/mh-icons/...`) to a Foundry img path.
+ * MH icons resolve as `mh-icons/filename.webp` (not `modules/mh-icons/...`).
+ * Absolute http(s) URLs and core `icons/` paths pass through.
  */
 export function toFoundryImgPath(path: string): string | null {
   const trimmed = path.trim();
@@ -116,11 +117,17 @@ export function toFoundryImgPath(path: string): string | null {
   if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("icons/")) {
     return trimmed;
   }
-  if (trimmed.startsWith("/mh-icons/")) {
-    return `modules/mh-icons${trimmed}`;
+
+  let rel = trimmed
+    .replace(/^modules\/mh-icons\//, "")
+    .replace(/^\//, "");
+
+  // Collapse accidental `mh-icons/mh-icons/...`
+  rel = rel.replace(/^(?:mh-icons\/)+/, "mh-icons/");
+
+  if (rel.startsWith("mh-icons/")) return rel;
+  if (/\.(webp|png|jpe?g|svg)$/i.test(rel)) {
+    return `mh-icons/${rel}`;
   }
-  if (trimmed.startsWith("mh-icons/")) {
-    return `modules/${trimmed}`;
-  }
-  return trimmed.replace(/^\//, "");
+  return rel;
 }
