@@ -1,31 +1,31 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Class } from "@/shared/types";
 import {
-  buildSourceOptions,
-  collectEntitySources,
-} from "@/features/spells/services/book-source.service";
-import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { getAllClasses, getListClasses } from "../services/class.service";
+  getAllClasses,
+  getClassFilterSourceCodes,
+  getListClasses,
+} from "../services/class.service";
 
 export function useClassList() {
   const [classes, setClasses] = useState<Class[]>([]);
   const [listClasses, setListClasses] = useState<Class[]>([]);
+  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const bookNames = useBookSourceNames();
 
-  useEffect(() => {
-    Promise.all([getAllClasses(), getListClasses()])
-      .then(([all, list]) => {
-        setClasses(all);
-        setListClasses(list);
-      })
-      .finally(() => setLoading(false));
+  const refresh = useCallback(async () => {
+    const [all, list, codes] = await Promise.all([
+      getAllClasses(),
+      getListClasses(),
+      getClassFilterSourceCodes(),
+    ]);
+    setClasses(all);
+    setListClasses(list);
+    setFilterSourceCodes(codes);
   }, []);
 
-  const sourceOptions = useMemo(
-    () => buildSourceOptions(collectEntitySources(listClasses), bookNames),
-    [listClasses, bookNames],
-  );
+  useEffect(() => {
+    refresh().finally(() => setLoading(false));
+  }, [refresh]);
 
-  return { classes, listClasses, sourceOptions, loading };
+  return { classes, listClasses, filterSourceCodes, loading, refresh };
 }

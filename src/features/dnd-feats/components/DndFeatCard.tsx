@@ -1,3 +1,4 @@
+import { memo } from "react";
 import type { DndFeat } from "@/shared/types";
 import { DND_FEAT_CATEGORY_LABELS } from "@/shared/types";
 import { Card } from "@/components/ui/card";
@@ -5,10 +6,13 @@ import { Award } from "lucide-react";
 
 interface DndFeatCardProps {
   feat: DndFeat;
-  onClick: () => void;
+  onSelect: (feat: DndFeat) => void;
 }
 
-export function DndFeatCard({ feat, onClick }: DndFeatCardProps) {
+export const DndFeatCard = memo(function DndFeatCard({
+  feat,
+  onSelect,
+}: DndFeatCardProps) {
   const preview =
     feat.paragraphs[0] ??
     feat.sections[0]?.paragraphs[0] ??
@@ -23,7 +27,7 @@ export function DndFeatCard({ feat, onClick }: DndFeatCardProps) {
       asChild
       className="w-full text-left p-4 transition-all duration-200 hover:bg-card/80 hover:shadow-lg hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring hover:border-amber-500/40"
     >
-      <button type="button" onClick={onClick}>
+      <button type="button" onClick={() => onSelect(feat)}>
       <div className="flex items-start gap-3 mb-3">
         <div className="rounded-md p-2 shrink-0 bg-amber-950/60">
           <Award className="h-5 w-5 text-amber-400" />
@@ -85,4 +89,4 @@ export function DndFeatCard({ feat, onClick }: DndFeatCardProps) {
       </button>
     </Card>
   );
-}
+});

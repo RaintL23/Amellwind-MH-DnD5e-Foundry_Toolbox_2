@@ -10,10 +10,20 @@ import {
   bySource,
   createEntityService,
 } from "@/shared/services/create-entity-service";
+import {
+  getSourceCatalog,
+  isOnDemandBrewSourceKind,
+} from "@/shared/services/source-catalog.service";
+import {
+  collectUaPropEntries,
+  loadUaBrewDocuments,
+} from "@/shared/services/ua-brew.service";
 import { mapDndFeat } from "../mappers/dnd-feat.mapper";
 import { dedupeDndFeatsByName } from "../utils/dnd-feat-dedupe.utils";
 
 type RawFeatEntry = Record<string, unknown>;
+
+const loadedUaSources = new Set<string>();
 
 const service = createEntityService<RawFeatEntry, DndFeat>({
   loadRaw: async () => {
@@ -30,7 +40,13 @@ const service = createEntityService<RawFeatEntry, DndFeat>({
       ? fluffData.featFluff
       : [];
 
-    const withFluff = attachFluffEntries(rawFeats, fluffEntries);
+    let withFluff = attachFluffEntries(rawFeats, fluffEntries);
+
+    if (loadedUaSources.size > 0) {
+      const docs = await loadUaBrewDocuments(loadedUaSources);
+      const uaFeats = collectUaPropEntries<RawFeatEntry>(docs, "feat");
+      withFluff = [...withFluff, ...uaFeats];
+    }
 
     return resolveByNameSource(
       withFluff as (RawFeatEntry & { name: string; source: string })[],
@@ -48,6 +64,41 @@ export const getListDndFeats = service.getList;
 export const getDndFeatsByName = service.getByName;
 export const getDndFeatById = service.getById;
 export const clearDndFeatCache = service.clearCache;
+
+export async function ensureDndFeatUaSourcesLoaded(
+  sourceCodes: string[],
+): Promise<boolean> {
+  const catalog = await getSourceCatalog();
+  const needed = sourceCodes.filter((code) => {
+    const kind = catalog.get(code)?.kind;
+    return isOnDemandBrewSourceKind(kind) && !loadedUaSources.has(code);
+  });
+  if (needed.length === 0) return false;
+  for (const code of needed) loadedUaSources.add(code);
+  service.clearCache();
+  await service.getAll();
+  return true;
+}
+
+export async function getDndFeatFilterSourceCodes(): Promise<string[]> {
+  const [catalog, list] = await Promise.all([
+    getSourceCatalog(),
+    getListDndFeats(),
+  ]);
+  const codes = new Set(
+    list.flatMap((f) => f.variantSources ?? [f.source]),
+  );
+  for (const [code, entry] of catalog) {
+    if (
+      entry.uaPath &&
+      (entry.uaPath.startsWith("feat/") ||
+        entry.uaPath.startsWith("collection/"))
+    ) {
+      codes.add(code);
+    }
+  }
+  return [...codes];
+}
 
 export async function resolveDndFeatForRef(
   ref: DndBackgroundFeatRef,

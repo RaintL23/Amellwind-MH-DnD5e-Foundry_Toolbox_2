@@ -6,6 +6,14 @@ import {
   bySource,
   createEntityService,
 } from "@/shared/services/create-entity-service";
+import {
+  getSourceCatalog,
+  isOnDemandBrewSourceKind,
+} from "@/shared/services/source-catalog.service";
+import {
+  collectUaPropEntries,
+  loadUaBrewDocuments,
+} from "@/shared/services/ua-brew.service";
 import { mapDndRace } from "../mappers/dnd-race.mapper";
 import {
   dedupeDndRacesByName,
@@ -14,6 +22,8 @@ import {
 } from "../utils/dnd-race-dedupe.utils";
 
 type RawRaceEntry = Record<string, unknown>;
+
+const loadedUaSources = new Set<string>();
 
 const service = createEntityService<RawRaceEntry, DndRace>({
   loadRaw: async () => {
@@ -25,10 +35,21 @@ const service = createEntityService<RawRaceEntry, DndRace>({
     const rawRaces = Array.isArray(data.race) ? data.race : [];
     const rawSubraces = Array.isArray(data.subrace) ? data.subrace : [];
 
-    const combined = [...rawRaces, ...rawSubraces] as (RawRaceEntry & {
+    let combined = [...rawRaces, ...rawSubraces] as (RawRaceEntry & {
       name: string;
       source: string;
     })[];
+
+    if (loadedUaSources.size > 0) {
+      const docs = await loadUaBrewDocuments(loadedUaSources);
+      const uaRaces = collectUaPropEntries<RawRaceEntry>(docs, "race");
+      const uaSubraces = collectUaPropEntries<RawRaceEntry>(docs, "subrace");
+      combined = [
+        ...combined,
+        ...(uaRaces as (RawRaceEntry & { name: string; source: string })[]),
+        ...(uaSubraces as (RawRaceEntry & { name: string; source: string })[]),
+      ];
+    }
 
     return resolveByNameSource(combined);
   },
@@ -44,6 +65,42 @@ export const getListDndRaces = service.getList;
 export const getDndRacesByName = service.getByName;
 export const getDndRaceById = service.getById;
 export const clearDndRaceCache = service.clearCache;
+
+export async function ensureDndRaceUaSourcesLoaded(
+  sourceCodes: string[],
+): Promise<boolean> {
+  const catalog = await getSourceCatalog();
+  const needed = sourceCodes.filter((code) => {
+    const kind = catalog.get(code)?.kind;
+    return isOnDemandBrewSourceKind(kind) && !loadedUaSources.has(code);
+  });
+  if (needed.length === 0) return false;
+  for (const code of needed) loadedUaSources.add(code);
+  service.clearCache();
+  await service.getAll();
+  return true;
+}
+
+export async function getDndRaceFilterSourceCodes(): Promise<string[]> {
+  const [catalog, list] = await Promise.all([
+    getSourceCatalog(),
+    getListDndRaces(),
+  ]);
+  const codes = new Set(
+    list.flatMap((r) => r.variantSources ?? [r.source]),
+  );
+  for (const [code, entry] of catalog) {
+    if (
+      entry.uaPath &&
+      (entry.uaPath.startsWith("race/") ||
+        entry.uaPath.startsWith("subrace/") ||
+        entry.uaPath.startsWith("collection/"))
+    ) {
+      codes.add(code);
+    }
+  }
+  return [...codes];
+}
 
 export async function getBuilderListDndRaces(): Promise<DndRace[]> {
   return dedupeDndRootRacesForBuilderList(await service.getAll());

@@ -1,98 +1,101 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Swords } from "lucide-react";
 import type { BestiaryCreature } from "@/shared/types/bestiary-creature.types";
-import { buildSourceOptions } from "@/features/spells/services/book-source.service";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { cn } from "@/shared/utils/cn";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
+import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import {
-  collectBestiarySources,
+  ListSearchWithFilters,
+  type ListFilterValues,
+} from "@/shared/components/list-filters";
+import {
+  buildSourcesFilterSection,
+  entityMatchesSourceFilter,
+} from "@/shared/utils/compendium-source-filter.utils";
+import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
+import {
   getAllBestiaryCreatures,
   getBestiarySourceCatalog,
   getListBestiaryCreatures,
-  loadSourceOnDemand,
+  preloadBestiarySources,
 } from "../services/bestiary.service";
+import { CR_FILTER_OPTIONS, SIZE_FILTER_OPTIONS } from "./bestiary-columns";
 import { BestiaryDataTable } from "./BestiaryDataTable";
-import type { DataTableFilterState } from "@/components/data-table/data-table.types";
-import type { ColumnFiltersState } from "@tanstack/react-table";
+
+const CR_OPTIONS = CR_FILTER_OPTIONS.filter((o) => o.value !== "");
+const SIZE_OPTIONS = SIZE_FILTER_OPTIONS.filter((o) => o.value !== "");
 
 export function BestiaryList() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
   const [creatures, setCreatures] = useState<BestiaryCreature[]>([]);
   const [listCreatures, setListCreatures] = useState<BestiaryCreature[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [loadingSource, setLoadingSource] = useState<string | null>(null);
-  const [availableSources, setAvailableSources] = useState<string[]>([]);
+  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
   const [loadedSources, setLoadedSources] = useState<string[]>([]);
+  const [loading, setLoading] = useState(true);
   const bookNames = useBookSourceNames();
+  const catalog = useSourceCatalog();
 
-  // Restore initial DataTable state from URL params
-  const initialSearch = searchParams.get("q") ?? "";
-  const initialColumnFilters = useMemo<ColumnFiltersState>(() => {
-    const filters: ColumnFiltersState = [];
-    const cr = searchParams.get("cr");
-    const sz = searchParams.get("sz");
-    const type = searchParams.get("type");
-    const env = searchParams.get("env");
-    const src = searchParams.get("src");
-    if (cr) filters.push({ id: "cr", value: cr });
-    if (sz) filters.push({ id: "size", value: sz });
-    if (type) filters.push({ id: "creatureType", value: type });
-    if (env) filters.push({ id: "environment", value: env });
-    if (src) filters.push({ id: "source", value: src });
-    return filters;
-  // Only run on mount; searchParams object changes on every URL update
-  }, []);
-
-  // Persist DataTable filter/search/page state to URL (replace to avoid history noise)
-  const handleFilterStateChange = useCallback(
-    (state: DataTableFilterState) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams();
-          if (state.search) next.set("q", state.search);
-          for (const f of state.columnFilters) {
-            const v = f.value as string;
-            if (!v) continue;
-            if (f.id === "cr") next.set("cr", v);
-            else if (f.id === "size") next.set("sz", v);
-            else if (f.id === "creatureType") next.set("type", v);
-            else if (f.id === "environment") next.set("env", v);
-            else if (f.id === "source") next.set("src", v);
-          }
-          // Preserve any unloaded-source-load params that live alongside filter params
-          const loaded = prev.getAll("loaded");
-          for (const l of loaded) next.append("loaded", l);
-          return next;
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams],
-  );
+  const { q, getAll, patchFilters, ensureMultiIfEmpty } = useListSessionFilters({
+    listId: "bestiary",
+    stringKeys: ["q"],
+    multiKeys: ["cr", "sz", "type", "env", "src"],
+  });
+  const crs = getAll("cr");
+  const sizes = getAll("sz");
+  const types = getAll("type");
+  const environments = getAll("env");
+  const sourceFilter = getAll("src");
 
   const refreshCreatures = useCallback(async () => {
-    const [all, list, catalog] = await Promise.all([
+    const [all, list, sourceCatalog] = await Promise.all([
       getAllBestiaryCreatures(),
       getListBestiaryCreatures(),
       getBestiarySourceCatalog(),
     ]);
     setCreatures(all);
     setListCreatures(list);
-    setAvailableSources(catalog.available);
-    setLoadedSources(catalog.loaded);
+    setFilterSourceCodes(sourceCatalog.available);
+    setLoadedSources(sourceCatalog.loaded);
   }, []);
 
   useEffect(() => {
     refreshCreatures().finally(() => setLoading(false));
   }, [refreshCreatures]);
 
+  useEffect(() => {
+    if (sourceFilter.length > 0 || catalog.size === 0 || filterSourceCodes.length === 0) {
+      return;
+    }
+    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
+    if (defaults.length === 0) return;
+    ensureMultiIfEmpty("src", defaults);
+  }, [catalog, filterSourceCodes, sourceFilter.length, ensureMultiIfEmpty]);
+
+  useEffect(() => {
+    if (sourceFilter.length === 0) return;
+    const missing = sourceFilter.filter((s) => !loadedSources.includes(s));
+    if (missing.length === 0) return;
+    void preloadBestiarySources(missing).then(() => {
+      void refreshCreatures();
+    });
+  }, [sourceFilter, loadedSources, refreshCreatures]);
+
+  const commitSearch = useCallback(
+    (q: string) => patchFilters({ q }),
+    [patchFilters],
+  );
+  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
+    useDebouncedListSearch(q, commitSearch);
+
   const typeOptions = useMemo(() => {
-    const types = new Set<string>();
-    for (const c of listCreatures) types.add(c.type.type);
-    return Array.from(types).sort((a, b) => a.localeCompare(b));
+    const typeSet = new Set<string>();
+    for (const c of listCreatures) typeSet.add(c.type.type);
+    return Array.from(typeSet)
+      .sort((a, b) => a.localeCompare(b))
+      .map((t) => ({ value: t, label: t }));
   }, [listCreatures]);
 
   const environmentOptions = useMemo(() => {
@@ -100,33 +103,95 @@ export function BestiaryList() {
     for (const c of listCreatures) {
       for (const e of c.environment ?? []) envs.add(e);
     }
-    return Array.from(envs).sort((a, b) => a.localeCompare(b));
+    return Array.from(envs)
+      .sort((a, b) => a.localeCompare(b))
+      .map((e) => ({ value: e, label: e }));
   }, [listCreatures]);
 
-  const sourceOptions = useMemo(
-    () => buildSourceOptions(collectBestiarySources(listCreatures), bookNames),
-    [listCreatures, bookNames],
+  const sourceSection = useMemo(
+    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
+    [filterSourceCodes, catalog, bookNames],
   );
 
-  const unloadedSources = useMemo(
-    () => availableSources.filter((s) => !loadedSources.includes(s)),
-    [availableSources, loadedSources],
+  const filterSections = useMemo(
+    () => [
+      {
+        id: "cr",
+        title: "Challenge Rating",
+        mode: "multi" as const,
+        options: CR_OPTIONS,
+      },
+      {
+        id: "sz",
+        title: "Size",
+        mode: "multi" as const,
+        options: SIZE_OPTIONS,
+      },
+      {
+        id: "type",
+        title: "Type",
+        mode: "multi" as const,
+        options: typeOptions,
+      },
+      {
+        id: "env",
+        title: "Environment",
+        mode: "multi" as const,
+        options: environmentOptions,
+      },
+      sourceSection,
+    ],
+    [typeOptions, environmentOptions, sourceSection],
   );
 
-  const unloadedSourceOptions = useMemo(
-    () => buildSourceOptions(unloadedSources, bookNames),
-    [unloadedSources, bookNames],
-  );
+  const filtered = useMemo(() => {
+    let result = listCreatures;
 
-  async function handleLoadSource(source: string) {
-    setLoadingSource(source);
-    try {
-      await loadSourceOnDemand(source);
-      await refreshCreatures();
-    } finally {
-      setLoadingSource(null);
+    if (appliedSearch.trim()) {
+      const q = appliedSearch.toLowerCase();
+      result = result.filter(
+        (c) =>
+          (c.searchText?.includes(q) ?? false) ||
+          c.name.toLowerCase().includes(q) ||
+          c.cr.toLowerCase().includes(q) ||
+          c.size.toLowerCase().includes(q) ||
+          c.type.type.toLowerCase().includes(q) ||
+          (c.variantSources?.some((s) => s.toLowerCase().includes(q)) ?? false),
+      );
     }
-  }
+
+    if (crs.length > 0) {
+      result = result.filter((c) => crs.includes(c.cr));
+    }
+    if (sizes.length > 0) {
+      result = result.filter((c) => sizes.includes(c.size));
+    }
+    if (types.length > 0) {
+      result = result.filter((c) => types.includes(c.type.type));
+    }
+    if (environments.length > 0) {
+      result = result.filter((c) =>
+        (c.environment ?? []).some((e) => environments.includes(e)),
+      );
+    }
+    if (sourceFilter.length > 0) {
+      result = result.filter((c) =>
+        entityMatchesSourceFilter(c, sourceFilter, catalog, bookNames),
+      );
+    }
+
+    return result;
+  }, [
+    listCreatures,
+    appliedSearch,
+    crs,
+    sizes,
+    types,
+    environments,
+    sourceFilter,
+    catalog,
+    bookNames,
+  ]);
 
   const handleSelect = useCallback(
     (row: BestiaryCreature) => {
@@ -134,6 +199,16 @@ export function BestiaryList() {
     },
     [navigate],
   );
+
+  function applyDialogFilters(values: ListFilterValues) {
+    patchFilters({
+      cr: Array.isArray(values.cr) ? values.cr : [],
+      sz: Array.isArray(values.sz) ? values.sz : [],
+      type: Array.isArray(values.type) ? values.type : [],
+      env: Array.isArray(values.env) ? values.env : [],
+      src: Array.isArray(values.src) ? values.src : [],
+    });
+  }
 
   return (
     <div className="flex flex-col h-full min-h-0">
@@ -143,7 +218,7 @@ export function BestiaryList() {
           <h1 className="text-xl font-bold text-foreground">Bestiary (D&amp;D 5e)</h1>
           {!loading && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
-              {listCreatures.length} creatures
+              {filtered.length} / {listCreatures.length}
               {listCreatures.length < creatures.length && (
                 <span className="opacity-70"> ({creatures.length} entries)</span>
               )}
@@ -155,40 +230,28 @@ export function BestiaryList() {
         </p>
       </div>
 
-      {!loading && unloadedSources.length > 0 && (
-        <div className="shrink-0 border-b border-border px-6 py-3">
-          <p className="text-xs text-muted-foreground mb-2">
-            Load additional sources ({loadedSources.length}/{availableSources.length} loaded):
-          </p>
-          <div className="flex flex-wrap gap-1.5 max-h-24 overflow-y-auto">
-            {unloadedSourceOptions.slice(0, 40).map(({ value, label }) => (
-              <button
-                key={value}
-                type="button"
-                title={value}
-                disabled={loadingSource === value}
-                onClick={() => void handleLoadSource(value)}
-                className={cn(
-                  "rounded-md border px-2 py-0.5 text-[10px] font-medium transition-colors",
-                  loadingSource === value
-                    ? "border-amber-500/50 bg-amber-500/10 text-amber-400"
-                    : "border-border bg-card text-muted-foreground hover:bg-accent hover:text-foreground",
-                )}
-              >
-                {loadingSource === value ? "…" : `+ ${label}`}
-              </button>
-            ))}
-            {unloadedSources.length > 40 && (
-              <span className="text-[10px] text-muted-foreground self-center px-1">
-                +{unloadedSources.length - 40} more
-              </span>
-            )}
-          </div>
-        </div>
-      )}
+      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <ListSearchWithFilters
+          searchValue={searchDraft}
+          onSearchChange={setSearchDraft}
+          searchPlaceholder="Search name, type, CR..."
+          inputClassName="h-8 text-sm"
+          sections={filterSections}
+          filterValues={{
+            cr: crs,
+            sz: sizes,
+            type: types,
+            env: environments,
+            src: sourceFilter,
+          }}
+          onFiltersApply={applyDialogFilters}
+          dialogTitle="Bestiary Filters"
+          dialogDescription="Filter by CR, size, type, environment, and sourcebook. Changes apply when you save."
+        />
+      </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
-        {loading ? (
+        {loading || isSearchPending ? (
           <ListAreaLoading />
         ) : listCreatures.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-48 text-muted-foreground gap-2">
@@ -196,19 +259,9 @@ export function BestiaryList() {
             <p className="text-sm">No creatures loaded.</p>
           </div>
         ) : (
-          <BestiaryDataTable
-            creatures={listCreatures}
-            typeOptions={typeOptions}
-            environmentOptions={environmentOptions}
-            sourceOptions={sourceOptions}
-            onRowClick={handleSelect}
-            initialSearch={initialSearch}
-            initialColumnFilters={initialColumnFilters}
-            onFilterStateChange={handleFilterStateChange}
-          />
+          <BestiaryDataTable creatures={filtered} onRowClick={handleSelect} />
         )}
       </div>
-
     </div>
   );
 }

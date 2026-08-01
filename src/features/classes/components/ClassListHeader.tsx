@@ -2,12 +2,14 @@ import { User } from "lucide-react";
 
 interface ClassListHeaderProps {
   loading: boolean;
+  filteredCount: number;
   listCount: number;
   totalCount: number;
 }
 
 export function ClassListHeader({
   loading,
+  filteredCount,
   listCount,
   totalCount,
 }: ClassListHeaderProps) {
@@ -20,7 +22,7 @@ export function ClassListHeader({
         </h1>
         {!loading && (
           <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
-            {listCount} classes
+            {filteredCount} / {listCount}
             {listCount < totalCount && (
               <span className="opacity-70"> ({totalCount} entries)</span>
             )}

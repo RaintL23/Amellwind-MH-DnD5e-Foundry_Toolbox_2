@@ -86,6 +86,7 @@ export function ClassDetailPage() {
             activeSubclassId={activeSubclassId}
             onSelect={handleSubclassSelect}
             subclassTitle={active.subclassTitle}
+            bookNames={bookNames}
           />
 
           <Separator />

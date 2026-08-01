@@ -1,24 +1,29 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import type { DndFeat } from "@/shared/types";
 import {
+  ensureDndFeatUaSourcesLoaded,
   getAllDndFeats,
+  getDndFeatFilterSourceCodes,
   getDndFeatsByName,
   getListDndFeats,
 } from "../services/dnd-feat.service";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
+import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
+import {
+  buildSourcesFilterSection,
+  entityMatchesSourceFilter,
+} from "@/shared/utils/compendium-source-filter.utils";
+import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
 import { DndFeatCard } from "./DndFeatCard";
 import { DndFeatDetailDialog } from "./DndFeatDetailDialog";
+import { Pagination } from "@/components/ui/pagination";
 import { Award } from "lucide-react";
-import {
-  buildSourceOptions,
-  collectEntitySources,
-} from "@/features/spells/services/book-source.service";
-import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { appendAll, setIfPresent } from "@/shared/utils/list-url-params.utils";
 
 type DndFeatFilter =
   | ""
@@ -34,61 +39,72 @@ const FEAT_TYPE_OPTIONS = [
   { value: "prerequisite", label: "With prerequisites" },
 ];
 
+const DND_FEAT_PAGE_SIZE = 30;
+
 export function DndFeatList() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [feats, setFeats] = useState<DndFeat[]>([]);
   const [listFeats, setListFeats] = useState<DndFeat[]>([]);
+  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
-  const urlSearch = searchParams.get("q") ?? "";
-  const filter = (searchParams.get("filter") ?? "") as DndFeatFilter;
-  const sourceFilter = searchParams.getAll("src");
+  const { q, getString, getAll, patchFilters, ensureMultiIfEmpty } =
+    useListSessionFilters({
+      listId: "dnd-feats",
+      stringKeys: ["q", "filter"],
+      multiKeys: ["src"],
+      urlPreserveKeys: ["feat"],
+    });
+  const { value: featParam, setValue: setFeatParam } = useListItemUrlParam("feat");
+  const filter = getString("filter") as DndFeatFilter;
+  const sourceFilter = getAll("src");
   const [selected, setSelected] = useState<DndFeat | null>(null);
   const [selectedVariants, setSelectedVariants] = useState<DndFeat[]>([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(DND_FEAT_PAGE_SIZE);
   const bookNames = useBookSourceNames();
+  const catalog = useSourceCatalog();
 
-  useEffect(() => {
-    Promise.all([getAllDndFeats(), getListDndFeats()])
-      .then(([all, list]) => {
-        setFeats(all);
-        setListFeats(list);
-      })
-      .finally(() => setLoading(false));
+  const refresh = useCallback(async () => {
+    const [all, list, codes] = await Promise.all([
+      getAllDndFeats(),
+      getListDndFeats(),
+      getDndFeatFilterSourceCodes(),
+    ]);
+    setFeats(all);
+    setListFeats(list);
+    setFilterSourceCodes(codes);
   }, []);
 
-  const patchFilters = useCallback(
-    (patch: { q?: string; filter?: DndFeatFilter; src?: string[] }) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams();
-          const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
-          const nextFilter =
-            "filter" in patch
-              ? (patch.filter ?? "")
-              : (prev.get("filter") ?? "");
-          const src =
-            "src" in patch ? (patch.src ?? []) : prev.getAll("src");
-          setIfPresent(next, "q", q);
-          setIfPresent(next, "filter", nextFilter);
-          appendAll(next, "src", src);
-          return next;
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams],
-  );
+  useEffect(() => {
+    refresh().finally(() => setLoading(false));
+  }, [refresh]);
 
-  const commitSearchToUrl = useCallback(
+  useEffect(() => {
+    if (sourceFilter.length > 0 || catalog.size === 0 || filterSourceCodes.length === 0) {
+      return;
+    }
+    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
+    if (defaults.length === 0) return;
+    ensureMultiIfEmpty("src", defaults);
+  }, [catalog, filterSourceCodes, sourceFilter.length, ensureMultiIfEmpty]);
+
+  useEffect(() => {
+    if (sourceFilter.length === 0) return;
+    void ensureDndFeatUaSourcesLoaded(sourceFilter).then((changed) => {
+      if (changed) void refresh();
+    });
+  }, [sourceFilter, refresh]);
+
+  const commitSearch = useCallback(
     (q: string) => patchFilters({ q }),
     [patchFilters],
   );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(urlSearch, commitSearchToUrl);
+    useDebouncedListSearch(q, commitSearch);
 
-  const sourceOptions = useMemo(
-    () => buildSourceOptions(collectEntitySources(listFeats), bookNames),
-    [listFeats, bookNames],
+  const sourceSection = useMemo(
+    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
+    [filterSourceCodes, catalog, bookNames],
   );
 
   const filterSections = useMemo(
@@ -99,14 +115,9 @@ export function DndFeatList() {
         mode: "single" as const,
         options: FEAT_TYPE_OPTIONS,
       },
-      {
-        id: "src",
-        title: "Source",
-        mode: "multi" as const,
-        options: sourceOptions,
-      },
+      sourceSection,
     ],
-    [sourceOptions],
+    [sourceSection],
   );
 
   const filtered = useMemo(() => {
@@ -125,10 +136,9 @@ export function DndFeatList() {
     }
 
     if (sourceFilter.length > 0) {
-      result = result.filter((f) => {
-        const sources = f.variantSources ?? [f.source];
-        return sources.some((s) => sourceFilter.includes(s));
-      });
+      result = result.filter((f) =>
+        entityMatchesSourceFilter(f, sourceFilter, catalog, bookNames),
+      );
     }
 
     if (filter === "origin") {
@@ -142,13 +152,65 @@ export function DndFeatList() {
     }
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [listFeats, appliedSearch, filter, sourceFilter]);
+  }, [listFeats, appliedSearch, filter, sourceFilter, catalog, bookNames]);
 
-  const handleSelect = useCallback((item: DndFeat) => {
-    setSelected(item);
+  useEffect(() => {
+    setPage(1);
+  }, [appliedSearch, filter, sourceFilter]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const paginated = useMemo(
+    () => filtered.slice((safePage - 1) * pageSize, safePage * pageSize),
+    [filtered, safePage, pageSize],
+  );
+
+  const openFeat = useCallback(
+    (feat: DndFeat) => {
+      setSelected(feat);
+      setDialogOpen(true);
+      setFeatParam(feat.name);
+      void getDndFeatsByName(feat.name).then(setSelectedVariants);
+    },
+    [setFeatParam],
+  );
+
+  useEffect(() => {
+    if (!featParam) {
+      setDialogOpen(false);
+      setSelected(null);
+      setSelectedVariants([]);
+      return;
+    }
+    if (loading) return;
+
+    const decoded = decodeURIComponent(featParam);
+    const found =
+      listFeats.find((feat) => feat.name.toLowerCase() === decoded.toLowerCase()) ??
+      feats.find((feat) => feat.name.toLowerCase() === decoded.toLowerCase());
+    if (!found || (selected?.name === found.name && dialogOpen)) return;
+
+    setSelected(found);
     setDialogOpen(true);
-    void getDndFeatsByName(item.name).then(setSelectedVariants);
-  }, []);
+    void getDndFeatsByName(found.name).then(setSelectedVariants);
+  }, [featParam, loading, listFeats, feats, selected?.name, dialogOpen]);
+
+  const handleSelect = useCallback(
+    (feat: DndFeat) => openFeat(feat),
+    [openFeat],
+  );
+
+  const handleDialogOpenChange = useCallback(
+    (open: boolean) => {
+      setDialogOpen(open);
+      if (!open) {
+        setSelected(null);
+        setSelectedVariants([]);
+        setFeatParam(null);
+      }
+    },
+    [setFeatParam],
+  );
 
   function applyDialogFilters(values: ListFilterValues) {
     patchFilters({
@@ -190,7 +252,7 @@ export function DndFeatList() {
           filterValues={{ filter, src: sourceFilter }}
           onFiltersApply={applyDialogFilters}
           dialogTitle="Feat Filters"
-          dialogDescription="Filter official feats by type and sourcebook."
+          dialogDescription="Filter official feats by type and sourcebook. Changes apply when you save."
         />
       </div>
 
@@ -204,16 +266,28 @@ export function DndFeatList() {
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {filtered.map((item) => (
-              <DndFeatCard
-                key={item.id}
-                feat={item}
-                onClick={() => handleSelect(item)}
-              />
+            {paginated.map((item) => (
+              <DndFeatCard key={item.id} feat={item} onSelect={handleSelect} />
             ))}
           </div>
         )}
       </div>
+
+      {!loading && !isSearchPending && filtered.length > 0 && (
+        <div className="shrink-0 border-t border-border px-6 py-3">
+          <Pagination
+            page={safePage}
+            totalPages={totalPages}
+            totalItems={filtered.length}
+            pageSize={pageSize}
+            onPageChange={setPage}
+            onPageSizeChange={(size) => {
+              setPageSize(size);
+              setPage(1);
+            }}
+          />
+        </div>
+      )}
 
       {dialogOpen && selected && (
         <DndFeatDetailDialog
@@ -221,7 +295,7 @@ export function DndFeatList() {
           feat={selected}
           variants={selectedVariants}
           open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          onOpenChange={handleDialogOpenChange}
         />
       )}
     </div>

@@ -3,7 +3,7 @@ import { useEffect, useMemo, useCallback, useState } from "react";
 import { Weapon } from "@/shared/types";
 import { getAllWeapons } from "../services/weapon.service";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { useWeaponDialogUrlSync } from "../hooks/useWeaponDialogUrlSync";
 import { findWeaponByUrlKey } from "../utils/weapon-dialog-url.utils";
 import { WeaponCard } from "./WeaponCard";
@@ -13,7 +13,12 @@ import { weaponMatchesCompatibleProficiency } from "../data/weapon-proficiencies
 import { Swords } from "lucide-react";
 
 export function WeaponList() {
-  const { getString, setString, patchFields } = useListUrlState();
+  const { q, getString, patchFilters } = useListSessionFilters({
+    listId: "weapons",
+    stringKeys: ["q", "dmg", "prop", "compat"],
+    multiKeys: [],
+    urlPreserveKeys: ["weapon", "rarity"],
+  });
   const { urlWeaponKey, urlRarityParam, syncOpen, syncClose, syncRarity } =
     useWeaponDialogUrlSync();
   const [weapons, setWeapons] = useState<Weapon[]>([]);
@@ -21,13 +26,12 @@ export function WeaponList() {
   const [selected, setSelected] = useState<Weapon | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const urlSearch = getString("q");
-  const commitSearchToUrl = useCallback(
-    (q: string) => setString("q", q),
-    [setString],
+  const commitSearchToSession = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
   );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending, commitSearch } =
-    useDebouncedListSearch(urlSearch, commitSearchToUrl);
+    useDebouncedListSearch(q, commitSearchToSession);
   const dmgFilter = getString("dmg");
   const propFilter = getString("prop");
   const compatFilter = getString("compat");
@@ -102,16 +106,14 @@ export function WeaponList() {
 
   const clearFilters = useCallback(() => {
     commitSearch("");
-    setString("dmg", "");
-    setString("prop", "");
-    setString("compat", "");
-  }, [commitSearch, setString]);
+    patchFilters({ dmg: "", prop: "", compat: "" });
+  }, [commitSearch, patchFilters]);
 
   const applyWeaponFilters = useCallback(
     (dmg: string, prop: string, compat: string) => {
-      patchFields({ dmg, prop, compat });
+      patchFilters({ dmg, prop, compat });
     },
-    [patchFields],
+    [patchFilters],
   );
 
   return (
