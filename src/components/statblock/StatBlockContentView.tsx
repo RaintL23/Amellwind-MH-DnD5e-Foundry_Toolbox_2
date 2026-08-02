@@ -3,15 +3,33 @@ import type {
   StatBlockContent,
   StatBlockListItem,
 } from "@/shared/types/statblock-content.types";
-import { DndRichText } from "@/shared/components/DndRichText";
+import {
+  DndRichText,
+  type RichTextPhraseLink,
+} from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
 
-function ContentTable({ table }: { table: DowntimeTable }) {
+interface RichTextInteractionProps {
+  phraseLinks?: RichTextPhraseLink[];
+  onPhraseClick?: (phraseId: string) => void;
+}
+
+function ContentTable({
+  table,
+  phraseLinks,
+  onPhraseClick,
+}: {
+  table: DowntimeTable;
+} & RichTextInteractionProps) {
   return (
     <div className="overflow-x-auto rounded-md border border-border my-2">
       {table.caption && (
         <p className="px-3 py-2 text-xs font-semibold text-amber-400/90 border-b border-border bg-muted/30">
-          <DndRichText text={table.caption} />
+          <DndRichText
+            text={table.caption}
+            phraseLinks={phraseLinks}
+            onPhraseClick={onPhraseClick}
+          />
         </p>
       )}
       <table className="w-full text-sm">
@@ -41,7 +59,11 @@ function ContentTable({ table }: { table: DowntimeTable }) {
                     cellIndex === 0 && "font-medium whitespace-nowrap",
                   )}
                 >
-                  <DndRichText text={cell} />
+                  <DndRichText
+                    text={cell}
+                    phraseLinks={phraseLinks}
+                    onPhraseClick={onPhraseClick}
+                  />
                 </td>
               ))}
             </tr>
@@ -53,18 +75,32 @@ function ContentTable({ table }: { table: DowntimeTable }) {
           key={i}
           className="px-3 py-2 text-xs italic text-muted-foreground border-t border-border bg-muted/20"
         >
-          <DndRichText text={note} />
+          <DndRichText
+            text={note}
+            phraseLinks={phraseLinks}
+            onPhraseClick={onPhraseClick}
+          />
         </p>
       ))}
     </div>
   );
 }
 
-function ListItemView({ item }: { item: StatBlockListItem }) {
+function ListItemView({
+  item,
+  phraseLinks,
+  onPhraseClick,
+}: {
+  item: StatBlockListItem;
+} & RichTextInteractionProps) {
   if (item.type === "text") {
     return (
       <li className="text-sm text-muted-foreground">
-        <DndRichText text={item.text} />
+        <DndRichText
+          text={item.text}
+          phraseLinks={phraseLinks}
+          onPhraseClick={onPhraseClick}
+        />
       </li>
     );
   }
@@ -72,7 +108,11 @@ function ListItemView({ item }: { item: StatBlockListItem }) {
   return (
     <li className="text-sm text-muted-foreground">
       <strong className="text-foreground">{item.name}.</strong>{" "}
-      <StatBlockInlineContent content={item.children} />
+      <StatBlockInlineContent
+        content={item.children}
+        phraseLinks={phraseLinks}
+        onPhraseClick={onPhraseClick}
+      />
     </li>
   );
 }
@@ -80,16 +120,24 @@ function ListItemView({ item }: { item: StatBlockListItem }) {
 export function StatBlockInlineContent({
   content,
   className,
+  phraseLinks,
+  onPhraseClick,
 }: {
   content: StatBlockContent[];
   className?: string;
-}) {
+} & RichTextInteractionProps) {
   if (content.length === 0) return null;
 
   return (
     <span className={cn("inline", className)}>
       {content.map((block, i) => (
-        <StatBlockContentBlock key={i} block={block} inline />
+        <StatBlockContentBlock
+          key={i}
+          block={block}
+          inline
+          phraseLinks={phraseLinks}
+          onPhraseClick={onPhraseClick}
+        />
       ))}
     </span>
   );
@@ -99,11 +147,13 @@ function StatBlockContentBlock({
   block,
   depth = 0,
   inline = false,
+  phraseLinks,
+  onPhraseClick,
 }: {
   block: StatBlockContent;
   depth?: number;
   inline?: boolean;
-}) {
+} & RichTextInteractionProps) {
   if (block.type === "paragraph") {
     const Tag = inline ? "span" : "p";
     return (
@@ -113,13 +163,23 @@ function StatBlockContentBlock({
           !inline && "mb-0",
         )}
       >
-        <DndRichText text={block.text} />
+        <DndRichText
+          text={block.text}
+          phraseLinks={phraseLinks}
+          onPhraseClick={onPhraseClick}
+        />
       </Tag>
     );
   }
 
   if (block.type === "table") {
-    return <ContentTable table={block.table} />;
+    return (
+      <ContentTable
+        table={block.table}
+        phraseLinks={phraseLinks}
+        onPhraseClick={onPhraseClick}
+      />
+    );
   }
 
   if (block.type === "list") {
@@ -132,7 +192,12 @@ function StatBlockContentBlock({
         )}
       >
         {block.items.map((item, i) => (
-          <ListItemView key={i} item={item} />
+          <ListItemView
+            key={i}
+            item={item}
+            phraseLinks={phraseLinks}
+            onPhraseClick={onPhraseClick}
+          />
         ))}
       </ul>
     );
@@ -147,7 +212,13 @@ function StatBlockContentBlock({
       </Heading>
       <div className="space-y-1">
         {block.children.map((child, i) => (
-          <StatBlockContentBlock key={i} block={child} depth={depth + 1} />
+          <StatBlockContentBlock
+            key={i}
+            block={child}
+            depth={depth + 1}
+            phraseLinks={phraseLinks}
+            onPhraseClick={onPhraseClick}
+          />
         ))}
       </div>
     </div>
@@ -156,15 +227,22 @@ function StatBlockContentBlock({
 
 export function StatBlockContentView({
   content,
+  phraseLinks,
+  onPhraseClick,
 }: {
   content: StatBlockContent[];
-}) {
+} & RichTextInteractionProps) {
   if (content.length === 0) return null;
 
   return (
     <div className="space-y-3">
       {content.map((block, i) => (
-        <StatBlockContentBlock key={i} block={block} />
+        <StatBlockContentBlock
+          key={i}
+          block={block}
+          phraseLinks={phraseLinks}
+          onPhraseClick={onPhraseClick}
+        />
       ))}
     </div>
   );

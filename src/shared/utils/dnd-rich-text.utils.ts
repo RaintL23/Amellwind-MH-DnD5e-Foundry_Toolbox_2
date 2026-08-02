@@ -20,11 +20,22 @@ export type RichTextMarkupKind =
 
 export type RichTextSegment =
   | { kind: RichTextMarkupKind; content: string }
-  | { kind: "keyword"; content: string; category: DndKeywordCategory };
+  | { kind: "keyword"; content: string; category: DndKeywordCategory }
+  | { kind: "phraseLink"; content: string; phraseId: string };
+
+/** Phrase that should render as a clickable link inside rich text. */
+export interface RichTextPhraseLink {
+  /** Stable id passed to onPhraseClick (e.g. progression id). */
+  id: string;
+  /** Case-insensitive phrase to match in plain text. */
+  phrase: string;
+}
 
 export interface ParseRichTextOptions {
   /** Apply D&D keyword highlighting to plain-text segments. Default: true. */
   highlightKeywords?: boolean;
+  /** Optional phrases to turn into clickable links (matched before keywords). */
+  phraseLinks?: RichTextPhraseLink[];
 }
 
 // ─── Markup styling (5etools {@tag …} segments) ──────────────────────────────
@@ -151,16 +162,69 @@ function tokenizeFiveToolsMarkup(text: string): RichTextSegment[] {
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/** Split plain text into text / phraseLink segments (longest phrase wins). */
+export function splitPhraseLinks(
+  text: string,
+  phraseLinks: RichTextPhraseLink[],
+): RichTextSegment[] {
+  const usable = phraseLinks
+    .map((link) => ({ id: link.id, phrase: link.phrase.trim() }))
+    .filter((link) => link.phrase.length > 0);
+
+  if (usable.length === 0 || !text) {
+    return text ? [{ kind: "text", content: text }] : [];
+  }
+
+  const byLower = new Map<string, string>();
+  for (const link of usable) {
+    const key = link.phrase.toLowerCase();
+    if (!byLower.has(key)) byLower.set(key, link.id);
+  }
+
+  const uniquePhrases = [...byLower.keys()].sort((a, b) => b.length - a.length);
+  const pattern = uniquePhrases.map(escapeRegExp).join("|");
+  const re = new RegExp(`(${pattern})`, "gi");
+
+  const segments: RichTextSegment[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  re.lastIndex = 0;
+  while ((match = re.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      segments.push({ kind: "text", content: text.slice(lastIndex, match.index) });
+    }
+    const matched = match[1];
+    const phraseId = byLower.get(matched.toLowerCase());
+    if (phraseId) {
+      segments.push({ kind: "phraseLink", content: matched, phraseId });
+    } else {
+      segments.push({ kind: "text", content: matched });
+    }
+    lastIndex = match.index + matched.length;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ kind: "text", content: text.slice(lastIndex) });
+  }
+
+  return segments.length > 0 ? segments : [{ kind: "text", content: text }];
+}
+
 /**
  * Parses text that may contain 5etools markup ({@spell …}, {@i …}, etc.),
- * markdown `**bold**`, and optionally highlights common D&D terms in
- * plain-text segments.
+ * markdown `**bold**`, optional phrase links, and optionally highlights
+ * common D&D terms in plain-text segments.
  */
 export function parseRichText(
   text: string,
   options: ParseRichTextOptions = {},
 ): RichTextSegment[] {
-  const { highlightKeywords = true } = options;
+  const { highlightKeywords = true, phraseLinks } = options;
 
   // 5etools tags first (paths that preserve {@…}), then markdown bold on
   // remaining plain text (renderFiveToolsEntries emits `**…**`).
@@ -173,10 +237,19 @@ export function parseRichText(
     }
   }
 
-  if (!highlightKeywords) return markupSegments;
+  const withLinks: RichTextSegment[] = [];
+  for (const seg of markupSegments) {
+    if (seg.kind === "text" && phraseLinks?.length) {
+      withLinks.push(...splitPhraseLinks(seg.content, phraseLinks));
+    } else {
+      withLinks.push(seg);
+    }
+  }
+
+  if (!highlightKeywords) return withLinks;
 
   const result: RichTextSegment[] = [];
-  for (const seg of markupSegments) {
+  for (const seg of withLinks) {
     if (seg.kind !== "text") {
       result.push(seg);
       continue;
@@ -194,6 +267,9 @@ export function parseRichText(
 
 export function getRichTextSegmentClass(segment: RichTextSegment): string | null {
   if (segment.kind === "keyword") return DND_KEYWORD_CLASS[segment.category];
+  if (segment.kind === "phraseLink") {
+    return "text-sky-400 font-medium underline-offset-2 hover:underline cursor-pointer";
+  }
   if (segment.kind === "text") return null;
   return RICH_TEXT_MARKUP_CLASS[segment.kind];
 }

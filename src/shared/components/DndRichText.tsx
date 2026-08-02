@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { cn } from "@/shared/utils/cn";
 import {
   type ParseRichTextOptions,
+  type RichTextPhraseLink,
   parseRichText,
   getRichTextSegmentClass,
 } from "@/shared/utils/dnd-rich-text.utils";
@@ -9,6 +10,8 @@ import {
 interface DndRichTextProps extends ParseRichTextOptions {
   text: string;
   className?: string;
+  /** Fired when a phraseLink segment is activated. */
+  onPhraseClick?: (phraseId: string) => void;
 }
 
 /**
@@ -19,10 +22,12 @@ export function DndRichText({
   text,
   className,
   highlightKeywords = true,
+  phraseLinks,
+  onPhraseClick,
 }: DndRichTextProps) {
   const segments = useMemo(
-    () => parseRichText(text, { highlightKeywords }),
-    [text, highlightKeywords],
+    () => parseRichText(text, { highlightKeywords, phraseLinks }),
+    [text, highlightKeywords, phraseLinks],
   );
 
   return (
@@ -44,6 +49,21 @@ export function DndRichText({
             </strong>
           );
         }
+        if (seg.kind === "phraseLink") {
+          return (
+            <button
+              key={i}
+              type="button"
+              className={cn(
+                "inline p-0 m-0 border-0 bg-transparent align-baseline text-inherit",
+                styleClass,
+              )}
+              onClick={() => onPhraseClick?.(seg.phraseId)}
+            >
+              {seg.content}
+            </button>
+          );
+        }
         if (styleClass) {
           return (
             <span key={i} className={cn(styleClass)}>
@@ -56,3 +76,5 @@ export function DndRichText({
     </span>
   );
 }
+
+export type { RichTextPhraseLink };
