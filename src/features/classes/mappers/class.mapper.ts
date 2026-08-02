@@ -176,9 +176,40 @@ function buildTableCellsForLevel(
   const cells: string[] = [];
   for (const group of groups) {
     const row = group.rows[levelIndex];
-    if (row) cells.push(...row);
+    if (row) {
+      cells.push(...row);
+    } else {
+      cells.push(...group.colLabels.map(() => "—"));
+    }
   }
   return cells;
+}
+
+/** Standard D&D proficiency bonus by character level (1–20). */
+export function proficiencyBonusAtLevel(level: number): number {
+  if (level < 1) return 2;
+  return Math.min(6, 2 + Math.floor((level - 1) / 4));
+}
+
+function buildProficiencyBonusTableGroup(): ClassTableGroup {
+  return {
+    colLabels: ["Proficiency Bonus"],
+    rows: Array.from({ length: 20 }, (_, i) => [
+      `+${proficiencyBonusAtLevel(i + 1)}`,
+    ]),
+  };
+}
+
+/**
+ * Class resource/spell columns + subclass spell columns, with Proficiency Bonus
+ * prepended (5etools omits PB from JSON and injects it at render time).
+ */
+export function mergeClassTableGroups(
+  classGroups: ClassTableGroup[],
+  subclass: Subclass | null,
+): ClassTableGroup[] {
+  const subclassGroups = subclass?.spellProgression ?? [];
+  return [buildProficiencyBonusTableGroup(), ...classGroups, ...subclassGroups];
 }
 
 function mapProgression(
@@ -752,33 +783,48 @@ export function getCasterLabel(casterProgression?: string): string {
   return CASTER_LABELS[casterProgression] ?? casterProgression;
 }
 
-/** Merge class and subclass features for the level table display */
+/** Merge class and subclass features + table columns for the level table display */
 export function mergeProgressionWithSubclass(
   classProgression: ClassLevelRow[],
   subclass: Subclass | null,
+  tableGroups?: ClassTableGroup[],
 ): ClassLevelRow[] {
-  if (!subclass) return classProgression;
-
   return classProgression.map((row, i) => {
-    const subclassFeatures = (subclass.progression[i]?.features ?? []).map(
-      (f) => ({ ...f, isSubclassFeature: true }),
-    );
+    const subclassFeatures = subclass
+      ? (subclass.progression[i]?.features ?? []).map((f) => ({
+          ...f,
+          isSubclassFeature: true,
+        }))
+      : [];
 
     const classFeatures = row.features.filter((f) => !f.gainSubclassFeature);
     const placeholders = row.features.filter((f) => f.gainSubclassFeature);
 
-    const mergedFeatures: ClassFeatureEntry[] = [
-      ...classFeatures,
-      ...subclassFeatures,
-      ...placeholders.map((f) => ({
-        ...f,
-        displayName: subclass.name,
-      })),
-    ];
+    const mergedFeatures: ClassFeatureEntry[] = subclass
+      ? [
+          ...classFeatures,
+          ...subclassFeatures,
+          ...placeholders.map((f) => ({
+            ...f,
+            displayName: subclass.name,
+          })),
+        ]
+      : row.features;
+
+    const tableCells = tableGroups
+      ? buildTableCellsForLevel(tableGroups, i)
+      : subclass
+        ? [
+            `+${proficiencyBonusAtLevel(row.level)}`,
+            ...row.tableCells,
+            ...(subclass.progression[i]?.tableCells ?? []),
+          ]
+        : [`+${proficiencyBonusAtLevel(row.level)}`, ...row.tableCells];
 
     return {
       ...row,
       features: mergedFeatures,
+      tableCells,
     };
   });
 }

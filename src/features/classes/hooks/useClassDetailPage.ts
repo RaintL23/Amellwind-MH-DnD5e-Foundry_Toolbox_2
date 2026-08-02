@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Class, ClassFeatureEntry } from "@/shared/types";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { mergeProgressionWithSubclass } from "../mappers/class.mapper";
+import { mergeProgressionWithSubclass, mergeClassTableGroups } from "../mappers/class.mapper";
 import { getAllClasses, getClassesByName } from "../services/class.service";
 import {
   sortClassVariants,
@@ -117,10 +117,19 @@ export function useClassDetailPage(classId: string) {
     return variantSubclasses.find((s) => s.id === activeSubclassId) ?? null;
   }, [variantSubclasses, activeSubclassId]);
 
+  const mergedTableGroups = useMemo(() => {
+    if (!active) return [];
+    return mergeClassTableGroups(active.spellProgression, activeSubclass);
+  }, [active, activeSubclass]);
+
   const mergedProgression = useMemo(() => {
     if (!active) return [];
-    return mergeProgressionWithSubclass(active.progression, activeSubclass);
-  }, [active, activeSubclass]);
+    return mergeProgressionWithSubclass(
+      active.progression,
+      activeSubclass,
+      mergedTableGroups,
+    );
+  }, [active, activeSubclass, mergedTableGroups]);
 
   const allFeatureUids = useMemo(
     () => getAllFeatureUids(mergedProgression),
@@ -186,6 +195,7 @@ export function useClassDetailPage(classId: string) {
     varyingFields,
     differs,
     mergedProgression,
+    mergedTableGroups,
     enabledFeatureUids,
     enabledFeatures,
     activeSubclassId,

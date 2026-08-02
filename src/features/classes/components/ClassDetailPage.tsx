@@ -25,6 +25,7 @@ export function ClassDetailPage() {
     varyingFields,
     differs,
     mergedProgression,
+    mergedTableGroups,
     enabledFeatureUids,
     enabledFeatures,
     activeSubclassId,
@@ -93,7 +94,7 @@ export function ClassDetailPage() {
 
           <ClassLevelTable
             progression={mergedProgression}
-            tableGroups={active.spellProgression}
+            tableGroups={mergedTableGroups}
             enabledFeatureUids={enabledFeatureUids}
             onToggleFeature={toggleFeature}
           />
