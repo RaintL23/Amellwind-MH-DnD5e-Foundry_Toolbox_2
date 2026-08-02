@@ -47,23 +47,28 @@ export const WEAPON_MASTERY_PROPERTY_ORDER: WeaponMasteryProperty[] = [
   "Vex",
 ];
 
-/** XPHB p.214 — weapon mastery property descriptions. */
-const WEAPON_MASTERY_DESCRIPTIONS_RAW: Record<WeaponMasteryProperty, string> =
-  {
-    Cleave:
-      "If you hit a creature with a melee attack roll using this weapon, you can make a melee attack roll with the weapon against a second creature within 5 feet of the first that is also within your reach. On a hit, the second creature takes the weapon's damage, but don't add your ability modifier to that damage unless that modifier is negative. You can make this extra attack only once per turn.",
-    Graze:
-      "If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll. This damage is the same type dealt by the weapon, and the damage can be increased only by increasing the ability modifier.",
-    Nick: "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of as a Bonus Action. You can make this extra attack only once per turn.",
-    Push:
-      "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller.",
-    Sap: "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn.",
-    Slow:
-      "If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn't exceed 10 feet.",
-    Topple:
-      "If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw (DC 8 plus the ability modifier used to make the attack roll and your Proficiency Bonus). On a failed save, the creature has the Prone condition.",
-    Vex: "If you hit a creature with this weapon and deal damage to the creature, you have Advantage on your next attack roll against that creature before the end of your next turn.",
-  };
+/**
+ * XPHB p.214 — weapon mastery property descriptions (raw 5etools tags kept for
+ * Foundry export enrichers; UI uses {@link WEAPON_MASTERY_DESCRIPTIONS}).
+ */
+export const WEAPON_MASTERY_DESCRIPTIONS_RAW: Record<
+  WeaponMasteryProperty,
+  string
+> = {
+  Cleave:
+    "If you hit a creature with a melee attack roll using this weapon, you can make a melee attack roll with the weapon against a second creature within 5 feet of the first that is also within your reach. On a hit, the second creature takes the weapon's damage, but don't add your ability modifier to that damage unless that modifier is negative. You can make this extra attack only once per turn.",
+  Graze:
+    "If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll. This damage is the same type dealt by the weapon, and the damage can be increased only by increasing the ability modifier.",
+  Nick: "When you make the extra attack of the Light property, you can make it as part of the {@action Attack|XPHB} action instead of as a {@variantrule Bonus Action|XPHB}. You can make this extra attack only once per turn.",
+  Push:
+    "If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller.",
+  Sap: "If you hit a creature with this weapon, that creature has {@variantrule Disadvantage|XPHB} on its next attack roll before the start of your next turn.",
+  Slow:
+    "If you hit a creature with this weapon and deal damage to it, you can reduce its {@variantrule Speed|XPHB} by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the {@variantrule Speed|XPHB} reduction doesn't exceed 10 feet.",
+  Topple:
+    "If you hit a creature with this weapon, you can force the creature to make a Constitution saving throw ({@dc 8} plus the ability modifier used to make the attack roll and your {@variantrule Proficiency|XPHB|Proficiency Bonus}). On a failed save, the creature has the {@condition Prone|XPHB} condition.",
+  Vex: "If you hit a creature with this weapon and deal damage to the creature, you have {@variantrule Advantage|XPHB} on your next attack roll against that creature before the end of your next turn.",
+};
 
 export const WEAPON_MASTERY_DESCRIPTIONS: Record<
   WeaponMasteryProperty,
@@ -150,6 +155,60 @@ export function getWeaponMasteryProperty(
   weaponId: string,
 ): WeaponMasteryProperty | undefined {
   return WEAPON_MASTERY_WEAPON_BY_ID.get(weaponId)?.mastery;
+}
+
+const WEAPON_MASTERY_BY_NAME = new Map(
+  WEAPON_MASTERY_WEAPONS.map((weapon) => [
+    weapon.name.trim().toLowerCase(),
+    weapon,
+  ]),
+);
+
+/** Looks up a PHB/XPHB weapon mastery entry by display name (e.g. "Spear"). */
+export function getWeaponMasteryByWeaponName(
+  weaponName: string,
+): WeaponMasteryWeaponEntry | undefined {
+  return WEAPON_MASTERY_BY_NAME.get(weaponName.trim().toLowerCase());
+}
+
+/**
+ * Foundry `system.mastery` key (lowercase) for a D&D weapon name when the
+ * catalog entry omitted mastery (common for PHB reprints).
+ */
+export function getWeaponMasteryKeyByWeaponName(
+  weaponName: string,
+): string | undefined {
+  const mastery = getWeaponMasteryByWeaponName(weaponName)?.mastery;
+  return mastery ? mastery.toLowerCase() : undefined;
+}
+
+/**
+ * Raw mastery rule text (with `{@…}` tags) for Foundry item descriptions.
+ * Accepts Foundry keys (`sap`) or display names (`Sap`).
+ */
+export function getWeaponMasteryDescriptionRaw(
+  masteryKey: string,
+): string | undefined {
+  const normalized = masteryKey.trim().toLowerCase();
+  const entry = WEAPON_MASTERY_PROPERTY_ORDER.find(
+    (name) => name.toLowerCase() === normalized,
+  );
+  return entry ? WEAPON_MASTERY_DESCRIPTIONS_RAW[entry] : undefined;
+}
+
+/**
+ * Builds the Mastery block appended to D&D 5e weapon descriptions on Foundry
+ * export. Returns undefined when mastery is unknown / empty.
+ */
+export function buildWeaponMasteryDescriptionBlock(
+  masteryKey: string | undefined | null,
+): string | undefined {
+  if (!masteryKey?.trim()) return undefined;
+  const key = masteryKey.trim().toLowerCase();
+  const body = getWeaponMasteryDescriptionRaw(key);
+  if (!body) return undefined;
+  const label = key.charAt(0).toUpperCase() + key.slice(1);
+  return `***Mastery: ${label}.*** ${body}`;
 }
 
 export interface WeaponMasteryAvailabilityOptions {
