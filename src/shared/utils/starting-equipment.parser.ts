@@ -15,6 +15,7 @@ const EQUIPMENT_TYPE_LABELS: Record<string, string> = {
   focusSpellcastingHoly: "Holy symbol",
   focusSpellcastingDruidic: "Druidic focus",
   toolArtisan: "Artisan's tools",
+  setGaming: "Gaming Set",
 };
 
 function titleCaseItemName(name: string): string {
@@ -22,6 +23,14 @@ function titleCaseItemName(name: string): string {
     .split(" ")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
     .join(" ");
+}
+
+/** `setGaming` / `toolArtisan` → readable labels when not in {@link EQUIPMENT_TYPE_LABELS}. */
+function humanizeEquipmentType(equipmentType: string): string {
+  const known = EQUIPMENT_TYPE_LABELS[equipmentType];
+  if (known) return known;
+  const spaced = equipmentType.replace(/([a-z])([A-Z])/g, "$1 $2");
+  return titleCaseItemName(spaced);
 }
 
 function parseItemKey(key: string): { name: string; source: string } {
@@ -93,9 +102,7 @@ function parseRawItem(
   }
 
   if (typeof obj.equipmentType === "string") {
-    const label =
-      EQUIPMENT_TYPE_LABELS[obj.equipmentType] ??
-      titleCaseItemName(obj.equipmentType);
+    const label = humanizeEquipmentType(obj.equipmentType);
     const qty = typeof obj.quantity === "number" ? obj.quantity : 1;
     return {
       id: buildItemId(

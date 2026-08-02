@@ -17,6 +17,8 @@ export interface ClassFeatureEntry {
   content: import("./statblock-content.types").StatBlockContent[];
   /** Plain-text fallback for search and legacy consumers. */
   description: string[];
+  /** Raw 5etools entries (keeps `{@…}` tags for Foundry enrichers). */
+  rawEntries?: unknown[];
   isSubclassFeature?: boolean;
   gainSubclassFeature?: boolean;
   /** Explicit optional-feature refs from {@code options} blocks in this feature. */

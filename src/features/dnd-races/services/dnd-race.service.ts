@@ -1,7 +1,11 @@
 import type { DndRace } from "@/shared/types";
-import { RACES_JSON_URL } from "@/shared/constants/api.constants";
+import {
+  FLUFF_RACES_JSON_URL,
+  RACES_JSON_URL,
+} from "@/shared/constants/api.constants";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 import { resolveByNameSource } from "@/shared/utils/entity-copy.utils";
+import { attachFluffEntries } from "@/shared/utils/fluff.utils";
 import {
   bySource,
   createEntityService,
@@ -27,10 +31,16 @@ const loadedUaSources = new Set<string>();
 
 const service = createEntityService<RawRaceEntry, DndRace>({
   loadRaw: async () => {
-    const data = await fetchFiveToolsJson<{
-      race?: RawRaceEntry[];
-      subrace?: RawRaceEntry[];
-    }>(RACES_JSON_URL, "races.json");
+    const [data, fluffData] = await Promise.all([
+      fetchFiveToolsJson<{
+        race?: RawRaceEntry[];
+        subrace?: RawRaceEntry[];
+      }>(RACES_JSON_URL, "races.json"),
+      fetchFiveToolsJson<{ raceFluff?: RawRaceEntry[] }>(
+        FLUFF_RACES_JSON_URL,
+        "fluff-races.json",
+      ).catch(() => ({ raceFluff: [] as RawRaceEntry[] })),
+    ]);
 
     const rawRaces = Array.isArray(data.race) ? data.race : [];
     const rawSubraces = Array.isArray(data.subrace) ? data.subrace : [];
@@ -51,7 +61,20 @@ const service = createEntityService<RawRaceEntry, DndRace>({
       ];
     }
 
-    return resolveByNameSource(combined);
+    const fluffEntries = Array.isArray(fluffData.raceFluff)
+      ? fluffData.raceFluff
+      : [];
+    const withFluff = attachFluffEntries(
+      resolveByNameSource(combined),
+      resolveByNameSource(
+        fluffEntries.filter(
+          (e): e is RawRaceEntry & { name: string; source: string } =>
+            typeof e.name === "string" && typeof e.source === "string",
+        ),
+      ),
+    );
+
+    return withFluff as (RawRaceEntry & { name: string; source: string })[];
   },
   map: (raw) => mapDndRace(raw),
   idOf: (race) => race.id,

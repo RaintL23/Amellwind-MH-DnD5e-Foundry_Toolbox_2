@@ -77,6 +77,11 @@ function applyArrayMod(baseArr: unknown[], mod: ArrayMod): unknown[] {
     return [...arr, ...toAppend];
   }
 
+  if (mode === "prependArr" && mod.items !== undefined) {
+    const toPrepend = Array.isArray(mod.items) ? mod.items : [mod.items];
+    return [...toPrepend, ...arr];
+  }
+
   if (mode === "insertArr" && mod.items !== undefined) {
     const toInsert = Array.isArray(mod.items) ? mod.items : [mod.items];
     if (mod.index === undefined || mod.index === -1) {

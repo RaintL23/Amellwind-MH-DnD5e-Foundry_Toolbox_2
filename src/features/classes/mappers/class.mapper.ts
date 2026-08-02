@@ -92,6 +92,7 @@ function mapFeatureEntry(
     source: feature.source,
     content,
     description: contentToDescription(content),
+    rawEntries: Array.isArray(feature.entries) ? feature.entries : undefined,
     isSubclassFeature,
     gainSubclassFeature: feature.gainSubclassFeature,
     optionalFeatureRefs: optionalFeatureRefs.length

@@ -64,6 +64,8 @@ export const FIVETOOLS_DATA_BASE_URL = `${GITHUB_RAW}/${FIVETOOLS_MIRROR}/${FIVE
 
 export const SPELLS_BASE_URL = `${FIVETOOLS_DATA_BASE_URL}/spells`;
 export const SPELL_INDEX_URL = `${SPELLS_BASE_URL}/index.json`;
+/** Index of per-source spell fluff files under data/spells/ (spellFluff + art). */
+export const SPELL_FLUFF_INDEX_URL = `${SPELLS_BASE_URL}/fluff-index.json`;
 
 /**
  * 5etools class JSONs live under data/class/ in the mirror, one file per base
@@ -101,6 +103,11 @@ export const SPELL_SOURCE_LOOKUP_URL = `${FIVETOOLS_DATA_BASE_URL}/generated/gen
 
 /** 5etools races/species compendium. Local dev: copy backup-jsons/5etools/races.json → public/5etools/races.json and set VITE_5ETOOLS_DATA=local */
 export const RACES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/races.json`;
+/** Parallel fluff file for races/species (lore + art). Local: fluff-races.json */
+export const FLUFF_RACES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-races.json`;
+
+/** Index of per-class fluff files under data/class/ (classFluff + subclassFluff). */
+export const CLASS_FLUFF_INDEX_URL = `${CLASSES_BASE_URL}/fluff-index.json`;
 
 /** 5etools backgrounds compendium. Local dev: copy backup-jsons/5etools/backgrounds.json + fluff-backgrounds.json → public/5etools/ and set VITE_5ETOOLS_DATA=local */
 export const BACKGROUNDS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/backgrounds.json`;
@@ -123,6 +130,8 @@ export const NAMES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/names.json`;
 export const ITEMS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items.json`;
 export const ITEMS_BASE_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/items-base.json`;
 export const MAGIC_VARIANTS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/magicvariants.json`;
+/** Parallel fluff file for items (lore + art). Local: fluff-items.json */
+export const FLUFF_ITEMS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-items.json`;
 export const LOCAL_5ETOOLS_BASE = "/5etools";
 
 /** Bestiary compendium — local dev: copy backup-jsons/5etools/bestiary/ → public/5etools/bestiary/; set VITE_5ETOOLS_DATA=local. Minimum: index.json, bestiary-mm.json, legendarygroups.json */
