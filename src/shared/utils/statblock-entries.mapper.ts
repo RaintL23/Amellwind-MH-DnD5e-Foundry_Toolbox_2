@@ -3,36 +3,17 @@ import type {
   StatBlockListItem,
 } from "@/shared/types/statblock-content.types";
 import type { DowntimeTable } from "@/shared/types/downtime.types";
-import { parseFiveToolsMarkup, formatAbilityDcText } from "@/shared/utils/fivetools-parser";
+import {
+  formatAbilityDcText,
+  mapFiveToolsTable,
+  parseFiveToolsMarkup,
+} from "@/shared/utils/fivetools-parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
 function mapTable(raw: Raw): DowntimeTable {
-  const colLabels = Array.isArray(raw.colLabels)
-    ? raw.colLabels.map(String)
-    : [];
-  const rows = Array.isArray(raw.rows)
-    ? (raw.rows as unknown[][]).map((row) =>
-        row.map((cell) =>
-          typeof cell === "string"
-            ? parseFiveToolsMarkup(cell)
-            : String(cell ?? ""),
-        ),
-      )
-    : [];
-  const footnotes = Array.isArray(raw.footnotes)
-    ? raw.footnotes.map((note: unknown) =>
-        typeof note === "string" ? parseFiveToolsMarkup(note) : String(note),
-      )
-    : undefined;
-
-  return {
-    caption: typeof raw.caption === "string" ? parseFiveToolsMarkup(raw.caption) : undefined,
-    colLabels: colLabels.map((l) => parseFiveToolsMarkup(l)),
-    rows,
-    footnotes,
-  };
+  return mapFiveToolsTable(raw);
 }
 
 function mapListItems(items: unknown[]): StatBlockListItem[] {
@@ -69,8 +50,17 @@ export function statBlockContentToPlainText(block: StatBlockContent): string {
   switch (block.type) {
     case "paragraph":
       return block.text;
-    case "table":
-      return block.table.caption ?? block.table.colLabels.join(" ");
+    case "table": {
+      const { caption, colLabels, rows, footnotes } = block.table;
+      return [
+        caption,
+        colLabels.join(" "),
+        ...rows.map((row) => row.join(" ")),
+        ...(footnotes ?? []),
+      ]
+        .filter(Boolean)
+        .join(" ");
+    }
     case "section":
       return [block.name, ...block.children.map(statBlockContentToPlainText)]
         .filter(Boolean)
@@ -86,6 +76,16 @@ export function statBlockContentToPlainText(block: StatBlockContent): string {
     default:
       return "";
   }
+}
+
+export function statBlockContentsToPlainText(
+  blocks: StatBlockContent[],
+  separator = "\n",
+): string {
+  return blocks
+    .map(statBlockContentToPlainText)
+    .filter((text) => text.trim().length > 0)
+    .join(separator);
 }
 
 export function mapStatBlockEntries(entries: unknown[]): StatBlockContent[] {

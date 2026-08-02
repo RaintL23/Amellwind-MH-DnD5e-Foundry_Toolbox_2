@@ -85,6 +85,125 @@ export function parseFiveToolsMarkup(text: string): string {
   return result;
 }
 
+/** Formats a 5etools table roll range (`exact` or `min`/`max`) for display. */
+export function formatFiveToolsRoll(roll: unknown): string {
+  if (typeof roll !== "object" || roll === null) return "";
+  const obj = roll as Record<string, unknown>;
+  if (typeof obj.exact === "number") return String(obj.exact);
+  const min = typeof obj.min === "number" ? obj.min : null;
+  const max = typeof obj.max === "number" ? obj.max : null;
+  if (min != null && max != null) {
+    if (min === max) return String(min);
+    const pad = Math.max(String(min).length, String(max).length, 2);
+    return `${String(min).padStart(pad, "0")}–${String(max).padStart(pad, "0")}`;
+  }
+  if (min != null) return String(min);
+  if (max != null) return String(max);
+  return "";
+}
+
+/**
+ * Flattens a 5etools table cell (string, `{type:"cell"}`, nested entries) to
+ * display text. When `parseMarkup` is true, `{@…}` tags are resolved to plain text.
+ */
+export function formatFiveToolsTableCell(
+  cell: unknown,
+  parseMarkup = true,
+): string {
+  const apply = (text: string) =>
+    parseMarkup ? parseFiveToolsMarkup(text) : text;
+
+  if (cell == null) return "";
+  if (typeof cell === "string") return apply(cell).trim();
+  if (typeof cell === "number" || typeof cell === "boolean") {
+    return String(cell);
+  }
+  if (Array.isArray(cell)) {
+    return cell
+      .map((part) => formatFiveToolsTableCell(part, parseMarkup))
+      .filter(Boolean)
+      .join(" ");
+  }
+  if (typeof cell !== "object") return "";
+
+  const obj = cell as Record<string, unknown>;
+
+  if (obj.type === "cell") {
+    if (typeof obj.entry === "string" && obj.entry.trim()) {
+      return apply(obj.entry).trim();
+    }
+    if (Array.isArray(obj.entry)) {
+      return formatFiveToolsTableCell(obj.entry, parseMarkup);
+    }
+    const rollText = formatFiveToolsRoll(obj.roll);
+    if (rollText) return rollText;
+  }
+
+  if (typeof obj.text === "string") return apply(obj.text).trim();
+  if (typeof obj.entry === "string") return apply(obj.entry).trim();
+
+  if (Array.isArray(obj.entries)) {
+    return (obj.entries as unknown[])
+      .map((part) => formatFiveToolsTableCell(part, parseMarkup))
+      .filter(Boolean)
+      .join(" ");
+  }
+
+  const rollText = formatFiveToolsRoll(obj.roll);
+  if (rollText) return rollText;
+
+  return "";
+}
+
+export interface FiveToolsTableData {
+  caption?: string;
+  colLabels: string[];
+  rows: string[][];
+  footnotes?: string[];
+}
+
+/** Maps a raw 5etools `{type:"table"}` object into display-ready string cells. */
+export function mapFiveToolsTable(
+  raw: Record<string, unknown>,
+  parseMarkup = true,
+): FiveToolsTableData {
+  const apply = (text: string) =>
+    parseMarkup ? parseFiveToolsMarkup(text) : text;
+
+  const colLabels = Array.isArray(raw.colLabels)
+    ? (raw.colLabels as unknown[]).map((label) =>
+        apply(String(label ?? "")).trim(),
+      )
+    : [];
+
+  const rows = Array.isArray(raw.rows)
+    ? (raw.rows as unknown[]).map((row) => {
+        const cells = Array.isArray(row) ? row : [row];
+        return cells.map((cell) => formatFiveToolsTableCell(cell, parseMarkup));
+      })
+    : [];
+
+  const footnotes = Array.isArray(raw.footnotes)
+    ? (raw.footnotes as unknown[])
+        .map((note) =>
+          typeof note === "string"
+            ? apply(note).trim()
+            : formatFiveToolsTableCell(note, parseMarkup),
+        )
+        .filter(Boolean)
+    : undefined;
+
+  const caption =
+    typeof raw.caption === "string" ? apply(raw.caption).trim() : undefined;
+
+  return {
+    caption: caption || undefined,
+    colLabels,
+    rows,
+    footnotes: footnotes?.length ? footnotes : undefined,
+  };
+}
+
 export function parseEntries(entries: unknown[]): string {
   return entries
     .map((entry) => {
@@ -109,8 +228,14 @@ export function parseEntries(entries: unknown[]): string {
             obj["attributes"],
           );
         }
-        if (obj["type"] === "table" && typeof obj["caption"] === "string") {
-          return parseFiveToolsMarkup(obj["caption"]);
+        if (obj["type"] === "table") {
+          const table = mapFiveToolsTable(obj);
+          const parts = [
+            table.caption,
+            table.colLabels.join(" | "),
+            ...table.rows.map((row) => row.join(" | ")),
+          ].filter(Boolean);
+          return parts.join("; ");
         }
       }
       return "";
@@ -159,6 +284,20 @@ export function flattenEntriesForDisplay(entries: unknown[]): string {
           obj.attributes,
         ),
       );
+      return;
+    }
+
+    if (obj.type === "table") {
+      const table = mapFiveToolsTable(obj, false);
+      if (table.caption) lines.push(table.caption);
+      if (table.colLabels.length) lines.push(table.colLabels.join(" — "));
+      for (const row of table.rows) {
+        const text = row.filter(Boolean).join(" — ");
+        if (text) lines.push(`• ${text}`);
+      }
+      if (table.footnotes) {
+        for (const note of table.footnotes) lines.push(note);
+      }
       return;
     }
 
@@ -271,8 +410,23 @@ export function renderFiveToolsEntries(
           ...renderFiveToolsEntries(obj.entries as unknown[], options, depth + 1),
         );
       }
-    } else if (renderTableCaption && obj.type === "table" && obj.caption) {
-      result.push(`**${parseFiveToolsMarkup(String(obj.caption))}**`);
+    } else if (renderTableCaption && obj.type === "table") {
+      const table = mapFiveToolsTable(obj);
+      if (table.caption) {
+        result.push(`**${table.caption}**`);
+      }
+      if (table.colLabels.length > 0) {
+        result.push(`${bullet}${table.colLabels.join(" — ")}`);
+      }
+      for (const row of table.rows) {
+        const text = row.filter(Boolean).join(" — ");
+        if (text) result.push(`${bullet}${text}`);
+      }
+      if (table.footnotes) {
+        for (const note of table.footnotes) {
+          if (note) result.push(note);
+        }
+      }
     } else if (obj.type === "abilityDc") {
       const text = formatAbilityDcText(
         typeof obj.name === "string" ? obj.name : "Save",

@@ -1,5 +1,8 @@
 import type { DowntimeActivity, DowntimeContent, DowntimeTable } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  mapFiveToolsTable,
+  parseFiveToolsMarkup,
+} from "@/shared/utils/fivetools-parser";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -14,30 +17,7 @@ function slugify(name: string): string {
 }
 
 function mapTable(raw: Raw): DowntimeTable {
-  const colLabels = Array.isArray(raw.colLabels)
-    ? raw.colLabels.map(String)
-    : [];
-  const rows = Array.isArray(raw.rows)
-    ? (raw.rows as unknown[][]).map((row) =>
-        row.map((cell) =>
-          typeof cell === "string"
-            ? parseFiveToolsMarkup(cell)
-            : String(cell ?? ""),
-        ),
-      )
-    : [];
-  const footnotes = Array.isArray(raw.footnotes)
-    ? raw.footnotes.map((note: unknown) =>
-        typeof note === "string" ? parseFiveToolsMarkup(note) : String(note),
-      )
-    : undefined;
-
-  return {
-    caption: typeof raw.caption === "string" ? raw.caption : undefined,
-    colLabels,
-    rows,
-    footnotes,
-  };
+  return mapFiveToolsTable(raw);
 }
 
 function mapEntries(entries: unknown[]): DowntimeContent[] {
