@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Spell } from "@/shared/types";
 import {
   Dialog,
@@ -41,27 +41,27 @@ function MetaRow({
   differs,
 }: {
   label: string;
-  value: string;
+  value: ReactNode;
   differs?: boolean;
 }) {
   return (
-    <div className="flex gap-2">
+    <div className="flex gap-2 items-baseline">
       <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide w-28 shrink-0">
         {label}
       </span>
       <span
         className={cn(
-          "text-sm",
+          "text-sm min-w-0 flex-1",
           differs ? "text-amber-300 font-medium" : "text-foreground",
         )}
       >
         {value}
-        {differs && (
-          <span className="ml-1.5 text-[10px] font-normal text-amber-500/80">
-            (varies)
-          </span>
-        )}
       </span>
+      {differs && (
+        <span className="shrink-0 text-[10px] font-normal text-amber-500/80">
+          (varies)
+        </span>
+      )}
     </div>
   );
 }
@@ -301,20 +301,9 @@ export function SpellDetailDialog({
             <MetaRow label="Range" value={active.range} differs={differs("range")} />
             <MetaRow
               label="Components"
-              value=""
+              value={<ComponentsText components={active.components} />}
               differs={differs("components")}
             />
-            <div className="flex gap-2 -mt-1">
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide w-28 shrink-0" />
-              <span
-                className={cn(
-                  "text-sm",
-                  differs("components") ? "text-amber-300 font-medium" : "text-foreground",
-                )}
-              >
-                <ComponentsText components={active.components} />
-              </span>
-            </div>
             <MetaRow
               label="Duration"
               value={active.duration}
