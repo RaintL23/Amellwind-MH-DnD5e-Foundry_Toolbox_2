@@ -57,6 +57,7 @@ import { FOUNDRY_ITEM_ICONS, resolveItemIcon } from "../foundry-export/foundry-i
 import { downloadCharacterImages } from "../utils/image-download.utils";
 import { getAllDndItems } from "@/features/dnd-items/services/dnd-item.service";
 import type { DndItem } from "@/shared/types/dnd-item.types";
+import { statBlockContentsToPlainText } from "@/shared/utils/statblock-entries.mapper";
 import type {
   InventoryCatalogMeta,
   SpellItemInput,
@@ -660,7 +661,10 @@ export function useFoundryExport() {
       for (const item of dndItems) {
         const key = item.name.trim().toLowerCase();
         if (!key) continue;
-        const description = joinDescription(item.description);
+        const description =
+          item.description.length > 0
+            ? statBlockContentsToPlainText(item.description)
+            : undefined;
         const valueGp =
           item.valueCp != null && Number.isFinite(item.valueCp)
             ? item.valueCp / 100

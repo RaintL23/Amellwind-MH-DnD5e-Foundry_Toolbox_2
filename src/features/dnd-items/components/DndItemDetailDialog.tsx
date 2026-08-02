@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/shared/utils/cn";
-import { DescriptionLines } from "@/shared/components/DescriptionLines";
+import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { SourceBadge } from "@/features/spells/components/SourceBadge";
 import {
   getBookSourceNames,
@@ -400,7 +400,7 @@ export function DndItemDetailDialog({
                   </span>
                 )}
               </h3>
-              <DescriptionLines lines={active.description} />
+              <StatBlockContentView content={active.description} />
             </>
           )}
         </DialogBody>

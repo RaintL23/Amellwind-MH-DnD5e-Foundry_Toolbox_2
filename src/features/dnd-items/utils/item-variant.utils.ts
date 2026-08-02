@@ -1,4 +1,5 @@
 import { DndItem } from "@/shared/types";
+import { statBlockContentsToPlainText } from "@/shared/utils/statblock-entries.mapper";
 
 export type DndItemVariantField =
   | "rarityLabel"
@@ -54,7 +55,7 @@ function fieldValue(item: DndItem, field: DndItemVariantField): string {
     case "bonusAc":
       return item.bonusAc ?? "";
     case "description":
-      return item.description.join("\n");
+      return statBlockContentsToPlainText(item.description);
   }
 }
 
@@ -91,7 +92,7 @@ export function formatFieldValue(
   switch (field) {
     case "description":
       return item.description.length > 0
-        ? `${item.description.length} paragraph(s)`
+        ? `${item.description.length} block(s)`
         : "—";
     case "attunement":
       return item.attunement ?? "—";

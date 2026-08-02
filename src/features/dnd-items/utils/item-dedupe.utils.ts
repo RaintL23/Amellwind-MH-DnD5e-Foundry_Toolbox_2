@@ -1,4 +1,5 @@
 import { DndItem } from "@/shared/types";
+import { statBlockContentsToPlainText } from "@/shared/utils/statblock-entries.mapper";
 
 export const CANONICAL_SOURCE_PRIORITY = [
   "XDMG",
@@ -81,7 +82,9 @@ function buildSearchText(group: DndItem[]): string {
       item.typeLabel,
       item.rarityLabel,
       item.category,
-      item.description.join(" "),
+      item.description.length
+        ? statBlockContentsToPlainText(item.description, " ")
+        : "",
       item.baseName ?? "",
       item.variantName ?? "",
     );

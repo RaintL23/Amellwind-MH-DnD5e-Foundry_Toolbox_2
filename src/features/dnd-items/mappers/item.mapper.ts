@@ -1,6 +1,9 @@
 import type { DndItem, DndItemRarity } from "@/shared/types/dnd-item.types";
 import { DMG_TYPE_LABELS } from "@/shared/types";
-import { renderFiveToolsEntries } from "@/shared/utils/fivetools-parser";
+import {
+  mapStatBlockEntries,
+  statBlockContentsToPlainText,
+} from "@/shared/utils/statblock-entries.mapper";
 import type { ItemBaseIndexes, RawItemEntity } from "../utils/item-raw.types";
 import { formatDndItemProperties } from "../utils/item-property.utils";
 import { itemId, unpackItemTypeUid } from "../utils/item-uids.utils";
@@ -92,10 +95,11 @@ export function mapDndItem(
   const rarity = (raw.rarity ?? "none") as DndItemRarity;
   const isMundane = rarity === "none";
   const typeCode = raw.type != null ? String(raw.type) : undefined;
-  const description = renderFiveToolsEntries([
+  const description = mapStatBlockEntries([
     ...(Array.isArray(raw.entries) ? raw.entries : []),
     ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
   ]);
+  const descriptionPlain = statBlockContentsToPlainText(description, " ");
 
   const name = String(raw.name ?? "Unknown");
   const source = String(raw.source ?? "");
@@ -114,7 +118,7 @@ export function mapDndItem(
     typeLabel,
     weaponCategory ? formatWeaponCategoryLabel(weaponCategory) : null,
     rarity,
-    description.join(" "),
+    descriptionPlain,
     raw._baseName,
     raw._variantName,
   ]

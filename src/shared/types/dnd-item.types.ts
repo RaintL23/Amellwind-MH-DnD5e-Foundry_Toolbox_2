@@ -1,3 +1,5 @@
+import type { StatBlockContent } from "./statblock-content.types";
+
 export type DndItemRarity =
   | "none"
   | "common"
@@ -29,7 +31,8 @@ export interface DndItem {
   weight: string | null;
   valueGp: string | null;
   valueCp: number | null;
-  description: string[];
+  /** Structured 5etools entries (paragraphs, lists, tables, named sections). */
+  description: StatBlockContent[];
   searchText: string;
   category: string;
   groupItemRefs?: string[];
