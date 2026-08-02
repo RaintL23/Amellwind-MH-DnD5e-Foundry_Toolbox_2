@@ -132,7 +132,9 @@ export const WEAPON_MASTERY_OPTIONS: FeatureChoiceOption[] =
     id: weapon.id,
     name: weapon.name,
     source: "XPHB",
-    entries: [`Mastery: ${weapon.mastery}`],
+    entries: [
+      `**Mastery: ${weapon.mastery}.** ${WEAPON_MASTERY_DESCRIPTIONS_RAW[weapon.mastery]}`,
+    ],
   }));
 
 /** Weapons grouped by mastery property for the library UI. */

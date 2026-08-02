@@ -28,6 +28,8 @@ export function ClassDetailPage() {
     mergedTableGroups,
     enabledFeatureUids,
     enabledFeatures,
+    activeSubclass,
+    optionalFeatureProgressions,
     activeSubclassId,
     toggleFeature,
     handleSourceSelect,
@@ -99,7 +101,12 @@ export function ClassDetailPage() {
             onToggleFeature={toggleFeature}
           />
 
-          <ClassFeatureDetailsPanel features={enabledFeatures} />
+          <ClassFeatureDetailsPanel
+            features={enabledFeatures}
+            classData={active}
+            subclass={activeSubclass}
+            progressions={optionalFeatureProgressions}
+          />
         </div>
       </div>
     </div>

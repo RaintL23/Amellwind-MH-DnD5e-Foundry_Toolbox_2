@@ -20,6 +20,7 @@ import {
   getFeaturesUpToLevel,
   getSubclassGainLevel,
 } from "../../../utils/builder-class.utils";
+import { collectClassOptionalFeatureProgressions } from "@/features/classes/utils/class-optional-feature-browse.utils";
 
 interface ClassLibraryDetailProps {
   classData: Class;
@@ -60,6 +61,8 @@ export function ClassLibraryDetail({
   const byLevel = groupFeaturesByLevel(features);
   const subclassLevel = getSubclassGainLevel(classData);
   const sortedLevels = [...byLevel.entries()].sort(([a], [b]) => a - b);
+  const optionalFeatureProgressions =
+    collectClassOptionalFeatureProgressions(classData, subclass);
 
   return (
     <div className="space-y-3">
@@ -158,6 +161,9 @@ export function ClassLibraryDetail({
               <AccordionContent className="pb-2 pt-0">
                 <ClassFeatureDetailsPanel
                   features={levelFeatures}
+                  classData={classData}
+                  subclass={subclass}
+                  progressions={optionalFeatureProgressions}
                   className="mt-0"
                 />
               </AccordionContent>

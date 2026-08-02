@@ -11,6 +11,7 @@ import { SourceVariantSwitcher } from "@/features/builder/components/shared/Sour
 import type { SourceVariant } from "@/features/builder/utils/library-variant.utils";
 import type { Subclass } from "@/shared/types";
 import { EmptyState } from "./LibraryUi";
+import { collectClassOptionalFeatureProgressions } from "@/features/classes/utils/class-optional-feature-browse.utils";
 
 export function SubclassLibraryDetail({
   subclass,
@@ -30,6 +31,8 @@ export function SubclassLibraryDetail({
   const rowsWithFeatures = subclass.progression.filter(
     (row) => row.level <= level && row.features.length > 0,
   );
+  const optionalFeatureProgressions =
+    collectClassOptionalFeatureProgressions(null, subclass);
 
   return (
     <div className="space-y-3">
@@ -75,6 +78,8 @@ export function SubclassLibraryDetail({
                     ...f,
                     isSubclassFeature: true,
                   }))}
+                  subclass={subclass}
+                  progressions={optionalFeatureProgressions}
                   className="mt-0"
                 />
               </AccordionContent>

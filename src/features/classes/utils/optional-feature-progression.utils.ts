@@ -33,6 +33,12 @@ export function isFightingStyleCategory(category: string): boolean {
   return upper === "FS" || upper.startsWith("FS:");
 }
 
+/** Feat categories surfaced as class optional-feature progressions (FS*, Epic Boon). */
+export function isMappedFeatProgressionCategory(category: string): boolean {
+  const upper = category.toUpperCase();
+  return upper === "EB" || isFightingStyleCategory(upper);
+}
+
 export function isFightingStyleProgression(
   progression: OptionalFeatureProgression,
 ): boolean {
@@ -95,10 +101,13 @@ export function mapClassFeatProgressions(
   return rawList
     .filter(
       (entry) =>
-        entry.category?.some(isFightingStyleCategory) && entry.progression,
+        entry.category?.some(isMappedFeatProgressionCategory) &&
+        entry.progression,
     )
     .map((entry) => {
-      const featCategories = entry.category!.filter(isFightingStyleCategory);
+      const featCategories = entry.category!.filter(
+        isMappedFeatProgressionCategory,
+      );
       return {
         id: buildProgressionId(scope, ownerId, featCategories),
         name: entry.name,

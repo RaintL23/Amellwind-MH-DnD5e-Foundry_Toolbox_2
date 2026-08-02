@@ -17,6 +17,7 @@ import {
   getFieldsThatVaryAcrossVariants,
   type ClassVariantField,
 } from "../utils/class-variant.utils";
+import { collectClassOptionalFeatureProgressions } from "../utils/class-optional-feature-browse.utils";
 
 export function useClassDetailPage(classId: string) {
   const navigate = useNavigate();
@@ -184,6 +185,11 @@ export function useClassDetailPage(classId: string) {
     return features;
   }, [mergedProgression, enabledFeatureUids]);
 
+  const optionalFeatureProgressions = useMemo(
+    () => collectClassOptionalFeatureProgressions(active, activeSubclass),
+    [active, activeSubclass],
+  );
+
   return {
     loading,
     notFound,
@@ -198,6 +204,8 @@ export function useClassDetailPage(classId: string) {
     mergedTableGroups,
     enabledFeatureUids,
     enabledFeatures,
+    activeSubclass,
+    optionalFeatureProgressions,
     activeSubclassId,
     toggleFeature,
     handleSourceSelect,
