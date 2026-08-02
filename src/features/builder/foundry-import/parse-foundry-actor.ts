@@ -140,10 +140,23 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
           mastery: asString(getPath(item, "system.mastery")),
         });
         break;
+      case "loot":
+      case "tool":
+      case "consumable":
+        loot.push({
+          name,
+          quantity: asNumber(getPath(item, "system.quantity")) ?? 1,
+        });
+        break;
       case "equipment": {
         const equipKind = asString(getPath(item, "system.type.value"));
         if (equipKind === "trinket") {
           trinkets.push(name);
+        } else if (equipKind === "clothing") {
+          loot.push({
+            name,
+            quantity: asNumber(getPath(item, "system.quantity")) ?? 1,
+          });
         } else {
           armors.push({
             name,
@@ -155,12 +168,6 @@ export function parseFoundryActor(raw: unknown): ParsedFoundryActor {
         }
         break;
       }
-      case "loot":
-        loot.push({
-          name,
-          quantity: asNumber(getPath(item, "system.quantity")) ?? 1,
-        });
-        break;
       default:
         break;
     }
