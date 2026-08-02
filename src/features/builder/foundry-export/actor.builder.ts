@@ -23,13 +23,14 @@ import {
   buildBackgroundItem,
   buildClassItem,
   buildFeatItem,
-  buildLootItem,
+  buildInventoryItem,
   buildRaceItem,
   buildSpellItem,
   buildSubclassItem,
   buildTrinketItem,
   buildWeaponItem,
   type FeatSubtype,
+  type InventoryCatalogMeta,
   type SpellItemInput,
 } from "./item.builders";
 import {
@@ -59,6 +60,12 @@ export interface FeatureInput {
   subtype: FeatSubtype;
   level: number;
   identifier?: string;
+  img?: string;
+  /**
+   * When set, standalone feats (e.g. Metamagic picks) are grouped under this
+   * origin on the Foundry sheet instead of "Other Features".
+   */
+  originKind?: "class" | "subclass" | "race" | "background";
 }
 
 export interface ClassInfoInput {
@@ -71,6 +78,7 @@ export interface ClassInfoInput {
   spellcastingAbility: string;
   primaryAbilities: string[];
   description?: string;
+  img?: string;
   saveProficiencies: AbilityKey[];
   features: FeatureInput[];
 }
@@ -83,6 +91,7 @@ export interface SubclassInfoInput {
   spellcastingProgression: string;
   spellcastingAbility: string;
   description?: string;
+  img?: string;
   features: FeatureInput[];
 }
 
@@ -96,6 +105,7 @@ export interface RaceInfoInput {
   size: string;
   darkvision?: number | null;
   description?: string;
+  img?: string;
   features: FeatureInput[];
 }
 
@@ -104,6 +114,7 @@ export interface BackgroundInfoInput {
   identifier: string;
   source?: string;
   description?: string;
+  img?: string;
   features: FeatureInput[];
 }
 
@@ -126,6 +137,11 @@ export interface FoundryExportInput {
   languages: string[];
   tools: string[];
   weaponProficiencies: string[];
+  /**
+   * Foundry `traits.weaponProf.mastery.value` — baseItem slugs the character
+   * has Weapon Mastery for (e.g. `spear`, `longsword`).
+   */
+  weaponMasteryBaseItems?: string[];
   armorProficiencies: string[];
   resistances: DamageType[];
   immunities: DamageType[];
@@ -154,11 +170,40 @@ export interface FoundryExportInput {
   tokenImage?: string | null;
   /** Lookup (lowercased item name → HTML/plain description) for armor/trinket/loot. */
   itemDescriptions?: Record<string, string>;
+  /** Catalog metadata (type/weight/value/…) for inventory item routing. */
+  itemCatalog?: Record<string, InventoryCatalogMeta>;
+  /** Lookup (lowercased item/feat name → Foundry img URL or path). */
+  itemImages?: Record<string, string>;
   /** Lossless builder choice snapshot embedded as a namespaced actor flag. */
   builderSnapshot?: BuilderChoiceSnapshot;
 }
 
 // ─── Feature item helpers ────────────────────────────────────────────────────
+
+/** Sets `flags.dnd5e.advancementOrigin` so the sheet groups features by class/race/…. */
+function stampAdvancementOrigins(
+  featureItems: FoundryItem[],
+  advancements: Record<string, unknown>[],
+  parentId: string,
+): void {
+  const featIdToAdvId = new Map<string, string>();
+  for (const adv of advancements) {
+    if (adv.type !== "ItemGrant") continue;
+    const value = adv.value as { added?: Record<string, string> } | undefined;
+    for (const featId of Object.keys(value?.added ?? {})) {
+      featIdToAdvId.set(featId, String(adv._id));
+    }
+  }
+  for (const feat of featureItems) {
+    const advId = featIdToAdvId.get(feat._id);
+    const origin = advId ? `${parentId}.${advId}` : parentId;
+    const prev = (feat.flags.dnd5e as Record<string, unknown> | undefined) ?? {};
+    feat.flags = {
+      ...feat.flags,
+      dnd5e: { ...prev, advancementOrigin: origin },
+    };
+  }
+}
 
 function buildFeatureItems(
   features: FeatureInput[],
@@ -171,6 +216,7 @@ function buildFeatureItems(
       description: f.description,
       subtype: f.subtype,
       identifier: f.identifier,
+      img: f.img,
     });
     items.push(item);
     const level = Math.max(0, f.level);
@@ -196,8 +242,18 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   const items: FoundryItem[] = [];
   const descFor = (name: string): string | undefined =>
     input.itemDescriptions?.[name.trim().toLowerCase()];
+  const catalogFor = (name: string): InventoryCatalogMeta | undefined => {
+    const key = name.trim().toLowerCase();
+    const fromCatalog = input.itemCatalog?.[key];
+    if (fromCatalog) return fromCatalog;
+    const description = descFor(name);
+    return description ? { description } : undefined;
+  };
+  const imgFor = (name: string): string | undefined =>
+    input.itemImages?.[name.trim().toLowerCase()];
 
   let classId: string | null = null;
+  let subclassId: string | null = null;
   let raceId: string | null = null;
   let backgroundId: string | null = null;
 
@@ -208,6 +264,7 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
     );
     items.push(...featureItems);
 
+    const itemGrants = itemGrantsByLevel(byLevel);
     const advancement: Record<string, unknown>[] = [
       buildHitPointsAdvancement(),
       buildTraitAdvancement(
@@ -218,7 +275,7 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
         "primary",
       ),
       ...buildScaleValueAdvancements(input.classInfo.identifier),
-      ...itemGrantsByLevel(byLevel),
+      ...itemGrants,
     ];
 
     const classItem = buildClassItem({
@@ -231,18 +288,24 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       spellcastingAbility: input.classInfo.spellcastingAbility,
       primaryAbilities: input.classInfo.primaryAbilities,
       description: input.classInfo.description,
+      img: input.classInfo.img,
       advancement,
     });
     classId = classItem._id;
+    stampAdvancementOrigins(featureItems, itemGrants, classId);
     items.push(classItem);
   }
 
   // Subclass + subclass features
   if (input.subclassInfo) {
     const { items: featureItems, byLevel } = buildFeatureItems(
-      input.subclassInfo.features,
+      input.subclassInfo.features.map((f) => ({
+        ...f,
+        subtype: f.subtype === "class" ? "subclass" : f.subtype,
+      })),
     );
     items.push(...featureItems);
+    const itemGrants = itemGrantsByLevel(byLevel);
     const subclassItem = buildSubclassItem({
       name: input.subclassInfo.name,
       identifier: input.subclassInfo.identifier,
@@ -251,8 +314,11 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       spellcastingProgression: input.subclassInfo.spellcastingProgression,
       spellcastingAbility: input.subclassInfo.spellcastingAbility,
       description: input.subclassInfo.description,
-      advancement: itemGrantsByLevel(byLevel),
+      img: input.subclassInfo.img,
+      advancement: itemGrants,
     });
+    subclassId = subclassItem._id;
+    stampAdvancementOrigins(featureItems, itemGrants, subclassId);
     items.push(subclassItem);
   }
 
@@ -262,9 +328,13 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       input.raceInfo.features,
     );
     items.push(...featureItems);
+    const itemGrants = itemGrantsByLevel(
+      byLevel,
+      "icons/environment/people/group.webp",
+    );
     const advancement: Record<string, unknown>[] = [
       buildSizeAdvancement(mapSize(input.raceInfo.size)),
-      ...itemGrantsByLevel(byLevel, "icons/environment/people/group.webp"),
+      ...itemGrants,
     ];
     const raceItem = buildRaceItem({
       name: input.raceInfo.name,
@@ -276,9 +346,11 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       size: mapSize(input.raceInfo.size),
       senses: { darkvision: input.raceInfo.darkvision ?? null },
       description: input.raceInfo.description,
+      img: input.raceInfo.img,
       advancement,
     });
     raceId = raceItem._id;
+    stampAdvancementOrigins(featureItems, itemGrants, raceId);
     items.push(raceItem);
   }
 
@@ -288,25 +360,38 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       input.backgroundInfo.features,
     );
     items.push(...featureItems);
+    const itemGrants = itemGrantsByLevel(byLevel);
     const backgroundItem = buildBackgroundItem({
       name: input.backgroundInfo.name,
       identifier: input.backgroundInfo.identifier,
       source: input.backgroundInfo.source,
       description: input.backgroundInfo.description,
-      advancement: itemGrantsByLevel(byLevel),
+      img: input.backgroundInfo.img,
+      advancement: itemGrants,
     });
     backgroundId = backgroundItem._id;
+    stampAdvancementOrigins(featureItems, itemGrants, backgroundId);
     items.push(backgroundItem);
   }
 
-  // Standalone feats
+  // Standalone feats (origin feats, ASI feats, optional-feature picks, …)
   for (const feat of input.feats) {
+    let advancementOrigin: string | undefined;
+    if (feat.originKind === "class" && classId) advancementOrigin = classId;
+    else if (feat.originKind === "subclass" && subclassId) {
+      advancementOrigin = subclassId;
+    } else if (feat.originKind === "race" && raceId) advancementOrigin = raceId;
+    else if (feat.originKind === "background" && backgroundId) {
+      advancementOrigin = backgroundId;
+    }
     items.push(
       buildFeatItem({
         name: feat.name,
         description: feat.description,
         subtype: feat.subtype,
         identifier: feat.identifier,
+        img: feat.img ?? imgFor(feat.name),
+        advancementOrigin,
       }),
     );
   }
@@ -317,6 +402,7 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       equipped: w.isEquipped,
       attackAbility: w.attackAbility,
       description: w.equipped.weapon.description,
+      img: imgFor(w.equipped.weapon.name),
     });
     const magical =
       Number(
@@ -332,18 +418,25 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   // Armor / shields
   for (const a of input.armors) {
     items.push(
-      buildArmorItem(a.armor, a.equipped, a.armor.description ?? descFor(a.armor.name)),
+      buildArmorItem(
+        a.armor,
+        a.equipped,
+        a.armor.description ?? descFor(a.armor.name),
+        imgFor(a.armor.name),
+      ),
     );
   }
 
   // Trinkets
   for (const t of input.trinkets) {
-    items.push(buildTrinketItem(t, descFor(t)));
+    items.push(buildTrinketItem(t, descFor(t), imgFor(t)));
   }
 
-  // Inventory loot
+  // Inventory (tools / clothing / consumables / loot)
   for (const entry of input.loot) {
-    items.push(buildLootItem(entry, descFor(entry.name)));
+    items.push(
+      buildInventoryItem(entry, catalogFor(entry.name), imgFor(entry.name)),
+    );
   }
 
   // Embedded runes (equipment trinkets with AE)
@@ -437,7 +530,14 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       custom: languageCustom.join(";"),
       communication: { telepathy: { value: null, units: "ft" } },
     },
-    weaponProf: { value: weaponProf, custom: "", mastery: { value: [], bonus: [] } },
+    weaponProf: {
+      value: weaponProf,
+      custom: "",
+      mastery: {
+        value: [...new Set(input.weaponMasteryBaseItems ?? [])],
+        bonus: [],
+      },
+    },
     armorProf: { value: armorProf, custom: "" },
   };
 

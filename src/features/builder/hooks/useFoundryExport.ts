@@ -17,6 +17,8 @@ import { SKILL_ORDER } from "@/shared/constants/dnd";
 import {
   getXpForLevel,
   loadFeatExportLookups,
+  sumInventoryGoldGp,
+  isGoldInventoryEntry,
   type FeatExportDescLookup,
   type OptionalFeatureDescMap,
 } from "../utils/character-sheet-export.utils";
@@ -33,9 +35,35 @@ import type {
 } from "../foundry-export";
 import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export";
 import { kebab, mapAbilityLabel, mapCasterProgression } from "../foundry-export/mappings";
+import {
+  resolveBackgroundFluffForFoundry,
+  resolveClassFluffForFoundry,
+  resolveRaceFluffForFoundry,
+  resolveSubclassFluffForFoundry,
+  prefetchFoundryEntityFluffImgs,
+  getSpellFluffImgSync,
+  getItemFluffImgSync,
+  getFeatFluffImgSync,
+} from "../foundry-export/fluff-lookup";
+import {
+  buildBackgroundIdentityDescription,
+  buildClassIdentityDescription,
+  buildRaceIdentityDescription,
+  buildSubclassIdentityDescription,
+} from "../foundry-export/identity-description";
+import { renderFiveToolsEntries } from "../foundry-export/fluff-description";
+import { buildSpellExportList } from "../foundry-export/spell-export.utils";
+import { FOUNDRY_ITEM_ICONS, resolveItemIcon } from "../foundry-export/foundry-icons";
 import { downloadCharacterImages } from "../utils/image-download.utils";
 import { getAllDndItems } from "@/features/dnd-items/services/dnd-item.service";
 import type { DndItem } from "@/shared/types/dnd-item.types";
+import type {
+  InventoryCatalogMeta,
+  SpellItemInput,
+} from "../foundry-export/item.builders";
+import { parseWeightLb } from "../foundry-export/item.builders";
+import { getWeaponMasteryWeapon } from "../data/weapon-mastery.data";
+import { slugify } from "../foundry-export/mappings";
 
 const ALIGNMENT_LABELS: Record<string, string> = {
   L: "Lawful", N: "Neutral", C: "Chaotic", G: "Good", E: "Evil",
@@ -55,6 +83,17 @@ function joinDescription(lines: string[] | undefined): string | undefined {
   if (!lines || lines.length === 0) return undefined;
   // Keep raw 5etools tags; foundry-export description enrichers convert them.
   return lines.join("\n\n");
+}
+
+/** Prefers raw 5etools entries (with `{@…}` tags) when present on a class feature. */
+function featureDescriptionHtml(
+  feature: Class["progression"][number]["features"][number],
+): string | undefined {
+  if (feature.rawEntries?.length) {
+    const html = renderFiveToolsEntries(feature.rawEntries).trim();
+    if (html) return html;
+  }
+  return joinDescription(feature.description);
 }
 
 /** Extracts class/subclass feature items up to a character level for advancement grants. */
@@ -77,7 +116,7 @@ function extractFeatures(
       if (excludeNames?.has(name.toLowerCase())) continue;
       features.push({
         name,
-        description: joinDescription(feature.description),
+        description: featureDescriptionHtml(feature),
         subtype,
         level: row.level,
       });
@@ -225,6 +264,7 @@ export function useFoundryExport() {
       featLookup: FeatExportDescLookup,
       optDescMap: OptionalFeatureDescMap,
       itemDescriptions: Record<string, string>,
+      itemCatalog: Record<string, InventoryCatalogMeta> = {},
     ): FoundryExportInput => {
     const { character } = builder;
     const level = character.level;
@@ -268,6 +308,8 @@ export function useFoundryExport() {
     const handledNames = progressionHandledNames(allProgressions);
 
     // ── Identity: class / subclass / race / background ──
+    // Descriptions are placeholders; exportFoundry replaces them with full
+    // 5etools fluff HTML + art when available.
     const classInfo: FoundryExportInput["classInfo"] =
       builder.class && classData
         ? {
@@ -302,9 +344,15 @@ export function useFoundryExport() {
             spellcastingAbility: subFromSubclass ? spellAbilityKey : "",
             description: subclassData.shortName,
             features: extractFeatures(
-              subclassData.progression,
+              subclassData.progression.map((row) => ({
+                ...row,
+                features: row.features.map((f) => ({
+                  ...f,
+                  isSubclassFeature: true,
+                })),
+              })),
               level,
-              "class",
+              "subclass",
               true,
               handledNames,
             ),
@@ -396,6 +444,8 @@ export function useFoundryExport() {
           description: `${baseDescription ?? ""}${marker}`,
           subtype: "feat",
           level: 0,
+          // Group Metamagic / Fighting Style / etc. under the class section.
+          originKind: "class",
         });
       }
     }
@@ -457,34 +507,17 @@ export function useFoundryExport() {
     for (const name of inventory.trinkets) trinketSet.add(name);
     const trinkets = [...trinketSet];
 
-    // ── Loot (inventory items not classified as weapon/armor/trinket) ──
+    // ── Inventory (exclude pure gold entries — those become system.currency) ──
     const loot: CartEntry[] = inventory.items.filter(
-      (entry) => inventory.getEntryKind(entry) === "other",
+      (entry) =>
+        inventory.getEntryKind(entry) === "other" &&
+        !isGoldInventoryEntry(entry),
     );
 
     // ── Spells ──
-    const spells = Object.values(builder.spellSelections ?? {})
-      .flat()
-      .map((selection) => {
-        const spell = allSpells.find((s) => s.id === selection.id);
-        return {
-          name: selection.name,
-          level: selection.level,
-          ability: spellAbilityKey || undefined,
-          description: spell ? joinDescription(spell.description) : undefined,
-          source: spell?.source,
-          school: spell?.school,
-          castingTime: spell?.castingTime,
-          range: spell?.range,
-          duration: spell?.duration,
-          isRitual: spell?.isRitual,
-          isConcentration: spell?.isConcentration,
-          components: spell?.components,
-          spellAttack: spell?.spellAttack,
-          savingThrows: spell?.savingThrows,
-          damageTypes: spell?.damageTypes,
-        };
-      });
+    // Placeholder; exportFoundry replaces with full prepared-caster / known list
+    // after fluff images are available. buildInput stays sync.
+    const spells: SpellItemInput[] = [];
 
     // ── Runes from equipped gear ──
     const runes: { rune: Rune; slotContext: "Weapon" | "Armor" | "Trinket" }[] =
@@ -508,13 +541,27 @@ export function useFoundryExport() {
       runes.push({ rune: builder.trinket2.rune, slotContext: "Trinket" });
     }
 
-    // ── Currency ──
-    const goldGp = inventory.items.reduce((sum, entry) => {
-      const isGold = /^(gp|gold)/i.test(entry.name.trim());
-      return isGold ? sum + entry.quantity : sum;
-    }, 0);
+    // ── Currency (entries named "90 gp" / gold pouch rows, not inventory items) ──
+    const goldGp = sumInventoryGoldGp(inventory.items);
 
     const attunement = getAttunementInfo(builder.class?.name, level);
+
+    // Weapon Mastery picks → Foundry traits.weaponProf.mastery.value (baseItem ids)
+    const weaponMasteryBaseItems: string[] = [];
+    for (const progression of allProgressions) {
+      if (progression.name !== "Weapon Mastery") continue;
+      const picks = (optionalSelections[progression.id] ?? []).filter(
+        (pick): pick is NonNullable<typeof pick> => pick !== null,
+      );
+      for (const pick of picks) {
+        const masteryWeapon = getWeaponMasteryWeapon(pick.id);
+        const baseName = masteryWeapon?.name ?? pick.name;
+        const baseItem = slugify(baseName);
+        if (baseItem && !weaponMasteryBaseItems.includes(baseItem)) {
+          weaponMasteryBaseItems.push(baseItem);
+        }
+      }
+    }
 
     return {
       name: character.name,
@@ -535,6 +582,7 @@ export function useFoundryExport() {
       languages: builder.resolvedLanguageItems,
       tools: builder.resolvedToolItems,
       weaponProficiencies: builder.resolvedWeaponItems,
+      weaponMasteryBaseItems,
       armorProficiencies: builder.resolvedArmorItems,
       resistances: builder.resolvedResistances,
       immunities: builder.resolvedImmunities,
@@ -564,10 +612,10 @@ export function useFoundryExport() {
       portraitImage: builder.portraitImage,
       tokenImage: builder.tokenImage,
       itemDescriptions,
+      itemCatalog,
       builderSnapshot: gatherBuilderSnapshot(builder, inventory),
     };
   }, [
-    allSpells,
     armorClass,
     backgroundData,
     builder,
@@ -586,18 +634,188 @@ export function useFoundryExport() {
       // Load catalogs to enrich feat / optional-feature descriptions.
       const { optDescMap, featDescLookup } = await loadFeatExportLookups();
 
-      // Build a name → description lookup so armor / trinkets / loot (which the
-      // builder stores by name only) export with their catalog descriptions.
+      // Build catalog lookups so armor / trinkets / inventory (name-only in the
+      // builder) export with 5etools descriptions, type, weight, and value.
+      // Prefer XPHB/XDMG entries when multiple sources share a name.
       const dndItems = await getAllDndItems().catch(() => [] as DndItem[]);
       const itemDescriptions: Record<string, string> = {};
+      const itemCatalog: Record<string, InventoryCatalogMeta> = {};
+
+      const sourceRank = (source: string): number => {
+        const s = source.toUpperCase();
+        if (s === "XPHB" || s === "XDMG") return 0;
+        if (s === "PHB" || s === "DMG") return 1;
+        return 2;
+      };
+
+      const catalogScore = (meta: InventoryCatalogMeta): number => {
+        const hasDesc = meta.description ? 1_000_000 : 0;
+        return (
+          hasDesc -
+          sourceRank(meta.source ?? "") * 10_000 +
+          (meta.description?.length ?? 0)
+        );
+      };
+
       for (const item of dndItems) {
         const key = item.name.trim().toLowerCase();
-        if (itemDescriptions[key]) continue;
-        const desc = joinDescription(item.description);
-        if (desc) itemDescriptions[key] = desc;
+        if (!key) continue;
+        const description = joinDescription(item.description);
+        const valueGp =
+          item.valueCp != null && Number.isFinite(item.valueCp)
+            ? item.valueCp / 100
+            : undefined;
+        const candidate: InventoryCatalogMeta = {
+          description,
+          typeCode: item.typeCode,
+          weightLb: parseWeightLb(item.weight),
+          valueGp,
+          rarity: item.rarity === "none" ? "" : item.rarity,
+          attunement: item.attunement,
+          source: item.source,
+        };
+        const existing = itemCatalog[key];
+        if (!existing || catalogScore(candidate) > catalogScore(existing)) {
+          itemCatalog[key] = candidate;
+          if (description) itemDescriptions[key] = description;
+        }
       }
 
-      const input = buildInput(featDescLookup, optDescMap, itemDescriptions);
+      const input = buildInput(
+        featDescLookup,
+        optDescMap,
+        itemDescriptions,
+        itemCatalog,
+      );
+
+      // Prefetch fluff art maps (spells / items / feats) then enrich images + spells.
+      await prefetchFoundryEntityFluffImgs();
+
+      const itemImages: Record<string, string> = {};
+      const rememberItemImg = (name: string, source?: string) => {
+        const key = name.trim().toLowerCase();
+        if (!key || itemImages[key]) return;
+        const url = getItemFluffImgSync(name, source);
+        if (url) itemImages[key] = url;
+      };
+      for (const w of input.weapons) {
+        rememberItemImg(w.equipped.weapon.name, w.equipped.weapon.source);
+      }
+      for (const a of input.armors) {
+        rememberItemImg(a.armor.name, a.armor.source);
+      }
+      for (const t of input.trinkets) {
+        rememberItemImg(t);
+      }
+      for (const entry of input.loot) {
+        rememberItemImg(entry.name, entry.source);
+      }
+      for (const feat of input.feats) {
+        const key = feat.name.trim().toLowerCase();
+        if (!key) continue;
+        const url = getFeatFluffImgSync(feat.name);
+        if (url) {
+          itemImages[key] = url;
+          feat.img = resolveItemIcon(FOUNDRY_ITEM_ICONS.feat, url);
+        }
+      }
+      input.itemImages = itemImages;
+
+      const spellAbilityKey = mapAbilityLabel(spellcasting.spellcastingAbility);
+      const selections = Object.values(builder.spellSelections ?? {}).flat();
+      input.spells = buildSpellExportList({
+        allSpells,
+        selections,
+        isPreparedCaster: spellcasting.isPreparedCaster,
+        isPactMagic: spellcasting.isPactMagic,
+        spellAbilityKey,
+        listContext: {
+          className: builder.class?.name ?? "",
+          subclassName: builder.subclass?.name ?? null,
+          subclassShortName: spellcasting.subclassShortName,
+          expandedFilters: spellcasting.expandedSpellFilters,
+          characterLevel: builder.character.level,
+          availableSpellSlotLevels: spellcasting.availableSpellSlotLevels,
+          spellcastingFromSubclass: spellcasting.spellcastingFromSubclass,
+        },
+        alwaysPrepared: spellcasting.subclassAlwaysPrepared,
+        bonusKnown: spellcasting.subclassBonusKnown,
+        optionalFeatureGranted: spellcasting.optionalFeatureGranted,
+        resolveFluffImg: (name, source) => getSpellFluffImgSync(name, source),
+      });
+
+      // Replace identity stubs with Plutonium-style descriptions:
+      // fluff art/lore + class table + leveled features / race traits.
+      const [classFluff, subclassFluff, raceFluff, backgroundFluff] =
+        await Promise.all([
+          input.classInfo
+            ? resolveClassFluffForFoundry(
+                input.classInfo.name,
+                input.classInfo.source ?? "",
+              )
+            : Promise.resolve({ html: "", img: undefined }),
+          input.subclassInfo
+            ? resolveSubclassFluffForFoundry(
+                input.subclassInfo.name,
+                input.subclassInfo.source ?? "",
+                input.classInfo?.name ?? "",
+                input.classInfo?.source,
+              )
+            : Promise.resolve({ html: "", img: undefined }),
+          input.raceInfo
+            ? resolveRaceFluffForFoundry(
+                input.raceInfo.name,
+                input.raceInfo.source ?? "",
+                builder.speciesData?.parentSpecies,
+                builder.speciesData?.parentSource,
+              )
+            : Promise.resolve({ html: "", img: undefined }),
+          input.backgroundInfo
+            ? resolveBackgroundFluffForFoundry(
+                input.backgroundInfo.name,
+                input.backgroundInfo.source ?? "",
+              )
+            : Promise.resolve({ html: "", img: undefined }),
+        ]);
+
+      if (input.classInfo && classData) {
+        const html = buildClassIdentityDescription({
+          fluff: classFluff,
+          classData,
+        });
+        if (html) input.classInfo.description = html;
+        if (classFluff.img) input.classInfo.img = classFluff.img;
+      }
+      if (input.subclassInfo && subclassData) {
+        const html = buildSubclassIdentityDescription({
+          fluff: subclassFluff,
+          subclassData,
+        });
+        if (html) input.subclassInfo.description = html;
+        if (subclassFluff.img) input.subclassInfo.img = subclassFluff.img;
+      }
+      if (input.raceInfo) {
+        const html = buildRaceIdentityDescription({
+          fluff: raceFluff,
+          fluffText: builder.speciesData?.fluff,
+          traits: builder.speciesData?.traits ?? [],
+        });
+        if (html) input.raceInfo.description = html;
+        if (raceFluff.img) input.raceInfo.img = raceFluff.img;
+      }
+      if (input.backgroundInfo) {
+        const html = buildBackgroundIdentityDescription({
+          fluff: backgroundFluff,
+          fluffText: input.backgroundInfo.description,
+          features: input.backgroundInfo.features.map((f) => ({
+            name: f.name,
+            description: f.description,
+          })),
+        });
+        if (html) input.backgroundInfo.description = html;
+        if (backgroundFluff.img) input.backgroundInfo.img = backgroundFluff.img;
+      }
+
       const actor = buildFoundryActor(input);
       const sanitize = (s: string) =>
         s.trim().replace(/[\s/\\:*?"<>|]+/g, "_").replace(/^_+|_+$/g, "");
@@ -614,7 +832,14 @@ export function useFoundryExport() {
     } finally {
       setExporting(false);
     }
-  }, [buildInput, builder.class?.name]);
+  }, [
+    buildInput,
+    builder,
+    allSpells,
+    spellcasting,
+    classData,
+    subclassData,
+  ]);
 
   return { exportFoundry, exporting, error };
 }
