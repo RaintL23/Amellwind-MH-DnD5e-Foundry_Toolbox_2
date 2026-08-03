@@ -5,7 +5,12 @@ import {
   statBlockContentsToPlainText,
 } from "@/shared/utils/statblock-entries.mapper";
 import type { ItemBaseIndexes, RawItemEntity } from "../utils/item-raw.types";
-import { formatDndItemProperties } from "../utils/item-property.utils";
+import {
+  collectDndItemAttachedRuleEntries,
+  formatAmmoTypeLabel,
+  formatDndItemMastery,
+  formatDndItemProperties,
+} from "../utils/item-property.utils";
 import { itemId, unpackItemTypeUid } from "../utils/item-uids.utils";
 
 const RARITY_LABELS: Record<string, string> = {
@@ -63,15 +68,44 @@ function isGenericVariantType(typeCode: string | undefined): boolean {
   return unpackItemTypeUid(typeCode).abbreviation === GENERIC_VARIANT_ABBREV;
 }
 
+/** Primary damage line (versatile/two-hand damage lives in the property template). */
 function mapDamage(raw: RawItemEntity): string | null {
   const parts: string[] = [];
   if (raw.dmg1) parts.push(String(raw.dmg1));
-  if (raw.dmg2) parts.push(String(raw.dmg2));
   if (raw.dmgType) {
     const typeKey = String(raw.dmgType);
     parts.push(DMG_TYPE_LABELS[typeKey] ?? typeKey);
   }
   return parts.length ? parts.join(" ") : null;
+}
+
+function mapRange(raw: RawItemEntity): string | null {
+  if (typeof raw.range !== "string" || !raw.range.trim()) return null;
+  return `${raw.range.trim()} ft.`;
+}
+
+function mapAmmoType(raw: RawItemEntity): string | null {
+  if (typeof raw.ammoType !== "string" || !raw.ammoType.trim()) return null;
+  return formatAmmoTypeLabel(raw.ammoType) || null;
+}
+
+function mapArmorClass(raw: RawItemEntity): string | null {
+  if (typeof raw.ac !== "number") return null;
+  const { abbreviation } = unpackItemTypeUid(
+    raw.type != null ? String(raw.type) : "",
+  );
+  // Shields are listed as a bonus (e.g. "+2").
+  if (abbreviation.toUpperCase() === "S") return `+${raw.ac}`;
+  return String(raw.ac);
+}
+
+function mapStealth(raw: RawItemEntity): string | null {
+  return raw.stealth === true ? "Disadvantage" : null;
+}
+
+function mapStrengthRequirement(raw: RawItemEntity): string | null {
+  if (raw.strength == null || raw.strength === "") return null;
+  return `Str ${raw.strength}`;
 }
 
 export function parseWeaponCategory(
@@ -95,10 +129,13 @@ export function mapDndItem(
   const rarity = (raw.rarity ?? "none") as DndItemRarity;
   const isMundane = rarity === "none";
   const typeCode = raw.type != null ? String(raw.type) : undefined;
-  const description = mapStatBlockEntries([
+
+  const attachedRules = collectDndItemAttachedRuleEntries(raw, indexes);
+  const ownEntries = [
     ...(Array.isArray(raw.entries) ? raw.entries : []),
     ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
-  ]);
+  ];
+  const description = mapStatBlockEntries([...attachedRules, ...ownEntries]);
   const descriptionPlain = statBlockContentsToPlainText(description, " ");
 
   const name = String(raw.name ?? "Unknown");
@@ -112,11 +149,32 @@ export function mapDndItem(
 
   const typeLabel = resolveTypeLabel(typeCode, indexes);
   const weaponCategory = parseWeaponCategory(raw);
+  const mastery = formatDndItemMastery(
+    Array.isArray(raw.mastery) ? raw.mastery : undefined,
+  );
+  const properties = formatDndItemProperties(
+    Array.isArray(raw.property) ? raw.property : undefined,
+    indexes,
+    raw,
+  );
+  const range = mapRange(raw);
+  const ammoType = mapAmmoType(raw);
+  const armorClass = mapArmorClass(raw);
+  const stealth = mapStealth(raw);
+  const strengthRequirement = mapStrengthRequirement(raw);
+
   const searchText = [
     name,
     source,
     typeLabel,
     weaponCategory ? formatWeaponCategoryLabel(weaponCategory) : null,
+    mastery,
+    properties,
+    range,
+    ammoType,
+    armorClass,
+    stealth,
+    strengthRequirement,
     rarity,
     descriptionPlain,
     raw._baseName,
@@ -160,10 +218,13 @@ export function mapDndItem(
       typeof raw.bonusWeapon === "string" ? raw.bonusWeapon : undefined,
     bonusAc: typeof raw.bonusAc === "string" ? raw.bonusAc : undefined,
     damage: mapDamage(raw),
-    properties: formatDndItemProperties(
-      Array.isArray(raw.property) ? raw.property : undefined,
-      indexes,
-    ),
+    properties,
+    mastery,
+    range,
+    ammoType,
+    armorClass,
+    stealth,
+    strengthRequirement,
     weaponCategory,
   };
 }
