@@ -267,7 +267,11 @@ export function DndItemDetailDialog({
           <DialogDescription asChild>
             <div className="flex items-center gap-2 flex-wrap">
               <Badge variant="secondary">
-                {active.typeLabel} · {active.rarityLabel}
+                {active.weaponCategory
+                  ? `${active.weaponCategory === "martial" ? "Martial" : "Simple"} ${active.typeLabel}`
+                  : active.typeLabel}
+                {" · "}
+                {active.rarityLabel}
               </Badge>
               <SourceBadge source={active.source} bookNames={bookNames} />
               {active.attunement && (
@@ -317,11 +321,46 @@ export function DndItemDetailDialog({
               value={active.weight ?? "—"}
               differs={differs("weight")}
             />
+            {active.armorClass && (
+              <MetaRow
+                label="Armor Class"
+                value={active.armorClass}
+                differs={differs("armorClass")}
+              />
+            )}
+            {active.strengthRequirement && (
+              <MetaRow
+                label="Strength"
+                value={active.strengthRequirement}
+                differs={differs("strengthRequirement")}
+              />
+            )}
+            {active.stealth && (
+              <MetaRow
+                label="Stealth"
+                value={active.stealth}
+                differs={differs("stealth")}
+              />
+            )}
             {active.damage && (
               <MetaRow
                 label="Damage"
                 value={active.damage}
                 differs={differs("damage")}
+              />
+            )}
+            {active.range && (
+              <MetaRow
+                label="Range"
+                value={active.range}
+                differs={differs("range")}
+              />
+            )}
+            {active.ammoType && (
+              <MetaRow
+                label="Ammunition"
+                value={active.ammoType}
+                differs={differs("ammoType")}
               />
             )}
             {active.weaponCategory && (
@@ -338,6 +377,13 @@ export function DndItemDetailDialog({
                 label="Properties"
                 value={active.properties}
                 differs={differs("properties")}
+              />
+            )}
+            {active.mastery && (
+              <MetaRow
+                label="Mastery"
+                value={active.mastery}
+                differs={differs("mastery")}
               />
             )}
             {active.bonusWeapon && (

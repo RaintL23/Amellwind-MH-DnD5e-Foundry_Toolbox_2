@@ -10,6 +10,12 @@ export type DndItemVariantField =
   | "attunement"
   | "damage"
   | "properties"
+  | "mastery"
+  | "range"
+  | "ammoType"
+  | "armorClass"
+  | "stealth"
+  | "strengthRequirement"
   | "weaponCategory"
   | "bonusWeapon"
   | "bonusAc"
@@ -24,6 +30,12 @@ const FIELD_LABELS: Record<DndItemVariantField, string> = {
   attunement: "Attunement",
   damage: "Damage",
   properties: "Properties",
+  mastery: "Mastery",
+  range: "Range",
+  ammoType: "Ammunition",
+  armorClass: "Armor Class",
+  stealth: "Stealth",
+  strengthRequirement: "Strength",
   weaponCategory: "Proficiency",
   bonusWeapon: "Weapon bonus",
   bonusAc: "AC bonus",
@@ -48,6 +60,18 @@ function fieldValue(item: DndItem, field: DndItemVariantField): string {
       return item.damage ?? "";
     case "properties":
       return item.properties ?? "";
+    case "mastery":
+      return item.mastery ?? "";
+    case "range":
+      return item.range ?? "";
+    case "ammoType":
+      return item.ammoType ?? "";
+    case "armorClass":
+      return item.armorClass ?? "";
+    case "stealth":
+      return item.stealth ?? "";
+    case "strengthRequirement":
+      return item.strengthRequirement ?? "";
     case "weaponCategory":
       return item.weaponCategory ?? "";
     case "bonusWeapon":
