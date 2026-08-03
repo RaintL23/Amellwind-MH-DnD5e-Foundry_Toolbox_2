@@ -1,0 +1,550 @@
+Item Name,Rarity,Attunement,Cost (gp),Note,Armor Cost,Rare Material,AC Bonus,Save Bonus,Set Score (Modifier),+2 Bonus To Score (Y/N),Weapon Bonus,Spell Level,Unlimited Charges (Y/N),Charges/Day (Unlimit = 7),Charges/Item (Destroyed),Spells Share Charges,"Condition (1Min, Save)",Consumable Damage (Avg),Consumable Save? (Y/N),Semi-Permanent Damage (Avg),Semi-Perm Save? (Y/N),Duration? (Minutes),Permanent Damage (Avg),Perm Save? (Y/N),Specific Situations (Y/N),Restore HP (Avg),Misc. Costs,2 Spell Level,2 Unlimited Charges (Y/N),2 Charges/Day (Unlimit = 7),3 Spell Level,3 Unlimited Charges (Y/N),3 Charges/Day (Unlimit = 7),MatCost,ACCost,SaveCost,SetScore Cost,BonusScore Cost,WeaponCost,Consum Spell Cost,PermCharges Cost,Charges - Destroyed,SpellShare ChargesCost,ConditionCost,ConsDMG Cost,Sm-PrDMG Cost,PerDMG Cost,AVGHP Cost,MiscCost,2 Consum Spell Cost,2 Perm Charges Cost,3 Consum Spell Cost,3 Perm Charges Cost,Source Sheet
+Adamantine Chain Shirt,Uncommon,No,5033,,50,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3050,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Scale Mail,Uncommon,No,5033,,50,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3050,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Breastplate,Uncommon,No,5610,,400,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3400,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Half Plate,Uncommon,No,6188,,750,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3750,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Ring Mail,Uncommon,No,5000,,30,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3030,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Chain Mail,Uncommon,No,5074,,75,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3075,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Splint,Uncommon,No,5280,,200,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3200,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Plate,Uncommon,No,7425,,1500,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,4500,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Ammunition,Uncommon,No,4950,"Add ammunition cost for a 'quiver' of them in Armor Cost column (Arrows = 20, Bolts = 20, Firearm Bullets = 10, Sling Bullets = 10, Needles = 50)",0,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3000,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Arrows (20),Uncommon,No,4952,Cost is for 1 quiver of 20 arrows,1,Adamantine,,,,,,,,,,,,,,,,,,,,,,,,,,,,3001,,,,,,,,,,,,,,,,,,,,DMG 2024
+Adamantine Weapon,Uncommon,No,5445,"Add weapon cost in Armor Cost column, added cantrip for magic weapon property",0,Adamantine,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,3000,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Alchemy Jug,Uncommon,No,4950,based: create food and water,,,,,,,,3,Y,7,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+"Ammunition, +1",Uncommon,No,297,,,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,180,,,,,,,,,,,,,,DMG 2024
+"Ammunition, +2",Rare,No,990,,,,,,,,,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,450,,,,,,,,,,,,,,DMG 2024
+"Ammunition, +3",Very Rare,No,2772,,,,,,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,840,,,,,,,,,,,,,,DMG 2024
+Ammunition of Slaying,Very Rare,Yes,267,,,,,,,,,,,,,,,33,Y,,,,,,,,,,,,,,,,,,,,,,,,,,89,,,,,,,,,DMG 2024
+Amulet of Health,Rare,Yes,12600,,,,,,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,6300,,,,,,,,,,,,,,,,,DMG 2024
+Amulet of Proof Against Detect and Location,Uncommon,Yes,2700,,,,,,,,,3,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,300,1500,,,,,,,,,,,,,DMG 2024
+Amulet of the Planes,Very Rare,Yes,32400,,,,,,,,,7,Y,7,,,,,,,,,,,,,,,,,,,,,,,,,,1080,9720,,,,,,,,,,,,,DMG 2024
+Animated Shield,Very Rare,Yes,2700,,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Apparatus of Kwalish,Legendary,No,137500,,,,,,,,,,,,,,,,,,,,,,,,25000,,,,,,,,,,,,,,,,,,,,,,25000,,,,,DMG 2024
+"Armor, +1",Rare,No,1980,Add armor cost for total,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,900,,,,,,,,,,,,,,,,,,,DMG 2024
+"Armor, +2",Very Rare,No,8910,Add armor cost for total,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,2700,,,,,,,,,,,,,,,,,,,DMG 2024
+"Armor, +3",Legendary,No,29700,Add armor cost for total,,,3,,,,,,,,,,,,,,,,,,,,,,,,,,,,5400,,,,,,,,,,,,,,,,,,,DMG 2024
+Armor of Gleaming,Common,No,330,add armor to total; based: prestidigitation,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Armor of Invulnerability,Legendary,Yes,69300,Add armor cost for total,,,,,,,,5,Y,,,,,,,,,,,,,,,7,N,4,,,,,,,,,,630,5670,,,,,,,,,1080,6480,,,DMG 2024
+Armor of Resistance,Rare,Yes,9000,"Add armor cost for total; based: protection from energy (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+"Armor of Resistance, Leather",Rare,Yes,9020,"based: protection from energy (plus 1 level, no concentration)",10,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,10,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+"Armor of Resistance, Chain Shirt",Rare,Yes,9100,"based: protection from energy (plus 1 level, no concentration)",50,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,50,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+"Armor of Resistance, Breastplate",Rare,Yes,9800,"based: protection from energy (plus 1 level, no concentration)",400,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,400,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+"Armor of Resistance, Plate",Rare,Yes,12000,"based: protection from energy (plus 1 level, no concentration)",1500,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,1500,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Armor of Vulnerability,Rare,Yes,0,"Cursed, not priced (would be the same as Armor of Resistance)",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Arrow-Catching Shield,Rare,Yes,7200,,,,2,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,2700,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Axe of the Dwarvish Lords,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Baba Yaga's Dancing Broom,Uncommon,Yes,2700,based: spiritual weapon,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Bag of Beans,Rare,No,0,"Random, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Bag of Devouring,Very Rare,No,0,"Cursed, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Bag of Holding,Uncommon,No,1485,based: floating disk,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Bag of Tricks,Uncommon,No,4455,"based: conjure animals (plus 1 level, no concentraiton, highest level monster is CR 2)",,,,,,,,4,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,450,2250,,,,,,,,,,,,,DMG 2024
+Bead of Force,Rare,No,13933,"based: resilient sphere (plus 1 level, no concentration), add charges per bead",,,,,,,,5,N,8,,,,12,Y,,,1,,,,,,,,,,,,,,,,,,630,5670,,,,33,,,,,,,,,DMG 2024
+Belt of Dwarvenkind,Rare,Yes,8460,"not included: advantage on CHA, dwarven language",,,,,,Y,,2,Y,,,,,,,,,,,,,,,2,Y,,,,,,,,,630,,180,1620,,,,,,,,,180,1620,,,DMG 2024
+"Belt of Giant Strength, Hill",Rare,Yes,18900,,,,,,5,,,,,,,,,,,,,,,,,,,,,,,,,,,,9450,,,,,,,,,,,,,,,,,DMG 2024
+"Belt of Giant Strength, Stone/Frost",Very Rare,Yes,39690,,,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,13230,,,,,,,,,,,,,,,,,DMG 2024
+"Belt of Giant Strength, Fire",Very Rare,Yes,52920,,,,,,7,,,,,,,,,,,,,,,,,,,,,,,,,,,,17640,,,,,,,,,,,,,,,,,DMG 2024
+"Belt of Giant Strength, Cloud",Legendary,Yes,113400,,,,,,8,,,,,,,,,,,,,,,,,,,,,,,,,,,,22680,,,,,,,,,,,,,,,,,DMG 2024
+"Belt of Giant Strength, Storm",Legendary,Yes,141750,,,,,,9,,,,,,,,,,,,,,,,,,,,,,,,,,,,28350,,,,,,,,,,,,,,,,,DMG 2024
+Berserker Axe,Rare,Yes,0,"Cursed, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Blackrazor,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Book of Exalted Deeds,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Book of Vile Darkness,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Boots of Elvenkind,Uncommon,No,2970,based: enhance ability,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Boots of False Tracks,Common,No,330,based: disguise self (minus 1 level),,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Boots of Levitation,Rare,Yes,3600,based: levitate,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Boots of Speed,Rare,Yes,1800,based: zephyr strike,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Boots of Striding and Springing,Uncommon,Yes,1350,based: jump,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Boots of the Winterlands,Uncommon,Yes,4050,based: freedom of movement minus 2 levels,,,,,,,,1,Y,,,,,,,,,,,,,,,2,Y,,,,,,,,,,,90,810,,,,,,,,,180,1620,,,DMG 2024
+Bowl of Commanding Water Elementals,Rare,No,7392,"based: conjure elemental (plus 1 level, no cocentration)",,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+Bracers of Archery,Uncommon,Yes,2250,,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,1500,,,,,,,,,,,,,,,DMG 2024
+Bracers of Defense,Rare,Yes,5400,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,2700,,,,,,,,,,,,,,,,,,,DMG 2024
+Brazier of Commanding Fire Elementals,Rare,No,7392,"based: conjure elemental (plus 1 level, no cocentration)",,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+Brooch of Shielding,Uncommon,Yes,2700,based: shield for immunity,,,,,,,,1,Y,,,,,,,,,,,,,,,1,Y,,,,,,,,,,,90,810,,,,,,,,,90,810,,,DMG 2024
+Broom of Flying,Uncommon,Yes,4500,based: fly,,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Candle of Invocation,Very Rare,Yes,28350,based: gate & unlimited guardian of nature,,,,,,,,9,N,,,,,,,,,,,,,,,4,Y,,,,,,,,,,,1650,3300,,,,,,,,,450,4050,,,DMG 2024
+Candle of the Deep,Common,No,330,based: light,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Cape of the Mountebank,Rare,No,3960,based: dimension door,,,,,,,,4,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,450,1350,,,,,,,,,,,,,DMG 2024
+Cap of Water Breathing,Uncommon,No,4950,based: water breathing,,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+"Carpet of Flying, 3x5",Very Rare,No,14850,"based: fly, 1 creature (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+"Carpet of Flying, 4x6",Very Rare,No,29700,"based: fly, 2 creatures (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,,4,Y,,,,,,,,,,,450,4050,,,,,,,,,450,4050,,,DMG 2024
+"Carpet of Flying, 5x7",Very Rare,No,44550,"based: fly, 3 creatures (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,,4,Y,,4,Y,,,,,,,,450,4050,,,,,,,,,450,4050,450,4050,DMG 2024
+"Carpet of Flying, 6x9",Very Rare,No,59400,"based: fly, 4 creatures (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,4500,4,Y,,4,Y,,,,,,,,450,4050,,,,,,,,4500,450,4050,450,4050,DMG 2024
+Cast-Off Armor,Common,No,330,add armor cost; based: cantrip power,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Cauldron of Rebirth,Very Rare,Yes,10860,"based: raise dead, Misc cost for scrying focus",,,,,,,,5,N,1,,,,,,,,,,,,14,1000,,,,,,,,,,,,,630,1890,,,,,,,99.96,1000,,,,,DMG 2024
+Censer of Controlling Air Elementals,Rare,No,7392,"based: conjure elemental (plus 1 level, no cocentration)",,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+Charlatan's Die,Common,Yes,300,based: minor illusion,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Chime of Opening,Rare,Yes,4320,based: knock,,,,,,,,2,N,,10,,,,,,,,,,,,,,,,,,,,,,,,,180,360,1620,,,,,,,,,,,,DMG 2024
+Circlet of Blasting,Uncommon,No,1188,based: scorching ray,,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+Cloak of Arachnida,Very Rare,Yes,12780,"based: spider climb (plus 1 level, no concentration), web",,,,,,,,1,Y,,,,,,,,,,,,,,,3,Y,,1,N,1,,,,,,,90,810,,,,,,,,,300,2700,90,270,DMG 2024
+Cloak of Billowing,Common,No,330,based: gust,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Cloak of Displacement,Rare,Yes,6000,"based: blur (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Cloak of Elvenkind,Uncommon,Yes,9000,"based: enhance ability x2  (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,3,Y,,,,,,,,,,,300,2700,,,,,,,,,300,2700,,,DMG 2024
+Cloak of Invisibility,Legendary,Yes,42000,"based: greater invisibility (plus 1 level, no concentration), 2 hours = effective permanent",,,,,,,,6,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,,,,,,,,,,,,DMG 2024
+Cloak of Many Fashions,Common,No,990,based: disguise self,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Cloak of Protection,Uncommon,Yes,2700,,,,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,900,900,,,,,,,,,,,,,,,,,,DMG 2024
+Cloak of the Bat,Rare,Yes,15600,"based: enhance ability (plus 1 level, no concentration), fly (no change in level due to requirments), polymorph",,,,,,,,3,Y,,,,,,,,,,,,,,,3,Y,,4,N,1,,,,,,,300,2700,,,,,,,,,300,2700,450,1350,DMG 2024
+Cloak of the Manta Ray,Uncommon,No,9900,"based: water breathing & alter self (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,3,Y,,,,,,,,,,,300,2700,,,,,,,,,300,2700,,,DMG 2024
+Clockwork Amulet,Common,No,792,based: 2nd-level spell power,,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+Clothes of Mending,Common,No,330,based: mending,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Crystal Ball,Very Rare,Yes,18900,based: scrying,,,,,,,,5,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,630,5670,,,,,,,,,,,,,DMG 2024
+Crystal Ball of Mind Reading,Legendary,Yes,36000,based: scrying & detect thoughts,,,,,,,,5,Y,,,,,,,,,,,,,,,1,Y,,,,,,,,,,,630,5670,,,,,,,,,90,810,,,DMG 2024
+Crystal Ball of Telepathy,Legendary,Yes,33300,based: scrying & suggestion,,,,,,,,5,Y,,,,,,,,,,,,,,,1,N,1,,,,,,,,,,630,5670,,,,,,,,,90,270,,,DMG 2024
+Crystal Ball of True Seeing,Legendary,Yes,73500,based: scrying & truesight,,,,,,,,5,Y,,,,,,,,,,,,,,,6,Y,,,,,,,,,,,630,5670,,,,,,,,,840,7560,,,DMG 2024
+Cube of Force,Rare,Yes,17880,"based: wall of force (plus 1 level, no concentration)",,,,,,,,6,N,10,,18,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,540,,,,,,,,,,,DMG 2024
+Cube of Summoning,Rare,No,7392,"based: 6th level spell (plus 1 level, no concentration)",,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+Cubic Gate,Legendary,No,60390,based: gate & planeshift (charges based on highest level spell),,,,,,,,9,N,3,,,,,,,,,,,,,,7,,,,,,,,,,,,1650,8250,,,,,,,,,1080,,,,DMG 2024
+Daern's Instant Fortress,Rare,Yes,16800,based: magnificent mansion (minus 1 level),,,,,,,,6,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,,,,,,,,,,,,DMG 2024
+Dagger of Venom,Rare,No,2350,,,,,,,,1,,,,,,Poisoned,,,11,Y,0,,,,,,,,,,,,,,,,,500,,,,,450,,117.92,,,,,,,,DMG 2024
+Dancing Sword,Very Rare,Yes,5400,based: spiritual weapon,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Dark Shard Amulet,Common,Yes,120,based: cantrip power,,,,,,,,0,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,30,90,,,,,,,,,,,,,DMG 2024
+Decanter of Endless Water,Uncommon,No,1570,based: create or destroy water,,,,,,,,1,Y,,,,Prone,,,2,Y,0,,,,,,,,,,,,,,,,,,90,810,,,30,,21.44,,,,,,,,DMG 2024
+Deck of Illusions,Uncommon,Yes,16200,"based: major image, add charges based on cards",,,,,,,,3,N,,34,,,,,,,,,,,,,,,,,,,,,,,,,300,600,9900,,,,,,,,,,,,DMG 2024
+Deck of Many Things,Legendary,No,0,haha,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Defender,Legendary,Yes,15000,,,,,,,,3,,,,,,,,,,,,,,,,,,,,,,,,,,,,3000,,,,,,,,,,,,,,,DMG 2024
+Demon Armor,Very Rare,Yes,13200,,1500,,1,,,,1,,,,,,,,,,,,,,,,,,,,,,,1500,2400,,,,500,,,,,,,,,,,,,,,DMG 2024
+Demonomicon of Iggwilv,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Dimensional Shackles,Rare,No,9900,based: counterspell (plus 1 level),,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Dragon Scale Mail,Very Rare,Yes,21900,"based: locate creature, protection from energy (plus 1 level, no concentration)",50,,1,,,,,4,Y,,,,,,,,,,,,,,,4,N,1,,,,50,950,,,,,450,4050,,,,,,,,,450,1350,,,DMG 2024
+Dragon Slayer,Rare,No,1886,,,,,,,,1,,,,,,,,,,,,10,N,Y,,,,,,,,,,,,,,500,,,,,,,,357,,,,,,,DMG 2024
+Dread Helm,Common,No,330,based: minor illusion,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Driftglobe,Uncommon,No,2475,based: light & daylight,,,,,,,,0,Y,,,,,,,,,,,,,,,3,N,1,,,,,,,,,,30,270,,,,,,,,,300,900,,,DMG 2024
+Dust of Disappearance,Uncommon,No,2970,"based: invisible (plus 1 level, no concentration), x4 for AoE",,,,,,,,4,,,4,,,,,,,,,,,,,,,,,,,,,,,,,450,,1350,,,,,,,,,,,,DMG 2024
+Dust of Dryness,Uncommon,No,156,multiply total based on charges,,,,,,,,,,,,,,35,Y,,,,,,,,,,,,,,,,,,,,,,,,,,94,,,,,,,,,DMG 2024
+Dust of Sneezing and Choking,Uncommon,No,0,"Cursed, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Dwarven Plate,Very Rare,No,18810,,1500,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,1500,4200,,,,,,,,,,,,,,,,,,,DMG 2024
+Dwarven Thrower,Very Rare,Yes,9964,,,,,,,,3,,,,,,,,,,,,9,N,Y,,,,,,,,,,,,,,3000,,,,,,,,321.3,,,,,,,DMG 2024
+Ear Horn of Hearing,Common,No,990,"based: lesser restoration (minus 1 level, lesser effect)",,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Efreeti Bottle,Very Rare,No,32670,based: conjure elemental at 9th level,,,,,,,,9,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,1650,8250,,,,,,,,,,,,,DMG 2024
+Efreeti Chain,Legendary,Yes,81750,"based: primordial ward (plus 1 level, no concentration)",75,,3,,,,,7,Y,,,,,,,,,,,,,,,,,,,,,75,5475,,,,,1080,9720,,,,,,,,,,,,,DMG 2024
+Elemental Gem,Uncommon,No,1386,"based: conjure elemental (plus 1 level, no concentration)",,,,,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,840,,,,,,,,,,,,,,DMG 2024
+Elixir of Health,Rare,No,396,based: lesser restoration,,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,180,,,,,,,,,,,,,,DMG 2024
+Elven Chain,Rare,No,2200,,50,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,50,950,,,,,,,,,,,,,,,,,,,DMG 2024
+Enduring Spellbook,Common,No,330,based: mending,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Energy Bow,Very Rare,Yes,12570,"based: misty step (plus 2 levels, increased range and affect others), spider climb",,,,,,,1,2,Y,,,,Restrained,,,,,,,,,,,2,Y,,,,,,,,,,500,180,1620,,,90,,,,,,180,1620,,,DMG 2024
+Enspelled Armor (Cantrip),Uncommon,Yes,405,Add armor cost for total,,,,,,,,0,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,30,240,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (1st),Uncommon,Yes,1215,Add armor cost for total,,,,,,,,1,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,90,720,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (2nd),Rare,Yes,3240,Add armor cost for total,,,,,,,,2,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,180,1440,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (3rd),Rare,Yes,5400,Add armor cost for total,,,,,,,,3,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,300,2400,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (4th),Very Rare,Yes,12150,Add armor cost for total,,,,,,,,4,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,450,3600,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (5th),Very Rare,Yes,17010,Add armor cost for total,,,,,,,,5,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,630,5040,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (6th),Legendary,Yes,37800,Add armor cost for total,,,,,,,,6,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,840,6720,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (7th),Legendary,Yes,48600,Add armor cost for total,,,,,,,,7,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,1080,8640,,,,,,,,,,,,,DMG 2024
+Enspelled Armor (8th),Legendary,Yes,60750,Add armor cost for total,,,,,,,,8,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,1350,10800,,,,,,,,,,,,,DMG 2024
+Enspelled Leather Armor (Cantrip),Uncommon,Yes,420,Add armor cost for total,10,,,,,,,0,N,6,,,,,,,,,,,,,,,,,,,,10,,,,,,30,240,,,,,,,,,,,,,DMG 2024
+Enspelled Plate Armor (8th),Legendary,Yes,68250,Add armor cost for total,1500,,,,,,,8,N,6,,,,,,,,,,,,,,,,,,,,1500,,,,,,1350,10800,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (Cantrip),Uncommon,Yes,406,,0.2,,,,,,,0,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,30,240,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (1st),Uncommon,Yes,1216,,0.2,,,,,,,1,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,90,720,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (2nd),Rare,Yes,3241,,0.2,,,,,,,2,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,180,1440,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (3rd),Rare,Yes,5401,,0.2,,,,,,,3,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,300,2400,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (4th),Very Rare,Yes,12151,,0.2,,,,,,,4,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,450,3600,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (5th),Very Rare,Yes,17011,,0.2,,,,,,,5,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,630,5040,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (6th),Legendary,Yes,37801,,0.2,,,,,,,6,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,840,6720,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (7th),Legendary,Yes,48601,,0.2,,,,,,,7,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,1080,8640,,,,,,,,,,,,,DMG 2024
+Enspelled Staff (8th),Legendary,Yes,60751,,0.2,,,,,,,8,N,6,,,,,,,,,,,,,,,,,,,,0.2,,,,,,1350,10800,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (Cantrip),Uncommon,Yes,405,Add weapon cost (use Armor Cost column),,,,,,,,0,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,30,240,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (1st),Uncommon,Yes,1215,Add weapon cost (use Armor Cost column),,,,,,,,1,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,90,720,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (2nd),Rare,Yes,3240,Add weapon cost (use Armor Cost column),,,,,,,,2,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,180,1440,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (3rd),Rare,Yes,5400,Add weapon cost (use Armor Cost column),,,,,,,,3,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,300,2400,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (4th),Very Rare,Yes,12150,Add weapon cost (use Armor Cost column),,,,,,,,4,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,450,3600,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (5th),Very Rare,Yes,17010,Add weapon cost (use Armor Cost column),,,,,,,,5,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,630,5040,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (6th),Legendary,Yes,37800,Add weapon cost (use Armor Cost column),,,,,,,,6,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,840,6720,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (7th),Legendary,Yes,48600,Add weapon cost (use Armor Cost column),,,,,,,,7,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,1080,8640,,,,,,,,,,,,,DMG 2024
+Enspelled Weapon (8th),Legendary,Yes,60750,Add weapon cost (use Armor Cost column),,,,,,,,8,N,6,,,,,,,,,,,,,,,,,,,,,,,,,,1350,10800,,,,,,,,,,,,,DMG 2024
+Enspelled Shortsword (Cantrip),Uncommon,Yes,420,Add weapon cost (use Armor Cost column),10,,,,,,,0,N,6,,,,,,,,,,,,,,,,,,,,10,,,,,,30,240,,,,,,,,,,,,,DMG 2024
+Enspelled Glaive (8th),Legendary,Yes,60850,Add weapon cost (use Armor Cost column),20,,,,,,,8,N,6,,,,,,,,,,,,,,,,,,,,20,,,,,,1350,10800,,,,,,,,,,,,,DMG 2024
+Ersatz Eye,Common,No,990,"based: lesser restoration (minus 1 level, lesser effect)",,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Eversmoking Bottle,Uncommon,No,2970,"based: fog cloud (plus 1 level, no concentration)",,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Executioner's Axe,Very Rare,No,3465,,,,,,,,1,,,,,,,,,,,,7,N,N,7,,,,,,,,,,,,,500,,,,,,,,499.8,49.98,,,,,,DMG 2024
+Eye and Hand of Vecna,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Eyes of Charming,Uncommon,Yes,810,based: charm person,,,,,,,,1,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,90,450,,,,,,,,,,,,,DMG 2024
+Eyes of Minute Seeing,Uncommon,No,4950,"based: enhance ability (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Eyes of the Eagle,Uncommon,Yes,4500,"based: enhance ability (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Griffon",Rare,No,3960,"based: conjure animals (plus 1 level, no concentration)",,,,,,,,4,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,450,1350,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Fly",Rare,No,1584,based: conjure animals (minus 1 level),,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Lions",Rare,No,3300,price for all 2; based: conjure animals,,,,,,,,3,N,2,,,,,,,,,,,,,,,,,,,,,,,,,,300,1200,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Goats",Rare,No,2376,price for all 3; based: conjure animals (minus 1 level),,,,,,,,2,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,180,900,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Elephant",Rare,No,7392,based: conjure animals (plus 3 levels),,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Steed",Very Rare,No,8316,based: conjure animals (plus 2 levels),,,,,,,,5,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,630,1890,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Dog",Rare,No,1584,based: conjure animals (minus 1 level),,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Owl",Rare,No,1584,based: conjure animals (minus 1 level),,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+"Figurine of Wondrous Power, Raven",Uncommon,No,1188,based: conjure animals (minus 1 level),,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+Flame Tongue,Rare,Yes,1600,based: light,,,,,,,,0,Y,,,,,,,,,,7,N,N,,,,,,,,,,,,,,,30,270,,,,,,499.8,,,,,,,DMG 2024
+Folding Boat,Rare,No,8800,based on ships in DMG,,,,,,,,,,,,,,,,,,,,,,,4000,,,,,,,,,,,,,,,,,,,,,,4000,,,,,DMG 2024
+Frost Brand,Very Rare,Yes,14143,"based: protection from energy (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,3,N,N,,,,,,,,,,,,,,,450,4050,,,,,,214.2,,,,,,,DMG 2024
+Gauntlets of Ogre Power,Uncommon,Yes,9450,,,,,,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,6300,,,,,,,,,,,,,,,,,DMG 2024
+Gem of Brightness,Uncommon,No,4851,based: light & color spray,,,,,,,,0,Y,,50,,Blinded,,,,,,,,,,,1,Y,,,,,,,,,,,30,270,1470,,270,,,,,,90,810,,,DMG 2024
+Gem of Seeing,Rare,Yes,10080,based: true seeing,,,,,,,,6,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,840,4200,,,,,,,,,,,,,DMG 2024
+Giant Slayer,Rare,No,1716,,,,,,,,1,,,,,,Prone,,,,,,7,N,Y,,,,,,,,,,,,,,500,,,,,30,,,249.9,,,,,,,DMG 2024
+Glamoured Studded Leather,Rare,No,4158,based: disguise self,45,,1,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,45,945,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Gloves of Missile Snaring,Uncommon,Yes,2700,based: 2nd-level spell power as monks get it at 3rd level,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Gloves of Swimming and Climbing,Uncommon,Yes,9000,"based: alter self and spider climb (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,3,Y,,,,,,,,,,,300,2700,,,,,,,,,300,2700,,,DMG 2024
+Gloves of Thievery,Uncommon,No,4950,"based: enhanced ability (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Goggles of Night,Uncommon,No,2970,based: darkvision,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Hag Eye,Uncommon,No,6930,"based: scrying (minus 2 levels, very limited); true cost for players: 1980 w/out scry",,,,,,,,2,N,3,,4,,,,,,,,,,,,3,Y,,,,,,,,,,,180,900,,120,,,,,,,300,2700,,,DMG 2024
+Hammer of Thunderbolts,Legendary,No,72545,"based: power word stun, additional 1260 gp for extra boost to STR",,,,,,Y,1,8,N,5,,,,,,,,,,,,,1260,,,,,,,,,,,630,500,1350,9450,,,,,,,,1260,,,,,DMG 2024
+Hat of Disguise,Uncommon,Yes,2700,"based: disguise self (plus 1 level, no concentration)",,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Hat of Many Spells,Very Rare,Yes,21000,misc cost: 1000 gp for material cost * unlimited charges (7),,,,,,,,,,,,,,,,,,,,,,,7000,,,,,,,,,,,,,,,,,,,,,,7000,,,,,DMG 2024
+Hat of Vermin,Common,No,594,based: conjure animals (minus 2 levels),,,,,,,,1,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,90,450,,,,,,,,,,,,,DMG 2024
+Hat of Wizardy,Common,Yes,120,based: cantrip power,,,,,,,,0,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,30,90,,,,,,,,,,,,,DMG 2024
+Headband of Intellect,Uncommon,Yes,9450,,,,,,4,,,,,,,,,,,,,,,,,,,,,,,,,,,,6300,,,,,,,,,,,,,,,,,DMG 2024
+Helm of Brilliance,Very Rare,Yes,125850,"calculated with max jewels (Misc: 21,000 for x70 lv3 spells, 9,000 for x20 lv4 spells)",,,,,,,,7,,,10,,,,,,,,7,N,Y,,30000,1,Y,,,,,,,,,,,1080,,9720,,,,,249.9,,30000,90,810,,,DMG 2024
+Helm of Comprehending Languages,Uncommon,No,1485,based: comprehend languages,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Helm of Telepathy,Uncommon,Yes,2430,based: detect thoughts & suggestion,,,,,,,,1,Y,,,,,,,,,,,,,,,2,N,1,,,,,,,,,,90,810,,,,,,,,,180,540,,,DMG 2024
+Helm of Teleportation,Rare,Yes,12960,based: teleport,,,,,,,,7,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,1080,5400,,,,,,,,,,,,,DMG 2024
+Heward's Handy Haversack,Rare,No,3960,based: floating disk x2,,,,,,,,1,Y,,,,,,,,,,,,,,,1,Y,,,,,,,,,,,90,810,,,,,,,,,90,810,,,DMG 2024
+Heward's Handy Spice Pouch,Common,No,330,based: prestidigitation,,,,,,,,0,N,10,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Holy Avenger,Legendary,Yes,39464,"aura: similar auras at paladin 7th level, about 4th level spell power",,,,,,,3,4,Y,,,,,,,,,,11,N,Y,,,,,,,,,,,,,,3000,450,4050,,,,,,392.7,,,,,,,DMG 2024
+Horn of Blasting,Rare,No,2005,"while it is consumable, it has (likely) multiple uses",,,,,,,,,,,,,,,,,,,17,Y,N,,,,,,,,,,,,,,,,,,,,,,911.2,,,,,,,DMG 2024
+Horn of Silent Alarm,Common,No,693,based: message (plus 1 level),,,,,,,,1,N,4,,,,,,,,,,,,,,,,,,,,,,,,,,90,540,,,,,,,,,,,,,DMG 2024
+"Horn of Valhalla, Silver",Rare,No,14520,"based: conjure animals, avg summoned 7",,,,,,,,9,N,1,1,,,,,,,,,,,,,,,,,,,,,,,,,1650,4950,0,,,,,,,,,,,,DMG 2024
+"Horn of Valhalla, Brass",Rare,No,21780,"based: conjure animals, avg summoned 10",,,,,,,,9,N,1,3,,,,,,,,,,,,,,,,,,,,,,,,,1650,4950,3300,,,,,,,,,,,,DMG 2024
+"Horn of Valhalla, Bronze",Very Rare,No,38115,"based: conjure animals, avg summoned 14",,,,,,,,9,N,1,4,,,,,,,,,,,,,,,,,,,,,,,,,1650,4950,4950,,,,,,,,,,,,DMG 2024
+"Horn of Valhalla, Iron",Legendary,No,72600,"based: conjure animals, avg summoned 17",,,,,,,,9,N,1,5,,,,,,,,,,,,,,,,,,,,,,,,,1650,4950,6600,,,,,,,,,,,,DMG 2024
+Horseshoes of a Zephyr,Very Rare,No,5940,based: freedom of movement minus 2 levels,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Horseshoes of Speed,Rare,No,3960,based: longstrider (plus 1 level),,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Immovable Rod,Uncommon,No,7425,based: lock (plus 2 levels),,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Instrument of Illusions,Common,Yes,300,based: minor illusion,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Instrument of Scribing,Common,Yes,180,based: cantrip power,,,,,,,,0,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,30,150,,,,,,,,,,,,,DMG 2024
+"Instrument of the Bards, Anstruth Harp",Very Rare,Yes,42840,"Misc: 3000 for fly, invisibility, levitate, protection from evil and good",,,,,,,,8,N,1,,,,,,,,,,,,,3000,5,N,1,6,N,1,,,,,,,1350,4050,,,,,,,,3000,630,1890,840,2520,DMG 2024
+"Instrument of the Bards, Canaith Mandolin",Rare,Yes,13200,"Misc: 3000 for fly, invisibility, levitate, protection from evil and good",,,,,,,,3,N,1,,,,,,,,,,,,,3000,3,N,1,3,N,1,,,,,,,300,900,,,,,,,,3000,300,900,300,900,DMG 2024
+"Instrument of the Bards, Cli Lyre",Rare,Yes,15600,"Misc: 3000 for fly, invisibility, levitate, protection from evil and good",,,,,,,,4,N,1,,,,,,,,,,,,,3000,4,N,1,3,N,1,,,,,,,450,1350,,,,,,,,3000,450,1350,300,900,DMG 2024
+"Instrument of the Bards, Doss Lute",Uncommon,Yes,7920,"Misc: 3000 for fly, invisibility, levitate, protection from evil and good",,,,,,,,1,N,1,,,,,,,,,,,,,3000,3,N,1,2,N,1,,,,,,,90,270,,,,,,,,3000,300,900,180,540,DMG 2024
+"Instrument of the Bards, Fochlucan Bandore",Uncommon,Yes,6300,"Misc: 3360 for fly, invisibility, levitate, protection from evil and good, speak with animals",,,,,,,,1,N,1,,,,,,,,,,,,,3360,1,N,1,0,N,1,,,,,,,90,270,,,,,,,,3360,90,270,30,90,DMG 2024
+"Instrument of the Bards, Mac-Fuirmidh Cittern",Uncommon,Yes,6660,"Misc: 3000 for fly, invisibility, levitate, protection from evil and good",,,,,,,,2,N,1,,,,,,,,,,,,,3000,1,N,1,1,N,1,,,,,,,180,540,,,,,,,,3000,90,270,90,270,DMG 2024
+"Instrument of the Bards, Ollamh Harp",Legendary,Yes,72600,"Misc: 3000 for fly, invisibility, levitate, protection from evil and good",,,,,,,,4,N,1,,,,,,,,,,,,,3000,8,N,1,7,N,1,,,,,,,450,1350,,,,,,,,3000,1350,4050,1080,3240,DMG 2024
+"Ioun Stone, Absorption",Very Rare,Yes,6750,"based: counterspell (plus 1 level), charges based on highest level",,,,,,,,4,,,5,,,,,,,,,,,,,,,,,,,,,,,,,450,,1800,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Agility",Very Rare,Yes,1890,,,,,,,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,,630,,,,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Awareness",Rare,Yes,1800,based: alarm,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Fortitude",Very Rare,Yes,1890,,,,,,,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,,630,,,,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Greater Absorption",Legendary,Yes,47250,"based: counterspell (plus 5 levels), charges based on highest level",,,,,,,,8,,,7,,,,,,,,,,,,,,,,,,,,,,,,,1350,,8100,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Insight",Very Rare,Yes,1890,,,,,,,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,,630,,,,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Intellect",Very Rare,Yes,1890,,,,,,,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,,630,,,,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Leadership",Very Rare,Yes,1890,,,,,,,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,,630,,,,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Mastery",Legendary,Yes,82500,based: wish,,,,,,,,9,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,1650,14850,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Protection",Rare,Yes,1800,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,900,,,,,,,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Regeneration",Legendary,Yes,15000,"based: cure wounds (plus 2 levels), 24 charges a day",,,,,,,,3,N,24,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Reserve",Rare,Yes,9000,based on 4th level spell power,,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Strength",Very Rare,Yes,1890,,,,,,,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,,630,,,,,,,,,,,,,,,,DMG 2024
+"Ioun Stone, Sustenance",Rare,Yes,1800,based: goodberry,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Iron Bands of Bilarro,Rare,No,1980,based on restrained multiplied by 10,,,,,,,,,,,,,,,,,,,,,,,900,,,,,,,,,,,,,,,,,,,,,,900,,,,,DMG 2024
+Iron Flask,Legendary,No,24750,based: charm monster for an empty flask,,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Javelin of Lightning,Uncommon,No,1683,based: lightning bolt (minus 1 level) and permanent cantrip for magic weapon,,,,,,,,2,N,1,,,,,,,,,,,,,,0,Y,,,,,,,,,,,180,540,,,,,,,,,30,270,,,DMG 2024
+Keoghtom's Ointment,Uncommon,No,1391,for 5 doses,,,,,,,,,,,,,Poisoned,,,,,,,,,55,,,,,,,,,,,,,,,,,,450,,,,392.7,,,,,,DMG 2024
+Lantern of Revealing,Uncommon,No,4950,based: see invisibility (plus 1 level),,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Lock of Trickery,Common,No,990,based: bane (sort of),,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Luck Blade,Legendary,Yes,37750,"based: x3 wishes & enhance ability (plus 1 level, no concentration)",,,,1,,,1,9,,,3,,,,,,,,,,,,,3,N,1,,,,,,900,,,500,1650,,3300,,,,,,,,300,900,,,DMG 2024
+Lute of Thunderous Thumping,Very Rare,No,11550,treat weapon as if +3 weapon (as bard Cha bonus is typically at least that much higher than Str),,,,,,,3,,,,,,,,,,,,7,N,N,,,,,,,,,,,,,,3000,,,,,,,,499.8,,,,,,,DMG 2024
+Mace of Disruption,Rare,Yes,1880,cantrip magic weapon and light,,,,,,,,0,Y,,,,Frightened,,,,,,7,N,Y,,,0,Y,,,,,,,,,,,30,270,,,90,,,249.9,,,30,270,,,DMG 2024
+Mace of Smiting,Rare,No,8140,misc: halved cost of +3 weapon that deals 14,,,,,,,1,,,,,,,,,,,,7,N,Y,,2950,,,,,,,,,,,,500,,,,,,,,249.9,,2950,,,,,DMG 2024
+Mace of Terror,Rare,Yes,4200,based: fear & cantrip for magic weapon,,,,,,,,3,N,3,,,,,,,,,,,,,,0,Y,,,,,,,,,,,300,1500,,,,,,,,,30,270,,,DMG 2024
+Mantle of Spell Resistance,Rare,Yes,9000,based: circle of power (minus 1 level),,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Manual of Bodily Health,Very Rare,No,43659,"due to max increase, uses set score",,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,13230,,,,,,,,,,,,,,,,,DMG 2024
+Manual of Gainful Exercise,Very Rare,No,43659,"due to max increase, uses set score",,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,13230,,,,,,,,,,,,,,,,,DMG 2024
+"Manual of Golems, Clay",Very Rare,No,16335,based: conjure elemental (9th-level),,,,,,,,9,N,,1,,,,,,,,,,,,,,,,,,,,,,,,,1650,3300,0,,,,,,,,,,,,DMG 2024
+"Manual of Golems, Flesh",Very Rare,No,6237,based: conjure elemental,,,,,,,,5,N,,1,,,,,,,,,,,,,,,,,,,,,,,,,630,1260,0,,,,,,,,,,,,DMG 2024
+"Manual of Golems, Iron",Very Rare,No,27225,based: conjure elemental (x3 9th level),,,,,,,,9,N,,3,,,,,,,,,,,,,,,,,,,,,,,,,1650,3300,3300,,,,,,,,,,,,DMG 2024
+"Manual of Golems, Stone",Very Rare,No,21780,based: conjure elemental (x2 9th level),,,,,,,,9,N,,2,,,,,,,,,,,,,,,,,,,,,,,,,1650,3300,1650,,,,,,,,,,,,DMG 2024
+Manual of Quickness of Action,Very Rare,No,43659,"due to max increase, uses set score",,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,13230,,,,,,,,,,,,,,,,,DMG 2024
+Mariner's Armor,Uncommon,No,2970,based: alter self,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Medallion of Thoughts,Uncommon,Yes,2160,based: detect thoughts,,,,,,,,2,N,5,,,,,,,,,,,,,,,,,,,,,,,,,,180,1260,,,,,,,,,,,,,DMG 2024
+Mirror of Life Trapping,Very Rare,No,20790,based: banishment x12,,,,,,,,4,N,,12,,,,,,,,,,,,,,,,,,,,,,,,,450,900,4950,,,,,,,,,,,,DMG 2024
+Mithral Chain Shirt,Uncommon,No,1733,,50,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,1050,,,,,,,,,,,,,,,,,,,,DMG 2024
+Mithral Scale Mail,Uncommon,No,1733,,50,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,1050,,,,,,,,,,,,,,,,,,,,DMG 2024
+Mithral Breastplate,Uncommon,No,2310,,400,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,1400,,,,,,,,,,,,,,,,,,,,DMG 2024
+Mithral Half Plate,Uncommon,No,2888,,750,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,1750,,,,,,,,,,,,,,,,,,,,DMG 2024
+Mithral Ring Mail,Uncommon,No,1700,,30,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,1030,,,,,,,,,,,,,,,,,,,,DMG 2024
+Mithral Chain Mail,Uncommon,No,1774,,75,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,1075,,,,,,,,,,,,,,,,,,,,DMG 2024
+Mithral Splint,Uncommon,No,1980,,200,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,1200,,,,,,,,,,,,,,,,,,,,DMG 2024
+Mithral Plate,Uncommon,No,4125,,1500,Mithral,,,,,,,,,,,,,,,,,,,,,,,,,,,,2500,,,,,,,,,,,,,,,,,,,,DMG 2024
+Moonblade,Legendary,Yes,-,"Not priced, more like an Artifact and it chooses its wielder",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Moon-Touched Sword,Common,No,660,based: light,,,,,,,,0,Y,,,,,,,,,,,,,,,0,Y,,,,,,,,,,,30,270,,,,,,,,,30,270,,,DMG 2024
+Mystery Key,Common,No,99,based: knock (minus 1 level),,,,,,,,1,,,1,,,,,,,,,,,,,,,,,,,,,,,,,90,,0,,,,,,,,,,,,DMG 2024
+Nature's Mantle,Uncommon,Yes,2700,based: invisibility,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Necklace of Adaption,Uncommon,Yes,9000,based: water breathing & protection from poison,,,,,,,,3,Y,,,,,,,,,,,,,,,3,Y,,,,,,,,,,,300,2700,,,,,,,,,300,2700,,,DMG 2024
+Necklace of Fireballs,Rare,No,5940,based on 9 beads,,,,,,,,3,,,9,,,,,,,,,,,,,,,,,,,,,,,,,300,,2400,,,,,,,,,,,,DMG 2024
+"Necklace of Prayer Beads, Blessing Bead",Rare,Yes,1440,based: bless (plus 1 level for BA cast),,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+"Necklace of Prayer Beads, Curing Bead",Rare,Yes,2400,based: cure wounds & lesser restoration (plus 1 level for BA cast),,,,,,,,3,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,300,900,,,,,,,,,,,,,DMG 2024
+"Necklace of Prayer Beads, Favor Bead",Rare,Yes,6720,based: greater restoration (plus 1 level for BA cast),,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+"Necklace of Prayer Beads, Smiting Bead",Rare,Yes,2400,based: branding smite (plus 1 level for BA cast),,,,,,,,3,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,300,900,,,,,,,,,,,,,DMG 2024
+"Necklace of Prayer Beads, Summons Bead",Rare,Yes,8640,based: planar ally (plus 1 level for BA cast),,,,,,,,7,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,1080,3240,,,,,,,,,,,,,DMG 2024
+"Necklace of Prayer Beads, Wind Walking Bead",Rare,Yes,8640,based: wind walk (plus 1 level for BA cast),,,,,,,,7,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,1080,3240,,,,,,,,,,,,,DMG 2024
+Nine Lives Stealer,Very Rare,Yes,40950,"9 charges, based: power word kill (minus 1 level due to save)",,,,,,,2,8,,,9,,,,,,,,,,,,,,,,,,,,,,,,1500,1350,,10800,,,,,,,,,,,,DMG 2024
+Nolzur's Marvelous Pigments,Very Rare,No,14850,per pot; based: fabricate (permanent),,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Oathbow,Very Rare,Yes,6471,based: invisibility (for constant advantage),,,,,,,,2,Y,,,,,,,,,,10,N,Y,,,,,,,,,,,,,,,180,1620,,,,,,357,,,,,,,DMG 2024
+Oil of Etherealness,Rare,No,2376,,,,,,,,,7,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1080,,0,,,,,,,,,,,,DMG 2024
+Oil of Sharpness,Very Rare,No,2772,based: magic weapon,,,,,,,,6,,,1,,,,,,,,,,,,,,,,,,,,,,,,,840,,0,,,,,,,,,,,,DMG 2024
+Oil of Slipperiness,Uncommon,No,743,based: freedom of movement,,,,,,,,4,,,1,,,,,,,,,,,,,,,,,,,,,,,,,450,,0,,,,,,,,,,,,DMG 2024
+Orb of Direction,Common,No,330,based: cantrip power,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Orb of Dragonkin,Artifact,Yes,-,"Artifact, not priced",,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Orb of Time,Common,No,330,based: cantrip power,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Pearl of Power,Uncommon,Yes,2700,based: 4th level spells,,,,,,,,4,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,450,1350,,,,,,,,,,,,,DMG 2024
+Perfume of Bewitching,Common,No,198,based: enhance ability,,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,180,,,,,,,,,,,,,,DMG 2024
+Periapt of Health,Uncommon,No,2079,"based: cure wounds (1/day), protection from poison (minus 1 level since it doesn't grant immunity)",,,,,,,,1,N,1,,,,,,,,,,,,,,1,Y,,,,,,,,,,,90,270,,,,,,,,,90,810,,,DMG 2024
+Periapt of Proof against Poison,Rare,Yes,6000,based: protection from poison (plus 1 level),,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Periapt of Wound Closure,Uncommon,Yes,2700,based: stabilize (plus 2 levels),,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Philter of Love,Uncommon,No,1040,based: charm monster (plus 1 level),,,,,,,,5,,,1,,,,,,,,,,,,,,,,,,,,,,,,,630,,0,,,,,,,,,,,,DMG 2024
+Pipe of Smoke Monsters,Common,No,330,based: minor illusion,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Pipes of Haunting,Uncommon,No,2970,based: cause fear (3rd level),,,,,,,,3,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,300,1500,,,,,,,,,,,,,DMG 2024
+Pipes of the Sewers,Uncommon,Yes,1620,based: conjure animals (minus 1 level),,,,,,,,2,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,180,900,,,,,,,,,,,,,DMG 2024
+Plate Armor of Etherealness,Legendary,Yes,24300,based: etherealness (minus 1 level due to short duration),1500,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,1500,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+Pole of Angling,Common,No,330,based: cantrip power,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Pole of Collapsing,Common,No,330,based: cantrip power,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Portable Hole,Rare,No,3960,"based: floating disk (plus 1 level, carries more)",,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Potion of Animal Friendship,Uncommon,No,149,based: animal friendship,,,,,,,,1,,,1,,,,,,,,,,,,,,,,,,,,,,,,,90,,0,,,,,,,,,,,,DMG 2024
+Potion of Clairvoyance,Rare,No,990,"based: clairvoyance (plus 1 level, no concentration)",,,,,,,,4,,,1,,,,,,,,,,,,,,,,,,,,,,,,,450,,0,,,,,,,,,,,,DMG 2024
+Potion of Climbing,Common,No,693,"based: spider climb, enhance ability (plus 1 level, no concentration)",,,,,,,,3,,,1,,,,,,,,,,,,330,,,,,,,,,,,,,300,,0,,,,,,,330,,,,,DMG 2024
+Potion of Diminution,Rare,No,660,"based: enlarge/reduce (plus 1 level, longer duration)",,,,,,,,3,,,1,,,,,,,,,,,,,,,,,,,,,,,,,300,,0,,,,,,,,,,,,DMG 2024
+Potion of Fire Breath,Uncommon,No,297,based: dragon's breath,,,,,,,,2,,,1,,,,,,,,,,,,,,,,,,,,,,,,,180,,0,,,,,,,,,,,,DMG 2024
+Potion of Flying,Very Rare,No,1485,"based: fly (plus 1 level, no concentration)",,,,,,,,4,,,1,,,,,,,,,,,,,,,,,,,,,,,,,450,,0,,,,,,,,,,,,DMG 2024
+Potion of Gaseous Form,Rare,No,990,"based: gaseous form (plus 1 level, no concentration)",,,,,,,,4,,,1,,,,,,,,,,,,,,,,,,,,,,,,,450,,0,,,,,,,,,,,,DMG 2024
+"Potion of Giant Strength, Hill",Uncommon,No,3119,"misc: belt of hill, divided by 10",,,,,,,,,,,,,,,,,,,,,,,1890,,,,,,,,,,,,,,,,,,,,,,1890,,,,,DMG 2024
+"Potion of Giant Strength, Frost/Stone",Rare,No,8732,"misc: belt of frost/storm, divided by 10",,,,,,,,,,,,,,,,,,,,,,,3969,,,,,,,,,,,,,,,,,,,,,,3969,,,,,DMG 2024
+"Potion of Giant Strength, Fire",Rare,No,11643,"misc: belt of fire, divided by 10",,,,,,,,,,,,,,,,,,,,,,,5292,,,,,,,,,,,,,,,,,,,,,,5292,,,,,DMG 2024
+"Potion of Giant Strength, Cloud",Very Rare,No,37422,"misc: belt of cloud, divided by 10",,,,,,,,,,,,,,,,,,,,,,,11340,,,,,,,,,,,,,,,,,,,,,,11340,,,,,DMG 2024
+"Potion of Giant Strength, Storm",Legendary,No,77963,"misc: belt of storm, divided by 10",,,,,,,,,,,,,,,,,,,,,,,14175,,,,,,,,,,,,,,,,,,,,,,14175,,,,,DMG 2024
+Potion of Greater Invisibility,Very Rare,No,3564,"based: greater invisibility (plus 3 levels, no concentration and lasts for 1 hour)",,,,,,,,7,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1080,,0,,,,,,,,,,,,DMG 2024
+Potion of Growth,Uncommon,No,495,"based: enlarge/reduce (plus 1 level, longer duration)",,,,,,,,3,,,1,,,,,,,,,,,,,,,,,,,,,,,,,300,,0,,,,,,,,,,,,DMG 2024
+Potion of Healing,Common,No,55,,,,,,,,,,,,,,,,,,,,,,,7,,,,,,,,,,,,,,,,,,,,,,49.98,,,,,,DMG 2024
+Potion of Greater Healing,Uncommon,No,165,,,,,,,,,,,,,,,,,,,,,,,14,,,,,,,,,,,,,,,,,,,,,,99.96,,,,,,DMG 2024
+Potion of Superior Healing,Rare,No,440,,,,,,,,,,,,,,,,,,,,,,,28,,,,,,,,,,,,,,,,,,,,,,199.92,,,,,,DMG 2024
+Potion of Supreme Healing,Very Rare,No,1061,,,,,,,,,,,,,,,,,,,,,,,45,,,,,,,,,,,,,,,,,,,,,,321.3,,,,,,DMG 2024
+Potion of Heroism,Rare,No,792,"based: heroism & bless (plus 1 level, no concentration)",,,,,,,,2,,,1,,,,,,,,,,,,,2,,,,,,,,,,,,180,,0,,,,,,,,180,,,,DMG 2024
+Potion of Invisibility,Rare,No,660,"based: invisibility (plus 1 level, no concentration)",,,,,,,,3,,,1,,,,,,,,,,,,,,,,,,,,,,,,,300,,0,,,,,,,,,,,,DMG 2024
+Potion of Invulnerability,Rare,No,3630,based: invulnerability,,,,,,,,9,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1650,,0,,,,,,,,,,,,DMG 2024
+Potion of Longevity,Very Rare,No,5445,based: wish,,,,,,,,9,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1650,,0,,,,,,,,,,,,DMG 2024
+Potion of Mind Reading,Rare,No,660,"based: detect thoughts (plus 1 level, no concentration)",,,,,,,,3,,,1,,,,,,,,,,,,,,,,,,,,,,,,,300,,0,,,,,,,,,,,,DMG 2024
+Potion of Poison,Uncommon,No,1103,added magic aura for disguising it,,,,,,,,2,,,1,,Poisoned,14,Y,,,,,,,,,,,,,,,,,,,,,180,,0,,450,38,,,,,,,,,DMG 2024
+Potion of Pugilism,Uncommon,No,248,,,,,,,,,,,,,,,,,3,,10,,,,,,,,,,,,,,,,,,,,,,,,149.94,,,,,,,,DMG 2024
+Potion of Resistance,Uncommon,No,743,"based: protection from energy (plus 1 level, no concentration)",,,,,,,,4,,,1,,,,,,,,,,,,,,,,,,,,,,,,,450,,0,,,,,,,,,,,,DMG 2024
+Potion of Speed,Very Rare,No,1485,"based: haste (plus 1 level, no concentration)",,,,,,,,4,,,1,,,,,,,,,,,,,,,,,,,,,,,,,450,,0,,,,,,,,,,,,DMG 2024
+Potion of Vitality,Very Rare,No,2772,based: greater restoration (plus 1 level for increased effect),,,,,,,,6,,,1,,,,,,,,,,,,,,,,,,,,,,,,,840,,0,,,,,,,,,,,,DMG 2024
+Potion of Water Breathing,Uncommon,No,297,based: water breathing (minus 1 level for duration),,,,,,,,2,,,1,,,,,,,,,,,,,,,,,,,,,,,,,180,,0,,,,,,,,,,,,DMG 2024
+Pot of Awakening,Common,No,198,based: conjure animal (minus 1 level),,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,180,,,,,,,,,,,,,,DMG 2024
+Prosthetic Limb,Common,No,330,based: mage hand,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+"Quaal's Feather Token, Anchor",Rare,No,2376,"based: hold monster (plus 2 levels for duration, no concentration)",,,,,,,,7,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1080,,0,,,,,,,,,,,,DMG 2024
+"Quaal's Feather Token, Bird",Rare,No,3630,based: conjure elemental (9th-level),,,,,,,,9,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1650,,0,,,,,,,,,,,,DMG 2024
+"Quaal's Feather Token, Fan",Rare,No,660,"based: gust of wind (plus 1 level, no concentration)",,,,,,,,3,,,1,,,,,,,,,,,,,,,,,,,,,,,,,300,,0,,,,,,,,,,,,DMG 2024
+"Quaal's Feather Token, Swan Boat",Rare,No,660,based on similar boats,,,,,,,,,,,,,,,,,,,,,,,300,,,,,,,,,,,,,,,,,,,,,,300,,,,,DMG 2024
+"Quaal's Feather Token, Tree",Rare,No,660,based: druidcraft (permanent),,,,,,,,0,Y,,1,,,,,,,,,,,,,,,,,,,,,,,,,30,270,0,,,,,,,,,,,,DMG 2024
+"Quaal's Feather Token, Whip",Rare,No,660,based: spiritual weapon (plus 1 level),,,,,,,,3,,,1,,,,,,,,,,,,,,,,,,,,,,,,,300,,0,,,,,,,,,,,,DMG 2024
+Quarterstaff of the Acrobat,Very Rare,Yes,12420,"based: light, enhance ability (minus 1 level due to limited, plus 1 level - no concentration), shield (3 charges)",,,,,,,2,1,N,3,,,,,,,,,,,,,,0,Y,,2,Y,,,,,,,1500,90,450,,,,,,,,,30,270,180,1620,DMG 2024
+Quiver of Ehlonna,Uncommon,No,495,"based: floating disk (minus 1 level, carries less)",,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Ring of Animal Influence,Rare,No,4290,"charges based on highest spell level, spell share charge sum of all available spells",,,,,,,,3,N,3,,5,,,,,,,,,,,,,,,,,,,,,,,,300,1500,,150,,,,,,,,,,,DMG 2024
+Ring of Djinni Summoning,Legendary,Yes,33000,based: conjure elemental (9th-level),,,,,,,,9,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,1650,4950,,,,,,,,,,,,,DMG 2024
+Ring of Air Elemental Command,Legendary,Yes,67050,"based: protection from evil and good, dominate monster, featherfall; misc: protection from energy",,,,,,,,8,N,3,,17,,,,,,,,,,,3000,1,Y,,1,Y,,,,,,,,1350,6750,,510,,,,,,3000,90,810,90,810,DMG 2024
+Ring of Earth Elemental Command,Legendary,Yes,67650,"based: protection from evil and good, dominate monster, freedom of movement (minus 3 levels); misc: protection from energy",,,,,,,,8,N,3,,21,,,,,,,,,,,3000,1,Y,,1,Y,,,,,,,,1350,6750,,630,,,,,,3000,90,810,90,810,DMG 2024
+Ring of Fire Elemental Command,Legendary,Yes,104400,"based: protection from evil and good, dominate monster, investiture (immunity); misc: protection from energy resistance",,,,,,,,8,N,3,,16,,,,,,,,,,,3000,1,Y,,6,Y,,,,,,,,1350,6750,,480,,,,,,3000,90,810,840,7560,DMG 2024
+Ring of Water Elemental Command,Legendary,Yes,72450,"based: protection from evil and good, dominate monster, water walk (minus 1 level); misc: water breathing (minus 1 level)",,,,,,,,8,N,3,,23,,,,,,,,,,,3000,1,Y,,2,Y,,,,,,,,1350,6750,,690,,,,,,3000,90,810,180,1620,DMG 2024
+Ring of Evasion,Rare,Yes,7560,based on 5th level spells,,,,,,,,5,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,630,3150,,,,,,,,,,,,,DMG 2024
+Ring of Feather Falling,Rare,Yes,1800,based: featherfall,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Ring of Free Action,Rare,Yes,9000,based: freedom of movement,,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Ring of Invisibility,Legendary,Yes,31500,"based: greater invisibility (plus 1 level, no concentration)",,,,,,,,5,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,630,5670,,,,,,,,,,,,,DMG 2024
+Ring of Jumping,Uncommon,Yes,1350,based: jump,,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Ring of Mind Shielding,Uncommon,Yes,12600,based: mind blank (minus 2 levels for less abilities),,,,,,,,6,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,,,,,,,,,,,,DMG 2024
+Ring of Protection,Rare,Yes,3600,,,,1,1,,,,,,,,,,,,,,,,,,,,,,,,,,,900,900,,,,,,,,,,,,,,,,,,DMG 2024
+Ring of Regeneration,Very Rare,Yes,32400,based: regenerate,,,,,,,,7,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,1080,9720,,,,,,,,,,,,,DMG 2024
+Ring of Resistance,Rare,No,9900,"based: protection from energy (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Ring of Shooting Stars,Very Rare,Yes,5276,based: fearie fire charges; misc: permanent dancing lights and light,,,,,,,,1,N,6,,,,,,26,Y,1,,,,,600,,,,,,,,,,,,,90,720,,,,,348.4,,,600,,,,,DMG 2024
+Ring of Spell Storing,Rare,Yes,12600,5th level spell,,,,,,,,5,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,630,5670,,,,,,,,,,,,,DMG 2024
+Ring of Spell Turning,Legendary,Yes,31500,based: circle of power,,,,,,,,5,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,630,5670,,,,,,,,,,,,,DMG 2024
+Ring of Swimming,Uncommon,No,4950,"based: alter self (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Ring of Telekinesis,Very Rare,Yes,18900,"based: telekinesis (no change to level due to restriction, even with no concentration)",,,,,,,,5,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,630,5670,,,,,,,,,,,,,DMG 2024
+Ring of the Ram,Rare,Yes,708,,,,,,,,,,,,,,,,,33,Y,0,,,,,,,,,,,,,,,,,,,,,,,,353.76,,,,,,,,DMG 2024
+Ring of Three Wishes,Legendary,No,27225,based: wish x3,,,,,,,,9,,,3,,,,,,,,,,,,,,,,,,,,,,,,,1650,,3300,,,,,,,,,,,,DMG 2024
+Ring of Warmth,Uncommon,Yes,6750,"based: protection from energy (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Ring of Water Walking,Uncommon,No,7425,"based: water walking (plus 1 level, no concentration)",,,,,,,,4,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Ring of X-Ray Vision,Rare,Yes,3600,based: arcane eye (minus 2 levels),,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Rival Coin,Common,No,132,based: vicious mockery,,,,,,,,0,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,30,90,,,,,,,,,,,,,DMG 2024
+Robe of Eyes,Rare,Yes,20400,"based: enhance ability, true seeing",,,,,,,,2,Y,,,,,,,,,,,,,,,6,Y,,,,,,,,,,,180,1620,,,,,,,,,840,7560,,,DMG 2024
+Robe of Scintillating Colors,Very Rare,Yes,6750,based: invisibility ,,,,,,,,2,Y,,,,Stunned,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,450,,,,,,,,,,DMG 2024
+Robe of Stars,Very Rare,Yes,19710,,,,,1,,,,5,N,6,,,,,,,,,,,,,,,,,,,,,,900,,,,630,5040,,,,,,,,,,,,,DMG 2024
+Robe of the Archmagi,Legendary,Yes,43500,based: circle of power (minus 1 level); AC bonus is based on AC of 15 + Dex (difference between mage armor and 15),,,2,,,,2,4,Y,,,,,,,,,,,,,,,,,,,,,,2700,,,,1500,450,4050,,,,,,,,,,,,,DMG 2024
+Robe of Useful Items,Uncommon,No,0,raw materials of the cloak times 1.65 (rarity & attunement tax),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Rod of Absorption,Very Rare,Yes,43650,"10 charges of 5th level spells, 6 uses of counterspell at 9th level",,,,,,,,5,,,10,,,,,,,,,,,,8250,,,,,,,,,,,,,630,,5670,,,,,,,8250,,,,,DMG 2024
+Rod of Alertness,Very Rare,Yes,16200,"based: enhance ability, similar auras at paladin 7th level, about 4th level spell power",,,,,,,,2,Y,,,,,,,,,,,,,,,2,Y,,4,N,1,,,,,,,180,1620,,,,,,,,,180,1620,450,1350,DMG 2024
+Rod of Lordly Might,Legendary,Yes,24893,based on flame tongue; misc is frightened,,,,,,,3,,,,,,Paralyzed,,,12,Y,0,7,N,N,,90,,,,,,,,,,,,3000,,,,,1260,,128.64,499.8,,90,,,,,DMG 2024
+Rod of Resurrection,Legendary,Yes,27150,based: heal x5,,,,,,,,5,N,5,,13,,,,,,,,,,,,,,,,,,,,,,,,630,4410,,390,,,,,,,,,,,DMG 2024
+Rod of Rulership,Rare,Yes,6720,based: charm monster (plus 2 levels),,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+Rod of Security,Very Rare,No,22275,based: magnificent mansion (plus 1 level) x2,,,,,,,,8,N,1,2,,,,,,,,,,,,,,,,,,,,,,,,,1350,4050,1350,,,,,,,,,,,,DMG 2024
+"Rod of the Pact Keeper, +1",Uncommon,Yes,2640,"Spell Save DC = AC bonus, spell attack = weapon bonus, regain spell slot treated as Lv1",,,1,,,,1,1,N,1,,,,,,,,,,,,,,,,,,,,,900,,,,500,90,270,,,,,,,,,,,,,DMG 2024
+"Rod of the Pact Keeper, +2",Rare,Yes,9120,"Spell Save DC = AC bonus, spell attack = weapon bonus, regain spell slot treated as Lv1",,,2,,,,2,1,N,1,,,,,,,,,,,,,,,,,,,,,2700,,,,1500,90,270,,,,,,,,,,,,,DMG 2024
+"Rod of the Pact Keeper, +3",Very Rare,Yes,26280,"Spell Save DC = AC bonus, spell attack = weapon bonus, regain spell slot treated as Lv1",,,3,,,,3,1,N,1,,,,,,,,,,,,,,,,,,,,,5400,,,,3000,90,270,,,,,,,,,,,,,DMG 2024
+Rope of Climbing,Uncommon,No,495,based: mage hand,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Rope of Entanglement,Rare,No,198,,,,,,,,,,,,,,Restrained,,,,,,,,,,,,,,,,,,,,,,,,,,,90,,,,,,,,,,DMG 2024
+Rope of Mending,Common,No,330,based: mending,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Ruby of the War Mage,Common,Yes,300,based: cantrip power,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Saddle of the Cavalier,Uncommon,No,4950,"based: protection from evil and good (plus 2 levels, no concentration and can't be dismounted)",,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Scarab of Protection,Legendary,Yes,60300,"based: circle of power (minus 1 level), additional effect based on x12 5 level spells",,,,,,,,5,,,12,,,,,,,,,,,,,4,Y,,,,,,,,,,,630,,6930,,,,,,,,450,4050,,,DMG 2024
+Scimitar of Speed,Very Rare,Yes,9900,based: haste (minus 1 level),,,,,,,2,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,1500,180,1620,,,,,,,,,,,,,DMG 2024
+Scroll of Protection,Rare,No,198,based: protection from evil and good,,,,,,,,1,,,1,,,,,,,,,,,,,,,,,,,,,,,,,90,,0,,,,,,,,,,,,DMG 2024
+Scroll of Titan Summoning,Legendary,No,10890,based: 10th level,,,,,,,,10,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1980,,0,,,,,,,,,,,,DMG 2024
+Sending Stones,Uncommon,No,1188,"based: sending (minus 1 level, limitations)",,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+Sentinel Shield,Uncommon,No,2970,based: enhanced ability,,,,,,,,2,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+"Shield, +1",Uncommon,No,1518,,10,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,10,910,,,,,,,,,,,,,,,,,,,DMG 2024
+"Shield, +2",Rare,No,5984,,10,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,10,2710,,,,,,,,,,,,,,,,,,,DMG 2024
+"Shield, +3",Very Rare,No,17886,,10,,3,,,,,,,,,,,,,,,,,,,,,,,,,,,10,5410,,,,,,,,,,,,,,,,,,,DMG 2024
+Shield of Expression,Common,No,341,based: minor illusion,10,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,10,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Shield of Missile Attraction,Rare,Yes,6000,based: protection from energy,,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Shield of the Cavalier,Very Rare,Yes,15518,based: resilient sphere,,,2,,,,,4,N,1,,,Prone,,,,,,9,N,N,,,,,,,,,,2700,,,,,450,1350,,,30,,,642.6,,,,,,,DMG 2024
+Silvered Weapon,Common,No,488,"add cost of weapon, default damage based on d8 for weapon damage die, cantrip power for magic weapon",,,,,,,,0,Y,,,,,,,,,,4,N,Y,,,,,,,,,,,,,,,30,270,,,,,,142.8,,,,,,,DMG 2024
+Silvered Shortsword,Common,No,129,,10,,,,,,,,,,,,,,,,,,3,N,Y,,,,,,,,,10,,,,,,,,,,,,,107.1,,,,,,,DMG 2024
+Silvered Greataxe,Common,No,269,,30,,,,,,,,,,,,,,,,,,6,N,Y,,,,,,,,,30,,,,,,,,,,,,,214.2,,,,,,,DMG 2024
+Slippers of Spider Climbing,Uncommon,Yes,4500,"based: spider climb (plus 1 level, no concentration)",,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Smoldering Armor,Common,No,330,add armor to total; based: minor illusion,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Sovereign Glue,Legendary,No,17325,price is 7 uses; based: fabricate,,,,,,,,4,,,7,,,,,,,,,,,,,,,,,,,,,,,,,450,,2700,,,,,,,,,,,,DMG 2024
+Spellguard Shield,Very Rare,Yes,25200,"based: circle of power (plus 1 level, no concentration)",,,,,,,,6,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,,,,,,,,,,,,DMG 2024
+"Spell Scroll, Cantrip",Common,No,33,,,,,,,,,0,,,1,,,,,,,,,,,,,,,,,,,,,,,,,30,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 1st",Common,No,99,,,,,,,,,1,,,1,,,,,,,,,,,,,,,,,,,,,,,,,90,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 2nd",Uncommon,No,297,,,,,,,,,2,,,1,,,,,,,,,,,,,,,,,,,,,,,,,180,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 3rd",Uncommon,No,495,,,,,,,,,3,,,1,,,,,,,,,,,,,,,,,,,,,,,,,300,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 4th",Rare,No,990,,,,,,,,,4,,,1,,,,,,,,,,,,,,,,,,,,,,,,,450,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 5th",Rare,No,1386,,,,,,,,,5,,,1,,,,,,,,,,,,,,,,,,,,,,,,,630,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 6th",Very Rare,No,2772,,,,,,,,,6,,,1,,,,,,,,,,,,,,,,,,,,,,,,,840,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 7th",Very Rare,No,3564,,,,,,,,,7,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1080,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 8th",Very Rare,No,4455,,,,,,,,,8,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1350,,0,,,,,,,,,,,,DMG 2024
+"Spell Scroll, 9th",Legendary,No,9075,,,,,,,,,9,,,1,,,,,,,,,,,,,,,,,,,,,,,,,1650,,0,,,,,,,,,,,,DMG 2024
+Sphere of Annihilation,Legendary,No,46200,based: disintegrate,,,,,,,,6,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,,,,,,,,,,,,DMG 2024
+Spirit Board,Very Rare,No,13167,,,,,,,,,5,N,3,,7,,,,,,,,,,,,,,,,,,,,,,,,630,3150,,210,,,,,,,,,,,DMG 2024
+Staff of Adornment,Common,No,330,based: cantrip power,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Staff of Birdcalls,Common,No,330,based: thaumaturgy,,,,,,,,0,N,10,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Staff of Charming,Rare,Yes,7020,"based: on 1st level spell with 10 charges, 1 use per day of 5th level spell",,,,,,,,1,N,10,,3,,,,,,,,,,,,5,N,1,,,,,,,,,,90,810,,90,,,,,,,630,1890,,,DMG 2024
+Staff of Fire,Very Rare,Yes,20970,"based: wall of fire x2, protection from energy (plus 1 level, no concentration)",,,,,,,,4,N,2,,8,,,,,,,,,,,,4,Y,,,,,,,,,,,450,1800,,240,,,,,,,450,4050,,,DMG 2024
+Staff of Flowers,Common,No,330,based: druidcraft,,,,,,,,0,N,10,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Staff of Frost,Very Rare,Yes,27540,"based: wall of ice x2, protection from energy (plus 1 level, no concentration)",,,,,,,,6,N,2,,16,,,,,,,,,,,,4,Y,,,,,,,,,,,840,3360,,480,,,,,,,450,4050,,,DMG 2024
+Staff of Healing,Rare,Yes,6780,based: mass cure wounds x2,,,,,,,,5,N,2,,8,,,,,,,,,,,,,,,,,,,,,,,,630,2520,,240,,,,,,,,,,,DMG 2024
+Staff of Power,Very Rare,Yes,39060,based: globe of invulnerability x3,,,2,2,,,2,6,N,3,,36,,,,,,,,,,,,,,,,,,,2700,2700,,,1500,840,4200,,1080,,,,,,,,,,,DMG 2024
+Staff of Striking,Very Rare,Yes,9429,,,,,,,,3,,,,,,,,,10,N,0,,,,,,,,,,,,,,,,,3000,,,,,,,142.8,,,,,,,,DMG 2024
+Staff of Swarming Insects,Rare,Yes,6840,based: insect plague x2,,,,,,,,5,N,2,,9,,,,,,,,,,,,,,,,,,,,,,,,630,2520,,270,,,,,,,,,,,DMG 2024
+Staff of the Adder,Uncommon,Yes,282,,,,,,,,,,,,,,,,,14,Y,1,,,,,,,,,,,,,,,,,,,,,,,,187.6,,,,,,,,DMG 2024
+Staff of the Magi,Legendary,Yes,104250,"based: circle of power, 7th-level spell x7 charges; misc: spells that don't take charges to cast",,,,,,,2,5,Y,,,55,,,,,,,,,,,600,7,N,7,,,,,,,,,1500,630,5670,,1650,,,,,,600,1080,9720,,,DMG 2024
+Staff of the Python,Uncommon,Yes,4500,based: conjure animals,,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Staff of the Woodlands,Rare,Yes,20400,"based: pass without trace, wall of thorns x2, tree form is 1st level appropriate power",,,,,,,2,3,Y,,,20,,,,,,,,,,,,6,N,2,1,Y,,,,,,,1500,300,2700,,600,,,,,,,840,3360,90,810,DMG 2024
+Staff of Thunder and Lightning,Very Rare,Yes,12630,"based: lightning bolt (plus 1 level), thunderclap based on 1st level",,,,,,,2,4,N,1,,,Stunned,,,7,N,0,,,,,,1,N,1,,,,,,,,,1500,450,1350,,,450,,99.96,,,,90,270,,,DMG 2024
+Staff of Withering,Rare,Yes,12960,based: eyebite (plus 1 level),,,,,,,,7,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,1080,5400,,,,,,,,,,,,,DMG 2024
+Stone of Controlling Earth Elementals,Rare,No,7392,"based: conjure elemental (plus 1 level, no cocentration)",,,,,,,,6,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,840,2520,,,,,,,,,,,,,DMG 2024
+Stone of Good Luck,Uncommon,Yes,2100,ability bonus = weapon bonus,,,,1,,,1,,,,,,,,,,,,,,,,,,,,,,,,,900,,,500,,,,,,,,,,,,,,,DMG 2024
+Sun Blade,Rare,Yes,3886,,,,,,,,2,0,Y,,,,,,,,,,4,N,Y,,,,,,,,,,,,,,1500,30,270,,,,,,142.8,,,,,,,DMG 2024
+Sword of Answering,Legendary,Yes,30000,based: haste,,,,,,,3,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,3000,300,2700,,,,,,,,,,,,,DMG 2024
+Sword of Kas,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Sword of Life Stealing,Rare,Yes,857,,,,,,,,,,,,,,,,,,,,10,N,Y,10,,,,,,,,,,,,,,,,,,,,,357,71.4,,,,,,DMG 2024
+Sword of Sharpness,Very Rare,Yes,2785,extra damage based on greatsword max minus avg,,,,,,,,0,Y,,,,,,,14,N,0,6,N,N,,,,,,,,,,,,,,,30,270,,,,,199.92,428.4,,,,,,,DMG 2024
+Sword of Vengeance,Uncommon,Yes,750,"Cursed, not priced",,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,500,,,,,,,,,,,,,,,DMG 2024
+Sword of Wounding,Rare,Yes,1715,treat bleeding comparable to poison; misc: difficult healing,,,,,,,,,,,,,Poisoned,,,,,,2,Y,N,,300,,,,,,,,,,,,,,,,,450,,,107.2,,300,,,,,DMG 2024
+Sylvan Talon,Common,Yes,420,"based: comprehend language (minus 1 level for limited), message",,,,,,,,0,Y,,,,,,,,,,,,,,,0,N,1,,,,,,,,,,30,270,,,,,,,,,30,90,,,DMG 2024
+Talisman of Pure Good,Legendary,Yes,65250,fissure equal to 9th level spell,,,,,,,2,9,,,7,,,,,,,,,,,,,,,,,,,,,,,,1500,1650,,9900,,,,,,,,,,,,DMG 2024
+Talisman of the Sphere,Legendary,Yes,15000,based: enhance ability (plus 1 level),,,,,,,,3,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Talisman of Ultimate Evil,Legendary,Yes,57000,fissure equal to 9th level spell,,,,,,,2,9,,,6,,,,,,,,,,,,,,,,,,,,,,,,1500,1650,,8250,,,,,,,,,,,,DMG 2024
+Talking Doll,Common,Yes,900,based: magic mouth (minus 1 level),,,,,,,,1,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Tankard of Sobriety,Common,No,330,based: prestidigitation,,,,,,,,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,,30,270,,,,,,,,,,,,,DMG 2024
+Tentacle Rod,Rare,Yes,3228,,,,,,,,,,,,,,Exhaustion,,,,,,10,N,N,,,,,,,,,,,,,,,,,,,900,,,714,,,,,,,DMG 2024
+Thunderous Greatclub,Very Rare,Yes,42257,based: earthquake (minus 1 level due to 1 round duration),,,,,5,,,7,N,1,,,Prone,,,,,,4,N,N,,,,,,,,,,,,9450,,,1080,3240,,,30,,,285.6,,,,,,,DMG 2024
+Tome of Clear Thought,Very Rare,No,43659,"due to max increase, uses set score",,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,13230,,,,,,,,,,,,,,,,,DMG 2024
+Tome of Leadership and Influence,Very Rare,No,43659,"due to max increase, uses set score",,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,13230,,,,,,,,,,,,,,,,,DMG 2024
+Tome of the Stilled Tongue,Legendary,Yes,33000,treat as 9th level for bonus action casting,,,,,,,,9,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,1650,4950,,,,,,,,,,,,,DMG 2024
+Tome of Understanding,Very Rare,No,43659,"due to max increase, uses set score",,,,,6,,,,,,,,,,,,,,,,,,,,,,,,,,,,13230,,,,,,,,,,,,,,,,,DMG 2024
+Trident of Fish Command,Uncommon,Yes,4050,based: dominate beast,,,,,,,,4,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,450,2250,,,,,,,,,,,,,DMG 2024
+Universal Solvent,Legendary,No,4620,based: disintegrate,,,,,,,,6,,,1,,,,,,,,,,,,,,,,,,,,,,,,,840,,0,,,,,,,,,,,,DMG 2024
+Veteran's Cane,Common,No,99,based: disguise self,,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,90,,,,,,,,,,,,,,DMG 2024
+Vicious Weapon,Rare,No,1760,"cantrip for magic weapon, add cost for weapon",,,,,,,,0,Y,,,,,,,,,,7,N,N,,,,,,,,,,,,,,,30,270,,,,,,499.8,,,,,,,DMG 2024
+Vorpal Sword,Legendary,Yes,51855,"based: protection from energy (plus 2 levels, no concentration, ignore resist)",,,,,,,3,5,Y,,,,,,,,,,30,N,Y,,,,,,,,,,,,,,3000,630,5670,,,,,,1071,,,,,,,DMG 2024
+Walloping Ammunition,Common,No,33,,,,,,,,,,,,,,Prone,,,,,,,,,,,,,,,,,,,,,,,,,,,30,,,,,,,,,,DMG 2024
+Wand of Binding,Rare,Yes,9300,"based: hold monster x1, hold person x1, freedom of movement (minus 1 level)",,,,,,,,5,N,1,,7,,,,,,,,,,,,2,N,1,3,N,1,,,,,,,630,1890,,210,,,,,,,180,540,300,900,DMG 2024
+Wand of Conducting,Common,No,198,based: thaumaturgy,,,,,,,,0,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,30,150,,,,,,,,,,,,,DMG 2024
+Wand of Enemy Detection,Rare,Yes,9000,based: locate creature,,,,,,,,4,N,7,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Wand of Fear,Rare,Yes,4320,"based: fear x3, command x1",,,,,,,,3,N,3,,,,,,,,,,,,,,1,N,1,,,,,,,,,,300,1500,,,,,,,,,90,270,,,DMG 2024
+Wand of Fireballs,Rare,Yes,6000,based: fireball x7,,,,,,,,3,N,7,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Wand of Lightning Bolts,Rare,Yes,6000,based: lightning bolts x7,,,,,,,,3,N,7,,,,,,,,,,,,,,,,,,,,,,,,,,300,2700,,,,,,,,,,,,,DMG 2024
+Wand of Magic Detection,Uncommon,No,891,based: detect magic x3,,,,,,,,1,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,90,450,,,,,,,,,,,,,DMG 2024
+Wand of Magic Missiles,Uncommon,No,1485,based: magic missile x7,,,,,,,,1,N,7,,,,,,,,,,,,,,,,,,,,,,,,,,90,810,,,,,,,,,,,,,DMG 2024
+Wand of Orcus,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Wand of Paralysis,Rare,Yes,16800,"based: hold monster (plus 1 level, no concentration) x7",,,,,,,,6,N,7,,,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,,,,,,,,,,,,DMG 2024
+Wand of Polymorph,Very Rare,Yes,13500,based: polymorph x7,,,,,,,,4,N,7,,,,,,,,,,,,,,,,,,,,,,,,,,450,4050,,,,,,,,,,,,,DMG 2024
+Wand of Pyrotechnics,Common,No,198,based: light,,,,,,,,0,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,30,150,,,,,,,,,,,,,DMG 2024
+Wand of Secrets,Uncommon,No,1782,based: find traps x3,,,,,,,,2,N,3,,,,,,,,,,,,,,,,,,,,,,,,,,180,900,,,,,,,,,,,,,DMG 2024
+"Wand of War Mage, +1",Uncommon,Yes,900,misc: 100 for ignore cover,,,,,,,1,,,,,,,,,,,,,,,,100,,,,,,,,,,,,500,,,,,,,,,,100,,,,,DMG 2024
+"Wand of War Mage, +2",Rare,Yes,3200,misc: 100 for ignore cover,,,,,,,2,,,,,,,,,,,,,,,,100,,,,,,,,,,,,1500,,,,,,,,,,100,,,,,DMG 2024
+"Wand of War Mage, +3",Very Rare,Yes,9300,misc: 100 for ignore cover,,,,,,,3,,,,,,,,,,,,,,,,100,,,,,,,,,,,,3000,,,,,,,,,,100,,,,,DMG 2024
+Wand of Web,Uncommon,Yes,2700,based: web x7,,,,,,,,2,N,7,,,,,,,,,,,,,,,,,,,,,,,,,,180,1620,,,,,,,,,,,,,DMG 2024
+Wand of Wonder,Rare,Yes,20400,based: 6th level spell x7 charges,,,,,,,,6,N,7,,60,,,,,,,,,,,,,,,,,,,,,,,,840,7560,,1800,,,,,,,,,,,DMG 2024
+Wave,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+"Weapon, +1",Uncommon,No,825,add cost of weapon,,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,,,,,,500,,,,,,,,,,,,,,,DMG 2024
+"Weapon, +2",Rare,No,3300,add cost of weapon,,,,,,,2,,,,,,,,,,,,,,,,,,,,,,,,,,,,1500,,,,,,,,,,,,,,,DMG 2024
+"Weapon, +3",Very Rare,No,9900,add cost of weapon,,,,,,,3,,,,,,,,,,,,,,,,,,,,,,,,,,,,3000,,,,,,,,,,,,,,,DMG 2024
+"Shortsword, +1",Uncommon,No,842,,10,,,,,,1,,,,,,,,,,,,,,,,,,,,,,,10,,,,,500,,,,,,,,,,,,,,,DMG 2024
+Weapon of Warning,Uncommon,Yes,4500,"based: Alarm, Enhance Ability; cantrip for magic weapon",,,,,,,,0,Y,,,,,,,,,,,,,,,1,Y,,2,Y,,,,,,,,30,270,,,,,,,,,90,810,180,1620,DMG 2024
+Well of Many Worlds,Legendary,No,47520,based: planeshift x5,,,,,,,,7,N,5,,,,,,,,,,,,,,,,,,,,,,,,,,1080,7560,,,,,,,,,,,,,DMG 2024
+Whelm,Artifact,Yes,-,"Artifact, not priced",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,DMG 2024
+Wind Fan,Uncommon,No,1188,based: gust of wind,,,,,,,,2,N,1,,,,,,,,,,,,,,,,,,,,,,,,,,180,540,,,,,,,,,,,,,DMG 2024
+Winged Boots,Uncommon,Yes,4725,"based: fly (plus 1 level, no concentration)",,,,,,,,4,N,4,,,,,,,,,,,,,,,,,,,,,,,,,,450,2700,,,,,,,,,,,,,DMG 2024
+Wings of Flying,Rare,Yes,6300,"based: fly (plus 1 level, no concentration) x4",,,,,,,,4,N,4,,,,,,,,,,,,,,,,,,,,,,,,,,450,2700,,,,,,,,,,,,,DMG 2024
+"Wraps of Unarmed Power, +1",Uncommon,No,1320,added cantrip for Force damage,,,,,,,1,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,500,30,270,,,,,,,,,,,,,DMG 2024
+"Wraps of Unarmed Power, +2",Rare,No,3960,added cantrip for Force damage,,,,,,,2,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,1500,30,270,,,,,,,,,,,,,DMG 2024
+"Wraps of Unarmed Power, +3",Very Rare,No,10890,added cantrip for Force damage,,,,,,,3,0,Y,,,,,,,,,,,,,,,,,,,,,,,,,,3000,30,270,,,,,,,,,,,,,DMG 2024
+Bead of Nourishment,Common,No,99,based: goodberry,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XGTE
+Bead of Refreshment,Common,No,99,based: create or destroy water,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XGTE
+Unbreakable Arrow,Common,No,330,based: mending,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XGTE
+Wand of Scowls,Common,No,198,based: minor illusion,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XGTE
+Wand of Smiles,Common,No,198,based: minor illusion,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,XGTE
+Absorbing Tattoo,Very Rare,Yes,14580,"based: protection from energy (plus 1 level, no concentration), immunity is based on absorb elements",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Alchemical Compendium,Rare,Yes,6680,"Alchemy is treated as Fabricate spell (x3), Treat swap spells as Lv3 added to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"All-Purpose Tool, +1",Uncommon,Yes,2580,"Spell Save DC = AC bonus, spell attack = weapon bonus, Misc Cost: avg price for various tools/supplies",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"All-Purpose Tool, +2",Rare,Yes,9040,"Spell Save DC = AC bonus, spell attack = weapon bonus, Misc Cost: avg price for various tools/supplies",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"All-Purpose Tool, +3",Very Rare,Yes,26160,"Spell Save DC = AC bonus, spell attack = weapon bonus, Misc Cost: avg price for various tools/supplies",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Amulet of the Devout, +1",Uncommon,Yes,2640,"Spell Save DC = AC bonus, spell attack = weapon bonus, Channel Divinty treated as extra Lv1 spell slot",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Amulet of the Devout, +2",Rare,Yes,9120,"Spell Save DC = AC bonus, spell attack = weapon bonus, Channel Divinty treated as extra Lv1 spell slot",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Amulet of the Devout, +3",Very Rare,Yes,26280,"Spell Save DC = AC bonus, spell attack = weapon bonus, Channel Divinty treated as extra Lv1 spell slot",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Arcane Grimoire, +1",Uncommon,Yes,2640,"Spell Save DC = AC bonus, spell attack = weapon bonus, Extra Arcane Recovery treated as extra Lv1 spell slot",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Arcane Grimoire, +2",Rare,Yes,9120,"Spell Save DC = AC bonus, spell attack = weapon bonus, Extra Arcane Recovery treated as extra Lv1 spell slot",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Arcane Grimoire, +3",Very Rare,Yes,26280,"Spell Save DC = AC bonus, spell attack = weapon bonus, Extra Arcane Recovery treated as extra Lv1 spell slot",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Astral Shard,Rare,Yes,6020,"At-will Misty Step (plus 1 level for no action economy), Misc cost of focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Astromancy Archive,Rare,Yes,5360,"Treat swap spells as Lv3 (x3), reaction treated as Lv2 spell and add to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Atlas of Endless Horizons,Rare,Yes,6080,"Treat swap spells as Lv3 (x3), reaction treated as Lv2 spell added to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Barrier Tattoo, AC12+Dex",Uncommon,Yes,1350,based: mage armor,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Barrier Tattoo, AC15+Dex2",Rare,Yes,3600,based: barkskin,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Barrier Tattoo, AC18",Very Rare,Yes,9000,based: Lv3 spell,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Bell Branch,Rare,Yes,1160,"based: protection spell (x3), detect evil & good, misc cost of focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Blood Fury Tattoo,Legendary,Yes,27000,"treat reaction as hellish rebuke spell, necrotic damage as vampiric touch (+1 level)",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Bloodwell Vial, +1",Uncommon,Yes,3900,"Spell Save DC = AC bonus, spell attack = weapon bonus, extra spell points = Lv3 spell",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Bloodwell Vial, +2",Rare,Yes,10800,"Spell Save DC = AC bonus, spell attack = weapon bonus, extra spell points = Lv3 spell",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Bloodwell Vial, +3",Very Rare,Yes,28800,"Spell Save DC = AC bonus, spell attack = weapon bonus, extra spell points = Lv3 spell",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Coiling Grasp Tattoo,Uncommon,Yes,849,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Crystalline Chronicle,Very Rare,Yes,10290,"Treat swap spells as Lv3 (x3), subtlecast as Lv3 spell added to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus + 300 for at-will cantrip",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Devotee's Censer,Rare,Yes,1734,"Treat heal as Avg2 * 4 creatures * 10 rounds, Misc cost is focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Duplicitious Manuscript,Rare,Yes,4820,"Treat swap spells as Lv3 (x3), reaction as Lv1 (silvery barbs inspiration) added to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Eldritch Claw Tattoo,Uncommon,Yes,1371,treat extended reach as Lv1 spell,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Elemental Essence Shard, Air",Rare,Yes,3620,"treat as 'unlimited' fly spell (-1 lv due to limited effect), Misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Elemental Essence Shard, Earth",Rare,Yes,6020,"treat as 'unlimited' protection from elements (-1 lv due to limited effect), Misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Elemental Essence Shard, Fire",Rare,Yes,806,Misc cost for focus,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Elemental Essence Shard, Water",Rare,Yes,1581,"AoE damage multiplied by 4 due to size of effect, Misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Far Realm Shard,Rare,Yes,736,Misc cost for focus,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Feywild Shard,Uncommon,Yes,4515,"wild magic treated as Lv3 spell, Misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Fulminating Treatise,Rare,Yes,5190,"Treat swap spells as Lv3 (x3), extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Ghost Step Tattoo,Very Rare,Yes,3240,based: blink (-1 lv spell due to short duration and effect),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Guardian Emblem,Uncommon,Yes,825,"based: shield spell, Misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Heart Weaver's Primer,Rare,Yes,5240,"Treat swap spells as Lv3 (x3), reaction as Lv1 (silvery barbs inspiration) added to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Illuminator's Tattoo,Common,Yes,660,"based: illusory script x1/day, writing with finger as cantrip",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Libram of Souls and Flesh,Rare,Yes,5240,"Treat swap spells as Lv3 (x3), treat indifferent undead as Lv1 spell and added to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Lifewell Tattoo,Very Rare,Yes,18900,"based: protection from energy (plus 1 level, no concentration) and death ward",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Lyre of Building,Rare,Yes,23160,"based: mending, reaction as shield (plus 1 level), and misc cost includes extra 1/day spells you can cast",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Masquerade Tattoo,Common,Yes,660,"based: fluid ink as cantrip, disguise self 1/day",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Moon Sickle, +1",Uncommon,Yes,4815,"Spell Save DC = AC bonus, treat extra d4 healing as unlimited healing word, misc cost includes focus & spell attack bonus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Moon Sickle, +2",Rare,Yes,15620,"Spell Save DC = AC bonus, treat extra d4 healing as unlimited healing word, misc cost includes focus & spell attack bonus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Moon Sickle, +3",Very Rare,Yes,44130,"Spell Save DC = AC bonus, treat extra d4 healing as unlimited healing word, misc cost includes focus & spell attack bonus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Outer Essence Shard, Lawful",Rare,Yes,12620,"based: 'unlimited' greater restoration, Misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Outer Essence Shard, Chaotic",Rare,Yes,6020,"based: 'unlimited' blur spell (plus 1 level due to increase effect), misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Outer Essence Shard, Good",Rare,Yes,3620,"based: Lv2 false life, misc cost for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Outer Essence Shard, Evil",Rare,Yes,734,misc cost for focus,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Planecaller's Codex,Rare,Yes,5240,"Treat swap spells as Lv3 (x3), adv on attacks as beast bond, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Protective Verses,Rare,Yes,5240,"Treat swap spells as Lv3 (x3), temp HP as false life added to extra spells, extra spells are treated as if it were a staff, Misc Cost: 10 gp for focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Reveler's Concertina,Rare,Yes,12120,"based: irresitible dance, Spell Save DC = AC Bonus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Rhythm-Maker's Drum, +1",Uncommon,Yes,2640,"Spell Save DC = AC bonus, spell attack = weapon bonus, treat recover inspiration as lv1 spell",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Rhythm-Maker's Drum, +2",Rare,Yes,9120,"Spell Save DC = AC bonus, spell attack = weapon bonus, treat recover inspiration as lv1 spell",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Rhythm-Maker's Drum, +3",Very Rare,Yes,26280,"Spell Save DC = AC bonus, spell attack = weapon bonus, treat recover inspiration as lv1 spell",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Shadowfell Brand Tattoo,Rare,Yes,6480,"based: darkvision (x3), enhance ability; shadowy defense as shield",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+Shadowfell Shard,Rare,Yes,6020,"based: disadv as bestow curse, misc cost is focus",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Spellwrought Tattoo, Cantrip",Common,No,99,cantrip (+1 lvl because anyone can cast it),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Spellwrought Tattoo, Lv1",Common,No,198,lv1 spell (+1 lvl because anyone can cast it),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Spellwrought Tattoo, Lv2",Uncommon,No,495,lv2 spell (+1 lvl because anyone can cast it),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Spellwrought Tattoo, Lv3",Uncommon,No,743,lv3 spell (+1 lvl because anyone can cast it),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Spellwrought Tattoo, Lv4",Rare,No,1386,lv4 spell (+1 lvl because anyone can cast it),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
+"Spellwrought Tattoo, Lv5",Rare,No,1848,lv5 spell (+1 lvl because anyone can cast it),,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,TCoE
