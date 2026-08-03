@@ -2,10 +2,17 @@
  * One-time scraper for RPGBOT 2024 class optimization guides.
  * Run: pnpm scrape:rpgbot
  *
- * On Windows, TLS certificate chain issues are handled inside the script.
+ * Some Windows environments fail TLS verification against rpgbot.net.
+ * Opt in explicitly — never disable certificate checks by default:
+ *   ALLOW_INSECURE_TLS=1 pnpm scrape:rpgbot
  */
 
-process.env.NODE_TLS_REJECT_UNAUTHORIZED ??= "0";
+if (process.env.ALLOW_INSECURE_TLS === "1") {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+  console.warn(
+    "[scrape:rpgbot] ALLOW_INSECURE_TLS=1 — TLS certificate verification is disabled.",
+  );
+}
 
 import * as cheerio from "cheerio";
 import { writeFileSync } from "node:fs";
