@@ -18,6 +18,7 @@ import type {
   ItemsJson,
   MagicVariantsJson,
   RawItemEntity,
+  RawItemEntry,
   RawItemMastery,
   RawItemProperty,
   RawItemType,
@@ -106,6 +107,20 @@ function buildItemMasteryIndex(
     };
     map.set(`${m.name}|${m.source}`.toLowerCase(), entry);
     map.set(m.name.toLowerCase(), entry);
+  }
+  return map;
+}
+
+function buildItemEntryIndex(
+  itemEntries: RawItemEntry[],
+): Map<string, unknown[]> {
+  const map = new Map<string, unknown[]>();
+  for (const entry of itemEntries) {
+    if (!entry?.name || !Array.isArray(entry.entriesTemplate)) continue;
+    const template = entry.entriesTemplate;
+    map.set(`${entry.name}|${entry.source}`.toLowerCase(), template);
+    // Name-only fallback (last write wins; prefer later sources in file order).
+    map.set(entry.name.toLowerCase(), template);
   }
   return map;
 }
@@ -479,6 +494,15 @@ async function ensureJsonBundle(): Promise<ItemJsonBundle> {
         entry != null &&
         typeof entry.appliesTo === "string" &&
         Array.isArray(entry.entries),
+    ),
+    itemEntries: buildItemEntryIndex(
+      (baseJson.itemEntry ?? []).filter(
+        (entry): entry is RawItemEntry =>
+          typeof entry === "object" &&
+          entry != null &&
+          typeof entry.name === "string" &&
+          typeof entry.source === "string",
+      ),
     ),
   };
 

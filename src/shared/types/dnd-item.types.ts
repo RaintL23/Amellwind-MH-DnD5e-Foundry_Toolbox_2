@@ -32,6 +32,11 @@ export interface DndItem {
   valueGp: string | null;
   valueCp: number | null;
   /**
+   * Mundane base item cost in copper (from specific-variant `_baseValue`).
+   * Used when Magic Item Pricing notes say to add weapon/armor/ammo cost.
+   */
+  baseValueCp: number | null;
+  /**
    * Structured 5etools entries: attached rule text (type / properties /
    * mastery / type-additional) followed by the item's own entries.
    */

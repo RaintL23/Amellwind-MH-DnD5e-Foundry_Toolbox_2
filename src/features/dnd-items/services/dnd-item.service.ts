@@ -99,6 +99,20 @@ export async function getDndItemsByName(name: string): Promise<DndItem[]> {
   return sortDndItemVariants(group);
 }
 
+/** Specific magic variants produced from a generic variant (e.g. Armor of Lightning Resistance). */
+export async function getSpecificVariantsForGeneric(
+  genericName: string,
+): Promise<DndItem[]> {
+  const all = await getAllDndItems();
+  return all
+    .filter(
+      (item) =>
+        item.isSpecificVariant &&
+        item.variantName?.toLowerCase() === genericName.toLowerCase(),
+    )
+    .sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: "base" }));
+}
+
 export async function getDndItemById(id: string): Promise<DndItem | undefined> {
   if (indexById === null) await getAllDndItems();
   return indexById?.get(id);

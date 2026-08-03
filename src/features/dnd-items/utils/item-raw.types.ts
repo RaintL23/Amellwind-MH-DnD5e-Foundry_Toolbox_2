@@ -90,13 +90,19 @@ export interface RawItemTypeAdditionalEntries {
   entries: unknown[];
 }
 
+export interface RawItemEntry {
+  name: string;
+  source: string;
+  entriesTemplate?: unknown[];
+}
+
 export interface ItemsBaseJson {
   _meta?: { internalCopies?: string[] };
   baseitem: RawItemEntity[];
   itemType?: RawItemType[];
   itemProperty?: RawItemProperty[];
   itemTypeAdditionalEntries?: RawItemTypeAdditionalEntries[];
-  itemEntry?: unknown[];
+  itemEntry?: RawItemEntry[];
   itemMastery?: RawItemMastery[];
 }
 
@@ -145,4 +151,6 @@ export interface ItemBaseIndexes {
   itemProperties: Map<string, ItemPropertyIndexEntry>;
   itemMasteries: Map<string, ItemMasteryIndexEntry>;
   itemTypeAdditionalEntries: RawItemTypeAdditionalEntries[];
+  /** name|source and name-only → entriesTemplate */
+  itemEntries: Map<string, unknown[]>;
 }

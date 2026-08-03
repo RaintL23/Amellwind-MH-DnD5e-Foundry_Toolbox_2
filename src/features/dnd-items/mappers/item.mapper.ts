@@ -11,6 +11,7 @@ import {
   formatDndItemMastery,
   formatDndItemProperties,
 } from "../utils/item-property.utils";
+import { expandItemEntryRefs } from "../utils/item-entry-resolve.utils";
 import { itemId, unpackItemTypeUid } from "../utils/item-uids.utils";
 
 const RARITY_LABELS: Record<string, string> = {
@@ -135,17 +136,19 @@ export function mapDndItem(
     ...(Array.isArray(raw.entries) ? raw.entries : []),
     ...(Array.isArray(raw.additionalEntries) ? raw.additionalEntries : []),
   ];
-  const description = mapStatBlockEntries([...attachedRules, ...ownEntries]);
+  const resolvedEntries = expandItemEntryRefs(
+    [...attachedRules, ...ownEntries],
+    raw,
+    indexes,
+  );
+  const description = mapStatBlockEntries(resolvedEntries);
   const descriptionPlain = statBlockContentsToPlainText(description, " ");
 
   const name = String(raw.name ?? "Unknown");
   const source = String(raw.source ?? "");
-  const valueCp =
-    typeof raw.value === "number"
-      ? raw.value
-      : raw._baseValue != null
-        ? null
-        : null;
+  const valueCp = typeof raw.value === "number" ? raw.value : null;
+  const baseValueCp =
+    typeof raw._baseValue === "number" ? raw._baseValue : null;
 
   const typeLabel = resolveTypeLabel(typeCode, indexes);
   const weaponCategory = parseWeaponCategory(raw);
@@ -203,6 +206,7 @@ export function mapDndItem(
     weight: formatWeight(raw.weight as number | string | undefined),
     valueGp: formatValueGp(valueCp),
     valueCp,
+    baseValueCp,
     description,
     searchText,
     category: String(raw._category ?? "Other"),
