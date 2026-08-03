@@ -33,6 +33,7 @@ import {
   Map,
   Crosshair,
   Hammer,
+  Store,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
@@ -150,6 +151,7 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Character Tools",
         items: [
           { to: "/xanathar-backstory", label: "Xanathar Backstory", icon: Map },
+          { to: "/shop-generator", label: "Shop Generator", icon: Store },
         ],
       },
     ],

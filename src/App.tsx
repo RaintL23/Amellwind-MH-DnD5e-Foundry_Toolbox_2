@@ -168,6 +168,13 @@ const XanatharBackstoryPage = lazy(() =>
     }),
   ),
 );
+const ShopGeneratorPage = lazy(() =>
+  import("@/features/shop-generator/components/ShopGeneratorPage").then(
+    (m) => ({
+      default: m.ShopGeneratorPage,
+    }),
+  ),
+);
 const DamageCalculatorPage = lazy(() =>
   import("@/features/damage-calculator/components/DamageCalculatorPage").then(
     (m) => ({
@@ -580,6 +587,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <XanatharBackstoryPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="shop-generator"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <ShopGeneratorPage />
                   </Suspense>
                 }
               />

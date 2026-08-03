@@ -27,6 +27,7 @@ import {
   Bot,
   ImportIcon,
   Crosshair,
+  Store,
 } from "lucide-react";
 import {
   Card,
@@ -36,6 +37,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { MAGIC_ITEM_PRICING_ATTRIBUTION } from "@/features/shop-generator/data/magic-item-pricing-attribution";
 
 interface SectionItem {
   label: string;
@@ -258,6 +260,13 @@ const dndSections: SectionItem[] = [
     description: "Random backstory generator using XGE tables.",
     icon: <Map className="h-5 w-5" />,
   },
+  {
+    label: "Shop Generator",
+    route: "/shop-generator",
+    description:
+      "Procedural D&D 5e shops with tiered stock, themes, and prices from the Dump Stat Adventures Magic Item Pricing spreadsheet.",
+    icon: <Store className="h-5 w-5" />,
+  },
 ];
 
 function SectionCard({ item }: { item: SectionItem }) {
@@ -369,19 +378,43 @@ export function HomePage() {
 
       {/* Footer note */}
       <Separator />
-      <p className="text-xs text-muted-foreground pb-2">
-        Fan-made project. Homebrew content is created by{" "}
-        <a
-          href="https://www.patreon.com/cw/amellwind"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="underline underline-offset-2 hover:text-foreground transition-colors"
-        >
-          Amellwind
-        </a>
-        . Monster Hunter is property of Capcom; D&amp;D is property of Wizards
-        of the Coast.
-      </p>
+      <div className="space-y-2 pb-2 text-xs text-muted-foreground">
+        <p>
+          Fan-made project. Homebrew content is created by{" "}
+          <a
+            href="https://www.patreon.com/cw/amellwind"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-foreground transition-colors"
+          >
+            Amellwind
+          </a>
+          . Monster Hunter is property of Capcom; D&amp;D is property of Wizards
+          of the Coast.
+        </p>
+        <p>
+          Suggested magic-item prices follow the{" "}
+          <a
+            href={MAGIC_ITEM_PRICING_ATTRIBUTION.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-foreground transition-colors"
+          >
+            {MAGIC_ITEM_PRICING_ATTRIBUTION.title}
+          </a>{" "}
+          spreadsheet by {MAGIC_ITEM_PRICING_ATTRIBUTION.author} (
+          <a
+            href={MAGIC_ITEM_PRICING_ATTRIBUTION.siteUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline underline-offset-2 hover:text-foreground transition-colors"
+          >
+            dumpstatadventures.com
+          </a>
+          ) — formulas and costs from that work, not original calculations from
+          this app.
+        </p>
+      </div>
     </div>
   );
 }
