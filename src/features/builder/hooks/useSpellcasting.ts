@@ -191,12 +191,67 @@ function evaluatePreparedFormula(
   if (!/^[0-9+\-*/ ().]+$/.test(expr)) return 0;
 
   try {
-    // eslint-disable-next-line no-new-func
-    const result = new Function(`return (${expr})`)() as number;
+    const result = evalArithmeticExpression(expr);
+    if (!Number.isFinite(result)) return 0;
     return Math.max(1, Math.floor(result));
   } catch {
     return 0;
   }
+}
+
+/**
+ * Evaluates a whitelist-only arithmetic expression (+ - * / and parentheses).
+ * Avoids `new Function` / `eval` so CSP can omit `unsafe-eval`.
+ */
+function evalArithmeticExpression(source: string): number {
+  const expr = source.replace(/\s+/g, "");
+  let i = 0;
+
+  const peek = (): string | undefined => expr[i];
+  const consume = (): string => expr[i++]!;
+
+  const parseExpression = (): number => {
+    let value = parseTerm();
+    while (peek() === "+" || peek() === "-") {
+      const op = consume();
+      const right = parseTerm();
+      value = op === "+" ? value + right : value - right;
+    }
+    return value;
+  };
+
+  const parseTerm = (): number => {
+    let value = parseFactor();
+    while (peek() === "*" || peek() === "/") {
+      const op = consume();
+      const right = parseFactor();
+      value = op === "*" ? value * right : value / right;
+    }
+    return value;
+  };
+
+  const parseFactor = (): number => {
+    if (peek() === "(") {
+      consume();
+      const value = parseExpression();
+      if (peek() !== ")") throw new Error("Unbalanced parentheses");
+      consume();
+      return value;
+    }
+    if (peek() === "+" || peek() === "-") {
+      const op = consume();
+      const value = parseFactor();
+      return op === "-" ? -value : value;
+    }
+    const start = i;
+    while (peek() !== undefined && /[0-9]/.test(peek()!)) consume();
+    if (start === i) throw new Error("Expected number");
+    return Number(expr.slice(start, i));
+  };
+
+  const result = parseExpression();
+  if (i !== expr.length) throw new Error("Unexpected trailing input");
+  return result;
 }
 
 function getCantripCountFromTable(

@@ -129,6 +129,7 @@ Para desarrollo offline, copia los JSON desde `backup-jsons/5etools/` a `public/
 - **Output:** `dist`
 - **Variables de entorno:** ninguna obligatoria
 - **Node:** 22.x (`.nvmrc` / `package.json`)
+- **Security headers:** `vercel.json` sets CSP (allows `connect-src` to `raw.githubusercontent.com`), `X-Frame-Options`, `nosniff`, and related policies. If you override mirrors away from GitHub raw, update the CSP `connect-src` allowlist.
 
 ## Fuentes de datos
 
