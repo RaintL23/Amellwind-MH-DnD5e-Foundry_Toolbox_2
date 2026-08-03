@@ -48,6 +48,7 @@ Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son
 | **Backgrounds** | `/dnd-backgrounds`           | Trasfondos oficiales 5e (2014 / 2024)                    |
 | **Feats**       | `/dnd-feats`                 | Dotes oficiales 5e                                       |
 | **Xanathar Backstory** | `/xanathar-backstory` | Generador de trasfondo aleatorio con las tablas de Xanathar (XGE) |
+| **Shop Generator** | `/shop-generator` | Tiendas D&D 5e procedurales (tema, tier, precios CSV editables) |
 
 ### Integración con Foundry VTT
 
@@ -97,9 +98,14 @@ pnpm preview
 # Lint
 pnpm lint
 
+# Rebuild magic-item pricing lookup from scripts/data/magic-item-pricing.csv
+pnpm pricing:build
+
 # Build con análisis de bundle
 pnpm build:analyze
 ```
+
+`pnpm build` y `pnpm dev` también ejecutan `pricing:build` automáticamente. Para actualizar precios: sustituye `scripts/data/magic-item-pricing.csv` (export CSV de la hoja [Magic Item Pricing](https://dumpstatadventures.com/the-gm-is-always-right/pricing-magic-items-2024-dungeon-masters-guide) de Dump Stat Adventures — pestañas DMG 2024 + filas XGTE/TCoE) y corre `pnpm pricing:build` (o cualquier build/dev). La app atribuye esos precios a VaranSL / Dump Stat Adventures; no son cálculos originales de este proyecto.
 
 La app almacena todos los datos en **IndexedDB**, que es su **fuente de verdad** en runtime. GitHub actúa solo como *feed de actualización* (modelo offline-first): al arrancar, si ya hay datos guardados se muestran de inmediato y, si superan las 24 h, se refrescan en segundo plano; solo el primer arranque (sin datos aún) espera a la descarga. Si la red falla, la app sigue funcionando con lo ya guardado en IndexedDB.
 
@@ -195,6 +201,7 @@ src/
 │   ├── dnd-feats/          # Dotes oficiales 5e
 │   ├── dnd-optionalfeatures/ # Optional features 5e (sin ruta; consumido por el builder)
 │   ├── xanathar-backstory/ # Generador de trasfondo (XGE)
+│   ├── shop-generator/     # Generador de tiendas D&D 5e
 │   └── bestiary/           # Bestiario 5e
 └── shared/
     ├── constants/          # URLs de API, IndexedDB y constantes D&D (abilities, skills)

@@ -75,6 +75,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /bestiary                  → Bestiario oficial
 /bestiary/:creatureId      → Detalle de criatura
 /xanathar-backstory        → Generador de trasfondo (XGE)
+/shop-generator            → Generador de tiendas D&D 5e
 
 *                          → Página 404 / Not Found
 ```
@@ -140,7 +141,7 @@ El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInven
 | Amellwind Homebrew | Gear            | Weapons, Items                                                |
 | Amellwind Homebrew | Craft & Trade   | Shops, Cooking, Combo List, Environments, Resources, Downtime |
 | DnD 5e            | Compendium      | Spells, Classes, Races, Backgrounds, Feats, Items, Bestiary  |
-| DnD 5e            | Character Tools | Xanathar Backstory, Damage Calculator                        |
+| DnD 5e            | Character Tools | Xanathar Backstory, Shop Generator, Damage Calculator        |
 
 ### Layout global (`MainLayout`)
 
@@ -1609,6 +1610,7 @@ Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar. 
 | Feats          | `/dnd-feats`       | `feat` + UA/partnered              | Dedupe por nombre; Filter dialog (tipo/sources) |
 | D&D Items      | `/dnd-items`       | items.json + variants           | Precarga PHB/DMG; resto al seleccionar Sources; Filter dialog; armas/armaduras enriquecidas: Properties con templates 5etools, Mastery, Range/Ammo/AC/Stealth/Str, y textos de reglas (tipo + propiedades + mastery + type-additional) en la descripción |
 | Bestiary       | `/bestiary`        | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto al seleccionar Sources |
+| Shop Generator | `/shop-generator`  | catálogo `dnd-items` + CSV precios | Tema/tier/filtros → stock procedural; precios CSV (alias +N) → generic+base → catalog → estimado; markup cheap/normal/expensive; localStorage `mh-shop-generator` |
 
 Fetch centralizado en `shared/data/fivetools-fetch.ts` (offline-first *stale-while-revalidate*: memoria → IndexedDB `fivetools_cache` → red; refresco en segundo plano si está viejo) con soporte `VITE_5ETOOLS_DATA=local`. Catálogo de sources (oficial + UA + partnered homebrew) en `shared/services/source-catalog.service.ts`; UI compartida `ListSearchWithFilters` / `ListFiltersDialog` (Sources agrupadas por año).
 
@@ -1621,6 +1623,18 @@ Fetch centralizado en `shared/data/fivetools-fetch.ts` (offline-first *stale-whi
 **Ruta**: `/xanathar-backstory`
 
 Generador de trasfondo de personaje basado en las tablas aleatorias de _Xanathar's Guide to Everything_ (origen, familia, eventos de vida, etc.). Herramienta de personaje del bloque DnD 5e. Componente `XanatharBackstoryPage`.
+
+---
+
+### Shop Generator (D&D 5e)
+
+**Ruta**: `/shop-generator`
+
+Generador de tiendas del compendio 5e (no confundir con `/shops` Amellwind). Usa el catálogo `dnd-items`, temas/tiers, filtros (types, rarities, sources, class affinities) y precios desde `scripts/data/magic-item-pricing.csv` (unión **DMG 2024 + XGTE + TCoE** de la hoja *Magic Item Pricing* de Dump Stat Adventures / VaranSL; regenerar con `pnpm pricing:build` → `magic-item-pricing.data.ts` + meta Note/Source Sheet).
+
+Cadena de precio (`resolveItemPriceGp`): CSV exacto (con alias `+N Name` ↔ `Name, +N`) → genéricos `Armor/Weapon/Ammunition +N` **más** coste mundano `baseValueCp` de la variante específica → `valueCp` del catálogo → estimación por rareza. La columna **Price** del listado y el diálogo de ítems usan esa cadena (tooltip de breakdown + atribución); el badge Basis del shop hace lo mismo. El diálogo sigue mostrando también el **Value** crudo de 5etools cuando existe.
+
+Markup post-generación cheap/normal/expensive; precios editables a mano. Persistencia de la última tienda en `localStorage` (`mh-shop-generator`). Créditos en Home y cabecera del Shop Generator. Feature: `src/features/shop-generator/`.
 
 ---
 
@@ -1665,6 +1679,7 @@ src/
 │   ├── dnd-feats/          # Dotes 5e
 │   ├── dnd-optionalfeatures/ # Optional features 5e (sin ruta)
 │   ├── xanathar-backstory/ # Generador de trasfondo (XGE)
+│   ├── shop-generator/     # Generador de tiendas D&D 5e
 │   └── bestiary/           # Bestiario 5e
 ├── shared/
 │   ├── types/              # Entidades tipadas
