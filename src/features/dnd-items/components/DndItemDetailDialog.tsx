@@ -12,13 +12,20 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/shared/utils/cn";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 import { SourceBadge } from "@/features/spells/components/SourceBadge";
 import {
   getBookSourceNames,
   resolveBookSourceName,
   type BookSourceNameMap,
 } from "@/features/spells/services/book-source.service";
-import { getDndItemById } from "../services/dnd-item.service";
+import { MAGIC_ITEM_PRICING_ATTRIBUTION } from "@/features/shop-generator/data/magic-item-pricing-attribution";
+import {
+  formatPriceBreakdownTooltip,
+  formatShopPriceGp,
+  resolveItemPriceGp,
+} from "@/features/shop-generator/utils/price-resolve.utils";
+import { getDndItemById, getSpecificVariantsForGeneric } from "../services/dnd-item.service";
 import { sortDndItemVariants } from "../utils/item-dedupe.utils";
 import {
   formatFieldValue,
@@ -39,30 +46,43 @@ function MetaRow({
   label,
   value,
   differs,
+  tooltip,
 }: {
   label: string;
   value: string;
   differs?: boolean;
+  tooltip?: string;
 }) {
   if (!value || value === "—") return null;
+  const valueEl = (
+    <span
+      className={cn(
+        "text-sm",
+        differs ? "text-amber-300 font-medium" : "text-foreground",
+        tooltip &&
+          "cursor-help underline decoration-dotted decoration-muted-foreground/60 underline-offset-2",
+      )}
+    >
+      {value}
+      {differs && (
+        <span className="ml-1.5 text-[10px] font-normal text-amber-500/80">
+          (varies)
+        </span>
+      )}
+    </span>
+  );
   return (
     <div className="flex gap-2">
       <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide w-28 shrink-0">
         {label}
       </span>
-      <span
-        className={cn(
-          "text-sm",
-          differs ? "text-amber-300 font-medium" : "text-foreground",
-        )}
-      >
-        {value}
-        {differs && (
-          <span className="ml-1.5 text-[10px] font-normal text-amber-500/80">
-            (varies)
-          </span>
-        )}
-      </span>
+      {tooltip ? (
+        <HintTooltip content={tooltip} side="top" align="start" className="max-w-sm">
+          {valueEl}
+        </HintTooltip>
+      ) : (
+        valueEl
+      )}
     </div>
   );
 }
@@ -212,10 +232,20 @@ export function DndItemDetailDialog({
   const [activeId, setActiveId] = useState("");
   const [bookNames, setBookNames] = useState<BookSourceNameMap>({});
   const [groupMembers, setGroupMembers] = useState<DndItem[]>([]);
+  const [baseVariants, setBaseVariants] = useState<DndItem[]>([]);
+  const [linkedItem, setLinkedItem] = useState<DndItem | null>(null);
+  const [linkedOpen, setLinkedOpen] = useState(false);
 
   useEffect(() => {
     if (item) setActiveId(item.id);
   }, [item?.id]);
+
+  useEffect(() => {
+    if (!open) {
+      setLinkedOpen(false);
+      setLinkedItem(null);
+    }
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -237,6 +267,25 @@ export function DndItemDetailDialog({
     return (field: DndItemVariantField) => set.has(field);
   }, [varyingFields]);
 
+  const resolvedPrice = useMemo(
+    () => (active ? resolveItemPriceGp(active) : null),
+    [active],
+  );
+
+  const priceTooltip = useMemo(() => {
+    if (!resolvedPrice) return undefined;
+    const lines = [
+      ...resolvedPrice.breakdown,
+      "",
+      MAGIC_ITEM_PRICING_ATTRIBUTION.shortCredit,
+      MAGIC_ITEM_PRICING_ATTRIBUTION.url,
+    ];
+    return formatPriceBreakdownTooltip({
+      ...resolvedPrice,
+      breakdown: lines,
+    });
+  }, [resolvedPrice]);
+
   useEffect(() => {
     if (!active?.isItemGroup || !active.groupItemRefs?.length) {
       setGroupMembers([]);
@@ -255,9 +304,29 @@ export function DndItemDetailDialog({
     });
   }, [active?.id, active?.groupItemRefs]);
 
+  useEffect(() => {
+    if (!active?.isGenericVariant) {
+      setBaseVariants([]);
+      return;
+    }
+    let cancelled = false;
+    void getSpecificVariantsForGeneric(active.name).then((list) => {
+      if (!cancelled) setBaseVariants(list);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [active?.id, active?.isGenericVariant, active?.name]);
+
+  function openLinkedItem(next: DndItem) {
+    setLinkedItem(next);
+    setLinkedOpen(true);
+  }
+
   if (!item || !active) return null;
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
@@ -311,6 +380,13 @@ export function DndItemDetailDialog({
               value={active.category}
               differs={differs("category")}
             />
+            {resolvedPrice ? (
+              <MetaRow
+                label="Price"
+                value={formatShopPriceGp(resolvedPrice.basePriceGp)}
+                tooltip={priceTooltip}
+              />
+            ) : null}
             <MetaRow
               label="Value"
               value={active.valueGp ?? "—"}
@@ -422,9 +498,13 @@ export function DndItemDetailDialog({
                   {groupMembers.length > 0
                     ? groupMembers.map((m) => (
                         <li key={m.id}>
-                          <span className="text-foreground font-medium">
+                          <button
+                            type="button"
+                            className="text-left font-medium text-sky-300 hover:underline underline-offset-2"
+                            onClick={() => openLinkedItem(m)}
+                          >
                             {m.name}
-                          </span>
+                          </button>
                           <span className="ml-2 text-xs">({m.source})</span>
                         </li>
                       ))
@@ -449,8 +529,48 @@ export function DndItemDetailDialog({
               <StatBlockContentView content={active.description} />
             </>
           )}
+
+          {active.isGenericVariant && baseVariants.length > 0 && (
+            <>
+              <Separator className="my-4" />
+              <h3 className="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">
+                Base items
+              </h3>
+              <p className="mb-2 text-sm italic text-muted-foreground">
+                This item variant can be applied to the following base items:
+              </p>
+              <ul className="mb-2 space-y-1.5">
+                {baseVariants.map((variant) => (
+                  <li key={variant.id}>
+                    <button
+                      type="button"
+                      className="text-left text-sm text-sky-300 hover:underline underline-offset-2"
+                      onClick={() => openLinkedItem(variant)}
+                    >
+                      <span className="font-medium">
+                        {variant.baseName ?? variant.name}
+                      </span>
+                      {variant.baseName ? (
+                        <span className="text-muted-foreground">
+                          {" "}
+                          ({variant.name})
+                        </span>
+                      ) : null}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </>
+          )}
         </DialogBody>
       </DialogContent>
     </Dialog>
+
+    <DndItemDetailDialog
+      item={linkedItem}
+      open={linkedOpen}
+      onOpenChange={setLinkedOpen}
+    />
+    </>
   );
 }

@@ -1,6 +1,11 @@
 import { ColumnDef, FilterFn } from "@tanstack/react-table";
 import { DndItem } from "@/shared/types";
 import { DataTableColumnHeader } from "@/components/data-table/data-table-column-header";
+import {
+  formatPriceBreakdownTooltip,
+  formatShopPriceGp,
+  resolveItemPriceGp,
+} from "@/features/shop-generator/utils/price-resolve.utils";
 import { cn } from "@/shared/utils/cn";
 
 export const dndItemGlobalFilter: FilterFn<DndItem> = (row, _columnId, filterValue) => {
@@ -111,14 +116,21 @@ export const dndItemColumns: ColumnDef<DndItem>[] = [
     },
   },
   {
-    accessorKey: "valueGp",
-    header: "Value",
+    id: "price",
+    accessorFn: (row) => resolveItemPriceGp(row).basePriceGp,
+    header: "Price",
     enableSorting: false,
-    cell: ({ row }) => (
-      <span className="text-muted-foreground text-xs whitespace-nowrap">
-        {row.original.valueGp ?? "—"}
-      </span>
-    ),
+    cell: ({ row }) => {
+      const resolved = resolveItemPriceGp(row.original);
+      return (
+        <span
+          className="text-muted-foreground text-xs whitespace-nowrap"
+          title={formatPriceBreakdownTooltip(resolved)}
+        >
+          {formatShopPriceGp(resolved.basePriceGp)}
+        </span>
+      );
+    },
   },
   {
     accessorKey: "weight",
