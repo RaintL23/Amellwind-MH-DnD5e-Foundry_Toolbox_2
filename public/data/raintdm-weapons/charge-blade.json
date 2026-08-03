@@ -1,0 +1,185 @@
+{
+  "name": "Charge Blade",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 7,
+  "value": 5000,
+  "property": [
+    "H",
+    "2H",
+    "F",
+    "L",
+    "S"
+  ],
+  "dmg1": "1d6",
+  "dmgType": "S",
+  "entries": [
+    {
+      "type": "inset",
+      "name": "Charge Blade",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features"
+          ],
+          "rows": [
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Switch Mode, Mastery (Sap) (Sword & Shield), Mastery (Cleave) (Axe)"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Phial Charges, Guard Point (Elemental Guard)"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Elemental Discharge, Amped Element Discharge (AED)"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Charged Shield (Red Shield), Elemental Discharge Upgrade I, Guard Point Upgrade I, Amped Element Discharge Upgrade I"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "Super Amped Element Discharge, Guard Point Upgrade II, Elemental Discharge Upgrade II"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "dmg2": "1d12",
+  "ac": 2,
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "5a5e75e5-f259-4786-9366-7ad94b7661fb",
+        "name": "Switch Mode",
+        "description": "As a Bonus Action, you can transform the weapon between Sword & Shield Mode and Axe Mode."
+      },
+      {
+        "id": "cba18750-7d9b-47d2-937f-717d6abcfc11",
+        "name": "Mastery (Sap) (Sword & Shield)",
+        "description": "If you hit a creature, that creature has Disadvantage on its next attack roll before the start of your next turn."
+      },
+      {
+        "id": "4388f536-b9fe-46c3-83ef-e3802aba23c6",
+        "name": "Mastery (Cleave) (Axe)",
+        "description": "If you hit a creature, you can make an extra attack against a second creature within 5 feet of the first that is also within your reach."
+      },
+      {
+        "id": "5a9c0206-fc45-47c6-bcd5-fa613c3a8241",
+        "name": "Phial Charges",
+        "description": "The weapon can hold up to 5 Phial Charges. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. The gauge starts at 0 after a Long Rest. When you hit a creature with an attack in Sword & Shield Mode, you generate 1 Phial Charge."
+      },
+      {
+        "id": "138046c6-326c-44db-93e1-4e9e9d69f8e7",
+        "name": "Guard Point (Elemental Guard)",
+        "description": "You learn to perfectly time your blocks. As a Reaction when you are hit by a melee attack while in Sword & Shield Mode, you can expend 1 Phial Charge to add +2 to your AC against that attack. If this causes the attack to miss, your shield erupts, dealing 1d4 Acid, Cold, Fire, or Lightning damage (your choice upon attunement) to the attacker."
+      },
+      {
+        "id": "c8e3227c-53d1-4334-b3ae-08f169aff1b5",
+        "name": "Elemental Discharge",
+        "description": "While in Axe Mode, the weapon becomes a conduit of raw power. When you hit a creature with an attack in Axe Mode, you can expend 1 Phial Charge to deal an extra 1d6 elemental damage (of your chosen type) to the target."
+      },
+      {
+        "id": "866f6967-c7d5-46ca-9d0f-863caf51247e",
+        "name": "Amped Element Discharge (AED)",
+        "description": "You can unleash all stored energy in one devastating shockwave. As an Action while in Axe Mode, you can expend all remaining Phial Charges (minimum of 1) to unleash a 15-foot cone of elemental energy. Each creature in that area must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength or Dexterity modifier). A creature takes 1d8 elemental damage per phial expended on a failed save, or half as much on a successful one."
+      },
+      {
+        "id": "0da72473-8e45-440b-b096-94a4a2dd51ac",
+        "name": "Charged Shield (Red Shield)",
+        "description": "You can cycle the energy back into the weapon's defense mechanism. When you use your Amped Element Discharge Action, you can choose to cancel the shockwave to charge your shield instead. For 1 minute, your shield grants an additional +1 AC, and your Guard Point feature deals 2d6 elemental damage instead of its normal damage."
+      },
+      {
+        "id": "9eaf6061-6c2d-46bd-9f52-f7d80c318c90",
+        "name": "Elemental Discharge Upgrade I",
+        "description": "Your Elemental Discharge (Axe hit) damage increases to 1d8.",
+        "upgradesFromId": "c8e3227c-53d1-4334-b3ae-08f169aff1b5"
+      },
+      {
+        "id": "a350bfd3-137b-4cfa-8cf6-b41380cc1f8b",
+        "name": "Guard Point Upgrade I",
+        "description": "Your Guard Point damage increases to 1d6.",
+        "upgradesFromId": "138046c6-326c-44db-93e1-4e9e9d69f8e7"
+      },
+      {
+        "id": "7db58e95-33c2-499f-8d32-f929ef800143",
+        "name": "Amped Element Discharge Upgrade I",
+        "description": "Your Amped Element Discharge (Cone) damage increases to 1d10 per phial expended.",
+        "upgradesFromId": "866f6967-c7d5-46ca-9d0f-863caf51247e"
+      },
+      {
+        "id": "7bead823-a2ab-4e2f-aae8-c10d36f3df23",
+        "name": "Super Amped Element Discharge",
+        "description": "Your AED transforms into its ultimate form. The cone extends to 30 feet. Additionally, if the cone completely covers the space of a Huge or larger creature, that creature has Disadvantage on the saving throw. Additional your damage increases to 1d12 per phial expended.",
+        "upgradesFromId": "7db58e95-33c2-499f-8d32-f929ef800143"
+      },
+      {
+        "id": "96608ab2-e407-4d0c-a2d0-4d9454b2af85",
+        "name": "Guard Point Upgrade II",
+        "description": "Your Guard Point damage increases to 1d8.",
+        "upgradesFromId": "a350bfd3-137b-4cfa-8cf6-b41380cc1f8b"
+      },
+      {
+        "id": "39e2e2a4-f979-4110-b951-d7372cf45636",
+        "name": "Elemental Discharge Upgrade II",
+        "description": "Your Elemental Discharge (Axe hit) damage increases to 1d10.",
+        "upgradesFromId": "9eaf6061-6c2d-46bd-9f52-f7d80c318c90"
+      }
+    ],
+    "modes": [
+      {
+        "label": "Sword & Shield",
+        "damage": "1d6",
+        "dmgType": "S",
+        "hasShield": true,
+        "isTwoHanded": true,
+        "blocksOffHand": true
+      },
+      {
+        "label": "Axe",
+        "damage": "1d12",
+        "dmgType": "S",
+        "isTwoHanded": true,
+        "blocksOffHand": true
+      }
+    ],
+    "proficiency": {
+      "compatible": [
+        "Battleaxe",
+        "Greataxe",
+        "Longsword",
+        "Scimitar",
+        "Shortsword"
+      ],
+      "requiresShield": true,
+      "tier": "martial",
+      "range": "melee"
+    }
+  }
+}

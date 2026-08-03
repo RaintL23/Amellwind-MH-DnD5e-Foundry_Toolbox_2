@@ -3,6 +3,7 @@
   "description": "Homebrew MH weapons catalog — one JSON file per weapon.",
   "weapons": [
     "bow.json",
+    "charge-blade.json",
     "dual-blades.json",
     "dual-repeaters.json",
     "great-sword.json",
@@ -10,6 +11,7 @@
     "hammer.json",
     "hunting-horn.json",
     "lance.json",
+    "light-bowgun.json",
     "magus-staff.json",
     "switch-axe.json",
     "sword-and-shield.json",
