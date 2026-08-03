@@ -375,6 +375,54 @@ export function defaultOfficialSourceCodes(
 }
 
 /**
+ * Official defaults published on/after `minYear` (D&D 2024+ when minYear=2024).
+ * Codes without a catalog year are kept only for known 2024 core books.
+ */
+export function defaultOfficialSourceCodesSince(
+  sourceCodes: Iterable<string>,
+  catalog: Map<string, SourceCatalogEntry>,
+  minYear = 2024,
+): string[] {
+  const FALLBACK_CORE_2024 = new Set(["XPHB", "XDMG", "XMM"]);
+  return defaultOfficialSourceCodes(sourceCodes, catalog).filter((code) => {
+    const entry = catalog.get(code);
+    if (!entry) return FALLBACK_CORE_2024.has(code);
+    if (entry.kind !== "official") return false;
+    if (entry.year != null) return entry.year >= minYear;
+    return FALLBACK_CORE_2024.has(code);
+  });
+}
+
+const SOURCE_KIND_ORDER: SourceKind[] = [
+  "official",
+  "partnered",
+  "ua",
+  "ddb",
+];
+
+const SOURCE_KIND_LABELS: Record<SourceKind, string> = {
+  official: "Official",
+  partnered: "Partnered",
+  ua: "Unearthed Arcana",
+  ddb: "D&D Beyond",
+};
+
+export function sourceKindLabel(kind: SourceKind): string {
+  return SOURCE_KIND_LABELS[kind];
+}
+
+function resolveSourceKind(
+  codes: string[],
+  catalog: Map<string, SourceCatalogEntry>,
+): SourceKind {
+  for (const code of codes) {
+    const kind = catalog.get(code)?.kind;
+    if (kind) return kind;
+  }
+  return "official";
+}
+
+/**
  * Collapse source codes that share a display name into one filter option.
  * Aliases keep all identity codes so selecting the pill matches every variant.
  */
@@ -429,10 +477,14 @@ export function buildSourceFilterSectionOptions(
       aliases: aliases.length > 0 ? aliases : undefined,
       year: group.year,
       published: group.published,
+      kind: resolveSourceKind(group.codes, catalog),
     };
   });
 
   enriched.sort((a, b) => {
+    const ka = SOURCE_KIND_ORDER.indexOf(a.kind);
+    const kb = SOURCE_KIND_ORDER.indexOf(b.kind);
+    if (ka !== kb) return ka - kb;
     const ya = a.year ?? -1;
     const yb = b.year ?? -1;
     if (ya !== yb) return yb - ya;
@@ -450,29 +502,51 @@ export function buildSourceFilterSectionOptions(
     }),
   );
 
-  const byYear = new Map<string, ListFilterOption[]>();
+  /** Nested groups: kind (Official / Partnered / …) → year subgroups. */
+  const byKind = new Map<
+    SourceKind,
+    Map<string, ListFilterOption[]>
+  >();
+
   for (const item of enriched) {
-    const key = item.year != null ? String(item.year) : "Unknown";
-    const group = byYear.get(key) ?? [];
-    group.push({
+    const yearKey = item.year != null ? String(item.year) : "Unknown";
+    let byYear = byKind.get(item.kind);
+    if (!byYear) {
+      byYear = new Map();
+      byKind.set(item.kind, byYear);
+    }
+    const yearOptions = byYear.get(yearKey) ?? [];
+    yearOptions.push({
       value: item.value,
       label: item.label,
       aliases: item.aliases,
     });
-    byYear.set(key, group);
+    byYear.set(yearKey, yearOptions);
   }
 
-  const yearKeys = [...byYear.keys()].sort((a, b) => {
-    if (a === "Unknown") return 1;
-    if (b === "Unknown") return -1;
-    return Number(b) - Number(a);
-  });
+  const groups: ListFilterOptionGroup[] = SOURCE_KIND_ORDER.filter((kind) =>
+    byKind.has(kind),
+  ).map((kind) => {
+    const byYear = byKind.get(kind)!;
+    const yearKeys = [...byYear.keys()].sort((a, b) => {
+      if (a === "Unknown") return 1;
+      if (b === "Unknown") return -1;
+      return Number(b) - Number(a);
+    });
 
-  const groups: ListFilterOptionGroup[] = yearKeys.map((year) => ({
-    id: `year-${year}`,
-    label: year === "Unknown" ? "Unknown year" : year,
-    options: byYear.get(year) ?? [],
-  }));
+    const yearGroups: ListFilterOptionGroup[] = yearKeys.map((year) => ({
+      id: `kind-${kind}-year-${year}`,
+      label: year === "Unknown" ? "Unknown year" : year,
+      options: byYear.get(year) ?? [],
+    }));
+
+    return {
+      id: `kind-${kind}`,
+      label: SOURCE_KIND_LABELS[kind],
+      options: yearGroups.flatMap((g) => g.options),
+      groups: yearGroups,
+    };
+  });
 
   return { options, groups };
 }

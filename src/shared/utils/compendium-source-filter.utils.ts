@@ -3,6 +3,7 @@ import { optionFilterValues } from "@/shared/components/list-filters/list-filter
 import {
   buildSourceFilterSectionOptions,
   defaultOfficialSourceCodes,
+  defaultOfficialSourceCodesSince,
   getSourceDisplayName,
   type BookSourceNameMap,
   type SourceCatalogEntry,
@@ -34,7 +35,7 @@ export function expandSourceFilterSelection(
   return [...expanded];
 }
 
-/** Build a Sources multi section grouped by publication year (collapsed by name). */
+/** Build a Sources multi section grouped by kind + publication year (collapsed by name). */
 export function buildSourcesFilterSection(
   sourceCodes: Iterable<string>,
   catalog: Map<string, SourceCatalogEntry>,
@@ -57,6 +58,25 @@ export function buildSourcesFilterSection(
     options,
     groups,
     defaultValues: defaults,
+  };
+}
+
+/**
+ * Sources section for tools that should default to official D&D 2024+ books.
+ */
+export function buildSourcesFilterSectionFrom2024(
+  sourceCodes: Iterable<string>,
+  catalog: Map<string, SourceCatalogEntry>,
+  bookNames: BookSourceNameMap,
+): ListFilterSectionConfig {
+  return {
+    ...buildSourcesFilterSection(
+      sourceCodes,
+      catalog,
+      bookNames,
+      defaultOfficialSourceCodesSince(sourceCodes, catalog, 2024),
+    ),
+    defaultExpanded: true,
   };
 }
 
