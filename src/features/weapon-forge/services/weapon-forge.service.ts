@@ -57,8 +57,13 @@ async function loadCuratedFromManifest(): Promise<CustomWeapon[]> {
 
   const payloads = await Promise.all(
     files.map(async (file) => {
-      const safeName = file.replace(/^\/+/, "");
-      const res = await fetch(`${WEAPONS_BASE}/${safeName}`);
+      // Basename only: reject path segments, traversal, and non-JSON names.
+      const safeName = file.replace(/\\/g, "/").split("/").pop() ?? "";
+      if (!safeName || safeName === "." || safeName === ".." || !/\.json$/i.test(safeName)) {
+        console.warn(`Skipped unsafe curated weapon path: ${file}`);
+        return null;
+      }
+      const res = await fetch(`${WEAPONS_BASE}/${encodeURIComponent(safeName)}`);
       if (!res.ok) {
         console.warn(`Failed to load curated weapon: ${safeName}`);
         return null;
