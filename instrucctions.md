@@ -1607,7 +1607,7 @@ Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar. 
 | Races          | `/dnd-races`       | `race`/`subrace` + UA/partnered    | Dedupe por nombre; Filter dialog (kind/size/sources) |
 | Backgrounds    | `/dnd-backgrounds` | `background` 5etools            | Dedupe por nombre; Filter dialog (edition/sources) |
 | Feats          | `/dnd-feats`       | `feat` + UA/partnered              | Dedupe por nombre; Filter dialog (tipo/sources) |
-| D&D Items      | `/dnd-items`       | items.json + variants           | Precarga PHB/DMG; resto al seleccionar Sources; Filter dialog |
+| D&D Items      | `/dnd-items`       | items.json + variants           | Precarga PHB/DMG; resto al seleccionar Sources; Filter dialog; armas/armaduras enriquecidas: Properties con templates 5etools, Mastery, Range/Ammo/AC/Stealth/Str, y textos de reglas (tipo + propiedades + mastery + type-additional) en la descripción |
 | Bestiary       | `/bestiary`        | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto al seleccionar Sources |
 
 Fetch centralizado en `shared/data/fivetools-fetch.ts` (offline-first *stale-while-revalidate*: memoria → IndexedDB `fivetools_cache` → red; refresco en segundo plano si está viejo) con soporte `VITE_5ETOOLS_DATA=local`. Catálogo de sources (oficial + UA + partnered homebrew) en `shared/services/source-catalog.service.ts`; UI compartida `ListSearchWithFilters` / `ListFiltersDialog` (Sources agrupadas por año).
