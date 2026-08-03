@@ -33,9 +33,17 @@ export interface RawItemEntity {
   edition?: string | null;
   noDisplay?: boolean;
   property?: unknown[];
+  /** Weapon Mastery UIDs from XPHB (e.g. `["Slow|XPHB"]`). */
+  mastery?: unknown[];
   dmg1?: string;
   dmg2?: string;
   dmgType?: string;
+  range?: string;
+  ammoType?: string;
+  reload?: number | string;
+  ac?: number;
+  stealth?: boolean;
+  strength?: number | string;
   bonusWeapon?: string;
   bonusAc?: string;
   armor?: boolean;
@@ -68,14 +76,28 @@ export interface RawItemProperty {
   entries?: unknown[];
 }
 
+export interface RawItemMastery {
+  name: string;
+  source: string;
+  page?: number;
+  entries?: unknown[];
+}
+
+export interface RawItemTypeAdditionalEntries {
+  name?: string;
+  source: string;
+  appliesTo: string;
+  entries: unknown[];
+}
+
 export interface ItemsBaseJson {
   _meta?: { internalCopies?: string[] };
   baseitem: RawItemEntity[];
   itemType?: RawItemType[];
   itemProperty?: RawItemProperty[];
-  itemTypeAdditionalEntries?: unknown[];
+  itemTypeAdditionalEntries?: RawItemTypeAdditionalEntries[];
   itemEntry?: unknown[];
-  itemMastery?: unknown[];
+  itemMastery?: RawItemMastery[];
 }
 
 export interface RawMagicVariant {
@@ -101,15 +123,26 @@ export interface ItemTypeIndexEntry {
   abbreviation: string;
   source: string;
   name?: string;
+  entries?: unknown[];
 }
 
 export interface ItemPropertyIndexEntry {
   abbreviation: string;
   source?: string;
   name?: string;
+  template?: string;
+  entries?: unknown[];
+}
+
+export interface ItemMasteryIndexEntry {
+  name: string;
+  source: string;
+  entries?: unknown[];
 }
 
 export interface ItemBaseIndexes {
   itemTypes: Map<string, ItemTypeIndexEntry>;
   itemProperties: Map<string, ItemPropertyIndexEntry>;
+  itemMasteries: Map<string, ItemMasteryIndexEntry>;
+  itemTypeAdditionalEntries: RawItemTypeAdditionalEntries[];
 }

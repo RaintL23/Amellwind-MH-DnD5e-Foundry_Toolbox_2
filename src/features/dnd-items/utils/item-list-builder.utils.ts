@@ -11,13 +11,17 @@ import {
 } from "./item-copy.utils";
 import type {
   ItemBaseIndexes,
+  ItemMasteryIndexEntry,
   ItemPropertyIndexEntry,
   ItemTypeIndexEntry,
   ItemsBaseJson,
   ItemsJson,
   MagicVariantsJson,
   RawItemEntity,
+  RawItemMastery,
+  RawItemProperty,
   RawItemType,
+  RawItemTypeAdditionalEntries,
   RawMagicVariant,
 } from "./item-raw.types";
 import { itemEntityKey, unpackItemTypeUid } from "./item-uids.utils";
@@ -40,11 +44,16 @@ function copyFast<T>(obj: T): T {
 function buildItemTypeIndex(itemTypes: RawItemType[]): Map<string, ItemTypeIndexEntry> {
   const map = new Map<string, ItemTypeIndexEntry>();
   for (const t of itemTypes) {
-    map.set(`${t.abbreviation}|${t.source}`.toLowerCase(), {
+    const entry: ItemTypeIndexEntry = {
       abbreviation: t.abbreviation,
       source: t.source,
       name: t.name,
-    });
+      entries: Array.isArray(t.entries) ? t.entries : undefined,
+    };
+    map.set(`${t.abbreviation}|${t.source}`.toLowerCase(), entry);
+    // Abbreviation-only fallback (last write wins; prefer later sources when
+    // resolveItemTypesByAbbreviation already collapsed reprints).
+    map.set(t.abbreviation.toLowerCase(), entry);
   }
   return map;
 }
@@ -66,23 +75,37 @@ function extractItemPropertyDisplayName(property: {
 }
 
 function buildItemPropertyIndex(
-  itemProperties: {
-    abbreviation: string;
-    source?: string;
-    name?: string;
-    entries?: unknown[];
-  }[],
+  itemProperties: RawItemProperty[],
 ): Map<string, ItemPropertyIndexEntry> {
   const map = new Map<string, ItemPropertyIndexEntry>();
   for (const p of itemProperties) {
-    const key = p.source
-      ? `${p.abbreviation}|${p.source}`.toLowerCase()
-      : p.abbreviation.toLowerCase();
-    map.set(key, {
+    const entry: ItemPropertyIndexEntry = {
       abbreviation: p.abbreviation,
       source: p.source,
       name: extractItemPropertyDisplayName(p),
-    });
+      template: typeof p.template === "string" ? p.template : undefined,
+      entries: Array.isArray(p.entries) ? p.entries : undefined,
+    };
+    if (p.source) {
+      map.set(`${p.abbreviation}|${p.source}`.toLowerCase(), entry);
+    }
+    map.set(p.abbreviation.toLowerCase(), entry);
+  }
+  return map;
+}
+
+function buildItemMasteryIndex(
+  itemMasteries: RawItemMastery[],
+): Map<string, ItemMasteryIndexEntry> {
+  const map = new Map<string, ItemMasteryIndexEntry>();
+  for (const m of itemMasteries) {
+    const entry: ItemMasteryIndexEntry = {
+      name: m.name,
+      source: m.source,
+      entries: Array.isArray(m.entries) ? m.entries : undefined,
+    };
+    map.set(`${m.name}|${m.source}`.toLowerCase(), entry);
+    map.set(m.name.toLowerCase(), entry);
   }
   return map;
 }
@@ -447,6 +470,16 @@ async function ensureJsonBundle(): Promise<ItemJsonBundle> {
   indexesCache = {
     itemTypes: buildItemTypeIndex(resolvedTypes),
     itemProperties: buildItemPropertyIndex(baseJson.itemProperty ?? []),
+    itemMasteries: buildItemMasteryIndex(baseJson.itemMastery ?? []),
+    itemTypeAdditionalEntries: (
+      baseJson.itemTypeAdditionalEntries ?? []
+    ).filter(
+      (entry): entry is RawItemTypeAdditionalEntries =>
+        typeof entry === "object" &&
+        entry != null &&
+        typeof entry.appliesTo === "string" &&
+        Array.isArray(entry.entries),
+    ),
   };
 
   return jsonBundle;

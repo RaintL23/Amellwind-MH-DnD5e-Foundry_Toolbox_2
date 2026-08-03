@@ -31,7 +31,10 @@ export interface DndItem {
   weight: string | null;
   valueGp: string | null;
   valueCp: number | null;
-  /** Structured 5etools entries (paragraphs, lists, tables, named sections). */
+  /**
+   * Structured 5etools entries: attached rule text (type / properties /
+   * mastery / type-additional) followed by the item's own entries.
+   */
   description: StatBlockContent[];
   searchText: string;
   category: string;
@@ -42,7 +45,20 @@ export interface DndItem {
   bonusWeapon?: string;
   bonusAc?: string;
   damage?: string | null;
+  /** Templated property summary (e.g. "Ammunition (Range 80/320 ft.; Bolt)"). */
   properties?: string | null;
+  /** Weapon Mastery property label(s) from XPHB (e.g. "Slow"); absent on 2014 weapons. */
+  mastery?: string | null;
+  /** Weapon range, e.g. "80/320 ft." */
+  range?: string | null;
+  /** Resolved ammunition label, e.g. "Bolt". */
+  ammoType?: string | null;
+  /** Armor/shield AC text, e.g. "11" or "+2". */
+  armorClass?: string | null;
+  /** Stealth note when the armor imposes disadvantage. */
+  stealth?: string | null;
+  /** Minimum Strength score required to wear without speed penalty. */
+  strengthRequirement?: string | null;
   /** simple / martial from items-base (weapons only). */
   weaponCategory?: "simple" | "martial";
   /** Fuentes adicionales con el mismo nombre (solo en lista deduplicada) */
