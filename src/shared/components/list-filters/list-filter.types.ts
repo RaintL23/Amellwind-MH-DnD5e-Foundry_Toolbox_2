@@ -12,6 +12,8 @@ export interface ListFilterOptionGroup {
   id: string;
   label: string;
   options: ListFilterOption[];
+  /** Nested subgroups (e.g. years under Official / Partnered). */
+  groups?: ListFilterOptionGroup[];
 }
 
 export type ListFilterSectionMode = "multi" | "single";
@@ -28,6 +30,8 @@ export interface ListFilterSectionConfig {
    * When omitted, multi defaults to [] and single to "".
    */
   defaultValues?: string[];
+  /** When true, the section accordion starts expanded. */
+  defaultExpanded?: boolean;
 }
 
 /** Dialog filter values: multi sections use string[], single sections use string ("" = none). */

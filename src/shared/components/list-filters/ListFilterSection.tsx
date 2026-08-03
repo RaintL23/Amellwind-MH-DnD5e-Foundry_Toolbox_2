@@ -181,6 +181,98 @@ const YearAccordionGroup = memo(function YearAccordionGroup({
   );
 });
 
+type MatchedFilterGroup = {
+  id: string;
+  label: string;
+  options: ListFilterOption[];
+  groups?: Array<{ id: string; label: string; options: ListFilterOption[] }>;
+};
+
+const KindAccordionGroup = memo(function KindAccordionGroup({
+  group,
+  selectedSet,
+  onToggle,
+  forceOpen,
+}: {
+  group: MatchedFilterGroup;
+  selectedSet: Set<string>;
+  onToggle: (option: ListFilterOption) => void;
+  forceOpen: boolean;
+}) {
+  const nested = group.groups && group.groups.length > 0;
+  const selectedInGroup = useMemo(
+    () =>
+      group.options.filter((option) =>
+        isFilterOptionSelected(option, selectedSet),
+      ),
+    [group.options, selectedSet],
+  );
+
+  const [manualOpen, setManualOpen] = useState(
+    // Official / first kind often holds the defaults — start open when nested.
+    nested ? group.id : "",
+  );
+  const value = forceOpen ? group.id : manualOpen || undefined;
+
+  if (!nested) {
+    return (
+      <YearAccordionGroup
+        group={group}
+        selectedSet={selectedSet}
+        onToggle={onToggle}
+        forceOpen={forceOpen}
+      />
+    );
+  }
+
+  return (
+    <Accordion
+      type="single"
+      collapsible
+      value={value}
+      onValueChange={(next) => {
+        if (!forceOpen) setManualOpen(next);
+      }}
+      className="w-full"
+    >
+      <AccordionItem value={group.id} className="border-border/60">
+        <AccordionTrigger className="py-2 text-xs font-semibold text-foreground hover:no-underline">
+          <span className="flex items-center gap-2">
+            {group.label}
+            {selectedInGroup.length > 0 && (
+              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
+                {selectedInGroup.length}
+              </span>
+            )}
+          </span>
+        </AccordionTrigger>
+
+        {!forceOpen && !manualOpen && selectedInGroup.length > 0 && (
+          <div className="pb-2">
+            <OptionPillRow
+              options={selectedInGroup}
+              selectedSet={selectedSet}
+              onToggle={onToggle}
+            />
+          </div>
+        )}
+
+        <AccordionContent className="space-y-1 pb-2 pt-0 pl-1">
+          {(group.groups ?? []).map((yearGroup) => (
+            <YearAccordionGroup
+              key={yearGroup.id}
+              group={yearGroup}
+              selectedSet={selectedSet}
+              onToggle={onToggle}
+              forceOpen={forceOpen}
+            />
+          ))}
+        </AccordionContent>
+      </AccordionItem>
+    </Accordion>
+  );
+});
+
 export const ListFilterSection = memo(function ListFilterSection({
   title,
   options,
@@ -189,6 +281,7 @@ export const ListFilterSection = memo(function ListFilterSection({
   onChange,
   searchQuery,
   mode = "multi",
+  defaultExpanded = false,
 }: {
   title: string;
   options: ListFilterOption[];
@@ -197,6 +290,7 @@ export const ListFilterSection = memo(function ListFilterSection({
   onChange: (next: string[]) => void;
   searchQuery: string;
   mode?: "multi" | "single";
+  defaultExpanded?: boolean;
 }) {
   const normalizedQuery = searchQuery.trim().toLowerCase();
   const selectedSet = useMemo(() => new Set(selected), [selected]);
@@ -205,27 +299,54 @@ export const ListFilterSection = memo(function ListFilterSection({
   const hasGroups = Boolean(groups && groups.length > 0);
   const forceOpenFromSearch = normalizedQuery.length > 0;
 
-  const [sectionOpen, setSectionOpen] = useState("");
+  const [sectionOpen, setSectionOpen] = useState(
+    defaultExpanded ? "section" : "",
+  );
 
   const allOptions = useMemo(() => {
     if (groups && groups.length > 0) {
-      return groups.flatMap((group) => group.options);
+      return groups.flatMap((group) => {
+        if (group.groups && group.groups.length > 0) {
+          return group.groups.flatMap((sub) => sub.options);
+        }
+        return group.options;
+      });
     }
     return options;
   }, [groups, options]);
 
   const matchedGroups = useMemo(() => {
-    if (!groups || groups.length === 0) return [];
+    if (!groups || groups.length === 0) return [] as MatchedFilterGroup[];
 
-    const result: Array<{
-      id: string;
-      label: string;
-      options: ListFilterOption[];
-    }> = [];
+    const result: MatchedFilterGroup[] = [];
 
     for (const group of groups) {
       const groupMatches =
         sectionMatches || group.label.toLowerCase().includes(normalizedQuery);
+
+      if (group.groups && group.groups.length > 0) {
+        const nested: MatchedFilterGroup["groups"] = [];
+        for (const sub of group.groups) {
+          const subMatches =
+            groupMatches || sub.label.toLowerCase().includes(normalizedQuery);
+          const matched = filterOptionsByQuery(
+            sub.options,
+            normalizedQuery,
+            subMatches || groupMatches || sectionMatches,
+          );
+          if (matched.length === 0) continue;
+          nested.push({ id: sub.id, label: sub.label, options: matched });
+        }
+        if (nested.length === 0) continue;
+        result.push({
+          id: group.id,
+          label: group.label,
+          options: nested.flatMap((n) => n.options),
+          groups: nested,
+        });
+        continue;
+      }
+
       const matched = filterOptionsByQuery(
         group.options,
         normalizedQuery,
@@ -321,7 +442,7 @@ export const ListFilterSection = memo(function ListFilterSection({
     const body = hasGroups ? (
       <div className="space-y-1">
         {matchedGroups.map((group) => (
-          <YearAccordionGroup
+          <KindAccordionGroup
             key={group.id}
             group={group}
             selectedSet={selectedSet}
