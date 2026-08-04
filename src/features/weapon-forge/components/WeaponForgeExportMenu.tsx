@@ -11,23 +11,31 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/shared/utils/cn";
 import type { CustomWeapon } from "../types/weapon-forge.types";
-import { FoundryModuleRequirementsNotice } from "@/features/builder/foundry-export/FoundryModuleRequirementsNotice";
+import type { FoundryItem } from "@/shared/foundry";
+import { FoundryModuleRequirementsNotice } from "@/shared/foundry";
 
 interface WeaponForgeExportMenuProps {
   weapon: CustomWeapon;
   /** When set, Foundry export uses this rarity index (dialog). When omitted, shows rarity submenu (list/card). */
   foundryRarityIndex?: number;
+  /** Exact preview/export payload when rarity is fixed (dialog). */
+  foundryItem?: FoundryItem;
   variant?: "ghost" | "outline";
   size?: "sm" | "md";
   className?: string;
   triggerLabel?: string;
   onExportAmellwind: (weapon: CustomWeapon) => void;
-  onExportFoundry: (weapon: CustomWeapon, rarityIndex: number) => void;
+  onExportFoundry: (
+    weapon: CustomWeapon,
+    rarityIndex: number,
+    item?: FoundryItem,
+  ) => void;
 }
 
 export function WeaponForgeExportMenu({
   weapon,
   foundryRarityIndex,
+  foundryItem,
   variant = "ghost",
   size = "sm",
   className,
@@ -71,7 +79,7 @@ export function WeaponForgeExportMenu({
           <DropdownMenuItem
             className="text-xs"
             onSelect={() =>
-              onExportFoundry(weapon, foundryRarityIndex)
+              onExportFoundry(weapon, foundryRarityIndex, foundryItem)
             }
           >
             Foundry VTT (v12)

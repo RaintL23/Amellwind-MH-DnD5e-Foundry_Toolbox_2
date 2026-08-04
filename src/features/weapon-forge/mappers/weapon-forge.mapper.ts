@@ -25,6 +25,10 @@ import {
   featureDefsFromRarityRows,
 } from "../types/weapon-forge.types";
 import { descriptionToParagraphs, rarityRowsWithFeatureDisplayNames } from "../utils/weapon-forge-features.utils";
+import {
+  WEAPON_ACTIVITY_TEMPLATE_KINDS,
+  type WeaponActivityTemplateKind,
+} from "@/shared/foundry/weapons";
 
 function newId(): string {
   if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
@@ -258,6 +262,7 @@ export function weaponToRawExport(weapon: Weapon): Record<string, unknown> {
       description: f.description,
       upgradesFromId: f.upgradesFromId,
       resourceColumn: f.resourceColumn,
+      automation: f.automation,
     }));
   }
   if (weapon.modes && weapon.modes.length >= 2) {
@@ -319,6 +324,30 @@ function buildColLabels(rows: WeaponRarityRow[]): string[] {
   return labels;
 }
 
+function parseAutomation(raw: unknown): WeaponForgeFeatureDef["automation"] {
+  if (!isRecord(raw)) return undefined;
+  const templateRaw = typeof raw.template === "string" ? raw.template : "";
+  if (
+    !(WEAPON_ACTIVITY_TEMPLATE_KINDS as readonly string[]).includes(templateRaw)
+  ) {
+    return undefined;
+  }
+  const template = templateRaw as WeaponActivityTemplateKind;
+  return {
+    template,
+    chainKey: typeof raw.chainKey === "string" ? raw.chainKey : undefined,
+    params: isRecord(raw.params)
+      ? (raw.params as NonNullable<WeaponForgeFeatureDef["automation"]>["params"])
+      : undefined,
+    foundryOverrides: isRecord(raw.foundryOverrides)
+      ? (raw.foundryOverrides as NonNullable<
+          WeaponForgeFeatureDef["automation"]
+        >["foundryOverrides"])
+      : undefined,
+    notes: typeof raw.notes === "string" ? raw.notes : undefined,
+  };
+}
+
 function parseCustomFeatures(raw: unknown): WeaponForgeFeatureDef[] | undefined {
   if (!Array.isArray(raw)) return undefined;
   return raw
@@ -334,6 +363,7 @@ function parseCustomFeatures(raw: unknown): WeaponForgeFeatureDef[] | undefined 
           typeof f.resourceColumn === "string" && f.resourceColumn.trim()
             ? f.resourceColumn.trim()
             : undefined,
+        automation: parseAutomation(f.automation),
       }),
     )
     .filter((f) => f.name.trim());

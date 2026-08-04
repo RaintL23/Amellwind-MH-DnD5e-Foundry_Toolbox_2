@@ -11,6 +11,8 @@ import {
 import { resolveWeaponModeDefs, createDefaultForgeModes } from "@/features/weapons/utils/weapon-mode.utils";
 import { ensureFormBaseRarityRow } from "@/features/weapons/utils/weapon-base-rarity.utils";
 import { resolveWeaponProficiency } from "@/features/weapons/data/weapon-proficiencies.data";
+import type { WeaponFeatureAutomationSpec } from "@/shared/foundry/weapons";
+import { isPrimaryFeaturesColumn as isSharedPrimaryFeaturesColumn } from "@/shared/foundry/weapons";
 
 /** Rarity-table bonus column labels (replaces legacy single "Bonus"). */
 export const BONUS_COLUMN_KEYS = {
@@ -31,12 +33,7 @@ export const RESOURCE_COLUMN_PRESETS = [
 
 /** Combat Features column labels (not weapon-resource unlocks). */
 function isCombatFeaturesLabel(label: string): boolean {
-  const lower = label.toLowerCase();
-  return (
-    lower === "features" ||
-    lower.includes("single features") ||
-    lower.includes("splint features")
-  );
+  return isSharedPrimaryFeaturesColumn(label);
 }
 
 export function isBonusColumnLabel(label: string): boolean {
@@ -94,6 +91,12 @@ export interface WeaponForgeFeatureDef {
    * (Phials, Coatings, Ammo, Notes, …) instead of Features.
    */
   resourceColumn?: string;
+  /**
+   * Foundry Activity automation for this chain link. Upgrades merge params into
+   * the root Activity at export rarity (see weapon-activity compiler).
+   * Ignored when `resourceColumn` is set.
+   */
+  automation?: WeaponFeatureAutomationSpec;
 }
 
 export interface CustomWeapon extends Weapon {
@@ -403,5 +406,6 @@ export function createFeatureDef(
     description: partial.description,
     upgradesFromId: partial.upgradesFromId,
     resourceColumn,
+    automation: resourceColumn ? undefined : partial.automation,
   };
 }

@@ -10,6 +10,8 @@ import {
   buildWeaponFoundryItem,
   foundryItemFilename,
 } from "../mappers/weapon-forge-foundry.export";
+import type { FoundryItem } from "@/shared/foundry";
+import { downloadFoundryJson } from "@/shared/foundry";
 
 const STORAGE_KEY = "weapon_forge_custom";
 const MANIFEST_URL = "/data/raintdm-weapons/manifest.json";
@@ -149,14 +151,7 @@ export function importUserWeapons(data: unknown): CustomWeapon[] {
 }
 
 export function downloadJson(data: unknown, filename: string): void {
-  const json = JSON.stringify(data, null, 2);
-  const blob = new Blob([json], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
+  downloadFoundryJson(data, filename);
 }
 
 export function exportWeaponJson(weapon: CustomWeapon): void {
@@ -171,9 +166,11 @@ export function exportWeaponJson(weapon: CustomWeapon): void {
 export function exportWeaponFoundryJson(
   weapon: CustomWeapon,
   rarityIndex: number,
+  /** When provided, downloads this exact payload (must match preview). */
+  item?: FoundryItem,
 ): void {
-  const item = buildWeaponFoundryItem(weapon, rarityIndex);
-  downloadJson(item, foundryItemFilename(weapon, rarityIndex));
+  const payload = item ?? buildWeaponFoundryItem(weapon, rarityIndex);
+  downloadJson(payload, foundryItemFilename(weapon, rarityIndex));
 }
 
 export function exportAllUserWeaponsJson(weapons: CustomWeapon[]): void {

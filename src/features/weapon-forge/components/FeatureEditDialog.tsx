@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -18,6 +18,10 @@ import {
   createFeatureDef,
 } from "../types/weapon-forge.types";
 import { findFeatureDefById } from "../utils/weapon-forge-features.utils";
+import type { WeaponFeatureAutomationSpec } from "@/shared/foundry/weapons";
+import { mergeAutomationSpecs } from "@/shared/foundry/weapons";
+import { lookupWeaponFeatureAutomation } from "@/shared/foundry/weapons";
+import { FeatureAutomationEditor } from "./FeatureAutomationEditor";
 
 const CUSTOM_COLUMN_VALUE = "__custom__";
 
@@ -28,7 +32,43 @@ interface FeatureEditDialogProps {
   title?: string;
   /** Features that can be selected as the upgrade source. */
   upgradeCandidates?: WeaponForgeFeatureDef[];
+  /** All features — used to preview merged chain automation. */
+  allFeatures?: WeaponForgeFeatureDef[];
   onSave: (feature: WeaponForgeFeatureDef) => void;
+}
+
+function buildUpgradeChainSpecs(
+  feature: {
+    id?: string;
+    upgradesFromId?: string;
+    automation?: WeaponFeatureAutomationSpec;
+    name: string;
+  },
+  allFeatures: WeaponForgeFeatureDef[],
+): Array<WeaponFeatureAutomationSpec | undefined> {
+  const byId = new Map(allFeatures.map((f) => [f.id, f]));
+  const chain: WeaponForgeFeatureDef[] = [];
+  let cursor: WeaponForgeFeatureDef | undefined = feature.upgradesFromId
+    ? byId.get(feature.upgradesFromId)
+    : undefined;
+  const seen = new Set<string>();
+  while (cursor && !seen.has(cursor.id)) {
+    seen.add(cursor.id);
+    chain.unshift(cursor);
+    cursor = cursor.upgradesFromId
+      ? byId.get(cursor.upgradesFromId)
+      : undefined;
+  }
+
+  const selfAutomation =
+    feature.automation ??
+    lookupWeaponFeatureAutomation(feature.name) ??
+    undefined;
+
+  return [
+    ...chain.map((f) => f.automation ?? lookupWeaponFeatureAutomation(f.name)),
+    selfAutomation,
+  ];
 }
 
 export function FeatureEditDialog({
@@ -37,6 +77,7 @@ export function FeatureEditDialog({
   initial,
   title,
   upgradeCandidates = [],
+  allFeatures = [],
   onSave,
 }: FeatureEditDialogProps) {
   const [name, setName] = useState("");
@@ -47,6 +88,9 @@ export function FeatureEditDialog({
     RESOURCE_COLUMN_PRESETS[0],
   );
   const [customResourceColumn, setCustomResourceColumn] = useState("");
+  const [automation, setAutomation] = useState<
+    WeaponFeatureAutomationSpec | undefined
+  >(undefined);
 
   useEffect(() => {
     if (!open) return;
@@ -67,14 +111,65 @@ export function FeatureEditDialog({
         setResourcePreset(CUSTOM_COLUMN_VALUE);
         setCustomResourceColumn(column);
       }
+      setAutomation(undefined);
     } else {
       setIsWeaponResource(false);
       setResourcePreset(RESOURCE_COLUMN_PRESETS[0]);
       setCustomResourceColumn("");
+      if (initial?.automation) {
+        setAutomation(initial.automation);
+      } else if (initial?.name) {
+        const fromRegistry = lookupWeaponFeatureAutomation(initial.name);
+        setAutomation(
+          fromRegistry
+            ? {
+                ...fromRegistry,
+                params: { ...fromRegistry.params },
+                enabled: fromRegistry.enabled !== false,
+              }
+            : undefined,
+        );
+      } else {
+        setAutomation(undefined);
+      }
     }
   }, [open, initial]);
 
   const candidates = upgradeCandidates.filter((f) => f.id !== initial?.id);
+
+  const mergedPreviewJson = useMemo(() => {
+    if (isWeaponResource) return undefined;
+    const merged = mergeAutomationSpecs(
+      buildUpgradeChainSpecs(
+        {
+          id: initial?.id,
+          name,
+          upgradesFromId: upgradesFromId || undefined,
+          automation,
+        },
+        allFeatures.length > 0 ? allFeatures : upgradeCandidates,
+      ),
+    );
+    if (!merged) return undefined;
+    return JSON.stringify(
+      {
+        template: merged.template,
+        enabled: merged.enabled !== false,
+        chainKey: merged.chainKey,
+        params: merged.params ?? {},
+      },
+      null,
+      2,
+    );
+  }, [
+    isWeaponResource,
+    name,
+    upgradesFromId,
+    automation,
+    allFeatures,
+    upgradeCandidates,
+    initial?.id,
+  ]);
 
   function resolveResourceColumn(): string | undefined {
     if (!isWeaponResource) return undefined;
@@ -97,6 +192,7 @@ export function FeatureEditDialog({
         description: description.trim(),
         upgradesFromId: upgradesFromId || undefined,
         resourceColumn,
+        automation: resourceColumn ? undefined : automation,
       }),
     );
     onOpenChange(false);
@@ -114,7 +210,7 @@ export function FeatureEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-lg">
+      <DialogContent className="min-w-[400px] w-[min(96vw,56rem)] max-h-[90vh]">
         <DialogHeader>
           <DialogTitle>
             {title ?? (initial ? "Edit feature" : "Add feature")}
@@ -134,7 +230,9 @@ export function FeatureEditDialog({
 
             {(candidates.length > 0 || upgradesFromId) && (
               <div className="space-y-1.5">
-                <Label htmlFor="feat-upgrade">Upgrades feature (optional)</Label>
+                <Label htmlFor="feat-upgrade">
+                  Upgrades feature (optional)
+                </Label>
                 <Select
                   id="feat-upgrade"
                   value={upgradesFromId}
@@ -222,6 +320,16 @@ export function FeatureEditDialog({
                 placeholder="Rules text for this feature. Line breaks and bullet lists are preserved in the weapon dialog."
               />
             </div>
+
+            <FeatureAutomationEditor
+              value={automation}
+              onChange={setAutomation}
+              featureName={name}
+              isUpgradeLink={!!upgradesFromId}
+              mergedPreviewJson={mergedPreviewJson}
+              disabled={isWeaponResource}
+            />
+
             <div className="flex justify-end gap-2">
               <Button
                 type="button"

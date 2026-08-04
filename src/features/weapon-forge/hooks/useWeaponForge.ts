@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Weapon } from "@/shared/types";
+import type { FoundryItem } from "@/shared/foundry";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import {
@@ -83,8 +84,8 @@ export function useWeaponForge() {
   }, []);
 
   const exportOneFoundry = useCallback(
-    (weapon: CustomWeapon, rarityIndex: number) => {
-      exportWeaponFoundryJson(weapon, rarityIndex);
+    (weapon: CustomWeapon, rarityIndex: number, item?: FoundryItem) => {
+      exportWeaponFoundryJson(weapon, rarityIndex, item);
     },
     [],
   );
