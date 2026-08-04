@@ -8,7 +8,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/shared/utils/cn";
 import type { HuntRollEntry } from "../hooks/useHuntState";
 
@@ -56,41 +55,39 @@ export function HuntRollHistory({
             Rolls will appear here after you use the tracker or resource tools.
           </p>
         ) : (
-          <ScrollArea className="max-h-80 pr-3">
-            <div className="space-y-2">
-              {entries.map((entry) => (
-                <div
-                  key={entry.id}
-                  className="rounded-md border border-border bg-muted/20 p-3 space-y-1.5"
-                >
-                  <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
-                    <span>{entry.createdAt.toLocaleTimeString()}</span>
-                    {renderBadge?.(entry)}
-                  </div>
-                  <p className="text-xs font-semibold text-foreground">
-                    {entry.label}
-                    {typeof entry.success === "boolean" && (
-                      <span
-                        className={cn(
-                          "ml-2",
-                          entry.success ? "text-emerald-400" : "text-rose-400",
-                        )}
-                      >
-                        {entry.success ? "SUCCESS" : "FAIL"}
-                      </span>
-                    )}
-                    {entry.signsGained != null && entry.signsGained > 0 && (
-                      <span className="ml-2 text-sky-400">
-                        +{entry.signsGained} sign(s)
-                      </span>
-                    )}
-                  </p>
-                  <p className="text-xs text-muted-foreground">{entry.details}</p>
-                  <p className="text-xs text-foreground">{entry.result}</p>
+          <div className="max-h-80 space-y-2 overflow-y-auto overscroll-contain pr-1">
+            {entries.map((entry) => (
+              <div
+                key={entry.id}
+                className="rounded-md border border-border bg-muted/20 p-3 space-y-1.5"
+              >
+                <div className="flex flex-wrap items-center gap-2 text-[11px] text-muted-foreground">
+                  <span>{entry.createdAt.toLocaleTimeString()}</span>
+                  {renderBadge?.(entry)}
                 </div>
-              ))}
-            </div>
-          </ScrollArea>
+                <p className="text-xs font-semibold text-foreground">
+                  {entry.label}
+                  {typeof entry.success === "boolean" && (
+                    <span
+                      className={cn(
+                        "ml-2",
+                        entry.success ? "text-emerald-400" : "text-rose-400",
+                      )}
+                    >
+                      {entry.success ? "SUCCESS" : "FAIL"}
+                    </span>
+                  )}
+                  {entry.signsGained != null && entry.signsGained > 0 && (
+                    <span className="ml-2 text-sky-400">
+                      +{entry.signsGained} sign(s)
+                    </span>
+                  )}
+                </p>
+                <p className="text-xs text-muted-foreground">{entry.details}</p>
+                <p className="text-xs text-foreground">{entry.result}</p>
+              </div>
+            ))}
+          </div>
         )}
       </CardContent>
     </Card>

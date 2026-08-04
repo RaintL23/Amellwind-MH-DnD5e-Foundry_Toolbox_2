@@ -1,7 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
+  Check,
   CheckCircle2,
+  ChevronsUpDown,
   Dices,
   Loader2,
   Shuffle,
@@ -9,22 +11,32 @@ import {
   MapPin,
   SlidersHorizontal,
 } from "lucide-react";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Select } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { ENVIRONMENT_COLORS } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { BIOME_ICONS } from "@/features/environments/constants/environment.constants";
 import { HUNT_ENCOUNTER_DIFFICULTY_LABELS } from "../utils/hunt-prep-generator.utils";
@@ -37,14 +49,7 @@ interface HuntSetupPanelProps {
 }
 
 export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
-  const [monsterSearch, setMonsterSearch] = useState("");
-
-  const filteredMonsters = useMemo(() => {
-    const pool = hunt.compatibleMonsters;
-    const query = monsterSearch.trim().toLowerCase();
-    if (!query) return pool;
-    return pool.filter((monster) => monster.name.toLowerCase().includes(query));
-  }, [hunt.compatibleMonsters, monsterSearch]);
+  const [monsterPickerOpen, setMonsterPickerOpen] = useState(false);
 
   return (
     <div className="space-y-5">
@@ -90,71 +95,86 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
               sync.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 p-4 pt-0">
+          <CardContent className="space-y-2 p-4 pt-0">
             <div className="space-y-1.5">
-              <Label htmlFor="monster-search" className="text-xs">
-                Search
-              </Label>
-              <Input
-                id="monster-search"
-                value={monsterSearch}
-                onChange={(e) => setMonsterSearch(e.target.value)}
-                placeholder="Filter monsters..."
-              />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label htmlFor="monster-select" className="text-xs">
+              <Label htmlFor="monster-combobox" className="text-xs">
                 Monster
               </Label>
-              <Select
-                id="monster-select"
-                value={hunt.selectedMonster?.name ?? ""}
-                onChange={(e) => {
-                  const name = e.target.value;
-                  if (!name) {
-                    hunt.pickMonster(null);
-                    return;
-                  }
-                  const monster =
-                    hunt.monsters.find((m) => m.name === name) ?? null;
-                  hunt.pickMonster(monster);
-                }}
-                disabled={hunt.monstersLoading}
+              <Popover
+                open={monsterPickerOpen}
+                onOpenChange={setMonsterPickerOpen}
               >
-                <option value="">— Choose monster —</option>
-                {filteredMonsters.map((monster) => (
-                  <option
-                    key={`${monster.name}-${monster.source}`}
-                    value={monster.name}
+                <PopoverTrigger asChild>
+                  <Button
+                    id="monster-combobox"
+                    type="button"
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={monsterPickerOpen}
+                    disabled={hunt.monstersLoading}
+                    className="h-9 w-full justify-between font-normal"
                   >
-                    {monster.name} (CR {monster.cr})
-                  </option>
-                ))}
-              </Select>
+                    <span className="truncate">
+                      {hunt.selectedMonster
+                        ? `${hunt.selectedMonster.name} (CR ${hunt.selectedMonster.cr})`
+                        : "Search monsters..."}
+                    </span>
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  align="start"
+                  className="w-[var(--radix-popover-trigger-width)] p-0"
+                >
+                  <Command>
+                    <CommandInput placeholder="Type a monster name..." />
+                    <CommandList>
+                      <CommandEmpty>No monster found.</CommandEmpty>
+                      <CommandGroup>
+                        {hunt.compatibleMonsters.map((monster) => {
+                          const selected =
+                            hunt.selectedMonster?.name === monster.name;
+                          return (
+                            <CommandItem
+                              key={`${monster.name}-${monster.source}`}
+                              value={`${monster.name} CR ${monster.cr}`}
+                              onSelect={() => {
+                                hunt.pickMonster(monster);
+                                setMonsterPickerOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "h-4 w-4 shrink-0",
+                                  selected ? "opacity-100" : "opacity-0",
+                                )}
+                              />
+                              <span className="truncate">{monster.name}</span>
+                              <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+                                CR {monster.cr}
+                              </span>
+                            </CommandItem>
+                          );
+                        })}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
 
             {hunt.selectedMonster ? (
-              <div className="rounded-md border border-border bg-muted/20 p-3 space-y-1 text-xs">
-                <p className="text-foreground font-semibold">
-                  {hunt.selectedMonster.name}
-                </p>
-                <p className="text-muted-foreground">
+              <p className="text-xs text-muted-foreground capitalize">
+                <span className="normal-case">
                   CR {hunt.selectedMonster.cr}
                   {hunt.selectedMonster.type?.type
                     ? ` · ${hunt.selectedMonster.type.type}`
                     : ""}
-                </p>
-                {hunt.selectedMonster.environment?.length ? (
-                  <p className="text-muted-foreground capitalize">
-                    Habitats: {hunt.selectedMonster.environment.join(", ")}
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground">
-                    No habitat tags listed.
-                  </p>
-                )}
-              </div>
+                </span>
+                {hunt.selectedMonster.environment?.length
+                  ? ` · ${hunt.selectedMonster.environment.join(", ")}`
+                  : " · No habitat tags"}
+              </p>
             ) : (
               <p className="text-xs text-muted-foreground">
                 Pick a monster or use randomize.
@@ -174,7 +194,7 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
               selected monster habitats.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 p-4 pt-0">
+          <CardContent className="space-y-2 p-4 pt-0">
             <div className="space-y-1.5">
               <Label htmlFor="environment-select" className="text-xs">
                 Environment
@@ -203,36 +223,23 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
             </div>
 
             {hunt.selectedEnvironment ? (
-              <div
-                className={cn(
-                  "rounded-md border p-3 space-y-2 text-xs",
-                  ENVIRONMENT_COLORS[hunt.selectedEnvironment.name]?.border ??
-                    "border-border",
-                  ENVIRONMENT_COLORS[hunt.selectedEnvironment.name]?.bg ??
-                    "bg-muted/20",
-                )}
-              >
-                <p className="text-foreground font-semibold">
-                  {hunt.selectedEnvironment.name}
-                </p>
-                <p className="text-muted-foreground">
+              <div className="space-y-1.5">
+                <p className="text-xs text-muted-foreground">
                   {hunt.selectedEnvironment.biome}
-                </p>
-                <p className="text-muted-foreground">
-                  Mapped tags:{" "}
+                  {" · "}
                   {getEnvironmentTagsLabel(hunt.selectedEnvironment.name)}
                 </p>
-                <div className="flex flex-wrap gap-2 pt-1">
-                  <Badge variant="outline">
-                    Nav DC {hunt.selectedEnvironment.navigationDC}
+                <div className="flex flex-wrap gap-1.5">
+                  <Badge variant="outline" className="text-[10px] font-normal">
+                    Nav {hunt.selectedEnvironment.navigationDC}
                   </Badge>
-                  <Badge variant="outline">
-                    Encounter DC {hunt.selectedEnvironment.encounterDC}
+                  <Badge variant="outline" className="text-[10px] font-normal">
+                    Encounter {hunt.selectedEnvironment.encounterDC}
                   </Badge>
-                  <Badge variant="outline">
-                    Investigation DC {hunt.selectedEnvironment.investigationDC}
+                  <Badge variant="outline" className="text-[10px] font-normal">
+                    Investigation {hunt.selectedEnvironment.investigationDC}
                   </Badge>
-                  <Badge variant="outline">
+                  <Badge variant="outline" className="text-[10px] font-normal">
                     Resources {hunt.selectedEnvironment.totalResources}
                   </Badge>
                 </div>
@@ -343,47 +350,74 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
       )}
 
       {hunt.hasBaseSetup && !hunt.prepGenerating && (
-        <Card className="border-primary/20">
-          <CardHeader className="p-4 pb-2">
-            {hunt.setupComplete ? (
-              <Alert className="border-emerald-500/30 bg-emerald-500/5">
-                <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-                <AlertTitle className="text-emerald-400">
-                  Hunt setup complete
-                </AlertTitle>
-                <AlertDescription>
-                  Tracker and Resources are unlocked. You can still edit prep
-                  tables below.
-                </AlertDescription>
-              </Alert>
-            ) : (
-              <CardDescription>
+        <Card
+          className={
+            hunt.setupComplete
+              ? "border-emerald-500/30 bg-emerald-500/5"
+              : "border-primary/20"
+          }
+        >
+          {hunt.setupComplete ? (
+            <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex min-w-0 flex-1 items-start gap-2">
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                <div className="min-w-0 space-y-1">
+                  <p className="text-sm font-medium text-emerald-400">
+                    Hunt setup complete
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Tracker and Resources are unlocked. You can still edit prep
+                    tables below.
+                  </p>
+                </div>
+              </div>
+              <div className="flex shrink-0 flex-wrap gap-2 sm:justify-end">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={hunt.regeneratePrepTables}
+                >
+                  Regenerate tables
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={hunt.completeSetup}
+                  disabled
+                >
+                  <Dices className="h-4 w-4 mr-1.5" />
+                  Start Hunt
+                </Button>
+              </div>
+            </CardContent>
+          ) : (
+            <CardContent className="flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <CardDescription className="min-w-0 flex-1">
                 Review and edit the generated tables, then confirm to start the
                 hunt.
               </CardDescription>
-            )}
-          </CardHeader>
-          <CardFooter className="flex flex-wrap justify-end gap-2 p-4 pt-0">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={hunt.regeneratePrepTables}
-            >
-              Regenerate tables
-            </Button>
-            <Button
-              type="button"
-              size="sm"
-              onClick={hunt.completeSetup}
-              disabled={
-                hunt.setupComplete || hunt.prepTables.signs.length === 0
-              }
-            >
-              <Dices className="h-4 w-4 mr-1.5" />
-              Start Hunt
-            </Button>
-          </CardFooter>
+              <div className="flex shrink-0 flex-wrap gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={hunt.regeneratePrepTables}
+                >
+                  Regenerate tables
+                </Button>
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={hunt.completeSetup}
+                  disabled={hunt.prepTables.signs.length === 0}
+                >
+                  <Dices className="h-4 w-4 mr-1.5" />
+                  Start Hunt
+                </Button>
+              </div>
+            </CardContent>
+          )}
         </Card>
       )}
 
