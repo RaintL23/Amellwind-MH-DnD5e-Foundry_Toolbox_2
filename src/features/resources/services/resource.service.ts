@@ -13,6 +13,23 @@ export function getAllResources(): Resource[] {
   return RESOURCE_TABLES.flatMap((t) => t.resources);
 }
 
+export function getResourceByName(
+  name: string,
+  category?: ResourceCategory,
+): Resource | undefined {
+  const normalized = name.trim().toLowerCase();
+  if (!normalized || normalized === "—") return undefined;
+
+  const pool = category
+    ? getResourcesByCategory(category)
+    : getAllResources();
+
+  return (
+    pool.find((r) => r.name.toLowerCase() === normalized) ??
+    getAllResources().find((r) => r.name.toLowerCase() === normalized)
+  );
+}
+
 export function getResourcesByCategory(category: ResourceCategory): Resource[] {
   return getResourceTableByCategory(category)?.resources ?? [];
 }
