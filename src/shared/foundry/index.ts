@@ -40,6 +40,12 @@ export {
   FOUNDRY_RARITY_COLORS,
   foundryRarityColor,
   foundryRarityTitleHtml,
+  foundryActivationLeadHtml,
+  foundryActivationLabelFromType,
+  formatFeatureBodyHtml,
+  foundryFeatureCardHtml,
+  foundryChatFeatureCardHtml,
+  foundryUpgradeBlockHtml,
 } from "./description";
 export type { FoundryDescriptionOptions } from "./description";
 

@@ -11,5 +11,11 @@ export {
   FOUNDRY_RARITY_COLORS,
   foundryRarityColor,
   foundryRarityTitleHtml,
+  foundryActivationLeadHtml,
+  foundryActivationLabelFromType,
+  formatFeatureBodyHtml,
+  foundryFeatureCardHtml,
+  foundryChatFeatureCardHtml,
+  foundryUpgradeBlockHtml,
 } from "@/shared/foundry";
 export type { FoundryDescriptionOptions } from "@/shared/foundry";

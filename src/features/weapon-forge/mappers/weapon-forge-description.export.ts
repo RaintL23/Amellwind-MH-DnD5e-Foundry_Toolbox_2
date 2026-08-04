@@ -3,6 +3,12 @@ import {
   escapeHtml,
   foundryDividerHtml,
   foundryRarityTitleHtml,
+  foundryActivationLeadHtml,
+  foundryActivationLabelFromType,
+  foundryFeatureCardHtml,
+  foundryChatFeatureCardHtml,
+  foundryUpgradeBlockHtml,
+  formatFeatureBodyHtml,
   toFoundryDescriptionHtml,
   buildEffect,
   EFFECT_MODE,
@@ -28,7 +34,27 @@ import {
   resolveCatalogIconForWeaponName,
   toFoundryImgPath,
 } from "@/features/weapons/utils/weapon-icon.utils";
+import { parseFeatureUsage } from "@/features/builder/foundry-export/feature-usage.utils";
 
+function activationLeadFromDescription(
+  description: string | undefined,
+): string {
+  const usage = parseFeatureUsage(description);
+  return foundryActivationLeadHtml(
+    foundryActivationLabelFromType(usage.activationType),
+  );
+}
+
+function featureBodyHtml(description: string | undefined): string {
+  if (!description?.trim()) return "";
+  const enriched = toFoundryDescriptionHtml(description, { wrapHtml: false });
+  return formatFeatureBodyHtml(enriched);
+}
+
+/**
+ * Full sheet block for one feature (root of a chain or standalone).
+ * Kept for tests / callers that build a single block without chain context.
+ */
 export function appendFeatureDescription(
   parts: string[],
   name: string,
@@ -36,21 +62,89 @@ export function appendFeatureDescription(
   nested: boolean,
   rarityLabel: string | undefined,
 ): void {
-  if (nested) parts.push("<blockquote>");
-  parts.push(`<p>${foundryRarityTitleHtml(name, rarityLabel)}</p>`);
-  if (description?.trim()) {
-    const enriched = toFoundryDescriptionHtml(description, { wrapHtml: false });
-    for (const para of enriched.split(/\n\s*\n/)) {
-      const trimmed = para.trim();
-      if (!trimmed) continue;
-      if (trimmed.startsWith("<")) {
-        parts.push(trimmed);
-      } else {
-        parts.push(`<p>${trimmed.replace(/\n/g, "<br/>")}</p>`);
-      }
-    }
+  const title = foundryRarityTitleHtml(name, rarityLabel);
+  const lead = activationLeadFromDescription(description);
+  const body = featureBodyHtml(description);
+  if (nested) {
+    parts.push(
+      foundryUpgradeBlockHtml(
+        `▸ Upgrade — ${title}`,
+        `${lead}${body}`,
+        rarityLabel,
+      ),
+    );
+    return;
   }
-  if (nested) parts.push("</blockquote>");
+  parts.push(`<p>${title}</p>${lead}${body}`);
+}
+
+function appendFeatureChainCard(
+  parts: string[],
+  weapon: CustomWeapon,
+  features: NonNullable<CustomWeapon["customFeatures"]>,
+  chainFeatures: { name: string; rarityIndex: number }[],
+): void {
+  if (chainFeatures.length === 0) return;
+
+  const tip = chainFeatures[chainFeatures.length - 1]!;
+  const tipRarity = weapon.rarityRows[tip.rarityIndex]?.rarity;
+  const inner: string[] = [];
+
+  chainFeatures.forEach((feat, fi) => {
+    const def = resolveFeatureDef(features, feat.name);
+    const displayName = def?.name ?? feat.name;
+    const rarityLabel = weapon.rarityRows[feat.rarityIndex]?.rarity;
+    const title = foundryRarityTitleHtml(displayName, rarityLabel);
+    const lead = activationLeadFromDescription(def?.description);
+    const body = featureBodyHtml(def?.description);
+
+    if (fi === 0) {
+      inner.push(`<p>${title}</p>${lead}${body}`);
+    } else {
+      inner.push(
+        foundryUpgradeBlockHtml(
+          `▸ Upgrade — ${title}`,
+          `${lead}${body}`,
+          rarityLabel,
+        ),
+      );
+    }
+  });
+
+  parts.push(foundryFeatureCardHtml(inner.join(""), tipRarity));
+}
+
+function appendFeatureChainChatCard(
+  parts: string[],
+  weapon: CustomWeapon,
+  features: NonNullable<CustomWeapon["customFeatures"]>,
+  chainFeatures: { name: string; rarityIndex: number }[],
+): void {
+  if (chainFeatures.length === 0) return;
+
+  const root = chainFeatures[0]!;
+  const tip = chainFeatures[chainFeatures.length - 1]!;
+  const tipRarity = weapon.rarityRows[tip.rarityIndex]?.rarity;
+  const rootDef = resolveFeatureDef(features, root.name);
+  const rootName = rootDef?.name ?? root.name;
+  const rootRarity = weapon.rarityRows[root.rarityIndex]?.rarity;
+
+  const inner: string[] = [
+    `<p>${foundryRarityTitleHtml(rootName, rootRarity)}</p>`,
+    activationLeadFromDescription(rootDef?.description),
+  ];
+
+  for (let i = 1; i < chainFeatures.length; i += 1) {
+    const feat = chainFeatures[i]!;
+    const def = resolveFeatureDef(features, feat.name);
+    const displayName = def?.name ?? feat.name;
+    const rarityLabel = weapon.rarityRows[feat.rarityIndex]?.rarity;
+    inner.push(
+      `<p style="margin:0.2em 0 0 0.35em">▸ ${foundryRarityTitleHtml(displayName, rarityLabel)}</p>`,
+    );
+  }
+
+  parts.push(foundryChatFeatureCardHtml(inner.join(""), tipRarity));
 }
 
 export function resolveVisibleColumnChains(
@@ -121,26 +215,10 @@ export function buildFoundryDescriptionHtml(
     parts.push(foundryDividerHtml());
   }
 
-  let featureBlockIndex = 0;
   for (const { label, chains } of visibleCols) {
     parts.push(`<h3>${escapeHtml(label)}</h3>`);
     for (const chain of chains) {
-      if (featureBlockIndex > 0) {
-        parts.push(foundryDividerHtml());
-      }
-      featureBlockIndex += 1;
-      chain.features.forEach((feat, fi) => {
-        const def = resolveFeatureDef(features, feat.name);
-        const displayName = def?.name ?? feat.name;
-        const rarityLabel = weapon.rarityRows[feat.rarityIndex]?.rarity;
-        appendFeatureDescription(
-          parts,
-          displayName,
-          def?.description,
-          fi > 0,
-          rarityLabel,
-        );
-      });
+      appendFeatureChainCard(parts, weapon, features, chain.features);
     }
   }
 
@@ -148,8 +226,8 @@ export function buildFoundryDescriptionHtml(
 }
 
 /**
- * Condensed Foundry chat card: base weapon text + combat feature names
- * (with upgrades). Resource columns (Phials, Coatings, …) are omitted.
+ * Condensed Foundry chat card: base weapon text + combat feature cards
+ * (names + activation lead + upgrade names). Resource columns omitted.
  */
 export function buildFoundryChatDescriptionHtml(
   weapon: CustomWeapon,
@@ -168,24 +246,9 @@ export function buildFoundryChatDescriptionHtml(
     parts.push(foundryDividerHtml());
   }
 
-  let featureBlockIndex = 0;
   for (const { chains } of featureCols) {
     for (const chain of chains) {
-      if (featureBlockIndex > 0) {
-        parts.push(foundryDividerHtml());
-      }
-      featureBlockIndex += 1;
-      chain.features.forEach((feat, fi) => {
-        const def = resolveFeatureDef(features, feat.name);
-        const displayName = def?.name ?? feat.name;
-        const rarityLabel = weapon.rarityRows[feat.rarityIndex]?.rarity;
-        const title = foundryRarityTitleHtml(displayName, rarityLabel);
-        if (fi === 0) {
-          parts.push(`<p>${title}</p>`);
-        } else {
-          parts.push(`<blockquote><p>${title}</p></blockquote>`);
-        }
-      });
+      appendFeatureChainChatCard(parts, weapon, features, chain.features);
     }
   }
 
@@ -228,5 +291,3 @@ export function resolveWeaponImg(weapon: CustomWeapon): string {
   }
   return DEFAULT_FOUNDRY_WEAPON_IMG;
 }
-
-

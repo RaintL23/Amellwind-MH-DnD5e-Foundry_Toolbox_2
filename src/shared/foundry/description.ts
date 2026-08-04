@@ -270,3 +270,126 @@ export function foundryRarityTitleHtml(
   const color = foundryRarityColor(rarity);
   return `<strong style="color:${color}">${escapeHtml(name)}</strong>`;
 }
+
+/** Soft rarity card chrome (inline styles — no world CSS required). */
+const FEATURE_CARD_STYLE =
+  "margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid VAR_COLOR;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0";
+const UPGRADE_BLOCK_STYLE =
+  "margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid VAR_COLOR;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0";
+const CHAT_CARD_STYLE =
+  "margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid VAR_COLOR;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0";
+
+function withRarityBorder(template: string, rarity: string | undefined | null): string {
+  return template.replace("VAR_COLOR", foundryRarityColor(rarity));
+}
+
+/**
+ * PHB-style activation lead (`Bonus Action.`, `Reaction.`, `Action.`).
+ * Pass an empty string to omit.
+ */
+export function foundryActivationLeadHtml(
+  label: string | undefined | null,
+): string {
+  const trimmed = (label ?? "").trim();
+  if (!trimmed) return "";
+  const withDot = /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
+  return `<p><strong>${escapeHtml(withDot)}</strong></p>`;
+}
+
+/** Maps parseFeatureUsage activation types to PHB lead labels. */
+export function foundryActivationLabelFromType(
+  type: string | undefined | null,
+): string {
+  switch ((type ?? "").trim().toLowerCase()) {
+    case "bonus":
+      return "Bonus Action";
+    case "reaction":
+      return "Reaction";
+    case "action":
+      return "Action";
+    default:
+      return "";
+  }
+}
+
+/**
+ * Turns enriched feature prose into HTML paragraphs / lists.
+ * Consecutive lines starting with `-` or `•` become a `<ul>`.
+ */
+export function formatFeatureBodyHtml(enriched: string): string {
+  const trimmed = enriched.trim();
+  if (!trimmed) return "";
+  if (/^</.test(trimmed) && !trimmed.includes("\n")) return trimmed;
+
+  const blocks = trimmed
+    .split(/\n\s*\n/)
+    .map((b) => b.trim())
+    .filter(Boolean);
+
+  const out: string[] = [];
+  for (const block of blocks) {
+    if (block.startsWith("<") && !/^[-•]/.test(block)) {
+      out.push(block);
+      continue;
+    }
+    const lines = block.split(/\n/).map((l) => l.trim()).filter(Boolean);
+    const listItemRe = /^[-•]\s+(.+)$/;
+    let i = 0;
+    while (i < lines.length) {
+      if (listItemRe.test(lines[i]!)) {
+        const items: string[] = [];
+        while (i < lines.length) {
+          const m = lines[i]!.match(listItemRe);
+          if (!m) break;
+          items.push(`<li>${m[1]}</li>`);
+          i += 1;
+        }
+        out.push(`<ul>${items.join("")}</ul>`);
+        continue;
+      }
+      const paraLines: string[] = [];
+      while (i < lines.length && !listItemRe.test(lines[i]!)) {
+        paraLines.push(lines[i]!);
+        i += 1;
+      }
+      out.push(`<p>${paraLines.join("<br/>")}</p>`);
+    }
+  }
+  return out.join("");
+}
+
+/** Soft card wrapper for a feature upgrade chain (sheet description). */
+export function foundryFeatureCardHtml(
+  innerHtml: string,
+  rarity: string | undefined | null,
+): string {
+  const inner = innerHtml.trim();
+  if (!inner) return "";
+  const style = withRarityBorder(FEATURE_CARD_STYLE, rarity);
+  return `<div style="${style}">${inner}</div>`;
+}
+
+/** Compact card for `system.description.chat`. */
+export function foundryChatFeatureCardHtml(
+  innerHtml: string,
+  rarity: string | undefined | null,
+): string {
+  const inner = innerHtml.trim();
+  if (!inner) return "";
+  const style = withRarityBorder(CHAT_CARD_STYLE, rarity);
+  return `<div style="${style}">${inner}</div>`;
+}
+
+/**
+ * Nested upgrade block inside a feature card (replaces bare `<blockquote>`).
+ */
+export function foundryUpgradeBlockHtml(
+  titleHtml: string,
+  bodyHtml: string,
+  rarity: string | undefined | null,
+): string {
+  const style = withRarityBorder(UPGRADE_BLOCK_STYLE, rarity);
+  const title = titleHtml.trim();
+  const body = bodyHtml.trim();
+  return `<div style="${style}"><p>${title}</p>${body}</div>`;
+}
