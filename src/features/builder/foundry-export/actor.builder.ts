@@ -1,23 +1,22 @@
-import type {
-  AbilityKey,
-  AbilityScores,
-  ArmorItem,
-  CartEntry,
-  DamageType,
-  EquippedWeapon,
-  Rune,
-  SkillKey,
-  Speed,
-} from "@/shared/types";
+import type { SkillKey } from "@/shared/types";
 import { SKILL_ABILITY, ABILITY_KEYS } from "@/shared/constants/dnd";
-import type { FoundryActor, FoundryItem } from "./foundry.types";
-import type { BuilderChoiceSnapshot } from "./builder-snapshot";
-import { toBuilderSnapshotFlags } from "./builder-snapshot";
+import type { FoundryActor, FoundryItem } from "@/shared/foundry";
 import {
   buildStats,
   buildPrototypeToken,
   DEFAULT_OWNERSHIP,
-} from "./foundry-id.utils";
+  ensureActivityMidiProperties,
+  FULL_CASTER_SLOTS,
+  effectiveCasterLevel,
+  mapLanguage,
+  mapArmorProficiency,
+  mapSize,
+  mapTool,
+  mapWeaponProficiency,
+  toolAbility,
+} from "@/shared/foundry";
+import { applyItemAutomation } from "@/shared/foundry/weapons";
+import { toBuilderSnapshotFlags } from "./builder-snapshot";
 import {
   buildArmorItem,
   buildBackgroundItem,
@@ -29,214 +28,30 @@ import {
   buildSubclassItem,
   buildTrinketItem,
   buildWeaponItem,
-  type FeatSubtype,
   type InventoryCatalogMeta,
-  type SpellItemInput,
 } from "./item.builders";
 import {
   buildHitPointsAdvancement,
-  buildItemGrantAdvancement,
   buildScaleValueAdvancements,
   buildSizeAdvancement,
   buildTraitAdvancement,
 } from "./advancement.builders";
-import { applyItemAutomation } from "./automation.builders";
-import { ensureActivityMidiProperties } from "./midi.utils";
 import { buildRuneFoundryItem } from "@/features/runes/utils/rune-foundry-export";
 import {
-  FULL_CASTER_SLOTS,
-  effectiveCasterLevel,
-  mapLanguage,
-  mapArmorProficiency,
-  mapSize,
-  mapTool,
-  mapWeaponProficiency,
-  toolAbility,
-} from "./mappings";
+  stampAdvancementOrigins,
+  buildFeatureItems,
+  itemGrantsByLevel,
+} from "./actor-feature-advancement";
+import type { FoundryExportInput } from "./actor-export.types";
 
-export interface FeatureInput {
-  name: string;
-  description?: string;
-  subtype: FeatSubtype;
-  level: number;
-  identifier?: string;
-  img?: string;
-  /**
-   * When set, standalone feats (e.g. Metamagic picks) are grouped under this
-   * origin on the Foundry sheet instead of "Other Features".
-   */
-  originKind?: "class" | "subclass" | "race" | "background";
-}
-
-export interface ClassInfoInput {
-  name: string;
-  identifier: string;
-  source?: string;
-  hitDie: string;
-  levels: number;
-  spellcastingProgression: string;
-  spellcastingAbility: string;
-  primaryAbilities: string[];
-  description?: string;
-  img?: string;
-  saveProficiencies: AbilityKey[];
-  features: FeatureInput[];
-}
-
-export interface SubclassInfoInput {
-  name: string;
-  identifier: string;
-  classIdentifier: string;
-  source?: string;
-  spellcastingProgression: string;
-  spellcastingAbility: string;
-  description?: string;
-  img?: string;
-  features: FeatureInput[];
-}
-
-export interface RaceInfoInput {
-  name: string;
-  identifier: string;
-  source?: string;
-  walkSpeed: number;
-  creatureType: string;
-  subtype?: string;
-  size: string;
-  darkvision?: number | null;
-  description?: string;
-  img?: string;
-  features: FeatureInput[];
-}
-
-export interface BackgroundInfoInput {
-  name: string;
-  identifier: string;
-  source?: string;
-  description?: string;
-  img?: string;
-  features: FeatureInput[];
-}
-
-export interface FoundryExportInput {
-  name: string;
-  size: string;
-  alignment: string;
-  level: number;
-  xp: number;
-  abilities: AbilityScores;
-  saveProficiencies: AbilityKey[];
-  skillProficiencies: Partial<Record<SkillKey, 1 | 2>>;
-  proficiencyBonus: number;
-  hp: number;
-  speed: Speed;
-  acCalc: string;
-  acFlat: number | null;
-  initiativeAbility: string;
-  darkvision: number | null;
-  languages: string[];
-  tools: string[];
-  weaponProficiencies: string[];
-  /**
-   * Foundry `traits.weaponProf.mastery.value` — baseItem slugs the character
-   * has Weapon Mastery for (e.g. `spear`, `longsword`).
-   */
-  weaponMasteryBaseItems?: string[];
-  armorProficiencies: string[];
-  resistances: DamageType[];
-  immunities: DamageType[];
-  currency: { pp: number; gp: number; ep: number; sp: number; cp: number };
-  spellcastingAbility: string;
-  casterProgression: string;
-  casterLevel: number;
-  pactSlots: { count: number; level: number } | null;
-  attunementMax: number;
-  biography: string;
-  classInfo: ClassInfoInput | null;
-  subclassInfo: SubclassInfoInput | null;
-  raceInfo: RaceInfoInput | null;
-  backgroundInfo: BackgroundInfoInput | null;
-  feats: FeatureInput[];
-  weapons: { equipped: EquippedWeapon; isEquipped: boolean; attackAbility?: string }[];
-  armors: { armor: ArmorItem; equipped: boolean }[];
-  trinkets: string[];
-  loot: CartEntry[];
-  spells: SpellItemInput[];
-  /** Rune items to embed on the actor (from equipped weapon/armor/trinket slots). */
-  runes: { rune: Rune; slotContext: "Weapon" | "Armor" | "Trinket" }[];
-  /** Base64 data URL for the actor's main art (system img). */
-  portraitImage?: string | null;
-  /** Base64 data URL for the prototype token texture. Falls back to portraitImage. */
-  tokenImage?: string | null;
-  /** Lookup (lowercased item name → HTML/plain description) for armor/trinket/loot. */
-  itemDescriptions?: Record<string, string>;
-  /** Catalog metadata (type/weight/value/…) for inventory item routing. */
-  itemCatalog?: Record<string, InventoryCatalogMeta>;
-  /** Lookup (lowercased item/feat name → Foundry img URL or path). */
-  itemImages?: Record<string, string>;
-  /** Lossless builder choice snapshot embedded as a namespaced actor flag. */
-  builderSnapshot?: BuilderChoiceSnapshot;
-}
-
-// ─── Feature item helpers ────────────────────────────────────────────────────
-
-/** Sets `flags.dnd5e.advancementOrigin` so the sheet groups features by class/race/…. */
-function stampAdvancementOrigins(
-  featureItems: FoundryItem[],
-  advancements: Record<string, unknown>[],
-  parentId: string,
-): void {
-  const featIdToAdvId = new Map<string, string>();
-  for (const adv of advancements) {
-    if (adv.type !== "ItemGrant") continue;
-    const value = adv.value as { added?: Record<string, string> } | undefined;
-    for (const featId of Object.keys(value?.added ?? {})) {
-      featIdToAdvId.set(featId, String(adv._id));
-    }
-  }
-  for (const feat of featureItems) {
-    const advId = featIdToAdvId.get(feat._id);
-    const origin = advId ? `${parentId}.${advId}` : parentId;
-    const prev = (feat.flags.dnd5e as Record<string, unknown> | undefined) ?? {};
-    feat.flags = {
-      ...feat.flags,
-      dnd5e: { ...prev, advancementOrigin: origin },
-    };
-  }
-}
-
-function buildFeatureItems(
-  features: FeatureInput[],
-): { items: FoundryItem[]; byLevel: Map<number, string[]> } {
-  const items: FoundryItem[] = [];
-  const byLevel = new Map<number, string[]>();
-  for (const f of features) {
-    const item = buildFeatItem({
-      name: f.name,
-      description: f.description,
-      subtype: f.subtype,
-      identifier: f.identifier,
-      img: f.img,
-    });
-    items.push(item);
-    const level = Math.max(0, f.level);
-    const list = byLevel.get(level) ?? [];
-    list.push(item._id);
-    byLevel.set(level, list);
-  }
-  return { items, byLevel };
-}
-
-function itemGrantsByLevel(
-  byLevel: Map<number, string[]>,
-  icon?: string,
-): Record<string, unknown>[] {
-  return [...byLevel.entries()]
-    .sort((a, b) => a[0] - b[0])
-    .map(([level, ids]) => buildItemGrantAdvancement(level, ids, "Features", icon));
-}
-
-// ─── Actor assembly ──────────────────────────────────────────────────────────
+export type {
+  FeatureInput,
+  ClassInfoInput,
+  SubclassInfoInput,
+  RaceInfoInput,
+  BackgroundInfoInput,
+  FoundryExportInput,
+} from "./actor-export.types";
 
 export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   const items: FoundryItem[] = [];
