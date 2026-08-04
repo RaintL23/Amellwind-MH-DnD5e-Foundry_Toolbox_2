@@ -1,6 +1,6 @@
 export { buildFoundryActor } from "./actor.builder";
 export type { FoundryExportInput, FeatureInput } from "./actor.builder";
-export type { FoundryActor } from "./foundry.types";
+export type { FoundryActor } from "@/shared/foundry";
 export {
   TOOLBOX_FLAG_NAMESPACE,
   BUILDER_SNAPSHOT_VERSION,
@@ -15,13 +15,7 @@ export {
   FOUNDRY_EXPORT_TARGET,
   getFoundryModuleRequirements,
   formatModuleRequirementsSummary,
-} from "./module-requirements";
-export type {
-  FoundryExportKind,
-  FoundryModuleRequirement,
-} from "./module-requirements";
-export { FoundryModuleRequirementsNotice } from "./FoundryModuleRequirementsNotice";
-export {
+  FoundryModuleRequirementsNotice,
   toFoundryDescriptionHtml,
   toFoundryDescription,
   convertFiveToolsTagsToFoundry,
@@ -29,24 +23,49 @@ export {
   foundryRarityColor,
   foundryRarityTitleHtml,
   FOUNDRY_RARITY_COLORS,
-} from "./description.enrichers";
-export {
   defaultMidiProperties,
   ensureActivityMidiProperties,
   linkNonTransferEffectsToActivities,
-} from "./midi.utils";
-
-/** Serializes and downloads a Foundry actor JSON in the browser. */
-export function downloadFoundryActor(
-  actor: unknown,
-  filename: string,
-): void {
-  const json = JSON.stringify(actor, null, 2);
-  const blob = new Blob([json], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
+  foundryId,
+  foundryIdFromSeed,
+  downloadFoundryJson,
+  downloadFoundryActor,
+} from "@/shared/foundry";
+export type {
+  FoundryExportKind,
+  FoundryModuleRequirement,
+} from "@/shared/foundry";
+export {
+  compileWeaponFeatureActivities,
+} from "@/shared/foundry/weapons";
+export {
+  buildCombatFeatureChains,
+  resolveChainAtRarity,
+  resolveCombatChainsAtRarity,
+  catalogWeaponToFeatureDefs,
+} from "@/shared/foundry/weapons";
+export {
+  lookupWeaponFeatureAutomation,
+  parseWeaponMasteryAutomation,
+} from "@/shared/foundry/weapons";
+export {
+  mergeAutomationSpecs,
+  stripFeatureAutomationUpgradeSuffix,
+} from "@/shared/foundry/weapons";
+export {
+  buildWeaponActiveEffect,
+  hasWeaponActiveEffectPayload,
+  resolveWeaponActiveEffectConfig,
+  previewWeaponActiveEffectJson,
+} from "@/shared/foundry/weapons";
+export type { WeaponActiveEffectConfig } from "@/shared/foundry/weapons";
+export type {
+  WeaponActivityTemplateKind,
+  WeaponFeatureAutomationSpec,
+  WeaponActivityParams,
+  WeaponFeatureAutomationStatus,
+} from "@/shared/foundry/weapons";
+export {
+  WEAPON_ACTIVITY_TEMPLATE_KINDS,
+  TEMPLATE_LABELS,
+} from "@/shared/foundry/weapons";

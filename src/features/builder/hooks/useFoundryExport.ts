@@ -27,14 +27,15 @@ import type {
   OptionalFeatureProgression,
   Subclass,
 } from "@/shared/types";
-import { buildFoundryActor, downloadFoundryActor } from "../foundry-export";
+import { downloadFoundryJson } from "@/shared/foundry";
+import { buildFoundryActor } from "../foundry-export";
 import type {
   FeatureInput,
   FoundryExportInput,
   BuilderChoiceSnapshot,
 } from "../foundry-export";
 import { BUILDER_SNAPSHOT_VERSION } from "../foundry-export";
-import { kebab, mapAbilityLabel, mapCasterProgression } from "../foundry-export/mappings";
+import { kebab, mapAbilityLabel, mapCasterProgression } from "@/shared/foundry";
 import {
   resolveBackgroundFluffForFoundry,
   resolveClassFluffForFoundry,
@@ -829,7 +830,7 @@ export function useFoundryExport() {
         `Level${input.level}`,
       ].filter(Boolean);
       const filenameBase = parts.join("_");
-      downloadFoundryActor(actor, `${filenameBase}.json`);
+      downloadFoundryJson(actor, `${filenameBase}.json`);
       downloadCharacterImages(filenameBase, builder.portraitImage, builder.tokenImage);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Foundry export failed");

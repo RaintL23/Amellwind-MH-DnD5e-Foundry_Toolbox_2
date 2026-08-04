@@ -3,7 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useRuneBuild } from "../../context/RuneBuildContext";
 import { downloadAllBuildRuneJsons } from "../../utils/rune-foundry-export";
-import { FoundryModuleRequirementsNotice } from "@/features/builder/foundry-export/FoundryModuleRequirementsNotice";
+import { FoundryModuleRequirementsNotice } from "@/shared/foundry";
 
 interface BuildDrawerFooterProps {
   totalRunes: number;

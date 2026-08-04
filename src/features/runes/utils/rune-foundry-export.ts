@@ -1,28 +1,21 @@
 import type { Rune } from "@/shared/types";
 import {
   foundryId,
-  buildStats,
-  DEFAULT_OWNERSHIP,
-} from "@/features/builder/foundry-export/foundry-id.utils";
-import {
+  wrapItem,
   slugify,
   kebab,
   mapRarity,
   mapDamageType,
-} from "@/features/builder/foundry-export/mappings";
-import type {
-  FoundryActiveEffect,
-  FoundryItem,
-} from "@/features/builder/foundry-export/foundry.types";
-import {
   escapeHtml,
   toFoundryDescriptionHtml,
-} from "@/features/builder/foundry-export/description.enrichers";
-import { defaultMidiProperties } from "@/features/builder/foundry-export/midi.utils";
-import {
+  defaultMidiProperties,
   buildEffect,
   EFFECT_MODE,
-} from "@/features/builder/foundry-export/effect.builders";
+  downloadFoundryJson,
+  FOUNDRY_EXPORT_TARGET,
+  type FoundryActiveEffect,
+  type FoundryItem,
+} from "@/shared/foundry";
 import { UNKNOWN_MATERIAL_EFFECT_TIER } from "@/features/material-effects/constants/material-effect.constants";
 import {
   getMaterialEffectNameIndex,
@@ -31,8 +24,6 @@ import {
 import { getMaterialEffectTierForText } from "@/features/material-effects/utils/material-effect-highlight.utils";
 
 export type RuneSlotContext = "Weapon" | "Armor" | "Trinket";
-
-let _itemSort = 0;
 
 function resolveRuneMaterialEffectRarity(
   rune: Rune,
@@ -219,8 +210,6 @@ export function buildRuneFoundryItem(
   materialEffectIndex?: MaterialEffectNameIndex | null,
 ): FoundryItem {
   const itemName = `${rune.name} Rune (${slotContext})`;
-  _itemSort += 100000;
-
   const materialRarity = materialEffectIndex
     ? resolveRuneMaterialEffectRarity(rune, slotContext, materialEffectIndex)
     : "";
@@ -266,7 +255,7 @@ export function buildRuneFoundryItem(
       book: rune.monsterSource ?? "",
       page: "",
       license: "",
-      rules: "2024",
+      rules: FOUNDRY_EXPORT_TARGET.rules,
       revision: 1,
     },
     description: {
@@ -299,16 +288,12 @@ export function buildRuneFoundryItem(
     uses: { spent: 0, max: "", recovery: [] },
   };
 
-  return {
-    _id: foundryId(),
+  return wrapItem({
     name: itemName,
     type: "equipment",
     img: "mh-icons/material-rune.webp",
     system,
     effects,
-    folder: null,
-    sort: _itemSort,
-    ownership: { ...DEFAULT_OWNERSHIP },
     flags: {
       "amellwind-toolbox": {
         exportKind: "rune",
@@ -317,21 +302,11 @@ export function buildRuneFoundryItem(
         monsterName: rune.monsterName,
       },
     },
-    _stats: buildStats(),
-  };
+  });
 }
 
 function triggerJsonDownload(item: FoundryItem, filename: string): void {
-  const json = JSON.stringify(item, null, 2);
-  const blob = new Blob([json], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  downloadFoundryJson(item, filename);
 }
 
 export async function downloadAllBuildRuneJsons(
