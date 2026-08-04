@@ -103,8 +103,8 @@ Estas áreas tienen reglas de negocio densas. Lee su sección en `instrucctions.
    - Persistencia propia en `storage/builder.storage.ts`.
    - Depende de varios catálogos (clases, especies, trasfondos, dotes, conjuros, equipo) y del planificador de runas (`RuneBuildProvider`, compartido con `/runes`).
 
-2. **Export Foundry VTT** — `src/features/builder/foundry-export/`
-   - Genera un actor `character` de **Foundry dnd5e v12**. Builders separados: `actor.builder.ts`, `item.builders.ts`, `advancement.builders.ts`, `effect.builders.ts`. IDs vía `foundry-id.utils.ts`, tipos en `foundry.types.ts`, tablas de equivalencia en `mappings.ts`.
+2. **Export Foundry VTT** — núcleo `src/shared/foundry/` (+ `weapons/`); actor en `src/features/builder/foundry-export/`
+   - Genera un actor `character` de **Foundry dnd5e v12**. Infra: tipos/IDs/`downloadFoundryJson`/midi/enrichers/mappings en `shared/foundry/`. Actor: `actor.builder.ts` + `items/*`. Automatización de armas: `shared/foundry/weapons/`.
    - Cambiar un mapeo aquí puede romper la importación en Foundry: respeta la forma exacta del schema dnd5e.
 
 3. **Import Foundry VTT** — `src/features/builder/foundry-import/`
