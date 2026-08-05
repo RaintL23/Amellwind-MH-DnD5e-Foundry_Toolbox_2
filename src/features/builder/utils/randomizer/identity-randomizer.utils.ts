@@ -193,8 +193,9 @@ export function pickDndBackground(
 export function pickAmellwindBackground(
   backgrounds: Background[],
 ): Background | null {
+  if (backgrounds.length === 0) return null;
   const hunterInitiate = backgrounds.find((bg) =>
     HUNTER_INITIATE_PATTERN.test(bg.name),
   );
-  return hunterInitiate ?? null;
+  return hunterInitiate ?? pickRandom(backgrounds);
 }

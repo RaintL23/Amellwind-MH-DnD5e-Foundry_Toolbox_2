@@ -13,23 +13,15 @@ import type {
   DefenseGrant,
   DefenseKind,
 } from "@/shared/types/proficiency.types";
-import {
-  resolveFixedGrants,
-  resolveFixedExpertiseGrants,
-  computeCharacterProficiencies,
-} from "../../utils/compute-character-proficiencies";
 import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
 import { resolveFixedDefenseGrants } from "@/shared/utils/defense-grant.parser";
 import {
   pruneChoicesByHierarchy,
   skillsFromHigherPriority,
 } from "../../utils/skill-choice-hierarchy.utils";
-import {
-  ORIGIN_FEAT_SOURCE_NAME,
-  formatInvocationOriginFeatSourceName,
-} from "../../utils/origin-feat.constants";
 import { ensureCommonLanguage } from "@/shared/utils/language-resolution.utils";
 import type { OptionalFeatureOriginFeatSlot } from "../../utils/optional-feature-feat-grants.utils";
+import { resolveProficiencySnapshot } from "./proficiency/resolve-proficiency-snapshot";
 import type { Character } from "../../models/Character";
 
 export interface ProficiencySliceInput {
@@ -386,96 +378,37 @@ export function useProficiencySlice({
     });
   }, [higherThanClass]);
 
-  const proficiencyResult = useMemo(() => {
-    const fixedSkills = resolveFixedGrants(allSkillGrants);
-
-    const classChooseGrants = allSkillGrants.filter(
-      (g) => g.kind !== "fixed" && g.source.type === "class",
-    );
-    const chosenSkillsFromClass: Array<{ skill: SkillKey; source: ProficiencySource }> =
-      Object.entries(classSkillChoices).flatMap(([idx, skills]) =>
-        skills.map((sk) => ({
-          skill: sk,
-          source:
-            classChooseGrants[Number(idx)]?.source ?? {
-              type: "class" as const,
-              name: "Class",
-            },
-        })),
-      );
-    const chosenSkillsFromBackground: Array<{ skill: SkillKey; source: ProficiencySource }> =
-      backgroundSkillChoices.map((sk) => {
-        const grant = allSkillGrants.find((g) => g.kind !== "fixed" && g.source.type === "background");
-        return { skill: sk, source: grant?.source ?? { type: "background", name: "Background" } };
-      });
-    const chosenSkillsFromSpecies: Array<{ skill: SkillKey; source: ProficiencySource }> =
-      speciesSkillChoices.map((sk) => {
-        const grant = allSkillGrants.find((g) => g.kind !== "fixed" && g.source.type === "species");
-        return { skill: sk, source: grant?.source ?? { type: "species", name: "Species" } };
-      });
-    const chosenSkillsFromFeats: Array<{ skill: SkillKey; source: ProficiencySource }> =
-      Object.entries(featSkillChoices).flatMap(([idx, skills]) =>
-        skills.map((sk) => ({
-          skill: sk,
-          source: { type: "feat" as const, name: `Feat slot ${Number(idx) + 1}` },
-        })),
-      );
-    const chosenSkillsFromOriginFeat: Array<{ skill: SkillKey; source: ProficiencySource }> =
-      originFeatSkillChoices.map((sk) => ({
-        skill: sk,
-        source: { type: "feat" as const, name: ORIGIN_FEAT_SOURCE_NAME },
-      }));
-    const chosenSkillsFromInvocationOriginFeats: Array<{
-      skill: SkillKey;
-      source: ProficiencySource;
-    }> = Object.entries(optionalFeatureOriginFeatSkillChoices).flatMap(
-      ([slotIndex, skills]) => {
-        const slot = optionalFeatureOriginFeatSlots[Number(slotIndex)];
-        const sourceName = slot
-          ? formatInvocationOriginFeatSourceName(
-              slot.sourceFeatureName,
-              slot.duplicateIndex,
-            )
-          : ORIGIN_FEAT_SOURCE_NAME;
-        return skills.map((sk) => ({
-          skill: sk,
-          source: { type: "feat" as const, name: sourceName },
-        }));
-      },
-    );
-
-    const resolvedSkillGrants = [
-      ...fixedSkills,
-      ...chosenSkillsFromClass,
-      ...chosenSkillsFromBackground,
-      ...chosenSkillsFromSpecies,
-      ...chosenSkillsFromOriginFeat,
-      ...chosenSkillsFromInvocationOriginFeats,
-      ...chosenSkillsFromFeats,
-    ];
-
-    const fixedExpertise = resolveFixedExpertiseGrants(allExpertiseGrants);
-    const chosenExpertise: Array<{ skill: SkillKey; source: ProficiencySource }> =
-      Object.entries(expertiseChoices).flatMap(([grantId, skills]) =>
-        skills.map((sk) => ({
-          skill: sk,
-          source: { type: "feature" as const, name: grantId },
-        })),
-      );
-    const resolvedExpertiseGrants = [...fixedExpertise, ...chosenExpertise];
-
-    return computeCharacterProficiencies(
-      saveProficiencyAbilities,
-      resolvedSkillGrants,
-      resolvedExpertiseGrants,
+  const proficiencyResult = useMemo(
+    () =>
+      resolveProficiencySnapshot({
+        allSkillGrants,
+        allExpertiseGrants,
+        allSkillAdvantages,
+        saveProficiencyAbilities,
+        classSkillChoices,
+        backgroundSkillChoices,
+        speciesSkillChoices,
+        originFeatSkillChoices,
+        featSkillChoices,
+        expertiseChoices,
+        optionalFeatureOriginFeatSlots,
+        optionalFeatureOriginFeatSkillChoices,
+      }),
+    [
+      allSkillGrants,
+      allExpertiseGrants,
       allSkillAdvantages,
-    );
-  }, [
-    allSkillGrants, allExpertiseGrants, allSkillAdvantages, saveProficiencyAbilities,
-    classSkillChoices, backgroundSkillChoices, speciesSkillChoices,
-    originFeatSkillChoices, featSkillChoices, expertiseChoices,
-    optionalFeatureOriginFeatSlots, optionalFeatureOriginFeatSkillChoices,
-  ]);
+      saveProficiencyAbilities,
+      classSkillChoices,
+      backgroundSkillChoices,
+      speciesSkillChoices,
+      originFeatSkillChoices,
+      featSkillChoices,
+      expertiseChoices,
+      optionalFeatureOriginFeatSlots,
+      optionalFeatureOriginFeatSkillChoices,
+    ],
+  );
 
   const identityGrantsResult = useMemo(() => {
     function resolveFixedGrantList(grants: NamedProficiencyGrant[]) {
