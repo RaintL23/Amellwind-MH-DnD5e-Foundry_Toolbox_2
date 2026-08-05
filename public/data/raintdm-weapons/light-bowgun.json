@@ -263,7 +263,7 @@
     ],
     "proficiency": {
       "compatible": ["Light Crossbow", "Hand Crossbow"],
-      "tier": "martial",
+      "tier": "simple",
       "range": "ranged"
     }
   }
