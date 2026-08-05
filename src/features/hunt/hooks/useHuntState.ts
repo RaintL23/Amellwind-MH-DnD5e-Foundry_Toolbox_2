@@ -1,7 +1,13 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { Background, Environment, Monster, Species } from "@/shared/types";
 import { getAllEnvironments } from "@/features/environments/services/environment.service";
 import { getAllMonsters } from "@/features/monsters/services/monster.service";
+import {
+  clearHuntState,
+  huntPrepTablesHaveContent,
+  loadHuntState,
+  persistHuntState,
+} from "../storage/hunt.storage";
 import {
   findResourceRowByRoll,
   rollD20WithMode,
@@ -103,26 +109,59 @@ function createRollEntry(
 }
 
 export function useHuntState(): UseHuntStateResult {
+  // Persisted session (loaded once): setup, prep tables and tracker progress.
+  const persistedRef = useRef(loadHuntState());
+  const persisted = persistedRef.current;
+  // When a saved setup with generated tables exists, skip the first automatic
+  // prep-table regeneration so restored (possibly edited) tables and tracker
+  // progress are preserved instead of being wiped/regenerated on mount.
+  const hydrationPendingRef = useRef(
+    Boolean(
+      persisted?.monsterName &&
+        persisted?.environmentName &&
+        huntPrepTablesHaveContent(persisted.prepTables),
+    ),
+  );
+
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [monstersLoading, setMonstersLoading] = useState(true);
   const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
   const [selectedEnvironment, setSelectedEnvironment] =
-    useState<Environment | null>(null);
-  const [selectedTierIndex, setSelectedTierIndex] = useState(0);
-  const [signsFound, setSignsFound] = useState(0);
-  const [signsRequired, setSignsRequired] = useState(3);
-  const [areasVisited, setAreasVisited] = useState(0);
-  const [flatBonus, setFlatBonus] = useState(0);
-  const [rollMode, setRollMode] = useState<RollMode>("normal");
-  const [survivalSucceeded, setSurvivalSucceeded] = useState(true);
-  const [rollHistory, setRollHistory] = useState<HuntRollEntry[]>([]);
+    useState<Environment | null>(() => {
+      if (!persisted?.environmentName) return null;
+      return (
+        getAllEnvironments().find(
+          (env) => env.name === persisted.environmentName,
+        ) ?? null
+      );
+    });
+  const [selectedTierIndex, setSelectedTierIndex] = useState(
+    persisted?.selectedTierIndex ?? 0,
+  );
+  const [signsFound, setSignsFound] = useState(persisted?.signsFound ?? 0);
+  const [signsRequired, setSignsRequired] = useState(
+    persisted?.signsRequired ?? 3,
+  );
+  const [areasVisited, setAreasVisited] = useState(persisted?.areasVisited ?? 0);
+  const [flatBonus, setFlatBonus] = useState(persisted?.flatBonus ?? 0);
+  const [rollMode, setRollMode] = useState<RollMode>(
+    persisted?.rollMode ?? "normal",
+  );
+  const [survivalSucceeded, setSurvivalSucceeded] = useState(
+    persisted?.survivalSucceeded ?? true,
+  );
+  const [rollHistory, setRollHistory] = useState<HuntRollEntry[]>(
+    persisted?.rollHistory ?? [],
+  );
   const [prepTables, setPrepTables] = useState<HuntPrepTables>(
-    createEmptyHuntPrepTables,
+    () => persisted?.prepTables ?? createEmptyHuntPrepTables(),
   );
   const [prepGenerating, setPrepGenerating] = useState(false);
-  const [setupComplete, setSetupComplete] = useState(false);
+  const [setupComplete, setSetupComplete] = useState(
+    persisted?.setupComplete ?? false,
+  );
   const [encounterDifficulty, setEncounterDifficulty] =
-    useState<HuntEncounterDifficulty>("normal");
+    useState<HuntEncounterDifficulty>(persisted?.encounterDifficulty ?? "normal");
   const [npcSpecies, setNpcSpecies] = useState<Species[]>([]);
   const [npcBackgrounds, setNpcBackgrounds] = useState<Background[]>([]);
 
@@ -132,6 +171,22 @@ export function useHuntState(): UseHuntStateResult {
     getAllMonsters()
       .then((data) => {
         setMonsters(data);
+        const savedMonsterName = persistedRef.current?.monsterName;
+        if (savedMonsterName) {
+          const savedSource = persistedRef.current?.monsterSource;
+          const match =
+            data.find(
+              (m) =>
+                m.name === savedMonsterName &&
+                (savedSource ? m.source === savedSource : true),
+            ) ?? data.find((m) => m.name === savedMonsterName);
+          if (match) {
+            setSelectedMonster(match);
+          } else {
+            // Saved monster no longer resolvable — resume normal generation.
+            hydrationPendingRef.current = false;
+          }
+        }
       })
       .finally(() => {
         setMonstersLoading(false);
@@ -208,6 +263,14 @@ export function useHuntState(): UseHuntStateResult {
   ]);
 
   useEffect(() => {
+    // Preserve the restored session on the first render(s): don't wipe or
+    // regenerate the saved prep tables/tracker until the setup has resolved.
+    if (hydrationPendingRef.current) {
+      if (!hasBaseSetup || !selectedTier || npcSpecies.length === 0) return;
+      hydrationPendingRef.current = false;
+      return;
+    }
+
     if (!hasBaseSetup || !selectedTier || npcSpecies.length === 0) {
       setPrepTables(createEmptyHuntPrepTables());
       return;
@@ -430,7 +493,45 @@ export function useHuntState(): UseHuntStateResult {
     setRollHistory([]);
   }, []);
 
+  // Persist the serializable session (once catalogs have loaded, so the
+  // async-resolved monster is not briefly overwritten with null).
+  useEffect(() => {
+    if (monstersLoading) return;
+    persistHuntState({
+      monsterName: selectedMonster?.name ?? null,
+      monsterSource: selectedMonster?.source ?? null,
+      environmentName: selectedEnvironment?.name ?? null,
+      selectedTierIndex,
+      signsFound,
+      signsRequired,
+      areasVisited,
+      flatBonus,
+      rollMode,
+      survivalSucceeded,
+      rollHistory,
+      prepTables,
+      setupComplete,
+      encounterDifficulty,
+    });
+  }, [
+    monstersLoading,
+    selectedMonster,
+    selectedEnvironment,
+    selectedTierIndex,
+    signsFound,
+    signsRequired,
+    areasVisited,
+    flatBonus,
+    rollMode,
+    survivalSucceeded,
+    rollHistory,
+    prepTables,
+    setupComplete,
+    encounterDifficulty,
+  ]);
+
   const resetHunt = useCallback(() => {
+    hydrationPendingRef.current = false;
     setSelectedMonster(null);
     setSelectedEnvironment(null);
     setSelectedTierIndex(0);
@@ -444,6 +545,7 @@ export function useHuntState(): UseHuntStateResult {
     setPrepTables(createEmptyHuntPrepTables());
     setSetupComplete(false);
     setEncounterDifficulty("normal");
+    clearHuntState();
   }, []);
 
   return {

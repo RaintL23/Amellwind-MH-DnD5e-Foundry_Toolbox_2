@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Crosshair,
   BookOpen,
@@ -12,6 +12,7 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/shared/utils/cn";
 import { useHuntState } from "../hooks/useHuntState";
+import { loadHuntActiveTab, persistHuntActiveTab } from "../storage/hunt.storage";
 import { HuntRulesTab } from "./HuntRulesTab";
 import { HuntSetupPanel } from "./HuntSetupPanel";
 import { HuntTrackerTab } from "./HuntTrackerTab";
@@ -19,10 +20,29 @@ import { HuntResourcesTab } from "./HuntResourcesTab";
 
 type HuntTab = "rules" | "setup" | "tracker" | "resources";
 
+const HUNT_TABS: readonly HuntTab[] = ["rules", "setup", "tracker", "resources"];
+
+function loadInitialTab(): HuntTab {
+  const saved = loadHuntActiveTab();
+  return HUNT_TABS.includes(saved as HuntTab) ? (saved as HuntTab) : "setup";
+}
+
 export function HuntPage() {
-  const [activeTab, setActiveTab] = useState<HuntTab>("setup");
+  const [activeTab, setActiveTab] = useState<HuntTab>(loadInitialTab);
   const hunt = useHuntState();
   const huntTabsLocked = !hunt.setupComplete;
+
+  // A locked tab may have been restored (e.g. tracker) before setup completes;
+  // fall back to setup so the user is not stuck on a disabled panel.
+  useEffect(() => {
+    if (huntTabsLocked && (activeTab === "tracker" || activeTab === "resources")) {
+      setActiveTab("setup");
+    }
+  }, [huntTabsLocked, activeTab]);
+
+  useEffect(() => {
+    persistHuntActiveTab(activeTab);
+  }, [activeTab]);
 
   function handleTabChange(value: string) {
     const tab = value as HuntTab;
