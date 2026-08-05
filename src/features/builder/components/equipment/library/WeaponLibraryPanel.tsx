@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { getDndWeapons } from "@/features/dnd-items/services/dnd-equipment.service";
+import { getAllForgeWeapons } from "@/features/weapon-forge/services/weapon-forge.service";
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import { weaponsToSourceVariants } from "@/features/dnd-items/mappers/dnd-weapon.mapper";
@@ -26,13 +27,11 @@ import {
 
 import { buildWeaponInventoryBundle } from "@/features/builder/utils/equipment-inventory.utils";
 
-import { matchesEquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
-
-import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 import { weaponMatchesLibraryFilters } from "@/features/builder/utils/builder-library-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 
 import type { Weapon } from "@/shared/types";
+import type { WeaponLibraryCatalog } from "@/features/builder/components/shared/WeaponCatalogBadgeGroup";
 
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
 
@@ -43,13 +42,10 @@ interface WeaponLibraryPanelProps {
 
   q: string;
 
-  rarityFilter?: EquipmentRarityFilter;
-
   listFilters?: ListFilterValues;
-}
 
-function getWeaponRarityLabel(weapon: Weapon): string {
-  return weapon.itemRarityLabel ?? "Standard";
+  /** Only used while Amellwind Homebrew is on. Defaults to forge. */
+  weaponCatalog?: WeaponLibraryCatalog;
 }
 
 export function WeaponLibraryPanel({
@@ -57,9 +53,9 @@ export function WeaponLibraryPanel({
 
   q,
 
-  rarityFilter = "Standard",
-
   listFilters = {},
+
+  weaponCatalog = "forge",
 }: WeaponLibraryPanelProps) {
   const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
 
@@ -117,25 +113,27 @@ export function WeaponLibraryPanel({
 
     setWeaponsLoading(true);
 
-    const load = useAmellwindHomebrew
-      ? getAllWeapons()
-      : getDndWeapons(prefer2024);
+    let load: Promise<Weapon[]>;
+    if (!useAmellwindHomebrew) {
+      load = getDndWeapons(prefer2024);
+    } else if (weaponCatalog === "forge") {
+      load = getAllForgeWeapons();
+    } else {
+      load = getAllWeapons();
+    }
 
     load.then(setAllWeapons).finally(() => setWeaponsLoading(false));
-  }, [isWeaponSlot, selectedSlot, useAmellwindHomebrew, prefer2024]);
+  }, [
+    isWeaponSlot,
+    selectedSlot,
+    useAmellwindHomebrew,
+    prefer2024,
+    weaponCatalog,
+  ]);
 
-  const matchesRarity = useCallback(
-    (weapon: Weapon) => {
-      if (useAmellwindHomebrew) return true;
-
-      return matchesEquipmentRarityFilter(
-        getWeaponRarityLabel(weapon),
-
-        rarityFilter,
-      );
-    },
-
-    [rarityFilter, useAmellwindHomebrew],
+  const effectiveListFilters = useMemo(
+    () => (useAmellwindHomebrew ? { ...listFilters, rarity: "" } : listFilters),
+    [useAmellwindHomebrew, listFilters],
   );
 
   const inventoryWeaponsFiltered = useMemo(() => {
@@ -144,10 +142,9 @@ export function WeaponLibraryPanel({
     return inventoryWeapons.filter(
       (w) =>
         w.name.toLowerCase().includes(q) &&
-        matchesRarity(w) &&
-        weaponMatchesLibraryFilters(w, listFilters),
+        weaponMatchesLibraryFilters(w, effectiveListFilters),
     );
-  }, [inventoryWeapons, isWeaponSlot, q, matchesRarity, listFilters]);
+  }, [inventoryWeapons, isWeaponSlot, q, effectiveListFilters]);
 
   const catalogWeaponsFiltered = useMemo(() => {
     if (!isWeaponSlot) return [];
@@ -158,18 +155,9 @@ export function WeaponLibraryPanel({
       (w) =>
         w.name.toLowerCase().includes(q) &&
         !invNames.has(w.name) &&
-        matchesRarity(w) &&
-        weaponMatchesLibraryFilters(w, listFilters),
+        weaponMatchesLibraryFilters(w, effectiveListFilters),
     );
-  }, [
-    allWeapons,
-    inventoryWeapons,
-    isWeaponSlot,
-    q,
-    matchesRarity,
-    listFilters,
-  ]);
-
+  }, [allWeapons, inventoryWeapons, isWeaponSlot, q, effectiveListFilters]);
   const equippedWeapon =
     selectedSlot === "mainHand"
       ? mainHand

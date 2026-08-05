@@ -24,6 +24,7 @@ import {
   getDndArmors,
   getDndWeapons,
 } from "@/features/dnd-items/services/dnd-equipment.service";
+import { getAllForgeWeapons } from "@/features/weapon-forge/services/weapon-forge.service";
 import { MH_ARMOR_CATALOG } from "../utils/cart-equipment.resolver";
 import { getFeatSlotLevels } from "../utils/builder-class.utils";
 import { parseFoundryActor } from "../foundry-import";
@@ -402,7 +403,10 @@ export function useFoundryImport() {
         getDndArmors(true).catch(() => [] as ArmorItem[]),
       ]);
       const homebrewWeapons = builder.useAmellwindHomebrew
-        ? await getAllWeapons().catch(() => [] as Weapon[])
+        ? await Promise.all([
+            getAllForgeWeapons().catch(() => [] as Weapon[]),
+            getAllWeapons().catch(() => [] as Weapon[]),
+          ]).then(([forge, agmh]) => [...forge, ...agmh])
         : [];
       const weaponCatalog: Weapon[] = [...dndWeapons, ...homebrewWeapons];
       const armorCatalog: ArmorItem[] = [

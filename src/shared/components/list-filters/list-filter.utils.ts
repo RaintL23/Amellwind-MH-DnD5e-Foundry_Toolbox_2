@@ -84,9 +84,9 @@ export function buildDefaultFilterValues(
 }
 
 /**
- * Multi sections with an explicit defaultValues list count as "active" only when
+ * Sections with an explicit defaultValues list count as "active" only when
  * the current selection differs from that default (so official-source defaults
- * do not inflate the Filters badge).
+ * and Standard rarity do not inflate the Filters badge).
  */
 export function isFilterSectionActive(
   section: ListFilterSectionConfig,
@@ -102,7 +102,10 @@ export function isFilterSectionActive(
     }
     return selected.length > 0;
   }
-  return typeof raw === "string" && raw !== "";
+  const selected = typeof raw === "string" ? raw : "";
+  const defaultValue = section.defaultValues?.[0] ?? "";
+  if (defaultValue) return selected !== defaultValue;
+  return selected !== "";
 }
 
 export function countActiveListFilters(

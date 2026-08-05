@@ -103,6 +103,12 @@ export function getUserWeapons(): CustomWeapon[] {
   return readUserWeapons();
 }
 
+/** Curated raintdm catalog plus user weapons from localStorage. */
+export async function getAllForgeWeapons(): Promise<CustomWeapon[]> {
+  const curated = await getCuratedWeapons();
+  return [...curated, ...getUserWeapons()];
+}
+
 export function saveUserWeapon(weapon: CustomWeapon): CustomWeapon[] {
   const list = readUserWeapons();
   const now = new Date().toISOString();

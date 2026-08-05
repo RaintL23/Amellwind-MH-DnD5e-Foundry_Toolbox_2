@@ -26,9 +26,14 @@ import {
   FeatSourceBadgeGroup,
   type FeatDataSource,
 } from "../../shared/FeatSourceBadgeGroup";
+import {
+  WeaponCatalogBadgeGroup,
+  type WeaponLibraryCatalog,
+} from "../../shared/WeaponCatalogBadgeGroup";
 import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
 import {
   ListSearchWithFilters,
+  buildDefaultFilterValues,
   type ListFilterSectionConfig,
   type ListFilterValues,
 } from "@/shared/components/list-filters";
@@ -46,8 +51,6 @@ import {
 import { FeatLibraryPanel, isFeatPickerSlot } from "./FeatLibraryPanel";
 import { SLOT_LABELS } from "./constants";
 import { EmptyState } from "./shared/LibraryUi";
-import { EquipmentRarityFilterGroup } from "../../shared/EquipmentRarityFilterGroup";
-import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 import { useLibrarySearch } from "./hooks/useLibrarySearch";
 import { toRpgbotClassSlug } from "@/features/builder/data/rpgbot-ratings.utils";
 import { RpgbotLegend } from "../../shared/RpgbotLegend";
@@ -57,6 +60,7 @@ import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import {
   ARMOR_LIBRARY_FILTER_SECTIONS,
+  EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION,
   FEAT_LIBRARY_FILTER_SECTIONS,
   WEAPON_LIBRARY_FILTER_SECTIONS,
   buildLibrarySourceFilterSections,
@@ -71,11 +75,13 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   const [identitySourceOverride, setIdentitySourceOverride] =
     useState<IdentityDataSource | null>(null);
   const [featSource, setFeatSource] = useState<FeatDataSource>("amellwind");
+  const [weaponLibraryCatalog, setWeaponLibraryCatalog] =
+    useState<WeaponLibraryCatalog>("forge");
   const [showAsiPanel, setShowAsiPanel] = useState(false);
   const [featSearchHidden, setFeatSearchHidden] = useState(false);
-  const [equipmentRarity, setEquipmentRarity] =
-    useState<EquipmentRarityFilter>("Standard");
-  const [filterValues, setFilterValues] = useState<ListFilterValues>({});
+  const [filterValues, setFilterValues] = useState<ListFilterValues>(() =>
+    buildDefaultFilterValues([EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION]),
+  );
 
   const bookNames = useBookSourceNames();
   const catalog = useSourceCatalog();
@@ -144,22 +150,72 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     rpgbotClassSlug,
   ]);
 
+  const filterSections = useMemo((): ListFilterSectionConfig[] => {
+    if (isWeaponSlot) {
+      return useAmellwindHomebrew
+        ? WEAPON_LIBRARY_FILTER_SECTIONS
+        : [
+            EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION,
+            ...WEAPON_LIBRARY_FILTER_SECTIONS,
+          ];
+    }
+    if (isArmorSlot) {
+      return useAmellwindHomebrew
+        ? ARMOR_LIBRARY_FILTER_SECTIONS
+        : [
+            EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION,
+            ...ARMOR_LIBRARY_FILTER_SECTIONS,
+          ];
+    }
+    if (isFeatPicker) return FEAT_LIBRARY_FILTER_SECTIONS;
+    if (isIdentityOrClassSlot) {
+      return buildLibrarySourceFilterSections(
+        catalog.keys(),
+        catalog,
+        bookNames,
+      );
+    }
+    return [];
+  }, [
+    isWeaponSlot,
+    isArmorSlot,
+    isFeatPicker,
+    isIdentityOrClassSlot,
+    useAmellwindHomebrew,
+    catalog,
+    bookNames,
+  ]);
+
   useEffect(() => {
     setShowAsiPanel(false);
     setFeatSearchHidden(false);
-    setEquipmentRarity("Standard");
-    setFilterValues({});
+
+    const needsRarityDefault =
+      !useAmellwindHomebrew && (isWeaponSlot || isArmorSlot);
+    setFilterValues(
+      needsRarityDefault
+        ? buildDefaultFilterValues([EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION])
+        : {},
+    );
 
     if (!useAmellwindHomebrew) {
       setFeatSource("dnd2024");
       return;
     }
     setFeatSource("amellwind");
-  }, [selectedSlot, useAmellwindHomebrew, classSelection?.name]);
+    setWeaponLibraryCatalog("forge");
+  }, [
+    selectedSlot,
+    useAmellwindHomebrew,
+    classSelection?.name,
+    isWeaponSlot,
+    isArmorSlot,
+  ]);
 
   useEffect(() => {
     if (!useAmellwindHomebrew) {
       setFeatSource("dnd2024");
+      setWeaponLibraryCatalog("forge");
     }
   }, [useAmellwindHomebrew]);
 
@@ -215,10 +271,8 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     useAmellwindHomebrew && (isSpeciesSlot || isBackgroundSlot);
   const showFeatSourceToggle =
     isFeatSlot && !showAsiPanel && !isAnyOriginFeatSlotSelected;
-  const showEquipmentRarityToggle =
-    !useAmellwindHomebrew &&
-    (isWeaponSlot || isArmorSlot) &&
-    !showWeaponDetail;
+  const showWeaponCatalogToggle =
+    useAmellwindHomebrew && isWeaponSlot && !showWeaponDetail;
 
   const showRpgbotLegend =
     !!rpgbotClassSlug &&
@@ -226,27 +280,6 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     selectedSlot !== null &&
     selectedSlot !== "class" &&
     !isMulticlassClassSlot(selectedSlot);
-
-  const filterSections = useMemo((): ListFilterSectionConfig[] => {
-    if (isWeaponSlot) return WEAPON_LIBRARY_FILTER_SECTIONS;
-    if (isArmorSlot) return ARMOR_LIBRARY_FILTER_SECTIONS;
-    if (isFeatPicker) return FEAT_LIBRARY_FILTER_SECTIONS;
-    if (isIdentityOrClassSlot) {
-      return buildLibrarySourceFilterSections(
-        catalog.keys(),
-        catalog,
-        bookNames,
-      );
-    }
-    return [];
-  }, [
-    isWeaponSlot,
-    isArmorSlot,
-    isFeatPicker,
-    isIdentityOrClassSlot,
-    catalog,
-    bookNames,
-  ]);
 
   const slotLabel = useMemo(() => {
     if (!selectedSlot) return "Library";
@@ -293,10 +326,10 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
           hideAmellwind={!useAmellwindHomebrew}
         />
       )}
-      {showEquipmentRarityToggle && (
-        <EquipmentRarityFilterGroup
-          value={equipmentRarity}
-          onChange={setEquipmentRarity}
+      {showWeaponCatalogToggle && (
+        <WeaponCatalogBadgeGroup
+          value={weaponLibraryCatalog}
+          onChange={setWeaponLibraryCatalog}
         />
       )}
     </span>
@@ -344,13 +377,12 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
             <WeaponLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
-              rarityFilter={equipmentRarity}
               listFilters={filterValues}
+              weaponCatalog={weaponLibraryCatalog}
             />
             <ArmorLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
-              rarityFilter={equipmentRarity}
               listFilters={filterValues}
             />
             <IdentityLibraryPanel

@@ -26,8 +26,10 @@ export interface ListFilterSectionConfig {
   /** When set, options are rendered under labeled subgroups (e.g. source years). */
   groups?: ListFilterOptionGroup[];
   /**
-   * Default multi values for Reset / initial apply.
-   * When omitted, multi defaults to [] and single to "".
+   * Default values for Reset / initial apply.
+   * Multi: full selected list (omitted → []). Single: first entry used
+   * (omitted → ""). Also excluded from the Filters badge count when current
+   * selection still matches these defaults.
    */
   defaultValues?: string[];
   /** When true, the section accordion starts expanded. */

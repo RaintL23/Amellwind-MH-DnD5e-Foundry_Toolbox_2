@@ -1453,6 +1453,7 @@ Encima del grid: `CharacterCreationTipsPanel` con consejos de creación.
 
 - **Fuente de verdad**: líneas del **`CartContext`** (ítems comprados/añadidos en Shops/Items).
 - Resuelve nombres del carrito a `Weapon[]` y `ArmorItem[]` vía `cart-equipment.resolver`.
+- Con Amellwind Homebrew, el catálogo de armas es `getAllForgeWeapons()` + `getAllWeapons()` (forge primero en lookups por nombre).
 - Badge en Sidebar = `totalItems` del carrito (no un inventario separado de armas).
 - Armaduras no GTMH: lista inicial desde `armor.placeholder.ts`.
 
@@ -1474,7 +1475,18 @@ Slots: `mainHand`, `offHand`, `armor`, `trinket1`, `trinket2`.
 
 Reglas de manos: armas `2H` bloquean off-hand; armas `V` (versatile) permiten modo a una o dos manos.
 
-#### Componentes
+Con **Amellwind Homebrew** activo, la librería de armas (`WeaponLibraryPanel`) muestra por defecto el catálogo del **Weapon Forge** (curated raintdm + custom de localStorage) y un pill toggle (`WeaponCatalogBadgeGroup`: `Weapon Forge` / `Base (AGMH)`) para cambiar al catálogo AGMH via `getAllWeapons()`. Sin homebrew, sigue cargando armas D&D (`getDndWeapons`).
+
+#### Randomizer (`useCharacterRandomizer`)
+
+Botón dados en `StatsPanel`. Disponible en **ambos** modos (Amellwind y D&D). Conserva el nivel actual, hace `resetBuild` y rellena clase/subclase, ASI point-buy, skills, idiomas, optional features, origin feats, hechizos, dotes de nivel y starting equipment del carrito (no equipa armas/armadura en el paper doll).
+
+- **D&D**: species/backgrounds 5e con ratings RPGBOT; lineage spells; background ASI.
+- **Amellwind**: species AGMH (`pickAmellwindSpecies` por saves/abilities relevantes); background preferido Hunter's Initiate (`pickAmellwindBackground`, si falta → aleatorio); skills/tools/idiomas del homebrew; Origin Feat de trasfondo AGMH (siempre choose 2024); facción la setea el slice de identity al aplicar el background.
+
+#### Completeness / tests
+
+Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness*`), consumida por `BuildCompletenessContext` (highlights + bloqueo de export). Tests Vitest en `build-completeness.test.ts` (`pnpm test`). Checklist agente: `.agents/skills/builder-validation/`.#### Componentes
 
 | Componente | Rol |
 | ---------- | --- |

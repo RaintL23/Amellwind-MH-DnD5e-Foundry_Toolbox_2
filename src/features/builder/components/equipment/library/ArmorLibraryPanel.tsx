@@ -12,8 +12,6 @@ import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilder
 import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
 import type { BuilderSlotSelection } from "@/features/builder/hooks/useBuilderSlotSelection";
 import { checkArmorProficiency } from "@/features/builder/utils/equipment-proficiency.utils";
-import { matchesEquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
-import type { EquipmentRarityFilter } from "@/features/builder/utils/dnd-rarity.utils";
 import { armorMatchesLibraryFilters } from "@/features/builder/utils/builder-library-filters";
 import {
   buildArmorInventoryBundle,
@@ -33,18 +31,12 @@ import { EmptyState } from "./shared/LibraryUi";
 interface ArmorLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
   q: string;
-  rarityFilter?: EquipmentRarityFilter;
   listFilters?: ListFilterValues;
-}
-
-function getArmorRarityLabel(armor: ArmorItem): string {
-  return armor.itemRarityLabel ?? armor.rarity ?? "Standard";
 }
 
 export function ArmorLibraryPanel({
   selectedSlot,
   q,
-  rarityFilter = "Standard",
   listFilters = {},
 }: ArmorLibraryPanelProps) {
   const {
@@ -108,15 +100,9 @@ export function ArmorLibraryPanel({
     return dndArmors;
   }, [useAmellwindHomebrew, dndArmors]);
 
-  const matchesRarity = useCallback(
-    (armorItem: ArmorItem) => {
-      if (useAmellwindHomebrew) return true;
-      return matchesEquipmentRarityFilter(
-        getArmorRarityLabel(armorItem),
-        rarityFilter,
-      );
-    },
-    [rarityFilter, useAmellwindHomebrew],
+  const effectiveListFilters = useMemo(
+    () => (useAmellwindHomebrew ? { ...listFilters, rarity: "" } : listFilters),
+    [useAmellwindHomebrew, listFilters],
   );
 
   const inventoryArmorsFiltered = useMemo(() => {
@@ -124,10 +110,9 @@ export function ArmorLibraryPanel({
     return inventoryArmors.filter(
       (a) =>
         a.name.toLowerCase().includes(q) &&
-        matchesRarity(a) &&
-        armorMatchesLibraryFilters(a, listFilters),
+        armorMatchesLibraryFilters(a, effectiveListFilters),
     );
-  }, [inventoryArmors, isArmorSlot, q, matchesRarity, listFilters]);
+  }, [inventoryArmors, isArmorSlot, q, effectiveListFilters]);
 
   const catalogArmorsFiltered = useMemo(() => {
     if (!isArmorSlot) return [];
@@ -136,17 +121,9 @@ export function ArmorLibraryPanel({
       (a) =>
         a.name.toLowerCase().includes(q) &&
         !invNames.has(a.name) &&
-        matchesRarity(a) &&
-        armorMatchesLibraryFilters(a, listFilters),
+        armorMatchesLibraryFilters(a, effectiveListFilters),
     );
-  }, [
-    catalogArmors,
-    inventoryArmors,
-    isArmorSlot,
-    q,
-    matchesRarity,
-    listFilters,
-  ]);
+  }, [catalogArmors, inventoryArmors, isArmorSlot, q, effectiveListFilters]);
 
   const inventoryTrinketsFiltered = useMemo(() => {
     if (!isTrinketSlot) return [];

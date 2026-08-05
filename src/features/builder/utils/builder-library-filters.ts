@@ -6,6 +6,11 @@ import type {
 } from "@/shared/components/list-filters";
 import type { LibraryListOption } from "@/features/builder/utils/library-variant.utils";
 import {
+  EQUIPMENT_RARITY_FILTERS,
+  matchesEquipmentRarityFilter,
+  type EquipmentRarityFilter,
+} from "@/features/builder/utils/dnd-rarity.utils";
+import {
   buildSourcesFilterSection,
   entityMatchesSourceFilter,
 } from "@/shared/utils/compendium-source-filter.utils";
@@ -13,6 +18,18 @@ import type {
   BookSourceNameMap,
   SourceCatalogEntry,
 } from "@/shared/services/source-catalog.service";
+
+export const EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION: ListFilterSectionConfig = {
+  id: "rarity",
+  title: "Rarity",
+  mode: "single",
+  defaultExpanded: true,
+  defaultValues: ["Standard"],
+  options: EQUIPMENT_RARITY_FILTERS.map((rarity) => ({
+    value: rarity,
+    label: rarity,
+  })),
+};
 
 export const WEAPON_LIBRARY_FILTER_SECTIONS: ListFilterSectionConfig[] = [
   {
@@ -50,6 +67,23 @@ export const ARMOR_LIBRARY_FILTER_SECTIONS: ListFilterSectionConfig[] = [
     ],
   },
 ];
+
+function asEquipmentRarityFilter(
+  value: string,
+): EquipmentRarityFilter | null {
+  return (EQUIPMENT_RARITY_FILTERS as readonly string[]).includes(value)
+    ? (value as EquipmentRarityFilter)
+    : null;
+}
+
+function matchesLibraryRarityFilter(
+  itemRarityLabel: string,
+  values: ListFilterValues,
+): boolean {
+  const rarity = asEquipmentRarityFilter(asFilterString(values.rarity));
+  if (!rarity) return true;
+  return matchesEquipmentRarityFilter(itemRarityLabel, rarity);
+}
 
 export const FEAT_LIBRARY_FILTER_SECTIONS: ListFilterSectionConfig[] = [
   {
@@ -95,6 +129,11 @@ export function weaponMatchesLibraryFilters(
   weapon: Weapon,
   values: ListFilterValues,
 ): boolean {
+  if (
+    !matchesLibraryRarityFilter(weapon.itemRarityLabel ?? "Standard", values)
+  ) {
+    return false;
+  }
   const dmg = asFilterString(values.dmg);
   if (dmg && weapon.dmgType !== dmg) return false;
   const prop = asFilterString(values.prop);
@@ -106,6 +145,14 @@ export function armorMatchesLibraryFilters(
   armor: ArmorItem,
   values: ListFilterValues,
 ): boolean {
+  if (
+    !matchesLibraryRarityFilter(
+      armor.itemRarityLabel ?? armor.rarity ?? "Standard",
+      values,
+    )
+  ) {
+    return false;
+  }
   const category = asFilterString(values.category);
   if (category && armor.category !== category) return false;
   return true;
