@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
@@ -83,6 +83,16 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
     urlDialog,
   } = options;
 
+  // Callers typically pass inline `load` / `urlDialog` / `ensureSourcesLoaded`.
+  // Keep the latest via refs so dependency-driven effects do not re-fire every
+  // render (which previously caused an infinite load → setState → freeze).
+  const loadRef = useRef(load);
+  loadRef.current = load;
+  const ensureSourcesLoadedRef = useRef(ensureSourcesLoaded);
+  ensureSourcesLoadedRef.current = ensureSourcesLoaded;
+  const urlDialogRef = useRef(urlDialog);
+  urlDialogRef.current = urlDialog;
+
   const [all, setAll] = useState<T[]>([]);
   const [list, setList] = useState<T[]>([]);
   const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
@@ -98,12 +108,18 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
   const bookNames = useBookSourceNames();
   const catalog = useSourceCatalog();
 
+  const dialogParamKey = urlDialog?.paramKey;
+  const sessionPreserveKey = (session.urlPreserveKeys ?? []).join("\0");
+
   const urlPreserveKeys = useMemo(() => {
-    if (!urlDialog) return session.urlPreserveKeys;
-    const keys = session.urlPreserveKeys ? [...session.urlPreserveKeys] : [];
-    if (!keys.includes(urlDialog.paramKey)) keys.push(urlDialog.paramKey);
+    const keys = sessionPreserveKey
+      ? sessionPreserveKey.split("\0")
+      : [];
+    if (dialogParamKey && !keys.includes(dialogParamKey)) {
+      keys.push(dialogParamKey);
+    }
     return keys;
-  }, [session.urlPreserveKeys, urlDialog]);
+  }, [sessionPreserveKey, dialogParamKey]);
 
   const { q, getString, getAll, patchFilters, ensureMultiIfEmpty } =
     useListSessionFilters({
@@ -114,19 +130,19 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
     });
 
   const { value: urlParamValue, setValue: setUrlParamValue } =
-    useInactiveListItemUrlParam(urlDialog?.paramKey);
+    useInactiveListItemUrlParam(dialogParamKey);
 
   const sourceFilter = getAll(sourceFilterKey);
 
   const refresh = useCallback(async () => {
-    const result = await load();
+    const result = await loadRef.current();
     setAll(result.all);
     setList(result.list);
     setFilterSourceCodes(result.filterSourceCodes);
     if (result.loadedSources !== undefined) {
       setLoadedSources(result.loadedSources);
     }
-  }, [load]);
+  }, []);
 
   useEffect(() => {
     refresh().finally(() => setLoading(false));
@@ -152,11 +168,12 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
   ]);
 
   useEffect(() => {
-    if (!ensureSourcesLoaded || sourceFilter.length === 0) return;
-    void ensureSourcesLoaded(sourceFilter, { loadedSources }).then((changed) => {
+    const ensure = ensureSourcesLoadedRef.current;
+    if (!ensure || sourceFilter.length === 0) return;
+    void ensure(sourceFilter, { loadedSources }).then((changed) => {
       if (changed) void refresh();
     });
-  }, [sourceFilter, loadedSources, ensureSourcesLoaded, refresh]);
+  }, [sourceFilter, loadedSources, refresh]);
 
   const commitSearch = useCallback(
     (nextQ: string) => patchFilters({ q: nextQ }),
@@ -182,17 +199,19 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
 
   const openItem = useCallback(
     (item: T) => {
-      if (!urlDialog) return;
+      const dialog = urlDialogRef.current;
+      if (!dialog) return;
       setSelected(item);
       setDialogOpen(true);
       setUrlParamValue(item.name);
-      void urlDialog.getVariantsByName(item.name).then(setSelectedVariants);
+      void dialog.getVariantsByName(item.name).then(setSelectedVariants);
     },
-    [urlDialog, setUrlParamValue],
+    [setUrlParamValue],
   );
 
   useEffect(() => {
-    if (!urlDialog) return;
+    const dialog = urlDialogRef.current;
+    if (!dialog) return;
     if (!urlParamValue) {
       setDialogOpen(false);
       setSelected(null);
@@ -209,9 +228,8 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
 
     setSelected(found);
     setDialogOpen(true);
-    void urlDialog.getVariantsByName(found.name).then(setSelectedVariants);
+    void dialog.getVariantsByName(found.name).then(setSelectedVariants);
   }, [
-    urlDialog,
     urlParamValue,
     loading,
     list,
@@ -226,10 +244,10 @@ export function useCompendiumListPage<T extends CompendiumNamedEntity>(
       if (!open) {
         setSelected(null);
         setSelectedVariants([]);
-        if (urlDialog) setUrlParamValue(null);
+        if (urlDialogRef.current) setUrlParamValue(null);
       }
     },
-    [urlDialog, setUrlParamValue],
+    [setUrlParamValue],
   );
 
   const dialog: CompendiumListDialogState<T> | undefined = urlDialog
