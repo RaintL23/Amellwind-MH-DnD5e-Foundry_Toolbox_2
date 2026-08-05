@@ -102,12 +102,12 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
               <Sword className="h-3.5 w-3.5" />
               {inWeapon ? (
                 <>
-                  <Check className="h-3 w-3" /> En Arma
+                  <Check className="h-3 w-3" /> Weapon
                 </>
               ) : weaponFull ? (
-                "Arma llena"
+                "Weapon full"
               ) : (
-                "→ Arma"
+                "→ Weapon"
               )}
             </button>
           </div>

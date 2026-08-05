@@ -6,6 +6,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { HintTooltip } from "@/shared/components/HintTooltip";
 import { cn } from "@/shared/utils/cn";
 import {
   FOUNDRY_EXPORT_TARGET,
@@ -71,16 +72,37 @@ export function FoundryModuleRequirementsNotice({
 
   if (compact) {
     return (
-      <p
+      <div
         className={cn(
-          "text-[10px] leading-snug text-muted-foreground",
+          "inline-flex items-center gap-1 text-[10px] leading-snug text-muted-foreground",
           className,
         )}
       >
-        Foundry {FOUNDRY_EXPORT_TARGET.coreVersion} / dnd5e{" "}
-        {FOUNDRY_EXPORT_TARGET.systemVersion}. For Midi automation enable:{" "}
-        {required}. Recommended: {recommended}.
-      </p>
+        <span>
+          Foundry {FOUNDRY_EXPORT_TARGET.coreVersion} / dnd5e{" "}
+          {FOUNDRY_EXPORT_TARGET.systemVersion}
+        </span>
+        <HintTooltip
+          side="bottom"
+          align="start"
+          className="max-w-[min(20rem,calc(100vw-2rem))]"
+          content={
+            <>
+              For Midi automation enable: {required}.
+              {"\n"}
+              Recommended: {recommended}.
+            </>
+          }
+        >
+          <button
+            type="button"
+            className="inline-flex shrink-0 rounded-sm text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+            aria-label="Foundry module requirements"
+          >
+            <Info className="h-3 w-3" aria-hidden />
+          </button>
+        </HintTooltip>
+      </div>
     );
   }
 
