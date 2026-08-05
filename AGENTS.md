@@ -30,6 +30,7 @@ graphify explain "CharacterBuilderContext"
 ```
 
 - Skill versionada: `.agents/skills/graphify/`
+- Skill de validación del Builder: `.agents/skills/builder-validation/` (checklist + Vitest sobre `evaluateBuildCompleteness`)
 - Regla Cursor local: `.cursor/rules/graphify.mdc` (carpeta `.cursor/` está en `.gitignore`)
 - `graphify-out/` está en `.gitignore` (regenerable; no hace falta API key con `--code-only`)
 - Dominio Amellwind / 5etools / Foundry schema → sigue siendo `instrucctions.md`
@@ -47,11 +48,13 @@ pnpm install          # dependencias
 pnpm dev              # servidor de desarrollo (Vite)
 pnpm build            # tsc -b && vite build  → valida tipos + compila
 pnpm lint             # eslint estricto: --max-warnings 0 (cero warnings permitidos)
+pnpm test             # Vitest (completeness del Builder y tests unitarios)
 pnpm preview          # vista previa del build
 pnpm build:analyze    # build con visualizer del bundle
 ```
 
 - **Antes de dar por terminado un cambio de código**, corre `pnpm lint` y `pnpm build`. El lint falla con cualquier warning; el build hace type-check completo (`tsc -b`) además de compilar.
+- Cambios al **Character Builder** (identity, feats, spells, randomizer, export gates): corre también `pnpm test` y sigue `.agents/skills/builder-validation/`.
 - TypeScript está en modo `strict` con `noUnusedLocals` y `noUnusedParameters`: no dejes imports, variables ni parámetros sin usar.
 
 ## Convenciones de código
