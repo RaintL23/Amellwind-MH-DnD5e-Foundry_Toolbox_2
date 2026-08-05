@@ -13,10 +13,8 @@ import {
   collectUaPropEntries,
   loadUaBrewDocuments,
 } from "@/shared/services/ua-brew.service";
-import {
-  getSourceCatalog,
-  isOnDemandBrewSourceKind,
-} from "@/shared/services/source-catalog.service";
+import { getSourceCatalog } from "@/shared/services/source-catalog.service";
+import { createUaSourceLoader } from "@/shared/services/ua-source-loader.utils";
 import { mapSpell } from "../mappers/spell.mapper";
 import type { SpellSourceLookup } from "../utils/spell-lookup.types";
 import { mutateSpellFromLookup } from "../utils/spell-lookup.mutator";
@@ -102,21 +100,11 @@ export const getSpellsByName = service.getByName;
 export const getSpellById = service.getById;
 export const clearSpellCache = service.clearCache;
 
-/** Ensure selected UA/DDB/partnered sources are merged into the spell pool. */
-export async function ensureSpellUaSourcesLoaded(
-  sourceCodes: string[],
-): Promise<boolean> {
-  const catalog = await getSourceCatalog();
-  const needed = sourceCodes.filter((code) => {
-    const kind = catalog.get(code)?.kind;
-    return isOnDemandBrewSourceKind(kind) && !loadedUaSources.has(code);
-  });
-  if (needed.length === 0) return false;
-  for (const code of needed) loadedUaSources.add(code);
-  service.clearCache();
-  await service.getAll();
-  return true;
-}
+export const ensureSpellUaSourcesLoaded = createUaSourceLoader({
+  loadedUaSources,
+  clearCache: service.clearCache,
+  reload: service.getAll,
+});
 
 /** All source codes that can appear in the Spells filter (official index + UA). */
 export async function getSpellFilterSourceCodes(): Promise<string[]> {

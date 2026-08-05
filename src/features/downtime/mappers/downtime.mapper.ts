@@ -3,18 +3,12 @@ import {
   mapFiveToolsTable,
   parseFiveToolsMarkup,
 } from "@/shared/utils/fivetools-parser";
+import { slugifyKebab } from "@/shared/utils/slugify.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
 const DOWNTIME_PREFIX = "Downtime Activity:";
-
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
 
 function mapTable(raw: Raw): DowntimeTable {
   return mapFiveToolsTable(raw);
@@ -61,7 +55,7 @@ function mapDowntimeActivity(raw: Raw): DowntimeActivity {
     : fullName;
 
   return {
-    id: slugify(shortName),
+    id: slugifyKebab(shortName),
     name: fullName,
     shortName,
     page: typeof raw.page === "number" ? raw.page : undefined,

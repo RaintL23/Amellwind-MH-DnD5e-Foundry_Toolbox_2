@@ -3,7 +3,10 @@ import {
   FeatAbilityIncrease,
   FeatSection,
 } from "@/shared/types";
-import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import {
+  FEAT_ENTRY_OPTIONS,
+  renderFiveToolsEntries,
+} from "@/shared/utils/fivetools-parser";
 import { ABILITY_ABBREVIATIONS } from "@/shared/constants/dnd";
 import {
   parseSkillProficiencyBlocks,
@@ -18,77 +21,6 @@ const ABILITY_LABELS: Record<string, string> = ABILITY_ABBREVIATIONS;
 
 function featId(raw: Raw): string {
   return `${raw.name}::${raw.source}`;
-}
-
-function renderListItems(items: unknown[], depth = 0): string[] {
-  const prefix = depth > 0 ? "  " : "";
-  const result: string[] = [];
-
-  for (const item of items) {
-    if (typeof item === "string") {
-      const text = parseFiveToolsMarkup(item).trim();
-      if (text) result.push(`${prefix}• ${text}`);
-      continue;
-    }
-    if (typeof item !== "object" || item === null) continue;
-    const obj = item as Raw;
-
-    if (obj.type === "entries" && obj.name) {
-      const name = parseFiveToolsMarkup(String(obj.name));
-      const nested = Array.isArray(obj.entries)
-        ? renderEntries(obj.entries as unknown[], depth + 1)
-        : [];
-      result.push(`${prefix}**${name}**`);
-      result.push(...nested);
-    } else if (Array.isArray(obj.entries)) {
-      result.push(...renderEntries(obj.entries as unknown[], depth + 1));
-    }
-  }
-
-  return result;
-}
-
-function renderEntries(entries: unknown[], depth = 0): string[] {
-  const result: string[] = [];
-
-  for (const entry of entries) {
-    if (typeof entry === "string") {
-      const text = parseFiveToolsMarkup(entry).trim();
-      if (text) result.push(text);
-      continue;
-    }
-    if (typeof entry !== "object" || entry === null) continue;
-    const obj = entry as Raw;
-
-    if (obj.type === "list" && Array.isArray(obj.items)) {
-      result.push(...renderListItems(obj.items as unknown[], depth));
-    } else if (obj.type === "inset" && Array.isArray(obj.entries)) {
-      const inset = renderEntries(obj.entries as unknown[], depth);
-      if (inset.length) {
-        result.push(...inset.map((line) => (depth === 0 ? `» ${line}` : line)));
-      }
-    } else if (obj.type === "entries" && obj.name) {
-      const name = parseFiveToolsMarkup(String(obj.name));
-      const nested = Array.isArray(obj.entries)
-        ? renderEntries(obj.entries as unknown[], depth + 1)
-        : [];
-      result.push(`**${name}**`);
-      result.push(...nested);
-    } else if (obj.type === "homebrew" && Array.isArray(obj.entries)) {
-      for (const sub of obj.entries as Raw[]) {
-        if (sub.name && Array.isArray(sub.items)) {
-          result.push(`**${parseFiveToolsMarkup(String(sub.name))}**`);
-          result.push(
-            ...renderListItems(sub.items as unknown[], depth),
-          );
-        }
-      }
-    } else if (Array.isArray(obj.entries)) {
-      result.push(...renderEntries(obj.entries as unknown[], depth));
-    }
-  }
-
-  return result;
 }
 
 function mapAbilityIncreases(raw: Raw): FeatAbilityIncrease[] {
@@ -197,7 +129,7 @@ const REPEATABLE_PATTERN = /can select this feat multiple times/i;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function mapFeat(raw: any): Feat {
   const entries = Array.isArray(raw.entries) ? (raw.entries as unknown[]) : [];
-  const allParagraphs = renderEntries(entries);
+  const allParagraphs = renderFiveToolsEntries(entries, FEAT_ENTRY_OPTIONS);
   const { lead, sections } = splitSections(allParagraphs);
   const prerequisites = mapPrerequisites(raw);
   const abilityIncreases = mapAbilityIncreases(raw);

@@ -3,15 +3,9 @@
  * canonical Foundry VTT dnd5e identifiers used in the example actors.
  */
 import { toAbilityKey } from "@/shared/constants/dnd";
+import { slugify } from "@/shared/utils/slugify.utils";
 
-/** Lowercase, alphanumeric-only slug (Foundry baseItem / identifier style). */
-export function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "");
-}
+export { slugify };
 
 /** Kebab-case identifier used by class/feature `system.identifier`. */
 export function kebab(value: string): string {

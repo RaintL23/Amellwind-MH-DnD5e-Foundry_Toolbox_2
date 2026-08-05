@@ -13,6 +13,7 @@ import {
 } from "../utils/item-property.utils";
 import { expandItemEntryRefs } from "../utils/item-entry-resolve.utils";
 import { itemId, unpackItemTypeUid } from "../utils/item-uids.utils";
+import { formatGpFromCp } from "@/shared/utils/currency.utils";
 
 const RARITY_LABELS: Record<string, string> = {
   none: "None",
@@ -27,13 +28,6 @@ const RARITY_LABELS: Record<string, string> = {
 };
 
 const GENERIC_VARIANT_ABBREV = "GV";
-
-function formatValueGp(valueCp: number | null | undefined): string {
-  if (valueCp == null || valueCp === undefined) return "—";
-  const gp = valueCp / 100;
-  if (gp >= 1000) return `${gp.toLocaleString("en-US")} gp`;
-  return `${gp} gp`;
-}
 
 function formatWeight(weight: number | string | undefined): string | null {
   if (weight == null) return null;
@@ -204,7 +198,7 @@ export function mapDndItem(
     isSpecificVariant: !!raw._variantName && !raw._isBaseItem,
     attunement: mapAttunement(raw),
     weight: formatWeight(raw.weight as number | string | undefined),
-    valueGp: formatValueGp(valueCp),
+    valueGp: formatGpFromCp(valueCp),
     valueCp,
     baseValueCp,
     description,

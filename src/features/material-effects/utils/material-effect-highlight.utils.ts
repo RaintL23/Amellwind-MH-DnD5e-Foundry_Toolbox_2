@@ -5,18 +5,12 @@ import {
   type MaterialEffectTierFilter,
 } from "@/features/material-effects/constants/material-effect.constants";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { slugifyKebab } from "@/shared/utils/slugify.utils";
 
 export interface MaterialEffectNameIndex {
   all: string[];
   bySlot: Record<MaterialEffectSlot, string[]>;
   byKey: Map<string, MaterialEffect>;
-}
-
-function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
 }
 
 const LEADING_TITLE_REJECT =
@@ -168,7 +162,7 @@ export function supplementIndexWithRuneEffectNames(
       const parsed = parseFiveToolsMarkup(text);
       const displayName = name.replace(/\.$/, "").trim();
       const synthetic: MaterialEffect = {
-        id: `discovered:${slot}:${slugify(displayName)}`,
+        id: `discovered:${slot}:${slugifyKebab(displayName)}`,
         name: displayName,
         effect: parsed,
         summary:

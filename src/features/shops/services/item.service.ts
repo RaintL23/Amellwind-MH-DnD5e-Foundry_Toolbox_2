@@ -1,5 +1,6 @@
 import { MHItem } from "@/shared/types";
 import { getGtmhData } from "@/shared/db/sync.service";
+import { formatGpFromCp } from "@/shared/utils/currency.utils";
 
 const TYPE_LABELS: Record<string, string> = {
   HW: "Hunter Weapon",
@@ -24,10 +25,7 @@ interface RawItem {
 }
 
 export function formatValueGp(valueCp: number | null): string {
-  if (valueCp === null || valueCp === undefined) return "—";
-  const gp = valueCp / 100;
-  if (gp >= 1000) return `${gp.toLocaleString("en-US")} gp`;
-  return `${gp} gp`;
+  return formatGpFromCp(valueCp);
 }
 
 function mapItem(raw: RawItem): MHItem {

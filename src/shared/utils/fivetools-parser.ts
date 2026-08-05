@@ -322,12 +322,20 @@ export interface RenderEntriesOptions {
   bullet?: string;
   /** Render `{type:"item", name, entry|entries}` list children as `• **name**: body`. */
   renderItemObjects?: boolean;
+  /** Render `{type:"entries", name, entries}` list children (MH feats). */
+  renderListEntryObjects?: boolean;
+  /** Emit `{type:"homebrew"}` blocks with named item lists (MH feats). */
+  renderHomebrew?: boolean;
+  /** Indent prefix applied to list lines when depth > 0 (MH feats). */
+  listDepthIndent?: string;
   /** Emit a bold `**name**` heading for named `type:"entries"` blocks. */
   boldNamedEntries?: boolean;
   /** Emit a bold `**caption**` line for `type:"table"` blocks. */
   renderTableCaption?: boolean;
   /** Prefix added to each line produced by a `type:"inset"` block (null = none). */
   insetPrefix?: string | null;
+  /** When true, inset prefix is only applied at depth 0 (MH feats). */
+  insetPrefixAtRootOnly?: boolean;
 }
 
 /** Resolve body text for a `{type:"item"}` from singular `entry` or `entries[]`. */
@@ -347,6 +355,68 @@ function resolveItemBody(
   return "";
 }
 
+function renderFiveToolsListItems(
+  items: unknown[],
+  options: RenderEntriesOptions,
+  depth: number,
+  result: string[],
+): void {
+  const {
+    bullet = "• ",
+    renderItemObjects = true,
+    renderListEntryObjects = false,
+    listDepthIndent,
+  } = options;
+  const linePrefix = listDepthIndent && depth > 0 ? listDepthIndent : "";
+
+  for (const item of items) {
+    if (typeof item === "string") {
+      const text = parseFiveToolsMarkup(item).trim();
+      if (text) result.push(`${linePrefix}${bullet}${text}`);
+      continue;
+    }
+    if (typeof item !== "object" || item === null) continue;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const subObj = item as Record<string, any>;
+
+    if (renderItemObjects && subObj.type === "item" && subObj.name) {
+      const name = parseFiveToolsMarkup(String(subObj.name)).trim();
+      const body = resolveItemBody(subObj, options, depth);
+      result.push(
+        body
+          ? `${linePrefix}${bullet}**${name}**: ${body}`
+          : `${linePrefix}${bullet}**${name}**`,
+      );
+      continue;
+    }
+
+    if (renderListEntryObjects && subObj.type === "entries" && subObj.name) {
+      const name = parseFiveToolsMarkup(String(subObj.name)).trim();
+      result.push(`${linePrefix}**${name}**`);
+      if (Array.isArray(subObj.entries)) {
+        result.push(
+          ...renderFiveToolsEntries(
+            subObj.entries as unknown[],
+            options,
+            depth + 1,
+          ),
+        );
+      }
+      continue;
+    }
+
+    if (Array.isArray(subObj.entries)) {
+      result.push(
+        ...renderFiveToolsEntries(
+          subObj.entries as unknown[],
+          options,
+          depth + 1,
+        ),
+      );
+    }
+  }
+}
+
 /**
  * Canonical 5etools entries → display-paragraph renderer.
  *
@@ -363,10 +433,11 @@ export function renderFiveToolsEntries(
 ): string[] {
   const {
     bullet = "• ",
-    renderItemObjects = true,
+    renderHomebrew = false,
     boldNamedEntries = true,
     renderTableCaption = true,
     insetPrefix = "» ",
+    insetPrefixAtRootOnly = false,
   } = options;
 
   const result: string[] = [];
@@ -382,27 +453,7 @@ export function renderFiveToolsEntries(
     const obj = entry as Record<string, any>;
 
     if (obj.type === "list" && Array.isArray(obj.items)) {
-      for (const item of obj.items as unknown[]) {
-        if (typeof item === "string") {
-          const text = parseFiveToolsMarkup(item).trim();
-          if (text) result.push(`${bullet}${text}`);
-        } else if (
-          renderItemObjects &&
-          typeof item === "object" &&
-          item !== null
-        ) {
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const subObj = item as Record<string, any>;
-          // 5etools uses either singular `entry` (string) or `entries` (array).
-          if (subObj.type === "item" && subObj.name) {
-            const name = parseFiveToolsMarkup(String(subObj.name)).trim();
-            const body = resolveItemBody(subObj, options, depth);
-            result.push(
-              body ? `${bullet}**${name}**: ${body}` : `${bullet}**${name}**`,
-            );
-          }
-        }
-      }
+      renderFiveToolsListItems(obj.items as unknown[], options, depth, result);
     } else if (boldNamedEntries && obj.type === "entries" && obj.name) {
       result.push(`**${parseFiveToolsMarkup(String(obj.name))}**`);
       if (Array.isArray(obj.entries)) {
@@ -439,7 +490,27 @@ export function renderFiveToolsEntries(
         options,
         depth,
       );
-      result.push(...(insetPrefix ? inset.map((l) => `${insetPrefix}${l}`) : inset));
+      const applyPrefix =
+        insetPrefix &&
+        (!insetPrefixAtRootOnly || depth === 0);
+      result.push(...(applyPrefix ? inset.map((l) => `${insetPrefix}${l}`) : inset));
+    } else if (renderHomebrew && obj.type === "homebrew" && Array.isArray(obj.entries)) {
+      for (const sub of obj.entries as unknown[]) {
+        if (typeof sub !== "object" || sub === null) continue;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const homebrewEntry = sub as Record<string, any>;
+        if (homebrewEntry.name && Array.isArray(homebrewEntry.items)) {
+          result.push(
+            `**${parseFiveToolsMarkup(String(homebrewEntry.name))}**`,
+          );
+          renderFiveToolsListItems(
+            homebrewEntry.items as unknown[],
+            options,
+            depth,
+            result,
+          );
+        }
+      }
     } else if (Array.isArray(obj.entries)) {
       result.push(
         ...renderFiveToolsEntries(obj.entries as unknown[], options, depth),
@@ -460,4 +531,16 @@ export const PLAIN_ENTRY_OPTIONS: RenderEntriesOptions = {
   boldNamedEntries: false,
   renderTableCaption: false,
   insetPrefix: null,
+};
+
+/** Preset matching legacy MH feat entry rendering (`renderEntries` / `renderListItems`). */
+export const FEAT_ENTRY_OPTIONS: RenderEntriesOptions = {
+  renderItemObjects: false,
+  renderListEntryObjects: true,
+  renderHomebrew: true,
+  listDepthIndent: "  ",
+  boldNamedEntries: true,
+  renderTableCaption: false,
+  insetPrefix: "» ",
+  insetPrefixAtRootOnly: true,
 };

@@ -10,10 +10,8 @@ import {
   bySource,
   createEntityService,
 } from "@/shared/services/create-entity-service";
-import {
-  getSourceCatalog,
-  isOnDemandBrewSourceKind,
-} from "@/shared/services/source-catalog.service";
+import { getSourceCatalog } from "@/shared/services/source-catalog.service";
+import { createUaSourceLoader } from "@/shared/services/ua-source-loader.utils";
 import {
   collectUaPropEntries,
   loadUaBrewDocuments,
@@ -65,20 +63,11 @@ export const getDndFeatsByName = service.getByName;
 export const getDndFeatById = service.getById;
 export const clearDndFeatCache = service.clearCache;
 
-export async function ensureDndFeatUaSourcesLoaded(
-  sourceCodes: string[],
-): Promise<boolean> {
-  const catalog = await getSourceCatalog();
-  const needed = sourceCodes.filter((code) => {
-    const kind = catalog.get(code)?.kind;
-    return isOnDemandBrewSourceKind(kind) && !loadedUaSources.has(code);
-  });
-  if (needed.length === 0) return false;
-  for (const code of needed) loadedUaSources.add(code);
-  service.clearCache();
-  await service.getAll();
-  return true;
-}
+export const ensureDndFeatUaSourcesLoaded = createUaSourceLoader({
+  loadedUaSources,
+  clearCache: service.clearCache,
+  reload: service.getAll,
+});
 
 export async function getDndFeatFilterSourceCodes(): Promise<string[]> {
   const [catalog, list] = await Promise.all([

@@ -1,6 +1,7 @@
 import type { MaterialEffect, MaterialEffectSlot } from "@/shared/types";
 import type { ResourceRarity } from "@/shared/types";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
+import { slugifyKebab } from "@/shared/utils/slugify.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -15,13 +16,6 @@ const RARITIES: ResourceRarity[] = [
   "Very Rare",
   "Legendary",
 ];
-
-function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
 
 function normalizeName(name: string): string {
   return name.replace(/\.$/, "").trim();
@@ -74,7 +68,7 @@ function mapSectionEffects(
       const effect = parseFiveToolsMarkup(rawEffect);
 
       effects.push({
-        id: `${slot}-${rarity}-${slugify(name)}`,
+        id: `${slot}-${rarity}-${slugifyKebab(name)}`,
         name,
         effect,
         summary: effect.length > 140 ? `${effect.slice(0, 137)}…` : effect,

@@ -1,6 +1,7 @@
 import type { DndItem } from "@/shared/types/dnd-item.types";
 import { DEFAULT_DND_ITEM_SOURCES } from "@/shared/constants/api.constants";
 import { clearFiveToolsJsonCache } from "@/shared/data/fivetools-fetch";
+import { createOnDemandEntityService } from "@/shared/services/create-on-demand-entity-service";
 import { mapDndItem } from "../mappers/item.mapper";
 import { clearDndEquipmentCache } from "./dnd-equipment.service";
 import {
@@ -21,82 +22,49 @@ import {
   sortDndItemVariants,
 } from "../utils/item-dedupe.utils";
 
-let cache: DndItem[] = [];
-let listCache: DndItem[] | null = null;
-let byNameIndex: Map<string, DndItem[]> | null = null;
-let indexById: Map<string, DndItem> | null = null;
 let indexesCache: ItemBaseIndexes | null = null;
-const mappedKeys = new Set<string>();
 
-function buildIndexes(items: DndItem[]): void {
-  indexById = new Map<string, DndItem>();
-  for (const item of items) indexById.set(item.id, item);
-
-  const byName = new Map<string, DndItem[]>();
-  for (const item of items) {
-    const group = byName.get(item.name) ?? [];
-    group.push(item);
-    byName.set(item.name, group);
-  }
-  byNameIndex = byName;
-  listCache = dedupeDndItemsByName(items);
-}
-
-function appendMapped(rawItems: RawItemEntity[]): void {
-  if (!indexesCache) return;
-
-  const newItems: DndItem[] = [];
-  for (const raw of rawItems) {
+const service = createOnDemandEntityService<RawItemEntity, DndItem>({
+  defaultSources: DEFAULT_DND_ITEM_SOURCES,
+  loadSources: loadItemSources,
+  loadSource: loadItemSource,
+  getAllRaw: getAllRawItems,
+  entityKey: (raw) => {
     const source = getRawItemSource(raw);
-    if (!source) continue;
-    const key = itemEntityKey({ name: raw.name, source });
-    if (mappedKeys.has(key)) continue;
-    mappedKeys.add(key);
-    newItems.push(mapDndItem(raw, indexesCache));
-  }
-
-  if (newItems.length === 0) return;
-
-  cache = [...cache, ...newItems];
-  buildIndexes(cache);
-}
-
-function syncCacheFromPool(): void {
-  appendMapped(getAllRawItems());
-}
-
-export async function getAllDndItems(): Promise<DndItem[]> {
-  if (cache.length === 0) {
-    await loadItemSources([...DEFAULT_DND_ITEM_SOURCES]);
+    if (!source) return null;
+    return itemEntityKey({ name: raw.name, source });
+  },
+  map: (raw) => mapDndItem(raw, indexesCache!),
+  onSourcesLoaded: () => {
     indexesCache = getItemBaseIndexes();
-    syncCacheFromPool();
-  }
-  return cache;
-}
+  },
+  idOf: (item) => item.id,
+  nameOf: (item) => item.name,
+  dedupe: dedupeDndItemsByName,
+  sortVariantGroup: sortDndItemVariants,
+  getSourceCatalog: async () => {
+    const available = await getAvailableItemSources();
+    return {
+      available,
+      loaded: getLoadedItemSources(),
+    };
+  },
+  onClearCache: () => {
+    indexesCache = null;
+    clearItemListBuilderCache();
+    clearDndEquipmentCache();
+    clearFiveToolsJsonCache();
+  },
+});
 
-export async function getListDndItems(): Promise<DndItem[]> {
-  await getAllDndItems();
-  return listCache ?? [];
-}
-
-export async function preloadDndItemSources(sources: string[]): Promise<DndItem[]> {
-  await loadItemSources(sources);
-  indexesCache = getItemBaseIndexes();
-  syncCacheFromPool();
-  return cache;
-}
-
-export async function loadSourceOnDemand(source: string): Promise<DndItem[]> {
-  await loadItemSource(source);
-  indexesCache = getItemBaseIndexes();
-  syncCacheFromPool();
-  return cache;
-}
+export const getAllDndItems = service.getAll;
+export const getListDndItems = service.getList;
+export const preloadDndItemSources = service.preloadSources;
+export const loadSourceOnDemand = service.loadSourceOnDemand;
+export const getDndItemSourceCatalog = service.getSourceCatalog;
 
 export async function getDndItemsByName(name: string): Promise<DndItem[]> {
-  await getAllDndItems();
-  const group = byNameIndex?.get(name) ?? [];
-  return sortDndItemVariants(group);
+  return service.getByName(name);
 }
 
 /** Specific magic variants produced from a generic variant (e.g. Armor of Lightning Resistance). */
@@ -114,19 +82,7 @@ export async function getSpecificVariantsForGeneric(
 }
 
 export async function getDndItemById(id: string): Promise<DndItem | undefined> {
-  if (indexById === null) await getAllDndItems();
-  return indexById?.get(id);
-}
-
-export async function getDndItemSourceCatalog(): Promise<{
-  available: string[];
-  loaded: string[];
-}> {
-  const available = await getAvailableItemSources();
-  return {
-    available,
-    loaded: getLoadedItemSources(),
-  };
+  return service.getById(id);
 }
 
 export function isDndItemSourceLoaded(source: string): boolean {
@@ -143,14 +99,4 @@ export function getDndItemIndexes(): ItemBaseIndexes | null {
   return indexesCache;
 }
 
-export function clearDndItemCache(): void {
-  cache = [];
-  listCache = null;
-  byNameIndex = null;
-  indexById = null;
-  indexesCache = null;
-  mappedKeys.clear();
-  clearItemListBuilderCache();
-  clearDndEquipmentCache();
-  clearFiveToolsJsonCache();
-}
+export const clearDndItemCache = service.clearCache;
