@@ -4,9 +4,11 @@ import {
   useState,
   ReactNode,
   useCallback,
+  useEffect,
   useMemo,
 } from "react";
 import { CartEntry } from "@/shared/types";
+import { readJson, writeJson } from "@/shared/utils/local-storage.utils";
 
 interface CartContextValue {
   items: CartEntry[];
@@ -17,10 +19,18 @@ interface CartContextValue {
   totalItems: number;
 }
 
+const CART_STORAGE_KEY = "mh-shop-cart";
+
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<CartEntry[]>([]);
+  const [items, setItems] = useState<CartEntry[]>(() =>
+    readJson<CartEntry[]>(CART_STORAGE_KEY, []),
+  );
+
+  useEffect(() => {
+    writeJson(CART_STORAGE_KEY, items);
+  }, [items]);
 
   const addItem = useCallback((incoming: Omit<CartEntry, "quantity">) => {
     setItems((prev) => {
