@@ -1,4 +1,7 @@
-/** sessionStorage helpers for list filter state (per browser tab/session). */
+/**
+ * localStorage helpers for list filter state. Shared across tabs and persisted
+ * across browser restarts so users find their filters as they left them.
+ */
 
 const STORAGE_PREFIX = "list-filters:";
 
@@ -13,7 +16,7 @@ export function readListSessionState(
   listId: string,
 ): ListSessionStoredState | null {
   try {
-    const raw = sessionStorage.getItem(listSessionStorageKey(listId));
+    const raw = localStorage.getItem(listSessionStorageKey(listId));
     if (!raw) return null;
     const parsed: unknown = JSON.parse(raw);
     if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
@@ -30,12 +33,12 @@ export function writeListSessionState(
   state: ListSessionStoredState,
 ): void {
   try {
-    sessionStorage.setItem(
+    localStorage.setItem(
       listSessionStorageKey(listId),
       JSON.stringify(state),
     );
   } catch {
-    /* sessionStorage unavailable or quota exceeded */
+    /* localStorage unavailable or quota exceeded */
   }
 }
 
