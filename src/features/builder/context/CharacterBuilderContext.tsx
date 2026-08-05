@@ -12,6 +12,7 @@ import {
   loadUseAmellwindHomebrew,
   persistUseAmellwindHomebrew,
 } from "../storage/builder.storage";
+import { clearBuilderAutosave } from "../storage/builder-autosave.storage";
 import type { AbilityKey, AbilityScores } from "@/shared/types";
 import {
   composeAlignment,
@@ -279,6 +280,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     spell.resetSpellSlice();
     equipment.resetEquipment();
     clearInventory();
+    clearBuilderAutosave();
   }, [
     clearInventory,
     identity.resetIdentitySlice,
