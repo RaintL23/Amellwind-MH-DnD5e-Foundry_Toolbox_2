@@ -22,19 +22,14 @@ export interface CantripPoolsState {
   ready: boolean;
 }
 
-export function useCantripPools(
-  optionalFeatureSelections: BuilderOptionalFeatureSelections,
-  classData: Class | null,
-  subclassData: Subclass | null,
-  level: number,
-  options: {
-    speciesOriginFeat?: BuilderFeatSelection | null;
-    backgroundOriginFeat?: BuilderFeatSelection | null;
-    speciesOriginFeatGrant?: OriginFeatGrant | null;
-    backgroundOriginFeatGrant?: OriginFeatGrant | null;
-    featSelections?: (BuilderFeatSelection | null)[];
-  } = {},
-): CantripPoolsState {
+export interface CantripPoolCatalogs {
+  optionalCatalog: Awaited<ReturnType<typeof getAllDndOptionalFeatures>>;
+  featCatalog: Awaited<ReturnType<typeof getAllDndFeats>>;
+  ready: boolean;
+}
+
+/** Shared async catalogs for cantrip pool resolution (load once, resolve many). */
+export function useCantripPoolCatalogs(): CantripPoolCatalogs {
   const [ready, setReady] = useState(false);
   const [optionalCatalog, setOptionalCatalog] = useState<
     Awaited<ReturnType<typeof getAllDndOptionalFeatures>>
@@ -59,6 +54,24 @@ export function useCantripPools(
       cancelled = true;
     };
   }, []);
+
+  return { optionalCatalog, featCatalog, ready };
+}
+
+export function useCantripPools(
+  optionalFeatureSelections: BuilderOptionalFeatureSelections,
+  classData: Class | null,
+  subclassData: Subclass | null,
+  level: number,
+  options: {
+    speciesOriginFeat?: BuilderFeatSelection | null;
+    backgroundOriginFeat?: BuilderFeatSelection | null;
+    speciesOriginFeatGrant?: OriginFeatGrant | null;
+    backgroundOriginFeatGrant?: OriginFeatGrant | null;
+    featSelections?: (BuilderFeatSelection | null)[];
+  } = {},
+): CantripPoolsState {
+  const { optionalCatalog, featCatalog, ready } = useCantripPoolCatalogs();
 
   const progressions = useMemo(
     () =>

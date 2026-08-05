@@ -218,25 +218,46 @@ export function MonstieCreatorProvider({ children }: { children: ReactNode }) {
 
   const resetDraft = useCallback(() => setDraftState(defaultDraft), []);
 
-  const value: MonstieCreatorContextValue = {
-    loading,
-    eligibleMonsters,
-    allMonsters,
-    classFeatures,
-    draft,
-    baseMonster,
-    builtMonstie,
-    maxSkillSlots,
-    maxTraitSlots,
-    maxCreatureSlots,
-    setDraft,
-    selectBaseMonster,
-    toggleSkill,
-    toggleTrait,
-    toggleCreatureFeature,
-    generateRandom,
-    resetDraft,
-  };
+  const value = useMemo<MonstieCreatorContextValue>(
+    () => ({
+      loading,
+      eligibleMonsters,
+      allMonsters,
+      classFeatures,
+      draft,
+      baseMonster,
+      builtMonstie,
+      maxSkillSlots,
+      maxTraitSlots,
+      maxCreatureSlots,
+      setDraft,
+      selectBaseMonster,
+      toggleSkill,
+      toggleTrait,
+      toggleCreatureFeature,
+      generateRandom,
+      resetDraft,
+    }),
+    [
+      loading,
+      eligibleMonsters,
+      allMonsters,
+      classFeatures,
+      draft,
+      baseMonster,
+      builtMonstie,
+      maxSkillSlots,
+      maxTraitSlots,
+      maxCreatureSlots,
+      setDraft,
+      selectBaseMonster,
+      toggleSkill,
+      toggleTrait,
+      toggleCreatureFeature,
+      generateRandom,
+      resetDraft,
+    ],
+  );
 
   return (
     <MonstieCreatorContext.Provider value={value}>

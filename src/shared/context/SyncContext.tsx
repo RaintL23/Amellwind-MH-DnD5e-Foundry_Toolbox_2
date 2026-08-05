@@ -1,4 +1,4 @@
-import { createContext, useContext } from "react";
+import { createContext, useContext, useMemo } from "react";
 
 interface SyncContextValue {
   syncing: boolean;
@@ -13,8 +13,10 @@ export function SyncProvider({
   syncing: boolean;
   children: React.ReactNode;
 }) {
+  const value = useMemo(() => ({ syncing }), [syncing]);
+
   return (
-    <SyncContext.Provider value={{ syncing }}>{children}</SyncContext.Provider>
+    <SyncContext.Provider value={value}>{children}</SyncContext.Provider>
   );
 }
 

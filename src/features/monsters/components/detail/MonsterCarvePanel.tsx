@@ -6,7 +6,7 @@ import { cn } from "@/shared/utils/cn";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { NumberStepper } from "@/features/builder/components/shared/NumberStepper";
+import { NumberStepper } from "@/shared/components/NumberStepper";
 import { getRunesByMonster } from "@/features/runes/services/rune.service";
 import { getMaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";

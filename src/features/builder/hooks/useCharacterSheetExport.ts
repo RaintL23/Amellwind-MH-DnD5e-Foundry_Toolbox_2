@@ -7,10 +7,8 @@ import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { useCharacterArmorClass } from "./useCharacterArmorClass";
 import { useCharacterHitPoints } from "./useCharacterHitPoints";
 import { useCharacterSpeed } from "./useCharacterSpeed";
-import { useSpellcasting } from "./useSpellcasting";
+import { useSpellcastingContext } from "../context/SpellcastingContext";
 import { useSelectedClass, useSelectedSubclass } from "./useBuilderSelections";
-import { useOptionalFeatureSpellGrants } from "./useOptionalFeatureSpellGrants";
-import { useCantripPools } from "./useCantripPools";
 import { useSpellCatalog } from "./useSpellCatalog";
 import { getAttunementInfo } from "../utils/attunement.utils";
 import {
@@ -57,38 +55,7 @@ export function useCharacterSheetExport() {
   const armorClass = useCharacterArmorClass();
   const speed = useCharacterSpeed();
   const { allSpells } = useSpellCatalog();
-  const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
-    builder.optionalFeatureSelections ?? {},
-    builder.character.level,
-    classData,
-    subclassData,
-  );
-  const { bonusPools: bonusCantripPools } = useCantripPools(
-    builder.optionalFeatureSelections ?? {},
-    classData,
-    subclassData,
-    builder.character.level,
-    {
-      speciesOriginFeat: builder.speciesOriginFeat,
-      backgroundOriginFeat: builder.backgroundOriginFeat,
-      speciesOriginFeatGrant: builder.speciesOriginFeatGrant,
-      backgroundOriginFeatGrant: builder.backgroundOriginFeatGrant,
-      featSelections: builder.featSelections,
-    },
-  );
-  const spellcasting = useSpellcasting(
-    classData,
-    subclassData,
-    builder.character.level,
-    builder.character.abilities,
-    builder.spellSelections ?? {},
-    builder.optionalFeatureSelections ?? {},
-    optionalFeatureSpellGrants,
-    builder.faction,
-    builder.character.level,
-    undefined,
-    bonusCantripPools,
-  );
+  const { spellcasting } = useSpellcastingContext();
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

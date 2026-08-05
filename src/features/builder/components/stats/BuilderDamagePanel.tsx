@@ -9,7 +9,7 @@ import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { formatDamagePerTurnTooltip } from "../../utils/combat.calculator";
 import { getActiveWeaponDamageLabel } from "@/features/weapons/utils/weapon-mode.utils";
 import { isMonkClass } from "../../utils/unarmed-strike.utils";
-import { NumberStepper } from "../shared/NumberStepper";
+import { NumberStepper } from "../shared";
 import { HintTooltip } from "@/shared/components/HintTooltip";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";

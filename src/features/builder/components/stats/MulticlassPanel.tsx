@@ -1,7 +1,7 @@
 import { Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
-import { NumberStepper } from "../shared/NumberStepper";
+import { NumberStepper } from "../shared";
 import {
   buildClassLevelEntries,
   getMulticlassPrerequisiteFailures,

@@ -72,7 +72,7 @@ export function EffectSection({
       <div className="space-y-1.5 text-sm text-muted-foreground leading-relaxed">
         {lines.map((line, index) => (
           <p
-            key={index}
+            key={`${label}-line-${index}`}
             className={cn(line.startsWith("•") && "pl-3")}
           >
             <MaterialEffectHighlightText

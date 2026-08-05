@@ -1,6 +1,6 @@
 import { Info, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { NumberStepper } from "@/features/builder/components/shared/NumberStepper";
+import { NumberStepper } from "@/shared/components/NumberStepper";
 import { DiceEditor } from "./DiceEditor";
 import { calcSaveSuccessChance, formatPercent } from "../utils/damage-math.utils";
 import type {

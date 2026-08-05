@@ -268,7 +268,7 @@ function RulesTab() {
             <div className="space-y-2">
               {rule.content.map((line, i) => (
                 <p
-                  key={i}
+                  key={`${rule.name}-line-${i}`}
                   className="text-sm text-muted-foreground leading-relaxed"
                 >
                   <DndRichText text={line} />
@@ -288,7 +288,10 @@ function RulesTab() {
           </div>
           <div className="space-y-2">
             {inset.content.map((line, i) => (
-              <p key={i} className="text-sm text-amber-100/80 leading-relaxed">
+              <p
+                key={`${inset.name}-line-${i}`}
+                className="text-sm text-amber-100/80 leading-relaxed"
+              >
                 <DndRichText text={line} />
               </p>
             ))}
@@ -389,9 +392,9 @@ function ToolTab({
                   </td>
                 </tr>
               ) : (
-                filtered.map((row, i) => (
+                filtered.map((row) => (
                   <CraftRow
-                    key={i}
+                    key={comboRowKey(table.id, row)}
                     row={row}
                     hasCategory={table.hasCategory}
                     itemDescMap={itemDescMap}
@@ -563,9 +566,9 @@ function SearchResultsPanel({
                   </tr>
                 </thead>
                 <tbody>
-                  {groupResults.map(({ row }, i) => (
+                  {groupResults.map(({ row }) => (
                     <CraftRow
-                      key={i}
+                      key={comboRowKey(toolId, row)}
                       row={row}
                       hasCategory={hasCategory}
                       itemDescMap={itemDescMap}
@@ -582,6 +585,10 @@ function SearchResultsPanel({
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────
+
+function comboRowKey(tableId: string, row: ComboRow): string {
+  return `${tableId}-${row.name}-${row.item1}-${row.item2 ?? ""}`;
+}
 
 function getUniqueCategories(rows: ComboRow[]): string[] {
   const cats = new Set<string>();

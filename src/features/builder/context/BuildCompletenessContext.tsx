@@ -11,9 +11,7 @@ import { useCharacterBuilder } from "./CharacterBuilderContext";
 import { useBuilderInventory } from "./BuilderInventoryContext";
 import { useSelectedClass, useSelectedSubclass, useSelectedSpecies } from "../hooks/useBuilderSelections";
 import { useSelectedDndBackground } from "../hooks/useSelectedDndBackground";
-import { useOptionalFeatureSpellGrants } from "../hooks/useOptionalFeatureSpellGrants";
-import { useCantripPools } from "../hooks/useCantripPools";
-import { useSpellcasting } from "../hooks/useSpellcasting";
+import { useSpellcastingContext } from "./SpellcastingContext";
 import {
   evaluateBuildCompleteness,
   type BuildCompletenessInput,
@@ -45,38 +43,7 @@ export function BuildCompletenessProvider({
   const subclassData = useSelectedSubclass();
   const { species: speciesData } = useSelectedSpecies();
   const { dndBackground } = useSelectedDndBackground();
-  const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
-    builder.optionalFeatureSelections ?? {},
-    builder.character.level,
-    classData,
-    subclassData,
-  );
-  const { bonusPools: bonusCantripPools } = useCantripPools(
-    builder.optionalFeatureSelections ?? {},
-    classData,
-    subclassData,
-    builder.character.level,
-    {
-      speciesOriginFeat: builder.speciesOriginFeat,
-      backgroundOriginFeat: builder.backgroundOriginFeat,
-      speciesOriginFeatGrant: builder.speciesOriginFeatGrant,
-      backgroundOriginFeatGrant: builder.backgroundOriginFeatGrant,
-      featSelections: builder.featSelections,
-    },
-  );
-  const spellcasting = useSpellcasting(
-    classData,
-    subclassData,
-    builder.character.level,
-    builder.character.abilities,
-    builder.spellSelections ?? {},
-    builder.optionalFeatureSelections ?? {},
-    optionalFeatureSpellGrants,
-    builder.faction,
-    builder.character.level,
-    undefined,
-    bonusCantripPools,
-  );
+  const { spellcasting } = useSpellcastingContext();
 
   const input = useMemo(
     (): BuildCompletenessInput => ({

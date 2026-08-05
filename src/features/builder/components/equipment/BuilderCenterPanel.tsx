@@ -18,7 +18,6 @@ import {
   isMulticlassSubclassSlot,
   parseMulticlassClassSlotIndex,
   parseMulticlassSubclassSlotIndex,
-  buildClassLevelEntries,
 } from "../../utils/multiclass.utils";
 import {
   getProgressionPicks,
@@ -41,10 +40,8 @@ import { BackstoryNotesPanel } from "./BackstoryNotesPanel";
 import { FactionLibraryPanel } from "./library/FactionLibraryPanel";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { isOffHandSlotOccupied } from "@/features/weapons/utils/weapon-hands.utils";
-import { useSpellcasting } from "../../hooks/useSpellcasting";
-import { useOptionalFeatureSpellGrants } from "../../hooks/useOptionalFeatureSpellGrants";
+import { useSpellcastingContext } from "../../context/SpellcastingContext";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
-import { useCantripPools } from "../../hooks/useCantripPools";
 
 export function BuilderCenterPanel() {
   const {
@@ -114,47 +111,7 @@ export function BuilderCenterPanel() {
     loading: spellsLoading,
     spellLevelByName,
   } = useSpellCatalog();
-  const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
-    optionalFeatureSelections ?? {},
-    character.level,
-    classData,
-    subclassData,
-  );
-  const { bonusPools: bonusCantripPools } = useCantripPools(
-    optionalFeatureSelections ?? {},
-    classData,
-    subclassData,
-    primaryClassLevel,
-    {
-      speciesOriginFeat,
-      backgroundOriginFeat,
-      speciesOriginFeatGrant,
-      backgroundOriginFeatGrant,
-      featSelections,
-    },
-  );
-  const spellcastingInfo = useSpellcasting(
-    classData,
-    subclassData,
-    character.level,
-    character.abilities,
-    spellSelections ?? {},
-    optionalFeatureSelections ?? {},
-    optionalFeatureSpellGrants,
-    faction,
-    primaryClassLevel,
-    multiclassEnabled
-      ? buildClassLevelEntries(
-          classSelection,
-          classData,
-          primaryClassLevel,
-          subclass,
-          multiclassEntries,
-          multiclassClassData,
-        )
-      : undefined,
-    bonusCantripPools,
-  );
+  const { centerPanelSpellcasting: spellcastingInfo } = useSpellcastingContext();
 
   const optionalProgressions = useMemo(
     () =>

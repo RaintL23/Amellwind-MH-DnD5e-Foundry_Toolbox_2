@@ -156,25 +156,43 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     return result;
   }, [weaponRunes, armorRunes, trinket1Rune, trinket2Rune]);
 
+  const value = useMemo(
+    () => ({
+      weaponRarity,
+      armorRarity,
+      weaponRunes,
+      armorRunes,
+      trinket1Rune,
+      trinket2Rune,
+      setWeaponRarity,
+      setArmorRarity,
+      addRune,
+      removeRune,
+      clearBuild,
+      totalRunes,
+      isInBuild,
+      allBuildRunes,
+    }),
+    [
+      weaponRarity,
+      armorRarity,
+      weaponRunes,
+      armorRunes,
+      trinket1Rune,
+      trinket2Rune,
+      setWeaponRarity,
+      setArmorRarity,
+      addRune,
+      removeRune,
+      clearBuild,
+      totalRunes,
+      isInBuild,
+      allBuildRunes,
+    ],
+  );
+
   return (
-    <RuneBuildContext.Provider
-      value={{
-        weaponRarity,
-        armorRarity,
-        weaponRunes,
-        armorRunes,
-        trinket1Rune,
-        trinket2Rune,
-        setWeaponRarity,
-        setArmorRarity,
-        addRune,
-        removeRune,
-        clearBuild,
-        totalRunes,
-        isInBuild,
-        allBuildRunes,
-      }}
-    >
+    <RuneBuildContext.Provider value={value}>
       {children}
     </RuneBuildContext.Provider>
   );

@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, ReactNode, useCallback } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useMemo,
+} from "react";
 import { CartEntry } from "@/shared/types";
 
 interface CartContextValue {
@@ -45,10 +52,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const totalItems = items.reduce((sum, i) => sum + i.quantity, 0);
 
+  const value = useMemo(
+    () => ({ items, addItem, removeItem, updateQuantity, clearCart, totalItems }),
+    [items, addItem, removeItem, updateQuantity, clearCart, totalItems],
+  );
+
   return (
-    <CartContext.Provider
-      value={{ items, addItem, removeItem, updateQuantity, clearCart, totalItems }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );

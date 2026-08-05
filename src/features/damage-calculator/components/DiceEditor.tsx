@@ -1,7 +1,7 @@
 import { Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { NumberStepper } from "@/features/builder/components/shared/NumberStepper";
+import { NumberStepper } from "@/shared/components/NumberStepper";
 import { formatDamageTypeLabel } from "@/shared/utils/defense-grant.parser";
 import type { DamageType } from "@/shared/types";
 import {

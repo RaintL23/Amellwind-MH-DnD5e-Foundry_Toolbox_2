@@ -36,7 +36,7 @@ import {
   Store,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { useBuilderInventory } from "@/features/builder/context/BuilderInventoryContext";
+import { useBuilderInventoryOptional } from "@/features/builder/context/BuilderInventoryContext";
 import { ThemeSelector } from "@/components/layout/ThemeSelector";
 
 type NavItem = {
@@ -168,7 +168,8 @@ interface SidebarProps {
 }
 
 function BuilderBadge({ collapsed }: { collapsed: boolean }) {
-  const { totalItems } = useBuilderInventory();
+  const inventory = useBuilderInventoryOptional();
+  const totalItems = inventory?.totalItems ?? 0;
   if (totalItems === 0) return null;
   return (
     <span

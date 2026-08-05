@@ -152,7 +152,11 @@ export function RuneAssignmentPanel({ slot, onClose }: RuneAssignmentPanelProps)
       <div className="flex gap-2 flex-wrap">
         {runes.map((rune, i) => (
           <div
-            key={i}
+            key={
+              rune
+                ? `${rune.name}||${rune.monsterName}`
+                : `slot-${slot}-${i}`
+            }
             className={cn(
               "w-16 h-16 rounded-md border flex flex-col items-center justify-center gap-0.5 relative group",
               rune

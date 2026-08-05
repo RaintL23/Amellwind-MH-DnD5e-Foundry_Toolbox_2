@@ -1,6 +1,8 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
+import { BuilderRouteProviders } from "@/components/layout/BuilderRouteProviders";
+import { RuneBuildRouteLayout } from "@/components/layout/RuneBuildRouteLayout";
 import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { NotFound } from "@/components/layout/NotFound";
 import { SyncProvider } from "@/shared/context/SyncContext";
@@ -322,14 +324,26 @@ export default function App() {
                   }
                 />
               </Route>
-              <Route
-                path="runes"
-                element={
-                  <Suspense fallback={<PageFallback />}>
-                    <RuneList />
-                  </Suspense>
-                }
-              />
+              <Route element={<RuneBuildRouteLayout />}>
+                <Route
+                  path="runes"
+                  element={
+                    <Suspense fallback={<PageFallback />}>
+                      <RuneList />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="builder"
+                  element={
+                    <BuilderRouteProviders>
+                      <Suspense fallback={<PageFallback />}>
+                        <BuilderPage />
+                      </Suspense>
+                    </BuilderRouteProviders>
+                  }
+                />
+              </Route>
               <Route
                 path="material-effects"
                 element={
@@ -435,14 +449,6 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <HuntPage />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="builder"
-                element={
-                  <Suspense fallback={<PageFallback />}>
-                    <BuilderPage />
                   </Suspense>
                 }
               />

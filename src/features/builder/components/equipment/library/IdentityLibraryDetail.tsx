@@ -65,6 +65,7 @@ interface IdentityLibraryDetailProps {
 }
 
 function DetailTable({ caption, colLabels, rows }: SpeciesTable) {
+  const tableKey = caption ?? colLabels.join("-");
   return (
     <div className="my-2 overflow-x-auto rounded-md border border-border">
       {caption && (
@@ -87,9 +88,15 @@ function DetailTable({ caption, colLabels, rows }: SpeciesTable) {
         </thead>
         <tbody>
           {rows.map((row, i) => (
-            <tr key={i} className="border-b border-border/50 last:border-0">
+            <tr
+              key={`${tableKey}-${row[0] ?? i}-${i}`}
+              className="border-b border-border/50 last:border-0"
+            >
               {row.map((cell, j) => (
-                <td key={j} className="px-2 py-1.5 text-foreground/90">
+                <td
+                  key={`${colLabels[j] ?? j}-${cell}`}
+                  className="px-2 py-1.5 text-foreground/90"
+                >
                   {cell}
                 </td>
               ))}
@@ -143,7 +150,7 @@ function TraitList({
             </h4>
             {(trait.entries ?? []).map((paragraph, i) => (
               <p
-                key={i}
+                key={`${trait.name}-entry-${i}`}
                 className={cn(
                   "mb-1 text-xs leading-relaxed text-muted-foreground",
                   bodyClass,
@@ -153,7 +160,10 @@ function TraitList({
               </p>
             ))}
             {trait.tables?.map((table, i) => (
-              <DetailTable key={i} {...table} />
+              <DetailTable
+                key={table.caption ?? `${trait.name}-table-${i}`}
+                {...table}
+              />
             ))}
           </div>
         ))}
@@ -188,14 +198,17 @@ function BackgroundSectionBlock({
             </h4>
             {section.entries?.map((paragraph, i) => (
               <p
-                key={i}
+                key={`${section.name}-entry-${i}`}
                 className="mb-1 text-xs leading-relaxed text-muted-foreground"
               >
                 <DndRichText text={paragraph} />
               </p>
             ))}
             {section.tables?.map((table, i) => (
-              <DetailTable key={i} {...table} />
+              <DetailTable
+                key={table.caption ?? `${section.name}-table-${i}`}
+                {...table}
+              />
             ))}
           </div>
         ))}
@@ -245,7 +258,7 @@ function SpeciesLineageDescription({
       </h4>
       {activeLegacy.entries.map((paragraph, index) => (
         <p
-          key={index}
+          key={`${activeLegacy.name}-entry-${index}`}
           className="mb-1 text-xs leading-relaxed text-muted-foreground last:mb-0"
         >
           <DndRichText text={paragraph} />

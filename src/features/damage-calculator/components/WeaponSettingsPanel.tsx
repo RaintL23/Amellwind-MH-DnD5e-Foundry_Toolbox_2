@@ -1,4 +1,4 @@
-import { NumberStepper } from "@/features/builder/components/shared/NumberStepper";
+import { NumberStepper } from "@/shared/components/NumberStepper";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { formatDamageTypeLabel } from "@/shared/utils/defense-grant.parser";

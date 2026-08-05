@@ -15,6 +15,7 @@ import {
   getDndArmors,
   getDndWeapons,
 } from "@/features/dnd-items/services/dnd-equipment.service";
+import { getAllForgeWeapons } from "@/features/weapon-forge/services/weapon-forge.service";
 import { loadUseAmellwindHomebrew } from "../storage/builder.storage";
 import {
   classifyCartEntry,
@@ -60,6 +61,7 @@ interface BuilderInventoryContextValue {
   totalItems: number;
   equippableCount: number;
   isSyncing: boolean;
+  ensureWeaponCatalogsLoaded: () => void;
   getEntryKind: (entry: CartEntry) => CartItemKind;
   syncEquipmentCatalogs: (
     useAmellwindHomebrew: boolean,
@@ -90,8 +92,9 @@ export function BuilderInventoryProvider({
   const [trinkets, setTrinkets] = useState<string[]>([]);
   const [weaponCatalog, setWeaponCatalog] = useState<Weapon[]>([]);
   const [armorCatalog, setArmorCatalog] = useState<ArmorItem[]>(MH_ARMOR_CATALOG);
-  const [isSyncing, setIsSyncing] = useState(true);
+  const [isSyncing, setIsSyncing] = useState(false);
   const catalogRequestRef = useRef(0);
+  const catalogLoadedRef = useRef(false);
 
   const syncEquipmentCatalogs = useCallback(
     (useAmellwindHomebrew: boolean, prefer2024: boolean) => {
@@ -99,12 +102,16 @@ export function BuilderInventoryProvider({
       setIsSyncing(true);
       setWeaponCatalog([]);
       setArmorCatalog([]);
+      catalogLoadedRef.current = false;
 
       const load = useAmellwindHomebrew
-        ? getAllWeapons().then((weapons) => ({
-            weapons,
-            armors: MH_ARMOR_CATALOG,
-          }))
+        ? Promise.all([getAllForgeWeapons(), getAllWeapons()]).then(
+            ([forgeWeapons, agmhWeapons]) => ({
+              // Forge first so name lookups prefer curated/custom over AGMH base.
+              weapons: [...forgeWeapons, ...agmhWeapons],
+              armors: MH_ARMOR_CATALOG,
+            }),
+          )
         : Promise.all([
             getDndWeapons(prefer2024),
             getDndArmors(prefer2024),
@@ -115,6 +122,7 @@ export function BuilderInventoryProvider({
           if (catalogRequestRef.current !== requestId) return;
           setWeaponCatalog(weapons);
           setArmorCatalog(armors);
+          catalogLoadedRef.current = weapons.length > 0;
         })
         .finally(() => {
           if (catalogRequestRef.current === requestId) {
@@ -125,7 +133,8 @@ export function BuilderInventoryProvider({
     [],
   );
 
-  useEffect(() => {
+  const ensureWeaponCatalogsLoaded = useCallback(() => {
+    if (catalogLoadedRef.current) return;
     syncEquipmentCatalogs(loadUseAmellwindHomebrew(), true);
   }, [syncEquipmentCatalogs]);
 
@@ -175,24 +184,32 @@ export function BuilderInventoryProvider({
     );
   }, []);
 
-  const addEquipmentBundle = useCallback((entries: CartEntry[]) => {
-    if (entries.length === 0) return;
-    setItems((prev) => mergeCartEntries(prev, entries));
-  }, []);
+  const addEquipmentBundle = useCallback(
+    (entries: CartEntry[]) => {
+      if (entries.length === 0) return;
+      ensureWeaponCatalogsLoaded();
+      setItems((prev) => mergeCartEntries(prev, entries));
+    },
+    [ensureWeaponCatalogsLoaded],
+  );
 
-  const addToInventory = useCallback((entry: CartEntry) => {
-    setItems((prev) => {
-      if (entry.startingEquipmentId) {
-        if (
-          prev.some((i) => i.startingEquipmentId === entry.startingEquipmentId)
-        ) {
-          return prev;
+  const addToInventory = useCallback(
+    (entry: CartEntry) => {
+      ensureWeaponCatalogsLoaded();
+      setItems((prev) => {
+        if (entry.startingEquipmentId) {
+          if (
+            prev.some((i) => i.startingEquipmentId === entry.startingEquipmentId)
+          ) {
+            return prev;
+          }
+          return [...prev, { ...entry }];
         }
-        return [...prev, { ...entry }];
-      }
-      return mergeCartEntries(prev, [entry]);
-    });
-  }, []);
+        return mergeCartEntries(prev, [entry]);
+      });
+    },
+    [ensureWeaponCatalogsLoaded],
+  );
 
   const removeStartingEquipmentItem = useCallback((startingEquipmentId: string) => {
     setItems((prev) =>
@@ -216,9 +233,10 @@ export function BuilderInventoryProvider({
 
   const purchaseFromCart = useCallback(() => {
     if (cartItems.length === 0) return;
+    ensureWeaponCatalogsLoaded();
     setItems((prev) => mergeCartEntries(prev, cartItems));
     clearCart();
-  }, [cartItems, clearCart]);
+  }, [cartItems, clearCart, ensureWeaponCatalogsLoaded]);
 
   const contextValue = useMemo<BuilderInventoryContextValue>(
     () => ({
@@ -230,6 +248,7 @@ export function BuilderInventoryProvider({
       totalItems,
       equippableCount,
       isSyncing,
+      ensureWeaponCatalogsLoaded,
       getEntryKind,
       syncEquipmentCatalogs,
       addToInventory,
@@ -250,6 +269,7 @@ export function BuilderInventoryProvider({
       totalItems,
       equippableCount,
       isSyncing,
+      ensureWeaponCatalogsLoaded,
       getEntryKind,
       syncEquipmentCatalogs,
       addToInventory,
@@ -278,4 +298,8 @@ export function useBuilderInventory(): BuilderInventoryContextValue {
     );
   }
   return ctx;
+}
+
+export function useBuilderInventoryOptional(): BuilderInventoryContextValue | null {
+  return useContext(BuilderInventoryContext);
 }
