@@ -3,10 +3,21 @@ import {
   useContext,
   useState,
   useCallback,
+  useEffect,
   useMemo,
+  useRef,
   ReactNode,
 } from "react";
 import { Rune } from "@/shared/types";
+import { getAllRunes } from "../services/rune.service";
+import {
+  clearRuneBuild,
+  loadRuneBuild,
+  persistRuneBuild,
+  runeRefKey,
+  runeToRef,
+  type RuneRef,
+} from "../storage/rune-build.storage";
 
 export type ItemRarity = "common" | "uncommon" | "rare" | "very rare" | "legendary";
 export type BuildSlotType = "weapon" | "armor" | "trinket1" | "trinket2";
@@ -50,13 +61,83 @@ function makeSlots(rarity: ItemRarity): (Rune | null)[] {
   return Array<Rune | null>(RARITY_SLOTS[rarity]).fill(null);
 }
 
+/** Resolves persisted rune refs into full runes for a slot array of `size`. */
+function resolveSlots(
+  refs: (RuneRef | null)[],
+  size: number,
+  runeMap: Map<string, Rune>,
+): (Rune | null)[] {
+  return Array.from({ length: size }, (_, i) => {
+    const ref = refs[i];
+    return ref ? runeMap.get(runeRefKey(ref)) ?? null : null;
+  });
+}
+
 export function RuneBuildProvider({ children }: { children: ReactNode }) {
-  const [weaponRarity, setWeaponRarityState] = useState<ItemRarity>("common");
-  const [armorRarity, setArmorRarityState] = useState<ItemRarity>("common");
-  const [weaponRunes, setWeaponRunes] = useState<(Rune | null)[]>(makeSlots("common"));
-  const [armorRunes, setArmorRunes] = useState<(Rune | null)[]>(makeSlots("common"));
+  // Persisted build (loaded once). Rarities hydrate synchronously so slot sizes
+  // are correct on first render; the runes themselves resolve asynchronously.
+  const persistedRef = useRef(loadRuneBuild());
+  const persisted = persistedRef.current;
+  // Suppress persistence until the async rehydration settles, so the transient
+  // empty state doesn't overwrite a saved build.
+  const hydratedRef = useRef(!persisted);
+
+  const [weaponRarity, setWeaponRarityState] = useState<ItemRarity>(
+    persisted?.weaponRarity ?? "common",
+  );
+  const [armorRarity, setArmorRarityState] = useState<ItemRarity>(
+    persisted?.armorRarity ?? "common",
+  );
+  const [weaponRunes, setWeaponRunes] = useState<(Rune | null)[]>(() =>
+    makeSlots(persisted?.weaponRarity ?? "common"),
+  );
+  const [armorRunes, setArmorRunes] = useState<(Rune | null)[]>(() =>
+    makeSlots(persisted?.armorRarity ?? "common"),
+  );
   const [trinket1Rune, setTrinket1Rune] = useState<Rune | null>(null);
   const [trinket2Rune, setTrinket2Rune] = useState<Rune | null>(null);
+
+  useEffect(() => {
+    if (!persisted) return;
+    let cancelled = false;
+    getAllRunes()
+      .then((runes) => {
+        if (cancelled) return;
+        const runeMap = new Map<string, Rune>();
+        for (const rune of runes) runeMap.set(runeRefKey(rune), rune);
+        setWeaponRunes(
+          resolveSlots(
+            persisted.weaponRunes,
+            RARITY_SLOTS[persisted.weaponRarity],
+            runeMap,
+          ),
+        );
+        setArmorRunes(
+          resolveSlots(
+            persisted.armorRunes,
+            RARITY_SLOTS[persisted.armorRarity],
+            runeMap,
+          ),
+        );
+        setTrinket1Rune(
+          persisted.trinket1Rune
+            ? runeMap.get(runeRefKey(persisted.trinket1Rune)) ?? null
+            : null,
+        );
+        setTrinket2Rune(
+          persisted.trinket2Rune
+            ? runeMap.get(runeRefKey(persisted.trinket2Rune)) ?? null
+            : null,
+        );
+      })
+      .finally(() => {
+        if (!cancelled) hydratedRef.current = true;
+      });
+    return () => {
+      cancelled = true;
+    };
+    // Rehydrate exactly once on mount from the snapshot loaded above.
+  }, []);
 
   const setWeaponRarity = useCallback((r: ItemRarity) => {
     setWeaponRarityState(r);
@@ -155,6 +236,34 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     }
     return result;
   }, [weaponRunes, armorRunes, trinket1Rune, trinket2Rune]);
+
+  useEffect(() => {
+    if (!hydratedRef.current) return;
+    const isEmpty =
+      totalRunes === 0 &&
+      weaponRarity === "common" &&
+      armorRarity === "common";
+    if (isEmpty) {
+      clearRuneBuild();
+      return;
+    }
+    persistRuneBuild({
+      weaponRarity,
+      armorRarity,
+      weaponRunes: weaponRunes.map(runeToRef),
+      armorRunes: armorRunes.map(runeToRef),
+      trinket1Rune: runeToRef(trinket1Rune),
+      trinket2Rune: runeToRef(trinket2Rune),
+    });
+  }, [
+    weaponRarity,
+    armorRarity,
+    weaponRunes,
+    armorRunes,
+    trinket1Rune,
+    trinket2Rune,
+    totalRunes,
+  ]);
 
   const value = useMemo(
     () => ({
