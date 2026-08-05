@@ -11,6 +11,10 @@ export type {
   BuilderChoiceSnapshot,
   BuilderSnapshotEquipment,
 } from "./builder-snapshot";
+export { gatherBuilderSnapshot } from "./gather-builder-snapshot";
+export type { GatherBuilderSnapshotInventory } from "./gather-builder-snapshot";
+export { applyBuilderSnapshot } from "./apply-builder-snapshot";
+export type { ApplyBuilderSnapshotInventory } from "./apply-builder-snapshot";
 export {
   FOUNDRY_EXPORT_TARGET,
   getFoundryModuleRequirements,
