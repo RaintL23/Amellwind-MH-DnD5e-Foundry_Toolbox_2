@@ -1,4 +1,5 @@
 import { Class } from "@/shared/types";
+import { dedupeByNameWithVariants } from "@/shared/utils/dedupe-by-name.utils";
 import { getCasterLabel } from "../mappers/class.mapper";
 
 const CANONICAL_SOURCE_PRIORITY = ["XPHB", "PHB", "TCE", "XGE", "SCAG", "EGW"];
@@ -6,14 +7,6 @@ const CANONICAL_SOURCE_PRIORITY = ["XPHB", "PHB", "TCE", "XGE", "SCAG", "EGW"];
 function sourcePriority(source: string): number {
   const index = CANONICAL_SOURCE_PRIORITY.indexOf(source);
   return index === -1 ? CANONICAL_SOURCE_PRIORITY.length : index;
-}
-
-function pickCanonicalClass(group: Class[]): Class {
-  return [...group].sort((a, b) => {
-    const bySource = sourcePriority(a.source) - sourcePriority(b.source);
-    if (bySource !== 0) return bySource;
-    return a.source.localeCompare(b.source);
-  })[0];
 }
 
 function buildSearchText(group: Class[]): string {
@@ -32,28 +25,18 @@ function buildSearchText(group: Class[]): string {
 }
 
 export function dedupeClassesByName(classes: Class[]): Class[] {
-  const byName = new Map<string, Class[]>();
-
-  for (const cls of classes) {
-    const group = byName.get(cls.name) ?? [];
-    group.push(cls);
-    byName.set(cls.name, group);
-  }
-
-  return Array.from(byName.values()).map((group) => {
-    const canonical = pickCanonicalClass(group);
-    const variantSources = [...new Set(group.map((c) => c.source))].sort((a, b) =>
-      a.localeCompare(b),
-    );
-
-    return {
-      ...canonical,
-      variantCount: group.length,
-      variantSources,
-      searchText: buildSearchText(group),
-      /** Only the canonical variant's subclasses (PHB ≠ XPHB); searchText still indexes all */
-      subclasses: canonical.subclasses,
-    };
+  return dedupeByNameWithVariants(classes, {
+    sourcePriority: CANONICAL_SOURCE_PRIORITY,
+    buildSearchText,
+    /** Only the canonical variant's subclasses (PHB ≠ XPHB); searchText still indexes all */
+    mergeExtra: (group) => {
+      const canonical = [...group].sort((a, b) => {
+        const bySource = sourcePriority(a.source) - sourcePriority(b.source);
+        if (bySource !== 0) return bySource;
+        return a.source.localeCompare(b.source);
+      })[0];
+      return { subclasses: canonical.subclasses };
+    },
   });
 }
 

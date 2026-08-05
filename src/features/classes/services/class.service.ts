@@ -6,13 +6,14 @@ import {
 } from "@/shared/constants/api.constants";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
 import {
-  getSourceCatalog,
-  isOnDemandBrewSourceKind,
-} from "@/shared/services/source-catalog.service";
+  createEntityService,
+} from "@/shared/services/create-entity-service";
+import { getSourceCatalog } from "@/shared/services/source-catalog.service";
 import {
   collectUaPropEntries,
   loadUaBrewDocuments,
 } from "@/shared/services/ua-brew.service";
+import { createUaSourceLoader } from "@/shared/services/ua-source-loader.utils";
 import { mapClass } from "../mappers/class.mapper";
 import type {
   ClassFileDocument,
@@ -24,12 +25,16 @@ import { dedupeClassesByName } from "../utils/class-dedupe.utils";
 /** Bump when mapped Class shape changes so in-memory cache is rebuilt. */
 const CLASS_CACHE_VERSION = 20;
 
-let cache: Class[] | null = null;
-let cacheVersion: number | null = null;
-let listCache: Class[] | null = null;
-let byNameIndex: Map<string, Class[]> | null = null;
 let lookupCache: SubclassLookup | null = null;
 const loadedUaSources = new Set<string>();
+let mappedCacheVersion: number | null = null;
+
+function ensureCacheVersion(): void {
+  if (mappedCacheVersion !== CLASS_CACHE_VERSION) {
+    service.clearCache();
+    mappedCacheVersion = CLASS_CACHE_VERSION;
+  }
+}
 
 async function getSubclassLookup(): Promise<SubclassLookup> {
   if (lookupCache) return lookupCache;
@@ -57,86 +62,75 @@ async function loadOfficialClassIndex(): Promise<Record<string, string>> {
   }
 }
 
-async function loadRawClassDocuments(): Promise<ClassFileDocument[]> {
-  const index = await loadOfficialClassIndex();
-  const files = Object.values(index);
-  const results = await Promise.all(
-    files.map((file) =>
-      fetchFiveToolsJson<ClassFileDocument>(
-        `${CLASSES_BASE_URL}/${file}`,
-        `class/${file}`,
-      ).catch(() => ({}) as ClassFileDocument),
-    ),
-  );
+const service = createEntityService<Class, Class>({
+  loadRaw: async () => {
+    await getSubclassLookup();
 
-  if (loadedUaSources.size === 0) return results;
+    const index = await loadOfficialClassIndex();
+    const files = Object.values(index);
+    const results = await Promise.all(
+      files.map((file) =>
+        fetchFiveToolsJson<ClassFileDocument>(
+          `${CLASSES_BASE_URL}/${file}`,
+          `class/${file}`,
+        ).catch(() => ({}) as ClassFileDocument),
+      ),
+    );
 
-  const docs = await loadUaBrewDocuments(loadedUaSources);
-  const uaDocs: ClassFileDocument[] = [
-    {
-      class: collectUaPropEntries(docs, "class"),
-      subclass: collectUaPropEntries(docs, "subclass"),
-      classFeature: collectUaPropEntries(docs, "classFeature"),
-      subclassFeature: collectUaPropEntries(docs, "subclassFeature"),
-    },
-  ];
+    let documents = results;
+    if (loadedUaSources.size > 0) {
+      const docs = await loadUaBrewDocuments(loadedUaSources);
+      const uaDocs: ClassFileDocument[] = [
+        {
+          class: collectUaPropEntries(docs, "class"),
+          subclass: collectUaPropEntries(docs, "subclass"),
+          classFeature: collectUaPropEntries(docs, "classFeature"),
+          subclassFeature: collectUaPropEntries(docs, "subclassFeature"),
+        },
+      ];
+      documents = [...results, ...uaDocs];
+    }
 
-  return [...results, ...uaDocs];
-}
+    const classes = documents.flatMap((doc) => doc.class ?? []);
+    const subclasses = documents.flatMap((doc) => doc.subclass ?? []);
+    const classFeatures = documents.flatMap((doc) => doc.classFeature ?? []);
+    const subclassFeatures = documents.flatMap(
+      (doc) => doc.subclassFeature ?? [],
+    );
 
-function buildIndexes(all: Class[]): void {
-  const byName = new Map<string, Class[]>();
-  for (const cls of all) {
-    const group = byName.get(cls.name) ?? [];
-    group.push(cls);
-    byName.set(cls.name, group);
-  }
-  byNameIndex = byName;
-  listCache = dedupeClassesByName(all);
-}
+    const processed = processAllClasses(
+      classes,
+      subclasses,
+      classFeatures,
+      subclassFeatures,
+    );
+
+    return processed.map((c) => mapClass(c, classFeatures, subclassFeatures));
+  },
+  map: (cls) => cls,
+  idOf: (cls) => cls.id,
+  nameOf: (cls) => cls.name,
+  dedupe: dedupeClassesByName,
+});
 
 export async function getAllClasses(): Promise<Class[]> {
-  if (cache && cacheVersion === CLASS_CACHE_VERSION) return cache;
-
-  await getSubclassLookup();
-
-  const documents = await loadRawClassDocuments();
-
-  const classes = documents.flatMap((doc) => doc.class ?? []);
-  const subclasses = documents.flatMap((doc) => doc.subclass ?? []);
-  const classFeatures = documents.flatMap((doc) => doc.classFeature ?? []);
-  const subclassFeatures = documents.flatMap(
-    (doc) => doc.subclassFeature ?? [],
-  );
-
-  const processed = processAllClasses(
-    classes,
-    subclasses,
-    classFeatures,
-    subclassFeatures,
-  );
-
-  cache = processed.map((c) =>
-    mapClass(c, classFeatures, subclassFeatures),
-  );
-  cacheVersion = CLASS_CACHE_VERSION;
-  buildIndexes(cache);
-  return cache;
+  ensureCacheVersion();
+  return service.getAll();
 }
 
 export async function getListClasses(): Promise<Class[]> {
-  await getAllClasses();
-  return listCache ?? [];
+  ensureCacheVersion();
+  return service.getList();
 }
 
 export async function getClassesByName(name: string): Promise<Class[]> {
-  await getAllClasses();
-  return byNameIndex?.get(name) ?? [];
+  ensureCacheVersion();
+  return service.getByName(name);
 }
 
 export async function getClassById(id: string): Promise<Class | undefined> {
-  const all = await getAllClasses();
-  return all.find((c) => c.id === id);
+  ensureCacheVersion();
+  return service.getById(id);
 }
 
 export async function getSubclassLookupData(): Promise<SubclassLookup> {
@@ -156,20 +150,17 @@ export function resolveSubclassDisplayName(
   );
 }
 
-export async function ensureClassUaSourcesLoaded(
-  sourceCodes: string[],
-): Promise<boolean> {
-  const catalog = await getSourceCatalog();
-  const needed = sourceCodes.filter((code) => {
-    const kind = catalog.get(code)?.kind;
-    return isOnDemandBrewSourceKind(kind) && !loadedUaSources.has(code);
-  });
-  if (needed.length === 0) return false;
-  for (const code of needed) loadedUaSources.add(code);
-  clearClassCache();
-  await getAllClasses();
-  return true;
-}
+export const ensureClassUaSourcesLoaded = createUaSourceLoader({
+  loadedUaSources,
+  clearCache: () => {
+    service.clearCache();
+    lookupCache = null;
+  },
+  reload: async () => {
+    ensureCacheVersion();
+    return service.getAll();
+  },
+});
 
 export async function getClassFilterSourceCodes(): Promise<string[]> {
   const [catalog, list] = await Promise.all([
@@ -193,9 +184,7 @@ export async function getClassFilterSourceCodes(): Promise<string[]> {
 }
 
 export function clearClassCache(): void {
-  cache = null;
-  cacheVersion = null;
-  listCache = null;
-  byNameIndex = null;
+  service.clearCache();
+  mappedCacheVersion = null;
   lookupCache = null;
 }
