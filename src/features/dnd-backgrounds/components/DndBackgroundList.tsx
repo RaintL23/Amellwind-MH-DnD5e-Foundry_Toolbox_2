@@ -1,5 +1,5 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import type { DndBackground } from "@/shared/types";
 import { DND_BACKGROUND_EDITION_LABELS } from "@/shared/types";
 import { ScrollText } from "lucide-react";
@@ -8,22 +8,13 @@ import {
   getDndBackgroundsByName,
   getListDndBackgrounds,
 } from "../services/dnd-background.service";
-import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
-import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
-import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
+import { useCompendiumListPage } from "@/shared/hooks/useCompendiumListPage";
 import {
   ListSearchWithFilters,
   type ListFilterValues,
 } from "@/shared/components/list-filters";
 import {
-  buildSourcesFilterSection,
-  entityMatchesSourceFilter,
-} from "@/shared/utils/compendium-source-filter.utils";
-import {
   collectEntitySources,
-  defaultOfficialSourceCodes,
 } from "@/shared/services/source-catalog.service";
 import { DndBackgroundDataTable } from "./DndBackgroundDataTable";
 import { DndBackgroundDetailDialog } from "./DndBackgroundDetailDialog";
@@ -33,61 +24,44 @@ const EDITION_OPTIONS = (
 ).map(([value, label]) => ({ value, label }));
 
 export function DndBackgroundList() {
-  const [backgrounds, setBackgrounds] = useState<DndBackground[]>([]);
-  const [listBackgrounds, setListBackgrounds] = useState<DndBackground[]>([]);
-  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<DndBackground | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState<DndBackground[]>([]);
-  const bookNames = useBookSourceNames();
-  const catalog = useSourceCatalog();
-
-  const { q, getAll, patchFilters, ensureMultiIfEmpty } =
-    useListSessionFilters({
+  const {
+    all: backgrounds,
+    list: listBackgrounds,
+    loading,
+    getAll,
+    patchFilters,
+    sourceFilter,
+    sourceSection,
+    matchesSourceFilter,
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    dialog,
+  } = useCompendiumListPage<DndBackground>({
+    session: {
       listId: "dnd-backgrounds",
       multiKeys: ["ed", "src"],
       urlPreserveKeys: ["background"],
-    });
-  const { value: backgroundParam, setValue: setBackgroundParam } =
-    useListItemUrlParam("background");
+    },
+    load: async () => {
+      const [all, list] = await Promise.all([
+        getAllDndBackgrounds(),
+        getListDndBackgrounds(),
+      ]);
+      return {
+        all,
+        list,
+        filterSourceCodes: collectEntitySources(list),
+      };
+    },
+    urlDialog: {
+      paramKey: "background",
+      getVariantsByName: getDndBackgroundsByName,
+    },
+  });
+
   const editions = getAll("ed");
-  const sourceFilter = getAll("src");
-
-  const refresh = useCallback(async () => {
-    const [all, list] = await Promise.all([
-      getAllDndBackgrounds(),
-      getListDndBackgrounds(),
-    ]);
-    setBackgrounds(all);
-    setListBackgrounds(list);
-    setFilterSourceCodes(collectEntitySources(list));
-  }, []);
-
-  useEffect(() => {
-    refresh().finally(() => setLoading(false));
-  }, [refresh]);
-
-  useEffect(() => {
-    if (sourceFilter.length > 0 || catalog.size === 0 || filterSourceCodes.length === 0) {
-      return;
-    }
-    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
-    if (defaults.length === 0) return;
-    ensureMultiIfEmpty("src", defaults);
-  }, [catalog, filterSourceCodes, sourceFilter.length, ensureMultiIfEmpty]);
-
-  const commitSearch = useCallback(
-    (q: string) => patchFilters({ q }),
-    [patchFilters],
-  );
-  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(q, commitSearch);
-
-  const sourceSection = useMemo(
-    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
-    [filterSourceCodes, catalog, bookNames],
-  );
 
   const filterSections = useMemo(
     () => [
@@ -124,70 +98,15 @@ export function DndBackgroundList() {
     }
 
     if (sourceFilter.length > 0) {
-      result = result.filter((bg) =>
-        entityMatchesSourceFilter(bg, sourceFilter, catalog, bookNames),
-      );
+      result = result.filter((bg) => matchesSourceFilter(bg, sourceFilter));
     }
 
     return result;
-  }, [listBackgrounds, appliedSearch, editions, sourceFilter, catalog, bookNames]);
-
-  const openBackground = useCallback(
-    (background: DndBackground) => {
-      setSelected(background);
-      setDialogOpen(true);
-      setBackgroundParam(background.name);
-      void getDndBackgroundsByName(background.name).then(setSelectedVariants);
-    },
-    [setBackgroundParam],
-  );
-
-  useEffect(() => {
-    if (!backgroundParam) {
-      setDialogOpen(false);
-      setSelected(null);
-      setSelectedVariants([]);
-      return;
-    }
-    if (loading) return;
-
-    const decoded = decodeURIComponent(backgroundParam);
-    const found =
-      listBackgrounds.find(
-        (background) => background.name.toLowerCase() === decoded.toLowerCase(),
-      ) ??
-      backgrounds.find(
-        (background) => background.name.toLowerCase() === decoded.toLowerCase(),
-      );
-    if (!found || (selected?.name === found.name && dialogOpen)) return;
-
-    setSelected(found);
-    setDialogOpen(true);
-    void getDndBackgroundsByName(found.name).then(setSelectedVariants);
-  }, [
-    backgroundParam,
-    loading,
-    listBackgrounds,
-    backgrounds,
-    selected?.name,
-    dialogOpen,
-  ]);
+  }, [listBackgrounds, appliedSearch, editions, sourceFilter, matchesSourceFilter]);
 
   const handleSelect = useCallback(
-    (background: DndBackground) => openBackground(background),
-    [openBackground],
-  );
-
-  const handleDialogOpenChange = useCallback(
-    (open: boolean) => {
-      setDialogOpen(open);
-      if (!open) {
-        setSelected(null);
-        setSelectedVariants([]);
-        setBackgroundParam(null);
-      }
-    },
-    [setBackgroundParam],
+    (background: DndBackground) => dialog?.openItem(background),
+    [dialog],
   );
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -255,13 +174,13 @@ export function DndBackgroundList() {
         )}
       </div>
 
-      {dialogOpen && selected && (
+      {dialog?.dialogOpen && dialog.selected && (
         <DndBackgroundDetailDialog
-          key={selected.id}
-          background={selected}
-          variants={selectedVariants}
-          open={dialogOpen}
-          onOpenChange={handleDialogOpenChange}
+          key={dialog.selected.id}
+          background={dialog.selected}
+          variants={dialog.selectedVariants}
+          open={dialog.dialogOpen}
+          onOpenChange={dialog.handleDialogOpenChange}
         />
       )}
     </div>

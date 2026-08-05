@@ -1,5 +1,5 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import type { DndRace } from "@/shared/types";
 import { DND_RACE_KIND_LABELS } from "@/shared/types";
 import { Users } from "lucide-react";
@@ -10,20 +10,11 @@ import {
   getDndRacesByName,
   getListDndRaces,
 } from "../services/dnd-race.service";
-import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
-import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
-import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
+import { useCompendiumListPage } from "@/shared/hooks/useCompendiumListPage";
 import {
   ListSearchWithFilters,
   type ListFilterValues,
 } from "@/shared/components/list-filters";
-import {
-  buildSourcesFilterSection,
-  entityMatchesSourceFilter,
-} from "@/shared/utils/compendium-source-filter.utils";
-import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
 import { SIZE_FILTER_OPTIONS } from "@/features/bestiary/components/bestiary-columns";
 import { DndRaceDataTable } from "./DndRaceDataTable";
 import { DndRaceDetailDialog } from "@/features/dnd-races/components/DndRaceDetailDialog";
@@ -35,68 +26,43 @@ const KIND_OPTIONS = (
 const SIZE_OPTIONS = SIZE_FILTER_OPTIONS.filter((o) => o.value !== "");
 
 export function DndRaceList() {
-  const [races, setRaces] = useState<DndRace[]>([]);
-  const [listRaces, setListRaces] = useState<DndRace[]>([]);
-  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<DndRace | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState<DndRace[]>([]);
-  const bookNames = useBookSourceNames();
-  const catalog = useSourceCatalog();
-
-  const { q, getAll, patchFilters, ensureMultiIfEmpty } = useListSessionFilters({
-    listId: "dnd-races",
-    multiKeys: ["kind", "sz", "src"],
-    urlPreserveKeys: ["race"],
+  const {
+    all: races,
+    list: listRaces,
+    loading,
+    getAll,
+    patchFilters,
+    sourceFilter,
+    sourceSection,
+    matchesSourceFilter,
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    dialog,
+  } = useCompendiumListPage<DndRace>({
+    session: {
+      listId: "dnd-races",
+      multiKeys: ["kind", "sz", "src"],
+      urlPreserveKeys: ["race"],
+    },
+    load: async () => {
+      const [all, list, codes] = await Promise.all([
+        getAllDndRaces(),
+        getListDndRaces(),
+        getDndRaceFilterSourceCodes(),
+      ]);
+      return { all, list, filterSourceCodes: codes };
+    },
+    ensureSourcesLoaded: (sources) => ensureDndRaceUaSourcesLoaded(sources),
+    urlDialog: {
+      paramKey: "race",
+      getVariantsByName: getDndRacesByName,
+    },
   });
-  const { value: raceParam, setValue: setRaceParam } = useListItemUrlParam("race");
+
   const kinds = getAll("kind");
   const sizes = getAll("sz");
-  const sourceFilter = getAll("src");
-
-  const refresh = useCallback(async () => {
-    const [all, list, codes] = await Promise.all([
-      getAllDndRaces(),
-      getListDndRaces(),
-      getDndRaceFilterSourceCodes(),
-    ]);
-    setRaces(all);
-    setListRaces(list);
-    setFilterSourceCodes(codes);
-  }, []);
-
-  useEffect(() => {
-    refresh().finally(() => setLoading(false));
-  }, [refresh]);
-
-  useEffect(() => {
-    if (sourceFilter.length > 0 || catalog.size === 0 || filterSourceCodes.length === 0) {
-      return;
-    }
-    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
-    if (defaults.length === 0) return;
-    ensureMultiIfEmpty("src", defaults);
-  }, [catalog, filterSourceCodes, sourceFilter.length, ensureMultiIfEmpty]);
-
-  useEffect(() => {
-    if (sourceFilter.length === 0) return;
-    void ensureDndRaceUaSourcesLoaded(sourceFilter).then((changed) => {
-      if (changed) void refresh();
-    });
-  }, [sourceFilter, refresh]);
-
-  const commitSearch = useCallback(
-    (q: string) => patchFilters({ q }),
-    [patchFilters],
-  );
-  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(q, commitSearch);
-
-  const sourceSection = useMemo(
-    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
-    [filterSourceCodes, catalog, bookNames],
-  );
 
   const filterSections = useMemo(
     () => [
@@ -143,59 +109,15 @@ export function DndRaceList() {
     }
 
     if (sourceFilter.length > 0) {
-      result = result.filter((race) =>
-        entityMatchesSourceFilter(race, sourceFilter, catalog, bookNames),
-      );
+      result = result.filter((race) => matchesSourceFilter(race, sourceFilter));
     }
 
     return result;
-  }, [listRaces, appliedSearch, kinds, sizes, sourceFilter, catalog, bookNames]);
-
-  const openRace = useCallback(
-    (race: DndRace) => {
-      setSelected(race);
-      setDialogOpen(true);
-      setRaceParam(race.name);
-      void getDndRacesByName(race.name).then(setSelectedVariants);
-    },
-    [setRaceParam],
-  );
-
-  useEffect(() => {
-    if (!raceParam) {
-      setDialogOpen(false);
-      setSelected(null);
-      setSelectedVariants([]);
-      return;
-    }
-    if (loading) return;
-
-    const decoded = decodeURIComponent(raceParam);
-    const found =
-      listRaces.find((race) => race.name.toLowerCase() === decoded.toLowerCase()) ??
-      races.find((race) => race.name.toLowerCase() === decoded.toLowerCase());
-    if (!found || (selected?.name === found.name && dialogOpen)) return;
-
-    setSelected(found);
-    setDialogOpen(true);
-    void getDndRacesByName(found.name).then(setSelectedVariants);
-  }, [raceParam, loading, listRaces, races, selected?.name, dialogOpen]);
+  }, [listRaces, appliedSearch, kinds, sizes, sourceFilter, matchesSourceFilter]);
 
   const handleSelect = useCallback(
-    (race: DndRace) => openRace(race),
-    [openRace],
-  );
-
-  const handleDialogOpenChange = useCallback(
-    (open: boolean) => {
-      setDialogOpen(open);
-      if (!open) {
-        setSelected(null);
-        setSelectedVariants([]);
-        setRaceParam(null);
-      }
-    },
-    [setRaceParam],
+    (race: DndRace) => dialog?.openItem(race),
+    [dialog],
   );
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -259,13 +181,13 @@ export function DndRaceList() {
         )}
       </div>
 
-      {dialogOpen && selected && (
+      {dialog?.dialogOpen && dialog.selected && (
         <DndRaceDetailDialog
-          key={selected.id}
-          race={selected}
-          variants={selectedVariants}
-          open={dialogOpen}
-          onOpenChange={handleDialogOpenChange}
+          key={dialog.selected.id}
+          race={dialog.selected}
+          variants={dialog.selectedVariants}
+          open={dialog.dialogOpen}
+          onOpenChange={dialog.handleDialogOpenChange}
         />
       )}
     </div>

@@ -8,18 +8,9 @@ import {
   getDndFeatsByName,
   getListDndFeats,
 } from "../services/dnd-feat.service";
-import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
-import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
-import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
+import { useCompendiumListPage } from "@/shared/hooks/useCompendiumListPage";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
-import {
-  buildSourcesFilterSection,
-  entityMatchesSourceFilter,
-} from "@/shared/utils/compendium-source-filter.utils";
-import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
 import { DndFeatCard } from "./DndFeatCard";
 import { DndFeatDetailDialog } from "./DndFeatDetailDialog";
 import { Pagination } from "@/components/ui/pagination";
@@ -42,70 +33,45 @@ const FEAT_TYPE_OPTIONS = [
 const DND_FEAT_PAGE_SIZE = 30;
 
 export function DndFeatList() {
-  const [feats, setFeats] = useState<DndFeat[]>([]);
-  const [listFeats, setListFeats] = useState<DndFeat[]>([]);
-  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const { q, getString, getAll, patchFilters, ensureMultiIfEmpty } =
-    useListSessionFilters({
+  const {
+    all: feats,
+    list: listFeats,
+    loading,
+    getString,
+    patchFilters,
+    sourceFilter,
+    sourceSection,
+    matchesSourceFilter,
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    dialog,
+  } = useCompendiumListPage<DndFeat>({
+    session: {
       listId: "dnd-feats",
       stringKeys: ["q", "filter"],
       multiKeys: ["src"],
       urlPreserveKeys: ["feat"],
-    });
-  const { value: featParam, setValue: setFeatParam } = useListItemUrlParam("feat");
+    },
+    load: async () => {
+      const [all, list, codes] = await Promise.all([
+        getAllDndFeats(),
+        getListDndFeats(),
+        getDndFeatFilterSourceCodes(),
+      ]);
+      return { all, list, filterSourceCodes: codes };
+    },
+    ensureSourcesLoaded: (sources) => ensureDndFeatUaSourcesLoaded(sources),
+    urlDialog: {
+      paramKey: "feat",
+      getVariantsByName: getDndFeatsByName,
+    },
+  });
+
   const filter = getString("filter") as DndFeatFilter;
-  const sourceFilter = getAll("src");
-  const [selected, setSelected] = useState<DndFeat | null>(null);
-  const [selectedVariants, setSelectedVariants] = useState<DndFeat[]>([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DND_FEAT_PAGE_SIZE);
-  const bookNames = useBookSourceNames();
-  const catalog = useSourceCatalog();
-
-  const refresh = useCallback(async () => {
-    const [all, list, codes] = await Promise.all([
-      getAllDndFeats(),
-      getListDndFeats(),
-      getDndFeatFilterSourceCodes(),
-    ]);
-    setFeats(all);
-    setListFeats(list);
-    setFilterSourceCodes(codes);
-  }, []);
-
-  useEffect(() => {
-    refresh().finally(() => setLoading(false));
-  }, [refresh]);
-
-  useEffect(() => {
-    if (sourceFilter.length > 0 || catalog.size === 0 || filterSourceCodes.length === 0) {
-      return;
-    }
-    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
-    if (defaults.length === 0) return;
-    ensureMultiIfEmpty("src", defaults);
-  }, [catalog, filterSourceCodes, sourceFilter.length, ensureMultiIfEmpty]);
-
-  useEffect(() => {
-    if (sourceFilter.length === 0) return;
-    void ensureDndFeatUaSourcesLoaded(sourceFilter).then((changed) => {
-      if (changed) void refresh();
-    });
-  }, [sourceFilter, refresh]);
-
-  const commitSearch = useCallback(
-    (q: string) => patchFilters({ q }),
-    [patchFilters],
-  );
-  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(q, commitSearch);
-
-  const sourceSection = useMemo(
-    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
-    [filterSourceCodes, catalog, bookNames],
-  );
 
   const filterSections = useMemo(
     () => [
@@ -136,9 +102,7 @@ export function DndFeatList() {
     }
 
     if (sourceFilter.length > 0) {
-      result = result.filter((f) =>
-        entityMatchesSourceFilter(f, sourceFilter, catalog, bookNames),
-      );
+      result = result.filter((f) => matchesSourceFilter(f, sourceFilter));
     }
 
     if (filter === "origin") {
@@ -152,7 +116,7 @@ export function DndFeatList() {
     }
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [listFeats, appliedSearch, filter, sourceFilter, catalog, bookNames]);
+  }, [listFeats, appliedSearch, filter, sourceFilter, matchesSourceFilter]);
 
   useEffect(() => {
     setPage(1);
@@ -165,51 +129,9 @@ export function DndFeatList() {
     [filtered, safePage, pageSize],
   );
 
-  const openFeat = useCallback(
-    (feat: DndFeat) => {
-      setSelected(feat);
-      setDialogOpen(true);
-      setFeatParam(feat.name);
-      void getDndFeatsByName(feat.name).then(setSelectedVariants);
-    },
-    [setFeatParam],
-  );
-
-  useEffect(() => {
-    if (!featParam) {
-      setDialogOpen(false);
-      setSelected(null);
-      setSelectedVariants([]);
-      return;
-    }
-    if (loading) return;
-
-    const decoded = decodeURIComponent(featParam);
-    const found =
-      listFeats.find((feat) => feat.name.toLowerCase() === decoded.toLowerCase()) ??
-      feats.find((feat) => feat.name.toLowerCase() === decoded.toLowerCase());
-    if (!found || (selected?.name === found.name && dialogOpen)) return;
-
-    setSelected(found);
-    setDialogOpen(true);
-    void getDndFeatsByName(found.name).then(setSelectedVariants);
-  }, [featParam, loading, listFeats, feats, selected?.name, dialogOpen]);
-
   const handleSelect = useCallback(
-    (feat: DndFeat) => openFeat(feat),
-    [openFeat],
-  );
-
-  const handleDialogOpenChange = useCallback(
-    (open: boolean) => {
-      setDialogOpen(open);
-      if (!open) {
-        setSelected(null);
-        setSelectedVariants([]);
-        setFeatParam(null);
-      }
-    },
-    [setFeatParam],
+    (feat: DndFeat) => dialog?.openItem(feat),
+    [dialog],
   );
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -289,13 +211,13 @@ export function DndFeatList() {
         </div>
       )}
 
-      {dialogOpen && selected && (
+      {dialog?.dialogOpen && dialog.selected && (
         <DndFeatDetailDialog
-          key={selected.id}
-          feat={selected}
-          variants={selectedVariants}
-          open={dialogOpen}
-          onOpenChange={handleDialogOpenChange}
+          key={dialog.selected.id}
+          feat={dialog.selected}
+          variants={dialog.selectedVariants}
+          open={dialog.dialogOpen}
+          onOpenChange={dialog.handleDialogOpenChange}
         />
       )}
     </div>

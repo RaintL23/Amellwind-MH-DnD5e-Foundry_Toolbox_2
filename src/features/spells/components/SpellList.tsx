@@ -1,5 +1,5 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import { Spell } from "@/shared/types";
 import {
   ensureSpellUaSourcesLoaded,
@@ -8,20 +8,12 @@ import {
   getSpellFilterSourceCodes,
   getSpellsByName,
 } from "../services/spell.service";
-import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
-import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
-import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
+import { useCompendiumListPage } from "@/shared/hooks/useCompendiumListPage";
 import {
   ListSearchWithFilters,
   type ListFilterValues,
 } from "@/shared/components/list-filters";
-import {
-  buildSourcesFilterSection,
-  entityMatchesSourceFilter,
-} from "@/shared/utils/compendium-source-filter.utils";
-import { defaultOfficialSourceCodes } from "@/shared/services/source-catalog.service";
+import { entityMatchesSourceFilter } from "@/shared/utils/compendium-source-filter.utils";
 import { SPELL_LIST_FILTER_CLASSES } from "../utils/spell-class.constants";
 import {
   buildSpellFacetFilterSections,
@@ -37,102 +29,46 @@ import { Sparkles } from "lucide-react";
 const SPELL_URL_PARAM = "spell";
 
 export function SpellList() {
-  const [spells, setSpells] = useState<Spell[]>([]);
-  const [listSpells, setListSpells] = useState<Spell[]>([]);
-  const [filterSourceCodes, setFilterSourceCodes] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<Spell | null>(null);
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [selectedVariants, setSelectedVariants] = useState<Spell[]>([]);
-  const bookNames = useBookSourceNames();
-  const catalog = useSourceCatalog();
-
-  const { q, getAll, patchFilters, ensureMultiIfEmpty } = useListSessionFilters({
-    listId: "spells",
-    multiKeys: SPELL_LIST_MULTI_KEYS,
-    urlPreserveKeys: [SPELL_URL_PARAM],
+  const {
+    all: spells,
+    list: listSpells,
+    loading,
+    getAll,
+    patchFilters,
+    sourceSection,
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    bookNames,
+    catalog,
+    dialog,
+  } = useCompendiumListPage<Spell>({
+    session: {
+      listId: "spells",
+      multiKeys: SPELL_LIST_MULTI_KEYS,
+      urlPreserveKeys: [SPELL_URL_PARAM],
+    },
+    load: async () => {
+      const [all, list, codes] = await Promise.all([
+        getAllSpells(),
+        getListSpells(),
+        getSpellFilterSourceCodes(),
+      ]);
+      return { all, list, filterSourceCodes: codes };
+    },
+    ensureSourcesLoaded: (sources) => ensureSpellUaSourcesLoaded(sources),
+    urlDialog: {
+      paramKey: SPELL_URL_PARAM,
+      getVariantsByName: getSpellsByName,
+    },
   });
-  const { value: spellParam, setValue: setSpellParam } =
-    useListItemUrlParam(SPELL_URL_PARAM);
 
   const multi = useMemo(() => {
     const out = {} as Record<SpellListMultiKey, string[]>;
     for (const key of SPELL_LIST_MULTI_KEYS) out[key] = getAll(key);
     return out;
   }, [getAll]);
-
-  const refresh = useCallback(async () => {
-    const [all, list, codes] = await Promise.all([
-      getAllSpells(),
-      getListSpells(),
-      getSpellFilterSourceCodes(),
-    ]);
-    setSpells(all);
-    setListSpells(list);
-    setFilterSourceCodes(codes);
-  }, []);
-
-  useEffect(() => {
-    refresh().finally(() => setLoading(false));
-  }, [refresh]);
-
-  useEffect(() => {
-    if (
-      multi.src.length > 0 ||
-      catalog.size === 0 ||
-      filterSourceCodes.length === 0
-    ) {
-      return;
-    }
-    const defaults = defaultOfficialSourceCodes(filterSourceCodes, catalog);
-    if (defaults.length === 0) return;
-    ensureMultiIfEmpty("src", defaults);
-  }, [catalog, filterSourceCodes, multi.src.length, ensureMultiIfEmpty]);
-
-  useEffect(() => {
-    if (multi.src.length === 0) return;
-    void ensureSpellUaSourcesLoaded(multi.src).then((changed) => {
-      if (changed) void refresh();
-    });
-  }, [multi.src, refresh]);
-
-  const commitSearch = useCallback(
-    (nextQ: string) => patchFilters({ q: nextQ }),
-    [patchFilters],
-  );
-  const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(q, commitSearch);
-
-  const openSpell = useCallback(
-    (spell: Spell) => {
-      setSelected(spell);
-      setDialogOpen(true);
-      setSpellParam(spell.name);
-      void getSpellsByName(spell.name).then(setSelectedVariants);
-    },
-    [setSpellParam],
-  );
-
-  useEffect(() => {
-    if (!spellParam) {
-      setDialogOpen(false);
-      setSelected(null);
-      setSelectedVariants([]);
-      return;
-    }
-    if (loading) return;
-
-    const decoded = decodeURIComponent(spellParam);
-    const found =
-      listSpells.find((s) => s.name.toLowerCase() === decoded.toLowerCase()) ??
-      spells.find((s) => s.name.toLowerCase() === decoded.toLowerCase());
-    if (!found) return;
-    if (selected?.name === found.name && dialogOpen) return;
-
-    setSelected(found);
-    setDialogOpen(true);
-    void getSpellsByName(found.name).then(setSelectedVariants);
-  }, [spellParam, loading, listSpells, spells, selected?.name, dialogOpen]);
 
   const classOptions = useMemo(() => {
     const present = new Set<string>();
@@ -147,11 +83,6 @@ export function SpellList() {
   const presentFacets = useMemo(
     () => collectSpellPresentFacets(listSpells),
     [listSpells],
-  );
-
-  const sourceSection = useMemo(
-    () => buildSourcesFilterSection(filterSourceCodes, catalog, bookNames),
-    [filterSourceCodes, catalog, bookNames],
   );
 
   const filterSections = useMemo(
@@ -196,21 +127,9 @@ export function SpellList() {
 
   const handleSelect = useCallback(
     (spell: Spell) => {
-      openSpell(spell);
+      dialog?.openItem(spell);
     },
-    [openSpell],
-  );
-
-  const handleDialogOpenChange = useCallback(
-    (open: boolean) => {
-      setDialogOpen(open);
-      if (!open) {
-        setSelected(null);
-        setSelectedVariants([]);
-        setSpellParam(null);
-      }
-    },
-    [setSpellParam],
+    [dialog],
   );
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -268,13 +187,13 @@ export function SpellList() {
         )}
       </div>
 
-      {dialogOpen && selected && (
+      {dialog?.dialogOpen && dialog.selected && (
         <SpellDetailDialog
-          key={selected.id}
-          spell={selected}
-          variants={selectedVariants}
-          open={dialogOpen}
-          onOpenChange={handleDialogOpenChange}
+          key={dialog.selected.id}
+          spell={dialog.selected}
+          variants={dialog.selectedVariants}
+          open={dialog.dialogOpen}
+          onOpenChange={dialog.handleDialogOpenChange}
         />
       )}
     </div>
