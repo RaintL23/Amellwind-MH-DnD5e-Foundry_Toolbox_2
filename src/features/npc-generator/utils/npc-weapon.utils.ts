@@ -10,7 +10,7 @@ import { resolveWeaponBaseFeatures } from "@/features/weapons/services/optionalf
 import {
   buildColumnChains,
   getBaseFeatureName,
-} from "@/features/weapons/utils/weapon-feature-chains.utils";
+} from "@/shared/foundry/weapons";
 import { getRarityToHitBonus } from "@/features/weapons/utils/rarity-slide.utils";
 import { toNpcFeatureText } from "./npc-feature-text.utils";
 import { NPC_WEAPON_META_FEATURE, isVariantPrimaryWeapon } from "../data/npc-ammo-attacks.data";

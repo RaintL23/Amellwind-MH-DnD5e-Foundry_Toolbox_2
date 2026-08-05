@@ -7,7 +7,7 @@
  * images with captions.
  */
 
-import { escapeHtml } from "./description.enrichers";
+import { escapeHtml } from "@/shared/foundry";
 
 /** Public 5e.tools image CDN root (same host Plutonium uses for book art). */
 export const FIVETOOLS_IMG_BASE = "https://5e.tools/img";

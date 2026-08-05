@@ -133,14 +133,6 @@ export function useEquipmentSlice({
     [mainHand, offHand],
   );
 
-  /** @deprecated Prefer {@link setWeaponMode} */
-  const setVersatileMode = useCallback(
-    (slot: "mainHand" | "offHand", twoHanded: boolean) => {
-      setWeaponMode(slot, twoHanded ? 1 : 0);
-    },
-    [setWeaponMode],
-  );
-
   const equipShield = useCallback(
     (shield: StandaloneShieldItem) => {
       if (hasActiveIntegratedShield(mainHand) || blocksOffHand(mainHand)) return;
@@ -379,7 +371,6 @@ export function useEquipmentSlice({
       unequipWeapon,
       setWeaponRarity,
       setWeaponMode,
-      setVersatileMode,
       equipArmor,
       unequipArmor,
       equipShield,
@@ -418,7 +409,6 @@ export function useEquipmentSlice({
       unequipWeapon,
       setWeaponRarity,
       setWeaponMode,
-      setVersatileMode,
       equipArmor,
       unequipArmor,
       equipShield,

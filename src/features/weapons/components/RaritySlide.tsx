@@ -4,7 +4,7 @@ import {
   RARITY_STYLES,
 } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
-import { ColumnChains } from "../utils/weapon-feature-chains.utils";
+import { ColumnChains } from "@/shared/foundry/weapons";
 import {
   getRaritySlideStatEntries,
   getRaritySlideUnlockSections,

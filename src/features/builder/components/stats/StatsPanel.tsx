@@ -32,8 +32,8 @@ import { AbilityScoresSection } from "./ability-scores/AbilityScoresSection";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { CompletenessHighlightBanner } from "../shared/CompletenessHighlightBanner";
 import { MulticlassPanel } from "./MulticlassPanel";
-import { NumberStepper } from "../shared/NumberStepper";
-import { FoundryModuleRequirementsNotice } from "../../foundry-export/FoundryModuleRequirementsNotice";
+import { NumberStepper } from "../shared";
+import { FoundryModuleRequirementsNotice } from "@/shared/foundry";
 
 const ICON_BUTTON_CLASS = "h-6 w-6 shrink-0";
 
@@ -48,7 +48,6 @@ export function StatsPanel() {
     resetBuild,
     multiclassEnabled,
     setMulticlassEnabled,
-    useAmellwindHomebrew,
   } = useCharacterBuilder();
   const { randomize, isRandomizing, canRandomize } = useCharacterRandomizer();
   const {
@@ -323,16 +322,8 @@ export function StatsPanel() {
               clearHighlight();
               void randomize();
             }}
-            title={
-              useAmellwindHomebrew
-                ? "Random only available in D&D mode"
-                : "Randomize character"
-            }
-            aria-label={
-              useAmellwindHomebrew
-                ? "Random only available in D&D mode"
-                : "Randomize character"
-            }
+            title="Randomize character"
+            aria-label="Randomize character"
           >
             <Dices
               className={cn("h-3 w-3", isRandomizing && "animate-spin")}

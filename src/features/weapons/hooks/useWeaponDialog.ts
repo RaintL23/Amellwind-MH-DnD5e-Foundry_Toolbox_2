@@ -5,7 +5,7 @@ import {
   resolveWeaponBaseFeatures,
 } from "../services/optionalfeature.service";
 import { getMhItemEffectsMap } from "../services/mh-item-effects.service";
-import { buildColumnChains } from "../utils/weapon-feature-chains.utils";
+import { buildColumnChains } from "@/shared/foundry/weapons";
 import { weaponWithDisplayRarityRows } from "../utils/weapon-base-rarity.utils";
 
 interface UseWeaponDialogOptions {

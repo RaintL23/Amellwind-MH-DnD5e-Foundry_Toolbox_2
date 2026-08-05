@@ -6,7 +6,7 @@ import {
 import {
   getAccumulatedUnlocks,
   getUnlockColumnLabels,
-} from "./weapon-feature-chains.utils";
+} from "@/shared/foundry/weapons";
 
 const TYPED_BONUS_COLUMNS: Array<{
   keys: string[];

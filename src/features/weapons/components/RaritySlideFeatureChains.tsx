@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { OptionalFeature, WeaponRarityRow } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
-import { ColumnChains } from "../utils/weapon-feature-chains.utils";
+import { ColumnChains } from "@/shared/foundry/weapons";
 import { resolveMhItemParagraphs } from "../services/mh-item-effects.service";
 import { ExpandableFeatureRow } from "./ExpandableFeatureRow";
 import { RarityDot } from "./RarityDot";

@@ -386,7 +386,6 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       unequipWeapon: equipment.unequipWeapon,
       setWeaponRarity: equipment.setWeaponRarity,
       setWeaponMode: equipment.setWeaponMode,
-      setVersatileMode: equipment.setVersatileMode,
       equipArmor: equipment.equipArmor,
       unequipArmor: equipment.unequipArmor,
       equipShield: equipment.equipShield,

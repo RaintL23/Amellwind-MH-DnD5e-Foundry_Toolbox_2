@@ -6,7 +6,7 @@ import {
   buildColumnChains,
   ColumnChains,
   type FeatureUpgradeLink,
-} from "../utils/weapon-feature-chains.utils";
+} from "@/shared/foundry/weapons";
 import { RaritySlide } from "./RaritySlide";
 import { RarityDots } from "./RarityDots";
 

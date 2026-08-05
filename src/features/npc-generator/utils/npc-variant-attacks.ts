@@ -4,7 +4,7 @@ import type { NpcAttackDefinition } from "@/shared/types/npc.types";
 import type { Weapon } from "@/shared/types";
 import { formatAttackEntry, rollAverage } from "./npc-attack.utils";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
-import { getAccumulatedUnlocks } from "@/features/weapons/utils/weapon-feature-chains.utils";
+import { getAccumulatedUnlocks } from "@/shared/foundry/weapons";
 import {
   NPC_AMMO_ATTACKS,
   NPC_AMMO_PRIORITY,

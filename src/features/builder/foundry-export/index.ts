@@ -29,43 +29,8 @@ export {
   foundryId,
   foundryIdFromSeed,
   downloadFoundryJson,
-  downloadFoundryActor,
 } from "@/shared/foundry";
 export type {
   FoundryExportKind,
   FoundryModuleRequirement,
 } from "@/shared/foundry";
-export {
-  compileWeaponFeatureActivities,
-} from "@/shared/foundry/weapons";
-export {
-  buildCombatFeatureChains,
-  resolveChainAtRarity,
-  resolveCombatChainsAtRarity,
-  catalogWeaponToFeatureDefs,
-} from "@/shared/foundry/weapons";
-export {
-  lookupWeaponFeatureAutomation,
-  parseWeaponMasteryAutomation,
-} from "@/shared/foundry/weapons";
-export {
-  mergeAutomationSpecs,
-  stripFeatureAutomationUpgradeSuffix,
-} from "@/shared/foundry/weapons";
-export {
-  buildWeaponActiveEffect,
-  hasWeaponActiveEffectPayload,
-  resolveWeaponActiveEffectConfig,
-  previewWeaponActiveEffectJson,
-} from "@/shared/foundry/weapons";
-export type { WeaponActiveEffectConfig } from "@/shared/foundry/weapons";
-export type {
-  WeaponActivityTemplateKind,
-  WeaponFeatureAutomationSpec,
-  WeaponActivityParams,
-  WeaponFeatureAutomationStatus,
-} from "@/shared/foundry/weapons";
-export {
-  WEAPON_ACTIVITY_TEMPLATE_KINDS,
-  TEMPLATE_LABELS,
-} from "@/shared/foundry/weapons";

@@ -10,7 +10,7 @@ import type {
   Subclass,
 } from "@/shared/types";
 import type { SpeciesTrait } from "@/shared/types/species.types";
-import { escapeHtml, foundryDividerHtml } from "./description.enrichers";
+import { escapeHtml, foundryDividerHtml } from "@/shared/foundry";
 import {
   renderFiveToolsEntries,
   type FluffArtResult,

@@ -9,6 +9,3 @@ export function downloadFoundryJson(data: unknown, filename: string): void {
   anchor.click();
   URL.revokeObjectURL(url);
 }
-
-/** @deprecated Prefer `downloadFoundryJson` — same implementation. */
-export const downloadFoundryActor = downloadFoundryJson;

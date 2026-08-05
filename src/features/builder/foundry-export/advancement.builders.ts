@@ -1,4 +1,4 @@
-import { foundryId } from "./foundry-id.utils";
+import { foundryId } from "@/shared/foundry";
 
 const FEATURE_ICON = "icons/svg/upgrade.svg";
 

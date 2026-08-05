@@ -7,7 +7,7 @@
 import type { Spell } from "@/shared/types";
 import type { BuilderSpellSelection } from "@/shared/types";
 import type { SpellItemInput, SpellPreparationMode } from "./item.builders";
-import { resolveSpellIcon } from "./foundry-icons";
+import { resolveSpellIcon } from "@/shared/foundry";
 import {
   spellMatchesCharacterSpellList,
   type CharacterSpellListContext,

@@ -18,7 +18,7 @@ export {
   SYSTEM_VERSION,
 } from "./id";
 
-export { downloadFoundryJson, downloadFoundryActor } from "./download";
+export { downloadFoundryJson } from "./download";
 
 export { wrapItem, nextFoundryItemSort, resetFoundryItemSort } from "./wrap-item";
 

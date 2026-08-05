@@ -191,19 +191,3 @@ export function getCharacterHitPointBreakdown(
     }),
   };
 }
-
-/** @deprecated Use getCharacterHitPointBreakdown */
-export function getCharacterHitPointStats(
-  level: number,
-  conModifier: number,
-  hitDie: string,
-): Pick<CharacterHitPointBreakdown, "max" | "hitDice"> | null {
-  const breakdown = getCharacterHitPointBreakdown(
-    level,
-    conModifier,
-    hitDie,
-    "Class",
-  );
-  if (!breakdown) return null;
-  return { max: breakdown.max, hitDice: breakdown.hitDice };
-}

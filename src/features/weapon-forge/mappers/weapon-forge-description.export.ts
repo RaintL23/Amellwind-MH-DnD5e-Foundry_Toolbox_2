@@ -17,7 +17,7 @@ import {
   buildColumnChains,
   type ColumnChains,
   type FeatureUpgradeLink,
-} from "@/features/weapons/utils/weapon-feature-chains.utils";
+} from "@/shared/foundry/weapons";
 import {
   isPrimaryFeaturesColumn,
   type CustomWeapon,

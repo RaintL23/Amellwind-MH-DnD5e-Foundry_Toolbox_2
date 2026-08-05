@@ -1,4 +1,4 @@
-import { getBaseFeatureName } from "@/features/weapons/utils/weapon-feature-chains.utils";
+import { getBaseFeatureName } from "@/shared/foundry/weapons";
 import { type WeaponRarityRow } from "@/shared/types";
 import type { WeaponForgeFeatureDef } from "../types/weapon-forge.types";
 import {
