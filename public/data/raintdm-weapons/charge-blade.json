@@ -6,13 +6,7 @@
   "rarity": "none",
   "weight": 7,
   "value": 5000,
-  "property": [
-    "H",
-    "2H",
-    "F",
-    "L",
-    "S"
-  ],
+  "property": ["H", "2H", "F", "L", "S"],
   "dmg1": "1d6",
   "dmgType": "S",
   "entries": [
@@ -113,7 +107,7 @@
       {
         "id": "0da72473-8e45-440b-b096-94a4a2dd51ac",
         "name": "Charged Shield (Red Shield)",
-        "description": "You can cycle the energy back into the weapon's defense mechanism. When you use your Amped Element Discharge Action, you can choose to cancel the shockwave to charge your shield instead. For 1 minute, your shield grants an additional +1 AC, and your Guard Point feature deals 2d6 elemental damage instead of its normal damage."
+        "description": "You can cycle the energy back into the weapon's defense mechanism. When you use your Amped Element Discharge Action, you can choose to cancel the shockwave to charge your shield instead. For 1 minute, your shield grants an additional +1 AC, and your Guard Point feature deals two times your Elemental Discharge elemental damage instead of its normal damage."
       },
       {
         "id": "9eaf6061-6c2d-46bd-9f52-f7d80c318c90",
