@@ -6,6 +6,7 @@ import { buildWeaponItem } from "@/features/builder/foundry-export/item.builders
 import {
   applyItemAutomation,
   compileWeaponFeatureActivities,
+  enrichWeaponActivities,
 } from "@/shared/foundry/weapons";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { resolveMagicalBonus } from "./weapon-forge-foundry.helpers";
@@ -20,11 +21,59 @@ import {
   applyMidiToExistingActivities,
 } from "./weapon-forge-activities.export";
 import { hasWeaponSwitchModes } from "@/features/weapons/utils/weapon-mode.utils";
+import {
+  applyHuntingHornSongbookOverlay,
+  defaultWeaponForgeItemFlags,
+} from "./weapon-forge-foundry-envelope";
+import { buildWeaponMelodyFeatItems } from "./weapon-forge-melody.export";
+
+/** Foundry feat group for a weapon-resource column that already has export builders. */
+export interface WeaponFoundryResourceGroup {
+  /** Stable tab id (e.g. `melodies`). */
+  id: string;
+  /** UI label (e.g. `Melodies`). */
+  label: string;
+  items: FoundryItem[];
+}
+
+export interface WeaponFoundryExportBundle {
+  weapon: FoundryItem;
+  /** Flat list of resource feats (download order). */
+  resources: FoundryItem[];
+  /**
+   * Resource feats grouped for Foundry preview tabs.
+   * Only columns with a real Foundry builder appear (today: Melodies).
+   */
+  resourceGroups: WeaponFoundryResourceGroup[];
+}
+
+/**
+ * Build Foundry feat groups for weapon resources that have export builders.
+ * Add Phials / Ammo / Coatings here when their feat builders land.
+ */
+export function buildWeaponFoundryResourceGroups(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): WeaponFoundryResourceGroup[] {
+  const groups: WeaponFoundryResourceGroup[] = [];
+  const melodies = buildWeaponMelodyFeatItems(weapon, rarityIndex);
+  if (melodies.length > 0) {
+    groups.push({ id: "melodies", label: "Melodies", items: melodies });
+  }
+  return groups;
+}
 
 export function buildWeaponFoundryItem(
   weapon: CustomWeapon,
   rarityIndex: number,
 ): FoundryItem {
+  return buildWeaponFoundryExportBundle(weapon, rarityIndex).weapon;
+}
+
+export function buildWeaponFoundryExportBundle(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): WeaponFoundryExportBundle {
   const clamped = Math.max(
     0,
     Math.min(rarityIndex, Math.max(0, weapon.rarityRows.length - 1)),
@@ -41,15 +90,18 @@ export function buildWeaponFoundryItem(
         ? "martial"
         : "martial";
 
+  // Canonical forge display: "Great Sword (Uncommon)" — not Foundry's "+1 …".
+  const exportName =
+    !isBaseRarity(rarityLabel) && rarityLabel.trim()
+      ? `${weapon.name} (${rarityLabel})`
+      : weapon.name;
+
   const exportWeapon: Weapon = {
     ...weapon,
     weaponCategory,
     baseName: weapon.name,
     itemRarityLabel: isBaseRarity(rarityLabel) ? undefined : rarityLabel,
-    name:
-      magicalBonus > 0 && !/^\+\d+\s/.test(weapon.name)
-        ? `+${magicalBonus} ${weapon.name}`
-        : weapon.name,
+    name: exportName,
   };
 
   const equipped = makeWeaponSlot(exportWeapon, rarityLabel);
@@ -62,6 +114,19 @@ export function buildWeaponFoundryItem(
   item.img = resolveWeaponImg(weapon);
 
   const system = item.system as Record<string, unknown>;
+  // Keep rarety in display name, but Foundry identifier/baseItem stay on the weapon stem.
+  const stem = weapon.name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "")
+    .trim();
+  if (stem) {
+    system.identifier = stem;
+    const type = system.type as Record<string, unknown> | undefined;
+    if (type && typeof type === "object") {
+      type.baseItem = stem;
+    }
+  }
+
   let magical = magicalBonus > 0;
 
   if (row && !isBaseRarity(row.rarity)) {
@@ -81,6 +146,7 @@ export function buildWeaponFoundryItem(
     ? (system.properties as string[])
     : [];
   if (props.includes("mgc")) magical = true;
+  system.properties = [...props].sort((a, b) => a.localeCompare(b));
 
   const multiMode = hasWeaponSwitchModes(weapon);
   if (multiMode) {
@@ -99,20 +165,22 @@ export function buildWeaponFoundryItem(
     item.effects.push(...passiveEffects);
   }
 
-  // Canonical English name helps Automated Animations / CPR name matching.
+  enrichWeaponActivities(item);
+
   item.flags = {
-    ...item.flags,
-    "amellwind-toolbox": {
-      ...(typeof item.flags["amellwind-toolbox"] === "object" &&
-      item.flags["amellwind-toolbox"] !== null
-        ? (item.flags["amellwind-toolbox"] as Record<string, unknown>)
-        : {}),
+    ...defaultWeaponForgeItemFlags({
       baseWeaponName: weapon.name,
-      exportKind: "weapon-forge",
-    },
+    }),
+    ...item.flags,
   };
 
-  return item;
+  // Songbook overlay owns midi-qol / itemacro / world (applied last).
+  applyHuntingHornSongbookOverlay(item);
+
+  const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);
+  const resources = resourceGroups.flatMap((group) => group.items);
+
+  return { weapon: item, resources, resourceGroups };
 }
 
 function mapRarityLabel(label: string): string {
@@ -144,4 +212,3 @@ export function foundryItemFilename(
       .replace(/^-|-$/g, "");
   return `fvtt-Item-${slug(weapon.name) || "weapon"}-${slug(rarity) || "item"}.json`;
 }
-

@@ -7,9 +7,10 @@ import {
   weaponToRawExport,
 } from "../mappers/weapon-forge.mapper";
 import {
-  buildWeaponFoundryItem,
+  buildWeaponFoundryExportBundle,
   foundryItemFilename,
 } from "../mappers/weapon-forge-foundry.export";
+import { melodyFeatFilename } from "../mappers/weapon-forge-melody.export";
 import type { FoundryItem } from "@/shared/foundry";
 import { downloadFoundryJson } from "@/shared/foundry";
 
@@ -172,11 +173,20 @@ export function exportWeaponJson(weapon: CustomWeapon): void {
 export function exportWeaponFoundryJson(
   weapon: CustomWeapon,
   rarityIndex: number,
-  /** When provided, downloads this exact payload (must match preview). */
+  /** When provided, downloads this exact weapon payload (must match preview). */
   item?: FoundryItem,
 ): void {
-  const payload = item ?? buildWeaponFoundryItem(weapon, rarityIndex);
-  downloadJson(payload, foundryItemFilename(weapon, rarityIndex));
+  const bundle = item
+    ? {
+        weapon: item,
+        resources: buildWeaponFoundryExportBundle(weapon, rarityIndex).resources,
+      }
+    : buildWeaponFoundryExportBundle(weapon, rarityIndex);
+
+  downloadJson(bundle.weapon, foundryItemFilename(weapon, rarityIndex));
+  for (const resource of bundle.resources) {
+    downloadJson(resource, melodyFeatFilename(resource));
+  }
 }
 
 export function exportAllUserWeaponsJson(weapons: CustomWeapon[]): void {
