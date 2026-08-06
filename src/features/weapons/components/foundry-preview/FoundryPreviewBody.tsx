@@ -12,6 +12,7 @@ import {
 import { ActivityCard } from "@/features/weapons/components/foundry-preview/FoundryPreviewActivityCard";
 import { ChainStatusList } from "@/features/weapons/components/foundry-preview/FoundryPreviewChainStatusList";
 import { DetailsSection } from "@/features/weapons/components/foundry-preview/FoundryPreviewDetailsSection";
+import { FeatDetailsSection } from "@/features/weapons/components/foundry-preview/FoundryFeatPreviewDetailsSection";
 import { EffectCard } from "@/features/weapons/components/foundry-preview/FoundryPreviewEffectCard";
 import { SectionTitle } from "@/features/weapons/components/foundry-preview/FoundryPreviewFieldRow";
 import { FoundryRawJsonDialog } from "@/features/weapons/components/foundry-preview/FoundryRawJsonDialog";
@@ -19,12 +20,15 @@ import { Braces } from "lucide-react";
 
 export function PreviewBody({
   item,
-  chains,
+  chains = [],
   filename,
+  variant = "weapon",
 }: {
   item: FoundryItem;
-  chains: ResolvedCombatChain[];
+  chains?: ResolvedCombatChain[];
   filename: string;
+  /** Weapon sheet vs resource feat (Melodies, …). */
+  variant?: "weapon" | "feat";
 }) {
   const [jsonOpen, setJsonOpen] = useState(false);
   const system = item.system as Record<string, unknown>;
@@ -40,6 +44,7 @@ export function PreviewBody({
 
   const damage = asRecord(system.damage);
   const baseDamageLabel = formatDamageField(damage?.base);
+  const isFeat = variant === "feat";
 
   return (
     <div className="space-y-4 pb-2">
@@ -70,7 +75,11 @@ export function PreviewBody({
         </p>
       </div>
 
-      <DetailsSection system={system} />
+      {isFeat ? (
+        <FeatDetailsSection system={system} />
+      ) : (
+        <DetailsSection system={system} />
+      )}
 
       <section className="space-y-2">
         <SectionTitle>Activities ({activityList.length})</SectionTitle>
@@ -102,10 +111,12 @@ export function PreviewBody({
         )}
       </section>
 
-      <section className="space-y-2">
-        <SectionTitle>Feature automation map</SectionTitle>
-        <ChainStatusList chains={chains} />
-      </section>
+      {!isFeat && (
+        <section className="space-y-2">
+          <SectionTitle>Feature automation map</SectionTitle>
+          <ChainStatusList chains={chains} />
+        </section>
+      )}
 
       <Button
         type="button"
