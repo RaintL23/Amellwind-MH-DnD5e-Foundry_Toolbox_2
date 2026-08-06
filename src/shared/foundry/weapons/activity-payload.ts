@@ -94,7 +94,7 @@ export function consumptionTargets(
 }
 
 export function targetBlock(params: WeaponActivityParams): Record<string, unknown> {
-  const hasTemplate = !!params.templateType?.trim();
+  const affectsType = params.targetAffectsType?.trim() || "";
   return {
     template: {
       count: "",
@@ -107,19 +107,30 @@ export function targetBlock(params: WeaponActivityParams): Record<string, unknow
     },
     affects: {
       count: "",
-      type: hasTemplate ? "" : "",
+      type: affectsType,
       choice: false,
       special: "",
     },
-    prompt: true,
+    prompt: params.targetPrompt ?? true,
     override: false,
   };
 }
 
 export function rangeBlock(params: WeaponActivityParams): Record<string, unknown> {
+  const units =
+    params.rangeUnits?.trim() ||
+    (params.rangeValue?.trim() ? "ft" : "");
+  // When only units are set (e.g. self), omit null `value` to match Foundry saves.
+  if (!params.rangeValue?.trim() && units === "self") {
+    return {
+      units,
+      special: "",
+      override: false,
+    };
+  }
   return {
     value: params.rangeValue?.trim() || null,
-    units: params.rangeUnits?.trim() || (params.rangeValue ? "ft" : ""),
+    units,
     special: "",
     override: false,
   };
@@ -146,7 +157,9 @@ export function baseActivityFields(opts: {
     _id: opts.id,
     sort: opts.sort,
     name: opts.name,
-    img: "",
+    ...(opts.params.activityImg?.trim()
+      ? { img: opts.params.activityImg.trim() }
+      : {}),
     activation: {
       type: opts.activation,
       value: opts.activation === "special" ? null : 1,
@@ -162,8 +175,8 @@ export function baseActivityFields(opts: {
       chatFlavor: opts.params.chatFlavor ?? "",
     },
     duration: {
-      value: "",
-      units: "inst",
+      value: opts.params.durationValue?.trim() || "",
+      units: opts.params.durationUnits?.trim() || "inst",
       concentration: false,
       override: false,
     },
@@ -172,6 +185,9 @@ export function baseActivityFields(opts: {
     target: targetBlock(opts.params),
     uses: usesBlock(opts.params),
     midiProperties: opts.midi,
+    useConditionText: "",
+    useConditionReason: "",
+    effectConditionText: opts.params.effectConditionText ?? "",
   };
 }
 
@@ -188,5 +204,58 @@ export function midiFor(
     ignoreFullCover: params.ignoreCover === true,
     automationOnly: params.automationOnly === true,
     toggleEffect: params.toggleEffect === true,
+    ...(params.otherActivityCompatible !== undefined
+      ? { otherActivityCompatible: params.otherActivityCompatible }
+      : {}),
   });
+}
+
+/** Foundry / Midi activity fields usually present after saving in-world. */
+export function foundryActivityEnvelope(
+  activity: Record<string, unknown>,
+): Record<string, unknown> {
+  const type = String(activity.type ?? "");
+  const isAttack = type === "attack";
+  return {
+    macroData: { name: "", command: "" },
+    ignoreTraits: { idi: false, idr: false, idv: false, ida: false },
+    isOverTimeFlag: false,
+    overTimeProperties: {
+      saveRemoves: true,
+      preRemoveConditionText: "",
+      postRemoveConditionText: "",
+    },
+    ...(isAttack
+      ? {
+          otherActivityId: "",
+          otherActivityUuid: "",
+          attackMode: "oneHanded",
+          ammunition: "",
+        }
+      : { otherActivityId: "none" }),
+    useConditionText: "",
+    useConditionReason: "",
+    effectConditionText: isAttack ? "false" : "",
+  };
+}
+
+/** Fill missing Foundry activity envelope keys without clobbering authored values. */
+export function enrichWeaponActivities(item: {
+  system: Record<string, unknown>;
+}): void {
+  const activities = item.system.activities;
+  if (!activities || typeof activities !== "object") return;
+  for (const activity of Object.values(
+    activities as Record<string, Record<string, unknown>>,
+  )) {
+    if (!activity || typeof activity !== "object") continue;
+    const envelope = foundryActivityEnvelope(activity);
+    for (const [key, value] of Object.entries(envelope)) {
+      if (activity[key] === undefined) activity[key] = value;
+    }
+    if (activity.img === "") delete activity.img;
+    if (!activity.midiProperties || typeof activity.midiProperties !== "object") {
+      activity.midiProperties = defaultMidiProperties();
+    }
+  }
 }

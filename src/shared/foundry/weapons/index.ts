@@ -61,6 +61,8 @@ export {
 } from "./activity.compiler";
 export type { CompileWeaponFeatureActivitiesOptions } from "./activity.compiler";
 
+export { enrichWeaponActivities } from "./activity-payload";
+
 export {
   lookupWeaponFeatureAutomation,
   parseWeaponMasteryAutomation,

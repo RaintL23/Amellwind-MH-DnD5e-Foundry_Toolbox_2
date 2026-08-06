@@ -34,10 +34,11 @@ export function applyItemUses(
       ]
     : [];
 
+  // Key order matches Foundry-saved items (spent → recovery → max).
   system.uses = {
     spent: startsEmpty && Number.isFinite(maxNum) ? maxNum : 0,
-    max,
     recovery,
+    max,
   };
 }
 

@@ -128,6 +128,8 @@ export interface WeaponActiveEffectConfig {
   auraOnlyOnce?: boolean;
 
   // ── Extra DAE ────────────────────────────────────────────────────────
+  /** DAE: apply this effect to the item user when the linked activity is used. */
+  selfTarget?: boolean;
   selfTargetAlways?: boolean;
 }
 

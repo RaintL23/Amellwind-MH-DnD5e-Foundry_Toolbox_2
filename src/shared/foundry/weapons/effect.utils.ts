@@ -100,6 +100,7 @@ export function hasWeaponActiveEffectPayload(
     !!asTrimmed(cfg.combat ?? undefined) ||
     cfg.showIcon === true ||
     cfg.overlay === true ||
+    cfg.selfTarget === true ||
     cfg.selfTargetAlways === true ||
     cfg.disableIncapacitated === true ||
     !!params.acBonus?.trim() ||
@@ -121,6 +122,7 @@ function buildDaeFlags(
     // Match prior compiler default when specialDuration is set.
     dae.stackable = "noneName";
   }
+  if (cfg.selfTarget === true) dae.selfTarget = true;
   if (cfg.selfTargetAlways === true) dae.selfTargetAlways = true;
   if (asTrimmed(cfg.disableCondition)) {
     dae.disableCondition = cfg.disableCondition!.trim();

@@ -122,7 +122,7 @@ export function buildWeaponItem(
         denomination: baseDice.denomination,
         types: dmgType ? [dmgType] : [],
         custom: { enabled: false },
-        scaling: { mode: "", number: 1 },
+        scaling: { number: 1, mode: "" },
         bonus: "",
       },
       versatile: versatileDice
@@ -134,7 +134,13 @@ export function buildWeaponItem(
             scaling: { number: 1 },
             bonus: "",
           }
-        : { number: null, denomination: null, types: [], custom: { enabled: false }, scaling: { number: 1 } },
+        : {
+            number: null,
+            denomination: null,
+            types: [],
+            custom: { enabled: false },
+            scaling: { number: 1 },
+          },
     },
     magicalBonus: magicBonus || null,
     properties,
@@ -168,6 +174,8 @@ export function buildWeaponItem(
           prompt: true,
         },
         uses: { spent: 0, recovery: [] },
+        useConditionText: "",
+        effectConditionText: "false",
         attack: {
           ability: options.attackAbility ?? "",
           type: {

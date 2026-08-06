@@ -349,6 +349,90 @@ export function FeatureAutomationEditor({
                     </div>
 
                     <div className="space-y-1.5">
+                      <Label htmlFor="feat-auto-range-units">Range units</Label>
+                      <Input
+                        id="feat-auto-range-units"
+                        value={params.rangeUnits ?? ""}
+                        onChange={(e) =>
+                          patchParams({ rangeUnits: e.target.value })
+                        }
+                        placeholder="self, ft, …"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="feat-auto-duration-value">
+                        Duration value
+                      </Label>
+                      <Input
+                        id="feat-auto-duration-value"
+                        value={params.durationValue ?? ""}
+                        onChange={(e) =>
+                          patchParams({ durationValue: e.target.value })
+                        }
+                        placeholder="e.g. 1"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="feat-auto-duration-units">
+                        Duration units
+                      </Label>
+                      <Input
+                        id="feat-auto-duration-units"
+                        value={params.durationUnits ?? ""}
+                        onChange={(e) =>
+                          patchParams({ durationUnits: e.target.value })
+                        }
+                        placeholder="inst, minute, round…"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <Label htmlFor="feat-auto-target-type">
+                        Target type
+                      </Label>
+                      <Input
+                        id="feat-auto-target-type"
+                        value={params.targetAffectsType ?? ""}
+                        onChange={(e) =>
+                          patchParams({ targetAffectsType: e.target.value })
+                        }
+                        placeholder="self, creature…"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5 sm:col-span-2">
+                      <Label htmlFor="feat-auto-chat">Chat flavor</Label>
+                      <Input
+                        id="feat-auto-chat"
+                        value={params.chatFlavor ?? ""}
+                        onChange={(e) =>
+                          patchParams({ chatFlavor: e.target.value })
+                        }
+                        placeholder="Shown on the activity chat card"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5 sm:col-span-2">
+                      <Label htmlFor="feat-auto-img">Activity icon path</Label>
+                      <Input
+                        id="feat-auto-img"
+                        value={params.activityImg ?? ""}
+                        onChange={(e) =>
+                          patchParams({ activityImg: e.target.value })
+                        }
+                        placeholder="icons/…"
+                        className="h-9"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
                       <Label htmlFor="feat-auto-template-type">
                         AoE template
                       </Label>

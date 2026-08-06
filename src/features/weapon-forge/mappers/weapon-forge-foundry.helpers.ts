@@ -66,7 +66,7 @@ export function damageFieldFromFormula(
     denomination: dice.denomination,
     types: mapped ? [mapped] : [],
     custom: { enabled: false },
-    scaling: { mode: "", number: 1 },
+    scaling: { number: 1, mode: "" },
     bonus: "",
   };
 }

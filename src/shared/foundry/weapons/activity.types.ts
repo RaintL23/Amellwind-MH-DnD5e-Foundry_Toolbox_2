@@ -69,6 +69,20 @@ export interface WeaponActivityParams {
   templateWidth?: string;
   rangeValue?: string;
   rangeUnits?: string;
+  /** Activity duration value (e.g. `"1"` with `durationUnits: "minute"`). */
+  durationValue?: string;
+  /** Activity duration units (`inst`, `minute`, `round`, …). */
+  durationUnits?: string;
+  /** `target.affects.type` (e.g. `"self"`). */
+  targetAffectsType?: string;
+  /** `target.prompt` — when set, overrides the template default. */
+  targetPrompt?: boolean;
+  /** Activity sheet icon path. */
+  activityImg?: string;
+  /** Midi `otherActivityCompatible` override. */
+  otherActivityCompatible?: boolean;
+  /** Midi / activity `effectConditionText` (e.g. `"false"` to block AE apply). */
+  effectConditionText?: string;
   usesMax?: string;
   usesRecoveryPeriod?: WeaponUsesRecoveryPeriod;
   usesRecoveryFormula?: string;
@@ -93,8 +107,15 @@ export interface WeaponActivityParams {
   /** Inclusive spend range for ×N / scaled counter activities. */
   spendMin?: number;
   spendMax?: number;
-  /** Midi advantage AE on spend activities (Charged Slash, ZSD, …). */
+  /**
+   * Midi advantage AE (1Attack). When `emitGather` is on, the AE is linked to
+   * Gather (selfTarget) like RaintDM Charged Slash; otherwise to each ×N spend.
+   */
   advantageOnUse?: boolean;
+  /** Midi `useConditionText` on the Gather utility (defaults when max is set). */
+  gatherUseConditionText?: string;
+  /** Midi `useConditionReason` when Gather is blocked (at max charges). */
+  gatherUseConditionReason?: string;
   magicDamage?: boolean;
   magicEffect?: boolean;
   ignoreCover?: boolean;

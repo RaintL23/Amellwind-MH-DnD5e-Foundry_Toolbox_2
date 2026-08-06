@@ -111,6 +111,12 @@ export function buildSpendActivityPayload(opts: {
       includeBase: opts.params.includeBaseDamage ?? false,
       parts: part ? [part] : [],
     },
+    // Melee weapon activities use range units "self" (dnd5e 4.x / Midi).
+    range: {
+      units: "self",
+      special: "",
+      override: false,
+    },
   };
 }
 
@@ -160,6 +166,13 @@ export function compileCounterSpend(
     });
   }
 
+  // When Gather exists (Charged Slash), wire advantage to Gather + selfTarget.
+  // Without Gather (ZSD), keep advantage on the ×N / scale spend activities.
+  const advantageOnGather =
+    params.advantageOnUse === true && emitGather === true;
+  const advantageOnSpend =
+    params.advantageOnUse === true && !advantageOnGather;
+
   let advantageEffectId: string | undefined;
   if (params.advantageOnUse === true) {
     const advantageEffect = buildEffect({
@@ -174,7 +187,18 @@ export function compileCounterSpend(
         },
       ],
       flags: {
-        dae: { specialDuration: ["1Attack"], stackable: "noneName" },
+        dae: {
+          specialDuration: ["1Attack"],
+          stackable: "noneName",
+          ...(advantageOnGather
+            ? {
+                selfTarget: true,
+                selfTargetAlways: false,
+                showIcon: true,
+                dontApply: false,
+              }
+            : {}),
+        },
       },
     });
     advantageEffect._id = foundryIdFromSeed(`eff-adv-${chainKey}`);
@@ -183,20 +207,24 @@ export function compileCounterSpend(
   }
 
   if (emitGather) {
+    const maxLabel = params.itemUsesMax?.trim() || "max";
     const gatherParams: WeaponActivityParams = {
       ...params,
-      consumeItemUses: false,
-      chatFlavor:
-        params.gatherLabel?.trim() ||
-        params.activationCondition?.trim() ||
-        "Recover 1 item use on this weapon (grant 1 counter). Counters may expire — see feature text.",
+      // Negative itemUses consumption restores 1 charge (Foundry dnd5e).
+      consumeItemUses: true,
+      consumeAmount: "-1",
+      // Foundry sheet label is short; long rules stay in the feature card.
+      chatFlavor: params.gatherLabel?.trim() || "Gather Charge",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
     };
     const gatherId = foundryIdFromSeed(`act-gather-${chainKey}`);
     const gatherName = params.gatherLabel?.trim()
       ? `${displayName}: ${params.gatherLabel.trim()}`
       : `${displayName}: Gather`;
     const gatherMidi = midiFor(gatherName, gatherParams, opts.magical);
-    emitActivityOntoItem(item, {
+    const gatherActivity: Record<string, unknown> = {
       ...baseActivityFields({
         id: gatherId,
         name: gatherName,
@@ -207,7 +235,42 @@ export function compileCounterSpend(
       }),
       type: "utility",
       roll: { formula: "", name: "", prompt: false, visible: false },
-    });
+      range: {
+        units: "self",
+        special: "",
+        override: false,
+      },
+      target: {
+        template: {
+          count: "",
+          contiguous: false,
+          type: "",
+          size: "",
+          width: "",
+          height: "",
+          units: "ft",
+        },
+        affects: {
+          count: "",
+          type: "self",
+          choice: false,
+          special: "",
+        },
+        prompt: false,
+        override: false,
+      },
+      useConditionText:
+        params.gatherUseConditionText?.trim() ||
+        "@item.uses.value < @item.uses.max",
+      useConditionReason:
+        params.gatherUseConditionReason?.trim() ||
+        `Already at maximum charges (${maxLabel}).`,
+      effectConditionText: "",
+    };
+    if (advantageOnGather && advantageEffectId) {
+      linkEffectsToActivity(gatherActivity, [advantageEffectId]);
+    }
+    emitActivityOntoItem(item, gatherActivity);
   }
 
   const span = spendMax - spendMin + 1;
@@ -244,8 +307,11 @@ export function compileCounterSpend(
         damageFormula: scaled,
         activityType,
       });
-      if (advantageEffectId) {
+      if (advantageOnSpend && advantageEffectId) {
         linkEffectsToActivity(activity, [advantageEffectId]);
+      } else if (advantageOnGather) {
+        // Prefer AE apply from Gather only (midi); block stray application on spend.
+        activity.effectConditionText = "false";
       }
       emitActivityOntoItem(item, activity);
     }
@@ -308,8 +374,10 @@ export function compileCounterSpend(
         };
       }
     }
-    if (advantageEffectId) {
+    if (advantageOnSpend && advantageEffectId) {
       linkEffectsToActivity(activity, [advantageEffectId]);
+    } else if (advantageOnGather) {
+      activity.effectConditionText = "false";
     }
     emitActivityOntoItem(item, activity);
   }

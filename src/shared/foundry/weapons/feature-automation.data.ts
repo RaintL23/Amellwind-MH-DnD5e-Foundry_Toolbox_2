@@ -262,7 +262,12 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   // ── Reactions ───────────────────────────────────────────────────────
   "emergency guard": reactionUtility(
     "When you are hit by a melee attack",
-    { rollFormula: "1d10", chatFlavor: "+3 AC vs triggering attack; reduce damage by 1d10 + STR on a hit." },
+    {
+      rollFormula: "1d10 + @abilities.str.mod",
+      chatFlavor:
+        "+3 AC vs triggering attack; reduce damage by 1d10 + STR on a hit.",
+      rangeUnits: "self",
+    },
     "Single-attack AC bonus and damage reduction are manual/midi macros; activity exposes the reaction + reduction roll.",
   ),
   "guard (gs)": reactionUtility(
@@ -386,9 +391,24 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   ),
   "empowered reload": baUtility("", "Reload; Empowered if a hostile is within 15 ft."),
   magazines: baUtility("", "Reload both repeaters (6 volleys)."),
-  recital: baUtility(
-    "When you hit a creature with this weapon on your turn",
-    "Perform a Recital (melody choices remain description-driven).",
+  recital: spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      activationCondition:
+        "When you hit a creature with this weapon on your turn",
+      chatFlavor: "Perform a Melody from your Songbook",
+      durationValue: "1",
+      durationUnits: "minute",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      otherActivityCompatible: false,
+      effectConditionText: "false",
+      activityImg: "icons/skills/trades/music-notes-sound-blue.webp",
+    },
+    "Opens Songbook via ItemMacro (Hunting Horn overlay); Melody feats toggle Active Auras.",
   ),
   encore: baUtility("", "Recital can keep two melodies active."),
   "item prodigy": baUtility("", "Take the Utilize action as a Bonus Action."),
