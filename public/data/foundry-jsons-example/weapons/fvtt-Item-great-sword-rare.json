@@ -1,0 +1,1001 @@
+{
+  "name": "Great Sword (Rare)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_greatsword.webp",
+  "system": {
+    "activities": {
+      "HAG2o683MA4rgcPB": {
+        "_id": "HAG2o683MA4rgcPB",
+        "type": "attack",
+        "sort": 0,
+        "name": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "attack",
+          "displayActivityName": false,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "forceDialog": false
+        },
+        "useConditionReason": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityUuid": ""
+      },
+      "DLUrp8iG0mVg01SI": {
+        "_id": "DLUrp8iG0mVg01SI",
+        "sort": 200000,
+        "name": "Charged Slash: Gather Charge",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "-1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Gather Charge"
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "Ebg4LMQBPQ79ya3D"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "charged-slash-gather-charge",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "forceDialog": false
+        },
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "@item.uses.value < @item.uses.max",
+        "useConditionReason": "Already at maximum charges (3).",
+        "effectConditionText": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "PcgohwlKeoCHjGPA": {
+        "_id": "PcgohwlKeoCHjGPA",
+        "sort": 201000,
+        "name": "Charged Slash ×1",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 1 (+3d6)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "charged-slash-1",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "forceDialog": false
+        },
+        "type": "attack",
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": [
+            {
+              "number": 3,
+              "denomination": 6,
+              "types": ["slashing"],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "effectConditionText": "false",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityUuid": ""
+      },
+      "UFyKQcJAV3S3mC2P": {
+        "_id": "UFyKQcJAV3S3mC2P",
+        "sort": 202000,
+        "name": "Charged Slash ×2",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "2",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 2 (+6d6)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "charged-slash-2",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "forceDialog": false
+        },
+        "type": "attack",
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": [
+            {
+              "number": 6,
+              "denomination": 6,
+              "types": ["slashing"],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "effectConditionText": "false",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityUuid": ""
+      },
+      "DP7yi4yOesaRgJXN": {
+        "_id": "DP7yi4yOesaRgJXN",
+        "sort": 203000,
+        "name": "Charged Slash ×3",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "3",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 3 (+9d6)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "charged-slash-3",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "forceDialog": false
+        },
+        "type": "attack",
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": [
+            {
+              "number": 9,
+              "denomination": 6,
+              "types": ["slashing"],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "effectConditionText": "false",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityUuid": ""
+      },
+      "VzOYRrSMkVMUQIEL": {
+        "_id": "VzOYRrSMkVMUQIEL",
+        "sort": 400000,
+        "name": "Emergency Guard",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When you are hit by a melee attack",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+3 AC vs triggering attack; reduce damage by 1d10 + STR on a hit."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "emergency-guard",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "forceDialog": false
+        },
+        "type": "utility",
+        "roll": {
+          "formula": "1d10 + @abilities.str.mod",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      }
+    },
+    "uses": {
+      "spent": 3,
+      "recovery": [],
+      "max": "3"
+    },
+    "description": {
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p>As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.</p><p>When you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage</p><p>On hit the weapon deals an extra [[/r 3d6]] slashing damage for each charge expended in this way.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p><p>Your charge becomes deadlier. Your charged slash now deals an extra [[/r 4d6]] slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when you are hit by a melee attack, you can position the broad side of the blade to protect yourself, gaining a +3 bonus to your AC against that attack. If the attack still hits, you reduce the damage by [[/r 1d10]] + your Strength modifier.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p><p>Using a weapon as a shield ruins its edge. After using this Emergency Guard, the weapon loses its Graze Mastery property until you finish a Short or Long Rest, or spend 1 minute sharpening it with a whetstone.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p></div>"
+    },
+    "identifier": "greatsword",
+    "source": {
+      "revision": 1,
+      "rules": "2024",
+      "book": "RAINTDM",
+      "page": "",
+      "custom": "",
+      "license": ""
+    },
+    "identified": true,
+    "unidentified": {
+      "description": ""
+    },
+    "container": null,
+    "quantity": 1,
+    "weight": {
+      "value": 6,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "rare",
+    "attunement": "",
+    "cover": null,
+    "crewed": false,
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "damage": {
+      "base": {
+        "number": 2,
+        "denomination": 6,
+        "types": ["slashing"],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": 1,
+    "properties": ["hvy", "mgc", "two"],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "type": {
+      "value": "martialM",
+      "baseItem": "greatsword"
+    },
+    "mastery": "graze",
+    "attuned": false,
+    "equipped": false
+  },
+  "effects": [
+    {
+      "_id": "vhh8HPMEELQQETIM",
+      "name": "Mastery Property (Graze)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": 1781481787,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "Ebg4LMQBPQ79ya3D",
+      "name": "Charged Slash (Advantage)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [
+        {
+          "key": "flags.midi-qol.advantage.attack.all",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "specialDuration": ["1Attack"],
+          "stackable": "noneName",
+          "selfTarget": true,
+          "showIcon": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": "CRXu392wlpAlDBpK",
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Great Sword",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      },
+      "last": {
+        "HAG2o683MA4rgcPB": {
+          "attackMode": "twoHanded",
+          "damageType": {
+            "0": "slashing"
+          }
+        },
+        "PcgohwlKeoCHjGPA": {
+          "attackMode": "twoHanded",
+          "damageType": {
+            "0": "slashing",
+            "1": "slashing"
+          }
+        }
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": ""
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    }
+  },
+  "_stats": {
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786022400448,
+    "modifiedTime": 1786022416456,
+    "lastModifiedBy": "6fq5bv9o4XfSzYRr"
+  }
+}

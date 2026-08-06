@@ -1,0 +1,155 @@
+{
+  "name": "Melody of Might",
+  "type": "feat",
+  "img": "icons/skills/melee/strike-sword-blood-red.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital activates one Melody as a 15-foot aura for 1 minute.</em></p>",
+      "chat": ""
+    },
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "melody-of-might",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Hunting Horn (Songbook)",
+    "properties": [],
+    "activities": {},
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "99e1184e62aa679a",
+      "name": "Melody of Might (Aura 15 ft)",
+      "img": "icons/skills/melee/strike-sword-blood-red.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.bonuses.mwak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.rwak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.msak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.rsak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "ActiveAuras": {
+          "isAura": true,
+          "aura": "Allies",
+          "radius": "15",
+          "alignment": "",
+          "type": "",
+          "customCheck": "",
+          "ignoreSelf": false,
+          "height": false,
+          "hidden": false,
+          "displayTemp": true,
+          "hostile": false,
+          "onlyOnce": false,
+          "wallsBlock": "system",
+          "statuses": []
+        },
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "isIncapacitated"
+          ],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "world": {
+          "hh": {
+            "isMelodyAura": true
+          }
+        }
+      },
+      "_stats": {
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "hh": {
+        "isMelody": true,
+        "melodyKey": "might"
+      }
+    }
+  },
+  "_stats": {
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}
