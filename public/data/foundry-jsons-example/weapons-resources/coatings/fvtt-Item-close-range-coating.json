@@ -1,0 +1,334 @@
+{
+  "_id": "ictQiJZn2ugouCce",
+  "name": "Close Range Coating",
+  "type": "consumable",
+  "img": "mh-icons/coating-full.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Close Range Coating</strong> (Bow coating vial)</p><p>While this coating is active, you do not have Disadvantage on ranged attacks with the Bow from a hostile creature within 5 feet of you.</p><p><em>Apply Coating</em> (once per turn, no action): expend this vial to gain <strong>3 charges</strong>. Each ranged attack with the Bow spends 1 charge (hit or miss). Remaining charges are lost if you apply a different coating or finish a Short or Long Rest.</p><p><em>Requires Midi QOL Nearby Foe optional rule (or equivalent) for full automation via <code>flags.midi-qol.ignoreNearbyFoes</code>.</em></p>",
+      "chat": "<p><strong>Close Range Coating</strong></p><p>Ignore nearby-foe Disadvantage on ranged attacks (3 charges per vial).</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "close-range-coating",
+    "quantity": 1,
+    "weight": {
+      "value": 0.25,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "",
+    "identified": true,
+    "unidentified": {
+      "description": "",
+      "name": "Mysterious Coating"
+    },
+    "container": null,
+    "attunement": "",
+    "attuned": false,
+    "equipped": false,
+    "type": {
+      "value": "poison",
+      "subtype": ""
+    },
+    "damage": {
+      "base": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false,
+          "formula": ""
+        },
+        "scaling": {
+          "mode": "",
+          "number": null
+        },
+        "bonus": ""
+      },
+      "replace": false
+    },
+    "magicalBonus": null,
+    "properties": [],
+    "uses": {
+      "spent": 0,
+      "max": "1",
+      "recovery": [],
+      "autoDestroy": true
+    },
+    "activities": {
+      "uxBQ7VnNpsiCFtmB": {
+        "_id": "uxBQ7VnNpsiCFtmB",
+        "type": "utility",
+        "sort": 0,
+        "name": "Apply Coating",
+        "img": "mh-icons/coating-full.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "Once on each of your turns (no action required)",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Apply Close Range Coating (3 charges)"
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "apply-coating",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      }
+    }
+  },
+  "effects": [
+    {
+      "_id": "UV5jp2gDyrzl04e4",
+      "name": "Close Range Coating (Active) [3/3]",
+      "img": "mh-icons/coating-full.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.ignoreNearbyFoes",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "<p>Ignore Disadvantage from nearby foes on ranged attacks. Charges tracked by Bow Item Macro.</p>",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": true,
+          "selfTargetAlways": true,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "shortRest",
+            "longRest"
+          ],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "world": {
+          "bow": {
+            "isCoatingTemplate": true,
+            "isCoatingActive": true,
+            "coatingKey": "close-range",
+            "charges": 3,
+            "chargesMax": 3
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1785988000000,
+        "modifiedTime": 1785988000000,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "weapon-resource",
+      "resourceKind": "coating",
+      "baseWeaponName": "Bow"
+    },
+    "world": {
+      "bow": {
+        "isCoating": true,
+        "coatingKey": "close-range",
+        "chargesPerVial": 3
+      }
+    },
+    "midi-qol": {
+      "onUseMacroName": "[preTargeting]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Close Range Coating",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Bow Coatings — Item Macros (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n//\n// EMBEDS:\n// 1) Coating consumable (Power / Close Range / …)\n//    On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro\n//    Activity identifier: apply-coating\n// 2) Bow weapon\n//    On Use: [postAttackRoll]ItemMacro\n//\n// Flags:\n// - flags.world.bow.isCoating (consumable item)\n// - flags.world.bow.coatingKey (\"power\" | \"close-range\" | …)\n// - flags.world.bow.chargesPerVial (default 3)\n// - AE flags.world.bow.isCoatingActive + charges + coatingKey\n//\n// Apply Coating consumes 1 vial (item uses), recreates an actor AE with 3 charges.\n// Switching coatings deletes the previous AE (remaining charges lost).\n// Short/Long Rest: DAE specialDuration clears the AE (charges lost).\n// Bow attacks spend 1 charge (hit or miss). At 0 the AE is deleted.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? \"\").toLowerCase();\nconst actType = String(rolled?.type ?? workflow?.activity?.type ?? \"\").toLowerCase();\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Bow Coatings: actor not found.\");\n  return;\n}\n\nconst isCoatingItem = foundry.utils.getProperty(item, \"flags.world.bow.isCoating\") === true\n  || String(item?.system?.identifier ?? \"\").endsWith(\"-coating\")\n  || /coating$/i.test(item?.name ?? \"\");\n\nconst isBowWeapon = foundry.utils.getProperty(item, \"flags.world.bow.isBow\") === true\n  || String(item?.system?.identifier ?? \"\") === \"bow\"\n  || /^bow\\b/i.test(item?.name ?? \"\");\n\nconst isCoatingActiveAe = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.bow.isCoatingActive\") === true\n  || /coating \\(active\\)/i.test(ef.name ?? \"\");\n\nconst coatingLabel = (key, charges, max) => {\n  const names = {\n    power: \"Power Coating\",\n    \"close-range\": \"Close Range Coating\",\n    acid: \"Acid Coating\",\n    cold: \"Cold Coating\",\n    fire: \"Fire Coating\",\n    lightning: \"Lightning Coating\",\n    blast: \"Blast Coating\",\n    poison: \"Poison Coating\",\n    paralysis: \"Paralysis Coating\",\n    sleep: \"Sleep Coating\",\n  };\n  const base = names[key] ?? \"Coating\";\n  return `${base} (Active) [${charges}/${max}]`;\n};\n\nconst isApplyActivity =\n  actId === \"apply-coating\"\n  || actName.includes(\"apply coating\")\n  || actName === \"apply\";\n\n// ── Coating: once-per-turn gate (before vial is consumed) ───────────────────\nif (isCoatingItem && isApplyActivity && (macroPass.includes(\"pretargeting\") || macroPass.includes(\"preitemroll\") || macroPass === \"\")) {\n  // Empty macroPass can happen on some midi builds; only gate when we can detect apply.\n  if (macroPass.includes(\"pretargeting\") || macroPass.includes(\"preitemroll\")) {\n    const combat = game.combat;\n    if (combat?.started) {\n      const turnKey = `${combat.id}:${combat.round}:${combat.turn}:${actorDoc.id}`;\n      const last = foundry.utils.getProperty(actorDoc, \"flags.world.bow.lastCoatingApplyTurn\");\n      if (last === turnKey) {\n        ui.notifications.warn(\"Bow Coatings: already applied a coating this turn.\");\n        if (workflow) workflow.aborted = true;\n        return false;\n      }\n    }\n    // Allow the activity to proceed; mark the turn after success in postActiveEffects.\n    return;\n  }\n}\n\n// ── Coating: apply / refresh active AE ──────────────────────────────────────\nif (isCoatingItem && isApplyActivity && (macroPass.includes(\"postactiveeffects\") || macroPass === \"\")) {\n  if (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\n  const coatingKey = String(\n    foundry.utils.getProperty(item, \"flags.world.bow.coatingKey\")\n    ?? (item.system?.identifier ?? \"\").replace(/-coating$/, \"\")\n    ?? \"power\",\n  ).toLowerCase();\n  const maxCharges = Math.max(\n    1,\n    Number(foundry.utils.getProperty(item, \"flags.world.bow.chargesPerVial\") ?? 3),\n  );\n\n  const combat = game.combat;\n  if (combat?.started) {\n    const turnKey = `${combat.id}:${combat.round}:${combat.turn}:${actorDoc.id}`;\n    await actorDoc.setFlag(\"world\", \"bow.lastCoatingApplyTurn\", turnKey);\n  }\n\n  // Recreate AE from this vial's template (previous coating charges are lost).\n  const stale = actorDoc.effects.filter(isCoatingActiveAe);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\n  }\n\n  const template = item.effects.find((ef) =>\n    foundry.utils.getProperty(ef, \"flags.world.bow.isCoatingTemplate\") === true\n    || foundry.utils.getProperty(ef, \"flags.world.bow.coatingKey\") === coatingKey\n    || /coating/i.test(ef.name ?? \"\"),\n  );\n  if (!template) {\n    ui.notifications.error(`${item.name}: missing coating Active Effect template.`);\n    return;\n  }\n\n  const data = template.toObject();\n  delete data._id;\n  data.disabled = false;\n  data.transfer = false;\n  foundry.utils.setProperty(data, \"flags.world.bow.isCoatingActive\", true);\n  foundry.utils.setProperty(data, \"flags.world.bow.isCoatingTemplate\", false);\n  foundry.utils.setProperty(data, \"flags.world.bow.coatingKey\", coatingKey);\n  foundry.utils.setProperty(data, \"flags.world.bow.charges\", maxCharges);\n  foundry.utils.setProperty(data, \"flags.world.bow.chargesMax\", maxCharges);\n  data.name = coatingLabel(coatingKey, maxCharges, maxCharges);\n  const [ae] = await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [data]);\n\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> applies <em>${esc(ae.name)}</em>.</p><p>3 coating charges. Spent when you make a ranged attack with the Bow (hit or miss). Remaining charges are lost if you apply a different coating or finish a Short/Long Rest.</p></div>`,\n  });\n  return;\n}\n\n// ── Bow weapon: spend coating charge on attack ──────────────────────────────\nif (!isBowWeapon) return;\nif (macroPass && !macroPass.includes(\"postattackroll\")) return;\n\nconst isAttackActivity =\n  actType === \"attack\"\n  || actId === \"attack\"\n  || actName === \"attack\";\n\nif (!isAttackActivity) return;\n\nconst ae = actorDoc.effects.find(isCoatingActiveAe);\nif (!ae) return;\n\nconst maxCharges = Math.max(1, Number(foundry.utils.getProperty(ae, \"flags.world.bow.chargesMax\") ?? 3));\nlet charges = Number(foundry.utils.getProperty(ae, \"flags.world.bow.charges\") ?? 0);\nconst coatingKey = String(foundry.utils.getProperty(ae, \"flags.world.bow.coatingKey\") ?? \"power\");\n\ncharges -= 1;\nif (charges <= 0) {\n  await ae.delete();\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p>Coating expended (0 charges left).</p></div>`,\n  });\n  return;\n}\n\nawait ae.update({\n  name: coatingLabel(coatingKey, charges, maxCharges),\n  \"flags.world.bow.charges\": charges,\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1785988000000,
+    "modifiedTime": 1785988000000,
+    "lastModifiedBy": null
+  }
+}
