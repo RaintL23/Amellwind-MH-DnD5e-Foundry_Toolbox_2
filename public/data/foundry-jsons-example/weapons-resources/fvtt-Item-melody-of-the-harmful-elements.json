@@ -1,11 +1,11 @@
 {
-  "name": "Melody of Might",
+  "name": "Melody of the Harmful Elements",
   "type": "feat",
-  "img": "icons/skills/melee/strike-sword-blood-red.webp",
+  "img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>",
-      "chat": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>"
+      "value": "<p><strong>Melody of the Harmful Elements</strong></p><p>When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura deal an extra [[/r 1d4]] damage of that type.</p><p><em>Songbook Melody for Hunting Horn (Rare+). On Encore/Recital you choose the damage type. Starts inactive.</em></p>",
+      "chat": ""
     },
     "source": {
       "custom": "",
@@ -15,7 +15,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "melody-of-might",
+    "identifier": "melody-of-the-harmful-elements",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -36,34 +36,34 @@
   },
   "effects": [
     {
-      "_id": "99e1184e62aa679a",
-      "name": "Melody of Might (Aura 15 ft)",
-      "img": "icons/skills/melee/strike-sword-blood-red.webp",
+      "_id": "542073b2ea2d1d21",
+      "name": "Melody of the Harmful Elements (Aura 15 ft)",
+      "img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
       "type": "base",
       "system": {},
       "changes": [
         {
           "key": "system.bonuses.mwak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[fire]",
           "priority": 20
         },
         {
           "key": "system.bonuses.rwak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[fire]",
           "priority": 20
         },
         {
           "key": "system.bonuses.msak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[fire]",
           "priority": 20
         },
         {
           "key": "system.bonuses.rsak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[fire]",
           "priority": 20
         }
       ],
@@ -107,7 +107,9 @@
           "stackable": "noneName",
           "showIcon": true,
           "durationExpression": "",
-          "specialDuration": ["isIncapacitated"],
+          "specialDuration": [
+            "isIncapacitated"
+          ],
           "disableIncapacitated": false,
           "dontApply": false
         },
@@ -130,7 +132,7 @@
   "folder": null,
   "flags": {
     "exportSource": {
-      "world": "monster-hunter-hunts",
+      "world": "amellwind-toolbox",
       "system": "dnd5e",
       "coreVersion": "12.331",
       "systemVersion": "4.4.4"
@@ -138,7 +140,8 @@
     "world": {
       "hh": {
         "isMelody": true,
-        "melodyKey": "might"
+        "melodyKey": "harmful-elements",
+        "needsElementChoice": true
       }
     }
   },

@@ -10,8 +10,8 @@
       "max": ""
     },
     "description": {
-      "value": "<p><strong>Melody of Swiftness</strong></p><p>Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital activates one Melody as a 15-foot aura for 1 minute.</em></p>",
-      "chat": ""
+      "value": "<p><strong>Melody of Swiftness</strong></p><p>Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>",
+      "chat": "<p><strong>Melody of Swiftness</strong></p><p>Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>"
     },
     "identifier": "melody-of-swiftness",
     "source": {
@@ -98,9 +98,7 @@
           "stackable": "noneName",
           "showIcon": true,
           "durationExpression": "",
-          "specialDuration": [
-            "isIncapacitated"
-          ],
+          "specialDuration": ["isIncapacitated"],
           "disableIncapacitated": false,
           "dontApply": false
         },

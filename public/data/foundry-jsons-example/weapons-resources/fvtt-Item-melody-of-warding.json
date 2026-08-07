@@ -1,11 +1,11 @@
 {
-  "name": "Melody of Might",
+  "name": "Melody of Warding",
   "type": "feat",
-  "img": "icons/skills/melee/strike-sword-blood-red.webp",
+  "img": "icons/magic/defensive/shield-barrier-blue.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>",
-      "chat": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>"
+      "value": "<p><strong>Melody of Warding</strong></p><p>Allies in the aura gain a +1 bonus to their Armor Class.</p><p><em>Songbook Melody for Hunting Horn (Rare+). Starts inactive; Recital/Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
+      "chat": ""
     },
     "source": {
       "custom": "",
@@ -15,7 +15,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "melody-of-might",
+    "identifier": "melody-of-warding",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -36,34 +36,16 @@
   },
   "effects": [
     {
-      "_id": "99e1184e62aa679a",
-      "name": "Melody of Might (Aura 15 ft)",
-      "img": "icons/skills/melee/strike-sword-blood-red.webp",
+      "_id": "556065fec45042ee",
+      "name": "Melody of Warding (Aura 15 ft)",
+      "img": "icons/magic/defensive/shield-barrier-blue.webp",
       "type": "base",
       "system": {},
       "changes": [
         {
-          "key": "system.bonuses.mwak.damage",
+          "key": "system.attributes.ac.bonus",
           "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rwak.damage",
-          "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.msak.damage",
-          "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rsak.damage",
-          "mode": 2,
-          "value": "1d4",
+          "value": "1",
           "priority": 20
         }
       ],
@@ -107,7 +89,9 @@
           "stackable": "noneName",
           "showIcon": true,
           "durationExpression": "",
-          "specialDuration": ["isIncapacitated"],
+          "specialDuration": [
+            "isIncapacitated"
+          ],
           "disableIncapacitated": false,
           "dontApply": false
         },
@@ -130,7 +114,7 @@
   "folder": null,
   "flags": {
     "exportSource": {
-      "world": "monster-hunter-hunts",
+      "world": "amellwind-toolbox",
       "system": "dnd5e",
       "coreVersion": "12.331",
       "systemVersion": "4.4.4"
@@ -138,7 +122,7 @@
     "world": {
       "hh": {
         "isMelody": true,
-        "melodyKey": "might"
+        "melodyKey": "warding"
       }
     }
   },
