@@ -1,9 +1,13 @@
 {
-  "_id": "72S00eMeNsTqbWmR",
-  "name": "Bow (Uncommon)",
-  "type": "weapon",
-  "img": "mh-icons/weapon_bow.webp",
+  "_id": "oaqfyayZkjozcHkg",
+  "name": "Lightning Coating",
+  "type": "consumable",
+  "img": "mh-icons/coating-full.webp",
   "system": {
+    "description": {
+      "value": "<p><strong>Lightning Coating</strong> (Bow coating vial)</p><p>On a hit with the Bow while this coating is active, the attack deals an extra [[/r 1d6]] lightning damage.</p><p><em>Apply Coating</em> (once per turn, no action): expend this vial to gain <strong>3 charges</strong>. Each ranged attack with the Bow spends 1 charge (hit or miss). Remaining charges are lost if you apply a different coating or finish a Short or Long Rest. Coatings do not regenerate.</p><p><em>Crafted coating (not sold in standard shops).</em></p>",
+      "chat": "<p><strong>Lightning Coating</strong></p><p>Extra [[/r 1d6]] lightning on hit while active (3 charges per vial).</p>"
+    },
     "source": {
       "custom": "",
       "book": "RAINTDM",
@@ -12,187 +16,66 @@
       "rules": "2024",
       "revision": 1
     },
-    "description": {
-      "value": "<p><a href=\"https://5e.tools/items.html#bow\" target=\"_blank\" rel=\"noopener\">Open Bow filters on 5e.tools</a></p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p><p>If you hit a creature with this weapon and deal damage to it, the creature's Speed is reduced by 10 feet until the start of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Coatings</strong></p><p>This weapon can apply specialized coatings that you purchase or craft as inventory items. You can apply only coating types unlocked for this weapon's rarity (and any lower rarity).</p><p><strong>Once on each of your turns (no action required),</strong> you can expend one coating vial you are carrying and make that coating your active coating. An active coating has 3 charges. It remains active until its charges are expended, you activate a different coating (any remaining charges on the previous coating are lost), or you finish a Short or Long Rest (any remaining charges are lost).</p><p>When you make a ranged attack with this bow while a coating is active, one charge is expended and the coating's effect applies as described for that coating. You still expend ammunition (arrows) as normal for the attack. Coatings do not regenerate; new vials must be bought or crafted.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charging Sidestep</strong></p><p><strong>Bonus Action.</strong></p><p>You leap up to 15 feet without provoking Opportunity Attacks. If you make a ranged attack with this bow later on the same turn, that attack deals an extra [[/r 1d4]] piercing damage on a hit.</p></div><h3>Coatings</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Power Coating</strong></p><p>On a hit, the attack deals an extra [[/r 1d6]] piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Close Range Coating</strong></p><p>You do not have Disadvantage on this ranged attack from a hostile creature within 5 feet of you. This coating expends a charge when you make the attack, hit or miss.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Coatings</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charging Sidestep</strong></p><p><strong>Bonus Action.</strong></p></div>"
-    },
-    "identifier": "bow",
+    "identifier": "lightning-coating",
     "quantity": 1,
     "weight": {
-      "value": 2,
+      "value": 0.25,
       "units": "lb"
     },
     "price": {
-      "value": 50,
+      "value": 1,
       "denomination": "gp"
     },
-    "attuned": false,
-    "attunement": "",
-    "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "",
     "identified": true,
+    "unidentified": {
+      "description": "",
+      "name": "Mysterious Coating"
+    },
+    "container": null,
+    "attunement": "",
+    "attuned": false,
+    "equipped": false,
     "type": {
-      "value": "martialR",
-      "baseItem": "longbow"
+      "value": "poison",
+      "subtype": ""
     },
     "damage": {
       "base": {
-        "number": 1,
-        "denomination": 8,
-        "types": [
-          "piercing"
-        ],
-        "custom": {
-          "enabled": false
-        },
-        "scaling": {
-          "mode": "",
-          "number": 1
-        },
-        "bonus": ""
-      },
-      "versatile": {
         "number": null,
         "denomination": null,
         "types": [],
         "custom": {
-          "enabled": false
+          "enabled": false,
+          "formula": ""
         },
         "scaling": {
-          "number": 1
-        }
-      }
+          "mode": "",
+          "number": null
+        },
+        "bonus": ""
+      },
+      "replace": false
     },
     "magicalBonus": null,
-    "properties": [
-      "amm",
-      "two"
-    ],
-    "proficient": null,
-    "range": {
-      "value": 150,
-      "long": 600,
-      "reach": null,
-      "units": "ft"
-    },
-    "mastery": "slow",
-    "ammunition": {
-      "type": "arrow"
-    },
-    "armor": {
-      "value": null
-    },
+    "properties": [],
     "uses": {
       "spent": 0,
-      "max": "",
-      "recovery": []
+      "max": "1",
+      "recovery": [],
+      "autoDestroy": true
     },
     "activities": {
-      "nU7ar4FE05cmd2kr": {
-        "_id": "nU7ar4FE05cmd2kr",
-        "type": "attack",
+      "WSLhJODEoQHU39au": {
+        "_id": "WSLhJODEoQHU39au",
+        "type": "utility",
         "sort": 0,
-        "name": "Attack",
+        "name": "Apply Coating",
+        "img": "mh-icons/coating-full.webp",
         "activation": {
-          "type": "action",
-          "value": 1,
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false
-          },
-          "spellSlot": true,
-          "targets": []
-        },
-        "description": {},
-        "duration": {
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "units": "self",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "contiguous": false,
-            "units": "ft"
-          },
-          "affects": {
-            "choice": false
-          },
-          "override": false,
-          "prompt": true
-        },
-        "uses": {
-          "spent": 0,
-          "recovery": []
-        },
-        "useConditionText": "",
-        "effectConditionText": "false",
-        "attack": {
-          "ability": "",
-          "type": {
-            "value": "ranged",
-            "classification": "weapon"
-          },
-          "critical": {
-            "threshold": null
-          },
-          "flat": false,
-          "bonus": ""
-        },
-        "damage": {
-          "critical": {
-            "bonus": ""
-          },
-          "includeBase": true,
-          "parts": []
-        },
-        "midiProperties": {
-          "ignoreTraits": [],
-          "triggeredActivityId": "none",
-          "triggeredActivityConditionText": "",
-          "triggeredActivityTargets": "targets",
-          "triggeredActivityRollAs": "self",
-          "autoConsume": false,
-          "forceConsumeDialog": "default",
-          "forceRollDialog": "default",
-          "forceDamageDialog": "default",
-          "confirmTargets": "default",
-          "autoTargetType": "any",
-          "autoTargetAction": "default",
-          "automationOnly": false,
-          "otherActivityCompatible": false,
-          "identifier": "attack",
-          "displayActivityName": true,
-          "rollMode": "default",
-          "chooseEffects": false,
-          "toggleEffect": false,
-          "ignoreFullCover": false,
-          "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
-          "noConcentrationCheck": false,
-          "autoCEEffects": "default"
-        },
-        "otherActivityId": "none",
-        "otherActivityUuid": "",
-        "attackMode": "oneHanded",
-        "ammunition": ""
-      },
-      "uMggQbDkDG51EwUj": {
-        "_id": "uMggQbDkDG51EwUj",
-        "sort": 200000,
-        "name": "Charging Sidestep",
-        "img": "icons/skills/movement/figure-running-gray.webp",
-        "activation": {
-          "type": "bonus",
-          "value": 1,
-          "condition": "",
+          "type": "special",
+          "value": null,
+          "condition": "Once on each of your turns (no action required)",
           "override": false
         },
         "consumption": {
@@ -201,10 +84,20 @@
             "max": ""
           },
           "spellSlot": false,
-          "targets": []
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
         },
         "description": {
-          "chatFlavor": "Leap up to 15 ft (no OA). Next Bow attack this turn: +1d4 piercing on hit."
+          "chatFlavor": "Apply Lightning Coating (3 charges)"
         },
         "duration": {
           "value": "",
@@ -212,14 +105,10 @@
           "concentration": false,
           "override": false
         },
-        "effects": [
-          {
-            "_id": "RcoXxVml1uWJqgXH"
-          }
-        ],
+        "effects": [],
         "range": {
-          "value": "15",
-          "units": "ft",
+          "value": null,
+          "units": "self",
           "special": "",
           "override": false
         },
@@ -262,7 +151,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "charging-sidestep",
+          "identifier": "apply-coating",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -274,7 +163,6 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "type": "utility",
         "roll": {
           "formula": "",
           "name": "",
@@ -287,7 +175,7 @@
         },
         "useConditionText": "",
         "useConditionReason": "",
-        "effectConditionText": "",
+        "effectConditionText": "false",
         "ignoreTraits": {
           "idi": false,
           "idr": false,
@@ -302,64 +190,24 @@
         },
         "otherActivityId": "none"
       }
-    },
-    "container": null,
-    "cover": null,
-    "crewed": false,
-    "unidentified": {
-      "description": ""
     }
   },
   "effects": [
     {
-      "_id": "DfUOIUG0ARhtUl0x",
-      "name": "Mastery (Slow)",
-      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
-      "description": "",
-      "changes": [],
-      "disabled": false,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "origin": null,
-      "transfer": true,
-      "statuses": [],
+      "_id": "sovGmeUyH0o5OByY",
+      "name": "Lightning Coating (Active) [3/3]",
+      "img": "mh-icons/coating-full.webp",
       "type": "base",
       "system": {},
-      "tint": "#ffffff",
-      "sort": 0,
-      "flags": {},
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": 1785988000000,
-        "modifiedTime": 1785988000000,
-        "lastModifiedBy": null
-      }
-    },
-    {
-      "_id": "RcoXxVml1uWJqgXH",
-      "name": "Charging Sidestep (+1d4)",
-      "img": "icons/skills/movement/figure-running-gray.webp",
-      "description": "",
       "changes": [
         {
           "key": "system.bonuses.rwak.damage",
           "mode": 2,
-          "value": "1d4[piercing]",
+          "value": "1d6[lightning]",
           "priority": 20
         }
       ],
-      "disabled": false,
+      "disabled": true,
       "duration": {
         "startTime": null,
         "seconds": null,
@@ -369,27 +217,34 @@
         "startRound": null,
         "startTurn": null
       },
+      "description": "<p>Extra 1d6 lightning on ranged weapon hits. Charges tracked by Bow Item Macro.</p>",
       "origin": null,
+      "tint": "#ffffff",
       "transfer": false,
       "statuses": [],
-      "type": "base",
-      "system": {},
-      "tint": "#ffffff",
       "sort": 0,
       "flags": {
         "dae": {
-          "specialDuration": [
-            "turnEndSource"
-          ],
-          "stackable": "noneName",
+          "enableCondition": "",
           "selfTarget": true,
           "selfTargetAlways": true,
+          "stackable": "noneName",
           "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "shortRest",
+            "longRest"
+          ],
+          "disableIncapacitated": false,
           "dontApply": false
         },
         "world": {
           "bow": {
-            "isSidestepBuff": true
+            "isCoatingTemplate": true,
+            "isCoatingActive": true,
+            "coatingKey": "lightning",
+            "charges": 3,
+            "chargesMax": 3
           }
         }
       },
@@ -399,8 +254,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1785988000000,
-        "modifiedTime": 1785988000000,
+        "createdTime": 1785989000000,
+        "modifiedTime": 1785989000000,
         "lastModifiedBy": null
       }
     }
@@ -412,34 +267,35 @@
   },
   "flags": {
     "amellwind-toolbox": {
-      "baseWeaponName": "Bow",
-      "exportKind": "weapon-forge"
+      "exportKind": "weapon-resource",
+      "resourceKind": "coating",
+      "baseWeaponName": "Bow"
+    },
+    "world": {
+      "bow": {
+        "isCoating": true,
+        "coatingKey": "lightning",
+        "chargesPerVial": 3
+      }
     },
     "midi-qol": {
-      "onUseMacroName": "[postAttackRoll]ItemMacro,[postDamageRoll]ItemMacro",
+      "onUseMacroName": "[preTargeting]ItemMacro,[postActiveEffects]ItemMacro",
       "onUseMacroParts": {
         "items": [
           {
             "macroName": "ItemMacro",
-            "option": "postAttackRoll"
+            "option": "preTargeting"
           },
           {
             "macroName": "ItemMacro",
-            "option": "postDamageRoll"
+            "option": "postActiveEffects"
           }
         ]
-      },
-      "fumbleThreshold": null,
-      "rollAttackPerTarget": "default",
-      "removeAttackDamageButtons": "default",
-      "itemCondition": "",
-      "reactionCondition": "",
-      "otherCondition": "",
-      "effectCondition": ""
+      }
     },
     "itemacro": {
       "macro": {
-        "name": "Bow",
+        "name": "Lightning Coating",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -458,25 +314,6 @@
         }
       }
     },
-    "world": {
-      "bow": {
-        "isBow": true,
-        "tier": "uncommon",
-        "unlockedCoatings": [
-          "power",
-          "close-range"
-        ]
-      }
-    },
-    "midiProperties": {
-      "autoFailFriendly": false,
-      "autoSaveFriendly": false,
-      "magicdam": false,
-      "magiceffect": false,
-      "noConcentrationCheck": false,
-      "toggleEffect": false,
-      "ignoreTotalCover": false
-    },
     "exportSource": {
       "world": "monster-hunter-hunts",
       "system": "dnd5e",
@@ -490,8 +327,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1785988000000,
-    "modifiedTime": 1785988000000,
+    "createdTime": 1785989000000,
+    "modifiedTime": 1785989000000,
     "lastModifiedBy": null
   }
 }

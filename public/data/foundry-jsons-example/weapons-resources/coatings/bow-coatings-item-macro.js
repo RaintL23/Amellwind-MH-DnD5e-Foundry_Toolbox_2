@@ -1,22 +1,21 @@
-// Bow Coatings — Item Macros (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)
+// Bow — Item Macros (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)
 //
 // EMBEDS:
-// 1) Coating consumable (Power / Close Range / …)
+// 1) Coating consumable (Power / Close Range / Acid / …)
 //    On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro
 //    Activity identifier: apply-coating
-// 2) Bow weapon
+// 2) Bow weapon (Uncommon+)
 //    On Use: [postAttackRoll]ItemMacro,[postDamageRoll]ItemMacro
+//    Rare+: also gains Tracer on Attack hits; Dragonpiercer spends Tracer via ×N activities
 //
-// Charge / Sidestep cleanup runs AFTER damage when the attack hits, so Power
-// Coating (+1d6) and Charging Sidestep (+1d4) still apply on the damage roll.
+// Charge / Sidestep cleanup runs AFTER damage when the attack hits.
 // On a miss (no damage roll), cleanup runs on postAttackRoll instead.
 //
 // Flags:
-// - flags.world.bow.isCoating (consumable item)
-// - flags.world.bow.coatingKey ("power" | "close-range" | …)
-// - flags.world.bow.chargesPerVial (default 3)
-// - AE flags.world.bow.isCoatingActive + charges + coatingKey
-// - AE flags.world.bow.isSidestepBuff (Charging Sidestep +1d4)
+// - flags.world.bow.isCoating / coatingKey / chargesPerVial
+// - AE flags.world.bow.isCoatingActive + charges
+// - AE flags.world.bow.isSidestepBuff
+// - flags.world.bow.tracerMax (default 3) — item system.uses tracks Tracer pool
 
 const esc = (value) => {
   const s = String(value ?? "");
@@ -50,7 +49,7 @@ const actorDoc = actor
   ?? (typeof token !== "undefined" ? token?.actor : null);
 
 if (!actorDoc) {
-  ui.notifications.warn("Bow Coatings: actor not found.");
+  ui.notifications.warn("Bow: actor not found.");
   return;
 }
 
@@ -91,6 +90,38 @@ const isApplyActivity =
   actId === "apply-coating"
   || actName.includes("apply coating")
   || actName === "apply";
+
+const tracerEnabled = () => {
+  const max = Number(foundry.utils.getProperty(item, "flags.world.bow.tracerMax") ?? 0);
+  if (max > 0) return max;
+  const usesMax = Number(item?.system?.uses?.max ?? 0);
+  return Number.isFinite(usesMax) && usesMax > 0 ? usesMax : 0;
+};
+
+const refreshTracerIdle = async () => {
+  const max = tracerEnabled();
+  if (!max || !item) return;
+  const now = game.time?.worldTime ?? 0;
+  const last = Number(foundry.utils.getProperty(actorDoc, "flags.world.bow.tracerLastAttack") ?? 0);
+  if (last && now - last > 60) {
+    const spent = Number(item.system?.uses?.spent ?? 0);
+    if (spent < max) {
+      await item.update({ "system.uses.spent": max });
+      ui.notifications.info("Bow Tracer faded (1 minute without attacking).");
+    }
+  }
+  await actorDoc.setFlag("world", "bow.tracerLastAttack", now);
+};
+
+const gainTracer = async () => {
+  const max = tracerEnabled();
+  if (!max || !item) return;
+  await refreshTracerIdle();
+  const bowItem = actorDoc.items.get(item.id) ?? item;
+  const spent = Number(bowItem.system?.uses?.spent ?? 0);
+  if (spent <= 0) return; // already full (available = max - spent)
+  await bowItem.update({ "system.uses.spent": spent - 1 });
+};
 
 // ── Coating: once-per-turn gate (before vial is consumed) ───────────────────
 if (isCoatingItem && isApplyActivity && (macroPass.includes("pretargeting") || macroPass.includes("preitemroll"))) {
@@ -161,13 +192,24 @@ if (isCoatingItem && isApplyActivity && (macroPass.includes("postactiveeffects")
   return;
 }
 
-// ── Bow weapon: resolve after damage (hit) or after attack (miss) ────────────
+// ── Bow weapon ──────────────────────────────────────────────────────────────
 if (!isBowWeapon) return;
 
 const isAttackActivity =
   actType === "attack"
   || actId === "attack"
   || actName === "attack";
+
+const isDragonpiercer =
+  actId.startsWith("dragonpiercer")
+  || actName.includes("dragonpiercer");
+
+// Keep Tracer idle timer fresh on any Bow attack / Dragonpiercer use
+if ((isAttackActivity || isDragonpiercer) && (macroPass.includes("postattackroll") || macroPass.includes("postdamageroll") || macroPass.includes("pretargeting"))) {
+  if (macroPass.includes("pretargeting") && isDragonpiercer) {
+    await refreshTracerIdle();
+  }
+}
 
 if (!isAttackActivity) return;
 
@@ -179,11 +221,10 @@ const isHit = hitCount > 0;
 const isPostAttack = macroPass.includes("postattackroll");
 const isPostDamage = macroPass.includes("postdamageroll");
 
-// Hit → wait until damage is applied. Miss → no damage roll, clean up now.
 const shouldResolve =
   (isPostDamage && isHit)
   || (isPostAttack && !isHit)
-  || (isPostDamage && !isHit); // safety if midi still fires damage pass on miss
+  || (isPostDamage && !isHit);
 
 if (!shouldResolve) return;
 
@@ -219,3 +260,10 @@ const clearSidestepBuff = async () => {
 
 await spendCoatingCharge();
 await clearSidestepBuff();
+
+// Tracer I+: gain 1 on a hit with Attack (after damage resolves)
+if (isHit && isPostDamage) {
+  await gainTracer();
+} else if (!isHit && isPostAttack) {
+  await refreshTracerIdle();
+}
