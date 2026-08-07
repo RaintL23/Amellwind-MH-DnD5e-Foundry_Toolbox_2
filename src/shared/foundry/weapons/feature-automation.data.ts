@@ -315,15 +315,32 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   ),
   "demon dodge": reactionUtility(
     "While Demon Mode is active, when you are hit by a melee attack you can see",
-    { chatFlavor: "Add your Proficiency Bonus to AC against the triggering attack." },
-  ),
-  "perfect evade": reactionUtility(
-    "After Demon Dodge causes the triggering attack to miss",
     {
+      chatFlavor:
+        "Add your Proficiency Bonus to AC vs the triggering attack (Midi rechecks). On a miss, move 5 ft without OA.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/movement/figure-running-gray.webp",
+    },
+    // Utility alone does not change AC. Dual Blades uncommon example embeds ItemMacro
+    // [postActiveEffects] that applies system.attributes.ac.bonus + @prof with
+    // dae.specialDuration isAttacked (same Shield / Lance Counter-Thrust pattern).
+    "Needs ItemMacro AC AE (see foundry-jsons-example/weapons fvtt-Item-dual-blades-uncommon).",
+  ),
+  "perfect evade": spec(
+    "reaction",
+    {
+      activation: "reaction",
       activityType: "attack",
       includeBaseDamage: true,
-      chatFlavor: "Make one melee weapon attack as part of the same reaction.",
+      activationCondition:
+        "After Demon Dodge causes the triggering attack to miss",
+      chatFlavor:
+        "After 5 ft of movement: make one melee weapon attack against the attacker.",
+      activityImg: "icons/skills/melee/blade-tip-orange.webp",
     },
+    "Companion to Demon Dodge (same reaction), Rare+.",
   ),
   "elemental guard": reactionUtility(
     "When you are hit by an attack (Sword mode)",
@@ -530,26 +547,96 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   }),
   "demon mode": spec("mode_aura_or_stance", {
     activation: "bonus",
-    usesMax: "2",
+    usesMax: "@prof",
     usesRecoveryPeriod: "lr",
-    speedBonus: "5",
-    durationSeconds: 30,
+    speedBonus: "10",
+    durationSeconds: 60,
+    durationValue: "1",
+    durationUnits: "minute",
     toggleEffect: true,
-    chatFlavor: "+5 walk; +1d4 weapon damage on first hit each turn (manual).",
+    rangeUnits: "self",
+    targetAffectsType: "self",
+    targetPrompt: false,
+    activityImg: "icons/magic/unholy/strike-body-life-shadow-green.webp",
+    chatFlavor:
+      "+10 walk; +1d4 slashing on melee weapon attacks (Light extra attack bonus).",
+    effectChanges: [
+      {
+        key: "system.bonuses.mwak.damage",
+        mode: EFFECT_MODE.ADD,
+        value: "1d4[slashing]",
+        priority: 20,
+      },
+    ],
+    activeEffect: {
+      img: "icons/magic/unholy/strike-body-life-shadow-green.webp",
+      showIcon: true,
+      // Do not set selfTarget: Midi toggleEffect already applies the AE.
+      // selfTarget + toggleEffect doubles the effect on the actor.
+      disableIncapacitated: true,
+    },
   }),
   "demon mode upgrade": spec("upgrade_scaler", {
-    usesMax: "3",
-    speedBonus: "10",
-    damageFormula: "1d4",
+    speedBonus: "15",
+    effectChanges: [
+      {
+        key: "system.bonuses.mwak.damage",
+        mode: EFFECT_MODE.ADD,
+        value: "1d6[slashing]",
+        priority: 20,
+      },
+    ],
   }),
   "demon mode upgrade i": spec("upgrade_scaler", {
     speedBonus: "15",
-    damageFormula: "1d6",
+    effectChanges: [
+      {
+        key: "system.bonuses.mwak.damage",
+        mode: EFFECT_MODE.ADD,
+        value: "1d6[slashing]",
+        priority: 20,
+      },
+    ],
   }),
-  "archdemon mode": baUtility(
-    "When Demon Mode ends",
-    "Enter Archdemon Mode per description; uses tracked on Demon Mode.",
-  ),
+  /** Very Rare feature name on Dual Blades (upgrades Demon Mode). */
+  "demon upgrade": spec("upgrade_scaler", {
+    speedBonus: "15",
+    effectChanges: [
+      {
+        key: "system.bonuses.mwak.damage",
+        mode: EFFECT_MODE.ADD,
+        value: "1d6[slashing]",
+        priority: 20,
+      },
+    ],
+  }),
+  "archdemon mode": spec("mode_aura_or_stance", {
+    activation: "bonus",
+    activationCondition: "When Demon Mode ends",
+    durationSeconds: 60,
+    durationValue: "1",
+    durationUnits: "minute",
+    toggleEffect: true,
+    rangeUnits: "self",
+    targetAffectsType: "self",
+    targetPrompt: false,
+    activityImg: "icons/magic/unholy/strike-beam-blood-red-purple.webp",
+    chatFlavor:
+      "+1d4 slashing retained; no speed bonus / Demon Dodge. Ends Demon Mode if still active.",
+    effectChanges: [
+      {
+        key: "system.bonuses.mwak.damage",
+        mode: EFFECT_MODE.ADD,
+        value: "1d4[slashing]",
+        priority: 20,
+      },
+    ],
+    activeEffect: {
+      img: "icons/magic/unholy/strike-beam-blood-red-purple.webp",
+      showIcon: true,
+      disableIncapacitated: true,
+    },
+  }),
   reload: spec(
     "bonus_action",
     {

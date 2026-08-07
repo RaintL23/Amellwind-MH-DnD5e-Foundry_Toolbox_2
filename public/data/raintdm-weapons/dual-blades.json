@@ -5,7 +5,7 @@
   "type": "HW",
   "rarity": "none",
   "weight": 4,
-  "value": 30,
+  "value": 3000,
   "property": [
     "F",
     "L"
@@ -94,8 +94,7 @@
       {
         "id": "dc187db9-2fe2-40ea-90ad-f496af129f34",
         "name": "Archdemon Mode",
-        "description": "The relentless combat charges your blades. When your Demon Mode ends (either because the duration expires or you end it early as a Bonus Action), you enter Archdemon Mode for 1 minute. You lose the movement speed bonus and Demon Dodge features, but you retain the extra 1d4 damage on your extra attack from the Light property.",
-        "upgradesFromId": "14c618e5-6c38-4875-980a-377a7fab13df"
+        "description": "The relentless combat charges your blades. When your Demon Mode ends (either because the duration expires or you end it early as a Bonus Action), you enter Archdemon Mode for 1 minute. You lose the movement speed bonus and Demon Dodge features, but you retain the extra 1d4 damage on your extra attack from the Light property."
       },
       {
         "id": "17d5c2c9-d8bf-4576-be5a-1472dbdfd497",
@@ -128,8 +127,7 @@
       {
         "id": "acfdd1cc-781f-4486-b38e-23a2b9975fb3",
         "name": "Perfect Evade",
-        "description": "Your Demon Dodge improves. If you use your Reaction to increase your AC and successfully cause the triggering attack to miss, you can make one melee weapon attack against the attacker immediately after your 5-foot movement, as part of the same Reaction.",
-        "upgradesFromId": "8387250b-8303-4467-863b-bac65872d350"
+        "description": "Your Demon Dodge improves. If you use your Reaction to increase your AC and successfully cause the triggering attack to miss, you can make one melee weapon attack against the attacker immediately after your 5-foot movement, as part of the same Reaction."
       },
       {
         "id": "f7412648-0d3a-438b-a950-2c8dfc0620a8",

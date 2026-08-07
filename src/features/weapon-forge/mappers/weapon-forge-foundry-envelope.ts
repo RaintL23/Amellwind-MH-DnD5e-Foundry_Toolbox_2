@@ -1,5 +1,6 @@
 import type { FoundryItem } from "@/shared/foundry";
 import { FOUNDRY_EXPORT_TARGET, foundryIdFromSeed } from "@/shared/foundry";
+import { DUAL_BLADES_DEMON_DODGE_ITEM_MACRO } from "./dual-blades-demon-dodge.macro";
 import { HUNTING_HORN_RECITAL_ITEM_MACRO } from "./hunting-horn-recital.macro";
 
 /** Default item-level Midi / dnd5e flags stamped on Weapon Forge exports. */
@@ -325,6 +326,151 @@ export function applyHuntingHornSongbookOverlay(item: FoundryItem): boolean {
         songbook: true,
         melodyFlag: "world.hh.isMelody",
         maxActiveMelodies,
+      },
+    },
+  };
+
+  return true;
+}
+
+function activityMeta(activity: Record<string, unknown>): {
+  name: string;
+  id: string;
+} {
+  const name = String(activity.name ?? "").toLowerCase();
+  const midi = activity.midiProperties as Record<string, unknown> | undefined;
+  const id = String(midi?.identifier ?? "").toLowerCase();
+  return { name, id };
+}
+
+function hasDualBladesAutomation(item: FoundryItem): boolean {
+  const system = item.system as Record<string, unknown>;
+  const activities = system.activities;
+  if (!activities || typeof activities !== "object") return false;
+  return Object.values(
+    activities as Record<string, Record<string, unknown>>,
+  ).some((activity) => {
+    if (!activity) return false;
+    const { name, id } = activityMeta(activity);
+    return (
+      id === "demon-dodge" ||
+      id === "demon-mode" ||
+      id === "archdemon-mode" ||
+      id === "perfect-evade" ||
+      name.includes("demon dodge") ||
+      name.includes("demon mode") ||
+      name.includes("archdemon") ||
+      name.includes("perfect evade")
+    );
+  });
+}
+
+function resolveDualBladesTier(item: FoundryItem): string {
+  const system = item.system as Record<string, unknown>;
+  const rarity = String(system.rarity ?? "uncommon")
+    .toLowerCase()
+    .replace(/\s+/g, "");
+  if (rarity === "veryrare") return "veryRare";
+  return rarity || "uncommon";
+}
+
+function tagDualBladesEffect(
+  effect: { name?: string; flags?: Record<string, unknown> },
+  flagKey: "isDemonMode" | "isArchdemonMode",
+): void {
+  const flags = (effect.flags ?? {}) as Record<string, unknown>;
+  const world = (flags.world as Record<string, unknown> | undefined) ?? {};
+  const dualBlades =
+    (world.dualBlades as Record<string, unknown> | undefined) ?? {};
+  effect.flags = {
+    ...flags,
+    world: {
+      ...world,
+      dualBlades: {
+        ...dualBlades,
+        [flagKey]: true,
+      },
+    },
+  };
+}
+
+/**
+ * Dual Blades: wire ItemMacro (Demon Dodge AC / Archdemon cleanup) and tag
+ * Demon Mode / Archdemon Mode AEs for macro gates.
+ */
+export function applyDualBladesDemonDodgeOverlay(item: FoundryItem): boolean {
+  if (!hasDualBladesAutomation(item)) return false;
+
+  const system = item.system as Record<string, unknown>;
+  const activities = system.activities as
+    | Record<string, Record<string, unknown>>
+    | undefined;
+  if (!activities) return false;
+
+  for (const activity of Object.values(activities)) {
+    if (!activity || activity.type !== "attack") continue;
+    const name = String(activity.name ?? "").trim();
+    if (name !== "" && name.toLowerCase() !== "attack") continue;
+    activity.name = "Attack";
+    const midi =
+      (activity.midiProperties as Record<string, unknown> | undefined) ?? {};
+    activity.midiProperties = {
+      ...midi,
+      identifier: "attack",
+      displayActivityName: true,
+    };
+  }
+
+  for (const effect of item.effects) {
+    const effectName = effect.name ?? "";
+    if (/^demon mode$/i.test(effectName)) {
+      tagDualBladesEffect(effect, "isDemonMode");
+    } else if (/^archdemon mode$/i.test(effectName)) {
+      tagDualBladesEffect(effect, "isArchdemonMode");
+    }
+  }
+
+  const existingWorld =
+    (item.flags?.world as Record<string, unknown> | undefined) ?? {};
+  const existingDb =
+    (existingWorld.dualBlades as Record<string, unknown> | undefined) ?? {};
+  const existingMidi =
+    (item.flags?.["midi-qol"] as Record<string, unknown> | undefined) ?? {};
+
+  item.flags = {
+    ...item.flags,
+    "midi-qol": {
+      ...existingMidi,
+      onUseMacroName: "[postActiveEffects]ItemMacro",
+      onUseMacroParts: {
+        items: [{ macroName: "ItemMacro", option: "postActiveEffects" }],
+      },
+    },
+    itemacro: {
+      macro: {
+        name: item.name,
+        type: "script",
+        scope: "global",
+        author: "",
+        img: "icons/svg/dice-target.svg",
+        command: DUAL_BLADES_DEMON_DODGE_ITEM_MACRO,
+        folder: null,
+        sort: 0,
+        ownership: { default: 0 },
+        flags: {},
+        _stats: {
+          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
+          systemId: FOUNDRY_EXPORT_TARGET.systemId,
+          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
+        },
+      },
+    },
+    world: {
+      ...existingWorld,
+      dualBlades: {
+        ...existingDb,
+        isDualBlades: true,
+        tier: resolveDualBladesTier(item),
       },
     },
   };
