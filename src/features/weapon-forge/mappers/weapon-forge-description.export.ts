@@ -255,6 +255,45 @@ export function buildFoundryChatDescriptionHtml(
   return parts.join("");
 }
 
+/** Passive AE for the weapon's integrated shield base AC (`weapon.acBonus`). */
+export function buildIntegratedShieldEffect(
+  weapon: CustomWeapon,
+): FoundryItem["effects"][number] | null {
+  const bonus = weapon.acBonus;
+  if (bonus == null || !Number.isFinite(bonus) || bonus <= 0) return null;
+  if (weapon.includesShield === false) return null;
+
+  const effect = buildEffect({
+    name: `Integrated Shield (+${bonus} AC)`,
+    img: "icons/equipment/shield/heater-steel-boss.webp",
+    description:
+      "Base AC from the weapon's integrated shield while equipped.",
+    transfer: true,
+    changes: [
+      {
+        key: "system.attributes.ac.bonus",
+        mode: EFFECT_MODE.ADD,
+        value: String(Math.trunc(bonus)),
+        priority: 20,
+      },
+    ],
+    flags: {
+      dae: {
+        stackable: "noneName",
+        showIcon: true,
+      },
+      world: {
+        integratedShield: {
+          isIntegratedShield: true,
+          bonus: Math.trunc(bonus),
+        },
+      },
+    },
+  });
+  effect.sort = 100000;
+  return effect;
+}
+
 /** Passive AE for typed AC bonuses on the selected rarity row. */
 export function buildRarityPassiveEffects(
   weapon: CustomWeapon,
@@ -266,7 +305,9 @@ export function buildRarityPassiveEffects(
   if (acBonus <= 0) return [];
   return [
     buildEffect({
-      name: `${weapon.name} AC`,
+      name: `${weapon.name} AC (+${acBonus})`,
+      img: "icons/equipment/shield/heater-steel-boss.webp",
+      description: `${row.rarity} ${weapon.name} bonus AC from the rarity table.`,
       transfer: true,
       changes: [
         {
@@ -276,6 +317,12 @@ export function buildRarityPassiveEffects(
           priority: 20,
         },
       ],
+      flags: {
+        dae: {
+          stackable: "noneName",
+          showIcon: true,
+        },
+      },
     }),
   ];
 }

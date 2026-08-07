@@ -228,9 +228,16 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activityType: "utility",
       itemUsesMax: "4",
       poolStartsEmpty: false,
+      consumeItemUses: true,
+      // Negative itemUses restores charges (Foundry clamps spent ≥ 0).
+      consumeAmount: "-4",
       chatFlavor: "Reload all expended shells.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/weapons/ammunition/bullets-triple-orange.webp",
     },
-    "Shell capacity as item uses (starts full). BA reloads the pool.",
+    "Shell capacity as item uses (starts full). BA restores up to 4 via −itemUses.",
   ),
   "expanded gauge": scaleUses("5"),
   "expanded gauge i": scaleUses("7"),
@@ -386,8 +393,18 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
   ),
   "guard reload": reactionUtility(
-    "When a creature misses you with a melee attack while wielding the shield",
-    { chatFlavor: "Reload up to 2 expended shells." },
+    "When a creature misses you with a melee attack while you are wielding the shield",
+    {
+      consumeItemUses: true,
+      consumeAmount: "-2",
+      chatFlavor: "Reload up to 2 expended shells.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/shield-block-gray-orange.webp",
+    },
+    // Hand-tuned uncommon example: useCondition isMissed melee + ItemMacro Yes/No.
+    "Shared Artillery Shells pool. Negative itemUses restores up to 2 (Foundry clamps). See fvtt-Item-gunlance-uncommon ItemMacro.",
   ),
   "counter mine": reactionUtility(
     "When a creature hits you with a melee attack",
@@ -534,6 +551,10 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     consumeItemUses: true,
     consumeAmount: "1",
     chatFlavor: "Expend 1 shell; propel yourself up to 20 ft (no OA).",
+    rangeUnits: "self",
+    targetAffectsType: "self",
+    targetPrompt: false,
+    activityImg: "icons/magic/fire/projectile-fireball-smoke-orange.webp",
   }),
   /**
    * RaintDM Light Bowgun: Bonus Action attack(s).
@@ -878,15 +899,22 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       damageType: "thunder",
       activityType: "damage",
       activation: "special",
+      activationCondition:
+        "When you hit a creature with a melee attack using this weapon",
       chatFlavor: "On melee hit: expend shells for extra Thunder damage.",
+      activityImg: "icons/magic/fire/explosion-fireball-medium-orange.webp",
     },
-    "Shared Artillery Shells pool. Full Burst upgrades spendMax/die.",
+    "Shared Artillery Shells pool. Full Burst upgrades spendMax/die. Hand-tuned uncommon: on-hit ItemMacro dialog → completeActivityUse ×1.",
   ),
-  "full burst": spec("upgrade_scaler", {
-    spendMax: 3,
-    damageFormula: "1d8",
-    chatFlavor: "Spend up to 3 shells; 1d8 Thunder each.",
-  }),
+  "full burst": spec(
+    "upgrade_scaler",
+    {
+      spendMax: 3,
+      damageFormula: "1d8",
+      chatFlavor: "Spend up to 3 shells; 1d8 Thunder each.",
+    },
+    "Hand-tuned rare renames ×N to Shelling Strike + ItemMacro ×1/×2/×3 dialog (fvtt-Item-gunlance-rare).",
+  ),
   "elemental discharge": spec("action_ability", {
     activation: "special",
     activityType: "damage",

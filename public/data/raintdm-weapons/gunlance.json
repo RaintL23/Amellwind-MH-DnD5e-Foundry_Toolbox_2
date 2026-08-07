@@ -9,6 +9,7 @@
   "property": ["R"],
   "dmg1": "1d8",
   "dmgType": "P",
+  "ac": 2,
   "entries": [
     {
       "type": "inset",

@@ -17,6 +17,7 @@ import { resolveMagicalBonus } from "./weapon-forge-foundry.helpers";
 import {
   buildFoundryDescriptionHtml,
   buildFoundryChatDescriptionHtml,
+  buildIntegratedShieldEffect,
   buildRarityPassiveEffects,
   resolveWeaponImg,
 } from "./weapon-forge-description.export";
@@ -168,6 +169,11 @@ export function buildWeaponFoundryExportBundle(
   compileWeaponFeatureActivities(item, weapon, clamped, { magical });
 
   applyItemAutomation(item);
+
+  const shieldEffect = buildIntegratedShieldEffect(weapon);
+  if (shieldEffect) {
+    item.effects.push(shieldEffect);
+  }
 
   const passiveEffects = buildRarityPassiveEffects(weapon, clamped);
   if (passiveEffects.length > 0) {

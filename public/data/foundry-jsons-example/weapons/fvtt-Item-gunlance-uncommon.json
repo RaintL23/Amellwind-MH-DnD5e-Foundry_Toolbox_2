@@ -1,0 +1,787 @@
+{
+  "_id": "Tg50qhVAWP2GdTlw",
+  "name": "Gunlance (Uncommon)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_gunlance.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Push)</strong></p><p>If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from you.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Artillery Shells</strong></p><p><strong>Bonus Action.</strong></p><p>The weapon holds up to 4 shells. You can use a Bonus Action to quickly reload all expended shells.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shelling Strike</strong></p><p>The gunlance isn't meant for long-range sniping; it's for point-blank destruction. When you hit a creature with a melee attack using this weapon, you can expend 1 shell to trigger an explosion inside their guard. The target takes an extra [[/r 1d6]] Thunder damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Reload</strong></p><p><strong>Reaction.</strong></p><p>When a creature misses you with a melee attack while you are wielding the shield, you can use your Reaction to brace yourself and instantly reload up to 2 expended shells.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Push)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Artillery Shells</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shelling Strike</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Reload</strong></p><p><strong>Reaction.</strong></p></div>"
+    },
+    "identifier": "gunlance",
+    "quantity": 1,
+    "weight": {
+      "value": 6,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "gunlance"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 8,
+        "types": [
+          "piercing"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": null,
+    "properties": [
+      "rch"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 10,
+      "units": "ft"
+    },
+    "mastery": "push",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "recovery": [],
+      "max": "4"
+    },
+    "activities": {
+      "jK8g4qrFkf8Oqddg": {
+        "_id": "jK8g4qrFkf8Oqddg",
+        "type": "attack",
+        "sort": 0,
+        "name": "Attack",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "attack",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionReason": ""
+      },
+      "PIyeRBXFolVYwx1O": {
+        "_id": "PIyeRBXFolVYwx1O",
+        "sort": 200000,
+        "name": "Artillery Shells",
+        "img": "icons/weapons/ammunition/bullets-triple-orange.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "-4",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Bonus Action: reload all expended shells (restore item uses to max)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "artillery-shells",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "@item.uses.spent > 0",
+        "useConditionReason": "No expended shells to reload.",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "5iRrCEnCIMAbs89D": {
+        "_id": "5iRrCEnCIMAbs89D",
+        "sort": 301000,
+        "name": "Shelling Strike ×1",
+        "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "When you hit a creature with a melee attack using this weapon",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "On melee hit: expend 1 shell for +1d6 Thunder damage."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "never",
+          "forceRollDialog": "never",
+          "forceDamageDialog": "never",
+          "confirmTargets": "never",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "shelling-strike-1",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "damage",
+        "damage": {
+          "critical": {
+            "allow": false,
+            "bonus": ""
+          },
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "thunder"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "HMQvSFTMaFuttW7H": {
+        "_id": "HMQvSFTMaFuttW7H",
+        "sort": 400000,
+        "name": "Guard Reload",
+        "img": "icons/skills/melee/shield-block-gray-orange.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When a creature misses you with a melee attack while you are wielding the shield",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "-2",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Reaction (melee miss while shield): confirm to reload up to 2 expended shells."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "guard-reload",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "@item.uses.spent > 0 && (!reaction || (reaction == \"isMissed\" && item.actionType?.includes(\"m\")))",
+        "useConditionReason": "No expended shells, or trigger is not a melee miss.",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "LveNAAALstlZRgkG",
+      "name": "Mastery (Push)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786140439185,
+        "modifiedTime": 1786140439185,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "5dKuRr0SHjE899AA",
+      "name": "Integrated Shield (+2 AC)",
+      "img": "icons/equipment/shield/heater-steel-boss.webp",
+      "description": "Base AC from the weapon's integrated shield while equipped.",
+      "changes": [
+        {
+          "key": "system.attributes.ac.bonus",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 100000,
+      "flags": {
+        "dae": {
+          "stackable": "noneName",
+          "showIcon": true
+        },
+        "world": {
+          "integratedShield": {
+            "isIntegratedShield": true,
+            "bonus": 2
+          },
+          "gunlance": {
+            "isIntegratedShield": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786141489324,
+        "modifiedTime": 1786141489324,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 100000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Gunlance",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[preTargeting]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postDamageRoll"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Gunlance",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Gunlance — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\r\n// On Use: [preTargeting]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro\r\n//\r\n// Shelling Strike / Full Burst (Attack hit, postDamageRoll):\r\n//   Uncommon: yes/no → Shelling Strike ×1 (1d6 Thunder).\r\n//   Rare+: buttons ×1 / ×2 / ×3 (capped by shells) → Shelling Strike / Full Burst ×N (1d8).\r\n//\r\n// Guard Reload (reaction, preTargeting):\r\n//   Midi offers when useCondition matches isMissed melee.\r\n//   Confirm yes/no; Cancel aborts before −itemUses restore.\r\n//\r\n// Blast Dash (Rare+, postActiveEffects):\r\n//   After BA dash (1 shell spent), optional dialog to make one Attack as part of the BA.\r\n//\r\n// Flags (weapon):\r\n//   flags.world.gunlance.isGunlance\r\n//   flags.world.gunlance.tier   (\"uncommon\" | \"rare\" | \"veryRare\" | \"legendary\")\r\n\r\nconst esc = (value) => {\r\n  const s = String(value ?? \"\");\r\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\r\n  return s\r\n    .replaceAll(\"&\", \"&amp;\")\r\n    .replaceAll(\"<\", \"&lt;\")\r\n    .replaceAll(\">\", \"&gt;\")\r\n    .replaceAll('\"', \"&quot;\")\r\n    .replaceAll(\"'\", \"&#39;\");\r\n};\r\n\r\nconst macroPass = String(\r\n  args?.[0]?.macroPass\r\n  ?? workflow?.macroPass\r\n  ?? \"\",\r\n).toLowerCase();\r\n\r\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\r\n  ? rolledActivity\r\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\r\n\r\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\r\nconst actMidi = rolled?.midiProperties ?? workflow?.activity?.midiProperties ?? {};\r\nconst actId = String(\r\n  rolled?.identifier\r\n  ?? actMidi?.identifier\r\n  ?? workflow?.activity?.identifier\r\n  ?? \"\",\r\n).toLowerCase().trim();\r\nconst actType = String(rolled?.type ?? workflow?.activity?.type ?? \"\").toLowerCase();\r\n\r\nconst weaponItem = item\r\n  ?? workflow?.item\r\n  ?? args?.[0]?.item\r\n  ?? null;\r\n\r\nconst actorDoc = actor\r\n  ?? workflow?.actor\r\n  ?? weaponItem?.actor\r\n  ?? weaponItem?.parent\r\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\r\n\r\nif (!weaponItem || !actorDoc) return;\r\n\r\nconst tier = String(\r\n  foundry.utils.getProperty(weaponItem, \"flags.world.gunlance.tier\") ?? \"uncommon\",\r\n).toLowerCase().replace(/\\s+/g, \"\");\r\n\r\nconst fullBurstEnabled = [\"rare\", \"veryrare\", \"legendary\"].includes(tier);\r\nconst blastDashEnabled = fullBurstEnabled;\r\n\r\nconst isPre = macroPass.includes(\"pretargeting\");\r\nconst isPostDamage = macroPass.includes(\"postdamageroll\");\r\nconst isPostAe = macroPass.includes(\"postactiveeffects\");\r\n\r\nconst isAttack =\r\n  actType === \"attack\"\r\n  && (actId === \"attack\" || actName === \"attack\" || actName === \"\");\r\n\r\nconst isGuardReload =\r\n  actId === \"guard-reload\"\r\n  || actName === \"guard reload\";\r\n\r\nconst isBlastDash =\r\n  actId === \"blast-dash\"\r\n  || actName === \"blast dash\";\r\n\r\nconst isShellingLike =\r\n  actId.startsWith(\"shelling-strike\")\r\n  || actId.startsWith(\"full-burst\")\r\n  || actName.includes(\"shelling strike\")\r\n  || actName.includes(\"full burst\");\r\n\r\nconst shellsAvailable = () => {\r\n  const uses = weaponItem.system?.uses;\r\n  if (!uses) return 0;\r\n  const max = Math.max(0, Number(uses.max) || 0);\r\n  const spent = Math.max(0, Number(uses.spent) || 0);\r\n  return Math.max(0, max - spent);\r\n};\r\n\r\nconst shellsSpent = () => {\r\n  const uses = weaponItem.system?.uses;\r\n  if (!uses) return 0;\r\n  return Math.max(0, Number(uses.spent) || 0);\r\n};\r\n\r\nconst shellsMax = () => Math.max(0, Number(weaponItem.system?.uses?.max) || 4);\r\n\r\nconst confirmDialog = (title, content, yesLabel = \"Yes\", noLabel = \"No\") =>\r\n  new Promise((resolve) => {\r\n    let settled = false;\r\n    const done = (v) => {\r\n      if (!settled) {\r\n        settled = true;\r\n        resolve(v);\r\n      }\r\n    };\r\n    new Dialog({\r\n      title,\r\n      content: `<div class=\"dnd5e2\">${content}</div>`,\r\n      buttons: {\r\n        yes: {\r\n          icon: '<i class=\"fas fa-check\"></i>',\r\n          label: yesLabel,\r\n          callback: () => done(true),\r\n        },\r\n        no: {\r\n          icon: '<i class=\"fas fa-times\"></i>',\r\n          label: noLabel,\r\n          callback: () => done(false),\r\n        },\r\n      },\r\n      default: \"yes\",\r\n      close: () => done(false),\r\n    }).render(true);\r\n  });\r\n\r\n/** @returns {Promise<number|null>} shell count, or null if skipped */\r\nconst shellingChoiceDialog = (title, content, maxSpend) =>\r\n  new Promise((resolve) => {\r\n    let settled = false;\r\n    const done = (v) => {\r\n      if (!settled) {\r\n        settled = true;\r\n        resolve(v);\r\n      }\r\n    };\r\n    const buttons = {};\r\n    for (let n = 1; n <= maxSpend; n += 1) {\r\n      const dieLabel = fullBurstEnabled ? `${n}d8` : \"1d6\";\r\n      buttons[`n${n}`] = {\r\n        icon: '<i class=\"fas fa-bomb\"></i>',\r\n        label: `×${n} (+${dieLabel})`,\r\n        callback: () => done(n),\r\n      };\r\n    }\r\n    buttons.skip = {\r\n      icon: '<i class=\"fas fa-times\"></i>',\r\n      label: \"Skip\",\r\n      callback: () => done(null),\r\n    };\r\n    new Dialog({\r\n      title,\r\n      content: `<div class=\"dnd5e2\">${content}</div>`,\r\n      buttons,\r\n      default: \"n1\",\r\n      close: () => done(null),\r\n    }).render(true);\r\n  });\r\n\r\nconst listActivities = () => {\r\n  const col = weaponItem.system?.activities;\r\n  if (!col) return [];\r\n  if (typeof col === \"object\" && Array.isArray(col.contents)) return col.contents;\r\n  if (typeof col.values === \"function\") return [...col.values()];\r\n  return Object.values(col);\r\n};\r\n\r\nconst findShellingActivity = (n) => {\r\n  const list = listActivities();\r\n  const want = Number(n) || 1;\r\n  const idExact = [\r\n    `shelling-strike-${want}`,\r\n    `full-burst-${want}`,\r\n  ];\r\n  const nameExact = [\r\n    `shelling strike ×${want}`,\r\n    `shelling strike x${want}`,\r\n    `full burst ×${want}`,\r\n    `full burst x${want}`,\r\n  ];\r\n  const hit = list.find((a) => {\r\n    const id = String(a?.identifier ?? a?.midiProperties?.identifier ?? \"\").toLowerCase();\r\n    const name = String(a?.name ?? \"\").toLowerCase();\r\n    return idExact.includes(id) || nameExact.includes(name);\r\n  });\r\n  if (hit) return hit;\r\n  if (want === 1) {\r\n    return list.find((a) => {\r\n      const id = String(a?.identifier ?? a?.midiProperties?.identifier ?? \"\").toLowerCase();\r\n      const name = String(a?.name ?? \"\").toLowerCase();\r\n      return id.startsWith(\"shelling-strike\") || id.startsWith(\"full-burst\")\r\n        || name.includes(\"shelling strike\") || name.includes(\"full burst\");\r\n    }) ?? null;\r\n  }\r\n  return null;\r\n};\r\n\r\nconst findAttackActivity = () => {\r\n  const list = listActivities();\r\n  return (\r\n    list.find((a) => {\r\n      const id = String(a?.identifier ?? a?.midiProperties?.identifier ?? \"\").toLowerCase();\r\n      const name = String(a?.name ?? \"\").toLowerCase();\r\n      return a?.type === \"attack\" && (id === \"attack\" || name === \"attack\" || name === \"\");\r\n    })\r\n    ?? list.find((a) => a?.type === \"attack\")\r\n    ?? null\r\n  );\r\n};\r\n\r\nconst abort = (msg) => {\r\n  if (msg) ui.notifications.warn(msg);\r\n  if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\r\n  return false;\r\n};\r\n\r\nconst launchActivity = async (activity, targetUuids = []) => {\r\n  if (!activity) {\r\n    ui.notifications.warn(\"Gunlance: activity not found.\");\r\n    return;\r\n  }\r\n  const midiOptions = {\r\n    ...(targetUuids.length ? { targetUuids } : {}),\r\n    workflowOptions: {\r\n      autoRollAttack: true,\r\n      autoRollDamage: \"always\",\r\n      fastForwardAttack: true,\r\n      fastForwardDamage: true,\r\n    },\r\n  };\r\n  if (typeof MidiQOL?.completeActivityUse === \"function\") {\r\n    await MidiQOL.completeActivityUse(activity, { midiOptions });\r\n  } else if (typeof activity.use === \"function\") {\r\n    await activity.use({ midiOptions }, { configure: false }, { create: true });\r\n  } else {\r\n    ui.notifications.warn(\"Gunlance: cannot launch activity (MidiQOL missing).\");\r\n  }\r\n};\r\n\r\n// ── Guard Reload: confirm before restoring shells ───────────────────────────\r\nif (isGuardReload && (isPre || !macroPass)) {\r\n  const spent = shellsSpent();\r\n  if (spent <= 0) {\r\n    return abort(\"Gunlance: no expended shells to reload.\");\r\n  }\r\n  const restore = Math.min(2, spent);\r\n  const remaining = shellsAvailable();\r\n  const ok = await confirmDialog(\r\n    \"Guard Reload\",\r\n    `<p><strong>${esc(actorDoc.name)}</strong> — reload <strong>${restore}</strong> expended shell${restore === 1 ? \"\" : \"s\"}?</p>\r\n     <p>Current shells: <strong>${remaining}</strong> / <strong>${shellsMax()}</strong> (spent ${spent}).</p>`,\r\n    \"Reload\",\r\n    \"Cancel\",\r\n  );\r\n  if (!ok) return abort();\r\n  return;\r\n}\r\n\r\n// ── Blast Dash (Rare+): optional melee attack after the dash ────────────────\r\nif (isBlastDash && blastDashEnabled && (isPostAe || (!macroPass && !isPre))) {\r\n  const ok = await confirmDialog(\r\n    \"Blast Dash\",\r\n    `<p><strong>${esc(actorDoc.name)}</strong> dashed up to 20 ft (no OA).</p>\r\n     <p>If you ended within reach of a hostile creature, make <strong>one melee weapon attack</strong> as part of this Bonus Action?</p>`,\r\n    \"Attack\",\r\n    \"Skip\",\r\n  );\r\n  if (!ok) return;\r\n  await launchActivity(findAttackActivity());\r\n  return;\r\n}\r\n\r\n// Shelling activities themselves never re-prompt\r\nif (isShellingLike) return;\r\nif (!isAttack) return;\r\nif (!isPostDamage && !isPostAe) return;\r\n\r\n// Prefer postDamageRoll; postActiveEffects is a fallback. Avoid double-asking.\r\nconst asked = foundry.utils.getProperty(workflow, \"flags.world.gunlance.shellingAsked\");\r\nif (asked) return;\r\ntry {\r\n  foundry.utils.setProperty(workflow, \"flags.world.gunlance.shellingAsked\", true);\r\n} catch (_) {\r\n  // ignore\r\n}\r\n\r\nconst hitTargets = [...(workflow?.hitTargets ?? args?.[0]?.hitTargets ?? [])];\r\nif (!hitTargets.length) return;\r\n\r\nconst available = shellsAvailable();\r\nif (available <= 0) return;\r\n\r\nconst primary = hitTargets[0];\r\nconst targetName = primary?.name ?? primary?.document?.name ?? \"the target\";\r\nconst max = shellsMax();\r\nconst maxSpend = fullBurstEnabled ? Math.min(3, available) : Math.min(1, available);\r\nconst dieHint = fullBurstEnabled ? \"1d8 Thunder per shell (Full Burst)\" : \"1d6 Thunder\";\r\n\r\nlet spendN = null;\r\nif (!fullBurstEnabled) {\r\n  const useShelling = await confirmDialog(\r\n    \"Shelling Strike\",\r\n    `<p>Hit <strong>${esc(targetName)}</strong> with ${esc(weaponItem.name)}.</p>\r\n     <p>Expend <strong>1</strong> shell for <strong>+1d6 Thunder</strong>?</p>\r\n     <p>Shells remaining: <strong>${available}</strong> / <strong>${max}</strong>.</p>`,\r\n    \"Shelling Strike\",\r\n    \"Skip\",\r\n  );\r\n  spendN = useShelling ? 1 : null;\r\n} else {\r\n  spendN = await shellingChoiceDialog(\r\n    \"Shelling Strike — Full Burst\",\r\n    `<p>Hit <strong>${esc(targetName)}</strong> with ${esc(weaponItem.name)}.</p>\r\n     <p>Expend shells for <strong>${dieHint}</strong>.</p>\r\n     <p>Shells remaining: <strong>${available}</strong> / <strong>${max}</strong> (choose up to <strong>${maxSpend}</strong>).</p>`,\r\n    maxSpend,\r\n  );\r\n}\r\n\r\nif (!spendN) return;\r\n\r\nconst shellAct = findShellingActivity(spendN);\r\nif (!shellAct) {\r\n  ui.notifications.warn(`Gunlance: Shelling Strike ×${spendN} activity not found.`);\r\n  return;\r\n}\r\n\r\nconst targetUuid = primary?.document?.uuid ?? primary?.uuid;\r\nif (!targetUuid) {\r\n  ui.notifications.warn(\"Gunlance: could not resolve hit target.\");\r\n  return;\r\n}\r\n\r\nawait launchActivity(shellAct, [targetUuid]);\r\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "gunlance": {
+        "isGunlance": true,
+        "tier": "uncommon",
+        "shellMax": 4
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786140439183,
+    "modifiedTime": 1786140439183,
+    "lastModifiedBy": null
+  }
+}
