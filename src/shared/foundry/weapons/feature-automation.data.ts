@@ -474,6 +474,60 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   ),
   encore: baUtility("", "Recital can keep two melodies active."),
   "item prodigy": baUtility("", "Take the Utilize action as a Bonus Action."),
+  /**
+   * Sword and Shield (Uncommon+): secondary Martial Melee attack (Light, 1d4 B).
+   * Does not include the sword’s base damage; Ability mod via activity roll.
+   */
+  "shield bash": spec(
+    "action_ability",
+    {
+      activation: "action",
+      activityType: "attack",
+      damageFormula: "1d4",
+      damageType: "bludgeoning",
+      includeBaseDamage: false,
+      chatFlavor:
+        "Martial Melee (Light): 1d4 Bludgeoning. Pair with Mastery (Nick) as part of the Attack action.",
+      activityImg: "icons/equipment/shield/heater-steel-boss.webp",
+    },
+    "Secondary shield attack; exclude sword base damage (includeBase=false).",
+  ),
+  /**
+   * Sword and Shield (Rare+): on hit, target has Disadvantage on its next save
+   * vs an item or spell (until end of your next turn). Midi approximates with
+   * save.all + isSave / turnEndSource — intended scope is narrative/GM filter.
+   */
+  "alchemical rend": spec(
+    "on_hit_condition",
+    {
+      effectTransfer: false,
+      effectChanges: [
+        {
+          key: "flags.midi-qol.disadvantage.ability.save.all",
+          mode: EFFECT_MODE.CUSTOM,
+          value: "1",
+          priority: 20,
+        },
+      ],
+      specialDuration: ["isSave", "turnEndSource"],
+      activeEffect: {
+        showIcon: true,
+        stackable: "noneName",
+        img: "icons/magic/acid/dissolve-bone-white.webp",
+        description:
+          "Disadvantage on the next saving throw against an item or a spell (until the end of the attacker's next turn).",
+      },
+    },
+    "Link AE to Attack + Shield Bash; clear effectConditionText on those attacks so Midi can apply on hit.",
+  ),
+  "advancing slash": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "When you use Item Prodigy (Utilize as a Bonus Action), immediately move up to 10 ft without provoking Opportunity Attacks.",
+    },
+    "Rider on Item Prodigy — fold into Item Prodigy chatFlavor in Rare+ authored JSONs.",
+  ),
   "blast dash": spec("bonus_action", {
     activation: "bonus",
     activityType: "utility",
