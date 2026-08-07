@@ -20,6 +20,15 @@ export {
 
 export { downloadFoundryJson } from "./download";
 
+export {
+  FOUNDRY_ITEM_FILE_PREFIX,
+  isFoundryItemDocument,
+  ensureFoundryItemFilename,
+  buildFoundryItemFilename,
+  stripFoundryWeaponRaritySuffix,
+  formatWeaponFoundryItemName,
+} from "./item-naming";
+
 export { wrapItem, nextFoundryItemSort, resetFoundryItemSort } from "./wrap-item";
 
 export {
