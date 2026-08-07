@@ -22,15 +22,39 @@ export function wireTriggeredFromAttacks(
   item: FoundryItem,
   triggeredId: string,
   condition: string,
+  opts?: {
+    /**
+     * When set, only wire Attack activities whose name or midi identifier
+     * matches (case-insensitive). Full-string match if the pattern has no
+     * regexp metacharacters; otherwise treated as a RegExp source.
+     */
+    attackNameMatch?: string;
+  },
 ): void {
   const system = item.system as Record<string, unknown>;
   const activities = system.activities;
   if (!activities || typeof activities !== "object") return;
 
+  const matchRaw = opts?.attackNameMatch?.trim();
+  const matcher = matchRaw
+    ? new RegExp(
+        /[\\^$.*+?()[\]{}|]/.test(matchRaw) ? matchRaw : `^${matchRaw}$`,
+        "i",
+      )
+    : null;
+
   for (const activity of Object.values(
     activities as Record<string, Record<string, unknown>>,
   )) {
     if (!activity || activity.type !== "attack") continue;
+    if (matcher) {
+      const name = String(activity.name ?? "");
+      const midiId = String(
+        (activity.midiProperties as { identifier?: string } | undefined)
+          ?.identifier ?? "",
+      );
+      if (!matcher.test(name) && !matcher.test(midiId)) continue;
+    }
     const midi =
       (activity.midiProperties as Record<string, unknown> | undefined) ??
       defaultMidiProperties();
@@ -307,6 +331,9 @@ export function compileResolvedChain(
       item,
       activityId,
       params.triggeredActivityCondition ?? "hits > 0",
+      params.triggerFromAttackMatch
+        ? { attackNameMatch: params.triggerFromAttackMatch }
+        : undefined,
     );
   }
 

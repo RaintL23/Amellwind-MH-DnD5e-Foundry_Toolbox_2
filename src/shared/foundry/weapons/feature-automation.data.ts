@@ -834,6 +834,14 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Shared Phial Gauge. Wide range → scaled attack with advantage AE.",
   ),
+  "zero sum discharge splash": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "ZSD Splash (Rare+): even on a miss, creatures within 5 ft of the target DEX save or take half the Phial explosion damage (companion Save activity).",
+    },
+    "Leaf renames ZSD. Companion DEX save emitted by Switch Axe overlay.",
+  ),
   "true zero sum discharge": spec(
     "upgrade_scaler",
     {
@@ -886,6 +894,22 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     consumeItemUses: true,
     consumeAmount: "1",
     chatFlavor: "Axe mode on hit: expend 1 phial for elemental damage.",
+  }),
+  /**
+   * Switch Axe: Sword-mode hits must spend 1 Phial Charge to activate the installed
+   * Phial. Default formula is Power (1d6 S); Element (1d8) is emitted as a sibling
+   * activity by `applySwitchAxeOverlay` when that Phial is unlocked.
+   */
+  "phial discharge": spec("action_ability", {
+    activation: "special",
+    activityType: "damage",
+    damageFormula: "1d6",
+    damageType: "slashing",
+    consumeItemUses: true,
+    consumeAmount: "1",
+    activationCondition: "Sword mode on hit",
+    chatFlavor:
+      "Expend 1 Phial Charge to activate your installed Phial (Power 1d6 Slashing / Element 1d8 Acid, Cold, Fire, or Lightning).",
   }),
   "elemental discharge upgrade i": spec("upgrade_scaler", {
     damageFormula: "1d8",
@@ -1065,12 +1089,11 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     chatFlavor:
       "On cantrip damage to a hostile: recover 1 Spell Counter on this staff (2 if target within 15 ft).",
   }),
-  "kinetic generator": spec("action_ability", {
-    activation: "special",
-    activityType: "utility",
-    chatFlavor:
-      "On Axe-mode hit: recover 1 Phial Charge (2 on a Critical Hit).",
-  }),
+  "kinetic generator": spec(
+    "unmapped",
+    {},
+    "Switch Axe: ItemMacro postDamageRoll recovers Phial Gauge uses on Axe hit (see applySwitchAxeOverlay).",
+  ),
 
   // ── Narrative / state — keep description-only ───────────────────────
   "dull the blade": spec("unmapped", {}, "Removes Graze until rest/sharpen — not automatible as AE cleanly."),

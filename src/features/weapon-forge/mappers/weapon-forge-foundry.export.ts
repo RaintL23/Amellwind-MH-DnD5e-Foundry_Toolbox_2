@@ -32,6 +32,8 @@ import {
   defaultWeaponForgeItemFlags,
 } from "./weapon-forge-foundry-envelope";
 import { buildWeaponMelodyFeatItems } from "./weapon-forge-melody.export";
+import { buildWeaponPhialFeatItems } from "./weapon-forge-phial.export";
+import { applySwitchAxeOverlay } from "./weapon-forge-switch-axe.export";
 
 /** Foundry feat group for a weapon-resource column that already has export builders. */
 export interface WeaponFoundryResourceGroup {
@@ -48,14 +50,14 @@ export interface WeaponFoundryExportBundle {
   resources: FoundryItem[];
   /**
    * Resource feats grouped for Foundry preview tabs.
-   * Only columns with a real Foundry builder appear (today: Melodies).
+   * Columns with a real Foundry builder appear (today: Melodies, Phials).
    */
   resourceGroups: WeaponFoundryResourceGroup[];
 }
 
 /**
  * Build Foundry feat groups for weapon resources that have export builders.
- * Add Phials / Ammo / Coatings here when their feat builders land.
+ * Ammo / Coatings land here when their feat builders ship.
  */
 export function buildWeaponFoundryResourceGroups(
   weapon: CustomWeapon,
@@ -65,6 +67,10 @@ export function buildWeaponFoundryResourceGroups(
   const melodies = buildWeaponMelodyFeatItems(weapon, rarityIndex);
   if (melodies.length > 0) {
     groups.push({ id: "melodies", label: "Melodies", items: melodies });
+  }
+  const phials = buildWeaponPhialFeatItems(weapon, rarityIndex);
+  if (phials.length > 0) {
+    groups.push({ id: "phials", label: "Phials", items: phials });
   }
   return groups;
 }
@@ -181,6 +187,7 @@ export function buildWeaponFoundryExportBundle(
   applyHuntingHornSongbookOverlay(item);
   applyDualBladesDemonDodgeOverlay(item);
   applyWireKnucklesSilkbindOverlay(item);
+  applySwitchAxeOverlay(item, weapon, clamped);
 
   const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);
   const resources = resourceGroups.flatMap((group) => group.items);

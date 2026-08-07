@@ -145,6 +145,11 @@ export interface WeaponActivityParams {
   activeEffect?: WeaponActiveEffectConfig;
   /** Wire this activity as midi triggeredActivity on weapon Attack activities. */
   triggerFromAttack?: boolean;
+  /**
+   * Restrict `triggerFromAttack` to Attack activities matching this name /
+   * midi identifier (e.g. `"^axe$"` for Switch Axe). Omit to wire every Attack.
+   */
+  triggerFromAttackMatch?: string;
   triggeredActivityCondition?: string;
   automationOnly?: boolean;
   toggleEffect?: boolean;

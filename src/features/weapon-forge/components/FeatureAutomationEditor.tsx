@@ -130,7 +130,7 @@ export function FeatureAutomationEditor({
 
           {disabled ? (
             <p className="text-xs text-muted-foreground">
-              Weapon resources are out of scope for automation (Phials, Coatings,
+              Weapon resources use separate Foundry builders (Phials, Coatings,
               Ammo, Notes, …).
             </p>
           ) : (
