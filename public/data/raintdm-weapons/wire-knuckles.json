@@ -9,6 +9,7 @@
   "property": ["L"],
   "dmg1": "1d4",
   "dmgType": "B",
+  "img": "/mh-icons/weapon_tonfas.webp",
   "entries": [
     {
       "type": "inset",
@@ -57,7 +58,7 @@
       {
         "id": "46348121-0e21-4250-b5ff-d027b48fd949",
         "name": "Wirebug Gauge",
-        "description": "our gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest."
+        "description": "Your gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest."
       },
       {
         "id": "4695089f-7741-4e30-8819-4bcc11d3ca96",

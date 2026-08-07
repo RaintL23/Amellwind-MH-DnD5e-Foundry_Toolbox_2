@@ -477,3 +477,155 @@ export function applyDualBladesDemonDodgeOverlay(item: FoundryItem): boolean {
 
   return true;
 }
+
+/**
+ * Wire Knuckles (Rare+): companion STR save to snap Silkbind Tether.
+ * The 15-ft leash is description-only; this activity rolls the start-of-turn save.
+ */
+export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
+  if (!/^wire knuckles/i.test(item.name ?? "")) return false;
+
+  const system = item.system as Record<string, unknown>;
+  const activities = system.activities as
+    | Record<string, Record<string, unknown>>
+    | undefined;
+  if (!activities) return false;
+
+  const hasTether = Object.values(activities).some((activity) =>
+    /^silkbind tether$/i.test(String(activity?.name ?? "").trim()),
+  );
+  if (!hasTether) return false;
+
+  const snapId = foundryIdFromSeed("act-wire-knuckles-snap-silkbind");
+  if (activities[snapId]) return true;
+
+  const magical =
+    Number((system.magicalBonus as number | null | undefined) ?? 0) > 0 ||
+    (Array.isArray(system.properties) &&
+      (system.properties as string[]).includes("mgc"));
+
+  activities[snapId] = {
+    _id: snapId,
+    type: "save",
+    sort: 600000,
+    name: "Snap Silkbind",
+    img: "icons/magic/control/debuff-chains-orb-purple-white.webp",
+    activation: {
+      type: "special",
+      value: null,
+      condition: "At the start of a Tethered creature's turn",
+      override: false,
+    },
+    consumption: {
+      scaling: { allowed: false, max: "" },
+      spellSlot: false,
+      targets: [],
+    },
+    description: {
+      chatFlavor:
+        "STR save vs Silkbind DC (8 + PB + STR or DEX — use the higher). On a success, remove the Tethered effect.",
+    },
+    duration: {
+      value: "",
+      units: "inst",
+      concentration: false,
+      override: false,
+    },
+    effects: [],
+    range: {
+      units: "ft",
+      value: 5,
+      special: "",
+      override: false,
+    },
+    target: {
+      template: {
+        count: "",
+        contiguous: false,
+        type: "",
+        size: "",
+        width: "",
+        height: "",
+        units: "ft",
+      },
+      affects: {
+        count: "1",
+        type: "creature",
+        choice: false,
+        special: "",
+      },
+      prompt: true,
+      override: false,
+    },
+    uses: {
+      spent: 0,
+      max: "",
+      recovery: [],
+    },
+    midiProperties: {
+      ignoreTraits: [],
+      triggeredActivityId: "none",
+      triggeredActivityConditionText: "",
+      triggeredActivityTargets: "targets",
+      triggeredActivityRollAs: "self",
+      autoConsume: false,
+      forceConsumeDialog: "default",
+      forceRollDialog: "default",
+      forceDamageDialog: "default",
+      confirmTargets: "default",
+      autoTargetType: "any",
+      autoTargetAction: "default",
+      automationOnly: false,
+      otherActivityCompatible: true,
+      identifier: "snap-silkbind",
+      displayActivityName: true,
+      rollMode: "default",
+      chooseEffects: false,
+      toggleEffect: false,
+      ignoreFullCover: false,
+      removeChatButtons: "default",
+      magicEffect: magical,
+      magicDamage: magical,
+      noConcentrationCheck: false,
+      autoCEEffects: "default",
+    },
+    damage: {
+      parts: [],
+      onSave: "none",
+    },
+    save: {
+      ability: ["str"],
+      dc: {
+        // Prefer STR; chat notes DEX if higher (Foundry DC calc is single-ability).
+        calculation: "str",
+        formula: "",
+      },
+    },
+    useConditionText: "",
+    useConditionReason: "",
+    effectConditionText: "",
+    macroData: { name: "", command: "" },
+    ignoreTraits: { idi: false, idr: false, idv: false, ida: false },
+    isOverTimeFlag: false,
+    overTimeProperties: {
+      saveRemoves: true,
+      preRemoveConditionText: "",
+      postRemoveConditionText: "",
+    },
+    otherActivityId: "none",
+  };
+
+  const existingWorld =
+    (item.flags?.world as Record<string, unknown> | undefined) ?? {};
+  item.flags = {
+    ...item.flags,
+    world: {
+      ...existingWorld,
+      wireKnuckles: {
+        hasSilkbind: true,
+      },
+    },
+  };
+
+  return true;
+}

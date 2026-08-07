@@ -931,13 +931,83 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     damageType: "bludgeoning",
     chatFlavor: "Extra damage vs Prone or Stunned targets.",
   }),
-  "silkbind tether": spec("action_ability", {
-    activation: "special",
-    activityType: "utility",
-    consumeItemUses: true,
-    consumeAmount: "1",
-    chatFlavor: "On hit: expend 1 Wirebug to tether the target.",
-  }),
+  // ── Wire Knuckles (Wirebug pool + mobility) ─────────────────────────
+  "wire-dash": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      consumeItemUses: true,
+      consumeAmount: "1",
+      activationCondition: "When you take damage",
+      chatFlavor:
+        "Expend 1 Wirebug: move up to 15 ft in any direction (including vertically). This movement does not provoke Opportunity Attacks.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/movement/figure-running-gray.webp",
+    },
+    "Does not consume Reaction — trigger is optional spend when damaged.",
+  ),
+  "wire-fall": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      consumeItemUses: true,
+      consumeAmount: "1",
+      activationCondition: "When you fall",
+      chatFlavor:
+        "Expend 1 Wirebug: arrest your fall in mid-air until the start of your next turn; take no fall damage from the previous drop.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/magic/air/wind-stream-blue.webp",
+    },
+    "Does not consume Reaction — trigger is optional spend when falling.",
+  ),
+  "silkbind tether": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      consumeItemUses: true,
+      consumeAmount: "1",
+      activationCondition: "When you hit a creature with this weapon",
+      chatFlavor:
+        "Expend 1 Wirebug: apply Tethered (cannot move more than 15 ft from the embed point). Start-of-turn STR save uses Snap Silkbind.",
+      targetAffectsType: "creature",
+      targetPrompt: true,
+      rangeUnits: "ft",
+      rangeValue: "5",
+      effectTransfer: false,
+      activityImg: "icons/magic/control/debuff-chains-blue.webp",
+      activeEffect: {
+        name: "Tethered",
+        img: "icons/magic/control/debuff-chains-blue.webp",
+        showIcon: true,
+        stackable: "noneName",
+        description:
+          "Tethered by ironsilk. Cannot move more than 15 feet away from the point where the silk was embedded. At the start of each of your turns, you may attempt a Strength saving throw against the silkbinder's Silkbind DC (use Snap Silkbind on their weapon) to snap the silk and end this effect.",
+      },
+    },
+    "Apply AE manually via Midi on use. 15-ft leash is theater-of-the-mind / measured from embed token mark.",
+  ),
+  "silkbind grapple": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      activationCondition: "While a creature is Tethered by your Silkbind",
+      chatFlavor:
+        "While a creature is Tethered by your Silkbind, you may attempt to Grapple it even if it is up to two size categories larger than you.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/unarmed-punch-fist-yellow-red.webp",
+    },
+    "Narrative size override for Grapple — no mechanical consume.",
+  ),
 
   // ── Charged Slash family (self-owned counter + Gather + ×N attacks) ─
   "charged slash": counterSpend(

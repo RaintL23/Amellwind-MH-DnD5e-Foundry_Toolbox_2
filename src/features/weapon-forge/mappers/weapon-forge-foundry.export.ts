@@ -28,6 +28,7 @@ import { hasWeaponSwitchModes } from "@/features/weapons/utils/weapon-mode.utils
 import {
   applyDualBladesDemonDodgeOverlay,
   applyHuntingHornSongbookOverlay,
+  applyWireKnucklesSilkbindOverlay,
   defaultWeaponForgeItemFlags,
 } from "./weapon-forge-foundry-envelope";
 import { buildWeaponMelodyFeatItems } from "./weapon-forge-melody.export";
@@ -179,6 +180,7 @@ export function buildWeaponFoundryExportBundle(
   // Weapon-specific overlays own midi-qol / itemacro / world (applied last).
   applyHuntingHornSongbookOverlay(item);
   applyDualBladesDemonDodgeOverlay(item);
+  applyWireKnucklesSilkbindOverlay(item);
 
   const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);
   const resources = resourceGroups.flatMap((group) => group.items);
