@@ -1,0 +1,1808 @@
+{
+  "_id": "ZDZ7H5DejkXe1D17",
+  "name": "Light Bowgun (Uncommon)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_lightbowgun.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<p>Requires Attunement</p><p><a href=\"https://5e.tools/items.html#light%20bowgun\" target=\"_blank\" rel=\"noopener\">Open Light Bowgun filters on 5e.tools</a></p><p>Ammo DC = 8 + your proficiency bonus + your Dexterity modifier</p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p><p>If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn't exceed 10 feet.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Rapid Fire</strong></p><p><strong>Bonus Action.</strong></p><p>When you take the Attack action and attack with this weapon, you can make one additional attack with it as a Bonus Action.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #1eff00;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>\u25b8 Upgrade \u2014 <strong style=\"color:#1eff00\">Rapid Fire Upgrade I</strong></p><p><strong>Bonus Action.</strong></p><p>When you use your Rapid Fire feature to attack as a Bonus Action, you can make two additional attacks instead of one.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Magazine</strong></p><p>The weapon holds a maximum of 6 loaded rounds at a time. When the magazine reaches 0, you must reload it before you can fire again.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #1eff00;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>\u25b8 Upgrade \u2014 <strong style=\"color:#1eff00\">Magazine Upgrade I</strong></p><p>Your magazine capacity increases to 8 rounds of standard ammunition (Normal, Pierce, or Spread).</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Reload</strong></p><p><strong>Action.</strong></p><p>You can fully reload your magazine using an Action or a Bonus Action. When you do so, you choose the type of ammunition the weapon will contain.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Special Ammo</strong></p><p>Due to barrel pressure limits, you can load a maximum of 2 Special Ammo rounds into the magazine during a reload. Once these are expended, you must reload to switch back to another ammunition type.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wyvernblast</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can plant a Wyvernblast charge on the ground in an unoccupied space within 5 feet of you, or shoot it into a creature within 30 feet. When a creature within 5 feet of the charge takes damage from an attack or spell, the charge detonates, dealing [[/r 1d6]] Fire damage to all creatures within 5 feet of it. The charge lasts for 1 minute or until it detonates 3 times. You can use this feature a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Evading Reload</strong></p><p>The weapon is designed to be reloaded using the momentum of your body. Once per turn, if you move at least 15 feet in a straight line, you can reload half your magazine as part of that movement without expending an action. When you do so, choose either standard ammunition (Normal, Pierce, or Spread Ammo) or Special Ammo; you reload a number of rounds equal to half that ammunition type's current magazine capacity (rounded down).</p></div><h3>Ammunition</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Normal Ammo</strong></p><p>Deals the weapon's base damage ([[/r 1d4]] Piercing) to a single target.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Pierce Ammo</strong></p><p>You fire in a 30-foot line that is 5 feet wide. Make a single attack roll and compare it against the AC of each creature in that line. All creatures hit take the weapon's normal damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Spread Ammo</strong></p><p>Instead of making an attack roll, you fire a 10-foot cone. Each creature in the cone must make a Dexterity saving throw against your Ammo DC. On a failed save, a creature takes [[/r 1d4]] Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Recover Ammo</strong></p><p>Instead of taking damage, a willing creature hit by this ammo regains [[/r 1d4]] hit points.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Flaming Ammo</strong></p><p>Your attacks with this ammo deal Fire damage instead of Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Water Ammo</strong></p><p>Your attacks with this ammo deal Acid damage instead of Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Thunder Ammo</strong></p><p>Your attacks with this ammo deal Lightning damage instead of Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Freeze Ammo</strong></p><p>Your attacks with this ammo deal Cold damage instead of Piercing damage.</p></div>",
+      "chat": "<p>Requires Attunement</p><p>Ammo DC = 8 + your proficiency bonus + your Dexterity modifier</p><hr><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Rapid Fire</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">\u25b8 <strong style=\"color:#1eff00\">Rapid Fire Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Magazine</strong></p><p style=\"margin:0.2em 0 0 0.35em\">\u25b8 <strong style=\"color:#1eff00\">Magazine Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Reload</strong></p><p><strong>Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Special Ammo</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wyvernblast</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Evading Reload</strong></p></div>"
+    },
+    "identifier": "lightbowgun",
+    "quantity": 1,
+    "weight": {
+      "value": 5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "type": {
+      "value": "simpleR",
+      "baseItem": "lightbowgun"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 4,
+        "types": [
+          "piercing"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": null,
+    "properties": [
+      "amm",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": 80,
+      "long": 320,
+      "reach": null,
+      "units": "ft"
+    },
+    "mastery": "slow",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "recovery": [],
+      "max": "8"
+    },
+    "activities": {
+      "SKnWHDEywmygDC6a": {
+        "_id": "SKnWHDEywmygDC6a",
+        "type": "attack",
+        "sort": 0,
+        "name": "Normal Ammo",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "normal-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionReason": ""
+      },
+      "QvCEIfVF1xi05WBP": {
+        "_id": "QvCEIfVF1xi05WBP",
+        "sort": 200000,
+        "name": "Rapid Fire",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "When you take the Attack action and attack with this weapon",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Make 2 additional attacks with this weapon as a Bonus Action."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "rapid-fire",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "attack",
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": ""
+      },
+      "RnGMj0mO2e8mpVkN": {
+        "_id": "RnGMj0mO2e8mpVkN",
+        "sort": 400000,
+        "name": "Reload",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Fully reload magazine (also usable as an Action). Set spent uses to 0 for standard ammo, or to max \u2212 Special Ammo capacity when loading Special Ammo."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "reload",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "id7yt1eFrdRgNntO": {
+        "_id": "id7yt1eFrdRgNntO",
+        "sort": 600000,
+        "name": "Wyvernblast",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Plant or shoot a Wyvernblast charge (see feature for placement)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "radius",
+            "size": "5",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "@prof",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "wyvernblast",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "save",
+        "damage": {
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "fire"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ],
+          "onSave": "half"
+        },
+        "save": {
+          "ability": [
+            "dex"
+          ],
+          "dc": {
+            "calculation": "",
+            "formula": ""
+          }
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "VBD2W31LUghRELvK": {
+        "_id": "VBD2W31LUghRELvK",
+        "sort": 700000,
+        "name": "Evading Reload",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "Once per turn, if you move at least 15 feet in a straight line",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Reload half magazine (standard or Special Ammo capacity, rounded down). Adjust item uses manually."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "evading-reload",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "WjC1iQbhekk0PexH": {
+        "_id": "WjC1iQbhekk0PexH",
+        "type": "attack",
+        "sort": 600000,
+        "name": "Pierce Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "30-ft line (5 ft wide). One attack roll vs each creature in the line."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "line",
+            "size": "30",
+            "width": "5",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "pierce-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      },
+      "pGGha0FqnbEoB3nb": {
+        "_id": "pGGha0FqnbEoB3nb",
+        "type": "save",
+        "sort": 700000,
+        "name": "Spread Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "10-ft cone. Dexterity save vs Ammo DC; damage on a failed save."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "cone",
+            "size": "10",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "spread-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "damage": {
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 4,
+              "types": [
+                "piercing"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ],
+          "onSave": "none"
+        },
+        "save": {
+          "ability": [
+            "dex"
+          ],
+          "dc": {
+            "calculation": "dex",
+            "formula": ""
+          }
+        },
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      },
+      "R3az7IVI3K1Vd4IG": {
+        "_id": "R3az7IVI3K1Vd4IG",
+        "type": "attack",
+        "sort": 800000,
+        "name": "Flaming Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Weapon attack as fire damage (replaces piercing)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "flaming-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": null,
+              "denomination": null,
+              "types": [
+                "fire"
+              ],
+              "custom": {
+                "enabled": true,
+                "formula": "1d4[fire] + @mod"
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      },
+      "nc8aE4oJfdTHiYvS": {
+        "_id": "nc8aE4oJfdTHiYvS",
+        "type": "attack",
+        "sort": 900000,
+        "name": "Water Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Weapon attack as acid damage (replaces piercing)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "water-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": null,
+              "denomination": null,
+              "types": [
+                "acid"
+              ],
+              "custom": {
+                "enabled": true,
+                "formula": "1d4[acid] + @mod"
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      },
+      "A9HxsZGrgpZe1fYY": {
+        "_id": "A9HxsZGrgpZe1fYY",
+        "type": "attack",
+        "sort": 1000000,
+        "name": "Thunder Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Weapon attack as lightning damage (replaces piercing)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "thunder-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": null,
+              "denomination": null,
+              "types": [
+                "lightning"
+              ],
+              "custom": {
+                "enabled": true,
+                "formula": "1d4[lightning] + @mod"
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      },
+      "RNjUaTHDQxoQWFUC": {
+        "_id": "RNjUaTHDQxoQWFUC",
+        "type": "attack",
+        "sort": 1100000,
+        "name": "Freeze Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Weapon attack as cold damage (replaces piercing)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "freeze-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": null,
+              "denomination": null,
+              "types": [
+                "cold"
+              ],
+              "custom": {
+                "enabled": true,
+                "formula": "1d4[cold] + @mod"
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      },
+      "LM4Oro3oZcWYw5F5": {
+        "_id": "LM4Oro3oZcWYw5F5",
+        "type": "heal",
+        "sort": 1200000,
+        "name": "Recover Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "Willing creature",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Willing creature regains 1d4 hit points."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "80",
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "recover-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "healing": {
+          "number": 1,
+          "denomination": 4,
+          "types": [
+            "healing"
+          ],
+          "custom": {
+            "enabled": false,
+            "formula": ""
+          },
+          "scaling": {
+            "mode": "",
+            "number": 1
+          },
+          "bonus": ""
+        },
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "N6DEE6PMoVotKUJI",
+      "name": "Mastery (Slow)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786122242795,
+        "modifiedTime": 1786122242795,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 100000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Light Bowgun",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "onUseMacroName": "[preTargeting]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          }
+        ]
+      },
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": ""
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "lbg": {
+        "isLightBowgun": true,
+        "tier": "uncommon",
+        "specialAmmoMax": 2,
+        "unlockedAmmo": [
+          "normal",
+          "pierce",
+          "spread",
+          "recover",
+          "flaming",
+          "water",
+          "thunder",
+          "freeze"
+        ],
+        "loadedAmmoKey": null
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "_id": null,
+        "name": "Light Bowgun",
+        "type": "script",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "scope": "global",
+        "command": "// Light Bowgun \u2014 Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro\n//\n// Reload / Evading Reload:\n//   Dialog \u2192 pick ammo from inventory \u2192 fill Magazine (full or half) \u2192 spend rounds from ammo stack.\n// Fire activities (Normal Ammo, Pierce Ammo, \u2026):\n//   Require matching flags.world.lbg.loadedAmmoKey (and magazine rounds remaining).\n// Rapid Fire:\n//   Requires magazine rounds; uses the weapon Attack (player should pick the matching ammo activity\n//   for Pierce / Spread / Recover / Explosive / Sleep).\n//\n// Flags (weapon):\n//   flags.world.lbg.isLightBowgun\n//   flags.world.lbg.tier                (\"uncommon\" | \"rare\" | \"veryRare\" | \u2026)\n//   flags.world.lbg.specialAmmoMax      (2 / 4 / 6 / 10)\n//   flags.world.lbg.unlockedAmmo        (string[] ammo keys)\n//   flags.world.lbg.loadedAmmoKey       (current magazine load)\n//   flags.world.lbg.lastEvadingReloadTurn\n// Flags (ammo consumable):\n//   flags.world.lbg.isAmmo / ammoKey / isSpecial\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\n// Only gate / dialog before the activity resolves.\nif (macroPass && !macroPass.includes(\"pretargeting\") && !macroPass.includes(\"preitemroll\")) {\n  return;\n}\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? workflow?.activity?.midiProperties?.identifier\n  ?? \"\",\n).toLowerCase();\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Light Bowgun: actor not found.\");\n  return;\n}\n\nconst isLbgWeapon = foundry.utils.getProperty(item, \"flags.world.lbg.isLightBowgun\") === true\n  || String(item?.system?.identifier ?? \"\") === \"lightbowgun\"\n  || /^light bowgun\\b/i.test(item?.name ?? \"\");\n\nif (!isLbgWeapon) return;\n\nconst STANDARD_KEYS = new Set([\"normal\", \"pierce\", \"spread\"]);\nconst SPECIAL_KEYS = new Set([\n  \"recover\",\n  \"flaming\",\n  \"water\",\n  \"thunder\",\n  \"freeze\",\n  \"poison\",\n  \"paralysis\",\n  \"explosive-sticky\",\n  \"sleep\",\n  \"dragon\",\n]);\n\nconst AMMO_LABELS = {\n  normal: \"Normal Ammo\",\n  pierce: \"Pierce Ammo\",\n  spread: \"Spread Ammo\",\n  recover: \"Recover Ammo\",\n  flaming: \"Flaming Ammo\",\n  water: \"Water Ammo\",\n  thunder: \"Thunder Ammo\",\n  freeze: \"Freeze Ammo\",\n  poison: \"Poison Ammo\",\n  paralysis: \"Paralysis Ammo\",\n  \"explosive-sticky\": \"Explosive/Sticky Ammo\",\n  sleep: \"Sleep Ammo\",\n  dragon: \"Dragon Ammo\",\n};\n\nconst activityToAmmoKey = () => {\n  if (actId === \"normal-ammo\" || actName === \"normal ammo\" || actName === \"attack\") return \"normal\";\n  if (actId === \"pierce-ammo\" || actName.includes(\"pierce ammo\")) return \"pierce\";\n  if (actId === \"spread-ammo\" || actName.includes(\"spread ammo\")) return \"spread\";\n  if (actId === \"recover-ammo\" || actName.includes(\"recover ammo\")) return \"recover\";\n  if (actId === \"flaming-ammo\" || actName.includes(\"flaming ammo\")) return \"flaming\";\n  if (actId === \"water-ammo\" || actName.includes(\"water ammo\")) return \"water\";\n  if (actId === \"thunder-ammo\" || actName.includes(\"thunder ammo\")) return \"thunder\";\n  if (actId === \"freeze-ammo\" || actName.includes(\"freeze ammo\")) return \"freeze\";\n  if (actId === \"poison-ammo\" || actName.includes(\"poison ammo\")) return \"poison\";\n  if (actId === \"paralysis-ammo\" || actName.includes(\"paralysis ammo\")) return \"paralysis\";\n  if (actId === \"explosive-sticky-ammo\" || actName.includes(\"explosive\") || actName.includes(\"sticky\")) {\n    return \"explosive-sticky\";\n  }\n  if (actId === \"sleep-ammo\" || actName.includes(\"sleep ammo\")) return \"sleep\";\n  if (actId === \"dragon-ammo\" || actName.includes(\"dragon ammo\")) return \"dragon\";\n  return null;\n};\n\nconst isReload =\n  actId === \"reload\"\n  || (actName === \"reload\" && !actName.includes(\"evading\"));\nconst isEvadingReload =\n  actId === \"evading-reload\"\n  || actName.includes(\"evading reload\");\nconst isRapidFire =\n  actId === \"rapid-fire\"\n  || actName.includes(\"rapid fire\");\nconst fireAmmoKey = activityToAmmoKey();\nconst isFireActivity = Boolean(fireAmmoKey) || isRapidFire;\n\nconst abort = (msg) => {\n  if (msg) ui.notifications.warn(msg);\n  if (workflow) workflow.aborted = true;\n  return false;\n};\n\nconst magazineMax = () => {\n  const raw = item.system?.uses?.max;\n  const n = Number(raw);\n  if (Number.isFinite(n) && n > 0) return Math.trunc(n);\n  // Fallback: evaluate formula-like max if present\n  try {\n    const rolledMax = item.system?.uses?.max\n      ? Number(Roll.getFormula?.(String(raw)) ?? raw)\n      : NaN;\n    if (Number.isFinite(rolledMax) && rolledMax > 0) return Math.trunc(rolledMax);\n  } catch (_) { /* ignore */ }\n  return 6;\n};\n\nconst magazineSpent = () => Math.max(0, Number(item.system?.uses?.spent ?? 0));\nconst magazineAvailable = () => Math.max(0, magazineMax() - magazineSpent());\n\nconst specialMax = () => Math.max(\n  1,\n  Number(foundry.utils.getProperty(item, \"flags.world.lbg.specialAmmoMax\") ?? 2),\n);\n\nconst unlockedAmmo = () => {\n  const listed = foundry.utils.getProperty(item, \"flags.world.lbg.unlockedAmmo\");\n  if (Array.isArray(listed) && listed.length) {\n    return listed.map((k) => String(k).toLowerCase());\n  }\n  return [\"normal\", \"pierce\", \"spread\", \"recover\", \"flaming\", \"water\", \"thunder\", \"freeze\"];\n};\n\nconst isAmmoItem = (i) => {\n  if (foundry.utils.getProperty(i, \"flags.world.lbg.isAmmo\") === true) return true;\n  const id = String(i.system?.identifier ?? \"\").toLowerCase();\n  if (id.endsWith(\"-ammo\")) return true;\n  if (i.type === \"consumable\" && /ammo$/i.test(i.name ?? \"\")) return true;\n  return false;\n};\n\nconst ammoKeyOf = (i) => {\n  const flagged = foundry.utils.getProperty(i, \"flags.world.lbg.ammoKey\");\n  if (flagged) return String(flagged).toLowerCase();\n  const id = String(i.system?.identifier ?? \"\").toLowerCase().replace(/-ammo$/, \"\");\n  if (id) return id;\n  return String(i.name ?? \"\")\n    .toLowerCase()\n    .replace(/\\s+ammo.*$/, \"\")\n    .replace(/[^a-z0-9]+/g, \"-\")\n    .replace(/^-|-$/g, \"\");\n};\n\nconst isSpecialAmmoKey = (key) => {\n  if (SPECIAL_KEYS.has(key)) return true;\n  if (STANDARD_KEYS.has(key)) return false;\n  return foundry.utils.getProperty(\n    actorDoc.items.find((i) => isAmmoItem(i) && ammoKeyOf(i) === key),\n    \"flags.world.lbg.isSpecial\",\n  ) === true;\n};\n\nconst capacityFor = (key) => (isSpecialAmmoKey(key) ? specialMax() : magazineMax());\n\nconst inventoryAmmoOptions = () => {\n  const unlocked = new Set(unlockedAmmo());\n  const byKey = new Map();\n  for (const i of actorDoc.items) {\n    if (!isAmmoItem(i)) continue;\n    const key = ammoKeyOf(i);\n    if (!unlocked.has(key)) continue;\n    const qty = Math.max(0, Number(i.system?.quantity ?? 0));\n    if (qty <= 0) continue;\n    const prev = byKey.get(key);\n    if (!prev || qty > prev.qty) {\n      byKey.set(key, { key, item: i, qty, label: AMMO_LABELS[key] ?? i.name });\n    }\n  }\n  return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label));\n};\n\nconst loadedKey = () => String(\n  foundry.utils.getProperty(item, \"flags.world.lbg.loadedAmmoKey\") ?? \"\",\n).toLowerCase() || null;\n\n// \u2500\u2500 Fire gate \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nif (isFireActivity && !isReload && !isEvadingReload) {\n  const avail = magazineAvailable();\n  if (avail <= 0) {\n    return abort(\"Light Bowgun: magazine empty \u2014 Reload first.\");\n  }\n  const loaded = loadedKey();\n  if (!loaded) {\n    return abort(\"Light Bowgun: no ammo type loaded \u2014 use Reload.\");\n  }\n  if (isRapidFire) {\n    // Pierce / Spread / Recover / Explosive / Sleep need their dedicated activities.\n    if ([\"pierce\", \"spread\", \"recover\", \"explosive-sticky\", \"sleep\"].includes(loaded)) {\n      return abort(\n        `Light Bowgun: ${AMMO_LABELS[loaded] ?? loaded} is loaded \u2014 use that ammo activity (not Rapid Fire).`,\n      );\n    }\n    return;\n  }\n  if (fireAmmoKey && fireAmmoKey !== loaded) {\n    return abort(\n      `Light Bowgun: magazine is loaded with ${AMMO_LABELS[loaded] ?? loaded}, not ${AMMO_LABELS[fireAmmoKey] ?? fireAmmoKey}. Reload to switch.`,\n    );\n  }\n  return;\n}\n\n// \u2500\u2500 Reload / Evading Reload \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\nif (!isReload && !isEvadingReload) return;\n\nif (isEvadingReload) {\n  const combat = game.combat;\n  if (combat?.started) {\n    const turnKey = `${combat.id}:${combat.round}:${combat.turn}:${actorDoc.id}`;\n    const last = foundry.utils.getProperty(actorDoc, \"flags.world.lbg.lastEvadingReloadTurn\");\n    if (last === turnKey) {\n      return abort(\"Light Bowgun: Evading Reload already used this turn.\");\n    }\n  }\n}\n\nconst options = inventoryAmmoOptions();\nif (!options.length) {\n  return abort(\"Light Bowgun: no unlocked ammo in inventory (quantity > 0).\");\n}\n\nconst half = isEvadingReload;\nconst title = half ? \"Evading Reload \u2014 Magazine\" : \"Reload \u2014 Magazine\";\nconst currentLoaded = loadedKey();\nconst magMax = magazineMax();\nconst magAvail = magazineAvailable();\n\nconst optsHtml = options.map((o) => {\n  const cap = capacityFor(o.key);\n  const loadAmt = half ? Math.floor(cap / 2) : cap;\n  const selected = currentLoaded === o.key ? \" selected\" : \"\";\n  const special = isSpecialAmmoKey(o.key) ? \" [Special]\" : \"\";\n  return `<option value=\"${esc(o.key)}\"${selected}>${esc(o.label)}${special} \u2014 pack ${o.qty}, load ${loadAmt}/${cap}</option>`;\n}).join(\"\");\n\nconst content = `\n<form class=\"flexcol\">\n  <p>Magazine: <strong>${magAvail}/${magMax}</strong>${\n    currentLoaded ? ` \u00b7 loaded <em>${esc(AMMO_LABELS[currentLoaded] ?? currentLoaded)}</em>` : \"\"\n  }</p>\n  <p>${half\n    ? \"Evading Reload loads <strong>half</strong> of the chosen ammo capacity (rounded down).\"\n    : \"Reload fills up to the chosen ammo capacity (standard Magazine or Special Ammo limit).\"\n  }</p>\n  <div class=\"form-group\">\n    <label>Ammunition</label>\n    <div class=\"form-fields\">\n      <select name=\"lbg-ammo\">${optsHtml}</select>\n    </div>\n  </div>\n</form>`;\n\nconst chosenKey = await new Promise((resolve) => {\n  let settled = false;\n  const done = (v) => { if (!settled) { settled = true; resolve(v); } };\n  new Dialog({\n    title,\n    content,\n    buttons: {\n      ok: {\n        icon: '<i class=\"fas fa-sync\"></i>',\n        label: half ? \"Evading Reload\" : \"Reload\",\n        callback: (html) => {\n          const $h = html?.find ? html : $(html);\n          done($h.find('select[name=\"lbg-ammo\"]').val() || null);\n        },\n      },\n      cancel: {\n        icon: '<i class=\"fas fa-times\"></i>',\n        label: \"Cancel\",\n        callback: () => done(null),\n      },\n    },\n    default: \"ok\",\n    close: () => done(null),\n  }).render(true);\n});\n\nif (!chosenKey) {\n  return abort(\"Light Bowgun: reload cancelled.\");\n}\n\nconst pick = options.find((o) => o.key === chosenKey);\nif (!pick) {\n  return abort(\"Light Bowgun: invalid ammo selection.\");\n}\n\nconst cap = capacityFor(chosenKey);\nconst desired = half ? Math.floor(cap / 2) : cap;\nif (desired <= 0) {\n  return abort(\"Light Bowgun: load amount is 0 for this capacity.\");\n}\n\nconst loadAmt = Math.min(desired, pick.qty);\nif (loadAmt <= 0) {\n  return abort(`Light Bowgun: no rounds left in ${pick.label}.`);\n}\n\nconst bowItem = actorDoc.items.get(item.id) ?? item;\nconst max = magazineMax();\nconst newSpent = Math.max(0, max - loadAmt);\nconst newQty = Math.max(0, Number(pick.item.system?.quantity ?? 0) - loadAmt);\n\nawait pick.item.update({ \"system.quantity\": newQty });\nawait bowItem.update({\n  \"system.uses.spent\": newSpent,\n  \"flags.world.lbg.loadedAmmoKey\": chosenKey,\n});\n\nif (half) {\n  const combat = game.combat;\n  if (combat?.started) {\n    const turnKey = `${combat.id}:${combat.round}:${combat.turn}:${actorDoc.id}`;\n    await actorDoc.setFlag(\"world\", \"lbg.lastEvadingReloadTurn\", turnKey);\n  }\n}\n\nconst specialNote = isSpecialAmmoKey(chosenKey)\n  ? ` Special Ammo capacity ${cap}.`\n  : \"\";\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> ${\n    half ? \"evading-reloads\" : \"reloads\"\n  } the Light Bowgun with <em>${esc(pick.label)}</em>.</p><p>Magazine <strong>${loadAmt}/${max}</strong> \u00b7 spent ${loadAmt} from inventory (${newQty} left).${specialNote}</p></div>`,\n});\n\nreturn;\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": null,
+          "systemVersion": null,
+          "createdTime": null,
+          "modifiedTime": null,
+          "lastModifiedBy": null
+        }
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786122242792,
+    "modifiedTime": 1786122242792,
+    "lastModifiedBy": null
+  }
+}

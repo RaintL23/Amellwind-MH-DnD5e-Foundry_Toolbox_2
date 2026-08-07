@@ -206,6 +206,14 @@ export function compileResolvedChain(
     };
   } else if (emitKind === "attack") {
     const part = damagePartFromParams(params);
+    const weaponTypeValue = String(
+      (item.system as { type?: { value?: string } } | undefined)?.type?.value ??
+        "",
+    );
+    const attackValue =
+      weaponTypeValue === "simpleR" || weaponTypeValue === "martialR"
+        ? "ranged"
+        : "melee";
     activity = {
       ...baseActivityFields({
         id: activityId,
@@ -222,7 +230,7 @@ export function compileResolvedChain(
         critical: { threshold: null },
         flat: false,
         type: {
-          value: "melee",
+          value: attackValue,
           classification: "weapon",
         },
       },

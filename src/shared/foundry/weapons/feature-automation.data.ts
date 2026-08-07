@@ -376,9 +376,10 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "When a creature hits you with a melee attack",
     {
       activityType: "damage",
-      damageFormula: "1d6",
+      damageFormula: "3d6",
       damageType: "fire",
-      chatFlavor: "Embed and detonate Wyvernblast on the attacker (see feature text for die).",
+      chatFlavor:
+        "Embed and detonate Wyvernblast (all 3 detonations = 3× current Wyvernblast die).",
     },
   ),
 
@@ -463,7 +464,49 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     consumeAmount: "1",
     chatFlavor: "Expend 1 shell; propel yourself up to 20 ft (no OA).",
   }),
-  // "Rapid Fire" omitted: Amellwind = Extra Attack on Attack action; RaintDM = BA attack.
+  /**
+   * RaintDM Light Bowgun: Bonus Action attack(s).
+   * Amellwind LBG “Rapid Fire” is Extra Attack narrative — prefer per-weapon
+   * `automation` override there if both catalogs share this registry key.
+   */
+  "rapid fire": spec("bonus_action", {
+    activation: "bonus",
+    activityType: "attack",
+    includeBaseDamage: true,
+    consumeItemUses: true,
+    activationCondition:
+      "When you take the Attack action and attack with this weapon",
+    chatFlavor: "Make 1 additional attack with this weapon as a Bonus Action.",
+  }),
+  "rapid fire upgrade i": spec("upgrade_scaler", {
+    chatFlavor: "Make 2 additional attacks with this weapon as a Bonus Action.",
+  }),
+  "rapid fire upgrade ii": spec("upgrade_scaler", {
+    chatFlavor: "Make 3 additional attacks with this weapon as a Bonus Action.",
+  }),
+  "rapid fire upgrade iii": spec("upgrade_scaler", {
+    chatFlavor: "Make 4 additional attacks with this weapon as a Bonus Action.",
+  }),
+  magazine: gauge(
+    "6",
+    undefined,
+    "Loaded rounds (standard ammo). Attack / Rapid Fire / ammo activities consume 1.",
+  ),
+  "magazine upgrade i": scaleUses("8"),
+  "magazine upgrade ii": scaleUses("10"),
+  "magazine upgrade iii": scaleUses("12"),
+  "magazine upgrade iv": scaleUses("15"),
+  "evading reload": spec("bonus_action", {
+    activation: "special",
+    activityType: "utility",
+    activationCondition:
+      "Once per turn, if you move at least 15 feet in a straight line",
+    chatFlavor:
+      "Reload half magazine (standard or Special Ammo capacity, rounded down). Adjust item uses manually.",
+    rangeUnits: "self",
+    targetAffectsType: "self",
+    targetPrompt: false,
+  }),
   wyvernblast: spec("bonus_action", {
     activation: "bonus",
     activityType: "save",
@@ -473,6 +516,8 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     onSave: "half",
     templateType: "radius",
     templateSize: "5",
+    usesMax: "@prof",
+    usesRecoveryPeriod: "lr",
     chatFlavor: "Plant or shoot a Wyvernblast charge (see feature for placement).",
   }),
   "wyvernblast upgrade i": spec("upgrade_scaler", {
@@ -505,7 +550,19 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "When Demon Mode ends",
     "Enter Archdemon Mode per description; uses tracked on Demon Mode.",
   ),
-  reload: baUtility("", "Fully reload magazine (also usable as an Action)."),
+  reload: spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      chatFlavor:
+        "Fully reload magazine (also usable as an Action). Set spent uses to 0 for standard ammo, or to max − Special Ammo capacity when loading Special Ammo.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+    },
+    "Manual item-uses adjust after reload.",
+  ),
 
   // ── Action / special abilities with fixed geometry ──────────────────
   "amped element discharge": counterSpend(
