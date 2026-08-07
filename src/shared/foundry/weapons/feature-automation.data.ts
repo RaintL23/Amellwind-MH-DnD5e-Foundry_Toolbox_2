@@ -282,7 +282,18 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   }),
   "counter-thrust": reactionUtility(
     "When a creature you can see hits you or an ally within your reach with an attack",
-    { rollFormula: "1d8", chatFlavor: "Add 1d8 to the target's AC against the triggering attack." },
+    {
+      rollFormula: "1d8",
+      chatFlavor: "Add 1d8 to the target's AC against the triggering attack.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/shield-damaged-broken-orange.webp",
+    },
+    // Utility roll alone does not change AC. Hand-tuned Lance uncommon example embeds
+    // ItemMacro [postActiveEffects] that applies system.attributes.ac.bonus + N with
+    // dae.specialDuration isAttacked so Midi can recheck the triggering attack.
+    "Needs ItemMacro AC AE (see foundry-jsons-example/weapons fvtt-Item-lance-uncommon).",
   ),
   "offset strike": reactionAttack(
     "When a creature moves into your reach and makes a melee attack against you",
