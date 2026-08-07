@@ -3,8 +3,10 @@
 //
 // Compatible with:
 // - Recital (uncommon): flags.world.hh.maxActiveMelodies = 1
-// - Encore (rare+):     flags.world.hh.maxActiveMelodies = 2
+// - Encore (rare+):     flags.world.hh.maxActiveMelodies = 2+
+// - End Melodies:       disables all Songbook auras (any rarity)
 // Melodies detected via flags.world.hh.isMelody / identifier melody-* / name "Melody of *"
+// UI: one dropdown per active Melody slot (no checkboxes); exclusive options when multi-slot.
 
 const esc = (value) => {
   const s = String(value ?? "");
@@ -22,12 +24,17 @@ const rolled = (typeof rolledActivity !== "undefined" && rolledActivity)
   : (workflow?.activity ?? args?.[0]?.activity ?? null);
 
 const actName = (rolled?.name ?? workflow?.activity?.name ?? "").toLowerCase();
-const actId = rolled?.identifier ?? workflow?.activity?.identifier ?? "";
+const actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? "").toLowerCase();
+
+const isEndMelodies =
+  actId === "end-melodies" || actId === "cancel-melodies"
+  || actName.includes("end melod") || actName.includes("cancel melod");
+
 const isSongUse =
   actId === "recital" || actId === "encore"
   || actName.includes("recital") || actName.includes("encore");
 
-if (!isSongUse) return;
+if (!isEndMelodies && !isSongUse) return;
 
 const actorDoc = actor
   ?? workflow?.actor
@@ -39,8 +46,6 @@ if (!actorDoc) {
   ui.notifications.warn("Hunting Horn: no se encontró el actor.");
   return;
 }
-
-const maxActive = Math.max(1, Number(foundry.utils.getProperty(item, "flags.world.hh.maxActiveMelodies") ?? 1));
 
 const isMelodyItem = (i) => {
   const flag = foundry.utils.getProperty(i, "flags.world.hh.isMelody");
@@ -56,93 +61,156 @@ const isMelodyAura = (ef) => {
 };
 
 const melodies = actorDoc.items.filter(isMelodyItem);
+
+const disableAllMelodyAuras = async () => {
+  const ops = [];
+  for (const mel of melodies) {
+    for (const ef of mel.effects) {
+      if (!isMelodyAura(ef)) continue;
+      ops.push(ef.update({
+        disabled: true,
+        duration: { seconds: null, rounds: null, turns: null, startTime: null }
+      }));
+    }
+  }
+  for (const ef of actorDoc.effects) {
+    if (!isMelodyAura(ef)) continue;
+    ops.push(ef.update({
+      disabled: true,
+      duration: { seconds: null, rounds: null, turns: null, startTime: null }
+    }));
+  }
+  if (ops.length) await Promise.all(ops);
+  return ops.length;
+};
+
+const refreshActiveAuras = async (reason) => {
+  try {
+    const sceneId = canvas.scene?.id;
+    if (game.modules.get("ActiveAuras")?.active && sceneId) {
+      if (globalThis.ActiveAuras?.CollateAuras) {
+        await ActiveAuras.CollateAuras(sceneId, true, true, reason);
+      } else if (globalThis.AAHelpers?.collateAuras) {
+        await AAHelpers.collateAuras(sceneId, true, true, reason);
+      }
+    }
+  } catch (err) {
+    console.warn("Hunting Horn: Active Auras refresh skipped", err);
+  }
+};
+
+// ── End Melodies (any rarity) ──────────────────────────────────────────────
+if (isEndMelodies) {
+  if (!melodies.length) {
+    ui.notifications.warn("Hunting Horn: no hay Melodies en el Songbook del actor.");
+    return;
+  }
+  const changed = await disableAllMelodyAuras();
+  await refreshActiveAuras("hunting-horn-end");
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+    content: `<div class="dnd5e2"><p><strong>${esc(actorDoc.name)}</strong> ends all active Songbook Melodies.</p>${
+      changed ? "" : "<p><em>No active Melody auras were found.</em></p>"
+    }</div>`
+  });
+  if (!changed) ui.notifications.info("Hunting Horn: no había Melodies activas.");
+  return;
+}
+
+// ── Recital / Encore (perform) ─────────────────────────────────────────────
 if (!melodies.length) {
   ui.notifications.warn("Hunting Horn: no hay Melodies en el Songbook del actor.");
   return;
 }
 
+const maxActive = Math.max(1, Number(foundry.utils.getProperty(item, "flags.world.hh.maxActiveMelodies") ?? 1));
 const pickCount = Math.min(maxActive, melodies.length);
 const title = (actId === "encore" || actName.includes("encore")) ? "Encore — Songbook" : "Recital — Songbook";
 
 ui.notifications.info(`${title}: elige ${pickCount} Melody${pickCount > 1 ? "s" : ""}…`);
 
-let selectedIds = [];
-if (pickCount === 1) {
-  const optionsHtml = melodies.map(m => `<option value="${m.id}">${esc(m.name)}</option>`).join("");
-  const content = `
+// One dropdown per active slot; pre-select distinct defaults (1st, 2nd, …).
+const selectsHtml = Array.from({ length: pickCount }, (_, i) => {
+  const label = pickCount === 1 ? "Melody" : `Melody ${i + 1}`;
+  const opts = melodies.map((m, mi) =>
+    `<option value="${m.id}"${mi === i ? " selected" : ""}>${esc(m.name)}</option>`
+  ).join("");
+  return `
+  <div class="form-group">
+    <label>${label}</label>
+    <div class="form-fields">
+      <select class="hh-melody-select" data-slot="${i}">${opts}</select>
+    </div>
+  </div>`;
+}).join("");
+
+const promptText = pickCount === 1
+  ? "Activa 1 Melody (aura 15 ft, 1 minuto)."
+  : `Elige <strong>${pickCount}</strong> Melodies distintas (aura 15 ft, 1 minuto).`;
+
+const content = `
 <form class="flexcol">
-  <p>Activa 1 Melody (aura 15 ft, 1 minuto).</p>
-  <div class="form-group"><label>Melody</label>
-    <div class="form-fields"><select id="hh-melody-select">${optionsHtml}</select></div>
-  </div>
+  <p>${promptText}</p>
+  ${selectsHtml}
 </form>`;
-  const selectedId = await new Promise((resolve) => {
-    let settled = false;
-    const done = (v) => { if (!settled) { settled = true; resolve(v); } };
-    new Dialog({
-      title,
-      content,
-      buttons: {
-        ok: {
-          icon: '<i class="fas fa-music"></i>',
-          label: "Perform",
-          callback: (html) => {
-            const $h = html?.find ? html : $(html);
-            done($h.find("#hh-melody-select").val() || null);
+
+const selectedIds = await new Promise((resolve) => {
+  let settled = false;
+  const done = (v) => { if (!settled) { settled = true; resolve(v); } };
+  new Dialog({
+    title,
+    content,
+    buttons: {
+      ok: {
+        icon: '<i class="fas fa-music"></i>',
+        label: "Perform",
+        callback: (html) => {
+          const $h = html?.find ? html : $(html);
+          const picked = $h.find("select.hh-melody-select").map((_, el) => el.value).get();
+          if (picked.length !== pickCount || picked.some(id => !id)) {
+            ui.notifications.warn(`Debes elegir ${pickCount} Melody${pickCount > 1 ? "s" : ""}.`);
+            done(null);
+            return;
           }
-        },
-        cancel: { icon: '<i class="fas fa-times"></i>', label: "Cancel", callback: () => done(null) }
-      },
-      default: "ok",
-      close: () => done(null)
-    }).render(true);
-  });
-  if (!selectedId) {
-    ui.notifications.warn("Cancelado.");
-    return;
-  }
-  selectedIds = [selectedId];
-} else {
-  const boxes = melodies.map(m => `
-<label class="checkbox" style="display:block;margin:0.25em 0;">
-  <input type="checkbox" name="melody" value="${m.id}"> ${esc(m.name)}
-</label>`).join("");
-  const content = `
-<form class="flexcol">
-  <p>Elige <strong>exactamente ${pickCount}</strong> Melodies distintas (aura 15 ft, 1 minuto).</p>
-  <div class="form-group">${boxes}</div>
-</form>`;
-  selectedIds = await new Promise((resolve) => {
-    let settled = false;
-    const done = (v) => { if (!settled) { settled = true; resolve(v); } };
-    new Dialog({
-      title,
-      content,
-      buttons: {
-        ok: {
-          icon: '<i class="fas fa-music"></i>',
-          label: "Perform",
-          callback: (html) => {
-            const $h = html?.find ? html : $(html);
-            const picked = $h.find('input[name="melody"]:checked').map((_, el) => el.value).get();
-            if (picked.length !== pickCount) {
-              ui.notifications.warn(`Debes elegir exactamente ${pickCount} Melodies.`);
-              done(null);
-              return;
-            }
-            done(picked);
+          if (new Set(picked).size !== picked.length) {
+            ui.notifications.warn("Las Melodies deben ser distintas.");
+            done(null);
+            return;
           }
-        },
-        cancel: { icon: '<i class="fas fa-times"></i>', label: "Cancel", callback: () => done(null) }
+          done(picked);
+        }
       },
-      default: "ok",
-      close: () => done(null)
-    }).render(true);
-  });
-  if (!selectedIds?.length) {
-    ui.notifications.warn("Cancelado.");
-    return;
-  }
+      cancel: { icon: '<i class="fas fa-times"></i>', label: "Cancel", callback: () => done(null) }
+    },
+    default: "ok",
+    close: () => done(null),
+    // Multi-slot: hide a Melody from other dropdowns once it is selected.
+    render: (html) => {
+      if (pickCount <= 1) return;
+      const $h = html?.find ? html : $(html);
+      const syncExclusiveOptions = () => {
+        const selects = $h.find("select.hh-melody-select").toArray();
+        const chosen = selects.map((sel) => sel.value);
+        selects.forEach((sel, i) => {
+          const current = chosen[i];
+          const blocked = new Set(chosen.filter((id, j) => j !== i && id));
+          const opts = melodies
+            .filter((m) => m.id === current || !blocked.has(m.id))
+            .map((m) => `<option value="${m.id}"${m.id === current ? " selected" : ""}>${esc(m.name)}</option>`)
+            .join("");
+          sel.innerHTML = opts;
+          if (current && [...sel.options].some((o) => o.value === current)) sel.value = current;
+        });
+      };
+      $h.find("select.hh-melody-select").off("change.hhExclusive").on("change.hhExclusive", syncExclusiveOptions);
+      syncExclusiveOptions();
+    }
+  }).render(true);
+});
+
+if (!selectedIds?.length) {
+  ui.notifications.warn("Cancelado.");
+  return;
 }
 
 const selected = selectedIds.map(id => melodies.find(m => m.id === id)).filter(Boolean);
@@ -193,25 +261,7 @@ for (const mel of selected) {
   elementByMelodyId[mel.id] = el;
 }
 
-// Disable all melody auras
-const ops = [];
-for (const mel of melodies) {
-  for (const ef of mel.effects) {
-    if (!isMelodyAura(ef)) continue;
-    ops.push(ef.update({
-      disabled: true,
-      duration: { seconds: null, rounds: null, turns: null, startTime: null }
-    }));
-  }
-}
-for (const ef of actorDoc.effects) {
-  if (!isMelodyAura(ef)) continue;
-  ops.push(ef.update({
-    disabled: true,
-    duration: { seconds: null, rounds: null, turns: null, startTime: null }
-  }));
-}
-if (ops.length) await Promise.all(ops);
+await disableAllMelodyAuras();
 
 const startTime = game.time.worldTime;
 const enabledNames = [];
@@ -251,20 +301,9 @@ for (const mel of selected) {
   enabledNames.push(element ? `${mel.name} [${element}]` : mel.name);
 }
 
-try {
-  const sceneId = canvas.scene?.id;
-  if (game.modules.get("ActiveAuras")?.active && sceneId) {
-    if (globalThis.ActiveAuras?.CollateAuras) {
-      await ActiveAuras.CollateAuras(sceneId, true, true, "hunting-horn-song");
-    } else if (globalThis.AAHelpers?.collateAuras) {
-      await AAHelpers.collateAuras(sceneId, true, true, "hunting-horn-song");
-    }
-  }
-} catch (err) {
-  console.warn("Hunting Horn: Active Auras refresh skipped", err);
-}
+await refreshActiveAuras("hunting-horn-song");
 
 await ChatMessage.create({
   speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
-  content: `<div class="dnd5e2"><p><strong>${esc(actorDoc.name)}</strong> performs <em>${esc(enabledNames.join(" + "))}</em>.</p><p>15-foot aura(s) active for 1 minute (or until Incapacitated / another performance).</p></div>`
+  content: `<div class="dnd5e2"><p><strong>${esc(actorDoc.name)}</strong> performs <em>${esc(enabledNames.join(" + "))}</em>.</p><p>15-foot aura(s) active for 1 minute (or until Incapacitated / another performance / End Melodies).</p></div>`
 });

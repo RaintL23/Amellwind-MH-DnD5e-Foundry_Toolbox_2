@@ -283,10 +283,14 @@ describe("Weapon Forge Foundry example parity", () => {
     );
     expect(byName.Attack).toBeDefined();
     expect(byName.Recital).toBeDefined();
+    expect(byName["End Melodies"]).toBeDefined();
     expect(byName.Recital.duration?.units).toBe("minute");
     expect(byName.Recital.duration?.value).toBe("1");
     expect(byName.Recital.description?.chatFlavor).toBe(
       "Perform a Melody from your Songbook",
+    );
+    expect(byName["End Melodies"].description?.chatFlavor).toBe(
+      "End all active Songbook Melodies",
     );
 
     const flags = exported.flags as {
