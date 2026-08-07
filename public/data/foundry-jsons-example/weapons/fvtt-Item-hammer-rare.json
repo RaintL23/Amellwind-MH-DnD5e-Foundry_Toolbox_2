@@ -1,0 +1,1088 @@
+{
+  "_id": "Vv6PGvNJOo0Y36M1",
+  "name": "Hammer (Rare)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_hammer.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Topple)</strong></p><p>If you hit a creature, you can force it to make a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). On a failed save, the creature has the Prone condition.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Power Charge</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you begin winding up the hammer. The weapon remains charged for 1 minute, until you hit with an attack using it, until you are knocked Prone, or until you are Incapacitated. While charged, your walking speed increases by 5 feet, and your next successful attack with this weapon deals an extra [[/r 2d6]] bludgeoning damage <em>(Charge Upgrade I)</em>.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Mighty Weapon</strong></p><p><strong>Special.</strong></p><p>Once per turn when you hit a creature in the head (or just hit it) with a charged attack, you can unleash the built-up kinetic energy to rattle their brain. The target must make a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). On a failed save, the creature is Stunned until the end of your next turn. A Huge or larger creature has Advantage on the saving throw. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest (tracked as this weapon's <strong>Limited Uses</strong> — open the item and lower <em>Spent</em> to restore a use after a rollback).</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Charge Upgrade I</strong></p><p>Your Power Charge now deals an extra [[/r 2d6]] bludgeoning damage on a hit.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Upswing / Spinning Bludgeon</strong></p><p>Your charged attacks gain tactical versatility. When you hit a creature with an attack empowered by your Power Charge, you can choose one of the following additional effects:</p><ul><li><strong>Upswing:</strong> The target is pushed 10 feet away from you. If they hit a solid object (like a wall or another creature), they take an additional [[/r 1d6]] bludgeoning damage.</li><li><strong>Spinning Bludgeon:</strong> You carry the momentum into a spin. Choose a second creature within 5 feet of the original target; you can immediately make one melee weapon attack against the second creature (this second attack does not benefit from the charge's extra damage).</li></ul></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Topple)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Power Charge</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Mighty Weapon</strong></p><p><strong>Special.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Charge Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Upswing / Spinning Bludgeon</strong></p></div>"
+    },
+    "identifier": "hammer",
+    "quantity": 1,
+    "weight": {
+      "value": 10,
+      "units": "lb"
+    },
+    "price": {
+      "value": 35,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "rare",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "hammer"
+    },
+    "damage": {
+      "base": {
+        "number": 2,
+        "denomination": 6,
+        "types": [
+          "bludgeoning"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "mode": "",
+          "number": 1
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": 1,
+    "properties": [
+      "hvy",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "mastery": "topple",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "max": "@prof",
+      "recovery": [
+        {
+          "period": "lr",
+          "type": "recoverAll",
+          "formula": ""
+        }
+      ]
+    },
+    "activities": {
+      "H4by69MzoPPgdtBi": {
+        "_id": "H4by69MzoPPgdtBi",
+        "type": "attack",
+        "sort": 0,
+        "name": "Attack",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "attack",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "twoHanded",
+        "ammunition": "",
+        "useConditionReason": ""
+      },
+      "yiXT5DrZ5YEscsxL": {
+        "_id": "yiXT5DrZ5YEscsxL",
+        "sort": 200000,
+        "name": "Power Charge",
+        "img": "icons/skills/melee/strike-hammer-destructive-orange.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+5 walk; next hit with this hammer deals +2d6 bludgeoning (Charge Upgrade I). Ends on hit, Prone, or Incapacitated."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "PeMYcWrcpAA193vg"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "power-charge",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": true,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "CvbbONkgomcdtjKk": {
+        "_id": "CvbbONkgomcdtjKk",
+        "type": "save",
+        "sort": 300000,
+        "name": "Mighty Weapon",
+        "img": "icons/skills/melee/strike-flail-destructive-yellow.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "Requires active Power Charge (or a charged hit this turn). Rules: once per turn.",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "CON save vs Hammer DC (8 + PB + STR) or Stunned until end of your next turn. Requires active Power Charge (or a charged hit this turn). Huge+ have Advantage. Limited Uses are on the weapon item (Details -> Limited Uses / Spent)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "9iF1iTvbXOF2BMoG"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "mighty-weapon",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "damage": {
+          "parts": [],
+          "onSave": "none"
+        },
+        "save": {
+          "ability": [
+            "con"
+          ],
+          "dc": {
+            "calculation": "str",
+            "formula": ""
+          }
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "fXwfLOExy7K1e38R": {
+        "_id": "fXwfLOExy7K1e38R",
+        "sort": 400000,
+        "name": "Upswing",
+        "img": "icons/skills/melee/strike-axe-blood-red.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "After a Power Charge hit this turn",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Push the target 10 ft away. If they hit a solid object/creature, use Upswing: Collision."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default",
+          "identifier": "upswing"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "mnKgheAagJkwH3kn": {
+        "_id": "mnKgheAagJkwH3kn",
+        "type": "damage",
+        "sort": 401000,
+        "name": "Upswing: Collision",
+        "img": "icons/skills/melee/strike-axe-blood-red.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "If Upswing pushes the target into a solid object or creature",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Additional 1d6 bludgeoning when Upswing drives the target into a solid object or creature."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default",
+          "identifier": "upswing-collision"
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "bludgeoning"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "Q0yA2YRoL4sqKUzC": {
+        "_id": "Q0yA2YRoL4sqKUzC",
+        "type": "attack",
+        "sort": 500000,
+        "name": "Spinning Bludgeon",
+        "img": "icons/skills/melee/blade-tips-triple-orange.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "After a Power Charge hit; second creature within 5 ft of the original target",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Extra melee attack vs a second creature within 5 ft of the original target (no Power Charge bonus)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default",
+          "identifier": "spinning-bludgeon"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "attackMode": "twoHanded",
+        "ammunition": ""
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "RrRlm04EwEFOQ3Fv",
+      "name": "Mastery Property (Topple)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786132000000,
+        "modifiedTime": 1786132000000,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "PeMYcWrcpAA193vg",
+      "name": "Power Charge",
+      "img": "icons/skills/melee/strike-hammer-destructive-orange.webp",
+      "description": "<p>+5 walking speed. Next successful attack with this hammer deals an extra 2d6 bludgeoning (Charge Upgrade I). Ends on hit (Item Macro), Prone, or Incapacitated.</p>",
+      "changes": [
+        {
+          "key": "system.attributes.movement.walk",
+          "mode": 2,
+          "value": "5",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.mwak.damage",
+          "mode": 2,
+          "value": "2d6[bludgeoning]",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "disableIncapacitated": true,
+          "showIcon": true,
+          "stackable": "noneName",
+          "specialDuration": [
+            "isIncapacitated",
+            "isProne"
+          ],
+          "dontApply": false
+        },
+        "world": {
+          "hammer": {
+            "isPowerCharged": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786132000000,
+        "modifiedTime": 1786132000000,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "9iF1iTvbXOF2BMoG",
+      "name": "Mighty Weapon (Stunned)",
+      "img": "systems/dnd5e/icons/svg/statuses/stunned.svg",
+      "description": "<p>Stunned until the end of the hammer wielder's next turn.</p>",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [
+        "stunned"
+      ],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "dontApply": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "turnEndSource"
+          ]
+        },
+        "world": {
+          "hammer": {
+            "isMightyWeaponStun": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786132000000,
+        "modifiedTime": 1786132000000,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Hammer",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[preItemRoll]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preItemRoll"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Hammer (Rare)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Hammer — Power Charge / Mighty Weapon / Upswing / Spinning Bludgeon\n// MidiQOL 12.4 / Foundry v12 / dnd5e 4.4\n// On Use: [preItemRoll]ItemMacro,[postActiveEffects]ItemMacro\n//\n// Power Charge (Attack hit, postActiveEffects):\n//   Clears Power Charge AE (Rare: +2d6 already applied), unlocks charged follow-ups this turn.\n//\n// Mighty Weapon / Upswing / Spinning Bludgeon (preItemRoll):\n//   Require active Power Charge OR pending charged-hit unlock this turn.\n//   No hard once-per-turn macro lock. Resource for Mighty = ITEM Limited Uses.\n//   Huge+ get Con-save Advantage on Mighty Weapon (dae: isSave).\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? \"\").toLowerCase();\n\nconst isAttack = actId === \"attack\" || actName === \"attack\";\nconst isMighty =\n  actId === \"mighty-weapon\"\n  || actName === \"mighty weapon\"\n  || actName.includes(\"mighty weapon\");\nconst isUpswing = actId === \"upswing\" || actName === \"upswing\";\nconst isSpin =\n  actId === \"spinning-bludgeon\"\n  || actName === \"spinning bludgeon\"\n  || actName.includes(\"spinning bludgeon\");\nconst isChargedFollowUp = isMighty || isUpswing || isSpin;\n\nif (!isAttack && !isChargedFollowUp) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Hammer: actor not found.\");\n  return;\n}\n\nconst combat = game.combat;\nconst turnKey = combat\n  ? `${combat.id}:${combat.round}:${combat.turn}`\n  : `ooc:${game.time?.worldTime ?? 0}`;\n\nconst isPowerCharge = (ef) => {\n  if (ef.disabled) return false;\n  const flag = foundry.utils.getProperty(ef, \"flags.world.hammer.isPowerCharged\");\n  return flag === true || /^power charge$/i.test(String(ef.name ?? \"\").trim());\n};\n\nconst findPowerCharges = () => {\n  const list = actorDoc.appliedEffects ?? actorDoc.effects?.contents ?? actorDoc.effects ?? [];\n  return Array.from(list).filter(isPowerCharge);\n};\n\nconst isHugeOrLarger = (targetActor) => {\n  const size = String(targetActor?.system?.traits?.size ?? \"\").toLowerCase();\n  return size === \"huge\" || size === \"grg\" || size === \"gargantuan\";\n};\n\nconst hitCount = (() => {\n  const ht = workflow?.hitTargets;\n  if (ht instanceof Set) return ht.size;\n  if (Array.isArray(ht)) return ht.length;\n  const n = Number(ht?.size ?? 0);\n  if (Number.isFinite(n) && n > 0) return n;\n  if (workflow?.damageList?.length) return workflow.damageList.length;\n  if (args?.[0]?.hitTargets?.length) return args[0].hitTargets.length;\n  return 0;\n})();\n\nconst requireChargedUnlock = async () => {\n  const charged = findPowerCharges();\n  const pending = foundry.utils.getProperty(item, \"flags.world.hammer.pendingMightyTurn\");\n  const unlocked = charged.length > 0 || pending === turnKey;\n  if (!unlocked) {\n    ui.notifications.warn(\n      \"Hammer: this feature requires an active Power Charge (or a Power Charge hit this turn).\",\n    );\n    return false;\n  }\n  // Clear legacy once-per-turn lock if present.\n  if (foundry.utils.getProperty(item, \"flags.world.hammer.mightyUsedTurn\") != null) {\n    await item.unsetFlag(\"world\", \"hammer.mightyUsedTurn\");\n  }\n  return true;\n};\n\n// ── Charged follow-ups (preItemRoll) ─────────────────────────────────────────\nif (isChargedFollowUp) {\n  if (macroPass.includes(\"postactiveeffects\")) return;\n  if (macroPass && !macroPass.includes(\"preitemroll\")) return;\n\n  const ok = await requireChargedUnlock();\n  if (!ok) return false;\n\n  // Upswing: prompt to push + optional collision damage reminder.\n  if (isUpswing) {\n    await ChatMessage.create({\n      speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n      content: `<div class=\"dnd5e2\"><p><strong>Upswing:</strong> push the target <strong>10 feet</strong> away.</p><p>If they hit a solid object or another creature, use <strong>Upswing: Collision</strong> for [[/r 1d6]] bludgeoning.</p></div>`,\n    });\n    return;\n  }\n\n  // Spinning Bludgeon: reminder that the second attack does not get charge damage.\n  if (isSpin) {\n    await ChatMessage.create({\n      speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n      content: `<div class=\"dnd5e2\"><p><strong>Spinning Bludgeon:</strong> make one melee weapon attack vs a second creature within 5 feet of the original target. This attack does <em>not</em> gain Power Charge extra damage.</p></div>`,\n    });\n    return;\n  }\n\n  // Mighty Weapon: Huge+ Con save advantage.\n  if (isMighty) {\n    const pending = foundry.utils.getProperty(item, \"flags.world.hammer.pendingMightyTurn\");\n    // Do not clear pending yet — Upswing/Spinning may also be used this turn after the same hit.\n    const targets = Array.from(workflow?.targets ?? args?.[0]?.targets ?? []);\n    const hugeNames = [];\n\n    for (const t of targets) {\n      const targetActor = t?.actor ?? t;\n      if (!targetActor || !isHugeOrLarger(targetActor)) continue;\n      hugeNames.push(targetActor.name);\n\n      const stale = targetActor.effects.filter((ef) =>\n        foundry.utils.getProperty(ef, \"flags.world.hammer.isMightySaveAdv\") === true\n        || /^mighty weapon \\(save advantage\\)$/i.test(ef.name ?? \"\"),\n      );\n      if (stale.length) {\n        await targetActor.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\n      }\n\n      await targetActor.createEmbeddedDocuments(\"ActiveEffect\", [\n        {\n          name: \"Mighty Weapon (Save Advantage)\",\n          img: \"icons/skills/melee/strike-flail-destructive-yellow.webp\",\n          transfer: false,\n          disabled: false,\n          changes: [\n            {\n              key: \"flags.midi-qol.advantage.ability.save.con\",\n              mode: CONST.ACTIVE_EFFECT_MODES.CUSTOM,\n              value: \"1\",\n              priority: 20,\n            },\n          ],\n          duration: {\n            startTime: null,\n            seconds: null,\n            combat: null,\n            rounds: null,\n            turns: null,\n            startRound: null,\n            startTurn: null,\n          },\n          flags: {\n            dae: {\n              specialDuration: [\"isSave\"],\n              stackable: \"noneName\",\n              showIcon: true,\n              dontApply: false,\n            },\n            world: {\n              hammer: {\n                isMightySaveAdv: true,\n              },\n            },\n          },\n        },\n      ]);\n    }\n\n    if (hugeNames.length) {\n      await ChatMessage.create({\n        speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n        content: `<div class=\"dnd5e2\"><p><strong>Mighty Weapon:</strong> Huge+ targets have Advantage on the Con save (${hugeNames.map(esc).join(\", \")}).</p></div>`,\n      });\n    }\n    return;\n  }\n}\n\n// ── Attack hit (postActiveEffects): spend Power Charge ───────────────────────\nif (!isAttack) return;\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\nif (hitCount <= 0) return;\n\nconst charged = findPowerCharges();\nif (!charged.length) return;\n\nawait actorDoc.deleteEmbeddedDocuments(\n  \"ActiveEffect\",\n  charged.map((e) => e.id),\n);\n\nawait item.setFlag(\"world\", \"hammer.pendingMightyTurn\", turnKey);\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong>'s <strong>Power Charge</strong> is spent on this hit (+[[/r 2d6]] bludgeoning already included).</p><p>This turn you may use <strong>Mighty Weapon</strong>, <strong>Upswing</strong>, and/or <strong>Spinning Bludgeon</strong>.</p></div>`,\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "hammer": {
+        "isHammer": true,
+        "tier": "rare"
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786132000000,
+    "modifiedTime": 1786133000000,
+    "lastModifiedBy": null
+  }
+}
