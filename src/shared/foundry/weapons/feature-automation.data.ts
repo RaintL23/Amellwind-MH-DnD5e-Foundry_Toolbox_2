@@ -389,6 +389,39 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   ),
   "power charge": baUtility("", "Weapon remains charged for 1 minute or until you hit."),
   "guard dash": baUtility("", "Move up to 15 ft without provoking opportunity attacks."),
+  "shielding presence": spec(
+    "passive_stat",
+    {
+      effectTransfer: true,
+      activeEffect: {
+        name: "Shielding Presence (Aura 5 ft)",
+        transfer: true,
+        showIcon: true,
+        disableIncapacitated: true,
+        specialDuration: ["isIncapacitated"],
+        isAura: true,
+        auraTargets: "Allies",
+        auraRadius: "5",
+        auraIgnoreSelf: true,
+        auraDisplayTemp: true,
+        changes: [
+          { key: "system.attributes.ac.bonus", mode: 2, value: "2", priority: 20 },
+          {
+            key: "system.abilities.dex.bonuses.save",
+            mode: 2,
+            value: "2",
+            priority: 20,
+          },
+        ],
+      },
+    },
+    "Requires Active Auras. Half Cover for allies within 5 ft.",
+  ),
+  "anchor rage": spec(
+    "unmapped",
+    {},
+    "Granted by Counter-Thrust ItemMacro on miss (Rare+): +1d6 piercing until 1Hit / turnEndSource. See lance-counter-thrust-item-macro.js.",
+  ),
   "leaping thrust": spec("bonus_action", {
     activation: "bonus",
     activityType: "attack",

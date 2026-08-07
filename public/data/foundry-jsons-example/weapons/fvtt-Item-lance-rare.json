@@ -1,6 +1,6 @@
 {
-  "_id": "6U5JPHMGCAsRAaO3",
-  "name": "Lance (Uncommon)",
+  "_id": "3PlbktLapbLVzUMu",
+  "name": "Lance (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_lance.webp",
   "system": {
@@ -13,8 +13,8 @@
       "revision": 1
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p><p>If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Counter-Thrust</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when a creature you can see hits you or an ally within your reach with an attack, you can raise your shield to intervene. Roll [[/r 1d8]] and add it to the target's AC against that attack, potentially causing it to miss. If this causes a melee attack to miss, you can immediately make one Lance attack against the attacker as part of the same Reaction.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Dash</strong></p><p><strong>Bonus Action.</strong></p><p>The lance is heavy, but you use your shield's momentum to push forward. As a Bonus Action, you can move up to 15 feet in any direction without provoking Opportunity Attacks, keeping your guard raised as you reposition.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Counter-Thrust</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Dash</strong></p><p><strong>Bonus Action.</strong></p></div>"
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p><p>If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Counter-Thrust</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when a creature you can see hits you or an ally within your reach with an attack, you can raise your shield to intervene. Roll [[/r 1d8]] and add it to the target's AC against that attack, potentially causing it to miss. If this causes a melee attack to miss, you can immediately make one Lance attack against the attacker as part of the same Reaction.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Dash</strong></p><p><strong>Bonus Action.</strong></p><p>The lance is heavy, but you use your shield's momentum to push forward. As a Bonus Action, you can move up to 15 feet in any direction without provoking Opportunity Attacks, keeping your guard raised as you reposition.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Shielding Presence</strong></p><p>You become a walking barricade. Allies within 5 feet of you gain the benefits of Half Cover (+2 bonus to AC and Dexterity saving throws) as long as you are conscious and actively wielding the shield.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Anchor Rage</strong></p><p>Blocking heavy blows empowers your strikes. Whenever you successfully cause an attack to miss using your Counter-Thrust, your weapon absorbs the kinetic energy. Until the end of your next turn, your next successful Lance attack deals an extra [[/r 1d6]] piercing damage.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Counter-Thrust</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Dash</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Shielding Presence</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Anchor Rage</strong></p></div>"
     },
     "identifier": "lance",
     "quantity": 1,
@@ -23,13 +23,13 @@
       "units": "lb"
     },
     "price": {
-      "value": 20,
+      "value": 500,
       "denomination": "gp"
     },
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "martialM",
@@ -204,7 +204,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Applies rolled 1d8 as AC vs triggering attack (Midi rechecks). If a melee attack misses, use Counter-Thrust: Riposte."
+          "chatFlavor": "Roll 1d8 → AC vs triggering attack (Midi rechecks). On a miss: Riposte + Anchor Rage (+1d6 next hit)."
         },
         "duration": {
           "value": "",
@@ -580,8 +580,143 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786118827246,
-        "modifiedTime": 1786118827246,
+        "createdTime": 1786119820026,
+        "modifiedTime": 1786119820026,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "wbYuLpZq0gPXciHt",
+      "name": "Lance AC (+1)",
+      "img": "icons/equipment/shield/heater-steel-boss.webp",
+      "description": "Rare Lance bonus AC from the rarity table.",
+      "changes": [
+        {
+          "key": "system.attributes.ac.bonus",
+          "mode": 2,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 100000,
+      "flags": {
+        "dae": {
+          "stackable": "noneName",
+          "showIcon": true
+        },
+        "world": {
+          "lance": {
+            "isRarityAc": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786119820026,
+        "modifiedTime": 1786119820026,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "wPk8iETAc1aamwSP",
+      "name": "Shielding Presence (Aura 5 ft)",
+      "img": "icons/magic/defensive/shield-barrier-blue.webp",
+      "description": "Allies within 5 feet gain Half Cover (+2 AC and Dexterity saving throws) while you are conscious and wielding this shield set.",
+      "changes": [
+        {
+          "key": "system.attributes.ac.bonus",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        },
+        {
+          "key": "system.abilities.dex.bonuses.save",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 200000,
+      "flags": {
+        "ActiveAuras": {
+          "isAura": true,
+          "aura": "Allies",
+          "radius": "5",
+          "alignment": "",
+          "type": "",
+          "customCheck": "",
+          "ignoreSelf": true,
+          "height": false,
+          "hidden": false,
+          "displayTemp": true,
+          "hostile": false,
+          "onlyOnce": false,
+          "wallsBlock": "system",
+          "statuses": []
+        },
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "isIncapacitated"
+          ],
+          "disableIncapacitated": true,
+          "dontApply": false
+        },
+        "world": {
+          "lance": {
+            "isShieldingPresence": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786119820026,
+        "modifiedTime": 1786119820026,
         "lastModifiedBy": null
       }
     }
@@ -659,7 +794,7 @@
     "world": {
       "lance": {
         "isLance": true,
-        "tier": "uncommon"
+        "tier": "rare"
       }
     }
   },
