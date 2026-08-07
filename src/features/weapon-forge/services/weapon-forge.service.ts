@@ -175,18 +175,41 @@ export function exportWeaponFoundryJson(
   rarityIndex: number,
   /** When provided, downloads this exact weapon payload (must match preview). */
   item?: FoundryItem,
+  options?: { includeResources?: boolean },
 ): void {
+  const includeResources = options?.includeResources === true;
   const bundle = item
     ? {
         weapon: item,
-        resources: buildWeaponFoundryExportBundle(weapon, rarityIndex).resources,
+        resources: includeResources
+          ? buildWeaponFoundryExportBundle(weapon, rarityIndex).resources
+          : [],
       }
-    : buildWeaponFoundryExportBundle(weapon, rarityIndex);
+    : (() => {
+        const full = buildWeaponFoundryExportBundle(weapon, rarityIndex);
+        return {
+          weapon: full.weapon,
+          resources: includeResources ? full.resources : [],
+        };
+      })();
 
-  downloadJson(bundle.weapon, foundryItemFilename(weapon, rarityIndex));
+  const files: Array<{ data: unknown; filename: string }> = [
+    {
+      data: bundle.weapon,
+      filename: foundryItemFilename(weapon, rarityIndex),
+    },
+  ];
   for (const resource of bundle.resources) {
-    downloadJson(resource, melodyFeatFilename(resource));
+    files.push({
+      data: resource,
+      filename: melodyFeatFilename(resource),
+    });
   }
+
+  // Browsers often keep only the last of several immediate downloads.
+  files.forEach((file, index) => {
+    window.setTimeout(() => downloadJson(file.data, file.filename), index * 150);
+  });
 }
 
 export function exportAllUserWeaponsJson(weapons: CustomWeapon[]): void {

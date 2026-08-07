@@ -84,8 +84,13 @@ export function useWeaponForge() {
   }, []);
 
   const exportOneFoundry = useCallback(
-    (weapon: CustomWeapon, rarityIndex: number, item?: FoundryItem) => {
-      exportWeaponFoundryJson(weapon, rarityIndex, item);
+    (
+      weapon: CustomWeapon,
+      rarityIndex: number,
+      item?: FoundryItem,
+      options?: { includeResources?: boolean },
+    ) => {
+      exportWeaponFoundryJson(weapon, rarityIndex, item, options);
     },
     [],
   );

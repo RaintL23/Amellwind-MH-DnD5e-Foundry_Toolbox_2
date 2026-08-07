@@ -1,9 +1,10 @@
 import type { Weapon, OptionalFeature } from "@/shared/types";
 import type { CustomWeapon } from "@/features/weapon-forge/types/weapon-forge.types";
 import {
+  buildWeaponFoundryExportBundle,
   buildWeaponFoundryItem,
-  foundryItemFilename,
 } from "@/features/weapon-forge/mappers/weapon-forge-foundry.export";
+import { exportWeaponFoundryJson } from "@/features/weapon-forge/services/weapon-forge.service";
 import { catalogWeaponToFeatureDefs } from "@/shared/foundry/weapons";
 import type { FoundryItem } from "@/shared/foundry";
 import { downloadFoundryJson } from "@/shared/foundry";
@@ -45,17 +46,10 @@ export function weaponToExportCustomWeapon(
   };
 }
 
-/**
- * Canonical Foundry Item for Amellwind catalog weapons. Preview and Export
- * must both use this (or download a memoized result of this).
- */
-export function buildAmellwindWeaponFoundryItem(
+function stampAmellwindWeaponFlags(
+  item: FoundryItem,
   weapon: Weapon,
-  rarityIndex: number,
-  featuresMap?: Map<string, OptionalFeature>,
 ): FoundryItem {
-  const custom = weaponToExportCustomWeapon(weapon, featuresMap);
-  const item = buildWeaponFoundryItem(custom, rarityIndex);
   item.flags = {
     ...item.flags,
     "amellwind-toolbox": {
@@ -70,15 +64,32 @@ export function buildAmellwindWeaponFoundryItem(
   return item;
 }
 
+/**
+ * Canonical Foundry Item for Amellwind catalog weapons. Preview and Export
+ * must both use this (or download a memoized result of this).
+ */
+export function buildAmellwindWeaponFoundryItem(
+  weapon: Weapon,
+  rarityIndex: number,
+  featuresMap?: Map<string, OptionalFeature>,
+): FoundryItem {
+  const custom = weaponToExportCustomWeapon(weapon, featuresMap);
+  const item = buildWeaponFoundryItem(custom, rarityIndex);
+  return stampAmellwindWeaponFlags(item, weapon);
+}
+
 export function exportAmellwindWeaponFoundryJson(
   weapon: Weapon,
   rarityIndex: number,
   featuresMap?: Map<string, OptionalFeature>,
-  /** When provided, downloads this exact payload (must match preview). */
+  /** When provided, downloads this exact weapon payload (must match preview). */
   item?: FoundryItem,
+  options?: { includeResources?: boolean },
 ): void {
-  const payload =
-    item ?? buildAmellwindWeaponFoundryItem(weapon, rarityIndex, featuresMap);
   const custom = weaponToExportCustomWeapon(weapon, featuresMap);
-  downloadFoundryJson(payload, foundryItemFilename(custom, rarityIndex));
+  const payload = stampAmellwindWeaponFlags(
+    item ?? buildWeaponFoundryExportBundle(custom, rarityIndex).weapon,
+    weapon,
+  );
+  exportWeaponFoundryJson(custom, rarityIndex, payload, options);
 }

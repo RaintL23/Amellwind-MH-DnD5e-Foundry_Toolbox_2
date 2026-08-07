@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { Download } from "lucide-react";
 import type { Weapon } from "@/shared/types";
 import { Button } from "@/components/ui/button";
@@ -5,15 +6,19 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  downloadFoundryJson,
   FoundryModuleRequirementsNotice,
   type FoundryItem,
 } from "@/shared/foundry";
-import { foundryItemFilename } from "@/features/weapon-forge/mappers/weapon-forge-foundry.export";
-import { weaponToExportCustomWeapon } from "../services/weapon-foundry-export.service";
+import { buildWeaponFoundryResourceGroups } from "@/features/weapon-forge/mappers/weapon-forge-foundry.export";
+import {
+  exportAmellwindWeaponFoundryJson,
+  weaponToExportCustomWeapon,
+} from "../services/weapon-foundry-export.service";
 
 interface WeaponCatalogExportMenuProps {
   weapon: Weapon;
@@ -27,6 +32,27 @@ export function WeaponCatalogExportMenu({
   rarityIndex,
   item,
 }: WeaponCatalogExportMenuProps) {
+  const hasResources = useMemo(() => {
+    try {
+      return (
+        buildWeaponFoundryResourceGroups(
+          weaponToExportCustomWeapon(weapon),
+          rarityIndex,
+        ).length > 0
+      );
+    } catch {
+      return false;
+    }
+  }, [weapon, rarityIndex]);
+
+  const exportFoundry = (includeResources: boolean) => {
+    exportAmellwindWeaponFoundryJson(weapon, rarityIndex, undefined, item, {
+      includeResources,
+    });
+  };
+
+  const rarityLabel = weapon.rarityRows[rarityIndex]?.rarity ?? "rarity";
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,22 +68,34 @@ export function WeaponCatalogExportMenu({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="text-xs">
-        <DropdownMenuItem
-          className="text-xs"
-          onSelect={() =>
-            downloadFoundryJson(
-              item,
-              foundryItemFilename(
-                weaponToExportCustomWeapon(weapon),
-                rarityIndex,
-              ),
-            )
-          }
-        >
-          Foundry VTT (v12) —{" "}
-          {weapon.rarityRows[rarityIndex]?.rarity ?? "rarity"}
-        </DropdownMenuItem>
-        <div className="max-w-[16rem] border-t border-border px-2 py-1.5">
+        {hasResources ? (
+          <>
+            <DropdownMenuLabel className="text-[10px] font-normal text-muted-foreground">
+              Foundry VTT (v12) — {rarityLabel}
+            </DropdownMenuLabel>
+            <DropdownMenuItem
+              className="text-xs"
+              onSelect={() => exportFoundry(true)}
+            >
+              Weapon + resources
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-xs"
+              onSelect={() => exportFoundry(false)}
+            >
+              Weapon only
+            </DropdownMenuItem>
+          </>
+        ) : (
+          <DropdownMenuItem
+            className="text-xs"
+            onSelect={() => exportFoundry(false)}
+          >
+            Foundry VTT (v12) — {rarityLabel}
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuSeparator />
+        <div className="max-w-[16rem] px-2 py-1.5">
           <FoundryModuleRequirementsNotice kind="weapon" compact />
         </div>
       </DropdownMenuContent>

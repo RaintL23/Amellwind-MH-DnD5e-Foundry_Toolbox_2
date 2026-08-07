@@ -18,6 +18,7 @@ import type { CustomWeapon } from "../types/weapon-forge.types";
 import { customFeaturesToOptionalMap } from "../mappers/weapon-forge.mapper";
 import type { FoundryItem } from "@/shared/foundry";
 import { WeaponForgeExportMenu } from "./WeaponForgeExportMenu";
+import type { FoundryExportOptions } from "./WeaponForgeExportMenu";
 
 interface WeaponForgeDialogProps {
   weapon: CustomWeapon | null;
@@ -32,6 +33,7 @@ interface WeaponForgeDialogProps {
     weapon: CustomWeapon,
     rarityIndex: number,
     item?: FoundryItem,
+    options?: FoundryExportOptions,
   ) => void;
   onDelete?: (weapon: CustomWeapon) => void;
 }

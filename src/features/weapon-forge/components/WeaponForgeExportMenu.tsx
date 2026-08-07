@@ -1,9 +1,12 @@
+import { useMemo } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -13,6 +16,11 @@ import { cn } from "@/shared/utils/cn";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import type { FoundryItem } from "@/shared/foundry";
 import { FoundryModuleRequirementsNotice } from "@/shared/foundry";
+import { buildWeaponFoundryResourceGroups } from "../mappers/weapon-forge-foundry.export";
+
+export interface FoundryExportOptions {
+  includeResources?: boolean;
+}
 
 interface WeaponForgeExportMenuProps {
   weapon: CustomWeapon;
@@ -29,7 +37,16 @@ interface WeaponForgeExportMenuProps {
     weapon: CustomWeapon,
     rarityIndex: number,
     item?: FoundryItem,
+    options?: FoundryExportOptions,
   ) => void;
+}
+
+function rarityHasResources(weapon: CustomWeapon, rarityIndex: number): boolean {
+  try {
+    return buildWeaponFoundryResourceGroups(weapon, rarityIndex).length > 0;
+  } catch {
+    return false;
+  }
 }
 
 export function WeaponForgeExportMenu({
@@ -44,6 +61,40 @@ export function WeaponForgeExportMenu({
   onExportFoundry,
 }: WeaponForgeExportMenuProps) {
   const useFixedRarity = typeof foundryRarityIndex === "number";
+
+  const fixedHasResources = useMemo(
+    () =>
+      useFixedRarity
+        ? rarityHasResources(weapon, foundryRarityIndex)
+        : false,
+    [useFixedRarity, weapon, foundryRarityIndex],
+  );
+
+  const anyRarityHasResources = useMemo(() => {
+    if (useFixedRarity) return fixedHasResources;
+    return weapon.rarityRows.some((_, index) =>
+      rarityHasResources(weapon, index),
+    );
+  }, [useFixedRarity, fixedHasResources, weapon]);
+
+  const rarityItems = (includeResources: boolean) =>
+    weapon.rarityRows.length === 0 ? (
+      <DropdownMenuItem className="text-xs" disabled>
+        No rarities
+      </DropdownMenuItem>
+    ) : (
+      weapon.rarityRows.map((row, index) => (
+        <DropdownMenuItem
+          key={`${includeResources ? "with" : "only"}-${row.rarity}-${index}`}
+          className="text-xs"
+          onSelect={() =>
+            onExportFoundry(weapon, index, undefined, { includeResources })
+          }
+        >
+          {row.rarity}
+        </DropdownMenuItem>
+      ))
+    );
 
   return (
     <DropdownMenu>
@@ -76,35 +127,71 @@ export function WeaponForgeExportMenu({
         </DropdownMenuItem>
 
         {useFixedRarity ? (
-          <DropdownMenuItem
-            className="text-xs"
-            onSelect={() =>
-              onExportFoundry(weapon, foundryRarityIndex, foundryItem)
-            }
-          >
-            Foundry VTT (v12)
-          </DropdownMenuItem>
+          fixedHasResources ? (
+            <>
+              <DropdownMenuSeparator />
+              <DropdownMenuLabel className="text-[10px] font-normal text-muted-foreground">
+                Foundry VTT (v12)
+              </DropdownMenuLabel>
+              <DropdownMenuItem
+                className="text-xs"
+                onSelect={() =>
+                  onExportFoundry(weapon, foundryRarityIndex, foundryItem, {
+                    includeResources: true,
+                  })
+                }
+              >
+                Weapon + resources
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-xs"
+                onSelect={() =>
+                  onExportFoundry(weapon, foundryRarityIndex, foundryItem, {
+                    includeResources: false,
+                  })
+                }
+              >
+                Weapon only
+              </DropdownMenuItem>
+            </>
+          ) : (
+            <DropdownMenuItem
+              className="text-xs"
+              onSelect={() =>
+                onExportFoundry(weapon, foundryRarityIndex, foundryItem, {
+                  includeResources: false,
+                })
+              }
+            >
+              Foundry VTT (v12)
+            </DropdownMenuItem>
+          )
+        ) : anyRarityHasResources ? (
+          <>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="text-xs">
+                Foundry — Weapon + resources
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="text-xs" sideOffset={2}>
+                {rarityItems(true)}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="text-xs">
+                Foundry — Weapon only
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className="text-xs" sideOffset={2}>
+                {rarityItems(false)}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+          </>
         ) : (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger className="text-xs">
               Foundry VTT (v12)
             </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="text-xs">
-              {weapon.rarityRows.length === 0 ? (
-                <DropdownMenuItem className="text-xs" disabled>
-                  No rarities
-                </DropdownMenuItem>
-              ) : (
-                weapon.rarityRows.map((row, index) => (
-                  <DropdownMenuItem
-                    key={`${row.rarity}-${index}`}
-                    className="text-xs"
-                    onSelect={() => onExportFoundry(weapon, index)}
-                  >
-                    {row.rarity}
-                  </DropdownMenuItem>
-                ))
-              )}
+            <DropdownMenuSubContent className="text-xs" sideOffset={2}>
+              {rarityItems(false)}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         )}
