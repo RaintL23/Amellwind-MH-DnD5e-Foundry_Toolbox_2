@@ -3,6 +3,7 @@ import {
   foundryId,
   wrapItem,
   defaultMidiProperties,
+  formatWeaponFoundryItemName,
   mapAmmunitionType,
   mapDamageType,
   mapRarity,
@@ -11,6 +12,7 @@ import {
   parseWeaponRange,
   slugify,
   resolveWeaponItemIcon,
+  stripFoundryWeaponRaritySuffix,
   toFoundryDescription,
 } from "@/shared/foundry";
 import type { Weapon, EquippedWeapon } from "@/shared/types";
@@ -60,12 +62,36 @@ function resolveWeaponExportDescription(
   return base ? `${base}\n\n${masteryBlock}` : masteryBlock;
 }
 
+function resolveWeaponFoundryDisplayName(equipped: EquippedWeapon): {
+  magicBonus: number;
+  clean: string;
+  displayName: string;
+} {
+  const weapon = equipped.weapon;
+  const { bonus: magicBonus, clean } = parseMagicBonus(weapon.name);
+  const stem = stripFoundryWeaponRaritySuffix(
+    (weapon.baseName?.trim() || clean).trim(),
+  );
+  const rarityCandidate =
+    equipped.rarity?.trim() || weapon.itemRarityLabel?.trim() || "";
+  const rarityLabel =
+    rarityCandidate && rarityCandidate.toLowerCase() !== "standard"
+      ? rarityCandidate
+      : undefined;
+  return {
+    magicBonus,
+    clean: stem || clean,
+    displayName: formatWeaponFoundryItemName(stem || clean, rarityLabel),
+  };
+}
+
 export function buildWeaponItem(
   equipped: EquippedWeapon,
   options: WeaponItemOptions,
 ): FoundryItem {
   const weapon = equipped.weapon;
-  const { bonus: magicBonus, clean } = parseMagicBonus(weapon.name);
+  const { magicBonus, clean, displayName } =
+    resolveWeaponFoundryDisplayName(equipped);
   const ranged = isRangedWeapon(weapon);
   const masteryKey =
     weapon.mastery?.trim() ||
@@ -202,7 +228,7 @@ export function buildWeaponItem(
   };
 
   return wrapItem({
-    name: weapon.name,
+    name: displayName,
     type: "weapon",
     img: resolveWeaponItemIcon(weapon.baseName ?? clean, ranged, options.img),
     system,

@@ -1,6 +1,10 @@
 import type { Weapon } from "@/shared/types";
 import { isBaseRarity } from "@/shared/types";
 import type { FoundryItem } from "@/shared/foundry";
+import {
+  buildFoundryItemFilename,
+  formatWeaponFoundryItemName,
+} from "@/shared/foundry";
 import { makeWeaponSlot } from "@/features/builder/utils/equipment.factory";
 import { buildWeaponItem } from "@/features/builder/foundry-export/item.builders";
 import {
@@ -90,11 +94,8 @@ export function buildWeaponFoundryExportBundle(
         ? "martial"
         : "martial";
 
-  // Canonical forge display: "Great Sword (Uncommon)" — not Foundry's "+1 …".
-  const exportName =
-    !isBaseRarity(rarityLabel) && rarityLabel.trim()
-      ? `${weapon.name} (${rarityLabel})`
-      : weapon.name;
+  // Canonical forge display: "Great Sword (Rare)" — including Base; not Foundry's "+1 …".
+  const exportName = formatWeaponFoundryItemName(weapon.name, rarityLabel);
 
   const exportWeapon: Weapon = {
     ...weapon,
@@ -205,10 +206,5 @@ export function foundryItemFilename(
   rarityIndex: number,
 ): string {
   const rarity = weapon.rarityRows[rarityIndex]?.rarity ?? "item";
-  const slug = (s: string) =>
-    s
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-|-$/g, "");
-  return `fvtt-Item-${slug(weapon.name) || "weapon"}-${slug(rarity) || "item"}.json`;
+  return buildFoundryItemFilename(weapon.name, rarity);
 }

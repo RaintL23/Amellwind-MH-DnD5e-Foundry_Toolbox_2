@@ -3,7 +3,6 @@ import {
   foundryId,
   wrapItem,
   slugify,
-  kebab,
   mapRarity,
   mapDamageType,
   escapeHtml,
@@ -15,6 +14,7 @@ import {
   FOUNDRY_EXPORT_TARGET,
   type FoundryActiveEffect,
   type FoundryItem,
+  buildFoundryItemFilename,
 } from "@/shared/foundry";
 import { UNKNOWN_MATERIAL_EFFECT_TIER } from "@/features/material-effects/constants/material-effect.constants";
 import {
@@ -334,7 +334,12 @@ export async function downloadAllBuildRuneJsons(
 
   entries.forEach(({ rune, slotContext }, index) => {
     const item = buildRuneFoundryItem(rune, slotContext, materialEffectIndex);
-    const filename = `${kebab(rune.monsterName)}-${kebab(rune.name)}-rune-${slotContext.toLowerCase()}.json`;
+    const filename = buildFoundryItemFilename(
+      rune.monsterName,
+      rune.name,
+      "rune",
+      slotContext,
+    );
     setTimeout(() => triggerJsonDownload(item, filename), index * 150);
   });
 }

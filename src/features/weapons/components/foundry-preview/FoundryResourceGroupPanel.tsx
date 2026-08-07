@@ -6,12 +6,11 @@ import {
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
 import type { FoundryItem } from "@/shared/foundry";
-import { slugifyIdentifier } from "@/shared/foundry/weapons/activity-payload";
+import { buildFoundryItemFilename } from "@/shared/foundry";
 import { PreviewBody } from "@/features/weapons/components/foundry-preview/FoundryPreviewBody";
 
 function resourceItemFilename(item: FoundryItem): string {
-  const slug = slugifyIdentifier(item.name) || "resource";
-  return `fvtt-Item-${slug}.json`;
+  return buildFoundryItemFilename(item.name || "resource");
 }
 
 export function FoundryResourceGroupPanel({

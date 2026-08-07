@@ -1,6 +1,7 @@
 import type { FoundryActiveEffect, FoundryItem } from "@/shared/foundry";
 import {
   buildEffect,
+  buildFoundryItemFilename,
   EFFECT_MODE,
   FOUNDRY_EXPORT_TARGET,
   wrapItem,
@@ -201,6 +202,5 @@ export function buildWeaponMelodyFeatItems(
 }
 
 export function melodyFeatFilename(item: FoundryItem): string {
-  const slug = slugifyIdentifier(item.name) || "melody";
-  return `fvtt-Item-${slug}.json`;
+  return buildFoundryItemFilename(item.name || "melody");
 }
