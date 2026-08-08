@@ -265,7 +265,7 @@ export function buildIntegratedShieldEffect(
 
   const effect = buildEffect({
     name: `Integrated Shield (+${bonus} AC)`,
-    img: "icons/equipment/shield/heater-steel-boss.webp",
+    img: "icons/skills/melee/shield-block-gray-orange.webp",
     description:
       "Base AC from the weapon's integrated shield while equipped.",
     transfer: true,
@@ -306,7 +306,7 @@ export function buildRarityPassiveEffects(
   return [
     buildEffect({
       name: `${weapon.name} AC (+${acBonus})`,
-      img: "icons/equipment/shield/heater-steel-boss.webp",
+      img: "icons/skills/melee/shield-block-gray-orange.webp",
       description: `${row.rarity} ${weapon.name} bonus AC from the rarity table.`,
       transfer: true,
       changes: [

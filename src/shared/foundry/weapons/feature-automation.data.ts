@@ -362,18 +362,25 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   "guard point (elemental guard)": reactionUtility(
     "When you are hit by a melee attack while in Sword & Shield Mode",
     {
-      consumeItemUses: true,
-      consumeAmount: "1",
-      chatFlavor: "Expend 1 phial: +2 AC vs the attack; deal Guard Point damage on a miss/block per description.",
+      // Do NOT consume itemUses here — Midi filters out unpaid reactions.
+      // Charge Blade overlay spends 1 Phial Charge in ItemMacro (Lance Shield pattern).
+      chatFlavor:
+        "Expend 1 phial: +2 AC vs the attack (Midi rechecks). On a miss, Guard Point: Eruption deals elemental damage.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/shield-block-gray-orange.webp",
     },
+    // Empty Midi useCondition (default isHit). See applyChargeBladeOverlay.
+    "Needs ItemMacro AC AE + Eruption (Lance Counter-Thrust / Shield pattern).",
   ),
   "guard point upgrade i": spec("upgrade_scaler", {
     damageFormula: "1d6",
-    chatFlavor: "Guard Point damage 1d6.",
+    chatFlavor: "Guard Point Eruption damage 1d6.",
   }),
   "guard point upgrade ii": spec("upgrade_scaler", {
     damageFormula: "1d8",
-    chatFlavor: "Guard Point damage 1d8.",
+    chatFlavor: "Guard Point Eruption damage 1d8.",
   }),
   "offset morph": reactionUtility(
     "When a creature you can see makes a melee attack against you",
@@ -915,13 +922,32 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Hand-tuned rare renames ×N to Shelling Strike + ItemMacro ×1/×2/×3 dialog (fvtt-Item-gunlance-rare).",
   ),
+  "elemental attunement": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      usesMax: "1",
+      usesRecoveryPeriod: "sr",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      chatFlavor:
+        "Once per Short or Long Rest: choose the element attuned to this weapon (Acid, Cold, Fire, or Lightning). Guard Point Eruption, Elemental Discharge, and AED use that type.",
+      activityImg: "icons/magic/symbols/elements-air-earth-fire-water.webp",
+    },
+    "Charge Blade: ItemMacro dialog sets flags.world.chargeBlade.elementalType and updates elemental activity damage types. No default element.",
+  ),
   "elemental discharge": spec("action_ability", {
     activation: "special",
     activityType: "damage",
     damageFormula: "1d6",
     consumeItemUses: true,
     consumeAmount: "1",
-    chatFlavor: "Axe mode on hit: expend 1 phial for elemental damage.",
+    activationCondition: "When you hit a creature with an attack in Axe Mode",
+    chatFlavor:
+      "Axe mode on hit: expend 1 phial for attuned elemental damage (prompted by ItemMacro).",
+    activityImg: "icons/magic/lightning/bolt-strike-smoke-yellow.webp",
   }),
   /**
    * Switch Axe: Sword-mode hits must spend 1 Phial Charge to activate the installed

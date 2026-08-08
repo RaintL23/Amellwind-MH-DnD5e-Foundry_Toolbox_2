@@ -1264,6 +1264,8 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 
 **Switch Axe (Uncommon+)**: overlay `applySwitchAxeOverlay` — AEs indicador **Axe Mode** (default) / **Sword Mode**; sin Activity Sword; golpe Sword = **Phial Discharge** (Attack `2d6` + phial, consume 1); **Fluid Morph** BA alterna modos vía ItemMacro; **Kinetic** recupera uses en hit Axe; 0 charges en Sword aborta y revierte a Axe; ZSD vacía gauge y vuelve a Axe. **Rare:** Expanded Gauge I (`uses` max 7), **ZSD Splash** Save DEX radio 5 ft (trigger desde ZSD), Phials **Exhaust** (AE −10 walk) / **Poison** (Save CON). Macro: `switch-axe-kinetic.macro.ts`. Ejemplos: `fvtt-Item-switch-axe-uncommon.json`, `fvtt-Item-switch-axe-rare.json`.
 
+**Charge Blade (Uncommon+)**: overlay `applyChargeBladeOverlay` — AEs indicador **Sword & Shield Mode** (default) / **Axe Mode**; Attacks por modo con **`@mod`** en damage parts; **Switch Mode** BA + deshabilita Integrated Shield en Axe + swap mastery Sap/Cleave; **Elemental Attunement** utility 1/SR (diálogo Acid/Cold/Fire/Lightning; sin elemento por defecto — actualiza `flags.world.chargeBlade.elementalType` y types de Eruption/Discharge/AED); **Phial Charges** recupera 1 en hit Sword; **Guard Point** patrón Shield/Lance; **Rare:** Elemental Discharge (diálogo Yes/No tras hit Axe) + **AED** Activity única con diálogo de cargas (1…available). Macro: `charge-blade.macro.ts`. Ejemplos: `fvtt-Item-charge-blade-uncommon.json`, `fvtt-Item-charge-blade-rare.json`.
+
 #### Entidad `Weapon`
 
 | Campo              | Descripción |

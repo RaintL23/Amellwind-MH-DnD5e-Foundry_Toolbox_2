@@ -29,7 +29,7 @@
               "1",
               "--",
               "--",
-              "Switch Mode, Mastery (Sap) (Sword & Shield), Mastery (Cleave) (Axe)"
+              "Switch Mode, Elemental Attunement, Mastery (Sap) (Sword & Shield), Mastery (Cleave) (Axe)"
             ],
             [
               "Uncommon",
@@ -75,6 +75,11 @@
         "description": "As a Bonus Action, you can transform the weapon between Sword & Shield Mode and Axe Mode."
       },
       {
+        "id": "b7c4e210-8f3a-4d6e-9c1b-2a0f5d8e6c71",
+        "name": "Elemental Attunement",
+        "description": "Once per Short rest or Long rest, you can change the element attuned to this weapon."
+      },
+      {
         "id": "cba18750-7d9b-47d2-937f-717d6abcfc11",
         "name": "Mastery (Sap) (Sword & Shield)",
         "description": "If you hit a creature, that creature has Disadvantage on its next attack roll before the start of your next turn."
@@ -92,17 +97,17 @@
       {
         "id": "138046c6-326c-44db-93e1-4e9e9d69f8e7",
         "name": "Guard Point (Elemental Guard)",
-        "description": "You learn to perfectly time your blocks. As a Reaction when you are hit by a melee attack while in Sword & Shield Mode, you can expend 1 Phial Charge to add +2 to your AC against that attack. If this causes the attack to miss, your shield erupts, dealing 1d4 Acid, Cold, Fire, or Lightning damage (your choice upon attunement) to the attacker."
+        "description": "You learn to perfectly time your blocks. As a Reaction when you are hit by a melee attack while in Sword & Shield Mode, you can expend 1 Phial Charge to add +2 to your AC against that attack. If this causes the attack to miss, your shield erupts, dealing 1d4 damage of your Elemental Attunement type to the attacker."
       },
       {
         "id": "c8e3227c-53d1-4334-b3ae-08f169aff1b5",
         "name": "Elemental Discharge",
-        "description": "While in Axe Mode, the weapon becomes a conduit of raw power. When you hit a creature with an attack in Axe Mode, you can expend 1 Phial Charge to deal an extra 1d6 elemental damage (of your chosen type) to the target."
+        "description": "While in Axe Mode, the weapon becomes a conduit of raw power. When you hit a creature with an attack in Axe Mode, you can expend 1 Phial Charge to deal an extra 1d6 damage of your Elemental Attunement type to the target."
       },
       {
         "id": "866f6967-c7d5-46ca-9d0f-863caf51247e",
         "name": "Amped Element Discharge (AED)",
-        "description": "You can unleash all stored energy in one devastating shockwave. As an Action while in Axe Mode, you can expend all remaining Phial Charges (minimum of 1) to unleash a 15-foot cone of elemental energy. Each creature in that area must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength or Dexterity modifier). A creature takes 1d8 elemental damage per phial expended on a failed save, or half as much on a successful one."
+        "description": "You can unleash all stored energy in one devastating shockwave. As an Action while in Axe Mode, you can expend any number of remaining Phial Charges (minimum of 1) to unleash a 15-foot cone of elemental energy. Each creature in that area must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength or Dexterity modifier). A creature takes 1d8 damage of your Elemental Attunement type per phial expended on a failed save, or half as much on a successful one."
       },
       {
         "id": "0da72473-8e45-440b-b096-94a4a2dd51ac",

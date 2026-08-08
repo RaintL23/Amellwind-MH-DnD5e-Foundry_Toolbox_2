@@ -34,6 +34,7 @@ import {
 } from "./weapon-forge-foundry-envelope";
 import { buildWeaponMelodyFeatItems } from "./weapon-forge-melody.export";
 import { buildWeaponPhialFeatItems } from "./weapon-forge-phial.export";
+import { applyChargeBladeOverlay } from "./weapon-forge-charge-blade.export";
 import { applySwitchAxeOverlay } from "./weapon-forge-switch-axe.export";
 
 /** Foundry feat group for a weapon-resource column that already has export builders. */
@@ -194,6 +195,7 @@ export function buildWeaponFoundryExportBundle(
   applyDualBladesDemonDodgeOverlay(item);
   applyWireKnucklesSilkbindOverlay(item);
   applySwitchAxeOverlay(item, weapon, clamped);
+  applyChargeBladeOverlay(item, weapon, clamped);
 
   const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);
   const resources = resourceGroups.flatMap((group) => group.items);
