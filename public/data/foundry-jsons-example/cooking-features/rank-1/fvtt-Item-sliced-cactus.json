@@ -1,0 +1,168 @@
+{
+  "_id": "JApOvU9Ey3wq28Dn",
+  "name": "Sliced Cactus",
+  "type": "feat",
+  "img": "mh-icons/bbq.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Sliced Cactus</strong> <em>(Cooking Rank 1)</em></p><p>As a bonus action, you can make a DC 15 Dexterity (Acrobatics) check. If you succeed, difficult terrain doesn&apos;t cost you extra movement until the end of the current turn.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
+      "chat": "<p><strong>Sliced Cactus</strong></p><p>Bonus action: DC 15 Acrobatics to ignore difficult terrain until end of turn.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "sliced-cactus",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Artisan Cooking (Rank 1)",
+    "properties": [],
+    "activities": {
+      "Fhrm36ejjhw0LkSb": {
+        "_id": "Fhrm36ejjhw0LkSb",
+        "type": "utility",
+        "sort": 0,
+        "name": "Ignore Difficult Terrain",
+        "img": "mh-icons/bbq.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "DC 15 Dexterity (Acrobatics) check",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Bonus action: DC 15 Dexterity (Acrobatics). On success, difficult terrain doesn't cost extra movement until the end of the current turn (Sliced Cactus)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "sliced-cactus-ignore-terrain",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "cooking": {
+        "rank": 1,
+        "mealKey": "sliced-cactus",
+        "dc": 10
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

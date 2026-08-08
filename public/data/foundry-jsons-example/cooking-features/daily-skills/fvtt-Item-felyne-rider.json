@@ -1,0 +1,126 @@
+{
+  "_id": "ORFpDX4WwCZurpCA",
+  "name": "Felyne Rider",
+  "type": "feat",
+  "img": "mh-icons/bbq.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Felyne Rider</strong> <em>(Daily Skill)</em></p><p>You have advantage on checks to stay mounted on monsters.</p><p><em>Active Effect grants MidiQOL advantage on Animal Handling (common mount check). Adjust if your table uses Athletics/Acrobatics.</em></p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
+      "chat": "<p><strong>Felyne Rider</strong></p><p>Advantage on checks to stay mounted on monsters.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "felyne-rider",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Artisan Cooking (Daily Skill)",
+    "properties": [],
+    "activities": {},
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "NbEXrdjoSCzh9LBK",
+      "name": "Felyne Rider",
+      "img": "mh-icons/bbq.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.advantage.skill.ani",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Advantage on checks to stay mounted (Animal Handling stand-in).",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "cooking": {
+        "dailySkill": true,
+        "index": 22,
+        "skillKey": "felyne-rider"
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

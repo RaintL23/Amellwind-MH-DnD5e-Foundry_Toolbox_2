@@ -1,0 +1,168 @@
+{
+  "_id": "bOhgDagFNT6HRyDs",
+  "name": "Cube Steak",
+  "type": "feat",
+  "img": "mh-icons/bbq.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Cube Steak</strong> <em>(Cooking Rank 1)</em></p><p>You can doff or don your armor as an action.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
+      "chat": "<p><strong>Cube Steak</strong></p><p>Don or doff armor as an action.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "cube-steak",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Artisan Cooking (Rank 1)",
+    "properties": [],
+    "activities": {
+      "EbA4AneCfCyXAVL0": {
+        "_id": "EbA4AneCfCyXAVL0",
+        "type": "utility",
+        "sort": 0,
+        "name": "Don or Doff Armor",
+        "img": "mh-icons/bbq.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Don or doff your armor as an action (Cube Steak)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "cube-steak-don-doff",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "cooking": {
+        "rank": 1,
+        "mealKey": "cube-steak",
+        "dc": 10
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

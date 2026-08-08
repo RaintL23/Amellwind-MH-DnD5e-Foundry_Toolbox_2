@@ -1,0 +1,230 @@
+{
+  "_id": "7KqQCWrwy88GsPEb",
+  "name": "Felyne Foodie",
+  "type": "feat",
+  "img": "mh-icons/bbq.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Felyne Foodie</strong> <em>(Daily Skill)</em></p><p>The food bonus lasts for 48 hours, you cannot become inebriated during this time, and you can cast the <em>thaumaturgy</em> spell at will.</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
+      "chat": "<p><strong>Felyne Foodie</strong></p><p>Food bonus 48h; cannot become inebriated; thaumaturgy at will.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "felyne-foodie",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Artisan Cooking (Daily Skill)",
+    "properties": [],
+    "activities": {
+      "Ghr9eT30Cp7eRchN": {
+        "_id": "Ghr9eT30Cp7eRchN",
+        "type": "utility",
+        "sort": 0,
+        "name": "Cast Thaumaturgy",
+        "img": "mh-icons/bbq.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "At will",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Cast thaumaturgy (Felyne Foodie)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "felyne-foodie-thaumaturgy",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "RfI3oZXcx9oKmAA6",
+      "name": "Felyne Foodie",
+      "img": "mh-icons/bbq.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.traits.ci.custom",
+          "mode": 2,
+          "value": "Inebriated",
+          "priority": 20
+        },
+        {
+          "key": "flags.world.cooking.foodie",
+          "mode": 5,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 172800,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Food bonus 48 hours; immunity to inebriation; thaumaturgy at will.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "cooking": {
+        "dailySkill": true,
+        "index": 20,
+        "skillKey": "felyne-foodie"
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

@@ -1,0 +1,224 @@
+{
+  "_id": "1N09fgh9cyVDcalk",
+  "name": "Felyne Dungmaster",
+  "type": "feat",
+  "img": "mh-icons/bbq.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Felyne Dungmaster</strong> <em>(Daily Skill)</em></p><p>A creature hit by a dung bomb must succeed on a DC 12 Constitution saving throw or immediately use its reaction, if available, to move as far as its speed allows away from you. The creature doesn&apos;t move into obviously dangerous ground, such as fire or a pit.</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
+      "chat": "<p><strong>Felyne Dungmaster</strong></p><p>Dung bomb hit: DC 12 Con save or use reaction to flee.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "felyne-dungmaster",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Artisan Cooking (Daily Skill)",
+    "properties": [],
+    "activities": {
+      "uLtWwg4DzKWgRQHj": {
+        "_id": "uLtWwg4DzKWgRQHj",
+        "type": "utility",
+        "sort": 0,
+        "name": "Dung Bomb Fear",
+        "img": "mh-icons/bbq.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "When a creature is hit by a dung bomb",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "DC 12 Constitution saving throw or use reaction to move away (Felyne Dungmaster)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "felyne-dungmaster-save",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "1d20",
+          "name": "",
+          "prompt": false,
+          "visible": true
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "d4IMNlrFCEP2Sdx5",
+      "name": "Felyne Dungmaster",
+      "img": "mh-icons/bbq.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.world.cooking.dungmaster",
+          "mode": 5,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Dung bombs force DC 12 Con save or flee.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "cooking": {
+        "dailySkill": true,
+        "index": 18,
+        "skillKey": "felyne-dungmaster"
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

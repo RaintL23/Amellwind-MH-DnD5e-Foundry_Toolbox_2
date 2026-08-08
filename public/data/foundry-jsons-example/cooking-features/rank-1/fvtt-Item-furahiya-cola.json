@@ -1,0 +1,71 @@
+{
+  "_id": "fOOZRDwDVtGMToG2",
+  "name": "Furahiya Cola",
+  "type": "feat",
+  "img": "mh-icons/bbq.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Furahiya Cola</strong> <em>(Cooking Rank 1)</em></p><p>You gain the same benefits as if you drank a Hot Drink:</p><blockquote><p>Kept in a standard glass vial, with a closed lid on top. The liquid inside is sparkling and orange, smelling and tasting of burning red peppers. When you drink it, you can tolerate temperatures as low as −50 degrees Fahrenheit (−45 degrees Celsius) without any additional protection for 24 hours. If you wear heavy clothes, you can tolerate temperatures as low as −100 degrees Fahrenheit (−73 degrees Celsius).</p></blockquote><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
+      "chat": "<p><strong>Furahiya Cola</strong></p><p>Same benefits as a Hot Drink (tolerate extreme cold for 24 hours).</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "furahiya-cola",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Artisan Cooking (Rank 1)",
+    "properties": [],
+    "activities": {},
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "cooking": {
+        "rank": 1,
+        "mealKey": "furahiya-cola",
+        "dc": 10
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

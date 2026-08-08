@@ -1,0 +1,71 @@
+{
+  "_id": "6ETK06ymlxEEx2iZ",
+  "name": "Felyne Weathercat",
+  "type": "feat",
+  "img": "mh-icons/bbq.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Felyne Weathercat</strong> <em>(Daily Skill)</em></p><p>Foul weather occurs more often during a quest (Heavy rain, blizzards, sandstorms, etc).</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
+      "chat": "<p><strong>Felyne Weathercat</strong></p><p>Foul weather occurs more often during a quest.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "felyne-weathercat",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Artisan Cooking (Daily Skill)",
+    "properties": [],
+    "activities": {},
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "flags": {
+    "exportSource": {
+      "world": "monster-hunter-hunts",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "cooking": {
+        "dailySkill": true,
+        "index": 1,
+        "skillKey": "felyne-weathercat"
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}
