@@ -28,6 +28,7 @@ export const RESOURCE_COLUMN_PRESETS = [
   "Phials",
   "Coatings",
   "Ammo",
+  "Magazines",
   "Notes",
 ] as const;
 

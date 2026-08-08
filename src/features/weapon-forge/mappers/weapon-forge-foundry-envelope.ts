@@ -1,7 +1,10 @@
 import type { FoundryItem } from "@/shared/foundry";
 import { FOUNDRY_EXPORT_TARGET, foundryIdFromSeed } from "@/shared/foundry";
 import { DUAL_BLADES_DEMON_DODGE_ITEM_MACRO } from "./dual-blades-demon-dodge.macro";
+import { DUAL_REPEATERS_MAGAZINES_ITEM_MACRO } from "./dual-repeaters-magazines.macro";
 import { HUNTING_HORN_RECITAL_ITEM_MACRO } from "./hunting-horn-recital.macro";
+import type { CustomWeapon } from "../types/weapon-forge.types";
+import { listUnlockedMagazineKeys } from "./weapon-forge-magazine.export";
 
 /** Default item-level Midi / dnd5e flags stamped on Weapon Forge exports. */
 export function defaultWeaponForgeItemFlags(opts: {
@@ -623,6 +626,136 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
       ...existingWorld,
       wireKnuckles: {
         hasSilkbind: true,
+      },
+    },
+  };
+
+  return true;
+}
+
+function isDualRepeatersWeapon(item: FoundryItem): boolean {
+  const system = item.system as Record<string, unknown>;
+  const identifier = String(system.identifier ?? "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+  if (identifier === "dualrepeaters") return true;
+  return /^dual\s+repeaters\b/i.test(item.name ?? "");
+}
+
+/**
+ * Dual Repeaters: Magazines are consumables that fill weapon Charges (6 Volleys).
+ * Wire ItemMacro for Magazines / Empowered Reload dialogs + Attack charge spend.
+ * Charges are shown on the weapon sheet via system.uses (Bow-style resource UI).
+ */
+export function applyDualRepeatersOverlay(
+  item: FoundryItem,
+  weapon?: CustomWeapon,
+  rarityIndex = 0,
+): boolean {
+  if (!isDualRepeatersWeapon(item)) return false;
+
+  const system = item.system as Record<string, unknown>;
+  const activities = system.activities as
+    | Record<string, Record<string, unknown>>
+    | undefined;
+  if (!activities) return false;
+
+  const hasMagazinesActivity = Object.values(activities).some((activity) => {
+    const name = String(activity?.name ?? "").toLowerCase();
+    const id = String(
+      (activity?.midiProperties as { identifier?: string } | undefined)
+        ?.identifier ?? "",
+    ).toLowerCase();
+    return (
+      id === "magazines" ||
+      id === "empowered-reload" ||
+      name === "magazines" ||
+      name.includes("empowered reload")
+    );
+  });
+  if (!hasMagazinesActivity) return false;
+
+  // Charges (Volleys) on the weapon sheet — starts empty until a Magazine is loaded.
+  system.uses = { spent: 6, max: "6", recovery: [] };
+
+  for (const activity of Object.values(activities)) {
+    if (!activity || activity.type !== "attack") continue;
+    const name = String(activity.name ?? "").trim();
+    if (name !== "" && name.toLowerCase() !== "attack") continue;
+    activity.name = "Attack";
+    const midi =
+      (activity.midiProperties as Record<string, unknown> | undefined) ?? {};
+    activity.midiProperties = {
+      ...midi,
+      identifier: "attack",
+      displayActivityName: true,
+    };
+    // Each Attack spends 1 Charge (weapon system.uses).
+    activity.consumption = {
+      scaling: { allowed: false },
+      spellSlot: false,
+      targets: [
+        {
+          type: "itemUses",
+          target: "",
+          value: "1",
+          scaling: { mode: "", formula: "" },
+        },
+      ],
+    };
+  }
+
+  const unlockedMagazines = weapon
+    ? listUnlockedMagazineKeys(weapon, rarityIndex)
+    : ["normal", "blaze", "cryo", "storm", "slime"];
+
+  const existingWorld =
+    (item.flags?.world as Record<string, unknown> | undefined) ?? {};
+  const existingDr =
+    (existingWorld.dualRepeaters as Record<string, unknown> | undefined) ?? {};
+  const existingMidi =
+    (item.flags?.["midi-qol"] as Record<string, unknown> | undefined) ?? {};
+
+  item.flags = {
+    ...item.flags,
+    "midi-qol": {
+      ...existingMidi,
+      onUseMacroName:
+        "[preTargeting]ItemMacro,[postAttackRoll]ItemMacro,[postDamageRoll]ItemMacro",
+      onUseMacroParts: {
+        items: [
+          { macroName: "ItemMacro", option: "preTargeting" },
+          { macroName: "ItemMacro", option: "postAttackRoll" },
+          { macroName: "ItemMacro", option: "postDamageRoll" },
+        ],
+      },
+    },
+    itemacro: {
+      macro: {
+        name: item.name,
+        type: "script",
+        scope: "global",
+        author: "",
+        img: "icons/svg/dice-target.svg",
+        command: DUAL_REPEATERS_MAGAZINES_ITEM_MACRO,
+        folder: null,
+        sort: 0,
+        ownership: { default: 0 },
+        flags: {},
+        _stats: {
+          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
+          systemId: FOUNDRY_EXPORT_TARGET.systemId,
+          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
+        },
+      },
+    },
+    world: {
+      ...existingWorld,
+      dualRepeaters: {
+        ...existingDr,
+        isDualRepeaters: true,
+        volleysMax: 6,
+        unlockedMagazines,
       },
     },
   };

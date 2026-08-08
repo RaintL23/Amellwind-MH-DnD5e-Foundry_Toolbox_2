@@ -28,12 +28,14 @@ import {
 import { hasWeaponSwitchModes } from "@/features/weapons/utils/weapon-mode.utils";
 import {
   applyDualBladesDemonDodgeOverlay,
+  applyDualRepeatersOverlay,
   applyHuntingHornSongbookOverlay,
   applyWireKnucklesSilkbindOverlay,
   defaultWeaponForgeItemFlags,
 } from "./weapon-forge-foundry-envelope";
 import { buildWeaponMelodyFeatItems } from "./weapon-forge-melody.export";
 import { buildWeaponPhialFeatItems } from "./weapon-forge-phial.export";
+import { buildWeaponMagazineConsumableItems } from "./weapon-forge-magazine.export";
 import { applyChargeBladeOverlay } from "./weapon-forge-charge-blade.export";
 import { applySwitchAxeOverlay } from "./weapon-forge-switch-axe.export";
 
@@ -58,8 +60,8 @@ export interface WeaponFoundryExportBundle {
 }
 
 /**
- * Build Foundry feat groups for weapon resources that have export builders.
- * Ammo / Coatings land here when their feat builders ship.
+ * Build Foundry feat/consumable groups for weapon resources that have export builders.
+ * Melodies / Phials are feats; Magazines are consumables (Bow Coatings pattern).
  */
 export function buildWeaponFoundryResourceGroups(
   weapon: CustomWeapon,
@@ -73,6 +75,10 @@ export function buildWeaponFoundryResourceGroups(
   const phials = buildWeaponPhialFeatItems(weapon, rarityIndex);
   if (phials.length > 0) {
     groups.push({ id: "phials", label: "Phials", items: phials });
+  }
+  const magazines = buildWeaponMagazineConsumableItems(weapon, rarityIndex);
+  if (magazines.length > 0) {
+    groups.push({ id: "magazines", label: "Magazines", items: magazines });
   }
   return groups;
 }
@@ -193,6 +199,7 @@ export function buildWeaponFoundryExportBundle(
   // Weapon-specific overlays own midi-qol / itemacro / world (applied last).
   applyHuntingHornSongbookOverlay(item);
   applyDualBladesDemonDodgeOverlay(item);
+  applyDualRepeatersOverlay(item, weapon, clamped);
   applyWireKnucklesSilkbindOverlay(item);
   applySwitchAxeOverlay(item, weapon, clamped);
   applyChargeBladeOverlay(item, weapon, clamped);

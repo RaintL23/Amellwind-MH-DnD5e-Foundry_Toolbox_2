@@ -31,9 +31,9 @@ export function FoundryResourceGroupPanel({
   return (
     <div className="space-y-3">
       <p className="text-[11px] text-muted-foreground">
-        {items.length} {label} feat{items.length === 1 ? "" : "s"} unlocked at
-        this rarity. Import beside the weapon; activation rules live on the
-        weapon (e.g. Recital).
+        {items.length} {label} item{items.length === 1 ? "" : "s"} unlocked at
+        this rarity. Import beside the weapon; Magazines/Coatings are
+        consumables, Melodies/Phials are feats.
       </p>
       <Accordion
         type="multiple"
@@ -63,7 +63,7 @@ export function FoundryResourceGroupPanel({
               <PreviewBody
                 item={resource}
                 filename={resourceItemFilename(resource)}
-                variant="feat"
+                variant={resource.type === "consumable" ? "weapon" : "feat"}
               />
             </AccordionContent>
           </AccordionItem>

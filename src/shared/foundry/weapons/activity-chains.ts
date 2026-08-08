@@ -195,13 +195,22 @@ export function resolveChainAtRarity(
     effective.chainKey = chain.chainKey;
   }
 
+  // Prefer the last non-scaler link so "Rapid Fire Upgrade I" still shows as "Rapid Fire".
+  let displayLink = leaf;
+  for (let i = prefix.length - 1; i >= 0; i--) {
+    if (prefix[i].automation?.template !== "upgrade_scaler") {
+      displayLink = prefix[i];
+      break;
+    }
+  }
+
   return {
     chain,
     prefix,
     leaf,
     effective,
     status: statusForEffective(effective),
-    displayName: leaf.def?.name ?? leaf.featureName,
+    displayName: displayLink.def?.name ?? displayLink.featureName,
   };
 }
 

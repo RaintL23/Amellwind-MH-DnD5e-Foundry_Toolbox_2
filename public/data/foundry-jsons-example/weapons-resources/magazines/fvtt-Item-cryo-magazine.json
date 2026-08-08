@@ -1,0 +1,301 @@
+{
+  "_id": "ZXXDSuKqLLltUdRT",
+  "name": "Cryo Magazine",
+  "type": "consumable",
+  "img": "mh-icons/bowgun-ammo.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Cryo Magazine</strong> (Dual Repeaters specialty magazine)</p><p>Your attacks with this ammo deal cold damage instead of piercing.</p><p><em>Load Magazine</em> (Bonus Action): expend this magazine to fill the Dual Repeaters with <strong>6 Charges</strong> (shown on the weapon sheet). Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate.</p>",
+      "chat": "<p><strong>Cryo Magazine</strong></p><p>Cold damage instead of piercing (fills 6 weapon Charges).</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "cryo-magazine",
+    "quantity": 1,
+    "weight": {
+      "value": 0.5,
+      "units": "lb"
+    },
+    "price": {
+      "value": 1,
+      "denomination": "gp"
+    },
+    "rarity": "",
+    "identified": true,
+    "unidentified": {
+      "description": "",
+      "name": "Mysterious Magazine"
+    },
+    "container": null,
+    "attunement": "",
+    "attuned": false,
+    "equipped": false,
+    "type": {
+      "value": "ammo",
+      "subtype": ""
+    },
+    "damage": {
+      "base": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false,
+          "formula": ""
+        },
+        "scaling": {
+          "mode": "",
+          "number": null
+        },
+        "bonus": ""
+      },
+      "replace": false
+    },
+    "magicalBonus": null,
+    "properties": [],
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": [],
+      "autoDestroy": false
+    },
+    "activities": {
+      "BqhdgstO0mKIE2DP": {
+        "_id": "BqhdgstO0mKIE2DP",
+        "type": "utility",
+        "sort": 0,
+        "name": "Load Magazine",
+        "img": "mh-icons/bowgun-ammo.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Load Cryo Magazine (6 Charges)"
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "load-magazine",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
+        "otherActivityId": "none"
+      }
+    }
+  },
+  "effects": [
+    {
+      "_id": "BXkZJrpGCbR7qC2L",
+      "name": "Cryo Magazine (Loaded)",
+      "img": "mh-icons/bowgun-ammo.webp",
+      "description": "<p>Cryo Magazine loaded. Attacks deal cold instead of piercing. Charge count is tracked on the Dual Repeaters weapon sheet (Charges).</p>",
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": true,
+          "selfTargetAlways": true,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "shortRest",
+            "longRest"
+          ],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "world": {
+          "dualRepeaters": {
+            "isMagazineTemplate": true,
+            "isMagazineActive": true,
+            "magazineKey": "cryo",
+            "damageType": "cold",
+            "chargesMax": 6
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786207260699,
+        "modifiedTime": 1786207260699,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 900000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "weapon-resource",
+      "resourceKind": "magazine",
+      "baseWeaponName": "Dual Repeaters"
+    },
+    "world": {
+      "dualRepeaters": {
+        "isMagazine": true,
+        "magazineKey": "cryo",
+        "chargesPerMagazine": 6,
+        "damageType": "cold"
+      }
+    },
+    "midi-qol": {
+      "onUseMacroName": "[preTargeting]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Cryo Magazine",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Dual Repeaters — Item Macros (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n//\n// EMBEDS:\n// 1) Magazine consumable (Normal / Blaze / Cryo / Storm / Slime / …)\n//    On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro\n//    Activity identifier: load-magazine\n// 2) Dual Repeaters weapon (Uncommon+)\n//    On Use: [preTargeting]ItemMacro,[postAttackRoll]ItemMacro,[postDamageRoll]ItemMacro\n//    Magazines / Empowered Reload: dialog → expend one magazine → fill weapon Charges (6)\n//    Attack: spends 1 weapon Charge via itemUses; AE tracks loaded magazine type\n//    Specialty magazines overwrite system.damage.base.types (piercing → fire/cold/…)\n//\n// Flags:\n// - flags.world.dualRepeaters.isMagazine / magazineKey / chargesPerMagazine / damageType\n// - AE flags.world.dualRepeaters.isMagazineActive + magazineKey / damageType\n// - AE flags.world.dualRepeaters.isEmpowered\n// - flags.world.dualRepeaters.unlockedMagazines / loadedMagazineKey / loadedDamageType / baseDamageTypes\n// - weapon system.uses = Charges (Volleys remaining)\n// - weapon system.damage.base.types overwritten while a specialty magazine is loaded\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? workflow?.activity?.midiProperties?.identifier\n  ?? \"\",\n).toLowerCase();\nconst actType = String(rolled?.type ?? workflow?.activity?.type ?? \"\").toLowerCase();\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Dual Repeaters: actor not found.\");\n  return;\n}\n\nconst abort = (msg) => {\n  if (msg) ui.notifications.warn(msg);\n  if (workflow) workflow.aborted = true;\n  return false;\n};\n\nconst MAGAZINE_LABELS = {\n  normal: \"Normal Magazine\",\n  blaze: \"Blaze Magazine\",\n  cryo: \"Cryo Magazine\",\n  storm: \"Storm Magazine\",\n  slime: \"Slime Magazine\",\n  dawnstar: \"Dawnstar Magazine\",\n  twilight: \"Twilight Magazine\",\n};\n\nconst magazineLoadedName = (key) => {\n  const base = MAGAZINE_LABELS[key] ?? \"Magazine\";\n  return base + \" (Loaded)\";\n};\n\nconst isMagazineDoc = (doc) =>\n  foundry.utils.getProperty(doc, \"flags.world.dualRepeaters.isMagazine\") === true\n  || String(doc?.system?.identifier ?? \"\").endsWith(\"-magazine\")\n  || /magazine$/i.test(doc?.name ?? \"\");\n\nconst isDualRepeatersDoc = (doc) =>\n  foundry.utils.getProperty(doc, \"flags.world.dualRepeaters.isDualRepeaters\") === true\n  || String(doc?.system?.identifier ?? \"\") === \"dualrepeaters\"\n  || /^dual\\s+repeaters\\b/i.test(doc?.name ?? \"\");\n\nconst isMagazineItem = isMagazineDoc(item);\nconst isDualRepeatersWeapon = isDualRepeatersDoc(item);\n\nconst isMagazineActiveAe = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.dualRepeaters.isMagazineActive\") === true\n  || /magazine \\(loaded\\)/i.test(ef.name ?? \"\");\n\nconst isEmpoweredAe = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.dualRepeaters.isEmpowered\") === true\n  || /^empowered$/i.test(ef.name ?? \"\");\n\nconst isLoadActivity =\n  actId === \"load-magazine\"\n  || actName.includes(\"load magazine\")\n  || actName === \"load\";\n\nconst isMagazinesReload =\n  actId === \"magazines\"\n  || actName === \"magazines\";\n\nconst isEmpoweredReload =\n  actId === \"empowered-reload\"\n  || actName.includes(\"empowered reload\");\n\nconst isAttackActivity =\n  actType === \"attack\"\n  || actId === \"attack\"\n  || actName === \"attack\";\n\nconst chargesPer = (doc) => Math.max(\n  1,\n  Number(foundry.utils.getProperty(doc, \"flags.world.dualRepeaters.chargesPerMagazine\") ?? 6),\n);\n\nconst magazineKeyOf = (doc) => String(\n  foundry.utils.getProperty(doc, \"flags.world.dualRepeaters.magazineKey\")\n  ?? String(doc?.system?.identifier ?? \"\").replace(/-magazine$/, \"\")\n  ?? \"normal\",\n).toLowerCase();\n\nconst damageTypeOf = (doc) => {\n  const flagged = foundry.utils.getProperty(doc, \"flags.world.dualRepeaters.damageType\");\n  if (flagged) return String(flagged).toLowerCase();\n  const key = magazineKeyOf(doc);\n  if (key === \"blaze\") return \"fire\";\n  if (key === \"cryo\") return \"cold\";\n  if (key === \"storm\") return \"lightning\";\n  if (key === \"slime\") return \"acid\";\n  return \"piercing\";\n};\n\nconst findDualRepeatersWeapon = () => {\n  if (isDualRepeatersWeapon) return actorDoc.items.get(item.id) ?? item;\n  return actorDoc.items.find((i) => isDualRepeatersDoc(i)) ?? null;\n};\n\nconst unlockedMagazines = (weaponDoc) => {\n  const listed = foundry.utils.getProperty(\n    weaponDoc ?? item,\n    \"flags.world.dualRepeaters.unlockedMagazines\",\n  );\n  if (Array.isArray(listed) && listed.length) {\n    return listed.map((k) => String(k).toLowerCase());\n  }\n  return [\"normal\", \"blaze\", \"cryo\", \"storm\", \"slime\"];\n};\n\nconst inventoryMagazineOptions = (weaponDoc) => {\n  const unlocked = new Set(unlockedMagazines(weaponDoc));\n  const byKey = new Map();\n  for (const i of actorDoc.items) {\n    if (!isMagazineDoc(i)) continue;\n    const key = magazineKeyOf(i);\n    if (!unlocked.has(key)) continue;\n    const qty = Math.max(0, Number(i.system?.quantity ?? 0));\n    if (qty <= 0) continue;\n    const prev = byKey.get(key);\n    if (!prev || qty > prev.qty) {\n      byKey.set(key, {\n        key,\n        item: i,\n        qty,\n        label: MAGAZINE_LABELS[key] ?? i.name,\n        damageType: damageTypeOf(i),\n        charges: chargesPer(i),\n      });\n    }\n  }\n  return [...byKey.values()].sort((a, b) => a.label.localeCompare(b.label));\n};\n\nconst clearLoadedMagazine = async () => {\n  const stale = actorDoc.effects.filter(isMagazineActiveAe);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\n  }\n};\n\nconst clearEmpowered = async () => {\n  const buffs = actorDoc.effects.filter(isEmpoweredAe);\n  if (buffs.length) {\n    await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", buffs.map((e) => e.id));\n  }\n};\n\nconst fillWeaponCharges = async (weaponDoc, maxCharges) => {\n  const max = Math.max(1, Number(maxCharges) || 6);\n  await weaponDoc.update({\n    \"system.uses.spent\": 0,\n    \"system.uses.max\": String(max),\n    \"system.uses.recovery\": [],\n  });\n};\n\nconst weaponChargesAvailable = (weaponDoc) => {\n  const max = Number(weaponDoc.system?.uses?.max ?? 0);\n  const spent = Number(weaponDoc.system?.uses?.spent ?? 0);\n  if (!Number.isFinite(max) || max <= 0) return 0;\n  return Math.max(0, max - spent);\n};\n\n/** Remember the weapon's native damage types so we can restore after specialty magazines. */\nconst ensureBaseDamageTypes = async (weaponDoc) => {\n  const saved = foundry.utils.getProperty(weaponDoc, \"flags.world.dualRepeaters.baseDamageTypes\");\n  if (Array.isArray(saved) && saved.length) return saved.map(String);\n  const current = weaponDoc.system?.damage?.base?.types;\n  const base = Array.isArray(current) && current.length ? current.map(String) : [\"piercing\"];\n  await weaponDoc.update({ \"flags.world.dualRepeaters.baseDamageTypes\": base });\n  return base;\n};\n\n/**\n * Specialty Magazines overwrite the weapon's base damage type (piercing → fire/cold/…).\n * Normal Magazine restores the native type.\n */\nconst applyWeaponDamageType = async (weaponDoc, damageType) => {\n  const baseTypes = await ensureBaseDamageTypes(weaponDoc);\n  const nextType = (damageType && damageType !== \"piercing\")\n    ? String(damageType).toLowerCase()\n    : (baseTypes[0] || \"piercing\");\n  const update = {\n    \"system.damage.base.types\": [nextType],\n    \"flags.world.dualRepeaters.loadedDamageType\": nextType,\n  };\n  await weaponDoc.update(update);\n  return nextType;\n};\n\nconst restoreWeaponDamageType = async (weaponDoc) => {\n  const baseTypes = await ensureBaseDamageTypes(weaponDoc);\n  await weaponDoc.update({\n    \"system.damage.base.types\": baseTypes,\n    \"flags.world.dualRepeaters.loadedMagazineKey\": null,\n    \"flags.world.dualRepeaters.loadedDamageType\": null,\n  });\n};\n\nconst applyMagazineFromItem = async (magItem, weaponDoc, { empower = false } = {}) => {\n  const magazineKey = magazineKeyOf(magItem);\n  const maxCharges = chargesPer(magItem);\n  const damageType = damageTypeOf(magItem);\n\n  await clearLoadedMagazine();\n  await clearEmpowered();\n  await fillWeaponCharges(weaponDoc, maxCharges);\n  // Overwrite weapon damage type so Attack/includeBase rolls the magazine element.\n  const appliedType = await applyWeaponDamageType(weaponDoc, damageType);\n\n  const template = magItem.effects.find((ef) =>\n    foundry.utils.getProperty(ef, \"flags.world.dualRepeaters.isMagazineTemplate\") === true\n    || foundry.utils.getProperty(ef, \"flags.world.dualRepeaters.magazineKey\") === magazineKey\n    || /magazine/i.test(ef.name ?? \"\"),\n  );\n\n  const aeData = template\n    ? template.toObject()\n    : {\n      name: magazineLoadedName(magazineKey),\n      img: magItem.img,\n      type: \"base\",\n      system: {},\n      changes: [],\n      disabled: false,\n      transfer: false,\n      statuses: [],\n      flags: {\n        dae: {\n          selfTarget: true,\n          selfTargetAlways: true,\n          stackable: \"noneName\",\n          showIcon: true,\n          specialDuration: [\"shortRest\", \"longRest\"],\n        },\n        world: { dualRepeaters: {} },\n      },\n    };\n\n  delete aeData._id;\n  aeData.disabled = false;\n  aeData.transfer = false;\n  aeData.name = magazineLoadedName(magazineKey);\n  foundry.utils.setProperty(aeData, \"flags.world.dualRepeaters.isMagazineActive\", true);\n  foundry.utils.setProperty(aeData, \"flags.world.dualRepeaters.isMagazineTemplate\", false);\n  foundry.utils.setProperty(aeData, \"flags.world.dualRepeaters.magazineKey\", magazineKey);\n  foundry.utils.setProperty(aeData, \"flags.world.dualRepeaters.damageType\", appliedType);\n  // Charge count lives on the weapon sheet (system.uses), not on the AE.\n  foundry.utils.setProperty(aeData, \"flags.world.dualRepeaters.chargesMax\", maxCharges);\n\n  const [ae] = await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [aeData]);\n\n  await weaponDoc.update({\n    \"flags.world.dualRepeaters.loadedMagazineKey\": magazineKey,\n    \"flags.world.dualRepeaters.loadedDamageType\": appliedType,\n  });\n\n  if (empower) {\n    await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [{\n      name: \"Empowered\",\n      img: \"icons/magic/fire/projectile-fireball-smoke-orange.webp\",\n      type: \"base\",\n      disabled: false,\n      transfer: false,\n      changes: [{\n        key: \"system.bonuses.rwak.damage\",\n        mode: 2,\n        value: \"1d4[\" + appliedType + \"]\",\n        priority: 20,\n      }],\n      flags: {\n        dae: {\n          selfTarget: true,\n          selfTargetAlways: true,\n          stackable: \"noneName\",\n          showIcon: true,\n        },\n        world: {\n          dualRepeaters: {\n            isEmpowered: true,\n            damageType: appliedType,\n          },\n        },\n      },\n    }]);\n  }\n\n  const newQty = Math.max(0, Number(magItem.system?.quantity ?? 0) - 1);\n  await magItem.update({ \"system.quantity\": newQty });\n\n  return { ae, magazineKey, maxCharges, damageType: appliedType, empower, newQty, weaponDoc };\n};\n\nconst pickMagazineDialog = async (title, weaponDoc) => {\n  const options = inventoryMagazineOptions(weaponDoc);\n  if (!options.length) {\n    return abort(\"Dual Repeaters: no unlocked magazines in inventory (quantity > 0).\");\n  }\n\n  const optsHtml = options.map((o) => {\n    const typeNote = o.damageType !== \"piercing\" ? (\" [\" + o.damageType + \"]\") : \"\";\n    return '<option value=\"' + esc(o.key) + '\">'\n      + esc(o.label) + typeNote\n      + \" — pack \" + o.qty + \", load \" + o.charges + \" Charges</option>\";\n  }).join(\"\");\n\n  const content = \"\"\n    + '<form class=\"flexcol\">'\n    + \"<p>Expend one Magazine to fill the Dual Repeaters with <strong>6 Charges</strong> (Volleys).</p>\"\n    + '<div class=\"form-group\">'\n    + \"<label>Magazine</label>\"\n    + '<div class=\"form-fields\">'\n    + '<select name=\"dr-magazine\">' + optsHtml + \"</select>\"\n    + \"</div></div></form>\";\n\n  const chosenKey = await new Promise((resolve) => {\n    let settled = false;\n    const done = (v) => { if (!settled) { settled = true; resolve(v); } };\n    new Dialog({\n      title,\n      content,\n      buttons: {\n        ok: {\n          icon: '<i class=\"fas fa-sync\"></i>',\n          label: \"Load\",\n          callback: (html) => {\n            const $h = html?.find ? html : $(html);\n            done($h.find('select[name=\"dr-magazine\"]').val() || null);\n          },\n        },\n        cancel: {\n          icon: '<i class=\"fas fa-times\"></i>',\n          label: \"Cancel\",\n          callback: () => done(null),\n        },\n      },\n      default: \"ok\",\n      close: () => done(null),\n    }).render(true);\n  });\n\n  if (!chosenKey) return abort(\"Dual Repeaters: reload cancelled.\");\n  const pick = options.find((o) => o.key === chosenKey);\n  if (!pick) return abort(\"Dual Repeaters: invalid magazine selection.\");\n  return pick;\n};\n\nconst hostileWithin15 = () => {\n  const tokenDoc = typeof token !== \"undefined\" ? token : canvas?.tokens?.controlled?.[0];\n  if (!tokenDoc?.document && !tokenDoc?.center) return false;\n  const origin = tokenDoc.center ?? tokenDoc.getCenterPoint?.() ?? null;\n  if (!origin) return false;\n  const foes = canvas?.tokens?.placeables ?? [];\n  for (const t of foes) {\n    if (!t.actor || t.id === tokenDoc.id) continue;\n    const disposition = t.document?.disposition ?? t.disposition;\n    if (disposition >= 0) continue;\n    const dist = canvas.grid.measureDistance(origin, t.center);\n    if (dist <= 15) return true;\n  }\n  return false;\n};\n\n// ── Magazine consumable: Load Magazine ──────────────────────────────────────\nif (isMagazineItem && isLoadActivity && (macroPass.includes(\"pretargeting\") || macroPass.includes(\"preitemroll\"))) {\n  const weaponDoc = findDualRepeatersWeapon();\n  if (!weaponDoc) {\n    return abort(\"Dual Repeaters: equip/own a Dual Repeaters weapon before loading a magazine.\");\n  }\n  return;\n}\n\nif (isMagazineItem && isLoadActivity && (macroPass.includes(\"postactiveeffects\") || macroPass === \"\")) {\n  if (macroPass && !macroPass.includes(\"postactiveeffects\") && macroPass !== \"\") return;\n\n  const weaponDoc = findDualRepeatersWeapon();\n  if (!weaponDoc) {\n    return abort(\"Dual Repeaters: equip/own a Dual Repeaters weapon before loading a magazine.\");\n  }\n\n  const result = await applyMagazineFromItem(item, weaponDoc, { empower: false });\n  if (!result) return;\n\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: '<div class=\"dnd5e2\"><p><strong>'\n      + esc(actorDoc.name) + \"</strong> loads <em>\"\n      + esc(result.ae.name) + \"</em>.</p><p>Weapon Charges <strong>\"\n      + result.maxCharges + \"/\" + result.maxCharges\n      + \"</strong>. Each Dual Repeaters attack spends 1 Charge. Remaining Charges are lost if you load a different magazine. Magazines do not regenerate.</p></div>\",\n  });\n  return;\n}\n\n// ── Dual Repeaters weapon ───────────────────────────────────────────────────\nif (!isDualRepeatersWeapon) return;\n\nconst weaponDoc = actorDoc.items.get(item.id) ?? item;\n\n// Magazines / Empowered Reload — pick + expend magazine from inventory\nif ((isMagazinesReload || isEmpoweredReload) && (macroPass.includes(\"pretargeting\") || macroPass.includes(\"preitemroll\") || macroPass === \"\")) {\n  if (macroPass && !macroPass.includes(\"pretargeting\") && !macroPass.includes(\"preitemroll\") && macroPass !== \"\") return;\n\n  const title = isEmpoweredReload ? \"Empowered Reload — Magazine\" : \"Magazines — Load\";\n  const pick = await pickMagazineDialog(title, weaponDoc);\n  if (!pick) return false;\n\n  const empower = isEmpoweredReload && hostileWithin15();\n  const result = await applyMagazineFromItem(pick.item, weaponDoc, { empower });\n  if (!result) return false;\n\n  const empowerNote = result.empower\n    ? \" <strong>Empowered</strong> (+1d4 ammo-type damage until next reload).\"\n    : (isEmpoweredReload ? \" (no hostile within 15 ft — not Empowered).\" : \"\");\n\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: '<div class=\"dnd5e2\"><p><strong>'\n      + esc(actorDoc.name) + \"</strong> reloads Dual Repeaters with <em>\"\n      + esc(pick.label) + \"</em>.</p><p>Charges <strong>\"\n      + result.maxCharges + \"/\" + result.maxCharges\n      + \"</strong> · spent 1 from inventory (\" + result.newQty + \" left).\"\n      + empowerNote + \"</p></div>\",\n  });\n  // Abort the empty utility roll — reload already applied via macro.\n  if (workflow) workflow.aborted = true;\n  return false;\n}\n\n// Attack gate — need Charges remaining. Damage type already overwritten on the weapon.\nif (isAttackActivity && (macroPass.includes(\"pretargeting\") || macroPass.includes(\"preitemroll\"))) {\n  const avail = weaponChargesAvailable(weaponDoc);\n  if (avail <= 0) {\n    return abort(\"Dual Repeaters: no Charges left — reload with Magazines / Empowered Reload.\");\n  }\n  // Belt-and-suspenders: force Midi/activity to the loaded magazine element.\n  const ae = actorDoc.effects.find(isMagazineActiveAe);\n  const damageType = String(\n    foundry.utils.getProperty(weaponDoc, \"flags.world.dualRepeaters.loadedDamageType\")\n    ?? foundry.utils.getProperty(ae, \"flags.world.dualRepeaters.damageType\")\n    ?? weaponDoc.system?.damage?.base?.types?.[0]\n    ?? \"piercing\",\n  ).toLowerCase();\n  if (workflow) {\n    workflow.defaultDamageType = damageType;\n    if (globalThis.MidiQOL) MidiQOL.MQdefaultDamageType = damageType;\n  }\n  // Keep sheet type in sync if something else reset it mid-combat.\n  const current = String(weaponDoc.system?.damage?.base?.types?.[0] ?? \"\").toLowerCase();\n  if (damageType && current !== damageType) {\n    await weaponDoc.update({ \"system.damage.base.types\": [damageType] });\n  }\n  return;\n}\n\n// After attack resolves: if Charges hit 0, clear loaded magazine AE + restore piercing\nif (!isAttackActivity) return;\n\nconst hitCount = workflow?.hitTargets?.size\n  ?? args?.[0]?.hitTargets?.size\n  ?? 0;\nconst isHit = hitCount > 0;\nconst isPostAttack = macroPass.includes(\"postattackroll\");\nconst isPostDamage = macroPass.includes(\"postdamageroll\");\nconst shouldResolve =\n  (isPostDamage && isHit)\n  || (isPostAttack && !isHit)\n  || (isPostDamage && !isHit);\n\nif (!shouldResolve) return;\n\n// itemUses consumption already spent 1 Charge on the Attack activity.\nconst refreshed = actorDoc.items.get(weaponDoc.id) ?? weaponDoc;\nconst remaining = weaponChargesAvailable(refreshed);\nif (remaining > 0) return;\n\nawait clearLoadedMagazine();\nawait clearEmpowered();\nawait restoreWeaponDamageType(refreshed);\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: '<div class=\"dnd5e2\"><p>Dual Repeaters magazine empty (0 Charges left). Damage type restored to piercing.</p></div>',\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786207260699,
+    "modifiedTime": 1786207260699,
+    "lastModifiedBy": null
+  }
+}

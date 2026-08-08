@@ -475,8 +475,54 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "",
     "Leap up to 15 ft (no OA) and generate 1 Coating Charge.",
   ),
-  "empowered reload": baUtility("", "Reload; Empowered if a hostile is within 15 ft."),
-  magazines: baUtility("", "Reload both repeaters (6 volleys)."),
+  /**
+   * Dual Repeaters: Magazines / Empowered Reload open an ItemMacro dialog that
+   * expends one Magazine consumable (Weapon Resource) to grant 6 Volley charges
+   * (Coatings-style AE). Specialty magazines replace piercing damage type.
+   */
+  magazines: spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      chatFlavor:
+        "Expend one Magazine from inventory to fill weapon Charges (6 Volleys).",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/weapons/ammunition/bullets-triple-orange.webp",
+    },
+    "ItemMacro dialog → spend Magazine consumable → fill weapon Charges (max 6).",
+  ),
+  "magazines upgrade i": spec(
+    "upgrade_scaler",
+    {},
+    "Specialty Magazines pouch capacity 3 (narrative; see Magazines section).",
+  ),
+  "magazines upgrade ii": spec(
+    "upgrade_scaler",
+    {},
+    "Specialty Magazines pouch capacity 5 (narrative).",
+  ),
+  "magazines upgrade iii": spec(
+    "upgrade_scaler",
+    {},
+    "Specialty Magazines pouch capacity 7 (narrative).",
+  ),
+  "empowered reload": spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      chatFlavor:
+        "Expend one Magazine to reload Charges (6). Empowered (+1d4) if a hostile is within 15 ft.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+    },
+    "Same Magazines dialog; applies Empowered AE when a hostile is within 15 ft.",
+  ),
   recital: spec(
     "bonus_action",
     {
