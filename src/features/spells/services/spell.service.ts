@@ -13,7 +13,7 @@ import {
   collectUaPropEntries,
   loadUaBrewDocuments,
 } from "@/shared/services/ua-brew.service";
-import { getSourceCatalog } from "@/shared/services/source-catalog.service";
+import { collectOnDemandBrewSourceCodesForProps } from "@/shared/services/source-catalog.service";
 import { createUaSourceLoader } from "@/shared/services/ua-source-loader.utils";
 import { mapSpell } from "../mappers/spell.mapper";
 import type { SpellSourceLookup } from "../utils/spell-lookup.types";
@@ -108,20 +108,12 @@ export const ensureSpellUaSourcesLoaded = createUaSourceLoader({
 
 /** All source codes that can appear in the Spells filter (official index + UA). */
 export async function getSpellFilterSourceCodes(): Promise<string[]> {
-  const [index, catalog] = await Promise.all([
+  const [index, brewCodes] = await Promise.all([
     loadOfficialSpellIndex(),
-    getSourceCatalog(),
+    collectOnDemandBrewSourceCodesForProps(["spell"]),
   ]);
   const codes = new Set<string>(Object.keys(index));
-  for (const [code, entry] of catalog) {
-    if (
-      entry.uaPath &&
-      (entry.uaPath.startsWith("spell/") ||
-        entry.uaPath.startsWith("collection/"))
-    ) {
-      codes.add(code);
-    }
-  }
+  for (const code of brewCodes) codes.add(code);
   return [...codes];
 }
 

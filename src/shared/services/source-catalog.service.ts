@@ -4,10 +4,12 @@ import {
   DDB_SOURCE_CODES,
   HOMEBREW_BASE_URL,
   HOMEBREW_INDEX_META_URL,
+  HOMEBREW_INDEX_PROPS_URL,
   HOMEBREW_INDEX_SOURCES_URL,
   HOMEBREW_INDEX_TIMESTAMPS_URL,
   UA_BASE_URL,
   UA_INDEX_META_URL,
+  UA_INDEX_PROPS_URL,
   UA_INDEX_SOURCES_URL,
   UA_INDEX_TIMESTAMPS_URL,
 } from "@/shared/constants/api.constants";
@@ -58,11 +60,15 @@ type BrewIndexTimestamps = Record<
   string,
   { a?: number; m?: number; p?: number }
 >;
+/** prop → { brewRelativePath → prop } */
+type BrewIndexProps = Record<string, Record<string, string>>;
 
 const DDB_SET = new Set<string>(DDB_SOURCE_CODES);
 
 let catalogCache: Map<string, SourceCatalogEntry> | null = null;
 let nameMapCache: BookSourceNameMap | null = null;
+/** `${feed}:${path}` keys for brew files that contain a given prop. */
+const brewPropPathCache = new Map<string, Promise<Set<string>>>();
 
 function yearFromIso(published: string | undefined): number | undefined {
   if (!published) return undefined;
@@ -603,9 +609,75 @@ export async function getUaPathsForSources(
   return paths.map((p) => p.path);
 }
 
+function brewPropCacheKey(feed: BrewFeed, prop: string): string {
+  return `${feed}:${prop}`;
+}
+
+async function loadBrewPathsForProp(
+  feed: BrewFeed,
+  prop: string,
+): Promise<Set<string>> {
+  const cacheKey = brewPropCacheKey(feed, prop);
+  const cached = brewPropPathCache.get(cacheKey);
+  if (cached) return cached;
+
+  const pending = (async () => {
+    const url =
+      feed === "homebrew" ? HOMEBREW_INDEX_PROPS_URL : UA_INDEX_PROPS_URL;
+    const local =
+      feed === "homebrew"
+        ? "homebrew/_generated/index-props.json"
+        : "ua/_generated/index-props.json";
+    try {
+      const index = await fetchFiveToolsJson<BrewIndexProps>(url, local);
+      const paths = index[prop] ?? {};
+      return new Set(Object.keys(paths));
+    } catch {
+      return new Set<string>();
+    }
+  })();
+
+  brewPropPathCache.set(cacheKey, pending);
+  return pending;
+}
+
+/**
+ * On-demand brew / partnered source codes whose files contain any of `props`
+ * (via `_generated/index-props.json`). Prefer this over dumping every
+ * `collection/` path into a feature filter — collections often lack the entity.
+ */
+export async function collectOnDemandBrewSourceCodesForProps(
+  props: readonly string[],
+): Promise<string[]> {
+  if (props.length === 0) return [];
+
+  const catalog = await loadCatalogMap();
+  const pathKeys = new Set<string>();
+
+  await Promise.all(
+    (["ua", "homebrew"] as const).flatMap((feed) =>
+      props.map(async (prop) => {
+        const paths = await loadBrewPathsForProp(feed, prop);
+        for (const path of paths) pathKeys.add(`${feed}:${path}`);
+      }),
+    ),
+  );
+
+  const codes: string[] = [];
+  for (const [code, entry] of catalog) {
+    if (!entry.uaPath || !isOnDemandBrewSourceKind(entry.kind)) continue;
+    const feed = entry.brewFeed ?? "ua";
+    if (pathKeys.has(`${feed}:${entry.uaPath}`)) {
+      codes.push(code);
+    }
+  }
+  return codes;
+}
+
 export function clearSourceCatalogCache(): void {
   catalogCache = null;
   nameMapCache = null;
+  brewPropPathCache.clear();
 }
 
 export function clearBookSourceCache(): void {

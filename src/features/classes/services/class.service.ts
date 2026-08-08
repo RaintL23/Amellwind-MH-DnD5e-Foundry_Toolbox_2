@@ -5,10 +5,8 @@ import {
   SUBCLASS_LOOKUP_URL,
 } from "@/shared/constants/api.constants";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
-import {
-  createEntityService,
-} from "@/shared/services/create-entity-service";
-import { getSourceCatalog } from "@/shared/services/source-catalog.service";
+import { createEntityService } from "@/shared/services/create-entity-service";
+import { collectOnDemandBrewSourceCodesForProps } from "@/shared/services/source-catalog.service";
 import {
   collectUaPropEntries,
   loadUaBrewDocuments,
@@ -163,23 +161,14 @@ export const ensureClassUaSourcesLoaded = createUaSourceLoader({
 });
 
 export async function getClassFilterSourceCodes(): Promise<string[]> {
-  const [catalog, list] = await Promise.all([
-    getSourceCatalog(),
+  const [list, brewCodes] = await Promise.all([
     getListClasses(),
+    collectOnDemandBrewSourceCodesForProps(["class", "subclass"]),
   ]);
   const codes = new Set<string>(
     list.flatMap((c) => c.variantSources ?? [c.source]),
   );
-  for (const [code, entry] of catalog) {
-    if (
-      entry.uaPath &&
-      (entry.uaPath.startsWith("class/") ||
-        entry.uaPath.startsWith("subclass/") ||
-        entry.uaPath.startsWith("collection/"))
-    ) {
-      codes.add(code);
-    }
-  }
+  for (const code of brewCodes) codes.add(code);
   return [...codes];
 }
 

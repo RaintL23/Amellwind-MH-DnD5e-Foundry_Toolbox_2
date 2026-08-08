@@ -10,7 +10,7 @@ import {
   bySource,
   createEntityService,
 } from "@/shared/services/create-entity-service";
-import { getSourceCatalog } from "@/shared/services/source-catalog.service";
+import { collectOnDemandBrewSourceCodesForProps } from "@/shared/services/source-catalog.service";
 import { createUaSourceLoader } from "@/shared/services/ua-source-loader.utils";
 import {
   collectUaPropEntries,
@@ -94,23 +94,14 @@ export const ensureDndRaceUaSourcesLoaded = createUaSourceLoader({
 });
 
 export async function getDndRaceFilterSourceCodes(): Promise<string[]> {
-  const [catalog, list] = await Promise.all([
-    getSourceCatalog(),
+  const [list, brewCodes] = await Promise.all([
     getListDndRaces(),
+    collectOnDemandBrewSourceCodesForProps(["race", "subrace"]),
   ]);
   const codes = new Set(
     list.flatMap((r) => r.variantSources ?? [r.source]),
   );
-  for (const [code, entry] of catalog) {
-    if (
-      entry.uaPath &&
-      (entry.uaPath.startsWith("race/") ||
-        entry.uaPath.startsWith("subrace/") ||
-        entry.uaPath.startsWith("collection/"))
-    ) {
-      codes.add(code);
-    }
-  }
+  for (const code of brewCodes) codes.add(code);
   return [...codes];
 }
 

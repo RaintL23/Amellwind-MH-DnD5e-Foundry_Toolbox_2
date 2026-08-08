@@ -10,7 +10,7 @@ import {
   bySource,
   createEntityService,
 } from "@/shared/services/create-entity-service";
-import { getSourceCatalog } from "@/shared/services/source-catalog.service";
+import { collectOnDemandBrewSourceCodesForProps } from "@/shared/services/source-catalog.service";
 import { createUaSourceLoader } from "@/shared/services/ua-source-loader.utils";
 import {
   collectUaPropEntries,
@@ -70,22 +70,14 @@ export const ensureDndFeatUaSourcesLoaded = createUaSourceLoader({
 });
 
 export async function getDndFeatFilterSourceCodes(): Promise<string[]> {
-  const [catalog, list] = await Promise.all([
-    getSourceCatalog(),
+  const [list, brewCodes] = await Promise.all([
     getListDndFeats(),
+    collectOnDemandBrewSourceCodesForProps(["feat"]),
   ]);
   const codes = new Set(
     list.flatMap((f) => f.variantSources ?? [f.source]),
   );
-  for (const [code, entry] of catalog) {
-    if (
-      entry.uaPath &&
-      (entry.uaPath.startsWith("feat/") ||
-        entry.uaPath.startsWith("collection/"))
-    ) {
-      codes.add(code);
-    }
-  }
+  for (const code of brewCodes) codes.add(code);
   return [...codes];
 }
 

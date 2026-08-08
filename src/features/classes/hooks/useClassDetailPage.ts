@@ -2,8 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Class, ClassFeatureEntry } from "@/shared/types";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { readListSessionState } from "@/shared/utils/list-session-storage.utils";
 import { mergeProgressionWithSubclass, mergeClassTableGroups } from "../mappers/class.mapper";
-import { getAllClasses, getClassesByName } from "../services/class.service";
+import {
+  ensureClassUaSourcesLoaded,
+  getAllClasses,
+  getClassesByName,
+} from "../services/class.service";
 import {
   sortClassVariants,
 } from "../utils/class-dedupe.utils";
@@ -18,6 +23,14 @@ import {
   type ClassVariantField,
 } from "../utils/class-variant.utils";
 import { collectClassOptionalFeatureProgressions } from "../utils/class-optional-feature-browse.utils";
+
+function classListSourceFilterFromSession(): string[] {
+  const raw = readListSessionState("classes");
+  const src = raw?.src;
+  return Array.isArray(src)
+    ? src.filter((item): item is string => typeof item === "string")
+    : [];
+}
 
 export function useClassDetailPage(classId: string) {
   const navigate = useNavigate();
@@ -57,23 +70,27 @@ export function useClassDetailPage(classId: string) {
     setLoading(true);
     setNotFound(false);
 
-    Promise.all([getAllClasses()])
-      .then(([classes]) => {
-        const found = classes.find((c) => c.id === classId);
-        if (cancelled) return;
-        if (!found) {
-          setNotFound(true);
-          setCls(null);
-          setResolvedVariants([]);
-          return;
-        }
-        setCls(found);
-        setActiveId(found.id);
-        setActiveSubclassId("");
-      })
-      .finally(() => {
-        if (!cancelled) setLoading(false);
-      });
+    const sourceFilter = classListSourceFilterFromSession();
+
+    void (async () => {
+      if (sourceFilter.length > 0) {
+        await ensureClassUaSourcesLoaded(sourceFilter);
+      }
+      const classes = await getAllClasses();
+      if (cancelled) return;
+      const found = classes.find((c) => c.id === classId);
+      if (!found) {
+        setNotFound(true);
+        setCls(null);
+        setResolvedVariants([]);
+        return;
+      }
+      setCls(found);
+      setActiveId(found.id);
+      setActiveSubclassId("");
+    })().finally(() => {
+      if (!cancelled) setLoading(false);
+    });
 
     return () => {
       cancelled = true;
