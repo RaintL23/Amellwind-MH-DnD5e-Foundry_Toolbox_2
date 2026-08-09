@@ -7,20 +7,35 @@ export interface ShopThemeDefinition {
   shopNameTemplates: string[];
   shopkeeperTitles: string[];
   flavorLines: string[];
-  /** Preferred typeLabel substrings (case-insensitive). */
-  preferredTypes: string[];
-  /** Keywords matched against name + searchText. */
+  /**
+   * Hard allowlist: typeLabel must match at least one entry
+   * (case-insensitive substring). Empty = no type gate.
+   */
+  allowedTypes: string[];
+  /**
+   * Hard denylist applied after the allowlist. Use when a broad allow
+   * (e.g. "Weapon") would still pull unwanted subtypes.
+   */
+  excludedTypes: string[];
+  /**
+   * Types that are only kept when the item also matches a theme keyword.
+   * Keeps broad buckets like "Wondrous Item" from flooding every specialty shop.
+   */
+  keywordGatedTypes: string[];
+  /** Keywords matched against name + searchText + attunement + typeLabel. */
   keywords: string[];
   /** Bias toward magic items when true; mundane when false; null = balanced. */
   preferMagic: boolean | null;
-  weightBoost: number;
+  /** Extra weight when a keyword matches (ranking within the themed pool). */
+  keywordWeightBoost: number;
 }
 
 export const SHOP_THEMES: ShopThemeDefinition[] = [
   {
     id: "general",
     label: "General Store",
-    description: "A mixed stock of gear, tools, and the odd curiosity.",
+    description:
+      "Stock: adventuring gear, tools, trade goods, and rations — not armory or arcana.",
     shopNameTemplates: [
       "The Wayside Emporium",
       "{name}'s General Goods",
@@ -33,15 +48,36 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Happy to haggle if the coin is honest.",
       "Knows every caravan route within a week's travel.",
     ],
-    preferredTypes: ["Adventuring Gear", "Tool", "Goods", "Food"],
-    keywords: ["kit", "pack", "rope", "lantern", "rations", "tool"],
-    preferMagic: null,
-    weightBoost: 2.5,
+    allowedTypes: [
+      "Adventuring Gear",
+      "Tool",
+      "Goods",
+      "Food",
+      "Trade Good",
+    ],
+    excludedTypes: [
+      "Weapon",
+      "Armor",
+      "Shield",
+      "Ammunition",
+      "Wand",
+      "Staff",
+      "Rod",
+      "Scroll",
+      "Ring",
+      "Potion",
+      "Poison",
+    ],
+    keywordGatedTypes: [],
+    keywords: ["kit", "pack", "rope", "lantern", "rations", "tool", "torch"],
+    preferMagic: false,
+    keywordWeightBoost: 1.8,
   },
   {
     id: "blacksmith",
     label: "Blacksmith",
-    description: "Weapons, armor, and forged goods.",
+    description:
+      "Stock: weapons, armor, shields, and ammunition — forged steel, mundane or enchanted.",
     shopNameTemplates: [
       "The Anvil & Flame",
       "{name}'s Forge",
@@ -54,21 +90,26 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Insists every blade leave the shop with a proper edge.",
       "Speaks of steel the way others speak of old friends.",
     ],
-    preferredTypes: [
-      "Weapon",
-      "Armor",
-      "Shield",
-      "Melee Weapon",
-      "Ranged Weapon",
+    allowedTypes: ["Weapon", "Armor", "Shield", "Ammunition"],
+    excludedTypes: [
+      "Potion",
+      "Poison",
+      "Scroll",
+      "Wand",
+      "Rod",
+      "Ring",
+      "Wondrous Item",
     ],
+    keywordGatedTypes: [],
     keywords: ["sword", "axe", "armor", "shield", "hammer", "blade", "mail"],
     preferMagic: null,
-    weightBoost: 3.5,
+    keywordWeightBoost: 1.6,
   },
   {
     id: "alchemist",
     label: "Alchemist",
-    description: "Potions, poisons, and alchemical supplies.",
+    description:
+      "Stock: potions, elixirs, oils, and poisons — no weapons, armor, or random curios.",
     shopNameTemplates: [
       "The Bubbling Flask",
       "{name}'s Apothecary",
@@ -81,7 +122,20 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Labels everything twice — once for safety, once for comedy.",
       "Will not sell anything that is still smoking.",
     ],
-    preferredTypes: ["Potion", "Poison", "Wondrous Item"],
+    allowedTypes: ["Potion", "Poison"],
+    excludedTypes: [
+      "Weapon",
+      "Armor",
+      "Shield",
+      "Ammunition",
+      "Wand",
+      "Staff",
+      "Rod",
+      "Ring",
+      "Scroll",
+      "Wondrous Item",
+    ],
+    keywordGatedTypes: [],
     keywords: [
       "potion",
       "elixir",
@@ -90,14 +144,16 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "alchem",
       "philter",
       "antidote",
+      "draught",
     ],
-    preferMagic: true,
-    weightBoost: 3.5,
+    preferMagic: null,
+    keywordWeightBoost: 1.7,
   },
   {
     id: "arcane",
     label: "Arcane Emporium",
-    description: "Scrolls, wands, foci, and wizardly curios.",
+    description:
+      "Stock: scrolls, wands, staves, rods, rings, and wizardly wondrous items — not the armory.",
     shopNameTemplates: [
       "The Gilded Grimoire",
       "{name}'s Arcana",
@@ -110,7 +166,7 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Warns customers not to open anything that hums.",
       "Trades rumors as readily as spell components.",
     ],
-    preferredTypes: [
+    allowedTypes: [
       "Scroll",
       "Wand",
       "Staff",
@@ -118,23 +174,43 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Ring",
       "Wondrous Item",
     ],
+    excludedTypes: [
+      "Weapon",
+      "Armor",
+      "Shield",
+      "Ammunition",
+      "Potion",
+      "Poison",
+    ],
+    // Full wondrous catalog is in-theme; weapons with spell text are typed Weapon.
+    keywordGatedTypes: [],
     keywords: [
       "scroll",
       "wand",
       "staff",
       "robe",
-      "spell",
       "arcane",
       "focus",
       "crystal",
+      "orb",
+      "grimoire",
+      "spellbook",
+      "component",
+      "amulet",
+      "tome",
+      "ioun",
+      "cloak",
+      "boots",
+      "bracers",
     ],
     preferMagic: true,
-    weightBoost: 3.5,
+    keywordWeightBoost: 1.9,
   },
   {
     id: "temple",
     label: "Temple Reliquary",
-    description: "Holy symbols, blessed gear, and restorative items.",
+    description:
+      "Stock: holy symbols, potions, scrolls, and blessed wondrous relics.",
     shopNameTemplates: [
       "The Open Hand Reliquary",
       "Sanctum Supplies",
@@ -147,24 +223,48 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Gives a quiet blessing with every purchase.",
       "Keeps the rarest relics behind a curtained alcove.",
     ],
-    preferredTypes: ["Potion", "Wondrous Item", "Holy Symbol", "Scroll"],
+    allowedTypes: ["Potion", "Holy Symbol", "Scroll", "Wondrous Item"],
+    excludedTypes: [
+      "Weapon",
+      "Armor",
+      "Shield",
+      "Ammunition",
+      "Wand",
+      "Rod",
+      "Poison",
+    ],
+    keywordGatedTypes: ["Wondrous Item"],
     keywords: [
       "holy",
       "bless",
       "heal",
+      "healing",
       "cleric",
       "paladin",
       "symbol",
       "amulet",
       "prayer",
+      "divine",
+      "radiant",
+      "undead",
+      "restoration",
+      "cure",
+      "life",
+      "spirit",
+      "sacred",
+      "temple",
+      "monastery",
+      "pearl of",
+      "necklace of prayer",
     ],
     preferMagic: true,
-    weightBoost: 3,
+    keywordWeightBoost: 1.8,
   },
   {
     id: "adventuring",
     label: "Adventuring Outfitter",
-    description: "Travel gear, tools, and practical equipment.",
+    description:
+      "Stock: travel kits, tools, mundane weapons/armor, mounts, and vehicles.",
     shopNameTemplates: [
       "Ready Pack Outfitters",
       "The Trailworn Rack",
@@ -177,14 +277,28 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Can pack a dungeon kit faster than most people pack lunch.",
       "Charges extra for anything that has already seen a dragon.",
     ],
-    preferredTypes: [
+    allowedTypes: [
       "Adventuring Gear",
       "Tool",
       "Weapon",
       "Armor",
+      "Shield",
+      "Ammunition",
       "Mount",
       "Vehicle",
+      "Food",
     ],
+    excludedTypes: [
+      "Wand",
+      "Staff",
+      "Rod",
+      "Scroll",
+      "Ring",
+      "Wondrous Item",
+      "Potion",
+      "Poison",
+    ],
+    keywordGatedTypes: [],
     keywords: [
       "pack",
       "kit",
@@ -194,14 +308,17 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "climbing",
       "camping",
       "tool",
+      "tent",
+      "waterskin",
     ],
     preferMagic: false,
-    weightBoost: 3,
+    keywordWeightBoost: 1.7,
   },
   {
     id: "black-market",
     label: "Black Market",
-    description: "Risky magic, poisons, and goods best bought quietly.",
+    description:
+      "Stock: poisons, illicit magic, quiet weapons, and goods best bought after dark.",
     shopNameTemplates: [
       "The Back-Alley Vault",
       "No Questions Asked",
@@ -214,27 +331,83 @@ export const SHOP_THEMES: ShopThemeDefinition[] = [
       "Prices climb with how badly you need the goods.",
       "Remembers faces better than names.",
     ],
-    preferredTypes: [
+    allowedTypes: [
       "Poison",
       "Wondrous Item",
       "Weapon",
       "Ring",
       "Scroll",
+      "Potion",
     ],
+    excludedTypes: ["Holy Symbol", "Mount", "Vehicle", "Food", "Trade Good"],
+    // Weapons/poisons/scrolls/rings are in-theme; wondrous curios need a shady slant.
+    keywordGatedTypes: ["Wondrous Item"],
     keywords: [
       "poison",
       "assassin",
       "invisibility",
       "cursed",
-      "stolen",
       "shadow",
       "venom",
+      "stealth",
+      "silent",
+      "dust of",
+      "death",
+      "necro",
+      "theft",
+      "thieves",
+      "dagger",
+      "disguise",
+      "forgery",
+      "charm",
+      "fear",
+      "nightmare",
+      "slippery",
+      "portable hole",
+      "bag of",
     ],
     preferMagic: true,
-    weightBoost: 3,
+    keywordWeightBoost: 2,
   },
 ];
 
 export function getShopTheme(id: ShopThemeId): ShopThemeDefinition {
   return SHOP_THEMES.find((t) => t.id === id) ?? SHOP_THEMES[0];
+}
+
+export function matchesTypePreference(
+  typeLabel: string,
+  preferred: string[],
+): boolean {
+  if (preferred.length === 0) return false;
+  const lower = typeLabel.toLowerCase();
+  return preferred.some((p) => lower.includes(p.toLowerCase()));
+}
+
+/** Hard theme eligibility (allowlist / denylist / keyword gates). */
+export function itemMatchesShopTheme(
+  typeLabel: string,
+  textBlob: string,
+  theme: ShopThemeDefinition,
+): boolean {
+  if (matchesTypePreference(typeLabel, theme.excludedTypes)) {
+    return false;
+  }
+
+  if (
+    theme.allowedTypes.length > 0 &&
+    !matchesTypePreference(typeLabel, theme.allowedTypes)
+  ) {
+    return false;
+  }
+
+  if (matchesTypePreference(typeLabel, theme.keywordGatedTypes)) {
+    const blob = textBlob.toLowerCase();
+    const hasKeyword = theme.keywords.some((k) =>
+      blob.includes(k.toLowerCase()),
+    );
+    if (!hasKeyword) return false;
+  }
+
+  return true;
 }

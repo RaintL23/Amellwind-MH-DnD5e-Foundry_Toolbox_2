@@ -66,6 +66,8 @@ function parseConfig(raw: unknown): ShopConfig {
         ? c.attunementFilter
         : "",
     classAffinities: parseStringArray(c.classAffinities),
+    intendedUses: parseStringArray(c.intendedUses),
+    abilityAffinities: parseStringArray(c.abilityAffinities),
   };
 }
 
@@ -98,6 +100,15 @@ function parseStockEntry(raw: unknown): ShopStockEntry | null {
         : "estimated",
     priceOverrideGp:
       typeof e.priceOverrideGp === "number" ? e.priceOverrideGp : null,
+    spellId: typeof e.spellId === "string" ? e.spellId : undefined,
+    spellName: typeof e.spellName === "string" ? e.spellName : undefined,
+    spellLevel:
+      typeof e.spellLevel === "number" &&
+      Number.isFinite(e.spellLevel) &&
+      e.spellLevel >= 0 &&
+      e.spellLevel <= 9
+        ? Math.round(e.spellLevel)
+        : undefined,
   };
 }
 

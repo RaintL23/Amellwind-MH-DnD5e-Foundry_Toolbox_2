@@ -268,7 +268,7 @@ export function ShopResultPanel() {
                         size="icon"
                         className="h-8 w-8"
                         title="Replace item"
-                        onClick={() => replaceEntry(entry.rowId)}
+                        onClick={() => void replaceEntry(entry.rowId)}
                       >
                         <Replace className="h-4 w-4" />
                       </Button>

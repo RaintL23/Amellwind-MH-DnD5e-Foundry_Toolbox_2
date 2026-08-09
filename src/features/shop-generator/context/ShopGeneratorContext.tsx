@@ -55,7 +55,7 @@ interface ShopGeneratorContextValue {
   rerollShopkeeper: () => Promise<void>;
   editStockPrice: (rowId: string, priceGp: number | null) => void;
   removeStockEntry: (rowId: string) => void;
-  replaceEntry: (rowId: string) => void;
+  replaceEntry: (rowId: string) => Promise<void>;
   getDisplayPriceGp: (rowId: string) => number;
   getStockTotalGp: () => number;
   exportJson: () => void;
@@ -205,13 +205,13 @@ export function ShopGeneratorProvider({
   }, []);
 
   const replaceEntry = useCallback(
-    (rowId: string) => {
+    async (rowId: string) => {
       if (!shop) return;
       const sources =
         config.sources.length > 0
           ? config.sources
           : [...DEFAULT_DND_ITEM_SOURCES];
-      const next = replaceStockEntry(
+      const next = await replaceStockEntry(
         items,
         {
           ...config,

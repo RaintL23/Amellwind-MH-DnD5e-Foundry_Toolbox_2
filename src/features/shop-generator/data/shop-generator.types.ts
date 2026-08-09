@@ -23,6 +23,10 @@ export interface ShopConfig {
   magicFilter: "" | "mundane" | "magic";
   attunementFilter: "" | "yes" | "no";
   classAffinities: string[];
+  /** Soft roles: offensive, defensive, support, utility, control, mobility. */
+  intendedUses: string[];
+  /** Soft ability focus: strength … charisma. */
+  abilityAffinities: string[];
 }
 
 export interface Shopkeeper {
@@ -45,6 +49,11 @@ export interface ShopStockEntry {
   priceSource: PriceSourceKind;
   /** Manual override in gp after markup; when set, markup changes ignore this row. */
   priceOverrideGp: number | null;
+  /** Bound spell when this row is a specialized Spell Scroll. */
+  spellId?: string;
+  spellName?: string;
+  /** 0 = cantrip … 9 = 9th level. */
+  spellLevel?: number;
 }
 
 export interface GeneratedShop {
@@ -78,4 +87,6 @@ export const DEFAULT_SHOP_CONFIG: ShopConfig = {
   magicFilter: "",
   attunementFilter: "",
   classAffinities: [],
+  intendedUses: [],
+  abilityAffinities: [],
 };

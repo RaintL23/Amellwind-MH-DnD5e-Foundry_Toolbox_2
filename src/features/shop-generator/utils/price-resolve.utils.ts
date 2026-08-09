@@ -9,6 +9,7 @@ import {
 import { MAGIC_ITEM_PRICING_ATTRIBUTION } from "../data/magic-item-pricing-attribution";
 import { estimatePriceByRarity } from "../data/rarity-price-estimates.data";
 import type { PriceSourceKind } from "../data/shop-generator.types";
+import { spellScrollPricingAliasKeys } from "./spell-scroll.utils";
 
 export interface ResolvedItemPrice {
   basePriceGp: number;
@@ -85,7 +86,12 @@ interface CsvLookupHit {
 
 function lookupCsvEntry(name: string): CsvLookupHit | null {
   const normalized = normalizeMagicItemPricingName(name);
-  for (const key of magicItemPricingNameAliases(normalized)) {
+  const keys = [
+    ...magicItemPricingNameAliases(normalized),
+    ...spellScrollPricingAliasKeys(normalized),
+    ...spellScrollPricingAliasKeys(name),
+  ];
+  for (const key of keys) {
     const value = MAGIC_ITEM_PRICING_BY_NAME[key];
     if (typeof value === "number") {
       return {
