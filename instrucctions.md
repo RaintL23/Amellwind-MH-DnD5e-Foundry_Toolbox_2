@@ -1634,7 +1634,7 @@ Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar. 
 | Classes        | `/classes`         | `class/index.json` + UA/partnered  | Detalle en `/classes/:classId`; Filter dialog (caster/sources) |
 | Races          | `/dnd-races`       | `race`/`subrace` + UA/partnered    | Dedupe por nombre; Filter dialog (kind/size/sources) |
 | Backgrounds    | `/dnd-backgrounds` | `background` 5etools            | Dedupe por nombre; Filter dialog (edition/sources) |
-| Feats          | `/dnd-feats`       | `feat` + UA/partnered              | Dedupe por nombre; Filter dialog (tipo/sources) |
+| Feats          | `/dnd-feats`       | `feat` + UA/partnered              | Dedupe por nombre; Filter dialog (kind/category/ability/prerequisite/repeatable/sources); prerequisite + ASI badges |
 | D&D Items      | `/dnd-items`       | items.json + variants           | Precarga PHB/DMG; resto al seleccionar Sources; Filter dialog; armas/armaduras enriquecidas: Properties con templates 5etools, Mastery, Range/Ammo/AC/Stealth/Str, y textos de reglas (tipo + propiedades + mastery + type-additional) en la descripción |
 | Bestiary       | `/bestiary`        | `BESTIARY_BASE_URL`             | Precarga MM/VGM/MPMM/XMM; resto al seleccionar Sources |
 | Shop Generator | `/shop-generator`  | catálogo `dnd-items` + CSV precios | Tema/tier/filtros → stock procedural; precios CSV (alias +N) → generic+base → catalog → estimado; markup cheap/normal/expensive; localStorage `mh-shop-generator` |
@@ -1658,6 +1658,14 @@ Generador de trasfondo de personaje basado en las tablas aleatorias de _Xanathar
 **Ruta**: `/shop-generator`
 
 Generador de tiendas del compendio 5e (no confundir con `/shops` Amellwind). Usa el catálogo `dnd-items`, temas/tiers, filtros (types, rarities, sources, class affinities) y precios desde `scripts/data/magic-item-pricing.csv` (unión **DMG 2024 + XGTE + TCoE** de la hoja *Magic Item Pricing* de Dump Stat Adventures / VaranSL; regenerar con `pnpm pricing:build` → `magic-item-pricing.data.ts` + meta Note/Source Sheet).
+
+**Setup dialog** (`ShopSetupDialog`): un solo diálogo concentra item count, tier, theme, magic/attunement, sources y afinidades. Esos valores son **lineamientos de generación** (pool + bias al sortear), no filtros post-roll. Fuera queda resumen/pills + Generate.
+
+**Temas = gate duro de catálogo** (`shop-themes.data.ts` → `itemMatchesShopTheme` en `filterShopPool`): cada tema define `allowedTypes` / `excludedTypes` (y opcionalmente `keywordGatedTypes` para buckets amplios como *Wondrous Item*). Ej.: Alchemist solo Potion/Poison; Arcane Emporium scrolls/wands/staves/rods/rings/wondrous (sin armas/armaduras aunque digan “spell” en el texto); Blacksmith armas/armaduras/munición; General Store gear/tools/goods. Keywords y `preferMagic` solo reordenan dentro del pool ya filtrado.
+
+**Filtros de catálogo** (dentro del setup): types/rarities = hard filter del pool; **class affinity** + **intended use** (Offensive/Defensive/Support/Utility/Control/Mobility) + **ability focus** (STR–CHA) = soft bias (`class-affinity.data.ts` + `item-affinity.utils.ts`). Clases enriquecidas con signature gear popular (Saga20 / community wishlists) y `reqAttune` del catálogo 5etools.
+
+**Spell Scrolls**: las plantillas genéricas del catálogo (`Spell Scroll (3rd Level)`, etc.) se materializan al generar/reemplazar stock con hechizos concretos (`Spell Scroll (Fireball)`), distintos por nivel, tomados del catálogo de conjuros filtrado por las same sources de la tienda (`spell-scroll.utils.ts`). En temas arcane/temple/black-market los scrolls tienen boost de peso y pueden repetir la plantilla hasta agotar hechizos de ese nivel. El `itemId` sigue apuntando a la plantilla (detalle + precio CSV del nivel); `spellId`/`spellName`/`spellLevel` viajan en el stock exportable.
 
 Cadena de precio (`resolveItemPriceGp`): CSV exacto (con alias `+N Name` ↔ `Name, +N`) → genéricos `Armor/Weapon/Ammunition +N` **más** coste mundano `baseValueCp` de la variante específica → `valueCp` del catálogo → estimación por rareza. La columna **Price** del listado y el diálogo de ítems usan esa cadena (tooltip de breakdown + atribución); el badge Basis del shop hace lo mismo. El diálogo sigue mostrando también el **Value** crudo de 5etools cuando existe.
 
