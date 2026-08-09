@@ -56,7 +56,116 @@
       "recovery": []
     }
   },
-  "effects": [],
+  "effects": [
+    {
+      "_id": "wEgQSUfiQYcBvErh",
+      "name": "Rajang Claw - Critical Eye",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.critical.range",
+          "mode": 2,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Weapon attack critical hit range increased by 1.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "9zHfLPq6WGXOa2sl",
+      "name": "Rajang Claw - Prone Save Advantage",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "[isSave]ItemMacro.Rajang Claw Rune (Trinket)",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Advantage on saving throws against being knocked prone.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
   "folder": null,
   "sort": 700000,
   "ownership": {
@@ -68,6 +177,38 @@
       "runeName": "Rajang Claw",
       "slotContext": "Trinket",
       "monsterName": "Adolescent Rajang"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Rajang Claw Rune (Trinket)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Rajang Claw - advantage on saves vs being knocked prone (MidiQOL isSave)\n// Transfer AE registers: flags.midi-qol.onUseMacroName = [isSave]ItemMacro.<this item>\n\nconst macroPass = String(args?.[0]?.macroPass ?? \"\").toLowerCase();\nif (macroPass && !macroPass.includes(\"issave\")) return;\n\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\nconst wf = workflow ?? args?.[0]?.workflow;\nif (!actorDoc || !wf) return;\n\nconst looksProne = (obj) => {\n  if (!obj) return false;\n  const dump = JSON.stringify(obj).toLowerCase();\n  return dump.includes('\"prone\"') || dump.includes(\"[prone]\") || /\\bprone\\b/.test(dump);\n};\n\nlet appliesProne = false;\ntry {\n  const activity = wf.activity;\n  const effects = activity?.effects ?? [];\n  for (const ref of effects) {\n    const eid = ref?._id ?? ref;\n    const ef = wf.item?.effects?.get?.(eid)\n      ?? wf.item?.effects?.find?.((e) => e.id === eid || e._id === eid);\n    const statuses = ef?.statuses;\n    const hasProne = statuses?.has?.(\"prone\")\n      || [...(statuses ?? [])].includes(\"prone\")\n      || looksProne(ef);\n    if (ef && hasProne) {\n      appliesProne = true;\n      break;\n    }\n  }\n  if (!appliesProne && looksProne(activity)) appliesProne = true;\n  if (!appliesProne && looksProne(wf.item?.system)) appliesProne = true;\n  const desc = String(wf.item?.system?.description?.value ?? \"\").toLowerCase();\n  if (!appliesProne && desc.includes(\"prone\") && (desc.includes(\"knock\") || desc.includes(\"save\"))) {\n    appliesProne = true;\n  }\n} catch (err) {\n  console.warn(\"Rajang Claw prone check failed\", err);\n}\n\nif (!appliesProne) return;\n\nfoundry.utils.setProperty(args[0], \"advantage\", true);\nif (wf) wf.advantage = true;\nawait actorDoc.setFlag(\"midi-qol\", \"advantage.ability.save.all\", true);\nHooks.once(\"midi-qol.RollComplete\", async () => {\n  try { await actorDoc.unsetFlag(\"midi-qol\", \"advantage.ability.save.all\"); } catch (_) {}\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "midi-qol": {
+      "onUseMacroName": "[isSave]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "isSave"
+          }
+        ]
+      }
     }
   },
   "_stats": {

@@ -56,7 +56,62 @@
       "recovery": []
     }
   },
-  "effects": [],
+  "effects": [
+    {
+      "_id": "z3ztqtTgde2FtPXR",
+      "name": "Duram Carapace - Partbreaker",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "[DamageBonus]ItemMacro.Duram Carapace Rune (Trinket)",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Extra 1d4 damage on a critical hit with a weapon.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
   "folder": null,
   "sort": 7100000,
   "ownership": {
@@ -68,6 +123,38 @@
       "runeName": "Duram Carapace",
       "slotContext": "Trinket",
       "monsterName": "Duramboros"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Duram Carapace Rune (Trinket)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Duram Carapace - Partbreaker (MidiQOL DamageBonus)\n// Extra 1d4 damage on a critical hit with a weapon attack.\n\nconst macroPass = String(args?.[0]?.macroPass ?? \"\").toLowerCase();\nif (macroPass && !macroPass.includes(\"damagebonus\")) return {};\n\nconst wf = workflow ?? args?.[0]?.workflow;\nif (!wf) return {};\n\nconst actType = String(wf.activity?.type ?? \"\").toLowerCase();\nconst isAttack = actType === \"attack\" || wf.item?.type === \"weapon\";\nif (!isAttack) return {};\n\nconst isCrit = Boolean(wf.isCritical ?? args?.[0]?.isCritical);\nif (!isCrit) return {};\n\nreturn {\n  damageRoll: \"1d4\",\n  flavor: \"Partbreaker\",\n};\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "midi-qol": {
+      "onUseMacroName": "[DamageBonus]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "DamageBonus"
+          }
+        ]
+      }
     }
   },
   "_stats": {

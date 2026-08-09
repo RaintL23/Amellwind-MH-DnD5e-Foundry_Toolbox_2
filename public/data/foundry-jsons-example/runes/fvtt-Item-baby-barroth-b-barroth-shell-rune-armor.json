@@ -56,7 +56,68 @@
       "recovery": []
     }
   },
-  "effects": [],
+  "effects": [
+    {
+      "_id": "fpypPFtOk5B3ij2K",
+      "name": "B.Barroth Shell - Bludgeoning Reduction",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.traits.dm.amount.bludgeoning",
+          "mode": 2,
+          "value": "-2",
+          "priority": 20
+        },
+        {
+          "key": "system.traits.dm.midi.bludgeoning",
+          "mode": 2,
+          "value": "-2",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Reduce bludgeoning damage taken by 2.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
   "folder": null,
   "sort": 500000,
   "ownership": {

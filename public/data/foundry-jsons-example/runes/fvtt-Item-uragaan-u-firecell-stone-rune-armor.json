@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "",
+    "attunement": "required",
     "equipped": false,
     "rarity": "uncommon",
     "identified": true,
@@ -44,62 +44,69 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "W3FycE23qqITgVUD": {
-        "_id": "W3FycE23qqITgVUD",
+      "fgAJ0mjkf1PHhtKu": {
+        "_id": "fgAJ0mjkf1PHhtKu",
         "type": "utility",
         "sort": 0,
-        "name": "U.Firecell Stone Rune (Armor)",
+        "name": "Shield Rune Bonus",
+        "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "action",
-          "value": 1,
+          "type": "special",
+          "value": null,
+          "condition": "When you use a reaction that would increase your AC (does not consume your reaction)",
           "override": false
         },
         "consumption": {
           "scaling": {
-            "allowed": false
+            "allowed": false,
+            "max": ""
           },
           "spellSlot": false,
           "targets": []
         },
         "description": {
-          "chatFlavor": ""
+          "chatFlavor": "Gain an additional +1 AC until the start of your next turn."
         },
         "duration": {
+          "value": "",
           "units": "inst",
           "concentration": false,
           "override": false
         },
-        "effects": [],
+        "effects": [
+          {
+            "_id": "CmWIz9DBpKI48rrm"
+          }
+        ],
         "range": {
+          "value": null,
           "units": "self",
+          "special": "",
           "override": false
         },
         "target": {
           "template": {
+            "count": "",
             "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
             "units": "ft"
           },
           "affects": {
-            "choice": false
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
           },
-          "override": false,
-          "prompt": false
+          "prompt": false,
+          "override": false
         },
         "uses": {
           "spent": 0,
-          "max": "1",
-          "recovery": [
-            {
-              "period": "lr",
-              "type": "recoverAll"
-            }
-          ]
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
+          "max": "",
+          "recovery": []
         },
         "midiProperties": {
           "ignoreTraits": [],
@@ -116,8 +123,8 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "ufirecellstonerunearmor",
-          "displayActivityName": false,
+          "identifier": "shield-rune-bonus",
+          "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
           "toggleEffect": false,
@@ -127,7 +134,16 @@
           "magicDamage": false,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
-        }
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
       }
     },
     "container": null,
@@ -142,7 +158,64 @@
       "recovery": []
     }
   },
-  "effects": [],
+  "effects": [
+    {
+      "_id": "CmWIz9DBpKI48rrm",
+      "name": "U.Firecell Stone - Shield (+1 AC)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.attributes.ac.bonus",
+          "mode": 2,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "+1 AC until the start of your next turn.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "turnStart"
+          ],
+          "disableIncapacitated": false,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
   "folder": null,
   "sort": 7000000,
   "ownership": {
@@ -154,6 +227,38 @@
       "runeName": "U.Firecell Stone",
       "slotContext": "Armor",
       "monsterName": "Uragaan"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "U.Firecell Stone Rune (Armor)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// U.Firecell Stone - Shield (+1 AC when you use an AC-boosting reaction)\n// Activity \"Shield Rune Bonus\" (reaction) applies the AE; this confirms in chat.\n\nconst macroPass = String(args?.[0]?.macroPass ?? workflow?.macroPass ?? \"\").toLowerCase();\nif (macroPass && !macroPass.includes(\"postactiveeffects\") && macroPass !== \"\") return;\n\nconst actorDoc = actor ?? workflow?.actor ?? item?.actor;\nif (!actorDoc) return;\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>Shield</strong> (U.Firecell Stone): +1 AC until the start of your next turn.</p></div>`,\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "midi-qol": {
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
     }
   },
   "_stats": {
