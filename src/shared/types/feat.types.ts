@@ -1,6 +1,23 @@
+import type { AbilityKey } from "./actor.types";
+
+/** Prerequisite facets used for list filtering / badges. */
+export type FeatPrerequisiteKind =
+  | "level"
+  | "ability"
+  | "race"
+  | "feat"
+  | "feature"
+  | "proficiency"
+  | "spellcasting"
+  | "campaign"
+  | "background"
+  | "other";
+
 export interface FeatAbilityIncrease {
   /** e.g. "STR +1" or "INT or WIS +1 (choose)" */
   label: string;
+  /** Ability scores this increase can apply to. */
+  abilities: AbilityKey[];
 }
 
 export interface Feat {
@@ -9,6 +26,10 @@ export interface Feat {
   source: string;
   page?: number;
   prerequisites: string[];
+  /** Distinct prerequisite kinds present on this feat (for filters). */
+  prerequisiteKinds: FeatPrerequisiteKind[];
+  /** Numeric character level prerequisites (e.g. 4 for "Level 4+"). */
+  prerequisiteLevels: number[];
   abilityIncreases: FeatAbilityIncrease[];
   paragraphs: string[];
   /** Subsecciones con título (p. ej. opciones de shells, notas del creador) */
