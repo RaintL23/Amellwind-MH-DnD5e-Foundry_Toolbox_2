@@ -18,18 +18,6 @@ import {
   parseMulticlassSubclassSlotIndex,
 } from "@/features/builder/utils/multiclass.utils";
 import { BuilderPanel } from "../../shared/BuilderPanel";
-import {
-  IdentitySourceBadgeGroup,
-  type IdentityDataSource,
-} from "../../shared/IdentitySourceBadgeGroup";
-import {
-  FeatSourceBadgeGroup,
-  type FeatDataSource,
-} from "../../shared/FeatSourceBadgeGroup";
-import {
-  WeaponCatalogBadgeGroup,
-  type WeaponLibraryCatalog,
-} from "../../shared/WeaponCatalogBadgeGroup";
 import { ScrollableWhenNeeded } from "../../shared/ScrollableWhenNeeded";
 import {
   ListSearchWithFilters,
@@ -63,7 +51,15 @@ import {
   EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION,
   FEAT_LIBRARY_FILTER_SECTIONS,
   WEAPON_LIBRARY_FILTER_SECTIONS,
+  buildFeatCatalogFilterSection,
+  buildIdentityCatalogFilterSection,
   buildLibrarySourceFilterSections,
+  buildWeaponCatalogFilterSection,
+  parseFeatDataSource,
+  parseIdentityDataSource,
+  parseWeaponLibraryCatalog,
+  type FeatDataSource,
+  type IdentityDataSource,
 } from "@/features/builder/utils/builder-library-filters";
 
 interface BuilderLibraryPanelProps {
@@ -72,16 +68,10 @@ interface BuilderLibraryPanelProps {
 
 export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) {
   const { search, setSearch, q } = useLibrarySearch(selectedSlot);
-  const [identitySourceOverride, setIdentitySourceOverride] =
-    useState<IdentityDataSource | null>(null);
-  const [featSource, setFeatSource] = useState<FeatDataSource>("amellwind");
-  const [weaponLibraryCatalog, setWeaponLibraryCatalog] =
-    useState<WeaponLibraryCatalog>("forge");
   const [showAsiPanel, setShowAsiPanel] = useState(false);
   const [featSearchHidden, setFeatSearchHidden] = useState(false);
-  const [filterValues, setFilterValues] = useState<ListFilterValues>(() =>
-    buildDefaultFilterValues([EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION]),
-  );
+  const [filterValues, setFilterValues] = useState<ListFilterValues>({});
+  const [filterResetKey, setFilterResetKey] = useState("");
 
   const bookNames = useBookSourceNames();
   const catalog = useSourceCatalog();
@@ -132,28 +122,26 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     ? toRpgbotClassSlug(classSelection.name)
     : null;
 
-  useEffect(() => {
-    setIdentitySourceOverride(null);
-  }, [selectedSlot, classSelection?.name]);
-
-  const identitySource = useMemo((): IdentityDataSource => {
+  const defaultIdentityCatalog = useMemo((): IdentityDataSource => {
     if (!useAmellwindHomebrew) return "dnd";
-    if (identitySourceOverride) return identitySourceOverride;
     const isIdentitySlot =
       selectedSlot === "species" || selectedSlot === "background";
     if (isIdentitySlot && rpgbotClassSlug) return "dnd";
     return "amellwind";
-  }, [
-    useAmellwindHomebrew,
-    identitySourceOverride,
-    selectedSlot,
-    rpgbotClassSlug,
-  ]);
+  }, [useAmellwindHomebrew, selectedSlot, rpgbotClassSlug]);
+
+  const defaultFeatCatalog = useMemo((): FeatDataSource => {
+    if (!useAmellwindHomebrew || isAnyOriginFeatSlotSelected) return "dnd2024";
+    return "amellwind";
+  }, [useAmellwindHomebrew, isAnyOriginFeatSlotSelected]);
 
   const filterSections = useMemo((): ListFilterSectionConfig[] => {
     if (isWeaponSlot) {
       return useAmellwindHomebrew
-        ? WEAPON_LIBRARY_FILTER_SECTIONS
+        ? [
+            buildWeaponCatalogFilterSection("forge"),
+            ...WEAPON_LIBRARY_FILTER_SECTIONS,
+          ]
         : [
             EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION,
             ...WEAPON_LIBRARY_FILTER_SECTIONS,
@@ -167,68 +155,83 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
             ...ARMOR_LIBRARY_FILTER_SECTIONS,
           ];
     }
-    if (isFeatPicker) return FEAT_LIBRARY_FILTER_SECTIONS;
+    if (isFeatPicker) {
+      if (isAnyOriginFeatSlotSelected) return FEAT_LIBRARY_FILTER_SECTIONS;
+      return [
+        buildFeatCatalogFilterSection({
+          includeAmellwind: useAmellwindHomebrew,
+          defaultValue: defaultFeatCatalog,
+        }),
+        ...FEAT_LIBRARY_FILTER_SECTIONS,
+      ];
+    }
     if (isIdentityOrClassSlot) {
-      return buildLibrarySourceFilterSections(
+      const sourceSections = buildLibrarySourceFilterSections(
         catalog.keys(),
         catalog,
         bookNames,
       );
+      if (useAmellwindHomebrew && (isSpeciesSlot || isBackgroundSlot)) {
+        return [
+          buildIdentityCatalogFilterSection(defaultIdentityCatalog),
+          ...sourceSections,
+        ];
+      }
+      return sourceSections;
     }
     return [];
   }, [
     isWeaponSlot,
     isArmorSlot,
     isFeatPicker,
+    isAnyOriginFeatSlotSelected,
     isIdentityOrClassSlot,
+    isSpeciesSlot,
+    isBackgroundSlot,
     useAmellwindHomebrew,
+    defaultFeatCatalog,
+    defaultIdentityCatalog,
     catalog,
     bookNames,
   ]);
 
+  const nextFilterResetKey = [
+    selectedSlot ?? "",
+    useAmellwindHomebrew ? "1" : "0",
+    classSelection?.name ?? "",
+    defaultFeatCatalog,
+    defaultIdentityCatalog,
+    isWeaponSlot ? "w" : "",
+    isArmorSlot ? "a" : "",
+    isFeatPicker ? "f" : "",
+    isAnyOriginFeatSlotSelected ? "o" : "",
+  ].join("|");
+
+  if (nextFilterResetKey !== filterResetKey) {
+    setFilterResetKey(nextFilterResetKey);
+    setFilterValues(buildDefaultFilterValues(filterSections));
+  }
+
   useEffect(() => {
     setShowAsiPanel(false);
     setFeatSearchHidden(false);
+  }, [selectedSlot, classSelection?.name]);
 
-    const needsRarityDefault =
-      !useAmellwindHomebrew && (isWeaponSlot || isArmorSlot);
-    setFilterValues(
-      needsRarityDefault
-        ? buildDefaultFilterValues([EQUIPMENT_RARITY_LIBRARY_FILTER_SECTION])
-        : {},
-    );
+  const featSource = useMemo(
+    () => parseFeatDataSource(filterValues.catalog, defaultFeatCatalog),
+    [filterValues.catalog, defaultFeatCatalog],
+  );
 
-    if (!useAmellwindHomebrew) {
-      setFeatSource("dnd2024");
-      return;
-    }
-    setFeatSource("amellwind");
-    setWeaponLibraryCatalog("forge");
-  }, [
-    selectedSlot,
-    useAmellwindHomebrew,
-    classSelection?.name,
-    isWeaponSlot,
-    isArmorSlot,
-  ]);
+  const identitySource = useMemo(
+    () =>
+      parseIdentityDataSource(filterValues.catalog, defaultIdentityCatalog),
+    [filterValues.catalog, defaultIdentityCatalog],
+  );
 
-  useEffect(() => {
-    if (!useAmellwindHomebrew) {
-      setFeatSource("dnd2024");
-      setWeaponLibraryCatalog("forge");
-    }
-  }, [useAmellwindHomebrew]);
-
-  useEffect(() => {
-    if (!isFeatPicker) return;
-    if (isInvocationOriginFeatSlotSelected || isOriginFeatSlotSelected) {
-      setFeatSource("dnd2024");
-    }
-  }, [
-    isFeatPicker,
-    isInvocationOriginFeatSlotSelected,
-    isOriginFeatSlotSelected,
-  ]);
+  const weaponLibraryCatalog = useMemo(
+    () => parseWeaponLibraryCatalog(filterValues.catalog, "forge"),
+    [filterValues.catalog],
+  );
 
   const activeSubclass = useMemo(() => {
     if (!classData || !subclass) return null;
@@ -267,13 +270,6 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     showWeaponDetail ||
     featSearchHidden;
 
-  const showIdentitySourceToggle =
-    useAmellwindHomebrew && (isSpeciesSlot || isBackgroundSlot);
-  const showFeatSourceToggle =
-    isFeatSlot && !showAsiPanel && !isAnyOriginFeatSlotSelected;
-  const showWeaponCatalogToggle =
-    useAmellwindHomebrew && isWeaponSlot && !showWeaponDetail;
-
   const showRpgbotLegend =
     !!rpgbotClassSlug &&
     !hideSearch &&
@@ -310,32 +306,11 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     useAmellwindHomebrew,
   ]);
 
-  const panelTitle = selectedSlot ? (
-    <span className="flex min-w-0 flex-wrap items-center gap-2">
-      <span>{showAsiPanel ? "ASI" : `Library — ${slotLabel}`}</span>
-      {showIdentitySourceToggle && (
-        <IdentitySourceBadgeGroup
-          value={identitySource}
-          onChange={setIdentitySourceOverride}
-        />
-      )}
-      {showFeatSourceToggle && (
-        <FeatSourceBadgeGroup
-          value={featSource}
-          onChange={setFeatSource}
-          hideAmellwind={!useAmellwindHomebrew}
-        />
-      )}
-      {showWeaponCatalogToggle && (
-        <WeaponCatalogBadgeGroup
-          value={weaponLibraryCatalog}
-          onChange={setWeaponLibraryCatalog}
-        />
-      )}
-    </span>
-  ) : (
-    "Library"
-  );
+  const panelTitle = selectedSlot
+    ? showAsiPanel
+      ? "ASI"
+      : `Library — ${slotLabel}`
+    : "Library";
 
   const dialogTitle = isWeaponSlot
     ? "Weapon Filters"
@@ -389,7 +364,6 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
               selectedSlot={selectedSlot}
               q={q}
               identitySource={identitySource}
-              onIdentitySourceChange={setIdentitySourceOverride}
               listFilters={filterValues}
             />
             <ClassLibraryPanel
@@ -401,7 +375,6 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
               selectedSlot={selectedSlot}
               q={q}
               featSource={featSource}
-              onFeatSourceChange={setFeatSource}
               onShowAsiPanelChange={setShowAsiPanel}
               onSearchHiddenChange={setFeatSearchHidden}
               listFilters={filterValues}

@@ -32,7 +32,7 @@ import {
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import { RpgbotLoadingHint } from "@/features/builder/components/shared/RpgbotLoadingHint";
-import type { IdentityDataSource } from "@/features/builder/components/shared/IdentitySourceBadgeGroup";
+import type { IdentityDataSource } from "@/features/builder/utils/builder-library-filters";
 import type { NamedVariant } from "@/features/builder/components/shared/NamedVariantSwitcher";
 import { LibraryList } from "@/features/builder/components/shared/LibraryList";
 import type {
@@ -54,7 +54,6 @@ interface IdentityLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
   q: string;
   identitySource: IdentityDataSource;
-  onIdentitySourceChange: (source: IdentityDataSource) => void;
   listFilters?: ListFilterValues;
 }
 
@@ -72,7 +71,6 @@ export function IdentityLibraryPanel({
   selectedSlot,
   q,
   identitySource,
-  onIdentitySourceChange: _onIdentitySourceChange,
   listFilters = {},
 }: IdentityLibraryPanelProps) {
   const identityBookNames = useBookSourceNames();

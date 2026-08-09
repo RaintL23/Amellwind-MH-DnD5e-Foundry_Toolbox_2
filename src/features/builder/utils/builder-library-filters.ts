@@ -1,5 +1,10 @@
 import { DMG_TYPE_LABELS, PROPERTY_LABELS } from "@/shared/types";
-import type { ArmorItem, DndFeat, Weapon } from "@/shared/types";
+import type {
+  ArmorItem,
+  BuilderFeatSource,
+  DndFeat,
+  Weapon,
+} from "@/shared/types";
 import type {
   ListFilterSectionConfig,
   ListFilterValues,
@@ -98,6 +103,93 @@ export const FEAT_LIBRARY_FILTER_SECTIONS: ListFilterSectionConfig[] = [
     ],
   },
 ];
+
+/** Catalog switchers formerly rendered as header pill badges. */
+export type FeatDataSource = Exclude<BuilderFeatSource, "asi">;
+export type IdentityDataSource = "amellwind" | "dnd";
+export type WeaponLibraryCatalog = "forge" | "base";
+
+export const LIBRARY_CATALOG_FILTER_ID = "catalog";
+
+export function buildFeatCatalogFilterSection(options: {
+  includeAmellwind: boolean;
+  defaultValue: FeatDataSource;
+}): ListFilterSectionConfig {
+  const opts = [
+    ...(options.includeAmellwind
+      ? [{ value: "amellwind", label: "Amellwind Monster Hunter" }]
+      : []),
+    { value: "dnd2014", label: "D&D 2014" },
+    { value: "dnd2024", label: "D&D 2024" },
+  ];
+  return {
+    id: LIBRARY_CATALOG_FILTER_ID,
+    title: "Catalog",
+    mode: "single",
+    defaultExpanded: true,
+    defaultValues: [options.defaultValue],
+    options: opts,
+  };
+}
+
+export function buildIdentityCatalogFilterSection(
+  defaultValue: IdentityDataSource,
+): ListFilterSectionConfig {
+  return {
+    id: LIBRARY_CATALOG_FILTER_ID,
+    title: "Catalog",
+    mode: "single",
+    defaultExpanded: true,
+    defaultValues: [defaultValue],
+    options: [
+      { value: "amellwind", label: "Amellwind Monster Hunter" },
+      { value: "dnd", label: "Dungeons & Dragons" },
+    ],
+  };
+}
+
+export function buildWeaponCatalogFilterSection(
+  defaultValue: WeaponLibraryCatalog = "forge",
+): ListFilterSectionConfig {
+  return {
+    id: LIBRARY_CATALOG_FILTER_ID,
+    title: "Catalog",
+    mode: "single",
+    defaultExpanded: true,
+    defaultValues: [defaultValue],
+    options: [
+      { value: "forge", label: "Weapon Forge" },
+      { value: "base", label: "Base (AGMH)" },
+    ],
+  };
+}
+
+export function parseFeatDataSource(
+  value: string | string[] | undefined,
+  fallback: FeatDataSource,
+): FeatDataSource {
+  const raw = asFilterString(value);
+  if (raw === "amellwind" || raw === "dnd2014" || raw === "dnd2024") return raw;
+  return fallback;
+}
+
+export function parseIdentityDataSource(
+  value: string | string[] | undefined,
+  fallback: IdentityDataSource,
+): IdentityDataSource {
+  const raw = asFilterString(value);
+  if (raw === "amellwind" || raw === "dnd") return raw;
+  return fallback;
+}
+
+export function parseWeaponLibraryCatalog(
+  value: string | string[] | undefined,
+  fallback: WeaponLibraryCatalog = "forge",
+): WeaponLibraryCatalog {
+  const raw = asFilterString(value);
+  if (raw === "forge" || raw === "base") return raw;
+  return fallback;
+}
 
 export function buildLibrarySourceFilterSections(
   sourceCodes: Iterable<string>,

@@ -7,7 +7,3 @@ export { LibraryList } from "./LibraryList";
 export { SourceVariantSwitcher } from "./SourceVariantSwitcher";
 export { NamedVariantSwitcher } from "./NamedVariantSwitcher";
 export type { NamedVariant } from "./NamedVariantSwitcher";
-export { IdentitySourceBadgeGroup } from "./IdentitySourceBadgeGroup";
-export type { IdentityDataSource } from "./IdentitySourceBadgeGroup";
-export { FeatSourceBadgeGroup } from "./FeatSourceBadgeGroup";
-export type { FeatDataSource } from "./FeatSourceBadgeGroup";

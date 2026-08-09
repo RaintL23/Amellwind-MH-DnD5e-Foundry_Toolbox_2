@@ -35,12 +35,12 @@ import {
 } from "@/features/builder/utils/library-variant.utils";
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
-import type { FeatDataSource } from "@/features/builder/components/shared/FeatSourceBadgeGroup";
 import type { BuilderFeatSelection, DndFeat, Feat } from "@/shared/types";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import {
   asFilterString,
   dndFeatMatchesTypeFilter,
+  type FeatDataSource,
 } from "@/features/builder/utils/builder-library-filters";
 import { AsiLibraryPanel } from "../AsiLibraryPanel";
 import { FeatLibraryDetail } from "./FeatLibraryDetail";
@@ -59,7 +59,6 @@ interface FeatLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
   q: string;
   featSource: FeatDataSource;
-  onFeatSourceChange: (source: FeatDataSource) => void;
   onShowAsiPanelChange?: (show: boolean) => void;
   onSearchHiddenChange?: (hidden: boolean) => void;
   listFilters?: ListFilterValues;
@@ -69,7 +68,6 @@ export function FeatLibraryPanel({
   selectedSlot,
   q,
   featSource,
-  onFeatSourceChange: _onFeatSourceChange,
   onShowAsiPanelChange,
   onSearchHiddenChange,
   listFilters = {},

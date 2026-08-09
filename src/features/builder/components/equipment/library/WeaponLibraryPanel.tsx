@@ -32,7 +32,7 @@ import { weaponMatchesLibraryFilters } from "@/features/builder/utils/builder-li
 import type { ListFilterValues } from "@/shared/components/list-filters";
 
 import type { Weapon } from "@/shared/types";
-import type { WeaponLibraryCatalog } from "@/features/builder/components/shared/WeaponCatalogBadgeGroup";
+import type { WeaponLibraryCatalog } from "@/features/builder/utils/builder-library-filters";
 
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
 
