@@ -1,0 +1,83 @@
+{
+  "_id": "gRL617IHCu7powgT",
+  "name": "Tetranadon Disc Rune (Armor)",
+  "type": "equipment",
+  "img": "mh-icons/material-rune.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Tetranadon | CR: 6 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Armor Effect</h3>\n<em>Evade Extender (S).</em> You have a +1 bonus to Dexterity saving throws while you wear this armor.\n<p><em><strong>Tags:</strong> weapon-type:ranged, mechanic:bonus-action, mechanic:advantage, mechanic:long-rest</em></p>",
+      "chat": ""
+    },
+    "identifier": "tetranadondiscrunearmor",
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "type": {
+      "value": "trinket",
+      "baseItem": ""
+    },
+    "armor": {
+      "value": null,
+      "dex": null,
+      "magicalBonus": null
+    },
+    "properties": [],
+    "proficient": null,
+    "strength": null,
+    "activities": {},
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 6900000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "rune",
+      "runeName": "Tetranadon Disc",
+      "slotContext": "Armor",
+      "monsterName": "Tetranadon"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786308112283,
+    "modifiedTime": 1786308112283,
+    "lastModifiedBy": null
+  }
+}
