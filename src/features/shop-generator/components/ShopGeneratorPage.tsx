@@ -28,9 +28,10 @@ function ShopGeneratorPageContent() {
               Shop Generator
             </h1>
             <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
-              Build a D&amp;D 5e shop from the item catalog: pick theme, tier,
-              sources, and filters; generate stock with Magic Item Pricing
-              costs; then adjust markup or edit individual prices.
+              Build a D&amp;D 5e shop from the item catalog: use Shop setup to
+              define generation guidelines (theme, tier, sources, affinities),
+              generate stock with Magic Item Pricing costs, then adjust markup
+              or edit individual prices.
             </p>
             <MagicItemPricingCredit className="mt-2 max-w-2xl text-xs text-muted-foreground" />
           </div>

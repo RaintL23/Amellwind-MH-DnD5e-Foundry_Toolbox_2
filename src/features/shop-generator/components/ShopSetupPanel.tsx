@@ -1,27 +1,30 @@
 import { useEffect, useMemo, useState } from "react";
-import { BookMarked, Dices, Loader2 } from "lucide-react";
+import { Dices, Loader2, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select } from "@/components/ui/select";
 import {
   ListFilterPill,
-  ListFiltersDialog,
-  type ListFilterValues,
+  countActiveListFilters,
+  type ListFilterSectionConfig,
 } from "@/shared/components/list-filters";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
-import { getSourceDisplayName } from "@/shared/services/source-catalog.service";
 import {
   buildSourcesFilterSectionFrom2024,
   expandSourceFilterSelection,
 } from "@/shared/utils/compendium-source-filter.utils";
-import { CLASS_AFFINITIES } from "../data/class-affinity.data";
-import { SHOP_TIERS } from "../data/shop-tier.data";
-import { SHOP_THEMES } from "../data/shop-themes.data";
-import type { ShopThemeId, ShopTierId } from "../data/shop-generator.types";
+import {
+  ABILITY_AFFINITIES,
+  CLASS_AFFINITIES,
+  INTENDED_USE_AFFINITIES,
+} from "../data/class-affinity.data";
+import {
+  DEFAULT_SHOP_CONFIG,
+  type ShopConfig,
+} from "../data/shop-generator.types";
+import { getShopTier } from "../data/shop-tier.data";
+import { getShopTheme } from "../data/shop-themes.data";
 import { useShopGenerator } from "../context/ShopGeneratorContext";
-import { MultiSelectFilter } from "./MultiSelectFilter";
+import { ShopSetupDialog } from "./ShopSetupDialog";
 
 export function ShopSetupPanel() {
   const {
@@ -38,7 +41,7 @@ export function ShopSetupPanel() {
   } = useShopGenerator();
   const bookNames = useBookSourceNames();
   const catalog = useSourceCatalog();
-  const [sourcesDialogOpen, setSourcesDialogOpen] = useState(false);
+  const [setupOpen, setSetupOpen] = useState(false);
   const [sourcesSeeded, setSourcesSeeded] = useState(false);
 
   const sourceSection = useMemo(
@@ -55,6 +58,54 @@ export function ShopSetupPanel() {
     () => sourceSection.defaultValues ?? [],
     [sourceSection],
   );
+
+  const catalogSections = useMemo((): ListFilterSectionConfig[] => {
+    return [
+      {
+        id: "types",
+        title: "Item types",
+        mode: "multi",
+        defaultExpanded: true,
+        options: typeOptions.map((t) => ({ value: t, label: t })),
+      },
+      {
+        id: "rarities",
+        title: "Rarities",
+        mode: "multi",
+        options: rarityOptions.map((r) => ({
+          value: r,
+          label: r.charAt(0).toUpperCase() + r.slice(1),
+        })),
+      },
+      {
+        id: "classAffinities",
+        title: "Class affinity",
+        mode: "multi",
+        options: CLASS_AFFINITIES.map((c) => ({
+          value: c.id,
+          label: c.label,
+        })),
+      },
+      {
+        id: "intendedUses",
+        title: "Intended use",
+        mode: "multi",
+        options: INTENDED_USE_AFFINITIES.map((c) => ({
+          value: c.id,
+          label: c.label,
+        })),
+      },
+      {
+        id: "abilityAffinities",
+        title: "Ability focus",
+        mode: "multi",
+        options: ABILITY_AFFINITIES.map((c) => ({
+          value: c.id,
+          label: c.label,
+        })),
+      },
+    ];
+  }, [typeOptions, rarityOptions]);
 
   // Pre-select official D&D 2024+ sources once the catalog is ready.
   useEffect(() => {
@@ -86,228 +137,193 @@ export function ShopSetupPanel() {
     void ensureSourcesLoaded(config.sources);
   }, [config.sources, ensureSourcesLoaded]);
 
-  const selectedSourceOptions = useMemo(() => {
-    const selected = new Set(config.sources);
-    return sourceSection.options.filter(
-      (opt) =>
-        selected.has(opt.value) ||
-        (opt.aliases ?? []).some((alias) => selected.has(alias)),
-    );
-  }, [config.sources, sourceSection.options]);
+  const theme = getShopTheme(config.themeId);
+  const tier = getShopTier(config.shopTier);
 
-  const theme = SHOP_THEMES.find((t) => t.id === config.themeId);
+  const filterCount = useMemo(() => {
+    const filterValues = {
+      src: config.sources,
+      types: config.types,
+      rarities: config.rarities,
+      classAffinities: config.classAffinities,
+      intendedUses: config.intendedUses,
+      abilityAffinities: config.abilityAffinities,
+    };
+    const sectionCount = countActiveListFilters(filterValues, [
+      { ...sourceSection, defaultValues: sourceDefaults },
+      ...catalogSections,
+    ]);
+    let scalar = 0;
+    if (config.itemCount !== DEFAULT_SHOP_CONFIG.itemCount) scalar += 1;
+    if (config.shopTier !== DEFAULT_SHOP_CONFIG.shopTier) scalar += 1;
+    if (config.themeId !== DEFAULT_SHOP_CONFIG.themeId) scalar += 1;
+    if (config.magicFilter) scalar += 1;
+    if (config.attunementFilter) scalar += 1;
+    return sectionCount + scalar;
+  }, [config, sourceSection, sourceDefaults, catalogSections]);
 
-  function handleSourcesApply(values: ListFilterValues) {
-    const raw = values.src;
-    const selected = Array.isArray(raw) ? raw : [];
-    patchConfig({
-      sources: expandSourceFilterSelection(selected, sourceSection.options),
-    });
-  }
+  const summaryPills = useMemo(() => {
+    const pills: Array<{ key: string; label: string; clear?: () => void }> = [
+      { key: "theme", label: theme.label },
+      { key: "tier", label: `${tier.label} · ${tier.levelRange}` },
+      { key: "count", label: `${config.itemCount} items` },
+    ];
 
-  function toggleSelectedSource(value: string) {
-    const option = sourceSection.options.find((o) => o.value === value);
-    if (!option) {
-      patchConfig({
-        sources: config.sources.filter((code) => code !== value),
+    if (config.magicFilter === "magic") {
+      pills.push({
+        key: "magic",
+        label: "Magic only",
+        clear: () => patchConfig({ magicFilter: "" }),
       });
-      return;
+    } else if (config.magicFilter === "mundane") {
+      pills.push({
+        key: "mundane",
+        label: "Mundane only",
+        clear: () => patchConfig({ magicFilter: "" }),
+      });
     }
-    const group = [option.value, ...(option.aliases ?? [])];
-    const selectedSet = new Set(config.sources);
-    const isOn = group.some((code) => selectedSet.has(code));
-    if (isOn) {
-      for (const code of group) selectedSet.delete(code);
-    } else {
-      for (const code of group) selectedSet.add(code);
+
+    if (config.attunementFilter === "yes") {
+      pills.push({
+        key: "attune-yes",
+        label: "Attunement",
+        clear: () => patchConfig({ attunementFilter: "" }),
+      });
+    } else if (config.attunementFilter === "no") {
+      pills.push({
+        key: "attune-no",
+        label: "No attunement",
+        clear: () => patchConfig({ attunementFilter: "" }),
+      });
     }
-    patchConfig({ sources: [...selectedSet] });
+
+    if (config.sources.length > 0) {
+      pills.push({
+        key: "sources",
+        label: `${config.sources.length} sources`,
+      });
+    }
+
+    for (const id of config.classAffinities) {
+      const profile = CLASS_AFFINITIES.find((c) => c.id === id);
+      pills.push({
+        key: `class-${id}`,
+        label: profile?.label ?? id,
+        clear: () =>
+          patchConfig({
+            classAffinities: config.classAffinities.filter((x) => x !== id),
+          }),
+      });
+    }
+    for (const id of config.intendedUses) {
+      const profile = INTENDED_USE_AFFINITIES.find((c) => c.id === id);
+      pills.push({
+        key: `use-${id}`,
+        label: profile?.label ?? id,
+        clear: () =>
+          patchConfig({
+            intendedUses: config.intendedUses.filter((x) => x !== id),
+          }),
+      });
+    }
+    for (const id of config.abilityAffinities) {
+      const profile = ABILITY_AFFINITIES.find((c) => c.id === id);
+      pills.push({
+        key: `ability-${id}`,
+        label: profile?.label ?? id,
+        clear: () =>
+          patchConfig({
+            abilityAffinities: config.abilityAffinities.filter(
+              (x) => x !== id,
+            ),
+          }),
+      });
+    }
+    for (const type of config.types) {
+      pills.push({
+        key: `type-${type}`,
+        label: type,
+        clear: () =>
+          patchConfig({ types: config.types.filter((x) => x !== type) }),
+      });
+    }
+    for (const rarity of config.rarities) {
+      pills.push({
+        key: `rarity-${rarity}`,
+        label: rarity.charAt(0).toUpperCase() + rarity.slice(1),
+        clear: () =>
+          patchConfig({
+            rarities: config.rarities.filter((x) => x !== rarity),
+          }),
+      });
+    }
+
+    return pills;
+  }, [config, theme.label, tier.label, tier.levelRange, patchConfig]);
+
+  function handleSetupApply(next: ShopConfig) {
+    patchConfig(next);
+    if (next.sources.length > 0) {
+      void ensureSourcesLoaded(next.sources);
+    }
   }
 
   return (
     <section className="space-y-4 rounded-lg border border-border bg-card/40 p-4">
-      <div>
-        <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Shop setup
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          Configure stock size, theme, tier, and filters, then generate a shop
-          from the D&amp;D item catalog.
-        </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+            Shop setup
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Open setup to choose the guidelines used when generating shop stock,
+            then generate or regenerate.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={() => setSetupOpen(true)}
+        >
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          {filterCount > 0 ? `Shop setup (${filterCount})` : "Shop setup"}
+        </Button>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <div className="space-y-1.5">
-          <Label htmlFor="shop-item-count">Item count</Label>
-          <Input
-            id="shop-item-count"
-            type="number"
-            min={1}
-            max={40}
-            value={config.itemCount}
-            onChange={(e) => {
-              const n = Number(e.target.value);
-              if (!Number.isFinite(n)) return;
-              patchConfig({
-                itemCount: Math.min(40, Math.max(1, Math.round(n))),
-              });
-            }}
-          />
-        </div>
+      <p className="text-xs text-muted-foreground">{theme.description}</p>
 
-        <div className="space-y-1.5">
-          <Label htmlFor="shop-tier">Shop tier</Label>
-          <Select
-            id="shop-tier"
-            value={String(config.shopTier)}
-            onChange={(e) =>
-              patchConfig({
-                shopTier: Number(e.target.value) as ShopTierId,
-              })
-            }
-          >
-            {SHOP_TIERS.map((tier) => (
-              <option key={tier.id} value={tier.id}>
-                {tier.label} ({tier.levelRange})
-              </option>
-            ))}
-          </Select>
+      {summaryPills.length > 0 ? (
+        <div className="flex flex-wrap gap-1.5">
+          {summaryPills.map((pill) =>
+            pill.clear ? (
+              <ListFilterPill
+                key={pill.key}
+                label={pill.label}
+                active
+                onClick={pill.clear}
+              />
+            ) : (
+              <span
+                key={pill.key}
+                className="rounded-md border border-border bg-muted/30 px-2.5 py-1 text-xs font-medium text-muted-foreground"
+              >
+                {pill.label}
+              </span>
+            ),
+          )}
         </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="shop-theme">Theme</Label>
-          <Select
-            id="shop-theme"
-            value={config.themeId}
-            onChange={(e) =>
-              patchConfig({ themeId: e.target.value as ShopThemeId })
-            }
-          >
-            {SHOP_THEMES.map((t) => (
-              <option key={t.id} value={t.id}>
-                {t.label}
-              </option>
-            ))}
-          </Select>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="shop-magic">Magic / mundane</Label>
-          <Select
-            id="shop-magic"
-            value={config.magicFilter}
-            onChange={(e) =>
-              patchConfig({
-                magicFilter: e.target.value as "" | "mundane" | "magic",
-              })
-            }
-          >
-            <option value="">Any</option>
-            <option value="mundane">Mundane only</option>
-            <option value="magic">Magic only</option>
-          </Select>
-        </div>
-
-        <div className="space-y-1.5">
-          <Label htmlFor="shop-attune">Attunement</Label>
-          <Select
-            id="shop-attune"
-            value={config.attunementFilter}
-            onChange={(e) =>
-              patchConfig({
-                attunementFilter: e.target.value as "" | "yes" | "no",
-              })
-            }
-          >
-            <option value="">Any</option>
-            <option value="yes">Requires attunement</option>
-            <option value="no">No attunement</option>
-          </Select>
-        </div>
-      </div>
-
-      {theme ? (
-        <p className="text-xs text-muted-foreground">{theme.description}</p>
       ) : null}
 
-      <div className="space-y-2">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <Label>Sources</Label>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => setSourcesDialogOpen(true)}
-            disabled={availableSources.length === 0}
-          >
-            <BookMarked className="mr-1.5 h-3.5 w-3.5" />
-            {selectedSourceOptions.length > 0
-              ? `${selectedSourceOptions.length} selected`
-              : "Choose sources"}
-          </Button>
-        </div>
-        <p className="text-xs text-muted-foreground">
-          Official D&amp;D 2024+ sources are pre-selected. Open the dialog to
-          browse by Official / Partnered / UA and year.
-        </p>
-        {selectedSourceOptions.length > 0 ? (
-          <div className="flex flex-wrap gap-1.5">
-            {selectedSourceOptions.map((option) => (
-              <ListFilterPill
-                key={option.value}
-                label={
-                  option.label ||
-                  getSourceDisplayName(option.value, catalog, bookNames)
-                }
-                active
-                onClick={() => toggleSelectedSource(option.value)}
-              />
-            ))}
-          </div>
-        ) : (
-          <p className="text-xs text-amber-500/90">
-            No sources selected — generation will fall back to core defaults.
-          </p>
-        )}
-      </div>
-
-      <ListFiltersDialog
-        open={sourcesDialogOpen}
-        onOpenChange={setSourcesDialogOpen}
-        title="Shop sources"
-        description="Grouped by Official, Partnered, Unearthed Arcana, and D&D Beyond, then by publication year. Selected sources are highlighted."
-        sections={[sourceSection]}
-        applied={{ src: config.sources }}
-        defaults={{ src: sourceDefaults }}
-        onApply={handleSourcesApply}
+      <ShopSetupDialog
+        open={setupOpen}
+        onOpenChange={setSetupOpen}
+        config={config}
+        sourceSection={sourceSection}
+        sourceDefaults={sourceDefaults}
+        catalogSections={catalogSections}
+        onApply={handleSetupApply}
       />
-
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        <MultiSelectFilter
-          label="Item types"
-          selected={config.types}
-          onChange={(types) => patchConfig({ types })}
-          options={typeOptions.map((t) => ({ value: t, label: t }))}
-        />
-        <MultiSelectFilter
-          label="Rarities"
-          selected={config.rarities}
-          onChange={(rarities) => patchConfig({ rarities })}
-          options={rarityOptions.map((r) => ({
-            value: r,
-            label: r.charAt(0).toUpperCase() + r.slice(1),
-          }))}
-        />
-        <MultiSelectFilter
-          label="Class affinities"
-          selected={config.classAffinities}
-          onChange={(classAffinities) => patchConfig({ classAffinities })}
-          options={CLASS_AFFINITIES.map((c) => ({
-            value: c.id,
-            label: c.label,
-          }))}
-        />
-      </div>
 
       <div className="flex flex-wrap items-center gap-3">
         <Button
