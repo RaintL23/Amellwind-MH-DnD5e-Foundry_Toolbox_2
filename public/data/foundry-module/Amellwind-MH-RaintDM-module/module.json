@@ -1,0 +1,120 @@
+{
+  "id": "Amellwind-MH-RaintDM-module",
+  "title": "Amellwind MH — RaintDM Content",
+  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, runes and cooking features for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
+  "version": "1.0.0",
+  "authors": [
+    {
+      "name": "RaintDM"
+    }
+  ],
+  "compatibility": {
+    "minimum": "12",
+    "verified": "12.331"
+  },
+  "relationships": {
+    "systems": [
+      {
+        "id": "dnd5e",
+        "type": "system",
+        "compatibility": {
+          "minimum": "4.4.4",
+          "verified": "4.4.4"
+        }
+      }
+    ],
+    "requires": [
+      {
+        "id": "midi-qol",
+        "type": "module",
+        "reason": "Most weapon/item automation (attacks, on-hit effects, riders) relies on Midi QOL."
+      },
+      {
+        "id": "itemacro",
+        "type": "module",
+        "reason": "Several items ship an embedded Item Macro (flags.itemacro) that runs their special behavior."
+      }
+    ]
+  },
+  "packs": [
+    {
+      "name": "weapons",
+      "label": "Amellwind Weapons",
+      "path": "packs/weapons",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "weapon-resources",
+      "label": "Amellwind Weapon Resources",
+      "path": "packs/weapon-resources",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "runes",
+      "label": "Amellwind Runes",
+      "path": "packs/runes",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "cooking-items",
+      "label": "Amellwind Cooking Items",
+      "path": "packs/cooking-items",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "cooking-actors",
+      "label": "Amellwind Cooking Actors",
+      "path": "packs/cooking-actors",
+      "type": "Actor",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "cooking-macros",
+      "label": "Amellwind Cooking Macros",
+      "path": "packs/cooking-macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Amellwind MH",
+      "sorting": "m",
+      "packs": [
+        "weapons",
+        "weapon-resources",
+        "runes",
+        "cooking-items",
+        "cooking-actors",
+        "cooking-macros"
+      ]
+    }
+  ]
+}

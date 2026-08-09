@@ -43,6 +43,7 @@ scripts/*
 !scripts/generate-raintdm-manifest.mjs
 !scripts/optimize-mh-icons.mjs
 !scripts/build-magic-item-pricing.mjs
+!scripts/build-foundry-module.mjs
 !scripts/data/
 !scripts/data/magic-item-pricing.csv
 
@@ -93,6 +94,13 @@ $RECYCLE.BIN/
 *.tmp
 ~$*
 *.conflict*
+
+# ── Foundry module (packs LevelDB + iconos son generados) ────
+# Fuente versionada: public/data/foundry-jsons-example + scripts/build-foundry-module.mjs
+# + module.json + README. Regenerar con: pnpm build:foundry-module
+public/data/foundry-module/Amellwind-MH-RaintDM-module/packs/
+public/data/foundry-module/Amellwind-MH-RaintDM-module/assets/
+public/data/foundry-module/Amellwind-MH-RaintDM-module/.staging/
 
 # ── Graphify (knowledge graph for AI assistants) ─────────────
 # Regenerable in ~25s with: graphify extract . --code-only && graphify cluster-only . --no-label

@@ -1,0 +1,230 @@
+// Build the Foundry VTT content module `Amellwind-MH-RaintDM-module` from the
+// JSON exports in `public/data/foundry-jsons-example`.
+//
+// Why this exists: Foundry v11+ does NOT read loose JSON files as compendium
+// packs; each pack must be a LevelDB database. This script groups the source
+// JSON by document type + folder, recreates the folder tree inside each pack
+// with Folder documents, assigns STABLE ids (so rebuilds update in place and
+// never duplicate), rewrites `mh-icons/...` image paths so the module is
+// self-contained, and compiles everything to LevelDB via @foundryvtt/foundryvtt-cli.
+//
+// Run with: pnpm build:foundry-module
+
+import { createHash } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+import { compilePack } from "@foundryvtt/foundryvtt-cli";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const ROOT = path.resolve(__dirname, "..");
+
+const MODULE_ID = "Amellwind-MH-RaintDM-module";
+const SRC_DIR = path.join(ROOT, "public", "data", "foundry-jsons-example");
+const ICONS_SRC = path.join(ROOT, "public", "mh-icons");
+const MODULE_DIR = path.join(ROOT, "public", "data", "foundry-module", MODULE_ID);
+const PACKS_DIR = path.join(MODULE_DIR, "packs");
+const ASSETS_ICONS_DIR = path.join(MODULE_DIR, "assets", "mh-icons");
+const STAGING_DIR = path.join(MODULE_DIR, ".staging");
+
+const CORE_VERSION = "12.331";
+const SYSTEM_ID = "dnd5e";
+const SYSTEM_VERSION = "4.4.4";
+
+// Pack definitions. `rootDir` is the source directory scanned recursively;
+// `docType` filters entries by their `fvtt-<Type>-` filename prefix. Any
+// sub-directory that contains matching JSON becomes a Folder inside the pack.
+const PACKS = [
+  { name: "weapons", docType: "Item", rootDir: path.join(SRC_DIR, "weapons") },
+  { name: "weapon-resources", docType: "Item", rootDir: path.join(SRC_DIR, "weapons-resources") },
+  { name: "runes", docType: "Item", rootDir: path.join(SRC_DIR, "runes") },
+  { name: "cooking-items", docType: "Item", rootDir: path.join(SRC_DIR, "cooking-features") },
+  { name: "cooking-actors", docType: "Actor", rootDir: path.join(SRC_DIR, "cooking-features") },
+  { name: "cooking-macros", docType: "Macro", rootDir: path.join(SRC_DIR, "cooking-features") },
+];
+
+const COLLECTION_BY_TYPE = { Item: "items", Actor: "actors", Macro: "macros" };
+const ID_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+const ID_RE = /^[A-Za-z0-9]{16}$/;
+
+// Mirror of the CLI's embedded-document hierarchy. The compiler recurses into
+// these collections and requires every embedded doc to carry its own `_key`
+// (e.g. `!actors.items!<actorId>.<itemId>`), otherwise LevelDB rejects the batch.
+const HIERARCHY = {
+  actors: { items: [], effects: [] },
+  items: { effects: [] },
+  effects: {},
+};
+
+const keyJoin = (prefix, part) => (prefix ? `${prefix}.${part}` : part);
+
+/** Deterministic 16-char Foundry id derived from a seed string. */
+function stableId(seed) {
+  const hash = createHash("sha1").update(seed).digest();
+  let id = "";
+  for (let i = 0; i < 16; i += 1) id += ID_ALPHABET[hash[i] % ID_ALPHABET.length];
+  return id;
+}
+
+/** Turn a directory segment (e.g. "daily-skills") into a folder label. */
+function prettifyFolderName(segment) {
+  return segment
+    .split("-")
+    .map((word) => (word ? word[0].toUpperCase() + word.slice(1) : word))
+    .join(" ");
+}
+
+/**
+ * Recursively assign LevelDB `_key`s to a document and every embedded document,
+ * matching the format the Foundry CLI expects when compiling packs.
+ */
+function assignKeys(doc, collection, sublevelPrefix = null, idPrefix = null, seed = "") {
+  if (!(typeof doc._id === "string" && ID_RE.test(doc._id))) doc._id = stableId(`${seed}::${collection}`);
+  const sublevel = keyJoin(sublevelPrefix, collection);
+  const id = keyJoin(idPrefix, doc._id);
+  doc._key = `!${sublevel}!${id}`;
+  for (const embeddedName of Object.keys(HIERARCHY[collection] ?? {})) {
+    const value = doc[embeddedName];
+    if (!Array.isArray(value)) continue;
+    value.forEach((child, index) => assignKeys(child, embeddedName, sublevel, id, `${id}.${embeddedName}.${index}`));
+  }
+}
+
+/** Rewrite every `mh-icons/...` asset path so it resolves inside the module. */
+function rewriteIcons(doc) {
+  const json = JSON.stringify(doc);
+  const rewritten = json.split('"mh-icons/').join(`"modules/${MODULE_ID}/assets/mh-icons/`);
+  return JSON.parse(rewritten);
+}
+
+function ensureCleanDir(dir) {
+  fs.rmSync(dir, { force: true, recursive: true, maxRetries: 10 });
+  fs.mkdirSync(dir, { recursive: true });
+}
+
+function walkJsonFiles(dir) {
+  const out = [];
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...walkJsonFiles(full));
+    else if (entry.isFile() && entry.name.endsWith(".json")) out.push(full);
+  }
+  return out;
+}
+
+const folderStats = () => ({ coreVersion: CORE_VERSION, systemId: SYSTEM_ID, systemVersion: SYSTEM_VERSION });
+
+/**
+ * Build the JSON documents (content + folders) for one pack.
+ * @returns {{docs: object[], folders: number, entries: number}}
+ */
+function buildPackDocs({ name, docType, rootDir }) {
+  const prefix = `fvtt-${docType}-`;
+  const collection = COLLECTION_BY_TYPE[docType];
+  const files = walkJsonFiles(rootDir).filter((f) => path.basename(f).startsWith(prefix));
+
+  const folderDocs = new Map(); // relDir -> folder doc
+  const contentDocs = [];
+
+  // Create (or reuse) a folder doc for `relDir` and every ancestor. Returns leaf id.
+  const ensureFolder = (relDir) => {
+    if (!relDir || relDir === ".") return null;
+    const segments = relDir.split(path.sep).filter(Boolean);
+    let parentId = null;
+    let accumulated = "";
+    for (const segment of segments) {
+      accumulated = accumulated ? `${accumulated}/${segment}` : segment;
+      if (!folderDocs.has(accumulated)) {
+        const id = stableId(`${name}::folder::${accumulated}`);
+        folderDocs.set(accumulated, {
+          _id: id,
+          _key: `!folders!${id}`,
+          name: prettifyFolderName(segment),
+          type: docType,
+          sorting: "a",
+          folder: parentId,
+          color: null,
+          description: "",
+          flags: {},
+          sort: 0,
+          _stats: folderStats(),
+        });
+      }
+      parentId = folderDocs.get(accumulated)._id;
+    }
+    return parentId;
+  };
+
+  for (const file of files) {
+    const raw = JSON.parse(fs.readFileSync(file, "utf8"));
+    const relPath = path.relative(rootDir, file);
+    const relDir = path.dirname(relPath);
+    const folderId = ensureFolder(relDir);
+
+    let id = typeof raw._id === "string" && ID_RE.test(raw._id) ? raw._id : null;
+    if (!id) id = stableId(`${name}::doc::${relPath.split(path.sep).join("/")}`);
+
+    const doc = rewriteIcons(raw);
+    doc._id = id;
+    assignKeys(doc, collection, null, null, `${name}::${id}`);
+    doc.folder = folderId;
+    contentDocs.push(doc);
+  }
+
+  return { docs: [...folderDocs.values(), ...contentDocs], folders: folderDocs.size, entries: contentDocs.length };
+}
+
+async function buildPack(def) {
+  const { docs, folders, entries } = buildPackDocs(def);
+  if (entries === 0) {
+    console.warn(`  ! pack "${def.name}" has no ${def.docType} documents — skipped`);
+    return { entries: 0, folders: 0 };
+  }
+
+  const staging = path.join(STAGING_DIR, def.name);
+  ensureCleanDir(staging);
+  for (const doc of docs) {
+    fs.writeFileSync(path.join(staging, `${doc._id}.json`), JSON.stringify(doc, null, 2));
+  }
+
+  const dest = path.join(PACKS_DIR, def.name);
+  // compilePack does not clean LevelDB destinations; remove stale data first so
+  // deletions in the source are reflected in the rebuilt pack.
+  ensureCleanDir(dest);
+  await compilePack(staging, dest, { log: false });
+
+  console.log(`  ok pack "${def.name}": ${entries} ${def.docType} + ${folders} folder(s)`);
+  return { entries, folders };
+}
+
+function copyIcons() {
+  if (!fs.existsSync(ICONS_SRC)) {
+    console.warn(`  ! icons source not found: ${ICONS_SRC}`);
+    return 0;
+  }
+  ensureCleanDir(ASSETS_ICONS_DIR);
+  fs.cpSync(ICONS_SRC, ASSETS_ICONS_DIR, { recursive: true });
+  return fs.readdirSync(ASSETS_ICONS_DIR).filter((f) => fs.statSync(path.join(ASSETS_ICONS_DIR, f)).isFile()).length;
+}
+
+async function main() {
+  console.log(`Building Foundry module "${MODULE_ID}" from ${path.relative(ROOT, SRC_DIR)}`);
+  fs.mkdirSync(PACKS_DIR, { recursive: true });
+
+  let totalEntries = 0;
+  for (const def of PACKS) {
+    const { entries } = await buildPack(def);
+    totalEntries += entries;
+  }
+
+  const iconCount = copyIcons();
+  fs.rmSync(STAGING_DIR, { force: true, recursive: true, maxRetries: 10 });
+
+  console.log(`Done: ${totalEntries} documents across ${PACKS.length} packs, ${iconCount} icons bundled.`);
+}
+
+main().catch((err) => {
+  console.error("Foundry module build failed:", err);
+  process.exitCode = 1;
+});
