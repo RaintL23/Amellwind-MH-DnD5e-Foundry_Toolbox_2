@@ -47,6 +47,8 @@ import { getWeaponEffectiveTierLabel } from "../../../utils/equipment-proficienc
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import { SourceVariantSwitcher } from "@/features/builder/components/shared/SourceVariantSwitcher";
 import type { SourceVariant } from "@/features/builder/utils/library-variant.utils";
+import { customFeaturesToOptionalMap } from "@/features/weapon-forge/mappers/weapon-forge.mapper";
+import { isWeaponForgeWeapon } from "@/features/weapon-forge/utils/is-forge-weapon";
 
 interface WeaponLibraryDetailProps {
   equipped: EquippedWeapon;
@@ -91,8 +93,22 @@ function WeaponFeatureSection({
   runes: (Rune | null)[];
 }) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const isForge = isWeaponForgeWeapon(weapon);
+  const extraFeaturesMap = useMemo(() => {
+    if (!isForge) return undefined;
+    const map = customFeaturesToOptionalMap(
+      weapon.customFeatures,
+      weapon.name,
+    );
+    return map.size > 0 ? map : undefined;
+  }, [isForge, weapon]);
   const { columnChains, featuresMap, baseFeatures, baseFeatureNameKeys } =
-    useWeaponDialog(weapon, true);
+    useWeaponDialog(weapon, true, {
+      extraFeaturesMap,
+      // Forge JSON is authoritative — do not inject AGMH optional features
+      // matched only by shared weapon names (Great Sword, Hunting Horn, …).
+      includePrerequisiteMatches: !isForge,
+    });
 
   const unlockSections = getRaritySlideUnlockSections(
     weapon.rarityRows,

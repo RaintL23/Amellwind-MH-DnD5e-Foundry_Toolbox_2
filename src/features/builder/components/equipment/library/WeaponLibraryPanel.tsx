@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import { getDndWeapons } from "@/features/dnd-items/services/dnd-equipment.service";
 import { getAllForgeWeapons } from "@/features/weapon-forge/services/weapon-forge.service";
+import { isWeaponForgeWeapon } from "@/features/weapon-forge/utils/is-forge-weapon";
 import { resolveRpgbotContext } from "@/features/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/builder/hooks/useRpgbotRatingsLookup";
 import { weaponsToSourceVariants } from "@/features/dnd-items/mappers/dnd-weapon.mapper";
@@ -36,6 +37,14 @@ import type { WeaponLibraryCatalog } from "@/features/builder/components/shared/
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
 
 import { WeaponList } from "./shared/LibraryLists";
+
+function weaponMatchesLibraryCatalog(
+  weapon: Weapon,
+  catalog: WeaponLibraryCatalog,
+): boolean {
+  const isForge = isWeaponForgeWeapon(weapon);
+  return catalog === "forge" ? isForge : !isForge;
+}
 
 interface WeaponLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -141,23 +150,42 @@ export function WeaponLibraryPanel({
 
     return inventoryWeapons.filter(
       (w) =>
+        (!useAmellwindHomebrew ||
+          weaponMatchesLibraryCatalog(w, weaponCatalog)) &&
         w.name.toLowerCase().includes(q) &&
         weaponMatchesLibraryFilters(w, effectiveListFilters),
     );
-  }, [inventoryWeapons, isWeaponSlot, q, effectiveListFilters]);
+  }, [
+    inventoryWeapons,
+    isWeaponSlot,
+    q,
+    effectiveListFilters,
+    useAmellwindHomebrew,
+    weaponCatalog,
+  ]);
 
   const catalogWeaponsFiltered = useMemo(() => {
     if (!isWeaponSlot) return [];
 
-    const invNames = new Set(inventoryWeapons.map((w) => w.name));
+    // Only hide catalog rows that already appear in the *same* library catalog
+    // (AGMH "Great Sword" must not suppress Forge "Great Sword").
+    const invNames = new Set(
+      inventoryWeaponsFiltered.map((w) => w.name.toLowerCase()),
+    );
 
     return allWeapons.filter(
       (w) =>
         w.name.toLowerCase().includes(q) &&
-        !invNames.has(w.name) &&
+        !invNames.has(w.name.toLowerCase()) &&
         weaponMatchesLibraryFilters(w, effectiveListFilters),
     );
-  }, [allWeapons, inventoryWeapons, isWeaponSlot, q, effectiveListFilters]);
+  }, [
+    allWeapons,
+    inventoryWeaponsFiltered,
+    isWeaponSlot,
+    q,
+    effectiveListFilters,
+  ]);
   const equippedWeapon =
     selectedSlot === "mainHand"
       ? mainHand
