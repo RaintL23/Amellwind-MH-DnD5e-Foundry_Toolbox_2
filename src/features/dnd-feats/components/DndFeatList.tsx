@@ -11,24 +11,18 @@ import {
 import { useCompendiumListPage } from "@/shared/hooks/useCompendiumListPage";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
+import { entityMatchesSourceFilter } from "@/shared/utils/compendium-source-filter.utils";
+import {
+  buildDndFeatFilterSections,
+  collectDndFeatPresentFacets,
+  DND_FEAT_LIST_MULTI_KEYS,
+  dndFeatMatchesFacetFilters,
+  type DndFeatListMultiKey,
+} from "../utils/dnd-feat-list-filters";
 import { DndFeatCard } from "./DndFeatCard";
 import { DndFeatDetailDialog } from "./DndFeatDetailDialog";
 import { Pagination } from "@/components/ui/pagination";
 import { Award } from "lucide-react";
-
-type DndFeatFilter =
-  | ""
-  | "origin"
-  | "repeatable"
-  | "ability"
-  | "prerequisite";
-
-const FEAT_TYPE_OPTIONS = [
-  { value: "origin", label: "Origin Feats" },
-  { value: "repeatable", label: "Repeatable" },
-  { value: "ability", label: "With ability increases" },
-  { value: "prerequisite", label: "With prerequisites" },
-];
 
 const DND_FEAT_PAGE_SIZE = 30;
 
@@ -38,20 +32,21 @@ export function DndFeatList() {
     list: listFeats,
     loading,
     getString,
+    getAll,
     patchFilters,
-    sourceFilter,
     sourceSection,
-    matchesSourceFilter,
     searchDraft,
     setSearchDraft,
     appliedSearch,
     isSearchPending,
+    bookNames,
+    catalog,
     dialog,
   } = useCompendiumListPage<DndFeat>({
     session: {
       listId: "dnd-feats",
-      stringKeys: ["q", "filter"],
-      multiKeys: ["src"],
+      stringKeys: ["q", "repeat"],
+      multiKeys: DND_FEAT_LIST_MULTI_KEYS,
       urlPreserveKeys: ["feat"],
     },
     load: async () => {
@@ -69,22 +64,31 @@ export function DndFeatList() {
     },
   });
 
-  const filter = getString("filter") as DndFeatFilter;
+  const multi = useMemo(() => {
+    const out = {} as Record<DndFeatListMultiKey, string[]>;
+    for (const key of DND_FEAT_LIST_MULTI_KEYS) out[key] = getAll(key);
+    return out;
+  }, [getAll]);
+
+  const repeat = getString("repeat");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(DND_FEAT_PAGE_SIZE);
 
-  const filterSections = useMemo(
-    () => [
-      {
-        id: "filter",
-        title: "Feat Type",
-        mode: "single" as const,
-        options: FEAT_TYPE_OPTIONS,
-      },
-      sourceSection,
-    ],
-    [sourceSection],
+  const presentFacets = useMemo(
+    () => collectDndFeatPresentFacets(listFeats),
+    [listFeats],
   );
+
+  const filterSections = useMemo(
+    () => buildDndFeatFilterSections(presentFacets, sourceSection),
+    [presentFacets, sourceSection],
+  );
+
+  const filterValues = useMemo(() => {
+    const values: ListFilterValues = { repeat };
+    for (const key of DND_FEAT_LIST_MULTI_KEYS) values[key] = multi[key];
+    return values;
+  }, [multi, repeat]);
 
   const filtered = useMemo(() => {
     let result = listFeats;
@@ -95,32 +99,36 @@ export function DndFeatList() {
         (f) =>
           f.name.toLowerCase().includes(q) ||
           (f.searchText ?? f.summary).toLowerCase().includes(q) ||
+          f.prerequisites.some((p) => p.toLowerCase().includes(q)) ||
+          f.abilityIncreases.some((a) => a.label.toLowerCase().includes(q)) ||
           (f.variantSources ?? [f.source]).some((s) =>
             s.toLowerCase().includes(q),
           ),
       );
     }
 
-    if (sourceFilter.length > 0) {
-      result = result.filter((f) => matchesSourceFilter(f, sourceFilter));
-    }
-
-    if (filter === "origin") {
-      result = result.filter((f) => f.isOriginFeat);
-    } else if (filter === "repeatable") {
-      result = result.filter((f) => f.repeatable);
-    } else if (filter === "ability") {
-      result = result.filter((f) => f.abilityIncreases.length > 0);
-    } else if (filter === "prerequisite") {
-      result = result.filter((f) => f.prerequisites.length > 0);
-    }
+    result = result.filter((f) =>
+      dndFeatMatchesFacetFilters(f, filterValues, {
+        sourceMatcher: (feat, selected) =>
+          entityMatchesSourceFilter(feat, selected, catalog, bookNames),
+      }),
+    );
 
     return [...result].sort((a, b) => a.name.localeCompare(b.name));
-  }, [listFeats, appliedSearch, filter, sourceFilter, matchesSourceFilter]);
+  }, [listFeats, appliedSearch, filterValues, catalog, bookNames]);
 
   useEffect(() => {
     setPage(1);
-  }, [appliedSearch, filter, sourceFilter]);
+  }, [
+    appliedSearch,
+    repeat,
+    multi.kind,
+    multi.cat,
+    multi.abi,
+    multi.prereq,
+    multi.plvl,
+    multi.src,
+  ]);
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -135,12 +143,13 @@ export function DndFeatList() {
   );
 
   function applyDialogFilters(values: ListFilterValues) {
-    patchFilters({
-      filter: (typeof values.filter === "string"
-        ? values.filter
-        : "") as DndFeatFilter,
-      src: Array.isArray(values.src) ? values.src : [],
-    });
+    const patch: Record<string, string | string[]> = {
+      repeat: typeof values.repeat === "string" ? values.repeat : "",
+    };
+    for (const key of DND_FEAT_LIST_MULTI_KEYS) {
+      patch[key] = Array.isArray(values[key]) ? (values[key] as string[]) : [];
+    }
+    patchFilters(patch);
   }
 
   return (
@@ -168,13 +177,13 @@ export function DndFeatList() {
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
-          searchPlaceholder="Search feat..."
+          searchPlaceholder="Search feat, prerequisite, ability..."
           inputClassName="h-8 text-sm"
           sections={filterSections}
-          filterValues={{ filter, src: sourceFilter }}
+          filterValues={filterValues}
           onFiltersApply={applyDialogFilters}
           dialogTitle="Feat Filters"
-          dialogDescription="Filter official feats by type and sourcebook. Changes apply when you save."
+          dialogDescription="Filter by kind, category, ability increases, prerequisites, prerequisite level, and sourcebook. Changes apply when you save."
         />
       </div>
 

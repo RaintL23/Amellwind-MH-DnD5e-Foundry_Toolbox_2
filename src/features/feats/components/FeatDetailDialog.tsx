@@ -62,13 +62,13 @@ export function FeatDetailDialog({
           {(feat.prerequisites.length > 0 || feat.abilityIncreases.length > 0) && (
             <>
               <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">
-                Requisitos y bonificaciones
+                Requirements &amp; bonuses
               </h3>
               <div className="flex flex-wrap gap-2 mb-4">
                 {feat.prerequisites.map((p) => (
                   <span
                     key={p}
-                    className="rounded-md border border-border bg-muted/30 px-2.5 py-1 text-xs font-medium text-foreground"
+                    className="rounded-md border border-amber-800/50 bg-amber-950/40 px-2.5 py-1 text-xs font-medium text-amber-400"
                   >
                     {p}
                   </span>
@@ -87,7 +87,7 @@ export function FeatDetailDialog({
           )}
 
           <h3 className="text-xs font-bold text-amber-400 uppercase tracking-wider mb-3">
-            Descripción
+            Description
           </h3>
           <DescriptionLines lines={feat.paragraphs} />
           {feat.sections.map((section, i) => (

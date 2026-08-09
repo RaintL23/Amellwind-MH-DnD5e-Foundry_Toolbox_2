@@ -50,7 +50,7 @@ export const DndFeatCard = memo(function DndFeatCard({
             {feat.prerequisites.map((p) => (
               <span
                 key={p}
-                className="inline-block rounded border border-border/50 px-1.5 py-0.5 text-[10px] font-medium text-amber-400/90"
+                className="inline-block rounded border border-amber-800/50 bg-amber-950/40 px-1.5 py-0.5 text-[10px] font-medium text-amber-400"
               >
                 {p}
               </span>
@@ -65,7 +65,7 @@ export const DndFeatCard = memo(function DndFeatCard({
             ))}
             {feat.repeatable && (
               <span className="inline-block rounded border border-violet-800/50 bg-violet-950/40 px-1.5 py-0.5 text-[10px] font-medium text-violet-400">
-                Repetible
+                Repeatable
               </span>
             )}
           </div>
