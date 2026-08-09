@@ -1,0 +1,83 @@
+{
+  "_id": "BW4r2GGCo7aEzr8t",
+  "name": "Rajang Claw Rune (Trinket)",
+  "type": "equipment",
+  "img": "mh-icons/material-rune.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Adolescent Rajang | CR: 8 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Critical Eye.</em> Your weapon attacks critical hit range is increased by 1.\n<h3>Armor Effect</h3>\n<p>When you must succeed on a saving throw or be knocked @condition[prone], you do so with advantage.</p>\n<p><em><strong>Tags:</strong> mechanic:critical, type:offensive, mechanic:saving-throw, mechanic:condition, mechanic:advantage, type:defensive</em></p>",
+      "chat": ""
+    },
+    "identifier": "rajangclawrunetrinket",
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "rare",
+    "identified": true,
+    "type": {
+      "value": "trinket",
+      "baseItem": ""
+    },
+    "armor": {
+      "value": null,
+      "dex": null,
+      "magicalBonus": null
+    },
+    "properties": [],
+    "proficient": null,
+    "strength": null,
+    "activities": {},
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 700000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "rune",
+      "runeName": "Rajang Claw",
+      "slotContext": "Trinket",
+      "monsterName": "Adolescent Rajang"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786214698182,
+    "modifiedTime": 1786214698182,
+    "lastModifiedBy": null
+  }
+}
