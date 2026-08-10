@@ -33,7 +33,7 @@ export function MainLayout({ syncing = false }: { syncing?: boolean }) {
                 <button
                   onClick={() => setMobileOpen(true)}
                   className="p-1.5 rounded-md hover:bg-accent text-muted-foreground transition-colors"
-                  aria-label="Abrir menú"
+                  aria-label="Open menu"
                 >
                   <Menu className="h-5 w-5" />
                 </button>

@@ -202,7 +202,7 @@ function NavItemLink({
   if (!to || disabled) {
     return (
       <div
-        title={collapsed ? `${label} (próximamente)` : undefined}
+        title={collapsed ? `${label} (coming soon)` : undefined}
         aria-disabled="true"
         className={cn(
           "flex items-center rounded-md text-sm font-medium transition-colors relative text-muted-foreground/60 cursor-not-allowed",
@@ -450,7 +450,7 @@ export function Sidebar({
         <button
           onClick={onMobileClose}
           className="ml-auto md:hidden p-1 rounded hover:bg-accent text-muted-foreground"
-          aria-label="Cerrar menú"
+          aria-label="Close menu"
         >
           <X className="h-4 w-4" />
         </button>

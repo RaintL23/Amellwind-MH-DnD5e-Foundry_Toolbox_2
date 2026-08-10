@@ -51,11 +51,11 @@ export function Pagination({
       {/* Rango visible + selector de tamaño */}
       <div className="flex items-center gap-3">
         <p className="text-xs text-muted-foreground">
-          {from}–{to} de {totalItems}
+          {from}–{to} of {totalItems}
         </p>
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">Por página:</span>
+            <span className="text-xs text-muted-foreground">Per page:</span>
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
@@ -77,7 +77,7 @@ export function Pagination({
           className={cn(btnBase, "hover:bg-muted")}
           onClick={() => onPageChange(1)}
           disabled={page === 1}
-          aria-label="Primera página"
+          aria-label="First page"
         >
           <ChevronsLeft className="h-4 w-4" />
         </button>
@@ -85,7 +85,7 @@ export function Pagination({
           className={cn(btnBase, "hover:bg-muted")}
           onClick={() => onPageChange(page - 1)}
           disabled={page === 1}
-          aria-label="Página anterior"
+          aria-label="Previous page"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -115,7 +115,7 @@ export function Pagination({
           className={cn(btnBase, "hover:bg-muted")}
           onClick={() => onPageChange(page + 1)}
           disabled={page === totalPages}
-          aria-label="Página siguiente"
+          aria-label="Next page"
         >
           <ChevronRight className="h-4 w-4" />
         </button>
@@ -123,7 +123,7 @@ export function Pagination({
           className={cn(btnBase, "hover:bg-muted")}
           onClick={() => onPageChange(totalPages)}
           disabled={page === totalPages}
-          aria-label="Última página"
+          aria-label="Last page"
         >
           <ChevronsRight className="h-4 w-4" />
         </button>
