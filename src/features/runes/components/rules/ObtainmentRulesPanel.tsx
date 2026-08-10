@@ -98,9 +98,9 @@ export function ObtainMaterialsPanel() {
           </section>
 
           <p className="text-[10px] text-muted-foreground/60 border-t border-border pt-3">
-            Los valores Carve / Capture de cada material en la tabla corresponden a la
-            tabla de botín del monstruo. Usa el filtro &quot;Toda obtención&quot; para
-            ver solo materiales carveables o capturables.
+            Carve / Capture values for each material in the table match the
+            monster&apos;s loot table. Use the &quot;Both&quot; obtainment filter to
+            see only carveable or capturable materials.
           </p>
         </div>
       )}

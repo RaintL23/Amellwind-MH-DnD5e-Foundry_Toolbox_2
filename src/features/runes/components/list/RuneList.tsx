@@ -144,7 +144,7 @@ export function RuneList() {
         filters.obtainment.some((obtainment) => {
           if (obtainment === "Carveable") return r.carveChance !== "-";
           if (obtainment === "Capturable") return r.captureChance !== "-";
-          if (obtainment === "Ambas")
+          if (obtainment === "Both" || obtainment === "Ambas")
             return r.carveChance !== "-" && r.captureChance !== "-";
           return false;
         }),

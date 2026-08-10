@@ -36,7 +36,7 @@ export function BuildDrawer() {
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-6 right-6 z-40 flex items-center gap-2 rounded-full bg-amber-600 px-4 py-3 text-white shadow-lg hover:bg-amber-500 transition-colors"
-        aria-label="Abrir Rune Planner"
+        aria-label="Open Rune Planner"
       >
         <Layers className="h-5 w-5" />
         {totalRunes > 0 && (

@@ -32,7 +32,7 @@ export const DEFAULT_RUNE_DIALOG_FILTERS: RuneDialogFiltersState = {
 const OBTAINMENT_OPTIONS = [
   { value: "Carveable", label: "Carveable" },
   { value: "Capturable", label: "Capturable" },
-  { value: "Ambas", label: "Both" },
+  { value: "Both", label: "Both" },
 ];
 
 const SLOT_OPTIONS = [

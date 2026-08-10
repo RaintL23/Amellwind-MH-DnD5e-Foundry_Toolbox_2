@@ -54,8 +54,8 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
 
   function handleAdd(slotType: "weapon" | "armor" | "trinket1" | "trinket2") {
     const placed = addRune(rune, slotType);
-    if (!placed) flash("No hay slots disponibles en esta rareza.");
-    else flash("¡Runa agregada al build!");
+    if (!placed) flash("No slots available at this rarity.");
+    else flash("Rune added to build!");
   }
 
   // A trinket holds a single material effect, so the user must pick which one.

@@ -84,12 +84,12 @@ export function BuildDrawerFooter({
     <div className="shrink-0 border-t border-border px-5 py-4">
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
-          {totalRunes} material{totalRunes !== 1 ? "es" : ""} in the build
+          {totalRunes} material{totalRunes !== 1 ? "s" : ""} in the build
         </span>
         {totalViolations > 0 ? (
           <Badge variant="orange" className="gap-1 font-medium">
             <AlertTriangle className="h-3.5 w-3.5" />
-            {totalViolations} conflicto{totalViolations !== 1 ? "s" : ""}
+            {totalViolations} conflict{totalViolations !== 1 ? "s" : ""}
           </Badge>
         ) : (
           <Badge variant="green" className="font-medium">
