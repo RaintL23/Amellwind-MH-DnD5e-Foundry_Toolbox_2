@@ -1285,9 +1285,9 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 
 `FEATURE_COL_KEYS` identifica columnas de tipo feature: `features`, `single features`, `splint features`, `notes`, `ammo`, `coatings`, `phials`, `available`.
 
-`buildColumnChains` agrupa por rareza y anida upgrades (`Foo Upgrade I`) bajo su base. Si un upgrade vive en **Features** pero el ítem base está en otra columna (**Phials**, Ammo, Coatings…), p. ej. `Power Phial Upgrade` ↔ `Power Phial (Costs 2)`, se reparenta a esa cadena (`normalizeFeatureMatchKey`).
+`buildColumnChains` agrupa por rareza y anida upgrades (`Foo Upgrade I`) bajo su base. Si un upgrade vive en **Features** pero el ítem base está en otra columna (**Phials**, Ammo, Coatings…), p. ej. `Power Phial Upgrade` ↔ `Power Phial (Costs 2)`, se reparenta a esa cadena (`normalizeFeatureMatchKey`). Las listas trailing `Unlocked Ammo` / `Unlocked Coatings` / etc. se muestran como la columna recurso (tipos expandibles). Si además existe una columna feature con el mismo nombre (caso Light Bowgun: columna **Ammo** con `Ammo (LBG)` / Capacity Increase y tipos en Unlocked Ammo), esa columna feature se remapea a **Features** para no mezclar reglas con munición/recursos.
 
-`resolveWeaponBaseFeatures` también inyecta properties MH con descripción (p. ej. **Loading** desde `MHL`) junto a las `{@optfeature}` base. En el diálogo, si no hay fila **Base**, se inyecta una con esas features (`weapon-base-rarity.utils.ts`); si ya existe, la sección legacy “Base Features” se omite y el contenido vive en esa tier. Los bloques 5etools `{ type: "abilityDc" }` (Ammo/Coating save DC) se renderizan vía `formatAbilityDcText` en `fivetools-parser.ts`.
+`resolveWeaponBaseFeatures` también inyecta properties MH con descripción (p. ej. **Loading** desde `MHL`) junto a las `{@optfeature}` base. Features ya listadas en columnas de rareza (p. ej. **Ammo (LBG)** en la columna Ammo) no se reinyectan en Features. En el diálogo, si no hay fila **Base**, se inyecta una con esas features (`weapon-base-rarity.utils.ts`); si ya existe, la sección legacy “Base Features” se omite y el contenido vive en esa tier. Los bloques 5etools `{ type: "abilityDc" }` (Ammo/Coating save DC) se renderizan vía `formatAbilityDcText` en `fivetools-parser.ts`.
 
 #### Entidad `OptionalFeature`
 

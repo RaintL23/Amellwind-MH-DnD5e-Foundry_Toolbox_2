@@ -5,13 +5,9 @@ import {
 } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { ColumnChains } from "@/shared/foundry/weapons";
-import {
-  getRaritySlideStatEntries,
-  getRaritySlideUnlockSections,
-} from "../utils/rarity-slide.utils";
+import { getRaritySlideStatEntries } from "../utils/rarity-slide.utils";
 import { RaritySlideHeader } from "./RaritySlideHeader";
 import { RaritySlideStats } from "./RaritySlideStats";
-import { RaritySlideUnlockSection } from "./RaritySlideUnlockSection";
 import { RaritySlideFeatureChains } from "./RaritySlideFeatureChains";
 
 interface RaritySlideProps {
@@ -37,7 +33,6 @@ export function RaritySlide({
 }: RaritySlideProps) {
   const style = RARITY_STYLES[row.rarity] ?? RARITY_STYLES["Common"];
   const { headerBonuses, otherStats } = getRaritySlideStatEntries(row);
-  const unlockSections = getRaritySlideUnlockSections(rarityRows, rarityIndex);
 
   return (
     <div
@@ -54,14 +49,6 @@ export function RaritySlide({
       />
 
       <RaritySlideStats entries={otherStats} styleText={style.text} />
-
-      <RaritySlideUnlockSection
-        sections={unlockSections}
-        rarityRows={rarityRows}
-        rarityIndex={rarityIndex}
-        styleText={style.text}
-        mhItemEffectsMap={mhItemEffectsMap}
-      />
 
       <RaritySlideFeatureChains
         rarityIndex={rarityIndex}

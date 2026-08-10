@@ -14,18 +14,14 @@ import {
   PROPERTY_LABELS,
   RARITY_ORDER,
   Rune,
-  UNLOCK_COLUMN_PREFIX,
 } from "@/shared/types";
 import { ExpandableFeatureRow } from "@/features/weapons/components/ExpandableFeatureRow";
 import { WeaponProficiencyInfo } from "@/features/weapons/components/WeaponProficiencyInfo";
-import { RarityDot } from "@/features/weapons/components/RarityDot";
 import { useWeaponDialog } from "@/features/weapons/hooks/useWeaponDialog";
 import { formatWeaponValue } from "@/features/weapons/services/weapon.service";
+import { resolveMhItemParagraphs } from "@/features/weapons/services/mh-item-effects.service";
 import { getWeaponShieldAcBonusAtIndex } from "@/features/weapons/utils/shield.utils";
-import {
-  getRaritySlideStatEntries,
-  getRaritySlideUnlockSections,
-} from "@/features/weapons/utils/rarity-slide.utils";
+import { getRaritySlideStatEntries } from "@/features/weapons/utils/rarity-slide.utils";
 import { RuneFeaturesSection } from "../RuneFeaturesSection";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { WeaponModeToggle } from "@/features/weapons/components/WeaponModeToggle";
@@ -102,18 +98,18 @@ function WeaponFeatureSection({
     );
     return map.size > 0 ? map : undefined;
   }, [isForge, weapon]);
-  const { columnChains, featuresMap, baseFeatures, baseFeatureNameKeys } =
-    useWeaponDialog(weapon, true, {
+  const {
+    columnChains,
+    featuresMap,
+    mhItemEffectsMap,
+    baseFeatures,
+    baseFeatureNameKeys,
+  } = useWeaponDialog(weapon, true, {
       extraFeaturesMap,
       // Forge JSON is authoritative — do not inject AGMH optional features
       // matched only by shared weapon names (Great Sword, Hunting Horn, …).
       includePrerequisiteMatches: !isForge,
     });
-
-  const unlockSections = getRaritySlideUnlockSections(
-    weapon.rarityRows,
-    rarityIndex,
-  );
 
   function toggleFeature(name: string) {
     setExpanded((prev) => {
@@ -148,48 +144,6 @@ function WeaponFeatureSection({
 
   return (
     <>
-      {unlockSections.length > 0 && (
-        <div className="mb-3 space-y-3">
-          {unlockSections.map(({ label, items }) => (
-            <div key={label}>
-              <h4 className="mb-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
-                {label.replace(UNLOCK_COLUMN_PREFIX, "")}
-              </h4>
-              <ul className="space-y-0.5 text-xs text-muted-foreground">
-                {items.map((item) => {
-                  const introducedAt = weapon.rarityRows.findIndex((r) => {
-                    const val = r.columns[label];
-                    if (!val) return false;
-                    const list = Array.isArray(val) ? val : [val];
-                    return list.some(
-                      (v) => v.toLowerCase() === item.toLowerCase(),
-                    );
-                  });
-                  const isNew = introducedAt === rarityIndex;
-
-                  return (
-                    <li
-                      key={item}
-                      className="flex items-start gap-1.5 leading-relaxed"
-                    >
-                      <span className="shrink-0">•</span>
-                      <span className={isNew ? "text-foreground" : undefined}>
-                        {item}
-                      </span>
-                      {introducedAt >= 0 && (
-                        <RarityDot
-                          rarity={weapon.rarityRows[introducedAt]?.rarity ?? ""}
-                        />
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
-          ))}
-        </div>
-      )}
-
       {(baseFeatures.length > 0 || hasChainFeatures) && (
         <>
           <Separator className="my-3" />
@@ -229,12 +183,20 @@ function WeaponFeatureSection({
                     return visible.map((feat, fi) => {
                       const isUpgrade = fi > 0;
                       const feature = featuresMap.get(feat.name.toLowerCase());
+                      const paragraphs =
+                        feature?.paragraphs?.length
+                          ? feature.paragraphs
+                          : resolveMhItemParagraphs(
+                              feature?.name ?? feat.name,
+                              mhItemEffectsMap,
+                            );
+                      const displayName = feature?.name ?? feat.name;
 
                       return (
                         <ExpandableFeatureRow
                           key={`${feat.name}-${feat.rarityIndex}`}
-                          name={feat.name}
-                          paragraphs={feature?.paragraphs ?? []}
+                          name={displayName}
+                          paragraphs={paragraphs}
                           isExpanded={expanded.has(feat.name.toLowerCase())}
                           onToggle={() => toggleFeature(feat.name)}
                           indent={isUpgrade}

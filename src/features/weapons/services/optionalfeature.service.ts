@@ -8,9 +8,6 @@ import {
 import { mapOptionalFeature } from "../mappers/optionalfeature.mapper";
 import { getOptionalFeaturesRaw } from "@/shared/db/sync.service";
 
-/** Ammo (LBG) / Ammo (HBG) apply at every rarity but appear once in the rarity table. */
-const GLOBAL_AMMO_FEATURE = /^ammo\s+\([^)]+\)$/i;
-
 function collectColumnFeatureNames(weapon: Weapon): Set<string> {
   const names = new Set<string>();
   for (const row of weapon.rarityRows) {
@@ -32,8 +29,8 @@ function collectColumnFeatureNames(weapon: Weapon): Set<string> {
  * - optional features whose prerequisite is the weapon name with no rarity suffix
  *   (e.g. Rapid Fire / Overheat on Light Bowgun) — skip for forge/RaintDM weapons
  *
- * Features listed in rarity-table columns (e.g. Hunting Horn notes) are excluded
- * unless they are global ammo rules (Ammo (LBG), Ammo (HBG), …).
+ * Features already listed in rarity-table columns (Ammo (LBG), Hunting Horn
+ * notes, …) stay in those columns so they are not duplicated under Features.
  */
 export function resolveWeaponBaseFeatures(
   weapon: Weapon,
@@ -74,8 +71,7 @@ export function resolveWeaponBaseFeatures(
       if (feat.weaponName.toLowerCase() !== weapon.name.toLowerCase()) continue;
       if (feat.prerequisiteRarity) continue;
 
-      const key = feat.name.toLowerCase();
-      if (columnNames.has(key) && !GLOBAL_AMMO_FEATURE.test(feat.name)) continue;
+      if (columnNames.has(feat.name.toLowerCase())) continue;
 
       add(feat);
     }

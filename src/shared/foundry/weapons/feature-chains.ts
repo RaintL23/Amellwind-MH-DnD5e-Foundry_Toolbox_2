@@ -1,4 +1,5 @@
 import {
+  UNLOCK_COLUMN_PREFIX,
   WeaponRarityRow,
   isUnlockListColumn,
   isWeaponFeatureColumn,
@@ -167,6 +168,91 @@ function reparentCrossColumnUpgrades(
   });
 }
 
+/** "Unlocked Ammo" → "Ammo" so trailing nested tables join the resource column. */
+function unlockHostLabel(label: string): string {
+  const host = label.slice(UNLOCK_COLUMN_PREFIX.length).trim();
+  return host || label;
+}
+
+/**
+ * Feature / resource columns that feed rarity-slide chains.
+ *
+ * Trailing "Unlocked …" lists become the display column for resource *types*
+ * (Normal, Tranq, Power Phial, …). When the rarity table also has a feature
+ * column with that same host name (Light Bowgun: Ammo column holds
+ * `Ammo (LBG)` / Capacity Increase while types live in Unlocked Ammo), that
+ * feature column is remapped to **Features** so rule optfeatures stay with
+ * Features and Ammo/Coatings/… only list unlockable resources.
+ */
+function collectChainColumnSources(rarityRows: WeaponRarityRow[]): {
+  displayLabel: string;
+  sourceLabels: string[];
+}[] {
+  const order: string[] = [];
+  const sourcesByDisplay = new Map<string, string[]>();
+  const lowerToDisplay = new Map<string, string>();
+
+  const featureLabels: string[] = [];
+  const featureLabelSet = new Set<string>();
+  const unlockLabels: string[] = [];
+  const unlockLabelSet = new Set<string>();
+
+  for (const row of rarityRows) {
+    for (const label of Object.keys(row.columns)) {
+      if (isWeaponFeatureColumn(label)) {
+        if (!featureLabelSet.has(label)) {
+          featureLabelSet.add(label);
+          featureLabels.push(label);
+        }
+      } else if (isUnlockListColumn(label)) {
+        if (!unlockLabelSet.has(label)) {
+          unlockLabelSet.add(label);
+          unlockLabels.push(label);
+        }
+      }
+    }
+  }
+
+  const featureDisplayBySource = new Map<string, string>();
+  for (const unlockLabel of unlockLabels) {
+    const host = unlockHostLabel(unlockLabel);
+    const hostKey = host.toLowerCase();
+    for (const featureLabel of featureLabels) {
+      if (featureLabel.toLowerCase() !== hostKey) continue;
+      // Prefer an existing Features column casing when present.
+      const existingFeatures = featureLabels.find(
+        (l) => l.toLowerCase() === "features",
+      );
+      featureDisplayBySource.set(featureLabel, existingFeatures ?? "Features");
+    }
+  }
+
+  const addSource = (displayLabel: string, sourceLabel: string) => {
+    const key = displayLabel.toLowerCase();
+    let canonical = lowerToDisplay.get(key);
+    if (!canonical) {
+      canonical = displayLabel;
+      lowerToDisplay.set(key, canonical);
+      order.push(canonical);
+      sourcesByDisplay.set(canonical, []);
+    }
+    const sources = sourcesByDisplay.get(canonical)!;
+    if (!sources.includes(sourceLabel)) sources.push(sourceLabel);
+  };
+
+  for (const label of featureLabels) {
+    addSource(featureDisplayBySource.get(label) ?? label, label);
+  }
+  for (const unlockLabel of unlockLabels) {
+    addSource(unlockHostLabel(unlockLabel), unlockLabel);
+  }
+
+  return order.map((displayLabel) => ({
+    displayLabel,
+    sourceLabels: sourcesByDisplay.get(displayLabel) ?? [displayLabel],
+  }));
+}
+
 export function buildColumnChains(
   rarityRows: WeaponRarityRow[],
   options: BuildColumnChainsOptions = {},
@@ -174,43 +260,35 @@ export function buildColumnChains(
   const upgradeIndexes = buildUpgradeLinkIndexes(options.upgradeLinks);
   const hasExplicitLinks = upgradeIndexes.byId.size > 0;
 
-  const colLabelOrder: string[] = [];
-  const colLabelSet = new Set<string>();
+  const columnSources = collectChainColumnSources(rarityRows);
 
-  for (const row of rarityRows) {
-    for (const label of Object.keys(row.columns)) {
-      if (isWeaponFeatureColumn(label) && !colLabelSet.has(label)) {
-        colLabelOrder.push(label);
-        colLabelSet.add(label);
-      }
-    }
-  }
-
-  const columnChains = colLabelOrder.map((colLabel) => {
+  const columnChains = columnSources.map(({ displayLabel, sourceLabels }) => {
     const chainMap = new Map<string, FeatureChain>();
 
     for (let i = 0; i < rarityRows.length; i++) {
-      const val = rarityRows[i].columns[colLabel];
-      if (!val) continue;
+      for (const sourceLabel of sourceLabels) {
+        const val = rarityRows[i].columns[sourceLabel];
+        if (!val) continue;
 
-      const items = Array.isArray(val) ? val : [val];
+        const items = Array.isArray(val) ? val : [val];
 
-      for (const name of items) {
-        if (!name) continue;
-        const chainKey = hasExplicitLinks
-          ? resolveFeatureChainKey(name, upgradeIndexes)
-          : getBaseFeatureName(name);
+        for (const name of items) {
+          if (!name) continue;
+          const chainKey = hasExplicitLinks
+            ? resolveFeatureChainKey(name, upgradeIndexes)
+            : getBaseFeatureName(name);
 
-        if (!chainMap.has(chainKey)) {
-          chainMap.set(chainKey, {
-            baseName: chainKey,
-            features: [{ name, rarityIndex: i }],
-            introducedAtIndex: i,
-          });
-        } else {
-          const chain = chainMap.get(chainKey)!;
-          chain.features.push({ name, rarityIndex: i });
-          chain.introducedAtIndex = Math.min(chain.introducedAtIndex, i);
+          if (!chainMap.has(chainKey)) {
+            chainMap.set(chainKey, {
+              baseName: chainKey,
+              features: [{ name, rarityIndex: i }],
+              introducedAtIndex: i,
+            });
+          } else {
+            const chain = chainMap.get(chainKey)!;
+            chain.features.push({ name, rarityIndex: i });
+            chain.introducedAtIndex = Math.min(chain.introducedAtIndex, i);
+          }
         }
       }
     }
@@ -223,7 +301,7 @@ export function buildColumnChains(
       (a, b) => a.introducedAtIndex - b.introducedAtIndex,
     );
 
-    return { label: colLabel, chains };
+    return { label: displayLabel, chains };
   });
 
   return reparentCrossColumnUpgrades(columnChains);
