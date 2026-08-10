@@ -1,6 +1,10 @@
 import { ArrowLeft, TrendingUp } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { ABILITY_LABELS, type AbilityKey, type BuilderAsiChoices } from "@/shared/types";
+import {
+  ABILITY_LABELS,
+  type AbilityKey,
+  type BuilderAsiChoices,
+} from "@/shared/types";
 import { Select } from "@/components/ui/select";
 import { ABILITY_ORDER } from "@/shared/constants/dnd";
 
@@ -59,13 +63,13 @@ export function AsiLibraryPanel({
           active={choices.mode === "plus2"}
           onClick={() => setMode("plus2")}
         >
-          +2 a una
+          +2 one ability
         </ModeButton>
         <ModeButton
           active={choices.mode === "plus1plus1"}
           onClick={() => setMode("plus1plus1")}
         >
-          +1 a dos
+          +1 two abilities
         </ModeButton>
       </div>
 
@@ -93,7 +97,9 @@ export function AsiLibraryPanel({
       ) : (
         <div className="space-y-2">
           <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="w-16 shrink-0 font-medium text-foreground">+1</span>
+            <span className="w-16 shrink-0 font-medium text-foreground">
+              +1
+            </span>
             <Select
               value={choices.plus1a ?? ""}
               onChange={(e) =>
@@ -115,7 +121,9 @@ export function AsiLibraryPanel({
             </Select>
           </label>
           <label className="flex items-center gap-2 text-xs text-muted-foreground">
-            <span className="w-16 shrink-0 font-medium text-foreground">+1</span>
+            <span className="w-16 shrink-0 font-medium text-foreground">
+              +1
+            </span>
             <Select
               value={choices.plus1b ?? ""}
               onChange={(e) =>
