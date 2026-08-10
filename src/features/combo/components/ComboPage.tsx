@@ -150,7 +150,7 @@ export function ComboPage() {
   const isSearching = appliedSearch.trim().length > 0;
 
   const TABS: { id: ActiveTab; label: string; icon: React.ElementType }[] = [
-    { id: "rules", label: "Reglas", icon: BookOpen },
+    { id: "rules", label: "Rules", icon: BookOpen },
     ...tables.map((t) => ({
       id: t.id,
       label: t.toolName,
