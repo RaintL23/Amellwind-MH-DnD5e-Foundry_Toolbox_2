@@ -1,0 +1,391 @@
+{
+  "_id": "wzmEv3iMX2i4XMB5",
+  "name": "Fey Nerscylla Chelicera Rune",
+  "type": "equipment",
+  "img": "mh-icons/material-rune.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Fey Nerscylla | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>When you hit a creature with this weapon it must make a @Check[constitution|dc:14] saving throw or become @condition[poisoned] until the end of its next turn.</p>\n<h3>Armor Effect</h3>\n<em>Trap Master+.</em> While you wear this armor, you can set @item[pitfall trap|AGMH]s or @item[shock trap|AGMH]s as a bonus action and its save DC is increased by 2. Additionally, you can use an action to cast the @spell[snare|XGE] spell from it. Once used, the snare effect can't be used again until the next dawn.\n<p><em><strong>Tags:</strong> mechanic:condition, mechanic:saving-throw, type:offensive, mechanic:bonus-action, mechanic:spell</em></p>",
+      "chat": ""
+    },
+    "identifier": "feynerscyllachelicerarune",
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "type": {
+      "value": "trinket",
+      "baseItem": ""
+    },
+    "armor": {
+      "value": null,
+      "dex": null,
+      "magicalBonus": null
+    },
+    "properties": [],
+    "proficient": null,
+    "strength": null,
+    "activities": {
+      "nb5OMk7XuBMSeKPo": {
+        "_id": "nb5OMk7XuBMSeKPo",
+        "type": "utility",
+        "sort": 0,
+        "name": "Cast Snare",
+        "img": "mh-icons/material-rune.webp",
+        "activation": {
+          "type": "action",
+          "value": null,
+          "condition": "Armor side active — cast snare (XGE) from this rune",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "activityUses",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Cast snare (XGE). Can't be used again until the next dawn."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "1",
+          "recovery": [
+            {
+              "period": "dawn",
+              "type": "recoverAll"
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "cast-snare",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "5BMX4i2XMi3vEmzw",
+      "name": "Fey Nerscylla Chelicera Rune (Equip)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "macro.itemMacro",
+          "mode": 0,
+          "value": "",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "On equip, choose which rune effect (Weapon or Armor) to activate.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": -10,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeController": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "oedKAzOOGx7w6Ceh",
+      "name": "Fey Nerscylla Chelicera - Poisoned Strike",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "[postDamageRoll]ItemMacro.Fey Nerscylla Chelicera Rune",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "On weapon hit: CON DC 14 or poisoned until end of target's next turn.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Poisoned Strike"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "osOWuhrocUjpIsen",
+      "name": "Fey Nerscylla Chelicera - Trap Master+",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "<em>Trap Master+.</em> Set pitfall/shock traps as a bonus action (save DC +2); cast @spell[snare|XGE] 1/dawn.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "armor",
+          "materialEffectName": "Trap Master+"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 7300000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "rune",
+      "runeName": "Fey Nerscylla Chelicera",
+      "monsterName": "Fey Nerscylla",
+      "unified": true,
+      "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Poisoned Strike"
+        },
+        "armor": {
+          "label": "Armor Effect — Trap Master+"
+        }
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Fey Nerscylla Chelicera Rune",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Amellwind unified rune controller (Foundry v12 / dnd5e 4.4 / MidiQOL + DAE + Item Macro)\n// DAE runs this via change key \"macro.itemMacro\": args[0] === \"on\" when equipped, \"off\" when unequipped.\n// MidiQOL on-use passes arrive with args[0].macroPass (registered by the cloned effect on the actor).\nconst FLAG = \"amellwind-toolbox\";\n// Foundry only allows getFlag/setFlag for active module ids / \"world\" / \"core\".\n// This content pack uses a custom namespace, so read/write via getProperty + update.\nconst getRuneFlag = (doc, key) => foundry.utils.getProperty(doc, `flags.${FLAG}.${key}`);\nconst setRuneFlag = async (doc, key, value) => doc.update({ [`flags.${FLAG}.${key}`]: value });\nconst unsetRuneFlag = async (doc, key) => doc.update({ [`flags.${FLAG}.-=${key}`]: null });\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\nif (!item) return;\nconst arg0 = args?.[0];\nconst pass = String(arg0?.macroPass ?? \"\").toLowerCase();\nconst runeName = getRuneFlag(item, \"runeName\") ?? item.name;\n\nasync function runeCleanup() {\n  if (!actorDoc) return;\n  const mine = actorDoc.effects.filter((e) => getRuneFlag(e, \"runeClone\") && e.origin === item.uuid);\n  if (mine.length) await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", mine.map((e) => e.id));\n  await unsetRuneFlag(item, \"applied\");\n}\n\nfunction runeAeName(side, matName, trinket) {\n  let n = `${runeName}-${side}`;\n  if (matName) n += `-${matName}`;\n  if (trinket) n += \" (Trinket)\";\n  return n;\n}\n\nasync function runeApplySide(side, trinket) {\n  if (!actorDoc) return;\n  const blueprints = item.effects.filter((e) => getRuneFlag(e, \"runeSide\") === side);\n  const docs = blueprints.map((e) => {\n    const o = e.toObject();\n    delete o._id;\n    o.origin = item.uuid;\n    o.disabled = false;\n    o.transfer = false;\n    o.name = runeAeName(side, getRuneFlag(e, \"materialEffectName\"), trinket);\n    foundry.utils.setProperty(o, `flags.${FLAG}.runeClone`, true);\n    // Never clutter the token with rune status icons (many runes equipped at once).\n    foundry.utils.setProperty(o, \"flags.dae.showIcon\", false);\n    return o;\n  });\n  if (docs.length) await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  await setRuneFlag(item, \"applied\", { side, trinket });\n  if (typeof runeOnEquip === \"function\") await runeOnEquip(side, trinket);\n}\n\nif (arg0 === \"on\") {\n  if (!actorDoc) return;\n  await runeCleanup();\n  const sides = getRuneFlag(item, \"sides\") ?? {};\n  const available = Object.keys(sides).filter((s) => sides[s]);\n  if (!available.length) return;\n  const radios = available\n    .map((s, i) => `<label style=\"display:block;margin:.15rem 0\"><input type=\"radio\" name=\"runeSide\" value=\"${s}\" ${i === 0 ? \"checked\" : \"\"}/> ${sides[s].label ?? s}</label>`)\n    .join(\"\");\n  const content = `<form class=\"dnd5e2\"><p>Choose which effect to activate for <strong>${runeName}</strong>:</p>${radios}<hr/><label style=\"display:block;margin-top:.35rem\"><input type=\"checkbox\" name=\"runeTrinket\"/> Equipped in a trinket</label></form>`;\n  const choice = await new Promise((resolve) => {\n    new Dialog({\n      title: `${runeName} Rune`,\n      content,\n      buttons: {\n        ok: { icon: '<i class=\"fas fa-check\"></i>', label: \"Activate\", callback: (html) => resolve({ side: html.find('input[name=\"runeSide\"]:checked').val(), trinket: html.find('input[name=\"runeTrinket\"]').is(\":checked\") }) },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => resolve(null) },\n      },\n      default: \"ok\",\n      close: () => resolve(null),\n    }).render(true);\n  });\n  if (!choice || !choice.side) { await item.update({ \"system.equipped\": false }); return; }\n  await runeApplySide(choice.side, choice.trinket);\n  return;\n}\n\nif (arg0 === \"off\") { await runeCleanup(); return; }\nif (arg0 === \"each\") return;\n\n// ===== rune-specific combat passes =====\nif (pass.includes(\"postdamageroll\") || pass.includes(\"postactiveeffects\") || pass.includes(\"ishit\")) {\n  const wf = workflow ?? arg0?.workflow;\n  if (!wf) return;\n  const itemType = String(wf.item?.type ?? \"\").toLowerCase();\n  const actType = String(wf.activity?.type ?? arg0?.activity?.type ?? \"\").toLowerCase();\n  const actionType = String(\n    arg0?.itemActionType\n    ?? wf.itemActionType\n    ?? \"\",\n  ).toLowerCase();\n  const isWeaponAttack =\n    itemType === \"weapon\"\n    || [\"mwak\", \"rwak\"].includes(actionType)\n    || (actType === \"attack\" && itemType !== \"spell\");\n  if (!isWeaponAttack) return;\n\n  const hits = [...(arg0?.hitTargets ?? wf.hitTargets ?? [])];\n  if (!hits.length) return;\n\n  const DC = 14;\n  const origin = item.uuid;\n  const img = CONFIG.statusEffects?.find((e) => e.id === \"poisoned\")?.img\n    ?? item?.img\n    ?? \"icons/svg/poison.svg\";\n\n  const resolveActor = (t) =>\n    t?.actor\n    ?? t?.document?.actor\n    ?? (t?.documentName === \"Actor\" ? t : null);\n\n  const buildPoisoned = () => ({\n    name: \"Poisoned\",\n    img,\n    type: \"base\",\n    origin,\n    transfer: false,\n    disabled: false,\n    duration: {\n      rounds: 1,\n      turns: null,\n      seconds: null,\n      startTime: null,\n      combat: null,\n      startRound: null,\n      startTurn: null,\n    },\n    changes: [],\n    statuses: [\"poisoned\"],\n    tint: \"#ffffff\",\n    description: \"Poisoned until the end of the creature's next turn.\",\n    flags: {\n      dae: {\n        specialDuration: [\"turnEnd\"],\n        stackable: \"noneName\",\n        showIcon: true,\n      },\n      \"amellwind-toolbox\": {\n        cheliceraPoison: true,\n      },\n    },\n  });\n\n  const createEffects = async (targetActor, docs) => {\n    if (!game.user.isGM && typeof MidiQOL?.socket === \"function\") {\n      try {\n        await MidiQOL.socket().executeAsGM(\"createEffects\", {\n          actorUuid: targetActor.uuid,\n          effects: docs,\n        });\n        return;\n      } catch (err) {\n        console.warn(\"Chelicera poison createEffects via Midi socket failed\", err);\n      }\n    }\n    await targetActor.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  };\n\n  for (const t of hits) {\n    const targetActor = resolveActor(t);\n    if (!targetActor) continue;\n\n    let total = null;\n    try {\n      if (typeof targetActor.rollSavingThrow === \"function\") {\n        const parts = await targetActor.rollSavingThrow({\n          ability: \"con\",\n          target: DC,\n          chatMessage: true,\n          flavor: `${runeName} — Constitution save (DC ${DC})`,\n        });\n        const roll = Array.isArray(parts) ? parts[0] : parts;\n        total = Number(roll?.total ?? roll?._total);\n      } else if (typeof targetActor.rollAbilitySave === \"function\") {\n        const roll = await targetActor.rollAbilitySave(\"con\", {\n          chatMessage: true,\n          flavor: `${runeName} — Constitution save (DC ${DC})`,\n        });\n        total = Number(roll?.total);\n      }\n    } catch (err) {\n      console.warn(\"Chelicera poison save failed\", err);\n      continue;\n    }\n    if (total == null || Number.isNaN(total)) continue;\n    if (total >= DC) continue;\n    await createEffects(targetActor, [buildPoisoned()]);\n  }\n  return;\n}\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786390000000,
+    "modifiedTime": 1786390000000,
+    "lastModifiedBy": null
+  }
+}

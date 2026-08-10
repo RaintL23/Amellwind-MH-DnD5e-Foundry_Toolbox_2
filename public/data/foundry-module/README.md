@@ -44,7 +44,7 @@ Amellwind MH/
 | ------------------------ | ----------------- | ----- | ------------------------------------- | -------- |
 | Weapons                  | Amellwind MH      | Item  | `weapons/`                            | 27 weapons |
 | Weapon Resources         | Amellwind MH      | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
-| Runes                    | Amellwind MH      | Item  | `runes/<Monster>/`                    | 16 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
+| Runes                    | Amellwind MH      | Item  | `runes/<Monster>/`                    | 21 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
 | Combo Crafting           | Amellwind MH      | Item  | `combo-crafting/`                     | Combo Crafting feature (drop on any actor) |
 | Cooking Items            | Felyne Kitchen    | Item  | `cooking-features/` (rank-1, daily-skills) | food + daily skills |
 | Felyne Cook              | Felyne Kitchen    | Actor | `cooking-features/`                   | Felyne Cook (embeds its 46 items) |
