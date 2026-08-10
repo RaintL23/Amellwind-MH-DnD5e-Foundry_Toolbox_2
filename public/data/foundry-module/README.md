@@ -23,7 +23,7 @@ Sub-folders from the source tree are recreated as **compendium folders** inside 
 | ------------------------------ | ----- | ------------------------------------- | -------- |
 | Amellwind Weapons              | Item  | `weapons/`                            | 27 weapons |
 | Amellwind Weapon Resources     | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
-| Amellwind Runes                | Item  | `runes/`                              | 13 unified runes (equip dialog picks Weapon/Armor) |
+| Amellwind Runes                | Item  | `runes/<Monster>/`                    | 13 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
 | Amellwind Cooking Items        | Item  | `cooking-features/` (rank-1, daily-skills) | food + daily skills |
 | Amellwind Cooking Actors       | Actor | `cooking-features/`                   | Felyne Cook (embeds its 46 items) |
 | Amellwind Cooking Macros       | Macro | `cooking-features/`                   | Felyne Cook — Kitchen Sync |
