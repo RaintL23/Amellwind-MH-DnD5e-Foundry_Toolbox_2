@@ -134,7 +134,7 @@ export function BackstoryTableCard({
       {showTable && (
         <div className="px-4 pb-4">
           <p className="text-xs text-muted-foreground mb-2">
-            Haz clic en una fila para elegir esa opción manualmente.
+            Click a row to choose that option manually.
           </p>
           <div className="rounded border border-border overflow-hidden">
             <Table className="text-xs">
@@ -164,7 +164,7 @@ export function BackstoryTableCard({
                     <TableRow
                       key={i}
                       onClick={() => !selectDisabled && onSelect(table.id, i)}
-                      title={selectDisabled ? disabledReason : "Seleccionar esta opción"}
+                      title={selectDisabled ? disabledReason : "Select this option"}
                       className={cn(
                         "border-b border-border last:border-0 transition-colors",
                         selectDisabled

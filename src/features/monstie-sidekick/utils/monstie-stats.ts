@@ -70,7 +70,7 @@ export function getMonstieHitPoints(
   const formula =
     level === 1
       ? `10 + ${conMod >= 0 ? "+" : ""}${conMod} (Con)`
-      : `10 + Con + ${level - 1}d8+Con por nivel${level >= 15 ? `; +15 HP máx. al 15º, +1/nivel` : ""}`;
+      : `10 + Con + ${level - 1}d8+Con per level${level >= 15 ? `; +15 max HP at 15th, +1/level` : ""}`;
   return { average: Math.round(average), formula };
 }
 

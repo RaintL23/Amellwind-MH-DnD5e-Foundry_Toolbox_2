@@ -29,7 +29,7 @@ export function MealRollResultCard({
       <button
         onClick={onClose}
         className="absolute top-3 right-3 text-muted-foreground hover:text-foreground transition-colors text-lg leading-none"
-        aria-label="Cerrar resultado"
+        aria-label="Close result"
       >
         ×
       </button>
