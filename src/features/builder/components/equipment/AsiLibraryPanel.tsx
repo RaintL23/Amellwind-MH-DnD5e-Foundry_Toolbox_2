@@ -44,7 +44,7 @@ export function AsiLibraryPanel({
         className="flex items-center gap-1 text-[10px] text-muted-foreground transition-colors hover:text-foreground"
       >
         <ArrowLeft className="h-3 w-3" />
-        Elegir otro feat
+        Choose another feat
       </button>
 
       <div className="flex items-center gap-2">
@@ -55,7 +55,7 @@ export function AsiLibraryPanel({
       </div>
 
       <p className="text-[10px] leading-snug text-muted-foreground">
-        Aumenta una habilidad en +2 o dos habilidades distintas en +1 cada una.
+        Increase one ability by +2, or two different abilities by +1 each.
       </p>
 
       <div className="flex gap-1 rounded-md border border-border/60 bg-muted/20 p-0.5">
@@ -86,7 +86,7 @@ export function AsiLibraryPanel({
             }
             className="h-7 flex-1 text-xs"
           >
-            <option value="">Seleccionar…</option>
+            <option value="">Select…</option>
             {ABILITY_OPTIONS.map(({ key, label }) => (
               <option key={key} value={key}>
                 {label}
@@ -110,7 +110,7 @@ export function AsiLibraryPanel({
               }
               className="h-7 flex-1 text-xs"
             >
-              <option value="">Seleccionar…</option>
+              <option value="">Select…</option>
               {abilityOptions(choices.plus1b ? [choices.plus1b] : []).map(
                 ({ key, label }) => (
                   <option key={key} value={key}>
@@ -134,7 +134,7 @@ export function AsiLibraryPanel({
               }
               className="h-7 flex-1 text-xs"
             >
-              <option value="">Seleccionar…</option>
+              <option value="">Select…</option>
               {abilityOptions(choices.plus1a ? [choices.plus1a] : []).map(
                 ({ key, label }) => (
                   <option key={key} value={key}>

@@ -31,14 +31,14 @@ export function isAsiFeatSelection(selection: BuilderFeatSelection): boolean {
 }
 
 export function formatAsiChoicesSummary(choices: BuilderAsiChoices | undefined): string {
-  if (!choices) return "Sin asignar";
+  if (!choices) return "Unassigned";
   if (choices.mode === "plus2") {
-    return choices.plus2 ? `+2 ${choices.plus2.toUpperCase()}` : "Sin asignar";
+    return choices.plus2 ? `+2 ${choices.plus2.toUpperCase()}` : "Unassigned";
   }
   const parts: string[] = [];
   if (choices.plus1a) parts.push(`+1 ${choices.plus1a.toUpperCase()}`);
   if (choices.plus1b) parts.push(`+1 ${choices.plus1b.toUpperCase()}`);
-  return parts.length > 0 ? parts.join(", ") : "Sin asignar";
+  return parts.length > 0 ? parts.join(", ") : "Unassigned";
 }
 
 export function getSubclassGainLevel(classData: Class): number | null {

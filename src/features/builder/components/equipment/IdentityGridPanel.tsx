@@ -307,7 +307,7 @@ export function IdentityGridPanel({
           onUnequip={subclass ? () => onUnequipSlot("subclass") : undefined}
           isSelected={selectedSlot === "subclass"}
           disabled={!classSelection}
-          disabledHint={!classSelection ? "Elige una clase primero" : undefined}
+          disabledHint={!classSelection ? "Choose a class first" : undefined}
         />
       )}
       <OptionalFeatureGridPanel

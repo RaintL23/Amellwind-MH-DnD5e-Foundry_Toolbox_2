@@ -401,7 +401,7 @@ export function SpellcastingGridPanel({
                 onClickDetails={() => onSelectSlot(slot)}
                 isSelected={selectedSlot === slot}
                 highlighted={highlighted}
-                emptyTitle={`Elegir cantrips de ${className}`}
+                emptyTitle={`Choose ${className} cantrips`}
               />
             );
           }
@@ -423,7 +423,7 @@ export function SpellcastingGridPanel({
                 onClickDetails={() => onSelectSlot(pool.slot)}
                 isSelected={selectedSlot === pool.slot}
                 highlighted={highlighted}
-                emptyTitle={`Elegir cantrip — lista de ${pool.spellListClassName}`}
+                emptyTitle={`Choose cantrip — ${pool.spellListClassName} list`}
               />
             );
           }
@@ -448,14 +448,14 @@ export function SpellcastingGridPanel({
                 onClickDetails={() => onSelectSlot(PACT_SPELL_SLOT)}
                 isSelected={selectedSlot === PACT_SPELL_SLOT}
                 highlighted={highlighted}
-                emptyTitle={`Elegir hechizos de Pact Magic (1–${spellcastingInfo.pactMaxSpellLevel})`}
+                emptyTitle={`Choose Pact Magic spells (1–${spellcastingInfo.pactMaxSpellLevel})`}
               />
             );
           }
 
           const level = entry.level;
           const slot = toSpellLevelSlot(level);
-          const label = SPELL_LEVEL_LABELS[level] ?? `Nivel ${level}`;
+          const label = SPELL_LEVEL_LABELS[level] ?? `Level ${level}`;
           const isSelected =
             isSpellLevelSlot(selectedSlot) &&
             parseSpellLevel(selectedSlot) === level;
@@ -482,8 +482,8 @@ export function SpellcastingGridPanel({
               highlighted={highlighted}
               emptyTitle={
                 level === 0
-                  ? `Elegir cantrips de ${className}`
-                  : `Elegir hechizos de nivel ${level} de ${className}`
+                  ? `Choose ${className} cantrips`
+                  : `Choose level ${level} ${className} spells`
               }
             />
           );

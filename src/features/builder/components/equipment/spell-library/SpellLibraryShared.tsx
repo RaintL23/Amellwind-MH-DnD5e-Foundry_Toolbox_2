@@ -53,10 +53,10 @@ export function SpellInfoToggleButton({
         e.stopPropagation();
         onToggle();
       }}
-      title={expanded ? "Ocultar detalles" : "Ver detalles del hechizo"}
+      title={expanded ? "Hide details" : "Show spell details"}
       aria-expanded={expanded}
       aria-label={
-        expanded ? "Ocultar detalles del hechizo" : "Ver detalles del hechizo"
+        expanded ? "Hide spell details" : "Show spell details"
       }
       className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-muted/60 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
     >
@@ -80,7 +80,7 @@ export function SpellDamageToggleButton({
     <button
       type="button"
       onClick={onToggle}
-      title="Calcular daño"
+      title="Calculate damage"
       className="flex h-5 w-5 items-center justify-center rounded bg-amber-950/50 text-amber-400 transition-colors hover:bg-amber-950/80"
     >
       {showDamage ? (

@@ -88,7 +88,7 @@ export function OptionalFeatureLibraryPanel({
     return (
       <BuilderPanel title="Optional Features">
         <p className="text-xs italic text-muted-foreground">
-          Selecciona un slot de optional feature.
+          Select an optional feature slot.
         </p>
       </BuilderPanel>
     );

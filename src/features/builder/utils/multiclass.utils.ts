@@ -443,8 +443,8 @@ export function getMulticlassHitPointBreakdown(
     classTotal += gain;
     lines.push(
       charLevel === 1
-        ? `Niv. ${charLevel} (${entry.classData.name}): ${entry.classData.hitDie} max + Con (${formatModifier(conModifier)}) = ${gain}`
-        : `Niv. ${charLevel} (${entry.classData.name}): ${fixedPerLevel} + Con = ${gain}`,
+        ? `Lvl ${charLevel} (${entry.classData.name}): ${entry.classData.hitDie} max + Con (${formatModifier(conModifier)}) = ${gain}`
+        : `Lvl ${charLevel} (${entry.classData.name}): ${fixedPerLevel} + Con = ${gain}`,
     );
   }
 

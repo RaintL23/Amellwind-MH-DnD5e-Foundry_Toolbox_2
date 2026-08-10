@@ -150,7 +150,7 @@ export function StatsPanel() {
                 disabled={exportingFoundry}
               >
                 <FileDown className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                Descargar JSON
+                Download JSON
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem
@@ -159,7 +159,7 @@ export function StatsPanel() {
                 disabled={importingFoundry}
               >
                 <FileUp className="h-3.5 w-3.5 shrink-0" aria-hidden />
-                Subir JSON
+                Upload JSON
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -184,7 +184,7 @@ export function StatsPanel() {
         <FoundryModuleRequirementsNotice kind="actor" compact className="px-0.5" />
         {importingFoundry && (
           <p className="text-[10px] text-muted-foreground">
-            Importando Foundry VTT JSON…
+            Importing Foundry VTT JSON…
           </p>
         )}
         {foundryImportError && (
@@ -194,16 +194,16 @@ export function StatsPanel() {
           <div className="space-y-1 rounded border border-border bg-muted/40 p-2 text-[10px]">
             <div className="flex items-center justify-between gap-2">
               <span className="font-medium text-foreground">
-                Importado: {foundryImportSummary.matched.length} elemento(s)
+                Imported: {foundryImportSummary.matched.length} item(s)
                 {foundryImportSummary.unmatched.length > 0 &&
-                  ` · ${foundryImportSummary.unmatched.length} sin coincidencia`}
+                  ` · ${foundryImportSummary.unmatched.length} unmatched`}
               </span>
               <button
                 type="button"
                 className="text-muted-foreground underline-offset-2 hover:underline"
                 onClick={clearFoundryImport}
               >
-                Cerrar
+                Close
               </button>
             </div>
             {foundryImportSummary.unmatched.length > 0 && (

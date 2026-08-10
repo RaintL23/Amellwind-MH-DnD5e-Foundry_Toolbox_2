@@ -443,7 +443,7 @@ export function IdentityLibraryPanel({
       );
     }
 
-    return <EmptyState text="No se encontró la información." />;
+    return <EmptyState text="Information not found." />;
   }
 
   return (

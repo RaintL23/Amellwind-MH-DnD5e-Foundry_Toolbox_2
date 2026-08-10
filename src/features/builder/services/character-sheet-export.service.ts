@@ -139,7 +139,7 @@ export async function exportCharacterSheetPdf(
 ): Promise<Uint8Array> {
   const response = await fetch(TEMPLATE_URL);
   if (!response.ok) {
-    throw new Error("No se pudo cargar la plantilla de la hoja de personaje.");
+    throw new Error("Could not load the character sheet template.");
   }
 
   const templateBytes = await response.arrayBuffer();

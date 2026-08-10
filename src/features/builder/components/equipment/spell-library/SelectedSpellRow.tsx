@@ -63,7 +63,7 @@ export function SelectedSpellRow({
           <button
             type="button"
             onClick={onRemove}
-            title="Quitar hechizo"
+            title="Remove spell"
             className="flex h-5 w-5 items-center justify-center rounded bg-destructive/20 text-destructive-foreground transition-colors hover:bg-destructive/40"
           >
             <X className="h-2.5 w-2.5" strokeWidth={3} />

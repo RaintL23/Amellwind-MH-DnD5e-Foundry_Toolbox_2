@@ -414,7 +414,7 @@ export function FeatList({
       icon={<Award className="h-3.5 w-3.5 text-rose-400" />}
       stats={(option) =>
         option.id === ABILITY_SCORE_IMPROVEMENT.id
-          ? "Mejora 2 puntos de habilidad o elige un feat"
+          ? "Improve 2 ability points or choose a feat"
           : ""
       }
       onSelect={onSelect}

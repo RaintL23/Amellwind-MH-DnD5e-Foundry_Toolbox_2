@@ -431,7 +431,7 @@ export function ClassLibraryPanel({
         : null;
 
     if (!entryClassData) {
-      return <EmptyState text="Elige la clase adicional primero." />;
+      return <EmptyState text="Choose the additional class first." />;
     }
 
     return (

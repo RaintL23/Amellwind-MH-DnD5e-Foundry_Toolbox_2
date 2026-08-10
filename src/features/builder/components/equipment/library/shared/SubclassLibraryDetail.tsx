@@ -87,7 +87,7 @@ export function SubclassLibraryDetail({
           ))}
         </Accordion>
       ) : (
-        <EmptyState text="Sin rasgos de subclass disponibles para este nivel." />
+        <EmptyState text="No subclass features available for this level." />
       )}
     </div>
   );

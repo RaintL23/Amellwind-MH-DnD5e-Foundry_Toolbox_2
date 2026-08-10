@@ -116,8 +116,8 @@ export function ClassLibraryDetail({
 
       {!subclass && subclassLevel !== null && level >= subclassLevel && (
         <p className="text-[11px] italic text-muted-foreground">
-          Elige una {classData.subclassTitle?.toLowerCase() ?? "subclass"} para
-          ver sus rasgos.
+          Choose a {classData.subclassTitle?.toLowerCase() ?? "subclass"} to
+          see its features.
         </p>
       )}
 
@@ -140,7 +140,7 @@ export function ClassLibraryDetail({
 
       {byLevel.size === 0 ? (
         <p className="text-xs italic text-muted-foreground">
-          No hay rasgos disponibles para este nivel.
+          No features available for this level.
         </p>
       ) : (
         <Accordion type="multiple" className="space-y-1">

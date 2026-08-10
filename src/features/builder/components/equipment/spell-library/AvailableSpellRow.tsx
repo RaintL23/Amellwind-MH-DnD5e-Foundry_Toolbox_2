@@ -37,7 +37,7 @@ export function AvailableSpellRow({
           type="button"
           onClick={onSelect}
           disabled={disabled}
-          title={disabled ? disabledHint : `Añadir ${spell.name}`}
+          title={disabled ? disabledHint : `Add ${spell.name}`}
           className={cn(
             "flex min-w-0 flex-1 items-center gap-1.5 text-left",
             disabled ? "cursor-not-allowed" : "cursor-pointer",
