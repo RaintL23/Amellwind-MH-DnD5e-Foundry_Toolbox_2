@@ -1438,6 +1438,8 @@ Grupos de tags **mutuamente excluyentes** al colocar materiales:
 
 Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efectos parseados, botón limpiar build. Desde **RuneList** / **RuneDetailDialog** se pueden añadir runas al planificador.
 
+**Export Foundry** (`BuildDrawerFooter` → `downloadAllBuildRuneJsons` / `buildRuneFoundryItem`): descarga un Item `equipment` por runa del build. **Solo descripción** (HTML enriquecido); sin activities ni Active Effects. Las automatizaciones curadas viven en `public/data/foundry-jsons-example/runes`.
+
 ---
 
 ### Character Builder (ALPHA)
@@ -1543,7 +1545,7 @@ El builder puede **exportar** el personaje a un actor `character` de **Foundry V
 - **Inventory items** (`buildInventoryItem`): routing por tipo 5etools — tools (`T`/`AT`/`GS`/`INS`) → Foundry `tool` + activity `check`; ropa (`Costume`, `Fine Clothes`, …) → `equipment` clothing; pociones/scrolls y gear con usos limitados (p. ej. Healer's Kit) → `consumable` con activity heal/utility + `system.uses`; resto → `loot` gear. Descriptions/weight/price/rarity desde el catálogo `dnd-items` (prioriza XPHB/XDMG). Entradas `"N gp"` **no** se exportan como ítems: se suman a `system.currency.gp` vía `sumInventoryGoldGp` / `isGoldInventoryEntry`.
 - **Export** (`builder/foundry-export/` + hook `useFoundryExport`): `buildFoundryActor(input)` ensambla `system` + `items[]` + `prototypeToken`. Sub-builders en `foundry-export/items/*` (feat/weapon/equipment/inventory/spell/identity), runas embebidas vía `buildRuneFoundryItem`, `advancement.builders.ts`. Infraestructura (IDs, stats, midi, enrichers, mappings, `wrapItem`, `downloadFoundryJson`) vive en `shared/foundry/`. Automatización de armas (compiler/chains/registry) en `shared/foundry/weapons/`. Retrato/token base64.
 - **Automatización Midi-QoL / DAE (estilo Plutonium)** (`automation.data.ts` + `automation.builders.ts`): `applyItemAutomation` fusiona overlays por nombre; enlaza AE `transfer:false` a activities vacías (`linkNonTransferEffectsToActivities`). Requiere Midi + DAE + Times Up en el mundo. Ampliar: entradas en `AUTOMATIONS` por nombre normalizado.
-- **Runas**: export standalone en `/runes` y también items `equipment` en el actor del builder (equipped, con AE pasivos parseados cuando el texto mapea AC/resistencia/daño). Descriptions enriquecidas.
+- **Runas**: export standalone en `/runes` y también items `equipment` en el actor del builder (equipped). **Solo descripción** enriquecida — sin activities ni AE generados; las automatizaciones se añaden a mano (referencia: `public/data/foundry-jsons-example/runes`).
 - **Import** (`foundry-import/`, hook `useFoundryImport`): sin cambios de contrato; matching + snapshot.
 - **Snapshot** (`builder-snapshot.ts`): `flags["amellwind-toolbox"].builderSnapshot` para round-trip de choices/equipo/runas.
 

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { AlertTriangle, Check, Copy } from "lucide-react";
+import { AlertTriangle, Check, Copy, Download } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { MaterialEffectSlot, Rune } from "@/shared/types";
 import { extractLeadingMaterialEffectName } from "@/features/material-effects/utils/material-effect-highlight.utils";
 import { useRuneBuild } from "../../context/RuneBuildContext";
+import { downloadAllBuildRuneJsons } from "../../utils/rune-foundry-export";
 
 interface BuildDrawerFooterProps {
   totalRunes: number;
@@ -33,7 +34,10 @@ function describeTrinket(
   return `${label}: ${rune.name} (${rune.monsterName}) — ${effectKind}${suffix}`;
 }
 
-export function BuildDrawerFooter({ totalRunes, totalViolations }: BuildDrawerFooterProps) {
+export function BuildDrawerFooter({
+  totalRunes,
+  totalViolations,
+}: BuildDrawerFooterProps) {
   const {
     weaponRunes,
     armorRunes,
@@ -67,11 +71,20 @@ export function BuildDrawerFooter({ totalRunes, totalViolations }: BuildDrawerFo
     }
   };
 
+  const handleExportFoundry = () => {
+    void downloadAllBuildRuneJsons(
+      weaponRunes,
+      armorRunes,
+      trinket1Rune,
+      trinket2Rune,
+    );
+  };
+
   return (
     <div className="shrink-0 border-t border-border px-5 py-4">
       <div className="flex items-center justify-between text-sm text-muted-foreground">
         <span>
-          {totalRunes} material{totalRunes !== 1 ? "es" : ""} en el build
+          {totalRunes} material{totalRunes !== 1 ? "es" : ""} in the build
         </span>
         {totalViolations > 0 ? (
           <Badge variant="orange" className="gap-1 font-medium">
@@ -80,30 +93,40 @@ export function BuildDrawerFooter({ totalRunes, totalViolations }: BuildDrawerFo
           </Badge>
         ) : (
           <Badge variant="green" className="font-medium">
-            Build válido ✓
+            Valid build ✓
           </Badge>
         )}
       </div>
       <p className="mt-1 text-xs text-muted-foreground/60 italic">
-        Los cambios no se guardan entre sesiones.
+        Changes are not saved between sessions.
       </p>
-      <Button
-        onClick={handleCopy}
-        variant="outline"
-        className="mt-3 w-full gap-2 border-amber-600/30 bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 hover:text-amber-400"
-      >
-        {copied ? (
-          <>
-            <Check className="h-4 w-4" />
-            Copied!
-          </>
-        ) : (
-          <>
-            <Copy className="h-4 w-4" />
-            Copy runes names
-          </>
-        )}
-      </Button>
+      <p className="mt-1 text-xs text-muted-foreground/60 italic">
+        The descriptions generated from the Rune Builder will only be the
+        descriptions.
+      </p>
+      <div className="mt-3 flex flex-col gap-2">
+        <Button
+          onClick={handleExportFoundry}
+          variant="outline"
+          className="w-full gap-2 border-amber-600/30 bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 hover:text-amber-400"
+        >
+          <Download className="h-4 w-4" />
+          Export to Foundry VTT
+        </Button>
+        <Button onClick={handleCopy} variant="outline" className="w-full gap-2">
+          {copied ? (
+            <>
+              <Check className="h-4 w-4" />
+              Copied! ✓
+            </>
+          ) : (
+            <>
+              <Copy className="h-4 w-4" />
+              Copy rune names
+            </>
+          )}
+        </Button>
+      </div>
     </div>
   );
 }

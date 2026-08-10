@@ -132,8 +132,8 @@ export function getFoundryModuleRequirements(
       ...ANIMATION_STACK,
     ];
   }
-  // Runes: midi for AE when present; Plutonium for @spell in effect text
-  return [...MIDI_STACK, ...RICH_TEXT_STACK];
+  // Runes from the builder are description-only; Plutonium helps @spell enrichers
+  return [...RICH_TEXT_STACK];
 }
 
 export function formatModuleRequirementsSummary(
