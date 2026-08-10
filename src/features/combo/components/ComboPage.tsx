@@ -326,10 +326,10 @@ function ToolTab({
             {table.toolName}
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">
-            {table.rows.length} recetas disponibles ·{" "}
+            {table.rows.length} recipes available ·{" "}
             {getUniqueCategories(table.rows).length > 0
-              ? `Categorías: ${getUniqueCategories(table.rows).join(", ")}`
-              : "Sin subcategorías"}
+              ? `Categories: ${getUniqueCategories(table.rows).join(", ")}`
+              : "No subcategories"}
           </p>
         </div>
         {/* Local search */}
@@ -339,7 +339,7 @@ function ToolTab({
             type="text"
             value={localSearch}
             onChange={(e) => setLocalSearch(e.target.value)}
-            placeholder="Filtrar recetas…"
+            placeholder="Filter recipes…"
             className="w-full pl-8 pr-3 py-1.5 rounded-md border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
           />
           {localSearch && (
@@ -361,23 +361,23 @@ function ToolTab({
               <tr className="bg-muted/50 border-b border-border">
                 {table.hasCategory && (
                   <th className="px-3 py-3 text-left font-semibold text-muted-foreground whitespace-nowrap w-28">
-                    Categoría
+                    Category
                   </th>
                 )}
                 <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
-                  Objeto
+                  Item
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
-                  Ingrediente 1
+                  Ingredient 1
                 </th>
                 <th className="px-4 py-3 text-left font-semibold text-muted-foreground">
-                  Ingrediente 2
+                  Ingredient 2
                 </th>
                 <th className="px-3 py-3 text-center font-semibold text-muted-foreground w-14">
                   DC
                 </th>
                 <th className="px-3 py-3 text-center font-semibold text-muted-foreground w-16">
-                  Cant.
+                  Qty
                 </th>
               </tr>
             </thead>
