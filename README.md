@@ -1,100 +1,102 @@
 # Amellwind Monster Hunter DnD5e Toolbox
 
-Toolkit web para **Dungeon Masters** y jugadores del homebrew de **Amellwind**, que combina **Monster Hunter** con **Dungeons & Dragons 5e**. Monstruos, runas, armas, character builder con **export/import a Foundry VTT**, calculadora de daño, cocina, tiendas y más en una sola aplicación, con datos cacheados en el navegador para consultar offline entre sesiones.
+**Language / Idioma:** **English** · [Español](./README.es.md)
 
-Nació en mi mesa de rol: juego con amigos más entusiasmados con D&D que con Monster Hunter, y al usar el homebrew de Amellwind tropezamos una y otra vez buscando reglas y opciones de personaje. Es un sistema con poco material centralizado — casi sin wikis ni referencias cómodas — así que armé esta herramienta para que cualquiera pueda explorar el contenido de Amellwind y preparar personajes sin saltar entre PDFs y pestañas sueltas.
+Web toolkit for **Dungeon Masters** and players of the **Amellwind** homebrew, which combines **Monster Hunter** with **Dungeons & Dragons 5e**. Monsters, runes, weapons, a character builder with **Foundry VTT export/import**, a damage calculator, cooking, shops, and more — in one app, with browser-cached data so you can browse offline between sessions.
 
-> **Estado:** v0.1.23 — el Character Builder está en fase **ALPHA**.
+It started at my table: I play with friends who care more about D&D than Monster Hunter, and while using Amellwind’s homebrew we kept getting stuck hunting for rules and character options. The system has little centralized material — almost no wikis or handy references — so I built this tool so anyone can explore Amellwind content and prepare characters without jumping between PDFs and loose tabs.
 
-**App en vivo:** [https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/](https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/)
+> **Status:** v0.1.23 — the Character Builder is in **ALPHA**.
 
-## Características
+**Live app:** [https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/](https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/)
+
+## Features
 
 ### Amellwind Homebrew
 
-| Sección              | Ruta                | Descripción                                                                   |
+| Section              | Route               | Description                                                                   |
 | -------------------- | ------------------- | ----------------------------------------------------------------------------- |
-| **Builder**          | `/builder`          | Character Builder — stats, equipamiento, runas, DPT y **export/import Foundry VTT** _(ALPHA)_ |
-| **Damage Calculator**| `/damage-calculator`| Calculadora de daño esperado por turno comparando builds de armas (persistida) |
-| **Creation Guide**   | `/character-guide`  | Guía de creación de personajes del manual (species, roles, skills, etc.)      |
-| **Monstie Sidekick** | `/monstie-sidekick` | Reglas y creador de sidekicks Monstie                                         |
-| **NPC Generator**    | `/npc-generator`    | Generador de stat blocks para NPCs humanoides                                 |
-| **Species**          | `/species`          | Especies y subrazas de la Guía de Caza                                        |
-| **Backgrounds**      | `/backgrounds`      | Trasfondos de cazador del manual                                              |
-| **Feats**            | `/feats`            | Dotes (feats) del manual                                                      |
-| **Monsters**         | `/monsters`         | Bestiario MH con stat blocks, detalle y página dedicada por monstruo          |
-| **Runes**            | `/runes`            | Materiales de monstruo y planificador de builds (drawer lateral)              |
-| **Material Effects** | `/material-effects` | Efectos de materiales de monstruo (armadura/arma) en listado consultable      |
-| **Conditions**       | `/conditions`       | Condiciones del homebrew Amellwind                                            |
-| **Diseases**         | `/diseases`         | Enfermedades del homebrew Amellwind                                           |
-| **Weapons**          | `/weapons`          | Armas de cazador (Hunter Weapons) y optional features                         |
-| **Items**            | `/items`            | Catálogo de ítems de la Guía de Caza                                          |
-| **Shops**            | `/shops`            | Tiendas con carrito de compra                                                 |
-| **Cooking**          | `/cooking`          | Sistema de cocina artesana                                                    |
-| **Combo List**       | `/combo`            | Crafteo y combinaciones de objetos                                            |
-| **Environments**     | `/environments`     | Biomas y tablas de encuentro/recursos                                         |
-| **Resources**        | `/resources`        | Recursos de entorno (plantas, minerales, etc.)                                |
-| **Downtime**         | `/downtime`         | Actividades de tiempo libre del manual                                        |
+| **Builder**          | `/builder`          | Character Builder — stats, equipment, runes, DPR, and **Foundry VTT export/import** _(ALPHA)_ |
+| **Damage Calculator**| `/damage-calculator`| Expected damage-per-turn calculator for comparing weapon builds (persisted) |
+| **Creation Guide**   | `/character-guide`  | Character creation guide from the manual (species, roles, skills, etc.)      |
+| **Monstie Sidekick** | `/monstie-sidekick` | Rules and creator for Monstie sidekicks                                         |
+| **NPC Generator**    | `/npc-generator`    | Humanoid NPC stat block generator                                 |
+| **Species**          | `/species`          | Species and subraces from the Hunting Guide                                        |
+| **Backgrounds**      | `/backgrounds`      | Hunter backgrounds from the manual                                              |
+| **Feats**            | `/feats`            | Feats from the manual                                                      |
+| **Monsters**         | `/monsters`         | MH bestiary with stat blocks, detail, and a dedicated page per monster          |
+| **Runes**            | `/runes`            | Monster materials and build planner (side drawer)              |
+| **Material Effects** | `/material-effects` | Monster material effects (armor/weapon) in a browsable list      |
+| **Conditions**       | `/conditions`       | Amellwind homebrew conditions                                            |
+| **Diseases**         | `/diseases`         | Amellwind homebrew diseases                                           |
+| **Weapons**          | `/weapons`          | Hunter Weapons and optional features                         |
+| **Items**            | `/items`            | Item catalog from the Hunting Guide                                          |
+| **Shops**            | `/shops`            | Shops with a shopping cart                                                 |
+| **Cooking**          | `/cooking`          | Artisan cooking system                                                    |
+| **Combo List**       | `/combo`            | Item crafting and combinations                                            |
+| **Environments**     | `/environments`     | Biomes and encounter/resource tables                                         |
+| **Resources**        | `/resources`        | Environment resources (plants, minerals, etc.)                                |
+| **Downtime**         | `/downtime`         | Downtime activities from the manual                                        |
 
-### Compendio D&D 5e
+### D&D 5e Compendium
 
-Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son homebrew de Amellwind):
+Official reference data loaded from [5etools](https://5e.tools) (not Amellwind homebrew):
 
-| Sección         | Ruta                         | Descripción                                              |
+| Section         | Route                         | Description                                              |
 | --------------- | ---------------------------- | -------------------------------------------------------- |
-| **Spells**      | `/spells`                    | Conjuros con filtros por clase, nivel y fuente           |
-| **Classes**     | `/classes`, `/classes/:id`   | Clases base con página de detalle por variante           |
-| **Items**       | `/dnd-items`                 | Ítems mágicos y equipo del PHB/DMG y otras fuentes       |
-| **Bestiary**    | `/bestiary`, `/bestiary/:id` | Criaturas del MM y otras fuentes, con carga bajo demanda |
-| **Races**       | `/dnd-races`                 | Especies, linajes y subrazas oficiales 5e                |
-| **Backgrounds** | `/dnd-backgrounds`           | Trasfondos oficiales 5e (2014 / 2024)                    |
-| **Feats**       | `/dnd-feats`                 | Dotes oficiales 5e                                       |
-| **Xanathar Backstory** | `/xanathar-backstory` | Generador de trasfondo aleatorio con las tablas de Xanathar (XGE) |
-| **Shop Generator** | `/shop-generator` | Tiendas D&D 5e procedurales (tema, tier, precios CSV editables) |
+| **Spells**      | `/spells`                    | Spells with filters by class, level, and source           |
+| **Classes**     | `/classes`, `/classes/:id`   | Base classes with a detail page per variant           |
+| **Items**       | `/dnd-items`                 | Magic items and equipment from the PHB/DMG and other sources       |
+| **Bestiary**    | `/bestiary`, `/bestiary/:id` | Creatures from the MM and other sources, loaded on demand |
+| **Races**       | `/dnd-races`                 | Official 5e species, lineages, and subraces                |
+| **Backgrounds** | `/dnd-backgrounds`           | Official 5e backgrounds (2014 / 2024)                    |
+| **Feats**       | `/dnd-feats`                 | Official 5e feats                                       |
+| **Xanathar Backstory** | `/xanathar-backstory` | Random backstory generator using Xanathar’s tables (XGE) |
+| **Shop Generator** | `/shop-generator` | Procedural D&D 5e shops (theme, tier, editable CSV prices) |
 
-### Integración con Foundry VTT
+### Foundry VTT integration
 
-El **Character Builder** puede **exportar** el personaje a un actor `character` de **Foundry VTT (sistema dnd5e v12)** listo para importar, e **importar** de vuelta un JSON de actor de Foundry para reconstruir el build dentro de la app. El export genera un único archivo JSON con clase/subclase, especie, trasfondo, dotes, conjuros, armas/armadura/trinkets, advancements y retrato/token; el import hace _matching_ de cada entidad contra los catálogos de la app (clases, especies, trasfondos, dotes, conjuros y equipo). Ambos flujos viven en `src/features/builder/foundry-export/` y `foundry-import/`, con botones en el `StatsPanel` del builder.
+The **Character Builder** can **export** the character as a **Foundry VTT (dnd5e v12)** `character` actor ready to import, and **import** a Foundry actor JSON back to rebuild the character inside the app. Export produces a single JSON file with class/subclass, species, background, feats, spells, weapons/armor/trinkets, advancements, and portrait/token; import _matches_ each entity against the app catalogs (classes, species, backgrounds, feats, spells, and equipment). Both flows live in `src/features/builder/foundry-export/` and `foundry-import/`, with buttons on the builder’s `StatsPanel`.
 
-El export además **enriquece los items con automatización Midi-QoL / DAE** (Active Effects con flags de `midi-qol`/`dae`), replicando el comportamiento que añadiría el importador de **Plutonium**: el actor se comporta como si hubiera pasado por *Plutonium Addon: Automation*, siempre que el mundo destino tenga **Midi QoL + DAE + Times Up** activos. Los overlays de automatización (`foundry-export/automation.data.ts`) están portados como datos de referencia desde los repos de [TheGiddyLimit](https://github.com/TheGiddyLimit) — ver [Fuentes de datos](#fuentes-de-datos).
+Export also **enriches items with Midi-QoL / DAE automation** (Active Effects with `midi-qol`/`dae` flags), mirroring what the **Plutonium** importer would add: the actor behaves as if it went through *Plutonium Addon: Automation*, as long as the destination world has **Midi QoL + DAE + Times Up** enabled. Automation overlays (`foundry-export/automation.data.ts`) are ported as reference data from [TheGiddyLimit](https://github.com/TheGiddyLimit) repos — see [Data sources](#data-sources).
 
-## Stack tecnológico
+## Tech stack
 
-| Capa           | Tecnología                        |
+| Layer           | Technology                        |
 | -------------- | --------------------------------- |
 | Framework      | React 18 + TypeScript             |
 | Build          | Vite                              |
-| Estilos        | Tailwind CSS                      |
-| Componentes UI | shadcn/ui (Radix UI)              |
-| Tablas         | TanStack Table                    |
+| Styles        | Tailwind CSS                      |
+| UI components | shadcn/ui (Radix UI)              |
+| Tables         | TanStack Table                    |
 | Routing        | React Router v6 (lazy + Suspense) |
-| Almacenamiento | IndexedDB (`idb`)                 |
-| Paquetes       | pnpm                              |
+| Storage | IndexedDB (`idb`)                 |
+| Packages       | pnpm                              |
 
-La app es una **SPA** sin backend propio. Los datos de Amellwind se sincronizan y cachean en el navegador; el compendio D&D 5e se obtiene bajo demanda desde el mirror de 5etools.
+The app is an **SPA** with no backend of its own. Amellwind data is synced and cached in the browser; the D&D 5e compendium is fetched on demand from the 5etools mirror.
 
-## Requisitos
+## Requirements
 
-- [Node.js](https://nodejs.org/) **22.x** (ver `.nvmrc`)
+- [Node.js](https://nodejs.org/) **22.x** (see `.nvmrc`)
 - [pnpm](https://pnpm.io/installation)
 
-## Instalación y uso
+## Install and usage
 
 ```bash
-# Clonar el repositorio
+# Clone the repository
 git clone https://github.com/RaintL23/Amellwind-MH-DnD5e-Foundry_Toolbox_2.git
 cd Amellwind-MH-DnD5e-Foundry_Toolbox_2
 
-# Instalar dependencias
+# Install dependencies
 pnpm install
 
-# Servidor de desarrollo
+# Dev server
 pnpm dev
 
-# Build de producción
+# Production build
 pnpm build
 
-# Vista previa del build
+# Preview the build
 pnpm preview
 
 # Lint
@@ -103,133 +105,133 @@ pnpm lint
 # Rebuild magic-item pricing lookup from scripts/data/magic-item-pricing.csv
 pnpm pricing:build
 
-# Build con análisis de bundle
+# Build with bundle analysis
 pnpm build:analyze
 ```
 
-`pnpm build` y `pnpm dev` también ejecutan `pricing:build` automáticamente. Para actualizar precios: sustituye `scripts/data/magic-item-pricing.csv` (export CSV de la hoja [Magic Item Pricing](https://dumpstatadventures.com/the-gm-is-always-right/pricing-magic-items-2024-dungeon-masters-guide) de Dump Stat Adventures — pestañas DMG 2024 + filas XGTE/TCoE) y corre `pnpm pricing:build` (o cualquier build/dev). La app atribuye esos precios a VaranSL / Dump Stat Adventures; no son cálculos originales de este proyecto.
+`pnpm build` and `pnpm dev` also run `pricing:build` automatically. To update prices: replace `scripts/data/magic-item-pricing.csv` (CSV export from the [Magic Item Pricing](https://dumpstatadventures.com/the-gm-is-always-right/pricing-magic-items-2024-dungeon-masters-guide) Dump Stat Adventures sheet — DMG 2024 tabs + XGTE/TCoE rows) and run `pnpm pricing:build` (or any build/dev). The app attributes those prices to VaranSL / Dump Stat Adventures; they are not original calculations from this project.
 
-La app almacena todos los datos en **IndexedDB**, que es su **fuente de verdad** en runtime. GitHub actúa solo como *feed de actualización* (modelo offline-first): al arrancar, si ya hay datos guardados se muestran de inmediato y, si superan las 24 h, se refrescan en segundo plano; solo el primer arranque (sin datos aún) espera a la descarga. Si la red falla, la app sigue funcionando con lo ya guardado en IndexedDB.
+The app stores all data in **IndexedDB**, its runtime **source of truth**. GitHub is only an *update feed* (offline-first): on startup, cached data is shown immediately and, if older than 24h, refreshed in the background; only the first launch (no data yet) waits for the download. If the network fails, the app keeps working with what is already in IndexedDB.
 
-### Compendio 5etools: producción vs. desarrollo offline
+### 5etools compendium: production vs offline development
 
-| Entorno                      | Configuración                             | Origen de datos                                                                                          |
+| Environment                      | Configuration                             | Data source                                                                                          |
 | ---------------------------- | ----------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| **Vercel / producción**      | Sin variables de entorno                  | Mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) vía `raw.githubusercontent.com` |
-| **Desarrollo (por defecto)** | Igual que producción                      | Remoto                                                                                                   |
-| **Desarrollo offline**       | `VITE_5ETOOLS_DATA=local` en `.env.local` | JSON en `public/5etools/`                                                                                |
+| **Vercel / production**      | No env vars                  | [5etools-src](https://github.com/5etools-mirror-3/5etools-src) mirror via `raw.githubusercontent.com` |
+| **Development (default)** | Same as production                      | Remote                                                                                                   |
+| **Offline development**       | `VITE_5ETOOLS_DATA=local` in `.env.local` | JSON under `public/5etools/`                                                                                |
 
-En producción **no hace falta** commitear `races.json`, `backgrounds.json`, `feats.json` ni el resto del mirror: spells, classes, races, backgrounds, feats, items y bestiary se resuelven en runtime desde GitHub. Los JSON en `public/5etools/` que sí están en el repo son solo un subset para probar items/bestiary sin red.
+In production you **do not need** to commit `races.json`, `backgrounds.json`, `feats.json`, or the rest of the mirror: spells, classes, races, backgrounds, feats, items, and bestiary resolve at runtime from GitHub. The JSON files under `public/5etools/` that are in the repo are only a subset for testing items/bestiary offline.
 
-**No configures `VITE_5ETOOLS_DATA=local` en Vercel** — spells y classes requieren cientos de archivos que no van en el repo.
+**Do not set `VITE_5ETOOLS_DATA=local` on Vercel** — spells and classes need hundreds of files that are not in the repo.
 
-Para desarrollo offline, copia los JSON desde `backup-jsons/5etools/` a `public/5etools/` y crea `.env.local` a partir de [`.env.example`](./.env.example). Ver comentarios en `src/shared/constants/api.constants.ts` para las rutas exactas.
+For offline development, copy JSON from `backup-jsons/5etools/` to `public/5etools/` and create `.env.local` from [`.env.example`](./.env.example). See comments in `src/shared/constants/api.constants.ts` for exact paths.
 
-### Deploy en Vercel
+### Deploy on Vercel
 
-- **Producción:** [https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/](https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/)
-- **Build:** `pnpm build` (definido en `vercel.json`)
+- **Production:** [https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/](https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/)
+- **Build:** `pnpm build` (defined in `vercel.json`)
 - **Output:** `dist`
-- **Variables de entorno:** ninguna obligatoria
+- **Environment variables:** none required
 - **Node:** 22.x (`.nvmrc` / `package.json`)
 - **Security headers:** `vercel.json` sets CSP (allows `connect-src` to `raw.githubusercontent.com`), `X-Frame-Options`, `nosniff`, and related policies. If you override mirrors away from GitHub raw, update the CSP `connect-src` allowlist.
 
-## Fuentes de datos
+## Data sources
 
-> **Modelo de datos:** la app guarda todo en **IndexedDB**, su fuente de verdad en runtime. Los repositorios de GitHub de abajo son solo *feeds de actualización*: se consultan para refrescar las bases internas (offline-first, con TTL de 24 h) y no son una dependencia dura en cada carga. Los slugs de mirror/homebrew/UA y su rama son configurables por entorno (`VITE_5ETOOLS_MIRROR`, `VITE_5ETOOLS_REF`, `VITE_HOMEBREW_MIRROR`, `VITE_HOMEBREW_REF`, `VITE_UA_MIRROR`, `VITE_UA_REF`), útil si un mirror de 5etools rota (p. ej. `-3` → `-4`) o para usar un fork.
+> **Data model:** the app stores everything in **IndexedDB**, its runtime source of truth. The GitHub repos below are only *update feeds*: they are polled to refresh internal stores (offline-first, 24h TTL) and are not a hard dependency on every load. Mirror/homebrew/UA slugs and their branches are configurable via env (`VITE_5ETOOLS_MIRROR`, `VITE_5ETOOLS_REF`, `VITE_HOMEBREW_MIRROR`, `VITE_HOMEBREW_REF`, `VITE_UA_MIRROR`, `VITE_UA_REF`), useful if a 5etools mirror rotates (e.g. `-3` → `-4`) or you want a fork.
 
-### Homebrew Amellwind
+### Amellwind homebrew
 
-La información principal proviene de los recursos homebrew de Amellwind en el repositorio de [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew):
+Primary information comes from Amellwind’s homebrew resources in the [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew) repository:
 
 - [Amellwind; Monster Hunter Monster Manual](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json)
 - [Amellwind; Amellwind's Guide to Monster Hunting](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json)
 
-El JSON de la Guía de Caza también aporta species, backgrounds, feats, clases MH, class features (Monstie Sidekick), optional features de armas y reglas variantes (downtime).
+The Hunting Guide JSON also provides species, backgrounds, feats, MH classes, class features (Monstie Sidekick), weapon optional features, and variant rules (downtime).
 
-### Datos estáticos embebidos
+### Embedded static data
 
-Recursos, entornos, tiendas, combo, cocina, guía de creación de personajes y plantillas del generador de NPCs viven en archivos `*.data.ts` dentro del proyecto.
+Resources, environments, shops, combo, cooking, the character creation guide, and NPC generator templates live in `*.data.ts` files inside the project.
 
-### Compendio D&D 5e
+### D&D 5e compendium
 
-Spells, classes, items, bestiary, races, backgrounds y feats se cargan desde el mirror de [5etools-src](https://github.com/5etools-mirror-3/5etools-src) (`raw.githubusercontent.com`), con precarga de fuentes habituales (MM, PHB, DMG, etc.) y carga bajo demanda del resto vía el Filter dialog (Sources agrupadas por año; por defecto solo oficiales).
+Spells, classes, items, bestiary, races, backgrounds, and feats load from the [5etools-src](https://github.com/5etools-mirror-3/5etools-src) mirror (`raw.githubusercontent.com`), with preloading of common sources (MM, PHB, DMG, etc.) and on-demand loading of the rest via the Filter dialog (Sources grouped by year; official-only by default).
 
-Material de playtest / Unearthed Arcana se obtiene del feed [TheGiddyLimit/unearthed-arcana](https://github.com/TheGiddyLimit/unearthed-arcana) (`VITE_UA_MIRROR` / `VITE_UA_REF`) cuando el usuario selecciona esas sources. Residuales tipo D&D Beyond presentes en ese feed (p. ej. Wayfinder's Guide to Eberron / `WGE`) se tratan igual; no se scrapea D&D Beyond.
+Playtest / Unearthed Arcana material comes from the [TheGiddyLimit/unearthed-arcana](https://github.com/TheGiddyLimit/unearthed-arcana) feed (`VITE_UA_MIRROR` / `VITE_UA_REF`) when the user selects those sources. Residuals similar to D&D Beyond in that feed (e.g. Wayfinder's Guide to Eberron / `WGE`) are treated the same; D&D Beyond is not scraped.
 
-### Automatización Foundry (Midi-QoL / Plutonium)
+### Foundry automation (Midi-QoL / Plutonium)
 
-La automatización que el export inyecta en los items (Active Effects con flags de `midi-qol`/`dae`, en `src/features/builder/foundry-export/automation.data.ts` y `automation.builders.ts`) usa como **información de referencia** los siguientes repositorios, para operar esa sección del código igual que lo haría el importador de Plutonium:
+The automation export injects into items (Active Effects with `midi-qol`/`dae` flags, in `src/features/builder/foundry-export/automation.data.ts` and `automation.builders.ts`) uses the following repositories as **reference information**, so that section of the code behaves like the Plutonium importer:
 
-- [TheGiddyLimit/plutonium-addon-automation](https://github.com/TheGiddyLimit/plutonium-addon-automation) — formato de overlays de automatización y datos de effects por entidad (dotes, features, items mágicos, conjuros). _MIT License, © TheGiddyLimit._
-- [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew) — formato de homebrew 5etools de referencia para el matching por nombre/fuente.
-- [tposney/midi-qol](https://github.com/tposney/midi-qol) y [DAE](https://foundryvtt.com/packages/dae) — claves de flags (`flags.midi-qol.*`, `flags.dae.*`) y semántica de duraciones especiales que consumen los Active Effects generados.
+- [TheGiddyLimit/plutonium-addon-automation](https://github.com/TheGiddyLimit/plutonium-addon-automation) — automation overlay format and effect data per entity (feats, features, magic items, spells). _MIT License, © TheGiddyLimit._
+- [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew) — reference 5etools homebrew format for name/source matching.
+- [tposney/midi-qol](https://github.com/tposney/midi-qol) and [DAE](https://foundryvtt.com/packages/dae) — flag keys (`flags.midi-qol.*`, `flags.dae.*`) and special duration semantics consumed by the generated Active Effects.
 
-El código **no incluye** el módulo ni sus datos completos: solo reproduce el formato mecánico de los effects para un set curado de entidades, ampliable por nombre. Requiere Midi QoL + DAE + Times Up activos en el mundo destino.
+The code **does not include** the module or its full dataset: it only reproduces the mechanical effects format for a curated set of entities, expandable by name. Requires Midi QoL + DAE + Times Up active in the destination world.
 
-## Estructura del proyecto
+## Project structure
 
 ```text
 src/
-├── App.tsx                 # Router lazy, sync al arrancar, providers globales
+├── App.tsx                 # Lazy router, startup sync, global providers
 ├── components/
 │   ├── layout/             # MainLayout, Sidebar, LoadingScreen, NotFound, ThemeSelector
-│   ├── data-table/         # Tabla reutilizable (TanStack Table)
+│   ├── data-table/         # Reusable table (TanStack Table)
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
-│   ├── builder/            # Character Builder (ALPHA) + export/import Foundry VTT
-│   ├── damage-calculator/  # Calculadora de daño por turno (persistida en localStorage)
-│   ├── monsters/           # Listado + detalle de monstruos MH
-│   ├── runes/              # Materiales + planificador (BuildDrawer)
-│   ├── material-effects/   # Efectos de materiales (armadura/arma)
-│   ├── conditions/         # Condiciones Amellwind
-│   ├── diseases/           # Enfermedades Amellwind
+│   ├── builder/            # Character Builder (ALPHA) + Foundry VTT export/import
+│   ├── damage-calculator/  # Damage-per-turn calculator (persisted in localStorage)
+│   ├── monsters/           # MH monster list + detail
+│   ├── runes/              # Materials + planner (BuildDrawer)
+│   ├── material-effects/   # Material effects (armor/weapon)
+│   ├── conditions/         # Amellwind conditions
+│   ├── diseases/           # Amellwind diseases
 │   ├── weapons/            # Hunter Weapons
-│   ├── shops/              # Items, tiendas, carrito
-│   ├── species/            # Especies GTMH
-│   ├── backgrounds/        # Trasfondos GTMH
-│   ├── feats/              # Feats GTMH
-│   ├── character-guide/    # Guía de creación (estático)
-│   ├── monstie-sidekick/   # Sidekicks Monstie
-│   ├── npc-generator/      # Generador de NPCs
-│   ├── downtime/           # Actividades de downtime
-│   ├── cooking/            # Cocina artesana
+│   ├── shops/              # Items, shops, cart
+│   ├── species/            # GTMH species
+│   ├── backgrounds/        # GTMH backgrounds
+│   ├── feats/              # GTMH feats
+│   ├── character-guide/    # Creation guide (static)
+│   ├── monstie-sidekick/   # Monstie sidekicks
+│   ├── npc-generator/      # NPC generator
+│   ├── downtime/           # Downtime activities
+│   ├── cooking/            # Artisan cooking
 │   ├── combo/              # Combo List
-│   ├── resources/          # Recursos de campo
-│   ├── environments/       # Biomas
-│   ├── spells/             # Compendio de conjuros 5e
-│   ├── classes/            # Compendio de clases 5e
-│   ├── dnd-items/          # Compendio de ítems 5e (+ catálogo de equipo del builder)
-│   ├── dnd-races/          # Especies oficiales 5e
-│   ├── dnd-backgrounds/    # Trasfondos oficiales 5e
-│   ├── dnd-feats/          # Dotes oficiales 5e
-│   ├── dnd-optionalfeatures/ # Optional features 5e (sin ruta; consumido por el builder)
-│   ├── xanathar-backstory/ # Generador de trasfondo (XGE)
-│   ├── shop-generator/     # Generador de tiendas D&D 5e
-│   └── bestiary/           # Bestiario 5e
+│   ├── resources/          # Field resources
+│   ├── environments/       # Biomes
+│   ├── spells/             # 5e spell compendium
+│   ├── classes/            # 5e class compendium
+│   ├── dnd-items/          # 5e item compendium (+ builder equipment catalog)
+│   ├── dnd-races/          # Official 5e species
+│   ├── dnd-backgrounds/    # Official 5e backgrounds
+│   ├── dnd-feats/          # Official 5e feats
+│   ├── dnd-optionalfeatures/ # 5e optional features (no route; used by the builder)
+│   ├── xanathar-backstory/ # Backstory generator (XGE)
+│   ├── shop-generator/     # D&D 5e shop generator
+│   └── bestiary/           # 5e bestiary
 └── shared/
-    ├── constants/          # URLs de API, IndexedDB y constantes D&D (abilities, skills)
+    ├── constants/          # API URLs, IndexedDB, D&D constants (abilities, skills)
     ├── context/            # ThemeContext, SyncContext
-    ├── db/                 # IndexedDB y sincronización
-    ├── types/              # Tipos compartidos
-    ├── services/           # create-entity-service (factory de services)
+    ├── db/                 # IndexedDB and sync
+    ├── types/              # Shared types
+    ├── services/           # create-entity-service (service factory)
     ├── components/         # ItemRefText, DndKeywordText, StatBlockSection
-    ├── utils/              # Parser 5etools, CR, dedupe-by-name, fluff, etc.
-    └── data/               # fetch helper para JSON 5etools
+    ├── utils/              # 5etools parser, CR, dedupe-by-name, fluff, etc.
+    └── data/               # fetch helper for 5etools JSON
 ```
 
-Cada feature sigue un patrón similar: `components/`, `services/`, `hooks/`, `mappers/` y, cuando aplica, `data/` o `context/`.
+Each feature follows a similar pattern: `components/`, `services/`, `hooks/`, `mappers/`, and when applicable `data/` or `context/`.
 
-## Documentación para desarrolladores
+## Developer documentation
 
-El archivo [`instrucctions.md`](./instrucctions.md) contiene la documentación técnica detallada: arquitectura de datos, entidades de dominio, mapeos 5etools → Foundry, reglas de negocio y convenciones del código.
+[`instrucctions.md`](./instrucctions.md) holds the detailed technical docs: data architecture, domain entities, 5etools → Foundry mappings, business rules, and code conventions.
 
-## Aviso legal
+## Legal notice
 
-Este proyecto es una herramienta fan-made para facilitar el uso del homebrew de **Amellwind** (_Monster Hunter D&D 5e_). Todo el contenido, reglas y diseño de ese homebrew son obra de Amellwind; este repositorio **no crea ni modifica** ese material: solo organiza y presenta información que ya está **publicada en internet** (por ejemplo en [5etools](https://5e.tools) y fuentes relacionadas).
+This project is a fan-made tool to make **Amellwind**’s homebrew (_Monster Hunter D&D 5e_) easier to use. All content, rules, and design of that homebrew are Amellwind’s work; this repository **does not create or modify** that material — it only organizes and presents information that is already **published on the internet** (for example on [5etools](https://5e.tools) and related sources).
 
-La fuente oficial y el trabajo completo del autor están en su Patreon: [patreon.com/cw/amellwind](https://www.patreon.com/cw/amellwind).
+The official source and the author’s full work are on Patreon: [patreon.com/cw/amellwind](https://www.patreon.com/cw/amellwind).
 
-**Monster Hunter** es propiedad de Capcom y **Dungeons & Dragons** es propiedad de Wizards of the Coast. Este proyecto no está afiliado ni respaldado por Capcom, Wizards of the Coast, Amellwind ni por ninguna otra marca o autor mencionado.
+**Monster Hunter** is owned by Capcom and **Dungeons & Dragons** is owned by Wizards of the Coast. This project is not affiliated with or endorsed by Capcom, Wizards of the Coast, Amellwind, or any other brand or author mentioned.
 
-Los derechos del contenido homebrew corresponden a sus respectivos autores. Consulta las licencias originales en [5etools](https://5e.tools) y en los repositorios fuente.
+Rights to homebrew content belong to their respective authors. See the original licenses on [5etools](https://5e.tools) and the source repositories.
