@@ -310,21 +310,21 @@ function AttackResultPanel({
 function getStatDescriptions(resolution: "attack-roll" | "save") {
   return {
     expression:
-      "Fórmula de dados y bonos planos del ataque, incluyendo tipo de daño y comentarios entre corchetes.",
+      "Dice formula and flat bonuses for the attack, including damage type and bracket comments.",
     averageHit:
-      "Daño medio si el ataque conecta como golpe normal (sin crítico). No incluye la probabilidad de fallar.",
+      "Average damage on a normal hit (no crit). Does not include miss chance.",
     averageCrit:
-      "Daño medio en un golpe crítico: dados duplicados, bonos planos y dados extra de Brutal Critical si aplica.",
+      "Average critical damage: doubled dice, flat bonuses, and Brutal Critical dice if applicable.",
     expected:
       resolution === "attack-roll"
-        ? "Daño medio por intento de ataque, ponderando fallos (0), golpes normales y críticos."
-        : "Daño medio por uso del efecto, ponderando si el objetivo falla o supera la tirada de salvación.",
+        ? "Average damage per attack attempt, weighting misses (0), hits, and crits."
+        : "Average damage per effect use, weighting whether the target fails or makes the save.",
     hitChance:
-      "Probabilidad de que el ataque impacte al objetivo (incluye golpes críticos).",
+      "Chance the attack hits the target (includes critical hits).",
     critChance:
-      "Probabilidad de obtener un golpe crítico en este ataque, según el rango de crítico configurado.",
+      "Chance of a critical hit, based on the configured crit range.",
     saveFailChance:
-      "Probabilidad de que el objetivo falle la tirada de salvación contra el DC del ataque.",
+      "Chance the target fails the save against the attack's DC.",
   };
 }
 
