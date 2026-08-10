@@ -241,7 +241,11 @@ const getLootStacks = (nodeActor, featureItem) => {
   return [...nodeActor.items].filter((i) => {
     if (featureId && i.id === featureId) return false;
     if (foundry.utils.getProperty(i, `${FLAG}.isFeature`) === true) return false;
-    if (String(i.system?.identifier ?? "") === "resource-node") return false;
+    if (foundry.utils.getProperty(i, "flags.world.hiddenDetect.isFeature") === true) return false;
+    const identifier = String(i.system?.identifier ?? "");
+    if (identifier === "resource-node" || identifier === "hidden-detection") return false;
+    // Automation feats on the prop actor are never gather loot.
+    if (i.type === "feat") return false;
     return true;
   });
 };
@@ -418,7 +422,10 @@ const copyLootItem = async (pcActor, sourceItem) => {
   delete data._id;
   data.folder = null;
   if (data.system && Object.prototype.hasOwnProperty.call(data.system, "quantity")) {
-    foundry.utils.setProperty(data, "system.quantity", 1);
+    // Preserve table "Name xN" quantities from the node's loot stack.
+    const fromStack = Number(sourceItem.system?.quantity);
+    const qty = Number.isFinite(fromStack) && fromStack > 0 ? Math.floor(fromStack) : 1;
+    foundry.utils.setProperty(data, "system.quantity", qty);
   }
   const created = await pcActor.createEmbeddedDocuments("Item", [data]);
   return created?.[0] ?? null;
