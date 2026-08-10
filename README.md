@@ -6,6 +6,8 @@ Nació en mi mesa de rol: juego con amigos más entusiasmados con D&D que con Mo
 
 > **Estado:** v0.1.23 — el Character Builder está en fase **ALPHA**.
 
+**App en vivo:** [https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/](https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/)
+
 ## Características
 
 ### Amellwind Homebrew
@@ -125,6 +127,7 @@ Para desarrollo offline, copia los JSON desde `backup-jsons/5etools/` a `public/
 
 ### Deploy en Vercel
 
+- **Producción:** [https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/](https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/)
 - **Build:** `pnpm build` (definido en `vercel.json`)
 - **Output:** `dist`
 - **Variables de entorno:** ninguna obligatoria
