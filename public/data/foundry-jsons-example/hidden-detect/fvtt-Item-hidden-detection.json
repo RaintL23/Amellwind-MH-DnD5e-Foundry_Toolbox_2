@@ -1,0 +1,231 @@
+{
+  "_id": "HiddenDetectItm1",
+  "name": "Hidden Detection",
+  "type": "feat",
+  "img": "mh-icons/mystery-item.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Hidden Detection</strong> — Baldur's Gate–style discovery for Foundry.</p>\n<p>Place this feature on the <em>hidden object</em> actor. Hide the token from players,\nthen use <strong>Configure Hidden Detection</strong> (GM). Saving arms proximity sync\nfor the session — you do not need a separate macro first (the Sync macro is still\navailable for world-load automation).</p>\n<ul>\n<li><strong>Range:</strong> when a PC enters the aura, detection resolves.</li>\n<li><strong>Mode:</strong> active skill check <em>or</em> Passive Perception vs DC.</li>\n<li><strong>Passive mode:</strong> attempt whispers go to the GM only; players get a chat\nmessage only when they successfully reveal the object.</li>\n<li><strong>Fail lock:</strong> optional one-fail lockout per PC (GM configurable).</li>\n<li><strong>Reveal:</strong> only the discoverer, or the whole party on first success.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. GM only for configuration.</em></p>",
+      "chat": ""
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "hidden-detection",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "GM — place on the hidden object actor",
+    "properties": [],
+    "activities": {
+      "HiddenDetectCfg1": {
+        "_id": "HiddenDetectCfg1",
+        "type": "utility",
+        "sort": 0,
+        "name": "Configure Hidden Detection",
+        "img": "mh-icons/mystery-item.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": ""
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "configure-hidden-detection",
+          "displayActivityName": false,
+          "rollMode": "selfroll",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "all",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "none"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[preItemRoll]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preItemRoll"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Hidden Detection",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/eye.svg",
+        "command": "// Hidden Detection — Item Macro (Foundry v12 / dnd5e 4.4 / MidiQOL + Item Macro)\r\n// On Use: [preItemRoll]ItemMacro,[postActiveEffects]ItemMacro\r\n// Activity identifier: configure-hidden-detection\r\n//\r\n// Opens a GM configuration dialog. Suppresses the usage chat card.\r\n// Also arms Hidden Detection Sync hooks so proximity works without a separate macro.\r\n\r\n// Hidden Detection Sync engine — Amellwind (Foundry v12 / dnd5e 4.4)\r\n// Shared by the Sync macro and the Hidden Detection Feature Item Macro.\r\n// Registers proximity hooks and resolves skill check / Passive Perception.\r\n\r\nconst NS = \"__amellwindHiddenDetect\";\r\nconst FLAG = \"flags.world.hiddenDetect\";\r\n\r\nconst measureDistanceFt = (tokenA, tokenB, { wallsBlock = false } = {}) => {\r\n  if (!tokenA || !tokenB) return Infinity;\r\n  if (typeof MidiQOL?.computeDistance === \"function\") {\r\n    try {\r\n      const d = Number(MidiQOL.computeDistance(tokenA, tokenB, { wallsBlock: Boolean(wallsBlock) }));\r\n      if (Number.isFinite(d)) return d;\r\n    } catch (_err) {\r\n      // fall through\r\n    }\r\n  }\r\n  if (typeof canvas.grid?.measurePath === \"function\") {\r\n    const path = canvas.grid.measurePath([tokenA.center, tokenB.center]);\r\n    const d = Number(path?.distance ?? path?.spaces);\r\n    if (Number.isFinite(d)) return d;\r\n  }\r\n  const d = Number(canvas.grid.measureDistance(tokenA.center, tokenB.center, { gridSpaces: true }));\r\n  return Number.isFinite(d) ? d : Infinity;\r\n};\r\n\r\nconst gmWhisperIds = () => ChatMessage.getWhisperRecipients(\"GM\").map((u) => u.id);\r\n\r\nconst readFeatureConfig = (featureItem) => {\r\n  const f = foundry.utils.getProperty(featureItem, FLAG) ?? {};\r\n  if (f.isFeature !== true && String(featureItem?.system?.identifier ?? \"\") !== \"hidden-detection\") {\r\n    return null;\r\n  }\r\n  return {\r\n    enabled: f.enabled !== false,\r\n    rangeFt: Number.isFinite(Number(f.rangeFt)) ? Number(f.rangeFt) : 30,\r\n    detectMode: f.detectMode === \"passivePerception\" ? \"passivePerception\" : \"skillCheck\",\r\n    skill: typeof f.skill === \"string\" && f.skill ? f.skill : \"prc\",\r\n    dc: Number.isFinite(Number(f.dc)) ? Number(f.dc) : 15,\r\n    wallsBlock: f.wallsBlock === true,\r\n    allowRetryOnFail: f.allowRetryOnFail === true,\r\n    revealToParty: f.revealToParty === true,\r\n    whisperToGm: f.whisperToGm !== false,\r\n    revealed: f.revealed === true,\r\n    revealedBy: f.revealedBy ?? null,\r\n    failedBy: Array.isArray(f.failedBy) ? [...f.failedBy] : [],\r\n    inRangeBy: f.inRangeBy && typeof f.inRangeBy === \"object\" ? { ...f.inRangeBy } : {},\r\n    visibleToUsers: Array.isArray(f.visibleToUsers) ? [...f.visibleToUsers] : [],\r\n  };\r\n};\r\n\r\nconst findHiddenFeature = (actorDoc) => {\r\n  if (!actorDoc?.items) return null;\r\n  return (\r\n    actorDoc.items.find((i) => foundry.utils.getProperty(i, `${FLAG}.isFeature`) === true)\r\n    ?? actorDoc.items.find((i) => String(i.system?.identifier ?? \"\") === \"hidden-detection\")\r\n    ?? actorDoc.items.find((i) => String(i.name ?? \"\").toLowerCase() === \"hidden detection\")\r\n    ?? null\r\n  );\r\n};\r\n\r\nconst isActiveGm = () => {\r\n  if (!game.user.isGM) return false;\r\n  if (game.users.activeGM && game.users.activeGM.id !== game.user.id) return false;\r\n  return true;\r\n};\r\n\r\nconst isPcToken = (tok) => {\r\n  const a = tok?.actor;\r\n  if (!a) return false;\r\n  if (a.type === \"character\") return true;\r\n  return game.users.some((u) => !u.isGM && a.testUserPermission?.(u, \"OWNER\"));\r\n};\r\n\r\nconst actorKey = (actorDoc) => actorDoc?.uuid ?? actorDoc?.id ?? null;\r\n\r\nconst getPassivePerception = (actorDoc) => {\r\n  const direct = Number(actorDoc.system?.skills?.prc?.passive);\r\n  if (Number.isFinite(direct)) return direct;\r\n  const senses = Number(actorDoc.system?.attributes?.senses?.passivePerception);\r\n  if (Number.isFinite(senses)) return senses;\r\n  const mod = Number(actorDoc.system?.skills?.prc?.total ?? actorDoc.system?.skills?.prc?.mod ?? 0);\r\n  return 10 + (Number.isFinite(mod) ? mod : 0);\r\n};\r\n\r\nconst skillLabel = (skillId) => CONFIG.DND5E?.skills?.[skillId]?.label ?? String(skillId).toUpperCase();\r\n\r\nconst playersForActor = (actorDoc) => {\r\n  const users = new Set();\r\n  for (const u of game.users) {\r\n    if (u.isGM) continue;\r\n    if (u.character?.id === actorDoc.id) users.add(u);\r\n    else if (actorDoc.testUserPermission?.(u, \"OWNER\")) users.add(u);\r\n  }\r\n  return [...users];\r\n};\r\n\r\nconst partyPlayerUsers = () => {\r\n  const users = new Set();\r\n  for (const tok of canvas.tokens?.placeables ?? []) {\r\n    if (!isPcToken(tok)) continue;\r\n    for (const u of playersForActor(tok.actor)) users.add(u);\r\n  }\r\n  if (!users.size) {\r\n    for (const u of game.users) {\r\n      if (!u.isGM && u.character) users.add(u);\r\n    }\r\n  }\r\n  return [...users];\r\n};\r\n\r\nconst applyTokenVisibility = (token) => {\r\n  const visibleTo = foundry.utils.getProperty(token.document, `${FLAG}.visibleToUsers`);\r\n  if (!Array.isArray(visibleTo) || !visibleTo.length) return;\r\n  if (game.user.isGM) return;\r\n  if (!visibleTo.includes(game.user.id)) {\r\n    token.visible = false;\r\n    if (token.mesh) token.mesh.visible = false;\r\n  }\r\n};\r\n\r\nconst writeFeatureState = async (featureItem, cfg) => {\r\n  await featureItem.update({\r\n    [FLAG]: {\r\n      isFeature: true,\r\n      enabled: cfg.enabled,\r\n      rangeFt: cfg.rangeFt,\r\n      detectMode: cfg.detectMode,\r\n      skill: cfg.skill,\r\n      dc: cfg.dc,\r\n      wallsBlock: cfg.wallsBlock,\r\n      allowRetryOnFail: cfg.allowRetryOnFail,\r\n      revealToParty: cfg.revealToParty,\r\n      whisperToGm: cfg.whisperToGm,\r\n      revealed: cfg.revealed,\r\n      revealedBy: cfg.revealedBy,\r\n      failedBy: cfg.failedBy,\r\n      inRangeBy: cfg.inRangeBy,\r\n      visibleToUsers: cfg.visibleToUsers,\r\n    },\r\n  });\r\n};\r\n\r\nconst revealHiddenToken = async (hiddenTok, featureItem, cfg, discovererActor, resolveDetail = \"\") => {\r\n  const discovererUsers = playersForActor(discovererActor).map((u) => u.id);\r\n  const partyUsers = partyPlayerUsers().map((u) => u.id);\r\n  let visibleToUsers = cfg.revealToParty\r\n    ? [...new Set([...partyUsers, ...discovererUsers])]\r\n    : [...new Set(discovererUsers)];\r\n  if (!visibleToUsers.length) visibleToUsers = partyUsers;\r\n\r\n  const ownership = foundry.utils.deepClone(hiddenTok.actor?.ownership ?? {});\r\n  for (const userId of visibleToUsers) {\r\n    ownership[userId] = Math.max(\r\n      Number(ownership[userId] ?? 0),\r\n      CONST.DOCUMENT_OWNERSHIP_LEVELS.OBSERVER,\r\n    );\r\n  }\r\n  if (hiddenTok.actor) await hiddenTok.actor.update({ ownership });\r\n\r\n  const tokenUpdate = { hidden: false };\r\n  foundry.utils.setProperty(tokenUpdate, `${FLAG}.visibleToUsers`, visibleToUsers);\r\n  await hiddenTok.document.update(tokenUpdate);\r\n\r\n  cfg.revealed = true;\r\n  cfg.revealedBy = actorKey(discovererActor);\r\n  cfg.visibleToUsers = visibleToUsers;\r\n  cfg.inRangeBy = {};\r\n  await writeFeatureState(featureItem, cfg);\r\n\r\n  // Players: only told on success (they found something).\r\n  const playerIds = cfg.revealToParty ? visibleToUsers : discovererUsers;\r\n  if (playerIds.length) {\r\n    const how =\r\n      cfg.detectMode === \"passivePerception\"\r\n        ? \"thanks to your Passive Perception\"\r\n        : \"thanks to your keen senses\";\r\n    await ChatMessage.create({\r\n      speaker: ChatMessage.getSpeaker({ actor: discovererActor }),\r\n      content: `<p>You notice something hidden nearby… ${how} revealed <em>${hiddenTok.name}</em>.</p>`,\r\n      whisper: playerIds,\r\n    });\r\n  }\r\n\r\n  // GM always gets the full audit line.\r\n  await ChatMessage.create({\r\n    content: `<p><strong>Hidden Detection</strong> — ${discovererActor.name} discovered <em>${hiddenTok.name}</em>${\r\n      cfg.revealToParty ? \" (party)\" : \"\"\r\n    }${resolveDetail ? ` (${resolveDetail})` : \"\"}.</p>`,\r\n    whisper: gmWhisperIds(),\r\n  });\r\n\r\n  if (game.user.isGM) {\r\n    ui.notifications?.info?.(\r\n      `Hidden Detection: ${cfg.revealToParty ? \"the party\" : discovererActor.name} noticed ${hiddenTok.name}.`,\r\n    );\r\n  }\r\n};\r\n\r\nconst resolveSkillCheck = async (actorDoc, cfg) => {\r\n  const skill = cfg.skill || \"prc\";\r\n  const rollMode = cfg.whisperToGm ? CONST.DICE_ROLL_MODES.BLIND : game.settings.get(\"core\", \"rollMode\");\r\n  let roll;\r\n  try {\r\n    roll = await actorDoc.rollSkill(skill, {\r\n      event: null,\r\n      configure: false,\r\n      targetValue: cfg.dc,\r\n      rollMode,\r\n      flavor: `Hidden Detection — ${skillLabel(skill)} (DC ${cfg.dc})`,\r\n    });\r\n  } catch (_err) {\r\n    roll = await actorDoc.rollSkill({\r\n      skill,\r\n      event: null,\r\n      configure: false,\r\n      targetValue: cfg.dc,\r\n      rollMode,\r\n      flavor: `Hidden Detection — ${skillLabel(skill)} (DC ${cfg.dc})`,\r\n    });\r\n  }\r\n\r\n  const total = Number(roll?.total ?? roll?.dice?.[0]?.total ?? roll?.rolls?.[0]?.total ?? roll?._total);\r\n  if (!Number.isFinite(total)) {\r\n    console.warn(\"Hidden Detection: could not read skill roll total\", roll);\r\n    return { success: false, total: null, detail: \"roll failed\" };\r\n  }\r\n  return { success: total >= cfg.dc, total, detail: `${total} vs DC ${cfg.dc}` };\r\n};\r\n\r\nconst resolvePassive = async (actorDoc, cfg) => {\r\n  const passive = getPassivePerception(actorDoc);\r\n  const success = passive >= cfg.dc;\r\n  const detail = `Passive Perception ${passive} vs DC ${cfg.dc}`;\r\n  // Failures (and all passive attempts) are GM-only. Players only learn on success\r\n  // via revealHiddenToken.\r\n  await ChatMessage.create({\r\n    content: `<p><strong>Hidden Detection</strong> — ${actorDoc.name}: ${detail} → <strong>${\r\n      success ? \"Success\" : \"Failure\"\r\n    }</strong></p>`,\r\n    whisper: gmWhisperIds(),\r\n  });\r\n  return { success, total: passive, detail };\r\n};\r\n\r\nconst processEntry = async (pcTok, hiddenTok, featureItem, cfg) => {\r\n  const pc = pcTok.actor;\r\n  if (!pc || !isPcToken(pcTok)) return;\r\n  if (!cfg.enabled || cfg.revealed) return;\r\n\r\n  const key = actorKey(pc);\r\n  if (!key) return;\r\n  if (!cfg.allowRetryOnFail && cfg.failedBy.includes(key)) return;\r\n\r\n  let result;\r\n  if (cfg.detectMode === \"passivePerception\") {\r\n    result = await resolvePassive(pc, cfg);\r\n  } else {\r\n    result = await resolveSkillCheck(pc, cfg);\r\n  }\r\n\r\n  if (result.success) {\r\n    await revealHiddenToken(hiddenTok, featureItem, cfg, pc, result.detail);\r\n    return;\r\n  }\r\n\r\n  if (!cfg.failedBy.includes(key)) cfg.failedBy.push(key);\r\n  await writeFeatureState(featureItem, cfg);\r\n};\r\n\r\nconst syncHiddenDetection = async ({ notify = false } = {}) => {\r\n  if (!isActiveGm()) return;\r\n  if (!canvas?.ready) return;\r\n\r\n  const pcTokens = (canvas.tokens?.placeables ?? []).filter((t) => isPcToken(t));\r\n  const hiddenEntries = [];\r\n\r\n  for (const tok of canvas.tokens?.placeables ?? []) {\r\n    const feature = findHiddenFeature(tok.actor);\r\n    if (!feature) continue;\r\n    const cfg = readFeatureConfig(feature);\r\n    if (!cfg || !cfg.enabled) continue;\r\n    hiddenEntries.push({ tok, feature, cfg });\r\n  }\r\n\r\n  let checks = 0;\r\n  for (const { tok: hiddenTok, feature, cfg } of hiddenEntries) {\r\n    if (cfg.revealed) continue;\r\n    const nextInRange = { ...cfg.inRangeBy };\r\n    let dirty = false;\r\n\r\n    for (const pcTok of pcTokens) {\r\n      const key = actorKey(pcTok.actor);\r\n      if (!key) continue;\r\n      const dist = measureDistanceFt(pcTok, hiddenTok, { wallsBlock: cfg.wallsBlock });\r\n      const inRange = dist <= cfg.rangeFt + 1e-6;\r\n      const wasInRange = nextInRange[key] === true;\r\n\r\n      if (!inRange) {\r\n        if (wasInRange) {\r\n          delete nextInRange[key];\r\n          dirty = true;\r\n          if (cfg.allowRetryOnFail) {\r\n            const before = cfg.failedBy.length;\r\n            cfg.failedBy = cfg.failedBy.filter((id) => id !== key);\r\n            if (cfg.failedBy.length !== before) dirty = true;\r\n          }\r\n        }\r\n        continue;\r\n      }\r\n\r\n      if (!wasInRange) {\r\n        nextInRange[key] = true;\r\n        dirty = true;\r\n        cfg.inRangeBy = nextInRange;\r\n        await writeFeatureState(feature, cfg);\r\n        checks += 1;\r\n        await processEntry(pcTok, hiddenTok, feature, cfg);\r\n        const refreshed = readFeatureConfig(feature);\r\n        if (refreshed) {\r\n          Object.assign(cfg, refreshed);\r\n          Object.assign(nextInRange, refreshed.inRangeBy ?? nextInRange);\r\n        }\r\n        if (cfg.revealed) break;\r\n      }\r\n    }\r\n\r\n    cfg.inRangeBy = nextInRange;\r\n    if (dirty && !cfg.revealed) {\r\n      await writeFeatureState(feature, cfg);\r\n    }\r\n  }\r\n\r\n  if (notify && game.user.isGM) {\r\n    ui.notifications.info(\r\n      `Hidden Detection Sync: watching ${hiddenEntries.length} hidden object(s)${\r\n        checks ? `, ${checks} check(s) this pass` : \"\"\r\n      }.`,\r\n    );\r\n  }\r\n\r\n  return { hidden: hiddenEntries.length, checks };\r\n};\r\n\r\nconst ensureHiddenDetectHooks = () => {\r\n  globalThis[NS] = globalThis[NS] || {};\r\n  Object.assign(globalThis[NS], {\r\n    syncHiddenDetection,\r\n    measureDistanceFt,\r\n    findHiddenFeature,\r\n    applyTokenVisibility,\r\n    ensureHiddenDetectHooks,\r\n  });\r\n\r\n  if (globalThis[NS].hooksReady) return globalThis[NS];\r\n  globalThis[NS].hooksReady = true;\r\n\r\n  let timer = null;\r\n  const queue = () => {\r\n    if (timer) clearTimeout(timer);\r\n    timer = setTimeout(() => syncHiddenDetection({ notify: false }), 250);\r\n  };\r\n\r\n  Hooks.on(\"updateToken\", (_doc, changes) => {\r\n    if (\"x\" in changes || \"y\" in changes || \"elevation\" in changes || \"hidden\" in changes) queue();\r\n  });\r\n  Hooks.on(\"createToken\", queue);\r\n  Hooks.on(\"deleteToken\", queue);\r\n  Hooks.on(\"canvasReady\", queue);\r\n  Hooks.on(\"refreshToken\", (token) => applyTokenVisibility(token));\r\n  Hooks.on(\"updateToken\", (doc) => {\r\n    const tok = canvas.tokens?.get(doc.id);\r\n    if (tok) applyTokenVisibility(tok);\r\n  });\r\n\r\n  return globalThis[NS];\r\n};\r\n\r\nensureHiddenDetectHooks();\r\n\r\n(async () => {\r\n  const macroPass = String(\r\n    (typeof args !== \"undefined\" ? args?.[0]?.macroPass : \"\") ??\r\n      (typeof workflow !== \"undefined\" ? workflow?.macroPass : \"\") ??\r\n      \"\",\r\n  ).toLowerCase();\r\n\r\n  const wf =\r\n    (typeof workflow !== \"undefined\" && workflow) ||\r\n    (typeof args !== \"undefined\" ? args?.[0]?.workflow : null) ||\r\n    null;\r\n\r\n  const suppressChatCard = async () => {\r\n    try {\r\n      if (wf) {\r\n        foundry.utils.setProperty(wf, \"options.createMessage\", false);\r\n        foundry.utils.setProperty(wf, \"workflowOptions.createMessage\", false);\r\n        if (typeof wf.whisperCard === \"function\") {\r\n          // no-op: just keep self/gm\r\n        }\r\n      }\r\n      const uuid = wf?.itemCardUuid ?? args?.[0]?.itemCardUuid;\r\n      const id = wf?.itemCardId ?? args?.[0]?.itemCardId;\r\n      if (uuid) {\r\n        const msg = await fromUuid(uuid);\r\n        if (msg) {\r\n          await msg.delete();\r\n          return;\r\n        }\r\n      }\r\n      if (id) await game.messages.get(id)?.delete();\r\n    } catch (_err) {\r\n      // optional\r\n    }\r\n  };\r\n\r\n  // Kill the card as early as possible, then again after it may have been created.\r\n  if (macroPass.includes(\"preitemroll\")) {\r\n    await suppressChatCard();\r\n    // Continue so Midi can still fire postActiveEffects for the dialog.\r\n    return;\r\n  }\r\n\r\n  if (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\r\n\r\n  await suppressChatCard();\r\n  // Chat card is often created just after preItemRoll — delete once more next tick.\r\n  setTimeout(() => {\r\n    suppressChatCard();\r\n  }, 50);\r\n  setTimeout(() => {\r\n    suppressChatCard();\r\n  }, 250);\r\n\r\n  // Also scrub any recent public \"Configure Hidden Detection\" cards (safety net).\r\n  try {\r\n    const recent = [...game.messages].slice(-8);\r\n    for (const msg of recent) {\r\n      const content = String(msg.content ?? \"\");\r\n      const flavor = String(msg.flavor ?? \"\");\r\n      if (/Configure Hidden Detection/i.test(content) || /Configure Hidden Detection/i.test(flavor)) {\r\n        if (msg.isAuthor || game.user.isGM) await msg.delete().catch(() => null);\r\n      }\r\n    }\r\n  } catch (_err) {\r\n    // optional\r\n  }\r\n\r\n  const featureItem =\r\n    (typeof item !== \"undefined\" && item) ||\r\n    wf?.item ||\r\n    null;\r\n  if (!featureItem) {\r\n    ui.notifications.warn(\"Hidden Detection: feature item not found.\");\r\n    return;\r\n  }\r\n\r\n  if (!game.user.isGM) {\r\n    ui.notifications.warn(\"Hidden Detection: only the GM can configure this feature.\");\r\n    return;\r\n  }\r\n\r\n  // Ensure flags exist even if the item was duplicated without world flags.\r\n  if (foundry.utils.getProperty(featureItem, \"flags.world.hiddenDetect.isFeature\") !== true) {\r\n    await featureItem.update({\r\n      \"flags.world.hiddenDetect\": {\r\n        isFeature: true,\r\n        enabled: true,\r\n        rangeFt: 30,\r\n        detectMode: \"skillCheck\",\r\n        skill: \"prc\",\r\n        dc: 15,\r\n        wallsBlock: false,\r\n        allowRetryOnFail: false,\r\n        revealToParty: false,\r\n        whisperToGm: true,\r\n        revealed: false,\r\n        revealedBy: null,\r\n        failedBy: [],\r\n        inRangeBy: {},\r\n        visibleToUsers: [],\r\n      },\r\n    });\r\n  }\r\n\r\n  ensureHiddenDetectHooks();\r\n\r\n  const FLAG_PATH = \"flags.world.hiddenDetect\";\r\n  const SKILL_OPTIONS = [\r\n    [\"prc\", \"Perception\"],\r\n    [\"inv\", \"Investigation\"],\r\n    [\"sur\", \"Survival\"],\r\n    [\"nat\", \"Nature\"],\r\n    [\"arc\", \"Arcana\"],\r\n    [\"his\", \"History\"],\r\n    [\"ins\", \"Insight\"],\r\n    [\"med\", \"Medicine\"],\r\n    [\"rel\", \"Religion\"],\r\n    [\"ani\", \"Animal Handling\"],\r\n    [\"ath\", \"Athletics\"],\r\n    [\"acr\", \"Acrobatics\"],\r\n    [\"slt\", \"Sleight of Hand\"],\r\n    [\"ste\", \"Stealth\"],\r\n    [\"dec\", \"Deception\"],\r\n    [\"itm\", \"Intimidation\"],\r\n    [\"per\", \"Persuasion\"],\r\n    [\"prf\", \"Performance\"],\r\n  ];\r\n\r\n  const readConfig = () => {\r\n    const f = foundry.utils.getProperty(featureItem, FLAG_PATH) ?? {};\r\n    return {\r\n      enabled: f.enabled !== false,\r\n      rangeFt: Number.isFinite(Number(f.rangeFt)) ? Number(f.rangeFt) : 30,\r\n      detectMode: f.detectMode === \"passivePerception\" ? \"passivePerception\" : \"skillCheck\",\r\n      skill: typeof f.skill === \"string\" && f.skill ? f.skill : \"prc\",\r\n      dc: Number.isFinite(Number(f.dc)) ? Number(f.dc) : 15,\r\n      wallsBlock: f.wallsBlock === true,\r\n      allowRetryOnFail: f.allowRetryOnFail === true,\r\n      revealToParty: f.revealToParty === true,\r\n      whisperToGm: f.whisperToGm !== false,\r\n      revealed: f.revealed === true,\r\n      revealedBy: f.revealedBy ?? null,\r\n      failedBy: Array.isArray(f.failedBy) ? f.failedBy : [],\r\n      inRangeBy: f.inRangeBy && typeof f.inRangeBy === \"object\" ? f.inRangeBy : {},\r\n      visibleToUsers: Array.isArray(f.visibleToUsers) ? f.visibleToUsers : [],\r\n    };\r\n  };\r\n\r\n  const cfg = readConfig();\r\n  const esc = (value) => {\r\n    const s = String(value ?? \"\");\r\n    if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\r\n    return s\r\n      .replaceAll(\"&\", \"&amp;\")\r\n      .replaceAll(\"<\", \"&lt;\")\r\n      .replaceAll(\">\", \"&gt;\")\r\n      .replaceAll('\"', \"&quot;\")\r\n      .replaceAll(\"'\", \"&#39;\");\r\n  };\r\n\r\n  const skillOptionsHtml = SKILL_OPTIONS.map(\r\n    ([id, label]) =>\r\n      `<option value=\"${esc(id)}\" ${cfg.skill === id ? \"selected\" : \"\"}>${esc(label)} (${esc(id)})</option>`,\r\n  ).join(\"\");\r\n\r\n  const hooksArmed = Boolean(globalThis.__amellwindHiddenDetect?.hooksReady);\r\n  const content = `\r\n    <form class=\"flexcol\" style=\"gap:8px;\">\r\n      <p style=\"margin:0 0 4px;opacity:0.85;font-size:12px;\">\r\n        Hide this actor's token, configure below, then <strong>Save</strong>.\r\n        Saving arms proximity detection for this session\r\n        ${hooksArmed ? \"(hooks already active)\" : \"(will arm hooks now)\"}.\r\n      </p>\r\n      <div class=\"form-group\">\r\n        <label><input type=\"checkbox\" name=\"enabled\" ${cfg.enabled ? \"checked\" : \"\"}/> Enabled</label>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label>Detection range (ft)</label>\r\n        <input type=\"number\" name=\"rangeFt\" value=\"${esc(cfg.rangeFt)}\" min=\"1\" step=\"1\"/>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label>Detection mode</label>\r\n        <select name=\"detectMode\">\r\n          <option value=\"skillCheck\" ${cfg.detectMode === \"skillCheck\" ? \"selected\" : \"\"}>Skill check (roll)</option>\r\n          <option value=\"passivePerception\" ${cfg.detectMode === \"passivePerception\" ? \"selected\" : \"\"}>Passive Perception only</option>\r\n        </select>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label>Skill (skill-check mode)</label>\r\n        <select name=\"skill\">${skillOptionsHtml}</select>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label>DC</label>\r\n        <input type=\"number\" name=\"dc\" value=\"${esc(cfg.dc)}\" min=\"1\" step=\"1\"/>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label><input type=\"checkbox\" name=\"wallsBlock\" ${cfg.wallsBlock ? \"checked\" : \"\"}/> Walls block detection</label>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label><input type=\"checkbox\" name=\"allowRetryOnFail\" ${cfg.allowRetryOnFail ? \"checked\" : \"\"}/> Allow retry after fail (leave &amp; re-enter)</label>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label><input type=\"checkbox\" name=\"revealToParty\" ${cfg.revealToParty ? \"checked\" : \"\"}/> Reveal to whole party on first success</label>\r\n      </div>\r\n      <div class=\"form-group\">\r\n        <label><input type=\"checkbox\" name=\"whisperToGm\" ${cfg.whisperToGm ? \"checked\" : \"\"}/> Whisper skill checks to GM</label>\r\n      </div>\r\n      <p style=\"margin:6px 0 0;font-size:12px;opacity:0.8;\">\r\n        Status: ${cfg.revealed ? \"<strong>Revealed</strong>\" : \"Hidden\"}\r\n        · Failed PCs: ${cfg.failedBy.length}\r\n      </p>\r\n    </form>\r\n  `;\r\n\r\n  const writeFlags = async (patch) => {\r\n    const next = { ...readConfig(), ...patch, isFeature: true };\r\n    await featureItem.update({ [FLAG_PATH]: next });\r\n  };\r\n\r\n  const parseForm = (html) => {\r\n    const form = html[0].querySelector(\"form\");\r\n    const fd = new FormData(form);\r\n    const rangeFt = Math.max(1, Number(fd.get(\"rangeFt\")) || 30);\r\n    const dc = Math.max(1, Number(fd.get(\"dc\")) || 15);\r\n    const detectMode = fd.get(\"detectMode\") === \"passivePerception\" ? \"passivePerception\" : \"skillCheck\";\r\n    const skill = String(fd.get(\"skill\") || \"prc\");\r\n    return {\r\n      enabled: form.querySelector('[name=\"enabled\"]')?.checked === true,\r\n      rangeFt,\r\n      detectMode,\r\n      skill,\r\n      dc,\r\n      wallsBlock: form.querySelector('[name=\"wallsBlock\"]')?.checked === true,\r\n      allowRetryOnFail: form.querySelector('[name=\"allowRetryOnFail\"]')?.checked === true,\r\n      revealToParty: form.querySelector('[name=\"revealToParty\"]')?.checked === true,\r\n      whisperToGm: form.querySelector('[name=\"whisperToGm\"]')?.checked === true,\r\n    };\r\n  };\r\n\r\n  const rehideTokens = async () => {\r\n    const actorDoc = featureItem.actor ?? featureItem.parent;\r\n    if (!actorDoc) return;\r\n    const tokens = actorDoc.getActiveTokens?.(true) ?? [];\r\n    for (const tok of tokens) {\r\n      const updates = { hidden: true };\r\n      foundry.utils.setProperty(updates, \"flags.world.hiddenDetect.visibleToUsers\", []);\r\n      await tok.document.update(updates);\r\n    }\r\n  };\r\n\r\n  const armAndSync = async () => {\r\n    ensureHiddenDetectHooks();\r\n    const result = await syncHiddenDetection({ notify: true });\r\n    return result;\r\n  };\r\n\r\n  // Arm hooks as soon as Configure opens (even before Save).\r\n  await armAndSync();\r\n\r\n  await new Promise((resolve) => {\r\n    new Dialog({\r\n      title: `Hidden Detection — ${featureItem.actor?.name ?? featureItem.name}`,\r\n      content,\r\n      buttons: {\r\n        save: {\r\n          icon: '<i class=\"fas fa-save\"></i>',\r\n          label: \"Save\",\r\n          callback: async (html) => {\r\n            const formCfg = parseForm(html);\r\n            await writeFlags({\r\n              ...formCfg,\r\n              revealed: cfg.revealed,\r\n              revealedBy: cfg.revealedBy,\r\n              failedBy: cfg.failedBy,\r\n              inRangeBy: {},\r\n              visibleToUsers: cfg.visibleToUsers,\r\n            });\r\n            await armAndSync();\r\n            ui.notifications.info(\"Hidden Detection: saved and proximity sync armed.\");\r\n            resolve(true);\r\n          },\r\n        },\r\n        resetAttempts: {\r\n          icon: '<i class=\"fas fa-undo\"></i>',\r\n          label: \"Reset attempts\",\r\n          callback: async (html) => {\r\n            const formCfg = parseForm(html);\r\n            await writeFlags({\r\n              ...formCfg,\r\n              revealed: cfg.revealed,\r\n              revealedBy: cfg.revealedBy,\r\n              failedBy: [],\r\n              inRangeBy: {},\r\n              visibleToUsers: cfg.visibleToUsers,\r\n            });\r\n            await armAndSync();\r\n            ui.notifications.info(\"Hidden Detection: attempts reset.\");\r\n            resolve(true);\r\n          },\r\n        },\r\n        resetReveal: {\r\n          icon: '<i class=\"fas fa-eye-slash\"></i>',\r\n          label: \"Reset reveal\",\r\n          callback: async (html) => {\r\n            const formCfg = parseForm(html);\r\n            await writeFlags({\r\n              ...formCfg,\r\n              revealed: false,\r\n              revealedBy: null,\r\n              failedBy: [],\r\n              inRangeBy: {},\r\n              visibleToUsers: [],\r\n            });\r\n            await rehideTokens();\r\n            await armAndSync();\r\n            ui.notifications.info(\"Hidden Detection: reveal reset; token(s) hidden again.\");\r\n            resolve(true);\r\n          },\r\n        },\r\n        cancel: {\r\n          icon: '<i class=\"fas fa-times\"></i>',\r\n          label: \"Cancel\",\r\n          callback: () => resolve(false),\r\n        },\r\n      },\r\n      default: \"save\",\r\n      close: () => resolve(false),\r\n    }, { width: 460 }).render(true);\r\n  });\r\n})();\r\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "hiddenDetect": {
+        "isFeature": true,
+        "enabled": true,
+        "rangeFt": 30,
+        "detectMode": "skillCheck",
+        "skill": "prc",
+        "dc": 15,
+        "wallsBlock": false,
+        "allowRetryOnFail": false,
+        "revealToParty": false,
+        "whisperToGm": true,
+        "revealed": false,
+        "revealedBy": null,
+        "failedBy": [],
+        "inRangeBy": {},
+        "visibleToUsers": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}
