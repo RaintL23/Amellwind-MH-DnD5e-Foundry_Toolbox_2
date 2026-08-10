@@ -23,17 +23,19 @@ export function BuildSlotRow({ index, rune, onRemove }: BuildSlotRowProps) {
         {index + 1}
       </span>
       {isEmpty ? (
-        <span className="flex-1 italic">Slot vacío</span>
+        <span className="flex-1 italic">Empty slot</span>
       ) : (
         <>
           <div className="flex-1 min-w-0">
             <p className="font-medium text-foreground truncate">{rune.name}</p>
-            <p className="text-muted-foreground/60 truncate">{rune.monsterName}</p>
+            <p className="text-muted-foreground/60 truncate">
+              {rune.monsterName}
+            </p>
           </div>
           <button
             onClick={onRemove}
             className="shrink-0 rounded p-1 text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-            aria-label={`Quitar ${rune.name}`}
+            aria-label={`Remove ${rune.name}`}
           >
             <X className="h-3 w-3" />
           </button>

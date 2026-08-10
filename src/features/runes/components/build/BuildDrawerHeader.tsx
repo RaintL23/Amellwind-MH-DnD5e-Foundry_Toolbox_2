@@ -35,16 +35,16 @@ export function BuildDrawerHeader({
           <button
             onClick={onClear}
             className="flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-            title="Limpiar build"
+            title="Clear build"
           >
             <Trash2 className="h-3.5 w-3.5" />
-            Limpiar
+            Clear
           </button>
         )}
         <button
           onClick={onClose}
           className="rounded-md p-1.5 hover:bg-accent text-muted-foreground transition-colors"
-          aria-label="Cerrar"
+          aria-label="Close"
         >
           <X className="h-4 w-4" />
         </button>

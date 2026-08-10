@@ -70,7 +70,9 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
   ) {
     addRune(rune, slotType, undefined, kind);
     const slotLabel = slotType === "trinket1" ? "Trinket 1" : "Trinket 2";
-    flash(`Added to ${slotLabel} (${MATERIAL_EFFECT_SLOT_LABELS[kind]} effect)`);
+    flash(
+      `Added to ${slotLabel} (${MATERIAL_EFFECT_SLOT_LABELS[kind]} effect)`,
+    );
   }
 
   function renderTrinketButton(
@@ -137,7 +139,7 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
   return (
     <div className="space-y-2 mt-4">
       <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">
-        Agregar al Rune Planner
+        Add to Rune Planner
       </h4>
 
       <div className="flex flex-wrap gap-2">
@@ -152,7 +154,8 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
                   </p>
                   {weaponViolation.offenders.slice(1).length > 0 && (
                     <p className="text-orange-400/60">
-                      Choca con: {weaponViolation.offenders.slice(1).join(", ")}
+                      Collides with:{" "}
+                      {weaponViolation.offenders.slice(1).join(", ")}
                     </p>
                   )}
                 </div>
@@ -208,7 +211,8 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
                   </p>
                   {armorViolation.offenders.slice(1).length > 0 && (
                     <p className="text-orange-400/60">
-                      Choca con: {armorViolation.offenders.slice(1).join(", ")}
+                      Collides with:{" "}
+                      {armorViolation.offenders.slice(1).join(", ")}
                     </p>
                   )}
                 </div>

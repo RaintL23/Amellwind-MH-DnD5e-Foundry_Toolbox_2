@@ -10,7 +10,12 @@ interface TrinketSlotRowProps {
   slotType: Extract<BuildSlotType, "trinket1" | "trinket2">;
 }
 
-export function TrinketSlotRow({ label, rune, kind, slotType }: TrinketSlotRowProps) {
+export function TrinketSlotRow({
+  label,
+  rune,
+  kind,
+  slotType,
+}: TrinketSlotRowProps) {
   const { removeRune } = useRuneBuild();
   const effectKind = kind ?? (rune?.weaponEffect ? "weapon" : "armor");
 
@@ -21,8 +26,13 @@ export function TrinketSlotRow({ label, rune, kind, slotType }: TrinketSlotRowPr
         <div className="flex items-center gap-2 rounded-md border border-border bg-muted/20 px-3 py-2 text-xs">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-1.5">
-              <p className="font-medium text-foreground truncate">{rune.name}</p>
-              <Badge variant="outline" className="shrink-0 gap-1 border-purple-700/40 text-purple-300">
+              <p className="font-medium text-foreground truncate">
+                {rune.name}
+              </p>
+              <Badge
+                variant="outline"
+                className="shrink-0 gap-1 border-purple-700/40 text-purple-300"
+              >
                 {effectKind === "weapon" ? (
                   <Sword className="h-3 w-3" />
                 ) : (
@@ -31,7 +41,9 @@ export function TrinketSlotRow({ label, rune, kind, slotType }: TrinketSlotRowPr
                 {effectKind === "weapon" ? "Weapon" : "Armor"}
               </Badge>
             </div>
-            <p className="text-muted-foreground/60 truncate">{rune.monsterName}</p>
+            <p className="text-muted-foreground/60 truncate">
+              {rune.monsterName}
+            </p>
           </div>
           <button
             onClick={() => removeRune(slotType)}
@@ -42,7 +54,7 @@ export function TrinketSlotRow({ label, rune, kind, slotType }: TrinketSlotRowPr
         </div>
       ) : (
         <div className="rounded-md border border-dashed border-border/50 px-3 py-2 text-xs text-muted-foreground/40 italic">
-          Slot vacío
+          Empty slot
         </div>
       )}
     </div>
