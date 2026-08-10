@@ -36,7 +36,8 @@ Amellwind MH/
 │   └── Hidden Detection Sync
 └── Resource Nodes/
     ├── Resource Node
-    └── Resource Node Sync
+    ├── Resource Node Sync
+    └── Resource Node Actors
 ```
 
 | Pack (compendium)        | Folder            | Type  | Source folder                         | Contents |
@@ -52,6 +53,7 @@ Amellwind MH/
 | Hidden Detection Sync    | Hidden Detection  | Macro | `hidden-detect/`                      | Hidden Detection Sync (proximity hooks) |
 | Resource Node            | Resource Nodes    | Item  | `resource-node/`                      | Resource Node feature (drop on map gather actors) |
 | Resource Node Sync       | Resource Nodes    | Macro | `resource-node/`                      | Resource Node Sync (token interaction hooks) |
+| Resource Node Actors     | Resource Nodes    | Actor | `resource-node/actors/`               | Prebuilt gather nodes (Environment × Tier × Category) |
 
 Item icons that referenced `mh-icons/...` are bundled under
 `Amellwind-MH-RaintDM-module/assets/mh-icons/` and their paths are rewritten to
@@ -139,6 +141,12 @@ node public/data/foundry-jsons-example/hidden-detect/build-hidden-detection.mjs
 node public/data/foundry-jsons-example/resource-node/build-resource-node.mjs
 ```
 
+   If environment / resource tables changed, regenerate the prebuilt actors:
+
+```bash
+node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.mjs
+```
+
 3. Rebuild the packs:
 
 ```bash
@@ -170,8 +178,9 @@ inside an Item alone, so this ships as a **Feature Item** + a **Sync Macro**.
 3. Place the Actor's token on the scene and **hide** it (Foundry eye / `hidden`).
 4. Use **Configure Hidden Detection** (GM). Saving **arms proximity hooks** for the
    session and runs a sync pass — you do not need the Sync macro first.
-5. Optional: run **Hidden Detection Sync** on world load (Advanced Macros) so hooks
-   are armed without opening Configure.
+5. Optional: run **Hidden Detection Sync** mid-session if you need to re-arm hooks
+   without reloading (hooks also arm automatically from the module script on world
+   ready).
 
 Configure fields:
 
@@ -260,7 +269,8 @@ Configure fields:
   kit; plants/mushrooms without kit roll with disadvantage; fish/insects/minerals
   require their tool).
 - On success: roll **1dN** over inventory stacks (N = number of stacks, excluding
-  the Resource Node feature) and **copy** that item (`quantity: 1`) to the PC.
+  the Resource Node / Hidden Detection features) and **copy** that item to the PC
+  (quantity preserved from the stack, so table entries like `Honey x3` grant 3).
   The node's inventory is not depleted.
 - One attempt per character (success or fail). Further clicks are blocked until
   the GM resets that player (or all) in Configure.
@@ -275,6 +285,36 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node.mjs
 pnpm build:foundry-module
 ```
 
+## Resource Node Actors (environment gather props)
+
+Prebuilt NPC props — **one actor per Environment × Level Tier × Resource Category**
+(e.g. `Ancestral Steppes — Plants (Tier 1-5)`). Each actor embeds:
+
+1. **Resource Node** — category + harvest DC from that environment tier table
+2. **Hidden Detection** — Passive Perception mode with a **tier-scaled DC**:
+   - levels mid ≤ 5 → DC 12
+   - mid ≤ 10 → DC 15
+   - mid ≤ 16 → DC 18
+   - otherwise → DC 21
+3. **Loot inventory** — one stack per table-row entry for that category (preserves
+   `1dN` odds). Icons use `mh-icons` by category (`herb`, `mushroom`, `minerals`,
+   `fish`, `bug`, `bones`; Honey uses `honey.webp`).
+
+### Setup (GM)
+
+1. From **Amellwind MH → Resource Nodes → Resource Node Actors**, open the
+   environment / tier folder and drag the actor onto the scene.
+2. Keep the token **hidden** (prototype already sets `hidden: true`).
+3. Players who beat Passive Perception see the node; double-click gathers as usual.
+
+Regenerate after editing `environment.data.ts` / `resource.data.ts`:
+
+```bash
+node public/data/foundry-jsons-example/resource-node/build-resource-node.mjs
+node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.mjs
+pnpm build:foundry-module
+```
+
 ## Notes and limitations
 
 - **Cook aura:** the world-level aura logic (the hooks that grant "Ask for a Meal"
@@ -282,8 +322,9 @@ pnpm build:foundry-module
   **Felyne Cook actor already embeds its items and templates internally**, and the
   **Kitchen Sync** macro ships in the Cooking Macros pack to drive the aura at
   runtime.
-- **Hidden Detection sync:** same pattern as Kitchen Sync — run the Sync macro as
-  GM each session (or auto-run on load) so proximity hooks stay registered.
+- **Hidden Detection sync:** proximity hooks load automatically from the module
+  script on every client. The Sync macro / Configure dialog can still re-arm them
+  mid-session if needed.
 - **Resource Node sync:** token double-click hooks load automatically from the
   module script on every client. The Sync macro / Configure dialog can still re-arm
   them mid-session if needed.
