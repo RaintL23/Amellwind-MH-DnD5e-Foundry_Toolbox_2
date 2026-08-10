@@ -1,0 +1,1137 @@
+{
+  "_id": "C35zzGBFyN5dQAZa",
+  "name": "The Wetlands — Plants (Tier 5-10)",
+  "type": "npc",
+  "img": "mh-icons/herb.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>The Wetlands — Plants (Tier 5-10)</strong></p>\n<p>Amellwind field gathering node for <em>The Wetlands</em> (Old Swamp), party levels <strong>5-10</strong>.</p>\n<ul>\n<li><strong>Resource Node:</strong> Plants harvest DC <strong>19</strong>. Double-click the token to gather (Item Piles–style).</li>\n<li><strong>Hidden Detection:</strong> Passive Perception DC <strong>15</strong> (tier-scaled). Place the token <em>hidden</em>; proximity reveals it.</li>\n<li><strong>Loot pool:</strong> 6 stack(s) from the environment resource table (roll 1dN on success).</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro modules. Resource Node hooks arm from the module script; Hidden Detection arms from the module script / Sync macro.</em></p>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "details": {
+      "type": {
+        "value": "custom",
+        "subtype": "",
+        "swarm": "",
+        "custom": "Resource Node"
+      },
+      "alignment": "unaligned",
+      "race": "",
+      "biography": {
+        "value": "<p><strong>The Wetlands — Plants (Tier 5-10)</strong></p>\n<p>Amellwind field gathering node for <em>The Wetlands</em> (Old Swamp), party levels <strong>5-10</strong>.</p>\n<ul>\n<li><strong>Resource Node:</strong> Plants harvest DC <strong>19</strong>. Double-click the token to gather (Item Piles–style).</li>\n<li><strong>Hidden Detection:</strong> Passive Perception DC <strong>15</strong> (tier-scaled). Place the token <em>hidden</em>; proximity reveals it.</li>\n<li><strong>Loot pool:</strong> 6 stack(s) from the environment resource table (roll 1dN on success).</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro modules. Resource Node hooks arm from the module script; Hidden Detection arms from the module script / Sync macro.</em></p>",
+        "public": ""
+      },
+      "cr": 0,
+      "spellLevel": 0,
+      "source": {
+        "custom": "",
+        "book": "AGMH",
+        "page": "",
+        "license": "",
+        "rules": "2024",
+        "revision": 1
+      }
+    },
+    "abilities": {
+      "str": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "dex": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "con": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "int": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "wis": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "cha": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      }
+    },
+    "attributes": {
+      "ac": {
+        "flat": 10,
+        "calc": "flat",
+        "formula": ""
+      },
+      "hp": {
+        "value": 1,
+        "max": 1,
+        "temp": 0,
+        "tempmax": 0,
+        "formula": ""
+      },
+      "init": {
+        "ability": "dex",
+        "bonus": ""
+      },
+      "movement": {
+        "burrow": null,
+        "climb": null,
+        "fly": null,
+        "swim": null,
+        "walk": 0,
+        "units": "ft",
+        "hover": false
+      },
+      "senses": {
+        "darkvision": 0,
+        "blindsight": 0,
+        "tremorsense": 0,
+        "truesight": 0,
+        "units": "ft",
+        "special": ""
+      },
+      "spellcasting": "",
+      "exhaustion": 0
+    },
+    "traits": {
+      "size": "med",
+      "di": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "dr": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "dv": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "ci": {
+        "value": [],
+        "custom": ""
+      },
+      "languages": {
+        "value": [],
+        "custom": ""
+      }
+    },
+    "currency": {
+      "pp": 0,
+      "gp": 0,
+      "ep": 0,
+      "sp": 0,
+      "cp": 0
+    }
+  },
+  "prototypeToken": {
+    "name": "The Wetlands — Plants (Tier 5-10)",
+    "displayName": 0,
+    "actorLink": true,
+    "width": 1,
+    "height": 1,
+    "texture": {
+      "src": "mh-icons/herb.webp",
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "offsetX": 0,
+      "offsetY": 0,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "rotation": 0,
+      "tint": "#ffffff",
+      "alphaThreshold": 0.75
+    },
+    "lockRotation": false,
+    "rotation": 0,
+    "alpha": 1,
+    "disposition": 0,
+    "displayBars": 0,
+    "bar1": {
+      "attribute": null
+    },
+    "bar2": {
+      "attribute": null
+    },
+    "light": {
+      "negative": false,
+      "priority": 0,
+      "alpha": 0.5,
+      "angle": 360,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "dim": 0,
+      "attenuation": 0.5,
+      "luminosity": 0.5,
+      "saturation": 0,
+      "contrast": 0,
+      "shadows": 0,
+      "animation": {
+        "type": null,
+        "speed": 5,
+        "intensity": 5,
+        "reverse": false
+      },
+      "darkness": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "sight": {
+      "enabled": false,
+      "range": 0,
+      "angle": 360,
+      "visionMode": "basic",
+      "color": null,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "saturation": 0,
+      "contrast": 0
+    },
+    "detectionModes": [],
+    "flags": {},
+    "randomImg": false,
+    "hidden": true
+  },
+  "items": [
+    {
+      "_id": "GitxZirWihFDQ990",
+      "name": "Resource Node",
+      "type": "feat",
+      "img": "mh-icons/herb.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Resource Node</strong> — Amellwind field gathering for Foundry.</p>\n<p>Place this feature on a prop actor (plant, mineral vein, fishing spot, etc.).\nPut possible loot items in that actor's <strong>inventory</strong>, then use\n<strong>Configure Resource Node</strong> (GM).</p>\n<ul>\n<li><strong>Interact:</strong> players double-click the token to gather (Items Pile–style UI).</li>\n<li><strong>Harvest:</strong> category skill check vs DC + Amellwind tool rules.</li>\n<li><strong>Loot:</strong> on success roll <em>1dN</em> over inventory stacks and copy 1 item to the PC.</li>\n<li><strong>Attempts:</strong> one try per character (success or fail). GM can reset from Configure.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. Players double-click the token to gather (no ownership of the node required; PC token on the scene). GM: double-click (no PC) or Shift+double-click opens Configure; Alt+double-click opens the actor sheet.</em></p>\n<p><em>Preconfigured for The Wetlands · Tier 5-10 · Plants (DC 19).</em></p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "resource-node",
+        "type": {
+          "value": "feat",
+          "subtype": ""
+        },
+        "requirements": "Place on a map resource actor (GM configures)",
+        "properties": [],
+        "activities": {
+          "2mNpHbVrXnfG7vFr": {
+            "_id": "2mNpHbVrXnfG7vFr",
+            "type": "utility",
+            "sort": 0,
+            "name": "Configure Resource Node",
+            "img": "mh-icons/herb.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": ""
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": null,
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "configure-resource-node",
+              "displayActivityName": false,
+              "rollMode": "selfroll",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "all",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "none"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": ""
+          },
+          "o14G5A44ZQDADlNZ": {
+            "_id": "o14G5A44ZQDADlNZ",
+            "type": "utility",
+            "sort": 1,
+            "name": "Gather Resource",
+            "img": "mh-icons/herb.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": ""
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": null,
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "gather-resource",
+              "displayActivityName": false,
+              "rollMode": "selfroll",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "all",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "none"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 0,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "noConcentrationCheck": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false
+        },
+        "world": {
+          "resourceNode": {
+            "isFeature": true,
+            "enabled": true,
+            "category": "Plants",
+            "dc": 19,
+            "requireTool": true,
+            "interactionDistance": 5,
+            "attemptedBy": []
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "B24CUKG7B6DKG9Mu",
+      "name": "Hidden Detection",
+      "type": "feat",
+      "img": "mh-icons/mystery-item.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Hidden Detection</strong> — Baldur's Gate–style discovery for Foundry.</p>\n<p>Place this feature on the <em>hidden object</em> actor. Hide the token from players,\nthen use <strong>Configure Hidden Detection</strong> (GM). Saving arms proximity sync\nfor the session — you do not need a separate macro first (the Sync macro is still\navailable for world-load automation).</p>\n<ul>\n<li><strong>Range:</strong> when a PC enters the aura, detection resolves.</li>\n<li><strong>Mode:</strong> active skill check <em>or</em> Passive Perception vs DC.</li>\n<li><strong>Passive mode:</strong> attempt whispers go to the GM only; players get a chat\nmessage only when they successfully reveal the object.</li>\n<li><strong>Fail lock:</strong> optional one-fail lockout per PC (GM configurable).</li>\n<li><strong>Reveal:</strong> only the discoverer, or the whole party on first success.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. GM only for configuration.</em></p>\n<p><em>Preconfigured Passive Perception DC 15 for Tier 5-10.</em></p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "hidden-detection",
+        "type": {
+          "value": "feat",
+          "subtype": ""
+        },
+        "requirements": "GM — place on the hidden object actor",
+        "properties": [],
+        "activities": {
+          "DfvDf2HzF1znhfzi": {
+            "_id": "DfvDf2HzF1znhfzi",
+            "type": "utility",
+            "sort": 0,
+            "name": "Configure Hidden Detection",
+            "img": "mh-icons/mystery-item.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": ""
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": null,
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "configure-hidden-detection",
+              "displayActivityName": false,
+              "rollMode": "selfroll",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "all",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "none"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 1,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "noConcentrationCheck": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false
+        },
+        "world": {
+          "hiddenDetect": {
+            "isFeature": true,
+            "enabled": true,
+            "rangeFt": 30,
+            "detectMode": "passivePerception",
+            "skill": "prc",
+            "dc": 15,
+            "wallsBlock": false,
+            "allowRetryOnFail": false,
+            "revealToParty": false,
+            "whisperToGm": true,
+            "revealed": false,
+            "revealedBy": null,
+            "failedBy": [],
+            "inRangeBy": {},
+            "visibleToUsers": []
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "IZW6qDQLXTPt515u",
+      "name": "Herb",
+      "type": "loot",
+      "img": "mh-icons/herb.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Herb</strong> <em>(Plants · Common)</em></p><p>You can use an action to eat this herb, regaining 1d4 hit points.</p><p>Sell value: 1 gp. Crafting material.</p>",
+          "chat": ""
+        },
+        "identifier": "herb",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 1,
+          "denomination": "gp"
+        },
+        "rarity": "common",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 100,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Plants",
+          "tableName": "Herb",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "BMtYAHr4r2sUpLbf",
+      "name": "Huskberry",
+      "type": "loot",
+      "img": "mh-icons/herb.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Huskberry</strong> <em>(Plants · Common)</em></p><p>An empty berry that can grow anywhere.</p><p>Sell value: 1 sp. Crafting material.</p>",
+          "chat": ""
+        },
+        "identifier": "huskberry",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 1,
+          "denomination": "sp"
+        },
+        "rarity": "common",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 101,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Plants",
+          "tableName": "Huskberry",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "813Rh8lPjm7uMha8",
+      "name": "Antidote Herb",
+      "type": "loot",
+      "img": "mh-icons/herb.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Antidote Herb</strong> <em>(Plants · Common)</em></p><p>You can eat this herb as an action, curing yourself of the poisoned condition.</p><p>Sell value: 1 gp. Crafting material.</p>",
+          "chat": ""
+        },
+        "identifier": "antidote-herb",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 1,
+          "denomination": "gp"
+        },
+        "rarity": "common",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 102,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Plants",
+          "tableName": "Antidote Herb",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "ACv4uHzxn5OPsmgr",
+      "name": "Dragon Seed",
+      "type": "loot",
+      "img": "mh-icons/herb.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Dragon Seed</strong> <em>(Plants · Common)</em></p><p>A Mysterious berry, said to be hated by dragons.</p><p>Sell value: 1 sp. Crafting material.</p>",
+          "chat": ""
+        },
+        "identifier": "dragon-seed",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 1,
+          "denomination": "sp"
+        },
+        "rarity": "common",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 103,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Plants",
+          "tableName": "Dragon Seed",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "e7jLBSbKWCK7mJGL",
+      "name": "Scatternut",
+      "type": "loot",
+      "img": "mh-icons/herb.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Scatternut</strong> <em>(Plants · Common)</em></p><p>A nut that violently ejects its contents when struck.</p><p>Sell value: 1 sp. Crafting material.</p>",
+          "chat": ""
+        },
+        "identifier": "scatternut",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 1,
+          "denomination": "sp"
+        },
+        "rarity": "common",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 104,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Plants",
+          "tableName": "Scatternut",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "SMTE36j1rXqyDwrV",
+      "name": "Gloamgrass Herb",
+      "type": "loot",
+      "img": "mh-icons/herb.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Gloamgrass Herb</strong> <em>(Plants · Uncommon)</em></p><p>Possesses antidotal agents, but it will not work by itself.</p><p>Sell value: 35 gp. Crafting material.</p>",
+          "chat": ""
+        },
+        "identifier": "gloamgrass-herb",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 35,
+          "denomination": "gp"
+        },
+        "rarity": "uncommon",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 105,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Plants",
+          "tableName": "Gloamgrass Root",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "world": {
+      "resourceNodeActor": true,
+      "environment": "The Wetlands",
+      "levelRange": "5-10",
+      "category": "Plants",
+      "harvestDc": 19,
+      "hiddenPassiveDc": 15
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

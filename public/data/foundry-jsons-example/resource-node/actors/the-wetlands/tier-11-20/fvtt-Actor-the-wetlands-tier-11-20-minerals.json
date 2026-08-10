@@ -1,0 +1,1137 @@
+{
+  "_id": "HRrzIj6iMAb3NxBB",
+  "name": "The Wetlands — Minerals (Tier 11-20)",
+  "type": "npc",
+  "img": "mh-icons/minerals.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>The Wetlands — Minerals (Tier 11-20)</strong></p>\n<p>Amellwind field gathering node for <em>The Wetlands</em> (Old Swamp), party levels <strong>11-20</strong>.</p>\n<ul>\n<li><strong>Resource Node:</strong> Minerals harvest DC <strong>23</strong>. Double-click the token to gather (Item Piles–style).</li>\n<li><strong>Hidden Detection:</strong> Passive Perception DC <strong>18</strong> (tier-scaled). Place the token <em>hidden</em>; proximity reveals it.</li>\n<li><strong>Loot pool:</strong> 6 stack(s) from the environment resource table (roll 1dN on success).</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro modules. Resource Node hooks arm from the module script; Hidden Detection arms from the module script / Sync macro.</em></p>",
+      "chat": "",
+      "unidentified": ""
+    },
+    "details": {
+      "type": {
+        "value": "custom",
+        "subtype": "",
+        "swarm": "",
+        "custom": "Resource Node"
+      },
+      "alignment": "unaligned",
+      "race": "",
+      "biography": {
+        "value": "<p><strong>The Wetlands — Minerals (Tier 11-20)</strong></p>\n<p>Amellwind field gathering node for <em>The Wetlands</em> (Old Swamp), party levels <strong>11-20</strong>.</p>\n<ul>\n<li><strong>Resource Node:</strong> Minerals harvest DC <strong>23</strong>. Double-click the token to gather (Item Piles–style).</li>\n<li><strong>Hidden Detection:</strong> Passive Perception DC <strong>18</strong> (tier-scaled). Place the token <em>hidden</em>; proximity reveals it.</li>\n<li><strong>Loot pool:</strong> 6 stack(s) from the environment resource table (roll 1dN on success).</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro modules. Resource Node hooks arm from the module script; Hidden Detection arms from the module script / Sync macro.</em></p>",
+        "public": ""
+      },
+      "cr": 0,
+      "spellLevel": 0,
+      "source": {
+        "custom": "",
+        "book": "AGMH",
+        "page": "",
+        "license": "",
+        "rules": "2024",
+        "revision": 1
+      }
+    },
+    "abilities": {
+      "str": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "dex": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "con": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "int": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "wis": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "cha": {
+        "value": 10,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      }
+    },
+    "attributes": {
+      "ac": {
+        "flat": 10,
+        "calc": "flat",
+        "formula": ""
+      },
+      "hp": {
+        "value": 1,
+        "max": 1,
+        "temp": 0,
+        "tempmax": 0,
+        "formula": ""
+      },
+      "init": {
+        "ability": "dex",
+        "bonus": ""
+      },
+      "movement": {
+        "burrow": null,
+        "climb": null,
+        "fly": null,
+        "swim": null,
+        "walk": 0,
+        "units": "ft",
+        "hover": false
+      },
+      "senses": {
+        "darkvision": 0,
+        "blindsight": 0,
+        "tremorsense": 0,
+        "truesight": 0,
+        "units": "ft",
+        "special": ""
+      },
+      "spellcasting": "",
+      "exhaustion": 0
+    },
+    "traits": {
+      "size": "med",
+      "di": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "dr": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "dv": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "ci": {
+        "value": [],
+        "custom": ""
+      },
+      "languages": {
+        "value": [],
+        "custom": ""
+      }
+    },
+    "currency": {
+      "pp": 0,
+      "gp": 0,
+      "ep": 0,
+      "sp": 0,
+      "cp": 0
+    }
+  },
+  "prototypeToken": {
+    "name": "The Wetlands — Minerals (Tier 11-20)",
+    "displayName": 0,
+    "actorLink": true,
+    "width": 1,
+    "height": 1,
+    "texture": {
+      "src": "mh-icons/minerals.webp",
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "offsetX": 0,
+      "offsetY": 0,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "rotation": 0,
+      "tint": "#ffffff",
+      "alphaThreshold": 0.75
+    },
+    "lockRotation": false,
+    "rotation": 0,
+    "alpha": 1,
+    "disposition": 0,
+    "displayBars": 0,
+    "bar1": {
+      "attribute": null
+    },
+    "bar2": {
+      "attribute": null
+    },
+    "light": {
+      "negative": false,
+      "priority": 0,
+      "alpha": 0.5,
+      "angle": 360,
+      "bright": 0,
+      "color": null,
+      "coloration": 1,
+      "dim": 0,
+      "attenuation": 0.5,
+      "luminosity": 0.5,
+      "saturation": 0,
+      "contrast": 0,
+      "shadows": 0,
+      "animation": {
+        "type": null,
+        "speed": 5,
+        "intensity": 5,
+        "reverse": false
+      },
+      "darkness": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "sight": {
+      "enabled": false,
+      "range": 0,
+      "angle": 360,
+      "visionMode": "basic",
+      "color": null,
+      "attenuation": 0.1,
+      "brightness": 0,
+      "saturation": 0,
+      "contrast": 0
+    },
+    "detectionModes": [],
+    "flags": {},
+    "randomImg": false,
+    "hidden": true
+  },
+  "items": [
+    {
+      "_id": "1PSFnn4ywTQAERQu",
+      "name": "Resource Node",
+      "type": "feat",
+      "img": "mh-icons/minerals.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Resource Node</strong> — Amellwind field gathering for Foundry.</p>\n<p>Place this feature on a prop actor (plant, mineral vein, fishing spot, etc.).\nPut possible loot items in that actor's <strong>inventory</strong>, then use\n<strong>Configure Resource Node</strong> (GM).</p>\n<ul>\n<li><strong>Interact:</strong> players double-click the token to gather (Items Pile–style UI).</li>\n<li><strong>Harvest:</strong> category skill check vs DC + Amellwind tool rules.</li>\n<li><strong>Loot:</strong> on success roll <em>1dN</em> over inventory stacks and copy 1 item to the PC.</li>\n<li><strong>Attempts:</strong> one try per character (success or fail). GM can reset from Configure.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. Players double-click the token to gather (no ownership of the node required; PC token on the scene). GM: double-click (no PC) or Shift+double-click opens Configure; Alt+double-click opens the actor sheet.</em></p>\n<p><em>Preconfigured for The Wetlands · Tier 11-20 · Minerals (DC 23).</em></p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "resource-node",
+        "type": {
+          "value": "feat",
+          "subtype": ""
+        },
+        "requirements": "Place on a map resource actor (GM configures)",
+        "properties": [],
+        "activities": {
+          "IFuAYzBnBZwY1ouO": {
+            "_id": "IFuAYzBnBZwY1ouO",
+            "type": "utility",
+            "sort": 0,
+            "name": "Configure Resource Node",
+            "img": "mh-icons/minerals.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": ""
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": null,
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "configure-resource-node",
+              "displayActivityName": false,
+              "rollMode": "selfroll",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "all",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "none"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": ""
+          },
+          "pRvGLwUVP8v93tMa": {
+            "_id": "pRvGLwUVP8v93tMa",
+            "type": "utility",
+            "sort": 1,
+            "name": "Gather Resource",
+            "img": "mh-icons/minerals.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": ""
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": null,
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "gather-resource",
+              "displayActivityName": false,
+              "rollMode": "selfroll",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "all",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "none"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 0,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "noConcentrationCheck": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false
+        },
+        "world": {
+          "resourceNode": {
+            "isFeature": true,
+            "enabled": true,
+            "category": "Minerals",
+            "dc": 23,
+            "requireTool": true,
+            "interactionDistance": 5,
+            "attemptedBy": []
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "od0ZRu959FJxE6HM",
+      "name": "Hidden Detection",
+      "type": "feat",
+      "img": "mh-icons/mystery-item.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Hidden Detection</strong> — Baldur's Gate–style discovery for Foundry.</p>\n<p>Place this feature on the <em>hidden object</em> actor. Hide the token from players,\nthen use <strong>Configure Hidden Detection</strong> (GM). Saving arms proximity sync\nfor the session — you do not need a separate macro first (the Sync macro is still\navailable for world-load automation).</p>\n<ul>\n<li><strong>Range:</strong> when a PC enters the aura, detection resolves.</li>\n<li><strong>Mode:</strong> active skill check <em>or</em> Passive Perception vs DC.</li>\n<li><strong>Passive mode:</strong> attempt whispers go to the GM only; players get a chat\nmessage only when they successfully reveal the object.</li>\n<li><strong>Fail lock:</strong> optional one-fail lockout per PC (GM configurable).</li>\n<li><strong>Reveal:</strong> only the discoverer, or the whole party on first success.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. GM only for configuration.</em></p>\n<p><em>Preconfigured Passive Perception DC 18 for Tier 11-20.</em></p>",
+          "chat": ""
+        },
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "hidden-detection",
+        "type": {
+          "value": "feat",
+          "subtype": ""
+        },
+        "requirements": "GM — place on the hidden object actor",
+        "properties": [],
+        "activities": {
+          "TzNNzxc7X7QfFAT3": {
+            "_id": "TzNNzxc7X7QfFAT3",
+            "type": "utility",
+            "sort": 0,
+            "name": "Configure Hidden Detection",
+            "img": "mh-icons/mystery-item.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": ""
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": null,
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "configure-hidden-detection",
+              "displayActivityName": false,
+              "rollMode": "selfroll",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "all",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "none"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 1,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "noConcentrationCheck": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false
+        },
+        "world": {
+          "hiddenDetect": {
+            "isFeature": true,
+            "enabled": true,
+            "rangeFt": 30,
+            "detectMode": "passivePerception",
+            "skill": "prc",
+            "dc": 18,
+            "wallsBlock": false,
+            "allowRetryOnFail": false,
+            "revealToParty": false,
+            "whisperToGm": true,
+            "revealed": false,
+            "revealedBy": null,
+            "failedBy": [],
+            "inRangeBy": {},
+            "visibleToUsers": []
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "86iwdKJNN71YOeqq",
+      "name": "Machalite Ore",
+      "type": "loot",
+      "img": "mh-icons/minerals.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Machalite Ore</strong> <em>(Minerals · Uncommon)</em></p><p>Resource used to upgrade a weapon to Rare. Can be traded to the smithy for two Earth Crystals.</p><p>Sell value: 40 gp.</p>",
+          "chat": ""
+        },
+        "identifier": "machalite-ore",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 40,
+          "denomination": "gp"
+        },
+        "rarity": "uncommon",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 100,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Minerals",
+          "tableName": "Machalite Ore",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "BJb6KF32quLjgctb",
+      "name": "Heavy Armor Sphere",
+      "type": "loot",
+      "img": "mh-icons/minerals.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Heavy Armor Sphere</strong> <em>(Minerals · Rare)</em></p><p>Resource used to upgrade armor to Very Rare. Can be traded to the smithy for two Hard Armor Spheres.</p><p>Sell value: 250 gp.</p>",
+          "chat": ""
+        },
+        "identifier": "heavy-armor-sphere",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 250,
+          "denomination": "gp"
+        },
+        "rarity": "rare",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 101,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Minerals",
+          "tableName": "Heavy Armor Sphere",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "rFxQ1StKkWxzg3gE",
+      "name": "Dragonite Ore",
+      "type": "loot",
+      "img": "mh-icons/minerals.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Dragonite Ore</strong> <em>(Minerals · Rare)</em></p><p>Resource used to upgrade a weapon to Very Rare. Can be traded to the smithy for two Machalite Ore.</p><p>Sell value: 250 gp.</p>",
+          "chat": ""
+        },
+        "identifier": "dragonite-ore",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 250,
+          "denomination": "gp"
+        },
+        "rarity": "rare",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 102,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Minerals",
+          "tableName": "Dragonite Ore",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "C209eQI5gJ32H5ds",
+      "name": "Lifecrystals",
+      "type": "loot",
+      "img": "mh-icons/minerals.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Lifecrystals</strong> <em>(Minerals · Rare)</em></p><p>Long worshipped as a source of life. You can use an action to cast the light cantrip from the crystals for 1 hour. They shatter when the light fades.</p><p>Sell value: 150 gp. Crafting material.</p>",
+          "chat": ""
+        },
+        "identifier": "lifecrystals",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 150,
+          "denomination": "gp"
+        },
+        "rarity": "rare",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 103,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Minerals",
+          "tableName": "Lifecrystals",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "TB8NBP8c08DHZAXr",
+      "name": "Carbalite Ore",
+      "type": "loot",
+      "img": "mh-icons/minerals.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Carbalite Ore</strong> <em>(Minerals · Very Rare)</em></p><p>Resource used to upgrade a weapon to Legendary. Can be traded to the smithy for two Dragonite Ore.</p><p>Sell value: 900 gp.</p>",
+          "chat": ""
+        },
+        "identifier": "carbalite-ore",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 900,
+          "denomination": "gp"
+        },
+        "rarity": "veryRare",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 104,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Minerals",
+          "tableName": "Carbalite Ore",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "oCNKlQvDY3mGKoTm",
+      "name": "Royal Armor Sphere",
+      "type": "loot",
+      "img": "mh-icons/minerals.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Royal Armor Sphere</strong> <em>(Minerals · Very Rare)</em></p><p>Resource used to upgrade armor to Legendary. Can be traded to the smithy for two Heavy Armor Spheres.</p><p>Sell value: 900 gp.</p>",
+          "chat": ""
+        },
+        "identifier": "royal-armor-sphere",
+        "source": {
+          "custom": "",
+          "book": "AGMH",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identified": true,
+        "unidentified": {
+          "name": ""
+        },
+        "container": null,
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 900,
+          "denomination": "gp"
+        },
+        "rarity": "veryRare",
+        "properties": [],
+        "type": {
+          "value": "",
+          "subtype": ""
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 105,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "world": {
+          "resourceNodeLoot": true,
+          "resourceCategory": "Minerals",
+          "tableName": "Royal Armor Sphere",
+          "grantQuantity": 1
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "world": {
+      "resourceNodeActor": true,
+      "environment": "The Wetlands",
+      "levelRange": "11-20",
+      "category": "Minerals",
+      "harvestDc": 23,
+      "hiddenPassiveDc": 18
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}
