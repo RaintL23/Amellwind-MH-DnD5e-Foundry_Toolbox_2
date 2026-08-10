@@ -170,7 +170,7 @@ export function mapTraits(entries: unknown[]): SpeciesTrait[] {
 }
 
 export interface MapResistancesOptions {
-  /** Prefix for choose-summary text (e.g. "elige:" vs "choose:"). */
+  /** Prefix for choose-summary text (e.g. "choose:"). */
   choosePrefix?: string;
 }
 

@@ -62,16 +62,16 @@ export function SpeciesDetailDialog({
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-4 text-sm">
             <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
               <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                Bonificadores
-              </p>
-              <p className="font-medium text-foreground">
-                {species.abilitySummary}
-              </p>
-            </div>
+                  Ability Bonuses
+                </p>
+                <p className="font-medium text-foreground">
+                  {species.abilitySummary}
+                </p>
+              </div>
             {species.darkvision !== undefined && (
               <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                  Visión en la oscuridad
+                  Darkvision
                 </p>
                 <p className="font-medium text-foreground">
                   {species.darkvision} ft.
@@ -81,7 +81,7 @@ export function SpeciesDetailDialog({
             {(species.resistances.length > 0 || species.resistanceSummary) && (
               <div className="rounded-md border border-border bg-muted/20 px-3 py-2">
                 <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-0.5">
-                  Resistencias
+                  Resistances
                 </p>
                 <p className="font-medium text-foreground capitalize">
                   {[...species.resistances, species.resistanceSummary]

@@ -55,7 +55,7 @@ export function mapSpecies(raw: any): Species {
   const category = inferCategory(raw);
   const { fixed: resistances, summary: resistanceSummary } = mapResistances(
     raw.resist,
-    { choosePrefix: "elige:" },
+    { choosePrefix: "choose:" },
   );
   const traits = mapTraits(raw.entries);
   const speciesSource = {
