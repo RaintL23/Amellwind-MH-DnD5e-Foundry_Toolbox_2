@@ -23,7 +23,7 @@ Sub-folders from the source tree are recreated as **compendium folders** inside 
 | ------------------------------ | ----- | ------------------------------------- | -------- |
 | Amellwind Weapons              | Item  | `weapons/`                            | 27 weapons |
 | Amellwind Weapon Resources     | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
-| Amellwind Runes                | Item  | `runes/<Monster>/`                    | 13 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
+| Amellwind Runes                | Item  | `runes/<Monster>/`                    | 16 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
 | Amellwind Cooking Items        | Item  | `cooking-features/` (rank-1, daily-skills) | food + daily skills |
 | Amellwind Cooking Actors       | Actor | `cooking-features/`                   | Felyne Cook (embeds its 46 items) |
 | Amellwind Cooking Macros       | Macro | `cooking-features/`                   | Felyne Cook — Kitchen Sync |
@@ -38,8 +38,15 @@ self-contained (no need to drop `mh-icons/` at your Foundry data root).
 The compendium packs are LevelDB databases (required since Foundry v11+), so they
 must be compiled from the source JSON. From the Toolbox repo root:
 
+First time only (installs `@foundryvtt/foundryvtt-cli`):
+
 ```bash
-pnpm install            # first time only (installs @foundryvtt/foundryvtt-cli)
+pnpm install
+```
+
+Then build the module packs and assets:
+
+```bash
 pnpm build:foundry-module
 ```
 
@@ -52,7 +59,12 @@ they are fully derived from the source JSON.
 
 ## Install into a world
 
-1. Run `pnpm build:foundry-module` (see above).
+1. Build the module:
+
+```bash
+pnpm build:foundry-module
+```
+
 2. Copy the whole folder
    `public/data/foundry-module/Amellwind-MH-RaintDM-module/`
    into your Foundry data folder, under:
@@ -75,7 +87,12 @@ Whenever you add or change content in
 [`public/data/foundry-jsons-example`](../foundry-jsons-example):
 
 1. Edit / add the `fvtt-*.json` files there (keep the folder layout).
-2. Rebuild: `pnpm build:foundry-module`.
+2. Rebuild:
+
+```bash
+pnpm build:foundry-module
+```
+
 3. Bump the `version` in
    `Amellwind-MH-RaintDM-module/module.json` (e.g. `1.0.0` → `1.1.0`).
 4. Replace the `Amellwind-MH-RaintDM-module` folder in your Foundry

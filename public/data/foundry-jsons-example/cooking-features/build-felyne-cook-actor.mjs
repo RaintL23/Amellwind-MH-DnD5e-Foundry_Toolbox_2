@@ -345,9 +345,10 @@ const askTemplate = {
     description: {
       value: `<p><strong>Ask for a Meal (Rank 1)</strong></p>
 <p>While you are within 10 feet of the Felyne Cook, you can request a Rank 1 meal for yourself (1 serving).</p>
+<p><strong>Price:</strong> <strong>2 gp</strong> (paid when you confirm the order). If you cannot pay, the cook refuses the order.</p>
 <p>Choose a meal, then assign ability scores to the three cooking steps chosen by the cook.</p>
 <p><em>Granted automatically when you enter the Camp Kitchen Aura. Template copies on players are named "Ask for a Meal (Rank 1)".</em></p>`,
-      chat: "<p>Ask for a Rank 1 meal from the Felyne Cook.</p>",
+      chat: "<p>Ask for a Rank 1 meal from the Felyne Cook (2 gp).</p>",
     },
     source: {
       custom: "",
@@ -366,7 +367,7 @@ const askTemplate = {
         id: askActivityId,
         name: "Ask for a Meal",
         identifier: "ask-for-a-meal-rank-1",
-        chatFlavor: "Ask the Felyne Cook for a Rank 1 meal.",
+        chatFlavor: "Ask the Felyne Cook for a Rank 1 meal (2 gp).",
         condition: "Within 10 ft of the Felyne Cook",
       }),
     },

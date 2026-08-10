@@ -1,6 +1,9 @@
 // Shared player cooking flow for Felyne Cook handoff / Ask feature.
 // Expects in scope: cookActor, caller
-// Optional in scope: HANDOFF_MACRO_ID (string, may be "")
+// Optional in scope:
+//   HANDOFF_MACRO_ID (string, may be "")
+//   CHARGE_FOR_MEAL (boolean) — when true, Rank 1 meals cost MEAL_PRICE_GP
+//   MEAL_PRICE_GP (number, default 2)
 
 const esc = (value) => {
   const s = String(value ?? "");
@@ -29,6 +32,54 @@ const STEP_LABELS = [
   "Cook the meal",
   "Plate the meal",
 ];
+
+const felynePick = (lines) => lines[Math.floor(Math.random() * lines.length)];
+
+const FELYNE = {
+  greetMenu: [
+    "Welcome, buddy-pal! What's it gonna be today, nya?",
+    "Hehe, the grill is hot and ready~! Pick something tasty, meowster!",
+    "Ohhh a hungry hunter! Leave the cookin' to this Felyne, nya!",
+    "Come closer, partner! Today's menu smells purrfect!",
+  ],
+  confirmPay: (name, price) => [
+    `Alrighty! One ${name} comin' right up — that'll be ${price} gp, nya!`,
+    `${price} gp for a fresh ${name}, buddy-pal. Sound good, meow?`,
+    `Hehe~ a ${name} for ${price} gp! Dig deep in those pouches, partner!`,
+  ],
+  noGold: (price, have) => [
+    `Nyooo… you only got ${have} gp, buddy-pal. I need ${price} gp for a Rank 1 meal!`,
+    `Can't cook on empty purses, meowster! Need ${price} gp (you have ${have}).`,
+    `Aww… not enough zenny-gp! Bring ${price} gp next time, partner!`,
+  ],
+  paid: (price) => [
+    `Clink-clink~! ${price} gp received, nya! Time to get grill-cooking!`,
+    `Thanks a bunch, buddy-pal! Pocketed ${price} gp — let's cook!`,
+    `Purrfect payment! ${price} gp in the tip jar, meow!`,
+  ],
+  checks: [
+    "Okay! Three cookin' steps — match 'em with three different abilities, nya!",
+    "Assign your abilities wisely, meowster. Cooking is an art!",
+    "Hehe, don't burn the pot! Pick different ability scores for each step!",
+  ],
+  delicious: [
+    "Mmmrrrow~! Smell that? Absolute purrfection!",
+    "Yes yes yes! A delicious success, buddy-pal!",
+    "The hunters will love this one, nyaaa!",
+  ],
+  bland: [
+    "Eh… it's edible? Kinda? Counts as a ration, but no tasty boon, nya…",
+    "Oopsie. Bland batch. At least nobody goes hungry… probably.",
+  ],
+  ruined: [
+    "NYAA?! Smoke everywhere! This one's ruined, partner!",
+    "Aaagh— too much spice, too little care! Ruined meal, meow!",
+  ],
+  daily: [
+    "Ooooh, and a Daily Skill bubbled up from the stew, nya!",
+    "Lucky huntin'! Extra Daily Skill for the table!",
+  ],
+};
 
 const dialogForm = (title, content, okLabel = "Continue", { width = 460, render } = {}) => new Promise((resolve) => {
   let settled = false;
@@ -59,6 +110,65 @@ const dialogForm = (title, content, okLabel = "Continue", { width = 460, render 
     },
   }, { width }).render(true);
 });
+
+const currencyToCopper = (currency = {}) => {
+  const pp = Number(currency.pp) || 0;
+  const gp = Number(currency.gp) || 0;
+  const ep = Number(currency.ep) || 0;
+  const sp = Number(currency.sp) || 0;
+  const cp = Number(currency.cp) || 0;
+  return (pp * 1000) + (gp * 100) + (ep * 50) + (sp * 10) + cp;
+};
+
+const copperToCurrency = (totalCp) => {
+  let n = Math.max(0, Math.floor(Number(totalCp) || 0));
+  const pp = Math.floor(n / 1000);
+  n %= 1000;
+  const gp = Math.floor(n / 100);
+  n %= 100;
+  const ep = Math.floor(n / 50);
+  n %= 50;
+  const sp = Math.floor(n / 10);
+  n %= 10;
+  return { pp, gp, ep, sp, cp: n };
+};
+
+const formatGpAmount = (gp) => {
+  const n = Number(gp) || 0;
+  return Number.isInteger(n) ? String(n) : n.toFixed(2);
+};
+
+const trySpendGold = async (payer, gpAmount) => {
+  const needCp = Math.round(gpAmount * 100);
+  const current = foundry.utils.deepClone(payer.system?.currency ?? {});
+  const totalCp = currencyToCopper(current);
+  if (totalCp < needCp) {
+    return { ok: false, haveGp: totalCp / 100 };
+  }
+
+  const next = foundry.utils.deepClone(current);
+  const haveGp = Number(next.gp) || 0;
+  if (haveGp >= gpAmount) {
+    next.gp = haveGp - gpAmount;
+  } else {
+    Object.assign(next, copperToCurrency(totalCp - needCp));
+  }
+
+  await payer.update({ "system.currency": next });
+  return { ok: true, haveGp: totalCp / 100 };
+};
+
+const tryCreditCook = async (cook, gpAmount) => {
+  try {
+    if (!(cook.isOwner || game.user.isGM)) return false;
+    const current = foundry.utils.deepClone(cook.system?.currency ?? {});
+    current.gp = (Number(current.gp) || 0) + gpAmount;
+    await cook.update({ "system.currency": current });
+    return true;
+  } catch (_err) {
+    return false;
+  }
+};
 
 const getMealTemplates = () => cookActor.items.filter((i) => {
   const cooking = foundry.utils.getProperty(i, "flags.world.cooking") ?? {};
@@ -123,13 +233,32 @@ const rollAbilityCheck = async (abilityId, { addProf = false, flavor = "" } = {}
   return Number(roll.total ?? 0);
 };
 
+/** @returns {{ index: number, d20: number, d6: number, total: number, formula: string }} */
 const rollDailySkillIndex = async () => {
   const roll = await new Roll("1d20 + 1d6 - 1").evaluate();
+  const dice = roll.dice ?? [];
+  const d20 = Number(dice[0]?.results?.[0]?.result ?? dice[0]?.total ?? 0);
+  const d6 = Number(dice[1]?.results?.[0]?.result ?? dice[1]?.total ?? 0);
+  const total = Number(roll.total ?? 1);
+  const index = Math.min(25, Math.max(1, total));
+
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor: caller }),
-    flavor: "Daily Skill table (1d20 + 1d6 − 1)",
+    flavor: `Daily Skill table — d20(${d20}) + d6(${d6}) − 1 = ${total} → row #${index}`,
   });
-  return Math.min(25, Math.max(1, Number(roll.total ?? 1)));
+
+  return {
+    index,
+    d20,
+    d6,
+    total,
+    formula: "1d20 + 1d6 − 1",
+  };
+};
+
+const formatDailyRollLine = (rollInfo, skillLabel) => {
+  const { d20, d6, total, index } = rollInfo;
+  return `d20(${d20}) + d6(${d6}) − 1 = <strong>${total}</strong> → row #${index}: ${esc(skillLabel)}`;
 };
 
 const pickNpcSteps = () => {
@@ -147,15 +276,20 @@ if (!meals.length) {
   return;
 }
 
+const mealPriceGp = Number(typeof MEAL_PRICE_GP !== "undefined" ? MEAL_PRICE_GP : 2) || 2;
+const chargeForMeal = Boolean(typeof CHARGE_FOR_MEAL !== "undefined" && CHARGE_FOR_MEAL);
+
 const mealOptions = meals.map((m) => {
   const dc = Number(foundry.utils.getProperty(m, "flags.world.cooking.dc") ?? 10);
   return `<option value="${esc(m.id)}">${esc(m.name)} (DC ${dc})</option>`;
 }).join("");
 
 const mealForm = await dialogForm(
-  "Felyne Cook — Choose your meal",
+  `${cookActor.name} — Pick a dish, nya!`,
   `<form class="flexcol">
-    <p><strong>${esc(cookActor.name)}</strong> prepares a single serving for <strong>${esc(caller.name)}</strong>. What would you like?</p>
+    <p><em>${esc(felynePick(FELYNE.greetMenu))}</em></p>
+    <p><strong>${esc(cookActor.name)}</strong> can whip up one Rank 1 serving for <strong>${esc(caller.name)}</strong>.</p>
+    ${chargeForMeal ? `<p><strong>Price:</strong> ${mealPriceGp} gp (Rank 1 meal)</p>` : ""}
     <div class="form-group">
       <label>Meal</label>
       <select name="meal">${mealOptions}</select>
@@ -164,9 +298,9 @@ const mealForm = await dialogForm(
       <label style="font-weight:bold;">Boon</label>
       <div class="meal-desc"></div>
     </div>
-    <p class="hint"><em>Servings: 1</em> (the cook prepares this meal only for you).</p>
+    <p class="hint"><em>Servings: 1</em> (just for you, buddy-pal!)</p>
   </form>`,
-  "Choose abilities",
+  chargeForMeal ? "Order (pay next)" : "Choose abilities",
   {
     width: 520,
     render: (html) => {
@@ -190,6 +324,49 @@ if (!mealItem) {
   return;
 }
 
+if (chargeForMeal) {
+  const payLine = felynePick(FELYNE.confirmPay(mealItem.name, mealPriceGp));
+  const payForm = await dialogForm(
+    `${cookActor.name} — That'll be ${mealPriceGp} gp, nya!`,
+    `<form class="flexcol">
+      <p><em>${esc(payLine)}</em></p>
+      <p>Pay <strong>${mealPriceGp} gp</strong> from <strong>${esc(caller.name)}</strong>'s pouch to start cooking <strong>${esc(mealItem.name)}</strong>?</p>
+    </form>`,
+    `Pay ${mealPriceGp} gp`,
+  );
+  if (!payForm) return;
+
+  const spent = await trySpendGold(caller, mealPriceGp);
+  if (!spent.ok) {
+    const have = formatGpAmount(spent.haveGp);
+    const line = felynePick(FELYNE.noGold(mealPriceGp, have));
+    ui.notifications.warn(line);
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: cookActor }),
+      content: `
+        <div class="dnd5e2">
+          <h3>${esc(cookActor.name)}</h3>
+          <p><em>${esc(line)}</em></p>
+        </div>
+      `,
+    });
+    return;
+  }
+
+  const credited = await tryCreditCook(cookActor, mealPriceGp);
+  const paidLine = felynePick(FELYNE.paid(mealPriceGp));
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: cookActor }),
+    content: `
+      <div class="dnd5e2">
+        <h3>${esc(cookActor.name)} — Payment</h3>
+        <p><em>${esc(paidLine)}</em></p>
+        <p><strong>${esc(caller.name)}</strong> paid <strong>${mealPriceGp} gp</strong>${credited ? " (added to the cook's pouch)" : " (GM: credit the cook if desired)"}.</p>
+      </div>
+    `,
+  });
+}
+
 const servings = 1;
 const baseDc = Number(foundry.utils.getProperty(mealItem, "flags.world.cooking.dc") ?? 10);
 const dc = baseDc;
@@ -202,9 +379,10 @@ const npcSteps = pickNpcSteps();
 const defaultAbilities = ["int", "wis", "dex"];
 
 const checkForm = await dialogForm(
-  "Felyne Cook — Three cooking checks",
+  `${cookActor.name} — Three cookin' checks!`,
   `<form class="flexcol">
-    <p>The cook chooses three cooking steps. You assign a <strong>different ability score</strong> to each one. If you are proficient with cook's utensils, add your proficiency bonus to <em>one</em> check.</p>
+    <p><em>${esc(felynePick(FELYNE.checks))}</em></p>
+    <p>Assign a <strong>different ability score</strong> to each step. If you are proficient with cook's utensils, add your proficiency bonus to <em>one</em> check.</p>
     <p><strong>Meal:</strong> ${esc(mealItem.name)} &nbsp;|&nbsp; <strong>DC:</strong> ${dc} &nbsp;|&nbsp; <strong>Servings:</strong> ${servings}</p>
     ${[1, 2, 3].map((n) => `
       <fieldset style="margin:0.35rem 0;padding:0.5rem;">
@@ -237,7 +415,7 @@ const picks = [1, 2, 3].map((n) => ({
 }));
 
 if (new Set(picks.map((p) => p.ability)).size !== 3) {
-  ui.notifications.warn("Felyne Cook: you must use three different ability scores.");
+  ui.notifications.warn("Felyne Cook: you must use three different ability scores, nya!");
   return;
 }
 
@@ -258,12 +436,16 @@ const margin = average - dc;
 const success = average >= dc;
 
 let resultTitle = "Bland meal";
+let resultFlavor = felynePick(FELYNE.bland);
 let resultBody = "<p>The dish counts as a day's ration but grants <strong>no meal boon</strong>.</p>";
 const grantedNames = [];
 const canModifyCaller = caller.isOwner || game.user.isGM;
+/** @type {string[]} */
+const dailyDetailLines = [];
 
 if (success) {
   resultTitle = "Delicious success";
+  resultFlavor = felynePick(FELYNE.delicious);
   if (!canModifyCaller) {
     resultBody = `<p><strong>${esc(caller.name)}</strong> cooked <strong>${esc(mealItem.name)}</strong>, but this client cannot grant items. Ask the GM to apply the meal feature.</p>`;
   } else {
@@ -274,13 +456,13 @@ if (success) {
 
     const dailyRolls = margin >= 8 ? 2 : margin >= 4 ? 1 : 0;
     if (dailyRolls > 0) {
+      resultFlavor = `${resultFlavor} ${felynePick(FELYNE.daily)}`;
       const dailyMap = getDailyTemplates();
-      const rolledSkills = [];
       for (let i = 0; i < dailyRolls; i += 1) {
-        const index = await rollDailySkillIndex();
-        const template = dailyMap.get(index);
+        const rollInfo = await rollDailySkillIndex();
+        const template = dailyMap.get(rollInfo.index);
         if (!template) {
-          rolledSkills.push(`#${index} (missing template on cook)`);
+          dailyDetailLines.push(formatDailyRollLine(rollInfo, `(missing template on cook)`));
           continue;
         }
         const already = caller.items.find((it) => {
@@ -288,20 +470,26 @@ if (success) {
           return key && key === foundry.utils.getProperty(template, "flags.world.cooking.skillKey");
         });
         if (already) {
-          rolledSkills.push(`${template.name} (already known)`);
+          dailyDetailLines.push(formatDailyRollLine(rollInfo, `${template.name} (already known)`));
           continue;
         }
         const created = await cloneFeatToActor(template, caller);
         if (created) {
           grantedNames.push(created.name);
-          rolledSkills.push(created.name);
+          dailyDetailLines.push(formatDailyRollLine(rollInfo, created.name));
+        } else {
+          dailyDetailLines.push(formatDailyRollLine(rollInfo, `${template.name} (grant failed)`));
         }
       }
-      resultBody += `<p><strong>Daily Skill${dailyRolls > 1 ? "s" : ""}:</strong> ${rolledSkills.map(esc).join(", ")}</p>`;
+      resultBody += `
+        <p><strong>Daily Skill${dailyRolls > 1 ? "s" : ""}</strong> <em>(${felynePick(["lucky rollin', nya!", "extra helpin' from the pot!"])})</em>:</p>
+        <ul>${dailyDetailLines.map((line) => `<li>${line}</li>`).join("")}</ul>
+      `;
     }
   }
 } else if (margin <= -5) {
   resultTitle = "Ruined meal";
+  resultFlavor = felynePick(FELYNE.ruined);
   resultBody = `<p>The meal does <strong>not</strong> count as a ration. ${esc(caller.name)} must succeed on a Constitution saving throw (DC ${dc}) or become poisoned for 1 hour.</p>`;
   if (typeof caller.rollSavingThrow === "function") {
     await caller.rollSavingThrow({ ability: "con", targetValue: dc });
@@ -315,7 +503,8 @@ await ChatMessage.create({
   content: `
     <div class="dnd5e2">
       <h3>${esc(cookActor.name)} — Artisan Cooking (Rank 1)</h3>
-      <p><strong>Cook:</strong> ${esc(caller.name)} &nbsp;|&nbsp; <strong>Meal:</strong> ${esc(mealItem.name)}</p>
+      <p><em>${esc(resultFlavor)}</em></p>
+      <p><strong>Cook:</strong> ${esc(caller.name)} &nbsp;|&nbsp; <strong>Meal:</strong> ${esc(mealItem.name)}${chargeForMeal ? ` &nbsp;|&nbsp; <strong>Paid:</strong> ${mealPriceGp} gp` : ""}</p>
       <p><strong>Checks:</strong> ${totals.join(" / ")} &nbsp;|&nbsp; <strong>Average:</strong> ${average} vs DC ${dc} (${margin >= 0 ? "+" : ""}${margin})</p>
       <p><strong>${esc(resultTitle)}</strong></p>
       ${resultBody}

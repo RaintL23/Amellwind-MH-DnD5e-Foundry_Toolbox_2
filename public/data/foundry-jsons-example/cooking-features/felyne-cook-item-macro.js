@@ -102,17 +102,20 @@ const buildPlayerMacroCommand = ({ cookActorUuid, callerUuid, handoffMacroId }) 
 const COOK_UUID = ${JSON.stringify(cookActorUuid)};
 const CALLER_UUID = ${JSON.stringify(callerUuid)};
 const HANDOFF_MACRO_ID = ${JSON.stringify(handoffMacroId ?? "")};
+// GM handoff: complimentary cook-in (no pouch charge).
+const MEAL_PRICE_GP = 2;
+const CHARGE_FOR_MEAL = false;
 
 const cookActor = await fromUuid(COOK_UUID);
 const caller = await fromUuid(CALLER_UUID);
 if (!cookActor || !caller) {
-  ui.notifications.error("Felyne Cook: could not resolve cook or hunter.");
+  ui.notifications.error("Felyne Cook: could not resolve cook or hunter, nya…");
   return;
 }
 
 const isCallerOwner = caller.isOwner || game.user.isGM;
 if (!isCallerOwner) {
-  ui.notifications.warn("Felyne Cook: only the chosen hunter (or GM) can run this handoff.");
+  ui.notifications.warn("Felyne Cook: only the chosen hunter (or GM) can run this handoff, meow!");
   return;
 }
 
@@ -184,9 +187,10 @@ const options = nearby.map(({ actor: a, distance, token: t }) => (
 )).join("");
 
 const form = await dialogForm(
-  "Felyne Cook — Choose nearby hunter",
+  "Felyne Cook — Who's helpin' in the kitchen, nya?",
   `<form class="flexcol">
-    <p>GM: choose which hunter within <strong>${RANGE_FT} ft</strong> may cook. That player will continue the remaining steps.</p>
+    <p><em>Hehe~ pick a buddy-pal within <strong>${RANGE_FT} ft</strong> to finish the cookin'!</em></p>
+    <p>GM: that player continues the remaining steps (no gold charge on handoff).</p>
     <div class="form-group">
       <label>Hunter (within ${RANGE_FT} ft)</label>
       <select name="tokenId">${options}</select>
@@ -251,14 +255,14 @@ await ChatMessage.create({
   whisper: whisperUsers.map((u) => u.id),
   content: `
     <div class="dnd5e2">
-      <h3>${esc(cookActor.name)} — Ready to cook</h3>
-      <p>The cook invites <strong>${esc(selected.actor.name)}</strong> (${selected.distance} ft away) to prepare a Rank 1 meal.</p>
+      <h3>${esc(cookActor.name)} — Ready to cook, nya!</h3>
+      <p><em>Alrighty, buddy-pal <strong>${esc(selected.actor.name)}</strong> (${selected.distance} ft)! Let's get grill-cooking!</em></p>
       <p><em>${ownerUserIds.length
-    ? "Player: open the handoff macro below, then choose the meal and roll the three checks."
+    ? "Player: open the handoff macro below, pick a meal, then roll the three checks."
     : "No player owner found — GM can run the handoff macro for this hunter."}</em></p>
       <p>@UUID[${handoffMacro.uuid}]{Continue cooking as ${esc(selected.actor.name)}}</p>
     </div>
   `,
 });
 
-ui.notifications.info(`Felyne Cook: handed off to ${selected.actor.name}. Player should run the whispered macro.`);
+ui.notifications.info(`Felyne Cook: handed off to ${selected.actor.name}, nya! Player should run the whispered macro.`);

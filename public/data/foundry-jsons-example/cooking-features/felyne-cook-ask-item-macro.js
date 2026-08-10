@@ -107,8 +107,12 @@ if (!cookActor || !cookToken) {
 
 const dist = measureDistanceFt(callerToken, cookToken);
 if (dist > RANGE_FT + 1e-6) {
-  ui.notifications.warn(`Felyne Cook: you must stay within ${RANGE_FT} ft of the cook (currently ${Math.round(dist * 10) / 10} ft).`);
+  ui.notifications.warn(`Felyne Cook: you must stay within ${RANGE_FT} ft of the cook (currently ${Math.round(dist * 10) / 10} ft), nya!`);
   return;
 }
+
+// Paid Ask-for-a-Meal path (Rank 1 camp kitchen).
+const MEAL_PRICE_GP = 2;
+const CHARGE_FOR_MEAL = true;
 
 /* @@PLAYER_FLOW_BODY@@ */
