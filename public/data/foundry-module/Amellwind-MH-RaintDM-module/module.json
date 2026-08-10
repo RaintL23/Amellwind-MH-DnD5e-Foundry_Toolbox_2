@@ -1,8 +1,8 @@
 {
   "id": "Amellwind-MH-RaintDM-module",
   "title": "Amellwind MH \u2014 RaintDM Content",
-  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, runes and cooking features for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
-  "version": "1.2.0",
+  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, runes, cooking features, combo crafting, hidden object detection, and resource gathering nodes for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
+  "version": "1.8.1",
   "authors": [
     {
       "name": "RaintDM"
@@ -12,6 +12,9 @@
     "minimum": "12",
     "verified": "12.331"
   },
+  "scripts": [
+    "scripts/resource-node.js"
+  ],
   "relationships": {
     "systems": [
       {
@@ -39,7 +42,7 @@
   "packs": [
     {
       "name": "weapons",
-      "label": "Amellwind Weapons",
+      "label": "Weapons",
       "path": "packs/weapons",
       "type": "Item",
       "system": "dnd5e",
@@ -50,7 +53,7 @@
     },
     {
       "name": "weapon-resources",
-      "label": "Amellwind Weapon Resources",
+      "label": "Weapon Resources",
       "path": "packs/weapon-resources",
       "type": "Item",
       "system": "dnd5e",
@@ -61,7 +64,7 @@
     },
     {
       "name": "runes",
-      "label": "Amellwind Runes",
+      "label": "Runes",
       "path": "packs/runes",
       "type": "Item",
       "system": "dnd5e",
@@ -72,7 +75,7 @@
     },
     {
       "name": "cooking-items",
-      "label": "Amellwind Cooking Items",
+      "label": "Cooking Items",
       "path": "packs/cooking-items",
       "type": "Item",
       "system": "dnd5e",
@@ -83,7 +86,7 @@
     },
     {
       "name": "cooking-actors",
-      "label": "Amellwind Cooking Actors",
+      "label": "Felyne Cook",
       "path": "packs/cooking-actors",
       "type": "Actor",
       "system": "dnd5e",
@@ -94,8 +97,61 @@
     },
     {
       "name": "cooking-macros",
-      "label": "Amellwind Cooking Macros",
+      "label": "Kitchen Sync",
       "path": "packs/cooking-macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "combo-crafting",
+      "label": "Combo Crafting",
+      "path": "packs/combo-crafting",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "hidden-detect-items",
+      "label": "Hidden Detection",
+      "path": "packs/hidden-detect-items",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "hidden-detect-macros",
+      "label": "Hidden Detection Sync",
+      "path": "packs/hidden-detect-macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "resource-node-items",
+      "label": "Resource Node",
+      "path": "packs/resource-node-items",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
+      "name": "resource-node-macros",
+      "label": "Resource Node Sync",
+      "path": "packs/resource-node-macros",
       "type": "Macro",
       "ownership": {
         "PLAYER": "OBSERVER",
@@ -111,9 +167,34 @@
         "weapons",
         "weapon-resources",
         "runes",
-        "cooking-items",
-        "cooking-actors",
-        "cooking-macros"
+        "combo-crafting"
+      ],
+      "folders": [
+        {
+          "name": "Felyne Kitchen",
+          "sorting": "m",
+          "packs": [
+            "cooking-items",
+            "cooking-actors",
+            "cooking-macros"
+          ]
+        },
+        {
+          "name": "Hidden Detection",
+          "sorting": "m",
+          "packs": [
+            "hidden-detect-items",
+            "hidden-detect-macros"
+          ]
+        },
+        {
+          "name": "Resource Nodes",
+          "sorting": "m",
+          "packs": [
+            "resource-node-items",
+            "resource-node-macros"
+          ]
+        }
       ]
     }
   ]
