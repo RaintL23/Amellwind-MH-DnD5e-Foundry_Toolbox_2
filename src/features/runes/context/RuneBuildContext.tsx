@@ -8,7 +8,7 @@ import {
   useRef,
   ReactNode,
 } from "react";
-import { Rune } from "@/shared/types";
+import { MaterialEffectSlot, Rune } from "@/shared/types";
 import { getAllRunes } from "../services/rune.service";
 import {
   clearRuneBuild,
@@ -45,9 +45,17 @@ interface RuneBuildContextValue {
   armorRunes: (Rune | null)[];
   trinket1Rune: Rune | null;
   trinket2Rune: Rune | null;
+  /** Chosen effect (weapon/armor) for each trinket rune, null when empty. */
+  trinket1Kind: MaterialEffectSlot | null;
+  trinket2Kind: MaterialEffectSlot | null;
   setWeaponRarity: (r: ItemRarity) => void;
   setArmorRarity: (r: ItemRarity) => void;
-  addRune: (rune: Rune, slotType: BuildSlotType, slotIndex?: number) => boolean;
+  addRune: (
+    rune: Rune,
+    slotType: BuildSlotType,
+    slotIndex?: number,
+    materialEffectKind?: MaterialEffectSlot,
+  ) => boolean;
   removeRune: (slotType: BuildSlotType, slotIndex?: number) => void;
   clearBuild: () => void;
   totalRunes: number;
@@ -59,6 +67,11 @@ const RuneBuildContext = createContext<RuneBuildContextValue | null>(null);
 
 function makeSlots(rarity: ItemRarity): (Rune | null)[] {
   return Array<Rune | null>(RARITY_SLOTS[rarity]).fill(null);
+}
+
+/** Falls back to whichever effect the rune actually has (weapon preferred). */
+function defaultMaterialEffectKind(rune: Rune): MaterialEffectSlot {
+  return rune.weaponEffect ? "weapon" : "armor";
 }
 
 /** Resolves persisted rune refs into full runes for a slot array of `size`. */
@@ -96,6 +109,12 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
   );
   const [trinket1Rune, setTrinket1Rune] = useState<Rune | null>(null);
   const [trinket2Rune, setTrinket2Rune] = useState<Rune | null>(null);
+  const [trinket1Kind, setTrinket1Kind] = useState<MaterialEffectSlot | null>(
+    null,
+  );
+  const [trinket2Kind, setTrinket2Kind] = useState<MaterialEffectSlot | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!persisted) return;
@@ -119,14 +138,22 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
             runeMap,
           ),
         );
-        setTrinket1Rune(
-          persisted.trinket1Rune
-            ? runeMap.get(runeRefKey(persisted.trinket1Rune)) ?? null
+        const resolvedTrinket1 = persisted.trinket1Rune
+          ? runeMap.get(runeRefKey(persisted.trinket1Rune)) ?? null
+          : null;
+        const resolvedTrinket2 = persisted.trinket2Rune
+          ? runeMap.get(runeRefKey(persisted.trinket2Rune)) ?? null
+          : null;
+        setTrinket1Rune(resolvedTrinket1);
+        setTrinket2Rune(resolvedTrinket2);
+        setTrinket1Kind(
+          resolvedTrinket1
+            ? persisted.trinket1Kind ?? defaultMaterialEffectKind(resolvedTrinket1)
             : null,
         );
-        setTrinket2Rune(
-          persisted.trinket2Rune
-            ? runeMap.get(runeRefKey(persisted.trinket2Rune)) ?? null
+        setTrinket2Kind(
+          resolvedTrinket2
+            ? persisted.trinket2Kind ?? defaultMaterialEffectKind(resolvedTrinket2)
             : null,
         );
       })
@@ -156,13 +183,20 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const addRune = useCallback(
-    (rune: Rune, slotType: BuildSlotType, slotIndex?: number): boolean => {
+    (
+      rune: Rune,
+      slotType: BuildSlotType,
+      slotIndex?: number,
+      materialEffectKind?: MaterialEffectSlot,
+    ): boolean => {
       if (slotType === "trinket1") {
         setTrinket1Rune(rune);
+        setTrinket1Kind(materialEffectKind ?? defaultMaterialEffectKind(rune));
         return true;
       }
       if (slotType === "trinket2") {
         setTrinket2Rune(rune);
+        setTrinket2Kind(materialEffectKind ?? defaultMaterialEffectKind(rune));
         return true;
       }
 
@@ -190,8 +224,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
   );
 
   const removeRune = useCallback((slotType: BuildSlotType, slotIndex?: number) => {
-    if (slotType === "trinket1") { setTrinket1Rune(null); return; }
-    if (slotType === "trinket2") { setTrinket2Rune(null); return; }
+    if (slotType === "trinket1") { setTrinket1Rune(null); setTrinket1Kind(null); return; }
+    if (slotType === "trinket2") { setTrinket2Rune(null); setTrinket2Kind(null); return; }
 
     const setter = slotType === "weapon" ? setWeaponRunes : setArmorRunes;
     setter((prev) => {
@@ -206,6 +240,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     setArmorRunes((prev) => prev.map(() => null));
     setTrinket1Rune(null);
     setTrinket2Rune(null);
+    setTrinket1Kind(null);
+    setTrinket2Kind(null);
   }, []);
 
   const isInBuild = useCallback(
@@ -254,6 +290,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
       armorRunes: armorRunes.map(runeToRef),
       trinket1Rune: runeToRef(trinket1Rune),
       trinket2Rune: runeToRef(trinket2Rune),
+      trinket1Kind: trinket1Rune ? trinket1Kind : null,
+      trinket2Kind: trinket2Rune ? trinket2Kind : null,
     });
   }, [
     weaponRarity,
@@ -262,6 +300,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     armorRunes,
     trinket1Rune,
     trinket2Rune,
+    trinket1Kind,
+    trinket2Kind,
     totalRunes,
   ]);
 
@@ -273,6 +313,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
       armorRunes,
       trinket1Rune,
       trinket2Rune,
+      trinket1Kind,
+      trinket2Kind,
       setWeaponRarity,
       setArmorRarity,
       addRune,
@@ -289,6 +331,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
       armorRunes,
       trinket1Rune,
       trinket2Rune,
+      trinket1Kind,
+      trinket2Kind,
       setWeaponRarity,
       setArmorRarity,
       addRune,

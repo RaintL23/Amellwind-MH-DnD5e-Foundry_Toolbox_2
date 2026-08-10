@@ -1,5 +1,5 @@
 import { Gem, Layers, ShieldCheck, Sword } from "lucide-react";
-import { Rune } from "@/shared/types";
+import { MaterialEffectSlot, Rune } from "@/shared/types";
 import { ItemRarity, RARITY_SLOTS } from "../../context/RuneBuildContext";
 import { RuleViolation } from "../../utils/build.validation";
 import { AccumulatedEffects } from "./AccumulatedEffects";
@@ -15,6 +15,8 @@ interface BuildDrawerContentProps {
   armorRunes: (Rune | null)[];
   trinket1Rune: Rune | null;
   trinket2Rune: Rune | null;
+  trinket1Kind: MaterialEffectSlot | null;
+  trinket2Kind: MaterialEffectSlot | null;
   weaponViolations: RuleViolation[];
   armorViolations: RuleViolation[];
   onWeaponRarityChange: (r: ItemRarity) => void;
@@ -29,6 +31,8 @@ export function BuildDrawerContent({
   armorRunes,
   trinket1Rune,
   trinket2Rune,
+  trinket1Kind,
+  trinket2Kind,
   weaponViolations,
   armorViolations,
   onWeaponRarityChange,
@@ -105,11 +109,13 @@ export function BuildDrawerContent({
         <TrinketSlotRow
           label="Trinket 1"
           rune={trinket1Rune}
+          kind={trinket1Kind}
           slotType="trinket1"
         />
         <TrinketSlotRow
           label="Trinket 2"
           rune={trinket2Rune}
+          kind={trinket2Kind}
           slotType="trinket2"
         />
 
@@ -125,6 +131,8 @@ export function BuildDrawerContent({
         armorRunes={armorRunes}
         trinket1Rune={trinket1Rune}
         trinket2Rune={trinket2Rune}
+        trinket1Kind={trinket1Kind}
+        trinket2Kind={trinket2Kind}
       />
     </>
   );

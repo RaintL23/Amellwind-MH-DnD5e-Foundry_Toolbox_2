@@ -1,6 +1,14 @@
 import { useState } from "react";
 import { AlertTriangle, Check, Gem, ShieldCheck, Sword } from "lucide-react";
-import { Rune } from "@/shared/types";
+import { MaterialEffectSlot, Rune } from "@/shared/types";
+import { MATERIAL_EFFECT_SLOT_LABELS } from "@/shared/types/material-effect.types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useRuneBuild } from "../../context/RuneBuildContext";
 import { wouldViolateRule } from "../../utils/build.validation";
 import { cn } from "@/shared/utils/cn";
@@ -48,6 +56,82 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
     const placed = addRune(rune, slotType);
     if (!placed) flash("No hay slots disponibles en esta rareza.");
     else flash("¡Runa agregada al build!");
+  }
+
+  // A trinket holds a single material effect, so the user must pick which one.
+  const trinketKinds: MaterialEffectSlot[] = [
+    ...(rune.weaponEffect ? (["weapon"] as const) : []),
+    ...(rune.armorEffect ? (["armor"] as const) : []),
+  ];
+
+  function handleAddTrinket(
+    slotType: "trinket1" | "trinket2",
+    kind: MaterialEffectSlot,
+  ) {
+    addRune(rune, slotType, undefined, kind);
+    const slotLabel = slotType === "trinket1" ? "Trinket 1" : "Trinket 2";
+    flash(`Added to ${slotLabel} (${MATERIAL_EFFECT_SLOT_LABELS[kind]} effect)`);
+  }
+
+  function renderTrinketButton(
+    slotType: "trinket1" | "trinket2",
+    inTrinket: boolean,
+    label: string,
+  ) {
+    const baseClass = cn(
+      "flex flex-1 items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-xs font-medium transition-colors",
+      inTrinket
+        ? "bg-green-900/30 border-green-700/50 text-green-400"
+        : "border-purple-700/40 text-purple-300 hover:bg-purple-900/20",
+    );
+
+    if (inTrinket) {
+      return (
+        <button onClick={() => removeRune(slotType)} className={baseClass}>
+          <Gem className="h-3.5 w-3.5" />
+          <Check className="h-3 w-3" /> {label}
+        </button>
+      );
+    }
+
+    if (trinketKinds.length <= 1) {
+      const kind = trinketKinds[0] ?? "weapon";
+      return (
+        <button
+          onClick={() => handleAddTrinket(slotType, kind)}
+          className={baseClass}
+        >
+          <Gem className="h-3.5 w-3.5" />
+          {`→ ${label}`}
+        </button>
+      );
+    }
+
+    return (
+      <DropdownMenu>
+        <DropdownMenuTrigger className={baseClass}>
+          <Gem className="h-3.5 w-3.5" />
+          {`→ ${label}`}
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="center">
+          <DropdownMenuLabel>Which effect?</DropdownMenuLabel>
+          {trinketKinds.map((kind) => (
+            <DropdownMenuItem
+              key={kind}
+              onSelect={() => handleAddTrinket(slotType, kind)}
+              className="gap-1.5"
+            >
+              {kind === "weapon" ? (
+                <Sword className="h-3.5 w-3.5 text-orange-400" />
+              ) : (
+                <ShieldCheck className="h-3.5 w-3.5 text-blue-400" />
+              )}
+              {MATERIAL_EFFECT_SLOT_LABELS[kind]} effect
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
   }
 
   return (
@@ -171,46 +255,8 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
       </div>
 
       <div className="flex gap-2">
-        <button
-          onClick={() =>
-            inTrinket1 ? removeRune("trinket1") : handleAdd("trinket1")
-          }
-          className={cn(
-            "flex flex-1 items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-xs font-medium transition-colors",
-            inTrinket1
-              ? "bg-green-900/30 border-green-700/50 text-green-400"
-              : "border-purple-700/40 text-purple-300 hover:bg-purple-900/20",
-          )}
-        >
-          <Gem className="h-3.5 w-3.5" />
-          {inTrinket1 ? (
-            <>
-              <Check className="h-3 w-3" /> Trinket 1
-            </>
-          ) : (
-            "→ Trinket 1"
-          )}
-        </button>
-        <button
-          onClick={() =>
-            inTrinket2 ? removeRune("trinket2") : handleAdd("trinket2")
-          }
-          className={cn(
-            "flex flex-1 items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-xs font-medium transition-colors",
-            inTrinket2
-              ? "bg-green-900/30 border-green-700/50 text-green-400"
-              : "border-purple-700/40 text-purple-300 hover:bg-purple-900/20",
-          )}
-        >
-          <Gem className="h-3.5 w-3.5" />
-          {inTrinket2 ? (
-            <>
-              <Check className="h-3 w-3" /> Trinket 2
-            </>
-          ) : (
-            "→ Trinket 2"
-          )}
-        </button>
+        {renderTrinketButton("trinket1", inTrinket1, "Trinket 1")}
+        {renderTrinketButton("trinket2", inTrinket2, "Trinket 2")}
       </div>
 
       {feedback && (

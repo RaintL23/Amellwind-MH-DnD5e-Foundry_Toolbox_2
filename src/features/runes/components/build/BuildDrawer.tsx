@@ -19,6 +19,8 @@ export function BuildDrawer() {
     armorRunes,
     trinket1Rune,
     trinket2Rune,
+    trinket1Kind,
+    trinket2Kind,
     setWeaponRarity,
     setArmorRarity,
     clearBuild,
@@ -80,6 +82,8 @@ export function BuildDrawer() {
             armorRunes={armorRunes}
             trinket1Rune={trinket1Rune}
             trinket2Rune={trinket2Rune}
+            trinket1Kind={trinket1Kind}
+            trinket2Kind={trinket2Kind}
             weaponViolations={weaponViolations}
             armorViolations={armorViolations}
             onWeaponRarityChange={setWeaponRarity}

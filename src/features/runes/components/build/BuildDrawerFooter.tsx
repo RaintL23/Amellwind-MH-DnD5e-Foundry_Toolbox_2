@@ -1,27 +1,70 @@
-import { AlertTriangle, Download } from "lucide-react";
+import { useState } from "react";
+import { AlertTriangle, Check, Copy } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import type { MaterialEffectSlot, Rune } from "@/shared/types";
+import { extractLeadingMaterialEffectName } from "@/features/material-effects/utils/material-effect-highlight.utils";
 import { useRuneBuild } from "../../context/RuneBuildContext";
-import { downloadAllBuildRuneJsons } from "../../utils/rune-foundry-export";
-import { FoundryModuleRequirementsNotice } from "@/shared/foundry";
 
 interface BuildDrawerFooterProps {
   totalRunes: number;
   totalViolations: number;
 }
 
+function listRunes(runes: (Rune | null)[]): string[] {
+  const filled = runes.filter((r): r is Rune => r !== null);
+  if (filled.length === 0) return ["- (none)"];
+  return filled.map((r) => `- ${r.name} (${r.monsterName})`);
+}
+
+function describeTrinket(
+  label: string,
+  rune: Rune | null,
+  kind: MaterialEffectSlot | null,
+): string {
+  if (!rune) return `${label}: (empty)`;
+  const effectKind = kind ?? (rune.weaponEffect ? "weapon" : "armor");
+  const effectText =
+    effectKind === "weapon" ? rune.weaponEffect : rune.armorEffect;
+  const materialEffectName = effectText
+    ? extractLeadingMaterialEffectName(effectText)
+    : null;
+  const suffix = materialEffectName ? `: ${materialEffectName}` : "";
+  return `${label}: ${rune.name} (${rune.monsterName}) — ${effectKind}${suffix}`;
+}
+
 export function BuildDrawerFooter({ totalRunes, totalViolations }: BuildDrawerFooterProps) {
-  const { weaponRunes, armorRunes, trinket1Rune, trinket2Rune } = useRuneBuild();
+  const {
+    weaponRunes,
+    armorRunes,
+    trinket1Rune,
+    trinket2Rune,
+    trinket1Kind,
+    trinket2Kind,
+  } = useRuneBuild();
+  const [copied, setCopied] = useState(false);
 
   if (totalRunes === 0) return null;
 
-  const handleDownload = () => {
-    void downloadAllBuildRuneJsons(
-      weaponRunes,
-      armorRunes,
-      trinket1Rune,
-      trinket2Rune,
-    );
+  const buildCopyText = (): string =>
+    [
+      "Weapon runes:",
+      ...listRunes(weaponRunes),
+      "Armor runes:",
+      ...listRunes(armorRunes),
+      "Trinkets:",
+      `- ${describeTrinket("Trinket 1", trinket1Rune, trinket1Kind)}`,
+      `- ${describeTrinket("Trinket 2", trinket2Rune, trinket2Kind)}`,
+    ].join("\n");
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(buildCopyText());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      setCopied(false);
+    }
   };
 
   return (
@@ -44,14 +87,22 @@ export function BuildDrawerFooter({ totalRunes, totalViolations }: BuildDrawerFo
       <p className="mt-1 text-xs text-muted-foreground/60 italic">
         Los cambios no se guardan entre sesiones.
       </p>
-      <FoundryModuleRequirementsNotice kind="rune" compact className="mt-2" />
       <Button
-        onClick={handleDownload}
+        onClick={handleCopy}
         variant="outline"
         className="mt-3 w-full gap-2 border-amber-600/30 bg-amber-600/20 text-amber-400 hover:bg-amber-600/30 hover:text-amber-400"
       >
-        <Download className="h-4 w-4" />
-        Export Runes to Foundry
+        {copied ? (
+          <>
+            <Check className="h-4 w-4" />
+            Copied!
+          </>
+        ) : (
+          <>
+            <Copy className="h-4 w-4" />
+            Copy runes names
+          </>
+        )}
       </Button>
     </div>
   );

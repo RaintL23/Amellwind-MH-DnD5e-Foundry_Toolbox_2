@@ -7,7 +7,7 @@ import {
   Sparkles,
   Sword,
 } from "lucide-react";
-import { Rune } from "@/shared/types";
+import { MaterialEffectSlot, Rune } from "@/shared/types";
 import { BuildEffectBlock } from "./BuildEffectBlock";
 
 interface AccumulatedEffectsProps {
@@ -15,6 +15,8 @@ interface AccumulatedEffectsProps {
   armorRunes: (Rune | null)[];
   trinket1Rune: Rune | null;
   trinket2Rune: Rune | null;
+  trinket1Kind: MaterialEffectSlot | null;
+  trinket2Kind: MaterialEffectSlot | null;
 }
 
 export function AccumulatedEffects({
@@ -22,6 +24,8 @@ export function AccumulatedEffects({
   armorRunes,
   trinket1Rune,
   trinket2Rune,
+  trinket1Kind,
+  trinket2Kind,
 }: AccumulatedEffectsProps) {
   const [open, setOpen] = useState(true);
 
@@ -106,38 +110,33 @@ export function AccumulatedEffects({
                 Trinkets
               </div>
               {[
-                { rune: trinket1Rune, label: "Trinket 1" },
-                { rune: trinket2Rune, label: "Trinket 2" },
-              ].map(
-                ({ rune, label }) =>
-                  rune && (
-                    <div key={label} className="space-y-1">
-                      <p className="text-xs text-muted-foreground/50 italic">
-                        {label}
-                      </p>
-                      {rune.weaponEffect && (
-                        <BuildEffectBlock
-                          runeName={rune.name}
-                          monsterName={rune.monsterName}
-                          effect={rune.weaponEffect}
-                          accentColor="text-purple-300"
-                          borderColor="border-purple-800/30"
-                          bgColor="bg-purple-900/10"
-                        />
-                      )}
-                      {rune.armorEffect && (
-                        <BuildEffectBlock
-                          runeName={rune.name}
-                          monsterName={rune.monsterName}
-                          effect={rune.armorEffect}
-                          accentColor="text-purple-300"
-                          borderColor="border-purple-800/30"
-                          bgColor="bg-purple-900/10"
-                        />
-                      )}
-                    </div>
-                  ),
-              )}
+                { rune: trinket1Rune, kind: trinket1Kind, label: "Trinket 1" },
+                { rune: trinket2Rune, kind: trinket2Kind, label: "Trinket 2" },
+              ].map(({ rune, kind, label }) => {
+                if (!rune) return null;
+                const effectKind =
+                  kind ?? (rune.weaponEffect ? "weapon" : "armor");
+                const effect =
+                  effectKind === "weapon"
+                    ? rune.weaponEffect
+                    : rune.armorEffect;
+                if (!effect) return null;
+                return (
+                  <div key={label} className="space-y-1">
+                    <p className="text-xs text-muted-foreground/50 italic">
+                      {label} · {effectKind === "weapon" ? "Weapon" : "Armor"}
+                    </p>
+                    <BuildEffectBlock
+                      runeName={rune.name}
+                      monsterName={rune.monsterName}
+                      effect={effect}
+                      accentColor="text-purple-300"
+                      borderColor="border-purple-800/30"
+                      bgColor="bg-purple-900/10"
+                    />
+                  </div>
+                );
+              })}
               <p className="text-xs text-muted-foreground/40 italic">
                 Remember: only one trinket active at a time.
               </p>
