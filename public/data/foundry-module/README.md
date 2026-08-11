@@ -19,10 +19,10 @@ The module is generated automatically from the source JSON. Each Foundry documen
 type must live in its own compendium, so the content is split across multiple packs.
 Sub-folders from the source tree are recreated as **compendium folders** inside each pack.
 
-Sidebar layout under **Amellwind MH** (nested `packFolders` in `module.json`):
+Sidebar layout under **Amellwind MH (RaintDM)** (nested `packFolders` in `module.json`):
 
 ```text
-Amellwind MH/
+Amellwind MH (RaintDM)/
 ├── Weapons
 ├── Weapon Resources
 ├── Runes
@@ -40,12 +40,12 @@ Amellwind MH/
     └── Resource Node Actors
 ```
 
-| Pack (compendium)        | Folder            | Type  | Source folder                         | Contents |
-| ------------------------ | ----------------- | ----- | ------------------------------------- | -------- |
-| Weapons                  | Amellwind MH      | Item  | `weapons/`                            | 27 weapons |
-| Weapon Resources         | Amellwind MH      | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
-| Runes                    | Amellwind MH      | Item  | `runes/<Monster>/`                    | 44 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
-| Combo Crafting           | Amellwind MH      | Item  | `combo-crafting/`                     | Combo Crafting feature (drop on any actor) |
+| Pack (compendium)        | Folder                    | Type  | Source folder                         | Contents |
+| ------------------------ | ------------------------- | ----- | ------------------------------------- | -------- |
+| Weapons                  | Amellwind MH (RaintDM)    | Item  | `weapons/`                            | 27 weapons |
+| Weapon Resources         | Amellwind MH (RaintDM)    | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
+| Runes                    | Amellwind MH (RaintDM)    | Item  | `runes/<Monster>/`                    | 44 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
+| Combo Crafting           | Amellwind MH (RaintDM)    | Item  | `combo-crafting/`                     | Combo Crafting feature (drop on any actor) |
 | Cooking Items            | Felyne Kitchen    | Item  | `cooking-features/` (rank-1, daily-skills) | food + daily skills |
 | Felyne Cook              | Felyne Kitchen    | Actor | `cooking-features/`                   | Felyne Cook (embeds its 46 items) |
 | Kitchen Sync             | Felyne Kitchen    | Macro | `cooking-features/`                   | Felyne Cook — Kitchen Sync |
@@ -100,8 +100,8 @@ pnpm build:foundry-module
    the module `id`.)
 3. Restart Foundry (or "Return to Setup" and relaunch) so it detects the module.
 4. Launch your world, open **Game Settings → Manage Modules**, enable
-   **Amellwind MH — RaintDM Content**, and save.
-5. Open the **Compendium Packs** sidebar tab. Packs appear under **Amellwind MH**,
+   **Amellwind MH (RaintDM)**, and save.
+5. Open the **Compendium Packs** sidebar tab. Packs appear under **Amellwind MH (RaintDM)**,
    with feature bundles nested in **Felyne Kitchen**, **Hidden Detection**, and
    **Resource Nodes**. Drag items/actors onto sheets or the sidebar, or
    right-click a pack → **Import All** to pull everything into the world.
@@ -109,8 +109,8 @@ pnpm build:foundry-module
 > **Existing worlds:** Foundry applies `packFolders` when the module is first
 > enabled in that world. If you already had the flat list, either drag packs
 > into the new folders manually, or disable the module, delete the old
-> "Amellwind MH" folder in the Compendium sidebar, re-enable the module, and
-> reload the world so Foundry recreates the nested layout.
+> "Amellwind MH" / "Amellwind MH (RaintDM)" folder in the Compendium sidebar,
+> re-enable the module, and reload the world so Foundry recreates the nested layout.
 
 Note: Midi QOL and Item Macro are **required**. Install and enable them first;
 Foundry blocks enabling this module until its required dependencies are present.
@@ -179,7 +179,7 @@ with token double-click armed from `scripts/felyne-cook.js` on every client.
 
 ### Setup (GM)
 
-1. From **Amellwind MH → Felyne Kitchen → Felyne Cook**, drag the actor onto the scene.
+1. From **Amellwind MH (RaintDM) → Felyne Kitchen → Felyne Cook**, drag the actor onto the scene.
 2. Optional: run **Kitchen Sync** once (or rely on the module script at world ready).
 3. Players double-click the cook token while within **10 ft** to open the kitchen menu.
 4. **Ask for a Meal (Rank 1)** still grants via the Camp Kitchen Aura as a backup.
@@ -214,7 +214,7 @@ inside an Item alone, so this ships as a **Feature Item** + a **Sync Macro**.
 ### Setup (GM)
 
 1. Create or pick an Actor for the hidden object (NPC prop, loot pile, etc.).
-2. From **Amellwind MH → Hidden Detection → Hidden Detection**, drag the feature
+2. From **Amellwind MH (RaintDM) → Hidden Detection → Hidden Detection**, drag the feature
    onto that Actor (re-import the item if you used an older copy).
 3. Place the Actor's token on the scene and **hide** it (Foundry eye / `hidden`).
 4. Use **Configure Hidden Detection** (GM). Saving **arms proximity hooks** for the
@@ -263,7 +263,7 @@ cannot travel inside an Item alone, so this ships as a **Feature Item** + a
 ### Setup (GM)
 
 1. Create or pick an Actor for the node (plant, mineral outcrop, fishing spot, etc.).
-2. From **Amellwind MH → Resource Nodes → Resource Node**, drag the feature onto
+2. From **Amellwind MH (RaintDM) → Resource Nodes → Resource Node**, drag the feature onto
    that Actor.
 3. Put possible loot items in the Actor's **inventory** (each stack is one entry in the loot pool).
 4. Place the token on the scene.
@@ -343,7 +343,7 @@ Prebuilt NPC props — **one actor per Environment × Level Tier × Resource Cat
 
 ### Setup (GM)
 
-1. From **Amellwind MH → Resource Nodes → Resource Node Actors**, open the
+1. From **Amellwind MH (RaintDM) → Resource Nodes → Resource Node Actors**, open the
    environment / tier folder and drag the actor onto the scene.
 2. Keep the token **hidden** (prototype already sets `hidden: true`).
 3. Players who beat Passive Perception see the node; double-click gathers as usual.
