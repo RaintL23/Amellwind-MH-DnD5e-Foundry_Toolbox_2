@@ -1,4 +1,8 @@
-import { ABILITY_NAMES, SKILL_LABELS } from "@/shared/constants/dnd";
+import {
+  ABILITY_ABBREVIATIONS,
+  ABILITY_NAMES,
+  SKILL_LABELS,
+} from "@/shared/constants/dnd";
 import type { DamageType } from "@/shared/types";
 
 export type DndKeywordCategory =
@@ -49,16 +53,22 @@ function formatDamageTypeTerm(type: DamageType): string {
   return type.charAt(0).toUpperCase() + type.slice(1);
 }
 
-/** Common D&D 5e terms, longest first for safe overlapping matches. */
+/** Collapse whitespace and lowercase for stable keyword identity. */
+function normalizeKeywordKey(value: string): string {
+  return value.toLowerCase().replace(/\s+/g, " ").trim();
+}
+
+/**
+ * Common D&D 5e terms. Prefer longer phrases first in the source list when two
+ * entries would share a key; the matcher also sorts by length so "bonus action"
+ * wins over bare "bonus".
+ */
 const STATIC_DND_KEYWORDS: DndKeyword[] = [
-  // Action economy
-  { term: "action bonus", category: "action" },
+  // Action economy (phrases before bare "action")
   { term: "bonus actions", category: "action" },
   { term: "bonus action", category: "action" },
   { term: "opportunity attacks", category: "action" },
   { term: "opportunity attack", category: "action" },
-  { term: "reactions", category: "action" },
-  { term: "reaction", category: "action" },
   { term: "melee weapon attacks", category: "action" },
   { term: "ranged weapon attacks", category: "action" },
   { term: "melee weapon attack", category: "action" },
@@ -74,65 +84,118 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "your action", category: "action" },
   { term: "an action", category: "action" },
   { term: "the action", category: "action" },
+  { term: "reactions", category: "action" },
+  { term: "reaction", category: "action" },
   { term: "actions", category: "action" },
   { term: "action", category: "action" },
 
   // Combat & damage
   { term: "temporary hit points", category: "combat" },
+  { term: "maximum hit points", category: "combat" },
   { term: "critical hits", category: "combat" },
   { term: "critical hit", category: "combat" },
   { term: "attack rolls", category: "combat" },
   { term: "attack roll", category: "combat" },
   { term: "spell attacks", category: "combat" },
   { term: "spell attack", category: "combat" },
-  { term: "spell-attack", category: "combat" },
   { term: "spell-attacks", category: "combat" },
+  { term: "spell-attack", category: "combat" },
   { term: "weapon attacks", category: "combat" },
   { term: "weapon attack", category: "combat" },
   { term: "weapon-attacks", category: "combat" },
   { term: "unarmed strikes", category: "combat" },
   { term: "unarmed strike", category: "combat" },
+  { term: "unarmed attacks", category: "combat" },
   { term: "hit points", category: "combat" },
   { term: "hit point", category: "combat" },
+  { term: "weapons", category: "combat" },
+  { term: "weapon", category: "combat" },
+  { term: "targets", category: "combat" },
+  { term: "target", category: "combat" },
+  { term: "creatures", category: "combat" },
+  { term: "creature", category: "combat" },
   { term: "damage", category: "combat" },
   { term: "healing", category: "combat" },
+  { term: "attacker", category: "combat" },
   { term: "attacks", category: "combat" },
   { term: "attack", category: "combat" },
-  { term: "attacker", category: "combat" },
-  { term: "unarmed attacks", category: "combat" },
-  { term: "unarmed strikes", category: "combat" },
+  { term: "HP", category: "combat" },
 
-  // Saves, checks & rolls
+  // Saves, checks, skills & abilities (phrases before bare terms)
+  { term: "death saving throws", category: "save" },
+  { term: "death saving throw", category: "save" },
   { term: "spell save DC", category: "save" },
   { term: "spell save", category: "save" },
   { term: "saving throws", category: "save" },
   { term: "saving throw", category: "save" },
+  { term: "ability checks", category: "save" },
+  { term: "ability check", category: "save" },
+  { term: "skill checks", category: "save" },
+  { term: "skill check", category: "save" },
+  { term: "ability scores", category: "save" },
+  { term: "ability score", category: "save" },
+  { term: "ability modifiers", category: "save" },
+  { term: "ability modifier", category: "save" },
   { term: "proficiency bonus", category: "save" },
+  { term: "check rolls bonus", category: "save" },
+  { term: "checks bonus", category: "save" },
+  { term: "check rolls", category: "save" },
+  { term: "check roll", category: "save" },
+  { term: "dc bonus", category: "save" },
+  { term: "proficiencies", category: "save" },
+  { term: "proficiency", category: "save" },
+  { term: "proficient", category: "save" },
+  { term: "expertise", category: "save" },
+  { term: "initiative", category: "save" },
   { term: "advantage", category: "save" },
   { term: "disadvantage", category: "save" },
-  { term: "saving throw", category: "save" },
-  { term: " DC ", category: "save" },
-  { term: " dc ", category: "save" },
-  { term: "dc bonus", category: "save" },
-  { term: " check rolls bonus", category: "save" },
-  { term: " check roll ", category: "save" },
-  { term: " check ", category: "save" },
-  { term: " checks ", category: "save" },
-  { term: " check ", category: "save" },
+  { term: "modifiers", category: "save" },
+  { term: "modifier", category: "save" },
+  { term: "abilities", category: "save" },
+  { term: "ability", category: "save" },
+  { term: "skills", category: "save" },
+  { term: "skill", category: "save" },
+  { term: "checks", category: "save" },
+  { term: "check", category: "save" },
+  { term: "DC", category: "save" },
 
-  // Resources & duration
+  // Resources, magic & duration — bare "bonus(es)" only when not part of a longer phrase
+  { term: "legendary resistances", category: "resource" },
+  { term: "legendary resistance", category: "resource" },
+  { term: "legendary actions", category: "action" },
+  { term: "legendary action", category: "action" },
+  { term: "lair actions", category: "action" },
+  { term: "lair action", category: "action" },
+  { term: "spellcasting ability", category: "resource" },
+  { term: "spellcasting", category: "resource" },
+  { term: "spellcaster", category: "resource" },
   { term: "spell slots", category: "resource" },
   { term: "spell slot", category: "resource" },
-  { term: "short rest", category: "resource" },
+  { term: "cantrips", category: "resource" },
+  { term: "cantrip", category: "resource" },
+  { term: "rituals", category: "resource" },
+  { term: "ritual", category: "resource" },
+  { term: "spells", category: "resource" },
+  { term: "spell", category: "resource" },
   { term: "short rests", category: "resource" },
-  { term: "long rest", category: "resource" },
+  { term: "short rest", category: "resource" },
   { term: "long rests", category: "resource" },
+  { term: "long rest", category: "resource" },
+  { term: "hit dice", category: "resource" },
+  { term: "hit die", category: "resource" },
+  { term: "attunement", category: "resource" },
+  { term: "attuned", category: "resource" },
+  { term: "inspiration", category: "resource" },
   { term: "concentration", category: "resource" },
   { term: "duration", category: "resource" },
-  { term: "bonus", category: "resource" },
   { term: "bonuses", category: "resource" },
+  { term: "bonus", category: "resource" },
   { term: "charges", category: "resource" },
   { term: "charge", category: "resource" },
+  { term: "rounds", category: "resource" },
+  { term: "round", category: "resource" },
+  { term: "turns", category: "resource" },
+  { term: "turn", category: "resource" },
 
   // Conditions
   { term: "incapacitated", category: "condition" },
@@ -152,23 +215,43 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "prone", category: "condition" },
 
   // Defense & resistances
+  { term: "three-quarters cover", category: "defense" },
+  { term: "half cover", category: "defense" },
+  { term: "total cover", category: "defense" },
   { term: "armor class", category: "defense" },
-  { term: " AC ", category: "defense" },
-  { term: "nonmagical", category: "defense" },
+  { term: "resistances", category: "defense" },
   { term: "resistance", category: "defense" },
+  { term: "immunities", category: "defense" },
   { term: "immunity", category: "defense" },
+  { term: "vulnerabilities", category: "defense" },
   { term: "vulnerability", category: "defense" },
+  { term: "nonmagical", category: "defense" },
   { term: "magical", category: "defense" },
+  { term: "armor", category: "defense" },
+  { term: "cover", category: "defense" },
+  { term: "AC", category: "defense" },
 
   // Movement & senses
   { term: "difficult terrain", category: "movement" },
+  { term: "walking speed", category: "movement" },
+  { term: "flying speed", category: "movement" },
+  { term: "swimming speed", category: "movement" },
+  { term: "climbing speed", category: "movement" },
+  { term: "burrowing speed", category: "movement" },
+  { term: "fly speed", category: "movement" },
+  { term: "swim speed", category: "movement" },
+  { term: "climb speed", category: "movement" },
+  { term: "burrow speed", category: "movement" },
   { term: "darkvision", category: "movement" },
   { term: "tremorsense", category: "movement" },
   { term: "truesight", category: "movement" },
   { term: "blindsight", category: "movement" },
+  { term: "teleport", category: "movement" },
   { term: "movement", category: "movement" },
+  { term: "flying", category: "movement" },
   { term: "speed", category: "movement" },
   { term: "jump", category: "movement" },
+  { term: "fly", category: "movement" },
 
   // Distance, range & area (static phrases; numeric measures use DISTANCE_PATTERN)
   { term: "line of sight", category: "distance" },
@@ -177,6 +260,7 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "hemisphere", category: "distance" },
   { term: "emanation", category: "distance" },
   { term: "cylinder", category: "distance" },
+  { term: "cylinders", category: "distance" },
   { term: "diameter", category: "distance" },
   { term: "spreads", category: "distance" },
   { term: "spread", category: "distance" },
@@ -184,7 +268,6 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "burst", category: "distance" },
   { term: "spheres", category: "distance" },
   { term: "sphere", category: "distance" },
-  { term: "cylinders", category: "distance" },
   { term: "cones", category: "distance" },
   { term: "cone", category: "distance" },
   { term: "cubes", category: "distance" },
@@ -204,6 +287,10 @@ const DND_KEYWORDS: DndKeyword[] = [
     term,
     category: "save" as const,
   })),
+  ...Object.values(ABILITY_ABBREVIATIONS).map((term) => ({
+    term,
+    category: "save" as const,
+  })),
   ...Object.values(SKILL_LABELS).map((term) => ({
     term,
     category: "save" as const,
@@ -214,18 +301,29 @@ const DND_KEYWORDS: DndKeyword[] = [
   })),
 ];
 
-const KEYWORD_LOOKUP = new Map(
-  DND_KEYWORDS.map((kw) => [kw.term.toLowerCase(), kw.category]),
-);
+/** First declaration wins for duplicate normalized keys. */
+const KEYWORD_LOOKUP = new Map<string, DndKeywordCategory>();
+for (const kw of DND_KEYWORDS) {
+  const key = normalizeKeywordKey(kw.term);
+  if (key && !KEYWORD_LOOKUP.has(key)) {
+    KEYWORD_LOOKUP.set(key, kw.category);
+  }
+}
 
 function escapeRegex(value: string): string {
   return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+/** Word-bounded pattern; multi-word terms allow flexible whitespace. */
+function termToPattern(term: string): string {
+  const parts = normalizeKeywordKey(term).split(" ").map(escapeRegex);
+  return `\\b${parts.join("\\s+")}\\b`;
+}
+
 const KEYWORD_REGEX = new RegExp(
-  `(${[...DND_KEYWORDS]
-    .sort((a, b) => b.term.length - a.term.length)
-    .map(({ term }) => escapeRegex(term).replace(/\s+/g, "\\s+"))
+  `(${[...KEYWORD_LOOKUP.keys()]
+    .sort((a, b) => b.length - a.length || a.localeCompare(b))
+    .map(termToPattern)
     .join("|")})`,
   "gi",
 );
@@ -313,7 +411,7 @@ export function splitDndKeywords(text: string): DndTextSegment[] {
         .filter((part) => part.length > 0)
         .map((part) => ({
           text: part,
-          category: KEYWORD_LOOKUP.get(part.toLowerCase()) ?? null,
+          category: KEYWORD_LOOKUP.get(normalizeKeywordKey(part)) ?? null,
         }));
 
       result.push(...keywordParts);
