@@ -15,6 +15,10 @@ interface RaritySlideFeatureChainsProps {
   baseFeatures: OptionalFeature[];
   baseFeatureNameKeys: Set<string>;
   styleText: string;
+  /** Show section titles even when only one column is visible. */
+  alwaysShowColumnLabels?: boolean;
+  /** Skip the "No features…" placeholder (e.g. scaling-dice block). */
+  hideEmptyMessage?: boolean;
 }
 
 export function RaritySlideFeatureChains({
@@ -26,6 +30,8 @@ export function RaritySlideFeatureChains({
   baseFeatures,
   baseFeatureNameKeys,
   styleText,
+  alwaysShowColumnLabels = false,
+  hideEmptyMessage = false,
 }: RaritySlideFeatureChainsProps) {
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
@@ -82,7 +88,7 @@ export function RaritySlideFeatureChains({
           <div className="space-y-4">
             {visibleCols.map(({ label, chains }) => (
               <div key={label}>
-                {visibleCols.length > 1 && (
+                {(alwaysShowColumnLabels || visibleCols.length > 1) && (
                   <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground mb-2">
                     {label}
                   </p>
@@ -156,7 +162,7 @@ export function RaritySlideFeatureChains({
               </div>
             ))}
           </div>
-        ) : baseFeatures.length === 0 ? (
+        ) : baseFeatures.length === 0 && !hideEmptyMessage ? (
           <p className="text-sm text-muted-foreground italic">
             No features at this rarity tier.
           </p>
