@@ -236,7 +236,7 @@
         {
           "key": "flags.midi-qol.onUseMacroName",
           "mode": 0,
-          "value": "[postDamageRoll]ItemMacro.Nerscylla Chelicera Rune",
+          "value": "ItemMacro.Nerscylla Chelicera Rune,postDamageRoll",
           "priority": 20
         }
       ],

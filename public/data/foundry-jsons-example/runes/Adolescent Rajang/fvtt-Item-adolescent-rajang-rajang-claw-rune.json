@@ -182,7 +182,7 @@
         {
           "key": "flags.midi-qol.onUseMacroName",
           "mode": 0,
-          "value": "[isSave]ItemMacro.Rajang Claw Rune",
+          "value": "ItemMacro.Rajang Claw Rune,isSave",
           "priority": 20
         }
       ],

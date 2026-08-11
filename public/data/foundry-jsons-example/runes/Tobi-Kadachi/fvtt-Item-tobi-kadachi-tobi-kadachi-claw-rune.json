@@ -124,7 +124,7 @@
         {
           "key": "flags.midi-qol.onUseMacroName",
           "mode": 0,
-          "value": "[DamageBonus]ItemMacro.Tobi-Kadachi Claw Rune",
+          "value": "ItemMacro.Tobi-Kadachi Claw Rune,damageBonus",
           "priority": 20
         }
       ],

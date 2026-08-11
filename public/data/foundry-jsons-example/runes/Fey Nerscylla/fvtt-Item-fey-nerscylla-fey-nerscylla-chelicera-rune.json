@@ -236,7 +236,7 @@
         {
           "key": "flags.midi-qol.onUseMacroName",
           "mode": 0,
-          "value": "[postDamageRoll]ItemMacro.Fey Nerscylla Chelicera Rune",
+          "value": "ItemMacro.Fey Nerscylla Chelicera Rune,postDamageRoll",
           "priority": 20
         }
       ],

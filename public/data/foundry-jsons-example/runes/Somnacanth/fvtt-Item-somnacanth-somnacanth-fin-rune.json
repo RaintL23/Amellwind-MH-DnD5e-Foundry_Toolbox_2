@@ -124,7 +124,7 @@
         {
           "key": "flags.midi-qol.onUseMacroName",
           "mode": 0,
-          "value": "[DamageBonus]ItemMacro.Somnacanth Fin Rune",
+          "value": "ItemMacro.Somnacanth Fin Rune,damageBonus",
           "priority": 20
         }
       ],

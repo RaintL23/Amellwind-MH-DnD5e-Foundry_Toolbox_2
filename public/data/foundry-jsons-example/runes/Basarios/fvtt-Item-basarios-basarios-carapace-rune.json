@@ -124,7 +124,7 @@
         {
           "key": "flags.midi-qol.onUseMacroName",
           "mode": 0,
-          "value": "[isDamaged]ItemMacro.Basarios Carapace Rune",
+          "value": "ItemMacro.Basarios Carapace Rune,isDamaged",
           "priority": 20
         }
       ],

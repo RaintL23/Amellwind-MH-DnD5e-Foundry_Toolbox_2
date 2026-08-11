@@ -124,7 +124,7 @@
         {
           "key": "flags.midi-qol.onUseMacroName",
           "mode": 0,
-          "value": "[postDamageRoll]ItemMacro.Basarios Shell Rune",
+          "value": "ItemMacro.Basarios Shell Rune,postDamageRoll",
           "priority": 20
         }
       ],
@@ -138,7 +138,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "On weapon hit, target's speed -5 ft until the start of your next turn.",
+      "description": "On weapon hit, apply the Stamina Drain Active Effect to each hit target.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -159,6 +159,89 @@
         "amellwind-toolbox": {
           "runeSide": "weapon",
           "materialEffectName": "Stamina Drain"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "bSrStmDrnBpPrnt1",
+      "name": "Stamina Drain (-5 ft)",
+      "img": "icons/magic/movement/trail-orbit-swirl-blue.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.attributes.movement.walk",
+          "mode": 2,
+          "value": "-5",
+          "priority": 20
+        },
+        {
+          "key": "system.attributes.movement.fly",
+          "mode": 2,
+          "value": "-5",
+          "priority": 20
+        },
+        {
+          "key": "system.attributes.movement.swim",
+          "mode": 2,
+          "value": "-5",
+          "priority": 20
+        },
+        {
+          "key": "system.attributes.movement.climb",
+          "mode": 2,
+          "value": "-5",
+          "priority": 20
+        },
+        {
+          "key": "system.attributes.movement.burrow",
+          "mode": 2,
+          "value": "-5",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": 1,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Speed reduced by 5 feet until the start of the attacker's next turn.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 1,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "turnStartSource"
+          ],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "staminaDrainBlueprint": true
         }
       },
       "_stats": {
@@ -251,7 +334,7 @@
         "scope": "global",
         "author": "",
         "img": "icons/svg/dice-target.svg",
-        "command": "// Amellwind unified rune controller (Foundry v12 / dnd5e 4.4 / MidiQOL + DAE + Item Macro)\n// DAE runs this via change key \"macro.itemMacro\": args[0] === \"on\" when equipped, \"off\" when unequipped.\n// MidiQOL on-use passes arrive with args[0].macroPass (registered by the cloned effect on the actor).\nconst FLAG = \"amellwind-toolbox\";\n// Foundry only allows getFlag/setFlag for active module ids / \"world\" / \"core\".\n// This content pack uses a custom namespace, so read/write via getProperty + update.\nconst getRuneFlag = (doc, key) => foundry.utils.getProperty(doc, `flags.${FLAG}.${key}`);\nconst setRuneFlag = async (doc, key, value) => doc.update({ [`flags.${FLAG}.${key}`]: value });\nconst unsetRuneFlag = async (doc, key) => doc.update({ [`flags.${FLAG}.-=${key}`]: null });\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\nif (!item) return;\nconst arg0 = args?.[0];\nconst pass = String(arg0?.macroPass ?? \"\").toLowerCase();\nconst runeName = getRuneFlag(item, \"runeName\") ?? item.name;\n\nasync function runeCleanup() {\n  if (!actorDoc) return;\n  const mine = actorDoc.effects.filter((e) => getRuneFlag(e, \"runeClone\") && e.origin === item.uuid);\n  if (mine.length) await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", mine.map((e) => e.id));\n  await unsetRuneFlag(item, \"applied\");\n}\n\nfunction runeAeName(side, matName, trinket) {\n  let n = `${runeName}-${side}`;\n  if (matName) n += `-${matName}`;\n  if (trinket) n += \" (Trinket)\";\n  return n;\n}\n\nasync function runeApplySide(side, trinket) {\n  if (!actorDoc) return;\n  const blueprints = item.effects.filter((e) => getRuneFlag(e, \"runeSide\") === side);\n  const docs = blueprints.map((e) => {\n    const o = e.toObject();\n    delete o._id;\n    o.origin = item.uuid;\n    o.disabled = false;\n    o.transfer = false;\n    o.name = runeAeName(side, getRuneFlag(e, \"materialEffectName\"), trinket);\n    foundry.utils.setProperty(o, `flags.${FLAG}.runeClone`, true);\n    // Never clutter the token with rune status icons (many runes equipped at once).\n    foundry.utils.setProperty(o, \"flags.dae.showIcon\", false);\n    return o;\n  });\n  if (docs.length) await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  await setRuneFlag(item, \"applied\", { side, trinket });\n  if (typeof runeOnEquip === \"function\") await runeOnEquip(side, trinket);\n}\n\nif (arg0 === \"on\") {\n  if (!actorDoc) return;\n  await runeCleanup();\n  const sides = getRuneFlag(item, \"sides\") ?? {};\n  const available = Object.keys(sides).filter((s) => sides[s]);\n  if (!available.length) return;\n  const radios = available\n    .map((s, i) => `<label style=\"display:block;margin:.15rem 0\"><input type=\"radio\" name=\"runeSide\" value=\"${s}\" ${i === 0 ? \"checked\" : \"\"}/> ${sides[s].label ?? s}</label>`)\n    .join(\"\");\n  const content = `<form class=\"dnd5e2\"><p>Choose which effect to activate for <strong>${runeName}</strong>:</p>${radios}<hr/><label style=\"display:block;margin-top:.35rem\"><input type=\"checkbox\" name=\"runeTrinket\"/> Equipped in a trinket</label></form>`;\n  const choice = await new Promise((resolve) => {\n    new Dialog({\n      title: `${runeName} Rune`,\n      content,\n      buttons: {\n        ok: { icon: '<i class=\"fas fa-check\"></i>', label: \"Activate\", callback: (html) => resolve({ side: html.find('input[name=\"runeSide\"]:checked').val(), trinket: html.find('input[name=\"runeTrinket\"]').is(\":checked\") }) },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => resolve(null) },\n      },\n      default: \"ok\",\n      close: () => resolve(null),\n    }).render(true);\n  });\n  if (!choice || !choice.side) { await item.update({ \"system.equipped\": false }); return; }\n  await runeApplySide(choice.side, choice.trinket);\n  return;\n}\n\nif (arg0 === \"off\") { await runeCleanup(); return; }\nif (arg0 === \"each\") return;\n\n// ===== rune-specific combat passes =====\nif (pass.includes(\"postdamageroll\") || pass.includes(\"postactiveeffects\") || pass.includes(\"ishit\")) {\n  const wf = workflow ?? arg0?.workflow;\n  if (!wf) return;\n  const itemType = String(wf.item?.type ?? \"\").toLowerCase();\n  const actType = String(wf.activity?.type ?? arg0?.activity?.type ?? \"\").toLowerCase();\n  const actionType = String(\n    arg0?.itemActionType\n    ?? wf.itemActionType\n    ?? \"\",\n  ).toLowerCase();\n  const isWeaponAttack =\n    itemType === \"weapon\"\n    || [\"mwak\", \"rwak\"].includes(actionType)\n    || (actType === \"attack\" && itemType !== \"spell\");\n  if (!isWeaponAttack) return;\n\n  const hits = [...(arg0?.hitTargets ?? wf.hitTargets ?? [])];\n  if (!hits.length) return;\n\n  const origin = item.uuid;\n  const img = item?.img ?? \"icons/svg/aura.svg\";\n\n  const resolveActor = (t) =>\n    t?.actor\n    ?? t?.document?.actor\n    ?? (t?.documentName === \"Actor\" ? t : null);\n\n  const buildEffect = () => ({\n    name: \"Stamina Drain (-5 ft)\",\n    img,\n    type: \"base\",\n    origin,\n    transfer: false,\n    disabled: false,\n    duration: {\n      rounds: 1,\n      turns: null,\n      seconds: null,\n      startTime: null,\n      combat: null,\n      startRound: null,\n      startTurn: null,\n    },\n    changes: [{\n      key: \"system.attributes.movement.walk\",\n      mode: CONST.ACTIVE_EFFECT_MODES?.ADD ?? 2,\n      value: \"-5\",\n      priority: 20,\n    }],\n    statuses: [],\n    tint: \"#ffffff\",\n    description: \"Speed reduced by 5 feet until the start of the attacker's next turn.\",\n    flags: {\n      dae: {\n        specialDuration: [\"turnStartSource\"],\n        stackable: \"noneName\",\n        showIcon: true,\n      },\n      \"amellwind-toolbox\": {\n        staminaDrain: true,\n      },\n    },\n  });\n\n  const deleteEffects = async (targetActor, ids) => {\n    if (!ids.length) return;\n    if (!game.user.isGM && typeof MidiQOL?.socket === \"function\") {\n      try {\n        await MidiQOL.socket().executeAsGM(\"removeEffects\", {\n          actorUuid: targetActor.uuid,\n          effects: ids.map((id) => targetActor.effects.get(id)?.uuid).filter(Boolean),\n        });\n        return;\n      } catch (err) {\n        console.warn(\"Stamina Drain removeEffects via Midi socket failed\", err);\n      }\n    }\n    await targetActor.deleteEmbeddedDocuments(\"ActiveEffect\", ids);\n  };\n\n  const createEffects = async (targetActor, docs) => {\n    if (!game.user.isGM && typeof MidiQOL?.socket === \"function\") {\n      try {\n        await MidiQOL.socket().executeAsGM(\"createEffects\", {\n          actorUuid: targetActor.uuid,\n          effects: docs,\n        });\n        return;\n      } catch (err) {\n        console.warn(\"Stamina Drain createEffects via Midi socket failed\", err);\n      }\n    }\n    await targetActor.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  };\n\n  for (const t of hits) {\n    const targetActor = resolveActor(t);\n    if (!targetActor) continue;\n    const stale = targetActor.effects.filter(\n      (ef) =>\n        (ef.origin === origin && /stamina drain/i.test(ef.name ?? \"\"))\n        || foundry.utils.getProperty(ef, \"flags.amellwind-toolbox.staminaDrain\") === true,\n    );\n    if (stale.length) await deleteEffects(targetActor, stale.map((e) => e.id));\n    await createEffects(targetActor, [buildEffect()]);\n  }\n  return;\n}\n",
+        "command": "// Amellwind unified rune controller (Foundry v12 / dnd5e 4.4 / MidiQOL + DAE + Item Macro)\n// DAE runs this via change key \"macro.itemMacro\": args[0] === \"on\" when equipped, \"off\" when unequipped.\n// MidiQOL on-use passes arrive with args[0].macroPass (registered by the cloned effect on the actor).\nconst FLAG = \"amellwind-toolbox\";\n// Foundry only allows getFlag/setFlag for active module ids / \"world\" / \"core\".\n// This content pack uses a custom namespace, so read/write via getProperty + update.\nconst getRuneFlag = (doc, key) => foundry.utils.getProperty(doc, `flags.${FLAG}.${key}`);\nconst setRuneFlag = async (doc, key, value) => doc.update({ [`flags.${FLAG}.${key}`]: value });\nconst unsetRuneFlag = async (doc, key) => doc.update({ [`flags.${FLAG}.-=${key}`]: null });\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\nif (!item) return;\nconst arg0 = args?.[0];\nconst pass = String(arg0?.macroPass ?? \"\").toLowerCase();\nconst runeName = getRuneFlag(item, \"runeName\") ?? item.name;\n\nasync function runeCleanup() {\n  if (!actorDoc) return;\n  const mine = actorDoc.effects.filter((e) => getRuneFlag(e, \"runeClone\") && e.origin === item.uuid);\n  if (mine.length) await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", mine.map((e) => e.id));\n  await unsetRuneFlag(item, \"applied\");\n}\n\nfunction runeAeName(side, matName, trinket) {\n  let n = `${runeName}-${side}`;\n  if (matName) n += `-${matName}`;\n  if (trinket) n += \" (Trinket)\";\n  return n;\n}\n\nasync function runeApplySide(side, trinket) {\n  if (!actorDoc) return;\n  const blueprints = item.effects.filter((e) => getRuneFlag(e, \"runeSide\") === side);\n  const docs = blueprints.map((e) => {\n    const o = e.toObject();\n    delete o._id;\n    o.origin = item.uuid;\n    o.disabled = false;\n    o.transfer = false;\n    o.name = runeAeName(side, getRuneFlag(e, \"materialEffectName\"), trinket);\n    foundry.utils.setProperty(o, `flags.${FLAG}.runeClone`, true);\n    // Never clutter the token with rune status icons (many runes equipped at once).\n    foundry.utils.setProperty(o, \"flags.dae.showIcon\", false);\n    return o;\n  });\n  if (docs.length) await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  await setRuneFlag(item, \"applied\", { side, trinket });\n  if (typeof runeOnEquip === \"function\") await runeOnEquip(side, trinket);\n}\n\nif (arg0 === \"on\") {\n  if (!actorDoc) return;\n  await runeCleanup();\n  const sides = getRuneFlag(item, \"sides\") ?? {};\n  const available = Object.keys(sides).filter((s) => sides[s]);\n  if (!available.length) return;\n  const radios = available\n    .map((s, i) => `<label style=\"display:block;margin:.15rem 0\"><input type=\"radio\" name=\"runeSide\" value=\"${s}\" ${i === 0 ? \"checked\" : \"\"}/> ${sides[s].label ?? s}</label>`)\n    .join(\"\");\n  const content = `<form class=\"dnd5e2\"><p>Choose which effect to activate for <strong>${runeName}</strong>:</p>${radios}<hr/><label style=\"display:block;margin-top:.35rem\"><input type=\"checkbox\" name=\"runeTrinket\"/> Equipped in a trinket</label></form>`;\n  const choice = await new Promise((resolve) => {\n    new Dialog({\n      title: `${runeName} Rune`,\n      content,\n      buttons: {\n        ok: { icon: '<i class=\"fas fa-check\"></i>', label: \"Activate\", callback: (html) => resolve({ side: html.find('input[name=\"runeSide\"]:checked').val(), trinket: html.find('input[name=\"runeTrinket\"]').is(\":checked\") }) },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => resolve(null) },\n      },\n      default: \"ok\",\n      close: () => resolve(null),\n    }).render(true);\n  });\n  if (!choice || !choice.side) { await item.update({ \"system.equipped\": false }); return; }\n  await runeApplySide(choice.side, choice.trinket);\n  return;\n}\n\nif (arg0 === \"off\") { await runeCleanup(); return; }\nif (arg0 === \"each\") return;\n\n// ===== rune-specific combat passes =====\n// Stamina Drain: on weapon hit, apply the item's blueprint AE to each hit target.\nif (pass.includes(\"postdamageroll\") || pass.includes(\"postactiveeffects\")) {\n  const wf = workflow ?? arg0?.workflow;\n  if (!wf) return;\n\n  const itemType = String(wf.item?.type ?? \"\").toLowerCase();\n  const actType = String(wf.activity?.type ?? arg0?.activity?.type ?? \"\").toLowerCase();\n  const actionType = String(arg0?.itemActionType ?? wf.itemActionType ?? \"\").toLowerCase();\n  const isWeaponAttack =\n    itemType === \"weapon\"\n    || [\"mwak\", \"rwak\"].includes(actionType)\n    || (actType === \"attack\" && itemType !== \"spell\");\n  if (!isWeaponAttack) return;\n\n  const hits = [...(arg0?.hitTargets ?? wf.hitTargets ?? [])];\n  if (!hits.length) return;\n\n  if (wf.amellwindStaminaDrainApplied) return;\n  wf.amellwindStaminaDrainApplied = true;\n\n  const blueprint = item.effects.find((e) => getRuneFlag(e, \"staminaDrainBlueprint\") === true)\n    ?? item.effects.find((e) => /stamina drain/i.test(e.name ?? \"\") && !getRuneFlag(e, \"runeSide\"));\n\n  const origin = actorDoc?.uuid ?? item.uuid;\n  const img = blueprint?.img ?? item?.img ?? \"icons/svg/aura.svg\";\n\n  const buildEffect = () => {\n    if (blueprint) {\n      const o = blueprint.toObject();\n      delete o._id;\n      o.disabled = false;\n      o.transfer = false;\n      o.origin = origin;\n      if (!o.system) o.system = {};\n      foundry.utils.setProperty(o, \"flags.dae.showIcon\", true);\n      foundry.utils.setProperty(o, \"flags.dae.specialDuration\", [\"turnStartSource\"]);\n      foundry.utils.setProperty(o, \"flags.dae.stackable\", \"noneName\");\n      foundry.utils.setProperty(o, `flags.${FLAG}.staminaDrain`, true);\n      if (o.flags?.[FLAG]?.staminaDrainBlueprint != null) delete o.flags[FLAG].staminaDrainBlueprint;\n      return o;\n    }\n    return {\n      name: \"Stamina Drain (-5 ft)\",\n      img,\n      type: \"base\",\n      system: {},\n      origin,\n      transfer: false,\n      disabled: false,\n      duration: { turns: 1, rounds: null, seconds: null, startTime: null, combat: null, startRound: null, startTurn: null },\n      changes: [\n        { key: \"system.attributes.movement.walk\", mode: 2, value: \"-5\", priority: 20 },\n        { key: \"system.attributes.movement.fly\", mode: 2, value: \"-5\", priority: 20 },\n        { key: \"system.attributes.movement.swim\", mode: 2, value: \"-5\", priority: 20 },\n        { key: \"system.attributes.movement.climb\", mode: 2, value: \"-5\", priority: 20 },\n        { key: \"system.attributes.movement.burrow\", mode: 2, value: \"-5\", priority: 20 },\n      ],\n      statuses: [],\n      tint: \"#ffffff\",\n      description: \"Speed reduced by 5 feet until the start of the attacker's next turn.\",\n      flags: {\n        dae: { specialDuration: [\"turnStartSource\"], stackable: \"noneName\", showIcon: true },\n        [FLAG]: { staminaDrain: true },\n      },\n    };\n  };\n\n  const resolveActor = (t) =>\n    t?.actor ?? t?.document?.actor ?? (t?.documentName === \"Actor\" ? t : null);\n\n  const applyTo = async (targetActor, docs) => {\n    if (typeof MidiQOL?.socket === \"function\" && !game.user.isGM) {\n      try {\n        await MidiQOL.socket().executeAsGM(\"createEffects\", {\n          actorUuid: targetActor.uuid,\n          effects: docs,\n        });\n        return;\n      } catch (err) {\n        console.warn(\"Stamina Drain createEffects via Midi socket failed\", err);\n      }\n    }\n    await targetActor.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  };\n\n  const removeFrom = async (targetActor, ids) => {\n    if (!ids.length) return;\n    if (typeof MidiQOL?.socket === \"function\" && !game.user.isGM) {\n      try {\n        await MidiQOL.socket().executeAsGM(\"removeEffects\", {\n          actorUuid: targetActor.uuid,\n          effects: ids.map((id) => targetActor.effects.get(id)?.uuid).filter(Boolean),\n        });\n        return;\n      } catch (err) {\n        console.warn(\"Stamina Drain removeEffects via Midi socket failed\", err);\n      }\n    }\n    await targetActor.deleteEmbeddedDocuments(\"ActiveEffect\", ids);\n  };\n\n  for (const t of hits) {\n    const targetActor = resolveActor(t);\n    if (!targetActor) continue;\n    const stale = targetActor.effects.filter(\n      (ef) =>\n        foundry.utils.getProperty(ef, `flags.${FLAG}.staminaDrain`) === true\n        || /stamina drain/i.test(ef.name ?? \"\"),\n    );\n    if (stale.length) await removeFrom(targetActor, stale.map((e) => e.id));\n    await applyTo(targetActor, [buildEffect()]);\n  }\n  return;\n}\n",
         "folder": null,
         "sort": 0,
         "ownership": {
