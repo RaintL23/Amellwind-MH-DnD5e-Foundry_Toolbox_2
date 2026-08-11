@@ -356,6 +356,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       setOptionalFeatureOriginFeatAtIndex: spell.setOptionalFeatureOriginFeatAtIndex,
       classData: identity.classData,
       classDataLoading: identity.classDataLoading,
+      reloadClassData: identity.reloadClassData,
       speciesData: identity.speciesData,
       speciesDataLoading: identity.speciesDataLoading,
       useTashaOrigin: identity.useTashaOrigin,

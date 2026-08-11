@@ -367,6 +367,10 @@ export function useIdentitySlice({
     };
   }, [classRef?.id]);
 
+  const multiclassClassIdsKey = multiclassEntries
+    .map((e) => e.classRef?.id ?? "")
+    .join("|");
+
   useEffect(() => {
     if (!multiclassEntries.length) {
       setMulticlassClassData([]);
@@ -392,7 +396,38 @@ export function useIdentitySlice({
     return () => {
       cancelled = true;
     };
-  }, [multiclassEntries.map((e) => e.classRef?.id ?? "").join("|")]);
+  }, [multiclassClassIdsKey]);
+
+  /** Re-fetch class payloads after on-demand brew sources are merged into the catalog. */
+  const reloadClassData = useCallback(async () => {
+    const primaryId = classRef?.id;
+    const multiclassIds = multiclassEntries.map((e) => e.classRef?.id ?? null);
+
+    if (primaryId) {
+      setClassDataLoading(true);
+      try {
+        const data = await getClassById(primaryId);
+        setClassData(data ?? null);
+      } catch {
+        setClassData(null);
+      } finally {
+        setClassDataLoading(false);
+      }
+    }
+
+    if (multiclassIds.some(Boolean)) {
+      try {
+        const results = await Promise.all(
+          multiclassIds.map((id) =>
+            id ? getClassById(id).then((cls) => cls ?? null) : Promise.resolve(null),
+          ),
+        );
+        setMulticlassClassData(results);
+      } catch {
+        setMulticlassClassData(multiclassIds.map(() => null));
+      }
+    }
+  }, [classRef?.id, multiclassClassIdsKey]);
 
   useEffect(() => {
     if (!species) {
@@ -608,6 +643,7 @@ export function useIdentitySlice({
       featSelections,
       classData,
       classDataLoading,
+      reloadClassData,
       speciesData,
       speciesDataLoading,
       speciesOriginFeatGrant,
@@ -668,6 +704,7 @@ export function useIdentitySlice({
       featSelections,
       classData,
       classDataLoading,
+      reloadClassData,
       speciesData,
       speciesDataLoading,
       speciesOriginFeatGrant,

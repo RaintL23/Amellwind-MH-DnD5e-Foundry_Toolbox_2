@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { GraduationCap, Sparkles } from "lucide-react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
-import { getListClasses } from "@/features/classes/services/class.service";
+import {
+  ensureClassUaSourcesLoaded,
+  getListClasses,
+} from "@/features/classes/services/class.service";
 import { subclassesForClassVariant } from "@/features/classes/utils/class-subclass.utils";
 import { useCharacterBuilder } from "@/features/builder/context/CharacterBuilderContext";
 import { useClassVariants } from "@/features/builder/hooks/useClassVariants";
@@ -70,6 +73,7 @@ export function ClassLibraryPanel({
     setSubclass,
     setMulticlassEntryClass,
     setMulticlassEntrySubclass,
+    reloadClassData,
   } = useCharacterBuilder();
 
   const { classData, loading: classDetailLoading } = useSelectedClass();
@@ -81,7 +85,15 @@ export function ClassLibraryPanel({
   } = useClassVariants(classData);
   const identityBookNames = useBookSourceNames();
   const catalog = useSourceCatalog();
-  const sourceFilter = asFilterStringArray(listFilters.src);
+  const sourceFilterKey = Array.isArray(listFilters.src)
+    ? [...listFilters.src].sort().join("|")
+    : typeof listFilters.src === "string"
+      ? listFilters.src
+      : "";
+  const sourceFilter = useMemo(
+    () => asFilterStringArray(listFilters.src),
+    [sourceFilterKey],
+  );
 
   const isClassSlot = selectedSlot === "class";
   const isSubclassSlot = selectedSlot === "subclass";
@@ -93,6 +105,52 @@ export function ClassLibraryPanel({
     : null;
   const isMulticlassClassPicker = multiclassClassIndex !== null;
   const isMulticlassSubclassPicker = multiclassSubclassIndex !== null;
+
+  const needsClassCatalog =
+    isClassSlot ||
+    isSubclassSlot ||
+    isMulticlassClassPicker ||
+    isMulticlassSubclassPicker;
+
+  const refreshClassCatalog = useCallback(() => {
+    if (!needsClassCatalog) return;
+    setClassLoading(true);
+    getListClasses()
+      .then((list) => {
+        const playable = list.filter((c) => !c.isSidekick);
+        setClassCatalog(playable);
+        setClassOptions(playable.map(entityToLibraryOption));
+      })
+      .finally(() => setClassLoading(false));
+  }, [needsClassCatalog]);
+
+  useEffect(() => {
+    if (!needsClassCatalog) return;
+    setClassOptions([]);
+    setClassCatalog([]);
+    refreshClassCatalog();
+  }, [needsClassCatalog, selectedSlot, refreshClassCatalog]);
+
+  // Partnered / UA brew (e.g. Grim Hollow) loads on demand when Sources change —
+  // same path as /classes — then refresh class + subclass lists.
+  useEffect(() => {
+    if (!needsClassCatalog || sourceFilter.length === 0) return;
+    let cancelled = false;
+    void ensureClassUaSourcesLoaded(sourceFilter).then(async (changed) => {
+      if (cancelled || !changed) return;
+      await reloadClassData();
+      if (!cancelled) refreshClassCatalog();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    needsClassCatalog,
+    sourceFilterKey,
+    sourceFilter,
+    reloadClassData,
+    refreshClassCatalog,
+  ]);
 
   const subclassContextClassName = useMemo(() => {
     if (isSubclassSlot) return classSelection?.name ?? null;
@@ -120,27 +178,6 @@ export function ClassLibraryPanel({
 
   const { lookup: rpgbotSubclassLookup, ready: rpgbotSubclassReady } =
     useRpgbotRatingsLookup(rpgbotSubclassContext);
-
-  useEffect(() => {
-    if (
-      !isClassSlot &&
-      !isSubclassSlot &&
-      !isMulticlassClassPicker &&
-      !isMulticlassSubclassPicker
-    ) {
-      return;
-    }
-    setClassLoading(true);
-    setClassOptions([]);
-    setClassCatalog([]);
-    getListClasses()
-      .then((list) => {
-        const playable = list.filter((c) => !c.isSidekick);
-        setClassCatalog(playable);
-        setClassOptions(playable.map(entityToLibraryOption));
-      })
-      .finally(() => setClassLoading(false));
-  }, [isClassSlot, isSubclassSlot, selectedSlot]);
 
   useEffect(() => {
     if (!classData || !subclass) return;

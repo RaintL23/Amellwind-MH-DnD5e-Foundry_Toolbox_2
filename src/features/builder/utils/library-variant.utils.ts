@@ -90,6 +90,8 @@ export function dedupeByNameToListOptions<
       return {
         id: canonical.id,
         name: canonical.name,
+        // Always keep source so library source filters work for single-book entries.
+        source: canonical.source,
         variantSources: variantSources.length > 1 ? variantSources : undefined,
         searchText:
           buildSearchText?.(group) ??

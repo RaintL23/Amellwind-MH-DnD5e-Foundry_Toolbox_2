@@ -272,6 +272,19 @@ export function useOptionalFeatureLibraryPanelState({
     return sections;
   }, [catalogOptions, catalog, bookNames, usesFeatCatalog]);
 
+  // Apply Sources defaults once options exist (catalog / book list load async).
+  useEffect(() => {
+    const srcSection = filterSections.find((section) => section.id === "src");
+    const defaults = srcSection?.defaultValues;
+    if (!defaults || defaults.length === 0) return;
+    setFilterValues((prev) => {
+      const src = prev.src;
+      const hasSrc = Array.isArray(src) ? src.length > 0 : !!src;
+      if (hasSrc) return prev;
+      return { ...prev, src: [...defaults] };
+    });
+  }, [filterSections, selectedSlot]);
+
   const filteredOptions = useMemo(() => {
     const base = catalogOptions.filter((item) => {
       if (

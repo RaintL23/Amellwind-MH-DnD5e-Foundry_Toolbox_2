@@ -61,6 +61,7 @@ import {
   type FeatDataSource,
   type IdentityDataSource,
 } from "@/features/builder/utils/builder-library-filters";
+import { getClassFilterSourceCodes } from "@/features/classes/services/class.service";
 
 interface BuilderLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -118,6 +119,27 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     (selectedSlot !== null && isMulticlassClassSlot(selectedSlot)) ||
     (selectedSlot !== null && isMulticlassSubclassSlot(selectedSlot));
 
+  const isClassOrSubclassSlot =
+    selectedSlot === "class" ||
+    selectedSlot === "subclass" ||
+    (selectedSlot !== null && isMulticlassClassSlot(selectedSlot)) ||
+    (selectedSlot !== null && isMulticlassSubclassSlot(selectedSlot));
+
+  const [classFilterSourceCodes, setClassFilterSourceCodes] = useState<
+    string[]
+  >([]);
+
+  useEffect(() => {
+    if (!isClassOrSubclassSlot) return;
+    let cancelled = false;
+    void getClassFilterSourceCodes().then((codes) => {
+      if (!cancelled) setClassFilterSourceCodes(codes);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isClassOrSubclassSlot]);
+
   const rpgbotClassSlug = classSelection?.name
     ? toRpgbotClassSlug(classSelection.name)
     : null;
@@ -166,8 +188,11 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
       ];
     }
     if (isIdentityOrClassSlot) {
+      const sourceCodes = isClassOrSubclassSlot
+        ? classFilterSourceCodes
+        : catalog.keys();
       const sourceSections = buildLibrarySourceFilterSections(
-        catalog.keys(),
+        sourceCodes,
         catalog,
         bookNames,
       );
@@ -186,14 +211,25 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     isFeatPicker,
     isAnyOriginFeatSlotSelected,
     isIdentityOrClassSlot,
+    isClassOrSubclassSlot,
     isSpeciesSlot,
     isBackgroundSlot,
     useAmellwindHomebrew,
     defaultFeatCatalog,
     defaultIdentityCatalog,
+    classFilterSourceCodes,
     catalog,
     bookNames,
   ]);
+
+  // Include catalog size so defaults re-apply once Sources finish loading.
+  // Without this, the first reset stores {} while catalog is still empty and
+  // the Filters dialog never shows the official-source selection.
+  const sourceSectionDefaultsKey = useMemo(() => {
+    const src = filterSections.find((section) => section.id === "src");
+    if (!src?.defaultValues?.length) return "0";
+    return `${src.defaultValues.length}:${src.options.length}`;
+  }, [filterSections]);
 
   const nextFilterResetKey = [
     selectedSlot ?? "",
@@ -205,6 +241,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     isArmorSlot ? "a" : "",
     isFeatPicker ? "f" : "",
     isAnyOriginFeatSlotSelected ? "o" : "",
+    isIdentityOrClassSlot ? `src:${sourceSectionDefaultsKey}` : "",
   ].join("|");
 
   if (nextFilterResetKey !== filterResetKey) {

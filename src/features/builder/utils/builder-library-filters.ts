@@ -196,13 +196,10 @@ export function buildLibrarySourceFilterSections(
   catalog: Map<string, SourceCatalogEntry>,
   bookNames: BookSourceNameMap,
 ): ListFilterSectionConfig[] {
-  const section = buildSourcesFilterSection(
-    sourceCodes,
-    catalog,
-    bookNames,
-    [],
-  );
-  return section.options.length > 0 ? [section] : [];
+  // Omit defaultCodes so official sources are preselected (passing [] disables defaults).
+  const section = buildSourcesFilterSection(sourceCodes, catalog, bookNames);
+  if (section.options.length === 0) return [];
+  return [{ ...section, defaultExpanded: true }];
 }
 
 export function asFilterString(value: string | string[] | undefined): string {

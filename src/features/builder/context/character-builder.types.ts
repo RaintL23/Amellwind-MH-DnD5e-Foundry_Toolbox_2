@@ -130,6 +130,8 @@ export interface CharacterBuilderContextValue {
   // Loaded identity data (shared — avoids duplicate fetches)
   classData: Class | null;
   classDataLoading: boolean;
+  /** Re-fetch class/subclass payloads after brew sources load into the class catalog. */
+  reloadClassData: () => Promise<void>;
   speciesData: Species | null;
   speciesDataLoading: boolean;
 
