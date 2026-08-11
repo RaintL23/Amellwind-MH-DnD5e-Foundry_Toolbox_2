@@ -1,4 +1,4 @@
-import { Gem, Layers, ShieldCheck, Sword } from "lucide-react";
+import { Gem, ShieldCheck, Sword } from "lucide-react";
 import { MaterialEffectSlot, Rune } from "@/shared/types";
 import { ItemRarity, RARITY_SLOTS } from "../../context/RuneBuildContext";
 import { RuleViolation } from "../../utils/build.validation";
@@ -8,7 +8,6 @@ import { RaritySelect } from "./RaritySelect";
 import { TrinketSlotRow } from "./TrinketSlotRow";
 
 interface BuildDrawerContentProps {
-  totalRunes: number;
   weaponRarity: ItemRarity;
   armorRarity: ItemRarity;
   weaponRunes: (Rune | null)[];
@@ -24,7 +23,6 @@ interface BuildDrawerContentProps {
 }
 
 export function BuildDrawerContent({
-  totalRunes,
   weaponRarity,
   armorRarity,
   weaponRunes,
@@ -38,18 +36,6 @@ export function BuildDrawerContent({
   onWeaponRarityChange,
   onArmorRarityChange,
 }: BuildDrawerContentProps) {
-  if (totalRunes === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full gap-3 text-center py-16">
-        <Layers className="h-12 w-12 text-muted-foreground/30" />
-        <p className="text-sm text-muted-foreground">Your build is empty.</p>
-        <p className="text-xs text-muted-foreground/60">
-          Open the detail of a rune and add it to your weapon, armor or trinket.
-        </p>
-      </div>
-    );
-  }
-
   return (
     <>
       <div className="space-y-2">

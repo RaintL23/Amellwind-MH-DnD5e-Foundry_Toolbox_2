@@ -19,7 +19,7 @@ export function BuildViolationList({ violations }: BuildViolationListProps) {
           <div>
             <p className="text-xs text-orange-300 font-medium">{v.rule}</p>
             <p className="text-xs text-orange-400/60 mt-0.5">
-              Conflicto: {v.offenders.join(", ")}
+              Conflict: {v.offenders.join(", ")}
             </p>
           </div>
         </div>

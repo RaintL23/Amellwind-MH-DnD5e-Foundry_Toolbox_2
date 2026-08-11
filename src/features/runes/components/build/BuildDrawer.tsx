@@ -75,7 +75,6 @@ export function BuildDrawer() {
 
         <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5">
           <BuildDrawerContent
-            totalRunes={totalRunes}
             weaponRarity={weaponRarity}
             armorRarity={armorRarity}
             weaponRunes={weaponRunes}

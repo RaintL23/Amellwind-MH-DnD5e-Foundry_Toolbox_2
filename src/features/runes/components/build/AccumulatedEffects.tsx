@@ -52,7 +52,7 @@ export function AccumulatedEffects({
       >
         <div className="flex items-center gap-1.5">
           <Sparkles className="h-3.5 w-3.5" />
-          Efectos Acumulados
+          Effects Accumulated
         </div>
         {open ? (
           <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
