@@ -11,6 +11,12 @@ const rankDir = path.join(__dirname, "rank-1");
 const dailyDir = path.join(__dirname, "daily-skills");
 const outPath = path.join(__dirname, "fvtt-Actor-felyne-cook.json");
 
+const CORE_VERSION = "12.331";
+const SYSTEM_ID = "dnd5e";
+const SYSTEM_VERSION = "4.4.4";
+// Foundry DOCUMENT_OWNERSHIP_LEVELS.OBSERVER — players need item data for the meal menu.
+const CONST_PLAYER_OWNERSHIP = 2;
+
 const randomId = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let id = "";
@@ -22,19 +28,27 @@ const read = (name) => fs.readFileSync(path.join(__dirname, name), "utf8");
 
 const auraHooks = read("felyne-cook-aura-hooks.fragment.js");
 const playerFlow = read("felyne-cook-player-flow.fragment.js");
+const syncEngine = read("felyne-cook-sync-engine.js");
 const refreshAuraMacro = read("felyne-cook-refresh-aura-item-macro.js").replace(
   "/* @@AURA_HOOKS@@ */",
-  auraHooks,
+  `${auraHooks}\n\n${syncEngine}`,
 );
-const kitchenSyncMacro = read("felyne-cook-kitchen-sync-macro.js");
+const kitchenSyncMacro = read("felyne-cook-kitchen-sync-macro.js")
+  .replace("/* @@PLAYER_FLOW@@ */", playerFlow)
+  .replace("/* @@SYNC_ENGINE@@ */", syncEngine)
+  .replace("/* @@AURA_HOOKS@@ */", auraHooks);
 
+// Do NOT inject syncEngine here — it redeclares const RANGE_FT / measureDistanceFt
+// and breaks MidiQOL Item Macro validation. Token hooks come from the module script.
 const gmMacroCommand = read("felyne-cook-item-macro.js")
   .replace("/* @@AURA_HOOKS@@ */", auraHooks)
   .replace("/* @@PLAYER_FLOW_JSON@@ */ \"\"", JSON.stringify(playerFlow));
 
+// Append IIFE sync engine so using Ask also arms double-click on this client
+// (safe: no outer const collisions with ask-item-macro).
 const askMacroCommand = read("felyne-cook-ask-item-macro.js")
   .replace("/* @@AURA_HOOKS@@ */", auraHooks)
-  .replace("/* @@PLAYER_FLOW_BODY@@ */", playerFlow);
+  .replace("/* @@PLAYER_FLOW_BODY@@ */", `${playerFlow}\n\n${syncEngine}`);
 
 const effectMacroGrant = `
 if (!game.user.isGM) return;
@@ -278,11 +292,11 @@ const requestMeal = {
     description: {
       value: `<p><strong>Request Meal (Rank 1)</strong> — GM handoff</p>
 <ol>
-<li><strong>GM:</strong> choose a hunter token within 10 ft of the cook.</li>
-<li><strong>Player:</strong> run the whispered handoff macro (or use <em>Ask for a Meal (Rank 1)</em> if they received it from the kitchen aura).</li>
+<li><strong>Players:</strong> double-click the Felyne Cook token (within 10 ft) to open the camp kitchen menu.</li>
+<li><strong>GM (optional):</strong> use this activity to hand off a complimentary cook-in to a nearby hunter.</li>
 <li>Average three checks vs the meal DC. Success grants the meal feature; +4 / +8 → Daily Skills.</li>
 </ol>
-<p><em>Requires MidiQOL + Item Macro. Nearby PCs also get Ask via Active Auras (10 ft).</em></p>`,
+<p><em>Requires MidiQOL + Item Macro. Ask for a Meal remains available as a backup while in the kitchen aura.</em></p>`,
       chat: "<p>The Felyne Cook looks for a hunter within 10 feet.</p>",
     },
     source: {
@@ -344,11 +358,12 @@ const askTemplate = {
   system: {
     description: {
       value: `<p><strong>Ask for a Meal (Rank 1)</strong></p>
-<p>While you are within 10 feet of the Felyne Cook, you can request a Rank 1 meal for yourself (1 serving).</p>
+<p><strong>Preferred:</strong> double-click the Felyne Cook token while within 10 feet to open the camp kitchen menu.</p>
+<p>This feature is a backup while you remain in the kitchen aura. Request a Rank 1 meal for yourself (1 serving).</p>
 <p><strong>Price:</strong> <strong>2 gp</strong> (paid when you confirm the order). If you cannot pay, the cook refuses the order.</p>
 <p>Choose a meal, then assign ability scores to the three cooking steps chosen by the cook.</p>
-<p><em>Granted automatically when you enter the Camp Kitchen Aura. Template copies on players are named "Ask for a Meal (Rank 1)".</em></p>`,
-      chat: "<p>Ask for a Rank 1 meal from the Felyne Cook (2 gp).</p>",
+<p><em>Granted automatically when you enter the Camp Kitchen Aura.</em></p>`,
+      chat: "<p>Ask for a Rank 1 meal from the Felyne Cook (2 gp). Preferred: double-click the cook token.</p>",
     },
     source: {
       custom: "",
@@ -410,11 +425,11 @@ const kitchenAura = {
   system: {
     description: {
       value: `<p><strong>Camp Kitchen Aura (10 ft)</strong></p>
-<p>Allied characters within <strong>10 feet</strong> of the Felyne Cook gain <strong>Ask for a Meal (Rank 1)</strong> on their own sheet.</p>
-<p>Leaving the aura removes that feature.</p>
-<p><strong>GM:</strong> after placing the cook (or if PCs are already nearby), use <em>Refresh Kitchen Aura</em> once so everyone currently in range receives the feature.</p>
-<p><em>Requires <strong>Active Auras</strong> for the visual/temp effect. Feature granting also syncs by distance (token move).</em></p>`,
-      chat: "<p>Kitchen aura: nearby hunters can Ask for a Meal (Rank 1).</p>",
+<p>Hunters within <strong>10 feet</strong> can <strong>double-click the Felyne Cook token</strong> to open the camp kitchen menu (Item Piles–style).</p>
+<p>They also gain <strong>Ask for a Meal (Rank 1)</strong> on their sheet as a backup. Leaving the aura removes that feature.</p>
+<p><strong>GM:</strong> after placing the cook, use <em>Refresh Kitchen Aura</em> once if PCs are already nearby. Shift+double-click / Alt+double-click opens the cook sheet.</p>
+<p><em>Requires <strong>Active Auras</strong> for the visual/temp effect. Token interaction arms from the Amellwind module script (or Kitchen Sync).</em></p>`,
+      chat: "<p>Kitchen aura: double-click the cook token (or Ask) for a Rank 1 meal.</p>",
     },
     source: {
       custom: "",
@@ -596,10 +611,11 @@ const actor = {
     details: {
       biography: {
         value: `<p>A cheerful Felyne artisan cook who keeps Rank 1 camp meals ready for hunters.</p>
-<p><strong>Camp Kitchen Aura (10 ft):</strong> PCs in range get <em>Ask for a Meal (Rank 1)</em> on their sheet. GM: use <em>Refresh Kitchen Aura</em> once after placing the cook.</p>
-<p><strong>Request Meal (Rank 1):</strong> GM can also hand off cooking to a nearby hunter.</p>
+<p><strong>Interact:</strong> players double-click this token (within 10 ft) to open the camp kitchen menu — same feel as Gather Resource nodes.</p>
+<p><strong>Camp Kitchen Aura (10 ft):</strong> PCs in range also get <em>Ask for a Meal (Rank 1)</em> as a backup. GM: use <em>Refresh Kitchen Aura</em> once after placing the cook.</p>
+<p><strong>GM:</strong> Shift+double-click or Alt+double-click opens the actor sheet. Request Meal can still hand off a complimentary cook-in.</p>
 <p><em>Menus loaded: Rank 1 only. Daily Skills are inactive templates used for automatic grants.</em></p>`,
-        public: "A Felyne cook offering Rank 1 artisan meals at camp.",
+        public: "Double-click this Felyne cook for Rank 1 artisan meals at camp.",
       },
       alignment: "Neutral Good",
       race: "",
@@ -703,14 +719,27 @@ const actor = {
       contrast: 0,
     },
     detectionModes: [],
-    flags: {},
+    // Player-readable marker so double-click works Item Piles–style without OWNER.
+    flags: {
+      world: {
+        cooking: {
+          cookNpc: true,
+          isCookToken: true,
+          enabled: true,
+          kitchenAuraFt: 10,
+          interactionDistance: 10,
+          mealPriceGp: 2,
+        },
+      },
+    },
     randomImg: false,
   },
   items: [kitchenAura, requestMeal, askTemplate, ...meals, ...dailies],
   effects: [],
   folder: null,
   sort: 0,
-  ownership: { default: 0 },
+  // OBSERVER: players can resolve cook meals for double-click / Ask without OWNER.
+  ownership: { default: CONST_PLAYER_OWNERSHIP },
   flags: {
     exportSource: {
       world: "amellwind-toolbox",
@@ -721,8 +750,12 @@ const actor = {
     world: {
       cooking: {
         cookNpc: true,
+        isCookToken: true,
+        enabled: true,
         ranks: [1],
         kitchenAuraFt: 10,
+        interactionDistance: 10,
+        mealPriceGp: 2,
       },
     },
   },

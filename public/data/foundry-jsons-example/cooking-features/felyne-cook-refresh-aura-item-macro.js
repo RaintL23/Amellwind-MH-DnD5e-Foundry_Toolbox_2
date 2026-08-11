@@ -41,3 +41,18 @@ if (typeof sync !== "function") {
 }
 
 await sync({ notify: true });
+
+try {
+  globalThis.__amellwindFelyneCook?.ensureFelyneCookHooks?.();
+  const cook = actor
+    ?? workflow?.actor
+    ?? item?.actor
+    ?? item?.parent
+    ?? null;
+  if (cook) {
+    await globalThis.__amellwindFelyneCook?.syncPublicCookMarkers?.(cook);
+  }
+  ui.notifications.info("Felyne Cook: double-click the cook token (within 10 ft) to open the kitchen menu.");
+} catch (err) {
+  console.error("Felyne Cook | failed to arm token click", err);
+}

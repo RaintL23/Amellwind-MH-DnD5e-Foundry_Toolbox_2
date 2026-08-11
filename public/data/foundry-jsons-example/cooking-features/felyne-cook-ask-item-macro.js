@@ -5,10 +5,10 @@
 
 /* @@AURA_HOOKS@@ */
 
-const RANGE_FT = 10;
+const ASK_RANGE_FT = 10;
 const HANDOFF_MACRO_ID = "";
 
-const measureDistanceFt = (tokenA, tokenB) => {
+const measureAskDistanceFt = (tokenA, tokenB) => {
   if (!tokenA || !tokenB) return Infinity;
   if (typeof MidiQOL?.computeDistance === "function") {
     const d = Number(MidiQOL.computeDistance(tokenA, tokenB, { wallsBlock: false }));
@@ -34,10 +34,18 @@ const findNearestCook = (fromToken) => {
   let best = null;
   for (const t of canvas.tokens?.placeables ?? []) {
     const a = t.actor;
-    if (!a || a.type !== "npc") continue;
-    if (foundry.utils.getProperty(a, "flags.world.cooking.cookNpc") !== true) continue;
-    const dist = measureDistanceFt(fromToken, t);
-    if (dist <= RANGE_FT + 1e-6 && (!best || dist < best.distance)) {
+    const tokenFlag = foundry.utils.getProperty(t.document, "flags.world.cooking") ?? {};
+    const actorFlag = foundry.utils.getProperty(a, "flags.world.cooking") ?? {};
+    const isCook =
+      tokenFlag.cookNpc === true
+      || tokenFlag.isCookToken === true
+      || actorFlag.cookNpc === true
+      || actorFlag.isCookToken === true
+      || /^felyne cook$/i.test(String(t.document?.name ?? a?.name ?? "").trim());
+    if (!isCook) continue;
+    if (a && a.type && a.type !== "npc" && a.type !== "character") continue;
+    const dist = measureAskDistanceFt(fromToken, t);
+    if (dist <= ASK_RANGE_FT + 1e-6 && (!best || dist < best.distance)) {
       best = { token: t, actor: a, distance: dist };
     }
   }
@@ -98,16 +106,16 @@ let cookToken = cookActor ? findActorToken(cookActor) : null;
 if (!cookActor || !cookToken) {
   const near = findNearestCook(callerToken);
   if (!near) {
-    ui.notifications.warn(`Felyne Cook: no cook within ${RANGE_FT} ft.`);
+    ui.notifications.warn(`Felyne Cook: no cook within ${ASK_RANGE_FT} ft.`);
     return;
   }
   cookActor = near.actor;
   cookToken = near.token;
 }
 
-const dist = measureDistanceFt(callerToken, cookToken);
-if (dist > RANGE_FT + 1e-6) {
-  ui.notifications.warn(`Felyne Cook: you must stay within ${RANGE_FT} ft of the cook (currently ${Math.round(dist * 10) / 10} ft), nya!`);
+const dist = measureAskDistanceFt(callerToken, cookToken);
+if (dist > ASK_RANGE_FT + 1e-6) {
+  ui.notifications.warn(`Felyne Cook: you must stay within ${ASK_RANGE_FT} ft of the cook (currently ${Math.round(dist * 10) / 10} ft), nya!`);
   return;
 }
 

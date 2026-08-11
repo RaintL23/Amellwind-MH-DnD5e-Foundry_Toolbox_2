@@ -129,6 +129,12 @@ Whenever you add or change content in
 node public/data/foundry-jsons-example/combo-crafting/build-combo-craft-item.mjs
 ```
 
+   If you changed Felyne Cook macros / token UI:
+
+```bash
+node public/data/foundry-jsons-example/cooking-features/build-felyne-cook-actor.mjs
+```
+
    If you changed Hidden Detection macros / config UI:
 
 ```bash
@@ -164,6 +170,41 @@ Document `_id`s are **stable** (reused from the source when present, otherwise
 derived deterministically from the file path), so rebuilding updates entries
 in place instead of creating duplicates. Deleting a source JSON removes it from
 the rebuilt pack.
+
+## Felyne Kitchen (camp cook)
+
+Token interaction for Rank 1 artisan meals. World hooks cannot travel inside an
+Actor alone, so this ships as the **Felyne Cook** actor + a **Kitchen Sync** macro,
+with token double-click armed from `scripts/felyne-cook.js` on every client.
+
+### Setup (GM)
+
+1. From **Amellwind MH → Felyne Kitchen → Felyne Cook**, drag the actor onto the scene.
+2. Optional: run **Kitchen Sync** once (or rely on the module script at world ready).
+3. Players double-click the cook token while within **10 ft** to open the kitchen menu.
+4. **Ask for a Meal (Rank 1)** still grants via the Camp Kitchen Aura as a backup.
+
+### Token interactions
+
+| Who | Action | Result |
+| --- | --- | --- |
+| Player | Double-click Felyne Cook token | Open camp kitchen menu (pick meal → pay → cook checks) |
+| GM | Double-click (with a PC token on scene) | Open kitchen menu as that hunter (testing) |
+| GM | Double-click (no PC) or Shift+double-click | Open the cook **actor sheet** |
+| Anyone (GM) | Alt+double-click | Open the normal **actor sheet** |
+
+Players do **not** need OWNER on the cook. On world ready (GM), the module publishes
+a cook marker and sets default ownership to **LIMITED** so double-click works
+Item Piles–style. Range is **10 ft** (same as the kitchen aura).
+
+### Rebuild sources
+
+After editing `cooking-features/*.js`:
+
+```bash
+node public/data/foundry-jsons-example/cooking-features/build-felyne-cook-actor.mjs
+pnpm build:foundry-module
+```
 
 ## Hidden Detection (BG3-style)
 
@@ -317,11 +358,10 @@ pnpm build:foundry-module
 
 ## Notes and limitations
 
-- **Cook aura:** the world-level aura logic (the hooks that grant "Ask for a Meal"
-  to nearby PCs) is not something a compendium can carry. That's fine — the
-  **Felyne Cook actor already embeds its items and templates internally**, and the
-  **Kitchen Sync** macro ships in the Cooking Macros pack to drive the aura at
-  runtime.
+- **Cook aura / token UI:** kitchen aura hooks and double-click interaction load
+  automatically from `scripts/felyne-cook.js` on every client. The Kitchen Sync
+  macro can still re-arm mid-session. Nearby PCs still receive **Ask for a Meal**
+  as a backup while in the 10 ft aura.
 - **Hidden Detection sync:** proximity hooks load automatically from the module
   script on every client. The Sync macro / Configure dialog can still re-arm them
   mid-session if needed.

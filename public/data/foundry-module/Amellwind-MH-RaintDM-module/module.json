@@ -2,7 +2,7 @@
   "id": "Amellwind-MH-RaintDM-module",
   "title": "Amellwind MH \u2014 RaintDM Content",
   "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, runes, cooking features, combo crafting, hidden object detection, and resource gathering nodes for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
-  "version": "1.9.0",
+  "version": "1.10.4",
   "authors": [
     {
       "name": "RaintDM"
@@ -14,7 +14,8 @@
   },
   "scripts": [
     "scripts/resource-node.js",
-    "scripts/hidden-detection.js"
+    "scripts/hidden-detection.js",
+    "scripts/felyne-cook.js"
   ],
   "relationships": {
     "systems": [
