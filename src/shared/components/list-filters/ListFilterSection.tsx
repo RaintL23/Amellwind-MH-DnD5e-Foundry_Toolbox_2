@@ -152,7 +152,7 @@ const YearAccordionGroup = memo(function YearAccordionGroup({
           <span className="flex items-center gap-2">
             {group.label}
             {selectedInGroup.length > 0 && (
-              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-normal normal-case tracking-normal text-muted-foreground">
+              <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-normal normal-case tracking-normal text-primary">
                 {selectedInGroup.length}
               </span>
             )}
@@ -240,7 +240,7 @@ const KindAccordionGroup = memo(function KindAccordionGroup({
           <span className="flex items-center gap-2">
             {group.label}
             {selectedInGroup.length > 0 && (
-              <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
+              <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-normal text-primary">
                 {selectedInGroup.length}
               </span>
             )}
@@ -476,7 +476,7 @@ export const ListFilterSection = memo(function ListFilterSection({
                 <span className="flex items-center gap-2">
                   {title}
                   {selectedFlatOptions.length > 0 && (
-                    <span className="rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-normal text-muted-foreground">
+                    <span className="rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-normal text-primary">
                       {selectedFlatOptions.length}
                     </span>
                   )}
@@ -485,13 +485,32 @@ export const ListFilterSection = memo(function ListFilterSection({
               {headerActions}
             </div>
 
-            {!sectionExpanded && selectedFlatOptions.length > 0 && (
-              <div className="pb-2">
+            {selectedFlatOptions.length > 0 && (
+              <div className="mb-2 space-y-1.5 rounded-md border border-border/60 bg-muted/20 p-2.5">
+                <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                  Currently selected
+                  <span className="ml-1.5 rounded-full bg-primary/15 px-1.5 py-0.5 text-[10px] font-normal normal-case tracking-normal text-primary">
+                    {selectedFlatOptions.length}
+                  </span>
+                </p>
                 <OptionPillRow
-                  options={selectedFlatOptions}
+                  options={
+                    selectedFlatOptions.length > LARGE_FILTER_SECTION_PILL_CAP
+                      ? selectedFlatOptions.slice(
+                          0,
+                          LARGE_FILTER_SECTION_PILL_CAP,
+                        )
+                      : selectedFlatOptions
+                  }
                   selectedSet={selectedSet}
                   onToggle={toggle}
                 />
+                {selectedFlatOptions.length > LARGE_FILTER_SECTION_PILL_CAP && (
+                  <p className="text-[11px] text-muted-foreground">
+                    {selectedFlatOptions.length - LARGE_FILTER_SECTION_PILL_CAP}{" "}
+                    more — expand a year below or search to find them.
+                  </p>
+                )}
               </div>
             )}
 
