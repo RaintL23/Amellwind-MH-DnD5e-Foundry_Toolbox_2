@@ -42,13 +42,16 @@ export function buildSourcesFilterSection(
   bookNames: BookSourceNameMap,
   defaultCodes?: string[],
 ): ListFilterSectionConfig {
+  // Materialize once — Map.keys() / generators are single-pass; options + defaults
+  // both need the full code list.
+  const codes = [...new Set(sourceCodes)];
   const { options, groups } = buildSourceFilterSectionOptions(
-    sourceCodes,
+    codes,
     catalog,
     bookNames,
   );
   const baseDefaults =
-    defaultCodes ?? defaultOfficialSourceCodes(sourceCodes, catalog);
+    defaultCodes ?? defaultOfficialSourceCodes(codes, catalog);
   const defaults = expandSourceFilterSelection(baseDefaults, options);
 
   return {
@@ -69,12 +72,13 @@ export function buildSourcesFilterSectionFrom2024(
   catalog: Map<string, SourceCatalogEntry>,
   bookNames: BookSourceNameMap,
 ): ListFilterSectionConfig {
+  const codes = [...new Set(sourceCodes)];
   return {
     ...buildSourcesFilterSection(
-      sourceCodes,
+      codes,
       catalog,
       bookNames,
-      defaultOfficialSourceCodesSince(sourceCodes, catalog, 2024),
+      defaultOfficialSourceCodesSince(codes, catalog, 2024),
     ),
     defaultExpanded: true,
   };
