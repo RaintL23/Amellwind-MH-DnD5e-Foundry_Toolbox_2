@@ -798,12 +798,68 @@ const openConfigureDialog = async (featureItem) => {
           const $open = $(
             `<button type="button" data-rn-action="open-sheet"><i class="fas fa-scroll"></i> Open sheet</button>`,
           );
+          const $hd = $(
+            `<button type="button" data-rn-action="hidden-detect"><i class="fas fa-eye"></i> Hidden Detection</button>`,
+          );
           const $reset = $(
             `<button type="button" data-rn-action="reset-all"><i class="fas fa-undo"></i> Reset all attempts</button>`,
           );
-          // Visual order: Save | Open sheet | Reset all | Cancel
+          // Visual order: Save | Open sheet | Hidden Detection | Reset all | Cancel
           $buttons.find('[data-button="save"]').after($open);
-          $open.after($reset);
+          $open.after($hd);
+          $hd.after($reset);
+
+          $hd.on("click", async (event) => {
+            event.preventDefault();
+            event.stopPropagation();
+
+            const actorDoc =
+              (nodeActor?.id ? game.actors?.get(nodeActor.id) : null) ?? nodeActor ?? null;
+
+            const findHdFeature = (actor) => {
+              if (!actor?.items) return null;
+              const items = [...actor.items];
+              return (
+                items.find((i) => foundry.utils.getProperty(i, "flags.world.hiddenDetect.isFeature") === true)
+                ?? items.find((i) => String(i.system?.identifier ?? "") === "hidden-detection")
+                ?? items.find((i) => String(i.name ?? "").toLowerCase() === "hidden detection")
+                ?? null
+              );
+            };
+
+            let hdApi = globalThis.__amellwindHiddenDetect;
+            try {
+              hdApi?.ensureHiddenDetectHooks?.();
+              hdApi = globalThis.__amellwindHiddenDetect;
+            } catch (_err) {
+              // optional
+            }
+
+            const feat =
+              findHdFeature(actorDoc)
+              ?? (typeof hdApi?.findHiddenFeature === "function"
+                ? hdApi.findHiddenFeature(actorDoc)
+                : null);
+
+            if (!feat) {
+              ui.notifications.warn(
+                "Hidden Detection: this actor has no Hidden Detection feature. Re-import it from Resource Node Actors.",
+              );
+              return;
+            }
+            if (typeof hdApi?.openConfigureDialog !== "function") {
+              ui.notifications.warn(
+                "Hidden Detection: Amellwind module script not loaded. Copy Amellwind-MH-RaintDM-module (v1.10.6+) into Foundry Data/modules and hard-refresh (Ctrl+F5).",
+              );
+              return;
+            }
+            try {
+              await hdApi.openConfigureDialog(feat);
+            } catch (err) {
+              console.error("Resource Node → Hidden Detection configure failed", err);
+              ui.notifications.error("Hidden Detection: failed to open configure.");
+            }
+          });
 
           $open.on("click", async (event) => {
             event.preventDefault();

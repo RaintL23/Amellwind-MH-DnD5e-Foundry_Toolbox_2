@@ -277,6 +277,7 @@ function buildHiddenDetectionClientScript() {
   }
 
   let engine = fs.readFileSync(enginePath, "utf8").replace(/\r\n/g, "\n");
+  // Strip the source file's trailing self-call; the client bootstrap owns lifecycle.
   engine = engine.replace(/\nensureHiddenDetectHooks\(\);\s*$/m, "\n");
 
   const client = [
@@ -287,12 +288,21 @@ function buildHiddenDetectionClientScript() {
     " */",
     engine.trim(),
     "",
+    "// Register API immediately so Resource Node Configure can open HD settings",
+    "// even if this script evaluates after Hooks.once('ready') already fired.",
+    "try {",
+    "  ensureHiddenDetectHooks();",
+    '  console.log("Amellwind Hidden Detection | proximity hooks armed");',
+    "} catch (err) {",
+    '  console.error("Amellwind Hidden Detection | failed to arm hooks", err);',
+    "}",
+    "",
     'Hooks.once("ready", () => {',
     "  try {",
     "    ensureHiddenDetectHooks();",
-    '    console.log("Amellwind Hidden Detection | proximity hooks armed");',
+    "    if (canvas?.ready) globalThis.__amellwindHiddenDetect?.syncHiddenDetection?.({ notify: false });",
     "  } catch (err) {",
-    '    console.error("Amellwind Hidden Detection | failed to arm hooks", err);',
+    '    console.error("Amellwind Hidden Detection | ready re-arm failed", err);',
     "  }",
     "});",
     "",

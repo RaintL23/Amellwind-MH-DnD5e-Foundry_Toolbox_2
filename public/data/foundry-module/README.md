@@ -219,6 +219,9 @@ inside an Item alone, so this ships as a **Feature Item** + a **Sync Macro**.
 3. Place the Actor's token on the scene and **hide** it (Foundry eye / `hidden`).
 4. Use **Configure Hidden Detection** (GM). Saving **arms proximity hooks** for the
    session and runs a sync pass — you do not need the Sync macro first.
+   On Resource Node actors the embedded feature has no Item Macro (pack size); the
+   module still intercepts the Configure activity, and **Configure Resource Node**
+   includes a **Hidden Detection** button.
 5. Optional: run **Hidden Detection Sync** mid-session if you need to re-arm hooks
    without reloading (hooks also arm automatically from the module script on world
    ready).
@@ -347,6 +350,10 @@ Prebuilt NPC props — **one actor per Environment × Level Tier × Resource Cat
    environment / tier folder and drag the actor onto the scene.
 2. Keep the token **hidden** (prototype already sets `hidden: true`).
 3. Players who beat Passive Perception see the node; double-click gathers as usual.
+4. **Configure Hidden Detection** on these actors (Item Macro is stripped to keep
+   packs small): use **Configure Resource Node → Hidden Detection**, or run the
+   **Configure Hidden Detection** activity on the feature (module script intercepts
+   it). Reset attempts / reveal from that dialog if a PC gets locked out.
 
 Regenerate after editing `environment.data.ts` / `resource.data.ts`:
 

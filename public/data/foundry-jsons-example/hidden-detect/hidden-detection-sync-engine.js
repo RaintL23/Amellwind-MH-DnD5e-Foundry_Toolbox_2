@@ -1,9 +1,46 @@
 // Hidden Detection Sync engine — Amellwind (Foundry v12 / dnd5e 4.4)
-// Shared by the Sync macro and the Hidden Detection Feature Item Macro.
-// Registers proximity hooks and resolves skill check / Passive Perception.
+// Shared by the Sync macro, the Hidden Detection Feature Item Macro, and the
+// module client script. Registers proximity hooks, Configure dialog, and
+// skill check / Passive Perception resolution.
+//
+// Resource Node actors intentionally strip Item Macro from embedded features
+// (payload size). Configure still works via this engine: module activity hook,
+// Resource Node Configure button, or Sync / standalone Item Macro.
 
 const NS = "__amellwindHiddenDetect";
 const FLAG = "flags.world.hiddenDetect";
+
+const SKILL_OPTIONS = [
+  ["prc", "Perception"],
+  ["inv", "Investigation"],
+  ["sur", "Survival"],
+  ["nat", "Nature"],
+  ["arc", "Arcana"],
+  ["his", "History"],
+  ["ins", "Insight"],
+  ["med", "Medicine"],
+  ["rel", "Religion"],
+  ["ani", "Animal Handling"],
+  ["ath", "Athletics"],
+  ["acr", "Acrobatics"],
+  ["slt", "Sleight of Hand"],
+  ["ste", "Stealth"],
+  ["dec", "Deception"],
+  ["itm", "Intimidation"],
+  ["per", "Persuasion"],
+  ["prf", "Performance"],
+];
+
+const escHtml = (value) => {
+  const s = String(value ?? "");
+  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);
+  return s
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+};
 
 const measureDistanceFt = (tokenA, tokenB, { wallsBlock = false } = {}) => {
   if (!tokenA || !tokenB) return Infinity;
@@ -342,6 +379,242 @@ const syncHiddenDetection = async ({ notify = false } = {}) => {
   return { hidden: hiddenEntries.length, checks };
 };
 
+const isConfigureHiddenDetectionActivity = (activity) => {
+  const midiId = String(activity?.midiProperties?.identifier ?? "").toLowerCase();
+  const id = String(activity?.identifier ?? "").toLowerCase();
+  const name = String(activity?.name ?? "").toLowerCase();
+  return (
+    midiId === "configure-hidden-detection"
+    || id === "configure-hidden-detection"
+    || name === "configure hidden detection"
+  );
+};
+
+const isHiddenDetectionItem = (item) => {
+  if (!item) return false;
+  if (foundry.utils.getProperty(item, `${FLAG}.isFeature`) === true) return true;
+  if (String(item.system?.identifier ?? "") === "hidden-detection") return true;
+  return String(item.name ?? "").toLowerCase() === "hidden detection";
+};
+
+/**
+ * GM Configure dialog. Works without Item Macro (resource-node embeds strip it).
+ */
+const openConfigureDialog = async (featureItem) => {
+  if (!game.user.isGM) {
+    ui.notifications.warn("Hidden Detection: only the GM can configure this feature.");
+    return false;
+  }
+  if (!featureItem) {
+    ui.notifications.warn("Hidden Detection: feature item not found.");
+    return false;
+  }
+
+  if (foundry.utils.getProperty(featureItem, `${FLAG}.isFeature`) !== true) {
+    await featureItem.update({
+      [FLAG]: {
+        isFeature: true,
+        enabled: true,
+        rangeFt: 30,
+        detectMode: "skillCheck",
+        skill: "prc",
+        dc: 15,
+        wallsBlock: false,
+        allowRetryOnFail: false,
+        revealToParty: false,
+        whisperToGm: true,
+        revealed: false,
+        revealedBy: null,
+        failedBy: [],
+        inRangeBy: {},
+        visibleToUsers: [],
+      },
+    });
+  }
+
+  ensureHiddenDetectHooks();
+
+  let cfg = readFeatureConfig(featureItem);
+  if (!cfg) {
+    ui.notifications.error("Hidden Detection: invalid feature config.");
+    return false;
+  }
+
+  const skillOptionsHtml = SKILL_OPTIONS.map(
+    ([id, label]) =>
+      `<option value="${escHtml(id)}" ${cfg.skill === id ? "selected" : ""}>${escHtml(label)} (${escHtml(id)})</option>`,
+  ).join("");
+
+  const hooksArmed = Boolean(globalThis[NS]?.hooksReady);
+  const content = `
+    <form class="flexcol" style="gap:8px;">
+      <p style="margin:0 0 4px;opacity:0.85;font-size:12px;">
+        Hide this actor's token, configure below, then <strong>Save</strong>.
+        Saving arms proximity detection for this session
+        ${hooksArmed ? "(hooks already active)" : "(will arm hooks now)"}.
+        Resource Node actors: you can also open this from <strong>Configure Resource Node</strong>.
+      </p>
+      <div class="form-group">
+        <label><input type="checkbox" name="enabled" ${cfg.enabled ? "checked" : ""}/> Enabled</label>
+      </div>
+      <div class="form-group">
+        <label>Detection range (ft)</label>
+        <input type="number" name="rangeFt" value="${escHtml(cfg.rangeFt)}" min="1" step="1"/>
+      </div>
+      <div class="form-group">
+        <label>Detection mode</label>
+        <select name="detectMode">
+          <option value="skillCheck" ${cfg.detectMode === "skillCheck" ? "selected" : ""}>Skill check (roll)</option>
+          <option value="passivePerception" ${cfg.detectMode === "passivePerception" ? "selected" : ""}>Passive Perception only</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Skill (skill-check mode)</label>
+        <select name="skill">${skillOptionsHtml}</select>
+      </div>
+      <div class="form-group">
+        <label>DC</label>
+        <input type="number" name="dc" value="${escHtml(cfg.dc)}" min="1" step="1"/>
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" name="wallsBlock" ${cfg.wallsBlock ? "checked" : ""}/> Walls block detection</label>
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" name="allowRetryOnFail" ${cfg.allowRetryOnFail ? "checked" : ""}/> Allow retry after fail (leave &amp; re-enter)</label>
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" name="revealToParty" ${cfg.revealToParty ? "checked" : ""}/> Reveal to whole party on first success</label>
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" name="whisperToGm" ${cfg.whisperToGm ? "checked" : ""}/> Whisper skill checks to GM</label>
+      </div>
+      <p style="margin:6px 0 0;font-size:12px;opacity:0.8;">
+        Status: ${cfg.revealed ? "<strong>Revealed</strong>" : "Hidden"}
+        · Failed PCs: ${cfg.failedBy.length}
+      </p>
+    </form>
+  `;
+
+  const writeFlags = async (patch) => {
+    const current = readFeatureConfig(featureItem) ?? cfg;
+    const next = { ...current, ...patch, isFeature: true };
+    await writeFeatureState(featureItem, next);
+    cfg = next;
+  };
+
+  const parseForm = (html) => {
+    const form = html[0].querySelector("form");
+    const fd = new FormData(form);
+    const rangeFt = Math.max(1, Number(fd.get("rangeFt")) || 30);
+    const dc = Math.max(1, Number(fd.get("dc")) || 15);
+    const detectMode = fd.get("detectMode") === "passivePerception" ? "passivePerception" : "skillCheck";
+    const skill = String(fd.get("skill") || "prc");
+    return {
+      enabled: form.querySelector('[name="enabled"]')?.checked === true,
+      rangeFt,
+      detectMode,
+      skill,
+      dc,
+      wallsBlock: form.querySelector('[name="wallsBlock"]')?.checked === true,
+      allowRetryOnFail: form.querySelector('[name="allowRetryOnFail"]')?.checked === true,
+      revealToParty: form.querySelector('[name="revealToParty"]')?.checked === true,
+      whisperToGm: form.querySelector('[name="whisperToGm"]')?.checked === true,
+    };
+  };
+
+  const rehideTokens = async () => {
+    const actorDoc = featureItem.actor ?? featureItem.parent;
+    if (!actorDoc) return;
+    const tokens = actorDoc.getActiveTokens?.(true) ?? [];
+    for (const tok of tokens) {
+      const updates = { hidden: true };
+      foundry.utils.setProperty(updates, `${FLAG}.visibleToUsers`, []);
+      await tok.document.update(updates);
+    }
+  };
+
+  const armAndSync = async () => {
+    ensureHiddenDetectHooks();
+    return syncHiddenDetection({ notify: true });
+  };
+
+  await armAndSync();
+
+  return await new Promise((resolve) => {
+    new Dialog(
+      {
+        title: `Hidden Detection — ${featureItem.actor?.name ?? featureItem.name}`,
+        content,
+        buttons: {
+          save: {
+            icon: '<i class="fas fa-save"></i>',
+            label: "Save",
+            callback: async (html) => {
+              const formCfg = parseForm(html);
+              await writeFlags({
+                ...formCfg,
+                revealed: cfg.revealed,
+                revealedBy: cfg.revealedBy,
+                failedBy: cfg.failedBy,
+                inRangeBy: {},
+                visibleToUsers: cfg.visibleToUsers,
+              });
+              await armAndSync();
+              ui.notifications.info("Hidden Detection: saved and proximity sync armed.");
+              resolve(true);
+            },
+          },
+          resetAttempts: {
+            icon: '<i class="fas fa-undo"></i>',
+            label: "Reset attempts",
+            callback: async (html) => {
+              const formCfg = parseForm(html);
+              await writeFlags({
+                ...formCfg,
+                revealed: cfg.revealed,
+                revealedBy: cfg.revealedBy,
+                failedBy: [],
+                inRangeBy: {},
+                visibleToUsers: cfg.visibleToUsers,
+              });
+              await armAndSync();
+              ui.notifications.info("Hidden Detection: attempts reset.");
+              resolve(true);
+            },
+          },
+          resetReveal: {
+            icon: '<i class="fas fa-eye-slash"></i>',
+            label: "Reset reveal",
+            callback: async (html) => {
+              const formCfg = parseForm(html);
+              await writeFlags({
+                ...formCfg,
+                revealed: false,
+                revealedBy: null,
+                failedBy: [],
+                inRangeBy: {},
+                visibleToUsers: [],
+              });
+              await rehideTokens();
+              await armAndSync();
+              ui.notifications.info("Hidden Detection: reveal reset; token(s) hidden again.");
+              resolve(true);
+            },
+          },
+          cancel: {
+            icon: '<i class="fas fa-times"></i>',
+            label: "Cancel",
+            callback: () => resolve(false),
+          },
+        },
+        default: "save",
+        close: () => resolve(false),
+      },
+      { width: 460 },
+    ).render(true);
+  });
+};
+
 const ensureHiddenDetectHooks = () => {
   globalThis[NS] = globalThis[NS] || {};
   Object.assign(globalThis[NS], {
@@ -349,6 +622,7 @@ const ensureHiddenDetectHooks = () => {
     measureDistanceFt,
     findHiddenFeature,
     applyTokenVisibility,
+    openConfigureDialog,
     ensureHiddenDetectHooks,
   });
 
@@ -372,6 +646,20 @@ const ensureHiddenDetectHooks = () => {
     const tok = canvas.tokens?.get(doc.id);
     if (tok) applyTokenVisibility(tok);
   });
+
+  // Resource Node embeds strip Item Macro — intercept Configure from the sheet.
+  Hooks.on("dnd5e.preUseActivity", (activity) => {
+    if (!isConfigureHiddenDetectionActivity(activity)) return;
+    const item = activity.item;
+    if (!isHiddenDetectionItem(item)) return;
+    Promise.resolve(openConfigureDialog(item)).catch((err) => {
+      console.error("Hidden Detection: configure failed", err);
+    });
+    return false;
+  });
+
+  // If canvas is already up (ready fired after first canvasReady), sync now.
+  if (canvas?.ready) queue();
 
   return globalThis[NS];
 };
