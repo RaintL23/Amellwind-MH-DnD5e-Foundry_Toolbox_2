@@ -72,6 +72,17 @@ const MARTIAL_WEAPON_NAMES = new Set([
   "firearm",
 ]);
 
+/** PHB/XPHB martial weapons that have the Finesse and/or Light property. */
+const MARTIAL_FINESSE_OR_LIGHT_WEAPON_NAMES = [
+  "Rapier",
+  "Scimitar",
+  "Shortsword",
+  "Whip",
+  "Hand Crossbow",
+  "Crossbow Hand",
+  "Handcrossbow",
+];
+
 const ARMOR_CATEGORY_LABELS: Record<string, string> = {
   light: "Light",
   medium: "Medium",
@@ -97,6 +108,58 @@ function hasSimpleProficiency(proficiencies: string[]): boolean {
 
 function hasMartialProficiency(proficiencies: string[]): boolean {
   return hasProficiency(proficiencies, "martial");
+}
+
+/**
+ * XPHB Rogue (and similar) grants: "Martial weapons that have the Finesse or Light property".
+ * Stored as prose after 5etools markup stripping — detect by keywords, not exact string.
+ */
+export function hasMartialFinesseOrLightGrant(proficiencies: string[]): boolean {
+  return proficiencies.some((prof) => {
+    const lower = prof.toLowerCase();
+    return (
+      lower.includes("martial") &&
+      lower.includes("finesse") &&
+      lower.includes("light")
+    );
+  });
+}
+
+function isMartialFinesseOrLightWeaponName(weaponName: string): boolean {
+  const key = normalizeProficiencyKey(weaponName);
+  return MARTIAL_FINESSE_OR_LIGHT_WEAPON_NAMES.some(
+    (name) => normalizeProficiencyKey(name) === key,
+  );
+}
+
+function weaponHasFinesseOrLightProperty(properties: string[]): boolean {
+  return properties.some((prop) => {
+    const code = String(prop).split("|")[0].trim().toUpperCase();
+    return (
+      code === "F" ||
+      code === "L" ||
+      code === "FIN" ||
+      code === "FINESSE" ||
+      code === "LIGHT"
+    );
+  });
+}
+
+function matchesMartialFinesseOrLightWeapon(
+  proficiencies: string[],
+  weaponName: string,
+  weapon?: Pick<Weapon, "properties" | "weaponCategory" | "contentSource">,
+): boolean {
+  if (!hasMartialFinesseOrLightGrant(proficiencies)) return false;
+
+  if (weapon?.contentSource === "dnd") {
+    return (
+      weapon.weaponCategory === "martial" &&
+      weaponHasFinesseOrLightProperty(weapon.properties)
+    );
+  }
+
+  return isMartialFinesseOrLightWeaponName(weaponName);
 }
 
 function hasShieldProficiency(proficiencies: string[]): boolean {
@@ -125,6 +188,13 @@ function matchesCompatibleWeapon(
   }
 
   if (hasProficiency(proficiencies, compatibleWeapon)) {
+    return true;
+  }
+
+  if (
+    hasMartialFinesseOrLightGrant(proficiencies) &&
+    isMartialFinesseOrLightWeaponName(compatibleWeapon)
+  ) {
     return true;
   }
 
@@ -196,19 +266,22 @@ function checkDndWeaponCategoryProficiency(
   const category = weapon.weaponCategory;
   if (!category) return { allowed: true };
 
-  const hasSimple = hasSimpleProficiency(weaponProficiencies);
-  const hasMartial = hasMartialProficiency(weaponProficiencies);
-  const nameKey = normalizeProficiencyKey(weapon.name);
-
   if (hasProficiency(weaponProficiencies, weapon.name)) {
     return { allowed: true, effectiveTier: category };
   }
 
-  if (category === "simple" && (hasSimple || SIMPLE_WEAPON_NAMES.has(nameKey))) {
+  if (category === "simple" && hasSimpleProficiency(weaponProficiencies)) {
     return { allowed: true, effectiveTier: "simple" };
   }
 
-  if (category === "martial" && (hasMartial || MARTIAL_WEAPON_NAMES.has(nameKey))) {
+  if (category === "martial" && hasMartialProficiency(weaponProficiencies)) {
+    return { allowed: true, effectiveTier: "martial" };
+  }
+
+  if (
+    category === "martial" &&
+    matchesMartialFinesseOrLightWeapon(weaponProficiencies, weapon.name, weapon)
+  ) {
     return { allowed: true, effectiveTier: "martial" };
   }
 
@@ -239,6 +312,10 @@ function checkPhbCategoryWeaponProficiency(
   }
 
   if (hasMartialProficiency(weaponProficiencies)) {
+    return { allowed: true, effectiveTier: "martial" };
+  }
+
+  if (matchesMartialFinesseOrLightWeapon(weaponProficiencies, weaponName)) {
     return { allowed: true, effectiveTier: "martial" };
   }
 
@@ -307,6 +384,16 @@ export function checkWeaponProficiency(
   }
 
   if (hasCompatible || hasMartial) {
+    return { allowed: true, effectiveTier: "martial" };
+  }
+
+  // Direct property match for forge / MH weapons (grant + martial tier + Finesse/Light).
+  // Compatible-name chain above already covers Dual Repeaters via Hand Crossbow.
+  if (
+    hasMartialFinesseOrLightGrant(weaponProficiencies) &&
+    weapon &&
+    weaponHasFinesseOrLightProperty(weapon.properties)
+  ) {
     return { allowed: true, effectiveTier: "martial" };
   }
 
