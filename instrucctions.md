@@ -684,7 +684,7 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:spell`         | Contiene `{@spell`                                                                                                     |
 | `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
 | `mechanic:critical`      | Contiene la palabra `critical` (case-insensitive)                                                                      |
-| `mechanic:extra-damage`  | Contiene `extra {@damage` o `extra \d+d\d+`                                                                            |
+| `mechanic:extra-damage`  | Contiene `extra {@damage`, `extra NdX` o `extra N … damage` → se emite como `:minor` / `:major` según score |
 | `mechanic:resistance`    | Contiene `resistance to` seguido de tipo de daño                                                                       |
 | `mechanic:immunity`      | Contiene `immune to` o `immunity to`                                                                                   |
 | `mechanic:bonus-action`  | Contiene `bonus action`                                                                                                |
@@ -1427,12 +1427,20 @@ Permite simular un set de equipo con materiales de monstruo **sin** depender del
 
 #### Validación (`build.validation.ts`)
 
-Grupos de tags **mutuamente excluyentes** al colocar materiales:
+Grupos de tags **mutuamente excluyentes** al colocar materiales. El match usa **prefijo** (`mechanic:extra-damage` cubre también `…:minor` / `…:major`, igual para `mechanic:spell-buff`).
 
-- **Armadura**: resistencia/inmunidad elemental, bonus AC, efectos de runa-charges.
-- **Arma**: críticos en 20, daño extra/on-hit, runa-charges.
+- **Armadura**:
+  1. resistencia / reducción / inmunidad elemental (no inmunidad a condición)
+  2. ventaja o inmunidad vs una condición
+  3. bonus AC
+  4. efectos de runa-charges
+- **Arma**:
+  1. efecto al sacar 20 natural (`mechanic:critical`) — exento de la regla 2
+  2. daño extra / condición on-hit / efecto al impacto (el daño extra condicionado a una condición ya presente no cuenta como “extra damage”)
+  3. efectos de runa-charges
+  4. bonus a spell DC / spell attack (`mechanic:spell-buff`)
 
-`wouldViolateRule()` se usa antes de asignar una runa; el drawer muestra alertas con los materiales en conflicto.
+`wouldViolateRule()` avisa en el diálogo al añadir (Rune Builder **permite** añadir y marca la build como inválida; Character Builder puede bloquear la asignación). El drawer muestra alertas con los materiales en conflicto.
 
 #### UI
 

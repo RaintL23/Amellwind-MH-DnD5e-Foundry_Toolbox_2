@@ -159,12 +159,21 @@ function parseLargestDiceScore(text: string): number {
 }
 
 /**
- * mechanic:extra-damage:minor  → 1d4 – 1d6  (score ≤ 6)
- * mechanic:extra-damage:major  → 1d8 / 2d6+ (score > 6)
+ * mechanic:extra-damage:minor  → 1d4 – 1d6, or flat ≤ 6  (score ≤ 6)
+ * mechanic:extra-damage:major  → 1d8 / 2d6+, or flat > 6 (score > 6)
+ * Also matches flat extras like "extra 1 slashing damage".
  */
 function extraDamageTag(text: string): string | null {
-  if (!/extra (?:\{@damage|\d+d\d+)/i.test(text)) return null;
-  return parseLargestDiceScore(text) > 6
+  if (!/extra (?:\{@damage|\d+)/i.test(text)) return null;
+  const diceScore = parseLargestDiceScore(text);
+  if (diceScore > 0) {
+    return diceScore > 6
+      ? "mechanic:extra-damage:major"
+      : "mechanic:extra-damage:minor";
+  }
+  const flat = text.match(/extra (\d+)\s+\w+\s+damage/i);
+  const amount = flat ? parseInt(flat[1], 10) : 0;
+  return amount > 6
     ? "mechanic:extra-damage:major"
     : "mechanic:extra-damage:minor";
 }
