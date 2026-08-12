@@ -1,21 +1,13 @@
-import { useMemo } from "react";
 import { Weapon } from "@/shared/types";
 import {
   Dialog,
   DialogContent,
   DialogBody,
 } from "@/components/ui/dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useWeaponDialog } from "../hooks/useWeaponDialog";
 import { WeaponDialogHeader } from "./WeaponDialogHeader";
 import { WeaponDialogMeta } from "./WeaponDialogMeta";
 import { WeaponRarityProgression } from "./WeaponRarityProgression";
-import { WeaponCatalogExportMenu } from "./WeaponCatalogExportMenu";
-import { WeaponFoundryPreviewPanel } from "./WeaponFoundryPreviewPanel";
-import {
-  buildAmellwindWeaponFoundryItem,
-  weaponToExportCustomWeapon,
-} from "../services/weapon-foundry-export.service";
 
 interface WeaponDialogProps {
   weapon: Weapon | null;
@@ -51,25 +43,6 @@ export function WeaponDialog({
     onRarityChange,
   });
 
-  const foundryWeapon = useMemo(() => {
-    if (!displayWeapon) return null;
-    return weaponToExportCustomWeapon(displayWeapon, featuresMap);
-  }, [displayWeapon, featuresMap]);
-
-  // One build for preview + Export download (same FoundryItem reference).
-  const foundryItem = useMemo(() => {
-    if (!displayWeapon) return null;
-    try {
-      return buildAmellwindWeaponFoundryItem(
-        displayWeapon,
-        current,
-        featuresMap,
-      );
-    } catch {
-      return null;
-    }
-  }, [displayWeapon, current, featuresMap]);
-
   if (!weapon || !displayWeapon) return null;
 
   return (
@@ -78,52 +51,23 @@ export function WeaponDialog({
         <WeaponDialogHeader
           weapon={displayWeapon}
           currentRarityIndex={current}
-          exportSlot={
-            foundryItem ? (
-              <WeaponCatalogExportMenu
-                weapon={displayWeapon}
-                rarityIndex={current}
-                item={foundryItem}
-              />
-            ) : null
-          }
         />
 
-        <DialogBody>
-          <Tabs defaultValue="rules" className="w-full">
-            <TabsList className="mb-3">
-              <TabsTrigger value="rules">Rules</TabsTrigger>
-              <TabsTrigger value="foundry">Foundry VTT v12</TabsTrigger>
-            </TabsList>
+        <DialogBody className="space-y-4">
+          <WeaponDialogMeta weapon={displayWeapon} />
 
-            <TabsContent value="rules" className="mt-0 space-y-4">
-              <WeaponDialogMeta weapon={displayWeapon} />
-
-              <WeaponRarityProgression
-                weapon={displayWeapon}
-                current={current}
-                onSelect={setCurrent}
-                onPrev={handlePrev}
-                onNext={handleNext}
-                columnChains={columnChains}
-                featuresMap={featuresMap}
-                mhItemEffectsMap={mhItemEffectsMap}
-                baseFeatures={baseFeatures}
-                baseFeatureNameKeys={baseFeatureNameKeys}
-              />
-            </TabsContent>
-
-            <TabsContent value="foundry" className="mt-0">
-              {foundryWeapon && (
-                <WeaponFoundryPreviewPanel
-                  weapon={foundryWeapon}
-                  rarityIndex={current}
-                  item={foundryItem}
-                  onRarityIndexChange={setCurrent}
-                />
-              )}
-            </TabsContent>
-          </Tabs>
+          <WeaponRarityProgression
+            weapon={displayWeapon}
+            current={current}
+            onSelect={setCurrent}
+            onPrev={handlePrev}
+            onNext={handleNext}
+            columnChains={columnChains}
+            featuresMap={featuresMap}
+            mhItemEffectsMap={mhItemEffectsMap}
+            baseFeatures={baseFeatures}
+            baseFeatureNameKeys={baseFeatureNameKeys}
+          />
         </DialogBody>
       </DialogContent>
     </Dialog>

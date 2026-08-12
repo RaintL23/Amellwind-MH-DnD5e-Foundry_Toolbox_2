@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { Weapon, PROPERTY_LABELS, DMG_TYPE_LABELS } from "@/shared/types";
 import {
   DialogHeader,
@@ -15,13 +14,11 @@ import { Shield } from "lucide-react";
 interface WeaponDialogHeaderProps {
   weapon: Weapon;
   currentRarityIndex: number;
-  exportSlot?: ReactNode;
 }
 
 export function WeaponDialogHeader({
   weapon,
   currentRarityIndex,
-  exportSlot,
 }: WeaponDialogHeaderProps) {
   const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
   const damageDisplay = weapon.dmg2
@@ -42,10 +39,7 @@ export function WeaponDialogHeader({
           />
         </div>
         <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <DialogTitle>{weapon.name}</DialogTitle>
-            {exportSlot}
-          </div>
+          <DialogTitle>{weapon.name}</DialogTitle>
           <DialogDescription className="mt-0.5">
             <span className="font-semibold text-foreground/80">
               {damageDisplay}
