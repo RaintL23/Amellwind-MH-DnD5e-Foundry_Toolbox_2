@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "",
+    "attunement": "required",
     "equipped": false,
     "rarity": "rare",
     "identified": true,

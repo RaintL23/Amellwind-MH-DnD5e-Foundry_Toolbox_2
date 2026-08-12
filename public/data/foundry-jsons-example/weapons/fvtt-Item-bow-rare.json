@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "",
+    "attunement": "required",
     "equipped": false,
     "rarity": "rare",
     "identified": true,
@@ -39,7 +39,9 @@
       "base": {
         "number": 1,
         "denomination": 8,
-        "types": ["piercing"],
+        "types": [
+          "piercing"
+        ],
         "custom": {
           "enabled": false
         },
@@ -62,7 +64,11 @@
       }
     },
     "magicalBonus": 1,
-    "properties": ["amm", "mgc", "two"],
+    "properties": [
+      "amm",
+      "mgc",
+      "two"
+    ],
     "proficient": null,
     "range": {
       "value": 150,
@@ -404,7 +410,9 @@
             {
               "number": 4,
               "denomination": 6,
-              "types": ["piercing"],
+              "types": [
+                "piercing"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -419,7 +427,9 @@
           "onSave": "half"
         },
         "save": {
-          "ability": ["dex"],
+          "ability": [
+            "dex"
+          ],
           "dc": {
             "calculation": "dex",
             "formula": ""
@@ -562,7 +572,9 @@
             {
               "number": 5,
               "denomination": 6,
-              "types": ["piercing"],
+              "types": [
+                "piercing"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -577,7 +589,9 @@
           "onSave": "half"
         },
         "save": {
-          "ability": ["dex"],
+          "ability": [
+            "dex"
+          ],
           "dc": {
             "calculation": "dex",
             "formula": ""
@@ -720,7 +734,9 @@
             {
               "number": 6,
               "denomination": 6,
-              "types": ["piercing"],
+              "types": [
+                "piercing"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -735,7 +751,9 @@
           "onSave": "half"
         },
         "save": {
-          "ability": ["dex"],
+          "ability": [
+            "dex"
+          ],
           "dc": {
             "calculation": "dex",
             "formula": ""
@@ -878,7 +896,9 @@
             {
               "number": 7,
               "denomination": 6,
-              "types": ["piercing"],
+              "types": [
+                "piercing"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -893,7 +913,9 @@
           "onSave": "half"
         },
         "save": {
-          "ability": ["dex"],
+          "ability": [
+            "dex"
+          ],
           "dc": {
             "calculation": "dex",
             "formula": ""
@@ -996,7 +1018,9 @@
       "sort": 0,
       "flags": {
         "dae": {
-          "specialDuration": ["turnEndSource"],
+          "specialDuration": [
+            "turnEndSource"
+          ],
           "stackable": "noneName",
           "selfTarget": true,
           "selfTargetAlways": true,

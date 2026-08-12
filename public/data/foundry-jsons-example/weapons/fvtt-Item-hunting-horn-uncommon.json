@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "",
+    "attunement": "required",
     "equipped": false,
     "rarity": "uncommon",
     "identified": true,
@@ -39,7 +39,9 @@
       "base": {
         "number": 1,
         "denomination": 12,
-        "types": ["bludgeoning"],
+        "types": [
+          "bludgeoning"
+        ],
         "custom": {
           "enabled": false
         },
@@ -62,7 +64,10 @@
       }
     },
     "magicalBonus": null,
-    "properties": ["two", "hvy"],
+    "properties": [
+      "two",
+      "hvy"
+    ],
     "proficient": null,
     "range": {
       "value": null,

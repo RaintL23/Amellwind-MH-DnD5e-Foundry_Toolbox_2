@@ -335,7 +335,9 @@
             {
               "number": 3,
               "denomination": 6,
-              "types": ["slashing"],
+              "types": [
+                "slashing"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -480,7 +482,9 @@
             {
               "number": 6,
               "denomination": 6,
-              "types": ["slashing"],
+              "types": [
+                "slashing"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -625,7 +629,9 @@
             {
               "number": 9,
               "denomination": 6,
-              "types": ["slashing"],
+              "types": [
+                "slashing"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -800,7 +806,7 @@
       "denomination": "gp"
     },
     "rarity": "rare",
-    "attunement": "",
+    "attunement": "required",
     "cover": null,
     "crewed": false,
     "ammunition": {
@@ -813,7 +819,9 @@
       "base": {
         "number": 2,
         "denomination": 6,
-        "types": ["slashing"],
+        "types": [
+          "slashing"
+        ],
         "custom": {
           "enabled": false
         },
@@ -836,7 +844,11 @@
       }
     },
     "magicalBonus": 1,
-    "properties": ["hvy", "mgc", "two"],
+    "properties": [
+      "hvy",
+      "mgc",
+      "two"
+    ],
     "proficient": null,
     "range": {
       "value": null,
@@ -920,7 +932,9 @@
       "sort": 0,
       "flags": {
         "dae": {
-          "specialDuration": ["1Attack"],
+          "specialDuration": [
+            "1Attack"
+          ],
           "stackable": "noneName",
           "selfTarget": true,
           "showIcon": true
