@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Monoblos | CR: 12 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you are attuned to this weapon, you can perform the somatic components of spells even when you have weapons or a shield in one or both hands.</p>\n<h3>Armor Effect</h3>\n<em>Botanist+.</em> When you successfully gather a plant resource, you gather an extra [[/r 1d4]] more.\n<p><em><strong>Tags:</strong> class:spellcaster, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Monoblos | CR: 12 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you wield this weapon, you can perform the somatic components of spells even when you have weapons or a shield in one or both hands.</p>\n<h3>Armor Effect</h3>\n<em>Botanist+.</em> When you successfully gather a plant resource, you gather an extra [[/r 1d4]] more.\n<p><em><strong>Tags:</strong> class:spellcaster, type:utility</em></p>",
       "chat": ""
     },
     "identifier": "monobloscarapacerune",
@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "required",
+    "attunement": "",
     "equipped": false,
     "rarity": "uncommon",
     "identified": true,
@@ -131,7 +131,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "While attuned, perform somatic components with weapons/shield in hand (manual).",
+      "description": "While equipped, perform somatic components with weapons/shield in hand (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Crimson Qurupeco | CR: 6 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you are attuned to this weapon, you can use this weapon as your spellcasting focus.</p>\n<h3>Armor Effect</h3>\n<p>You have a +2 bonus to @skill[Performance] checks while you wear this armor.</p>\n<p><em><strong>Tags:</strong> mechanic:skill, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Crimson Qurupeco | CR: 6 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you wield this weapon, you can use this weapon as your spellcasting focus.</p>\n<h3>Armor Effect</h3>\n<p>You have a +2 bonus to @skill[Performance] checks while you wear this armor.</p>\n<p><em><strong>Tags:</strong> mechanic:skill, type:utility</em></p>",
       "chat": ""
     },
     "identifier": "vividfeatherrune",
@@ -131,7 +131,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "While attuned, this weapon can be used as a spellcasting focus.",
+      "description": "While equipped, this weapon can be used as a spellcasting focus.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Vespoid | CR: 1/4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While attuned to this weapon your save DC for condition causing effects, such as the @spell[sleep] spell, or a material effect, is increased by 1.</p>\n<h3>Armor Effect</h3>\n<em>Honey Hunter.</em> Once per day, when you use an @item[herbalism kit|PHB] to gather plants, you gather 1 honey with it.\n<p><em><strong>Tags:</strong> mechanic:spell-buff:save, mechanic:condition, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Vespoid | CR: 1/4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you wield this weapon your save DC for condition causing effects, such as the @spell[sleep] spell, or a material effect, is increased by 1.</p>\n<h3>Armor Effect</h3>\n<em>Honey Hunter.</em> Once per day, when you use an @item[herbalism kit|PHB] to gather plants, you gather 1 honey with it.\n<p><em><strong>Tags:</strong> mechanic:spell-buff:save, mechanic:condition, type:utility</em></p>",
       "chat": ""
     },
     "identifier": "vespoidshellrune",
@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "required",
+    "attunement": "",
     "equipped": false,
     "rarity": "common",
     "identified": true,
@@ -136,7 +136,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "While attuned: +1 save DC for condition-causing effects (manual — apply to relevant features).",
+      "description": "While equipped: +1 save DC for condition-causing effects (manual — apply to relevant features).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>FastCharge.</em> When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, you can use your reaction to grant yourself @variantrule[Advantage|XPHB] on any @skill[Acrobatics] check. Once used, you can't use it again until you finish a short or long rest.</p>\n<p><em><strong>Tags:</strong> mechanic:class-feature, mechanic:reaction, mechanic:advantage, mechanic:short-rest, mechanic:long-rest</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Duramboros | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>FastCharge.</em> When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.\n<h3>Armor Effect</h3>\n<p>While you wear this armor, you can use your reaction to grant yourself @variantrule[Advantage|XPHB] on any @skill[Acrobatics] check. Once used, you can't use it again until you finish a short or long rest.</p>\n<p><em><strong>Tags:</strong> mechanic:class-feature, mechanic:reaction, mechanic:advantage, mechanic:short-rest, mechanic:long-rest</em></p>",
       "chat": ""
     },
     "identifier": "hardmossplaterune",
@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "required",
+    "attunement": "",
     "equipped": false,
     "rarity": "common",
     "identified": true,

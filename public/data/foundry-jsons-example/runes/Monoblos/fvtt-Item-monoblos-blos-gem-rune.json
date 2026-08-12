@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Monoblos | CR: 12 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Bowgun only) Load Up+.</em> While attuned to this weapon, you increase the maximum capacity for all of your ammo by 2.\n<h3>Armor Effect</h3>\n<p>You have a +1 bonus to your AC while you wear this armor.</p>\n<p><em><strong>Tags:</strong> weapon-type:light-bowgun, weapon-type:heavy-bowgun, mechanic:ac, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Monoblos | CR: 12 | Tier: 3</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Bowgun only) Load Up+.</em> While you wield this weapon, you increase the maximum capacity for all of your ammo by 2.\n<h3>Armor Effect</h3>\n<p>You have a +1 bonus to your AC while you wear this armor.</p>\n<p><em><strong>Tags:</strong> weapon-type:light-bowgun, weapon-type:heavy-bowgun, mechanic:ac, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "blosgemrune",
@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "required",
+    "attunement": "",
     "equipped": false,
     "rarity": "rare",
     "identified": true,
@@ -131,7 +131,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "(Bowgun only) +2 max capacity for all ammo while attuned (manual).",
+      "description": "(Bowgun only) +2 max capacity for all ammo while equipped (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

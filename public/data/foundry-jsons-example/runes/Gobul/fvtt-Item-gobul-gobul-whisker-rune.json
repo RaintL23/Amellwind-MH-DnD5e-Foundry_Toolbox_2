@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Gobul | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Critical Eye.</em> Your weapon attacks critical hit range is increased by 1.\n<h3>Armor Effect</h3>\n<em>Speed Eating.</em> While you are attuned to this armor, you can use any consumable, such as a potion or food, as a bonus action; so long as you are the one consuming it.\n<p><em><strong>Tags:</strong> mechanic:critical, type:offensive, mechanic:bonus-action</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Gobul | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Critical Eye.</em> Your weapon attacks critical hit range is increased by 1.\n<h3>Armor Effect</h3>\n<em>Speed Eating.</em> While you wear this armor, you can use any consumable, such as a potion or food, as a bonus action; so long as you are the one consuming it.\n<p><em><strong>Tags:</strong> mechanic:critical, type:offensive, mechanic:bonus-action</em></p>",
       "chat": ""
     },
     "identifier": "gobulwhiskerrune",
@@ -189,7 +189,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "<em>Speed Eating.</em> While you are attuned to this armor, you can use any consumable, such as a potion or food, as a bonus action; so long as you are the one consuming it.",
+      "description": "<em>Speed Eating.</em> While you wear this armor, you can use any consumable, such as a potion or food, as a bonus action; so long as you are the one consuming it.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

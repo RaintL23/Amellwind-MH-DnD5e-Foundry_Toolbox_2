@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Anjanath | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Bow only) Special Ammo boost.</em> While attuned to this weapon, your coat arrow now coats up to 20 arrows and your dragonpiercer an extra [[/r 1d6]] piercing damage.\n<h3>Armor Effect</h3>\n<em>(Spellcaster only)</em> This armor has 2 runes, which it regains daily at dawn. You may expend a rune to cast the @spell[hellish rebuke] spell from it.\n<p><em><strong>Tags:</strong> weapon-type:bow, mechanic:class-feature, mechanic:extra-damage:minor, type:offensive, damage:piercing, class:spellcaster, mechanic:rune-charges, mechanic:spell:lvl1-2</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Anjanath | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Bow only) Special Ammo boost.</em> While you wield this weapon, your coat arrow now coats up to 20 arrows and your dragonpiercer an extra [[/r 1d6]] piercing damage.\n<h3>Armor Effect</h3>\n<em>(Spellcaster only)</em> This armor has 2 runes, which it regains daily at dawn. You may expend a rune to cast the @spell[hellish rebuke] spell from it.\n<p><em><strong>Tags:</strong> weapon-type:bow, mechanic:class-feature, mechanic:extra-damage:minor, type:offensive, damage:piercing, class:spellcaster, mechanic:rune-charges, mechanic:spell:lvl1-2</em></p>",
       "chat": ""
     },
     "identifier": "anjanathtailrune",

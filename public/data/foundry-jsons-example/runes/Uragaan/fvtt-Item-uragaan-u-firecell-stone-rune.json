@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Uragaan | CR: 6 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you are attuned to this weapon you can use an action to conjure a @item[alchemist's fire (flask)] once a day. If unused for 24 hours, the flask returns to whence it came, where that is, who knows?</p>\n<h3>Armor Effect</h3>\n<em>Shield.</em> While you are attuned to this armor and you use a reaction that would increase your AC, you gain an additional +1 bonus to your AC until the start of your next turn.\n<p><em><strong>Tags:</strong> mechanic:reaction, mechanic:ac, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Uragaan | CR: 6 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you wield this weapon you can use an action to conjure a @item[alchemist's fire (flask)] once a day. If unused for 24 hours, the flask returns to whence it came, where that is, who knows?</p>\n<h3>Armor Effect</h3>\n<em>Shield.</em> While you wear this armor and you use a reaction that would increase your AC, you gain an additional +1 bonus to your AC until the start of your next turn.\n<p><em><strong>Tags:</strong> mechanic:reaction, mechanic:ac, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "ufirecellstonerune",
@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "required",
+    "attunement": "",
     "equipped": false,
     "rarity": "uncommon",
     "identified": true,
@@ -333,7 +333,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "While you are attuned to this weapon you can use an action to conjure a @item[alchemist's fire (flask)] once a day. If unused for 24 hours, the flask returns to whence it came, where that is, who knows?",
+      "description": "While you wield this weapon you can use an action to conjure a @item[alchemist's fire (flask)] once a day. If unused for 24 hours, the flask returns to whence it came, where that is, who knows?",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Anjanath | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Bow only) Bow Charge Plus.</em> While attuned to this weapon, you can use your dragonpiercer one additional time between rests and it recharges after a Short or Long rest.\n<h3>Armor Effect</h3>\n<p>While you wear this armor, you may pass a Constitution saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.</p>\n<p><em><strong>Tags:</strong> weapon-type:bow, mechanic:class-feature, mechanic:short-rest, mechanic:long-rest</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Anjanath | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Bow only) Bow Charge Plus.</em> While you wield this weapon, you can use your dragonpiercer one additional time between rests and it recharges after a Short or Long rest.\n<h3>Armor Effect</h3>\n<p>While you wear this armor, you may pass a Constitution saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.</p>\n<p><em><strong>Tags:</strong> weapon-type:bow, mechanic:class-feature, mechanic:short-rest, mechanic:long-rest</em></p>",
       "chat": ""
     },
     "identifier": "anjanathnosebonerune",
@@ -212,7 +212,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "<em>(Bow only) Bow Charge Plus.</em> While attuned to this weapon, you can use your dragonpiercer one additional time between rests and it recharges after a Short or Long rest.",
+      "description": "<em>(Bow only) Bow Charge Plus.</em> While you wield this weapon, you can use your dragonpiercer one additional time between rests and it recharges after a Short or Long rest.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

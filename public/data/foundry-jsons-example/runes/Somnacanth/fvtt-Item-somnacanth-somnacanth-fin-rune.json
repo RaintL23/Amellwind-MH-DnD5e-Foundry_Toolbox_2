@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Somnacanth | CR: 10 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Capture Expert.</em> While attuned to this weapon @item[tranq bomb|AGMH]s and @item[tranq ammo (1)|AGMH|tranq ammo] roll an extra [[/r 3d8]] when they hit a creature.\n<h3>Armor Effect</h3>\n<em>Item Prolonger+.</em> Whenever you use a consumable item that has a duration, its duration is increased by an additional 12 seconds.\n<p><em><strong>Tags:</strong> mechanic:extra-damage:major, type:offensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Somnacanth | CR: 10 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Capture Expert.</em> While you wield this weapon @item[tranq bomb|AGMH]s and @item[tranq ammo (1)|AGMH|tranq ammo] roll an extra [[/r 3d8]] when they hit a creature.\n<h3>Armor Effect</h3>\n<em>Item Prolonger+.</em> Whenever you use a consumable item that has a duration, its duration is increased by an additional 12 seconds.\n<p><em><strong>Tags:</strong> mechanic:extra-damage:major, type:offensive</em></p>",
       "chat": ""
     },
     "identifier": "somnacanthfinrune",

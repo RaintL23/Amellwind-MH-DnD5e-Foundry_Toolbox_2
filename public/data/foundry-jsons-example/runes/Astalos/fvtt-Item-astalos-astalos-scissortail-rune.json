@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Astalos | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Cleric &amp; Paladin only)</em> While you are attuned to this weapon, whenever you use a spell of 1st-level or higher to restore hit points to a creature, the creature regains additional hit points equal to the spell's level.\n<h3>Armor Effect</h3>\n<p>While you are attuned to this armor, lightning arcs across it, creating bright light in a 10-foot radius and dim light for an additional 5 feet.</p>\n<p><em><strong>Tags:</strong> class:cleric, class:paladin, mechanic:healing, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Astalos | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Cleric &amp; Paladin only)</em> While you wield this weapon, whenever you use a spell of 1st-level or higher to restore hit points to a creature, the creature regains additional hit points equal to the spell's level.\n<h3>Armor Effect</h3>\n<p>While you wear this armor, lightning arcs across it, creating bright light in a 10-foot radius and dim light for an additional 5 feet.</p>\n<p><em><strong>Tags:</strong> class:cleric, class:paladin, mechanic:healing, type:utility</em></p>",
       "chat": ""
     },
     "identifier": "astalosscissortailrune",
@@ -27,7 +27,7 @@
       "denomination": "gp"
     },
     "attuned": false,
-    "attunement": "required",
+    "attunement": "",
     "equipped": false,
     "rarity": "uncommon",
     "identified": true,
@@ -182,7 +182,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "While attuned: bright light 10 ft, dim light +5 ft.",
+      "description": "While equipped: bright light 10 ft, dim light +5 ft.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
