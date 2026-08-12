@@ -8,7 +8,6 @@ import { ColumnChains } from "@/shared/foundry/weapons";
 import {
   getRaritySlideStatEntries,
   getScalingDiceHeaderBonuses,
-  hasVisibleColumnChainsAtRarity,
   partitionRaritySlideColumnChains,
 } from "../utils/rarity-slide.utils";
 import { RaritySlideHeader } from "./RaritySlideHeader";
@@ -44,11 +43,6 @@ export function RaritySlide({
     scalingDiceColumns,
     rarityIndex,
   );
-  const showScalingDice = hasVisibleColumnChainsAtRarity(
-    scalingDiceColumns,
-    rarityIndex,
-    baseFeatureNameKeys,
-  );
 
   return (
     <div
@@ -64,24 +58,6 @@ export function RaritySlide({
         styleText={style.text}
       />
 
-      {/* Scaling damage dice sit with combat bonuses, above feature lists */}
-      {showScalingDice && (
-        <div className="border-t border-white/10 pt-2">
-          <RaritySlideFeatureChains
-            rarityIndex={rarityIndex}
-            rarityRows={rarityRows}
-            columnChains={scalingDiceColumns}
-            featuresMap={featuresMap}
-            mhItemEffectsMap={mhItemEffectsMap}
-            baseFeatures={[]}
-            baseFeatureNameKeys={baseFeatureNameKeys}
-            styleText={style.text}
-            alwaysShowColumnLabels
-            hideEmptyMessage
-          />
-        </div>
-      )}
-
       <RaritySlideStats entries={otherStats} styleText={style.text} />
 
       <RaritySlideFeatureChains
@@ -93,7 +69,6 @@ export function RaritySlide({
         baseFeatures={baseFeatures}
         baseFeatureNameKeys={baseFeatureNameKeys}
         styleText={style.text}
-        alwaysShowColumnLabels={showScalingDice}
       />
     </div>
   );

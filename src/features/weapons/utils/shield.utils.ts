@@ -1,4 +1,4 @@
-import { EquippedWeapon, Weapon } from "@/shared/types";
+import { EquippedWeapon, Weapon, isWeaponAcBonusColumn } from "@/shared/types";
 import { doesGripModeHaveShield, hasWeaponGripModes } from "./weapon-mode.utils";
 
 /** Weapons sold with an integrated shield (`ac` field in source data). */
@@ -32,7 +32,7 @@ function findAcBonusColumnValue(
   columns: Record<string, string | string[]>,
 ): string | string[] | undefined {
   const entry = Object.entries(columns).find(([label]) =>
-    /ac bonus/i.test(label),
+    isWeaponAcBonusColumn(label),
   );
   return entry?.[1];
 }

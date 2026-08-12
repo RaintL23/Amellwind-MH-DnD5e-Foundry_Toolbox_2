@@ -320,7 +320,7 @@ function readBonusCell(row: WeaponRarityRow, label: string): string {
   return Array.isArray(val) ? val.join(", ") : String(val);
 }
 
-/** Read a typed bonus value, falling back to legacy "Bonus" for to-hit only. */
+/** Read a typed bonus value, falling back to AGMH labels (Bonus / AC Bonus). */
 export function getTypedBonusValue(
   row: WeaponRarityRow,
   key: BonusColumnKey,
@@ -332,6 +332,10 @@ export function getTypedBonusValue(
   if (key === "toHit") {
     const legacy = readBonusCell(row, "Bonus") || readBonusCell(row, "bonus");
     return legacy;
+  }
+
+  if (key === "ac") {
+    return readBonusCell(row, "AC Bonus") || readBonusCell(row, "ac bonus");
   }
 
   return "";

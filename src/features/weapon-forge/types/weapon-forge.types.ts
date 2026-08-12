@@ -4,6 +4,7 @@ import {
   WEAPON_RARITY_ORDER,
   defaultSlotsForWeaponRarity,
   isBaseRarity,
+  isWeaponStatBonusColumn,
   type WeaponModeDef,
   type WeaponProficiencyRange,
   type WeaponProficiencyTier,
@@ -38,11 +39,7 @@ function isCombatFeaturesLabel(label: string): boolean {
 }
 
 export function isBonusColumnLabel(label: string): boolean {
-  const lower = label.toLowerCase();
-  if (lower === "bonus") return true;
-  return (Object.values(BONUS_COLUMN_KEYS) as readonly string[]).some(
-    (key) => key.toLowerCase() === lower,
-  );
+  return isWeaponStatBonusColumn(label);
 }
 
 /**

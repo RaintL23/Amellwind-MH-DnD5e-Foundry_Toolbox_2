@@ -1,3 +1,4 @@
+import { isWeaponAcBonusColumn } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 
 interface RaritySlideStatsProps {
@@ -11,7 +12,7 @@ export function RaritySlideStats({ entries, styleText }: RaritySlideStatsProps) 
   return (
     <div className="flex flex-wrap gap-x-5 gap-y-1 border-t border-white/10 pt-2">
       {entries.map(([label, value]) => {
-        const isAcBonus = label.toLowerCase() === "ac bonus";
+        const isAcBonus = isWeaponAcBonusColumn(label);
         return (
           <div key={label} className="text-sm">
             <span className="text-muted-foreground">{label}:</span>{" "}

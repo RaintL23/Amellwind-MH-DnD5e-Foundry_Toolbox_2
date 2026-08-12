@@ -1,10 +1,12 @@
 import type { AbilityKey, Entry } from "@/shared/types";
-import type {
-  OptionalFeature,
-  RarityTier,
-  Weapon,
+import {
+  DMG_TYPE_LABELS,
+  RARITY_ORDER,
+  isWeaponAcBonusColumn,
+  type OptionalFeature,
+  type RarityTier,
+  type Weapon,
 } from "@/shared/types";
-import { DMG_TYPE_LABELS, RARITY_ORDER } from "@/shared/types";
 import type { NpcAttackDefinition } from "@/shared/types/npc.types";
 import { resolveWeaponBaseFeatures } from "@/features/weapons/services/optionalfeature.service";
 import {
@@ -259,7 +261,7 @@ export function getPrimaryShieldAcBonus(
   const row = weapon.rarityRows[rarityIndex] ?? weapon.rarityRows[weapon.rarityRows.length - 1];
   if (!row) return weapon.acBonus;
   const acEntry = Object.entries(row.columns).find(([label]) =>
-    /ac bonus/i.test(label),
+    isWeaponAcBonusColumn(label),
   );
   if (acEntry) {
     const parsed = parseFlatBonus(

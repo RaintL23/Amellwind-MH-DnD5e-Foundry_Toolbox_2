@@ -1,6 +1,7 @@
 import {
   WeaponRarityRow,
   isUnlockListColumn,
+  isWeaponAcBonusColumn,
   isWeaponFeatureColumn,
 } from "@/shared/types";
 import {
@@ -9,18 +10,9 @@ import {
   type ColumnChains,
 } from "@/shared/foundry/weapons";
 
-const TYPED_BONUS_COLUMNS: Array<{
-  keys: string[];
-  format: (value: string) => string;
-}> = [
-  { keys: ["bonus to hit", "bonus"], format: (value) => `${value} to hit` },
-  { keys: ["bonus to damage"], format: (value) => `${value} damage` },
-  { keys: ["bonus ac"], format: (value) => `${value} AC` },
-];
+const SIMPLE_BONUS_VALUE_RE = /^[+-]\d+$/;
 
-const HEADER_BONUS_LABEL_KEYS = new Set(
-  TYPED_BONUS_COLUMNS.flatMap((col) => col.keys),
-);
+type TypedBonusKind = "toHit" | "damage" | "ac";
 
 /** Die faces / formulas used as rarity-scaling damage columns (e.g. d4 → d6). */
 const DIE_FACE_RE = /^(?:\d+)?d\d+$/i;
@@ -33,6 +25,26 @@ function readColumnDisplay(val: string | string[] | undefined): string {
 function isEmptyBonusValue(value: string): boolean {
   const trimmed = value.trim();
   return !trimmed || trimmed === "--" || trimmed === "-";
+}
+
+function isSimpleBonusDisplay(value: string): boolean {
+  return SIMPLE_BONUS_VALUE_RE.test(value.trim());
+}
+
+function typedBonusKind(label: string): TypedBonusKind | undefined {
+  const lower = label.toLowerCase().trim();
+  if (lower === "bonus to hit" || lower === "bonus") return "toHit";
+  if (lower === "bonus to damage") return "damage";
+  if (isWeaponAcBonusColumn(label)) return "ac";
+  return undefined;
+}
+
+function formatGenericSimpleBonus(label: string, value: string): string {
+  const nice = label
+    .replace(/^bonus\s+/i, "")
+    .replace(/\s+bonus$/i, "")
+    .trim();
+  return nice ? `${value} ${nice}` : value;
 }
 
 export function isDieFaceToken(value: string): boolean {
@@ -62,24 +74,6 @@ export function partitionRaritySlideColumnChains(columnChains: ColumnChains[]): 
     else featureColumns.push(col);
   }
   return { scalingDiceColumns, featureColumns };
-}
-
-export function hasVisibleColumnChainsAtRarity(
-  columns: ColumnChains[],
-  rarityIndex: number,
-  baseFeatureNameKeys: Set<string> = new Set(),
-): boolean {
-  return columns.some((col) =>
-    col.chains.some(
-      (chain) =>
-        chain.introducedAtIndex <= rarityIndex &&
-        chain.features.some(
-          (feat) =>
-            feat.rarityIndex <= rarityIndex &&
-            !baseFeatureNameKeys.has(feat.name.toLowerCase()),
-        ),
-    ),
-  );
 }
 
 /** Latest die introduced at or before this rarity (e.g. Rare → "d6"). */
@@ -139,18 +133,50 @@ export function getRaritySlideStatEntries(row: WeaponRarityRow): {
     if (display) statEntries.push([label, display]);
   }
 
-  const headerBonuses: string[] = [];
-  for (const { keys, format } of TYPED_BONUS_COLUMNS) {
-    const entry = statEntries.find(([label]) =>
-      keys.includes(label.toLowerCase()),
-    );
-    if (!entry || isEmptyBonusValue(entry[1])) continue;
-    headerBonuses.push(format(entry[1].trim()));
+  let toHit: string | undefined;
+  let damage: string | undefined;
+  let ac: string | undefined;
+  const genericHeader: string[] = [];
+  const otherStats: [string, string][] = [];
+
+  for (const [label, raw] of statEntries) {
+    const value = raw.trim();
+    if (isEmptyBonusValue(value)) continue;
+
+    const kind = typedBonusKind(label);
+    if (kind === "toHit") {
+      toHit = value;
+      continue;
+    }
+    if (kind === "damage") {
+      damage = value;
+      continue;
+    }
+    if (kind === "ac") {
+      ac = value;
+      continue;
+    }
+    if (isSimpleBonusDisplay(value)) {
+      genericHeader.push(formatGenericSimpleBonus(label, value));
+      continue;
+    }
+    otherStats.push([label, raw]);
   }
 
-  const otherStats = statEntries.filter(
-    ([label]) => !HEADER_BONUS_LABEL_KEYS.has(label.toLowerCase()),
-  );
+  const headerBonuses: string[] = [];
+  if (toHit) {
+    const damageMatchesHit = !damage || damage === toHit;
+    headerBonuses.push(
+      damageMatchesHit ? `${toHit} to Hit and Damage` : `${toHit} to Hit`,
+    );
+  }
+  if (damage && damage !== toHit) {
+    headerBonuses.push(`${damage} to Damage`);
+  }
+  if (ac) {
+    headerBonuses.push(`${ac} to AC`);
+  }
+  headerBonuses.push(...genericHeader);
 
   return {
     headerBonuses,

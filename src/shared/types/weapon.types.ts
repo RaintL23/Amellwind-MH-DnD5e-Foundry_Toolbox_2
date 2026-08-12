@@ -207,15 +207,31 @@ export const FEATURE_COL_KEYS = [
 /** Item lists parsed from trailing nested tables (ammo types, coatings, etc.) */
 export const UNLOCK_COLUMN_PREFIX = "Unlocked ";
 
+/** Combat stat columns: "Bonus", "Bonus to Hit", "Bonus AC", "AC Bonus", … */
+export function isWeaponStatBonusColumn(label: string): boolean {
+  const lower = label.toLowerCase().trim();
+  return (
+    lower === "bonus" ||
+    lower.startsWith("bonus ") ||
+    lower.endsWith(" bonus")
+  );
+}
+
+/** Rarity-table AC column, whether labeled "AC Bonus" (AGMH) or "Bonus AC" (forge). */
+export function isWeaponAcBonusColumn(label: string): boolean {
+  const lower = label.toLowerCase().trim();
+  return lower === "ac bonus" || lower === "bonus ac";
+}
+
 /**
  * Feature and weapon-resource unlock columns on a rarity row.
- * Excludes Bonus* stats and nested "Unlocked …" lists. Any other column
- * (including custom forge resource names) is treated as a feature list.
+ * Excludes Bonus* / *Bonus stats and nested "Unlocked …" lists. Any other
+ * column (including custom forge resource names) is treated as a feature list.
  */
 export function isWeaponFeatureColumn(label: string): boolean {
   const lower = label.toLowerCase();
   if (lower.startsWith(UNLOCK_COLUMN_PREFIX.toLowerCase())) return false;
-  if (lower === "bonus" || lower.startsWith("bonus ")) return false;
+  if (isWeaponStatBonusColumn(label)) return false;
   return true;
 }
 
