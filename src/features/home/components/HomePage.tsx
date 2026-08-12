@@ -131,6 +131,13 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
         icon: <Sword className="h-5 w-5" />,
       },
       {
+        label: "Weapon Forge",
+        route: "/weapon-forge",
+        description:
+          "Browse curated RaintDM weapons or create and edit custom ones.",
+        icon: <Hammer className="h-5 w-5" />,
+      },
+      {
         label: "Runes",
         route: "/runes",
         description: "Monster materials and visual Rune Planner for runes.",
