@@ -15,6 +15,7 @@ import { RuneFilters, type RuneFiltersState } from "./RuneFilters";
 import { RuneTable } from "./RuneTable";
 import { useRuneBuild } from "../../context/RuneBuildContext";
 import { matchesRuneSearchQuery } from "../../utils/rune-search.utils";
+import { runeMatchesListTagFilter } from "../../utils/rune-compatibility.utils";
 import {
   buildRuneListSearchParams,
   parseRuneListUrlState,
@@ -150,10 +151,11 @@ export function RuneList() {
         }),
       );
     }
-    if (filters.tag.length > 0)
+    if (filters.tag.length > 0) {
       result = result.filter((r) =>
-        filters.tag.some((tag) => r.tags.includes(tag)),
+        runeMatchesListTagFilter(r, filters.tag, filters.slot),
       );
+    }
     if (filters.monsterTier.length > 0) {
       result = result.filter((r) =>
         filters.monsterTier.includes(String(r.tier)),

@@ -64,7 +64,7 @@ export function RuneFilters({
       filterValues={pickFilterValues(filters, sectionIds)}
       onFiltersApply={applyDialogFilters}
       dialogTitle="Filters"
-      dialogDescription="Refine materials by monster, CR, slots, tags, and more. Changes apply when you save."
+      dialogDescription="Refine materials by monster, CR, slots, tags, and more. Selected tags must all appear on the same armor or weapon effect. Changes apply when you save."
     />
   );
 }

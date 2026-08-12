@@ -31,7 +31,7 @@ function tagsAllowEffect(
 ): boolean {
   if (tags.length === 0) return true;
   const runeTags = slot === "weapon" ? rune.weaponTags : rune.armorTags;
-  return tags.some((tag) => runeTags.includes(tag));
+  return tags.every((tag) => runeTags.includes(tag));
 }
 
 function collectSearchableEffectTexts(

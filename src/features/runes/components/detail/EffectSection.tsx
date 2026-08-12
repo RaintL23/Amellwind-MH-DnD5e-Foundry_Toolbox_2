@@ -3,7 +3,11 @@ import type { MaterialEffectSlot, ResourceRarity } from "@/shared/types";
 import { RESOURCE_RARITY_STYLES } from "@/shared/types";
 import type { MaterialEffectNameIndex } from "@/features/material-effects/services/material-effect.service";
 import { MaterialEffectHighlightText } from "@/features/material-effects/components/MaterialEffectHighlightText";
-import { getReferencedMaterialEffectsForText } from "@/features/material-effects/utils/material-effect-highlight.utils";
+import { getMaterialEffectTierForText } from "@/features/material-effects/utils/material-effect-highlight.utils";
+import {
+  UNKNOWN_MATERIAL_EFFECT_TIER,
+  type MaterialEffectTierFilter,
+} from "@/features/material-effects/constants/material-effect.constants";
 import { Badge } from "@/components/ui/badge";
 import { formatTag, tagVariant } from "../../utils/rune-tag.utils";
 import { cn } from "@/shared/utils/cn";
@@ -21,13 +25,9 @@ function resolveEffectRarityLabel(
   text: string,
   slot: MaterialEffectSlot,
   index: MaterialEffectNameIndex | null | undefined,
-): ResourceRarity | "Unknown" {
-  if (!index) return "Unknown";
-
-  const refs = getReferencedMaterialEffectsForText(text, slot, index);
-  if (refs.length === 0) return "Unknown";
-
-  return refs[0].rarity;
+): MaterialEffectTierFilter {
+  if (!index) return UNKNOWN_MATERIAL_EFFECT_TIER;
+  return getMaterialEffectTierForText(text, slot, index);
 }
 
 export function EffectSection({
@@ -43,9 +43,9 @@ export function EffectSection({
   );
 
   const rarityStyle =
-    rarityLabel === "Unknown"
+    rarityLabel === UNKNOWN_MATERIAL_EFFECT_TIER
       ? "bg-muted/40 text-muted-foreground border-border"
-      : RESOURCE_RARITY_STYLES[rarityLabel].badge;
+      : RESOURCE_RARITY_STYLES[rarityLabel as ResourceRarity].badge;
 
   const lines = splitDisplayTextLines(text);
 

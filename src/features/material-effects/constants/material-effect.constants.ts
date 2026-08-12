@@ -15,6 +15,12 @@ export const MATERIAL_EFFECT_RARITIES: ResourceRarity[] = [
   "Legendary",
 ];
 
+/** Always-on damage resistance in rune text (Armor of Resistance / Ring of Resistance). */
+export const INLINE_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Rare";
+
+/** Always-on damage immunity in rune text (one step above resistance). */
+export const INLINE_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Very Rare";
+
 export const UNKNOWN_MATERIAL_EFFECT_TIER = "Unknown" as const;
 
 export type MaterialEffectTierFilter =

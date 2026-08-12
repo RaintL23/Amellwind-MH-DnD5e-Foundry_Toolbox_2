@@ -705,6 +705,18 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 - Un mismo efecto puede activar múltiples reglas simultáneamente. Ejemplo: `"{@i (Spellcaster only)} This weapon has 4 runes. Cast {@spell lightning bolt}"` → `["class:spellcaster", "mechanic:rune-charges", "mechanic:spell"]`.
 - Si el texto no coincide con ninguna regla, `tags` es `[]`.
 - Las reglas son **case-insensitive** salvo donde se indique lo contrario.
+- El listado `/runes` filtra tags en **AND sobre el mismo lado** (`runeMatchesListTagFilter`): Slot Armor + `damage:fire` + `mechanic:immunity` solo muestra runas cuyo **armorEffect** tenga fuego e inmunidad juntos. No basta con que el fuego esté en el arma y la inmunidad en la armadura.
+
+##### Rareza de resistencia / inmunidad inline
+
+Si el texto del efecto **no** referencia un material effect nombrado del catálogo GTMH, `getMaterialEffectTierForText` infiere rareza desde grants en primera persona (`inline-defense-rarity.utils.ts`):
+
+| Texto (ejemplos) | Rareza |
+| --- | --- |
+| `You have resistance to lightning damage, while you wear this armor.` | **Rare** |
+| `You are immune to fire damage while you wear this armor.` | **Very Rare** |
+
+Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición). Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. El badge del diálogo y el filtro **Material Effect Tier** usan la misma función.
 
 ---
 
@@ -1052,7 +1064,7 @@ Tres listados de referencia derivados del homebrew Amellwind, con caché en memo
 
 | Feature           | Ruta                | Fuente / servicio                          | Contenido |
 | ----------------- | ------------------- | ------------------------------------------ | --------- |
-| Material Effects  | `/material-effects` | `material-effect.service.ts` (`MaterialEffectList`) | Efectos de materiales de monstruo (slots armadura/arma) consultables sin pasar por la tabla de runas |
+| Material Effects  | `/material-effects` | `material-effect.service.ts` (`MaterialEffectList`) | Efectos de materiales de monstruo (slots armadura/arma) consultables sin pasar por la tabla de runas. En `/runes`, la rareza del efecto también puede inferirse de resistencia (Rare) o inmunidad a daño (Very Rare) cuando el texto no cita un efecto nombrado. |
 | Conditions        | `/conditions`       | `condition.service.ts` (`ConditionList`)   | Condiciones del manual con texto parseado |
 | Diseases          | `/diseases`         | `disease.service.ts` (`DiseaseList`)       | Enfermedades del manual con texto parseado |
 

@@ -311,6 +311,33 @@ export function runeMatchesTagFilter(
   return getMatchingMaterialEffectKinds(rune, selectedTags, mode).length > 0;
 }
 
+/**
+ * Catalog list tag filter: every selected tag must appear together on the
+ * same material-effect side. Slot A/W restricts that check to armor/weapon.
+ */
+export function runeMatchesListTagFilter(
+  rune: Rune,
+  selectedTags: string[],
+  slotFilter: "" | "A" | "W" = "",
+): boolean {
+  if (selectedTags.length === 0) return true;
+
+  if (slotFilter === "A") {
+    return (
+      Boolean(rune.armorEffect) &&
+      tagsMatchFilter(rune.armorTags, selectedTags, "and")
+    );
+  }
+  if (slotFilter === "W") {
+    return (
+      Boolean(rune.weaponEffect) &&
+      tagsMatchFilter(rune.weaponTags, selectedTags, "and")
+    );
+  }
+
+  return getMatchingMaterialEffectKinds(rune, selectedTags, "and").length > 0;
+}
+
 export function getRuneMaterialEffectText(
   rune: Rune,
   kind: MaterialEffectSlot,

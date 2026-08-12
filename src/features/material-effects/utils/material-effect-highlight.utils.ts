@@ -6,6 +6,7 @@ import {
 } from "@/features/material-effects/constants/material-effect.constants";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { slugifyKebab } from "@/shared/utils/slugify.utils";
+import { inferInlineDamageDefenseRarity } from "./inline-defense-rarity.utils";
 
 export interface MaterialEffectNameIndex {
   all: string[];
@@ -254,20 +255,30 @@ export function getMaterialEffectTierForText(
   slot: MaterialEffectSlot,
   index: MaterialEffectNameIndex,
 ): MaterialEffectTierFilter {
+  if (!text.trim()) return UNKNOWN_MATERIAL_EFFECT_TIER;
+
   const refs = getReferencedMaterialEffectsForText(text, slot, index);
-  if (refs.length === 0) return UNKNOWN_MATERIAL_EFFECT_TIER;
-  if (isDiscoveredEffect(refs[0])) return UNKNOWN_MATERIAL_EFFECT_TIER;
-  return refs[0].rarity;
+  const catalogRef = refs.find((effect) => !isDiscoveredEffect(effect));
+  if (catalogRef) return catalogRef.rarity;
+
+  const defenseRarity = inferInlineDamageDefenseRarity(text);
+  if (defenseRarity) return defenseRarity;
+
+  return UNKNOWN_MATERIAL_EFFECT_TIER;
 }
 
 export function getMaterialEffectTiersForRune(
   rune: Rune,
   index: MaterialEffectNameIndex,
 ): MaterialEffectTierFilter[] {
-  return [
-    getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
-    getMaterialEffectTierForText(rune.weaponEffect ?? "", "weapon", index),
-  ];
+  const tiers: MaterialEffectTierFilter[] = [];
+  if (rune.armorEffect) {
+    tiers.push(getMaterialEffectTierForText(rune.armorEffect, "armor", index));
+  }
+  if (rune.weaponEffect) {
+    tiers.push(getMaterialEffectTierForText(rune.weaponEffect, "weapon", index));
+  }
+  return tiers;
 }
 
 export function runeMatchesMaterialEffectTierFilter(

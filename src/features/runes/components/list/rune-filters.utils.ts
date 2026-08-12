@@ -76,7 +76,7 @@ export function buildRuneFilterSections(
     },
     {
       id: "tag",
-      title: "Tags",
+      title: "Tags (same effect)",
       mode: "multi",
       options: uniqueTags.map((tag) => ({
         value: tag,
