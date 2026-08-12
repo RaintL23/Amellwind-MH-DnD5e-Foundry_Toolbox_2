@@ -18,11 +18,7 @@ import {
 import { formatWeaponValue } from "@/features/weapons/services/weapon.service";
 import { WeaponIcon } from "@/features/weapons/components/WeaponIcon";
 import type { CustomWeapon } from "../types/weapon-forge.types";
-import type { FoundryItem } from "@/shared/foundry";
-import {
-  WeaponForgeExportMenu,
-  type FoundryExportOptions,
-} from "./WeaponForgeExportMenu";
+import { WeaponForgeExportMenu } from "./WeaponForgeExportMenu";
 
 const BADGE_SIZE_XS = "rounded px-1 py-px text-[9px] font-medium";
 
@@ -35,12 +31,6 @@ interface WeaponForgeCardProps {
   onEdit?: () => void;
   onClone?: () => void;
   onExportAmellwind?: (weapon: CustomWeapon) => void;
-  onExportFoundry?: (
-    weapon: CustomWeapon,
-    rarityIndex: number,
-    item?: FoundryItem,
-    options?: FoundryExportOptions,
-  ) => void;
   onDelete?: () => void;
 }
 
@@ -53,7 +43,6 @@ export function WeaponForgeCard({
   onEdit,
   onClone,
   onExportAmellwind,
-  onExportFoundry,
   onDelete,
 }: WeaponForgeCardProps) {
   const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
@@ -146,11 +135,10 @@ export function WeaponForgeCard({
       {!compareMode &&
         (onEdit || onClone || onExportAmellwind || onDelete) && (
         <div className="mt-3 flex gap-1 border-t border-border/60 pt-2">
-          {onExportAmellwind && onExportFoundry && (
+          {onExportAmellwind && (
             <WeaponForgeExportMenu
               weapon={weapon}
               onExportAmellwind={onExportAmellwind}
-              onExportFoundry={onExportFoundry}
             />
           )}
           {onClone && !weapon.isCustom && (

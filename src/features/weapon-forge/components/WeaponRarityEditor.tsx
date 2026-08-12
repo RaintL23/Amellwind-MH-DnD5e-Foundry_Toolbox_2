@@ -7,7 +7,6 @@ import {
 } from "@/shared/types";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Select } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 import type { WeaponForgeFeatureDef } from "../types/weapon-forge.types";
 import {
@@ -30,7 +29,6 @@ import {
   suggestUpgradeName,
 } from "../utils/weapon-forge-features.utils";
 import { FeatureEditDialog } from "./FeatureEditDialog";
-import { WeaponAutomationChainsPanel } from "./WeaponAutomationChainsPanel";
 import { RarityRowItem } from "./rarity-editor/RarityRowItem";
 
 interface WeaponRarityEditorProps {
@@ -54,12 +52,6 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
   >(null);
   const [upgradePickForIndex, setUpgradePickForIndex] = useState<number | null>(
     null,
-  );
-  const [automationRarityIndex, setAutomationRarityIndex] = useState(0);
-
-  const clampedAutomationRarity = Math.min(
-    Math.max(0, automationRarityIndex),
-    Math.max(0, rows.length - 1),
   );
 
   const rowsRef = useRef(rows);
@@ -353,41 +345,11 @@ export const WeaponRarityEditor = memo(function WeaponRarityEditor({
         ))}
       </div>
 
-      {rows.length > 0 && (
-        <div className="space-y-2 rounded-md border border-border/50 p-3">
-          <div className="flex flex-wrap items-center gap-2">
-            <Label htmlFor="automation-rarity" className="text-xs">
-              Preview rarity
-            </Label>
-            <Select
-              id="automation-rarity"
-              value={String(clampedAutomationRarity)}
-              onChange={(e) =>
-                setAutomationRarityIndex(Number(e.target.value))
-              }
-              className="h-8 w-auto min-w-[8rem] text-xs"
-            >
-              {rows.map((row, index) => (
-                <option key={`${row.rarity}-${index}`} value={String(index)}>
-                  {row.rarity}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <WeaponAutomationChainsPanel
-            rarityRows={rows}
-            customFeatures={customFeatures}
-            rarityIndex={clampedAutomationRarity}
-          />
-        </div>
-      )}
-
       <FeatureEditDialog
         open={editOpen}
         onOpenChange={setEditOpen}
         initial={editingFeature}
         upgradeCandidates={upgradeCandidatesForDialog}
-        allFeatures={customFeatures}
         onSave={(feature) => {
           const previousName = editingFeatureRef.current?.name;
           const previousId = editingFeatureRef.current?.id;

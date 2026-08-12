@@ -33,7 +33,6 @@ export function WeaponForgeList() {
     removeWeapon,
     importFromJson,
     exportOne,
-    exportOneFoundry,
     exportAll,
     compareSelection,
     toggleCompare,
@@ -332,7 +331,6 @@ export function WeaponForgeList() {
                     selectedForCompare={compareSelection.includes(weapon.id)}
                     onToggleCompare={() => toggleCompare(weapon.id)}
                     onExportAmellwind={exportOne}
-                    onExportFoundry={exportOneFoundry}
                     onClone={() => cloneToMine(weapon)}
                   />
                 ))}
@@ -379,7 +377,6 @@ export function WeaponForgeList() {
                     onToggleCompare={() => toggleCompare(weapon.id)}
                     onEdit={() => openEdit(weapon)}
                     onExportAmellwind={exportOne}
-                    onExportFoundry={exportOneFoundry}
                     onDelete={() => handleDelete(weapon)}
                   />
                 ))}
@@ -397,7 +394,6 @@ export function WeaponForgeList() {
         onRarityChange={handleRarityChange}
         onEdit={openEdit}
         onExportAmellwind={exportOne}
-        onExportFoundry={exportOneFoundry}
         onDelete={handleDelete}
       />
     </div>

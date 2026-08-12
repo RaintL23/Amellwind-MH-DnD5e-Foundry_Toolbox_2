@@ -1,204 +1,42 @@
-import { useMemo } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { cn } from "@/shared/utils/cn";
 import type { CustomWeapon } from "../types/weapon-forge.types";
-import type { FoundryItem } from "@/shared/foundry";
-import { FoundryModuleRequirementsNotice } from "@/shared/foundry";
-import { buildWeaponFoundryResourceGroups } from "../mappers/weapon-forge-foundry.export";
-
-export interface FoundryExportOptions {
-  includeResources?: boolean;
-}
 
 interface WeaponForgeExportMenuProps {
   weapon: CustomWeapon;
-  /** When set, Foundry export uses this rarity index (dialog). When omitted, shows rarity submenu (list/card). */
-  foundryRarityIndex?: number;
-  /** Exact preview/export payload when rarity is fixed (dialog). */
-  foundryItem?: FoundryItem;
   variant?: "ghost" | "outline";
   size?: "sm" | "md";
   className?: string;
   triggerLabel?: string;
   onExportAmellwind: (weapon: CustomWeapon) => void;
-  onExportFoundry: (
-    weapon: CustomWeapon,
-    rarityIndex: number,
-    item?: FoundryItem,
-    options?: FoundryExportOptions,
-  ) => void;
-}
-
-function rarityHasResources(weapon: CustomWeapon, rarityIndex: number): boolean {
-  try {
-    return buildWeaponFoundryResourceGroups(weapon, rarityIndex).length > 0;
-  } catch {
-    return false;
-  }
 }
 
 export function WeaponForgeExportMenu({
   weapon,
-  foundryRarityIndex,
-  foundryItem,
   variant = "ghost",
   size = "sm",
   className,
   triggerLabel = "JSON",
   onExportAmellwind,
-  onExportFoundry,
 }: WeaponForgeExportMenuProps) {
-  const useFixedRarity = typeof foundryRarityIndex === "number";
-
-  const fixedHasResources = useMemo(
-    () =>
-      useFixedRarity
-        ? rarityHasResources(weapon, foundryRarityIndex)
-        : false,
-    [useFixedRarity, weapon, foundryRarityIndex],
-  );
-
-  const anyRarityHasResources = useMemo(() => {
-    if (useFixedRarity) return fixedHasResources;
-    return weapon.rarityRows.some((_, index) =>
-      rarityHasResources(weapon, index),
-    );
-  }, [useFixedRarity, fixedHasResources, weapon]);
-
-  const rarityItems = (includeResources: boolean) =>
-    weapon.rarityRows.length === 0 ? (
-      <DropdownMenuItem className="text-xs" disabled>
-        No rarities
-      </DropdownMenuItem>
-    ) : (
-      weapon.rarityRows.map((row, index) => (
-        <DropdownMenuItem
-          key={`${includeResources ? "with" : "only"}-${row.rarity}-${index}`}
-          className="text-xs"
-          onSelect={() =>
-            onExportFoundry(weapon, index, undefined, { includeResources })
-          }
-        >
-          {row.rarity}
-        </DropdownMenuItem>
-      ))
-    );
-
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          type="button"
-          variant={variant}
-          size={size}
-          className={cn(
-            size === "sm" && variant === "ghost" && "h-7 px-2",
-            className,
-          )}
-          onClick={(e) => e.stopPropagation()}
-          aria-label={`Download JSON for ${weapon.name}`}
-        >
-          <Download className="h-3.5 w-3.5 mr-1" />
-          {triggerLabel}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="start"
-        className="text-xs"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <DropdownMenuItem
-          className="text-xs"
-          onSelect={() => onExportAmellwind(weapon)}
-        >
-          Amellwind JSON
-        </DropdownMenuItem>
-
-        {useFixedRarity ? (
-          fixedHasResources ? (
-            <>
-              <DropdownMenuSeparator />
-              <DropdownMenuLabel className="text-[10px] font-normal text-muted-foreground">
-                Foundry VTT (v12)
-              </DropdownMenuLabel>
-              <DropdownMenuItem
-                className="text-xs"
-                onSelect={() =>
-                  onExportFoundry(weapon, foundryRarityIndex, foundryItem, {
-                    includeResources: true,
-                  })
-                }
-              >
-                Weapon + resources
-              </DropdownMenuItem>
-              <DropdownMenuItem
-                className="text-xs"
-                onSelect={() =>
-                  onExportFoundry(weapon, foundryRarityIndex, foundryItem, {
-                    includeResources: false,
-                  })
-                }
-              >
-                Weapon only
-              </DropdownMenuItem>
-            </>
-          ) : (
-            <DropdownMenuItem
-              className="text-xs"
-              onSelect={() =>
-                onExportFoundry(weapon, foundryRarityIndex, foundryItem, {
-                  includeResources: false,
-                })
-              }
-            >
-              Foundry VTT (v12)
-            </DropdownMenuItem>
-          )
-        ) : anyRarityHasResources ? (
-          <>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-xs">
-                Foundry — Weapon + resources
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="text-xs" sideOffset={2}>
-                {rarityItems(true)}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className="text-xs">
-                Foundry — Weapon only
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className="text-xs" sideOffset={2}>
-                {rarityItems(false)}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-          </>
-        ) : (
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger className="text-xs">
-              Foundry VTT (v12)
-            </DropdownMenuSubTrigger>
-            <DropdownMenuSubContent className="text-xs" sideOffset={2}>
-              {rarityItems(false)}
-            </DropdownMenuSubContent>
-          </DropdownMenuSub>
-        )}
-        <div className="max-w-[16rem] border-t border-border px-2 py-1.5">
-          <FoundryModuleRequirementsNotice kind="weapon" compact />
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <Button
+      type="button"
+      variant={variant}
+      size={size}
+      className={cn(
+        size === "sm" && variant === "ghost" && "h-7 px-2",
+        className,
+      )}
+      onClick={(e) => {
+        e.stopPropagation();
+        onExportAmellwind(weapon);
+      }}
+      aria-label={`Download Amellwind JSON for ${weapon.name}`}
+    >
+      <Download className="h-3.5 w-3.5 mr-1" />
+      {triggerLabel}
+    </Button>
   );
 }

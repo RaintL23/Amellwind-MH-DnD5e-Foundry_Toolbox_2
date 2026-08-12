@@ -6,12 +6,6 @@ import {
   parseImportedWeapons,
   weaponToRawExport,
 } from "../mappers/weapon-forge.mapper";
-import {
-  buildWeaponFoundryExportBundle,
-  foundryItemFilename,
-} from "../mappers/weapon-forge-foundry.export";
-import { melodyFeatFilename } from "../mappers/weapon-forge-melody.export";
-import type { FoundryItem } from "@/shared/foundry";
 import { downloadFoundryJson } from "@/shared/foundry";
 
 const STORAGE_KEY = "weapon_forge_custom";
@@ -168,48 +162,6 @@ export function exportWeaponJson(weapon: CustomWeapon): void {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
   downloadJson(raw, `${safeName || "weapon"}.json`);
-}
-
-export function exportWeaponFoundryJson(
-  weapon: CustomWeapon,
-  rarityIndex: number,
-  /** When provided, downloads this exact weapon payload (must match preview). */
-  item?: FoundryItem,
-  options?: { includeResources?: boolean },
-): void {
-  const includeResources = options?.includeResources === true;
-  const bundle = item
-    ? {
-        weapon: item,
-        resources: includeResources
-          ? buildWeaponFoundryExportBundle(weapon, rarityIndex).resources
-          : [],
-      }
-    : (() => {
-        const full = buildWeaponFoundryExportBundle(weapon, rarityIndex);
-        return {
-          weapon: full.weapon,
-          resources: includeResources ? full.resources : [],
-        };
-      })();
-
-  const files: Array<{ data: unknown; filename: string }> = [
-    {
-      data: bundle.weapon,
-      filename: foundryItemFilename(weapon, rarityIndex),
-    },
-  ];
-  for (const resource of bundle.resources) {
-    files.push({
-      data: resource,
-      filename: melodyFeatFilename(resource),
-    });
-  }
-
-  // Browsers often keep only the last of several immediate downloads.
-  files.forEach((file, index) => {
-    window.setTimeout(() => downloadJson(file.data, file.filename), index * 150);
-  });
 }
 
 export function exportAllUserWeaponsJson(weapons: CustomWeapon[]): void {

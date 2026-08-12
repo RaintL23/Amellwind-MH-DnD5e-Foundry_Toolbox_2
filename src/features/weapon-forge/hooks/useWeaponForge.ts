@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { Weapon } from "@/shared/types";
-import type { FoundryItem } from "@/shared/foundry";
 import { getAllWeapons } from "@/features/weapons/services/weapon.service";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import {
   deleteUserWeapon,
   exportAllUserWeaponsJson,
-  exportWeaponFoundryJson,
   exportWeaponJson,
   getCuratedWeapons,
   getUserWeapons,
@@ -83,18 +81,6 @@ export function useWeaponForge() {
     exportWeaponJson(weapon);
   }, []);
 
-  const exportOneFoundry = useCallback(
-    (
-      weapon: CustomWeapon,
-      rarityIndex: number,
-      item?: FoundryItem,
-      options?: { includeResources?: boolean },
-    ) => {
-      exportWeaponFoundryJson(weapon, rarityIndex, item, options);
-    },
-    [],
-  );
-
   const exportAll = useCallback(() => {
     exportAllUserWeaponsJson(userWeapons);
   }, [userWeapons]);
@@ -135,7 +121,6 @@ export function useWeaponForge() {
     removeWeapon,
     importFromJson,
     exportOne,
-    exportOneFoundry,
     exportAll,
     compareSelection,
     toggleCompare,

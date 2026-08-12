@@ -6,19 +6,14 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pencil, Trash2 } from "lucide-react";
 import { useWeaponDialog } from "@/features/weapons/hooks/useWeaponDialog";
 import { WeaponDialogHeader } from "@/features/weapons/components/WeaponDialogHeader";
 import { WeaponDialogMeta } from "@/features/weapons/components/WeaponDialogMeta";
 import { WeaponRarityProgression } from "@/features/weapons/components/WeaponRarityProgression";
-import { WeaponFoundryPreviewPanel } from "@/features/weapons/components/WeaponFoundryPreviewPanel";
-import { buildWeaponFoundryItem } from "../mappers/weapon-forge-foundry.export";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { customFeaturesToOptionalMap } from "../mappers/weapon-forge.mapper";
-import type { FoundryItem } from "@/shared/foundry";
 import { WeaponForgeExportMenu } from "./WeaponForgeExportMenu";
-import type { FoundryExportOptions } from "./WeaponForgeExportMenu";
 
 interface WeaponForgeDialogProps {
   weapon: CustomWeapon | null;
@@ -29,12 +24,6 @@ interface WeaponForgeDialogProps {
   onRarityChange?: (rarity: string) => void;
   onEdit?: (weapon: CustomWeapon) => void;
   onExportAmellwind?: (weapon: CustomWeapon) => void;
-  onExportFoundry?: (
-    weapon: CustomWeapon,
-    rarityIndex: number,
-    item?: FoundryItem,
-    options?: FoundryExportOptions,
-  ) => void;
   onDelete?: (weapon: CustomWeapon) => void;
 }
 
@@ -47,7 +36,6 @@ export function WeaponForgeDialog({
   onRarityChange,
   onEdit,
   onExportAmellwind,
-  onExportFoundry,
   onDelete,
 }: WeaponForgeDialogProps) {
   const extraFeaturesMap = useMemo(() => {
@@ -80,15 +68,6 @@ export function WeaponForgeDialog({
     includePrerequisiteMatches: false,
   });
 
-  const foundryItem = useMemo(() => {
-    if (!weapon) return null;
-    try {
-      return buildWeaponFoundryItem(weapon, current);
-    } catch {
-      return null;
-    }
-  }, [weapon, current]);
-
   if (!weapon || !displayWeapon) return null;
 
   return (
@@ -114,16 +93,13 @@ export function WeaponForgeDialog({
             <Badge variant="outline">{weapon.source}</Badge>
 
             <div className="ml-auto flex gap-1">
-              {onExportAmellwind && onExportFoundry && (
+              {onExportAmellwind && (
                 <WeaponForgeExportMenu
                   weapon={weapon}
-                  foundryRarityIndex={current}
-                  foundryItem={foundryItem ?? undefined}
                   variant="outline"
                   size="sm"
                   triggerLabel="Download JSON"
                   onExportAmellwind={onExportAmellwind}
-                  onExportFoundry={onExportFoundry}
                 />
               )}
               {onEdit && weapon.isCustom && (
@@ -158,38 +134,22 @@ export function WeaponForgeDialog({
             </div>
           </div>
 
-          <Tabs defaultValue="rules" className="w-full">
-            <TabsList className="mb-3">
-              <TabsTrigger value="rules">Rules</TabsTrigger>
-              <TabsTrigger value="foundry">Foundry VTT v12</TabsTrigger>
-            </TabsList>
+          <div className="space-y-4">
+            <WeaponDialogMeta weapon={displayWeapon} />
 
-            <TabsContent value="rules" className="mt-0 space-y-4">
-              <WeaponDialogMeta weapon={displayWeapon} />
-
-              <WeaponRarityProgression
-                weapon={displayWeapon}
-                current={current}
-                onSelect={setCurrent}
-                onPrev={handlePrev}
-                onNext={handleNext}
-                columnChains={columnChains}
-                featuresMap={featuresMap}
-                mhItemEffectsMap={mhItemEffectsMap}
-                baseFeatures={baseFeatures}
-                baseFeatureNameKeys={baseFeatureNameKeys}
-              />
-            </TabsContent>
-
-            <TabsContent value="foundry" className="mt-0">
-              <WeaponFoundryPreviewPanel
-                weapon={weapon}
-                rarityIndex={current}
-                item={foundryItem}
-                onRarityIndexChange={setCurrent}
-              />
-            </TabsContent>
-          </Tabs>
+            <WeaponRarityProgression
+              weapon={displayWeapon}
+              current={current}
+              onSelect={setCurrent}
+              onPrev={handlePrev}
+              onNext={handleNext}
+              columnChains={columnChains}
+              featuresMap={featuresMap}
+              mhItemEffectsMap={mhItemEffectsMap}
+              baseFeatures={baseFeatures}
+              baseFeatureNameKeys={baseFeatureNameKeys}
+            />
+          </div>
         </DialogBody>
       </DialogContent>
     </Dialog>
