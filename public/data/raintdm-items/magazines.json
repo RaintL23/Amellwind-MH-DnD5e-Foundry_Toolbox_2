@@ -1,0 +1,314 @@
+{
+  "version": "1.0",
+  "description": "Dual Repeaters magazines (RaintDM rework).",
+  "items": [
+    {
+      "name": "Normal Magazine",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "common",
+      "value": 200,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Huskberry",
+        "item2": "Insect Husk",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters magazine. Unlocked at Common.",
+        "Deals the weapon's normal piercing damage.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "normal",
+        "chargesPerMagazine": 6,
+        "damageType": "piercing",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Blaze Magazine",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "uncommon",
+      "value": 500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Nitroshroom",
+        "item2": "Insect Husk",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Uncommon.",
+        "Your attacks with this ammo deal fire damage instead of piercing.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "blaze",
+        "chargesPerMagazine": 6,
+        "damageType": "fire",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Cryo Magazine",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "uncommon",
+      "value": 500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Snow Herb",
+        "item2": "Insect Husk",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Uncommon.",
+        "Your attacks with this ammo deal cold damage instead of piercing.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "cryo",
+        "chargesPerMagazine": 6,
+        "damageType": "cold",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Storm Magazine",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "uncommon",
+      "value": 500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Thunderbug",
+        "item2": "Insect Husk",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Uncommon.",
+        "Your attacks with this ammo deal lightning damage instead of piercing.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "storm",
+        "chargesPerMagazine": 6,
+        "damageType": "lightning",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Slime Magazine",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "uncommon",
+      "value": 500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Sap Plant",
+        "item2": "Insect Husk",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Uncommon.",
+        "Your attacks with this ammo deal acid damage instead of piercing.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "slime",
+        "chargesPerMagazine": 6,
+        "damageType": "acid",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Blaze Magazine Upgrade I",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "rare",
+      "value": 1500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Catalyst",
+        "item2": "Nitroshroom",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Rare.",
+        "Your attacks with this ammo deal fire damage instead of piercing. The target takes an extra {@dice 1d6} fire damage.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "blaze-i",
+        "chargesPerMagazine": 6,
+        "damageType": "fire",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Cryo Magazine Upgrade I",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "rare",
+      "value": 1500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Catalyst",
+        "item2": "Snow Herb",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Rare.",
+        "Your attacks with this ammo deal cold damage instead of piercing. The target's Speed is reduced by 10 feet until the start of your next turn (does not stack).",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "cryo-i",
+        "chargesPerMagazine": 6,
+        "damageType": "cold",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Storm Magazine Upgrade I",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "rare",
+      "value": 1500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Catalyst",
+        "item2": "Thunderbug",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Rare.",
+        "Your attacks with this ammo deal lightning damage instead of piercing. The target cannot take Reactions until the start of your next turn.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "storm-i",
+        "chargesPerMagazine": 6,
+        "damageType": "lightning",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Slime Magazine Upgrade I",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "rare",
+      "value": 1500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Catalyst",
+        "item2": "Sap Plant",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Rare.",
+        "Your attacks with this ammo deal acid damage instead of piercing. The next attack roll made against the target before the end of your next turn has Advantage.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "slime-i",
+        "chargesPerMagazine": 6,
+        "damageType": "acid",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Dawnstar Magazine",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "rare",
+      "value": 2000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Exciteshroom",
+        "item2": "Insect Husk",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Rare.",
+        "Undead take an extra {@dice 1d6} damage. Invisible creatures hit by this ammo lose their invisibility until the end of your next turn.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "dawnstar",
+        "chargesPerMagazine": 6,
+        "damageType": "piercing",
+        "baseWeapon": "Dual Repeaters"
+      }
+    },
+    {
+      "name": "Twilight Magazine",
+      "source": "RAINTDM",
+      "type": "MHMAG",
+      "rarity": "rare",
+      "value": 2000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Gloamglass Root",
+        "item2": "Insect Husk",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Dual Repeaters specialty magazine. Unlocked at Rare.",
+        "A creature hit by this ammo cannot regain hit points until the start of your next turn.",
+        "Load Magazine (Bonus Action): expend this magazine to fill the Dual Repeaters with 6 Charges. Each Dual Repeaters attack spends 1 Charge. Magazines do not regenerate."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "magazine",
+        "magazineKey": "twilight",
+        "chargesPerMagazine": 6,
+        "damageType": "piercing",
+        "baseWeapon": "Dual Repeaters"
+      }
+    }
+  ]
+}

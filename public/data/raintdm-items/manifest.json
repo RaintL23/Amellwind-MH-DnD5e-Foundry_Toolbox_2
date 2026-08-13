@@ -1,0 +1,5 @@
+{
+  "version": "1.0",
+  "description": "Curated RaintDM items catalog — one JSON file per category.",
+  "items": ["magazines.json"]
+}
