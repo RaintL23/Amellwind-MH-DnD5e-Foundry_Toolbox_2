@@ -1,14 +1,20 @@
 import { Rune } from "@/shared/types";
 import { getMonsterData, clearMonsterDataCache } from "@/shared/db/sync.service";
 import { createEntityService } from "@/shared/services/create-entity-service";
+import { getAllSpells } from "@/features/spells/services/spell.service";
 import { mapRunesFromMonster } from "../mappers/rune.mapper";
+import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 
 const service = createEntityService<Rune, Rune>({
   loadRaw: async () => {
-    const rawData = (await getMonsterData()) as unknown[];
+    const [rawData, spells] = await Promise.all([
+      getMonsterData() as Promise<unknown[]>,
+      getAllSpells().catch(() => [] as Awaited<ReturnType<typeof getAllSpells>>),
+    ]);
+    const spellLevels = buildSpellLevelLookup(spells);
     const runes: Rune[] = [];
     for (const rawMonster of rawData) {
-      runes.push(...mapRunesFromMonster(rawMonster));
+      runes.push(...mapRunesFromMonster(rawMonster, spellLevels));
     }
     return runes;
   },

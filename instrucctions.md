@@ -681,7 +681,7 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 
 | Tag                      | Regla de detección                                                                                                     |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `mechanic:spell`         | Contiene `{@spell` de nivel 1+ → se emite como `:lvl1-2` / `:lvl3+` (no cantrips)                                      |
+| `mechanic:spell`         | Contiene `{@spell`: se resuelve el nivel en el catálogo de conjuros → `mechanic:spell:lvlN` (1–9). Cantrip (nivel 0) → solo `mechanic:cantrip`. Si el conjuro no está en el catálogo, fallback `lvl1-2` / `lvl3+` por texto/runas. |
 | `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
 | `mechanic:critical`      | Contiene la palabra `critical` (case-insensitive)                                                                      |
 | `mechanic:extra-damage`  | Contiene `extra {@damage`, `extra NdX` o `extra N … damage` → se emite como `:minor` / `:major` según score |
@@ -697,13 +697,13 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:movement`      | Contiene `movement` o `speed` o `jump` en contexto de desplazamiento                                                   |
 | `mechanic:advantage`     | Contiene `advantage` (sin ser seguido de `saving throw` — ese ya tiene su tag)                                         |
 | `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
-| `mechanic:cantrip`       | Contiene `cantrip`; si el efecto solo lanza un cantrip (`{@spell …} cantrip`), no se añade `mechanic:spell:lvl*`   |
+| `mechanic:cantrip`       | Contiene `cantrip`, o `{@spell` resuelto como nivel 0 en el catálogo                                                  |
 | `mechanic:class-feature` | Contiene el nombre de una feature de clase específica (ej. `wyvernfire`, `dragonpiercer`, `Guard AC`, `Mighty Weapon`) |
 
 ##### Notas de implementación de tags
 
 - Las reglas se aplican sobre el texto del efecto **ya concatenado** (`entries.join(" ")`), antes de parsear el marcado de 5etools.
-- Un mismo efecto puede activar múltiples reglas simultáneamente. Ejemplo: `"{@i (Spellcaster only)} This weapon has 4 runes. Cast {@spell lightning bolt}"` → `["class:spellcaster", "mechanic:rune-charges", "mechanic:spell"]`.
+- Un mismo efecto puede activar múltiples reglas simultáneamente. Ejemplo: `"{@i (Spellcaster only)} This weapon has 4 runes. Cast {@spell lightning bolt}"` → con catálogo de conjuros → `["class:spellcaster", "mechanic:rune-charges", "mechanic:spell:lvl3"]` (Lightning Bolt es nivel 3).
 - Si el texto no coincide con ninguna regla, `tags` es `[]`.
 - Las reglas son **case-insensitive** salvo donde se indique lo contrario.
 - El listado `/runes` filtra tags en **AND sobre el mismo lado** (`runeMatchesListTagFilter`): Slot Armor + `damage:fire` + `mechanic:immunity` solo muestra runas cuyo **armorEffect** tenga fuego e inmunidad juntos. No basta con que el fuego esté en el arma y la inmunidad en la armadura.

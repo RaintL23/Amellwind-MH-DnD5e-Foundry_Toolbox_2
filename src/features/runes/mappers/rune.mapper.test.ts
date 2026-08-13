@@ -1,5 +1,34 @@
 import { describe, expect, it } from "vitest";
 import { extractRuneEffectTags } from "../mappers/rune.mapper";
+import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
+import type { Spell } from "@/shared/types";
+
+function makeSpell(name: string, level: number): Spell {
+  return {
+    id: name,
+    name,
+    source: "XPHB",
+    level,
+    school: "V",
+    schoolName: "Evocation",
+    castingTime: "1 action",
+    range: "Self",
+    components: { v: true, s: false },
+    duration: "Instantaneous",
+    isRitual: false,
+    isConcentration: false,
+    classNames: [],
+    classes: [],
+    description: [],
+    summary: "",
+  };
+}
+
+const spellLevels = buildSpellLevelLookup([
+  makeSpell("Light", 0),
+  makeSpell("Shield", 1),
+  makeSpell("Dimension Door", 4),
+]);
 
 describe("extractRuneEffectTags — mixed resistance and immunity", () => {
   it("tags both resistance and immunity for resistant-to + condition immunity", () => {
@@ -47,16 +76,27 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
   });
 
-  it("tags cantrip casts without spell:lvl1-2", () => {
+  it("tags cantrip casts without spell:lvl tags when looked up", () => {
     const tags = extractRuneEffectTags(
       "While holding this weapon, you can use an action to cast the {@spell light} cantrip from it. Once used, this property can't be used again until the next dawn.",
+      spellLevels,
     );
 
     expect(tags).toContain("mechanic:cantrip");
     expect(tags.some((tag) => tag.startsWith("mechanic:spell:"))).toBe(false);
   });
 
-  it("still tags leveled {@spell} as spell:lvl1-2", () => {
+  it("tags dimension door from the spell catalog as spell:lvl4", () => {
+    const tags = extractRuneEffectTags(
+      "While you are wearing this armor, you can cast the {@spell dimension door} spell as an action. Once you use this property, you can't use it again until the next dawn.",
+      spellLevels,
+    );
+
+    expect(tags).toContain("mechanic:spell:lvl4");
+    expect(tags).not.toContain("mechanic:spell:lvl1-2");
+  });
+
+  it("falls back to spell:lvl1-2 when the spell catalog has no match", () => {
     const tags = extractRuneEffectTags(
       "You can cast {@spell shield} from this weapon (1 rune).",
     );

@@ -6,6 +6,11 @@ import {
   getCrValues,
   parseCR,
 } from "@/shared/utils/cr.utils";
+import {
+  resolveSpellLevelsFromText,
+  spellTagsFromLevels,
+  type SpellLevelLookup,
+} from "../utils/spell-level-lookup.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -229,33 +234,39 @@ function spellBuffTags(text: string): string[] {
 }
 
 /**
- * mechanic:spell:lvl3+   → menciona nivel 3-9 explícitamente, o costo ≥ 3 runas
- * mechanic:spell:lvl1-2  → {@spell de nivel 1–2 (no cantrips)
- * Cantrips solo emiten mechanic:cantrip (patrón MECHANIC_PATTERNS), no spell:lvl*.
+ * Resolves spell tags from the spell catalog when possible.
+ * Fallback heuristic when the spell is unknown / lookup missing:
+ * - mechanic:spell:lvl3+ for 3rd+ language or costly runes
+ * - mechanic:spell:lvl1-2 otherwise (except cantrip-only text)
  */
-function spellTag(text: string): string | null {
-  if (!/\{@spell/i.test(text)) return null;
+function spellTags(
+  text: string,
+  spellLevels?: SpellLevelLookup | null,
+): string[] {
+  if (!/\{@spell/i.test(text)) return [];
 
-  // Nivel explícito en texto: "3rd-level", "4th-level spell", etc.
-  if (/\b[3-9](?:rd|th)-level\b/i.test(text)) return "mechanic:spell:lvl3+";
+  const lookedUp = spellTagsFromLevels(
+    resolveSpellLevelsFromText(text, spellLevels),
+  );
+  if (lookedUp.length > 0) return lookedUp;
 
-  // Costo de runas como proxy de nivel: "(3 runes)", "(4 runes)…"
+  if (/\b[3-9](?:rd|th)-level\b/i.test(text)) return ["mechanic:spell:lvl3+"];
+
   const runeMatches = [
     ...text.matchAll(/\{@spell[^}]+\}\s*\((\d+)\s*runes?\)/gi),
   ];
   if (runeMatches.some((m) => parseInt(m[1], 10) >= 3)) {
-    return "mechanic:spell:lvl3+";
+    return ["mechanic:spell:lvl3+"];
   }
 
   const hasLeveledSpellLanguage =
     /\b[12](?:st|nd)-level\b/i.test(text) || runeMatches.length > 0;
 
-  // "cast the {@spell light} cantrip" → only mechanic:cantrip, not spell:lvl1-2
   if (/\bcantrip\b/i.test(text) && !hasLeveledSpellLanguage) {
-    return null;
+    return [];
   }
 
-  return "mechanic:spell:lvl1-2";
+  return ["mechanic:spell:lvl1-2"];
 }
 
 /**
@@ -308,7 +319,10 @@ function typeTags(text: string): string[] {
   return tags;
 }
 
-function extractTags(effectText: string): string[] {
+function extractTags(
+  effectText: string,
+  spellLevels?: SpellLevelLookup | null,
+): string[] {
   const tags = new Set<string>();
 
   for (const [pattern, tag] of CLASS_PATTERNS) {
@@ -328,8 +342,9 @@ function extractTags(effectText: string): string[] {
   const heal = healingTag(effectText);
   if (heal) tags.add(heal);
 
-  const spell = spellTag(effectText);
-  if (spell) tags.add(spell);
+  for (const spell of spellTags(effectText, spellLevels)) {
+    tags.add(spell);
+  }
 
   for (const buffTag of spellBuffTags(effectText)) {
     tags.add(buffTag);
@@ -347,8 +362,11 @@ function extractTags(effectText: string): string[] {
 }
 
 /** Exported for unit tests and shared tag previews. */
-export function extractRuneEffectTags(effectText: string): string[] {
-  return extractTags(effectText);
+export function extractRuneEffectTags(
+  effectText: string,
+  spellLevels?: SpellLevelLookup | null,
+): string[] {
+  return extractTags(effectText, spellLevels);
 }
 
 // ─── Main mapper ─────────────────────────────────────────────────────────────
@@ -367,8 +385,10 @@ function findInset(entries: unknown[]): Raw | undefined {
   return undefined;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function mapRunesFromMonster(rawMonster: any): Rune[] {
+export function mapRunesFromMonster(
+  rawMonster: Raw,
+  spellLevels?: SpellLevelLookup | null,
+): Rune[] {
   const fluff = rawMonster?.fluff;
   if (!fluff || !Array.isArray(fluff.entries)) return [];
 
@@ -420,8 +440,12 @@ export function mapRunesFromMonster(rawMonster: any): Rune[] {
     const armorEffect = armorEffects[name] ?? null;
     const weaponEffect = weaponEffects[name] ?? null;
 
-    const weaponTags = weaponEffect ? extractTags(weaponEffect) : [];
-    const armorTags = armorEffect ? extractTags(armorEffect) : [];
+    const weaponTags = weaponEffect
+      ? extractTags(weaponEffect, spellLevels)
+      : [];
+    const armorTags = armorEffect
+      ? extractTags(armorEffect, spellLevels)
+      : [];
     const tags = Array.from(new Set([...weaponTags, ...armorTags]));
 
     runes.push({
