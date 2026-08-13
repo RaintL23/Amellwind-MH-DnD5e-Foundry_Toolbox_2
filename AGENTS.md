@@ -74,14 +74,18 @@ El código vive en `src/`:
 src/
 ├── App.tsx              # Router lazy + sync inicial + providers globales
 ├── components/          # layout/, data-table/ (TanStack Table), ui/ (shadcn)
-├── features/<feature>/  # una carpeta por pantalla/dominio
+├── features/
+│   ├── home/            # landing (las 3 secciones)
+│   ├── amellwind/<x>/   # Homebrew Amellwind (misma sección que el Sidebar)
+│   ├── raintdm/<x>/     # RaintDM (Builder + forges)
+│   └── dnd/<x>/         # Compendio D&D 5e
 └── shared/              # constants, context, db, services, types, utils, mappers, components
 ```
 
 **Patrón de feature** (no todas tienen todas las carpetas — copia el patrón de una vecina similar):
 
 ```text
-features/<x>/
+features/<section>/<x>/
 ├── components/   # UI de la feature
 ├── services/     # acceso a datos (ver factory abajo)
 ├── mappers/      # raw (5etools/IndexedDB) → modelo de dominio
@@ -89,6 +93,8 @@ features/<x>/
 ├── data/         # datos estáticos *.data.ts (cuando aplica)
 └── context/      # estado local de la feature (cuando aplica)
 ```
+
+Colocación: **misma sección que el Sidebar**. El Character Builder es RaintDM (hub de personaje). Si una feature no tiene ruta (p. ej. `dnd/optionalfeatures`), va con el compendio 5e.
 
 ### Capa de datos (clave para no romper nada)
 
@@ -101,16 +107,16 @@ features/<x>/
 
 Estas áreas tienen reglas de negocio densas. Lee su sección en `instrucctions.md` y los tipos involucrados **antes** de editar.
 
-1. **Character Builder (ALPHA)** — `src/features/builder/`
+1. **Character Builder (ALPHA)** — `src/features/raintdm/builder/`
    - Estado compuesto por **slices de hooks** (`context/slices/`: identity, proficiency, equipment, spell) orquestados por `CharacterBuilderContext`. Hay contextos satélite: `BuilderInventoryContext`, `BuildCompletenessContext`, `RpgbotRatingsContext`.
    - Persistencia propia en `storage/builder.storage.ts`.
    - Depende de varios catálogos (clases, especies, trasfondos, dotes, conjuros, equipo) y del planificador de runas (`RuneBuildProvider`, compartido con `/runes`).
 
-2. **Export Foundry VTT** — núcleo `src/shared/foundry/` (+ `weapons/`); actor en `src/features/builder/foundry-export/`
+2. **Export Foundry VTT** — núcleo `src/shared/foundry/` (+ `weapons/`); actor en `src/features/raintdm/builder/foundry-export/`
    - Genera un actor `character` de **Foundry dnd5e v12**. Infra: tipos/IDs/`downloadFoundryJson`/midi/enrichers/mappings en `shared/foundry/`. Actor: `actor.builder.ts` + `items/*`. Automatización de armas: `shared/foundry/weapons/`.
    - Cambiar un mapeo aquí puede romper la importación en Foundry: respeta la forma exacta del schema dnd5e.
 
-3. **Import Foundry VTT** — `src/features/builder/foundry-import/`
+3. **Import Foundry VTT** — `src/features/raintdm/builder/foundry-import/`
    - `parse-foundry-actor.ts` reconstruye el build haciendo *matching* de cada entidad contra los catálogos de la app. Cambios en nombres/IDs de catálogos pueden romper el matching.
 
 4. **Parsing de 5etools** — `src/shared/utils/` y `src/shared/data/`

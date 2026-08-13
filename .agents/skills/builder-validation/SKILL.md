@@ -13,12 +13,12 @@ description: >-
 
 In-app completeness lives in:
 
-- `evaluateBuildCompleteness()` — `src/features/builder/utils/build-completeness.utils.ts`
+- `evaluateBuildCompleteness()` — `src/features/raintdm/builder/utils/build-completeness.utils.ts`
 - Wired to UI/export via `BuildCompletenessContext`
 - Export is blocked when `shouldBlockExport` is true (`hasStarted && issues.length > 0`)
 
 Do **not** invent a parallel checklist. Extend the evaluators under
-`src/features/builder/utils/build-completeness/` and cover new rules with Vitest.
+`src/features/raintdm/builder/utils/build-completeness/` and cover new rules with Vitest.
 
 ## Character creation steps (what must be valid)
 
@@ -46,7 +46,7 @@ Notes:
 
 1. Read the matching evaluator file before editing.
 2. Add/adjust a Vitest case in
-   `src/features/builder/utils/build-completeness/build-completeness.test.ts`
+   `src/features/raintdm/builder/utils/build-completeness/build-completeness.test.ts`
    (use `createEmptyCompletenessInput` from `completeness-input.fixture.ts`).
 3. Run:
 

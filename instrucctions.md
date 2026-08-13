@@ -41,7 +41,6 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /                          → Redirect a /monsters
 
 ── Amellwind Homebrew ──
-/builder                   → Character Builder (ALPHA, export/import Foundry VTT)
 /damage-calculator         → Calculadora de daño por turno
 /character-guide           → Guía de creación de personajes
 /monstie-sidekick          → Reglas y creador de Monstie Sidekick
@@ -65,6 +64,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /downtime                  → Actividades de downtime (GTMH)
 
 ── Amellwind (RaintDM) ──
+/builder                   → Character Builder (ALPHA, export/import Foundry VTT)
 /weapon-forge              → Weapon Forge (variantes RaintDM + armas custom)
 /weapon-forge/new          → Crear arma custom
 /weapon-forge/edit/:id     → Editar arma custom
@@ -135,19 +135,20 @@ Providers **por ruta** (no globales):
 
 El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_SECTIONS` (`Sidebar.tsx`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items`. Home replica las mismas tres secciones en `HomePage.tsx`.
 
-**Amellwind (RaintDM)** agrupa variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (p. ej. Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
+**Amellwind (RaintDM)** agrupa el Character Builder (hub de personaje de toda la app) y las variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
 
 El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInventoryContext`), no un inventario separado: el equipo equipable del builder proviene de ítems añadidos al carrito en Shops/Items.
 
 | Sección                | Grupo Sidebar                      | Links principales                                              |
 | ---------------------- | ---------------------------------- | -------------------------------------------------------------- |
-| Amellwind Homebrew     | Character                          | Builder, Damage Calculator, Creation Guide                     |
+| Amellwind Homebrew     | Character                          | Damage Calculator, Creation Guide                              |
 | Amellwind Homebrew     | Bestiary and Rules                 | Monsters, Conditions & Diseases                                |
 | Amellwind Homebrew     | Species and Character Options      | Species, Backgrounds, Feats                                    |
 | Amellwind Homebrew     | Weapons, Runes, and Equipment      | Weapons, Runes, Material Effects, Items                        |
 | Amellwind Homebrew     | World and Exploration              | Hunt Planner, Environments, Resources, Shops, Cooking, Combo List, Downtime |
 | Amellwind Homebrew     | NPCs and Companions                | Monstie Sidekick, NPC Generator                                |
-| Amellwind (RaintDM)    | Weapons _(plano si es el único grupo)_ | Weapon Forge, Items Forge                                  |
+| Amellwind (RaintDM)    | Character                          | Builder                                                        |
+| Amellwind (RaintDM)    | Weapons                            | Weapon Forge, Items Forge                                      |
 | D&D 5e Compendium      | Spells and Classes                 | Spells, Classes                                                |
 | D&D 5e Compendium      | Character Options                  | Races, Backgrounds, Feats                                      |
 | D&D 5e Compendium      | Bestiary                           | Bestiary                                                       |
@@ -1769,7 +1770,7 @@ Generador de tiendas del compendio 5e (no confundir con `/shops` Amellwind). Usa
 
 Cadena de precio (`resolveItemPriceGp`): CSV exacto (con alias `+N Name` ↔ `Name, +N`) → genéricos `Armor/Weapon/Ammunition +N` **más** coste mundano `baseValueCp` de la variante específica → `valueCp` del catálogo → estimación por rareza. La columna **Price** del listado y el diálogo de ítems usan esa cadena (tooltip de breakdown + atribución); el badge Basis del shop hace lo mismo. El diálogo sigue mostrando también el **Value** crudo de 5etools cuando existe.
 
-Markup post-generación cheap/normal/expensive; precios editables a mano. Persistencia de la última tienda en `localStorage` (`mh-shop-generator`). Créditos en Home y cabecera del Shop Generator. Feature: `src/features/shop-generator/`.
+Markup post-generación cheap/normal/expensive; precios editables a mano. Persistencia de la última tienda en `localStorage` (`mh-shop-generator`). Créditos en Home y cabecera del Shop Generator. Feature: `src/features/dnd/shop-generator/`.
 
 ---
 
@@ -1786,38 +1787,26 @@ src/
 │   ├── data-table/         # Tabla reutilizable (TanStack Table)
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
-│   ├── builder/            # Character Builder ALPHA (+ foundry-export/ actor-only, foundry-import/)
-│   ├── weapon-forge/       # Custom weapons + Foundry item export (uses shared/foundry)
-│   ├── item-forge/         # Catálogo de ítems RaintDM (JSON curated)
-│   ├── damage-calculator/  # Calculadora de daño por turno (localStorage)
-│   ├── monsters/           # Listado + MonsterDetailPage
-│   ├── runes/              # Materiales + BuildDrawer + RuneBuildContext
-│   ├── material-effects/   # Efectos de materiales (armadura/arma)
-│   ├── conditions/         # Condiciones Amellwind
-│   ├── diseases/           # Enfermedades Amellwind
-│   ├── weapons/            # Hunter Weapons + optional features
-│   ├── shops/              # Items, Shops, CartContext
-│   ├── species/            # Especies GTMH
-│   ├── backgrounds/        # Trasfondos GTMH
-│   ├── feats/              # Feats GTMH
-│   ├── character-guide/    # Guía de creación (estático)
-│   ├── monstie-sidekick/   # Sidekicks Monstie
-│   ├── npc-generator/      # Generador de NPCs
-│   ├── downtime/           # Actividades de downtime
-│   ├── cooking/            # Cocina artesana
-│   ├── combo/              # Combo List
-│   ├── resources/          # Recursos de campo
-│   ├── environments/       # Biomas
-│   ├── spells/             # Conjuros 5e
-│   ├── classes/            # Clases 5e
-│   ├── dnd-items/          # Ítems 5e + catálogo de equipo del builder
-│   ├── dnd-races/          # Especies 5e
-│   ├── dnd-backgrounds/    # Trasfondos 5e
-│   ├── dnd-feats/          # Dotes 5e
-│   ├── dnd-optionalfeatures/ # Optional features 5e (sin ruta)
-│   ├── xanathar-backstory/ # Generador de trasfondo (XGE)
-│   ├── shop-generator/     # Generador de tiendas D&D 5e
-│   └── bestiary/           # Bestiario 5e
+│   ├── home/               # Landing (replica las tres secciones del Sidebar)
+│   ├── amellwind/          # Homebrew Amellwind (mismos grupos que el Sidebar)
+│   │   ├── damage-calculator/
+│   │   ├── character-guide/
+│   │   ├── monsters/
+│   │   ├── conditions/ + diseases/
+│   │   ├── species/ backgrounds/ feats/
+│   │   ├── weapons/ runes/ material-effects/ shops/
+│   │   ├── hunt/ environments/ resources/ cooking/ combo/ downtime/
+│   │   └── monstie-sidekick/ npc-generator/
+│   ├── raintdm/            # RaintDM
+│   │   ├── builder/        # Character Builder ALPHA (+ foundry-export/, foundry-import/)
+│   │   ├── weapon-forge/
+│   │   └── item-forge/
+│   └── dnd/                # Compendio D&D 5e
+│       ├── spells/ classes/ races/ backgrounds/ feats/ items/
+│       ├── optionalfeatures/  # sin ruta; usado por builder/classes
+│       ├── bestiary/
+│       ├── xanathar-backstory/
+│       └── shop-generator/
 ├── shared/
 │   ├── foundry/            # Foundry VTT export core (types, id, download, midi, enrichers, mappings, icons, weapons/)
 │   ├── types/              # Entidades tipadas

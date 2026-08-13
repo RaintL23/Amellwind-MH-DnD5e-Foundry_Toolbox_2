@@ -121,7 +121,7 @@ Whenever you add or change content in
 [`public/data/foundry-jsons-example`](../foundry-jsons-example):
 
 1. Edit / add the `fvtt-*.json` files there (keep the folder layout).
-2. If you changed the Combo List recipes (`src/features/combo/data/combo.data.ts`)
+2. If you changed the Combo List recipes (`src/features/amellwind/combo/data/combo.data.ts`)
    or the crafting macro/UI, regenerate the Combo Crafting item first so the
    embedded recipe table and Item Macro stay in sync:
 

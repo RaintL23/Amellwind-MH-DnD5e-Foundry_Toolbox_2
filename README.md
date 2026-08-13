@@ -16,7 +16,6 @@ It started at my table: I play with friends who care more about D&D than Monster
 
 | Section              | Route               | Description                                                                   |
 | -------------------- | ------------------- | ----------------------------------------------------------------------------- |
-| **Builder**          | `/builder`          | Character Builder — stats, equipment, runes, DPR, and **Foundry VTT export/import** _(ALPHA)_ |
 | **Damage Calculator**| `/damage-calculator`| Expected damage-per-turn calculator for comparing weapon builds (persisted) |
 | **Creation Guide**   | `/character-guide`  | Character creation guide from the manual (species, roles, skills, etc.)      |
 | **Monstie Sidekick** | `/monstie-sidekick` | Rules and creator for Monstie sidekicks                                         |
@@ -44,6 +43,7 @@ RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tw
 
 | Section         | Route           | Description                                                                 |
 | --------------- | --------------- | --------------------------------------------------------------------------- |
+| **Builder**      | `/builder`      | Character Builder — stats, equipment, runes, DPR, and **Foundry VTT export/import** _(ALPHA)_. Aggregates Amellwind, 5e, and RaintDM catalogs. |
 | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create and export |
 | **Items Forge**  | `/item-forge`   | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
 
@@ -65,7 +65,7 @@ Official reference data loaded from [5etools](https://5e.tools) (not Amellwind h
 
 ### Foundry VTT integration
 
-The **Character Builder** can **export** the character as a **Foundry VTT (dnd5e v12)** `character` actor ready to import, and **import** a Foundry actor JSON back to rebuild the character inside the app. Export produces a single JSON file with class/subclass, species, background, feats, spells, weapons/armor/trinkets, advancements, and portrait/token; import _matches_ each entity against the app catalogs (classes, species, backgrounds, feats, spells, and equipment). Both flows live in `src/features/builder/foundry-export/` and `foundry-import/`, with buttons on the builder’s `StatsPanel`.
+The **Character Builder** can **export** the character as a **Foundry VTT (dnd5e v12)** `character` actor ready to import, and **import** a Foundry actor JSON back to rebuild the character inside the app. Export produces a single JSON file with class/subclass, species, background, feats, spells, weapons/armor/trinkets, advancements, and portrait/token; import _matches_ each entity against the app catalogs (classes, species, backgrounds, feats, spells, and equipment). Both flows live in `src/features/raintdm/builder/foundry-export/` and `foundry-import/`, with buttons on the builder’s `StatsPanel`.
 
 Export also **enriches items with Midi-QoL / DAE automation** (Active Effects with `midi-qol`/`dae` flags), mirroring what the **Plutonium** importer would add: the actor behaves as if it went through *Plutonium Addon: Automation*, as long as the destination world has **Midi QoL + DAE + Times Up** enabled. Automation overlays (`foundry-export/automation.data.ts`) are ported as reference data from [TheGiddyLimit](https://github.com/TheGiddyLimit) repos — see [Data sources](#data-sources).
 
@@ -170,7 +170,7 @@ Playtest / Unearthed Arcana material comes from the [TheGiddyLimit/unearthed-arc
 
 ### Foundry automation (Midi-QoL / Plutonium)
 
-The automation export injects into items (Active Effects with `midi-qol`/`dae` flags, in `src/features/builder/foundry-export/automation.data.ts` and `automation.builders.ts`) uses the following repositories as **reference information**, so that section of the code behaves like the Plutonium importer:
+The automation export injects into items (Active Effects with `midi-qol`/`dae` flags, in `src/features/raintdm/builder/foundry-export/automation.data.ts` and `automation.builders.ts`) uses the following repositories as **reference information**, so that section of the code behaves like the Plutonium importer:
 
 - [TheGiddyLimit/plutonium-addon-automation](https://github.com/TheGiddyLimit/plutonium-addon-automation) — automation overlay format and effect data per entity (feats, features, magic items, spells). _MIT License, © TheGiddyLimit._
 - [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew) — reference 5etools homebrew format for name/source matching.
@@ -188,37 +188,10 @@ src/
 │   ├── data-table/         # Reusable table (TanStack Table)
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
-│   ├── builder/            # Character Builder (ALPHA) + Foundry VTT export/import
-│   ├── damage-calculator/  # Damage-per-turn calculator (persisted in localStorage)
-│   ├── monsters/           # MH monster list + detail
-│   ├── runes/              # Materials + planner (BuildDrawer)
-│   ├── material-effects/   # Material effects (armor/weapon)
-│   ├── conditions/         # Amellwind conditions
-│   ├── diseases/           # Amellwind diseases
-│   ├── weapons/            # Hunter Weapons
-│   ├── shops/              # Items, shops, cart
-│   ├── item-forge/         # RaintDM items catalog (curated JSON)
-│   ├── species/            # GTMH species
-│   ├── backgrounds/        # GTMH backgrounds
-│   ├── feats/              # GTMH feats
-│   ├── character-guide/    # Creation guide (static)
-│   ├── monstie-sidekick/   # Monstie sidekicks
-│   ├── npc-generator/      # NPC generator
-│   ├── downtime/           # Downtime activities
-│   ├── cooking/            # Artisan cooking
-│   ├── combo/              # Combo List
-│   ├── resources/          # Field resources
-│   ├── environments/       # Biomes
-│   ├── spells/             # 5e spell compendium
-│   ├── classes/            # 5e class compendium
-│   ├── dnd-items/          # 5e item compendium (+ builder equipment catalog)
-│   ├── dnd-races/          # Official 5e species
-│   ├── dnd-backgrounds/    # Official 5e backgrounds
-│   ├── dnd-feats/          # Official 5e feats
-│   ├── dnd-optionalfeatures/ # 5e optional features (no route; used by the builder)
-│   ├── xanathar-backstory/ # Backstory generator (XGE)
-│   ├── shop-generator/     # D&D 5e shop generator
-│   └── bestiary/           # 5e bestiary
+│   ├── home/               # Landing (mirrors the three Sidebar sections)
+│   ├── amellwind/          # Amellwind Homebrew (same groups as the Sidebar)
+│   ├── raintdm/            # RaintDM: Character Builder + Weapon/Items Forge
+│   └── dnd/                # D&D 5e Compendium (spells, classes, races, items, …)
 └── shared/
     ├── constants/          # API URLs, IndexedDB, D&D constants (abilities, skills)
     ├── context/            # ThemeContext, SyncContext
