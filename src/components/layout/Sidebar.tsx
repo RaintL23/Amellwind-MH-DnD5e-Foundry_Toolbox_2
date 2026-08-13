@@ -123,6 +123,7 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Weapons",
         items: [
           { to: "/weapon-forge", label: "Weapon Forge", icon: Hammer },
+          { to: "/item-forge", label: "Items Forge", icon: Layers },
         ],
       },
     ],

@@ -218,6 +218,13 @@ const raintDmSections: SectionItem[] = [
       "Browse curated RaintDM weapons or create and edit custom ones for your table.",
     icon: <Hammer className="h-5 w-5" />,
   },
+  {
+    label: "Items Forge",
+    route: "/item-forge",
+    description:
+      "Browse curated RaintDM items and craft them with Amellwind Combo List recipes.",
+    icon: <Layers className="h-5 w-5" />,
+  },
 ];
 
 const dndSections: SectionItem[] = [
