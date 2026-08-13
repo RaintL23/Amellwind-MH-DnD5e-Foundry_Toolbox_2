@@ -45,6 +45,7 @@ Variantes de RaintDM sobre el homebrew 2014 de Amellwind — toques de house rul
 | Sección          | Ruta            | Descripción                                                                 |
 | ---------------- | --------------- | --------------------------------------------------------------------------- |
 | **Weapon Forge** | `/weapon-forge` | Armas de cazador curated de RaintDM más armas custom que creas y exportas |
+| **Items Forge**  | `/item-forge`   | Ítems curated de RaintDM y recetas tipo Combo List (magazines de Dual Repeaters y más adelante) |
 
 ### Compendio D&D 5e
 
@@ -159,7 +160,7 @@ El JSON de la Guía de Caza también aporta species, backgrounds, feats, clases 
 
 ### Datos estáticos embebidos
 
-Recursos, entornos, tiendas, combo, cocina, guía de creación de personajes y plantillas del generador de NPCs viven en archivos `*.data.ts` dentro del proyecto.
+Recursos, entornos, tiendas, combo, cocina, guía de creación de personajes y plantillas del generador de NPCs viven en archivos `*.data.ts` dentro del proyecto. Los catálogos RaintDM de Weapon Forge e Items Forge viven en `public/data/raintdm-weapons/` y `public/data/raintdm-items/`.
 
 ### Compendio D&D 5e
 
@@ -196,6 +197,7 @@ src/
 │   ├── diseases/           # Enfermedades Amellwind
 │   ├── weapons/            # Hunter Weapons
 │   ├── shops/              # Items, tiendas, carrito
+│   ├── item-forge/         # Catálogo de ítems RaintDM (JSON curated)
 │   ├── species/            # Especies GTMH
 │   ├── backgrounds/        # Trasfondos GTMH
 │   ├── feats/              # Feats GTMH

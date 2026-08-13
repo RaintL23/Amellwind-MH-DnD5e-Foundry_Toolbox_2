@@ -45,6 +45,7 @@ RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tw
 | Section         | Route           | Description                                                                 |
 | --------------- | --------------- | --------------------------------------------------------------------------- |
 | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create and export |
+| **Items Forge**  | `/item-forge`   | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines and more to come) |
 
 ### D&D 5e Compendium
 
@@ -159,7 +160,7 @@ The Hunting Guide JSON also provides species, backgrounds, feats, MH classes, cl
 
 ### Embedded static data
 
-Resources, environments, shops, combo, cooking, the character creation guide, and NPC generator templates live in `*.data.ts` files inside the project.
+Resources, environments, shops, combo, cooking, the character creation guide, and NPC generator templates live in `*.data.ts` files inside the project. RaintDM Weapon Forge and Items Forge catalogs live in `public/data/raintdm-weapons/` and `public/data/raintdm-items/`.
 
 ### D&D 5e compendium
 
@@ -196,6 +197,7 @@ src/
 │   ├── diseases/           # Amellwind diseases
 │   ├── weapons/            # Hunter Weapons
 │   ├── shops/              # Items, shops, cart
+│   ├── item-forge/         # RaintDM items catalog (curated JSON)
 │   ├── species/            # GTMH species
 │   ├── backgrounds/        # GTMH backgrounds
 │   ├── feats/              # GTMH feats

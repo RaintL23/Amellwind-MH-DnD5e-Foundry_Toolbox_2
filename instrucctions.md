@@ -68,6 +68,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /weapon-forge              → Weapon Forge (variantes RaintDM + armas custom)
 /weapon-forge/new          → Crear arma custom
 /weapon-forge/edit/:id     → Editar arma custom
+/item-forge                → Items Forge (catálogo curated RaintDM)
 
 ── Compendio D&D 5e ──
 /spells                    → Conjuros (5etools)
@@ -134,7 +135,7 @@ Providers **por ruta** (no globales):
 
 El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_SECTIONS` (`Sidebar.tsx`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items`. Home replica las mismas tres secciones en `HomePage.tsx`.
 
-**Amellwind (RaintDM)** agrupa variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (p. ej. Weapon Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
+**Amellwind (RaintDM)** agrupa variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (p. ej. Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
 
 El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInventoryContext`), no un inventario separado: el equipo equipable del builder proviene de ítems añadidos al carrito en Shops/Items.
 
@@ -146,7 +147,7 @@ El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInven
 | Amellwind Homebrew     | Weapons, Runes, and Equipment      | Weapons, Runes, Material Effects, Items                        |
 | Amellwind Homebrew     | World and Exploration              | Hunt Planner, Environments, Resources, Shops, Cooking, Combo List, Downtime |
 | Amellwind Homebrew     | NPCs and Companions                | Monstie Sidekick, NPC Generator                                |
-| Amellwind (RaintDM)    | Weapons _(plano si es el único grupo)_ | Weapon Forge                                               |
+| Amellwind (RaintDM)    | Weapons _(plano si es el único grupo)_ | Weapon Forge, Items Forge                                  |
 | D&D 5e Compendium      | Spells and Classes                 | Spells, Classes                                                |
 | D&D 5e Compendium      | Character Options                  | Races, Backgrounds, Feats                                      |
 | D&D 5e Compendium      | Bestiary                           | Bestiary                                                       |
@@ -865,6 +866,7 @@ Estado de cobertura del manual / features de la app:
 ### Amellwind (RaintDM) — implementado
 
 - [x] **Weapon Forge** — Catálogo curated RaintDM + armas custom (localStorage) y export Foundry Item; navegación en sección propia (Sidebar + Home), no bajo Amellwind Homebrew.
+- [x] **Items Forge** — Catálogo curated RaintDM (`public/data/raintdm-items/`); UI tabular tipo `/items` (sin carrito ni editor); v1: Magazines de Dual Repeaters.
 
 ### Compendio D&D 5e — implementado
 
@@ -1413,6 +1415,30 @@ Estado global del carrito (`CartEntry[]`): nombre, costo, peso, cantidad, tienda
 
 ---
 
+### Items Forge (RaintDM)
+
+**Ruta**: `/item-forge`
+**Fuente de datos**: `public/data/raintdm-items/` (`manifest.json` + un JSON por categoría, p. ej. `magazines.json`). Fetch en runtime; sin IndexedDB ni editor.
+
+Catálogo curated de variantes RaintDM sobre ítems Amellwind. La UI combina **lista de ítems** y **Combo List**: búsqueda, tabs por `typeLabel`, tabla Name/Rarity/Cost/Weight + Ingredient 1/2/DC/Qty, panel de detalle. **Sin carrito** y **sin crear/editar**. Las recetas usan recursos e ítems Amellwind y las mismas reglas de tirada del Combo List.
+
+#### Entidad `RaintdmItem`
+
+Extiende `MHItem` (`name`, `source`, `type`, `typeLabel`, `rarity`, `valueCp`, `weight`, `entries[]`) con `raintdm?` (`author`, `kind`, `magazineKey`, `chargesPerMagazine`, `damageType`, `baseWeapon`) mapeado desde `_raintdm`, y `crafting?` (`tool`, `item1`, `item2`, `dc`, `quantity?`) desde el campo top-level `crafting` del JSON.
+
+- Tipo `MHMAG` → label **Magazine (Repeaters)**. Tipos desconocidos → **Misc**.
+- v1: 11 magazines de Dual Repeaters (rework RaintDM; rareza = unlock del arma; 0.5 lb). Precio por rareza: Normal **2 gp**, elemental Uncommon **5 gp**, Upgrade I **15 gp**, Dawnstar/Twilight **20 gp**. El export Foundry de magazines sigue saliendo de Weapon Forge (`priceGp` en `DUAL_REPEATERS_MAGAZINE_DEFS`).
+- Crafting magazines: **Herbalism Kit** (igual que DR AMMO AGMH). Specialty = receta AGMH (recurso elemental + Insect Husk, DC 12, qty 1). Normal = Huskberry + Insect Husk (casing). Upgrade I = Catalyst + recurso elemental, DC 15.
+
+#### Service (`item-forge.service.ts`)
+
+| Función                 | Descripción |
+| ----------------------- | ----------- |
+| `getAllForgeItems()`    | Fetch manifest + archivos curated → `RaintdmItem[]` (caché en memoria) |
+| `clearForgeItemCache()` | Invalida la caché |
+
+---
+
 ### Recursos de entorno (Resources)
 
 **Ruta**: `/resources`
@@ -1761,6 +1787,7 @@ src/
 ├── features/
 │   ├── builder/            # Character Builder ALPHA (+ foundry-export/ actor-only, foundry-import/)
 │   ├── weapon-forge/       # Custom weapons + Foundry item export (uses shared/foundry)
+│   ├── item-forge/         # Catálogo de ítems RaintDM (JSON curated)
 │   ├── damage-calculator/  # Calculadora de daño por turno (localStorage)
 │   ├── monsters/           # Listado + MonsterDetailPage
 │   ├── runes/              # Materiales + BuildDrawer + RuneBuildContext
