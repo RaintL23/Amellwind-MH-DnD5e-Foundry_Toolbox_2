@@ -1,3 +1,4 @@
+import { SKILL_NAME_TO_KEY } from "@/shared/constants/dnd/skills.constants";
 import { Rune, RuneSlot, RuneTier } from "@/shared/types";
 import { flattenEntriesForDisplay } from "@/shared/utils/fivetools-parser";
 import {
@@ -86,7 +87,7 @@ const WEAPON_TYPE_PATTERNS: Array<[RegExp, string]> = [
 // funciones de escala en lugar de patrones simples.
 const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/\d+\s*runes?|runes?\s*\d+/i, "mechanic:rune-charges"],
-  [/critical/i, "mechanic:critical"],
+  [/critical|roll(?:s|ing)? a 20 (?:on |for )?(?:your |an |the )?attack roll|natural 20/i, "mechanic:critical"],
   [/resist(?:ant|ance) to\s+\w/i, "mechanic:resistance"],
   [/immune to|immunity to/i, "mechanic:immunity"],
   [
@@ -104,7 +105,7 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
     /saving throw.*(?:advantage|disadvantage)|(?:advantage|disadvantage).*saving throw/i,
     "mechanic:saving-throw",
   ],
-  [/\+\d+\s*bonus\s+on.*\{@skill/i, "mechanic:skill-bonus"],
+  [/\+\d+\s*bonus\s+(?:on|to).*\{@skill/i, "mechanic:skill-bonus"],
   [/\bAC\b|armor class/i, "mechanic:ac"],
   [
     /\{@condition|(?:immune|immunity) to (?:the )?\w+ condition/i,
@@ -112,7 +113,7 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   ],
   [/\bdiseases?\b/i, "mechanic:disease"],
   [/(?:movement|speed|jump)\s+(?:increase|by|\d+)/i, "mechanic:movement"],
-  [/\badvantage\b(?!.*saving throw)/i, "mechanic:advantage"],
+  [/\badvantage\b/i, "mechanic:advantage"],
   [/\bcantrip\b/i, "mechanic:cantrip"],
   [
     /wyvernfire|dragonpiercer|Guard AC|Mighty Weapon/i,
@@ -153,6 +154,76 @@ function damageTypeTags(text: string): string[] {
     if (mentionsType) tags.push(`damage:${type}`);
   }
   return tags;
+}
+
+/**
+ * mechanic:skill-insight, mechanic:skill-animal-handling, etc.
+ * One tag per `{@skill Name}` referenced in the effect text.
+ */
+function skillTags(text: string): string[] {
+  const tags = new Set<string>();
+  for (const match of text.matchAll(/\{@skill\s+([^}|]+)/gi)) {
+    const name = (match[1] ?? "").trim().toLowerCase();
+    if (!name || !(name in SKILL_NAME_TO_KEY)) continue;
+    tags.add(`mechanic:skill-${name.replace(/\s+/g, "-")}`);
+  }
+  return Array.from(tags);
+}
+
+/**
+ * mechanic:condition-stunned, mechanic:condition-frenzy-virus, etc.
+ * From `{@condition Name}` and "immune to the ___ condition" wording.
+ * Keeps the generic `mechanic:condition` pattern for broad filters / build rules.
+ */
+function conditionNameTags(text: string): string[] {
+  const tags = new Set<string>();
+
+  const add = (raw: string) => {
+    const name = raw.trim().toLowerCase();
+    if (!name) return;
+    tags.add(`mechanic:condition-${name.replace(/\s+/g, "-")}`);
+  };
+
+  for (const match of text.matchAll(/\{@condition\s+([^}|]+)/gi)) {
+    add(match[1] ?? "");
+  }
+  for (const match of text.matchAll(
+    /(?:immune|immunity) to (?:the )?([a-z][a-z\s-]{0,40}?) condition/gi,
+  )) {
+    add(match[1] ?? "");
+  }
+
+  return Array.from(tags);
+}
+
+/**
+ * mechanic:against-condition — defensive protection vs suffering a condition
+ * (advantage on saves against being X, immunity to a condition, etc.).
+ * Does not cover weapon effects that inflict a condition on hit.
+ */
+function againstConditionTag(text: string): string | null {
+  if (
+    /(?:immune|immunity) to (?:the )?(?:\{@condition|[a-z][\w\s-]{0,40}? condition)/i.test(
+      text,
+    )
+  ) {
+    return "mechanic:against-condition";
+  }
+
+  if (/saving throws? against being/i.test(text)) {
+    return "mechanic:against-condition";
+  }
+
+  // e.g. "saving throw or be knocked {@condition prone}, you do so with advantage"
+  if (
+    /\badvantage\b/i.test(text) &&
+    /(?:against being|or be (?:knocked )?|or become )/i.test(text) &&
+    /\{@condition/i.test(text)
+  ) {
+    return "mechanic:against-condition";
+  }
+
+  return null;
 }
 
 // ─── Scaled sub-tag extractors ────────────────────────────────────────────────
@@ -307,11 +378,14 @@ function typeTags(text: string): string[] {
   const isOffensive =
     /extra (?:\{@damage|\d+d\d+)/i.test(text) ||
     /\bcritical\b/i.test(text) ||
+    /roll(?:s|ing)? a 20 (?:on |for )?(?:your |an |the )?attack roll|natural 20/i.test(
+      text,
+    ) ||
     /\+\d+\s*bonus.*(?:attack|damage)/i.test(text) ||
     /(?:attack|damage) roll.*\+\d+/i.test(text) ||
     /spell attack\s+roll|spell damage|damage roll/i.test(text) ||
     (/\{@condition/i.test(text) && /(?:hit|attack|strike|on a hit)/i.test(text)) ||
-    /(?:deals?|extra)\s+(?:\{@damage|\d+d\d+)/i.test(text) ||
+    /(?:deals?|extra|takes?)\s+(?:\{@damage\s+)?\d+d\d+/i.test(text) ||
     (/\{@spell/i.test(text) && /deals?\s+\w+\s+damage/i.test(text));
 
   if (isOffensive) tags.push("type:offensive");
@@ -357,6 +431,17 @@ function extractTags(
   for (const damageTag of damageTypeTags(effectText)) {
     tags.add(damageTag);
   }
+
+  for (const skillTag of skillTags(effectText)) {
+    tags.add(skillTag);
+  }
+
+  for (const conditionTag of conditionNameTags(effectText)) {
+    tags.add(conditionTag);
+  }
+
+  const againstCondition = againstConditionTag(effectText);
+  if (againstCondition) tags.add(againstCondition);
 
   return Array.from(tags);
 }

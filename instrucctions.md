@@ -683,19 +683,22 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
 | `mechanic:spell`         | Contiene `{@spell`: se resuelve el nivel en el catálogo de conjuros → `mechanic:spell:lvlN` (1–9). Cantrip (nivel 0) → solo `mechanic:cantrip`. Si el conjuro no está en el catálogo, fallback `lvl1-2` / `lvl3+` por texto/runas. |
 | `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
-| `mechanic:critical`      | Contiene la palabra `critical` (case-insensitive)                                                                      |
+| `mechanic:critical`      | Contiene `critical`, `natural 20`, o `roll a 20` en attack roll                                                        |
 | `mechanic:extra-damage`  | Contiene `extra {@damage`, `extra NdX` o `extra N … damage` → se emite como `:minor` / `:major` según score |
 | `mechanic:resistance`    | Contiene `resistance to` o `resistant to` seguido de tipo de daño                                                     |
 | `mechanic:immunity`      | Contiene `immune to` o `immunity to`                                                                                   |
 | `mechanic:bonus-action`  | Contiene `bonus action`                                                                                                |
 | `mechanic:reaction`      | Contiene `reaction`                                                                                                    |
 | `mechanic:saving-throw`  | Contiene `saving throw` con `advantage` o `disadvantage`                                                               |
-| `mechanic:skill-bonus`   | Contiene `{@skill` con un valor de bonus (ej. `+2 bonus on`)                                                           |
+| `mechanic:skill-bonus`   | Contiene `+N bonus on/to` junto a `{@skill`                                                                            |
+| `mechanic:skill-{name}`  | Por cada `{@skill Name}` (p. ej. Insight → `skill-insight`, Animal Handling → `skill-animal-handling`)                |
 | `mechanic:ac`            | Contiene `\bAC\b` o `armor class`                                                                                      |
 | `mechanic:condition`     | Contiene `{@condition` o `immune/immunity to the ___ condition`                                                        |
+| `mechanic:condition-{n}` | Por cada condición nombrada (p. ej. stunned → `condition-stunned`, frenzy virus → `condition-frenzy-virus`)           |
+| `mechanic:against-condition` | Protección defensiva frente a una condición (advantage en saves vs being X, inmunidad a condición, etc.)            |
+| `mechanic:advantage`     | Contiene `advantage` (también junto a saving throws)                                                                   |
 | `mechanic:disease`       | Contiene `disease` / `diseases`                                                                                        |
 | `mechanic:movement`      | Contiene `movement` o `speed` o `jump` en contexto de desplazamiento                                                   |
-| `mechanic:advantage`     | Contiene `advantage` (sin ser seguido de `saving throw` — ese ya tiene su tag)                                         |
 | `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
 | `mechanic:cantrip`       | Contiene `cantrip`, o `{@spell` resuelto como nivel 0 en el catálogo                                                  |
 | `mechanic:class-feature` | Contiene el nombre de una feature de clase específica (ej. `wyvernfire`, `dragonpiercer`, `Guard AC`, `Mighty Weapon`) |
@@ -726,11 +729,11 @@ Si el texto del efecto **no** referencia un material effect nombrado del catálo
 
 Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición). La detección de “limitada” busca gasto de economy (`action` / `bonus action` / `reaction`) junto al grant de resistencia/inmunidad.
 
-**Daño extra de arma** (`inline-extra-damage-rarity.utils.ts`), score = dados × caras (o flat):
+**Daño de arma** (`inline-extra-damage-rarity.utils.ts`), score = dados × caras (o flat) — aplica a daño extra siempre activo y a daño que el efecto hace sufrir al objetivo (p. ej. DoT al crit):
 
 | Score | Ejemplo | Rareza |
 | --- | --- | --- |
-| ≤ 6 | `extra 1d6 … damage` | **Uncommon** |
+| ≤ 6 | `extra 1d6 … damage`, crit DoT `takes 1d4 fire damage` | **Uncommon** |
 | 7–12 | `extra 2d6 necrotic damage` | **Rare** |
 | 13–20 | `extra 3d6 … damage` | **Very Rare** |
 | ≥ 21 | `extra 4d6 … damage` | **Legendary** |

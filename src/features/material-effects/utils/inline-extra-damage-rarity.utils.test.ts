@@ -64,4 +64,20 @@ describe("inferInlineExtraDamageRarity", () => {
       ),
     ).toBeNull();
   });
+
+  it("assigns Uncommon to crit DoT 1d4 fire damage", () => {
+    expect(
+      inferInlineExtraDamageRarity(
+        "When you roll a 20 on your attack roll with this weapon, the target creature catches fire. Until someone takes an action to douse the flames, the creature takes {@damage 1d4} fire damage at the start of each of its turns.",
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("ignores armor self-damage wording", () => {
+    expect(
+      inferInlineExtraDamageRarity(
+        "When you take fire damage while wearing this armor, you regain 1 hit point.",
+      ),
+    ).toBeNull();
+  });
 });

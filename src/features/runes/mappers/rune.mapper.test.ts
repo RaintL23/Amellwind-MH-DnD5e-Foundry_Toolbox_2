@@ -113,4 +113,94 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
       expect.arrayContaining(["mechanic:immunity", "mechanic:condition"]),
     );
   });
+
+  it("tags specific skills from {@skill} markup", () => {
+    const tags = extractRuneEffectTags(
+      "You gain a +2 bonus on {@skill Insight} checks while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:skill-bonus",
+        "mechanic:skill-insight",
+      ]),
+    );
+  });
+
+  it("tags bonus-to skills and multi-word skill names", () => {
+    const tags = extractRuneEffectTags(
+      "You have a +2 bonus to {@skill Animal Handling} checks while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:skill-bonus",
+        "mechanic:skill-animal-handling",
+      ]),
+    );
+  });
+
+  it("tags skills granted via advantage without a numeric bonus", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on Wisdom ({@skill Insight}) checks while you wear this armor.",
+    );
+
+    expect(tags).toContain("mechanic:skill-insight");
+    expect(tags).not.toContain("mechanic:skill-bonus");
+  });
+
+  it("tags specific conditions from {@condition} markup", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on saving throws against being {@condition stunned} while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:condition",
+        "mechanic:condition-stunned",
+        "mechanic:against-condition",
+        "mechanic:advantage",
+        "mechanic:saving-throw",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags named condition immunity without markup", () => {
+    const tags = extractRuneEffectTags(
+      "You are immune to the poisoned condition while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:condition",
+        "mechanic:condition-poisoned",
+        "mechanic:against-condition",
+        "mechanic:immunity",
+      ]),
+    );
+  });
+
+  it("does not tag against-condition when a weapon inflicts a condition", () => {
+    const tags = extractRuneEffectTags(
+      "On a hit, the target must succeed on a Constitution saving throw or be {@condition stunned} until the end of its next turn.",
+    );
+
+    expect(tags).toContain("mechanic:condition-stunned");
+    expect(tags).not.toContain("mechanic:against-condition");
+  });
+
+  it("tags roll-a-20 weapon effects as critical and offensive", () => {
+    const tags = extractRuneEffectTags(
+      "When you roll a 20 on your attack roll with this weapon, the target creature catches fire. Until someone takes an action to douse the flames, the creature takes {@damage 1d4} fire damage at the start of each of its turns.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:critical",
+        "type:offensive",
+        "damage:fire",
+      ]),
+    );
+  });
 });
