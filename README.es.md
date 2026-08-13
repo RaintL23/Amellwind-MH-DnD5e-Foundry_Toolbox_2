@@ -38,6 +38,14 @@ Nació en mi mesa de rol: juego con amigos más entusiasmados con D&D que con Mo
 | **Resources**        | `/resources`        | Recursos de entorno (plantas, minerales, etc.)                                |
 | **Downtime**         | `/downtime`         | Actividades de tiempo libre del manual                                        |
 
+### Amellwind (RaintDM)
+
+Variantes de RaintDM sobre el homebrew 2014 de Amellwind — toques de house rule para mis mesas y campañas:
+
+| Sección          | Ruta            | Descripción                                                                 |
+| ---------------- | --------------- | --------------------------------------------------------------------------- |
+| **Weapon Forge** | `/weapon-forge` | Armas de cazador curated de RaintDM más armas custom que creas y exportas |
+
 ### Compendio D&D 5e
 
 Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son homebrew de Amellwind):

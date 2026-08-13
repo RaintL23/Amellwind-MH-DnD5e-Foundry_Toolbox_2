@@ -38,6 +38,14 @@ It started at my table: I play with friends who care more about D&D than Monster
 | **Resources**        | `/resources`        | Environment resources (plants, minerals, etc.)                                |
 | **Downtime**         | `/downtime`         | Downtime activities from the manual                                        |
 
+### Amellwind (RaintDM)
+
+RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tweaks for my tables and campaigns:
+
+| Section         | Route           | Description                                                                 |
+| --------------- | --------------- | --------------------------------------------------------------------------- |
+| **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create and export |
+
 ### D&D 5e Compendium
 
 Official reference data loaded from [5etools](https://5e.tools) (not Amellwind homebrew):

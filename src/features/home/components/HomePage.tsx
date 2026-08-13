@@ -131,13 +131,6 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
         icon: <Sword className="h-5 w-5" />,
       },
       {
-        label: "Weapon Forge",
-        route: "/weapon-forge",
-        description:
-          "Browse curated RaintDM weapons or create and edit custom ones.",
-        icon: <Hammer className="h-5 w-5" />,
-      },
-      {
         label: "Runes",
         route: "/runes",
         description: "Monster materials and visual Rune Planner for runes.",
@@ -214,6 +207,16 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
         icon: <Bot className="h-5 w-5" />,
       },
     ],
+  },
+];
+
+const raintDmSections: SectionItem[] = [
+  {
+    label: "Weapon Forge",
+    route: "/weapon-forge",
+    description:
+      "Browse curated RaintDM weapons or create and edit custom ones for your table.",
+    icon: <Hammer className="h-5 w-5" />,
   },
 ];
 
@@ -355,6 +358,24 @@ export function HomePage() {
             </div>
           </div>
         ))}
+      </section>
+
+      <Separator />
+
+      {/* Amellwind (RaintDM) sections */}
+      <section className="space-y-4">
+        <div>
+          <h2 className="text-lg font-semibold">Amellwind (RaintDM)</h2>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            RaintDM variants on Amellwind&apos;s 2014 Monster Hunter homebrew —
+            house-rule tweaks for my tables and campaigns.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+          {raintDmSections.map((item) => (
+            <SectionCard key={item.route} item={item} />
+          ))}
+        </div>
       </section>
 
       <Separator />

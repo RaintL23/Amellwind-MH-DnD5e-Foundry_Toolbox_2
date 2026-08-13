@@ -8,7 +8,7 @@ import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { CartDrawer } from "./CartDrawer";
 import { ItemDetailPanel } from "./ItemDetailPanel";
 import { ItemSearchResultsPanel } from "./ItemSearchResultsPanel";
-import { ItemsTab } from "./ItemsTab";
+import { ItemsTable } from "./ItemsTable";
 import { ItemTabBar } from "./ItemTabBar";
 import { SearchInput } from "./SearchInput";
 import { setIfPresent } from "@/shared/utils/list-url-params.utils";
@@ -108,7 +108,7 @@ export function ItemList() {
             activeTab={activeTab}
             onTabChange={handleTabChange}
           />
-          <ItemsTab
+          <ItemsTable
             items={tabItems}
             selected={selected}
             onSelect={setSelected}

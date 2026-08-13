@@ -89,11 +89,6 @@ const NAV_SECTIONS: NavSection[] = [
         label: "Weapons, Runes, and Equipment",
         items: [
           { to: "/weapons", label: "Weapons", icon: Sword },
-          {
-            to: "/weapon-forge",
-            label: "Weapon Forge (RaintDM)",
-            icon: Hammer,
-          },
           { to: "/runes", label: "Runes", icon: Flame },
           { to: "/material-effects", label: "Material Effects", icon: Shield },
           { to: "/items", label: "Items", icon: Layers },
@@ -116,6 +111,18 @@ const NAV_SECTIONS: NavSection[] = [
         items: [
           { to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
           { to: "/npc-generator", label: "NPC Generator", icon: Bot },
+        ],
+      },
+    ],
+  },
+  {
+    id: "amellwind-raintdm",
+    label: "Amellwind (RaintDM)",
+    groups: [
+      {
+        label: "Weapons",
+        items: [
+          { to: "/weapon-forge", label: "Weapon Forge", icon: Hammer },
         ],
       },
     ],

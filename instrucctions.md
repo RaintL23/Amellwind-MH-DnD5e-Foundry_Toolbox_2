@@ -64,6 +64,11 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /resources                 → Recursos de campo
 /downtime                  → Actividades de downtime (GTMH)
 
+── Amellwind (RaintDM) ──
+/weapon-forge              → Weapon Forge (variantes RaintDM + armas custom)
+/weapon-forge/new          → Crear arma custom
+/weapon-forge/edit/:id     → Editar arma custom
+
 ── Compendio D&D 5e ──
 /spells                    → Conjuros (5etools)
 /classes                   → Listado de clases base
@@ -127,21 +132,26 @@ Providers **por ruta** (no globales):
 
 ### Sidebar y navegación
 
-El `Sidebar` agrupa links en grupos colapsables organizados bajo dos secciones: **Amellwind Homebrew** y **DnD 5e**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_GROUPS` (`Sidebar.tsx`); cada grupo tiene `section` + `label` + `items`.
+El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_SECTIONS` (`Sidebar.tsx`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items`. Home replica las mismas tres secciones en `HomePage.tsx`.
+
+**Amellwind (RaintDM)** agrupa variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (p. ej. Weapon Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
 
 El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInventoryContext`), no un inventario separado: el equipo equipable del builder proviene de ítems añadidos al carrito en Shops/Items.
 
-| Sección           | Grupo Sidebar   | Links principales                                              |
-| ----------------- | --------------- | -------------------------------------------------------------- |
-| Amellwind Homebrew | _(suelto)_     | Builder                                                        |
-| Amellwind Homebrew | DM Tools        | NPC Generator                                                 |
-| Amellwind Homebrew | Character Tools | Monstie Sidekick, Damage Calculator                          |
-| Amellwind Homebrew | Character       | Creation Guide, Species, Backgrounds, Feats                  |
-| Amellwind Homebrew | Bestiary        | Monsters, Runes, Material Effects, Conditions, Diseases      |
-| Amellwind Homebrew | Gear            | Weapons, Items                                                |
-| Amellwind Homebrew | Craft & Trade   | Shops, Cooking, Combo List, Environments, Resources, Downtime |
-| DnD 5e            | Compendium      | Spells, Classes, Races, Backgrounds, Feats, Items, Bestiary  |
-| DnD 5e            | Character Tools | Xanathar Backstory, Shop Generator, Damage Calculator        |
+| Sección                | Grupo Sidebar                      | Links principales                                              |
+| ---------------------- | ---------------------------------- | -------------------------------------------------------------- |
+| Amellwind Homebrew     | Character                          | Builder, Damage Calculator, Creation Guide                     |
+| Amellwind Homebrew     | Bestiary and Rules                 | Monsters, Conditions & Diseases                                |
+| Amellwind Homebrew     | Species and Character Options      | Species, Backgrounds, Feats                                    |
+| Amellwind Homebrew     | Weapons, Runes, and Equipment      | Weapons, Runes, Material Effects, Items                        |
+| Amellwind Homebrew     | World and Exploration              | Hunt Planner, Environments, Resources, Shops, Cooking, Combo List, Downtime |
+| Amellwind Homebrew     | NPCs and Companions                | Monstie Sidekick, NPC Generator                                |
+| Amellwind (RaintDM)    | Weapons _(plano si es el único grupo)_ | Weapon Forge                                               |
+| D&D 5e Compendium      | Spells and Classes                 | Spells, Classes                                                |
+| D&D 5e Compendium      | Character Options                  | Races, Backgrounds, Feats                                      |
+| D&D 5e Compendium      | Bestiary                           | Bestiary                                                       |
+| D&D 5e Compendium      | Equipment                          | Items                                                          |
+| D&D 5e Compendium      | Character Tools                    | Xanathar Backstory, Shop Generator                             |
 
 ### Layout global (`MainLayout`)
 
@@ -851,6 +861,10 @@ Estado de cobertura del manual / features de la app:
 - [x] **Entornos / biomas** — Datos estáticos con DCs, clima, encuentros y tablas de recursos.
 - [x] **Material Effects / Conditions / Diseases** — Listados de referencia derivados del homebrew.
 - [x] **Damage Calculator** — Calculadora de daño por turno persistida en `localStorage`.
+
+### Amellwind (RaintDM) — implementado
+
+- [x] **Weapon Forge** — Catálogo curated RaintDM + armas custom (localStorage) y export Foundry Item; navegación en sección propia (Sidebar + Home), no bajo Amellwind Homebrew.
 
 ### Compendio D&D 5e — implementado
 
