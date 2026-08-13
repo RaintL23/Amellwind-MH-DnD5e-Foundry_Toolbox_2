@@ -82,7 +82,7 @@ const WEAPON_TYPE_PATTERNS: Array<[RegExp, string]> = [
 const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/\d+\s*runes?|runes?\s*\d+/i, "mechanic:rune-charges"],
   [/critical/i, "mechanic:critical"],
-  [/resistance to\s+\w/i, "mechanic:resistance"],
+  [/resist(?:ant|ance) to\s+\w/i, "mechanic:resistance"],
   [/immune to|immunity to/i, "mechanic:immunity"],
   [
     /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i,
@@ -101,7 +101,11 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   ],
   [/\+\d+\s*bonus\s+on.*\{@skill/i, "mechanic:skill-bonus"],
   [/\bAC\b|armor class/i, "mechanic:ac"],
-  [/\{@condition/i, "mechanic:condition"],
+  [
+    /\{@condition|(?:immune|immunity) to (?:the )?\w+ condition/i,
+    "mechanic:condition",
+  ],
+  [/\bdiseases?\b/i, "mechanic:disease"],
   [/(?:movement|speed|jump)\s+(?:increase|by|\d+)/i, "mechanic:movement"],
   [/\badvantage\b(?!.*saving throw)/i, "mechanic:advantage"],
   [/\bcantrip\b/i, "mechanic:cantrip"],
@@ -138,7 +142,7 @@ function damageTypeTags(text: string): string[] {
   for (const type of DAMAGE_TYPES) {
     const mentionsType =
       new RegExp(`\\b${type}\\s+damage\\b`, "i").test(text) ||
-      new RegExp(`resistance to\\s+${type}\\b`, "i").test(text) ||
+      new RegExp(`resist(?:ant|ance) to\\s+${type}\\b`, "i").test(text) ||
       new RegExp(`immune(?:ity)? to\\s+${type}\\b`, "i").test(text) ||
       new RegExp(`vulnerab(?:le|ility) to\\s+${type}\\b`, "i").test(text);
     if (mentionsType) tags.push(`damage:${type}`);
@@ -226,15 +230,31 @@ function spellBuffTags(text: string): string[] {
 
 /**
  * mechanic:spell:lvl3+   → menciona nivel 3-9 explícitamente, o costo ≥ 3 runas
- * mechanic:spell:lvl1-2  → resto de casos con {@spell
+ * mechanic:spell:lvl1-2  → {@spell de nivel 1–2 (no cantrips)
+ * Cantrips solo emiten mechanic:cantrip (patrón MECHANIC_PATTERNS), no spell:lvl*.
  */
 function spellTag(text: string): string | null {
   if (!/\{@spell/i.test(text)) return null;
+
   // Nivel explícito en texto: "3rd-level", "4th-level spell", etc.
   if (/\b[3-9](?:rd|th)-level\b/i.test(text)) return "mechanic:spell:lvl3+";
+
   // Costo de runas como proxy de nivel: "(3 runes)", "(4 runes)…"
-  const runeMatches = [...text.matchAll(/\{@spell[^}]+\}\s*\((\d+)\s*runes?\)/gi)];
-  if (runeMatches.some((m) => parseInt(m[1]) >= 3)) return "mechanic:spell:lvl3+";
+  const runeMatches = [
+    ...text.matchAll(/\{@spell[^}]+\}\s*\((\d+)\s*runes?\)/gi),
+  ];
+  if (runeMatches.some((m) => parseInt(m[1], 10) >= 3)) {
+    return "mechanic:spell:lvl3+";
+  }
+
+  const hasLeveledSpellLanguage =
+    /\b[12](?:st|nd)-level\b/i.test(text) || runeMatches.length > 0;
+
+  // "cast the {@spell light} cantrip" → only mechanic:cantrip, not spell:lvl1-2
+  if (/\bcantrip\b/i.test(text) && !hasLeveledSpellLanguage) {
+    return null;
+  }
+
   return "mechanic:spell:lvl1-2";
 }
 
@@ -259,7 +279,7 @@ function typeTags(text: string): string[] {
 
   const isDefensive =
     /\bAC\b|armor class/i.test(text) ||
-    /resistance to\s+\w/i.test(text) ||
+    /resist(?:ant|ance) to\s+\w/i.test(text) ||
     /immune to|immunity to/i.test(text) ||
     /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i.test(
       text,
@@ -324,6 +344,11 @@ function extractTags(effectText: string): string[] {
   }
 
   return Array.from(tags);
+}
+
+/** Exported for unit tests and shared tag previews. */
+export function extractRuneEffectTags(effectText: string): string[] {
+  return extractTags(effectText);
 }
 
 // ─── Main mapper ─────────────────────────────────────────────────────────────

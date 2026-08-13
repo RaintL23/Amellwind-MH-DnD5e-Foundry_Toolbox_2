@@ -681,22 +681,23 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 
 | Tag                      | Regla de detección                                                                                                     |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `mechanic:spell`         | Contiene `{@spell`                                                                                                     |
+| `mechanic:spell`         | Contiene `{@spell` de nivel 1+ → se emite como `:lvl1-2` / `:lvl3+` (no cantrips)                                      |
 | `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
 | `mechanic:critical`      | Contiene la palabra `critical` (case-insensitive)                                                                      |
 | `mechanic:extra-damage`  | Contiene `extra {@damage`, `extra NdX` o `extra N … damage` → se emite como `:minor` / `:major` según score |
-| `mechanic:resistance`    | Contiene `resistance to` seguido de tipo de daño                                                                       |
+| `mechanic:resistance`    | Contiene `resistance to` o `resistant to` seguido de tipo de daño                                                     |
 | `mechanic:immunity`      | Contiene `immune to` o `immunity to`                                                                                   |
 | `mechanic:bonus-action`  | Contiene `bonus action`                                                                                                |
 | `mechanic:reaction`      | Contiene `reaction`                                                                                                    |
 | `mechanic:saving-throw`  | Contiene `saving throw` con `advantage` o `disadvantage`                                                               |
 | `mechanic:skill-bonus`   | Contiene `{@skill` con un valor de bonus (ej. `+2 bonus on`)                                                           |
 | `mechanic:ac`            | Contiene `\bAC\b` o `armor class`                                                                                      |
-| `mechanic:condition`     | Contiene `{@condition`                                                                                                 |
+| `mechanic:condition`     | Contiene `{@condition` o `immune/immunity to the ___ condition`                                                        |
+| `mechanic:disease`       | Contiene `disease` / `diseases`                                                                                        |
 | `mechanic:movement`      | Contiene `movement` o `speed` o `jump` en contexto de desplazamiento                                                   |
 | `mechanic:advantage`     | Contiene `advantage` (sin ser seguido de `saving throw` — ese ya tiene su tag)                                         |
 | `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
-| `mechanic:cantrip`       | Contiene `cantrip`                                                                                                     |
+| `mechanic:cantrip`       | Contiene `cantrip`; si el efecto solo lanza un cantrip (`{@spell …} cantrip`), no se añade `mechanic:spell:lvl*`   |
 | `mechanic:class-feature` | Contiene el nombre de una feature de clase específica (ej. `wyvernfire`, `dragonpiercer`, `Guard AC`, `Mighty Weapon`) |
 
 ##### Notas de implementación de tags
@@ -716,7 +717,9 @@ Si el texto del efecto **no** referencia un material effect nombrado del catálo
 | Texto (ejemplos) | Rareza |
 | --- | --- |
 | `You have resistance to lightning damage, while you wear this armor.` | **Rare** |
+| `You are resistant to poison damage and immune to the poisoned condition…` | **Rare** (resistencia a daño; la inmunidad a condición no sube rareza) |
 | `You are immune to fire damage while you wear this armor.` | **Very Rare** |
+| `You are immune to poison and disease while you wear this armor.` | **Very Rare** (atajo clásico: `poison` = daño de veneno) |
 
 Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición).
 

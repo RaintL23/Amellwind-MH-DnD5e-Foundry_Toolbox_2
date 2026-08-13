@@ -16,20 +16,37 @@ export interface MaterialEffectNameIndex {
 }
 
 const LEADING_TITLE_REJECT =
-  /^(while|when|you|if|this|the|a|an|see|for|each|any)\b/i;
+  /^(while|when|whenever|where|you|your|if|this|the|a|an|as|on|at|after|before|during|once|until|unless|see|for|each|any|by|with|from)\b/i;
+
+/** Real catalog titles are short proper names, not full sentences. */
+const MAX_LEADING_TITLE_CHARS = 48;
+const MAX_LEADING_TITLE_WORDS = 6;
 
 /**
  * Extracts an inline material effect title from the start of rune effect text,
  * e.g. "{@i Sovereign Wrath.} You gain…" → "Sovereign Wrath".
+ * Rejects sentence openers mistaken for titles (e.g. "As an action you can…").
  */
 export function extractLeadingMaterialEffectName(text: string): string | null {
   const firstLine = parseFiveToolsMarkup(text).trim().split(/\n/)[0]?.trim() ?? "";
-  const match = firstLine.match(/^(.+?)\.\s+(.+)$/);
+  // Drop leading class/weapon restrictions: "(Insect Glaive only) Title. Body"
+  const withoutRestriction = firstLine
+    .replace(/^\([^)]*only\)\s*/i, "")
+    .replace(/^\([^)]*\)\s*/, "")
+    .trim();
+  const match = withoutRestriction.match(/^(.+?)\.\s+(.+)$/);
   if (!match) return null;
 
   const name = match[1].trim();
-  if (!/^[A-Z("(]/.test(name)) return null;
+  if (!/^[A-Z]/.test(name)) return null;
   if (LEADING_TITLE_REJECT.test(name)) return null;
+  if (name.length > MAX_LEADING_TITLE_CHARS) return null;
+  if (name.split(/\s+/).length > MAX_LEADING_TITLE_WORDS) return null;
+  // Titles are names, not clauses ("…you can…", lists with many commas).
+  if (/\b(you|your|can|must|deal|gain|have|are|is|to)\b/i.test(name)) {
+    return null;
+  }
+  if ((name.match(/,/g) ?? []).length >= 2) return null;
 
   return name;
 }

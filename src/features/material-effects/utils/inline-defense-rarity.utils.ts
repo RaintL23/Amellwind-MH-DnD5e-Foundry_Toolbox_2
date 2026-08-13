@@ -29,66 +29,87 @@ export interface InlineDamageDefense {
   types: DamageType[];
 }
 
-const RESISTANCE_GRANT =
-  /\byou\s+(?:have|gain)\s+resistance\s+to\s+(.+?)(?:\s+while|\s+when|$)/i;
+/**
+ * Captures resistance clauses, including combined sentences:
+ * "You are resistant to poison damage and immune to the poisoned condition…"
+ */
+const RESISTANCE_GRANT_GLOBAL =
+  /(?:you\s+(?:are\s+resistant|have\s+resistance|gain\s+resistance)|(?:^|[.;]\s*|,\s*|and\s+)(?:are\s+)?resistant|(?:^|[.;]\s*|,\s*|and\s+)(?:have|gain)\s+resistance)\s+to\s+(.+?)(?=\s+and\s+(?:are\s+)?(?:immune|immunity|\w+\s+resistant)|\s+while\b|\s+when\b|[.;]|$)/gi;
 
-const IMMUNITY_GRANT =
-  /\byou\s+(?:are|have|gain)\s+(?:immune|immunity)\s+to\s+(.+?)(?:\s+while|\s+when|$)/i;
+/**
+ * Captures damage immunity clauses even when chained after resistance:
+ * "…and immune to fire damage while you wear this armor."
+ */
+const IMMUNITY_GRANT_GLOBAL =
+  /(?:you\s+(?:are|have|gain)\s+)?(?:immune|immunity)\s+to\s+(.+?)(?=\s+and\s+(?:are\s+)?(?:resistant|immune|immunity)|\s+while\b|\s+when\b|[.;]|$)/gi;
 
 function extractDamageTypes(fragment: string): DamageType[] {
+  // "the poisoned condition" is not a damage grant.
+  if (/\bcondition\b/i.test(fragment) && !/\bdamage\b/i.test(fragment)) {
+    return [];
+  }
+
   const matches: Array<{ type: DamageType; index: number }> = [];
   for (const type of DAMAGE_TYPES) {
-    const match = new RegExp(`\\b${type}\\b`, "i").exec(fragment);
-    if (match && match.index !== undefined) {
-      matches.push({ type, index: match.index });
+    const damagePhrase = new RegExp(`\\b${type}\\s+damage\\b`, "i").exec(
+      fragment,
+    );
+    if (damagePhrase && damagePhrase.index !== undefined) {
+      matches.push({ type, index: damagePhrase.index });
+      continue;
+    }
+
+    // Classic shorthand: "immune to poison and disease", "resistance to fire".
+    // `\bpoison\b` does not match "poisoned".
+    const bare = new RegExp(`\\b${type}\\b`, "i").exec(fragment);
+    if (bare && bare.index !== undefined) {
+      matches.push({ type, index: bare.index });
     }
   }
   return matches.sort((a, b) => a.index - b.index).map((entry) => entry.type);
 }
 
-function isConditionalOrNegatedGrant(sentence: string): boolean {
-  const lower = sentence.toLowerCase();
+function isNegatedContext(text: string, matchIndex: number): boolean {
+  const prefix = text.slice(Math.max(0, matchIndex - 24), matchIndex).toLowerCase();
   return (
-    /^(if|unless)\b/.test(lower) ||
-    /\balready\s+(?:have|has)\b/.test(lower) ||
-    /\bignores?\s+resistance\b/.test(lower) ||
-    /\bunless\s+(?:it|you|they|the)\b/.test(lower)
+    /\bunless\s+$/.test(prefix) ||
+    /\bif\s+$/.test(prefix) ||
+    /\balready\s+(?:have|has)\s+$/.test(prefix) ||
+    /\bignores?\s+$/.test(prefix)
   );
+}
+
+function collectGrants(
+  text: string,
+  pattern: RegExp,
+  kind: InlineDamageDefenseKind,
+): InlineDamageDefense[] {
+  const defenses: InlineDamageDefense[] = [];
+  for (const match of text.matchAll(pattern)) {
+    if (match.index !== undefined && isNegatedContext(text, match.index)) {
+      continue;
+    }
+    const types = extractDamageTypes(match[1] ?? "");
+    if (types.length > 0) {
+      defenses.push({ kind, types });
+    }
+  }
+  return defenses;
 }
 
 /**
  * Detects first-person grants of damage resistance or immunity in rune effect text,
  * e.g. "You are immune to fire damage while you wear this armor."
+ * Also handles mixed wording: "You are resistant to poison damage and immune to…"
  */
 export function parseInlineDamageDefenses(text: string): InlineDamageDefense[] {
   if (!text.trim()) return [];
 
   const parsed = parseFiveToolsMarkup(text);
-  const sentences = parsed.split(/(?<=[.!?])\s+|\n+/);
-  const defenses: InlineDamageDefense[] = [];
-
-  for (const rawSentence of sentences) {
-    const sentence = rawSentence.trim();
-    if (!sentence || isConditionalOrNegatedGrant(sentence)) continue;
-
-    const resistanceMatch = sentence.match(RESISTANCE_GRANT);
-    if (resistanceMatch) {
-      const types = extractDamageTypes(resistanceMatch[1] ?? "");
-      if (types.length > 0) {
-        defenses.push({ kind: "resistance", types });
-      }
-    }
-
-    const immunityMatch = sentence.match(IMMUNITY_GRANT);
-    if (immunityMatch) {
-      const types = extractDamageTypes(immunityMatch[1] ?? "");
-      if (types.length > 0) {
-        defenses.push({ kind: "immunity", types });
-      }
-    }
-  }
-
-  return defenses;
+  return [
+    ...collectGrants(parsed, RESISTANCE_GRANT_GLOBAL, "resistance"),
+    ...collectGrants(parsed, IMMUNITY_GRANT_GLOBAL, "immunity"),
+  ];
 }
 
 export function rarityForInlineDamageDefense(

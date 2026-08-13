@@ -29,6 +29,33 @@ describe("parseInlineDamageDefenses", () => {
     ).toEqual([{ kind: "resistance", types: ["fire", "cold"] }]);
   });
 
+  it("detects resistant-to wording with condition immunity in one sentence", () => {
+    expect(
+      parseInlineDamageDefenses(
+        "You are resistant to poison damage and immune to the {@condition poisoned} condition while you wear this armor.",
+      ),
+    ).toEqual([{ kind: "resistance", types: ["poison"] }]);
+  });
+
+  it("detects chained damage immunity after resistance", () => {
+    expect(
+      parseInlineDamageDefenses(
+        "You have resistance to cold damage and are immune to fire damage while you wear this armor.",
+      ),
+    ).toEqual([
+      { kind: "resistance", types: ["cold"] },
+      { kind: "immunity", types: ["fire"] },
+    ]);
+  });
+
+  it("detects shorthand poison immunity with disease", () => {
+    expect(
+      parseInlineDamageDefenses(
+        "You are immune to poison and disease while you wear this armor.",
+      ),
+    ).toEqual([{ kind: "immunity", types: ["poison"] }]);
+  });
+
   it("ignores condition-only immunity", () => {
     expect(
       parseInlineDamageDefenses(
@@ -69,6 +96,22 @@ describe("inferInlineDamageDefenseRarity", () => {
         "You have resistance to cold damage. You are immune to fire damage while you wear this armor.",
       ),
     ).toBe("Very Rare");
+  });
+
+  it("catalogues shorthand poison immunity as Very Rare", () => {
+    expect(
+      inferInlineDamageDefenseRarity(
+        "You are immune to poison and disease while you wear this armor.",
+      ),
+    ).toBe("Very Rare");
+  });
+
+  it("catalogues resistant-to poison + poisoned condition as Rare", () => {
+    expect(
+      inferInlineDamageDefenseRarity(
+        "You are resistant to poison damage and immune to the {@condition poisoned} condition while you wear this armor.",
+      ),
+    ).toBe("Rare");
   });
 
   it("returns null when the text does not grant a damage defense", () => {

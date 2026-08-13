@@ -2,9 +2,13 @@ import { describe, expect, it } from "vitest";
 import type { MaterialEffect } from "@/shared/types";
 import {
   buildMaterialEffectNameIndex,
+  extractLeadingMaterialEffectName,
   getMaterialEffectTierForText,
   getMaterialEffectTiersForRune,
   runeMatchesMaterialEffectTierFilter,
+  supplementIndexWithRuneEffectNames,
+  splitMaterialEffectRefs,
+  findMatchingMaterialEffectNames,
 } from "./material-effect-highlight.utils";
 import type { Rune } from "@/shared/types";
 
@@ -40,6 +44,46 @@ function makeRune(partial: Partial<Rune> & Pick<Rune, "name">): Rune {
 }
 
 const emptyIndex = buildMaterialEffectNameIndex([]);
+
+describe("extractLeadingMaterialEffectName", () => {
+  it("extracts short titled effects", () => {
+    expect(
+      extractLeadingMaterialEffectName(
+        "Sovereign Wrath. You gain advantage on attack rolls.",
+      ),
+    ).toBe("Sovereign Wrath");
+  });
+
+  it("does not treat action sentences as material effect titles", () => {
+    const text =
+      "(Insect Glaive only) As an action you can hurl this weapon and speak this weapon's command word, it transforms into a bolt of lightning, forming a line 5 feet wide that extends out from you to a target within 120 feet. Each creature in the line excluding you and the target must make a DC 13 Dexterity saving throw.";
+    expect(extractLeadingMaterialEffectName(text)).toBeNull();
+  });
+
+  it("strips leading restrictions before reading a real title", () => {
+    expect(
+      extractLeadingMaterialEffectName(
+        "(Insect Glaive only) Thunder Lash. Your weapon deals an extra 1d6 lightning damage.",
+      ),
+    ).toBe("Thunder Lash");
+  });
+});
+
+describe("material effect highlight — sentence false positives", () => {
+  it("does not highlight an entire action paragraph as a discovered effect name", () => {
+    const text =
+      "(Insect Glaive only) As an action you can hurl this weapon and speak this weapon's command word, it transforms into a bolt of lightning, forming a line 5 feet wide that extends out from you to a target within 120 feet. Each creature in the line excluding you and the target must make a DC 13 Dexterity saving throw.";
+    const rune = makeRune({
+      name: "Test Scale",
+      slots: ["W"],
+      weaponEffect: text,
+    });
+    const index = supplementIndexWithRuneEffectNames(emptyIndex, [rune]);
+    const candidates = findMatchingMaterialEffectNames(text, index.all);
+    const segments = splitMaterialEffectRefs(text, candidates, index.byKey, "weapon");
+    expect(segments.every((segment) => !segment.isMaterialEffect)).toBe(true);
+  });
+});
 
 describe("getMaterialEffectTierForText — inline defenses", () => {
   it("assigns Rare to unnamed resistance text", () => {
