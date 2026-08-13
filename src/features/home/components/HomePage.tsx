@@ -52,14 +52,6 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
     group: "Character",
     items: [
       {
-        label: "Builder",
-        route: "/builder",
-        description:
-          "Create your hunter: stats, equipment, runes, and export/import to Foundry VTT.",
-        icon: <UserRound className="h-5 w-5" />,
-        badge: "ALPHA",
-      },
-      {
         label: "Damage Calculator",
         route: "/damage-calculator",
         description: "Compare weapon builds by calculating expected DPT.",
@@ -210,20 +202,38 @@ const amellwindSections: { group: string; items: SectionItem[] }[] = [
   },
 ];
 
-const raintDmSections: SectionItem[] = [
+const raintDmSections: { group: string; items: SectionItem[] }[] = [
   {
-    label: "Weapon Forge",
-    route: "/weapon-forge",
-    description:
-      "Browse curated RaintDM weapons or create and edit custom ones for your table.",
-    icon: <Hammer className="h-5 w-5" />,
+    group: "Character",
+    items: [
+      {
+        label: "Builder",
+        route: "/builder",
+        description:
+          "Create a full D&D character using catalogs from the whole toolbox, then export/import to Foundry VTT.",
+        icon: <UserRound className="h-5 w-5" />,
+        badge: "ALPHA",
+      },
+    ],
   },
   {
-    label: "Items Forge",
-    route: "/item-forge",
-    description:
-      "Browse curated RaintDM items and craft them with Amellwind Combo List recipes.",
-    icon: <Layers className="h-5 w-5" />,
+    group: "Weapons",
+    items: [
+      {
+        label: "Weapon Forge",
+        route: "/weapon-forge",
+        description:
+          "Browse curated RaintDM weapons or create and edit custom ones for your table.",
+        icon: <Hammer className="h-5 w-5" />,
+      },
+      {
+        label: "Items Forge",
+        route: "/item-forge",
+        description:
+          "Browse curated RaintDM items and craft them with Amellwind Combo List recipes.",
+        icon: <Layers className="h-5 w-5" />,
+      },
+    ],
   },
 ];
 
@@ -370,7 +380,7 @@ export function HomePage() {
       <Separator />
 
       {/* Amellwind (RaintDM) sections */}
-      <section className="space-y-4">
+      <section className="space-y-7">
         <div>
           <h2 className="text-lg font-semibold">Amellwind (RaintDM)</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -378,11 +388,18 @@ export function HomePage() {
             house-rule tweaks for my tables and campaigns.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {raintDmSections.map((item) => (
-            <SectionCard key={item.route} item={item} />
-          ))}
-        </div>
+        {raintDmSections.map((group) => (
+          <div key={group.group} className="space-y-3">
+            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+              {group.group}
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+              {group.items.map((item) => (
+                <SectionCard key={item.route} item={item} />
+              ))}
+            </div>
+          </div>
+        ))}
       </section>
 
       <Separator />

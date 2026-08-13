@@ -65,7 +65,6 @@ const NAV_SECTIONS: NavSection[] = [
       {
         label: "Character",
         items: [
-          { to: "/builder", label: "Builder", icon: UserRound },
           { to: "/damage-calculator", label: "Damage Calculator", icon: Calculator },
           { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
         ],
@@ -119,6 +118,10 @@ const NAV_SECTIONS: NavSection[] = [
     id: "amellwind-raintdm",
     label: "Amellwind (RaintDM)",
     groups: [
+      {
+        label: "Character",
+        items: [{ to: "/builder", label: "Builder", icon: UserRound }],
+      },
       {
         label: "Weapons",
         items: [
