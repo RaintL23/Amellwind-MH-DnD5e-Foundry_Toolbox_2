@@ -4,7 +4,7 @@ import {
 } from "@/shared/types";
 import { parseSkillProficiencyBlocks } from "@/shared/utils/skill-proficiency.parser";
 import { parseNamedProficiencyBlocks } from "@/shared/utils/named-proficiency.parser";
-import { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "@/features/raintdm/builder/utils/origin-feat.constants";
+import { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "../constants/origin-feat.constants";
 import { mapFluffEntriesToText } from "@/shared/utils/fluff.utils";
 import {
   mapListProficiencies,

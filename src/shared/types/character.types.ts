@@ -87,6 +87,14 @@ export interface ArmorItem {
   source?: string;
 }
 
+/** D&D 5e standalone shield (PHB / items catalog), distinct from armor. */
+export interface StandaloneShieldItem {
+  name: string;
+  acBonus: number;
+  weight: number;
+  rarity: string;
+}
+
 // ─── Equipped Items ──────────────────────────────────────────────────────────
 
 export interface EquippedWeapon {

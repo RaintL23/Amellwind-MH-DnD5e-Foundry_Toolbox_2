@@ -253,18 +253,27 @@ async function clearGuideDerivedCaches(): Promise<void> {
     { clearFeatCache },
     { clearMonstieSidekickCache },
     { clearMaterialEffectCache },
+    { clearItemCache },
+    { clearWeaponCache },
+    { clearDowntimeCache },
   ] = await Promise.all([
     import("@/features/amellwind/species/services/species.service"),
     import("@/features/amellwind/backgrounds/services/background.service"),
     import("@/features/amellwind/feats/services/feat.service"),
     import("@/features/amellwind/monstie-sidekick/services/monstie-sidekick.service"),
     import("@/features/amellwind/material-effects/services/material-effect.service"),
+    import("@/features/amellwind/shops/services/item.service"),
+    import("@/features/amellwind/weapons/services/weapon.service"),
+    import("@/features/amellwind/downtime/services/downtime.service"),
   ]);
   clearSpeciesCache();
   clearBackgroundCache();
   clearFeatCache();
   clearMonstieSidekickCache();
   clearMaterialEffectCache();
+  clearItemCache();
+  clearWeaponCache();
+  clearDowntimeCache();
 }
 
 /**

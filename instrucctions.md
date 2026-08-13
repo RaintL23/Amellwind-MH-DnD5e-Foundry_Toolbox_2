@@ -89,7 +89,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 
 ### Implementación en `App.tsx`
 
-Al montar, `App.tsx` ejecuta `syncData()` y muestra un banner de sincronización vía `SyncProvider` hasta que termina. Tras un sync exitoso invalida cachés en memoria según qué store se actualizó (monstruos/runas vs. species/backgrounds/feats/monstie).
+Al montar, `App.tsx` ejecuta `syncData()` y muestra un banner de sincronización vía `SyncProvider` hasta que termina. Tras un sync exitoso invalida cachés en memoria según qué store se actualizó (MM: monstruos/runas/conditions/diseases; GTMH: species/backgrounds/feats/monstie/material-effects/items/weapons/downtime).
 
 Providers globales:
 
@@ -100,13 +100,13 @@ Providers globales:
 Providers en **`MainLayout`** (todas las rutas con layout):
 
 - **`CartProvider`** — carrito de compras (tiendas e ítems).
-- **`BuilderInventoryProvider`** — resuelve armas/armaduras equipables desde el carrito para el Builder (aún global; `CartDrawer` lo consume).
-- **`CharacterBuilderProvider`** — estado del Builder (aún global en MainLayout; el badge del Sidebar ya no existe).
+- **`BuilderInventoryProvider`** — resuelve armas/armaduras equipables desde el carrito para el Builder (global: Purchase en `/shops` y `/items`). `CartPurchaseBridge` inyecta `purchaseFromCart` para que `CartDrawer` no importe el Builder.
+- **`CartPurchaseBridge`** — puente layout: `BuilderInventoryContext` → `CartPurchaseContext`.
 
 Providers **por ruta** (no globales):
 
 - **`RuneBuildRouteLayout`** — `RuneBuildProvider` solo en `/runes` y `/builder`.
-- **`BuilderRouteProviders`** — spellcasting + autosave + syncs de inventario, solo en `/builder`.
+- **`BuilderRouteProviders`** — `CharacterBuilderProvider` + spellcasting + autosave + syncs de inventario, solo en `/builder`.
 
 ```tsx
 <ThemeProvider>
@@ -137,7 +137,7 @@ Providers **por ruta** (no globales):
 
 ### Sidebar y navegación
 
-El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_SECTIONS` (`Sidebar.tsx`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items`. Home replica las mismas tres secciones en `HomePage.tsx`.
+El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_SECTIONS` (`src/shared/constants/nav-sections.ts`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items` (con `description` / `badge` para Home). `Sidebar` y `HomePage` consumen el mismo mapa. Hunt Planner está en **World and Exploration**.
 
 **Amellwind (RaintDM)** agrupa el Character Builder (hub de personaje de toda la app) y las variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
 
@@ -1547,7 +1547,7 @@ Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efec
 ### Character Builder (ALPHA)
 
 **Ruta**: `/builder`
-**Estado**: `CharacterBuilderProvider` + `BuilderInventoryProvider` (aún globales en `MainLayout`; el badge del Sidebar se eliminó) + `RuneBuildProvider` vía `RuneBuildRouteLayout` (`/runes` + `/builder`) + `BuilderRouteProviders` (solo `/builder`: spellcasting/autosave/syncs).
+**Estado**: `BuilderInventoryProvider` global en `MainLayout` (Purchase del carrito) + `CharacterBuilderProvider` solo en `/builder` vía `BuilderRouteProviders` (spellcasting/autosave/syncs; flush de autosave al salir) + `RuneBuildProvider` vía `RuneBuildRouteLayout` (`/runes` + `/builder`). El Sidebar **no** muestra badge de inventario sobre Builder.
 
 Herramienta experimental para equipar armas/armadura/runas y estimar **daño por turno (DPT)**.
 
@@ -1565,7 +1565,7 @@ Encima del grid: `CharacterCreationTipsPanel` con consejos de creación.
 
 #### Inventario del builder (`BuilderInventoryContext`)
 
-- **Fuente de verdad**: líneas del **`CartContext`** (ítems comprados/añadidos en Shops/Items).
+- **Fuente de verdad**: líneas del **`CartContext`** (ítems comprados/añadidos en Shops/Items). Purchase pasa por `CartPurchaseBridge` (`CartPurchaseContext`); `CartDrawer` no importa el Builder.
 - Resuelve nombres del carrito a `Weapon[]` y `ArmorItem[]` vía `cart-equipment.resolver`.
 - Con Amellwind Homebrew, el catálogo de armas es `getAllForgeWeapons()` + `getAllWeapons()` (forge primero en lookups por nombre).
 - Armaduras no GTMH: lista inicial desde `armor.placeholder.ts`.
@@ -1836,7 +1836,7 @@ Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estát
 - **Node.js 22.x** requerido (`package.json` engines + `.nvmrc`).
 - Rutas lazy con `<Suspense>`; sync y temas gestionados en `App.tsx` / `ThemeProvider` / `SyncProvider`.
 - `RuneBuildRouteLayout` (`RuneBuildProvider`) solo en `/runes` y `/builder`; `BuilderRouteProviders` solo en `/builder`; `BuildDrawer` solo en `RuneList`.
-- Inventario del builder derivado del **carrito** (`CartContext` → `BuilderInventoryContext`).
+- Inventario del builder derivado del **carrito** (`CartContext` → `BuilderInventoryContext` vía `CartPurchaseBridge`).
 - Utilidades clave: `fivetools-parser.ts`, `cr.utils.ts`, `ItemRefText`, `DndKeywordText`, `fivetools-fetch.ts`, `dedupe-by-name.utils.ts`, `fluff.utils.ts`.
 - Services del compendio 5e creados con el factory `createEntityService` (`shared/services/`); constantes D&D centralizadas en `shared/constants/dnd/`.
 - **Export/Import Foundry VTT**: núcleo en `shared/foundry/` (+ `shared/foundry/weapons/`); actor en `builder/foundry-export/` / `foundry-import/` (dnd5e v12); items de arma en forge/weapons vía el mismo núcleo. Botones en `StatsPanel`.

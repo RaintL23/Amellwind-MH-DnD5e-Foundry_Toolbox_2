@@ -139,6 +139,8 @@ export function BuilderAutosaveSync() {
     () => buildPersistPayload(builder, { items: inventory.items }),
     [builder, inventory.items],
   );
+  const payloadRef = useRef(payload);
+  payloadRef.current = payload;
   const debounced = useDebouncedValue(payload, 500);
 
   useEffect(() => {
@@ -149,6 +151,14 @@ export function BuilderAutosaveSync() {
     lastWrittenRef.current = serialized;
     persistBuilderAutosave(debounced);
   }, [debounced]);
+
+  useEffect(() => {
+    return () => {
+      const latest = payloadRef.current;
+      if (!hasBuildContent(latest)) return;
+      persistBuilderAutosave(latest);
+    };
+  }, []);
 
   return null;
 }

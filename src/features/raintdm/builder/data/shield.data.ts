@@ -1,12 +1,6 @@
-import type { ArmorItem } from "@/shared/types";
+import type { ArmorItem, StandaloneShieldItem } from "@/shared/types";
 
-/** D&D 5e standalone shield (PHB / items catalog). */
-export interface StandaloneShieldItem {
-  name: string;
-  acBonus: number;
-  weight: number;
-  rarity: string;
-}
+export type { StandaloneShieldItem };
 
 export const STANDALONE_SHIELD: StandaloneShieldItem = {
   name: "Shield",

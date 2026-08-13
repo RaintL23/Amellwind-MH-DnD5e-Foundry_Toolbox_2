@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ShoppingCart, X, Trash2 } from "lucide-react";
-import { useBuilderInventory } from "@/features/raintdm/builder/context/BuilderInventoryContext";
 import { useCart } from "../context/CartContext";
+import { useCartPurchase } from "../context/CartPurchaseContext";
 import { cn } from "@/shared/utils/cn";
 import { CartFloatingButton } from "./CartFloatingButton";
 import { CartItemRow } from "./CartItemRow";
@@ -11,7 +11,7 @@ export function CartDrawer() {
   const [open, setOpen] = useState(false);
   const { items, totalItems, removeItem, updateQuantity, clearCart } =
     useCart();
-  const { purchaseFromCart } = useBuilderInventory();
+  const purchaseFromCart = useCartPurchase();
 
   const handlePurchase = () => {
     purchaseFromCart();

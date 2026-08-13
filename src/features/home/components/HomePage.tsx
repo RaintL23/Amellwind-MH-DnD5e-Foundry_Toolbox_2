@@ -1,34 +1,5 @@
 import { Link } from "react-router-dom";
-import {
-  Sword,
-  BookOpen,
-  Wand2,
-  Skull,
-  ShoppingBag,
-  UtensilsCrossed,
-  Leaf,
-  Map,
-  Swords,
-  AlertTriangle,
-  Users,
-  Sparkles,
-  FlaskConical,
-  ScrollText,
-  LibraryBig,
-  Layers,
-  TreePine,
-  Clock,
-  Hammer,
-  Shield,
-  Calculator,
-  UserRound,
-  Flame,
-  PawPrint,
-  Bot,
-  ImportIcon,
-  Crosshair,
-  Store,
-} from "lucide-react";
+import { Hammer, ImportIcon } from "lucide-react";
 import {
   Card,
   CardHeader,
@@ -38,271 +9,33 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { MAGIC_ITEM_PRICING_ATTRIBUTION } from "@/features/dnd/shop-generator/data/magic-item-pricing-attribution";
+import {
+  NAV_SECTIONS,
+  type NavGroupDef,
+  type NavItemDef,
+  type NavSectionDef,
+} from "@/shared/constants/nav-sections";
 
-interface SectionItem {
-  label: string;
-  route: string;
-  description: string;
-  icon: React.ReactNode;
-  badge?: string;
+function navSectionById(id: string): NavSectionDef {
+  const section = NAV_SECTIONS.find((s) => s.id === id);
+  if (!section) throw new Error(`Missing nav section: ${id}`);
+  return section;
 }
 
-const amellwindSections: { group: string; items: SectionItem[] }[] = [
-  {
-    group: "Character",
-    items: [
-      {
-        label: "Damage Calculator",
-        route: "/damage-calculator",
-        description: "Compare weapon builds by calculating expected DPT.",
-        icon: <Calculator className="h-5 w-5" />,
-      },
-      {
-        label: "Creation Guide",
-        route: "/character-guide",
-        description: "Step-by-step guide to creating an Amellwind character.",
-        icon: <BookOpen className="h-5 w-5" />,
-      },
-    ],
-  },
-  {
-    group: "Bestiary and Rules",
-    items: [
-      {
-        label: "Monsters",
-        route: "/monsters",
-        description: "Complete bestiary of Monster Hunter with stat blocks.",
-        icon: <Skull className="h-5 w-5" />,
-      },
-      {
-        label: "Hunt Planner",
-        route: "/hunt",
-        description:
-          "Plan and simulate a monster hunt with tracking rolls and resource tables.",
-        icon: <Crosshair className="h-5 w-5" />,
-      },
-      {
-        label: "Conditions & Diseases",
-        route: "/conditions",
-        description:
-          "Blight conditions, afflictions and infectious diseases from Amellwind.",
-        icon: <AlertTriangle className="h-5 w-5" />,
-      },
-    ],
-  },
-  {
-    group: "Species and Character Options",
-    items: [
-      {
-        label: "Species",
-        route: "/species",
-        description: "Species and subraces from the Hunter's Guide.",
-        icon: <Users className="h-5 w-5" />,
-      },
-      {
-        label: "Backgrounds",
-        route: "/backgrounds",
-        description: "Hunter backgrounds from the Amellwind manual.",
-        icon: <ScrollText className="h-5 w-5" />,
-      },
-      {
-        label: "Feats",
-        route: "/feats",
-        description: "Exclusive feats from the Amellwind homebrew.",
-        icon: <Sparkles className="h-5 w-5" />,
-      },
-    ],
-  },
-  {
-    group: "Weapons, Runes, and Equipment",
-    items: [
-      {
-        label: "Weapons",
-        route: "/weapons",
-        description: "Hunter Weapons and their optional features.",
-        icon: <Sword className="h-5 w-5" />,
-      },
-      {
-        label: "Runes",
-        route: "/runes",
-        description: "Monster materials and visual Rune Planner for runes.",
-        icon: <Flame className="h-5 w-5" />,
-      },
-      {
-        label: "Material Effects",
-        route: "/material-effects",
-        description: "Material effects for armor and weapons.",
-        icon: <Shield className="h-5 w-5" />,
-      },
-      {
-        label: "Items",
-        route: "/items",
-        description: "Catalog of items from the Hunter's Guide.",
-        icon: <Layers className="h-5 w-5" />,
-      },
-    ],
-  },
-  {
-    group: "World and Exploration",
-    items: [
-      {
-        label: "Environments",
-        route: "/environments",
-        description: "Biomes and encounter/resource tables.",
-        icon: <TreePine className="h-5 w-5" />,
-      },
-      {
-        label: "Resources",
-        route: "/resources",
-        description: "Plants, minerals, and gatherable field resources.",
-        icon: <Leaf className="h-5 w-5" />,
-      },
-      {
-        label: "Shops",
-        route: "/shops",
-        description: "Shops with shopping carts for your sessions.",
-        icon: <ShoppingBag className="h-5 w-5" />,
-      },
-      {
-        label: "Cooking",
-        route: "/cooking",
-        description: "Artisan cooking system from the manual.",
-        icon: <UtensilsCrossed className="h-5 w-5" />,
-      },
-      {
-        label: "Combo List",
-        route: "/combo",
-        description: "Crafting and item combinations.",
-        icon: <FlaskConical className="h-5 w-5" />,
-      },
-      {
-        label: "Downtime",
-        route: "/downtime",
-        description: "Free time activities between adventures.",
-        icon: <Clock className="h-5 w-5" />,
-      },
-    ],
-  },
-  {
-    group: "NPCs and Companions",
-    items: [
-      {
-        label: "Monstie Sidekick",
-        route: "/monstie-sidekick",
-        description: "Monstie sidekick rules and creator.",
-        icon: <PawPrint className="h-5 w-5" />,
-      },
-      {
-        label: "NPC Generator",
-        route: "/npc-generator",
-        description: "Generate stat blocks for humanoid NPCs instantly.",
-        icon: <Bot className="h-5 w-5" />,
-      },
-    ],
-  },
-];
+const amellwindSection = navSectionById("amellwind");
+const raintDmSection = navSectionById("amellwind-raintdm");
+const dndSection = navSectionById("dnd5e");
 
-const raintDmSections: { group: string; items: SectionItem[] }[] = [
-  {
-    group: "Character",
-    items: [
-      {
-        label: "Builder",
-        route: "/builder",
-        description:
-          "Create a full D&D character using catalogs from the whole toolbox, then export/import to Foundry VTT.",
-        icon: <UserRound className="h-5 w-5" />,
-        badge: "ALPHA",
-      },
-    ],
-  },
-  {
-    group: "Weapons",
-    items: [
-      {
-        label: "Weapon Forge",
-        route: "/weapon-forge",
-        description:
-          "Browse curated RaintDM weapons or create and edit custom ones for your table.",
-        icon: <Hammer className="h-5 w-5" />,
-      },
-      {
-        label: "Items Forge",
-        route: "/item-forge",
-        description:
-          "Browse curated RaintDM items and craft them with Amellwind Combo List recipes.",
-        icon: <Layers className="h-5 w-5" />,
-      },
-    ],
-  },
-];
-
-const dndSections: SectionItem[] = [
-  {
-    label: "Spells",
-    route: "/spells",
-    description: "Spells with filters by class, level, and source.",
-    icon: <Wand2 className="h-5 w-5" />,
-  },
-  {
-    label: "Classes",
-    route: "/classes",
-    description: "Base classes with subclass details.",
-    icon: <Swords className="h-5 w-5" />,
-  },
-  {
-    label: "Bestiary",
-    route: "/bestiary",
-    description: "Monsters from the MM and other official sources.",
-    icon: <Skull className="h-5 w-5" />,
-  },
-  {
-    label: "Races",
-    route: "/dnd-races",
-    description: "Official 5e races, lineages, and subraces.",
-    icon: <Users className="h-5 w-5" />,
-  },
-  {
-    label: "Backgrounds",
-    route: "/dnd-backgrounds",
-    description: "Official 5e backgrounds (2014 / 2024).",
-    icon: <ScrollText className="h-5 w-5" />,
-  },
-  {
-    label: "Feats",
-    route: "/dnd-feats",
-    description: "Official 5e feats.",
-    icon: <Sparkles className="h-5 w-5" />,
-  },
-  {
-    label: "Items",
-    route: "/dnd-items",
-    description:
-      "Magic items and equipment from the PHB, DMG, and other sources.",
-    icon: <LibraryBig className="h-5 w-5" />,
-  },
-  {
-    label: "Xanathar Backstory",
-    route: "/xanathar-backstory",
-    description: "Random backstory generator using XGE tables.",
-    icon: <Map className="h-5 w-5" />,
-  },
-  {
-    label: "Shop Generator",
-    route: "/shop-generator",
-    description:
-      "Procedural D&D 5e shops with tiered stock, themes, and prices from the Dump Stat Adventures Magic Item Pricing spreadsheet.",
-    icon: <Store className="h-5 w-5" />,
-  },
-];
-
-function SectionCard({ item }: { item: SectionItem }) {
+function SectionCard({ item }: { item: NavItemDef }) {
+  const Icon = item.icon;
   return (
-    <Link to={item.route} className="group focus:outline-none">
+    <Link to={item.to} className="group focus:outline-none">
       <Card className="h-full transition-colors hover:bg-accent hover:border-primary/50 group-focus-visible:ring-2 group-focus-visible:ring-ring">
         <CardHeader className="p-4 gap-2">
           <div className="flex items-center gap-2">
-            <span className="text-primary">{item.icon}</span>
+            <span className="text-primary">
+              <Icon className="h-5 w-5" />
+            </span>
             <CardTitle className="text-sm">{item.label}</CardTitle>
             {item.badge && (
               <Badge variant="orange" className="ml-auto text-[10px] py-0">
@@ -316,6 +49,29 @@ function SectionCard({ item }: { item: SectionItem }) {
         </CardHeader>
       </Card>
     </Link>
+  );
+}
+
+function HomeSectionGroups({
+  section,
+}: {
+  section: Pick<NavSectionDef, "groups">;
+}) {
+  return (
+    <>
+      {section.groups.map((group: NavGroupDef) => (
+        <div key={group.label} className="space-y-3">
+          <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
+            {group.label}
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {group.items.map((item) => (
+              <SectionCard key={item.to} item={item} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </>
   );
 }
 
@@ -363,18 +119,7 @@ export function HomePage() {
           </p>
         </div>
 
-        {amellwindSections.map((group) => (
-          <div key={group.group} className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              {group.group}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {group.items.map((item) => (
-                <SectionCard key={item.route} item={item} />
-              ))}
-            </div>
-          </div>
-        ))}
+        <HomeSectionGroups section={amellwindSection} />
       </section>
 
       <Separator />
@@ -388,24 +133,13 @@ export function HomePage() {
             house-rule tweaks for my tables and campaigns.
           </p>
         </div>
-        {raintDmSections.map((group) => (
-          <div key={group.group} className="space-y-3">
-            <h3 className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">
-              {group.group}
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-              {group.items.map((item) => (
-                <SectionCard key={item.route} item={item} />
-              ))}
-            </div>
-          </div>
-        ))}
+        <HomeSectionGroups section={raintDmSection} />
       </section>
 
       <Separator />
 
       {/* D&D 5e sections */}
-      <section className="space-y-4">
+      <section className="space-y-7">
         <div>
           <h2 className="text-lg font-semibold">D&D 5e Compendium</h2>
           <p className="text-xs text-muted-foreground mt-0.5">
@@ -421,11 +155,7 @@ export function HomePage() {
             . Not homebrew content from Amellwind.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
-          {dndSections.map((item) => (
-            <SectionCard key={item.route} item={item} />
-          ))}
-        </div>
+        <HomeSectionGroups section={dndSection} />
       </section>
 
       {/* Footer note */}

@@ -1,176 +1,23 @@
 /**
- * App navigation from NAV_SECTIONS: Amellwind Homebrew, RaintDM, D&D 5e.
- * Desktop icon-collapse + mobile drawer. Home duplicates this map in HomePage.
+ * App navigation from shared NAV_SECTIONS: Amellwind Homebrew, RaintDM, D&D 5e.
+ * Desktop icon-collapse + mobile drawer. Home consumes the same map.
  */
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
-import type { LucideIcon } from "lucide-react";
 import {
-  Swords,
-  AlertTriangle,
   ChevronDown,
   ChevronLeft,
   ChevronRight,
   X,
-  Sword,
-  Leaf,
-  Users,
-  ScrollText,
-  BookOpen,
-  PawPrint,
-  Sparkles,
   Lock,
-  Skull,
-  Calculator,
-  UserRound,
-  Shield,
-  Layers,
-  TreePine,
-  ShoppingBag,
-  UtensilsCrossed,
-  FlaskConical,
-  Clock,
-  Bot,
-  Flame,
-  Wand2,
-  LibraryBig,
-  Map,
-  Crosshair,
-  Hammer,
-  Store,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { ThemeSelector } from "@/components/layout/ThemeSelector";
-
-type NavItem = {
-  label: string;
-  icon: LucideIcon;
-  to?: string;
-  disabled?: boolean;
-};
-
-type NavGroup = {
-  label: string;
-  items: NavItem[];
-};
-
-type NavSection = {
-  id: string;
-  label: string;
-  groups: NavGroup[];
-};
-
-const NAV_SECTIONS: NavSection[] = [
-  {
-    id: "amellwind",
-    label: "Amellwind Homebrew",
-    groups: [
-      {
-        label: "Character",
-        items: [
-          { to: "/damage-calculator", label: "Damage Calculator", icon: Calculator },
-          { to: "/character-guide", label: "Creation Guide", icon: BookOpen },
-        ],
-      },
-      {
-        label: "Bestiary and Rules",
-        items: [
-          { to: "/monsters", label: "Monsters", icon: Skull },
-          { to: "/conditions", label: "Conditions & Diseases", icon: AlertTriangle },
-        ],
-      },
-      {
-        label: "Species and Character Options",
-        items: [
-          { to: "/species", label: "Species", icon: Users },
-          { to: "/backgrounds", label: "Backgrounds", icon: ScrollText },
-          { to: "/feats", label: "Feats", icon: Sparkles },
-        ],
-      },
-      {
-        label: "Weapons, Runes, and Equipment",
-        items: [
-          { to: "/weapons", label: "Weapons", icon: Sword },
-          { to: "/runes", label: "Runes", icon: Flame },
-          { to: "/material-effects", label: "Material Effects", icon: Shield },
-          { to: "/items", label: "Items", icon: Layers },
-        ],
-      },
-      {
-        label: "World and Exploration",
-        items: [
-          { to: "/hunt", label: "Hunt Planner", icon: Crosshair },
-          { to: "/environments", label: "Environments", icon: TreePine },
-          { to: "/resources", label: "Resources", icon: Leaf },
-          { to: "/shops", label: "Shops", icon: ShoppingBag },
-          { to: "/cooking", label: "Cooking", icon: UtensilsCrossed },
-          { to: "/combo", label: "Combo List", icon: FlaskConical },
-          { to: "/downtime", label: "Downtime", icon: Clock },
-        ],
-      },
-      {
-        label: "NPCs and Companions",
-        items: [
-          { to: "/monstie-sidekick", label: "Monstie Sidekick", icon: PawPrint },
-          { to: "/npc-generator", label: "NPC Generator", icon: Bot },
-        ],
-      },
-    ],
-  },
-  {
-    id: "amellwind-raintdm",
-    label: "Amellwind (RaintDM)",
-    groups: [
-      {
-        label: "Character",
-        items: [{ to: "/builder", label: "Builder", icon: UserRound }],
-      },
-      {
-        label: "Weapons",
-        items: [
-          { to: "/weapon-forge", label: "Weapon Forge", icon: Hammer },
-          { to: "/item-forge", label: "Items Forge", icon: Layers },
-        ],
-      },
-    ],
-  },
-  {
-    id: "dnd5e",
-    label: "D&D 5e Compendium",
-    groups: [
-      {
-        label: "Spells and Classes",
-        items: [
-          { to: "/spells", label: "Spells", icon: Wand2 },
-          { to: "/classes", label: "Classes", icon: Swords },
-        ],
-      },
-      {
-        label: "Character Options",
-        items: [
-          { to: "/dnd-races", label: "Races", icon: Users },
-          { to: "/dnd-backgrounds", label: "Backgrounds", icon: ScrollText },
-          { to: "/dnd-feats", label: "Feats", icon: Sparkles },
-        ],
-      },
-      {
-        label: "Bestiary",
-        items: [{ to: "/bestiary", label: "Bestiary", icon: Skull }],
-      },
-      {
-        label: "Equipment",
-        items: [{ to: "/dnd-items", label: "Items", icon: LibraryBig }],
-      },
-      {
-        label: "Character Tools",
-        items: [
-          { to: "/xanathar-backstory", label: "Xanathar Backstory", icon: Map },
-          { to: "/shop-generator", label: "Shop Generator", icon: Store },
-        ],
-      },
-    ],
-  },
-];
+import {
+  NAV_SECTIONS,
+  type NavGroupDef,
+  type NavItemDef,
+} from "@/shared/constants/nav-sections";
 
 interface SidebarProps {
   /** Desktop: colapsado a sólo iconos */
@@ -185,7 +32,7 @@ function isNavItemActive(pathname: string, to: string) {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
 
-function groupHasActiveRoute(pathname: string, group: NavGroup) {
+function groupHasActiveRoute(pathname: string, group: NavGroupDef) {
   return group.items.some((item) => item.to && isNavItemActive(pathname, item.to));
 }
 
@@ -196,7 +43,7 @@ function NavItemLink({
   disabled = false,
   collapsed,
   onMobileClose,
-}: NavItem & { collapsed: boolean; onMobileClose: () => void }) {
+}: NavItemDef & { collapsed: boolean; onMobileClose: () => void }) {
   if (!to || disabled) {
     return (
       <div
@@ -248,7 +95,7 @@ function SidebarNavGroup({
   onMobileClose,
 }: {
   sectionId: string;
-  group: NavGroup;
+  group: NavGroupDef;
   collapsed: boolean;
   open: boolean;
   onToggle: () => void;

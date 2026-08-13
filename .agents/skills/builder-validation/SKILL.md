@@ -39,7 +39,7 @@ These map to `BuildCompletenessSection` / issue ids:
 Notes:
 
 - Equipping MH/Forge weapons on the paper doll is a **workflow** tip (`BUILDER_WORKFLOW_STEPS`), not currently a hard completeness gate.
-- Amellwind backgrounds always grant a choose Origin Feat (`AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT`).
+- Amellwind backgrounds always grant a choose Origin Feat (`AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT` in `amellwind/backgrounds/constants/origin-feat.constants.ts`; Builder re-exports it).
 - Randomizer must leave `evaluateBuildCompleteness(...).issues` empty for the resulting snapshot (no weapons required).
 
 ## When changing Builder code

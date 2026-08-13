@@ -1,15 +1,15 @@
 /**
  * Shell for every page route: Sidebar, optional Amellwind sync banner, Outlet.
- * CartProvider is global (shops cart). BuilderInventoryProvider +
- * CharacterBuilderProvider still wrap all routes (CartDrawer / builder hub);
- * Builder-only sync/spellcasting lives in BuilderRouteProviders on /builder.
+ * CartProvider is global (shops cart). BuilderInventoryProvider stays global
+ * for Purchase → builder inventory; CharacterBuilderProvider lives in
+ * BuilderRouteProviders on /builder only.
  */
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Menu } from "lucide-react";
 import { CartProvider } from "@/features/amellwind/shops/context/CartContext";
 import { BuilderInventoryProvider } from "@/features/raintdm/builder/context/BuilderInventoryContext";
-import { CharacterBuilderProvider } from "@/features/raintdm/builder/context/CharacterBuilderContext";
+import { CartPurchaseBridge } from "./CartPurchaseBridge";
 import { Sidebar } from "./Sidebar";
 
 export function MainLayout({ syncing = false }: { syncing?: boolean }) {
@@ -19,7 +19,7 @@ export function MainLayout({ syncing = false }: { syncing?: boolean }) {
   return (
     <CartProvider>
       <BuilderInventoryProvider>
-        <CharacterBuilderProvider>
+        <CartPurchaseBridge>
           <div className="flex h-screen bg-background text-foreground">
             <Sidebar
               collapsed={collapsed}
@@ -53,7 +53,7 @@ export function MainLayout({ syncing = false }: { syncing?: boolean }) {
               </main>
             </div>
           </div>
-        </CharacterBuilderProvider>
+        </CartPurchaseBridge>
       </BuilderInventoryProvider>
     </CartProvider>
   );

@@ -1,5 +1,4 @@
-import type { StandaloneShieldItem } from "@/features/raintdm/builder/data/shield.data";
-import { EquippedWeapon, Weapon } from "@/shared/types";
+import { EquippedWeapon, Weapon, type StandaloneShieldItem } from "@/shared/types";
 import type { WeaponGripMode } from "./weapon-mode.utils";
 import {
   doesGripModeBlockOffHand,

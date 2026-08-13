@@ -82,6 +82,10 @@ src/
 └── shared/              # constants, context, db, services, types, utils, mappers, components
 ```
 
+Cursor/Grep can still list old flat paths (`src/features/builder`, `shops`, …). On disk only `amellwind/`, `raintdm/`, `dnd/`, and `home/` exist under `src/features/`. Prefer those; do not recreate the flat tree.
+
+Nav map (Sidebar + Home, including Hunt Planner under World and Exploration): `src/shared/constants/nav-sections.ts`.
+
 **Patrón de feature** (no todas tienen todas las carpetas — copia el patrón de una vecina similar):
 
 ```text
@@ -100,7 +104,7 @@ Colocación: **misma sección que el Sidebar**. El Character Builder es RaintDM 
 
 - **Services se construyen con `createEntityService`** (`src/shared/services/create-entity-service.ts`): provee `getAll/getList/getById/getByName/clearCache`, con caché en memoria, dedupe e índices. Para una nueva entidad, **declara un service con esa factory** en vez de hand-rollear caché. Vistas extra (`getXByType`, filtros) son wrappers finos sobre `getAll`.
 - **Filtros de lista vs URL:** usa `useListSessionFilters` (sessionStorage por pestaña) para búsqueda/filtros; no vuelques `src=` ni facets a la query. Para el ítem abierto usa `useListItemUrlParam` (p. ej. `?spell=Fireball`) o una ruta de detalle.
-- **IndexedDB** (`src/shared/db/database.ts` + `sync.service.ts`): stores `mm_*` (Monster Manual) y `gtmh_*` (Guía de Caza), con esquema current/previous/meta. La sincronización corre al arrancar en `App.tsx`; tras un sync exitoso se invalidan cachés en memoria. No accedas a IndexedDB directamente desde componentes: pasa por services.
+- **IndexedDB** (`src/shared/db/database.ts` + `sync.service.ts`): stores `mm_*` (Monster Manual) y `gtmh_*` (Guía de Caza), con esquema current/previous/meta. La sincronización corre al arrancar en `App.tsx`; tras un sync exitoso se invalidan cachés en memoria (MM: monsters/runes/conditions/diseases; GTMH: species/backgrounds/feats/monstie/material-effects/items/weapons/downtime). No accedas a IndexedDB directamente desde componentes: pasa por services.
 - **Flujo:** raw JSON (5etools / IndexedDB) → `mapper` → modelo de dominio → `service` (cachea) → `hook` → `component`.
 
 ## Zonas complejas (extrema cautela)

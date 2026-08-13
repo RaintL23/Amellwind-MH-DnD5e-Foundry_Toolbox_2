@@ -1,11 +1,11 @@
 import { useMemo } from "react";
 import { OptionalFeature, Weapon } from "@/shared/types";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import type { WeaponForgeFeatureDef } from "@/features/raintdm/weapon-forge/types/weapon-forge.types";
 import {
   buildColumnChains,
   ColumnChains,
   type FeatureUpgradeLink,
+  type WeaponFeatureDef,
 } from "@/shared/foundry/weapons";
 import { RaritySlide } from "./RaritySlide";
 import { RarityDots } from "./RarityDots";
@@ -24,7 +24,7 @@ interface WeaponRarityProgressionProps {
 }
 
 function toUpgradeLinks(
-  customFeatures: WeaponForgeFeatureDef[] | undefined,
+  customFeatures: WeaponFeatureDef[] | undefined,
 ): FeatureUpgradeLink[] | undefined {
   if (!customFeatures?.length) return undefined;
   return customFeatures
@@ -57,7 +57,7 @@ export function WeaponRarityProgression({
   const total = weapon.rarityRows.length;
 
   const resolvedColumnChains = useMemo(() => {
-    const customFeatures = (weapon as { customFeatures?: WeaponForgeFeatureDef[] })
+    const customFeatures = (weapon as { customFeatures?: WeaponFeatureDef[] })
       .customFeatures;
     const upgradeLinks = toUpgradeLinks(customFeatures);
 
