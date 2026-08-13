@@ -44,6 +44,7 @@ Variantes de RaintDM sobre el homebrew 2014 de Amellwind — toques de house rul
 | Sección          | Ruta            | Descripción                                                                 |
 | ---------------- | --------------- | --------------------------------------------------------------------------- |
 | **Builder**      | `/builder`      | Character Builder — stats, equipamiento, runas, DPT y **export/import Foundry VTT** _(ALPHA)_. Junta catálogos Amellwind, 5e y RaintDM. |
+| **Damage Calculator** | `/damage-calculator` | Calculadora de daño esperado por turno comparando builds de armas (también en Amellwind Homebrew) |
 | **Weapon Forge** | `/weapon-forge` | Armas de cazador curated de RaintDM más armas custom que creas y exportas |
 | **Items Forge**  | `/item-forge`   | Ítems curated de RaintDM y recetas tipo Combo List (magazines de Dual Repeaters, trampas de caza) |
 

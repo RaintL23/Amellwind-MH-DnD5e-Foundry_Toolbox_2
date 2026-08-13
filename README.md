@@ -44,6 +44,7 @@ RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tw
 | Section         | Route           | Description                                                                 |
 | --------------- | --------------- | --------------------------------------------------------------------------- |
 | **Builder**      | `/builder`      | Character Builder — stats, equipment, runes, DPR, and **Foundry VTT export/import** _(ALPHA)_. Aggregates Amellwind, 5e, and RaintDM catalogs. |
+| **Damage Calculator** | `/damage-calculator` | Expected damage-per-turn calculator for comparing weapon builds (also under Amellwind Homebrew) |
 | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create and export |
 | **Items Forge**  | `/item-forge`   | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
 

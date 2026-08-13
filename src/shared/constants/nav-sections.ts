@@ -228,6 +228,12 @@ export const NAV_SECTIONS: NavSectionDef[] = [
               "Create a full D&D character using catalogs from the whole toolbox, then export/import to Foundry VTT.",
             badge: "ALPHA",
           },
+          {
+            to: "/damage-calculator",
+            label: "Damage Calculator",
+            icon: Calculator,
+            description: "Compare weapon builds by calculating expected DPT.",
+          },
         ],
       },
       {

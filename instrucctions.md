@@ -139,7 +139,7 @@ Providers **por ruta** (no globales):
 
 El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones: **Amellwind Homebrew**, **Amellwind (RaintDM)** y **D&D 5e Compendium**. Soporta **colapso en desktop** (solo iconos) y **drawer en mobile** con overlay. Incluye **`ThemeSelector`** en el footer. La configuración vive en `NAV_SECTIONS` (`src/shared/constants/nav-sections.ts`); cada sección tiene `id` + `label` + `groups`, y cada grupo tiene `label` + `items` (con `description` / `badge` para Home). `Sidebar` y `HomePage` consumen el mismo mapa. Hunt Planner está en **World and Exploration**.
 
-**Amellwind (RaintDM)** agrupa el Character Builder (hub de personaje de toda la app) y las variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
+**Amellwind (RaintDM)** agrupa el Character Builder (hub de personaje de toda la app), el Damage Calculator (también listado en Amellwind Homebrew) y las variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
 
 El equipo equipable del Builder proviene de ítems añadidos al carrito en Shops/Items (`CartContext` → `BuilderInventoryContext`). El Sidebar **no** muestra badge de inventario sobre Builder.
 
@@ -151,7 +151,7 @@ El equipo equipable del Builder proviene de ítems añadidos al carrito en Shops
 | Amellwind Homebrew     | Weapons, Runes, and Equipment      | Weapons, Runes, Material Effects, Items                        |
 | Amellwind Homebrew     | World and Exploration              | Hunt Planner, Environments, Resources, Shops, Cooking, Combo List, Downtime |
 | Amellwind Homebrew     | NPCs and Companions                | Monstie Sidekick, NPC Generator                                |
-| Amellwind (RaintDM)    | Character                          | Builder                                                        |
+| Amellwind (RaintDM)    | Character                          | Builder, Damage Calculator                                     |
 | Amellwind (RaintDM)    | Weapons                            | Weapon Forge, Items Forge                                      |
 | D&D 5e Compendium      | Spells and Classes                 | Spells, Classes                                                |
 | D&D 5e Compendium      | Character Options                  | Races, Backgrounds, Feats                                      |
