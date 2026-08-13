@@ -1418,17 +1418,18 @@ Estado global del carrito (`CartEntry[]`): nombre, costo, peso, cantidad, tienda
 ### Items Forge (RaintDM)
 
 **Ruta**: `/item-forge`
-**Fuente de datos**: `public/data/raintdm-items/` (`manifest.json` + un JSON por categoría, p. ej. `magazines.json`). Fetch en runtime; sin IndexedDB ni editor.
+**Fuente de datos**: `public/data/raintdm-items/` (`manifest.json` + un JSON por categoría, p. ej. `magazines.json`, `traps.json`). Fetch en runtime; sin IndexedDB ni editor.
 
 Catálogo curated de variantes RaintDM sobre ítems Amellwind. La UI combina **lista de ítems** y **Combo List**: búsqueda, tabs por `typeLabel`, tabla Name/Rarity/Cost/Weight + Ingredient 1/2/DC/Qty, panel de detalle. **Sin carrito** y **sin crear/editar**. Las recetas usan recursos e ítems Amellwind y las mismas reglas de tirada del Combo List.
 
 #### Entidad `RaintdmItem`
 
-Extiende `MHItem` (`name`, `source`, `type`, `typeLabel`, `rarity`, `valueCp`, `weight`, `entries[]`) con `raintdm?` (`author`, `kind`, `magazineKey`, `chargesPerMagazine`, `damageType`, `baseWeapon`) mapeado desde `_raintdm`, y `crafting?` (`tool`, `item1`, `item2`, `dc`, `quantity?`) desde el campo top-level `crafting` del JSON.
+Extiende `MHItem` (`name`, `source`, `type`, `typeLabel`, `rarity`, `valueCp`, `weight`, `entries[]`) con `raintdm?` (`author`, `kind`, `magazineKey`, `trapKey`, `chargesPerMagazine`, `damageType`, `baseWeapon`) mapeado desde `_raintdm`, y `crafting?` (`tool`, `item1`, `item2`, `dc`, `quantity?`) desde el campo top-level `crafting` del JSON.
 
-- Tipo `MHMAG` → label **Magazine (Repeaters)**. Tipos desconocidos → **Misc**.
+- Tipo `MHMAG` → label **Magazine (Repeaters)**. Tipo `MHTRAP` → **Traps**. Tipos desconocidos → **Misc**.
 - v1: 11 magazines de Dual Repeaters (rework RaintDM; rareza = unlock del arma; 0.5 lb). Precio por rareza: Normal **2 gp**, elemental Uncommon **5 gp**, Upgrade I **15 gp**, Dawnstar/Twilight **20 gp**. El export Foundry de magazines sigue saliendo de Weapon Forge (`priceGp` en `DUAL_REPEATERS_MAGAZINE_DEFS`).
 - Crafting magazines: **Herbalism Kit** (igual que DR AMMO AGMH). Specialty = receta AGMH (recurso elemental + Insect Husk, DC 12, qty 1). Normal = Huskberry + Insect Husk (casing). Upgrade I = Catalyst + recurso elemental, DC 15.
+- v2: 5 hunter traps (rework RaintDM de AGMH). **Trap Tool** 120 gp / 2 lb (componente, sin receta). **Pitfall Trap** 250 gp DC 14 Str (Prone + Restrained until start of next turn); **Shock Trap** 420 gp DC 14 Con (Incapacitated + Speed 0 until start of next turn). **+** versions: Uncommon, DC 16, until end of next turn; Shock+ also deals 2d8 lightning on trigger. Accustomed: after the effect ends, immune to that trap's base version until a Short Rest; a + still works, with Advantage on the repeat save at the start of the next turn. Placement is an Action, camouflaged DC 15 Perception, lasts 1 hour or until retrieved unused. Crafting takes 10 minutes with **Tinker's Tools**: Pitfall = Net + Trap Tool DC 12; Shock = Thunderbug + Trap Tool DC 12; + = base trap + Trap Tool DC 15.
 
 #### Service (`item-forge.service.ts`)
 

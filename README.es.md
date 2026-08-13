@@ -45,7 +45,7 @@ Variantes de RaintDM sobre el homebrew 2014 de Amellwind — toques de house rul
 | Sección          | Ruta            | Descripción                                                                 |
 | ---------------- | --------------- | --------------------------------------------------------------------------- |
 | **Weapon Forge** | `/weapon-forge` | Armas de cazador curated de RaintDM más armas custom que creas y exportas |
-| **Items Forge**  | `/item-forge`   | Ítems curated de RaintDM y recetas tipo Combo List (magazines de Dual Repeaters y más adelante) |
+| **Items Forge**  | `/item-forge`   | Ítems curated de RaintDM y recetas tipo Combo List (magazines de Dual Repeaters, trampas de caza) |
 
 ### Compendio D&D 5e
 

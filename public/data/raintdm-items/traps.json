@@ -1,0 +1,132 @@
+{
+  "version": "1.0",
+  "description": "Hunter traps (RaintDM rework of AGMH Pitfall / Shock / Trap Tool).",
+  "items": [
+    {
+      "name": "Trap Tool",
+      "source": "RAINTDM",
+      "type": "MHTRAP",
+      "rarity": "common",
+      "value": 12000,
+      "weight": 2,
+      "entries": [
+        "A consumable hunter's component used to assemble {@item Pitfall Trap|RAINTDM}s and {@item Shock Trap|RAINTDM}s. Crafting either trap consumes this item."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "trap",
+        "trapKey": "tool"
+      }
+    },
+    {
+      "name": "Pitfall Trap",
+      "source": "RAINTDM",
+      "type": "MHTRAP",
+      "rarity": "common",
+      "value": 25000,
+      "weight": 8,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Net",
+        "item2": "Trap Tool",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an Action, you set this trap on the ground in an unoccupied space within 5 feet of you. The trap is camouflaged: a creature notices it only if it has Truesight or succeeds on a {@dc 15} Wisdom ({@skill Perception}) check while within 10 feet of the trap.",
+        "The trap remains for 1 hour, until it triggers, or until you retrieve it (an Action; the trap is not consumed if it has not triggered). If the hour expires, the trap is ruined and cannot be retrieved.",
+        "The trap triggers when a Huge or smaller creature on the ground enters a 10-foot square centered on the trap. The triggering creature must succeed on a {@dc 14} Strength saving throw or be {@condition prone} and {@condition restrained} until the start of its next turn. The trap is consumed when it triggers, whether the save succeeds or fails.",
+        "A creature that was affected by this trap becomes accustomed to pitfall traps after the effect ends. Until the creature finishes a Short Rest, it is immune to Pitfall Traps, but not {@item Pitfall Trap+|RAINTDM}.",
+        "Crafting this trap takes 10 minutes (Combo List rules)."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "trap",
+        "trapKey": "pitfall"
+      }
+    },
+    {
+      "name": "Pitfall Trap+",
+      "source": "RAINTDM",
+      "type": "MHTRAP",
+      "rarity": "uncommon",
+      "value": 50000,
+      "weight": 8,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Pitfall Trap",
+        "item2": "Trap Tool",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an Action, you set this trap on the ground in an unoccupied space within 5 feet of you. The trap is camouflaged: a creature notices it only if it has Truesight or succeeds on a {@dc 15} Wisdom ({@skill Perception}) check while within 10 feet of the trap.",
+        "The trap remains for 1 hour, until it triggers, or until you retrieve it (an Action; the trap is not consumed if it has not triggered). If the hour expires, the trap is ruined and cannot be retrieved.",
+        "The trap triggers when a Huge or smaller creature on the ground enters a 10-foot square centered on the trap. The triggering creature must succeed on a {@dc 16} Strength saving throw or be {@condition prone} and {@condition restrained} until the end of its next turn. The trap is consumed when it triggers, whether the save succeeds or fails.",
+        "If the target is already accustomed to pitfall traps, it repeats the saving throw at the start of its next turn with Advantage, ending the effect on a success.",
+        "A creature that was affected by this trap becomes accustomed to pitfall traps after the effect ends. Until the creature finishes a Short Rest, it is immune to Pitfall Traps, but not Pitfall Trap+.",
+        "Crafting this trap takes 10 minutes (Combo List rules)."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "trap",
+        "trapKey": "pitfall-plus"
+      }
+    },
+    {
+      "name": "Shock Trap",
+      "source": "RAINTDM",
+      "type": "MHTRAP",
+      "rarity": "common",
+      "value": 42000,
+      "weight": 8,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Thunderbug",
+        "item2": "Trap Tool",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an Action, you set this trap on the ground in an unoccupied space within 5 feet of you. The trap is camouflaged: a creature notices it only if it has Truesight or succeeds on a {@dc 15} Wisdom ({@skill Perception}) check while within 10 feet of the trap.",
+        "The trap remains for 1 hour, until it triggers, or until you retrieve it (an Action; the trap is not consumed if it has not triggered). If the hour expires, the trap is ruined and cannot be retrieved.",
+        "The trap triggers when a Large or larger creature on the ground enters a 10-foot square centered on the trap. The triggering creature must succeed on a {@dc 14} Constitution saving throw or be {@condition incapacitated} and have its Speed reduced to 0 until the start of its next turn. Attacks against the creature do not gain Advantage from this effect alone. The trap is consumed when it triggers, whether the save succeeds or fails.",
+        "A creature that was affected by this trap becomes accustomed to shock traps after the effect ends. Until the creature finishes a Short Rest, it is immune to Shock Traps, but not {@item Shock Trap+|RAINTDM}.",
+        "Crafting this trap takes 10 minutes (Combo List rules)."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "trap",
+        "trapKey": "shock"
+      }
+    },
+    {
+      "name": "Shock Trap+",
+      "source": "RAINTDM",
+      "type": "MHTRAP",
+      "rarity": "uncommon",
+      "value": 84000,
+      "weight": 8,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Shock Trap",
+        "item2": "Trap Tool",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an Action, you set this trap on the ground in an unoccupied space within 5 feet of you. The trap is camouflaged: a creature notices it only if it has Truesight or succeeds on a {@dc 15} Wisdom ({@skill Perception}) check while within 10 feet of the trap.",
+        "The trap remains for 1 hour, until it triggers, or until you retrieve it (an Action; the trap is not consumed if it has not triggered). If the hour expires, the trap is ruined and cannot be retrieved.",
+        "The trap triggers when a Large or larger creature on the ground enters a 10-foot square centered on the trap. The triggering creature takes {@dice 2d8} lightning damage and must succeed on a {@dc 16} Constitution saving throw or be {@condition incapacitated} and have its Speed reduced to 0 until the end of its next turn. Attacks against the creature do not gain Advantage from this effect alone. The trap is consumed when it triggers, whether the save succeeds or fails.",
+        "If the target is already accustomed to shock traps, it repeats the saving throw at the start of its next turn with Advantage, ending the {@condition incapacitated} condition and the Speed reduction on a success.",
+        "A creature that was affected by this trap becomes accustomed to shock traps after the effect ends. Until the creature finishes a Short Rest, it is immune to Shock Traps, but not Shock Trap+.",
+        "Crafting this trap takes 10 minutes (Combo List rules)."
+      ],
+      "_raintdm": {
+        "author": "RaintDM",
+        "kind": "trap",
+        "trapKey": "shock-plus"
+      }
+    }
+  ]
+}

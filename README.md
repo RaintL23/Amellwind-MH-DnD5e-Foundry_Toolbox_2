@@ -45,7 +45,7 @@ RaintDM variants on Amellwind’s 2014 Monster Hunter homebrew — house-rule tw
 | Section         | Route           | Description                                                                 |
 | --------------- | --------------- | --------------------------------------------------------------------------- |
 | **Weapon Forge** | `/weapon-forge` | Curated RaintDM hunter weapons plus custom weapons you create and export |
-| **Items Forge**  | `/item-forge`   | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines and more to come) |
+| **Items Forge**  | `/item-forge`   | Curated RaintDM items and Combo List recipes (Dual Repeaters magazines, hunter traps) |
 
 ### D&D 5e Compendium
 

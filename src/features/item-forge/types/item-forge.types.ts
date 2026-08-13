@@ -12,6 +12,7 @@ export interface RaintdmItemMeta {
   author?: string;
   kind?: string;
   magazineKey?: string;
+  trapKey?: string;
   chargesPerMagazine?: number;
   damageType?: string;
   baseWeapon?: string;
