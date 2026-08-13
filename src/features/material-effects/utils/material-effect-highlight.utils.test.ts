@@ -82,6 +82,28 @@ describe("getMaterialEffectTierForText — inline defenses", () => {
   });
 });
 
+describe("getMaterialEffectTierForText — inline extra damage", () => {
+  it("assigns Rare to unnamed 2d6 weapon extra damage", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Your weapon deals an extra {@damage 2d6} necrotic damage.",
+        "weapon",
+        emptyIndex,
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon to unnamed 1d6 weapon extra damage", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Your weapon deals an extra {@damage 1d6} lightning damage.",
+        "weapon",
+        emptyIndex,
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
 describe("getMaterialEffectTiersForRune", () => {
   it("does not treat a missing effect side as Unknown", () => {
     const rune = makeRune({

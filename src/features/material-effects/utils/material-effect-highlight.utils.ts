@@ -1,12 +1,13 @@
-import type { MaterialEffect, MaterialEffectSlot } from "@/shared/types";
-import type { Rune } from "@/shared/types";
+import type { MaterialEffect, MaterialEffectSlot, ResourceRarity, Rune } from "@/shared/types";
 import {
+  MATERIAL_EFFECT_RARITIES,
   UNKNOWN_MATERIAL_EFFECT_TIER,
   type MaterialEffectTierFilter,
 } from "@/features/material-effects/constants/material-effect.constants";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { slugifyKebab } from "@/shared/utils/slugify.utils";
 import { inferInlineDamageDefenseRarity } from "./inline-defense-rarity.utils";
+import { inferInlineExtraDamageRarity } from "./inline-extra-damage-rarity.utils";
 
 export interface MaterialEffectNameIndex {
   all: string[];
@@ -261,10 +262,18 @@ export function getMaterialEffectTierForText(
   const catalogRef = refs.find((effect) => !isDiscoveredEffect(effect));
   if (catalogRef) return catalogRef.rarity;
 
-  const defenseRarity = inferInlineDamageDefenseRarity(text);
-  if (defenseRarity) return defenseRarity;
+  const inferred = [
+    inferInlineDamageDefenseRarity(text),
+    inferInlineExtraDamageRarity(text),
+  ].filter((rarity): rarity is ResourceRarity => rarity != null);
 
-  return UNKNOWN_MATERIAL_EFFECT_TIER;
+  if (inferred.length === 0) return UNKNOWN_MATERIAL_EFFECT_TIER;
+
+  return inferred.reduce((best, rarity) =>
+    MATERIAL_EFFECT_RARITIES.indexOf(rarity) >= MATERIAL_EFFECT_RARITIES.indexOf(best)
+      ? rarity
+      : best,
+  );
 }
 
 export function getMaterialEffectTiersForRune(

@@ -707,16 +707,29 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 - Las reglas son **case-insensitive** salvo donde se indique lo contrario.
 - El listado `/runes` filtra tags en **AND sobre el mismo lado** (`runeMatchesListTagFilter`): Slot Armor + `damage:fire` + `mechanic:immunity` solo muestra runas cuyo **armorEffect** tenga fuego e inmunidad juntos. No basta con que el fuego esté en el arma y la inmunidad en la armadura.
 
-##### Rareza de resistencia / inmunidad inline
+##### Rareza de resistencia / inmunidad / daño extra inline
 
-Si el texto del efecto **no** referencia un material effect nombrado del catálogo GTMH, `getMaterialEffectTierForText` infiere rareza desde grants en primera persona (`inline-defense-rarity.utils.ts`):
+Si el texto del efecto **no** referencia un material effect nombrado del catálogo GTMH, `getMaterialEffectTierForText` infiere rareza desde grants en primera persona:
+
+**Defensas** (`inline-defense-rarity.utils.ts`):
 
 | Texto (ejemplos) | Rareza |
 | --- | --- |
 | `You have resistance to lightning damage, while you wear this armor.` | **Rare** |
 | `You are immune to fire damage while you wear this armor.` | **Very Rare** |
 
-Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición). Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. El badge del diálogo y el filtro **Material Effect Tier** usan la misma función.
+Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición).
+
+**Daño extra de arma** (`inline-extra-damage-rarity.utils.ts`), score = dados × caras (o flat):
+
+| Score | Ejemplo | Rareza |
+| --- | --- | --- |
+| ≤ 6 | `extra 1d6 … damage` | **Uncommon** |
+| 7–12 | `extra 2d6 necrotic damage` | **Rare** |
+| 13–20 | `extra 3d6 … damage` | **Very Rare** |
+| ≥ 21 | `extra 4d6 … damage` | **Legendary** |
+
+Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Si un mismo texto dispara varias inferencias, se usa la rareza más alta. El badge del diálogo y el filtro **Material Effect Tier** usan la misma función.
 
 ---
 

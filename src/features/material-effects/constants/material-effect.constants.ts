@@ -21,6 +21,21 @@ export const INLINE_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Rare";
 /** Always-on damage immunity in rune text (one step above resistance). */
 export const INLINE_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Very Rare";
 
+/**
+ * Always-on "extra NdX damage" weapon text, by dice score (n × faces or flat amount).
+ * Aligns with Dragon's Wrath / Flame Tongue-style scaling and rune `extra-damage` tags.
+ */
+export const INLINE_EXTRA_DAMAGE_RARITY_BY_SCORE: Array<{
+  maxScore: number;
+  rarity: ResourceRarity;
+}> = [
+  { maxScore: 6, rarity: "Uncommon" },
+  { maxScore: 12, rarity: "Rare" },
+  { maxScore: 20, rarity: "Very Rare" },
+];
+
+export const INLINE_EXTRA_DAMAGE_LEGENDARY_RARITY: ResourceRarity = "Legendary";
+
 export const UNKNOWN_MATERIAL_EFFECT_TIER = "Unknown" as const;
 
 export type MaterialEffectTierFilter =
