@@ -471,10 +471,12 @@ function findInset(entries: unknown[]): Raw | undefined {
 }
 
 export function mapRunesFromMonster(
-  rawMonster: Raw,
+  rawMonster: unknown,
   spellLevels?: SpellLevelLookup | null,
 ): Rune[] {
-  const fluff = rawMonster?.fluff;
+  if (typeof rawMonster !== "object" || rawMonster === null) return [];
+  const monster = rawMonster as Raw;
+  const fluff = monster?.fluff;
   if (!fluff || !Array.isArray(fluff.entries)) return [];
 
   const inset = findInset(fluff.entries as unknown[]);
@@ -535,11 +537,11 @@ export function mapRunesFromMonster(
 
     runes.push({
       name,
-      monsterName: String(rawMonster.name ?? ""),
-      monsterSource: String(rawMonster.source ?? ""),
-      monsterCr: formatCrDisplay(rawMonster.cr),
-      monsterCrs: getCrValues(rawMonster.cr),
-      tier: crToTier(rawMonster.cr),
+      monsterName: String(monster.name ?? ""),
+      monsterSource: String(monster.source ?? ""),
+      monsterCr: formatCrDisplay(monster.cr),
+      monsterCrs: getCrValues(monster.cr),
+      tier: crToTier(monster.cr),
       carveChance,
       captureChance,
       rolls,

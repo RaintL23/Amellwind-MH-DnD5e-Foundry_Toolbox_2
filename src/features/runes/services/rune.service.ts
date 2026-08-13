@@ -8,7 +8,7 @@ import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 const service = createEntityService<Rune, Rune>({
   loadRaw: async () => {
     const [rawData, spells] = await Promise.all([
-      getMonsterData() as Promise<unknown[]>,
+      getMonsterData(),
       getAllSpells().catch(() => [] as Awaited<ReturnType<typeof getAllSpells>>),
     ]);
     const spellLevels = buildSpellLevelLookup(spells);

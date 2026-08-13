@@ -3,12 +3,16 @@ import type { Spell } from "@/shared/types";
 /** Normalized spell name → spell level (0 = cantrip). */
 export type SpellLevelLookup = ReadonlyMap<string, number>;
 
+export type SpellLevelSource = Pick<Spell, "name" | "level">;
+
 export function normalizeSpellLookupKey(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
 /** Builds a name→level map from the spell catalog (first wins for duplicates). */
-export function buildSpellLevelLookup(spells: Spell[]): SpellLevelLookup {
+export function buildSpellLevelLookup(
+  spells: SpellLevelSource[],
+): SpellLevelLookup {
   const map = new Map<string, number>();
   for (const spell of spells) {
     const key = normalizeSpellLookupKey(spell.name);

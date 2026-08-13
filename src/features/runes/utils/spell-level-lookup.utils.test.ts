@@ -5,27 +5,9 @@ import {
   resolveSpellLevelsFromText,
   spellTagsFromLevels,
 } from "./spell-level-lookup.utils";
-import type { Spell } from "@/shared/types";
 
-function makeSpell(name: string, level: number): Spell {
-  return {
-    id: name,
-    name,
-    source: "XPHB",
-    level,
-    school: "V",
-    schoolName: "Evocation",
-    castingTime: "1 action",
-    range: "Self",
-    components: { v: true, s: false },
-    duration: "Instantaneous",
-    isRitual: false,
-    isConcentration: false,
-    classNames: [],
-    classes: [],
-    description: [],
-    summary: "",
-  };
+function makeSpell(name: string, level: number) {
+  return { name, level };
 }
 
 describe("spell-level-lookup", () => {
