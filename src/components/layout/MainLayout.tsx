@@ -1,3 +1,9 @@
+/**
+ * Shell for every page route: Sidebar, optional Amellwind sync banner, Outlet.
+ * CartProvider is global (shops cart). BuilderInventoryProvider +
+ * CharacterBuilderProvider still wrap all routes (CartDrawer / builder hub);
+ * Builder-only sync/spellcasting lives in BuilderRouteProviders on /builder.
+ */
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Menu } from "lucide-react";

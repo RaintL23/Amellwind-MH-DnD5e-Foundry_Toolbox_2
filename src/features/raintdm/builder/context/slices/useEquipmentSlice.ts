@@ -1,3 +1,8 @@
+/**
+ * Equipment slice: grip slots, armor, shield, trinkets, rune assignment, and
+ * derived AC / DPT. Enforces two-handed / dual-grip / integrated-shield rules
+ * from Amellwind weapon utils.
+ */
 import { useState, useCallback, useMemo } from "react";
 import type {
   EquippedWeapon,
@@ -63,6 +68,8 @@ export function useEquipmentSlice({
   useUnarmedStrike,
   useAmellwindHomebrew,
 }: EquipmentSliceInput) {
+  // ─── Equipped slots ─────────────────────────────────────────────────────────
+
   const [mainHand, setMainHand] = useState<EquippedWeapon | null>(null);
   const [offHand, setOffHand] = useState<EquippedWeapon | null>(null);
   const [equippedShield, setEquippedShield] =
@@ -70,6 +77,8 @@ export function useEquipmentSlice({
   const [armor, setArmor] = useState<EquippedArmor | null>(null);
   const [trinket1, setTrinket1] = useState<EquippedTrinket | null>(null);
   const [trinket2, setTrinket2] = useState<EquippedTrinket | null>(null);
+
+  // ─── Equip / unequip / rarity / grip mode ───────────────────────────────────
 
   const equipWeapon = useCallback(
     (slot: "mainHand" | "offHand", weapon: Weapon, rarity: string) => {
@@ -180,6 +189,8 @@ export function useEquipmentSlice({
     setTrinket2(null);
   }, []);
 
+  // ─── Rune assignment ────────────────────────────────────────────────────────
+
   const assignWeaponRune = useCallback(
     (slot: "mainHand" | "offHand", index: number, rune: Rune): RuleViolation | null => {
       const setter = slot === "mainHand" ? setMainHand : setOffHand;
@@ -258,6 +269,8 @@ export function useEquipmentSlice({
     const setter = slot === "trinket1" ? setTrinket1 : setTrinket2;
     setter((prev) => (prev ? { ...prev, rune: null } : prev));
   }, []);
+
+  // ─── Derived AC / DPT / grip flags ──────────────────────────────────────────
 
   const isTwoHanded = isWeaponTwoHanded(mainHand);
   const isOffHandBlocked = blocksOffHand(mainHand);

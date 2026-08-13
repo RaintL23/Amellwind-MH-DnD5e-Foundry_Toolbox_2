@@ -64,7 +64,7 @@ pnpm build:analyze    # build con visualizer del bundle
 - **Estilos:** Tailwind + componentes de `src/components/ui/` (shadcn). No añadas librerías de UI nuevas; reutiliza Radix/shadcn ya presentes.
 - **Preferencia de componentes UI:** antes de implementar cualquier elemento visual (botones, diálogos, selects, tooltips, tablas, formularios, badges, etc.), **verifica primero si shadcn/ui ya ofrece un componente adecuado** en `src/components/ui/`. Si existe o puede adaptarse con props/clases de Tailwind, úsalo obligatoriamente. Solo recurre a implementación custom cuando shadcn no tenga equivalente funcional para el caso.
 - **Idioma:** el idioma preferido para **todo** (UI, textos visibles, comentarios de dominio, documentación e identificadores de código) es el **inglés**. Usa inglés por defecto en cualquier texto nuevo que se agregue al proyecto.
-- **Comentarios:** solo donde aclaran lógica no obvia (mira el header de `create-entity-service.ts` como referencia de estilo).
+- **Comentarios:** solo donde aclaran lógica no obvia (mira el header de `create-entity-service.ts` como referencia de estilo). Están permitidos **headers de archivo** (qué es + flujo, 3–8 líneas) y **banners de sección** (`// ─── Nombre ───`) en wiring denso (`App.tsx`, slices del Builder, export Foundry). No narres lo obvio línea a línea.
 
 ## Arquitectura por features
 

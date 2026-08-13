@@ -4,7 +4,11 @@ import { StartingEquipmentInventorySync } from "@/features/raintdm/builder/compo
 import { InventoryCatalogSync } from "@/features/raintdm/builder/components/InventoryCatalogSync";
 import { BuilderAutosaveSync } from "@/features/raintdm/builder/components/BuilderAutosaveSync";
 
-/** Builder-only sync and spellcasting — avoids running on every app route. */
+/**
+ * Route-scoped Builder wiring (only `/builder`): spellcasting context plus
+ * autosave / starting-equipment / inventory catalog sync. Avoids running on
+ * every app route; CharacterBuilderProvider itself still lives in MainLayout.
+ */
 export function BuilderRouteProviders({ children }: Readonly<{ children: ReactNode }>) {
   return (
     <SpellcastingProvider>

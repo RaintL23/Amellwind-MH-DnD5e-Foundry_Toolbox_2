@@ -1,3 +1,8 @@
+/**
+ * Identity slice: species, background, class/subclass, feats, multiclass, ASI
+ * (Tasha / background), origin feats, backstory/personality. Loads catalog
+ * entities by id and notifies other slices via onSpecies/Background/ClassChange.
+ */
 import { useState, useCallback, useEffect, useMemo, useRef } from "react";
 import type {
   AbilityKey,
@@ -57,6 +62,8 @@ export function useIdentitySlice({
   onClassChange,
   clearSubclassOptionalFeatures,
 }: IdentitySliceInput) {
+  // ─── Selection state ───────────────────────────────────────────────────────
+
   const [species, setSpeciesState] = useState<CharacterSelectionRef | null>(null);
   const [speciesData, setSpeciesData] = useState<Species | null>(null);
   const [speciesDataLoading, setSpeciesDataLoading] = useState(false);
@@ -132,6 +139,8 @@ export function useIdentitySlice({
     },
     [],
   );
+
+  // ─── Setters (species / background / class / feats) ─────────────────────────
 
   const setBackstoryNotes = useCallback(
     (value: string | ((current: string) => string)) => {
@@ -255,6 +264,8 @@ export function useIdentitySlice({
     multiclassClassData,
   ]);
 
+  // ─── Multiclass ─────────────────────────────────────────────────────────────
+
   const setMulticlassEnabled = useCallback((enabled: boolean) => {
     setMulticlassEnabledState(enabled);
     if (!enabled) {
@@ -366,6 +377,8 @@ export function useIdentitySlice({
       cancelled = true;
     };
   }, [classRef?.id]);
+
+  // ─── Catalog loads (class / multiclass class data) ──────────────────────────
 
   const multiclassClassIdsKey = multiclassEntries
     .map((e) => e.classRef?.id ?? "")
@@ -569,6 +582,8 @@ export function useIdentitySlice({
       cancelled = true;
     };
   }, [backgroundRef?.id]);
+
+  // ─── Homebrew cleanup + full reset ──────────────────────────────────────────
 
   const clearAmellwindIdentity = useCallback(async () => {
     setFactionState(null);

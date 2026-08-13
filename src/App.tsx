@@ -1,3 +1,8 @@
+/**
+ * App shell: Amellwind IndexedDB sync on boot, in-memory cache invalidation
+ * when MM/GTMH refresh, and lazy React Router routes grouped by Sidebar
+ * section (Amellwind / RaintDM / D&D 5e).
+ */
 import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
@@ -12,6 +17,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { loadChooseableLanguages } from "@/shared/data/chooseable-languages";
 import { loadChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
 import { syncData } from "@/shared/db/sync.service";
+
+// ─── Lazy page imports ───────────────────────────────────────────────────────
 
 const MonsterList = lazy(() =>
   import("@/features/amellwind/monsters/components/MonsterList").then((m) => ({
@@ -216,6 +223,8 @@ function PageFallback() {
   return <LoadingScreen />;
 }
 
+// ─── Cache invalidation after Amellwind sync ─────────────────────────────────
+
 async function clearMonsterManualDerivedCaches(): Promise<void> {
   // Cache-clearers are imported on demand so their service + mapper modules
   // stay out of the initial `index` chunk (loaded on every page); they only
@@ -267,6 +276,8 @@ function handleDataUpdated(updated: { mm: boolean; gtmh: boolean }): void {
   if (updated.gtmh) void clearGuideDerivedCaches();
 }
 
+// ─── Bootstrap + providers ───────────────────────────────────────────────────
+
 export default function App() {
   const [syncing, setSyncing] = useState(true);
 
@@ -296,6 +307,7 @@ export default function App() {
           <BrowserRouter>
           <Routes>
             <Route path="/" element={<MainLayout syncing={syncing} />}>
+              {/* ── Home ── */}
               <Route
                 index
                 element={
@@ -304,6 +316,7 @@ export default function App() {
                   </Suspense>
                 }
               />
+              {/* ── Amellwind Homebrew ── */}
               <Route
                 path="monsters"
                 element={
@@ -329,6 +342,7 @@ export default function App() {
                   }
                 />
               </Route>
+              {/* Shared rune planner: /runes + /builder */}
               <Route element={<RuneBuildRouteLayout />}>
                 <Route
                   path="runes"
@@ -409,6 +423,7 @@ export default function App() {
                   </Suspense>
                 }
               />
+              {/* ── RaintDM forges ── */}
               <Route
                 path="weapon-forge"
                 element={
@@ -521,6 +536,7 @@ export default function App() {
                   </Suspense>
                 }
               />
+              {/* ── D&D 5e Compendium ── */}
               <Route
                 path="spells"
                 element={

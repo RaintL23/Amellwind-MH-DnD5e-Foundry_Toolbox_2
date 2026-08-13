@@ -1,3 +1,8 @@
+/**
+ * Items Forge catalog: fetch `public/data/raintdm-items/manifest.json`, then
+ * each category JSON (magazines, traps, …). In-memory cache only — no IndexedDB
+ * and no user editor. Flow: manifest → JSON files → mapper → RaintdmItem[].
+ */
 import type { RaintdmItem, RaintdmItemsManifest } from "../types/item-forge.types";
 import { parseImportedItems } from "../mappers/item-forge.mapper";
 
@@ -6,6 +11,8 @@ const ITEMS_BASE = "/data/raintdm-items";
 const FETCH_INIT: RequestInit = { cache: "no-store" };
 
 let cache: RaintdmItem[] | null = null;
+
+// ─── Manifest + category JSON fetch ───────────────────────────────────────────
 
 async function loadCuratedFromManifest(): Promise<RaintdmItem[]> {
   const manifestRes = await fetch(MANIFEST_URL, FETCH_INIT);
@@ -38,6 +45,8 @@ async function loadCuratedFromManifest(): Promise<RaintdmItem[]> {
 
   return parseImportedItems(payloads.filter((p) => p != null));
 }
+
+// ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function getAllForgeItems(): Promise<RaintdmItem[]> {
   if (cache) return cache;

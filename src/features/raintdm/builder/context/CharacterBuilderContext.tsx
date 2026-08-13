@@ -1,3 +1,8 @@
+/**
+ * Character Builder hub: composes identity / proficiency / spell / equipment
+ * slices into one context. Cross-slice resets use refs so identity can notify
+ * proficiency + spell without circular hook calls.
+ */
 import {
   createContext,
   useContext,
@@ -60,6 +65,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     clearSubclassOptionalFeatures: () => {},
   });
 
+  // ─── Cross-slice reset wiring ───────────────────────────────────────────────
+
   const onSpeciesChange = useCallback(() => {
     proficiencyResetRef.current.resetOnSpeciesChange();
   }, []);
@@ -76,6 +83,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
   const clearSubclassOptionalFeatures = useCallback(() => {
     spellResetRef.current.clearSubclassOptionalFeatures();
   }, []);
+
+  // ─── Slices ─────────────────────────────────────────────────────────────────
 
   const identity = useIdentitySlice({
     onSpeciesChange,
@@ -138,6 +147,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     resetSpellSlice: spell.resetSpellSlice,
     clearSubclassOptionalFeatures: spell.clearSubclassOptionalFeatures,
   };
+
+  // ─── Character field setters ────────────────────────────────────────────────
 
   const setName = useCallback((name: string) => {
     setCharacter((prev) => prev.withUpdates({ name }));
@@ -267,6 +278,8 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       prev.withUpdates({ abilities: { ...prev.abilities, ...clamped } }),
     );
   }, []);
+
+  // ─── Reset + assembled context value ────────────────────────────────────────
 
   const resetBuild = useCallback(() => {
     setCharacter(new Character());

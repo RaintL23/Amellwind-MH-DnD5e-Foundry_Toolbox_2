@@ -1,3 +1,7 @@
+/**
+ * Character speed: size/species base walk, then class / feat / rune bonuses.
+ * `getCharacterSpeedBreakdown` is the UI entry point (display + tooltip).
+ */
 import type {
   Class,
   EquippedArmor,
@@ -30,6 +34,8 @@ const SPEED_TYPES = ["walk", "fly", "swim", "climb", "burrow"] as const;
 type SpeedType = (typeof SPEED_TYPES)[number];
 
 export type BuilderCreatureSize = "M" | "S";
+
+// ─── Size + species base ───────────────────────────────────────────────────────
 
 export function getBaseWalkSpeedForSize(size: BuilderCreatureSize): number {
   return size === "S" ? 25 : 30;
@@ -272,6 +278,8 @@ function isPassiveRuneSpeedEffect(text: string): boolean {
   return false;
 }
 
+// ─── Detect bonuses from runes / class / feats ─────────────────────────────────
+
 export function detectRuneSpeedBonuses(
   rune: Rune,
   effectText: string,
@@ -511,6 +519,8 @@ function formatSpeedTooltip(parts: {
   lines.push(`Total: ${formatSpeedDisplay(total)}`);
   return lines.join("\n");
 }
+
+// ─── Assemble breakdown for the stats panel ────────────────────────────────────
 
 export function getCharacterSpeedBreakdown(options: {
   creatureSize?: BuilderCreatureSize;

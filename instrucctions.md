@@ -38,7 +38,7 @@ La app usa **React Router v6** con rutas declarativas montadas en `App.tsx`. El 
 Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallback `LoadingScreen` con skeletons).
 
 ```text
-/                          → Redirect a /monsters
+/                          → Home (landing; replica las 3 secciones del Sidebar)
 
 ── Amellwind Homebrew ──
 /damage-calculator         → Calculadora de daño por turno
@@ -52,13 +52,14 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /monsters/:monsterId       → Detalle de monstruo (página dedicada)
 /runes                     → Materiales de monstruo + planificador
 /material-effects          → Efectos de materiales (armadura/arma)
-/conditions                → Condiciones (GTMH)
-/diseases                  → Enfermedades (GTMH)
+/conditions                → Condiciones y enfermedades (GTMH; UI combinada)
+/diseases                  → Redirect a /conditions
 /weapons                   → Hunter Weapons
-/items                     → Catálogo de ítems GTMH
+/items                     → Catálogo de ítems GTMH (`amellwind/shops` ItemList)
 /shops                     → Tiendas y carrito
 /cooking                   → Cocina artesana
 /combo                     → Combo List
+/hunt                      → Hunt Planner
 /environments              → Biomas y tablas de cacería
 /resources                 → Recursos de campo
 /downtime                  → Actividades de downtime (GTMH)
@@ -99,11 +100,13 @@ Providers globales:
 Providers en **`MainLayout`** (todas las rutas con layout):
 
 - **`CartProvider`** — carrito de compras (tiendas e ítems).
-- **`BuilderInventoryProvider`** — resuelve armas/armaduras equipables desde el carrito para el Builder.
+- **`BuilderInventoryProvider`** — resuelve armas/armaduras equipables desde el carrito para el Builder (aún global; `CartDrawer` lo consume).
+- **`CharacterBuilderProvider`** — estado del Builder (aún global en MainLayout; el badge del Sidebar ya no existe).
 
 Providers **por ruta** (no globales):
 
-- **`RuneBuildProvider`** — envuelve `/runes` y `/builder` (planificador de runas).
+- **`RuneBuildRouteLayout`** — `RuneBuildProvider` solo en `/runes` y `/builder`.
+- **`BuilderRouteProviders`** — spellcasting + autosave + syncs de inventario, solo en `/builder`.
 
 ```tsx
 <ThemeProvider>
@@ -111,18 +114,19 @@ Providers **por ruta** (no globales):
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<MainLayout syncing={syncing} />}>
-          <Route index element={<Navigate to="/monsters" replace />} />
+          <Route index element={<HomePage />} />
           {/* … rutas lazy con Suspense … */}
-          <Route path="runes" element={
-            <RuneBuildProvider><RuneList /></RuneBuildProvider>
-          } />
-          <Route path="builder" element={
-            <RuneBuildProvider><BuilderPage /></RuneBuildProvider>
-          } />
+          <Route element={<RuneBuildRouteLayout />}>
+            <Route path="runes" element={<RuneList />} />
+            <Route path="builder" element={
+              <BuilderRouteProviders><BuilderPage /></BuilderRouteProviders>
+            } />
+          </Route>
           <Route path="monsters" element={<MonstersOutlet />}>
             <Route index element={<MonsterList />} />
             <Route path=":monsterId" element={<MonsterDetailPage />} />
           </Route>
+          <Route path="diseases" element={<Navigate to="/conditions" replace />} />
           {/* … */}
         </Route>
       </Routes>
@@ -137,7 +141,7 @@ El `Sidebar` agrupa links en grupos colapsables organizados bajo tres secciones:
 
 **Amellwind (RaintDM)** agrupa el Character Builder (hub de personaje de toda la app) y las variantes de mesa de RaintDM sobre el homebrew 2014 de Amellwind (Weapon Forge, Items Forge). Si una sección tiene un solo grupo, el Sidebar renderiza los links planos bajo el título de sección (sin acordeón extra).
 
-El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInventoryContext`), no un inventario separado: el equipo equipable del builder proviene de ítems añadidos al carrito en Shops/Items.
+El equipo equipable del Builder proviene de ítems añadidos al carrito en Shops/Items (`CartContext` → `BuilderInventoryContext`). El Sidebar **no** muestra badge de inventario sobre Builder.
 
 | Sección                | Grupo Sidebar                      | Links principales                                              |
 | ---------------------- | ---------------------------------- | -------------------------------------------------------------- |
@@ -157,7 +161,7 @@ El link **Builder** muestra un badge con `totalItems` del carrito (`BuilderInven
 
 ### Layout global (`MainLayout`)
 
-`MainLayout` monta `Sidebar`, banner de sync opcional, topbar mobile y `<Outlet />`. **No** incluye `BuildDrawer` global: el planificador de runas vive solo en **`RuneList`** (`/runes`) y el builder reutiliza `RuneBuildContext` en `/builder`.
+`MainLayout` monta `Sidebar`, banner de sync opcional, topbar mobile y `<Outlet />`. Wrappers extra: **`RuneBuildRouteLayout`** (`/runes` + `/builder`) y **`BuilderRouteProviders`** (solo `/builder`). **No** incluye `BuildDrawer` global: el planificador de runas vive solo en **`RuneList`** (`/runes`) y el builder reutiliza `RuneBuildContext` en `/builder`.
 
 ---
 
@@ -1117,8 +1121,7 @@ Tres listados de referencia derivados del homebrew Amellwind, con caché en memo
 | Feature           | Ruta                | Fuente / servicio                          | Contenido |
 | ----------------- | ------------------- | ------------------------------------------ | --------- |
 | Material Effects  | `/material-effects` | `material-effect.service.ts` (`MaterialEffectList`) | Efectos de materiales de monstruo (slots armadura/arma) consultables sin pasar por la tabla de runas. En `/runes`, la rareza del efecto también puede inferirse de resistencia (Rare) o inmunidad a daño (Very Rare) cuando el texto no cita un efecto nombrado. |
-| Conditions        | `/conditions`       | `condition.service.ts` (`ConditionList`)   | Condiciones del manual con texto parseado |
-| Diseases          | `/diseases`         | `disease.service.ts` (`DiseaseList`)       | Enfermedades del manual con texto parseado |
+| Conditions + Diseases | `/conditions` (`/diseases` → redirect) | `condition.service.ts` + `disease.service.ts` (`ConditionsDiseasesPage`) | Condiciones y enfermedades del manual (UI combinada) |
 
 Sus cachés se limpian en el bootstrap (`clearMaterialEffectCache`, `clearConditionCache`, `clearDiseaseCache`).
 
@@ -1501,7 +1504,7 @@ Biomas del sistema de cacería con reglas de exploración, clima y tablas por ni
 ### Planificador de runas (`BuildDrawer`)
 
 **Ubicación**: montado en **`RuneList`** (`/runes`), no en `MainLayout`.
-**Estado**: `RuneBuildProvider` envuelve `/runes` y `/builder`.
+**Estado**: `RuneBuildRouteLayout` (`RuneBuildProvider`) envuelve `/runes` y `/builder`.
 
 Permite simular un set de equipo con materiales de monstruo **sin** depender del Character Builder.
 
@@ -1544,7 +1547,7 @@ Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efec
 ### Character Builder (ALPHA)
 
 **Ruta**: `/builder`
-**Estado**: `CharacterBuilderProvider` (local a la página) + `RuneBuildProvider` (runas) + `BuilderInventoryProvider` (global en MainLayout).
+**Estado**: `CharacterBuilderProvider` + `BuilderInventoryProvider` (aún globales en `MainLayout`; el badge del Sidebar se eliminó) + `RuneBuildProvider` vía `RuneBuildRouteLayout` (`/runes` + `/builder`) + `BuilderRouteProviders` (solo `/builder`: spellcasting/autosave/syncs).
 
 Herramienta experimental para equipar armas/armadura/runas y estimar **daño por turno (DPT)**.
 
@@ -1565,7 +1568,6 @@ Encima del grid: `CharacterCreationTipsPanel` con consejos de creación.
 - **Fuente de verdad**: líneas del **`CartContext`** (ítems comprados/añadidos en Shops/Items).
 - Resuelve nombres del carrito a `Weapon[]` y `ArmorItem[]` vía `cart-equipment.resolver`.
 - Con Amellwind Homebrew, el catálogo de armas es `getAllForgeWeapons()` + `getAllWeapons()` (forge primero en lookups por nombre).
-- Badge en Sidebar = `totalItems` del carrito (no un inventario separado de armas).
 - Armaduras no GTMH: lista inicial desde `armor.placeholder.ts`.
 
 #### Modelo `Character` (`builder/models/Character.ts`)
@@ -1783,7 +1785,7 @@ src/
 ├── App.tsx                 # Router lazy, sync al arrancar, ThemeProvider, SyncProvider
 ├── main.tsx                # Punto de entrada React (sin sync)
 ├── components/
-│   ├── layout/             # MainLayout, Sidebar, LoadingScreen, NotFound, ThemeSelector
+│   ├── layout/             # MainLayout, Sidebar, BuilderRouteProviders, RuneBuildRouteLayout, LoadingScreen, NotFound, ThemeSelector
 │   ├── data-table/         # Tabla reutilizable (TanStack Table)
 │   └── ui/                 # shadcn: button, dialog, input, badge, …
 ├── features/
@@ -1822,7 +1824,7 @@ src/
 └── index.css               # Tailwind + variables de tema
 ```
 
-Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estático), `context/`, `hooks/` según necesidad. Subcarpetas comunes en builder: `components/stats/`, `components/equipment/`, `components/paper-doll/`, `components/combat/`, `foundry-export/` (actor), `foundry-import/`.
+Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estático), `context/`, `hooks/`, `utils/`, `types/`, `storage/` según necesidad. Subcarpetas comunes en builder: `components/stats/` (incl. `ability-scores/`), `components/equipment/` (library, spell-library, optional-feature-library), `foundry-export/` (actor), `foundry-import/`.
 
 ---
 
@@ -1833,7 +1835,7 @@ Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estát
 - Stack: **React 18 + TypeScript + Vite**, **Tailwind CSS**, **shadcn/ui** (Radix), **TanStack Table**, **idb**, **react-router-dom v6** (lazy routes), **lucide-react**, **embla-carousel**.
 - **Node.js 22.x** requerido (`package.json` engines + `.nvmrc`).
 - Rutas lazy con `<Suspense>`; sync y temas gestionados en `App.tsx` / `ThemeProvider` / `SyncProvider`.
-- `RuneBuildProvider` solo en `/runes` y `/builder`; `BuildDrawer` solo en `RuneList`.
+- `RuneBuildRouteLayout` (`RuneBuildProvider`) solo en `/runes` y `/builder`; `BuilderRouteProviders` solo en `/builder`; `BuildDrawer` solo en `RuneList`.
 - Inventario del builder derivado del **carrito** (`CartContext` → `BuilderInventoryContext`).
 - Utilidades clave: `fivetools-parser.ts`, `cr.utils.ts`, `ItemRefText`, `DndKeywordText`, `fivetools-fetch.ts`, `dedupe-by-name.utils.ts`, `fluff.utils.ts`.
 - Services del compendio 5e creados con el factory `createEntityService` (`shared/services/`); constantes D&D centralizadas en `shared/constants/dnd/`.

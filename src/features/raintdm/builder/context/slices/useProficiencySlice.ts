@@ -1,3 +1,8 @@
+/**
+ * Proficiency slice: skill / tool / language / armor / weapon / defense grants
+ * from class, background, species, and feats. Snapshot resolution lives in
+ * `resolve-proficiency-snapshot.ts`; this hook owns choice state + resets.
+ */
 import { useState, useCallback, useEffect, useMemo } from "react";
 import type {
   AbilityKey,
@@ -47,6 +52,8 @@ export function useProficiencySlice({
   optionalFeatureOriginFeatSlots,
   optionalFeatureOriginFeatSkillChoices,
 }: ProficiencySliceInput) {
+  // ─── Grant lists + player choices ───────────────────────────────────────────
+
   const [classSkillGrants, setClassSkillGrants] = useState<SkillProficiencyGrant[]>([]);
   const [bgSkillGrants, setBgSkillGrants] = useState<SkillProficiencyGrant[]>([]);
   const [speciesSkillGrants, setSpeciesSkillGrants] = useState<SkillProficiencyGrant[]>([]);
@@ -119,6 +126,8 @@ export function useProficiencySlice({
   const [speciesDefenseChoices, setSpeciesDefenseChoicesState] = useState<
     Record<number, DamageType[]>
   >({});
+
+  // ─── Apply grants from identity / feats ─────────────────────────────────────
 
   const applyIdentityGrants = useCallback((payload: {
     skillGrants?: SkillProficiencyGrant[];
@@ -240,6 +249,8 @@ export function useProficiencySlice({
     },
     [],
   );
+
+  // ─── Resets when identity changes ───────────────────────────────────────────
 
   const resetOnSpeciesChange = useCallback(() => {
     setSpeciesSkillChoices([]);
@@ -377,6 +388,8 @@ export function useProficiencySlice({
       return changed ? next : prev;
     });
   }, [higherThanClass]);
+
+  // ─── Snapshot (resolved lists + sources for the UI) ─────────────────────────
 
   const proficiencyResult = useMemo(
     () =>

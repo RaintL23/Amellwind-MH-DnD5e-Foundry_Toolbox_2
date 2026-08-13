@@ -1,3 +1,8 @@
+/**
+ * Builds a Foundry dnd5e v12 `character` actor from Character Builder input.
+ * Order: class / subclass / race / background / feats → equipment → runes →
+ * spells → Midi overlays → system stats (abilities, skills, HP, spells).
+ */
 import type { SkillKey } from "@/shared/types";
 import { SKILL_ABILITY, ABILITY_KEYS } from "@/shared/constants/dnd";
 import type { FoundryActor, FoundryItem } from "@/shared/foundry";
@@ -71,6 +76,8 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   let subclassId: string | null = null;
   let raceId: string | null = null;
   let backgroundId: string | null = null;
+
+  // ─── Class / subclass / race / background ───────────────────────────────────
 
   // Class + class features
   if (input.classInfo) {
@@ -189,6 +196,8 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
     items.push(backgroundItem);
   }
 
+  // ─── Feats ──────────────────────────────────────────────────────────────────
+
   // Standalone feats (origin feats, ASI feats, optional-feature picks, …)
   for (const feat of input.feats) {
     let advancementOrigin: string | undefined;
@@ -210,6 +219,8 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
       }),
     );
   }
+
+  // ─── Inventory (weapons / armor / trinkets / loot / runes / spells) ─────────
 
   // Weapons
   for (const w of input.weapons) {
@@ -271,6 +282,8 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   for (const item of items) {
     applyItemAutomation(item);
   }
+
+  // ─── Actor system (abilities, skills, HP, spell slots) ──────────────────────
 
   // ── system.abilities ──
   const abilities: Record<string, unknown> = {};

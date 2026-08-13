@@ -1,3 +1,7 @@
+/**
+ * App navigation from NAV_SECTIONS: Amellwind Homebrew, RaintDM, D&D 5e.
+ * Desktop icon-collapse + mobile drawer. Home duplicates this map in HomePage.
+ */
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import type { LucideIcon } from "lucide-react";
@@ -36,7 +40,6 @@ import {
   Store,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { useBuilderInventoryOptional } from "@/features/raintdm/builder/context/BuilderInventoryContext";
 import { ThemeSelector } from "@/components/layout/ThemeSelector";
 
 type NavItem = {
@@ -178,22 +181,6 @@ interface SidebarProps {
   onMobileClose: () => void;
 }
 
-function BuilderBadge({ collapsed }: { collapsed: boolean }) {
-  const inventory = useBuilderInventoryOptional();
-  const totalItems = inventory?.totalItems ?? 0;
-  if (totalItems === 0) return null;
-  return (
-    <span
-      className={cn(
-        "rounded-full bg-primary/80 text-[9px] font-bold text-primary-foreground min-w-[16px] h-4 flex items-center justify-center px-1",
-        collapsed ? "absolute -top-0.5 -right-0.5" : "ml-auto",
-      )}
-    >
-      {totalItems}
-    </span>
-  );
-}
-
 function isNavItemActive(pathname: string, to: string) {
   return pathname === to || pathname.startsWith(`${to}/`);
 }
@@ -248,7 +235,6 @@ function NavItemLink({
     >
       <Icon className="h-4 w-4 shrink-0" />
       {!collapsed && label}
-      {to === "/builder" && <BuilderBadge collapsed={collapsed} />}
     </NavLink>
   );
 }

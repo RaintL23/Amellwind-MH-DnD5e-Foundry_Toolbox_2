@@ -1,3 +1,8 @@
+/**
+ * Weapon Forge catalog: curated JSON under `public/data/raintdm-weapons/` plus
+ * user weapons in localStorage. Curated list is cached in memory; user list is
+ * read/written on each mutation.
+ */
 import type {
   CustomWeapon,
   RaintdmWeaponsCatalog,
@@ -20,6 +25,8 @@ interface RaintdmManifest {
 
 let curatedCache: CustomWeapon[] | null = null;
 
+// ─── User weapons (localStorage) ──────────────────────────────────────────────
+
 function readUserWeapons(): CustomWeapon[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -41,6 +48,8 @@ function writeUserWeapons(weapons: CustomWeapon[]): void {
     /* localStorage unavailable */
   }
 }
+
+// ─── Curated catalog (manifest fetch) ─────────────────────────────────────────
 
 async function loadCuratedFromManifest(): Promise<CustomWeapon[]> {
   const manifestRes = await fetch(MANIFEST_URL);
@@ -77,6 +86,8 @@ async function loadCuratedFromManifest(): Promise<CustomWeapon[]> {
     source: w.source || "RAINTDM",
   }));
 }
+
+// ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function getCuratedWeapons(): Promise<CustomWeapon[]> {
   if (curatedCache) return curatedCache;
