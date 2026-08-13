@@ -25,9 +25,10 @@ function resolveEffectRarityLabel(
   text: string,
   slot: MaterialEffectSlot,
   index: MaterialEffectNameIndex | null | undefined,
+  tags: string[],
 ): MaterialEffectTierFilter {
   if (!index) return UNKNOWN_MATERIAL_EFFECT_TIER;
-  return getMaterialEffectTierForText(text, slot, index);
+  return getMaterialEffectTierForText(text, slot, index, tags);
 }
 
 export function EffectSection({
@@ -38,8 +39,8 @@ export function EffectSection({
   materialEffectIndex,
 }: EffectSectionProps) {
   const rarityLabel = useMemo(
-    () => resolveEffectRarityLabel(text, slot, materialEffectIndex),
-    [text, slot, materialEffectIndex],
+    () => resolveEffectRarityLabel(text, slot, materialEffectIndex, tags),
+    [text, slot, materialEffectIndex, tags],
   );
 
   const rarityStyle =

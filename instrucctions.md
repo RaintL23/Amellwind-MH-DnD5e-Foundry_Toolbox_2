@@ -716,12 +716,15 @@ Si el texto del efecto **no** referencia un material effect nombrado del catálo
 
 | Texto (ejemplos) | Rareza |
 | --- | --- |
-| `You have resistance to lightning damage, while you wear this armor.` | **Rare** |
+| `You have resistance to lightning damage, while you wear this armor.` | **Rare** (siempre activa) |
 | `You are resistant to poison damage and immune to the poisoned condition…` | **Rare** (resistencia a daño; la inmunidad a condición no sube rareza) |
-| `You are immune to fire damage while you wear this armor.` | **Very Rare** |
+| `…use your reaction or bonus action to gain resistance to lightning…` (usos / long rest) | **Uncommon** (activada / limitada) |
+| `As an action, you gain resistance to … for 1 minute` (1/long rest) | **Uncommon** |
+| `You are immune to fire damage while you wear this armor.` | **Very Rare** (siempre activa) |
 | `You are immune to poison and disease while you wear this armor.` | **Very Rare** (atajo clásico: `poison` = daño de veneno) |
+| Inmunidad a daño activada (action / BA / reaction + duración corta) | **Rare** (un escalón bajo Very Rare) |
 
-Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición).
+Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición). La detección de “limitada” busca gasto de economy (`action` / `bonus action` / `reaction`) junto al grant de resistencia/inmunidad.
 
 **Daño extra de arma** (`inline-extra-damage-rarity.utils.ts`), score = dados × caras (o flat):
 
@@ -732,7 +735,18 @@ Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condici
 | 13–20 | `extra 3d6 … damage` | **Very Rare** |
 | ≥ 21 | `extra 4d6 … damage` | **Legendary** |
 
-Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Si un mismo texto dispara varias inferencias, se usa la rareza más alta. El badge del diálogo y el filtro **Material Effect Tier** usan la misma función.
+Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Si un mismo texto dispara varias inferencias de defensa/daño, se usa la rareza más alta.
+
+**Lanzamiento de hechizos** (`inline-spell-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene tags `mechanic:cantrip` o `mechanic:spell:lvlN` (nivel real del catálogo):
+
+| Nivel del hechizo | Rareza |
+| --- | --- |
+| 0–3 (cantrip … 3rd) | **Uncommon** |
+| 4–5 | **Rare** (p. ej. Dimension Door) |
+| 6–8 | **Very Rare** |
+| 9 | **Legendary** |
+
+El badge del diálogo y el filtro **Material Effect Tier** usan la misma función.
 
 ---
 

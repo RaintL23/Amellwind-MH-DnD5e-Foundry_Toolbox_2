@@ -22,6 +22,15 @@ export const INLINE_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Rare";
 export const INLINE_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Very Rare";
 
 /**
+ * Activated / limited resistance (reaction, bonus action, or action; short duration;
+ * uses per rest). Common Amellwind pattern — one step below always-on Rare.
+ */
+export const INLINE_LIMITED_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Uncommon";
+
+/** Limited/activated damage immunity — one step below always-on Very Rare. */
+export const INLINE_LIMITED_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Rare";
+
+/**
  * Always-on "extra NdX damage" weapon text, by dice score (n × faces or flat amount).
  * Aligns with Dragon's Wrath / Flame Tongue-style scaling and rune `extra-damage` tags.
  */
@@ -35,6 +44,22 @@ export const INLINE_EXTRA_DAMAGE_RARITY_BY_SCORE: Array<{
 ];
 
 export const INLINE_EXTRA_DAMAGE_LEGENDARY_RARITY: ResourceRarity = "Legendary";
+
+/**
+ * Once-per-day (or similar) spell cast from a rune, by spell level.
+ * Aligned with DMG 2024 Magic Item Power by Rarity (max spell level),
+ * with Uncommon as the floor (runes are not Common consumables).
+ */
+export const INLINE_SPELL_CAST_RARITY_BY_LEVEL: Array<{
+  maxLevel: number;
+  rarity: ResourceRarity;
+}> = [
+  { maxLevel: 3, rarity: "Uncommon" },
+  { maxLevel: 5, rarity: "Rare" },
+  { maxLevel: 8, rarity: "Very Rare" },
+];
+
+export const INLINE_SPELL_CAST_LEGENDARY_RARITY: ResourceRarity = "Legendary";
 
 export const UNKNOWN_MATERIAL_EFFECT_TIER = "Unknown" as const;
 

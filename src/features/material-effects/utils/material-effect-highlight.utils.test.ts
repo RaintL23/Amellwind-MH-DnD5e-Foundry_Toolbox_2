@@ -148,6 +148,41 @@ describe("getMaterialEffectTierForText — inline extra damage", () => {
   });
 });
 
+describe("getMaterialEffectTierForText — spell tags when Unknown", () => {
+  it("assigns Rare to dimension door (lvl4) when no other rarity applies", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are wearing this armor, you can cast the {@spell dimension door} spell as an action.",
+        "armor",
+        emptyIndex,
+        ["mechanic:spell:lvl4"],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon to cantrip casts", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While holding this weapon, you can use an action to cast the {@spell light} cantrip from it.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:cantrip"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("does not override an inline defense rarity with spell tags", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You have resistance to fire damage while you wear this armor. You can cast {@spell dimension door}.",
+        "armor",
+        emptyIndex,
+        ["mechanic:resistance", "damage:fire", "mechanic:spell:lvl4"],
+      ),
+    ).toBe("Rare");
+  });
+});
+
 describe("getMaterialEffectTiersForRune", () => {
   it("does not treat a missing effect side as Unknown", () => {
     const rune = makeRune({

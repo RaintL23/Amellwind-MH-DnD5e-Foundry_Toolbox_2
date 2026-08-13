@@ -8,6 +8,7 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { slugifyKebab } from "@/shared/utils/slugify.utils";
 import { inferInlineDamageDefenseRarity } from "./inline-defense-rarity.utils";
 import { inferInlineExtraDamageRarity } from "./inline-extra-damage-rarity.utils";
+import { inferRarityFromSpellMechanicTags } from "./inline-spell-rarity.utils";
 
 export interface MaterialEffectNameIndex {
   all: string[];
@@ -272,6 +273,7 @@ export function getMaterialEffectTierForText(
   text: string,
   slot: MaterialEffectSlot,
   index: MaterialEffectNameIndex,
+  effectTags: string[] = [],
 ): MaterialEffectTierFilter {
   if (!text.trim()) return UNKNOWN_MATERIAL_EFFECT_TIER;
 
@@ -284,13 +286,20 @@ export function getMaterialEffectTierForText(
     inferInlineExtraDamageRarity(text),
   ].filter((rarity): rarity is ResourceRarity => rarity != null);
 
-  if (inferred.length === 0) return UNKNOWN_MATERIAL_EFFECT_TIER;
+  if (inferred.length > 0) {
+    return inferred.reduce((best, rarity) =>
+      MATERIAL_EFFECT_RARITIES.indexOf(rarity) >=
+      MATERIAL_EFFECT_RARITIES.indexOf(best)
+        ? rarity
+        : best,
+    );
+  }
 
-  return inferred.reduce((best, rarity) =>
-    MATERIAL_EFFECT_RARITIES.indexOf(rarity) >= MATERIAL_EFFECT_RARITIES.indexOf(best)
-      ? rarity
-      : best,
-  );
+  // Only when still Unknown: spell/cantrip tags from the rune effect side.
+  const spellRarity = inferRarityFromSpellMechanicTags(effectTags);
+  if (spellRarity) return spellRarity;
+
+  return UNKNOWN_MATERIAL_EFFECT_TIER;
 }
 
 export function getMaterialEffectTiersForRune(
@@ -299,10 +308,24 @@ export function getMaterialEffectTiersForRune(
 ): MaterialEffectTierFilter[] {
   const tiers: MaterialEffectTierFilter[] = [];
   if (rune.armorEffect) {
-    tiers.push(getMaterialEffectTierForText(rune.armorEffect, "armor", index));
+    tiers.push(
+      getMaterialEffectTierForText(
+        rune.armorEffect,
+        "armor",
+        index,
+        rune.armorTags,
+      ),
+    );
   }
   if (rune.weaponEffect) {
-    tiers.push(getMaterialEffectTierForText(rune.weaponEffect, "weapon", index));
+    tiers.push(
+      getMaterialEffectTierForText(
+        rune.weaponEffect,
+        "weapon",
+        index,
+        rune.weaponTags,
+      ),
+    );
   }
   return tiers;
 }

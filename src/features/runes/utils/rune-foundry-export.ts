@@ -29,20 +29,32 @@ function resolveRuneMaterialEffectRarity(
       rune.weaponEffect ?? "",
       "weapon",
       index,
+      rune.weaponTags,
     );
   }
   if (slotContext === "Armor") {
-    return getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index);
+    return getMaterialEffectTierForText(
+      rune.armorEffect ?? "",
+      "armor",
+      index,
+      rune.armorTags,
+    );
   }
 
   const weaponTier = getMaterialEffectTierForText(
     rune.weaponEffect ?? "",
     "weapon",
     index,
+    rune.weaponTags,
   );
   if (weaponTier !== UNKNOWN_MATERIAL_EFFECT_TIER) return weaponTier;
 
-  return getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index);
+  return getMaterialEffectTierForText(
+    rune.armorEffect ?? "",
+    "armor",
+    index,
+    rune.armorTags,
+  );
 }
 
 function buildRuneDescription(

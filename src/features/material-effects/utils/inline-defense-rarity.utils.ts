@@ -3,6 +3,8 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import {
   INLINE_DAMAGE_IMMUNITY_RARITY,
   INLINE_DAMAGE_RESISTANCE_RARITY,
+  INLINE_LIMITED_DAMAGE_IMMUNITY_RARITY,
+  INLINE_LIMITED_DAMAGE_RESISTANCE_RARITY,
   MATERIAL_EFFECT_RARITIES,
 } from "../constants/material-effect.constants";
 
@@ -27,21 +29,28 @@ export type InlineDamageDefenseKind = "resistance" | "immunity";
 export interface InlineDamageDefense {
   kind: InlineDamageDefenseKind;
   types: DamageType[];
+  /** True when the grant requires an action economy spend and/or is temporary with uses. */
+  limited: boolean;
 }
 
 /**
- * Captures resistance clauses, including combined sentences:
- * "You are resistant to poison damage and immune to the poisoned condition…"
+ * Captures resistance clauses, including:
+ * - always-on: "You have resistance to fire damage while you wear this armor."
+ * - activated: "…use your reaction or bonus action to gain resistance to lightning…"
  */
 const RESISTANCE_GRANT_GLOBAL =
-  /(?:you\s+(?:are\s+resistant|have\s+resistance|gain\s+resistance)|(?:^|[.;]\s*|,\s*|and\s+)(?:are\s+)?resistant|(?:^|[.;]\s*|,\s*|and\s+)(?:have|gain)\s+resistance)\s+to\s+(.+?)(?=\s+and\s+(?:are\s+)?(?:immune|immunity|\w+\s+resistant)|\s+while\b|\s+when\b|[.;]|$)/gi;
+  /(?:you\s+(?:are\s+resistant|have\s+resistance|gain\s+resistance)|(?:^|[.;]\s*|,\s*|and\s+)(?:are\s+)?resistant|(?:^|[.;]\s*|,\s*|and\s+|to\s+)(?:have|gain)\s+resistance)\s+to\s+(.+?)(?=\s+and\s+(?:are\s+)?(?:immune|immunity|\w+\s+resistant)|\s+while\b|\s+when\b|\s+until\b|[.;]|$)/gi;
 
 /**
  * Captures damage immunity clauses even when chained after resistance:
  * "…and immune to fire damage while you wear this armor."
  */
 const IMMUNITY_GRANT_GLOBAL =
-  /(?:you\s+(?:are|have|gain)\s+)?(?:immune|immunity)\s+to\s+(.+?)(?=\s+and\s+(?:are\s+)?(?:resistant|immune|immunity)|\s+while\b|\s+when\b|[.;]|$)/gi;
+  /(?:you\s+(?:are|have|gain)\s+)?(?:immune|immunity)\s+to\s+(.+?)(?=\s+and\s+(?:are\s+)?(?:resistant|immune|immunity)|\s+while\b|\s+when\b|\s+until\b|[.;]|$)/gi;
+
+/** Reaction / BA / action used to gain the defense (not merely "while wearing"). */
+const LIMITED_ACTIVATION =
+  /(?:as an action|use (?:your |an )?action|bonus action|\breaction\b).{0,120}(?:gain |have )?(?:resistance|resistant|immunity|immune)|(?:gain |have )?(?:resistance|immunity|resistant|immune).{0,80}(?:as an action|bonus action|\breaction\b)/i;
 
 function extractDamageTypes(fragment: string): DamageType[] {
   // "the poisoned condition" is not a damage grant.
@@ -60,7 +69,6 @@ function extractDamageTypes(fragment: string): DamageType[] {
     }
 
     // Classic shorthand: "immune to poison and disease", "resistance to fire".
-    // `\bpoison\b` does not match "poisoned".
     const bare = new RegExp(`\\b${type}\\b`, "i").exec(fragment);
     if (bare && bare.index !== undefined) {
       matches.push({ type, index: bare.index });
@@ -79,10 +87,15 @@ function isNegatedContext(text: string, matchIndex: number): boolean {
   );
 }
 
+export function isLimitedDefenseActivation(text: string): boolean {
+  return LIMITED_ACTIVATION.test(text);
+}
+
 function collectGrants(
   text: string,
   pattern: RegExp,
   kind: InlineDamageDefenseKind,
+  limited: boolean,
 ): InlineDamageDefense[] {
   const defenses: InlineDamageDefense[] = [];
   for (const match of text.matchAll(pattern)) {
@@ -91,7 +104,7 @@ function collectGrants(
     }
     const types = extractDamageTypes(match[1] ?? "");
     if (types.length > 0) {
-      defenses.push({ kind, types });
+      defenses.push({ kind, types, limited });
     }
   }
   return defenses;
@@ -100,23 +113,30 @@ function collectGrants(
 /**
  * Detects first-person grants of damage resistance or immunity in rune effect text,
  * e.g. "You are immune to fire damage while you wear this armor."
- * Also handles mixed wording: "You are resistant to poison damage and immune to…"
+ * Also handles activated grants: "…bonus action to gain resistance to lightning…"
  */
 export function parseInlineDamageDefenses(text: string): InlineDamageDefense[] {
   if (!text.trim()) return [];
 
   const parsed = parseFiveToolsMarkup(text);
+  const limited = isLimitedDefenseActivation(parsed);
   return [
-    ...collectGrants(parsed, RESISTANCE_GRANT_GLOBAL, "resistance"),
-    ...collectGrants(parsed, IMMUNITY_GRANT_GLOBAL, "immunity"),
+    ...collectGrants(parsed, RESISTANCE_GRANT_GLOBAL, "resistance", limited),
+    ...collectGrants(parsed, IMMUNITY_GRANT_GLOBAL, "immunity", limited),
   ];
 }
 
 export function rarityForInlineDamageDefense(
   kind: InlineDamageDefenseKind,
+  limited = false,
 ): ResourceRarity {
-  return kind === "immunity"
-    ? INLINE_DAMAGE_IMMUNITY_RARITY
+  if (kind === "immunity") {
+    return limited
+      ? INLINE_LIMITED_DAMAGE_IMMUNITY_RARITY
+      : INLINE_DAMAGE_IMMUNITY_RARITY;
+  }
+  return limited
+    ? INLINE_LIMITED_DAMAGE_RESISTANCE_RARITY
     : INLINE_DAMAGE_RESISTANCE_RARITY;
 }
 
@@ -126,7 +146,10 @@ function higherRarity(a: ResourceRarity, b: ResourceRarity): ResourceRarity {
     : b;
 }
 
-/** Rare for resistance, Very Rare for immunity. Immunity wins if both appear. */
+/**
+ * Always-on resistance → Rare; limited/activated resistance → Uncommon.
+ * Always-on immunity → Very Rare; limited immunity → Rare.
+ */
 export function inferInlineDamageDefenseRarity(
   text: string,
 ): ResourceRarity | null {
@@ -135,7 +158,10 @@ export function inferInlineDamageDefenseRarity(
 
   return defenses.reduce<ResourceRarity>(
     (current, defense) =>
-      higherRarity(current, rarityForInlineDamageDefense(defense.kind)),
-    INLINE_DAMAGE_RESISTANCE_RARITY,
+      higherRarity(
+        current,
+        rarityForInlineDamageDefense(defense.kind, defense.limited),
+      ),
+    INLINE_LIMITED_DAMAGE_RESISTANCE_RARITY,
   );
 }

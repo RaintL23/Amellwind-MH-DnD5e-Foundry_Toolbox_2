@@ -10,7 +10,7 @@ describe("parseInlineDamageDefenses", () => {
       parseInlineDamageDefenses(
         "You are immune to fire damage while you wear this armor.",
       ),
-    ).toEqual([{ kind: "immunity", types: ["fire"] }]);
+    ).toEqual([{ kind: "immunity", types: ["fire"], limited: false }]);
   });
 
   it("detects armor lightning resistance with a comma", () => {
@@ -18,7 +18,7 @@ describe("parseInlineDamageDefenses", () => {
       parseInlineDamageDefenses(
         "You have resistance to lightning damage, while you wear this armor.",
       ),
-    ).toEqual([{ kind: "resistance", types: ["lightning"] }]);
+    ).toEqual([{ kind: "resistance", types: ["lightning"], limited: false }]);
   });
 
   it("detects multiple damage types in one grant", () => {
@@ -26,7 +26,9 @@ describe("parseInlineDamageDefenses", () => {
       parseInlineDamageDefenses(
         "You have resistance to fire and cold damage while you wear this armor.",
       ),
-    ).toEqual([{ kind: "resistance", types: ["fire", "cold"] }]);
+    ).toEqual([
+      { kind: "resistance", types: ["fire", "cold"], limited: false },
+    ]);
   });
 
   it("detects resistant-to wording with condition immunity in one sentence", () => {
@@ -34,7 +36,7 @@ describe("parseInlineDamageDefenses", () => {
       parseInlineDamageDefenses(
         "You are resistant to poison damage and immune to the {@condition poisoned} condition while you wear this armor.",
       ),
-    ).toEqual([{ kind: "resistance", types: ["poison"] }]);
+    ).toEqual([{ kind: "resistance", types: ["poison"], limited: false }]);
   });
 
   it("detects chained damage immunity after resistance", () => {
@@ -43,8 +45,8 @@ describe("parseInlineDamageDefenses", () => {
         "You have resistance to cold damage and are immune to fire damage while you wear this armor.",
       ),
     ).toEqual([
-      { kind: "resistance", types: ["cold"] },
-      { kind: "immunity", types: ["fire"] },
+      { kind: "resistance", types: ["cold"], limited: false },
+      { kind: "immunity", types: ["fire"], limited: false },
     ]);
   });
 
@@ -53,7 +55,15 @@ describe("parseInlineDamageDefenses", () => {
       parseInlineDamageDefenses(
         "You are immune to poison and disease while you wear this armor.",
       ),
-    ).toEqual([{ kind: "immunity", types: ["poison"] }]);
+    ).toEqual([{ kind: "immunity", types: ["poison"], limited: false }]);
+  });
+
+  it("detects reaction/bonus-action temporary resistance", () => {
+    expect(
+      parseInlineDamageDefenses(
+        "While you are wearing this armor, you can use your reaction or bonus action to gain resistance to lightning damage until the end of your next turn. You can use this property twice, regaining all uses when you finish a long rest.",
+      ),
+    ).toEqual([{ kind: "resistance", types: ["lightning"], limited: true }]);
   });
 
   it("ignores condition-only immunity", () => {
@@ -74,7 +84,7 @@ describe("parseInlineDamageDefenses", () => {
 });
 
 describe("inferInlineDamageDefenseRarity", () => {
-  it("catalogues resistance as Rare", () => {
+  it("catalogues always-on resistance as Rare", () => {
     expect(
       inferInlineDamageDefenseRarity(
         "You have resistance to cold damage while you wear this armor.",
@@ -82,7 +92,23 @@ describe("inferInlineDamageDefenseRarity", () => {
     ).toBe("Rare");
   });
 
-  it("catalogues immunity as Very Rare", () => {
+  it("catalogues limited reaction/bonus-action resistance as Uncommon", () => {
+    expect(
+      inferInlineDamageDefenseRarity(
+        "While you are wearing this armor, you can use your reaction or bonus action to gain resistance to lightning damage until the end of your next turn. You can use this property twice, regaining all uses when you finish a long rest.",
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("catalogues action-activated 1-minute resistance as Uncommon", () => {
+    expect(
+      inferInlineDamageDefenseRarity(
+        "As an action, you gain resistance to necrotic damage for 1 minute. Once you use this property, you can't use it again until you finish a long rest.",
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("catalogues always-on immunity as Very Rare", () => {
     expect(
       inferInlineDamageDefenseRarity(
         "You are immune to fire damage while you wear this armor.",
