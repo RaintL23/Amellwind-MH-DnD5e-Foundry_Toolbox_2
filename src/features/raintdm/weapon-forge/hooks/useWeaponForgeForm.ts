@@ -1,0 +1,205 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import type { Weapon } from "@/shared/types";
+import { getAllWeapons } from "@/features/amellwind/weapons/services/weapon.service";
+import {
+  getOptionalFeaturesMap,
+  resolveWeaponBaseFeatures,
+} from "@/features/amellwind/weapons/services/optionalfeature.service";
+import { populateBaseRarityFeatures } from "@/features/amellwind/weapons/utils/weapon-base-rarity.utils";
+import {
+  createFeatureDef,
+  emptyFormValues,
+  weaponToFormValues,
+  type CustomWeapon,
+  type WeaponForgeFeatureDef,
+  type WeaponForgeFormValues,
+} from "../types/weapon-forge.types";
+import {
+  formValuesToWeapon,
+  mergeCopiedRarities,
+  toCustomWeapon,
+} from "../mappers/weapon-forge.mapper";
+import { getAssignedFeaturesForRow } from "../utils/weapon-forge-features.utils";
+import {
+  getUserWeapons,
+  saveUserWeapon,
+} from "../services/weapon-forge.service";
+
+export function useWeaponForgeForm() {
+  const navigate = useNavigate();
+  const { weaponId: weaponIdParam } = useParams<{ weaponId?: string }>();
+  const weaponId = weaponIdParam ? decodeURIComponent(weaponIdParam) : undefined;
+  const isEdit = Boolean(weaponId);
+
+  const [values, setValues] = useState<WeaponForgeFormValues>(emptyFormValues());
+  const [existing, setExisting] = useState<CustomWeapon | null>(null);
+  const [amellwindWeapons, setAmellwindWeapons] = useState<Weapon[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [notFound, setNotFound] = useState(false);
+  const valuesRef = useRef(values);
+  valuesRef.current = values;
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function load() {
+      setLoading(true);
+      setNotFound(false);
+
+      try {
+        const amellwind = await getAllWeapons();
+        if (cancelled) return;
+        setAmellwindWeapons(amellwind);
+
+        if (!weaponId) {
+          setExisting(null);
+          setValues(emptyFormValues());
+          return;
+        }
+
+        const found = getUserWeapons().find((w) => w.id === weaponId) ?? null;
+        if (!found) {
+          setExisting(null);
+          setNotFound(true);
+          return;
+        }
+
+        setExisting(found);
+        setValues(weaponToFormValues(found));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    }
+
+    void load();
+    return () => {
+      cancelled = true;
+    };
+  }, [weaponId]);
+
+  const patch = useCallback(<K extends keyof WeaponForgeFormValues>(
+    key: K,
+    value: WeaponForgeFormValues[K],
+  ) => {
+    setValues((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  const patchMany = useCallback((partial: Partial<WeaponForgeFormValues>) => {
+    setValues((prev) => ({ ...prev, ...partial }));
+  }, []);
+
+  const handleChangeRows = useCallback(
+    (rows: WeaponForgeFormValues["rarityRows"]) => patch("rarityRows", rows),
+    [patch],
+  );
+
+  const handleChangeFeatures = useCallback(
+    (features: WeaponForgeFormValues["customFeatures"]) =>
+      patch("customFeatures", features),
+    [patch],
+  );
+
+  const applyBase = useCallback(
+    (weapon: Weapon, rarities: string[] | "all") => {
+      const baseValues = weaponToFormValues(weapon);
+      baseValues.rarityRows = mergeCopiedRarities(weapon, rarities);
+      setValues((prev) => {
+        if (prev.name.trim()) baseValues.name = prev.name;
+        if (prev.img.trim()) baseValues.img = prev.img;
+        return baseValues;
+      });
+
+      void getOptionalFeaturesMap().then((map) => {
+        const resolvedBase = resolveWeaponBaseFeatures(weapon, map);
+        const baseNames = [
+          ...weapon.baseFeatureNames,
+          ...resolvedBase.map((f) => f.name),
+        ];
+        const rarityRows = populateBaseRarityFeatures(
+          baseValues.rarityRows,
+          baseNames,
+        );
+
+        const defs: WeaponForgeFeatureDef[] = [];
+        const seen = new Set<string>();
+
+        for (const row of rarityRows) {
+          for (const ref of getAssignedFeaturesForRow(row)) {
+            const key = ref.name.toLowerCase();
+            if (seen.has(key)) continue;
+            seen.add(key);
+            const opt = map.get(key);
+            defs.push(
+              createFeatureDef({
+                name: ref.name,
+                description: opt?.paragraphs.join("\n\n") ?? "",
+                resourceColumn: ref.resourceColumn,
+              }),
+            );
+          }
+        }
+
+        for (const feat of resolvedBase) {
+          const key = feat.name.toLowerCase();
+          if (seen.has(key)) continue;
+          seen.add(key);
+          defs.push(
+            createFeatureDef({
+              name: feat.name,
+              description: feat.paragraphs.join("\n\n"),
+            }),
+          );
+        }
+
+        setValues((prev) => ({
+          ...prev,
+          rarityRows,
+          baseFeatureNames: baseNames.join(", "),
+          customFeatures: defs,
+        }));
+      });
+    },
+    [],
+  );
+
+  const goBack = useCallback(() => {
+    navigate("/weapon-forge");
+  }, [navigate]);
+
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+      const current = valuesRef.current;
+      if (!current.name.trim()) return;
+
+      const base = formValuesToWeapon(current);
+      const weapon = toCustomWeapon(base, {
+        id: existing?.id,
+        isCustom: true,
+        createdAt: existing?.createdAt,
+        author: current.author.trim() || "RaintDM",
+        img: current.img,
+        customFeatures: current.customFeatures,
+      });
+      saveUserWeapon(weapon);
+      navigate("/weapon-forge");
+    },
+    [existing, navigate],
+  );
+
+  return {
+    isEdit,
+    values,
+    amellwindWeapons,
+    loading,
+    notFound,
+    patch,
+    patchMany,
+    handleChangeRows,
+    handleChangeFeatures,
+    applyBase,
+    goBack,
+    handleSubmit,
+  };
+}

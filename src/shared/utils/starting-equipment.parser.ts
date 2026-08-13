@@ -1,5 +1,5 @@
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
-import { formatTotalGp } from "@/features/shops/utils/cost.utils";
+import { formatTotalGp } from "@/features/amellwind/shops/utils/cost.utils";
 import type {
   StartingEquipmentGroup,
   StartingEquipmentItem,

@@ -4,7 +4,7 @@
  */
 import { ITEMS_BASE_JSON_URL } from "@/shared/constants/api.constants";
 import { fetchFiveToolsJson } from "@/shared/data/fivetools-fetch";
-import type { ItemsBaseJson } from "@/features/dnd-items/utils/item-raw.types";
+import type { ItemsBaseJson } from "@/features/dnd/items/utils/item-raw.types";
 
 function isInstrumentType(type?: string): boolean {
   if (!type) return false;

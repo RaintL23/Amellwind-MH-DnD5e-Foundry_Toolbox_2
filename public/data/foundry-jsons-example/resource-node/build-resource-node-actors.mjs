@@ -18,8 +18,8 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "../../../..");
-const ENV_DATA = path.join(ROOT, "src/features/environments/data/environment.data.ts");
-const RESOURCE_DATA = path.join(ROOT, "src/features/resources/data/resource.data.ts");
+const ENV_DATA = path.join(ROOT, "src/features/amellwind/environments/data/environment.data.ts");
+const RESOURCE_DATA = path.join(ROOT, "src/features/amellwind/resources/data/resource.data.ts");
 const OUT_DIR = path.join(__dirname, "actors");
 const RESOURCE_NODE_ITEM = path.join(__dirname, "fvtt-Item-resource-node.json");
 const HIDDEN_DETECT_ITEM = path.join(__dirname, "../hidden-detect/fvtt-Item-hidden-detection.json");

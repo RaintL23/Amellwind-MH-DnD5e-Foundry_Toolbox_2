@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Menu } from "lucide-react";
-import { CartProvider } from "@/features/shops/context/CartContext";
-import { BuilderInventoryProvider } from "@/features/builder/context/BuilderInventoryContext";
-import { CharacterBuilderProvider } from "@/features/builder/context/CharacterBuilderContext";
+import { CartProvider } from "@/features/amellwind/shops/context/CartContext";
+import { BuilderInventoryProvider } from "@/features/raintdm/builder/context/BuilderInventoryContext";
+import { CharacterBuilderProvider } from "@/features/raintdm/builder/context/CharacterBuilderContext";
 import { Sidebar } from "./Sidebar";
 
 export function MainLayout({ syncing = false }: { syncing?: boolean }) {

@@ -36,7 +36,7 @@ import {
   Store,
 } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
-import { useBuilderInventoryOptional } from "@/features/builder/context/BuilderInventoryContext";
+import { useBuilderInventoryOptional } from "@/features/raintdm/builder/context/BuilderInventoryContext";
 import { ThemeSelector } from "@/components/layout/ThemeSelector";
 
 type NavItem = {

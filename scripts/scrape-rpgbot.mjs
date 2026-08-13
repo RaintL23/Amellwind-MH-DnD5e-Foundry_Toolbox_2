@@ -22,7 +22,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUTPUT_PATH = join(
   __dirname,
-  "../src/features/builder/data/rpgbot-ratings.json",
+  "../src/features/raintdm/builder/data/rpgbot-ratings.json",
 );
 
 const URLS = [

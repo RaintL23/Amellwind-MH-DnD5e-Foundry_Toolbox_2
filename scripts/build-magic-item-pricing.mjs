@@ -1,6 +1,6 @@
 /**
  * Converts scripts/data/magic-item-pricing.csv →
- * src/features/shop-generator/data/magic-item-pricing.data.ts
+ * src/features/dnd/shop-generator/data/magic-item-pricing.data.ts
  *
  * Update the CSV (replace the file), then run: pnpm pricing:build
  * Also runs automatically as part of `pnpm build`.
@@ -13,7 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const csvPath = path.resolve(__dirname, "data/magic-item-pricing.csv");
 const outDir = path.resolve(
   __dirname,
-  "../src/features/shop-generator/data",
+  "../src/features/dnd/shop-generator/data",
 );
 const outPath = path.join(outDir, "magic-item-pricing.data.ts");
 

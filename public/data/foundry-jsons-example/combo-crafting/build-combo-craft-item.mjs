@@ -1,7 +1,7 @@
 /**
  * Builds the Combo Crafting Foundry content from the app's Combo List data.
  *
- * Reads COMBO_TOOL_TABLES from src/features/combo/data/combo.data.ts (single
+ * Reads COMBO_TOOL_TABLES from src/features/amellwind/combo/data/combo.data.ts (single
  * source of truth shared with the /combo screen), then writes:
  *   - combo-recipes.json           snapshot of the recipe tables
  *   - fvtt-Item-combo-crafting.json a dnd5e "feat" that any actor can receive;
@@ -15,7 +15,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "../../../..");
-const COMBO_DATA = path.join(ROOT, "src", "features", "combo", "data", "combo.data.ts");
+const COMBO_DATA = path.join(ROOT, "src", "features", "amellwind", "combo", "data", "combo.data.ts");
 
 const CORE_VERSION = "12.331";
 const SYSTEM_ID = "dnd5e";

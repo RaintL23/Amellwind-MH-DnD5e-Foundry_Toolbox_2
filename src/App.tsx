@@ -14,195 +14,195 @@ import { loadChooseableMusicalInstruments } from "@/shared/data/chooseable-music
 import { syncData } from "@/shared/db/sync.service";
 
 const MonsterList = lazy(() =>
-  import("@/features/monsters/components/MonsterList").then((m) => ({
+  import("@/features/amellwind/monsters/components/MonsterList").then((m) => ({
     default: m.MonsterList,
   })),
 );
 const MonsterDetailPage = lazy(() =>
-  import("@/features/monsters/components/MonsterDetailPage").then((m) => ({
+  import("@/features/amellwind/monsters/components/MonsterDetailPage").then((m) => ({
     default: m.MonsterDetailPage,
   })),
 );
 const MonstersOutlet = lazy(() =>
-  import("@/features/monsters/components/MonstersOutlet").then((m) => ({
+  import("@/features/amellwind/monsters/components/MonstersOutlet").then((m) => ({
     default: m.MonstersOutlet,
   })),
 );
 const RuneList = lazy(() =>
-  import("@/features/runes/components/list/RuneList").then((m) => ({
+  import("@/features/amellwind/runes/components/list/RuneList").then((m) => ({
     default: m.RuneList,
   })),
 );
 const MaterialEffectList = lazy(() =>
-  import("@/features/material-effects/components/MaterialEffectList").then(
+  import("@/features/amellwind/material-effects/components/MaterialEffectList").then(
     (m) => ({ default: m.MaterialEffectList }),
   ),
 );
 const ConditionsDiseasesPage = lazy(() =>
-  import("@/features/conditions/components/ConditionsDiseasesPage").then((m) => ({
+  import("@/features/amellwind/conditions/components/ConditionsDiseasesPage").then((m) => ({
     default: m.ConditionsDiseasesPage,
   })),
 );
 const CookingPage = lazy(() =>
-  import("@/features/cooking/components/CookingPage").then((m) => ({
+  import("@/features/amellwind/cooking/components/CookingPage").then((m) => ({
     default: m.CookingPage,
   })),
 );
 const ComboPage = lazy(() =>
-  import("@/features/combo/components/ComboPage").then((m) => ({
+  import("@/features/amellwind/combo/components/ComboPage").then((m) => ({
     default: m.ComboPage,
   })),
 );
 const ItemList = lazy(() =>
-  import("@/features/shops/components/ItemList").then((m) => ({
+  import("@/features/amellwind/shops/components/ItemList").then((m) => ({
     default: m.ItemList,
   })),
 );
 const ShopList = lazy(() =>
-  import("@/features/shops/components/ShopList").then((m) => ({
+  import("@/features/amellwind/shops/components/ShopList").then((m) => ({
     default: m.ShopList,
   })),
 );
 const WeaponList = lazy(() =>
-  import("@/features/weapons/components/WeaponList").then((m) => ({
+  import("@/features/amellwind/weapons/components/WeaponList").then((m) => ({
     default: m.WeaponList,
   })),
 );
 const WeaponForgeList = lazy(() =>
-  import("@/features/weapon-forge/components/WeaponForgeList").then((m) => ({
+  import("@/features/raintdm/weapon-forge/components/WeaponForgeList").then((m) => ({
     default: m.WeaponForgeList,
   })),
 );
 const WeaponForgeForm = lazy(() =>
-  import("@/features/weapon-forge/components/WeaponForgeForm").then((m) => ({
+  import("@/features/raintdm/weapon-forge/components/WeaponForgeForm").then((m) => ({
     default: m.WeaponForgeForm,
   })),
 );
 const ItemForgeList = lazy(() =>
-  import("@/features/item-forge/components/ItemForgeList").then((m) => ({
+  import("@/features/raintdm/item-forge/components/ItemForgeList").then((m) => ({
     default: m.ItemForgeList,
   })),
 );
 const ResourcePage = lazy(() =>
-  import("@/features/resources/components/ResourcePage").then((m) => ({
+  import("@/features/amellwind/resources/components/ResourcePage").then((m) => ({
     default: m.ResourcePage,
   })),
 );
 const EnvironmentList = lazy(() =>
-  import("@/features/environments/components/EnvironmentList").then((m) => ({
+  import("@/features/amellwind/environments/components/EnvironmentList").then((m) => ({
     default: m.EnvironmentList,
   })),
 );
 const HuntPage = lazy(() =>
-  import("@/features/hunt/components/HuntPage").then((m) => ({
+  import("@/features/amellwind/hunt/components/HuntPage").then((m) => ({
     default: m.HuntPage,
   })),
 );
 const BuilderPage = lazy(() =>
-  import("@/features/builder/components/page/BuilderPage").then((m) => ({
+  import("@/features/raintdm/builder/components/page/BuilderPage").then((m) => ({
     default: m.BuilderPage,
   })),
 );
 const SpeciesList = lazy(() =>
-  import("@/features/species/components/SpeciesList").then((m) => ({
+  import("@/features/amellwind/species/components/SpeciesList").then((m) => ({
     default: m.SpeciesList,
   })),
 );
 const BackgroundList = lazy(() =>
-  import("@/features/backgrounds/components/BackgroundList").then((m) => ({
+  import("@/features/amellwind/backgrounds/components/BackgroundList").then((m) => ({
     default: m.BackgroundList,
   })),
 );
 const FeatList = lazy(() =>
-  import("@/features/feats/components/FeatList").then((m) => ({
+  import("@/features/amellwind/feats/components/FeatList").then((m) => ({
     default: m.FeatList,
   })),
 );
 const CharacterGuidePage = lazy(() =>
-  import("@/features/character-guide/components/CharacterGuidePage").then(
+  import("@/features/amellwind/character-guide/components/CharacterGuidePage").then(
     (m) => ({ default: m.CharacterGuidePage }),
   ),
 );
 const DowntimePage = lazy(() =>
-  import("@/features/downtime/components/DowntimePage").then((m) => ({
+  import("@/features/amellwind/downtime/components/DowntimePage").then((m) => ({
     default: m.DowntimePage,
   })),
 );
 const MonstieSidekickPage = lazy(() =>
-  import("@/features/monstie-sidekick/components/MonstieSidekickPage").then(
+  import("@/features/amellwind/monstie-sidekick/components/MonstieSidekickPage").then(
     (m) => ({ default: m.MonstieSidekickPage }),
   ),
 );
 const NpcGeneratorPage = lazy(() =>
-  import("@/features/npc-generator/components/NpcGeneratorPage").then((m) => ({
+  import("@/features/amellwind/npc-generator/components/NpcGeneratorPage").then((m) => ({
     default: m.NpcGeneratorPage,
   })),
 );
 const SpellList = lazy(() =>
-  import("@/features/spells/components/SpellList").then((m) => ({
+  import("@/features/dnd/spells/components/SpellList").then((m) => ({
     default: m.SpellList,
   })),
 );
 const ClassList = lazy(() =>
-  import("@/features/classes/components/ClassList").then((m) => ({
+  import("@/features/dnd/classes/components/ClassList").then((m) => ({
     default: m.ClassList,
   })),
 );
 const ClassDetailPage = lazy(() =>
-  import("@/features/classes/components/ClassDetailPage").then((m) => ({
+  import("@/features/dnd/classes/components/ClassDetailPage").then((m) => ({
     default: m.ClassDetailPage,
   })),
 );
 const DndItemList = lazy(() =>
-  import("@/features/dnd-items/components/DndItemList").then((m) => ({
+  import("@/features/dnd/items/components/DndItemList").then((m) => ({
     default: m.DndItemList,
   })),
 );
 const BestiaryList = lazy(() =>
-  import("@/features/bestiary/components/BestiaryList").then((m) => ({
+  import("@/features/dnd/bestiary/components/BestiaryList").then((m) => ({
     default: m.BestiaryList,
   })),
 );
 const BestiaryDetailPage = lazy(() =>
-  import("@/features/bestiary/components/BestiaryDetailPage").then((m) => ({
+  import("@/features/dnd/bestiary/components/BestiaryDetailPage").then((m) => ({
     default: m.BestiaryDetailPage,
   })),
 );
 const XanatharBackstoryPage = lazy(() =>
-  import("@/features/xanathar-backstory/components/XanatharBackstoryPage").then(
+  import("@/features/dnd/xanathar-backstory/components/XanatharBackstoryPage").then(
     (m) => ({
       default: m.XanatharBackstoryPage,
     }),
   ),
 );
 const ShopGeneratorPage = lazy(() =>
-  import("@/features/shop-generator/components/ShopGeneratorPage").then(
+  import("@/features/dnd/shop-generator/components/ShopGeneratorPage").then(
     (m) => ({
       default: m.ShopGeneratorPage,
     }),
   ),
 );
 const DamageCalculatorPage = lazy(() =>
-  import("@/features/damage-calculator/components/DamageCalculatorPage").then(
+  import("@/features/amellwind/damage-calculator/components/DamageCalculatorPage").then(
     (m) => ({
       default: m.DamageCalculatorPage,
     }),
   ),
 );
 const DndRaceList = lazy(() =>
-  import("@/features/dnd-races/components/DndRaceList").then((m) => ({
+  import("@/features/dnd/races/components/DndRaceList").then((m) => ({
     default: m.DndRaceList,
   })),
 );
 const DndBackgroundList = lazy(() =>
-  import("@/features/dnd-backgrounds/components/DndBackgroundList").then(
+  import("@/features/dnd/backgrounds/components/DndBackgroundList").then(
     (m) => ({
       default: m.DndBackgroundList,
     }),
   ),
 );
 const DndFeatList = lazy(() =>
-  import("@/features/dnd-feats/components/DndFeatList").then((m) => ({
+  import("@/features/dnd/feats/components/DndFeatList").then((m) => ({
     default: m.DndFeatList,
   })),
 );
@@ -226,10 +226,10 @@ async function clearMonsterManualDerivedCaches(): Promise<void> {
     { clearConditionCache },
     { clearDiseaseCache },
   ] = await Promise.all([
-    import("@/features/monsters/services/monster.service"),
-    import("@/features/runes/services/rune.service"),
-    import("@/features/conditions/services/condition.service"),
-    import("@/features/diseases/services/disease.service"),
+    import("@/features/amellwind/monsters/services/monster.service"),
+    import("@/features/amellwind/runes/services/rune.service"),
+    import("@/features/amellwind/conditions/services/condition.service"),
+    import("@/features/amellwind/diseases/services/disease.service"),
   ]);
   clearMonsterCache();
   clearRuneCache();
@@ -245,11 +245,11 @@ async function clearGuideDerivedCaches(): Promise<void> {
     { clearMonstieSidekickCache },
     { clearMaterialEffectCache },
   ] = await Promise.all([
-    import("@/features/species/services/species.service"),
-    import("@/features/backgrounds/services/background.service"),
-    import("@/features/feats/services/feat.service"),
-    import("@/features/monstie-sidekick/services/monstie-sidekick.service"),
-    import("@/features/material-effects/services/material-effect.service"),
+    import("@/features/amellwind/species/services/species.service"),
+    import("@/features/amellwind/backgrounds/services/background.service"),
+    import("@/features/amellwind/feats/services/feat.service"),
+    import("@/features/amellwind/monstie-sidekick/services/monstie-sidekick.service"),
+    import("@/features/amellwind/material-effects/services/material-effect.service"),
   ]);
   clearSpeciesCache();
   clearBackgroundCache();

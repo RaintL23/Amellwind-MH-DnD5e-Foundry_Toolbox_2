@@ -37,7 +37,7 @@ import {
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { MAGIC_ITEM_PRICING_ATTRIBUTION } from "@/features/shop-generator/data/magic-item-pricing-attribution";
+import { MAGIC_ITEM_PRICING_ATTRIBUTION } from "@/features/dnd/shop-generator/data/magic-item-pricing-attribution";
 
 interface SectionItem {
   label: string;
