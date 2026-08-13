@@ -26,6 +26,8 @@ export interface MagazineConsumableDef {
   damageType: string;
   /** Charges granted when this magazine is expended. */
   chargesPerMagazine: number;
+  /** Shop price in gp (matches raintdm-items magazines catalog). */
+  priceGp: number;
   /**
    * Optional on-hit / while-loaded rider (Rare Upgrade I magazines, Dawnstar, …).
    * `bonusDamage` is stamped on the Loaded AE; other kinds run from ItemMacro on hit.
@@ -61,6 +63,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Normal Magazine</strong></p><p>Normal piercing damage (fills 6 weapon Charges).</p>",
       damageType: "piercing",
       chargesPerMagazine: 6,
+      priceGp: 2,
     },
     "blaze magazine": {
       name: "Blaze Magazine",
@@ -72,6 +75,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Blaze Magazine</strong></p><p>Fire damage instead of piercing (fills 6 weapon Charges).</p>",
       damageType: "fire",
       chargesPerMagazine: 6,
+      priceGp: 5,
     },
     "cryo magazine": {
       name: "Cryo Magazine",
@@ -83,6 +87,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Cryo Magazine</strong></p><p>Cold damage instead of piercing (fills 6 weapon Charges).</p>",
       damageType: "cold",
       chargesPerMagazine: 6,
+      priceGp: 5,
     },
     "storm magazine": {
       name: "Storm Magazine",
@@ -94,6 +99,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Storm Magazine</strong></p><p>Lightning damage instead of piercing (fills 6 weapon Charges).</p>",
       damageType: "lightning",
       chargesPerMagazine: 6,
+      priceGp: 5,
     },
     "slime magazine": {
       name: "Slime Magazine",
@@ -105,6 +111,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Slime Magazine</strong></p><p>Acid damage instead of piercing (fills 6 weapon Charges).</p>",
       damageType: "acid",
       chargesPerMagazine: 6,
+      priceGp: 5,
     },
     "blaze magazine upgrade i": {
       name: "Blaze Magazine Upgrade I",
@@ -116,6 +123,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Blaze Magazine Upgrade I</strong></p><p>Fire damage + extra 1d6 fire (fills 6 weapon Charges).</p>",
       damageType: "fire",
       chargesPerMagazine: 6,
+      priceGp: 15,
       rider: {
         kind: "bonusDamage",
         damageFormula: "1d6",
@@ -133,6 +141,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Cryo Magazine Upgrade I</strong></p><p>Cold damage; −10 ft Speed until start of your next turn (fills 6 weapon Charges).</p>",
       damageType: "cold",
       chargesPerMagazine: 6,
+      priceGp: 15,
       rider: {
         kind: "onHitSpeed",
         speedPenalty: 10,
@@ -149,6 +158,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Storm Magazine Upgrade I</strong></p><p>Lightning damage; no Reactions until start of your next turn (fills 6 weapon Charges).</p>",
       damageType: "lightning",
       chargesPerMagazine: 6,
+      priceGp: 15,
       rider: {
         kind: "onHitNoReactions",
         description: "No Reactions until start of your next turn.",
@@ -164,6 +174,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Slime Magazine Upgrade I</strong></p><p>Acid damage; next attack vs target has Advantage (fills 6 weapon Charges).</p>",
       damageType: "acid",
       chargesPerMagazine: 6,
+      priceGp: 15,
       rider: {
         kind: "onHitAdvantage",
         description:
@@ -180,6 +191,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Dawnstar Magazine</strong></p><p>+1d6 vs Undead; ends invisibility on a hit (fills 6 weapon Charges).</p>",
       damageType: "piercing",
       chargesPerMagazine: 6,
+      priceGp: 20,
       rider: {
         kind: "onHitUndead",
         damageFormula: "1d6",
@@ -197,6 +209,7 @@ export const DUAL_REPEATERS_MAGAZINE_DEFS: Record<string, MagazineConsumableDef>
         "<p><strong>Twilight Magazine</strong></p><p>No healing until start of your next turn (fills 6 weapon Charges).</p>",
       damageType: "piercing",
       chargesPerMagazine: 6,
+      priceGp: 20,
       rider: {
         kind: "onHitNoHeal",
         description: "Cannot regain hit points until start of your next turn.",
@@ -403,7 +416,7 @@ export function buildMagazineConsumableItem(
     identifier: slugifyIdentifier(def.name),
     quantity: 1,
     weight: { value: 0.5, units: "lb" },
-    price: { value: 1, denomination: "gp" },
+    price: { value: def.priceGp, denomination: "gp" },
     rarity: "",
     identified: true,
     unidentified: {
