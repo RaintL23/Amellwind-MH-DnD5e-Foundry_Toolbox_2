@@ -197,6 +197,22 @@ function conditionNameTags(text: string): string[] {
 }
 
 /**
+ * mechanic:item-related — effect references a usable item (`{@item …}`).
+ * mechanic:trap — MH trap subset (pitfall / shock / trap tool). Always also item-related.
+ */
+const MH_TRAP_ITEM =
+  /\{@item\s+(?:pitfall trap\+?|shock trap\+?|trap tool)\b/i;
+const MH_TRAP_BARE = /\b(?:pitfall trap\+?|shock trap\+?|trap tool)\b/i;
+
+function itemRelatedTags(text: string): string[] {
+  const tags: string[] = [];
+  const hasTrap = MH_TRAP_ITEM.test(text) || MH_TRAP_BARE.test(text);
+  if (/\{@item\b/i.test(text) || hasTrap) tags.push("mechanic:item-related");
+  if (hasTrap) tags.push("mechanic:trap");
+  return tags;
+}
+
+/**
  * mechanic:against-condition — defensive protection vs suffering a condition
  * (advantage on saves against being X, immunity to a condition, etc.).
  * Does not cover weapon effects that inflict a condition on hit.
@@ -442,6 +458,10 @@ function extractTags(
 
   const againstCondition = againstConditionTag(effectText);
   if (againstCondition) tags.add(againstCondition);
+
+  for (const itemTag of itemRelatedTags(effectText)) {
+    tags.add(itemTag);
+  }
 
   return Array.from(tags);
 }

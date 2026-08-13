@@ -185,4 +185,32 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
       ]),
     );
   });
+
+  it("tags item-related effects from {@item} markup", () => {
+    const tags = extractRuneEffectTags(
+      "{@i Capture Novice.} While attuned to this armor, {@item tranq bomb|AGMH}s and {@item tranq ammo (1)|AGMH|tranq ammo} roll an extra 2d8 when they hit a creature.",
+    );
+
+    expect(tags).toContain("mechanic:item-related");
+    expect(tags).not.toContain("mechanic:trap");
+  });
+
+  it("tags MH trap effects as item-related plus trap", () => {
+    const tags = extractRuneEffectTags(
+      "{@i Trap Master.} While you wear this armor, you can set {@item pitfall trap|AGMH}s or {@item shock trap|AGMH}s as a bonus action.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:item-related", "mechanic:trap"]),
+    );
+  });
+
+  it("does not tag dungeon-detect wording as MH traps", () => {
+    const tags = extractRuneEffectTags(
+      "Your weapon has 3 runes. While holding it, you can use an action to expend 1 of its runes, and if a secret door or trap is within 30 feet of you, the weapon pulses and points at the one nearest to you.",
+    );
+
+    expect(tags).not.toContain("mechanic:trap");
+    expect(tags).not.toContain("mechanic:item-related");
+  });
 });

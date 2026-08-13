@@ -702,6 +702,8 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
 | `mechanic:cantrip`       | Contiene `cantrip`, o `{@spell` resuelto como nivel 0 en el catálogo                                                  |
 | `mechanic:class-feature` | Contiene el nombre de una feature de clase específica (ej. `wyvernfire`, `dragonpiercer`, `Guard AC`, `Mighty Weapon`) |
+| `mechanic:item-related`  | Contiene `{@item` (uso / proficiency / conjuro de ítems: bombas, ammo, kits, pociones, etc.)                          |
+| `mechanic:trap`          | Subconjunto de `item-related`: pitfall/shock trap(+ ) o trap tool (trampas MH)                                        |
 
 ##### Notas de implementación de tags
 
