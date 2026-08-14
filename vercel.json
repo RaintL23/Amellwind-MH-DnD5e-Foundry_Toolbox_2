@@ -22,6 +22,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/((?!assets/|5etools/|icon/|mh-icons/).*)", "destination": "/index.html" }
+    { "source": "/((?!assets/|5etools/|icon/|mh-icons/|mh-tokens/).*)", "destination": "/index.html" }
   ]
 }

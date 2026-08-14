@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { toMonsterId } from "../utils/monster-id.utils";
 import { buildMonsterFilterSections } from "../utils/monster-filter-sections";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { MhTokenImage } from "@/shared/components/MhTokenImage";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -383,7 +384,12 @@ export function MonsterList() {
                   onClick={() => handleSelect(monster)}
                 >
                   <td className="px-4 py-3 font-medium text-foreground">
-                    {monster.name}
+                    <div className="flex items-center gap-3">
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+                        <MhTokenImage name={monster.name} size="sm" />
+                      </div>
+                      <span>{monster.name}</span>
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">
                     {monster.cr}

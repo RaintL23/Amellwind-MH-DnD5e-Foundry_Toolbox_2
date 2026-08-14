@@ -1,0 +1,2106 @@
+{
+  "version": 1,
+  "generatedAt": "2026-08-14T14:38:34.060Z",
+  "count": 248,
+  "tokens": {
+    "acidic-glavenus": {
+      "path": "/mh-tokens/acidic-glavenus.webp",
+      "source": "acidic-glavenus.webp",
+      "names": [
+        "Acidic Glavenus"
+      ]
+    },
+    "acpceros": {
+      "path": "/mh-tokens/acpceros.webp",
+      "source": "acpceros.webp",
+      "names": [
+        "Acpceros"
+      ]
+    },
+    "agnaktor": {
+      "path": "/mh-tokens/agnaktor.webp",
+      "source": "agnaktor.webp",
+      "names": [
+        "Agnaktor"
+      ]
+    },
+    "ahtal-ka": {
+      "path": "/mh-tokens/ahtal-ka.webp",
+      "source": "ahtal-ka.webp",
+      "names": [
+        "Ahtal Ka"
+      ]
+    },
+    "ahtal-neset": {
+      "path": "/mh-tokens/ahtal-neset.webp",
+      "source": "ahtal-neset.webp",
+      "names": [
+        "Ahtal Neset"
+      ]
+    },
+    "akantor": {
+      "path": "/mh-tokens/akantor.webp",
+      "source": "akantor.webp",
+      "names": [
+        "Akantor"
+      ]
+    },
+    "alatreon": {
+      "path": "/mh-tokens/alatreon.webp",
+      "source": "alatreon.webp",
+      "names": [
+        "Alatreon"
+      ]
+    },
+    "altaroth": {
+      "path": "/mh-tokens/altaroth.webp",
+      "source": "altaroth.webp",
+      "names": [
+        "Altaroth"
+      ]
+    },
+    "amatsumagatsuchi": {
+      "path": "/mh-tokens/amatsumagatsuchi.webp",
+      "source": "amatsumagatsuchi.webp",
+      "names": [
+        "Amatsumagatsuchi"
+      ]
+    },
+    "ancient-leshen": {
+      "path": "/mh-tokens/ancient-leshen.webp",
+      "source": "ancient-leshen.webp",
+      "names": [
+        "Ancient Leshen"
+      ]
+    },
+    "anjanath": {
+      "path": "/mh-tokens/anjanath.webp",
+      "source": "anjanath.webp",
+      "names": [
+        "Anjanath"
+      ]
+    },
+    "anteka": {
+      "path": "/mh-tokens/anteka.webp",
+      "source": "anteka.webp",
+      "names": [
+        "Anteka"
+      ]
+    },
+    "apceros": {
+      "path": "/mh-tokens/apceros.webp",
+      "source": "apceros.webp",
+      "names": [
+        "Apceros"
+      ]
+    },
+    "arzuros": {
+      "path": "/mh-tokens/arzuros.webp",
+      "source": "arzuros.webp",
+      "names": [
+        "Arzuros"
+      ]
+    },
+    "astalos": {
+      "path": "/mh-tokens/astalos.webp",
+      "source": "astalos.webp",
+      "names": [
+        "Astalos"
+      ]
+    },
+    "astalos2": {
+      "path": "/mh-tokens/astalos2.webp",
+      "source": "astalos2.webp",
+      "names": [
+        "Astalos2"
+      ]
+    },
+    "azure-rathalos": {
+      "path": "/mh-tokens/azure-rathalos.webp",
+      "source": "azure-rathalos.webp",
+      "names": [
+        "Azure Rathalos"
+      ]
+    },
+    "baby-apceros": {
+      "path": "/mh-tokens/baby-apceros.webp",
+      "source": "baby-apceros.webp",
+      "names": [
+        "Baby Apceros"
+      ]
+    },
+    "baby-gammoth": {
+      "path": "/mh-tokens/baby-gammoth.webp",
+      "source": "baby-gammoth.webp",
+      "names": [
+        "Baby Gammoth"
+      ]
+    },
+    "baby-popo": {
+      "path": "/mh-tokens/baby-popo.webp",
+      "source": "baby-popo.webp",
+      "names": [
+        "Baby Popo"
+      ]
+    },
+    "baggi": {
+      "path": "/mh-tokens/baggi.webp",
+      "source": "baggi.webp",
+      "names": [
+        "Baggi"
+      ]
+    },
+    "banbaro": {
+      "path": "/mh-tokens/banbaro.webp",
+      "source": "banbaro.webp",
+      "names": [
+        "Banbaro"
+      ]
+    },
+    "barioth": {
+      "path": "/mh-tokens/barioth.webp",
+      "source": "barioth.webp",
+      "names": [
+        "Barioth"
+      ]
+    },
+    "barroth": {
+      "path": "/mh-tokens/barroth.webp",
+      "source": "barroth.webp",
+      "names": [
+        "Barroth"
+      ]
+    },
+    "basarios": {
+      "path": "/mh-tokens/basarios.webp",
+      "source": "basarios.webp",
+      "names": [
+        "Basarios"
+      ]
+    },
+    "bazelgeuse": {
+      "path": "/mh-tokens/bazelgeuse.webp",
+      "source": "bazelgeuse.webp",
+      "names": [
+        "Bazelgeuse"
+      ]
+    },
+    "behemoth": {
+      "path": "/mh-tokens/behemoth.webp",
+      "source": "behemoth.webp",
+      "names": [
+        "Behemoth"
+      ]
+    },
+    "beotodus": {
+      "path": "/mh-tokens/beotodus.webp",
+      "source": "beotodus.webp",
+      "names": [
+        "Beotodus"
+      ]
+    },
+    "blackveil-vaal-hazak": {
+      "path": "/mh-tokens/blackveil-vaal-hazak.webp",
+      "source": "blackveil-vaal-hazak.webp",
+      "names": [
+        "Blackveil Vaal Hazak"
+      ]
+    },
+    "blango": {
+      "path": "/mh-tokens/blango.webp",
+      "source": "blango.webp",
+      "names": [
+        "Blango"
+      ]
+    },
+    "blangonga1-0": {
+      "path": "/mh-tokens/blangonga1-0.webp",
+      "source": "blangonga1-0.webp",
+      "names": [
+        "Blangonga1 0"
+      ]
+    },
+    "blangonga2-0": {
+      "path": "/mh-tokens/blangonga2-0.webp",
+      "source": "blangonga2-0.webp",
+      "names": [
+        "Blangonga2 0"
+      ]
+    },
+    "blinking-nargacuga": {
+      "path": "/mh-tokens/blinking-nargacuga.webp",
+      "source": "blinking-nargacuga.webp",
+      "names": [
+        "Blinking Nargacuga"
+      ]
+    },
+    "blue-yian-kut-ku": {
+      "path": "/mh-tokens/blue-yian-kut-ku.webp",
+      "source": "blue-yian-kut-ku.webp",
+      "names": [
+        "Blue Yian Kut Ku"
+      ]
+    },
+    "bnahabra": {
+      "path": "/mh-tokens/bnahabra.webp",
+      "source": "bnahabra.webp",
+      "names": [
+        "Bnahabra"
+      ]
+    },
+    "boaboa-black": {
+      "path": "/mh-tokens/boaboa-black.webp",
+      "source": "boaboa-black.webp",
+      "names": [
+        "Boaboa Black"
+      ]
+    },
+    "boaboa-blue": {
+      "path": "/mh-tokens/boaboa-blue.webp",
+      "source": "boaboa-blue.webp",
+      "names": [
+        "Boaboa Blue"
+      ]
+    },
+    "boaboa-purple": {
+      "path": "/mh-tokens/boaboa-purple.webp",
+      "source": "boaboa-purple.webp",
+      "names": [
+        "Boaboa Purple"
+      ]
+    },
+    "boaboa-yellow": {
+      "path": "/mh-tokens/boaboa-yellow.webp",
+      "source": "boaboa-yellow.webp",
+      "names": [
+        "Boaboa Yellow"
+      ]
+    },
+    "boominghowl-great-jaggi": {
+      "path": "/mh-tokens/boominghowl-great-jaggi.webp",
+      "source": "boominghowl-great-jaggi.webp",
+      "names": [
+        "Boominghowl Great Jaggi"
+      ]
+    },
+    "brachydios": {
+      "path": "/mh-tokens/brachydios.webp",
+      "source": "brachydios.webp",
+      "names": [
+        "Brachydios"
+      ]
+    },
+    "brute-tigrex": {
+      "path": "/mh-tokens/brute-tigrex.webp",
+      "source": "brute-tigrex.webp",
+      "names": [
+        "Brute Tigrex"
+      ]
+    },
+    "bulldrome": {
+      "path": "/mh-tokens/bulldrome.webp",
+      "source": "bulldrome.webp",
+      "names": [
+        "Bulldrome"
+      ]
+    },
+    "bullfango": {
+      "path": "/mh-tokens/bullfango.webp",
+      "source": "bullfango.webp",
+      "names": [
+        "Bullfango"
+      ]
+    },
+    "ceadeus": {
+      "path": "/mh-tokens/ceadeus.webp",
+      "source": "ceadeus.webp",
+      "names": [
+        "Ceadeus"
+      ]
+    },
+    "ceanataur": {
+      "path": "/mh-tokens/ceanataur.webp",
+      "source": "ceanataur.webp",
+      "names": [
+        "Ceanataur"
+      ]
+    },
+    "cephadrome": {
+      "path": "/mh-tokens/cephadrome.webp",
+      "source": "cephadrome.webp",
+      "names": [
+        "Cephadrome"
+      ]
+    },
+    "cephalos": {
+      "path": "/mh-tokens/cephalos.webp",
+      "source": "cephalos.webp",
+      "names": [
+        "Cephalos"
+      ]
+    },
+    "chameleos": {
+      "path": "/mh-tokens/chameleos.webp",
+      "source": "chameleos.webp",
+      "names": [
+        "Chameleos"
+      ]
+    },
+    "conga": {
+      "path": "/mh-tokens/conga.webp",
+      "source": "conga.webp",
+      "names": [
+        "Conga"
+      ]
+    },
+    "congalala-2-0": {
+      "path": "/mh-tokens/congalala-2-0.webp",
+      "source": "congalala-2-0.webp",
+      "names": [
+        "Congalala 2 0"
+      ]
+    },
+    "congalala": {
+      "path": "/mh-tokens/congalala.webp",
+      "source": "congalala.webp",
+      "names": [
+        "Congalala"
+      ]
+    },
+    "coral-pukei-pukei": {
+      "path": "/mh-tokens/coral-pukei-pukei.webp",
+      "source": "coral-pukei-pukei.webp",
+      "names": [
+        "Coral Pukei Pukei"
+      ]
+    },
+    "crystal-basarios": {
+      "path": "/mh-tokens/crystal-basarios.webp",
+      "source": "crystal-basarios.webp",
+      "names": [
+        "Crystal Basarios"
+      ]
+    },
+    "dahren-mohran": {
+      "path": "/mh-tokens/dahren-mohran.webp",
+      "source": "dahren-mohran.webp",
+      "names": [
+        "Dahren Mohran"
+      ]
+    },
+    "daimyo-hermitaur": {
+      "path": "/mh-tokens/daimyo-hermitaur.webp",
+      "source": "daimyo-hermitaur.webp",
+      "names": [
+        "Daimyo Hermitaur"
+      ]
+    },
+    "dalamadur": {
+      "path": "/mh-tokens/dalamadur.webp",
+      "source": "dalamadur.webp",
+      "names": [
+        "Dalamadur"
+      ]
+    },
+    "delex": {
+      "path": "/mh-tokens/delex.webp",
+      "source": "delex.webp",
+      "names": [
+        "Delex"
+      ]
+    },
+    "deviljho": {
+      "path": "/mh-tokens/deviljho.webp",
+      "source": "deviljho.webp",
+      "names": [
+        "Deviljho"
+      ]
+    },
+    "diablos": {
+      "path": "/mh-tokens/diablos.webp",
+      "source": "diablos.webp",
+      "names": [
+        "Diablos"
+      ]
+    },
+    "dire-miralis": {
+      "path": "/mh-tokens/dire-miralis.webp",
+      "source": "dire-miralis.webp",
+      "names": [
+        "Dire Miralis"
+      ]
+    },
+    "dodogama": {
+      "path": "/mh-tokens/dodogama.webp",
+      "source": "dodogama.webp",
+      "names": [
+        "Dodogama"
+      ]
+    },
+    "duramboros": {
+      "path": "/mh-tokens/duramboros.webp",
+      "source": "duramboros.webp",
+      "names": [
+        "Duramboros"
+      ]
+    },
+    "ebony-odogaron": {
+      "path": "/mh-tokens/ebony-odogaron.webp",
+      "source": "ebony-odogaron.webp",
+      "names": [
+        "Ebony Odogaron"
+      ]
+    },
+    "epioth": {
+      "path": "/mh-tokens/epioth.webp",
+      "source": "epioth.webp",
+      "names": [
+        "Epioth"
+      ]
+    },
+    "fatalis": {
+      "path": "/mh-tokens/fatalis.webp",
+      "source": "fatalis.webp",
+      "names": [
+        "Fatalis"
+      ]
+    },
+    "felyne": {
+      "path": "/mh-tokens/felyne.webp",
+      "source": "felyne.webp",
+      "names": [
+        "Felyne"
+      ]
+    },
+    "forest-gekko": {
+      "path": "/mh-tokens/forest-gekko.webp",
+      "source": "forest-gekko.webp",
+      "names": [
+        "Forest Gekko"
+      ]
+    },
+    "fulgur-anjanath": {
+      "path": "/mh-tokens/fulgur-anjanath.webp",
+      "source": "fulgur-anjanath.webp",
+      "names": [
+        "Fulgur Anjanath"
+      ]
+    },
+    "furious-rajang": {
+      "path": "/mh-tokens/furious-rajang.webp",
+      "source": "furious-rajang.webp",
+      "names": [
+        "Furious Rajang"
+      ]
+    },
+    "gajalaka": {
+      "path": "/mh-tokens/gajalaka.webp",
+      "source": "gajalaka.webp",
+      "names": [
+        "Gajalaka"
+      ]
+    },
+    "gajalaka2": {
+      "path": "/mh-tokens/gajalaka2.webp",
+      "source": "gajalaka2.webp",
+      "names": [
+        "Gajalaka2"
+      ]
+    },
+    "gajalaka3": {
+      "path": "/mh-tokens/gajalaka3.webp",
+      "source": "gajalaka3.webp",
+      "names": [
+        "Gajalaka3"
+      ]
+    },
+    "gajau2": {
+      "path": "/mh-tokens/gajau2.webp",
+      "source": "gajau2.webp",
+      "names": [
+        "Gajau2"
+      ]
+    },
+    "gammoth": {
+      "path": "/mh-tokens/gammoth.webp",
+      "source": "gammoth.webp",
+      "names": [
+        "Gammoth"
+      ]
+    },
+    "gargwa": {
+      "path": "/mh-tokens/gargwa.webp",
+      "source": "gargwa.webp",
+      "names": [
+        "Gargwa"
+      ]
+    },
+    "gastodon": {
+      "path": "/mh-tokens/gastodon.webp",
+      "source": "gastodon.webp",
+      "names": [
+        "Gastodon"
+      ]
+    },
+    "gendrome": {
+      "path": "/mh-tokens/gendrome.webp",
+      "source": "gendrome.webp",
+      "names": [
+        "Gendrome"
+      ]
+    },
+    "genprey": {
+      "path": "/mh-tokens/genprey.webp",
+      "source": "genprey.webp",
+      "names": [
+        "Genprey"
+      ]
+    },
+    "giadrome": {
+      "path": "/mh-tokens/giadrome.webp",
+      "source": "giadrome.webp",
+      "names": [
+        "Giadrome"
+      ]
+    },
+    "giant-vigorwasp": {
+      "path": "/mh-tokens/giant-vigorwasp.webp",
+      "source": "giant-vigorwasp.webp",
+      "names": [
+        "Giant Vigorwasp"
+      ]
+    },
+    "giaprey": {
+      "path": "/mh-tokens/giaprey.webp",
+      "source": "giaprey.webp",
+      "names": [
+        "Giaprey"
+      ]
+    },
+    "giggi-egg-sac": {
+      "path": "/mh-tokens/giggi-egg-sac.webp",
+      "source": "giggi-egg-sac.webp",
+      "names": [
+        "Giggi Egg Sac"
+      ]
+    },
+    "giggi1": {
+      "path": "/mh-tokens/giggi1.webp",
+      "source": "giggi1.webp",
+      "names": [
+        "Giggi1"
+      ]
+    },
+    "giggi2": {
+      "path": "/mh-tokens/giggi2.webp",
+      "source": "giggi2.webp",
+      "names": [
+        "Giggi2"
+      ]
+    },
+    "giggi3": {
+      "path": "/mh-tokens/giggi3.webp",
+      "source": "giggi3.webp",
+      "names": [
+        "Giggi3"
+      ]
+    },
+    "gigginox": {
+      "path": "/mh-tokens/gigginox.webp",
+      "source": "gigginox.webp",
+      "names": [
+        "Gigginox"
+      ]
+    },
+    "girros": {
+      "path": "/mh-tokens/girros.webp",
+      "source": "girros.webp",
+      "names": [
+        "Girros"
+      ]
+    },
+    "glacial-agnaktor": {
+      "path": "/mh-tokens/glacial-agnaktor.webp",
+      "source": "glacial-agnaktor.webp",
+      "names": [
+        "Glacial Agnaktor"
+      ]
+    },
+    "glavenus": {
+      "path": "/mh-tokens/glavenus.webp",
+      "source": "glavenus.webp",
+      "names": [
+        "Glavenus"
+      ]
+    },
+    "gobul-2-0": {
+      "path": "/mh-tokens/gobul-2-0.webp",
+      "source": "gobul-2-0.webp",
+      "names": [
+        "Gobul 2 0"
+      ]
+    },
+    "gobul-enlarged": {
+      "path": "/mh-tokens/gobul-enlarged.webp",
+      "source": "gobul-enlarged.webp",
+      "names": [
+        "Gobul Enlarged"
+      ]
+    },
+    "gobul": {
+      "path": "/mh-tokens/gobul.webp",
+      "source": "gobul.webp",
+      "names": [
+        "Gobul"
+      ]
+    },
+    "gogmazios": {
+      "path": "/mh-tokens/gogmazios.webp",
+      "source": "gogmazios.webp",
+      "names": [
+        "Gogmazios"
+      ]
+    },
+    "gore-magala": {
+      "path": "/mh-tokens/gore-magala.webp",
+      "source": "gore-magala.webp",
+      "names": [
+        "Gore Magala"
+      ]
+    },
+    "gravios": {
+      "path": "/mh-tokens/gravios.webp",
+      "source": "gravios.webp",
+      "names": [
+        "Gravios"
+      ]
+    },
+    "great-baggi": {
+      "path": "/mh-tokens/great-baggi.webp",
+      "source": "great-baggi.webp",
+      "names": [
+        "Great Baggi"
+      ]
+    },
+    "great-girros": {
+      "path": "/mh-tokens/great-girros.webp",
+      "source": "great-girros.webp",
+      "names": [
+        "Great Girros"
+      ]
+    },
+    "great-izuchi-token": {
+      "path": "/mh-tokens/great-izuchi-token.webp",
+      "source": "great-izuchi-token.webp",
+      "names": [
+        "Great Izuchi Token"
+      ]
+    },
+    "great-jaggi": {
+      "path": "/mh-tokens/great-jaggi.webp",
+      "source": "great-jaggi.webp",
+      "names": [
+        "Great Jaggi"
+      ]
+    },
+    "great-jagras": {
+      "path": "/mh-tokens/great-jagras.webp",
+      "source": "great-jagras.webp",
+      "names": [
+        "Great Jagras"
+      ]
+    },
+    "great-maccao": {
+      "path": "/mh-tokens/great-maccao.webp",
+      "source": "great-maccao.webp",
+      "names": [
+        "Great Maccao"
+      ]
+    },
+    "great-wroggi": {
+      "path": "/mh-tokens/great-wroggi.webp",
+      "source": "great-wroggi.webp",
+      "names": [
+        "Great Wroggi"
+      ]
+    },
+    "greatthunderbug": {
+      "path": "/mh-tokens/greatthunderbug.webp",
+      "source": "greatthunderbug.webp",
+      "names": [
+        "Greatthunderbug"
+      ]
+    },
+    "grimalkyne": {
+      "path": "/mh-tokens/grimalkyne.webp",
+      "source": "grimalkyne.webp",
+      "names": [
+        "Grimalkyne"
+      ]
+    },
+    "gypceros": {
+      "path": "/mh-tokens/gypceros.webp",
+      "source": "gypceros.webp",
+      "names": [
+        "Gypceros"
+      ]
+    },
+    "hermitaur": {
+      "path": "/mh-tokens/hermitaur.webp",
+      "source": "hermitaur.webp",
+      "names": [
+        "Hermitaur"
+      ]
+    },
+    "hornetaur": {
+      "path": "/mh-tokens/hornetaur.webp",
+      "source": "hornetaur.webp",
+      "names": [
+        "Hornetaur"
+      ]
+    },
+    "hypnocatrice": {
+      "path": "/mh-tokens/hypnocatrice.webp",
+      "source": "hypnocatrice.webp",
+      "names": [
+        "Hypnocatrice"
+      ]
+    },
+    "iodrome": {
+      "path": "/mh-tokens/iodrome.webp",
+      "source": "iodrome.webp",
+      "names": [
+        "Iodrome"
+      ]
+    },
+    "ioprey": {
+      "path": "/mh-tokens/ioprey.webp",
+      "source": "ioprey.webp",
+      "names": [
+        "Ioprey"
+      ]
+    },
+    "iron-helmcrab": {
+      "path": "/mh-tokens/iron-helmcrab.webp",
+      "source": "iron-helmcrab.webp",
+      "names": [
+        "Iron Helmcrab"
+      ]
+    },
+    "izuchi-token": {
+      "path": "/mh-tokens/izuchi-token.webp",
+      "source": "izuchi-token.webp",
+      "names": [
+        "Izuchi Token"
+      ]
+    },
+    "jaggi": {
+      "path": "/mh-tokens/jaggi.webp",
+      "source": "jaggi.webp",
+      "names": [
+        "Jaggi"
+      ]
+    },
+    "jaggia": {
+      "path": "/mh-tokens/jaggia.webp",
+      "source": "jaggia.webp",
+      "names": [
+        "Jaggia"
+      ]
+    },
+    "jagras": {
+      "path": "/mh-tokens/jagras.webp",
+      "source": "jagras.webp",
+      "names": [
+        "Jagras"
+      ]
+    },
+    "jhen-mohran": {
+      "path": "/mh-tokens/jhen-mohran.webp",
+      "source": "jhen-mohran.webp",
+      "names": [
+        "Jhen Mohran"
+      ]
+    },
+    "jyuratodus": {
+      "path": "/mh-tokens/jyuratodus.webp",
+      "source": "jyuratodus.webp",
+      "names": [
+        "Jyuratodus"
+      ]
+    },
+    "kecha-wacha": {
+      "path": "/mh-tokens/kecha-wacha.webp",
+      "source": "kecha-wacha.webp",
+      "names": [
+        "Kecha Wacha"
+      ]
+    },
+    "kelbi": {
+      "path": "/mh-tokens/kelbi.webp",
+      "source": "kelbi.webp",
+      "names": [
+        "Kelbi"
+      ]
+    },
+    "kestodon-female": {
+      "path": "/mh-tokens/kestodon-female.webp",
+      "source": "kestodon-female.webp",
+      "names": [
+        "Kestodon Female"
+      ]
+    },
+    "kestodon-male": {
+      "path": "/mh-tokens/kestodon-male.webp",
+      "source": "kestodon-male.webp",
+      "names": [
+        "Kestodon Male"
+      ]
+    },
+    "khezu": {
+      "path": "/mh-tokens/khezu.webp",
+      "source": "khezu.webp",
+      "names": [
+        "Khezu"
+      ]
+    },
+    "kingshakalaka": {
+      "path": "/mh-tokens/kingshakalaka.webp",
+      "source": "kingshakalaka.webp",
+      "names": [
+        "Kingshakalaka"
+      ]
+    },
+    "kirin": {
+      "path": "/mh-tokens/kirin.webp",
+      "source": "kirin.webp",
+      "names": [
+        "Kirin"
+      ]
+    },
+    "konchu": {
+      "path": "/mh-tokens/konchu.webp",
+      "source": "konchu.webp",
+      "names": [
+        "Konchu"
+      ]
+    },
+    "konchuball": {
+      "path": "/mh-tokens/konchuball.webp",
+      "source": "konchuball.webp",
+      "names": [
+        "Konchuball"
+      ]
+    },
+    "kulu-ya-ku": {
+      "path": "/mh-tokens/kulu-ya-ku.webp",
+      "source": "kulu-ya-ku.webp",
+      "names": [
+        "Kulu Ya Ku"
+      ]
+    },
+    "kulve-taroth": {
+      "path": "/mh-tokens/kulve-taroth.webp",
+      "source": "kulve-taroth.webp",
+      "names": [
+        "Kulve Taroth"
+      ]
+    },
+    "kushala-daora": {
+      "path": "/mh-tokens/kushala-daora.webp",
+      "source": "kushala-daora.webp",
+      "names": [
+        "Kushala Daora"
+      ]
+    },
+    "lagiacrus": {
+      "path": "/mh-tokens/lagiacrus.webp",
+      "source": "lagiacrus.webp",
+      "names": [
+        "Lagiacrus"
+      ]
+    },
+    "lagombi": {
+      "path": "/mh-tokens/lagombi.webp",
+      "source": "lagombi.webp",
+      "names": [
+        "Lagombi"
+      ]
+    },
+    "lao-shan-lung": {
+      "path": "/mh-tokens/lao-shan-lung.webp",
+      "source": "lao-shan-lung.webp",
+      "names": [
+        "Lao Shan Lung"
+      ]
+    },
+    "larinoth": {
+      "path": "/mh-tokens/larinoth.webp",
+      "source": "larinoth.webp",
+      "names": [
+        "Larinoth"
+      ]
+    },
+    "lavasioth": {
+      "path": "/mh-tokens/lavasioth.webp",
+      "source": "lavasioth.webp",
+      "names": [
+        "Lavasioth"
+      ]
+    },
+    "legiana": {
+      "path": "/mh-tokens/legiana.webp",
+      "source": "legiana.webp",
+      "names": [
+        "Legiana"
+      ]
+    },
+    "leshen": {
+      "path": "/mh-tokens/leshen.webp",
+      "source": "leshen.webp",
+      "names": [
+        "Leshen"
+      ]
+    },
+    "ludroth": {
+      "path": "/mh-tokens/ludroth.webp",
+      "source": "ludroth.webp",
+      "names": [
+        "Ludroth"
+      ]
+    },
+    "lunastra": {
+      "path": "/mh-tokens/lunastra.webp",
+      "source": "lunastra.webp",
+      "names": [
+        "Lunastra"
+      ]
+    },
+    "maccao1": {
+      "path": "/mh-tokens/maccao1.webp",
+      "source": "maccao1.webp",
+      "names": [
+        "Maccao1"
+      ]
+    },
+    "maccao2": {
+      "path": "/mh-tokens/maccao2.webp",
+      "source": "maccao2.webp",
+      "names": [
+        "Maccao2"
+      ]
+    },
+    "maccao3": {
+      "path": "/mh-tokens/maccao3.webp",
+      "source": "maccao3.webp",
+      "names": [
+        "Maccao3"
+      ]
+    },
+    "malfestio": {
+      "path": "/mh-tokens/malfestio.webp",
+      "source": "malfestio.webp",
+      "names": [
+        "Malfestio"
+      ]
+    },
+    "melynx": {
+      "path": "/mh-tokens/melynx.webp",
+      "source": "melynx.webp",
+      "names": [
+        "Melynx"
+      ]
+    },
+    "mizutsune": {
+      "path": "/mh-tokens/mizutsune.webp",
+      "source": "mizutsune.webp",
+      "names": [
+        "Mizutsune"
+      ]
+    },
+    "molten-tigrex": {
+      "path": "/mh-tokens/molten-tigrex.webp",
+      "source": "molten-tigrex.webp",
+      "names": [
+        "Molten Tigrex"
+      ]
+    },
+    "monoblos": {
+      "path": "/mh-tokens/monoblos.webp",
+      "source": "monoblos.webp",
+      "names": [
+        "Monoblos"
+      ]
+    },
+    "moofah": {
+      "path": "/mh-tokens/moofah.webp",
+      "source": "moofah.webp",
+      "names": [
+        "Moofah"
+      ]
+    },
+    "moofy": {
+      "path": "/mh-tokens/moofy.webp",
+      "source": "moofy.webp",
+      "names": [
+        "Moofy"
+      ]
+    },
+    "moonlight-gekko": {
+      "path": "/mh-tokens/moonlight-gekko.webp",
+      "source": "moonlight-gekko.webp",
+      "names": [
+        "Moonlight Gekko"
+      ]
+    },
+    "mosswine": {
+      "path": "/mh-tokens/mosswine.webp",
+      "source": "mosswine.webp",
+      "names": [
+        "Mosswine"
+      ]
+    },
+    "najarala": {
+      "path": "/mh-tokens/najarala.webp",
+      "source": "najarala.webp",
+      "names": [
+        "Najarala"
+      ]
+    },
+    "nakarkos-body-stage-1": {
+      "path": "/mh-tokens/nakarkos-body-stage-1.webp",
+      "source": "nakarkos-body-stage-1.webp",
+      "names": [
+        "Nakarkos Body Stage 1"
+      ]
+    },
+    "nakarkos-body-stage-2": {
+      "path": "/mh-tokens/nakarkos-body-stage-2.webp",
+      "source": "nakarkos-body-stage-2.webp",
+      "names": [
+        "Nakarkos Body Stage 2"
+      ]
+    },
+    "nakarkos-tentacle": {
+      "path": "/mh-tokens/nakarkos-tentacle.webp",
+      "source": "nakarkos-tentacle.webp",
+      "names": [
+        "Nakarkos Tentacle"
+      ]
+    },
+    "namielle": {
+      "path": "/mh-tokens/namielle.webp",
+      "source": "namielle.webp",
+      "names": [
+        "Namielle"
+      ]
+    },
+    "nargacuga": {
+      "path": "/mh-tokens/nargacuga.webp",
+      "source": "nargacuga.webp",
+      "names": [
+        "Nargacuga"
+      ]
+    },
+    "nergigante": {
+      "path": "/mh-tokens/nergigante.webp",
+      "source": "nergigante.webp",
+      "names": [
+        "Nergigante"
+      ]
+    },
+    "nerscylla": {
+      "path": "/mh-tokens/nerscylla.webp",
+      "source": "nerscylla.webp",
+      "names": [
+        "Nerscylla"
+      ]
+    },
+    "nibelsnarf1": {
+      "path": "/mh-tokens/nibelsnarf1.webp",
+      "source": "nibelsnarf1.webp",
+      "names": [
+        "Nibelsnarf1"
+      ]
+    },
+    "nibelsnarf2": {
+      "path": "/mh-tokens/nibelsnarf2.webp",
+      "source": "nibelsnarf2.webp",
+      "names": [
+        "Nibelsnarf2"
+      ]
+    },
+    "nightshade-paolumu": {
+      "path": "/mh-tokens/nightshade-paolumu.webp",
+      "source": "nightshade-paolumu.webp",
+      "names": [
+        "Nightshade Paolumu"
+      ]
+    },
+    "nightshade-paolumu2": {
+      "path": "/mh-tokens/nightshade-paolumu2.webp",
+      "source": "nightshade-paolumu2.webp",
+      "names": [
+        "Nightshade Paolumu2"
+      ]
+    },
+    "nitrotoad": {
+      "path": "/mh-tokens/nitrotoad.webp",
+      "source": "nitrotoad.webp",
+      "names": [
+        "Nitrotoad"
+      ]
+    },
+    "odogaron": {
+      "path": "/mh-tokens/odogaron.webp",
+      "source": "odogaron.webp",
+      "names": [
+        "Odogaron"
+      ]
+    },
+    "paolumu": {
+      "path": "/mh-tokens/paolumu.webp",
+      "source": "paolumu.webp",
+      "names": [
+        "Paolumu"
+      ]
+    },
+    "paratoad": {
+      "path": "/mh-tokens/paratoad.webp",
+      "source": "paratoad.webp",
+      "names": [
+        "Paratoad"
+      ]
+    },
+    "pinkrathian": {
+      "path": "/mh-tokens/pinkrathian.webp",
+      "source": "pinkrathian.webp",
+      "names": [
+        "Pinkrathian"
+      ]
+    },
+    "plesioth": {
+      "path": "/mh-tokens/plesioth.webp",
+      "source": "plesioth.webp",
+      "names": [
+        "Plesioth"
+      ]
+    },
+    "popo": {
+      "path": "/mh-tokens/popo.webp",
+      "source": "popo.webp",
+      "names": [
+        "Popo"
+      ]
+    },
+    "pukei-pukei": {
+      "path": "/mh-tokens/pukei-pukei.webp",
+      "source": "pukei-pukei.webp",
+      "names": [
+        "Pukei Pukei"
+      ]
+    },
+    "purple-ludroth": {
+      "path": "/mh-tokens/purple-ludroth.webp",
+      "source": "purple-ludroth.webp",
+      "names": [
+        "Purple Ludroth"
+      ]
+    },
+    "pygmy-dodogama": {
+      "path": "/mh-tokens/pygmy-dodogama.webp",
+      "source": "pygmy-dodogama.webp",
+      "names": [
+        "Pygmy Dodogama"
+      ]
+    },
+    "qurupeco": {
+      "path": "/mh-tokens/qurupeco.webp",
+      "source": "qurupeco.webp",
+      "names": [
+        "Qurupeco"
+      ]
+    },
+    "radobaan": {
+      "path": "/mh-tokens/radobaan.webp",
+      "source": "radobaan.webp",
+      "names": [
+        "Radobaan"
+      ]
+    },
+    "raging-brachydios": {
+      "path": "/mh-tokens/raging-brachydios.webp",
+      "source": "raging-brachydios.webp",
+      "names": [
+        "Raging Brachydios"
+      ]
+    },
+    "rajang": {
+      "path": "/mh-tokens/rajang.webp",
+      "source": "rajang.webp",
+      "names": [
+        "Rajang"
+      ]
+    },
+    "rajang2": {
+      "path": "/mh-tokens/rajang2.webp",
+      "source": "rajang2.webp",
+      "names": [
+        "Rajang2"
+      ]
+    },
+    "rathalos": {
+      "path": "/mh-tokens/rathalos.webp",
+      "source": "rathalos.webp",
+      "names": [
+        "Rathalos"
+      ]
+    },
+    "rathian": {
+      "path": "/mh-tokens/rathian.webp",
+      "source": "rathian.webp",
+      "names": [
+        "Rathian"
+      ]
+    },
+    "remobra": {
+      "path": "/mh-tokens/remobra.webp",
+      "source": "remobra.webp",
+      "names": [
+        "Remobra"
+      ]
+    },
+    "rhenoplos": {
+      "path": "/mh-tokens/rhenoplos.webp",
+      "source": "rhenoplos.webp",
+      "names": [
+        "Rhenoplos"
+      ]
+    },
+    "royal-ludroth": {
+      "path": "/mh-tokens/royal-ludroth.webp",
+      "source": "royal-ludroth.webp",
+      "names": [
+        "Royal Ludroth"
+      ]
+    },
+    "ruiner-nergigante": {
+      "path": "/mh-tokens/ruiner-nergigante.webp",
+      "source": "ruiner-nergigante.webp",
+      "names": [
+        "Ruiner Nergigante"
+      ]
+    },
+    "safitoken": {
+      "path": "/mh-tokens/safitoken.webp",
+      "source": "safitoken.webp",
+      "names": [
+        "Safitoken"
+      ]
+    },
+    "savage-deviljho": {
+      "path": "/mh-tokens/savage-deviljho.webp",
+      "source": "savage-deviljho.webp",
+      "names": [
+        "Savage Deviljho"
+      ]
+    },
+    "scarred-yian-garuga": {
+      "path": "/mh-tokens/scarred-yian-garuga.webp",
+      "source": "scarred-yian-garuga.webp",
+      "names": [
+        "Scarred Yian Garuga"
+      ]
+    },
+    "seething-bazelgeuse": {
+      "path": "/mh-tokens/seething-bazelgeuse.webp",
+      "source": "seething-bazelgeuse.webp",
+      "names": [
+        "Seething Bazelgeuse"
+      ]
+    },
+    "seltas-queen-2-0": {
+      "path": "/mh-tokens/seltas-queen-2-0.webp",
+      "source": "seltas-queen-2-0.webp",
+      "names": [
+        "Seltas Queen 2 0"
+      ]
+    },
+    "seltas-queen": {
+      "path": "/mh-tokens/seltas-queen.webp",
+      "source": "seltas-queen.webp",
+      "names": [
+        "Seltas Queen"
+      ]
+    },
+    "seltas": {
+      "path": "/mh-tokens/seltas.webp",
+      "source": "seltas.webp",
+      "names": [
+        "Seltas"
+      ]
+    },
+    "seregios": {
+      "path": "/mh-tokens/seregios.webp",
+      "source": "seregios.webp",
+      "names": [
+        "Seregios"
+      ]
+    },
+    "shagru-magala": {
+      "path": "/mh-tokens/shagru-magala.webp",
+      "source": "shagru-magala.webp",
+      "names": [
+        "Shagru Magala"
+      ]
+    },
+    "shah-dalamadur": {
+      "path": "/mh-tokens/shah-dalamadur.webp",
+      "source": "shah-dalamadur.webp",
+      "names": [
+        "Shah Dalamadur"
+      ]
+    },
+    "shakalaka": {
+      "path": "/mh-tokens/shakalaka.webp",
+      "source": "shakalaka.webp",
+      "names": [
+        "Shakalaka"
+      ]
+    },
+    "shamos": {
+      "path": "/mh-tokens/shamos.webp",
+      "source": "shamos.webp",
+      "names": [
+        "Shamos"
+      ]
+    },
+    "shamos2": {
+      "path": "/mh-tokens/shamos2.webp",
+      "source": "shamos2.webp",
+      "names": [
+        "Shamos2"
+      ]
+    },
+    "shamos3": {
+      "path": "/mh-tokens/shamos3.webp",
+      "source": "shamos3.webp",
+      "names": [
+        "Shamos3"
+      ]
+    },
+    "shara-ishvalda": {
+      "path": "/mh-tokens/shara-ishvalda.webp",
+      "source": "shara-ishvalda.webp",
+      "names": [
+        "Shara Ishvalda"
+      ]
+    },
+    "shara-shell": {
+      "path": "/mh-tokens/shara-shell.webp",
+      "source": "shara-shell.webp",
+      "names": [
+        "Shara Shell"
+      ]
+    },
+    "shen-gaoren": {
+      "path": "/mh-tokens/shen-gaoren.webp",
+      "source": "shen-gaoren.webp",
+      "names": [
+        "Shen Gaoren"
+      ]
+    },
+    "shogunceantaur": {
+      "path": "/mh-tokens/shogunceantaur.webp",
+      "source": "shogunceantaur.webp",
+      "names": [
+        "Shogunceantaur"
+      ]
+    },
+    "shrieking-legiana": {
+      "path": "/mh-tokens/shrieking-legiana.webp",
+      "source": "shrieking-legiana.webp",
+      "names": [
+        "Shrieking Legiana"
+      ]
+    },
+    "silverwind-nargacuga": {
+      "path": "/mh-tokens/silverwind-nargacuga.webp",
+      "source": "silverwind-nargacuga.webp",
+      "names": [
+        "Silverwind Nargacuga"
+      ]
+    },
+    "slagtoth": {
+      "path": "/mh-tokens/slagtoth.webp",
+      "source": "slagtoth.webp",
+      "names": [
+        "Slagtoth"
+      ]
+    },
+    "sleeptoad": {
+      "path": "/mh-tokens/sleeptoad.webp",
+      "source": "sleeptoad.webp",
+      "names": [
+        "Sleeptoad"
+      ]
+    },
+    "soldier-helmcrab": {
+      "path": "/mh-tokens/soldier-helmcrab.webp",
+      "source": "soldier-helmcrab.webp",
+      "names": [
+        "Soldier Helmcrab"
+      ]
+    },
+    "soulseer-mizutsune": {
+      "path": "/mh-tokens/soulseer-mizutsune.webp",
+      "source": "soulseer-mizutsune.webp",
+      "names": [
+        "Soulseer Mizutsune"
+      ]
+    },
+    "teostra": {
+      "path": "/mh-tokens/teostra.webp",
+      "source": "teostra.webp",
+      "names": [
+        "Teostra"
+      ]
+    },
+    "tetsucabra": {
+      "path": "/mh-tokens/tetsucabra.webp",
+      "source": "tetsucabra.webp",
+      "names": [
+        "Tetsucabra"
+      ]
+    },
+    "tigrex": {
+      "path": "/mh-tokens/tigrex.webp",
+      "source": "tigrex.webp",
+      "names": [
+        "Tigrex"
+      ]
+    },
+    "tobi-kadachi": {
+      "path": "/mh-tokens/tobi-kadachi.webp",
+      "source": "tobi-kadachi.webp",
+      "names": [
+        "Tobi Kadachi"
+      ]
+    },
+    "tzitzi-ya-ku-v1-0": {
+      "path": "/mh-tokens/tzitzi-ya-ku-v1-0.webp",
+      "source": "tzitzi-ya-ku-v1-0.webp",
+      "names": [
+        "Tzitzi Ya Ku V1 0"
+      ]
+    },
+    "tzitzi-ya-ku-v2-0": {
+      "path": "/mh-tokens/tzitzi-ya-ku-v2-0.webp",
+      "source": "tzitzi-ya-ku-v2-0.webp",
+      "names": [
+        "Tzitzi Ya Ku V2 0"
+      ]
+    },
+    "ukanlos": {
+      "path": "/mh-tokens/ukanlos.webp",
+      "source": "ukanlos.webp",
+      "names": [
+        "Ukanlos"
+      ]
+    },
+    "uragaan": {
+      "path": "/mh-tokens/uragaan.webp",
+      "source": "uragaan.webp",
+      "names": [
+        "Uragaan"
+      ]
+    },
+    "uroktor": {
+      "path": "/mh-tokens/uroktor.webp",
+      "source": "uroktor.webp",
+      "names": [
+        "Uroktor"
+      ]
+    },
+    "vaal-hazak": {
+      "path": "/mh-tokens/vaal-hazak.webp",
+      "source": "vaal-hazak.webp",
+      "names": [
+        "Vaal Hazak"
+      ]
+    },
+    "vastrax": {
+      "path": "/mh-tokens/vastrax.webp",
+      "source": "vastrax.webp",
+      "names": [
+        "Vastrax"
+      ]
+    },
+    "velkhana": {
+      "path": "/mh-tokens/velkhana.webp",
+      "source": "velkhana.webp",
+      "names": [
+        "Velkhana"
+      ]
+    },
+    "velocidrome": {
+      "path": "/mh-tokens/velocidrome.webp",
+      "source": "velocidrome.webp",
+      "names": [
+        "Velocidrome"
+      ]
+    },
+    "velociprey": {
+      "path": "/mh-tokens/velociprey.webp",
+      "source": "velociprey.webp",
+      "names": [
+        "Velociprey"
+      ]
+    },
+    "vespoid": {
+      "path": "/mh-tokens/vespoid.webp",
+      "source": "vespoid.webp",
+      "names": [
+        "Vespoid"
+      ]
+    },
+    "vespoidqueen": {
+      "path": "/mh-tokens/vespoidqueen.webp",
+      "source": "vespoidqueen.webp",
+      "names": [
+        "Vespoidqueen"
+      ]
+    },
+    "vigorwasp": {
+      "path": "/mh-tokens/vigorwasp.webp",
+      "source": "vigorwasp.webp",
+      "names": [
+        "Vigorwasp"
+      ]
+    },
+    "viper-tobi-kadachi": {
+      "path": "/mh-tokens/viper-tobi-kadachi.webp",
+      "source": "viper-tobi-kadachi.webp",
+      "names": [
+        "Viper Tobi Kadachi"
+      ]
+    },
+    "volvidon": {
+      "path": "/mh-tokens/volvidon.webp",
+      "source": "volvidon.webp",
+      "names": [
+        "Volvidon"
+      ]
+    },
+    "white-velociprey": {
+      "path": "/mh-tokens/white-velociprey.webp",
+      "source": "white-velociprey.webp",
+      "names": [
+        "White Velociprey"
+      ]
+    },
+    "wiggler": {
+      "path": "/mh-tokens/wiggler.webp",
+      "source": "wiggler.webp",
+      "names": [
+        "Wiggler"
+      ]
+    },
+    "wild-melynx": {
+      "path": "/mh-tokens/wild-melynx.webp",
+      "source": "wild-melynx.webp",
+      "names": [
+        "Wild Melynx"
+      ]
+    },
+    "wildspire-gekko": {
+      "path": "/mh-tokens/wildspire-gekko.webp",
+      "source": "wildspire-gekko.webp",
+      "names": [
+        "Wildspire Gekko"
+      ]
+    },
+    "wingdrake-2": {
+      "path": "/mh-tokens/wingdrake-2.webp",
+      "source": "wingdrake-2.webp",
+      "names": [
+        "Wingdrake 2"
+      ]
+    },
+    "wingdrake-3": {
+      "path": "/mh-tokens/wingdrake-3.webp",
+      "source": "wingdrake-3.webp",
+      "names": [
+        "Wingdrake 3"
+      ]
+    },
+    "wingdrake-4": {
+      "path": "/mh-tokens/wingdrake-4.webp",
+      "source": "wingdrake-4.webp",
+      "names": [
+        "Wingdrake 4"
+      ]
+    },
+    "wingdrake": {
+      "path": "/mh-tokens/wingdrake.webp",
+      "source": "wingdrake.webp",
+      "names": [
+        "Wingdrake"
+      ]
+    },
+    "wroggi": {
+      "path": "/mh-tokens/wroggi.webp",
+      "source": "wroggi.webp",
+      "names": [
+        "Wroggi"
+      ]
+    },
+    "wulg": {
+      "path": "/mh-tokens/wulg.webp",
+      "source": "wulg.webp",
+      "names": [
+        "Wulg"
+      ]
+    },
+    "xenojiiva": {
+      "path": "/mh-tokens/xenojiiva.webp",
+      "source": "xenojiiva.webp",
+      "names": [
+        "Xenojiiva"
+      ]
+    },
+    "yama-tsukami": {
+      "path": "/mh-tokens/yama-tsukami.webp",
+      "source": "yama-tsukami.webp",
+      "names": [
+        "Yama Tsukami"
+      ]
+    },
+    "yian-garuga": {
+      "path": "/mh-tokens/yian-garuga.webp",
+      "source": "yian-garuga.webp",
+      "names": [
+        "Yian Garuga"
+      ]
+    },
+    "yiankut-ku": {
+      "path": "/mh-tokens/yiankut-ku.webp",
+      "source": "yiankut-ku.webp",
+      "names": [
+        "Yiankut Ku"
+      ]
+    },
+    "young-gammoth": {
+      "path": "/mh-tokens/young-gammoth.webp",
+      "source": "young-gammoth.webp",
+      "names": [
+        "Young Gammoth"
+      ]
+    },
+    "young-magala": {
+      "path": "/mh-tokens/young-magala.webp",
+      "source": "young-magala.webp",
+      "names": [
+        "Young Magala"
+      ]
+    },
+    "zamite": {
+      "path": "/mh-tokens/zamite.webp",
+      "source": "zamite.webp",
+      "names": [
+        "Zamite"
+      ]
+    },
+    "zamtrios-2": {
+      "path": "/mh-tokens/zamtrios-2.webp",
+      "source": "zamtrios-2.webp",
+      "names": [
+        "Zamtrios 2"
+      ]
+    },
+    "zamtrios-3": {
+      "path": "/mh-tokens/zamtrios-3.webp",
+      "source": "zamtrios-3.webp",
+      "names": [
+        "Zamtrios 3"
+      ]
+    },
+    "zamtrios": {
+      "path": "/mh-tokens/zamtrios.webp",
+      "source": "zamtrios.webp",
+      "names": [
+        "Zamtrios"
+      ]
+    },
+    "zinogre": {
+      "path": "/mh-tokens/zinogre.webp",
+      "source": "zinogre.webp",
+      "names": [
+        "Zinogre"
+      ]
+    }
+  },
+  "byName": {
+    "acidic glavenus": "acidic-glavenus",
+    "acidicglavenus": "acidic-glavenus",
+    "acpceros": "acpceros",
+    "agnaktor": "agnaktor",
+    "ahtal ka": "ahtal-ka",
+    "ahtalka": "ahtal-ka",
+    "ahtal neset": "ahtal-neset",
+    "ahtalneset": "ahtal-neset",
+    "akantor": "akantor",
+    "alatreon": "alatreon",
+    "altaroth": "altaroth",
+    "amatsumagatsuchi": "amatsumagatsuchi",
+    "ancient leshen": "ancient-leshen",
+    "ancientleshen": "ancient-leshen",
+    "anjanath": "anjanath",
+    "anteka": "anteka",
+    "apceros": "apceros",
+    "arzuros": "arzuros",
+    "astalos": "astalos",
+    "astalos 2": "astalos2",
+    "astalos2": "astalos2",
+    "azure rathalos": "azure-rathalos",
+    "azurerathalos": "azure-rathalos",
+    "baby apceros": "baby-apceros",
+    "babyapceros": "baby-apceros",
+    "baby gammoth": "baby-gammoth",
+    "babygammoth": "baby-gammoth",
+    "baby popo": "baby-popo",
+    "babypopo": "baby-popo",
+    "baggi": "baggi",
+    "banbaro": "banbaro",
+    "barioth": "barioth",
+    "barroth": "barroth",
+    "basarios": "basarios",
+    "bazelgeuse": "bazelgeuse",
+    "behemoth": "behemoth",
+    "beotodus": "beotodus",
+    "blackveil vaal hazak": "blackveil-vaal-hazak",
+    "blackveilvaalhazak": "blackveil-vaal-hazak",
+    "blango": "blango",
+    "blangonga1 0": "blangonga1-0",
+    "blangonga10": "blangonga1-0",
+    "blangonga2 0": "blangonga2-0",
+    "blangonga20": "blangonga2-0",
+    "blinking nargacuga": "blinking-nargacuga",
+    "blinkingnargacuga": "blinking-nargacuga",
+    "blue yian kut ku": "blue-yian-kut-ku",
+    "blueyiankutku": "blue-yian-kut-ku",
+    "bnahabra": "bnahabra",
+    "boaboa black": "boaboa-black",
+    "boaboablack": "boaboa-black",
+    "boaboa blue": "boaboa-blue",
+    "boaboablue": "boaboa-blue",
+    "boaboa purple": "boaboa-purple",
+    "boaboapurple": "boaboa-purple",
+    "boaboa yellow": "boaboa-yellow",
+    "boaboayellow": "boaboa-yellow",
+    "boominghowl great jaggi": "boominghowl-great-jaggi",
+    "boominghowlgreatjaggi": "boominghowl-great-jaggi",
+    "brachydios": "brachydios",
+    "brute tigrex": "brute-tigrex",
+    "brutetigrex": "brute-tigrex",
+    "bulldrome": "bulldrome",
+    "bullfango": "bullfango",
+    "ceadeus": "ceadeus",
+    "ceanataur": "ceanataur",
+    "cephadrome": "cephadrome",
+    "cephalos": "cephalos",
+    "chameleos": "chameleos",
+    "conga": "conga",
+    "congalala 2 0": "congalala-2-0",
+    "congalala20": "congalala-2-0",
+    "congalala": "congalala",
+    "coral pukei pukei": "coral-pukei-pukei",
+    "coralpukeipukei": "coral-pukei-pukei",
+    "crystal basarios": "crystal-basarios",
+    "crystalbasarios": "crystal-basarios",
+    "dahren mohran": "dahren-mohran",
+    "dahrenmohran": "dahren-mohran",
+    "daimyo hermitaur": "daimyo-hermitaur",
+    "daimyohermitaur": "daimyo-hermitaur",
+    "dalamadur": "dalamadur",
+    "delex": "delex",
+    "deviljho": "deviljho",
+    "diablos": "diablos",
+    "dire miralis": "dire-miralis",
+    "diremiralis": "dire-miralis",
+    "dodogama": "dodogama",
+    "duramboros": "duramboros",
+    "ebony odogaron": "ebony-odogaron",
+    "ebonyodogaron": "ebony-odogaron",
+    "epioth": "epioth",
+    "fatalis": "fatalis",
+    "felyne": "felyne",
+    "forest gekko": "forest-gekko",
+    "forestgekko": "forest-gekko",
+    "fulgur anjanath": "fulgur-anjanath",
+    "fulguranjanath": "fulgur-anjanath",
+    "furious rajang": "furious-rajang",
+    "furiousrajang": "furious-rajang",
+    "gajalaka": "gajalaka",
+    "gajalaka 2": "gajalaka2",
+    "gajalaka2": "gajalaka2",
+    "gajalaka 3": "gajalaka3",
+    "gajalaka3": "gajalaka3",
+    "gajau 2": "gajau2",
+    "gajau2": "gajau2",
+    "gammoth": "gammoth",
+    "gargwa": "gargwa",
+    "gastodon": "gastodon",
+    "gendrome": "gendrome",
+    "genprey": "genprey",
+    "giadrome": "giadrome",
+    "giant vigorwasp": "giant-vigorwasp",
+    "giantvigorwasp": "giant-vigorwasp",
+    "giaprey": "giaprey",
+    "giggi egg sac": "giggi-egg-sac",
+    "giggieggsac": "giggi-egg-sac",
+    "giggi 1": "giggi1",
+    "giggi1": "giggi1",
+    "giggi 2": "giggi2",
+    "giggi2": "giggi2",
+    "giggi 3": "giggi3",
+    "giggi3": "giggi3",
+    "gigginox": "gigginox",
+    "girros": "girros",
+    "glacial agnaktor": "glacial-agnaktor",
+    "glacialagnaktor": "glacial-agnaktor",
+    "glavenus": "glavenus",
+    "gobul 2 0": "gobul-2-0",
+    "gobul20": "gobul-2-0",
+    "gobul enlarged": "gobul-enlarged",
+    "gobulenlarged": "gobul-enlarged",
+    "gobul": "gobul",
+    "gogmazios": "gogmazios",
+    "gore magala": "gore-magala",
+    "goremagala": "gore-magala",
+    "gravios": "gravios",
+    "great baggi": "great-baggi",
+    "greatbaggi": "great-baggi",
+    "great girros": "great-girros",
+    "greatgirros": "great-girros",
+    "great izuchi token": "great-izuchi-token",
+    "greatizuchitoken": "great-izuchi-token",
+    "great jaggi": "great-jaggi",
+    "greatjaggi": "great-jaggi",
+    "great jagras": "great-jagras",
+    "greatjagras": "great-jagras",
+    "great maccao": "great-maccao",
+    "greatmaccao": "great-maccao",
+    "great wroggi": "great-wroggi",
+    "greatwroggi": "great-wroggi",
+    "greatthunderbug": "greatthunderbug",
+    "grimalkyne": "grimalkyne",
+    "gypceros": "gypceros",
+    "hermitaur": "hermitaur",
+    "hornetaur": "hornetaur",
+    "hypnocatrice": "hypnocatrice",
+    "iodrome": "iodrome",
+    "ioprey": "ioprey",
+    "iron helmcrab": "iron-helmcrab",
+    "ironhelmcrab": "iron-helmcrab",
+    "izuchi token": "izuchi-token",
+    "izuchitoken": "izuchi-token",
+    "jaggi": "jaggi",
+    "jaggia": "jaggia",
+    "jagras": "jagras",
+    "jhen mohran": "jhen-mohran",
+    "jhenmohran": "jhen-mohran",
+    "jyuratodus": "jyuratodus",
+    "kecha wacha": "kecha-wacha",
+    "kechawacha": "kecha-wacha",
+    "kelbi": "kelbi",
+    "kestodon female": "kestodon-female",
+    "kestodonfemale": "kestodon-female",
+    "kestodon male": "kestodon-male",
+    "kestodonmale": "kestodon-male",
+    "khezu": "khezu",
+    "kingshakalaka": "kingshakalaka",
+    "kirin": "kirin",
+    "konchu": "konchu",
+    "konchuball": "konchuball",
+    "kulu ya ku": "kulu-ya-ku",
+    "kuluyaku": "kulu-ya-ku",
+    "kulve taroth": "kulve-taroth",
+    "kulvetaroth": "kulve-taroth",
+    "kushala daora": "kushala-daora",
+    "kushaladaora": "kushala-daora",
+    "lagiacrus": "lagiacrus",
+    "lagombi": "lagombi",
+    "lao shan lung": "lao-shan-lung",
+    "laoshanlung": "lao-shan-lung",
+    "larinoth": "larinoth",
+    "lavasioth": "lavasioth",
+    "legiana": "legiana",
+    "leshen": "leshen",
+    "ludroth": "ludroth",
+    "lunastra": "lunastra",
+    "maccao 1": "maccao1",
+    "maccao1": "maccao1",
+    "maccao 2": "maccao2",
+    "maccao2": "maccao2",
+    "maccao 3": "maccao3",
+    "maccao3": "maccao3",
+    "malfestio": "malfestio",
+    "melynx": "melynx",
+    "mizutsune": "mizutsune",
+    "molten tigrex": "molten-tigrex",
+    "moltentigrex": "molten-tigrex",
+    "monoblos": "monoblos",
+    "moofah": "moofah",
+    "moofy": "moofy",
+    "moonlight gekko": "moonlight-gekko",
+    "moonlightgekko": "moonlight-gekko",
+    "mosswine": "mosswine",
+    "najarala": "najarala",
+    "nakarkos body stage 1": "nakarkos-body-stage-1",
+    "nakarkosbodystage1": "nakarkos-body-stage-1",
+    "nakarkos body stage 2": "nakarkos-body-stage-2",
+    "nakarkosbodystage2": "nakarkos-body-stage-2",
+    "nakarkos tentacle": "nakarkos-tentacle",
+    "nakarkostentacle": "nakarkos-tentacle",
+    "namielle": "namielle",
+    "nargacuga": "nargacuga",
+    "nergigante": "nergigante",
+    "nerscylla": "nerscylla",
+    "nibelsnarf 1": "nibelsnarf1",
+    "nibelsnarf1": "nibelsnarf1",
+    "nibelsnarf 2": "nibelsnarf2",
+    "nibelsnarf2": "nibelsnarf2",
+    "nightshade paolumu": "nightshade-paolumu",
+    "nightshadepaolumu": "nightshade-paolumu",
+    "nightshade paolumu 2": "nightshade-paolumu2",
+    "nightshadepaolumu2": "nightshade-paolumu2",
+    "nightshade paolumu2": "nightshade-paolumu2",
+    "nitrotoad": "nitrotoad",
+    "odogaron": "odogaron",
+    "paolumu": "paolumu",
+    "paratoad": "paratoad",
+    "pinkrathian": "pinkrathian",
+    "plesioth": "plesioth",
+    "popo": "popo",
+    "pukei pukei": "pukei-pukei",
+    "pukeipukei": "pukei-pukei",
+    "purple ludroth": "purple-ludroth",
+    "purpleludroth": "purple-ludroth",
+    "pygmy dodogama": "pygmy-dodogama",
+    "pygmydodogama": "pygmy-dodogama",
+    "qurupeco": "qurupeco",
+    "radobaan": "radobaan",
+    "raging brachydios": "raging-brachydios",
+    "ragingbrachydios": "raging-brachydios",
+    "rajang": "rajang",
+    "rajang 2": "rajang2",
+    "rajang2": "rajang2",
+    "rathalos": "rathalos",
+    "rathian": "rathian",
+    "remobra": "remobra",
+    "rhenoplos": "rhenoplos",
+    "royal ludroth": "royal-ludroth",
+    "royalludroth": "royal-ludroth",
+    "ruiner nergigante": "ruiner-nergigante",
+    "ruinernergigante": "ruiner-nergigante",
+    "safitoken": "safitoken",
+    "savage deviljho": "savage-deviljho",
+    "savagedeviljho": "savage-deviljho",
+    "scarred yian garuga": "scarred-yian-garuga",
+    "scarredyiangaruga": "scarred-yian-garuga",
+    "seething bazelgeuse": "seething-bazelgeuse",
+    "seethingbazelgeuse": "seething-bazelgeuse",
+    "seltas queen 2 0": "seltas-queen-2-0",
+    "seltasqueen20": "seltas-queen-2-0",
+    "seltas queen": "seltas-queen",
+    "seltasqueen": "seltas-queen",
+    "seltas": "seltas",
+    "seregios": "seregios",
+    "shagru magala": "shagru-magala",
+    "shagrumagala": "shagru-magala",
+    "shah dalamadur": "shah-dalamadur",
+    "shahdalamadur": "shah-dalamadur",
+    "shakalaka": "shakalaka",
+    "shamos": "shamos",
+    "shamos 2": "shamos2",
+    "shamos2": "shamos2",
+    "shamos 3": "shamos3",
+    "shamos3": "shamos3",
+    "shara ishvalda": "shara-ishvalda",
+    "sharaishvalda": "shara-ishvalda",
+    "shara shell": "shara-shell",
+    "sharashell": "shara-shell",
+    "shen gaoren": "shen-gaoren",
+    "shengaoren": "shen-gaoren",
+    "shogunceantaur": "shogunceantaur",
+    "shrieking legiana": "shrieking-legiana",
+    "shriekinglegiana": "shrieking-legiana",
+    "silverwind nargacuga": "silverwind-nargacuga",
+    "silverwindnargacuga": "silverwind-nargacuga",
+    "slagtoth": "slagtoth",
+    "sleeptoad": "sleeptoad",
+    "soldier helmcrab": "soldier-helmcrab",
+    "soldierhelmcrab": "soldier-helmcrab",
+    "soulseer mizutsune": "soulseer-mizutsune",
+    "soulseermizutsune": "soulseer-mizutsune",
+    "teostra": "teostra",
+    "tetsucabra": "tetsucabra",
+    "tigrex": "tigrex",
+    "tobi kadachi": "tobi-kadachi",
+    "tobikadachi": "tobi-kadachi",
+    "tzitzi ya ku v1 0": "tzitzi-ya-ku-v1-0",
+    "tzitziyakuv10": "tzitzi-ya-ku-v1-0",
+    "tzitzi ya ku v2 0": "tzitzi-ya-ku-v2-0",
+    "tzitziyakuv20": "tzitzi-ya-ku-v2-0",
+    "ukanlos": "ukanlos",
+    "uragaan": "uragaan",
+    "uroktor": "uroktor",
+    "vaal hazak": "vaal-hazak",
+    "vaalhazak": "vaal-hazak",
+    "vastrax": "vastrax",
+    "velkhana": "velkhana",
+    "velocidrome": "velocidrome",
+    "velociprey": "velociprey",
+    "vespoid": "vespoid",
+    "vespoidqueen": "vespoidqueen",
+    "vigorwasp": "vigorwasp",
+    "viper tobi kadachi": "viper-tobi-kadachi",
+    "vipertobikadachi": "viper-tobi-kadachi",
+    "volvidon": "volvidon",
+    "white velociprey": "white-velociprey",
+    "whitevelociprey": "white-velociprey",
+    "wiggler": "wiggler",
+    "wild melynx": "wild-melynx",
+    "wildmelynx": "wild-melynx",
+    "wildspire gekko": "wildspire-gekko",
+    "wildspiregekko": "wildspire-gekko",
+    "wingdrake 2": "wingdrake-2",
+    "wingdrake2": "wingdrake-2",
+    "wingdrake 3": "wingdrake-3",
+    "wingdrake3": "wingdrake-3",
+    "wingdrake 4": "wingdrake-4",
+    "wingdrake4": "wingdrake-4",
+    "wingdrake": "wingdrake",
+    "wroggi": "wroggi",
+    "wulg": "wulg",
+    "xenojiiva": "xenojiiva",
+    "yama tsukami": "yama-tsukami",
+    "yamatsukami": "yama-tsukami",
+    "yian garuga": "yian-garuga",
+    "yiangaruga": "yian-garuga",
+    "yiankut ku": "yiankut-ku",
+    "yiankutku": "yiankut-ku",
+    "young gammoth": "young-gammoth",
+    "younggammoth": "young-gammoth",
+    "young magala": "young-magala",
+    "youngmagala": "young-magala",
+    "zamite": "zamite",
+    "zamtrios 2": "zamtrios-2",
+    "zamtrios2": "zamtrios-2",
+    "zamtrios 3": "zamtrios-3",
+    "zamtrios3": "zamtrios-3",
+    "zamtrios": "zamtrios",
+    "zinogre": "zinogre"
+  }
+}
