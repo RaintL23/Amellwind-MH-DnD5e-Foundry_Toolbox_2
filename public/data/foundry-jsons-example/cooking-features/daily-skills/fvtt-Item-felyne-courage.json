@@ -2,7 +2,7 @@
   "_id": "D4CHhbW4ncDXUocE",
   "name": "Felyne Courage",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Courage</strong> <em>(Daily Skill)</em></p><p>If you are frightened, you can choose to repeat your saving throw at the start of your turn instead of the end.</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "iKkcBBohd3kM0vzo",
       "name": "Felyne Courage",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

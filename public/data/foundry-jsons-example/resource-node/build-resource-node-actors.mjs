@@ -6,8 +6,8 @@
  *   - Hidden Detection feature (Passive Perception DC by tier)
  *   - Loot stacks for every resource entry in that column (table odds preserved)
  *
- * Icons: category mh-icons (herb / mushroom / minerals / fish / bug / bones),
- * with honey.webp for Honey.
+ * Icons: Foundry core paths by category (plants, mushrooms, ore, fish, beetles,
+ * bone piles). Honey uses the beehive icon. mh-icons stay on hunter weapons.
  *
  * Run: node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.mjs
  */
@@ -31,13 +31,17 @@ const SYSTEM_VERSION = "4.4.4";
 const ID_ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 const CATEGORY_ICONS = {
-  Bonepiles: "mh-icons/bones.webp",
-  Fish: "mh-icons/fish.webp",
-  Insects: "mh-icons/bug.webp",
-  Minerals: "mh-icons/minerals.webp",
-  Mushrooms: "mh-icons/mushroom.webp",
-  Plants: "mh-icons/herb.webp",
+  Bonepiles: "icons/commodities/bones/bones-stack-tan.webp",
+  Fish: "icons/consumables/meat/fish-whole-blue.webp",
+  Insects: "icons/creatures/invertebrates/beetle-stag-tan-brown.webp",
+  Minerals: "icons/commodities/stone/ore-chunk-grey.webp",
+  Mushrooms: "icons/consumables/mushrooms/mushroom-spotted-red.webp",
+  Plants: "icons/consumables/plants/herb-tied-bundle-green.webp",
 };
+
+const HONEY_ICON = "icons/consumables/food/honey-beehive-brown.webp";
+const UNKNOWN_ICON = "icons/commodities/treasure/token-engraved-question-green.webp";
+const HIDDEN_DETECT_ICON = "icons/magic/perception/eye-ringed-green.webp";
 
 /** Known spelling drift between environment tables and resource.data.ts */
 const NAME_ALIASES = {
@@ -115,8 +119,8 @@ const rarityKey = (rarity) => {
 };
 
 const itemIconFor = (name, category) => {
-  if (String(name).toLowerCase() === "honey") return "mh-icons/honey.webp";
-  return CATEGORY_ICONS[category] ?? "mh-icons/mystery-item.webp";
+  if (String(name).toLowerCase() === "honey") return HONEY_ICON;
+  return CATEGORY_ICONS[category] ?? UNKNOWN_ICON;
 };
 
 const parseEnvironments = (src) => {
@@ -566,7 +570,7 @@ const main = () => {
 
         const hiddenDetectFeature = slimFeature(hiddenDetectTemplate, {
           seed,
-          img: "mh-icons/mystery-item.webp",
+          img: HIDDEN_DETECT_ICON,
           flagPatch: {
             hiddenDetect: {
               isFeature: true,

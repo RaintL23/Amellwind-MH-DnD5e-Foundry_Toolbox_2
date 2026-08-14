@@ -210,7 +210,7 @@
         "type": "attack",
         "sort": 100000,
         "name": "Shield Bash",
-        "img": "icons/equipment/shield/heater-steel-boss.webp",
+        "img": "icons/equipment/shield/heater-steel-boss-red.webp",
         "activation": {
           "type": "action",
           "value": 1,
@@ -357,7 +357,7 @@
         "_id": "WgVYFEnKVkZzegZJ",
         "sort": 200000,
         "name": "Item Prodigy",
-        "img": "icons/consumables/potions/potion-bottle-corked-labeled-purple.webp",
+        "img": "icons/consumables/potions/potion-bottle-corked-labeled-green.webp",
         "activation": {
           "type": "bonus",
           "value": 1,
@@ -513,7 +513,7 @@
     {
       "_id": "XQrW7aJEoOAu9ewO",
       "name": "Integrated Shield (+2 AC)",
-      "img": "icons/equipment/shield/heater-steel-boss.webp",
+      "img": "icons/equipment/shield/heater-steel-boss-red.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
       "changes": [
         {
@@ -565,7 +565,7 @@
     {
       "_id": "kZNrl0xO92LrOjsK",
       "name": "Sword and Shield AC (+1)",
-      "img": "icons/equipment/shield/heater-steel-boss.webp",
+      "img": "icons/equipment/shield/heater-steel-boss-red.webp",
       "description": "Rare Sword and Shield bonus AC from the rarity table.",
       "changes": [
         {

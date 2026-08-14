@@ -2,7 +2,7 @@
   "_id": "ChyqAtoOjjuKIW5m",
   "name": "Aged Cheese",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/food/bowl-stew-brown.webp",
   "system": {
     "description": {
       "value": "<p><strong>Aged Cheese</strong> <em>(Cooking Rank 1)</em></p><p>You count as if you were one size larger for the purpose of determining your carrying capacity.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "5AqPWj2DFQmviTcL",
       "name": "Aged Cheese",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/consumables/food/bowl-stew-brown.webp",
       "type": "base",
       "system": {},
       "changes": [

@@ -206,7 +206,7 @@
         "_id": "dwSFLzmGmlCbYgNE",
         "sort": 200000,
         "name": "Demon Mode",
-        "img": "icons/magic/unholy/strike-body-life-shadow-green.webp",
+        "img": "icons/magic/unholy/strike-body-life-soul-green.webp",
         "activation": {
           "type": "bonus",
           "value": 1,
@@ -732,7 +732,7 @@
     {
       "_id": "8LUopOvCDLb3mwWN",
       "name": "Demon Mode",
-      "img": "icons/magic/unholy/strike-body-life-shadow-green.webp",
+      "img": "icons/magic/unholy/strike-body-life-soul-green.webp",
       "description": "",
       "changes": [
         {

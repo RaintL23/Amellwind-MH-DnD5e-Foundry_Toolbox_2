@@ -2,7 +2,7 @@
   "_id": "dyPxuIt6f9biDY66",
   "name": "Volcano — Mushrooms (Tier 17-20)",
   "type": "npc",
-  "img": "mh-icons/mushroom.webp",
+  "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
   "system": {
     "description": {
       "value": "<p><strong>Volcano — Mushrooms (Tier 17-20)</strong></p>\n<p>Amellwind field gathering node for <em>Volcano</em> (Dry, craggy, rocky areas; lava pools and streams), party levels <strong>17-20</strong>.</p>\n<ul>\n<li><strong>Resource Node:</strong> Mushrooms harvest DC <strong>22</strong>. Double-click the token to gather (Item Piles–style).</li>\n<li><strong>Hidden Detection:</strong> Passive Perception DC <strong>21</strong> (tier-scaled). Place the token <em>hidden</em>; proximity reveals it.</li>\n<li><strong>Loot pool:</strong> 6 stack(s) from the environment resource table (roll 1dN on success).</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro modules. Resource Node hooks arm from the module script; Hidden Detection arms from the module script / Sync macro.</em></p>",
@@ -167,7 +167,7 @@
     "width": 1,
     "height": 1,
     "texture": {
-      "src": "mh-icons/mushroom.webp",
+      "src": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "anchorX": 0.5,
       "anchorY": 0.5,
       "offsetX": 0,
@@ -236,7 +236,7 @@
       "_id": "Rj3gbhBvNEfSk7u1",
       "name": "Resource Node",
       "type": "feat",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Resource Node</strong> — Amellwind field gathering for Foundry.</p>\n<p>Place this feature on a prop actor (plant, mineral vein, fishing spot, etc.).\nPut possible loot items in that actor's <strong>inventory</strong>, then use\n<strong>Configure Resource Node</strong> (GM).</p>\n<ul>\n<li><strong>Interact:</strong> players double-click the token to gather (Items Pile–style UI).</li>\n<li><strong>Harvest:</strong> category skill check vs DC + Amellwind tool rules.</li>\n<li><strong>Loot:</strong> on success roll <em>1dN</em> over inventory stacks and copy 1 item to the PC.</li>\n<li><strong>Attempts:</strong> one try per character (success or fail). GM can reset from Configure.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. Players double-click the token to gather (no ownership of the node required; PC token on the scene). GM: double-click (no PC) or Shift+double-click opens Configure; Alt+double-click opens the actor sheet.</em></p>\n<p><em>Preconfigured for Volcano · Tier 17-20 · Mushrooms (DC 22).</em></p>",
@@ -263,7 +263,7 @@
             "type": "utility",
             "sort": 0,
             "name": "Configure Resource Node",
-            "img": "mh-icons/mushroom.webp",
+            "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
             "activation": {
               "type": "special",
               "value": null,
@@ -360,7 +360,7 @@
             "type": "utility",
             "sort": 1,
             "name": "Gather Resource",
-            "img": "mh-icons/mushroom.webp",
+            "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
             "activation": {
               "type": "special",
               "value": null,
@@ -523,7 +523,7 @@
       "_id": "kva2R88LEhIYOK7m",
       "name": "Hidden Detection",
       "type": "feat",
-      "img": "mh-icons/mystery-item.webp",
+      "img": "icons/magic/perception/eye-ringed-green.webp",
       "system": {
         "description": {
           "value": "<p><strong>Hidden Detection</strong> — Baldur's Gate–style discovery for Foundry.</p>\n<p>Place this feature on the <em>hidden object</em> actor. Hide the token from players,\nthen use <strong>Configure Hidden Detection</strong> (GM). Saving arms proximity sync\nfor the session — you do not need a separate macro first (the Sync macro is still\navailable for world-load automation).</p>\n<ul>\n<li><strong>Range:</strong> when a PC enters the aura, detection resolves.</li>\n<li><strong>Mode:</strong> active skill check <em>or</em> Passive Perception vs DC.</li>\n<li><strong>Passive mode:</strong> attempt whispers go to the GM only; players get a chat\nmessage only when they successfully reveal the object.</li>\n<li><strong>Fail lock:</strong> optional one-fail lockout per PC (GM configurable).</li>\n<li><strong>Reveal:</strong> only the discoverer, or the whole party on first success.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. GM only for configuration.</em></p>\n<p><em>Preconfigured Passive Perception DC 21 for Tier 17-20.</em></p>",
@@ -550,7 +550,7 @@
             "type": "utility",
             "sort": 0,
             "name": "Configure Hidden Detection",
-            "img": "mh-icons/mystery-item.webp",
+            "img": "icons/magic/perception/eye-ringed-green.webp",
             "activation": {
               "type": "special",
               "value": null,
@@ -721,7 +721,7 @@
       "_id": "ABICS94havevKcnM",
       "name": "Nitroshroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Nitroshroom</strong> <em>(Mushrooms · Common)</em></p><p>A common mushroom with the power to generate heat. Acts as a campfire for 8 hours if crushed on the ground, but generates no light or smoke.</p><p>Sell value: 4 gp. Crafting material.</p>",
@@ -786,7 +786,7 @@
       "_id": "SFidxxn9IMpH4H8S",
       "name": "Nitroshroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Nitroshroom</strong> <em>(Mushrooms · Common)</em></p><p>A common mushroom with the power to generate heat. Acts as a campfire for 8 hours if crushed on the ground, but generates no light or smoke.</p><p>Sell value: 4 gp. Crafting material.</p>",
@@ -851,7 +851,7 @@
       "_id": "Fx6KeN0MA1489hPk",
       "name": "Nitroshroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Nitroshroom</strong> <em>(Mushrooms · Common)</em></p><p>A common mushroom with the power to generate heat. Acts as a campfire for 8 hours if crushed on the ground, but generates no light or smoke.</p><p>Sell value: 4 gp. Crafting material.</p>",
@@ -916,7 +916,7 @@
       "_id": "JhWlQcDRiPwceb5R",
       "name": "Dragon Toadstool",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Dragon Toadstool</strong> <em>(Mushrooms · Very Rare)</em></p><p>A dangerous fungus said to draw the life out of people. Beware. A creature takes 1d6 necrotic damage when they pluck it from the ground.</p><p>Sell value: 600 gp. Crafting material.</p>",
@@ -981,7 +981,7 @@
       "_id": "5omHwPQvU1IivcbH",
       "name": "Dragon Toadstool",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Dragon Toadstool</strong> <em>(Mushrooms · Very Rare)</em></p><p>A dangerous fungus said to draw the life out of people. Beware. A creature takes 1d6 necrotic damage when they pluck it from the ground.</p><p>Sell value: 600 gp. Crafting material.</p>",
@@ -1046,7 +1046,7 @@
       "_id": "UyLSjmhsTYpnP9j1",
       "name": "Dragon Toadstool",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Dragon Toadstool</strong> <em>(Mushrooms · Very Rare)</em></p><p>A dangerous fungus said to draw the life out of people. Beware. A creature takes 1d6 necrotic damage when they pluck it from the ground.</p><p>Sell value: 600 gp. Crafting material.</p>",

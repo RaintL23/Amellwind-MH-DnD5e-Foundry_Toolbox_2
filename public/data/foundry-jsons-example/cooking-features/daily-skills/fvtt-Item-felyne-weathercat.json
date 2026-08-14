@@ -2,7 +2,7 @@
   "_id": "6ETK06ymlxEEx2iZ",
   "name": "Felyne Weathercat",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Weathercat</strong> <em>(Daily Skill)</em></p><p>Foul weather occurs more often during a quest (Heavy rain, blizzards, sandstorms, etc).</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",

@@ -333,7 +333,7 @@
         "_id": "1LjllCqOWNEjNUcB",
         "sort": 400000,
         "name": "Wire-Fall",
-        "img": "icons/magic/air/wind-stream-blue.webp",
+        "img": "icons/magic/air/wind-stream-blue-gray.webp",
         "activation": {
           "type": "special",
           "value": null,

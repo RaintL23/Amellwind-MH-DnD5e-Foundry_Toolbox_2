@@ -2,7 +2,7 @@
   "_id": "ID2parOYLnzRlmev",
   "name": "Felyne Lander",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Lander</strong> <em>(Daily Skill)</em></p><p>You always land on your feet when falling from a height greater than 10 feet. This does not prevent the damage you would still take.</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "m4mXyXn64NoeiDHm",
       "name": "Felyne Lander",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

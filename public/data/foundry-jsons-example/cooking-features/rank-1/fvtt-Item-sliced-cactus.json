@@ -2,7 +2,7 @@
   "_id": "JApOvU9Ey3wq28Dn",
   "name": "Sliced Cactus",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/fruit/pickly-pear-cactus-red-yellow.webp",
   "system": {
     "description": {
       "value": "<p><strong>Sliced Cactus</strong> <em>(Cooking Rank 1)</em></p><p>As a bonus action, you can make a DC 15 Dexterity (Acrobatics) check. If you succeed, difficult terrain doesn&apos;t cost you extra movement until the end of the current turn.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -29,7 +29,7 @@
         "type": "utility",
         "sort": 0,
         "name": "Ignore Difficult Terrain",
-        "img": "mh-icons/bbq.webp",
+        "img": "icons/consumables/fruit/pickly-pear-cactus-red-yellow.webp",
         "activation": {
           "type": "bonus",
           "value": 1,

@@ -2,7 +2,7 @@
   "_id": "UfrKFzefTF3OuIyg",
   "name": "Mild Herbs",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/plants/herb-tied-bundle-green.webp",
   "system": {
     "description": {
       "value": "<p><strong>Mild Herbs</strong> <em>(Cooking Rank 1)</em></p><p>Once per meal, you can roll a [[/r 1d4]] and add the number rolled to one saving throw of your choice. You can roll the die before or after making the saving throw.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -29,7 +29,7 @@
         "type": "utility",
         "sort": 0,
         "name": "Saving Throw Bonus",
-        "img": "mh-icons/bbq.webp",
+        "img": "icons/consumables/plants/herb-tied-bundle-green.webp",
         "activation": {
           "type": "special",
           "value": null,

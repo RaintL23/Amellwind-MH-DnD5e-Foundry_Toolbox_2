@@ -215,7 +215,7 @@
         "_id": "qlwOADPAthsGbgNI",
         "sort": 200000,
         "name": "Magazines",
-        "img": "icons/weapons/ammunition/bullets-triple-orange.webp",
+        "img": "icons/weapons/ammunition/bullets-cartridge-shell-gray.webp",
         "activation": {
           "type": "bonus",
           "value": 1,

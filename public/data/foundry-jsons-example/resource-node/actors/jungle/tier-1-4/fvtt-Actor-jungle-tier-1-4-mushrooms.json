@@ -2,7 +2,7 @@
   "_id": "P1JxsQD7aF41L0Ei",
   "name": "Jungle — Mushrooms (Tier 1-4)",
   "type": "npc",
-  "img": "mh-icons/mushroom.webp",
+  "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
   "system": {
     "description": {
       "value": "<p><strong>Jungle — Mushrooms (Tier 1-4)</strong></p>\n<p>Amellwind field gathering node for <em>Jungle</em> (Coastal, Forest, Hills), party levels <strong>1-4</strong>.</p>\n<ul>\n<li><strong>Resource Node:</strong> Mushrooms harvest DC <strong>10</strong>. Double-click the token to gather (Item Piles–style).</li>\n<li><strong>Hidden Detection:</strong> Passive Perception DC <strong>12</strong> (tier-scaled). Place the token <em>hidden</em>; proximity reveals it.</li>\n<li><strong>Loot pool:</strong> 6 stack(s) from the environment resource table (roll 1dN on success).</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro modules. Resource Node hooks arm from the module script; Hidden Detection arms from the module script / Sync macro.</em></p>",
@@ -167,7 +167,7 @@
     "width": 1,
     "height": 1,
     "texture": {
-      "src": "mh-icons/mushroom.webp",
+      "src": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "anchorX": 0.5,
       "anchorY": 0.5,
       "offsetX": 0,
@@ -236,7 +236,7 @@
       "_id": "kZiwf3OEJ063dS2u",
       "name": "Resource Node",
       "type": "feat",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Resource Node</strong> — Amellwind field gathering for Foundry.</p>\n<p>Place this feature on a prop actor (plant, mineral vein, fishing spot, etc.).\nPut possible loot items in that actor's <strong>inventory</strong>, then use\n<strong>Configure Resource Node</strong> (GM).</p>\n<ul>\n<li><strong>Interact:</strong> players double-click the token to gather (Items Pile–style UI).</li>\n<li><strong>Harvest:</strong> category skill check vs DC + Amellwind tool rules.</li>\n<li><strong>Loot:</strong> on success roll <em>1dN</em> over inventory stacks and copy 1 item to the PC.</li>\n<li><strong>Attempts:</strong> one try per character (success or fail). GM can reset from Configure.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. Players double-click the token to gather (no ownership of the node required; PC token on the scene). GM: double-click (no PC) or Shift+double-click opens Configure; Alt+double-click opens the actor sheet.</em></p>\n<p><em>Preconfigured for Jungle · Tier 1-4 · Mushrooms (DC 10).</em></p>",
@@ -263,7 +263,7 @@
             "type": "utility",
             "sort": 0,
             "name": "Configure Resource Node",
-            "img": "mh-icons/mushroom.webp",
+            "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
             "activation": {
               "type": "special",
               "value": null,
@@ -360,7 +360,7 @@
             "type": "utility",
             "sort": 1,
             "name": "Gather Resource",
-            "img": "mh-icons/mushroom.webp",
+            "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
             "activation": {
               "type": "special",
               "value": null,
@@ -523,7 +523,7 @@
       "_id": "waEQZ9uPk3ybDkYQ",
       "name": "Hidden Detection",
       "type": "feat",
-      "img": "mh-icons/mystery-item.webp",
+      "img": "icons/magic/perception/eye-ringed-green.webp",
       "system": {
         "description": {
           "value": "<p><strong>Hidden Detection</strong> — Baldur's Gate–style discovery for Foundry.</p>\n<p>Place this feature on the <em>hidden object</em> actor. Hide the token from players,\nthen use <strong>Configure Hidden Detection</strong> (GM). Saving arms proximity sync\nfor the session — you do not need a separate macro first (the Sync macro is still\navailable for world-load automation).</p>\n<ul>\n<li><strong>Range:</strong> when a PC enters the aura, detection resolves.</li>\n<li><strong>Mode:</strong> active skill check <em>or</em> Passive Perception vs DC.</li>\n<li><strong>Passive mode:</strong> attempt whispers go to the GM only; players get a chat\nmessage only when they successfully reveal the object.</li>\n<li><strong>Fail lock:</strong> optional one-fail lockout per PC (GM configurable).</li>\n<li><strong>Reveal:</strong> only the discoverer, or the whole party on first success.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. GM only for configuration.</em></p>\n<p><em>Preconfigured Passive Perception DC 12 for Tier 1-4.</em></p>",
@@ -550,7 +550,7 @@
             "type": "utility",
             "sort": 0,
             "name": "Configure Hidden Detection",
-            "img": "mh-icons/mystery-item.webp",
+            "img": "icons/magic/perception/eye-ringed-green.webp",
             "activation": {
               "type": "special",
               "value": null,
@@ -721,7 +721,7 @@
       "_id": "DCe4Mle9GVk5vFYx",
       "name": "Nitroshroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Nitroshroom</strong> <em>(Mushrooms · Common)</em></p><p>A common mushroom with the power to generate heat. Acts as a campfire for 8 hours if crushed on the ground, but generates no light or smoke.</p><p>Sell value: 4 gp. Crafting material.</p>",
@@ -786,7 +786,7 @@
       "_id": "wGu0FFEgVaMTYbUo",
       "name": "Blue Mushroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Blue Mushroom</strong> <em>(Mushrooms · Common)</em></p><p>Common mushroom with a power-enhancing effect.</p><p>Sell value: 1 sp. Crafting material.</p>",
@@ -851,7 +851,7 @@
       "_id": "mHfFStCq0563aqrj",
       "name": "Nitroshroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Nitroshroom</strong> <em>(Mushrooms · Common)</em></p><p>A common mushroom with the power to generate heat. Acts as a campfire for 8 hours if crushed on the ground, but generates no light or smoke.</p><p>Sell value: 4 gp. Crafting material.</p>",
@@ -916,7 +916,7 @@
       "_id": "sdTMKwgLmgPZz5Eh",
       "name": "Nitroshroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Nitroshroom</strong> <em>(Mushrooms · Common)</em></p><p>A common mushroom with the power to generate heat. Acts as a campfire for 8 hours if crushed on the ground, but generates no light or smoke.</p><p>Sell value: 4 gp. Crafting material.</p>",
@@ -981,7 +981,7 @@
       "_id": "AJBPtRcp6bjMpSHV",
       "name": "Nitroshroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Nitroshroom</strong> <em>(Mushrooms · Common)</em></p><p>A common mushroom with the power to generate heat. Acts as a campfire for 8 hours if crushed on the ground, but generates no light or smoke.</p><p>Sell value: 4 gp. Crafting material.</p>",
@@ -1046,7 +1046,7 @@
       "_id": "nVNemZ6HCFfvjkX3",
       "name": "Blue Mushroom",
       "type": "loot",
-      "img": "mh-icons/mushroom.webp",
+      "img": "icons/consumables/mushrooms/mushroom-spotted-red.webp",
       "system": {
         "description": {
           "value": "<p><strong>Blue Mushroom</strong> <em>(Mushrooms · Common)</em></p><p>Common mushroom with a power-enhancing effect.</p><p>Sell value: 1 sp. Crafting material.</p>",

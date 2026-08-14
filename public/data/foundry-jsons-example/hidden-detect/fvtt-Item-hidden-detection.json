@@ -2,7 +2,7 @@
   "_id": "HiddenDetectItm1",
   "name": "Hidden Detection",
   "type": "feat",
-  "img": "mh-icons/mystery-item.webp",
+  "img": "icons/magic/perception/eye-ringed-green.webp",
   "system": {
     "description": {
       "value": "<p><strong>Hidden Detection</strong> — Baldur's Gate–style discovery for Foundry.</p>\n<p>Place this feature on the <em>hidden object</em> actor. Hide the token from players,\nthen use <strong>Configure Hidden Detection</strong> (GM). Saving arms proximity sync\nfor the session — you do not need a separate macro first (the Sync macro is still\navailable for world-load automation).</p>\n<ul>\n<li><strong>Range:</strong> when a PC enters the aura, detection resolves.</li>\n<li><strong>Mode:</strong> active skill check <em>or</em> Passive Perception vs DC.</li>\n<li><strong>Passive mode:</strong> attempt whispers go to the GM only; players get a chat\nmessage only when they successfully reveal the object.</li>\n<li><strong>Fail lock:</strong> optional one-fail lockout per PC (GM configurable).</li>\n<li><strong>Reveal:</strong> only the discoverer, or the whole party on first success.</li>\n</ul>\n<p><em>Requires Midi QOL + Item Macro. GM only for configuration.</em></p>",
@@ -29,7 +29,7 @@
         "type": "utility",
         "sort": 0,
         "name": "Configure Hidden Detection",
-        "img": "mh-icons/mystery-item.webp",
+        "img": "icons/magic/perception/eye-ringed-green.webp",
         "activation": {
           "type": "special",
           "value": null,

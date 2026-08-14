@@ -2,7 +2,7 @@
   "_id": "faokNQVWeFqHiLKB",
   "name": "Felyne Fur Coating",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Fur Coating</strong> <em>(Daily Skill)</em></p><p>You take half as much damage from environmental hazards and blight effects.</p><p><em>Active Effect marks this boon; apply half damage manually (or via Midi custom rules) for environmental / blight sources.</em></p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "K95Xaf3CrNoKB9pE",
       "name": "Felyne Fur Coating",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

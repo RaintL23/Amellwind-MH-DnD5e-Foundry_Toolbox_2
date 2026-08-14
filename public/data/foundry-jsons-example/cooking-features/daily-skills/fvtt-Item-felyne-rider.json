@@ -2,7 +2,7 @@
   "_id": "ORFpDX4WwCZurpCA",
   "name": "Felyne Rider",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Rider</strong> <em>(Daily Skill)</em></p><p>You have advantage on checks to stay mounted on monsters.</p><p><em>Active Effect grants MidiQOL advantage on Animal Handling (common mount check). Adjust if your table uses Athletics/Acrobatics.</em></p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "NbEXrdjoSCzh9LBK",
       "name": "Felyne Rider",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

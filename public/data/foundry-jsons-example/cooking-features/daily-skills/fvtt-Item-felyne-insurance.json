@@ -2,7 +2,7 @@
   "_id": "96um71R64Q9P71qE",
   "name": "Felyne Insurance",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Insurance</strong> <em>(Daily Skill)</em></p><p>The first time you or an ally drops to 0 hit points on the hunt, they instead drop to 1 hit point.</p><p><em>Active Effect sets MidiQOL min HP to 1 for the bearer. For an ally, apply a copy of this feature (or AE) to them; remove after the first trigger.</em></p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "sFY8eBc1ciXVq8Im",
       "name": "Felyne Insurance",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

@@ -2,7 +2,7 @@
   "_id": "VW0Hn5RmZ6SGU1xD",
   "name": "Felyne Cleats",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Cleats</strong> <em>(Daily Skill)</em></p><p>Your movement is unaffected by the first 15 feet of difficult terrain (magical or otherwise) you move through on your turn.</p><p><em>Active Effect ignores all difficult terrain (dnd5e automation). RAW is only the first 15 feet per turn—track the remainder manually if needed.</em></p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "Wdk1QTKWf51kr15h",
       "name": "Felyne Cleats",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

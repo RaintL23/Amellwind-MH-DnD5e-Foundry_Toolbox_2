@@ -2,7 +2,7 @@
   "_id": "7KqQCWrwy88GsPEb",
   "name": "Felyne Foodie",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Foodie</strong> <em>(Daily Skill)</em></p><p>The food bonus lasts for 48 hours, you cannot become inebriated during this time, and you can cast the <em>thaumaturgy</em> spell at will.</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -29,7 +29,7 @@
         "type": "utility",
         "sort": 0,
         "name": "Cast Thaumaturgy",
-        "img": "mh-icons/bbq.webp",
+        "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
         "activation": {
           "type": "action",
           "value": 1,
@@ -137,7 +137,7 @@
     {
       "_id": "RfI3oZXcx9oKmAA6",
       "name": "Felyne Foodie",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

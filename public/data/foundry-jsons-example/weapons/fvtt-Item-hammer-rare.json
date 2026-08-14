@@ -706,7 +706,7 @@
         "type": "attack",
         "sort": 500000,
         "name": "Spinning Bludgeon",
-        "img": "icons/skills/melee/blade-tips-triple-orange.webp",
+        "img": "icons/skills/melee/blade-tips-triple-steel.webp",
         "activation": {
           "type": "special",
           "value": null,

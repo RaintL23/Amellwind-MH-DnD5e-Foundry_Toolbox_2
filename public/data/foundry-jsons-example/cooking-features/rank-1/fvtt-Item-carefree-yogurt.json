@@ -2,7 +2,7 @@
   "_id": "CrEGqhsXXc0teVu0",
   "name": "Carefree Yogurt",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/food/bowl-stew-brown.webp",
   "system": {
     "description": {
       "value": "<p><strong>Carefree Yogurt</strong> <em>(Cooking Rank 1)</em></p><p>You gain the same benefits as if you drank a Cool Drink:</p><blockquote><p>This white, translucent, pearly syrup smells of spearmint and alcohol. When you drink it, you suffer no harm from temperatures as warm as 120 degrees Fahrenheit (49 degrees Celsius) for the next 24 hours.</p></blockquote><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",

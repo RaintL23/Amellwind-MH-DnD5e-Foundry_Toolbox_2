@@ -223,7 +223,7 @@ for (const id of ownerUserIds) ownership[id] = 3;
 const handoffMacro = await Macro.create({
   name: `Felyne Cook → ${selected.actor.name}`,
   type: "script",
-  img: "mh-icons/bbq.webp",
+  img: "icons/environment/settlement/tavern.webp",
   command: "// pending",
   ownership,
   flags: {

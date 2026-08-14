@@ -18,7 +18,7 @@ const SYSTEM_VERSION = "4.4.4";
 const ITEM_ID = "HiddenDetectItm1";
 const ACTIVITY_ID = "HiddenDetectCfg1";
 const MACRO_ID = "HiddenDetectSync1";
-const IMG = "mh-icons/mystery-item.webp";
+const IMG = "icons/magic/perception/eye-ringed-green.webp";
 
 const toMacroCommand = (src) => src.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
 

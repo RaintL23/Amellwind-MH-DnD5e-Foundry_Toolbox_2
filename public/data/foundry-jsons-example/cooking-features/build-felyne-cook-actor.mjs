@@ -17,6 +17,9 @@ const SYSTEM_VERSION = "4.4.4";
 // Foundry DOCUMENT_OWNERSHIP_LEVELS.OBSERVER — players need item data for the meal menu.
 const CONST_PLAYER_OWNERSHIP = 2;
 
+const FELYNE_IMG = "icons/creatures/mammals/humanoid-cat-skulking-teal.webp";
+const KITCHEN_IMG = "icons/environment/settlement/tavern.webp";
+
 const randomId = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let id = "";
@@ -135,7 +138,7 @@ const makeUtilityActivity = ({ id, name, identifier, chatFlavor, condition = "" 
   type: "utility",
   sort: 0,
   name,
-  img: "mh-icons/bbq.webp",
+  img: KITCHEN_IMG,
   activation: {
     type: "action",
     value: 1,
@@ -287,7 +290,7 @@ const requestMeal = {
   _id: randomId(),
   name: "Request Meal (Rank 1)",
   type: "feat",
-  img: "mh-icons/bbq.webp",
+  img: KITCHEN_IMG,
   system: {
     description: {
       value: `<p><strong>Request Meal (Rank 1)</strong> — GM handoff</p>
@@ -354,7 +357,7 @@ const askTemplate = {
   _id: randomId(),
   name: "Ask for a Meal (Rank 1) (Template)",
   type: "feat",
-  img: "mh-icons/bbq.webp",
+  img: KITCHEN_IMG,
   system: {
     description: {
       value: `<p><strong>Ask for a Meal (Rank 1)</strong></p>
@@ -421,7 +424,7 @@ const kitchenAura = {
   _id: randomId(),
   name: "Camp Kitchen Aura",
   type: "feat",
-  img: "mh-icons/bbq.webp",
+  img: KITCHEN_IMG,
   system: {
     description: {
       value: `<p><strong>Camp Kitchen Aura (10 ft)</strong></p>
@@ -460,7 +463,7 @@ const kitchenAura = {
     {
       _id: kitchenAuraEffectId,
       name: "Camp Kitchen Aura (10 ft)",
-      img: "mh-icons/bbq.webp",
+      img: KITCHEN_IMG,
       type: "base",
       system: {},
       changes: [
@@ -564,7 +567,7 @@ const actor = {
   _id: randomId(),
   name: "Felyne Cook",
   type: "npc",
-  img: "mh-icons/bbq.webp",
+  img: FELYNE_IMG,
   system: {
     abilities: {
       str: abilityBlock(8),
@@ -671,7 +674,7 @@ const actor = {
     width: 1,
     height: 1,
     texture: {
-      src: "mh-icons/bbq.webp",
+      src: FELYNE_IMG,
       anchorX: 0.5,
       anchorY: 0.5,
       offsetX: 0,
@@ -778,7 +781,7 @@ const macroDoc = {
   _id: randomId(),
   name: "Felyne Cook — Kitchen Sync",
   type: "script",
-  img: "mh-icons/bbq.webp",
+  img: FELYNE_IMG,
   command: kitchenSyncMacro,
   folder: null,
   sort: 0,

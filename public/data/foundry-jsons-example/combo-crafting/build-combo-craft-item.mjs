@@ -24,7 +24,7 @@ const SYSTEM_VERSION = "4.4.4";
 // Deterministic 16-char ids so rebuilds update the pack in place (no churn).
 const ITEM_ID = "ComboCraftItem01";
 const ACTIVITY_ID = "ComboCraftAct001";
-const IMG = "mh-icons/book.webp";
+const IMG = "icons/sundries/books/book-red-exclamation.webp";
 
 /** Extract a top-level exported array literal from a TS source file via bracket matching. */
 function extractArrayLiteral(src, exportName) {

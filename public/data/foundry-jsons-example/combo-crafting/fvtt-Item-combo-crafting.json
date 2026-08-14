@@ -2,7 +2,7 @@
   "_id": "ComboCraftItem01",
   "name": "Combo Crafting",
   "type": "feat",
-  "img": "mh-icons/book.webp",
+  "img": "icons/sundries/books/book-red-exclamation.webp",
   "system": {
     "description": {
       "value": "<p><strong>Combo Crafting</strong> — the Monster Hunter combo list, on your sheet.</p>\n<p>Activate this feature to open the crafting panel. Pick a tool you own, choose a\nrecipe you have the ingredients for, select an ability score, and craft. The panel\nstays open so you can keep crafting.</p>\n<p><strong>Crafting Check:</strong> 1d20 + ability modifier + your proficiency bonus\n(only if you are proficient with the tool) + Combo Book bonus (+1 per distinct Combo\nBook volume you carry, max +5).</p>\n<ul>\n<li><strong>Success:</strong> both ingredients are consumed and the item is crafted.</li>\n<li><strong>Fail by 5 or less:</strong> only one ingredient (your choice) is consumed.</li>\n<li><strong>Fail by 6 or more:</strong> both ingredients are consumed.</li>\n</ul>\n<p><em>Only tools you carry in your inventory appear. Recipes whose ingredients you\nlack are greyed out. The crafted item must exist on your sheet, in the world, or in a\ncompendium (import the Amellwind items first).</em></p>\n<p><em>Requires MidiQOL + Item Macro. 123 recipes across 9 tools.</em></p>",
@@ -29,7 +29,7 @@
         "type": "utility",
         "sort": 0,
         "name": "Open Combo Crafting",
-        "img": "mh-icons/book.webp",
+        "img": "icons/sundries/books/book-red-exclamation.webp",
         "activation": {
           "type": "action",
           "value": 1,

@@ -2,7 +2,7 @@
   "_id": "1N09fgh9cyVDcalk",
   "name": "Felyne Dungmaster",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Dungmaster</strong> <em>(Daily Skill)</em></p><p>A creature hit by a dung bomb must succeed on a DC 12 Constitution saving throw or immediately use its reaction, if available, to move as far as its speed allows away from you. The creature doesn&apos;t move into obviously dangerous ground, such as fire or a pit.</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -29,7 +29,7 @@
         "type": "utility",
         "sort": 0,
         "name": "Dung Bomb Fear",
-        "img": "mh-icons/bbq.webp",
+        "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
         "activation": {
           "type": "special",
           "value": null,
@@ -137,7 +137,7 @@
     {
       "_id": "d4IMNlrFCEP2Sdx5",
       "name": "Felyne Dungmaster",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

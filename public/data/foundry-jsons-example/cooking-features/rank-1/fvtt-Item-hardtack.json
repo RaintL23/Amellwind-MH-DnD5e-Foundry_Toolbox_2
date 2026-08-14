@@ -2,7 +2,7 @@
   "_id": "uEj6SKelRjBaedwN",
   "name": "Hardtack",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/grains/breadsticks-crackers-wrapped-ration-brown.webp",
   "system": {
     "description": {
       "value": "<p><strong>Hardtack</strong> <em>(Cooking Rank 1)</em></p><p>Reduces the casting time of rituals by half.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",

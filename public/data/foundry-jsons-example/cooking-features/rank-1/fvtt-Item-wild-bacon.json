@@ -2,7 +2,7 @@
   "_id": "LV2rKgFq6bwb61Jk",
   "name": "Wild Bacon",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/food/cooked-drumstick-bone-brown.webp",
   "system": {
     "description": {
       "value": "<p><strong>Wild Bacon</strong> <em>(Cooking Rank 1)</em></p><p>Your walking speed is increased by 5 feet.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "3B0KBn7Wt6PESk97",
       "name": "Wild Bacon",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/consumables/food/cooked-drumstick-bone-brown.webp",
       "type": "base",
       "system": {},
       "changes": [

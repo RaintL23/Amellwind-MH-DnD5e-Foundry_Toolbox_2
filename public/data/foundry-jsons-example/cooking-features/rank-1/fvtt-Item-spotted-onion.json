@@ -2,7 +2,7 @@
   "_id": "DFySzk2AKXkieIAg",
   "name": "Spotted Onion",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/plants/sprout-leaf-herb-green.webp",
   "system": {
     "description": {
       "value": "<p><strong>Spotted Onion</strong> <em>(Cooking Rank 1)</em></p><p>You have blindsight out to a range of 5 feet.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "8NwfIEr4zi9YWcs2",
       "name": "Spotted Onion",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/consumables/plants/sprout-leaf-herb-green.webp",
       "type": "base",
       "system": {},
       "changes": [

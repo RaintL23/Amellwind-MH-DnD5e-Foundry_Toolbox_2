@@ -2,7 +2,7 @@
   "_id": "isB4pwv7DCmZvIFw",
   "name": "Felyne Gatherer (Lo)",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
   "system": {
     "description": {
       "value": "<p><strong>Felyne Gatherer (Lo)</strong> <em>(Daily Skill)</em></p><p>Increase the number of resources you can gain on a hunt by 2.</p><p><em>Artisan Cooking Daily Skill. Gained when a meal succeeds by 4+ (roll once) or by 8+ (roll twice). Apply to hunters who ate the meal; duration is typically until the end of the hunt or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "rLHkq2XdqJJOPRi1",
       "name": "Felyne Gatherer (Lo)",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/creatures/mammals/humanoid-cat-skulking-teal.webp",
       "type": "base",
       "system": {},
       "changes": [

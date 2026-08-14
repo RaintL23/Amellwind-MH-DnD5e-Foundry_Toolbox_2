@@ -205,7 +205,7 @@
         "_id": "PIyeRBXFolVYwx1O",
         "sort": 200000,
         "name": "Artillery Shells",
-        "img": "icons/weapons/ammunition/bullets-triple-orange.webp",
+        "img": "icons/weapons/ammunition/bullets-cartridge-shell-gray.webp",
         "activation": {
           "type": "bonus",
           "value": 1,
@@ -1043,7 +1043,7 @@
     {
       "_id": "VL2YdVya790cDfa0",
       "name": "Integrated Shield (+2 AC)",
-      "img": "icons/equipment/shield/heater-steel-boss.webp",
+      "img": "icons/equipment/shield/heater-steel-boss-red.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
       "changes": [
         {
@@ -1099,7 +1099,7 @@
     {
       "_id": "rUysbEquQPxqmkF9",
       "name": "Gunlance AC (+1)",
-      "img": "icons/equipment/shield/heater-steel-boss.webp",
+      "img": "icons/equipment/shield/heater-steel-boss-red.webp",
       "description": "Rare Gunlance bonus AC from the rarity table.",
       "changes": [
         {

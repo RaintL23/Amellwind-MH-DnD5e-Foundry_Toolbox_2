@@ -2,7 +2,7 @@
   "_id": "6ZocSdw9P57utpRe",
   "name": "Tuna Head",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/meat/fish-whole-blue.webp",
   "system": {
     "description": {
       "value": "<p><strong>Tuna Head</strong> <em>(Cooking Rank 1)</em></p><p>Your swim speed is increased by 5 feet.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -39,7 +39,7 @@
     {
       "_id": "NLHXAk31D2xWDSQ5",
       "name": "Tuna Head",
-      "img": "mh-icons/bbq.webp",
+      "img": "icons/consumables/meat/fish-whole-blue.webp",
       "type": "base",
       "system": {},
       "changes": [

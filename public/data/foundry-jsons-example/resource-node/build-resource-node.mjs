@@ -19,7 +19,7 @@ const ITEM_ID = "ResNodeFeature01";
 const CFG_ACTIVITY_ID = "ResNodeCfgAct01";
 const GATHER_ACTIVITY_ID = "ResNodeGthAct01";
 const MACRO_ID = "ResNodeSyncMac01";
-const IMG = "mh-icons/herb.webp";
+const IMG = "icons/consumables/plants/herb-tied-bundle-green.webp";
 
 const toMacroCommand = (src) => src.replace(/\r\n/g, "\n").replace(/\n/g, "\r\n");
 

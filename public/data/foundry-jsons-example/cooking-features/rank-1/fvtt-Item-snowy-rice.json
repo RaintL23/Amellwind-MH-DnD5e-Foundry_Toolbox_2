@@ -2,7 +2,7 @@
   "_id": "b2vaEZS53XmxhgXV",
   "name": "Snowy Rice",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/grains/sack-rice-open-brown.webp",
   "system": {
     "description": {
       "value": "<p><strong>Snowy Rice</strong> <em>(Cooking Rank 1)</em></p><p>While holding your weapon in darkness it sheds moonlight, creating bright light in a 15-foot radius and dim light for an additional 15 feet.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",

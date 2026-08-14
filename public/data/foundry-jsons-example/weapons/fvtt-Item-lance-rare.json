@@ -302,7 +302,7 @@
         "_id": "LnCtRp0stEAtt4ck",
         "sort": 201000,
         "name": "Counter-Thrust: Riposte",
-        "img": "icons/weapons/polearms/spear-horse-brown.webp",
+        "img": "icons/weapons/polearms/spear-hooked-brown.webp",
         "activation": {
           "type": "special",
           "value": null,
@@ -588,7 +588,7 @@
     {
       "_id": "wbYuLpZq0gPXciHt",
       "name": "Lance AC (+1)",
-      "img": "icons/equipment/shield/heater-steel-boss.webp",
+      "img": "icons/equipment/shield/heater-steel-boss-red.webp",
       "description": "Rare Lance bonus AC from the rarity table.",
       "changes": [
         {

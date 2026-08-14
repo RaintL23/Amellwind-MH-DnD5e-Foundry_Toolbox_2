@@ -2,7 +2,7 @@
   "_id": "TxS87xArJUuTDEUw",
   "name": "Moofa Butter",
   "type": "feat",
-  "img": "mh-icons/bbq.webp",
+  "img": "icons/consumables/food/bowl-stew-brown.webp",
   "system": {
     "description": {
       "value": "<p><strong>Moofa Butter</strong> <em>(Cooking Rank 1)</em></p><p>Once per meal, when you fail a Constitution saving throw to maintain concentration, you can reroll the d20, taking the new result.</p><p><em>Artisan Cooking Rank 1 meal boon (DC 10). Apply after eating a successful meal. Duration is typically until your next meal or 24 hours (DM&apos;s call), unless noted otherwise.</em></p>",
@@ -29,7 +29,7 @@
         "type": "utility",
         "sort": 0,
         "name": "Reroll Concentration",
-        "img": "mh-icons/bbq.webp",
+        "img": "icons/consumables/food/bowl-stew-brown.webp",
         "activation": {
           "type": "special",
           "value": null,
