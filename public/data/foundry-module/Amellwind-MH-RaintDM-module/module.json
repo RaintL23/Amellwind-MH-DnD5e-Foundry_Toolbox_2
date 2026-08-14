@@ -1,8 +1,8 @@
 {
   "id": "Amellwind-MH-RaintDM-module",
   "title": "Amellwind MH (RaintDM)",
-  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, runes, cooking features, combo crafting, hidden object detection, and resource gathering nodes for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
-  "version": "1.10.8",
+  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, runes, cooking features, combo crafting, hidden object detection, resource gathering nodes, and hunt monsters for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
+  "version": "1.11.0",
   "authors": [
     {
       "name": "RaintDM"
@@ -15,7 +15,8 @@
   "scripts": [
     "scripts/resource-node.js",
     "scripts/hidden-detection.js",
-    "scripts/felyne-cook.js"
+    "scripts/felyne-cook.js",
+    "scripts/dire-miralis.js"
   ],
   "relationships": {
     "systems": [
@@ -170,6 +171,17 @@
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OWNER"
       }
+    },
+    {
+      "name": "monsters",
+      "label": "Monsters",
+      "path": "packs/monsters",
+      "type": "Actor",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
     }
   ],
   "packFolders": [
@@ -207,6 +219,13 @@
             "resource-node-items",
             "resource-node-macros",
             "resource-node-actors"
+          ]
+        },
+        {
+          "name": "Monsters",
+          "sorting": "m",
+          "packs": [
+            "monsters"
           ]
         }
       ]

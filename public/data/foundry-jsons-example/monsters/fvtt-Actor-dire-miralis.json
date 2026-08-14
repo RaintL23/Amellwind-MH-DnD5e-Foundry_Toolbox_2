@@ -1,0 +1,5883 @@
+{
+  "_id": "0aMMGOEMZhdxQOnD",
+  "name": "Dire Miralis",
+  "type": "npc",
+  "img": "mh-tokens/dire-miralis.webp",
+  "system": {
+    "abilities": {
+      "str": {
+        "value": 24,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "dex": {
+        "value": 16,
+        "proficient": 1,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "con": {
+        "value": 21,
+        "proficient": 1,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "int": {
+        "value": 12,
+        "proficient": 0,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "wis": {
+        "value": 15,
+        "proficient": 1,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      },
+      "cha": {
+        "value": 9,
+        "proficient": 1,
+        "max": null,
+        "bonuses": {
+          "check": "",
+          "save": ""
+        }
+      }
+    },
+    "attributes": {
+      "ac": {
+        "flat": 18,
+        "calc": "flat",
+        "formula": ""
+      },
+      "hp": {
+        "value": 230,
+        "max": 230,
+        "temp": 0,
+        "tempmax": 0,
+        "formula": "15d20 + 75"
+      },
+      "init": {
+        "ability": "dex",
+        "bonus": ""
+      },
+      "movement": {
+        "burrow": null,
+        "climb": null,
+        "fly": null,
+        "swim": 40,
+        "walk": 30,
+        "units": "ft",
+        "hover": false
+      },
+      "attunement": {
+        "max": 3
+      },
+      "senses": {
+        "darkvision": 0,
+        "blindsight": 120,
+        "tremorsense": 0,
+        "truesight": 0,
+        "units": "ft",
+        "special": ""
+      },
+      "spellcasting": "",
+      "exhaustion": 0,
+      "concentration": {
+        "ability": ""
+      },
+      "death": {
+        "success": 0,
+        "failure": 0
+      },
+      "spell": {
+        "level": 0
+      }
+    },
+    "details": {
+      "biography": {
+        "value": "<h2>Dire Miralis</h2>\n<p><em>Gargantuan Dragon (Elder), Unaligned — Challenge 11 (Boss; ~10,000 XP)</em></p>\n<p>An Elder Dragon of boiling seas and volcanic vents. Place the token in the arena, roll initiative, and use the features on the sheet. Magma Armor, lava templates, Calamity Rain interrupt/detonation, Boiling Presence, and Scorching Hide run from the Amellwind module script.</p>\n<h3>Combat notes</h3>\n<ul>\n<li><strong>Stance:</strong> starts Biped (15-ft Claw, Crush). Shift Stance (legendary) toggles Quadruped (Tail Sweep, advantage vs prone).</li>\n<li><strong>Magma Armor:</strong> arms below 70% HP (161/230). Cold damage or an interrupted Calamity Rain cracks it; six cracks shatter it.</li>\n<li><strong>Calamity Rain:</strong> target up to six spaces, Charge, then either 40+ damage in one turn interrupts or Greater Fireball detonates on each marker at the start of its next turn.</li>\n<li><strong>Lair actions</strong> (optional, initiative 20): cannot repeat the same effect two rounds in a row.</li>\n</ul>",
+        "public": "A gargantuan Elder Dragon whose presence boils the sea."
+      },
+      "alignment": "Unaligned",
+      "race": "",
+      "type": {
+        "value": "dragon",
+        "subtype": "Elder",
+        "swarm": "",
+        "custom": ""
+      },
+      "environment": "Coastal / Tainted Sea Cove",
+      "cr": 11,
+      "spellLevel": 0,
+      "source": {
+        "custom": "Amellwind MH (RaintDM)",
+        "book": "RAINTDM",
+        "page": "",
+        "license": "",
+        "rules": "2024",
+        "revision": 1
+      },
+      "treasure": {
+        "value": []
+      }
+    },
+    "traits": {
+      "size": "grg",
+      "di": {
+        "value": [
+          "fire"
+        ],
+        "bypasses": [],
+        "custom": ""
+      },
+      "dr": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "dv": {
+        "value": [],
+        "bypasses": [],
+        "custom": ""
+      },
+      "ci": {
+        "value": [
+          "frightened"
+        ],
+        "custom": ""
+      },
+      "languages": {
+        "value": [
+          "draconic"
+        ],
+        "custom": ""
+      }
+    },
+    "currency": {
+      "pp": 0,
+      "gp": 0,
+      "ep": 0,
+      "sp": 0,
+      "cp": 0
+    },
+    "skills": {
+      "prc": {
+        "value": 1,
+        "ability": "",
+        "bonuses": {
+          "check": "",
+          "passive": ""
+        }
+      }
+    },
+    "tools": {},
+    "spells": {},
+    "bonuses": {
+      "mwak": {
+        "attack": "",
+        "damage": ""
+      },
+      "rwak": {
+        "attack": "",
+        "damage": ""
+      },
+      "msak": {
+        "attack": "",
+        "damage": ""
+      },
+      "rsak": {
+        "attack": "",
+        "damage": ""
+      },
+      "abilities": {
+        "check": "",
+        "save": "",
+        "skill": ""
+      },
+      "spell": {
+        "dc": ""
+      }
+    },
+    "resources": {
+      "legact": {
+        "value": 3,
+        "max": 3
+      },
+      "legres": {
+        "value": 3,
+        "max": 3
+      },
+      "lair": {
+        "value": true,
+        "initiative": 20,
+        "inside": true
+      }
+    }
+  },
+  "prototypeToken": {
+    "name": "Dire Miralis",
+    "displayName": 20,
+    "actorLink": true,
+    "appendNumber": false,
+    "prependAdjective": false,
+    "width": 4,
+    "height": 4,
+    "texture": {
+      "src": "mh-tokens/dire-miralis.webp",
+      "anchorX": 0.5,
+      "anchorY": 0.5,
+      "offsetX": 0,
+      "offsetY": 0,
+      "fit": "contain",
+      "scaleX": 1,
+      "scaleY": 1,
+      "rotation": 0,
+      "tint": "#ffffff",
+      "alphaThreshold": 0.75
+    },
+    "hexagonalShape": 0,
+    "lockRotation": false,
+    "rotation": 0,
+    "alpha": 1,
+    "disposition": -1,
+    "displayBars": 40,
+    "bar1": {
+      "attribute": "attributes.hp"
+    },
+    "bar2": {
+      "attribute": "resources.legact"
+    },
+    "light": {
+      "negative": false,
+      "priority": 0,
+      "alpha": 0.45,
+      "angle": 360,
+      "bright": 5,
+      "color": "#ff5500",
+      "coloration": 1,
+      "dim": 15,
+      "attenuation": 0.5,
+      "luminosity": 0.4,
+      "saturation": 0,
+      "contrast": 0,
+      "shadows": 0,
+      "animation": {
+        "type": "torch",
+        "speed": 4,
+        "intensity": 4,
+        "reverse": false
+      },
+      "darkness": {
+        "min": 0,
+        "max": 1
+      }
+    },
+    "sight": {
+      "enabled": true,
+      "range": 120,
+      "angle": 360,
+      "visionMode": "basic",
+      "color": "#ffaa66",
+      "attenuation": 0.1,
+      "brightness": 0,
+      "saturation": 0,
+      "contrast": 0
+    },
+    "detectionModes": [
+      {
+        "id": "blindsight",
+        "enabled": true,
+        "range": 120
+      }
+    ],
+    "flags": {
+      "world": {
+        "direMiralis": {
+          "bossNpc": true
+        }
+      }
+    },
+    "randomImg": false
+  },
+  "items": [
+    {
+      "_id": "OL5jt5GDLpAg1WOs",
+      "name": "Amphibious",
+      "type": "feat",
+      "img": "icons/commodities/biological/fin-red-green.webp",
+      "system": {
+        "description": {
+          "value": "<p>The Dire Miralis can breathe air and water.</p>",
+          "chat": "<p>The Dire Miralis can breathe air and water.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "amphibious",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {},
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 100000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "amphibious"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "SUcGNbaB6PWhEHFR",
+      "name": "Legendary Resistance",
+      "type": "feat",
+      "img": "icons/magic/symbols/runes-star-blue.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Legendary Resistance (3/Day).</strong> If the Dire Miralis fails a saving throw, it can choose to succeed instead.</p>",
+          "chat": "<p>The Dire Miralis succeeds on a failed saving throw.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "legendary-resistance",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "tcAhuyJHZopIKQZX": {
+            "_id": "tcAhuyJHZopIKQZX",
+            "type": "utility",
+            "sort": 0,
+            "name": "Succeed on a Failed Save",
+            "img": "icons/magic/symbols/runes-star-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "itemUses",
+                  "target": "",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Succeed on a Failed Save"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "legendary-resistance",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "3",
+          "recovery": [
+            {
+              "period": "day",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 100100,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "legendaryResistance"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "eBjVuE8iseuufnMe",
+      "name": "Siege Monster",
+      "type": "feat",
+      "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
+      "system": {
+        "description": {
+          "value": "<p>The Dire Miralis deals double damage to objects and structures.</p>",
+          "chat": "<p>Double damage to objects and structures.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "siege-monster",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {},
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 100200,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "siegeMonster"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "BZV8eFDZQ3dN0Icj",
+      "name": "Boiling Presence",
+      "type": "feat",
+      "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+      "system": {
+        "description": {
+          "value": "<p>The Dire Miralis radiates furnace heat. At the start of each of the Dire Miralis's turns, each creature within <strong>10 feet</strong> of it takes <strong>5 (1d10) fire damage</strong>.</p>\n<p><em>Automated by the Amellwind module script at the start of its turn.</em></p>",
+          "chat": "<p>Creatures within 10 feet take 1d10 fire damage at the start of the Dire Miralis's turn.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "boiling-presence",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {},
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [
+        {
+          "_id": "aQp81HOuoHrkxJFk",
+          "name": "Boiling Presence (10 ft)",
+          "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+          "type": "base",
+          "system": {},
+          "changes": [
+            {
+              "key": "flags.world.direMiralis.nearBoiling",
+              "mode": 5,
+              "value": "1",
+              "priority": 20
+            }
+          ],
+          "disabled": false,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "Furnace heat. Nearby creatures take 1d10 fire at the start of the Dire Miralis's turn.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": true,
+          "statuses": [],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "boilingPresence"
+              }
+            },
+            "ActiveAuras": {
+              "isAura": true,
+              "aura": "Enemy",
+              "radius": "10",
+              "alignment": "",
+              "type": "",
+              "customCheck": "",
+              "ignoreSelf": true,
+              "height": false,
+              "hidden": false,
+              "displayTemp": true,
+              "hostile": true,
+              "onlyOnce": false,
+              "wallsBlock": "system",
+              "statuses": []
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        }
+      ],
+      "folder": null,
+      "sort": 100300,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "boilingPresence"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "2SvuCrpWIzqysgId",
+      "name": "Tainted Sea Presence",
+      "type": "feat",
+      "img": "icons/commodities/biological/fin-red-green.webp",
+      "system": {
+        "description": {
+          "value": "<p>Any creature that <strong>enters</strong> or <strong>starts its turn</strong> in boiling/tainted water within <strong>60 feet</strong> of the Dire Miralis takes <strong>11 (2d10) fire damage</strong>. That water is difficult terrain for creatures other than the Dire Miralis.</p>\n<p><em>Lava and tainted-water templates placed by Magma Glob, Volcanic Vents, and lair actions are automated. Mark other boiling water with those templates as needed.</em></p>",
+          "chat": "<p>Boiling/tainted water within 60 ft: 2d10 fire on enter or start of turn; difficult terrain.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "tainted-sea-presence",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {},
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 100400,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "taintedSea"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "uS6CoJkkjvP01SBx",
+      "name": "Volcanic Vents",
+      "type": "feat",
+      "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+      "system": {
+        "description": {
+          "value": "<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. Those spaces become <strong>lava</strong> until the start of the Dire Miralis's next turn (see Magma Glob).</p>\n<p><em>Target two tokens/spaces, then use this feature. Lava templates expire at the start of its next turn.</em></p>",
+          "chat": "<p>DC 17 Dexterity vs 2d8 fire in up to two spaces; those spaces become lava.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "volcanic-vents",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "Y80J8gVSrzAOfJqf": {
+            "_id": "Y80J8gVSrzAOfJqf",
+            "type": "save",
+            "sort": 0,
+            "name": "Volcanic Vents",
+            "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "End of the Dire Miralis's turn",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Volcanic Vents"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 60,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "2",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "volcanic-vents",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 2,
+                  "denomination": 8,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "17"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 100500,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Volcanic Vents",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "volcanicVents"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "47zleFIlRphbLw2m",
+      "name": "Magma Armor",
+      "type": "feat",
+      "img": "icons/commodities/biological/shell-turtle-grey.webp",
+      "system": {
+        "description": {
+          "value": "<p>When the Dire Miralis is reduced below <strong>70%</strong> hit points, its hide hardens into a slag shell. While Magma Armor is active:</p>\n<ul>\n<li>Its AC becomes <strong>22</strong>.</li>\n<li>It has <strong>resistance to bludgeoning, piercing, and slashing damage</strong>.</li>\n</ul>\n<p><strong>Cracking the Shell.</strong> Magma Armor <strong>cracks</strong> (the Dire Miralis loses the resistance—and its AC returns to 18—until the end of its next turn) when any of the following happens:</p>\n<ol>\n<li>It takes <strong>cold damage</strong>, or</li>\n<li>The hunters <strong>interrupt Calamity Rain</strong>.</li>\n</ol>\n<p>If Magma Armor has been cracked <strong>six</strong> times, the shell shatters: Magma Armor ends and can't return for the rest of the combat. Detonating Calamity Rain also cracks the shell once from heat shock (if it was active).</p>\n<p><em>Armed automatically from the module script.</em></p>",
+          "chat": "<p>Below 70% HP: AC 22 and resistance to B/P/S until cracked or shattered.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "magma-armor",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {},
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [
+        {
+          "_id": "Eubtiv4Ld2t9vy9P",
+          "name": "Magma Armor",
+          "img": "icons/commodities/biological/shell-turtle-grey.webp",
+          "type": "base",
+          "system": {},
+          "changes": [
+            {
+              "key": "system.attributes.ac.calc",
+              "mode": 5,
+              "value": "flat",
+              "priority": 50
+            },
+            {
+              "key": "system.attributes.ac.flat",
+              "mode": 5,
+              "value": "22",
+              "priority": 50
+            },
+            {
+              "key": "system.traits.dr.value",
+              "mode": 2,
+              "value": "bludgeoning",
+              "priority": 20
+            },
+            {
+              "key": "system.traits.dr.value",
+              "mode": 2,
+              "value": "piercing",
+              "priority": 20
+            },
+            {
+              "key": "system.traits.dr.value",
+              "mode": 2,
+              "value": "slashing",
+              "priority": 20
+            }
+          ],
+          "disabled": true,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "AC 22. Resistance to bludgeoning, piercing, and slashing.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": true,
+          "statuses": [],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "magmaArmor"
+              }
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        },
+        {
+          "_id": "j9NWs4HnVnaNQ25q",
+          "name": "Cracked Shell",
+          "img": "icons/commodities/biological/shell-turtle-grey.webp",
+          "type": "base",
+          "system": {},
+          "changes": [],
+          "disabled": true,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "Magma Armor is cracked. AC 18; no physical resistance until the end of the Dire Miralis's next turn.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": true,
+          "statuses": [],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "crackedShell"
+              }
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        }
+      ],
+      "folder": null,
+      "sort": 100600,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "magmaArmor"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "AcKEBpCyEIWeazEZ",
+      "name": "Stance (Biped / Quadruped)",
+      "type": "feat",
+      "img": "icons/skills/movement/figure-running-gray.webp",
+      "system": {
+        "description": {
+          "value": "<p>The Dire Miralis uses one stance at a time and can change it with <strong>Shift Stance</strong>.</p>\n<ul>\n<li><strong>Biped:</strong> melee reach <strong>15 feet</strong>; can use <strong>Crush</strong>.</li>\n<li><strong>Quadruped:</strong> melee reach <strong>10 feet</strong>; can use <strong>Tail Sweep</strong>; advantage on saving throws against being knocked prone.</li>\n</ul>\n<p>Starts in <strong>Biped</strong>. Claw reach updates when the stance changes.</p>",
+          "chat": "<p>Biped: 15-ft reach, Crush. Quadruped: 10-ft reach, Tail Sweep, advantage vs prone.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "stance-biped-quadruped",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {},
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [
+        {
+          "_id": "Xq3tKnBM7yWi53gI",
+          "name": "Biped Stance",
+          "img": "icons/skills/movement/figure-running-gray.webp",
+          "type": "base",
+          "system": {},
+          "changes": [],
+          "disabled": false,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "Melee reach 15 feet. Crush is available.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": true,
+          "statuses": [],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "stanceBiped"
+              }
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        },
+        {
+          "_id": "2NsRel2wfUlHshRH",
+          "name": "Quadruped Stance",
+          "img": "icons/skills/movement/figure-running-gray.webp",
+          "type": "base",
+          "system": {},
+          "changes": [],
+          "disabled": true,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "Melee reach 10 feet. Tail Sweep is available. Advantage on saves against being knocked prone.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": true,
+          "statuses": [],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "stanceQuadruped"
+              }
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        }
+      ],
+      "folder": null,
+      "sort": 100700,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "stance"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "ke369rmCDB9u8Dpn",
+      "name": "Multiattack",
+      "type": "feat",
+      "img": "icons/creatures/claws/claw-talons-glowing-orange.webp",
+      "system": {
+        "description": {
+          "value": "<p>The Dire Miralis makes two attacks, using <strong>Claw</strong>, <strong>Magma Glob</strong>, or one of each.</p>",
+          "chat": "<p>Two attacks: Claw, Magma Glob, or one of each.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "multiattack",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "iGj5ORoRwIDmnXWq": {
+            "_id": "iGj5ORoRwIDmnXWq",
+            "type": "utility",
+            "sort": 0,
+            "name": "Multiattack",
+            "img": "icons/creatures/claws/claw-talons-glowing-orange.webp",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Multiattack"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "multiattack",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 200000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "multiattack"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "6MlAcQweZqLjrIgV",
+      "name": "Claw",
+      "type": "weapon",
+      "img": "icons/creatures/claws/claw-talons-glowing-orange.webp",
+      "system": {
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "description": {
+          "value": "<p><em>Melee Weapon Attack:</em> +11 to hit, reach 10 ft. (15 ft. in Biped), one target.</p>\n<p><em>Hit:</em> <strong>25 (4d8 + 7)</strong> slashing damage plus <strong>4 (1d8)</strong> fire damage.</p>\n<p>Reach is updated automatically when the Dire Miralis changes stance.</p>",
+          "chat": "<p>+11 to hit, 4d8+7 slashing + 1d8 fire.</p>"
+        },
+        "identifier": "claw",
+        "quantity": 1,
+        "weight": {
+          "value": 0,
+          "units": "lb"
+        },
+        "price": {
+          "value": 0,
+          "denomination": "gp"
+        },
+        "attuned": false,
+        "attunement": "",
+        "equipped": true,
+        "rarity": "",
+        "identified": true,
+        "type": {
+          "value": "natural",
+          "baseItem": ""
+        },
+        "ability": "str",
+        "damage": {
+          "base": {
+            "number": 4,
+            "denomination": 8,
+            "types": [
+              "slashing"
+            ],
+            "custom": {
+              "enabled": false,
+              "formula": ""
+            },
+            "scaling": {
+              "number": 1,
+              "mode": ""
+            },
+            "bonus": ""
+          },
+          "versatile": {
+            "number": null,
+            "denomination": null,
+            "types": [],
+            "custom": {
+              "enabled": false,
+              "formula": ""
+            },
+            "scaling": {
+              "number": 1
+            }
+          }
+        },
+        "magicalBonus": null,
+        "properties": [],
+        "proficient": 1,
+        "range": {
+          "value": null,
+          "long": null,
+          "reach": 15,
+          "units": "ft"
+        },
+        "mastery": "",
+        "ammunition": {
+          "type": ""
+        },
+        "armor": {
+          "value": null
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "activities": {
+          "Big9D2lzVpY95Cuh": {
+            "_id": "Big9D2lzVpY95Cuh",
+            "type": "attack",
+            "sort": 0,
+            "name": "Claw",
+            "img": "icons/creatures/claws/claw-talons-glowing-orange.webp",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Claw"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": null,
+              "units": "ft",
+              "special": "Reach set by stance",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "claw",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "attack": {
+              "ability": "str",
+              "bonus": "",
+              "critical": {
+                "threshold": null
+              },
+              "flat": false,
+              "type": {
+                "value": "melee",
+                "classification": "weapon"
+              }
+            },
+            "damage": {
+              "critical": {
+                "bonus": ""
+              },
+              "includeBase": true,
+              "parts": [
+                {
+                  "number": 1,
+                  "denomination": 8,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ]
+            },
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "",
+            "otherActivityUuid": "",
+            "attackMode": "oneHanded",
+            "ammunition": "",
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "false"
+          }
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 200100,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "claw"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "a7qDGp5rGFBySwkx",
+      "name": "Magma Glob",
+      "type": "feat",
+      "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+      "system": {
+        "description": {
+          "value": "<p><em>Ranged Weapon Attack:</em> +7 to hit, range 80/320 ft., one target.</p>\n<p><em>Hit:</em> <strong>27 (5d10)</strong> fire damage, and the target's space becomes <strong>lava</strong> for <strong>1 hour</strong>. On a miss, the lava appears in an unoccupied space within 5 feet of the target.</p>\n<p>A creature that <strong>enters</strong> the lava or <strong>starts its turn</strong> there takes <strong>11 (2d10)</strong> fire damage. The lava ignites flammable objects not being worn or carried.</p>",
+          "chat": "<p>+7 to hit, 5d10 fire; space becomes lava (miss: adjacent space).</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "magma-glob",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "onL2XV3j0Dxg1cGw": {
+            "_id": "onL2XV3j0Dxg1cGw",
+            "type": "attack",
+            "sort": 0,
+            "name": "Magma Glob",
+            "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Magma Glob"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 80,
+              "units": "ft",
+              "special": "320 ft long range",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "magma-glob",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "attack": {
+              "ability": "dex",
+              "bonus": "",
+              "critical": {
+                "threshold": null
+              },
+              "flat": false,
+              "type": {
+                "value": "ranged",
+                "classification": "weapon"
+              }
+            },
+            "damage": {
+              "critical": {
+                "bonus": ""
+              },
+              "includeBase": false,
+              "parts": [
+                {
+                  "number": 5,
+                  "denomination": 10,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ]
+            },
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "",
+            "otherActivityUuid": "",
+            "attackMode": "oneHanded",
+            "ammunition": "",
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "false"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 200200,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Magma Glob",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "magmaGlob"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "6Q1By9HatWH3uUtk",
+      "name": "Crush",
+      "type": "feat",
+      "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Biped Only.</strong> The Dire Miralis slams down in a <strong>20-foot-by-20-foot square</strong> originating from an edge of its space. Each creature in that area must make a <strong>DC 19 Strength or Dexterity</strong> saving throw (target's choice).</p>\n<p><em>Failure:</em> <strong>18 (4d8)</strong> bludgeoning + <strong>18 (4d8)</strong> fire damage, and the creature is knocked <strong>prone</strong>.</p>\n<p><em>Success:</em> half damage, not prone, and the creature is pushed to the nearest unoccupied space outside the area (or falls prone in the Dire Miralis's space if none exists).</p>",
+          "chat": "<p>Biped. 20-ft square, DC 19 Str/Dex: 4d8 bludgeoning + 4d8 fire, prone on a fail.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "crush",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "bxEkAynVQps5puW1": {
+            "_id": "bxEkAynVQps5puW1",
+            "type": "save",
+            "sort": 0,
+            "name": "Crush",
+            "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "Biped stance only",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Crush"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [
+              {
+                "_id": "fD6CUIHRvNkEA3NC",
+                "onSave": false
+              }
+            ],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "square",
+                "size": "20",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "crush",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 4,
+                  "denomination": 8,
+                  "types": [
+                    "bludgeoning"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                },
+                {
+                  "number": 4,
+                  "denomination": 8,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ],
+              "onSave": "half"
+            },
+            "save": {
+              "ability": [
+                "str",
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "19"
+              }
+            },
+            "useConditionText": "@actor.flags.world.direMiralis.stance != \"quadruped\"",
+            "useConditionReason": "Crush can only be used in Biped stance.",
+            "effectConditionText": "failedSave",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [
+        {
+          "_id": "fD6CUIHRvNkEA3NC",
+          "name": "Prone",
+          "img": "systems/dnd5e/icons/svg/statuses/prone.svg",
+          "type": "base",
+          "system": {},
+          "changes": [],
+          "disabled": false,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "Knocked prone by Crush.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": false,
+          "statuses": [
+            "prone"
+          ],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "crushProne"
+              }
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        }
+      ],
+      "folder": null,
+      "sort": 200300,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Crush",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "crush"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "Mu2VcYZSduIkomGA",
+      "name": "Tail Sweep",
+      "type": "feat",
+      "img": "icons/commodities/biological/tail-spiked-green.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Quadruped Only.</strong> The Dire Miralis sweeps its tail in a <strong>30-foot cone</strong>. Each creature in that area must succeed on a <strong>DC 19 Dexterity</strong> saving throw or take <strong>22 (4d6 + 7)</strong> bludgeoning damage and be pushed <strong>10 feet</strong> away. On a success, half damage and no push.</p>",
+          "chat": "<p>Quadruped. 30-ft cone, DC 19 Dex: 4d6+7 bludgeoning and 10-ft push.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "tail-sweep",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "bArVy1240iGFBogT": {
+            "_id": "bArVy1240iGFBogT",
+            "type": "save",
+            "sort": 0,
+            "name": "Tail Sweep",
+            "img": "icons/commodities/biological/tail-spiked-green.webp",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "Quadruped stance only",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Tail Sweep"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "cone",
+                "size": "30",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "tail-sweep",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 4,
+                  "denomination": 6,
+                  "types": [
+                    "bludgeoning"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": "+7"
+                }
+              ],
+              "onSave": "half"
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "19"
+              }
+            },
+            "useConditionText": "@actor.flags.world.direMiralis.stance == \"quadruped\"",
+            "useConditionReason": "Tail Sweep can only be used in Quadruped stance.",
+            "effectConditionText": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 200400,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Tail Sweep",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "tailSweep"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "cSbwzzihUMMYFccj",
+      "name": "Greater Fireball",
+      "type": "feat",
+      "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Recharge 5–6.</strong> The Dire Miralis exhales a massive fireball centered on a point it can see within <strong>150 feet</strong>. Each creature in a <strong>25-foot-radius sphere</strong> must make a <strong>DC 17 Dexterity</strong> saving throw, taking <strong>38 (11d6)</strong> fire damage on a failed save, or half as much on a successful one.</p>",
+          "chat": "<p>Recharge 5–6. 25-ft radius, 150 ft, DC 17 Dex, 11d6 fire.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "greater-fireball",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "s9BSpRz0gdgtiWeA": {
+            "_id": "s9BSpRz0gdgtiWeA",
+            "type": "save",
+            "sort": 0,
+            "name": "Greater Fireball",
+            "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "itemUses",
+                  "target": "",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Greater Fireball"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 150,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "sphere",
+                "size": "25",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "greater-fireball",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 11,
+                  "denomination": 6,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ],
+              "onSave": "half"
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "17"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "1",
+          "recovery": [
+            {
+              "period": "recharge",
+              "type": "recoverAll",
+              "formula": "5"
+            }
+          ]
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 200500,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": ""
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "greaterFireball"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "JKukFf9WpMbYXzON",
+      "name": "Calamity Rain",
+      "type": "feat",
+      "img": "icons/magic/fire/beam-jet-stream-yellow.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>1/Day; Enrage Nova.</strong></p>\n<p><strong>Charge (action):</strong> The Dire Miralis coils and glows. Until the start of its next turn it is visibly charging. Place <strong>six</strong> glowing markers in spaces it can see within <strong>120 feet</strong>. While charging, it can't take reactions, and damage it takes is tallied for the interrupt.</p>\n<p><strong>Interrupt:</strong> If the Dire Miralis takes <strong>40 or more damage in one turn</strong> during the charge (before detonation), the nova fails. It is knocked <strong>prone</strong>, Magma Armor <strong>cracks</strong> (if active), and it can't use Legendary Actions until the end of its next turn.</p>\n<p><strong>Detonation</strong> (start of its next turn, if not interrupted): Greater Fireball erupts on each detonation zone. After detonating, Magma Armor <strong>cracks</strong> once from the heat shock (if it was active).</p>\n<p><em>Target up to six tokens/spaces as markers, then use Charge. Interrupt and detonation are automated.</em></p>",
+          "chat": "<p>Charge: 6 markers within 120 ft. 40+ damage in one turn interrupts. Else Greater Fireball on each zone.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "calamity-rain",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "czcU768ZPsSn3AwM": {
+            "_id": "czcU768ZPsSn3AwM",
+            "type": "utility",
+            "sort": 0,
+            "name": "Calamity Rain — Charge",
+            "img": "icons/magic/fire/beam-jet-stream-yellow.webp",
+            "activation": {
+              "type": "action",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "itemUses",
+                  "target": "",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Calamity Rain — Charge"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 120,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "6",
+                "type": "any",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "calamity-rain-charge",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "1",
+          "recovery": [
+            {
+              "period": "day",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        }
+      },
+      "effects": [
+        {
+          "_id": "XwnyUXpbCwMACG9W",
+          "name": "Calamity Rain — Charging",
+          "img": "icons/magic/fire/beam-jet-stream-yellow.webp",
+          "type": "base",
+          "system": {},
+          "changes": [],
+          "disabled": true,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "Coiling and glowing. Cannot take reactions. 40+ damage in one turn interrupts the nova.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": true,
+          "statuses": [],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "calamityCharging"
+              }
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        }
+      ],
+      "folder": null,
+      "sort": 200600,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Calamity Rain",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "calamityRain"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "7CXbNFj1cbrHNeG0",
+      "name": "Lumbering Advance",
+      "type": "feat",
+      "img": "icons/skills/movement/figure-running-gray.webp",
+      "system": {
+        "description": {
+          "value": "<p>The Dire Miralis moves up to <strong>half its speed</strong>. This movement doesn't provoke opportunity attacks if it ends the move in water or adjacent to a structure or Huge or larger object.</p>",
+          "chat": "<p>Bonus action: move half speed. No OA if it ends in water or next to a structure / Huge+ object.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "lumbering-advance",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "nHeaz8nAj8F5dbBu": {
+            "_id": "nHeaz8nAj8F5dbBu",
+            "type": "utility",
+            "sort": 0,
+            "name": "Lumbering Advance",
+            "img": "icons/skills/movement/figure-running-gray.webp",
+            "activation": {
+              "type": "bonus",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Lumbering Advance"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "lumbering-advance",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 300000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Lumbering Advance",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "lumberingAdvance"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "PO3U6QiO4ZtfX4oX",
+      "name": "Scorching Hide",
+      "type": "feat",
+      "img": "icons/commodities/biological/wing-lizard-brown.webp",
+      "system": {
+        "description": {
+          "value": "<p>When the Dire Miralis is hit by a melee attack, the attacker takes <strong>9 (2d8)</strong> fire damage.</p>",
+          "chat": "<p>Reaction: when hit by a melee attack, the attacker takes 2d8 fire.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "scorching-hide",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "Daft4Zu1BUeGJhU0": {
+            "_id": "Daft4Zu1BUeGJhU0",
+            "type": "damage",
+            "sort": 0,
+            "name": "Scorching Hide",
+            "img": "icons/commodities/biological/wing-lizard-brown.webp",
+            "activation": {
+              "type": "reaction",
+              "value": 1,
+              "condition": "When hit by a melee attack",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Scorching Hide"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 5,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "scorching-hide",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "critical": {
+                "allow": false,
+                "bonus": ""
+              },
+              "parts": [
+                {
+                  "number": 2,
+                  "denomination": 8,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ]
+            },
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 400000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "isHit && meleeAttack",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "",
+          "onUseMacroParts": {
+            "items": []
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "world": {
+          "direMiralis": {
+            "role": "scorchingHide"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "T9g5XGVSz1rKsBiz",
+      "name": "Shift Stance",
+      "type": "feat",
+      "img": "icons/skills/movement/figure-running-gray.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Legendary Action.</strong> The Dire Miralis switches between Biped and Quadruped, or moves up to <strong>half its speed</strong> without provoking opportunity attacks.</p>",
+          "chat": "<p>Legendary: switch stance, or move half speed with no OA.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "shift-stance",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "Rv9G8pe09tzcXFir": {
+            "_id": "Rv9G8pe09tzcXFir",
+            "type": "utility",
+            "sort": 0,
+            "name": "Switch Stance",
+            "img": "icons/skills/movement/figure-running-gray.webp",
+            "activation": {
+              "type": "legendary",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "attribute",
+                  "target": "resources.legact.value",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Switch Stance"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "shift-stance-toggle",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "sONZN7Yc7Fly7Kl1": {
+            "_id": "sONZN7Yc7Fly7Kl1",
+            "type": "utility",
+            "sort": 1000,
+            "name": "Reposition (Half Speed)",
+            "img": "icons/skills/movement/figure-running-gray.webp",
+            "activation": {
+              "type": "legendary",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "attribute",
+                  "target": "resources.legact.value",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Reposition (Half Speed)"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "shift-stance-move",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 500000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Shift Stance",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "shiftStance"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "zF3xSLubAmf9DAwy",
+      "name": "Tremor",
+      "type": "feat",
+      "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Legendary Action.</strong> Each creature on the ground within <strong>30 feet</strong> of the Dire Miralis must succeed on a <strong>DC 19 Dexterity</strong> saving throw or fall <strong>prone</strong>.</p>",
+          "chat": "<p>Legendary: 30-ft, DC 19 Dex or prone.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "tremor",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "dK3ybQBbjDIqqx2v": {
+            "_id": "dK3ybQBbjDIqqx2v",
+            "type": "save",
+            "sort": 0,
+            "name": "Tremor",
+            "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
+            "activation": {
+              "type": "legendary",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "attribute",
+                  "target": "resources.legact.value",
+                  "value": "1",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Tremor"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [
+              {
+                "_id": "k11Rlx1BPNgYeQne",
+                "onSave": false
+              }
+            ],
+            "range": {
+              "value": 30,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "radius",
+                "size": "30",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "tremor",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "19"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "failedSave",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [
+        {
+          "_id": "k11Rlx1BPNgYeQne",
+          "name": "Prone",
+          "img": "systems/dnd5e/icons/svg/statuses/prone.svg",
+          "type": "base",
+          "system": {},
+          "changes": [],
+          "disabled": false,
+          "duration": {
+            "startTime": null,
+            "seconds": null,
+            "combat": null,
+            "rounds": null,
+            "turns": null,
+            "startRound": null,
+            "startTurn": null
+          },
+          "description": "Knocked prone by Tremor.",
+          "origin": null,
+          "tint": "#ffffff",
+          "transfer": false,
+          "statuses": [
+            "prone"
+          ],
+          "sort": 0,
+          "flags": {
+            "dae": {
+              "enableCondition": "",
+              "selfTarget": false,
+              "selfTargetAlways": false,
+              "stackable": "noneName",
+              "showIcon": true,
+              "durationExpression": "",
+              "specialDuration": [],
+              "disableIncapacitated": false,
+              "dontApply": false
+            },
+            "world": {
+              "direMiralis": {
+                "kind": "tremorProne"
+              }
+            }
+          },
+          "_stats": {
+            "compendiumSource": null,
+            "duplicateSource": null,
+            "coreVersion": "12.331",
+            "systemId": "dnd5e",
+            "systemVersion": "4.4.4",
+            "createdTime": null,
+            "modifiedTime": null,
+            "lastModifiedBy": null
+          }
+        }
+      ],
+      "folder": null,
+      "sort": 500100,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Tremor",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "tremor"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "NmVuAn1oiocdu8Nh",
+      "name": "Magma Attack",
+      "type": "feat",
+      "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis makes one <strong>Magma Glob</strong> attack.</p>",
+          "chat": "<p>Legendary (2): one Magma Glob attack.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "magma-attack",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "87RbfPMNW6OJ5se1": {
+            "_id": "87RbfPMNW6OJ5se1",
+            "type": "attack",
+            "sort": 0,
+            "name": "Magma Glob",
+            "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+            "activation": {
+              "type": "legendary",
+              "value": 2,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "attribute",
+                  "target": "resources.legact.value",
+                  "value": "2",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Magma Glob"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 80,
+              "units": "ft",
+              "special": "320 ft long range",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "magma-attack",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "attack": {
+              "ability": "dex",
+              "bonus": "",
+              "critical": {
+                "threshold": null
+              },
+              "flat": false,
+              "type": {
+                "value": "ranged",
+                "classification": "weapon"
+              }
+            },
+            "damage": {
+              "critical": {
+                "bonus": ""
+              },
+              "includeBase": false,
+              "parts": [
+                {
+                  "number": 5,
+                  "denomination": 10,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ]
+            },
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "",
+            "otherActivityUuid": "",
+            "attackMode": "oneHanded",
+            "ammunition": "",
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "false"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 500200,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Magma Attack",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "magmaGlob"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "fqNr37exebPTKUJh",
+      "name": "Vent Barrage",
+      "type": "feat",
+      "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis uses <em>Volcanic Vents</em>, targeting up to <strong>three</strong> spaces instead of two.</p>",
+          "chat": "<p>Legendary (2): Volcanic Vents on up to three spaces.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "vent-barrage",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "jW2PUGwpzk2JMl0C": {
+            "_id": "jW2PUGwpzk2JMl0C",
+            "type": "save",
+            "sort": 0,
+            "name": "Vent Barrage",
+            "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
+            "activation": {
+              "type": "legendary",
+              "value": 2,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": [
+                {
+                  "type": "attribute",
+                  "target": "resources.legact.value",
+                  "value": "2",
+                  "scaling": {
+                    "mode": "",
+                    "formula": ""
+                  }
+                }
+              ]
+            },
+            "description": {
+              "chatFlavor": "Vent Barrage"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 60,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "3",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "vent-barrage",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 2,
+                  "denomination": 8,
+                  "types": [
+                    "fire"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "17"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 500300,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Vent Barrage",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "ventBarrage"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "jzN3JF6AIf6NwmEG",
+      "name": "Lair: Rising Magma Tide",
+      "type": "feat",
+      "img": "icons/environment/settlement/quarry.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong> (losing initiative ties).</p>\n<p>Boiling water or lava spreads <strong>10 feet</strong> inland from the current waterline along a 40-foot-wide front. New spaces use <em>Boiling Presence</em> / lava hazards.</p>\n<p>Cannot use the same lair effect two rounds in a row.</p>",
+          "chat": "<p>Lair: 40-ft front of boiling water / lava spreads 10 ft inland.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "lair-rising-magma-tide",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "gVbWqHE37zhhv0RQ": {
+            "_id": "gVbWqHE37zhhv0RQ",
+            "type": "utility",
+            "sort": 0,
+            "name": "Rising Magma Tide",
+            "img": "icons/environment/settlement/quarry.webp",
+            "activation": {
+              "type": "lair",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Rising Magma Tide"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 60,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "any",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "rising-magma-tide",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 600000,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Lair: Rising Magma Tide",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "risingMagmaTide"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "q3gpEqqSUOoPKSvX",
+      "name": "Lair: Wreck Collapse",
+      "type": "feat",
+      "img": "icons/environment/settlement/quarry.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>\n<p>One shipwreck section within 60 feet partially collapses. Creatures in a <strong>15-foot square</strong> there must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>14 (4d6)</strong> bludgeoning damage and be <strong>restrained</strong> (escape DC 17). The area becomes difficult terrain and provides half cover afterward.</p>\n<p>Cannot use the same lair effect two rounds in a row.</p>",
+          "chat": "<p>Lair: 15-ft square, DC 17 Dex, 4d6 bludgeoning and restrained; difficult terrain + half cover.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "lair-wreck-collapse",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "1DJsbkmjXppIHISF": {
+            "_id": "1DJsbkmjXppIHISF",
+            "type": "save",
+            "sort": 0,
+            "name": "Wreck Collapse",
+            "img": "icons/environment/settlement/quarry.webp",
+            "activation": {
+              "type": "lair",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Wreck Collapse"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 60,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "square",
+                "size": "15",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "wreck-collapse",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 4,
+                  "denomination": 6,
+                  "types": [
+                    "bludgeoning"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "17"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 600100,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Lair: Wreck Collapse",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "wreckCollapse"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "inBxn3hBAwp3VObH",
+      "name": "Lair: Blood-Red Steam",
+      "type": "feat",
+      "img": "icons/environment/settlement/quarry.webp",
+      "system": {
+        "description": {
+          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>\n<p>A scalding steam cloud fills a <strong>20-foot cube</strong> the Dire Miralis can see within 60 feet until initiative count 20 on the next round. The area is heavily obscured; any creature that starts its turn there takes <strong>7 (2d6)</strong> fire damage.</p>\n<p>Cannot use the same lair effect two rounds in a row.</p>",
+          "chat": "<p>Lair: 20-ft cube of steam, heavily obscured, 2d6 fire at start of turn.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "RAINTDM",
+          "page": "",
+          "license": "",
+          "rules": "2024",
+          "revision": 1
+        },
+        "identifier": "lair-blood-red-steam",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "MSUVznxQGBmx9gn4": {
+            "_id": "MSUVznxQGBmx9gn4",
+            "type": "utility",
+            "sort": 0,
+            "name": "Blood-Red Steam",
+            "img": "icons/environment/settlement/quarry.webp",
+            "activation": {
+              "type": "lair",
+              "value": 1,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Blood-Red Steam"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "value": 60,
+              "units": "ft",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "cube",
+                "size": "20",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "any",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": true,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "default",
+              "autoTargetType": "any",
+              "autoTargetAction": "default",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "blood-red-steam",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 600200,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Lair: Blood-Red Steam",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "direMiralis": {
+            "role": "bloodRedSteam"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "world": {
+      "direMiralis": {
+        "bossNpc": true,
+        "stance": "biped",
+        "magmaArmor": {
+          "unlocked": false,
+          "shattered": false,
+          "cracked": false,
+          "cracks": 0
+        },
+        "calamity": {
+          "charging": false,
+          "interrupted": false,
+          "damageByTurn": {},
+          "markerIds": []
+        }
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

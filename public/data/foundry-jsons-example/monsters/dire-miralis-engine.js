@@ -1,0 +1,1083 @@
+/**
+ * Dire Miralis — combat automation (Foundry v12 / dnd5e 4.4 / Midi QOL 12.x).
+ * Loaded as a module script on every client; GM-only mutations run on the active GM.
+ *
+ * Handles: Magma Armor (70% HP / cracks / shatter), stance reach, Boiling Presence,
+ * lava + tainted-water hazards, Calamity Rain charge/interrupt/detonation,
+ * Scorching Hide fallback, quadruped advantage vs prone, lair-action cooldown.
+ */
+(() => {
+  const NS = "direMiralis";
+  const FLAG = `flags.world.${NS}`;
+  const MAGMA_HP_FRACTION = 0.7;
+  const MAGMA_CRACKS_TO_SHATTER = 6;
+  const CALAMITY_INTERRUPT_DAMAGE = 40;
+  const LAVA_DAMAGE = "2d10";
+  const BOILING_DAMAGE = "1d10";
+  const STEAM_DAMAGE = "2d6";
+  const FIREBALL_DAMAGE = "11d6";
+  const FIREBALL_DC = 17;
+  const FIREBALL_RADIUS_FT = 25;
+
+  const isActiveGM = () =>
+    Boolean(game.user?.isGM) &&
+    (!game.users?.activeGM || game.users.activeGM.id === game.user.id);
+
+  const getFlag = (doc, path, fallback = undefined) => {
+    if (!doc) return fallback;
+    const value = foundry.utils.getProperty(doc, `${FLAG}.${path}`);
+    return value === undefined ? fallback : value;
+  };
+
+  const isBoss = (actor) => Boolean(actor && getFlag(actor, "bossNpc") === true);
+
+  const bossActors = () =>
+    (game.actors?.contents ?? []).filter((a) => isBoss(a));
+
+  const bossTokens = (actor) =>
+    (canvas?.tokens?.placeables ?? []).filter((t) => t.actor && (t.actor === actor || t.actor.id === actor?.id));
+
+  const speakerFor = (actor) => ChatMessage.getSpeaker({ actor });
+
+  const chat = async (actor, html, { whisperGM = false } = {}) => {
+    const data = {
+      speaker: speakerFor(actor),
+      content: html,
+    };
+    if (whisperGM) {
+      data.whisper = game.users.filter((u) => u.isGM).map((u) => u.id);
+    }
+    await ChatMessage.create(data);
+  };
+
+  const measureDistanceFt = (tokenA, tokenB) => {
+    if (!tokenA || !tokenB) return Infinity;
+    if (typeof MidiQOL?.computeDistance === "function") {
+      const d = Number(MidiQOL.computeDistance(tokenA, tokenB, { wallsBlock: false }));
+      if (Number.isFinite(d)) return d;
+    }
+    if (typeof canvas.grid?.measurePath === "function") {
+      const path = canvas.grid.measurePath([tokenA.center, tokenB.center]);
+      const d = Number(path?.distance ?? path?.spaces);
+      if (Number.isFinite(d)) return d;
+    }
+    const dx = tokenA.center.x - tokenB.center.x;
+    const dy = tokenA.center.y - tokenB.center.y;
+    const px = Math.hypot(dx, dy);
+    const grid = canvas.grid?.size || 100;
+    const ft = canvas.grid?.distance || 5;
+    return (px / grid) * ft;
+  };
+
+  const tokensInRange = (origin, rangeFt, { excludeSelf = true } = {}) => {
+    if (!origin) return [];
+    return (canvas.tokens?.placeables ?? []).filter((t) => {
+      if (!t.visible && !game.user.isGM) return false;
+      if (!t.actor) return false;
+      if (excludeSelf && (t.id === origin.id || t.actor.id === origin.actor?.id)) return false;
+      if (t.actor.system?.attributes?.hp?.value <= 0) return false;
+      return measureDistanceFt(origin, t) <= rangeFt + 0.5;
+    });
+  };
+
+  const evaluateRoll = async (formula) => {
+    const roll = await new Roll(formula).evaluate();
+    return roll;
+  };
+
+  const applyFireDamage = async ({ tokens, formula, flavor, type = "fire", item = null }) => {
+    const list = (tokens ?? []).filter((t) => t?.actor);
+    if (!list.length) return null;
+    const roll = await evaluateRoll(formula);
+    await roll.toMessage({
+      speaker: speakerFor(item?.actor ?? list[0]?.actor),
+      flavor,
+    });
+    const total = Number(roll.total) || 0;
+    if (typeof MidiQOL?.applyTokenDamage === "function") {
+      await MidiQOL.applyTokenDamage(
+        [{ damage: total, type }],
+        total,
+        new Set(list),
+        item,
+        new Set(),
+      );
+      return roll;
+    }
+    for (const token of list) {
+      const actor = token.actor;
+      if (typeof actor.applyDamage === "function") {
+        try {
+          await actor.applyDamage([{ value: total, type }]);
+        } catch {
+          await actor.applyDamage(total);
+        }
+      }
+    }
+    return roll;
+  };
+
+  const rollSave = async (actor, ability, dc) => {
+    if (!actor) return { success: true, total: dc };
+    let result;
+    if (typeof actor.rollSavingThrow === "function") {
+      result = await actor.rollSavingThrow({ ability, target: dc, chatMessage: true });
+    } else if (typeof actor.rollAbilitySave === "function") {
+      result = await actor.rollAbilitySave(ability, { targetValue: dc });
+    }
+    const roll = Array.isArray(result) ? result[0] : result;
+    const total = Number(roll?.total ?? roll?._total ?? 0);
+    return { success: total >= dc, total, roll };
+  };
+
+  const hpMax = (actor) =>
+    Number(actor?.system?.attributes?.hp?.max ?? 0) || 1;
+  const hpValue = (actor) =>
+    Number(actor?.system?.attributes?.hp?.value ?? 0);
+
+  const magmaThreshold = (actor) => Math.floor(hpMax(actor) * MAGMA_HP_FRACTION);
+
+  const findEffect = (actor, kind) =>
+    actor?.effects?.find((ef) => foundry.utils.getProperty(ef, `${FLAG}.kind`) === kind) ?? null;
+
+  const setEffectDisabled = async (actor, kind, disabled) => {
+    const ef = findEffect(actor, kind);
+    if (!ef || ef.disabled === disabled) return;
+    await ef.update({ disabled });
+  };
+
+  const patchState = async (actor, patch) => {
+    const current = foundry.utils.getProperty(actor, FLAG) ?? {};
+    const next = foundry.utils.mergeObject(foundry.utils.deepClone(current), patch, { inplace: false });
+    await actor.update({ [`flags.world.${NS}`]: next });
+  };
+
+  const stanceOf = (actor) => getFlag(actor, "stance", "biped");
+
+  const updateClawReach = async (actor, stance) => {
+    const claw = actor.items.find((i) => foundry.utils.getProperty(i, `${FLAG}.role`) === "claw");
+    if (!claw) return;
+    const reach = stance === "biped" ? 15 : 10;
+    if (Number(claw.system?.range?.reach) === reach) return;
+    await claw.update({ "system.range.reach": reach });
+  };
+
+  const setStance = async (actor, stance) => {
+    const next = stance === "quadruped" ? "quadruped" : "biped";
+    await patchState(actor, { stance: next });
+    await setEffectDisabled(actor, "stanceBiped", next !== "biped");
+    await setEffectDisabled(actor, "stanceQuadruped", next !== "quadruped");
+    await updateClawReach(actor, next);
+    await chat(
+      actor,
+      `<p><strong>Dire Miralis</strong> shifts to <strong>${next === "biped" ? "Biped" : "Quadruped"}</strong> stance.</p>
+       <p>${next === "biped"
+         ? "Melee reach 15 ft. Crush is available."
+         : "Melee reach 10 ft. Tail Sweep is available. Advantage on saves against being knocked prone."}</p>`,
+    );
+  };
+
+  const activateMagmaArmor = async (actor) => {
+    const state = getFlag(actor, "magmaArmor", {});
+    if (state.shattered || state.unlocked) return;
+    await patchState(actor, {
+      magmaArmor: { ...state, unlocked: true, cracked: false, cracks: state.cracks ?? 0 },
+    });
+    await setEffectDisabled(actor, "magmaArmor", false);
+    await setEffectDisabled(actor, "crackedShell", true);
+    await chat(
+      actor,
+      `<p>The Dire Miralis's hide hardens into a <strong>slag shell</strong> (Magma Armor).</p>
+       <p>AC becomes <strong>22</strong> and it gains resistance to bludgeoning, piercing, and slashing.</p>`,
+    );
+  };
+
+  const restoreMagmaArmor = async (actor) => {
+    const state = getFlag(actor, "magmaArmor", {});
+    if (!state.unlocked || state.shattered || !state.cracked) return;
+    await patchState(actor, { magmaArmor: { ...state, cracked: false } });
+    await setEffectDisabled(actor, "magmaArmor", false);
+    await setEffectDisabled(actor, "crackedShell", true);
+    await chat(actor, `<p>The slag shell <strong>reseals</strong>. Magma Armor is active again (AC 22).</p>`);
+  };
+
+  const shatterMagmaArmor = async (actor) => {
+    const state = getFlag(actor, "magmaArmor", {});
+    await patchState(actor, {
+      magmaArmor: { ...state, shattered: true, cracked: false, unlocked: true, cracks: MAGMA_CRACKS_TO_SHATTER },
+    });
+    await setEffectDisabled(actor, "magmaArmor", true);
+    await setEffectDisabled(actor, "crackedShell", true);
+    await chat(
+      actor,
+      `<p>The slag shell <strong>shatters</strong> after six cracks. Magma Armor ends and cannot return for the rest of the combat.</p>`,
+    );
+  };
+
+  const crackMagmaArmor = async (actor, reason = "") => {
+    const state = getFlag(actor, "magmaArmor", {});
+    if (!state.unlocked || state.shattered) return false;
+    const cracks = Number(state.cracks ?? 0) + 1;
+    if (cracks >= MAGMA_CRACKS_TO_SHATTER) {
+      await shatterMagmaArmor(actor);
+      return true;
+    }
+    await patchState(actor, {
+      magmaArmor: { ...state, cracks, cracked: true, restoreOnTurnEnd: true },
+    });
+    await setEffectDisabled(actor, "magmaArmor", true);
+    await setEffectDisabled(actor, "crackedShell", false);
+    const why = reason ? ` (${reason})` : "";
+    await chat(
+      actor,
+      `<p>The slag shell <strong>cracks</strong>${why}! AC returns to 18 and physical resistance is lost until the end of the Dire Miralis's next turn.</p>
+       <p>Cracks: <strong>${cracks}/${MAGMA_CRACKS_TO_SHATTER}</strong></p>`,
+    );
+    return true;
+  };
+
+  const placeHazardTemplate = async ({
+    x,
+    y,
+    t = "circle",
+    distance = 5,
+    fillColor = "#ff5500",
+    borderColor = "#aa2200",
+    hazard = "lava",
+    until = null,
+    label = "Lava",
+  }) => {
+    const scene = canvas.scene;
+    if (!scene) return null;
+    const [doc] = await scene.createEmbeddedDocuments("MeasuredTemplate", [
+      {
+        t,
+        user: game.user.id,
+        x,
+        y,
+        direction: 0,
+        angle: 0,
+        distance,
+        width: 0,
+        borderColor,
+        fillColor,
+        hidden: false,
+        flags: {
+          world: {
+            [NS]: {
+              hazard,
+              until,
+              label,
+            },
+          },
+        },
+      },
+    ]);
+    return doc;
+  };
+
+  const hazardTemplates = (hazard) =>
+    (canvas.scene?.templates ?? []).filter(
+      (tpl) => foundry.utils.getProperty(tpl, `${FLAG}.hazard`) === hazard,
+    );
+
+  const tokenInTemplate = (token, template) => {
+    if (!token || !template) return false;
+    try {
+      const shape = template.object?.shape;
+      const center = token.center;
+      if (shape && typeof shape.contains === "function") {
+        const local = template.object.worldTransform
+          ? undefined
+          : null;
+        const obj = template.object;
+        if (obj?.shape && obj?.ray == null) {
+          const dx = center.x - template.x;
+          const dy = center.y - template.y;
+          if (template.t === "circle" || template.t === "rect") {
+            return obj.shape.contains(dx, dy);
+          }
+        }
+        if (typeof obj?.shape?.contains === "function") {
+          return obj.shape.contains(center.x - obj.x, center.y - obj.y);
+        }
+      }
+    } catch {
+      /* fall through to distance */
+    }
+    const dx = token.center.x - template.x;
+    const dy = token.center.y - template.y;
+    const grid = canvas.grid?.size || 100;
+    const ft = canvas.grid?.distance || 5;
+    const distFt = (Math.hypot(dx, dy) / grid) * ft;
+    const radius = Number(template.distance) || 5;
+    return distFt <= radius + 2.5;
+  };
+
+  const tokensInHazard = (hazard) => {
+    const tpls = hazardTemplates(hazard);
+    if (!tpls.length) return [];
+    const seen = new Set();
+    const out = [];
+    for (const token of canvas.tokens?.placeables ?? []) {
+      if (!token.actor || token.actor.system?.attributes?.hp?.value <= 0) continue;
+      if (isBoss(token.actor)) continue;
+      if (tpls.some((tpl) => tokenInTemplate(token, tpl))) {
+        if (!seen.has(token.id)) {
+          seen.add(token.id);
+          out.push(token);
+        }
+      }
+    }
+    return out;
+  };
+
+  const expireHazards = async (hazard, predicate) => {
+    const scene = canvas.scene;
+    if (!scene) return;
+    const ids = hazardTemplates(hazard)
+      .filter((tpl) => (predicate ? predicate(tpl) : true))
+      .map((tpl) => tpl.id);
+    if (ids.length) await scene.deleteEmbeddedDocuments("MeasuredTemplate", ids);
+  };
+
+  const lavaTickKey = (token) => {
+    const c = game.combat;
+    return `${c?.id ?? "n"}-${c?.round ?? 0}-${c?.turn ?? 0}-${token.id}`;
+  };
+
+  const applyLavaIfNeeded = async (token, { reason = "lava" } = {}) => {
+    if (!token?.actor || isBoss(token.actor)) return;
+    const tpls = [
+      ...hazardTemplates("lava"),
+      ...hazardTemplates("taintedWater"),
+      ...hazardTemplates("ventLava"),
+    ];
+    if (!tpls.some((tpl) => tokenInTemplate(token, tpl))) return;
+    const key = lavaTickKey(token);
+    const last = foundry.utils.getProperty(token.actor, `${FLAG}.lastLavaTick`);
+    if (last === key) return;
+    await token.actor.update({ [`${FLAG}.lastLavaTick`]: key });
+    const origin = bossActors()[0];
+    const item = origin?.items.find((i) => foundry.utils.getProperty(i, `${FLAG}.role`) === "magmaGlob") ?? null;
+    await applyFireDamage({
+      tokens: [token],
+      formula: LAVA_DAMAGE,
+      flavor: reason === "tainted"
+        ? "Tainted Sea Presence — boiling water"
+        : "Lava — Magma Glob / Volcanic Vents",
+      item,
+    });
+  };
+
+  const applySteamIfNeeded = async (token) => {
+    if (!token?.actor || isBoss(token.actor)) return;
+    const tpls = hazardTemplates("steam");
+    if (!tpls.some((tpl) => tokenInTemplate(token, tpl))) return;
+    const key = `steam-${lavaTickKey(token)}`;
+    const last = foundry.utils.getProperty(token.actor, `${FLAG}.lastSteamTick`);
+    if (last === key) return;
+    await token.actor.update({ [`${FLAG}.lastSteamTick`]: key });
+    await applyFireDamage({
+      tokens: [token],
+      formula: STEAM_DAMAGE,
+      flavor: "Blood-Red Steam",
+    });
+  };
+
+  const boilingPresence = async (actor) => {
+    const token = bossTokens(actor)[0];
+    if (!token) return;
+    const targets = tokensInRange(token, 10);
+    if (!targets.length) return;
+    const item = actor.items.find((i) => foundry.utils.getProperty(i, `${FLAG}.role`) === "boilingPresence");
+    await applyFireDamage({
+      tokens: targets,
+      formula: BOILING_DAMAGE,
+      flavor: "Boiling Presence (10 ft)",
+      item,
+    });
+  };
+
+  const placeLavaOnTargets = async (tokens, { hazard = "lava", until = null, distance = 5 } = {}) => {
+    const placed = [];
+    for (const token of tokens) {
+      const center = token.center ?? { x: token.x, y: token.y };
+      const doc = await placeHazardTemplate({
+        x: center.x,
+        y: center.y,
+        distance,
+        hazard,
+        until,
+        label: hazard === "ventLava" ? "Volcanic Vent Lava" : "Lava",
+      });
+      if (doc) placed.push(doc);
+    }
+    return placed;
+  };
+
+  const nearestUnoccupiedOffset = (originToken, targetToken) => {
+    const grid = canvas.grid?.size || 100;
+    const dirs = [
+      [1, 0], [-1, 0], [0, 1], [0, -1],
+      [1, 1], [1, -1], [-1, 1], [-1, -1],
+    ];
+    const occupied = new Set(
+      (canvas.tokens?.placeables ?? []).map((t) => `${Math.round(t.document.x / grid)},${Math.round(t.document.y / grid)}`),
+    );
+    for (const [dx, dy] of dirs) {
+      const x = targetToken.document.x + dx * grid;
+      const y = targetToken.document.y + dy * grid;
+      const key = `${Math.round(x / grid)},${Math.round(y / grid)}`;
+      if (!occupied.has(key)) return { x: x + targetToken.w / 2, y: y + targetToken.h / 2 };
+    }
+    const ox = originToken?.center?.x ?? targetToken.center.x;
+    const oy = originToken?.center?.y ?? targetToken.center.y;
+    return { x: targetToken.center.x + Math.sign(targetToken.center.x - ox) * grid, y: targetToken.center.y };
+  };
+
+  const onMagmaGlob = async (workflow) => {
+    const actor = workflow.actor;
+    const origin = bossTokens(actor)[0];
+    const hits = [...(workflow.hitTargets ?? [])];
+    const targets = [...(workflow.targets ?? [])];
+    const until = Date.now() + 60 * 60 * 1000;
+    if (hits.length) {
+      await placeLavaOnTargets(hits, { hazard: "lava", until });
+      await chat(actor, `<p>Magma Glob splatters — the target's space becomes <strong>lava</strong> for 1 hour.</p>`);
+      return;
+    }
+    const missTarget = targets[0];
+    if (!missTarget) return;
+    const spot = nearestUnoccupiedOffset(origin, missTarget);
+    await placeHazardTemplate({
+      x: spot.x,
+      y: spot.y,
+      hazard: "lava",
+      until,
+      label: "Lava (miss scatter)",
+    });
+    await chat(actor, `<p>Magma Glob misses — lava erupts in an unoccupied space within 5 feet of the target.</p>`);
+  };
+
+  const onVolcanicVents = async (workflow, { spaces = 2 } = {}) => {
+    const actor = workflow.actor;
+    const combat = game.combat;
+    const until = combat
+      ? { combatId: combat.id, round: combat.round, restoreOnBossTurnStart: true }
+      : { ts: Date.now() + 6000 };
+    const targets = [...(workflow.targets ?? [])];
+    const picked = targets.slice(0, spaces);
+    if (!picked.length) {
+      ui.notifications?.warn(`Volcanic Vents: target up to ${spaces} spaces / tokens.`);
+      return;
+    }
+    await placeLavaOnTargets(picked, { hazard: "ventLava", until, distance: 5 });
+    await chat(
+      actor,
+      `<p>Volcanic Vents open under ${picked.length} space(s). Those spaces are <strong>lava</strong> until the start of the Dire Miralis's next turn.</p>`,
+    );
+  };
+
+  const pushToken = async (token, fromToken, distanceFt) => {
+    if (!token?.document || !fromToken) return;
+    const dx = token.center.x - fromToken.center.x;
+    const dy = token.center.y - fromToken.center.y;
+    const len = Math.hypot(dx, dy) || 1;
+    const grid = canvas.grid?.size || 100;
+    const ft = canvas.grid?.distance || 5;
+    const distPx = (distanceFt / ft) * grid;
+    await token.document.update({
+      x: token.document.x + (dx / len) * distPx,
+      y: token.document.y + (dy / len) * distPx,
+    });
+  };
+
+  const failedSaveTokens = (workflow) => {
+    const failed = [...(workflow.failedSaves ?? [])];
+    if (failed.length) return failed;
+    const saved = new Set([...(workflow.saves ?? [])].map((t) => t.id ?? t.document?.id));
+    return [...(workflow.targets ?? [])].filter((t) => !saved.has(t.id ?? t.document?.id));
+  };
+
+  const successfulSaveTokens = (workflow) => {
+    const saved = [...(workflow.saves ?? [])];
+    if (saved.length) return saved;
+    const failed = new Set(failedSaveTokens(workflow).map((t) => t.id ?? t.document?.id));
+    return [...(workflow.targets ?? [])].filter((t) => !failed.has(t.id ?? t.document?.id));
+  };
+
+  const applyProne = async (tokens) => {
+    for (const token of tokens) {
+      const actor = token.actor;
+      if (!actor || typeof actor.toggleStatusEffect !== "function") continue;
+      await actor.toggleStatusEffect("prone", { active: true });
+    }
+  };
+
+  const onCrush = async (workflow) => {
+    const origin = bossTokens(workflow.actor)[0];
+    await applyProne(failedSaveTokens(workflow));
+    const survivors = successfulSaveTokens(workflow);
+    if (survivors.length && origin) {
+      await chat(
+        workflow.actor,
+        `<p>Crush: creatures that succeeded are pushed to the nearest unoccupied space outside the area (resolve remaining movement if needed).</p>`,
+        { whisperGM: true },
+      );
+    }
+  };
+
+  const onTailSweep = async (workflow) => {
+    const origin = bossTokens(workflow.actor)[0];
+    for (const token of failedSaveTokens(workflow)) {
+      await pushToken(token, origin, 10);
+    }
+  };
+
+  const onTremor = async (workflow) => {
+    await applyProne(failedSaveTokens(workflow));
+  };
+
+  const onWreckCollapse = async (workflow) => {
+    await applyProne([]);
+    for (const token of failedSaveTokens(workflow)) {
+      if (typeof token.actor?.toggleStatusEffect === "function") {
+        await token.actor.toggleStatusEffect("restrained", { active: true });
+      }
+    }
+    const targets = [...(workflow.targets ?? [])];
+    if (targets[0]) {
+      await placeHazardTemplate({
+        x: targets[0].center.x,
+        y: targets[0].center.y,
+        t: "rect",
+        distance: 15,
+        fillColor: "#6b4a2b",
+        borderColor: "#3a2414",
+        hazard: "wreckage",
+        label: "Wreck Collapse (difficult terrain, half cover)",
+      });
+    }
+  };
+
+  const onBloodRedSteam = async (workflow) => {
+    const combat = game.combat;
+    const until = combat
+      ? { combatId: combat.id, round: (combat.round ?? 0) + 1, init20: true }
+      : { ts: Date.now() + 6000 };
+    const target = [...(workflow.targets ?? [])][0];
+    const origin = bossTokens(workflow.actor)[0];
+    const x = target?.center?.x ?? origin?.center?.x;
+    const y = target?.center?.y ?? origin?.center?.y;
+    if (x == null) return;
+    await placeHazardTemplate({
+      x,
+      y,
+      t: "rect",
+      distance: 20,
+      fillColor: "#ff8899",
+      borderColor: "#aa3344",
+      hazard: "steam",
+      until,
+      label: "Blood-Red Steam (heavily obscured)",
+    });
+  };
+
+  const onRisingMagmaTide = async (workflow) => {
+    const target = [...(workflow.targets ?? [])][0];
+    const origin = bossTokens(workflow.actor)[0];
+    const x = target?.center?.x ?? origin?.center?.x;
+    const y = target?.center?.y ?? origin?.center?.y;
+    if (x == null) return;
+    await placeHazardTemplate({
+      x,
+      y,
+      t: "rect",
+      distance: 40,
+      fillColor: "#ff6600",
+      borderColor: "#aa2200",
+      hazard: "taintedWater",
+      label: "Rising Magma Tide (boiling water / lava)",
+    });
+    await chat(
+      workflow.actor,
+      `<p>Rising Magma Tide: boiling water or lava spreads 10 feet inland along a 40-foot-wide front. Reposition the template to the waterline.</p>`,
+      { whisperGM: true },
+    );
+  };
+
+  const markLairUsed = async (actor, key) => {
+    const round = game.combat?.round ?? 0;
+    await patchState(actor, { lastLair: { key, round } });
+  };
+
+  const assertLairNotRepeat = (actor, key) => {
+    const last = getFlag(actor, "lastLair", {});
+    const round = game.combat?.round ?? 0;
+    if (last?.key === key && last?.round === round - 1) {
+      ui.notifications?.warn("Lair Action: cannot use the same effect two rounds in a row.");
+      return false;
+    }
+    return true;
+  };
+
+  const startCalamityCharge = async (workflow) => {
+    const actor = workflow.actor;
+    const targets = [...(workflow.targets ?? [])].slice(0, 6);
+    if (targets.length < 1) {
+      ui.notifications?.warn("Calamity Rain: place/target up to 6 detonation zones within 120 ft.");
+    }
+    const markerIds = [];
+    for (const token of targets) {
+      const doc = await placeHazardTemplate({
+        x: token.center.x,
+        y: token.center.y,
+        distance: 5,
+        fillColor: "#ffdd33",
+        borderColor: "#ffaa00",
+        hazard: "calamityMarker",
+        label: "Calamity Rain marker",
+      });
+      if (doc) markerIds.push(doc.id);
+    }
+    await patchState(actor, {
+      calamity: {
+        charging: true,
+        interrupted: false,
+        damageByTurn: {},
+        markerIds,
+        startedRound: game.combat?.round ?? 0,
+      },
+    });
+    await setEffectDisabled(actor, "calamityCharging", false);
+    await chat(
+      actor,
+      `<p>The Dire Miralis <strong>coils and glows</strong> — Calamity Rain is charging.</p>
+       <p>${markerIds.length} detonation zone(s) marked. If it takes <strong>40+ damage in one turn</strong> before detonation, the nova fails.</p>
+       <p>It cannot take reactions while charging.</p>`,
+    );
+  };
+
+  const combatTurnKey = () => {
+    const c = game.combat;
+    return `${c?.id ?? "n"}-${c?.round ?? 0}-${c?.turn ?? 0}`;
+  };
+
+  const interruptCalamity = async (actor) => {
+    const calamity = getFlag(actor, "calamity", {});
+    if (!calamity.charging || calamity.interrupted) return;
+    await patchState(actor, {
+      calamity: { ...calamity, charging: false, interrupted: true },
+      blockLegendaryUntilTurnEnd: true,
+    });
+    await setEffectDisabled(actor, "calamityCharging", true);
+    if (typeof actor.toggleStatusEffect === "function") {
+      await actor.toggleStatusEffect("prone", { active: true });
+    }
+    await crackMagmaArmor(actor, "Calamity Rain interrupted");
+    const ids = calamity.markerIds ?? [];
+    if (ids.length && canvas.scene) {
+      await canvas.scene.deleteEmbeddedDocuments("MeasuredTemplate", ids).catch(() => null);
+    }
+    await chat(
+      actor,
+      `<p><strong>Calamity Rain is interrupted!</strong> The Dire Miralis is knocked <strong>prone</strong>, Magma Armor cracks (if active), and it cannot use Legendary Actions until the end of its next turn.</p>`,
+    );
+  };
+
+  const fireballAtPoint = async (actor, x, y) => {
+    const item = actor.items.find((i) => foundry.utils.getProperty(i, `${FLAG}.role`) === "greaterFireball");
+    const origin = { center: { x, y } };
+    const targets = (canvas.tokens?.placeables ?? []).filter((t) => {
+      if (!t.actor || isBoss(t.actor)) return false;
+      if (t.actor.system?.attributes?.hp?.value <= 0) return false;
+      const grid = canvas.grid?.size || 100;
+      const ft = canvas.grid?.distance || 5;
+      const distFt = (Math.hypot(t.center.x - x, t.center.y - y) / grid) * ft;
+      return distFt <= FIREBALL_RADIUS_FT + 2.5;
+    });
+    if (!targets.length) {
+      await chat(actor, `<p>Greater Fireball detonates — no creatures in the 25-foot radius.</p>`);
+      return;
+    }
+    const roll = await evaluateRoll(FIREBALL_DAMAGE);
+    await roll.toMessage({ speaker: speakerFor(actor), flavor: "Calamity Rain — Greater Fireball" });
+    const full = Number(roll.total) || 0;
+    const half = Math.floor(full / 2);
+    for (const token of targets) {
+      const save = await rollSave(token.actor, "dex", FIREBALL_DC);
+      const dmg = save.success ? half : full;
+      if (typeof MidiQOL?.applyTokenDamage === "function") {
+        await MidiQOL.applyTokenDamage(
+          [{ damage: dmg, type: "fire" }],
+          dmg,
+          new Set([token]),
+          item ?? null,
+          new Set(),
+        );
+      } else if (typeof token.actor.applyDamage === "function") {
+        try {
+          await token.actor.applyDamage([{ value: dmg, type: "fire" }]);
+        } catch {
+          await token.actor.applyDamage(dmg);
+        }
+      }
+    }
+    void origin;
+  };
+
+  const detonateCalamity = async (actor) => {
+    const calamity = getFlag(actor, "calamity", {});
+    if (!calamity.charging || calamity.interrupted) return;
+    const templates = (canvas.scene?.templates ?? []).filter((tpl) =>
+      (calamity.markerIds ?? []).includes(tpl.id),
+    );
+    await chat(
+      actor,
+      `<p><strong>Calamity Rain detonates!</strong> Greater Fireball erupts on each marked zone.</p>`,
+    );
+    for (const tpl of templates) {
+      await fireballAtPoint(actor, tpl.x, tpl.y);
+    }
+    if (templates.length && canvas.scene) {
+      await canvas.scene.deleteEmbeddedDocuments(
+        "MeasuredTemplate",
+        templates.map((t) => t.id),
+      ).catch(() => null);
+    }
+    await patchState(actor, {
+      calamity: { charging: false, interrupted: false, damageByTurn: {}, markerIds: [] },
+    });
+    await setEffectDisabled(actor, "calamityCharging", true);
+    await crackMagmaArmor(actor, "heat shock from Calamity Rain");
+  };
+
+  const tallyCalamityDamage = async (actor, amount) => {
+    const calamity = getFlag(actor, "calamity", {});
+    if (!calamity.charging || calamity.interrupted) return;
+    const key = combatTurnKey();
+    const damageByTurn = { ...(calamity.damageByTurn ?? {}) };
+    damageByTurn[key] = Number(damageByTurn[key] ?? 0) + Number(amount || 0);
+    await patchState(actor, { calamity: { ...calamity, damageByTurn } });
+    if (damageByTurn[key] >= CALAMITY_INTERRUPT_DAMAGE) {
+      await interruptCalamity(actor);
+    }
+  };
+
+  const extractDamageTypes = (payload) => {
+    const types = new Set();
+    const details =
+      payload?.damageItem?.damageDetail ??
+      payload?.damageList ??
+      payload?.damageDetail ??
+      [];
+    const list = Array.isArray(details) ? details : [];
+    for (const row of list) {
+      const t = row?.type ?? row?.damageType;
+      if (t) types.add(String(t).toLowerCase());
+    }
+    if (payload?.item?.system?.damage?.base?.types) {
+      for (const t of payload.item.system.damage.base.types) types.add(String(t).toLowerCase());
+    }
+    return [...types];
+  };
+
+  const extractAppliedDamage = (payload, actor) => {
+    const list = payload?.damageList ?? payload?.damageItem ?? null;
+    if (Array.isArray(list)) {
+      const row = list.find((r) => r.actorId === actor.id || r.tokenId === actor.token?.id);
+      if (row) return Number(row.appliedDamage ?? row.hpDamage ?? row.totalDamage ?? 0);
+      return list.reduce((n, r) => n + Number(r.appliedDamage ?? r.hpDamage ?? 0), 0);
+    }
+    return Number(payload?.appliedDamage ?? payload?.totalDamage ?? 0);
+  };
+
+  const onBossDamaged = async (actor, amount, types) => {
+    if (!isBoss(actor) || !isActiveGM()) return;
+    if (amount > 0 && types.includes("cold")) {
+      await crackMagmaArmor(actor, "cold damage");
+    }
+    if (amount > 0) await tallyCalamityDamage(actor, amount);
+    if (hpValue(actor) < magmaThreshold(actor)) {
+      await activateMagmaArmor(actor);
+    }
+  };
+
+  const scorchingHide = async (workflow) => {
+    const attacker = workflow.token ?? [...(workflow.targets ?? [])][0];
+    // When Dire Miralis is HIT, the workflow actor is the attacker.
+    const hitTargets = [...(workflow.hitTargets ?? [])];
+    const bossHit = hitTargets.find((t) => isBoss(t.actor));
+    if (!bossHit) return;
+    const attackType = String(workflow.activity?.attack?.type?.value ?? workflow.item?.system?.actionType ?? "");
+    const isMelee = attackType === "melee" || ["mwak", "msak"].includes(attackType);
+    if (!isMelee) return;
+    const actor = bossHit.actor;
+    const charging = getFlag(actor, "calamity.charging") === true;
+    if (charging) return;
+    const item = actor.items.find((i) => foundry.utils.getProperty(i, `${FLAG}.role`) === "scorchingHide");
+    const attackerToken = workflow.token ?? canvas.tokens.get(workflow.tokenId);
+    if (!attackerToken) return;
+    await applyFireDamage({
+      tokens: [attackerToken],
+      formula: "2d8",
+      flavor: "Scorching Hide",
+      item,
+    });
+  };
+
+  const onUse = async (payload) => {
+    if (!isActiveGM()) return;
+    const workflow = payload?.workflow ?? payload;
+    const item = workflow?.item ?? null;
+    if (!item) return;
+    const actor = workflow.actor ?? item.actor;
+    if (!isBoss(actor)) return;
+    const role = foundry.utils.getProperty(item, `${FLAG}.role`);
+    const identifier = String(
+      workflow.activity?.midiProperties?.identifier ?? workflow.activity?.identifier ?? "",
+    );
+
+    switch (role) {
+      case "magmaGlob":
+        await onMagmaGlob(workflow);
+        break;
+      case "volcanicVents":
+        await onVolcanicVents(workflow, { spaces: 2 });
+        break;
+      case "ventBarrage":
+        await onVolcanicVents(workflow, { spaces: 3 });
+        break;
+      case "crush":
+        await onCrush(workflow);
+        break;
+      case "tailSweep":
+        await onTailSweep(workflow);
+        break;
+      case "tremor":
+        await onTremor(workflow);
+        break;
+      case "shiftStance":
+        if (identifier === "shift-stance-move") {
+          await chat(actor, `<p>The Dire Miralis repositions up to half its speed without provoking opportunity attacks.</p>`);
+        } else {
+          const next = stanceOf(actor) === "biped" ? "quadruped" : "biped";
+          await setStance(actor, next);
+        }
+        break;
+      case "calamityRain":
+        await startCalamityCharge(workflow);
+        break;
+      case "wreckCollapse":
+        if (!assertLairNotRepeat(actor, "wreck")) return;
+        await markLairUsed(actor, "wreck");
+        await onWreckCollapse(workflow);
+        break;
+      case "bloodRedSteam":
+        if (!assertLairNotRepeat(actor, "steam")) return;
+        await markLairUsed(actor, "steam");
+        await onBloodRedSteam(workflow);
+        break;
+      case "risingMagmaTide":
+        if (!assertLairNotRepeat(actor, "tide")) return;
+        await markLairUsed(actor, "tide");
+        await onRisingMagmaTide(workflow);
+        break;
+      case "lumberingAdvance":
+        await chat(
+          actor,
+          `<p>Lumbering Advance: the Dire Miralis moves up to half its speed. This movement doesn't provoke opportunity attacks if it ends in water or adjacent to a structure or Huge or larger object.</p>`,
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+  const onBossTurnStart = async (actor) => {
+    const calamity = getFlag(actor, "calamity", {});
+    if (calamity.charging && !calamity.interrupted) {
+      await detonateCalamity(actor);
+    }
+    await expireHazards("ventLava", () => true);
+    await boilingPresence(actor);
+  };
+
+  const onBossTurnEnd = async (actor) => {
+    const magma = getFlag(actor, "magmaArmor", {});
+    if (magma.cracked && magma.restoreOnTurnEnd && !magma.shattered) {
+      await restoreMagmaArmor(actor);
+    }
+    if (getFlag(actor, "blockLegendaryUntilTurnEnd") === true) {
+      await patchState(actor, { blockLegendaryUntilTurnEnd: false });
+      await chat(actor, `<p>The Dire Miralis can use Legendary Actions again.</p>`);
+    }
+    const vents = actor.items.find((i) => foundry.utils.getProperty(i, `${FLAG}.role`) === "volcanicVents");
+    await chat(
+      actor,
+      `<p><em>End of turn — Volcanic Vents:</em> choose up to two spaces within 60 feet${vents ? ` and use <strong>${vents.name}</strong>` : ""}.</p>`,
+      { whisperGM: true },
+    );
+  };
+
+  const onOtherTurnStart = async (combatant) => {
+    const token = combatant?.token ?? canvas.tokens.get(combatant?.tokenId);
+    if (!token) return;
+    await applyLavaIfNeeded(token, { reason: "lava" });
+    await applySteamIfNeeded(token);
+  };
+
+  const handleCombatTurn = async (combat, _prior, current) => {
+    if (!isActiveGM()) return;
+    const actor = current?.actor;
+    if (isBoss(actor)) {
+      await onBossTurnStart(actor);
+      return;
+    }
+    await onOtherTurnStart(current);
+  };
+
+  const handleCombatUpdate = async (combat, changed) => {
+    if (!isActiveGM()) return;
+    if (changed.turn === undefined && changed.round === undefined) return;
+    const prevTurn = combat.previous?.turn;
+    if (prevTurn === undefined) return;
+    const prev = combat.turns?.[prevTurn];
+    if (prev?.actor && isBoss(prev.actor)) {
+      await onBossTurnEnd(prev.actor);
+    }
+  };
+
+  let hooksArmed = false;
+
+  const ensureHooks = () => {
+    if (hooksArmed) return;
+    hooksArmed = true;
+
+    Hooks.on("updateActor", (actor, changed) => {
+      if (!isBoss(actor) || !isActiveGM()) return;
+      const nextHp = changed.system?.attributes?.hp?.value;
+      if (nextHp === undefined) return;
+      if (Number(nextHp) < magmaThreshold(actor)) {
+        activateMagmaArmor(actor).catch((err) => console.error("Dire Miralis | magma armor", err));
+      }
+    });
+
+    Hooks.on("preUpdateActor", (actor, changed) => {
+      if (!isBoss(actor) || !isActiveGM()) return;
+      const nextHp = changed.system?.attributes?.hp?.value;
+      if (nextHp === undefined) return;
+      const prev = hpValue(actor);
+      const dealt = prev - Number(nextHp);
+      if (dealt > 0) {
+        tallyCalamityDamage(actor, dealt).catch((err) => console.error("Dire Miralis | calamity tally", err));
+      }
+    });
+
+    const damageHook = (first, second) => {
+      try {
+        let actor = null;
+        let payload = second ?? first;
+        if (first?.actor) actor = first.actor;
+        else if (first?.documentName === "Actor") actor = first;
+        else if (second?.actor) actor = second.actor;
+        if (!actor && payload?.actorUuid) {
+          actor = fromUuidSync(payload.actorUuid);
+        }
+        if (!isBoss(actor)) {
+          // Attack workflows: Dire Miralis may be the hit target (Scorching Hide).
+          if (first?.hitTargets) {
+            scorchingHide(first).catch((err) => console.error("Dire Miralis | hide", err));
+          }
+          return;
+        }
+        const amount = extractAppliedDamage(payload, actor) || extractAppliedDamage(first, actor);
+        const types = extractDamageTypes(payload).concat(extractDamageTypes(first));
+        onBossDamaged(actor, amount, types).catch((err) => console.error("Dire Miralis | damaged", err));
+      } catch (err) {
+        console.error("Dire Miralis | damage hook", err);
+      }
+    };
+
+    Hooks.on("midi-qol.DamageApplied", damageHook);
+    Hooks.on("midi-qol.RollComplete", (workflow) => {
+      if (!workflow) return;
+      scorchingHide(workflow).catch((err) => console.error("Dire Miralis | hide", err));
+      const hitBoss = [...(workflow.hitTargets ?? [])].find((t) => isBoss(t.actor));
+      if (!hitBoss) return;
+      const types = [];
+      const detail = workflow.damageDetail
+        ?? (workflow.defaultDamageType ? [workflow.defaultDamageType] : []);
+      for (const part of detail) {
+        if (typeof part === "string") types.push(part.toLowerCase());
+        else if (part?.type) types.push(String(part.type).toLowerCase());
+      }
+      if (String(workflow.defaultDamageType ?? "").toLowerCase() === "cold") types.push("cold");
+      const amount = Number(workflow.totalDamage ?? workflow.damageTotal ?? 0);
+      onBossDamaged(hitBoss.actor, amount, types).catch((err) => console.error("Dire Miralis | roll complete", err));
+    });
+
+    Hooks.on("updateToken", (tokenDoc, changed) => {
+      if (!isActiveGM()) return;
+      if (changed.x === undefined && changed.y === undefined) return;
+      const token = tokenDoc.object ?? canvas.tokens.get(tokenDoc.id);
+      if (!token) return;
+      applyLavaIfNeeded(token, { reason: "enter" }).catch((err) => console.error("Dire Miralis | lava enter", err));
+      applySteamIfNeeded(token).catch((err) => console.error("Dire Miralis | steam enter", err));
+    });
+
+    Hooks.on("combatTurnChange", (combat, prior, current) => {
+      handleCombatTurn(combat, prior, current).catch((err) => console.error("Dire Miralis | turn", err));
+    });
+    Hooks.on("updateCombat", (combat, changed) => {
+      handleCombatUpdate(combat, changed).catch((err) => console.error("Dire Miralis | combat", err));
+    });
+
+    Hooks.on("dnd5e.preRollSavingThrowV2", (config) => {
+      const actor = config?.subject ?? config?.actor;
+      if (!isBoss(actor) || stanceOf(actor) !== "quadruped") return;
+      const flavor = String(config?.flavor ?? config?.title ?? config?.dialogOptions?.title ?? "").toLowerCase();
+      const isProne = /prone/.test(flavor);
+      if (isProne) {
+        config.advantage = true;
+        if (config.rolls?.[0]) config.rolls[0].advantage = true;
+      }
+    });
+
+    Hooks.on("midi-qol.preItemRoll", (workflow) => {
+      const actor = workflow?.actor;
+      if (!isBoss(actor)) return true;
+      if (getFlag(actor, "calamity.charging") !== true) return true;
+      const activation = String(workflow?.activity?.activation?.type ?? workflow?.item?.system?.activation?.type ?? "");
+      if (activation === "reaction") {
+        ui.notifications?.warn("Calamity Rain is charging — the Dire Miralis cannot take reactions.");
+        return false;
+      }
+      return true;
+    });
+
+    Hooks.on("midi-qol.preItemRoll", (workflow) => {
+      const actor = workflow?.actor;
+      if (!isBoss(actor)) return true;
+      if (getFlag(actor, "blockLegendaryUntilTurnEnd") !== true) return true;
+      const activation = String(workflow?.activity?.activation?.type ?? "");
+      if (activation === "legendary") {
+        ui.notifications?.warn("The Dire Miralis cannot use Legendary Actions until the end of its next turn.");
+        return false;
+      }
+      return true;
+    });
+  };
+
+  globalThis.__amellwindDireMiralis = {
+    NS,
+    isBoss,
+    onUse,
+    ensureHooks,
+    setStance,
+    crackMagmaArmor,
+    activateMagmaArmor,
+    placeHazardTemplate,
+  };
+})();

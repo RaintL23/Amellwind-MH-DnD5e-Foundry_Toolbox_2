@@ -34,10 +34,12 @@ Amellwind MH (RaintDM)/
 ├── Hidden Detection/
 │   ├── Hidden Detection
 │   └── Hidden Detection Sync
-└── Resource Nodes/
-    ├── Resource Node
-    ├── Resource Node Sync
-    └── Resource Node Actors
+├── Resource Nodes/
+│   ├── Resource Node
+│   ├── Resource Node Sync
+│   └── Resource Node Actors
+└── Monsters/
+    └── Monsters
 ```
 
 | Pack (compendium)        | Folder                    | Type  | Source folder                         | Contents |
@@ -54,11 +56,31 @@ Amellwind MH (RaintDM)/
 | Resource Node            | Resource Nodes    | Item  | `resource-node/`                      | Resource Node feature (drop on map gather actors) |
 | Resource Node Sync       | Resource Nodes    | Macro | `resource-node/`                      | Resource Node Sync (token interaction hooks) |
 | Resource Node Actors     | Resource Nodes    | Actor | `resource-node/actors/`               | Prebuilt gather nodes (Environment × Tier × Category) |
+| Monsters                 | Monsters          | Actor | `monsters/`                           | Hunt bosses (Dire Miralis) |
 
 Item icons that referenced `mh-icons/...` are bundled under
 `Amellwind-MH-RaintDM-module/assets/mh-icons/` and their paths are rewritten to
 `modules/Amellwind-MH-RaintDM-module/assets/mh-icons/...`, so the module is
 self-contained (no need to drop `mh-icons/` at your Foundry data root).
+
+Hunter weapons, runes, coatings, and ammo keep those mh-icons. Everything else
+(resource-node actors, Felyne Cook, Hidden Detection, Combo Crafting, Dire
+Miralis, gather loot) prefers Foundry core paths such as
+`icons/equipment/hand/gauntlet-tooled-leather-brown.webp` or
+`icons/consumables/plants/herb-tied-bundle-green.webp` when a core icon fits
+better — those resolve from Foundry's own `icons/` folder, so they are not
+copied into the module.
+
+Validate core `icons/...` paths against your local Foundry install before building
+(default: `C:/Program Files/Foundry Virtual Tabletop/resources/app/public` on Windows):
+
+```bash
+pnpm validate:foundry-icons
+# or: FOUNDRY_PUBLIC="/path/to/resources/app/public" pnpm validate:foundry-icons
+```
+
+The script reports missing paths and suggests nearest matches from Foundry's 6300+ icon files.
+`mh-icons/` and `systems/dnd5e/icons/` paths are excluded (module / system assets).
 
 ## Build the module
 
@@ -151,6 +173,12 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node.mjs
 
 ```bash
 node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.mjs
+```
+
+   If you changed Dire Miralis (or added another hunt monster actor):
+
+```bash
+node public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs
 ```
 
 3. Rebuild the packs:
@@ -341,8 +369,8 @@ Prebuilt NPC props — **one actor per Environment × Level Tier × Resource Cat
    - mid ≤ 16 → DC 18
    - otherwise → DC 21
 3. **Loot inventory** — one stack per table-row entry for that category (preserves
-   `1dN` odds). Icons use `mh-icons` by category (`herb`, `mushroom`, `minerals`,
-   `fish`, `bug`, `bones`; Honey uses `honey.webp`).
+   `1dN` odds). Icons use Foundry core art by category (herbs, mushrooms, ore,
+   fish, beetles, bone piles; Honey uses the beehive icon).
 
 ### Setup (GM)
 
@@ -363,6 +391,44 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.
 pnpm build:foundry-module
 ```
 
+## Monsters (hunt bosses)
+
+NPC actors for table bosses. World hooks cannot travel inside an Actor pack
+alone, so combat automation ships as `scripts/dire-miralis.js` (armed on world
+ready).
+
+### Dire Miralis (CR 11 Boss)
+
+Gargantuan Elder Dragon for the Tainted Sea Cove. Drag from
+**Amellwind MH (RaintDM) → Monsters → Monsters**. Token is 4×4 (Gargantuan)
+with furnace light and blindsight 120 ft.
+
+**Automated (module script + Midi QOL):**
+
+- Boiling Presence (1d10 fire to creatures within 10 ft at the start of its turn)
+- Magma Armor at &lt;70% HP (AC 22 + B/P/S resistance); cracks on cold damage or
+  interrupted Calamity Rain; shatters after 6 cracks
+- Stance: Biped (15-ft Claw, Crush) / Quadruped (10-ft Claw, Tail Sweep, advantage
+  vs prone) via **Shift Stance**
+- Magma Glob / Volcanic Vents / Vent Barrage lava templates (2d10 fire on enter
+  or start of turn)
+- Calamity Rain charge → interrupt at 40+ damage in one turn, or Greater Fireball
+  on each marker at the start of its next turn
+- Scorching Hide (2d8 fire when hit by a melee attack)
+- Lair-action cooldown (cannot repeat the same effect two rounds in a row)
+
+**Use from the sheet:** Multiattack, Claw, Crush, Tail Sweep, Greater Fireball
+(Recharge 5–6), Lumbering Advance, legendary actions, optional lair actions.
+
+### Rebuild sources
+
+After editing `monsters/*.js` / the build script:
+
+```bash
+node public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs
+pnpm build:foundry-module
+```
+
 ## Notes and limitations
 
 - **Cook aura / token UI:** kitchen aura hooks and double-click interaction load
@@ -375,8 +441,14 @@ pnpm build:foundry-module
 - **Resource Node sync:** token double-click hooks load automatically from the
   module script on every client. The Sync macro / Configure dialog can still re-arm
   them mid-session if needed.
+- **Dire Miralis:** Magma Armor, lava templates, Calamity Rain, Boiling Presence,
+  and Scorching Hide load from `scripts/dire-miralis.js` on world ready (GM
+  mutations run on the active GM). Item Macros call that API; they warn if the
+  module script is not armed.
 - **Sidecar scripts:** the loose `.js` / `.mjs` / `.fragment.js` files in the source
   folders are development references and are **not** packed. Item-level automation
   already travels embedded in each item's `flags.itemacro`.
-- **Assets:** all 82 `mh-icons` are bundled. If you add items that reference new
-  icons, drop the `.webp` in `public/mh-icons/` before building.
+- **Assets:** hunter `mh-icons` still used by weapons/runes/ammo are bundled.
+  Generic actors and loot use Foundry core `icons/...` paths (no extra files).
+  If you add hunter items that reference new mh-icons, drop the `.webp` in
+  `public/mh-icons/` before building.
