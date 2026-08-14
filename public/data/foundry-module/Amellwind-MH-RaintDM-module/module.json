@@ -1,8 +1,8 @@
 {
   "id": "Amellwind-MH-RaintDM-module",
   "title": "Amellwind MH (RaintDM)",
-  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, runes, cooking features, combo crafting, hidden object detection, resource gathering nodes, and hunt monsters for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
-  "version": "1.11.0",
+  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, Items Forge hunter traps, runes, cooking features, combo crafting, hidden object detection, resource gathering nodes, and hunt monsters for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
+  "version": "1.12.0",
   "authors": [
     {
       "name": "RaintDM"
@@ -16,7 +16,8 @@
     "scripts/resource-node.js",
     "scripts/hidden-detection.js",
     "scripts/felyne-cook.js",
-    "scripts/dire-miralis.js"
+    "scripts/dire-miralis.js",
+    "scripts/hunter-traps.js"
   ],
   "relationships": {
     "systems": [
@@ -120,6 +121,17 @@
       }
     },
     {
+      "name": "items-forge",
+      "label": "Items Forge",
+      "path": "packs/items-forge",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    },
+    {
       "name": "hidden-detect-items",
       "label": "Hidden Detection",
       "path": "packs/hidden-detect-items",
@@ -192,7 +204,8 @@
         "weapons",
         "weapon-resources",
         "runes",
-        "combo-crafting"
+        "combo-crafting",
+        "items-forge"
       ],
       "folders": [
         {

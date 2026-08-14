@@ -1,0 +1,361 @@
+{
+  "_id": "ShockTrapItem001",
+  "name": "Shock Trap",
+  "type": "consumable",
+  "img": "icons/magic/lightning/bolt-strike-blue.webp",
+  "system": {
+    "description": {
+      "value": "<p>As an Action, you set this trap on the ground in an unoccupied space within 5 feet of you. The trap is camouflaged: a creature notices it only if it has Truesight or succeeds on a DC 15 Wisdom (@skill[Perception]) check while within 10 feet of the trap.</p><p>The trap remains for 1 hour, until it triggers, or until you retrieve it (an Action; the trap is not consumed if it has not triggered). If the hour expires, the trap is ruined and cannot be retrieved.</p><p>The trap triggers when a Large or larger creature on the ground enters a 10-foot square centered on the trap. The triggering creature must succeed on a DC 14 Constitution saving throw or be @condition[incapacitated] and have its Speed reduced to 0 until the start of its next turn. Attacks against the creature do not gain Advantage from this effect alone. The trap is consumed when it triggers, whether the save succeeds or fails.</p><p>A creature that was affected by this trap becomes accustomed to shock traps after the effect ends. Until the creature finishes a Short Rest, it is immune to Shock Traps, but not @item[Shock Trap+|RAINTDM].</p><p>Crafting this trap takes 10 minutes (Combo List rules).</p><p><em>Craft (10 minutes, Combo List): Tinker's Tools — Thunderbug + Trap Tool DC 12, qty 1.</em></p>",
+      "chat": "<p><strong>Shock Trap</strong></p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "shock-trap",
+    "quantity": 1,
+    "weight": {
+      "value": 8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 420,
+      "denomination": "gp"
+    },
+    "rarity": "",
+    "identified": true,
+    "unidentified": {
+      "description": "",
+      "name": "Mysterious Hunter Gear"
+    },
+    "container": null,
+    "attunement": "",
+    "attuned": false,
+    "equipped": false,
+    "type": {
+      "value": "trinket",
+      "subtype": ""
+    },
+    "damage": {
+      "base": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false,
+          "formula": ""
+        },
+        "scaling": {
+          "mode": "",
+          "number": null
+        },
+        "bonus": ""
+      },
+      "replace": false
+    },
+    "magicalBonus": null,
+    "properties": [],
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": [],
+      "autoDestroy": false
+    },
+    "activities": {
+      "SetTrapAct000001": {
+        "_id": "SetTrapAct000001",
+        "type": "utility",
+        "sort": 0,
+        "name": "Set Trap",
+        "img": "icons/magic/lightning/bolt-strike-blue.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Set a camouflaged 10-foot-square hunter trap within 5 feet."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": 5,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "square",
+            "size": "10",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "set-trap",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      },
+      "RetrvTrapAct0001": {
+        "_id": "RetrvTrapAct0001",
+        "type": "utility",
+        "sort": 100000,
+        "name": "Retrieve Trap",
+        "img": "icons/magic/lightning/bolt-strike-blue.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "Unused trap within 5 feet",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Retrieve an unused hunter trap within 5 feet."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": 5,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "retrieve-trap",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 300000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "items-forge",
+      "resourceKind": "trap",
+      "trapKey": "shock"
+    },
+    "world": {
+      "hunterTrap": {
+        "trapKey": "shock",
+        "isTrap": true,
+        "family": "shock",
+        "isPlus": false,
+        "saveAbility": "con",
+        "saveDc": 14,
+        "sizeMode": "largeOrLarger",
+        "durationMode": "start",
+        "lightning": null
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Shock Trap",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Hunter traps — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\r\n// On Use: [postActiveEffects]ItemMacro\r\n//\r\n// Activities:\r\n//   set-trap      — spend 1 from the stack, stamp the 10-ft square template\r\n//   retrieve-trap — pick up an unused trap of yours within 5 ft\r\n//\r\n// Canvas trigger / expiry / camouflage live on scripts/hunter-traps.js\r\n\r\n(async () => {\r\n  const macroPass = String(\r\n    (typeof args !== \"undefined\" ? args?.[0]?.macroPass : \"\") ??\r\n      (typeof workflow !== \"undefined\" ? workflow?.macroPass : \"\") ??\r\n      \"\",\r\n  ).toLowerCase();\r\n  if (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\r\n\r\n  const api = globalThis.__amellwindHunterTraps;\r\n  if (!api?.armPlacedTemplate) {\r\n    ui.notifications.warn(\r\n      \"Hunter Traps: module script is not armed. Enable Amellwind MH (RaintDM) and reload.\",\r\n    );\r\n    return;\r\n  }\r\n  api.ensureHooks?.();\r\n\r\n  const actorDoc =\r\n    (typeof actor !== \"undefined\" && actor)\r\n    || (typeof workflow !== \"undefined\" && workflow?.actor)\r\n    || (typeof item !== \"undefined\" && (item?.actor ?? item?.parent))\r\n    || (typeof token !== \"undefined\" ? token?.actor : null);\r\n\r\n  if (!actorDoc) {\r\n    ui.notifications.warn(\"Hunter Traps: actor not found.\");\r\n    return;\r\n  }\r\n\r\n  const rolled =\r\n    (typeof rolledActivity !== \"undefined\" && rolledActivity)\r\n    || workflow?.activity\r\n    || (typeof args !== \"undefined\" ? args?.[0]?.activity : null);\r\n\r\n  const actId = String(\r\n    rolled?.identifier\r\n    ?? rolled?.midiProperties?.identifier\r\n    ?? workflow?.activity?.identifier\r\n    ?? \"\",\r\n  ).toLowerCase();\r\n  const actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\r\n\r\n  const isRetrieve =\r\n    actId === \"retrieve-trap\" || actName.includes(\"retrieve\");\r\n  const isSet =\r\n    actId === \"set-trap\" || actName.includes(\"set trap\") || (!isRetrieve && actName.includes(\"set\"));\r\n\r\n  const tokenDoc =\r\n    (typeof token !== \"undefined\" && token)\r\n    || canvas.tokens?.controlled?.[0]\r\n    || actorDoc.getActiveTokens?.()?.[0]\r\n    || null;\r\n\r\n  if (isRetrieve) {\r\n    await api.retrieveTraps({ actor: actorDoc, token: tokenDoc, item });\r\n    if (workflow) workflow.aborted = true;\r\n    return;\r\n  }\r\n\r\n  if (!isSet) return;\r\n\r\n  const qty = Math.max(0, Number(item?.system?.quantity ?? 0));\r\n  if (qty < 1) {\r\n    ui.notifications.warn(\"Hunter Traps: none left in this stack.\");\r\n    if (workflow) workflow.aborted = true;\r\n    return;\r\n  }\r\n\r\n  const cfg = foundry.utils.getProperty(item, \"flags.world.hunterTrap\") ?? {};\r\n  if (!cfg.trapKey || cfg.trapKey === \"tool\") {\r\n    ui.notifications.warn(\"Hunter Traps: Trap Tool is a crafting component — it cannot be set.\");\r\n    if (workflow) workflow.aborted = true;\r\n    return;\r\n  }\r\n\r\n  const resolveTemplate = () => {\r\n    const fromWorkflow =\r\n      workflow?.template\r\n      ?? workflow?.templateDocument\r\n      ?? (workflow?.templateId && canvas.scene?.templates?.get(workflow.templateId));\r\n    if (fromWorkflow) return fromWorkflow;\r\n    const uuid = workflow?.templateUuid ?? args?.[0]?.templateUuid;\r\n    if (uuid) {\r\n      const parsed = fromUuidSync?.(uuid);\r\n      if (parsed) return parsed;\r\n    }\r\n    const mine = (canvas.scene?.templates ?? [])\r\n      .filter((tpl) => tpl.user === game.user.id)\r\n      .sort((a, b) => Number(b._stats?.modifiedTime ?? 0) - Number(a._stats?.modifiedTime ?? 0));\r\n    return mine[0] ?? null;\r\n  };\r\n\r\n  let template = resolveTemplate();\r\n  if (!template) {\r\n    ui.notifications.warn(\"Hunter Traps: place the 10-foot square on the map, then try Set Trap again.\");\r\n    if (workflow) workflow.aborted = true;\r\n    return;\r\n  }\r\n\r\n  const origin = tokenDoc?.center ?? tokenDoc?.getCenterPoint?.() ?? null;\r\n  if (origin) {\r\n    const center = template.object?.center ?? { x: template.x, y: template.y };\r\n    const dist = canvas.grid?.measureDistance\r\n      ? Number(canvas.grid.measureDistance(origin, center))\r\n      : Infinity;\r\n    if (Number.isFinite(dist) && dist > 5.5) {\r\n      await canvas.scene.deleteEmbeddedDocuments(\"MeasuredTemplate\", [template.id]).catch(() => null);\r\n      ui.notifications.warn(\"Hunter Traps: you must set the trap in an unoccupied space within 5 feet.\");\r\n      if (workflow) workflow.aborted = true;\r\n      return;\r\n    }\r\n  }\r\n\r\n  await api.armPlacedTemplate(template, {\r\n    trapKey: cfg.trapKey,\r\n    family: cfg.family,\r\n    isPlus: Boolean(cfg.isPlus),\r\n    name: item.name,\r\n    img: item.img,\r\n    saveAbility: cfg.saveAbility,\r\n    saveDc: cfg.saveDc,\r\n    sizeMode: cfg.sizeMode,\r\n    durationMode: cfg.durationMode,\r\n    lightning: cfg.lightning || null,\r\n    ownerActorId: actorDoc.id,\r\n    ownerTokenId: tokenDoc?.id ?? tokenDoc?.document?.id ?? null,\r\n    itemUuid: item.uuid,\r\n  });\r\n\r\n  await item.update({ \"system.quantity\": qty - 1 });\r\n\r\n  await ChatMessage.create({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    content:\r\n      '<div class=\"dnd5e2\"><p><strong>'\r\n      + (item.name ?? \"Hunter Trap\")\r\n      + \"</strong> is set and camouflaged (DC 15 Perception within 10 ft, or Truesight). It lasts 1 hour, until it triggers, or until retrieved unused.</p></div>\",\r\n  });\r\n})();\r\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

@@ -27,6 +27,7 @@ Amellwind MH (RaintDM)/
 ├── Weapon Resources
 ├── Runes
 ├── Combo Crafting
+├── Items Forge
 ├── Felyne Kitchen/
 │   ├── Cooking Items
 │   ├── Felyne Cook
@@ -48,6 +49,7 @@ Amellwind MH (RaintDM)/
 | Weapon Resources         | Amellwind MH (RaintDM)    | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
 | Runes                    | Amellwind MH (RaintDM)    | Item  | `runes/<Monster>/`                    | 44 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
 | Combo Crafting           | Amellwind MH (RaintDM)    | Item  | `combo-crafting/`                     | Combo Crafting feature (drop on any actor) |
+| Items Forge              | Amellwind MH (RaintDM)    | Item  | `items-forge/traps/`                  | Hunter traps (Trap Tool, Pitfall, Shock, +) |
 | Cooking Items            | Felyne Kitchen    | Item  | `cooking-features/` (rank-1, daily-skills) | food + daily skills |
 | Felyne Cook              | Felyne Kitchen    | Actor | `cooking-features/`                   | Felyne Cook (embeds its 46 items) |
 | Kitchen Sync             | Felyne Kitchen    | Macro | `cooking-features/`                   | Felyne Cook — Kitchen Sync |
@@ -63,7 +65,7 @@ Item icons that referenced `mh-icons/...` are bundled under
 `modules/Amellwind-MH-RaintDM-module/assets/mh-icons/...`, so the module is
 self-contained (no need to drop `mh-icons/` at your Foundry data root).
 
-Hunter weapons, runes, coatings, and ammo keep those mh-icons. Everything else
+Hunter weapons, runes, coatings, ammo, and hunter traps keep those mh-icons. Everything else
 (resource-node actors, Felyne Cook, Hidden Detection, Combo Crafting, Dire
 Miralis, gather loot) prefers Foundry core paths such as
 `icons/equipment/hand/gauntlet-tooled-leather-brown.webp` or
@@ -173,6 +175,12 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node.mjs
 
 ```bash
 node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.mjs
+```
+
+   If you changed Items Forge hunter traps (`public/data/raintdm-items/traps.json`):
+
+```bash
+node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
 ```
 
    If you changed Dire Miralis (or added another hunt monster actor):
@@ -391,6 +399,39 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.
 pnpm build:foundry-module
 ```
 
+## Items Forge (hunter traps)
+
+Consumable hunter traps from `/item-forge` (`public/data/raintdm-items/traps.json`).
+Dual Repeaters **magazines** stay in **Weapon Resources** (they already ship with
+Load Magazine automation). Drag traps from
+**Amellwind MH (RaintDM) → Items Forge**.
+
+World hooks cannot travel inside an Item pack alone, so canvas trigger / expiry
+ship as `scripts/hunter-traps.js` (armed on world ready).
+
+**Items:** Trap Tool (crafting component), Pitfall Trap / Pitfall Trap+, Shock Trap /
+Shock Trap+.
+
+**Automated (module script + Midi QOL + Item Macro):**
+
+- **Set Trap** (Action): place a camouflaged 10-ft square within 5 ft (hidden from
+  players). Spends 1 from the stack.
+- Trigger when a matching-size creature on the ground enters the square
+  (Pitfall: Huge or smaller; Shock: Large or larger).
+- Saves DC 14 / 16; Pitfall → prone + restrained; Shock → incapacitated + Speed 0.
+  Shock+ also deals 2d8 lightning on trigger.
+- Accustomed: after a failed save, immune to the **base** version until a Short Rest;
+  a + still works, with Advantage on the repeat save at the start of the next turn.
+- **Retrieve Trap** (Action): unused trap within 5 ft returns to the stack.
+- 1-hour world-time expiry ruins the trap (cannot retrieve).
+
+### Rebuild sources
+
+```bash
+node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
+pnpm build:foundry-module
+```
+
 ## Monsters (hunt bosses)
 
 NPC actors for table bosses. World hooks cannot travel inside an Actor pack
@@ -445,6 +486,8 @@ pnpm build:foundry-module
   and Scorching Hide load from `scripts/dire-miralis.js` on world ready (GM
   mutations run on the active GM). Item Macros call that API; they warn if the
   module script is not armed.
+- **Hunter traps:** Set / retrieve Item Macros call `scripts/hunter-traps.js`.
+  Canvas trigger, camouflage notices, and 1-hour expiry run on the active GM.
 - **Sidecar scripts:** the loose `.js` / `.mjs` / `.fragment.js` files in the source
   folders are development references and are **not** packed. Item-level automation
   already travels embedded in each item's `flags.itemacro`.
