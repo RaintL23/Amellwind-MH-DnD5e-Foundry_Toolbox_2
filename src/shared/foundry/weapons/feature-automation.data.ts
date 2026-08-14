@@ -235,7 +235,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       rangeUnits: "self",
       targetAffectsType: "self",
       targetPrompt: false,
-      activityImg: "icons/weapons/ammunition/bullets-triple-orange.webp",
+      activityImg: "icons/weapons/ammunition/bullets-cartridge-shell-gray.webp",
     },
     "Shell capacity as item uses (starts full). BA restores up to 4 via −itemUses.",
   ),
@@ -490,7 +490,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       rangeUnits: "self",
       targetAffectsType: "self",
       targetPrompt: false,
-      activityImg: "icons/weapons/ammunition/bullets-triple-orange.webp",
+      activityImg: "icons/weapons/ammunition/bullets-cartridge-shell-gray.webp",
     },
     "ItemMacro dialog → spend Magazine consumable → fill weapon Charges (max 6).",
   ),
@@ -558,7 +558,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       includeBaseDamage: false,
       chatFlavor:
         "Martial Melee (Light): 1d4 Bludgeoning. Pair with Mastery (Nick) as part of the Attack action.",
-      activityImg: "icons/equipment/shield/heater-steel-boss.webp",
+      activityImg: "icons/equipment/shield/heater-steel-boss-red.webp",
     },
     "Secondary shield attack; exclude sword base damage (includeBase=false).",
   ),
@@ -685,7 +685,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     rangeUnits: "self",
     targetAffectsType: "self",
     targetPrompt: false,
-    activityImg: "icons/magic/unholy/strike-body-life-shadow-green.webp",
+    activityImg: "icons/magic/unholy/strike-body-life-soul-green.webp",
     chatFlavor:
       "+10 walk; +1d4 slashing on melee weapon attacks (Light extra attack bonus).",
     effectChanges: [
@@ -697,7 +697,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       },
     ],
     activeEffect: {
-      img: "icons/magic/unholy/strike-body-life-shadow-green.webp",
+      img: "icons/magic/unholy/strike-body-life-soul-green.webp",
       showIcon: true,
       // Do not set selfTarget: Midi toggleEffect already applies the AE.
       // selfTarget + toggleEffect doubles the effect on the actor.
@@ -1086,7 +1086,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       rangeUnits: "self",
       targetAffectsType: "self",
       targetPrompt: false,
-      activityImg: "icons/magic/air/wind-stream-blue.webp",
+      activityImg: "icons/magic/air/wind-stream-blue-gray.webp",
     },
     "Does not consume Reaction — trigger is optional spend when falling.",
   ),

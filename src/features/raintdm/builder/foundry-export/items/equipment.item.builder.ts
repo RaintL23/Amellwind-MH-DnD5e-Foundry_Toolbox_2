@@ -5,6 +5,8 @@ import {
   mapRarity,
   slugify,
   FOUNDRY_ITEM_ICONS,
+  resolveArmorItemIcon,
+  resolveNamedGearIcon,
 } from "@/shared/foundry";
 import type { ArmorItem } from "@/shared/types";
 import { sourceBlock, htmlDesc, parseMagicBonus } from "./item-shared";
@@ -55,13 +57,10 @@ export function buildArmorItem(
     unidentified: { description: "" },
   };
 
-  const fallbackImg = isShield
-    ? FOUNDRY_ITEM_ICONS.shield
-    : FOUNDRY_ITEM_ICONS.armor;
   return wrapItem({
     name: armor.name,
     type: "equipment",
-    img: img ?? fallbackImg,
+    img: resolveArmorItemIcon(armor.name, armor.category, img),
     system,
   });
 }
@@ -97,7 +96,7 @@ export function buildTrinketItem(
   return wrapItem({
     name,
     type: "equipment",
-    img: img ?? FOUNDRY_ITEM_ICONS.trinket,
+    img: resolveNamedGearIcon(name) ?? img ?? FOUNDRY_ITEM_ICONS.trinket,
     system,
   });
 }

@@ -512,7 +512,7 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
     type: "save",
     sort: 600000,
     name: "Snap Silkbind",
-    img: "icons/magic/control/debuff-chains-orb-purple-white.webp",
+    img: "icons/magic/control/debuff-chains-purple.webp",
     activation: {
       type: "special",
       value: null,

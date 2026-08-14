@@ -5,7 +5,7 @@ import { getTypedBonusValue } from "../utils/weapon-forge-features.utils";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 
 export const DEFAULT_FOUNDRY_WEAPON_IMG =
-  "icons/weapons/swords/sword-broad-steel.webp";
+  "icons/weapons/swords/sword-broad-red.webp";
 
 export function parseBonusNumber(raw: string): number {
   const match = raw.trim().match(/([+-]?\d+)/);

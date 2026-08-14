@@ -89,6 +89,8 @@ export {
   resolveSpellIcon,
   resolveItemIcon,
   resolveWeaponItemIcon,
+  resolveNamedGearIcon,
+  resolveArmorItemIcon,
   resolveInventoryItemIcon,
 } from "./icons";
 

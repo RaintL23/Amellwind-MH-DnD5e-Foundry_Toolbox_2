@@ -680,7 +680,7 @@ if (isPostDamage && isHit) {
       if (invisible) {
         const revealed = {
           name: "Dawnstar Magazine — Revealed",
-          img: "icons/magic/light/explosion-star-small-blue.webp",
+          img: "icons/magic/light/explosion-star-blue-small.webp",
           type: "base",
           disabled: false,
           transfer: false,
@@ -709,7 +709,7 @@ if (isPostDamage && isHit) {
   if (riderKind === "onhitnoheal" || magKey === "twilight") {
     await applyAeToTargets({
       name: "Twilight Magazine — No Healing",
-      img: "icons/magic/unholy/strike-beam-blood-red.webp",
+      img: "icons/magic/unholy/strike-beam-blood-large-red-blue.webp",
       type: "base",
       disabled: false,
       transfer: false,
