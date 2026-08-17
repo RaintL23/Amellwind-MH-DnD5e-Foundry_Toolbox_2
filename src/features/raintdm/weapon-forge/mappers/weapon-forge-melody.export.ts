@@ -19,7 +19,7 @@ export interface MelodyFeatDef {
   changes: Array<{ key: string; mode: number; value: string; priority?: number }>;
 }
 
-/** Hand-tuned Songbook Melodies matching `public/data/foundry-jsons-example/weapons-resources/`. */
+/** Hand-tuned Songbook Melodies matching `public/data/foundry-jsons-example/weapons-resources/melodies/`. */
 export const SONGBOOK_MELODY_FEATS: Record<string, MelodyFeatDef> = {
   "melody of might": {
     name: "Melody of Might",

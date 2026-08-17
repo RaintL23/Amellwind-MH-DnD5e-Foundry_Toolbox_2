@@ -317,11 +317,11 @@ describe("Weapon Forge Foundry example parity", () => {
     for (const [name, path] of [
       [
         "Melody of Might",
-        "public/data/foundry-jsons-example/weapons-resources/fvtt-Item-melody-of-might.json",
+        "public/data/foundry-jsons-example/weapons-resources/melodies/fvtt-Item-melody-of-might.json",
       ],
       [
         "Melody of Swiftness",
-        "public/data/foundry-jsons-example/weapons-resources/fvtt-Item-melody-of-swiftness.json",
+        "public/data/foundry-jsons-example/weapons-resources/melodies/fvtt-Item-melody-of-swiftness.json",
       ],
     ] as const) {
       const example = JSON.parse(readFileSync(path, "utf8"));

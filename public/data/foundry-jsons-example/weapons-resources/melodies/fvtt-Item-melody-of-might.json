@@ -4,8 +4,8 @@
   "img": "icons/skills/melee/strike-sword-blood-red.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>",
-      "chat": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital/Encore activates Melodies as a 15-foot aura for 1 minute.</em></p>"
+      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital activates one Melody as a 15-foot aura for 1 minute.</em></p>",
+      "chat": ""
     },
     "source": {
       "custom": "",
