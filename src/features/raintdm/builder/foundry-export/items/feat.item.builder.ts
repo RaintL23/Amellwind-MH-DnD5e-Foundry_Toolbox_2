@@ -24,6 +24,7 @@ export interface FeatItemInput {
   subtype: FeatSubtype;
   identifier?: string;
   img?: string;
+  source?: string;
   requirements?: string;
   effects?: FoundryActiveEffect[];
   advancement?: unknown[];
@@ -111,7 +112,7 @@ export function buildFeatItem(input: FeatItemInput): FoundryItem {
 
   const system: Record<string, unknown> = {
     description: htmlDesc(input.description),
-    source: sourceBlock(undefined),
+    source: sourceBlock(input.source),
     identifier: input.identifier ?? kebab(input.name),
     activation: {
       type: usage.activationType,

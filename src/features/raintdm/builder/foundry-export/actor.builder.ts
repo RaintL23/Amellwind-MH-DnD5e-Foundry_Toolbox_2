@@ -11,6 +11,8 @@ import {
   buildPrototypeToken,
   DEFAULT_OWNERSHIP,
   ensureActivityMidiProperties,
+  applyFoundryModuleCompat,
+  FOUNDRY_EXPORT_TARGET,
   FULL_CASTER_SLOTS,
   effectiveCasterLevel,
   mapLanguage,
@@ -21,7 +23,7 @@ import {
   toolAbility,
 } from "@/shared/foundry";
 import { applyItemAutomation } from "@/shared/foundry/weapons";
-import { toBuilderSnapshotFlags } from "./builder-snapshot";
+import { toBuilderSnapshotFlags, TOOLBOX_FLAG_NAMESPACE } from "./builder-snapshot";
 import {
   buildArmorItem,
   buildBackgroundItem,
@@ -278,9 +280,10 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
     items.push(buildSpellItem(spell));
   }
 
-  // Enrich items with Midi-QoL / DAE automation (Plutonium-style overlays).
+  // Midi-QoL / DAE overlays, then stamp CPR/GPS/Plutonium/Item Macro compat.
   for (const item of items) {
     applyItemAutomation(item);
+    applyFoundryModuleCompat(item);
   }
 
   // ─── Actor system (abilities, skills, HP, spell slots) ──────────────────────
@@ -493,6 +496,15 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
   const portraitSrc = input.portraitImage || DEFAULT_ART;
   const tokenSrc = input.tokenImage || input.portraitImage || DEFAULT_ART;
 
+  const snapshotFlags = input.builderSnapshot
+    ? toBuilderSnapshotFlags(input.builderSnapshot)
+    : {};
+  const snapshotNs = snapshotFlags[TOOLBOX_FLAG_NAMESPACE];
+  const snapshotNsObj =
+    snapshotNs && typeof snapshotNs === "object"
+      ? (snapshotNs as Record<string, unknown>)
+      : {};
+
   return {
     name: input.name,
     type: "character",
@@ -504,7 +516,24 @@ export function buildFoundryActor(input: FoundryExportInput): FoundryActor {
     folder: null,
     sort: 0,
     ownership: { ...DEFAULT_OWNERSHIP },
-    flags: input.builderSnapshot ? toBuilderSnapshotFlags(input.builderSnapshot) : {},
+    flags: {
+      ...snapshotFlags,
+      [TOOLBOX_FLAG_NAMESPACE]: {
+        ...snapshotNsObj,
+        foundryCompat: {
+          core: FOUNDRY_EXPORT_TARGET.coreVersion,
+          system: `${FOUNDRY_EXPORT_TARGET.systemId} ${FOUNDRY_EXPORT_TARGET.systemVersion}`,
+          stack: [
+            "midi-qol",
+            "itemacro",
+            "dae",
+            "plutonium",
+            "chris-premades",
+            "gambits-premades",
+          ],
+        },
+      },
+    },
     _stats: buildStats(),
   };
 }

@@ -1,14 +1,7 @@
-import { toFoundryDescription, FOUNDRY_EXPORT_TARGET } from "@/shared/foundry";
+import { toFoundryDescription, foundrySourceBlock } from "@/shared/foundry";
 
 export function sourceBlock(source: string | undefined): Record<string, unknown> {
-  return {
-    custom: "",
-    book: source ?? "",
-    page: "",
-    license: "",
-    rules: FOUNDRY_EXPORT_TARGET.rules,
-    revision: 1,
-  };
+  return foundrySourceBlock(source);
 }
 
 export function htmlDesc(text: string | undefined): { value: string; chat: string } {

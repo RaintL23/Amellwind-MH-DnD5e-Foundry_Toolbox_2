@@ -96,12 +96,41 @@ function parseSpellRange(range: string | undefined): {
 } {
   const raw = (range ?? "").trim().toLowerCase();
   if (!raw) return { value: null, long: null, units: "" };
-  if (raw === "self") return { value: null, long: null, units: "self" };
-  if (raw === "touch") return { value: null, long: null, units: "touch" };
+  if (raw.includes("touch")) return { value: null, long: null, units: "touch" };
   if (raw.includes("sight")) return { value: null, long: null, units: "spec" };
   const ft = raw.match(/(\d+)\s*(?:feet|foot|ft)/i);
-  if (ft) return { value: Number(ft[1]), long: null, units: "ft" };
+  if (raw.startsWith("self") && !ft) {
+    return { value: null, long: null, units: "self" };
+  }
+  if (raw === "self") return { value: null, long: null, units: "self" };
+  if (ft) {
+    const units = raw.startsWith("self") ? "self" : "ft";
+    return {
+      value: units === "ft" ? Number(ft[1]) : null,
+      long: null,
+      units: units === "self" ? "self" : "ft",
+    };
+  }
   return { value: null, long: null, units: "spec" };
+}
+
+/** Parses `(20-foot radius)` / `15-foot cone` from 5etools range strings. */
+function parseSpellTemplate(range: string | undefined): {
+  type: string;
+  size: string;
+} | null {
+  const raw = (range ?? "").trim().toLowerCase();
+  if (!raw) return null;
+  const match = raw.match(
+    /(\d+)\s*[-\s]?foot[-\s]?(radius|sphere|cube|cone|cylinder|line|emanation|square)/i,
+  );
+  if (!match) return null;
+  const kind = match[2]!.toLowerCase();
+  const type =
+    kind === "radius" || kind === "sphere" || kind === "emanation"
+      ? "radius"
+      : kind;
+  return { type, size: match[1]! };
 }
 
 function mapSaveAbility(label: string): string {
@@ -145,6 +174,7 @@ function buildSpellActivities(input: SpellItemInput): Record<string, unknown> {
   const duration = parseSpellDuration(input.duration);
   if (input.isConcentration) duration.concentration = true;
   const range = parseSpellRange(input.range);
+  const template = parseSpellTemplate(input.range);
   const activities: Record<string, unknown> = {};
 
   const base = {
@@ -172,7 +202,13 @@ function buildSpellActivities(input: SpellItemInput): Record<string, unknown> {
       override: false,
     },
     target: {
-      template: { contiguous: false, units: "ft" },
+      template: {
+        contiguous: false,
+        units: "ft",
+        ...(template
+          ? { type: template.type, size: template.size }
+          : {}),
+      },
       affects: { choice: false },
       override: false,
       prompt: true,
@@ -223,6 +259,8 @@ function buildSpellActivities(input: SpellItemInput): Record<string, unknown> {
       },
       midiProperties: defaultMidiProperties({
         identifier: slugify(input.name),
+        magicEffect: true,
+        magicDamage: Boolean(dmgType),
       }),
     };
     return activities;
@@ -260,6 +298,8 @@ function buildSpellActivities(input: SpellItemInput): Record<string, unknown> {
       },
       midiProperties: defaultMidiProperties({
         identifier: slugify(input.name),
+        magicEffect: true,
+        magicDamage: Boolean(dmgType),
       }),
     };
     return activities;
@@ -275,6 +315,8 @@ function buildSpellActivities(input: SpellItemInput): Record<string, unknown> {
     roll: { formula: "", name: "", prompt: false, visible: false },
     midiProperties: defaultMidiProperties({
       identifier: slugify(input.name),
+      magicEffect: true,
+      magicDamage: false,
     }),
   };
   return activities;
@@ -285,6 +327,7 @@ export function buildSpellItem(input: SpellItemInput): FoundryItem {
   const duration = parseSpellDuration(input.duration);
   if (input.isConcentration) duration.concentration = true;
   const range = parseSpellRange(input.range);
+  const template = parseSpellTemplate(input.range);
   const properties: string[] = [];
   if (input.components?.v) properties.push("vocal");
   if (input.components?.s) properties.push("somatic");
@@ -331,8 +374,8 @@ export function buildSpellItem(input: SpellItemInput): FoundryItem {
       template: {
         count: "",
         contiguous: false,
-        type: "",
-        size: "",
+        type: template?.type ?? "",
+        size: template?.size ?? "",
         units: "ft",
       },
       affects: { count: "", type: "", choice: false },
