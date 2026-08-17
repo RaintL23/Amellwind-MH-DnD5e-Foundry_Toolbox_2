@@ -103,6 +103,13 @@ describe("Switch Axe uncommon Foundry export", () => {
     expect(zsdDamage.includeBase).toBe(false);
     expect(zsdDamage.parts[0]).toMatchObject({ number: 2, denomination: 6 });
 
+    const zsdAdv = item.effects.find((effect) =>
+      effect.name.includes("Zero Sum Discharge (ZSD) (Advantage)"),
+    );
+    expect(
+      (zsdAdv?.flags as { dae?: { showIcon?: boolean } })?.dae?.showIcon,
+    ).toBe(true);
+
     const flags = item.flags as {
       itemacro?: { macro?: { command?: string } };
       "midi-qol"?: { onUseMacroName?: string };

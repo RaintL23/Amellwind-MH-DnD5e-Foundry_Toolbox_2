@@ -1469,7 +1469,8 @@
           "specialDuration": [
             "1Attack"
           ],
-          "stackable": "noneName"
+          "stackable": "noneName",
+          "showIcon": true
         }
       },
       "_stats": {

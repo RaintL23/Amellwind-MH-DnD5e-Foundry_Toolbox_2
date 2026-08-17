@@ -120,6 +120,15 @@ describe("Switch Axe rare Foundry export", () => {
       Object.entries(activities).find(([, a]) => a.name === "ZSD Splash")?.[0],
     );
 
+    const splashAdv = item.effects.find(
+      (effect) =>
+        /zero sum discharge/i.test(effect.name) &&
+        /advantage/i.test(effect.name),
+    );
+    expect(
+      (splashAdv?.flags as { dae?: { showIcon?: boolean } })?.dae?.showIcon,
+    ).toBe(true);
+
     expect(resources.map((r) => r.name).sort()).toEqual([
       "Element Phial",
       "Exhaust Phial",

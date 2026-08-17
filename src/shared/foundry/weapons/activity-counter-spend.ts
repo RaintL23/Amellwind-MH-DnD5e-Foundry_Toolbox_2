@@ -194,10 +194,10 @@ export function compileCounterSpend(
             ? {
                 selfTarget: true,
                 selfTargetAlways: false,
-                showIcon: true,
                 dontApply: false,
               }
             : {}),
+          showIcon: true,
         },
       },
     });
