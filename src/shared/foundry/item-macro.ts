@@ -125,6 +125,35 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
+/** Keep authored `_stats` keys but fill Item Macro 2.x system identity when missing. */
+function completeItemMacroStats(
+  existing: unknown,
+  fallback: unknown,
+): Record<string, unknown> {
+  const current = isPlainObject(existing) ? existing : {};
+  const defaults = isPlainObject(fallback) ? fallback : {};
+  const pick = (key: string, fromTarget: boolean): string => {
+    const authored = current[key];
+    if (typeof authored === "string" && authored.trim()) return authored;
+    const fromDefaults = defaults[key];
+    if (typeof fromDefaults === "string" && fromDefaults.trim()) {
+      return fromDefaults;
+    }
+    if (fromTarget) {
+      if (key === "coreVersion") return FOUNDRY_EXPORT_TARGET.coreVersion;
+      if (key === "systemId") return FOUNDRY_EXPORT_TARGET.systemId;
+      if (key === "systemVersion") return FOUNDRY_EXPORT_TARGET.systemVersion;
+    }
+    return "";
+  };
+  return {
+    ...current,
+    coreVersion: pick("coreVersion", true),
+    systemId: pick("systemId", true),
+    systemVersion: pick("systemVersion", true),
+  };
+}
+
 /**
  * Embeds an Item Macro and Midi on-use hooks on `item.flags`.
  * Preserves `world` / toolbox flags; only `midi-qol` on-use + `itemacro` change.
@@ -177,15 +206,20 @@ export function normalizeItemMacroFlags(item: FoundryItem): void {
   if (command) {
     const bag = isPlainObject(item.flags.itemacro) ? item.flags.itemacro : {};
     const macro = isPlainObject(bag.macro) ? bag.macro : {};
+    const envelope = buildItemMacroDocument({ name: item.name, command });
     item.flags = {
       ...item.flags,
       itemacro: {
         ...bag,
         macro: {
-          ...buildItemMacroDocument({ name: item.name, command }),
+          ...envelope,
           ...macro,
           command,
-          name: typeof macro.name === "string" && macro.name ? macro.name : item.name,
+          name:
+            typeof macro.name === "string" && macro.name
+              ? macro.name
+              : item.name,
+          _stats: completeItemMacroStats(macro._stats, envelope._stats),
         },
       },
     };
