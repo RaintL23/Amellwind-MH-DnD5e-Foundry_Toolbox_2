@@ -139,5 +139,7 @@ export function ensureActivityMidiProperties(
     } else {
       activity.midiProperties = defaultMidiProperties(overrides);
     }
+    // Midi 12.4 replaced `forceDialog` with forceConsume/Roll/DamageDialog.
+    delete (activity.midiProperties as Record<string, unknown>).forceDialog;
   }
 }

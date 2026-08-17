@@ -9,24 +9,11 @@ function isObj(v: unknown): v is AnyObj {
   return typeof v === "object" && v !== null && !Array.isArray(v);
 }
 
-/** Midi dialect keys that differ between older Foundry exports and our NEW default. */
-const MIDI_DIALECT_KEYS = new Set([
-  "forceDialog",
-  "autoConsume",
-  "forceConsumeDialog",
-  "forceRollDialog",
-  "forceDamageDialog",
-  "removeChatButtons",
-  "magicEffect",
-  "magicDamage",
-  "noConcentrationCheck",
-  "autoCEEffects",
-]);
-
-function stripMidiDialect(midi: AnyObj): AnyObj {
+/** Legacy Midi 11 key dropped when examples were upgraded to the 12.4 blob. */
+function stripLegacyMidiKeys(midi: AnyObj): AnyObj {
   const out: AnyObj = {};
   for (const [k, v] of Object.entries(midi)) {
-    if (MIDI_DIALECT_KEYS.has(k)) continue;
+    if (k === "forceDialog") continue;
     out[k] = v;
   }
   return out;
@@ -104,7 +91,7 @@ function normalizeForParity(value: unknown, path = ""): unknown {
     // Empty activity img is omitted in hand-tuned GS samples.
     if (k === "img" && v === "") continue;
     if (k === "midiProperties" && isObj(v)) {
-      out[k] = stripMidiDialect(v);
+      out[k] = stripLegacyMidiKeys(v);
       continue;
     }
     if (k === "activities" && isObj(v)) {
