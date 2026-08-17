@@ -156,6 +156,10 @@ export function getRaritySlideStatEntries(row: WeaponRarityRow): {
       ac = value;
       continue;
     }
+    if (label.toLowerCase().trim() === "spirit gain") {
+      genericHeader.push(`${value} Spirit Gain`);
+      continue;
+    }
     if (isSimpleBonusDisplay(value)) {
       genericHeader.push(formatGenericSimpleBonus(label, value));
       continue;

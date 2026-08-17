@@ -236,6 +236,101 @@ describe("Weapon Forge Foundry example parity", () => {
     expect(diffs, diffs.slice(0, 15).join("\n")).toEqual([]);
   });
 
+  it("Longsword Uncommon matches example (normalized)", () => {
+    const weapon = loadWeapon("public/data/raintdm-weapons/longsword.json");
+    const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Uncommon");
+    const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
+    const example = JSON.parse(
+      readFileSync(
+        "public/data/foundry-jsons-example/weapons/fvtt-Item-longsword-uncommon.json",
+        "utf8",
+      ),
+    );
+
+    expect(exported.name).toBe("Longsword (Uncommon)");
+    expect((exported.system as { mastery?: string; uses?: unknown }).mastery).toBe(
+      "sap",
+    );
+    expect((exported.system as { uses?: unknown }).uses).toMatchObject({
+      spent: 6,
+      max: "6",
+    });
+
+    const names = Object.values(
+      (exported.system as { activities: Record<string, { name?: string }> })
+        .activities,
+    )
+      .map((a) => a.name || "(default)")
+      .sort();
+    expect(names).toEqual(["Attack", "Spirit Blade"].sort());
+
+    const diffs: string[] = [];
+    deepDiff(
+      normalizeForParity(example),
+      normalizeForParity(exported),
+      "",
+      diffs,
+      40,
+    );
+    expect(diffs, diffs.slice(0, 15).join("\n")).toEqual([]);
+  });
+
+  it("Longsword Rare matches example + Foresight Slash", () => {
+    const weapon = loadWeapon("public/data/raintdm-weapons/longsword.json");
+    const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Rare");
+    const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
+    const example = JSON.parse(
+      readFileSync(
+        "public/data/foundry-jsons-example/weapons/fvtt-Item-longsword-rare.json",
+        "utf8",
+      ),
+    );
+
+    expect(exported.name).toBe("Longsword (Rare)");
+    expect((exported.system as { magicalBonus?: number }).magicalBonus).toBe(1);
+
+    const acts = Object.values(
+      (
+        exported.system as {
+          activities: Record<
+            string,
+            {
+              name?: string;
+              activation?: { type?: string };
+              consumption?: { targets?: unknown[] };
+              description?: { chatFlavor?: string };
+            }
+          >;
+        }
+      ).activities,
+    );
+    const names = acts.map((a) => a.name || "(default)").sort();
+    expect(names).toContain("Foresight Slash");
+    expect(names).toContain("Foresight Slash: Counter");
+    expect(names).toContain("Spirit Blade");
+    expect(names.some((n) => /thrust|roundslash|helm breaker/i.test(n))).toBe(
+      false,
+    );
+
+    const foresight = acts.find((a) => a.name === "Foresight Slash");
+    expect(foresight?.activation?.type).toBe("reaction");
+    expect(foresight?.consumption?.targets ?? []).toEqual([]);
+    expect(foresight?.description?.chatFlavor).toContain("1d8");
+
+    const blade = acts.find((a) => a.name === "Spirit Blade");
+    expect(blade?.description?.chatFlavor).toContain("1d6");
+
+    const diffs: string[] = [];
+    deepDiff(
+      normalizeForParity(example),
+      normalizeForParity(exported),
+      "",
+      diffs,
+      40,
+    );
+    expect(diffs, diffs.slice(0, 15).join("\n")).toEqual([]);
+  });
+
   it("Hunting Horn Uncommon has Recital Songbook wiring + Melodies", () => {
     const weapon = loadWeapon("public/data/raintdm-weapons/hunting-horn.json");
     const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Uncommon");

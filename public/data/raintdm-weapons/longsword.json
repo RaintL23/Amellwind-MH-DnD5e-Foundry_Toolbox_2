@@ -1,0 +1,129 @@
+{
+  "name": "Longsword",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "weight": 3,
+  "value": 2500,
+  "property": ["2H"],
+  "dmg1": "1d10",
+  "dmgType": "S",
+  "img": "/mh-icons/weapon_longsword.webp",
+  "entries": [
+    "An elegant two-handed sword. Normal attacks fill a Spirit Gauge; named Spirit techniques replace one of your attacks from the Attack action and spend that gauge. Each technique works on its own — with Extra Attack you can chain two in the same action if you pay both costs.",
+    {
+      "type": "inset",
+      "name": "Longsword",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features",
+            "Spirit Gain"
+          ],
+          "rows": [
+            ["Common", "1", "--", "--", "Mastery (Sap)", "--"],
+            ["Uncommon", "2", "--", "--", "Spirit Gauge, Spirit Blade", "1"],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Spirit Blade Upgrade I, Foresight Slash",
+              "1"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Spirit Gauge Upgrade II, Spirit Thrust, Spirit Roundslash, Spirit Helm Breaker",
+              "2"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "Special Sheathe (Iai Spirit Slash), Spirit Release Slash",
+              "2"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "8f3c1a90-2b4e-4d11-9c7a-1e6f0b2d4a10",
+        "name": "Mastery (Sap)",
+        "description": "If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn."
+      },
+      {
+        "id": "2c9e4b71-8d55-4a02-b3f1-7a6c91e04d22",
+        "name": "Spirit Gauge",
+        "description": "This weapon holds up to 6 spirit (the gauge starts empty). When you hit a creature with a normal attack using this weapon (an attack you did not replace with a Spirit technique), you gain 1 spirit. You lose all spirit if you don't hit a creature with this weapon within 1 minute or if you become Incapacitated.\n\nSpirit techniques that replace an attack do not generate spirit. You cannot apply Spirit Blade to the same attack you replace with a Spirit technique."
+      },
+      {
+        "id": "5a1d8e33-6f40-4c88-ae12-90b7d3c54111",
+        "name": "Spirit Blade",
+        "description": "When you hit with a normal attack using this weapon, you can expend any number of spirits: the attack deals an extra 1d4 slashing damage per spirit expended. You cannot use Spirit Blade on an attack you replaced with Spirit Thrust, Spirit Roundslash, or Spirit Helm Breaker."
+      },
+      {
+        "id": "71b2c094-1e8a-4f26-9d03-55aa88e1c033",
+        "name": "Spirit Blade Upgrade I",
+        "description": "Spirit Blade extra damage increases to 1d6 slashing per spirit expended.",
+        "upgradesFromId": "5a1d8e33-6f40-4c88-ae12-90b7d3c54111"
+      },
+      {
+        "id": "9d44e12f-0c7b-4a91-8e56-2f18c3a7b044",
+        "name": "Foresight Slash",
+        "description": "As a Reaction when a creature you can see hits you with a melee attack, you can expend 2 spirits. Roll 1d8 and add it to your AC against that attack, potentially causing it to miss. If this causes the attack to miss, you can make one attack with this weapon against the attacker as part of the same Reaction, and you regain 1 spirit. You can't use this feature if you have no spirit."
+      },
+      {
+        "id": "c4e90a18-3d27-4b6f-a821-e09f5c7d2055",
+        "name": "Spirit Gauge Upgrade II",
+        "description": "When you hit with a normal attack using this weapon, you gain 2 spirit instead of 1.",
+        "upgradesFromId": "2c9e4b71-8d55-4a02-b3f1-7a6c91e04d22"
+      },
+      {
+        "id": "0b6f27d1-5a48-4e73-9c01-d8a4b2e3f066",
+        "name": "Spirit Thrust",
+        "description": "When you take the Attack action, you can replace one of those attacks with a Spirit Thrust. Expend 2 spirits: this attack deals piercing damage instead of slashing. On a hit, you can move up to 15 feet in a straight line through the target's space without provoking Opportunity Attacks. This attack does not generate spirit."
+      },
+      {
+        "id": "a17c3e59-8b14-4d90-bf22-1c5e6a708077",
+        "name": "Spirit Roundslash",
+        "description": "Once per turn when you take the Attack action, you can replace one of those attacks with a Spirit Roundslash. Expend 3 spirits and make an attack against a creature. If another creature is within 5 feet of that target and within your reach, it also takes the weapon's damage, but don't add your ability modifier to that damage unless that modifier is negative. This attack does not generate spirit."
+      },
+      {
+        "id": "3e8a51c2-7d09-4f15-a634-b90c1d2e4088",
+        "name": "Spirit Helm Breaker",
+        "description": "Once per turn when you take the Attack action, you can replace one of those attacks with a Spirit Helm Breaker. Expend 3 spirits: you can move up to 10 feet toward the target without provoking Opportunity Attacks, then make the attack. On a hit, the attack deals an extra 3d6 slashing damage. If you already resolved another Spirit technique (Spirit Blade, Spirit Thrust, or Spirit Roundslash) during this Attack action, the extra damage is 4d6 instead. This attack does not generate spirit. You cannot apply Spirit Blade to this attack."
+      },
+      {
+        "id": "d25b90e4-1f63-4a72-8c50-e4b7a81930aa",
+        "name": "Special Sheathe (Iai Spirit Slash)",
+        "description": "As a Bonus Action, you sheathe the blade and enter Iai until the start of your next turn. While in Iai, your Speed is reduced by 10 feet. If a creature hits you or enters your reach while you are in Iai, you can take a Reaction and expend 3 spirits to make an Iai Spirit Slash: one attack with this weapon with Advantage, dealing an extra 3d6 slashing damage on a hit. If that attack hits and you had 5 or more spirits before this spend, the target has Disadvantage on the next saving throw it makes before the start of your next turn."
+      },
+      {
+        "id": "e81c47b3-2a94-4d08-9f61-c7e3b0a541bb",
+        "name": "Spirit Release Slash",
+        "description": "Your Helm Breaker improves. If the attack hits and you had 5 or more spirits before the spend, the extra damage is 5d6 slashing instead of 3d6 (or 6d6 instead of 4d6 if the combo bonus from another Spirit technique this Attack action also applies).",
+        "upgradesFromId": "3e8a51c2-7d09-4f15-a634-b90c1d2e4088"
+      }
+    ],
+    "proficiency": {
+      "compatible": ["Greatsword", "Longsword"],
+      "tier": "martial",
+      "range": "melee"
+    }
+  }
+}

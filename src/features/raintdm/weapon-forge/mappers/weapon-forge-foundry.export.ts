@@ -34,6 +34,7 @@ import {
   applyWireKnucklesSilkbindOverlay,
   defaultWeaponForgeItemFlags,
 } from "./weapon-forge-foundry-envelope";
+import { applyLongswordOverlay } from "./weapon-forge-longsword.export";
 import { buildWeaponMelodyFeatItems } from "./weapon-forge-melody.export";
 import { buildWeaponPhialFeatItems } from "./weapon-forge-phial.export";
 import { buildWeaponMagazineConsumableItems } from "./weapon-forge-magazine.export";
@@ -204,6 +205,7 @@ export function buildWeaponFoundryExportBundle(
   applyWireKnucklesSilkbindOverlay(item);
   applySwitchAxeOverlay(item, weapon, clamped);
   applyChargeBladeOverlay(item, weapon, clamped);
+  applyLongswordOverlay(item, weapon, clamped);
   applyFoundryModuleCompat(item, { light: true });
 
   const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);

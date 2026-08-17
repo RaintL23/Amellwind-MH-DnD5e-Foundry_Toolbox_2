@@ -12,6 +12,9 @@ describe("foundry item naming", () => {
     expect(buildFoundryItemFilename("Great Sword", "Rare")).toBe(
       "fvtt-Item-great-sword-rare.json",
     );
+    expect(buildFoundryItemFilename("Longsword", "Uncommon")).toBe(
+      "fvtt-Item-longsword-uncommon.json",
+    );
     expect(buildFoundryItemFilename("Great Sword", "Base")).toBe(
       "fvtt-Item-great-sword-base.json",
     );

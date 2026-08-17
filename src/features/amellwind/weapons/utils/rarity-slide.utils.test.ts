@@ -22,6 +22,8 @@ describe("weapon bonus column classification", () => {
     expect(isWeaponFeatureColumn("AC Bonus")).toBe(false);
     expect(isWeaponFeatureColumn("Bonus AC")).toBe(false);
     expect(isWeaponFeatureColumn("Features")).toBe(true);
+    expect(isWeaponFeatureColumn("Spirit Gain")).toBe(false);
+    expect(isWeaponStatBonusColumn("Spirit Gain")).toBe(false);
   });
 });
 
@@ -72,5 +74,19 @@ describe("getRaritySlideStatEntries", () => {
 
     expect(headerBonuses).toEqual(["+1 Save DC"]);
     expect(otherStats).toEqual([["Bonus Notes", "Keep the shield raised"]]);
+  });
+
+  it("lifts Spirit Gain into the rarity header without treating it as a feature", () => {
+    const { headerBonuses, otherStats } = getRaritySlideStatEntries(
+      row({
+        "Bonus to Hit": "+2",
+        "Bonus to Damage": "+2",
+        Features: ["Spirit Helm Breaker"],
+        "Spirit Gain": "2",
+      }),
+    );
+
+    expect(headerBonuses).toEqual(["+2 to Hit and Damage", "2 Spirit Gain"]);
+    expect(otherStats).toEqual([]);
   });
 });

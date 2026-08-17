@@ -1337,6 +1337,8 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 
 **Dual Repeaters (Uncommon+)**: Magazines son **Weapon Resources** consumibles: cada magazine llena las **Charges** del arma (`system.uses` max 6, empieza vacío — UI de Charges en la ficha). Attack gasta 1 Charge. AE `Magazine (Loaded)` marca el tipo cargado (damage type) y riders Rare (p. ej. Blaze Upgrade I → +1d6 fire en AE). Overlay `applyDualRepeatersOverlay` + macro `dual-repeaters-magazines.macro.ts` (on-hit: Cryo/Storm/Slime Upgrade I, Dawnstar, Twilight). Ejemplos: `fvtt-Item-dual-repeaters-uncommon.json`, `fvtt-Item-dual-repeaters-rare.json`, `weapons-resources/magazines/`.
 
+**Longsword (Forge RaintDM)**: 1d10 slashing two-handed (no Heavy — the fast two-hander vs Great Sword). Common: Mastery (Sap). Uncommon: **Spirit Gauge** (max 6, starts empty, +1 on a *normal* hit; dissipates after 1 min / Incapacitated) + **Spirit Blade** (on a normal hit, spend N spirit for +N d4 slashing; d6 at Rare). Rare: **Foresight Slash** (Reaction when hit by melee: spend 2, 1d8 to AC; on a miss caused this way, one counter-attack and regain 1 spirit). Overlay `applyLongswordOverlay` + `longsword.macro.ts`: Attack hit recovers Spirit Gain; Spirit Blade is a scaled **damage** rider (not a second attack); Foresight spends 2 in ItemMacro, applies +1d8 AC (`isAttacked`), refunds 1 on miss, and emits **Foresight Slash: Counter**. Very Rare: fill +2; **Spirit Thrust** / **Spirit Roundslash** / **Spirit Helm Breaker** each **replace one Attack-action attack** (independent; optional combo +1d6 on Helm Breaker if another Spirit technique already resolved this action). No Prone/Stun — Sap is the control. Legendary: **Special Sheathe (Iai Spirit Slash)** BA stance + Reaction; **Spirit Release Slash** (Helm Breaker extra 5d6 if 5+ spirit before the spend). Column **Spirit Gain** is a rarity stat chip, not a feature list. `public/data/raintdm-weapons/longsword.json`. Foundry examples: `fvtt-Item-longsword-uncommon.json`, `fvtt-Item-longsword-rare.json`. VR/Legendary Forge only for now.
+
 #### Entidad `Weapon`
 
 | Campo              | Descripción |
@@ -1352,7 +1354,7 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 | `rarityRows`       | Filas de la tabla inset: rareza (incl. opcional **Base**), slots de runa, columnas dinámicas (stats, features, ammo, phials, etc.) |
 | `baseFeatureNames` | Nombres de `{@optfeature ...}` en la descripción (features que aplican a todas las rarezas); en forge se sincronizan con la fila **Base** |
 
-`FEATURE_COL_KEYS` identifica columnas de tipo feature: `features`, `single features`, `splint features`, `notes`, `ammo`, `coatings`, `phials`, `available`.
+`FEATURE_COL_KEYS` identifica columnas de tipo feature: `features`, `single features`, `splint features`, `notes`, `ammo`, `coatings`, `phials`, `available`. Longsword **Spirit Gain** is a numeric rarity stat chip (`isWeaponSpiritGainColumn`), not a feature list.
 
 Columnas de bonus numérico (`Bonus`, `Bonus to Hit`, `Bonus to Damage`, `AC Bonus`, `Bonus AC`) no son features: van en la cabecera de rareza (`+2 to Hit and Damage | +3 to AC`). El `Bonus` / to-hit de AGMH es el bonus mágico de arma (ataque y daño).
 

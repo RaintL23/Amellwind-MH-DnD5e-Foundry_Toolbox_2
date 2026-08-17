@@ -224,14 +224,24 @@ export function isWeaponAcBonusColumn(label: string): boolean {
 }
 
 /**
+ * Numeric Spirit Gain column on Longsword rarity rows (1 → 2). Shown as a
+ * rarity stat chip, not as named features.
+ */
+export function isWeaponSpiritGainColumn(label: string): boolean {
+  return label.toLowerCase().trim() === "spirit gain";
+}
+
+/**
  * Feature and weapon-resource unlock columns on a rarity row.
- * Excludes Bonus* / *Bonus stats and nested "Unlocked …" lists. Any other
- * column (including custom forge resource names) is treated as a feature list.
+ * Excludes Bonus* / *Bonus stats, Spirit Gain, and nested "Unlocked …" lists.
+ * Any other column (including custom forge resource names) is treated as a
+ * feature list.
  */
 export function isWeaponFeatureColumn(label: string): boolean {
   const lower = label.toLowerCase();
   if (lower.startsWith(UNLOCK_COLUMN_PREFIX.toLowerCase())) return false;
   if (isWeaponStatBonusColumn(label)) return false;
+  if (isWeaponSpiritGainColumn(label)) return false;
   return true;
 }
 

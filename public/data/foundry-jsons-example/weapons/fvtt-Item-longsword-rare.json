@@ -1,0 +1,714 @@
+{
+  "_id": "D2egs55LSnZkllCH",
+  "name": "Longsword (Rare)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_longsword.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<p>An elegant two-handed sword. Normal attacks fill a Spirit Gauge; named Spirit techniques replace one of your attacks from the Attack action and spend that gauge. Each technique works on its own — with Extra Attack you can chain two in the same action if you pay both costs.</p><p><a href=\"https://5e.tools/items.html#longsword\" target=\"_blank\" rel=\"noopener\">Open Longsword filters on 5e.tools</a></p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p><p>If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spirit Gauge</strong></p><p>This weapon holds up to 6 spirit (the gauge starts empty). When you hit a creature with a normal attack using this weapon (an attack you did not replace with a Spirit technique), you gain 1 spirit. You lose all spirit if you don't hit a creature with this weapon within 1 minute or if you become Incapacitated.</p><p>Spirit techniques that replace an attack do not generate spirit. You cannot apply Spirit Blade to the same attack you replace with a Spirit technique.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spirit Blade</strong></p><p>When you hit with a normal attack using this weapon, you can expend any number of spirits: the attack deals an extra [[/r 1d4]] slashing damage per spirit expended. You cannot use Spirit Blade on an attack you replaced with Spirit Thrust, Spirit Roundslash, or Spirit Helm Breaker.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Spirit Blade Upgrade I</strong></p><p>Spirit Blade extra damage increases to [[/r 1d6]] slashing per spirit expended.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Foresight Slash</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when a creature you can see hits you with a melee attack, you can expend 2 spirits. Roll [[/r 1d8]] and add it to your AC against that attack, potentially causing it to miss. If this causes the attack to miss, you can make one attack with this weapon against the attacker as part of the same Reaction, and you regain 1 spirit. You can't use this feature if you have no spirit.</p></div>",
+      "chat": "<p>An elegant two-handed sword. Normal attacks fill a Spirit Gauge; named Spirit techniques replace one of your attacks from the Attack action and spend that gauge. Each technique works on its own — with Extra Attack you can chain two in the same action if you pay both costs.</p><hr><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spirit Gauge</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spirit Blade</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Spirit Blade Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Foresight Slash</strong></p><p><strong>Reaction.</strong></p></div>"
+    },
+    "identifier": "longsword",
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 25,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "rare",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "longsword"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 10,
+        "types": [
+          "slashing"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": 1,
+    "properties": [
+      "mgc",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "mastery": "sap",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 6,
+      "recovery": [],
+      "max": "6"
+    },
+    "activities": {
+      "5GBzHBUdzNoFc7Ag": {
+        "_id": "5GBzHBUdzNoFc7Ag",
+        "type": "attack",
+        "sort": 0,
+        "name": "Attack",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "attack",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionReason": ""
+      },
+      "JfkVzHMMkKztxSgC": {
+        "_id": "JfkVzHMMkKztxSgC",
+        "sort": 301000,
+        "name": "Spirit Blade",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "When you hit with a normal attack using this weapon",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": true,
+            "max": "5"
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "amount",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "On a normal hit: expend N spirit for +Nd6 slashing. Do not use on a Spirit replace attack. Base 1 counter; max 6. Per counter: 1d6."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "spirit-blade",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "damage",
+        "damage": {
+          "critical": {
+            "allow": false,
+            "bonus": ""
+          },
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "slashing"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "whole",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "rt8H6L2LU3DyaJQE": {
+        "_id": "rt8H6L2LU3DyaJQE",
+        "sort": 400000,
+        "name": "Foresight Slash",
+        "img": "icons/skills/melee/strike-sword-steel-yellow.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When a creature you can see hits you with a melee attack",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+1d8 AC vs the triggering melee attack (Midi rechecks). Expends 2 spirit via Item Macro. On a miss, regain 1 spirit and use Foresight Slash: Counter."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "foresight-slash",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "OnlCHA2Lho4uhs8H": {
+        "_id": "OnlCHA2Lho4uhs8H",
+        "type": "attack",
+        "sort": 400500,
+        "name": "Foresight Slash: Counter",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "If Foresight Slash causes the triggering melee attack to miss",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Make one Longsword attack against the attacker as part of the same Reaction (does not spend another Reaction)."
+        },
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "foresight-slash-counter",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionReason": "",
+        "img": "icons/skills/melee/strike-sword-steel-yellow.webp"
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "P3eRIrWBMMnOITBH",
+      "name": "Mastery (Sap)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786997903935,
+        "modifiedTime": 1786997903935,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 200000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Longsword",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[preTargeting]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Longsword (Rare)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Longsword — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro\n//\n// Spirit Gauge: recover spiritGain on a normal Attack hit (not Blade / replace / Foresight).\n// Foresight Slash: spend 2 spirit, +1d8 AC vs the triggering melee hit (Midi rechecks).\n//   On a miss caused this way: refund 1 spirit and use Foresight Slash: Counter.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? workflow?.activity?.midiProperties?.identifier\n  ?? \"\",\n).toLowerCase();\n\nconst isForesightCounter =\n  actId === \"foresight-slash-counter\"\n  || actName.includes(\"foresight slash: counter\")\n  || actName.includes(\"foresight-slash-counter\");\n\nconst isForesight =\n  !isForesightCounter\n  && (actId === \"foresight-slash\" || actName === \"foresight slash\" || actName.startsWith(\"foresight slash\"));\n\nconst isSpiritBlade =\n  actId.includes(\"spirit-blade\")\n  || actName.includes(\"spirit blade\");\n\nconst isSpiritReplace =\n  actId.includes(\"spirit-thrust\")\n  || actId.includes(\"spirit-roundslash\")\n  || actId.includes(\"helm-breaker\")\n  || actId.includes(\"iai\")\n  || actName.includes(\"spirit thrust\")\n  || actName.includes(\"spirit roundslash\")\n  || actName.includes(\"helm breaker\")\n  || actName.includes(\"iai\");\n\nconst isAttack =\n  !isForesight\n  && !isForesightCounter\n  && !isSpiritBlade\n  && !isSpiritReplace\n  && (actId === \"attack\" || actName === \"attack\" || actName === \"\");\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Longsword: actor not found.\");\n  return;\n}\n\nconst isLongsword =\n  foundry.utils.getProperty(item, \"flags.world.longsword.isLongsword\") === true\n  || String(item?.system?.identifier ?? \"\") === \"longsword\"\n  || /^longsword\\b/i.test(item?.name ?? \"\");\n\nif (!isLongsword) return;\n\nconst uses = item?.system?.uses ?? {};\nconst max = Math.max(0, Number(uses.max) || 0);\nconst spent = Math.max(0, Number(uses.spent) || 0);\nconst available = Math.max(0, max - spent);\nconst spiritGain = Math.max(\n  1,\n  Number(foundry.utils.getProperty(item, \"flags.world.longsword.spiritGain\")) || 1,\n);\n\nconst isForesightAc = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.longsword.isForesightAc\") === true\n  || /^foresight slash \\(\\+/i.test(ef.name ?? \"\");\n\nconst hitCount = (() => {\n  const ht = workflow?.hitTargets;\n  if (ht instanceof Set) return ht.size;\n  if (Array.isArray(ht)) return ht.length;\n  const n = Number(ht?.size ?? 0);\n  if (Number.isFinite(n) && n > 0) return n;\n  if (workflow?.damageList?.length) return workflow.damageList.length;\n  if (args?.[0]?.hitTargets?.length) return args[0].hitTargets.length;\n  return 0;\n})();\n\nconst findAttackTotal = () => {\n  const opts = args?.[0]?.workflowOptions ?? workflow?.workflowOptions ?? {};\n  const direct = Number(opts.attackTotal ?? opts.attackRollTotal ?? args?.[0]?.attackTotal);\n  if (Number.isFinite(direct) && direct > 0) return direct;\n\n  const srcId = opts.triggeredWorkflowId\n    ?? opts.sourceWorkflowId\n    ?? opts.workflowId\n    ?? opts.attackWorkflowId;\n  if (srcId && globalThis.MidiQOL?.Workflow?.getWorkflow) {\n    const atk = MidiQOL.Workflow.getWorkflow(srcId);\n    const t = Number(atk?.attackTotal ?? atk?.attackRoll?.total);\n    if (Number.isFinite(t) && t > 0) return t;\n  }\n  return null;\n};\n\n// ── Foresight Slash: need 2 spirit before Midi commits the reaction ─────────\nif (isForesight && (!macroPass || macroPass.includes(\"pretargeting\"))) {\n  if (available < 2) {\n    ui.notifications.warn(\"Longsword: Foresight Slash needs ≥2 spirit.\");\n    return false;\n  }\n  if (macroPass.includes(\"pretargeting\")) return;\n}\n\n// ── Foresight Slash: spend 2, apply +1d8 AC, maybe refund ───────────────────\nif (isForesight) {\n  if (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\n  const take = Math.min(2, available);\n  if (take < 2) {\n    ui.notifications.warn(\"Longsword: Foresight Slash needs ≥2 spirit.\");\n    return;\n  }\n\n  const nextSpent = spent + take;\n  await item.update({ \"system.uses.spent\": nextSpent });\n\n  const roll = await new Roll(\"1d8\").evaluate();\n  await roll.toMessage({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    flavor: \"Foresight Slash — AC Bonus\",\n  });\n  const bonus = roll.total;\n\n  const stale = actorDoc.effects.filter(isForesightAc);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\n  }\n\n  await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [\n    {\n      name: `Foresight Slash (+${bonus} AC)`,\n      img: \"icons/skills/melee/strike-sword-steel-yellow.webp\",\n      transfer: false,\n      disabled: false,\n      changes: [\n        {\n          key: \"system.attributes.ac.bonus\",\n          mode: CONST.ACTIVE_EFFECT_MODES.ADD,\n          value: String(bonus),\n          priority: 20,\n        },\n      ],\n      duration: {\n        startTime: null,\n        seconds: null,\n        combat: null,\n        rounds: null,\n        turns: null,\n        startRound: null,\n        startTurn: null,\n      },\n      flags: {\n        dae: {\n          specialDuration: [\"isAttacked\"],\n          stackable: \"noneName\",\n          showIcon: true,\n          selfTarget: true,\n          selfTargetAlways: true,\n          dontApply: false,\n        },\n        world: {\n          longsword: {\n            isForesightAc: true,\n          },\n        },\n      },\n    },\n  ]);\n\n  const attackTotal = findAttackTotal();\n  const ac = Number(actorDoc.system?.attributes?.ac?.value);\n  const causedMiss =\n    Number.isFinite(attackTotal) && Number.isFinite(ac) && attackTotal < ac;\n\n  let refundLine = \"\";\n  if (causedMiss) {\n    await item.update({ \"system.uses.spent\": Math.max(0, nextSpent - 1) });\n    refundLine = `<p>The attack now misses: regain <strong>1 spirit</strong> and use <strong>Foresight Slash: Counter</strong>.</p>`;\n  } else if (!Number.isFinite(attackTotal)) {\n    refundLine = `<p>If this causes the attack to miss: regain <strong>1 spirit</strong> and use <strong>Foresight Slash: Counter</strong>.</p>`;\n  } else {\n    refundLine = `<p>The attack still hits.</p>`;\n  }\n\n  const left = max - (causedMiss ? nextSpent - 1 : nextSpent);\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> uses Foresight Slash: <strong>+${bonus} AC</strong> against the triggering melee attack. Spirit: ${left}/${max}.</p>${refundLine}</div>`,\n  });\n  return;\n}\n\nif (isForesightCounter || isSpiritBlade) return;\nif (!isAttack) return;\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\nif (hitCount <= 0) return;\nif (spent <= 0) return;\n\nconst gain = Math.min(spiritGain, spent);\nawait item.update({ \"system.uses.spent\": spent - gain });\nconst left = max - (spent - gain);\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>Spirit Gauge</strong> — gained ${gain} spirit (${left}/${max}).</p></div>`,\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "longsword": {
+        "isLongsword": true,
+        "tier": "rare",
+        "spiritGain": 1
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1786997903933,
+    "modifiedTime": 1786997903933,
+    "lastModifiedBy": null
+  }
+}

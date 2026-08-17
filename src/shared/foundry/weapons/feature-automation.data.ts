@@ -209,8 +209,14 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   "wirebug whisperer": scaleUses("4"),
   "spirit gauge": gauge(
     "6",
-    "sr",
-    "Spirit spent via description options — uses track the pool only.",
+    undefined,
+    "Longsword spirit pool; starts empty; build on normal hits; dissipates after 1 min idle. Spends (Blade / Foresight / Thrust / Roundslash / Helm Breaker / Iai) consume uses.",
+    { startsEmpty: true },
+  ),
+  "spirit gauge upgrade ii": spec(
+    "unmapped",
+    {},
+    "Fill rate 2 spirit per normal hit — item uses max stays 6.",
   ),
   "accelerator gauge": gauge("5"),
   "sword gauge": gauge("20"),
@@ -1234,6 +1240,116 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "unmapped",
     {},
     "Switch Axe: ItemMacro postDamageRoll recovers Phial Gauge uses on Axe hit (see applySwitchAxeOverlay).",
+  ),
+
+  // ── Longsword spirit techniques ─────────────────────────────────────
+  "spirit blade": counterSpend(
+    {
+      ownsItemUses: false,
+      emitGather: false,
+      spendMin: 1,
+      spendMax: 6,
+      damageFormula: "1d4",
+      damageType: "slashing",
+      activityType: "damage",
+      includeBaseDamage: false,
+      activation: "special",
+      activationCondition:
+        "When you hit with a normal attack using this weapon",
+      chatFlavor:
+        "On a normal hit: expend N spirit for +Nd4 slashing. Do not use on a Spirit replace attack.",
+    },
+    "Shared Spirit Gauge. Wide range → scaled damage rider (not a second attack roll).",
+  ),
+  "spirit blade upgrade i": spec(
+    "upgrade_scaler",
+    {
+      damageFormula: "1d6",
+      chatFlavor:
+        "On a normal hit: expend N spirit for +Nd6 slashing. Do not use on a Spirit replace attack.",
+    },
+    "Spirit Blade extra damage → 1d6 per spirit.",
+  ),
+  "foresight slash": reactionUtility(
+    "When a creature you can see hits you with a melee attack",
+    {
+      rollFormula: "1d8",
+      chatFlavor:
+        "Expend 2 spirit. Add 1d8 to your AC against that attack. If this causes a miss: one Longsword attack vs the attacker and regain 1 spirit.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/strike-sword-steel-yellow.webp",
+    },
+    "Do not consume itemUses on the reaction (Midi unpaid-reaction filter). Overlay ItemMacro spends 2 spirit, applies +1d8 AC (isAttacked), refunds 1 on miss, and emits Foresight Slash: Counter.",
+  ),
+  "spirit thrust": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "attack",
+      includeBaseDamage: true,
+      consumeItemUses: true,
+      consumeAmount: "2",
+      chatFlavor:
+        "Replace one Attack-action attack. Expend 2 spirit: piercing damage. On hit, move 15 ft through the target without OA.",
+      activityImg: "icons/skills/melee/strike-sword-blood-red.webp",
+    },
+    "Consumes 2 Spirit Gauge uses. Damage type swap (S→P) is description / manual.",
+  ),
+  "spirit roundslash": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "attack",
+      includeBaseDamage: true,
+      consumeItemUses: true,
+      consumeAmount: "3",
+      chatFlavor:
+        "Replace one Attack-action attack (once per turn). Expend 3 spirit. Optional second creature within 5 ft of the target takes weapon damage without your ability modifier.",
+      activityImg: "icons/skills/melee/strike-blade-hooked-orange.webp",
+    },
+    "Cleave rider vs a second target is manual.",
+  ),
+  "spirit helm breaker": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "attack",
+      includeBaseDamage: true,
+      consumeItemUses: true,
+      consumeAmount: "3",
+      damageFormula: "3d6",
+      damageType: "slashing",
+      chatFlavor:
+        "Replace one Attack-action attack (once per turn). Expend 3 spirit: move 10 ft toward the target without OA, then attack with +3d6 (+4d6 if another Spirit technique already resolved this Attack action).",
+      activityImg: "icons/skills/melee/strike-axe-blood-red.webp",
+    },
+    "Combo +1d6 is honor-system. No Prone/Stun.",
+  ),
+  "spirit release slash": spec(
+    "upgrade_scaler",
+    {
+      damageFormula: "5d6",
+      chatFlavor:
+        "Helm Breaker extra is 5d6 if you had 5+ spirit before the spend (6d6 if the combo bonus also applies).",
+    },
+    "Crimson threshold (5+ spirit before spend) is description; Foundry uses the 5d6 scaler.",
+  ),
+  "special sheathe (iai spirit slash)": spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      activationCondition: "Enter Iai until the start of your next turn",
+      chatFlavor:
+        "Sheathe: Speed −10 ft until start of next turn. If a creature hits you or enters your reach while in Iai, Reaction: expend 3 spirit, attack with Advantage +3d6. If you had 5+ spirit before the spend, target has Disadvantage on its next save before the start of your next turn.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/sword-engraved-glow-purple.webp",
+    },
+    "Iai Reaction / Advantage / 3-spirit spend is honor-system; activity is the BA sheathe.",
   ),
 
   // ── Narrative / state — keep description-only ───────────────────────
