@@ -5,8 +5,8 @@
   "img": "mh-icons/bowgun-ammo.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Pierce Ammo</strong> (Light Bowgun)</p><p>Fire in a 30-foot line that is 5 feet wide. Make a single attack roll vs each creature in the line. All creatures hit take the weapon's normal damage.</p>",
-      "chat": "<p><strong>Pierce Ammo</strong></p><p>30-ft line (5 ft wide).</p>"
+      "value": "<p><strong>Pierce Ammo</strong> (Light Bowgun)</p><p>Fire in a 20-foot line that is 5 feet wide. Make a single attack roll vs each creature in the line. All creatures hit take the weapon's normal damage.</p>",
+      "chat": "<p><strong>Pierce Ammo</strong></p><p>20-ft line (5 ft wide).</p>"
     },
     "source": {
       "custom": "",

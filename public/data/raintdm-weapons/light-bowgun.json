@@ -106,7 +106,7 @@
       {
         "id": "ff2430b2-51c6-4a16-9940-613ac096afe2",
         "name": "Pierce Ammo",
-        "description": "You fire in a 30-foot line that is 5 feet wide. Make a single attack roll and compare it against the AC of each creature in that line. All creatures hit take the weapon's normal damage.",
+        "description": "You fire in a 20-foot line that is 5 feet wide. Make a single attack roll and compare it against the AC of each creature in that line. All creatures hit take the weapon's normal damage.",
         "resourceColumn": "Ammo"
       },
       {
