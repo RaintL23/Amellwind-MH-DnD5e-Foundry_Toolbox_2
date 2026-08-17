@@ -39,7 +39,39 @@
       {
         "id": "itemacro",
         "type": "module",
-        "reason": "Several items ship an embedded Item Macro (flags.itemacro) that runs their special behavior."
+        "reason": "Several items ship an embedded Item Macro (flags.itemacro) that runs their special behavior via Midi [pass]ItemMacro hooks."
+      }
+    ],
+    "recommends": [
+      {
+        "id": "dae",
+        "type": "module",
+        "reason": "DAE specialDuration / stackable flags on Active Effects."
+      },
+      {
+        "id": "times-up",
+        "type": "module",
+        "reason": "Effect expiry for rounds, turns, and DAE specialDuration."
+      },
+      {
+        "id": "plutonium",
+        "type": "module",
+        "reason": "Resolves @item / @spell / @feat / @book content links in descriptions."
+      },
+      {
+        "id": "chris-premades",
+        "type": "module",
+        "reason": "Cauldron of Plentiful Resources Medkit overlays PHB/XPHB spells and features by English name."
+      },
+      {
+        "id": "gambits-premades",
+        "type": "module",
+        "reason": "Gambit's Premades reaction suite (Opportunity Attack, Counterspell, Silvery Barbs) via CPR Medkit and module settings."
+      },
+      {
+        "id": "ActiveAuras",
+        "type": "module",
+        "reason": "Stance/mode auras and Gambit's Premades Foundry 12 aura automation."
       }
     ]
   },

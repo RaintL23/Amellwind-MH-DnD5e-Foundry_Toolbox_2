@@ -12,6 +12,11 @@ files one by one.
   dependencies in `module.json` (`relationships.requires`), so **Foundry will not let
   you enable this module unless both are installed and enabled** (Foundry also pulls in
   Midi QOL's own dependencies such as socketlib, libWrapper and DAE).
+- **Recommended (Foundry 12 / dnd5e 4.4.x):** [Plutonium](https://foundryvtt.com/packages/plutonium)
+  (content links), [Cauldron of Plentiful Resources](https://foundryvtt.com/packages/chris-premades)
+  (Actor Medkit on PHB/XPHB names), [Gambit's Premades](https://foundryvtt.com/packages/gambits-premades)
+  **v1.0.1–1.0.56** (not the v13 line), Active Auras, Times Up. After import, run the
+  CPR Actor Medkit and add GPS as an additional Medkit compendium.
 
 ## What's inside
 
