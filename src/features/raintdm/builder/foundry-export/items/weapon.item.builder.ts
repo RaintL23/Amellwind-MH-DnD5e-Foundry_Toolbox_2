@@ -134,7 +134,8 @@ export function buildWeaponItem(
     weight: { value: weapon.weight ?? 0, units: "lb" },
     price: { value: (weapon.valueCp ?? 0) / 100, denomination: "gp" },
     attuned: false,
-    attunement: "",
+    // Amellwind/RaintDM unique weapons occupy an attunement slot (Foundry examples).
+    attunement: weapon.contentSource === "dnd" ? "" : "required",
     equipped: options.equipped,
     rarity: mapRarity(weapon.itemRarityLabel),
     identified: true,

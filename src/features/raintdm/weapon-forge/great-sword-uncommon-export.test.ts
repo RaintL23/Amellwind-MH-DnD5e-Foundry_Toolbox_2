@@ -25,6 +25,7 @@ describe("Great Sword uncommon Foundry export", () => {
     );
 
     expect(system.rarity).toBe("uncommon");
+    expect(system.attunement).toBe("required");
     expect(system.mastery).toBe("graze");
     expect(system.uses).toMatchObject({ spent: 3, max: "3" });
 
