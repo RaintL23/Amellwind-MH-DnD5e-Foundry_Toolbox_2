@@ -12,6 +12,7 @@ import {
   compileWeaponFeatureActivities,
   enrichWeaponActivities,
 } from "@/shared/foundry/weapons";
+import { applyFoundryModuleCompat } from "@/shared/foundry";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { resolveMagicalBonus } from "./weapon-forge-foundry.helpers";
 import {
@@ -203,9 +204,13 @@ export function buildWeaponFoundryExportBundle(
   applyWireKnucklesSilkbindOverlay(item);
   applySwitchAxeOverlay(item, weapon, clamped);
   applyChargeBladeOverlay(item, weapon, clamped);
+  applyFoundryModuleCompat(item, { light: true });
 
   const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);
   const resources = resourceGroups.flatMap((group) => group.items);
+  for (const resource of resources) {
+    applyFoundryModuleCompat(resource, { light: true });
+  }
 
   return { weapon: item, resources, resourceGroups };
 }

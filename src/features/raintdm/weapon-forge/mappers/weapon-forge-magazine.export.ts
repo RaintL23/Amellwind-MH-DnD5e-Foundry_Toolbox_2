@@ -6,6 +6,7 @@ import {
   FOUNDRY_EXPORT_TARGET,
   foundryIdFromSeed,
   wrapItem,
+  itemMacroFlagBundle,
 } from "@/shared/foundry";
 import { slugifyIdentifier } from "@/shared/foundry/weapons/activity-payload";
 import type { CustomWeapon } from "../types/weapon-forge.types";
@@ -360,34 +361,11 @@ function magazineItemFlags(def: MagazineConsumableDef): Record<string, unknown> 
         rider: def.rider ?? null,
       },
     },
-    "midi-qol": {
-      onUseMacroName: "[preTargeting]ItemMacro,[postActiveEffects]ItemMacro",
-      onUseMacroParts: {
-        items: [
-          { macroName: "ItemMacro", option: "preTargeting" },
-          { macroName: "ItemMacro", option: "postActiveEffects" },
-        ],
-      },
-    },
-    itemacro: {
-      macro: {
-        name: def.name,
-        type: "script",
-        scope: "global",
-        author: "",
-        img: "icons/svg/dice-target.svg",
-        command: DUAL_REPEATERS_MAGAZINES_ITEM_MACRO,
-        folder: null,
-        sort: 0,
-        ownership: { default: 0 },
-        flags: {},
-        _stats: {
-          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
-          systemId: FOUNDRY_EXPORT_TARGET.systemId,
-          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
-        },
-      },
-    },
+    ...itemMacroFlagBundle({
+      name: def.name,
+      command: DUAL_REPEATERS_MAGAZINES_ITEM_MACRO,
+      passes: ["preTargeting", "postActiveEffects"],
+    }),
     exportSource: {
       world: "amellwind-toolbox",
       system: FOUNDRY_EXPORT_TARGET.systemId,

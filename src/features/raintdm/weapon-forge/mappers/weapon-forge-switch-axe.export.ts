@@ -3,9 +3,9 @@ import {
   buildEffect,
   defaultMidiProperties,
   EFFECT_MODE,
-  FOUNDRY_EXPORT_TARGET,
   foundryIdFromSeed,
   mapDamageType,
+  embedItemMacro,
 } from "@/shared/foundry";
 import {
   resolveGripModeDamage,
@@ -783,46 +783,18 @@ function applySwitchAxeItemMacro(
   item: FoundryItem,
   opts: { hasKinetic: boolean },
 ): void {
-  const existingMidi =
-    (item.flags?.["midi-qol"] as Record<string, unknown> | undefined) ?? {};
   const existingWorld =
     (item.flags?.world as Record<string, unknown> | undefined) ?? {};
   const existingSa =
     (existingWorld.switchAxe as Record<string, unknown> | undefined) ?? {};
 
+  embedItemMacro(item, {
+    command: SWITCH_AXE_ITEM_MACRO,
+    passes: ["preTargeting", "postDamageRoll", "postActiveEffects"],
+  });
+
   item.flags = {
     ...item.flags,
-    "midi-qol": {
-      ...existingMidi,
-      onUseMacroName:
-        "[preTargeting]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro",
-      onUseMacroParts: {
-        items: [
-          { macroName: "ItemMacro", option: "preTargeting" },
-          { macroName: "ItemMacro", option: "postDamageRoll" },
-          { macroName: "ItemMacro", option: "postActiveEffects" },
-        ],
-      },
-    },
-    itemacro: {
-      macro: {
-        name: item.name,
-        type: "script",
-        scope: "global",
-        author: "",
-        img: "icons/svg/dice-target.svg",
-        command: SWITCH_AXE_ITEM_MACRO,
-        folder: null,
-        sort: 0,
-        ownership: { default: 0 },
-        flags: {},
-        _stats: {
-          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
-          systemId: FOUNDRY_EXPORT_TARGET.systemId,
-          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
-        },
-      },
-    },
     world: {
       ...existingWorld,
       switchAxe: {

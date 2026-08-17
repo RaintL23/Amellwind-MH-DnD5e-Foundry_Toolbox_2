@@ -1,5 +1,5 @@
 import type { FoundryItem } from "@/shared/foundry";
-import { FOUNDRY_EXPORT_TARGET, foundryIdFromSeed } from "@/shared/foundry";
+import { FOUNDRY_EXPORT_TARGET, foundryIdFromSeed, embedItemMacro } from "@/shared/foundry";
 import { DUAL_BLADES_DEMON_DODGE_ITEM_MACRO } from "./dual-blades-demon-dodge.macro";
 import { DUAL_REPEATERS_MAGAZINES_ITEM_MACRO } from "./dual-repeaters-magazines.macro";
 import { HUNTING_HORN_RECITAL_ITEM_MACRO } from "./hunting-horn-recital.macro";
@@ -295,33 +295,14 @@ export function applyHuntingHornSongbookOverlay(item: FoundryItem): boolean {
   const existingHh =
     (existingWorld.hh as Record<string, unknown> | undefined) ?? {};
 
+  embedItemMacro(item, {
+    command: HUNTING_HORN_RECITAL_ITEM_MACRO,
+    passes: ["preTargeting"],
+    midiMode: "replace",
+  });
+
   item.flags = {
     ...item.flags,
-    "midi-qol": {
-      onUseMacroName: "[preTargeting]ItemMacro",
-      onUseMacroParts: {
-        items: [{ macroName: "ItemMacro", option: "preTargeting" }],
-      },
-    },
-    itemacro: {
-      macro: {
-        name: item.name,
-        type: "script",
-        scope: "global",
-        author: "",
-        img: "icons/svg/dice-target.svg",
-        command: HUNTING_HORN_RECITAL_ITEM_MACRO,
-        folder: null,
-        sort: 0,
-        ownership: { default: 0 },
-        flags: {},
-        _stats: {
-          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
-          systemId: FOUNDRY_EXPORT_TARGET.systemId,
-          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
-        },
-      },
-    },
     world: {
       ...existingWorld,
       hh: {
@@ -437,37 +418,14 @@ export function applyDualBladesDemonDodgeOverlay(item: FoundryItem): boolean {
     (item.flags?.world as Record<string, unknown> | undefined) ?? {};
   const existingDb =
     (existingWorld.dualBlades as Record<string, unknown> | undefined) ?? {};
-  const existingMidi =
-    (item.flags?.["midi-qol"] as Record<string, unknown> | undefined) ?? {};
+
+  embedItemMacro(item, {
+    command: DUAL_BLADES_DEMON_DODGE_ITEM_MACRO,
+    passes: ["postActiveEffects"],
+  });
 
   item.flags = {
     ...item.flags,
-    "midi-qol": {
-      ...existingMidi,
-      onUseMacroName: "[postActiveEffects]ItemMacro",
-      onUseMacroParts: {
-        items: [{ macroName: "ItemMacro", option: "postActiveEffects" }],
-      },
-    },
-    itemacro: {
-      macro: {
-        name: item.name,
-        type: "script",
-        scope: "global",
-        author: "",
-        img: "icons/svg/dice-target.svg",
-        command: DUAL_BLADES_DEMON_DODGE_ITEM_MACRO,
-        folder: null,
-        sort: 0,
-        ownership: { default: 0 },
-        flags: {},
-        _stats: {
-          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
-          systemId: FOUNDRY_EXPORT_TARGET.systemId,
-          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
-        },
-      },
-    },
     world: {
       ...existingWorld,
       dualBlades: {
@@ -713,42 +671,14 @@ export function applyDualRepeatersOverlay(
     (item.flags?.world as Record<string, unknown> | undefined) ?? {};
   const existingDr =
     (existingWorld.dualRepeaters as Record<string, unknown> | undefined) ?? {};
-  const existingMidi =
-    (item.flags?.["midi-qol"] as Record<string, unknown> | undefined) ?? {};
+
+  embedItemMacro(item, {
+    command: DUAL_REPEATERS_MAGAZINES_ITEM_MACRO,
+    passes: ["preTargeting", "postAttackRoll", "postDamageRoll"],
+  });
 
   item.flags = {
     ...item.flags,
-    "midi-qol": {
-      ...existingMidi,
-      onUseMacroName:
-        "[preTargeting]ItemMacro,[postAttackRoll]ItemMacro,[postDamageRoll]ItemMacro",
-      onUseMacroParts: {
-        items: [
-          { macroName: "ItemMacro", option: "preTargeting" },
-          { macroName: "ItemMacro", option: "postAttackRoll" },
-          { macroName: "ItemMacro", option: "postDamageRoll" },
-        ],
-      },
-    },
-    itemacro: {
-      macro: {
-        name: item.name,
-        type: "script",
-        scope: "global",
-        author: "",
-        img: "icons/svg/dice-target.svg",
-        command: DUAL_REPEATERS_MAGAZINES_ITEM_MACRO,
-        folder: null,
-        sort: 0,
-        ownership: { default: 0 },
-        flags: {},
-        _stats: {
-          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
-          systemId: FOUNDRY_EXPORT_TARGET.systemId,
-          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
-        },
-      },
-    },
     world: {
       ...existingWorld,
       dualRepeaters: {

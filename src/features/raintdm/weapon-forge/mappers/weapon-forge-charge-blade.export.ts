@@ -3,8 +3,8 @@ import {
   buildEffect,
   defaultMidiProperties,
   EFFECT_MODE,
-  FOUNDRY_EXPORT_TARGET,
   foundryIdFromSeed,
+  embedItemMacro,
 } from "@/shared/foundry";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { getAssignedFeaturesForRow } from "../utils/weapon-forge-features.utils";
@@ -848,8 +848,6 @@ function applyChargeBladeItemMacro(
     axeMastery: string;
   },
 ): void {
-  const existingMidi =
-    (item.flags?.["midi-qol"] as Record<string, unknown> | undefined) ?? {};
   const existingWorld =
     (item.flags?.world as Record<string, unknown> | undefined) ?? {};
   const existingCb =
@@ -863,40 +861,18 @@ function applyChargeBladeItemMacro(
     .replaceAll("__AED_DAMAGE__", opts.aedDamage)
     .replaceAll("__ELEMENTAL_TYPE__", opts.elementalType);
 
+  embedItemMacro(item, {
+    command: macro,
+    passes: [
+      "preTargeting",
+      "preDamageRoll",
+      "postDamageRoll",
+      "postActiveEffects",
+    ],
+  });
+
   item.flags = {
     ...item.flags,
-    "midi-qol": {
-      ...existingMidi,
-      onUseMacroName:
-        "[preTargeting]ItemMacro,[preDamageRoll]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro",
-      onUseMacroParts: {
-        items: [
-          { macroName: "ItemMacro", option: "preTargeting" },
-          { macroName: "ItemMacro", option: "preDamageRoll" },
-          { macroName: "ItemMacro", option: "postDamageRoll" },
-          { macroName: "ItemMacro", option: "postActiveEffects" },
-        ],
-      },
-    },
-    itemacro: {
-      macro: {
-        name: item.name,
-        type: "script",
-        scope: "global",
-        author: "",
-        img: "icons/svg/dice-target.svg",
-        command: macro,
-        folder: null,
-        sort: 0,
-        ownership: { default: 0 },
-        flags: {},
-        _stats: {
-          coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
-          systemId: FOUNDRY_EXPORT_TARGET.systemId,
-          systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
-        },
-      },
-    },
     world: {
       ...existingWorld,
       chargeBlade: {
