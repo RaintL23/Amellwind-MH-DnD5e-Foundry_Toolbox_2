@@ -20,6 +20,7 @@
  */
 
 import { EFFECT_MODE } from "../effects";
+import type { FoundryRulesVersion } from "../target";
 
 export interface AutomationChange {
   key: string;
@@ -46,6 +47,8 @@ export interface AutomationEffect {
 export interface AutomationOverlay {
   /** Source book code, for reference / future disambiguation. */
   source?: string;
+  /** When set, skipped if the item's `system.source.rules` differs. */
+  rules?: FoundryRulesVersion;
   /** Item-level flag merge (e.g. `midiProperties`). */
   flags?: Record<string, unknown>;
   effects?: AutomationEffect[];
@@ -411,6 +414,7 @@ const AUTOMATIONS: Record<string, AutomationOverlay> = {
   },
   "true strike": {
     source: "PHB",
+    rules: "2014",
     effects: [
       {
         transfer: false,
@@ -434,21 +438,85 @@ const AUTOMATIONS: Record<string, AutomationOverlay> = {
       },
     ],
   },
+
+  shield: {
+    source: "PHB",
+    effects: [
+      {
+        transfer: false,
+        duration: { rounds: 1 },
+        flags: {
+          dae: { specialDuration: ["turnStart"], selfTargetAlways: true },
+        },
+        changes: [
+          { key: "system.attributes.ac.bonus", mode: M.ADD, value: "+5" },
+        ],
+      },
+    ],
+  },
+  bless: {
+    source: "PHB",
+    effects: [
+      {
+        transfer: false,
+        duration: { seconds: 60 },
+        changes: [
+          { key: "flags.midi-qol.optional.bless.label", mode: M.CUSTOM, value: "Bless" },
+          { key: "flags.midi-qol.optional.bless.attack.all", mode: M.CUSTOM, value: "+ 1d4" },
+          { key: "flags.midi-qol.optional.bless.save.all", mode: M.CUSTOM, value: "+ 1d4" },
+        ],
+      },
+    ],
+  },
+  bane: {
+    source: "PHB",
+    effects: [
+      {
+        transfer: false,
+        duration: { seconds: 60 },
+        changes: [
+          { key: "flags.midi-qol.optional.bane.label", mode: M.CUSTOM, value: "Bane" },
+          { key: "flags.midi-qol.optional.bane.attack.all", mode: M.CUSTOM, value: "- 1d4" },
+          { key: "flags.midi-qol.optional.bane.save.all", mode: M.CUSTOM, value: "- 1d4" },
+        ],
+      },
+    ],
+  },
+  "mage armor": {
+    source: "PHB",
+    effects: [
+      {
+        transfer: false,
+        duration: { seconds: 28800 },
+        flags: { dae: { selfTargetAlways: true } },
+        changes: [
+          { key: "system.attributes.ac.calc", mode: M.OVERRIDE, value: "mage" },
+        ],
+      },
+    ],
+  },
 };
+
+function automationLookupKey(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .replace(/^\+\d+\s+/, "")
+    .replace(/\s+\+\d+$/, "");
+}
 
 /** Returns the automation overlay for an item name, if one exists. */
 export function lookupAutomation(
   name: string,
-  source?: string,
+  _source?: string,
+  rules?: string,
 ): AutomationOverlay | undefined {
-  const overlay = AUTOMATIONS[name.trim().toLowerCase()];
+  const overlay =
+    AUTOMATIONS[automationLookupKey(name)] ??
+    AUTOMATIONS[name.trim().toLowerCase()];
   if (!overlay) return undefined;
-  if (
-    source &&
-    overlay.source &&
-    overlay.source.trim().toLowerCase() !== source.trim().toLowerCase()
-  ) {
-    return overlay;
+  if (overlay.rules && rules && overlay.rules !== rules.trim()) {
+    return undefined;
   }
   return overlay;
 }

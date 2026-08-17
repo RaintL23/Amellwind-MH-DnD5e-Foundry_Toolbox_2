@@ -29,10 +29,32 @@ function deepMerge(
  * item-level flags. No-op when no automation exists for the item.
  */
 export function applyItemAutomation(item: FoundryItem, source?: string): void {
-  const overlay = lookupAutomation(item.name, source);
+  const systemSource = item.system.source;
+  const book =
+    source ??
+    (typeof systemSource === "object" &&
+    systemSource !== null &&
+    "book" in systemSource
+      ? String((systemSource as { book?: string }).book ?? "")
+      : undefined);
+  const rules =
+    typeof systemSource === "object" &&
+    systemSource !== null &&
+    "rules" in systemSource
+      ? String((systemSource as { rules?: string }).rules ?? "")
+      : undefined;
+  const overlay = lookupAutomation(item.name, book, rules);
   if (!overlay) return;
 
   for (const eff of overlay.effects ?? []) {
+    const flags = { ...(eff.flags ?? {}) };
+    if (eff.transfer === false) {
+      const dae = {
+        ...((flags.dae as Record<string, unknown> | undefined) ?? {}),
+      };
+      if (dae.showIcon === undefined) dae.showIcon = true;
+      flags.dae = dae;
+    }
     item.effects.push(
       buildEffect({
         name: eff.name ?? item.name,
@@ -40,7 +62,7 @@ export function applyItemAutomation(item: FoundryItem, source?: string): void {
         transfer: eff.transfer,
         disabled: eff.disabled,
         duration: eff.duration,
-        flags: eff.flags,
+        flags,
         statuses: eff.statuses,
         changes: eff.changes.map((c) => ({
           key: c.key,
