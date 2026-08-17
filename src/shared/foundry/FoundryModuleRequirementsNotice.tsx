@@ -11,7 +11,7 @@ import { cn } from "@/shared/utils/cn";
 import {
   FOUNDRY_EXPORT_TARGET,
   formatModuleRequirementsSummary,
-  getFoundryModuleRequirements,
+  groupFoundryModuleRequirements,
   type FoundryExportKind,
 } from "@/shared/foundry/module-requirements";
 
@@ -28,32 +28,37 @@ interface FoundryModuleRequirementsNoticeProps {
 
 function NoticeBody({ kind }: { kind: FoundryExportKind }) {
   const { required, recommended } = formatModuleRequirementsSummary(kind);
-  const modules = getFoundryModuleRequirements(kind);
+  const groups = groupFoundryModuleRequirements(kind);
 
   return (
     <div className="text-[11px] text-muted-foreground space-y-1.5">
       <p>
         Target: Core {FOUNDRY_EXPORT_TARGET.coreVersion}, system{" "}
         {FOUNDRY_EXPORT_TARGET.systemId} {FOUNDRY_EXPORT_TARGET.systemVersion}.
-        The JSON embeds schema and references; companion modules activate them.
+        The JSON embeds schema and references; companion modules activate them
+        (Midi QoL, Item Macro, Plutonium, CPR, Gambit&apos;s Premades).
       </p>
       <p>
-        <span className="font-medium text-foreground">Required (Midi):</span>{" "}
+        <span className="font-medium text-foreground">Required:</span>{" "}
         {required}.
       </p>
       <p>
         <span className="font-medium text-foreground">Recommended:</span>{" "}
         {recommended}.
       </p>
-      <ul className="list-disc pl-4 space-y-0.5">
-        {modules
-          .filter((m) => m.tier === "recommended")
-          .map((m) => (
-            <li key={m.id}>
-              {m.name}: {m.reason}
-            </li>
-          ))}
-      </ul>
+      {groups.map((entry) => (
+        <div key={entry.group}>
+          <p className="font-medium text-foreground">{entry.label}</p>
+          <ul className="list-disc pl-4 space-y-0.5">
+            {entry.modules.map((m) => (
+              <li key={m.id}>
+                {m.name}
+                {m.versionHint ? ` (${m.versionHint})` : ""}: {m.reason}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 }
@@ -88,7 +93,7 @@ export function FoundryModuleRequirementsNotice({
           className="max-w-[min(20rem,calc(100vw-2rem))]"
           content={
             <>
-              For Midi automation enable: {required}.
+              Enable Midi QoL + Item Macro (+ DAE, Times Up): {required}.
               {"\n"}
               Recommended: {recommended}.
             </>

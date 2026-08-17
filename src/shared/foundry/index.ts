@@ -6,7 +6,12 @@ export type {
   FoundryActor,
 } from "./types";
 
-export { FOUNDRY_EXPORT_TARGET } from "./target";
+export {
+  FOUNDRY_EXPORT_TARGET,
+  inferFoundryRulesVersion,
+  foundrySourceBlock,
+} from "./target";
+export type { FoundryRulesVersion } from "./target";
 
 export {
   foundryId,
@@ -34,8 +39,25 @@ export { wrapItem, nextFoundryItemSort, resetFoundryItemSort } from "./wrap-item
 export {
   defaultMidiProperties,
   ensureActivityMidiProperties,
+  ensureMidiActivityIdentifiers,
+  midiOverridesForItem,
   linkNonTransferEffectsToActivities,
 } from "./midi";
+
+export {
+  MIDI_ON_USE_PASSES,
+  midiOnUseMacroName,
+  midiOnUseMacroParts,
+  parseMidiOnUseMacroName,
+  buildItemMacroDocument,
+  itemMacroFlagBundle,
+  embedItemMacro,
+  normalizeItemMacroFlags,
+} from "./item-macro";
+export type { MidiOnUsePass, EmbedItemMacroOptions } from "./item-macro";
+
+export { applyFoundryModuleCompat } from "./module-compat";
+export type { ApplyFoundryModuleCompatOptions } from "./module-compat";
 
 export {
   escapeHtml,
@@ -97,9 +119,11 @@ export {
 export {
   getFoundryModuleRequirements,
   formatModuleRequirementsSummary,
+  groupFoundryModuleRequirements,
 } from "./module-requirements";
 export type {
   FoundryModuleTier,
+  FoundryModuleGroup,
   FoundryModuleRequirement,
   FoundryExportKind,
 } from "./module-requirements";

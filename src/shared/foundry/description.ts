@@ -130,8 +130,7 @@ function convertFiveToolsTag(tag: string, body: string): string {
     return escapeHtml(display || body);
   }
   if (lower === "book" || lower === "adventure" || lower === "quickref") {
-    const display = body.split("|")[0]?.trim() ?? body;
-    return escapeHtml(display);
+    return `@${lower}[${body}]`;
   }
   if (lower === "chance") {
     return "";
