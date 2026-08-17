@@ -3,6 +3,8 @@
 //
 // Reload / Evading Reload:
 //   Dialog → pick ammo from inventory → fill Magazine (full or half) → spend rounds from ammo stack.
+//   Same ammo type already loaded: only top up empty slots (do not re-spend rounds still in the magazine).
+//   Different ammo type: replace the magazine (remaining rounds are discarded).
 // Fire activities (Normal Ammo, Pierce Ammo, …):
 //   Require matching flags.world.lbg.loadedAmmoKey (and magazine rounds remaining).
 // Rapid Fire:
@@ -274,10 +276,17 @@ const magAvail = magazineAvailable();
 
 const optsHtml = options.map((o) => {
   const cap = capacityFor(o.key);
-  const loadAmt = half ? Math.floor(cap / 2) : cap;
+  const targetAvail = half ? Math.floor(cap / 2) : cap;
+  const sameType = Boolean(currentLoaded && currentLoaded === o.key);
+  const need = sameType
+    ? Math.max(0, targetAvail - magAvail)
+    : targetAvail;
   const selected = currentLoaded === o.key ? " selected" : "";
   const special = isSpecialAmmoKey(o.key) ? " [Special]" : "";
-  return `<option value="${esc(o.key)}"${selected}>${esc(o.label)}${special} — pack ${o.qty}, load ${loadAmt}/${cap}</option>`;
+  const loadHint = sameType
+    ? (need > 0 ? `top up ${need}/${cap}` : `full ${magAvail}/${cap}`)
+    : `load ${targetAvail}/${cap}`;
+  return `<option value="${esc(o.key)}"${selected}>${esc(o.label)}${special} — pack ${o.qty}, ${loadHint}</option>`;
 }).join("");
 
 const content = `
@@ -289,6 +298,7 @@ const content = `
     ? "Evading Reload loads <strong>half</strong> of the chosen ammo capacity (rounded down)."
     : "Reload fills up to the chosen ammo capacity (standard Magazine or Special Ammo limit)."
   }</p>
+  <p>Reloading the <strong>same</strong> ammo type only spends rounds for empty slots. Switching ammo replaces the magazine.</p>
   <div class="form-group">
     <label>Ammunition</label>
     <div class="form-fields">
@@ -333,19 +343,33 @@ if (!pick) {
 }
 
 const cap = capacityFor(chosenKey);
-const desired = half ? Math.floor(cap / 2) : cap;
-if (desired <= 0) {
+const targetAvail = half ? Math.floor(cap / 2) : cap;
+if (targetAvail <= 0) {
   return abort("Light Bowgun: load amount is 0 for this capacity.");
 }
 
-const loadAmt = Math.min(desired, pick.qty);
+const sameType = Boolean(currentLoaded && currentLoaded === chosenKey);
+const need = sameType
+  ? Math.max(0, targetAvail - magAvail)
+  : targetAvail;
+
+if (sameType && need <= 0) {
+  return abort(
+    half
+      ? "Light Bowgun: magazine already at or above half capacity for this ammo."
+      : "Light Bowgun: magazine already full for this ammo.",
+  );
+}
+
+const loadAmt = Math.min(need, pick.qty);
 if (loadAmt <= 0) {
   return abort(`Light Bowgun: no rounds left in ${pick.label}.`);
 }
 
+const finalAvail = sameType ? magAvail + loadAmt : loadAmt;
 const bowItem = actorDoc.items.get(item.id) ?? item;
 const max = magazineMax();
-const newSpent = Math.max(0, max - loadAmt);
+const newSpent = Math.max(0, max - finalAvail);
 const newQty = Math.max(0, Number(pick.item.system?.quantity ?? 0) - loadAmt);
 
 await pick.item.update({ "system.quantity": newQty });
@@ -365,12 +389,13 @@ if (half) {
 const specialNote = isSpecialAmmoKey(chosenKey)
   ? ` Special Ammo capacity ${cap}.`
   : "";
+const topUpNote = sameType ? " (top-up)" : "";
 
 await ChatMessage.create({
   speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
   content: `<div class="dnd5e2"><p><strong>${esc(actorDoc.name)}</strong> ${
     half ? "evading-reloads" : "reloads"
-  } the Light Bowgun with <em>${esc(pick.label)}</em>.</p><p>Magazine <strong>${loadAmt}/${max}</strong> · spent ${loadAmt} from inventory (${newQty} left).${specialNote}</p></div>`,
+  } the Light Bowgun with <em>${esc(pick.label)}</em>${topUpNote}.</p><p>Magazine <strong>${finalAvail}/${max}</strong> · spent ${loadAmt} from inventory (${newQty} left).${specialNote}</p></div>`,
 });
 
 return;
