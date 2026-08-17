@@ -1,0 +1,193 @@
+{
+  "_id": "hbgPoisAmmo00006",
+  "name": "Poison Ammo",
+  "type": "consumable",
+  "img": "mh-icons/bowgun-ammo.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Poison Ammo</strong> (Heavy Bowgun · Special)</p><p>Weapon damage. On a hit, the target must succeed on a Constitution saving throw against your Ammo DC or have the Poisoned condition for 1 minute. The creature can repeat the saving throw at the end of each of its turns, ending the effect on a success. Loaded into the Magazine on Reload (Special Ammo capacity).</p>",
+      "chat": "<p><strong>Poison Ammo</strong></p><p>Weapon damage; Con save or Poisoned 1 minute.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "poison-ammo",
+    "quantity": 3,
+    "weight": {
+      "value": 0.05,
+      "units": "lb"
+    },
+    "price": {
+      "value": 4,
+      "denomination": "gp"
+    },
+    "rarity": "",
+    "identified": true,
+    "unidentified": {
+      "description": "",
+      "name": "Mysterious Ammo"
+    },
+    "container": null,
+    "attunement": "",
+    "attuned": false,
+    "equipped": false,
+    "type": {
+      "value": "ammo",
+      "subtype": "bolt"
+    },
+    "damage": {
+      "base": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false,
+          "formula": ""
+        },
+        "scaling": {
+          "mode": "",
+          "number": null
+        },
+        "bonus": ""
+      },
+      "replace": false
+    },
+    "magicalBonus": null,
+    "properties": [],
+    "uses": {
+      "spent": 0,
+      "max": "1",
+      "recovery": [],
+      "autoDestroy": false
+    },
+    "activities": {
+      "loadAmmoType0001": {
+        "_id": "loadAmmoType0001",
+        "type": "utility",
+        "sort": 0,
+        "name": "Load Ammo Type",
+        "img": "mh-icons/bowgun-ammo.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "When you Reload the Heavy Bowgun",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Choose Poison Ammo when reloading the Heavy Bowgun magazine."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "load-ammo-type",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "otherActivityId": "none"
+      }
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "raintdm-ammo",
+      "baseWeaponName": "Heavy Bowgun"
+    },
+    "world": {
+      "hbg": {
+        "isAmmo": true,
+        "ammoKey": "poison",
+        "isSpecial": true
+      }
+    }
+  },
+  "_stats": {
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

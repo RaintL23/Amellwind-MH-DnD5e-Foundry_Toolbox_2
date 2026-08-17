@@ -1,0 +1,329 @@
+{
+  "name": "Heavy Bowgun",
+  "source": "RAINTDM",
+  "author": "RaintDM",
+  "type": "HW",
+  "rarity": "none",
+  "reqAttune": true,
+  "weight": 18,
+  "value": 5000,
+  "property": ["A", "H", "2H", "MHL"],
+  "dmg1": "1d10",
+  "dmgType": "P",
+  "range": "100/400",
+  "entries": [
+    "Requires Attunement",
+    "Ammo DC = 8 + your proficiency bonus + your Dexterity modifier",
+    {
+      "type": "inset",
+      "name": "Heavy Bowgun",
+      "entries": [
+        {
+          "type": "table",
+          "colLabels": [
+            "Rarity",
+            "Slots",
+            "Bonus to Hit",
+            "Bonus to Damage",
+            "Features",
+            "Ammunition"
+          ],
+          "rows": [
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery (Slow), Magazine, Reload",
+              "Normal Ammo"
+            ],
+            [
+              "Uncommon",
+              "2",
+              "--",
+              "--",
+              "Magazine Upgrade I, Ignition, Wyvernheart, Wyvernheart Upgrade I, Guard, Special Ammo",
+              "Pierce Ammo, Spread Ammo, Cluster Ammo, Recover Ammo"
+            ],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Magazine Upgrade II, Special Ammo Upgrade I, Guard Upgrade I, Wyverncounter",
+              "Poison Ammo, Paralysis Ammo, Sticky Ammo, Slicing Ammo, Wyvern Ammo"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Magazine Upgrade III, Special Ammo Upgrade II, Wyvernheart Upgrade II, Wyvernpiercer",
+              "Normal Ammo Upgrade, Pierce Ammo Upgrade, Spread Ammo Upgrade, Recover Ammo Upgrade, Cluster Ammo Upgrade"
+            ],
+            [
+              "Legendary",
+              "5",
+              "+3",
+              "+3",
+              "Magazine Upgrade IV, Special Ammo Upgrade III, Wyvernpiercer Upgrade, Ignition Mode",
+              "--"
+            ]
+          ]
+        }
+      ]
+    }
+  ],
+  "_raintdm": {
+    "author": "RaintDM",
+    "customFeatures": [
+      {
+        "id": "b3c1a90e-2d74-4f0a-9c55-8a1e6d0f2b11",
+        "name": "Mastery (Slow)",
+        "description": "If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn't exceed 10 feet."
+      },
+      {
+        "id": "e8f2c41b-9a03-4d77-b1c6-5d2e0a8f7c44",
+        "name": "Magazine",
+        "description": "The weapon holds a maximum of 4 loaded rounds at a time. When the magazine reaches 0, you must reload it before you can fire again.",
+        "automation": {
+          "template": "resource_gauge",
+          "params": {
+            "itemUsesMax": "4"
+          },
+          "notes": "Loaded rounds (standard ammo). Attack / Wyvernheart / ammo activities consume 1."
+        }
+      },
+      {
+        "id": "4a91d0c6-7e2b-4f18-a305-1b9c6e4d8a22",
+        "name": "Reload",
+        "description": "You can fully reload your magazine using an Action or a Bonus Action. When you do so, you choose the type of ammunition the weapon will contain."
+      },
+      {
+        "id": "c0d5e8a1-3f46-4b29-9e70-6a12c5d3b088",
+        "name": "Normal Ammo",
+        "description": "Deals the weapon's base damage (1d10 Piercing) to a single target.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "a17b4e92-8c30-4f51-b6d8-2e9f0c1a5d77",
+        "name": "Magazine Upgrade I",
+        "description": "Your magazine capacity increases to 6 rounds of standard ammunition (Normal, Pierce, or Spread).",
+        "upgradesFromId": "e8f2c41b-9a03-4d77-b1c6-5d2e0a8f7c44",
+        "automation": {
+          "template": "upgrade_scaler",
+          "params": {
+            "itemUsesMax": "6"
+          }
+        }
+      },
+      {
+        "id": "f29c6b04-1e58-4a73-8d20-9b4e7c5a3f11",
+        "name": "Ignition",
+        "description": "Whenever you hit a creature with this weapon, you gain 1 Ignition (maximum 3). Ignition remains until you spend it and is not lost when the magazine is empty."
+      },
+      {
+        "id": "d4e8a10b-6c25-4f93-a741-0b3d9e2c8a55",
+        "name": "Wyvernheart",
+        "description": "Spend 1 Ignition to make one additional attack with this weapon as a Bonus Action. If you already hit a creature with this weapon this turn, this extra attack deals an extra 1d6 Piercing damage."
+      },
+      {
+        "id": "9b2f7c18-4d60-4e8a-b305-7c1a0e6d4f33",
+        "name": "Wyvernheart Upgrade I",
+        "description": "When you use Wyvernheart after already hitting a creature with this weapon this turn, the extra damage increases to 1d8 Piercing.",
+        "upgradesFromId": "d4e8a10b-6c25-4f93-a741-0b3d9e2c8a55"
+      },
+      {
+        "id": "5c0a3e76-8b14-4d29-9f52-1e7c4a8b0d99",
+        "name": "Guard",
+        "description": "When a creature you can see hits you with an attack while you are wielding this weapon, you can use your Reaction to roll 1d4 and add it to your AC against that attack, potentially causing it to miss. You cannot use Guard on the same turn you used Wyvernheart."
+      },
+      {
+        "id": "7e1d9c42-5a80-4b36-8e17-2f4c0d6b9a66",
+        "name": "Special Ammo",
+        "description": "Due to barrel pressure limits, you can load a maximum of 2 Special Ammo rounds into the magazine during a reload. Once these are expended, you must reload to switch back to another ammunition type."
+      },
+      {
+        "id": "2a8f5d13-6c47-4e91-b024-8d3e1a7c5b00",
+        "name": "Pierce Ammo",
+        "description": "You fire in a 40-foot line that is 5 feet wide. Make a single attack roll and compare it against the AC of each creature in that line. All creatures hit take the weapon's normal damage.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "8c4b0e27-9d15-4a62-bf38-5e1a2c7d9044",
+        "name": "Spread Ammo",
+        "description": "Instead of making an attack roll, you fire a 15-foot cone. Each creature in the cone must make a Dexterity saving throw against your Ammo DC. On a failed save, a creature takes 1d10 Piercing damage.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "1f6d3a80-2b49-4c75-ae91-6d0e8b4c2a11",
+        "name": "Cluster Ammo",
+        "description": "This ammo deals no weapon damage. On a hit, it explodes, dealing 2d6 Fire damage to the target and each creature within 5 feet of it.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "3b9e1c54-7a08-4d26-9f40-c5e2a8d16b77",
+        "name": "Recover Ammo",
+        "description": "Instead of taking damage, a willing creature hit by this ammo regains 1d4 hit points.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "a8c3e10f-2b47-4c91-9d55-6e1f0a8b3c22",
+        "name": "Magazine Upgrade II",
+        "description": "Your magazine capacity increases to 8 rounds of standard ammunition.",
+        "upgradesFromId": "a17b4e92-8c30-4f51-b6d8-2e9f0c1a5d77",
+        "automation": {
+          "template": "upgrade_scaler",
+          "params": {
+            "itemUsesMax": "8"
+          }
+        }
+      },
+      {
+        "id": "b7d4f21a-3c58-4d02-8e66-7f2a1b9c4d33",
+        "name": "Special Ammo Upgrade I",
+        "description": "Your magazine can now hold up to 4 Special Ammo rounds.",
+        "upgradesFromId": "7e1d9c42-5a80-4b36-8e17-2f4c0d6b9a66"
+      },
+      {
+        "id": "c6e5a32b-4d69-4e13-9f77-8a3b2c0d5e44",
+        "name": "Guard Upgrade I",
+        "description": "When you use Guard, you roll 1d6 instead of 1d4 and add it to your AC against the triggering attack.",
+        "upgradesFromId": "5c0a3e76-8b14-4d29-9f52-1e7c4a8b0d99"
+      },
+      {
+        "id": "d5f6b43c-5e70-4f24-a088-9b4c3d1e6f55",
+        "name": "Wyverncounter",
+        "description": "When you use Guard and the triggering attack misses you, you can spend 1 Ignition to make one attack with this weapon against that creature (no additional action required). This attack consumes 1 loaded round and does not apply a special ammunition effect. If the creature is within 15 feet of you, the attack deals an extra 1d8 Piercing damage. You cannot use Wyverncounter on a turn you used Wyvernheart."
+      },
+      {
+        "id": "e4a7c54d-6f81-4035-b199-0c5d4e2f7066",
+        "name": "Poison Ammo",
+        "description": "A creature hit by this ammo must succeed on a Constitution saving throw against your Ammo DC or have the Poisoned condition for 1 minute. The creature can repeat the saving throw at the end of each of its turns, ending the effect on a success.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "f3b8d65e-7092-4146-c2aa-1d6e5f308177",
+        "name": "Paralysis Ammo",
+        "description": "A creature hit by this ammo must succeed on a Constitution saving throw against your Ammo DC or become Incapacitated and have its Speed reduced to 0 until the end of your next turn. If it fails the save by 5 or more, it is Paralyzed instead until the end of your next turn.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "04c9e76f-81a3-4257-d3bb-2e7f60419288",
+        "name": "Sticky Ammo",
+        "description": "A creature hit by this ammo must succeed on a Strength saving throw against your Ammo DC or have the Restrained condition for 1 minute. The creature can use its action to attempt to escape (escape DC equal to your Ammo DC).",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "15dae870-92b4-4368-e4cc-3f807152a399",
+        "name": "Slicing Ammo",
+        "description": "Instead of making a ranged weapon attack, choose a target within this weapon's long range. The target must succeed on a Dexterity saving throw against your Ammo DC, taking 4d6 Slashing damage on a failed save, or half as much on a successful one. If the target is beyond this weapon's normal range, it has advantage on the save.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "26ebf981-a3c5-4479-f5dd-40918263b4aa",
+        "name": "Wyvern Ammo",
+        "description": "You do not make an attack roll with this ammo. Instead, each creature in a 15-foot cone must make a Dexterity saving throw against your Ammo DC, taking 2d12 Fire damage on a failed save, or half as much on a successful one.",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "37fc0a92-b4d6-4580-a6ee-51a29374c5bb",
+        "name": "Magazine Upgrade III",
+        "description": "Your magazine capacity increases to 10 rounds of standard ammunition.",
+        "upgradesFromId": "a8c3e10f-2b47-4c91-9d55-6e1f0a8b3c22",
+        "automation": {
+          "template": "upgrade_scaler",
+          "params": {
+            "itemUsesMax": "10"
+          }
+        }
+      },
+      {
+        "id": "480d1ba3-c5e7-4691-b7ff-62b3a485d6cc",
+        "name": "Special Ammo Upgrade II",
+        "description": "Your magazine can now hold up to 6 Special Ammo rounds.",
+        "upgradesFromId": "b7d4f21a-3c58-4d02-8e66-7f2a1b9c4d33"
+      },
+      {
+        "id": "6a2f3dc5-e709-48b3-d911-84d5c6a7f8ee",
+        "name": "Wyvernheart Upgrade II",
+        "description": "When you use Wyvernheart after already hitting a creature with this weapon this turn, the extra damage increases to 1d10 Piercing.",
+        "upgradesFromId": "9b2f7c18-4d60-4e8a-b305-7c1a0e6d4f33"
+      },
+      {
+        "id": "591e2cb4-d6f8-47a2-c800-73c4b596e7dd",
+        "name": "Wyvernpiercer",
+        "description": "As an Action, you can spend 2 Ignition and 1 loaded round to fire a focused shot in an 80-foot line that is 5 feet wide. This shot does not apply a special ammunition effect. Make a single attack roll and compare it against the AC of each creature in that line. A creature hit takes the weapon's normal damage plus 2d10 Piercing damage. After you use Wyvernpiercer, you cannot use Guard until the start of your next turn."
+      },
+      {
+        "id": "7b304ed6-f81a-49c4-ea22-95e6d7b809ff",
+        "name": "Normal Ammo Upgrade",
+        "description": "Your Normal Ammo now deals an extra 1d6 Piercing damage.",
+        "upgradesFromId": "c0d5e8a1-3f46-4b29-9e70-6a12c5d3b088",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "8c415fe7-092b-4ad5-fb33-a6f7e8c91a00",
+        "name": "Pierce Ammo Upgrade",
+        "description": "Your Pierce Ammo now deals an extra 1d6 Piercing damage.",
+        "upgradesFromId": "2a8f5d13-6c47-4e91-b024-8d3e1a7c5b00",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "9d5260f8-1a3c-4be6-0c44-b708f9da2b11",
+        "name": "Spread Ammo Upgrade",
+        "description": "Your Spread Ammo now deals an extra 1d6 Piercing damage.",
+        "upgradesFromId": "8c4b0e27-9d15-4a62-bf38-5e1a2c7d9044",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "ae637109-2b4d-4cf7-1d55-c8190aeb3c22",
+        "name": "Recover Ammo Upgrade",
+        "description": "Your Recover Ammo now restores 2d4 + your Proficiency Bonus hit points.",
+        "upgradesFromId": "3b9e1c54-7a08-4d26-9f40-c5e2a8d16b77",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "bf74821a-3c5e-4d08-2e66-d92a1bfc4d33",
+        "name": "Cluster Ammo Upgrade",
+        "description": "Your Cluster Ammo explosion now deals 3d6 Fire damage.",
+        "upgradesFromId": "1f6d3a80-2b49-4c75-ae91-6d0e8b4c2a11",
+        "resourceColumn": "Ammo"
+      },
+      {
+        "id": "c085932b-4d6f-4e19-3f77-ea3b2c0d5e44",
+        "name": "Magazine Upgrade IV",
+        "description": "Your magazine capacity increases to 12 rounds of standard ammunition.",
+        "upgradesFromId": "37fc0a92-b4d6-4580-a6ee-51a29374c5bb",
+        "automation": {
+          "template": "upgrade_scaler",
+          "params": {
+            "itemUsesMax": "12"
+          }
+        }
+      },
+      {
+        "id": "d196a43c-5e70-4f2a-4088-fb4c3d1e6f55",
+        "name": "Special Ammo Upgrade III",
+        "description": "Your magazine can now hold up to 8 Special Ammo rounds.",
+        "upgradesFromId": "480d1ba3-c5e7-4691-b7ff-62b3a485d6cc"
+      },
+      {
+        "id": "e2a7b54d-6f81-403b-5199-0c5d4e2f7066",
+        "name": "Wyvernpiercer Upgrade",
+        "description": "Your Wyvernpiercer line increases to 100 feet, and a creature hit takes the weapon's normal damage plus 4d10 Piercing damage.",
+        "upgradesFromId": "591e2cb4-d6f8-47a2-c800-73c4b596e7dd"
+      },
+      {
+        "id": "f3b8c65e-7092-414c-62aa-1d6e5f308177",
+        "name": "Ignition Mode",
+        "description": "As a Bonus Action, you can enter Ignition Mode for 1 minute. You can use this feature a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest. While Ignition Mode is active, you cannot use Guard or Wyverncounter; whenever you hit a creature with this weapon, you gain 2 Ignition instead of 1 (maximum still 3); and you can use Wyvernpiercer as a Bonus Action."
+      }
+    ],
+    "proficiency": {
+      "compatible": ["Heavy Crossbow"],
+      "tier": "martial",
+      "range": "ranged"
+    }
+  }
+}

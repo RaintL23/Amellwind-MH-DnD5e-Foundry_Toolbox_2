@@ -632,6 +632,47 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   "rapid fire upgrade iii": spec("upgrade_scaler", {
     chatFlavor: "Make 4 additional attacks with this weapon as a Bonus Action.",
   }),
+  wyvernheart: spec("bonus_action", {
+    activation: "bonus",
+    activityType: "attack",
+    includeBaseDamage: true,
+    consumeItemUses: true,
+    chatFlavor:
+      "Spend 1 Ignition. One extra attack; +1d6 piercing if you already hit with this weapon this turn.",
+    activityImg: "icons/weapons/ammunition/shot-round-red.webp",
+  }),
+  "wyvernheart upgrade i": spec("upgrade_scaler", {
+    chatFlavor:
+      "Spend 1 Ignition. One extra attack; +1d8 piercing if you already hit with this weapon this turn.",
+  }),
+  guard: reactionUtility(
+    "When a creature you can see hits you with an attack while you are wielding this weapon",
+    {
+      rollFormula: "1d4",
+      chatFlavor:
+        "Add 1d4 to your AC against that attack. Cannot be used on a turn you used Wyvernheart.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/shield-block-gray-orange.webp",
+    },
+    "Heavy Bowgun shield: AC roll is exposed; Wyvernheart same-turn lockout is Item Macro.",
+  ),
+  wyverncounter: spec("reaction", {
+    activation: "reaction",
+    activityType: "attack",
+    includeBaseDamage: true,
+    consumeItemUses: true,
+    activationCondition: "When you use Guard and the triggering attack misses you",
+    chatFlavor:
+      "Spend 1 Ignition. One attack (no special ammo). Extra 1d8 piercing if the creature is within 15 ft.",
+    activityImg: "icons/skills/ranged/cannon-barreling-orange.webp",
+  }, "Item Macro: requires Guard this turn; spends Ignition; extra 1d8 within 15 ft."),
+  "guard upgrade i": spec("upgrade_scaler", {
+    rollFormula: "1d6",
+    chatFlavor:
+      "Add 1d6 to your AC against that attack. Cannot be used on a turn you used Wyvernheart.",
+  }),
   magazine: gauge(
     "6",
     undefined,
