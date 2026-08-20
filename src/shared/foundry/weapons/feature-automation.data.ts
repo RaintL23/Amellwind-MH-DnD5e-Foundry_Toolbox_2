@@ -465,6 +465,20 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Requires Active Auras. Half Cover for allies within 5 ft.",
   ),
+  "aegis wall": reactionUtility(
+    "When you would make a Dexterity saving throw against an area effect while wielding the shield",
+    {
+      usesMax: "1",
+      usesRecoveryPeriod: "lr",
+      chatFlavor:
+        "Consumes your Reaction. Con save with Advantage instead of Dex. Allies within 15 ft may spend their Reaction to move up to half Speed into the 10-ft cone behind you before the effect resolves. Those in the cone: Con+Adv; success = no damage, fail = half (not you).",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/shield-block-gray-orange.webp",
+    },
+    "Manual: wielder spends Reaction; Con+Adv vs the effect DC. Allies within 15 ft may spend their Reaction to move half Speed into the 10-ft cone before resolution (no OA). Cone creatures other than the wielder get Evasion-like Con+Adv.",
+  ),
   "anchor rage": spec(
     "unmapped",
     {},

@@ -34,7 +34,7 @@
               "+1",
               "+2",
               "+1",
-              "Perfect Offset, Leaping Thrust"
+              "Perfect Offset, Leaping Thrust, Aegis Wall"
             ],
             [
               "Legendary",
@@ -89,6 +89,12 @@
         "name": "Leaping Thrust",
         "description": "When you use your Guard Dash Bonus Action, you can make one Lance attack at the end of the movement as part of the same Bonus Action.",
         "upgradesFromId": "81385314-08fa-4ed7-8d18-72963344075f"
+      },
+      {
+        "id": "7e4a9c2b-6d18-4f53-a8c1-b92e5f0d3a16",
+        "name": "Aegis Wall",
+        "description": "Your Shielding Presence improves. Once per Long Rest, when you would make a Dexterity saving throw against an area effect while you are conscious and wielding the shield, you can use your Reaction to face the effect's origin and plant your shield as a barrier. You make a Constitution saving throw with Advantage against the effect's DC instead of a Dexterity saving throw.\n\nThis stance creates a 10-foot cone of cover behind you, originating from your space and pointing directly away from the effect's origin. You count as a wall between the effect and that cone.\n\nWhen you use this Reaction, you can shout an order to each ally within 15 feet of you. Each of those allies can immediately use their Reaction to move up to half their Speed, provided they end this movement in the cone behind you. This movement happens before the effect resolves and does not provoke Opportunity Attacks.\n\nEach creature in the cone that is also in the effect's area can choose to make a Constitution saving throw with Advantage against the effect's DC instead of a Dexterity saving throw. A creature other than you that succeeds on this saving throw takes no damage from the effect, and a creature that fails takes only half as much damage.",
+        "upgradesFromId": "849c2cd2-458c-4b0f-955b-f69369627089"
       },
       {
         "id": "bef6c94f-d0bf-4123-8e8a-fb40d968cc7a",
