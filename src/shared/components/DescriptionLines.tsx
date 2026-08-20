@@ -1,4 +1,4 @@
-import { DndRichText } from "./DndRichText";
+import { DndRichText, type RichTextPhraseLink } from "./DndRichText";
 import { cn } from "@/shared/utils/cn";
 
 interface DescriptionLinesProps {
@@ -7,6 +7,7 @@ interface DescriptionLinesProps {
   sizeClass?: string;
   /** Accent class for inset lines border. Default: amber */
   insetAccent?: "amber" | "violet";
+  phraseLinks?: RichTextPhraseLink[];
 }
 
 /**
@@ -17,6 +18,7 @@ export function DescriptionLines({
   lines,
   sizeClass = "text-sm",
   insetAccent = "amber",
+  phraseLinks,
 }: DescriptionLinesProps) {
   const insetBorder =
     insetAccent === "violet" ? "border-violet-800/40" : "border-amber-800/40";
@@ -38,7 +40,7 @@ export function DescriptionLines({
               key={i}
               className={cn(sizeClass, "font-semibold text-foreground mt-3 mb-1")}
             >
-              <DndRichText text={line} />
+              <DndRichText text={line} phraseLinks={phraseLinks} />
             </p>
           );
         }
@@ -56,7 +58,10 @@ export function DescriptionLines({
                   : "text-muted-foreground",
             )}
           >
-            <DndRichText text={line.replace(/^[»•]\s*/, "")} />
+            <DndRichText
+              text={line.replace(/^[»•]\s*/, "")}
+              phraseLinks={phraseLinks}
+            />
           </p>
         );
       })}

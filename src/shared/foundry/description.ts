@@ -1,10 +1,18 @@
 /**
  * Converts 5etools / Amellwind description text into Foundry-ready HTML with
- * Plutonium-style content links (`@item[Name|SRC]`), core roll enrichers
- * (`[[/r 2d4 + 2]]`), and optional 5e.tools deep links.
+ * Plutonium-style content links (`@variantrule[…]`), core roll enrichers
+ * (`[[/r 2d4 + 2]]`), and Toolbox deep links (spells, items, conditions, …).
  *
  * Do NOT use `parseFiveToolsMarkup` here — that strips tags for the app UI.
  */
+
+import {
+  buildToolboxFilterHref,
+  buildToolboxWeaponHref,
+  extractNextFiveToolsTag,
+  resolveToolboxEntityRef,
+  toAbsoluteToolboxUrl,
+} from "@/shared/utils/toolbox-entity-links";
 
 const ALREADY_CONTENT_LINK = /@[a-zA-Z]+\[/;
 const ALREADY_ROLL = /\[\[\/[^\]]+\]\]/;
@@ -30,14 +38,13 @@ function wrapParagraphs(html: string): string {
     .join("");
 }
 
-/** Builds a 5e.tools items hash URL for a simple name lookup when stable. */
+/** Absolute Toolbox URL for a hunter weapon (replaces the old 5e.tools item hash). */
 export function buildFiveToolsItemUrl(itemName: string): string {
-  const hash = encodeURIComponent(itemName.trim().toLowerCase());
-  return `https://5e.tools/items.html#${hash}`;
+  return toAbsoluteToolboxUrl(buildToolboxWeaponHref(itemName));
 }
 
 /**
- * Parses `{@filter Label|page|key=value;…}` into a 5e.tools URL when possible.
+ * Parses `{@filter Label|page|key=value;…}` into a Toolbox URL when possible.
  * Falls back to null so the caller can keep a content-link style label.
  */
 export function buildFiveToolsFilterUrl(
@@ -45,44 +52,28 @@ export function buildFiveToolsFilterUrl(
   page: string,
   filterSpec: string,
 ): string | null {
-  const pageSlug = page.trim().toLowerCase() || "items";
-  const types: string[] = [];
-  for (const part of filterSpec.split(";")) {
-    const [key, rawVal] = part.split("=").map((s) => s.trim());
-    if (!key || !rawVal) continue;
-    if (key === "type" || key === "types") {
-      types.push(rawVal.toLowerCase());
-    }
-  }
-  if (types.length >= 2 && pageSlug === "items") {
-    const [a, b] = types;
-    const flst = `flsttype:${encodeURIComponent(a)}=1~${encodeURIComponent(b)}=1`;
-    return `https://5e.tools/items.html#blankhash,${flst}`;
-  }
-  if (types.length === 1 && pageSlug === "items") {
-    const flst = `flsttype:${encodeURIComponent(types[0])}=1`;
-    return `https://5e.tools/items.html#blankhash,${flst}`;
-  }
-  if (display.trim()) {
-    return `https://5e.tools/${pageSlug}.html#${encodeURIComponent(display.trim().toLowerCase())}`;
-  }
-  return null;
+  const href = buildToolboxFilterHref(display, page, filterSpec);
+  return href ? toAbsoluteToolboxUrl(href) : null;
+}
+
+function toolboxAnchorHtml(href: string, label: string): string {
+  return `<a href="${escapeHtml(toAbsoluteToolboxUrl(href))}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
 }
 
 function convertFiveToolsTag(tag: string, body: string): string {
   const lower = tag.toLowerCase();
 
   if (lower === "b" || lower === "bold") {
-    return `<strong>${escapeHtml(body)}</strong>`;
+    return `<strong>${convertFiveToolsTagsToFoundry(body)}</strong>`;
   }
   if (lower === "i" || lower === "italic") {
-    return `<em>${escapeHtml(body)}</em>`;
+    return `<em>${convertFiveToolsTagsToFoundry(body)}</em>`;
   }
   if (lower === "u" || lower === "underline") {
-    return `<u>${escapeHtml(body)}</u>`;
+    return `<u>${convertFiveToolsTagsToFoundry(body)}</u>`;
   }
   if (lower === "s" || lower === "strike") {
-    return `<s>${escapeHtml(body)}</s>`;
+    return `<s>${convertFiveToolsTagsToFoundry(body)}</s>`;
   }
   if (lower === "h") {
     return `<strong>Hit:</strong>`;
@@ -147,7 +138,12 @@ function convertFiveToolsTag(tag: string, body: string): string {
     return `<em>${escapeHtml(body.trim().toUpperCase())} Attack:</em>`;
   }
 
-  // Content links: {@item Greataxe|XPHB|Greataxes} → @item[Greataxe|XPHB|Greataxes]
+  const entity = resolveToolboxEntityRef(lower, body);
+  if (entity) {
+    return toolboxAnchorHtml(entity.href, entity.label);
+  }
+
+  // Remaining content links for Foundry/Plutonium: {@variantrule Advantage|XPHB}
   return `@${lower}[${body}]`;
 }
 
@@ -155,9 +151,19 @@ function convertFiveToolsTag(tag: string, body: string): string {
  * Converts `{@tag …}` tokens. Leaves existing `@tag[…]` and `[[/…]]` alone.
  */
 export function convertFiveToolsTagsToFoundry(text: string): string {
-  return text.replace(/\{@([a-zA-Z]+)\s?([^}]*)\}/g, (_full, tag: string, body: string) =>
-    convertFiveToolsTag(tag, body ?? ""),
-  );
+  let result = "";
+  let cursor = 0;
+  while (cursor < text.length) {
+    const extracted = extractNextFiveToolsTag(text, cursor);
+    if (!extracted) {
+      result += text.slice(cursor);
+      break;
+    }
+    result += text.slice(cursor, extracted.start);
+    result += convertFiveToolsTag(extracted.tag, extracted.body);
+    cursor = extracted.end;
+  }
+  return result;
 }
 
 /**
@@ -184,7 +190,7 @@ export function wrapBareDiceFormulas(text: string): string {
 export interface FoundryDescriptionOptions {
   /** When true (default), wrap plain text in <p> blocks. */
   wrapHtml?: boolean;
-  /** Optional 5e.tools deep-link label appended when `fiveToolsItemName` is set. */
+  /** Optional Toolbox deep-link appended when `fiveToolsItemName` is set. */
   fiveToolsItemName?: string;
   fiveToolsLinkLabel?: string;
 }
@@ -214,7 +220,7 @@ export function toFoundryDescriptionHtml(
 
   if (options.fiveToolsItemName?.trim()) {
     const url = buildFiveToolsItemUrl(options.fiveToolsItemName);
-    const label = options.fiveToolsLinkLabel?.trim() || "View on 5e.tools";
+    const label = options.fiveToolsLinkLabel?.trim() || `Open ${options.fiveToolsItemName} in the Toolbox`;
     html += `<p><a href="${url}" target="_blank" rel="noopener">${escapeHtml(label)}</a></p>`;
   }
 

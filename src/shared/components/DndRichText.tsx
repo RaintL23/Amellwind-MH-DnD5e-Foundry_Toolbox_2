@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { Link } from "react-router-dom";
 import { cn } from "@/shared/utils/cn";
 import {
   type ParseRichTextOptions,
@@ -49,7 +50,31 @@ export function DndRichText({
             </strong>
           );
         }
+        if (seg.kind === "entityLink") {
+          return (
+            <Link
+              key={i}
+              to={seg.href}
+              onClick={(event) => event.stopPropagation()}
+              className={cn(styleClass)}
+            >
+              {seg.content}
+            </Link>
+          );
+        }
         if (seg.kind === "phraseLink") {
+          if (seg.href) {
+            return (
+              <Link
+                key={i}
+                to={seg.href}
+                onClick={(event) => event.stopPropagation()}
+                className={cn(styleClass)}
+              >
+                {seg.content}
+              </Link>
+            );
+          }
           return (
             <button
               key={i}

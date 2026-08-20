@@ -3,6 +3,12 @@ import {
   DND_KEYWORD_CLASS,
   splitDndKeywords,
 } from "./dnd-keywords.utils";
+import {
+  type ToolboxEntityKind,
+  buildToolboxFilterHref,
+  extractNextFiveToolsTag,
+  resolveToolboxEntityRef,
+} from "./toolbox-entity-links";
 
 // ─── Segment types ────────────────────────────────────────────────────────────
 
@@ -21,7 +27,13 @@ export type RichTextMarkupKind =
 export type RichTextSegment =
   | { kind: RichTextMarkupKind; content: string }
   | { kind: "keyword"; content: string; category: DndKeywordCategory }
-  | { kind: "phraseLink"; content: string; phraseId: string };
+  | { kind: "phraseLink"; content: string; phraseId: string; href?: string }
+  | {
+      kind: "entityLink";
+      content: string;
+      href: string;
+      refKind: ToolboxEntityKind;
+    };
 
 /** Phrase that should render as a clickable link inside rich text. */
 export interface RichTextPhraseLink {
@@ -29,6 +41,8 @@ export interface RichTextPhraseLink {
   id: string;
   /** Case-insensitive phrase to match in plain text. */
   phrase: string;
+  /** When set, the phrase renders as an in-app `<Link>` instead of a button. */
+  href?: string;
 }
 
 export interface ParseRichTextOptions {
@@ -52,6 +66,20 @@ export const RICH_TEXT_MARKUP_CLASS: Record<Exclude<RichTextMarkupKind, "text">,
   action: "font-semibold text-yellow-300/90",
 };
 
+const ENTITY_LINK_KIND_CLASS: Record<ToolboxEntityKind, string> = {
+  spell: RICH_TEXT_MARKUP_CLASS.spell,
+  condition: RICH_TEXT_MARKUP_CLASS.condition,
+  disease: "text-purple-400 font-medium",
+  item: "text-amber-300 font-medium",
+  weapon: "text-orange-400 font-medium",
+  class: "text-sky-300 font-medium",
+  race: "text-emerald-300 font-medium",
+  species: "text-emerald-300 font-medium",
+  creature: "text-rose-300 font-medium",
+  feat: "text-violet-300 font-medium",
+  background: "text-teal-300 font-medium",
+};
+
 export { DND_KEYWORD_CLASS };
 
 // ─── Markdown bold tokenizer ────────────────────────────────────────────────
@@ -69,7 +97,7 @@ function tokenizeMarkdownBold(text: string): RichTextSegment[] {
     if (match.index > lastIndex) {
       segments.push({ kind: "text", content: text.slice(lastIndex, match.index) });
     }
-    segments.push({ kind: "bold", content: match[1] });
+    segments.push({ kind: "bold", content: match[1] ?? "" });
     lastIndex = match.index + match[0].length;
   }
 
@@ -82,79 +110,107 @@ function tokenizeMarkdownBold(text: string): RichTextSegment[] {
 
 // ─── 5etools markup tokenizer ───────────────────────────────────────────────
 
-const TAG_RE = /\{@(\w+)\s+([^}|]+)(?:\|[^}]*)?\}|\{@(\w+)\}/g;
+function withItalicKind(segment: RichTextSegment): RichTextSegment {
+  if (segment.kind === "text") return { kind: "italic", content: segment.content };
+  return segment;
+}
+
+function withBoldKind(segment: RichTextSegment): RichTextSegment {
+  if (segment.kind === "text") return { kind: "bold", content: segment.content };
+  return segment;
+}
+
+function segmentsFromFiveToolsTag(tag: string, body: string): RichTextSegment[] {
+  const lower = tag.toLowerCase();
+  const content = body.trim();
+
+  if (lower === "i" || lower === "italic") {
+    return tokenizeFiveToolsMarkup(body).map(withItalicKind);
+  }
+  if (lower === "b" || lower === "bold") {
+    return tokenizeFiveToolsMarkup(body).map(withBoldKind);
+  }
+
+  const entity = resolveToolboxEntityRef(lower, body);
+  if (entity) {
+    return [
+      {
+        kind: "entityLink",
+        content: entity.label,
+        href: entity.href,
+        refKind: entity.kind,
+      },
+    ];
+  }
+
+  switch (lower) {
+    case "condition":
+      return [{ kind: "condition", content }];
+    case "spell":
+      return [{ kind: "spell", content }];
+    case "damage":
+      return [{ kind: "damage", content }];
+    case "dice":
+      return [{ kind: "text", content }];
+    case "skill":
+      return [{ kind: "skill", content }];
+    case "dc":
+      return [{ kind: "dc", content: `DC ${content}` }];
+    case "hit":
+      return [{ kind: "hit", content: `+${content} to hit` }];
+    case "h":
+      return [{ kind: "text", content: "Hit: " }];
+    case "atk":
+      return [
+        {
+          kind: "text",
+          content: `${content.replace("mw,rw", "mw or rw").toUpperCase()} Attack: `,
+        },
+      ];
+    case "action":
+      return [{ kind: "action", content }];
+    case "recharge":
+      return [{ kind: "text", content: `(Recharge ${content}–6)` }];
+    case "chance":
+      return [];
+    case "filter": {
+      const parts = body.split("|");
+      const display = (parts[0] ?? "").trim();
+      const page = (parts[1] ?? "items").trim();
+      const spec = (parts[2] ?? "").trim();
+      const href = buildToolboxFilterHref(display, page, spec);
+      if (href && display) {
+        return [
+          {
+            kind: "entityLink",
+            content: display,
+            href,
+            refKind: "item",
+          },
+        ];
+      }
+      return display ? [{ kind: "text", content: display }] : [];
+    }
+    default:
+      return content ? [{ kind: "text", content }] : [];
+  }
+}
 
 function tokenizeFiveToolsMarkup(text: string): RichTextSegment[] {
   const segments: RichTextSegment[] = [];
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
+  let cursor = 0;
 
-  TAG_RE.lastIndex = 0;
-  while ((match = TAG_RE.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      segments.push({ kind: "text", content: text.slice(lastIndex, match.index) });
+  while (cursor < text.length) {
+    const extracted = extractNextFiveToolsTag(text, cursor);
+    if (!extracted) {
+      segments.push({ kind: "text", content: text.slice(cursor) });
+      break;
     }
-
-    const tag = (match[1] ?? match[3] ?? "").toLowerCase();
-    const content = (match[2] ?? "").trim();
-
-    switch (tag) {
-      case "i":
-      case "italic":
-        segments.push({ kind: "italic", content });
-        break;
-      case "b":
-      case "bold":
-        segments.push({ kind: "bold", content });
-        break;
-      case "condition":
-        segments.push({ kind: "condition", content });
-        break;
-      case "spell":
-        segments.push({ kind: "spell", content });
-        break;
-      case "damage":
-        segments.push({ kind: "damage", content });
-        break;
-      case "dice":
-        segments.push({ kind: "text", content });
-        break;
-      case "skill":
-        segments.push({ kind: "skill", content });
-        break;
-      case "dc":
-        segments.push({ kind: "dc", content: `DC ${content}` });
-        break;
-      case "hit":
-        segments.push({ kind: "hit", content: `+${content} to hit` });
-        break;
-      case "h":
-        segments.push({ kind: "text", content: "Hit: " });
-        break;
-      case "atk":
-        segments.push({
-          kind: "text",
-          content: `${content.replace("mw,rw", "mw or rw").toUpperCase()} Attack: `,
-        });
-        break;
-      case "action":
-        segments.push({ kind: "action", content });
-        break;
-      case "recharge":
-        segments.push({ kind: "text", content: `(Recharge ${content}–6)` });
-        break;
-      case "chance":
-        break;
-      default:
-        if (content) segments.push({ kind: "text", content });
-        break;
+    if (extracted.start > cursor) {
+      segments.push({ kind: "text", content: text.slice(cursor, extracted.start) });
     }
-
-    lastIndex = match.index + match[0].length;
-  }
-
-  if (lastIndex < text.length) {
-    segments.push({ kind: "text", content: text.slice(lastIndex) });
+    segments.push(...segmentsFromFiveToolsTag(extracted.tag, extracted.body));
+    cursor = extracted.end;
   }
 
   return segments;
@@ -172,17 +228,21 @@ export function splitPhraseLinks(
   phraseLinks: RichTextPhraseLink[],
 ): RichTextSegment[] {
   const usable = phraseLinks
-    .map((link) => ({ id: link.id, phrase: link.phrase.trim() }))
+    .map((link) => ({
+      id: link.id,
+      phrase: link.phrase.trim(),
+      href: link.href,
+    }))
     .filter((link) => link.phrase.length > 0);
 
   if (usable.length === 0 || !text) {
     return text ? [{ kind: "text", content: text }] : [];
   }
 
-  const byLower = new Map<string, string>();
+  const byLower = new Map<string, { id: string; href?: string }>();
   for (const link of usable) {
     const key = link.phrase.toLowerCase();
-    if (!byLower.has(key)) byLower.set(key, link.id);
+    if (!byLower.has(key)) byLower.set(key, { id: link.id, href: link.href });
   }
 
   const uniquePhrases = [...byLower.keys()].sort((a, b) => b.length - a.length);
@@ -198,10 +258,15 @@ export function splitPhraseLinks(
     if (match.index > lastIndex) {
       segments.push({ kind: "text", content: text.slice(lastIndex, match.index) });
     }
-    const matched = match[1];
-    const phraseId = byLower.get(matched.toLowerCase());
-    if (phraseId) {
-      segments.push({ kind: "phraseLink", content: matched, phraseId });
+    const matched = match[1] ?? "";
+    const meta = byLower.get(matched.toLowerCase());
+    if (meta) {
+      segments.push({
+        kind: "phraseLink",
+        content: matched,
+        phraseId: meta.id,
+        href: meta.href,
+      });
     } else {
       segments.push({ kind: "text", content: matched });
     }
@@ -269,6 +334,9 @@ export function getRichTextSegmentClass(segment: RichTextSegment): string | null
   if (segment.kind === "keyword") return DND_KEYWORD_CLASS[segment.category];
   if (segment.kind === "phraseLink") {
     return "text-sky-400 font-medium underline-offset-2 hover:underline cursor-pointer";
+  }
+  if (segment.kind === "entityLink") {
+    return `${ENTITY_LINK_KIND_CLASS[segment.refKind]} underline-offset-2 hover:underline`;
   }
   if (segment.kind === "text") return null;
   return RICH_TEXT_MARKUP_CLASS[segment.kind];

@@ -188,7 +188,7 @@ export function appendWeaponIntroHtml(
           ? weapon.name
           : undefined,
         fiveToolsLinkLabel: options.includeFiveToolsLink
-          ? `Open ${weapon.name} filters on 5e.tools`
+          ? `Open ${weapon.name} in the Toolbox`
           : undefined,
       }),
     );

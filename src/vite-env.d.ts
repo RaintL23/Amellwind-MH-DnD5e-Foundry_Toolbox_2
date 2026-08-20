@@ -14,6 +14,8 @@ interface ImportMetaEnv {
   readonly VITE_UA_MIRROR?: string;
   /** Override the UA git ref (branch/tag/commit). Default: "master". */
   readonly VITE_UA_REF?: string;
+  /** Public site origin used in Foundry description deep links. */
+  readonly VITE_PUBLIC_SITE_URL?: string;
 }
 
 interface ImportMeta {
