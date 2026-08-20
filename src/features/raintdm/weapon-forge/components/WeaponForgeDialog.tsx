@@ -23,7 +23,6 @@ interface WeaponForgeDialogProps {
   initialRarity?: string | null;
   onRarityChange?: (rarity: string) => void;
   onEdit?: (weapon: CustomWeapon) => void;
-  onExportAmellwind?: (weapon: CustomWeapon) => void;
   onDelete?: (weapon: CustomWeapon) => void;
 }
 
@@ -35,7 +34,6 @@ export function WeaponForgeDialog({
   initialRarity = null,
   onRarityChange,
   onEdit,
-  onExportAmellwind,
   onDelete,
 }: WeaponForgeDialogProps) {
   const extraFeaturesMap = useMemo(() => {
@@ -93,15 +91,13 @@ export function WeaponForgeDialog({
             <Badge variant="outline">{weapon.source}</Badge>
 
             <div className="ml-auto flex gap-1">
-              {onExportAmellwind && (
-                <WeaponForgeExportMenu
-                  weapon={weapon}
-                  variant="outline"
-                  size="sm"
-                  triggerLabel="Download JSON"
-                  onExportAmellwind={onExportAmellwind}
-                />
-              )}
+              <WeaponForgeExportMenu
+                weapon={weapon}
+                variant="outline"
+                size="sm"
+                triggerLabel="Download JSON"
+                preferredRarityIndex={current}
+              />
               {onEdit && weapon.isCustom && (
                 <Button
                   type="button"

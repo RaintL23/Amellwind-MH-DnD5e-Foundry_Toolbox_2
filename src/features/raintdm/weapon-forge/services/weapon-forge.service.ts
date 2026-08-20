@@ -12,6 +12,13 @@ import {
   weaponToRawExport,
 } from "../mappers/weapon-forge.mapper";
 import { downloadFoundryJson } from "@/shared/foundry";
+import {
+  buildWeaponFoundryExportBundle,
+  foundryItemFilename,
+} from "../mappers/weapon-forge-foundry.export";
+import { melodyFeatFilename } from "../mappers/weapon-forge-melody.export";
+import { phialFeatFilename } from "../mappers/weapon-forge-phial.export";
+import { magazineConsumableFilename } from "../mappers/weapon-forge-magazine.export";
 
 const STORAGE_KEY = "weapon_forge_custom";
 const MANIFEST_URL = "/data/raintdm-weapons/manifest.json";
@@ -163,7 +170,14 @@ export function importUserWeapons(data: unknown): CustomWeapon[] {
 }
 
 export function downloadJson(data: unknown, filename: string): void {
-  downloadFoundryJson(data, filename);
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }
 
 export function exportWeaponJson(weapon: CustomWeapon): void {
@@ -173,6 +187,35 @@ export function exportWeaponJson(weapon: CustomWeapon): void {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
   downloadJson(raw, `${safeName || "weapon"}.json`);
+}
+
+const FOUNDRY_DOWNLOAD_STAGGER_MS = 150;
+
+/** Foundry Item for one rarity, plus resource feats/consumables when the bundle emits them. */
+export function exportWeaponFoundryJson(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): void {
+  const bundle = buildWeaponFoundryExportBundle(weapon, rarityIndex);
+  downloadFoundryJson(bundle.weapon, foundryItemFilename(weapon, rarityIndex));
+
+  let delayIndex = 0;
+  for (const group of bundle.resourceGroups) {
+    const filenameFor =
+      group.id === "magazines"
+        ? magazineConsumableFilename
+        : group.id === "phials"
+          ? phialFeatFilename
+          : melodyFeatFilename;
+    for (const item of group.items) {
+      delayIndex += 1;
+      const filename = filenameFor(item);
+      setTimeout(
+        () => downloadFoundryJson(item, filename),
+        delayIndex * FOUNDRY_DOWNLOAD_STAGGER_MS,
+      );
+    }
+  }
 }
 
 export function exportAllUserWeaponsJson(weapons: CustomWeapon[]): void {

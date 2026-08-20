@@ -5,7 +5,6 @@ import type { CustomWeapon } from "../types/weapon-forge.types";
 import {
   deleteUserWeapon,
   exportAllUserWeaponsJson,
-  exportWeaponJson,
   getCuratedWeapons,
   getUserWeapons,
   importUserWeapons,
@@ -77,10 +76,6 @@ export function useWeaponForge() {
     return next;
   }, []);
 
-  const exportOne = useCallback((weapon: CustomWeapon) => {
-    exportWeaponJson(weapon);
-  }, []);
-
   const exportAll = useCallback(() => {
     exportAllUserWeaponsJson(userWeapons);
   }, [userWeapons]);
@@ -120,7 +115,6 @@ export function useWeaponForge() {
     saveFromForm,
     removeWeapon,
     importFromJson,
-    exportOne,
     exportAll,
     compareSelection,
     toggleCompare,

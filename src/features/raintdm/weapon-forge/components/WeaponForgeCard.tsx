@@ -30,7 +30,6 @@ interface WeaponForgeCardProps {
   onToggleCompare?: () => void;
   onEdit?: () => void;
   onClone?: () => void;
-  onExportAmellwind?: (weapon: CustomWeapon) => void;
   onDelete?: () => void;
 }
 
@@ -42,7 +41,6 @@ export function WeaponForgeCard({
   onToggleCompare,
   onEdit,
   onClone,
-  onExportAmellwind,
   onDelete,
 }: WeaponForgeCardProps) {
   const dmgLabel = DMG_TYPE_LABELS[weapon.dmgType] ?? weapon.dmgType;
@@ -132,15 +130,9 @@ export function WeaponForgeCard({
         </div>
       </button>
 
-      {!compareMode &&
-        (onEdit || onClone || onExportAmellwind || onDelete) && (
+      {!compareMode && (
         <div className="mt-3 flex gap-1 border-t border-border/60 pt-2">
-          {onExportAmellwind && (
-            <WeaponForgeExportMenu
-              weapon={weapon}
-              onExportAmellwind={onExportAmellwind}
-            />
-          )}
+          <WeaponForgeExportMenu weapon={weapon} />
           {onClone && !weapon.isCustom && (
             <Button
               type="button"
