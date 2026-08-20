@@ -6,7 +6,8 @@ Esta es una aplicación que servirá como toolkit para un Dungeon Master que qui
 
 La información mostrada en esta aplicación proviene de los siguientes recursos homebrew de Amellwind disponibles en 5etools:
 
-- [Amellwind; Monster Hunter Monster Manual.json](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json)
+- [Amellwind; Monster Hunter Monster Manual.json](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json) (feed público; se usa como respaldo para nombres que el PDF no cubre)
+- [MHMM with Loot Tables 2.0](https://www.patreon.com/amellwind/posts/monster-hunter-137502033) — PDF gratuito en el Patreon de Amellwind (fuente de las fichas y runas que muestra la app)
 - [Amellwind; Amellwind's Guide to Monster Hunting.json](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json)
 
 ---
@@ -209,7 +210,7 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 
 | Store (tabla)   | Contenido                                              |
 | --------------- | ------------------------------------------------------ |
-| `mm_current`    | Datos actuales del Monster Manual (array de monstruos) |
+| `mm_current`    | `data`: lista mezclada (PDF Patreon 2.0 gana por nombre). `github`: snapshot del feed público. `condition` / `disease`: mismas reglas (PDF gana; GitHub rellena). Snapshots GitHub: `githubCondition`, `githubDisease`. |
 | `mm_previous`   | Snapshot anterior del Monster Manual (para rollback)   |
 | `mm_meta`       | Timestamp del último fetch, versión, etc.              |
 | `gtmh_current`  | Datos de la Guía de Caza (ver claves abajo)            |
@@ -911,8 +912,8 @@ Pantalla (UI)
 
 | Mapper                    | Entrada (5etools / fuente)                                   | Salida (entidad app)           |
 | ------------------------- | ------------------------------------------------------------ | ------------------------------ |
-| `MonsterMapper`           | objeto crudo del store `mm_current`                          | `Monster`                      |
-| `RuneMapper`              | fluff/inset de cada monstruo en `mm_current`                 | `Rune[]` (uno por material)    |
+| `MonsterMapper`           | objeto crudo de `getMonsterData()` (PDF Patreon 2.0 + nombres solo-GitHub) | `Monster`                      |
+| `RuneMapper`              | fluff/inset de cada monstruo de `getMonsterData()`           | `Rune[]` (uno por material)    |
 | `WeaponMapper`            | ítem con `type: "HW"` en `gtmh_current`                      | `Weapon`                       |
 | `OptionalFeatureMapper`   | entrada de `optionalfeature[]` en GTMH                       | `OptionalFeature`              |
 | `SpeciesMapper`           | `race[]` + `subrace[]` en GTMH                               | `Species`                      |
@@ -985,7 +986,7 @@ Para evitar boilerplate repetido por feature, gran parte de los services del com
 
 ### Listado de Monstruos
 
-**Fuente de datos**: store `mm_current` de IndexedDB (Monster Manual).
+**Fuente de datos**: `getMonsterData()` mezcla `mm_current.github` (feed público) con `public/data/mhmm-patreon-2.0/supplement.json` (PDF gratuito de Amellwind, [Loot Tables 2.0](https://www.patreon.com/amellwind/posts/monster-hunter-137502033)). **El PDF gana** por nombre normalizado; GitHub solo aporta nombres que el PDF no tiene. El resultado mezclado se escribe en IndexedDB (`mm_current.data`). Regenerar el overlay con `pnpm build:mm-supplement`.
 
 #### Tabla
 
@@ -1060,7 +1061,7 @@ Al hacer clic en cualquier fila, se navega a **`/monsters/:monsterId`** (`Monste
 
 ### Listado de Runas
 
-**Fuente de datos**: store `mm_current` de IndexedDB, procesado con `RuneMapper` (genera un `Rune[]` iterando todos los monstruos).
+**Fuente de datos**: `getMonsterData()` (PDF Patreon 2.0 gana; GitHub rellena nombres ausentes), procesado con `RuneMapper`. La atribución del PDF está en la lista de Runes y de Monsters.
 
 #### Columnas de la tabla
 
@@ -1121,7 +1122,7 @@ Tres listados de referencia derivados del homebrew Amellwind, con caché en memo
 | Feature           | Ruta                | Fuente / servicio                          | Contenido |
 | ----------------- | ------------------- | ------------------------------------------ | --------- |
 | Material Effects  | `/material-effects` | `material-effect.service.ts` (`MaterialEffectList`) | Efectos de materiales de monstruo (slots armadura/arma) consultables sin pasar por la tabla de runas. En `/runes`, la rareza del efecto también puede inferirse de resistencia (Rare) o inmunidad a daño (Very Rare) cuando el texto no cita un efecto nombrado. |
-| Conditions + Diseases | `/conditions` (`/diseases` → redirect) | `condition.service.ts` + `disease.service.ts` (`ConditionsDiseasesPage`) | Condiciones y enfermedades del manual (UI combinada) |
+| Conditions + Diseases | `/conditions` (`/diseases` → redirect) | `condition.service.ts` + `disease.service.ts` (`ConditionsDiseasesPage`) | Condiciones, venenos y enfermedades del PDF Patreon 2.0 (el JSON de GitHub rellena nombres ausentes, p. ej. si el capítulo no trae una ficha) |
 
 Sus cachés se limpian en el bootstrap (`clearMaterialEffectCache`, `clearConditionCache`, `clearDiseaseCache`).
 

@@ -154,10 +154,13 @@ Para desarrollo offline, copia los JSON desde `backup-jsons/5etools/` a `public/
 
 La información principal proviene de los recursos homebrew de Amellwind en el repositorio de [TheGiddyLimit/homebrew](https://github.com/TheGiddyLimit/homebrew):
 
-- [Amellwind; Monster Hunter Monster Manual](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json)
+- [Amellwind; Monster Hunter Monster Manual](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json) (feed público; respaldo para nombres que el PDF no cubre)
+- [MHMM with Loot Tables 2.0](https://www.patreon.com/amellwind/posts/monster-hunter-137502033) — PDF gratuito del Patreon de Amellwind (fichas, loot y runas que muestra la app)
 - [Amellwind; Amellwind's Guide to Monster Hunting](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json)
 
 El JSON de la Guía de Caza también aporta species, backgrounds, feats, clases MH, class features (Monstie Sidekick), optional features de armas y reglas variantes (downtime).
+
+Las fichas del Monster Manual, las runas, condiciones y enfermedades se cargan del overlay del PDF en `public/data/mhmm-patreon-2.0/supplement.json`. En runtime el PDF gana por nombre normalizado; el JSON de GitHub solo rellena nombres que el PDF no tiene. Las listas mezcladas se escriben en IndexedDB (`mm_current.data`, `condition`, `disease`). Regenerar el overlay con `pnpm build:mm-supplement`.
 
 ### Datos estáticos embebidos
 
