@@ -1,0 +1,3 @@
+# How loot tables work
+
+
