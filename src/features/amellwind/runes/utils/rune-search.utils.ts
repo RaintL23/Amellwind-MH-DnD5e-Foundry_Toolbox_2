@@ -1,7 +1,7 @@
-import type { MaterialEffect, MaterialEffectSlot } from "@/shared/types";
-import type { Rune } from "@/shared/types";
+import type { MaterialEffectSlot, Rune } from "@/shared/types";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
-import { getReferencedMaterialEffectsForText } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
+import { getMaterialEffectTiersForRune } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
+import type { MaterialEffectTierFilter } from "@/features/amellwind/material-effects/constants/material-effect.constants";
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 
 export type RuneSearchSlotFilter = "" | "A" | "W";
@@ -12,8 +12,14 @@ export interface RuneSearchContext {
   materialEffectTier: string[];
 }
 
-function effectTextMatchesQuery(text: string, query: string): boolean {
-  return parseFiveToolsMarkup(text).toLowerCase().includes(query);
+/** Precomputed haystacks so list search is a cheap `includes`, not markup parsing. */
+export interface RuneSearchIndexEntry {
+  rune: Rune;
+  name: string;
+  monsterName: string;
+  armorHaystack: string;
+  weaponHaystack: string;
+  materialEffectTiers: MaterialEffectTierFilter[];
 }
 
 function slotIncluded(
@@ -34,77 +40,62 @@ function tagsAllowEffect(
   return tags.every((tag) => runeTags.includes(tag));
 }
 
-function collectSearchableEffectTexts(
-  rune: Rune,
-  context: RuneSearchContext,
-): string[] {
-  const texts: string[] = [];
-
-  if (
-    slotIncluded("armor", context.slot) &&
-    tagsAllowEffect(rune, "armor", context.tags) &&
-    rune.armorEffect
-  ) {
-    texts.push(rune.armorEffect);
-  }
-
-  if (
-    slotIncluded("weapon", context.slot) &&
-    tagsAllowEffect(rune, "weapon", context.tags) &&
-    rune.weaponEffect
-  ) {
-    texts.push(rune.weaponEffect);
-  }
-
-  return texts;
+function parsedEffectHaystack(text: string | null): string {
+  if (!text) return "";
+  return parseFiveToolsMarkup(text).toLowerCase();
 }
 
-function collectSearchableMaterialEffects(
-  rune: Rune,
-  index: MaterialEffectNameIndex,
-  context: RuneSearchContext,
-): MaterialEffect[] {
-  const refs: MaterialEffect[] = [];
-
-  for (const slot of ["armor", "weapon"] as const) {
-    if (!slotIncluded(slot, context.slot)) continue;
-    if (!tagsAllowEffect(rune, slot, context.tags)) continue;
-
-    const effectText =
-      slot === "armor" ? (rune.armorEffect ?? "") : (rune.weaponEffect ?? "");
-    refs.push(...getReferencedMaterialEffectsForText(effectText, slot, index));
-  }
-
-  if (context.materialEffectTier.length === 0) return refs;
-
-  return refs.filter((ref) => context.materialEffectTier.includes(ref.rarity));
+export function buildRuneSearchIndex(
+  runes: Rune[],
+  materialEffectIndex: MaterialEffectNameIndex | null,
+): RuneSearchIndexEntry[] {
+  return runes.map((rune) => ({
+    rune,
+    name: rune.name.toLowerCase(),
+    monsterName: rune.monsterName.toLowerCase(),
+    armorHaystack: parsedEffectHaystack(rune.armorEffect),
+    weaponHaystack: parsedEffectHaystack(rune.weaponEffect),
+    materialEffectTiers: materialEffectIndex
+      ? getMaterialEffectTiersForRune(rune, materialEffectIndex)
+      : [],
+  }));
 }
 
 export function matchesRuneSearchQuery(
-  rune: Rune,
+  entry: RuneSearchIndexEntry,
   query: string,
-  materialEffectIndex: MaterialEffectNameIndex | null,
   context: RuneSearchContext = { slot: "", tags: [], materialEffectTier: [] },
 ): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
 
-  if (rune.name.toLowerCase().includes(q)) return true;
-  if (rune.monsterName.toLowerCase().includes(q)) return true;
+  if (entry.name.includes(q) || entry.monsterName.includes(q)) return true;
 
-  const effectTexts = collectSearchableEffectTexts(rune, context);
-  if (effectTexts.some((text) => effectTextMatchesQuery(text, q))) return true;
+  if (
+    slotIncluded("armor", context.slot) &&
+    tagsAllowEffect(entry.rune, "armor", context.tags) &&
+    entry.armorHaystack.includes(q)
+  ) {
+    return true;
+  }
 
-  if (materialEffectIndex) {
-    const refs = collectSearchableMaterialEffects(
-      rune,
-      materialEffectIndex,
-      context,
-    );
-    if (refs.some((effect) => effect.name.toLowerCase().includes(q))) {
-      return true;
-    }
+  if (
+    slotIncluded("weapon", context.slot) &&
+    tagsAllowEffect(entry.rune, "weapon", context.tags) &&
+    entry.weaponHaystack.includes(q)
+  ) {
+    return true;
   }
 
   return false;
+}
+
+export function runeIndexMatchesMaterialEffectTier(
+  entry: RuneSearchIndexEntry,
+  selectedTiers: string[],
+): boolean {
+  if (selectedTiers.length === 0) return true;
+  return selectedTiers.some((tier) =>
+    entry.materialEffectTiers.includes(tier as MaterialEffectTierFilter),
+  );
 }

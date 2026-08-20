@@ -248,10 +248,24 @@ export function findMatchingMaterialEffectNames(
   text: string,
   names: string[],
 ): string[] {
+  if (names.length === 0 || !text) return [];
   const lower = text.toLowerCase();
-  return names
-    .filter((name) => new RegExp(buildNameMatchPattern(name), "i").test(lower))
-    .sort((a, b) => b.length - a.length);
+  const matched: string[] = [];
+
+  for (const name of names) {
+    const { base, tierSuffix } = parseEffectNameParts(name);
+    const needle = base.toLowerCase();
+    if (!lower.includes(needle)) continue;
+    if (!tierSuffix) {
+      matched.push(name);
+      continue;
+    }
+    if (new RegExp(buildNameMatchPattern(name), "i").test(lower)) {
+      matched.push(name);
+    }
+  }
+
+  return matched.sort((a, b) => b.length - a.length);
 }
 
 export function getReferencedMaterialEffectsForText(

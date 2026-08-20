@@ -5,7 +5,6 @@ import { parseCR } from "@/shared/utils/cr.utils";
 import { getAllRunes } from "../../services/rune.service";
 import { getMaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
-import { runeMatchesMaterialEffectTierFilter } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
 import { Pagination } from "@/components/ui/pagination";
 import { RuneDetailDialog } from "../detail/RuneDetailDialog";
 import { RulesPanel } from "../rules/RulesPanel";
@@ -14,7 +13,12 @@ import { BuildDrawer } from "../build/BuildDrawer";
 import { RuneFilters, type RuneFiltersState } from "./RuneFilters";
 import { RuneTable } from "./RuneTable";
 import { useRuneBuild } from "../../context/RuneBuildContext";
-import { matchesRuneSearchQuery } from "../../utils/rune-search.utils";
+import {
+  buildRuneSearchIndex,
+  matchesRuneSearchQuery,
+  runeIndexMatchesMaterialEffectTier,
+  type RuneSearchIndexEntry,
+} from "../../utils/rune-search.utils";
 import { runeMatchesListTagFilter } from "../../utils/rune-compatibility.utils";
 import {
   buildRuneListSearchParams,
@@ -28,6 +32,7 @@ import { Layers } from "lucide-react";
 export function RuneList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [runes, setRunes] = useState<Rune[]>([]);
+  const [searchIndex, setSearchIndex] = useState<RuneSearchIndexEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Rune | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -95,6 +100,7 @@ export function RuneList() {
       ([data, index]) => {
         setRunes(data);
         setMaterialEffectIndex(index);
+        setSearchIndex(buildRuneSearchIndex(data, index));
         setLoading(false);
       },
     );
@@ -119,62 +125,67 @@ export function RuneList() {
   );
 
   const filtered = useMemo(() => {
-    let result = runes;
+    const searchContext = {
+      slot: filters.slot,
+      tags: filters.tag,
+      materialEffectTier: filters.materialEffectTier,
+    };
+    let result = searchIndex;
 
     if (appliedSearch.trim()) {
-      result = result.filter((r) =>
-        matchesRuneSearchQuery(r, appliedSearch, materialEffectIndex, {
-          slot: filters.slot,
-          tags: filters.tag,
-          materialEffectTier: filters.materialEffectTier,
-        }),
+      result = result.filter((entry) =>
+        matchesRuneSearchQuery(entry, appliedSearch, searchContext),
       );
     }
     if (filters.monster.length > 0)
-      result = result.filter((r) => filters.monster.includes(r.monsterName));
+      result = result.filter((entry) =>
+        filters.monster.includes(entry.rune.monsterName),
+      );
     if (filters.monsterCr.length > 0) {
-      result = result.filter((r) =>
-        r.monsterCrs.some((cr) => filters.monsterCr.includes(cr)),
+      result = result.filter((entry) =>
+        entry.rune.monsterCrs.some((cr) => filters.monsterCr.includes(cr)),
       );
     }
     if (filters.slot === "A" || filters.slot === "W") {
       const slot = filters.slot;
-      result = result.filter((r) => r.slots.includes(slot));
+      result = result.filter((entry) => entry.rune.slots.includes(slot));
     }
     if (filters.obtainment.length > 0) {
-      result = result.filter((r) =>
+      result = result.filter((entry) =>
         filters.obtainment.some((obtainment) => {
-          if (obtainment === "Carveable") return r.carveChance !== "-";
-          if (obtainment === "Capturable") return r.captureChance !== "-";
+          if (obtainment === "Carveable") return entry.rune.carveChance !== "-";
+          if (obtainment === "Capturable")
+            return entry.rune.captureChance !== "-";
           if (obtainment === "Both" || obtainment === "Ambas")
-            return r.carveChance !== "-" && r.captureChance !== "-";
+            return (
+              entry.rune.carveChance !== "-" && entry.rune.captureChance !== "-"
+            );
           return false;
         }),
       );
     }
     if (filters.tag.length > 0) {
-      result = result.filter((r) =>
-        runeMatchesListTagFilter(r, filters.tag, filters.slot),
+      result = result.filter((entry) =>
+        runeMatchesListTagFilter(entry.rune, filters.tag, filters.slot),
       );
     }
     if (filters.monsterTier.length > 0) {
-      result = result.filter((r) =>
-        filters.monsterTier.includes(String(r.tier)),
+      result = result.filter((entry) =>
+        filters.monsterTier.includes(String(entry.rune.tier)),
       );
     }
     if (filters.materialEffectTier.length > 0 && materialEffectIndex) {
-      result = result.filter((r) =>
-        runeMatchesMaterialEffectTierFilter(
-          r,
-          materialEffectIndex,
+      result = result.filter((entry) =>
+        runeIndexMatchesMaterialEffectTier(
+          entry,
           filters.materialEffectTier,
         ),
       );
     }
 
-    return result;
+    return result.map((entry) => entry.rune);
   }, [
-    runes,
+    searchIndex,
     appliedSearch,
     filters.monster,
     filters.monsterCr,
@@ -185,8 +196,6 @@ export function RuneList() {
     filters.materialEffectTier,
     materialEffectIndex,
   ]);
-
-  const isListRefreshing = loading || isSearchPending;
 
   const updateFilters = useCallback(
     (next: RuneFiltersState) => {
@@ -224,9 +233,9 @@ export function RuneList() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Runes</h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {!isListRefreshing && (
+              {!loading && (
                 <>
-                  {filtered.length} / {runes.length} materials
+                  {isSearchPending ? "Updating…" : `${filtered.length} / ${runes.length} materials`}
                 </>
               )}
             </p>
@@ -253,7 +262,7 @@ export function RuneList() {
           onChange={updateFilters}
         />
 
-        {isListRefreshing ? (
+        {loading ? (
           <ListAreaLoading />
         ) : (
           <>

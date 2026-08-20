@@ -1082,8 +1082,7 @@ Mostrar todos los materiales de todos los monstruos en una tabla con las siguien
 
 Cada columna debe ser filtrable de forma independiente:
 
-- **Name**: input de texto libre, filtrado por coincidencia parcial (case-insensitive).
-- **Monster**: selector de valores únicos presentes en los datos (lista de nombres de monstruos).
+- **Name**: input de texto libre, filtrado por coincidencia parcial (case-insensitive) sobre nombre, monstruo y texto de efecto ya parseado. Al cargar `/runes` se precarga un índice (`buildRuneSearchIndex`) para que teclear no vuelva a parsear markup 5etools ni cruzar el catálogo de material effects.
 - **Slots**: selector múltiple con opciones `Armor` y `Weapon`.
 - **Tags**: selector múltiple con todos los valores únicos de tags presentes en los datos, agrupados por categoría (`class:`, `weapon-type:`, `mechanic:`).
 - **Tier**: selector por tier de material (1–4), alineado con el CR del monstruo de origen.
