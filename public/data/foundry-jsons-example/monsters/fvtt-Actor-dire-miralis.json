@@ -112,7 +112,7 @@
     },
     "details": {
       "biography": {
-        "value": "<h2>Dire Miralis</h2>\n<p><em>Gargantuan Dragon (Elder), Unaligned — Challenge 11 (Boss; ~10,000 XP)</em></p>\n<p>An Elder Dragon of boiling seas and volcanic vents. Place the token in the arena, roll initiative, and use the features on the sheet. Magma Armor, lava templates, Calamity Rain interrupt/detonation, Boiling Presence, and Scorching Hide run from the Amellwind module script.</p>\n<h3>Combat notes</h3>\n<ul>\n<li><strong>Stance:</strong> starts Biped (15-ft Claw, Crush). Shift Stance (legendary) toggles Quadruped (Tail Sweep, advantage vs prone).</li>\n<li><strong>Magma Armor:</strong> arms below 70% HP (161/230). Cold damage or an interrupted Calamity Rain cracks it; six cracks shatter it.</li>\n<li><strong>Calamity Rain:</strong> target up to six spaces, Charge, then either 40+ damage in one turn interrupts or Greater Fireball detonates on each marker at the start of its next turn.</li>\n<li><strong>Lair actions</strong> (optional, initiative 20): cannot repeat the same effect two rounds in a row.</li>\n</ul>",
+        "value": "<h2>Dire Miralis</h2>\n<p><em>Gargantuan Dragon (Elder), Unaligned — Challenge 11 (Boss; ~10,000 XP)</em></p>\n<p>An Elder Dragon of boiling seas and volcanic vents. Place the token in the arena, roll initiative, and use the features on the sheet. Magma Armor, lava templates, Calamity Rain interrupt/detonation, Boiling Presence, and Scorching Hide run from the Amellwind module script.</p>\n<h3>Combat notes</h3>\n<ul>\n<li><strong>Stance:</strong> starts Biped (15-ft Claw, Crush). Shift Stance (legendary) toggles Quadruped (10-ft Claw, Tail Sweep, advantage vs prone). Reach updates automatically.</li>\n<li><strong>Magma Armor:</strong> arms below 70% HP (161/230): AC 22 + B/P/S resistance. Cold hits crack it (AC 18 until end of next turn). Six cold hits shatter it. Interrupt / Calamity heat-shock only crack (do not count toward shatter). After a shatter, use Magma Armor to reform (resets 0/6); it does not auto-reform.</li>\n<li><strong>Lava:</strong> Magma Glob (1 hour) and Volcanic Vents / Vent Barrage (until start of next turn) place a template on <em>every</em> chosen square. Enter or start of turn: 2d10 fire per square (typed).</li>\n<li><strong>Calamity Rain:</strong> Charge, then click up to six spaces (no tokens). 40 cumulative cold interrupts (markers vanish, prone, no legendary until end of next turn). Else Greater Fireball (11d6, DC 17 Dex, 25-ft) on each marker at the start of its next turn.</li>\n<li><strong>Boiling Presence:</strong> 1d10 fire within 10 ft at the start of its turn. <strong>Scorching Hide:</strong> 2d8 fire when hit by melee (suppressed during Calamity charge).</li>\n<li><strong>Lair actions</strong> (optional, initiative 20): cannot repeat the same effect two rounds in a row.</li>\n</ul>",
         "public": "A gargantuan Elder Dragon whose presence boils the sea."
       },
       "alignment": "Unaligned",
@@ -709,8 +709,8 @@
       "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
       "system": {
         "description": {
-          "value": "<p>The Dire Miralis radiates furnace heat. At the start of each of the Dire Miralis's turns, each creature within <strong>10 feet</strong> of it takes <strong>5 (1d10) fire damage</strong>.</p>\n<p><em>Automated by the Amellwind module script at the start of its turn.</em></p>",
-          "chat": "<p>Creatures within 10 feet take 1d10 fire damage at the start of the Dire Miralis's turn.</p>"
+          "value": "<p>The Dire Miralis radiates furnace heat. At the start of each of the Dire Miralis's turns, each creature within <strong>10 feet</strong> of it takes <strong>5 (1d10) fire damage</strong>.</p>\n<p><em>Automated at the start of its turn (typed fire damage).</em></p>",
+          "chat": "<p>Start of turn: 1d10 fire to creatures within 10 ft (automated).</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -870,8 +870,8 @@
       "img": "icons/commodities/biological/fin-red-green.webp",
       "system": {
         "description": {
-          "value": "<p>Any creature that <strong>enters</strong> or <strong>starts its turn</strong> in boiling/tainted water within <strong>60 feet</strong> of the Dire Miralis takes <strong>11 (2d10) fire damage</strong>. That water is difficult terrain for creatures other than the Dire Miralis.</p>\n<p><em>Lava and tainted-water templates placed by Magma Glob, Volcanic Vents, and lair actions are automated. Mark other boiling water with those templates as needed.</em></p>",
-          "chat": "<p>Boiling/tainted water within 60 ft: 2d10 fire on enter or start of turn; difficult terrain.</p>"
+          "value": "<p>Any creature that <strong>enters</strong> or <strong>starts its turn</strong> in boiling/tainted water within <strong>60 feet</strong> of the Dire Miralis takes <strong>11 (2d10) fire damage</strong>. That water is difficult terrain for creatures other than the Dire Miralis.</p>\n<p><strong>Lava</strong> uses the same damage: enter or start of turn, <strong>11 (2d10) fire</strong> (typed). Entering a lava square deals that damage even if the creature already took lava damage from a different square this turn.</p>\n<ul>\n<li><strong>Magma Glob</strong> lava lasts <strong>1 hour</strong>.</li>\n<li><strong>Volcanic Vents / Vent Barrage</strong> lava lasts until the start of the Dire Miralis's next turn (every placed square).</li>\n<li><strong>Lair: Rising Magma Tide</strong> places boiling water / lava to reposition onto the waterline.</li>\n</ul>\n<p><em>Hazard templates are automated. Mark other boiling water with those templates as needed.</em></p>",
+          "chat": "<p>Water/lava within 60 ft: 2d10 fire on enter or start of turn (per square). Glob lava 1 hour; vents until next turn.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -955,8 +955,8 @@
       "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
       "system": {
         "description": {
-          "value": "<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. Those spaces become <strong>lava</strong> until the start of the Dire Miralis's next turn (see Magma Glob).</p>\n<p><em>Place up to two 5-foot squares (empty or occupied). Creatures in those spaces make the save. Lava templates expire at the start of its next turn.</em></p>",
-          "chat": "<p>DC 17 Dexterity vs 2d8 fire in up to two spaces; those spaces become lava.</p>"
+          "value": "<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. <strong>Every</strong> placed space becomes <strong>lava</strong> until the start of the Dire Miralis's next turn.</p>\n<p>A creature that <strong>enters</strong> any of those lava spaces or <strong>starts its turn</strong> there takes <strong>11 (2d10) fire damage</strong> (once per square entered). All vent lava expires at the start of the Dire Miralis's next turn.</p>\n<p><em>Place up to two 5-foot squares (empty or occupied). Creatures in those spaces make the save. Every square becomes a lava template.</em></p>",
+          "chat": "<p>End of turn: up to 2 squares, DC 17 Dex vs 2d8 fire. Every square is lava until the start of its next turn (2d10 fire on enter).</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -1209,8 +1209,8 @@
       "img": "icons/commodities/biological/shell-turtle-grey.webp",
       "system": {
         "description": {
-          "value": "<p>When the Dire Miralis is reduced below <strong>70%</strong> hit points, its hide hardens into a slag shell. While Magma Armor is active:</p>\n<ul>\n<li>Its AC becomes <strong>22</strong>.</li>\n<li>It has <strong>resistance to bludgeoning, piercing, and slashing damage</strong>.</li>\n</ul>\n<p><strong>Cracking the Shell.</strong> Magma Armor <strong>cracks</strong> (the Dire Miralis loses the resistance—and its AC returns to 18—until the end of its next turn) when any of the following happens:</p>\n<ol>\n<li>It takes <strong>cold damage</strong>, or</li>\n<li>The hunters <strong>interrupt Calamity Rain</strong>.</li>\n</ol>\n<p>If Magma Armor has been cracked <strong>six</strong> times, the shell shatters: Magma Armor ends and can't return for the rest of the combat. Detonating Calamity Rain also cracks the shell once from heat shock (if it was active).</p>\n<p><em>Armed automatically from the module script.</em></p>",
-          "chat": "<p>Below 70% HP: AC 22 and resistance to B/P/S until cracked or shattered.</p>"
+          "value": "<p>When the Dire Miralis is reduced below <strong>70%</strong> hit points (<strong>161/230</strong>), its hide hardens into a slag shell. While Magma Armor is active:</p>\n<ul>\n<li>Its AC becomes <strong>22</strong>.</li>\n<li>It has <strong>resistance to bludgeoning, piercing, and slashing damage</strong>.</li>\n</ul>\n<p><strong>Cracking the Shell.</strong> Magma Armor <strong>cracks</strong> (AC returns to 18, no B/P/S resistance until the end of its next turn) when any of the following happens:</p>\n<ol>\n<li>It takes a hit of <strong>cold</strong> damage, or</li>\n<li>The hunters <strong>interrupt Calamity Rain</strong>, or</li>\n<li>Calamity Rain <strong>detonates</strong> (heat shock).</li>\n</ol>\n<p><strong>Shatter.</strong> Only <strong>cold hits</strong> count toward shattering. After <strong>six cold hits</strong>, the shell shatters and Magma Armor ends. Interrupt and heat-shock crack the shell temporarily but do <em>not</em> add to the shatter count. After a shatter it does <strong>not</strong> reform automatically (dropping below 70% HP again does nothing).</p>\n<p><strong>Reform.</strong> Use this feature to form or reform the slag shell. After a shatter, that resets cold hits to <strong>0/6</strong> and restores AC 22. If the shell is only cracked, using this feature reseals it without resetting the cold-hit count.</p>\n<p><em>Arms automatically below 70% HP the first time. After a shatter, click Magma Armor → Reform Magma Armor.</em></p>",
+          "chat": "<p>Below 70% HP (161/230): AC 22 and B/P/S resistance. Six cold hits shatter it. Click this feature to reform (resets 0/6). Interrupt/heat-shock only crack.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -1227,7 +1227,121 @@
         },
         "requirements": "",
         "properties": [],
-        "activities": {},
+        "activities": {
+          "EbCGHR4X7xdsEoQB": {
+            "_id": "EbCGHR4X7xdsEoQB",
+            "type": "utility",
+            "sort": 0,
+            "name": "Reform Magma Armor",
+            "img": "icons/commodities/biological/shell-turtle-grey.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Reform Magma Armor"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "magma-armor-reform",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
         "enchant": {},
         "prerequisites": {
           "level": null,
@@ -1288,7 +1402,7 @@
             "startRound": null,
             "startTurn": null
           },
-          "description": "AC 22. Resistance to bludgeoning, piercing, and slashing.",
+          "description": "Slag shell. AC 22. Resistance to bludgeoning, piercing, and slashing. Six cold hits shatter it; use Magma Armor to reform.",
           "origin": null,
           "tint": "#ffffff",
           "transfer": true,
@@ -1298,7 +1412,7 @@
             "dae": {
               "enableCondition": "",
               "selfTarget": false,
-              "selfTargetAlways": false,
+              "selfTargetAlways": true,
               "stackable": "noneName",
               "showIcon": true,
               "durationExpression": "",
@@ -1340,7 +1454,7 @@
             "startRound": null,
             "startTurn": null
           },
-          "description": "Magma Armor is cracked. AC 18; no physical resistance until the end of the Dire Miralis's next turn.",
+          "description": "Magma Armor is cracked. AC 18; no B/P/S resistance until the end of the Dire Miralis's next turn. Does not count toward shatter unless the crack came from a cold hit.",
           "origin": null,
           "tint": "#ffffff",
           "transfer": true,
@@ -1350,7 +1464,7 @@
             "dae": {
               "enableCondition": "",
               "selfTarget": false,
-              "selfTargetAlways": false,
+              "selfTargetAlways": true,
               "stackable": "noneName",
               "showIcon": true,
               "durationExpression": "",
@@ -1395,7 +1509,16 @@
           "itemCondition": "",
           "reactionCondition": "",
           "otherCondition": "",
-          "effectCondition": ""
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
         },
         "midiProperties": {
           "autoFailFriendly": false,
@@ -1405,6 +1528,27 @@
           "toggleEffect": false,
           "ignoreTotalCover": false,
           "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Magma Armor",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Dire Miralis — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindDireMiralis;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Dire Miralis automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Dire Miralis | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
         },
         "world": {
           "direMiralis": {
@@ -1430,7 +1574,7 @@
       "img": "icons/skills/movement/figure-running-gray.webp",
       "system": {
         "description": {
-          "value": "<p>The Dire Miralis uses one stance at a time and can change it with <strong>Shift Stance</strong>.</p>\n<ul>\n<li><strong>Biped:</strong> melee reach <strong>15 feet</strong>; can use <strong>Crush</strong>.</li>\n<li><strong>Quadruped:</strong> melee reach <strong>10 feet</strong>; can use <strong>Tail Sweep</strong>; advantage on saving throws against being knocked prone.</li>\n</ul>\n<p>Starts in <strong>Biped</strong>. Claw reach updates when the stance changes.</p>",
+          "value": "<p>The Dire Miralis uses one stance at a time and can change it with <strong>Shift Stance</strong>.</p>\n<ul>\n<li><strong>Biped:</strong> melee reach <strong>15 feet</strong>; can use <strong>Crush</strong>.</li>\n<li><strong>Quadruped:</strong> melee reach <strong>10 feet</strong>; can use <strong>Tail Sweep</strong>; advantage on saving throws against being knocked prone.</li>\n</ul>\n<p>Starts in <strong>Biped</strong>. Claw reach updates automatically when the stance changes.</p>",
           "chat": "<p>Biped: 15-ft reach, Crush. Quadruped: 10-ft reach, Tail Sweep, advantage vs prone.</p>"
         },
         "source": {
@@ -2088,8 +2232,8 @@
       "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
       "system": {
         "description": {
-          "value": "<p><em>Ranged Weapon Attack:</em> +7 to hit, range 80/320 ft., one target.</p>\n<p><em>Hit:</em> <strong>27 (5d10)</strong> fire damage, and the target's space becomes <strong>lava</strong> for <strong>1 hour</strong>. On a miss, the lava appears in an unoccupied space within 5 feet of the target.</p>\n<p>A creature that <strong>enters</strong> the lava or <strong>starts its turn</strong> there takes <strong>11 (2d10)</strong> fire damage. The lava ignites flammable objects not being worn or carried.</p>",
-          "chat": "<p>+7 to hit, 5d10 fire; space becomes lava (miss: adjacent space).</p>"
+          "value": "<p><em>Ranged Weapon Attack:</em> +7 to hit, range 80/320 ft., one target.</p>\n<p><em>Hit:</em> <strong>27 (5d10)</strong> fire damage, and the target's space becomes <strong>lava</strong> for <strong>1 hour</strong>. On a miss, the lava appears in an unoccupied space within 5 feet of the target.</p>\n<p>A creature that <strong>enters</strong> the lava or <strong>starts its turn</strong> there takes <strong>11 (2d10)</strong> fire damage. The lava ignites flammable objects not being worn or carried.</p>\n<p><em>Hit or miss places a lava template automatically (typed fire).</em></p>",
+          "chat": "<p>+7 to hit, 5d10 fire; space becomes lava for 1 hour (miss: adjacent). 2d10 fire on enter or start of turn.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -2351,7 +2495,7 @@
       "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Biped Only.</strong> The Dire Miralis slams down in a <strong>20-foot-by-20-foot square</strong> originating from an edge of its space. Each creature in that area must make a <strong>DC 19 Strength or Dexterity</strong> saving throw (target's choice).</p>\n<p><em>Failure:</em> <strong>18 (4d8)</strong> bludgeoning + <strong>18 (4d8)</strong> fire damage, and the creature is knocked <strong>prone</strong>.</p>\n<p><em>Success:</em> half damage, not prone, and the creature is pushed to the nearest unoccupied space outside the area (or falls prone in the Dire Miralis's space if none exists).</p>",
+          "value": "<p><strong>Biped Only.</strong> The Dire Miralis slams down in a <strong>20-foot-by-20-foot square</strong> originating from an edge of its space. Each creature in that area must make a <strong>DC 19 Strength or Dexterity</strong> saving throw (target's choice).</p>\n<p><em>Failure:</em> <strong>18 (4d8)</strong> bludgeoning + <strong>18 (4d8)</strong> fire damage, and the creature is knocked <strong>prone</strong>.</p>\n<p><em>Success:</em> half damage, not prone, and the creature is pushed to the nearest unoccupied space outside the area (or falls prone in the Dire Miralis's space if none exists).</p>\n<p><em>Biped stance only (blocked in Quadruped). Prone on a failed save is automated.</em></p>",
           "chat": "<p>Biped. 20-ft square, DC 19 Str/Dex: 4d8 bludgeoning + 4d8 fire, prone on a fail.</p>"
         },
         "source": {
@@ -2681,7 +2825,7 @@
       "img": "icons/commodities/biological/tail-spiked-green.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Quadruped Only.</strong> The Dire Miralis sweeps its tail in a <strong>30-foot cone</strong>. Each creature in that area must succeed on a <strong>DC 19 Dexterity</strong> saving throw or take <strong>22 (4d6 + 7)</strong> bludgeoning damage and be pushed <strong>10 feet</strong> away. On a success, half damage and no push.</p>",
+          "value": "<p><strong>Quadruped Only.</strong> The Dire Miralis sweeps its tail in a <strong>30-foot cone</strong>. Each creature in that area must succeed on a <strong>DC 19 Dexterity</strong> saving throw or take <strong>22 (4d6 + 7)</strong> bludgeoning damage and be pushed <strong>10 feet</strong> away. On a success, half damage and no push.</p>\n<p><em>Quadruped stance only (blocked in Biped). The 10-foot push on a failed save is automated.</em></p>",
           "chat": "<p>Quadruped. 30-ft cone, DC 19 Dex: 4d6+7 bludgeoning and 10-ft push.</p>"
         },
         "source": {
@@ -2934,8 +3078,8 @@
       "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Recharge 5–6.</strong> The Dire Miralis exhales a massive fireball centered on a point it can see within <strong>150 feet</strong>. Each creature in a <strong>25-foot-radius sphere</strong> must make a <strong>DC 17 Dexterity</strong> saving throw, taking <strong>38 (11d6)</strong> fire damage on a failed save, or half as much on a successful one.</p>",
-          "chat": "<p>Recharge 5–6. 25-ft radius, 150 ft, DC 17 Dex, 11d6 fire.</p>"
+          "value": "<p><strong>Recharge 5–6.</strong> The Dire Miralis exhales a massive fireball centered on a point it can see within <strong>150 feet</strong>. Each creature in a <strong>25-foot-radius sphere</strong> must make a <strong>DC 17 Dexterity</strong> saving throw, taking <strong>38 (11d6)</strong> fire damage on a failed save, or half as much on a successful one.</p>\n<p><em>Calamity Rain detonation also uses this effect on each marker (automated, typed fire). Sequencer/JB2A plays the volley if those modules are installed.</em></p>",
+          "chat": "<p>Recharge 5–6. 25-ft radius, 150 ft, DC 17 Dex, 11d6 fire. Also used by Calamity Rain detonation.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -3174,8 +3318,8 @@
       "img": "icons/magic/fire/beam-jet-stream-yellow.webp",
       "system": {
         "description": {
-          "value": "<p><strong>1/Day; Enrage Nova.</strong></p>\n<p><strong>Charge (action):</strong> The Dire Miralis coils and glows. Until the start of its next turn it is visibly charging. Place <strong>six</strong> glowing markers in spaces it can see within <strong>120 feet</strong>. While charging, it can't take reactions, and damage it takes is tallied for the interrupt.</p>\n<p><strong>Interrupt:</strong> If the Dire Miralis takes <strong>40 or more damage in one turn</strong> during the charge (before detonation), the nova fails. It is knocked <strong>prone</strong>, Magma Armor <strong>cracks</strong> (if active), and it can't use Legendary Actions until the end of its next turn.</p>\n<p><strong>Detonation</strong> (start of its next turn, if not interrupted): Greater Fireball erupts on each detonation zone. After detonating, Magma Armor <strong>cracks</strong> once from the heat shock (if it was active).</p>\n<p><em>Target up to six tokens/spaces as markers, then use Charge. Interrupt and detonation are automated.</em></p>",
-          "chat": "<p>Charge: 6 markers within 120 ft. 40+ damage in one turn interrupts. Else Greater Fireball on each zone.</p>"
+          "value": "<p><strong>1/Day; Enrage Nova.</strong></p>\n<p><strong>Charge (action):</strong> The Dire Miralis coils and glows. Until the start of its next turn it is visibly charging. Place up to <strong>six</strong> glowing markers in spaces it can see within <strong>120 feet</strong>. While charging, it can't take reactions (including Scorching Hide), and <strong>cold</strong> damage it takes is tallied for the interrupt (GM whisper shows <strong>n/40 cold</strong>).</p>\n<p><strong>Interrupt:</strong> If the Dire Miralis takes <strong>40 cumulative cold damage</strong> during the charge (before detonation), the nova fails. All markers are <strong>removed</strong>. It is knocked <strong>prone</strong>, Magma Armor <strong>cracks</strong> if active (this does <em>not</em> count as a cold hit toward shatter), and it can't use Legendary Actions until the end of its next turn.</p>\n<p><strong>Detonation</strong> (start of its next turn, if not interrupted): Greater Fireball (<strong>11d6</strong> fire, DC 17 Dexterity, 25-foot radius) erupts on each remaining marker, then the markers are removed. After detonating, Magma Armor <strong>cracks</strong> once from the heat shock if it was active (also not a cold hit).</p>\n<p><em>Use Charge — do not target tokens. Then click up to six 5-foot squares (right-click or Enter to finish). Interrupt and detonation are automated. Sequencer/JB2A plays the volley if installed.</em></p>",
+          "chat": "<p>Charge: click up to 6 spaces (no tokens). 40 cumulative cold interrupts (markers vanish, prone, no legendary). Else Greater Fireball on each zone at the start of the next turn.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -3250,12 +3394,12 @@
                 "units": "ft"
               },
               "affects": {
-                "count": "6",
-                "type": "any",
+                "count": "",
+                "type": "",
                 "choice": false,
                 "special": ""
               },
-              "prompt": true,
+              "prompt": false,
               "override": false
             },
             "uses": {
@@ -3273,9 +3417,9 @@
               "forceConsumeDialog": "default",
               "forceRollDialog": "default",
               "forceDamageDialog": "default",
-              "confirmTargets": "default",
+              "confirmTargets": "never",
               "autoTargetType": "any",
-              "autoTargetAction": "default",
+              "autoTargetAction": "never",
               "automationOnly": false,
               "otherActivityCompatible": true,
               "identifier": "calamity-rain-charge",
@@ -3353,7 +3497,7 @@
             "startRound": null,
             "startTurn": null
           },
-          "description": "Coiling and glowing. Cannot take reactions. 40+ damage in one turn interrupts the nova.",
+          "description": "Coiling and glowing. Cannot take reactions (including Scorching Hide). 40 cumulative cold damage interrupts the nova (markers vanish).",
           "origin": null,
           "tint": "#ffffff",
           "transfer": true,
@@ -3702,8 +3846,8 @@
       "img": "icons/commodities/biological/wing-lizard-brown.webp",
       "system": {
         "description": {
-          "value": "<p>When the Dire Miralis is hit by a melee attack, the attacker takes <strong>9 (2d8)</strong> fire damage.</p>",
-          "chat": "<p>Reaction: when hit by a melee attack, the attacker takes 2d8 fire.</p>"
+          "value": "<p>When the Dire Miralis is hit by a melee attack, the attacker takes <strong>9 (2d8)</strong> fire damage.</p>\n<p><em>Automated (Midi QOL, with a fallback). Does not trigger while Calamity Rain is charging — the Dire Miralis cannot take reactions.</em></p>",
+          "chat": "<p>When hit by a melee attack: 2d8 fire to the attacker (automated). Suppressed during Calamity Rain charge.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -3924,8 +4068,8 @@
       "img": "icons/skills/movement/figure-running-gray.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action.</strong> The Dire Miralis switches between Biped and Quadruped, or moves up to <strong>half its speed</strong> without provoking opportunity attacks.</p>",
-          "chat": "<p>Legendary: switch stance, or move half speed with no OA.</p>"
+          "value": "<p><strong>Legendary Action.</strong> The Dire Miralis switches between Biped and Quadruped, or moves up to <strong>half its speed</strong> without provoking opportunity attacks.</p>\n<p>Switching stance updates Claw reach (15 ft Biped / 10 ft Quadruped) and which action is available (Crush vs Tail Sweep). Quadruped also grants advantage on saves against being knocked prone.</p>\n<p><em>Blocked until the end of its next turn if Calamity Rain was interrupted.</em></p>",
+          "chat": "<p>Legendary: switch stance (reach + Crush/Tail Sweep), or move half speed with no OA. Blocked after Calamity interrupt.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -4286,7 +4430,7 @@
       "img": "icons/creatures/magical/construct-iron-stomping-yellow.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action.</strong> Each creature on the ground within <strong>30 feet</strong> of the Dire Miralis must succeed on a <strong>DC 19 Dexterity</strong> saving throw or fall <strong>prone</strong>.</p>",
+          "value": "<p><strong>Legendary Action.</strong> Each creature on the ground within <strong>30 feet</strong> of the Dire Miralis must succeed on a <strong>DC 19 Dexterity</strong> saving throw or fall <strong>prone</strong>.</p>\n<p><em>Blocked until the end of its next turn if Calamity Rain was interrupted. Prone on a failed save is automated.</em></p>",
           "chat": "<p>Legendary: 30-ft, DC 19 Dex or prone.</p>"
         },
         "source": {
@@ -4593,8 +4737,8 @@
       "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis makes one <strong>Magma Glob</strong> attack.</p>",
-          "chat": "<p>Legendary (2): one Magma Glob attack.</p>"
+          "value": "<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis makes one <strong>Magma Glob</strong> attack (+7 to hit, 5d10 fire). Hit or miss places lava for 1 hour (2d10 fire on enter or start of turn).</p>",
+          "chat": "<p>Legendary (2): one Magma Glob. Lava template for 1 hour on hit or miss.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -4866,8 +5010,8 @@
       "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis uses <em>Volcanic Vents</em>, targeting up to <strong>three</strong> spaces instead of two.</p>",
-          "chat": "<p>Legendary (2): Volcanic Vents on up to three spaces.</p>"
+          "value": "<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis uses <em>Volcanic Vents</em>, targeting up to <strong>three</strong> spaces instead of two.</p>\n<p>Each creature in those spaces: <strong>DC 17 Dexterity</strong> or <strong>9 (2d8)</strong> fire. <strong>Every</strong> placed square becomes lava until the start of the Dire Miralis's next turn (2d10 fire on enter or start of turn, per square).</p>\n<p><em>Place up to three 5-foot squares (empty or occupied).</em></p>",
+          "chat": "<p>Legendary (2): up to 3 squares, DC 17 Dex vs 2d8 fire. Every square is lava until the start of its next turn.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -5130,8 +5274,8 @@
       "img": "icons/environment/settlement/quarry.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong> (losing initiative ties).</p>\n<p>Boiling water or lava spreads <strong>10 feet</strong> inland from the current waterline along a 40-foot-wide front. New spaces use <em>Boiling Presence</em> / lava hazards.</p>\n<p>Cannot use the same lair effect two rounds in a row.</p>",
-          "chat": "<p>Lair: 40-ft front of boiling water / lava spreads 10 ft inland.</p>"
+          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong> (losing initiative ties).</p>\n<p>Boiling water or lava spreads <strong>10 feet</strong> inland from the current waterline along a 40-foot-wide front. New spaces use Tainted Sea / lava hazards (<strong>11 (2d10)</strong> fire on enter or start of turn).</p>\n<p>Cannot use the same lair effect two rounds in a row (enforced).</p>\n<p><em>Places a boiling-water template — reposition it onto the waterline.</em></p>",
+          "chat": "<p>Lair: 40-ft front of boiling water / lava spreads 10 ft inland (2d10 fire). Reposition onto the waterline. No repeat.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -5360,8 +5504,8 @@
       "img": "icons/environment/settlement/quarry.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>\n<p>One shipwreck section within 60 feet partially collapses. Creatures in a <strong>15-foot square</strong> there must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>14 (4d6)</strong> bludgeoning damage and be <strong>restrained</strong> (escape DC 17). The area becomes difficult terrain and provides half cover afterward.</p>\n<p>Cannot use the same lair effect two rounds in a row.</p>",
-          "chat": "<p>Lair: 15-ft square, DC 17 Dex, 4d6 bludgeoning and restrained; difficult terrain + half cover.</p>"
+          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>\n<p>One shipwreck section within 60 feet partially collapses. Creatures in a <strong>15-foot square</strong> there must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>14 (4d6)</strong> bludgeoning damage and be <strong>restrained</strong> (escape DC 17). The area becomes difficult terrain and provides half cover afterward.</p>\n<p>Cannot use the same lair effect two rounds in a row (enforced).</p>",
+          "chat": "<p>Lair: 15-ft square, DC 17 Dex, 4d6 bludgeoning and restrained; difficult terrain + half cover. No repeat.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -5614,8 +5758,8 @@
       "img": "icons/environment/settlement/quarry.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>\n<p>A scalding steam cloud fills a <strong>20-foot cube</strong> the Dire Miralis can see within 60 feet until initiative count 20 on the next round. The area is heavily obscured; any creature that starts its turn there takes <strong>7 (2d6)</strong> fire damage.</p>\n<p>Cannot use the same lair effect two rounds in a row.</p>",
-          "chat": "<p>Lair: 20-ft cube of steam, heavily obscured, 2d6 fire at start of turn.</p>"
+          "value": "<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>\n<p>A scalding steam cloud fills a <strong>20-foot cube</strong> the Dire Miralis can see within 60 feet until initiative count 20 on the next round. The area is heavily obscured; any creature that starts its turn there takes <strong>7 (2d6)</strong> fire damage.</p>\n<p>Cannot use the same lair effect two rounds in a row (enforced).</p>\n<p><em>Places a steam hazard template (start-of-turn fire is automated).</em></p>",
+          "chat": "<p>Lair: 20-ft cube of steam, heavily obscured, 2d6 fire at start of turn. No repeat.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -5859,12 +6003,14 @@
           "unlocked": false,
           "shattered": false,
           "cracked": false,
-          "cracks": 0
+          "cracks": 0,
+          "coldHits": 0
         },
         "calamity": {
           "charging": false,
           "interrupted": false,
           "damageByTurn": {},
+          "coldTaken": 0,
           "markerIds": []
         }
       }

@@ -452,15 +452,17 @@ with furnace light and blindsight 120 ft.
 **Automated (module script + Midi QOL):**
 
 - Boiling Presence (1d10 fire to creatures within 10 ft at the start of its turn)
-- Magma Armor at &lt;70% HP (AC 22 + B/P/S resistance); cracks on cold damage or
-  interrupted Calamity Rain; shatters after 6 cracks
+- Magma Armor at &lt;70% HP (161/230; AC 22 + B/P/S resistance); cracks on a cold hit,
+  interrupted Calamity Rain, or Calamity heat-shock; shatters after 6 cold hits
+  (interrupt/heat-shock do not count); use Magma Armor to reform (resets 0/6)
 - Stance: Biped (15-ft Claw, Crush) / Quadruped (10-ft Claw, Tail Sweep, advantage
   vs prone) via **Shift Stance**
-- Magma Glob / Volcanic Vents / Vent Barrage lava templates (2d10 fire on enter
-  or start of turn)
-- Calamity Rain charge → interrupt at 40+ damage in one turn, or Greater Fireball
-  on each marker at the start of its next turn
-- Scorching Hide (2d8 fire when hit by a melee attack)
+- Magma Glob lava for 1 hour; Volcanic Vents / Vent Barrage lava on every placed
+  square until the start of its next turn (2d10 fire on enter or start of turn, per square)
+- Calamity Rain: Charge then click up to 6 spaces (no tokens) → interrupt at 40
+  cumulative cold (markers vanish), or Greater Fireball on each marker at the start
+  of its next turn
+- Scorching Hide (2d8 fire when hit by a melee attack; suppressed during Calamity charge)
 - Lair-action cooldown (cannot repeat the same effect two rounds in a row)
 
 **Use from the sheet:** Multiattack, Claw, Crush, Tail Sweep, Greater Fireball

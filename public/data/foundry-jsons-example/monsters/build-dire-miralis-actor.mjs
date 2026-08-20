@@ -259,6 +259,7 @@ const makeEffect = ({
   transfer = true,
   statuses = [],
   kind,
+  daeExtra = {},
   extraFlags = {},
 }) => ({
   _id: id,
@@ -284,7 +285,7 @@ const makeEffect = ({
   statuses,
   sort: 0,
   flags: {
-    dae: daeFlags(),
+    dae: daeFlags(daeExtra),
     world: { direMiralis: { kind } },
     ...extraFlags,
   },
@@ -467,6 +468,7 @@ const utilityActivity = ({
   uses = emptyUses(),
   useConditionText = "",
   useConditionReason = "",
+  midiExtra = {},
   sort = 0,
 }) =>
   wrapActivity({
@@ -483,7 +485,7 @@ const utilityActivity = ({
     range,
     target,
     uses,
-    midiProperties: midiProps(identifier),
+    midiProperties: midiProps(identifier, midiExtra),
     roll: { formula: "", name: "", prompt: false, visible: false },
     useConditionText,
     useConditionReason,
@@ -611,8 +613,8 @@ const boilingPresence = makeFeat({
   role: "boilingPresence",
   sort: 100300,
   description: `<p>The Dire Miralis radiates furnace heat. At the start of each of the Dire Miralis's turns, each creature within <strong>10 feet</strong> of it takes <strong>5 (1d10) fire damage</strong>.</p>
-<p><em>Automated by the Amellwind module script at the start of its turn.</em></p>`,
-  chat: `<p>Creatures within 10 feet take 1d10 fire damage at the start of the Dire Miralis's turn.</p>`,
+<p><em>Automated at the start of its turn (typed fire damage).</em></p>`,
+  chat: `<p>Start of turn: 1d10 fire to creatures within 10 ft (automated).</p>`,
   effects: [
     makeEffect({
       id: boilingAuraId,
@@ -653,8 +655,14 @@ const taintedSea = makeFeat({
   role: "taintedSea",
   sort: 100400,
   description: `<p>Any creature that <strong>enters</strong> or <strong>starts its turn</strong> in boiling/tainted water within <strong>60 feet</strong> of the Dire Miralis takes <strong>11 (2d10) fire damage</strong>. That water is difficult terrain for creatures other than the Dire Miralis.</p>
-<p><em>Lava and tainted-water templates placed by Magma Glob, Volcanic Vents, and lair actions are automated. Mark other boiling water with those templates as needed.</em></p>`,
-  chat: `<p>Boiling/tainted water within 60 ft: 2d10 fire on enter or start of turn; difficult terrain.</p>`,
+<p><strong>Lava</strong> uses the same damage: enter or start of turn, <strong>11 (2d10) fire</strong> (typed). Entering a lava square deals that damage even if the creature already took lava damage from a different square this turn.</p>
+<ul>
+<li><strong>Magma Glob</strong> lava lasts <strong>1 hour</strong>.</li>
+<li><strong>Volcanic Vents / Vent Barrage</strong> lava lasts until the start of the Dire Miralis's next turn (every placed square).</li>
+<li><strong>Lair: Rising Magma Tide</strong> places boiling water / lava to reposition onto the waterline.</li>
+</ul>
+<p><em>Hazard templates are automated. Mark other boiling water with those templates as needed.</em></p>`,
+  chat: `<p>Water/lava within 60 ft: 2d10 fire on enter or start of turn (per square). Glob lava 1 hour; vents until next turn.</p>`,
 });
 
 const ventsActId = stableId("dire-miralis::act::vents");
@@ -666,9 +674,10 @@ const volcanicVents = makeFeat({
   role: "volcanicVents",
   sort: 100500,
   withMacro: true,
-  description: `<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. Those spaces become <strong>lava</strong> until the start of the Dire Miralis's next turn (see Magma Glob).</p>
-<p><em>Place up to two 5-foot squares (empty or occupied). Creatures in those spaces make the save. Lava templates expire at the start of its next turn.</em></p>`,
-  chat: `<p>DC 17 Dexterity vs 2d8 fire in up to two spaces; those spaces become lava.</p>`,
+  description: `<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. <strong>Every</strong> placed space becomes <strong>lava</strong> until the start of the Dire Miralis's next turn.</p>
+<p>A creature that <strong>enters</strong> any of those lava spaces or <strong>starts its turn</strong> there takes <strong>11 (2d10) fire damage</strong> (once per square entered). All vent lava expires at the start of the Dire Miralis's next turn.</p>
+<p><em>Place up to two 5-foot squares (empty or occupied). Creatures in those spaces make the save. Every square becomes a lava template.</em></p>`,
+  chat: `<p>End of turn: up to 2 squares, DC 17 Dex vs 2d8 fire. Every square is lava until the start of its next turn (2d10 fire on enter).</p>`,
   activities: {
     [ventsActId]: saveActivity({
       id: ventsActId,
@@ -699,6 +708,7 @@ const volcanicVents = makeFeat({
 
 const magmaArmorFxId = stableId("dire-miralis::fx::magma-armor");
 const crackedFxId = stableId("dire-miralis::fx::cracked");
+const magmaArmorActId = stableId("dire-miralis::act::magma-armor");
 const magmaArmor = makeFeat({
   seed: "magma-armor",
   name: "Magma Armor",
@@ -706,19 +716,37 @@ const magmaArmor = makeFeat({
   identifier: "magma-armor",
   role: "magmaArmor",
   sort: 100600,
-  description: `<p>When the Dire Miralis is reduced below <strong>70%</strong> hit points, its hide hardens into a slag shell. While Magma Armor is active:</p>
+  withMacro: true,
+  description: `<p>When the Dire Miralis is reduced below <strong>70%</strong> hit points (<strong>161/230</strong>), its hide hardens into a slag shell. While Magma Armor is active:</p>
 <ul>
 <li>Its AC becomes <strong>22</strong>.</li>
 <li>It has <strong>resistance to bludgeoning, piercing, and slashing damage</strong>.</li>
 </ul>
-<p><strong>Cracking the Shell.</strong> Magma Armor <strong>cracks</strong> (the Dire Miralis loses the resistance—and its AC returns to 18—until the end of its next turn) when any of the following happens:</p>
+<p><strong>Cracking the Shell.</strong> Magma Armor <strong>cracks</strong> (AC returns to 18, no B/P/S resistance until the end of its next turn) when any of the following happens:</p>
 <ol>
-<li>It takes <strong>cold damage</strong>, or</li>
-<li>The hunters <strong>interrupt Calamity Rain</strong>.</li>
+<li>It takes a hit of <strong>cold</strong> damage, or</li>
+<li>The hunters <strong>interrupt Calamity Rain</strong>, or</li>
+<li>Calamity Rain <strong>detonates</strong> (heat shock).</li>
 </ol>
-<p>If Magma Armor has been cracked <strong>six</strong> times, the shell shatters: Magma Armor ends and can't return for the rest of the combat. Detonating Calamity Rain also cracks the shell once from heat shock (if it was active).</p>
-<p><em>Armed automatically from the module script.</em></p>`,
-  chat: `<p>Below 70% HP: AC 22 and resistance to B/P/S until cracked or shattered.</p>`,
+<p><strong>Shatter.</strong> Only <strong>cold hits</strong> count toward shattering. After <strong>six cold hits</strong>, the shell shatters and Magma Armor ends. Interrupt and heat-shock crack the shell temporarily but do <em>not</em> add to the shatter count. After a shatter it does <strong>not</strong> reform automatically (dropping below 70% HP again does nothing).</p>
+<p><strong>Reform.</strong> Use this feature to form or reform the slag shell. After a shatter, that resets cold hits to <strong>0/6</strong> and restores AC 22. If the shell is only cracked, using this feature reseals it without resetting the cold-hit count.</p>
+<p><em>Arms automatically below 70% HP the first time. After a shatter, click Magma Armor → Reform Magma Armor.</em></p>`,
+  chat: `<p>Below 70% HP (161/230): AC 22 and B/P/S resistance. Six cold hits shatter it. Click this feature to reform (resets 0/6). Interrupt/heat-shock only crack.</p>`,
+  activities: {
+    [magmaArmorActId]: utilityActivity({
+      id: magmaArmorActId,
+      name: "Reform Magma Armor",
+      identifier: "magma-armor-reform",
+      activationType: "special",
+      img: IMG.shell,
+      range: rangeBlock(null, "self"),
+      target: targetBlock({ affectsType: "self", prompt: false }),
+      midiExtra: {
+        autoTargetAction: "never",
+        confirmTargets: "never",
+      },
+    }),
+  },
   effects: [
     makeEffect({
       id: magmaArmorFxId,
@@ -726,7 +754,8 @@ const magmaArmor = makeFeat({
       img: IMG.shell,
       kind: "magmaArmor",
       disabled: true,
-      description: "AC 22. Resistance to bludgeoning, piercing, and slashing.",
+      daeExtra: { selfTargetAlways: true, showIcon: true },
+      description: "Slag shell. AC 22. Resistance to bludgeoning, piercing, and slashing. Six cold hits shatter it; use Magma Armor to reform.",
       changes: [
         { key: "system.attributes.ac.calc", mode: 5, value: "flat", priority: 50 },
         { key: "system.attributes.ac.flat", mode: 5, value: "22", priority: 50 },
@@ -741,7 +770,8 @@ const magmaArmor = makeFeat({
       img: IMG.shell,
       kind: "crackedShell",
       disabled: true,
-      description: "Magma Armor is cracked. AC 18; no physical resistance until the end of the Dire Miralis's next turn.",
+      daeExtra: { selfTargetAlways: true, showIcon: true },
+      description: "Magma Armor is cracked. AC 18; no B/P/S resistance until the end of the Dire Miralis's next turn. Does not count toward shatter unless the crack came from a cold hit.",
       changes: [],
     }),
   ],
@@ -761,7 +791,7 @@ const stance = makeFeat({
 <li><strong>Biped:</strong> melee reach <strong>15 feet</strong>; can use <strong>Crush</strong>.</li>
 <li><strong>Quadruped:</strong> melee reach <strong>10 feet</strong>; can use <strong>Tail Sweep</strong>; advantage on saving throws against being knocked prone.</li>
 </ul>
-<p>Starts in <strong>Biped</strong>. Claw reach updates when the stance changes.</p>`,
+<p>Starts in <strong>Biped</strong>. Claw reach updates automatically when the stance changes.</p>`,
   chat: `<p>Biped: 15-ft reach, Crush. Quadruped: 10-ft reach, Tail Sweep, advantage vs prone.</p>`,
   effects: [
     makeEffect({
@@ -895,8 +925,9 @@ const magmaGlob = makeFeat({
   withMacro: true,
   description: `<p><em>Ranged Weapon Attack:</em> +7 to hit, range 80/320 ft., one target.</p>
 <p><em>Hit:</em> <strong>27 (5d10)</strong> fire damage, and the target's space becomes <strong>lava</strong> for <strong>1 hour</strong>. On a miss, the lava appears in an unoccupied space within 5 feet of the target.</p>
-<p>A creature that <strong>enters</strong> the lava or <strong>starts its turn</strong> there takes <strong>11 (2d10)</strong> fire damage. The lava ignites flammable objects not being worn or carried.</p>`,
-  chat: `<p>+7 to hit, 5d10 fire; space becomes lava (miss: adjacent space).</p>`,
+<p>A creature that <strong>enters</strong> the lava or <strong>starts its turn</strong> there takes <strong>11 (2d10)</strong> fire damage. The lava ignites flammable objects not being worn or carried.</p>
+<p><em>Hit or miss places a lava template automatically (typed fire).</em></p>`,
+  chat: `<p>+7 to hit, 5d10 fire; space becomes lava for 1 hour (miss: adjacent). 2d10 fire on enter or start of turn.</p>`,
   activities: {
     [globAtkId]: attackActivity({
       id: globAtkId,
@@ -931,7 +962,8 @@ const crush = makeFeat({
   withMacro: true,
   description: `<p><strong>Biped Only.</strong> The Dire Miralis slams down in a <strong>20-foot-by-20-foot square</strong> originating from an edge of its space. Each creature in that area must make a <strong>DC 19 Strength or Dexterity</strong> saving throw (target's choice).</p>
 <p><em>Failure:</em> <strong>18 (4d8)</strong> bludgeoning + <strong>18 (4d8)</strong> fire damage, and the creature is knocked <strong>prone</strong>.</p>
-<p><em>Success:</em> half damage, not prone, and the creature is pushed to the nearest unoccupied space outside the area (or falls prone in the Dire Miralis's space if none exists).</p>`,
+<p><em>Success:</em> half damage, not prone, and the creature is pushed to the nearest unoccupied space outside the area (or falls prone in the Dire Miralis's space if none exists).</p>
+<p><em>Biped stance only (blocked in Quadruped). Prone on a failed save is automated.</em></p>`,
   chat: `<p>Biped. 20-ft square, DC 19 Str/Dex: 4d8 bludgeoning + 4d8 fire, prone on a fail.</p>`,
   activities: {
     [crushActId]: saveActivity({
@@ -980,7 +1012,8 @@ const tailSweep = makeFeat({
   role: "tailSweep",
   sort: 200400,
   withMacro: true,
-  description: `<p><strong>Quadruped Only.</strong> The Dire Miralis sweeps its tail in a <strong>30-foot cone</strong>. Each creature in that area must succeed on a <strong>DC 19 Dexterity</strong> saving throw or take <strong>22 (4d6 + 7)</strong> bludgeoning damage and be pushed <strong>10 feet</strong> away. On a success, half damage and no push.</p>`,
+  description: `<p><strong>Quadruped Only.</strong> The Dire Miralis sweeps its tail in a <strong>30-foot cone</strong>. Each creature in that area must succeed on a <strong>DC 19 Dexterity</strong> saving throw or take <strong>22 (4d6 + 7)</strong> bludgeoning damage and be pushed <strong>10 feet</strong> away. On a success, half damage and no push.</p>
+<p><em>Quadruped stance only (blocked in Biped). The 10-foot push on a failed save is automated.</em></p>`,
   chat: `<p>Quadruped. 30-ft cone, DC 19 Dex: 4d6+7 bludgeoning and 10-ft push.</p>`,
   activities: {
     [tailActId]: saveActivity({
@@ -1015,8 +1048,9 @@ const greaterFireball = makeFeat({
   role: "greaterFireball",
   sort: 200500,
   uses: rechargeUses("5"),
-  description: `<p><strong>Recharge 5–6.</strong> The Dire Miralis exhales a massive fireball centered on a point it can see within <strong>150 feet</strong>. Each creature in a <strong>25-foot-radius sphere</strong> must make a <strong>DC 17 Dexterity</strong> saving throw, taking <strong>38 (11d6)</strong> fire damage on a failed save, or half as much on a successful one.</p>`,
-  chat: `<p>Recharge 5–6. 25-ft radius, 150 ft, DC 17 Dex, 11d6 fire.</p>`,
+  description: `<p><strong>Recharge 5–6.</strong> The Dire Miralis exhales a massive fireball centered on a point it can see within <strong>150 feet</strong>. Each creature in a <strong>25-foot-radius sphere</strong> must make a <strong>DC 17 Dexterity</strong> saving throw, taking <strong>38 (11d6)</strong> fire damage on a failed save, or half as much on a successful one.</p>
+<p><em>Calamity Rain detonation also uses this effect on each marker (automated, typed fire). Sequencer/JB2A plays the volley if those modules are installed.</em></p>`,
+  chat: `<p>Recharge 5–6. 25-ft radius, 150 ft, DC 17 Dex, 11d6 fire. Also used by Calamity Rain detonation.</p>`,
   activities: {
     [fireballActId]: saveActivity({
       id: fireballActId,
@@ -1052,11 +1086,11 @@ const calamityRain = makeFeat({
   withMacro: true,
   uses: dayUses(1),
   description: `<p><strong>1/Day; Enrage Nova.</strong></p>
-<p><strong>Charge (action):</strong> The Dire Miralis coils and glows. Until the start of its next turn it is visibly charging. Place <strong>six</strong> glowing markers in spaces it can see within <strong>120 feet</strong>. While charging, it can't take reactions, and damage it takes is tallied for the interrupt.</p>
-<p><strong>Interrupt:</strong> If the Dire Miralis takes <strong>40 or more damage in one turn</strong> during the charge (before detonation), the nova fails. It is knocked <strong>prone</strong>, Magma Armor <strong>cracks</strong> (if active), and it can't use Legendary Actions until the end of its next turn.</p>
-<p><strong>Detonation</strong> (start of its next turn, if not interrupted): Greater Fireball erupts on each detonation zone. After detonating, Magma Armor <strong>cracks</strong> once from the heat shock (if it was active).</p>
-<p><em>Target up to six tokens/spaces as markers, then use Charge. Interrupt and detonation are automated.</em></p>`,
-  chat: `<p>Charge: 6 markers within 120 ft. 40+ damage in one turn interrupts. Else Greater Fireball on each zone.</p>`,
+<p><strong>Charge (action):</strong> The Dire Miralis coils and glows. Until the start of its next turn it is visibly charging. Place up to <strong>six</strong> glowing markers in spaces it can see within <strong>120 feet</strong>. While charging, it can't take reactions (including Scorching Hide), and <strong>cold</strong> damage it takes is tallied for the interrupt (GM whisper shows <strong>n/40 cold</strong>).</p>
+<p><strong>Interrupt:</strong> If the Dire Miralis takes <strong>40 cumulative cold damage</strong> during the charge (before detonation), the nova fails. All markers are <strong>removed</strong>. It is knocked <strong>prone</strong>, Magma Armor <strong>cracks</strong> if active (this does <em>not</em> count as a cold hit toward shatter), and it can't use Legendary Actions until the end of its next turn.</p>
+<p><strong>Detonation</strong> (start of its next turn, if not interrupted): Greater Fireball (<strong>11d6</strong> fire, DC 17 Dexterity, 25-foot radius) erupts on each remaining marker, then the markers are removed. After detonating, Magma Armor <strong>cracks</strong> once from the heat shock if it was active (also not a cold hit).</p>
+<p><em>Use Charge — do not target tokens. Then click up to six 5-foot squares (right-click or Enter to finish). Interrupt and detonation are automated. Sequencer/JB2A plays the volley if installed.</em></p>`,
+  chat: `<p>Charge: click up to 6 spaces (no tokens). 40 cumulative cold interrupts (markers vanish, prone, no legendary). Else Greater Fireball on each zone at the start of the next turn.</p>`,
   activities: {
     [calamityActId]: utilityActivity({
       id: calamityActId,
@@ -1065,13 +1099,13 @@ const calamityRain = makeFeat({
       activationType: "action",
       img: IMG.rain,
       range: rangeBlock(120),
-      target: targetBlock({
-        affectsType: "any",
-        affectsCount: "6",
-        prompt: true,
-      }),
+      target: targetBlock({ prompt: false }),
       consume: consumeItemUses(1),
       uses: emptyUses(),
+      midiExtra: {
+        autoTargetAction: "never",
+        confirmTargets: "never",
+      },
     }),
   },
   effects: [
@@ -1081,7 +1115,7 @@ const calamityRain = makeFeat({
       img: IMG.rain,
       kind: "calamityCharging",
       disabled: true,
-      description: "Coiling and glowing. Cannot take reactions. 40+ damage in one turn interrupts the nova.",
+      description: "Coiling and glowing. Cannot take reactions (including Scorching Hide). 40 cumulative cold damage interrupts the nova (markers vanish).",
       changes: [],
     }),
   ],
@@ -1120,8 +1154,9 @@ const scorchingHide = makeFeat({
   role: "scorchingHide",
   sort: 400000,
   extraMidi: scorchingMidiFlags(),
-  description: `<p>When the Dire Miralis is hit by a melee attack, the attacker takes <strong>9 (2d8)</strong> fire damage.</p>`,
-  chat: `<p>Reaction: when hit by a melee attack, the attacker takes 2d8 fire.</p>`,
+  description: `<p>When the Dire Miralis is hit by a melee attack, the attacker takes <strong>9 (2d8)</strong> fire damage.</p>
+<p><em>Automated (Midi QOL, with a fallback). Does not trigger while Calamity Rain is charging — the Dire Miralis cannot take reactions.</em></p>`,
+  chat: `<p>When hit by a melee attack: 2d8 fire to the attacker (automated). Suppressed during Calamity Rain charge.</p>`,
   activities: {
     [hideActId]: damageActivity({
       id: hideActId,
@@ -1147,8 +1182,10 @@ const shiftStance = makeFeat({
   role: "shiftStance",
   sort: 500000,
   withMacro: true,
-  description: `<p><strong>Legendary Action.</strong> The Dire Miralis switches between Biped and Quadruped, or moves up to <strong>half its speed</strong> without provoking opportunity attacks.</p>`,
-  chat: `<p>Legendary: switch stance, or move half speed with no OA.</p>`,
+  description: `<p><strong>Legendary Action.</strong> The Dire Miralis switches between Biped and Quadruped, or moves up to <strong>half its speed</strong> without provoking opportunity attacks.</p>
+<p>Switching stance updates Claw reach (15 ft Biped / 10 ft Quadruped) and which action is available (Crush vs Tail Sweep). Quadruped also grants advantage on saves against being knocked prone.</p>
+<p><em>Blocked until the end of its next turn if Calamity Rain was interrupted.</em></p>`,
+  chat: `<p>Legendary: switch stance (reach + Crush/Tail Sweep), or move half speed with no OA. Blocked after Calamity interrupt.</p>`,
   activities: {
     [shiftToggleId]: utilityActivity({
       id: shiftToggleId,
@@ -1185,7 +1222,8 @@ const tremor = makeFeat({
   role: "tremor",
   sort: 500100,
   withMacro: true,
-  description: `<p><strong>Legendary Action.</strong> Each creature on the ground within <strong>30 feet</strong> of the Dire Miralis must succeed on a <strong>DC 19 Dexterity</strong> saving throw or fall <strong>prone</strong>.</p>`,
+  description: `<p><strong>Legendary Action.</strong> Each creature on the ground within <strong>30 feet</strong> of the Dire Miralis must succeed on a <strong>DC 19 Dexterity</strong> saving throw or fall <strong>prone</strong>.</p>
+<p><em>Blocked until the end of its next turn if Calamity Rain was interrupted. Prone on a failed save is automated.</em></p>`,
   chat: `<p>Legendary: 30-ft, DC 19 Dex or prone.</p>`,
   activities: {
     [tremorActId]: saveActivity({
@@ -1233,8 +1271,8 @@ const magmaAttack = makeFeat({
   role: "magmaGlob",
   sort: 500200,
   withMacro: true,
-  description: `<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis makes one <strong>Magma Glob</strong> attack.</p>`,
-  chat: `<p>Legendary (2): one Magma Glob attack.</p>`,
+  description: `<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis makes one <strong>Magma Glob</strong> attack (+7 to hit, 5d10 fire). Hit or miss places lava for 1 hour (2d10 fire on enter or start of turn).</p>`,
+  chat: `<p>Legendary (2): one Magma Glob. Lava template for 1 hour on hit or miss.</p>`,
   activities: {
     [magmaAtkLegId]: attackActivity({
       id: magmaAtkLegId,
@@ -1264,8 +1302,10 @@ const ventBarrage = makeFeat({
   role: "ventBarrage",
   sort: 500300,
   withMacro: true,
-  description: `<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis uses <em>Volcanic Vents</em>, targeting up to <strong>three</strong> spaces instead of two.</p>`,
-  chat: `<p>Legendary (2): Volcanic Vents on up to three spaces.</p>`,
+  description: `<p><strong>Legendary Action (Costs 2).</strong> The Dire Miralis uses <em>Volcanic Vents</em>, targeting up to <strong>three</strong> spaces instead of two.</p>
+<p>Each creature in those spaces: <strong>DC 17 Dexterity</strong> or <strong>9 (2d8)</strong> fire. <strong>Every</strong> placed square becomes lava until the start of the Dire Miralis's next turn (2d10 fire on enter or start of turn, per square).</p>
+<p><em>Place up to three 5-foot squares (empty or occupied).</em></p>`,
+  chat: `<p>Legendary (2): up to 3 squares, DC 17 Dex vs 2d8 fire. Every square is lava until the start of its next turn.</p>`,
   activities: {
     [barrageActId]: saveActivity({
       id: barrageActId,
@@ -1305,9 +1345,10 @@ const risingTide = makeFeat({
   sort: 600000,
   withMacro: true,
   description: `<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong> (losing initiative ties).</p>
-<p>Boiling water or lava spreads <strong>10 feet</strong> inland from the current waterline along a 40-foot-wide front. New spaces use <em>Boiling Presence</em> / lava hazards.</p>
-<p>Cannot use the same lair effect two rounds in a row.</p>`,
-  chat: `<p>Lair: 40-ft front of boiling water / lava spreads 10 ft inland.</p>`,
+<p>Boiling water or lava spreads <strong>10 feet</strong> inland from the current waterline along a 40-foot-wide front. New spaces use Tainted Sea / lava hazards (<strong>11 (2d10)</strong> fire on enter or start of turn).</p>
+<p>Cannot use the same lair effect two rounds in a row (enforced).</p>
+<p><em>Places a boiling-water template — reposition it onto the waterline.</em></p>`,
+  chat: `<p>Lair: 40-ft front of boiling water / lava spreads 10 ft inland (2d10 fire). Reposition onto the waterline. No repeat.</p>`,
   activities: {
     [tideActId]: utilityActivity({
       id: tideActId,
@@ -1332,8 +1373,8 @@ const wreckCollapse = makeFeat({
   withMacro: true,
   description: `<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>
 <p>One shipwreck section within 60 feet partially collapses. Creatures in a <strong>15-foot square</strong> there must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>14 (4d6)</strong> bludgeoning damage and be <strong>restrained</strong> (escape DC 17). The area becomes difficult terrain and provides half cover afterward.</p>
-<p>Cannot use the same lair effect two rounds in a row.</p>`,
-  chat: `<p>Lair: 15-ft square, DC 17 Dex, 4d6 bludgeoning and restrained; difficult terrain + half cover.</p>`,
+<p>Cannot use the same lair effect two rounds in a row (enforced).</p>`,
+  chat: `<p>Lair: 15-ft square, DC 17 Dex, 4d6 bludgeoning and restrained; difficult terrain + half cover. No repeat.</p>`,
   activities: {
     [wreckActId]: saveActivity({
       id: wreckActId,
@@ -1367,8 +1408,9 @@ const bloodRedSteam = makeFeat({
   withMacro: true,
   description: `<p><strong>Arena Lair Action (Tainted Sea Cove) — Optional.</strong> On initiative count <strong>20</strong>.</p>
 <p>A scalding steam cloud fills a <strong>20-foot cube</strong> the Dire Miralis can see within 60 feet until initiative count 20 on the next round. The area is heavily obscured; any creature that starts its turn there takes <strong>7 (2d6)</strong> fire damage.</p>
-<p>Cannot use the same lair effect two rounds in a row.</p>`,
-  chat: `<p>Lair: 20-ft cube of steam, heavily obscured, 2d6 fire at start of turn.</p>`,
+<p>Cannot use the same lair effect two rounds in a row (enforced).</p>
+<p><em>Places a steam hazard template (start-of-turn fire is automated).</em></p>`,
+  chat: `<p>Lair: 20-ft cube of steam, heavily obscured, 2d6 fire at start of turn. No repeat.</p>`,
   activities: {
     [steamActId]: utilityActivity({
       id: steamActId,
@@ -1419,9 +1461,11 @@ const biography = `<h2>Dire Miralis</h2>
 <p>An Elder Dragon of boiling seas and volcanic vents. Place the token in the arena, roll initiative, and use the features on the sheet. Magma Armor, lava templates, Calamity Rain interrupt/detonation, Boiling Presence, and Scorching Hide run from the Amellwind module script.</p>
 <h3>Combat notes</h3>
 <ul>
-<li><strong>Stance:</strong> starts Biped (15-ft Claw, Crush). Shift Stance (legendary) toggles Quadruped (Tail Sweep, advantage vs prone).</li>
-<li><strong>Magma Armor:</strong> arms below 70% HP (161/230). Cold damage or an interrupted Calamity Rain cracks it; six cracks shatter it.</li>
-<li><strong>Calamity Rain:</strong> target up to six spaces, Charge, then either 40+ damage in one turn interrupts or Greater Fireball detonates on each marker at the start of its next turn.</li>
+<li><strong>Stance:</strong> starts Biped (15-ft Claw, Crush). Shift Stance (legendary) toggles Quadruped (10-ft Claw, Tail Sweep, advantage vs prone). Reach updates automatically.</li>
+<li><strong>Magma Armor:</strong> arms below 70% HP (161/230): AC 22 + B/P/S resistance. Cold hits crack it (AC 18 until end of next turn). Six cold hits shatter it. Interrupt / Calamity heat-shock only crack (do not count toward shatter). After a shatter, use Magma Armor to reform (resets 0/6); it does not auto-reform.</li>
+<li><strong>Lava:</strong> Magma Glob (1 hour) and Volcanic Vents / Vent Barrage (until start of next turn) place a template on <em>every</em> chosen square. Enter or start of turn: 2d10 fire per square (typed).</li>
+<li><strong>Calamity Rain:</strong> Charge, then click up to six spaces (no tokens). 40 cumulative cold interrupts (markers vanish, prone, no legendary until end of next turn). Else Greater Fireball (11d6, DC 17 Dex, 25-ft) on each marker at the start of its next turn.</li>
+<li><strong>Boiling Presence:</strong> 1d10 fire within 10 ft at the start of its turn. <strong>Scorching Hide:</strong> 2d8 fire when hit by melee (suppressed during Calamity charge).</li>
 <li><strong>Lair actions</strong> (optional, initiative 20): cannot repeat the same effect two rounds in a row.</li>
 </ul>`;
 
@@ -1608,11 +1652,13 @@ const actor = {
           shattered: false,
           cracked: false,
           cracks: 0,
+          coldHits: 0,
         },
         calamity: {
           charging: false,
           interrupted: false,
           damageByTurn: {},
+          coldTaken: 0,
           markerIds: [],
         },
       },
