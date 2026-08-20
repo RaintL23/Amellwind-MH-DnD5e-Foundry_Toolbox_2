@@ -55,12 +55,30 @@
     await ChatMessage.create(data);
   };
 
+  const tokenRect = (token) => {
+    const size = canvas.grid?.size || 100;
+    const w = token.w ?? (Number(token.document?.width) || 1) * size;
+    const h = token.h ?? (Number(token.document?.height) || 1) * size;
+    const c = token.center ?? { x: (token.document?.x ?? 0) + w / 2, y: (token.document?.y ?? 0) + h / 2 };
+    return { x: c.x - w / 2, y: c.y - h / 2, w, h };
+  };
+
+  const rectGapPx = (a, b) => {
+    const dx = Math.max(0, a.x - (b.x + b.w), b.x - (a.x + a.w));
+    const dy = Math.max(0, a.y - (b.y + b.h), b.y - (a.y + a.h));
+    return Math.hypot(dx, dy);
+  };
+
   const measureDistanceFt = (tokenA, tokenB) => {
     if (!tokenA || !tokenB) return Infinity;
     if (typeof MidiQOL?.computeDistance === "function") {
       const d = Number(MidiQOL.computeDistance(tokenA, tokenB, { wallsBlock: false }));
       if (Number.isFinite(d)) return d;
     }
+    const grid = canvas.grid?.size || 100;
+    const ft = canvas.grid?.distance || 5;
+    const gapFt = (rectGapPx(tokenRect(tokenA), tokenRect(tokenB)) / grid) * ft;
+    if (Number.isFinite(gapFt)) return gapFt;
     if (typeof canvas.grid?.measurePath === "function") {
       const path = canvas.grid.measurePath([tokenA.center, tokenB.center]);
       const d = Number(path?.distance ?? path?.spaces);
@@ -68,10 +86,19 @@
     }
     const dx = tokenA.center.x - tokenB.center.x;
     const dy = tokenA.center.y - tokenB.center.y;
-    const px = Math.hypot(dx, dy);
-    const grid = canvas.grid?.size || 100;
-    const ft = canvas.grid?.distance || 5;
-    return (px / grid) * ft;
+    return (Math.hypot(dx, dy) / grid) * ft;
+  };
+
+  const tokenCenterFromDoc = (tokenDoc, changed = {}) => {
+    const x = changed.x ?? tokenDoc.x;
+    const y = changed.y ?? tokenDoc.y;
+    if (typeof tokenDoc.getCenterPoint === "function") {
+      return tokenDoc.getCenterPoint({ x, y });
+    }
+    const size = canvas.grid?.size || 100;
+    const w = (Number(tokenDoc.width) || 1) * size;
+    const h = (Number(tokenDoc.height) || 1) * size;
+    return { x: x + w / 2, y: y + h / 2 };
   };
 
   const tokensInRange = (origin, rangeFt, { excludeSelf = true } = {}) => {
@@ -241,11 +268,28 @@
     return true;
   };
 
+  const squareTemplateSpec = ({ x, y, sizeFt = 5 }) => ({
+    t: "rect",
+    x,
+    y,
+    distance: sizeFt * Math.SQRT2,
+    direction: 45,
+  });
+
+  const tokenSpaceSpec = (token) => {
+    const doc = token.document ?? token;
+    const sizeFt = Math.max(Number(doc.width) || 1, 1) * (canvas.grid?.distance || 5);
+    return squareTemplateSpec({ x: doc.x, y: doc.y, sizeFt });
+  };
+
   const placeHazardTemplate = async ({
     x,
     y,
     t = "circle",
     distance = 5,
+    direction = 0,
+    angle = 0,
+    width = 0,
     fillColor = "#ff5500",
     borderColor = "#aa2200",
     hazard = "lava",
@@ -260,10 +304,10 @@
         user: game.user.id,
         x,
         y,
-        direction: 0,
-        angle: 0,
+        direction,
+        angle,
         distance,
-        width: 0,
+        width,
         borderColor,
         fillColor,
         hidden: false,
@@ -286,37 +330,65 @@
       (tpl) => foundry.utils.getProperty(tpl, `${FLAG}.hazard`) === hazard,
     );
 
-  const tokenInTemplate = (token, template) => {
-    if (!token || !template) return false;
+  const pointInTemplate = (point, template) => {
+    if (!point || !template) return false;
     try {
-      const shape = template.object?.shape;
-      const center = token.center;
+      const obj = template.object;
+      const shape = obj?.shape;
       if (shape && typeof shape.contains === "function") {
-        const local = template.object.worldTransform
-          ? undefined
-          : null;
-        const obj = template.object;
-        if (obj?.shape && obj?.ray == null) {
-          const dx = center.x - template.x;
-          const dy = center.y - template.y;
-          if (template.t === "circle" || template.t === "rect") {
-            return obj.shape.contains(dx, dy);
-          }
-        }
-        if (typeof obj?.shape?.contains === "function") {
-          return obj.shape.contains(center.x - obj.x, center.y - obj.y);
-        }
+        if (shape.contains(point.x - template.x, point.y - template.y)) return true;
+        if (obj.center && shape.contains(point.x - obj.center.x, point.y - obj.center.y)) return true;
       }
     } catch {
-      /* fall through to distance */
+      /* fall through */
     }
-    const dx = token.center.x - template.x;
-    const dy = token.center.y - template.y;
+    if (typeof canvas.grid?.getOffset === "function") {
+      const tokenCell = canvas.grid.getOffset(point);
+      const originCell = canvas.grid.getOffset({ x: template.x, y: template.y });
+      if (tokenCell && originCell && tokenCell.i === originCell.i && tokenCell.j === originCell.j) {
+        return true;
+      }
+      if (template.t === "rect") {
+        const size = canvas.grid?.size || 100;
+        const inside = canvas.grid.getOffset({
+          x: template.x + size / 2,
+          y: template.y + size / 2,
+        });
+        if (tokenCell && inside && tokenCell.i === inside.i && tokenCell.j === inside.j) return true;
+      }
+    }
+    const dx = point.x - template.x;
+    const dy = point.y - template.y;
     const grid = canvas.grid?.size || 100;
     const ft = canvas.grid?.distance || 5;
     const distFt = (Math.hypot(dx, dy) / grid) * ft;
     const radius = Number(template.distance) || 5;
-    return distFt <= radius + 2.5;
+    return distFt <= Math.min(radius, 5) + 2.5;
+  };
+
+  const tokenSamplePoints = (token, center) => {
+    const c = center ?? token?.center;
+    if (!token || !c) return [];
+    const doc = token.document ?? token;
+    const size = canvas.grid?.size || 100;
+    const nw = Math.max(1, Number(doc.width) || 1);
+    const nh = Math.max(1, Number(doc.height) || 1);
+    const topLeft = { x: c.x - (nw * size) / 2, y: c.y - (nh * size) / 2 };
+    const points = [c];
+    for (let i = 0; i < nw; i += 1) {
+      for (let j = 0; j < nh; j += 1) {
+        points.push({
+          x: topLeft.x + (i + 0.5) * size,
+          y: topLeft.y + (j + 0.5) * size,
+        });
+      }
+    }
+    return points;
+  };
+
+  const tokenInTemplate = (token, template, center = null) => {
+    if (!token || !template) return false;
+    return tokenSamplePoints(token, center ?? token.center).some((point) => pointInTemplate(point, template));
   };
 
   const tokensInHazard = (hazard) => {
@@ -351,14 +423,16 @@
     return `${c?.id ?? "n"}-${c?.round ?? 0}-${c?.turn ?? 0}-${token.id}`;
   };
 
-  const applyLavaIfNeeded = async (token, { reason = "lava" } = {}) => {
+  const applyLavaIfNeeded = async (token, { reason = "lava", center = null, prevCenter = null } = {}) => {
     if (!token?.actor || isBoss(token.actor)) return;
     const tpls = [
       ...hazardTemplates("lava"),
       ...hazardTemplates("taintedWater"),
       ...hazardTemplates("ventLava"),
     ];
-    if (!tpls.some((tpl) => tokenInTemplate(token, tpl))) return;
+    const inside = (pt) => tpls.some((tpl) => tokenInTemplate(token, tpl, pt));
+    if (!inside(center ?? token.center)) return;
+    if (prevCenter && inside(prevCenter)) return;
     const key = lavaTickKey(token);
     const last = foundry.utils.getProperty(token.actor, `${FLAG}.lastLavaTick`);
     if (last === key) return;
@@ -375,10 +449,12 @@
     });
   };
 
-  const applySteamIfNeeded = async (token) => {
+  const applySteamIfNeeded = async (token, { center = null, prevCenter = null } = {}) => {
     if (!token?.actor || isBoss(token.actor)) return;
     const tpls = hazardTemplates("steam");
-    if (!tpls.some((tpl) => tokenInTemplate(token, tpl))) return;
+    const inside = (pt) => tpls.some((tpl) => tokenInTemplate(token, tpl, pt));
+    if (!inside(center ?? token.center)) return;
+    if (prevCenter && inside(prevCenter)) return;
     const key = `steam-${lavaTickKey(token)}`;
     const last = foundry.utils.getProperty(token.actor, `${FLAG}.lastSteamTick`);
     if (last === key) return;
@@ -404,14 +480,12 @@
     });
   };
 
-  const placeLavaOnTargets = async (tokens, { hazard = "lava", until = null, distance = 5 } = {}) => {
+  const placeLavaOnTargets = async (tokens, { hazard = "lava", until = null } = {}) => {
     const placed = [];
     for (const token of tokens) {
-      const center = token.center ?? { x: token.x, y: token.y };
+      const spec = tokenSpaceSpec(token);
       const doc = await placeHazardTemplate({
-        x: center.x,
-        y: center.y,
-        distance,
+        ...spec,
         hazard,
         until,
         label: hazard === "ventLava" ? "Volcanic Vent Lava" : "Lava",
@@ -455,14 +529,79 @@
     const missTarget = targets[0];
     if (!missTarget) return;
     const spot = nearestUnoccupiedOffset(origin, missTarget);
+    const size = canvas.grid?.size || 100;
     await placeHazardTemplate({
-      x: spot.x,
-      y: spot.y,
+      ...squareTemplateSpec({ x: spot.x - size / 2, y: spot.y - size / 2, sizeFt: 5 }),
       hazard: "lava",
       until,
       label: "Lava (miss scatter)",
     });
     await chat(actor, `<p>Magma Glob misses — lava erupts in an unoccupied space within 5 feet of the target.</p>`);
+  };
+
+  const recentAoETemplates = [];
+  const rememberAoETemplate = (doc) => {
+    if (!doc || foundry.utils.getProperty(doc, `${FLAG}.hazard`)) return;
+    const dist = Number(doc.distance) || 0;
+    if (dist < 3 || dist > 10) return;
+    recentAoETemplates.push({
+      id: doc.id,
+      x: doc.x,
+      y: doc.y,
+      t: doc.t,
+      distance: doc.distance,
+      direction: doc.direction,
+      ts: Date.now(),
+    });
+    while (recentAoETemplates.length > 12) recentAoETemplates.shift();
+  };
+
+  const asTemplateLike = (value) => {
+    if (!value) return null;
+    if (typeof value === "string") {
+      const fromScene = canvas.scene?.templates?.get(value);
+      if (fromScene) return fromScene;
+      try {
+        return fromUuidSync(value);
+      } catch {
+        return null;
+      }
+    }
+    if (Number.isFinite(Number(value.x)) && Number.isFinite(Number(value.y))) return value;
+    return null;
+  };
+
+  const collectWorkflowTemplates = (workflow) => {
+    const out = [];
+    const seen = new Set();
+    const add = (raw) => {
+      const tpl = asTemplateLike(raw);
+      if (!tpl) return;
+      const id = tpl.id ?? tpl._id ?? `${tpl.x},${tpl.y},${tpl.distance ?? ""}`;
+      if (seen.has(id)) return;
+      seen.add(id);
+      out.push(tpl);
+    };
+    add(workflow?.templateId);
+    add(workflow?.templateUuid);
+    if (Array.isArray(workflow?.templateData)) {
+      for (const row of workflow.templateData) add(row);
+    } else {
+      add(workflow?.templateData);
+    }
+    for (const tpl of workflow?.templates ?? []) add(tpl);
+    for (const tpl of workflow?.placedTemplates ?? []) add(tpl);
+    for (const uuid of workflow?.templateUuids ?? []) add(uuid);
+    const origin = workflow?.item?.uuid;
+    if (origin) {
+      for (const tpl of canvas.scene?.templates ?? []) {
+        const src = String(
+          tpl.flags?.dnd5e?.origin ?? tpl.flags?.dnd5e?.itemOrigin ?? "",
+        );
+        if (src && (src === origin || src.startsWith(`${origin}.`))) add(tpl);
+      }
+    }
+    return out;
   };
 
   const onVolcanicVents = async (workflow, { spaces = 2 } = {}) => {
@@ -471,16 +610,41 @@
     const until = combat
       ? { combatId: combat.id, round: combat.round, restoreOnBossTurnStart: true }
       : { ts: Date.now() + 6000 };
+    const templates = collectWorkflowTemplates(workflow);
+    if (templates.length < spaces) {
+      const now = Date.now();
+      for (const row of [...recentAoETemplates].reverse()) {
+        if (templates.length >= spaces) break;
+        if (now - row.ts > 8000) continue;
+        if (templates.some((t) => t.id === row.id || (t.x === row.x && t.y === row.y))) continue;
+        templates.push(row);
+      }
+    }
     const targets = [...(workflow.targets ?? [])];
-    const picked = targets.slice(0, spaces);
-    if (!picked.length) {
-      ui.notifications?.warn(`Volcanic Vents: target up to ${spaces} spaces / tokens.`);
+    if (!templates.length && !targets.length) {
+      ui.notifications?.warn(`Volcanic Vents: place up to ${spaces} spaces (empty or occupied).`);
       return;
     }
-    await placeLavaOnTargets(picked, { hazard: "ventLava", until, distance: 5 });
+    if (templates.length) {
+      for (const tpl of templates.slice(0, spaces)) {
+        await placeHazardTemplate({
+          x: tpl.x,
+          y: tpl.y,
+          t: tpl.t ?? "rect",
+          distance: tpl.distance ?? 5 * Math.SQRT2,
+          direction: tpl.direction ?? 45,
+          hazard: "ventLava",
+          until,
+          label: "Volcanic Vent Lava",
+        });
+      }
+    } else {
+      await placeLavaOnTargets(targets.slice(0, spaces), { hazard: "ventLava", until });
+    }
+    const n = Math.min(templates.length, spaces) || Math.min(targets.length, spaces);
     await chat(
       actor,
-      `<p>Volcanic Vents open under ${picked.length} space(s). Those spaces are <strong>lava</strong> until the start of the Dire Miralis's next turn.</p>`,
+      `<p>Volcanic Vents open under ${n} space(s). Those spaces are <strong>lava</strong> until the start of the Dire Miralis's next turn.</p>`,
     );
   };
 
@@ -927,20 +1091,35 @@
   };
 
   const onOtherTurnStart = async (combatant) => {
-    const token = combatant?.token ?? canvas.tokens.get(combatant?.tokenId);
+    const tokenDoc = combatant?.token;
+    const token =
+      tokenDoc?.object
+      ?? canvas.tokens.get(combatant?.tokenId ?? tokenDoc?.id)
+      ?? (tokenDoc?.center ? tokenDoc : null);
     if (!token) return;
     await applyLavaIfNeeded(token, { reason: "lava" });
     await applySteamIfNeeded(token);
   };
 
+  const resolveTurnCombatant = (combat, ref) => {
+    if (ref?.actor) return ref;
+    const id = ref?.combatantId;
+    if (id && combat?.combatants?.get(id)) return combat.combatants.get(id);
+    if (ref?.tokenId) {
+      return combat?.combatants?.find((c) => c.tokenId === ref.tokenId) ?? combat?.combatant ?? null;
+    }
+    return combat?.combatant ?? null;
+  };
+
   const handleCombatTurn = async (combat, _prior, current) => {
     if (!isActiveGM()) return;
-    const actor = current?.actor;
+    const combatant = resolveTurnCombatant(combat, current);
+    const actor = combatant?.actor;
     if (isBoss(actor)) {
       await onBossTurnStart(actor);
       return;
     }
-    await onOtherTurnStart(current);
+    await onOtherTurnStart(combatant);
   };
 
   const handleCombatUpdate = async (combat, changed) => {
@@ -1023,13 +1202,19 @@
       onBossDamaged(hitBoss.actor, amount, types).catch((err) => console.error("Dire Miralis | roll complete", err));
     });
 
+    Hooks.on("createMeasuredTemplate", (doc) => {
+      rememberAoETemplate(doc);
+    });
+
     Hooks.on("updateToken", (tokenDoc, changed) => {
       if (!isActiveGM()) return;
       if (changed.x === undefined && changed.y === undefined) return;
       const token = tokenDoc.object ?? canvas.tokens.get(tokenDoc.id);
       if (!token) return;
-      applyLavaIfNeeded(token, { reason: "enter" }).catch((err) => console.error("Dire Miralis | lava enter", err));
-      applySteamIfNeeded(token).catch((err) => console.error("Dire Miralis | steam enter", err));
+      const prevCenter = token.center;
+      const nextCenter = tokenCenterFromDoc(tokenDoc, changed);
+      applyLavaIfNeeded(token, { reason: "enter", center: nextCenter, prevCenter }).catch((err) => console.error("Dire Miralis | lava enter", err));
+      applySteamIfNeeded(token, { center: nextCenter, prevCenter }).catch((err) => console.error("Dire Miralis | steam enter", err));
     });
 
     Hooks.on("combatTurnChange", (combat, prior, current) => {

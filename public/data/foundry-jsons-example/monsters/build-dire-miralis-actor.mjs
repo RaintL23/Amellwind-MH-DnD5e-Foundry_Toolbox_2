@@ -381,6 +381,7 @@ const saveActivity = ({
   useConditionReason = "",
   effectConditionText = "",
   sort = 0,
+  midiExtra = {},
 }) =>
   wrapActivity({
     _id: id,
@@ -396,7 +397,7 @@ const saveActivity = ({
     range,
     target,
     uses,
-    midiProperties: midiProps(identifier),
+    midiProperties: midiProps(identifier, midiExtra),
     damage: { parts, onSave },
     save: {
       ability: Array.isArray(saveAbility) ? saveAbility : [saveAbility],
@@ -666,7 +667,7 @@ const volcanicVents = makeFeat({
   sort: 100500,
   withMacro: true,
   description: `<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. Those spaces become <strong>lava</strong> until the start of the Dire Miralis's next turn (see Magma Glob).</p>
-<p><em>Target two tokens/spaces, then use this feature. Lava templates expire at the start of its next turn.</em></p>`,
+<p><em>Place up to two 5-foot squares (empty or occupied). Creatures in those spaces make the save. Lava templates expire at the start of its next turn.</em></p>`,
   chat: `<p>DC 17 Dexterity vs 2d8 fire in up to two spaces; those spaces become lava.</p>`,
   activities: {
     [ventsActId]: saveActivity({
@@ -678,14 +679,20 @@ const volcanicVents = makeFeat({
       img: IMG.vents,
       range: rangeBlock(60),
       target: targetBlock({
+        templateType: "square",
+        templateSize: "5",
+        templateCount: "2",
         affectsType: "creature",
-        affectsCount: "2",
         prompt: true,
       }),
       saveAbility: "dex",
       saveDc: 17,
       parts: [damagePart(2, 8, "fire")],
       onSave: "none",
+      midiExtra: {
+        autoTargetAction: "always",
+        confirmTargets: "never",
+      },
     }),
   },
 });
@@ -1268,8 +1275,10 @@ const ventBarrage = makeFeat({
       img: IMG.vents,
       range: rangeBlock(60),
       target: targetBlock({
+        templateType: "square",
+        templateSize: "5",
+        templateCount: "3",
         affectsType: "creature",
-        affectsCount: "3",
         prompt: true,
       }),
       saveAbility: "dex",
@@ -1277,6 +1286,10 @@ const ventBarrage = makeFeat({
       parts: [damagePart(2, 8, "fire")],
       onSave: "none",
       consume: consumeLegendary(2),
+      midiExtra: {
+        autoTargetAction: "always",
+        confirmTargets: "never",
+      },
     }),
   },
 });

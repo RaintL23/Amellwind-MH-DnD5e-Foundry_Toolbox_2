@@ -955,7 +955,7 @@
       "img": "icons/magic/fire/projectile-fireball-smoke-orange.webp",
       "system": {
         "description": {
-          "value": "<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. Those spaces become <strong>lava</strong> until the start of the Dire Miralis's next turn (see Magma Glob).</p>\n<p><em>Target two tokens/spaces, then use this feature. Lava templates expire at the start of its next turn.</em></p>",
+          "value": "<p>At the end of each of the Dire Miralis's turns, choose up to <strong>two</strong> spaces the Dire Miralis can see within <strong>60 feet</strong>. Each creature in those spaces must succeed on a <strong>DC 17 Dexterity</strong> saving throw or take <strong>9 (2d8) fire damage</strong>. Those spaces become <strong>lava</strong> until the start of the Dire Miralis's next turn (see Magma Glob).</p>\n<p><em>Place up to two 5-foot squares (empty or occupied). Creatures in those spaces make the save. Lava templates expire at the start of its next turn.</em></p>",
           "chat": "<p>DC 17 Dexterity vs 2d8 fire in up to two spaces; those spaces become lava.</p>"
         },
         "source": {
@@ -1012,16 +1012,16 @@
             },
             "target": {
               "template": {
-                "count": "",
+                "count": "2",
                 "contiguous": false,
-                "type": "",
-                "size": "",
+                "type": "square",
+                "size": "5",
                 "width": "",
                 "height": "",
                 "units": "ft"
               },
               "affects": {
-                "count": "2",
+                "count": "",
                 "type": "creature",
                 "choice": false,
                 "special": ""
@@ -1044,9 +1044,9 @@
               "forceConsumeDialog": "default",
               "forceRollDialog": "default",
               "forceDamageDialog": "default",
-              "confirmTargets": "default",
+              "confirmTargets": "never",
               "autoTargetType": "any",
-              "autoTargetAction": "default",
+              "autoTargetAction": "always",
               "automationOnly": false,
               "otherActivityCompatible": true,
               "identifier": "volcanic-vents",
@@ -4933,16 +4933,16 @@
             },
             "target": {
               "template": {
-                "count": "",
+                "count": "3",
                 "contiguous": false,
-                "type": "",
-                "size": "",
+                "type": "square",
+                "size": "5",
                 "width": "",
                 "height": "",
                 "units": "ft"
               },
               "affects": {
-                "count": "3",
+                "count": "",
                 "type": "creature",
                 "choice": false,
                 "special": ""
@@ -4965,9 +4965,9 @@
               "forceConsumeDialog": "default",
               "forceRollDialog": "default",
               "forceDamageDialog": "default",
-              "confirmTargets": "default",
+              "confirmTargets": "never",
               "autoTargetType": "any",
-              "autoTargetAction": "default",
+              "autoTargetAction": "always",
               "automationOnly": false,
               "otherActivityCompatible": true,
               "identifier": "vent-barrage",
