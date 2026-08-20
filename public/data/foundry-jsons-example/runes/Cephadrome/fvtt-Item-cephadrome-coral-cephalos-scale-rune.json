@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Cephadrome | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Ranged weapon only) Deadeye.</em> Your weapon's normal attack range is increased by 20 feet.\n<h3>Armor Effect</h3>\n<em>Constitution.</em> The duration from slowing effects, such as the @spell[slow] spell or a copper dragon's breath attack, are reduced by half while you wear this armor.\n<p><em><strong>Tags:</strong> weapon-type:ranged, mechanic:spell:lvl1-2, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Cephadrome | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Ranged weapon only) Deadeye.</em> Your weapon's normal attack range is increased by 20 feet.\n<h3>Armor Effect</h3>\n<em>Constitution.</em> While you wear this armor, you can reroll a Constitution saving throw that you fail. If you do so, you must use the new roll, and you can't use this property again until you finish a long rest.\n<p><em><strong>Tags:</strong> weapon-type:ranged, mechanic:saving-throw, mechanic:long-rest, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "coralcephalosscalerune",
@@ -182,7 +182,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Durations of slowing effects are halved while you wear this armor (manual).",
+      "description": "Once per long rest, reroll a failed Constitution saving throw and use the new roll (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

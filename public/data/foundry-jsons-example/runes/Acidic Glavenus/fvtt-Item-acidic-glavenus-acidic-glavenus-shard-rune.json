@@ -1,6 +1,6 @@
 {
   "_id": "bX1ju8nEBgP7g56N",
-  "name": "Acidic Glavenus Scale Rune",
+  "name": "Acidic Glavenus Shard Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -16,7 +16,7 @@
       "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Acidic Glavenus | CR: 19 | Tier: 4</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<em>Handicraft+2.</em> For 24 hours, you gain proficiency with two artisan tools of your choice each dawn.\n<p><em><strong>Tags:</strong> mechanic:proficiency, type:utility</em></p>",
       "chat": ""
     },
-    "identifier": "acidicglavenusscalerune",
+    "identifier": "acidicglavenusshardrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -59,7 +59,7 @@
   "effects": [
     {
       "_id": "uAFKgYgXcaenfcqk",
-      "name": "Acidic Glavenus Scale Rune (Equip)",
+      "name": "Acidic Glavenus Shard Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -116,7 +116,7 @@
     },
     {
       "_id": "Tf1F0WvNprEodm1B",
-      "name": "Acidic Glavenus Scale - Handicraft+2",
+      "name": "Acidic Glavenus Shard - Handicraft+2",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -174,7 +174,7 @@
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Acidic Glavenus Scale",
+      "runeName": "Acidic Glavenus Shard",
       "monsterName": "Acidic Glavenus",
       "unified": true,
       "sides": {
@@ -185,7 +185,7 @@
     },
     "itemacro": {
       "macro": {
-        "name": "Acidic Glavenus Scale Rune",
+        "name": "Acidic Glavenus Shard Rune",
         "type": "script",
         "scope": "global",
         "author": "",

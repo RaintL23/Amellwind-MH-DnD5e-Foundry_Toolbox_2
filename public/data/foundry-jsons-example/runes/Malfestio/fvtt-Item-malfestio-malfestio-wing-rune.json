@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Malfestio | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Your weapon has 3 runes. While holding it, you can use an action to expend 1 of its runes, and if a secret door or trap is within 30 feet of you, the weapon pulses and points at the one nearest to you. This weapon regains [[/r 1d3]] expended runes daily at dawn.</p>\n<h3>Armor Effect</h3>\n<p>You have @variantrule[Advantage|XPHB] on Wisdom (@skill[Perception]) checks that rely on sight while you wear this armor. In conditions of clear visibility, you can make out details of even extremely distant creatures and objects as small as 2 feet across.</p>\n<p><em><strong>Tags:</strong> mechanic:rune-charges, mechanic:advantage</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Malfestio | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Your weapon deals an extra [[/r 1d4]] thunder damage.</p>\n<h3>Armor Effect</h3>\n<p>Whenever you make a saving throw against the @condition[unconscious] condition or other sleep-like effects, you do so with a +3 bonus.</p>\n<p><em><strong>Tags:</strong> mechanic:extra-damage:minor, type:offensive, damage:thunder, mechanic:saving-throw, mechanic:condition, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "malfestiowingrune",
@@ -43,120 +43,7 @@
     "properties": [],
     "proficient": null,
     "strength": null,
-    "activities": {
-      "6fhto2FmZx1eM5Om": {
-        "_id": "6fhto2FmZx1eM5Om",
-        "type": "utility",
-        "sort": 0,
-        "name": "Sense Secret Door or Trap",
-        "img": "mh-icons/material-rune.webp",
-        "activation": {
-          "type": "action",
-          "value": null,
-          "condition": "Weapon side active — expend 1 rune; pulse toward nearest secret door/trap within 30 ft",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": [
-            {
-              "type": "activityUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
-        },
-        "description": {
-          "chatFlavor": "Expend 1 rune. If a secret door or trap is within 30 feet, the weapon pulses and points at the nearest one."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": null,
-          "units": "self",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "",
-            "type": "self",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": false,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "3",
-          "recovery": [
-            {
-              "period": "dawn",
-              "type": "formula",
-              "formula": "1d3"
-            }
-          ]
-        },
-        "midiProperties": {
-          "ignoreTraits": [],
-          "triggeredActivityId": "none",
-          "triggeredActivityConditionText": "",
-          "triggeredActivityTargets": "targets",
-          "triggeredActivityRollAs": "self",
-          "autoConsume": false,
-          "forceConsumeDialog": "default",
-          "forceRollDialog": "default",
-          "forceDamageDialog": "default",
-          "confirmTargets": "default",
-          "autoTargetType": "any",
-          "autoTargetAction": "default",
-          "automationOnly": false,
-          "otherActivityCompatible": true,
-          "identifier": "sense-secret-door-trap",
-          "displayActivityName": true,
-          "rollMode": "default",
-          "chooseEffects": false,
-          "toggleEffect": false,
-          "ignoreFullCover": false,
-          "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
-          "noConcentrationCheck": false,
-          "autoCEEffects": "default"
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
-        },
-        "useConditionText": "",
-        "useConditionReason": "",
-        "effectConditionText": ""
-      }
-    },
+    "activities": {},
     "container": null,
     "cover": null,
     "crewed": false,
@@ -229,11 +116,24 @@
     },
     {
       "_id": "kugnNlEG99oojnfB",
-      "name": "Malfestio Wing - Secret Sense",
+      "name": "Malfestio Wing - Extra Thunder",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
-      "changes": [],
+      "changes": [
+        {
+          "key": "system.bonuses.mwak.damage",
+          "mode": 2,
+          "value": "1d4[thunder]",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.rwak.damage",
+          "mode": 2,
+          "value": "1d4[thunder]",
+          "priority": 20
+        }
+      ],
       "disabled": true,
       "duration": {
         "startTime": null,
@@ -244,7 +144,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Expend 1 rune (of 3): if a secret door or trap is within 30 ft, the weapon pulses and points at the nearest one. Regains 1d3 runes at dawn.",
+      "description": "While this rune is equipped: 1d4[thunder] on weapon attacks.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -264,7 +164,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "Secret Sense"
+          "materialEffectName": "Extra Thunder"
         }
       },
       "_stats": {
@@ -280,7 +180,7 @@
     },
     {
       "_id": "8sbYhouZnmVcxQmZ",
-      "name": "Malfestio Wing - Keen Sight",
+      "name": "Malfestio Wing - Sleep Resistance",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -295,7 +195,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Advantage on Wisdom (Perception) checks that rely on sight; enhanced long-distance detail vision.",
+      "description": "+3 bonus on saving throws against the unconscious condition or other sleep-like effects (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -315,7 +215,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Keen Sight"
+          "materialEffectName": "Sleep Resistance"
         }
       },
       "_stats": {
@@ -343,10 +243,10 @@
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — Secret Sense"
+          "label": "Weapon Effect — Extra Thunder"
         },
         "armor": {
-          "label": "Armor Effect — Keen Sight"
+          "label": "Armor Effect — Sleep Resistance"
         }
       }
     },

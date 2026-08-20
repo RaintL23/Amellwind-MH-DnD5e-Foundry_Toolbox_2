@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Uragaan | CR: 6 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While you wield this weapon you can use an action to conjure a @item[alchemist's fire (flask)] once a day. If unused for 24 hours, the flask returns to whence it came, where that is, who knows?</p>\n<h3>Armor Effect</h3>\n<em>Shield.</em> While you wear this armor and you use a reaction that would increase your AC, you gain an additional +1 bonus to your AC until the start of your next turn.\n<p><em><strong>Tags:</strong> mechanic:reaction, mechanic:ac, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Uragaan | CR: 6 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<em>Shield.</em> While you wear this armor and you use a reaction that would increase your AC, you gain an additional +1 bonus to your AC until the start of your next turn.\n<p><em><strong>Tags:</strong> mechanic:reaction, mechanic:ac, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "ufirecellstonerune",
@@ -315,57 +315,6 @@
         "modifiedTime": null,
         "lastModifiedBy": null
       }
-    },
-    {
-      "_id": "r48778a33xxxxxxx",
-      "name": "U.Firecell Stone - Weapon Effect",
-      "img": "mh-icons/material-rune.webp",
-      "type": "base",
-      "system": {},
-      "changes": [],
-      "disabled": true,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "description": "While you wield this weapon you can use an action to conjure a @item[alchemist's fire (flask)] once a day. If unused for 24 hours, the flask returns to whence it came, where that is, who knows?",
-      "origin": null,
-      "tint": "#ffffff",
-      "transfer": false,
-      "statuses": [],
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "enableCondition": "",
-          "selfTarget": false,
-          "selfTargetAlways": false,
-          "stackable": "noneName",
-          "showIcon": false,
-          "durationExpression": "",
-          "specialDuration": [],
-          "disableIncapacitated": false,
-          "dontApply": false
-        },
-        "amellwind-toolbox": {
-          "runeSide": "weapon",
-          "materialEffectName": null
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      }
     }
   ],
   "folder": null,
@@ -382,9 +331,6 @@
       "sides": {
         "armor": {
           "label": "Armor Effect — Shield"
-        },
-        "weapon": {
-          "label": "Weapon Effect"
         }
       }
     },

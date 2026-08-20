@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Cephalos | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Ranged weapon only) Load Up.</em> Your normal ammo capacity increases by 10 while you wield this weapon.\n<p><em><strong>Tags:</strong> weapon-type:ranged</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Cephalos | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Load Up.</em> While you wield this weapon, you increase the maximum capacity for all your ammo by 2.\n<p><em><strong>Tags:</strong> mechanic:class-feature, type:utility</em></p>",
       "chat": ""
     },
     "identifier": "cephalosscalerune",
@@ -131,7 +131,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "(Ranged only) Normal ammo capacity +10 while equipped (manual — update weapon ammo).",
+      "description": "Increase the maximum capacity for all ammo by 2 while equipped (manual — update weapon ammo).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,

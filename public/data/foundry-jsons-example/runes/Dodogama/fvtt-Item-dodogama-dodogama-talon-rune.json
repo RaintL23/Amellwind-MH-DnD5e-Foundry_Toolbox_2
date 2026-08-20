@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Dodogama | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Gunlance only) Artillery+.</em> While you wield this weapon, your wyvernfire can now be used twice per long rest and you can add your Strength modifier to the damage of your shell attacks.\n<h3>Armor Effect</h3>\n<em>(Charge Blade &amp; Gunlance only) Capacity Boost.</em> This material provides one of the following armor properties depending on which weapon it is placed in:\n• <em>(Charge Blade)</em> Your phial charge maximum is increased by 1.\n• <em>(Gunlance)</em> You can use your shell attack one extra time between rests.\n<p><em><strong>Tags:</strong> weapon-type:gunlance, weapon-type:charge-blade, mechanic:class-feature, mechanic:long-rest</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Dodogama | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<em>(Charge Blade &amp; Gunlance only) Capacity Boost.</em> This material provides one of the following armor properties depending on which weapon it is placed in:\n• <em>(Charge Blade)</em> Your phial charge maximum is increased by 1.\n• <em>(Gunlance)</em> Your gunlance can hold one extra shell.\n<p><em><strong>Tags:</strong> weapon-type:gunlance, weapon-type:charge-blade, mechanic:class-feature</em></p>",
       "chat": ""
     },
     "identifier": "dodogamatalonrune",
@@ -115,57 +115,6 @@
       }
     },
     {
-      "_id": "leVsmfjS4Ejs1enD",
-      "name": "Dodogama Talon - Artillery+",
-      "img": "mh-icons/material-rune.webp",
-      "type": "base",
-      "system": {},
-      "changes": [],
-      "disabled": true,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "description": "(Gunlance only) Wyvernfire 2/long rest; add Str mod to shell attack damage (manual).",
-      "origin": null,
-      "tint": "#ffffff",
-      "transfer": false,
-      "statuses": [],
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "enableCondition": "",
-          "selfTarget": false,
-          "selfTargetAlways": false,
-          "stackable": "noneName",
-          "showIcon": false,
-          "durationExpression": "",
-          "specialDuration": [],
-          "disableIncapacitated": false,
-          "dontApply": false
-        },
-        "amellwind-toolbox": {
-          "runeSide": "weapon",
-          "materialEffectName": "Artillery+"
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      }
-    },
-    {
       "_id": "5RBFwSVEr8UnucgY",
       "name": "Dodogama Talon - Capacity Boost",
       "img": "mh-icons/material-rune.webp",
@@ -182,7 +131,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "(Charge Blade) +1 phial charge max; (Gunlance) +1 shell attack between rests (manual).",
+      "description": "(Charge Blade) +1 phial charge max; (Gunlance) hold one extra shell (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -229,9 +178,6 @@
       "monsterName": "Dodogama",
       "unified": true,
       "sides": {
-        "weapon": {
-          "label": "Weapon Effect — Artillery+"
-        },
         "armor": {
           "label": "Armor Effect — Capacity Boost"
         }

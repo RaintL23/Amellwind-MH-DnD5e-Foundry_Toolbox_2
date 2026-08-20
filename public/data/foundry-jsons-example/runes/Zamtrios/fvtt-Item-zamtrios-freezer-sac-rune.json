@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Zamtrios | CR: 5 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Light Bowgun only)</em> When you hit a creature with your water ammo it must make a @Check[constitution|dc:14] saving throw or have its movement speed reduced to 0 until the end of its next turn on a failed save. On a successful save, the creature's movement speed is reduced by 10 feet.\n<h3>Armor Effect</h3>\n<em>(Spellcaster only)</em> This armor has 2 runes, which it regains daily at dusk. While wearing it, you can expend a rune to cast @spell[armor of agathys].\n<p><em><strong>Tags:</strong> weapon-type:light-bowgun, mechanic:saving-throw, mechanic:movement, type:offensive, class:spellcaster, mechanic:rune-charges, mechanic:spell:lvl1-2</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Zamtrios | CR: 5 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Light Bowgun only)</em> When you hit a creature with your water ammo it must make a @Check[constitution|dc:14] saving throw or have its movement speed reduced to 0 until the end of its next turn on a failed save. On a successful save, the creature's movement speed is reduced by 10 feet.\n<h3>Armor Effect</h3>\n<em>(Spellcaster only)</em> This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 5 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 5 cold damage.\n<p><em><strong>Tags:</strong> weapon-type:light-bowgun, mechanic:saving-throw, mechanic:movement, type:offensive, class:spellcaster, mechanic:rune-charges, mechanic:temporary-hp, damage:cold, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "freezersacrune",
@@ -55,7 +55,7 @@
       "max": "2",
       "recovery": [
         {
-          "period": "dusk",
+          "period": "dawn",
           "type": "recoverAll"
         }
       ]
@@ -172,7 +172,7 @@
     },
     {
       "_id": "x7IjrSWcM0d5x5Sv",
-      "name": "Freezer Sac - Armor of Agathys (Manual)",
+      "name": "Freezer Sac - Magical Ice (Manual)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -187,7 +187,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Spellcaster only: expend 1 of 2 dusk runes to cast armor of agathys (manual — not auto-cast).",
+      "description": "Spellcaster only: expend 1 of 2 dawn runes (action) to gain 5 temporary hit points; melee attackers take 5 cold damage while those hit points remain (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -207,7 +207,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Armor of Agathys"
+          "materialEffectName": "Magical Ice"
         }
       },
       "_stats": {
@@ -238,7 +238,7 @@
           "label": "Weapon Effect — Water Ammo Slow"
         },
         "armor": {
-          "label": "Armor Effect — Armor of Agathys (manual)"
+          "label": "Armor Effect — Magical Ice (manual)"
         }
       }
     },

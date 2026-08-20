@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Rathalos | CR: 10 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<p>You have a +1 bonus to your AC while you wear this armor.</p>\n<p><em><strong>Tags:</strong> mechanic:ac, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Rathalos | CR: 10 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<p>This material has no listed armor or weapon effect in MHMM 2.0.</p>",
       "chat": ""
     },
     "identifier": "rathaloscarapacerune",
@@ -113,64 +113,6 @@
         "modifiedTime": null,
         "lastModifiedBy": null
       }
-    },
-    {
-      "_id": "DGfKFDQWdPLaQtAn",
-      "name": "Rathalos Carapace - +1 AC",
-      "img": "mh-icons/material-rune.webp",
-      "type": "base",
-      "system": {},
-      "changes": [
-        {
-          "key": "system.attributes.ac.bonus",
-          "mode": 2,
-          "value": "1",
-          "priority": 20
-        }
-      ],
-      "disabled": true,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "description": "+1 bonus to AC while you wear this armor.",
-      "origin": null,
-      "tint": "#ffffff",
-      "transfer": false,
-      "statuses": [],
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "enableCondition": "",
-          "selfTarget": false,
-          "selfTargetAlways": false,
-          "stackable": "noneName",
-          "showIcon": false,
-          "durationExpression": "",
-          "specialDuration": [],
-          "disableIncapacitated": false,
-          "dontApply": false
-        },
-        "amellwind-toolbox": {
-          "runeSide": "armor",
-          "materialEffectName": "+1 AC"
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      }
     }
   ],
   "folder": null,
@@ -184,11 +126,7 @@
       "runeName": "Rathalos Carapace",
       "monsterName": "Rathalos",
       "unified": true,
-      "sides": {
-        "armor": {
-          "label": "Armor Effect — +1 AC"
-        }
-      }
+      "sides": {}
     },
     "itemacro": {
       "macro": {

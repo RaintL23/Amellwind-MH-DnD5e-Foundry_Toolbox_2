@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Viper Tobi-Kadachi | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p><em>(Manual / spellcaster note — sourced as Ultraplegia Sac in MHMM.)</em> <em>(Bard, Cleric, Druid, Sorcerer, Warlock, &amp; Wizard only)</em> While you wield this weapon you can cast the @spell[hold person] spell from it, without expending a spell slot. You can use this property twice, regaining all expended uses when you finish a long rest.</p>\n<h3>Armor Effect</h3>\n<p>Whenever you make a saving throw against the @condition[paralyzed] condition, you do so with @variantrule[Advantage|XPHB].</p>\n<p><em><strong>Tags:</strong> class:spellcaster, mechanic:spell, mechanic:long-rest, mechanic:advantage, mechanic:condition, mechanic:saving-throw, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Viper Tobi-Kadachi | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<p>Whenever you make a saving throw against the @condition[paralyzed] condition, you do so with @variantrule[Advantage|XPHB].</p>\n<p><em><strong>Tags:</strong> mechanic:advantage, mechanic:condition, mechanic:saving-throw, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "vultraplegiasacrune",
@@ -115,57 +115,6 @@
       }
     },
     {
-      "_id": "7dhq2d59VyXHXLxL",
-      "name": "V.Ultraplegia Sac - Hold Person (Manual)",
-      "img": "mh-icons/material-rune.webp",
-      "type": "base",
-      "system": {},
-      "changes": [],
-      "disabled": true,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "description": "Spellcaster only: cast hold person 2/long rest from this weapon (manual — not auto-cast).",
-      "origin": null,
-      "tint": "#ffffff",
-      "transfer": false,
-      "statuses": [],
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "enableCondition": "",
-          "selfTarget": false,
-          "selfTargetAlways": false,
-          "stackable": "noneName",
-          "showIcon": false,
-          "durationExpression": "",
-          "specialDuration": [],
-          "disableIncapacitated": false,
-          "dontApply": false
-        },
-        "amellwind-toolbox": {
-          "runeSide": "weapon",
-          "materialEffectName": "Hold Person"
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      }
-    },
-    {
       "_id": "2CU0CJhUTkg0wxRj",
       "name": "V.Ultraplegia Sac - Paralysis Resistance",
       "img": "mh-icons/material-rune.webp",
@@ -229,9 +178,6 @@
       "monsterName": "Viper Tobi-Kadachi",
       "unified": true,
       "sides": {
-        "weapon": {
-          "label": "Weapon Effect — Hold Person (manual)"
-        },
         "armor": {
           "label": "Armor Effect — Paralysis Resistance"
         }
