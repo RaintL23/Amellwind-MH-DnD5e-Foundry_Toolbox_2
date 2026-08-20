@@ -60,6 +60,11 @@ GM Binder two-column layout still leaks into a minority of files (see `QA.md`):
 a following subspecies' actions may appear after the first stat block. Core
 fields (`ac`, `hp`, `loot[]`) keep the **first** block.
 
+Nested 5etools lists (form variants, “one of the following” attacks) were
+flattened into sibling `###` headings. The runtime mapper
+(`sanitizeNamedEntrySection`) folds those children back under the parent and
+splits glued `Name (Recharge)` abilities; it does not rewrite this archive.
+
 ## Ingestion notes
 
 `scripts/build-mm-patreon-supplement.mjs` converts catalog rows into inset loot

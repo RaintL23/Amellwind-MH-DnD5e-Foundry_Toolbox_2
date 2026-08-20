@@ -12,6 +12,10 @@ import {
   mapStatBlockEntries,
   statBlockContentToPlainText,
 } from "@/shared/utils/statblock-entries.mapper";
+import {
+  baseNamesFromNamedEntries,
+  sanitizeNamedEntrySection,
+} from "@/shared/utils/statblock-named-entries.sanitize";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type RawActor = Record<string, any>;
@@ -132,6 +136,11 @@ export function mapActorCore(raw: RawActor): Omit<Monster, "group" | "source" | 
   };
 
   const cr = mapCrString(raw);
+  const sanitizedActions = sanitizeNamedEntrySection(raw.action ?? []);
+  const sanitizedTraits = sanitizeNamedEntrySection(
+    raw.trait ?? [],
+    baseNamesFromNamedEntries(sanitizedActions),
+  );
 
   return {
     name: String(raw.name ?? "Unknown"),
@@ -163,8 +172,8 @@ export function mapActorCore(raw: RawActor): Omit<Monster, "group" | "source" | 
         )
       : [],
     languages: Array.isArray(raw.languages) ? raw.languages : [],
-    traits: mapEntries(raw.trait ?? []),
-    actions: mapEntries(raw.action ?? []),
-    reactions: mapEntries(raw.reaction ?? []),
+    traits: mapEntries(sanitizedTraits),
+    actions: mapEntries(sanitizedActions),
+    reactions: mapEntries(sanitizeNamedEntrySection(raw.reaction ?? [])),
   };
 }

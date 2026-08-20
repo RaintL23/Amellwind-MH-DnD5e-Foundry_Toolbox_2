@@ -6,6 +6,7 @@ import {
   type RawActor,
 } from "@/shared/mappers/actor-from-raw.mapper";
 import { mapStatBlockEntries } from "@/shared/utils/statblock-entries.mapper";
+import { sanitizeNamedEntrySection } from "@/shared/utils/statblock-named-entries.sanitize";
 
 function mapFluffText(fluff: unknown): string {
   if (typeof fluff !== "object" || fluff === null) return "";
@@ -51,7 +52,7 @@ export function mapMonster(raw: any): Monster {
     page: typeof raw.page === "number" ? raw.page : undefined,
     cr,
     environment: Array.isArray(raw.environment) ? raw.environment : undefined,
-    legendaryActions: mapEntries(raw.legendary ?? []),
+    legendaryActions: mapEntries(sanitizeNamedEntrySection(raw.legendary ?? [])),
     loot: raw.fluff ? { rolls: extractRolls(raw.fluff) } : undefined,
     fluff: mapFluffText(raw.fluff),
     bio: mapMonsterBio(raw.fluff),
