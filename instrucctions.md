@@ -993,7 +993,7 @@ Mostrar todos los monstruos en una tabla con las siguientes columnas:
 
 | Columna         | Campo fuente         | Notas                                          |
 | --------------- | -------------------- | ---------------------------------------------- |
-| **Name**        | `name`               |                                                |
+| **Name**        | `name`               | Token from `public/mh-tokens` via `resolveMhTokenPath`. Prefixed/suffixed variants (Tempered, Archtempered, Young, Pup, …) reuse the original monster’s token when they have no art of their own. |
 | **CR**          | `cr`                 | String: puede ser `"1/2"`, `"0"`, `"19"`, etc. |
 | **Tier**        | calculado desde `cr` | Ver tabla de cálculo abajo.                    |
 | **Type**        | `type.type`          | Capitalizar (`"wyvern"` → `"Wyvern"`).         |

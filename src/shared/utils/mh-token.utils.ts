@@ -1,3 +1,10 @@
+/**
+ * Resolve Monster Hunter token art from `mh-tokens.manifest.json`.
+ *
+ * Lookup order: exact name / aliases / slugs, then drop prefix or suffix
+ * words and retry against the original monster (Tempered Dire Miralis →
+ * Dire Miralis). Variants reuse the original token file instead of duplicating art.
+ */
 import manifest from "@/shared/data/mh-tokens.manifest.json";
 
 export interface MhTokenEntry {
@@ -41,6 +48,7 @@ export function normalizeMhTokenLookupKey(name: string): string {
     .toLowerCase()
     .replace(/[''`]/g, "")
     .replace(/\s*\([^)]*\)/g, "")
+    .replace(/[-_]+/g, " ")
     .replace(/\s+/g, " ")
     .replace(/\s*(\d+(?:\.\d+)?)\s*$/g, " $1")
     .trim();
@@ -59,10 +67,20 @@ function lookupKeysForName(name: string): string[] {
     if (!normalized) continue;
     keys.add(normalized);
     keys.add(normalized.replace(/\s+/g, ""));
+    keys.add(normalized.replace(/\s+/g, "-"));
     const alias = TOKEN_NAME_ALIASES[normalized];
     if (alias) keys.add(alias);
   }
   return [...keys];
+}
+
+function pathForKeys(keys: string[]): string | undefined {
+  for (const key of keys) {
+    const slug = MH_TOKEN_MANIFEST.byName[key] ?? key;
+    const path = MH_TOKEN_MANIFEST.tokens[slug]?.path;
+    if (path) return path;
+  }
+  return undefined;
 }
 
 /**
@@ -70,11 +88,22 @@ function lookupKeysForName(name: string): string[] {
  * Returns undefined when no curated token exists.
  */
 export function resolveMhTokenPath(name: string): string | undefined {
-  for (const key of lookupKeysForName(name)) {
-    const slug = MH_TOKEN_MANIFEST.byName[key];
-    if (!slug) continue;
-    return MH_TOKEN_MANIFEST.tokens[slug]?.path;
+  const direct = pathForKeys(lookupKeysForName(name));
+  if (direct) return direct;
+
+  const words = normalizeMhTokenLookupKey(name).split(" ").filter(Boolean);
+  if (words.length < 2) return undefined;
+
+  for (let drop = 1; drop < words.length; drop++) {
+    const withoutPrefix = words.slice(drop).join(" ");
+    const prefixHit = pathForKeys(lookupKeysForName(withoutPrefix));
+    if (prefixHit) return prefixHit;
+
+    const withoutSuffix = words.slice(0, words.length - drop).join(" ");
+    const suffixHit = pathForKeys(lookupKeysForName(withoutSuffix));
+    if (suffixHit) return suffixHit;
   }
+
   return undefined;
 }
 
