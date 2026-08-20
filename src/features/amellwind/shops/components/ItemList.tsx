@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Package } from "lucide-react";
 import { MHItem } from "@/shared/types";
@@ -13,11 +13,13 @@ import { ItemTabBar } from "./ItemTabBar";
 import { SearchInput } from "./SearchInput";
 import { setIfPresent } from "@/shared/utils/list-url-params.utils";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
 
 export function ItemList() {
   const { items, loading, uniqueTypes } = useItems();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selected, setSelected] = useState<MHItem | null>(null);
+  const { value: itemParam, setValue: setItemParam } = useListItemUrlParam("item");
 
   const search = searchParams.get("q") ?? "";
   const defaultType = uniqueTypes[0] ?? "";
@@ -35,6 +37,8 @@ export function ItemList() {
               : (prev.get("type") ?? defaultType);
           setIfPresent(next, "q", q);
           if (type && type !== defaultType) next.set("type", type);
+          const item = prev.get("item");
+          if (item) next.set("item", item);
           return next;
         },
         { replace: true },
@@ -67,8 +71,32 @@ export function ItemList() {
   const handleTabChange = (tab: string) => {
     commitSearch("");
     patchUrl({ type: tab, q: "" });
-    setSelected(null);
   };
+
+  const handleSelect = useCallback(
+    (item: MHItem | null) => {
+      setSelected(item);
+      setItemParam(item?.name ?? null);
+    },
+    [setItemParam],
+  );
+
+  const handleClose = useCallback(() => {
+    setSelected(null);
+    setItemParam(null);
+  }, [setItemParam]);
+
+  useEffect(() => {
+    if (!itemParam) {
+      setSelected(null);
+      return;
+    }
+    if (loading) return;
+    const found = items.find(
+      (item) => item.name.toLowerCase() === itemParam.toLowerCase(),
+    );
+    if (found) setSelected(found);
+  }, [itemParam, items, loading]);
 
   return (
     <div className="p-6 mx-auto">
@@ -99,7 +127,7 @@ export function ItemList() {
           results={searchResults}
           query={appliedSearch}
           selected={selected}
-          onSelect={setSelected}
+          onSelect={handleSelect}
         />
       ) : (
         <>
@@ -111,7 +139,7 @@ export function ItemList() {
           <ItemsTable
             items={tabItems}
             selected={selected}
-            onSelect={setSelected}
+            onSelect={handleSelect}
           />
         </>
       )}
@@ -120,10 +148,10 @@ export function ItemList() {
         <>
           <div
             className="fixed inset-0 z-20"
-            onClick={() => setSelected(null)}
+            onClick={handleClose}
             aria-hidden
           />
-          <ItemDetailPanel item={selected} onClose={() => setSelected(null)} />
+          <ItemDetailPanel item={selected} onClose={handleClose} />
         </>
       )}
 

@@ -25,10 +25,14 @@ export async function getMonsterById(
   if (!parsed) return undefined;
   const monsters = await service.getAll();
   const exact = monsters.find(
-    (m) => m.name === parsed.name && m.source === parsed.source,
+    (m) =>
+      m.name.toLowerCase() === parsed.name.toLowerCase() &&
+      m.source.toLowerCase() === parsed.source.toLowerCase(),
   );
   if (exact) return exact;
-  return monsters.find((m) => m.name === parsed.name);
+  return monsters.find(
+    (m) => m.name.toLowerCase() === parsed.name.toLowerCase(),
+  );
 }
 
 export async function getMonstersByGroup(group: string): Promise<Monster[]> {

@@ -39,6 +39,7 @@ export function FeatList() {
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
     useDebouncedListSearch(urlSearch, commitSearchToUrl);
   const filter = getString("filter") as FeatFilter;
+  const urlFeat = getString("feat");
   const [selected, setSelected] = useState<Feat | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -47,6 +48,22 @@ export function FeatList() {
       .then(setFeats)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!urlFeat) {
+      setDialogOpen(false);
+      setSelected(null);
+      return;
+    }
+    if (loading) return;
+    const found = feats.find(
+      (item) => item.name.toLowerCase() === urlFeat.toLowerCase(),
+    );
+    if (found) {
+      setSelected(found);
+      setDialogOpen(true);
+    }
+  }, [urlFeat, feats, loading]);
 
   const filtered = useMemo(() => {
     let result = feats;
@@ -76,6 +93,7 @@ export function FeatList() {
   function handleSelect(item: Feat) {
     setSelected(item);
     setDialogOpen(true);
+    setString("feat", item.name);
   }
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -141,7 +159,10 @@ export function FeatList() {
         <FeatDetailDialog
           feat={selected}
           open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) setString("feat", "");
+          }}
         />
       )}
     </div>

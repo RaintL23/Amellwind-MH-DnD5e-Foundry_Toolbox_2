@@ -78,7 +78,14 @@ export function useClassDetailPage(classId: string) {
       }
       const classes = await getAllClasses();
       if (cancelled) return;
-      const found = classes.find((c) => c.id === classId);
+      const decoded = decodeURIComponent(classId);
+      const found =
+        classes.find((c) => c.id === classId || c.id === decoded) ??
+        sortClassVariants(
+          classes.filter(
+            (c) => c.name.toLowerCase() === decoded.toLowerCase(),
+          ),
+        )[0];
       if (!found) {
         setNotFound(true);
         setCls(null);

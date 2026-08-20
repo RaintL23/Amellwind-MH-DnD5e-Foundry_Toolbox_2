@@ -40,6 +40,7 @@ export function SpeciesList() {
   const categoryFilter = getString("category") as "" | SpeciesCategory;
   const parentFilter = getString("parent");
   const viewMode = (getString("view", "All") || "All") as ViewMode;
+  const urlSpecies = getString("species");
   const [selected, setSelected] = useState<Species | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -48,6 +49,22 @@ export function SpeciesList() {
       .then(setSpecies)
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (!urlSpecies) {
+      setDialogOpen(false);
+      setSelected(null);
+      return;
+    }
+    if (loading) return;
+    const found = species.find(
+      (item) => item.name.toLowerCase() === urlSpecies.toLowerCase(),
+    );
+    if (found) {
+      setSelected(found);
+      setDialogOpen(true);
+    }
+  }, [urlSpecies, species, loading]);
 
   const parentOptions = useMemo(() => {
     const set = new Set<string>();
@@ -124,6 +141,7 @@ export function SpeciesList() {
   function handleSelect(item: Species) {
     setSelected(item);
     setDialogOpen(true);
+    setString("species", item.name);
   }
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -198,7 +216,10 @@ export function SpeciesList() {
         <SpeciesDetailDialog
           species={selected}
           open={dialogOpen}
-          onOpenChange={setDialogOpen}
+          onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) setString("species", "");
+          }}
         />
       )}
     </div>

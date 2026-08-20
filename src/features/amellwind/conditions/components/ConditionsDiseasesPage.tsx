@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import type { MhCondition } from "@/shared/types";
 import type { MhDisease } from "@/shared/types";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListUrlState } from "@/shared/hooks/useListUrlState";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { AlertTriangle, Biohazard, Search } from "lucide-react";
@@ -15,6 +16,9 @@ import { DiseaseDetailDialog } from "@/features/amellwind/diseases/components/Di
 import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 
 export function ConditionsDiseasesPage() {
+  const { getString, patchFields } = useListUrlState();
+  const urlCondition = getString("condition");
+  const urlDisease = getString("disease");
   const [conditions, setConditions] = useState<MhCondition[]>([]);
   const [diseases, setDiseases] = useState<MhDisease[]>([]);
   const [loading, setLoading] = useState(true);
@@ -25,6 +29,7 @@ export function ConditionsDiseasesPage() {
   const [selectedDisease, setSelectedDisease] = useState<MhDisease | null>(null);
   const [conditionDialogOpen, setConditionDialogOpen] = useState(false);
   const [diseaseDialogOpen, setDiseaseDialogOpen] = useState(false);
+  const [tab, setTab] = useState(urlDisease ? "diseases" : "conditions");
 
   useEffect(() => {
     Promise.all([getAllConditions(), getAllDiseases()])
@@ -34,6 +39,39 @@ export function ConditionsDiseasesPage() {
       })
       .finally(() => setLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (urlDisease) setTab("diseases");
+    else if (urlCondition) setTab("conditions");
+  }, [urlCondition, urlDisease]);
+
+  useEffect(() => {
+    if (loading) return;
+    if (!urlCondition) {
+      setConditionDialogOpen(false);
+      setSelectedCondition(null);
+    } else {
+      const found = conditions.find(
+        (item) => item.name.toLowerCase() === urlCondition.toLowerCase(),
+      );
+      if (found) {
+        setSelectedCondition(found);
+        setConditionDialogOpen(true);
+      }
+    }
+    if (!urlDisease) {
+      setDiseaseDialogOpen(false);
+      setSelectedDisease(null);
+    } else {
+      const found = diseases.find(
+        (item) => item.name.toLowerCase() === urlDisease.toLowerCase(),
+      );
+      if (found) {
+        setSelectedDisease(found);
+        setDiseaseDialogOpen(true);
+      }
+    }
+  }, [urlCondition, urlDisease, conditions, diseases, loading]);
 
   const filteredConditions = useMemo(() => {
     const q = appliedSearch.trim().toLowerCase();
@@ -93,7 +131,7 @@ export function ConditionsDiseasesPage() {
 
       {/* Tabs + content */}
       <div className="flex-1 overflow-y-auto px-6 py-5">
-        <Tabs defaultValue="conditions">
+        <Tabs value={tab} onValueChange={setTab}>
           <TabsList className="mb-5">
             <TabsTrigger value="conditions">
               <AlertTriangle className="h-3.5 w-3.5 text-rose-400" />
@@ -131,8 +169,10 @@ export function ConditionsDiseasesPage() {
                     key={item.id}
                     condition={item}
                     onClick={() => {
-                      setSelectedCondition(item);
-                      setConditionDialogOpen(true);
+                      patchFields({
+                        condition: item.name,
+                        disease: undefined,
+                      });
                     }}
                   />
                 ))}
@@ -156,8 +196,10 @@ export function ConditionsDiseasesPage() {
                     key={item.id}
                     disease={item}
                     onClick={() => {
-                      setSelectedDisease(item);
-                      setDiseaseDialogOpen(true);
+                      patchFields({
+                        disease: item.name,
+                        condition: undefined,
+                      });
                     }}
                   />
                 ))}
@@ -171,14 +213,20 @@ export function ConditionsDiseasesPage() {
         <ConditionDetailDialog
           condition={selectedCondition}
           open={conditionDialogOpen}
-          onOpenChange={setConditionDialogOpen}
+          onOpenChange={(open) => {
+            setConditionDialogOpen(open);
+            if (!open) patchFields({ condition: undefined });
+          }}
         />
       )}
       {diseaseDialogOpen && selectedDisease && (
         <DiseaseDetailDialog
           disease={selectedDisease}
           open={diseaseDialogOpen}
-          onOpenChange={setDiseaseDialogOpen}
+          onOpenChange={(open) => {
+            setDiseaseDialogOpen(open);
+            if (!open) patchFields({ disease: undefined });
+          }}
         />
       )}
     </div>
