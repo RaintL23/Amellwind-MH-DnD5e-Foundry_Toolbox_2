@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatTag, tagVariant } from "../../utils/rune-tag.utils";
 import { cn } from "@/shared/utils/cn";
 import { splitDisplayTextLines } from "@/shared/utils/fivetools-parser";
+import { RUNE_CATALOG_PHRASE_LINKS } from "../../utils/rune-catalog-links";
 
 interface EffectSectionProps {
   label: string;
@@ -80,6 +81,7 @@ export function EffectSection({
               text={line.startsWith("•") ? line.replace(/^•\s*/, "") : line}
               slot={slot}
               index={materialEffectIndex}
+              phraseLinks={RUNE_CATALOG_PHRASE_LINKS}
             />
           </p>
         ))}
