@@ -24,9 +24,11 @@ export async function getMonsterById(
   const parsed = parseMonsterId(monsterId);
   if (!parsed) return undefined;
   const monsters = await service.getAll();
-  return monsters.find(
+  const exact = monsters.find(
     (m) => m.name === parsed.name && m.source === parsed.source,
   );
+  if (exact) return exact;
+  return monsters.find((m) => m.name === parsed.name);
 }
 
 export async function getMonstersByGroup(group: string): Promise<Monster[]> {

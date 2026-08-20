@@ -21,6 +21,7 @@ import {
   parseRuneListUrlState,
 } from "./rune-list-url.utils";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { Layers } from "lucide-react";
 
@@ -237,6 +238,8 @@ export function RuneList() {
             </div>
           )}
         </div>
+
+        <MhmmSourceNotice className="mb-4" />
 
         <ObtainMaterialsPanel />
         <RulesPanel />

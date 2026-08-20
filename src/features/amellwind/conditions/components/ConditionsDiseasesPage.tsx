@@ -12,6 +12,7 @@ import { ConditionCard } from "./ConditionCard";
 import { ConditionDetailDialog } from "./ConditionDetailDialog";
 import { DiseaseCard } from "@/features/amellwind/diseases/components/DiseaseCard";
 import { DiseaseDetailDialog } from "@/features/amellwind/diseases/components/DiseaseDetailDialog";
+import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 
 export function ConditionsDiseasesPage() {
   const [conditions, setConditions] = useState<MhCondition[]>([]);
@@ -74,6 +75,7 @@ export function ConditionsDiseasesPage() {
           <span className="text-foreground/80">Monster Hunter Monster Manual</span>{" "}
           (Conditions, Poisons, and Diseases chapter).
         </p>
+        <MhmmSourceNotice className="mt-4" />
       </div>
 
       {/* Search bar */}

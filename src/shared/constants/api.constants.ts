@@ -34,6 +34,24 @@ export const UA_BASE_URL = `${GITHUB_RAW}/${UA_MIRROR}/${UA_REF}`;
 /** Amellwind Monster Hunter Monster Manual (homebrew). */
 export const MONSTER_MANUAL_URL = `${HOMEBREW_COLLECTION_BASE}/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json`;
 
+/**
+ * Local MHMM Patreon 2.0 overlay (Loot Tables PDF). Merged in
+ * `getMonsterData()`; local sheets win on normalized name. GitHub fills
+ * names the PDF does not have.
+ */
+export const MM_PATREON_SUPPLEMENT_URL = "/data/mhmm-patreon-2.0/supplement.json";
+
+/** Free MHMM PDF post used as the Monster Manual / rune source. */
+export const AMELLWIND_MHMM_PATREON_URL =
+  "https://www.patreon.com/amellwind/posts/monster-hunter-137502033";
+
+/** IndexedDB key for the raw GitHub MHMM `monster[]` feed. */
+export const MM_GITHUB_FEED_KEY = "github";
+/** IndexedDB key for the raw GitHub MHMM `condition[]` feed. */
+export const MM_GITHUB_CONDITION_KEY = "githubCondition";
+/** IndexedDB key for the raw GitHub MHMM `disease[]` feed. */
+export const MM_GITHUB_DISEASE_KEY = "githubDisease";
+
 /** Amellwind's Guide to Monster Hunting (homebrew): items, species, backgrounds, feats, MH classes, class features, weapon optional features and variant rules. */
 export const GUIDE_TO_MONSTER_HUNTING_URL = `${HOMEBREW_COLLECTION_BASE}/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json`;
 

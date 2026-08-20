@@ -3,7 +3,16 @@ import {
   MONSTER_MANUAL_URL,
   GUIDE_TO_MONSTER_HUNTING_URL,
   CACHE_TTL_MS,
+  MM_GITHUB_FEED_KEY,
+  MM_GITHUB_CONDITION_KEY,
+  MM_GITHUB_DISEASE_KEY,
 } from "../constants/api.constants";
+import {
+  getRawMonsterName,
+  loadMmPatreonOverlay,
+  mergeMonsterFeeds,
+  mergeNamedFeeds,
+} from "./mm-supplement";
 
 const OPT_FEATURES_STORE_KEY = "optfeatures";
 const RACE_STORE_KEY = "race";
@@ -18,7 +27,9 @@ const CONDITION_STORE_KEY = "condition";
 const DISEASE_STORE_KEY = "disease";
 
 let mmRawCache: unknown[] | null = null;
-let mmJsonPromise: Promise<Record<string, unknown>> | null = null;
+let mmRawPromise: Promise<unknown[]> | null = null;
+let mmConditionCache: unknown[] | null = null;
+let mmDiseaseCache: unknown[] | null = null;
 let gtmhJsonPromise: Promise<Record<string, unknown>> | null = null;
 
 interface DataMeta {
@@ -79,15 +90,92 @@ async function fetchAndCache(
   }
 }
 
-/** Persist the derived MM sub-collections (conditions, diseases) from the full JSON. */
+async function readGithubNamedFeed(
+  githubKey: string,
+  legacyDataKey: string,
+): Promise<unknown[]> {
+  const github = await getStoreValue<unknown[]>("MM_CURRENT", githubKey);
+  if (Array.isArray(github) && github.length > 0) return github;
+  const data = (await getStoreValue<unknown[]>("MM_CURRENT", legacyDataKey)) ?? [];
+  return Array.isArray(data) ? data : [];
+}
+
+async function readGithubMonsterFeed(): Promise<unknown[]> {
+  return readGithubNamedFeed(MM_GITHUB_FEED_KEY, "data");
+}
+
+async function persistMergedNamedList(options: {
+  githubFeed?: unknown[];
+  githubKey: string;
+  dataKey: string;
+  local: unknown[];
+  extraCoveredNames?: string[];
+}): Promise<unknown[]> {
+  const github = options.githubFeed ?? (await readGithubNamedFeed(options.githubKey, options.dataKey));
+  if (options.local.length === 0) {
+    if (options.githubFeed) {
+      await setStoreValue("MM_CURRENT", options.githubKey, github);
+    }
+    const existing =
+      (await getStoreValue<unknown[]>("MM_CURRENT", options.dataKey)) ?? github;
+    return Array.isArray(existing) && existing.length > 0 ? existing : github;
+  }
+  const { items } = mergeNamedFeeds(github, options.local, options.extraCoveredNames);
+  await setStoreValue("MM_CURRENT", options.githubKey, github);
+  await setStoreValue("MM_CURRENT", options.dataKey, items);
+  return items;
+}
+
+/**
+ * Merge the Patreon PDF overlay (local wins) onto the GitHub feed and persist
+ * snapshots: `github*` = raw feed, `data` / `condition` / `disease` = UI lists.
+ */
+async function persistMergedMonsterData(
+  githubFeed?: unknown[],
+): Promise<unknown[]> {
+  const overlay = await loadMmPatreonOverlay();
+  const github = githubFeed ?? (await readGithubMonsterFeed());
+  let monsters: unknown[];
+  if (overlay.monster.length === 0) {
+    if (githubFeed) {
+      await setStoreValue("MM_CURRENT", MM_GITHUB_FEED_KEY, github);
+    }
+    const existing =
+      (await getStoreValue<unknown[]>("MM_CURRENT", "data")) ?? github;
+    monsters = Array.isArray(existing) && existing.length > 0 ? existing : github;
+  } else {
+    monsters = mergeMonsterFeeds(github, overlay.monster).monsters;
+    await setStoreValue("MM_CURRENT", MM_GITHUB_FEED_KEY, github);
+    await setStoreValue("MM_CURRENT", "data", monsters);
+  }
+  mmRawCache = monsters;
+
+  const localConditionNames = overlay.condition.map(getRawMonsterName);
+  const localDiseaseNames = overlay.disease.map(getRawMonsterName);
+  mmConditionCache = await persistMergedNamedList({
+    githubKey: MM_GITHUB_CONDITION_KEY,
+    dataKey: CONDITION_STORE_KEY,
+    local: overlay.condition,
+    extraCoveredNames: localDiseaseNames,
+  });
+  mmDiseaseCache = await persistMergedNamedList({
+    githubKey: MM_GITHUB_DISEASE_KEY,
+    dataKey: DISEASE_STORE_KEY,
+    local: overlay.disease,
+    extraCoveredNames: localConditionNames,
+  });
+  return monsters;
+}
+
+/** Persist GitHub snapshots of MM sub-collections; overlay merge happens after. */
 async function writeMmDerivedStores(
   json: Record<string, unknown>,
 ): Promise<void> {
   if (Array.isArray(json.condition)) {
-    await setStoreValue("MM_CURRENT", CONDITION_STORE_KEY, json.condition);
+    await setStoreValue("MM_CURRENT", MM_GITHUB_CONDITION_KEY, json.condition);
   }
   if (Array.isArray(json.disease)) {
-    await setStoreValue("MM_CURRENT", DISEASE_STORE_KEY, json.disease);
+    await setStoreValue("MM_CURRENT", MM_GITHUB_DISEASE_KEY, json.disease);
   }
 }
 
@@ -148,21 +236,40 @@ export interface SyncOptions {
 let mmRefreshInFlight = false;
 let gtmhRefreshInFlight = false;
 
+async function fetchAndCacheMonsterManual(): Promise<unknown[] | null> {
+  try {
+    const response = await fetch(MONSTER_MANUAL_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const json = (await response.json()) as Record<string, unknown>;
+    const github: unknown[] = Array.isArray(json.monster)
+      ? (json.monster as unknown[])
+      : [];
+
+    const current = await getStoreValue("MM_CURRENT", "data");
+    if (current !== undefined) {
+      await setStoreValue("MM_PREVIOUS", "data", current);
+    }
+
+    await setStoreValue("MM_META", "meta", {
+      timestamp: Date.now(),
+      url: MONSTER_MANUAL_URL,
+    } satisfies DataMeta);
+    await writeMmDerivedStores(json);
+    return persistMergedMonsterData(github);
+  } catch (error) {
+    console.warn(`[SyncService] Fetch failed for ${MONSTER_MANUAL_URL}:`, error);
+    return null;
+  }
+}
+
 /** Background refresh of the Monster Manual feed; updates the stores for the next load. */
 async function refreshMonsterManual(onUpdated?: OnDataUpdated): Promise<void> {
   if (mmRefreshInFlight) return;
   mmRefreshInFlight = true;
   try {
-    const fetched = await fetchAndCache(
-      MONSTER_MANUAL_URL,
-      "MM_CURRENT",
-      "MM_PREVIOUS",
-      "MM_META",
-      "monster",
-      writeMmDerivedStores,
-    );
+    const fetched = await fetchAndCacheMonsterManual();
     if (fetched !== null) {
-      mmRawCache = null;
       onUpdated?.({ mm: true, gtmh: false });
     }
   } finally {
@@ -220,22 +327,27 @@ export async function syncData(options: SyncOptions = {}): Promise<SyncResult> {
   await Promise.all([
     (async () => {
       if (mmStored !== undefined) {
-        mmData = mmStored;
-        if (!mmFresh) void refreshMonsterManual(onUpdated);
-      } else {
-        const fetched = await fetchAndCache(
-          MONSTER_MANUAL_URL,
+        const hadGithubFeed = await getStoreValue<unknown[]>(
           "MM_CURRENT",
-          "MM_PREVIOUS",
-          "MM_META",
-          "monster",
-          writeMmDerivedStores,
+          MM_GITHUB_FEED_KEY,
         );
-        if (fetched !== null) {
-          mmData = fetched as unknown[];
+        const migrating = !Array.isArray(hadGithubFeed);
+        mmData = await persistMergedMonsterData();
+        if (migrating) {
           mmUpdated = true;
-          mmRawCache = null;
           onUpdated?.({ mm: true, gtmh: false });
+        }
+        // On first local-wins migrate, refresh GitHub so `github` is the raw
+        // feed rather than a previously merged list sitting in `data`.
+        if (migrating || !mmFresh) void refreshMonsterManual(onUpdated);
+      } else {
+        const fetched = await fetchAndCacheMonsterManual();
+        if (fetched !== null) {
+          mmData = fetched;
+          mmUpdated = true;
+          onUpdated?.({ mm: true, gtmh: false });
+        } else {
+          mmData = await persistMergedMonsterData([]);
         }
       }
     })(),
@@ -264,65 +376,43 @@ export async function syncData(options: SyncOptions = {}): Promise<SyncResult> {
   return { mmData, gtmhData, updated: { mm: mmUpdated, gtmh: gtmhUpdated } };
 }
 
+async function loadMergedMonsterData(): Promise<unknown[]> {
+  return persistMergedMonsterData();
+}
+
 export async function getMonsterData(): Promise<unknown[]> {
   if (mmRawCache) return mmRawCache;
-  const data = await getStoreValue<unknown[]>("MM_CURRENT", "data");
-  mmRawCache = data ?? [];
-  return mmRawCache;
+  if (!mmRawPromise) {
+    mmRawPromise = loadMergedMonsterData().finally(() => {
+      mmRawPromise = null;
+    });
+  }
+  return mmRawPromise;
 }
 
 export function clearMonsterDataCache(): void {
   mmRawCache = null;
-}
-
-async function fetchMmJsonOnce(): Promise<Record<string, unknown>> {
-  if (!mmJsonPromise) {
-    mmJsonPromise = fetch(MONSTER_MANUAL_URL)
-      .then((response) =>
-        response.ok
-          ? (response.json() as Promise<Record<string, unknown>>)
-          : ({} as Record<string, unknown>),
-      )
-      .catch(() => ({} as Record<string, unknown>));
-  }
-  return mmJsonPromise;
-}
-
-async function ensureMmArrayStore(
-  jsonKey: string,
-  storeKey: string,
-): Promise<unknown[]> {
-  const cached = await getStoreValue<unknown[]>("MM_CURRENT", storeKey);
-  if (cached && cached.length > 0) return cached;
-
-  try {
-    const json = await fetchMmJsonOnce();
-    const data: unknown[] = Array.isArray(json[jsonKey])
-      ? (json[jsonKey] as unknown[])
-      : [];
-    if (data.length > 0) {
-      await setStoreValue("MM_CURRENT", storeKey, data);
-    }
-    return data;
-  } catch {
-    return [];
-  }
+  mmRawPromise = null;
+  mmConditionCache = null;
+  mmDiseaseCache = null;
 }
 
 /**
- * Returns the raw condition array from the MHMM JSON.
- * Lazy-populates from remote if not yet cached.
+ * Returns the raw condition array (PDF overlay wins; GitHub fills gaps).
  */
 export async function getConditionsRaw(): Promise<unknown[]> {
-  return ensureMmArrayStore("condition", CONDITION_STORE_KEY);
+  if (mmConditionCache) return mmConditionCache;
+  await persistMergedMonsterData();
+  return mmConditionCache ?? [];
 }
 
 /**
- * Returns the raw disease array from the MHMM JSON.
- * Lazy-populates from remote if not yet cached.
+ * Returns the raw disease array (PDF overlay wins; GitHub fills gaps).
  */
 export async function getDiseasesRaw(): Promise<unknown[]> {
-  return ensureMmArrayStore("disease", DISEASE_STORE_KEY);
+  if (mmDiseaseCache) return mmDiseaseCache;
+  await persistMergedMonsterData();
+  return mmDiseaseCache ?? [];
 }
 
 async function fetchGtmhJsonOnce(): Promise<Record<string, unknown>> {

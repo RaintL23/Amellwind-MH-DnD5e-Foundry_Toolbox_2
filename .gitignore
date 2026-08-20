@@ -37,13 +37,14 @@ coverage/
 # ── RPG Cards (generadas por script) ─────────────────────────
 public/rpg-cards/
 
-# ── Scripts (solo scrape-rpgbot.mjs versionado) ──────────────
+# ── Scripts (allowlist; the rest of scripts/ stays local) ────
 scripts/*
 !scripts/scrape-rpgbot.mjs
 !scripts/generate-raintdm-manifest.mjs
 !scripts/optimize-mh-icons.mjs
 !scripts/build-magic-item-pricing.mjs
 !scripts/build-foundry-module.mjs
+!scripts/build-mm-patreon-supplement.mjs
 !scripts/data/
 !scripts/data/magic-item-pricing.csv
 

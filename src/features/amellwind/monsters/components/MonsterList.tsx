@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { toMonsterId } from "../utils/monster-id.utils";
 import { buildMonsterFilterSections } from "../utils/monster-filter-sections";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 import { MhTokenImage } from "@/shared/components/MhTokenImage";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
@@ -323,6 +324,7 @@ export function MonsterList() {
             </>
           )}
         </p>
+        <MhmmSourceNotice className="mt-4" />
       </div>
 
       <ListSearchWithFilters
