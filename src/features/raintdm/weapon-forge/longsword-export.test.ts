@@ -33,6 +33,9 @@ describe("Longsword Weapon Forge catalog", () => {
     expect(legendary?.columns["Spirit Gain"]).toBe("2");
     expect(legendary?.columns.Features).toEqual(
       expect.arrayContaining([
+        "Foresight Slash Upgrade I",
+        "Spirit Thrust Upgrade I",
+        "Spirit Roundslash Upgrade I",
         "Special Sheathe (Iai Spirit Slash)",
         "Spirit Release Slash",
       ]),
@@ -117,10 +120,18 @@ describe("Longsword Weapon Forge catalog", () => {
       (rareBlade?.description as { chatFlavor?: string } | undefined)
         ?.chatFlavor,
     ).toContain("1d6");
-    expect(
-      (rareItem.flags as { itemacro?: { macro?: { command?: string } } })
-        .itemacro?.macro?.command,
-    ).toContain("Foresight Slash");
+    const flags = rareItem.flags as {
+      itemacro?: { macro?: { command?: string } };
+      world?: {
+        longsword?: {
+          isLongsword?: boolean;
+          spiritGain?: number;
+          techniqueSpiritOnHit?: boolean;
+        };
+      };
+    };
+    expect(flags.world?.longsword?.techniqueSpiritOnHit).toBe(false);
+    expect(flags.itemacro?.macro?.command).toContain("Foresight Slash");
 
     const legendaryIndex = weapon.rarityRows.findIndex(
       (r) => r.rarity === "Legendary",
@@ -140,5 +151,18 @@ describe("Longsword Weapon Forge catalog", () => {
     expect((iai?.activation as { type?: string } | undefined)?.type).toBe(
       "bonus",
     );
+
+    const legendaryFlags = legendaryItem.flags as {
+      world?: { longsword?: { techniqueSpiritOnHit?: boolean } };
+    };
+    expect(legendaryFlags.world?.longsword?.techniqueSpiritOnHit).toBe(true);
+
+    const legendaryCounter = Object.values(legendaryActivities).find(
+      (a) => String(a.name ?? "") === "Foresight Slash: Counter",
+    );
+    expect(
+      (legendaryCounter?.description as { chatFlavor?: string } | undefined)
+        ?.chatFlavor,
+    ).toContain("gain 1 spirit");
   });
 });

@@ -11,6 +11,9 @@
  *   Rolls 1d8 and applies system.attributes.ac.bonus + N with dae.specialDuration
  *   isAttacked so Midi can recheck the triggering attack (Shield / Lance pattern).
  *   If that causes a miss: refund 1 spirit and use Foresight Slash: Counter.
+ *
+ * Legendary techniqueSpiritOnHit:
+ *   Foresight Counter / Spirit Thrust / Spirit Roundslash each grant 1 spirit on a hit.
  */
 export const LONGSWORD_ITEM_MACRO = `// Longsword — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)
 // On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro
@@ -18,6 +21,7 @@ export const LONGSWORD_ITEM_MACRO = `// Longsword — Item Macro (MidiQOL 12.4 /
 // Spirit Gauge: recover spiritGain on a normal Attack hit (not Blade / replace / Foresight).
 // Foresight Slash: spend 2 spirit, +1d8 AC vs the triggering melee hit (Midi rechecks).
 //   On a miss caused this way: refund 1 spirit and use Foresight Slash: Counter.
+// Legendary: Foresight Counter / Spirit Thrust / Spirit Roundslash grant 1 spirit on a hit.
 
 const esc = (value) => {
   const s = String(value ?? "");
@@ -62,13 +66,19 @@ const isSpiritBlade =
   actId.includes("spirit-blade")
   || actName.includes("spirit blade");
 
-const isSpiritReplace =
+const isSpiritThrust =
   actId.includes("spirit-thrust")
-  || actId.includes("spirit-roundslash")
+  || actName.includes("spirit thrust");
+
+const isSpiritRoundslash =
+  actId.includes("spirit-roundslash")
+  || actName.includes("spirit roundslash");
+
+const isSpiritReplace =
+  isSpiritThrust
+  || isSpiritRoundslash
   || actId.includes("helm-breaker")
   || actId.includes("iai")
-  || actName.includes("spirit thrust")
-  || actName.includes("spirit roundslash")
   || actName.includes("helm breaker")
   || actName.includes("iai");
 
@@ -105,6 +115,8 @@ const spiritGain = Math.max(
   1,
   Number(foundry.utils.getProperty(item, "flags.world.longsword.spiritGain")) || 1,
 );
+const techniqueSpiritOnHit =
+  foundry.utils.getProperty(item, "flags.world.longsword.techniqueSpiritOnHit") === true;
 
 const isForesightAc = (ef) =>
   foundry.utils.getProperty(ef, "flags.world.longsword.isForesightAc") === true
@@ -236,7 +248,26 @@ if (isForesight) {
   return;
 }
 
-if (isForesightCounter || isSpiritBlade) return;
+if (isSpiritBlade) return;
+
+const isTechniqueOnHitGain =
+  techniqueSpiritOnHit
+  && (isForesightCounter || isSpiritThrust || isSpiritRoundslash);
+
+if (isTechniqueOnHitGain) {
+  if (macroPass && !macroPass.includes("postactiveeffects")) return;
+  if (hitCount <= 0) return;
+  if (spent <= 0) return;
+  await item.update({ "system.uses.spent": spent - 1 });
+  const left = max - (spent - 1);
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+    content: \`<div class="dnd5e2"><p><strong>Spirit Gauge</strong> — \${esc(rolled?.name ?? workflow?.activity?.name ?? "Spirit technique")} hit: gained 1 spirit (\${left}/\${max}).</p></div>\`,
+  });
+  return;
+}
+
+if (isForesightCounter) return;
 if (!isAttack) return;
 if (macroPass && !macroPass.includes("postactiveeffects")) return;
 if (hitCount <= 0) return;

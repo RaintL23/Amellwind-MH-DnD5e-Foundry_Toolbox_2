@@ -50,7 +50,7 @@
               "5",
               "+3",
               "+3",
-              "Special Sheathe (Iai Spirit Slash), Spirit Release Slash",
+              "Foresight Slash Upgrade I, Spirit Thrust Upgrade I, Spirit Roundslash Upgrade I, Special Sheathe (Iai Spirit Slash), Spirit Release Slash",
               "2"
             ]
           ]
@@ -69,7 +69,7 @@
       {
         "id": "2c9e4b71-8d55-4a02-b3f1-7a6c91e04d22",
         "name": "Spirit Gauge",
-        "description": "This weapon holds up to 6 spirit (the gauge starts empty). When you hit a creature with a normal attack using this weapon (an attack you did not replace with a Spirit technique), you gain 1 spirit. You lose all spirit if you don't hit a creature with this weapon within 1 minute or if you become Incapacitated.\n\nSpirit techniques that replace an attack do not generate spirit. You cannot apply Spirit Blade to the same attack you replace with a Spirit technique."
+        "description": "This weapon holds up to 6 spirit (the gauge starts empty). When you hit a creature with a normal attack using this weapon (an attack you did not replace with a Spirit technique), you gain 1 spirit. You lose all spirit if you don't hit a creature with this weapon within 1 minute or if you become Incapacitated.\n\nSpirit techniques that replace an attack do not generate spirit unless a later upgrade says otherwise. You cannot apply Spirit Blade to the same attack you replace with a Spirit technique."
       },
       {
         "id": "5a1d8e33-6f40-4c88-ae12-90b7d3c54111",
@@ -88,6 +88,12 @@
         "description": "As a Reaction when a creature you can see hits you with a melee attack, you can expend 2 spirits. Roll 1d8 and add it to your AC against that attack, potentially causing it to miss. If this causes the attack to miss, you can make one attack with this weapon against the attacker as part of the same Reaction, and you regain 1 spirit. You can't use this feature if you have no spirit."
       },
       {
+        "id": "a3c8e1d2-4f7b-4a90-9c12-6e5d8b0a31cc",
+        "name": "Foresight Slash Upgrade I",
+        "description": "When the Foresight Slash counter-attack hits, you gain 1 spirit (in addition to the spirit you regain if you caused the triggering attack to miss).",
+        "upgradesFromId": "9d44e12f-0c7b-4a91-8e56-2f18c3a7b044"
+      },
+      {
         "id": "c4e90a18-3d27-4b6f-a821-e09f5c7d2055",
         "name": "Spirit Gauge Upgrade II",
         "description": "When you hit with a normal attack using this weapon, you gain 2 spirit instead of 1.",
@@ -99,9 +105,21 @@
         "description": "When you take the Attack action, you can replace one of those attacks with a Spirit Thrust. Expend 2 spirits: this attack deals piercing damage instead of slashing. On a hit, you can move up to 15 feet in a straight line through the target's space without provoking Opportunity Attacks. This attack does not generate spirit."
       },
       {
+        "id": "b7d14f80-9e2c-4c55-8a31-1f6b0d4e72aa",
+        "name": "Spirit Thrust Upgrade I",
+        "description": "On a hit, this attack now generates 1 spirit.",
+        "upgradesFromId": "0b6f27d1-5a48-4e73-9c01-d8a4b2e3f066"
+      },
+      {
         "id": "a17c3e59-8b14-4d90-bf22-1c5e6a708077",
         "name": "Spirit Roundslash",
         "description": "Once per turn when you take the Attack action, you can replace one of those attacks with a Spirit Roundslash. Expend 3 spirits and make an attack against a creature. If another creature is within 5 feet of that target and within your reach, it also takes the weapon's damage, but don't add your ability modifier to that damage unless that modifier is negative. This attack does not generate spirit."
+      },
+      {
+        "id": "c9e25a91-0f3d-4d66-9b42-2a7c1e5f83bb",
+        "name": "Spirit Roundslash Upgrade I",
+        "description": "On a hit, this attack now generates 1 spirit.",
+        "upgradesFromId": "a17c3e59-8b14-4d90-bf22-1c5e6a708077"
       },
       {
         "id": "3e8a51c2-7d09-4f15-a634-b90c1d2e4088",

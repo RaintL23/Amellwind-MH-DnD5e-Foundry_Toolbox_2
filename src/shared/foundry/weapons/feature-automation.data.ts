@@ -1297,6 +1297,14 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Do not consume itemUses on the reaction (Midi unpaid-reaction filter). Overlay ItemMacro spends 2 spirit, applies +1d8 AC (isAttacked), refunds 1 on miss, and emits Foresight Slash: Counter.",
   ),
+  "foresight slash upgrade i": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "Expend 2 spirit. Add 1d8 to your AC against that attack. If this causes a miss: one Longsword attack vs the attacker and regain 1 spirit. If that counter-attack hits, gain 1 spirit.",
+    },
+    "Legendary: Counter hit generates 1 spirit via overlay ItemMacro (`techniqueSpiritOnHit`).",
+  ),
   "spirit thrust": spec(
     "action_ability",
     {
@@ -1311,6 +1319,14 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Consumes 2 Spirit Gauge uses. Damage type swap (S→P) is description / manual.",
   ),
+  "spirit thrust upgrade i": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "Replace one Attack-action attack. Expend 2 spirit: piercing damage. On hit, move 15 ft through the target without OA and generate 1 spirit.",
+    },
+    "Legendary: on-hit generates 1 spirit via overlay ItemMacro (`techniqueSpiritOnHit`).",
+  ),
   "spirit roundslash": spec(
     "action_ability",
     {
@@ -1324,6 +1340,14 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activityImg: "icons/skills/melee/strike-blade-hooked-orange.webp",
     },
     "Cleave rider vs a second target is manual.",
+  ),
+  "spirit roundslash upgrade i": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "Replace one Attack-action attack (once per turn). Expend 3 spirit. On a hit, generate 1 spirit. Optional second creature within 5 ft of the target takes weapon damage without your ability modifier.",
+    },
+    "Legendary: on-hit generates 1 spirit via overlay ItemMacro (`techniqueSpiritOnHit`).",
   ),
   "spirit helm breaker": spec(
     "action_ability",

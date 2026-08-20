@@ -111,10 +111,11 @@ function patchSpiritBladeRider(item: FoundryItem): void {
   }
 }
 
-function patchForesightSlash(item: FoundryItem, magical: boolean): Record<
-  string,
-  unknown
-> | undefined {
+function patchForesightSlash(
+  item: FoundryItem,
+  magical: boolean,
+  techniqueSpiritOnHit: boolean,
+): Record<string, unknown> | undefined {
   const activities = activitiesOf(item);
   if (!activities) return undefined;
 
@@ -139,8 +140,9 @@ function patchForesightSlash(item: FoundryItem, magical: boolean): Record<
       targets: [],
     };
     activity.description = {
-      chatFlavor:
-        "+1d8 AC vs the triggering melee attack (Midi rechecks). Expends 2 spirit via Item Macro. On a miss, regain 1 spirit and use Foresight Slash: Counter.",
+      chatFlavor: techniqueSpiritOnHit
+        ? "+1d8 AC vs the triggering melee attack (Midi rechecks). Expends 2 spirit via Item Macro. On a miss, regain 1 spirit and use Foresight Slash: Counter. If the counter hits, gain 1 spirit."
+        : "+1d8 AC vs the triggering melee attack (Midi rechecks). Expends 2 spirit via Item Macro. On a miss, regain 1 spirit and use Foresight Slash: Counter.",
     };
     activity.range = {
       units: "self",
@@ -198,6 +200,7 @@ function emitForesightCounter(
   item: FoundryItem,
   foresight: Record<string, unknown>,
   magical: boolean,
+  techniqueSpiritOnHit: boolean,
 ): void {
   const activities = activitiesOf(item);
   if (!activities) return;
@@ -233,8 +236,9 @@ function emitForesightCounter(
     targets: [],
   };
   cloned.description = {
-    chatFlavor:
-      "Make one Longsword attack against the attacker as part of the same Reaction (does not spend another Reaction).",
+    chatFlavor: techniqueSpiritOnHit
+      ? "Make one Longsword attack against the attacker as part of the same Reaction (does not spend another Reaction). On a hit, gain 1 spirit."
+      : "Make one Longsword attack against the attacker as part of the same Reaction (does not spend another Reaction).",
   };
   cloned.range = { units: "self", special: "", override: false };
   cloned.useConditionText = "";
@@ -284,10 +288,15 @@ export function applyLongswordOverlay(
     (Array.isArray(system.properties) &&
       (system.properties as string[]).includes("mgc"));
 
+  const tier = resolveLongswordTier(item);
+  const techniqueSpiritOnHit = tier === "legendary";
+
   patchDefaultAttackName(item);
   patchSpiritBladeRider(item);
-  const foresight = patchForesightSlash(item, magical);
-  if (foresight) emitForesightCounter(item, foresight, magical);
+  const foresight = patchForesightSlash(item, magical, techniqueSpiritOnHit);
+  if (foresight) {
+    emitForesightCounter(item, foresight, magical, techniqueSpiritOnHit);
+  }
 
   const existingWorld =
     (item.flags?.world as Record<string, unknown> | undefined) ?? {};
@@ -306,8 +315,9 @@ export function applyLongswordOverlay(
       longsword: {
         ...existingLs,
         isLongsword: true,
-        tier: resolveLongswordTier(item),
+        tier,
         spiritGain: spiritGainAt(weapon, rarityIndex),
+        techniqueSpiritOnHit,
       },
     },
   };
