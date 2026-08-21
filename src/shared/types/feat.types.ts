@@ -20,6 +20,24 @@ export interface FeatAbilityIncrease {
   abilities: AbilityKey[];
 }
 
+/** One ability score floor inside a prerequisite alternative. */
+export interface FeatPrerequisiteAbilityReq {
+  ability: AbilityKey;
+  min: number;
+}
+
+/**
+ * One OR-branch from 5etools `prerequisite[]`.
+ * Ability alternatives within the branch are OR; each alternative is AND of its reqs.
+ * Groups with unverified requirements never auto-qualify (randomizer / eligibility).
+ */
+export interface FeatPrerequisiteCheckGroup {
+  level?: number;
+  /** OR of ability alternatives; each alternative is AND of its score floors. */
+  abilityAlternatives: FeatPrerequisiteAbilityReq[][];
+  hasUnverifiedRequirements: boolean;
+}
+
 export interface Feat {
   id: string;
   name: string;
@@ -30,6 +48,11 @@ export interface Feat {
   prerequisiteKinds: FeatPrerequisiteKind[];
   /** Numeric character level prerequisites (e.g. 4 for "Level 4+"). */
   prerequisiteLevels: number[];
+  /**
+   * Structured OR-groups for eligibility checks (empty = no prerequisites).
+   * Prefer this over parsing `prerequisites` labels.
+   */
+  prerequisiteCheckGroups: FeatPrerequisiteCheckGroup[];
   abilityIncreases: FeatAbilityIncrease[];
   paragraphs: string[];
   /** Subsecciones con título (p. ej. opciones de shells, notas del creador) */

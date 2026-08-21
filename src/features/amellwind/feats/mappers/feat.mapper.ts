@@ -1,6 +1,8 @@
 import {
   Feat,
   FeatAbilityIncrease,
+  FeatPrerequisiteAbilityReq,
+  FeatPrerequisiteCheckGroup,
   FeatPrerequisiteKind,
   FeatSection,
   type AbilityKey,
@@ -94,6 +96,7 @@ interface MappedPrerequisites {
   labels: string[];
   kinds: FeatPrerequisiteKind[];
   levels: number[];
+  checkGroups: FeatPrerequisiteCheckGroup[];
 }
 
 function pushPrereq(
@@ -114,6 +117,23 @@ function pushLevelPrereq(
 ) {
   pushPrereq(out, "level", label);
   if (!out.levels.includes(level)) out.levels.push(level);
+}
+
+function mapAbilityAlternatives(
+  abilityBlocks: Raw[],
+): FeatPrerequisiteAbilityReq[][] {
+  const alternatives: FeatPrerequisiteAbilityReq[][] = [];
+  for (const ab of abilityBlocks) {
+    const reqs: FeatPrerequisiteAbilityReq[] = [];
+    for (const [key, value] of Object.entries(ab)) {
+      const ability = abilityKeyFromUnknown(key);
+      if (ability && typeof value === "number") {
+        reqs.push({ ability, min: value });
+      }
+    }
+    if (reqs.length > 0) alternatives.push(reqs);
+  }
+  return alternatives;
 }
 
 function formatProficiency(entry: Raw): string | null {
@@ -143,24 +163,37 @@ function formatCategoryCode(code: string): string {
 }
 
 function mapPrerequisites(raw: Raw): MappedPrerequisites {
-  const out: MappedPrerequisites = { labels: [], kinds: [], levels: [] };
+  const out: MappedPrerequisites = {
+    labels: [],
+    kinds: [],
+    levels: [],
+    checkGroups: [],
+  };
   if (!Array.isArray(raw.prerequisite)) return out;
 
   for (const prereq of raw.prerequisite as Raw[]) {
+    const checkGroup: FeatPrerequisiteCheckGroup = {
+      abilityAlternatives: [],
+      hasUnverifiedRequirements: false,
+    };
+    let groupTouched = false;
+
     if (Array.isArray(prereq.ability)) {
-      for (const ab of prereq.ability as Raw[]) {
-        for (const [key, value] of Object.entries(ab)) {
-          const ability = abilityKeyFromUnknown(key);
-          const label = ability ? ABILITY_LABELS[ability] : undefined;
-          if (label && typeof value === "number") {
-            pushPrereq(out, "ability", `${label} ${value}+`);
-          }
+      const alternatives = mapAbilityAlternatives(prereq.ability as Raw[]);
+      checkGroup.abilityAlternatives = alternatives;
+      if (alternatives.length > 0) groupTouched = true;
+      for (const alt of alternatives) {
+        for (const req of alt) {
+          const label = ABILITY_LABELS[req.ability];
+          if (label) pushPrereq(out, "ability", `${label} ${req.min}+`);
         }
       }
     }
 
     if (typeof prereq.level === "number") {
       pushLevelPrereq(out, prereq.level, `Level ${prereq.level}+`);
+      checkGroup.level = prereq.level;
+      groupTouched = true;
     } else if (prereq.level && typeof prereq.level === "object") {
       const levelObj = prereq.level as Raw;
       const level =
@@ -177,6 +210,10 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
             ? `${titleCaseWords(className)} Level ${level}+`
             : `Level ${level}+`,
         );
+        checkGroup.level = level;
+        groupTouched = true;
+        // Class-gated level prereqs need class matching beyond raw level.
+        if (className) checkGroup.hasUnverifiedRequirements = true;
       }
     }
 
@@ -188,7 +225,11 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
             : typeof race === "string"
               ? race
               : "";
-        if (name) pushPrereq(out, "race", titleCaseWords(name));
+        if (name) {
+          pushPrereq(out, "race", titleCaseWords(name));
+          checkGroup.hasUnverifiedRequirements = true;
+          groupTouched = true;
+        }
       }
     }
 
@@ -196,6 +237,8 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
       for (const feat of prereq.feat as unknown[]) {
         if (typeof feat === "string") {
           pushPrereq(out, "feat", formatEntityRef(feat));
+          checkGroup.hasUnverifiedRequirements = true;
+          groupTouched = true;
         }
       }
     }
@@ -204,6 +247,8 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
       for (const feature of prereq.feature as unknown[]) {
         if (typeof feature === "string") {
           pushPrereq(out, "feature", formatEntityRef(feature));
+          checkGroup.hasUnverifiedRequirements = true;
+          groupTouched = true;
         }
       }
     }
@@ -211,7 +256,11 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
     if (Array.isArray(prereq.proficiency)) {
       for (const prof of prereq.proficiency as Raw[]) {
         const label = formatProficiency(prof);
-        if (label) pushPrereq(out, "proficiency", label);
+        if (label) {
+          pushPrereq(out, "proficiency", label);
+          checkGroup.hasUnverifiedRequirements = true;
+          groupTouched = true;
+        }
       }
     }
 
@@ -221,12 +270,16 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
       prereq.spellcastingFeature === true
     ) {
       pushPrereq(out, "spellcasting", "Spellcasting");
+      checkGroup.hasUnverifiedRequirements = true;
+      groupTouched = true;
     }
 
     if (Array.isArray(prereq.campaign)) {
       for (const campaign of prereq.campaign as unknown[]) {
         if (typeof campaign === "string" && campaign.trim()) {
           pushPrereq(out, "campaign", campaign.trim());
+          checkGroup.hasUnverifiedRequirements = true;
+          groupTouched = true;
         }
       }
     }
@@ -239,8 +292,12 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
             "background",
             parseFiveToolsMarkup(bg.displayEntry).trim(),
           );
+          checkGroup.hasUnverifiedRequirements = true;
+          groupTouched = true;
         } else if (typeof bg?.name === "string" && bg.name.trim()) {
           pushPrereq(out, "background", titleCaseWords(bg.name));
+          checkGroup.hasUnverifiedRequirements = true;
+          groupTouched = true;
         }
       }
     }
@@ -254,6 +311,8 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
               "other",
               `${formatCategoryCode(code.trim())} Feat`,
             );
+            checkGroup.hasUnverifiedRequirements = true;
+            groupTouched = true;
           }
         }
       }
@@ -267,12 +326,20 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
           : typeof summary.entry === "string"
             ? parseFiveToolsMarkup(summary.entry).trim()
             : "";
-      if (entry) pushPrereq(out, "other", entry);
+      if (entry) {
+        pushPrereq(out, "other", entry);
+        checkGroup.hasUnverifiedRequirements = true;
+        groupTouched = true;
+      }
     }
 
     if (typeof prereq.other === "string" && prereq.other.trim()) {
       pushPrereq(out, "other", prereq.other.trim());
+      checkGroup.hasUnverifiedRequirements = true;
+      groupTouched = true;
     }
+
+    if (groupTouched) out.checkGroups.push(checkGroup);
   }
 
   return out;
@@ -330,8 +397,12 @@ export function mapFeat(raw: any): Feat {
   const entries = Array.isArray(raw.entries) ? (raw.entries as unknown[]) : [];
   const allParagraphs = renderFiveToolsEntries(entries, FEAT_ENTRY_OPTIONS);
   const { lead, sections } = splitSections(allParagraphs);
-  const { labels: prerequisites, kinds: prerequisiteKinds, levels: prerequisiteLevels } =
-    mapPrerequisites(raw);
+  const {
+    labels: prerequisites,
+    kinds: prerequisiteKinds,
+    levels: prerequisiteLevels,
+    checkGroups: prerequisiteCheckGroups,
+  } = mapPrerequisites(raw);
   const abilityIncreases = mapAbilityIncreases(raw);
   const repeatable =
     raw.repeatable === true ||
@@ -363,6 +434,7 @@ export function mapFeat(raw: any): Feat {
     prerequisites,
     prerequisiteKinds,
     prerequisiteLevels,
+    prerequisiteCheckGroups,
     abilityIncreases,
     paragraphs: lead,
     sections,

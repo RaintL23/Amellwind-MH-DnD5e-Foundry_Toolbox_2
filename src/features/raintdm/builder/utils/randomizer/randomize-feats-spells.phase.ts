@@ -131,6 +131,10 @@ export async function randomizeFeatsAndSpellsPhase(
     preservedLevel,
     catalogs.dndFeats,
     rpgbot.rpgbotData,
+    {
+      ...characterAbilities,
+      ...abilityScores,
+    },
   );
   featSelections.forEach((selection, index) => {
     if (selection) setters.setFeatAtIndex(index, selection);
