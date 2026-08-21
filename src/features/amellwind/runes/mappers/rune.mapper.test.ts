@@ -698,6 +698,78 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
       false,
     );
   });
+
+  it("tags Moon-touched–style light shed in darkness", () => {
+    const tags = extractRuneEffectTags(
+      "While holding this weapon in darkness, it sheds moonlight, creating bright light in a 15-foot radius and dim light for an additional 15 feet.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:light",
+        "mechanic:darkness",
+        "mechanic:nonmagical-darkness",
+        "mechanic:passive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:magical-darkness");
+    expect(tags).not.toContain("mechanic:darkvision");
+  });
+
+  it("tags darkvision grants without magical-darkness", () => {
+    const tags = extractRuneEffectTags(
+      "While wearing this armor, you have darkvision out to a range of 60 feet. If you already have darkvision, your sight range increases by 60 feet.",
+    );
+
+    expect(tags).toContain("mechanic:darkvision");
+    expect(tags).toContain("mechanic:passive");
+    expect(tags).not.toContain("mechanic:darkness");
+    expect(tags).not.toContain("mechanic:light");
+  });
+
+  it("tags magical and nonmagical darkness sight", () => {
+    const tags = extractRuneEffectTags(
+      "You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet and you have advantage on Wisdom (Perception) checks that rely on sight while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:darkness",
+        "mechanic:magical-darkness",
+        "mechanic:nonmagical-darkness",
+        "mechanic:advantage",
+        "mechanic:passive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:darkvision");
+  });
+
+  it("tags Hide-in-dim-light darkness without producing light", () => {
+    const tags = extractRuneEffectTags(
+      "While in dim light or darkness, you can take the Hide action as a bonus action.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:darkness",
+        "mechanic:nonmagical-darkness",
+        "mechanic:bonus-action",
+        "mechanic:active",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:light");
+    expect(tags).not.toContain("mechanic:magical-darkness");
+  });
+
+  it("tags light-snuffing weapons as darkness without light production", () => {
+    const tags = extractRuneEffectTags(
+      "When held, this weapon draws in light, snuffing all nonmagical flames within 30 feet out. It turns dim light into darkness and bright light into dim light.",
+    );
+
+    expect(tags).toContain("mechanic:darkness");
+    expect(tags).toContain("mechanic:nonmagical-darkness");
+    expect(tags).not.toContain("mechanic:light");
+  });
 });
 
 describe("isPlaceableRune", () => {

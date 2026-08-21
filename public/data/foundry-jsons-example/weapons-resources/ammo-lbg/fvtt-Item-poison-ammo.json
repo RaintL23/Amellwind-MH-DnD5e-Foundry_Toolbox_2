@@ -17,13 +17,13 @@
       "revision": 1
     },
     "identifier": "poison-ammo",
-    "quantity": 20,
+    "quantity": 1,
     "weight": {
       "value": 0.05,
       "units": "lb"
     },
     "price": {
-      "value": 1,
+      "value": 4,
       "denomination": "gp"
     },
     "rarity": "",

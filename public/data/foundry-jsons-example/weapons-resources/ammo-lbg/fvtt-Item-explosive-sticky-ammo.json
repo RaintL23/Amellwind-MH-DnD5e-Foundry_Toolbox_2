@@ -17,7 +17,7 @@
       "revision": 1
     },
     "identifier": "explosive-sticky-ammo",
-    "quantity": 20,
+    "quantity": 1,
     "weight": {
       "value": 0.05,
       "units": "lb"

@@ -492,6 +492,67 @@ describe("getMaterialEffectTierForText — condition defense when Unknown", () =
   });
 });
 
+describe("getMaterialEffectTierForText — light / darkness when Unknown", () => {
+  it("assigns Common to Moon-touched–style light in darkness", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While holding this weapon in darkness, it sheds moonlight, creating bright light in a 15-foot radius and dim light for an additional 15 feet.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:light",
+          "mechanic:darkness",
+          "mechanic:nonmagical-darkness",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Uncommon to darkvision grants", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While wearing this armor, you have darkvision out to a range of 60 feet.",
+        "armor",
+        emptyIndex,
+        ["mechanic:darkvision", "mechanic:passive"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Rare to magical-darkness sight", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You can see normally in darkness, both magical and nonmagical, to a distance of 120 feet while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:darkness",
+          "mechanic:magical-darkness",
+          "mechanic:nonmagical-darkness",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("leaves bare darkness utility as Unknown", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While in dim light or darkness, you can take the Hide action as a bonus action.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:darkness",
+          "mechanic:nonmagical-darkness",
+          "mechanic:bonus-action",
+          "mechanic:active",
+        ],
+      ),
+    ).toBe("Unknown");
+  });
+});
+
 describe("getMaterialEffectTierForText — discovered named overlay", () => {
   it("assigns Common to Flexible Leathercraft", () => {
     const rune = makeRune({

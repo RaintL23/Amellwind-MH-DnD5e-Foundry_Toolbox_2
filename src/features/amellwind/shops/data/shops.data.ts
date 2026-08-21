@@ -1,4 +1,5 @@
 import { Shop } from "@/shared/types";
+import { buildAmmoVendorSections } from "./weapon-resource-pricing.data";
 
 export const SHOPS: Shop[] = [
   {
@@ -216,39 +217,8 @@ export const SHOPS: Shop[] = [
     id: "ammo-vendor",
     name: "Ammo Vendor",
     description:
-      "An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition types or just a few of the DM's choice.",
-    sections: [
-      {
-        caption: "Ammo",
-        entries: [
-          { name: "Normal Ammo (20)", category: "Bowgun Ammo", cost: "1 gp", weight: "1.5 lb.", extra: "Max 80" },
-          { name: "Paralysis Ammo (1)", category: "Bowgun Ammo", cost: "4 gp", weight: "1.5 lb.", extra: "Max 4" },
-          { name: "Poison Ammo (1)", category: "Bowgun Ammo", cost: "4 gp", weight: "1.5 lb.", extra: "Max 8" },
-          { name: "Recover lvl 1 (1)", category: "Bowgun Ammo", cost: "5 gp", weight: "1.5 lb.", extra: "Max 4" },
-          { name: "Recover lvl 2 (1)", category: "Bowgun Ammo", cost: "7 gp", weight: "1.5 lb.", extra: "Max 4" },
-          { name: "Spread Ammo (20)", category: "Bowgun Ammo", cost: "3 gp", weight: "1.5 lb.", extra: "Max 40" },
-          { name: "Sticky Ammo (1)", category: "Bowgun Ammo", cost: "1 gp", weight: "1.5 lb.", extra: "Max 10" },
-          { name: "Tranq Ammo (1)", category: "Bowgun Ammo", cost: "50 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Cluster Ammo (1)", category: "Heavy Bowgun", cost: "5 gp", weight: "1.5 lb.", extra: "Max 5" },
-          { name: "Pierce lvl 1 (20)", category: "Heavy Bowgun", cost: "2 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Pierce lvl 2 (20)", category: "Heavy Bowgun", cost: "3 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Pierce lvl 3 (20)", category: "Heavy Bowgun", cost: "4 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Slicing Ammo (1)", category: "Heavy Bowgun", cost: "5 gp", weight: "1.5 lb.", extra: "Max 5" },
-          { name: "Wyvern Ammo (1)", category: "Heavy Bowgun", cost: "10 gp", weight: "1.5 lb.", extra: "Max 3" },
-          { name: "Armor Ammo (1)", category: "Light Bowgun", cost: "8 gp", weight: "1.5 lb.", extra: "Max 5" },
-          { name: "Demon Ammo (1)", category: "Light Bowgun", cost: "8 gp", weight: "1.5 lb.", extra: "Max 5" },
-          { name: "Dragon Ammo (20)", category: "Light Bowgun", cost: "3 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Flaming Ammo (20)", category: "Light Bowgun", cost: "3 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Pierce Ammo (20)", category: "Light Bowgun", cost: "2 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Sleep Ammo (1)", category: "Light Bowgun", cost: "5 gp", weight: "1.5 lb.", extra: "Max 5" },
-          { name: "Thunder Ammo (20)", category: "Light Bowgun", cost: "3 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Water Ammo (20)", category: "Light Bowgun", cost: "3 gp", weight: "1.5 lb.", extra: "Max 20" },
-          { name: "Arrows (20)", category: "Bow", cost: "1 gp", weight: "1 lb." },
-          { name: "Power Coating (1)", category: "Bow", cost: "1 gp", weight: "1/4 lb." },
-          { name: "Close Range Coating (1)", category: "Bow", cost: "1 gp", weight: "1/4 lb." },
-        ],
-      },
-    ],
+      "An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition types or just a few of the DM's choice. Prices for bowgun ammo, coatings, and Dual Repeaters magazines follow the Weapon Resource pricing table.",
+    sections: buildAmmoVendorSections(),
   },
   {
     id: "traveling-merchant",

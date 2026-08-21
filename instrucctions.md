@@ -762,6 +762,11 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:attack-range`  | Aumenta el *normal attack range* del arma (`increased by N feet` / `doubled`). No aplica a Critical Eye (*critical hit range*) ni a bonos “outside of your normal attack range” |
 | `mechanic:attack-range:major` | El normal attack range queda **doubled** (Deadeye+ / underwater)                                                |
 | `mechanic:reach`         | Extiende el *reach* melee (`reach is increased` / `extend its reach by`)                                           |
+| `mechanic:light`         | Produce iluminación (`sheds … light` / `creating bright light` / `moonlight` / `dim light for an additional`) — no el entorno “in dim light or darkness” |
+| `mechanic:darkness`      | Menciona `darkness` (entorno, creación o visión)                                                                   |
+| `mechanic:nonmagical-darkness` | Oscuridad natural / no mágica: `nonmagical darkness`, `in darkness`, `dim light or darkness`, `into darkness`, o “both magical and nonmagical” |
+| `mechanic:magical-darkness` | Oscuridad mágica: `magical darkness` o “darkness, both magical and nonmagical” / *see normally in darkness, both magical…* |
+| `mechanic:darkvision`    | Concede `darkvision` (no *see normally in darkness*, que usa los tags de darkness)                               |
 
 ##### Notas de implementación de tags
 
@@ -838,6 +843,16 @@ Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Los
 | `ignore-difficult-terrain` o `movement-climb` sin paquete de hielo | **Common** | ignore DT genérico |
 | `flying` (sin major, &lt;60 ft) | **Rare** | flying speed 30 ft |
 | `flying`+`major` (≥60 ft) | **Very Rare** | flying speed 60–80 ft |
+
+**Luz / darkvision / oscuridad mágica** (`inline-light-darkness-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
+
+| Tags | Rareza | Ejemplos |
+| --- | --- | --- |
+| `mechanic:light` | **Common** | Moon-touched (shed moonlight in darkness), shed bright/dim light always-on |
+| `mechanic:darkvision` | **Uncommon** | darkvision 60 ft (Goggles of Night–adjacent) |
+| `mechanic:magical-darkness` | **Rare** | see normally in magical + nonmagical darkness (Gaismagorm) |
+
+Si hay varios, gana la rareza más alta. Solo `darkness` / `nonmagical-darkness` (Hide in dim light, snuff light) **sin** light / darkvision / magical-darkness sigue **Unknown**.
 
 **Lanzamiento de hechizos / recuperación de slots** (`inline-spell-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene tags `mechanic:cantrip`, `mechanic:spell:lvlN` (nivel real del catálogo) o `mechanic:spell-slot` / `mechanic:spell-slot:lvlN`:
 
@@ -1492,6 +1507,25 @@ Features opcionales de armas (Melody, Phials, etc.) almacenadas en `gtmh_current
 #### Entidad `Shop` / `ShopEntry`
 
 Tiendas definidas estáticamente con secciones, entradas (nombre, costo, peso, categoría, `craftOnly`, `extra`).
+
+#### Weapon Resource pricing (Ammo Vendor)
+
+Precios de venta canónicos para consumibles de `public/data/foundry-jsons-example/weapons-resources/` (Ammo LBG/HBG, Coatings, Magazines) viven en `src/features/amellwind/shops/data/weapon-resource-pricing.data.ts`. El Ammo Vendor (`shops.data.ts`) construye sus secciones con `buildAmmoVendorSections()` desde esa tabla (+ filas AGMH shop-only: Tranq, Armor/Demon, Pierce lvl 2–3, Recover lvl 2, Arrows).
+
+| Tier | Precio | Ejemplos |
+| --- | --- | --- |
+| Basic bulk ×20 | 1 gp | Normal Ammo |
+| Pierce bulk ×20 | 2 gp | Pierce Ammo |
+| Elemental / Spread ×20 | 3 gp | Flaming, Freeze, Water, Thunder, Dragon, Spread |
+| Sticky / control débil | 1 gp/unidad | Sticky, Explosive/Sticky |
+| Status | 4 gp/unidad | Paralysis, Poison |
+| Utility / fuerte | 5 gp/unidad | Sleep, Recover, Cluster, Slicing |
+| Specialty HBG | 10 gp/unidad | Wyvern |
+| Coating utility | 1 gp | Power, Close Range |
+| Coating elemental | 2 gp | Fire, Cold, Lightning, Acid |
+| Magazine | 2 / 5 / 15 / 20 gp | Normal / elemental / Upgrade I / Dawnstar·Twilight |
+
+Foundry `system.price` + `system.quantity` de los packs deben coincidir con esa tabla. Phials y Melodies son `feat` (no vendibles).
 
 #### Contexto `CartContext`
 

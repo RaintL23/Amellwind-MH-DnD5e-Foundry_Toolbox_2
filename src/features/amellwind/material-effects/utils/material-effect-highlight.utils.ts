@@ -14,6 +14,7 @@ import { inferRarityFromClassResourceRecoveryTags } from "./inline-class-resourc
 import { inferRarityFromConditionDefenseTags, inferRarityFromConditionImmunityTags } from "./inline-condition-rarity.utils";
 import { inferRarityFromGatherResourceTags } from "./inline-gather-rarity.utils";
 import { inferRarityFromHoldBreathUnderwaterTags } from "./inline-hold-breath-rarity.utils";
+import { inferRarityFromLightDarknessTags } from "./inline-light-darkness-rarity.utils";
 import { inferRarityFromMovementTags } from "./inline-movement-rarity.utils";
 import { inferRarityFromReactionAttackTags } from "./inline-reaction-attack-rarity.utils";
 import { inferRarityFromRoll20UtilityTags } from "./inline-roll-20-rarity.utils";
@@ -370,6 +371,9 @@ export function getMaterialEffectTierForText(
 
   const movementRarity = inferRarityFromMovementTags(effectTags);
   if (movementRarity) return movementRarity;
+
+  const lightDarknessRarity = inferRarityFromLightDarknessTags(effectTags);
+  if (lightDarknessRarity) return lightDarknessRarity;
 
   return UNKNOWN_MATERIAL_EFFECT_TIER;
 }

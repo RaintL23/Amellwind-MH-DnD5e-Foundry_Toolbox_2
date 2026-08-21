@@ -6,7 +6,7 @@
   "system": {
     "description": {
       "value": "<p><strong>Sleep Ammo</strong> (Light Bowgun)</p><p>If the target has 50 Hit Points or fewer, it must succeed on a Constitution saving throw or fall Unconscious for 1 minute (or until it takes damage or is shaken awake).</p><p>Loaded into the Magazine on Reload (Special Ammo capacity).</p>",
-      "chat": "<p><strong>Sleep Ammo</strong></p><p>Con save or Unconscious if \u226450 HP.</p>"
+      "chat": "<p><strong>Sleep Ammo</strong></p><p>Con save or Unconscious if ≤50 HP.</p>"
     },
     "source": {
       "custom": "",
@@ -17,13 +17,13 @@
       "revision": 1
     },
     "identifier": "sleep-ammo",
-    "quantity": 20,
+    "quantity": 1,
     "weight": {
       "value": 0.05,
       "units": "lb"
     },
     "price": {
-      "value": 1,
+      "value": 5,
       "denomination": "gp"
     },
     "rarity": "",

@@ -143,6 +143,7 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   // movement / burrow / swim / fly / climb → `movementTags()`
   [/\bunderwater\b/i, "mechanic:underwater"],
   [/hold(?: your)? breath/i, "mechanic:hold-breath"],
+  // light / darkness / darkvision → `lightDarknessTags()`
   [/\badvantage\b/i, "mechanic:advantage"],
   [/\bcantrip\b/i, "mechanic:cantrip"],
   [
@@ -428,6 +429,60 @@ function gatherResourceTags(text: string): string[] {
   ) {
     tags.push("mechanic:gather-resources:major");
   }
+
+  return tags;
+}
+
+/**
+ * Illumination and darkness-related utility.
+ * - `mechanic:light` — produces bright/dim light (or moonlight that creates it)
+ * - `mechanic:darkness` — mentions darkness (environment, creation, or sight)
+ * - `mechanic:nonmagical-darkness` — natural / nonmagical darkness (or bare
+ *   "in darkness" / "dim light or darkness" without a magical clause)
+ * - `mechanic:magical-darkness` — magical darkness, or "both magical and nonmagical"
+ * - `mechanic:darkvision` — grants darkvision (not "see normally in darkness")
+ */
+function lightDarknessTags(text: string): string[] {
+  const tags: string[] = [];
+
+  // Produce light — not bare "in dim light or darkness" environment wording.
+  const producesLight =
+    /\bsheds?\s+moonlight\b/i.test(text) ||
+    /\blight the weapon\b/i.test(text) ||
+    /(?:sheds?|creating|providing|casts?)\s+(?:bright\s+)?(?:[\w-]+-colored\s+)?light\b/i.test(
+      text,
+    ) ||
+    /\bsheds?\s+dim light\b/i.test(text) ||
+    /\bbright (?:[\w-]+-colored\s+)?light in (?:a )?(?:\d|[\d-])/i.test(text) ||
+    /\bdim light for an additional\b/i.test(text);
+  if (producesLight) tags.push("mechanic:light");
+
+  const hasDarkness = /\bdarkness\b/i.test(text);
+  if (hasDarkness) tags.push("mechanic:darkness");
+
+  const hasMagicalDarkness =
+    /\bmagical(?:\s+and\s+nonmagical)?\s+darkness\b/i.test(text) ||
+    /darkness,?\s+both magical and nonmagical/i.test(text) ||
+    /see normally in darkness,?\s+both magical/i.test(text);
+  if (hasMagicalDarkness) tags.push("mechanic:magical-darkness");
+
+  const hasExplicitNonmagicalDarkness =
+    /\bnonmagical darkness\b/i.test(text) ||
+    /darkness,?\s+both magical and nonmagical/i.test(text) ||
+    /see normally in darkness,?\s+both magical and nonmagical/i.test(text);
+  // Bare "in darkness" / "dim light or darkness" is natural darkness unless the
+  // text is specifically about magical darkness only.
+  const hasImpliedNaturalDarkness =
+    hasDarkness &&
+    !hasMagicalDarkness &&
+    (/\bin darkness\b/i.test(text) ||
+      /\bdim light or darkness\b/i.test(text) ||
+      /into darkness\b/i.test(text));
+  if (hasExplicitNonmagicalDarkness || hasImpliedNaturalDarkness) {
+    tags.push("mechanic:nonmagical-darkness");
+  }
+
+  if (/\bdarkvision\b/i.test(text)) tags.push("mechanic:darkvision");
 
   return tags;
 }
@@ -933,6 +988,10 @@ function extractTags(
 
   for (const gatherTag of gatherResourceTags(effectText)) {
     tags.add(gatherTag);
+  }
+
+  for (const lightTag of lightDarknessTags(effectText)) {
+    tags.add(lightTag);
   }
 
   for (const moveTag of movementTags(effectText)) {

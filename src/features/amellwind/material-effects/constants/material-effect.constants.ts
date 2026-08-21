@@ -149,6 +149,23 @@ export const INLINE_CONDITION_SAVE_ADVANTAGE_RARITY: ResourceRarity = "Common";
  */
 export const INLINE_CONDITION_IMMUNITY_RARITY: ResourceRarity = "Uncommon";
 
+/**
+ * Mild always-on illumination (shed bright/dim light, Moon-touched–style).
+ * Weaker than darkvision; Common floor.
+ */
+export const INLINE_LIGHT_RARITY: ResourceRarity = "Common";
+
+/**
+ * Always-on darkvision grant (Goggles of Night–adjacent).
+ */
+export const INLINE_DARKVISION_RARITY: ResourceRarity = "Uncommon";
+
+/**
+ * See normally in magical darkness (Devil's Sight–adjacent / Gaismagorm).
+ * One step above plain darkvision.
+ */
+export const INLINE_MAGICAL_DARKNESS_SIGHT_RARITY: ResourceRarity = "Rare";
+
 export const UNKNOWN_MATERIAL_EFFECT_TIER = "Unknown" as const;
 
 export type MaterialEffectTierFilter =
