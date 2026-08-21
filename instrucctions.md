@@ -579,7 +579,7 @@ const headerTable = tables.find((t) => !t.colLabels); // la tabla sin colLabels 
 - **carveChance** _(string)_ — Rango de d20 para obtenerlo por carve (ej. `"1-6"`). Valor `"-"` si no es carveable.
 - **captureChance** _(string)_ — Rango de d20 para obtenerlo por captura (ej. `"1-4"`). Valor `"-"` si no es capturable.
 - **rolls** _(int)_ — Número de tiradas de d20 al carvear o capturar al monstruo (ej. `3`). Es el mismo valor para ambos modos de obtención — viene del campo `"Carves/Capture"` del JSON.
-- **slots** _(array)_ — Tipos de equipo donde se puede usar. Valores posibles: `"A"` (Armor), `"W"` (Weapon). Puede ser `["A"]`, `["W"]`, o `["A", "W"]`. Mapeado desde el string `"(A,W)"` del JSON.
+- **slots** _(array)_ — Tipos de equipo donde se puede usar. Valores posibles: `"A"` (Armor), `"W"` (Weapon). Puede ser `["A"]`, `["W"]`, o `["A", "W"]`. Mapeado desde el string `"(A,W)"` del JSON. Filas de loot con slot **`O`** (Other: upgrade bones, crafting mats, sellables, rations…) quedan con `slots: []`; el mapper las sigue emitiendo para la tabla de carve del monstruo, pero **`getAllRunes()`** las excluye del catálogo `/runes` y del picker del Builder (`isPlaceableRune`).
 - **armorEffect** _(string | null)_ — Texto del efecto cuando se coloca en armadura. Presente solo si `slots` incluye `"A"`. El texto puede contener marcado de 5etools que debe parsearse.
 - **weaponEffect** _(string | null)_ — Texto del efecto cuando se coloca en un arma. Presente solo si `slots` incluye `"W"`. Ídem sobre el marcado.
 - **monsterCr** _(string)_ — CR del monstruo de origen (para referencia y filtros).
@@ -698,29 +698,70 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 
 | Tag                      | Regla de detección                                                                                                     |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `mechanic:spell`         | Contiene `{@spell`: se resuelve el nivel en el catálogo de conjuros → `mechanic:spell:lvlN` (1–9). Cantrip (nivel 0) → solo `mechanic:cantrip`. Si el conjuro no está en el catálogo, fallback `lvl1-2` / `lvl3+` por texto/runas. |
+| `mechanic:spell`         | Contiene `{@spell` **o** prosa MHMM (`cast the Earth Tremor spell`): se resuelve el nivel en el catálogo de conjuros → `mechanic:spell:lvlN` (1–9). Cantrip (nivel 0) → solo `mechanic:cantrip`. Si el conjuro no está en el catálogo, fallback `lvl1-2` / `lvl3+` por texto/runas. Un *upcast* explícito (`at 2nd level`) sube el nivel efectivo. |
+| `mechanic:spell:one-use` | Concede un único uso por recarga (`once per long rest` / `once a day` / `once used… can't… again`). No aplica a `at will`, bancos de runas (`expend` + runes) ni usos múltiples (`twice` / `three times`). |
 | `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
-| `mechanic:critical`      | Contiene `critical`, `natural 20`, o `roll a 20` en attack roll                                                        |
+| `mechanic:critical`      | Contiene `critical` / `critically` (p. ej. *Critical Status*). Ya **no** cubre un 20 natural por sí solo              |
+| `mechanic:roll-20`       | Contiene `roll a 20` o `natural 20` (el trigger es el dado, no necesariamente un crítico)                              |
+| `mechanic:push`          | Empuja al objetivo (`is pushed`, `push the creature/target`)                                                           |
+| `mechanic:no-damage`     | Rider de `roll-20` cuyo payoff no es daño extra ni un ataque adicional                                                 |
+| `mechanic:unarmed`       | Afecta **tus** unarmed strikes (`make an unarmed strike`, `your unarmed strikes`). No aplica a thorns de armadura      |
+| `mechanic:natural-weapon`| Afecta **tus** / de raza natural weapons (`Race with natural weapons only`, `your race's natural weapon`). No aplica a thorns (`hits you with … a natural melee weapon`) |
 | `mechanic:extra-damage`  | Contiene `extra {@damage`, `extra NdX` o `extra N … damage` → se emite como `:minor` / `:major` según score |
 | `mechanic:resistance`    | Contiene `resistance to` o `resistant to` seguido de tipo de daño                                                     |
 | `mechanic:immunity`      | Contiene `immune to` o `immunity to`                                                                                   |
 | `mechanic:bonus-action`  | Contiene `bonus action`                                                                                                |
 | `mechanic:reaction`      | Contiene `reaction`                                                                                                    |
-| `mechanic:saving-throw`  | Contiene `saving throw` con `advantage` o `disadvantage`                                                               |
+| `mechanic:saving-throw`  | Contiene `saving throw` (ventaja/desventaja, bonus a tus saves, o saves impuestos al objetivo)                         |
+| `mechanic:save-bonus`    | `+N bonus to/on … saving throws` (Evade Extender)                                                                      |
+| `mechanic:save-{ability}`| Buff a un save concreto (p. ej. Dexterity → `save-dexterity`). No aplica a “must make a Dexterity saving throw”        |
+| `mechanic:attack-roll`   | Menciona `attack roll(s)` (ventaja / bonus a tus tiradas de ataque)                                                    |
 | `mechanic:skill-bonus`   | Contiene `+N bonus on/to` junto a `{@skill`                                                                            |
 | `mechanic:skill-{name}`  | Por cada `{@skill Name}` (p. ej. Insight → `skill-insight`, Animal Handling → `skill-animal-handling`)                |
 | `mechanic:ac`            | Contiene `\bAC\b` o `armor class`                                                                                      |
-| `mechanic:condition`     | Contiene `{@condition` o `immune/immunity to the ___ condition`                                                        |
-| `mechanic:condition-{n}` | Por cada condición nombrada (p. ej. stunned → `condition-stunned`, frenzy virus → `condition-frenzy-virus`)           |
-| `mechanic:against-condition` | Protección defensiva frente a una condición (advantage en saves vs being X, inmunidad a condición, etc.)            |
+| `mechanic:condition`     | Contiene `{@condition`, inmunidad a una condición, o un nombre conocido (PHB + blight MH: poisoned, stunned, waterblight, frenzy virus, …) |
+| `mechanic:condition-{n}` | Por cada condición nombrada (p. ej. stunned → `condition-stunned`, poisoned → `condition-poisoned`, waterblight → `condition-waterblight`). Alias: `paralysis` → `paralyzed`. |
+| `mechanic:against-condition` | Ayuda a **evitar** adquirir una condición (advantage en saves vs being X / *the X condition* / paralysis, *can't be afflicted with*). **No** incluye inmunidad total a la condición |
 | `mechanic:advantage`     | Contiene `advantage` (también junto a saving throws)                                                                   |
+| `mechanic:passive`       | Efecto siempre activo (p. ej. *while you wear* / *you have…*) sin gastar action / BA / reaction                        |
+| `mechanic:active`        | Efecto activado: `as an action`, `bonus action` o `reaction` (gana sobre passive si ambos aplicarían)                  |
 | `mechanic:disease`       | Contiene `disease` / `diseases`                                                                                        |
-| `mechanic:movement`      | Contiene `movement` o `speed` o `jump` en contexto de desplazamiento                                                   |
+| `mechanic:movement`      | Speed / movement (grants o debuffs). Modos: `burrowing`, `swimming`, `flying`, `climbing`, `walking-speed`, `difficult-terrain`. `movement:major` si walk +10/doubles o fly ≥60 ft |
+| `mechanic:burrowing`     | `burrowing speed`                                                                                                      |
+| `mechanic:swimming`      | `swimming speed`                                                                                                       |
+| `mechanic:flying`        | `flying speed`                                                                                                         |
+| `mechanic:climbing`      | `climbing speed` / Spider Climb                                                                                        |
+| `mechanic:walking-speed` | `walking speed increases/becomes/doubles` o `your speed increases`                                                     |
+| `mechanic:difficult-terrain` | Contiene `difficult terrain`                                                                                        |
+| `mechanic:ignore-difficult-terrain` | `ignore difficult terrain` o *doesn't cost … extra movement/moment*                                             |
+| `mechanic:icy-surfaces`  | `icy surfaces` / difficult terrain de *ice or snow*                                                                    |
+| `mechanic:movement-climb`| Trepar sin check en superficies (p. ej. *climb icy surfaces without … ability check*). Distinto de `climbing` (climbing speed / Spider Climb) |
+| `mechanic:underwater`    | Contiene `underwater`                                                                                                  |
+| `mechanic:hold-breath`   | Contiene `hold breath` / `hold your breath`                                                                            |
 | `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
-| `mechanic:cantrip`       | Contiene `cantrip`, o `{@spell` resuelto como nivel 0 en el catálogo                                                  |
+| `mechanic:spell-slot`    | Recupera un *spell slot* (`regain` / `restore` / `recover` + `spell slot(s)`), no “without expending a spell slot”. Si el texto nombra un máximo (`up to 4th level`) → `mechanic:spell-slot:lvlN`. |
+| `mechanic:cantrip`       | Contiene `cantrip`, o un conjuro del catálogo resuelto como nivel 0 (`{@spell` o prosa) |
 | `mechanic:class-feature` | Contiene el nombre de una feature de clase específica (ej. `wyvernfire`, `dragonpiercer`, `Guard AC`, `Mighty Weapon`) |
 | `mechanic:item-related`  | Contiene `{@item` (uso / proficiency / conjuro de ítems: bombas, ammo, kits, pociones, etc.)                          |
 | `mechanic:trap`          | Subconjunto de `item-related`: pitfall/shock trap(+ ) o trap tool (trampas MH)                                        |
+| `mechanic:gather-resources` | Utilidad de recolección de campo MH (Botanist / Geologist / Fisherman / Pack Rat / Whim, …). Variantes fuertes (`1d4`, double de party, free gather) → también `mechanic:gather-resources:major` |
+| `mechanic:fishing`       | `catch fish` / `fishing pole` / `sushifish` (también emite `gather-resources`)                                         |
+| `mechanic:mining`        | `mining resource` / `mine or gather` / `mineral resource` / Mineralogist / Crystallography                             |
+| `mechanic:plant`         | `plant resource` / herbalist kit / Honey Hunter                                                                        |
+| `mechanic:bone`          | `bone resource` (Archaeologist)                                                                                        |
+| `mechanic:foraging`      | `harvest mushrooms` (Forager). No aplica a Fortitude (*track, forage, or travel*)                                       |
+| `mechanic:insects`       | `bug net` / Entomologist / insect resources                                                                            |
+| `mechanic:class-resource`| Pool de clase (ki, Channel Divinity, sorcery points, …). Siempre junto al tag específico del pool                      |
+| `mechanic:ki`            | Contiene `ki point(s)`                                                                                                 |
+| `mechanic:channel-divinity` | Contiene `channel divinity`                                                                                         |
+| `mechanic:sorcery-points`| Contiene `sorcery point(s)`                                                                                            |
+| `mechanic:superiority-dice` | Contiene `superiority dice`                                                                                         |
+| `mechanic:bardic-inspiration` | Contiene `bardic inspiration`                                                                                    |
+| `mechanic:focus-points`  | Contiene `focus point(s)`                                                                                              |
+| `mechanic:recover-class-resource` | Restaura usos gastados del pool (`regain` / `restore` / `recover` + ki / sorcery / …). No cubre “+1 use between rests” |
+| `mechanic:attack-range`  | Aumenta el *normal attack range* del arma (`increased by N feet` / `doubled`). No aplica a Critical Eye (*critical hit range*) ni a bonos “outside of your normal attack range” |
+| `mechanic:attack-range:major` | El normal attack range queda **doubled** (Deadeye+ / underwater)                                                |
+| `mechanic:reach`         | Extiende el *reach* melee (`reach is increased` / `extend its reach by`)                                           |
 
 ##### Notas de implementación de tags
 
@@ -757,18 +798,62 @@ Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condici
 | 13–20 | `extra 3d6 … damage` | **Very Rare** |
 | ≥ 21 | `extra 4d6 … damage` | **Legendary** |
 
-Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Si un mismo texto dispara varias inferencias de defensa/daño, se usa la rareza más alta.
+Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Los nombres extraídos de runas MHMM que **no** están en GTMH (`discovered:`) se asignan en `discovered-effect-rarity.data.ts` (p. ej. **Flexible Leathercraft** → **Common**); sin entrada siguen Unknown salvo que aplique una inferencia inline. Si un mismo texto dispara varias inferencias de defensa/daño, se usa la rareza más alta.
 
-**Lanzamiento de hechizos** (`inline-spell-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene tags `mechanic:cantrip` o `mechanic:spell:lvlN` (nivel real del catálogo):
+**Rider de 20 natural sin daño + empujón** (`inline-roll-20-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:roll-20` + `mechanic:no-damage` + `mechanic:push` (p. ej. Tetranadon Beak: unarmed, 5 pies, ~5 %): **Common**. Un rider de 20 con daño extra (Ajarakan, 1d4 + push) sigue la tabla de daño.
 
-| Nivel del hechizo | Rareza |
+**Ataque con reaction (natural weapon / unarmed)** (`inline-reaction-attack-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:reaction` + (`mechanic:natural-weapon` o `mechanic:unarmed`) (p. ej. Tigerstripe Zamtrios: reaction attack with race natural weapon): **Uncommon**. Si el texto también lista dados de daño (Congalala Strong Fang, 1d8), gana la rareza de daño extra.
+
+**Hold breath underwater** (`inline-hold-breath-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:hold-breath` + `mechanic:underwater` (p. ej. *hold breath underwater for twice as long*): **Common**. *Breathe underwater* (water breathing) no emite `hold-breath` y sigue Unknown salvo otra inferencia.
+
+**Gather resources (MH)** (`inline-gather-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
+
+| Tags | Rareza | Ejemplos |
+| --- | --- | --- |
+| `mechanic:gather-resources` (sin `:major`) | **Uncommon** | Expert Fisherman (x2 fish), Botanist / Geologist / Archaeologist (instead gather 2) |
+| `mechanic:gather-resources:major` | **Rare** | Pro Fisherman / Botanist+ (extra 1d4), Pack Rat (party double), Speed Gatherer+ |
+
+**Recuperación de recurso de clase** (`inline-class-resource-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:recover-class-resource` (p. ej. Monk: regain expended ki = half PB, 1/long rest): **Uncommon** (mismo suelo que spell-slot sin nivel). Extra use de Channel Divinity sin wording de recover sigue Unknown.
+
+**Attack range** (`inline-attack-range-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
+
+| Tags | Rareza | Ejemplos |
+| --- | --- | --- |
+| `mechanic:attack-range` (sin `:major`) | **Common** | Deadeye (+20 ft) |
+| `mechanic:attack-range:major` | **Uncommon** | Deadeye+ / underwater (range doubled) |
+
+**Advantage on attack rolls** (`inline-attack-advantage-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:advantage` + `mechanic:attack-roll`:
+
+| Activación | Rareza | Ejemplos |
+| --- | --- | --- |
+| Limited (`active` / BA / reaction; p. ej. Aim Booster ½ PB / long rest) | **Uncommon** | Aim Booster |
+| Always-on (`passive`) | **Rare** | advantage on attack rolls while attuned |
+
+**Movement / speed** (`inline-movement-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y hay grant de modo (no basta un debuff `its speed is reduced`):
+
+| Tags | Rareza | Ejemplos |
+| --- | --- | --- |
+| `walking-speed` (sin major, p. ej. +5) | **Common** | Marathon Runner |
+| `burrowing` / `swimming` / `climbing` / `walking-speed`+`major` (+10) / `icy-surfaces` | **Uncommon** | burrow 10 ft, swim = walk, Spider Climb, Marathon Runner+, climb icy + ignore ice/snow DT (Boots of the Winterlands) |
+| `ignore-difficult-terrain` o `movement-climb` sin paquete de hielo | **Common** | ignore DT genérico |
+| `flying` (sin major, &lt;60 ft) | **Rare** | flying speed 30 ft |
+| `flying`+`major` (≥60 ft) | **Very Rare** | flying speed 60–80 ft |
+
+**Lanzamiento de hechizos / recuperación de slots** (`inline-spell-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene tags `mechanic:cantrip`, `mechanic:spell:lvlN` (nivel real del catálogo) o `mechanic:spell-slot` / `mechanic:spell-slot:lvlN`:
+
+| Nivel del hechizo o slot | Rareza |
 | --- | --- |
-| 0–3 (cantrip … 3rd) | **Uncommon** |
-| 4–5 | **Rare** (p. ej. Dimension Door) |
+| 0–1 (cantrip / 1st; p. ej. Earth Tremor 1/long rest) | **Common** |
+| 2–3, o recuperación de slot sin nivel (p. ej. Arcane Recovery extra) | **Uncommon** (Pearl of Power = slot de 3rd) |
+| 4–5 | **Rare** (p. ej. Dimension Door, o recuperar un slot de hasta 4th) |
 | 6–8 | **Very Rare** |
 | 9 | **Legendary** |
 
-El badge del diálogo y el filtro **Material Effect Tier** usan la misma función.
+**Ventaja vs condición** (`inline-condition-rarity.utils.ts`) — **solo si** tras defensa/daño/hechizo la rareza seguiría en Unknown, y el efecto tiene `mechanic:against-condition` + `mechanic:advantage` **sin** `mechanic:immunity` (p. ej. *advantage on saving throws against the poisoned condition*): **Common**.
+
+**Inmunidad a condición** (`inferRarityFromConditionImmunityTags`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:immunity` + algún `mechanic:condition-*` (p. ej. *immune to the poisoned condition*): **Uncommon**. La inmunidad a un **tipo de daño** sigue la tabla de defensas (Rare / Very Rare); no usa esta regla.
+
+El badge del diálogo y el filtro **Material Effect Tier** usan la misma función. En **RuneDetailDialog**, si hay filtros de efecto activos (slot, tags same-effect, material-effect tier) y solo un lado de la runa los cumple, el otro efecto se muestra atenuado (`filtered out`) y su botón de **Add to Rune Planner** (arma/armadura/trinket de ese lado) queda deshabilitado.
 
 ---
 
@@ -1339,6 +1424,8 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 
 **Dual Repeaters (Uncommon+)**: Magazines son **Weapon Resources** consumibles: cada magazine llena las **Charges** del arma (`system.uses` max 6, empieza vacío — UI de Charges en la ficha). Attack gasta 1 Charge. AE `Magazine (Loaded)` marca el tipo cargado (damage type) y riders Rare (p. ej. Blaze Upgrade I → +1d6 fire en AE). Overlay `applyDualRepeatersOverlay` + macro `dual-repeaters-magazines.macro.ts` (on-hit: Cryo/Storm/Slime Upgrade I, Dawnstar, Twilight). Ejemplos: `fvtt-Item-dual-repeaters-uncommon.json`, `fvtt-Item-dual-repeaters-rare.json`, `weapons-resources/magazines/`.
 
+**Magus Staff (Forge RaintDM)**: simple melee quarterstaff-compatible focus (`foc` + Versatile 1d6/1d10 bludgeoning). Common: **Mastery (Sap)** as an *item* feature (not trained XPHB mastery) — overlay `applyMagusStaffOverlay` + `magus-staff.macro.ts` applies disadvantage on the target's next attack (`1Attack` + `turnStartSource`) after a melee **Attack** hit. Uncommon: **Spell Core Gauge** (max 3, starts empty; clear on SR/LR by setting Spent to max) + **Harvest Magic** (special activity; Item Macro dialog recovers 1 counter, or 2 if the cantrip target was within 15 ft) + **Arcane Discharge** (scaled damage rider, spend 1…max, `1d6` per counter of the spell's type). Rare: **Expanded Gauge** (max 5), **Improve Casting** (+1 spell attack / save DC AE while holding), **Offset Ward** (Reaction: Item Macro spends 2, applies +5 AC with `isAttacked`; on a miss caused this way, cast a Cantrip spell-attack — honor-system). Foundry examples: `fvtt-Item-magus-staff-common.json`, `fvtt-Item-magus-staff-uncommon.json`, `fvtt-Item-magus-staff-rare.json`. VR/Legendary Forge only for now.
+
 **Longsword (Forge RaintDM)**: 1d10 slashing two-handed (no Heavy — the fast two-hander vs Great Sword). Common: Mastery (Sap). Uncommon: **Spirit Gauge** (max 6, starts empty, +1 on a *normal* hit; dissipates after 1 min / Incapacitated) + **Spirit Blade** (on a normal hit, spend N spirit for +N d4 slashing; d6 at Rare). Rare: **Foresight Slash** (Reaction when hit by melee: spend 2, 1d8 to AC; on a miss caused this way, one counter-attack and regain 1 spirit). Overlay `applyLongswordOverlay` + `longsword.macro.ts`: Attack hit recovers Spirit Gain; Spirit Blade is a scaled **damage** rider (not a second attack); Foresight spends 2 in ItemMacro, applies +1d8 AC (`isAttacked`), refunds 1 on miss, and emits **Foresight Slash: Counter**. Very Rare: fill +2; **Spirit Thrust** / **Spirit Roundslash** / **Spirit Helm Breaker** each **replace one Attack-action attack** (independent; optional combo +1d6 on Helm Breaker if another Spirit technique already resolved this action). No Prone/Stun — Sap is the control. Legendary: **Foresight Slash / Spirit Thrust / Spirit Roundslash Upgrade I** (each generates 1 spirit on a successful hit — Counter hit for Foresight, primary attack hit for Thrust/Roundslash) so Helm Breaker's 5+ spirit **Spirit Release Slash** threshold can cycle; overlay flag `techniqueSpiritOnHit`. **Special Sheathe (Iai Spirit Slash)** BA stance + Reaction; **Spirit Release Slash** (Helm Breaker extra 5d6 if 5+ spirit before the spend). Column **Spirit Gain** is a rarity stat chip, not a feature list. `public/data/raintdm-weapons/longsword.json`. Foundry examples: `fvtt-Item-longsword-uncommon.json`, `fvtt-Item-longsword-rare.json`. VR/Legendary Forge only for now.
 
 #### Entidad `Weapon`
@@ -1536,7 +1623,7 @@ Grupos de tags **mutuamente excluyentes** al colocar materiales. El match usa **
   3. bonus AC
   4. efectos de runa-charges
 - **Arma**:
-  1. efecto al sacar 20 natural (`mechanic:critical`) — exento de la regla 2
+  1. efecto al sacar 20 natural (`mechanic:roll-20` o `mechanic:critical`) — exento de la regla 2
   2. daño extra / condición on-hit / efecto al impacto (el daño extra condicionado a una condición ya presente no cuenta como “extra damage”)
   3. efectos de runa-charges
   4. bonus a spell DC / spell attack (`mechanic:spell-buff`)
@@ -1545,7 +1632,7 @@ Grupos de tags **mutuamente excluyentes** al colocar materiales. El match usa **
 
 #### UI
 
-Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efectos parseados, botón limpiar build. Desde **RuneList** / **RuneDetailDialog** se pueden añadir runas al planificador.
+Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efectos parseados, botón limpiar build. Desde **RuneList** / **RuneDetailDialog** se pueden añadir runas al planificador. Con filtros de efecto activos en el catálogo, el diálogo atenúa el lado que no matchea y deshabilita su botón de añadir (sigue permitiendo quitar si ya estaba en el build).
 
 **Export Foundry** (`BuildDrawerFooter` → `downloadAllBuildRuneJsons` / `buildRuneFoundryItem`): descarga un Item `equipment` por runa del build. **Solo descripción** (HTML enriquecido); sin activities ni Active Effects. Las automatizaciones curadas viven en `public/data/foundry-jsons-example/runes`.
 
