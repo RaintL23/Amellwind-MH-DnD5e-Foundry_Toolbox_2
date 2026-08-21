@@ -31,7 +31,7 @@ export function MainLayout({ syncing = false }: { syncing?: boolean }) {
             <div className="flex flex-col flex-1 min-w-0">
               {syncing && (
                 <div className="shrink-0 border-b border-amber-500/30 bg-amber-500/10 px-4 py-1.5 text-center text-xs text-amber-400">
-                  Sincronizando datos de Amellwind…
+                  Syncing data from Amellwind…
                 </div>
               )}
               {/* Topbar mobile: solo visible en md y abajo */}
