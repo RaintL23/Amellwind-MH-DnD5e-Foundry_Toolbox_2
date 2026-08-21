@@ -81,6 +81,18 @@ export const INLINE_REACTION_ATTACK_RARITY: ResourceRarity = "Uncommon";
 export const INLINE_HOLD_BREATH_UNDERWATER_RARITY: ResourceRarity = "Common";
 
 /**
+ * Always-on shortened long/short rest (benefits after 4h instead of 8).
+ * Stronger than mild skill utility; aligns with darkvision / gather x2.
+ */
+export const INLINE_ACCELERATED_REST_RARITY: ResourceRarity = "Uncommon";
+
+/**
+ * Mithral Armor–style package (no Stealth disadvantage + no Str requirement).
+ * Matches DMG Mithral Armor at Uncommon.
+ */
+export const INLINE_MITHRAL_ARMOR_RARITY: ResourceRarity = "Uncommon";
+
+/**
  * MH field gather that doubles a single resource type (Botanist / Expert Fisherman).
  * Core hunt-loop utility — Uncommon floor.
  */
@@ -161,6 +173,12 @@ export const INLINE_CONDITION_IMMUNITY_RARITY: ResourceRarity = "Uncommon";
  * Weaker than darkvision; Common floor.
  */
 export const INLINE_LIGHT_RARITY: ResourceRarity = "Common";
+
+/**
+ * Weapon usable as a spellcasting focus (Ruby of the War Mage–adjacent).
+ * Mild caster utility — Common floor.
+ */
+export const INLINE_SPELLCASTING_FOCUS_RARITY: ResourceRarity = "Common";
 
 /**
  * Always-on darkvision grant (Goggles of Night–adjacent).

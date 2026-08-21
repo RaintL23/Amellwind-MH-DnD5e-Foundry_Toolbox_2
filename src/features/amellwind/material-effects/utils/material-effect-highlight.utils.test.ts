@@ -299,6 +299,64 @@ describe("getMaterialEffectTierForText — hold-breath underwater when Unknown",
   });
 });
 
+describe("getMaterialEffectTierForText — accelerated rest when Unknown", () => {
+  it("assigns Uncommon to long rest in 4 hours instead of 8", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You gain the benefits of a long rest after 4 hours instead of 8 while you are attuned to this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:accelerated-rest",
+          "mechanic:long-rest",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("does not assign Uncommon for long-rest recharge alone", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You can use this property once, regaining all uses when you finish a long rest.",
+        "armor",
+        emptyIndex,
+        ["mechanic:long-rest", "mechanic:passive"],
+      ),
+    ).toBe("Unknown");
+  });
+});
+
+describe("getMaterialEffectTierForText — mithral armor when Unknown", () => {
+  it("assigns Uncommon to Mithral-style flexible armor", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Your armor becomes light and flexible. If it is medium or light armor it can be worn under normal clothes. If the armor normally imposes disadvantage on Dexterity (Stealth) checks or has a Strength requirement, it no longer does.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:mithral",
+          "mechanic:skill-stealth",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — spellcasting focus when Unknown", () => {
+  it("assigns Common to weapon as spellcasting focus", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are attuned to this weapon, you can use this weapon as your spellcasting focus.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:spellcasting-focus", "mechanic:passive"],
+      ),
+    ).toBe("Common");
+  });
+});
+
 describe("getMaterialEffectTierForText — gather resources when Unknown", () => {
   it("assigns Uncommon to Expert Fisherman (x2 catch)", () => {
     expect(
@@ -503,6 +561,23 @@ describe("getMaterialEffectTierForText — condition defense when Unknown", () =
           "mechanic:immunity",
           "mechanic:condition",
           "mechanic:condition-poisoned",
+          "mechanic:passive",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Uncommon to 'cannot be knocked prone' immunity", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are wearing this armor, you cannot be knocked prone.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:immunity",
+          "mechanic:condition",
+          "mechanic:condition-prone",
           "mechanic:passive",
           "type:defensive",
         ],

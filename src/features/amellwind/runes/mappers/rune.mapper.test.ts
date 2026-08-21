@@ -302,6 +302,108 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     expect(tags).not.toContain("mechanic:against-condition");
   });
 
+  it("tags 'cannot be knocked prone' as condition immunity", () => {
+    const tags = extractRuneEffectTags(
+      "While you are wearing this armor, you cannot be knocked prone.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:immunity",
+        "mechanic:condition",
+        "mechanic:condition-prone",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:against-condition");
+  });
+
+  it("tags Tremor-Proof / Rock Steady prone lockouts as immunity", () => {
+    const tremor = extractRuneEffectTags(
+      "Tremor-Proof. You cannot be knocked prone while you wear this armor.",
+    );
+    const rockSteady = extractRuneEffectTags(
+      "Rock Steady. While wearing this armor, you can't be unwillingly knocked prone and you ignore effects like the kushala daora and amatsu's wind barrier.",
+    );
+
+    for (const tags of [tremor, rockSteady]) {
+      expect(tags).toEqual(
+        expect.arrayContaining([
+          "mechanic:immunity",
+          "mechanic:condition-prone",
+          "mechanic:condition",
+        ]),
+      );
+      expect(tags).not.toContain("mechanic:against-condition");
+    }
+  });
+
+  it("tags cannot-be lists and bare condition lockouts as immunity", () => {
+    const paralyzed = extractRuneEffectTags(
+      "You cannot be paralyzed while you wear this armor.",
+    );
+    const wellness = extractRuneEffectTags(
+      "Wellness. While wearing this armor, you cannot be unwillingly put to sleep, poisoned, paralyzed, or stunned.",
+    );
+    const deadeye = extractRuneEffectTags(
+      "Deadeye Soul X. While you are wearing this armor, you can't be stunned, and your critical range is increased by 1 when you are attacking a Huge or larger creature.",
+    );
+
+    expect(paralyzed).toEqual(
+      expect.arrayContaining([
+        "mechanic:immunity",
+        "mechanic:condition-paralyzed",
+      ]),
+    );
+    expect(wellness).toEqual(
+      expect.arrayContaining([
+        "mechanic:immunity",
+        "mechanic:condition-poisoned",
+        "mechanic:condition-paralyzed",
+        "mechanic:condition-stunned",
+      ]),
+    );
+    expect(deadeye).toEqual(
+      expect.arrayContaining([
+        "mechanic:immunity",
+        "mechanic:condition-stunned",
+      ]),
+    );
+  });
+
+  it("does not treat 'can't be afflicted' or Guard push lockouts as immunity-only condition", () => {
+    const afflicted = extractRuneEffectTags(
+      "You are immune to lightning damage, and you can't be afflicted with thunderblight while you wear this armor.",
+    );
+    const guard = extractRuneEffectTags(
+      "Guard. You cannot be pushed or knocked backwards while you wear this armor.",
+    );
+
+    // Damage immunity still applies; affliction stays against-condition only.
+    expect(afflicted).toContain("mechanic:immunity");
+    expect(afflicted).toContain("mechanic:against-condition");
+    expect(afflicted).toContain("mechanic:condition-thunderblight");
+
+    expect(guard).not.toContain("mechanic:immunity");
+    expect(guard).not.toContain("mechanic:condition-prone");
+  });
+
+  it("tags Negate Poison cannot-be-poisoned as immunity", () => {
+    const tags = extractRuneEffectTags(
+      "Negate Poison. You have resistance to poison damage and cannot be poisoned while wearing this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:resistance",
+        "mechanic:immunity",
+        "mechanic:condition-poisoned",
+        "damage:poison",
+      ]),
+    );
+  });
+
   it("tags 'against being poisoned' without the word condition", () => {
     const tags = extractRuneEffectTags(
       "You have advantage on saving throws against being poisoned while you wear this armor.",
@@ -483,6 +585,90 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
         "mechanic:passive",
       ]),
     );
+  });
+
+  it("tags accelerated long rest (4 hours instead of 8)", () => {
+    const tags = extractRuneEffectTags(
+      "You gain the benefits of a long rest after 4 hours instead of 8 while you are attuned to this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:accelerated-rest",
+        "mechanic:long-rest",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("does not tag accelerated-rest for long-rest recharge gates", () => {
+    const tags = extractRuneEffectTags(
+      "You can use this property once, regaining all uses when you finish a long rest.",
+    );
+
+    expect(tags).toContain("mechanic:long-rest");
+    expect(tags).not.toContain("mechanic:accelerated-rest");
+  });
+
+  it("tags Mithral-style flexible armor package", () => {
+    const tags = extractRuneEffectTags(
+      "Your armor becomes light and flexible. If it is medium or light armor it can be worn under normal clothes. If the armor normally imposes disadvantage on Dexterity (Stealth) checks or has a Strength requirement, it no longer does.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:mithral",
+        "mechanic:skill-stealth",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Nightcloak Malfestio variant with 'a light and flexible'", () => {
+    const tags = extractRuneEffectTags(
+      "Your armor becomes a light and flexible. If it is medium or light armor it can be worn under normal clothes. If the armor normally imposes disadvantage on Dexterity (Stealth) checks or has a Strength requirement, it no longer does.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:mithral",
+        "mechanic:skill-stealth",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("does not tag mithral for Strength requirement reduced by 1 alone", () => {
+    const tags = extractRuneEffectTags(
+      "This armor is 10% lighter than normal armor of this type. If it has a Strength requirement to use, it is reduced by 1.",
+    );
+
+    expect(tags).toContain("mechanic:passive");
+    expect(tags).not.toContain("mechanic:mithral");
+    expect(tags).not.toContain("mechanic:skill-stealth");
+  });
+
+  it("tags weapon as spellcasting focus", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this weapon, you can use this weapon as your spellcasting focus.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:spellcasting-focus",
+        "mechanic:passive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:focus-points");
+  });
+
+  it("tags spellcasting focus combined with fire-spell bypass", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this weapon, you can use this weapon as your spellcasting focus, and your fire spells bypass a creature resistance and immunities.",
+    );
+
+    expect(tags).toContain("mechanic:spellcasting-focus");
+    expect(tags).toContain("mechanic:passive");
   });
 
   it("tags Aim Booster with attack-roll and offensive", () => {

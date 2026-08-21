@@ -111,6 +111,7 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [ROLL_20_RE, "mechanic:roll-20"],
   [PUSH_RE, "mechanic:push"],
   [/resist(?:ant|ance) to\s+\w/i, "mechanic:resistance"],
+  // `mechanic:immunity` — also via `immunityTag()` ("cannot be knocked prone", …)
   [/immune to|immunity to/i, "mechanic:immunity"],
   [
     /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i,
@@ -167,6 +168,66 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/\bshort(?:\s+or\s+long)?\s+rest\b|\{@rest\s+short\}/i, "mechanic:short-rest"],
   [/\b(?:short\s+or\s+)?long\s+rest\b|\{@rest\s+long\}/i, "mechanic:long-rest"],
 ];
+
+/**
+ * Shortened long/short rest duration (Hypnocatrice-style trance), distinct from
+ * recharge wording like "once per long rest" / "finish a long rest".
+ */
+function acceleratedRestTag(text: string): string | null {
+  if (
+    /benefits of a (?:long|short) rest after \d+\s*hours?/i.test(text) ||
+    /(?:long|short) rest after \d+\s*hours? instead of/i.test(text) ||
+    /only (?:need|require) \d+\s*hours? (?:for|to (?:complete|finish|take)) a (?:long|short) rest/i.test(
+      text,
+    ) ||
+    /(?:complete|finish|take) a (?:long|short) rest in \d+\s*hours?/i.test(text)
+  ) {
+    return "mechanic:accelerated-rest";
+  }
+  return null;
+}
+
+/**
+ * Weapon (or item) usable as a spellcasting focus — Ruby of the War Mage–style.
+ * Distinct from `mechanic:focus-points` (Monk / similar class pools).
+ */
+function spellcastingFocusTag(text: string): string | null {
+  if (
+    /(?:as|as your|as a)\s+spellcasting focus/i.test(text) ||
+    /use (?:this |the )?(?:weapon|item|armor|trinket) as (?:your |a )?spellcasting focus/i.test(
+      text,
+    )
+  ) {
+    return "mechanic:spellcasting-focus";
+  }
+  return null;
+}
+
+/**
+ * Mithral Armor–style package: no Stealth disadvantage and/or no Strength
+ * requirement, often with "light and flexible" / worn under clothes.
+ * Partial "Str requirement reduced by N" alone is not this tag.
+ */
+function mithralArmorTag(text: string): string | null {
+  const removesStealthDisadvantage =
+    /imposes disadvantage on dexterity\s*\((?:\{@skill\s+)?stealth/i.test(
+      text,
+    ) && /(?:no longer does|doesn't|does not)/i.test(text);
+  const removesStrengthRequirement =
+    /strength requirement/i.test(text) &&
+    /(?:no longer does|doesn't|does not)/i.test(text);
+  const flexibleWording =
+    /light and flexible|worn under normal clothes/i.test(text);
+
+  if (
+    (removesStealthDisadvantage && removesStrengthRequirement) ||
+    (flexibleWording &&
+      (removesStealthDisadvantage || removesStrengthRequirement))
+  ) {
+    return "mechanic:mithral";
+  }
+  return null;
+}
 
 /** Action economy that marks an effect as activated rather than always-on. */
 const ACTION_ECONOMY_RE =
@@ -287,7 +348,12 @@ function skillTags(text: string): string[] {
   for (const name of BARE_SKILL_NAMES) {
     const escaped = name.replace(/\s+/g, "\\s+");
     // "Athletics checks", "Climb check", "+2 bonus to Stealth"
+    // "Dexterity (Stealth) checks" / "(Stealth) checks"
     const asChecks = new RegExp(`\\b${escaped}\\s+checks?\\b`, "i");
+    const asParenChecks = new RegExp(
+      `\\(${escaped}\\)\\s*checks?\\b`,
+      "i",
+    );
     const afterBonus = new RegExp(
       `\\+\\d+\\s*bonus\\s+(?:on|to)\\s+${escaped}\\b`,
       "i",
@@ -298,6 +364,7 @@ function skillTags(text: string): string[] {
     );
     if (
       asChecks.test(lower) ||
+      asParenChecks.test(lower) ||
       afterBonus.test(lower) ||
       afterAdvantage.test(lower)
     ) {
@@ -648,6 +715,28 @@ function weaponDistanceTags(text: string): string[] {
 }
 
 /**
+ * Full condition lockouts phrased without "immune to":
+ * "cannot be knocked prone", "can't be stunned", "cannot be poisoned,
+ * paralyzed, or stunned". Excludes "can't be afflicted…" (against-condition)
+ * and utility wording ("cannot be used / pushed / detected / …").
+ */
+function conditionImmunityCannotBeTag(text: string): string | null {
+  const clauseRe =
+    /can(?:not|'t)\s+be\s+(?!afflicted\b)((?:unwillingly\s+)?.{0,120}?)(?=[.;]|$)/gi;
+  for (const match of text.matchAll(clauseRe)) {
+    const clause = match[1] ?? "";
+    if (
+      new RegExp(`(?:knocked\\s+)?(?:${CONDITION_TERM_ALT})\\b`, "i").test(
+        clause,
+      )
+    ) {
+      return "mechanic:immunity";
+    }
+  }
+  return null;
+}
+
+/**
  * mechanic:against-condition — helps avoid acquiring a condition (advantage /
  * save bonus vs being X, can't be afflicted, …). Not full condition immunity —
  * that is `mechanic:immunity` + `mechanic:condition-*` only.
@@ -704,7 +793,11 @@ function passiveActiveTags(text: string, tags: Set<string>): string[] {
     /whenever you (?:make|must succeed on) a saving throw/i.test(text) ||
     /\byou (?:have|are|gain)\b/i.test(text) ||
     /(?:normal )?attack range is (?:increased|doubled)/i.test(text) ||
-    /reach is increased by/i.test(text);
+    /reach is increased by/i.test(text) ||
+    // Always-on armor property transforms (Mithral-style / lighter armor)
+    /your armor becomes|this armor is \d+%\s*lighter|can be worn under normal clothes/i.test(
+      text,
+    );
 
   if (isPassive) return ["mechanic:passive"];
   return [];
@@ -946,6 +1039,7 @@ function typeTags(text: string): string[] {
     /\bAC\b|armor class/i.test(text) ||
     /resist(?:ant|ance) to\s+\w/i.test(text) ||
     /immune to|immunity to/i.test(text) ||
+    conditionImmunityCannotBeTag(text) != null ||
     /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i.test(
       text,
     ) ||
@@ -1019,6 +1113,15 @@ function extractTags(
     if (pattern.test(effectText)) tags.add(tag);
   }
 
+  const acceleratedRest = acceleratedRestTag(effectText);
+  if (acceleratedRest) tags.add(acceleratedRest);
+
+  const spellcastingFocus = spellcastingFocusTag(effectText);
+  if (spellcastingFocus) tags.add(spellcastingFocus);
+
+  const mithral = mithralArmorTag(effectText);
+  if (mithral) tags.add(mithral);
+
   // Sub-tags escalados (reemplazan los genéricos)
   const dmg = extraDamageTag(effectText);
   if (dmg) tags.add(dmg);
@@ -1066,6 +1169,9 @@ function extractTags(
   if ([...tags].some((tag) => tag.startsWith("mechanic:condition-"))) {
     tags.add("mechanic:condition");
   }
+
+  const cannotBeImmunity = conditionImmunityCannotBeTag(effectText);
+  if (cannotBeImmunity) tags.add(cannotBeImmunity);
 
   const againstCondition = againstConditionTag(effectText);
   if (againstCondition) tags.add(againstCondition);
