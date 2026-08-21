@@ -16,10 +16,14 @@ import { useRuneBuild } from "../../context/RuneBuildContext";
 import {
   buildRuneSearchIndex,
   matchesRuneSearchQuery,
-  runeIndexMatchesMaterialEffectTier,
   type RuneSearchIndexEntry,
 } from "../../utils/rune-search.utils";
-import { runeMatchesListTagFilter } from "../../utils/rune-compatibility.utils";
+import {
+  hasActiveRuneEffectListFilters,
+  runeEffectMatchesListFilters,
+  type RuneListEffectFilters,
+} from "../../utils/rune-compatibility.utils";
+import type { MaterialEffectSlot } from "@/shared/types";
 import {
   buildRuneListSearchParams,
   parseRuneListUrlState,
@@ -146,10 +150,6 @@ export function RuneList() {
         entry.rune.monsterCrs.some((cr) => filters.monsterCr.includes(cr)),
       );
     }
-    if (filters.slot === "A" || filters.slot === "W") {
-      const slot = filters.slot;
-      result = result.filter((entry) => entry.rune.slots.includes(slot));
-    }
     if (filters.obtainment.length > 0) {
       result = result.filter((entry) =>
         filters.obtainment.some((obtainment) => {
@@ -164,21 +164,29 @@ export function RuneList() {
         }),
       );
     }
-    if (filters.tag.length > 0) {
-      result = result.filter((entry) =>
-        runeMatchesListTagFilter(entry.rune, filters.tag, filters.slot),
-      );
-    }
     if (filters.monsterTier.length > 0) {
       result = result.filter((entry) =>
         filters.monsterTier.includes(String(entry.rune.tier)),
       );
     }
-    if (filters.materialEffectTier.length > 0 && materialEffectIndex) {
+
+    // Slot, tags and materialEffectTier are effect-scoped: all three must hold
+    // on the SAME effect. A rune only passes when at least one of its effects
+    // (weapon or armor) satisfies every active effect-level filter simultaneously.
+    const effectFilters: RuneListEffectFilters = {
+      slot: filters.slot,
+      tag: filters.tag,
+      materialEffectTier: filters.materialEffectTier,
+    };
+    if (hasActiveRuneEffectListFilters(effectFilters)) {
       result = result.filter((entry) =>
-        runeIndexMatchesMaterialEffectTier(
-          entry,
-          filters.materialEffectTier,
+        (["weapon", "armor"] as MaterialEffectSlot[]).some((kind) =>
+          runeEffectMatchesListFilters(
+            entry.rune,
+            kind,
+            effectFilters,
+            materialEffectIndex,
+          ),
         ),
       );
     }
