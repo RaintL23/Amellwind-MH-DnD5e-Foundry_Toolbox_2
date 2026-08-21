@@ -36,6 +36,18 @@ describe("inferRarityFromConditionDefenseTags", () => {
       ]),
     ).toBeNull();
   });
+
+  it("assigns Common for a flat save bonus against a condition", () => {
+    expect(
+      inferRarityFromConditionDefenseTags([
+        "mechanic:against-condition",
+        "mechanic:save-bonus",
+        "mechanic:condition-prone",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    ).toBe("Common");
+  });
 });
 
 describe("inferRarityFromConditionImmunityTags", () => {

@@ -10,6 +10,7 @@ const spellLevels = buildSpellLevelLookup([
   makeSpell("Light", 0),
   makeSpell("Shield", 1),
   makeSpell("Earth Tremor", 1),
+  makeSpell("Ice Knife", 1),
   makeSpell("Dust Devil", 2),
   makeSpell("Call Lightning", 3),
   makeSpell("Dimension Door", 4),
@@ -105,6 +106,43 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     expect(tags).not.toContain("mechanic:spell:lvl1-2");
   });
 
+  it("tags know-the-spell grants as leveled + prepared", () => {
+    const tags = extractRuneEffectTags(
+      "(Druid, Sorcerer, & Wizard Only) While attuned to this weapon you know the ice knife spell. If you have to prepare spells, you always have it prepared, and it doesn't count against the number of spells you can prepare each day.",
+      spellLevels,
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "class:druid",
+        "class:sorcerer",
+        "class:wizard",
+        "mechanic:spell:lvl1",
+        "mechanic:spell:prepared",
+        "mechanic:passive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:spell:one-use");
+    expect(tags).not.toContain("mechanic:spell:lvl1-2");
+  });
+
+  it("tags know-the-cantrip grants from the catalog", () => {
+    const tags = extractRuneEffectTags(
+      "(Sorcerer & Wizard Only) While attuned to this weapon you know the ray of frost cantrip.",
+      buildSpellLevelLookup([
+        makeSpell("Ray of Frost", 0),
+        makeSpell("Ice Knife", 1),
+      ]),
+    );
+
+    expect(tags).toContain("mechanic:cantrip");
+    expect(tags).toContain("class:sorcerer");
+    expect(tags).toContain("class:wizard");
+    expect(tags.some((tag) => tag.startsWith("mechanic:spell:lvl"))).toBe(
+      false,
+    );
+  });
+
   it("tags multi-spell plain cast at 2nd level", () => {
     const tags = extractRuneEffectTags(
       "(Druid, Sorcerer, & Wizard Only) While attuned to this weapon you can cast the Earth Tremor and the Dust Devil spell at 2nd level once per day, without expending a spell slot.",
@@ -177,6 +215,37 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
 
     expect(tags).toContain("mechanic:skill-insight");
     expect(tags).not.toContain("mechanic:skill-bonus");
+  });
+
+  it("tags plain Climb checks as athletics with disarm advantage", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned to this weapon you have advantage on checks against being disarmed and a +2 bonus to Climb checks.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:advantage",
+        "mechanic:disarm",
+        "mechanic:skill-bonus",
+        "mechanic:skill-athletics",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags plain Athletics check bonus without {@skill} markup", () => {
+    const tags = extractRuneEffectTags(
+      "You have a +2 bonus to Athletics checks while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:skill-bonus",
+        "mechanic:skill-athletics",
+        "mechanic:passive",
+      ]),
+    );
   });
 
   it("tags specific conditions from {@condition} markup", () => {
@@ -308,6 +377,41 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
 
     expect(tags).toContain("mechanic:condition-stunned");
     expect(tags).not.toContain("mechanic:against-condition");
+  });
+
+  it("tags +2 save vs knocked prone as against-condition and save-bonus", () => {
+    const tags = extractRuneEffectTags(
+      "Whenever you must succeed on a saving throw or be knocked prone, you do so with a +2 bonus.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:against-condition",
+        "mechanic:save-bonus",
+        "mechanic:condition-prone",
+        "mechanic:condition",
+        "mechanic:saving-throw",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:advantage");
+  });
+
+  it("tags advantage vs knocked prone without {@condition} markup", () => {
+    const tags = extractRuneEffectTags(
+      "When you must succeed on a saving throw or be knocked prone, you do so with advantage.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:against-condition",
+        "mechanic:advantage",
+        "mechanic:condition-prone",
+        "mechanic:saving-throw",
+        "type:defensive",
+      ]),
+    );
   });
 
   it("tags roll-a-20 damage riders as roll-20 and offensive, not critical", () => {

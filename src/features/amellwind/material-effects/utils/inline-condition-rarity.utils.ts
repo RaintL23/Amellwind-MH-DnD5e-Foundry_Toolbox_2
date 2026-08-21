@@ -5,16 +5,19 @@ import {
 } from "../constants/material-effect.constants";
 
 /**
- * Infers Common for always-on advantage vs a condition (not immunity).
- * Requires `against-condition` + `advantage`; skips when immunity is also tagged.
+ * Infers Common for always-on save help vs a condition (not immunity).
+ * Requires `against-condition` + (`advantage` or `save-bonus`);
+ * skips when immunity is also tagged.
  */
 export function inferRarityFromConditionDefenseTags(
   tags: string[],
 ): ResourceRarity | null {
   const set = new Set(tags);
   if (!set.has("mechanic:against-condition")) return null;
-  if (!set.has("mechanic:advantage")) return null;
   if (set.has("mechanic:immunity")) return null;
+  if (!set.has("mechanic:advantage") && !set.has("mechanic:save-bonus")) {
+    return null;
+  }
   return INLINE_CONDITION_SAVE_ADVANTAGE_RARITY;
 }
 

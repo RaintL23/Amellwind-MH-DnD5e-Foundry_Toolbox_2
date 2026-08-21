@@ -59,8 +59,9 @@ function rangesOverlap(
 }
 
 /**
- * MHMM runes often write "cast the Earth Tremor spell" without `{@spell}`.
- * Match catalog names (longest first) near a "cast" / "cantrip" mention.
+ * MHMM runes often write "cast the Earth Tremor spell" or "know the ice knife
+ * spell" without `{@spell}`. Match catalog names (longest first) near cast /
+ * know / cantrip wording.
  */
 export function findCatalogSpellLevelsInPlainText(
   text: string,
@@ -69,7 +70,9 @@ export function findCatalogSpellLevelsInPlainText(
   if (lookup.size === 0) return [];
 
   const lower = text.toLowerCase().replace(/\s+/g, " ");
-  if (!/\bcast(?:s|ing)?\b|\bcantrip\b/.test(lower)) return [];
+  if (!/\bcast(?:s|ing)?\b|\bknow(?:s|ing)?\b|\bcantrip\b/.test(lower)) {
+    return [];
+  }
 
   const names = [...lookup.keys()].sort((a, b) => b.length - a.length);
   const levels: number[] = [];
@@ -88,14 +91,16 @@ export function findCatalogSpellLevelsInPlainText(
         continue;
       }
 
-      // Require cast/cantrip language near the name (MHMM: "cast the X spell").
+      // Require cast/know/cantrip language near the name
+      // (MHMM: "cast the X spell", "know the X spell").
       const windowStart = Math.max(0, idx - 48);
       const before = lower.slice(windowStart, idx);
       const after = lower.slice(idx + name.length, idx + name.length + 16);
       const nearCast = /\bcast(?:s|ing)?\b/.test(before);
+      const nearKnow = /\bknow(?:s|ing)?\b/.test(before);
       const nearCantrip =
         /\bcantrip\b/.test(before) || /^\s+cantrip\b/.test(after);
-      if (!nearCast && !nearCantrip) continue;
+      if (!nearCast && !nearKnow && !nearCantrip) continue;
 
       const level = lookup.get(name);
       if (typeof level !== "number") continue;

@@ -131,7 +131,18 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
     /\+\d+\s*bonus\s+(?:on|to)\s+(?:strength|dexterity|constitution|intelligence|wisdom|charisma)\s+saving throws?/i,
     "mechanic:save-bonus",
   ],
+  // "saving throw or be knocked prone, you do so with a +2 bonus"
+  [
+    /\bsaving throws?\b[\s\S]{0,80}do so with (?:a )?\+\d+\s*bonus/i,
+    "mechanic:save-bonus",
+  ],
   [/\+\d+\s*bonus\s+(?:on|to).*\{@skill/i, "mechanic:skill-bonus"],
+  // Plain MHMM: "+2 bonus to Athletics checks" / "+2 bonus to Climb checks"
+  [
+    /\+\d+\s*bonus\s+(?:on|to)\s+[a-z][a-z\s-]{0,24}checks?\b/i,
+    "mechanic:skill-bonus",
+  ],
+  [/\bdisarmed\b/i, "mechanic:disarm"],
   [/\bAC\b|armor class/i, "mechanic:ac"],
   // `mechanic:condition` is also added when conditionNameTags finds a named
   // condition (bare "poisoned condition" without {@condition} markup).
@@ -242,15 +253,58 @@ function damageTypeTags(text: string): string[] {
 
 /**
  * mechanic:skill-insight, mechanic:skill-animal-handling, etc.
- * One tag per `{@skill Name}` referenced in the effect text.
+ * From `{@skill Name}` and plain MHMM wording ("+2 bonus to Athletics checks",
+ * "Climb checks" → athletics).
  */
+
+/** Informal MHMM labels that map onto a 5e skill name. */
+const SKILL_NAME_ALIASES: Record<string, string> = {
+  climb: "athletics",
+  climbing: "athletics",
+};
+
+const BARE_SKILL_NAMES = [
+  ...Object.keys(SKILL_NAME_TO_KEY),
+  ...Object.keys(SKILL_NAME_ALIASES),
+].sort((a, b) => b.length - a.length);
+
 function skillTags(text: string): string[] {
   const tags = new Set<string>();
+
+  const addSkillName = (raw: string) => {
+    const lower = raw.trim().toLowerCase();
+    if (!lower) return;
+    const canonical = SKILL_NAME_ALIASES[lower] ?? lower;
+    if (!(canonical in SKILL_NAME_TO_KEY)) return;
+    tags.add(`mechanic:skill-${canonical.replace(/\s+/g, "-")}`);
+  };
+
   for (const match of text.matchAll(/\{@skill\s+([^}|]+)/gi)) {
-    const name = (match[1] ?? "").trim().toLowerCase();
-    if (!name || !(name in SKILL_NAME_TO_KEY)) continue;
-    tags.add(`mechanic:skill-${name.replace(/\s+/g, "-")}`);
+    addSkillName(match[1] ?? "");
   }
+
+  const lower = text.toLowerCase().replace(/\s+/g, " ");
+  for (const name of BARE_SKILL_NAMES) {
+    const escaped = name.replace(/\s+/g, "\\s+");
+    // "Athletics checks", "Climb check", "+2 bonus to Stealth"
+    const asChecks = new RegExp(`\\b${escaped}\\s+checks?\\b`, "i");
+    const afterBonus = new RegExp(
+      `\\+\\d+\\s*bonus\\s+(?:on|to)\\s+${escaped}\\b`,
+      "i",
+    );
+    const afterAdvantage = new RegExp(
+      `\\badvantage\\b[^.]{0,48}\\b${escaped}\\s+checks?\\b`,
+      "i",
+    );
+    if (
+      asChecks.test(lower) ||
+      afterBonus.test(lower) ||
+      afterAdvantage.test(lower)
+    ) {
+      addSkillName(name);
+    }
+  }
+
   return Array.from(tags);
 }
 
@@ -594,8 +648,8 @@ function weaponDistanceTags(text: string): string[] {
 }
 
 /**
- * mechanic:against-condition — helps avoid acquiring a condition (advantage on
- * saves vs being X, can't be afflicted, …). Not full condition immunity —
+ * mechanic:against-condition — helps avoid acquiring a condition (advantage /
+ * save bonus vs being X, can't be afflicted, …). Not full condition immunity —
  * that is `mechanic:immunity` + `mechanic:condition-*` only.
  */
 function againstConditionTag(text: string): string | null {
@@ -613,12 +667,17 @@ function againstConditionTag(text: string): string | null {
     return "mechanic:against-condition";
   }
 
-  // e.g. "saving throw or be knocked {@condition prone}, you do so with advantage"
-  if (
-    /\badvantage\b/i.test(text) &&
-    /(?:against being|or be (?:knocked )?|or become )/i.test(text) &&
-    /\{@condition/i.test(text)
-  ) {
+  // "saving throw or be knocked prone, you do so with advantage / a +2 bonus"
+  // (with or without {@condition} markup). Requires a save buff so offensive
+  // "or be stunned" riders are not tagged.
+  const saveOrBecomeCondition =
+    /(?:or be (?:knocked )?|or become )/i.test(text) &&
+    (new RegExp(`\\b(?:${CONDITION_TERM_ALT})\\b`, "i").test(text) ||
+      /\{@condition/i.test(text));
+  const saveBuff =
+    /\badvantage\b/i.test(text) ||
+    /do so with (?:a )?\+\d+\s*bonus/i.test(text);
+  if (saveOrBecomeCondition && saveBuff) {
     return "mechanic:against-condition";
   }
 
@@ -642,7 +701,7 @@ function passiveActiveTags(text: string, tags: Set<string>): string[] {
     /while you (?:wear|are wearing|are attuned|hold)|while (?:wearing|attuned|holding|you wear)/i.test(
       text,
     ) ||
-    /whenever you make a saving throw/i.test(text) ||
+    /whenever you (?:make|must succeed on) a saving throw/i.test(text) ||
     /\byou (?:have|are|gain)\b/i.test(text) ||
     /(?:normal )?attack range is (?:increased|doubled)/i.test(text) ||
     /reach is increased by/i.test(text);
@@ -756,9 +815,18 @@ function spellBuffTags(text: string): string[] {
   return tags;
 }
 
+function textGrantsSpellLanguage(text: string): boolean {
+  const hasSpellOrCantrip = /\bspell\b/i.test(text) || /\bcantrip\b/i.test(text);
+  if (!hasSpellOrCantrip) return false;
+  return (
+    /\bcast(?:s|ing)?\b/i.test(text) || /\bknow(?:s|ing)?\b/i.test(text)
+  );
+}
+
 /**
  * Resolves spell tags from the spell catalog when possible.
- * Matches `{@spell …}` and plain MHMM wording ("cast the Earth Tremor spell").
+ * Matches `{@spell …}` and plain MHMM wording ("cast the Earth Tremor spell",
+ * "know the ice knife spell").
  * Fallback heuristic when the spell is unknown / lookup missing:
  * - mechanic:spell:lvl3+ for 3rd+ language or costly runes
  * - mechanic:spell:lvl1-2 otherwise (except cantrip-only `{@spell}` text)
@@ -768,11 +836,7 @@ function spellTags(
   spellLevels?: SpellLevelLookup | null,
 ): string[] {
   const hasMarkup = /\{@spell/i.test(text);
-  const hasPlainCast =
-    /\bcast(?:s|ing)?\b/i.test(text) &&
-    (/\bspell\b/i.test(text) || /\bcantrip\b/i.test(text));
-
-  if (!hasMarkup && !hasPlainCast) return [];
+  if (!hasMarkup && !textGrantsSpellLanguage(text)) return [];
 
   const lookedUp = spellTagsFromLevels(
     resolveSpellLevelsFromText(text, spellLevels),
@@ -793,11 +857,23 @@ function spellTags(
 
   if (/\bcantrip\b/i.test(text) && !hasLeveledSpellLanguage) {
     // Markup cantrip with no catalog hit: keep prior behavior (cantrip word pattern).
-    // Plain "cast the mold earth cantrip" still needs an explicit cantrip tag.
+    // Plain "cast/know the mold earth cantrip" still needs an explicit cantrip tag.
     return hasMarkup ? [] : ["mechanic:cantrip"];
   }
 
   return ["mechanic:spell:lvl1-2"];
+}
+
+function tagsGrantSpell(tags: Set<string>): boolean {
+  return (
+    tags.has("mechanic:cantrip") ||
+    [...tags].some(
+      (tag) =>
+        tag === "mechanic:spell:lvl1-2" ||
+        tag === "mechanic:spell:lvl3+" ||
+        /^mechanic:spell:lvl\d+$/.test(tag),
+    )
+  );
 }
 
 /**
@@ -805,15 +881,7 @@ function spellTags(
  * once per rest, "once used…"), not at-will and not a multi-use rune bank.
  */
 function oneUseSpellTag(text: string, tags: Set<string>): string | null {
-  const grantsSpell =
-    tags.has("mechanic:cantrip") ||
-    [...tags].some(
-      (tag) =>
-        tag === "mechanic:spell:lvl1-2" ||
-        tag === "mechanic:spell:lvl3+" ||
-        /^mechanic:spell:lvl\d+$/.test(tag),
-    );
-  if (!grantsSpell) return null;
+  if (!tagsGrantSpell(tags)) return null;
 
   if (/\bat will\b/i.test(text)) return null;
   if (/\bruness?\b/i.test(text) && /expend/i.test(text)) return null;
@@ -833,6 +901,24 @@ function oneUseSpellTag(text: string, tags: Set<string>): string | null {
     /can'?t be used again/i.test(text);
 
   return once ? "mechanic:spell:one-use" : null;
+}
+
+/**
+ * mechanic:spell:prepared — always prepared / free prepare slot while the
+ * material is worn or attuned (Beotodus Fin, Steel Uragaan, …).
+ */
+function preparedSpellTag(text: string, tags: Set<string>): string | null {
+  if (!tagsGrantSpell(tags)) return null;
+
+  const alwaysPrepared =
+    /always have (?:it |them |this spell )?prepared/i.test(text) ||
+    /(?:have to )?prepare spells[^.]*always have/i.test(text);
+  const freePrepareSlot =
+    /doesn'?t count against the number of spells you can prepare/i.test(text);
+
+  return alwaysPrepared || freePrepareSlot
+    ? "mechanic:spell:prepared"
+    : null;
 }
 
 /**
@@ -869,7 +955,10 @@ function typeTags(text: string): string[] {
     /\+\d+\s*bonus\s+(?:on|to)\s+\w+\s+saving throws?/i.test(text) ||
     (/saving throw/i.test(text) &&
       /\badvantage\b/i.test(text) &&
-      !/\bdisadvantage\b/i.test(text));
+      !/\bdisadvantage\b/i.test(text)) ||
+    (/saving throw/i.test(text) &&
+      /do so with (?:a )?\+\d+\s*bonus/i.test(text)) ||
+    (/\badvantage\b/i.test(text) && /against being disarmed/i.test(text));
 
   if (isDefensive) tags.push("type:defensive");
 
@@ -943,6 +1032,9 @@ function extractTags(
 
   const oneUseSpell = oneUseSpellTag(effectText, tags);
   if (oneUseSpell) tags.add(oneUseSpell);
+
+  const preparedSpell = preparedSpellTag(effectText, tags);
+  if (preparedSpell) tags.add(preparedSpell);
 
   for (const slotTag of spellSlotRecoveryTags(effectText)) {
     tags.add(slotTag);

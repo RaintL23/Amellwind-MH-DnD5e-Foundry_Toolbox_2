@@ -18,6 +18,7 @@ import { inferRarityFromLightDarknessTags } from "./inline-light-darkness-rarity
 import { inferRarityFromMovementTags } from "./inline-movement-rarity.utils";
 import { inferRarityFromReactionAttackTags } from "./inline-reaction-attack-rarity.utils";
 import { inferRarityFromRoll20UtilityTags } from "./inline-roll-20-rarity.utils";
+import { inferRarityFromSkillUtilityTags } from "./inline-skill-rarity.utils";
 import { inferRarityFromSpellMechanicTags } from "./inline-spell-rarity.utils";
 import { lookupDiscoveredEffectRarity } from "../data/discovered-effect-rarity.data";
 
@@ -345,6 +346,9 @@ export function getMaterialEffectTierForText(
   const conditionImmunityRarity =
     inferRarityFromConditionImmunityTags(effectTags);
   if (conditionImmunityRarity) return conditionImmunityRarity;
+
+  const skillUtilityRarity = inferRarityFromSkillUtilityTags(effectTags);
+  if (skillUtilityRarity) return skillUtilityRarity;
 
   const roll20UtilityRarity = inferRarityFromRoll20UtilityTags(effectTags);
   if (roll20UtilityRarity) return roll20UtilityRarity;

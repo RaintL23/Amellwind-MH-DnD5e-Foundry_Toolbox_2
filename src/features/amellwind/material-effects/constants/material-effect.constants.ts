@@ -138,10 +138,17 @@ export const INLINE_FLYING_SPEED_RARITY: ResourceRarity = "Rare";
 export const INLINE_FLYING_SPEED_MAJOR_RARITY: ResourceRarity = "Very Rare";
 
 /**
- * Always-on advantage on saves against one condition (e.g. poisoned).
- * Milder than condition immunity; Common floor for unnamed inline text.
+ * Always-on advantage or flat save bonus against one condition (e.g. poisoned,
+ * knocked prone). Milder than condition immunity; Common floor for unnamed
+ * inline text.
  */
 export const INLINE_CONDITION_SAVE_ADVANTAGE_RARITY: ResourceRarity = "Common";
+
+/**
+ * Always-on flat skill bonus (+2 Athletics) or advantage on a skill / vs disarm.
+ * Mild utility — Common floor for unnamed inline text.
+ */
+export const INLINE_SKILL_UTILITY_RARITY: ResourceRarity = "Common";
 
 /**
  * Always-on immunity to a named condition (poisoned, stunned, …).

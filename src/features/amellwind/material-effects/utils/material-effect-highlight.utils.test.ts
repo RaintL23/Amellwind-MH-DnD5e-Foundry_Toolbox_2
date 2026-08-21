@@ -474,6 +474,25 @@ describe("getMaterialEffectTierForText — condition defense when Unknown", () =
     ).toBe("Common");
   });
 
+  it("assigns Common to a +2 save bonus vs knocked prone", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Whenever you must succeed on a saving throw or be knocked prone, you do so with a +2 bonus.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:against-condition",
+          "mechanic:save-bonus",
+          "mechanic:condition",
+          "mechanic:condition-prone",
+          "mechanic:saving-throw",
+          "mechanic:passive",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
   it("does not assign Common when condition immunity is also present", () => {
     expect(
       getMaterialEffectTierForText(
@@ -489,6 +508,26 @@ describe("getMaterialEffectTierForText — condition defense when Unknown", () =
         ],
       ),
     ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — skill utility when Unknown", () => {
+  it("assigns Common to disarm advantage + Climb bonus", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While attuned to this weapon you have advantage on checks against being disarmed and a +2 bonus to Climb checks.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:advantage",
+          "mechanic:disarm",
+          "mechanic:skill-bonus",
+          "mechanic:skill-athletics",
+          "mechanic:passive",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Common");
   });
 });
 

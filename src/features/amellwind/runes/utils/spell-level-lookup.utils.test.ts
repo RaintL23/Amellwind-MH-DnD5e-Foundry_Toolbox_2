@@ -48,6 +48,18 @@ describe("spell-level-lookup", () => {
     ).toEqual([1]);
   });
 
+  it("resolves plain MHMM know-the-spell wording from the catalog", () => {
+    expect(
+      findCatalogSpellLevelsInPlainText(
+        "(Druid, Sorcerer, & Wizard Only) While attuned to this weapon you know the ice knife spell. If you have to prepare spells, you always have it prepared.",
+        buildSpellLevelLookup([
+          makeSpell("Ice Knife", 1),
+          makeSpell("Earth Tremor", 1),
+        ]),
+      ),
+    ).toEqual([1]);
+  });
+
   it("resolves multiple plain spell names and raises to cast-at level", () => {
     expect(
       resolveSpellLevelsFromText(

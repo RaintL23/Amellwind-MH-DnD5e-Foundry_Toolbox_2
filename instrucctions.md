@@ -698,8 +698,9 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 
 | Tag                      | Regla de detección                                                                                                     |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
-| `mechanic:spell`         | Contiene `{@spell` **o** prosa MHMM (`cast the Earth Tremor spell`): se resuelve el nivel en el catálogo de conjuros → `mechanic:spell:lvlN` (1–9). Cantrip (nivel 0) → solo `mechanic:cantrip`. Si el conjuro no está en el catálogo, fallback `lvl1-2` / `lvl3+` por texto/runas. Un *upcast* explícito (`at 2nd level`) sube el nivel efectivo. |
+| `mechanic:spell`         | Contiene `{@spell` **o** prosa MHMM (`cast the Earth Tremor spell` / `know the ice knife spell`): se resuelve el nivel en el catálogo de conjuros → `mechanic:spell:lvlN` (1–9). Cantrip (nivel 0) → solo `mechanic:cantrip`. Si el conjuro no está en el catálogo, fallback `lvl1-2` / `lvl3+` por texto/runas. Un *upcast* explícito (`at 2nd level`) sube el nivel efectivo. |
 | `mechanic:spell:one-use` | Concede un único uso por recarga (`once per long rest` / `once a day` / `once used… can't… again`). No aplica a `at will`, bancos de runas (`expend` + runes) ni usos múltiples (`twice` / `three times`). |
+| `mechanic:spell:prepared`| Grant *always prepared* / no cuenta contra el límite de preparación (`always have it prepared`, `doesn't count against the number of spells you can prepare`). Requiere que el efecto también conceda un conjuro/cantrip. |
 | `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
 | `mechanic:critical`      | Contiene `critical` / `critically` (p. ej. *Critical Status*). Ya **no** cubre un 20 natural por sí solo              |
 | `mechanic:roll-20`       | Contiene `roll a 20` o `natural 20` (el trigger es el dado, no necesariamente un crítico)                              |
@@ -713,15 +714,16 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:bonus-action`  | Contiene `bonus action`                                                                                                |
 | `mechanic:reaction`      | Contiene `reaction`                                                                                                    |
 | `mechanic:saving-throw`  | Contiene `saving throw` (ventaja/desventaja, bonus a tus saves, o saves impuestos al objetivo)                         |
-| `mechanic:save-bonus`    | `+N bonus to/on … saving throws` (Evade Extender)                                                                      |
+| `mechanic:save-bonus`    | `+N bonus to/on … saving throws` (Evade Extender) **o** `do so with a +N bonus` tras un saving throw (p. ej. vs knocked prone) |
 | `mechanic:save-{ability}`| Buff a un save concreto (p. ej. Dexterity → `save-dexterity`). No aplica a “must make a Dexterity saving throw”        |
 | `mechanic:attack-roll`   | Menciona `attack roll(s)` (ventaja / bonus a tus tiradas de ataque)                                                    |
-| `mechanic:skill-bonus`   | Contiene `+N bonus on/to` junto a `{@skill`                                                                            |
-| `mechanic:skill-{name}`  | Por cada `{@skill Name}` (p. ej. Insight → `skill-insight`, Animal Handling → `skill-animal-handling`)                |
+| `mechanic:skill-bonus`   | Contiene `+N bonus on/to` junto a `{@skill` **o** prosa (`+2 bonus to Athletics checks` / `Climb checks`)              |
+| `mechanic:skill-{name}`  | Por cada `{@skill Name}` o nombre bare de skill cerca de `checks` (p. ej. Insight → `skill-insight`). Alias MHMM: Climb → Athletics |
+| `mechanic:disarm`        | Contiene `disarmed` (p. ej. *advantage on checks against being disarmed*)                                              |
 | `mechanic:ac`            | Contiene `\bAC\b` o `armor class`                                                                                      |
 | `mechanic:condition`     | Contiene `{@condition`, inmunidad a una condición, o un nombre conocido (PHB + blight MH: poisoned, stunned, waterblight, frenzy virus, …) |
 | `mechanic:condition-{n}` | Por cada condición nombrada (p. ej. stunned → `condition-stunned`, poisoned → `condition-poisoned`, waterblight → `condition-waterblight`). Alias: `paralysis` → `paralyzed`. |
-| `mechanic:against-condition` | Ayuda a **evitar** adquirir una condición (advantage en saves vs being X / *the X condition* / paralysis, *can't be afflicted with*). **No** incluye inmunidad total a la condición |
+| `mechanic:against-condition` | Ayuda a **evitar** adquirir una condición (advantage / save-bonus en saves vs being X / *the X condition* / *or be knocked prone* / paralysis, *can't be afflicted with*). **No** incluye inmunidad total a la condición |
 | `mechanic:advantage`     | Contiene `advantage` (también junto a saving throws)                                                                   |
 | `mechanic:passive`       | Efecto siempre activo (p. ej. *while you wear* / *you have…*) sin gastar action / BA / reaction                        |
 | `mechanic:active`        | Efecto activado: `as an action`, `bonus action` o `reaction` (gana sobre passive si ambos aplicarían)                  |
@@ -864,9 +866,16 @@ Si hay varios, gana la rareza más alta. Solo `darkness` / `nonmagical-darkness`
 | 6–8 | **Very Rare** |
 | 9 | **Legendary** |
 
-**Ventaja vs condición** (`inline-condition-rarity.utils.ts`) — **solo si** tras defensa/daño/hechizo la rareza seguiría en Unknown, y el efecto tiene `mechanic:against-condition` + `mechanic:advantage` **sin** `mechanic:immunity` (p. ej. *advantage on saving throws against the poisoned condition*): **Common**.
+**Ventaja / bonus vs condición** (`inline-condition-rarity.utils.ts`) — **solo si** tras defensa/daño/hechizo la rareza seguiría en Unknown, y el efecto tiene `mechanic:against-condition` + (`mechanic:advantage` **o** `mechanic:save-bonus`) **sin** `mechanic:immunity` (p. ej. *advantage on saving throws against the poisoned condition*, o *+2 bonus* vs knocked prone): **Common**.
 
 **Inmunidad a condición** (`inferRarityFromConditionImmunityTags`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:immunity` + algún `mechanic:condition-*` (p. ej. *immune to the poisoned condition*): **Uncommon**. La inmunidad a un **tipo de daño** sigue la tabla de defensas (Rare / Very Rare); no usa esta regla.
+
+**Skill / contest utility** (`inline-skill-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
+
+| Tags | Rareza | Ejemplos |
+| --- | --- | --- |
+| `mechanic:skill-bonus` | **Common** | +2 Athletics / Climb / Stealth checks |
+| `mechanic:advantage` + `mechanic:skill-*` o `mechanic:disarm` | **Common** | advantage on Insight; advantage vs being disarmed |
 
 El badge del diálogo y el filtro **Material Effect Tier** usan la misma función. En **RuneDetailDialog**, si hay filtros de efecto activos (slot, tags same-effect, material-effect tier) y solo un lado de la runa los cumple, el otro efecto se muestra atenuado (`filtered out`) y su botón de **Add to Rune Planner** (arma/armadura/trinket de ese lado) queda deshabilitado.
 
