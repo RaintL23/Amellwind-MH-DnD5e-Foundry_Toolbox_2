@@ -710,7 +710,7 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:natural-weapon`| Afecta **tus** / de raza natural weapons (`Race with natural weapons only`, `your race's natural weapon`). No aplica a thorns (`hits you with … a natural melee weapon`) |
 | `mechanic:extra-damage`  | Contiene `extra {@damage`, `extra NdX` o `extra N … damage` → se emite como `:minor` / `:major` según score |
 | `mechanic:resistance`    | Contiene `resistance to` o `resistant to` seguido de tipo de daño                                                     |
-| `mechanic:immunity`      | Contiene `immune to` o `immunity to`                                                                                   |
+| `mechanic:immunity`      | Contiene `immune to` / `immunity to`, **o** lockout de condición sin esa frase (`cannot be knocked prone`, `can't be stunned`, `cannot be poisoned, paralyzed, or stunned`). No incluye *can't be afflicted…* (eso es `against-condition`) ni utilidades (`cannot be used/pushed/detected`) |
 | `mechanic:bonus-action`  | Contiene `bonus action`                                                                                                |
 | `mechanic:reaction`      | Contiene `reaction`                                                                                                    |
 | `mechanic:saving-throw`  | Contiene `saving throw` (ventaja/desventaja, bonus a tus saves, o saves impuestos al objetivo)                         |
@@ -740,9 +740,14 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:movement-climb`| Trepar sin check en superficies (p. ej. *climb icy surfaces without … ability check*). Distinto de `climbing` (climbing speed / Spider Climb) |
 | `mechanic:underwater`    | Contiene `underwater`                                                                                                  |
 | `mechanic:hold-breath`   | Contiene `hold breath` / `hold your breath`                                                                            |
+| `mechanic:long-rest`     | Contiene `long rest` (recarga **o** duración de descanso)                                                              |
+| `mechanic:short-rest`    | Contiene `short rest`                                                                                                  |
+| `mechanic:accelerated-rest` | Acorta la duración del descanso (*benefits of a long rest after 4 hours instead of 8*). Distinto de recargas *once / finish a long rest* |
+| `mechanic:mithral`       | Paquete estilo *Mithral Armor*: armadura light/flexible, bajo ropa, sin desventaja en Stealth ni requisito de Fuerza |
 | `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
 | `mechanic:spell-slot`    | Recupera un *spell slot* (`regain` / `restore` / `recover` + `spell slot(s)`), no “without expending a spell slot”. Si el texto nombra un máximo (`up to 4th level`) → `mechanic:spell-slot:lvlN`. |
 | `mechanic:cantrip`       | Contiene `cantrip`, o un conjuro del catálogo resuelto como nivel 0 (`{@spell` o prosa) |
+| `mechanic:spellcasting-focus` | El arma/ítem se puede usar como *spellcasting focus* (*use this weapon as your spellcasting focus*). Distinto de `focus-points` |
 | `mechanic:class-feature` | Contiene el nombre de una feature de clase específica (ej. `wyvernfire`, `dragonpiercer`, `Guard AC`, `Mighty Weapon`) |
 | `mechanic:item-related`  | Contiene `{@item` (uso / proficiency / conjuro de ítems: bombas, ammo, kits, pociones, etc.)                          |
 | `mechanic:trap`          | Subconjunto de `item-related`: pitfall/shock trap(+ ) o trap tool (trampas MH)                                        |
@@ -813,6 +818,8 @@ Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Los
 
 **Hold breath underwater** (`inline-hold-breath-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:hold-breath` + `mechanic:underwater` (p. ej. *hold breath underwater for twice as long*): **Common**. *Breathe underwater* (water breathing) no emite `hold-breath` y sigue Unknown salvo otra inferencia.
 
+**Descanso acelerado** (`inline-accelerated-rest-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:accelerated-rest` (p. ej. *benefits of a long rest after 4 hours instead of 8*): **Uncommon**. Solo `mechanic:long-rest` (recargas *finish a long rest*) **no** basta.
+
 **Gather resources (MH)** (`inline-gather-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
 
 | Tags | Rareza | Ejemplos |
@@ -866,9 +873,11 @@ Si hay varios, gana la rareza más alta. Solo `darkness` / `nonmagical-darkness`
 | 6–8 | **Very Rare** |
 | 9 | **Legendary** |
 
+**Spellcasting focus** (`inline-spellcasting-focus-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:spellcasting-focus` (p. ej. *use this weapon as your spellcasting focus*): **Common** (como *Ruby of the War Mage*).
+
 **Ventaja / bonus vs condición** (`inline-condition-rarity.utils.ts`) — **solo si** tras defensa/daño/hechizo la rareza seguiría en Unknown, y el efecto tiene `mechanic:against-condition` + (`mechanic:advantage` **o** `mechanic:save-bonus`) **sin** `mechanic:immunity` (p. ej. *advantage on saving throws against the poisoned condition*, o *+2 bonus* vs knocked prone): **Common**.
 
-**Inmunidad a condición** (`inferRarityFromConditionImmunityTags`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:immunity` + algún `mechanic:condition-*` (p. ej. *immune to the poisoned condition*): **Uncommon**. La inmunidad a un **tipo de daño** sigue la tabla de defensas (Rare / Very Rare); no usa esta regla.
+**Inmunidad a condición** (`inferRarityFromConditionImmunityTags`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:immunity` + algún `mechanic:condition-*` (p. ej. *immune to the poisoned condition*, *cannot be knocked prone*, *can't be stunned*): **Uncommon**. La inmunidad a un **tipo de daño** sigue la tabla de defensas (Rare / Very Rare); no usa esta regla.
 
 **Skill / contest utility** (`inline-skill-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
 
@@ -876,6 +885,8 @@ Si hay varios, gana la rareza más alta. Solo `darkness` / `nonmagical-darkness`
 | --- | --- | --- |
 | `mechanic:skill-bonus` | **Common** | +2 Athletics / Climb / Stealth checks |
 | `mechanic:advantage` + `mechanic:skill-*` o `mechanic:disarm` | **Common** | advantage on Insight; advantage vs being disarmed |
+
+**Mithral / flexible armor** (`inline-mithral-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:mithral` (p. ej. *light and flexible* + sin desventaja en Stealth / sin requisito de Str): **Uncommon** (como *Mithral Armor* del DMG). Solo `skill-stealth` o “10% lighter / Str reduced by 1” **no** basta.
 
 El badge del diálogo y el filtro **Material Effect Tier** usan la misma función. En **RuneDetailDialog**, si hay filtros de efecto activos (slot, tags same-effect, material-effect tier) y solo un lado de la runa los cumple, el otro efecto se muestra atenuado (`filtered out`) y su botón de **Add to Rune Planner** (arma/armadura/trinket de ese lado) queda deshabilitado.
 
@@ -1730,6 +1741,8 @@ Con **Amellwind Homebrew** activo, la librería de armas (`WeaponLibraryPanel`) 
 #### Randomizer (`useCharacterRandomizer`)
 
 Botón dados en `StatsPanel`. Disponible en **ambos** modos (Amellwind y D&D). Conserva el nivel actual, hace `resetBuild` y rellena clase/subclase, ASI point-buy, skills, idiomas, optional features, origin feats, hechizos, dotes de nivel y starting equipment del carrito (no equipa armas/armadura en el paper doll).
+
+Los slots de dote de nivel (`buildFeatSelectionsForLevel`) solo eligen dotes **General** / **Epic Boon** 2024 que cumplen `meetsFeatPrerequisites` para el nivel del slot y los ability scores ya asignados (p. ej. no Epic Boons bajo 19; no Fighting Styles / Origin en slots ASI). Requisitos no verificables automáticamente (proficiency, feature, race, …) excluyen esa rama OR del pool.
 
 - **D&D**: species/backgrounds 5e con ratings RPGBOT; lineage spells; background ASI.
 - **Amellwind**: species AGMH (`pickAmellwindSpecies` por saves/abilities relevantes); background preferido Hunter's Initiate (`pickAmellwindBackground`, si falta → aleatorio); skills/tools/idiomas del homebrew; Origin Feat de trasfondo AGMH (siempre choose 2024); facción la setea el slice de identity al aplicar el background.
