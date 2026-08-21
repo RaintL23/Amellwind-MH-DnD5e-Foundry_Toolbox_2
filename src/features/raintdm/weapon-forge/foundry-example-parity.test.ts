@@ -403,6 +403,118 @@ describe("Weapon Forge Foundry example parity", () => {
     });
   });
 
+  it("Magus Staff Common matches example (normalized)", () => {
+    const weapon = loadWeapon("public/data/raintdm-weapons/magus-staff.json");
+    const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Common");
+    const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
+    const example = JSON.parse(
+      readFileSync(
+        "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-common.json",
+        "utf8",
+      ),
+    );
+
+    expect(exported.name).toBe("Magus Staff (Common)");
+    expect((exported.system as { mastery?: string }).mastery).toBe("sap");
+    expect((exported.system as { properties?: string[] }).properties).toEqual([
+      "foc",
+      "ver",
+    ]);
+    expect(
+      Object.values(
+        (exported.system as { activities: Record<string, { name?: string }> })
+          .activities,
+      ).map((a) => a.name || "(default)"),
+    ).toEqual(["Attack"]);
+
+    const diffs: string[] = [];
+    deepDiff(
+      normalizeForParity(example),
+      normalizeForParity(exported),
+      "",
+      diffs,
+      40,
+    );
+    expect(diffs, diffs.slice(0, 15).join("\n")).toEqual([]);
+  });
+
+  it("Magus Staff Uncommon matches example (normalized)", () => {
+    const weapon = loadWeapon("public/data/raintdm-weapons/magus-staff.json");
+    const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Uncommon");
+    const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
+    const example = JSON.parse(
+      readFileSync(
+        "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-uncommon.json",
+        "utf8",
+      ),
+    );
+
+    expect(exported.name).toBe("Magus Staff (Uncommon)");
+    expect((exported.system as { uses?: unknown }).uses).toMatchObject({
+      spent: 3,
+      max: "3",
+    });
+    expect(
+      Object.values(
+        (exported.system as { activities: Record<string, { name?: string }> })
+          .activities,
+      )
+        .map((a) => a.name || "(default)")
+        .sort(),
+    ).toEqual(["Arcane Discharge", "Attack", "Harvest Magic"].sort());
+
+    const diffs: string[] = [];
+    deepDiff(
+      normalizeForParity(example),
+      normalizeForParity(exported),
+      "",
+      diffs,
+      40,
+    );
+    expect(diffs, diffs.slice(0, 15).join("\n")).toEqual([]);
+  });
+
+  it("Magus Staff Rare matches example + Offset Ward / Improve Casting", () => {
+    const weapon = loadWeapon("public/data/raintdm-weapons/magus-staff.json");
+    const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Rare");
+    const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
+    const example = JSON.parse(
+      readFileSync(
+        "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-rare.json",
+        "utf8",
+      ),
+    );
+
+    expect(exported.name).toBe("Magus Staff (Rare)");
+    expect((exported.system as { uses?: unknown }).uses).toMatchObject({
+      spent: 5,
+      max: "5",
+    });
+    expect(
+      exported.effects.some((e) => e.name === "Improve Casting"),
+    ).toBe(true);
+    expect(
+      Object.values(
+        (exported.system as { activities: Record<string, { name?: string }> })
+          .activities,
+      )
+        .map((a) => a.name || "(default)")
+        .sort(),
+    ).toEqual(
+      ["Arcane Discharge", "Attack", "Harvest Magic", "Offset Ward"].sort(),
+    );
+
+    const diffs: string[] = [];
+    deepDiff(
+      normalizeForParity(example),
+      normalizeForParity(exported),
+      "",
+      diffs,
+      40,
+    );
+    expect(diffs, diffs.slice(0, 15).join("\n")).toEqual([]);
+  });
+
   it("Melody feats match weapons-resources examples (normalized)", () => {
     const weapon = loadWeapon("public/data/raintdm-weapons/hunting-horn.json");
     const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Uncommon");

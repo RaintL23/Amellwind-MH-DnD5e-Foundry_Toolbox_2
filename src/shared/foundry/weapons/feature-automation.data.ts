@@ -224,7 +224,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   "spell core gauge": gauge(
     "3",
     undefined,
-    "Spell Counters; starts empty; cleared on short/long rest.",
+    "Spell Counters; starts empty; clear on Short/Long Rest (set Spent to max). Magus Staff overlay wires Harvest / Discharge / Offset Ward.",
     { startsEmpty: true },
   ),
   "artillery shells": spec(
@@ -400,10 +400,16 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   "offset ward": reactionUtility(
     "When you are hit by a melee attack",
     {
-      consumeItemUses: true,
-      consumeAmount: "2",
-      chatFlavor: "Expend 2 Spell Counters for magical parry per description.",
+      // Spend + +5 AC AE applied in Magus Staff Item Macro (Shield / Foresight pattern).
+      chatFlavor:
+        "+5 AC vs the triggering melee attack. Expends 2 Spell Counters via Item Macro. On a miss, cast a Cantrip spell-attack at the attacker.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg:
+        "icons/magic/defensive/barrier-shield-dome-blue-purple.webp",
     },
+    "Needs ItemMacro AC AE (see foundry-jsons-example/weapons fvtt-Item-magus-staff-rare).",
   ),
   "guard reload": reactionUtility(
     "When a creature misses you with a melee attack while you are wielding the shield",
@@ -922,6 +928,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       ownsItemUses: false,
       emitGather: false,
       spendMin: 1,
+      // Overlay clamps spendMax to the live Spell Core max (3→5→7→10).
       spendMax: 10,
       damageFormula: "1d6",
       activityType: "damage",
@@ -929,7 +936,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       chatFlavor:
         "When casting a damaging leveled Instantaneous spell: add this damage to one affected target per counter spent.",
     },
-    "Shared Spell Core pool. Wide spend range → one scaled damage activity.",
+    "Shared Spell Core pool. Magus Staff overlay renames (scale) → Arcane Discharge and clamps max.",
   ),
   "discharge upgrade i": spec("upgrade_scaler", { damageFormula: "1d8" }),
   "discharge upgrade ii": spec("upgrade_scaler", {
@@ -1244,12 +1251,22 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   // Intentionally NOT registering bare "charge" — collides with Charge (H)/(L).
 
   // ── Counter builders (document recovering shared pools) ─────────────
-  "harvest magic": spec("action_ability", {
-    activation: "special",
-    activityType: "utility",
-    chatFlavor:
-      "On cantrip damage to a hostile: recover 1 Spell Counter on this staff (2 if target within 15 ft).",
-  }),
+  "harvest magic": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      activationCondition:
+        "When you deal damage to a hostile creature with a Cantrip",
+      chatFlavor:
+        "After cantrip damage to a hostile: Item Macro recovers 1 Spell Counter (2 if within 15 ft).",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/magic/symbols/runes-triangle-magenta.webp",
+    },
+    "Magus Staff overlay: dialog recovers uses; cannot auto-hook foreign cantrip items.",
+  ),
   "kinetic generator": spec(
     "unmapped",
     {},

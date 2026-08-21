@@ -1,0 +1,340 @@
+{
+  "_id": "eguLyMxdTAw0WUJJ",
+  "name": "Magus Staff (Common)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_magusstaff.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p><p>If you hit a creature with a melee weapon attack using this staff, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p></div>"
+    },
+    "identifier": "magusstaff",
+    "quantity": 1,
+    "weight": {
+      "value": 3,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "common",
+    "identified": true,
+    "type": {
+      "value": "simpleM",
+      "baseItem": "magusstaff"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 6,
+        "types": [
+          "bludgeoning"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": 1,
+        "denomination": 10,
+        "types": [
+          "bludgeoning"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        },
+        "bonus": ""
+      }
+    },
+    "magicalBonus": null,
+    "properties": [
+      "foc",
+      "ver"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "mastery": "sap",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    },
+    "activities": {
+      "alZbyZrmnw2CtsEm": {
+        "_id": "alZbyZrmnw2CtsEm",
+        "type": "attack",
+        "sort": 0,
+        "name": "Attack",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "attack",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionReason": ""
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "jwG6q8PAWghNMQQI",
+      "name": "Mastery (Sap)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1787322021847,
+        "modifiedTime": 1787322021847,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 400000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Magus Staff",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Magus Staff (Common)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Magus Staff — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro\n//\n// Mastery (Sap): on a melee weapon Attack hit, the target has Disadvantage\n// on its next attack roll before the start of your next turn.\n// Harvest Magic (Uncommon+): dialog recovers 1 Spell Counter (2 if within 15 ft).\n// Offset Ward (Rare+): spend 2 Spell Counters, +5 AC vs the triggering melee hit.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? workflow?.activity?.midiProperties?.identifier\n  ?? \"\",\n).toLowerCase();\n\nconst isAttack =\n  actId === \"attack\"\n  || actName === \"attack\";\n\nconst isHarvest =\n  actId === \"harvest-magic\"\n  || actName === \"harvest magic\"\n  || actName.startsWith(\"harvest magic\");\n\nconst isOffsetWard =\n  actId === \"offset-ward\"\n  || actName === \"offset ward\"\n  || actName.startsWith(\"offset ward\");\n\nif (!isAttack && !isHarvest && !isOffsetWard) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Magus Staff: actor not found.\");\n  return;\n}\n\nconst isMagusStaff =\n  foundry.utils.getProperty(item, \"flags.world.magusStaff.isMagusStaff\") === true\n  || String(item?.system?.identifier ?? \"\") === \"magusstaff\"\n  || /^magus staff\\b/i.test(item?.name ?? \"\");\n\nif (!isMagusStaff) return;\n\nconst uses = item?.system?.uses ?? {};\nconst max = Math.max(0, Number(uses.max) || 0);\nconst spent = Math.max(0, Number(uses.spent) || 0);\nconst available = Math.max(0, max - spent);\n\nconst isSap = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.magusStaff.isSap\") === true\n  || /^mastery \\(sap\\)$/i.test(ef.name ?? \"\");\n\nconst isOffsetWardAc = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.magusStaff.isOffsetWardAc\") === true\n  || /^offset ward \\(\\+/i.test(ef.name ?? \"\");\n\n// ── Offset Ward: need ≥2 Spell Counters before Midi commits the reaction ────\nif (isOffsetWard && (!macroPass || macroPass.includes(\"pretargeting\"))) {\n  if (available < 2) {\n    ui.notifications.warn(\"Magus Staff: Offset Ward needs ≥2 Spell Counters.\");\n    return false;\n  }\n  if (macroPass.includes(\"pretargeting\")) return;\n}\n\n// ── Offset Ward: spend 2, apply +5 AC, remind cantrip on miss ───────────────\nif (isOffsetWard) {\n  if (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\n  if (available < 2) {\n    ui.notifications.warn(\"Magus Staff: Offset Ward needs ≥2 Spell Counters.\");\n    return;\n  }\n\n  await item.update({ \"system.uses.spent\": spent + 2 });\n\n  const stale = actorDoc.effects.filter(isOffsetWardAc);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\n  }\n\n  await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [\n    {\n      name: \"Offset Ward (+5 AC)\",\n      img: \"icons/magic/defensive/barrier-shield-dome-blue-purple.webp\",\n      transfer: false,\n      disabled: false,\n      changes: [\n        {\n          key: \"system.attributes.ac.bonus\",\n          mode: CONST.ACTIVE_EFFECT_MODES.ADD,\n          value: \"5\",\n          priority: 20,\n        },\n      ],\n      duration: {\n        startTime: null,\n        seconds: null,\n        combat: null,\n        rounds: null,\n        turns: null,\n        startRound: null,\n        startTurn: null,\n      },\n      flags: {\n        dae: {\n          specialDuration: [\"isAttacked\"],\n          stackable: \"noneName\",\n          showIcon: true,\n          selfTarget: true,\n          selfTargetAlways: true,\n          dontApply: false,\n        },\n        world: {\n          magusStaff: {\n            isOffsetWardAc: true,\n          },\n        },\n      },\n    },\n  ]);\n\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> projects <strong>Offset Ward</strong>: <strong>+5 AC</strong> against the triggering melee attack (2 Spell Counters expended).</p><p>If that causes the attack to miss, immediately cast a Cantrip spell-attack (casting time 1 Action) targeting the attacker as part of the same Reaction.</p></div>`,\n  });\n  return;\n}\n\n// ── Harvest Magic: dialog recovers 1 or 2 Spell Counters ────────────────────\nif (isHarvest) {\n  if (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\n  if (max <= 0) {\n    ui.notifications.warn(\"Magus Staff: Spell Core Gauge is not available.\");\n    return;\n  }\n  if (available >= max) {\n    ui.notifications.warn(\"Magus Staff: Spell Core is already full.\");\n    return;\n  }\n\n  const choice = await new Promise((resolve) => {\n    new Dialog({\n      title: \"Harvest Magic\",\n      content: `<p>Was the cantrip target a hostile creature within <strong>15 feet</strong>?</p><p>Current Spell Counters: <strong>${available}</strong> / ${max}</p>`,\n      buttons: {\n        close: {\n          icon: '<i class=\"fas fa-bolt\"></i>',\n          label: \"Within 15 ft (+2)\",\n          callback: () => resolve(2),\n        },\n        far: {\n          icon: '<i class=\"fas fa-magic\"></i>',\n          label: \"Farther (+1)\",\n          callback: () => resolve(1),\n        },\n        cancel: {\n          icon: '<i class=\"fas fa-times\"></i>',\n          label: \"Cancel\",\n          callback: () => resolve(0),\n        },\n      },\n      default: \"far\",\n      close: () => resolve(0),\n    }).render(true);\n  });\n\n  const gain = Math.max(0, Number(choice) || 0);\n  if (gain <= 0) return;\n\n  const recovered = Math.min(gain, max - available);\n  if (recovered <= 0) return;\n\n  await item.update({ \"system.uses.spent\": Math.max(0, spent - recovered) });\n\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Harvest Magic:</strong> ${esc(item.name)} gains <strong>${recovered}</strong> Spell Counter${recovered === 1 ? \"\" : \"s\"} (now ${available + recovered}/${max}).</p></div>`,\n  });\n  return;\n}\n\n// ── Mastery (Sap) on Attack hit ─────────────────────────────────────────────\nif (!isAttack) return;\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\nconst hitTokens = (() => {\n  const ht = workflow?.hitTargets;\n  if (ht instanceof Set) return [...ht];\n  if (Array.isArray(ht)) return ht;\n  if (args?.[0]?.hitTargets?.length) return args[0].hitTargets;\n  return [];\n})();\n\nif (hitTokens.length <= 0) return;\n\nconst sapped = [];\n\nfor (const t of hitTokens) {\n  const targetActor = t?.actor ?? t;\n  if (!targetActor?.createEmbeddedDocuments) continue;\n\n  const stale = targetActor.effects.filter(isSap);\n  if (stale.length) {\n    await targetActor.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\n  }\n\n  await targetActor.createEmbeddedDocuments(\"ActiveEffect\", [\n    {\n      name: \"Mastery (Sap)\",\n      img: \"icons/magic/control/hypnosis-mesmerism-eye.webp\",\n      transfer: false,\n      disabled: false,\n      changes: [\n        {\n          key: \"flags.midi-qol.disadvantage.attack.all\",\n          mode: CONST.ACTIVE_EFFECT_MODES.UPGRADE,\n          value: \"1\",\n          priority: 20,\n        },\n      ],\n      duration: {\n        startTime: null,\n        seconds: null,\n        combat: null,\n        rounds: null,\n        turns: null,\n        startRound: null,\n        startTurn: null,\n      },\n      flags: {\n        dae: {\n          specialDuration: [\"1Attack\", \"turnStartSource\"],\n          stackable: \"noneName\",\n          showIcon: true,\n          selfTarget: false,\n          selfTargetAlways: false,\n          dontApply: false,\n        },\n        world: {\n          magusStaff: {\n            isSap: true,\n          },\n        },\n      },\n    },\n  ]);\n\n  sapped.push(targetActor.name);\n}\n\nif (sapped.length) {\n  const names = sapped.map((n) => esc(n)).join(\", \");\n  const verb = sapped.length === 1 ? \"has\" : \"have\";\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Mastery (Sap):</strong> ${names} ${verb} Disadvantage on the next attack roll (until the start of ${esc(actorDoc.name)}'s next turn).</p></div>`,\n  });\n}\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "magusStaff": {
+        "isMagusStaff": true,
+        "tier": "common",
+        "spellCoreMax": 0
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1787322021846,
+    "modifiedTime": 1787322021846,
+    "lastModifiedBy": null
+  }
+}

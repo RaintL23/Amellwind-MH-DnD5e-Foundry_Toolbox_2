@@ -108,6 +108,7 @@ export function buildWeaponItem(
     ),
   ];
   if (magicBonus > 0 && !properties.includes("mgc")) properties.push("mgc");
+  if (weapon.isFocus && !properties.includes("foc")) properties.push("foc");
 
   const dmgType = mapDamageType(weapon.dmgType);
   const baseDice = parseDice(weapon.dmg1) ?? { number: 1, denomination: 4 };
