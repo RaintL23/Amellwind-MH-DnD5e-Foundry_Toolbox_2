@@ -518,11 +518,8 @@ export function useIdentitySlice({
         setSpeciesOriginFeatState(dndFeatToBuilderSelection(feat));
         return;
       }
-
-      if (grant.kind === "choose") {
-        setSpeciesOriginFeatState(null);
-        setOriginFeatSkillChoicesState([]);
-      }
+      // "choose" grant: setSpecies already cleared the state synchronously.
+      // Do NOT reset here — that would overwrite a rehydrated snapshot value.
     }
 
     void loadOriginFeatGrant();
@@ -572,8 +569,8 @@ export function useIdentitySlice({
         });
         return;
       }
-
-      setBackgroundOriginFeatState(null);
+      // Non-fixed grant ("choose" or other): setBackground already cleared the state
+      // synchronously. Do NOT reset here — that would overwrite a rehydrated value.
     }
 
     void loadBackgroundOriginFeat();

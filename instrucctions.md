@@ -994,11 +994,11 @@ Estado de cobertura del manual / features de la app:
 
 ### En progreso o pendiente
 
-- [~] **Character Builder** — ALPHA: stats, paper doll, runas, DPT, retrato/token y export/import Foundry VTT; inventario ligado al carrito; armaduras placeholder.
-- [x] **Export/Import Foundry VTT** — Actor `character` dnd5e v12 con _matching_ contra catálogos de la app.
+- [~] **Character Builder** — ALPHA: stats, paper doll, runas, DPT, retrato/token; inventario ligado al carrito; armaduras placeholder.
+- [x] **Export/Import Foundry VTT** — Actor `character` dnd5e v12 con _matching_ contra catálogos de la app. UI temporalmente deshabilitada en `StatsPanel` (`FOUNDRY_JSON_UI_ENABLED = false`) hasta mejorar el exportador; código intacto.
+- [x] **Persistencia de personajes (Builder JSON nativo)** — Export/import de un JSON nativo (`amellwind-builder-character`) que round-trip el estado completo del Builder. Ver `builder/builder-json/`. No incluye portrait/token; formato distinto al actor Foundry.
 - [ ] **Armaduras (datos reales)** — Sets completos desde GTMH; hoy el builder usa `armor.placeholder.ts`.
 - [ ] **Vista de Combate / Encuentros activos** — Gestión de combate en tiempo real.
-- [ ] **Persistencia de personajes (interna)** — Guardar/cargar builds en la propia app (hoy la persistencia es vía export/import Foundry JSON).
 
 ---
 
@@ -1740,7 +1740,7 @@ Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness
 
 | Componente | Rol |
 | ---------- | --- |
-| `StatsPanel` / `AbilityScoresSection` | Nivel, ability scores, AC, iniciativa, ataques/turno; botones de export/import Foundry |
+| `StatsPanel` / `AbilityScoresSection` | Nivel, ability scores, AC, iniciativa, ataques/turno; menú JSON (Builder JSON activo; Foundry VTT deshabilitado temporalmente) |
 | `BuilderImagePanel` | Sube retrato y token (base64 data URL) que alimentan el export de Foundry |
 | `BuilderSavingThrowsPanel` / `BuilderSkillChecksPanel` | Saving throws y skills con competencia/expertise |
 | `BuilderDerivedPanel` | Stats derivados (proficiency, modifiers, etc.) |
@@ -1980,6 +1980,7 @@ Convención por feature: `components/`, `services/`, `mappers/`, `data/` (estát
 - Inventario del builder derivado del **carrito** (`CartContext` → `BuilderInventoryContext` vía `CartPurchaseBridge`).
 - Utilidades clave: `fivetools-parser.ts`, `cr.utils.ts`, `ItemRefText`, `DndKeywordText`, `fivetools-fetch.ts`, `dedupe-by-name.utils.ts`, `fluff.utils.ts`.
 - Services del compendio 5e creados con el factory `createEntityService` (`shared/services/`); constantes D&D centralizadas en `shared/constants/dnd/`.
-- **Export/Import Foundry VTT**: núcleo en `shared/foundry/` (+ `shared/foundry/weapons/`); actor en `builder/foundry-export/` / `foundry-import/` (dnd5e v12); items de arma en forge/weapons vía el mismo núcleo. Botones en `StatsPanel`.
+- **Builder JSON nativo**: `builder/builder-json/` — envelope `amellwind-builder-character` (kind + version + snapshotVersion + identity + core + multiclass + snapshot). Hooks: `useBuilderCharacterExport` / `useBuilderCharacterImport`. Lógica de serialización/rehidratación compartida en `builder/storage/builder-persist.ts` (también usada por el autosave local). Sin portrait/token.
+- **Export/Import Foundry VTT**: núcleo en `shared/foundry/` (+ `shared/foundry/weapons/`); actor en `builder/foundry-export/` / `foundry-import/` (dnd5e v12); items de arma en forge/weapons vía el mismo núcleo. UI deshabilitada temporalmente en `StatsPanel` (`FOUNDRY_JSON_UI_ENABLED = false`); `builderSnapshot` en flags sigue presente para cuando se reactive.
 - Catálogo de equipo D&D del builder en `dnd-items/dnd-equipment.service.ts` (`getDndWeapons`, `getDndArmors`, …).
 - El **Character Builder** y las **armaduras reales desde GTMH** siguen en desarrollo activo (ALPHA).
