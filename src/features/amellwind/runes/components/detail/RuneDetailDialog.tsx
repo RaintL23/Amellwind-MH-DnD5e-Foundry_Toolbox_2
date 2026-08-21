@@ -13,21 +13,55 @@ import { AddToBuildSection } from "./AddToBuildSection";
 import { EffectSection } from "./EffectSection";
 import { TierBadge } from "../shared/TierBadge";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
+import type { RuneListEffectFilters } from "../../utils/rune-compatibility.utils";
+import {
+  hasActiveRuneEffectListFilters,
+  runeEffectMatchesListFilters,
+} from "../../utils/rune-compatibility.utils";
 
 interface RuneDetailDialogProps {
   rune: Rune | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   materialEffectIndex?: MaterialEffectNameIndex | null;
+  /** Active effect-scoped list filters (slot / tags / material-effect tier). */
+  effectFilters?: RuneListEffectFilters;
 }
+
+const EMPTY_EFFECT_FILTERS: RuneListEffectFilters = {
+  slot: "",
+  tag: [],
+  materialEffectTier: [],
+};
 
 export function RuneDetailDialog({
   rune,
   open,
   onOpenChange,
   materialEffectIndex,
+  effectFilters = EMPTY_EFFECT_FILTERS,
 }: RuneDetailDialogProps) {
   if (!rune) return null;
+
+  const filtersActive = hasActiveRuneEffectListFilters(effectFilters);
+  const armorMatches =
+    !rune.armorEffect ||
+    !filtersActive ||
+    runeEffectMatchesListFilters(
+      rune,
+      "armor",
+      effectFilters,
+      materialEffectIndex,
+    );
+  const weaponMatches =
+    !rune.weaponEffect ||
+    !filtersActive ||
+    runeEffectMatchesListFilters(
+      rune,
+      "weapon",
+      effectFilters,
+      materialEffectIndex,
+    );
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -98,6 +132,7 @@ export function RuneDetailDialog({
               slot="armor"
               tags={rune.armorTags}
               materialEffectIndex={materialEffectIndex}
+              dimmed={filtersActive && !armorMatches}
             />
           )}
           {rune.weaponEffect && (
@@ -107,11 +142,16 @@ export function RuneDetailDialog({
               slot="weapon"
               tags={rune.weaponTags}
               materialEffectIndex={materialEffectIndex}
+              dimmed={filtersActive && !weaponMatches}
             />
           )}
 
           <Separator className="my-4" />
-          <AddToBuildSection rune={rune} />
+          <AddToBuildSection
+            rune={rune}
+            weaponAllowed={!filtersActive || weaponMatches}
+            armorAllowed={!filtersActive || armorMatches}
+          />
         </DialogBody>
       </DialogContent>
     </Dialog>

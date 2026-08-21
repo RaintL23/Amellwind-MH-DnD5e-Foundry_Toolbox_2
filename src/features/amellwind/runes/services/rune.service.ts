@@ -2,7 +2,7 @@ import { Rune } from "@/shared/types";
 import { getMonsterData, clearMonsterDataCache } from "@/shared/db/sync.service";
 import { createEntityService } from "@/shared/services/create-entity-service";
 import { getAllSpells } from "@/features/dnd/spells/services/spell.service";
-import { mapRunesFromMonster } from "../mappers/rune.mapper";
+import { isPlaceableRune, mapRunesFromMonster } from "../mappers/rune.mapper";
 import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 
 const service = createEntityService<Rune, Rune>({
@@ -21,15 +21,20 @@ const service = createEntityService<Rune, Rune>({
   map: (rune) => rune,
 });
 
-export const getAllRunes = service.getAll;
+/** Placeable A/W runes only (excludes loot slot "O" upgrade/craft materials). */
+export async function getAllRunes(): Promise<Rune[]> {
+  const all = await service.getAll();
+  return all.filter(isPlaceableRune);
+}
 
+/** Full loot-table materials for a monster, including non-placeable "O" rows. */
 export async function getRunesByMonster(monsterName: string): Promise<Rune[]> {
   const runes = await service.getAll();
   return runes.filter((r) => r.monsterName === monsterName);
 }
 
 export async function getRuneByName(name: string): Promise<Rune | undefined> {
-  const runes = await service.getAll();
+  const runes = await getAllRunes();
   return runes.find((r) => r.name === name);
 }
 

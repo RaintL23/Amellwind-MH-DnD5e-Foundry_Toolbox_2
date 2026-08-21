@@ -43,9 +43,12 @@ function inflictsConditionOnHit(effectText: string | null): boolean {
   );
 }
 
-/** Weapon rule 1 materials (nat-20 / critical) are exempt from rule 2. */
-function isCriticalExempt(tags: string[]): boolean {
-  return hasTagPrefix(tags, "mechanic:critical");
+/** Weapon rule 1 materials (nat-20 / named critical) are exempt from rule 2. */
+function isNat20Effect(tags: string[]): boolean {
+  return (
+    hasTagPrefix(tags, "mechanic:critical") ||
+    hasTagPrefix(tags, "mechanic:roll-20")
+  );
 }
 
 /**
@@ -56,7 +59,7 @@ function isCriticalExempt(tags: string[]): boolean {
  */
 function matchesWeaponOnHitRule(rune: Rune): boolean {
   const tags = rune.weaponTags;
-  if (isCriticalExempt(tags)) return false;
+  if (isNat20Effect(tags)) return false;
 
   const effect = rune.weaponEffect;
   const conditionalExtra = isConditionalExtraDamage(effect);
@@ -128,7 +131,7 @@ const ARMOR_RULE_GROUPS: RuleGroup[] = [
 const WEAPON_RULE_GROUPS: RuleGroup[] = [
   {
     rule: "Only 1 material with effect when rolling a natural 20 (rule 1)",
-    matches: (r) => hasTagPrefix(r.weaponTags, "mechanic:critical"),
+    matches: (r) => isNat20Effect(r.weaponTags),
   },
   {
     rule: "Only 1 material with extra damage, condition on hit or effect on impact (rule 2)",

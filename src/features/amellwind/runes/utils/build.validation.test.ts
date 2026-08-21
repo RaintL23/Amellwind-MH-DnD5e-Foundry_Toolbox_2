@@ -89,6 +89,38 @@ describe("weapon rule 2 — exceptions", () => {
     expect(getWeaponViolations([extraDamage, crit])).toEqual([]);
   });
 
+  it("treats roll-20 materials as the same nat-20 exclusivity group as critical", () => {
+    const roll20 = makeRune({
+      name: "Tetranadon Beak",
+      weaponTags: [
+        "mechanic:roll-20",
+        "mechanic:push",
+        "mechanic:no-damage",
+        "mechanic:unarmed",
+      ],
+    });
+    const namedCrit = makeRune({
+      name: "Critical Fang",
+      weaponTags: ["mechanic:critical", "mechanic:roll-20"],
+    });
+    const violations = getWeaponViolations([roll20, namedCrit]);
+    expect(violations).toHaveLength(1);
+    expect(violations[0].rule).toMatch(/rule 1/);
+  });
+
+  it("exempts roll-20 (rule 1) materials from rule 2", () => {
+    const roll20 = makeRune({
+      name: "Tetranadon Beak",
+      weaponTags: [
+        "mechanic:roll-20",
+        "mechanic:push",
+        "mechanic:no-damage",
+        "mechanic:unarmed",
+      ],
+    });
+    expect(getWeaponViolations([extraDamage, roll20])).toEqual([]);
+  });
+
   it("exempts conditional extra damage from the extra-damage part of rule 2", () => {
     const pureConditional = makeRune({
       name: "Fright Burn",

@@ -293,6 +293,11 @@ export function RuneList() {
             open={dialogOpen}
             onOpenChange={setDialogOpen}
             materialEffectIndex={materialEffectIndex}
+            effectFilters={{
+              slot: filters.slot,
+              tag: filters.tag,
+              materialEffectTier: filters.materialEffectTier,
+            }}
           />
         )}
       </div>

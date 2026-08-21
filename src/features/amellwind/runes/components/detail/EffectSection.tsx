@@ -20,6 +20,8 @@ interface EffectSectionProps {
   slot: MaterialEffectSlot;
   tags?: string[];
   materialEffectIndex?: MaterialEffectNameIndex | null;
+  /** When true, this side does not match the active list filters. */
+  dimmed?: boolean;
 }
 
 function resolveEffectRarityLabel(
@@ -38,6 +40,7 @@ export function EffectSection({
   slot,
   tags = [],
   materialEffectIndex,
+  dimmed = false,
 }: EffectSectionProps) {
   const rarityLabel = useMemo(
     () => resolveEffectRarityLabel(text, slot, materialEffectIndex, tags),
@@ -52,9 +55,30 @@ export function EffectSection({
   const lines = splitDisplayTextLines(text);
 
   return (
-    <div className="mt-4">
-      <h4 className="text-xs font-bold text-amber-400 uppercase tracking-wider">
+    <div
+      className={cn(
+        "mt-4 transition-opacity",
+        dimmed && "opacity-40 pointer-events-none select-none",
+      )}
+      aria-disabled={dimmed || undefined}
+      title={
+        dimmed
+          ? "This effect does not match the active list filters"
+          : undefined
+      }
+    >
+      <h4
+        className={cn(
+          "text-xs font-bold uppercase tracking-wider",
+          dimmed ? "text-muted-foreground" : "text-amber-400",
+        )}
+      >
         {label}
+        {dimmed && (
+          <span className="ml-2 font-normal normal-case tracking-normal text-[10px] text-muted-foreground">
+            (filtered out)
+          </span>
+        )}
       </h4>
       <div className="mt-1 mb-2 flex flex-wrap items-center gap-1.5">
         <span

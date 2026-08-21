@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractRuneEffectTags } from "../mappers/rune.mapper";
+import { extractRuneEffectTags, isPlaceableRune } from "../mappers/rune.mapper";
 import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 
 function makeSpell(name: string, level: number) {
@@ -9,6 +9,9 @@ function makeSpell(name: string, level: number) {
 const spellLevels = buildSpellLevelLookup([
   makeSpell("Light", 0),
   makeSpell("Shield", 1),
+  makeSpell("Earth Tremor", 1),
+  makeSpell("Dust Devil", 2),
+  makeSpell("Call Lightning", 3),
   makeSpell("Dimension Door", 4),
 ]);
 
@@ -65,7 +68,10 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
 
     expect(tags).toContain("mechanic:cantrip");
-    expect(tags.some((tag) => tag.startsWith("mechanic:spell:"))).toBe(false);
+    expect(tags).toContain("mechanic:spell:one-use");
+    expect(tags.some((tag) => tag.startsWith("mechanic:spell:lvl"))).toBe(
+      false,
+    );
   });
 
   it("tags dimension door from the spell catalog as spell:lvl4", () => {
@@ -75,7 +81,49 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
 
     expect(tags).toContain("mechanic:spell:lvl4");
+    expect(tags).toContain("mechanic:spell:one-use");
     expect(tags).not.toContain("mechanic:spell:lvl1-2");
+  });
+
+  it("tags plain MHMM Earth Tremor as spell:lvl1 one-use", () => {
+    const tags = extractRuneEffectTags(
+      "(Bard, Druid, Sorcerer, & Wizard Only) While attuned to this weapon you can cast the Earth Tremor spell once per long rest, without expending a spell slot.",
+      spellLevels,
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "class:bard",
+        "class:druid",
+        "class:sorcerer",
+        "class:wizard",
+        "mechanic:spell:lvl1",
+        "mechanic:spell:one-use",
+        "mechanic:long-rest",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:spell:lvl1-2");
+  });
+
+  it("tags multi-spell plain cast at 2nd level", () => {
+    const tags = extractRuneEffectTags(
+      "(Druid, Sorcerer, & Wizard Only) While attuned to this weapon you can cast the Earth Tremor and the Dust Devil spell at 2nd level once per day, without expending a spell slot.",
+      spellLevels,
+    );
+
+    expect(tags).toContain("mechanic:spell:lvl2");
+    expect(tags).toContain("mechanic:spell:one-use");
+    expect(tags).not.toContain("mechanic:spell:lvl1");
+  });
+
+  it("does not tag at-will cantrips as one-use", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned this weapon, you can cast the mold earth cantrip at will.",
+      spellLevels,
+    );
+
+    expect(tags).toContain("mechanic:cantrip");
+    expect(tags).not.toContain("mechanic:spell:one-use");
   });
 
   it("falls back to spell:lvl1-2 when the spell catalog has no match", () => {
@@ -143,9 +191,29 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
         "mechanic:against-condition",
         "mechanic:advantage",
         "mechanic:saving-throw",
+        "mechanic:passive",
         "type:defensive",
       ]),
     );
+  });
+
+  it("tags bare 'against the poisoned condition' without {@condition} markup", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on saving throws against the poisoned condition while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:condition",
+        "mechanic:condition-poisoned",
+        "mechanic:against-condition",
+        "mechanic:advantage",
+        "mechanic:saving-throw",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:active");
   });
 
   it("tags named condition immunity without markup", () => {
@@ -157,10 +225,80 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
       expect.arrayContaining([
         "mechanic:condition",
         "mechanic:condition-poisoned",
-        "mechanic:against-condition",
         "mechanic:immunity",
+        "mechanic:passive",
+        "type:defensive",
       ]),
     );
+    expect(tags).not.toContain("mechanic:against-condition");
+  });
+
+  it("tags 'against being poisoned' without the word condition", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on saving throws against being poisoned while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:condition",
+        "mechanic:condition-poisoned",
+        "mechanic:against-condition",
+        "mechanic:advantage",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags paralysis as condition-paralyzed and against-condition", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on saving throws against paralysis while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:condition-paralyzed",
+        "mechanic:against-condition",
+        "mechanic:advantage",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags MH blight names without {@condition} markup", () => {
+    const tags = extractRuneEffectTags(
+      "You have resistance to acid damage and immunity to the waterblight condition while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:condition-waterblight",
+        "mechanic:immunity",
+        "mechanic:resistance",
+        "damage:acid",
+        "mechanic:passive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:against-condition");
+  });
+
+  it("does not tag against-condition for earplugs vs thunder damage", () => {
+    const tags = extractRuneEffectTags(
+      "Earplugs. While you are attuned to this armor, you can use a bonus action to conjure two earplugs. While using these earplugs, you are considered deafened, and you have advantage on saving throws against thunder damage.",
+    );
+
+    expect(tags).toContain("mechanic:condition-deafened");
+    expect(tags).toContain("mechanic:active");
+    expect(tags).not.toContain("mechanic:against-condition");
+  });
+
+  it("tags bonus-action effects as active, not passive", () => {
+    const tags = extractRuneEffectTags(
+      "As a bonus action while you wear this armor, you gain resistance to fire damage for 1 minute.",
+    );
+
+    expect(tags).toContain("mechanic:active");
+    expect(tags).toContain("mechanic:bonus-action");
+    expect(tags).not.toContain("mechanic:passive");
   });
 
   it("does not tag against-condition when a weapon inflicts a condition", () => {
@@ -172,17 +310,313 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     expect(tags).not.toContain("mechanic:against-condition");
   });
 
-  it("tags roll-a-20 weapon effects as critical and offensive", () => {
+  it("tags roll-a-20 damage riders as roll-20 and offensive, not critical", () => {
     const tags = extractRuneEffectTags(
       "When you roll a 20 on your attack roll with this weapon, the target creature catches fire. Until someone takes an action to douse the flames, the creature takes {@damage 1d4} fire damage at the start of each of its turns.",
     );
 
     expect(tags).toEqual(
       expect.arrayContaining([
-        "mechanic:critical",
+        "mechanic:roll-20",
         "type:offensive",
         "damage:fire",
       ]),
+    );
+    expect(tags).not.toContain("mechanic:critical");
+    expect(tags).not.toContain("mechanic:no-damage");
+  });
+
+  it("tags a nat-20 unarmed push with no damage as Common-style utility tags", () => {
+    const tags = extractRuneEffectTags(
+      "When you make an unarmed strike while attuned to this weapon, and roll a 20 for the attack roll, the target is pushed 5 feet away from you.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:roll-20",
+        "mechanic:push",
+        "mechanic:no-damage",
+        "mechanic:unarmed",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:critical");
+    expect(tags).not.toContain("type:offensive");
+  });
+
+  it("does not tag incoming unarmed-strike thorns as unarmed", () => {
+    const tags = extractRuneEffectTags(
+      "While you wear this armor, any creature that hits you with a melee weapon, an unarmed strike, or a natural melee weapon takes 1d6 fire damage.",
+    );
+
+    expect(tags).not.toContain("mechanic:unarmed");
+    expect(tags).not.toContain("mechanic:natural-weapon");
+  });
+
+  it("tags a reaction attack with the race natural weapon", () => {
+    const tags = extractRuneEffectTags(
+      "(Race with natural weapons only.) When a hostile creature takes damage while within 5 feet of you, you can use your reaction to make an attack with your race's natural weapon against them.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:reaction",
+        "mechanic:natural-weapon",
+        "mechanic:active",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:unarmed");
+  });
+
+  it("tags hold-breath underwater utility", () => {
+    const tags = extractRuneEffectTags(
+      "You can hold breath underwater for twice as long as normal while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:hold-breath",
+        "mechanic:underwater",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Aim Booster with attack-roll and offensive", () => {
+    const tags = extractRuneEffectTags(
+      "(Ranged Weapon Only) Aim Booster. Before you make an attack with this weapon, you can use your bonus action to grant yourself advantage on the attack roll. You can use this property a number of times equal to half your proficiency modifier, regaining all expended uses when you finish a long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:ranged",
+        "mechanic:bonus-action",
+        "mechanic:advantage",
+        "mechanic:attack-roll",
+        "mechanic:long-rest",
+        "mechanic:active",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags burrowing speed as movement + burrowing", () => {
+    const tags = extractRuneEffectTags(
+      "You gain a burrowing speed of 10 feet while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:movement",
+        "mechanic:burrowing",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Marathon Runner+ as walking-speed major", () => {
+    const tags = extractRuneEffectTags(
+      "Marathon Runner+. While wearing this armor, your walking speed increases by 10 feet and you ignore difficult terrain if it was not created by a magical effect.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:movement",
+        "mechanic:walking-speed",
+        "mechanic:movement:major",
+        "mechanic:difficult-terrain",
+        "mechanic:ignore-difficult-terrain",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags icy-surface climb without checks", () => {
+    const tags = extractRuneEffectTags(
+      "While wearing this armor, you can move across and climb icy surfaces without needing to make an ability check. Additionally, difficult terrain composed of ice or snow doesn't cost it extra moment.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:movement",
+        "mechanic:icy-surfaces",
+        "mechanic:movement-climb",
+        "mechanic:difficult-terrain",
+        "mechanic:ignore-difficult-terrain",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Evade Extender with save-bonus and defensive", () => {
+    const tags = extractRuneEffectTags(
+      "Evade Extender (S). You have a +1 bonus to Dexterity saving throws while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:save-bonus",
+        "mechanic:save-dexterity",
+        "mechanic:saving-throw",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("does not tag enemy Dexterity saves as save-dexterity", () => {
+    const tags = extractRuneEffectTags(
+      "Each creature in the line must make a DC 13 Dexterity saving throw, taking 3d6 lightning damage on a failed save.",
+    );
+
+    expect(tags).toContain("mechanic:saving-throw");
+    expect(tags).not.toContain("mechanic:save-dexterity");
+    expect(tags).not.toContain("mechanic:save-bonus");
+  });
+
+  it("tags ki recovery as class-resource recover", () => {
+    const tags = extractRuneEffectTags(
+      "(Monk Only) While you are attuned to this weapon, you may spend one minute contemplating the patterns etched on this weapon's surface and regain a number of expended ki points equal to half your proficiency modifier. Once you use this property, you cannot use it again until you finish a long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "class:monk",
+        "mechanic:ki",
+        "mechanic:class-resource",
+        "mechanic:recover-class-resource",
+        "mechanic:long-rest",
+        "mechanic:active",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:passive");
+  });
+
+  it("tags Deadeye as attack-range (not major)", () => {
+    const tags = extractRuneEffectTags(
+      "(Ranged Weapon Only) Deadeye. Your weapon's normal attack range is increased by 20 feet.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:ranged",
+        "mechanic:attack-range",
+        "mechanic:passive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:attack-range:major");
+  });
+
+  it("tags Deadeye+ as attack-range major", () => {
+    const tags = extractRuneEffectTags(
+      "(Ranged Weapon Only) Deadeye+. Your weapon's normal attack range is doubled.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:attack-range",
+        "mechanic:attack-range:major",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("does not tag Critical Eye as attack-range", () => {
+    const tags = extractRuneEffectTags(
+      "Critical Eye. Your weapon attacks critical hit range is increased by 1.",
+    );
+
+    expect(tags).not.toContain("mechanic:attack-range");
+  });
+
+  it("does not tag Tune-Up outside-range bonus as attack-range", () => {
+    const tags = extractRuneEffectTags(
+      "(Ranged Weapon Only) Tune-Up. You gain a +2 bonus to your attack rolls with this weapon if the target is outside of your normal attack range.",
+    );
+
+    expect(tags).not.toContain("mechanic:attack-range");
+  });
+
+  it("tags Channel Divinity extra use as class-resource without recover", () => {
+    const tags = extractRuneEffectTags(
+      "(Paladin & Cleric Only) You can use your channel divinity feature one additional time between rests.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:channel-divinity",
+        "mechanic:class-resource",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:recover-class-resource");
+  });
+
+  it("tags Expert Fisherman as gather-resources + fishing", () => {
+    const tags = extractRuneEffectTags(
+      "Expert Fisherman. When you catch fish, you instead catch two.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:gather-resources",
+        "mechanic:fishing",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:gather-resources:major");
+  });
+
+  it("tags Botanist+ as major plant gather", () => {
+    const tags = extractRuneEffectTags(
+      "Botanist+. When you successfully gather a plant resource, you gather an extra 1d4 more.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:gather-resources",
+        "mechanic:gather-resources:major",
+        "mechanic:plant",
+      ]),
+    );
+  });
+
+  it("tags Geologist as mining gather without major", () => {
+    const tags = extractRuneEffectTags(
+      "Geologist. When you successfully gather a mining resource, you instead gather 2.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:gather-resources",
+        "mechanic:mining",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:gather-resources:major");
+  });
+
+  it("does not tag Fortitude forage advantage as gather-resources", () => {
+    const tags = extractRuneEffectTags(
+      "Fortitude. You have advantage on survival skill checks to track, forage, or travel while you are attuned to this armor.",
+    );
+
+    expect(tags).not.toContain("mechanic:gather-resources");
+    expect(tags).not.toContain("mechanic:foraging");
+  });
+
+  it("tags underwater without hold-breath for water breathing", () => {
+    const tags = extractRuneEffectTags(
+      "While you wear this armor, you have a swimming speed equal to your walking speed, you can breathe underwater, and you suffer no harm in water as cold as -20 degrees Fahrenheit.",
+    );
+
+    expect(tags).toContain("mechanic:underwater");
+    expect(tags).not.toContain("mechanic:hold-breath");
+  });
+
+  it("keeps named Critical Status as both critical and roll-20", () => {
+    const tags = extractRuneEffectTags(
+      "Critical Status (poison). When you make a weapon attack with this weapon, and roll a 20 for the attack roll, the target is poisoned until the end of its next turn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:critical", "mechanic:roll-20"]),
     );
   });
 
@@ -212,5 +646,65 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
 
     expect(tags).not.toContain("mechanic:trap");
     expect(tags).not.toContain("mechanic:item-related");
+  });
+
+  it("tags Pearl of Power–style 4th-level slot recovery", () => {
+    const tags = extractRuneEffectTags(
+      "You can use an action to speak this armor's command word and regain one expended spell slot of up to 4th level. Once you have used this effect, it can't be used again until the next dawn.",
+    );
+
+    expect(tags).toContain("mechanic:spell-slot:lvl4");
+    expect(tags.some((tag) => tag.startsWith("mechanic:spell:"))).toBe(false);
+    expect(tags.some((tag) => tag.startsWith("mechanic:healing"))).toBe(false);
+  });
+
+  it("tags 3rd-level slot recovery without treating it as a spell cast", () => {
+    const tags = extractRuneEffectTags(
+      "You can use an action to speak the command word and regain one expended spell slot of up to 3rd level. Once you have used this effect, it can't be used again until the next dawn.",
+    );
+
+    expect(tags).toContain("mechanic:spell-slot:lvl3");
+    expect(tags).not.toContain("mechanic:spell-slot:lvl4");
+  });
+
+  it("tags unleveled Arcane Recovery boosts as generic spell-slot", () => {
+    const tags = extractRuneEffectTags(
+      "(Wizard Only) While attuned to this armor, you can recover spell slots with your arcane recovery that have a combined level that is equal to or less than half your Wizard level (rounded up) +1.",
+    );
+
+    expect(tags).toContain("mechanic:spell-slot");
+    expect(tags.some((tag) => tag.startsWith("mechanic:spell-slot:lvl"))).toBe(
+      false,
+    );
+  });
+
+  it("does not tag casting without expending a slot as spell-slot recovery", () => {
+    const tags = extractRuneEffectTags(
+      "(Druids Only) While attuned to this weapon, you can use an action to cast the {@spell call lightning} spell from it twice per long rest, without expending a spell slot.",
+      spellLevels,
+    );
+
+    expect(tags.some((tag) => tag.startsWith("mechanic:spell-slot"))).toBe(
+      false,
+    );
+  });
+
+  it("does not tag rune-charge upcasting as spell-slot recovery", () => {
+    const tags = extractRuneEffectTags(
+      "This weapon has 5 runes. You can increase the spell slot level by one for each additional rune you expend. This weapon regains 1d4 + 1 expended runes daily at dawn.",
+    );
+
+    expect(tags.some((tag) => tag.startsWith("mechanic:spell-slot"))).toBe(
+      false,
+    );
+  });
+});
+
+describe("isPlaceableRune", () => {
+  it("accepts armor/weapon slot materials and rejects empty (O) slots", () => {
+    expect(isPlaceableRune({ slots: ["A"] })).toBe(true);
+    expect(isPlaceableRune({ slots: ["W"] })).toBe(true);
+    expect(isPlaceableRune({ slots: ["A", "W"] })).toBe(true);
+    expect(isPlaceableRune({ slots: [] })).toBe(false);
   });
 });

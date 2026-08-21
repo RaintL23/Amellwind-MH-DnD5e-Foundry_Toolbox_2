@@ -1,6 +1,9 @@
 import type { MaterialEffectSlot, Rune } from "@/shared/types";
 import type { Class, Subclass, Weapon } from "@/shared/types";
 import { resolveWeaponProficiency } from "@/features/amellwind/weapons/data/weapon-proficiencies.data";
+import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
+import { getMaterialEffectTierForText } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
+import type { MaterialEffectTierFilter } from "@/features/amellwind/material-effects/constants/material-effect.constants";
 
 export interface RuneCompatibilityContext {
   /** Name of the selected class (e.g. "Fighter"), or null if none. */
@@ -343,6 +346,65 @@ export function getRuneMaterialEffectText(
   kind: MaterialEffectSlot,
 ): string {
   return (kind === "weapon" ? rune.weaponEffect : rune.armorEffect) ?? "";
+}
+
+/**
+ * Effect-scoped catalog filters: slot, tags (same effect), and material-effect
+ * tier. Used to dim non-matching sides in the rune detail dialog.
+ */
+export interface RuneListEffectFilters {
+  slot: "" | "A" | "W";
+  tag: string[];
+  materialEffectTier: string[];
+}
+
+export function hasActiveRuneEffectListFilters(
+  filters: RuneListEffectFilters,
+): boolean {
+  return (
+    filters.slot === "A" ||
+    filters.slot === "W" ||
+    filters.tag.length > 0 ||
+    filters.materialEffectTier.length > 0
+  );
+}
+
+/**
+ * True when this material-effect side satisfies every active effect-scoped
+ * list filter (AND across filter types). Empty filters → always true.
+ */
+export function runeEffectMatchesListFilters(
+  rune: Rune,
+  kind: MaterialEffectSlot,
+  filters: RuneListEffectFilters,
+  materialEffectIndex?: MaterialEffectNameIndex | null,
+): boolean {
+  const text = kind === "weapon" ? rune.weaponEffect : rune.armorEffect;
+  if (!text) return false;
+
+  if (filters.slot === "A" && kind !== "armor") return false;
+  if (filters.slot === "W" && kind !== "weapon") return false;
+
+  if (filters.tag.length > 0) {
+    const tags = kind === "weapon" ? rune.weaponTags : rune.armorTags;
+    if (!tagsMatchFilter(tags, filters.tag, "and")) return false;
+  }
+
+  if (filters.materialEffectTier.length > 0) {
+    if (!materialEffectIndex) return true;
+    const tags = kind === "weapon" ? rune.weaponTags : rune.armorTags;
+    const tier = getMaterialEffectTierForText(
+      text,
+      kind,
+      materialEffectIndex,
+      tags,
+    );
+    return filters.materialEffectTier.includes(
+      tier as MaterialEffectTierFilter,
+    );
+  }
+
+  return true;
 }
 
 /** Expands runes into one row per applicable material effect for picker lists. */

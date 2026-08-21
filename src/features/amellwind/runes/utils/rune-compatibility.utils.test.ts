@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import type { Rune } from "@/shared/types";
-import { runeMatchesListTagFilter } from "./rune-compatibility.utils";
+import {
+  runeEffectMatchesListFilters,
+  runeMatchesListTagFilter,
+} from "./rune-compatibility.utils";
+import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
+import { UNKNOWN_MATERIAL_EFFECT_TIER } from "@/features/amellwind/material-effects/constants/material-effect.constants";
 
 function makeRune(partial: Partial<Rune> & Pick<Rune, "name">): Rune {
   return {
@@ -61,6 +66,13 @@ const splitTags = makeRune({
   ],
 });
 
+/** Empty index → getMaterialEffectTierForText falls through to Unknown / tag inference. */
+const emptyIndex: MaterialEffectNameIndex = {
+  all: [],
+  bySlot: { weapon: [], armor: [] },
+  byKey: new Map(),
+};
+
 describe("runeMatchesListTagFilter", () => {
   it("requires fire and immunity to appear together on the armor effect", () => {
     expect(
@@ -98,5 +110,90 @@ describe("runeMatchesListTagFilter", () => {
         "mechanic:immunity",
       ]),
     ).toBe(false);
+  });
+});
+
+describe("runeEffectMatchesListFilters", () => {
+  const tetsucabraClaw = makeRune({
+    name: "Tetsucabra Claw",
+    armorEffect: "Expert Fisherman. When you catch fish, you instead catch two.",
+    weaponEffect:
+      "While attuned this weapon, you can cast the mold earth cantrip at will.",
+    armorTags: [],
+    weaponTags: ["mechanic:cantrip", "mechanic:passive"],
+  });
+
+  it("matches both sides when no effect-scoped filters are active", () => {
+    const filters = { slot: "" as const, tag: [], materialEffectTier: [] };
+    expect(
+      runeEffectMatchesListFilters(tetsucabraClaw, "armor", filters, emptyIndex),
+    ).toBe(true);
+    expect(
+      runeEffectMatchesListFilters(
+        tetsucabraClaw,
+        "weapon",
+        filters,
+        emptyIndex,
+      ),
+    ).toBe(true);
+  });
+
+  it("dims the side whose material-effect tier is outside the filter", () => {
+    const filters = {
+      slot: "" as const,
+      tag: [],
+      materialEffectTier: [UNKNOWN_MATERIAL_EFFECT_TIER],
+    };
+    // Armor has no catalog/inferred rarity → Unknown
+    expect(
+      runeEffectMatchesListFilters(tetsucabraClaw, "armor", filters, emptyIndex),
+    ).toBe(true);
+    // Weapon has cantrip tag → Common, not Unknown
+    expect(
+      runeEffectMatchesListFilters(
+        tetsucabraClaw,
+        "weapon",
+        filters,
+        emptyIndex,
+      ),
+    ).toBe(false);
+  });
+
+  it("respects slot filter independently of tags/tiers", () => {
+    const filters = {
+      slot: "A" as const,
+      tag: [],
+      materialEffectTier: [],
+    };
+    expect(
+      runeEffectMatchesListFilters(tetsucabraClaw, "armor", filters, emptyIndex),
+    ).toBe(true);
+    expect(
+      runeEffectMatchesListFilters(
+        tetsucabraClaw,
+        "weapon",
+        filters,
+        emptyIndex,
+      ),
+    ).toBe(false);
+  });
+
+  it("requires tags on the same effect side", () => {
+    const filters = {
+      slot: "" as const,
+      tag: ["mechanic:cantrip"],
+      materialEffectTier: [],
+    };
+    expect(
+      runeEffectMatchesListFilters(tetsucabraClaw, "armor", filters, emptyIndex),
+    ).toBe(false);
+    expect(
+      runeEffectMatchesListFilters(
+        tetsucabraClaw,
+        "weapon",
+        filters,
+        emptyIndex,
+      ),
+    ).toBe(true);
   });
 });

@@ -15,9 +15,17 @@ import { cn } from "@/shared/utils/cn";
 
 interface AddToBuildSectionProps {
   rune: Rune;
+  /** False when the weapon effect does not match active list filters. */
+  weaponAllowed?: boolean;
+  /** False when the armor effect does not match active list filters. */
+  armorAllowed?: boolean;
 }
 
-export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
+export function AddToBuildSection({
+  rune,
+  weaponAllowed = true,
+  armorAllowed = true,
+}: AddToBuildSectionProps) {
   const {
     addRune,
     removeRune,
@@ -60,8 +68,8 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
 
   // A trinket holds a single material effect, so the user must pick which one.
   const trinketKinds: MaterialEffectSlot[] = [
-    ...(rune.weaponEffect ? (["weapon"] as const) : []),
-    ...(rune.armorEffect ? (["armor"] as const) : []),
+    ...(rune.weaponEffect && weaponAllowed ? (["weapon"] as const) : []),
+    ...(rune.armorEffect && armorAllowed ? (["armor"] as const) : []),
   ];
 
   function handleAddTrinket(
@@ -80,11 +88,14 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
     inTrinket: boolean,
     label: string,
   ) {
+    const filterBlocked = !inTrinket && trinketKinds.length === 0;
     const baseClass = cn(
       "flex flex-1 items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-xs font-medium transition-colors",
       inTrinket
         ? "bg-green-900/30 border-green-700/50 text-green-400"
-        : "border-purple-700/40 text-purple-300 hover:bg-purple-900/20",
+        : filterBlocked
+          ? "border-border text-muted-foreground/40 cursor-not-allowed opacity-50"
+          : "border-purple-700/40 text-purple-300 hover:bg-purple-900/20",
     );
 
     if (inTrinket) {
@@ -92,6 +103,20 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
         <button onClick={() => removeRune(slotType)} className={baseClass}>
           <Gem className="h-3.5 w-3.5" />
           <Check className="h-3 w-3" /> {label}
+        </button>
+      );
+    }
+
+    if (filterBlocked) {
+      return (
+        <button
+          type="button"
+          disabled
+          title="No effect matches the active list filters"
+          className={baseClass}
+        >
+          <Gem className="h-3.5 w-3.5" />
+          {`→ ${label}`}
         </button>
       );
     }
@@ -174,13 +199,18 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
                     )
                   : handleAdd("weapon")
               }
-              disabled={!inWeapon && weaponFull}
+              disabled={!inWeapon && (weaponFull || !weaponAllowed)}
+              title={
+                !inWeapon && !weaponAllowed
+                  ? "Weapon effect does not match the active list filters"
+                  : undefined
+              }
               className={cn(
                 "flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-xs font-medium transition-colors",
                 inWeapon
                   ? "bg-green-900/30 border-green-700/50 text-green-400"
-                  : weaponFull
-                    ? "border-border text-muted-foreground/40 cursor-not-allowed"
+                  : weaponFull || !weaponAllowed
+                    ? "border-border text-muted-foreground/40 cursor-not-allowed opacity-50"
                     : weaponViolation
                       ? "border-orange-700/50 text-orange-300 hover:bg-orange-900/20"
                       : "border-orange-600/50 text-orange-300 hover:bg-orange-900/20",
@@ -231,13 +261,18 @@ export function AddToBuildSection({ rune }: AddToBuildSectionProps) {
                     )
                   : handleAdd("armor")
               }
-              disabled={!inArmor && armorFull}
+              disabled={!inArmor && (armorFull || !armorAllowed)}
+              title={
+                !inArmor && !armorAllowed
+                  ? "Armor effect does not match the active list filters"
+                  : undefined
+              }
               className={cn(
                 "flex w-full items-center justify-center gap-1.5 rounded-md border px-3 py-2 text-xs font-medium transition-colors",
                 inArmor
                   ? "bg-green-900/30 border-green-700/50 text-green-400"
-                  : armorFull
-                    ? "border-border text-muted-foreground/40 cursor-not-allowed"
+                  : armorFull || !armorAllowed
+                    ? "border-border text-muted-foreground/40 cursor-not-allowed opacity-50"
                     : armorViolation
                       ? "border-orange-700/50 text-blue-300 hover:bg-blue-900/20"
                       : "border-blue-600/50 text-blue-300 hover:bg-blue-900/20",

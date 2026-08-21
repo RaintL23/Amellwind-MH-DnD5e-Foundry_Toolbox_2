@@ -35,6 +35,14 @@ function parseSlots(slotsStr: string): RuneSlot[] {
   return slots;
 }
 
+/**
+ * Materials with loot slot "O" (Other) — upgrade bones, crafting mats, sellables —
+ * parse to empty `slots` and are not placeable as Armor/Weapon/Trinket runes.
+ */
+export function isPlaceableRune(rune: Pick<Rune, "slots">): boolean {
+  return rune.slots.length > 0;
+}
+
 // ─── Effects indexer ──────────────────────────────────────────────────────────
 
 function indexEffectsByName(items: unknown[]): Record<string, string> {
@@ -83,11 +91,25 @@ const WEAPON_TYPE_PATTERNS: Array<[RegExp, string]> = [
   [/switchaxe.*only/i, "weapon-type:switchaxe"],
 ];
 
-// mechanic:extra-damage, mechanic:healing y mechanic:spell se emiten vía
-// funciones de escala en lugar de patrones simples.
+// mechanic:extra-damage, mechanic:healing, mechanic:spell y mechanic:spell-slot
+// se emiten vía funciones de escala en lugar de patrones simples.
+const ROLL_20_RE = /roll(?:s|ing)? a 20\b|natural 20/i;
+const CRITICAL_WORD_RE = /\bcritic(?:al|ally)\b/i;
+const PUSH_RE =
+  /\bis pushed\b|\bare pushed\b|\bpushed (?:up to )?\d+|\bpush(?:es)? the (?:target|creature)/i;
+const YOUR_UNARMED_RE =
+  /(?:make (?:an? |two |three )|your |with an |or )unarmed strikes?|proficien(?:t|cy) (?:in|with) unarmed strikes?/i;
+/** Your / race natural weapons — not incoming "hits you with … a natural melee weapon". */
+const YOUR_NATURAL_WEAPON_RE =
+  /Race with natural weapons only|(?:your |race'?s )natural(?: melee)? weapons?|attack with (?:your |a |an |your race'?s )?natural(?: melee)? weapons?/i;
+const DAMAGE_OR_EXTRA_ATTACK_RE =
+  /(?:takes?|deals?)\s+(?:an?\s+)?(?:additional\s+)?(?:\{@damage\s+)?(?:\d+d\d+|\d+)|loses?\s+(?:\d+d\d+|\d+)\s+hit points|damage dice one additional time|make one additional attack|(?:an? )?(?:additional|extra) attack/i;
+
 const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/\d+\s*runes?|runes?\s*\d+/i, "mechanic:rune-charges"],
-  [/critical|roll(?:s|ing)? a 20 (?:on |for )?(?:your |an |the )?attack roll|natural 20/i, "mechanic:critical"],
+  [CRITICAL_WORD_RE, "mechanic:critical"],
+  [ROLL_20_RE, "mechanic:roll-20"],
+  [PUSH_RE, "mechanic:push"],
   [/resist(?:ant|ance) to\s+\w/i, "mechanic:resistance"],
   [/immune to|immunity to/i, "mechanic:immunity"],
   [
@@ -102,17 +124,25 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/bonus action/i, "mechanic:bonus-action"],
   [/\breaction\b/i, "mechanic:reaction"],
   [
-    /saving throw.*(?:advantage|disadvantage)|(?:advantage|disadvantage).*saving throw/i,
+    /saving throw/i,
     "mechanic:saving-throw",
+  ],
+  [
+    /\+\d+\s*bonus\s+(?:on|to)\s+(?:strength|dexterity|constitution|intelligence|wisdom|charisma)\s+saving throws?/i,
+    "mechanic:save-bonus",
   ],
   [/\+\d+\s*bonus\s+(?:on|to).*\{@skill/i, "mechanic:skill-bonus"],
   [/\bAC\b|armor class/i, "mechanic:ac"],
+  // `mechanic:condition` is also added when conditionNameTags finds a named
+  // condition (bare "poisoned condition" without {@condition} markup).
   [
     /\{@condition|(?:immune|immunity) to (?:the )?\w+ condition/i,
     "mechanic:condition",
   ],
   [/\bdiseases?\b/i, "mechanic:disease"],
-  [/(?:movement|speed|jump)\s+(?:increase|by|\d+)/i, "mechanic:movement"],
+  // movement / burrow / swim / fly / climb → `movementTags()`
+  [/\bunderwater\b/i, "mechanic:underwater"],
+  [/hold(?: your)? breath/i, "mechanic:hold-breath"],
   [/\badvantage\b/i, "mechanic:advantage"],
   [/\bcantrip\b/i, "mechanic:cantrip"],
   [
@@ -125,6 +155,59 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/\bshort(?:\s+or\s+long)?\s+rest\b|\{@rest\s+short\}/i, "mechanic:short-rest"],
   [/\b(?:short\s+or\s+)?long\s+rest\b|\{@rest\s+long\}/i, "mechanic:long-rest"],
 ];
+
+/** Action economy that marks an effect as activated rather than always-on. */
+const ACTION_ECONOMY_RE =
+  /\bas an action\b|use (?:an |your )?action\b|bonus action|\breaction\b|spend (?:one|a|an|\d+) minutes?\b/i;
+
+/**
+ * Known condition names for wording without `{@condition}` (the X condition,
+ * against being poisoned, afflicted with waterblight, …).
+ * Longer / multi-word names first so "frenzy virus" wins over partials.
+ */
+const KNOWN_CONDITION_NAMES = [
+  "frenzy virus",
+  "waterblight",
+  "iceblight",
+  "thunderblight",
+  "dragonblight",
+  "bloodblight",
+  "fireblight",
+  "incapacitated",
+  "unconscious",
+  "frightened",
+  "restrained",
+  "paralyzed",
+  "petrified",
+  "exhaustion",
+  "grappled",
+  "invisible",
+  "poisoned",
+  "blinded",
+  "deafened",
+  "charmed",
+  "stunned",
+  "tarred",
+  "stench",
+  "prone",
+  "slick",
+  "frozen",
+] as const;
+
+/** Informal aliases that should emit the canonical `mechanic:condition-{n}` tag. */
+const CONDITION_ALIASES: Record<string, string> = {
+  paralysis: "paralyzed",
+  stenched: "stench",
+};
+
+const CONDITION_TERM_TO_CANONICAL: Array<[string, string]> = [
+  ...KNOWN_CONDITION_NAMES.map((name): [string, string] => [name, name]),
+  ...Object.entries(CONDITION_ALIASES),
+].sort((a, b) => b[0].length - a[0].length);
+
+const CONDITION_TERM_ALT = CONDITION_TERM_TO_CANONICAL.map(([term]) =>
+  term.replace(/\s+/g, "\\s+"),
+).join("|");
 
 const DAMAGE_TYPES = [
   "acid",
@@ -170,10 +253,52 @@ function skillTags(text: string): string[] {
   return Array.from(tags);
 }
 
+const ABILITY_NAMES = [
+  "strength",
+  "dexterity",
+  "constitution",
+  "intelligence",
+  "wisdom",
+  "charisma",
+] as const;
+
 /**
- * mechanic:condition-stunned, mechanic:condition-frenzy-virus, etc.
- * From `{@condition Name}` and "immune to the ___ condition" wording.
- * Keeps the generic `mechanic:condition` pattern for broad filters / build rules.
+ * mechanic:save-dexterity, etc. when *your* named ability save is buffed.
+ * Also emits mechanic:attack-roll for attack-roll grants / advantage.
+ */
+function rollTargetTags(text: string): string[] {
+  const tags: string[] = [];
+
+  for (const ability of ABILITY_NAMES) {
+    // Buffs to your saves — not "target must make a Dexterity saving throw".
+    if (
+      new RegExp(
+        `\\+\\d+\\s+bonus\\s+(?:on|to)\\s+${ability}\\s+saving throws?`,
+        "i",
+      ).test(text) ||
+      new RegExp(
+        `advantage on(?:\\s+\\w+){0,8}\\s+${ability}\\s+saving throws?`,
+        "i",
+      ).test(text)
+    ) {
+      tags.push(`mechanic:save-${ability}`);
+    }
+  }
+
+  if (
+    /\battack rolls?\b/i.test(text) ||
+    /\bon the attack roll\b/i.test(text)
+  ) {
+    tags.push("mechanic:attack-roll");
+  }
+
+  return tags;
+}
+
+/**
+ * mechanic:condition-stunned, mechanic:condition-poisoned, etc.
+ * From `{@condition Name}`, "immune to the ___ condition", and known
+ * names used bare ("against being poisoned", "afflicted with waterblight").
  */
 function conditionNameTags(text: string): string[] {
   const tags = new Set<string>();
@@ -181,7 +306,8 @@ function conditionNameTags(text: string): string[] {
   const add = (raw: string) => {
     const name = raw.trim().toLowerCase();
     if (!name) return;
-    tags.add(`mechanic:condition-${name.replace(/\s+/g, "-")}`);
+    const canonical = CONDITION_ALIASES[name] ?? name;
+    tags.add(`mechanic:condition-${canonical.replace(/\s+/g, "-")}`);
   };
 
   for (const match of text.matchAll(/\{@condition\s+([^}|]+)/gi)) {
@@ -191,6 +317,12 @@ function conditionNameTags(text: string): string[] {
     /(?:immune|immunity) to (?:the )?([a-z][a-z\s-]{0,40}?) condition/gi,
   )) {
     add(match[1] ?? "");
+  }
+  for (const [term, canonical] of CONDITION_TERM_TO_CANONICAL) {
+    const escaped = term.replace(/\s+/g, "\\s+");
+    if (new RegExp(`\\b${escaped}\\b`, "i").test(text)) {
+      add(canonical);
+    }
   }
 
   return Array.from(tags);
@@ -212,21 +344,217 @@ function itemRelatedTags(text: string): string[] {
   return tags;
 }
 
+/** Named class pools (ki, Channel Divinity, …) → specific tag + `class-resource`. */
+const CLASS_RESOURCE_KIND_PATTERNS: Array<[RegExp, string]> = [
+  [/\bki points?\b/i, "mechanic:ki"],
+  [/\bsorcery points?\b/i, "mechanic:sorcery-points"],
+  [/\bchannel divinity\b/i, "mechanic:channel-divinity"],
+  [/\bsuperiority dice\b/i, "mechanic:superiority-dice"],
+  [/\bbardic inspiration\b/i, "mechanic:bardic-inspiration"],
+  [/\bfocus points?\b/i, "mechanic:focus-points"],
+];
+
+const CLASS_RESOURCE_RECOVERY_RE =
+  /(?:regain|restore|recover)\s+(?:a number of |(?:one|an?|\d+)\s+)?(?:expended\s+)?(?:ki points?|sorcery points?|superiority dice|bardic inspiration|focus points?|channel divinity)|(?:regain|restore|recover).{0,48}(?:expended\s+)?(?:ki points?|sorcery points?|superiority dice|bardic inspiration|focus points?)/i;
+
 /**
- * mechanic:against-condition — defensive protection vs suffering a condition
- * (advantage on saves against being X, immunity to a condition, etc.).
- * Does not cover weapon effects that inflict a condition on hit.
+ * Class-feature resource pools (not spell slots / rune charges).
+ * Emits the specific pool tag + `mechanic:class-resource`, and
+ * `mechanic:recover-class-resource` when the effect restores expended uses.
  */
-function againstConditionTag(text: string): string | null {
+function classResourceTags(text: string): string[] {
+  const tags: string[] = [];
+  for (const [pattern, tag] of CLASS_RESOURCE_KIND_PATTERNS) {
+    if (pattern.test(text)) tags.push(tag);
+  }
+  if (tags.length === 0) return [];
+
+  tags.push("mechanic:class-resource");
+  if (CLASS_RESOURCE_RECOVERY_RE.test(text)) {
+    tags.push("mechanic:recover-class-resource");
+  }
+  return tags;
+}
+
+/**
+ * MH field-gathering utility (Botanist / Geologist / Fisherman / Pack Rat, …).
+ * Always emits `mechanic:gather-resources` when any subtype or general gather
+ * wording matches; stronger yields (1d4 / party double / free gather) also get
+ * `mechanic:gather-resources:major`.
+ */
+function gatherResourceTags(text: string): string[] {
+  const tags: string[] = [];
+
+  if (/\bcatch fish\b|fishing pole|sushifish/i.test(text)) {
+    tags.push("mechanic:fishing");
+  }
   if (
-    /(?:immune|immunity) to (?:the )?(?:\{@condition|[a-z][\w\s-]{0,40}? condition)/i.test(
+    /mining resource|\bmine or gather\b|mineral resource|Mineralogist|Crystallography/i.test(
       text,
     )
   ) {
+    tags.push("mechanic:mining");
+  }
+  if (
+    /plant resource|herbalist kit to gather plants|\bHoney Hunter\b/i.test(text)
+  ) {
+    tags.push("mechanic:plant");
+  }
+  if (/bone resource/i.test(text)) {
+    tags.push("mechanic:bone");
+  }
+  if (/harvest mushrooms/i.test(text)) {
+    tags.push("mechanic:foraging");
+  }
+  if (
+    /insect with a bug net|insects? resources?|\bEntomologist\b/i.test(text)
+  ) {
+    tags.push("mechanic:insects");
+  }
+
+  const isGeneralGather =
+    /gather(?:s|ing)? (?:a |an |the )?(?:\w+ )?resources?|\bPack Rat\b|\bHoarding\b|Speed Gatherer|Hunter Gatherer|resource table|\b(?:Divine |Spirit'?s )?Whim\b/i.test(
+      text,
+    );
+
+  if (tags.length === 0 && !isGeneralGather) return [];
+
+  tags.push("mechanic:gather-resources");
+
+  if (
+    /extra 1d4|instead (?:gather|catch) 1d4|gather 1d4|catch an? extra 1d4|an extra 1d4 more|1d4 additional resources|double the (?:normal )?number|gather double|doesn't count against the maximum|gain double the amount/i.test(
+      text,
+    )
+  ) {
+    tags.push("mechanic:gather-resources:major");
+  }
+
+  return tags;
+}
+
+/**
+ * Speed / movement grants and speed debuffs.
+ * Umbrella `mechanic:movement` plus mode tags (burrowing, swimming, flying,
+ * climbing, walking-speed, icy-surfaces, movement-climb, ignore-difficult-terrain).
+ * Stronger walk bumps / fly 60+ also get `movement:major`.
+ */
+function movementTags(text: string): string[] {
+  const tags: string[] = [];
+
+  if (/\bburrowing speed\b/i.test(text)) tags.push("mechanic:burrowing");
+  if (/\bswimming speed\b/i.test(text)) tags.push("mechanic:swimming");
+  if (/\bflying speed\b/i.test(text)) tags.push("mechanic:flying");
+  if (/\bclimbing speed\b/i.test(text) || /\bSpider Climb\b/i.test(text)) {
+    tags.push("mechanic:climbing");
+  }
+  if (
+    /walking speed (?:increases|becomes|doubles)|your (?:movement )?speed increases/i.test(
+      text,
+    )
+  ) {
+    tags.push("mechanic:walking-speed");
+  }
+
+  const hasIcySurfaces =
+    /\bicy surfaces?\b/i.test(text) ||
+    /difficult terrain (?:composed of |created by )(?:ice|snow)/i.test(text) ||
+    /(?:ice or snow|snow or ice)\b/i.test(text);
+  if (hasIcySurfaces) tags.push("mechanic:icy-surfaces");
+
+  if (
+    /\bclimb(?:s|ing)?\b.{0,40}\bicy\b|\bclimb(?:s|ing)? icy\b/i.test(text) ||
+    (/move across and climb/i.test(text) && hasIcySurfaces)
+  ) {
+    tags.push("mechanic:movement-climb");
+  }
+
+  if (/\bdifficult terrain\b/i.test(text)) {
+    tags.push("mechanic:difficult-terrain");
+  }
+  if (
+    /ignore(?:s|d)? difficult terrain/i.test(text) ||
+    /difficult terrain.{0,60}doesn'?t cost .{0,20}extra (?:movement|moment)/i.test(
+      text,
+    )
+  ) {
+    tags.push("mechanic:ignore-difficult-terrain");
+  }
+
+  const hasGeneralMovement =
+    /(?:movement|speed|jump)\s+(?:increase[sd]?|by|of|\d+)/i.test(text) ||
+    /speed (?:is |are )?(?:reduced|doubled|increased)/i.test(text) ||
+    /\bspeed of \d+/i.test(text) ||
+    /movement speed/i.test(text) ||
+    hasIcySurfaces ||
+    tags.includes("mechanic:ignore-difficult-terrain") ||
+    tags.includes("mechanic:movement-climb");
+
+  if (tags.length === 0 && !hasGeneralMovement) return [];
+
+  tags.push("mechanic:movement");
+
+  if (
+    /walking speed increases by (?:1[0-9]|[2-9]\d)|walking speed doubles|your (?:movement )?speed increases by (?:1[0-9]|[2-9]\d)/i.test(
+      text,
+    ) ||
+    (/flying speed of (?:[6-9]\d|\d{3,})/i.test(text) &&
+      tags.includes("mechanic:flying"))
+  ) {
+    tags.push("mechanic:movement:major");
+  }
+
+  return tags;
+}
+
+/**
+ * Weapon attack distance — not Critical Eye ("critical hit range").
+ * `mechanic:attack-range` for +N ft; `:major` when the normal range is doubled.
+ * `mechanic:reach` for melee reach extensions.
+ */
+function weaponDistanceTags(text: string): string[] {
+  const tags: string[] = [];
+
+  const attackRangeChange =
+    /(?:normal )?attack range is (?:increased|doubled)/i.test(text) ||
+    /weapon'?s normal (?:attack )?range is (?:increased|doubled)/i.test(text);
+
+  if (attackRangeChange) {
+    tags.push("mechanic:attack-range");
+    if (
+      /(?:normal )?(?:attack )?range is doubled/i.test(text) ||
+      /attack range is doubled/i.test(text)
+    ) {
+      tags.push("mechanic:attack-range:major");
+    }
+  }
+
+  if (
+    /(?:weapon'?s |its )?reach is increased/i.test(text) ||
+    /extend(?:s|ing)? (?:its |the weapon'?s )?reach by/i.test(text)
+  ) {
+    tags.push("mechanic:reach");
+  }
+
+  return tags;
+}
+
+/**
+ * mechanic:against-condition — helps avoid acquiring a condition (advantage on
+ * saves vs being X, can't be afflicted, …). Not full condition immunity —
+ * that is `mechanic:immunity` + `mechanic:condition-*` only.
+ */
+function againstConditionTag(text: string): string | null {
+  if (/can'?t be afflicted (?:with|to)/i.test(text)) {
     return "mechanic:against-condition";
   }
 
-  if (/saving throws? against being/i.test(text)) {
+  // "against being stunned", "against the poisoned condition", "against paralysis"
+  if (
+    new RegExp(
+      `saving throws? against (?:being\\b|(?:the )?(?:${CONDITION_TERM_ALT})(?:\\s+condition)?\\b|\\{@condition)`,
+      "i",
+    ).test(text)
+  ) {
     return "mechanic:against-condition";
   }
 
@@ -240,6 +568,32 @@ function againstConditionTag(text: string): string | null {
   }
 
   return null;
+}
+
+/**
+ * mechanic:active  — spends action / BA / reaction (or is otherwise activated).
+ * mechanic:passive — always-on while worn/attuned (or continuous grant wording).
+ * Active wins when both would apply (e.g. "while wearing, as a bonus action…").
+ */
+function passiveActiveTags(text: string, tags: Set<string>): string[] {
+  const isActive =
+    tags.has("mechanic:bonus-action") ||
+    tags.has("mechanic:reaction") ||
+    ACTION_ECONOMY_RE.test(text);
+
+  if (isActive) return ["mechanic:active"];
+
+  const isPassive =
+    /while you (?:wear|are wearing|are attuned|hold)|while (?:wearing|attuned|holding|you wear)/i.test(
+      text,
+    ) ||
+    /whenever you make a saving throw/i.test(text) ||
+    /\byou (?:have|are|gain)\b/i.test(text) ||
+    /(?:normal )?attack range is (?:increased|doubled)/i.test(text) ||
+    /reach is increased by/i.test(text);
+
+  if (isPassive) return ["mechanic:passive"];
+  return [];
 }
 
 // ─── Scaled sub-tag extractors ────────────────────────────────────────────────
@@ -295,6 +649,33 @@ function healingTag(text: string): string | null {
   return amount > 10 ? "mechanic:healing:major" : "mechanic:healing:minor";
 }
 
+const SPELL_SLOT_RECOVERY =
+  /(?:regain|restore|recover)\s+(?:one |a |an |\d+ )?(?:expended )?spell slots?/i;
+const ORDINAL_SPELL_LEVEL = /\b(\d+)(?:st|nd|rd|th)[-\s]?level\b/gi;
+
+function parseHighestOrdinalSpellLevel(text: string): number | null {
+  let max: number | null = null;
+  for (const match of text.matchAll(
+    new RegExp(ORDINAL_SPELL_LEVEL.source, "gi"),
+  )) {
+    const n = parseInt(match[1] ?? "", 10);
+    if (n < 1 || n > 9) continue;
+    max = Math.max(max ?? 0, n);
+  }
+  return max;
+}
+
+/**
+ * Pearl of Power–style slot recovery, not casting and not "without expending a slot".
+ * mechanic:spell-slot:lvlN when the text names a max slot level; otherwise mechanic:spell-slot.
+ */
+function spellSlotRecoveryTags(text: string): string[] {
+  if (!SPELL_SLOT_RECOVERY.test(text)) return [];
+  const level = parseHighestOrdinalSpellLevel(text);
+  if (level != null) return [`mechanic:spell-slot:lvl${level}`];
+  return ["mechanic:spell-slot"];
+}
+
 /**
  * mechanic:spell-buff:damage → bonus/advantage a spell attack rolls o daño de hechizos
  * mechanic:spell-buff:save   → bonus/incremento al spell save DC
@@ -322,15 +703,21 @@ function spellBuffTags(text: string): string[] {
 
 /**
  * Resolves spell tags from the spell catalog when possible.
+ * Matches `{@spell …}` and plain MHMM wording ("cast the Earth Tremor spell").
  * Fallback heuristic when the spell is unknown / lookup missing:
  * - mechanic:spell:lvl3+ for 3rd+ language or costly runes
- * - mechanic:spell:lvl1-2 otherwise (except cantrip-only text)
+ * - mechanic:spell:lvl1-2 otherwise (except cantrip-only `{@spell}` text)
  */
 function spellTags(
   text: string,
   spellLevels?: SpellLevelLookup | null,
 ): string[] {
-  if (!/\{@spell/i.test(text)) return [];
+  const hasMarkup = /\{@spell/i.test(text);
+  const hasPlainCast =
+    /\bcast(?:s|ing)?\b/i.test(text) &&
+    (/\bspell\b/i.test(text) || /\bcantrip\b/i.test(text));
+
+  if (!hasMarkup && !hasPlainCast) return [];
 
   const lookedUp = spellTagsFromLevels(
     resolveSpellLevelsFromText(text, spellLevels),
@@ -350,16 +737,55 @@ function spellTags(
     /\b[12](?:st|nd)-level\b/i.test(text) || runeMatches.length > 0;
 
   if (/\bcantrip\b/i.test(text) && !hasLeveledSpellLanguage) {
-    return [];
+    // Markup cantrip with no catalog hit: keep prior behavior (cantrip word pattern).
+    // Plain "cast the mold earth cantrip" still needs an explicit cantrip tag.
+    return hasMarkup ? [] : ["mechanic:cantrip"];
   }
 
   return ["mechanic:spell:lvl1-2"];
 }
 
 /**
- * type:offensive  → más daño (extra damage, críticos, buffs de ataque/daño)
+ * mechanic:spell:one-use — rune grants a single cast per recharge (once/day,
+ * once per rest, "once used…"), not at-will and not a multi-use rune bank.
+ */
+function oneUseSpellTag(text: string, tags: Set<string>): string | null {
+  const grantsSpell =
+    tags.has("mechanic:cantrip") ||
+    [...tags].some(
+      (tag) =>
+        tag === "mechanic:spell:lvl1-2" ||
+        tag === "mechanic:spell:lvl3+" ||
+        /^mechanic:spell:lvl\d+$/.test(tag),
+    );
+  if (!grantsSpell) return null;
+
+  if (/\bat will\b/i.test(text)) return null;
+  if (/\bruness?\b/i.test(text) && /expend/i.test(text)) return null;
+  if (
+    /\b(?:twice|thrice|two|three|[2-9]|1\d)\s+times?\b/i.test(text) &&
+    /(?:rest|dawn|day|uses?)/i.test(text)
+  ) {
+    return null;
+  }
+
+  const once =
+    /\bonce per (?:short or )?long rest\b/i.test(text) ||
+    /\bonce per (?:short )?rest\b/i.test(text) ||
+    /\bonce (?:per|a) day\b/i.test(text) ||
+    /\bonce used\b/i.test(text) ||
+    /can'?t use (?:it |this property )?again/i.test(text) ||
+    /can'?t be used again/i.test(text);
+
+  return once ? "mechanic:spell:one-use" : null;
+}
+
+/**
+ * type:offensive  → más daño (extra damage, named criticals, buffs de ataque/daño)
  * type:defensive  → menos daño recibido o bonus de AC
  * type:support    → ayuda a aliados o menciona criaturas willing
+ *
+ * Rolling a 20 alone is not offensive: a 5-foot push with no damage stays untyped.
  */
 function typeTags(text: string): string[] {
   const tags: string[] = [];
@@ -385,6 +811,7 @@ function typeTags(text: string): string[] {
     /damage (?:you take )?is reduced (?:by|to)/i.test(text) ||
     /when you (?:take|would take)(?: \w+)* damage[^.]*reduce/i.test(text) ||
     /Guard AC/i.test(text) ||
+    /\+\d+\s*bonus\s+(?:on|to)\s+\w+\s+saving throws?/i.test(text) ||
     (/saving throw/i.test(text) &&
       /\badvantage\b/i.test(text) &&
       !/\bdisadvantage\b/i.test(text));
@@ -393,20 +820,43 @@ function typeTags(text: string): string[] {
 
   const isOffensive =
     /extra (?:\{@damage|\d+d\d+)/i.test(text) ||
-    /\bcritical\b/i.test(text) ||
-    /roll(?:s|ing)? a 20 (?:on |for )?(?:your |an |the )?attack roll|natural 20/i.test(
-      text,
-    ) ||
+    CRITICAL_WORD_RE.test(text) ||
     /\+\d+\s*bonus.*(?:attack|damage)/i.test(text) ||
     /(?:attack|damage) roll.*\+\d+/i.test(text) ||
     /spell attack\s+roll|spell damage|damage roll/i.test(text) ||
     (/\{@condition/i.test(text) && /(?:hit|attack|strike|on a hit)/i.test(text)) ||
     /(?:deals?|extra|takes?)\s+(?:\{@damage\s+)?\d+d\d+/i.test(text) ||
-    (/\{@spell/i.test(text) && /deals?\s+\w+\s+damage/i.test(text));
+    (/\{@spell/i.test(text) && /deals?\s+\w+\s+damage/i.test(text)) ||
+    (/\badvantage\b/i.test(text) &&
+      /\b(?:the )?attack rolls?\b/i.test(text) &&
+      !/\bdisadvantage\b/i.test(text));
 
   if (isOffensive) tags.push("type:offensive");
 
   return tags;
+}
+
+/** Your unarmed strikes — not incoming "hits you with an unarmed strike". */
+function unarmedStrikeTag(text: string): string | null {
+  return YOUR_UNARMED_RE.test(text) ? "mechanic:unarmed" : null;
+}
+
+/** Your / race natural weapons — not armor thorns listing "natural melee weapon". */
+function naturalWeaponTag(text: string): string | null {
+  return YOUR_NATURAL_WEAPON_RE.test(text) ? "mechanic:natural-weapon" : null;
+}
+
+/**
+ * Nat-20 riders whose payoff is not extra damage or a bonus attack.
+ * Lets Tetranadon Beak-style pushes filter separately from crit DoT.
+ */
+function noDamageRiderTag(text: string, tags: Set<string>): string | null {
+  if (!tags.has("mechanic:roll-20")) return null;
+  if ([...tags].some((tag) => tag.startsWith("mechanic:extra-damage"))) {
+    return null;
+  }
+  if (DAMAGE_OR_EXTRA_ATTACK_RE.test(text)) return null;
+  return "mechanic:no-damage";
 }
 
 function extractTags(
@@ -436,6 +886,13 @@ function extractTags(
     tags.add(spell);
   }
 
+  const oneUseSpell = oneUseSpellTag(effectText, tags);
+  if (oneUseSpell) tags.add(oneUseSpell);
+
+  for (const slotTag of spellSlotRecoveryTags(effectText)) {
+    tags.add(slotTag);
+  }
+
   for (const buffTag of spellBuffTags(effectText)) {
     tags.add(buffTag);
   }
@@ -452,8 +909,15 @@ function extractTags(
     tags.add(skillTag);
   }
 
+  for (const rollTag of rollTargetTags(effectText)) {
+    tags.add(rollTag);
+  }
+
   for (const conditionTag of conditionNameTags(effectText)) {
     tags.add(conditionTag);
+  }
+  if ([...tags].some((tag) => tag.startsWith("mechanic:condition-"))) {
+    tags.add("mechanic:condition");
   }
 
   const againstCondition = againstConditionTag(effectText);
@@ -461,6 +925,35 @@ function extractTags(
 
   for (const itemTag of itemRelatedTags(effectText)) {
     tags.add(itemTag);
+  }
+
+  for (const classResourceTag of classResourceTags(effectText)) {
+    tags.add(classResourceTag);
+  }
+
+  for (const gatherTag of gatherResourceTags(effectText)) {
+    tags.add(gatherTag);
+  }
+
+  for (const moveTag of movementTags(effectText)) {
+    tags.add(moveTag);
+  }
+
+  for (const distanceTag of weaponDistanceTags(effectText)) {
+    tags.add(distanceTag);
+  }
+
+  const unarmed = unarmedStrikeTag(effectText);
+  if (unarmed) tags.add(unarmed);
+
+  const naturalWeapon = naturalWeaponTag(effectText);
+  if (naturalWeapon) tags.add(naturalWeapon);
+
+  const noDamage = noDamageRiderTag(effectText, tags);
+  if (noDamage) tags.add(noDamage);
+
+  for (const activationTag of passiveActiveTags(effectText, tags)) {
+    tags.add(activationTag);
   }
 
   return Array.from(tags);
