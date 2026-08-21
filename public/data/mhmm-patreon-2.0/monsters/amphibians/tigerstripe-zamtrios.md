@@ -182,7 +182,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** W
 - **Carve:** 19
 - **Capture:** 15-17
-- **Weapon effect:** bludgeoning damage.
+- **Weapon effect:** Your weapon deals an extra 1d6 bludgeoning damage.
 
 ### T.Zamtrios Tailbrand
 

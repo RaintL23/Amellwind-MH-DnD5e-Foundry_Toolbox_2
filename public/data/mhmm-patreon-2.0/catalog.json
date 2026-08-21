@@ -1905,7 +1905,7 @@
             "W"
           ],
           "armorEffect": null,
-          "weaponEffect": "bludgeoning damage.",
+          "weaponEffect": "Your weapon deals an extra 1d6 bludgeoning damage.",
           "otherEffect": null
         },
         {
