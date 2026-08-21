@@ -5,9 +5,10 @@ import {
 } from "./inline-spell-rarity.utils";
 
 describe("rarityForSpellLevel", () => {
-  it("maps DMG-aligned bands", () => {
-    expect(rarityForSpellLevel(0)).toBe("Uncommon");
-    expect(rarityForSpellLevel(1)).toBe("Uncommon");
+  it("maps Common-floor bands by spell level", () => {
+    expect(rarityForSpellLevel(0)).toBe("Common");
+    expect(rarityForSpellLevel(1)).toBe("Common");
+    expect(rarityForSpellLevel(2)).toBe("Uncommon");
     expect(rarityForSpellLevel(3)).toBe("Uncommon");
     expect(rarityForSpellLevel(4)).toBe("Rare");
     expect(rarityForSpellLevel(5)).toBe("Rare");
@@ -24,9 +25,15 @@ describe("inferRarityFromSpellMechanicTags", () => {
     ).toBeNull();
   });
 
-  it("maps cantrip to Uncommon", () => {
+  it("maps cantrip to Common", () => {
     expect(inferRarityFromSpellMechanicTags(["mechanic:cantrip"])).toBe(
-      "Uncommon",
+      "Common",
+    );
+  });
+
+  it("maps 1st-level spell to Common", () => {
+    expect(inferRarityFromSpellMechanicTags(["mechanic:spell:lvl1"])).toBe(
+      "Common",
     );
   });
 
@@ -43,5 +50,23 @@ describe("inferRarityFromSpellMechanicTags", () => {
         "mechanic:spell:lvl4",
       ]),
     ).toBe("Rare");
+  });
+
+  it("maps 4th-level spell-slot recovery to Rare", () => {
+    expect(
+      inferRarityFromSpellMechanicTags(["mechanic:spell-slot:lvl4"]),
+    ).toBe("Rare");
+  });
+
+  it("maps 3rd-level spell-slot recovery to Uncommon", () => {
+    expect(
+      inferRarityFromSpellMechanicTags(["mechanic:spell-slot:lvl3"]),
+    ).toBe("Uncommon");
+  });
+
+  it("maps unleveled spell-slot recovery to Uncommon", () => {
+    expect(inferRarityFromSpellMechanicTags(["mechanic:spell-slot"])).toBe(
+      "Uncommon",
+    );
   });
 });

@@ -160,7 +160,7 @@ describe("getMaterialEffectTierForText — spell tags when Unknown", () => {
     ).toBe("Rare");
   });
 
-  it("assigns Uncommon to cantrip casts", () => {
+  it("assigns Common to cantrip casts", () => {
     expect(
       getMaterialEffectTierForText(
         "While holding this weapon, you can use an action to cast the {@spell light} cantrip from it.",
@@ -168,7 +168,18 @@ describe("getMaterialEffectTierForText — spell tags when Unknown", () => {
         emptyIndex,
         ["mechanic:cantrip"],
       ),
-    ).toBe("Uncommon");
+    ).toBe("Common");
+  });
+
+  it("assigns Common to 1st-level plain cast tags", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While attuned to this weapon you can cast the Earth Tremor spell once per long rest.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:spell:lvl1", "mechanic:spell:one-use"],
+      ),
+    ).toBe("Common");
   });
 
   it("does not override an inline defense rarity with spell tags", () => {
@@ -180,6 +191,334 @@ describe("getMaterialEffectTierForText — spell tags when Unknown", () => {
         ["mechanic:resistance", "damage:fire", "mechanic:spell:lvl4"],
       ),
     ).toBe("Rare");
+  });
+
+  it("assigns Rare to 4th-level spell-slot recovery", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You can use an action to speak this armor's command word and regain one expended spell slot of up to 4th level.",
+        "armor",
+        emptyIndex,
+        ["mechanic:spell-slot:lvl4"],
+      ),
+    ).toBe("Rare");
+  });
+});
+
+describe("getMaterialEffectTierForText — roll-20 utility when Unknown", () => {
+  it("assigns Common to a nat-20 unarmed push with no damage", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "When you make an unarmed strike while attuned to this weapon, and roll a 20 for the attack roll, the target is pushed 5 feet away from you.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:roll-20",
+          "mechanic:push",
+          "mechanic:no-damage",
+          "mechanic:unarmed",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("does not override extra-damage rarity with the roll-20 utility fallback", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "When you make an unarmed strike against a creature with this weapon, and roll a 20 for the attack roll, you deal an extra 1d4 damage and you can chose to push the creature up to 10 feet away.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:roll-20",
+          "mechanic:push",
+          "mechanic:extra-damage:minor",
+          "mechanic:unarmed",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — reaction attack when Unknown", () => {
+  it("assigns Uncommon to a reaction natural-weapon attack", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Race with natural weapons only.) When a hostile creature takes damage while within 5 feet of you, you can use your reaction to make an attack with your race's natural weapon against them.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:reaction",
+          "mechanic:natural-weapon",
+          "mechanic:active",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("does not override extra-damage rarity with the reaction-attack fallback", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "When a creature within 5 feet of you hits you with an attack, you can use your reaction to make an unarmed strike. On a hit, the creature takes 1d8 bludgeoning damage.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:reaction",
+          "mechanic:unarmed",
+          "mechanic:active",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+});
+
+describe("getMaterialEffectTierForText — hold-breath underwater when Unknown", () => {
+  it("assigns Common to extended hold breath underwater", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You can hold breath underwater for twice as long as normal while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:hold-breath",
+          "mechanic:underwater",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("does not assign Common for water breathing without hold-breath", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you wear this armor, you have a swimming speed equal to your walking speed, you can breathe underwater, and you suffer no harm in water as cold as -20 degrees Fahrenheit.",
+        "armor",
+        emptyIndex,
+        ["mechanic:underwater", "mechanic:passive"],
+      ),
+    ).toBe("Unknown");
+  });
+});
+
+describe("getMaterialEffectTierForText — gather resources when Unknown", () => {
+  it("assigns Uncommon to Expert Fisherman (x2 catch)", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Expert Fisherman. When you catch fish, you instead catch two.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:gather-resources",
+          "mechanic:fishing",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Rare to Pro Fisherman (extra 1d4)", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Pro Fisherman. When you catch fish, you catch an extra 1d4 more.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:gather-resources",
+          "mechanic:gather-resources:major",
+          "mechanic:fishing",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+});
+
+describe("getMaterialEffectTierForText — class-resource recovery when Unknown", () => {
+  it("assigns Uncommon to ki point recovery 1/long rest", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Monk Only) While you are attuned to this weapon, you may spend one minute contemplating the patterns etched on this weapon's surface and regain a number of expended ki points equal to half your proficiency modifier. Once you use this property, you cannot use it again until you finish a long rest.",
+        "weapon",
+        emptyIndex,
+        [
+          "class:monk",
+          "mechanic:ki",
+          "mechanic:class-resource",
+          "mechanic:recover-class-resource",
+          "mechanic:long-rest",
+          "mechanic:active",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — attack-range when Unknown", () => {
+  it("assigns Common to Deadeye (+20 ft)", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Ranged Weapon Only) Deadeye. Your weapon's normal attack range is increased by 20 feet.",
+        "weapon",
+        emptyIndex,
+        [
+          "weapon-type:ranged",
+          "mechanic:attack-range",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Uncommon to Deadeye+ (doubled)", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Ranged Weapon Only) Deadeye+. Your weapon's normal attack range is doubled.",
+        "weapon",
+        emptyIndex,
+        [
+          "weapon-type:ranged",
+          "mechanic:attack-range",
+          "mechanic:attack-range:major",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — attack advantage when Unknown", () => {
+  it("assigns Uncommon to Aim Booster (limited BA advantage)", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Ranged Weapon Only) Aim Booster. Before you make an attack with this weapon, you can use your bonus action to grant yourself advantage on the attack roll. You can use this property a number of times equal to half your proficiency modifier, regaining all expended uses when you finish a long rest.",
+        "weapon",
+        emptyIndex,
+        [
+          "weapon-type:ranged",
+          "mechanic:bonus-action",
+          "mechanic:advantage",
+          "mechanic:attack-roll",
+          "mechanic:long-rest",
+          "mechanic:active",
+          "type:offensive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — movement when Unknown", () => {
+  it("assigns Uncommon to burrowing speed 10 ft", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You gain a burrowing speed of 10 feet while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:movement",
+          "mechanic:burrowing",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Common to Marathon Runner (+5 walk)", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Marathon Runner. While wearing this armor, your walking speed increases by 5 feet.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:movement",
+          "mechanic:walking-speed",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Uncommon to icy-surface Winterlands mobility", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While wearing this armor, you can move across and climb icy surfaces without needing to make an ability check. Additionally, difficult terrain composed of ice or snow doesn't cost it extra moment.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:movement",
+          "mechanic:icy-surfaces",
+          "mechanic:movement-climb",
+          "mechanic:difficult-terrain",
+          "mechanic:ignore-difficult-terrain",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — condition defense when Unknown", () => {
+  it("assigns Common to advantage against the poisoned condition", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You have advantage on saving throws against the poisoned condition while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:against-condition",
+          "mechanic:advantage",
+          "mechanic:condition",
+          "mechanic:condition-poisoned",
+          "mechanic:saving-throw",
+          "mechanic:passive",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("does not assign Common when condition immunity is also present", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You are immune to the poisoned condition while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:immunity",
+          "mechanic:condition",
+          "mechanic:condition-poisoned",
+          "mechanic:passive",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — discovered named overlay", () => {
+  it("assigns Common to Flexible Leathercraft", () => {
+    const rune = makeRune({
+      name: "Chatacabra Hide",
+      slots: ["A"],
+      armorEffect:
+        "Flexible Leathercraft. While attuned to this armor you gain bonus to your carve checks equal to half your proficiency bonus.",
+    });
+    const index = supplementIndexWithRuneEffectNames(emptyIndex, [rune]);
+
+    expect(
+      getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
+    ).toBe("Common");
+  });
+
+  it("leaves unclassified discovered names as Unknown", () => {
+    const rune = makeRune({
+      name: "Mystery Scale",
+      slots: ["A"],
+      armorEffect:
+        "Mystery Craft. While attuned to this armor you look fashionable.",
+    });
+    const index = supplementIndexWithRuneEffectNames(emptyIndex, [rune]);
+
+    expect(
+      getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
+    ).toBe("Unknown");
   });
 });
 

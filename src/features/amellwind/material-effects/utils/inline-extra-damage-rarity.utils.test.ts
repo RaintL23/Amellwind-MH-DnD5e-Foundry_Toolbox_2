@@ -80,4 +80,12 @@ describe("inferInlineExtraDamageRarity", () => {
       ),
     ).toBeNull();
   });
+
+  it("ignores gather extra 1d4 without damage wording", () => {
+    expect(
+      inferInlineExtraDamageRarity(
+        "Pro Fisherman. When you catch fish, you catch an extra 1d4 more.",
+      ),
+    ).toBeNull();
+  });
 });

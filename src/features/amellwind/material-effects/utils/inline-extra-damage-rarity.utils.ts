@@ -40,7 +40,9 @@ function parseWeaponDamageScore(text: string): number | null {
 
 function isWeaponDamageSentence(sentence: string): boolean {
   if (/\byou take\b/i.test(sentence)) return false;
-  if (EXTRA_DAMAGE_GRANT.test(sentence) || /extra (?:\{@damage|\d+)/i.test(sentence)) {
+  if (EXTRA_DAMAGE_GRANT.test(sentence)) return true;
+  // Require the word "damage" so gather "extra 1d4 more" is not misread as weapon damage.
+  if (/extra (?:\{@damage|\d+)/i.test(sentence) && /\bdamage\b/i.test(sentence)) {
     return true;
   }
   if (TARGET_TAKES_DAMAGE.test(sentence)) return true;

@@ -5,9 +5,10 @@ import {
 } from "../constants/material-effect.constants";
 
 /**
- * Maps a spell level (0 = cantrip) to material-effect rarity for rune casts.
+ * Maps a spell or recovered-slot level (0 = cantrip) to material-effect rarity.
  * | Level | Rarity |
- * | 0–3 | Uncommon |
+ * | 0–1 | Common |
+ * | 2–3 | Uncommon |
  * | 4–5 | Rare |
  * | 6–8 | Very Rare |
  * | 9 | Legendary |
@@ -21,8 +22,9 @@ export function rarityForSpellLevel(level: number): ResourceRarity {
 }
 
 /**
- * Infers rarity from rune mechanic tags such as `mechanic:cantrip` or
- * `mechanic:spell:lvl4`. Returns null when no spell/cantrip tags are present.
+ * Infers rarity from rune mechanic tags such as `mechanic:cantrip`,
+ * `mechanic:spell:lvl4`, or `mechanic:spell-slot:lvl4`.
+ * Returns null when no spell / cantrip / spell-slot tags are present.
  */
 export function inferRarityFromSpellMechanicTags(
   tags: string[],
@@ -40,6 +42,16 @@ export function inferRarityFromSpellMechanicTags(
     }
     if (tag === "mechanic:spell:lvl3+") {
       maxLevel = Math.max(maxLevel ?? 0, 3);
+      continue;
+    }
+    // Unleveled Arcane Recovery–style boost: Uncommon band (2nd–3rd).
+    if (tag === "mechanic:spell-slot") {
+      maxLevel = Math.max(maxLevel ?? 0, 2);
+      continue;
+    }
+    const slotMatch = /^mechanic:spell-slot:lvl(\d+)$/.exec(tag);
+    if (slotMatch) {
+      maxLevel = Math.max(maxLevel ?? 0, parseInt(slotMatch[1], 10));
       continue;
     }
     const match = /^mechanic:spell:lvl(\d+)$/.exec(tag);

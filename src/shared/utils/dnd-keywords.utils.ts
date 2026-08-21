@@ -213,6 +213,17 @@ const STATIC_DND_KEYWORDS: DndKeyword[] = [
   { term: "charmed", category: "condition" },
   { term: "stunned", category: "condition" },
   { term: "prone", category: "condition" },
+  { term: "frenzy virus", category: "condition" },
+  { term: "thunderblight", category: "condition" },
+  { term: "dragonblight", category: "condition" },
+  { term: "waterblight", category: "condition" },
+  { term: "bloodblight", category: "condition" },
+  { term: "fireblight", category: "condition" },
+  { term: "iceblight", category: "condition" },
+  { term: "frozen", category: "condition" },
+  { term: "tarred", category: "condition" },
+  { term: "stench", category: "condition" },
+  { term: "slick", category: "condition" },
 
   // Defense & resistances
   { term: "three-quarters cover", category: "defense" },

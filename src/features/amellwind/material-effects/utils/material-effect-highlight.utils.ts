@@ -8,7 +8,17 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { slugifyKebab } from "@/shared/utils/slugify.utils";
 import { inferInlineDamageDefenseRarity } from "./inline-defense-rarity.utils";
 import { inferInlineExtraDamageRarity } from "./inline-extra-damage-rarity.utils";
+import { inferRarityFromAttackAdvantageTags } from "./inline-attack-advantage-rarity.utils";
+import { inferRarityFromAttackRangeTags } from "./inline-attack-range-rarity.utils";
+import { inferRarityFromClassResourceRecoveryTags } from "./inline-class-resource-rarity.utils";
+import { inferRarityFromConditionDefenseTags, inferRarityFromConditionImmunityTags } from "./inline-condition-rarity.utils";
+import { inferRarityFromGatherResourceTags } from "./inline-gather-rarity.utils";
+import { inferRarityFromHoldBreathUnderwaterTags } from "./inline-hold-breath-rarity.utils";
+import { inferRarityFromMovementTags } from "./inline-movement-rarity.utils";
+import { inferRarityFromReactionAttackTags } from "./inline-reaction-attack-rarity.utils";
+import { inferRarityFromRoll20UtilityTags } from "./inline-roll-20-rarity.utils";
 import { inferRarityFromSpellMechanicTags } from "./inline-spell-rarity.utils";
+import { lookupDiscoveredEffectRarity } from "../data/discovered-effect-rarity.data";
 
 export interface MaterialEffectNameIndex {
   all: string[];
@@ -181,6 +191,7 @@ export function supplementIndexWithRuneEffectNames(
 
       const parsed = parseFiveToolsMarkup(text);
       const displayName = name.replace(/\.$/, "").trim();
+      const assignedRarity = lookupDiscoveredEffectRarity(displayName, slot);
       const synthetic: MaterialEffect = {
         id: `discovered:${slot}:${slugifyKebab(displayName)}`,
         name: displayName,
@@ -188,7 +199,7 @@ export function supplementIndexWithRuneEffectNames(
         summary:
           parsed.length > 140 ? `${parsed.slice(0, 137)}…` : parsed,
         slot,
-        rarity: "Common",
+        rarity: assignedRarity ?? "Common",
         isReference: true,
       };
 
@@ -295,6 +306,19 @@ export function getMaterialEffectTierForText(
   const catalogRef = refs.find((effect) => !isDiscoveredEffect(effect));
   if (catalogRef) return catalogRef.rarity;
 
+  const discoveredAssigned = refs
+    .filter(isDiscoveredEffect)
+    .map((effect) => lookupDiscoveredEffectRarity(effect.name, effect.slot))
+    .filter((rarity): rarity is ResourceRarity => rarity != null);
+  if (discoveredAssigned.length > 0) {
+    return discoveredAssigned.reduce((best, rarity) =>
+      MATERIAL_EFFECT_RARITIES.indexOf(rarity) >=
+      MATERIAL_EFFECT_RARITIES.indexOf(best)
+        ? rarity
+        : best,
+    );
+  }
+
   const inferred = [
     inferInlineDamageDefenseRarity(text),
     inferInlineExtraDamageRarity(text),
@@ -309,9 +333,43 @@ export function getMaterialEffectTierForText(
     );
   }
 
-  // Only when still Unknown: spell/cantrip tags from the rune effect side.
+  // Only when still Unknown: spell / cantrip / spell-slot tags from the rune side.
   const spellRarity = inferRarityFromSpellMechanicTags(effectTags);
   if (spellRarity) return spellRarity;
+
+  const conditionDefenseRarity =
+    inferRarityFromConditionDefenseTags(effectTags);
+  if (conditionDefenseRarity) return conditionDefenseRarity;
+
+  const conditionImmunityRarity =
+    inferRarityFromConditionImmunityTags(effectTags);
+  if (conditionImmunityRarity) return conditionImmunityRarity;
+
+  const roll20UtilityRarity = inferRarityFromRoll20UtilityTags(effectTags);
+  if (roll20UtilityRarity) return roll20UtilityRarity;
+
+  const reactionAttackRarity = inferRarityFromReactionAttackTags(effectTags);
+  if (reactionAttackRarity) return reactionAttackRarity;
+
+  const holdBreathRarity = inferRarityFromHoldBreathUnderwaterTags(effectTags);
+  if (holdBreathRarity) return holdBreathRarity;
+
+  const gatherRarity = inferRarityFromGatherResourceTags(effectTags);
+  if (gatherRarity) return gatherRarity;
+
+  const classResourceRarity =
+    inferRarityFromClassResourceRecoveryTags(effectTags);
+  if (classResourceRarity) return classResourceRarity;
+
+  const attackRangeRarity = inferRarityFromAttackRangeTags(effectTags);
+  if (attackRangeRarity) return attackRangeRarity;
+
+  const attackAdvantageRarity =
+    inferRarityFromAttackAdvantageTags(effectTags);
+  if (attackAdvantageRarity) return attackAdvantageRarity;
+
+  const movementRarity = inferRarityFromMovementTags(effectTags);
+  if (movementRarity) return movementRarity;
 
   return UNKNOWN_MATERIAL_EFFECT_TIER;
 }
