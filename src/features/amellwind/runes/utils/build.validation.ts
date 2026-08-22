@@ -120,7 +120,7 @@ const ARMOR_RULE_GROUPS: RuleGroup[] = [
   },
   {
     rule: "Only 1 material that grants AC bonus (rule 3)",
-    matches: (r) => hasTagPrefix(r.armorTags, "mechanic:ac"),
+    matches: (r) => hasTagPrefix(r.armorTags, "mechanic:armor-class"),
   },
   {
     rule: "Only 1 material with rune effect (rule 4)",

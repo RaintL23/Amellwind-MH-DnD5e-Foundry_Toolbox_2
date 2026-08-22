@@ -1060,6 +1060,76 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     expect(tags).toContain("mechanic:nonmagical-darkness");
     expect(tags).not.toContain("mechanic:light");
   });
+
+  it("tags spell attack and save DC bonuses as spell-buff", () => {
+    const tags = extractRuneEffectTags(
+      "You gain a +2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +4 when the spell you are casting deals fire damage.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:spell-buff:damage",
+        "mechanic:spell-buff:save",
+        "mechanic:passive",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags spaced + N and increase-by spell save wording", () => {
+    const spaced = extractRuneEffectTags(
+      "You gain a + 2 bonus to your spell attack rolls and spell save DC while attuned to this weapon.",
+    );
+    expect(spaced).toContain("mechanic:spell-buff:damage");
+    expect(spaced).toContain("mechanic:spell-buff:save");
+
+    const increaseOnly = extractRuneEffectTags(
+      "When you cast a spell that deals fire damage, you increase the spell save DC by 1.",
+    );
+    expect(increaseOnly).toContain("mechanic:spell-buff:save");
+    expect(increaseOnly).not.toContain("mechanic:spell-buff:damage");
+
+    const gainPlus = extractRuneEffectTags(
+      "You gain +3 to spell attack rolls and you ignore half cover when making a spell attack.",
+    );
+    expect(gainPlus).toContain("mechanic:spell-buff:damage");
+    expect(gainPlus).not.toContain("mechanic:spell-buff:save");
+  });
+
+  it("does not tag rune-bank casting as spell-buff", () => {
+    const tags = extractRuneEffectTags(
+      "(Sorcerer & Wizard Only) The weapon has 10 runes. You can use an action to expend 1 or more of its runes to cast one of the following spells from it, using your spell save DC: cause fear (1 rune), ray of enfeeblement (2 runes). The weapon regains 1d6 + 4 expended runes daily at dawn.",
+    );
+
+    expect(tags).toContain("class:sorcerer");
+    expect(tags).toContain("class:wizard");
+    expect(tags.some((tag) => tag.startsWith("mechanic:spell-buff"))).toBe(
+      false,
+    );
+  });
+
+  it("tags armor AC bonuses", () => {
+    const tags = extractRuneEffectTags(
+      "You have a +1 bonus to your AC while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:armor-class",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags Coalescence attack-rolls + spell save DC as spell-buff:save", () => {
+    const tags = extractRuneEffectTags(
+      "Coalescence+. Whenever you succeed on a saving throw to end a condition, you gain a +2 bonus to your attack rolls and spell save DC, and your weapon or spell attacks deal an extra 1d8 cold damage until the end of your next turn.",
+    );
+
+    expect(tags).toContain("mechanic:spell-buff:save");
+    expect(tags).toContain("mechanic:attack-roll");
+  });
 });
 
 describe("isPlaceableRune", () => {

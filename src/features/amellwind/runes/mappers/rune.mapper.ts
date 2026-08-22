@@ -144,7 +144,7 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
     "mechanic:skill-bonus",
   ],
   [/\bdisarmed\b/i, "mechanic:disarm"],
-  [/\bAC\b|armor class/i, "mechanic:ac"],
+  [/\bAC\b|armor class/i, "mechanic:armor-class"],
   // `mechanic:condition` is also added when conditionNameTags finds a named
   // condition (bare "poisoned condition" without {@condition} markup).
   [
@@ -886,21 +886,35 @@ function spellSlotRecoveryTags(text: string): string[] {
 /**
  * mechanic:spell-buff:damage → bonus/advantage a spell attack rolls o daño de hechizos
  * mechanic:spell-buff:save   → bonus/incremento al spell save DC
+ *
+ * Requires personal buff language tied to spell attack / save DC — not rune-bank
+ * wording like "cast … using your spell save DC" / "regain 1d6 + 4 runes".
  */
 function spellBuffTags(text: string): string[] {
   const tags: string[] = [];
-  const hasBuffLanguage =
-    /\+\d+\s*bonus|\badvantage\b|increase(?:s|d)?\s+by/i.test(text);
 
-  if (!hasBuffLanguage) return tags;
+  const hasNumericSpellBuff =
+    /\+\s*\d+\s*(?:bonus\s+)?to\s+(?:(?:your|its)\s+)?(?:[\w\s,]{0,40})?spell(?:\s+attack|\s+save)/i.test(
+      text,
+    ) ||
+    /gain \+\s*\d+ to spell attack/i.test(text) ||
+    /(?:spell attack(?:\s+rolls?|\s+bonus)?|spell save\s*DC).{0,48}(?:increase|\+\s*\d+)/i.test(
+      text,
+    ) ||
+    /increase(?:s|d)?(?:\s+\w+){0,10}\s+(?:the\s+|your\s+|its\s+)?spell(?:\s+attack|\s+save)/i.test(
+      text,
+    );
 
-  const targetsSaveDc =
-    /spell save\s+DC/i.test(text) ||
-    (/when you cast a spell/i.test(text) && /save\s+DC/i.test(text));
+  const hasAdvantageSpellAttack =
+    /\badvantage\b/i.test(text) && /spell attack/i.test(text);
 
+  if (!hasNumericSpellBuff && !hasAdvantageSpellAttack) return tags;
+
+  const targetsSaveDc = /spell save\s*DC/i.test(text);
   const targetsDamageOrAttack =
-    /spell attack\s+roll|spell damage|damage roll/i.test(text) ||
-    (/when you cast a spell/i.test(text) && !/save\s+DC/i.test(text));
+    /spell attack(?:\s+rolls?|\s+bonus)?|\bspell attacks?\b|spell damage/i.test(
+      text,
+    );
 
   if (targetsSaveDc) tags.push("mechanic:spell-buff:save");
   if (targetsDamageOrAttack) tags.push("mechanic:spell-buff:damage");
