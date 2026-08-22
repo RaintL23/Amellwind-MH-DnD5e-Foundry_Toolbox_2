@@ -586,6 +586,62 @@
       }
     },
     {
+      "_id": "lncShldIntAcPls2",
+      "name": "Integrated Shield (+2 AC)",
+      "img": "icons/equipment/shield/heater-steel-boss-red.webp",
+      "description": "Base AC from the weapon's integrated shield while equipped.",
+      "changes": [
+        {
+          "key": "system.attributes.ac.bonus",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 100000,
+      "flags": {
+        "dae": {
+          "stackable": "noneName",
+          "showIcon": true
+        },
+        "world": {
+          "integratedShield": {
+            "isIntegratedShield": true,
+            "bonus": 2
+          },
+          "lance": {
+            "isIntegratedShield": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786119820026,
+        "modifiedTime": 1786119820026,
+        "lastModifiedBy": null
+      }
+    },
+    {
       "_id": "wbYuLpZq0gPXciHt",
       "name": "Lance AC (+1)",
       "img": "icons/equipment/shield/heater-steel-boss-red.webp",
