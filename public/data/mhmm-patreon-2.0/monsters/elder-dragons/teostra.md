@@ -156,7 +156,7 @@ All Explosive Clouds detonate and burst into flames. Each creature within 10-fee
 | 3-4 | — | Elder Dragon Blood | O |
 | 5-7 | — | Fire Dragon Scale | A, W |
 | 8-10 | — | Teostra Carapace | A, W |
-| 11-12 | — | Teostra Claw A,W) | O |
+| 11-12 | — | Teostra Claw | A, W |
 | 13-14 | — | Teostra Webbing | A, W |
 | 15-16 | — | Teostra Tail | A, W |
 | 17-18 | — | Teostra Mane | A, W |
@@ -194,14 +194,16 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 8-10
 - **Capture:** —
-- **Armor effect:** While wearing this armor you can use an action to cast the protection from energy(fire) spell from it. This property can be used twice, regaining all expended uses daily at dawn. Teostra Claw Archaeologist+. When you successfully gather a bone resource, you gather an extra 1d4 more.
-- **Weapon effect:** (Bow Only) Special Ammo Boost+1. Your coating now coats up to 25 arrows and your dragonpiercer deals an extra 2d6 piercing damage. Teostra Claw Your weapon deals an extra 1d6 fire damage.
+- **Armor effect:** While wearing this armor you can use an action to cast the protection from energy(fire) spell from it. This property can be used twice, regaining all expended uses daily at dawn.
+- **Weapon effect:** (Bow Only) Special Ammo Boost+1. Your coating now coats up to 25 arrows and your dragonpiercer deals an extra 2d6 piercing damage.
 
-### Teostra Claw A,W)
+### Teostra Claw
 
-- **Slots:** O
+- **Slots:** A, W
 - **Carve:** 11-12
 - **Capture:** —
+- **Weapon effect:** Your weapon deals an extra 1d6 fire damage.
+- **Armor effect:** Archaeologist+. When you successfully gather a bone resource, you gather an extra 1d4 more.
 
 ### Teostra Webbing
 

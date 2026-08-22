@@ -78,5 +78,16 @@ Multiple material effects merged into a single field (PDF column bleed):
 | Kadaki Queen Substance | Pyre Rakna-Kadaki | Armor split; web / entomologist moved to Dull Glowgut / Hardclaw |
 | Gore Magala Carapace | Chaotic Gore Magala | Split from S.Magala Cortex (matches base Gore Magala carapace) |
 | S. Magala Cortex | Chaotic Gore Magala | Recovered Gourmand (armor) + Quick Load (weapon) |
+| Hirabami Webbing | Hirabami / Young Hirabami | Freezer Sac armor moved to Freezer Sac+ |
+| Magmadron Tail | Magma Almudron | Inferno Lava Muck effects moved to Inferno Lava Mud |
+| Juv.Astalos Shell / Wingtalon | Juvenile Astalos | Membrane / Electroscale effects restored to those materials |
+| Black Diablos Carapace | Black Diablos | Divine Blessing+3 moved to Black Diablos Fang |
+| Green Congalala Claw | Emerald Congalala | Belly reaction moved to Congalala Strong Fang |
+| Fulgur Anjanath Hardfang | Fulgur Anjanath | Nosebone effects restored; loot name/slots cleaned |
+| Garangolm Fist | Garangolm | Cold immunity / Stamina Thief moved to Golm Ploughtail |
+| Teostra Carapace | Teostra | Archaeologist+ / fire damage moved to Teostra Claw |
+| J.Uragaan Scute | Juvenile Uragaan | Load Up moved to J.Uragaan Marrow |
+| Vespoid Abdomen | Vespoid Queen | Entomologist moved to QueenVespoidShl |
+| Rakna-Kadaki Glowgut | Rakna-Kadaki | Spider Climb / fire damage moved to Sharpclaw |
 
-Curated map: `rune-concat-fixes.json` — apply with `node scripts/apply-rune-concat-fixes.mjs`.
+Curated map: `rune-concat-fixes.json` — apply with `node scripts/apply-rune-concat-fixes.mjs`, then `pnpm build:mm-supplement`.

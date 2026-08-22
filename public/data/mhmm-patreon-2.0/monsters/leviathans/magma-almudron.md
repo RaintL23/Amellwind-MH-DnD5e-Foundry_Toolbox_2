@@ -173,14 +173,16 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** —
 - **Capture:** 12-16
-- **Armor effect:** Resuscitate. You have advantage on Dexterity saving throws if you are suffering from a condition. Inferno Lava Muck Heroics. While below 25% of your maximum hit points your weapon attacks deal 1d4 extra damage and you have resistance to all damage except psychic damage.
-- **Weapon effect:** Crisis. While you are attuned to this weapon and suffering from an abnormal status effect caused by a hostile creature or object, such as poisoned, burning, slowed, blinded, etc., all attacks and spells deal an extra 1d10 spell or weapon damage. Inferno Lava Muck (Spellcaster Only) Whenever you cast a spell of 1st-level or higher, lava erupts from the ground around you. any creature within 5 feet of you takes 9 (2d8) points of fire damage. Also, when you cast a spell that deals fire damage, it deals extra damage equal to 2 times the spells level as fire damage.
+- **Armor effect:** Resuscitate. You have advantage on Dexterity saving throws if you are suffering from a condition.
+- **Weapon effect:** Crisis. While you are attuned to this weapon and suffering from an abnormal status effect caused by a hostile creature or object, such as poisoned, burning, slowed, blinded, etc., all attacks and spells deal an extra 1d10 spell or weapon damage.
 
 ### Inferno Lava Mud
 
 - **Slots:** A, W
 - **Carve:** 16-19
 - **Capture:** 17-18
+- **Weapon effect:** (Spellcaster Only) Whenever you cast a spell of 1st-level or higher, lava erupts from the ground around you. Any creature within 5 feet of you takes 9 (2d8) points of fire damage. Also, when you cast a spell that deals fire damage, it deals extra damage equal to 2 times the spell's level as fire damage.
+- **Armor effect:** Heroics. While below 25% of your maximum hit points your weapon attacks deal 1d4 extra damage and you have resistance to all damage except psychic damage.
 
 ### Magmadron Mantle
 

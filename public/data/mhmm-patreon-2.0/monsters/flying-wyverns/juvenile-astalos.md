@@ -105,8 +105,8 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 6-8
 - **Capture:** 4-7
-- **Armor effect:** You have a +2 bonus to Acrobatic checks while you wear this armor. Astalos Membrane Marathon Runner. While wearing this armor, your walking speed increases by 5 feet.
-- **Weapon effect:** Your weapon deals an extra 2 lightning damage. Astalos Membrane When you cast a spell that deals lightning damage, add half of your proficiency bonus to that damage.
+- **Armor effect:** You have a +2 bonus to Acrobatic checks while you wear this armor.
+- **Weapon effect:** Your weapon deals an extra 2 lightning damage.
 
 ### Juv.Astalos Membrane
 
@@ -114,6 +114,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 9-10
 - **Capture:** 8-12
 - **Weapon effect:** When you cast a spell that deals lightning or thunder damage, you gain a +1 bonus to its spell attack roll.
+- **Armor effect:** Marathon Runner. While wearing this armor, your walking speed increases by 5 feet.
 
 ### Juv.Astalos Scissortail
 
@@ -127,7 +128,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 15-17
 - **Capture:** 16-17
-- **Armor effect:** Entomologist. When you capture an insect with a bug net, you instead catch two. Juv.A Electroscale While attuned to this armor you can use an action to speak its command word to conjure a small totem is carved in the likeness of an Astalos. When held, it emits a faint buzzing sound that attracts nearby insects, providing a +2 bonus to Intelligence (Investigation) to locate insects resources. The totem remains for 1 hour before disappearing and can't be conjured again until you finish a long rest.
+- **Armor effect:** Entomologist. When you capture an insect with a bug net, you instead catch two.
 - **Weapon effect:** You know the shocking grasp cantrip while attuned to this weapon.
 
 ### Juv. A Electroscale
@@ -136,6 +137,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 18-19
 - **Capture:** 18-19
 - **Weapon effect:** When you roll a 1 or 2 on a damage die for a spell that deals lightning or thunder damage, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. Once you use this property, you can't use it again until you finish a long rest.
+- **Armor effect:** While attuned to this armor you can use an action to speak its command word to conjure a small totem carved in the likeness of an Astalos. When held, it emits a faint buzzing sound that attracts nearby insects, providing a +2 bonus to Intelligence (Investigation) to locate insect resources. The totem remains for 1 hour before disappearing and can't be conjured again until you finish a long rest.
 
 ### Juv.Astalos Plate
 

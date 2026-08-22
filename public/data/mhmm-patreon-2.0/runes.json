@@ -4169,14 +4169,14 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "You have advantage on saving throws against being stunned while you wear this armor. Heavy Fulgur Anjanath Nosebone While you wear this armor, you can pass a Dexterity saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.",
-      "weaponEffect": "Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target, you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a short or long rest. Heavy Fulgur Anjanath Nosebone While attuned to this weapon you can use an action to speak its command word, causing it to expel electric snot at a creature within 60 feet of you. That creature must make a DC 15 Dexterity saving throw or be covered in the snot for 1 minute or until it uses an action to wipe it away. While covered, the creature takes 1d4 lightning damage whenever it is hit by a melee weapon attack. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
+      "armorEffect": "You have advantage on saving throws against being stunned while you wear this armor.",
+      "weaponEffect": "Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target, you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a short or long rest.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/brute-wyverns/fulgur-anjanath.md"
     },
     {
-      "name": "Heavy Fulgur Anjanath Nosebone (A,W)",
+      "name": "Heavy Fulgur Anjanath Nosebone",
       "monsterName": "Fulgur Anjanath",
       "monsterSource": "MHMM-Patreon-2.0",
       "monsterCr": "15",
@@ -4187,12 +4187,15 @@
       "carveChance": "14-16",
       "captureChance": "11-14",
       "rolls": 3,
-      "slots": [],
+      "slots": [
+        "A",
+        "W"
+      ],
       "otherSlots": [
         "O"
       ],
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "While you wear this armor, you can pass a Dexterity saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.",
+      "weaponEffect": "While attuned to this weapon you can use an action to speak its command word, causing it to expel electric snot at a creature within 60 feet of you. That creature must make a DC 15 Dexterity saving throw or be covered in the snot for 1 minute or until it uses an action to wipe it away. While covered, the creature takes 1d4 lightning damage whenever it is hit by a melee weapon attack. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/brute-wyverns/fulgur-anjanath.md"
@@ -7197,7 +7200,7 @@
       ],
       "otherSlots": null,
       "armorEffect": "You have a +2 bonus to Athletics checks while you wear this armor.",
-      "weaponEffect": "When you make a weapon attack with this weapon and roll a 20 for the attack roll, you can choose to release a wave of concussive force. When you do, each creature within 5 feet of you must succeed on a DC 12 Strength saving throw or be knocked prone. Uragaan Marrow Load Up. While attuned to this weapon, you increase the maximum capacity for all your ammo by 2.",
+      "weaponEffect": "When you make a weapon attack with this weapon and roll a 20 for the attack roll, you can choose to release a wave of concussive force. When you do, each creature within 5 feet of you must succeed on a DC 12 Strength saving throw or be knocked prone.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/brute-wyverns/juvenile-uragaan.md"
@@ -7220,7 +7223,7 @@
       ],
       "otherSlots": null,
       "armorEffect": "Staunch Bleeding. You have advantage on Wisdom (Medicine) checks to staunch a wound, such as the odogaron's blood wound or bearded devil's infernal wound.",
-      "weaponEffect": null,
+      "weaponEffect": "Load Up. While attuned to this weapon, you increase the maximum capacity for all your ammo by 2.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/brute-wyverns/juvenile-uragaan.md"
@@ -17872,14 +17875,14 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "While wearing this armor you can use an action to cast the protection from energy(fire) spell from it. This property can be used twice, regaining all expended uses daily at dawn. Teostra Claw Archaeologist+. When you successfully gather a bone resource, you gather an extra 1d4 more.",
-      "weaponEffect": "(Bow Only) Special Ammo Boost+1. Your coating now coats up to 25 arrows and your dragonpiercer deals an extra 2d6 piercing damage. Teostra Claw Your weapon deals an extra 1d6 fire damage.",
+      "armorEffect": "While wearing this armor you can use an action to cast the protection from energy(fire) spell from it. This property can be used twice, regaining all expended uses daily at dawn.",
+      "weaponEffect": "(Bow Only) Special Ammo Boost+1. Your coating now coats up to 25 arrows and your dragonpiercer deals an extra 2d6 piercing damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/elder-dragons/teostra.md"
     },
     {
-      "name": "Teostra Claw A,W)",
+      "name": "Teostra Claw",
       "monsterName": "Teostra",
       "monsterSource": "MHMM-Patreon-2.0",
       "monsterCr": "13",
@@ -17890,12 +17893,15 @@
       "carveChance": "11-12",
       "captureChance": "—",
       "rolls": 4,
-      "slots": [],
+      "slots": [
+        "A",
+        "W"
+      ],
       "otherSlots": [
         "O"
       ],
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "Archaeologist+. When you successfully gather a bone resource, you gather an extra 1d4 more.",
+      "weaponEffect": "Your weapon deals an extra 1d6 fire damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/elder-dragons/teostra.md"
@@ -23081,7 +23087,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "You have proficiency with cook’s utensils while you are attuned to this armor. Green Congalala Strong Fang When a creature within 5 feet of you hits you with an attack, you can use your reaction to make an unarmed strike with your belly, dealing 1d8 bludgeoning damage plus your strength or dexterity modifier on a hit. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
+      "armorEffect": "You have proficiency with cook's utensils while you are attuned to this armor.",
       "weaponEffect": "When you hit a creature with this weapon, it must make a DC 14 Constitution saving throw. On a failed save the creature has disadvantage on Constitution saving throws to maintain concentration for 1 minute. You can use this property three times, regaining all expended uses when you finish a long rest.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -23104,7 +23110,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "When a creature within 5 feet of you hits you with an attack, you can use your reaction to make an unarmed strike with your belly, dealing 1d8 bludgeoning damage plus your Strength or Dexterity modifier on a hit. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
       "weaponEffect": "Capture Expert. Tranq bombs & ammo roll an extra 3d8 when they hit a creature.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -24000,8 +24006,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "Fortitude. You have advantage on survival skill checks to track, forage, or travel while you are attuned to this armor. Garangolm Ploughtail You are immune to cold damage while you wear this armor.",
-      "weaponEffect": "(Hammer Only) Slugger. While attuned to this weapon, you may use the Hammer's Mighty Weapon skill two additional times between rests. Garangolm Ploughtail Stamina Thief. Once per turn when you hit a creature with this weapon, it must make a DC 10 Constitution saving throw or gain one level of exhaustion. A creature cannot gain more than 2 levels of exhaustion from this weapon's property.",
+      "armorEffect": "Fortitude. You have advantage on survival skill checks to track, forage, or travel while you are attuned to this armor.",
+      "weaponEffect": "(Hammer Only) Slugger. While attuned to this weapon, you may use the Hammer's Mighty Weapon skill two additional times between rests.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/fanged-beasts/garangolm.md"
@@ -24023,8 +24029,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "You are immune to cold damage while you wear this armor.",
+      "weaponEffect": "Stamina Thief. Once per turn when you hit a creature with this weapon, it must make a DC 10 Constitution saving throw or gain one level of exhaustion. A creature cannot gain more than 2 levels of exhaustion from this weapon's property.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/fanged-beasts/garangolm.md"
@@ -29843,8 +29849,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "You have a +2 bonus to Acrobatic checks while you wear this armor. Astalos Membrane Marathon Runner. While wearing this armor, your walking speed increases by 5 feet.",
-      "weaponEffect": "Your weapon deals an extra 2 lightning damage. Astalos Membrane When you cast a spell that deals lightning damage, add half of your proficiency bonus to that damage.",
+      "armorEffect": "You have a +2 bonus to Acrobatic checks while you wear this armor.",
+      "weaponEffect": "Your weapon deals an extra 2 lightning damage.",
       "otherEffect": null,
       "inGithubJson": false,
       "file": "monsters/flying-wyverns/juvenile-astalos.md"
@@ -29866,7 +29872,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "Marathon Runner. While wearing this armor, your walking speed increases by 5 feet.",
       "weaponEffect": "When you cast a spell that deals lightning or thunder damage, you gain a +1 bonus to its spell attack roll.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -29911,7 +29917,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "Entomologist. When you capture an insect with a bug net, you instead catch two. Juv.A Electroscale While attuned to this armor you can use an action to speak its command word to conjure a small totem is carved in the likeness of an Astalos. When held, it emits a faint buzzing sound that attracts nearby insects, providing a +2 bonus to Intelligence (Investigation) to locate insects resources. The totem remains for 1 hour before disappearing and can't be conjured again until you finish a long rest.",
+      "armorEffect": "Entomologist. When you capture an insect with a bug net, you instead catch two.",
       "weaponEffect": "You know the shocking grasp cantrip while attuned to this weapon.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -29934,7 +29940,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "While attuned to this armor you can use an action to speak its command word to conjure a small totem carved in the likeness of an Astalos. When held, it emits a faint buzzing sound that attracts nearby insects, providing a +2 bonus to Intelligence (Investigation) to locate insect resources. The totem remains for 1 hour before disappearing and can't be conjured again until you finish a long rest.",
       "weaponEffect": "When you roll a 1 or 2 on a damage die for a spell that deals lightning or thunder damage, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2. Once you use this property, you can't use it again until you finish a long rest.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -32274,7 +32280,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "Tremor-Proof. You cannot be knocked prone while you wear this armor. B.Diablos Fang Divine Blessing+3. When you take damage you are not immune or resistant to, roll a d10 and reduce the damage you take by the number rolled. You can use this property a number of times equal to your proficiency bonus. You regain all expended uses when you finish a long rest.",
+      "armorEffect": "Tremor-Proof. You cannot be knocked prone while you wear this armor.",
       "weaponEffect": "KO+. When this material is placed into a hammer, it gains one addition use of its mighty weapon property. Additionally, when a creature must succeed on a saving throw or become stunned by the effect of one of your weapon attacks, they make the save with disadvantage.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -32297,7 +32303,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "Divine Blessing+3. When you take damage you are not immune or resistant to, roll a d10 and reduce the damage you take by the number rolled. You can use this property a number of times equal to your proficiency bonus. You regain all expended uses when you finish a long rest.",
       "weaponEffect": "FastCharge+. When you roll for initiative, your greatsword, longsword, or charge blade gains 2 charge, spirit, or phial charge.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -39855,8 +39861,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "Resuscitate. You have advantage on Dexterity saving throws if you are suffering from a condition. Inferno Lava Muck Heroics. While below 25% of your maximum hit points your weapon attacks deal 1d4 extra damage and you have resistance to all damage except psychic damage.",
-      "weaponEffect": "Crisis. While you are attuned to this weapon and suffering from an abnormal status effect caused by a hostile creature or object, such as poisoned, burning, slowed, blinded, etc., all attacks and spells deal an extra 1d10 spell or weapon damage. Inferno Lava Muck (Spellcaster Only) Whenever you cast a spell of 1st-level or higher, lava erupts from the ground around you. any creature within 5 feet of you takes 9 (2d8) points of fire damage. Also, when you cast a spell that deals fire damage, it deals extra damage equal to 2 times the spells level as fire damage.",
+      "armorEffect": "Resuscitate. You have advantage on Dexterity saving throws if you are suffering from a condition.",
+      "weaponEffect": "Crisis. While you are attuned to this weapon and suffering from an abnormal status effect caused by a hostile creature or object, such as poisoned, burning, slowed, blinded, etc., all attacks and spells deal an extra 1d10 spell or weapon damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/leviathans/magma-almudron.md"
@@ -39878,8 +39884,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "Heroics. While below 25% of your maximum hit points your weapon attacks deal 1d4 extra damage and you have resistance to all damage except psychic damage.",
+      "weaponEffect": "(Spellcaster Only) Whenever you cast a spell of 1st-level or higher, lava erupts from the ground around you. Any creature within 5 feet of you takes 9 (2d8) points of fire damage. Also, when you cast a spell that deals fire damage, it deals extra damage equal to 2 times the spell's level as fire damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/leviathans/magma-almudron.md"
@@ -40445,7 +40451,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it. Freezer Sac (Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.",
+      "armorEffect": "Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it.",
       "weaponEffect": "This weapon has three runes that it regains daily at dawn. When you hit a creature with this weapon it must succeed on a DC 14 Constitution saving throw or its speed becomes 0 until the start of your next turn.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -40468,7 +40474,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "(Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.",
       "weaponEffect": "Your cold spells deal an extra 1d4 cold damage.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -40604,7 +40610,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it. Freezer Sac (Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.",
+      "armorEffect": "Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it.",
       "weaponEffect": "This weapon has three runes that it regains daily at dawn. When you hit a creature with this weapon it must succeed on a DC 14 Constitution saving throw or its speed becomes 0 until the start of your next turn.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -40627,7 +40633,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "(Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.",
       "weaponEffect": "Your cold spells deal an extra 1d4 cold damage.",
       "otherEffect": null,
       "inGithubJson": false,
@@ -45911,7 +45917,7 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "While you wear this armor, the maximum number of resources your party can gather on a hunt is increased by 1.  QueenVespoidShl Entomologist. When you capture an insect with a bug net, you instead catch two.",
+      "armorEffect": "While you wear this armor, the maximum number of resources your party can gather on a hunt is increased by 1.",
       "weaponEffect": "(Spellcaster Only) You know the poison spray cantrip while attuned to this weapon. If you already know it, the DC of the spell increases by 1.",
       "otherEffect": null,
       "inGithubJson": true,
@@ -45933,7 +45939,7 @@
         "A"
       ],
       "otherSlots": null,
-      "armorEffect": null,
+      "armorEffect": "Entomologist. When you capture an insect with a bug net, you instead catch two.",
       "weaponEffect": null,
       "otherEffect": null,
       "inGithubJson": true,
@@ -48536,8 +48542,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": "This armor has 3 runes. It regains 1d3 runes daily at dawn. As an action you can expend one or more runes to cast the web spell (spell save DC 16). For 1 rune, you cast the spell as normal. You can increase the size of the cubed area by 5 feet for each additional rune you expend. Rakna-Kadaki Sharpclaw Spider Climb. While you wear this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by ice or oil.",
-      "weaponEffect": "Stamina Surge+2. While attuned to this weapon, you can use an action to cast the haste spell from it once per day but can target only yourself when you do so and you gain 1 level of exhaustion when the spell ends. Rakna-Kadaki Sharpclaw Your weapon deals an extra 1d8 fire damage.",
+      "armorEffect": "This armor has 3 runes. It regains 1d3 runes daily at dawn. As an action you can expend one or more runes to cast the web spell (spell save DC 16). For 1 rune, you cast the spell as normal. You can increase the size of the cubed area by 5 feet for each additional rune you expend.",
+      "weaponEffect": "Stamina Surge+2. While attuned to this weapon, you can use an action to cast the haste spell from it once per day but can target only yourself when you do so and you gain 1 level of exhaustion when the spell ends.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/temnocerans/rakna-kadaki.md"
@@ -48559,8 +48565,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "Spider Climb. While you wear this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by ice or oil.",
+      "weaponEffect": "Your weapon deals an extra 1d8 fire damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/temnocerans/rakna-kadaki.md"

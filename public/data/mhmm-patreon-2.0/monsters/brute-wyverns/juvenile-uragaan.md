@@ -99,7 +99,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 10-14
 - **Capture:** 12-17
 - **Armor effect:** You have a +2 bonus to Athletics checks while you wear this armor.
-- **Weapon effect:** When you make a weapon attack with this weapon and roll a 20 for the attack roll, you can choose to release a wave of concussive force. When you do, each creature within 5 feet of you must succeed on a DC 12 Strength saving throw or be knocked prone. Uragaan Marrow Load Up. While attuned to this weapon, you increase the maximum capacity for all your ammo by 2.
+- **Weapon effect:** When you make a weapon attack with this weapon and roll a 20 for the attack roll, you can choose to release a wave of concussive force. When you do, each creature within 5 feet of you must succeed on a DC 12 Strength saving throw or be knocked prone.
 
 ### J.Uragaan Marrow
 
@@ -107,6 +107,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 15-19
 - **Capture:** 18-20
 - **Armor effect:** Staunch Bleeding. You have advantage on Wisdom (Medicine) checks to staunch a wound, such as the odogaron's blood wound or bearded devil's infernal wound.
+- **Weapon effect:** Load Up. While attuned to this weapon, you increase the maximum capacity for all your ammo by 2.
 
 ### J.Uragaan Ruby
 

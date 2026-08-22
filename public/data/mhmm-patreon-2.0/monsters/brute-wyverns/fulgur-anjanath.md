@@ -119,7 +119,7 @@ The anjanath moves up to its speed without provoking opportunity attacks.
 | 1-5 | 1-5 | Fulgur Anjanath Thickfur | A, W |
 | 6-10 | 6-10 | Fulgur Anjanath Shard | A |
 | 11-13 | — | Fulgur Anjanath Hardfang | A, W |
-| 14-16 | 11-14 | Heavy Fulgur Anjanath Nosebone (A,W) | O |
+| 14-16 | 11-14 | Heavy Fulgur Anjanath Nosebone | A, W |
 | 17-19 | 15-16 | Fulgur Anjanath Lash | A, W |
 | — | 17-19 | Lightning Sac | A, W |
 | 20 | 20 | Fulgur Anjanath Mantle | A, W |
@@ -148,14 +148,16 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 11-13
 - **Capture:** —
-- **Armor effect:** You have advantage on saving throws against being stunned while you wear this armor. Heavy Fulgur Anjanath Nosebone While you wear this armor, you can pass a Dexterity saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.
-- **Weapon effect:** Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target, you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a short or long rest. Heavy Fulgur Anjanath Nosebone While attuned to this weapon you can use an action to speak its command word, causing it to expel electric snot at a creature within 60 feet of you. That creature must make a DC 15 Dexterity saving throw or be covered in the snot for 1 minute or until it uses an action to wipe it away. While covered, the creature takes 1d4 lightning damage whenever it is hit by a melee weapon attack. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.
+- **Armor effect:** You have advantage on saving throws against being stunned while you wear this armor.
+- **Weapon effect:** Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target, you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a short or long rest.
 
-### Heavy Fulgur Anjanath Nosebone (A,W)
+### Heavy Fulgur Anjanath Nosebone
 
-- **Slots:** O
+- **Slots:** A, W
 - **Carve:** 14-16
 - **Capture:** 11-14
+- **Weapon effect:** While attuned to this weapon you can use an action to speak its command word, causing it to expel electric snot at a creature within 60 feet of you. That creature must make a DC 15 Dexterity saving throw or be covered in the snot for 1 minute or until it uses an action to wipe it away. While covered, the creature takes 1d4 lightning damage whenever it is hit by a melee weapon attack. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.
+- **Armor effect:** While you wear this armor, you can pass a Dexterity saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.
 
 ### Fulgur Anjanath Lash
 

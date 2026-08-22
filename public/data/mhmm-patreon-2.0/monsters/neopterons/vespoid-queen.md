@@ -86,7 +86,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 1-4
 - **Capture:** —
-- **Armor effect:** While you wear this armor, the maximum number of resources your party can gather on a hunt is increased by 1.  QueenVespoidShl Entomologist. When you capture an insect with a bug net, you instead catch two.
+- **Armor effect:** While you wear this armor, the maximum number of resources your party can gather on a hunt is increased by 1.
 - **Weapon effect:** (Spellcaster Only) You know the poison spray cantrip while attuned to this weapon. If you already know it, the DC of the spell increases by 1.
 
 ### QueenVespoidShl
@@ -94,6 +94,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A
 - **Carve:** 5-12
 - **Capture:** —
+- **Armor effect:** Entomologist. When you capture an insect with a bug net, you instead catch two.
 
 ### Monster Fluid
 

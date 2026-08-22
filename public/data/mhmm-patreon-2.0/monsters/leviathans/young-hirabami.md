@@ -122,7 +122,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 12-14
 - **Capture:** 10-12
-- **Armor effect:** Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it. Freezer Sac (Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.
+- **Armor effect:** Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it.
 - **Weapon effect:** This weapon has three runes that it regains daily at dawn. When you hit a creature with this weapon it must succeed on a DC 14 Constitution saving throw or its speed becomes 0 until the start of your next turn.
 
 ### Freezer Sac+
@@ -131,6 +131,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 15-17
 - **Capture:** 13-16
 - **Weapon effect:** Your cold spells deal an extra 1d4 cold damage.
+- **Armor effect:** (Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.
 
 ### Hirabami Tail Claw
 

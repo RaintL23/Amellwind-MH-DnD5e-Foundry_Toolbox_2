@@ -211,14 +211,16 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 12-13
 - **Capture:** —
-- **Armor effect:** This armor has 3 runes. It regains 1d3 runes daily at dawn. As an action you can expend one or more runes to cast the web spell (spell save DC 16). For 1 rune, you cast the spell as normal. You can increase the size of the cubed area by 5 feet for each additional rune you expend. Rakna-Kadaki Sharpclaw Spider Climb. While you wear this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by ice or oil.
-- **Weapon effect:** Stamina Surge+2. While attuned to this weapon, you can use an action to cast the haste spell from it once per day but can target only yourself when you do so and you gain 1 level of exhaustion when the spell ends. Rakna-Kadaki Sharpclaw Your weapon deals an extra 1d8 fire damage.
+- **Armor effect:** This armor has 3 runes. It regains 1d3 runes daily at dawn. As an action you can expend one or more runes to cast the web spell (spell save DC 16). For 1 rune, you cast the spell as normal. You can increase the size of the cubed area by 5 feet for each additional rune you expend.
+- **Weapon effect:** Stamina Surge+2. While attuned to this weapon, you can use an action to cast the haste spell from it once per day but can target only yourself when you do so and you gain 1 level of exhaustion when the spell ends.
 
 ### Rakna‑Kadaki Sharpclaw
 
 - **Slots:** A, W
 - **Carve:** 14-16
 - **Capture:** 12-16
+- **Weapon effect:** Your weapon deals an extra 1d8 fire damage.
+- **Armor effect:** Spider Climb. While you wear this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by ice or oil.
 
 ### Rakna-Kadaki Spike
 

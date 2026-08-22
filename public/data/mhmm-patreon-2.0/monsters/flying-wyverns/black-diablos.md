@@ -136,7 +136,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 1-6
 - **Capture:** 1-3
-- **Armor effect:** Tremor-Proof. You cannot be knocked prone while you wear this armor. B.Diablos Fang Divine Blessing+3. When you take damage you are not immune or resistant to, roll a d10 and reduce the damage you take by the number rolled. You can use this property a number of times equal to your proficiency bonus. You regain all expended uses when you finish a long rest.
+- **Armor effect:** Tremor-Proof. You cannot be knocked prone while you wear this armor.
 - **Weapon effect:** KO+. When this material is placed into a hammer, it gains one addition use of its mighty weapon property. Additionally, when a creature must succeed on a saving throw or become stunned by the effect of one of your weapon attacks, they make the save with disadvantage.
 
 ### Black Diablos Fang
@@ -145,6 +145,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 7-9
 - **Capture:** 4-5
 - **Weapon effect:** FastCharge+. When you roll for initiative, your greatsword, longsword, or charge blade gains 2 charge, spirit, or phial charge.
+- **Armor effect:** Divine Blessing+3. When you take damage you are not immune or resistant to, roll a d10 and reduce the damage you take by the number rolled. You can use this property a number of times equal to your proficiency bonus. You regain all expended uses when you finish a long rest.
 
 ### Black Diablos Shell
 

@@ -147,7 +147,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 5-10
 - **Capture:** —
-- **Armor effect:** You have proficiency with cook’s utensils while you are attuned to this armor. Green Congalala Strong Fang When a creature within 5 feet of you hits you with an attack, you can use your reaction to make an unarmed strike with your belly, dealing 1d8 bludgeoning damage plus your strength or dexterity modifier on a hit. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.
+- **Armor effect:** You have proficiency with cook's utensils while you are attuned to this armor.
 - **Weapon effect:** When you hit a creature with this weapon, it must make a DC 14 Constitution saving throw. On a failed save the creature has disadvantage on Constitution saving throws to maintain concentration for 1 minute. You can use this property three times, regaining all expended uses when you finish a long rest.
 
 ### Congalala Strong Fang
@@ -156,6 +156,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 11-12
 - **Capture:** 5-8
 - **Weapon effect:** Capture Expert. Tranq bombs & ammo roll an extra 3d8 when they hit a creature.
+- **Armor effect:** When a creature within 5 feet of you hits you with an attack, you can use your reaction to make an unarmed strike with your belly, dealing 1d8 bludgeoning damage plus your Strength or Dexterity modifier on a hit. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.
 
 ### Lg Monster Bone
 

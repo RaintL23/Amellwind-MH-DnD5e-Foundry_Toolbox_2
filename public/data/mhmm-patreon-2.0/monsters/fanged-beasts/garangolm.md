@@ -173,14 +173,16 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 14-15
 - **Capture:** 13-16
-- **Armor effect:** Fortitude. You have advantage on survival skill checks to track, forage, or travel while you are attuned to this armor. Garangolm Ploughtail You are immune to cold damage while you wear this armor.
-- **Weapon effect:** (Hammer Only) Slugger. While attuned to this weapon, you may use the Hammer's Mighty Weapon skill two additional times between rests. Garangolm Ploughtail Stamina Thief. Once per turn when you hit a creature with this weapon, it must make a DC 10 Constitution saving throw or gain one level of exhaustion. A creature cannot gain more than 2 levels of exhaustion from this weapon's property.
+- **Armor effect:** Fortitude. You have advantage on survival skill checks to track, forage, or travel while you are attuned to this armor.
+- **Weapon effect:** (Hammer Only) Slugger. While attuned to this weapon, you may use the Hammer's Mighty Weapon skill two additional times between rests.
 
 ### Golm Ploughtail
 
 - **Slots:** A, W
 - **Carve:** 16-19
 - **Capture:** 17-19
+- **Weapon effect:** Stamina Thief. Once per turn when you hit a creature with this weapon, it must make a DC 10 Constitution saving throw or gain one level of exhaustion. A creature cannot gain more than 2 levels of exhaustion from this weapon's property.
+- **Armor effect:** You are immune to cold damage while you wear this armor.
 
 ### Garangolm Mantle
 
