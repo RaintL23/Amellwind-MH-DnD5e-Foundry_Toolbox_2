@@ -704,7 +704,8 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:rune-charges`  | Contiene `rune` seguido de número (ej. `"3 runes"`, `"has 4 runes"`)                                                   |
 | `mechanic:critical`      | Contiene `critical` / `critically` (p. ej. *Critical Status*). Ya **no** cubre un 20 natural por sí solo              |
 | `mechanic:roll-20`       | Contiene `roll a 20` o `natural 20` (el trigger es el dado, no necesariamente un crítico)                              |
-| `mechanic:push`          | Empuja al objetivo (`is pushed`, `push the creature/target`)                                                           |
+| `mechanic:push`          | Empuja al objetivo (`is/are/be pushed`, `pushed back N`, `push the creature/target`). No aplica a lockouts defensivos (`cannot/can't be pushed`) |
+| `mechanic:area`          | Forma de área: `N-foot cone/line/radius/sphere/cube/cylinder` (p. ej. oleada de magma en cono)                      |
 | `mechanic:no-damage`     | Rider de `roll-20` cuyo payoff no es daño extra ni un ataque adicional                                                 |
 | `mechanic:unarmed`       | Afecta **tus** unarmed strikes (`make an unarmed strike`, `your unarmed strikes`). No aplica a thorns de armadura      |
 | `mechanic:natural-weapon`| Afecta **tus** / de raza natural weapons (`Race with natural weapons only`, `your race's natural weapon`). No aplica a thorns (`hits you with … a natural melee weapon`) |
@@ -717,6 +718,9 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:save-bonus`    | `+N bonus to/on … saving throws` (Evade Extender) **o** `do so with a +N bonus` tras un saving throw (p. ej. vs knocked prone) |
 | `mechanic:save-{ability}`| Buff a un save concreto (p. ej. Dexterity → `save-dexterity`). No aplica a “must make a Dexterity saving throw”        |
 | `mechanic:attack-roll`   | Menciona `attack roll(s)` (ventaja / bonus a tus tiradas de ataque)                                                    |
+| `mechanic:initiative`    | Buff a iniciativa (`advantage on initiative rolls`, `add a dN to your initiative`, `first in the initiative order`). No aplica a FastCharge (*when you roll for initiative, gain charges*) |
+| `mechanic:initiative:major` | Control fuerte de iniciativa: dado d8+ y / o forzar el primer puesto en el orden                                      |
+| `mechanic:heal-other`    | Mejora la curación que **tú** aplicas a **otras** criaturas → se emite como `:minor` / `:major` (Astalos Scissortail, Lay on Hands + THP, transferencias Malzeno). No aplica a Recovery Up / Hasten Recovery (self) |
 | `mechanic:skill-bonus`   | Contiene `+N bonus on/to` junto a `{@skill` **o** prosa (`+2 bonus to Athletics checks` / `Climb checks`)              |
 | `mechanic:skill-{name}`  | Por cada `{@skill Name}` o nombre bare de skill cerca de `checks` (p. ej. Insight → `skill-insight`). Alias MHMM: Climb → Athletics |
 | `mechanic:disarm`        | Contiene `disarmed` (p. ej. *advantage on checks against being disarmed*)                                              |
@@ -747,6 +751,7 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:accelerated-rest` | Acorta la duración del descanso (*benefits of a long rest after 4 hours instead of 8*). Distinto de recargas *once / finish a long rest* |
 | `mechanic:mithral`       | Paquete estilo *Mithral Armor*: armadura light/flexible, bajo ropa, sin desventaja en Stealth ni requisito de Fuerza |
 | `mechanic:healing`       | Contiene `regain` o `restore` seguido de `hit points`                                                                  |
+| `mechanic:end-dot`       | Termina un efecto de daño continuo al inicio de tu turno (`damage to you at the start of your turn` + `ends the effect`; Recovery Level) |
 | `mechanic:spell-slot`    | Recupera un *spell slot* (`regain` / `restore` / `recover` + `spell slot(s)`), no “without expending a spell slot”. Si el texto nombra un máximo (`up to 4th level`) → `mechanic:spell-slot:lvlN`. |
 | `mechanic:cantrip`       | Contiene `cantrip`, o un conjuro del catálogo resuelto como nivel 0 (`{@spell` o prosa) |
 | `mechanic:spellcasting-focus` | El arma/ítem se puede usar como *spellcasting focus* (*use this weapon as your spellcasting focus*). Distinto de `focus-points` |
@@ -803,7 +808,7 @@ Si el texto del efecto **no** referencia un material effect nombrado del catálo
 
 Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición). La detección de “limitada” busca gasto de economy (`action` / `bonus action` / `reaction`) junto al grant de resistencia/inmunidad.
 
-**Daño de arma** (`inline-extra-damage-rarity.utils.ts`), score = dados × caras (o flat) — aplica a daño extra siempre activo y a daño que el efecto hace sufrir al objetivo (p. ej. DoT al crit):
+**Daño de arma** (`inline-extra-damage-rarity.utils.ts`), score = dados × caras (o flat) — aplica a daño extra siempre activo y a daño que el efecto hace sufrir al objetivo (p. ej. DoT al crit, AoE `dealing 22 (4d10) fire damage`):
 
 | Score | Ejemplo | Rareza |
 | --- | --- | --- |
@@ -812,7 +817,9 @@ Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condici
 | 13–20 | `extra 3d6 … damage` | **Very Rare** |
 | ≥ 21 | `extra 4d6 … damage` | **Legendary** |
 
-Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Los nombres extraídos de runas MHMM que **no** están en GTMH (`discovered:`) se asignan en `discovered-effect-rarity.data.ts` (p. ej. **Flexible Leathercraft** → **Common**); sin entrada siguen Unknown salvo que aplique una inferencia inline. Si un mismo texto dispara varias inferencias de defensa/daño, se usa la rareza más alta.
+Ráfagas de uso limitado (`once per long rest` / `can't use … again until … rest` / `once you use this property`) bajan **un escalón** (p. ej. cono 4d10 1/descanso → **Very Rare**, no Legendary). Acepta notación MHMM de promedio `22 (4d10)`.
+
+Un efecto nombrado del catálogo GTMH tiene prioridad sobre esta inferencia. Los nombres extraídos de runas MHMM que **no** están en GTMH (`discovered:`) se asignan en `discovered-effect-rarity.data.ts` (p. ej. **Flexible Leathercraft** → **Common**, **Recovery Level** → **Rare**); sin entrada siguen Unknown salvo que aplique una inferencia inline. Si un mismo texto dispara varias inferencias de defensa/daño, se usa la rareza más alta.
 
 **Rider de 20 natural sin daño + empujón** (`inline-roll-20-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:roll-20` + `mechanic:no-damage` + `mechanic:push` (p. ej. Tetranadon Beak: unarmed, 5 pies, ~5 %): **Common**. Un rider de 20 con daño extra (Ajarakan, 1d4 + push) sigue la tabla de daño.
 
@@ -891,6 +898,22 @@ Ejemplos: Rathalos Carapace (+1 AC) → Uncommon; Shield reaction +1 AC → Comm
 **Ventaja / bonus vs condición** (`inline-condition-rarity.utils.ts`) — **solo si** tras defensa/daño/hechizo la rareza seguiría en Unknown, y el efecto tiene `mechanic:against-condition` + (`mechanic:advantage` **o** `mechanic:save-bonus`) **sin** `mechanic:immunity` (p. ej. *advantage on saving throws against the poisoned condition*, o *+2 bonus* vs knocked prone): **Common**.
 
 **Inmunidad a condición** (`inferRarityFromConditionImmunityTags`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:immunity` + algún `mechanic:condition-*` (p. ej. *immune to the poisoned condition*, *cannot be knocked prone*, *can't be stunned*): **Uncommon**. La inmunidad a un **tipo de daño** sigue la tabla de defensas (Rare / Very Rare); no usa esta regla.
+
+**Fin de DoT / Recovery Level** (`inline-end-dot-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:end-dot` (limpia daño continuo al inicio del turno: sangrado, ácido/veneno DoT, fuego, …): **Rare**.
+
+**Iniciativa** (`inline-initiative-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
+
+| Tags | Rareza | Ejemplos |
+| --- | --- | --- |
+| `mechanic:initiative` (sin `:major`) | **Uncommon** | advantage on initiative rolls (Rejuvenated Beak) |
+| `mechanic:initiative:major` | **Rare** | add a d8 + become first in the initiative order (Safi'jiiva) |
+
+**Curación a otros** (`inline-heal-other-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
+
+| Tags | Rareza | Ejemplos |
+| --- | --- | --- |
+| `mechanic:heal-other:minor` | **Uncommon** | Astalos Scissortail (+spell level); Lay on Hands → THP = amount healed |
+| `mechanic:heal-other:major` | **Rare** | Astalos Scissortail+ (double spell level); LoH shared THP; Malzeno Tail HP transfer |
 
 **Skill / contest utility** (`inline-skill-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown:
 
