@@ -1,0 +1,402 @@
+{
+  "_id": "hw6ll661wo6io5jw",
+  "name": "Redhelm Ragehair Rune",
+  "type": "equipment",
+  "img": "mh-icons/material-rune.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Redhelm Arzuros | CR: 8 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Resentment.</em> Until the end of your turn, you gain a +1 bonus to attack and damage rolls against any creature that has damage you since the end of your last turn.\n<h3>Armor Effect</h3>\n<p>You have a +1 bonus to your AC while you wear this armor.</p>\n<p><em><strong>Tags:</strong> mechanic:attack-bonus, mechanic:extra-damage:minor, type:offensive, mechanic:ac, type:defensive</em></p>",
+      "chat": ""
+    },
+    "identifier": "redhelmragehairrune",
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "type": {
+      "value": "trinket",
+      "baseItem": ""
+    },
+    "armor": {
+      "value": null,
+      "dex": null,
+      "magicalBonus": null
+    },
+    "properties": [],
+    "proficient": null,
+    "strength": null,
+    "activities": {},
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "k3sua7fvqk8vdsog",
+      "name": "Redhelm Ragehair Rune (Equip)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "macro.itemMacro",
+          "mode": 0,
+          "value": "",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "On equip, choose which rune effect (Weapon or Armor) to activate.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": -10,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeController": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "6gu1l7mzwlr94bho",
+      "name": "Redhelm Ragehair - Resentment (Track)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "ItemMacro.Redhelm Ragehair Rune,isDamaged",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Tracks attackers that damage you (Resentment).",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Resentment"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "2viz145fz2xbsphc",
+      "name": "Redhelm Ragehair - Resentment (Attack)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "ItemMacro.Redhelm Ragehair Rune,preItemRoll",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "+1 attack rolls vs Resentment targets.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Resentment"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "4ps66syh581nduvg",
+      "name": "Redhelm Ragehair - Resentment (Damage)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "ItemMacro.Redhelm Ragehair Rune,damageBonus",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "+1 damage vs Resentment targets.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Resentment"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "dqdjorjjuagaxv94",
+      "name": "Redhelm Ragehair - +1 AC",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.attributes.ac.bonus",
+          "mode": 2,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "+1 bonus to AC while you wear this armor.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "armor",
+          "materialEffectName": "+1 AC"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 21400000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "rune",
+      "runeName": "Redhelm Ragehair",
+      "monsterName": "Redhelm Arzuros",
+      "unified": true,
+      "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Resentment"
+        },
+        "armor": {
+          "label": "Armor Effect — +1 AC"
+        }
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Redhelm Ragehair Rune",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Amellwind unified rune controller (Foundry v12 / dnd5e 4.4 / MidiQOL + DAE + Item Macro)\n// DAE runs this via change key \"macro.itemMacro\": args[0] === \"on\" when equipped, \"off\" when unequipped.\n// MidiQOL on-use passes arrive with args[0].macroPass (registered by the cloned effect on the actor).\nconst FLAG = \"amellwind-toolbox\";\nconst getRuneFlag = (doc, key) => foundry.utils.getProperty(doc, `flags.${FLAG}.${key}`);\nconst setRuneFlag = async (doc, key, value) => doc.update({ [`flags.${FLAG}.${key}`]: value });\nconst unsetRuneFlag = async (doc, key) => doc.update({ [`flags.${FLAG}.-=${key}`]: null });\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\nif (!item) return;\nconst arg0 = args?.[0];\nconst pass = String(arg0?.macroPass ?? \"\").toLowerCase();\nconst runeName = getRuneFlag(item, \"runeName\") ?? item.name;\n\nasync function runeCleanup() {\n  if (!actorDoc) return;\n  const mine = actorDoc.effects.filter((e) => getRuneFlag(e, \"runeClone\") && e.origin === item.uuid);\n  if (mine.length) await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", mine.map((e) => e.id));\n  await unsetRuneFlag(item, \"applied\");\n}\n\nfunction runeAeName(side, matName, trinket) {\n  let n = `${runeName}-${side}`;\n  if (matName) n += `-${matName}`;\n  if (trinket) n += \" (Trinket)\";\n  return n;\n}\n\nasync function runeApplySide(side, trinket) {\n  if (!actorDoc) return;\n  const blueprints = item.effects.filter((e) => getRuneFlag(e, \"runeSide\") === side);\n  const docs = blueprints.map((e) => {\n    const o = e.toObject();\n    delete o._id;\n    o.origin = item.uuid;\n    o.disabled = false;\n    o.transfer = false;\n    o.name = runeAeName(side, getRuneFlag(e, \"materialEffectName\"), trinket);\n    foundry.utils.setProperty(o, `flags.${FLAG}.runeClone`, true);\n    foundry.utils.setProperty(o, \"flags.dae.showIcon\", false);\n    return o;\n  });\n  if (docs.length) await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  await setRuneFlag(item, \"applied\", { side, trinket });\n  if (typeof runeOnEquip === \"function\") await runeOnEquip(side, trinket);\n}\n\nif (arg0 === \"on\") {\n  if (!actorDoc) return;\n  await runeCleanup();\n  const sides = getRuneFlag(item, \"sides\") ?? {};\n  const available = Object.keys(sides).filter((s) => sides[s]);\n  if (!available.length) return;\n  const radios = available\n    .map((s, i) => `<label style=\"display:block;margin:.15rem 0\"><input type=\"radio\" name=\"runeSide\" value=\"${s}\" ${i === 0 ? \"checked\" : \"\"}/> ${sides[s].label ?? s}</label>`)\n    .join(\"\");\n  const content = `<form class=\"dnd5e2\"><p>Choose which effect to activate for <strong>${runeName}</strong>:</p>${radios}<hr/><label style=\"display:block;margin-top:.35rem\"><input type=\"checkbox\" name=\"runeTrinket\"/> Equipped in a trinket</label></form>`;\n  const choice = await new Promise((resolve) => {\n    new Dialog({\n      title: `${runeName} Rune`,\n      content,\n      buttons: {\n        ok: { icon: '<i class=\"fas fa-check\"></i>', label: \"Activate\", callback: (html) => resolve({ side: html.find('input[name=\"runeSide\"]:checked').val(), trinket: html.find('input[name=\"runeTrinket\"]').is(\":checked\") }) },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => resolve(null) },\n      },\n      default: \"ok\",\n      close: () => resolve(null),\n    }).render(true);\n  });\n  if (!choice || !choice.side) { await item.update({ \"system.equipped\": false }); return; }\n  await runeApplySide(choice.side, choice.trinket);\n  return;\n}\n\nif (arg0 === \"off\") { await runeCleanup(); return; }\nif (arg0 === \"each\") return;\n\n// ===== rune-specific combat passes =====\n\nif (pass.includes(\"isdamaged\")) {\n  const wf = workflow ?? arg0?.workflow;\n  const attacker = wf?.token?.actor ?? wf?.actor;\n  if (!attacker || attacker.uuid === actorDoc?.uuid) return;\n  const ids = new Set(getRuneFlag(item, \"resentmentTargets\") ?? []);\n  ids.add(attacker.uuid);\n  await setRuneFlag(item, \"resentmentTargets\", [...ids]);\n  await setRuneFlag(item, \"resentmentTurn\", game.combat?.round ?? game.time?.worldTime ?? 0);\n  return;\n}\nif (pass.includes(\"preattackroll\") || pass.includes(\"preitemroll\")) {\n  const targets = getRuneFlag(item, \"resentmentTargets\") ?? [];\n  if (!targets.length) return;\n  const wf = workflow ?? arg0?.workflow;\n  const target = wf?.targets?.first?.()?.actor ?? wf?.target?.actor;\n  if (!target || !targets.includes(target.uuid)) return;\n  foundry.utils.setProperty(arg0, \"attackRollBonus\", (Number(arg0?.attackRollBonus ?? 0) || 0) + 1);\n  if (wf) wf.attackRollBonus = (Number(wf.attackRollBonus ?? 0) || 0) + 1;\n  return;\n}\nif (pass.includes(\"damagebonus\")) {\n  const targets = getRuneFlag(item, \"resentmentTargets\") ?? [];\n  if (!targets.length) return;\n  const wf = workflow ?? arg0?.workflow;\n  const target = wf?.targets?.first?.()?.actor ?? wf?.target?.actor;\n  if (!target || !targets.includes(target.uuid)) return;\n  return { damageRoll: \"1\", flavor: \"Resentment\" };\n}",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1787410841978,
+    "modifiedTime": 1787410841978,
+    "lastModifiedBy": null
+  }
+}
