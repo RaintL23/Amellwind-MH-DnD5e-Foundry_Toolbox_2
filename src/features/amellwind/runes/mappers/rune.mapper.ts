@@ -1226,18 +1226,50 @@ export function extractRuneEffectTags(
 
 // ─── Main mapper ─────────────────────────────────────────────────────────────
 
-/** Busca recursivamente un objeto `{ type: "inset" }` dentro de un array de entries. */
+/**
+ * Returns true when an inset's sub-entries contain a carve-chance loot table.
+ * Used to pick the right inset for monsters that have both a DM-Note inset
+ * (e.g. Gypceros "Feign Death") and the actual loot-table inset.
+ */
+function insetHasLootTable(insetEntries: unknown[]): boolean {
+  return insetEntries.some((e) => {
+    if (typeof e !== "object" || e === null) return false;
+    const obj = e as Raw;
+    return (
+      obj.type === "table" &&
+      Array.isArray(obj.colLabels) &&
+      String(obj.colLabels[0]).toLowerCase().includes("carve")
+    );
+  });
+}
+
+/**
+ * Finds the loot-table inset (the one whose sub-entries contain a
+ * "Carve Chance" table) rather than blindly returning the first inset.
+ * Falls back to the first inset found if none contains a loot table.
+ */
 function findInset(entries: unknown[]): Raw | undefined {
+  const insets: Raw[] = [];
+
   for (const e of entries) {
     if (typeof e !== "object" || e === null) continue;
     const obj = e as Raw;
-    if (obj.type === "inset") return obj;
-    if (Array.isArray(obj.entries)) {
+    if (obj.type === "inset") {
+      insets.push(obj);
+    } else if (Array.isArray(obj.entries)) {
       const found = findInset(obj.entries as unknown[]);
       if (found) return found;
     }
   }
-  return undefined;
+
+  // Prefer the inset that contains the loot table; fall back to first.
+  return (
+    insets.find(
+      (inset) =>
+        Array.isArray(inset.entries) &&
+        insetHasLootTable(inset.entries as unknown[]),
+    ) ?? insets[0]
+  );
 }
 
 export function mapRunesFromMonster(
