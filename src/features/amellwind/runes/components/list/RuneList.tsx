@@ -306,6 +306,8 @@ export function RuneList() {
               tag: filters.tag,
               materialEffectTier: filters.materialEffectTier,
             }}
+            filteredRunes={filtered}
+            onNavigate={setSelected}
           />
         )}
       </div>

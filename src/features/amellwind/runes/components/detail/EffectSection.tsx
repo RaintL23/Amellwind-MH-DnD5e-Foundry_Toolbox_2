@@ -11,7 +11,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { formatTag, tagVariant } from "../../utils/rune-tag.utils";
 import { cn } from "@/shared/utils/cn";
-import { splitDisplayTextLines } from "@/shared/utils/fivetools-parser";
+import { splitRuneEffectDisplayLines } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
 import { RUNE_CATALOG_PHRASE_LINKS } from "../../utils/rune-catalog-links";
 
 interface EffectSectionProps {
@@ -52,7 +52,10 @@ export function EffectSection({
       ? "bg-muted/40 text-muted-foreground border-border"
       : RESOURCE_RARITY_STYLES[rarityLabel as ResourceRarity].badge;
 
-  const lines = splitDisplayTextLines(text);
+  const lines = useMemo(
+    () => splitRuneEffectDisplayLines(text, materialEffectIndex?.all),
+    [text, materialEffectIndex],
+  );
 
   return (
     <div

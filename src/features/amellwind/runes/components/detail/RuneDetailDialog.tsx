@@ -1,3 +1,4 @@
+import { useEffect, useCallback } from "react";
 import { Rune } from "@/shared/types";
 import {
   Dialog,
@@ -9,6 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { AddToBuildSection } from "./AddToBuildSection";
 import { EffectSection } from "./EffectSection";
 import { TierBadge } from "../shared/TierBadge";
@@ -18,6 +20,7 @@ import {
   hasActiveRuneEffectListFilters,
   runeEffectMatchesListFilters,
 } from "../../utils/rune-compatibility.utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface RuneDetailDialogProps {
   rune: Rune | null;
@@ -26,6 +29,10 @@ interface RuneDetailDialogProps {
   materialEffectIndex?: MaterialEffectNameIndex | null;
   /** Active effect-scoped list filters (slot / tags / material-effect tier). */
   effectFilters?: RuneListEffectFilters;
+  /** Full filtered list for prev/next navigation. */
+  filteredRunes?: Rune[];
+  /** Called when the user navigates to a different rune. */
+  onNavigate?: (rune: Rune) => void;
 }
 
 const EMPTY_EFFECT_FILTERS: RuneListEffectFilters = {
@@ -40,7 +47,38 @@ export function RuneDetailDialog({
   onOpenChange,
   materialEffectIndex,
   effectFilters = EMPTY_EFFECT_FILTERS,
+  filteredRunes,
+  onNavigate,
 }: RuneDetailDialogProps) {
+  const currentIndex = filteredRunes && rune
+    ? filteredRunes.findIndex(
+        (r) => r.name === rune.name && r.monsterName === rune.monsterName,
+      )
+    : -1;
+  const hasPrev = currentIndex > 0;
+  const hasNext =
+    filteredRunes != null && currentIndex < filteredRunes.length - 1;
+  const showNav = !!filteredRunes && filteredRunes.length > 1;
+
+  const goTo = useCallback(
+    (delta: -1 | 1) => {
+      if (!filteredRunes || !onNavigate) return;
+      const next = filteredRunes[currentIndex + delta];
+      if (next) onNavigate(next);
+    },
+    [filteredRunes, currentIndex, onNavigate],
+  );
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft" && hasPrev) goTo(-1);
+      if (e.key === "ArrowRight" && hasNext) goTo(1);
+    };
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [open, hasPrev, hasNext, goTo]);
+
   if (!rune) return null;
 
   const filtersActive = hasActiveRuneEffectListFilters(effectFilters);
@@ -153,6 +191,37 @@ export function RuneDetailDialog({
             armorAllowed={!filtersActive || armorMatches}
           />
         </DialogBody>
+
+        {/* Navigation footer — sits below all content, never overlaps */}
+        {showNav && (
+          <div className="flex items-center justify-between border-t border-border px-4 py-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => goTo(-1)}
+              disabled={!hasPrev}
+              aria-label="Previous rune"
+              className="gap-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
+            >
+              <ChevronLeft className="h-4 w-4" />
+              Prev
+            </Button>
+            <span className="text-xs text-muted-foreground/60 tabular-nums">
+              {currentIndex + 1} / {filteredRunes.length}
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => goTo(1)}
+              disabled={!hasNext}
+              aria-label="Next rune"
+              className="gap-1 text-muted-foreground hover:text-foreground disabled:opacity-30"
+            >
+              Next
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
       </DialogContent>
     </Dialog>
   );

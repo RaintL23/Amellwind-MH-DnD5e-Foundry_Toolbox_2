@@ -38,9 +38,13 @@ function parseSlots(slotsStr: string): RuneSlot[] {
 /**
  * Materials with loot slot "O" (Other) — upgrade bones, crafting mats, sellables —
  * parse to empty `slots` and are not placeable as Armor/Weapon/Trinket runes.
+ * Also excludes materials that only carry an otherEffect (consumables, crafting
+ * ingredients, etc.) since they have no equippable armor or weapon effect.
  */
-export function isPlaceableRune(rune: Pick<Rune, "slots">): boolean {
-  return rune.slots.length > 0;
+export function isPlaceableRune(
+  rune: Pick<Rune, "slots" | "armorEffect" | "weaponEffect">,
+): boolean {
+  return rune.slots.length > 0 && (!!rune.armorEffect || !!rune.weaponEffect);
 }
 
 // ─── Effects indexer ──────────────────────────────────────────────────────────
@@ -95,21 +99,32 @@ const WEAPON_TYPE_PATTERNS: Array<[RegExp, string]> = [
 // se emiten vía funciones de escala en lugar de patrones simples.
 const ROLL_20_RE = /roll(?:s|ing)? a 20\b|natural 20/i;
 const CRITICAL_WORD_RE = /\bcritic(?:al|ally)\b/i;
+/** Offensive push — not Guard-style "cannot / can't be pushed". */
 const PUSH_RE =
-  /\bis pushed\b|\bare pushed\b|\bpushed (?:up to )?\d+|\bpush(?:es)? the (?:target|creature)/i;
+  /(?<!can(?:not|'t)\s)\b(?:is|are|be) pushed\b|\bpushed back(?:\s+(?:up to\s+)?\d+)?|\bpushed (?:up to )?\d+|\bpush(?:es)? the (?:target|creature)/i;
 const YOUR_UNARMED_RE =
   /(?:make (?:an? |two |three )|your |with an |or )unarmed strikes?|proficien(?:t|cy) (?:in|with) unarmed strikes?/i;
 /** Your / race natural weapons — not incoming "hits you with … a natural melee weapon". */
 const YOUR_NATURAL_WEAPON_RE =
   /Race with natural weapons only|(?:your |race'?s )natural(?: melee)? weapons?|attack with (?:your |a |an |your race'?s )?natural(?: melee)? weapons?/i;
-const DAMAGE_OR_EXTRA_ATTACK_RE =
-  /(?:takes?|deals?)\s+(?:an?\s+)?(?:additional\s+)?(?:\{@damage\s+)?(?:\d+d\d+|\d+)|loses?\s+(?:\d+d\d+|\d+)\s+hit points|damage dice one additional time|make one additional attack|(?:an? )?(?:additional|extra) attack/i;
+/** Includes MHMM average dice: "dealing 22 (4d10) fire damage" / "taking 4d6 …". */
+const DAMAGE_AMOUNT =
+  /(?:\d+\s*\(\s*)?(?:\{@damage\s+)?(?:\d+d\d+|\d+)(?:\})?(?:\s*\))?/;
+const DAMAGE_OR_EXTRA_ATTACK_RE = new RegExp(
+  String.raw`(?:takes?|taking|deals?|dealing)\s+(?:an?\s+)?(?:additional\s+)?${DAMAGE_AMOUNT.source}|loses?\s+(?:\d+d\d+|\d+)\s+hit points|damage dice one additional time|make one additional attack|(?:an? )?(?:additional|extra) attack`,
+  "i",
+);
 
 const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/\d+\s*runes?|runes?\s*\d+/i, "mechanic:rune-charges"],
   [CRITICAL_WORD_RE, "mechanic:critical"],
   [ROLL_20_RE, "mechanic:roll-20"],
   [PUSH_RE, "mechanic:push"],
+  // AoE shapes (cone / line / sphere / …) — Zorah Magdaros molten wave, breath weapons
+  [
+    /\b\d+[-\s]?foot[-\s]?(?:cone|line|radius|sphere|cube|cylinder)\b/i,
+    "mechanic:area",
+  ],
   [/resist(?:ant|ance) to\s+\w/i, "mechanic:resistance"],
   // `mechanic:immunity` — also via `immunityTag()` ("cannot be knocked prone", …)
   [/immune to|immunity to/i, "mechanic:immunity"],
@@ -415,6 +430,89 @@ function rollTargetTags(text: string): string[] {
   }
 
   return tags;
+}
+
+/**
+ * mechanic:initiative — buffs initiative rolls or order (not FastCharge
+ * "when you roll for initiative, gain charges").
+ * mechanic:initiative:major — flat die bonus (d8+) and/or force first.
+ */
+function initiativeTags(text: string): string[] {
+  const tags: string[] = [];
+
+  const hasAdvantage =
+    /advantage on initiative(?:\s+rolls?)?\b/i.test(text) ||
+    /initiative(?:\s+rolls?)?\b[^.]{0,40}\badvantage\b/i.test(text) ||
+    (/roll for initiative/i.test(text) &&
+      /\bgain advantage\b|\badvantage on that roll\b/i.test(text));
+
+  const hasDieBonus =
+    /add a d(\d+)\s+to your initiative\b/i.test(text) ||
+    /\+\s*\d+\s*(?:bonus\s+)?to (?:your )?initiative\b/i.test(text);
+
+  const forcesFirst =
+    /(?:become|are) first in the initiative\b/i.test(text) ||
+    /first in the initiative order\b/i.test(text);
+
+  if (!hasAdvantage && !hasDieBonus && !forcesFirst) return [];
+
+  tags.push("mechanic:initiative");
+
+  const dieMatch = text.match(/add a d(\d+)\s+to your initiative\b/i);
+  const dieFaces = dieMatch ? parseInt(dieMatch[1] ?? "0", 10) : 0;
+  if (forcesFirst || dieFaces >= 8) {
+    tags.push("mechanic:initiative:major");
+  }
+
+  return tags;
+}
+
+/**
+ * mechanic:heal-other:minor / :major — improves healing you provide to others
+ * (spell heal riders, Lay on Hands THP, HP-transfer heals). Not self-only
+ * Recovery Up / Hasten Recovery.
+ */
+function healOtherTag(text: string): string | null {
+  // Spell restore to a creature + additional HP (Astalos Scissortail / +)
+  if (
+    /restore hit points to a creature/i.test(text) &&
+    /additional hit points/i.test(text)
+  ) {
+    if (
+      /double the spell(?:'s|’s)? level/i.test(text) ||
+      /twice the spell(?:'s|’s)? level/i.test(text) ||
+      /additional hit points equal to double/i.test(text)
+    ) {
+      return "mechanic:heal-other:major";
+    }
+    return "mechanic:heal-other:minor";
+  }
+
+  // Lay on Hands outgoing restore + THP rider
+  if (/Lay on Hands/i.test(text) && /restore a creature'?s? hit points/i.test(text)) {
+    if (/you and the creature gain temporary hit points/i.test(text)) {
+      return "mechanic:heal-other:major";
+    }
+    if (/gains? temporary hit points equal to the amount healed/i.test(text)) {
+      return "mechanic:heal-other:minor";
+    }
+  }
+
+  // Direct transfer heal to another creature (Malzeno Tail)
+  if (/heal another creature/i.test(text)) {
+    return "mechanic:heal-other:major";
+  }
+
+  // Generic "when you heal a creature" with a meaningful rider (Benediction DR)
+  // — still an outgoing-heal package, minor unless the text scales hard.
+  if (
+    /when you heal a creature\b/i.test(text) &&
+    /hit points you healed/i.test(text)
+  ) {
+    return "mechanic:heal-other:minor";
+  }
+
+  return null;
 }
 
 /**
@@ -786,6 +884,8 @@ function passiveActiveTags(text: string, tags: Set<string>): string[] {
 
   if (isActive) return ["mechanic:active"];
 
+  if (tags.has("mechanic:end-dot")) return ["mechanic:passive"];
+
   const isPassive =
     /while you (?:wear|are wearing|are attuned|hold)|while (?:wearing|attuned|holding|you wear)/i.test(
       text,
@@ -1029,6 +1129,22 @@ function preparedSpellTag(text: string, tags: Set<string>): string | null {
 }
 
 /**
+ * mechanic:end-dot — ends ongoing damage-over-time on you at the start of your
+ * turn (Recovery Level: bleeding, acid/poison DoT, on fire, …).
+ */
+function endDotTag(text: string): string | null {
+  const cleansesAtTurnStart =
+    /damage to you at the start of your turn/i.test(text) &&
+    /ends the effect/i.test(text);
+  const describesDotCleanse =
+    /continues to damage you over time/i.test(text) &&
+    /ends the effect/i.test(text);
+  return cleansesAtTurnStart || describesDotCleanse
+    ? "mechanic:end-dot"
+    : null;
+}
+
+/**
  * type:offensive  → más daño (extra damage, named criticals, buffs de ataque/daño)
  * type:defensive  → menos daño recibido o bonus de AC
  * type:support    → ayuda a aliados o menciona criaturas willing
@@ -1047,6 +1163,8 @@ function typeTags(text: string): string[] {
     )
   ) {
     tags.push("type:support");
+  } else if (healOtherTag(text) != null) {
+    tags.push("type:support");
   }
 
   const isDefensive =
@@ -1054,6 +1172,7 @@ function typeTags(text: string): string[] {
     /resist(?:ant|ance) to\s+\w/i.test(text) ||
     /immune to|immunity to/i.test(text) ||
     conditionImmunityCannotBeTag(text) != null ||
+    endDotTag(text) != null ||
     /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i.test(
       text,
     ) ||
@@ -1077,7 +1196,10 @@ function typeTags(text: string): string[] {
     /(?:attack|damage) roll.*\+\d+/i.test(text) ||
     /spell attack\s+roll|spell damage|damage roll/i.test(text) ||
     (/\{@condition/i.test(text) && /(?:hit|attack|strike|on a hit)/i.test(text)) ||
-    /(?:deals?|extra|takes?)\s+(?:\{@damage\s+)?\d+d\d+/i.test(text) ||
+    new RegExp(
+      String.raw`(?:deals?|dealing|extra|takes?|taking)\s+(?:an?\s+)?(?:additional\s+)?${DAMAGE_AMOUNT.source}`,
+      "i",
+    ).test(text) ||
     (/\{@spell/i.test(text) && /deals?\s+\w+\s+damage/i.test(text)) ||
     (/\badvantage\b/i.test(text) &&
       /\b(?:the )?attack rolls?\b/i.test(text) &&
@@ -1143,6 +1265,9 @@ function extractTags(
   const heal = healingTag(effectText);
   if (heal) tags.add(heal);
 
+  const healOther = healOtherTag(effectText);
+  if (healOther) tags.add(healOther);
+
   for (const spell of spellTags(effectText, spellLevels)) {
     tags.add(spell);
   }
@@ -1177,6 +1302,10 @@ function extractTags(
     tags.add(rollTag);
   }
 
+  for (const initiativeTag of initiativeTags(effectText)) {
+    tags.add(initiativeTag);
+  }
+
   for (const conditionTag of conditionNameTags(effectText)) {
     tags.add(conditionTag);
   }
@@ -1189,6 +1318,9 @@ function extractTags(
 
   const againstCondition = againstConditionTag(effectText);
   if (againstCondition) tags.add(againstCondition);
+
+  const endDot = endDotTag(effectText);
+  if (endDot) tags.add(endDot);
 
   for (const itemTag of itemRelatedTags(effectText)) {
     tags.add(itemTag);

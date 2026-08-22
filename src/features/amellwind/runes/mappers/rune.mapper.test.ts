@@ -549,6 +549,131 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     expect(tags).not.toContain("type:offensive");
   });
 
+  it("tags MHMM 'pushed back' + average-dice AoE cone (Zorah Magdaros)", () => {
+    const tags = extractRuneEffectTags(
+      "(Melee Weapon Only) When you hit a creature with this weapon, it must succeed on a DC 17 Strength saving throw or be pushed back 10 feet. If the saving throw fails by 5 or more, it is also knocked prone. Additionally, when a creature fails its saving throw, you can speak the weapon's command word to create a wave of molten rock that erupts from the ground in a 30-foot cone in front you, dealing 22 (4d10) fire damage to each creature in the area. Once you use this property, you can't use it again until you finish a long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:melee",
+        "mechanic:push",
+        "mechanic:area",
+        "mechanic:saving-throw",
+        "mechanic:condition",
+        "mechanic:condition-prone",
+        "mechanic:long-rest",
+        "damage:fire",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("does not tag Guard 'cannot be pushed' as push", () => {
+    const tags = extractRuneEffectTags(
+      "Guard. You cannot be pushed or knocked backwards while you wear this armor.",
+    );
+    expect(tags).not.toContain("mechanic:push");
+  });
+
+  it("tags Recovery Level DoT cleanse as end-dot, passive, defensive", () => {
+    const tags = extractRuneEffectTags(
+      "Recovery Level. Whenever you suffer an effect that deals damage to you at the start of your turn your armor flashes white and ends the effect. This could include such effects as a bleeding wound, acid or poison that continues to damage you over time, being set on fire, etc. This armor has no effect on environmental effects, damage that you take from being in a given location or spell's area of effect or similar damage sources.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:end-dot",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+    expect(tags).not.toContain("damage:acid");
+    expect(tags).not.toContain("damage:poison");
+    expect(tags).not.toContain("mechanic:area");
+  });
+
+  it("tags always-on initiative advantage", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on initiative rolls while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:initiative",
+        "mechanic:advantage",
+        "mechanic:passive",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:initiative:major");
+  });
+
+  it("tags Safi-style initiative die + go-first as major", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this weapon you add a d8 to your initiative at the start of every combat. Additionally, this weapon has one rune. You can expend this rune at the start of combat to become first in the initiative order, no matter what you roll.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:initiative",
+        "mechanic:initiative:major",
+      ]),
+    );
+  });
+
+  it("does not tag FastCharge initiative triggers as initiative buffs", () => {
+    const tags = extractRuneEffectTags(
+      "FastCharge. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 1 charge, spirit, or phial charge.",
+    );
+    expect(tags).not.toContain("mechanic:initiative");
+  });
+
+  it("tags Astalos-style spell heal rider as heal-other minor", () => {
+    const tags = extractRuneEffectTags(
+      "(Cleric & Paladin Only) While you are attuned to this weapon, whenever you use a spell of 1st-level or higher to restore hit points to a creature, the creature regains additional hit points equal to the spell's level.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:heal-other:minor",
+        "type:support",
+        "class:cleric",
+        "class:paladin",
+      ]),
+    );
+  });
+
+  it("tags Astalos+ double spell-level heal as heal-other major", () => {
+    const tags = extractRuneEffectTags(
+      "(Cleric & Paladin only) While you are attuned to this weapon, whenever you use a spell of 1st-level or higher to restore hit points to a creature, the creature regains additional hit points equal to double the spell's level.",
+    );
+
+    expect(tags).toContain("mechanic:heal-other:major");
+  });
+
+  it("tags Lay on Hands THP rider as heal-other", () => {
+    const tags = extractRuneEffectTags(
+      "(Paladin Only) Whenever you restore a creature's hit points with your Lay on Hands feature, it gains temporary hit points equal to the amount healed until the start of your next turn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:heal-other:minor",
+        "type:support",
+        "class:paladin",
+      ]),
+    );
+  });
+
+  it("tags Malzeno HP-transfer heal as heal-other major", () => {
+    const tags = extractRuneEffectTags(
+      "This armor has three runes. As a bonus action you can expend 1 or more runes to lose 1d8 hit points for each rune expended and heal another creature you can see within 30 feet of you for double the amount of hit points you lost.",
+    );
+
+    expect(tags).toContain("mechanic:heal-other:major");
+    expect(tags).toContain("type:support");
+  });
+
   it("does not tag incoming unarmed-strike thorns as unarmed", () => {
     const tags = extractRuneEffectTags(
       "While you wear this armor, any creature that hits you with a melee weapon, an unarmed strike, or a natural melee weapon takes 1d6 fire damage.",
@@ -1134,9 +1259,36 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
 
 describe("isPlaceableRune", () => {
   it("accepts armor/weapon slot materials and rejects empty (O) slots", () => {
-    expect(isPlaceableRune({ slots: ["A"] })).toBe(true);
-    expect(isPlaceableRune({ slots: ["W"] })).toBe(true);
-    expect(isPlaceableRune({ slots: ["A", "W"] })).toBe(true);
-    expect(isPlaceableRune({ slots: [] })).toBe(false);
+    expect(
+      isPlaceableRune({
+        slots: ["A"],
+        armorEffect: "You have resistance to fire damage.",
+        weaponEffect: null,
+      }),
+    ).toBe(true);
+    expect(
+      isPlaceableRune({
+        slots: ["W"],
+        armorEffect: null,
+        weaponEffect: "Your weapon deals an extra 1d6 fire damage.",
+      }),
+    ).toBe(true);
+    expect(
+      isPlaceableRune({
+        slots: ["A", "W"],
+        armorEffect: "You have resistance to fire damage.",
+        weaponEffect: "Your weapon deals an extra 1d6 fire damage.",
+      }),
+    ).toBe(true);
+    expect(
+      isPlaceableRune({ slots: [], armorEffect: null, weaponEffect: null }),
+    ).toBe(false);
+    expect(
+      isPlaceableRune({
+        slots: ["A"],
+        armorEffect: null,
+        weaponEffect: null,
+      }),
+    ).toBe(false);
   });
 });
