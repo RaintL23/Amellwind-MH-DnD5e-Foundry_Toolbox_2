@@ -453,7 +453,7 @@ export function useIdentitySlice({
     setSpeciesDataLoading(true);
 
     resolveSpeciesParts(species)
-      .then(({ base, dndSubrace }) => {
+      .then(({ base, dndSubrace, mhSubrace }) => {
         if (cancelled) return;
 
         if (!base) {
@@ -461,9 +461,10 @@ export function useIdentitySlice({
           return;
         }
 
+        const subrace = mhSubrace ?? dndSubrace;
         const abilityBonuses = [
           ...base.abilityBonuses,
-          ...(dndSubrace?.abilityBonuses ?? []),
+          ...(subrace?.abilityBonuses ?? []),
         ];
         const displayName = species.subraceName
           ? `${base.name} (${species.subraceName})`
@@ -499,11 +500,11 @@ export function useIdentitySlice({
     let cancelled = false;
 
     async function loadOriginFeatGrant() {
-      const { base, dndSubrace } = await resolveSpeciesParts(species!);
+      const { base, dndSubrace, mhSubrace } = await resolveSpeciesParts(species!);
       if (cancelled) return;
 
       const grant =
-        base?.originFeatGrant ?? dndSubrace?.originFeatGrant ?? null;
+        base?.originFeatGrant ?? dndSubrace?.originFeatGrant ?? mhSubrace?.originFeatGrant ?? null;
       setSpeciesOriginFeatGrant(grant);
 
       if (!grant) {

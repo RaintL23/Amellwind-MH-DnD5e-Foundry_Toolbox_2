@@ -20,7 +20,7 @@ export function useResolvedSpecies(): ResolvedSpeciesData | null {
 
     let cancelled = false;
 
-    resolveSpeciesParts(speciesRef).then(({ base, dndSubrace }) => {
+    resolveSpeciesParts(speciesRef).then(({ base, dndSubrace, mhSubrace }) => {
       if (cancelled) return;
       if (!base) {
         setData(null);
@@ -30,9 +30,10 @@ export function useResolvedSpecies(): ResolvedSpeciesData | null {
       const displayName = speciesRef.subraceName
         ? `${base.name} (${speciesRef.subraceName})`
         : base.name;
+      const subrace = mhSubrace ?? dndSubrace;
       const traits = [
         ...base.traits,
-        ...(dndSubrace?.traits ?? []),
+        ...(subrace?.traits ?? []),
       ];
 
       setData({ name: displayName, traits });

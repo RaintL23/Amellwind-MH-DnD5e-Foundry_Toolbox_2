@@ -14,26 +14,33 @@ export interface ResolvedSpeciesParts {
   mhSpecies: Species | undefined;
   /** D&D race base entry (if the id matches one). */
   dndRace: DndRace | undefined;
-  /** D&D subrace entry (only when a subraceId is selected). */
+  /** D&D subrace entry (only when a subraceId is selected for a D&D race). */
   dndSubrace: DndRace | undefined;
+  /** Amellwind subspecies entry (only when a subraceId is selected for an MH species). */
+  mhSubrace: Species | undefined;
   /** Preferred base entry: MH species takes precedence over the D&D race. */
   base: Species | DndRace | undefined;
 }
 
 /**
  * Resolves a species selection against both the MH species catalog and the
- * D&D race catalog (plus the optional subrace). Centralizes the fetch triplet
- * (`getSpeciesById` + `getDndRaceById` + optional subrace) that several builder
- * hooks/utilities relied on, keeping the `mhSpecies ?? dndRace` precedence.
+ * D&D race catalog (plus the optional subrace). Centralizes the fetch quartet
+ * (`getSpeciesById` + `getDndRaceById` + optional subrace from both catalogs)
+ * that several builder hooks/utilities rely on, keeping the
+ * `mhSpecies ?? dndRace` precedence. MH subraces are also Species entries
+ * (stored with `isSubrace: true`), so we check both catalogs for the subrace.
  */
 export async function resolveSpeciesParts(
   species: SpeciesResolutionRef,
 ): Promise<ResolvedSpeciesParts> {
-  const [mhSpecies, dndRace, dndSubrace] = await Promise.all([
+  const [mhSpecies, dndRace, dndSubrace, mhSubrace] = await Promise.all([
     getSpeciesById(species.id),
     getDndRaceById(species.id),
     species.subraceId
       ? getDndRaceById(species.subraceId)
+      : Promise.resolve(undefined),
+    species.subraceId
+      ? getSpeciesById(species.subraceId)
       : Promise.resolve(undefined),
   ]);
 
@@ -41,6 +48,7 @@ export async function resolveSpeciesParts(
     mhSpecies,
     dndRace,
     dndSubrace,
+    mhSubrace,
     base: mhSpecies ?? dndRace,
   };
 }

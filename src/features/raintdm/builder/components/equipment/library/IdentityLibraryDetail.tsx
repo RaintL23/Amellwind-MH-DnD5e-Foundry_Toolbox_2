@@ -49,6 +49,8 @@ interface IdentityLibraryDetailProps {
   subspeciesTraits?: SpeciesTrait[];
   subspeciesLabel?: string | null;
   subspeciesAbilitySummary?: string | null;
+  /** Flavor/description text for the selected subspecies (Amellwind). */
+  subspeciesFluff?: string | null;
   bookNames?: BookSourceNameMap;
   startingEquipmentOffers?: StartingEquipmentOffers;
   startingEquipmentSource?: StartingEquipmentSource;
@@ -318,6 +320,7 @@ function SpeciesDetailBody({
   subspeciesTraits = [],
   subspeciesLabel,
   subspeciesAbilitySummary,
+  subspeciesFluff,
   namedSpellGroups,
   universalCantrips,
   activeLegacyId,
@@ -326,6 +329,7 @@ function SpeciesDetailBody({
   subspeciesTraits?: SpeciesTrait[];
   subspeciesLabel?: string | null;
   subspeciesAbilitySummary?: string | null;
+  subspeciesFluff?: string | null;
   namedSpellGroups?: SpeciesNamedSpellGroup[];
   universalCantrips?: string[];
   activeLegacyId?: string | null;
@@ -406,19 +410,46 @@ function SpeciesDetailBody({
         traitNameClass="text-foreground"
       />
 
-      {subspeciesTraits.length > 0 && (
-        <TraitList
-          traits={subspeciesTraits}
-          heading={
-            subspeciesLabel
-              ? `Lineage Traits — ${subspeciesLabel}`
-              : "Lineage Traits"
-          }
-          headingClass="text-sky-400"
-          traitNameClass="text-sky-300"
-          bodyClass="text-sky-100/70"
-          containerClass="subspecies-trait"
-        />
+      {(subspeciesFluff || subspeciesTraits.length > 0) && (
+        <>
+          <Separator className="my-3" />
+          <h3 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-sky-400">
+            {subspeciesLabel ? `Subspecies — ${subspeciesLabel}` : "Subspecies"}
+          </h3>
+          {subspeciesFluff && (
+            <p className="mb-2 border-l-2 border-sky-800/40 pl-2 text-xs italic leading-relaxed text-muted-foreground whitespace-pre-line">
+              {subspeciesFluff}
+            </p>
+          )}
+          {subspeciesTraits.length > 0 && (
+            <div className="space-y-3">
+              {subspeciesTraits.map((trait) => (
+                <div
+                  key={trait.name}
+                  className="rounded-md border border-sky-500/20 bg-sky-500/5 px-2 py-1.5"
+                >
+                  <h4 className="mb-0.5 text-xs font-semibold text-sky-300">
+                    {trait.name}
+                  </h4>
+                  {(trait.entries ?? []).map((paragraph, i) => (
+                    <p
+                      key={`${trait.name}-entry-${i}`}
+                      className="mb-1 text-xs leading-relaxed text-sky-100/70"
+                    >
+                      <DndRichText text={paragraph} />
+                    </p>
+                  ))}
+                  {trait.tables?.map((table, i) => (
+                    <DetailTable
+                      key={table.caption ?? `${trait.name}-table-${i}`}
+                      {...table}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </>
   );
@@ -552,6 +583,7 @@ export function IdentityLibraryDetail({
   subspeciesTraits = [],
   subspeciesLabel,
   subspeciesAbilitySummary,
+  subspeciesFluff,
   bookNames = {},
   startingEquipmentOffers,
   startingEquipmentSource,
@@ -661,6 +693,7 @@ export function IdentityLibraryDetail({
               subspeciesTraits={subspeciesTraits}
               subspeciesLabel={subspeciesLabel}
               subspeciesAbilitySummary={subspeciesAbilitySummary}
+              subspeciesFluff={subspeciesFluff}
               namedSpellGroups={namedSpellGroups}
               universalCantrips={universalCantrips}
               activeLegacyId={activeLegacyId}

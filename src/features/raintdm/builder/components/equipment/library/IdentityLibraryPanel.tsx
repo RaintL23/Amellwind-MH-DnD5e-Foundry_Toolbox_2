@@ -4,6 +4,7 @@ import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import {
   getAllSpecies,
   getSpeciesById,
+  getSubracesOf,
 } from "@/features/amellwind/species/services/species.service";
 import {
   getBuilderListDndRaces,
@@ -90,6 +91,8 @@ export function IdentityLibraryPanel({
   const [dndSubraceOptions, setDndSubraceOptions] = useState<NamedVariant[]>(
     [],
   );
+  const [mhSubraceOptions, setMhSubraceOptions] = useState<NamedVariant[]>([]);
+  const [mhSubraceDetail, setMhSubraceDetail] = useState<Species | null>(null);
   const [identityDetailLoading, setIdentityDetailLoading] = useState(false);
 
   const {
@@ -220,6 +223,8 @@ export function IdentityLibraryPanel({
     setIdentitySubraceDetail(null);
     setLoadedDndRaceBase(null);
     setDndSubraceOptions([]);
+    setMhSubraceOptions([]);
+    setMhSubraceDetail(null);
 
     async function loadIdentityDetail() {
       if (isSpeciesSlot && identitySource === "dnd") {
@@ -253,6 +258,37 @@ export function IdentityLibraryPanel({
 
         if (selectedSubrace) {
           setIdentitySubraceDetail(selectedSubrace);
+        }
+        return;
+      }
+
+      if (isSpeciesSlot && identitySource === "amellwind") {
+        const data = await getSpeciesById(selectedIdentity!.id);
+        if (cancelled || !data) return;
+
+        setIdentityDetail(data as Species);
+
+        const subraces = await getSubracesOf(data.name);
+        if (cancelled) return;
+
+        setMhSubraceOptions(
+          subraces.map((s) => ({ id: s.id, name: s.name })),
+        );
+
+        if (selectedIdentity!.subraceId) {
+          const selected = subraces.find(
+            (s) => s.id === selectedIdentity!.subraceId,
+          );
+          if (!selected) {
+            setSpecies({
+              id: selectedIdentity!.id,
+              name: selectedIdentity!.name,
+              subraceId: null,
+              subraceName: null,
+            });
+          } else {
+            setMhSubraceDetail(selected);
+          }
         }
         return;
       }
@@ -332,7 +368,9 @@ export function IdentityLibraryPanel({
       });
       return;
     }
-    const option = dndSubraceOptions.find((entry) => entry.id === subraceId);
+    const options =
+      identitySource === "dnd" ? dndSubraceOptions : mhSubraceOptions;
+    const option = options.find((entry) => entry.id === subraceId);
     if (!option) return;
     setSpecies({
       id: selectedIdentity.id,
@@ -355,6 +393,29 @@ export function IdentityLibraryPanel({
         id: g.name,
         name: g.name,
       }));
+
+      const activeSubraceOptions =
+        identitySource === "dnd"
+          ? dndSubraceOptions.length > 0
+            ? dndSubraceOptions
+            : undefined
+          : mhSubraceOptions.length > 0
+            ? mhSubraceOptions
+            : undefined;
+
+      const activeSubraceTraits =
+        identitySource === "dnd"
+          ? (identitySubraceDetail?.traits ?? [])
+          : (mhSubraceDetail?.traits ?? []);
+
+      const activeSubraceAbilitySummary =
+        identitySource === "dnd"
+          ? (identitySubraceDetail?.abilitySummary ?? null)
+          : (mhSubraceDetail?.abilitySummary ?? null);
+
+      const activeSubraceFluff =
+        identitySource === "amellwind" ? (mhSubraceDetail?.fluff ?? null) : null;
+
       return (
         <IdentityLibraryDetail
           species={identityDetail}
@@ -367,17 +428,14 @@ export function IdentityLibraryPanel({
               ? handleDndIdentitySourceSelect
               : undefined
           }
-          subspeciesOptions={
-            identitySource === "dnd" ? dndSubraceOptions : undefined
-          }
+          subspeciesOptions={activeSubraceOptions}
           activeSubspeciesId={selectedIdentity?.subraceId ?? null}
           onSubspeciesSelect={
-            identitySource === "dnd" ? handleSubspeciesSelect : undefined
+            activeSubraceOptions ? handleSubspeciesSelect : undefined
           }
-          subspeciesTraits={identitySubraceDetail?.traits ?? []}
-          subspeciesAbilitySummary={
-            identitySubraceDetail?.abilitySummary ?? null
-          }
+          subspeciesTraits={activeSubraceTraits}
+          subspeciesAbilitySummary={activeSubraceAbilitySummary}
+          subspeciesFluff={activeSubraceFluff}
           subspeciesLabel={selectedIdentity?.subraceName ?? null}
           bookNames={identityBookNames}
           namedSpellGroups={dndBase?.namedSpellGroups}
