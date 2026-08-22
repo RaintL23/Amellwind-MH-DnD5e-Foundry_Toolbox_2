@@ -8,6 +8,7 @@ import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { slugifyKebab } from "@/shared/utils/slugify.utils";
 import { inferInlineDamageDefenseRarity } from "./inline-defense-rarity.utils";
 import { inferInlineExtraDamageRarity } from "./inline-extra-damage-rarity.utils";
+import { inferRarityFromAcBonus } from "./inline-ac-bonus-rarity.utils";
 import { inferRarityFromAttackAdvantageTags } from "./inline-attack-advantage-rarity.utils";
 import { inferRarityFromAttackRangeTags } from "./inline-attack-range-rarity.utils";
 import { inferRarityFromAcceleratedRestTags } from "./inline-accelerated-rest-rarity.utils";
@@ -21,6 +22,7 @@ import { inferRarityFromMovementTags } from "./inline-movement-rarity.utils";
 import { inferRarityFromReactionAttackTags } from "./inline-reaction-attack-rarity.utils";
 import { inferRarityFromRoll20UtilityTags } from "./inline-roll-20-rarity.utils";
 import { inferRarityFromSkillUtilityTags } from "./inline-skill-rarity.utils";
+import { inferRarityFromSpellBuff } from "./inline-spell-buff-rarity.utils";
 import { inferRarityFromSpellMechanicTags } from "./inline-spell-rarity.utils";
 import { inferRarityFromSpellcastingFocusTags } from "./inline-spellcasting-focus-rarity.utils";
 import { lookupDiscoveredEffectRarity } from "../data/discovered-effect-rarity.data";
@@ -345,6 +347,12 @@ export function getMaterialEffectTierForText(
   const spellcastingFocusRarity =
     inferRarityFromSpellcastingFocusTags(effectTags);
   if (spellcastingFocusRarity) return spellcastingFocusRarity;
+
+  const spellBuffRarity = inferRarityFromSpellBuff(text, effectTags);
+  if (spellBuffRarity) return spellBuffRarity;
+
+  const acBonusRarity = inferRarityFromAcBonus(text, effectTags);
+  if (acBonusRarity) return acBonusRarity;
 
   const conditionDefenseRarity =
     inferRarityFromConditionDefenseTags(effectTags);

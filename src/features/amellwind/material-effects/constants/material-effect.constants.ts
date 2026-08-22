@@ -181,6 +181,28 @@ export const INLINE_LIGHT_RARITY: ResourceRarity = "Common";
 export const INLINE_SPELLCASTING_FOCUS_RARITY: ResourceRarity = "Common";
 
 /**
+ * Flat +N to AC or to spell attack / spell save DC (Cloak of Protection /
+ * Rod of the Pact Keeper–adjacent). Index 0 unused; amounts ≥ table length
+ * use the last band.
+ */
+export const INLINE_FLAT_BONUS_ALWAYS_RARITY: ResourceRarity[] = [
+  "Common", // placeholder for 0
+  "Uncommon", // +1
+  "Rare", // +2
+  "Very Rare", // +3
+  "Legendary", // +4+
+];
+
+/** Limited / reaction / short-duration flat bonus — one step below always-on. */
+export const INLINE_FLAT_BONUS_LIMITED_RARITY: ResourceRarity[] = [
+  "Common", // placeholder for 0
+  "Common", // +1
+  "Uncommon", // +2
+  "Rare", // +3
+  "Very Rare", // +4+
+];
+
+/**
  * Always-on darkvision grant (Goggles of Night–adjacent).
  */
 export const INLINE_DARKVISION_RARITY: ResourceRarity = "Uncommon";

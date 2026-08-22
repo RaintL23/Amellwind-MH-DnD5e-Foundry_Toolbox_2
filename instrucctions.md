@@ -720,7 +720,9 @@ Se detectan buscando palabras clave o marcado de 5etools en el cuerpo del texto 
 | `mechanic:skill-bonus`   | Contiene `+N bonus on/to` junto a `{@skill` **o** prosa (`+2 bonus to Athletics checks` / `Climb checks`)              |
 | `mechanic:skill-{name}`  | Por cada `{@skill Name}` o nombre bare de skill cerca de `checks` (p. ej. Insight → `skill-insight`). Alias MHMM: Climb → Athletics |
 | `mechanic:disarm`        | Contiene `disarmed` (p. ej. *advantage on checks against being disarmed*)                                              |
-| `mechanic:ac`            | Contiene `\bAC\b` o `armor class`                                                                                      |
+| `mechanic:armor-class`   | Contiene `\bAC\b` o `armor class`                                                                                      |
+| `mechanic:spell-buff:save` | Bonus / incremento al *spell save DC* (`+N bonus to … spell save DC`, `increase the spell save DC by N`). No aplica a bancos de runas (*cast … using your spell save DC*) |
+| `mechanic:spell-buff:damage` | Bonus / ventaja a *spell attack rolls* / *spell attack bonus* o daño de hechizos. Acepta `+ N`, `gain +N to spell attack`, etc. |
 | `mechanic:condition`     | Contiene `{@condition`, inmunidad a una condición, o un nombre conocido (PHB + blight MH: poisoned, stunned, waterblight, frenzy virus, …) |
 | `mechanic:condition-{n}` | Por cada condición nombrada (p. ej. stunned → `condition-stunned`, poisoned → `condition-poisoned`, waterblight → `condition-waterblight`). Alias: `paralysis` → `paralyzed`. |
 | `mechanic:against-condition` | Ayuda a **evitar** adquirir una condición (advantage / save-bonus en saves vs being X / *the X condition* / *or be knocked prone* / paralysis, *can't be afflicted with*). **No** incluye inmunidad total a la condición |
@@ -874,6 +876,17 @@ Si hay varios, gana la rareza más alta. Solo `darkness` / `nonmagical-darkness`
 | 9 | **Legendary** |
 
 **Spellcasting focus** (`inline-spellcasting-focus-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:spellcasting-focus` (p. ej. *use this weapon as your spellcasting focus*): **Common** (como *Ruby of the War Mage*).
+
+**Bonus plano a AC / spell attack / spell save DC** (`inline-ac-bonus-rarity.utils.ts`, `inline-spell-buff-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown. Requiere `mechanic:armor-class` con un `+N` parseable, o `mechanic:spell-buff:*` con `+N` (se ignora el bump *This bonus increases to +N when…*). Bandas al estilo *Cloak of Protection* / *Rod of the Pact Keeper*:
+
+| +N | Always-on (`passive`) | Limited (`active` / reaction / BA) |
+| --- | --- | --- |
+| +1 | **Uncommon** | **Common** |
+| +2 | **Rare** | **Uncommon** |
+| +3 | **Very Rare** | **Rare** |
+| +4+ | **Legendary** | **Very Rare** |
+
+Ejemplos: Rathalos Carapace (+1 AC) → Uncommon; Shield reaction +1 AC → Common; Gravios Jewel (+2 spell attack/DC) → Rare; Amatsu Pleura (+3) → Very Rare.
 
 **Ventaja / bonus vs condición** (`inline-condition-rarity.utils.ts`) — **solo si** tras defensa/daño/hechizo la rareza seguiría en Unknown, y el efecto tiene `mechanic:against-condition` + (`mechanic:advantage` **o** `mechanic:save-bonus`) **sin** `mechanic:immunity` (p. ej. *advantage on saving throws against the poisoned condition*, o *+2 bonus* vs knocked prone): **Common**.
 

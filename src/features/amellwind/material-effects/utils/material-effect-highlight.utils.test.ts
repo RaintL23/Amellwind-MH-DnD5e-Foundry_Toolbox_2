@@ -357,6 +357,58 @@ describe("getMaterialEffectTierForText — spellcasting focus when Unknown", () 
   });
 });
 
+describe("getMaterialEffectTierForText — spell-buff when Unknown", () => {
+  it("assigns Rare to always-on +2 spell attack and save DC", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You gain a +2 bonus to your spell attack rolls and spell save DC while attuned to this weapon.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:spell-buff:damage",
+          "mechanic:spell-buff:save",
+          "mechanic:passive",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon to always-on +1 spell attack", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While attuned to this weapon, you gain a +1 bonus to your spell attack rolls when casting fire spells.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:spell-buff:damage", "mechanic:passive"],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — AC bonus when Unknown", () => {
+  it("assigns Uncommon to always-on +1 AC", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You have a +1 bonus to your AC while you wear this armor.",
+        "armor",
+        emptyIndex,
+        ["mechanic:armor-class", "mechanic:passive", "type:defensive"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Common to reaction Shield +1 AC", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are attuned to this armor and you use a reaction that would increase your AC, you gain an additional +1 bonus to your AC until the start of your next turn.",
+        "armor",
+        emptyIndex,
+        ["mechanic:armor-class", "mechanic:reaction", "mechanic:active"],
+      ),
+    ).toBe("Common");
+  });
+});
+
 describe("getMaterialEffectTierForText — gather resources when Unknown", () => {
   it("assigns Uncommon to Expert Fisherman (x2 catch)", () => {
     expect(
