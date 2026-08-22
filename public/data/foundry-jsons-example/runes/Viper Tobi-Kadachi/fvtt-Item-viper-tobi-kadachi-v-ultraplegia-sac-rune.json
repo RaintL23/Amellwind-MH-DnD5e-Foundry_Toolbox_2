@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Viper Tobi-Kadachi | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<p>Whenever you make a saving throw against the @condition[paralyzed] condition, you do so with @variantrule[Advantage|XPHB].</p>\n<p><em><strong>Tags:</strong> mechanic:advantage, mechanic:condition, mechanic:saving-throw, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Viper Tobi-Kadachi | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p><em>(Bard, Cleric, Druid, Sorcerer, Warlock, &amp; Wizard Only)</em> While attuned to this weapon you can cast the @spell[hold person] spell from it, without expending a spell slot. You can use this property twice, regaining all expended uses when you finish a long rest.</p>\n<h3>Armor Effect</h3>\n<p>Whenever you make a saving throw against the @condition[paralyzed] condition, you do so with @variantrule[Advantage|XPHB].</p>\n<p><em><strong>Tags:</strong> class:spellcaster, mechanic:spell:lvl1-2, mechanic:long-rest, type:offensive, mechanic:advantage, mechanic:condition, mechanic:saving-throw, type:defensive</em></p>",
       "chat": ""
     },
     "identifier": "vultraplegiasacrune",
@@ -43,7 +43,119 @@
     "properties": [],
     "proficient": null,
     "strength": null,
-    "activities": {},
+    "activities": {
+      "ultraplegiaholdperson": {
+        "_id": "ultraplegiaholdperson",
+        "type": "utility",
+        "sort": 0,
+        "name": "Hold Person",
+        "img": "mh-icons/material-rune.webp",
+        "activation": {
+          "type": "action",
+          "value": null,
+          "condition": "Weapon side active — spellcasters only (Bard, Cleric, Druid, Sorcerer, Warlock, Wizard)",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "activityUses",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Cast hold person without a spell slot. 2/long rest."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "60",
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": "Humanoid only"
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "2",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll"
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "hold-person",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
     "container": null,
     "cover": null,
     "crewed": false,
@@ -101,6 +213,57 @@
         },
         "amellwind-toolbox": {
           "runeController": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "ultraplegiaweaponfx",
+      "name": "V.Ultraplegia Sac - Hold Person",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Cast hold person without a spell slot. 2/long rest (use activity; casters only).",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Hold Person"
         }
       },
       "_stats": {
@@ -178,6 +341,9 @@
       "monsterName": "Viper Tobi-Kadachi",
       "unified": true,
       "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Hold Person"
+        },
         "armor": {
           "label": "Armor Effect — Paralysis Resistance"
         }
