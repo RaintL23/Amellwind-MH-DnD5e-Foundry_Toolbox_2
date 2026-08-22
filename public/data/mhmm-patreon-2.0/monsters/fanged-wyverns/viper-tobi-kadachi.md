@@ -135,7 +135,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** —
 - **Capture:** 8-10
 - **Armor effect:** You have advantage on saving throws against the poisoned condition while you wear this armor.
-- **Weapon effect:** Your poison spells and attacks with this weapon deal an extra 1d4 poison damage. Ultraplegia Sac (Bard, Cleric, Druid, Sorcerer, Warlock, & Wizard Only) While attuned to this weapon you can cast the hold person spell from it, without expending a spell slot. You can use this property twice, regaining all expended uses when you finish a long rest.
+- **Weapon effect:** Your poison spells and attacks with this weapon deal an extra 1d4 poison damage.
 
 ### V.Tobi-Kadachi Membrane
 
@@ -164,6 +164,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** —
 - **Capture:** 18-19
 - **Armor effect:** Whenever you make a saving throw against the paralyzed condition, you do so with advantage.
+- **Weapon effect:** (Bard, Cleric, Druid, Sorcerer, Warlock, & Wizard Only) While attuned to this weapon you can cast the hold person spell from it, without expending a spell slot. You can use this property twice, regaining all expended uses when you finish a long rest.
 
 ### V.Kadachi Gem
 

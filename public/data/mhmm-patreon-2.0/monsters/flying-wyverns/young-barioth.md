@@ -97,6 +97,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 1-4
 - **Capture:** —
 - **Armor effect:** While wearing this armor, your breath takes on an icy, misty quality and you suffer no harm in temperature as cold as -20 degrees Fahrenheit while you wear this armor.
+- **Weapon effect:** In freezing temperatures, this weapon sheds bright light in a 10-foot radius and dim light for an additional 10 feet. When you draw this weapon, you can extinguish all nonmagical flames within 30 feet of you. This property can be used no more than once per hour.
 
 ### Y.Barioth Fur
 
@@ -104,6 +105,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 5-6
 - **Capture:** 1-6
 - **Armor effect:** You have a +3 bonus to Acrobatics checks while you wear this armor.
+- **Weapon effect:** While you are attuned to this weapon and you cast a spell that is a water or ice themed, it is cast as if it was one spell level higher. A spell cannot be increased beyond level 6 with this effect.
 
 ### Y.Barioth Talon
 
@@ -111,6 +113,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 7-10
 - **Capture:** 7-9
 - **Armor effect:** While you are attuned to this armor you can stand on and move across any liquid surface as if it were solid ground. You do this by temporarily freezing the ground beneath you as you walk on it.
+- **Weapon effect:** (Bow Only) As a bonus action you can freeze the air in your palm into an icicle nock it to your bow. The icicle acts as a normal armor, but when you hit a creature with this icicle, it deals cold damage instead of piercing damage.
 
 ### Freezer Sac
 
@@ -118,6 +121,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 11-13
 - **Capture:** 10-13
 - **Armor effect:** (Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 5 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 5 cold damage.
+- **Weapon effect:** (Light Bowgun Only) When you hit a creature with your water ammo it must make a DC 14 Constitution saving throw or have its movement speed reduced to 0 until the end of its next turn on a failed save. On a successful save, the creature's movement speed is reduced by 10 feet.
 
 ### Y.Barioth Spike
 
@@ -125,18 +129,21 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 14
 - **Capture:** 14-17
 - **Armor effect:** Evade Extender (S). You have a +1 bonus to Dexterity saving throws while you wear this armor.
+- **Weapon effect:** When you hit a creature with this weapon it must make a DC 10 Constitution saving throw or be diseased with Iceblight until the end of its next turn.
 
 ### Y.Barioth Tail
 
 - **Slots:** A, W
 - **Carve:** 15-19
 - **Capture:** —
+- **Weapon effect:** Critical Element (cold). When you critically hit with a weapon or spell that deals cold damage, you deal an extra 1d4 cold damage. Additionally, if a creature fails its saving throw by 5 or more against a spell that deals cold damage, you deal an extra 1d4 cold damage to it.
 
 ### Small Amber Tusks
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 18-20
+- **Weapon effect:** Your weapon deals an extra 1d6 cold damage.
 
 ## QA flags
 

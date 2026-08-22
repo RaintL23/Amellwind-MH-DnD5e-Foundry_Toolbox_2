@@ -125,6 +125,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 1-8
 - **Capture:** 1-3
 - **Armor effect:** (Spellcaster Only) While attuned to this armor, you can use an action to speak your armor's command work to cast the protection from energy (lightning) spell from it. you can use this property twice, regaining all expended uses when you finish a long rest.
+- **Weapon effect:** While holding your weapon, you can speak a command word and transform it into a fishing pole with a hook, a line, and a reel. You have a +1 bonus to checks to catch fish while using this fishing pole. Speaking the command word again changes the fishing pole back into the weapon.
 
 ### Dash Extract x2
 
@@ -145,24 +146,28 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 14-15
 - **Capture:** 10-13
 - **Armor effect:** Hunter Gatherer. While traveling as the Spotter of the group, you can roll twice a week on the mineral or bone resource table instead of once.
+- **Weapon effect:** While attuned to this weapon, you know the poison spray cantrip. if you already know the cantrip, the spell's range increases to 60 feet.
 
 ### Novacrystal
 
 - **Slots:** A, W
 - **Carve:** 16-17
 - **Capture:** —
+- **Weapon effect:** Blindsider. While attuned to this weapon, creatures have disadvantage on saving throws against being Blinded from effects and attacks caused by you.
 
 ### Gypceros Tail
 
 - **Slots:** A, W
 - **Carve:** 18-19
 - **Capture:** 14-19
+- **Weapon effect:** Resentment. Until the end of your turn, you gain a +1 bonus to attack and damage rolls against any creature that has damaged you since the end of your last turn.
 
 ### T.Gypceros Head
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 20
+- **Weapon effect:** While attuned to this weapon, you can conjure a hooded lantern as an action. The lantern hovers 10 feet off the ground and stays within 5 feet of you. While lit, this hooded lantern burns for 6 hours on 1 pint of oil, shedding bright light in a 30-foot radius and dim light for an additional 30 feet. Invisible creatures and objects are visible as long as they are in the lantern's bright light. You can use an action to lower the hood, reducing the light to dim light in a 5-foot radius.
 
 ## QA flags
 

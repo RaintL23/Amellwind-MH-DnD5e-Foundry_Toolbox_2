@@ -149,6 +149,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 1-4
 - **Capture:** —
 - **Armor effect:** You suffer no harm from temperatures as warm as 120 degrees Fahrenheit while you wear this armor.
+- **Weapon effect:** While attuned to this weapon, sand and dust whip around it like a micro dust devil.
 
 ### S.Barioth Fur
 
@@ -156,6 +157,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 5-6
 - **Capture:** 1-6
 - **Armor effect:** Stam Recov. When you take a long rest, you reduce your exhaustion by 2 levels instead of 1.
+- **Weapon effect:** (Spellcaster only) This weapon has 4 runes. While holding it, you can use an action to expend 1 or more of its charges to cast one of the following spells from it, using your spell save DC: mirror image (2 charges), or wall of sand (2 charges). The weapon regains 1d4 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week.
 
 ### S.Barioth Talon
 
@@ -163,21 +165,25 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 7-10
 - **Capture:** 7-9
 - **Armor effect:** Evade Extender (M). You gain a +2 bonus to Dexterity saving throws while you wear this armor.
+- **Weapon effect:** Your Dexterity score is 16 while attuned to this weapon. It has no effect on you if your Dexterity is already 16 or higher.
 
 ### Rugged Pleura
 
 - **Slots:** A, W
 - **Carve:** 11-14
 - **Capture:** 10-13
+- **Weapon effect:** Your weapon deals an extra 1d6 slashing damage.
 
 ### S.Barioth Lash
 
 - **Slots:** A, W
 - **Carve:** 15-19
 - **Capture:** 14-17
+- **Weapon effect:** (Druid, Sorcerer, & Wizard only) This weapon has 6 runes. While holding it, you can use an action to expend 1 or more of its runes to cast the dust devil spell from it. For 1 rune, you cast the 2nd-level version of the spell. You can increase the spell slot level by one for each additional rune you expend. The weapon regains 1d6 + 1 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week.
 
 ### Hvy Indigo Tusks
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 18-20
+- **Weapon effect:** Your weapon deals an extra 1d8 slashing damage.

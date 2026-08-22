@@ -180,6 +180,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 11-12
 - **Capture:** 12-16
 - **Armor effect:** While attuned to this armor you can use a bonus action to magically turn invisible until the start of your next turn or until you attack, make a damage roll, or force someone to make a saving throw. Once you use this property, you can't use it again until you finish a short or long rest.
+- **Weapon effect:** (Bard, druid, sorcerer, wizard only) While attuned to this weapon you can cast the confusion spell once a day, without expending a spell slot.
 
 ### Malfestio Tailblade
 
@@ -187,6 +188,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 13-18
 - **Capture:** 17-18
 - **Armor effect:** Health Boost. While wearing this armor, your hit point maximum increases by 1 for each character level you have.
+- **Weapon effect:** This weapon has 4 runes. It regains 1d4 expended runes daily at dawn. When you hit a creature with this weapon you can expend a rune to outline the target in a blue glow, that only you can see, for 1 minute. While the creature is outlined, you can always see them, even if they are invisible, so long as they are not behind full cover.
 
 ### Nightcloak Grandwing
 
@@ -194,6 +196,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 19
 - **Capture:** —
 - **Armor effect:** While you are attuned to this armor, you have proficiency in stealth, if you are already proficient then you gain expertise in stealth. While in dim light or darkness, you can take the Hide action as a bonus action.
+- **Weapon effect:** While you are holding this weapon, you can use an action to speak its command word to summon a giant owl for up to 8 hours. The owl can telepathically communicate with you at any range if you and it are on the same plane of existence. Once this property has been used, it can't be used again until the next dawn.
 
 ### Malfestio Goldfeather+
 
@@ -201,3 +204,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 19-20
 - **Armor effect:** You have resistance to thunder damage while you wear this armor.
+- **Weapon effect:** Nightcloak Soul. While you are attuned to this weapon you gain the following benefits: You can reload as a free action. You can set pitfall traps or shock traps as a bonus action. Your weapon attacks critical hit range is increased by 1. You can use a bonus action to conjure two earplugs in the shape of your choice.

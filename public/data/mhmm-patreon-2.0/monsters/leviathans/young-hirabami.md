@@ -123,12 +123,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 12-14
 - **Capture:** 10-12
 - **Armor effect:** Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it. Freezer Sac (Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.
+- **Weapon effect:** This weapon has three runes that it regains daily at dawn. When you hit a creature with this weapon it must succeed on a DC 14 Constitution saving throw or its speed becomes 0 until the start of your next turn.
 
 ### Freezer Sac+
 
 - **Slots:** A, W
 - **Carve:** 15-17
 - **Capture:** 13-16
+- **Weapon effect:** Your cold spells deal an extra 1d4 cold damage.
 
 ### Hirabami Tail Claw
 
@@ -136,6 +138,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 18-19
 - **Capture:** 17-19
 - **Armor effect:** While you are attuned to this armor, you can use an action to speak its command word to cast the pass without trace spell from it. Once you use this property, you can't use it again until you finish a long rest.
+- **Weapon effect:** When a creature attempts to escape your grapple, you can use your reaction to give the creature disadvantage on their skill check. You can use this property a number of times equal to your Strength modifier, regaining all expended uses when you finish a long rest.
 
 ### Hirabami Gem
 
@@ -143,3 +146,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 20
 - **Armor effect:** While you are attuned to this armor, you can use an action to extend your limbs, unfurling thin membranes that allow you to hover. Until you retract your limbs (no action required), you gain a fly speed of 5 feet (hover) but cannot ascend higher than your starting position. At the start of each of your turns while hovering, you must make a DC 10 Strength check to maintain control. On a failure, you can gain a level of exhaustion to stay hovering or fall. Once you use this property, you can't use it again for 10 minutes.
+- **Weapon effect:** Critical Element (cold). When you critically hit with a weapon or spell that deals cold damage, you deal an extra 1d6 cold damage. Additionally, if a creature fails its saving throw by 5 or more against a spell that deals cold damage, you deal an extra 1d6 cold damage to it.

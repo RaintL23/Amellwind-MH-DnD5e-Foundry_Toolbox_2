@@ -147,6 +147,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 15-16
 - **Capture:** 13-15
 - **Armor effect:** Whenever you make a saving throw against the poisoned condition, you do so with a advantage.
+- **Weapon effect:** Your weapon deals an extra 1d6 poison damage.
 
 ### R.Ludroth Tail+
 
@@ -154,6 +155,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 17-19
 - **Capture:** 16-19
 - **Armor effect:** Divine Blessing+. When you take damage you are not immune or resistant to, roll a d6 and reduce the damage you take by the number rolled. You can use this property a number of times equal to your proficiency bonus. You regain all expended uses when you finish a long rest.
+- **Weapon effect:** When you hit a creature with this weapon, they must make a DC 15 Constitution saving throw or become poisoned with Waterblight until the end of its next turn.
 
 ### P.Ludroth Crest
 
@@ -161,3 +163,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** —
 - **Armor effect:** Negate Hunger. You no longer need to eat or drink.
+- **Weapon effect:** (Spellcaster only) This weapon has 4 runes While wielding this weapon, you can use an action to expend 1 or more of its runes to cast one of the following Spells from it, using your spell save DC: chromatic orb (poison) (1 rune), ray of sickness (1 rune), dragon's breath (poison or cold) (2 runes), or protection from poison (2 runes).

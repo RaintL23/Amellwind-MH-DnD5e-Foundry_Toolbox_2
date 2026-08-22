@@ -86,6 +86,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 19
 - **Capture:** 18
 - **Armor effect:** You are immune to necrotic damage and you can't be afflicted to dragonblight while wearing this armor.
+- **Weapon effect:** Latent Power +2. When you are reduced to a half of your maximum hit points for the first time in combat or at the start of your turn on the 10th round of combat, whichever comes first, you gain the effects of the haste spell for 1 minute. Once used, you must finish a short or long rest before you can use this property again.
 
 ### T.Ebony Gem
 
@@ -93,3 +94,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 19-20
 - **Armor effect:** Nimbleness. You have advantage on Dexterity (Acrobatics) checks and Dexterity saving throws while you wear this armor. Also, when you are subjected to an effect that allows you to make a dexterity saving throw to take only half damage, you instead take no damage if you succeed on the saving throw, and only half damage if you fail.
+- **Weapon effect:** Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.

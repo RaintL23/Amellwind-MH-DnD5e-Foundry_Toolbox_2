@@ -121,6 +121,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 2-6
 - **Capture:** 5-6
 - **Armor effect:** Guard. You cannot be pushed or knocked backwards while you wear this armor.
+- **Weapon effect:** While attuned to this weapon, you can cast the mold earth cantrip at will.
 
 ### B.Tetsucabra Cortex
 
@@ -128,6 +129,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 7-9
 - **Capture:** 7-9
 - **Armor effect:** You have advantage on saving throws against being knocked prone while you wear this armor.
+- **Weapon effect:** When you cast a spell that deals fire damage, it deals an extra 1d4 fire damage.
 
 ### B.Tetsucabra Hardclaw
 
@@ -135,12 +137,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 10-11
 - **Capture:** 10-13
 - **Armor effect:** Shield. While you are attuned to this armor and you use a reaction that would increase your AC, you gain an additional +1 bonus to your AC until the start of your next turn.
+- **Weapon effect:** (Bowgun only) Pellet Shot. When you roll a 15 or higher on your attack roll with this weapon while using normal ammo, you can make an attack against an additional creature within 5 feet of your original target.
 
 ### Vicious Visage
 
 - **Slots:** A, W
 - **Carve:** 12-13
 - **Capture:** 14-16
+- **Weapon effect:** (Ranged Weapon Only) Deadeye+. Your weapon's normal attack range is doubled.
 
 ### Paddock Cream
 
@@ -153,3 +157,5 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 18-20
 - **Capture:** —
+- **Armor effect:** You have resistance to fire damage while you wear this armor.
+- **Weapon effect:** (Sorcerer & Wizard only) Mini-Bombardier. This weapon has 5 runes. While holding it, you can use an action to expend 1 or more of its runes to cast one of the following Spells from it, using your spell save DC: burning hands (1 rune) scorching ray (2 runes), aganazzar's scorcher (2 runes), or flaming sphere (2 runes). This weapon regains 1d4 + 1 expended runes daily at dawn. If you expend the last rune it cannot regain any runes for one week.

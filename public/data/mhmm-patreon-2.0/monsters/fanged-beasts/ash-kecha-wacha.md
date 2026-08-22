@@ -144,6 +144,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 8-12
 - **Capture:** 1-7
 - **Armor effect:** While wearing this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by ice or oil.
+- **Weapon effect:** (Gunlance Only) Artillery+. While attuned to this weapon, your wyvernfire can now be used twice per long rest and you can add your Strength modifier to the damage of your shell attacks.
 
 ### A.Kecha Lash
 
@@ -151,6 +152,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 13-14
 - **Capture:** 8-10
 - **Armor effect:** While wearing this armor, you grow a monkey-like tail. You can use the tail to hold an object or stow or retrieve an item from your bags. The tail can't attack, activate magic items, or carry more than 15 pounds.
+- **Weapon effect:** This weapon has 6 runes and regains 1d6 runes daily at dawn. You can use a bonus action to shoot a spark out of the weapon at a creature, up to 60 feet away. The targeted creature must make a DC 13 Constitution saving throw or become burned for 1 minute. A burned creature takes 1d4 fire damage at the start of their turn.
 
 ### Lg Monster Bone
 
@@ -163,9 +165,11 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 17
 - **Capture:** 14-15
+- **Weapon effect:** When you cast a spell that deals fire damage, it deals an extra 1d6 fire damage.
 
 ### A.Kecha Ripper
 
 - **Slots:** A, W
 - **Carve:** 18-20
 - **Capture:** 16-20
+- **Weapon effect:** (Bladed Weapon Only) Razor Sharp. Once per turn, when you hit a creature with this weapon, anytime it would regain hit points before the end of its next turn, it regains half as many. Additionally, if the creature is afflicted with a wound, such as the odogaron's bloody wound, it can only be closed by magical healing for 1 minute.

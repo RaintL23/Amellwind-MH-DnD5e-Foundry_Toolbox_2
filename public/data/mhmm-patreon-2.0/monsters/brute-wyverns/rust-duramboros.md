@@ -146,12 +146,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 12-13
 - **Capture:** 10-12
 - **Armor effect:** Botanist+. When you successfully gather a plant resource, you gather an extra 1d4 more.
+- **Weapon effect:** (Monk Only) Your stunning strike save DC increases by 3, but it no longer stuns. Instead, a creature that fails its saving throw is incapacitated.
 
 ### R.Duram Hardtail
 
 - **Slots:** W
 - **Carve:** 14-15
 - **Capture:** 13-14
+- **Weapon effect:** Awaken. When this material is placed in a weapon that does not deal cold, fire, lightning, necrotic, or thunder damage, it rolls one additional damage die when it hits. For example, a shortsword now rolls 2d6 and a greatsword deals 3d6.
 
 ### Duramboros Hardhorn
 
@@ -159,6 +161,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 16-17
 - **Capture:** 15-16
 - **Armor effect:** Wide-Range. When you eat or drink an Uncommon or lower consumable item (except potions of resistance), each creature within 10 feet of you also gain its effect.
+- **Weapon effect:** Shotplus+. Your normal ammo deals an extra 3 damage.
 
 ### Duram Sacrum
 
@@ -166,6 +169,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 18-19
 - **Capture:** 17-19
 - **Armor effect:** You have resistance to acid damage while you wear this armor.
+- **Weapon effect:** (Ranged Weapon Only) Deadeye+. Your weapon's normal attack range is doubled.
 
 ### Durambolite
 
@@ -173,3 +177,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 20
 - **Armor effect:** Survivor+. When an ally, that you can see, is reduced to 0 hit points you can use your reaction to gain +2 AC, +2 damage, and +2 to attack rolls for 1 minute. Once used, this property can't be used again until you finish a long rest.
+- **Weapon effect:** Rust. When you hit a creature for the first time on your turn, its AC is reduced by 1 until the start of your next turn.

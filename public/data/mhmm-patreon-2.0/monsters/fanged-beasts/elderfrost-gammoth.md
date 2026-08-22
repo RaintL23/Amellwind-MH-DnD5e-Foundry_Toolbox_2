@@ -168,12 +168,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 15-17
 - **Capture:** —
 - **Armor effect:** Health Boost+. While wearing this armor, your hit point maximum increases by 2 for each character level you have.
+- **Weapon effect:** While attuned to this weapon you can use an action to speak its command word to exhale shards of ice in a 30foot cone. Each creature in that area must make a DC 17 Dexterity saving throw, taking 5d6 cold damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.
 
 ### Gammoth Hardfang
 
 - **Slots:** W
 - **Carve:** 18
 - **Capture:** 14-16
+- **Weapon effect:** (Druid, Sorcerer, Warlock, & Wizard Only) This weapon has 10 runes. While holding it, you can use an action to expend 1 or more of its runes to cast one of the following spells from it, using your spell save DC: Cone of Cold (5 runes), Fog Cloud (1 runes), Ice Storm (4 runes), or Wall of Ice (4 runes). This weapon regains 1d6 + 4 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, the runes cannot recharge for a week.
 
 ### Gammoth Ice Orb
 
@@ -181,6 +183,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 19
 - **Capture:** 17-19
 - **Armor effect:** You are immune to cold damage while you wear this armor.
+- **Weapon effect:** Your weapon deals an extra 1d8 cold damage.
 
 ### Gammoth Pallium
 
@@ -188,3 +191,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 20
 - **Armor effect:** You have resistances to fire, lightning, and necrotic damage while you wear this armor.
+- **Weapon effect:** Your weapon deals an extra 1d8 cold damage.

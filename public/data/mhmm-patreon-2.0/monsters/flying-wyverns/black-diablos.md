@@ -137,12 +137,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 1-6
 - **Capture:** 1-3
 - **Armor effect:** Tremor-Proof. You cannot be knocked prone while you wear this armor. B.Diablos Fang Divine Blessing+3. When you take damage you are not immune or resistant to, roll a d10 and reduce the damage you take by the number rolled. You can use this property a number of times equal to your proficiency bonus. You regain all expended uses when you finish a long rest.
+- **Weapon effect:** KO+. When this material is placed into a hammer, it gains one addition use of its mighty weapon property. Additionally, when a creature must succeed on a saving throw or become stunned by the effect of one of your weapon attacks, they make the save with disadvantage.
 
 ### Black Diablos Fang
 
 - **Slots:** A, W
 - **Carve:** 7-9
 - **Capture:** 4-5
+- **Weapon effect:** FastCharge+. When you roll for initiative, your greatsword, longsword, or charge blade gains 2 charge, spirit, or phial charge.
 
 ### Black Diablos Shell
 
@@ -150,6 +152,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 10
 - **Capture:** 6-11
 - **Armor effect:** You gain a burrowing speed of 30 feet while you wear this armor.
+- **Weapon effect:** Partbreaker+3. You deal an extra 1d10 damage when you critically hit with this weapon.
 
 ### Black Diablos Ridge
 
@@ -157,12 +160,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 11
 - **Capture:** 12-13
 - **Armor effect:** HG Earplugs. While you are attuned to this armor, you can use a bonus action to conjure two earplugs in the shape of your choice. While using these earplugs, you can only hear creatures you choose to be able to hear, and you have advantage on saving throws against thunder damage.
+- **Weapon effect:** Resentment. Until the end of your turn, you gain a +1 bonus to attack and damage rolls against any creature that has damaged you since the end of your last turn.
 
 ### Diablos Hardtail
 
 - **Slots:** A, W
 - **Carve:** 12-15
 - **Capture:** 14-16
+- **Weapon effect:** Your weapon deals an extra 1d10 piercing damage.
 
 ### Dash Extract
 
@@ -175,21 +180,25 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** —
 - **Capture:** 19
+- **Weapon effect:** Charger. When you use your action to Dash, you can use a bonus action to shove a creature.
 
 ### Blackcurl Horn
 
 - **Slots:** A, W
 - **Carve:** 17-18
 - **Capture:** —
+- **Weapon effect:** Critical Draw+. During the first round of combat your melee weapon attacks score a critical hit on a roll of 15 or higher.
 
 ### Black Spiral Horn
 
 - **Slots:** A, W
 - **Carve:** 19
 - **Capture:** —
+- **Weapon effect:** Your weapon deals an extra 2d6 piercing damage.
 
 ### Diablos Brainstem
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 20
+- **Weapon effect:** Awaken+. When this material is placed in a weapon that does not deal cold, fire, lightning, necrotic, or thunder damage, it rolls two extra damage die when it hits.

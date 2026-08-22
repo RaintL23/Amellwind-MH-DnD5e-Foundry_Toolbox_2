@@ -1,0 +1,494 @@
+{
+  "meta": {
+    "description": "Curated weapon effects recovered from PDF bio/WEAPON MATERIAL EFFECTS leaks and base-monster inheritance.",
+    "generated": "2026-08-22"
+  },
+  "fixes": [
+    {
+      "monster": "Tempered Gypceros",
+      "name": "Rubbery Hide+",
+      "weaponEffect": "While holding your weapon, you can speak a command word and transform it into a fishing pole with a hook, a line, and a reel. You have a +1 bonus to checks to catch fish while using this fishing pole. Speaking the command word again changes the fishing pole back into the weapon.",
+      "source": "purple-gypceros.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gypceros",
+      "name": "Gypceros Wing",
+      "weaponEffect": "While attuned to this weapon, you know the poison spray cantrip. if you already know the cantrip, the spell's range increases to 60 feet.",
+      "source": "purple-gypceros.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gypceros",
+      "name": "Novacrystal",
+      "weaponEffect": "Blindsider. While attuned to this weapon, creatures have disadvantage on saving throws against being Blinded from effects and attacks caused by you.",
+      "source": "purple-gypceros.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gypceros",
+      "name": "Gypceros Tail",
+      "weaponEffect": "Resentment. Until the end of your turn, you gain a +1 bonus to attack and damage rolls against any creature that has damaged you since the end of your last turn.",
+      "source": "purple-gypceros.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gypceros",
+      "name": "T.Gypceros Head",
+      "weaponEffect": "While attuned to this weapon, you can conjure a hooded lantern as an action. The lantern hovers 10 feet off the ground and stays within 5 feet of you. While lit, this hooded lantern burns for 6 hours on 1 pint of oil, shedding bright light in a 30-foot radius and dim light for an additional 30 feet. Invisible creatures and objects are visible as long as they are in the lantern's bright light. You can use an action to lower the hood, reducing the light to dim light in a 5-foot radius.",
+      "source": "purple-gypceros.md WEAPON block"
+    },
+    {
+      "monster": "Nightcloak Malfestio",
+      "name": "Malfestio Grandwing",
+      "weaponEffect": "(Bard, druid, sorcerer, wizard only) While attuned to this weapon you can cast the confusion spell once a day, without expending a spell slot.",
+      "source": "qurupeco.md bio leak"
+    },
+    {
+      "monster": "Nightcloak Malfestio",
+      "name": "Malfestio Tailblade",
+      "weaponEffect": "This weapon has 4 runes. It regains 1d4 expended runes daily at dawn. When you hit a creature with this weapon you can expend a rune to outline the target in a blue glow, that only you can see, for 1 minute. While the creature is outlined, you can always see them, even if they are invisible, so long as they are not behind full cover.",
+      "source": "qurupeco.md bio leak"
+    },
+    {
+      "monster": "Nightcloak Malfestio",
+      "name": "Nightcloak Grandwing",
+      "weaponEffect": "While you are holding this weapon, you can use an action to speak its command word to summon a giant owl for up to 8 hours. The owl can telepathically communicate with you at any range if you and it are on the same plane of existence. Once this property has been used, it can't be used again until the next dawn.",
+      "source": "qurupeco.md bio leak"
+    },
+    {
+      "monster": "Nightcloak Malfestio",
+      "name": "Malfestio Goldfeather+",
+      "weaponEffect": "Nightcloak Soul. While you are attuned to this weapon you gain the following benefits: You can reload as a free action. You can set pitfall traps or shock traps as a bonus action. Your weapon attacks critical hit range is increased by 1. You can use a bonus action to conjure two earplugs in the shape of your choice.",
+      "source": "qurupeco.md bio leak"
+    },
+    {
+      "monster": "Rust Duramboros",
+      "name": "Marbled Hump",
+      "weaponEffect": "(Monk Only) Your stunning strike save DC increases by 3, but it no longer stuns. Instead, a creature that fails its saving throw is incapacitated.",
+      "source": "glavenus.md bio leak"
+    },
+    {
+      "monster": "Rust Duramboros",
+      "name": "R.Duram Hardtail",
+      "weaponEffect": "Awaken. When this material is placed in a weapon that does not deal cold, fire, lightning, necrotic, or thunder damage, it rolls one additional damage die when it hits. For example, a shortsword now rolls 2d6 and a greatsword deals 3d6.",
+      "source": "glavenus.md bio leak"
+    },
+    {
+      "monster": "Rust Duramboros",
+      "name": "Duramboros Hardhorn",
+      "weaponEffect": "Shotplus+. Your normal ammo deals an extra 3 damage.",
+      "source": "glavenus.md bio leak"
+    },
+    {
+      "monster": "Rust Duramboros",
+      "name": "Duram Sacrum",
+      "weaponEffect": "(Ranged Weapon Only) Deadeye+. Your weapon's normal attack range is doubled.",
+      "source": "Duramboros (github)"
+    },
+    {
+      "monster": "Rust Duramboros",
+      "name": "Durambolite",
+      "weaponEffect": "Rust. When you hit a creature for the first time on your turn, its AC is reduced by 1 until the start of your next turn.",
+      "source": "glavenus.md bio leak"
+    },
+    {
+      "monster": "Elderfrost Gammoth",
+      "name": "Elderfrost Trunkspine",
+      "weaponEffect": "While attuned to this weapon you can use an action to speak its command word to exhale shards of ice in a 30foot cone. Each creature in that area must make a DC 17 Dexterity saving throw, taking 5d6 cold damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.",
+      "source": "Gammoth Trunkspine inherit"
+    },
+    {
+      "monster": "Elderfrost Gammoth",
+      "name": "Gammoth Hardfang",
+      "weaponEffect": "(Druid, Sorcerer, Warlock, & Wizard Only) This weapon has 10 runes. While holding it, you can use an action to expend 1 or more of its runes to cast one of the following spells from it, using your spell save DC: Cone of Cold (5 runes), Fog Cloud (1 runes), Ice Storm (4 runes), or Wall of Ice (4 runes). This weapon regains 1d6 + 4 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, the runes cannot recharge for a week.",
+      "source": "Gammoth Fang inherit"
+    },
+    {
+      "monster": "Elderfrost Gammoth",
+      "name": "Gammoth Ice Orb",
+      "weaponEffect": "Your weapon deals an extra 1d8 cold damage.",
+      "source": "Gammoth Scalp inherit (tier parallel)"
+    },
+    {
+      "monster": "Elderfrost Gammoth",
+      "name": "Gammoth Pallium",
+      "weaponEffect": "Your weapon deals an extra 1d8 cold damage.",
+      "source": "Gammoth Scalp inherit (tier parallel)"
+    },
+    {
+      "monster": "Ash Kecha Wacha",
+      "name": "A.Kecha Leadbone",
+      "weaponEffect": "(Gunlance Only) Artillery+. While attuned to this weapon, your wyvernfire can now be used twice per long rest and you can add your Strength modifier to the damage of your shell attacks.",
+      "source": "lagombi.md bio leak"
+    },
+    {
+      "monster": "Ash Kecha Wacha",
+      "name": "A.Kecha Lash",
+      "weaponEffect": "This weapon has 6 runes and regains 1d6 runes daily at dawn. You can use a bonus action to shoot a spark out of the weapon at a creature, up to 60 feet away. The targeted creature must make a DC 13 Constitution saving throw or become burned for 1 minute. A burned creature takes 1d4 fire damage at the start of their turn.",
+      "source": "lagombi.md bio leak"
+    },
+    {
+      "monster": "Ash Kecha Wacha",
+      "name": "A.Kecha Auricle",
+      "weaponEffect": "When you cast a spell that deals fire damage, it deals an extra 1d6 fire damage.",
+      "source": "lagombi.md bio leak"
+    },
+    {
+      "monster": "Ash Kecha Wacha",
+      "name": "A.Kecha Ripper",
+      "weaponEffect": "(Bladed Weapon Only) Razor Sharp. Once per turn, when you hit a creature with this weapon, anytime it would regain hit points before the end of its next turn, it regains half as many. Additionally, if the creature is afflicted with a wound, such as the odogaron's bloody wound, it can only be closed by magical healing for 1 minute.",
+      "source": "lagombi.md bio leak"
+    },
+    {
+      "monster": "Tempered Ebony Odogaron",
+      "name": "T.Ebony Plate",
+      "weaponEffect": "Latent Power +2. When you are reduced to a half of your maximum hit points for the first time in combat or at the start of your turn on the 10th round of combat, whichever comes first, you gain the effects of the haste spell for 1 minute. Once used, you must finish a short or long rest before you can use this property again.",
+      "source": "shamos.md bio leak"
+    },
+    {
+      "monster": "Tempered Ebony Odogaron",
+      "name": "T.Ebony Gem",
+      "weaponEffect": "Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.",
+      "source": "shamos.md bio leak"
+    },
+    {
+      "monster": "Juvenile Astalos",
+      "name": "Juv.Astalos Membrane",
+      "weaponEffect": "When you cast a spell that deals lightning or thunder damage, you gain a +1 bonus to its spell attack roll.",
+      "source": "Astalos Membrane inherit"
+    },
+    {
+      "monster": "Young Barioth",
+      "name": "Y.Barioth Cortex",
+      "weaponEffect": "In freezing temperatures, this weapon sheds bright light in a 10-foot radius and dim light for an additional 10 feet. When you draw this weapon, you can extinguish all nonmagical flames within 30 feet of you. This property can be used no more than once per hour.",
+      "source": "sand-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Young Barioth",
+      "name": "Y.Barioth Fur",
+      "weaponEffect": "While you are attuned to this weapon and you cast a spell that is a water or ice themed, it is cast as if it was one spell level higher. A spell cannot be increased beyond level 6 with this effect.",
+      "source": "Barioth Fur inherit"
+    },
+    {
+      "monster": "Young Barioth",
+      "name": "Y.Barioth Talon",
+      "weaponEffect": "(Bow Only) As a bonus action you can freeze the air in your palm into an icicle nock it to your bow. The icicle acts as a normal armor, but when you hit a creature with this icicle, it deals cold damage instead of piercing damage.",
+      "source": "sand-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Young Barioth",
+      "name": "Freezer Sac",
+      "weaponEffect": "(Light Bowgun Only) When you hit a creature with your water ammo it must make a DC 14 Constitution saving throw or have its movement speed reduced to 0 until the end of its next turn on a failed save. On a successful save, the creature's movement speed is reduced by 10 feet.",
+      "source": "sand-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Young Barioth",
+      "name": "Y.Barioth Spike",
+      "weaponEffect": "When you hit a creature with this weapon it must make a DC 10 Constitution saving throw or be diseased with Iceblight until the end of its next turn.",
+      "source": "sand-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Young Barioth",
+      "name": "Y.Barioth Tail",
+      "weaponEffect": "Critical Element (cold). When you critically hit with a weapon or spell that deals cold damage, you deal an extra 1d4 cold damage. Additionally, if a creature fails its saving throw by 5 or more against a spell that deals cold damage, you deal an extra 1d4 cold damage to it.",
+      "source": "sand-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Young Barioth",
+      "name": "Small Amber Tusks",
+      "weaponEffect": "Your weapon deals an extra 1d6 cold damage.",
+      "source": "sand-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Sand Barioth",
+      "name": "S.Barioth Cortex",
+      "weaponEffect": "While attuned to this weapon, sand and dust whip around it like a micro dust devil.",
+      "source": "frostfang-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Sand Barioth",
+      "name": "S.Barioth Fur",
+      "weaponEffect": "(Spellcaster only) This weapon has 4 runes. While holding it, you can use an action to expend 1 or more of its charges to cast one of the following spells from it, using your spell save DC: mirror image (2 charges), or wall of sand (2 charges). The weapon regains 1d4 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week.",
+      "source": "frostfang-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Sand Barioth",
+      "name": "S.Barioth Talon",
+      "weaponEffect": "Your Dexterity score is 16 while attuned to this weapon. It has no effect on you if your Dexterity is already 16 or higher.",
+      "source": "frostfang-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Sand Barioth",
+      "name": "Rugged Pleura",
+      "weaponEffect": "Your weapon deals an extra 1d6 slashing damage.",
+      "source": "frostfang-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Sand Barioth",
+      "name": "S.Barioth Lash",
+      "weaponEffect": "(Druid, Sorcerer, & Wizard only) This weapon has 6 runes. While holding it, you can use an action to expend 1 or more of its runes to cast the dust devil spell from it. For 1 rune, you cast the 2nd-level version of the spell. You can increase the spell slot level by one for each additional rune you expend. The weapon regains 1d6 + 1 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week.",
+      "source": "frostfang-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Sand Barioth",
+      "name": "Hvy Indigo Tusks",
+      "weaponEffect": "Your weapon deals an extra 1d8 slashing damage.",
+      "source": "frostfang-barioth.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Black Diablos Carapace",
+      "weaponEffect": "KO+. When this material is placed into a hammer, it gains one addition use of its mighty weapon property. Additionally, when a creature must succeed on a saving throw or become stunned by the effect of one of your weapon attacks, they make the save with disadvantage.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Black Diablos Fang",
+      "weaponEffect": "FastCharge+. When you roll for initiative, your greatsword, longsword, or charge blade gains 2 charge, spirit, or phial charge.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Black Diablos Shell",
+      "weaponEffect": "Partbreaker+3. You deal an extra 1d10 damage when you critically hit with this weapon.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Black Diablos Ridge",
+      "weaponEffect": "Resentment. Until the end of your turn, you gain a +1 bonus to attack and damage rolls against any creature that has damaged you since the end of your last turn.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Diablos Hardtail",
+      "weaponEffect": "Your weapon deals an extra 1d10 piercing damage.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Blos Medulla",
+      "weaponEffect": "Charger. When you use your action to Dash, you can use a bonus action to shove a creature.",
+      "source": "Monoblos inherit"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Blackcurl Horn",
+      "weaponEffect": "Critical Draw+. During the first round of combat your melee weapon attacks score a critical hit on a roll of 15 or higher.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Black Spiral Horn",
+      "weaponEffect": "Your weapon deals an extra 2d6 piercing damage.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Black Diablos",
+      "name": "Diablos Brainstem",
+      "weaponEffect": "Awaken+. When this material is placed in a weapon that does not deal cold, fire, lightning, necrotic, or thunder damage, it rolls two extra damage die when it hits.",
+      "source": "bloodbath-diablos.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Gravios Carapace+",
+      "weaponEffect": "Your weapon deals an extra 1d10 fire damage.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Gravios Wing",
+      "weaponEffect": "When you hit a Huge or smaller creature with this weapon, it must succeed on a DC 15 Strength check or be pushed back 5 feet.",
+      "source": "Gravios inherit"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Conflagrant Sac",
+      "weaponEffect": "When you cast a spell that deals 10 or more fire damage while attuned to this weapon, it summons a nitrotoad in an unoccupied space adjacent to the target or in a space within the area of effect. If you deal more than 30 fire damage, it instead summons a giant nitrotoad.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "G.Coma Sac",
+      "weaponEffect": "(Spellcaster Only) This weapon has 10 runes and regains 1d6 + 4 runes daily at dusk. While holding it, you can cast one of the following spells from it, using your spell save DC and the spell's normal casting time: dream (5 runes), fear (3 runes), modify memory (5 runes), phantasmal killer (4 runes), or sleep (1 rune per spell level). If you expend the last rune it cannot regain any runes for one week.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Gravios Pleura",
+      "weaponEffect": "(Hunting Horn Only) Muse. When you finish a long rest choose one creature to become your muse until you start a long rest. Your muse gains the magical benefits of your completed melody while they are within 120 feet of you.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Gravios Skull",
+      "weaponEffect": "Peak Performance. When your hit points are full and you roll a 1 or 2 on a damage die for an attack you make with a melee weapon, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Gravios Medulla+",
+      "weaponEffect": "(Ranged Weapon Only) While attuned to this weapon your ammo and coatings change in the following ways: Bow. You blast coating radius increases to 15 feet. Dual Repeaters. Your blaze ammo is always empowered. Heavy Bowgun. Your cluster ammo deals an extra 2d6 fire damage. Light Bowgun. Creatures hit by your flaming ammo catch fire, taking 1d4 fire damage at the start of each of its turns until a creature uses an action to douse the flame.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Allfire Stone",
+      "weaponEffect": "While you are attuned to this weapon, you can use an action to gain the same benefits as a potion of cloud giant's strength for 10 minutes. Once you use this property, you cannot use it again for 1 week.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Tempered Gravios",
+      "name": "Gravios Jewel",
+      "weaponEffect": "You gain a + 2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +3 when the spell you are casting deals fire damage.",
+      "source": "black-gravios.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Rathalos Scale",
+      "weaponEffect": "Quick Sheath. While attuned to this weapon, you can always sheath it as a free action even if you have already drawn a weapon as part of your move action.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Inferno Sac",
+      "weaponEffect": "Your weapon deals an extra 1d10 fire damage.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Rathalos Carapace",
+      "weaponEffect": "Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target; you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a long rest.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Rathalos Marrow",
+      "weaponEffect": "You can use a bonus action to speak this weapon's command word, causing flames to erupt from the weapon. These flames shed bright light in a 50-foot radius and dim light for an additional 50 feet.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Rathalos Tail",
+      "weaponEffect": "Spirit. When fighting a Huge or larger creature, this weapon deals 1d6 extra weapon damage and its crit range is increased by 1.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Rathalos Wing",
+      "weaponEffect": "(Range Weapon Only) Ammo Up. Your bowgun's normal ammo capacity doubles while you are attuned to this weapon. Additionally, when coating, you can coat up to 10 additional arrows.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Rathalos Plate",
+      "weaponEffect": "Critical Boost+. You can roll two additional weapon damage dice when determining the extra damage for a critical hit with a weapon attack.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Silver Rathalos",
+      "name": "Silver Rathalos Ruby",
+      "weaponEffect": "Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature.",
+      "source": "dreadking-rathalos.md WEAPON block"
+    },
+    {
+      "monster": "Pink Rathian",
+      "name": "Conflagrant Sac",
+      "weaponEffect": "When you cast a spell that deals fire damage, you gain a +2 bonus to its spell attack roll and it deal an extra 1d4 fire damage.",
+      "source": "gold-rathian.md bio leak"
+    },
+    {
+      "monster": "Pink Rathian",
+      "name": "P.Rathian Spike",
+      "weaponEffect": "Critical Eye. Your weapon attacks critical hit range is increased by 1.",
+      "source": "gold-rathian.md bio leak"
+    },
+    {
+      "monster": "Pink Rathian",
+      "name": "P.Rathian Tail",
+      "weaponEffect": "Your weapon deals an extra 1d6 poison damage.",
+      "source": "gold-rathian.md bio leak"
+    },
+    {
+      "monster": "Pink Rathian",
+      "name": "P.Rath Wingtalon",
+      "weaponEffect": "Critical Element (fire and poison). When you critically hit with a weapon or spell that deals fire or poison damage, you deal an extra 1d6 damage of that type.",
+      "source": "gold-rathian.md bio leak"
+    },
+    {
+      "monster": "Pink Rathian",
+      "name": "P.Rathian Plate",
+      "weaponEffect": "When you hit a creature with this weapon, they must make a DC 14 Constitution saving throw or become poisoned until the end of its next turn.",
+      "source": "gold-rathian.md bio leak"
+    },
+    {
+      "monster": "Pink Rathian",
+      "name": "P.Rathian Ruby",
+      "weaponEffect": "While you hold your weapon, you gain +2 bonus to spell attack rolls and you ignore half cover when making a spell attack.",
+      "source": "gold-rathian.md bio leak"
+    },
+    {
+      "monster": "Hirabami",
+      "name": "Hirabami Webbing",
+      "weaponEffect": "This weapon has three runes that it regains daily at dawn. When you hit a creature with this weapon it must succeed on a DC 14 Constitution saving throw or its speed becomes 0 until the start of your next turn.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Hirabami",
+      "name": "Freezer Sac+",
+      "weaponEffect": "Your cold spells deal an extra 1d4 cold damage.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Hirabami",
+      "name": "Hirabami Tail Claw",
+      "weaponEffect": "When a creature attempts to escape your grapple, you can use your reaction to give the creature disadvantage on their skill check. You can use this property a number of times equal to your Strength modifier, regaining all expended uses when you finish a long rest.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Hirabami",
+      "name": "Hirabami Gem",
+      "weaponEffect": "Critical Element (cold). When you critically hit with a weapon or spell that deals cold damage, you deal an extra 1d6 cold damage. Additionally, if a creature fails its saving throw by 5 or more against a spell that deals cold damage, you deal an extra 1d6 cold damage to it.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Young Hirabami",
+      "name": "Hirabami Webbing",
+      "weaponEffect": "This weapon has three runes that it regains daily at dawn. When you hit a creature with this weapon it must succeed on a DC 14 Constitution saving throw or its speed becomes 0 until the start of your next turn.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Young Hirabami",
+      "name": "Freezer Sac+",
+      "weaponEffect": "Your cold spells deal an extra 1d4 cold damage.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Young Hirabami",
+      "name": "Hirabami Tail Claw",
+      "weaponEffect": "When a creature attempts to escape your grapple, you can use your reaction to give the creature disadvantage on their skill check. You can use this property a number of times equal to your Strength modifier, regaining all expended uses when you finish a long rest.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Young Hirabami",
+      "name": "Hirabami Gem",
+      "weaponEffect": "Critical Element (cold). When you critically hit with a weapon or spell that deals cold damage, you deal an extra 1d6 cold damage. Additionally, if a creature fails its saving throw by 5 or more against a spell that deals cold damage, you deal an extra 1d6 cold damage to it.",
+      "source": "jin-dahaad.md bio leak"
+    },
+    {
+      "monster": "Purple Ludroth",
+      "name": "Royal Poison Sac",
+      "weaponEffect": "Your weapon deals an extra 1d6 poison damage.",
+      "source": "mizutsune.md bio leak"
+    },
+    {
+      "monster": "Purple Ludroth",
+      "name": "R.Ludroth Tail+",
+      "weaponEffect": "When you hit a creature with this weapon, they must make a DC 15 Constitution saving throw or become poisoned with Waterblight until the end of its next turn.",
+      "source": "mizutsune.md bio leak"
+    },
+    {
+      "monster": "Purple Ludroth",
+      "name": "P.Ludroth Crest",
+      "weaponEffect": "(Spellcaster only) This weapon has 4 runes While wielding this weapon, you can use an action to expend 1 or more of its runes to cast one of the following Spells from it, using your spell save DC: chromatic orb (poison) (1 rune), ray of sickness (1 rune), dragon's breath (poison or cold) (2 runes), or protection from poison (2 runes).",
+      "source": "mizutsune.md bio leak"
+    }
+  ]
+}

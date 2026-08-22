@@ -170,14 +170,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 7-8
 - **Capture:** 6-8
 - **Armor effect:** Spider Climb. While you wear this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by ice or oil.
-- **Weapon effect:** While attuned to this weapon you can use a bonus action to fire a strand of webbing at a creature, object, or terrain within 30 feet of you and pull yourself to the closest adjacent space to the target. If the target is a creature, they can make a DC 16 Dexterity saving throw. On a successful save, the creature avoids the webbing and you are unable to pull yourself to it. You can use this property a number of times equal to your proficiency modifier, regaining all expended uses when you finish a long rest. Pyre-Kadaki Dull Glowgut Maximum Might. While your hit points are full and you are not suffering from any levels of exhaustion; you deal maximum weapon damage with your attacks. Pyre-Kadaki Hardclaw You gain a +2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +3 when the spell you are casting is a fire spell.
+- **Weapon effect:** While attuned to this weapon you can use a bonus action to fire a strand of webbing at a creature, object, or terrain within 30 feet of you and pull yourself to the closest adjacent space to the target. If the target is a creature, they can make a DC 16 Dexterity saving throw. On a successful save, the creature avoids the webbing and you are unable to pull yourself to it. You can use this property a number of times equal to your proficiency modifier, regaining all expended uses when you finish a long rest.
 
 ### Kadaki Queen Substance
 
 - **Slots:** A, O
 - **Carve:** 9-11
 - **Capture:** 9-11
-- **Armor effect:** While you wear this armor small spiders emerge from it, like hatching from an egg sac. The spiders are friendly to you and crawl around your armor but provide no other noticeable benefit. Pyre-Kadaki Dull Glowgut This armor has 4 runes. It regains 1d3+1 runes daily at dawn. As an action you can expend one or more runes to cast the web spell (spell save DC 16). For 1 rune, you cast the spell as normal. You can increase the size of the cubed area by 5 feet for each additional rune you expend. Pyre-Kadaki Hardclaw Entomologist+. When you capture an insect with a bug net, you instead gather 1d4.
+- **Armor effect:** While you wear this armor small spiders emerge from it, like hatching from an egg sac. The spiders are friendly to you and crawl around your armor but provide no other noticeable benefit.
 - **Other effect:** A potent pheromone sometimes released by the raknakadaki. It is highly valued by nobles (sell value 4,000 gp).
 
 ### Pyre‑Kadaki Dull Glowgut
@@ -185,12 +185,16 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 12-13
 - **Capture:** —
+- **Weapon effect:** Maximum Might. While your hit points are full and you are not suffering from any levels of exhaustion; you deal maximum weapon damage with your attacks.
+- **Armor effect:** This armor has 4 runes. It regains 1d3+1 runes daily at dawn. As an action you can expend one or more runes to cast the web spell (spell save DC 16). For 1 rune, you cast the spell as normal. You can increase the size of the cubed area by 5 feet for each additional rune you expend.
 
 ### Pyre‑Kadaki Hardclaw
 
 - **Slots:** A, W
 - **Carve:** 14-16
 - **Capture:** 12-16
+- **Weapon effect:** You gain a +2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +3 when the spell you are casting is a fire spell.
+- **Armor effect:** Entomologist+. When you capture an insect with a bug net, you instead gather 1d4.
 
 ### Pyre-Kadaki Spike
 

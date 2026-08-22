@@ -113,6 +113,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 9-10
 - **Capture:** 8-12
+- **Weapon effect:** When you cast a spell that deals lightning or thunder damage, you gain a +1 bonus to its spell attack roll.
 
 ### Juv.Astalos Scissortail
 

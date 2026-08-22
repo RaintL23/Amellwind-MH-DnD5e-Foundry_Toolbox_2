@@ -136,54 +136,63 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 1-6
 - **Capture:** 1-4
+- **Weapon effect:** Your weapon deals an extra 1d10 fire damage.
 
 ### Gravios Wing
 
 - **Slots:** A, W
 - **Carve:** 7-8
 - **Capture:** 5-8
+- **Weapon effect:** When you hit a Huge or smaller creature with this weapon, it must succeed on a DC 15 Strength check or be pushed back 5 feet.
 
 ### Conflagrant Sac
 
 - **Slots:** A, W
 - **Carve:** 9
 - **Capture:** 9-12
+- **Weapon effect:** When you cast a spell that deals 10 or more fire damage while attuned to this weapon, it summons a nitrotoad in an unoccupied space adjacent to the target or in a space within the area of effect. If you deal more than 30 fire damage, it instead summons a giant nitrotoad.
 
 ### G.Coma Sac
 
 - **Slots:** A, W, O
 - **Carve:** 10
 - **Capture:** 13-14
+- **Weapon effect:** (Spellcaster Only) This weapon has 10 runes and regains 1d6 + 4 runes daily at dusk. While holding it, you can cast one of the following spells from it, using your spell save DC and the spell's normal casting time: dream (5 runes), fear (3 runes), modify memory (5 runes), phantasmal killer (4 runes), or sleep (1 rune per spell level). If you expend the last rune it cannot regain any runes for one week.
 
 ### Gravios Pleura
 
 - **Slots:** A, W
 - **Carve:** 11
 - **Capture:** 15-18
+- **Weapon effect:** (Hunting Horn Only) Muse. When you finish a long rest choose one creature to become your muse until you start a long rest. Your muse gains the magical benefits of your completed melody while they are within 120 feet of you.
 
 ### Gravios Skull
 
 - **Slots:** A, W
 - **Carve:** 12-17
 - **Capture:** 19
+- **Weapon effect:** Peak Performance. When your hit points are full and you roll a 1 or 2 on a damage die for an attack you make with a melee weapon, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2.
 
 ### Gravios Medulla+
 
 - **Slots:** A, W
 - **Carve:** 18
 - **Capture:** —
+- **Weapon effect:** (Ranged Weapon Only) While attuned to this weapon your ammo and coatings change in the following ways: Bow. You blast coating radius increases to 15 feet. Dual Repeaters. Your blaze ammo is always empowered. Heavy Bowgun. Your cluster ammo deals an extra 2d6 fire damage. Light Bowgun. Creatures hit by your flaming ammo catch fire, taking 1d4 fire damage at the start of each of its turns until a creature uses an action to douse the flame.
 
 ### Allfire Stone
 
 - **Slots:** A, W
 - **Carve:** 19
 - **Capture:** —
+- **Weapon effect:** While you are attuned to this weapon, you can use an action to gain the same benefits as a potion of cloud giant's strength for 10 minutes. Once you use this property, you cannot use it again for 1 week.
 
 ### Gravios Jewel
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 20
+- **Weapon effect:** You gain a + 2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +3 when the spell you are casting deals fire damage.
 
 ## QA flags
 

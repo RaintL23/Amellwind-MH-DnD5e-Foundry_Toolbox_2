@@ -156,7 +156,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 18
 - **Armor effect:** You have resistance to lightning damage while you wear this armor.
-- **Weapon effect:** When a creature must succeed on a saving throw due to the effect of your weapon attack, increase the save DC by 1.  Zinogre Plate Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.
+- **Weapon effect:** When a creature must succeed on a saving throw due to the effect of your weapon attack, increase the save DC by 1.
 
 ### Zinogre Plate
 
@@ -164,3 +164,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** —
 - **Capture:** 19-20
 - **Armor effect:** Whenever you make a saving throw against the paralyzed condition, you do so with advantage.
+- **Weapon effect:** Chain Crit. Every consecutive hit on a creature increases your crit range by 1 until you score a critical hit, miss an attack, or hit a different creature.

@@ -148,6 +148,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 1-4
 - **Capture:** 1-4
 - **Armor effect:** Handicraft+3. For 24 hours, you gain proficiency with three artisan tools of your choice each dawn.
+- **Weapon effect:** Quick Sheath. While attuned to this weapon, you can always sheath it as a free action even if you have already drawn a weapon as part of your move action.
 
 ### Silver Inferno Sac
 
@@ -155,6 +156,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 5-6
 - **Capture:** —
 - **Armor effect:** While you are attuned to this armor, you can use a bonus action to speak its command word and exhale fire at a target within 30 feet of you. The target must make a DC 15 Dexterity saving throw, taking 4d6 fire damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.
+- **Weapon effect:** Your weapon deals an extra 1d10 fire damage.
 
 ### Silver Rathalos Carapace
 
@@ -162,6 +164,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 7-10
 - **Capture:** 5-10
 - **Armor effect:** Intimidator+. While wearing this armor, you have advantage on Charisma (Intimidation) checks. Additionally, CR 4 or lower beasts flee at the sight of you but will fight if cornered.
+- **Weapon effect:** Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target; you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a long rest.
 
 ### Silver Rathalos Webbing
 
@@ -175,27 +178,32 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 11
 - **Capture:** 14-15
+- **Weapon effect:** You can use a bonus action to speak this weapon's command word, causing flames to erupt from the weapon. These flames shed bright light in a 50-foot radius and dim light for an additional 50 feet.
 
 ### Silver Rathalos Tail
 
 - **Slots:** A, W, O
 - **Carve:** 12-16
 - **Capture:** 16-17
+- **Weapon effect:** Spirit. When fighting a Huge or larger creature, this weapon deals 1d6 extra weapon damage and its crit range is increased by 1.
 
 ### Silver Rathalos Wing
 
 - **Slots:** A, W
 - **Carve:** 17-18
 - **Capture:** —
+- **Weapon effect:** (Range Weapon Only) Ammo Up. Your bowgun's normal ammo capacity doubles while you are attuned to this weapon. Additionally, when coating, you can coat up to 10 additional arrows.
 
 ### Silver Rathalos Plate
 
 - **Slots:** A, W
 - **Carve:** 19
 - **Capture:** 18-19
+- **Weapon effect:** Critical Boost+. You can roll two additional weapon damage dice when determining the extra damage for a critical hit with a weapon attack.
 
 ### Silver Rathalos Ruby
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 20
+- **Weapon effect:** Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature.

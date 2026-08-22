@@ -144,14 +144,16 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 1-3
 - **Capture:** 1
-- **Armor effect:** Frenzy Res. Whenever you make a saving throw against the frenzy virus, you do so with advantage. S.Magala Cortex Gourmand. While attuned to this armor, you double the amount of days you can go without food or water before suffering a level of exhaustion.
-- **Weapon effect:** When held, this weapon draws in light, snuffing all nonmagical flames within 30 feet out. It turns dim light into darkness and bright light into dim light. S.Magala Cortex Quick Load. You can reload as a free action while you are attuned to this weapon.
+- **Armor effect:** Frenzy Res. Whenever you make a saving throw against the frenzy virus, you do so with advantage.
+- **Weapon effect:** When held, this weapon draws in light, snuffing all nonmagical flames within 30 feet out. It turns dim light into darkness and bright light into dim light.
 
 ### S. Magala Cortex
 
 - **Slots:** A, W
 - **Carve:** 4-5
 - **Capture:** 2-3
+- **Weapon effect:** Quick Load. You can reload as a free action while you are attuned to this weapon.
+- **Armor effect:** Gourmand. While attuned to this armor, you double the amount of days you can go without food or water before suffering a level of exhaustion.
 
 ### Antinomic Wing
 

@@ -122,6 +122,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 5
 - **Capture:** 5-7
 - **Armor effect:** While you are attuned to this armor, you can use a bonus action to speak its command word and exhale fire at a target within 15 feet of you. The target must make a DC 15 Dexterity saving throw, taking 4d6 fire damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.
+- **Weapon effect:** When you cast a spell that deals fire damage, you gain a +2 bonus to its spell attack roll and it deal an extra 1d4 fire damage.
 
 ### P.Rathian Carapace
 
@@ -143,6 +144,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 10
 - **Capture:** —
 - **Armor effect:** When you cast a spell that deals acid or poison damage, you gain a +1 bonus to its spell attack roll.
+- **Weapon effect:** Critical Eye. Your weapon attacks critical hit range is increased by 1.
 
 ### P.Rathian Tail
 
@@ -150,6 +152,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 11
 - **Capture:** 16-17
 - **Armor effect:** Item Prolonger+. Whenever you use a consumable item that has a duration, its duration is increased by an additional 30 seconds.
+- **Weapon effect:** Your weapon deals an extra 1d6 poison damage.
 
 ### P.Rath Wingtalon
 
@@ -157,6 +160,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 12-18
 - **Capture:** 18
 - **Armor effect:** Stamina Surge+1. While wearing this armor, you can use an action to cast the haste spell from it once per day but can target only yourself when you do so and you gain 2 levels of exhaustion when the spell ends.
+- **Weapon effect:** Critical Element (fire and poison). When you critically hit with a weapon or spell that deals fire or poison damage, you deal an extra 1d6 damage of that type.
 
 ### P.Rathian Plate
 
@@ -164,6 +168,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 19
 - **Capture:** 19
 - **Armor effect:** You have resistance to fire damage while you wear this armor.
+- **Weapon effect:** When you hit a creature with this weapon, they must make a DC 14 Constitution saving throw or become poisoned until the end of its next turn.
 
 ### P.Rathian Ruby
 
@@ -171,3 +176,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 20
 - **Armor effect:** You have resistance to poison damage and you immunity to the poisoned condition while you wear this armor.
+- **Weapon effect:** While you hold your weapon, you gain +2 bonus to spell attack rolls and you ignore half cover when making a spell attack.

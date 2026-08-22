@@ -1,0 +1,67 @@
+{
+  "description": "Split concatenated rune effects (multiple materials merged into one field).",
+  "fixes": [
+    {
+      "monster": "Viper Tobi-Kadachi",
+      "name": "V.Deadly Poison Sac",
+      "weaponEffect": "Your poison spells and attacks with this weapon deal an extra 1d4 poison damage.",
+      "source": "split from Ultraplegia Sac leak"
+    },
+    {
+      "monster": "Viper Tobi-Kadachi",
+      "name": "V.Ultraplegia Sac",
+      "weaponEffect": "(Bard, Cleric, Druid, Sorcerer, Warlock, & Wizard Only) While attuned to this weapon you can cast the hold person spell from it, without expending a spell slot. You can use this property twice, regaining all expended uses when you finish a long rest.",
+      "source": "split from V.Deadly Poison Sac leak"
+    },
+    {
+      "monster": "Pyre Rakna-Kadaki",
+      "name": "Pyre-Kadaki Silk",
+      "weaponEffect": "While attuned to this weapon you can use a bonus action to fire a strand of webbing at a creature, object, or terrain within 30 feet of you and pull yourself to the closest adjacent space to the target. If the target is a creature, they can make a DC 16 Dexterity saving throw. On a successful save, the creature avoids the webbing and you are unable to pull yourself to it. You can use this property a number of times equal to your proficiency modifier, regaining all expended uses when you finish a long rest.",
+      "source": "split from Dull Glowgut/Hardclaw leak"
+    },
+    {
+      "monster": "Pyre Rakna-Kadaki",
+      "name": "Pyre‑Kadaki Dull Glowgut",
+      "weaponEffect": "Maximum Might. While your hit points are full and you are not suffering from any levels of exhaustion; you deal maximum weapon damage with your attacks.",
+      "source": "split from Pyre-Kadaki Silk leak"
+    },
+    {
+      "monster": "Pyre Rakna-Kadaki",
+      "name": "Pyre‑Kadaki Hardclaw",
+      "weaponEffect": "You gain a +2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +3 when the spell you are casting is a fire spell.",
+      "source": "split from Pyre-Kadaki Silk leak"
+    },
+    {
+      "monster": "Pyre Rakna-Kadaki",
+      "name": "Kadaki Queen Substance",
+      "armorEffect": "While you wear this armor small spiders emerge from it, like hatching from an egg sac. The spiders are friendly to you and crawl around your armor but provide no other noticeable benefit.",
+      "source": "split from Dull Glowgut/Hardclaw armor leak"
+    },
+    {
+      "monster": "Pyre Rakna-Kadaki",
+      "name": "Pyre‑Kadaki Dull Glowgut",
+      "armorEffect": "This armor has 4 runes. It regains 1d3+1 runes daily at dawn. As an action you can expend one or more runes to cast the web spell (spell save DC 16). For 1 rune, you cast the spell as normal. You can increase the size of the cubed area by 5 feet for each additional rune you expend.",
+      "source": "split from Kadaki Queen Substance armor leak"
+    },
+    {
+      "monster": "Pyre Rakna-Kadaki",
+      "name": "Pyre‑Kadaki Hardclaw",
+      "armorEffect": "Entomologist+. When you capture an insect with a bug net, you instead gather 1d4.",
+      "source": "split from Kadaki Queen Substance armor leak"
+    },
+    {
+      "monster": "Chaotic Gore Magala",
+      "name": "Gore Magala Carapace",
+      "armorEffect": "Frenzy Res. Whenever you make a saving throw against the frenzy virus, you do so with advantage.",
+      "weaponEffect": "When held, this weapon draws in light, snuffing all nonmagical flames within 30 feet out. It turns dim light into darkness and bright light into dim light.",
+      "source": "split from S.Magala Cortex leak; matches base Gore Magala"
+    },
+    {
+      "monster": "Chaotic Gore Magala",
+      "name": "S. Magala Cortex",
+      "armorEffect": "Gourmand. While attuned to this armor, you double the amount of days you can go without food or water before suffering a level of exhaustion.",
+      "weaponEffect": "Quick Load. You can reload as a free action while you are attuned to this weapon.",
+      "source": "split from Gore Magala Carapace leak"
+    }
+  ]
+}

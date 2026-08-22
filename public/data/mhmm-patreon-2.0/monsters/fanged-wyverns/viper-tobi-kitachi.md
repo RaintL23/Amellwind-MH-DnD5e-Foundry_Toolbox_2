@@ -128,7 +128,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 18-20
 - **Capture:** —
 - **Armor effect:** Marathon Runner. While wearing this armor, your walking speed increases by 5 feet.
-- **Weapon effect:** While attuned to this weapon, your spell save DC is increased by 1 when casting spells that paralyzes or poisons a creature. instead of their normal color to indicate that they have allied with a Zinogre. If you look close at a Zinogre, you can see an energy field around it. Juvenile Zinogre have more hair on their bodies compared to adults and is white in color. It is believed that the increased hair protects the juvenile's shell and helps speed up the storage of electricity. This fur will shed as the juvenile Zinogre matures into adulthood. Zinogre are somewhat similar to real wolves, they even howl like them. But they do not form packs, quite the contrary, they are solitary hunters. This is no surprise, since they are extremely powerful and agile monsters, not needing teamwork to take down prey. According to eyewitnesses, adult Zinogre make herds and raise their young. During this period of time, it is ill-advised to go hunting Zinogre as the adults will aggressively attack any intruders getting too close to their offspring.
+- **Weapon effect:** While attuned to this weapon, your spell save DC is increased by 1 when casting spells that paralyze or poison a creature.
 
 ## QA flags
 
