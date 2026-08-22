@@ -169,6 +169,37 @@ export const INLINE_SKILL_UTILITY_RARITY: ResourceRarity = "Common";
 export const INLINE_CONDITION_IMMUNITY_RARITY: ResourceRarity = "Uncommon";
 
 /**
+ * Always-on cleanse of damage-over-time at the start of your turn
+ * (Recovery Level). Stronger than single-condition immunity (Uncommon);
+ * below always-on damage resistance (Rare) is a wash — Rare floor.
+ */
+export const INLINE_END_DOT_RARITY: ResourceRarity = "Rare";
+
+/**
+ * Always-on advantage on initiative rolls (Rejuvenated Beak–style).
+ * Weaker than always-on attack advantage (Rare); Uncommon floor.
+ */
+export const INLINE_INITIATIVE_ADVANTAGE_RARITY: ResourceRarity = "Uncommon";
+
+/**
+ * Strong initiative control: flat die bonus (d8+) and/or force first in order
+ * (Safi'jiiva Fellwing–style).
+ */
+export const INLINE_INITIATIVE_MAJOR_RARITY: ResourceRarity = "Rare";
+
+/**
+ * Buffs to healing you provide to other creatures (Astalos Scissortail +spell
+ * level, Lay on Hands THP rider). Minor = small additive / single-target THP.
+ */
+export const INLINE_HEAL_OTHER_MINOR_RARITY: ResourceRarity = "Uncommon";
+
+/**
+ * Stronger outgoing-heal packages (double spell level, shared THP, HP-transfer
+ * heals). One step above minor.
+ */
+export const INLINE_HEAL_OTHER_MAJOR_RARITY: ResourceRarity = "Rare";
+
+/**
  * Mild always-on illumination (shed bright/dim light, Moon-touched–style).
  * Weaker than darkvision; Common floor.
  */

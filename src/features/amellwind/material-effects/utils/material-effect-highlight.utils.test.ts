@@ -8,6 +8,7 @@ import {
   runeMatchesMaterialEffectTierFilter,
   supplementIndexWithRuneEffectNames,
   splitMaterialEffectRefs,
+  splitRuneEffectDisplayLines,
   findMatchingMaterialEffectNames,
 } from "./material-effect-highlight.utils";
 import type { Rune } from "@/shared/types";
@@ -44,6 +45,31 @@ function makeRune(partial: Partial<Rune> & Pick<Rune, "name">): Rune {
 }
 
 const emptyIndex = buildMaterialEffectNameIndex([]);
+
+describe("splitRuneEffectDisplayLines", () => {
+  const hirabamiWebbingArmor =
+    "Honey Hunter+. Once per day, when you use an herbalist kit to gather plants, you gather 1d4 honey with it. Freezer Sac (Spellcaster Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 10 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 10 cold damage.";
+
+  it("splits bundled named material effects on one line", () => {
+    const lines = splitRuneEffectDisplayLines(hirabamiWebbingArmor);
+    expect(lines).toHaveLength(2);
+    expect(lines[0]).toMatch(/^Honey Hunter\+\./);
+    expect(lines[1]).toMatch(/^Freezer Sac \(Spellcaster Only\)/);
+  });
+
+  it("preserves explicit newline breaks", () => {
+    expect(splitRuneEffectDisplayLines("Line one\nLine two")).toEqual([
+      "Line one",
+      "Line two",
+    ]);
+  });
+
+  it("leaves single-effect text unchanged", () => {
+    const text =
+      "Expert Fisherman. When you catch fish, you instead catch two.";
+    expect(splitRuneEffectDisplayLines(text)).toEqual([text]);
+  });
+});
 
 describe("extractLeadingMaterialEffectName", () => {
   it("extracts short titled effects", () => {
@@ -145,6 +171,16 @@ describe("getMaterialEffectTierForText — inline extra damage", () => {
         emptyIndex,
       ),
     ).toBe("Uncommon");
+  });
+
+  it("assigns Very Rare to limited-use average-dice AoE (Zorah Magdaros)", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Melee Weapon Only) When you hit a creature with this weapon, it must succeed on a DC 17 Strength saving throw or be pushed back 10 feet. If the saving throw fails by 5 or more, it is also knocked prone. Additionally, when a creature fails its saving throw, you can speak the weapon's command word to create a wave of molten rock that erupts from the ground in a 30-foot cone in front you, dealing 22 (4d10) fire damage to each creature in the area. Once you use this property, you can't use it again until you finish a long rest.",
+        "weapon",
+        emptyIndex,
+      ),
+    ).toBe("Very Rare");
   });
 });
 
@@ -732,6 +768,75 @@ describe("getMaterialEffectTierForText — discovered named overlay", () => {
     expect(
       getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
     ).toBe("Common");
+  });
+
+  it("assigns Rare to Recovery Level", () => {
+    const rune = makeRune({
+      name: "Khezu Hide",
+      slots: ["A"],
+      armorEffect:
+        "Recovery Level. Whenever you suffer an effect that deals damage to you at the start of your turn your armor flashes white and ends the effect.",
+    });
+    const index = supplementIndexWithRuneEffectNames(emptyIndex, [rune]);
+
+    expect(
+      getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
+    ).toBe("Rare");
+  });
+
+  it("assigns Rare from mechanic:end-dot tags when Unknown otherwise", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Whenever you suffer an effect that deals damage to you at the start of your turn your armor flashes white and ends the effect.",
+        "armor",
+        emptyIndex,
+        ["mechanic:end-dot", "mechanic:passive", "type:defensive"],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon from mechanic:initiative tags", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You have advantage on initiative rolls while you wear this armor.",
+        "armor",
+        emptyIndex,
+        ["mechanic:initiative", "mechanic:advantage", "mechanic:passive"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Rare from mechanic:initiative:major tags", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You add a d8 to your initiative and can become first in the initiative order.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:initiative", "mechanic:initiative:major"],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon from heal-other:minor tags", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Whenever you restore hit points to a creature, it regains additional hit points equal to the spell's level.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:heal-other:minor", "type:support"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Rare from heal-other:major tags", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "The creature regains additional hit points equal to double the spell's level.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:heal-other:major", "type:support"],
+      ),
+    ).toBe("Rare");
   });
 
   it("leaves unclassified discovered names as Unknown", () => {

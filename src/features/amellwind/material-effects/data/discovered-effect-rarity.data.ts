@@ -6,6 +6,8 @@ import type { MaterialEffectSlot, ResourceRarity } from "@/shared/types";
  */
 const DISCOVERED_EFFECT_RARITY_BY_KEY: Record<string, ResourceRarity> = {
   "armor:flexible leathercraft": "Common",
+  /** Always-on DoT cleanse at start of turn (Khezu / Gigginox / Red Khezu). */
+  "armor:recovery level": "Rare",
 };
 
 function overlayKey(slot: MaterialEffectSlot, name: string): string {

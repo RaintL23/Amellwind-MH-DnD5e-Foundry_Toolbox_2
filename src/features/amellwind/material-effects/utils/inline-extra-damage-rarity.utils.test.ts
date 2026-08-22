@@ -88,4 +88,28 @@ describe("inferInlineExtraDamageRarity", () => {
       ),
     ).toBeNull();
   });
+
+  it("reads MHMM average dice dealing 22 (4d10) and steps down when limited-use", () => {
+    expect(
+      inferInlineExtraDamageRarity(
+        "…create a wave of molten rock in a 30-foot cone, dealing 22 (4d10) fire damage to each creature in the area. Once you use this property, you can't use it again until you finish a long rest.",
+      ),
+    ).toBe("Very Rare");
+  });
+
+  it("keeps Legendary for always-on high extra damage", () => {
+    expect(
+      inferInlineExtraDamageRarity(
+        "Your weapon deals an extra 4d6 fire damage.",
+      ),
+    ).toBe("Legendary");
+  });
+
+  it("reads taking 4d6 without average parentheses", () => {
+    expect(
+      inferInlineExtraDamageRarity(
+        "The target must make a DC 15 Dexterity saving throw, taking 4d6 fire damage on a failed save. Once used, this property cannot be used again until you finish a long rest.",
+      ),
+    ).toBe("Very Rare");
+  });
 });

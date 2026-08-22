@@ -14,8 +14,11 @@ import { inferRarityFromAttackRangeTags } from "./inline-attack-range-rarity.uti
 import { inferRarityFromAcceleratedRestTags } from "./inline-accelerated-rest-rarity.utils";
 import { inferRarityFromClassResourceRecoveryTags } from "./inline-class-resource-rarity.utils";
 import { inferRarityFromConditionDefenseTags, inferRarityFromConditionImmunityTags } from "./inline-condition-rarity.utils";
+import { inferRarityFromEndDotTags } from "./inline-end-dot-rarity.utils";
 import { inferRarityFromGatherResourceTags } from "./inline-gather-rarity.utils";
+import { inferRarityFromHealOtherTags } from "./inline-heal-other-rarity.utils";
 import { inferRarityFromHoldBreathUnderwaterTags } from "./inline-hold-breath-rarity.utils";
+import { inferRarityFromInitiativeTags } from "./inline-initiative-rarity.utils";
 import { inferRarityFromLightDarknessTags } from "./inline-light-darkness-rarity.utils";
 import { inferRarityFromMithralArmorTags } from "./inline-mithral-rarity.utils";
 import { inferRarityFromMovementTags } from "./inline-movement-rarity.utils";
@@ -262,6 +265,78 @@ export function splitMaterialEffectRefs(
     });
 }
 
+/** Body openers after a titled material effect (e.g. "Freezer Sac (Spellcaster Only) This armor…"). */
+const EMBEDDED_EFFECT_BODY_START =
+  /^(?:\([^)]+\)\s+)?[A-Z][^.]{2,48}?(?:\s*\+\d*)?(?:\s+\([^)]+\))?\s+(?:This|While|When|You|Your|As|Once|Whenever|If|The|At|On|Before|After|During|Any|Each|All|A|An|It|In|For|See|Maximum|Expert|Pro|Marathon|Flexible|Recovery|Speed|Eating|Loading|Master|Hunter|Entomologist|Trap|Quick|Gourmand|Frenzy|Crisis|Deadeye|Booster|Runner|Leathercraft|Surge|Might|Load|Res|Wrath|Ward|Element|Sovereign|Thunder|Inferno|Deadly|Poison|Freezer|Honey|Evade|Critical|B\.Honey)/;
+
+function looksLikeEmbeddedEffectStart(
+  remainder: string,
+  effectNames?: string[],
+): boolean {
+  const trimmed = remainder.trimStart();
+  if (!trimmed) return false;
+  if (extractLeadingMaterialEffectName(trimmed)) return true;
+  if (effectNames?.length) {
+    for (const name of findMatchingMaterialEffectNames(trimmed, effectNames)) {
+      const pattern = new RegExp(
+        `^${buildNameMatchPattern(name)}(?:\\s*\\([^)]+\\))?\\s`,
+        "i",
+      );
+      if (pattern.test(trimmed)) return true;
+    }
+  }
+  return EMBEDDED_EFFECT_BODY_START.test(trimmed);
+}
+
+function collectEmbeddedEffectStartIndices(
+  text: string,
+  effectNames?: string[],
+): number[] {
+  const indices = new Set<number>([0]);
+
+  for (let i = 1; i < text.length; i++) {
+    if (text[i - 1] !== "." || !/\s/.test(text[i])) continue;
+    let start = i + 1;
+    while (start < text.length && /\s/.test(text[start])) start += 1;
+    if (looksLikeEmbeddedEffectStart(text.slice(start), effectNames)) {
+      indices.add(start);
+    }
+  }
+
+  return [...indices].sort((a, b) => a - b);
+}
+
+/**
+ * Splits rune effect text into display lines. Preserves explicit newlines and
+ * also breaks single-line fields that bundle multiple named material effects
+ * (e.g. Honey Hunter+ followed by Freezer Sac on Hirabami Webbing armor).
+ */
+export function splitRuneEffectDisplayLines(
+  text: string,
+  effectNames?: string[],
+): string[] {
+  const newlineSplit = text
+    .split(/\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (newlineSplit.length > 1) return newlineSplit;
+
+  const single = newlineSplit[0] ?? text.trim();
+  if (!single) return [];
+
+  const starts = collectEmbeddedEffectStartIndices(single, effectNames);
+  if (starts.length <= 1) return [single];
+
+  const segments: string[] = [];
+  for (let i = 0; i < starts.length; i++) {
+    const start = starts[i]!;
+    const end = starts[i + 1] ?? single.length;
+    const segment = single.slice(start, end).trim();
+    if (segment) segments.push(segment);
+  }
+  return segments;
+}
+
 export function findMatchingMaterialEffectNames(
   text: string,
   names: string[],
@@ -361,6 +436,15 @@ export function getMaterialEffectTierForText(
   const conditionImmunityRarity =
     inferRarityFromConditionImmunityTags(effectTags);
   if (conditionImmunityRarity) return conditionImmunityRarity;
+
+  const endDotRarity = inferRarityFromEndDotTags(effectTags);
+  if (endDotRarity) return endDotRarity;
+
+  const healOtherRarity = inferRarityFromHealOtherTags(effectTags);
+  if (healOtherRarity) return healOtherRarity;
+
+  const initiativeRarity = inferRarityFromInitiativeTags(effectTags);
+  if (initiativeRarity) return initiativeRarity;
 
   const skillUtilityRarity = inferRarityFromSkillUtilityTags(effectTags);
   if (skillUtilityRarity) return skillUtilityRarity;
