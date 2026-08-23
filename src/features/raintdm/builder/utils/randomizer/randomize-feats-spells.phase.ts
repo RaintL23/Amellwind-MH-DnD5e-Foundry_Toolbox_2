@@ -94,7 +94,10 @@ export async function randomizeFeatsAndSpellsPhase(
   });
   const lineageSpells = randomizedSpeciesDetail
     ? buildSpeciesLineageSpellSelectionsFromCatalog(
-        randomizedSpeciesDetail,
+        {
+          universalCantrips: randomizedSpeciesDetail.universalCantrips,
+          namedSpellGroups: randomizedSpeciesDetail.namedSpellGroups,
+        },
         randomizedSpeciesLineageChoice,
         preservedLevel,
         catalogs.allSpells,

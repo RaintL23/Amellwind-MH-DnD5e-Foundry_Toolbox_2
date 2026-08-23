@@ -120,6 +120,7 @@ export function useProficiencySlice({
   const [classToolChoices, setClassToolChoicesState] = useState<Record<number, string[]>>({});
   const [backgroundToolChoices, setBackgroundToolChoices] = useState<string[]>([]);
   const [speciesToolChoices, setSpeciesToolChoices] = useState<string[]>([]);
+  const [speciesWeaponChoices, setSpeciesWeaponChoices] = useState<string[]>([]);
   const [classLanguageChoices, setClassLanguageChoicesState] = useState<Record<number, string[]>>({});
   const [backgroundLanguageChoices, setBackgroundLanguageChoices] = useState<string[]>([]);
   const [speciesLanguageChoices, setSpeciesLanguageChoices] = useState<string[]>([]);
@@ -255,6 +256,7 @@ export function useProficiencySlice({
   const resetOnSpeciesChange = useCallback(() => {
     setSpeciesSkillChoices([]);
     setSpeciesToolChoices([]);
+    setSpeciesWeaponChoices([]);
     setSpeciesLanguageChoices([]);
     setSpeciesDefenseChoicesState({});
     setSpeciesSkillGrants([]);
@@ -320,6 +322,7 @@ export function useProficiencySlice({
     setClassToolChoicesState({});
     setBackgroundToolChoices([]);
     setSpeciesToolChoices([]);
+    setSpeciesWeaponChoices([]);
     setClassLanguageChoicesState({});
     setBackgroundLanguageChoices([]);
     setSpeciesLanguageChoices([]);
@@ -488,8 +491,13 @@ export function useProficiencySlice({
       backgroundToolChoices,
       speciesToolChoices,
     );
+    const weapons = resolveNamedWithChoices(
+      allWeaponGrants,
+      {},
+      [],
+      speciesWeaponChoices,
+    );
     const armor = resolveFixedGrantList(allArmorGrants);
-    const weapons = resolveFixedGrantList(allWeaponGrants);
     const languages = resolveNamedWithChoices(
       allLanguageGrants,
       classLanguageChoices,
@@ -550,6 +558,7 @@ export function useProficiencySlice({
     classToolChoices,
     backgroundToolChoices,
     speciesToolChoices,
+    speciesWeaponChoices,
     classLanguageChoices,
     backgroundLanguageChoices,
     speciesLanguageChoices,
@@ -635,16 +644,19 @@ export function useProficiencySlice({
       setClassToolChoicesAtIndex,
       setBackgroundToolChoices,
       setSpeciesToolChoices,
+      setSpeciesWeaponChoices,
       setClassLanguageChoicesAtIndex,
       setBackgroundLanguageChoices,
       setSpeciesLanguageChoices,
       setSpeciesDefenseChoicesAtIndex,
       allToolGrants,
+      allWeaponGrants,
       allLanguageGrants,
       allDefenseGrants,
       classToolChoices,
       backgroundToolChoices,
       speciesToolChoices,
+      speciesWeaponChoices,
       classLanguageChoices,
       backgroundLanguageChoices,
       speciesLanguageChoices,
@@ -686,16 +698,19 @@ export function useProficiencySlice({
       setClassToolChoicesAtIndex,
       setBackgroundToolChoices,
       setSpeciesToolChoices,
+      setSpeciesWeaponChoices,
       setClassLanguageChoicesAtIndex,
       setBackgroundLanguageChoices,
       setSpeciesLanguageChoices,
       setSpeciesDefenseChoicesAtIndex,
       allToolGrants,
+      allWeaponGrants,
       allLanguageGrants,
       allDefenseGrants,
       classToolChoices,
       backgroundToolChoices,
       speciesToolChoices,
+      speciesWeaponChoices,
       classLanguageChoices,
       backgroundLanguageChoices,
       speciesLanguageChoices,

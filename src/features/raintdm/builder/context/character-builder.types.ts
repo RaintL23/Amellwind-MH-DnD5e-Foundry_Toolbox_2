@@ -255,11 +255,13 @@ export interface CharacterBuilderContextValue {
   expertiseSources: Partial<Record<SkillKey, ProficiencySource>>;
 
   allToolGrants: NamedProficiencyGrant[];
+  allWeaponGrants: NamedProficiencyGrant[];
   allLanguageGrants: NamedProficiencyGrant[];
   allDefenseGrants: DefenseGrant[];
   classToolChoices: Record<number, string[]>;
   backgroundToolChoices: string[];
   speciesToolChoices: string[];
+  speciesWeaponChoices: string[];
   classLanguageChoices: Record<number, string[]>;
   backgroundLanguageChoices: string[];
   speciesLanguageChoices: string[];
@@ -267,6 +269,7 @@ export interface CharacterBuilderContextValue {
   setClassToolChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
   setBackgroundToolChoices: (choices: string[]) => void;
   setSpeciesToolChoices: (choices: string[]) => void;
+  setSpeciesWeaponChoices: (choices: string[]) => void;
   setClassLanguageChoicesAtIndex: (grantIndex: number, choices: string[]) => void;
   setBackgroundLanguageChoices: (choices: string[]) => void;
   setSpeciesLanguageChoices: (choices: string[]) => void;

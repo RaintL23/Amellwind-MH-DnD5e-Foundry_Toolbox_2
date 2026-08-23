@@ -65,6 +65,16 @@ function extractCantripsFromKnown(known: unknown): string[] {
     .map((entry) => extractSpellName(String(entry)));
 }
 
+/** Extract cantrip names from `innate.1` arrays (e.g. Modern Wyverian Magic). */
+function extractCantripsFromInnate(innate: unknown): string[] {
+  if (typeof innate !== "object" || innate === null) return [];
+  const level1 = (innate as Raw)["1"];
+  if (!Array.isArray(level1)) return [];
+  return (level1 as unknown[])
+    .filter((entry) => typeof entry === "string" && entry.includes("#c"))
+    .map((entry) => extractSpellName(String(entry)));
+}
+
 /**
  * Build a map of legacy name → resistance from _versions metadata.
  * _versions items have names like "Tiefling; Abyssal Legacy" and carry their own `resist` array.
@@ -131,7 +141,10 @@ function mapAdditionalSpellEntryToGroup(
   versionResistMap: Map<string, DamageType>,
   universalSet: Set<string>,
 ): SpeciesNamedSpellGroup {
-  const allGroupCantrips = extractCantripsFromKnown(entry.known);
+  const allGroupCantrips = [
+    ...extractCantripsFromKnown(entry.known),
+    ...extractCantripsFromInnate(entry.innate),
+  ];
   const uniqueCantrips = allGroupCantrips.filter((c) => !universalSet.has(c));
   const resistance = versionResistMap.get(groupName.toLowerCase());
   return {
@@ -357,6 +370,18 @@ function parseNamedGroupsFromAdditionalSpells(
 
   if (namedEntries.length < 2) {
     const single = additionalSpells[0] as Raw;
+    if (single && (single.innate || single.known)) {
+      const group = mapAdditionalSpellEntryToGroup(
+        single,
+        "",
+        versionResistMap,
+        new Set(),
+      );
+      return {
+        namedSpellGroups: group.cantrips.length || group.innateSpells?.length ? [group] : [],
+        universalCantrips: [],
+      };
+    }
     return {
       namedSpellGroups: [],
       universalCantrips: extractCantripsFromKnown(single?.known),
@@ -384,7 +409,8 @@ function parseNamedGroupsFromAdditionalSpells(
   return { namedSpellGroups, universalCantrips };
 }
 
-function parseAdditionalSpells(
+/** Parses 5etools `additionalSpells` blocks (shared by D&D races and GTMH species). */
+export function parseRaceAdditionalSpells(
   additionalSpells: unknown,
   versions: unknown,
   traitEntries?: unknown[],
@@ -453,7 +479,7 @@ export function mapDndRace(raw: any): DndRace {
   ];
 
   const { namedSpellGroups, universalCantrips, namedSpellGroupsLabel } =
-    parseAdditionalSpells(raw.additionalSpells, raw._versions, raw.entries);
+    parseRaceAdditionalSpells(raw.additionalSpells, raw._versions, raw.entries);
 
   return {
     id: raceId(raw),

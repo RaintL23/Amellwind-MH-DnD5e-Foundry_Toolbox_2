@@ -3,12 +3,10 @@ import { ScrollText, Users } from "lucide-react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
 import {
   getAllSpecies,
-  getSpeciesById,
   getSubracesOf,
 } from "@/features/amellwind/species/services/species.service";
 import {
   getBuilderListDndRaces,
-  getDndRaceById,
   getDndRacesByName,
   getDndSubracesForParent,
 } from "@/features/dnd/races/services/dnd-race.service";
@@ -24,6 +22,7 @@ import {
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
 import type { BuilderSlotSelection } from "@/features/raintdm/builder/hooks/useBuilderSlotSelection";
 import { useLibraryVariants } from "@/features/raintdm/builder/hooks/useLibraryVariants";
+import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-resolution.utils";
 import {
   entityToLibraryOption,
   prepareLibraryListOptions,
@@ -227,75 +226,83 @@ export function IdentityLibraryPanel({
     setMhSubraceDetail(null);
 
     async function loadIdentityDetail() {
-      if (isSpeciesSlot && identitySource === "dnd") {
-        const base = await getDndRaceById(selectedIdentity!.id);
-        if (cancelled || !base) return;
-
-        setIdentityDetail(base as unknown as Species);
-        setLoadedDndRaceBase(base);
-
-        const subraces = await getDndSubracesForParent(base.name, base.source);
+      if (isSpeciesSlot) {
+        const { mhSpecies, dndRace, dndSubrace, mhSubrace } =
+          await resolveSpeciesParts(selectedIdentity!);
         if (cancelled) return;
 
-        setDndSubraceOptions(
-          subraces.map((subrace) => ({ id: subrace.id, name: subrace.name })),
-        );
+        if (mhSpecies) {
+          setIdentityDetail(mhSpecies);
 
-        const selectedSubrace = selectedIdentity!.subraceId
-          ? subraces.find(
-              (subrace) => subrace.id === selectedIdentity!.subraceId,
-            )
-          : undefined;
+          const subraces = await getSubracesOf(mhSpecies.name);
+          if (cancelled) return;
 
-        if (selectedIdentity!.subraceId && !selectedSubrace) {
-          setSpecies({
-            id: selectedIdentity!.id,
-            name: selectedIdentity!.name,
-            subraceId: null,
-            subraceName: null,
-          });
-        }
-
-        if (selectedSubrace) {
-          setIdentitySubraceDetail(selectedSubrace);
-        }
-        return;
-      }
-
-      if (isSpeciesSlot && identitySource === "amellwind") {
-        const data = await getSpeciesById(selectedIdentity!.id);
-        if (cancelled || !data) return;
-
-        setIdentityDetail(data as Species);
-
-        const subraces = await getSubracesOf(data.name);
-        if (cancelled) return;
-
-        setMhSubraceOptions(
-          subraces.map((s) => ({ id: s.id, name: s.name })),
-        );
-
-        if (selectedIdentity!.subraceId) {
-          const selected = subraces.find(
-            (s) => s.id === selectedIdentity!.subraceId,
+          setMhSubraceOptions(
+            subraces.map((s) => ({ id: s.id, name: s.name })),
           );
-          if (!selected) {
+
+          const selectedSubrace =
+            mhSubrace ??
+            (selectedIdentity!.subraceId
+              ? subraces.find((s) => s.id === selectedIdentity!.subraceId)
+              : undefined);
+
+          if (selectedIdentity!.subraceId && !selectedSubrace) {
             setSpecies({
               id: selectedIdentity!.id,
               name: selectedIdentity!.name,
               subraceId: null,
               subraceName: null,
             });
-          } else {
-            setMhSubraceDetail(selected);
+          } else if (selectedSubrace) {
+            setMhSubraceDetail(selectedSubrace);
           }
+          return;
         }
+
+        if (dndRace) {
+          setIdentityDetail(dndRace as unknown as Species);
+          setLoadedDndRaceBase(dndRace);
+
+          const subraces = await getDndSubracesForParent(
+            dndRace.name,
+            dndRace.source,
+          );
+          if (cancelled) return;
+
+          setDndSubraceOptions(
+            subraces.map((subrace) => ({
+              id: subrace.id,
+              name: subrace.name,
+            })),
+          );
+
+          const selectedSubrace =
+            dndSubrace ??
+            (selectedIdentity!.subraceId
+              ? subraces.find(
+                  (subrace) => subrace.id === selectedIdentity!.subraceId,
+                )
+              : undefined);
+
+          if (selectedIdentity!.subraceId && !selectedSubrace) {
+            setSpecies({
+              id: selectedIdentity!.id,
+              name: selectedIdentity!.name,
+              subraceId: null,
+              subraceName: null,
+            });
+          } else if (selectedSubrace) {
+            setIdentitySubraceDetail(selectedSubrace);
+          }
+          return;
+        }
+
         return;
       }
 
-      const data = isSpeciesSlot
-        ? await getSpeciesById(selectedIdentity!.id)
-        : identitySource === "dnd"
+      const data =
+        identitySource === "dnd"
           ? await getDndBackgroundById(selectedIdentity!.id)
           : await getBackgroundById(selectedIdentity!.id);
 
@@ -368,8 +375,7 @@ export function IdentityLibraryPanel({
       });
       return;
     }
-    const options =
-      identitySource === "dnd" ? dndSubraceOptions : mhSubraceOptions;
+    const options = loadedDndRaceBase ? dndSubraceOptions : mhSubraceOptions;
     const option = options.find((entry) => entry.id === subraceId);
     if (!option) return;
     setSpecies({
@@ -394,27 +400,27 @@ export function IdentityLibraryPanel({
         name: g.name,
       }));
 
-      const activeSubraceOptions =
-        identitySource === "dnd"
-          ? dndSubraceOptions.length > 0
-            ? dndSubraceOptions
-            : undefined
-          : mhSubraceOptions.length > 0
-            ? mhSubraceOptions
-            : undefined;
+      const isDndSpeciesDetail = !!loadedDndRaceBase;
 
-      const activeSubraceTraits =
-        identitySource === "dnd"
-          ? (identitySubraceDetail?.traits ?? [])
-          : (mhSubraceDetail?.traits ?? []);
+      const activeSubraceOptions = isDndSpeciesDetail
+        ? dndSubraceOptions.length > 0
+          ? dndSubraceOptions
+          : undefined
+        : mhSubraceOptions.length > 0
+          ? mhSubraceOptions
+          : undefined;
 
-      const activeSubraceAbilitySummary =
-        identitySource === "dnd"
-          ? (identitySubraceDetail?.abilitySummary ?? null)
-          : (mhSubraceDetail?.abilitySummary ?? null);
+      const activeSubraceTraits = isDndSpeciesDetail
+        ? (identitySubraceDetail?.traits ?? [])
+        : (mhSubraceDetail?.traits ?? []);
 
-      const activeSubraceFluff =
-        identitySource === "amellwind" ? (mhSubraceDetail?.fluff ?? null) : null;
+      const activeSubraceAbilitySummary = isDndSpeciesDetail
+        ? (identitySubraceDetail?.abilitySummary ?? null)
+        : (mhSubraceDetail?.abilitySummary ?? null);
+
+      const activeSubraceFluff = isDndSpeciesDetail
+        ? null
+        : (mhSubraceDetail?.fluff ?? null);
 
       return (
         <IdentityLibraryDetail

@@ -139,6 +139,39 @@ function featureSourceName(
 }
 
 /**
+ * Ranger Deft Explorer (XPHB), TCE Canny, and similar: choose N of your
+ * existing skill proficiencies to gain Expertise (or double PB).
+ */
+function parseChooseYourSkillProficiencyExpertiseGrant(
+  feature: ClassFeatureEntry,
+  className: string,
+): ExpertiseGrant | null {
+  const fullText = feature.description.join(" ");
+
+  const match = fullText.match(
+    /choose\s+(one|two|three|four|\d+)\s+of\s+your\s+skill\s+proficienc(?:y|ies)/i,
+  );
+  if (!match) return null;
+
+  const hasExpertise =
+    fullText.includes("{@variantrule Expertise") ||
+    /\bexpertise\b/i.test(fullText) ||
+    /proficiency bonus is doubled/i.test(fullText);
+  if (!hasExpertise) return null;
+
+  const count = COUNT_WORDS[match[1].toLowerCase()] ?? 1;
+
+  return {
+    kind: "chooseProficient",
+    count,
+    source: {
+      type: "feature",
+      name: featureSourceName(feature, className),
+    },
+  };
+}
+
+/**
  * Wizard Scholar and similar features: choose N from a listed skill pool
  * among skills you are already proficient in, then gain Expertise in that pick.
  */
@@ -223,7 +256,9 @@ export function detectExpertiseGrants(
 
   for (const feature of features) {
     if (/^expertise$/i.test(feature.name.trim())) continue;
-    const parsed = parseListedProficientExpertiseGrant(feature, classData.name);
+    const parsed =
+      parseChooseYourSkillProficiencyExpertiseGrant(feature, classData.name) ??
+      parseListedProficientExpertiseGrant(feature, classData.name);
     if (parsed) grants.push(parsed);
   }
 

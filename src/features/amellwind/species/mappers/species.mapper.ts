@@ -23,6 +23,7 @@ import {
   mapSizes,
   mapTraits,
 } from "@/shared/mappers/species-race-core.mapper";
+import { parseRaceAdditionalSpells } from "@/features/dnd/races/mappers/dnd-race.mapper";
 
 export { formatAbilitySummary };
 
@@ -86,6 +87,19 @@ export function mapSpecies(raw: any): Species {
       speciesSource,
     ),
   ];
+  const weaponProficiencyGrants = parseNamedProficiencyBlocks(
+    Array.isArray(raw.weaponProficiencies) ? raw.weaponProficiencies : [],
+    speciesSource,
+  );
+  const toolProficiencyGrants = parseNamedProficiencyBlocks(
+    Array.isArray(raw.toolProficiencies) ? raw.toolProficiencies : [],
+    speciesSource,
+  );
+  const { namedSpellGroups, universalCantrips } = parseRaceAdditionalSpells(
+    raw.additionalSpells,
+    raw._versions,
+    raw.entries,
+  );
 
   return {
     id: speciesId(raw),
@@ -111,5 +125,13 @@ export function mapSpecies(raw: any): Species {
     originFeatGrant: parseOriginFeatGrant(raw.feats),
     languageGrants,
     defenseGrants,
+    weaponProficiencyGrants:
+      weaponProficiencyGrants.length > 0 ? weaponProficiencyGrants : undefined,
+    toolProficiencyGrants:
+      toolProficiencyGrants.length > 0 ? toolProficiencyGrants : undefined,
+    namedSpellGroups:
+      namedSpellGroups.length > 0 ? namedSpellGroups : undefined,
+    universalCantrips:
+      universalCantrips.length > 0 ? universalCantrips : undefined,
   };
 }

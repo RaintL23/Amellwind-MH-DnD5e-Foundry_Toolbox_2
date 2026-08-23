@@ -112,6 +112,28 @@ function parseProficiencyBlock(
   }
 
   const choose = block.choose as Raw | undefined;
+  if (choose && typeof choose.fromFilter === "string") {
+    const count = parseChooseCount(choose);
+    const filter = choose.fromFilter.toLowerCase();
+    if (/type\s*=\s*martial\s+weapon/.test(filter)) {
+      pushAnyGrant(
+        grants,
+        count,
+        `Martial weapon${count > 1 ? "s" : ""}`,
+        source,
+      );
+      return;
+    }
+    if (/type\s*=\s*simple\s+weapon/.test(filter)) {
+      pushAnyGrant(
+        grants,
+        count,
+        `Simple weapon${count > 1 ? "s" : ""}`,
+        source,
+      );
+      return;
+    }
+  }
   if (choose && Array.isArray(choose.from) && choose.from.length) {
     const from = (choose.from as unknown[])
       .map((item) => formatLabel(String(item)))
@@ -178,6 +200,28 @@ export function parseNamedProficiencyBlocks(
     }
 
     const choose = raw.choose as Raw | undefined;
+    if (choose && typeof choose.fromFilter === "string") {
+      const count = parseChooseCount(choose);
+      const filter = choose.fromFilter.toLowerCase();
+      if (/type\s*=\s*martial\s+weapon/.test(filter)) {
+        pushAnyGrant(
+          grants,
+          count,
+          `Martial weapon${count > 1 ? "s" : ""}`,
+          source,
+        );
+        continue;
+      }
+      if (/type\s*=\s*simple\s+weapon/.test(filter)) {
+        pushAnyGrant(
+          grants,
+          count,
+          `Simple weapon${count > 1 ? "s" : ""}`,
+          source,
+        );
+        continue;
+      }
+    }
     if (choose && Array.isArray(choose.from) && choose.from.length) {
       const from = (choose.from as unknown[])
         .map((item) => formatLabel(String(item)))

@@ -1,7 +1,10 @@
 import { useEffect, useRef } from "react";
-import { getDndRaceById } from "@/features/dnd/races/services/dnd-race.service";
 import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
-import { buildSpeciesLineageSpellSelections } from "@/features/raintdm/builder/utils/species-spell-grants.utils";
+import {
+  buildSpeciesLineageSpellSelections,
+  combineSpeciesSpellGrantSource,
+} from "@/features/raintdm/builder/utils/species-spell-grants.utils";
+import { resolveSpeciesParts } from "@/features/raintdm/builder/utils/species-resolution.utils";
 
 /** Syncs species lineage cantrips and innate spells into the spell grid. */
 export function useSpeciesSpellGrantSync() {
@@ -24,11 +27,22 @@ export function useSpeciesSpellGrantSync() {
 
     let cancelled = false;
 
-    void getDndRaceById(species.id).then(async (race) => {
-      if (cancelled || !race?.namedSpellGroups?.length) return;
+    void resolveSpeciesParts(species).then(async (parts) => {
+      const spellSource = combineSpeciesSpellGrantSource(
+        parts.mhSpecies ?? parts.dndRace,
+        parts.mhSubrace ?? parts.dndSubrace,
+      );
+      if (
+        cancelled ||
+        !spellSource ||
+        (!spellSource.universalCantrips?.length &&
+          !spellSource.namedSpellGroups?.length)
+      ) {
+        return;
+      }
 
       const selections = await buildSpeciesLineageSpellSelections(
-        race,
+        spellSource,
         speciesSpellGroupChoice,
         character.level,
       );
@@ -49,6 +63,7 @@ export function useSpeciesSpellGrantSync() {
     };
   }, [
     species?.id,
+    species?.subraceId,
     speciesSpellGroupChoice,
     character.level,
     addSpell,

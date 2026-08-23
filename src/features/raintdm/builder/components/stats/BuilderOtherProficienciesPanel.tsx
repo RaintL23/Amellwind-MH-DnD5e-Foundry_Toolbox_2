@@ -50,12 +50,15 @@ export function BuilderOtherProficienciesPanel() {
   const {
     class: selectedClass,
     allToolGrants,
+    allWeaponGrants,
     classToolChoices,
     backgroundToolChoices,
     speciesToolChoices,
+    speciesWeaponChoices,
     setClassToolChoicesAtIndex,
     setBackgroundToolChoices,
     setSpeciesToolChoices,
+    setSpeciesWeaponChoices,
     toolSources,
     resolvedToolItems,
     resolvedArmorItems,
@@ -64,11 +67,16 @@ export function BuilderOtherProficienciesPanel() {
     weaponSources,
   } = useCharacterBuilder();
 
-  const pending = getPendingNamedChoiceGrants(allToolGrants);
-  const speciesGrants = pending.filter((g) => g.source.type === "species");
-  const bgGrants = pending.filter((g) => g.source.type === "background");
-  const classGrants = pending.filter((g) => g.source.type === "class");
-  const hasPickers = pending.length > 0;
+  const pendingTools = getPendingNamedChoiceGrants(allToolGrants);
+  const pendingWeapons = getPendingNamedChoiceGrants(allWeaponGrants);
+  const speciesToolGrantPickers = pendingTools.filter((g) => g.source.type === "species");
+  const speciesWeaponGrantPickers = pendingWeapons.filter(
+    (g) => g.source.type === "species",
+  );
+  const bgGrants = pendingTools.filter((g) => g.source.type === "background");
+  const classGrants = pendingTools.filter((g) => g.source.type === "class");
+  const hasPickers =
+    pendingTools.length > 0 || pendingWeapons.length > 0;
 
   const totalCount =
     resolvedToolItems.length +
@@ -128,9 +136,19 @@ export function BuilderOtherProficienciesPanel() {
 
             {hasPickers && <BuilderSourceLegend />}
 
-            {speciesGrants.length > 0 && (
+            {speciesWeaponGrantPickers.length > 0 && (
               <BuilderNamedPicker
-                grants={speciesGrants}
+                grants={speciesWeaponGrantPickers}
+                chosen={speciesWeaponChoices}
+                onChange={setSpeciesWeaponChoices}
+                label="Species weapons"
+                pickerSourceType="species"
+              />
+            )}
+
+            {speciesToolGrantPickers.length > 0 && (
+              <BuilderNamedPicker
+                grants={speciesToolGrantPickers}
                 chosen={speciesToolChoices}
                 onChange={setSpeciesToolChoices}
                 label="Species tools"

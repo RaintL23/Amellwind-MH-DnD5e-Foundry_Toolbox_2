@@ -1,9 +1,35 @@
-import type { BuilderSpellSelection, DndRace, Spell } from "@/shared/types";
+import type { BuilderSpellSelection, DndRace, Spell, Species } from "@/shared/types";
 import type { SpeciesNamedSpellGroup } from "@/shared/types/dnd-race.types";
 import { getSpellsByName } from "@/features/dnd/spells/services/spell.service";
 import { normalizeSpellRef } from "./subclass-spells.utils";
 
 export const SPECIES_LINEAGE_SPELL_SOURCE = "species-lineage";
+
+export interface SpeciesSpellGrantSource {
+  universalCantrips?: string[];
+  namedSpellGroups?: SpeciesNamedSpellGroup[];
+}
+
+export function combineSpeciesSpellGrantSource(
+  base: Species | DndRace | undefined,
+  subrace: Species | DndRace | null | undefined,
+): SpeciesSpellGrantSource | null {
+  if (!base && !subrace) return null;
+  const root = base ?? subrace!;
+  const variant = subrace ?? null;
+  const groups =
+    variant?.namedSpellGroups && variant.namedSpellGroups.length > 0
+      ? variant.namedSpellGroups
+      : root.namedSpellGroups;
+
+  return {
+    universalCantrips: [
+      ...(root.universalCantrips ?? []),
+      ...(variant?.universalCantrips ?? []),
+    ],
+    namedSpellGroups: groups,
+  };
+}
 
 export function isSpeciesLineageSpell(
   selection: Pick<BuilderSpellSelection, "id" | "source">,
@@ -37,12 +63,16 @@ function toSpellId(name: string): string {
 }
 
 export function resolveActiveSpellGroup(
-  race: DndRace,
+  source: SpeciesSpellGrantSource,
   choice: string | null,
 ): SpeciesNamedSpellGroup | null {
-  if (!race.namedSpellGroups?.length || !choice) return null;
+  if (!source.namedSpellGroups?.length) return null;
+  if (source.namedSpellGroups.length === 1) {
+    return source.namedSpellGroups[0] ?? null;
+  }
+  if (!choice) return null;
   return (
-    race.namedSpellGroups.find(
+    source.namedSpellGroups.find(
       (group) => group.name.toLowerCase() === choice.toLowerCase(),
     ) ?? null
   );
@@ -71,11 +101,11 @@ function makeSelection(
 }
 
 export async function buildSpeciesLineageSpellSelections(
-  race: DndRace,
+  source: SpeciesSpellGrantSource,
   choice: string | null,
   characterLevel: number,
 ): Promise<BuilderSpellSelection[]> {
-  const group = resolveActiveSpellGroup(race, choice);
+  const group = resolveActiveSpellGroup(source, choice);
   const selections: BuilderSpellSelection[] = [];
   const seen = new Set<string>();
 
@@ -85,7 +115,7 @@ export async function buildSpeciesLineageSpellSelections(
     selections.push(selection);
   };
 
-  for (const cantripName of race.universalCantrips ?? []) {
+  for (const cantripName of source.universalCantrips ?? []) {
     pushSelection(makeSelection(cantripName, 0));
   }
 
@@ -106,13 +136,29 @@ export async function buildSpeciesLineageSpellSelections(
   return selections;
 }
 
-export function buildSpeciesLineageSpellSelectionsFromCatalog(
+/** @deprecated Use {@link buildSpeciesLineageSpellSelections} with a spell grant source. */
+export async function buildSpeciesLineageSpellSelectionsForRace(
   race: DndRace,
+  choice: string | null,
+  characterLevel: number,
+): Promise<BuilderSpellSelection[]> {
+  return buildSpeciesLineageSpellSelections(
+    {
+      universalCantrips: race.universalCantrips,
+      namedSpellGroups: race.namedSpellGroups,
+    },
+    choice,
+    characterLevel,
+  );
+}
+
+export function buildSpeciesLineageSpellSelectionsFromCatalog(
+  source: SpeciesSpellGrantSource,
   choice: string | null,
   characterLevel: number,
   allSpells: Spell[],
 ): BuilderSpellSelection[] {
-  const group = resolveActiveSpellGroup(race, choice);
+  const group = resolveActiveSpellGroup(source, choice);
   const selections: BuilderSpellSelection[] = [];
   const seen = new Set<string>();
 
@@ -132,7 +178,7 @@ export function buildSpeciesLineageSpellSelectionsFromCatalog(
     return lookupByName.get(normalized);
   };
 
-  for (const cantripName of race.universalCantrips ?? []) {
+  for (const cantripName of source.universalCantrips ?? []) {
     const spell = resolveFromCatalog(cantripName);
     pushSelection(
       makeSelection(cantripName, 0, spell?.schoolName),

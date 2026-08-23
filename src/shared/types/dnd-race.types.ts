@@ -66,6 +66,8 @@ export interface DndRace {
   originFeatGrant?: OriginFeatGrant | null;
   languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
   defenseGrants: import("./proficiency.types").DefenseGrant[];
+  weaponProficiencyGrants?: import("./proficiency.types").NamedProficiencyGrant[];
+  toolProficiencyGrants?: import("./proficiency.types").NamedProficiencyGrant[];
   /**
    * Mutually-exclusive named spell groups the player must choose from
    * (e.g. Tiefling Fiendish Legacy: Abyssal / Chthonic / Infernal).

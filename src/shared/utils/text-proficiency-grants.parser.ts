@@ -33,6 +33,96 @@ const PROFICIENCY_CLAUSE_RE =
 const CHOOSE_ONE_RE =
   /\b(?:one|choose|choice|following|your choice)\b/i;
 
+const WORD_NUMBERS: Record<string, number> = {
+  a: 1,
+  an: 1,
+  one: 1,
+  two: 2,
+  three: 3,
+  four: 4,
+  five: 5,
+};
+
+const CHOOSE_PROFICIENCY_OF_CHOICE_RE =
+  /\b(?:proficiency|proficiencies|proficient)\s+(?:with|in)\s+(?:(?<countWord>a|an|one|two|three|four|five|\d+)\s+)?(?<target>[^.;]+?)\s+of your choice\b/gi;
+
+function parseCountWord(raw: string | undefined, fallback = 1): number {
+  if (!raw) return fallback;
+  const lower = raw.trim().toLowerCase();
+  if (/^\d+$/.test(lower)) return Math.max(1, Number(lower));
+  return WORD_NUMBERS[lower] ?? fallback;
+}
+
+function pushAnyProficiencyGrant(
+  grants: NamedProficiencyGrant[],
+  count: number,
+  label: string,
+  source: ProficiencySource,
+): void {
+  if (count <= 0) return;
+  grants.push({ kind: "any", count, label, source });
+}
+
+/** Parses "proficiency in two artisan's tools of your choice" style grants. */
+export function parseChooseProficiencyGrantsFromText(
+  text: string,
+  source: ProficiencySource,
+): {
+  weaponGrants: NamedProficiencyGrant[];
+  toolGrants: NamedProficiencyGrant[];
+} {
+  const weaponGrants: NamedProficiencyGrant[] = [];
+  const toolGrants: NamedProficiencyGrant[] = [];
+  if (!text.trim()) return { weaponGrants, toolGrants };
+
+  CHOOSE_PROFICIENCY_OF_CHOICE_RE.lastIndex = 0;
+  for (const match of text.matchAll(CHOOSE_PROFICIENCY_OF_CHOICE_RE)) {
+    const groups = match.groups as { countWord?: string; target?: string } | undefined;
+    const count = parseCountWord(groups?.countWord);
+    const target = (groups?.target ?? "").trim().toLowerCase();
+    if (!target) continue;
+
+    if (/artisan'?s?\s+tools?/.test(target)) {
+      pushAnyProficiencyGrant(
+        toolGrants,
+        count,
+        `Artisan's tool${count > 1 ? "s" : ""}`,
+        source,
+      );
+      continue;
+    }
+    if (/martial\s+weapons?/.test(target)) {
+      pushAnyProficiencyGrant(
+        weaponGrants,
+        count,
+        `Martial weapon${count > 1 ? "s" : ""}`,
+        source,
+      );
+      continue;
+    }
+    if (/simple\s+weapons?/.test(target)) {
+      pushAnyProficiencyGrant(
+        weaponGrants,
+        count,
+        `Simple weapon${count > 1 ? "s" : ""}`,
+        source,
+      );
+    }
+  }
+
+  return { weaponGrants, toolGrants };
+}
+
+export function parseChooseProficiencyGrantsFromEntries(
+  entries: string[],
+  source: ProficiencySource,
+): {
+  weaponGrants: NamedProficiencyGrant[];
+  toolGrants: NamedProficiencyGrant[];
+} {
+  return parseChooseProficiencyGrantsFromText(entries.join(" "), source);
+}
+
 function uniquePush(target: string[], item: string): void {
   const label = canonicalizeWeaponProficiencyLabel(item);
   if (!label) return;
@@ -154,9 +244,16 @@ export function parseEntriesProficiencyGrants(
   toolGrants: NamedProficiencyGrant[];
 } {
   const parsed = parseEntriesTextProficiencyGrantItems(entries);
+  const chooseGrants = parseChooseProficiencyGrantsFromEntries(entries, source);
   return {
     armorGrants: toFixedGrants(parsed.armorItems, source),
-    weaponGrants: toFixedGrants(parsed.weaponItems, source),
-    toolGrants: toFixedGrants(parsed.toolItems, source),
+    weaponGrants: [
+      ...toFixedGrants(parsed.weaponItems, source),
+      ...chooseGrants.weaponGrants,
+    ],
+    toolGrants: [
+      ...toFixedGrants(parsed.toolItems, source),
+      ...chooseGrants.toolGrants,
+    ],
   };
 }

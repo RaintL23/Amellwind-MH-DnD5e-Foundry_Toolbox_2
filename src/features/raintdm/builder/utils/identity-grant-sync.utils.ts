@@ -1,14 +1,14 @@
-import { getSpeciesById } from "@/features/amellwind/species/services/species.service";
-import { getDndRaceById } from "@/features/dnd/races/services/dnd-race.service";
 import { getBackgroundById } from "@/features/amellwind/backgrounds/services/background.service";
 import { getDndBackgroundById } from "@/features/dnd/backgrounds/services/dnd-background.service";
 import type { CharacterSelectionRef } from "@/shared/types";
+import type { DndRace, Species } from "@/shared/types";
 import {
   isAmellwindBackgroundSelection,
   isAmellwindSpeciesSelection,
 } from "./homebrew-cleanup.utils";
 import { EMPTY_BACKGROUND_GRANTS, EMPTY_SPECIES_GRANTS } from "./grant-sync.constants";
 import { resolveSpeciesDefenseGrants } from "./species-defense-grants.utils";
+import { resolveSpeciesParts } from "./species-resolution.utils";
 import { parseEntriesProficiencyGrants } from "@/shared/utils/text-proficiency-grants.parser";
 
 import type { SpeciesTrait } from "@/shared/types";
@@ -38,6 +38,65 @@ function collectTraitTextProficiencyGrants(
   return { armorGrants, weaponGrants, toolGrants };
 }
 
+function mergeNamedGrants(
+  ...groups: Array<NamedProficiencyGrant[] | undefined>
+): NamedProficiencyGrant[] {
+  return groups.flatMap((group) => group ?? []);
+}
+
+function structuredWeaponGrants(
+  entry: Species | DndRace,
+): NamedProficiencyGrant[] {
+  return entry.weaponProficiencyGrants ?? [];
+}
+
+function structuredToolGrants(entry: Species | DndRace): NamedProficiencyGrant[] {
+  return entry.toolProficiencyGrants ?? [];
+}
+
+function buildSpeciesGrantPayloadFromParts(
+  base: Species | DndRace,
+  subrace: Species | DndRace | null | undefined,
+  speciesSpellGroupChoice: string | null,
+) {
+  const sub = subrace ?? null;
+  const traitSourceName = sub?.name ?? base.name;
+  const traitGrants = collectTraitTextProficiencyGrants(
+    [...base.traits, ...(sub?.traits ?? [])],
+    "species",
+    traitSourceName,
+  );
+
+  return {
+    source: "species" as const,
+    skillGrants: [...base.skillGrants, ...(sub?.skillGrants ?? [])],
+    skillAdvantages: [
+      ...base.skillAdvantages,
+      ...(sub?.skillAdvantages ?? []),
+    ],
+    languageGrants: [
+      ...base.languageGrants,
+      ...(sub?.languageGrants ?? []),
+    ],
+    defenseGrants: resolveSpeciesDefenseGrants(
+      base as DndRace,
+      (sub as DndRace | null) ?? null,
+      speciesSpellGroupChoice,
+    ),
+    weaponGrants: mergeNamedGrants(
+      structuredWeaponGrants(base),
+      sub ? structuredWeaponGrants(sub) : undefined,
+      traitGrants.weaponGrants,
+    ),
+    toolGrants: mergeNamedGrants(
+      structuredToolGrants(base),
+      sub ? structuredToolGrants(sub) : undefined,
+      traitGrants.toolGrants,
+    ),
+    armorGrants: traitGrants.armorGrants,
+  };
+}
+
 export async function loadSpeciesGrantPayload(
   species: CharacterSelectionRef & { subraceId?: string | null },
   speciesSpellGroupChoice: string | null,
@@ -46,62 +105,39 @@ export async function loadSpeciesGrantPayload(
   const useAmellwind =
     useAmellwindHomebrew && (await isAmellwindSpeciesSelection(species));
 
-  if (!useAmellwind) {
-    const base = await getDndRaceById(species.id);
-    if (!base) return { payload: EMPTY_SPECIES_GRANTS, invalidSubrace: false };
+  const parts = await resolveSpeciesParts(species);
 
-    const subrace = species.subraceId
-      ? await getDndRaceById(species.subraceId)
-      : undefined;
-
-    if (species.subraceId && !subrace) {
+  if (useAmellwind && parts.mhSpecies) {
+    if (species.subraceId && !parts.mhSubrace) {
       return { payload: EMPTY_SPECIES_GRANTS, invalidSubrace: true };
     }
 
     return {
-      payload: {
-        source: "species" as const,
-        skillGrants: [
-          ...base.skillGrants,
-          ...(subrace?.skillGrants ?? []),
-        ],
-        skillAdvantages: [
-          ...base.skillAdvantages,
-          ...(subrace?.skillAdvantages ?? []),
-        ],
-        languageGrants: [
-          ...base.languageGrants,
-          ...(subrace?.languageGrants ?? []),
-        ],
-        defenseGrants: resolveSpeciesDefenseGrants(
-          base,
-          subrace ?? null,
-          speciesSpellGroupChoice,
-        ),
-        ...collectTraitTextProficiencyGrants(
-          [...base.traits, ...(subrace?.traits ?? [])],
-          "species",
-          subrace?.name ?? base.name,
-        ),
-      },
+      payload: buildSpeciesGrantPayloadFromParts(
+        parts.mhSpecies,
+        parts.mhSubrace,
+        speciesSpellGroupChoice,
+      ),
       invalidSubrace: false,
     };
   }
 
-  const data = await getSpeciesById(species.id);
-  if (!data) return { payload: EMPTY_SPECIES_GRANTS, invalidSubrace: false };
+  if (parts.dndRace) {
+    if (species.subraceId && !parts.dndSubrace) {
+      return { payload: EMPTY_SPECIES_GRANTS, invalidSubrace: true };
+    }
 
-  return {
-    payload: {
-      source: "species" as const,
-      skillGrants: data.skillGrants,
-      skillAdvantages: data.skillAdvantages ?? [],
-      languageGrants: data.languageGrants ?? [],
-      defenseGrants: data.defenseGrants ?? [],
-      ...collectTraitTextProficiencyGrants(data.traits ?? [], "species", data.name),
-    },
-    invalidSubrace: false,
-  };
+    return {
+      payload: buildSpeciesGrantPayloadFromParts(
+        parts.dndRace,
+        parts.dndSubrace,
+        speciesSpellGroupChoice,
+      ),
+      invalidSubrace: false,
+    };
+  }
+
+  return { payload: EMPTY_SPECIES_GRANTS, invalidSubrace: false };
 }
 
 export async function loadBackgroundGrantPayload(

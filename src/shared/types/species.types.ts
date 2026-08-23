@@ -1,4 +1,6 @@
 import { AbilityKey, DamageType, Entry } from "./actor.types";
+import type { SpeciesNamedSpellGroup } from "@/shared/types/dnd-race.types";
+import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 
 export type SpeciesSize =
@@ -82,6 +84,14 @@ export interface Species {
   originFeatGrant?: OriginFeatGrant | null;
   languageGrants: import("./proficiency.types").NamedProficiencyGrant[];
   defenseGrants: import("./proficiency.types").DefenseGrant[];
+  /** Structured weapon proficiency grants from `weaponProficiencies` JSON. */
+  weaponProficiencyGrants?: NamedProficiencyGrant[];
+  /** Structured tool proficiency grants from `toolProficiencies` JSON. */
+  toolProficiencyGrants?: NamedProficiencyGrant[];
+  /** Innate / lineage spell groups from `additionalSpells` JSON. */
+  namedSpellGroups?: SpeciesNamedSpellGroup[];
+  /** Cantrips always granted regardless of lineage choice. */
+  universalCantrips?: string[];
 }
 
 export { ABILITY_ABBREVIATIONS as ABILITY_LABELS } from "@/shared/constants/dnd";

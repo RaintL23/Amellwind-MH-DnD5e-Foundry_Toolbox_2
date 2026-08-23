@@ -48,6 +48,9 @@ const CHOOSE_SUFFIX_SHORT =
 const LEARN_CHOOSE_PATTERN =
   /\b(?:also\s+)?learn(?:s)?\s+(?:(one|two|three|four|five|a|an|\d+)\s+)?languages?\s+of\s+(?:your|their)\s+choice/i;
 
+const YOU_KNOW_LANGUAGES_CHOOSE_PATTERN =
+  /\byou know\s+(?:(one|two|three|four|five|a|an|\d+)\s+)?languages?\s+of\s+(?:your|their)\s+choice/i;
+
 const YOU_KNOW_CHOOSE_PATTERN =
   /\byou know\s+(.+?)\s+and\s+(one|two|three|four|five|a|an|\d+)\s+other\s+languages?\s+of\s+(?:your|their)\s+choice/i;
 
@@ -148,6 +151,14 @@ export function parseLanguageGrantsFromFeatureText(
   const learnMatch = plain.match(LEARN_CHOOSE_PATTERN);
   if (learnMatch) {
     const countToken = learnMatch[1]?.trim();
+    const count = countToken ? parseCount(countToken) : 1;
+    pushChooseGrant(grants, count, [], source, chooseableLanguages);
+    return grants;
+  }
+
+  const knowLanguagesMatch = plain.match(YOU_KNOW_LANGUAGES_CHOOSE_PATTERN);
+  if (knowLanguagesMatch) {
+    const countToken = knowLanguagesMatch[1]?.trim();
     const count = countToken ? parseCount(countToken) : 1;
     pushChooseGrant(grants, count, [], source, chooseableLanguages);
     return grants;
