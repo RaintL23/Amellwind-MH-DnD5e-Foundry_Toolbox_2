@@ -1,0 +1,218 @@
+{
+  "_id": "teiyzcotohp6vz41",
+  "name": "Coral Pukei-Pukei Shard Rune",
+  "type": "equipment",
+  "img": "mh-icons/material-rune.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Coral Pukei-Pukei | CR: 10 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Partbreaker+1.</em> You deal an extra [[/r 1d6]] damage when you critically hit with this weapon.\n<p><em><strong>Tags:</strong> mechanic:critical, mechanic:extra-damage:minor, type:offensive</em></p>",
+      "chat": ""
+    },
+    "identifier": "coralpukeipukeishardrune",
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "type": {
+      "value": "trinket",
+      "baseItem": ""
+    },
+    "armor": {
+      "value": null,
+      "dex": null,
+      "magicalBonus": null
+    },
+    "properties": [],
+    "proficient": null,
+    "strength": null,
+    "activities": {},
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "g8sbi4q2y9v86wzs",
+      "name": "Coral Pukei-Pukei Shard Rune (Equip)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "macro.itemMacro",
+          "mode": 0,
+          "value": "",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "On equip, choose which rune effect (Weapon or Armor) to activate.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": -10,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeController": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "3t60rjiw1swjckjl",
+      "name": "Coral Pukei-Pukei Shard - Partbreaker+1",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Extra 1d6 damage on a critical hit with a weapon. Armed on equip via midi-qol DamageRollComplete hook.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Partbreaker+1"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 5100000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "rune",
+      "runeName": "Coral Pukei-Pukei Shard",
+      "monsterName": "Coral Pukei-Pukei",
+      "unified": true,
+      "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Partbreaker+1"
+        }
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Coral Pukei-Pukei Shard Rune",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Amellwind unified rune controller (Foundry v12 / dnd5e 4.4 / MidiQOL + DAE + Item Macro)\n// DAE runs this via change key \"macro.itemMacro\": args[0] === \"on\" when equipped, \"off\" when unequipped.\n// MidiQOL on-use passes arrive with args[0].macroPass (registered by the cloned effect on the actor).\nconst FLAG = \"amellwind-toolbox\";\n// Foundry only allows getFlag/setFlag for active module ids / \"world\" / \"core\".\n// This content pack uses a custom namespace, so read/write via getProperty + update.\nconst getRuneFlag = (doc, key) => foundry.utils.getProperty(doc, `flags.${FLAG}.${key}`);\nconst setRuneFlag = async (doc, key, value) => doc.update({ [`flags.${FLAG}.${key}`]: value });\nconst unsetRuneFlag = async (doc, key) => doc.update({ [`flags.${FLAG}.-=${key}`]: null });\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\nif (!item) return;\nconst arg0 = args?.[0];\nconst pass = String(arg0?.macroPass ?? \"\").toLowerCase();\nconst runeName = getRuneFlag(item, \"runeName\") ?? item.name;\n\nasync function runeCleanup() {\n  if (!actorDoc) return;\n  const mine = actorDoc.effects.filter((e) => getRuneFlag(e, \"runeClone\") && e.origin === item.uuid);\n  if (mine.length) await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", mine.map((e) => e.id));\n  await unsetRuneFlag(item, \"applied\");\n}\n\nfunction runeAeName(side, matName, trinket) {\n  let n = `${runeName}-${side}`;\n  if (matName) n += `-${matName}`;\n  if (trinket) n += \" (Trinket)\";\n  return n;\n}\n\nasync function runeApplySide(side, trinket) {\n  if (!actorDoc) return;\n  const blueprints = item.effects.filter((e) => getRuneFlag(e, \"runeSide\") === side);\n  const docs = blueprints.map((e) => {\n    const o = e.toObject();\n    delete o._id;\n    o.origin = item.uuid;\n    o.disabled = false;\n    o.transfer = false;\n    o.name = runeAeName(side, getRuneFlag(e, \"materialEffectName\"), trinket);\n    foundry.utils.setProperty(o, `flags.${FLAG}.runeClone`, true);\n    // Never clutter the token with rune status icons (many runes equipped at once).\n    foundry.utils.setProperty(o, \"flags.dae.showIcon\", false);\n    return o;\n  });\n  if (docs.length) await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  await setRuneFlag(item, \"applied\", { side, trinket });\n  if (typeof runeOnEquip === \"function\") await runeOnEquip(side, trinket);\n}\n\nif (arg0 === \"on\") {\n  if (!actorDoc) return;\n  await runeCleanup();\n  const sides = getRuneFlag(item, \"sides\") ?? {};\n  const available = Object.keys(sides).filter((s) => sides[s]);\n  if (!available.length) return;\n  const radios = available\n    .map((s, i) => `<label style=\"display:block;margin:.15rem 0\"><input type=\"radio\" name=\"runeSide\" value=\"${s}\" ${i === 0 ? \"checked\" : \"\"}/> ${sides[s].label ?? s}</label>`)\n    .join(\"\");\n  const content = `<form class=\"dnd5e2\"><p>Choose which effect to activate for <strong>${runeName}</strong>:</p>${radios}<hr/><label style=\"display:block;margin-top:.35rem\"><input type=\"checkbox\" name=\"runeTrinket\"/> Equipped in a trinket</label></form>`;\n  const choice = await new Promise((resolve) => {\n    new Dialog({\n      title: `${runeName} Rune`,\n      content,\n      buttons: {\n        ok: { icon: '<i class=\"fas fa-check\"></i>', label: \"Activate\", callback: (html) => resolve({ side: html.find('input[name=\"runeSide\"]:checked').val(), trinket: html.find('input[name=\"runeTrinket\"]').is(\":checked\") }) },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => resolve(null) },\n      },\n      default: \"ok\",\n      close: () => resolve(null),\n    }).render(true);\n  });\n  if (!choice || !choice.side) { await item.update({ \"system.equipped\": false }); return; }\n  await runeApplySide(choice.side, choice.trinket);\n  return;\n}\n\nif (arg0 === \"off\") { await runeCleanup(); return; }\nif (arg0 === \"each\") return;\n\n// ===== rune-specific combat passes =====\n\nconst PARTBREAKER_HOOK_EVENTS = [\n  \"midi-qol.DamageRollComplete\",\n  \"midi-qol.damageRollComplete\",\n];\n\nfunction pbTypeFromSet(types) {\n  if (!types) return \"\";\n  if (typeof types === \"string\") return types;\n  if (Array.isArray(types)) return String(types[0] ?? \"\");\n  if (typeof types?.[Symbol.iterator] === \"function\") { for (const t of types) return String(t ?? \"\"); }\n  return \"\";\n}\n\nfunction pbIsWeaponAttack(wf) {\n  const itemType = String(wf?.item?.type ?? \"\").toLowerCase();\n  const actType = String(wf?.activity?.type ?? \"\").toLowerCase();\n  const actionType = String(wf?.itemActionType ?? wf?.defaultActivityType ?? \"\").toLowerCase();\n  if (itemType === \"spell\") return false;\n  if (itemType === \"weapon\") return true;\n  if ([\"mwak\", \"rwak\"].includes(actionType)) return true;\n  if (actType === \"attack\" && itemType !== \"equipment\" && itemType !== \"consumable\") return true;\n  return false;\n}\n\nfunction pbIsCrit(wf) {\n  if (wf?.isCritical === true) return true;\n  if (wf?.tracker?.isCritical === true) return true;\n  const atkRoll = wf?.d20AttackRoll ?? wf?.attackRoll;\n  if (atkRoll?.isCritical === true) return true;\n  const dmgRolls = [...(wf?.damageRolls ?? [])];\n  if (dmgRolls.some((r) => r?.isCritical === true || r?.options?.isCritical === true)) return true;\n  const d20 = atkRoll?.dice?.find?.((d) => d.faces === 20) ?? atkRoll?.terms?.find?.((t) => t?.faces === 20) ?? null;\n  if (!d20) return false;\n  const critThreshold = Number(d20.options?.critical ?? atkRoll?.options?.critical ?? 20) || 20;\n  return (d20.results ?? []).some((r) => !r?.discarded && r?.active !== false && Number(r?.result) >= critThreshold);\n}\n\nfunction pbDamageType(wf) {\n  return (String(wf?.defaultDamageType || wf?.damageDetail?.[0]?.type || pbTypeFromSet(wf?.item?.system?.damage?.base?.types) || pbTypeFromSet(wf?.activity?.damage?.parts?.[0]?.types) || \"slashing\").toLowerCase().trim() || \"slashing\");\n}\n\nfunction pbDisarm() {\n  globalThis.__amellwindRuneHooks ??= {};\n  const hooks = globalThis.__amellwindRuneHooks[item.uuid] ?? [];\n  for (const h of hooks) { if (h?.event != null && h?.id != null) Hooks.off(h.event, h.id); }\n  delete globalThis.__amellwindRuneHooks[item.uuid];\n}\n\nasync function pbApply(wf) {\n  try {\n    if (!wf || !actorDoc || !item) return;\n    if (!item.system?.equipped) return;\n    const applied = getRuneFlag(item, \"applied\");\n    if (!applied || applied.side !== \"weapon\") return;\n    const attacker = wf.actor ?? wf.token?.actor;\n    if (!attacker || attacker.uuid !== actorDoc.uuid) return;\n    if (!pbIsWeaponAttack(wf)) return;\n    if (!pbIsCrit(wf)) return;\n    const targets = [...(wf.hitTargets ?? [])].filter(Boolean);\n    if (!targets.length) return;\n    globalThis.__amellwindPartbreaker ??= new Set();\n    const wid = String(wf.id ?? wf.uuid ?? wf.itemCardId ?? `${wf.item?.id}-${wf.damageTotal ?? \"\"}`);\n    const dedupeKey = `${item.uuid}:${wid}`;\n    if (globalThis.__amellwindPartbreaker.has(dedupeKey)) return;\n    globalThis.__amellwindPartbreaker.add(dedupeKey);\n    const dtype = pbDamageType(wf);\n    const rollData = actorDoc.getRollData?.() ?? {};\n    const RollClass = CONFIG.Dice.DamageRoll ?? Roll;\n    const damageRoll = await new RollClass(`1d6[${dtype}]`, rollData).evaluate();\n    await damageRoll.toMessage({ speaker: ChatMessage.getSpeaker({ actor: actorDoc }), flavor: `Partbreaker+1 (${dtype})` });\n    if (globalThis.MidiQOL?.applyTokenDamage) {\n      await MidiQOL.applyTokenDamage([{ damage: damageRoll.total, type: dtype }], damageRoll.total, new Set(targets), wf.item ?? item, new Set());\n    } else {\n      for (const t of targets) {\n        const ta = t.actor ?? t.document?.actor;\n        if (typeof ta?.applyDamage === \"function\") await ta.applyDamage([{ value: damageRoll.total, type: dtype }]);\n      }\n    }\n  } catch (err) { console.error(`${runeName} Partbreaker+1 apply failed`, err); }\n}\n\nfunction pbArm() {\n  pbDisarm();\n  globalThis.__amellwindRuneHooks ??= {};\n  const hooks = [];\n  const handler = (wf) => pbApply(wf);\n  for (const event of PARTBREAKER_HOOK_EVENTS) hooks.push({ event, id: Hooks.on(event, handler) });\n  globalThis.__amellwindRuneHooks[item.uuid] = hooks;\n  ui.notifications?.info?.(`${runeName}: Partbreaker+1 armed — +1d6 on weapon critical hits.`);\n}\n\n// Wire arm/disarm into the equip flow\nconst _origApplySide = runeApplySide;\nruneApplySide = async function(side, trinket) {\n  await _origApplySide(side, trinket);\n  if (side === \"weapon\") pbArm(); else pbDisarm();\n};\nconst _origCleanup = runeCleanup;\nruneCleanup = async function() {\n  pbDisarm();\n  await _origCleanup();\n};\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1787500000000,
+    "modifiedTime": 1787500000000,
+    "lastModifiedBy": null
+  }
+}
