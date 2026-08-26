@@ -1806,7 +1806,7 @@ Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness
 | `BuilderOtherProficienciesPanel` / `BuilderLanguagesPanel` / `BuilderDefensesPanel` | Competencias varias, idiomas, resistencias/inmunidades. **Other Proficiencies**: grants `any` (artisan tools, gaming sets, martial/simple weapons, …) se eligen con **combo searchable** desde catálogos 5etools (`chooseable-tools-weapons.ts`), no texto libre. |
 | `RuneAssignmentPanel` | Asignar/quitar runas por slot con validación |
 
-**Library (class / species / background / feats)**: el detalle marca features/traits/párrafos que otorgan competencias (badge *Proficiency* + borde ámbar) y muestra un resumen estructurado (`LibraryProficiencySummary`) cuando hay grants parseados.
+**Library (class / species / background / feats)**: el detalle marca features/traits/párrafos que otorgan competencias (badge *Proficiency* + borde ámbar) y muestra un resumen estructurado (`LibraryProficiencySummary`) cuando hay grants parseados. En slots ASI / dote de nivel, `FeatLibraryPanel` lista solo categorías **General** / **Epic Boon** (`isGeneralFeatSlotCategory`); Fighting Styles (`FS` / `FS:*`) y Origin Feats van por optional-feature slots u origin-feat slot, no por el picker genérico.
 
 #### Resolución de especie y dotes
 

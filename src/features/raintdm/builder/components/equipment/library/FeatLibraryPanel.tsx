@@ -51,6 +51,7 @@ import {
   dndFeatMatchesTypeFilter,
   type FeatDataSource,
 } from "@/features/raintdm/builder/utils/builder-library-filters";
+import { isGeneralFeatSlotCategory } from "@/features/raintdm/builder/utils/feat-prerequisites.utils";
 import { AsiLibraryPanel } from "../AsiLibraryPanel";
 import { FeatLibraryDetail } from "./FeatLibraryDetail";
 import { FeatList } from "./shared/LibraryLists";
@@ -270,15 +271,21 @@ export function FeatLibraryPanel({
       return [asiOption, ...filtered];
     }
 
+    // ASI / level-feat slots: General + Epic Boon only (not Origin or Fighting Style).
+    // Fighting Styles are chosen via optional-feature slots when the class grants them.
     const editionFeats =
       featSource === "dnd2014"
         ? dndFeats.filter(
             (f) =>
-              !isDnd2024Feat(f) && dndFeatMatchesTypeFilter(f, featTypeFilter),
+              !isDnd2024Feat(f) &&
+              isGeneralFeatSlotCategory(f) &&
+              dndFeatMatchesTypeFilter(f, featTypeFilter),
           )
         : dndFeats.filter(
             (f) =>
-              isDnd2024Feat(f) && dndFeatMatchesTypeFilter(f, featTypeFilter),
+              isDnd2024Feat(f) &&
+              isGeneralFeatSlotCategory(f) &&
+              dndFeatMatchesTypeFilter(f, featTypeFilter),
           );
 
     const deduped = dedupeByNameToListOptions(editionFeats, (group) =>
