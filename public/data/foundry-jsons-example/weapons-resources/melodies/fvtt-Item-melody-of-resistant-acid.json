@@ -1,10 +1,11 @@
 {
-  "name": "Melody of the Harmful Elements",
+  "_id": "wjFA1vksKxErOZqe",
+  "name": "Melody of Resistant Acid",
   "type": "feat",
-  "img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
+  "img": "icons/magic/acid/dissolve-bone-white.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of the Harmful Elements</strong></p><p>When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura deal an extra [[/r 1d4]] damage of that type.</p><p><em>Songbook Melody for Hunting Horn (Rare+). On Encore/Recital you choose the damage type. Starts inactive.</em></p>",
+      "value": "<p><strong>Melody of Resistant Acid</strong></p><p>Allies in the aura gain Resistance to Acid damage.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
       "chat": ""
     },
     "source": {
@@ -15,7 +16,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "melody-of-the-harmful-elements",
+    "identifier": "melody-of-resistant-acid",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -36,34 +37,15 @@
   },
   "effects": [
     {
-      "_id": "542073b2ea2d1d21",
-      "name": "Melody of the Harmful Elements (Aura 15 ft)",
-      "img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
-      "type": "base",
-      "system": {},
+      "_id": "liwv16jISjyQSFOW",
+      "name": "Melody of Resistant Acid (Aura 15 ft)",
+      "img": "icons/magic/acid/dissolve-bone-white.webp",
+      "description": "",
       "changes": [
         {
-          "key": "system.bonuses.mwak.damage",
+          "key": "system.traits.dr.value",
           "mode": 2,
-          "value": "1d4[fire]",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rwak.damage",
-          "mode": 2,
-          "value": "1d4[fire]",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.msak.damage",
-          "mode": 2,
-          "value": "1d4[fire]",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rsak.damage",
-          "mode": 2,
-          "value": "1d4[fire]",
+          "value": "acid",
           "priority": 20
         }
       ],
@@ -77,11 +59,12 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "",
       "origin": null,
-      "tint": "#ffffff",
       "transfer": true,
       "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
       "sort": 0,
       "flags": {
         "ActiveAuras": {
@@ -120,16 +103,22 @@
         }
       },
       "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
+        "createdTime": 1787754553653,
+        "modifiedTime": 1787754553653,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
+  "sort": 3500000,
+  "ownership": {
+    "default": 0
+  },
   "flags": {
     "exportSource": {
       "world": "amellwind-toolbox",
@@ -140,17 +129,18 @@
     "world": {
       "hh": {
         "isMelody": true,
-        "melodyKey": "harmful-elements",
-        "needsElementChoice": true
+        "melodyKey": "resistant-acid"
       }
     }
   },
   "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": null,
-    "modifiedTime": null,
+    "createdTime": 1787754553653,
+    "modifiedTime": 1787754553653,
     "lastModifiedBy": null
   }
 }

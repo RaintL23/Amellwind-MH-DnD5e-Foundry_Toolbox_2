@@ -1,49 +1,46 @@
 {
+  "_id": "1xohjrPJzC9zuYz5",
   "name": "Melody of Swiftness",
   "type": "feat",
   "img": "icons/skills/movement/feet-winged-boots-brown.webp",
   "system": {
-    "activities": {},
-    "uses": {
-      "spent": 0,
-      "recovery": [],
-      "max": ""
-    },
     "description": {
-      "value": "<p><strong>Melody of Swiftness</strong></p><p>Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital activates one Melody as a 15-foot aura for 1 minute.</em></p>",
+      "value": "<p><strong>Melody of Swiftness</strong></p><p>Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
       "chat": ""
     },
-    "identifier": "melody-of-swiftness",
     "source": {
-      "revision": 1,
-      "rules": "2024",
+      "custom": "",
       "book": "RAINTDM",
       "page": "",
-      "custom": "",
-      "license": ""
+      "license": "",
+      "rules": "2024",
+      "revision": 1
     },
-    "advancement": [],
-    "cover": null,
-    "crewed": false,
+    "identifier": "melody-of-swiftness",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "Hunting Horn (Songbook)",
+    "properties": [],
+    "activities": {},
     "enchant": {},
     "prerequisites": {
       "level": null,
       "repeatable": false
     },
-    "properties": [],
-    "requirements": "Hunting Horn (Songbook)",
-    "type": {
-      "value": "feat",
-      "subtype": ""
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "c153e801c257ddfa",
+      "_id": "GGr7rY5FTEeSRScb",
       "name": "Melody of Swiftness (Aura 15 ft)",
       "img": "icons/skills/movement/feet-winged-boots-brown.webp",
-      "type": "base",
-      "system": {},
+      "description": "",
       "changes": [
         {
           "key": "system.attributes.movement.bonus",
@@ -68,11 +65,12 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "",
       "origin": null,
-      "tint": "#ffffff",
       "transfer": true,
       "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
       "sort": 0,
       "flags": {
         "ActiveAuras": {
@@ -98,7 +96,9 @@
           "stackable": "noneName",
           "showIcon": true,
           "durationExpression": "",
-          "specialDuration": ["isIncapacitated"],
+          "specialDuration": [
+            "isIncapacitated"
+          ],
           "disableIncapacitated": false,
           "dontApply": false
         },
@@ -114,16 +114,20 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
+        "createdTime": 1787754553652,
+        "modifiedTime": 1787754553652,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
+  "sort": 2000000,
+  "ownership": {
+    "default": 0
+  },
   "flags": {
     "exportSource": {
-      "world": "monster-hunter-hunts",
+      "world": "amellwind-toolbox",
       "system": "dnd5e",
       "coreVersion": "12.331",
       "systemVersion": "4.4.4"
@@ -133,20 +137,16 @@
         "isMelody": true,
         "melodyKey": "swiftness"
       }
-    },
-    "dnd5e": {
-      "riders": {
-        "activity": [],
-        "effect": []
-      }
     }
   },
   "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786025374154,
-    "modifiedTime": 1786029872575,
-    "lastModifiedBy": "6fq5bv9o4XfSzYRr"
+    "createdTime": 1787754553652,
+    "modifiedTime": 1787754553652,
+    "lastModifiedBy": null
   }
 }

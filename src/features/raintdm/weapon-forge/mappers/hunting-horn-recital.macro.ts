@@ -1,2 +1,335 @@
-/** Item Macro (Midi preTargeting) for Hunting Horn Recital/Encore/End Melodies → Songbook. */
-export const HUNTING_HORN_RECITAL_ITEM_MACRO = "// Hunting Horn — Item Macro (MidiQOL 12.4 / Foundry v12)\n// On Use: ItemMacro @ \"Called before targeting is resolved (*)\" / preTargeting\n//\n// Compatible with:\n// - Recital (uncommon): flags.world.hh.maxActiveMelodies = 1\n// - Encore (rare+):     flags.world.hh.maxActiveMelodies = 2+\n// - End Melodies:       disables all Songbook auras (any rarity)\n// Melodies detected via flags.world.hh.isMelody / identifier melody-* / name \"Melody of *\"\n// UI: one dropdown per active Melody slot (no checkboxes); exclusive options when multi-slot.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? \"\").toLowerCase();\n\nconst isEndMelodies =\n  actId === \"end-melodies\" || actId === \"cancel-melodies\"\n  || actName.includes(\"end melod\") || actName.includes(\"cancel melod\");\n\nconst isSongUse =\n  actId === \"recital\" || actId === \"encore\"\n  || actName.includes(\"recital\") || actName.includes(\"encore\");\n\nif (!isEndMelodies && !isSongUse) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Hunting Horn: no se encontró el actor.\");\n  return;\n}\n\nconst isMelodyItem = (i) => {\n  const flag = foundry.utils.getProperty(i, \"flags.world.hh.isMelody\");\n  const id = String(i.system?.identifier ?? \"\");\n  return flag === true\n    || (i.type === \"feat\" && id.startsWith(\"melody-\"))\n    || /^melody of /i.test(i.name ?? \"\");\n};\n\nconst isMelodyAura = (ef) => {\n  const flag = foundry.utils.getProperty(ef, \"flags.world.hh.isMelodyAura\");\n  return flag === true || /melody of/i.test(ef.name ?? \"\");\n};\n\nconst melodies = actorDoc.items.filter(isMelodyItem);\n\nconst disableAllMelodyAuras = async () => {\n  const ops = [];\n  for (const mel of melodies) {\n    for (const ef of mel.effects) {\n      if (!isMelodyAura(ef)) continue;\n      ops.push(ef.update({\n        disabled: true,\n        duration: { seconds: null, rounds: null, turns: null, startTime: null }\n      }));\n    }\n  }\n  for (const ef of actorDoc.effects) {\n    if (!isMelodyAura(ef)) continue;\n    ops.push(ef.update({\n      disabled: true,\n      duration: { seconds: null, rounds: null, turns: null, startTime: null }\n    }));\n  }\n  if (ops.length) await Promise.all(ops);\n  return ops.length;\n};\n\nconst refreshActiveAuras = async (reason) => {\n  try {\n    const sceneId = canvas.scene?.id;\n    if (game.modules.get(\"ActiveAuras\")?.active && sceneId) {\n      if (globalThis.ActiveAuras?.CollateAuras) {\n        await ActiveAuras.CollateAuras(sceneId, true, true, reason);\n      } else if (globalThis.AAHelpers?.collateAuras) {\n        await AAHelpers.collateAuras(sceneId, true, true, reason);\n      }\n    }\n  } catch (err) {\n    console.warn(\"Hunting Horn: Active Auras refresh skipped\", err);\n  }\n};\n\n// ── End Melodies (any rarity) ──────────────────────────────────────────────\nif (isEndMelodies) {\n  if (!melodies.length) {\n    ui.notifications.warn(\"Hunting Horn: no hay Melodies en el Songbook del actor.\");\n    return;\n  }\n  const changed = await disableAllMelodyAuras();\n  await refreshActiveAuras(\"hunting-horn-end\");\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> ends all active Songbook Melodies.</p>${\n      changed ? \"\" : \"<p><em>No active Melody auras were found.</em></p>\"\n    }</div>`\n  });\n  if (!changed) ui.notifications.info(\"Hunting Horn: no había Melodies activas.\");\n  return;\n}\n\n// ── Recital / Encore (perform) ─────────────────────────────────────────────\nif (!melodies.length) {\n  ui.notifications.warn(\"Hunting Horn: no hay Melodies en el Songbook del actor.\");\n  return;\n}\n\nconst maxActive = Math.max(1, Number(foundry.utils.getProperty(item, \"flags.world.hh.maxActiveMelodies\") ?? 1));\nconst pickCount = Math.min(maxActive, melodies.length);\nconst title = (actId === \"encore\" || actName.includes(\"encore\")) ? \"Encore — Songbook\" : \"Recital — Songbook\";\n\nui.notifications.info(`${title}: elige ${pickCount} Melody${pickCount > 1 ? \"s\" : \"\"}…`);\n\n// One dropdown per active slot; pre-select distinct defaults (1st, 2nd, …).\nconst selectsHtml = Array.from({ length: pickCount }, (_, i) => {\n  const label = pickCount === 1 ? \"Melody\" : `Melody ${i + 1}`;\n  const opts = melodies.map((m, mi) =>\n    `<option value=\"${m.id}\"${mi === i ? \" selected\" : \"\"}>${esc(m.name)}</option>`\n  ).join(\"\");\n  return `\n  <div class=\"form-group\">\n    <label>${label}</label>\n    <div class=\"form-fields\">\n      <select class=\"hh-melody-select\" data-slot=\"${i}\">${opts}</select>\n    </div>\n  </div>`;\n}).join(\"\");\n\nconst promptText = pickCount === 1\n  ? \"Activa 1 Melody (aura 15 ft, 1 minuto).\"\n  : `Elige <strong>${pickCount}</strong> Melodies distintas (aura 15 ft, 1 minuto).`;\n\nconst content = `\n<form class=\"flexcol\">\n  <p>${promptText}</p>\n  ${selectsHtml}\n</form>`;\n\nconst selectedIds = await new Promise((resolve) => {\n  let settled = false;\n  const done = (v) => { if (!settled) { settled = true; resolve(v); } };\n  new Dialog({\n    title,\n    content,\n    buttons: {\n      ok: {\n        icon: '<i class=\"fas fa-music\"></i>',\n        label: \"Perform\",\n        callback: (html) => {\n          const $h = html?.find ? html : $(html);\n          const picked = $h.find(\"select.hh-melody-select\").map((_, el) => el.value).get();\n          if (picked.length !== pickCount || picked.some(id => !id)) {\n            ui.notifications.warn(`Debes elegir ${pickCount} Melody${pickCount > 1 ? \"s\" : \"\"}.`);\n            done(null);\n            return;\n          }\n          if (new Set(picked).size !== picked.length) {\n            ui.notifications.warn(\"Las Melodies deben ser distintas.\");\n            done(null);\n            return;\n          }\n          done(picked);\n        }\n      },\n      cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => done(null) }\n    },\n    default: \"ok\",\n    close: () => done(null),\n    // Multi-slot: hide a Melody from other dropdowns once it is selected.\n    render: (html) => {\n      if (pickCount <= 1) return;\n      const $h = html?.find ? html : $(html);\n      const syncExclusiveOptions = () => {\n        const selects = $h.find(\"select.hh-melody-select\").toArray();\n        const chosen = selects.map((sel) => sel.value);\n        selects.forEach((sel, i) => {\n          const current = chosen[i];\n          const blocked = new Set(chosen.filter((id, j) => j !== i && id));\n          const opts = melodies\n            .filter((m) => m.id === current || !blocked.has(m.id))\n            .map((m) => `<option value=\"${m.id}\"${m.id === current ? \" selected\" : \"\"}>${esc(m.name)}</option>`)\n            .join(\"\");\n          sel.innerHTML = opts;\n          if (current && [...sel.options].some((o) => o.value === current)) sel.value = current;\n        });\n      };\n      $h.find(\"select.hh-melody-select\").off(\"change.hhExclusive\").on(\"change.hhExclusive\", syncExclusiveOptions);\n      syncExclusiveOptions();\n    }\n  }).render(true);\n});\n\nif (!selectedIds?.length) {\n  ui.notifications.warn(\"Cancelado.\");\n  return;\n}\n\nconst selected = selectedIds.map(id => melodies.find(m => m.id === id)).filter(Boolean);\nif (selected.length !== pickCount) {\n  ui.notifications.error(\"Selección de Melodies inválida.\");\n  return;\n}\n\n// Element choice for Harmful Elements\nconst ELEMENTS = [\"acid\", \"cold\", \"fire\", \"lightning\", \"thunder\"];\nconst chooseElement = async (melodyName) => {\n  const opts = ELEMENTS.map(e => `<option value=\"${e}\">${e.charAt(0).toUpperCase()}${e.slice(1)}</option>`).join(\"\");\n  return await new Promise((resolve) => {\n    let settled = false;\n    const done = (v) => { if (!settled) { settled = true; resolve(v); } };\n    new Dialog({\n      title: `${melodyName} — Element`,\n      content: `<form><div class=\"form-group\"><label>Damage Type</label>\n        <div class=\"form-fields\"><select id=\"hh-element\">${opts}</select></div></div></form>`,\n      buttons: {\n        ok: {\n          icon: '<i class=\"fas fa-check\"></i>',\n          label: \"Choose\",\n          callback: (html) => {\n            const $h = html?.find ? html : $(html);\n            done($h.find(\"#hh-element\").val() || \"fire\");\n          }\n        },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => done(null) }\n      },\n      default: \"ok\",\n      close: () => done(null)\n    }).render(true);\n  });\n};\n\nconst elementByMelodyId = {};\nfor (const mel of selected) {\n  const needs = foundry.utils.getProperty(mel, \"flags.world.hh.needsElementChoice\") === true\n    || (mel.system?.identifier ?? \"\") === \"melody-of-the-harmful-elements\"\n    || /harmful elements/i.test(mel.name ?? \"\");\n  if (!needs) continue;\n  const el = await chooseElement(mel.name);\n  if (!el) {\n    ui.notifications.warn(\"Cancelado.\");\n    return;\n  }\n  elementByMelodyId[mel.id] = el;\n}\n\nawait disableAllMelodyAuras();\n\nconst startTime = game.time.worldTime;\nconst enabledNames = [];\n\nfor (const mel of selected) {\n  const auras = mel.effects.filter(isMelodyAura);\n  if (!auras.length) {\n    ui.notifications.error(`${mel.name}: sin Active Effect de aura.`);\n    return;\n  }\n  const element = elementByMelodyId[mel.id];\n  for (const ef of auras) {\n    const update = {\n      disabled: false,\n      duration: {\n        seconds: 60,\n        startTime,\n        rounds: null,\n        turns: null,\n        combat: null,\n        startRound: null,\n        startTurn: null\n      }\n    };\n    if (element) {\n      const formula = `1d4[${element}]`;\n      update.changes = [\n        { key: \"system.bonuses.mwak.damage\", mode: 2, value: formula, priority: 20 },\n        { key: \"system.bonuses.rwak.damage\", mode: 2, value: formula, priority: 20 },\n        { key: \"system.bonuses.msak.damage\", mode: 2, value: formula, priority: 20 },\n        { key: \"system.bonuses.rsak.damage\", mode: 2, value: formula, priority: 20 }\n      ];\n      update.name = `Melody of the Harmful Elements (${element}) (Aura 15 ft)`;\n    }\n    await ef.update(update);\n  }\n  enabledNames.push(element ? `${mel.name} [${element}]` : mel.name);\n}\n\nawait refreshActiveAuras(\"hunting-horn-song\");\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> performs <em>${esc(enabledNames.join(\" + \"))}</em>.</p><p>15-foot aura(s) active for 1 minute (or until Incapacitated / another performance / End Melodies).</p></div>`\n});\n";
+/** Item Macro (Midi preTargeting) for Hunting Horn Recital / Solo Recital / Encore / End Melodies → Songbook. */
+export const HUNTING_HORN_RECITAL_ITEM_MACRO = `// Hunting Horn — Item Macro (MidiQOL 12.4 / Foundry v12)
+// On Use: ItemMacro @ "Called before targeting is resolved (*)" / preTargeting
+//
+// Compatible with:
+// - Recital (uncommon): flags.world.hh.maxActiveMelodies = 1
+// - Encore / Magnificent Trio: maxActiveMelodies = 2 / 3
+// - Solo Recital: flags.world.hh.maxSoloMelodies = 1 (Upgrade → 2)
+// - End Melodies: disables all Songbook auras (any rarity)
+// Melodies detected via flags.world.hh.isMelody / identifier melody-* / name "Melody of *"
+// UI: one dropdown per active Melody slot (no checkboxes); exclusive options when multi-slot.
+// Melody of Guile: flags.world.hh.needsSkillChoice → skill picker rewrites the aura change key.
+
+const esc = (value) => {
+  const s = String(value ?? "");
+  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);
+  return s
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+};
+
+const rolled = (typeof rolledActivity !== "undefined" && rolledActivity)
+  ? rolledActivity
+  : (workflow?.activity ?? args?.[0]?.activity ?? null);
+
+const actName = (rolled?.name ?? workflow?.activity?.name ?? "").toLowerCase();
+const actId = String(
+  rolled?.identifier
+  ?? rolled?.midiProperties?.identifier
+  ?? workflow?.activity?.identifier
+  ?? workflow?.activity?.midiProperties?.identifier
+  ?? ""
+).toLowerCase();
+
+const isEndMelodies =
+  actId === "end-melodies" || actId === "cancel-melodies"
+  || actName.includes("end melod") || actName.includes("cancel melod");
+
+const isSolo =
+  actId === "solo-recital" || actId === "solo-recital-upgrade"
+  || actName.includes("solo recital");
+
+const isEncoreLike =
+  actId === "encore" || actName.includes("encore")
+  || actName.includes("magnificent trio") || actId.includes("magnificent");
+
+const isSongUse =
+  isSolo
+  || isEncoreLike
+  || actId === "recital"
+  || (!isSolo && actName.includes("recital"));
+
+if (!isEndMelodies && !isSongUse) return;
+
+const actorDoc = actor
+  ?? workflow?.actor
+  ?? item?.actor
+  ?? item?.parent
+  ?? (typeof token !== "undefined" ? token?.actor : null);
+
+if (!actorDoc) {
+  ui.notifications.warn("Hunting Horn: no se encontró el actor.");
+  return;
+}
+
+const isMelodyItem = (i) => {
+  const flag = foundry.utils.getProperty(i, "flags.world.hh.isMelody");
+  const id = String(i.system?.identifier ?? "");
+  return flag === true
+    || (i.type === "feat" && id.startsWith("melody-"))
+    || /^melody of /i.test(i.name ?? "");
+};
+
+const isMelodyAura = (ef) => {
+  const flag = foundry.utils.getProperty(ef, "flags.world.hh.isMelodyAura");
+  return flag === true || /melody of/i.test(ef.name ?? "");
+};
+
+const melodies = actorDoc.items.filter(isMelodyItem);
+
+const disableAllMelodyAuras = async () => {
+  const ops = [];
+  for (const mel of melodies) {
+    for (const ef of mel.effects) {
+      if (!isMelodyAura(ef)) continue;
+      ops.push(ef.update({
+        disabled: true,
+        duration: { seconds: null, rounds: null, turns: null, startTime: null }
+      }));
+    }
+  }
+  for (const ef of actorDoc.effects) {
+    if (!isMelodyAura(ef)) continue;
+    ops.push(ef.update({
+      disabled: true,
+      duration: { seconds: null, rounds: null, turns: null, startTime: null }
+    }));
+  }
+  if (ops.length) await Promise.all(ops);
+  return ops.length;
+};
+
+const refreshActiveAuras = async (reason) => {
+  try {
+    const sceneId = canvas.scene?.id;
+    if (game.modules.get("ActiveAuras")?.active && sceneId) {
+      if (globalThis.ActiveAuras?.CollateAuras) {
+        await ActiveAuras.CollateAuras(sceneId, true, true, reason);
+      } else if (globalThis.AAHelpers?.collateAuras) {
+        await AAHelpers.collateAuras(sceneId, true, true, reason);
+      }
+    }
+  } catch (err) {
+    console.warn("Hunting Horn: Active Auras refresh skipped", err);
+  }
+};
+
+// ── End Melodies (any rarity) ──────────────────────────────────────────────
+if (isEndMelodies) {
+  if (!melodies.length) {
+    ui.notifications.warn("Hunting Horn: no hay Melodies en el Songbook del actor.");
+    return;
+  }
+  const changed = await disableAllMelodyAuras();
+  await refreshActiveAuras("hunting-horn-end");
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+    content: \`<div class="dnd5e2"><p><strong>\${esc(actorDoc.name)}</strong> ends all active Songbook Melodies.</p>\${
+      changed ? "" : "<p><em>No active Melody auras were found.</em></p>"
+    }</div>\`
+  });
+  if (!changed) ui.notifications.info("Hunting Horn: no había Melodies activas.");
+  return;
+}
+
+// ── Recital / Solo Recital / Encore (perform) ──────────────────────────────
+if (!melodies.length) {
+  ui.notifications.warn("Hunting Horn: no hay Melodies en el Songbook del actor.");
+  return;
+}
+
+const maxRecital = Math.max(1, Number(foundry.utils.getProperty(item, "flags.world.hh.maxActiveMelodies") ?? 1));
+const maxSolo = Math.max(1, Number(foundry.utils.getProperty(item, "flags.world.hh.maxSoloMelodies") ?? 1));
+const maxActive = isSolo ? maxSolo : maxRecital;
+const pickCount = Math.min(maxActive, melodies.length);
+const title = isSolo
+  ? "Solo Recital — Songbook"
+  : (isEncoreLike ? "Encore — Songbook" : "Recital — Songbook");
+
+ui.notifications.info(\`\${title}: elige \${pickCount} Melody\${pickCount > 1 ? "s" : ""}…\`);
+
+const selectsHtml = Array.from({ length: pickCount }, (_, i) => {
+  const label = pickCount === 1 ? "Melody" : \`Melody \${i + 1}\`;
+  const opts = melodies.map((m, mi) =>
+    \`<option value="\${m.id}"\${mi === i ? " selected" : ""}>\${esc(m.name)}</option>\`
+  ).join("");
+  return \`
+  <div class="form-group">
+    <label>\${label}</label>
+    <div class="form-fields">
+      <select class="hh-melody-select" data-slot="\${i}">\${opts}</select>
+    </div>
+  </div>\`;
+}).join("");
+
+const promptText = pickCount === 1
+  ? "Activa 1 Melody (aura 15 ft, 1 minuto)."
+  : \`Elige <strong>\${pickCount}</strong> Melodies distintas (aura 15 ft, 1 minuto).\`;
+
+const content = \`
+<form class="flexcol">
+  <p>\${promptText}</p>
+  \${selectsHtml}
+</form>\`;
+
+const selectedIds = await new Promise((resolve) => {
+  let settled = false;
+  const done = (v) => { if (!settled) { settled = true; resolve(v); } };
+  new Dialog({
+    title,
+    content,
+    buttons: {
+      ok: {
+        icon: '<i class="fas fa-music"></i>',
+        label: "Perform",
+        callback: (html) => {
+          const $h = html?.find ? html : $(html);
+          const picked = $h.find("select.hh-melody-select").map((_, el) => el.value).get();
+          if (picked.length !== pickCount || picked.some(id => !id)) {
+            ui.notifications.warn(\`Debes elegir \${pickCount} Melody\${pickCount > 1 ? "s" : ""}.\`);
+            done(null);
+            return;
+          }
+          if (new Set(picked).size !== picked.length) {
+            ui.notifications.warn("Las Melodies deben ser distintas.");
+            done(null);
+            return;
+          }
+          done(picked);
+        }
+      },
+      cancel: { icon: '<i class="fas fa-times"></i>', label: "Cancel", callback: () => done(null) }
+    },
+    default: "ok",
+    close: () => done(null),
+    render: (html) => {
+      if (pickCount <= 1) return;
+      const $h = html?.find ? html : $(html);
+      const syncExclusiveOptions = () => {
+        const selects = $h.find("select.hh-melody-select").toArray();
+        const chosen = selects.map((sel) => sel.value);
+        selects.forEach((sel, i) => {
+          const current = chosen[i];
+          const blocked = new Set(chosen.filter((id, j) => j !== i && id));
+          const opts = melodies
+            .filter((m) => m.id === current || !blocked.has(m.id))
+            .map((m) => \`<option value="\${m.id}"\${m.id === current ? " selected" : ""}>\${esc(m.name)}</option>\`)
+            .join("");
+          sel.innerHTML = opts;
+          if (current && [...sel.options].some((o) => o.value === current)) sel.value = current;
+        });
+      };
+      $h.find("select.hh-melody-select").off("change.hhExclusive").on("change.hhExclusive", syncExclusiveOptions);
+      syncExclusiveOptions();
+    }
+  }).render(true);
+});
+
+if (!selectedIds?.length) {
+  ui.notifications.warn("Cancelado.");
+  return;
+}
+
+const selected = selectedIds.map(id => melodies.find(m => m.id === id)).filter(Boolean);
+if (selected.length !== pickCount) {
+  ui.notifications.error("Selección de Melodies inválida.");
+  return;
+}
+
+const SKILLS = [
+  ["acr", "Acrobatics"], ["ani", "Animal Handling"], ["arc", "Arcana"],
+  ["ath", "Athletics"], ["dec", "Deception"], ["his", "History"],
+  ["ins", "Insight"], ["itm", "Intimidation"], ["inv", "Investigation"],
+  ["med", "Medicine"], ["nat", "Nature"], ["prc", "Perception"],
+  ["prf", "Performance"], ["per", "Persuasion"], ["rel", "Religion"],
+  ["slt", "Sleight of Hand"], ["ste", "Stealth"], ["sur", "Survival"]
+];
+
+const chooseSkill = async (melodyName) => {
+  const opts = SKILLS.map(([id, label]) => \`<option value="\${id}">\${label}</option>\`).join("");
+  return await new Promise((resolve) => {
+    let settled = false;
+    const done = (v) => { if (!settled) { settled = true; resolve(v); } };
+    new Dialog({
+      title: \`\${melodyName} — Skill\`,
+      content: \`<form><div class="form-group"><label>Skill</label>
+        <div class="form-fields"><select id="hh-skill">\${opts}</select></div></div></form>\`,
+      buttons: {
+        ok: {
+          icon: '<i class="fas fa-check"></i>',
+          label: "Choose",
+          callback: (html) => {
+            const $h = html?.find ? html : $(html);
+            done($h.find("#hh-skill").val() || "ste");
+          }
+        },
+        cancel: { icon: '<i class="fas fa-times"></i>', label: "Cancel", callback: () => done(null) }
+      },
+      default: "ok",
+      close: () => done(null)
+    }).render(true);
+  });
+};
+
+const skillByMelodyId = {};
+for (const mel of selected) {
+  const needs = foundry.utils.getProperty(mel, "flags.world.hh.needsSkillChoice") === true
+    || (mel.system?.identifier ?? "") === "melody-of-guile"
+    || /melody of guile/i.test(mel.name ?? "");
+  if (!needs) continue;
+  const skill = await chooseSkill(mel.name);
+  if (!skill) {
+    ui.notifications.warn("Cancelado.");
+    return;
+  }
+  skillByMelodyId[mel.id] = skill;
+}
+
+await disableAllMelodyAuras();
+
+const startTime = game.time.worldTime;
+const enabledNames = [];
+
+for (const mel of selected) {
+  const auras = mel.effects.filter(isMelodyAura);
+  if (!auras.length) {
+    ui.notifications.error(\`\${mel.name}: sin Active Effect de aura.\`);
+    return;
+  }
+  const skill = skillByMelodyId[mel.id];
+  const skillLabel = skill ? (SKILLS.find(([id]) => id === skill)?.[1] ?? skill) : null;
+  for (const ef of auras) {
+    const update = {
+      disabled: false,
+      duration: {
+        seconds: 60,
+        startTime,
+        rounds: null,
+        turns: null,
+        combat: null,
+        startRound: null,
+        startTurn: null
+      }
+    };
+    if (skill) {
+      update.changes = [
+        { key: \`system.skills.\${skill}.bonuses.check\`, mode: 2, value: "1", priority: 20 }
+      ];
+      update.name = \`Melody of Guile (\${skillLabel}) (Aura 15 ft)\`;
+    }
+    await ef.update(update);
+  }
+  enabledNames.push(skillLabel ? \`\${mel.name} [\${skillLabel}]\` : mel.name);
+}
+
+await refreshActiveAuras("hunting-horn-song");
+
+await ChatMessage.create({
+  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+  content: \`<div class="dnd5e2"><p><strong>\${esc(actorDoc.name)}</strong> performs <em>\${esc(enabledNames.join(" + "))}</em>.</p><p>15-foot aura(s) active for 1 minute (or until Incapacitated / another performance / End Melodies).</p></div>\`
+});
+`;

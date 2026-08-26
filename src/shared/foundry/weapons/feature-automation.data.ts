@@ -306,7 +306,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     // Utility roll alone does not change AC. Hand-tuned Lance uncommon example embeds
     // ItemMacro [postActiveEffects] that applies system.attributes.ac.bonus + N with
     // dae.specialDuration isAttacked so Midi can recheck the triggering attack.
-    "Needs ItemMacro AC AE (see foundry-jsons-example/weapons fvtt-Item-lance-uncommon).",
+    "Needs ItemMacro AC AE (see foundry-jsons-example/weapons/lance/fvtt-Item-lance-uncommon).",
   ),
   "offset strike": reactionAttack(
     "When a creature moves into your reach and makes a melee attack against you",
@@ -567,6 +567,32 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activityImg: "icons/skills/trades/music-notes-sound-blue.webp",
     },
     "Opens Songbook via ItemMacro (Hunting Horn overlay); Melody feats toggle Active Auras.",
+  ),
+  "solo recital": spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      chatFlavor:
+        "Perform a Solo Recital (no hit required) — activate Melodies from your Songbook",
+      durationValue: "1",
+      durationUnits: "minute",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      otherActivityCompatible: false,
+      effectConditionText: "false",
+      activityImg: "icons/skills/trades/music-notes-sound-blue.webp",
+    },
+    "Same Songbook ItemMacro as Recital; uses flags.world.hh.maxSoloMelodies (independent of Encore).",
+  ),
+  "solo recital upgrade": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "Solo Recital can activate two different Melodies at the same time.",
+    },
+    "Overlay sets maxSoloMelodies=2 when this leaf is present.",
   ),
   encore: baUtility("", "Recital can keep two melodies active."),
   "item prodigy": baUtility("", "Take the Utilize action as a Bonus Action."),

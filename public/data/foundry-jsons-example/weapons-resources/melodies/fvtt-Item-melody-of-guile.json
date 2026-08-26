@@ -1,11 +1,11 @@
 {
-  "_id": "shkRlW9DcMh2b71P",
-  "name": "Melody of Might",
+  "_id": "O5ErxELpXdfPPCgw",
+  "name": "Melody of Guile",
   "type": "feat",
-  "img": "icons/skills/melee/strike-sword-blood-red.webp",
+  "img": "icons/magic/control/mouth-smile-creepy-green.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
+      "value": "<p><strong>Melody of Guile</strong></p><p>When you activate this Melody, choose one skill. Allies in the aura gain a +1 bonus to checks using that skill.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
       "chat": ""
     },
     "source": {
@@ -16,7 +16,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "melody-of-might",
+    "identifier": "melody-of-guile",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -37,33 +37,15 @@
   },
   "effects": [
     {
-      "_id": "MKjjNw1pqVE9IQvj",
-      "name": "Melody of Might (Aura 15 ft)",
-      "img": "icons/skills/melee/strike-sword-blood-red.webp",
+      "_id": "HY9CHSX9bihVwbHf",
+      "name": "Melody of Guile (Aura 15 ft)",
+      "img": "icons/magic/control/mouth-smile-creepy-green.webp",
       "description": "",
       "changes": [
         {
-          "key": "system.bonuses.mwak.damage",
+          "key": "system.skills.ste.bonuses.check",
           "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rwak.damage",
-          "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.msak.damage",
-          "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rsak.damage",
-          "mode": 2,
-          "value": "1d4",
+          "value": "1",
           "priority": 20
         }
       ],
@@ -133,7 +115,7 @@
     }
   ],
   "folder": null,
-  "sort": 1900000,
+  "sort": 2200000,
   "ownership": {
     "default": 0
   },
@@ -147,7 +129,8 @@
     "world": {
       "hh": {
         "isMelody": true,
-        "melodyKey": "might"
+        "melodyKey": "guile",
+        "needsSkillChoice": true
       }
     }
   },

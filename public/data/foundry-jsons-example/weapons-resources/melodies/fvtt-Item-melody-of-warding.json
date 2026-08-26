@@ -1,10 +1,11 @@
 {
+  "_id": "wGSRtaCjMw2f1JVY",
   "name": "Melody of Warding",
   "type": "feat",
   "img": "icons/magic/defensive/shield-barrier-blue.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of Warding</strong></p><p>Allies in the aura gain a +1 bonus to their Armor Class.</p><p><em>Songbook Melody for Hunting Horn (Rare+). Starts inactive; Recital/Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
+      "value": "<p><strong>Melody of Warding</strong></p><p>Allies in the aura gain a +1 bonus to their Armor Class.</p><p><em>Songbook Melody for Hunting Horn (Rare+). Starts inactive; Recital/Encore/Solo Recital activates Melodies as 15-foot auras for 1 minute.</em></p>",
       "chat": ""
     },
     "source": {
@@ -36,11 +37,10 @@
   },
   "effects": [
     {
-      "_id": "556065fec45042ee",
+      "_id": "KhRW4SFcfMTWVi2j",
       "name": "Melody of Warding (Aura 15 ft)",
       "img": "icons/magic/defensive/shield-barrier-blue.webp",
-      "type": "base",
-      "system": {},
+      "description": "",
       "changes": [
         {
           "key": "system.attributes.ac.bonus",
@@ -59,11 +59,12 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "",
       "origin": null,
-      "tint": "#ffffff",
       "transfer": true,
       "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
       "sort": 0,
       "flags": {
         "ActiveAuras": {
@@ -102,16 +103,22 @@
         }
       },
       "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
+        "createdTime": 1787754553652,
+        "modifiedTime": 1787754553652,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
+  "sort": 2300000,
+  "ownership": {
+    "default": 0
+  },
   "flags": {
     "exportSource": {
       "world": "amellwind-toolbox",
@@ -127,11 +134,13 @@
     }
   },
   "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": null,
-    "modifiedTime": null,
+    "createdTime": 1787754553652,
+    "modifiedTime": 1787754553652,
     "lastModifiedBy": null
   }
 }

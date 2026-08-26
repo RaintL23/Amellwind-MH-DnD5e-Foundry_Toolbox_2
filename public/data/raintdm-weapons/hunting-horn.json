@@ -32,8 +32,8 @@
               "2",
               "--",
               "--",
-              "Instrument of War (The Bard Fix), Recital, Songbook",
-              "Melody of Might, Melody of Swiftness"
+              "Instrument of War (The Bard Fix), Recital, Solo Recital, Songbook",
+              "Melody of Might, Melody of Swiftness, Melody of Precision, Melody of Guile"
             ],
             [
               "Rare",
@@ -41,15 +41,15 @@
               "+1",
               "+1",
               "Encore, Expanded Songbook",
-              "Melody of Warding, Melody of the Harmful Elements"
+              "Melody of Warding, Melody of Focus, Melody of Harmful Acid, Melody of Harmful Cold, Melody of Harmful Fire, Melody of Harmful Lightning, Melody of Harmful Thunder"
             ],
             [
               "Very Rare",
               "4",
               "+2",
               "+2",
-              "Magnificent Trio, Expanded Songbook II, Earthshaker",
-              "Melody of Clarity, Melody of Vigor, Melody of the Resistant Elements"
+              "Magnificent Trio, Solo Recital Upgrade, Expanded Songbook II, Earthshaker",
+              "Melody of Clarity, Melody of Vigor, Melody of Fortitude, Melody of Recovery, Melody of the Wilds, Melody of Resistant Acid, Melody of Resistant Cold, Melody of Resistant Fire, Melody of Resistant Lightning, Melody of Resistant Thunder"
             ],
             [
               "Legendary",
@@ -80,7 +80,12 @@
       {
         "id": "29f84662-52e6-49e2-8876-cdbf5c806d4d",
         "name": "Recital",
-        "description": "The horn relies on the momentum of combat to generate its magic. When you hit a creature with this weapon on your turn, you can use your Bonus Action to perform a Recital. You activate one Melody from your Songbook (see below). The Melody emits a 15-foot aura centered on you that lasts for 1 minute, until you are Incapacitated, or until you activate a different Melody."
+        "description": "The horn relies on the momentum of combat to generate its magic. When you hit a creature with this weapon on your turn, you can use your Bonus Action to perform a Recital. This ends all Melodies currently active from your Songbook, then activates one Melody of your choice. That Melody emits a 15-foot aura centered on you that lasts for 1 minute, until you are Incapacitated, or until you activate Melodies again."
+      },
+      {
+        "id": "68192c4d-12bb-45af-b0f2-dc90da1597c7",
+        "name": "Solo Recital",
+        "description": "As a Bonus Action, you can perform a Solo Recital without hitting a creature. This ends all Melodies currently active from your Songbook, then activates one Melody of your choice. That Melody emits a 15-foot aura centered on you that lasts for 1 minute, until you are Incapacitated, or until you activate Melodies again."
       },
       {
         "id": "77cb6fb5-35ab-40ad-821c-fd8a0d557d43",
@@ -100,9 +105,21 @@
         "resourceColumn": "Melodies"
       },
       {
+        "id": "2bfb5f1b-d0ca-4663-858f-a2c4f2bd85d9",
+        "name": "Melody of Precision",
+        "description": "Allies in the aura gain a +1 bonus to attack rolls.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "c264cd26-3321-4506-a14b-23e10264caa0",
+        "name": "Melody of Guile",
+        "description": "When you activate this Melody, choose one skill. Allies in the aura gain a +1 bonus to checks using that skill.",
+        "resourceColumn": "Melodies"
+      },
+      {
         "id": "06377a55-bdb6-4a9d-b1f5-ea5a31ddab16",
         "name": "Encore",
-        "description": "Your mastery over the horn's acoustics improves. When you use your Bonus Action to perform a Recital, you can have two different Melodies active at the same time.",
+        "description": "Your mastery over the horn's acoustics improves. When you perform a Recital, after ending all currently active Melodies you can activate two different Melodies at the same time instead of one.",
         "upgradesFromId": "29f84662-52e6-49e2-8876-cdbf5c806d4d"
       },
       {
@@ -112,10 +129,58 @@
         "upgradesFromId": "77cb6fb5-35ab-40ad-821c-fd8a0d557d43"
       },
       {
+        "id": "9c6cc752-69a3-45fd-ba1e-71f4f80d82f8",
+        "name": "Melody of Warding",
+        "description": "Allies in the aura gain a +1 bonus to their Armor Class.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "f751f5e8-1271-4929-bf0a-608bfc03e706",
+        "name": "Melody of Focus",
+        "description": "Allies in the aura (including you) gain a +1 bonus to their spell save DCs.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "f179524f-d93d-4fde-ac07-59a2b10b97c8",
+        "name": "Melody of Harmful Acid",
+        "description": "Allies in the aura deal an extra 1d4 Acid damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "f2c2b90f-6ccd-4da1-9da9-f815bfb720e5",
+        "name": "Melody of Harmful Cold",
+        "description": "Allies in the aura deal an extra 1d4 Cold damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "1af8bab2-485e-42bd-9d79-5d94e9a4b716",
+        "name": "Melody of Harmful Fire",
+        "description": "Allies in the aura deal an extra 1d4 Fire damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "d402e94e-510e-4507-8a81-676e5be69856",
+        "name": "Melody of Harmful Lightning",
+        "description": "Allies in the aura deal an extra 1d4 Lightning damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "69672bb0-1ae2-4ac8-9382-8cad669147bd",
+        "name": "Melody of Harmful Thunder",
+        "description": "Allies in the aura deal an extra 1d4 Thunder damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
         "id": "db28bdc2-0ae6-4261-974a-9b272778ce3f",
         "name": "Magnificent Trio",
-        "description": "You can now have up to three different Melodies active at the same time when you perform a Recital.",
+        "description": "When you perform a Recital, after ending all currently active Melodies you can activate up to three different Melodies at the same time.",
         "upgradesFromId": "06377a55-bdb6-4a9d-b1f5-ea5a31ddab16"
+      },
+      {
+        "id": "0c337618-1501-43f0-9537-de72903370c2",
+        "name": "Solo Recital Upgrade",
+        "description": "When you perform a Solo Recital, you can activate two different Melodies instead of one after ending all currently active Melodies.",
+        "upgradesFromId": "68192c4d-12bb-45af-b0f2-dc90da1597c7"
       },
       {
         "id": "7d046740-6c83-4d29-952c-c43f4e3fa588",
@@ -136,6 +201,54 @@
         "resourceColumn": "Melodies"
       },
       {
+        "id": "f755a3c3-50f2-475d-8bcc-e3ec4b315b63",
+        "name": "Melody of Fortitude",
+        "description": "Allies in the aura gain a +1 bonus to saving throws.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "8c70d88b-22ac-48bd-aefe-eccff76ab37c",
+        "name": "Melody of Recovery",
+        "description": "At the start of each of their turns, allies in the aura regain Hit Points equal to your Charisma or Strength modifier (minimum of 1).",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "54031122-03dd-4036-af5c-ad8355ed1d34",
+        "name": "Melody of the Wilds",
+        "description": "Allies in the aura can move across calm liquid as if it were solid ground, and they suffer no harm from extreme cold or extreme heat.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "d10b4d74-51b7-4106-a404-dd23c81c8183",
+        "name": "Melody of Resistant Acid",
+        "description": "Allies in the aura gain Resistance to Acid damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "e23f614d-5a81-4181-ba3e-4334cc027dcb",
+        "name": "Melody of Resistant Cold",
+        "description": "Allies in the aura gain Resistance to Cold damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "be3077eb-d31a-4c75-ab2b-1ad8c23ce65b",
+        "name": "Melody of Resistant Fire",
+        "description": "Allies in the aura gain Resistance to Fire damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "d0d9b267-3be9-4db3-a77f-8ca3c519f727",
+        "name": "Melody of Resistant Lightning",
+        "description": "Allies in the aura gain Resistance to Lightning damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
+        "id": "86c52a58-952b-4f64-b1fe-0702e7d58a8f",
+        "name": "Melody of Resistant Thunder",
+        "description": "Allies in the aura gain Resistance to Thunder damage.",
+        "resourceColumn": "Melodies"
+      },
+      {
         "id": "39badac0-df92-418e-9ff5-8816452200e4",
         "name": "Earthshaker",
         "description": "As an Action, you slam the horn into the ground to release a devastating shockwave. Every hostile creature within a 20-foot radius must make a Constitution saving throw against a DC equal to 8 + your Proficiency Bonus + your Strength or Charisma modifier. On a failed save, a creature takes 4d8 Thunder damage and is Deafened for 1 minute. On a successful save, it takes half as much damage.\n\nOnce you use this feature, you cannot do so again until you finish a Short or Long Rest. Alternatively, if you have the Spellcasting or Bardic Inspiration features, you can bypass this restriction by expending a spell slot of 2nd level or higher, or 2 uses of your Bardic Inspiration."
@@ -148,26 +261,8 @@
       {
         "id": "02e9abf8-e7ff-4096-850f-c9c15a122ca0",
         "name": "Songbook Mastery",
-        "description": "You know all available Melodies and can switch which ones are active every time you hit a creature and use your Bonus Action.",
+        "description": "You know all available Melodies and can switch which ones are active whenever you perform a Recital or Solo Recital.",
         "upgradesFromId": "7d046740-6c83-4d29-952c-c43f4e3fa588"
-      },
-      {
-        "id": "9c6cc752-69a3-45fd-ba1e-71f4f80d82f8",
-        "name": "Melody of Warding",
-        "description": "Allies in the aura gain a +1 bonus to their Armor Class.",
-        "resourceColumn": "Melodies"
-      },
-      {
-        "id": "9547ddf0-9003-4c35-849c-2eb374924c5d",
-        "name": "Melody of the Harmful Elements",
-        "description": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura deal an extra 1d4 damage of that type.",
-        "resourceColumn": "Melodies"
-      },
-      {
-        "id": "33849d8b-80ca-4401-9da3-14fb733a68c1",
-        "name": "Melody of the Resistant Elements",
-        "description": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura gain Resistance to the chosen damage type.",
-        "resourceColumn": "Melodies"
       }
     ],
     "proficiency": {

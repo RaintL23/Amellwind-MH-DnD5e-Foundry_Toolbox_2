@@ -48,16 +48,31 @@ export function defaultWeaponForgeItemFlags(opts: {
 
 function songActivityMeta(activity: Record<string, unknown>): {
   isRecital: boolean;
+  isSoloRecital: boolean;
   isEncore: boolean;
   isEndMelodies: boolean;
 } {
   const name = String(activity.name ?? "").toLowerCase();
   const midi = activity.midiProperties as Record<string, unknown> | undefined;
   const id = String(midi?.identifier ?? "").toLowerCase();
+  const isSoloRecital =
+    id === "solo-recital" ||
+    id === "solo-recital-upgrade" ||
+    name.includes("solo recital");
+  const isTrio =
+    name.includes("magnificent trio") || id.includes("magnificent");
   return {
+    // Exact Recital leaf — do not treat Solo Recital as Recital.
     isRecital:
-      name === "recital" || id === "recital" || name.includes("recital"),
-    isEncore: name === "encore" || id === "encore" || name.includes("encore"),
+      !isSoloRecital &&
+      !isTrio &&
+      (name === "recital" || id === "recital" || name.includes("recital")),
+    isSoloRecital,
+    isEncore:
+      isTrio ||
+      name === "encore" ||
+      id === "encore" ||
+      name.includes("encore"),
     isEndMelodies:
       id === "end-melodies" ||
       id === "cancel-melodies" ||
@@ -74,8 +89,8 @@ function hasSongbookActivity(item: FoundryItem): boolean {
     activities as Record<string, Record<string, unknown>>,
   ).some((activity) => {
     if (!activity) return false;
-    const { isRecital, isEncore } = songActivityMeta(activity);
-    return isRecital || isEncore;
+    const { isRecital, isSoloRecital, isEncore } = songActivityMeta(activity);
+    return isRecital || isSoloRecital || isEncore;
   });
 }
 
@@ -83,10 +98,40 @@ function resolveMaxActiveMelodies(item: FoundryItem): number {
   const system = item.system as Record<string, unknown>;
   const activities = system.activities;
   if (!activities || typeof activities !== "object") return 1;
-  const hasEncore = Object.values(
+  const list = Object.values(
     activities as Record<string, Record<string, unknown>>,
-  ).some((activity) => activity && songActivityMeta(activity).isEncore);
+  );
+  const hasTrio = list.some((activity) => {
+    if (!activity) return false;
+    const name = String(activity.name ?? "").toLowerCase();
+    const midi = activity.midiProperties as Record<string, unknown> | undefined;
+    const id = String(midi?.identifier ?? "").toLowerCase();
+    return name.includes("magnificent trio") || id.includes("magnificent");
+  });
+  if (hasTrio) return 3;
+  const hasEncore = list.some(
+    (activity) => activity && songActivityMeta(activity).isEncore,
+  );
   return hasEncore ? 2 : 1;
+}
+
+/** Solo Recital slot count (independent of Encore / Magnificent Trio). */
+function resolveMaxSoloMelodies(item: FoundryItem): number {
+  const system = item.system as Record<string, unknown>;
+  const activities = system.activities;
+  if (!activities || typeof activities !== "object") return 1;
+  const hasUpgrade = Object.values(
+    activities as Record<string, Record<string, unknown>>,
+  ).some((activity) => {
+    if (!activity) return false;
+    const name = String(activity.name ?? "").toLowerCase();
+    const midi = activity.midiProperties as Record<string, unknown> | undefined;
+    const id = String(midi?.identifier ?? "").toLowerCase();
+    return (
+      name.includes("solo recital upgrade") || id === "solo-recital-upgrade"
+    );
+  });
+  return hasUpgrade ? 2 : 1;
 }
 
 function resolveSongbookMagical(item: FoundryItem): boolean {
@@ -97,8 +142,8 @@ function resolveSongbookMagical(item: FoundryItem): boolean {
     activities as Record<string, Record<string, unknown>>,
   ).some((activity) => {
     if (!activity) return false;
-    const { isRecital, isEncore } = songActivityMeta(activity);
-    if (!isRecital && !isEncore) return false;
+    const { isRecital, isSoloRecital, isEncore } = songActivityMeta(activity);
+    if (!isRecital && !isSoloRecital && !isEncore) return false;
     const midi = activity.midiProperties as Record<string, unknown> | undefined;
     return midi?.magicEffect === true || midi?.magicDamage === true;
   });
@@ -290,6 +335,7 @@ export function applyHuntingHornSongbookOverlay(item: FoundryItem): boolean {
   ensureEndMelodiesActivity(item);
 
   const maxActiveMelodies = resolveMaxActiveMelodies(item);
+  const maxSoloMelodies = resolveMaxSoloMelodies(item);
   const existingWorld =
     (item.flags?.world as Record<string, unknown> | undefined) ?? {};
   const existingHh =
@@ -310,6 +356,7 @@ export function applyHuntingHornSongbookOverlay(item: FoundryItem): boolean {
         songbook: true,
         melodyFlag: "world.hh.isMelody",
         maxActiveMelodies,
+        maxSoloMelodies,
       },
     },
   };

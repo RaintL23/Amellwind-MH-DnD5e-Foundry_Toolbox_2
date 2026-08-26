@@ -1,11 +1,11 @@
 {
-  "_id": "shkRlW9DcMh2b71P",
-  "name": "Melody of Might",
+  "_id": "SGvmP6JHpr3OdMgs",
+  "name": "Melody of Harmful Thunder",
   "type": "feat",
-  "img": "icons/skills/melee/strike-sword-blood-red.webp",
+  "img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
+      "value": "<p><strong>Melody of Harmful Thunder</strong></p><p>Allies in the aura deal an extra [[/r 1d4]] Thunder damage.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
       "chat": ""
     },
     "source": {
@@ -16,7 +16,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "melody-of-might",
+    "identifier": "melody-of-harmful-thunder",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -37,33 +37,33 @@
   },
   "effects": [
     {
-      "_id": "MKjjNw1pqVE9IQvj",
-      "name": "Melody of Might (Aura 15 ft)",
-      "img": "icons/skills/melee/strike-sword-blood-red.webp",
+      "_id": "dSNCNDrD39e7VbM4",
+      "name": "Melody of Harmful Thunder (Aura 15 ft)",
+      "img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
       "description": "",
       "changes": [
         {
           "key": "system.bonuses.mwak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[thunder]",
           "priority": 20
         },
         {
           "key": "system.bonuses.rwak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[thunder]",
           "priority": 20
         },
         {
           "key": "system.bonuses.msak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[thunder]",
           "priority": 20
         },
         {
           "key": "system.bonuses.rsak.damage",
           "mode": 2,
-          "value": "1d4",
+          "value": "1d4[thunder]",
           "priority": 20
         }
       ],
@@ -133,7 +133,7 @@
     }
   ],
   "folder": null,
-  "sort": 1900000,
+  "sort": 2900000,
   "ownership": {
     "default": 0
   },
@@ -147,7 +147,7 @@
     "world": {
       "hh": {
         "isMelody": true,
-        "melodyKey": "might"
+        "melodyKey": "harmful-thunder"
       }
     }
   },

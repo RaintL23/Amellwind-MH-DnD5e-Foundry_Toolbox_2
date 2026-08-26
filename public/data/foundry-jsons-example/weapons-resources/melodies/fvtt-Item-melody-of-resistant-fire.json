@@ -1,11 +1,11 @@
 {
-  "_id": "shkRlW9DcMh2b71P",
-  "name": "Melody of Might",
+  "_id": "vMG4QHw9IRtsmMdr",
+  "name": "Melody of Resistant Fire",
   "type": "feat",
-  "img": "icons/skills/melee/strike-sword-blood-red.webp",
+  "img": "icons/magic/fire/flame-burning-orange.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
+      "value": "<p><strong>Melody of Resistant Fire</strong></p><p>Allies in the aura gain Resistance to Fire damage.</p><p><em>Songbook Melody for Hunting Horn. Starts inactive; Recital / Solo Recital / Encore activates Melodies as 15-foot auras for 1 minute.</em></p>",
       "chat": ""
     },
     "source": {
@@ -16,7 +16,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "melody-of-might",
+    "identifier": "melody-of-resistant-fire",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -37,33 +37,15 @@
   },
   "effects": [
     {
-      "_id": "MKjjNw1pqVE9IQvj",
-      "name": "Melody of Might (Aura 15 ft)",
-      "img": "icons/skills/melee/strike-sword-blood-red.webp",
+      "_id": "Yz78clMM0XeSVfDB",
+      "name": "Melody of Resistant Fire (Aura 15 ft)",
+      "img": "icons/magic/fire/flame-burning-orange.webp",
       "description": "",
       "changes": [
         {
-          "key": "system.bonuses.mwak.damage",
+          "key": "system.traits.dr.value",
           "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rwak.damage",
-          "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.msak.damage",
-          "mode": 2,
-          "value": "1d4",
-          "priority": 20
-        },
-        {
-          "key": "system.bonuses.rsak.damage",
-          "mode": 2,
-          "value": "1d4",
+          "value": "fire",
           "priority": 20
         }
       ],
@@ -126,14 +108,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1787754553652,
-        "modifiedTime": 1787754553652,
+        "createdTime": 1787754553653,
+        "modifiedTime": 1787754553653,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 1900000,
+  "sort": 3700000,
   "ownership": {
     "default": 0
   },
@@ -147,7 +129,7 @@
     "world": {
       "hh": {
         "isMelody": true,
-        "melodyKey": "might"
+        "melodyKey": "resistant-fire"
       }
     }
   },
@@ -157,8 +139,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1787754553652,
-    "modifiedTime": 1787754553652,
+    "createdTime": 1787754553653,
+    "modifiedTime": 1787754553653,
     "lastModifiedBy": null
   }
 }

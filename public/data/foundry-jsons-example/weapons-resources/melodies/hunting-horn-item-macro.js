@@ -3,10 +3,12 @@
 //
 // Compatible with:
 // - Recital (uncommon): flags.world.hh.maxActiveMelodies = 1
-// - Encore (rare+):     flags.world.hh.maxActiveMelodies = 2+
-// - End Melodies:       disables all Songbook auras (any rarity)
+// - Encore / Magnificent Trio: maxActiveMelodies = 2 / 3
+// - Solo Recital: flags.world.hh.maxSoloMelodies = 1 (Upgrade → 2)
+// - End Melodies: disables all Songbook auras (any rarity)
 // Melodies detected via flags.world.hh.isMelody / identifier melody-* / name "Melody of *"
 // UI: one dropdown per active Melody slot (no checkboxes); exclusive options when multi-slot.
+// Melody of Guile: flags.world.hh.needsSkillChoice → skill picker rewrites the aura change key.
 
 const esc = (value) => {
   const s = String(value ?? "");
@@ -24,15 +26,31 @@ const rolled = (typeof rolledActivity !== "undefined" && rolledActivity)
   : (workflow?.activity ?? args?.[0]?.activity ?? null);
 
 const actName = (rolled?.name ?? workflow?.activity?.name ?? "").toLowerCase();
-const actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? "").toLowerCase();
+const actId = String(
+  rolled?.identifier
+  ?? rolled?.midiProperties?.identifier
+  ?? workflow?.activity?.identifier
+  ?? workflow?.activity?.midiProperties?.identifier
+  ?? ""
+).toLowerCase();
 
 const isEndMelodies =
   actId === "end-melodies" || actId === "cancel-melodies"
   || actName.includes("end melod") || actName.includes("cancel melod");
 
+const isSolo =
+  actId === "solo-recital" || actId === "solo-recital-upgrade"
+  || actName.includes("solo recital");
+
+const isEncoreLike =
+  actId === "encore" || actName.includes("encore")
+  || actName.includes("magnificent trio") || actId.includes("magnificent");
+
 const isSongUse =
-  actId === "recital" || actId === "encore"
-  || actName.includes("recital") || actName.includes("encore");
+  isSolo
+  || isEncoreLike
+  || actId === "recital"
+  || (!isSolo && actName.includes("recital"));
 
 if (!isEndMelodies && !isSongUse) return;
 
@@ -117,19 +135,22 @@ if (isEndMelodies) {
   return;
 }
 
-// ── Recital / Encore (perform) ─────────────────────────────────────────────
+// ── Recital / Solo Recital / Encore (perform) ──────────────────────────────
 if (!melodies.length) {
   ui.notifications.warn("Hunting Horn: no hay Melodies en el Songbook del actor.");
   return;
 }
 
-const maxActive = Math.max(1, Number(foundry.utils.getProperty(item, "flags.world.hh.maxActiveMelodies") ?? 1));
+const maxRecital = Math.max(1, Number(foundry.utils.getProperty(item, "flags.world.hh.maxActiveMelodies") ?? 1));
+const maxSolo = Math.max(1, Number(foundry.utils.getProperty(item, "flags.world.hh.maxSoloMelodies") ?? 1));
+const maxActive = isSolo ? maxSolo : maxRecital;
 const pickCount = Math.min(maxActive, melodies.length);
-const title = (actId === "encore" || actName.includes("encore")) ? "Encore — Songbook" : "Recital — Songbook";
+const title = isSolo
+  ? "Solo Recital — Songbook"
+  : (isEncoreLike ? "Encore — Songbook" : "Recital — Songbook");
 
 ui.notifications.info(`${title}: elige ${pickCount} Melody${pickCount > 1 ? "s" : ""}…`);
 
-// One dropdown per active slot; pre-select distinct defaults (1st, 2nd, …).
 const selectsHtml = Array.from({ length: pickCount }, (_, i) => {
   const label = pickCount === 1 ? "Melody" : `Melody ${i + 1}`;
   const opts = melodies.map((m, mi) =>
@@ -184,7 +205,6 @@ const selectedIds = await new Promise((resolve) => {
     },
     default: "ok",
     close: () => done(null),
-    // Multi-slot: hide a Melody from other dropdowns once it is selected.
     render: (html) => {
       if (pickCount <= 1) return;
       const $h = html?.find ? html : $(html);
@@ -219,24 +239,31 @@ if (selected.length !== pickCount) {
   return;
 }
 
-// Element choice for Harmful Elements
-const ELEMENTS = ["acid", "cold", "fire", "lightning", "thunder"];
-const chooseElement = async (melodyName) => {
-  const opts = ELEMENTS.map(e => `<option value="${e}">${e.charAt(0).toUpperCase()}${e.slice(1)}</option>`).join("");
+const SKILLS = [
+  ["acr", "Acrobatics"], ["ani", "Animal Handling"], ["arc", "Arcana"],
+  ["ath", "Athletics"], ["dec", "Deception"], ["his", "History"],
+  ["ins", "Insight"], ["itm", "Intimidation"], ["inv", "Investigation"],
+  ["med", "Medicine"], ["nat", "Nature"], ["prc", "Perception"],
+  ["prf", "Performance"], ["per", "Persuasion"], ["rel", "Religion"],
+  ["slt", "Sleight of Hand"], ["ste", "Stealth"], ["sur", "Survival"]
+];
+
+const chooseSkill = async (melodyName) => {
+  const opts = SKILLS.map(([id, label]) => `<option value="${id}">${label}</option>`).join("");
   return await new Promise((resolve) => {
     let settled = false;
     const done = (v) => { if (!settled) { settled = true; resolve(v); } };
     new Dialog({
-      title: `${melodyName} — Element`,
-      content: `<form><div class="form-group"><label>Damage Type</label>
-        <div class="form-fields"><select id="hh-element">${opts}</select></div></div></form>`,
+      title: `${melodyName} — Skill`,
+      content: `<form><div class="form-group"><label>Skill</label>
+        <div class="form-fields"><select id="hh-skill">${opts}</select></div></div></form>`,
       buttons: {
         ok: {
           icon: '<i class="fas fa-check"></i>',
           label: "Choose",
           callback: (html) => {
             const $h = html?.find ? html : $(html);
-            done($h.find("#hh-element").val() || "fire");
+            done($h.find("#hh-skill").val() || "ste");
           }
         },
         cancel: { icon: '<i class="fas fa-times"></i>', label: "Cancel", callback: () => done(null) }
@@ -247,18 +274,18 @@ const chooseElement = async (melodyName) => {
   });
 };
 
-const elementByMelodyId = {};
+const skillByMelodyId = {};
 for (const mel of selected) {
-  const needs = foundry.utils.getProperty(mel, "flags.world.hh.needsElementChoice") === true
-    || (mel.system?.identifier ?? "") === "melody-of-the-harmful-elements"
-    || /harmful elements/i.test(mel.name ?? "");
+  const needs = foundry.utils.getProperty(mel, "flags.world.hh.needsSkillChoice") === true
+    || (mel.system?.identifier ?? "") === "melody-of-guile"
+    || /melody of guile/i.test(mel.name ?? "");
   if (!needs) continue;
-  const el = await chooseElement(mel.name);
-  if (!el) {
+  const skill = await chooseSkill(mel.name);
+  if (!skill) {
     ui.notifications.warn("Cancelado.");
     return;
   }
-  elementByMelodyId[mel.id] = el;
+  skillByMelodyId[mel.id] = skill;
 }
 
 await disableAllMelodyAuras();
@@ -272,7 +299,8 @@ for (const mel of selected) {
     ui.notifications.error(`${mel.name}: sin Active Effect de aura.`);
     return;
   }
-  const element = elementByMelodyId[mel.id];
+  const skill = skillByMelodyId[mel.id];
+  const skillLabel = skill ? (SKILLS.find(([id]) => id === skill)?.[1] ?? skill) : null;
   for (const ef of auras) {
     const update = {
       disabled: false,
@@ -286,19 +314,15 @@ for (const mel of selected) {
         startTurn: null
       }
     };
-    if (element) {
-      const formula = `1d4[${element}]`;
+    if (skill) {
       update.changes = [
-        { key: "system.bonuses.mwak.damage", mode: 2, value: formula, priority: 20 },
-        { key: "system.bonuses.rwak.damage", mode: 2, value: formula, priority: 20 },
-        { key: "system.bonuses.msak.damage", mode: 2, value: formula, priority: 20 },
-        { key: "system.bonuses.rsak.damage", mode: 2, value: formula, priority: 20 }
+        { key: `system.skills.${skill}.bonuses.check`, mode: 2, value: "1", priority: 20 }
       ];
-      update.name = `Melody of the Harmful Elements (${element}) (Aura 15 ft)`;
+      update.name = `Melody of Guile (${skillLabel}) (Aura 15 ft)`;
     }
     await ef.update(update);
   }
-  enabledNames.push(element ? `${mel.name} [${element}]` : mel.name);
+  enabledNames.push(skillLabel ? `${mel.name} [${skillLabel}]` : mel.name);
 }
 
 await refreshActiveAuras("hunting-horn-song");
