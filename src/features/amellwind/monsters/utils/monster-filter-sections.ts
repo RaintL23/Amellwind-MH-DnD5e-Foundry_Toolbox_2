@@ -1,10 +1,52 @@
-import type { ListFilterSectionConfig } from "@/shared/components/list-filters";
+import type {
+  ListFilterOption,
+  ListFilterOptionGroup,
+  ListFilterSectionConfig,
+} from "@/shared/components/list-filters";
+import type { MonsterTypeTaxonomyEntry } from "./monster-type-filter.utils";
+import {
+  encodeMonsterTypeFilterValue,
+  formatMonsterTypeLabel,
+  formatMonsterTypeTagLabel,
+} from "./monster-type-filter.utils";
 
 export function buildMonsterFilterSections(
   uniqueCRs: string[],
-  uniqueTypes: string[],
+  typeTaxonomy: MonsterTypeTaxonomyEntry[],
   uniqueEnvironments: string[],
 ): ListFilterSectionConfig[] {
+  const flatTypeOptions: ListFilterOption[] = [];
+  const typeGroups: ListFilterOptionGroup[] = [];
+
+  for (const entry of typeTaxonomy) {
+    const typeLabel = formatMonsterTypeLabel(entry.type);
+
+    if (entry.tags.length === 0) {
+      flatTypeOptions.push({
+        value: encodeMonsterTypeFilterValue(entry.type),
+        label: typeLabel,
+      });
+      continue;
+    }
+
+    const options: ListFilterOption[] = [
+      {
+        value: encodeMonsterTypeFilterValue(entry.type),
+        label: `All ${typeLabel}`,
+      },
+      ...entry.tags.map((tag) => ({
+        value: encodeMonsterTypeFilterValue(entry.type, tag),
+        label: formatMonsterTypeTagLabel(entry.type, tag),
+      })),
+    ];
+
+    typeGroups.push({
+      id: `type-${entry.type}`,
+      label: typeLabel,
+      options,
+    });
+  }
+
   return [
     {
       id: "cr",
@@ -25,10 +67,9 @@ export function buildMonsterFilterSections(
       id: "type",
       title: "Type",
       mode: "multi",
-      options: uniqueTypes.map((type) => ({
-        value: type,
-        label: type.charAt(0).toUpperCase() + type.slice(1),
-      })),
+      defaultExpanded: true,
+      options: flatTypeOptions,
+      groups: typeGroups.length > 0 ? typeGroups : undefined,
     },
     {
       id: "environment",

@@ -10,6 +10,10 @@ import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { toMonsterId } from "../utils/monster-id.utils";
 import { buildMonsterFilterSections } from "../utils/monster-filter-sections";
+import {
+  buildMonsterTypeTaxonomy,
+  monsterMatchesTypeFilters,
+} from "../utils/monster-type-filter.utils";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 import { MhTokenImage } from "@/shared/components/MhTokenImage";
@@ -199,8 +203,8 @@ export function MonsterList() {
     });
   }, [monsters]);
 
-  const uniqueTypes = useMemo(
-    () => Array.from(new Set(monsters.map((m) => m.type.type))).sort(),
+  const typeTaxonomy = useMemo(
+    () => buildMonsterTypeTaxonomy(monsters),
     [monsters],
   );
 
@@ -211,8 +215,8 @@ export function MonsterList() {
 
   const filterSections = useMemo(
     () =>
-      buildMonsterFilterSections(uniqueCRs, uniqueTypes, uniqueEnvironments),
-    [uniqueCRs, uniqueTypes, uniqueEnvironments],
+      buildMonsterFilterSections(uniqueCRs, typeTaxonomy, uniqueEnvironments),
+    [uniqueCRs, typeTaxonomy, uniqueEnvironments],
   );
 
   const commitName = useCallback(
@@ -256,7 +260,9 @@ export function MonsterList() {
         filters.tier.includes(String(getTier(m.cr))),
       );
     if (filters.type.length > 0)
-      result = result.filter((m) => filters.type.includes(m.type.type));
+      result = result.filter((m) =>
+        monsterMatchesTypeFilters(m, filters.type),
+      );
     if (filters.environment.length > 0)
       result = result.filter((m) =>
         m.environment?.some((env) => filters.environment.includes(env)),
@@ -341,7 +347,7 @@ export function MonsterList() {
         ])}
         onFiltersApply={applyDialogFilters}
         dialogTitle="Monster Filters"
-        dialogDescription="Filter by CR, tier, type, and environment. Changes apply when you save."
+        dialogDescription="Filter by CR, tier, type (including MH subtypes), and environment. Changes apply when you save."
       />
 
       {loading || isSearchPending ? (

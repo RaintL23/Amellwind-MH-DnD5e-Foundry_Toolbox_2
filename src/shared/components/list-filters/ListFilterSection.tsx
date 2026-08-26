@@ -303,17 +303,28 @@ export const ListFilterSection = memo(function ListFilterSection({
     defaultExpanded ? "section" : "",
   );
 
+  const optionsFromGroups = useMemo(() => {
+    if (!groups || groups.length === 0) return [] as ListFilterOption[];
+    return groups.flatMap((group) => {
+      if (group.groups && group.groups.length > 0) {
+        return group.groups.flatMap((sub) => sub.options);
+      }
+      return group.options;
+    });
+  }, [groups]);
+
+  const flatOnlyOptions = useMemo(() => {
+    if (optionsFromGroups.length === 0) return options;
+    const groupedValues = new Set(
+      optionsFromGroups.flatMap((option) => optionFilterValues(option)),
+    );
+    return options.filter((option) => !groupedValues.has(option.value));
+  }, [options, optionsFromGroups]);
+
   const allOptions = useMemo(() => {
-    if (groups && groups.length > 0) {
-      return groups.flatMap((group) => {
-        if (group.groups && group.groups.length > 0) {
-          return group.groups.flatMap((sub) => sub.options);
-        }
-        return group.options;
-      });
-    }
-    return options;
-  }, [groups, options]);
+    if (optionsFromGroups.length === 0) return options;
+    return [...flatOnlyOptions, ...optionsFromGroups];
+  }, [flatOnlyOptions, options, optionsFromGroups]);
 
   const matchedGroups = useMemo(() => {
     if (!groups || groups.length === 0) return [] as MatchedFilterGroup[];
@@ -359,14 +370,22 @@ export const ListFilterSection = memo(function ListFilterSection({
   }, [groups, normalizedQuery, sectionMatches]);
 
   const flatVisible = useMemo(() => {
-    if (hasGroups) return null;
+    const source = hasGroups ? flatOnlyOptions : options;
+    if (hasGroups && source.length === 0) return null;
     const matched = filterOptionsByQuery(
-      options,
+      source,
       normalizedQuery,
       sectionMatches,
     );
     return capOptions(matched, selectedSet, normalizedQuery);
-  }, [hasGroups, options, normalizedQuery, sectionMatches, selectedSet]);
+  }, [
+    flatOnlyOptions,
+    hasGroups,
+    options,
+    normalizedQuery,
+    sectionMatches,
+    selectedSet,
+  ]);
 
   const selectedFlatOptions = useMemo(() => {
     return allOptions.filter((option) =>
@@ -440,16 +459,27 @@ export const ListFilterSection = memo(function ListFilterSection({
 
   if (hasGroups || useFlatAccordion) {
     const body = hasGroups ? (
-      <div className="space-y-1">
-        {matchedGroups.map((group) => (
-          <KindAccordionGroup
-            key={group.id}
-            group={group}
+      <div className="space-y-3">
+        {(flatVisible?.visibleOptions.length ?? 0) > 0 && (
+          <OptionPillRow
+            options={flatVisible?.visibleOptions ?? []}
             selectedSet={selectedSet}
             onToggle={toggle}
-            forceOpen={forceOpenFromSearch}
           />
-        ))}
+        )}
+        {matchedGroups.length > 0 && (
+          <div className="space-y-1">
+            {matchedGroups.map((group) => (
+              <KindAccordionGroup
+                key={group.id}
+                group={group}
+                selectedSet={selectedSet}
+                onToggle={toggle}
+                forceOpen={forceOpenFromSearch}
+              />
+            ))}
+          </div>
+        )}
       </div>
     ) : (
       <OptionPillRow

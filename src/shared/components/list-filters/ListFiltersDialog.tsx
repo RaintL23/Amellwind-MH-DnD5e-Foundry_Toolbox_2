@@ -70,7 +70,11 @@ export function ListFiltersDialog({
   }, [defaults]);
 
   const visibleSections = useMemo(
-    () => sections.filter((section) => section.options.length > 0),
+    () =>
+      sections.filter(
+        (section) =>
+          section.options.length > 0 || (section.groups?.length ?? 0) > 0,
+      ),
     [sections],
   );
 

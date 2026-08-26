@@ -1204,7 +1204,7 @@ Cada columna debe ser filtrable de forma independiente:
 - **Name**: input de texto libre, filtrado por coincidencia parcial (case-insensitive).
 - **CR**: selector de valores únicos presentes en los datos.
 - **Tier**: selector múltiple (Tier 0 – Tier 4).
-- **Type**: selector de valores únicos presentes en los datos.
+- **Type**: tipos base (`type.type`) como pills planos. Si el tipo tiene subcategorías MH en `type.tags` (p. ej. `wyvern` → flying / brute / fanged), aparece como acordeón expandible con **All {Type}** y pills `Flying Wyvern`, `Fanged Wyvern`, etc. Los valores de filtro usan `type` o `type:tag` en la URL.
 - **Environment**: selector de valores únicos (expandiendo los arrays).
 
 #### Detalle del monstruo
