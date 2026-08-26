@@ -5,10 +5,10 @@ import { buildWeaponFoundryItem } from "@/features/raintdm/weapon-forge/mappers/
 
 const EXAMPLES = {
   common:
-    "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-common.json",
+    "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-common.json",
   uncommon:
-    "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-uncommon.json",
-  rare: "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-rare.json",
+    "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-uncommon.json",
+  rare: "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-rare.json",
 } as const;
 
 describe("Magus Staff Weapon Forge catalog", () => {

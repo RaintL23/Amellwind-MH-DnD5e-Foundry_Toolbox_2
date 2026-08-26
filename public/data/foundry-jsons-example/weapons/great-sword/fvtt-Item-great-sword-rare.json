@@ -1,11 +1,11 @@
 {
-  "name": "Great Sword (Uncommon)",
+  "name": "Great Sword (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
   "system": {
     "activities": {
-      "PoNBx0Cwfv2AIpvl": {
-        "_id": "PoNBx0Cwfv2AIpvl",
+      "HAG2o683MA4rgcPB": {
+        "_id": "HAG2o683MA4rgcPB",
         "type": "attack",
         "sort": 0,
         "name": "",
@@ -47,6 +47,8 @@
           "spent": 0,
           "recovery": []
         },
+        "useConditionText": "",
+        "effectConditionText": "false",
         "attack": {
           "ability": "",
           "type": {
@@ -88,14 +90,12 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "useConditionText": "",
         "useConditionReason": "",
-        "effectConditionText": "false",
         "macroData": {
           "name": "",
           "command": ""
@@ -210,8 +210,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -332,8 +332,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -374,9 +374,9 @@
             }
           ]
         },
+        "effectConditionText": "false",
         "useConditionText": "",
         "useConditionReason": "",
-        "effectConditionText": "false",
         "macroData": {
           "name": "",
           "command": ""
@@ -487,8 +487,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -529,9 +529,9 @@
             }
           ]
         },
+        "effectConditionText": "false",
         "useConditionText": "",
         "useConditionReason": "",
-        "effectConditionText": "false",
         "macroData": {
           "name": "",
           "command": ""
@@ -642,8 +642,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -684,9 +684,9 @@
             }
           ]
         },
+        "effectConditionText": "false",
         "useConditionText": "",
         "useConditionReason": "",
-        "effectConditionText": "false",
         "macroData": {
           "name": "",
           "command": ""
@@ -707,6 +707,118 @@
         "attackMode": "oneHanded",
         "ammunition": "",
         "otherActivityUuid": ""
+      },
+      "VzOYRrSMkVMUQIEL": {
+        "_id": "VzOYRrSMkVMUQIEL",
+        "sort": 400000,
+        "name": "Emergency Guard",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When you are hit by a melee attack",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+3 AC vs triggering attack; reduce damage by 1d10 + STR on a hit."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "emergency-guard",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "type": "utility",
+        "roll": {
+          "formula": "1d10 + @abilities.str.mod",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
       }
     },
     "uses": {
@@ -715,8 +827,8 @@
       "max": "3"
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p>As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.</p><p>When you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage</p><p>On hit the weapon deals an extra [[/r 3d6]] slashing damage for each charge expended in this way.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p></div>"
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p>As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.</p><p>When you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage</p><p>On hit the weapon deals an extra [[/r 3d6]] slashing damage for each charge expended in this way.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p><p>Your charge becomes deadlier. Your charged slash now deals an extra [[/r 4d6]] slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when you are hit by a melee attack, you can position the broad side of the blade to protect yourself, gaining a +3 bonus to your AC against that attack. If the attack still hits, you reduce the damage by [[/r 1d10]] + your Strength modifier.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p><p>Using a weapon as a shield ruins its edge. After using this Emergency Guard, the weapon loses its Graze Mastery property until you finish a Short or Long Rest, or spend 1 minute sharpening it with a whetstone.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p></div>"
     },
     "identifier": "greatsword",
     "source": {
@@ -741,7 +853,7 @@
       "value": 50,
       "denomination": "gp"
     },
-    "rarity": "uncommon",
+    "rarity": "rare",
     "attunement": "required",
     "cover": null,
     "crewed": false,
@@ -779,9 +891,10 @@
         }
       }
     },
-    "magicalBonus": null,
+    "magicalBonus": 1,
     "properties": [
       "hvy",
+      "mgc",
       "two"
     ],
     "proficient": null,
@@ -797,7 +910,7 @@
     },
     "mastery": "graze",
     "attuned": false,
-    "equipped": true
+    "equipped": false
   },
   "effects": [
     {
@@ -872,9 +985,7 @@
           ],
           "stackable": "noneName",
           "selfTarget": true,
-          "selfTargetAlways": false,
-          "showIcon": true,
-          "dontApply": false
+          "showIcon": true
         }
       },
       "_stats": {
@@ -889,7 +1000,7 @@
       }
     }
   ],
-  "folder": null,
+  "folder": "CRXu392wlpAlDBpK",
   "flags": {
     "amellwind-toolbox": {
       "baseWeaponName": "Great Sword",
@@ -901,8 +1012,18 @@
         "effect": []
       },
       "last": {
-        "PoNBx0Cwfv2AIpvl": {
-          "attackMode": "twoHanded"
+        "HAG2o683MA4rgcPB": {
+          "attackMode": "twoHanded",
+          "damageType": {
+            "0": "slashing"
+          }
+        },
+        "PcgohwlKeoCHjGPA": {
+          "attackMode": "twoHanded",
+          "damageType": {
+            "0": "slashing",
+            "1": "slashing"
+          }
         }
       }
     },
@@ -935,8 +1056,9 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1785977943054,
-    "modifiedTime": 1785977943091,
+    "createdTime": 1786022400448,
+    "modifiedTime": 1786022416456,
     "lastModifiedBy": "6fq5bv9o4XfSzYRr"
-  }
+  },
+  "_id": "ahAs3Ocj6quREB5C"
 }

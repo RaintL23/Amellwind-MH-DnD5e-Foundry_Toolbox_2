@@ -98,7 +98,7 @@ describe("Gunlance rare Foundry export", () => {
   it("hand-tuned rare example wires Full Burst dialog + Blast Dash attack offer", () => {
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-gunlance-rare.json",
+        "public/data/foundry-jsons-example/weapons/gunlance/fvtt-Item-gunlance-rare.json",
         "utf8",
       ),
     ) as {

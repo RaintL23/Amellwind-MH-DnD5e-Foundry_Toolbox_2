@@ -159,7 +159,7 @@ describe("Weapon Forge Foundry example parity", () => {
     const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-great-sword-uncommon.json",
+        "public/data/foundry-jsons-example/weapons/great-sword/fvtt-Item-great-sword-uncommon.json",
         "utf8",
       ),
     );
@@ -199,7 +199,7 @@ describe("Weapon Forge Foundry example parity", () => {
     const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-great-sword-rare.json",
+        "public/data/foundry-jsons-example/weapons/great-sword/fvtt-Item-great-sword-rare.json",
         "utf8",
       ),
     );
@@ -242,7 +242,7 @@ describe("Weapon Forge Foundry example parity", () => {
     const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-longsword-uncommon.json",
+        "public/data/foundry-jsons-example/weapons/longsword/fvtt-Item-longsword-uncommon.json",
         "utf8",
       ),
     );
@@ -281,7 +281,7 @@ describe("Weapon Forge Foundry example parity", () => {
     const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-longsword-rare.json",
+        "public/data/foundry-jsons-example/weapons/longsword/fvtt-Item-longsword-rare.json",
         "utf8",
       ),
     );
@@ -340,7 +340,7 @@ describe("Weapon Forge Foundry example parity", () => {
     );
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-hunting-horn-uncommon.json",
+        "public/data/foundry-jsons-example/weapons/hunting-horn/fvtt-Item-hunting-horn-uncommon.json",
         "utf8",
       ),
     );
@@ -365,11 +365,15 @@ describe("Weapon Forge Foundry example parity", () => {
     );
     expect(byName.Attack).toBeDefined();
     expect(byName.Recital).toBeDefined();
+    expect(byName["Solo Recital"]).toBeDefined();
     expect(byName["End Melodies"]).toBeDefined();
     expect(byName.Recital.duration?.units).toBe("minute");
     expect(byName.Recital.duration?.value).toBe("1");
     expect(byName.Recital.description?.chatFlavor).toBe(
       "Perform a Melody from your Songbook",
+    );
+    expect(byName["Solo Recital"].description?.chatFlavor).toContain(
+      "Solo Recital",
     );
     expect(byName["End Melodies"].description?.chatFlavor).toBe(
       "End all active Songbook Melodies",
@@ -377,15 +381,25 @@ describe("Weapon Forge Foundry example parity", () => {
 
     const flags = exported.flags as {
       itemacro?: { macro?: { command?: string } };
-      world?: { hh?: { songbook?: boolean } };
+      world?: {
+        hh?: {
+          songbook?: boolean;
+          maxActiveMelodies?: number;
+          maxSoloMelodies?: number;
+        };
+      };
       "midi-qol"?: { onUseMacroName?: string };
     };
     expect(flags.itemacro?.macro?.command).toContain("Songbook");
     expect(flags.world?.hh?.songbook).toBe(true);
+    expect(flags.world?.hh?.maxActiveMelodies).toBe(1);
+    expect(flags.world?.hh?.maxSoloMelodies).toBe(1);
     expect(flags["midi-qol"]?.onUseMacroName).toBe("[preTargeting]ItemMacro");
 
     expect(resources.map((r) => r.name).sort()).toEqual([
+      "Melody of Guile",
       "Melody of Might",
+      "Melody of Precision",
       "Melody of Swiftness",
     ]);
 
@@ -409,7 +423,7 @@ describe("Weapon Forge Foundry example parity", () => {
     const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-common.json",
+        "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-common.json",
         "utf8",
       ),
     );
@@ -444,7 +458,7 @@ describe("Weapon Forge Foundry example parity", () => {
     const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-uncommon.json",
+        "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-uncommon.json",
         "utf8",
       ),
     );
@@ -480,7 +494,7 @@ describe("Weapon Forge Foundry example parity", () => {
     const { weapon: exported } = buildWeaponFoundryExportBundle(weapon, idx);
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-magus-staff-rare.json",
+        "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-rare.json",
         "utf8",
       ),
     );
@@ -529,6 +543,14 @@ describe("Weapon Forge Foundry example parity", () => {
       [
         "Melody of Swiftness",
         "public/data/foundry-jsons-example/weapons-resources/melodies/fvtt-Item-melody-of-swiftness.json",
+      ],
+      [
+        "Melody of Precision",
+        "public/data/foundry-jsons-example/weapons-resources/melodies/fvtt-Item-melody-of-precision.json",
+      ],
+      [
+        "Melody of Guile",
+        "public/data/foundry-jsons-example/weapons-resources/melodies/fvtt-Item-melody-of-guile.json",
       ],
     ] as const) {
       const example = JSON.parse(readFileSync(path, "utf8"));

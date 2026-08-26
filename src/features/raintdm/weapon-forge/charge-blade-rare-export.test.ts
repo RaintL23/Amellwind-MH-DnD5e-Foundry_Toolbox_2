@@ -134,7 +134,7 @@ describe("Charge Blade rare Foundry export", () => {
   it("hand-tuned rare example matches builder export contract", () => {
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-charge-blade-rare.json",
+        "public/data/foundry-jsons-example/weapons/charge-blade/fvtt-Item-charge-blade-rare.json",
         "utf8",
       ),
     ) as {

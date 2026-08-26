@@ -81,7 +81,7 @@ describe("Dual Repeaters rare Foundry export", () => {
   it("hand-tuned rare example matches builder export contract", () => {
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-dual-repeaters-rare.json",
+        "public/data/foundry-jsons-example/weapons/dual-repeaters/fvtt-Item-dual-repeaters-rare.json",
         "utf8",
       ),
     );

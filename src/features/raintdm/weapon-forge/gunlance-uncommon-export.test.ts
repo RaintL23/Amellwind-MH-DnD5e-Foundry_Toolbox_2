@@ -118,7 +118,7 @@ describe("Gunlance uncommon Foundry export", () => {
   it("hand-tuned uncommon example wires Shelling Strike / Guard Reload dialogs", () => {
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-gunlance-uncommon.json",
+        "public/data/foundry-jsons-example/weapons/gunlance/fvtt-Item-gunlance-uncommon.json",
         "utf8",
       ),
     ) as {

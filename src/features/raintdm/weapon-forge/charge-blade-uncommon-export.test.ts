@@ -184,7 +184,7 @@ describe("Charge Blade uncommon Foundry export", () => {
   it("hand-tuned uncommon example wires modes / Guard Point / ItemMacro", () => {
     const example = JSON.parse(
       readFileSync(
-        "public/data/foundry-jsons-example/weapons/fvtt-Item-charge-blade-uncommon.json",
+        "public/data/foundry-jsons-example/weapons/charge-blade/fvtt-Item-charge-blade-uncommon.json",
         "utf8",
       ),
     ) as {

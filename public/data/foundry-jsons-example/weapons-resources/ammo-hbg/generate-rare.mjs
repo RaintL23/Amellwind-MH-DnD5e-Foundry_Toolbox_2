@@ -1364,7 +1364,7 @@ const weapon = {
 
 const weaponsDir = join(here, "..", "..", "weapons");
 writeFileSync(
-  join(weaponsDir, "fvtt-Item-heavy-bowgun-rare.json"),
+  join(weaponsDir, "heavy-bowgun", "fvtt-Item-heavy-bowgun-rare.json"),
   `${JSON.stringify(weapon, null, 2)}\n`,
   "utf8",
 );

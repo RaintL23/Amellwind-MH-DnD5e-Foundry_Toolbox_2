@@ -1,6 +1,6 @@
 {
-  "_id": "GFDaAlYI7MFXno3U",
-  "name": "Light Bowgun (Rare)",
+  "_id": "UF23OgprydCju67A",
+  "name": "Light Bowgun (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_lightbowgun.webp",
   "system": {
@@ -13,8 +13,8 @@
       "revision": 1
     },
     "description": {
-      "value": "<p>Requires Attunement</p><p><a href=\"https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/weapons?weapon=Light+Bowgun\" target=\"_blank\" rel=\"noopener\">Open Light Bowgun in the Toolbox</a></p><p>Ammo DC = 8 + your proficiency bonus + your Dexterity modifier</p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p><p>If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn't exceed 10 feet.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Rapid Fire</strong></p><p><strong>Bonus Action.</strong></p><p>When you take the Attack action and attack with this weapon, you can make one additional attack with it as a Bonus Action.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #1eff00;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#1eff00\">Rapid Fire Upgrade I</strong></p><p><strong>Bonus Action.</strong></p><p>When you use your Rapid Fire feature to attack as a Bonus Action, you can make two additional attacks instead of one.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Rapid Fire Upgrade II</strong></p><p><strong>Bonus Action.</strong></p><p>When you use your Rapid Fire feature to attack as a Bonus Action, you can make three additional attacks instead of two.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Magazine</strong></p><p>The weapon holds a maximum of 6 loaded rounds at a time. When the magazine reaches 0, you must reload it before you can fire again.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #1eff00;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#1eff00\">Magazine Upgrade I</strong></p><p>Your magazine capacity increases to 8 rounds of standard ammunition (Normal, Pierce, or Spread).</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Magazine Upgrade II</strong></p><p>Your magazine capacity increases to 10 rounds.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Reload</strong></p><p><strong>Action.</strong></p><p>You can fully reload your magazine using an Action or a Bonus Action. When you do so, you choose the type of ammunition the weapon will contain.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Special Ammo</strong></p><p>Due to barrel pressure limits, you can load a maximum of 2 Special Ammo rounds into the magazine during a reload. Once these are expended, you must reload to switch back to another ammunition type.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Special Ammo Upgrade I</strong></p><p>Your magazine can now hold up to 4 Special Ammo rounds.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wyvernblast</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can plant a Wyvernblast charge on the ground in an unoccupied space within 5 feet of you, or shoot it into a creature within 30 feet. When a creature within 5 feet of the charge takes damage from an attack or spell, the charge detonates, dealing [[/r 1d6]] Fire damage to all creatures within 5 feet of it. The charge lasts for 1 minute or until it detonates 3 times. You can use this feature a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Wyvernblast Upgrade I</strong></p><p>The damage of your Wyvernblast detonations increases to [[/r 1d8]] Fire damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Evading Reload</strong></p><p>The weapon is designed to be reloaded using the momentum of your body. Once per turn, if you move at least 15 feet in a straight line, you can reload half your magazine as part of that movement without expending an action. When you do so, choose either standard ammunition (Normal, Pierce, or Spread Ammo) or Special Ammo; you reload a number of rounds equal to half that ammunition type's current magazine capacity (rounded down).</p></div><h3>Ammunition</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Normal Ammo</strong></p><p>Deals the weapon's base damage ([[/r 1d4]] Piercing) to a single target.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Pierce Ammo</strong></p><p>You fire in a 20-foot line that is 5 feet wide. Make a single attack roll and compare it against the AC of each creature in that line. All creatures hit take the weapon's normal damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Spread Ammo</strong></p><p>Instead of making an attack roll, you fire a 10-foot cone. Each creature in the cone must make a Dexterity saving throw against your Ammo DC. On a failed save, a creature takes [[/r 1d4]] Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Recover Ammo</strong></p><p>Instead of taking damage, a willing creature hit by this ammo regains [[/r 1d4]] hit points.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Flaming Ammo</strong></p><p>Your attacks with this ammo deal Fire damage instead of Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Water Ammo</strong></p><p>Your attacks with this ammo deal Acid damage instead of Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Thunder Ammo</strong></p><p>Your attacks with this ammo deal Lightning damage instead of Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Freeze Ammo</strong></p><p>Your attacks with this ammo deal Cold damage instead of Piercing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Poison Ammo</strong></p><p>Your attacks with this ammo deal [[/r 1d4]] Poison damage. The target must succeed on a Constitution saving throw against your Ammo DC or have the Poisoned condition until the end of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Paralysis Ammo</strong></p><p>Your attacks with this ammo deal [[/r 1d4]] Lightning damage. The target must make a Constitution saving throw against your Ammo DC. On a failure, it becomes Paralyzed until the end of their next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Explosive/Sticky Ammo</strong></p><p>Your attacks with this ammo deal [[/r 1d4]] Fire damage and produce an explosion in a 5-foot radius. Every creature in that area must succeed on a Dexterity saving throw against your Ammo DC or suffer [[/r 2d4]] Fire damage and have the Prone condition.</p></div>",
-      "chat": "<p>Requires Attunement</p><p>Ammo DC = 8 + your proficiency bonus + your Dexterity modifier</p><hr><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Rapid Fire</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#1eff00\">Rapid Fire Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Rapid Fire Upgrade II</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Magazine</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#1eff00\">Magazine Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Magazine Upgrade II</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Reload</strong></p><p><strong>Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Special Ammo</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Special Ammo Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wyvernblast</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Wyvernblast Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Evading Reload</strong></p></div>"
+      "value": "<p>Requires Attunement</p><p><a href=\"https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/weapons?weapon=Light+Bowgun\" target=\"_blank\" rel=\"noopener\">Open Light Bowgun in the Toolbox</a></p><p>Ammo DC = 8 + your proficiency bonus + your Dexterity modifier</p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p><p>If you hit a creature with this weapon and deal damage to it, you can reduce its Speed by 10 feet until the start of your next turn. If the creature is hit more than once by weapons that have this property, the Speed reduction doesn't exceed 10 feet.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Rapid Fire</strong></p><p><strong>Bonus Action.</strong></p><p>When you take the Attack action and attack with this weapon, you can make one additional attack with it as a Bonus Action.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #1eff00;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#1eff00\">Rapid Fire Upgrade I</strong></p><p><strong>Bonus Action.</strong></p><p>When you use your Rapid Fire feature to attack as a Bonus Action, you can make two additional attacks instead of one.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Rapid Fire Upgrade II</strong></p><p><strong>Bonus Action.</strong></p><p>When you use your Rapid Fire feature to attack as a Bonus Action, you can make three additional attacks instead of two.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Overheat</strong></p><p>When you resolve an attack made with your Rapid Fire feature, you gain 1 stack of Overheat. Resolve that attack first (applying any Overheat stacks you already have), then gain the new stack; the attack that just granted the stack does not take that new stack's penalty.</p><p>While you have one or more stacks, attacks with this weapon deal 3 less damage for each stack (to a minimum of 1 damage from the weapon's damage roll and modifiers combined, before other effects that add damage dice). This penalty applies to every later attack with this weapon before the start of your next turn — including attacks from Action Surge, Extra Attack, and reactions — not only Rapid Fire shots. Overheat stacks last until the start of your next turn.</p><p>Against area ammunition (such as Pierce, Spread, or Explosive/Sticky Ammo), the penalty reduces the weapon damage of that shot for each creature affected. It does not change save DCs or non-damage effects (conditions, healing from Recover Ammo, and similar).</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Overheat Upgrade I</strong></p><p>Overheat's damage penalty is 2 per stack instead of 3.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Magazine</strong></p><p>The weapon holds a maximum of 6 loaded rounds at a time. When the magazine reaches 0, you must reload it before you can fire again.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #1eff00;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#1eff00\">Magazine Upgrade I</strong></p><p>Your magazine capacity increases to 8 rounds of standard ammunition (Normal, Pierce, or Spread).</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Magazine Upgrade II</strong></p><p>Your magazine capacity increases to 10 rounds.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Magazine Upgrade III</strong></p><p>Your magazine capacity increases to 12 rounds.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Reload</strong></p><p><strong>Action.</strong></p><p>You can fully reload your magazine using an Action or a Bonus Action. When you do so, you choose the type of ammunition the weapon will contain.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Special Ammo</strong></p><p>Due to barrel pressure limits, you can load a maximum of 2 Special Ammo rounds into the magazine during a reload. Once these are expended, you must reload to switch back to another ammunition type.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Special Ammo Upgrade I</strong></p><p>Your magazine can now hold up to 4 Special Ammo rounds.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Special Ammo Upgrade II</strong></p><p>Your magazine can now hold up to 6 Special Ammo rounds.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wyvernblast</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can plant a Wyvernblast charge on the ground in an unoccupied space within 5 feet of you, or shoot it into a creature within 30 feet. When a creature within 5 feet of the charge takes damage from an attack or spell, the charge detonates, dealing [[/r 1d6]] Fire damage to all creatures within 5 feet of it. The charge lasts for 1 minute or until it detonates 3 times. You can use this feature a number of times equal to your Proficiency Bonus, and you regain all expended uses when you finish a Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Wyvernblast Upgrade I</strong></p><p>The damage of your Wyvernblast detonations increases to [[/r 1d8]] Fire damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Evading Reload</strong></p><p>The weapon is designed to be reloaded using the momentum of your body. Once per turn, if you move at least 15 feet in a straight line, you can reload half your magazine as part of that movement without expending an action. When you do so, choose either standard ammunition (Normal, Pierce, or Spread Ammo) or Special Ammo; you reload a number of rounds equal to half that ammunition type's current magazine capacity (rounded down).</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Counter Mine</strong></p><p><strong>Reaction.</strong></p><p>If a creature hits you with a melee attack, you can use your Reaction to embed a Wyvernblast charge directly into the attacker and detonate it instantly. This expends one use of your Wyvernblast and causes all three detonations simultaneously.</p></div><h3>Ammunition</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Normal Ammo</strong></p><p>Deals the weapon's base damage ([[/r 1d4]] Piercing) to a single target.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Normal Ammo Upgrade</strong></p><p>Your Normal Ammo now deals an extra [[/r 1d6]] Piercing damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Pierce Ammo</strong></p><p>You fire in a 20-foot line that is 5 feet wide. Make a single attack roll and compare it against the AC of each creature in that line. All creatures hit take the weapon's normal damage.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Pierce Ammo Upgrade</strong></p><p>Your Pierce Ammo now deals an extra [[/r 1d6]] Piercing damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Spread Ammo</strong></p><p>Instead of making an attack roll, you fire a 10-foot cone. Each creature in the cone must make a Dexterity saving throw against your Ammo DC. On a failed save, a creature takes [[/r 1d4]] Piercing damage.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Spread Ammo Upgrade</strong></p><p>Your Spread Ammo now deals an extra [[/r 1d6]] Piercing damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Recover Ammo</strong></p><p>Instead of taking damage, a willing creature hit by this ammo regains [[/r 1d4]] hit points.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Recover Ammo Upgrade</strong></p><p>Your Recover Ammo now restores [[/r 2d4]] + your Proficiency Bonus hit points.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Flaming Ammo</strong></p><p>Your attacks with this ammo deal Fire damage instead of Piercing damage.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Flaming Ammo Upgrade</strong></p><p>Your Flaming Ammo now deals an extra [[/r 1d6]] Fire damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Water Ammo</strong></p><p>Your attacks with this ammo deal Acid damage instead of Piercing damage.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Water Ammo Upgrade</strong></p><p>Your Water Ammo now deals an extra [[/r 1d6]] Acid damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Thunder Ammo</strong></p><p>Your attacks with this ammo deal Lightning damage instead of Piercing damage.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Thunder Ammo Upgrade</strong></p><p>Your Thunder Ammo now deals an extra [[/r 1d6]] Lightning damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Freeze Ammo</strong></p><p>Your attacks with this ammo deal Cold damage instead of Piercing damage.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Freeze Ammo Upgrade</strong></p><p>Your Freeze Ammo now deals an extra [[/r 1d6]] Cold damage.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Poison Ammo</strong></p><p>Your attacks with this ammo deal [[/r 1d4]] Poison damage. The target must succeed on a Constitution saving throw against your Ammo DC or have the Poisoned condition until the end of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Paralysis Ammo</strong></p><p>Your attacks with this ammo deal [[/r 1d4]] Lightning damage. The target must make a Constitution saving throw against your Ammo DC. On a failure, it becomes Paralyzed until the end of their next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Explosive/Sticky Ammo</strong></p><p>Your attacks with this ammo deal [[/r 1d4]] Fire damage and produce an explosion in a 5-foot radius. Every creature in that area must succeed on a Dexterity saving throw against your Ammo DC or suffer [[/r 2d4]] Fire damage and have the Prone condition.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Sleep Ammo</strong></p><p>If the target has 50 Hit Points or fewer, it must succeed on a Constitution saving throw or fall Unconscious for 1 minute, or until it takes damage or someone uses an action to shake it awake.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Dragon Ammo</strong></p><p>The attack deals an extra [[/r 2d6]] Necrotic damage, and the target cannot regain Hit Points until the start of your next turn.</p></div>",
+      "chat": "<p>Requires Attunement</p><p>Ammo DC = 8 + your proficiency bonus + your Dexterity modifier</p><hr><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Rapid Fire</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#1eff00\">Rapid Fire Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Rapid Fire Upgrade II</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Overheat</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Overheat Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Magazine</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#1eff00\">Magazine Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Magazine Upgrade II</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Magazine Upgrade III</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Reload</strong></p><p><strong>Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Special Ammo</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Special Ammo Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Special Ammo Upgrade II</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wyvernblast</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Wyvernblast Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Evading Reload</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Counter Mine</strong></p><p><strong>Reaction.</strong></p></div>"
     },
     "identifier": "lightbowgun",
     "quantity": 1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "required",
     "equipped": false,
-    "rarity": "rare",
+    "rarity": "veryRare",
     "identified": true,
     "type": {
       "value": "simpleR",
@@ -63,7 +63,7 @@
         }
       }
     },
-    "magicalBonus": 1,
+    "magicalBonus": 2,
     "properties": [
       "amm",
       "mgc",
@@ -86,11 +86,11 @@
     "uses": {
       "spent": 0,
       "recovery": [],
-      "max": "10"
+      "max": "12"
     },
     "activities": {
-      "YQFQyiPOw4hG8BPP": {
-        "_id": "YQFQyiPOw4hG8BPP",
+      "uAF43vM8pnzrQCwb": {
+        "_id": "uAF43vM8pnzrQCwb",
         "type": "attack",
         "sort": 0,
         "name": "Normal Ammo",
@@ -161,7 +161,24 @@
             "bonus": ""
           },
           "includeBase": true,
-          "parts": []
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "piercing"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
         },
         "midiProperties": {
           "ignoreTraits": [],
@@ -718,8 +735,139 @@
         },
         "otherActivityId": "none"
       },
-      "SE3VhLzYL0MQuYji": {
-        "_id": "SE3VhLzYL0MQuYji",
+      "YB2S7yeN721tS72D": {
+        "_id": "YB2S7yeN721tS72D",
+        "sort": 800000,
+        "name": "Counter Mine",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When a creature hits you with a melee attack",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Embed and detonate Wyvernblast (3d8 fire = 3× Upgrade I die)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "counter-mine",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "damage",
+        "damage": {
+          "critical": {
+            "allow": false,
+            "bonus": ""
+          },
+          "parts": [
+            {
+              "number": 3,
+              "denomination": 8,
+              "types": [
+                "fire"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "q329NbYcmAoDJ7kE": {
+        "_id": "q329NbYcmAoDJ7kE",
         "type": "attack",
         "sort": 600000,
         "name": "Pierce Ammo",
@@ -832,7 +980,24 @@
             "bonus": ""
           },
           "includeBase": true,
-          "parts": []
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "piercing"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
         },
         "attackMode": "oneHanded",
         "ammunition": "",
@@ -842,8 +1007,8 @@
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "qxTfWbJweAlSG7hL": {
-        "_id": "qxTfWbJweAlSG7hL",
+      "X2FlzGBv4khX9Rfo": {
+        "_id": "X2FlzGBv4khX9Rfo",
         "type": "save",
         "sort": 700000,
         "name": "Spread Ammo",
@@ -956,6 +1121,22 @@
                 "number": 1
               },
               "bonus": ""
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "piercing"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
             }
           ],
           "onSave": "none"
@@ -975,8 +1156,8 @@
         "useConditionReason": "",
         "effectConditionText": ""
       },
-      "a6mHpcV7zEMhnmnY": {
-        "_id": "a6mHpcV7zEMhnmnY",
+      "kGqafvlsqXpTFvuM": {
+        "_id": "kGqafvlsqXpTFvuM",
         "type": "attack",
         "sort": 800000,
         "name": "Flaming Ammo",
@@ -1006,7 +1187,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Weapon attack as fire damage (replaces piercing)."
+          "chatFlavor": "Weapon attack as fire damage (replaces piercing); +1d6 fire."
         },
         "duration": {
           "value": "",
@@ -1105,6 +1286,22 @@
                 "number": 1
               },
               "bonus": ""
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "fire"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
             }
           ]
         },
@@ -1116,8 +1313,8 @@
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "uOJSacEhC0K0zafh": {
-        "_id": "uOJSacEhC0K0zafh",
+      "lflZtMYnXzTbLZKR": {
+        "_id": "lflZtMYnXzTbLZKR",
         "type": "attack",
         "sort": 900000,
         "name": "Water Ammo",
@@ -1147,7 +1344,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Weapon attack as acid damage (replaces piercing)."
+          "chatFlavor": "Weapon attack as acid damage (replaces piercing); +1d6 acid."
         },
         "duration": {
           "value": "",
@@ -1246,6 +1443,22 @@
                 "number": 1
               },
               "bonus": ""
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "acid"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
             }
           ]
         },
@@ -1257,8 +1470,8 @@
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "26GYtWplC03Rh2Hq": {
-        "_id": "26GYtWplC03Rh2Hq",
+      "7hrU4VzeZBRuPT4S": {
+        "_id": "7hrU4VzeZBRuPT4S",
         "type": "attack",
         "sort": 1000000,
         "name": "Thunder Ammo",
@@ -1288,7 +1501,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Weapon attack as lightning damage (replaces piercing)."
+          "chatFlavor": "Weapon attack as lightning damage (replaces piercing); +1d6 lightning."
         },
         "duration": {
           "value": "",
@@ -1387,6 +1600,22 @@
                 "number": 1
               },
               "bonus": ""
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "lightning"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
             }
           ]
         },
@@ -1398,8 +1627,8 @@
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "gcScR5rN6mJFyGH1": {
-        "_id": "gcScR5rN6mJFyGH1",
+      "8bMTpUTqr7Np6vNA": {
+        "_id": "8bMTpUTqr7Np6vNA",
         "type": "attack",
         "sort": 1100000,
         "name": "Freeze Ammo",
@@ -1429,7 +1658,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Weapon attack as cold damage (replaces piercing)."
+          "chatFlavor": "Weapon attack as cold damage (replaces piercing); +1d6 cold."
         },
         "duration": {
           "value": "",
@@ -1528,6 +1757,22 @@
                 "number": 1
               },
               "bonus": ""
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "cold"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
             }
           ]
         },
@@ -1539,8 +1784,8 @@
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "78ki76yATpbdr5Ar": {
-        "_id": "78ki76yATpbdr5Ar",
+      "J3cE9KUve6ffmLbQ": {
+        "_id": "J3cE9KUve6ffmLbQ",
         "type": "heal",
         "sort": 1200000,
         "name": "Recover Ammo",
@@ -1570,7 +1815,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Willing creature regains 1d4 hit points."
+          "chatFlavor": "Willing creature regains 2d4 + PB hit points."
         },
         "duration": {
           "value": "",
@@ -1637,7 +1882,7 @@
           "autoCEEffects": "default"
         },
         "healing": {
-          "number": 1,
+          "number": 2,
           "denomination": 4,
           "types": [
             "healing"
@@ -1650,7 +1895,7 @@
             "mode": "",
             "number": 1
           },
-          "bonus": ""
+          "bonus": "@prof"
         },
         "otherActivityId": "none",
         "otherActivityUuid": "",
@@ -1658,8 +1903,8 @@
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "cmMBYnObf2sgdQBV": {
-        "_id": "cmMBYnObf2sgdQBV",
+      "H9z2n4mZvTczBYBA": {
+        "_id": "H9z2n4mZvTczBYBA",
         "type": "attack",
         "sort": 1300000,
         "name": "Poison Ammo",
@@ -1730,7 +1975,7 @@
         },
         "midiProperties": {
           "ignoreTraits": [],
-          "triggeredActivityId": "AxBLOVkY0Hk1N5QP",
+          "triggeredActivityId": "De1dgYzU4MyqB6s4",
           "triggeredActivityConditionText": "hits > 0",
           "triggeredActivityTargets": "hit",
           "triggeredActivityRollAs": "self",
@@ -1793,14 +2038,14 @@
         },
         "attackMode": "oneHanded",
         "ammunition": "",
-        "otherActivityId": "AxBLOVkY0Hk1N5QP",
+        "otherActivityId": "De1dgYzU4MyqB6s4",
         "otherActivityUuid": "",
         "useConditionText": "",
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "DSYk65noI6MAdUtp": {
-        "_id": "DSYk65noI6MAdUtp",
+      "LdtHfoS5CjnK17Ha": {
+        "_id": "LdtHfoS5CjnK17Ha",
         "type": "attack",
         "sort": 1400000,
         "name": "Paralysis Ammo",
@@ -1871,7 +2116,7 @@
         },
         "midiProperties": {
           "ignoreTraits": [],
-          "triggeredActivityId": "rr3aYdqUyrEhKQKu",
+          "triggeredActivityId": "as5GkowVQ5urH1wW",
           "triggeredActivityConditionText": "hits > 0",
           "triggeredActivityTargets": "hit",
           "triggeredActivityRollAs": "self",
@@ -1934,14 +2179,14 @@
         },
         "attackMode": "oneHanded",
         "ammunition": "",
-        "otherActivityId": "rr3aYdqUyrEhKQKu",
+        "otherActivityId": "as5GkowVQ5urH1wW",
         "otherActivityUuid": "",
         "useConditionText": "",
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "PzpjEK8mjsSSxdAD": {
-        "_id": "PzpjEK8mjsSSxdAD",
+      "JVK2KLG91HgxppxX": {
+        "_id": "JVK2KLG91HgxppxX",
         "type": "attack",
         "sort": 1500000,
         "name": "Explosive/Sticky Ammo",
@@ -2012,7 +2257,7 @@
         },
         "midiProperties": {
           "ignoreTraits": [],
-          "triggeredActivityId": "faMPtVilxXJWZNln",
+          "triggeredActivityId": "US9TuEvugrjKWdd1",
           "triggeredActivityConditionText": "hits > 0",
           "triggeredActivityTargets": "hit",
           "triggeredActivityRollAs": "self",
@@ -2075,14 +2320,283 @@
         },
         "attackMode": "oneHanded",
         "ammunition": "",
-        "otherActivityId": "faMPtVilxXJWZNln",
+        "otherActivityId": "US9TuEvugrjKWdd1",
         "otherActivityUuid": "",
         "useConditionText": "",
         "useConditionReason": "",
         "effectConditionText": "false"
       },
-      "AxBLOVkY0Hk1N5QP": {
-        "_id": "AxBLOVkY0Hk1N5QP",
+      "JDEidaNSmuxRmQ9P": {
+        "_id": "JDEidaNSmuxRmQ9P",
+        "type": "attack",
+        "sort": 1600000,
+        "name": "Sleep Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "On hit: if target <= 50 HP, Con save or Unconscious."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "narHh3PsAYqswPDw",
+          "triggeredActivityConditionText": "hits > 0",
+          "triggeredActivityTargets": "hit",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "sleep-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityId": "narHh3PsAYqswPDw",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false"
+      },
+      "xkdmZ8vnNmIxiuyX": {
+        "_id": "xkdmZ8vnNmIxiuyX",
+        "type": "attack",
+        "sort": 1700000,
+        "name": "Dragon Ammo",
+        "img": "",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "+2d6 necrotic on hit. Target cannot regain HP until start of your next turn."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "jgFf1q3CgNditWsd"
+          }
+        ],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "dragon-ammo",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "ranged",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": [
+            {
+              "number": 2,
+              "denomination": 6,
+              "types": [
+                "necrotic"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "hits > 0"
+      },
+      "De1dgYzU4MyqB6s4": {
+        "_id": "De1dgYzU4MyqB6s4",
         "type": "save",
         "sort": 2000000,
         "name": "Poison Ammo: Save",
@@ -2111,7 +2625,7 @@
         },
         "effects": [
           {
-            "_id": "o3LQRQk6TC1lesCZ"
+            "_id": "sz55OgCGcoUWA6o2"
           }
         ],
         "range": {
@@ -2206,8 +2720,8 @@
           "postRemoveConditionText": ""
         }
       },
-      "rr3aYdqUyrEhKQKu": {
-        "_id": "rr3aYdqUyrEhKQKu",
+      "as5GkowVQ5urH1wW": {
+        "_id": "as5GkowVQ5urH1wW",
         "type": "save",
         "sort": 2100000,
         "name": "Paralysis Ammo: Save",
@@ -2236,7 +2750,7 @@
         },
         "effects": [
           {
-            "_id": "fqstRn8GQsMuf4ZK"
+            "_id": "JvEgzUSDTQPVfSSF"
           }
         ],
         "range": {
@@ -2331,8 +2845,8 @@
           "postRemoveConditionText": ""
         }
       },
-      "faMPtVilxXJWZNln": {
-        "_id": "faMPtVilxXJWZNln",
+      "US9TuEvugrjKWdd1": {
+        "_id": "US9TuEvugrjKWdd1",
         "type": "save",
         "sort": 2200000,
         "name": "Explosive/Sticky Ammo: Blast",
@@ -2361,7 +2875,7 @@
         },
         "effects": [
           {
-            "_id": "Y2V8II8sevtKxE7x"
+            "_id": "MjosvASMsjThU9Kk"
           }
         ],
         "range": {
@@ -2472,6 +2986,131 @@
           "preRemoveConditionText": "",
           "postRemoveConditionText": ""
         }
+      },
+      "narHh3PsAYqswPDw": {
+        "_id": "narHh3PsAYqswPDw",
+        "type": "save",
+        "sort": 2300000,
+        "name": "Sleep Ammo: Save",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "On hit with matching ammo",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "If target has 50 HP or fewer: Con save vs Ammo DC or Unconscious 1 minute."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "1lsA468QlXqcCz1E"
+          }
+        ],
+        "range": {
+          "value": "",
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": true,
+          "otherActivityCompatible": true,
+          "identifier": "sleep-ammo-save",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "damage": {
+          "parts": [],
+          "onSave": "none"
+        },
+        "save": {
+          "ability": [
+            "con"
+          ],
+          "dc": {
+            "calculation": "dex",
+            "formula": ""
+          }
+        },
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "useConditionText": "@target.system.attributes.hp.value <= 50",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        }
       }
     },
     "container": null,
@@ -2512,13 +3151,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786122242801,
-        "modifiedTime": 1786122242801,
+        "createdTime": 1786122242805,
+        "modifiedTime": 1786122242805,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "o3LQRQk6TC1lesCZ",
+      "_id": "sz55OgCGcoUWA6o2",
       "name": "Ammo: Poisoned",
       "img": "systems/dnd5e/icons/svg/statuses/poisoned.svg",
       "type": "base",
@@ -2566,7 +3205,7 @@
       }
     },
     {
-      "_id": "fqstRn8GQsMuf4ZK",
+      "_id": "JvEgzUSDTQPVfSSF",
       "name": "Ammo: Paralyzed",
       "img": "systems/dnd5e/icons/svg/statuses/paralyzed.svg",
       "type": "base",
@@ -2614,7 +3253,7 @@
       }
     },
     {
-      "_id": "Y2V8II8sevtKxE7x",
+      "_id": "MjosvASMsjThU9Kk",
       "name": "Ammo: Prone",
       "img": "systems/dnd5e/icons/svg/statuses/prone.svg",
       "type": "base",
@@ -2658,10 +3297,111 @@
         "modifiedTime": null,
         "lastModifiedBy": null
       }
+    },
+    {
+      "_id": "1lsA468QlXqcCz1E",
+      "name": "Ammo: Unconscious",
+      "img": "systems/dnd5e/icons/svg/statuses/unconscious.svg",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "<p>Unconscious for 1 minute, or until damage / shaken awake. Only applied if target had 50 HP or fewer.</p>",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [
+        "unconscious"
+      ],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "dontApply": false,
+          "stackable": "none",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "isDamaged"
+          ]
+        }
+      },
+      "_stats": {
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "jgFf1q3CgNditWsd",
+      "name": "Ammo: Dragon Suppression",
+      "img": "icons/svg/aura.svg",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.fail.skill.hea",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "<p>Cannot regain Hit Points until the start of the attacker's next turn.</p>",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "dontApply": false,
+          "stackable": "none",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [
+            "turnStartSource"
+          ]
+        }
+      },
+      "_stats": {
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
     }
   ],
   "folder": null,
-  "sort": 200000,
+  "sort": 300000,
   "ownership": {
     "default": 0
   },
@@ -2712,8 +3452,8 @@
     "world": {
       "lbg": {
         "isLightBowgun": true,
-        "tier": "rare",
-        "specialAmmoMax": 4,
+        "tier": "veryRare",
+        "specialAmmoMax": 6,
         "unlockedAmmo": [
           "normal",
           "pierce",
@@ -2725,7 +3465,9 @@
           "freeze",
           "poison",
           "paralysis",
-          "explosive-sticky"
+          "explosive-sticky",
+          "sleep",
+          "dragon"
         ],
         "loadedAmmoKey": null
       }
@@ -2762,8 +3504,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786122242801,
-    "modifiedTime": 1786122242801,
+    "createdTime": 1786122242805,
+    "modifiedTime": 1786122242805,
     "lastModifiedBy": null
   }
 }
