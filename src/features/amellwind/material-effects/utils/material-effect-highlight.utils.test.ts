@@ -37,6 +37,7 @@ function makeRune(partial: Partial<Rune> & Pick<Rune, "name">): Rune {
     slots: ["A", "W"],
     armorEffect: null,
     weaponEffect: null,
+    otherEffect: null,
     tags: [],
     weaponTags: [],
     armorTags: [],

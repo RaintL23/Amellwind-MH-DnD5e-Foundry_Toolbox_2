@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { extractRuneEffectTags, isPlaceableRune } from "../mappers/rune.mapper";
+import { extractRuneEffectTags, isPlaceableRune, mapRunesFromMonster, backfillSharedOtherEffects, normalizeLootChance, stripMaterialQuantity } from "../mappers/rune.mapper";
 import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 
 function makeSpell(name: string, level: number) {
@@ -1290,5 +1290,250 @@ describe("isPlaceableRune", () => {
         weaponEffect: null,
       }),
     ).toBe(false);
+  });
+});
+
+describe("normalizeLootChance", () => {
+  it("collapses dash glyphs to ASCII hyphen", () => {
+    expect(normalizeLootChance("—")).toBe("-");
+    expect(normalizeLootChance("–")).toBe("-");
+    expect(normalizeLootChance("-")).toBe("-");
+    expect(normalizeLootChance("1-4")).toBe("1-4");
+  });
+});
+
+describe("stripMaterialQuantity", () => {
+  it("removes leading and trailing quantity multipliers", () => {
+    expect(stripMaterialQuantity("B.Sleep Sac x2")).toBe("B.Sleep Sac");
+    expect(stripMaterialQuantity("2x Paddock Cream")).toBe("Paddock Cream");
+    expect(stripMaterialQuantity("Elder Dragon Blood X2")).toBe(
+      "Elder Dragon Blood",
+    );
+    expect(stripMaterialQuantity("White Liver")).toBe("White Liver");
+  });
+});
+
+describe("backfillSharedOtherEffects", () => {
+  it("copies otherEffect onto O-slot materials missing a local description", () => {
+    const filled = backfillSharedOtherEffects([
+      {
+        name: "White Liver",
+        monsterName: "Anteka",
+        monsterSource: "MHMM",
+        monsterCr: "0",
+        monsterCrs: ["0"],
+        tier: 1,
+        carveChance: "5-6",
+        captureChance: "-",
+        rolls: 1,
+        slots: [],
+        armorEffect: null,
+        weaponEffect: null,
+        otherEffect:
+          "A white-colored liver, popular for its juicy texture. Sells for 100 gp.",
+        tags: [],
+        weaponTags: [],
+        armorTags: [],
+      },
+      {
+        name: "White Liver",
+        monsterName: "Kelbi",
+        monsterSource: "MHMM",
+        monsterCr: "0",
+        monsterCrs: ["0"],
+        tier: 1,
+        carveChance: "5-6",
+        captureChance: "-",
+        rolls: 1,
+        slots: [],
+        armorEffect: null,
+        weaponEffect: null,
+        otherEffect: null,
+        tags: [],
+        weaponTags: [],
+        armorTags: [],
+      },
+    ]);
+
+    expect(filled[1]?.otherEffect).toBe(
+      "A white-colored liver, popular for its juicy texture. Sells for 100 gp.",
+    );
+  });
+
+  it("matches quantity-suffixed loot names to a base otherEffect", () => {
+    const filled = backfillSharedOtherEffects([
+      {
+        name: "Elder Dragon Blood",
+        monsterName: "Kirin",
+        monsterSource: "MHMM",
+        monsterCr: "10",
+        monsterCrs: ["10"],
+        tier: 2,
+        carveChance: "1",
+        captureChance: "-",
+        rolls: 3,
+        slots: [],
+        armorEffect: null,
+        weaponEffect: null,
+        otherEffect: "Any rarity weapon upgrade material.",
+        tags: [],
+        weaponTags: [],
+        armorTags: [],
+      },
+      {
+        name: "Elder Dragon Blood x2",
+        monsterName: "Zorah Magdaros",
+        monsterSource: "MHMM",
+        monsterCr: "20",
+        monsterCrs: ["20"],
+        tier: 4,
+        carveChance: "1",
+        captureChance: "-",
+        rolls: 3,
+        slots: [],
+        armorEffect: null,
+        weaponEffect: null,
+        otherEffect: null,
+        tags: [],
+        weaponTags: [],
+        armorTags: [],
+      },
+    ]);
+
+    expect(filled[1]?.otherEffect).toBe("Any rarity weapon upgrade material.");
+  });
+});
+
+describe("mapRunesFromMonster — OTHER MATERIAL EFFECTS", () => {
+  it("maps otherEffect from the OTHER MATERIAL EFFECTS list", () => {
+    const runes = mapRunesFromMonster({
+      name: "Kelbi",
+      source: "MHMM",
+      cr: "0",
+      fluff: {
+        entries: [
+          {
+            type: "inset",
+            name: "Kelbi",
+            entries: [
+              {
+                type: "table",
+                rows: [["Challenge Rating", "0", "Carves", "1"]],
+              },
+              {
+                type: "table",
+                colLabels: ["Carve Chance", "Material", "Slots"],
+                rows: [
+                  ["1-4", "Raw Meat", "(O)"],
+                  ["12-20", "Kelbi Horn", "(O)"],
+                  ["7-11", "Warm Pelt", "(A)"],
+                ],
+              },
+              {
+                type: "list",
+                name: "ARMOR MATERIAL EFFECTS",
+                items: [
+                  {
+                    type: "entries",
+                    name: "Warm Pelt",
+                    entries: [
+                      "You reduce thunder damage you take by 2 while you wear this armor.",
+                    ],
+                  },
+                ],
+              },
+              {
+                type: "list",
+                name: "OTHER MATERIAL EFFECTS",
+                items: [
+                  {
+                    type: "entries",
+                    name: "Raw Meat",
+                    entries: ["Provides 2 days rations when cooked."],
+                  },
+                  {
+                    type: "entries",
+                    name: "Kelbi Horn",
+                    entries: [
+                      "A crafting material that is ground up and combined with {@item mega nutrients|AGMH} to create {@item ancient potion|AGMH}s.",
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const rawMeat = runes.find((r) => r.name === "Raw Meat");
+    const horn = runes.find((r) => r.name === "Kelbi Horn");
+    const pelt = runes.find((r) => r.name === "Warm Pelt");
+
+    expect(rawMeat).toMatchObject({
+      slots: [],
+      armorEffect: null,
+      weaponEffect: null,
+      otherEffect: "Provides 2 days rations when cooked.",
+    });
+    expect(horn?.otherEffect).toContain("mega nutrients");
+    expect(pelt).toMatchObject({
+      slots: ["A"],
+      otherEffect: null,
+      armorEffect:
+        "You reduce thunder damage you take by 2 while you wear this armor.",
+    });
+  });
+
+  it("matches OTHER entries when loot name has a quantity suffix", () => {
+    const runes = mapRunesFromMonster({
+      name: "Great Baggi",
+      source: "MHMM",
+      cr: "2",
+      fluff: {
+        entries: [
+          {
+            type: "inset",
+            name: "Great Baggi",
+            entries: [
+              {
+                type: "table",
+                rows: [["Challenge Rating", "2", "Carves", "2"]],
+              },
+              {
+                type: "table",
+                colLabels: [
+                  "Carve Chance",
+                  "Capture Chance",
+                  "Material",
+                  "Slots",
+                ],
+                rows: [["3-5", "1-5", "B.Sleep Sac x2", "(O)"]],
+              },
+              {
+                type: "list",
+                name: "OTHER MATERIAL EFFECTS",
+                items: [
+                  {
+                    type: "item",
+                    name: "B.Sleep Sac",
+                    entries: [
+                      "A Material that replaces the sleep herb when crafting tranq bombs or tranq ammo.",
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(runes[0]).toMatchObject({
+      name: "B.Sleep Sac x2",
+      slots: [],
+      otherEffect:
+        "A Material that replaces the sleep herb when crafting tranq bombs or tranq ammo.",
+    });
   });
 });

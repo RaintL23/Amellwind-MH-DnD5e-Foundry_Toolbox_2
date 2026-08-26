@@ -47,6 +47,72 @@ export function isPlaceableRune(
   return rune.slots.length > 0 && (!!rune.armorEffect || !!rune.weaponEffect);
 }
 
+/** Normalize loot-table dash variants (em/en dash) to ASCII "-". */
+export function normalizeLootChance(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "-";
+  if (/^[—–―−‐-]+$/.test(trimmed)) return "-";
+  return trimmed;
+}
+
+/**
+ * Strip quantity multipliers from loot material names
+ * (`B.Sleep Sac x2`, `2x Paddock Cream`, `Elder Dragon Blood X2` → base name).
+ */
+export function stripMaterialQuantity(name: string): string {
+  return name
+    .replace(/^\d+\s*x\s+/i, "")
+    .replace(/\s*x\s*\d+\s*$/i, "")
+    .trim();
+}
+
+function preferShorterEffect(
+  map: Map<string, string>,
+  key: string,
+  effect: string,
+): void {
+  const prev = map.get(key);
+  if (!prev || effect.length < prev.length) map.set(key, effect);
+}
+
+/**
+ * Shared O-slot materials (Raw Meat, White Liver, bones…) often omit
+ * `OTHER MATERIAL EFFECTS` on some monster sheets. Copy the shortest known
+ * `otherEffect` for the same material name (or quantity-stripped base name)
+ * onto empty-slot rows that lack one.
+ */
+export function backfillSharedOtherEffects(runes: Rune[]): Rune[] {
+  const bestByKey = new Map<string, string>();
+  for (const rune of runes) {
+    const effect = rune.otherEffect?.trim();
+    if (!effect) continue;
+    preferShorterEffect(bestByKey, rune.name, effect);
+    preferShorterEffect(bestByKey, stripMaterialQuantity(rune.name), effect);
+  }
+
+  return runes.map((rune) => {
+    if (rune.otherEffect || rune.slots.length > 0) return rune;
+    const filled =
+      bestByKey.get(rune.name) ??
+      bestByKey.get(stripMaterialQuantity(rune.name));
+    return filled ? { ...rune, otherEffect: filled } : rune;
+  });
+}
+
+/** Look up an effect by exact name, then by quantity-stripped base name. */
+function lookupEffectByMaterialName(
+  index: Record<string, string>,
+  name: string,
+): string | null {
+  if (index[name]) return index[name];
+  const base = stripMaterialQuantity(name);
+  if (base !== name && index[base]) return index[base];
+  for (const [key, value] of Object.entries(index)) {
+    if (stripMaterialQuantity(key) === base) return value;
+  }
+  return null;
+}
+
 // ─── Effects indexer ──────────────────────────────────────────────────────────
 
 function indexEffectsByName(items: unknown[]): Record<string, string> {
@@ -1439,9 +1505,11 @@ export function mapRunesFromMonster(
   const lists = inset.entries.filter((e: Raw) => e.type === "list") as Raw[];
   const armorList = lists.find((l) => l.name === "ARMOR MATERIAL EFFECTS");
   const weaponList = lists.find((l) => l.name === "WEAPON MATERIAL EFFECTS");
+  const otherList = lists.find((l) => l.name === "OTHER MATERIAL EFFECTS");
 
   const armorEffects = indexEffectsByName(armorList?.items ?? []);
   const weaponEffects = indexEffectsByName(weaponList?.items ?? []);
+  const otherEffects = indexEffectsByName(otherList?.items ?? []);
 
   const rolls = parseInt(String(headerTable?.rows?.[0]?.[3] ?? "0")) || 0;
 
@@ -1458,12 +1526,12 @@ export function mapRunesFromMonster(
     let slotsStr: string;
 
     if (hasCapture) {
-      carveChance = String(row[0] ?? "-");
-      captureChance = String(row[1] ?? "-");
+      carveChance = normalizeLootChance(String(row[0] ?? "-"));
+      captureChance = normalizeLootChance(String(row[1] ?? "-"));
       name = String(row[2] ?? "");
       slotsStr = String(row[3] ?? "");
     } else {
-      carveChance = String(row[0] ?? "-");
+      carveChance = normalizeLootChance(String(row[0] ?? "-"));
       captureChance = "-";
       name = String(row[1] ?? "");
       slotsStr = String(row[2] ?? "");
@@ -1472,8 +1540,9 @@ export function mapRunesFromMonster(
     if (!name) continue;
 
     const slots = parseSlots(slotsStr);
-    const armorEffect = armorEffects[name] ?? null;
-    const weaponEffect = weaponEffects[name] ?? null;
+    const armorEffect = lookupEffectByMaterialName(armorEffects, name);
+    const weaponEffect = lookupEffectByMaterialName(weaponEffects, name);
+    const otherEffect = lookupEffectByMaterialName(otherEffects, name);
 
     const weaponTags = weaponEffect
       ? extractTags(weaponEffect, spellLevels)
@@ -1496,6 +1565,7 @@ export function mapRunesFromMonster(
       slots,
       armorEffect,
       weaponEffect,
+      otherEffect,
       tags,
       weaponTags,
       armorTags,

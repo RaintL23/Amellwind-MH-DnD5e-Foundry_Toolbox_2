@@ -69,12 +69,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** O
 - **Carve:** 1-4
 - **Capture:** —
+- **Other effect:** Provides 2 days rations when cooked.
 
 ### White Liver
 
 - **Slots:** O
 - **Carve:** 5-6
 - **Capture:** —
+- **Other effect:** A white-colored liver, popular for its juicy texture. Sells for 100 gp.
 
 ### Warm Pelt
 

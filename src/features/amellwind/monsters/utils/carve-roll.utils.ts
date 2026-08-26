@@ -92,7 +92,7 @@ export function formatChanceDisplay(chance: string): string {
 }
 
 export function formatSlotsDisplay(slots: Rune["slots"]): string {
-  if (slots.length === 0) return "—";
+  if (slots.length === 0) return "O";
   const labels: string[] = [];
   if (slots.includes("A")) labels.push("A");
   if (slots.includes("W")) labels.push("W");

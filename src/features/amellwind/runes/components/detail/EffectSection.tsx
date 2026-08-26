@@ -9,6 +9,7 @@ import {
   type MaterialEffectTierFilter,
 } from "@/features/amellwind/material-effects/constants/material-effect.constants";
 import { Badge } from "@/components/ui/badge";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { formatTag, tagVariant } from "../../utils/rune-tag.utils";
 import { cn } from "@/shared/utils/cn";
 import { splitRuneEffectDisplayLines } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
@@ -17,7 +18,8 @@ import { RUNE_CATALOG_PHRASE_LINKS } from "../../utils/rune-catalog-links";
 interface EffectSectionProps {
   label: string;
   text: string;
-  slot: MaterialEffectSlot;
+  /** Omit for Other (non-equip) materials — skips rarity / material-effect highlight. */
+  slot?: MaterialEffectSlot;
   tags?: string[];
   materialEffectIndex?: MaterialEffectNameIndex | null;
   /** When true, this side does not match the active list filters. */
@@ -42,8 +44,13 @@ export function EffectSection({
   materialEffectIndex,
   dimmed = false,
 }: EffectSectionProps) {
+  const showRarity = slot != null;
+
   const rarityLabel = useMemo(
-    () => resolveEffectRarityLabel(text, slot, materialEffectIndex, tags),
+    () =>
+      slot
+        ? resolveEffectRarityLabel(text, slot, materialEffectIndex, tags)
+        : UNKNOWN_MATERIAL_EFFECT_TIER,
     [text, slot, materialEffectIndex, tags],
   );
 
@@ -83,35 +90,55 @@ export function EffectSection({
           </span>
         )}
       </h4>
-      <div className="mt-1 mb-2 flex flex-wrap items-center gap-1.5">
-        <span
-          className={cn(
-            "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold",
-            rarityStyle,
+      {(showRarity || tags.length > 0) && (
+        <div className="mt-1 mb-2 flex flex-wrap items-center gap-1.5">
+          {showRarity && (
+            <span
+              className={cn(
+                "inline-flex items-center rounded-md border px-2 py-0.5 text-[11px] font-semibold",
+                rarityStyle,
+              )}
+            >
+              {rarityLabel}
+            </span>
           )}
-        >
-          {rarityLabel}
-        </span>
-        {tags.map((tag) => (
-          <Badge key={tag} variant={tagVariant(tag)} className="rounded-md text-[11px]">
-            {formatTag(tag)}
-          </Badge>
-        ))}
-      </div>
-      <div className="space-y-1.5 text-sm text-muted-foreground leading-relaxed">
-        {lines.map((line, index) => (
-          <p
-            key={`${label}-line-${index}`}
-            className={cn(line.startsWith("•") && "pl-3")}
-          >
-            <MaterialEffectHighlightText
-              text={line.startsWith("•") ? line.replace(/^•\s*/, "") : line}
-              slot={slot}
-              index={materialEffectIndex}
-              phraseLinks={RUNE_CATALOG_PHRASE_LINKS}
-            />
-          </p>
-        ))}
+          {tags.map((tag) => (
+            <Badge
+              key={tag}
+              variant={tagVariant(tag)}
+              className="rounded-md text-[11px]"
+            >
+              {formatTag(tag)}
+            </Badge>
+          ))}
+        </div>
+      )}
+      <div
+        className={cn(
+          "space-y-1.5 text-sm text-muted-foreground leading-relaxed",
+          !showRarity && tags.length === 0 && "mt-1",
+        )}
+      >
+        {lines.map((line, index) => {
+          const body = line.startsWith("•") ? line.replace(/^•\s*/, "") : line;
+          return (
+            <p
+              key={`${label}-line-${index}`}
+              className={cn(line.startsWith("•") && "pl-3")}
+            >
+              {slot ? (
+                <MaterialEffectHighlightText
+                  text={body}
+                  slot={slot}
+                  index={materialEffectIndex}
+                  phraseLinks={RUNE_CATALOG_PHRASE_LINKS}
+                />
+              ) : (
+                <DndRichText text={body} phraseLinks={RUNE_CATALOG_PHRASE_LINKS} />
+              )}
+            </p>
+          );
+        })}
       </div>
     </div>
   );

@@ -18,6 +18,11 @@ export interface Rune {
   slots: RuneSlot[];
   armorEffect: string | null;
   weaponEffect: string | null;
+  /**
+   * Non-equip effect from the loot inset list `OTHER MATERIAL EFFECTS`
+   * (crafting mats, upgrade bones, rations, sellables, consumables, etc.).
+   */
+  otherEffect: string | null;
   /** Tags combined from both effects (for display). */
   tags: string[];
   /** Tags extracted only from the weaponEffect (for weapon rule validation). */

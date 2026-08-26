@@ -11,6 +11,7 @@ import { getRunesByMonster } from "@/features/amellwind/runes/services/rune.serv
 import { getMaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
 import { EffectSection } from "@/features/amellwind/runes/components/detail/EffectSection";
+import { RuneDetailDialog } from "@/features/amellwind/runes/components/detail/RuneDetailDialog";
 import { TierBadge } from "@/features/amellwind/runes/components/shared/TierBadge";
 import type { RollMode } from "@/features/amellwind/environments/utils/environmentRoll.utils";
 import {
@@ -37,6 +38,13 @@ export function MonsterCarvePanel({ monster }: MonsterCarvePanelProps) {
   const [rollMode, setRollMode] = useState<RollMode>("normal");
   const [lastResult, setLastResult] = useState<CarveRollResult | null>(null);
   const [history, setHistory] = useState<CarveRollResult[]>([]);
+  const [selectedRune, setSelectedRune] = useState<Rune | null>(null);
+  const [runeDialogOpen, setRuneDialogOpen] = useState(false);
+
+  function openRuneDetail(rune: Rune) {
+    setSelectedRune(rune);
+    setRuneDialogOpen(true);
+  }
 
   const carveDc = getCarveDc(monster.cr);
   const rollsCount = monster.loot?.rolls ?? runes[0]?.rolls ?? 0;
@@ -242,7 +250,13 @@ export function MonsterCarvePanel({ monster }: MonsterCarvePanelProps) {
                       {formatChanceDisplay(rune.captureChance)}
                     </td>
                     <td className="px-4 py-2.5 font-medium text-foreground">
-                      {rune.name}
+                      <button
+                        type="button"
+                        onClick={() => openRuneDetail(rune)}
+                        className="text-left font-medium text-foreground underline-offset-2 hover:underline hover:text-amber-600 dark:hover:text-amber-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+                      >
+                        {rune.name}
+                      </button>
                     </td>
                     <td className="px-4 py-2.5 text-muted-foreground tabular-nums">
                       {formatSlotsDisplay(rune.slots)}
@@ -259,8 +273,17 @@ export function MonsterCarvePanel({ monster }: MonsterCarvePanelProps) {
         <CarveRollResultCard
           result={lastResult}
           materialEffectIndex={materialEffectIndex}
+          onOpenRune={openRuneDetail}
         />
       )}
+
+      <RuneDetailDialog
+        rune={selectedRune}
+        open={runeDialogOpen}
+        onOpenChange={setRuneDialogOpen}
+        materialEffectIndex={materialEffectIndex}
+        showAddToBuild={false}
+      />
 
       {history.length > 1 && (
         <div className="rounded-lg border border-border bg-muted/10 p-3 space-y-2">
@@ -298,9 +321,11 @@ export function MonsterCarvePanel({ monster }: MonsterCarvePanelProps) {
 function CarveRollResultCard({
   result,
   materialEffectIndex,
+  onOpenRune,
 }: {
   result: CarveRollResult;
   materialEffectIndex: MaterialEffectNameIndex | null;
+  onOpenRune: (rune: Rune) => void;
 }) {
   const { rune, lootRoll, carveCheck, mode } = result;
 
@@ -336,11 +361,20 @@ function CarveRollResultCard({
       {rune ? (
         <div className="rounded-md border border-border bg-card p-4 space-y-3">
           <div className="flex flex-wrap items-center gap-2">
-            <h4 className="text-base font-bold text-amber-400">{rune.name}</h4>
+            <button
+              type="button"
+              onClick={() => onOpenRune(rune)}
+              className="text-base font-bold text-amber-400 underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm"
+            >
+              {rune.name}
+            </button>
             <TierBadge tier={rune.tier} variant="full" />
             {rune.slots.includes("A") && <Badge variant="blue">Armor</Badge>}
             {rune.slots.includes("W") && (
               <Badge variant="orange">Weapon</Badge>
+            )}
+            {rune.otherEffect && !rune.slots.length && (
+              <Badge variant="secondary">Other</Badge>
             )}
           </div>
 
@@ -380,6 +414,9 @@ function CarveRollResultCard({
               tags={rune.weaponTags}
               materialEffectIndex={materialEffectIndex}
             />
+          )}
+          {rune.otherEffect && (
+            <EffectSection label="Other" text={rune.otherEffect} />
           )}
         </div>
       ) : (

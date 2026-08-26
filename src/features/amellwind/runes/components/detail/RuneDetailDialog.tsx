@@ -33,6 +33,8 @@ interface RuneDetailDialogProps {
   filteredRunes?: Rune[];
   /** Called when the user navigates to a different rune. */
   onNavigate?: (rune: Rune) => void;
+  /** When false, hides Rune Builder add/remove controls (read-only preview). */
+  showAddToBuild?: boolean;
 }
 
 const EMPTY_EFFECT_FILTERS: RuneListEffectFilters = {
@@ -49,6 +51,7 @@ export function RuneDetailDialog({
   effectFilters = EMPTY_EFFECT_FILTERS,
   filteredRunes,
   onNavigate,
+  showAddToBuild = true,
 }: RuneDetailDialogProps) {
   const currentIndex = filteredRunes && rune
     ? filteredRunes.findIndex(
@@ -122,6 +125,9 @@ export function RuneDetailDialog({
               {rune.slots.includes("W") && (
                 <Badge variant="orange">Weapon</Badge>
               )}
+              {rune.otherEffect && !rune.slots.length && (
+                <Badge variant="secondary">Other</Badge>
+              )}
             </div>
           </DialogDescription>
         </DialogHeader>
@@ -183,13 +189,20 @@ export function RuneDetailDialog({
               dimmed={filtersActive && !weaponMatches}
             />
           )}
+          {rune.otherEffect && (
+            <EffectSection label="Other" text={rune.otherEffect} />
+          )}
 
-          <Separator className="my-4" />
-          <AddToBuildSection
-            rune={rune}
-            weaponAllowed={!filtersActive || weaponMatches}
-            armorAllowed={!filtersActive || armorMatches}
-          />
+          {showAddToBuild && (
+            <>
+              <Separator className="my-4" />
+              <AddToBuildSection
+                rune={rune}
+                weaponAllowed={!filtersActive || weaponMatches}
+                armorAllowed={!filtersActive || armorMatches}
+              />
+            </>
+          )}
         </DialogBody>
 
         {/* Navigation footer — sits below all content, never overlaps */}

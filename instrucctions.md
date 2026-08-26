@@ -550,7 +550,7 @@ if (!inset) return []; // el monstruo no tiene datos de loot
 
 - La **tabla de cabecera** (elemento 0) no tiene `colLabels`. El número de tiradas está en `rows[0][3]`. Es un único número que aplica igual para carve y capture (ej. `"3"` significa 3 tiradas de d20 para ambos).
 - La **tabla de loot** (elemento 1) se identifica por tener `colLabels` con el valor `"Carve Chance"` en la primera posición.
-- Las **listas de efectos** se identifican por su `name`: `"ARMOR MATERIAL EFFECTS"` y `"WEAPON MATERIAL EFFECTS"`. Cualquiera de las dos puede estar ausente si el monstruo no tiene materiales de ese tipo.
+- Las **listas de efectos** se identifican por su `name`: `"ARMOR MATERIAL EFFECTS"`, `"WEAPON MATERIAL EFFECTS"` y `"OTHER MATERIAL EFFECTS"`. Cualquiera puede estar ausente si el monstruo no tiene materiales de ese tipo.
 - Los efectos de armadura y arma se buscan **por nombre de material** haciendo lookup en los items de cada lista.
 - Puede haber entradas en las listas de efectos que **no están en la tabla de loot** (datos huérfanos del JSON fuente). El mapper debe ignorarlos — solo procesa los materiales que aparecen en la tabla de loot.
 
@@ -570,6 +570,7 @@ const headerTable = tables.find((t) => !t.colLabels); // la tabla sin colLabels 
 | `headerTable.rows[0][3]`                                | `rolls` (tiradas d20 tanto para carve como capture) |
 | Lista `ARMOR MATERIAL EFFECTS` → item con mismo `name`  | `armorEffect`                                       |
 | Lista `WEAPON MATERIAL EFFECTS` → item con mismo `name` | `weaponEffect`                                      |
+| Lista `OTHER MATERIAL EFFECTS` → item con mismo `name`  | `otherEffect`                                       |
 
 #### Atributos de la entidad Rune
 
@@ -579,9 +580,10 @@ const headerTable = tables.find((t) => !t.colLabels); // la tabla sin colLabels 
 - **carveChance** _(string)_ — Rango de d20 para obtenerlo por carve (ej. `"1-6"`). Valor `"-"` si no es carveable.
 - **captureChance** _(string)_ — Rango de d20 para obtenerlo por captura (ej. `"1-4"`). Valor `"-"` si no es capturable.
 - **rolls** _(int)_ — Número de tiradas de d20 al carvear o capturar al monstruo (ej. `3`). Es el mismo valor para ambos modos de obtención — viene del campo `"Carves/Capture"` del JSON.
-- **slots** _(array)_ — Tipos de equipo donde se puede usar. Valores posibles: `"A"` (Armor), `"W"` (Weapon). Puede ser `["A"]`, `["W"]`, o `["A", "W"]`. Mapeado desde el string `"(A,W)"` del JSON. Filas de loot con slot **`O`** (Other: upgrade bones, crafting mats, sellables, rations…) quedan con `slots: []`; el mapper las sigue emitiendo para la tabla de carve del monstruo, pero **`getAllRunes()`** las excluye del catálogo `/runes` y del picker del Builder (`isPlaceableRune`).
+- **slots** _(array)_ — Tipos de equipo donde se puede usar. Valores posibles: `"A"` (Armor), `"W"` (Weapon). Puede ser `["A"]`, `["W"]`, o `["A", "W"]`. Mapeado desde el string `"(A,W)"` del JSON. Filas de loot con slot **`O`** (Other: upgrade bones, crafting mats, sellables, rations…) quedan con `slots: []`; el mapper las sigue emitiendo para la tabla de carve del monstruo, pero **`getAllRunes()`** las excluye del catálogo `/runes` y del picker del Builder (`isPlaceableRune`). Tras mapear todos los monstruos, `backfillSharedOtherEffects` rellena `otherEffect` vacío en filas O copiando el texto más corto conocido para el mismo `name` o su base sin cantidad (`B.Sleep Sac x2` ↔ `B.Sleep Sac`, `2x Paddock Cream` ↔ `Paddock Cream`). El lookup de efectos A/W/O usa la misma normalización. `normalizeLootChance` unifica guiones tipográficos (`—`) a `"-"`.
 - **armorEffect** _(string | null)_ — Texto del efecto cuando se coloca en armadura. Presente solo si `slots` incluye `"A"`. El texto puede contener marcado de 5etools que debe parsearse.
 - **weaponEffect** _(string | null)_ — Texto del efecto cuando se coloca en un arma. Presente solo si `slots` incluye `"W"`. Ídem sobre el marcado.
+- **otherEffect** _(string | null)_ — Texto de la lista `OTHER MATERIAL EFFECTS` (crafting, upgrade bones, rations, sellables, consumables, etc.). No es un efecto de equipo; se muestra en el detalle de la runa (p. ej. desde Carve / Capture) y **no** habilita Add to Build.
 - **monsterCr** _(string)_ — CR del monstruo de origen (para referencia y filtros).
 - **tier** _(1 | 2 | 3 | 4)_ — Rareza del material derivada del CR del monstruo (no confundir con el Tier de monstruos en la tabla de Monsters):
 
@@ -610,10 +612,12 @@ por cada monster en mm_current:
   headerTable  = inset.entries.find(e => e.type === "table" && !e.colLabels)
   armorList    = inset.entries.find(e => e.type === "list" && e.name === "ARMOR MATERIAL EFFECTS")
   weaponList   = inset.entries.find(e => e.type === "list" && e.name === "WEAPON MATERIAL EFFECTS")
+  otherList    = inset.entries.find(e => e.type === "list" && e.name === "OTHER MATERIAL EFFECTS")
 
   // 3. Indexar efectos por nombre de material (pueden ser undefined si no existe la lista)
   armorEffects  = indexarPorNombre(armorList?.items)   // { "Material Name" → item }
   weaponEffects = indexarPorNombre(weaponList?.items)  // { "Material Name" → item }
+  otherEffects  = indexarPorNombre(otherList?.items)   // { "Material Name" → item }
 
   // 4. Leer número de tiradas de la tabla de cabecera
   rolls = parseInt(headerTable?.rows[0][3]) ?? 0       // "3" → 3
@@ -630,6 +634,7 @@ por cada monster en mm_current:
       slots:          parsearSlots(row[3]),                      // "(A,W)" → ["A", "W"]
       armorEffect:    armorEffects[row[2]]?.entries.join(" ") ?? null,
       weaponEffect:   weaponEffects[row[2]]?.entries.join(" ") ?? null,
+      otherEffect:    otherEffects[row[2]]?.entries.join(" ") ?? null,
     }
 ```
 

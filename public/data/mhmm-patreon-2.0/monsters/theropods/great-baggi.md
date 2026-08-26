@@ -33,14 +33,15 @@ It has developed its own unique ability; it can spit a tranquilizing liquid that
 
 ## Stat Block
 
-*Large beast (theropod), unaligned*
+_Large beast (theropod), unaligned_
+
 - **Armor Class:** 13 (natural armor)
 - **Hit Points:** 59 (7d10 + 21)
 - **Speed:** 30 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 18 | 13 | 16 | 4 | 10 | 6 |
+| --: | --: | --: | --: | --: | --: |
+|  18 |  13 |  16 |   4 |  10 |   6 |
 
 - **Skills:** Athletics +6
 - **Damage Immunities:** cold
@@ -54,7 +55,6 @@ It has developed its own unique ability; it can spit a tranquilizing liquid that
 ### Pounce
 
 If the great baggi moves at least 20 feet straight toward a creature and then hits it with a Claw attack on the same turn, that target must succeed on a DC 14 Strength saving throw or be knocked prone. If the target is prone, the great baggi can make one Bite attack against it as a bonus action.
-
 
 ## Actions
 
@@ -74,20 +74,19 @@ The great baggi spits a sleepy concoction at a location within 60 feet of it. Ea
 
 The great baggi looses a guttural howl, calling 2 (1d4) baggi to its aid. The creatures arrive on initiative 20 (losing initiative ties), acting as allies of the great baggi and obeying its commands.
 
-
 ## Loot
 
 **Carves/Capture rolls:** 2
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-2 | — | Baggi Scale | A |
-| 3-5 | 1-5 | B.Sleep Sac x2 | O |
-| 6-12 | 6-7 | Great Baggi Hide | A, W |
-| 13-17 | 8-10 | Great Baggi Claw | A, W |
-| — | 11-18 | B.King's Crest | A, W |
-| 18-19 | 19 | Great Baggi Piel | A, W |
-| 20 | 20 | Imperial Crest | A |
+| Carve | Capture | Material         | Slots |
+| ----- | ------- | ---------------- | ----- |
+| 1-2   | —       | Baggi Scale      | A     |
+| 3-5   | 1-5     | B.Sleep Sac x2   | O     |
+| 6-12  | 6-7     | Great Baggi Hide | A, W  |
+| 13-17 | 8-10    | Great Baggi Claw | A, W  |
+| —     | 11-18   | B.King's Crest   | A, W  |
+| 18-19 | 19      | Great Baggi Piel | A, W  |
+| 20    | 20      | Imperial Crest   | A     |
 
 ## Materials (Runes)
 
@@ -105,6 +104,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** O
 - **Carve:** 3-5
 - **Capture:** 1-5
+- **Other effect:** A Material that replaces the sleep herb when crafting tranq bombs or tranq ammo.
 
 ### Great Baggi Hide
 

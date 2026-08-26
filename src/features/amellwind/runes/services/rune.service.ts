@@ -2,7 +2,7 @@ import { Rune } from "@/shared/types";
 import { getMonsterData, clearMonsterDataCache } from "@/shared/db/sync.service";
 import { createEntityService } from "@/shared/services/create-entity-service";
 import { getAllSpells } from "@/features/dnd/spells/services/spell.service";
-import { isPlaceableRune, mapRunesFromMonster } from "../mappers/rune.mapper";
+import { isPlaceableRune, mapRunesFromMonster, backfillSharedOtherEffects } from "../mappers/rune.mapper";
 import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 
 const service = createEntityService<Rune, Rune>({
@@ -16,7 +16,7 @@ const service = createEntityService<Rune, Rune>({
     for (const rawMonster of rawData) {
       runes.push(...mapRunesFromMonster(rawMonster, spellLevels));
     }
-    return runes;
+    return backfillSharedOtherEffects(runes);
   },
   map: (rune) => rune,
 });
