@@ -359,10 +359,34 @@ export function useSpellcasting(
       spellcastingFromSubclass: false,
     };
 
-    if (!classData) return none;
+    if (!classData) {
+      if (bonusPools.length === 0) return none;
+      const bonusCantripsSelected = bonusPools.reduce(
+        (sum, pool) => sum + pool.selectedCount,
+        0,
+      );
+      return {
+        ...none,
+        bonusCantripPools: bonusPools,
+        availableSpellLevels: [0],
+        selectedCantripCount: bonusCantripsSelected,
+      };
+    }
 
     const effective = resolveEffectiveSpellcasting(classData, subclassData);
-    if (!effective) return none;
+    if (!effective) {
+      if (bonusPools.length === 0) return none;
+      const bonusCantripsSelected = bonusPools.reduce(
+        (sum, pool) => sum + pool.selectedCount,
+        0,
+      );
+      return {
+        ...none,
+        bonusCantripPools: bonusPools,
+        availableSpellLevels: [0],
+        selectedCantripCount: bonusCantripsSelected,
+      };
+    }
 
     const progressionLevel = classLevelForProgression ?? level;
     const rowIndex = progressionLevel - 1;

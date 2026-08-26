@@ -203,3 +203,75 @@ export function buildSpeciesLineageSpellSelectionsFromCatalog(
 
   return selections;
 }
+
+export function speciesSpellGrantSourceHasSpells(
+  source: SpeciesSpellGrantSource | null | undefined,
+): boolean {
+  if (!source) return false;
+  if (source.universalCantrips?.length) return true;
+  return (source.namedSpellGroups ?? []).some(
+    (group) =>
+      group.cantrips.length > 0 || (group.innateSpells?.length ?? 0) > 0,
+  );
+}
+
+export interface SpeciesLineageSpellGrantPreview {
+  name: string;
+  /** Spell level (0 = cantrip) when known; null if catalog not loaded. */
+  spellLevel: number | null;
+  unlockedAtCharacterLevel: number;
+  unlocked: boolean;
+}
+
+/** All lineage grants for UI (includes locked future unlocks). */
+export function listSpeciesLineageSpellGrantPreviews(
+  source: SpeciesSpellGrantSource,
+  choice: string | null,
+  characterLevel: number,
+  allSpells?: Spell[],
+): SpeciesLineageSpellGrantPreview[] {
+  const group = resolveActiveSpellGroup(source, choice);
+  const previews: SpeciesLineageSpellGrantPreview[] = [];
+  const seen = new Set<string>();
+
+  const lookup = new Map<string, Spell>();
+  for (const spell of allSpells ?? []) {
+    lookup.set(spell.name.toLowerCase(), spell);
+  }
+
+  const push = (
+    name: string,
+    unlockedAtCharacterLevel: number,
+    fallbackSpellLevel: number | null,
+  ) => {
+    const key = normalizeSpellRef(name).toLowerCase();
+    if (seen.has(key)) return;
+    seen.add(key);
+    const spell = lookup.get(key);
+    previews.push({
+      name: normalizeSpellRef(name),
+      spellLevel: spell?.level ?? fallbackSpellLevel,
+      unlockedAtCharacterLevel,
+      unlocked: characterLevel >= unlockedAtCharacterLevel,
+    });
+  };
+
+  for (const cantripName of source.universalCantrips ?? []) {
+    push(cantripName, 1, 0);
+  }
+  if (!group) return previews;
+
+  for (const cantripName of group.cantrips) {
+    push(cantripName, 1, 0);
+  }
+  for (const grant of group.innateSpells ?? []) {
+    push(grant.name, grant.unlockedAtCharacterLevel, null);
+  }
+
+  return previews.sort((a, b) => {
+    if (a.unlockedAtCharacterLevel !== b.unlockedAtCharacterLevel) {
+      return a.unlockedAtCharacterLevel - b.unlockedAtCharacterLevel;
+    }
+    return a.name.localeCompare(b.name);
+  });
+}

@@ -18,6 +18,7 @@ import {
 import { parseDefenseBlocks } from "@/shared/utils/defense-grant.parser";
 import { parseOriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { mapFluffEntriesToText } from "@/shared/utils/fluff.utils";
+import { parseInnateSpellGroupFromTraitEntries } from "@/shared/utils/species-innate-spell-text.parser";
 import {
   collectTraitContent,
   formatAbilitySummary,
@@ -65,14 +66,37 @@ function extractCantripsFromKnown(known: unknown): string[] {
     .map((entry) => extractSpellName(String(entry)));
 }
 
-/** Extract cantrip names from `innate.1` arrays (e.g. Modern Wyverian Magic). */
+/** Extract cantrip names from `innate` arrays at any character level (entries with `#c`). */
 function extractCantripsFromInnate(innate: unknown): string[] {
   if (typeof innate !== "object" || innate === null) return [];
-  const level1 = (innate as Raw)["1"];
-  if (!Array.isArray(level1)) return [];
-  return (level1 as unknown[])
-    .filter((entry) => typeof entry === "string" && entry.includes("#c"))
-    .map((entry) => extractSpellName(String(entry)));
+  const names: string[] = [];
+  const seen = new Set<string>();
+
+  for (const block of Object.values(innate as Raw)) {
+    const lists: unknown[][] = [];
+    if (Array.isArray(block)) {
+      lists.push(block);
+    } else if (typeof block === "object" && block !== null) {
+      const daily = (block as Raw).daily;
+      if (typeof daily === "object" && daily !== null) {
+        for (const value of Object.values(daily as Raw)) {
+          if (Array.isArray(value)) lists.push(value);
+        }
+      }
+    }
+    for (const list of lists) {
+      for (const entry of list) {
+        if (typeof entry !== "string" || !entry.includes("#c")) continue;
+        const name = extractSpellName(entry);
+        const key = name.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        names.push(name);
+      }
+    }
+  }
+
+  return names;
 }
 
 /**
@@ -109,6 +133,27 @@ function parseVersionGroupDisplayName(fullName: string): string {
   return part.replace(/\s+lineage\s*$/i, "").replace(/\s+legacy\s*$/i, "").trim();
 }
 
+function pushInnateGrant(
+  grants: NonNullable<SpeciesNamedSpellGroup["innateSpells"]>,
+  rawSpell: string,
+  unlockedAtCharacterLevel: number,
+): void {
+  if (rawSpell.includes("#c")) return;
+  const name = extractSpellName(rawSpell);
+  if (!name) return;
+  const key = name.toLowerCase();
+  if (
+    grants.some(
+      (grant) =>
+        grant.name.toLowerCase() === key &&
+        grant.unlockedAtCharacterLevel === unlockedAtCharacterLevel,
+    )
+  ) {
+    return;
+  }
+  grants.push({ name, unlockedAtCharacterLevel });
+}
+
 function extractInnateSpellGrants(innate: unknown): SpeciesNamedSpellGroup["innateSpells"] {
   if (typeof innate !== "object" || innate === null) return [];
   const grants: NonNullable<SpeciesNamedSpellGroup["innateSpells"]> = [];
@@ -116,7 +161,18 @@ function extractInnateSpellGrants(innate: unknown): SpeciesNamedSpellGroup["inna
   for (const [charLevelKey, block] of Object.entries(innate as Raw)) {
     const charLevel = parseInt(charLevelKey, 10);
     if (isNaN(charLevel)) continue;
-    const daily = (block as Raw)?.daily;
+
+    // Flat list at this level: cantrips (#c) skipped here; leveled spells granted.
+    if (Array.isArray(block)) {
+      for (const spell of block) {
+        if (typeof spell !== "string") continue;
+        pushInnateGrant(grants, spell, charLevel);
+      }
+      continue;
+    }
+
+    if (typeof block !== "object" || block === null) continue;
+    const daily = (block as Raw).daily;
     if (typeof daily !== "object" || daily === null) continue;
 
     for (const [dailyKey, value] of Object.entries(daily as Raw)) {
@@ -124,10 +180,7 @@ function extractInnateSpellGrants(innate: unknown): SpeciesNamedSpellGroup["inna
       const unlockLevel = dailyKey === "pb" ? 1 : charLevel;
       for (const spell of value) {
         if (typeof spell !== "string") continue;
-        grants.push({
-          name: extractSpellName(spell),
-          unlockedAtCharacterLevel: unlockLevel,
-        });
+        pushInnateGrant(grants, spell, unlockLevel);
       }
     }
   }
@@ -373,7 +426,9 @@ function parseNamedGroupsFromAdditionalSpells(
     if (single && (single.innate || single.known)) {
       const group = mapAdditionalSpellEntryToGroup(
         single,
-        "",
+        typeof single.name === "string" && single.name.trim()
+          ? String(single.name)
+          : "Innate Spells",
         versionResistMap,
         new Set(),
       );
@@ -440,6 +495,22 @@ export function parseRaceAdditionalSpells(
         traitEntryList,
         versions,
       ),
+      namedSpellGroupsLabel,
+    };
+  }
+
+  if (
+    fromBase.namedSpellGroups.length > 0 ||
+    fromBase.universalCantrips.length > 0
+  ) {
+    return { ...fromBase, namedSpellGroupsLabel };
+  }
+
+  const fromText = parseInnateSpellGroupFromTraitEntries(traitEntryList);
+  if (fromText) {
+    return {
+      namedSpellGroups: [fromText],
+      universalCantrips: [],
       namedSpellGroupsLabel,
     };
   }

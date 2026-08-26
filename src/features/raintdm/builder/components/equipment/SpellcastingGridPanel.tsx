@@ -21,6 +21,7 @@ import {
   parseSpellLevel,
   toSpellLevelSlot,
 } from "../../hooks/useBuilderSlotSelection";
+import { isSpellSlotChoosable } from "../../utils/spellcasting-stats.utils";
 
 interface SpellcastingGridPanelProps {
   className: string;
@@ -30,6 +31,20 @@ interface SpellcastingGridPanelProps {
   spellsByName: Spell[];
   selectedSlot: BuilderSlotSelection;
   onSelectSlot: (slot: BuilderSlotSelection) => void;
+}
+
+function collectSpeciesSpellLevels(
+  spellSelections: BuilderSpellSelections,
+): number[] {
+  const levels = new Set<number>();
+  for (const [rawLevel, spells] of Object.entries(spellSelections ?? {})) {
+    const level = Number(rawLevel);
+    if (!Number.isFinite(level)) continue;
+    if (spells.some((spell) => isSpeciesLineageSpell(spell))) {
+      levels.add(level);
+    }
+  }
+  return [...levels].sort((a, b) => a - b);
 }
 
 const SPELL_LEVEL_LABELS: Record<number, string> = {
@@ -92,10 +107,15 @@ function getClassCantripEquipped(
     );
   }
   if (speciesNames) {
-    detailParts.push(`linaje: ${speciesNames}`);
+    detailParts.push(
+      cantripCount > 0 ? `lineage: ${speciesNames}` : speciesNames,
+    );
   }
   const detail = detailParts.join(" · ") || `0/${cantripCount}`;
-  return { name: `Cantrips (${className})`, detail };
+  return {
+    name: cantripCount > 0 ? `Cantrips (${className})` : "Cantrips",
+    detail,
+  };
 }
 
 function getBonusCantripPoolEquipped(
@@ -340,12 +360,15 @@ export function SpellcastingGridPanel({
   const { availableSpellLevels, usesUnifiedPactPool } = spellcastingInfo;
   const { highlighted, issues: spellIssues } =
     useSectionCompletenessHighlight("spells");
+  const speciesSpellLevels = collectSpeciesSpellLevels(spellSelections);
+  const hasSpeciesCantrips = speciesSpellLevels.includes(0);
 
   if (
     availableSpellLevels.length === 0 &&
     !usesUnifiedPactPool &&
     spellcastingInfo.cantripCount === 0 &&
-    spellcastingInfo.bonusCantripPools.length === 0
+    spellcastingInfo.bonusCantripPools.length === 0 &&
+    speciesSpellLevels.length === 0
   ) {
     return null;
   }
@@ -357,7 +380,7 @@ export function SpellcastingGridPanel({
     | { kind: "pact" }
   > = [];
 
-  if (spellcastingInfo.cantripCount > 0) {
+  if (spellcastingInfo.cantripCount > 0 || hasSpeciesCantrips) {
     gridSlots.push({ kind: "class-cantrip" });
   }
   for (const pool of spellcastingInfo.bonusCantripPools) {
@@ -365,9 +388,21 @@ export function SpellcastingGridPanel({
   }
   if (usesUnifiedPactPool) {
     gridSlots.push({ kind: "pact" });
+    for (const level of speciesSpellLevels) {
+      if (level === 0) continue;
+      gridSlots.push({ kind: "level", level });
+    }
   } else {
+    const leveled = new Set<number>();
     for (const level of availableSpellLevels) {
       if (level === 0) continue;
+      leveled.add(level);
+    }
+    for (const level of speciesSpellLevels) {
+      if (level === 0) continue;
+      leveled.add(level);
+    }
+    for (const level of [...leveled].sort((a, b) => a - b)) {
       gridSlots.push({ kind: "level", level });
     }
   }
@@ -391,17 +426,26 @@ export function SpellcastingGridPanel({
               spellsByName,
             );
             const slot = toSpellLevelSlot(0);
+            const choosable = isSpellSlotChoosable(slot, spellcastingInfo);
+            const cantripLabel =
+              spellcastingInfo.cantripCount > 0
+                ? `Cantrips (${className})`
+                : "Cantrips";
             return (
               <GridElementSlot
                 key={slot}
-                label={`Cantrips (${className})`}
+                label={cantripLabel}
                 icon={<Sparkles className="h-5 w-5 text-sky-400" />}
                 equipped={equipped}
                 onClickEquip={() => onSelectSlot(slot)}
                 onClickDetails={() => onSelectSlot(slot)}
                 isSelected={selectedSlot === slot}
-                highlighted={highlighted}
-                emptyTitle={`Choose ${className} cantrips`}
+                highlighted={highlighted && choosable}
+                emptyTitle={
+                  choosable
+                    ? `Choose ${className} cantrips`
+                    : "Lineage cantrips"
+                }
               />
             );
           }
@@ -469,6 +513,7 @@ export function SpellcastingGridPanel({
           );
           const colorClass =
             SPELL_LEVEL_COLORS[level] ?? "text-muted-foreground";
+          const choosable = isSpellSlotChoosable(slot, spellcastingInfo);
 
           return (
             <GridElementSlot
@@ -479,11 +524,13 @@ export function SpellcastingGridPanel({
               onClickEquip={() => onSelectSlot(slot)}
               onClickDetails={() => onSelectSlot(slot)}
               isSelected={isSelected}
-              highlighted={highlighted}
+              highlighted={highlighted && choosable}
               emptyTitle={
-                level === 0
-                  ? `Choose ${className} cantrips`
-                  : `Choose level ${level} ${className} spells`
+                choosable
+                  ? level === 0
+                    ? `Choose ${className} cantrips`
+                    : `Choose level ${level} ${className} spells`
+                  : `Lineage spells (level ${level})`
               }
             />
           );

@@ -32,6 +32,8 @@ export interface SpellLibraryPanelProps {
   allSpells: Spell[];
   spellsLoading: boolean;
   spellLevelByName: Map<string, number>;
+  /** When false, only locked grants are shown (no Available pick list). */
+  allowSpellPicks?: boolean;
   onAddSpell: (level: number, spell: BuilderSpellSelection) => void;
   onRemoveSpell: (level: number, spellId: string) => void;
 }
@@ -46,6 +48,7 @@ export function SpellLibraryPanel({
   allSpells,
   spellsLoading,
   spellLevelByName,
+  allowSpellPicks = true,
   onAddSpell,
   onRemoveSpell,
 }: SpellLibraryPanelProps) {
@@ -89,6 +92,18 @@ export function SpellLibraryPanel({
       Array.isArray(v) ? v.length > 0 : !!v,
     );
 
+  const filteredSpeciesLineage = speciesLineageAtLevel.filter(
+    (spell) =>
+      !search.trim() ||
+      spell.name.toLowerCase().includes(search.toLowerCase().trim()),
+  );
+
+  const hasLockedGrantSections =
+    alwaysPreparedAtLevel.filter(filterGrantBySearch).length > 0 ||
+    bonusKnownAtLevel.filter(filterGrantBySearch).length > 0 ||
+    optionalFeatureAtLevel.filter(filterGrantBySearch).length > 0 ||
+    filteredSpeciesLineage.length > 0;
+
   return (
     <BuilderPanel
       title={
@@ -101,7 +116,7 @@ export function SpellLibraryPanel({
               ? ` · ${spellcastingInfo.spellcastingAbility}`
               : ""}
           </span>
-          {capacityHint && (
+          {capacityHint && allowSpellPicks && (
             <span
               className={cn(
                 "ml-auto text-[11px] font-medium tabular-nums",
@@ -120,7 +135,7 @@ export function SpellLibraryPanel({
           searchValue={search}
           onSearchChange={setSearch}
           searchPlaceholder="Search spell name..."
-          sections={filterSections}
+          sections={allowSpellPicks ? filterSections : []}
           filterValues={filterValues}
           onFiltersApply={setFilterValues}
           dialogTitle="Spell Filters"
@@ -185,27 +200,31 @@ export function SpellLibraryPanel({
           </div>
         )}
 
-        {speciesLineageAtLevel.length > 0 && (
+        {filteredSpeciesLineage.length > 0 && (
           <div className="mb-3">
             <SectionLabel>
-              Granted by species
+              Spells granted by species
               {speciesName ? ` (${speciesName})` : ""}
             </SectionLabel>
-            {speciesLineageAtLevel.map((spell) => (
-              <SelectedSpellRow
+            {filteredSpeciesLineage.map((spell) => (
+              <SubclassGrantRow
                 key={spell.id}
-                spell={spell}
-                fullSpell={
+                grant={{
+                  name: spell.name,
+                  grantType: "always-prepared",
+                  unlockedAtLevel: 1,
+                }}
+                spell={
                   spellPool.find((s) => s.id === spell.id) ??
                   findSpellByName(spellPool, spell.name)
                 }
-                removable={false}
+                badge="Spell granted by species"
               />
             ))}
           </div>
         )}
 
-        {chosenAtLevel.length > 0 && (
+        {allowSpellPicks && chosenAtLevel.length > 0 && (
           <div className="mb-3">
             <SectionLabel>{selectedSectionLabel}</SectionLabel>
             {chosenAtLevel.map((spell) => (
@@ -220,32 +239,37 @@ export function SpellLibraryPanel({
           </div>
         )}
 
-        {spellsLoading ? (
-          <EmptyState text="Loading spells..." />
-        ) : isAtCapacity ? (
-          <EmptyState text={disabledHint} />
-        ) : availableSpells.length === 0 && !hasActiveQueryOrFilters ? (
-          <EmptyState text={`No spells of ${levelLabel} for ${className}.`} />
-        ) : availableSpells.length === 0 && hasActiveQueryOrFilters ? (
-          <EmptyState text="No results." />
-        ) : (
-          <>
-            <SectionLabel>Available</SectionLabel>
-            {availableSpells.map((spell) => (
-              <AvailableSpellRow
-                key={spell.id}
-                spell={spell}
-                disabled={false}
-                rpgbotRating={
-                  rpgbotSpellReady
-                    ? (rpgbotSpellLookup?.(spell.name, spell.source) ?? null)
-                    : null
-                }
-                onSelect={() => handleSelect(spell)}
-              />
-            ))}
-          </>
-        )}
+        {allowSpellPicks &&
+          (spellsLoading ? (
+            <EmptyState text="Loading spells..." />
+          ) : isAtCapacity ? (
+            <EmptyState text={disabledHint} />
+          ) : availableSpells.length === 0 && !hasActiveQueryOrFilters ? (
+            <EmptyState text={`No spells of ${levelLabel} for ${className}.`} />
+          ) : availableSpells.length === 0 && hasActiveQueryOrFilters ? (
+            <EmptyState text="No results." />
+          ) : (
+            <>
+              <SectionLabel>Available</SectionLabel>
+              {availableSpells.map((spell) => (
+                <AvailableSpellRow
+                  key={spell.id}
+                  spell={spell}
+                  disabled={false}
+                  rpgbotRating={
+                    rpgbotSpellReady
+                      ? (rpgbotSpellLookup?.(spell.name, spell.source) ?? null)
+                      : null
+                  }
+                  onSelect={() => handleSelect(spell)}
+                />
+              ))}
+            </>
+          ))}
+
+        {!allowSpellPicks &&
+          !hasLockedGrantSections &&
+          hasActiveQueryOrFilters && <EmptyState text="No results." />}
       </ScrollableWhenNeeded>
     </BuilderPanel>
   );

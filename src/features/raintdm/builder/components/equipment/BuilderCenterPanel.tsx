@@ -40,6 +40,7 @@ import { ArmorDetailPanel } from "./ArmorDetailPanel";
 import { IdentityGridPanel } from "./IdentityGridPanel";
 import { EquipmentGridPanel } from "./EquipmentGridPanel";
 import { SpellcastingGridPanel } from "./SpellcastingGridPanel";
+import { useSpeciesSpellGrantUi } from "./SpeciesInnateSpellsPanel";
 import { SpellLibraryPanel } from "./SpellLibraryPanel";
 import { OptionalFeatureLibraryPanel } from "./OptionalFeatureLibraryPanel";
 import { BuilderLibraryPanel } from "./library/BuilderLibraryPanel";
@@ -49,6 +50,17 @@ import { BuilderPanel } from "../shared/BuilderPanel";
 import { isOffHandSlotOccupied } from "@/features/amellwind/weapons/utils/weapon-hands.utils";
 import { useSpellcastingContext } from "../../context/SpellcastingContext";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
+import {
+  buildSpellcastingSectionTitle,
+  computeSpellcastingAttackStats,
+  hasChoosableSpellList,
+  isSpellSlotChoosable,
+  resolveSpellcastingSourceName,
+  spellSlotHasLockedGrants,
+} from "../../utils/spellcasting-stats.utils";
+import { isSpeciesLineageSpell } from "../../utils/species-spell-grants.utils";
+import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
+import { getAbilityModifier } from "@/shared/utils/cr.utils";
 
 export function BuilderCenterPanel() {
   // ─── Builder + slot selection state ───
@@ -109,6 +121,7 @@ export function BuilderCenterPanel() {
     useAmellwindHomebrew,
     resolvedWeaponItems,
   } = useCharacterBuilder();
+  const effectiveScores = useEffectiveAbilityScores();
 
   const { selectedSlot, selectSlot, clearSelection } =
     useBuilderSlotSelection();
@@ -120,6 +133,49 @@ export function BuilderCenterPanel() {
     spellLevelByName,
   } = useSpellCatalog();
   const { centerPanelSpellcasting: spellcastingInfo } = useSpellcastingContext();
+  const speciesSpellGrants = useSpeciesSpellGrantUi();
+  const hasSpeciesSpellsInSelections = useMemo(
+    () =>
+      Object.values(spellSelections ?? {}).some((list) =>
+        list.some((spell) => isSpeciesLineageSpell(spell)),
+      ),
+    [spellSelections],
+  );
+  const spellAttackStats = useMemo(
+    () =>
+      computeSpellcastingAttackStats(
+        spellcastingInfo.spellcastingAbility,
+        character.getProficiencyBonus(),
+        (key) => getAbilityModifier(effectiveScores[key]),
+      ),
+    [
+      spellcastingInfo.spellcastingAbility,
+      character.level,
+      effectiveScores,
+    ],
+  );
+  const choosableSpellList = hasChoosableSpellList(spellcastingInfo);
+  const showSpellcastingSection =
+    choosableSpellList ||
+    hasSpeciesSpellsInSelections ||
+    spellcastingInfo.subclassAlwaysPrepared.length > 0 ||
+    spellcastingInfo.subclassBonusKnown.length > 0 ||
+    spellcastingInfo.optionalFeatureGranted.length > 0;
+  const spellcastingSourceName = resolveSpellcastingSourceName({
+    spellcastingInfo,
+    className: classSelection?.name,
+    speciesGrantLabel: speciesSpellGrants.groupLabel,
+  });
+  const spellcastingTitle = buildSpellcastingSectionTitle({
+    sectionLabel: spellcastingInfo.sectionLabel,
+    sourceName: spellcastingSourceName,
+    spellAttackBonus: spellAttackStats.spellAttackBonus,
+    spellSaveDc: spellAttackStats.spellSaveDc,
+  });
+  const showSpellGrid =
+    spellcastingInfo.isSpellcaster ||
+    spellcastingInfo.bonusCantripPools.length > 0 ||
+    hasSpeciesSpellsInSelections;
 
   // ─── Derived: optional feature progressions + subclass level guard ───
   const optionalProgressions = useMemo(
@@ -323,8 +379,21 @@ export function BuilderCenterPanel() {
   // ─── Which contextual panel to show under the grids ───
   const showBackstoryPanel = selectedSlot === "backstory";
   const showFactionPanel = selectedSlot === "faction";
+  const allowSpellPicks =
+    selectedSlot !== null &&
+    isSpellPickerSlot(selectedSlot) &&
+    isSpellSlotChoosable(selectedSlot, spellcastingInfo);
   const showSpellLibrary =
-    selectedSlot !== null && isSpellPickerSlot(selectedSlot);
+    selectedSlot !== null &&
+    isSpellPickerSlot(selectedSlot) &&
+    (allowSpellPicks ||
+      spellSlotHasLockedGrants(
+        selectedSlot,
+        spellcastingInfo,
+        spellSelections,
+        spellLevelByName,
+        allSpells,
+      ));
   const showOptionalFeatureLibrary =
     selectedSlot !== null && isOptionalFeatureSlot(selectedSlot);
 
@@ -427,12 +496,12 @@ export function BuilderCenterPanel() {
         />
       </BuilderPanel>
 
-      {spellcastingInfo.isSpellcaster && classSelection && (
+      {showSpellcastingSection && (
         <BuilderPanel
           title={
             <>
               <Sparkles className="h-3.5 w-3.5" aria-hidden />
-              {spellcastingInfo.sectionLabel}: {classSelection.name}
+              {spellcastingTitle}
             </>
           }
           action={
@@ -478,15 +547,21 @@ export function BuilderCenterPanel() {
             )
           }
         >
-          <SpellcastingGridPanel
-            className={classSelection.name}
-            spellcastingInfo={spellcastingInfo}
-            spellSelections={spellSelections}
-            spellLevelByName={spellLevelByName}
-            spellsByName={allSpells}
-            selectedSlot={selectedSlot}
-            onSelectSlot={selectSlot}
-          />
+          {showSpellGrid && (
+            <SpellcastingGridPanel
+              className={
+                classSelection?.name ??
+                speciesSpellGrants.groupLabel ??
+                "Species"
+              }
+              spellcastingInfo={spellcastingInfo}
+              spellSelections={spellSelections}
+              spellLevelByName={spellLevelByName}
+              spellsByName={allSpells}
+              selectedSlot={selectedSlot}
+              onSelectSlot={selectSlot}
+            />
+          )}
         </BuilderPanel>
       )}
 
@@ -521,10 +596,14 @@ export function BuilderCenterPanel() {
 
       {useAmellwindHomebrew && showFactionPanel && <FactionLibraryPanel />}
 
-      {showSpellLibrary && selectedSlot && classSelection && (
+      {showSpellLibrary && selectedSlot && (
         <SpellLibraryPanel
           selectedSlot={selectedSlot}
-          className={classSelection.name}
+          className={
+            classSelection?.name ??
+            speciesSpellGrants.groupLabel ??
+            "Character"
+          }
           speciesName={species?.name}
           characterLevel={character.level}
           spellcastingInfo={spellcastingInfo}
@@ -532,6 +611,7 @@ export function BuilderCenterPanel() {
           allSpells={allSpells}
           spellsLoading={spellsLoading}
           spellLevelByName={spellLevelByName}
+          allowSpellPicks={allowSpellPicks}
           onAddSpell={addSpell}
           onRemoveSpell={removeSpell}
         />
