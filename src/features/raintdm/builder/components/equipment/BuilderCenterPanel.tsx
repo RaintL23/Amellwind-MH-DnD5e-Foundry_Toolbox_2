@@ -1,3 +1,10 @@
+/**
+ * Builder center column: identity / equipment / spell grids + contextual detail panels.
+ *
+ * Flow: read CharacterBuilder + selectedSlot → compute which library/detail to show →
+ * render grids always, then one contextual panel (weapon/armor/runes/library/etc.).
+ * Slot click → selectSlot; unequip → handleUnequipSlot then re-select so library reopens.
+ */
 import { Sparkles, Sword, Users } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
@@ -44,6 +51,7 @@ import { useSpellcastingContext } from "../../context/SpellcastingContext";
 import { useSpellCatalog } from "../../hooks/useSpellCatalog";
 
 export function BuilderCenterPanel() {
+  // ─── Builder + slot selection state ───
   const {
     mainHand,
     offHand,
@@ -113,6 +121,7 @@ export function BuilderCenterPanel() {
   } = useSpellCatalog();
   const { centerPanelSpellcasting: spellcastingInfo } = useSpellcastingContext();
 
+  // ─── Derived: optional feature progressions + subclass level guard ───
   const optionalProgressions = useMemo(
     () =>
       resolveOptionalFeatureProgressions(
@@ -123,6 +132,7 @@ export function BuilderCenterPanel() {
     [classData, subclassData, primaryClassLevel],
   );
 
+  // Drop subclass if level no longer qualifies (e.g. after level-down).
   useEffect(() => {
     if (!classData) return;
     if (!isSubclassLevelReached(classData, primaryClassLevel) && subclass) {
@@ -130,6 +140,7 @@ export function BuilderCenterPanel() {
     }
   }, [classData, primaryClassLevel, subclass, setSubclass]);
 
+  // ─── Weapon / off-hand context for detail + rune panels ───
   const selectedWeapon =
     selectedSlot === "mainHand"
       ? mainHand
@@ -152,6 +163,7 @@ export function BuilderCenterPanel() {
         }
       : null;
 
+  // Runes only for Amellwind gear slots (not identity / spells / shields).
   const showRunePanel =
     useAmellwindHomebrew &&
     selectedSlot &&
@@ -170,6 +182,7 @@ export function BuilderCenterPanel() {
     !isSpellPickerSlot(selectedSlot) &&
     !(selectedSlot === "offHand" && (hasIntegratedShield || equippedShield));
 
+  // ─── Slot occupancy (library vs detail routing) ───
   function isSlotOccupied(slot: BuilderSlotSelection): boolean {
     if (!slot) return false;
     switch (slot) {
@@ -237,6 +250,7 @@ export function BuilderCenterPanel() {
     );
   }
 
+  // Clear slot contents, then re-select so the picker/library opens again.
   function handleUnequipSlot(slot: BuilderSlotSelection) {
     if (!slot) return;
     switch (slot) {
@@ -306,6 +320,7 @@ export function BuilderCenterPanel() {
     selectSlot(slot);
   }
 
+  // ─── Which contextual panel to show under the grids ───
   const showBackstoryPanel = selectedSlot === "backstory";
   const showFactionPanel = selectedSlot === "faction";
   const showSpellLibrary =
@@ -313,6 +328,7 @@ export function BuilderCenterPanel() {
   const showOptionalFeatureLibrary =
     selectedSlot !== null && isOptionalFeatureSlot(selectedSlot);
 
+  // Generic catalog library: empty slots, or identity/gear slots that stay pickable when filled.
   const showLibrary =
     selectedSlot &&
     selectedSlot !== "backstory" &&
@@ -335,6 +351,7 @@ export function BuilderCenterPanel() {
 
   return (
     <div className="flex min-w-0 flex-col gap-2.5">
+      {/* ─── Always-visible grids ─── */}
       <BuilderPanel
         title={
           <>
@@ -473,6 +490,7 @@ export function BuilderCenterPanel() {
         </BuilderPanel>
       )}
 
+      {/* ─── Contextual panels (mutually driven by selectedSlot) ─── */}
       {selectedWeapon &&
         useAmellwindHomebrew &&
         (selectedSlot === "mainHand" || selectedSlot === "offHand") && (
