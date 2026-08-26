@@ -10,6 +10,16 @@ import {
 } from "@/features/dnd/feats/components/DndFeatContent";
 import type { DndFeat, Feat } from "@/shared/types";
 import { DND_FEAT_CATEGORY_LABELS } from "@/shared/types";
+import { SKILL_LABELS } from "@/shared/constants/dnd";
+import {
+  LibraryProficiencySummary,
+  ProficiencyGrantBadge,
+  ProficiencyHighlightFrame,
+} from "./shared/LibraryProficiencyHighlight";
+import {
+  buildSkillGrantSummaryRows,
+  textMentionsProficiencyGrant,
+} from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
 
 interface FeatLibraryDetailProps {
   feat: Feat | DndFeat;
@@ -30,6 +40,26 @@ export function FeatLibraryDetail({
     "category" in feat && feat.category
       ? (DND_FEAT_CATEGORY_LABELS[feat.category] ?? feat.category)
       : undefined;
+
+  const proficiencyRows = buildSkillGrantSummaryRows(feat.skillGrants);
+  const expertiseRows =
+    feat.expertiseGrants?.length
+      ? [
+          {
+            label: "Expertise",
+            value: feat.expertiseGrants
+              .map((grant) => {
+                if (grant.kind === "fixed") {
+                  return grant.skills
+                    .map((s) => SKILL_LABELS[s] ?? s)
+                    .join(", ");
+                }
+                return `Choose ${grant.count} proficient skill${grant.count > 1 ? "s" : ""}`;
+              })
+              .join("; "),
+          },
+        ]
+      : [];
 
   return (
     <div className="space-y-3">
@@ -72,12 +102,50 @@ export function FeatLibraryDetail({
         </p>
       )}
 
+      <LibraryProficiencySummary
+        rows={[...proficiencyRows, ...expertiseRows]}
+      />
+
       <Separator />
 
-      <FeatParagraphList lines={feat.paragraphs} />
-      {feat.sections.map((section, i) => (
-        <FeatSectionBlock key={section.name ?? i} section={section} />
-      ))}
+      <div className="space-y-2">
+        {feat.paragraphs.map((line, i) => {
+          const grantsProficiency = textMentionsProficiencyGrant(line);
+          return (
+            <ProficiencyHighlightFrame key={i} active={grantsProficiency}>
+              <div>
+                {grantsProficiency && (
+                  <div className="mb-1">
+                    <ProficiencyGrantBadge />
+                  </div>
+                )}
+                <FeatParagraphList lines={[line]} />
+              </div>
+            </ProficiencyHighlightFrame>
+          );
+        })}
+      </div>
+
+      {feat.sections.map((section, i) => {
+        const grantsProficiency = section.paragraphs.some((p) =>
+          textMentionsProficiencyGrant(p),
+        );
+        return (
+          <ProficiencyHighlightFrame
+            key={section.name ?? i}
+            active={grantsProficiency}
+          >
+            <div>
+              {grantsProficiency && section.name && (
+                <div className="mb-1 flex items-center gap-1.5">
+                  <ProficiencyGrantBadge />
+                </div>
+              )}
+              <FeatSectionBlock section={section} />
+            </div>
+          </ProficiencyHighlightFrame>
+        );
+      })}
     </div>
   );
 }

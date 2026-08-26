@@ -9,6 +9,10 @@ import { Badge } from "@/components/ui/badge";
 import { StatBlockContentView } from "@/components/statblock/StatBlockContentView";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
+import { entriesMentionProficiencyGrant } from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+import {
+  ProficiencyGrantBadge,
+} from "@/features/raintdm/builder/components/equipment/library/shared/LibraryProficiencyHighlight";
 import {
   buildOptionalFeaturePhraseLinks,
   findProgressionById,
@@ -32,9 +36,17 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
   titleProgressionId,
 }: ClassFeatureDetailPanelProps) {
   const titleClickable = Boolean(titleProgressionId && onTitleClick);
+  const grantsProficiency = entriesMentionProficiencyGrant(feature.description);
 
   return (
-    <div className="rounded-md border border-border bg-muted/20 p-3 space-y-2">
+    <div
+      className={cn(
+        "rounded-md border p-3 space-y-2",
+        grantsProficiency
+          ? "border-amber-500/40 bg-amber-500/5"
+          : "border-border bg-muted/20",
+      )}
+    >
       <div className="flex items-center gap-2 flex-wrap">
         {titleClickable ? (
           <button
@@ -50,6 +62,7 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
             {feature.displayName}
           </h4>
         )}
+        {grantsProficiency && <ProficiencyGrantBadge />}
         <Badge className="bg-violet-950/60 text-violet-300 border-violet-800/50 text-[10px]">
           Level {feature.level}
         </Badge>

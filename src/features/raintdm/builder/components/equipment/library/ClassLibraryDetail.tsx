@@ -21,6 +21,15 @@ import {
   getSubclassGainLevel,
 } from "../../../utils/builder-class.utils";
 import { collectClassOptionalFeatureProgressions } from "@/features/dnd/classes/utils/class-optional-feature-browse.utils";
+import { ClassMetaListSection } from "@/features/dnd/classes/components/detail/ClassMetaListSection";
+import {
+  LibraryProficiencySummary,
+} from "./shared/LibraryProficiencyHighlight";
+import {
+  buildNamedGrantSummaryRows,
+  buildSkillGrantSummaryRows,
+} from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
+import { hasClassMetaListContent } from "@/features/dnd/classes/utils/class-meta-list.utils";
 
 interface ClassLibraryDetailProps {
   classData: Class;
@@ -64,6 +73,14 @@ export function ClassLibraryDetail({
   const optionalFeatureProgressions =
     collectClassOptionalFeatureProgressions(classData, subclass);
 
+  const proficiencyRows = [
+    ...buildSkillGrantSummaryRows(classData.skillChoiceGrants),
+    ...buildNamedGrantSummaryRows("Armor", classData.armorGrants),
+    ...buildNamedGrantSummaryRows("Weapons", classData.weaponGrants),
+    ...buildNamedGrantSummaryRows("Tools", classData.toolGrants),
+    ...buildNamedGrantSummaryRows("Languages", classData.languageGrants),
+  ];
+
   return (
     <div className="space-y-3">
       <div className="flex flex-wrap items-center gap-2">
@@ -103,7 +120,24 @@ export function ClassLibraryDetail({
           </span>{" "}
           {getCasterLabel(classData.casterProgression)}
         </span>
+        {classData.proficiencies.length > 0 && (
+          <span className="col-span-2">
+            <span className="font-medium text-foreground/80">Saving Throws:</span>{" "}
+            {classData.proficiencies.join(", ")}
+          </span>
+        )}
       </div>
+
+      <LibraryProficiencySummary rows={proficiencyRows} />
+
+      {hasClassMetaListContent(classData.startingProficiencies) && (
+        <div className="rounded-md border border-border bg-muted/20 p-2">
+          <ClassMetaListSection
+            heading="Starting Proficiencies"
+            groups={classData.startingProficiencies}
+          />
+        </div>
+      )}
 
       {subclass && (
         <p className="text-[11px] text-muted-foreground">

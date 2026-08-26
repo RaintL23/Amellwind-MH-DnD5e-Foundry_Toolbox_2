@@ -32,6 +32,16 @@ import type {
 } from "@/shared/types";
 import { hasStartingEquipmentOffers } from "@/shared/utils/starting-equipment.parser";
 import { StartingEquipmentPicker } from "../StartingEquipmentPicker";
+import {
+  LibraryProficiencySummary,
+  ProficiencyGrantBadge,
+  ProficiencyHighlightFrame,
+} from "./shared/LibraryProficiencyHighlight";
+import {
+  buildNamedGrantSummaryRows,
+  buildSkillGrantSummaryRows,
+  entriesMentionProficiencyGrant,
+} from "@/features/raintdm/builder/utils/library-proficiency-highlight.utils";
 
 interface IdentityLibraryDetailProps {
   species?: Species;
@@ -139,36 +149,54 @@ function TraitList({
         {heading}
       </h3>
       <div className={cn("space-y-3", containerClass)}>
-        {traits.map((trait) => (
-          <div
-            key={trait.name}
-            className={cn(
-              containerClass &&
-                "rounded-md border border-sky-500/20 bg-sky-500/5 px-2 py-1.5",
-            )}
-          >
-            <h4 className={cn("mb-0.5 text-xs font-semibold", traitNameClass)}>
-              {trait.name}
-            </h4>
-            {(trait.entries ?? []).map((paragraph, i) => (
-              <p
-                key={`${trait.name}-entry-${i}`}
+        {traits.map((trait) => {
+          const grantsProficiency = entriesMentionProficiencyGrant(
+            trait.entries,
+          );
+          return (
+            <ProficiencyHighlightFrame
+              key={trait.name}
+              active={grantsProficiency && !containerClass}
+            >
+              <div
                 className={cn(
-                  "mb-1 text-xs leading-relaxed text-muted-foreground",
-                  bodyClass,
+                  containerClass &&
+                    "rounded-md border border-sky-500/20 bg-sky-500/5 px-2 py-1.5",
+                  grantsProficiency &&
+                    containerClass &&
+                    "border-amber-500/40 bg-amber-500/5",
                 )}
               >
-                <DndRichText text={paragraph} />
-              </p>
-            ))}
-            {trait.tables?.map((table, i) => (
-              <DetailTable
-                key={table.caption ?? `${trait.name}-table-${i}`}
-                {...table}
-              />
-            ))}
-          </div>
-        ))}
+                <h4
+                  className={cn(
+                    "mb-0.5 flex flex-wrap items-center gap-1.5 text-xs font-semibold",
+                    traitNameClass,
+                  )}
+                >
+                  {trait.name}
+                  {grantsProficiency && <ProficiencyGrantBadge />}
+                </h4>
+                {(trait.entries ?? []).map((paragraph, i) => (
+                  <p
+                    key={`${trait.name}-entry-${i}`}
+                    className={cn(
+                      "mb-1 text-xs leading-relaxed text-muted-foreground",
+                      bodyClass,
+                    )}
+                  >
+                    <DndRichText text={paragraph} />
+                  </p>
+                ))}
+                {trait.tables?.map((table, i) => (
+                  <DetailTable
+                    key={table.caption ?? `${trait.name}-table-${i}`}
+                    {...table}
+                  />
+                ))}
+              </div>
+            </ProficiencyHighlightFrame>
+          );
+        })}
       </div>
     </>
   );
@@ -193,27 +221,38 @@ function BackgroundSectionBlock({
         {heading}
       </h3>
       <div className="space-y-3">
-        {sections.map((section) => (
-          <div key={section.name}>
-            <h4 className="mb-0.5 text-xs font-semibold text-foreground">
-              {section.name}
-            </h4>
-            {section.entries?.map((paragraph, i) => (
-              <p
-                key={`${section.name}-entry-${i}`}
-                className="mb-1 text-xs leading-relaxed text-muted-foreground"
-              >
-                <DndRichText text={paragraph} />
-              </p>
-            ))}
-            {section.tables?.map((table, i) => (
-              <DetailTable
-                key={table.caption ?? `${section.name}-table-${i}`}
-                {...table}
-              />
-            ))}
-          </div>
-        ))}
+        {sections.map((section) => {
+          const grantsProficiency = entriesMentionProficiencyGrant(
+            section.entries,
+          );
+          return (
+            <ProficiencyHighlightFrame
+              key={section.name}
+              active={grantsProficiency}
+            >
+              <div>
+                <h4 className="mb-0.5 flex flex-wrap items-center gap-1.5 text-xs font-semibold text-foreground">
+                  {section.name}
+                  {grantsProficiency && <ProficiencyGrantBadge />}
+                </h4>
+                {section.entries?.map((paragraph, i) => (
+                  <p
+                    key={`${section.name}-entry-${i}`}
+                    className="mb-1 text-xs leading-relaxed text-muted-foreground"
+                  >
+                    <DndRichText text={paragraph} />
+                  </p>
+                ))}
+                {section.tables?.map((table, i) => (
+                  <DetailTable
+                    key={table.caption ?? `${section.name}-table-${i}`}
+                    {...table}
+                  />
+                ))}
+              </div>
+            </ProficiencyHighlightFrame>
+          );
+        })}
       </div>
     </>
   );
@@ -344,6 +383,16 @@ function SpeciesDetailBody({
   );
   const legacyResistance = activeLegacy?.resistance;
 
+  const proficiencyRows = [
+    ...buildSkillGrantSummaryRows(species.skillGrants),
+    ...buildNamedGrantSummaryRows(
+      "Weapons",
+      species.weaponProficiencyGrants,
+    ),
+    ...buildNamedGrantSummaryRows("Tools", species.toolProficiencyGrants),
+    ...buildNamedGrantSummaryRows("Languages", species.languageGrants),
+  ];
+
   return (
     <>
       {species.fluff && (
@@ -351,6 +400,8 @@ function SpeciesDetailBody({
           {species.fluff}
         </p>
       )}
+
+      <LibraryProficiencySummary rows={proficiencyRows} className="mb-3" />
 
       <div className="mb-3 grid grid-cols-2 gap-2 text-xs">
         <SpeciesBonuses
@@ -423,30 +474,41 @@ function SpeciesDetailBody({
           )}
           {subspeciesTraits.length > 0 && (
             <div className="space-y-3">
-              {subspeciesTraits.map((trait) => (
-                <div
-                  key={trait.name}
-                  className="rounded-md border border-sky-500/20 bg-sky-500/5 px-2 py-1.5"
-                >
-                  <h4 className="mb-0.5 text-xs font-semibold text-sky-300">
-                    {trait.name}
-                  </h4>
-                  {(trait.entries ?? []).map((paragraph, i) => (
-                    <p
-                      key={`${trait.name}-entry-${i}`}
-                      className="mb-1 text-xs leading-relaxed text-sky-100/70"
-                    >
-                      <DndRichText text={paragraph} />
-                    </p>
-                  ))}
-                  {trait.tables?.map((table, i) => (
-                    <DetailTable
-                      key={table.caption ?? `${trait.name}-table-${i}`}
-                      {...table}
-                    />
-                  ))}
-                </div>
-              ))}
+              {subspeciesTraits.map((trait) => {
+                const grantsProficiency = entriesMentionProficiencyGrant(
+                  trait.entries,
+                );
+                return (
+                  <div
+                    key={trait.name}
+                    className={cn(
+                      "rounded-md border px-2 py-1.5",
+                      grantsProficiency
+                        ? "border-amber-500/40 bg-amber-500/5"
+                        : "border-sky-500/20 bg-sky-500/5",
+                    )}
+                  >
+                    <h4 className="mb-0.5 flex flex-wrap items-center gap-1.5 text-xs font-semibold text-sky-300">
+                      {trait.name}
+                      {grantsProficiency && <ProficiencyGrantBadge />}
+                    </h4>
+                    {(trait.entries ?? []).map((paragraph, i) => (
+                      <p
+                        key={`${trait.name}-entry-${i}`}
+                        className="mb-1 text-xs leading-relaxed text-sky-100/70"
+                      >
+                        <DndRichText text={paragraph} />
+                      </p>
+                    ))}
+                    {trait.tables?.map((table, i) => (
+                      <DetailTable
+                        key={table.caption ?? `${trait.name}-table-${i}`}
+                        {...table}
+                      />
+                    ))}
+                  </div>
+                );
+              })}
             </div>
           )}
         </>
@@ -473,6 +535,12 @@ function BackgroundDetailBody({
   const originFeatSummary =
     featSummary && featSummary !== "—" ? featSummary : null;
 
+  const proficiencyRows = [
+    ...buildSkillGrantSummaryRows(background.skillGrants),
+    ...buildNamedGrantSummaryRows("Tools", background.toolGrants),
+    ...buildNamedGrantSummaryRows("Languages", background.languageGrants),
+  ];
+
   return (
     <>
       {background.fluff && (
@@ -480,6 +548,8 @@ function BackgroundDetailBody({
           {background.fluff}
         </p>
       )}
+
+      <LibraryProficiencySummary rows={proficiencyRows} className="mb-3" />
 
       <h3 className="mb-2 text-[10px] font-bold uppercase tracking-wider text-sky-400">
         Proficiencies
