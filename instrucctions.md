@@ -1798,17 +1798,20 @@ Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness
 | `BuilderImagePanel` | Sube retrato y token (base64 data URL) que alimentan el export de Foundry |
 | `BuilderSavingThrowsPanel` / `BuilderSkillChecksPanel` | Saving throws y skills con competencia/expertise |
 | `BuilderDerivedPanel` | Stats derivados (proficiency, modifiers, etc.) |
-| `BuilderCenterPanel` / `PaperDoll` | Silueta con slots, paneles de detalle de arma/armadura |
+| `BuilderCenterPanel` / `PaperDoll` | Silueta con slots, paneles de detalle de arma/armadura. **Spellcasting (unificado)**: slots de clase/Pact Magic + grants de species en el mismo grid. Al abrir un slot, `SpellLibraryPanel` muestra grants bloqueados (species / subclass always-prepared / optional features) con el mismo estilo (candado + badge verde); la lista Available solo si el slot es elegible (`allowSpellPicks` / `isSpellSlotChoosable`). |
 | `BuilderItemLibraryPanel` | Biblioteca de equipo desde carrito |
 | `BuilderDamagePanel` | Desglose DPT, críticos, fuentes de daño |
 | `BuilderInventoryPanel` | Inventario derivado del carrito (overflow de equipo) |
-| `BuilderOtherProficienciesPanel` / `BuilderLanguagesPanel` / `BuilderDefensesPanel` | Competencias varias, idiomas, resistencias/inmunidades |
+| `BuilderOtherProficienciesPanel` / `BuilderLanguagesPanel` / `BuilderDefensesPanel` | Competencias varias, idiomas, resistencias/inmunidades. **Other Proficiencies**: grants `any` (artisan tools, gaming sets, martial/simple weapons, …) se eligen con **combo searchable** desde catálogos 5etools (`chooseable-tools-weapons.ts`), no texto libre. |
 | `RuneAssignmentPanel` | Asignar/quitar runas por slot con validación |
+
+**Library (class / species / background / feats)**: el detalle marca features/traits/párrafos que otorgan competencias (badge *Proficiency* + borde ámbar) y muestra un resumen estructurado (`LibraryProficiencySummary`) cuando hay grants parseados.
 
 #### Resolución de especie y dotes
 
 - **`useResolvedSpecies` / `resolveSpeciesParts`** — resuelven la especie seleccionada contra los catálogos de species MH y razas D&D (con subraza opcional), con precedencia `mhSpecies ?? dndRace`, y exponen nombre de display y traits fusionados.
 - **`useActiveResolvedFeats`** — resuelve las dotes activas no-ASI (origin feats de especie/trasfondo + slots elegidos) a objetos `Feat` completos; fuente única para los hooks derivados de HP/velocidad.
+- **`computeEffectiveAbilityScores` / `useEffectiveAbilityScores`** — scores finales (base + Tasha/species/background ASI + feat ASI). Fuente de verdad para modificadores de AC, HP, iniciativa, skills/saves, combate/DPT, spellcasting y exports (PDF / Foundry). `character.abilities` sigue siendo solo la generación base editable.
 
 #### Export / Import a Foundry VTT
 
