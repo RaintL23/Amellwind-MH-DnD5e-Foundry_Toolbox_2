@@ -333,7 +333,10 @@ export function parseRichText(
 export function getRichTextSegmentClass(segment: RichTextSegment): string | null {
   if (segment.kind === "keyword") return DND_KEYWORD_CLASS[segment.category];
   if (segment.kind === "phraseLink") {
-    return "text-sky-400 font-medium underline-offset-2 hover:underline cursor-pointer";
+    const spellLinked = segment.phraseId.startsWith("spell:");
+    return spellLinked
+      ? `${RICH_TEXT_MARKUP_CLASS.spell} underline-offset-2 hover:underline`
+      : "text-sky-400 font-medium underline-offset-2 hover:underline cursor-pointer";
   }
   if (segment.kind === "entityLink") {
     return `${ENTITY_LINK_KIND_CLASS[segment.refKind]} underline-offset-2 hover:underline`;

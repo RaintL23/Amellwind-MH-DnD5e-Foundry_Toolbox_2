@@ -35,14 +35,15 @@ They also face fierce competition from powerful rivals such as pink rathian, dev
 
 ## Stat Block
 
-*Huge beast (amphibian), unaligned*
+_Huge beast (amphibian), unaligned_
+
 - **Armor Class:** 17 (natural armor)
 - **Hit Points:** 178 (17d12 + 68)
 - **Speed:** 40 ft., burrow 40 ft., swim 40 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 18 | 12 | 19 | 6 | 10 | 5 |
+| --: | --: | --: | --: | --: | --: |
+|  18 |  12 |  19 |   6 |  10 |   5 |
 
 - **Skills:** Perception +4, Stealth +5
 - **Condition Immunities:** paralyzed
@@ -65,7 +66,6 @@ The zamtrios has advantage on Dexterity (Stealth) checks made to hide in desert 
 
 The zamtrios's long jump is up to 20 feet and its high jump is up to 15 feet, without a running start. In addition, the zamtrios does not incur opportunity attacks while moving with a jump.
 
-
 ## Actions
 
 ### Multiattack (When not Expanded Only)
@@ -74,15 +74,11 @@ The zamtrios makes two Bite attacks.
 
 ### Bite
 
-
-
 ### Melee Weapon Attack
 
 +8 to hit, reach 10 ft., one target. Hit: 17 (3d8 + 4) piercing damage. If the zamtrios moved at least 20 feet straight toward the target immediately before the hit, the target takes an extra 13 (3d8) piercing damage.
 
 ### Paralyzing Spit
-
-
 
 ### Ranged Weapon Attack
 
@@ -100,13 +96,11 @@ The zamtrios can move up to half its movement speed in a straight line, without 
 
 The zamtrios uses one of the following water beams: (When not Expanded Only). The zamtrios exhales a high-pressure stream of water across a 30-foot cone. Each creature in that area must make a DC 16 Dexterity saving throw, taking 31 (7d8) acid damage on a failed save, or half as much damage on a successful one. (Expanded Only). The zamtrios exhales a highpressure stream of water in a 45-foot line that is 5 feet wide. Each creature in that area must make a DC 16 Dexterity saving throw, taking 45 (10d8) acid damage on a failed save, or half as much damage on a successful one.
 
-
 ## Bonus Actions
 
 ### Expand (Recharge 4-6)
 
 The zamtrios greatly expands its belly for 1 minute or until it uses Water Beam. While expanded, the zamtrios is Gargantuan, has resistance to bludgeoning damage, and its ice armor is destroyed. If the zamtrios lacks the room to become Gargantuan, it attains the maximum size possible in the space available. The zamtrios can repeat this bonus action to revert back to its original size.
-
 
 ## Legendary Actions
 
@@ -120,26 +114,25 @@ The zamtrios makes one Bite attack or one Paralyzing Spit.
 
 The zamtrios moves up to half of its speed without provoking opportunity attacks.
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-4 | 1-2 | 2x Paddock Cream | O |
-| 5-10 | 3-6 | T.Zamtrios Piel | A, W |
-| 11-13 | 7-9 | T.Zamtrios Shard | A, W |
-| 14-16 | 10-12 | Omniplegia Sac | A, W |
-| 17-18 | 13-14 | T.Zamtrios Grandfin | A, W |
-| 19 | 15-17 | T.Zamtrios Sawtooth+ | W |
-| 20 | 18-20 | T.Zamtrios Tailbrand | A, W |
+| Carve | Capture | Material             | Slots |
+| ----- | ------- | -------------------- | ----- |
+| 1-4   | 1-2     | 2x Paddock Oil       | O     |
+| 5-10  | 3-6     | T.Zamtrios Piel      | A, W  |
+| 11-13 | 7-9     | T.Zamtrios Shard     | A, W  |
+| 14-16 | 10-12   | Omniplegia Sac       | A, W  |
+| 17-18 | 13-14   | T.Zamtrios Grandfin  | A, W  |
+| 19    | 15-17   | T.Zamtrios Sawtooth+ | W     |
+| 20    | 18-20   | T.Zamtrios Tailbrand | A, W  |
 
 ## Materials (Runes)
 
 These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `armorEffect`, `weaponEffect`).
 
-### 2x Paddock Cream
+### 2x Paddock Oil
 
 - **Slots:** O
 - **Carve:** 1-4

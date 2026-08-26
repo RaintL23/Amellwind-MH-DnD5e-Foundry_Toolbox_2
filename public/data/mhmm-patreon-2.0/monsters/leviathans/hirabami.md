@@ -37,14 +37,15 @@ Individuals are frequently encountered in groups of three, and they defend nesti
 
 ## Stat Block
 
-*Huge leviathan, unaligned*
+_Huge leviathan, unaligned_
+
 - **Armor Class:** 16 (natural armor)
 - **Hit Points:** 161 (14d12 + 70)
 - **Speed:** 30 ft., fly 80 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 16 | 20 | 20 | 8 | 14 | 10 |
+| --: | --: | --: | --: | --: | --: |
+|  16 |  20 |  20 |   8 |  14 |  10 |
 
 - **Saving Throws:** Dex +9, Con +9, Cha +4
 - **Skills:** Perception +6, Stealth +9
@@ -63,7 +64,6 @@ If the hirabami is motionless while hanging from the ceiling at the start of com
 ### Ice Walk
 
 The hirabami can move across and climb icy surfaces without needing to make an ability check. Additionally, difficult terrain composed of ice or snow doesn't cost it extra moment.
-
 
 ## Actions
 
@@ -87,7 +87,6 @@ Ranged Weapon Attack: +9 to hit, range 60/240 ft., one target. Hit: 14 (4d6) col
 
 The hirabami spins rapidly into the air before smashing down and extending its tail to strike targets near it. Each creature within 25 feet of the hirabami must make a DC 17 Dexterity saving throw. On a failed save, the creature takes 26 (6d6 + 5) bludgeoning damage, is pushed 10 feet away, and knocked prone. On a successful save, the creature takes half as much damage, isn't pushed away, and isn't knocked prone.
 
-
 ## Legendary Actions
 
 The hirabami can take 2 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The hirabami regains spent legendary actions at the start of its turn.
@@ -100,20 +99,19 @@ The hirabami moves up to 10 feet, then makes one Bite attack.
 
 The hirabami moves 15 feet sideway while rolling. During this movement, it can enter a space that contains one or more creatures. Each of those creatures must succeed on a DC 17 Dexterity or Strength saving throw (target's choice) or be knocked prone and take 15 (3d6 + 5) bludgeoning damage. On a successful save, the creature takes only half the damage, isn't knocked prone, and is pushed 5 feet out of the hirabami's space into an unoccupied space of the creature's choice. If no unoccupied space is within range, the creature instead falls prone in the hirabami's space. 451
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-5 | 1-4 | Hirabami Scale | A, W |
-| 6-9 | 5-9 | Hirabami Hide | A |
-| 10-11 | — | Med Monster Bone | O |
-| 12-14 | 10-12 | Hirabami Webbing | A, W |
-| 15-17 | 13-16 | Freezer Sac+ | A, W |
-| 18-19 | 17-19 | Hirabami Tail Claw | A, W |
-| 20 | 20 | Hirabami Gem | A, W |
+| Carve | Capture | Material           | Slots |
+| ----- | ------- | ------------------ | ----- |
+| 1-5   | 1-4     | Hirabami Scale     | A, W  |
+| 6-9   | 5-9     | Hirabami Hide      | A     |
+| 10-11 | —       | Med Monster Bone   | O     |
+| 12-14 | 10-12   | Hirabami Webbing   | A, W  |
+| 15-17 | 13-16   | Freezer Sac+       | A, W  |
+| 18-19 | 17-19   | Hirabami Tail Claw | A, W  |
+| 20    | 20      | Hirabami Gem       | A, W  |
 
 ## Materials (Runes)
 
@@ -139,6 +137,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** O
 - **Carve:** 10-11
 - **Capture:** —
+- **Other effect:** Rare armor upgrade material.
 
 ### Hirabami Webbing
 

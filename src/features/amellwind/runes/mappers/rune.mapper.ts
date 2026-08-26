@@ -57,7 +57,7 @@ export function normalizeLootChance(raw: string): string {
 
 /**
  * Strip quantity multipliers from loot material names
- * (`B.Sleep Sac x2`, `2x Paddock Cream`, `Elder Dragon Blood X2` → base name).
+ * (`B.Sleep Sac x2`, `2x Paddock Oil`, `Elder Dragon Blood X2` → base name).
  */
 export function stripMaterialQuantity(name: string): string {
   return name
@@ -205,10 +205,7 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   ],
   [/bonus action/i, "mechanic:bonus-action"],
   [/\breaction\b/i, "mechanic:reaction"],
-  [
-    /saving throw/i,
-    "mechanic:saving-throw",
-  ],
+  [/saving throw/i, "mechanic:saving-throw"],
   [
     /\+\d+\s*bonus\s+(?:on|to)\s+(?:strength|dexterity|constitution|intelligence|wisdom|charisma)\s+saving throws?/i,
     "mechanic:save-bonus",
@@ -244,9 +241,15 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
     "mechanic:class-feature",
   ],
   // Regeneración de extremidades / partes del cuerpo (efecto de curación mayor distinto del HP)
-  [/(?:regrow|missing part.*grow|body part.*grow|limb.*regrow)/i, "mechanic:regeneration"],
+  [
+    /(?:regrow|missing part.*grow|body part.*grow|limb.*regrow)/i,
+    "mechanic:regeneration",
+  ],
   // Recarga o uso ligado a descansos
-  [/\bshort(?:\s+or\s+long)?\s+rest\b|\{@rest\s+short\}/i, "mechanic:short-rest"],
+  [
+    /\bshort(?:\s+or\s+long)?\s+rest\b|\{@rest\s+short\}/i,
+    "mechanic:short-rest",
+  ],
   [/\b(?:short\s+or\s+)?long\s+rest\b|\{@rest\s+long\}/i, "mechanic:long-rest"],
 ];
 
@@ -297,8 +300,9 @@ function mithralArmorTag(text: string): string | null {
   const removesStrengthRequirement =
     /strength requirement/i.test(text) &&
     /(?:no longer does|doesn't|does not)/i.test(text);
-  const flexibleWording =
-    /light and flexible|worn under normal clothes/i.test(text);
+  const flexibleWording = /light and flexible|worn under normal clothes/i.test(
+    text,
+  );
 
   if (
     (removesStealthDisadvantage && removesStrengthRequirement) ||
@@ -431,10 +435,7 @@ function skillTags(text: string): string[] {
     // "Athletics checks", "Climb check", "+2 bonus to Stealth"
     // "Dexterity (Stealth) checks" / "(Stealth) checks"
     const asChecks = new RegExp(`\\b${escaped}\\s+checks?\\b`, "i");
-    const asParenChecks = new RegExp(
-      `\\(${escaped}\\)\\s*checks?\\b`,
-      "i",
-    );
+    const asParenChecks = new RegExp(`\\(${escaped}\\)\\s*checks?\\b`, "i");
     const afterBonus = new RegExp(
       `\\+\\d+\\s*bonus\\s+(?:on|to)\\s+${escaped}\\b`,
       "i",
@@ -488,10 +489,7 @@ function rollTargetTags(text: string): string[] {
     }
   }
 
-  if (
-    /\battack rolls?\b/i.test(text) ||
-    /\bon the attack roll\b/i.test(text)
-  ) {
+  if (/\battack rolls?\b/i.test(text) || /\bon the attack roll\b/i.test(text)) {
     tags.push("mechanic:attack-roll");
   }
 
@@ -555,7 +553,10 @@ function healOtherTag(text: string): string | null {
   }
 
   // Lay on Hands outgoing restore + THP rider
-  if (/Lay on Hands/i.test(text) && /restore a creature'?s? hit points/i.test(text)) {
+  if (
+    /Lay on Hands/i.test(text) &&
+    /restore a creature'?s? hit points/i.test(text)
+  ) {
     if (/you and the creature gain temporary hit points/i.test(text)) {
       return "mechanic:heal-other:major";
     }
@@ -618,8 +619,7 @@ function conditionNameTags(text: string): string[] {
  * mechanic:item-related — effect references a usable item (`{@item …}`).
  * mechanic:trap — MH trap subset (pitfall / shock / trap tool). Always also item-related.
  */
-const MH_TRAP_ITEM =
-  /\{@item\s+(?:pitfall trap\+?|shock trap\+?|trap tool)\b/i;
+const MH_TRAP_ITEM = /\{@item\s+(?:pitfall trap\+?|shock trap\+?|trap tool)\b/i;
 const MH_TRAP_BARE = /\b(?:pitfall trap\+?|shock trap\+?|trap tool)\b/i;
 
 function itemRelatedTags(text: string): string[] {
@@ -1008,7 +1008,9 @@ function extraDamageTag(text: string): string | null {
  */
 function healingTag(text: string): string | null {
   // Regeneración de partes del cuerpo: aunque el HP sea bajo, es un efecto major
-  if (/(?:regrow|missing part.*grow|body part.*grow|limb.*regrow)/i.test(text)) {
+  if (
+    /(?:regrow|missing part.*grow|body part.*grow|limb.*regrow)/i.test(text)
+  ) {
     return "mechanic:healing:major";
   }
   if (!/(?:regain|restore)\s+\d+.*hit points/i.test(text)) return null;
@@ -1089,11 +1091,10 @@ function spellBuffTags(text: string): string[] {
 }
 
 function textGrantsSpellLanguage(text: string): boolean {
-  const hasSpellOrCantrip = /\bspell\b/i.test(text) || /\bcantrip\b/i.test(text);
+  const hasSpellOrCantrip =
+    /\bspell\b/i.test(text) || /\bcantrip\b/i.test(text);
   if (!hasSpellOrCantrip) return false;
-  return (
-    /\bcast(?:s|ing)?\b/i.test(text) || /\bknow(?:s|ing)?\b/i.test(text)
-  );
+  return /\bcast(?:s|ing)?\b/i.test(text) || /\bknow(?:s|ing)?\b/i.test(text);
 }
 
 /**
@@ -1189,9 +1190,7 @@ function preparedSpellTag(text: string, tags: Set<string>): string | null {
   const freePrepareSlot =
     /doesn'?t count against the number of spells you can prepare/i.test(text);
 
-  return alwaysPrepared || freePrepareSlot
-    ? "mechanic:spell:prepared"
-    : null;
+  return alwaysPrepared || freePrepareSlot ? "mechanic:spell:prepared" : null;
 }
 
 /**
@@ -1205,9 +1204,7 @@ function endDotTag(text: string): string | null {
   const describesDotCleanse =
     /continues to damage you over time/i.test(text) &&
     /ends the effect/i.test(text);
-  return cleansesAtTurnStart || describesDotCleanse
-    ? "mechanic:end-dot"
-    : null;
+  return cleansesAtTurnStart || describesDotCleanse ? "mechanic:end-dot" : null;
 }
 
 /**
@@ -1223,7 +1220,9 @@ function typeTags(text: string): string[] {
   if (/willing creature/i.test(text)) {
     tags.push("type:support");
   } else if (
-    /(?:another|friendly|allied|ally|allies)\s+(?:creature|target)/i.test(text) &&
+    /(?:another|friendly|allied|ally|allies)\s+(?:creature|target)/i.test(
+      text,
+    ) &&
     /(?:regain|restore|grant|give|heal|advantage on|temporary hit points)/i.test(
       text,
     )
@@ -1261,7 +1260,8 @@ function typeTags(text: string): string[] {
     /\+\d+\s*bonus.*(?:attack|damage)/i.test(text) ||
     /(?:attack|damage) roll.*\+\d+/i.test(text) ||
     /spell attack\s+roll|spell damage|damage roll/i.test(text) ||
-    (/\{@condition/i.test(text) && /(?:hit|attack|strike|on a hit)/i.test(text)) ||
+    (/\{@condition/i.test(text) &&
+      /(?:hit|attack|strike|on a hit)/i.test(text)) ||
     new RegExp(
       String.raw`(?:deals?|dealing|extra|takes?|taking)\s+(?:an?\s+)?(?:additional\s+)?${DAMAGE_AMOUNT.source}`,
       "i",
@@ -1547,9 +1547,7 @@ export function mapRunesFromMonster(
     const weaponTags = weaponEffect
       ? extractTags(weaponEffect, spellLevels)
       : [];
-    const armorTags = armorEffect
-      ? extractTags(armorEffect, spellLevels)
-      : [];
+    const armorTags = armorEffect ? extractTags(armorEffect, spellLevels) : [];
     const tags = Array.from(new Set([...weaponTags, ...armorTags]));
 
     runes.push({

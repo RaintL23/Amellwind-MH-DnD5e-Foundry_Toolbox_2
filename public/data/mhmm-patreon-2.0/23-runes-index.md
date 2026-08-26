@@ -34,14 +34,14 @@ Generated from parsed loot tables. Canonical machine file: `runes.json`.
 | B.Tetsucabra Cortex | Berserk Tetsucabra | **new** | 7-9 | 7-9 | A, W | `monsters/amphibians/berserk-tetsucabra.md` |
 | B.Tetsucabra Hardclaw | Berserk Tetsucabra | **new** | 10-11 | 10-13 | A, W | `monsters/amphibians/berserk-tetsucabra.md` |
 | Vicious Visage | Berserk Tetsucabra | **new** | 12-13 | 14-16 | A, W | `monsters/amphibians/berserk-tetsucabra.md` |
-| Paddock Cream | Berserk Tetsucabra | **new** | 14-17 | 17-20 | O | `monsters/amphibians/berserk-tetsucabra.md` |
+| Paddock Oil | Berserk Tetsucabra | **new** | 14-17 | 17-20 | O | `monsters/amphibians/berserk-tetsucabra.md` |
 | B.Tetsucabra Gnawrl | Berserk Tetsucabra | **new** | 18-20 | — | A, W | `monsters/amphibians/berserk-tetsucabra.md` |
 | Monster Toughbone | Drilltusk Tetsucabra | **new** | 1 | 1-4 | O | `monsters/amphibians/drilltusk-tetsucabra.md` |
 | Drilltusk Shard | Drilltusk Tetsucabra | **new** | 2-6 | 5-6 | A, W | `monsters/amphibians/drilltusk-tetsucabra.md` |
 | Vicious Visage | Drilltusk Tetsucabra | **new** | 7-9 | 7-9 | A, W | `monsters/amphibians/drilltusk-tetsucabra.md` |
 | Drilltusk Carapace | Drilltusk Tetsucabra | **new** | 10-11 | 10-13 | A, W | `monsters/amphibians/drilltusk-tetsucabra.md` |
 | Tetsucabra Hardclaw | Drilltusk Tetsucabra | **new** | 12-13 | 14-16 | A, W | `monsters/amphibians/drilltusk-tetsucabra.md` |
-| Paddock Cream | Drilltusk Tetsucabra | **new** | 14-17 | 17-20 | O | `monsters/amphibians/drilltusk-tetsucabra.md` |
+| Paddock Oil | Drilltusk Tetsucabra | **new** | 14-17 | 17-20 | O | `monsters/amphibians/drilltusk-tetsucabra.md` |
 | Drilltusk Gnawrl | Drilltusk Tetsucabra | **new** | 18-20 | — | A, W | `monsters/amphibians/drilltusk-tetsucabra.md` |
 | Sharp Fang | Zamite |  | 1-7 | — | W | `monsters/amphibians/zamite.md` |
 | Meaty Hide | Zamite |  | 8-14 | — | O | `monsters/amphibians/zamite.md` |
@@ -54,7 +54,7 @@ Generated from parsed loot tables. Canonical machine file: `runes.json`.
 | Zamtrios Fin | Zamtrios |  | 17-18 | 13-14 | W | `monsters/amphibians/zamtrios.md` |
 | Zamtrios Sawtooth | Zamtrios |  | 19 | 15-17 | W | `monsters/amphibians/zamtrios.md` |
 | Zamtrios Tailblade | Zamtrios |  | 20 | 18-20 | A | `monsters/amphibians/zamtrios.md` |
-| 2x Paddock Cream | Tigerstripe Zamtrios | **new** | 1-4 | 1-2 | O | `monsters/amphibians/tigerstripe-zamtrios.md` |
+| 2x Paddock Oil | Tigerstripe Zamtrios | **new** | 1-4 | 1-2 | O | `monsters/amphibians/tigerstripe-zamtrios.md` |
 | T.Zamtrios Piel | Tigerstripe Zamtrios | **new** | 5-10 | 3-6 | A, W | `monsters/amphibians/tigerstripe-zamtrios.md` |
 | T.Zamtrios Shard | Tigerstripe Zamtrios | **new** | 11-13 | 7-9 | A, W | `monsters/amphibians/tigerstripe-zamtrios.md` |
 | Omniplegia Sac | Tigerstripe Zamtrios | **new** | 14-16 | 10-12 | A, W | `monsters/amphibians/tigerstripe-zamtrios.md` |

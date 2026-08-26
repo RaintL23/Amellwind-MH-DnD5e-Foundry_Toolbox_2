@@ -225,7 +225,7 @@
       ],
       "armorEffect": null,
       "weaponEffect": null,
-      "otherEffect": "Rare armor upgrade material. boulders out of the way of its path but it can also use this as a method of attack to injure predator and prey alike. It uses these boulders as a shield against predators and hunters to prevent attacks. It also uses this to enclose small, tight areas, making it harder to maneuver. Another fact about the Tetsucabra is its ability to spit a glob of fluid at prey items. This sticky material acts as a powerful adhesive, sticking to the body and ground like glue. Even for a hunter, the adhesive quality of this material is not very strong, but it makes every movement a labor and greatly weakens the prey, leading to a reduction in stamina. When the Tetsucabra exerts itself, its tail inflates, possibly to help it balance itself as it picks up large boulders and rocks. The legs of a Tetsucabra help it perform powerful leaps, lunges, and jumps in the air to help it either ambush prey or to reach steep slopes out of its reach. A Tetsucabra's claws are powerful enough to break rock with ease and can destroy powerful armor. Tetsucabra are highly aggressive, territorial monsters though its ecology is much like a frog. The amphibians are well-known for attacking and eating anything that moves in its line of sight and leaping from ponds in order to grab potential prey. Despite being found in ponds, they spend most of its time on land, which could suggest that they patrol its territory on land, much like Zamtrios. During the breeding season male Tetsucabra will create large holes to impress females so that they'll lay its eggs in them. When the female lays her eggs in the pit the male will quickly fertilize them. After fertilizing the eggs, the male will then carry them in his mouth, and he will not eat anything until the offspring are fully developed.",
+      "otherEffect": "Rare armor upgrade material.",
       "inGithubJson": true,
       "file": "monsters/amphibians/tetranadon.md"
     },
@@ -639,7 +639,7 @@
       "file": "monsters/amphibians/berserk-tetsucabra.md"
     },
     {
-      "name": "Paddock Cream",
+      "name": "Paddock Oil",
       "monsterName": "Berserk Tetsucabra",
       "monsterSource": "MHMM-Patreon-2.0",
       "monsterCr": "8",
@@ -656,7 +656,7 @@
       ],
       "armorEffect": null,
       "weaponEffect": null,
-      "otherEffect": null,
+      "otherEffect": "When this oil is applied to the skin, the target gains tremorsense out to 60 feet for 1 hour.",
       "inGithubJson": false,
       "file": "monsters/amphibians/berserk-tetsucabra.md"
     },
@@ -798,7 +798,7 @@
       "file": "monsters/amphibians/drilltusk-tetsucabra.md"
     },
     {
-      "name": "Paddock Cream",
+      "name": "Paddock Oil",
       "monsterName": "Drilltusk Tetsucabra",
       "monsterSource": "MHMM-Patreon-2.0",
       "monsterCr": "12",
@@ -1087,7 +1087,7 @@
       "file": "monsters/amphibians/zamtrios.md"
     },
     {
-      "name": "2x Paddock Cream",
+      "name": "2x Paddock Oil",
       "monsterName": "Tigerstripe Zamtrios",
       "monsterSource": "MHMM-Patreon-2.0",
       "monsterCr": "10",
@@ -1354,7 +1354,7 @@
       ],
       "armorEffect": null,
       "weaponEffect": null,
-      "otherEffect": null,
+      "otherEffect": "Rare armor upgrade material.",
       "inGithubJson": true,
       "file": "monsters/bird-wyverns/aknosom.md"
     },
@@ -1375,8 +1375,8 @@
         "W"
       ],
       "otherSlots": null,
-      "armorEffect": null,
-      "weaponEffect": null,
+      "armorEffect": "While you are wearing this armor and an attacker that you can see hits you with an attack, you can use your reaction to halve the attack’s damage against you. You can use this property a number of times equal to half your proficiency bonus (rounded down), regaining all expended uses when you finish a long rest.",
+      "weaponEffect": "(Druid, Sorcerer, & Wizard Only) While attuned to this weapon you know the flaming sphere spell. If you have to prepare spells, you always have it prepared, and it doesn't count against the number of spells you can prepare each day. Once used, this property cannot be used again until you finish a long rest.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/bird-wyverns/aknosom.md"
@@ -40430,7 +40430,7 @@
       ],
       "armorEffect": null,
       "weaponEffect": null,
-      "otherEffect": null,
+      "otherEffect": "Rare armor upgrade material.",
       "inGithubJson": false,
       "file": "monsters/leviathans/hirabami.md"
     },
@@ -40589,7 +40589,7 @@
       ],
       "armorEffect": null,
       "weaponEffect": null,
-      "otherEffect": null,
+      "otherEffect": "Rare armor upgrade material.",
       "inGithubJson": false,
       "file": "monsters/leviathans/young-hirabami.md"
     },

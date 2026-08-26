@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { extractRuneEffectTags, isPlaceableRune, mapRunesFromMonster, backfillSharedOtherEffects, normalizeLootChance, stripMaterialQuantity } from "../mappers/rune.mapper";
+import {
+  extractRuneEffectTags,
+  isPlaceableRune,
+  mapRunesFromMonster,
+  backfillSharedOtherEffects,
+  normalizeLootChance,
+  stripMaterialQuantity,
+} from "../mappers/rune.mapper";
 import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 
 function makeSpell(name: string, level: number) {
@@ -971,10 +978,7 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
 
     expect(tags).toEqual(
-      expect.arrayContaining([
-        "mechanic:gather-resources",
-        "mechanic:fishing",
-      ]),
+      expect.arrayContaining(["mechanic:gather-resources", "mechanic:fishing"]),
     );
     expect(tags).not.toContain("mechanic:gather-resources:major");
   });
@@ -999,10 +1003,7 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
 
     expect(tags).toEqual(
-      expect.arrayContaining([
-        "mechanic:gather-resources",
-        "mechanic:mining",
-      ]),
+      expect.arrayContaining(["mechanic:gather-resources", "mechanic:mining"]),
     );
     expect(tags).not.toContain("mechanic:gather-resources:major");
   });
@@ -1305,7 +1306,7 @@ describe("normalizeLootChance", () => {
 describe("stripMaterialQuantity", () => {
   it("removes leading and trailing quantity multipliers", () => {
     expect(stripMaterialQuantity("B.Sleep Sac x2")).toBe("B.Sleep Sac");
-    expect(stripMaterialQuantity("2x Paddock Cream")).toBe("Paddock Cream");
+    expect(stripMaterialQuantity("2x Paddock Oil")).toBe("Paddock Oil");
     expect(stripMaterialQuantity("Elder Dragon Blood X2")).toBe(
       "Elder Dragon Blood",
     );

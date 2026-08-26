@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { Link } from "react-router-dom";
 import { cn } from "@/shared/utils/cn";
+import { useSpellPhraseLinksForText } from "@/shared/hooks/useSpellPhraseLinks";
 import {
   type ParseRichTextOptions,
   type RichTextPhraseLink,
@@ -13,6 +14,11 @@ interface DndRichTextProps extends ParseRichTextOptions {
   className?: string;
   /** Fired when a phraseLink segment is activated. */
   onPhraseClick?: (phraseId: string) => void;
+  /**
+   * When true (default), auto-link catalog spell names in plain prose
+   * (e.g. "haste spell" → /spells?spell=Haste). Tagged `{@spell}` still wins.
+   */
+  autoLinkSpells?: boolean;
 }
 
 /**
@@ -25,10 +31,22 @@ export function DndRichText({
   highlightKeywords = true,
   phraseLinks,
   onPhraseClick,
+  autoLinkSpells = true,
 }: DndRichTextProps) {
+  const spellLinks = useSpellPhraseLinksForText(autoLinkSpells ? text : "");
+  const mergedPhraseLinks = useMemo(() => {
+    if (!autoLinkSpells || spellLinks.length === 0) return phraseLinks;
+    if (!phraseLinks?.length) return spellLinks;
+    return [...spellLinks, ...phraseLinks];
+  }, [autoLinkSpells, spellLinks, phraseLinks]);
+
   const segments = useMemo(
-    () => parseRichText(text, { highlightKeywords, phraseLinks }),
-    [text, highlightKeywords, phraseLinks],
+    () =>
+      parseRichText(text, {
+        highlightKeywords,
+        phraseLinks: mergedPhraseLinks,
+      }),
+    [text, highlightKeywords, mergedPhraseLinks],
   );
 
   return (

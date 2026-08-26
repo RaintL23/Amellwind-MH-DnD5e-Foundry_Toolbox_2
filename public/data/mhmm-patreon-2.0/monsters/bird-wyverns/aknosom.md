@@ -33,14 +33,15 @@ Its tail also ends in a peculiar hook-like shape. Aknosom is capable of standing
 
 ## Stat Block
 
-*Large wyvern (bird), unaligned*
+_Large wyvern (bird), unaligned_
+
 - **Armor Class:** 16 (natural armor)
 - **Hit Points:** 136 (16d10 + 48)
 - **Speed:** 30 ft., fly 60 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 14 | 17 | 16 | 9 | 14 | 6 |
+| --: | --: | --: | --: | --: | --: |
+|  14 |  17 |  16 |   9 |  14 |   6 |
 
 - **Skills:** Acrobatics +6, Intimidation +1, Perception +5
 - **Damage Resistances:** fire, necrotic
@@ -54,7 +55,6 @@ Its tail also ends in a peculiar hook-like shape. Aknosom is capable of standing
 ### Pirouette
 
 When the aknosom makes a wing attack, it has advantage on Dexterity (Acrobatic) skill checks and Dexterity saving throws until the start of its next turn.
-
 
 ## Actions
 
@@ -82,19 +82,18 @@ Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 14 (2d10 + 3) slas
 
 The aknosom chooses up to five creatures within 30 feet of it and spits a small fireball at each of them. Each creature must make a DC 14 Dexterity saving throw, taking 5 (1d10) fire damage and catch fire on a failed save or half as much damage and doesn't catch fire on a successful one. Until a creature takes an action to douse the fire, the target takes 5 (1d10) fire damage at the start of each of its turns.
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-5 | 1-5 | Aknosom Scale | A |
-| 6-11 | 6-12 | Aknosom Feather | A, W |
-| 12-13 | 13-14 | Aknosom Beak | A, W |
-| 14-18 | 15-19 | Flame Sac | A, W |
-| 19-20 | — | Med Monster Bone | O |
-| — | 20 | Aknosom Crest | A, W |
+| Carve | Capture | Material         | Slots |
+| ----- | ------- | ---------------- | ----- |
+| 1-5   | 1-5     | Aknosom Scale    | A     |
+| 6-11  | 6-12    | Aknosom Feather  | A, W  |
+| 12-13 | 13-14   | Aknosom Beak     | A, W  |
+| 14-18 | 15-19   | Flame Sac        | A, W  |
+| 19-20 | —       | Med Monster Bone | O     |
+| —     | 20      | Aknosom Crest    | A, W  |
 
 ## Materials (Runes)
 
@@ -132,9 +131,12 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** O
 - **Carve:** 19-20
 - **Capture:** —
+- **Other effect:** Rare armor upgrade material.
 
 ### Aknosom Crest
 
 - **Slots:** A, W
 - **Carve:** —
 - **Capture:** 20
+- **Armor effect:** While you are wearing this armor and an attacker that you can see hits you with an attack, you can use your reaction to halve the attack’s damage against you. You can use this property a number of times equal to half your proficiency bonus (rounded down), regaining all expended uses when you finish a long rest.
+- **Weapon effect:** (Druid, Sorcerer, & Wizard Only) While attuned to this weapon you know the flaming sphere spell. If you have to prepare spells, you always have it prepared, and it doesn't count against the number of spells you can prepare each day. Once used, this property cannot be used again until you finish a long rest.

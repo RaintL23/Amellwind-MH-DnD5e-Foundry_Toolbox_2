@@ -31,14 +31,15 @@ Use 1-10 on the Hirabami table for the young hirabami loot.
 
 ## Stat Block
 
-*Large leviathan, unaligned*
+_Large leviathan, unaligned_
+
 - **Armor Class:** 14 (natural armor)
 - **Hit Points:** 85 (9d10 + 36)
 - **Speed:** 30 ft., fly 60 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 14 | 16 | 18 | 3 | 8 | 10 |
+| --: | --: | --: | --: | --: | --: |
+|  14 |  16 |  18 |   3 |   8 |  10 |
 
 - **Saving Throws:** Dex +5, Con +6
 - **Skills:** Perception +2, Stealth +5
@@ -58,7 +59,6 @@ If the hirabami is motionless while hanging from the ceiling at the start of com
 
 The hirabami can move across and climb icy surfaces without needing to make an ability check. Additionally, difficult terrain composed of ice or snow doesn't cost it extra moment.
 
-
 ## Actions
 
 ### Multiattack
@@ -77,20 +77,19 @@ Melee Weapon Attack: +5 to hit, reach 10 ft., one target. Hit: 19 (4d6 + 3) blud
 
 Ranged Weapon Attack: +5 to hit, range 60/240 ft., one target. Hit: 10 (3d6) cold damage. If the target is a creature it is restrained by ice. As an action, the restrained target can make a DC 15 Strength check, bursting the ice on a success. The ice can also be attacked and destroyed (AC 10; hp 5; vulnerability to fire damage; immunity to piercing, cold, poison, and psychic damage).
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-5 | 1-4 | Hirabami Scale | A, W |
-| 6-9 | 5-9 | Hirabami Hide | A |
-| 10-11 | — | Med Monster Bone | O |
-| 12-14 | 10-12 | Hirabami Webbing | A, W |
-| 15-17 | 13-16 | Freezer Sac+ | A, W |
-| 18-19 | 17-19 | Hirabami Tail Claw | A, W |
-| 20 | 20 | Hirabami Gem | A, W |
+| Carve | Capture | Material           | Slots |
+| ----- | ------- | ------------------ | ----- |
+| 1-5   | 1-4     | Hirabami Scale     | A, W  |
+| 6-9   | 5-9     | Hirabami Hide      | A     |
+| 10-11 | —       | Med Monster Bone   | O     |
+| 12-14 | 10-12   | Hirabami Webbing   | A, W  |
+| 15-17 | 13-16   | Freezer Sac+       | A, W  |
+| 18-19 | 17-19   | Hirabami Tail Claw | A, W  |
+| 20    | 20      | Hirabami Gem       | A, W  |
 
 ## Materials (Runes)
 
@@ -116,6 +115,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** O
 - **Carve:** 10-11
 - **Capture:** —
+- **Other effect:** Rare armor upgrade material.
 
 ### Hirabami Webbing
 

@@ -37,14 +37,15 @@ Jumbo Bone Uncommon armor upgrade material.
 
 ## Stat Block
 
-*Large beast (amphibian), unaligned*
+_Large beast (amphibian), unaligned_
+
 - **Armor Class:** 16 (natural armor)
 - **Hit Points:** 142 (15d10 + 60)
 - **Speed:** 30 ft., burrow 20 ft., swim 30 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 18 | 14 | 18 | 2 | 8 | 6 |
+| --: | --: | --: | --: | --: | --: |
+|  18 |  14 |  18 |   2 |   8 |   6 |
 
 - **Saving Throws:** Con +7
 - **Damage Immunities:** fire
@@ -66,7 +67,6 @@ At the start of its turn, the tetsucabra can gain advantage on all melee weapon 
 ### Standing Leap
 
 The tetsucabra's long jump is up to 20 feet and its high jump is up to 10 feet, without a running start. In addition, the tetsucabra does not incur attacks of opportunity while moving with a jump.
-
 
 ## Actions
 
@@ -90,20 +90,19 @@ Ranged Weapon Attack: +7 to hit, range 60/240 ft., one target. Hit: 13 (2d8 + 4)
 
 If the tetsucabra jumps at least 15 feet as part of its movement, it can then use this action to land on its feet in a space that contains one or more other creatures. Each of those creatures must succeed on a DC 15 Strength or Dexterity saving throw (target's choice) or be knocked prone and take 20 (3d10 + 4) bludgeoning damage On a successful save, the creature takes only half the damage, isn't knocked prone, and is pushed 5 feet out of the tetsucabra's space into an unoccupied space of the creature's choice. If no unoccupied space is within range, the creature instead falls prone in the tetsucabra's space. Explosive Rock (Recharge 5-6) The tetsucabra digs up a giant explosive rock that fits in a 10-foot-cubed area. The rock then rolls into a space, the tetsucabra can see, within 20 feet of it. On initiative 20, the rock explodes and each creature in a 30-foot radius around it must make a DC 15 Dexterity saving throw or take 42 (12d6) fire damage on a failed save, or half as much damage on a successful one.
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1 | 1-4 | Monster Bone+ | O |
-| 2-6 | 5-6 | B.Tetsucabra Shard | A, W |
-| 7-9 | 7-9 | B.Tetsucabra Cortex | A, W |
-| 10-11 | 10-13 | B.Tetsucabra Hardclaw | A, W |
-| 12-13 | 14-16 | Vicious Visage | A, W |
-| 14-17 | 17-20 | Paddock Cream | O |
-| 18-20 | — | B.Tetsucabra Gnawrl | A, W |
+| Carve | Capture | Material              | Slots |
+| ----- | ------- | --------------------- | ----- |
+| 1     | 1-4     | Monster Bone+         | O     |
+| 2-6   | 5-6     | B.Tetsucabra Shard    | A, W  |
+| 7-9   | 7-9     | B.Tetsucabra Cortex   | A, W  |
+| 10-11 | 10-13   | B.Tetsucabra Hardclaw | A, W  |
+| 12-13 | 14-16   | Vicious Visage        | A, W  |
+| 14-17 | 17-20   | Paddock Oil           | O     |
+| 18-20 | —       | B.Tetsucabra Gnawrl   | A, W  |
 
 ## Materials (Runes)
 
@@ -146,11 +145,12 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Capture:** 14-16
 - **Weapon effect:** (Ranged Weapon Only) Deadeye+. Your weapon's normal attack range is doubled.
 
-### Paddock Cream
+### Paddock Oil
 
 - **Slots:** O
 - **Carve:** 14-17
 - **Capture:** 17-20
+- **Other effect:** When this oil is applied to the skin, the target gains tremorsense out to 60 feet for 1 hour.
 
 ### B.Tetsucabra Gnawrl
 

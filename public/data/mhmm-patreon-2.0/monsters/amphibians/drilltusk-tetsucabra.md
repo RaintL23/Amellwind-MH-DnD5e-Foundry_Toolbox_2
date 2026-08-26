@@ -59,14 +59,15 @@ Each creature in a line must make a DC 16 Dexterity saving throw, taking 22 (4d1
 
 ## Stat Block
 
-*Huge beast (amphibian), unaligned*
+_Huge beast (amphibian), unaligned_
+
 - **Armor Class:** 16 (18 while holding a boulder)
 - **Hit Points:** 199 (19d12 + 76)
 - **Speed:** 30 ft., burrow 20 ft., swim 30 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 18 | 14 | 18 | 2 | 8 | 6 |
+| --: | --: | --: | --: | --: | --: |
+|  18 |  14 |  18 |   2 |   8 |   6 |
 
 - **Saving Throws:** Con +8
 - **Damage Immunities:** fire
@@ -88,7 +89,6 @@ When the tetsucabra is holding a boulder, it gains a +2 bonus to its AC, unless 
 ### Standing Leap
 
 The tetsucabra's long jump is up to 20 feet and its high jump is up to 10 feet, without a running start. In addition, the tetsucabra does not incur attacks of opportunity while moving with a jump.
-
 
 ## Actions
 
@@ -112,20 +112,19 @@ Ranged Weapon Attack: +8 to hit, range 60/240 ft., one target. Hit: 17 (3d8 + 4)
 
 If the tetsucabra jumps at least 15 feet as part of its movement, it can then use this action to land on its feet in a space that contains one or more other creatures. Each of those creatures must succeed on a DC 16 Strength or Dexterity saving throw (target's 8
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1 | 1-4 | Monster Toughbone | O |
-| 2-6 | 5-6 | Drilltusk Shard | A, W |
-| 7-9 | 7-9 | Vicious Visage | A, W |
-| 10-11 | 10-13 | Drilltusk Carapace | A, W |
-| 12-13 | 14-16 | Tetsucabra Hardclaw | A, W |
-| 14-17 | 17-20 | Paddock Cream | O |
-| 18-20 | — | Drilltusk Gnawrl | A, W |
+| Carve | Capture | Material            | Slots |
+| ----- | ------- | ------------------- | ----- |
+| 1     | 1-4     | Monster Toughbone   | O     |
+| 2-6   | 5-6     | Drilltusk Shard     | A, W  |
+| 7-9   | 7-9     | Vicious Visage      | A, W  |
+| 10-11 | 10-13   | Drilltusk Carapace  | A, W  |
+| 12-13 | 14-16   | Tetsucabra Hardclaw | A, W  |
+| 14-17 | 17-20   | Paddock Oil         | O     |
+| 18-20 | —       | Drilltusk Gnawrl    | A, W  |
 
 ## Materials (Runes)
 
@@ -170,7 +169,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Armor effect:** Scavenger. When you eat a ration you can roll a d100. On a 25 or more you lose one level of exhaustion. Once you use this property you can't use it again until you finish a long rest.
 - **Weapon effect:** Quick Load. You can reload as a free action while you are attuned to this weapon.
 
-### Paddock Cream
+### Paddock Oil
 
 - **Slots:** O
 - **Carve:** 14-17

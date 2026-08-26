@@ -37,14 +37,15 @@ The tetranadon are known to clash with arzuros. When in its bloated state, they 
 
 ## Stat Block
 
-*Large beast (amphibian), unaligned*
+_Large beast (amphibian), unaligned_
+
 - **Armor Class:** 15 (natural armor)
 - **Hit Points:** 95 (10d10 + 40)
 - **Speed:** 30 ft., swim 30 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 16 | 8 | 18 | 4 | 8 | 6 |
+| --: | --: | --: | --: | --: | --: |
+|  16 |   8 |  18 |   4 |   8 |   6 |
 
 - **Damage Resistances:** necrotic
 - **Damage Immunities:** acid
@@ -70,7 +71,6 @@ The tetranadon's long jump is up to 20 feet and its high jump is up to 15 feet, 
 ### Sumo Strike
 
 Whenever the tetranadon makes a palm strike attack, it can move 5 feet as part of the attack. If the tetranadon is not bloated, it makes the movement without provoking opportunity attacks.
-
 
 ## Actions
 
@@ -102,7 +102,6 @@ Ranged Weapon Attack: +6 to hit, range 30/120 ft., one target. Hit: 7 (2d6) acid
 
 If the tetranadon jumps at least 15 feet as part of its movement, it can then use this action to land on its feet in a space that contains one or more other creatures. Each of those creatures must succeed on a DC 15 Strength or Dexterity saving throw (target's choice) or be knocked prone and take 17 (4d6 + 3) bludgeoning damage On a successful save, the creature takes only half the damage, isn't knocked prone, and is pushed 5 feet out of the tetranadon's space into an unoccupied space of the creature's choice. If no unoccupied space is within range, the creature instead falls prone in the tetranadon's space.
 
-
 ## Legendary Actions
 
 The tetranadon can take 1 legendary action, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The tetranadon regains spent legendary actions at the start of its turn.
@@ -119,20 +118,19 @@ The tetranadon chooses a creature within 5 feet of it. That creature must succee
 
 The tetranadon exhales gravel and water in a 15-foot cone in front of it. Each creature in that area must make a DC 15 Dexterity saving throw, taking 4 (1d8) bludgeoning damage plus 4 (1d8) acid damage and be afflicted with waterblight for 1 minute on a failed save, or half as much damage and isn't afflicted with waterblight on a successful one. A creature can make a DC 15 Constitution saving throw at the end of each of its turns, ending the waterblight on itself on a success. 4
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-2 | 1-2 | Med Monster Bone | O |
-| 3-6 | 3-5 | Tetranadon Hide | A, W |
-| 7-11 | 6-10 | Tetranadon Carapace | A, W |
-| 12-13 | 11-12 | Tetranadon Beak | A, W |
-| 14-15 | 13 | Shiny Nacre | O |
-| 16-19 | 14-19 | Aqua Sac | A, W |
-| 20 | 20 | Tetranadon Disc | A, W |
+| Carve | Capture | Material            | Slots |
+| ----- | ------- | ------------------- | ----- |
+| 1-2   | 1-2     | Med Monster Bone    | O     |
+| 3-6   | 3-5     | Tetranadon Hide     | A, W  |
+| 7-11  | 6-10    | Tetranadon Carapace | A, W  |
+| 12-13 | 11-12   | Tetranadon Beak     | A, W  |
+| 14-15 | 13      | Shiny Nacre         | O     |
+| 16-19 | 14-19   | Aqua Sac            | A, W  |
+| 20    | 20      | Tetranadon Disc     | A, W  |
 
 ## Materials (Runes)
 
@@ -143,7 +141,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** O
 - **Carve:** 1-2
 - **Capture:** 1-2
-- **Other effect:** Rare armor upgrade material. boulders out of the way of its path but it can also use this as a method of attack to injure predator and prey alike. It uses these boulders as a shield against predators and hunters to prevent attacks. It also uses this to enclose small, tight areas, making it harder to maneuver. Another fact about the Tetsucabra is its ability to spit a glob of fluid at prey items. This sticky material acts as a powerful adhesive, sticking to the body and ground like glue. Even for a hunter, the adhesive quality of this material is not very strong, but it makes every movement a labor and greatly weakens the prey, leading to a reduction in stamina. When the Tetsucabra exerts itself, its tail inflates, possibly to help it balance itself as it picks up large boulders and rocks. The legs of a Tetsucabra help it perform powerful leaps, lunges, and jumps in the air to help it either ambush prey or to reach steep slopes out of its reach. A Tetsucabra's claws are powerful enough to break rock with ease and can destroy powerful armor. Tetsucabra are highly aggressive, territorial monsters though its ecology is much like a frog. The amphibians are well-known for attacking and eating anything that moves in its line of sight and leaping from ponds in order to grab potential prey. Despite being found in ponds, they spend most of its time on land, which could suggest that they patrol its territory on land, much like Zamtrios. During the breeding season male Tetsucabra will create large holes to impress females so that they'll lay its eggs in them. When the female lays her eggs in the pit the male will quickly fertilize them. After fertilizing the eggs, the male will then carry them in his mouth, and he will not eat anything until the offspring are fully developed.
+- **Other effect:** Rare armor upgrade material.
 
 ### Tetranadon Hide
 
