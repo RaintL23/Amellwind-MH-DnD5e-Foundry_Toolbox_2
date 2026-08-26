@@ -123,6 +123,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** —
 - **Capture:** 10-11
 - **Armor effect:** While wearing this armor, you have a swimming speed equal to your walking speed, and you can hold breath underwater for twice as long as normal.
+- **Weapon effect:** When you cast a spell that deals acid damage, add half of your proficiency bonus to that damage.
 
 ### Large Coral Pukei-Pukei Sac
 

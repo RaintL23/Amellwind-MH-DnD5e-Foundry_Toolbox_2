@@ -2839,7 +2839,7 @@
       ],
       "otherSlots": null,
       "armorEffect": "While wearing this armor, you have a swimming speed equal to your walking speed, and you can hold breath underwater for twice as long as normal.",
-      "weaponEffect": null,
+      "weaponEffect": "When you cast a spell that deals acid damage, add half of your proficiency bonus to that damage.",
       "otherEffect": null,
       "inGithubJson": true,
       "file": "monsters/bird-wyverns/coral-pukei-pukei.md"
