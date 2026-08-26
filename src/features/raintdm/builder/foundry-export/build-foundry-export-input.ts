@@ -1,5 +1,6 @@
 import type {
   ArmorItem,
+  AbilityScores,
   Background,
   CartEntry,
   Class,
@@ -146,6 +147,8 @@ export interface BuildFoundryExportInputContext {
   hitPoints: CharacterHitPointBreakdown | null;
   speed: CharacterSpeedBreakdown;
   spellcasting: SpellcastingInfo;
+  /** Final ability scores including origin bonuses and ASI. */
+  effectiveAbilities: AbilityScores;
 }
 
 /**
@@ -168,6 +171,7 @@ export function buildFoundryExportInput(
     hitPoints,
     speed,
     spellcasting,
+    effectiveAbilities,
   } = ctx;
   const { character } = builder;
   const level = character.level;
@@ -473,7 +477,7 @@ export function buildFoundryExportInput(
     alignment: formatAlignment(character.alignment),
     level,
     xp: getXpForLevel(level),
-    abilities: character.abilities,
+    abilities: effectiveAbilities,
     saveProficiencies: builder.saveProficiencyAbilities,
     skillProficiencies,
     proficiencyBonus: character.getProficiencyBonus(),

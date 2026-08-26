@@ -7,6 +7,7 @@ import { useCharacterHitPoints } from "./useCharacterHitPoints";
 import { useCharacterSpeed } from "./useCharacterSpeed";
 import { useSpellcastingContext } from "../context/SpellcastingContext";
 import { useSpellCatalog } from "./useSpellCatalog";
+import { useEffectiveAbilityScores } from "./useEffectiveAbilityScores";
 import {
   exportFoundryActor,
   type ExportFoundryActorContext,
@@ -22,6 +23,7 @@ export function useFoundryExport() {
   const speed = useCharacterSpeed();
   const { allSpells } = useSpellCatalog();
   const { spellcasting } = useSpellcastingContext();
+  const effectiveAbilities = useEffectiveAbilityScores();
 
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +38,7 @@ export function useFoundryExport() {
       hitPoints,
       speed,
       spellcasting,
+      effectiveAbilities,
       allSpells,
     }),
     [
@@ -43,6 +46,7 @@ export function useFoundryExport() {
       backgroundData,
       builder,
       classData,
+      effectiveAbilities,
       hitPoints,
       inventory,
       speed,

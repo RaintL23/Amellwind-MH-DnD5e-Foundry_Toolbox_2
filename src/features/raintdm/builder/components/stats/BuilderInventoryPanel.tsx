@@ -17,6 +17,7 @@ import { cn } from "@/shared/utils/cn";
 import { HintTooltip } from "@/shared/components/HintTooltip";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../../context/BuilderInventoryContext";
+import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
 import {
   findArmorByCartName,
   findShieldByCartName,
@@ -115,16 +116,17 @@ export function BuilderInventoryPanel() {
     clearEquipment,
   } = useCharacterBuilder();
 
+  const effectiveScores = useEffectiveAbilityScores();
   const equippedArmorName = armor?.armor.name ?? null;
   const equippedShieldName = equippedShield?.name ?? null;
   const carriedWeight = sumInventoryWeightLb(items);
   const creatureSize = normalizeBuilderCreatureSize(character.size);
-  const capacity = getCarryingCapacity(character.abilities.str, creatureSize);
+  const capacity = getCarryingCapacity(effectiveScores.str, creatureSize);
   const isOverCapacity = carriedWeight > capacity.carryLb;
   const weightTooltip = formatInventoryWeightTooltip(items);
   const capacityRuleTooltip = formatCarryingCapacityRuleTooltip();
   const capacityCalcTooltip = formatCarryingCapacityCalcTooltip(
-    character.abilities.str,
+    effectiveScores.str,
     creatureSize,
     capacity,
   );

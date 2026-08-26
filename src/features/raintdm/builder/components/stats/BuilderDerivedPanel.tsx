@@ -1,11 +1,12 @@
 import { ReactNode } from "react";
-import { formatModifier } from "@/shared/utils/cr.utils";
+import { formatModifier, getAbilityModifier } from "@/shared/utils/cr.utils";
 import { Shield } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import { getAttunementInfo } from "../../utils/attunement.utils";
 import { useCharacterArmorClass } from "../../hooks/useCharacterArmorClass";
 import { useCharacterHitPoints } from "../../hooks/useCharacterHitPoints";
 import { useCharacterSpeed } from "../../hooks/useCharacterSpeed";
+import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { HintTooltip } from "@/shared/components/HintTooltip";
 
@@ -15,6 +16,7 @@ export function BuilderDerivedPanel() {
   const hitPointStats = useCharacterHitPoints();
   const armorClass = useCharacterArmorClass();
   const speedStats = useCharacterSpeed();
+  const effectiveScores = useEffectiveAbilityScores();
   const attunement = getAttunementInfo(classSelection?.name, character.level);
 
   return (
@@ -48,7 +50,7 @@ export function BuilderDerivedPanel() {
         />
         <DerivedRow
           label="Initiative"
-          value={formatModifier(character.getModifier("dex"))}
+          value={formatModifier(getAbilityModifier(effectiveScores.dex))}
         />
         <DerivedRow
           label="Attunement"

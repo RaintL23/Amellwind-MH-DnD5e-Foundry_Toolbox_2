@@ -11,6 +11,7 @@ import type {
   Rune,
   Weapon,
   ArmorItem,
+  AbilityScores,
   CombatCalculation,
   CharacterSelectionRef,
   Class,
@@ -19,6 +20,7 @@ import type {
 import type { StandaloneShieldItem } from "../../data/shield.data";
 import { calculateCombat } from "../../utils/combat.calculator";
 import { getCharacterAcBreakdown } from "../../utils/character-armor-class";
+import { abilityModifiersFromScores } from "../../utils/effective-ability-scores";
 import {
   makeWeaponSlot,
   makeArmorSlot,
@@ -49,6 +51,8 @@ import {
 
 export interface EquipmentSliceInput {
   character: Character;
+  /** Base + origin + ASI scores used for AC / DPT modifiers. */
+  effectiveAbilities: AbilityScores;
   classRef: CharacterSelectionRef | null;
   speciesRef: CharacterSelectionRef | null;
   classData: Class | null;
@@ -60,6 +64,7 @@ export interface EquipmentSliceInput {
 
 export function useEquipmentSlice({
   character,
+  effectiveAbilities,
   classRef,
   speciesRef,
   classData,
@@ -285,14 +290,7 @@ export function useEquipmentSlice({
   const shieldAcBonus = integratedShieldAcBonus + standaloneShieldAcBonus;
 
   const totalAC = useMemo(() => {
-    const modifiers = {
-      str: character.getModifier("str"),
-      dex: character.getModifier("dex"),
-      con: character.getModifier("con"),
-      int: character.getModifier("int"),
-      wis: character.getModifier("wis"),
-      cha: character.getModifier("cha"),
-    };
+    const modifiers = abilityModifiersFromScores(effectiveAbilities);
 
     return getCharacterAcBreakdown({
       modifiers,
@@ -307,7 +305,8 @@ export function useEquipmentSlice({
     }).total;
   }, [
     armor,
-    character,
+    character.level,
+    effectiveAbilities,
     integratedShieldAcBonus,
     standaloneShieldAcBonus,
     classRef?.name,
@@ -316,10 +315,15 @@ export function useEquipmentSlice({
 
   const effectiveAttacksPerTurn = attacksPerTurnOverride ?? character.getAttacksPerTurn();
 
+  const combatCharacter = useMemo(
+    () => character.withUpdates({ abilities: effectiveAbilities }),
+    [character, effectiveAbilities],
+  );
+
   const combat: CombatCalculation = useMemo(
     () =>
       calculateCombat(
-        character,
+        combatCharacter,
         mainHand,
         offHand,
         effectiveAttacksPerTurn,
@@ -330,7 +334,7 @@ export function useEquipmentSlice({
         useAmellwindHomebrew,
       ),
     [
-      character,
+      combatCharacter,
       mainHand,
       offHand,
       effectiveAttacksPerTurn,

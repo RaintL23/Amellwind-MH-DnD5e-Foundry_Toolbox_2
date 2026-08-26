@@ -1,7 +1,9 @@
 import { useMemo } from "react";
+import { getAbilityModifier } from "@/shared/utils/cr.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useSelectedClass } from "./useBuilderSelections";
 import { useActiveResolvedFeats } from "./useActiveResolvedFeats";
+import { useEffectiveAbilityScores } from "./useEffectiveAbilityScores";
 import {
   buildClassLevelEntries,
   getMulticlassHitPointBreakdown,
@@ -25,6 +27,8 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
   } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const activeFeats = useActiveResolvedFeats();
+  const effectiveScores = useEffectiveAbilityScores();
+  const conMod = getAbilityModifier(effectiveScores.con);
 
   const featBonuses = useMemo<FeatHitPointBonus[]>(
     () =>
@@ -48,14 +52,14 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
       );
       return getMulticlassHitPointBreakdown(
         classEntries,
-        character.getModifier("con"),
+        conMod,
         featBonuses,
       );
     }
 
     return getCharacterHitPointBreakdown(
       character.level,
-      character.getModifier("con"),
+      conMod,
       classData.hitDie,
       classData.name,
       featBonuses,
@@ -70,7 +74,7 @@ export function useCharacterHitPoints(): CharacterHitPointBreakdown | null {
     multiclassClassData,
     primaryClassLevel,
     character.level,
-    character.abilities.con,
+    conMod,
     featBonuses,
   ]);
 }

@@ -1,16 +1,18 @@
 import { useCallback, useState } from "react";
-import { formatModifier } from "@/shared/utils/cr.utils";
-import { SKILL_ORDER, SKILL_LABELS, ABILITY_KEYS, toAbilityKey } from "@/shared/constants/dnd";
-import type { AbilityKey, SkillKey } from "@/shared/types";
+import { formatModifier, getAbilityModifier } from "@/shared/utils/cr.utils";
+import { SKILL_ORDER, SKILL_LABELS, SKILL_ABILITY, ABILITY_KEYS } from "@/shared/constants/dnd";
+import type { AbilityKey, AbilityScores, SkillKey } from "@/shared/types";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
 import { useCharacterArmorClass } from "./useCharacterArmorClass";
 import { useCharacterHitPoints } from "./useCharacterHitPoints";
 import { useCharacterSpeed } from "./useCharacterSpeed";
+import { useEffectiveAbilityScores } from "./useEffectiveAbilityScores";
 import { useSpellcastingContext } from "../context/SpellcastingContext";
 import { useSelectedClass, useSelectedSubclass } from "./useBuilderSelections";
 import { useSpellCatalog } from "./useSpellCatalog";
 import { getAttunementInfo } from "../utils/attunement.utils";
+import { computeSpellcastingAttackStats } from "../utils/spellcasting-stats.utils";
 import {
   downloadPdf,
   exportCharacterSheetPdf,
@@ -36,13 +38,10 @@ import {
 import { BACKGROUND_FACTION_LABELS } from "@/shared/types";
 import { downloadCharacterImages } from "../utils/image-download.utils";
 
-function formatAbilityExport(
-  character: ReturnType<typeof useCharacterBuilder>["character"],
-  key: AbilityKey,
-) {
+function formatAbilityExport(scores: AbilityScores, key: AbilityKey) {
   return {
-    score: character.abilities[key],
-    mod: formatModifier(character.getModifier(key)),
+    score: scores[key],
+    mod: formatModifier(getAbilityModifier(scores[key])),
   };
 }
 
@@ -56,6 +55,7 @@ export function useCharacterSheetExport() {
   const speed = useCharacterSpeed();
   const { allSpells } = useSpellCatalog();
   const { spellcasting } = useSpellcastingContext();
+  const effectiveScores = useEffectiveAbilityScores();
   const [exporting, setExporting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -65,15 +65,19 @@ export function useCharacterSheetExport() {
       featDescLookup: ReturnType<typeof buildFeatExportDescLookup>,
     ): CharacterSheetExportData => {
     const { character } = builder;
+    const exportCharacter = character.withUpdates({ abilities: effectiveScores });
     const attunement = getAttunementInfo(builder.class?.name, character.level);
 
-    const spellKey = toAbilityKey(spellcasting.spellcastingAbility);
-    const spellMod = spellKey ? character.getModifier(spellKey) : 0;
     const prof = character.getProficiencyBonus();
-    const spellSaveDc =
-      spellKey !== null ? String(8 + prof + spellMod) : undefined;
-    const spellAttackBonus =
-      spellKey !== null ? formatModifier(prof + spellMod) : undefined;
+    const {
+      spellSaveDc,
+      spellAttackBonus,
+      spellcastingMod,
+    } = computeSpellcastingAttackStats(
+      spellcasting.spellcastingAbility,
+      prof,
+      (key) => getAbilityModifier(effectiveScores[key]),
+    );
 
     const combatMainHand = builder.combat?.mainHand;
     const unarmedWeaponSource = combatMainHand?.sources.find(
@@ -81,7 +85,7 @@ export function useCharacterSheetExport() {
     );
 
     const weapons = buildWeaponsAndCantripsExport({
-      character,
+      character: exportCharacter,
       mainHand: builder.mainHand,
       offHand: builder.offHand,
       inventoryWeapons: inventory.weapons,
@@ -183,15 +187,26 @@ export function useCharacterSheetExport() {
 
     const savingThrows: Record<string, string> = {};
     for (const key of ABILITY_KEYS) {
-      savingThrows[key.toUpperCase()] = formatModifier(
-        character.getSavingThrowModifier(key),
-      );
+      const abilityMod = getAbilityModifier(effectiveScores[key]);
+      const saveMod = character.isSavingThrowProficient(key)
+        ? abilityMod + prof
+        : abilityMod;
+      savingThrows[key.toUpperCase()] = formatModifier(saveMod);
     }
 
     const skills: Record<string, string> = {};
     for (const skill of SKILL_ORDER) {
-      skills[skill] = formatModifier(character.getSkillModifier(skill));
+      const level = character.getSkillProficiencyLevel(skill);
+      const skillMod =
+        getAbilityModifier(effectiveScores[SKILL_ABILITY[skill]]) +
+        level * prof;
+      skills[skill] = formatModifier(skillMod);
     }
+
+    const perceptionLevel = character.getSkillProficiencyLevel("prc");
+    const perceptionMod =
+      getAbilityModifier(effectiveScores[SKILL_ABILITY.prc]) +
+      perceptionLevel * prof;
 
     return {
       name: character.name,
@@ -208,19 +223,19 @@ export function useCharacterSheetExport() {
       xp: getXpForLevel(character.level),
       size: character.size === "S" ? "S" : "M",
       speed: speed.display,
-      initiative: formatModifier(character.getModifier("dex")),
-      passivePerception: character.getPassiveScore("prc"),
+      initiative: formatModifier(getAbilityModifier(effectiveScores.dex)),
+      passivePerception: 10 + perceptionMod,
       proficiencyBonus: prof,
       armorClass: armorClass.total,
       maxHp: hitPoints?.max ?? 0,
       hitDice: hitPoints?.hitDice ?? "",
       abilities: {
-        str: formatAbilityExport(character, "str"),
-        dex: formatAbilityExport(character, "dex"),
-        con: formatAbilityExport(character, "con"),
-        int: formatAbilityExport(character, "int"),
-        wis: formatAbilityExport(character, "wis"),
-        cha: formatAbilityExport(character, "cha"),
+        str: formatAbilityExport(effectiveScores, "str"),
+        dex: formatAbilityExport(effectiveScores, "dex"),
+        con: formatAbilityExport(effectiveScores, "con"),
+        int: formatAbilityExport(effectiveScores, "int"),
+        wis: formatAbilityExport(effectiveScores, "wis"),
+        cha: formatAbilityExport(effectiveScores, "cha"),
       },
       savingThrows,
       skills,
@@ -250,7 +265,7 @@ export function useCharacterSheetExport() {
       weapons,
       spells: spellList,
       spellcastingAbility: spellcasting.spellcastingAbility ?? undefined,
-      spellcastingMod: spellKey !== null ? formatModifier(spellMod) : undefined,
+      spellcastingMod,
       spellSaveDc,
       spellAttackBonus,
       spellSlotTotals: getSpellSlotTotals(
@@ -278,6 +293,7 @@ export function useCharacterSheetExport() {
     armorClass.total,
     builder,
     classData,
+    effectiveScores,
     hitPoints,
     inventory.items,
     inventory.weapons,

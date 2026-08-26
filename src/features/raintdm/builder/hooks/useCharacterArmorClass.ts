@@ -1,10 +1,10 @@
 import { useMemo } from "react";
 import type { AbilityKey } from "@/shared/types";
-import { ABILITY_KEYS } from "@/shared/constants/dnd";
 import { subclassesForClassVariant } from "@/features/dnd/classes/utils/class-subclass.utils";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useResolvedSpecies } from "./useResolvedSpecies";
 import { useSelectedClass } from "./useBuilderSelections";
+import { useEffectiveAbilityModifiers } from "./useEffectiveAbilityScores";
 import {
   getCharacterAcBreakdown,
   type CharacterAcBreakdown,
@@ -22,6 +22,7 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
   } = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const resolvedSpecies = useResolvedSpecies();
+  const modifiers = useEffectiveAbilityModifiers();
 
   const subclassData = useMemo(() => {
     if (!classData || !subclass) return null;
@@ -31,18 +32,10 @@ export function useCharacterArmorClass(): CharacterAcBreakdown {
     );
   }, [classData, subclass]);
 
-  const modifiers = useMemo(
-    () =>
-      Object.fromEntries(
-        ABILITY_KEYS.map((key) => [key, character.getModifier(key)]),
-      ) as Record<AbilityKey, number>,
-    [character.abilities],
-  );
-
   return useMemo(
     () =>
       getCharacterAcBreakdown({
-        modifiers,
+        modifiers: modifiers as Record<AbilityKey, number>,
         level: character.level,
         armor,
         integratedShieldAcBonus,

@@ -18,7 +18,7 @@ import {
   persistUseAmellwindHomebrew,
 } from "../storage/builder.storage";
 import { clearBuilderAutosave } from "../storage/builder-autosave.storage";
-import type { AbilityKey, AbilityScores } from "@/shared/types";
+import type { AbilityKey, AbilityScores, DndBackground } from "@/shared/types";
 import {
   composeAlignment,
   parseAlignmentAxes,
@@ -27,7 +27,9 @@ import {
 } from "../utils/alignment.utils";
 import { Character } from "../models/Character";
 import { getPrimaryClassLevel } from "../utils/multiclass.utils";
+import { computeEffectiveAbilityScores } from "../utils/effective-ability-scores";
 import type { AbilityScoreGenerationMethod } from "../utils/ability-scores";
+import { getDndBackgroundById } from "@/features/dnd/backgrounds/services/dnd-background.service";
 import { useBuilderInventory } from "./BuilderInventoryContext";
 import type { CharacterBuilderContextValue } from "./character-builder.types";
 import { useIdentitySlice } from "./slices/useIdentitySlice";
@@ -106,8 +108,76 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     optionalFeatureOriginFeatSkillChoices: spell.optionalFeatureOriginFeatSkillChoices,
   });
 
+  const [dndBackground, setDndBackground] = useState<DndBackground | null>(null);
+  useEffect(() => {
+    const backgroundId = identity.background?.id;
+    if (!backgroundId) {
+      setDndBackground(null);
+      return;
+    }
+    let cancelled = false;
+    getDndBackgroundById(backgroundId)
+      .then((data) => {
+        if (!cancelled) setDndBackground(data ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setDndBackground(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [identity.background?.id]);
+
+  const effectiveAbilities = useMemo(
+    () =>
+      computeEffectiveAbilityScores({
+        baseScores: character.abilities,
+        level: character.level,
+        classSelection: identity.class,
+        classData: identity.classData,
+        multiclassEnabled: identity.multiclassEnabled,
+        multiclassEntries: identity.multiclassEntries,
+        multiclassClassData: identity.multiclassClassData,
+        species: identity.speciesData,
+        featSelections: identity.featSelections,
+        useTashaOrigin: identity.useTashaOrigin,
+        tashaPlus2: identity.tashaPlus2,
+        tashaPlus1: identity.tashaPlus1,
+        speciesAbilityChoices: identity.speciesAbilityChoices,
+        background: dndBackground
+          ? {
+              name: dndBackground.name,
+              abilityBonuses: dndBackground.abilityBonuses,
+            }
+          : null,
+        backgroundAsiMode: identity.backgroundAsiMode,
+        backgroundAsiPlus2: identity.backgroundAsiPlus2,
+        backgroundAsiPlus1: identity.backgroundAsiPlus1,
+      }),
+    [
+      character.abilities,
+      character.level,
+      identity.class,
+      identity.classData,
+      identity.multiclassEnabled,
+      identity.multiclassEntries,
+      identity.multiclassClassData,
+      identity.speciesData,
+      identity.featSelections,
+      identity.useTashaOrigin,
+      identity.tashaPlus2,
+      identity.tashaPlus1,
+      identity.speciesAbilityChoices,
+      dndBackground,
+      identity.backgroundAsiMode,
+      identity.backgroundAsiPlus2,
+      identity.backgroundAsiPlus1,
+    ],
+  );
+
   const equipment = useEquipmentSlice({
     character,
+    effectiveAbilities,
     classRef: identity.class,
     speciesRef: identity.species,
     classData: identity.classData,

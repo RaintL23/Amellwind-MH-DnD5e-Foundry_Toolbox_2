@@ -8,6 +8,7 @@ import { useCharacterBuilder } from "./CharacterBuilderContext";
 import { useSelectedClass, useSelectedSubclass } from "../hooks/useBuilderSelections";
 import { useOptionalFeatureSpellGrants } from "../hooks/useOptionalFeatureSpellGrants";
 import { useCantripPoolCatalogs } from "../hooks/useCantripPools";
+import { useEffectiveAbilityScores } from "../hooks/useEffectiveAbilityScores";
 import {
   useSpellcasting,
   type SpellcastingInfo,
@@ -39,6 +40,7 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
   const builder = useCharacterBuilder();
   const { classData } = useSelectedClass();
   const subclassData = useSelectedSubclass();
+  const effectiveAbilities = useEffectiveAbilityScores();
 
   const optionalFeatureSpellGrants = useOptionalFeatureSpellGrants(
     builder.optionalFeatureSelections ?? {},
@@ -139,7 +141,7 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
     classData,
     subclassData,
     builder.character.level,
-    builder.character.abilities,
+    effectiveAbilities,
     builder.spellSelections ?? {},
     builder.optionalFeatureSelections ?? {},
     optionalFeatureSpellGrants,
@@ -176,7 +178,7 @@ export function SpellcastingProvider({ children }: Readonly<{ children: ReactNod
     classData,
     subclassData,
     builder.character.level,
-    builder.character.abilities,
+    effectiveAbilities,
     builder.spellSelections ?? {},
     builder.optionalFeatureSelections ?? {},
     optionalFeatureSpellGrants,

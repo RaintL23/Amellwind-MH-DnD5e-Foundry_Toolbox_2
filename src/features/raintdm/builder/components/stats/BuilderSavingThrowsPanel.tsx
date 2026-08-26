@@ -1,7 +1,8 @@
-import { formatModifier } from "@/shared/utils/cr.utils";
+import { formatModifier, getAbilityModifier } from "@/shared/utils/cr.utils";
 import { ABILITY_LABELS } from "@/shared/types";
 import { ShieldCheck } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
+import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
 import { ABILITY_ORDER, ABILITY_NAMES } from "@/shared/constants/dnd";
 import { BuilderPanel } from "../shared/BuilderPanel";
 import { BuilderStatRow } from "./BuilderStatRow";
@@ -9,6 +10,8 @@ import { BuilderStatRow } from "./BuilderStatRow";
 export function BuilderSavingThrowsPanel() {
   const { character, saveProficiencyAbilities, class: classRef } =
     useCharacterBuilder();
+  const effectiveScores = useEffectiveAbilityScores();
+  const proficiencyBonus = character.getProficiencyBonus();
 
   return (
     <BuilderPanel
@@ -21,6 +24,10 @@ export function BuilderSavingThrowsPanel() {
       <div className="space-y-0">
         {ABILITY_ORDER.map((ability) => {
           const proficient = character.isSavingThrowProficient(ability);
+          const abilityMod = getAbilityModifier(effectiveScores[ability]);
+          const saveMod = proficient
+            ? abilityMod + proficiencyBonus
+            : abilityMod;
           const saveSources = proficient
             ? [
                 {
@@ -36,7 +43,7 @@ export function BuilderSavingThrowsPanel() {
             <BuilderStatRow
               key={ability}
               label={ABILITY_LABELS[ability]}
-              value={formatModifier(character.getSavingThrowModifier(ability))}
+              value={formatModifier(saveMod)}
               proficient={proficient}
               proficiencySources={saveSources}
               sourcesTooltip={tooltip}

@@ -1,7 +1,8 @@
-import { formatModifier } from "@/shared/utils/cr.utils";
+import { formatModifier, getAbilityModifier } from "@/shared/utils/cr.utils";
 import { ListChecks } from "lucide-react";
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
+  SKILL_ABILITY,
   SKILL_LABELS,
   SKILL_ORDER,
 } from "@/shared/constants/dnd";
@@ -12,6 +13,7 @@ import { BuilderStatRow } from "./BuilderStatRow";
 import { BuilderSkillPicker } from "./BuilderSkillPicker";
 import { BuilderExpertisePicker } from "./BuilderExpertisePicker";
 import type { SkillKey } from "@/shared/types";
+import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
 import {
   getPendingChoiceGrants,
   getPendingExpertiseGrants,
@@ -55,6 +57,8 @@ export function BuilderSkillChecksPanel() {
     setOptionalFeatureOriginFeatSkillChoicesAtIndex,
     setExpertiseChoices,
   } = useCharacterBuilder();
+  const effectiveScores = useEffectiveAbilityScores();
+  const proficiencyBonus = character.getProficiencyBonus();
 
   const speciesGrantList = allSkillGrants.filter((g) => g.source.type === "species");
   const bgGrantList = allSkillGrants.filter((g) => g.source.type === "background");
@@ -321,12 +325,17 @@ export function BuilderSkillChecksPanel() {
       <div className="mt-2 space-y-0">
         {SKILL_ORDER.map((skill) => {
           const level = character.getSkillProficiencyLevel(skill);
+          const abilityMod = getAbilityModifier(
+            effectiveScores[SKILL_ABILITY[skill]],
+          );
+          const skillMod = abilityMod + level * proficiencyBonus;
+          const passive = 10 + skillMod;
           return (
             <BuilderStatRow
               key={skill}
               label={SKILL_LABELS[skill]}
-              value={formatModifier(character.getSkillModifier(skill))}
-              secondary={`P ${character.getPassiveScore(skill)}`}
+              value={formatModifier(skillMod)}
+              secondary={`P ${passive}`}
               proficient={level === 1}
               expertise={level === 2}
               advantage={advantageSkills.has(skill)}
