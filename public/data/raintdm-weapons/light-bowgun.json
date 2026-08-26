@@ -34,7 +34,7 @@
               "1",
               "--",
               "--",
-              "Mastery (Slow), Rapid Fire, Magazine, Reload",
+              "Mastery (Slow), Rapid Fire, Overheat, Magazine, Reload",
               "Normal Ammo, Pierce Ammo, Spread Ammo"
             ],
             [
@@ -50,7 +50,7 @@
               "3",
               "+1",
               "+1",
-              "Rapid Fire Upgrade II, Magazine Upgrade II, Special Ammo Upgrade I, Wyvernblast Upgrade I",
+              "Magazine Upgrade II, Special Ammo Upgrade I, Wyvernblast Upgrade I",
               "Poison Ammo, Paralysis Ammo, Explosive/Sticky Ammo"
             ],
             [
@@ -58,7 +58,7 @@
               "4",
               "+2",
               "+2",
-              "Rapid Fire Upgrade III, Magazine Upgrade III, Special Ammo Upgrade II, Counter Mine",
+              "Rapid Fire Upgrade II, Overheat Upgrade I, Magazine Upgrade III, Special Ammo Upgrade II, Counter Mine",
               "Sleep Ammo, Dragon Ammo, Normal Ammo Upgrade, Pierce Ammo Upgrade, Spread Ammo Upgrade, Recover Ammo Upgrade, Flaming Ammo Upgrade, Water Ammo Upgrade, Thunder Ammo Upgrade, Freeze Ammo Upgrade"
             ],
             [
@@ -66,7 +66,7 @@
               "5",
               "+3",
               "+3",
-              "Magazine Upgrade IV, Special Ammo Upgrade III, Wyvernblast Upgrade II",
+              "Rapid Fire Upgrade III, Magazine Upgrade IV, Special Ammo Upgrade III, Wyvernblast Upgrade II",
               "--"
             ]
           ]
@@ -86,6 +86,11 @@
         "id": "df03844b-cc61-432a-a4b7-f99f9259e734",
         "name": "Rapid Fire",
         "description": "When you take the Attack action and attack with this weapon, you can make one additional attack with it as a Bonus Action."
+      },
+      {
+        "id": "90401a43-a2c9-448c-bb50-09144612dfce",
+        "name": "Overheat",
+        "description": "When you resolve an attack made with your Rapid Fire feature, you gain 1 stack of Overheat. Resolve that attack first (applying any Overheat stacks you already have), then gain the new stack; the attack that just granted the stack does not take that new stack's penalty.\n\nWhile you have one or more stacks, attacks with this weapon deal 3 less damage for each stack (to a minimum of 1 damage from the weapon's damage roll and modifiers combined, before other effects that add damage dice). This penalty applies to every later attack with this weapon before the start of your next turn — including attacks from Action Surge, Extra Attack, and reactions — not only Rapid Fire shots. Overheat stacks last until the start of your next turn.\n\nAgainst area ammunition (such as Pierce, Spread, or Explosive/Sticky Ammo), the penalty reduces the weapon damage of that shot for each creature affected. It does not change save DCs or non-damage effects (conditions, healing from Recover Ammo, and similar)."
       },
       {
         "id": "41f49f2b-d88a-4dfb-85b5-121e7308ba8a",
@@ -177,6 +182,12 @@
         "name": "Rapid Fire Upgrade II",
         "description": "When you use your Rapid Fire feature to attack as a Bonus Action, you can make three additional attacks instead of two.",
         "upgradesFromId": "92f90b89-4d17-4ae4-962e-e2cdf94bde10"
+      },
+      {
+        "id": "1461feca-fdf1-4823-9b9d-be0616c914ba",
+        "name": "Overheat Upgrade I",
+        "description": "Overheat's damage penalty is 2 per stack instead of 3.",
+        "upgradesFromId": "90401a43-a2c9-448c-bb50-09144612dfce"
       },
       {
         "id": "f81f62df-e3ae-45b5-95e4-fd39d440888a",
