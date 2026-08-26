@@ -33,14 +33,15 @@ They are capable of lunging and biting at foes, as well as performing an acrobat
 
 ## Stat Block
 
-*Medium beast (fanged), unaligned*
+_Medium beast (fanged), unaligned_
+
 - **Armor Class:** 13 (natural armor)
 - **Hit Points:** 19 (3d8 + 6)
 - **Speed:** 30 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 14 | 13 | 15 | 3 | 12 | 6 |
+| --: | --: | --: | --: | --: | --: |
+|  14 |  13 |  15 |   3 |  12 |   6 |
 
 - **Skills:** Perception +3
 - **Damage Immunities:** cold
@@ -52,8 +53,7 @@ They are capable of lunging and biting at foes, as well as performing an acrobat
 
 ### Special
 
-+2 Pack Tactics. The wulg has advantage on an attack roll against a creature if at least one of the wulg's allies is within 5 feet of the creature and the ally isn't incapacitated.
-
+Pack Tactics. The wulg has advantage on an attack roll against a creature if at least one of the wulg's allies is within 5 feet of the creature and the ally isn't incapacitated.
 
 ## Actions
 
@@ -65,22 +65,20 @@ Melee Weapon Attack: +4 hit, Reach 5 ft., one target. Hit: 5 (1d6 + 2) piercing 
 
 Melee Weapon Attack: +4 hit, Reach 5 ft., one target. Hit: 7 (2d4 + 2) slashing damage. If the wulg moved at least 20 feet straight toward a Medium or larger creature immediately before the hit, that target must succeed on a DC 12 Strength saving throw or the wulg attaches itself to the target (escape DC 12).
 
-
 ## Bonus Actions
 
 ### Crunch
 
 While attached to a creature, the wulg makes one Bite attack against it. 291
 
-
 ## Loot
 
 **Carves/Capture rolls:** 1
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-14 | — | Raw Meat | O |
-| 15-20 | — | Wulg Thickfur | A, W |
+| Carve | Capture | Material      | Slots |
+| ----- | ------- | ------------- | ----- |
+| 1-14  | —       | Raw Meat      | O     |
+| 15-20 | —       | Wulg Thickfur | A, W  |
 
 ## Materials (Runes)
 
