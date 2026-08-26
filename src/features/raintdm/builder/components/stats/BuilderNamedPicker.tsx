@@ -1,8 +1,22 @@
 import { useState } from "react";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import type { ProficiencySourceType } from "@/shared/types/proficiency.types";
+import { resolveAnyProficiencyOptions } from "@/shared/data/chooseable-tools-weapons";
 import {
   badgeStyleForSource,
   dominantSourceType,
@@ -30,19 +44,20 @@ export function BuilderNamedPicker({
   label,
   pickerSourceType,
 }: BuilderNamedPickerProps) {
-  const [customInput, setCustomInput] = useState("");
-
-  if (!grants.length) return null;
+  const [comboOpen, setComboOpen] = useState(false);
 
   const allowedSet = new Set<string>();
-  let freeformAny = false;
+  let catalogAny = false;
+  let catalogLabel = "option";
 
   for (const g of grants) {
     if (g.kind === "choose") {
       g.from.forEach((item) => allowedSet.add(item));
     } else if (g.kind === "any") {
-      g.options?.forEach((item) => allowedSet.add(item));
-      freeformAny = true;
+      const options = resolveAnyProficiencyOptions(g.label ?? "", g.options);
+      options.forEach((item) => allowedSet.add(item));
+      catalogAny = true;
+      if (g.label) catalogLabel = g.label;
     }
   }
 
@@ -52,6 +67,17 @@ export function BuilderNamedPicker({
     chosen.length,
   );
   const pickerColor = badgeStyleForSource(pickerSourceType);
+
+  /** Fixed choose-from list uses pills; open-ended any-grants use a searchable combo. */
+  const showChoosePills = grants.some((g) => g.kind === "choose") && !catalogAny;
+  const showCatalogCombo = catalogAny;
+
+  const chosenLower = new Set(chosen.map((item) => item.toLowerCase()));
+  const comboChoices = showCatalogCombo
+    ? allowed.filter((item) => !chosenLower.has(item.toLowerCase()))
+    : [];
+
+  if (!grants.length) return null;
 
   function handleToggle(item: string, isChosen: boolean) {
     if (isChosen) {
@@ -63,11 +89,10 @@ export function BuilderNamedPicker({
     }
   }
 
-  function handleAddCustom() {
-    const value = customInput.trim();
-    if (!value || !canPickMore || chosen.includes(value)) return;
-    onChange([...chosen, value]);
-    setCustomInput("");
+  function handlePickFromCombo(item: string) {
+    if (!canPickMore || chosen.includes(item)) return;
+    onChange([...chosen, item]);
+    setComboOpen(false);
   }
 
   return (
@@ -85,7 +110,7 @@ export function BuilderNamedPicker({
         )}
       </p>
 
-      {allowed.length > 0 && (
+      {showChoosePills && allowed.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {allowed.map((item) => {
             const isChosen = chosen.includes(item);
@@ -114,49 +139,71 @@ export function BuilderNamedPicker({
         </div>
       )}
 
-      {freeformAny && (
-        <div className="mt-2 flex flex-wrap items-center gap-1">
-          {chosen
-            .filter((item) => !allowed.includes(item))
-            .map((item) => (
-              <button
-                key={item}
-                type="button"
-                onClick={() => onChange(chosen.filter((s) => s !== item))}
-                className={pickerPillClassName({
-                  badgeColor: pickerColor,
-                  isDisabled: false,
-                })}
-              >
-                {item}
-              </button>
-            ))}
+      {showCatalogCombo && (
+        <div className="mt-1 space-y-2">
+          {chosen.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              {chosen.map((item) => (
+                <button
+                  key={item}
+                  type="button"
+                  title={`Remove ${item}`}
+                  onClick={() => onChange(chosen.filter((s) => s !== item))}
+                  className={pickerPillClassName({
+                    badgeColor: pickerColor,
+                    isDisabled: false,
+                  })}
+                >
+                  {item}
+                </button>
+              ))}
+            </div>
+          )}
+
           {canPickMore && (
-            <>
-              <Input
-                type="text"
-                value={customInput}
-                onChange={(e) => setCustomInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddCustom();
-                  }
-                }}
-                placeholder={grants.find((g) => g.kind === "any")?.label ?? "Custom"}
-                className="h-6 min-w-[7rem] flex-1 px-2 text-[10px]"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={handleAddCustom}
-                disabled={!customInput.trim()}
-                className="h-6 px-2 text-[10px]"
+            <Popover open={comboOpen} onOpenChange={setComboOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  type="button"
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={comboOpen}
+                  className="h-7 w-full justify-between px-2 text-[10px] font-normal"
+                >
+                  <span className="truncate text-muted-foreground">
+                    Search {catalogLabel.toLowerCase()}…
+                  </span>
+                  <ChevronsUpDown className="ml-2 h-3 w-3 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                align="start"
+                className="w-[var(--radix-popover-trigger-width)] p-0"
               >
-                Add
-              </Button>
-            </>
+                <Command>
+                  <CommandInput
+                    placeholder={`Type a ${catalogLabel.toLowerCase()}…`}
+                    className="h-8 text-xs"
+                  />
+                  <CommandList>
+                    <CommandEmpty>No match found.</CommandEmpty>
+                    <CommandGroup>
+                      {comboChoices.map((item) => (
+                        <CommandItem
+                          key={item}
+                          value={item}
+                          onSelect={() => handlePickFromCombo(item)}
+                          className="text-xs"
+                        >
+                          <Check className="mr-2 h-3.5 w-3.5 opacity-0" />
+                          <span className="truncate">{item}</span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
           )}
         </div>
       )}

@@ -9,6 +9,13 @@ import {
   STANDARD_LANGUAGES,
 } from "@/shared/data/chooseable-languages";
 import { getChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
+import {
+  getChooseableAllTools,
+  getChooseableArtisanTools,
+  getChooseableGamingSets,
+  getChooseableMartialWeapons,
+  getChooseableSimpleWeapons,
+} from "@/shared/data/chooseable-tools-weapons";
 
 export { STANDARD_LANGUAGES, getChooseableLanguages };
 
@@ -82,6 +89,7 @@ function parseProficiencyBlock(
         value,
         `Artisan's tool${value > 1 ? "s" : ""}`,
         source,
+        [...getChooseableArtisanTools()],
       );
       continue;
     }
@@ -98,12 +106,24 @@ function parseProficiencyBlock(
     }
 
     if (key === "anyGamingSet" && typeof value === "number") {
-      pushAnyGrant(grants, value, `Gaming set${value > 1 ? "s" : ""}`, source);
+      pushAnyGrant(
+        grants,
+        value,
+        `Gaming set${value > 1 ? "s" : ""}`,
+        source,
+        [...getChooseableGamingSets()],
+      );
       continue;
     }
 
     if (key === "anyTool" && typeof value === "number") {
-      pushAnyGrant(grants, value, `Tool${value > 1 ? "s" : ""}`, source);
+      pushAnyGrant(
+        grants,
+        value,
+        `Tool${value > 1 ? "s" : ""}`,
+        source,
+        [...getChooseableAllTools()],
+      );
     }
   }
 
@@ -121,6 +141,7 @@ function parseProficiencyBlock(
         count,
         `Martial weapon${count > 1 ? "s" : ""}`,
         source,
+        [...getChooseableMartialWeapons()],
       );
       return;
     }
@@ -130,6 +151,7 @@ function parseProficiencyBlock(
         count,
         `Simple weapon${count > 1 ? "s" : ""}`,
         source,
+        [...getChooseableSimpleWeapons()],
       );
       return;
     }
@@ -186,7 +208,9 @@ export function parseNamedProficiencyBlocks(
     const raw = block as Raw;
 
     if (typeof raw.any === "number") {
-      pushAnyGrant(grants, raw.any, "Proficiency", source);
+      pushAnyGrant(grants, raw.any, "Proficiency", source, [
+        ...getChooseableAllTools(),
+      ]);
       continue;
     }
 
@@ -209,6 +233,7 @@ export function parseNamedProficiencyBlocks(
           count,
           `Martial weapon${count > 1 ? "s" : ""}`,
           source,
+          [...getChooseableMartialWeapons()],
         );
         continue;
       }
@@ -218,6 +243,7 @@ export function parseNamedProficiencyBlocks(
           count,
           `Simple weapon${count > 1 ? "s" : ""}`,
           source,
+          [...getChooseableSimpleWeapons()],
         );
         continue;
       }

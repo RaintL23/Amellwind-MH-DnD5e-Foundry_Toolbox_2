@@ -16,6 +16,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { loadChooseableLanguages } from "@/shared/data/chooseable-languages";
 import { loadChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
+import { loadChooseableToolsAndWeapons } from "@/shared/data/chooseable-tools-weapons";
 import { syncData } from "@/shared/db/sync.service";
 
 // ─── Lazy page imports ───────────────────────────────────────────────────────
@@ -298,6 +299,9 @@ export default function App() {
       }),
       loadChooseableMusicalInstruments().catch((error) => {
         console.warn("[Bootstrap] Failed to load musical instruments:", error);
+      }),
+      loadChooseableToolsAndWeapons().catch((error) => {
+        console.warn("[Bootstrap] Failed to load tools/weapons:", error);
       }),
     ])
       .catch((error) => {

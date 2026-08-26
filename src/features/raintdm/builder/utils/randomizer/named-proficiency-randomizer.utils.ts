@@ -3,7 +3,7 @@ import {
   getChooseableLanguages,
   STANDARD_LANGUAGES,
 } from "@/shared/data/chooseable-languages";
-import { getChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
+import { resolveAnyProficiencyOptions } from "@/shared/data/chooseable-tools-weapons";
 import {
   getPendingNamedChoiceGrants,
   resolveFixedNamedGrants,
@@ -12,39 +12,18 @@ import { shuffle } from "./character-randomizer.utils";
 
 type PendingNamedGrant = ReturnType<typeof getPendingNamedChoiceGrants>[number];
 
-const COMMON_ARTISAN_TOOLS = [
-  "Carpenter's Tools",
-  "Smith's Tools",
-  "Thieves' Tools",
-  "Herbalism Kit",
-  "Cook's Utensils",
-];
-
-const COMMON_GAMING_SETS = [
-  "Dice Set",
-  "Playing Cards",
-  "Dragonchess Set",
-  "Three-Dragon Ante Set",
-];
-
 const FALLBACK_MUSICAL_INSTRUMENTS = ["Lute", "Flute", "Drum"];
 
 function poolForAnyGrant(
   grant: Extract<NamedProficiencyGrant, { kind: "any" }>,
 ): string[] {
-  if (grant.options?.length) return [...grant.options];
+  const resolved = resolveAnyProficiencyOptions(grant.label, grant.options);
+  if (resolved.length) return resolved;
 
   const label = grant.label.toLowerCase();
   if (label.includes("language")) return [...STANDARD_LANGUAGES];
-  if (label.includes("musical")) {
-    const loaded = getChooseableMusicalInstruments();
-    return loaded.length > 0 ? [...loaded] : FALLBACK_MUSICAL_INSTRUMENTS;
-  }
-  if (label.includes("gaming")) return COMMON_GAMING_SETS;
-  if (label.includes("artisan") || label.includes("tool")) {
-    return COMMON_ARTISAN_TOOLS;
-  }
-  return COMMON_ARTISAN_TOOLS;
+  if (label.includes("musical")) return FALLBACK_MUSICAL_INSTRUMENTS;
+  return resolveAnyProficiencyOptions("tool");
 }
 
 function isLanguageGrant(grant: PendingNamedGrant): boolean {

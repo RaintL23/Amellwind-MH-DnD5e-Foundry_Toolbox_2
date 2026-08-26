@@ -1,4 +1,9 @@
 import type { NamedProficiencyGrant, ProficiencySource } from "@/shared/types/proficiency.types";
+import {
+  getChooseableArtisanTools,
+  getChooseableMartialWeapons,
+  getChooseableSimpleWeapons,
+} from "@/shared/data/chooseable-tools-weapons";
 import { canonicalizeWeaponProficiencyLabel } from "@/shared/utils/weapon-proficiency-name.utils";
 
 export interface TextProficiencyGrantItems {
@@ -58,9 +63,10 @@ function pushAnyProficiencyGrant(
   count: number,
   label: string,
   source: ProficiencySource,
+  options?: string[],
 ): void {
   if (count <= 0) return;
-  grants.push({ kind: "any", count, label, source });
+  grants.push({ kind: "any", count, label, options, source });
 }
 
 /** Parses "proficiency in two artisan's tools of your choice" style grants. */
@@ -88,6 +94,7 @@ export function parseChooseProficiencyGrantsFromText(
         count,
         `Artisan's tool${count > 1 ? "s" : ""}`,
         source,
+        [...getChooseableArtisanTools()],
       );
       continue;
     }
@@ -97,6 +104,7 @@ export function parseChooseProficiencyGrantsFromText(
         count,
         `Martial weapon${count > 1 ? "s" : ""}`,
         source,
+        [...getChooseableMartialWeapons()],
       );
       continue;
     }
@@ -106,6 +114,7 @@ export function parseChooseProficiencyGrantsFromText(
         count,
         `Simple weapon${count > 1 ? "s" : ""}`,
         source,
+        [...getChooseableSimpleWeapons()],
       );
     }
   }
