@@ -25,6 +25,7 @@ import {
   toFeatSlot,
   toOptionalOriginFeatSlot,
 } from "../../utils/builder-class.utils";
+import { formatFeatAbilityIncreaseChoicesSummary } from "../../utils/feat-ability-increase-choices.utils";
 import {
   buildClassLevelEntries,
   getFeatSlotLevelsForBuild,
@@ -380,11 +381,14 @@ export function IdentityGridPanel({
                     name: feat.name,
                     detail: isAsiFeatSelection(feat)
                       ? formatAsiChoicesSummary(feat.asiChoices)
-                      : feat.source === "amellwind"
-                        ? "Amellwind"
-                        : feat.source === "dnd2024"
-                          ? "D&D 2024"
-                          : "D&D 2014",
+                      : (formatFeatAbilityIncreaseChoicesSummary(
+                          feat.abilityIncreaseChoices,
+                        ) ??
+                        (feat.source === "amellwind"
+                          ? "Amellwind"
+                          : feat.source === "dnd2024"
+                            ? "D&D 2024"
+                            : "D&D 2014")),
                   }
                 : null
             }

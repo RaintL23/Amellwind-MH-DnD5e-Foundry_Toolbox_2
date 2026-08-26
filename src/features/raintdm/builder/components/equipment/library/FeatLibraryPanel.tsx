@@ -23,6 +23,10 @@ import {
   parseOptionalOriginFeatSlotIndex,
 } from "@/features/raintdm/builder/utils/builder-class.utils";
 import {
+  buildFeatAbilityIncreaseChoices,
+  setFeatAbilityIncreaseChoiceAt,
+} from "@/features/raintdm/builder/utils/feat-ability-increase-choices.utils";
+import {
   resolveOriginFeatChooseTarget,
 } from "@/features/raintdm/builder/utils/origin-feat.constants";
 import {
@@ -35,7 +39,12 @@ import {
 } from "@/features/raintdm/builder/utils/library-variant.utils";
 import { resolveRpgbotContext } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import { useRpgbotRatingsLookup } from "@/features/raintdm/builder/hooks/useRpgbotRatingsLookup";
-import type { BuilderFeatSelection, DndFeat, Feat } from "@/shared/types";
+import type {
+  AbilityKey,
+  BuilderFeatSelection,
+  DndFeat,
+  Feat,
+} from "@/shared/types";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import {
   asFilterString,
@@ -350,6 +359,96 @@ export function FeatLibraryPanel({
     };
   }, [showFeatDetail, selectedFeat?.id, selectedFeat?.source]);
 
+  // Ensure ability-increase picks exist once the full feat is resolved.
+  useEffect(() => {
+    if (!featDetail || !selectedFeat || isAsiFeatSelection(selectedFeat)) return;
+    if (featDetail.abilityIncreases.length === 0) return;
+
+    const nextChoices = buildFeatAbilityIncreaseChoices(
+      featDetail.abilityIncreases,
+      { previous: selectedFeat.abilityIncreaseChoices },
+    );
+    const prev = selectedFeat.abilityIncreaseChoices;
+    const unchanged =
+      prev &&
+      prev.length === nextChoices.length &&
+      prev.every(
+        (choice, i) =>
+          choice.ability === nextChoices[i]?.ability &&
+          choice.amount === nextChoices[i]?.amount,
+      );
+    if (unchanged) return;
+
+    const nextSelection: BuilderFeatSelection = {
+      ...selectedFeat,
+      abilityIncreaseChoices: nextChoices,
+    };
+
+    if (
+      isInvocationOriginFeatSlotSelected &&
+      invocationOriginFeatIndex !== null
+    ) {
+      setOptionalFeatureOriginFeatAtIndex(
+        invocationOriginFeatIndex,
+        nextSelection,
+      );
+      return;
+    }
+    if (isOriginFeatSlotSelected) {
+      if (originFeatLocked) return;
+      if (originFeatChooseTarget === "background") {
+        setBackgroundOriginFeat(nextSelection);
+      } else {
+        setSpeciesOriginFeat(nextSelection);
+      }
+      return;
+    }
+    if (featSlotIndex === null) return;
+    setFeatAtIndex(featSlotIndex, nextSelection);
+  }, [
+    featDetail,
+    selectedFeat,
+    isInvocationOriginFeatSlotSelected,
+    invocationOriginFeatIndex,
+    isOriginFeatSlotSelected,
+    originFeatLocked,
+    originFeatChooseTarget,
+    featSlotIndex,
+    setOptionalFeatureOriginFeatAtIndex,
+    setBackgroundOriginFeat,
+    setSpeciesOriginFeat,
+    setFeatAtIndex,
+  ]);
+
+  function withAbilityIncreaseChoices(
+    selection: BuilderFeatSelection,
+    feat: Feat | DndFeat | undefined,
+  ): BuilderFeatSelection {
+    if (isAsiFeatSelection(selection) || !feat?.abilityIncreases.length) {
+      return selection;
+    }
+    return {
+      ...selection,
+      abilityIncreaseChoices: buildFeatAbilityIncreaseChoices(
+        feat.abilityIncreases,
+        { previous: selection.abilityIncreaseChoices },
+      ),
+    };
+  }
+
+  function findLoadedFeat(
+    id: string,
+    source: BuilderFeatSelection["source"],
+  ): Feat | DndFeat | undefined {
+    if (source === "amellwind") {
+      return amellwindFeats.find((f) => f.id === id);
+    }
+    if (source === "dnd2014" || source === "dnd2024") {
+      return dndFeats.find((f) => f.id === id);
+    }
+    return undefined;
+  }
+
   function handleSelectFeatOption(id: string, name: string) {
     if (featSlotIndex === null) return;
 
@@ -369,7 +468,9 @@ export function FeatLibraryPanel({
           ? ("dnd2024" as const)
           : ("dnd2014" as const);
 
-    handleSelectFeat({ id, name, source });
+    handleSelectFeat(
+      withAbilityIncreaseChoices({ id, name, source }, findLoadedFeat(id, source)),
+    );
   }
 
   function setOriginFeatSelection(selection: BuilderFeatSelection | null) {
@@ -383,32 +484,31 @@ export function FeatLibraryPanel({
   function handleDndFeatSourceSelect(id: string) {
     const variant = dndFeatSourceVariants.find((v) => v.id === id);
     if (!variant || !selectedFeat) return;
+    const fullVariant =
+      dndFeatVariantsRaw.find((f) => f.id === id) ??
+      findLoadedFeat(id, selectedFeat.source);
+    const next = withAbilityIncreaseChoices(
+      {
+        id: variant.id,
+        name: selectedFeat.name,
+        source: selectedFeat.source,
+      },
+      fullVariant,
+    );
     if (
       isInvocationOriginFeatSlotSelected &&
       invocationOriginFeatIndex !== null
     ) {
-      setOptionalFeatureOriginFeatAtIndex(invocationOriginFeatIndex, {
-        id: variant.id,
-        name: selectedFeat.name,
-        source: selectedFeat.source,
-      });
+      setOptionalFeatureOriginFeatAtIndex(invocationOriginFeatIndex, next);
       return;
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
-      setOriginFeatSelection({
-        id: variant.id,
-        name: selectedFeat.name,
-        source: selectedFeat.source,
-      });
+      setOriginFeatSelection(next);
       return;
     }
     if (featSlotIndex === null) return;
-    setFeatAtIndex(featSlotIndex, {
-      id: variant.id,
-      name: selectedFeat.name,
-      source: selectedFeat.source,
-    });
+    setFeatAtIndex(featSlotIndex, next);
   }
 
   function handleSelectFeat(selection: BuilderFeatSelection) {
@@ -440,7 +540,12 @@ export function FeatLibraryPanel({
   }
 
   function handleSelectOriginFeatOption(id: string, name: string) {
-    handleSelectFeat({ id, name, source: "dnd2024" });
+    handleSelectFeat(
+      withAbilityIncreaseChoices(
+        { id, name, source: "dnd2024" },
+        findLoadedFeat(id, "dnd2024"),
+      ),
+    );
   }
 
   function handleUpdateAsiChoices(
@@ -448,6 +553,39 @@ export function FeatLibraryPanel({
   ) {
     if (featSlotIndex === null || !selectedFeat) return;
     setFeatAtIndex(featSlotIndex, { ...selectedFeat, asiChoices: choices });
+  }
+
+  function handleAbilityIncreaseChoiceChange(
+    index: number,
+    ability: AbilityKey | null,
+  ) {
+    if (!selectedFeat?.abilityIncreaseChoices) return;
+    const nextSelection: BuilderFeatSelection = {
+      ...selectedFeat,
+      abilityIncreaseChoices: setFeatAbilityIncreaseChoiceAt(
+        selectedFeat.abilityIncreaseChoices,
+        index,
+        ability,
+      ),
+    };
+
+    if (
+      isInvocationOriginFeatSlotSelected &&
+      invocationOriginFeatIndex !== null
+    ) {
+      setOptionalFeatureOriginFeatAtIndex(
+        invocationOriginFeatIndex,
+        nextSelection,
+      );
+      return;
+    }
+    if (isOriginFeatSlotSelected) {
+      if (originFeatLocked) return;
+      setOriginFeatSelection(nextSelection);
+      return;
+    }
+    if (featSlotIndex === null) return;
+    setFeatAtIndex(featSlotIndex, nextSelection);
   }
 
   function renderFeatDetail(allowSourceSelect: boolean) {
@@ -468,6 +606,12 @@ export function FeatLibraryPanel({
               : undefined
           }
           bookNames={identityBookNames}
+          abilityIncreaseChoices={selectedFeat?.abilityIncreaseChoices}
+          onAbilityIncreaseChoiceChange={
+            selectedFeat && !isAsiFeatSelection(selectedFeat)
+              ? handleAbilityIncreaseChoiceChange
+              : undefined
+          }
         />
       );
     }

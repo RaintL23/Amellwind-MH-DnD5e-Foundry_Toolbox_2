@@ -24,24 +24,38 @@ export function applyFeatAsiBonuses(
   const slotLevels = getFeatSlotLevels(className, level);
 
   featSelections.forEach((feat, index) => {
-    if (!feat || !isAsiFeatSelection(feat)) return;
-
-    const choices = feat.asiChoices;
-    if (!choices) return;
+    if (!feat) return;
 
     const featLevel = slotLevels[index];
-    const label = featLevel
-      ? `ASI (nivel ${featLevel})`
-      : `ASI (${feat.name})`;
+    const levelLabel = featLevel ? ` (nivel ${featLevel})` : "";
 
-    if (choices.mode === "plus2" && choices.plus2) {
-      addBonus(bonusMap, choices.plus2, 2, label);
+    if (isAsiFeatSelection(feat)) {
+      const choices = feat.asiChoices;
+      if (!choices) return;
+
+      const label = featLevel
+        ? `ASI (nivel ${featLevel})`
+        : `ASI (${feat.name})`;
+
+      if (choices.mode === "plus2" && choices.plus2) {
+        addBonus(bonusMap, choices.plus2, 2, label);
+        return;
+      }
+
+      if (choices.mode === "plus1plus1") {
+        if (choices.plus1a) addBonus(bonusMap, choices.plus1a, 1, label);
+        if (choices.plus1b) addBonus(bonusMap, choices.plus1b, 1, label);
+      }
       return;
     }
 
-    if (choices.mode === "plus1plus1") {
-      if (choices.plus1a) addBonus(bonusMap, choices.plus1a, 1, label);
-      if (choices.plus1b) addBonus(bonusMap, choices.plus1b, 1, label);
+    const picks = feat.abilityIncreaseChoices;
+    if (!picks?.length) return;
+
+    const label = `${feat.name}${levelLabel}`;
+    for (const pick of picks) {
+      if (!pick.ability || pick.amount <= 0) continue;
+      addBonus(bonusMap, pick.ability, pick.amount, label);
     }
   });
 }

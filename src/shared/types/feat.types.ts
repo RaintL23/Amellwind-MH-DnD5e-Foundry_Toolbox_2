@@ -18,6 +18,8 @@ export interface FeatAbilityIncrease {
   label: string;
   /** Ability scores this increase can apply to. */
   abilities: AbilityKey[];
+  /** Score points granted (usually 1). */
+  amount: number;
 }
 
 /** One ability score floor inside a prerequisite alternative. */

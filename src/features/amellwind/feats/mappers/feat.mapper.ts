@@ -61,6 +61,9 @@ function mapAbilityIncreases(raw: Raw): FeatAbilityIncrease[] {
   const result: FeatAbilityIncrease[] = [];
 
   for (const block of raw.ability as Raw[]) {
+    // ASI / dual-mode blocks are handled by AsiLibraryPanel, not feat picks.
+    if (block.hidden === true) continue;
+
     const choose = block.choose as Raw | undefined;
     if (choose && Array.isArray(choose.from)) {
       const fromKeys = (choose.from as string[])
@@ -75,6 +78,7 @@ function mapAbilityIncreases(raw: Raw): FeatAbilityIncrease[] {
       result.push({
         label: `${labels.join(" or ")} +${amount} (choose)`,
         abilities,
+        amount,
       });
       continue;
     }
@@ -84,7 +88,11 @@ function mapAbilityIncreases(raw: Raw): FeatAbilityIncrease[] {
       const ability = abilityKeyFromUnknown(key);
       const label = ability ? ABILITY_LABELS[ability] : undefined;
       if (ability && label && typeof value === "number") {
-        result.push({ label: `${label} +${value}`, abilities: [ability] });
+        result.push({
+          label: `${label} +${value}`,
+          abilities: [ability],
+          amount: value,
+        });
       }
     }
   }

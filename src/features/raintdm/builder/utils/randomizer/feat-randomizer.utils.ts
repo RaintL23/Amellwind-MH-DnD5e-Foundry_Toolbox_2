@@ -51,7 +51,9 @@ function pickRandomOriginFeat(
       )
     : pool[Math.floor(Math.random() * pool.length)];
 
-  return picked ? dndFeatToBuilderSelection(picked) : null;
+  return picked
+    ? dndFeatToBuilderSelection(picked, { randomizeAbilityIncreases: true })
+    : null;
 }
 
 /** Resolve the builder selection for a species/background origin-feat grant (fixed or choose). */
@@ -113,7 +115,9 @@ function pickRandomClassFeat(
       )
     : pool[Math.floor(Math.random() * pool.length)];
 
-  return picked ? dndFeatToBuilderSelection(picked) : null;
+  return picked
+    ? dndFeatToBuilderSelection(picked, { randomizeAbilityIncreases: true })
+    : null;
 }
 
 export function buildFeatSelectionsForLevel(

@@ -48,11 +48,22 @@ export interface BuilderAsiChoices {
   plus1b: AbilityKey | null;
 }
 
+/**
+ * Parallel to {@link import("./feat.types").Feat.abilityIncreases}.
+ * Fixed increases auto-fill `ability`; choose blocks start as null until picked.
+ */
+export interface BuilderFeatAbilityIncreaseChoice {
+  ability: AbilityKey | null;
+  amount: number;
+}
+
 export interface BuilderFeatSelection {
   id: string;
   name: string;
   source: BuilderFeatSource;
   asiChoices?: BuilderAsiChoices;
+  /** Ability score picks from the feat's abilityIncreases (non-ASI feats). */
+  abilityIncreaseChoices?: BuilderFeatAbilityIncreaseChoice[];
 }
 
 export interface CharacterSelectionRef {

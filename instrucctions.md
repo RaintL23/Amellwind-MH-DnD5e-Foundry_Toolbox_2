@@ -451,6 +451,7 @@ Añade los siguientes campos sobre la base del Actor:
 - **page** _(int)_ — Página del libro de origen.
 - **cr** _(string)_ — Challenge Rating (ej. `"19"`, `"1/2"`, `"0"`). Es string porque puede ser fracción.
 - **environment** _(array)_ — Entornos donde habita. Valores del MM analizado: `forest`, `desert`, `swamp`, `mountain`, `underdark`, `arctic`, `coastal`, `grassland`, `urban`, `underwater`.
+- **bonusActions** _(array)_ — Bonus actions. Misma estructura que `actions`. Viene de `raw.bonus` (5etools); si el feed aún embebe entradas `Bonus Action: …` dentro de `action`, el mapper las separa aquí y las quita de Actions.
 - **legendaryActions** _(array)_ — Acciones legendarias. Misma estructura que `actions`. Solo presente en monstruos legendarios.
 - **loot** — Resumen de obtención de materiales al derrotar o capturar el monstruo:
   - `rolls` _(int)_ — Número de tiradas de d20 al carvear o capturar el monstruo (ej. `3`). Mismo valor para ambos modos — viene del campo `"Carves/Capture"` del JSON.
@@ -1219,7 +1220,7 @@ Al hacer clic en cualquier fila, se navega a **`/monsters/:monsterId`** (`Monste
 - Inmunidades a condiciones.
 - Sentidos y passive Perception.
 - Idiomas y CR.
-- Traits (rasgos pasivos), Actions, Reactions y Legendary Actions, cada uno en su sección.
+- Traits (rasgos pasivos), Actions, Bonus Actions, Reactions y Legendary Actions, cada uno en su sección.
 - Tabla de loot (carve/capture) si el monstruo la tiene.
 
 ### Listado de Runas
@@ -1811,7 +1812,7 @@ Fuente de verdad: `evaluateBuildCompleteness` (`builder/utils/build-completeness
 
 - **`useResolvedSpecies` / `resolveSpeciesParts`** — resuelven la especie seleccionada contra los catálogos de species MH y razas D&D (con subraza opcional), con precedencia `mhSpecies ?? dndRace`, y exponen nombre de display y traits fusionados.
 - **`useActiveResolvedFeats`** — resuelve las dotes activas no-ASI (origin feats de especie/trasfondo + slots elegidos) a objetos `Feat` completos; fuente única para los hooks derivados de HP/velocidad.
-- **`computeEffectiveAbilityScores` / `useEffectiveAbilityScores`** — scores finales (base + Tasha/species/background ASI + feat ASI). Fuente de verdad para modificadores de AC, HP, iniciativa, skills/saves, combate/DPT, spellcasting y exports (PDF / Foundry). `character.abilities` sigue siendo solo la generación base editable.
+- **`computeEffectiveAbilityScores` / `useEffectiveAbilityScores`** — scores finales (base + Tasha/species/background ASI + feat ASI + ability increases de dotes con elección, p. ej. Piercer STR/DEX). Fuente de verdad para modificadores de AC, HP, iniciativa, skills/saves, combate/DPT, spellcasting y exports (PDF / Foundry). `character.abilities` sigue siendo solo la generación base editable.
 
 #### Export / Import a Foundry VTT
 

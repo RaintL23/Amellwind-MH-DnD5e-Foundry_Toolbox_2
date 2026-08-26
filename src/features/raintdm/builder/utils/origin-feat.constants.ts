@@ -1,5 +1,6 @@
 import type { BuilderFeatSelection, DndFeat } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
+import { buildFeatAbilityIncreaseChoices } from "./feat-ability-increase-choices.utils";
 
 export { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "@/features/amellwind/backgrounds/constants/origin-feat.constants";
 
@@ -38,8 +39,11 @@ export function isInvocationOriginFeatSourceName(name: string): boolean {
   return name.startsWith(INVOCATION_ORIGIN_FEAT_SOURCE_PREFIX);
 }
 
-export function dndFeatToBuilderSelection(feat: DndFeat): BuilderFeatSelection {
-  return {
+export function dndFeatToBuilderSelection(
+  feat: DndFeat,
+  options?: { randomizeAbilityIncreases?: boolean },
+): BuilderFeatSelection {
+  const selection: BuilderFeatSelection = {
     id: feat.id,
     name: feat.name,
     source:
@@ -47,4 +51,13 @@ export function dndFeatToBuilderSelection(feat: DndFeat): BuilderFeatSelection {
         ? "dnd2024"
         : "dnd2014",
   };
+
+  if (feat.abilityIncreases.length > 0) {
+    selection.abilityIncreaseChoices = buildFeatAbilityIncreaseChoices(
+      feat.abilityIncreases,
+      { randomize: options?.randomizeAbilityIncreases === true },
+    );
+  }
+
+  return selection;
 }

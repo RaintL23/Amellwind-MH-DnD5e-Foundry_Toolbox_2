@@ -276,6 +276,13 @@ export function MonsterStatBlock({ monster }: MonsterStatBlockProps) {
         </StatBlockSection>
       )}
 
+      {/* Bonus Actions */}
+      {monster.bonusActions && monster.bonusActions.length > 0 && (
+        <StatBlockSection title="Bonus Actions">
+          <EntryBlock entries={monster.bonusActions} />
+        </StatBlockSection>
+      )}
+
       {/* Reactions */}
       {monster.reactions.length > 0 && (
         <StatBlockSection title="Reactions">

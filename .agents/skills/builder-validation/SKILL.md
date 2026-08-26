@@ -28,7 +28,7 @@ These map to `BuildCompletenessSection` / issue ids:
 | --- | --- | --- |
 | Species / background / class / subclass | `identity` | `identity-species`, `identity-background`, `identity-class`, `identity-subclass` |
 | Origin feat (D&D choose grant **or** Amellwind background) | `feats` | `origin-feat` |
-| Level feat / ASI slots | `feats` | `feat-slot-*`, `feat-asi-*` |
+| Level feat / ASI slots | `feats` | `feat-slot-*`, `feat-asi-*`, `feat-ability-*` |
 | Optional features (fighting styles, invocations, …) | `optional-features` | progression shortfalls |
 | Ability choices (species choose, background ASI, Tasha) | `ability-scores` | ability / ASI issues |
 | Skills / expertise | `skills` | skill picker incomplete |

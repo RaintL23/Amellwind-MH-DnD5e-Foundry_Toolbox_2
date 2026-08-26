@@ -1,7 +1,7 @@
 /**
  * Effective ability scores = base generation scores + origin bonuses (species /
- * Tasha / background ASI) + feat ASI picks. Used by AC, HP, initiative, combat,
- * spellcasting, and export — not just the ability-score UI.
+ * Tasha / background ASI) + feat ASI / feat ability-increase picks. Used by AC,
+ * HP, initiative, combat, spellcasting, and export — not just the ability-score UI.
  */
 import type {
   AbilityBonus,

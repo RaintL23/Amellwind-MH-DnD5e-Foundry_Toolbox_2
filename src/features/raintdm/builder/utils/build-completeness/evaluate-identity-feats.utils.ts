@@ -13,6 +13,7 @@ import {
 import {
   hasOriginFeatChooseGrant,
 } from "../origin-feat.constants";
+import { areFeatAbilityIncreaseChoicesComplete } from "../feat-ability-increase-choices.utils";
 import type { BuildCompletenessInput, BuildCompletenessIssue } from "../build-completeness.types";
 import { isAsiChoicesComplete } from "./helpers";
 
@@ -103,6 +104,18 @@ export function evaluateFeatsCompleteness(
             id: `feat-asi-${index}`,
             section: "feats",
             message: `Complete ASI choices for level ${featLevel} feat`,
+            slot: toFeatSlot(index),
+            highlightKey: toFeatSlot(index),
+          });
+        } else if (
+          !isAsiFeatSelection(feat) &&
+          feat.abilityIncreaseChoices &&
+          !areFeatAbilityIncreaseChoicesComplete(feat.abilityIncreaseChoices)
+        ) {
+          issues.push({
+            id: `feat-ability-${index}`,
+            section: "feats",
+            message: `Choose ability score increase for ${feat.name}`,
             slot: toFeatSlot(index),
             highlightKey: toFeatSlot(index),
           });

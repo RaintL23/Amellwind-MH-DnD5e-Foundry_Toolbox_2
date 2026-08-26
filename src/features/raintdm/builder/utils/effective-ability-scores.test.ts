@@ -75,6 +75,38 @@ describe("computeEffectiveAbilityScores", () => {
     expect(abilityModifiersFromScores(scores).dex).toBe(5);
   });
 
+  it("applies feat ability increase picks (e.g. Piercer) to the final score", () => {
+    const scores = computeEffectiveAbilityScores({
+      baseScores: BASE,
+      level: 4,
+      classSelection: { id: "fighter", name: "Fighter" },
+      classData: null,
+      multiclassEnabled: false,
+      multiclassEntries: [],
+      multiclassClassData: [],
+      species: SPECIES_STUB,
+      featSelections: [
+        {
+          id: "piercer|xphb",
+          name: "Piercer",
+          source: "dnd2024",
+          abilityIncreaseChoices: [{ ability: "str", amount: 1 }],
+        },
+      ],
+      useTashaOrigin: false,
+      tashaPlus2: null,
+      tashaPlus1: null,
+      speciesAbilityChoices: [],
+      background: null,
+      backgroundAsiMode: null,
+      backgroundAsiPlus2: null,
+      backgroundAsiPlus1: null,
+    });
+
+    expect(scores.str).toBe(12);
+    expect(scores.dex).toBe(16);
+  });
+
   it("leaves base scores unchanged when no bonuses apply", () => {
     const scores = computeEffectiveAbilityScores({
       baseScores: BASE,

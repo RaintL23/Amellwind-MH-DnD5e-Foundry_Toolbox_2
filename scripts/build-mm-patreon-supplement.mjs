@@ -281,13 +281,9 @@ function extractFrenzyVirus(catalogMonsters) {
 function toFiveToolsMonster(monster) {
   const { senses, passive } = parseSenses(monster.senses);
   const abilities = monster.abilities ?? {};
-  const action = [
-    ...(mapNamedEntries(monster.actions) ?? []),
-    ...(mapNamedEntries(monster.bonusActions)?.map((entry) => ({
-      ...entry,
-      name: `Bonus Action: ${entry.name}`,
-    })) ?? []),
-  ];
+  // Keep bonus actions only on `bonus` (not duplicated into `action` with a
+  // "Bonus Action:" prefix) so the stat block can render a separate section.
+  const action = mapNamedEntries(monster.actions) ?? [];
   const legendary = [
     ...(mapNamedEntries(monster.legendaryActions) ?? []),
     ...(mapNamedEntries(monster.mythicActions)?.map((entry) => ({

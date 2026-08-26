@@ -165,6 +165,50 @@ describe("evaluateBuildCompleteness", () => {
     expect(hasIssueId(result.issues, "origin-feat")).toBe(false);
   });
 
+  it("requires ability increase choices for feats like Piercer", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        level: 4,
+        classSelection: { id: "fighter|xphb", name: "Fighter" },
+        classData: minimalClass(),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+        featSelections: [
+          {
+            id: "piercer|xphb",
+            name: "Piercer",
+            source: "dnd2024",
+            abilityIncreaseChoices: [{ ability: null, amount: 1 }],
+          },
+        ],
+      }),
+    );
+
+    expect(hasIssueId(result.issues, "feat-ability-0")).toBe(true);
+  });
+
+  it("clears feat ability increase issue once a score is chosen", () => {
+    const result = evaluateBuildCompleteness(
+      createEmptyCompletenessInput({
+        level: 4,
+        classSelection: { id: "fighter|xphb", name: "Fighter" },
+        classData: minimalClass(),
+        species: { id: "human|xphb", name: "Human" },
+        background: { id: "soldier|xphb", name: "Soldier" },
+        featSelections: [
+          {
+            id: "piercer|xphb",
+            name: "Piercer",
+            source: "dnd2024",
+            abilityIncreaseChoices: [{ ability: "str", amount: 1 }],
+          },
+        ],
+      }),
+    );
+
+    expect(hasIssueId(result.issues, "feat-ability-0")).toBe(false);
+  });
+
   it("requires missing class cantrips for spellcasters", () => {
     const result = evaluateBuildCompleteness(
       createEmptyCompletenessInput({

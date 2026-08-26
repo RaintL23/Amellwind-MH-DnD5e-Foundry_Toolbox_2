@@ -1,4 +1,4 @@
-import { Monster } from "@/shared/types";
+import { Monster, type Entry } from "@/shared/types";
 import {
   mapActorCore,
   mapCrString,
@@ -7,6 +7,55 @@ import {
 } from "@/shared/mappers/actor-from-raw.mapper";
 import { mapStatBlockEntries } from "@/shared/utils/statblock-entries.mapper";
 import { sanitizeNamedEntrySection } from "@/shared/utils/statblock-named-entries.sanitize";
+
+/** MHMM dumps often prefix BA names; also catch catalog misfiles still under action. */
+const BONUS_ACTION_NAME_RE = /^bonus\s*actions?\s*:?\s*/i;
+
+function isBonusActionName(name: string): boolean {
+  return BONUS_ACTION_NAME_RE.test(name.trim());
+}
+
+function stripBonusActionPrefix(name: string): string {
+  const stripped = name.replace(BONUS_ACTION_NAME_RE, "").trim();
+  return stripped || name;
+}
+
+/**
+ * Prefer `raw.bonus`, and lift any `action` entries whose name starts with
+ * "Bonus Action" so the UI can render a dedicated Bonus Actions section.
+ */
+export function partitionMonsterBonusActions(
+  actions: Entry[],
+  fromBonusField: Entry[],
+): { actions: Entry[]; bonusActions: Entry[] } {
+  const remaining: Entry[] = [];
+  const fromActions: Entry[] = [];
+
+  for (const action of actions) {
+    if (isBonusActionName(action.name)) {
+      fromActions.push({
+        ...action,
+        name: stripBonusActionPrefix(action.name),
+      });
+    } else {
+      remaining.push(action);
+    }
+  }
+
+  const byName = new Map<string, Entry>();
+  for (const entry of fromBonusField) {
+    byName.set(entry.name.toLowerCase(), entry);
+  }
+  for (const entry of fromActions) {
+    const key = entry.name.toLowerCase();
+    if (!byName.has(key)) byName.set(key, entry);
+  }
+
+  return {
+    actions: remaining,
+    bonusActions: [...byName.values()],
+  };
+}
 
 function mapFluffText(fluff: unknown): string {
   if (typeof fluff !== "object" || fluff === null) return "";
@@ -44,14 +93,21 @@ function mapLairCr(raw: RawActor): string | undefined {
 export function mapMonster(raw: any): Monster {
   const core = mapActorCore(raw as RawActor);
   const cr = mapCrString(raw as RawActor);
+  const fromBonus = mapEntries(sanitizeNamedEntrySection(raw.bonus ?? []));
+  const { actions, bonusActions } = partitionMonsterBonusActions(
+    core.actions,
+    fromBonus,
+  );
 
   return {
     ...core,
+    actions,
     group: Array.isArray(raw.group) ? raw.group : undefined,
     source: String(raw.source ?? ""),
     page: typeof raw.page === "number" ? raw.page : undefined,
     cr,
     environment: Array.isArray(raw.environment) ? raw.environment : undefined,
+    bonusActions: bonusActions.length > 0 ? bonusActions : undefined,
     legendaryActions: mapEntries(sanitizeNamedEntrySection(raw.legendary ?? [])),
     loot: raw.fluff ? { rolls: extractRolls(raw.fluff) } : undefined,
     fluff: mapFluffText(raw.fluff),
