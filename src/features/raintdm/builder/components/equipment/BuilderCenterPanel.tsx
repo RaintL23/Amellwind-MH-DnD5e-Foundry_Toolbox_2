@@ -57,6 +57,7 @@ import {
   isSpellSlotChoosable,
   resolveSpellcastingSourceName,
   spellSlotHasLockedGrants,
+  spellSlotNeedsSpellListChoice,
 } from "../../utils/spellcasting-stats.utils";
 import { isSpeciesLineageSpell } from "../../utils/species-spell-grants.utils";
 import { useEffectiveAbilityScores } from "../../hooks/useEffectiveAbilityScores";
@@ -387,6 +388,7 @@ export function BuilderCenterPanel() {
     selectedSlot !== null &&
     isSpellPickerSlot(selectedSlot) &&
     (allowSpellPicks ||
+      spellSlotNeedsSpellListChoice(selectedSlot, spellcastingInfo) ||
       spellSlotHasLockedGrants(
         selectedSlot,
         spellcastingInfo,

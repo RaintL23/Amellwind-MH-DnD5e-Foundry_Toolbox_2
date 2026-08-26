@@ -8,6 +8,7 @@ import type {
   SpellLevelSlot,
   BuilderPactSpellSlot,
   BuilderBonusCantripSlot,
+  BuilderBonusFeatSpellSlot,
 } from "@/shared/types";
 import type { SpellcastingInfo } from "@/features/raintdm/builder/hooks/useSpellcasting";
 import {
@@ -16,8 +17,9 @@ import {
 } from "@/features/raintdm/builder/hooks/useBuilderSlotSelection";
 import {
   findCantripPoolBySlot,
-  isBonusCantripSlot,
+  isBonusSpellPoolSlot,
   BONUS_CANTRIP_POOL_BASE,
+  BONUS_FEAT_SPELL_POOL_BASE,
   countClassCantripSelections,
 } from "@/features/raintdm/builder/utils/cantrip-pools.utils";
 import { partitionSpellSelections } from "@/features/raintdm/builder/utils/species-spell-grants.utils";
@@ -84,7 +86,7 @@ export function useSpellLibraryPanelState({
   spellLevelByName,
   onAddSpell,
 }: {
-  selectedSlot: SpellLevelSlot | BuilderPactSpellSlot | BuilderBonusCantripSlot;
+  selectedSlot: SpellLevelSlot | BuilderPactSpellSlot | BuilderBonusCantripSlot | BuilderBonusFeatSpellSlot;
   className: string;
   characterLevel: number;
   spellcastingInfo: SpellcastingInfo;
@@ -94,26 +96,33 @@ export function useSpellLibraryPanelState({
   onAddSpell: (level: number, spell: BuilderSpellSelection) => void;
 }) {
   const isPactPool = isPactSpellSlot(selectedSlot);
-  const isBonusCantripPool =
-    typeof selectedSlot === "string" && isBonusCantripSlot(selectedSlot);
-  const activeBonusPool = isBonusCantripPool
-    ? findCantripPoolBySlot(
-        spellcastingInfo.bonusCantripPools,
-        selectedSlot as BuilderBonusCantripSlot,
-      )
+  const isBonusSpellPool =
+    typeof selectedSlot === "string" && isBonusSpellPoolSlot(selectedSlot);
+  const activeBonusPool = isBonusSpellPool
+    ? findCantripPoolBySlot(spellcastingInfo.bonusCantripPools, selectedSlot)
     : undefined;
+  const isBonusCantripPool =
+    isBonusSpellPool && (activeBonusPool?.spellLevel ?? 0) === 0;
+  const isBonusFeatSpellPool =
+    isBonusSpellPool && (activeBonusPool?.spellLevel ?? 0) > 0;
   const spellLevel =
-    isPactPool || isBonusCantripPool ? null : parseSpellLevel(selectedSlot);
-  const isClassCantrip = !isPactPool && !isBonusCantripPool && spellLevel === 0;
+    isPactPool || isBonusSpellPool ? null : parseSpellLevel(selectedSlot);
+  const isClassCantrip =
+    !isPactPool && !isBonusSpellPool && spellLevel === 0;
   const effectiveSpellLevel = isPactPool
     ? null
-    : isBonusCantripPool || isClassCantrip
-      ? 0
-      : spellLevel;
+    : isBonusFeatSpellPool
+      ? activeBonusPool!.spellLevel
+      : isBonusCantripPool || isClassCantrip
+        ? 0
+        : spellLevel;
   const selectionLevel = isPactPool
     ? PACT_SPELL_POOL_LEVEL
-    : isBonusCantripPool
-      ? (activeBonusPool?.selectionLevel ?? BONUS_CANTRIP_POOL_BASE)
+    : isBonusSpellPool
+      ? (activeBonusPool?.selectionLevel ??
+        (isBonusFeatSpellPool
+          ? BONUS_FEAT_SPELL_POOL_BASE
+          : BONUS_CANTRIP_POOL_BASE))
       : spellLevel!;
   const [committedSearch, setCommittedSearch] = useState("");
   const [filterValues, setFilterValues] = useState<ListFilterValues>({});
@@ -204,14 +213,16 @@ export function useSpellLibraryPanelState({
 
   const atClassCantripCapacity =
     isClassCantrip && classCantripsSelected >= spellcastingInfo.cantripCount;
-  const atBonusCantripCapacity =
-    isBonusCantripPool &&
+  const atBonusPoolCapacity =
+    isBonusSpellPool &&
     !!activeBonusPool &&
     selectedAtLevel.length >= activeBonusPool.maxCount;
-  const atCantripCapacity = atClassCantripCapacity || atBonusCantripCapacity;
+  const atCantripCapacity = atClassCantripCapacity || atBonusPoolCapacity;
   const isCantripSlot = isClassCantrip || isBonusCantripPool;
+  const isFeatSpellSlot = isBonusFeatSpellPool;
   const atSpellCapacity =
     !isCantripSlot &&
+    !isFeatSpellSlot &&
     !isPactPool &&
     spellcastingInfo.maxPreparedOrKnown > 0 &&
     spellcastingInfo.selectedSpellCount >= spellcastingInfo.maxPreparedOrKnown;
@@ -315,27 +326,31 @@ export function useSpellLibraryPanelState({
 
   const spellListClassName = activeBonusPool?.spellListClassName ?? className;
 
+  const isBonusClassListPool = isBonusCantripPool || isBonusFeatSpellPool;
+
   const spellListContext = useMemo(
     () => ({
       className: spellListClassName,
-      subclassName: isBonusCantripPool ? null : spellcastingInfo.subclassName,
-      subclassShortName: isBonusCantripPool
+      subclassName: isBonusClassListPool ? null : spellcastingInfo.subclassName,
+      subclassShortName: isBonusClassListPool
         ? null
         : spellcastingInfo.subclassShortName,
-      expandedFilters: isBonusCantripPool
+      expandedFilters: isBonusClassListPool
         ? []
         : spellcastingInfo.expandedSpellFilters,
       characterLevel,
       availableSpellSlotLevels: spellcastingInfo.availableSpellSlotLevels,
-      selectedSpellLevel: isPactPool ? 0 : isBonusCantripPool ? 0 : spellLevel!,
+      selectedSpellLevel:
+        isPactPool || effectiveSpellLevel === null
+          ? 0
+          : effectiveSpellLevel,
       isPactPool,
-      spellcastingFromSubclass: isBonusCantripPool
+      spellcastingFromSubclass: isBonusClassListPool
         ? false
         : spellcastingInfo.spellcastingFromSubclass,
     }),
     [
       spellListClassName,
-      className,
       spellcastingInfo.subclassName,
       spellcastingInfo.subclassShortName,
       spellcastingInfo.expandedSpellFilters,
@@ -343,19 +358,19 @@ export function useSpellLibraryPanelState({
       spellcastingInfo.spellcastingFromSubclass,
       characterLevel,
       isPactPool,
-      isBonusCantripPool,
-      spellLevel,
+      isBonusClassListPool,
+      effectiveSpellLevel,
     ],
   );
 
   const spellMatchesClassList = useCallback(
     (spell: Spell) => {
-      if (isBonusCantripPool) {
+      if (isBonusClassListPool) {
         return spellMatchesFilterClass(spell, spellListClassName);
       }
       return spellMatchesCharacterSpellList(spell, spellListContext);
     },
-    [isBonusCantripPool, spellListClassName, spellListContext],
+    [isBonusClassListPool, spellListClassName, spellListContext],
   );
 
   const slotEligibleSpells = useMemo(() => {
@@ -470,16 +485,16 @@ export function useSpellLibraryPanelState({
     ? spellcastingInfo.isPreparedCaster
       ? `Prepared Spells (1–${pactMaxLevel})`
       : `Spells Known (1–${pactMaxLevel})`
-    : isBonusCantripPool
-      ? `${activeBonusPool?.label ?? "Bonus cantrips"} · ${spellListClassName}`
+    : isBonusSpellPool && activeBonusPool
+      ? `${activeBonusPool.label} · ${spellListClassName}`
       : spellLevel === 0
         ? `Cantrips (${className})`
-        : `Nivel ${spellLevel}`;
+        : `Level ${spellLevel}`;
 
   const capacityHint = isClassCantrip
     ? `${classCantripsSelected}/${spellcastingInfo.cantripCount} class cantrips`
-    : isBonusCantripPool && activeBonusPool
-      ? `${selectedAtLevel.length}/${activeBonusPool.maxCount} · lista ${activeBonusPool.spellListClassName}`
+    : isBonusSpellPool && activeBonusPool
+      ? `${selectedAtLevel.length}/${activeBonusPool.maxCount} · ${activeBonusPool.spellListClassName} list`
       : isPactPool
         ? spellcastingInfo.maxPreparedOrKnown > 0
           ? `${spellcastingInfo.selectedSpellCount}/${spellcastingInfo.maxPreparedOrKnown} ${
@@ -496,8 +511,8 @@ export function useSpellLibraryPanelState({
 
   const disabledHint = isClassCantrip
     ? `Class cantrip limit reached (${spellcastingInfo.cantripCount})`
-    : isBonusCantripPool && activeBonusPool
-      ? `Bonus cantrip limit reached (${activeBonusPool.maxCount})`
+    : isBonusSpellPool && activeBonusPool
+      ? `Selection limit reached (${activeBonusPool.maxCount})`
       : isPactPool
         ? `Pact Magic prepared limit reached (${spellcastingInfo.maxPreparedOrKnown})`
         : spellcastingInfo.isPreparedCaster
@@ -506,8 +521,8 @@ export function useSpellLibraryPanelState({
 
   const selectedSectionLabel = isClassCantrip
     ? `Cantrips (${className})`
-    : isBonusCantripPool
-      ? (activeBonusPool?.label ?? "Bonus cantrips")
+    : isBonusSpellPool
+      ? (activeBonusPool?.label ?? "Feat spells")
       : isPactPool
         ? spellcastingInfo.isPreparedCaster
           ? "Prepared Spells"
@@ -537,6 +552,7 @@ export function useSpellLibraryPanelState({
     alwaysPreparedAtLevel,
     bonusKnownAtLevel,
     optionalFeatureAtLevel,
+    activeBonusPool,
     filterGrantBySearch,
     availableSpells,
     handleSelect,

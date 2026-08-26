@@ -14,6 +14,11 @@ import type {
 } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { parseCantripGrantsFromEntries } from "@/shared/utils/text-spell-grants.parser";
+import {
+  getFeatSpellListOptions,
+  parseQualifierFromDisplayName,
+  resolveFeatSpellBlock,
+} from "./feat-spell-list.utils";
 import { isSpeciesLineageSpell } from "./species-spell-grants.utils";
 
 /** Cantrips chosen for the class list in slot 0 (excludes species lineage grants). */
@@ -28,19 +33,32 @@ export function countClassCantripSelections(
 /** Internal keys in BuilderSpellSelections for bonus cantrip pools (-100, -101, …). */
 export const BONUS_CANTRIP_POOL_BASE = -100;
 
+/** Internal keys for feat-granted leveled spell pools (-200, -201, …). */
+export const BONUS_FEAT_SPELL_POOL_BASE = -200;
+
 export type BuilderBonusCantripSlot = `spell-cantrip-${string}`;
+
+export type BuilderBonusFeatSpellSlot = `spell-feat-${string}`;
 
 export interface CantripPoolDefinition {
   poolId: string;
-  slot: BuilderBonusCantripSlot;
+  slot: BuilderBonusCantripSlot | BuilderBonusFeatSpellSlot;
   selectionLevel: number;
   label: string;
   maxCount: number;
   spellListClassName: string;
+  spellLevel: number;
+  /** When the feat offers multiple spell lists (e.g. Magic Initiate). */
+  spellListClassOptions?: string[];
+  needsSpellListChoice?: boolean;
 }
 
 export function toBonusCantripSlot(poolId: string): BuilderBonusCantripSlot {
   return `spell-cantrip-${poolId}`;
+}
+
+export function toBonusFeatSpellSlot(poolId: string): BuilderBonusFeatSpellSlot {
+  return `spell-feat-${poolId}`;
 }
 
 export function isBonusCantripSlot(
@@ -49,8 +67,24 @@ export function isBonusCantripSlot(
   return slot.startsWith("spell-cantrip-");
 }
 
+export function isBonusFeatSpellSlot(
+  slot: string,
+): slot is BuilderBonusFeatSpellSlot {
+  return slot.startsWith("spell-feat-");
+}
+
+export function isBonusSpellPoolSlot(
+  slot: string,
+): slot is BuilderBonusCantripSlot | BuilderBonusFeatSpellSlot {
+  return isBonusCantripSlot(slot) || isBonusFeatSpellSlot(slot);
+}
+
 export function parseBonusCantripPoolId(slot: BuilderBonusCantripSlot): string {
   return slot.slice("spell-cantrip-".length);
+}
+
+export function parseBonusFeatSpellPoolId(slot: BuilderBonusFeatSpellSlot): string {
+  return slot.slice("spell-feat-".length);
 }
 
 function slugifyPoolId(value: string): string {
@@ -111,27 +145,115 @@ function parseCantripChooseFromBlock(
   return null;
 }
 
-function resolveFeatSpellBlock(
-  feat: DndFeat,
-  qualifier?: string | null,
-): SubclassSpellBlock | null {
-  const blocks = feat.additionalSpells;
-  if (!blocks?.length) return null;
-  if (blocks.length === 1) return blocks[0] ?? null;
+function parseLeveledChooseFromEntry(
+  entry: SubclassSpellEntry,
+  minSpellLevel: number,
+): { count: number; className: string | null; spellLevel: number } | null {
+  if (typeof entry !== "object" || entry === null) return null;
+  const choose = entry.choose;
+  if (typeof choose !== "string") return null;
+  const parsed = parseChooseFilter(choose);
+  if (!parsed || parsed.spellLevel < minSpellLevel) return null;
+  const count =
+    typeof (entry as { count?: number }).count === "number"
+      ? Math.max(1, (entry as { count: number }).count)
+      : 1;
+  return { count, className: parsed.className, spellLevel: parsed.spellLevel };
+}
 
-  if (qualifier) {
-    const normalized = normalizeSelectionName(qualifier);
-    const match = blocks.find((block) => {
-      const blockName = block.name;
-      return (
-        typeof blockName === "string" &&
-        normalizeSelectionName(blockName).includes(normalized)
-      );
-    });
-    if (match) return match;
+function parseInnateChooseFromBlock(
+  block: SubclassSpellBlock,
+): { count: number; className: string | null; spellLevel: number } | null {
+  const innate = block.innate;
+  if (!innate || typeof innate !== "object") return null;
+
+  for (const blockValue of Object.values(innate)) {
+    if (!blockValue || typeof blockValue !== "object") continue;
+    const daily = (blockValue as { daily?: Record<string, SubclassSpellEntry[]> })
+      .daily;
+    if (!daily) continue;
+
+    for (const entries of Object.values(daily)) {
+      if (!Array.isArray(entries)) continue;
+      for (const entry of entries) {
+        const parsed = parseLeveledChooseFromEntry(entry, 1);
+        if (parsed) return parsed;
+      }
+    }
   }
 
-  return blocks[0] ?? null;
+  return null;
+}
+
+function resolveCantripCountFromFeat(feat: DndFeat): number {
+  const block = feat.additionalSpells?.[0];
+  const structured = block ? parseCantripChooseFromBlock(block) : null;
+  return structured?.count ?? 1;
+}
+
+function pushPoolsFromFeat(
+  pools: CantripPoolDefinition[],
+  seen: Set<string>,
+  feat: DndFeat,
+  label: string,
+  poolId: string,
+  qualifier: string | null | undefined,
+  fallbackClassName: string,
+  spellListClassChoice?: string | null,
+): void {
+  const spellListOptions = getFeatSpellListOptions(feat);
+  const resolvedClass =
+    spellListClassChoice ??
+    (qualifier ? parseQualifierFromDisplayName(qualifier) : null);
+
+  if (spellListOptions.length > 1 && !resolvedClass) {
+    pushPool(pools, seen, {
+      poolId,
+      label,
+      maxCount: resolveCantripCountFromFeat(feat),
+      spellListClassName: "Spell list",
+      spellListClassOptions: spellListOptions,
+      needsSpellListChoice: true,
+      spellLevel: 0,
+    });
+    return;
+  }
+
+  const block = resolveFeatSpellBlock(feat, {
+    qualifier,
+    spellListClassChoice: resolvedClass,
+  });
+  const structured = block ? parseCantripChooseFromBlock(block) : null;
+  if (structured?.className) {
+    pushPool(pools, seen, {
+      poolId,
+      label,
+      maxCount: structured.count,
+      spellListClassName: structured.className,
+      spellLevel: 0,
+    });
+
+    const innateStructured = block ? parseInnateChooseFromBlock(block) : null;
+    if (innateStructured?.className) {
+      pushPool(pools, seen, {
+        poolId: `${poolId}-level-${innateStructured.spellLevel}`,
+        label: `${label} — Level ${innateStructured.spellLevel} spell`,
+        maxCount: innateStructured.count,
+        spellListClassName: innateStructured.className,
+        spellLevel: innateStructured.spellLevel,
+      });
+    }
+    return;
+  }
+
+  const textParts = [
+    ...feat.paragraphs,
+    ...feat.sections.flatMap((section) => [
+      section.name ?? "",
+      ...section.paragraphs,
+    ]),
+  ];
+  pushPoolsFromText(pools, seen, textParts, label, poolId, fallbackClassName);
 }
 
 function pushPool(
@@ -142,6 +264,9 @@ function pushPool(
     label: string;
     maxCount: number;
     spellListClassName: string;
+    spellLevel?: number;
+    spellListClassOptions?: string[];
+    needsSpellListChoice?: boolean;
   },
 ): void {
   if (params.maxCount <= 0) return;
@@ -150,14 +275,28 @@ function pushPool(
   seen.add(params.poolId);
   seen.add(`label:${labelKey}`);
 
-  const index = pools.length;
+  const spellLevel = params.spellLevel ?? 0;
+  const cantripIndex = pools.filter((pool) => pool.spellLevel === 0).length;
+  const leveledIndex = pools.filter((pool) => pool.spellLevel > 0).length;
+  const selectionLevel =
+    spellLevel === 0
+      ? BONUS_CANTRIP_POOL_BASE - cantripIndex
+      : BONUS_FEAT_SPELL_POOL_BASE - leveledIndex;
+  const slot =
+    spellLevel === 0
+      ? toBonusCantripSlot(params.poolId)
+      : toBonusFeatSpellSlot(params.poolId);
+
   pools.push({
     poolId: params.poolId,
-    slot: toBonusCantripSlot(params.poolId),
-    selectionLevel: BONUS_CANTRIP_POOL_BASE - index,
+    slot,
+    selectionLevel,
     label: params.label,
     maxCount: params.maxCount,
     spellListClassName: params.spellListClassName,
+    spellLevel,
+    spellListClassOptions: params.spellListClassOptions,
+    needsSpellListChoice: params.needsSpellListChoice,
   });
 }
 
@@ -229,39 +368,9 @@ function pushPoolsFromText(
       label,
       maxCount: grant.count,
       spellListClassName: grant.spellListClassName,
+      spellLevel: 0,
     });
   }
-}
-
-function pushPoolsFromFeat(
-  pools: CantripPoolDefinition[],
-  seen: Set<string>,
-  feat: DndFeat,
-  label: string,
-  poolId: string,
-  qualifier: string | null | undefined,
-  fallbackClassName: string,
-): void {
-  const block = resolveFeatSpellBlock(feat, qualifier);
-  const structured = block ? parseCantripChooseFromBlock(block) : null;
-  if (structured?.className) {
-    pushPool(pools, seen, {
-      poolId,
-      label,
-      maxCount: structured.count,
-      spellListClassName: structured.className,
-    });
-    return;
-  }
-
-  const textParts = [
-    ...feat.paragraphs,
-    ...feat.sections.flatMap((section) => [
-      section.name ?? "",
-      ...section.paragraphs,
-    ]),
-  ];
-  pushPoolsFromText(pools, seen, textParts, label, poolId, fallbackClassName);
 }
 
 function pushPoolsFromOriginFeat(
@@ -304,12 +413,8 @@ function pushPoolsFromOriginFeat(
     `origin-feat-${sourceKey}`,
     qualifier,
     fallbackClassName,
+    selection.spellListClassChoice,
   );
-}
-
-function parseQualifierFromDisplayName(name: string): string | null {
-  const match = name.match(/\(([^)]+)\)\s*$/);
-  return match?.[1]?.trim() ?? null;
 }
 
 export function resolveBonusCantripPools(params: {
@@ -415,6 +520,7 @@ export function resolveBonusCantripPools(params: {
       `feat-slot-${index}`,
       parseQualifierFromDisplayName(selection.name),
       fallbackClassName,
+      selection.spellListClassChoice,
     );
   }
 
@@ -423,7 +529,7 @@ export function resolveBonusCantripPools(params: {
 
 export function findCantripPoolBySlot(
   pools: CantripPoolDefinition[],
-  slot: BuilderBonusCantripSlot,
+  slot: BuilderBonusCantripSlot | BuilderBonusFeatSpellSlot,
 ): CantripPoolDefinition | undefined {
   return pools.find((pool) => pool.slot === slot);
 }

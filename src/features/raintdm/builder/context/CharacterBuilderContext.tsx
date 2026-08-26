@@ -492,6 +492,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       addSpell: spell.addSpell,
       removeSpell: spell.removeSpell,
       clearSpells: spell.clearSpells,
+      clearBonusCantripSpellSelections: spell.clearBonusCantripSpellSelections,
       optionalFeatureSelections: spell.optionalFeatureSelections,
       setOptionalFeaturesForProgression: spell.setOptionalFeaturesForProgression,
       clearOptionalFeatureProgression: spell.clearOptionalFeatureProgression,

@@ -39,6 +39,9 @@ interface FeatLibraryDetailProps {
     index: number,
     ability: AbilityKey | null,
   ) => void;
+  spellListClassOptions?: string[];
+  spellListClassChoice?: string | null;
+  onSpellListClassChoiceChange?: (className: string) => void;
 }
 
 export function FeatLibraryDetail({
@@ -49,6 +52,9 @@ export function FeatLibraryDetail({
   bookNames = {},
   abilityIncreaseChoices,
   onAbilityIncreaseChoiceChange,
+  spellListClassOptions,
+  spellListClassChoice,
+  onSpellListClassChoiceChange,
 }: FeatLibraryDetailProps) {
   const categoryLabel =
     "category" in feat && feat.category
@@ -83,6 +89,11 @@ export function FeatLibraryDetail({
     choosableIncreases.length > 0 &&
     !!abilityIncreaseChoices &&
     !!onAbilityIncreaseChoiceChange;
+
+  const showSpellListPicker =
+    !!spellListClassOptions?.length &&
+    spellListClassOptions.length > 1 &&
+    !!onSpellListClassChoiceChange;
 
   return (
     <div className="space-y-3">
@@ -123,6 +134,34 @@ export function FeatLibraryDetail({
           </span>{" "}
           {feat.prerequisites.join("; ")}
         </p>
+      )}
+
+      {showSpellListPicker && (
+        <div className="space-y-2 rounded-md border border-border/60 bg-muted/20 p-2">
+          <p className="text-[10px] font-medium text-foreground">
+            Spell list
+          </p>
+          <label className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="w-16 shrink-0 font-medium text-foreground">
+              Class
+            </span>
+            <Select
+              value={spellListClassChoice ?? ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value) onSpellListClassChoiceChange(value);
+              }}
+              className="h-7 flex-1 text-xs"
+            >
+              <option value="">Select…</option>
+              {spellListClassOptions.map((className) => (
+                <option key={className} value={className}>
+                  {className}
+                </option>
+              ))}
+            </Select>
+          </label>
+        </div>
       )}
 
       {showAbilityPickers && (

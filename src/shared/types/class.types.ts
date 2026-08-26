@@ -43,6 +43,8 @@ export interface SubclassSpellBlock {
   prepared?: Record<string, SubclassSpellEntry[]>;
   known?: Record<string, SubclassSpellEntry[]>;
   expanded?: Record<string, unknown[]>;
+  /** Innate / daily spell grants (e.g. Magic Initiate level-1 spell). */
+  innate?: Record<string, unknown>;
 }
 
 export interface Subclass {

@@ -246,13 +246,13 @@ export function buildRandomSpellSelections(params: {
   }
 
   for (const bonusPool of bonusCantripPools) {
-    if (bonusPool.maxCount <= 0) continue;
+    if (bonusPool.maxCount <= 0 || bonusPool.needsSpellListChoice) continue;
     const poolSpells = filterSpellsForClassFit(
       allSpells.filter(
         (spell) =>
-          spell.level === 0 &&
+          spell.level === bonusPool.spellLevel &&
           spellMatchesFilterClass(spell, bonusPool.spellListClassName) &&
-          !pickedCantripIds.has(spell.id),
+          (bonusPool.spellLevel === 0 ? !pickedCantripIds.has(spell.id) : true),
       ),
       classData,
       subclass,
@@ -265,7 +265,9 @@ export function buildRandomSpellSelections(params: {
     );
     if (picked.length > 0) {
       rawSelections[bonusPool.selectionLevel] = picked;
-      for (const spell of picked) pickedCantripIds.add(spell.id);
+      if (bonusPool.spellLevel === 0) {
+        for (const spell of picked) pickedCantripIds.add(spell.id);
+      }
     }
   }
 

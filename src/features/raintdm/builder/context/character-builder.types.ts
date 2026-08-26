@@ -203,6 +203,7 @@ export interface CharacterBuilderContextValue {
   addSpell: (level: number, spell: BuilderSpellSelection) => void;
   removeSpell: (level: number, spellId: string) => void;
   clearSpells: () => void;
+  clearBonusCantripSpellSelections: () => void;
 
   // Optional class features
   optionalFeatureSelections: BuilderOptionalFeatureSelections;

@@ -64,6 +64,8 @@ export interface BuilderFeatSelection {
   asiChoices?: BuilderAsiChoices;
   /** Ability score picks from the feat's abilityIncreases (non-ASI feats). */
   abilityIncreaseChoices?: BuilderFeatAbilityIncreaseChoice[];
+  /** Chosen class spell list for feats like Magic Initiate (Cleric, Druid, Wizard, …). */
+  spellListClassChoice?: string | null;
 }
 
 export interface CharacterSelectionRef {
@@ -207,6 +209,9 @@ export type BuilderPactSpellSlot = "spell-pact";
 
 /** Bonus cantrip pool from a feature, feat, or origin feat. */
 export type BuilderBonusCantripSlot = `spell-cantrip-${string}`;
+
+/** Bonus leveled spell pool from a feat (e.g. Magic Initiate level-1 spell). */
+export type BuilderBonusFeatSpellSlot = `spell-feat-${string}`;
 
 export interface BuilderSpellSelection {
   id: string;

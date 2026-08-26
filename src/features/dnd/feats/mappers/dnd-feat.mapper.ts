@@ -10,6 +10,7 @@ function mapAdditionalSpells(raw: unknown): SubclassSpellBlock[] | undefined {
       prepared: entry.prepared,
       known: entry.known,
       expanded: entry.expanded,
+      innate: entry.innate,
     };
   });
 }

@@ -26,6 +26,7 @@ import {
   buildFeatAbilityIncreaseChoices,
   setFeatAbilityIncreaseChoiceAt,
 } from "@/features/raintdm/builder/utils/feat-ability-increase-choices.utils";
+import { getFeatSpellListOptions } from "@/features/raintdm/builder/utils/feat-spell-list.utils";
 import {
   resolveOriginFeatChooseTarget,
 } from "@/features/raintdm/builder/utils/origin-feat.constants";
@@ -101,6 +102,7 @@ export function FeatLibraryPanel({
     setSpeciesOriginFeat,
     setBackgroundOriginFeat,
     setOptionalFeatureOriginFeatAtIndex,
+    clearBonusCantripSpellSelections,
   } = useCharacterBuilder();
 
   const identityBookNames = useBookSourceNames();
@@ -562,6 +564,37 @@ export function FeatLibraryPanel({
     setFeatAtIndex(featSlotIndex, { ...selectedFeat, asiChoices: choices });
   }
 
+  function applyFeatSelectionUpdate(nextSelection: BuilderFeatSelection) {
+    if (
+      isInvocationOriginFeatSlotSelected &&
+      invocationOriginFeatIndex !== null
+    ) {
+      setOptionalFeatureOriginFeatAtIndex(
+        invocationOriginFeatIndex,
+        nextSelection,
+      );
+      return;
+    }
+    if (isOriginFeatSlotSelected) {
+      if (originFeatLocked) return;
+      setOriginFeatSelection(nextSelection);
+      return;
+    }
+    if (featSlotIndex === null) return;
+    setFeatAtIndex(featSlotIndex, nextSelection);
+  }
+
+  function handleSpellListClassChoiceChange(className: string) {
+    if (!selectedFeat) return;
+    if (selectedFeat.spellListClassChoice === className) return;
+
+    clearBonusCantripSpellSelections();
+    applyFeatSelectionUpdate({
+      ...selectedFeat,
+      spellListClassChoice: className,
+    });
+  }
+
   function handleAbilityIncreaseChoiceChange(
     index: number,
     ability: AbilityKey | null,
@@ -600,6 +633,10 @@ export function FeatLibraryPanel({
       return <EmptyState text="Loading..." />;
     }
     if (featDetail) {
+      const spellListClassOptions =
+        "additionalSpells" in featDetail
+          ? getFeatSpellListOptions(featDetail as DndFeat)
+          : [];
       return (
         <FeatLibraryDetail
           feat={featDetail}
@@ -617,6 +654,13 @@ export function FeatLibraryPanel({
           onAbilityIncreaseChoiceChange={
             selectedFeat && !isAsiFeatSelection(selectedFeat)
               ? handleAbilityIncreaseChoiceChange
+              : undefined
+          }
+          spellListClassOptions={spellListClassOptions}
+          spellListClassChoice={selectedFeat?.spellListClassChoice}
+          onSpellListClassChoiceChange={
+            selectedFeat && !isAsiFeatSelection(selectedFeat)
+              ? handleSpellListClassChoiceChange
               : undefined
           }
         />

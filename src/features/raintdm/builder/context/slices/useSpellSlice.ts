@@ -16,6 +16,7 @@ import {
   type OptionalFeatureOriginFeatSlot,
 } from "../../utils/optional-feature-feat-grants.utils";
 import { PACT_SPELL_POOL_LEVEL } from "../../utils/pact-magic.utils";
+import { BONUS_CANTRIP_POOL_BASE } from "../../utils/cantrip-pools.utils";
 import { clearAmellwindFeats } from "../../utils/homebrew-cleanup.utils";
 import { isSpeciesLineageSpell } from "../../utils/species-spell-grants.utils";
 
@@ -63,6 +64,20 @@ export function useSpellSlice({
 
   const clearSpells = useCallback(() => {
     setSpellSelections({});
+  }, []);
+
+  const clearBonusCantripSpellSelections = useCallback(() => {
+    setSpellSelections((prev) => {
+      const base = prev ?? {};
+      const next = { ...base };
+      for (const key of Object.keys(next)) {
+        const level = Number(key);
+        if (Number.isFinite(level) && level <= BONUS_CANTRIP_POOL_BASE) {
+          delete next[level];
+        }
+      }
+      return next;
+    });
   }, []);
 
   const setOptionalFeaturesForProgression = useCallback(
@@ -262,6 +277,7 @@ export function useSpellSlice({
       addSpell,
       removeSpell,
       clearSpells,
+      clearBonusCantripSpellSelections,
       setOptionalFeaturesForProgression,
       clearOptionalFeatureProgression,
       setOptionalFeatureOriginFeatAtIndex,
@@ -280,6 +296,7 @@ export function useSpellSlice({
       addSpell,
       removeSpell,
       clearSpells,
+      clearBonusCantripSpellSelections,
       setOptionalFeaturesForProgression,
       clearOptionalFeatureProgression,
       setOptionalFeatureOriginFeatAtIndex,

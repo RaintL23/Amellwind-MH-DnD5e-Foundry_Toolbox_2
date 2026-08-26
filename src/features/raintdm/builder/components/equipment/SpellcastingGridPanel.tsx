@@ -130,7 +130,9 @@ function getBonusCantripPoolEquipped(
     .map((s) => formatSpellListName(s.name, spellsByName))
     .join(", ");
   const detail =
-    selected.length > 0
+    pool.needsSpellListChoice
+      ? `Choose spell list (${selected.length}/${pool.maxCount})`
+      : selected.length > 0
       ? `${selected.length}/${pool.maxCount} · ${pool.spellListClassName} list — ${selectedNames}`
       : `${selected.length}/${pool.maxCount} · ${pool.spellListClassName} list`;
   return { name: pool.label, detail };
@@ -376,6 +378,7 @@ export function SpellcastingGridPanel({
   const gridSlots: Array<
     | { kind: "class-cantrip" }
     | { kind: "bonus-cantrip"; pool: SpellcastingInfo["bonusCantripPools"][number] }
+    | { kind: "bonus-feat-spell"; pool: SpellcastingInfo["bonusCantripPools"][number] }
     | { kind: "level"; level: number }
     | { kind: "pact" }
   > = [];
@@ -384,7 +387,11 @@ export function SpellcastingGridPanel({
     gridSlots.push({ kind: "class-cantrip" });
   }
   for (const pool of spellcastingInfo.bonusCantripPools) {
-    gridSlots.push({ kind: "bonus-cantrip", pool });
+    if (pool.spellLevel > 0) {
+      gridSlots.push({ kind: "bonus-feat-spell", pool });
+    } else {
+      gridSlots.push({ kind: "bonus-cantrip", pool });
+    }
   }
   if (usesUnifiedPactPool) {
     gridSlots.push({ kind: "pact" });
@@ -450,6 +457,30 @@ export function SpellcastingGridPanel({
             );
           }
 
+          if (entry.kind === "bonus-feat-spell") {
+            const pool = entry.pool;
+            const equipped = getBonusCantripPoolEquipped(
+              spellSelections,
+              pool,
+              spellsByName,
+            );
+            const colorClass =
+              SPELL_LEVEL_COLORS[pool.spellLevel] ?? "text-emerald-400";
+            return (
+              <GridElementSlot
+                key={pool.slot}
+                label={pool.label}
+                icon={<Sparkles className={`h-5 w-5 ${colorClass}`} />}
+                equipped={equipped}
+                onClickEquip={() => onSelectSlot(pool.slot)}
+                onClickDetails={() => onSelectSlot(pool.slot)}
+                isSelected={selectedSlot === pool.slot}
+                highlighted={highlighted}
+                emptyTitle={`Choose level ${pool.spellLevel} spell — ${pool.spellListClassName} list`}
+              />
+            );
+          }
+
           if (entry.kind === "bonus-cantrip") {
             const pool = entry.pool;
             const equipped = getBonusCantripPoolEquipped(
@@ -467,7 +498,11 @@ export function SpellcastingGridPanel({
                 onClickDetails={() => onSelectSlot(pool.slot)}
                 isSelected={selectedSlot === pool.slot}
                 highlighted={highlighted}
-                emptyTitle={`Choose cantrip — ${pool.spellListClassName} list`}
+                emptyTitle={
+                  pool.needsSpellListChoice
+                    ? "Choose spell list (Cleric, Druid, or Wizard)"
+                    : `Choose cantrip — ${pool.spellListClassName} list`
+                }
               />
             );
           }

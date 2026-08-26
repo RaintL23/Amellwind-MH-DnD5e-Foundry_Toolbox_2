@@ -36,6 +36,31 @@ export function evaluateEquipmentAndSpellsCompleteness(
   }
 
   const spellcasting = input.spellcasting;
+  if (spellcasting) {
+    for (const pool of spellcasting.bonusCantripPools) {
+      if (pool.needsSpellListChoice) {
+        issues.push({
+          id: `spells-list-${pool.poolId}`,
+          section: "spells",
+          message: `Choose a spell list for ${pool.label}`,
+          slot: pool.slot,
+          highlightKey: "cantrips",
+        });
+        continue;
+      }
+      if (pool.selectedCount >= pool.maxCount) continue;
+      const missing = pool.maxCount - pool.selectedCount;
+      const unit = pool.spellLevel === 0 ? "cantrip" : "spell";
+      issues.push({
+        id: `spells-cantrips-${pool.poolId}`,
+        section: "spells",
+        message: `Choose ${missing} more ${unit}${missing === 1 ? "" : "s"} for ${pool.label} (${pool.selectedCount}/${pool.maxCount})`,
+        slot: pool.slot,
+        highlightKey: "cantrips",
+      });
+    }
+  }
+
   if (spellcasting?.isSpellcaster) {
     const classCantripsSelected = spellcasting.classCantripsSelected;
 
@@ -61,18 +86,6 @@ export function evaluateEquipmentAndSpellsCompleteness(
         section: "spells",
         message: `Remove ${excess} extra class cantrip${excess === 1 ? "" : "s"} (${classCantripsSelected}/${spellcasting.cantripCount})`,
         slot: "spell-level-0",
-        highlightKey: "cantrips",
-      });
-    }
-
-    for (const pool of spellcasting.bonusCantripPools) {
-      if (pool.selectedCount >= pool.maxCount) continue;
-      const missing = pool.maxCount - pool.selectedCount;
-      issues.push({
-        id: `spells-cantrips-${pool.poolId}`,
-        section: "spells",
-        message: `Choose ${missing} more cantrip${missing === 1 ? "" : "s"} for ${pool.label} (${pool.selectedCount}/${pool.maxCount})`,
-        slot: pool.slot,
         highlightKey: "cantrips",
       });
     }

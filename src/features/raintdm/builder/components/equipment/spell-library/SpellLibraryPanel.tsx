@@ -1,5 +1,11 @@
 import { BookOpen } from "lucide-react";
+import { Select } from "@/components/ui/select";
 import type { Spell } from "@/shared/types";
+import { useCharacterBuilder } from "@/features/raintdm/builder/context/CharacterBuilderContext";
+import {
+  applyFeatSpellListChoice,
+  resolveFeatOwnerFromPoolId,
+} from "@/features/raintdm/builder/utils/feat-spell-list.utils";
 import type {
   BuilderSpellSelection,
   BuilderSpellSelections,
@@ -8,6 +14,7 @@ import type {
   SpellLevelSlot,
   BuilderPactSpellSlot,
   BuilderBonusCantripSlot,
+  BuilderBonusFeatSpellSlot,
 } from "@/shared/types";
 import type { SpellcastingInfo } from "@/features/raintdm/builder/hooks/useSpellcasting";
 import { BuilderPanel } from "../../shared/BuilderPanel";
@@ -23,7 +30,11 @@ import { SubclassGrantRow } from "./SubclassGrantRow";
 import { useSpellLibraryPanelState } from "./useSpellLibraryPanelState";
 
 export interface SpellLibraryPanelProps {
-  selectedSlot: SpellLevelSlot | BuilderPactSpellSlot | BuilderBonusCantripSlot;
+  selectedSlot:
+    | SpellLevelSlot
+    | BuilderPactSpellSlot
+    | BuilderBonusCantripSlot
+    | BuilderBonusFeatSpellSlot;
   className: string;
   speciesName?: string | null;
   characterLevel: number;
@@ -75,6 +86,7 @@ export function SpellLibraryPanel({
     handleSelect,
     rpgbotSpellLookup,
     rpgbotSpellReady,
+    activeBonusPool,
   } = useSpellLibraryPanelState({
     selectedSlot,
     className,
@@ -85,6 +97,58 @@ export function SpellLibraryPanel({
     spellLevelByName,
     onAddSpell,
   });
+
+  const {
+    speciesOriginFeat,
+    backgroundOriginFeat,
+    featSelections,
+    setSpeciesOriginFeat,
+    setBackgroundOriginFeat,
+    setFeatAtIndex,
+    clearBonusCantripSpellSelections,
+  } = useCharacterBuilder();
+
+  function handleSpellListClassChoice(className: string) {
+    if (!activeBonusPool?.needsSpellListChoice) return;
+    const owner = resolveFeatOwnerFromPoolId(activeBonusPool.poolId);
+    if (!owner) return;
+
+    const nextSelection = applyFeatSpellListChoice(owner, className, {
+      speciesOriginFeat,
+      backgroundOriginFeat,
+      featSelections,
+    });
+    if (!nextSelection) return;
+
+    clearBonusCantripSpellSelections();
+    switch (owner.kind) {
+      case "species-origin":
+        setSpeciesOriginFeat(nextSelection);
+        break;
+      case "background-origin":
+        setBackgroundOriginFeat(nextSelection);
+        break;
+      case "feat-slot":
+        setFeatAtIndex(owner.index, nextSelection);
+        break;
+    }
+  }
+
+  const selectedSpellListClassChoice =
+    activeBonusPool?.needsSpellListChoice
+      ? (() => {
+          const owner = resolveFeatOwnerFromPoolId(activeBonusPool.poolId);
+          if (!owner) return null;
+          switch (owner.kind) {
+            case "species-origin":
+              return speciesOriginFeat?.spellListClassChoice ?? null;
+            case "background-origin":
+              return backgroundOriginFeat?.spellListClassChoice ?? null;
+            case "feat-slot":
+              return featSelections[owner.index]?.spellListClassChoice ?? null;
+          }
+        })()
+      : null;
 
   const hasActiveQueryOrFilters =
     !!search.trim() ||
@@ -130,6 +194,28 @@ export function SpellLibraryPanel({
       }
     >
       <div className="mb-2">
+        {activeBonusPool?.needsSpellListChoice && (
+          <div className="mb-3 space-y-2 rounded-md border border-border/60 bg-muted/20 p-2">
+            <p className="text-[10px] font-medium text-foreground">
+              Choose spell list for {activeBonusPool.label}
+            </p>
+            <Select
+              value={selectedSpellListClassChoice ?? ""}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value) handleSpellListClassChoice(value);
+              }}
+              className="h-8 w-full text-xs"
+            >
+              <option value="">Select Cleric, Druid, or Wizard…</option>
+              {(activeBonusPool.spellListClassOptions ?? []).map((className) => (
+                <option key={className} value={className}>
+                  {className}
+                </option>
+              ))}
+            </Select>
+          </div>
+        )}
         <ListSearchWithFilters
           compact
           searchValue={search}

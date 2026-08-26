@@ -5,7 +5,6 @@
 import { toAbilityKey } from "@/shared/constants/dnd";
 import type {
   AbilityKey,
-  BuilderBonusCantripSlot,
   BuilderSpellSelections,
   Spell,
 } from "@/shared/types";
@@ -13,7 +12,7 @@ import { formatModifier } from "@/shared/utils/cr.utils";
 import type { SpellcastingInfo } from "../hooks/useSpellcasting";
 import {
   findCantripPoolBySlot,
-  isBonusCantripSlot,
+  isBonusSpellPoolSlot,
 } from "./cantrip-pools.utils";
 import {
   grantsForPactPool,
@@ -55,6 +54,17 @@ export function hasChoosableSpellList(info: SpellcastingInfo): boolean {
   return info.isSpellcaster || info.bonusCantripPools.length > 0;
 }
 
+/** Bonus cantrip pool for this slot still needs a spell list class pick (e.g. Magic Initiate). */
+export function spellSlotNeedsSpellListChoice(
+  slot: string,
+  info: SpellcastingInfo,
+): boolean {
+  if (!isBonusSpellPoolSlot(slot)) return false;
+  return info.bonusCantripPools.some(
+    (pool) => pool.slot === slot && pool.needsSpellListChoice,
+  );
+}
+
 /**
  * Whether the slot should show the Available (pickable) spell list.
  * Species-only levels without class list access are grant-display only.
@@ -64,7 +74,9 @@ export function isSpellSlotChoosable(
   info: SpellcastingInfo,
 ): boolean {
   if (slot === PACT_SPELL_SLOT) return info.usesUnifiedPactPool;
-  if (isBonusCantripSlot(slot)) {
+  if (isBonusSpellPoolSlot(slot)) {
+    const pool = info.bonusCantripPools.find((candidate) => candidate.slot === slot);
+    if (pool?.needsSpellListChoice) return false;
     return info.bonusCantripPools.some((pool) => pool.slot === slot);
   }
   if (!slot.startsWith("spell-level-")) return false;
@@ -80,11 +92,11 @@ export function resolveSpellSlotSelectionLevel(
   info: SpellcastingInfo,
 ): number | null {
   if (slot === PACT_SPELL_SLOT) return PACT_SPELL_POOL_LEVEL;
-  if (isBonusCantripSlot(slot)) {
+  if (isBonusSpellPoolSlot(slot)) {
     return (
       findCantripPoolBySlot(
         info.bonusCantripPools,
-        slot as BuilderBonusCantripSlot,
+        slot,
       )?.selectionLevel ?? null
     );
   }
@@ -131,7 +143,7 @@ export function spellSlotHasLockedGrants(
     );
   }
 
-  if (isBonusCantripSlot(slot)) return false;
+  if (isBonusSpellPoolSlot(slot)) return false;
 
   const level = selectionLevel;
   return (
