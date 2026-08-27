@@ -46,6 +46,19 @@ describe("feat-ability-increase-choices.utils", () => {
     expect(areFeatAbilityIncreaseChoicesComplete(choices)).toBe(true);
   });
 
+  it("uses class ability priority when randomizing", () => {
+    const resilientLike: FeatAbilityIncrease = {
+      label: "Any ability +1 (choose)",
+      abilities: ["str", "dex", "con", "int", "wis", "cha"],
+      amount: 1,
+    };
+    const choices = buildFeatAbilityIncreaseChoices([resilientLike], {
+      randomize: true,
+      abilityPriority: ["wis", "con", "cha"],
+    });
+    expect(choices[0]?.ability).toBe("wis");
+  });
+
   it("updates a single choice and formats the summary", () => {
     const initial = buildFeatAbilityIncreaseChoices([PIERCER]);
     const updated = setFeatAbilityIncreaseChoiceAt(initial, 0, "dex");

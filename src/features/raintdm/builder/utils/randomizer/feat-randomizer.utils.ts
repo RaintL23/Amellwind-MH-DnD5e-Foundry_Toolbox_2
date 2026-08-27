@@ -1,4 +1,5 @@
 import type {
+  AbilityKey,
   AbilityScores,
   BuilderFeatSelection,
   Class,
@@ -34,6 +35,7 @@ function pickRandomOriginFeat(
   rpgbotData: RpgbotRatingsData | null,
   className: string,
   excludeIds: ReadonlySet<string> = new Set(),
+  abilityPriority: AbilityKey[] = [],
 ): BuilderFeatSelection | null {
   const pool = filterOriginFeats(feats).filter((feat) => !excludeIds.has(feat.id));
   if (pool.length === 0) return null;
@@ -52,7 +54,10 @@ function pickRandomOriginFeat(
     : pool[Math.floor(Math.random() * pool.length)];
 
   return picked
-    ? dndFeatToBuilderSelection(picked, { randomizeAbilityIncreases: true })
+    ? dndFeatToBuilderSelection(picked, {
+        randomizeAbilityIncreases: true,
+        abilityPriority,
+      })
     : null;
 }
 
@@ -63,11 +68,18 @@ export async function resolveOriginFeatSelectionForGrant(
   rpgbotData: RpgbotRatingsData | null,
   className: string,
   excludeIds: ReadonlySet<string> = new Set(),
+  abilityPriority: AbilityKey[] = [],
 ): Promise<BuilderFeatSelection | null> {
   if (!grant) return null;
 
   if (grant.kind === "choose") {
-    return pickRandomOriginFeat(feats, rpgbotData, className, excludeIds);
+    return pickRandomOriginFeat(
+      feats,
+      rpgbotData,
+      className,
+      excludeIds,
+      abilityPriority,
+    );
   }
 
   if (grant.kind === "fixed" && grant.featRefs[0]) {
@@ -89,6 +101,7 @@ function pickRandomClassFeat(
   slotLevel: number,
   abilities: Partial<AbilityScores> | AbilityScores,
   excludeIds: ReadonlySet<string> = new Set(),
+  abilityPriority: AbilityKey[] = [],
 ): BuilderFeatSelection | null {
   const eligible = prefer2024Edition(
     feats.filter(
@@ -116,7 +129,10 @@ function pickRandomClassFeat(
     : pool[Math.floor(Math.random() * pool.length)];
 
   return picked
-    ? dndFeatToBuilderSelection(picked, { randomizeAbilityIncreases: true })
+    ? dndFeatToBuilderSelection(picked, {
+        randomizeAbilityIncreases: true,
+        abilityPriority,
+      })
     : null;
 }
 
@@ -126,6 +142,7 @@ export function buildFeatSelectionsForLevel(
   feats: DndFeat[],
   rpgbotData: RpgbotRatingsData | null,
   abilities: Partial<AbilityScores> | AbilityScores = {},
+  abilityPriority: AbilityKey[] = [],
 ): (BuilderFeatSelection | null)[] {
   const slotLevels = getFeatSlotLevels(classData.name, level);
   const usedIds = new Set<string>();
@@ -137,6 +154,7 @@ export function buildFeatSelectionsForLevel(
       slotLevel,
       abilities,
       usedIds,
+      abilityPriority,
     );
     if (selection) usedIds.add(selection.id);
     return selection;

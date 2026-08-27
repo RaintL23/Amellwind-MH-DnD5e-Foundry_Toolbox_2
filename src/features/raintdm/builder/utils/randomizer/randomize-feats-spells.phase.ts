@@ -44,6 +44,7 @@ export async function randomizeInvocationOriginFeatsPhase(
       rpgbot.rpgbotData,
       classData.name,
       usedOriginFeatIds,
+      state.abilityPriority,
     );
     if (!selection) continue;
     setters.setOptionalFeatureOriginFeatAtIndex(slot.slotIndex, selection);
@@ -64,6 +65,7 @@ export async function randomizeFeatsAndSpellsPhase(
     classData,
     pickedSubclass,
     abilityScores,
+    abilityPriority,
     spellLookup,
     featLookup,
     randomFeatureChoiceSelections,
@@ -138,6 +140,7 @@ export async function randomizeFeatsAndSpellsPhase(
       ...characterAbilities,
       ...abilityScores,
     },
+    abilityPriority,
   );
   featSelections.forEach((selection, index) => {
     if (selection) setters.setFeatAtIndex(index, selection);

@@ -1,4 +1,4 @@
-import type { BuilderFeatSelection, DndFeat } from "@/shared/types";
+import type { AbilityKey, BuilderFeatSelection, DndFeat } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { buildFeatAbilityIncreaseChoices } from "./feat-ability-increase-choices.utils";
 
@@ -41,7 +41,10 @@ export function isInvocationOriginFeatSourceName(name: string): boolean {
 
 export function dndFeatToBuilderSelection(
   feat: DndFeat,
-  options?: { randomizeAbilityIncreases?: boolean },
+  options?: {
+    randomizeAbilityIncreases?: boolean;
+    abilityPriority?: AbilityKey[];
+  },
 ): BuilderFeatSelection {
   const selection: BuilderFeatSelection = {
     id: feat.id,
@@ -55,7 +58,10 @@ export function dndFeatToBuilderSelection(
   if (feat.abilityIncreases.length > 0) {
     selection.abilityIncreaseChoices = buildFeatAbilityIncreaseChoices(
       feat.abilityIncreases,
-      { randomize: options?.randomizeAbilityIncreases === true },
+      {
+        randomize: options?.randomizeAbilityIncreases === true,
+        abilityPriority: options?.abilityPriority,
+      },
     );
   }
 

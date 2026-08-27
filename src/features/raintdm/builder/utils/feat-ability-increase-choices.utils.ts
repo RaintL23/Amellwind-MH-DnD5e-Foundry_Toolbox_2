@@ -3,6 +3,7 @@ import type {
   BuilderFeatAbilityIncreaseChoice,
   FeatAbilityIncrease,
 } from "@/shared/types";
+import { pickPreferredAbility } from "@/features/raintdm/builder/utils/randomizer/class-ability-priority.utils";
 
 /** True when the increase offers more than one ability to pick from. */
 export function isChoosableAbilityIncrease(
@@ -21,10 +22,12 @@ export function buildFeatAbilityIncreaseChoices(
   options?: {
     previous?: BuilderFeatAbilityIncreaseChoice[];
     randomize?: boolean;
+    abilityPriority?: AbilityKey[];
   },
 ): BuilderFeatAbilityIncreaseChoice[] {
   const previous = options?.previous;
   const randomize = options?.randomize === true;
+  const abilityPriority = options?.abilityPriority ?? [];
 
   return increases.map((increase, index) => {
     const amount = increase.amount > 0 ? increase.amount : 1;
@@ -44,10 +47,12 @@ export function buildFeatAbilityIncreaseChoices(
 
     if (randomize) {
       const pick =
-        increase.abilities[
-          Math.floor(Math.random() * increase.abilities.length)
-        ];
-      return { ability: pick ?? null, amount };
+        abilityPriority.length > 0
+          ? pickPreferredAbility(increase.abilities, abilityPriority)
+          : (increase.abilities[
+              Math.floor(Math.random() * increase.abilities.length)
+            ] ?? null);
+      return { ability: pick, amount };
     }
 
     return { ability: null, amount };

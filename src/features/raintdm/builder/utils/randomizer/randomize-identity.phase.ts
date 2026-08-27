@@ -267,6 +267,8 @@ export async function randomizeSpeciesAndBackgroundPhase(
           dndFeats,
           rpgbot.rpgbotData,
           classData.name,
+          new Set(),
+          abilityPriority,
         );
       if (resolvedSpeciesOriginFeat) {
         setters.setSpeciesOriginFeat(resolvedSpeciesOriginFeat);
@@ -319,6 +321,8 @@ export async function randomizeSpeciesAndBackgroundPhase(
           dndFeats,
           rpgbot.rpgbotData,
           classData.name,
+          new Set(),
+          abilityPriority,
         );
       if (resolvedBackgroundOriginFeat) {
         setters.setBackgroundOriginFeat(resolvedBackgroundOriginFeat);
@@ -366,6 +370,8 @@ export async function randomizeSpeciesAndBackgroundPhase(
           dndFeats,
           rpgbot.rpgbotData,
           classData.name,
+          new Set(),
+          abilityPriority,
         );
         if (resolvedSpeciesOriginFeat) {
           setters.setSpeciesOriginFeat(resolvedSpeciesOriginFeat);
@@ -447,6 +453,8 @@ export async function randomizeSpeciesAndBackgroundPhase(
             dndFeats,
             rpgbot.rpgbotData,
             classData.name,
+            new Set(),
+            abilityPriority,
           );
         if (resolvedBackgroundOriginFeat) {
           setters.setBackgroundOriginFeat(resolvedBackgroundOriginFeat);

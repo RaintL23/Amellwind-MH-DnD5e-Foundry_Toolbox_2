@@ -44,28 +44,6 @@ export function pickRandomAlignmentAxes(): {
 
 const HUNTER_INITIATE_PATTERN = /hunter['']?s?\s+initiate/i;
 
-function speciesMatchesSaveProficiencies(
-  abilityBonuses: AbilityBonus[],
-  saveProficiencies: AbilityKey[],
-): boolean {
-  if (saveProficiencies.length === 0) return true;
-
-  const boosted = new Set<AbilityKey>();
-  for (const bonus of abilityBonuses) {
-    if (bonus.kind === "fixed") {
-      for (const key of Object.keys(bonus.bonuses) as AbilityKey[]) {
-        if (bonus.bonuses[key]) boosted.add(key);
-      }
-    } else if (bonus.kind === "choose") {
-      for (const key of bonus.from) boosted.add(key);
-    } else if (bonus.kind === "weightedDistribution") {
-      for (const key of bonus.from) boosted.add(key);
-    }
-  }
-
-  return saveProficiencies.some((ability) => boosted.has(ability));
-}
-
 function abilityBonusesIncludeAny(
   abilityBonuses: AbilityBonus[],
   abilities: AbilityKey[],
@@ -82,6 +60,53 @@ function abilityBonusesIncludeAny(
     for (const key of bonus.from) supported.add(key);
   }
   return abilities.some((ability) => supported.has(ability));
+}
+
+function getFixedAbilityBonus(
+  abilityBonuses: AbilityBonus[],
+  ability: AbilityKey,
+): number {
+  let total = 0;
+  for (const bonus of abilityBonuses) {
+    if (bonus.kind !== "fixed") continue;
+    total += bonus.bonuses[ability] ?? 0;
+  }
+  return total;
+}
+
+function filterSpeciesByAbilityPriority(
+  speciesList: Species[],
+  abilityPriority: AbilityKey[],
+): Species[] {
+  if (speciesList.length === 0 || abilityPriority.length === 0) {
+    return speciesList;
+  }
+
+  const [primary, secondary, tertiary] = abilityPriority;
+
+  if (primary) {
+    const strongPrimaryMatches = speciesList.filter(
+      (species) => getFixedAbilityBonus(species.abilityBonuses, primary) >= 2,
+    );
+    if (strongPrimaryMatches.length > 0) return strongPrimaryMatches;
+
+    const primaryMatches = speciesList.filter((species) =>
+      abilityBonusesIncludeAny(species.abilityBonuses, [primary]),
+    );
+    if (primaryMatches.length > 0) return primaryMatches;
+  }
+
+  const secondaryTargets = [secondary, tertiary].filter(
+    (ability): ability is AbilityKey => !!ability,
+  );
+  if (secondaryTargets.length > 0) {
+    const secondaryMatches = speciesList.filter((species) =>
+      abilityBonusesIncludeAny(species.abilityBonuses, secondaryTargets),
+    );
+    if (secondaryMatches.length > 0) return secondaryMatches;
+  }
+
+  return speciesList;
 }
 
 function filterBackgroundsByClassAbilities(
@@ -147,12 +172,8 @@ export function pickAmellwindSpecies(
   const roots = speciesList.filter((species) => !species.isSubrace);
   if (roots.length === 0) return null;
 
-  const relevant = preferredAbilities.slice(0, 3);
-  const matching = roots.filter((species) =>
-    speciesMatchesSaveProficiencies(species.abilityBonuses, relevant),
-  );
-
-  return pickRandom(matching.length > 0 ? matching : roots);
+  const matching = filterSpeciesByAbilityPriority(roots, preferredAbilities);
+  return pickRandom(matching);
 }
 
 export function pickDndBackground(
