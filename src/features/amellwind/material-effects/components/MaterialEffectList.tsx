@@ -15,7 +15,7 @@ import { MaterialEffectCard } from "./MaterialEffectCard";
 import { MaterialEffectDetailDialog } from "./MaterialEffectDetailDialog";
 import { parsePositiveInt } from "@/shared/utils/list-url-params.utils";
 
-const DEFAULT_PAGE_SIZE = 10;
+const DEFAULT_PAGE_SIZE = 20;
 
 export function MaterialEffectList() {
   const { q, getString, getAll, patchFilters } = useListSessionFilters({
@@ -108,8 +108,7 @@ export function MaterialEffectList() {
   );
 
   const handlePageSizeChange = useCallback(
-    (size: number) =>
-      patchFilters({ pageSize: String(size), page: "1" }),
+    (size: number) => patchFilters({ pageSize: String(size), page: "1" }),
     [patchFilters],
   );
 
@@ -128,7 +127,9 @@ export function MaterialEffectList() {
       <div className="shrink-0 border-b border-border px-6 py-5">
         <div className="flex items-center gap-3 mb-1">
           <Sparkles className="h-6 w-6 text-amber-400" />
-          <h1 className="text-xl font-bold text-foreground">Material Effects</h1>
+          <h1 className="text-xl font-bold text-foreground">
+            Material Effects
+          </h1>
           {!loading && (
             <span className="ml-2 rounded-full bg-muted px-2.5 py-0.5 text-xs text-muted-foreground">
               {filtered.length} / {effects.length}
