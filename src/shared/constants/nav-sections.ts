@@ -56,6 +56,55 @@ export type NavSectionDef = {
 
 export const NAV_SECTIONS: NavSectionDef[] = [
   {
+    id: "amellwind-raintdm",
+    label: "Amellwind (RaintDM)",
+    groups: [
+      {
+        label: "Character",
+        items: [
+          {
+            to: "/builder",
+            label: "Builder",
+            icon: UserRound,
+            description:
+              "Create a full D&D character using catalogs from the whole toolbox, then export/import to Foundry VTT.",
+            badge: "ALPHA",
+          },
+          {
+            to: "/damage-calculator",
+            label: "Damage Calculator",
+            icon: Calculator,
+            description: "Compare weapon builds by calculating expected DPT.",
+          },
+        ],
+      },
+      {
+        label: "Weapons",
+        items: [
+          {
+            to: "/weapon-forge",
+            label: "Weapon Forge",
+            icon: Hammer,
+            description:
+              "Browse curated RaintDM weapons or create and edit custom ones for your table.",
+          },
+        ],
+      },
+      {
+        label: "Items",
+        items: [
+          {
+            to: "/item-forge",
+            label: "Items Forge",
+            icon: Layers,
+            description:
+              "Browse curated RaintDM items and craft them with Amellwind Combo List recipes.",
+          },
+        ],
+      },
+    ],
+  },
+  {
     id: "amellwind",
     label: "Amellwind Homebrew",
     groups: [
@@ -63,16 +112,11 @@ export const NAV_SECTIONS: NavSectionDef[] = [
         label: "Character",
         items: [
           {
-            to: "/damage-calculator",
-            label: "Damage Calculator",
-            icon: Calculator,
-            description: "Compare weapon builds by calculating expected DPT.",
-          },
-          {
             to: "/character-guide",
             label: "Creation Guide",
             icon: BookOpen,
-            description: "Step-by-step guide to creating an Amellwind character.",
+            description:
+              "Step-by-step guide to creating an Amellwind character.",
           },
         ],
       },
@@ -83,7 +127,8 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             to: "/monsters",
             label: "Monsters",
             icon: Skull,
-            description: "Complete bestiary of Monster Hunter with stat blocks.",
+            description:
+              "Complete bestiary of Monster Hunter with stat blocks.",
           },
           {
             to: "/conditions",
@@ -208,50 +253,6 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             label: "NPC Generator",
             icon: Bot,
             description: "Generate stat blocks for humanoid NPCs instantly.",
-          },
-        ],
-      },
-    ],
-  },
-  {
-    id: "amellwind-raintdm",
-    label: "Amellwind (RaintDM)",
-    groups: [
-      {
-        label: "Character",
-        items: [
-          {
-            to: "/builder",
-            label: "Builder",
-            icon: UserRound,
-            description:
-              "Create a full D&D character using catalogs from the whole toolbox, then export/import to Foundry VTT.",
-            badge: "ALPHA",
-          },
-          {
-            to: "/damage-calculator",
-            label: "Damage Calculator",
-            icon: Calculator,
-            description: "Compare weapon builds by calculating expected DPT.",
-          },
-        ],
-      },
-      {
-        label: "Weapons",
-        items: [
-          {
-            to: "/weapon-forge",
-            label: "Weapon Forge",
-            icon: Hammer,
-            description:
-              "Browse curated RaintDM weapons or create and edit custom ones for your table.",
-          },
-          {
-            to: "/item-forge",
-            label: "Items Forge",
-            icon: Layers,
-            description:
-              "Browse curated RaintDM items and craft them with Amellwind Combo List recipes.",
           },
         ],
       },
