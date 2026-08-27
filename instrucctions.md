@@ -75,7 +75,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 ── Compendio D&D 5e ──
 /spells                    → Conjuros (5etools)
 /classes                   → Listado de clases base
-/classes/:classId          → Detalle de clase (variantes por fuente)
+/classes/:classId          → Detalle de clase (variantes por fuente; `?subclass=SOURCE::Name` selecciona subclase y auto-carga su source brew si hace falta)
 /dnd-races                 → Especies oficiales 5e
 /dnd-backgrounds           → Trasfondos oficiales 5e
 /dnd-feats                 → Dotes oficiales 5e
@@ -1942,7 +1942,7 @@ Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar. 
 | Feature        | Ruta               | Fuente                             | Notas                                                                                                                                                                                                                                                    |
 | -------------- | ------------------ | ---------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Spells         | `/spells`          | `spells/index.json` + UA/partnered | Dedupe por nombre; Filter dialog (nivel/escuela/clase/flags/sources)                                                                                                                                                                                     |
-| Classes        | `/classes`         | `class/index.json` + UA/partnered  | Detalle en `/classes/:classId`; Filter dialog (caster/sources)                                                                                                                                                                                           |
+| Classes        | `/classes`         | `class/index.json` + UA/partnered  | Detalle en `/classes/:classId?subclass=SOURCE::Name`; Filter dialog (caster/sources); deep-link asegura sources de clase/subclase on-demand                                                                                                                                                                                           |
 | Races          | `/dnd-races`       | `race`/`subrace` + UA/partnered    | Dedupe por nombre; Filter dialog (kind/size/sources)                                                                                                                                                                                                     |
 | Backgrounds    | `/dnd-backgrounds` | `background` 5etools               | Dedupe por nombre; Filter dialog (edition/sources)                                                                                                                                                                                                       |
 | Feats          | `/dnd-feats`       | `feat` + UA/partnered              | Dedupe por nombre; Filter dialog (kind/category/ability/prerequisite/repeatable/sources); prerequisite + ASI badges                                                                                                                                      |
@@ -1952,7 +1952,7 @@ Features de referencia oficial, separadas del homebrew Amellwind en el Sidebar. 
 
 Fetch centralizado en `shared/data/fivetools-fetch.ts` (offline-first _stale-while-revalidate_: memoria → IndexedDB `fivetools_cache` → red; refresco en segundo plano si está viejo) con soporte `VITE_5ETOOLS_DATA=local`. Catálogo de sources (oficial + UA + partnered homebrew) en `shared/services/source-catalog.service.ts` (filtros de brew por feature vía `collectOnDemandBrewSourceCodesForProps` + `_generated/index-props.json`); UI compartida `ListSearchWithFilters` / `ListFiltersDialog` (Sources agrupadas por año).
 
-**URL vs session (listas):** los filtros de búsqueda/sources viven en `sessionStorage` vía `useListSessionFilters` (por pestaña; no hinchan la query string). La URL solo destaca el ítem abierto: query (`?spell=`, `?feat=`, `?item=`, `?race=`, `?background=`, `?weapon=`) o ruta de detalle (`/classes/:id`, `/bestiary/:id`). Hooks: `useListSessionFilters`, `useListItemUrlParam`.
+**URL vs localStorage (listas):** los filtros de búsqueda/sources viven en `localStorage` vía `useListSessionFilters` (`list-filters:<listId>`; compartido entre pestañas del mismo origen; no hinchan la query string). La URL solo destaca el ítem abierto: query (`?spell=`, `?feat=`, `?item=`, `?race=`, `?background=`, `?weapon=`, `?subclass=`) o ruta de detalle (`/classes/:id`, `/bestiary/:id`). En Classes, `?subclass=SOURCE::Name` restaura la subclase y dispara `ensureClassUaSourcesLoaded` para el source de la clase y de la subclase. Hooks: `useListSessionFilters`, `useListItemUrlParam`.
 
 ---
 
