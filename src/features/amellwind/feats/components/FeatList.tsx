@@ -3,7 +3,8 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import { Feat } from "@/shared/types";
 import { getAllFeats } from "../services/feat.service";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import { FeatCard } from "./FeatCard";
@@ -28,18 +29,22 @@ const FEAT_FILTER_SECTIONS = [
 ];
 
 export function FeatList() {
-  const { getString, setString, patchFields } = useListUrlState();
+  const { q, getString, patchFilters } = useListSessionFilters({
+    listId: "mh-feats",
+    stringKeys: ["q", "filter"],
+    multiKeys: [],
+    urlPreserveKeys: ["feat"],
+  });
+  const { value: urlFeat, setValue: setUrlFeat } = useListItemUrlParam("feat");
   const [feats, setFeats] = useState<Feat[]>([]);
   const [loading, setLoading] = useState(true);
-  const urlSearch = getString("q");
-  const commitSearchToUrl = useCallback(
-    (q: string) => setString("q", q),
-    [setString],
+  const commitSearch = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
   );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(urlSearch, commitSearchToUrl);
+    useDebouncedListSearch(q, commitSearch);
   const filter = getString("filter") as FeatFilter;
-  const urlFeat = getString("feat");
   const [selected, setSelected] = useState<Feat | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -69,13 +74,13 @@ export function FeatList() {
     let result = feats;
 
     if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+      const query = appliedSearch.toLowerCase();
       result = result.filter(
         (f) =>
-          f.name.toLowerCase().includes(q) ||
-          f.summary.toLowerCase().includes(q) ||
-          f.paragraphs.some((p) => p.toLowerCase().includes(q)) ||
-          f.prerequisites.some((p) => p.toLowerCase().includes(q)),
+          f.name.toLowerCase().includes(query) ||
+          f.summary.toLowerCase().includes(query) ||
+          f.paragraphs.some((p) => p.toLowerCase().includes(query)) ||
+          f.prerequisites.some((p) => p.toLowerCase().includes(query)),
       );
     }
 
@@ -93,13 +98,13 @@ export function FeatList() {
   function handleSelect(item: Feat) {
     setSelected(item);
     setDialogOpen(true);
-    setString("feat", item.name);
+    setUrlFeat(item.name);
   }
 
   function applyDialogFilters(values: ListFilterValues) {
     const nextFilter =
       typeof values.filter === "string" ? values.filter : "";
-    patchFields({ filter: nextFilter });
+    patchFilters({ filter: nextFilter });
   }
 
   return (
@@ -161,7 +166,7 @@ export function FeatList() {
           open={dialogOpen}
           onOpenChange={(open) => {
             setDialogOpen(open);
-            if (!open) setString("feat", "");
+            if (!open) setUrlFeat(null);
           }}
         />
       )}

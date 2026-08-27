@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import {
   getAllComboTables,
   searchAllComboRows,
@@ -14,7 +14,9 @@ import { getAllItems } from "@/features/amellwind/shops/services/item.service";
 import { ItemRefText } from "@/shared/components/ItemRefText";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { ClearableSearchInput } from "@/shared/components/list-filters";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import {
   Hammer,
   BookOpen,
@@ -25,7 +27,6 @@ import {
   Utensils,
   Skull,
   Gem,
-  X,
   BookMarked,
 } from "lucide-react";
 
@@ -118,14 +119,21 @@ const TOOL_ICONS: Record<string, React.ElementType> = {
 
 export function ComboPage() {
   const [activeTab, setActiveTab] = useState<ActiveTab>("rules");
-  const [search, setSearch] = useState("");
+  const { q, patchFilters } = useListSessionFilters({
+    listId: "mh-combo",
+    stringKeys: ["q"],
+    multiKeys: [],
+  });
+  const commitSearch = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
+  );
   const {
     searchDraft,
     setSearchDraft,
     appliedSearch,
     isSearchPending,
-    commitSearch,
-  } = useDebouncedListSearch(search, setSearch);
+  } = useDebouncedListSearch(q, commitSearch);
   const [itemDescMap, setItemDescMap] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -160,7 +168,6 @@ export function ComboPage() {
 
   const handleTabChange = (tab: ActiveTab) => {
     setActiveTab(tab);
-    commitSearch("");
   };
 
   return (
@@ -177,26 +184,13 @@ export function ComboPage() {
         </p>
       </div>
 
-      {/* Search bar global */}
-      <div className="relative mb-5">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-        <input
-          type="text"
-          value={searchDraft}
-          onChange={(e) => setSearchDraft(e.target.value)}
-          placeholder="Search by name, ingredient or category..."
-          className="w-full pl-9 pr-9 py-2 rounded-lg border border-border bg-card text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-        />
-        {searchDraft && (
-          <button
-            onClick={() => commitSearch("")}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-            aria-label="Clear search"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        )}
-      </div>
+      <ClearableSearchInput
+        value={searchDraft}
+        onChange={setSearchDraft}
+        placeholder="Search by name, ingredient or category..."
+        className="mb-5"
+        inputClassName="h-10 rounded-lg bg-card"
+      />
 
       {/* ── MODO BÚSQUEDA ── */}
       {isSearchPending ? (
@@ -332,25 +326,14 @@ function ToolTab({
               : "No subcategories"}
           </p>
         </div>
-        {/* Local search */}
-        <div className="relative w-full sm:w-56">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <input
-            type="text"
-            value={localSearch}
-            onChange={(e) => setLocalSearch(e.target.value)}
-            placeholder="Filter recipes…"
-            className="w-full pl-8 pr-3 py-1.5 rounded-md border border-border bg-background text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
-          />
-          {localSearch && (
-            <button
-              onClick={() => setLocalSearch("")}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
+        <ClearableSearchInput
+          value={localSearch}
+          onChange={setLocalSearch}
+          placeholder="Filter recipes…"
+          compact
+          className="w-full sm:w-56"
+          inputClassName="h-8 text-sm"
+        />
       </div>
 
       {/* Table */}

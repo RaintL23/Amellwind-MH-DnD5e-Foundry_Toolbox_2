@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import { Rune } from "@/shared/types";
 import { parseCR } from "@/shared/utils/cr.utils";
 import { getAllRunes } from "../../services/rune.service";
@@ -11,6 +10,7 @@ import { RulesPanel } from "../rules/RulesPanel";
 import { ObtainMaterialsPanel } from "../rules/ObtainmentRulesPanel";
 import { BuildDrawer } from "../build/BuildDrawer";
 import { RuneFilters, type RuneFiltersState } from "./RuneFilters";
+import type { RuneSlotFilter } from "./rune-filters.utils";
 import { RuneTable } from "./RuneTable";
 import { useRuneBuild } from "../../context/RuneBuildContext";
 import {
@@ -24,17 +24,20 @@ import {
   type RuneListEffectFilters,
 } from "../../utils/rune-compatibility.utils";
 import type { MaterialEffectSlot } from "@/shared/types";
-import {
-  buildRuneListSearchParams,
-  parseRuneListUrlState,
-} from "./rune-list-url.utils";
+import { RUNE_DEFAULT_PAGE_SIZE } from "./rune-list-url.utils";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
+import { parsePositiveInt } from "@/shared/utils/list-url-params.utils";
 import { Layers } from "lucide-react";
 
 export function RuneList() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { q, getString, getAll, patchFilters } = useListSessionFilters({
+    listId: "mh-runes",
+    stringKeys: ["q", "slot", "page", "pageSize"],
+    multiKeys: ["monster", "mcr", "obtain", "tag", "mtier", "etier"],
+  });
   const [runes, setRunes] = useState<Rune[]>([]);
   const [searchIndex, setSearchIndex] = useState<RuneSearchIndexEntry[]>([]);
   const [loading, setLoading] = useState(true);
@@ -45,27 +48,31 @@ export function RuneList() {
 
   const { isInBuild, totalRunes } = useRuneBuild();
 
-  const { filters, page, pageSize } = useMemo(
-    () => parseRuneListUrlState(searchParams),
-    [searchParams],
+  const filters = useMemo<RuneFiltersState>(
+    () => ({
+      name: q,
+      monster: getAll("monster"),
+      monsterCr: getAll("mcr"),
+      slot: (getString("slot") || "") as RuneSlotFilter,
+      obtainment: getAll("obtain"),
+      tag: getAll("tag"),
+      monsterTier: getAll("mtier"),
+      materialEffectTier: getAll("etier"),
+    }),
+    [q, getString, getAll],
+  );
+
+  const page = parsePositiveInt(getString("page") || null, 1);
+  const pageSize = parsePositiveInt(
+    getString("pageSize") || null,
+    RUNE_DEFAULT_PAGE_SIZE,
   );
 
   const commitName = useCallback(
     (name: string) => {
-      setSearchParams(
-        (prev) => {
-          const current = parseRuneListUrlState(prev);
-          if (current.filters.name === name) return prev;
-          return buildRuneListSearchParams(
-            { ...current.filters, name },
-            1,
-            current.pageSize,
-          );
-        },
-        { replace: true },
-      );
+      patchFilters({ q: name, page: "1" });
     },
-    [setSearchParams],
+    [patchFilters],
   );
 
   const {
@@ -74,30 +81,7 @@ export function RuneList() {
     appliedSearch,
     isSearchPending,
     commitSearch,
-  } = useDebouncedListSearch(filters.name, commitName);
-
-  const patchListState = useCallback(
-    (
-      patch: Partial<{
-        filters: RuneFiltersState;
-        page: number;
-        pageSize: number;
-      }>,
-    ) => {
-      setSearchParams(
-        (prev) => {
-          const current = parseRuneListUrlState(prev);
-          return buildRuneListSearchParams(
-            patch.filters ?? current.filters,
-            patch.page ?? current.page,
-            patch.pageSize ?? current.pageSize,
-          );
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams],
-  );
+  } = useDebouncedListSearch(q, commitName);
 
   useEffect(() => {
     Promise.all([getAllRunes(), getMaterialEffectNameIndex()]).then(
@@ -170,9 +154,6 @@ export function RuneList() {
       );
     }
 
-    // Slot, tags and materialEffectTier are effect-scoped: all three must hold
-    // on the SAME effect. A rune only passes when at least one of its effects
-    // (weapon or armor) satisfies every active effect-level filter simultaneously.
     const effectFilters: RuneListEffectFilters = {
       slot: filters.slot,
       tag: filters.tag,
@@ -208,23 +189,33 @@ export function RuneList() {
   const updateFilters = useCallback(
     (next: RuneFiltersState) => {
       commitSearch(next.name);
-      patchListState({ filters: next, page: 1 });
+      patchFilters({
+        q: next.name,
+        monster: next.monster,
+        mcr: next.monsterCr,
+        slot: next.slot,
+        obtain: next.obtainment,
+        tag: next.tag,
+        mtier: next.monsterTier,
+        etier: next.materialEffectTier,
+        page: "1",
+      });
     },
-    [patchListState, commitSearch],
+    [patchFilters, commitSearch],
   );
 
   const handlePageChange = useCallback(
     (nextPage: number) => {
-      patchListState({ page: nextPage });
+      patchFilters({ page: String(nextPage) });
     },
-    [patchListState],
+    [patchFilters],
   );
 
   const handlePageSizeChange = useCallback(
     (size: number) => {
-      patchListState({ pageSize: size, page: 1 });
+      patchFilters({ pageSize: String(size), page: "1" });
     },
-    [patchListState],
+    [patchFilters],
   );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
@@ -243,7 +234,9 @@ export function RuneList() {
             <p className="text-sm text-muted-foreground mt-1">
               {!loading && (
                 <>
-                  {isSearchPending ? "Updating…" : `${filtered.length} / ${runes.length} materials`}
+                  {isSearchPending
+                    ? "Updating…"
+                    : `${filtered.length} / ${runes.length} materials`}
                 </>
               )}
             </p>

@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Package } from "lucide-react";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { setIfPresent } from "@/shared/utils/list-url-params.utils";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { ItemTabBar } from "@/features/amellwind/shops/components/ItemTabBar";
 import { SearchInput } from "@/features/amellwind/shops/components/SearchInput";
@@ -20,33 +20,19 @@ export function ItemForgeList() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [selected, setSelected] = useState<RaintdmItem | null>(null);
 
-  const search = searchParams.get("q") ?? "";
+  const { q, patchFilters } = useListSessionFilters({
+    listId: "item-forge",
+    stringKeys: ["q"],
+    multiKeys: [],
+    urlPreserveKeys: ["type"],
+  });
+
   const defaultType = uniqueTypes[0] ?? "";
   const activeTab = searchParams.get("type") ?? defaultType;
 
-  const patchUrl = useCallback(
-    (patch: { q?: string; type?: string }) => {
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams();
-          const q = "q" in patch ? (patch.q ?? "") : (prev.get("q") ?? "");
-          const type =
-            "type" in patch
-              ? (patch.type ?? defaultType)
-              : (prev.get("type") ?? defaultType);
-          setIfPresent(next, "q", q);
-          if (type && type !== defaultType) next.set("type", type);
-          return next;
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams, defaultType],
-  );
-
   const commitSearchQuery = useCallback(
-    (q: string) => patchUrl({ q }),
-    [patchUrl],
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
   );
 
   const {
@@ -54,8 +40,7 @@ export function ItemForgeList() {
     setSearchDraft,
     appliedSearch,
     isSearchPending,
-    commitSearch,
-  } = useDebouncedListSearch(search, commitSearchQuery);
+  } = useDebouncedListSearch(q, commitSearchQuery);
 
   const isSearching = appliedSearch.trim().length > 0;
   const searchResults = useItemForgeSearch(items, appliedSearch);
@@ -66,8 +51,15 @@ export function ItemForgeList() {
   );
 
   const handleTabChange = (tab: string) => {
-    commitSearch("");
-    patchUrl({ type: tab, q: "" });
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (tab && tab !== defaultType) next.set("type", tab);
+        else next.delete("type");
+        return next;
+      },
+      { replace: true },
+    );
     setSelected(null);
   };
 

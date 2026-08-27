@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Monster } from "@/shared/types";
 import { getAllMonsters } from "../services/monster.service";
 import { getTier } from "@/shared/utils/cr.utils";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ListSearchWithFilters, pickFilterValues } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import { Pagination } from "@/components/ui/pagination";
@@ -17,6 +18,7 @@ import {
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 import { MhTokenImage } from "@/shared/components/MhTokenImage";
+import { parsePositiveInt } from "@/shared/utils/list-url-params.utils";
 import { ChevronUp, ChevronDown, ChevronsUpDown } from "lucide-react";
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -69,113 +71,55 @@ function TierBadge({ tier }: { tier: number }) {
 
 export function MonsterList() {
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { getString, getAll, patchFilters } = useListSessionFilters({
+    listId: "mh-monsters",
+    // `name` kept for one-shot migrateFromUrl of legacy query bookmarks
+    stringKeys: ["q", "name", "sortKey", "sortDir", "page", "pageSize"],
+    multiKeys: ["cr", "tier", "type", "environment"],
+  });
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Derive all filter/sort/pagination state from the URL so it survives navigation
+  const searchCommitted = getString("q") || getString("name");
   const filters = useMemo<Filters>(
     () => ({
-      name: searchParams.get("name") ?? "",
-      cr: searchParams.getAll("cr"),
-      tier: searchParams.getAll("tier"),
-      type: searchParams.getAll("type"),
-      environment: searchParams.getAll("environment"),
+      name: searchCommitted,
+      cr: getAll("cr"),
+      tier: getAll("tier"),
+      type: getAll("type"),
+      environment: getAll("environment"),
     }),
-    [searchParams],
+    [searchCommitted, getAll],
   );
 
   const sort = useMemo(
     () => ({
-      key: (searchParams.get("sortKey") ?? "cr") as SortKey,
-      dir: (searchParams.get("sortDir") ?? "asc") as SortDir,
+      key: (getString("sortKey") || "cr") as SortKey,
+      dir: (getString("sortDir") || "asc") as SortDir,
     }),
-    [searchParams],
+    [getString],
   );
 
-  const page = useMemo(
-    () => parseInt(searchParams.get("page") ?? "1", 10),
-    [searchParams],
+  const page = parsePositiveInt(getString("page") || null, 1);
+  const pageSize = parsePositiveInt(
+    getString("pageSize") || null,
+    DEFAULT_PAGE_SIZE,
   );
 
-  const pageSize = useMemo(
-    () =>
-      parseInt(
-        searchParams.get("pageSize") ?? String(DEFAULT_PAGE_SIZE),
-        10,
-      ),
-    [searchParams],
+  const commitName = useCallback(
+    (name: string) => {
+      patchFilters({ q: name, name: "", page: "1" });
+    },
+    [patchFilters],
   );
 
-  // Merge a partial patch into the URL params. Uses replace:true so every
-  // filter keystroke doesn't create a new history entry.
-  function patchParams(
-    patch: Partial<{
-      name: string;
-      cr: string[];
-      tier: string[];
-      type: string[];
-      environment: string[];
-      sortKey: SortKey;
-      sortDir: SortDir;
-      page: number;
-      pageSize: number;
-    }>,
-  ) {
-    setSearchParams(
-      (prev) => {
-        const next = new URLSearchParams();
-
-        const name =
-          "name" in patch ? (patch.name ?? "") : (prev.get("name") ?? "");
-        const cr = "cr" in patch ? (patch.cr ?? []) : prev.getAll("cr");
-        const tier =
-          "tier" in patch ? (patch.tier ?? []) : prev.getAll("tier");
-        const type =
-          "type" in patch ? (patch.type ?? []) : prev.getAll("type");
-        const environment =
-          "environment" in patch
-            ? (patch.environment ?? [])
-            : prev.getAll("environment");
-        const sortKey = (
-          "sortKey" in patch
-            ? (patch.sortKey ?? "cr")
-            : (prev.get("sortKey") ?? "cr")
-        ) as SortKey;
-        const sortDir = (
-          "sortDir" in patch
-            ? (patch.sortDir ?? "asc")
-            : (prev.get("sortDir") ?? "asc")
-        ) as SortDir;
-        const pageNum =
-          "page" in patch
-            ? (patch.page ?? 1)
-            : parseInt(prev.get("page") ?? "1", 10);
-        const pageSizeNum =
-          "pageSize" in patch
-            ? (patch.pageSize ?? DEFAULT_PAGE_SIZE)
-            : parseInt(
-                prev.get("pageSize") ?? String(DEFAULT_PAGE_SIZE),
-                10,
-              );
-
-        // Only write non-default values to keep URLs clean
-        if (name) next.set("name", name);
-        for (const v of cr) next.append("cr", v);
-        for (const v of tier) next.append("tier", v);
-        for (const v of type) next.append("type", v);
-        for (const v of environment) next.append("environment", v);
-        if (sortKey !== "cr") next.set("sortKey", sortKey);
-        if (sortDir !== "asc") next.set("sortDir", sortDir);
-        if (pageNum !== 1) next.set("page", String(pageNum));
-        if (pageSizeNum !== DEFAULT_PAGE_SIZE)
-          next.set("pageSize", String(pageSizeNum));
-
-        return next;
-      },
-      { replace: true },
-    );
-  }
+  const {
+    searchDraft,
+    setSearchDraft,
+    appliedSearch,
+    isSearchPending,
+    commitSearch,
+  } = useDebouncedListSearch(searchCommitted, commitName);
 
   const handleSelect = useCallback(
     (monster: Monster) => {
@@ -191,7 +135,6 @@ export function MonsterList() {
     });
   }, []);
 
-  // Unique values for selects
   const uniqueCRs = useMemo(() => {
     const set = new Set(monsters.map((m) => m.cr));
     return Array.from(set).sort((a, b) => {
@@ -219,33 +162,6 @@ export function MonsterList() {
     [uniqueCRs, typeTaxonomy, uniqueEnvironments],
   );
 
-  const commitName = useCallback(
-    (name: string) => {
-      setSearchParams(
-        (prev) => {
-          const currentName = prev.get("name") ?? "";
-          if (currentName === name) return prev;
-          const next = new URLSearchParams(prev);
-          if (name) next.set("name", name);
-          else next.delete("name");
-          next.delete("page");
-          return next;
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams],
-  );
-
-  const {
-    searchDraft,
-    setSearchDraft,
-    appliedSearch,
-    isSearchPending,
-    commitSearch,
-  } = useDebouncedListSearch(filters.name, commitName);
-
-  // Filter + sort
   const filtered = useMemo(() => {
     let result = monsters;
 
@@ -283,24 +199,40 @@ export function MonsterList() {
     });
 
     return result;
-  }, [monsters, appliedSearch, filters.cr, filters.tier, filters.type, filters.environment, sort]);
+  }, [
+    monsters,
+    appliedSearch,
+    filters.cr,
+    filters.tier,
+    filters.type,
+    filters.environment,
+    sort,
+  ]);
 
-  // Resetear a página 1 cuando cambian filtros o sort
   function updateFilters(next: Filters) {
-    patchParams({ ...next, page: 1 });
+    patchFilters({
+      q: next.name,
+      name: "",
+      cr: next.cr,
+      tier: next.tier,
+      type: next.type,
+      environment: next.environment,
+      page: "1",
+    });
   }
 
   function toggleSort(key: SortKey) {
-    patchParams({
+    const nextDir =
+      sort.key === key ? (sort.dir === "asc" ? "desc" : "asc") : "asc";
+    patchFilters({
       sortKey: key,
-      sortDir:
-        sort.key === key ? (sort.dir === "asc" ? "desc" : "asc") : "asc",
-      page: 1,
+      sortDir: nextDir,
+      page: "1",
     });
   }
 
   function handlePageSizeChange(size: number) {
-    patchParams({ pageSize: size, page: 1 });
+    patchFilters({ pageSize: String(size), page: "1" });
   }
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -320,7 +252,6 @@ export function MonsterList() {
 
   return (
     <div className="flex flex-col h-full min-h-0 p-6">
-      {/* Header */}
       <div className="mb-6 shrink-0">
         <h1 className="text-2xl font-bold text-foreground">Monsters</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -354,109 +285,111 @@ export function MonsterList() {
         <ListAreaLoading />
       ) : (
         <>
-      {/* Table — altura según contenido, con tope en el espacio disponible */}
-      <div className="flex-1 min-h-0">
-        <div className="max-h-full overflow-auto rounded-lg border border-border">
-          <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-border">
-              {(
-                [
-                  { key: "name", label: "Name" },
-                  { key: "cr", label: "CR" },
-                  { key: "tier", label: "Tier" },
-                  { key: "type", label: "Type" },
-                ] as Array<{ key: SortKey; label: string }>
-              ).map(({ key, label }) => (
-                <th
-                  key={key}
-                  className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors backdrop-blur-sm"
-                  onClick={() => toggleSort(key)}
-                >
-                    <span className="flex items-center gap-1">
-                      {label}{" "}
-                      <SortIcon col={key} sortKey={sort.key} sortDir={sort.dir} />
-                    </span>
-                  </th>
-              ))}
-              <th className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground backdrop-blur-sm">
-                Environment
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-              {paginated.map((monster) => (
-                <tr
-                  key={`${monster.source}-${monster.name}`}
-                  className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
-                  onClick={() => handleSelect(monster)}
-                >
-                  <td className="px-4 py-3 font-medium text-foreground">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 shrink-0 items-center justify-center">
-                        <MhTokenImage name={monster.name} size="sm" />
-                      </div>
-                      <span>{monster.name}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground">
-                    {monster.cr}
-                  </td>
-                  <td className="px-4 py-3">
-                    <TierBadge tier={getTier(monster.cr)} />
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground capitalize">
-                    {monster.type.type.charAt(0).toUpperCase() +
-                      monster.type.type.slice(1)}
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap gap-1">
-                      {(monster.environment ?? []).slice(0, 3).map((env) => (
-                        <Badge
-                          key={env}
-                          variant="outline"
-                          className="text-xs capitalize"
-                        >
-                          {env}
-                        </Badge>
-                      ))}
-                      {(monster.environment?.length ?? 0) > 3 && (
-                        <Badge variant="secondary" className="text-xs">
-                          +{(monster.environment?.length ?? 0) - 3}
-                        </Badge>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-              {filtered.length === 0 && (
-                <tr>
-                  <td
-                    colSpan={5}
-                    className="px-4 py-10 text-center text-muted-foreground"
-                  >
-                    No monsters found with the applied filters.
-                  </td>
-                </tr>
-              )}
-          </tbody>
-          </table>
-        </div>
-      </div>
+          <div className="flex-1 min-h-0">
+            <div className="max-h-full overflow-auto rounded-lg border border-border">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-border">
+                    {(
+                      [
+                        { key: "name", label: "Name" },
+                        { key: "cr", label: "CR" },
+                        { key: "tier", label: "Tier" },
+                        { key: "type", label: "Type" },
+                      ] as Array<{ key: SortKey; label: string }>
+                    ).map(({ key, label }) => (
+                      <th
+                        key={key}
+                        className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors backdrop-blur-sm"
+                        onClick={() => toggleSort(key)}
+                      >
+                        <span className="flex items-center gap-1">
+                          {label}{" "}
+                          <SortIcon
+                            col={key}
+                            sortKey={sort.key}
+                            sortDir={sort.dir}
+                          />
+                        </span>
+                      </th>
+                    ))}
+                    <th className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground backdrop-blur-sm">
+                      Environment
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {paginated.map((monster) => (
+                    <tr
+                      key={`${monster.source}-${monster.name}`}
+                      className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
+                      onClick={() => handleSelect(monster)}
+                    >
+                      <td className="px-4 py-3 font-medium text-foreground">
+                        <div className="flex items-center gap-3">
+                          <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+                            <MhTokenImage name={monster.name} size="sm" />
+                          </div>
+                          <span>{monster.name}</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground">
+                        {monster.cr}
+                      </td>
+                      <td className="px-4 py-3">
+                        <TierBadge tier={getTier(monster.cr)} />
+                      </td>
+                      <td className="px-4 py-3 text-muted-foreground capitalize">
+                        {monster.type.type.charAt(0).toUpperCase() +
+                          monster.type.type.slice(1)}
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex flex-wrap gap-1">
+                          {(monster.environment ?? []).slice(0, 3).map((env) => (
+                            <Badge
+                              key={env}
+                              variant="outline"
+                              className="text-xs capitalize"
+                            >
+                              {env}
+                            </Badge>
+                          ))}
+                          {(monster.environment?.length ?? 0) > 3 && (
+                            <Badge variant="secondary" className="text-xs">
+                              +{(monster.environment?.length ?? 0) - 3}
+                            </Badge>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                  {filtered.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={5}
+                        className="px-4 py-10 text-center text-muted-foreground"
+                      >
+                        No monsters found with the applied filters.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
-      <div className="shrink-0">
-        <Pagination
-          page={page}
-          totalPages={totalPages}
-          totalItems={filtered.length}
-          pageSize={pageSize}
-          onPageChange={(p) => patchParams({ page: p })}
-          onPageSizeChange={handlePageSizeChange}
-        />
-      </div>
+          <div className="shrink-0">
+            <Pagination
+              page={page}
+              totalPages={totalPages}
+              totalItems={filtered.length}
+              pageSize={pageSize}
+              onPageChange={(p) => patchFilters({ page: String(p) })}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          </div>
         </>
       )}
-
     </div>
   );
 }

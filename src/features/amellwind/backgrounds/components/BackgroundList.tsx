@@ -7,7 +7,7 @@ import {
 } from "@/shared/types";
 import { getAllBackgrounds } from "../services/background.service";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import { BackgroundCard } from "./BackgroundCard";
@@ -30,16 +30,19 @@ const BACKGROUND_FILTER_SECTIONS = [
 ];
 
 export function BackgroundList() {
-  const { getString, setString, patchFields } = useListUrlState();
+  const { q, getString, patchFilters } = useListSessionFilters({
+    listId: "mh-backgrounds",
+    stringKeys: ["q", "faction"],
+    multiKeys: [],
+  });
   const [backgrounds, setBackgrounds] = useState<Background[]>([]);
   const [loading, setLoading] = useState(true);
-  const urlSearch = getString("q");
-  const commitSearchToUrl = useCallback(
-    (q: string) => setString("q", q),
-    [setString],
+  const commitSearch = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
   );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(urlSearch, commitSearchToUrl);
+    useDebouncedListSearch(q, commitSearch);
   const factionFilter = getString("faction") as "" | BackgroundFaction;
   const [selected, setSelected] = useState<Background | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -54,13 +57,13 @@ export function BackgroundList() {
     let result = backgrounds;
 
     if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+      const query = appliedSearch.toLowerCase();
       result = result.filter(
         (b) =>
-          b.name.toLowerCase().includes(q) ||
-          b.fluff.toLowerCase().includes(q) ||
-          b.proficiencies.skills.toLowerCase().includes(q) ||
-          BACKGROUND_FACTION_LABELS[b.faction].toLowerCase().includes(q),
+          b.name.toLowerCase().includes(query) ||
+          b.fluff.toLowerCase().includes(query) ||
+          b.proficiencies.skills.toLowerCase().includes(query) ||
+          BACKGROUND_FACTION_LABELS[b.faction].toLowerCase().includes(query),
       );
     }
 
@@ -79,7 +82,7 @@ export function BackgroundList() {
   function applyDialogFilters(values: ListFilterValues) {
     const faction =
       typeof values.faction === "string" ? values.faction : "";
-    patchFields({ faction });
+    patchFilters({ faction });
   }
 
   return (

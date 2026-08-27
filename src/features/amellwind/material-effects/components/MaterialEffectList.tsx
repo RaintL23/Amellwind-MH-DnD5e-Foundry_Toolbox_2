@@ -1,7 +1,7 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { useEffect, useMemo, useState, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import type { MaterialEffect } from "@/shared/types";
 import { Pagination } from "@/components/ui/pagination";
 import { Sparkles } from "lucide-react";
@@ -13,92 +13,41 @@ import {
 import { MaterialEffectFilters } from "./MaterialEffectFilters";
 import { MaterialEffectCard } from "./MaterialEffectCard";
 import { MaterialEffectDetailDialog } from "./MaterialEffectDetailDialog";
-import {
-  appendAll,
-  parsePositiveInt,
-  setIfPresent,
-  setIntIfNotDefault,
-} from "@/shared/utils/list-url-params.utils";
+import { parsePositiveInt } from "@/shared/utils/list-url-params.utils";
 
 const DEFAULT_PAGE_SIZE = 10;
 
-function parseMaterialEffectListUrl(searchParams: URLSearchParams) {
-  return {
-    filters: {
-      name: searchParams.get("q") ?? "",
-      slot: searchParams.getAll("slot") as MaterialEffectFiltersState["slot"],
-      rarity: searchParams.getAll("rarity") as MaterialEffectFiltersState["rarity"],
-    } satisfies MaterialEffectFiltersState,
-    page: parsePositiveInt(searchParams.get("page"), 1),
-    pageSize: parsePositiveInt(searchParams.get("pageSize"), DEFAULT_PAGE_SIZE),
-  };
-}
-
-function buildMaterialEffectListUrl(
-  filters: MaterialEffectFiltersState,
-  page: number,
-  pageSize: number,
-): URLSearchParams {
-  const next = new URLSearchParams();
-  setIfPresent(next, "q", filters.name);
-  appendAll(next, "slot", filters.slot);
-  appendAll(next, "rarity", filters.rarity);
-  setIntIfNotDefault(next, "page", page, 1);
-  setIntIfNotDefault(next, "pageSize", pageSize, DEFAULT_PAGE_SIZE);
-  return next;
-}
-
 export function MaterialEffectList() {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const { q, getString, getAll, patchFilters } = useListSessionFilters({
+    listId: "mh-material-effects",
+    stringKeys: ["q", "page", "pageSize"],
+    multiKeys: ["slot", "rarity"],
+  });
   const [effects, setEffects] = useState<MaterialEffect[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<MaterialEffect | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  const { filters, page, pageSize } = useMemo(
-    () => parseMaterialEffectListUrl(searchParams),
-    [searchParams],
+  const filters = useMemo<MaterialEffectFiltersState>(
+    () => ({
+      name: q,
+      slot: getAll("slot") as MaterialEffectFiltersState["slot"],
+      rarity: getAll("rarity") as MaterialEffectFiltersState["rarity"],
+    }),
+    [q, getAll],
   );
 
-  const patchListState = useCallback(
-    (
-      patch: Partial<{
-        filters: MaterialEffectFiltersState;
-        page: number;
-        pageSize: number;
-      }>,
-    ) => {
-      setSearchParams(
-        (prev) => {
-          const current = parseMaterialEffectListUrl(prev);
-          return buildMaterialEffectListUrl(
-            patch.filters ?? current.filters,
-            patch.page ?? current.page,
-            patch.pageSize ?? current.pageSize,
-          );
-        },
-        { replace: true },
-      );
-    },
-    [setSearchParams],
+  const page = parsePositiveInt(getString("page") || null, 1);
+  const pageSize = parsePositiveInt(
+    getString("pageSize") || null,
+    DEFAULT_PAGE_SIZE,
   );
 
   const commitName = useCallback(
     (name: string) => {
-      setSearchParams(
-        (prev) => {
-          const current = parseMaterialEffectListUrl(prev);
-          if (current.filters.name === name) return prev;
-          return buildMaterialEffectListUrl(
-            { ...current.filters, name },
-            1,
-            current.pageSize,
-          );
-        },
-        { replace: true },
-      );
+      patchFilters({ q: name, page: "1" });
     },
-    [setSearchParams],
+    [patchFilters],
   );
 
   const {
@@ -107,7 +56,7 @@ export function MaterialEffectList() {
     appliedSearch,
     isSearchPending,
     commitSearch,
-  } = useDebouncedListSearch(filters.name, commitName);
+  } = useDebouncedListSearch(q, commitName);
 
   useEffect(() => {
     getAllMaterialEffects()
@@ -119,11 +68,11 @@ export function MaterialEffectList() {
     let result = effects;
 
     if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+      const query = appliedSearch.toLowerCase();
       result = result.filter(
         (effect) =>
-          effect.name.toLowerCase().includes(q) ||
-          effect.effect.toLowerCase().includes(q),
+          effect.name.toLowerCase().includes(query) ||
+          effect.effect.toLowerCase().includes(query),
       );
     }
 
@@ -132,7 +81,9 @@ export function MaterialEffectList() {
     }
 
     if (filters.rarity.length > 0) {
-      result = result.filter((effect) => filters.rarity.includes(effect.rarity));
+      result = result.filter((effect) =>
+        filters.rarity.includes(effect.rarity),
+      );
     }
 
     return result;
@@ -141,19 +92,25 @@ export function MaterialEffectList() {
   const updateFilters = useCallback(
     (next: MaterialEffectFiltersState) => {
       commitSearch(next.name);
-      patchListState({ filters: next, page: 1 });
+      patchFilters({
+        q: next.name,
+        slot: next.slot,
+        rarity: next.rarity,
+        page: "1",
+      });
     },
-    [patchListState, commitSearch],
+    [patchFilters, commitSearch],
   );
 
   const handlePageChange = useCallback(
-    (nextPage: number) => patchListState({ page: nextPage }),
-    [patchListState],
+    (nextPage: number) => patchFilters({ page: String(nextPage) }),
+    [patchFilters],
   );
 
   const handlePageSizeChange = useCallback(
-    (size: number) => patchListState({ pageSize: size, page: 1 }),
-    [patchListState],
+    (size: number) =>
+      patchFilters({ pageSize: String(size), page: "1" }),
+    [patchFilters],
   );
 
   const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));

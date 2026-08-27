@@ -1,12 +1,13 @@
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import type { MhCondition } from "@/shared/types";
 import type { MhDisease } from "@/shared/types";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListUrlState } from "@/shared/hooks/useListUrlState";
-import { Input } from "@/components/ui/input";
+import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
+import { ClearableSearchInput } from "@/shared/components/list-filters";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { AlertTriangle, Biohazard, Search } from "lucide-react";
+import { AlertTriangle, Biohazard } from "lucide-react";
 import { getAllConditions } from "../services/condition.service";
 import { getAllDiseases } from "@/features/amellwind/diseases/services/disease.service";
 import { ConditionCard } from "./ConditionCard";
@@ -16,15 +17,25 @@ import { DiseaseDetailDialog } from "@/features/amellwind/diseases/components/Di
 import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
 
 export function ConditionsDiseasesPage() {
-  const { getString, patchFields } = useListUrlState();
-  const urlCondition = getString("condition");
-  const urlDisease = getString("disease");
+  const { q, patchFilters } = useListSessionFilters({
+    listId: "mh-conditions-diseases",
+    stringKeys: ["q"],
+    multiKeys: [],
+    urlPreserveKeys: ["condition", "disease"],
+  });
+  const { value: urlCondition, setValue: setUrlCondition } =
+    useListItemUrlParam("condition");
+  const { value: urlDisease, setValue: setUrlDisease } =
+    useListItemUrlParam("disease");
   const [conditions, setConditions] = useState<MhCondition[]>([]);
   const [diseases, setDiseases] = useState<MhDisease[]>([]);
   const [loading, setLoading] = useState(true);
-  const [search, setSearch] = useState("");
+  const commitSearch = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
+  );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(search, setSearch);
+    useDebouncedListSearch(q, commitSearch);
   const [selectedCondition, setSelectedCondition] = useState<MhCondition | null>(null);
   const [selectedDisease, setSelectedDisease] = useState<MhDisease | null>(null);
   const [conditionDialogOpen, setConditionDialogOpen] = useState(false);
@@ -118,15 +129,14 @@ export function ConditionsDiseasesPage() {
 
       {/* Search bar */}
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
-        <div className="relative max-w-xs">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-muted-foreground pointer-events-none" />
-          <Input
-            value={searchDraft}
-            onChange={(e) => setSearchDraft(e.target.value)}
-            placeholder="Search conditions or diseases..."
-            className="pl-9 h-8 text-sm"
-          />
-        </div>
+        <ClearableSearchInput
+          value={searchDraft}
+          onChange={setSearchDraft}
+          placeholder="Search conditions or diseases..."
+          compact
+          className="max-w-xs"
+          inputClassName="h-8 text-sm"
+        />
       </div>
 
       {/* Tabs + content */}
@@ -169,10 +179,8 @@ export function ConditionsDiseasesPage() {
                     key={item.id}
                     condition={item}
                     onClick={() => {
-                      patchFields({
-                        condition: item.name,
-                        disease: undefined,
-                      });
+                      setUrlDisease(null);
+                      setUrlCondition(item.name);
                     }}
                   />
                 ))}
@@ -196,10 +204,8 @@ export function ConditionsDiseasesPage() {
                     key={item.id}
                     disease={item}
                     onClick={() => {
-                      patchFields({
-                        disease: item.name,
-                        condition: undefined,
-                      });
+                      setUrlCondition(null);
+                      setUrlDisease(item.name);
                     }}
                   />
                 ))}
@@ -215,7 +221,7 @@ export function ConditionsDiseasesPage() {
           open={conditionDialogOpen}
           onOpenChange={(open) => {
             setConditionDialogOpen(open);
-            if (!open) patchFields({ condition: undefined });
+            if (!open) setUrlCondition(null);
           }}
         />
       )}
@@ -225,7 +231,7 @@ export function ConditionsDiseasesPage() {
           open={diseaseDialogOpen}
           onOpenChange={(open) => {
             setDiseaseDialogOpen(open);
-            if (!open) patchFields({ disease: undefined });
+            if (!open) setUrlDisease(null);
           }}
         />
       )}

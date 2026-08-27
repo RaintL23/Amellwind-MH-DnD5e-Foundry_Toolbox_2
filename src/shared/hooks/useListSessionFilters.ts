@@ -11,7 +11,7 @@ import {
 } from "@/shared/utils/list-session-storage.utils";
 
 export interface UseListSessionFiltersOptions {
-  /** Stable id for sessionStorage (`list-filters:<listId>`). */
+  /** Stable id for localStorage (`list-filters:<listId>`). */
   listId: string;
   /** Single-value fields. Defaults to `["q"]`. */
   stringKeys?: readonly string[];
@@ -38,8 +38,9 @@ export interface ListSessionFiltersApi {
 }
 
 /**
- * List search/filter state persisted in sessionStorage (per tab), not the URL.
- * Optionally migrates leftover `?src=&q=` query params into session once.
+ * List search/filter state persisted in localStorage (shared across tabs of the
+ * same origin), not the URL. Optionally migrates leftover `?src=&q=` query
+ * params into storage once.
  */
 export function useListSessionFilters(
   options: UseListSessionFiltersOptions,

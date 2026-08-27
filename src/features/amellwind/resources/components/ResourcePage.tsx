@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import {
   RESOURCE_CATEGORY_ICONS,
   RESOURCE_RARITY_STYLES,
@@ -7,12 +7,13 @@ import {
   type ResourceRarity,
 } from "@/shared/types";
 import { getAllResourceTables, searchResources } from "../services/resource.service";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/shared/utils/cn";
-import { Search, Hammer } from "lucide-react";
+import { Hammer } from "lucide-react";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { ClearableSearchInput } from "@/shared/components/list-filters";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ResourceDetailDialog } from "./ResourceDetailDialog";
 
 const CATEGORIES: ResourceCategory[] = ["Bonepiles", "Fish", "Insects", "Minerals", "Mushrooms", "Plants"];
@@ -50,12 +51,22 @@ function ResourceCard({ resource, onClick }: { resource: Resource; onClick: () =
 }
 
 export function ResourcePage() {
-  const [activeCategory, setActiveCategory] = useState<ResourceCategory | "all">("all");
-  const [activeRarity, setActiveRarity] = useState<ResourceRarity | "all">("all");
-  const [craftingOnly, setCraftingOnly] = useState(false);
-  const [search, setSearch] = useState("");
+  const { q, getString, patchFilters } = useListSessionFilters({
+    listId: "mh-resources",
+    stringKeys: ["q", "category", "rarity", "crafting"],
+    multiKeys: [],
+  });
+  const activeCategory = (getString("category") || "all") as
+    | ResourceCategory
+    | "all";
+  const activeRarity = (getString("rarity") || "all") as ResourceRarity | "all";
+  const craftingOnly = getString("crafting") === "1";
+  const commitSearch = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
+  );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(search, setSearch);
+    useDebouncedListSearch(q, commitSearch);
   const [selected, setSelected] = useState<Resource | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -101,21 +112,16 @@ export function ResourcePage() {
           </p>
         </div>
 
-        {/* Search */}
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="Search resources..."
-            value={searchDraft}
-            onChange={(e) => setSearchDraft(e.target.value)}
-            className="pl-9"
-          />
-        </div>
+        <ClearableSearchInput
+          placeholder="Search resources..."
+          value={searchDraft}
+          onChange={setSearchDraft}
+        />
 
         {/* Category Tabs */}
         <div className="flex flex-wrap gap-1.5">
           <button
-            onClick={() => setActiveCategory("all")}
+            onClick={() => patchFilters({ category: "" })}
             className={cn(
               "px-3 py-1 text-xs font-medium rounded-full border transition-colors",
               activeCategory === "all"
@@ -128,7 +134,7 @@ export function ResourcePage() {
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
-              onClick={() => setActiveCategory(cat)}
+              onClick={() => patchFilters({ category: cat })}
               className={cn(
                 "px-3 py-1 text-xs font-medium rounded-full border transition-colors flex items-center gap-1",
                 activeCategory === cat
@@ -145,7 +151,7 @@ export function ResourcePage() {
         {/* Rarity filter + crafting toggle */}
         <div className="flex flex-wrap gap-1.5 items-center">
           <button
-            onClick={() => setActiveRarity("all")}
+            onClick={() => patchFilters({ rarity: "" })}
             className={cn(
               "px-2 py-0.5 text-xs rounded-full border transition-colors",
               activeRarity === "all"
@@ -160,7 +166,7 @@ export function ResourcePage() {
             return (
               <button
                 key={r}
-                onClick={() => setActiveRarity(r)}
+                onClick={() => patchFilters({ rarity: r })}
                 className={cn(
                   "px-2 py-0.5 text-xs rounded-full border transition-colors",
                   activeRarity === r ? cn(s.badge, "opacity-100") : "text-muted-foreground border-border hover:bg-accent"
@@ -171,7 +177,9 @@ export function ResourcePage() {
             );
           })}
           <button
-            onClick={() => setCraftingOnly((v) => !v)}
+            onClick={() =>
+              patchFilters({ crafting: craftingOnly ? "" : "1" })
+            }
             className={cn(
               "ml-auto flex items-center gap-1 px-2 py-0.5 text-xs rounded-full border transition-colors",
               craftingOnly

@@ -8,11 +8,12 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
+import { ClearableSearchInput } from "@/shared/components/list-filters";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { useWeaponDialogUrlSync } from "@/features/amellwind/weapons/hooks/useWeaponDialogUrlSync";
 import { findWeaponByUrlKey } from "@/features/amellwind/weapons/utils/weapon-dialog-url.utils";
 import { useWeaponForge } from "../hooks/useWeaponForge";
@@ -43,9 +44,18 @@ export function WeaponForgeList() {
     useWeaponDialogUrlSync();
 
   const [tab, setTab] = useState<"catalog" | "mine">("catalog");
-  const [search, setSearch] = useState("");
+  const { q, patchFilters } = useListSessionFilters({
+    listId: "weapon-forge",
+    stringKeys: ["q"],
+    multiKeys: [],
+    urlPreserveKeys: ["weapon", "rarity"],
+  });
+  const commitSearch = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
+  );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(search, setSearch);
+    useDebouncedListSearch(q, commitSearch);
 
   const [selected, setSelected] = useState<CustomWeapon | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
@@ -246,11 +256,12 @@ export function WeaponForgeList() {
         </Accordion>
 
         <div className="mt-4 flex flex-wrap items-center gap-3">
-          <Input
+          <ClearableSearchInput
             value={searchDraft}
-            onChange={(e) => setSearchDraft(e.target.value)}
+            onChange={setSearchDraft}
             placeholder="Search weapons…"
-            className="max-w-xs h-9"
+            className="max-w-xs"
+            inputClassName="h-9"
           />
 
           {compareMode && (

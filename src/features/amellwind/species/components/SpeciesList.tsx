@@ -7,7 +7,8 @@ import {
 } from "@/shared/types";
 import { getAllSpecies } from "../services/species.service";
 import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
-import { useListUrlState } from "@/shared/hooks/useListUrlState";
+import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
+import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ListSearchWithFilters } from "@/shared/components/list-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import { SpeciesCard } from "./SpeciesCard";
@@ -27,20 +28,25 @@ const CATEGORY_OPTIONS = (
 ).map(([value, label]) => ({ value, label }));
 
 export function SpeciesList() {
-  const { getString, setString, patchFields } = useListUrlState();
+  const { q, getString, patchFilters } = useListSessionFilters({
+    listId: "mh-species",
+    stringKeys: ["q", "view", "category", "parent"],
+    multiKeys: [],
+    urlPreserveKeys: ["species"],
+  });
+  const { value: urlSpecies, setValue: setUrlSpecies } =
+    useListItemUrlParam("species");
   const [species, setSpecies] = useState<Species[]>([]);
   const [loading, setLoading] = useState(true);
-  const urlSearch = getString("q");
-  const commitSearchToUrl = useCallback(
-    (q: string) => setString("q", q),
-    [setString],
+  const commitSearch = useCallback(
+    (nextQ: string) => patchFilters({ q: nextQ }),
+    [patchFilters],
   );
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
-    useDebouncedListSearch(urlSearch, commitSearchToUrl);
+    useDebouncedListSearch(q, commitSearch);
   const categoryFilter = getString("category") as "" | SpeciesCategory;
   const parentFilter = getString("parent");
-  const viewMode = (getString("view", "All") || "All") as ViewMode;
-  const urlSpecies = getString("species");
+  const viewMode = (getString("view") || "All") as ViewMode;
   const [selected, setSelected] = useState<Species | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -108,12 +114,12 @@ export function SpeciesList() {
     if (viewMode === "Subraces") result = result.filter((s) => s.isSubrace);
 
     if (appliedSearch.trim()) {
-      const q = appliedSearch.toLowerCase();
+      const query = appliedSearch.toLowerCase();
       result = result.filter(
         (s) =>
-          s.name.toLowerCase().includes(q) ||
-          s.parentSpecies?.toLowerCase().includes(q) ||
-          s.fluff.toLowerCase().includes(q),
+          s.name.toLowerCase().includes(query) ||
+          s.parentSpecies?.toLowerCase().includes(query) ||
+          s.fluff.toLowerCase().includes(query),
       );
     }
 
@@ -141,7 +147,7 @@ export function SpeciesList() {
   function handleSelect(item: Species) {
     setSelected(item);
     setDialogOpen(true);
-    setString("species", item.name);
+    setUrlSpecies(item.name);
   }
 
   function applyDialogFilters(values: ListFilterValues) {
@@ -151,7 +157,7 @@ export function SpeciesList() {
         : "";
     const category = typeof values.category === "string" ? values.category : "";
     const parent = typeof values.parent === "string" ? values.parent : "";
-    patchFields({ view, category, parent });
+    patchFilters({ view, category, parent });
   }
 
   return (
@@ -218,7 +224,7 @@ export function SpeciesList() {
           open={dialogOpen}
           onOpenChange={(open) => {
             setDialogOpen(open);
-            if (!open) setString("species", "");
+            if (!open) setUrlSpecies(null);
           }}
         />
       )}

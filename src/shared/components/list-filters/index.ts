@@ -20,6 +20,7 @@ export {
   toggleMultiFilterValue,
 } from "./list-filter.utils";
 
+export { ClearableSearchInput } from "./ClearableSearchInput";
 export { LARGE_FILTER_SECTION_PILL_CAP, ListFilterPill, ListFilterSection } from "./ListFilterSection";
 export { ListFiltersDialog } from "./ListFiltersDialog";
 export { ListSearchWithFilters } from "./ListSearchWithFilters";
