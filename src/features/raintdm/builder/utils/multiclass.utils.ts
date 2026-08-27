@@ -14,40 +14,19 @@ import {
 } from "./character-hit-points";
 import { formatModifier } from "@/shared/utils/cr.utils";
 import { ABILITY_NAMES } from "@/shared/constants/dnd";
+import {
+  MULTICLASS_SPELL_SLOTS,
+  getMulticlassCasterLevel as getSharedMulticlassCasterLevel,
+  getMulticlassSpellSlotCounts as getSharedMulticlassSpellSlotCounts,
+  getMulticlassSpellSlotLevels as getSharedMulticlassSpellSlotLevels,
+  hasMultipleSpellcastingClasses as hasSharedMultipleSpellcastingClasses,
+  type MulticlassCasterEntry,
+} from "@/shared/utils/multiclass-spell-slots.utils";
+
+export { MULTICLASS_SPELL_SLOTS };
 
 const STANDARD_ASI_LEVELS = [4, 8, 12, 16, 19] as const;
 const FIGHTER_BONUS_ASI_CLASS_LEVELS = [6, 14] as const;
-
-/** PHB / XPHB Multiclass Spellcaster table (spell slots per combined caster level). */
-export const MULTICLASS_SPELL_SLOTS: number[][] = [
-  [2, 0, 0, 0, 0, 0, 0, 0, 0],
-  [3, 0, 0, 0, 0, 0, 0, 0, 0],
-  [4, 2, 0, 0, 0, 0, 0, 0, 0],
-  [4, 3, 0, 0, 0, 0, 0, 0, 0],
-  [4, 3, 2, 0, 0, 0, 0, 0, 0],
-  [4, 3, 3, 0, 0, 0, 0, 0, 0],
-  [4, 3, 3, 1, 0, 0, 0, 0, 0],
-  [4, 3, 3, 2, 0, 0, 0, 0, 0],
-  [4, 3, 3, 3, 1, 0, 0, 0, 0],
-  [4, 3, 3, 3, 2, 0, 0, 0, 0],
-  [4, 3, 3, 3, 2, 1, 0, 0, 0],
-  [4, 3, 3, 3, 2, 1, 0, 0, 0],
-  [4, 3, 3, 3, 2, 1, 1, 0, 0],
-  [4, 3, 3, 3, 2, 1, 1, 0, 0],
-  [4, 3, 3, 3, 2, 1, 1, 1, 0],
-  [4, 3, 3, 3, 2, 1, 1, 1, 0],
-  [4, 3, 3, 3, 2, 1, 1, 1, 1],
-  [4, 3, 3, 3, 3, 1, 1, 1, 1],
-  [4, 3, 3, 3, 3, 2, 1, 1, 1],
-  [4, 3, 3, 3, 3, 2, 2, 1, 1],
-];
-
-const FULL_CASTERS = new Set(["bard", "cleric", "druid", "sorcerer", "wizard"]);
-const HALF_CASTERS = new Set(["paladin", "ranger"]);
-const THIRD_CASTER_SUBCLASSES = new Set([
-  "eldritch knight",
-  "arcane trickster",
-]);
 
 const ABILITY_LABELS: Record<AbilityKey, string> = ABILITY_NAMES;
 
@@ -271,109 +250,36 @@ export function buildCurrentClassesForMulticlassPicker(
   return entries;
 }
 
-function resolveCasterContribution(
-  classData: Class,
-  classLevel: number,
-  subclassName: string | null,
-  edition?: "classic" | "one",
-): number {
-  const name = classData.name.toLowerCase();
-  const progression = classData.casterProgression;
-
-  if (progression === "full" || FULL_CASTERS.has(name)) {
-    return classLevel;
-  }
-
-  if (progression === "1/2" || HALF_CASTERS.has(name)) {
-    return edition === "one"
-      ? Math.ceil(classLevel / 2)
-      : Math.floor(classLevel / 2);
-  }
-
-  if (
-    progression === "1/3" ||
-    (subclassName && THIRD_CASTER_SUBCLASSES.has(subclassName.toLowerCase()))
-  ) {
-    return Math.floor(classLevel / 3);
-  }
-
-  if (progression === "pact") return 0;
-
-  return 0;
+function toCasterEntries(
+  classEntries: BuilderClassLevelEntry[],
+): MulticlassCasterEntry[] {
+  return classEntries.map((entry) => ({
+    classData: entry.classData,
+    level: entry.level,
+    subclassName: entry.subclass?.name ?? null,
+  }));
 }
 
 export function getMulticlassCasterLevel(
   classEntries: BuilderClassLevelEntry[],
 ): number {
-  let total = 0;
-  let hasPact = false;
-
-  for (const entry of classEntries) {
-    if (!entry.classData || entry.level < 1) continue;
-    const subclassName = entry.subclass?.name ?? null;
-
-    if (entry.classData.casterProgression === "pact") {
-      hasPact = true;
-      continue;
-    }
-
-    total += resolveCasterContribution(
-      entry.classData,
-      entry.level,
-      subclassName,
-      entry.classData.edition,
-    );
-  }
-
-  if (total === 0 && !hasPact) return 0;
-  return Math.min(20, Math.max(1, total));
+  return getSharedMulticlassCasterLevel(toCasterEntries(classEntries));
 }
 
 export function getMulticlassSpellSlotLevels(casterLevel: number): number[] {
-  if (casterLevel < 1) return [];
-  const row = MULTICLASS_SPELL_SLOTS[casterLevel - 1];
-  if (!row) return [];
-
-  const levels: number[] = [];
-  row.forEach((slots, index) => {
-    if (slots > 0) levels.push(index + 1);
-  });
-  return levels;
+  return getSharedMulticlassSpellSlotLevels(casterLevel);
 }
 
 export function getMulticlassSpellSlotCounts(
   casterLevel: number,
 ): Record<number, number> {
-  if (casterLevel < 1) return {};
-  const row = MULTICLASS_SPELL_SLOTS[casterLevel - 1];
-  if (!row) return {};
-
-  const counts: Record<number, number> = {};
-  row.forEach((slots, index) => {
-    if (slots > 0) counts[index + 1] = slots;
-  });
-  return counts;
+  return getSharedMulticlassSpellSlotCounts(casterLevel);
 }
 
 export function hasMultipleSpellcastingClasses(
   classEntries: BuilderClassLevelEntry[],
 ): boolean {
-  let count = 0;
-  for (const entry of classEntries) {
-    if (!entry.classData || entry.level < 1) continue;
-    const prog = entry.classData.casterProgression;
-    if (prog && prog !== "none" && prog !== "pact") count++;
-    if (prog === "pact") count++;
-    const subclassName = entry.subclass?.name?.toLowerCase();
-    if (
-      subclassName &&
-      THIRD_CASTER_SUBCLASSES.has(subclassName) &&
-      entry.level >= 3
-    ) {
-      count++;
-    }
-  }
-  return count > 1;
+  return hasSharedMultipleSpellcastingClasses(toCasterEntries(classEntries));
 }
 
 export interface MulticlassHitDicePool {
