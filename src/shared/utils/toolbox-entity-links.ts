@@ -215,9 +215,13 @@ export function buildToolboxEntityHref(
     case "disease":
       return buildToolboxQueryPath("/conditions", "disease", trimmed);
     case "class":
-      return `/classes/${encodeURIComponent(trimmed)}`;
-    case "subclass":
-      return `/classes/${encodeURIComponent(trimmed)}`;
+      return src
+        ? `/classes/${encodeURIComponent(`${src}::${trimmed}`)}`
+        : `/classes/${encodeURIComponent(trimmed)}`;
+    case "subclass": {
+      // 5etools: {@subclass Name|SubSrc|ClassName|ClassSrc|…}
+      return null;
+    }
     case "race":
     case "species":
       if (amellwind) return buildToolboxQueryPath("/species", "species", trimmed);
@@ -250,6 +254,36 @@ export function resolveToolboxEntityRef(
   const parsed = parseFiveToolsTagToken(tag, body);
   if (!parsed.name) return null;
 
+  if (parsed.tag === "subclass") {
+    const parts = body.split("|").map((part) => part.trim());
+    const subclassName = formatEntityDisplayName(parts[0] ?? "");
+    const subclassSource = parts[1] ?? "";
+    const className = formatEntityDisplayName(parts[2] ?? "");
+    const classSource = parts[3] ?? "";
+    if (!subclassName) return null;
+
+    const subclassId = subclassSource
+      ? `${subclassSource}::${subclassName}`
+      : subclassName;
+    let href: string;
+    if (className && classSource) {
+      const params = new URLSearchParams();
+      params.set("subclass", subclassId);
+      href = `/classes/${encodeURIComponent(`${classSource}::${className}`)}?${params.toString()}`;
+    } else if (className) {
+      const params = new URLSearchParams();
+      params.set("subclass", subclassId);
+      href = `/classes/${encodeURIComponent(className)}?${params.toString()}`;
+    } else {
+      return null;
+    }
+
+    const label =
+      parsed.display || subclassName;
+
+    return { kind: "class", href, label };
+  }
+
   const href = buildToolboxEntityHref(parsed.tag, parsed.name, parsed.source);
   if (!href) return null;
 
@@ -259,8 +293,6 @@ export function resolveToolboxEntityRef(
         return "condition";
       case "species":
         return "race";
-      case "subclass":
-        return "class";
       default:
         return parsed.tag as ToolboxEntityKind;
     }

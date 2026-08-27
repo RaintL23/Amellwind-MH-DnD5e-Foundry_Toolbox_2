@@ -1,7 +1,8 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Class, ClassFeatureEntry } from "@/shared/types";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
 import { readListSessionState } from "@/shared/utils/list-session-storage.utils";
 import { mergeProgressionWithSubclass, mergeClassTableGroups } from "../mappers/class.mapper";
 import {
@@ -32,13 +33,27 @@ function classListSourceFilterFromSession(): string[] {
     : [];
 }
 
+/** `SOURCE::Name` → SOURCE; bare names return null. */
+function sourceFromEntityId(id: string): string | null {
+  const decoded = decodeURIComponent(id);
+  const sep = decoded.indexOf("::");
+  if (sep <= 0) return null;
+  const source = decoded.slice(0, sep).trim();
+  return source || null;
+}
+
 export function useClassDetailPage(classId: string) {
   const navigate = useNavigate();
+  const { value: urlSubclass, setValue: setUrlSubclass } =
+    useListItemUrlParam("subclass");
+  const urlSubclassRef = useRef(urlSubclass);
+  urlSubclassRef.current = urlSubclass;
 
   const [cls, setCls] = useState<Class | null>(null);
   const [resolvedVariants, setResolvedVariants] = useState<Class[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
+  const [subclassEnsureDone, setSubclassEnsureDone] = useState(false);
 
   const [activeId, setActiveId] = useState("");
   const [activeSubclassId, setActiveSubclassId] = useState("");
@@ -54,27 +69,23 @@ export function useClassDetailPage(classId: string) {
       return;
     }
 
-    const isSameClassVariantSwitch =
-      cls !== null &&
-      resolvedVariants.some((c) => c.id === classId && c.name === cls.name);
-
-    if (isSameClassVariantSwitch) {
-      setActiveId(classId);
-      setActiveSubclassId("");
-      setNotFound(false);
-      setLoading(false);
-      return;
-    }
-
     let cancelled = false;
     setLoading(true);
     setNotFound(false);
+    setSubclassEnsureDone(false);
 
-    const sourceFilter = classListSourceFilterFromSession();
+    const sources = new Set(classListSourceFilterFromSession());
+    const classSource = sourceFromEntityId(classId);
+    if (classSource) sources.add(classSource);
+    const initialSubclass = urlSubclassRef.current;
+    const subclassSource = initialSubclass
+      ? sourceFromEntityId(initialSubclass)
+      : null;
+    if (subclassSource) sources.add(subclassSource);
 
     void (async () => {
-      if (sourceFilter.length > 0) {
-        await ensureClassUaSourcesLoaded(sourceFilter);
+      if (sources.size > 0) {
+        await ensureClassUaSourcesLoaded([...sources]);
       }
       const classes = await getAllClasses();
       if (cancelled) return;
@@ -94,7 +105,7 @@ export function useClassDetailPage(classId: string) {
       }
       setCls(found);
       setActiveId(found.id);
-      setActiveSubclassId("");
+      setSubclassEnsureDone(true);
     })().finally(() => {
       if (!cancelled) setLoading(false);
     });
@@ -102,7 +113,7 @@ export function useClassDetailPage(classId: string) {
     return () => {
       cancelled = true;
     };
-  }, [classId, cls, resolvedVariants]);
+  }, [classId]);
 
   useEffect(() => {
     if (!cls) {
@@ -121,6 +132,40 @@ export function useClassDetailPage(classId: string) {
     };
   }, [cls]);
 
+  useEffect(() => {
+    if (!urlSubclass || loading || !cls) {
+      if (!urlSubclass) setSubclassEnsureDone(true);
+      return;
+    }
+
+    const subclassSource = sourceFromEntityId(urlSubclass);
+    if (!subclassSource) {
+      setSubclassEnsureDone(true);
+      return;
+    }
+
+    let cancelled = false;
+    setSubclassEnsureDone(false);
+    void ensureClassUaSourcesLoaded([
+      ...classListSourceFilterFromSession(),
+      subclassSource,
+    ]).then(async (changed) => {
+      if (cancelled) return;
+      if (changed) {
+        const byName = await getClassesByName(cls.name);
+        if (cancelled) return;
+        setResolvedVariants(
+          byName.length > 0 ? sortClassVariants(byName) : [cls],
+        );
+      }
+      setSubclassEnsureDone(true);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [urlSubclass, loading, cls]);
+
   const variants = resolvedVariants;
 
   const active = useMemo(
@@ -136,6 +181,41 @@ export function useClassDetailPage(classId: string) {
     if (!active) return [];
     return subclassesForClassVariant(active);
   }, [active]);
+
+  useEffect(() => {
+    if (loading || !subclassEnsureDone || !cls) return;
+
+    if (!urlSubclass) {
+      if (activeSubclassId) setActiveSubclassId("");
+      return;
+    }
+
+    // Wait until same-name variants (and attached subclasses) are resolved.
+    if (resolvedVariants.length === 0) return;
+
+    const decoded = decodeURIComponent(urlSubclass);
+    const match =
+      variantSubclasses.find(
+        (s) => s.id === urlSubclass || s.id === decoded,
+      ) ?? null;
+
+    if (match) {
+      if (activeSubclassId !== match.id) setActiveSubclassId(match.id);
+      return;
+    }
+
+    setActiveSubclassId("");
+    setUrlSubclass(null);
+  }, [
+    loading,
+    subclassEnsureDone,
+    cls,
+    urlSubclass,
+    resolvedVariants.length,
+    variantSubclasses,
+    activeSubclassId,
+    setUrlSubclass,
+  ]);
 
   const activeSubclass = useMemo(() => {
     if (!activeSubclassId) return null;
@@ -178,14 +258,19 @@ export function useClassDetailPage(classId: string) {
     (id: string) => {
       setActiveId(id);
       setActiveSubclassId("");
+      setUrlSubclass(null);
       navigate(`/classes/${encodeURIComponent(id)}`, { replace: true });
     },
-    [navigate],
+    [navigate, setUrlSubclass],
   );
 
-  const handleSubclassSelect = useCallback((id: string) => {
-    setActiveSubclassId(id);
-  }, []);
+  const handleSubclassSelect = useCallback(
+    (id: string) => {
+      setActiveSubclassId(id);
+      setUrlSubclass(id || null);
+    },
+    [setUrlSubclass],
+  );
 
   const varyingFields = useMemo(
     () => getFieldsThatVaryAcrossVariants(variants),
