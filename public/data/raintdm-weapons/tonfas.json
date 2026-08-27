@@ -6,10 +6,7 @@
   "rarity": "none",
   "weight": 6,
   "value": 2500,
-  "property": [
-    "F",
-    "L"
-  ],
+  "property": ["F", "L"],
   "dmg1": "1d6",
   "dmgType": "B",
   "entries": [
@@ -33,35 +30,35 @@
               "1",
               "--",
               "--",
-              "Mastery Note (Nick), Ryuuki Gauge, Tonfa Styles, Ryuuki Burst"
+              "Mastery Note (Nick), Spirit Gauge, Tonfa Styles, Spirit Burst"
             ],
             [
               "Uncommon",
               "2",
               "--",
               "--",
-              "Ryuuki Gauge Upgrade I, Ryuuki Burst Upgrade I, Sky Step"
+              "Spirit Gauge Upgrade I, Spirit Burst Upgrade I, Sky Step"
             ],
             [
               "Rare",
               "3",
               "+1",
               "+1",
-              "Ryuuki Gauge Upgrade II, Ryuuki Burst Upgrade II, Earth Impact"
+              "Spirit Gauge Upgrade II, Spirit Burst Upgrade II, Earth Impact"
             ],
             [
               "Very Rare",
               "4",
               "+2",
               "+2",
-              "Ryuuki Gauge Upgrade III, Fast Ryuuki Charge, Sky Dash"
+              "Spirit Gauge Upgrade III, Fast Spirit Charge, Sky Dash"
             ],
             [
               "Legendary",
               "5",
               "+3",
               "+3",
-              "Ryuuki Gauge Upgrade IV, Ryuuki Burst Upgrade III, Style Master, Apex Ryuuki"
+              "Spirit Gauge Upgrade IV, Spirit Burst Upgrade III, Style Master, Apex Spirit"
             ]
           ]
         }
@@ -78,8 +75,8 @@
       },
       {
         "id": "3432940a-fb48-47df-9f96-ba910ca87f9f",
-        "name": "Ryuuki Gauge",
-        "description": "The weapon builds up internal pressure through combat. Whenever you hit a creature with a melee attack using this weapon, you gain 1 Ryuuki Charge (up to the maximum of 2). You lose all accumulated charges if you spend 1 minute out of combat or without making an attack."
+        "name": "Spirit Gauge",
+        "description": "The weapon builds up internal pressure through combat. Whenever you hit a creature with a melee attack using this weapon, you gain 1 Spirit Charge (up to the maximum of 2). You lose all accumulated charges if you spend 1 minute out of combat or without making an attack."
       },
       {
         "id": "8ad49cc6-6eae-4311-9127-d5520d6ea7dd",
@@ -88,69 +85,69 @@
       },
       {
         "id": "739302ab-c03b-41f3-962f-9f9238921617",
-        "name": "Ryuuki Burst",
-        "description": "When you hit a creature with a melee attack using this weapon, you can open the pressure valves. You can expend any number of Ryuuki Charges you currently have to add 1d4 Force damage to that attack."
+        "name": "Spirit Burst",
+        "description": "When you hit a creature with a melee attack using this weapon, you can open the pressure valves. You can expend any number of Spirit Charges you currently have to add 1d4 Force damage to that attack."
       },
       {
         "id": "a8df5ccd-98cb-44e3-8b65-9aac27bfbae4",
-        "name": "Ryuuki Gauge Upgrade I",
+        "name": "Spirit Gauge Upgrade I",
         "description": "You can store a maximum of 3 charges.",
         "upgradesFromId": "3432940a-fb48-47df-9f96-ba910ca87f9f"
       },
       {
         "id": "c7b361a1-bcb0-4e27-8ccc-8e7294be5284",
-        "name": "Ryuuki Burst Upgrade I",
-        "description": "Your Ryuuki Burst increases to 1d6 Force damage per charge expended.",
+        "name": "Spirit Burst Upgrade I",
+        "description": "Your Spirit Burst increases to 1d6 Force damage per charge expended.",
         "upgradesFromId": "739302ab-c03b-41f3-962f-9f9238921617"
       },
       {
         "id": "803a3a47-8434-4d25-b922-1f3ba3dbf50e",
         "name": "Sky Step",
-        "description": "While in Sky Style, when you make a running or standing jump, you can expend 1 Ryuuki Charge to double your jump distance (both horizontal and vertical) for that jump."
+        "description": "While in Sky Style, when you make a running or standing jump, you can expend 1 Spirit Charge to double your jump distance (both horizontal and vertical) for that jump."
       },
       {
         "id": "4b4904bc-46fc-43d7-86e8-854101a213a2",
-        "name": "Ryuuki Gauge Upgrade II",
+        "name": "Spirit Gauge Upgrade II",
         "description": "You can store a maximum of 4 charges.",
         "upgradesFromId": "a8df5ccd-98cb-44e3-8b65-9aac27bfbae4"
       },
       {
         "id": "e5e43718-f8dd-433e-a5f1-6129be2698ce",
-        "name": "Ryuuki Burst Upgrade II",
-        "description": "Your Ryuuki Burst increases to 1d8 Force damage per charge expended.",
+        "name": "Spirit Burst Upgrade II",
+        "description": "Your Spirit Burst increases to 1d8 Force damage per charge expended.",
         "upgradesFromId": "c7b361a1-bcb0-4e27-8ccc-8e7294be5284"
       },
       {
         "id": "ee62175f-6844-42ee-907e-423628540969",
         "name": "Earth Impact",
-        "description": "While in Earth Style, your critical hits transfer seismic pressure. If you score a critical hit against a creature, you can expend 1 Ryuuki Charge. If you do, the target must succeed on a Strength saving throw (DC = 8 + your Proficiency Bonus + your Strength or Dexterity modifier) or be knocked Prone."
+        "description": "While in Earth Style, your critical hits transfer seismic pressure. If you score a critical hit against a creature, you can expend 1 Spirit Charge. If you do, the target must succeed on a Strength saving throw (DC = 8 + your Proficiency Bonus + your Strength or Dexterity modifier) or be knocked Prone."
       },
       {
         "id": "525f9803-9518-4e4e-8392-8d7acc4c7629",
-        "name": "Ryuuki Gauge Upgrade III",
+        "name": "Spirit Gauge Upgrade III",
         "description": "You can store a maximum of 5 charges.",
         "upgradesFromId": "4b4904bc-46fc-43d7-86e8-854101a213a2"
       },
       {
         "id": "0a714f60-93e4-4484-b4fc-b372546097d2",
-        "name": "Fast Ryuuki Charge",
-        "description": "The initial friction heats up the weapon instantly. When you roll for Initiative, your Tonfas generate 2 Ryuuki Charges."
+        "name": "Fast Spirit Charge",
+        "description": "The initial friction heats up the weapon instantly. When you roll for Initiative, your Tonfas generate 2 Spirit Charges."
       },
       {
         "id": "6b66fa7a-0c05-450e-adda-0749ce8e6aa1",
         "name": "Sky Dash",
-        "description": "While in Sky Style, you can use the thrusters for three-dimensional evasive maneuvers. When an enemy misses you with a melee attack, you can expend 1 Ryuuki Charge to use your Reaction to move up to 15 feet without provoking opportunity attacks. During this movement (and only while the reaction lasts), you gain a fly speed. If you end this reaction in the air, you fall immediately unless you have another way to stay suspended."
+        "description": "While in Sky Style, you can use the thrusters for three-dimensional evasive maneuvers. When an enemy misses you with a melee attack, you can expend 1 Spirit Charge to use your Reaction to move up to 15 feet without provoking opportunity attacks. During this movement (and only while the reaction lasts), you gain a fly speed. If you end this reaction in the air, you fall immediately unless you have another way to stay suspended."
       },
       {
         "id": "89062d89-b55e-4403-ac92-d46af45b496e",
-        "name": "Ryuuki Gauge Upgrade IV",
+        "name": "Spirit Gauge Upgrade IV",
         "description": "You can store a maximum of 5 charges.",
         "upgradesFromId": "525f9803-9518-4e4e-8392-8d7acc4c7629"
       },
       {
         "id": "00986fc1-a90d-4fb1-ad41-03ece290d39a",
-        "name": "Ryuuki Burst Upgrade III",
-        "description": "Your Ryuuki Burst increases to 1d10 Force damage per charge expended.",
+        "name": "Spirit Burst Upgrade III",
+        "description": "Your Spirit Burst increases to 1d10 Force damage per charge expended.",
         "upgradesFromId": "e5e43718-f8dd-433e-a5f1-6129be2698ce"
       },
       {
@@ -161,8 +158,8 @@
       },
       {
         "id": "210be828-f21d-4c15-a9b5-41c9db24f624",
-        "name": "Apex Ryuuki",
-        "description": "If you expend 5 Ryuuki Charges in a single Ryuuki Burst, the impact causes a massive implosion within the creature. In addition to the extra force damage (5d10), the target becomes Incapacitated until the end of its next turn due to neurological shock. If the creature is Large or smaller, this feature ignores any immunity to the Incapacitated condition."
+        "name": "Apex Spirit",
+        "description": "If you expend 5 Spirit Charges in a single Spirit Burst, the impact causes a massive implosion within the creature. In addition to the extra force damage (5d10), the target becomes Incapacitated until the end of its next turn due to neurological shock. If the creature is Large or smaller, this feature ignores any immunity to the Incapacitated condition."
       }
     ],
     "proficiency": {
