@@ -45,19 +45,21 @@ export function MulticlassPanel() {
   const additionalTotal = multiclassEntries.reduce((s, e) => s + e.level, 0);
 
   return (
-    <div className="space-y-2 rounded-md border border-border/60 bg-muted/20 p-2">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] font-medium text-muted-foreground">
-          Multiclass (D&amp;D 5e){" "}
-          <span className="text-xs text-muted-foreground">
-            (Max. 20 levels) Total level: {character.level} / {20} levels (
-            {additionalTotal} additional){" "}
-            {prerequisiteFailures.length > 0 && (
-              <span className="text-xs text-amber-500">
-                ({prerequisiteFailures.length} prerequisite failures)
-              </span>
-            )}{" "}
-          </span>
+    <div className="space-y-2 rounded-md border border-border/60 bg-muted/30 p-2.5">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5">
+        <span className="text-[10px] font-medium text-foreground">
+          Additional classes
+        </span>
+        <span className="text-[10px] text-muted-foreground">
+          Total {character.level}/20
+          {additionalTotal > 0 && ` · +${additionalTotal} from multiclass`}
+          {prerequisiteFailures.length > 0 && (
+            <span className="text-amber-500">
+              {" "}
+              · {prerequisiteFailures.length} prerequisite
+              {prerequisiteFailures.length === 1 ? "" : "s"} missing
+            </span>
+          )}
         </span>
       </div>
 

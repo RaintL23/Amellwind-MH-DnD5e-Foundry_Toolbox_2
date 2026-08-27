@@ -35,3 +35,28 @@ export function composeAlignment(
   if (lawChaos === "N" && goodEvil === "N") return ["N"];
   return [`${lawChaos}${goodEvil}`];
 }
+
+const LAW_CHAOS_LABELS: Record<LawChaosAxis, string> = {
+  L: "Lawful",
+  N: "Neutral",
+  C: "Chaotic",
+};
+
+const GOOD_EVIL_LABELS: Record<GoodEvilAxis, string> = {
+  G: "Good",
+  N: "Neutral",
+  E: "Evil",
+};
+
+/** Human-readable alignment for UI previews (e.g. "Lawful Good", "True Neutral"). */
+export function formatAlignmentLabel(
+  lawChaos: LawChaosAxis,
+  goodEvil: GoodEvilAxis,
+): string {
+  if (lawChaos === "N" && goodEvil === "N") return "True Neutral";
+
+  const parts: string[] = [];
+  if (lawChaos !== "N") parts.push(LAW_CHAOS_LABELS[lawChaos]);
+  if (goodEvil !== "N") parts.push(GOOD_EVIL_LABELS[goodEvil]);
+  return parts.join(" ") || "True Neutral";
+}
