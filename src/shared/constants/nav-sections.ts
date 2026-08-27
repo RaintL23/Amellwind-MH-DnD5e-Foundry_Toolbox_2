@@ -17,6 +17,7 @@ import {
   Layers,
   Leaf,
   LibraryBig,
+  GitMerge,
   Map,
   PawPrint,
   ScrollText,
@@ -299,6 +300,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             label: "Feats",
             icon: Sparkles,
             description: "Official 5e feats.",
+          },
+          {
+            to: "/multiclass",
+            label: "Multiclassing",
+            icon: GitMerge,
+            description:
+              "Multiclass rules, class prerequisites, and spell slot calculator.",
           },
         ],
       },

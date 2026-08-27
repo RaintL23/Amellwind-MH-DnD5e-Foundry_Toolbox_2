@@ -176,6 +176,11 @@ const BestiaryDetailPage = lazy(() =>
     default: m.BestiaryDetailPage,
   })),
 );
+const MulticlassPage = lazy(() =>
+  import("@/features/dnd/multiclass/components/MulticlassPage").then((m) => ({
+    default: m.MulticlassPage,
+  })),
+);
 const XanatharBackstoryPage = lazy(() =>
   import("@/features/dnd/xanathar-backstory/components/XanatharBackstoryPage").then(
     (m) => ({
@@ -619,6 +624,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <DndFeatList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="multiclass"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <MulticlassPage />
                   </Suspense>
                 }
               />
