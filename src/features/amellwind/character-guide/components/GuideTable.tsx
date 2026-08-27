@@ -1,4 +1,5 @@
 import type { GuideTable as GuideTableType } from "@/shared/types";
+import { DndRichText } from "@/shared/components/DndRichText";
 import { cn } from "@/shared/utils/cn";
 import {
   Table,
@@ -50,7 +51,7 @@ export function GuideTable({ table, highlightRow }: GuideTableProps) {
                       isHighlighted && cellIndex === 0 && "text-primary",
                     )}
                   >
-                    {cell}
+                    <DndRichText text={cell} />
                   </TableCell>
                 ))}
               </TableRow>

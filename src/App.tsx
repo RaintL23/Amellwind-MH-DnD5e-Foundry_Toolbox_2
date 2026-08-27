@@ -131,6 +131,11 @@ const CharacterGuidePage = lazy(() =>
     (m) => ({ default: m.CharacterGuidePage }),
   ),
 );
+const FactionsPage = lazy(() =>
+  import("@/features/amellwind/factions/components/FactionsPage").then((m) => ({
+    default: m.FactionsPage,
+  })),
+);
 const DowntimePage = lazy(() =>
   import("@/features/amellwind/downtime/components/DowntimePage").then((m) => ({
     default: m.DowntimePage,
@@ -527,6 +532,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <CharacterGuidePage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="factions"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <FactionsPage />
                   </Suspense>
                 }
               />

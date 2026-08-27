@@ -15,6 +15,7 @@ import {
   FlaskConical,
   Hammer,
   Layers,
+  Landmark,
   Leaf,
   LibraryBig,
   GitMerge,
@@ -154,6 +155,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             label: "Backgrounds",
             icon: ScrollText,
             description: "Hunter backgrounds from the Amellwind manual.",
+          },
+          {
+            to: "/factions",
+            label: "Factions",
+            icon: Landmark,
+            description:
+              "Guilds and organizations of the Old World — membership, renown, and faction spells.",
           },
           {
             to: "/feats",

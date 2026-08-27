@@ -9,11 +9,18 @@ export interface GuideInset {
   paragraphs: string[];
 }
 
+export interface GuideQuote {
+  paragraphs: string[];
+  attribution?: string;
+}
+
 export interface GuideSubsection {
   name: string;
   paragraphs?: string[];
   table?: GuideTable;
   orderedList?: string[];
+  bulletList?: string[];
+  quote?: GuideQuote;
   inset?: GuideInset;
   subsections?: GuideSubsection[];
 }
@@ -24,6 +31,9 @@ export interface GuideSection {
   page?: number;
   intro?: string[];
   paragraphs?: string[];
+  bulletList?: string[];
+  quote?: GuideQuote;
+  footerNote?: string;
   subsections?: GuideSubsection[];
   skillEntries?: Array<{ name: string; description: string }>;
 }
