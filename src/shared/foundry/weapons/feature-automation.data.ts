@@ -595,6 +595,22 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "Overlay sets maxSoloMelodies=2 when this leaf is present.",
   ),
   encore: baUtility("", "Recital can keep two melodies active."),
+  /**
+   * Sword and Shield (Common): somatic spellcasting while both sword and shield
+   * are held — same scope as the War Caster feat's somatic clause.
+   */
+  "free hands": spec(
+    "passive_stat",
+    {
+      effectTransfer: true,
+      activeEffect: {
+        showIcon: true,
+        description:
+          "Perform somatic spell components while holding both the sword and the shield.",
+      },
+    },
+    "Honor-system somatic bypass while wielding Sword and Shield.",
+  ),
   "item prodigy": baUtility("", "Take the Utilize action as a Bonus Action."),
   /**
    * Sword and Shield (Uncommon+): secondary Martial Melee attack (Light, 1d4 B).

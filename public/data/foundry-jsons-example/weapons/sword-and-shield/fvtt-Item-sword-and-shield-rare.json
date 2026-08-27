@@ -13,8 +13,8 @@
       "revision": 1
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p><p>When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shield Bash</strong></p><p>You learn to seamlessly weave your shield into your attack forms. While equipped, the shield functions as a Martial Melee weapon that deals [[/r 1d4]] Bludgeoning damage and has the Light property.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Item Prodigy</strong></p><p><strong>Bonus Action.</strong></p><p>The hallmark of the weapon. You can take the Utilize action (such as drinking a potion, throwing alchemist's fire, or setting a trap) as a Bonus Action. You can do this even while holding both the sword and the shield.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Alchemical Rend</strong></p><p>You use your rapid strikes to create openings for your items and spells. When you hit a creature with this weapon, that creature has Disadvantage on the next saving throw it makes against an item (like a bomb, poison, or caltrops) or a spell before the end of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Advancing Slash</strong></p><p>Your mobility in combat increases. When you use your Item Prodigy feature to take the Utilize action, you can immediately move up to 10 feet without provoking Opportunity Attacks.</p></div><p><em>Bonuses:</em> +1 to attack and damage rolls. Integrated shield +2 AC, plus +1 AC from rarity (total +3 AC while equipped).</p>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shield Bash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Item Prodigy</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Alchemical Rend</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Advancing Slash</strong></p></div>"
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p><p>When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Free Hands</strong></p><p>While wielding this weapon, you can perform the somatic components of spells even while holding both the sword and the shield.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shield Bash</strong></p><p>You learn to seamlessly weave your shield into your attack forms. While equipped, the shield functions as a Martial Melee weapon that deals [[/r 1d4]] Bludgeoning damage and has the Light property.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Item Prodigy</strong></p><p><strong>Bonus Action.</strong></p><p>The hallmark of the weapon. You can take the Utilize action (such as drinking a potion, throwing alchemist's fire, or setting a trap) as a Bonus Action. You can do this even while holding both the sword and the shield.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Alchemical Rend</strong></p><p>You use your rapid strikes to create openings for your items and spells. When you hit a creature with this weapon, that creature has Disadvantage on the next saving throw it makes against an item (like a bomb, poison, or caltrops) or a spell before the end of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Advancing Slash</strong></p><p>Your mobility in combat increases. When you use your Item Prodigy feature to take the Utilize action, you can immediately move up to 10 feet without provoking Opportunity Attacks.</p></div><p><em>Bonuses:</em> +1 to attack and damage rolls. Integrated shield +2 AC, plus +1 AC from rarity (total +3 AC while equipped).</p>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Free Hands</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shield Bash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Item Prodigy</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Alchemical Rend</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Advancing Slash</strong></p></div>"
     },
     "identifier": "swordandshield",
     "quantity": 1,
@@ -480,6 +480,41 @@
       "name": "Mastery (Nick)",
       "img": "systems/dnd5e/icons/svg/items/equipment.svg",
       "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1786134000000,
+        "modifiedTime": 1786134000000,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "F9hE3nD5sA1b2c3d4",
+      "name": "Free Hands",
+      "img": "icons/magic/holy/prayer-hands-glowing-yellow.webp",
+      "description": "Perform somatic spell components while holding both the sword and the shield.",
       "changes": [],
       "disabled": false,
       "duration": {

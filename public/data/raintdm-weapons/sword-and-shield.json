@@ -25,7 +25,7 @@
             "Features"
           ],
           "rows": [
-            ["Common", "1", "--", "--", "--", "Mastery (Nick)"],
+            ["Common", "1", "--", "--", "--", "Mastery (Nick), Free Hands"],
             ["Uncommon", "2", "--", "--", "--", "Shield Bash, Item Prodigy"],
             ["Rare", "3", "+1", "+1", "+1", "Alchemical Rend, Advancing Slash"],
             [
@@ -57,6 +57,11 @@
         "id": "3fe7fdb4-3638-4939-989d-a675822bd252",
         "name": "Mastery (Nick)",
         "description": "When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action."
+      },
+      {
+        "id": "b8e4c1a2-3f5d-4e6a-9b7c-1d2e3f4a5b6c",
+        "name": "Free Hands",
+        "description": "While wielding this weapon, you can perform the somatic components of spells even while holding both the sword and the shield."
       },
       {
         "id": "fe875ab2-88b5-4d1b-a1f0-1369d65402fe",
