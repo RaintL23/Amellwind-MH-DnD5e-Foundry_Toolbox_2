@@ -345,6 +345,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
         label: "Character Tools",
         items: [
           {
+            to: "/encounter-calculator",
+            label: "Encounter Calculator",
+            icon: Calculator,
+            description:
+              "DMG encounter difficulty calculator: party XP budgets vs creature CR and count.",
+          },
+          {
             to: "/xanathar-backstory",
             label: "Xanathar Backstory",
             icon: Map,

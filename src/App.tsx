@@ -193,6 +193,13 @@ const XanatharBackstoryPage = lazy(() =>
     }),
   ),
 );
+const EncounterCalculatorPage = lazy(() =>
+  import("@/features/dnd/encounter-calculator/components/EncounterCalculatorPage").then(
+    (m) => ({
+      default: m.EncounterCalculatorPage,
+    }),
+  ),
+);
 const ShopGeneratorPage = lazy(() =>
   import("@/features/dnd/shop-generator/components/ShopGeneratorPage").then(
     (m) => ({
@@ -661,6 +668,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <XanatharBackstoryPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="encounter-calculator"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <EncounterCalculatorPage />
                   </Suspense>
                 }
               />
