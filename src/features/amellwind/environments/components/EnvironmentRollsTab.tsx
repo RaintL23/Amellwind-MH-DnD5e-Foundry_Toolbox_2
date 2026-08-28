@@ -4,15 +4,18 @@ import { cn } from "@/shared/utils/cn";
 import { DndRichText } from "@/shared/components/DndRichText";
 import { Dice6, Package } from "lucide-react";
 import {
-  findEncounterByRoll,
   findResourceRowByRoll,
-  findWeatherByRoll,
-  rollDie,
   rollD20WithMode,
   rollFromRangeLabel,
   type RollEntry,
   type RollMode,
 } from "../utils/environmentRoll.utils";
+import {
+  createEnvironmentEncounterRoll,
+  createEnvironmentInvestigationRoll,
+  createEnvironmentNavigationRoll,
+  createEnvironmentWeatherRoll,
+} from "../utils/environment-roll-actions";
 
 export function EnvironmentRollsTab({
   environments,
@@ -52,87 +55,77 @@ export function EnvironmentRollsTab({
 
   function rollNavigationCheck() {
     if (!selectedEnvironment || !selectedTier) return;
-    const d20 = rollD20WithMode(rollMode);
-    const total = d20.selected + skillMod;
-    const success = total >= selectedEnvironment.navigationDC;
+    const result = createEnvironmentNavigationRoll({
+      environment: selectedEnvironment,
+      tier: selectedTier,
+      skillMod,
+      rollMode,
+    });
     pushHistory({
       environmentName: selectedEnvironment.name,
       levelRange: selectedTier.levelRange,
       section: "navigation",
-      label: "Navigation Check",
-      details: `d20 ${d20.rolls.join(" / ")} (${d20.mode}) + mod ${skillMod >= 0 ? "+" : ""}${skillMod}`,
-      result: `Total ${total} vs DC ${selectedEnvironment.navigationDC}`,
-      success,
+      label: result.label,
+      details: result.details,
+      result: result.result,
+      success: result.success,
     });
   }
 
   function rollEncounter() {
     if (!selectedEnvironment || !selectedTier) return;
-    const encounterCheck = rollDie(20);
-    const triggered = encounterCheck >= selectedEnvironment.encounterDC;
-    if (!triggered) {
-      pushHistory({
-        environmentName: selectedEnvironment.name,
-        levelRange: selectedTier.levelRange,
-        section: "encounter-check",
-        label: "Encounter Check",
-        details: `d20 ${encounterCheck} vs Encounter DC ${selectedEnvironment.encounterDC}`,
-        result: "No encounter triggered.",
-        success: false,
-      });
-      return;
-    }
-
-    const encounterRoll = rollDie(10);
-    const encounter = findEncounterByRoll(selectedTier.encounters, encounterRoll);
+    const result = createEnvironmentEncounterRoll({
+      environment: selectedEnvironment,
+      tier: selectedTier,
+      skillMod,
+      rollMode,
+    });
     pushHistory({
       environmentName: selectedEnvironment.name,
       levelRange: selectedTier.levelRange,
       section: "encounter-check",
-      label: "Encounter Check",
-      details: `d20 ${encounterCheck} >= DC ${selectedEnvironment.encounterDC}; d10 ${encounterRoll}`,
-      result: encounter
-        ? `Encounter: ${encounter.description}`
-        : "Encounter triggered but no matching row was found.",
-      success: true,
+      label: result.label,
+      details: result.details,
+      result: result.result,
+      success: result.success,
     });
   }
 
   function rollWeather() {
-    if (
-      !selectedEnvironment ||
-      !selectedTier ||
-      !selectedEnvironment.weatherTable?.length
-    )
-      return;
-    const weatherRoll = rollDie(20);
-    const weather = findWeatherByRoll(
-      selectedEnvironment.weatherTable,
-      weatherRoll,
-    );
+    if (!selectedEnvironment || !selectedTier) return;
+    const result = createEnvironmentWeatherRoll({
+      environment: selectedEnvironment,
+      tier: selectedTier,
+      skillMod,
+      rollMode,
+    });
     pushHistory({
       environmentName: selectedEnvironment.name,
       levelRange: selectedTier.levelRange,
       section: "weather",
-      label: "Weather Roll",
-      details: `d20 ${weatherRoll}`,
-      result: weather ? weather.weather : "No weather row matched that roll.",
+      label: result.label,
+      details: result.details,
+      result: result.result,
+      success: result.success,
     });
   }
 
   function rollInvestigation() {
     if (!selectedEnvironment || !selectedTier) return;
-    const d20 = rollD20WithMode(rollMode);
-    const total = d20.selected + skillMod;
-    const success = total >= selectedEnvironment.investigationDC;
+    const result = createEnvironmentInvestigationRoll({
+      environment: selectedEnvironment,
+      tier: selectedTier,
+      skillMod,
+      rollMode,
+    });
     pushHistory({
       environmentName: selectedEnvironment.name,
       levelRange: selectedTier.levelRange,
       section: "investigation",
-      label: "Investigation Check",
-      details: `d20 ${d20.rolls.join(" / ")} (${d20.mode}) + mod ${skillMod >= 0 ? "+" : ""}${skillMod}`,
-      result: `Total ${total} vs DC ${selectedEnvironment.investigationDC}`,
-      success,
+      label: result.label,
+      details: result.details,
+      result: result.result,
+      success: result.success,
     });
   }
 
