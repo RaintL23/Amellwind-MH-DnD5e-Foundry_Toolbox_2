@@ -33,14 +33,15 @@ It has been said that on All Hallows' Eve, a pumpkin uragaan appears in a great 
 
 ## Stat Block
 
-*Huge wyvern (brute), unaligned*
+_Huge wyvern (brute), unaligned_
+
 - **Armor Class:** 17 (natural armor)
 - **Hit Points:** 123 (13d12 + 39)
 - **Speed:** 40 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 19 | 10 | 16 | 5 | 12 | 6 |
+| --: | --: | --: | --: | --: | --: |
+|  19 |  10 |  16 |   5 |  12 |   6 |
 
 - **Skills:** Perception +5
 - **Senses:** passive Perception 15
@@ -61,7 +62,6 @@ When the uragaan is reduced to 0 hit points, it resurrects on initiative count 2
 ### Undead Fortitude (While Undead Only)
 
 If damage reduces the uragaan to 0 hit points, it must make a Constitution saving throw with a DC of 5 + the damage taken, unless the damage is radiant or from a critical hit. On a success, the uragaan drops to 1 hit point instead.
-
 
 ## Actions
 
@@ -89,21 +89,20 @@ The uragaan rolls its body into a wheel and moves up to its speed. During this m
 
 (2/per Long rest). The uragaan releases a wave of fire from its underside in a 10-foot radius around it. Each creature in that area must make a DC 15 Dexterity saving throw, taking 21 (6d6) fire damage and catches fire on a failed save or half as much on a successful one and does not catch fire. until a creature takes an action to douse the fire, the creature takes 3 (1d6) fire damage at the start of each of its turns. 76
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-4 | — | Pumpkin.U Carapace | A, W |
-| 5-8 | — | P.Firecell Stone | A, W |
-| 9-11 | — | Pumpkin.U Scale | A, W |
-| 12-14 | — | Pumpkin.U Scute | A, W |
-| 15-16 | — | Pumpkin Flame Sac | A, W |
-| 17-18 | — | Pumpkin.U Marrow | A |
-| 19 | — | Pumpkin.U Jaw | A, W |
-| 20 | — | Pumpkin.U Ruby | A, W |
+| Carve | Capture | Material           | Slots |
+| ----- | ------- | ------------------ | ----- |
+| 1-4   | —       | Pumpkin.U Carapace | A, W  |
+| 5-8   | —       | P.Firecell Stone   | A, W  |
+| 9-11  | —       | Pumpkin.U Scale    | A, W  |
+| 12-14 | —       | Pumpkin.U Scute    | A, W  |
+| 15-16 | —       | Pumpkin Flame Sac  | A, W  |
+| 17-18 | —       | Pumpkin.U Marrow   | A     |
+| 19    | —       | Pumpkin.U Jaw      | A, W  |
+| 20    | —       | Pumpkin.U Ruby     | A, W  |
 
 ## Materials (Runes)
 
@@ -131,7 +130,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 9-11
 - **Capture:** —
 - **Armor effect:** Entomologist+. When you capture an insect with a bug net, you capture an extra 1d4 more.
-- **Weapon effect:** Pumpkin Carver. While you are attuned to this armor, you can carve a creature of CR 8 or lower 1 extra time.
+- **Weapon effect:** Pumpkin Carver. While you are attuned to this weapon, you can carve a creature of CR 8 or lower 1 extra time.
 
 ### Pumpkin.U Scute
 

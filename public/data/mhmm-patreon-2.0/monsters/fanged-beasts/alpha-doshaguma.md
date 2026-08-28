@@ -28,14 +28,15 @@ qa: missing-bio
 
 ## Stat Block
 
-*Huge beast (fanged), unaligned*
+_Huge beast (fanged), unaligned_
+
 - **Armor Class:** 15 (natural armor)
 - **Hit Points:** 114 (12d12 + 36)
 - **Speed:** 40 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 16 | 10 | 16 | 2 | 12 | 10 |
+| --: | --: | --: | --: | --: | --: |
+|  16 |  10 |  16 |   2 |  12 |  10 |
 
 - **Skills:** Perception +4
 - **Damage Resistances:** cold
@@ -53,7 +54,6 @@ The doshaguma has advantage on Wisdom (Perception) checks that rely on smell.
 ### Pack Tactics
 
 The doshaguma has advantage on an attack roll against a creature if at least one allied doshaguma is within 5 feet of the creature and the ally isn't incapacitated.
-
 
 ## Actions
 
@@ -77,7 +77,6 @@ Melee Weapon Attack: +6 to hit, reach 5 ft., one target. Hit: 16 (3d8 + 3) bludg
 
 The doshaguma performs a powerful claw attack against one creature within 5 feet of it. That creature must make a DC 14 Dexterity saving throw, taking 17 (4d6 + 3) bludgeoning damage on a failed save or half as much damage on a successful one. If the save fails by 5 or more, the target is also blinded until it uses an action to wipe the dust from its eyes.
 
-
 ## Legendary Actions
 
 The doshaguma can take 2 legendary actions, choosing from the options below. Only one legendary action option can be used at a time and only at the end of another creature's turn. The doshaguma regains spent legendary actions at the start of its turn.
@@ -94,19 +93,18 @@ One Medium or smaller object held or creature grappled by the doshaguma is throw
 
 The doshaguma rears up and slams its massive paws. Each creature within 15 feet of the doshaguma must succeed on a DC 14 Strength saving throw or take 12 (2d8 + 3) bludgeoning damage and be knocked prone. The doshaguma can then move up to half its speed. 268
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-4 | 1-2 | Doshaguma Hide | A, W |
-| 5-9 | 3-4 | Doshaguma Fur | A, W |
-| 10-12 | 5-9 | Doshaguma Claw | A, W |
-| 13-16 | 10-14 | Brute Bone | W, O |
-| 17-19 | 15-19 | Doshaguma Fang | A, W |
-| 20 | 20 | Doshaguma Gem | A, W |
+| Carve | Capture | Material       | Slots |
+| ----- | ------- | -------------- | ----- |
+| 1-4   | 1-2     | Doshaguma Hide | A, W  |
+| 5-9   | 3-4     | Doshaguma Fur  | A, W  |
+| 10-12 | 5-9     | Doshaguma Claw | A, W  |
+| 13-16 | 10-14   | Brute Bone     | W, O  |
+| 17-19 | 15-19   | Doshaguma Fang | A, W  |
+| 20    | 20      | Doshaguma Gem  | A, W  |
 
 ## Materials (Runes)
 
@@ -150,7 +148,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 17-19
 - **Capture:** 15-19
 - **Armor effect:** Palamute Rally. NPC allies within 10 feet of you gain a +1 bonus to their AC and attack rolls while you are attuned to this armor.
-- **Weapon effect:** Dwarf Thrower. While attuned to this armor you can use your Action to throw a willing ally that isn't grappled a number of feet equal to 5 times your Strength modifier. The ally lands as safely as possible in the space you throw them.
+- **Weapon effect:** Dwarf Thrower. While attuned to this weapon you can use your Action to throw a willing ally that isn't grappled a number of feet equal to 5 times your Strength modifier. The ally lands as safely as possible in the space you throw them.
 
 ### Doshaguma Gem
 

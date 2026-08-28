@@ -22,7 +22,8 @@ qa: missing-bio
 
 ## Stat Block
 
-*Large wyvern (bird), unaligned*
+_Large wyvern (bird), unaligned_
+
 - **Armor Class:** 17 (natural armor)
 - **Hit Points:** 153 (18d10 + 54)
 - **Speed:** 40 ft., fly 40 ft.
@@ -37,7 +38,6 @@ qa: missing-bio
 
 Damage Immunity necrotic Senses passive Perception 16 Languages - Challenge 10 (5,900 XP) Proficiency +4 Sensitive Ears. If the yian kut-ku takes thunder damage, or a spell or effect that emits a loud noise (per the description of the effect) is used within 60 feet of it, it must succeed on a DC 15 Constitution saving throw or be stunned until the start of its next turn.
 
-
 ## Actions
 
 ### Multiattack
@@ -46,23 +46,17 @@ The yian kut-ku makes three Peck attacks or three Mini-Fireball attacks.
 
 ### Peck
 
-
-
 ### Melee Weapon Attack
 
 +7 to hit, reach 5 ft., one target. Hit 12 (2d8 + 3) piercing damage.
 
 ### Tail
 
-
-
 ### Melee Weapon Attack
 
 +7 to hit, reach 5 ft., one target. Hit 14 (2d10 + 3) bludgeoning damage. If the target is a creature it must succeed on a DC 15 Strength saving throw or be pushed 5 feet away and knocked prone.
 
 ### Mini-Fireball
-
-
 
 ### Ranged Weapon Attack
 
@@ -71,7 +65,6 @@ The yian kut-ku makes three Peck attacks or three Mini-Fireball attacks.
 ### Fireball (Recharge 5-6)
 
 The yian kut-ku exhales a larger fireball at a point within 60 feet of it. Each creature in a 15-foot radius sphere centered on that point must make a DC 15 Dexterity saving throw, taking 35 (10d6) fire damage on a failed save or half as much damage on a successful one.
-
 
 ## Legendary Actions
 
@@ -85,21 +78,20 @@ The yian kut-ku makes one Tail attack.
 
 The yian kut-ku digs its beak into the ground as it moves up to its speed. During this move it can move through the spaces of other creatures without provoking opportunity attacks. Each creature the yian kut-ku moves through or is 10 or less feet underground in its path must succeed on a DC 15 Dexterity saving throw or take 16 (2d12 + 3) bludgeoning damage and be knocked prone. 38
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-6 | 1-3 | Kut-Ku Scale+ | A, W |
-| 7-9 | 4-9 | Kut-Ku Carapace+ | A, W |
-| 10-11 | — | Kut-Ku Wing | A, W |
-| 12-13 | 10 | Giant Beak+ | A, W |
-| — | 11-14 | Lg Monster Bone | O |
-| — | 15-16 | Y.Inferno Sac | A, W |
-| 14-19 | — | Kut-Ku Ear+ | A, W |
-| 20 | 17-20 | Kut-Ku Gem | A, W |
+| Carve | Capture | Material         | Slots |
+| ----- | ------- | ---------------- | ----- |
+| 1-6   | 1-3     | Kut-Ku Scale+    | A, W  |
+| 7-9   | 4-9     | Kut-Ku Carapace+ | A, W  |
+| 10-11 | —       | Kut-Ku Wing      | A, W  |
+| 12-13 | 10      | Giant Beak+      | A, W  |
+| —     | 11-14   | Lg Monster Bone  | O     |
+| —     | 15-16   | Y.Inferno Sac    | A, W  |
+| 14-19 | —       | Kut-Ku Ear+      | A, W  |
+| 20    | 17-20   | Kut-Ku Gem       | A, W  |
 
 ## Materials (Runes)
 
@@ -166,7 +158,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** 17-20
 - **Armor effect:** You are immune to fire damage while you wear this armor.
-- **Weapon effect:** While attuned to this armor you can use an action to speak its command word to cast the polymorph spell, but you can only target yourself and you can only transform into a regular yian kut-ku. Once you use this property, you can't use it again until you finish a long rest.
+- **Weapon effect:** While attuned to this weapon you can use an action to speak its command word to cast the polymorph spell, but you can only target yourself and you can only transform into a regular yian kut-ku. Once you use this property, you can't use it again until you finish a long rest.
 
 ## QA flags
 
