@@ -15,6 +15,17 @@ import {
   type RollMode,
 } from "@/features/amellwind/environments/utils/environmentRoll.utils";
 import {
+  createEnvironmentInvestigationRoll,
+  createEnvironmentNavigationRoll,
+  createEnvironmentEncounterRoll,
+  createEnvironmentWeatherRoll,
+  createScoutPerceptionRoll,
+  createScoutStealthRoll,
+  createSpotterPassiveInvestigationCheck,
+  createSpotterPassivePerceptionCheck,
+  type EnvironmentRollContext,
+} from "@/features/amellwind/environments/utils/environment-roll-actions";
+import {
   createPrepEntry,
   createEmptyHuntPrepTables,
   type HuntPrepTableKey,
@@ -26,19 +37,38 @@ import {
 } from "../utils/hunt-prep-generator.utils";
 import { loadNpcGeneratorData } from "@/features/amellwind/npc-generator/services/npc-generator.service";
 import {
+  createDefaultHunterLevels,
+  createTargetProgressMap,
+  DEFAULT_HUNTER_COUNT,
+  getAveragePartyLevel,
+  getHuntCombatDifficulty,
+  getMonsterKey,
+  getTotalTargetCr,
+  resizeHunterLevels,
+  type HuntTargetProgress,
+} from "../utils/hunt-party.utils";
+import {
+  environmentMatchesAllMonsters,
   environmentMatchesMonster,
   formatResolvedTrackingOutcome,
   getCompatibleEnvironments,
   getCompatibleMonsters,
   pickPrepEntry,
   pickRandom,
+  resolveFindingSignsRoll,
   resolveTrackingOutcome,
-  rollFindingSigns,
   type FindingSignsResult,
   type ResolvedTrackingOutcome,
 } from "../utils/hunt-roll.utils";
 
-export type HuntRollSection = "tracking" | "resources";
+export type HuntRollSection =
+  | "tracking"
+  | "resources"
+  | "environment"
+  | "scout"
+  | "spotter";
+
+export type HuntTrackingRollMode = "random" | "manual";
 
 export interface HuntRollEntry {
   id: string;
@@ -49,6 +79,8 @@ export interface HuntRollEntry {
   result: string;
   success?: boolean;
   signsGained?: number;
+  targetMonsterKey?: string;
+  targetMonsterName?: string;
   eventType?: FindingSignsResult["event"];
   resolvedOutcome?: ResolvedTrackingOutcome;
 }
@@ -61,34 +93,58 @@ export interface UseHuntStateResult {
   setupComplete: boolean;
   hasBaseSetup: boolean;
   encounterDifficulty: HuntEncounterDifficulty;
-  selectedMonster: Monster | null;
+  selectedMonsters: Monster[];
   selectedEnvironment: Environment | null;
   compatibleEnvironments: Environment[];
   compatibleMonsters: Monster[];
   selectedTierIndex: number;
-  signsFound: number;
   signsRequired: number;
+  targetProgress: Record<string, HuntTargetProgress>;
+  activeTrackingTargetKey: string | null;
   areasVisited: number;
   flatBonus: number;
   rollMode: RollMode;
+  trackingRollMode: HuntTrackingRollMode;
+  manualFindingSignsRoll: number | null;
   survivalSucceeded: boolean;
+  hunterCount: number;
+  hunterLevels: number[];
+  averagePartyLevel: number;
+  totalTargetCr: number;
+  combatDifficulty: ReturnType<typeof getHuntCombatDifficulty>;
+  scoutAmbushSpotNoticed: boolean;
   rollHistory: HuntRollEntry[];
-  monsterFound: boolean;
+  allMonstersFound: boolean;
   selectedTier: Environment["levelTiers"][number] | null;
   prepTables: HuntPrepTables;
   setSelectedTierIndex: (index: number) => void;
   setSignsRequired: (value: number) => void;
   setFlatBonus: (value: number) => void;
   setRollMode: (mode: RollMode) => void;
+  setTrackingRollMode: (mode: HuntTrackingRollMode) => void;
+  setManualFindingSignsRoll: (value: number | null) => void;
   setSurvivalSucceeded: (value: boolean) => void;
+  setHunterCount: (count: number) => void;
+  setHunterLevel: (index: number, level: number) => void;
+  setActiveTrackingTargetKey: (key: string | null) => void;
+  setScoutAmbushSpotNoticed: (value: boolean) => void;
   setEncounterDifficulty: (value: HuntEncounterDifficulty) => void;
   completeSetup: () => void;
   regeneratePrepTables: () => void;
-  pickMonster: (monster: Monster | null) => void;
+  addMonster: (monster: Monster) => void;
+  removeMonster: (monsterKey: string) => void;
   pickEnvironment: (environment: Environment | null) => void;
   randomize: () => void;
   rollTracking: () => void;
   rollResource: (resourceColumnIndex: number) => void;
+  rollEnvironmentNavigation: () => void;
+  rollEnvironmentEncounter: () => void;
+  rollEnvironmentWeather: () => void;
+  rollEnvironmentInvestigation: () => void;
+  rollScoutStealth: () => void;
+  rollScoutPerception: () => void;
+  checkSpotterPerception: (passivePerception: number) => void;
+  checkSpotterInvestigation: (passiveInvestigation: number) => void;
   addPrepEntry: (table: HuntPrepTableKey, text?: string) => void;
   updatePrepEntry: (table: HuntPrepTableKey, id: string, text: string) => void;
   removePrepEntry: (table: HuntPrepTableKey, id: string) => void;
@@ -108,16 +164,34 @@ function createRollEntry(
   };
 }
 
+function resolveSavedMonsters(
+  refs: Array<{ name: string; source: string | null }>,
+  catalog: Monster[],
+): Monster[] {
+  const resolved: Monster[] = [];
+  const seen = new Set<string>();
+  for (const ref of refs) {
+    const match =
+      catalog.find(
+        (monster) =>
+          monster.name === ref.name &&
+          (ref.source ? monster.source === ref.source : true),
+      ) ?? catalog.find((monster) => monster.name === ref.name);
+    if (!match) continue;
+    const key = getMonsterKey(match);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    resolved.push(match);
+  }
+  return resolved;
+}
+
 export function useHuntState(): UseHuntStateResult {
-  // Persisted session (loaded once): setup, prep tables and tracker progress.
   const persistedRef = useRef(loadHuntState());
   const persisted = persistedRef.current;
-  // When a saved setup with generated tables exists, skip the first automatic
-  // prep-table regeneration so restored (possibly edited) tables and tracker
-  // progress are preserved instead of being wiped/regenerated on mount.
   const hydrationPendingRef = useRef(
     Boolean(
-      persisted?.monsterName &&
+      persisted?.monsters?.length &&
         persisted?.environmentName &&
         huntPrepTablesHaveContent(persisted.prepTables),
     ),
@@ -125,7 +199,7 @@ export function useHuntState(): UseHuntStateResult {
 
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [monstersLoading, setMonstersLoading] = useState(true);
-  const [selectedMonster, setSelectedMonster] = useState<Monster | null>(null);
+  const [selectedMonsters, setSelectedMonsters] = useState<Monster[]>([]);
   const [selectedEnvironment, setSelectedEnvironment] =
     useState<Environment | null>(() => {
       if (!persisted?.environmentName) return null;
@@ -138,17 +212,38 @@ export function useHuntState(): UseHuntStateResult {
   const [selectedTierIndex, setSelectedTierIndex] = useState(
     persisted?.selectedTierIndex ?? 0,
   );
-  const [signsFound, setSignsFound] = useState(persisted?.signsFound ?? 0);
   const [signsRequired, setSignsRequired] = useState(
     persisted?.signsRequired ?? 3,
   );
+  const [targetProgress, setTargetProgress] = useState<
+    Record<string, HuntTargetProgress>
+  >(persisted?.targetProgress ?? {});
+  const [activeTrackingTargetKey, setActiveTrackingTargetKey] = useState<
+    string | null
+  >(persisted?.activeTrackingTargetKey ?? null);
   const [areasVisited, setAreasVisited] = useState(persisted?.areasVisited ?? 0);
   const [flatBonus, setFlatBonus] = useState(persisted?.flatBonus ?? 0);
   const [rollMode, setRollMode] = useState<RollMode>(
     persisted?.rollMode ?? "normal",
   );
+  const [trackingRollMode, setTrackingRollMode] = useState<HuntTrackingRollMode>(
+    persisted?.trackingRollMode ?? "random",
+  );
+  const [manualFindingSignsRoll, setManualFindingSignsRoll] = useState<
+    number | null
+  >(persisted?.manualFindingSignsRoll ?? null);
   const [survivalSucceeded, setSurvivalSucceeded] = useState(
     persisted?.survivalSucceeded ?? true,
+  );
+  const [hunterCount, setHunterCountState] = useState(
+    persisted?.hunterCount ?? DEFAULT_HUNTER_COUNT,
+  );
+  const [hunterLevels, setHunterLevels] = useState<number[]>(
+    persisted?.hunterLevels ??
+      createDefaultHunterLevels(persisted?.hunterCount ?? DEFAULT_HUNTER_COUNT),
+  );
+  const [scoutAmbushSpotNoticed, setScoutAmbushSpotNoticed] = useState(
+    persisted?.scoutAmbushSpotNoticed ?? false,
   );
   const [rollHistory, setRollHistory] = useState<HuntRollEntry[]>(
     persisted?.rollHistory ?? [],
@@ -171,19 +266,19 @@ export function useHuntState(): UseHuntStateResult {
     getAllMonsters()
       .then((data) => {
         setMonsters(data);
-        const savedMonsterName = persistedRef.current?.monsterName;
-        if (savedMonsterName) {
-          const savedSource = persistedRef.current?.monsterSource;
-          const match =
-            data.find(
-              (m) =>
-                m.name === savedMonsterName &&
-                (savedSource ? m.source === savedSource : true),
-            ) ?? data.find((m) => m.name === savedMonsterName);
-          if (match) {
-            setSelectedMonster(match);
+        const savedRefs = persistedRef.current?.monsters ?? [];
+        if (savedRefs.length > 0) {
+          const restored = resolveSavedMonsters(savedRefs, data);
+          if (restored.length > 0) {
+            setSelectedMonsters(restored);
+            setTargetProgress((prev) => createTargetProgressMap(restored, prev));
+            setActiveTrackingTargetKey((current) => {
+              if (current && restored.some((m) => getMonsterKey(m) === current)) {
+                return current;
+              }
+              return getMonsterKey(restored[0]);
+            });
           } else {
-            // Saved monster no longer resolvable — resume normal generation.
             hydrationPendingRef.current = false;
           }
         }
@@ -200,11 +295,12 @@ export function useHuntState(): UseHuntStateResult {
     });
   }, []);
 
-  const hasBaseSetup = Boolean(selectedMonster && selectedEnvironment);
+  const hasBaseSetup =
+    selectedMonsters.length > 0 && Boolean(selectedEnvironment);
 
   const compatibleEnvironments = useMemo(
-    () => getCompatibleEnvironments(selectedMonster, environments),
-    [selectedMonster, environments],
+    () => getCompatibleEnvironments(selectedMonsters, environments),
+    [selectedMonsters, environments],
   );
 
   const compatibleMonsters = useMemo(
@@ -217,7 +313,34 @@ export function useHuntState(): UseHuntStateResult {
     selectedEnvironment?.levelTiers[0] ??
     null;
 
-  const monsterFound = signsFound >= signsRequired;
+  const averagePartyLevel = useMemo(
+    () => getAveragePartyLevel(hunterLevels),
+    [hunterLevels],
+  );
+
+  const totalTargetCr = useMemo(
+    () => getTotalTargetCr(selectedMonsters),
+    [selectedMonsters],
+  );
+
+  const combatDifficulty = useMemo(
+    () =>
+      getHuntCombatDifficulty(
+        averagePartyLevel,
+        totalTargetCr,
+        hunterCount,
+        selectedTier?.levelRange,
+      ),
+    [averagePartyLevel, totalTargetCr, hunterCount, selectedTier?.levelRange],
+  );
+
+  const allMonstersFound = useMemo(() => {
+    if (selectedMonsters.length === 0) return false;
+    return selectedMonsters.every((monster) => {
+      const progress = targetProgress[getMonsterKey(monster)];
+      return progress?.found ?? false;
+    });
+  }, [selectedMonsters, targetProgress]);
 
   const pushHistory = useCallback((entry: Omit<HuntRollEntry, "id" | "createdAt">) => {
     setRollHistory((prev) => [createRollEntry(entry), ...prev]);
@@ -225,18 +348,26 @@ export function useHuntState(): UseHuntStateResult {
 
   const invalidateSetup = useCallback(() => {
     setSetupComplete(false);
-    setSignsFound(0);
+    setTargetProgress((prev) => {
+      const reset: Record<string, HuntTargetProgress> = {};
+      for (const [key] of Object.entries(prev)) {
+        reset[key] = { signsFound: 0, found: false };
+      }
+      return reset;
+    });
     setAreasVisited(0);
     setRollHistory([]);
   }, []);
 
   const regeneratePrepTables = useCallback(() => {
-    if (!selectedMonster || !selectedEnvironment || !selectedTier) return;
+    if (selectedMonsters.length === 0 || !selectedEnvironment || !selectedTier) {
+      return;
+    }
     if (npcSpecies.length === 0) return;
 
     setPrepGenerating(true);
     void generateHuntPrepTables({
-      target: selectedMonster,
+      targets: selectedMonsters,
       environment: selectedEnvironment,
       tier: selectedTier,
       difficulty: encounterDifficulty,
@@ -258,13 +389,11 @@ export function useHuntState(): UseHuntStateResult {
     npcBackgrounds,
     npcSpecies,
     selectedEnvironment,
-    selectedMonster,
+    selectedMonsters,
     selectedTier,
   ]);
 
   useEffect(() => {
-    // Preserve the restored session on the first render(s): don't wipe or
-    // regenerate the saved prep tables/tracker until the setup has resolved.
     if (hydrationPendingRef.current) {
       if (!hasBaseSetup || !selectedTier || npcSpecies.length === 0) return;
       hydrationPendingRef.current = false;
@@ -279,7 +408,7 @@ export function useHuntState(): UseHuntStateResult {
     let cancelled = false;
     setPrepGenerating(true);
     void generateHuntPrepTables({
-      target: selectedMonster!,
+      targets: selectedMonsters,
       environment: selectedEnvironment!,
       tier: selectedTier,
       difficulty: encounterDifficulty,
@@ -307,7 +436,7 @@ export function useHuntState(): UseHuntStateResult {
     npcBackgrounds,
     npcSpecies,
     selectedEnvironment,
-    selectedMonster,
+    selectedMonsters,
     selectedTier,
     selectedTierIndex,
   ]);
@@ -317,12 +446,17 @@ export function useHuntState(): UseHuntStateResult {
     setSetupComplete(true);
   }, [hasBaseSetup, prepTables.signs.length]);
 
-  const pickMonster = useCallback(
-    (monster: Monster | null) => {
-      setSelectedMonster(monster);
+  const addMonster = useCallback(
+    (monster: Monster) => {
+      const key = getMonsterKey(monster);
+      setSelectedMonsters((prev) => {
+        if (prev.some((entry) => getMonsterKey(entry) === key)) return prev;
+        return [...prev, monster];
+      });
+      setTargetProgress((prev) => createTargetProgressMap([monster], prev));
+      setActiveTrackingTargetKey((prev) => prev ?? key);
       invalidateSetup();
       if (
-        monster &&
         selectedEnvironment &&
         !environmentMatchesMonster(selectedEnvironment, monster)
       ) {
@@ -333,6 +467,24 @@ export function useHuntState(): UseHuntStateResult {
     [invalidateSetup, selectedEnvironment],
   );
 
+  const removeMonster = useCallback(
+    (monsterKey: string) => {
+      setSelectedMonsters((prev) =>
+        prev.filter((monster) => getMonsterKey(monster) !== monsterKey),
+      );
+      setTargetProgress((prev) => {
+        const next = { ...prev };
+        delete next[monsterKey];
+        return next;
+      });
+      setActiveTrackingTargetKey((prev) =>
+        prev === monsterKey ? null : prev,
+      );
+      invalidateSetup();
+    },
+    [invalidateSetup],
+  );
+
   const pickEnvironment = useCallback(
     (environment: Environment | null) => {
       setSelectedEnvironment(environment);
@@ -340,36 +492,58 @@ export function useHuntState(): UseHuntStateResult {
       invalidateSetup();
       if (
         environment &&
-        selectedMonster &&
-        !environmentMatchesMonster(environment, selectedMonster)
+        selectedMonsters.length > 0 &&
+        !environmentMatchesAllMonsters(environment, selectedMonsters)
       ) {
-        setSelectedMonster(null);
+        setSelectedMonsters([]);
+        setTargetProgress({});
+        setActiveTrackingTargetKey(null);
       }
     },
-    [invalidateSetup, selectedMonster],
+    [invalidateSetup, selectedMonsters],
   );
 
   const randomize = useCallback(() => {
     const monsterPool = selectedEnvironment
       ? getCompatibleMonsters(selectedEnvironment, monsters)
       : monsters;
-    const environmentPool = selectedMonster
-      ? getCompatibleEnvironments(selectedMonster, environments)
-      : environments;
+    const environmentPool =
+      selectedMonsters.length > 0
+        ? getCompatibleEnvironments(selectedMonsters, environments)
+        : environments;
 
     const nextMonster =
-      selectedMonster ?? pickRandom(monsterPool) ?? pickRandom(monsters);
+      selectedMonsters[0] ?? pickRandom(monsterPool) ?? pickRandom(monsters);
     const nextEnvironment =
       selectedEnvironment ??
       (nextMonster
-        ? pickRandom(getCompatibleEnvironments(nextMonster, environments))
+        ? pickRandom(getCompatibleEnvironments([nextMonster], environments))
         : pickRandom(environmentPool));
 
-    setSelectedMonster(nextMonster ?? null);
+    setSelectedMonsters(nextMonster ? [nextMonster] : []);
+    setTargetProgress(
+      nextMonster
+        ? createTargetProgressMap([nextMonster])
+        : {},
+    );
+    setActiveTrackingTargetKey(nextMonster ? getMonsterKey(nextMonster) : null);
     setSelectedEnvironment(nextEnvironment ?? null);
     setSelectedTierIndex(0);
     invalidateSetup();
-  }, [environments, invalidateSetup, monsters, selectedEnvironment, selectedMonster]);
+  }, [environments, invalidateSetup, monsters, selectedEnvironment, selectedMonsters]);
+
+  const setHunterCount = useCallback((count: number) => {
+    const clamped = Math.min(6, Math.max(1, count));
+    setHunterCountState(clamped);
+    setHunterLevels((prev) => resizeHunterLevels(prev, clamped));
+  }, []);
+
+  const setHunterLevel = useCallback((index: number, level: number) => {
+    const clampedLevel = Math.min(20, Math.max(1, level));
+    setHunterLevels((prev) =>
+      prev.map((value, idx) => (idx === index ? clampedLevel : value)),
+    );
+  }, []);
 
   const updatePrepEntry = useCallback(
     (table: HuntPrepTableKey, id: string, text: string) => {
@@ -409,10 +583,143 @@ export function useHuntState(): UseHuntStateResult {
     [prepTables],
   );
 
-  const rollTracking = useCallback(() => {
-    if (!setupComplete || !selectedMonster || !selectedEnvironment) return;
+  const getEnvironmentRollContext = useCallback((): EnvironmentRollContext | null => {
+    if (!selectedEnvironment || !selectedTier) return null;
+    return {
+      environment: selectedEnvironment,
+      tier: selectedTier,
+      skillMod: flatBonus,
+      rollMode,
+    };
+  }, [flatBonus, rollMode, selectedEnvironment, selectedTier]);
 
-    const outcome = rollFindingSigns(survivalSucceeded, flatBonus);
+  const pushEnvironmentRoll = useCallback(
+    (entry: ReturnType<typeof createEnvironmentNavigationRoll>) => {
+      pushHistory({
+        section: "environment",
+        label: entry.label,
+        details: entry.details,
+        result: entry.result,
+        success: entry.success,
+      });
+    },
+    [pushHistory],
+  );
+
+  const rollEnvironmentNavigation = useCallback(() => {
+    const context = getEnvironmentRollContext();
+    if (!setupComplete || !context) return;
+    pushEnvironmentRoll(createEnvironmentNavigationRoll(context));
+  }, [getEnvironmentRollContext, pushEnvironmentRoll, setupComplete]);
+
+  const rollEnvironmentEncounter = useCallback(() => {
+    const context = getEnvironmentRollContext();
+    if (!setupComplete || !context) return;
+    pushEnvironmentRoll(createEnvironmentEncounterRoll(context));
+  }, [getEnvironmentRollContext, pushEnvironmentRoll, setupComplete]);
+
+  const rollEnvironmentWeather = useCallback(() => {
+    const context = getEnvironmentRollContext();
+    if (!setupComplete || !context) return;
+    pushEnvironmentRoll(createEnvironmentWeatherRoll(context));
+  }, [getEnvironmentRollContext, pushEnvironmentRoll, setupComplete]);
+
+  const rollEnvironmentInvestigation = useCallback(() => {
+    const context = getEnvironmentRollContext();
+    if (!setupComplete || !context) return;
+    pushEnvironmentRoll(createEnvironmentInvestigationRoll(context));
+  }, [getEnvironmentRollContext, pushEnvironmentRoll, setupComplete]);
+
+  const rollScoutStealth = useCallback(() => {
+    if (!setupComplete) return;
+    const entry = createScoutStealthRoll(flatBonus, rollMode);
+    pushHistory({
+      section: "scout",
+      label: entry.label,
+      details: entry.details,
+      result: entry.result,
+      success: entry.success,
+    });
+  }, [flatBonus, pushHistory, rollMode, setupComplete]);
+
+  const rollScoutPerception = useCallback(() => {
+    if (!setupComplete) return;
+    const entry = createScoutPerceptionRoll(flatBonus, rollMode);
+    pushHistory({
+      section: "scout",
+      label: entry.label,
+      details: entry.details,
+      result: entry.result,
+      success: entry.success,
+    });
+  }, [flatBonus, pushHistory, rollMode, setupComplete]);
+
+  const checkSpotterPerception = useCallback(
+    (passivePerception: number) => {
+      if (!setupComplete || !selectedEnvironment) return;
+      const ambushDc = selectedEnvironment.encounterDC;
+      const effectivePassive =
+        passivePerception + (scoutAmbushSpotNoticed ? 4 : 0);
+      const entry = createSpotterPassivePerceptionCheck(
+        effectivePassive,
+        ambushDc,
+        scoutAmbushSpotNoticed,
+      );
+      pushHistory({
+        section: "spotter",
+        label: entry.label,
+        details: entry.details,
+        result: entry.result,
+        success: entry.success,
+      });
+    },
+    [pushHistory, scoutAmbushSpotNoticed, selectedEnvironment, setupComplete],
+  );
+
+  const checkSpotterInvestigation = useCallback(
+    (passiveInvestigation: number) => {
+      if (!setupComplete || !selectedEnvironment) return;
+      const entry = createSpotterPassiveInvestigationCheck(
+        passiveInvestigation,
+        selectedEnvironment.investigationDC,
+      );
+      pushHistory({
+        section: "spotter",
+        label: entry.label,
+        details: entry.details,
+        result: entry.result,
+        success: entry.success,
+      });
+    },
+    [pushHistory, selectedEnvironment, setupComplete],
+  );
+
+  const rollTracking = useCallback(() => {
+    if (!setupComplete || selectedMonsters.length === 0 || !selectedEnvironment) {
+      return;
+    }
+
+    const targetKey =
+      activeTrackingTargetKey ?? getMonsterKey(selectedMonsters[0]);
+    const targetMonster = selectedMonsters.find(
+      (monster) => getMonsterKey(monster) === targetKey,
+    );
+    if (!targetMonster) return;
+
+    const currentProgress = targetProgress[targetKey];
+    if (currentProgress?.found) return;
+
+    if (
+      trackingRollMode === "manual" &&
+      (manualFindingSignsRoll == null || Number.isNaN(manualFindingSignsRoll))
+    ) {
+      return;
+    }
+
+    const outcome = resolveFindingSignsRoll(survivalSucceeded, flatBonus, {
+      manualRoll:
+        trackingRollMode === "manual" ? manualFindingSignsRoll ?? undefined : undefined,
+    });
     const resolvedOutcome = resolveTrackingOutcome(
       outcome.event,
       outcome.signs,
@@ -421,29 +728,49 @@ export function useHuntState(): UseHuntStateResult {
     const resolvedText = formatResolvedTrackingOutcome(resolvedOutcome);
 
     setAreasVisited((prev) => prev + 1);
-    setSignsFound((prev) => prev + outcome.signs);
+    setTargetProgress((prev) => {
+      const current = prev[targetKey] ?? { signsFound: 0, found: false };
+      const nextSigns = current.signsFound + outcome.signs;
+      return {
+        ...prev,
+        [targetKey]: {
+          signsFound: nextSigns,
+          found: nextSigns >= signsRequired,
+        },
+      };
+    });
+
+    const rollSource =
+      trackingRollMode === "manual" ? `${outcome.rawRoll} (manual)` : `${outcome.rawRoll}`;
 
     pushHistory({
       section: "tracking",
       label: outcome.label,
-      details: `d${outcome.dieSides} ${outcome.rawRoll}${
+      details: `d${outcome.dieSides} ${rollSource}${
         outcome.flatBonus !== 0
           ? ` ${outcome.flatBonus >= 0 ? "+" : ""}${outcome.flatBonus}`
           : ""
-      } = ${outcome.adjustedRoll} (Survival ${survivalSucceeded ? "success" : "failure"})`,
+      } = ${outcome.adjustedRoll} (Survival ${survivalSucceeded ? "success" : "failure"}) · ${targetMonster.name}`,
       result: resolvedText || outcome.description,
       signsGained: outcome.signs,
+      targetMonsterKey: targetKey,
+      targetMonsterName: targetMonster.name,
       eventType: outcome.event,
       resolvedOutcome,
     });
   }, [
+    activeTrackingTargetKey,
     flatBonus,
+    manualFindingSignsRoll,
     prepTables,
     pushHistory,
     selectedEnvironment,
-    selectedMonster,
+    selectedMonsters,
+    signsRequired,
     survivalSucceeded,
     setupComplete,
+    targetProgress,
+    trackingRollMode,
   ]);
 
   const rollResource = useCallback(
@@ -493,21 +820,37 @@ export function useHuntState(): UseHuntStateResult {
     setRollHistory([]);
   }, []);
 
-  // Persist the serializable session (once catalogs have loaded, so the
-  // async-resolved monster is not briefly overwritten with null).
+  useEffect(() => {
+    if (selectedMonsters.length === 0) return;
+    setActiveTrackingTargetKey((prev) => {
+      if (prev && selectedMonsters.some((monster) => getMonsterKey(monster) === prev)) {
+        return prev;
+      }
+      return getMonsterKey(selectedMonsters[0]);
+    });
+  }, [selectedMonsters]);
+
   useEffect(() => {
     if (monstersLoading) return;
     persistHuntState({
-      monsterName: selectedMonster?.name ?? null,
-      monsterSource: selectedMonster?.source ?? null,
+      monsters: selectedMonsters.map((monster) => ({
+        name: monster.name,
+        source: monster.source ?? null,
+      })),
+      activeTrackingTargetKey,
       environmentName: selectedEnvironment?.name ?? null,
       selectedTierIndex,
-      signsFound,
       signsRequired,
+      targetProgress,
       areasVisited,
       flatBonus,
       rollMode,
+      trackingRollMode,
+      manualFindingSignsRoll,
       survivalSucceeded,
+      hunterCount,
+      hunterLevels,
+      scoutAmbushSpotNoticed,
       rollHistory,
       prepTables,
       setupComplete,
@@ -515,15 +858,21 @@ export function useHuntState(): UseHuntStateResult {
     });
   }, [
     monstersLoading,
-    selectedMonster,
+    activeTrackingTargetKey,
+    selectedMonsters,
     selectedEnvironment,
     selectedTierIndex,
-    signsFound,
     signsRequired,
+    targetProgress,
     areasVisited,
     flatBonus,
     rollMode,
+    trackingRollMode,
+    manualFindingSignsRoll,
     survivalSucceeded,
+    hunterCount,
+    hunterLevels,
+    scoutAmbushSpotNoticed,
     rollHistory,
     prepTables,
     setupComplete,
@@ -532,15 +881,21 @@ export function useHuntState(): UseHuntStateResult {
 
   const resetHunt = useCallback(() => {
     hydrationPendingRef.current = false;
-    setSelectedMonster(null);
+    setSelectedMonsters([]);
     setSelectedEnvironment(null);
     setSelectedTierIndex(0);
-    setSignsFound(0);
     setSignsRequired(3);
+    setTargetProgress({});
+    setActiveTrackingTargetKey(null);
     setAreasVisited(0);
     setFlatBonus(0);
     setRollMode("normal");
+    setTrackingRollMode("random");
+    setManualFindingSignsRoll(null);
     setSurvivalSucceeded(true);
+    setHunterCountState(DEFAULT_HUNTER_COUNT);
+    setHunterLevels(createDefaultHunterLevels(DEFAULT_HUNTER_COUNT));
+    setScoutAmbushSpotNoticed(false);
     setRollHistory([]);
     setPrepTables(createEmptyHuntPrepTables());
     setSetupComplete(false);
@@ -556,34 +911,58 @@ export function useHuntState(): UseHuntStateResult {
     setupComplete,
     hasBaseSetup,
     encounterDifficulty,
-    selectedMonster,
+    selectedMonsters,
     selectedEnvironment,
     compatibleEnvironments,
     compatibleMonsters,
     selectedTierIndex,
-    signsFound,
     signsRequired,
+    targetProgress,
+    activeTrackingTargetKey,
     areasVisited,
     flatBonus,
     rollMode,
+    trackingRollMode,
+    manualFindingSignsRoll,
     survivalSucceeded,
+    hunterCount,
+    hunterLevels,
+    averagePartyLevel,
+    totalTargetCr,
+    combatDifficulty,
+    scoutAmbushSpotNoticed,
     rollHistory,
-    monsterFound,
+    allMonstersFound,
     selectedTier,
     prepTables,
     setSelectedTierIndex,
     setSignsRequired,
     setFlatBonus,
     setRollMode,
+    setTrackingRollMode,
+    setManualFindingSignsRoll,
     setSurvivalSucceeded,
+    setHunterCount,
+    setHunterLevel,
+    setActiveTrackingTargetKey,
+    setScoutAmbushSpotNoticed,
     setEncounterDifficulty,
     completeSetup,
     regeneratePrepTables,
-    pickMonster,
+    addMonster,
+    removeMonster,
     pickEnvironment,
     randomize,
     rollTracking,
     rollResource,
+    rollEnvironmentNavigation,
+    rollEnvironmentEncounter,
+    rollEnvironmentWeather,
+    rollEnvironmentInvestigation,
+    rollScoutStealth,
+    rollScoutPerception,
+    checkSpotterPerception,
+    checkSpotterInvestigation,
     addPrepEntry,
     updatePrepEntry,
     removePrepEntry,

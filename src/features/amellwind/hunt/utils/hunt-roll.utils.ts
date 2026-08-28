@@ -73,16 +73,29 @@ export function interpretFindingSignsRoll(roll: number): Omit<
   };
 }
 
+export interface ResolveFindingSignsOptions {
+  manualRoll?: number;
+}
+
 export function rollFindingSigns(
   survivalSucceeded: boolean,
   flatBonus = 0,
+  options?: ResolveFindingSignsOptions,
+): FindingSignsResult {
+  return resolveFindingSignsRoll(survivalSucceeded, flatBonus, options);
+}
+
+export function resolveFindingSignsRoll(
+  survivalSucceeded: boolean,
+  flatBonus = 0,
+  options?: ResolveFindingSignsOptions,
 ): FindingSignsResult {
   const dieSides: 20 | 10 = survivalSucceeded ? 20 : 10;
-  const rawRoll = rollDie(dieSides);
-  const adjustedRoll = Math.min(
-    dieSides,
-    Math.max(1, rawRoll + flatBonus),
-  );
+  const rawRoll =
+    options?.manualRoll != null
+      ? Math.min(dieSides, Math.max(1, Math.round(options.manualRoll)))
+      : rollDie(dieSides);
+  const adjustedRoll = Math.min(dieSides, Math.max(1, rawRoll + flatBonus));
   const interpretation = interpretFindingSignsRoll(adjustedRoll);
 
   return {
@@ -94,16 +107,31 @@ export function rollFindingSigns(
   };
 }
 
+function getMonsterEnvironmentTags(monster: Monster): Set<string> {
+  return new Set(monster.environment ?? []);
+}
+
 export function getCompatibleEnvironments(
-  monster: Monster | null,
+  monsters: Monster | Monster[] | null,
   environments: Environment[],
 ): Environment[] {
-  if (!monster?.environment?.length) return environments;
+  const list = Array.isArray(monsters)
+    ? monsters
+    : monsters
+      ? [monsters]
+      : [];
 
-  const monsterTags = new Set(monster.environment);
+  if (list.length === 0) return environments;
+
+  const withTags = list.filter((monster) => monster.environment?.length);
+  if (withTags.length === 0) return environments;
+
   const compatible = environments.filter((env) => {
-    const tags = getTagsForEnvironment(env.name);
-    return tags.some((tag) => monsterTags.has(tag));
+    const envTags = getTagsForEnvironment(env.name);
+    return withTags.every((monster) => {
+      const monsterTags = getMonsterEnvironmentTags(monster);
+      return envTags.some((tag) => monsterTags.has(tag));
+    });
   });
 
   return compatible.length > 0 ? compatible : environments;
@@ -134,6 +162,16 @@ export function environmentMatchesMonster(
   const tags = getTagsForEnvironment(environment.name);
   if (tags.length === 0) return true;
   return monster.environment.some((tag) => tags.includes(tag));
+}
+
+export function environmentMatchesAllMonsters(
+  environment: Environment,
+  monsters: Monster[],
+): boolean {
+  if (monsters.length === 0) return true;
+  return monsters.every((monster) =>
+    environmentMatchesMonster(environment, monster),
+  );
 }
 
 export function getEnvironmentTagsLabel(envName: string): string {

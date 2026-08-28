@@ -68,9 +68,9 @@ export function HuntPrepTablesPanel({ hunt }: HuntPrepTablesPanelProps) {
             <CardTitle className="flex items-center gap-2 text-sm">
               <Table2 className="h-4 w-4 text-primary" />
               Generated Prep Tables
-              {hunt.selectedMonster && (
+              {hunt.selectedMonsters.length > 0 && (
                 <span className="font-normal text-muted-foreground">
-                  — {hunt.selectedMonster.name}
+                  — {hunt.selectedMonsters.map((m) => m.name).join(", ")}
                 </span>
               )}
             </CardTitle>

@@ -10,17 +10,27 @@ import type { RollMode } from "@/features/amellwind/environments/utils/environme
 import type { HuntPrepTables } from "../data/hunt-prep-defaults.data";
 import { createEmptyHuntPrepTables } from "../data/hunt-prep-defaults.data";
 import type { HuntEncounterDifficulty } from "../utils/hunt-prep-generator.utils";
-import type { HuntRollEntry } from "../hooks/useHuntState";
+import type { HuntRollEntry, HuntTrackingRollMode } from "../hooks/useHuntState";
+import type { HuntTargetProgress } from "../utils/hunt-party.utils";
+import {
+  createDefaultHunterLevels,
+  DEFAULT_HUNTER_COUNT,
+} from "../utils/hunt-party.utils";
 import { readJson, removeKey, writeJson } from "@/shared/utils/local-storage.utils";
 
 const STORAGE_KEY = "mh-hunt";
 const TAB_STORAGE_KEY = "mh-hunt:tab";
 
 /** Bump when the persisted shape changes incompatibly. */
-export const HUNT_STORAGE_VERSION = 1;
+export const HUNT_STORAGE_VERSION = 2;
 
-export interface HuntPersistedState {
-  version: number;
+export interface HuntMonsterRef {
+  name: string;
+  source: string | null;
+}
+
+export interface HuntPersistedStateV1 {
+  version: 1;
   monsterName: string | null;
   monsterSource: string | null;
   environmentName: string | null;
@@ -37,6 +47,29 @@ export interface HuntPersistedState {
   encounterDifficulty: HuntEncounterDifficulty;
 }
 
+export interface HuntPersistedState {
+  version: typeof HUNT_STORAGE_VERSION;
+  monsters: HuntMonsterRef[];
+  activeTrackingTargetKey: string | null;
+  environmentName: string | null;
+  selectedTierIndex: number;
+  signsRequired: number;
+  targetProgress: Record<string, HuntTargetProgress>;
+  areasVisited: number;
+  flatBonus: number;
+  rollMode: RollMode;
+  trackingRollMode: HuntTrackingRollMode;
+  manualFindingSignsRoll: number | null;
+  survivalSucceeded: boolean;
+  hunterCount: number;
+  hunterLevels: number[];
+  scoutAmbushSpotNoticed: boolean;
+  rollHistory: HuntRollEntry[];
+  prepTables: HuntPrepTables;
+  setupComplete: boolean;
+  encounterDifficulty: HuntEncounterDifficulty;
+}
+
 /** Revives `Date` fields lost to JSON serialization in the roll history. */
 function reviveRollHistory(history: unknown): HuntRollEntry[] {
   if (!Array.isArray(history)) return [];
@@ -46,26 +79,84 @@ function reviveRollHistory(history: unknown): HuntRollEntry[] {
   }));
 }
 
-export function loadHuntState(): HuntPersistedState | null {
-  const raw = readJson<Partial<HuntPersistedState> | null>(STORAGE_KEY, null);
-  if (!raw || typeof raw !== "object") return null;
-  if (raw.version !== HUNT_STORAGE_VERSION) return null;
+function migrateV1ToV2(raw: HuntPersistedStateV1): HuntPersistedState {
+  const monsters: HuntMonsterRef[] =
+    raw.monsterName != null
+      ? [{ name: raw.monsterName, source: raw.monsterSource ?? null }]
+      : [];
+  const activeKey =
+    monsters.length > 0
+      ? `${monsters[0].name}::${monsters[0].source ?? ""}`
+      : null;
+  const targetProgress: Record<string, HuntTargetProgress> = {};
+  if (activeKey) {
+    targetProgress[activeKey] = {
+      signsFound: raw.signsFound ?? 0,
+      found: (raw.signsFound ?? 0) >= (raw.signsRequired ?? 3),
+    };
+  }
+
   return {
     version: HUNT_STORAGE_VERSION,
-    monsterName: raw.monsterName ?? null,
-    monsterSource: raw.monsterSource ?? null,
+    monsters,
+    activeTrackingTargetKey: activeKey,
     environmentName: raw.environmentName ?? null,
     selectedTierIndex: raw.selectedTierIndex ?? 0,
-    signsFound: raw.signsFound ?? 0,
     signsRequired: raw.signsRequired ?? 3,
+    targetProgress,
     areasVisited: raw.areasVisited ?? 0,
     flatBonus: raw.flatBonus ?? 0,
     rollMode: raw.rollMode ?? "normal",
+    trackingRollMode: "random",
+    manualFindingSignsRoll: null,
     survivalSucceeded: raw.survivalSucceeded ?? true,
+    hunterCount: DEFAULT_HUNTER_COUNT,
+    hunterLevels: createDefaultHunterLevels(DEFAULT_HUNTER_COUNT),
+    scoutAmbushSpotNoticed: false,
     rollHistory: reviveRollHistory(raw.rollHistory),
     prepTables: raw.prepTables ?? createEmptyHuntPrepTables(),
     setupComplete: raw.setupComplete ?? false,
     encounterDifficulty: raw.encounterDifficulty ?? "normal",
+  };
+}
+
+export function loadHuntState(): HuntPersistedState | null {
+  const raw = readJson<Partial<HuntPersistedState | HuntPersistedStateV1> | null>(
+    STORAGE_KEY,
+    null,
+  );
+  if (!raw || typeof raw !== "object") return null;
+
+  if (raw.version === 1) {
+    return migrateV1ToV2(raw as HuntPersistedStateV1);
+  }
+
+  if (raw.version !== HUNT_STORAGE_VERSION) return null;
+
+  const state = raw as HuntPersistedState;
+  return {
+    version: HUNT_STORAGE_VERSION,
+    monsters: Array.isArray(state.monsters) ? state.monsters : [],
+    activeTrackingTargetKey: state.activeTrackingTargetKey ?? null,
+    environmentName: state.environmentName ?? null,
+    selectedTierIndex: state.selectedTierIndex ?? 0,
+    signsRequired: state.signsRequired ?? 3,
+    targetProgress: state.targetProgress ?? {},
+    areasVisited: state.areasVisited ?? 0,
+    flatBonus: state.flatBonus ?? 0,
+    rollMode: state.rollMode ?? "normal",
+    trackingRollMode: state.trackingRollMode ?? "random",
+    manualFindingSignsRoll: state.manualFindingSignsRoll ?? null,
+    survivalSucceeded: state.survivalSucceeded ?? true,
+    hunterCount: state.hunterCount ?? DEFAULT_HUNTER_COUNT,
+    hunterLevels:
+      state.hunterLevels ??
+      createDefaultHunterLevels(state.hunterCount ?? DEFAULT_HUNTER_COUNT),
+    scoutAmbushSpotNoticed: state.scoutAmbushSpotNoticed ?? false,
+    rollHistory: reviveRollHistory(state.rollHistory),
+    prepTables: state.prepTables ?? createEmptyHuntPrepTables(),
+    setupComplete: state.setupComplete ?? false,
+    encounterDifficulty: state.encounterDifficulty ?? "normal",
   };
 }
 

@@ -18,13 +18,19 @@ import {
 export type HuntEncounterDifficulty = "easier" | "normal" | "harder";
 
 export interface GenerateHuntPrepInput {
-  target: Monster;
+  targets: Monster[];
   environment: Environment;
   tier: LevelTier;
   difficulty: HuntEncounterDifficulty;
   allMonsters: Monster[];
   species: Species[];
   backgrounds: Background[];
+}
+
+function getPrimaryTarget(targets: Monster[]): Monster {
+  return [...targets].sort(
+    (a, b) => parseCR(b.cr) - parseCR(a.cr),
+  )[0];
 }
 
 const FRIENDLY_NPC_TEMPLATE_IDS = [
@@ -244,14 +250,18 @@ function toTableEntries(texts: string[]): HuntPrepTables["signs"] {
 export async function generateHuntPrepTables(
   input: GenerateHuntPrepInput,
 ): Promise<HuntPrepTables> {
-  const { target, environment, tier, difficulty, allMonsters, species, backgrounds } =
+  const { targets, environment, tier, difficulty, allMonsters, species, backgrounds } =
     input;
+  const target = getPrimaryTarget(targets);
   const targetCr = parseCR(target.cr);
+  const excludeNames = targets.map((monster) => monster.name);
   const prey = pickPreyName(tier, allMonsters);
   const similar =
-    pickFromEnvironmentPool(tier, allMonsters, targetCr, "normal", "large", [
-      target.name,
-    ])?.name ?? pickFromEnvironmentPool(tier, allMonsters, targetCr, "normal", "any", [target.name])?.name ?? "similar predator";
+    pickFromEnvironmentPool(tier, allMonsters, targetCr, "normal", "large", excludeNames)
+      ?.name ??
+    pickFromEnvironmentPool(tier, allMonsters, targetCr, "normal", "any", excludeNames)
+      ?.name ??
+    "similar predator";
 
   const minorMonster =
     pickFromEnvironmentPool(tier, allMonsters, targetCr, difficulty, "small")?.name ??
@@ -266,12 +276,8 @@ export async function generateHuntPrepTables(
     normalThreat;
   const carveTarget =
     pickCarvableCorpseMonster(tier, allMonsters, targetCr, target.name) ??
-    pickFromEnvironmentPool(tier, allMonsters, targetCr, "harder", "any", [
-      target.name,
-    ]) ??
-    pickFromEnvironmentPool(tier, allMonsters, targetCr, "normal", "large", [
-      target.name,
-    ]);
+    pickFromEnvironmentPool(tier, allMonsters, targetCr, "harder", "any", excludeNames) ??
+    pickFromEnvironmentPool(tier, allMonsters, targetCr, "normal", "large", excludeNames);
 
   const carveMonster = carveTarget?.name ?? majorThreat;
   const carveCr = carveTarget?.cr ?? "?";

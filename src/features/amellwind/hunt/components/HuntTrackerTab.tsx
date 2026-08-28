@@ -16,7 +16,9 @@ import { Select } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/shared/utils/cn";
+import { getCarveDc } from "@/shared/utils/cr.utils";
 import { FINDING_SIGNS_TABLE } from "../data/hunt-rules.data";
+import { getMonsterKey } from "../utils/hunt-party.utils";
 import type { UseHuntStateResult } from "../hooks/useHuntState";
 import { HuntRollHistory } from "./HuntRollHistory";
 import { HuntRuleTableView } from "./HuntRuleTable";
@@ -44,20 +46,27 @@ export function HuntTrackerTab({ hunt }: HuntTrackerTabProps) {
     );
   }
 
-  if (!hunt.selectedMonster || !hunt.selectedEnvironment) {
+  if (hunt.selectedMonsters.length === 0 || !hunt.selectedEnvironment) {
     return (
       <Alert>
         <AlertDescription className="text-muted-foreground">
-          Select a monster and environment in the Setup tab to start tracking.
+          Select monsters and an environment in the Setup tab to start tracking.
         </AlertDescription>
       </Alert>
     );
   }
 
-  const progressValue = Math.min(
-    100,
-    (hunt.signsFound / Math.max(hunt.signsRequired, 1)) * 100,
+  const activeKey =
+    hunt.activeTrackingTargetKey ?? getMonsterKey(hunt.selectedMonsters[0]);
+  const activeMonster = hunt.selectedMonsters.find(
+    (monster) => getMonsterKey(monster) === activeKey,
   );
+  const dieMax = hunt.survivalSucceeded ? 20 : 10;
+  const manualRollInvalid =
+    hunt.trackingRollMode === "manual" &&
+    (hunt.manualFindingSignsRoll == null ||
+      hunt.manualFindingSignsRoll < 1 ||
+      hunt.manualFindingSignsRoll > dieMax);
 
   const trackingHistory = hunt.rollHistory.filter(
     (entry) => entry.section === "tracking",
@@ -65,17 +74,64 @@ export function HuntTrackerTab({ hunt }: HuntTrackerTabProps) {
 
   return (
     <div className="space-y-5">
-      {hunt.monsterFound && (
+      {hunt.allMonstersFound && (
         <Alert className="border-emerald-500/40 bg-emerald-500/10">
           <Target className="h-4 w-4" />
-          <AlertTitle>Monster Found!</AlertTitle>
+          <AlertTitle>All Targets Found!</AlertTitle>
           <AlertDescription>
-            The party has found {hunt.signsFound} signs (required:{" "}
-            {hunt.signsRequired}). The final battle against{" "}
-            {hunt.selectedMonster.name} can begin.
+            Every quarry has reached the required sign count. Final battles can
+            begin.
           </AlertDescription>
         </Alert>
       )}
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+        {hunt.selectedMonsters.map((monster) => {
+          const key = getMonsterKey(monster);
+          const progress = hunt.targetProgress[key] ?? {
+            signsFound: 0,
+            found: false,
+          };
+          const progressValue = Math.min(
+            100,
+            (progress.signsFound / Math.max(hunt.signsRequired, 1)) * 100,
+          );
+          return (
+            <Card
+              key={key}
+              className={cn(
+                progress.found && "border-emerald-500/30 bg-emerald-500/5",
+              )}
+            >
+              <CardHeader className="p-4 pb-2">
+                <div className="flex items-center justify-between gap-2">
+                  <CardTitle className="text-sm">{monster.name}</CardTitle>
+                  {progress.found ? (
+                    <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/30">
+                      Found
+                    </Badge>
+                  ) : (
+                    <Badge variant="outline" className="text-[10px]">
+                      CR {monster.cr}
+                    </Badge>
+                  )}
+                </div>
+                <CardDescription>
+                  Carve DC {getCarveDc(String(monster.cr))}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2 p-4 pt-0">
+                <div className="flex items-center justify-between text-xs text-muted-foreground">
+                  <span>
+                    Signs: {progress.signsFound} / {hunt.signsRequired}
+                  </span>
+                </div>
+                <Progress value={progressValue} />
+              </CardContent>
+            </Card>
+          );
+        })}
+      </div>
 
       <Card>
         <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 space-y-0 p-4 pb-3">
@@ -92,22 +148,33 @@ export function HuntTrackerTab({ hunt }: HuntTrackerTabProps) {
           <Badge variant="outline">Areas visited: {hunt.areasVisited}</Badge>
         </CardHeader>
         <CardContent className="space-y-4 p-4 pt-0">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>
-                Signs found: {hunt.signsFound} / {hunt.signsRequired}
-              </span>
-              <span>{hunt.selectedMonster.name}</span>
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="tracker-target" className="text-xs">
+                Rolling signs for
+              </Label>
+              <Select
+                id="tracker-target"
+                value={activeKey}
+                onChange={(e) => hunt.setActiveTrackingTargetKey(e.target.value)}
+              >
+                {hunt.selectedMonsters.map((monster) => {
+                  const key = getMonsterKey(monster);
+                  const progress = hunt.targetProgress[key];
+                  const found = progress?.found ?? false;
+                  return (
+                    <option key={key} value={key} disabled={found}>
+                      {monster.name}
+                      {found ? " (found)" : ""}
+                    </option>
+                  );
+                })}
+              </Select>
             </div>
-            <Progress value={progressValue} />
-          </div>
 
-          <Separator />
-
-          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
             <div className="space-y-1.5">
               <Label htmlFor="tracker-signs" className="text-xs">
-                Signs required
+                Signs required (each target)
               </Label>
               <Select
                 id="tracker-signs"
@@ -119,6 +186,49 @@ export function HuntTrackerTab({ hunt }: HuntTrackerTabProps) {
                 <option value={5}>5 signs</option>
               </Select>
             </div>
+          </div>
+
+          <Separator />
+
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="tracker-roll-mode" className="text-xs">
+                Finding Signs roll
+              </Label>
+              <Select
+                id="tracker-roll-mode"
+                value={hunt.trackingRollMode}
+                onChange={(e) =>
+                  hunt.setTrackingRollMode(
+                    e.target.value as typeof hunt.trackingRollMode,
+                  )
+                }
+              >
+                <option value="random">Random d{dieMax}</option>
+                <option value="manual">Manual result</option>
+              </Select>
+            </div>
+
+            {hunt.trackingRollMode === "manual" && (
+              <div className="space-y-1.5">
+                <Label htmlFor="tracker-manual-roll" className="text-xs">
+                  Manual d{dieMax} result
+                </Label>
+                <Input
+                  id="tracker-manual-roll"
+                  type="number"
+                  min={1}
+                  max={dieMax}
+                  value={hunt.manualFindingSignsRoll ?? ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    hunt.setManualFindingSignsRoll(
+                      value === "" ? null : Number(value),
+                    );
+                  }}
+                />
+              </div>
+            )}
 
             <div className="space-y-1.5">
               <Label htmlFor="tracker-bonus" className="text-xs">
@@ -143,12 +253,30 @@ export function HuntTrackerTab({ hunt }: HuntTrackerTabProps) {
                 className="text-xs leading-snug text-muted-foreground"
               >
                 Trailblazer Survival success (d20 vs d10 on Finding Signs Table)
+                {activeMonster && (
+                  <>
+                    {" "}
+                    · Carve DC {getCarveDc(String(activeMonster.cr))}
+                  </>
+                )}
               </Label>
             </div>
           </div>
 
-          <Button type="button" onClick={hunt.rollTracking} className="w-full sm:w-auto">
+          {manualRollInvalid && (
+            <p className="text-xs text-amber-400">
+              Enter a manual roll between 1 and {dieMax} before rolling.
+            </p>
+          )}
+
+          <Button
+            type="button"
+            onClick={hunt.rollTracking}
+            disabled={manualRollInvalid || activeMonster == null}
+            className="w-full sm:w-auto"
+          >
             Roll Finding Signs
+            {activeMonster ? ` for ${activeMonster.name}` : ""}
           </Button>
         </CardContent>
       </Card>
@@ -158,6 +286,7 @@ export function HuntTrackerTab({ hunt }: HuntTrackerTabProps) {
           <CardTitle className="text-sm">{FINDING_SIGNS_TABLE.caption}</CardTitle>
           <CardDescription>
             Reference table for GM rolls after the Trailblazer Survival check.
+            Prep table picks stay random.
           </CardDescription>
         </CardHeader>
         <CardContent className="p-4 pt-0">
