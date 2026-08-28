@@ -6,6 +6,7 @@ import {
   Footprints,
   Package,
   Lock,
+  Dice6,
 } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Separator } from "@/components/ui/separator";
@@ -17,10 +18,17 @@ import { HuntRulesTab } from "./HuntRulesTab";
 import { HuntSetupPanel } from "./HuntSetupPanel";
 import { HuntTrackerTab } from "./HuntTrackerTab";
 import { HuntResourcesTab } from "./HuntResourcesTab";
+import { HuntRollsTab } from "./HuntRollsTab";
 
-type HuntTab = "rules" | "setup" | "tracker" | "resources";
+type HuntTab = "rules" | "setup" | "tracker" | "rolls" | "resources";
 
-const HUNT_TABS: readonly HuntTab[] = ["rules", "setup", "tracker", "resources"];
+const HUNT_TABS: readonly HuntTab[] = [
+  "rules",
+  "setup",
+  "tracker",
+  "rolls",
+  "resources",
+];
 
 function loadInitialTab(): HuntTab {
   const saved = loadHuntActiveTab();
@@ -35,7 +43,12 @@ export function HuntPage() {
   // A locked tab may have been restored (e.g. tracker) before setup completes;
   // fall back to setup so the user is not stuck on a disabled panel.
   useEffect(() => {
-    if (huntTabsLocked && (activeTab === "tracker" || activeTab === "resources")) {
+    if (
+      huntTabsLocked &&
+      (activeTab === "tracker" ||
+        activeTab === "rolls" ||
+        activeTab === "resources")
+    ) {
       setActiveTab("setup");
     }
   }, [huntTabsLocked, activeTab]);
@@ -46,7 +59,10 @@ export function HuntPage() {
 
   function handleTabChange(value: string) {
     const tab = value as HuntTab;
-    if (huntTabsLocked && (tab === "tracker" || tab === "resources")) {
+    if (
+      huntTabsLocked &&
+      (tab === "tracker" || tab === "rolls" || tab === "resources")
+    ) {
       return;
     }
     setActiveTab(tab);
@@ -87,6 +103,14 @@ export function HuntPage() {
                   Tracker
                 </TabsTrigger>
                 <TabsTrigger
+                  value="rolls"
+                  className={cn("gap-1.5", huntTabsLocked && "opacity-50")}
+                  disabled={huntTabsLocked}
+                >
+                  <Dice6 className="h-4 w-4" />
+                  Hunt Rolls
+                </TabsTrigger>
+                <TabsTrigger
                   value="resources"
                   className={cn("gap-1.5", huntTabsLocked && "opacity-50")}
                   disabled={huntTabsLocked}
@@ -104,7 +128,7 @@ export function HuntPage() {
               <AlertDescription className="text-muted-foreground">
                 Complete setup (monster, environment, prep tables) and press{" "}
                 <span className="font-medium text-foreground">Start Hunt</span>{" "}
-                to unlock Tracker and Resources.
+                to unlock Tracker, Hunt Rolls, and Resources.
               </AlertDescription>
             </Alert>
           )}
@@ -116,6 +140,9 @@ export function HuntPage() {
             {activeTab === "setup" && <HuntSetupPanel hunt={hunt} />}
             {activeTab === "tracker" && hunt.setupComplete && (
               <HuntTrackerTab hunt={hunt} />
+            )}
+            {activeTab === "rolls" && hunt.setupComplete && (
+              <HuntRollsTab hunt={hunt} />
             )}
             {activeTab === "resources" && hunt.setupComplete && (
               <HuntResourcesTab hunt={hunt} />
