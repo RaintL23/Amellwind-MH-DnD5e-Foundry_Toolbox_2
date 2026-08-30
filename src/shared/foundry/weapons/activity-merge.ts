@@ -79,6 +79,15 @@ export function mergeAutomationSpecs(
 
   for (const link of present) {
     if (link.template !== "upgrade_scaler") {
+      // Leaf "Upgrade …" rows often stay unmapped (narrative-only); do not
+      // downgrade an established gauge / activity template from earlier links.
+      if (
+        link.template === "unmapped" &&
+        template !== "unmapped" &&
+        template !== "upgrade_scaler"
+      ) {
+        continue;
+      }
       template = link.template;
     } else if (template === "unmapped" && link.template === "upgrade_scaler") {
       // Keep upgrade_scaler only if nothing else established a real template yet;

@@ -41,6 +41,7 @@ import { buildWeaponPhialFeatItems } from "./weapon-forge-phial.export";
 import { buildWeaponMagazineConsumableItems } from "./weapon-forge-magazine.export";
 import { applyChargeBladeOverlay } from "./weapon-forge-charge-blade.export";
 import { applySwitchAxeOverlay } from "./weapon-forge-switch-axe.export";
+import { applyTonfasOverlay } from "./weapon-forge-tonfas.export";
 
 /** Foundry feat group for a weapon-resource column that already has export builders. */
 export interface WeaponFoundryResourceGroup {
@@ -208,6 +209,7 @@ export function buildWeaponFoundryExportBundle(
   applyChargeBladeOverlay(item, weapon, clamped);
   applyLongswordOverlay(item, weapon, clamped);
   applyMagusStaffOverlay(item, weapon, clamped);
+  applyTonfasOverlay(item, weapon, clamped);
   applyFoundryModuleCompat(item, { light: true });
 
   const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);

@@ -1200,6 +1200,82 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Does not consume Reaction — trigger is optional spend when falling.",
   ),
+
+  // ── Tonfas (Spirit Charges + Sky / Earth styles) ────────────────────
+  "tonfa styles": spec("mode_switch", {
+    activation: "bonus",
+    chatFlavor:
+      "Toggle Sky Style ↔ Earth Style. Sky: ignore difficult terrain; moving through a hostile creature's space costs no extra movement. Earth: weapon damage die becomes 1d10; walking speed halved.",
+    activityImg: "icons/skills/melee/unarmed-palm-yellow.webp",
+  }),
+  "spirit burst": counterSpend(
+    {
+      ownsItemUses: false,
+      emitGather: false,
+      spendMin: 1,
+      spendMax: 4,
+      damageFormula: "1d4",
+      damageType: "force",
+      activityType: "damage",
+      includeBaseDamage: false,
+      activation: "special",
+      activationCondition:
+        "When you hit a creature with a melee attack using this weapon",
+      chatFlavor:
+        "Expend N Spirit Charges for +Nd4 Force damage on that hit.",
+    },
+    "Shared Spirit Gauge pool. Overlay sets spendMax from rarity capacity.",
+  ),
+  "spirit burst upgrade i": spec("upgrade_scaler", {
+    damageFormula: "1d6",
+    chatFlavor:
+      "Expend N Spirit Charges for +Nd6 Force damage on that hit.",
+  }),
+  "spirit burst upgrade ii": spec("upgrade_scaler", {
+    damageFormula: "1d8",
+    chatFlavor:
+      "Expend N Spirit Charges for +Nd8 Force damage on that hit.",
+  }),
+  "spirit gauge upgrade i": scaleUses("3"),
+  "sky step": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      consumeItemUses: true,
+      consumeAmount: "1",
+      activationCondition:
+        "While in Sky Style, when you make a running or standing jump",
+      chatFlavor:
+        "Expend 1 Spirit Charge to double your jump distance (horizontal and vertical) for that jump.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/movement/arrow-upward-yellow.webp",
+    },
+    "Requires Sky Style (Tonfa Styles toggle). Movement is manual.",
+  ),
+  "earth impact": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "save",
+      consumeItemUses: true,
+      consumeAmount: "1",
+      activationCondition:
+        "While in Earth Style, when you score a critical hit against a creature",
+      saveAbility: "str",
+      saveDcCalculation: "str",
+      chatFlavor:
+        "Expend 1 Spirit Charge: target STR save (DC 8 + PB + your STR or DEX modifier) or knocked Prone.",
+      targetAffectsType: "creature",
+      targetPrompt: true,
+      rangeUnits: "ft",
+      rangeValue: "5",
+      activityImg: "icons/magic/earth/strike-fist-stone-gray.webp",
+    },
+    "Manual: apply Prone on failed save. Requires Earth Style + critical hit.",
+  ),
   "silkbind tether": spec(
     "action_ability",
     {
@@ -1467,6 +1543,7 @@ export function parseWeaponMasteryAutomation(
 
   const match =
     raw.match(/^mastery\s+property\s*\(([^)]+)\)/i) ??
+    raw.match(/^mastery\s+note\s*\(([^)]+)\)/i) ??
     raw.match(/^mastery\s*\(([^)]+)\)/i) ??
     raw.match(/^mastery\s*:\s*([a-z]+)/i);
   if (!match) return undefined;
