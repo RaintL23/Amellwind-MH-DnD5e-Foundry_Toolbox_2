@@ -46,9 +46,10 @@ import { cn } from "@/shared/utils/cn";
 import { BIOME_ICONS } from "@/features/amellwind/environments/constants/environment.constants";
 import { HUNT_ENCOUNTER_DIFFICULTY_LABELS } from "../utils/hunt-prep-generator.utils";
 import {
-  getMonsterKey,
+  formatHuntTargetLabel,
   getScaledBossHp,
   HUNT_DIFFICULTY_BADGE_CLASS,
+  countTargetsOfMonster,
 } from "../utils/hunt-party.utils";
 import { getEnvironmentTagsLabel } from "../utils/hunt-roll.utils";
 import type { UseHuntStateResult } from "../hooks/useHuntState";
@@ -60,10 +61,6 @@ interface HuntSetupPanelProps {
 
 export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
   const [monsterPickerOpen, setMonsterPickerOpen] = useState(false);
-
-  const selectedMonsterKeys = new Set(
-    hunt.selectedMonsters.map((monster) => getMonsterKey(monster)),
-  );
 
   return (
     <div className="space-y-5">
@@ -105,8 +102,8 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
               Target Monsters
             </CardTitle>
             <CardDescription>
-              Add one or more quarry monsters. Each target tracks signs
-              separately during the hunt.
+              Add one or more quarry monsters. You can add the same monster
+              multiple times — each instance tracks signs separately.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-3 p-4 pt-0">
@@ -144,25 +141,34 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                       <CommandEmpty>No monster found.</CommandEmpty>
                       <CommandGroup>
                         {hunt.compatibleMonsters.map((monster) => {
-                          const key = getMonsterKey(monster);
-                          const selected = selectedMonsterKeys.has(key);
+                          const selectedCount = countTargetsOfMonster(
+                            hunt.selectedTargets,
+                            monster,
+                          );
                           return (
                             <CommandItem
-                              key={key}
+                              key={`${monster.name}-${monster.source ?? ""}`}
                               value={`${monster.name} CR ${monster.cr}`}
                               onSelect={() => {
-                                if (!selected) hunt.addMonster(monster);
+                                hunt.addMonster(monster);
                                 setMonsterPickerOpen(false);
                               }}
-                              disabled={selected}
                             >
                               <Check
                                 className={cn(
                                   "h-4 w-4 shrink-0",
-                                  selected ? "opacity-100" : "opacity-0",
+                                  selectedCount > 0 ? "opacity-100" : "opacity-0",
                                 )}
                               />
                               <span className="truncate">{monster.name}</span>
+                              {selectedCount > 0 && (
+                                <Badge
+                                  variant="secondary"
+                                  className="ml-2 shrink-0 text-[10px] font-normal"
+                                >
+                                  ×{selectedCount}
+                                </Badge>
+                              )}
                               <span className="ml-auto shrink-0 text-xs text-muted-foreground">
                                 CR {monster.cr}
                               </span>
@@ -176,28 +182,32 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
               </Popover>
             </div>
 
-            {hunt.selectedMonsters.length > 0 ? (
+            {hunt.selectedTargets.length > 0 ? (
               <div className="space-y-2">
                 <div className="flex flex-wrap items-center gap-2">
                   <Badge variant="outline" className="text-[10px] font-normal">
                     Total CR {hunt.totalTargetCr}
                   </Badge>
                   <Badge variant="outline" className="text-[10px] font-normal">
-                    {hunt.selectedMonsters.length} target
-                    {hunt.selectedMonsters.length === 1 ? "" : "s"}
+                    {hunt.selectedTargets.length} target
+                    {hunt.selectedTargets.length === 1 ? "" : "s"}
                   </Badge>
                 </div>
                 <ul className="space-y-2">
-                  {hunt.selectedMonsters.map((monster) => {
-                    const key = getMonsterKey(monster);
+                  {hunt.selectedTargets.map((target) => {
+                    const label = formatHuntTargetLabel(
+                      target,
+                      hunt.selectedTargets,
+                    );
+                    const { monster } = target;
                     return (
                       <li
-                        key={key}
+                        key={target.id}
                         className="flex items-start gap-2 rounded-md border border-border bg-muted/10 px-3 py-2"
                       >
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-medium text-foreground">
-                            {monster.name}
+                            {label}
                           </p>
                           <p className="text-xs text-muted-foreground capitalize">
                             CR {monster.cr}
@@ -212,8 +222,8 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                           variant="ghost"
                           size="icon"
                           className="h-7 w-7 shrink-0"
-                          onClick={() => hunt.removeMonster(key)}
-                          aria-label={`Remove ${monster.name}`}
+                          onClick={() => hunt.removeTarget(target.id)}
+                          aria-label={`Remove ${label}`}
                         >
                           <X className="h-3.5 w-3.5" />
                         </Button>
@@ -384,14 +394,15 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 p-4 pt-0">
-              {hunt.selectedMonsters.map((monster) => {
-                const scaled = getScaledBossHp(monster, hunt.hunterCount);
+              {hunt.selectedTargets.map((target) => {
+                const scaled = getScaledBossHp(target.monster, hunt.hunterCount);
+                const label = formatHuntTargetLabel(target, hunt.selectedTargets);
                 return (
                   <div
-                    key={getMonsterKey(monster)}
+                    key={target.id}
                     className="rounded-md border border-border bg-muted/10 px-3 py-2 text-xs"
                   >
-                    <p className="font-medium text-foreground">{monster.name}</p>
+                    <p className="font-medium text-foreground">{label}</p>
                     <div className="mt-1 flex flex-wrap gap-2 text-muted-foreground">
                       {scaled.averageHp != null && (
                         <span>Avg HP {scaled.averageHp}</span>
@@ -602,8 +613,12 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
           <Loader2 className="h-4 w-4 animate-spin" />
           <AlertDescription>
             Generating hunt prep tables for{" "}
-            {hunt.selectedMonsters.map((m) => m.name).join(", ")} in{" "}
-            {hunt.selectedEnvironment?.name}...
+            {hunt.selectedTargets
+              .map((target) =>
+                formatHuntTargetLabel(target, hunt.selectedTargets),
+              )
+              .join(", ")}{" "}
+            in {hunt.selectedEnvironment?.name}...
           </AlertDescription>
         </Alert>
       )}

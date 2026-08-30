@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import type { Monster } from "@/shared/types";
 import {
+  countTargetsOfMonster,
+  createHuntTarget,
+  formatHuntTargetLabel,
   getAveragePartyLevel,
   getHuntCombatDifficulty,
   getHuntHpMultiplier,
@@ -65,5 +68,16 @@ describe("hunt-party.utils", () => {
   it("rates combat difficulty from APL vs total CR", () => {
     const result = getHuntCombatDifficulty(5, 20, 4);
     expect(result.rating).toBe("medium");
+  });
+
+  it("labels duplicate quarry instances with #2, #3, …", () => {
+    const monster = makeMonster("2", {});
+    const first = createHuntTarget(monster, "a");
+    const second = createHuntTarget(monster, "b");
+    const targets = [first, second];
+
+    expect(formatHuntTargetLabel(first, targets)).toBe("Test Monster #1");
+    expect(formatHuntTargetLabel(second, targets)).toBe("Test Monster #2");
+    expect(countTargetsOfMonster(targets, monster)).toBe(2);
   });
 });

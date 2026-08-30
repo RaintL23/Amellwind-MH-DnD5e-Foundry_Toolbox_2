@@ -35,6 +35,49 @@ export function getMonsterKey(monster: Pick<Monster, "name" | "source">): string
   return `${monster.name}::${monster.source ?? ""}`;
 }
 
+/** One quarry instance in a hunt — duplicates of the same monster get unique ids. */
+export interface HuntTarget {
+  id: string;
+  monster: Monster;
+}
+
+function createHuntTargetId(): string {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `hunt-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+}
+
+export function createHuntTarget(monster: Monster, id?: string): HuntTarget {
+  return { id: id ?? createHuntTargetId(), monster };
+}
+
+export function getHuntTargetKey(target: Pick<HuntTarget, "id">): string {
+  return target.id;
+}
+
+/** Adds "#2", "#3", … when the same monster appears more than once. */
+export function formatHuntTargetLabel(
+  target: HuntTarget,
+  allTargets: HuntTarget[],
+): string {
+  const monsterKey = getMonsterKey(target.monster);
+  const sameType = allTargets.filter(
+    (entry) => getMonsterKey(entry.monster) === monsterKey,
+  );
+  if (sameType.length <= 1) return target.monster.name;
+  const index = sameType.findIndex((entry) => entry.id === target.id) + 1;
+  return `${target.monster.name} #${index}`;
+}
+
+export function countTargetsOfMonster(
+  targets: HuntTarget[],
+  monster: Pick<Monster, "name" | "source">,
+): number {
+  const key = getMonsterKey(monster);
+  return targets.filter((target) => getMonsterKey(target.monster) === key).length;
+}
+
 export function resolveMonsterKey(
   key: string,
   catalog: Monster[],
@@ -225,12 +268,12 @@ export function createEmptyTargetProgress(): HuntTargetProgress {
 }
 
 export function createTargetProgressMap(
-  monsters: Monster[],
+  targets: HuntTarget[],
   existing: Record<string, HuntTargetProgress> = {},
 ): Record<string, HuntTargetProgress> {
   const next: Record<string, HuntTargetProgress> = {};
-  for (const monster of monsters) {
-    const key = getMonsterKey(monster);
+  for (const target of targets) {
+    const key = getHuntTargetKey(target);
     next[key] = existing[key] ?? createEmptyTargetProgress();
   }
   return next;

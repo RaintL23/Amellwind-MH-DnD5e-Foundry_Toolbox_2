@@ -22,6 +22,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/shared/utils/cn";
+import { formatHuntTargetLabel } from "../utils/hunt-party.utils";
 import {
   HUNT_PREP_TABLE_META,
   type HuntPrepTableKey,
@@ -68,9 +69,14 @@ export function HuntPrepTablesPanel({ hunt }: HuntPrepTablesPanelProps) {
             <CardTitle className="flex items-center gap-2 text-sm">
               <Table2 className="h-4 w-4 text-primary" />
               Generated Prep Tables
-              {hunt.selectedMonsters.length > 0 && (
+              {hunt.selectedTargets.length > 0 && (
                 <span className="font-normal text-muted-foreground">
-                  — {hunt.selectedMonsters.map((m) => m.name).join(", ")}
+                  —{" "}
+                  {hunt.selectedTargets
+                    .map((target) =>
+                      formatHuntTargetLabel(target, hunt.selectedTargets),
+                    )
+                    .join(", ")}
                 </span>
               )}
             </CardTitle>

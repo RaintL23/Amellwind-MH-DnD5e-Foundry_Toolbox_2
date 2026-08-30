@@ -38,13 +38,16 @@ import {
 import { loadNpcGeneratorData } from "@/features/amellwind/npc-generator/services/npc-generator.service";
 import {
   createDefaultHunterLevels,
+  createHuntTarget,
   createTargetProgressMap,
   DEFAULT_HUNTER_COUNT,
+  formatHuntTargetLabel,
   getAveragePartyLevel,
   getHuntCombatDifficulty,
-  getMonsterKey,
+  getHuntTargetKey,
   getTotalTargetCr,
   resizeHunterLevels,
+  type HuntTarget,
   type HuntTargetProgress,
 } from "../utils/hunt-party.utils";
 import {
@@ -93,7 +96,7 @@ export interface UseHuntStateResult {
   setupComplete: boolean;
   hasBaseSetup: boolean;
   encounterDifficulty: HuntEncounterDifficulty;
-  selectedMonsters: Monster[];
+  selectedTargets: HuntTarget[];
   selectedEnvironment: Environment | null;
   compatibleEnvironments: Environment[];
   compatibleMonsters: Monster[];
@@ -132,7 +135,7 @@ export interface UseHuntStateResult {
   completeSetup: () => void;
   regeneratePrepTables: () => void;
   addMonster: (monster: Monster) => void;
-  removeMonster: (monsterKey: string) => void;
+  removeTarget: (targetId: string) => void;
   pickEnvironment: (environment: Environment | null) => void;
   randomize: () => void;
   rollTracking: () => void;
@@ -164,12 +167,11 @@ function createRollEntry(
   };
 }
 
-function resolveSavedMonsters(
-  refs: Array<{ name: string; source: string | null }>,
+function resolveSavedTargets(
+  refs: Array<{ id?: string; name: string; source: string | null }>,
   catalog: Monster[],
-): Monster[] {
-  const resolved: Monster[] = [];
-  const seen = new Set<string>();
+): HuntTarget[] {
+  const resolved: HuntTarget[] = [];
   for (const ref of refs) {
     const match =
       catalog.find(
@@ -178,10 +180,7 @@ function resolveSavedMonsters(
           (ref.source ? monster.source === ref.source : true),
       ) ?? catalog.find((monster) => monster.name === ref.name);
     if (!match) continue;
-    const key = getMonsterKey(match);
-    if (seen.has(key)) continue;
-    seen.add(key);
-    resolved.push(match);
+    resolved.push(createHuntTarget(match, ref.id));
   }
   return resolved;
 }
@@ -191,7 +190,7 @@ export function useHuntState(): UseHuntStateResult {
   const persisted = persistedRef.current;
   const hydrationPendingRef = useRef(
     Boolean(
-      persisted?.monsters?.length &&
+      persisted?.targets?.length &&
         persisted?.environmentName &&
         huntPrepTablesHaveContent(persisted.prepTables),
     ),
@@ -199,7 +198,7 @@ export function useHuntState(): UseHuntStateResult {
 
   const [monsters, setMonsters] = useState<Monster[]>([]);
   const [monstersLoading, setMonstersLoading] = useState(true);
-  const [selectedMonsters, setSelectedMonsters] = useState<Monster[]>([]);
+  const [selectedTargets, setSelectedTargets] = useState<HuntTarget[]>([]);
   const [selectedEnvironment, setSelectedEnvironment] =
     useState<Environment | null>(() => {
       if (!persisted?.environmentName) return null;
@@ -266,17 +265,17 @@ export function useHuntState(): UseHuntStateResult {
     getAllMonsters()
       .then((data) => {
         setMonsters(data);
-        const savedRefs = persistedRef.current?.monsters ?? [];
+        const savedRefs = persistedRef.current?.targets ?? [];
         if (savedRefs.length > 0) {
-          const restored = resolveSavedMonsters(savedRefs, data);
+          const restored = resolveSavedTargets(savedRefs, data);
           if (restored.length > 0) {
-            setSelectedMonsters(restored);
+            setSelectedTargets(restored);
             setTargetProgress((prev) => createTargetProgressMap(restored, prev));
             setActiveTrackingTargetKey((current) => {
-              if (current && restored.some((m) => getMonsterKey(m) === current)) {
+              if (current && restored.some((target) => target.id === current)) {
                 return current;
               }
-              return getMonsterKey(restored[0]);
+              return restored[0]?.id ?? null;
             });
           } else {
             hydrationPendingRef.current = false;
@@ -295,8 +294,13 @@ export function useHuntState(): UseHuntStateResult {
     });
   }, []);
 
+  const selectedMonsters = useMemo(
+    () => selectedTargets.map((target) => target.monster),
+    [selectedTargets],
+  );
+
   const hasBaseSetup =
-    selectedMonsters.length > 0 && Boolean(selectedEnvironment);
+    selectedTargets.length > 0 && Boolean(selectedEnvironment);
 
   const compatibleEnvironments = useMemo(
     () => getCompatibleEnvironments(selectedMonsters, environments),
@@ -323,6 +327,14 @@ export function useHuntState(): UseHuntStateResult {
     [selectedMonsters],
   );
 
+  const allMonstersFound = useMemo(() => {
+    if (selectedTargets.length === 0) return false;
+    return selectedTargets.every((target) => {
+      const progress = targetProgress[getHuntTargetKey(target)];
+      return progress?.found ?? false;
+    });
+  }, [selectedTargets, targetProgress]);
+
   const combatDifficulty = useMemo(
     () =>
       getHuntCombatDifficulty(
@@ -333,14 +345,6 @@ export function useHuntState(): UseHuntStateResult {
       ),
     [averagePartyLevel, totalTargetCr, hunterCount, selectedTier?.levelRange],
   );
-
-  const allMonstersFound = useMemo(() => {
-    if (selectedMonsters.length === 0) return false;
-    return selectedMonsters.every((monster) => {
-      const progress = targetProgress[getMonsterKey(monster)];
-      return progress?.found ?? false;
-    });
-  }, [selectedMonsters, targetProgress]);
 
   const pushHistory = useCallback((entry: Omit<HuntRollEntry, "id" | "createdAt">) => {
     setRollHistory((prev) => [createRollEntry(entry), ...prev]);
@@ -360,7 +364,7 @@ export function useHuntState(): UseHuntStateResult {
   }, []);
 
   const regeneratePrepTables = useCallback(() => {
-    if (selectedMonsters.length === 0 || !selectedEnvironment || !selectedTier) {
+    if (selectedTargets.length === 0 || !selectedEnvironment || !selectedTier) {
       return;
     }
     if (npcSpecies.length === 0) return;
@@ -390,6 +394,7 @@ export function useHuntState(): UseHuntStateResult {
     npcSpecies,
     selectedEnvironment,
     selectedMonsters,
+    selectedTargets,
     selectedTier,
   ]);
 
@@ -437,6 +442,7 @@ export function useHuntState(): UseHuntStateResult {
     npcSpecies,
     selectedEnvironment,
     selectedMonsters,
+    selectedTargets,
     selectedTier,
     selectedTierIndex,
   ]);
@@ -448,13 +454,13 @@ export function useHuntState(): UseHuntStateResult {
 
   const addMonster = useCallback(
     (monster: Monster) => {
-      const key = getMonsterKey(monster);
-      setSelectedMonsters((prev) => {
-        if (prev.some((entry) => getMonsterKey(entry) === key)) return prev;
-        return [...prev, monster];
-      });
-      setTargetProgress((prev) => createTargetProgressMap([monster], prev));
-      setActiveTrackingTargetKey((prev) => prev ?? key);
+      const target = createHuntTarget(monster);
+      setSelectedTargets((prev) => [...prev, target]);
+      setTargetProgress((prev) => ({
+        ...prev,
+        [target.id]: prev[target.id] ?? { signsFound: 0, found: false },
+      }));
+      setActiveTrackingTargetKey((prev) => prev ?? target.id);
       invalidateSetup();
       if (
         selectedEnvironment &&
@@ -467,18 +473,16 @@ export function useHuntState(): UseHuntStateResult {
     [invalidateSetup, selectedEnvironment],
   );
 
-  const removeMonster = useCallback(
-    (monsterKey: string) => {
-      setSelectedMonsters((prev) =>
-        prev.filter((monster) => getMonsterKey(monster) !== monsterKey),
-      );
+  const removeTarget = useCallback(
+    (targetId: string) => {
+      setSelectedTargets((prev) => prev.filter((target) => target.id !== targetId));
       setTargetProgress((prev) => {
         const next = { ...prev };
-        delete next[monsterKey];
+        delete next[targetId];
         return next;
       });
       setActiveTrackingTargetKey((prev) =>
-        prev === monsterKey ? null : prev,
+        prev === targetId ? null : prev,
       );
       invalidateSetup();
     },
@@ -495,7 +499,7 @@ export function useHuntState(): UseHuntStateResult {
         selectedMonsters.length > 0 &&
         !environmentMatchesAllMonsters(environment, selectedMonsters)
       ) {
-        setSelectedMonsters([]);
+        setSelectedTargets([]);
         setTargetProgress({});
         setActiveTrackingTargetKey(null);
       }
@@ -508,7 +512,7 @@ export function useHuntState(): UseHuntStateResult {
       ? getCompatibleMonsters(selectedEnvironment, monsters)
       : monsters;
     const environmentPool =
-      selectedMonsters.length > 0
+      selectedTargets.length > 0
         ? getCompatibleEnvironments(selectedMonsters, environments)
         : environments;
 
@@ -520,17 +524,18 @@ export function useHuntState(): UseHuntStateResult {
         ? pickRandom(getCompatibleEnvironments([nextMonster], environments))
         : pickRandom(environmentPool));
 
-    setSelectedMonsters(nextMonster ? [nextMonster] : []);
+    const nextTarget = nextMonster ? createHuntTarget(nextMonster) : null;
+    setSelectedTargets(nextTarget ? [nextTarget] : []);
     setTargetProgress(
-      nextMonster
-        ? createTargetProgressMap([nextMonster])
+      nextTarget
+        ? createTargetProgressMap([nextTarget])
         : {},
     );
-    setActiveTrackingTargetKey(nextMonster ? getMonsterKey(nextMonster) : null);
+    setActiveTrackingTargetKey(nextTarget?.id ?? null);
     setSelectedEnvironment(nextEnvironment ?? null);
     setSelectedTierIndex(0);
     invalidateSetup();
-  }, [environments, invalidateSetup, monsters, selectedEnvironment, selectedMonsters]);
+  }, [environments, invalidateSetup, monsters, selectedEnvironment, selectedMonsters, selectedTargets]);
 
   const setHunterCount = useCallback((count: number) => {
     const clamped = Math.min(6, Math.max(1, count));
@@ -695,16 +700,14 @@ export function useHuntState(): UseHuntStateResult {
   );
 
   const rollTracking = useCallback(() => {
-    if (!setupComplete || selectedMonsters.length === 0 || !selectedEnvironment) {
+    if (!setupComplete || selectedTargets.length === 0 || !selectedEnvironment) {
       return;
     }
 
     const targetKey =
-      activeTrackingTargetKey ?? getMonsterKey(selectedMonsters[0]);
-    const targetMonster = selectedMonsters.find(
-      (monster) => getMonsterKey(monster) === targetKey,
-    );
-    if (!targetMonster) return;
+      activeTrackingTargetKey ?? getHuntTargetKey(selectedTargets[0]);
+    const target = selectedTargets.find((entry) => entry.id === targetKey);
+    if (!target) return;
 
     const currentProgress = targetProgress[targetKey];
     if (currentProgress?.found) return;
@@ -750,11 +753,11 @@ export function useHuntState(): UseHuntStateResult {
         outcome.flatBonus !== 0
           ? ` ${outcome.flatBonus >= 0 ? "+" : ""}${outcome.flatBonus}`
           : ""
-      } = ${outcome.adjustedRoll} (Survival ${survivalSucceeded ? "success" : "failure"}) · ${targetMonster.name}`,
+      } = ${outcome.adjustedRoll} (Survival ${survivalSucceeded ? "success" : "failure"}) · ${formatHuntTargetLabel(target, selectedTargets)}`,
       result: resolvedText || outcome.description,
       signsGained: outcome.signs,
       targetMonsterKey: targetKey,
-      targetMonsterName: targetMonster.name,
+      targetMonsterName: formatHuntTargetLabel(target, selectedTargets),
       eventType: outcome.event,
       resolvedOutcome,
     });
@@ -765,7 +768,7 @@ export function useHuntState(): UseHuntStateResult {
     prepTables,
     pushHistory,
     selectedEnvironment,
-    selectedMonsters,
+    selectedTargets,
     signsRequired,
     survivalSucceeded,
     setupComplete,
@@ -821,21 +824,22 @@ export function useHuntState(): UseHuntStateResult {
   }, []);
 
   useEffect(() => {
-    if (selectedMonsters.length === 0) return;
+    if (selectedTargets.length === 0) return;
     setActiveTrackingTargetKey((prev) => {
-      if (prev && selectedMonsters.some((monster) => getMonsterKey(monster) === prev)) {
+      if (prev && selectedTargets.some((target) => target.id === prev)) {
         return prev;
       }
-      return getMonsterKey(selectedMonsters[0]);
+      return selectedTargets[0]?.id ?? null;
     });
-  }, [selectedMonsters]);
+  }, [selectedTargets]);
 
   useEffect(() => {
     if (monstersLoading) return;
     persistHuntState({
-      monsters: selectedMonsters.map((monster) => ({
-        name: monster.name,
-        source: monster.source ?? null,
+      targets: selectedTargets.map((target) => ({
+        id: target.id,
+        name: target.monster.name,
+        source: target.monster.source ?? null,
       })),
       activeTrackingTargetKey,
       environmentName: selectedEnvironment?.name ?? null,
@@ -859,7 +863,7 @@ export function useHuntState(): UseHuntStateResult {
   }, [
     monstersLoading,
     activeTrackingTargetKey,
-    selectedMonsters,
+    selectedTargets,
     selectedEnvironment,
     selectedTierIndex,
     signsRequired,
@@ -881,7 +885,7 @@ export function useHuntState(): UseHuntStateResult {
 
   const resetHunt = useCallback(() => {
     hydrationPendingRef.current = false;
-    setSelectedMonsters([]);
+    setSelectedTargets([]);
     setSelectedEnvironment(null);
     setSelectedTierIndex(0);
     setSignsRequired(3);
@@ -911,7 +915,7 @@ export function useHuntState(): UseHuntStateResult {
     setupComplete,
     hasBaseSetup,
     encounterDifficulty,
-    selectedMonsters,
+    selectedTargets,
     selectedEnvironment,
     compatibleEnvironments,
     compatibleMonsters,
@@ -950,7 +954,7 @@ export function useHuntState(): UseHuntStateResult {
     completeSetup,
     regeneratePrepTables,
     addMonster,
-    removeMonster,
+    removeTarget,
     pickEnvironment,
     randomize,
     rollTracking,
