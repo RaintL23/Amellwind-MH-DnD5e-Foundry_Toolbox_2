@@ -11,6 +11,7 @@ type FoundryRuneItem = {
   };
   effects: Array<{
     name?: string;
+    description?: string;
     changes?: Array<{ key?: string; value?: string }>;
     flags?: Record<string, Record<string, unknown>>;
   }>;
