@@ -237,6 +237,28 @@ function buildItem({ _id, name, identifier, description, runeName, monsterName, 
   };
 }
 
+function spellAttackElementBonus(types, label) {
+  const checks = types
+    .flatMap((t) => [
+      `dump.includes("${t}")`,
+      `desc.includes("${t}")`,
+    ])
+    .join(" || ");
+  return `
+if (pass.includes("preitemroll") || pass.includes("preattackroll")) {
+  const wf = workflow ?? arg0?.workflow;
+  const src = wf?.item;
+  if (!src || src.type !== "spell") return;
+  const dump = JSON.stringify(src.system?.damage ?? src.system?.activities ?? {}).toLowerCase();
+  const desc = String(src.system?.description?.value ?? "").toLowerCase();
+  const hasElement = ${checks};
+  if (!hasElement) return;
+  foundry.utils.setProperty(arg0, "attackRollBonus", (Number(arg0?.attackRollBonus ?? 0) || 0) + 1);
+  if (wf) wf.attackRollBonus = (Number(wf.attackRollBonus ?? 0) || 0) + 1;
+  return;
+}`;
+}
+
 function spellDamageTypeBonus(type, label) {
   return `
 if (pass.includes("damagebonus")) {
@@ -346,6 +368,61 @@ if (pass.includes("postdamageroll") || pass.includes("postactiveeffects") || pas
   }
   return;
 }`;
+}
+
+function slashingReductionChanges(amount) {
+  const value = `-${amount}`;
+  return [
+    { key: "system.traits.dm.amount.slashing", mode: 2, value, priority: 20 },
+    { key: "system.traits.dm.midi.slashing", mode: 2, value, priority: 20 },
+  ];
+}
+
+function extraSlashingDamageChanges(amount) {
+  const value = `${amount}[slashing]`;
+  return [
+    { key: "system.bonuses.mwak.damage", mode: 2, value, priority: 20 },
+    { key: "system.bonuses.rwak.damage", mode: 2, value, priority: 20 },
+  ];
+}
+
+function slugify(text) {
+  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
+function utilityActivity(id, name, activationType, chatFlavor, condition = "", consumeItemUse = false) {
+  const activity = {
+    _id: id,
+    type: "utility",
+    sort: 0,
+    name,
+    img: "mh-icons/material-rune.webp",
+    activation: { type: activationType, value: null, condition, override: false },
+    consumption: {
+      scaling: { allowed: false, max: "" },
+      spellSlot: false,
+      targets: consumeItemUse
+        ? [{ type: "itemUses", value: "1", scaling: { mode: "", formula: "" } }]
+        : [],
+    },
+    description: { chatFlavor },
+    duration: { value: "", units: "inst", concentration: false, override: false },
+    effects: [],
+    range: { value: null, units: "self", special: "", override: false },
+    target: {
+      template: { count: "", contiguous: false, type: "", size: "", width: "", height: "", units: "ft" },
+      affects: { count: "", type: "self", choice: false, special: "" },
+      prompt: false,
+      override: false,
+    },
+    uses: { spent: 0, max: "", recovery: [] },
+    midiProperties: { identifier: slugify(name), displayActivityName: true },
+    roll: { formula: "", name: "", prompt: false, visible: false },
+    useConditionText: "",
+    useConditionReason: "",
+    effectConditionText: "",
+  };
+  return { [id]: activity };
 }
 
 function isSaveProneAdvantageTail() {
@@ -716,6 +793,336 @@ items.push({
     },
     _stats: { ...STATS, createdTime: Date.now(), modifiedTime: Date.now() },
   },
+});
+
+// ─── Bulldrome Tusk (weapon only) ───
+items.push({
+  path: path.join(__dirname, "Bulldrome", "fvtt-Item-bulldrome-bulldrome-tusk-rune.json"),
+  doc: buildItem({
+    _id: "b7kR0m3TuskWpn01",
+    identifier: "bulldrometuskrune",
+    runeName: "Bulldrome Tusk",
+    monsterName: "Bulldrome",
+    sort: 2000000,
+    rarity: "common",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Bulldrome | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Your slashing weapon deals an extra 2 slashing damage.</p>\n<p><em><strong>Tags:</strong> damage:slashing, type:offensive, mechanic:extra-damage:minor</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Extra Slashing" },
+    },
+    macroName: "Bulldrome Tusk Rune",
+    macroTail: "",
+    effects: [
+      equipEffect("bTuskEq01xxxxxxxx"),
+      sideEffect(
+        "bTuskWpn01xxxxxxxx",
+        "Bulldrome Tusk - Extra Slashing",
+        "weapon",
+        "Extra Slashing",
+        [
+          { key: "system.bonuses.mwak.damage", mode: 2, value: "2[slashing]", priority: 20 },
+          { key: "system.bonuses.rwak.damage", mode: 2, value: "2[slashing]", priority: 20 },
+        ],
+        "Slashing weapons deal an extra 2 slashing damage on weapon attacks.",
+      ),
+    ],
+  }),
+});
+
+// ─── Juv.Astalos Membrane ───
+items.push({
+  path: path.join(__dirname, "Juvenile Astalos", "fvtt-Item-juvenile-astalos-juv-astalos-membrane-rune.json"),
+  doc: buildItem({
+    _id: "jAm3mbr4n3Astl0s",
+    identifier: "juvastalosmembranerune",
+    runeName: "Juv.Astalos Membrane",
+    monsterName: "Juvenile Astalos",
+    sort: 3000000,
+    rarity: "uncommon",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Juvenile Astalos | CR: 3 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>When you cast a spell that deals lightning or thunder damage, you gain a +1 bonus to its spell attack roll.</p>\n<h3>Armor Effect</h3>\n<em>Marathon Runner.</em> While wearing this armor, your walking speed increases by 5 feet.\n<p><em><strong>Tags:</strong> mechanic:spell-buff:attack, damage:lightning, damage:thunder, type:offensive, mechanic:movement, type:defensive</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Lightning/Thunder Spell Attack" },
+      armor: { label: "Armor Effect — Marathon Runner" },
+    },
+    macroName: "Juv.Astalos Membrane Rune",
+    macroTail: spellAttackElementBonus(["lightning", "thunder"], "Lightning/Thunder Spell Attack"),
+    effects: [
+      equipEffect("jAmEq01xxxxxxxxxx"),
+      sideEffect(
+        "jAmWpn01xxxxxxxxxx",
+        "Juv.Astalos Membrane - Lightning/Thunder Spell Attack",
+        "weapon",
+        "Lightning/Thunder Spell Attack",
+        [{ key: "flags.midi-qol.onUseMacroName", mode: 0, value: "ItemMacro.Juv.Astalos Membrane Rune,preItemRoll", priority: 20 }],
+        "+1 spell attack roll when casting a spell that deals lightning or thunder damage.",
+      ),
+      sideEffect(
+        "jAmArm01xxxxxxxxxx",
+        "Juv.Astalos Membrane - Marathon Runner",
+        "armor",
+        "Marathon Runner",
+        [{ key: "system.attributes.movement.walk", mode: 2, value: "5", priority: 20 }],
+        "Walking speed increases by 5 feet.",
+      ),
+    ],
+  }),
+});
+
+// ─── D.Seltas Razorwing ───
+items.push({
+  path: path.join(__dirname, "Desert Seltas", "fvtt-Item-desert-seltas-d-seltas-razorwing-rune.json"),
+  doc: buildItem({
+    _id: "dS3lt4Rz0rw1ng01",
+    identifier: "dseltasrazorwingrune",
+    runeName: "D.Seltas Razorwing",
+    monsterName: "Desert Seltas",
+    sort: 4000000,
+    rarity: "uncommon",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Desert Seltas | CR: 4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Gunlance Only) Artillery.</em> While attuned to this weapon, your wyvernfire can now be used twice per long rest.\n<h3>Armor Effect</h3>\n<em>Minor Guard Up.</em> When you fail a Dexterity or Strength saving throw, you can use your reaction to use your AC in place of your roll. Once you use this property you can't use it again until you finish a long rest.\n<p><em><strong>Tags:</strong> weapon-type:gunlance, mechanic:class-feature, mechanic:long-rest, type:offensive, mechanic:reaction, mechanic:saving-throw, mechanic:ac, type:defensive</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Artillery (Gunlance)" },
+      armor: { label: "Armor Effect — Minor Guard Up" },
+    },
+    macroName: "D.Seltas Razorwing Rune",
+    macroTail: "",
+    systemExtra: {
+      uses: { spent: 0, max: "1", recovery: [{ period: "lr", type: "recoverAll" }] },
+      activities: {
+        mGU01xxxxxxxxxxxxx: {
+          _id: "mGU01xxxxxxxxxxxxx",
+          type: "utility",
+          sort: 0,
+          name: "Minor Guard Up",
+          img: "mh-icons/material-rune.webp",
+          activation: {
+            type: "reaction",
+            value: null,
+            condition: "When you fail a Dexterity or Strength saving throw",
+            override: false,
+          },
+          consumption: {
+            scaling: { allowed: false, max: "" },
+            spellSlot: false,
+            targets: [{ type: "itemUses", value: "1", scaling: { mode: "", formula: "" } }],
+          },
+          description: { chatFlavor: "Use your AC in place of the failed save." },
+          duration: { value: "", units: "inst", concentration: false, override: false },
+          effects: [],
+          range: { value: null, units: "self", special: "", override: false },
+          target: {
+            template: { count: "", contiguous: false, type: "", size: "", width: "", height: "", units: "ft" },
+            affects: { count: "", type: "self", choice: false, special: "" },
+            prompt: false,
+            override: false,
+          },
+          uses: { spent: 0, max: "", recovery: [] },
+          midiProperties: { identifier: "minor-guard-up", displayActivityName: true },
+          roll: { formula: "", name: "", prompt: false, visible: false },
+        },
+      },
+    },
+    effects: [
+      equipEffect("dRzEq01xxxxxxxxxx"),
+      sideEffect(
+        "dRzWpn01xxxxxxxxxx",
+        "D.Seltas Razorwing - Artillery",
+        "weapon",
+        "Artillery",
+        [],
+        "(Gunlance Only) Wyvernfire can be used twice per long rest (manual — update Gunlance wyvernfire uses).",
+      ),
+      sideEffect(
+        "dRzArm01xxxxxxxxxx",
+        "D.Seltas Razorwing - Minor Guard Up",
+        "armor",
+        "Minor Guard Up",
+        [],
+        "Reaction when you fail a Dex or Str save: use AC instead of the roll. 1/LR via item activity.",
+      ),
+    ],
+  }),
+});
+
+// ─── Sharpened Fang (Volvidon Pup) ───
+items.push({
+  path: path.join(__dirname, "Volvidon Pup", "fvtt-Item-volvidon-pup-sharpened-fang-rune.json"),
+  doc: buildItem({
+    _id: "vPupShrpFng00001",
+    identifier: "sharpenedfangrune",
+    runeName: "Sharpened Fang",
+    monsterName: "Volvidon Pup",
+    sort: 8650000,
+    rarity: "common",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Volvidon Pup | CR: 1/2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Your slashing weapon deals an extra 1 slashing damage.</p>\n<h3>Armor Effect</h3>\n<p>You reduce slashing damage you take by 2 while you wear this armor.</p>\n<p><em><strong>Tags:</strong> damage:slashing, type:offensive, type:defensive</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Extra Slashing" },
+      armor: { label: "Armor Effect — Slashing Reduction" },
+    },
+    macroName: "Sharpened Fang Rune",
+    macroTail: "",
+    effects: [
+      equipEffect("vPupEq01xxxxxxxx"),
+      sideEffect(
+        "vPupWpn01xxxxxxx",
+        "Sharpened Fang - Extra Slashing",
+        "weapon",
+        "Extra Slashing",
+        extraSlashingDamageChanges(1),
+        "Slashing weapons deal an extra 1 slashing damage on weapon attacks.",
+      ),
+      sideEffect(
+        "vPupArm01xxxxxxx",
+        "Sharpened Fang - Slashing Reduction",
+        "armor",
+        "Slashing Reduction",
+        slashingReductionChanges(2),
+        "Reduce slashing damage taken by 2.",
+      ),
+    ],
+  }),
+});
+
+// ─── Lagombi Plastron ───
+items.push({
+  path: path.join(__dirname, "Lagombi", "fvtt-Item-lagombi-lagombi-plastron-rune.json"),
+  doc: buildItem({
+    _id: "lPl4str0nLgm0001",
+    identifier: "lagombiplastronrune",
+    runeName: "Lagombi Plastron",
+    monsterName: "Lagombi",
+    sort: 3400000,
+    rarity: "uncommon",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Lagombi | CR: 3 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>This weapon has a reservoir of ice magic that can freeze the ground for up to 30 seconds. While holding this weapon, you can use an action to plant this weapon in the ground and release the ice magic within. While planted and undepleted, the ground in a 10-foot radius of this weapon becomes difficult terrain. This weapon recharges [[/r 1d6]] seconds of energy to the weapon's reservoir daily at dawn.</p>\n<h3>Armor Effect</h3>\n<p>You ignore difficult terrain created by ice or snow while you wear this armor.</p>\n<p><em><strong>Tags:</strong> type:offensive, type:utility, mechanic:movement</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Ice Reservoir" },
+      armor: { label: "Armor Effect — Ice/Snow Terrain" },
+    },
+    macroName: "Lagombi Plastron Rune",
+    macroTail: "",
+    systemExtra: {
+      activities: utilityActivity(
+        "lPlIce01xxxxxxxxxx",
+        "Plant Ice Reservoir",
+        "action",
+        "Plant weapon: 10-ft radius becomes difficult terrain for up to 30 seconds (track reservoir manually). Recharges 1d6 seconds at dawn.",
+        "Weapon side active — while holding this weapon",
+      ),
+    },
+    effects: [
+      equipEffect("lPlEq01xxxxxxxxxx"),
+      sideEffect(
+        "lPlWpn01xxxxxxxxx",
+        "Lagombi Plastron - Ice Reservoir",
+        "weapon",
+        "Ice Reservoir",
+        [],
+        "Action: plant weapon to freeze ground in 10-ft radius (up to 30 seconds). Reservoir recharges 1d6 seconds daily at dawn.",
+      ),
+      sideEffect(
+        "lPlArm01xxxxxxxxx",
+        "Lagombi Plastron - Ice/Snow Terrain",
+        "armor",
+        "Ice/Snow Terrain",
+        [],
+        "Ignore difficult terrain created by ice or snow (passive).",
+      ),
+    ],
+  }),
+});
+
+// ─── Seregios Blunt Scale ───
+items.push({
+  path: path.join(__dirname, "Young Seregios", "fvtt-Item-young-seregios-seregios-blunt-scale-rune.json"),
+  doc: buildItem({
+    _id: "ySrgBlntScl00001",
+    identifier: "seregiosbluntscalerune",
+    runeName: "Seregios Blunt Scale",
+    monsterName: "Young Seregios",
+    sort: 6400000,
+    rarity: "common",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Young Seregios | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Hunter.</em> While attuned to this weapon you gain one extra ration from whatever you hunt.\n<h3>Armor Effect</h3>\n<p>You reduce slashing damage you take by 3 while you wear this armor.</p>\n<p><em><strong>Tags:</strong> damage:slashing, type:defensive, type:utility</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Hunter" },
+      armor: { label: "Armor Effect — Slashing Reduction" },
+    },
+    macroName: "Seregios Blunt Scale Rune",
+    macroTail: "",
+    effects: [
+      equipEffect("ySrgEq01xxxxxxxx"),
+      sideEffect(
+        "ySrgWpn01xxxxxxx",
+        "Seregios Blunt Scale - Hunter",
+        "weapon",
+        "Hunter",
+        [],
+        "While attuned: gain one extra ration from whatever you hunt (manual).",
+      ),
+      sideEffect(
+        "ySrgArm01xxxxxxx",
+        "Seregios Blunt Scale - Slashing Reduction",
+        "armor",
+        "Slashing Reduction",
+        slashingReductionChanges(3),
+        "Reduce slashing damage taken by 3.",
+      ),
+    ],
+  }),
+});
+
+// ─── Y.Seregios Scraper ───
+items.push({
+  path: path.join(__dirname, "Young Seregios", "fvtt-Item-young-seregios-y-seregios-scraper-rune.json"),
+  doc: buildItem({
+    _id: "ySrgScrpr0000001",
+    identifier: "yseregioscraperrune",
+    runeName: "Y.Seregios Scraper",
+    monsterName: "Young Seregios",
+    sort: 6450000,
+    rarity: "uncommon",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Young Seregios | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>FastCharge.</em> When you roll for initiative, your greatsword, longsword, or charge blade gains 1 charge, spirit, or phial charge.\n<h3>Armor Effect</h3>\n<em>Jump Master.</em> While wearing this armor, you can use an action to double your jump distance. You can use this property twice, regaining all expended uses on a short or long rest.\n<p><em><strong>Tags:</strong> mechanic:class-feature, mechanic:movement, mechanic:short-rest, mechanic:long-rest, type:defensive</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — FastCharge" },
+      armor: { label: "Armor Effect — Jump Master" },
+    },
+    macroName: "Y.Seregios Scraper Rune",
+    macroTail: "",
+    systemExtra: {
+      uses: { spent: 0, max: "2", recovery: [{ period: "sr", type: "recoverAll" }] },
+      activities: utilityActivity(
+        "ySrgJmp01xxxxxxxxx",
+        "Double Jump Distance",
+        "action",
+        "Double your jump distance for your next jump. 2 uses, regain on short or long rest.",
+        "Armor side active",
+        true,
+      ),
+    },
+    effects: [
+      equipEffect("yScrEq01xxxxxxxx"),
+      sideEffect(
+        "yScrWpn01xxxxxxx",
+        "Y.Seregios Scraper - FastCharge",
+        "weapon",
+        "FastCharge",
+        [],
+        "On initiative: greatsword/longsword/charge blade gains 1 charge, spirit, or phial charge (manual).",
+      ),
+      sideEffect(
+        "yScrArm01xxxxxxx",
+        "Y.Seregios Scraper - Jump Master",
+        "armor",
+        "Jump Master",
+        [],
+        "Action: double your jump distance. 2 uses, regain on short or long rest (item activity).",
+      ),
+    ],
+  }),
 });
 
 for (const { path: filePath, doc } of items) {

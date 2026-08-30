@@ -1,0 +1,286 @@
+{
+  "_id": "jAm3mbr4n3Astl0s",
+  "name": "Juv.Astalos Membrane Rune",
+  "type": "equipment",
+  "img": "mh-icons/material-rune.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Juvenile Astalos | CR: 3 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>When you cast a spell that deals lightning or thunder damage, you gain a +1 bonus to its spell attack roll.</p>\n<h3>Armor Effect</h3>\n<em>Marathon Runner.</em> While wearing this armor, your walking speed increases by 5 feet.\n<p><em><strong>Tags:</strong> mechanic:spell-buff:attack, damage:lightning, damage:thunder, type:offensive, mechanic:movement, type:defensive</em></p>",
+      "chat": ""
+    },
+    "identifier": "juvastalosmembranerune",
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "uncommon",
+    "identified": true,
+    "type": {
+      "value": "trinket",
+      "baseItem": ""
+    },
+    "armor": {
+      "value": null,
+      "dex": null,
+      "magicalBonus": null
+    },
+    "properties": [],
+    "proficient": null,
+    "strength": null,
+    "activities": {},
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "jAmEq01xxxxxxxxxx",
+      "name": "Juv.Astalos Membrane Rune (Equip)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "macro.itemMacro",
+          "mode": 0,
+          "value": "",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "On equip, choose which rune effect (Weapon or Armor) to activate.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": -10,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeController": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "jAmWpn01xxxxxxxxxx",
+      "name": "Juv.Astalos Membrane - Lightning/Thunder Spell Attack",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "ItemMacro.Juv.Astalos Membrane Rune,preItemRoll",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "+1 spell attack roll when casting a spell that deals lightning or thunder damage.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Lightning/Thunder Spell Attack"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "jAmArm01xxxxxxxxxx",
+      "name": "Juv.Astalos Membrane - Marathon Runner",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.attributes.movement.walk",
+          "mode": 2,
+          "value": "5",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Walking speed increases by 5 feet.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "armor",
+          "materialEffectName": "Marathon Runner"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 3000000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "rune",
+      "runeName": "Juv.Astalos Membrane",
+      "monsterName": "Juvenile Astalos",
+      "unified": true,
+      "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Lightning/Thunder Spell Attack"
+        },
+        "armor": {
+          "label": "Armor Effect — Marathon Runner"
+        }
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Juv.Astalos Membrane Rune",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Amellwind unified rune controller (Foundry v12 / dnd5e 4.4 / MidiQOL + DAE + Item Macro)\nconst FLAG = \"amellwind-toolbox\";\nconst getRuneFlag = (doc, key) => foundry.utils.getProperty(doc, `flags.${FLAG}.${key}`);\nconst setRuneFlag = async (doc, key, value) => doc.update({ [`flags.${FLAG}.${key}`]: value });\nconst unsetRuneFlag = async (doc, key) => doc.update({ [`flags.${FLAG}.-=${key}`]: null });\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\nif (!item) return;\nconst arg0 = args?.[0];\nconst pass = String(arg0?.macroPass ?? \"\").toLowerCase();\nconst runeName = getRuneFlag(item, \"runeName\") ?? item.name;\n\nasync function runeCleanup() {\n  if (!actorDoc) return;\n  const mine = actorDoc.effects.filter((e) => getRuneFlag(e, \"runeClone\") && e.origin === item.uuid);\n  if (mine.length) await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", mine.map((e) => e.id));\n  await unsetRuneFlag(item, \"applied\");\n}\n\nfunction runeAeName(side, matName, trinket) {\n  let n = `${runeName}-${side}`;\n  if (matName) n += `-${matName}`;\n  if (trinket) n += \" (Trinket)\";\n  return n;\n}\n\nasync function runeApplySide(side, trinket) {\n  if (!actorDoc) return;\n  const blueprints = item.effects.filter((e) => getRuneFlag(e, \"runeSide\") === side);\n  const docs = blueprints.map((e) => {\n    const o = e.toObject();\n    delete o._id;\n    o.origin = item.uuid;\n    o.disabled = false;\n    o.transfer = false;\n    o.name = runeAeName(side, getRuneFlag(e, \"materialEffectName\"), trinket);\n    foundry.utils.setProperty(o, `flags.${FLAG}.runeClone`, true);\n    foundry.utils.setProperty(o, \"flags.dae.showIcon\", false);\n    return o;\n  });\n  if (docs.length) await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", docs);\n  await setRuneFlag(item, \"applied\", { side, trinket });\n  if (typeof runeOnEquip === \"function\") await runeOnEquip(side, trinket);\n}\n\nif (arg0 === \"on\") {\n  if (!actorDoc) return;\n  await runeCleanup();\n  const sides = getRuneFlag(item, \"sides\") ?? {};\n  const available = Object.keys(sides).filter((s) => sides[s]);\n  if (!available.length) return;\n  const radios = available\n    .map((s, i) => `<label style=\"display:block;margin:.15rem 0\"><input type=\"radio\" name=\"runeSide\" value=\"${s}\" ${i === 0 ? \"checked\" : \"\"}/> ${sides[s].label ?? s}</label>`)\n    .join(\"\");\n  const content = `<form class=\"dnd5e2\"><p>Choose which effect to activate for <strong>${runeName}</strong>:</p>${radios}<hr/><label style=\"display:block;margin-top:.35rem\"><input type=\"checkbox\" name=\"runeTrinket\"/> Equipped in a trinket</label></form>`;\n  const choice = await new Promise((resolve) => {\n    new Dialog({\n      title: `${runeName} Rune`,\n      content,\n      buttons: {\n        ok: { icon: '<i class=\"fas fa-check\"></i>', label: \"Activate\", callback: (html) => resolve({ side: html.find('input[name=\"runeSide\"]:checked').val(), trinket: html.find('input[name=\"runeTrinket\"]').is(\":checked\") }) },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => resolve(null) },\n      },\n      default: \"ok\",\n      close: () => resolve(null),\n    }).render(true);\n  });\n  if (!choice || !choice.side) { await item.update({ \"system.equipped\": false }); return; }\n  await runeApplySide(choice.side, choice.trinket);\n  return;\n}\n\nif (arg0 === \"off\") { await runeCleanup(); return; }\nif (arg0 === \"each\") return;\n\n// ===== rune-specific combat passes =====\nif (pass.includes(\"preitemroll\") || pass.includes(\"preattackroll\")) {\n  const wf = workflow ?? arg0?.workflow;\n  const src = wf?.item;\n  if (!src || src.type !== \"spell\") return;\n  const dump = JSON.stringify(src.system?.damage ?? src.system?.activities ?? {}).toLowerCase();\n  const desc = String(src.system?.description?.value ?? \"\").toLowerCase();\n  const hasElement = dump.includes(\"lightning\") || desc.includes(\"lightning\") || dump.includes(\"thunder\") || desc.includes(\"thunder\");\n  if (!hasElement) return;\n  foundry.utils.setProperty(arg0, \"attackRollBonus\", (Number(arg0?.attackRollBonus ?? 0) || 0) + 1);\n  if (wf) wf.attackRollBonus = (Number(wf.attackRollBonus ?? 0) || 0) + 1;\n  return;\n}",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1788119579646,
+    "modifiedTime": 1788119579646,
+    "lastModifiedBy": null
+  }
+}

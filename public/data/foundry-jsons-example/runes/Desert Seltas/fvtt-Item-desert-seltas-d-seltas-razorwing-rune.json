@@ -1,6 +1,6 @@
 {
-  "_id": "lxmvTIGSJR14adrm",
-  "name": "Blue Kut-Ku Auricle Rune",
+  "_id": "dS3lt4Rz0rw1ng01",
+  "name": "D.Seltas Razorwing Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Blue Yian Kut-Ku | CR: 5 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While attuned to this weapon, you can use a bonus action to exhale fire at a target within 15 feet of you. The target must make a DC 14 Dexterity saving throw, taking [[/r 3d6]] fire damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.</p>\n<h3>Armor Effect</h3>\n<p>When you make a skill check while wearing this armor, you can use your reaction to gain a +2 bonus to the check. You can use this property twice, regaining all expended uses after you finish a long rest.</p>\n<p><em><strong>Tags:</strong> mechanic:bonus-action, mechanic:saving-throw, damage:fire, type:offensive, mechanic:reaction, mechanic:skill, mechanic:long-rest, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Desert Seltas | CR: 4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Gunlance Only) Artillery.</em> While attuned to this weapon, your wyvernfire can now be used twice per long rest.\n<h3>Armor Effect</h3>\n<em>Minor Guard Up.</em> When you fail a Dexterity or Strength saving throw, you can use your reaction to use your AC in place of your roll. Once you use this property you can't use it again until you finish a long rest.\n<p><em><strong>Tags:</strong> weapon-type:gunlance, mechanic:class-feature, mechanic:long-rest, type:offensive, mechanic:reaction, mechanic:saving-throw, mechanic:ac, type:defensive</em></p>",
       "chat": ""
     },
-    "identifier": "bluekutkuauriclerune",
+    "identifier": "dseltasrazorwingrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "NfFP1AKikeHKIoPm": {
-        "_id": "NfFP1AKikeHKIoPm",
-        "type": "save",
+      "mGU01xxxxxxxxxxxxx": {
+        "_id": "mGU01xxxxxxxxxxxxx",
+        "type": "utility",
         "sort": 0,
-        "name": "Fire Breath",
+        "name": "Minor Guard Up",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "bonus",
+          "type": "reaction",
           "value": null,
-          "condition": "",
+          "condition": "When you fail a Dexterity or Strength saving throw",
           "override": false
         },
         "consumption": {
@@ -74,7 +74,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Exhale fire at a target within 15 ft (DC 14 Dex, 3d6 fire)."
+          "chatFlavor": "Use your AC in place of the failed save."
         },
         "duration": {
           "value": "",
@@ -84,8 +84,8 @@
         },
         "effects": [],
         "range": {
-          "value": "15",
-          "units": "ft",
+          "value": null,
+          "units": "self",
           "special": "",
           "override": false
         },
@@ -100,12 +100,12 @@
             "units": "ft"
           },
           "affects": {
-            "count": "1",
-            "type": "creature",
+            "count": "",
+            "type": "self",
             "choice": false,
             "special": ""
           },
-          "prompt": true,
+          "prompt": false,
           "override": false
         },
         "uses": {
@@ -113,35 +113,9 @@
           "max": "",
           "recovery": []
         },
-        "damage": {
-          "parts": [
-            {
-              "number": 3,
-              "denomination": 6,
-              "bonus": "",
-              "types": [
-                "fire"
-              ],
-              "custom": {
-                "enabled": false
-              }
-            }
-          ],
-          "onSave": "half"
-        },
-        "save": {
-          "ability": [
-            "dex"
-          ],
-          "dc": {
-            "calculation": "",
-            "formula": "14"
-          }
-        },
         "midiProperties": {
-          "identifier": "fire-breath",
-          "displayActivityName": true,
-          "magicDamage": true
+          "identifier": "minor-guard-up",
+          "displayActivityName": true
         },
         "roll": {
           "formula": "",
@@ -170,8 +144,8 @@
   },
   "effects": [
     {
-      "_id": "x9vCiSs15g9Q3mL0",
-      "name": "Blue Kut-Ku Auricle Rune (Equip)",
+      "_id": "dRzEq01xxxxxxxxxx",
+      "name": "D.Seltas Razorwing Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -227,8 +201,8 @@
       }
     },
     {
-      "_id": "puCPIg2lQYRq5o4I",
-      "name": "Blue Kut-Ku Auricle - Fire Breath",
+      "_id": "dRzWpn01xxxxxxxxxx",
+      "name": "D.Seltas Razorwing - Artillery",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -243,7 +217,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Bonus action: 15 ft, DC 14 Dex save, 3d6 fire (half on save). 1/LR via item activity.",
+      "description": "(Gunlance Only) Wyvernfire can be used twice per long rest (manual — update Gunlance wyvernfire uses).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -263,7 +237,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "Fire Breath"
+          "materialEffectName": "Artillery"
         }
       },
       "_stats": {
@@ -278,8 +252,8 @@
       }
     },
     {
-      "_id": "n41IsszBMBsTqHLd",
-      "name": "Blue Kut-Ku Auricle - Skill Check Boost",
+      "_id": "dRzArm01xxxxxxxxxx",
+      "name": "D.Seltas Razorwing - Minor Guard Up",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -294,7 +268,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: +2 to a skill check. 2 uses, regain on long rest (track manually).",
+      "description": "Reaction when you fail a Dex or Str save: use AC instead of the roll. 1/LR via item activity.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +288,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Skill Check Boost"
+          "materialEffectName": "Minor Guard Up"
         }
       },
       "_stats": {
@@ -330,28 +304,28 @@
     }
   ],
   "folder": null,
-  "sort": 4300000,
+  "sort": 4000000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Blue Kut-Ku Auricle",
-      "monsterName": "Blue Yian Kut-Ku",
+      "runeName": "D.Seltas Razorwing",
+      "monsterName": "Desert Seltas",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — Fire Breath"
+          "label": "Weapon Effect — Artillery (Gunlance)"
         },
         "armor": {
-          "label": "Armor Effect — Skill Check Boost"
+          "label": "Armor Effect — Minor Guard Up"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Blue Kut-Ku Auricle Rune",
+        "name": "D.Seltas Razorwing Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -377,8 +351,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788119579646,
-    "modifiedTime": 1788119579646,
+    "createdTime": 1788119579647,
+    "modifiedTime": 1788119579647,
     "lastModifiedBy": null
   }
 }

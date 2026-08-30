@@ -1,6 +1,6 @@
 {
-  "_id": "lxmvTIGSJR14adrm",
-  "name": "Blue Kut-Ku Auricle Rune",
+  "_id": "ySrgScrpr0000001",
+  "name": "Y.Seregios Scraper Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Blue Yian Kut-Ku | CR: 5 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While attuned to this weapon, you can use a bonus action to exhale fire at a target within 15 feet of you. The target must make a DC 14 Dexterity saving throw, taking [[/r 3d6]] fire damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.</p>\n<h3>Armor Effect</h3>\n<p>When you make a skill check while wearing this armor, you can use your reaction to gain a +2 bonus to the check. You can use this property twice, regaining all expended uses after you finish a long rest.</p>\n<p><em><strong>Tags:</strong> mechanic:bonus-action, mechanic:saving-throw, damage:fire, type:offensive, mechanic:reaction, mechanic:skill, mechanic:long-rest, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Young Seregios | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>FastCharge.</em> When you roll for initiative, your greatsword, longsword, or charge blade gains 1 charge, spirit, or phial charge.\n<h3>Armor Effect</h3>\n<em>Jump Master.</em> While wearing this armor, you can use an action to double your jump distance. You can use this property twice, regaining all expended uses on a short or long rest.\n<p><em><strong>Tags:</strong> mechanic:class-feature, mechanic:movement, mechanic:short-rest, mechanic:long-rest, type:defensive</em></p>",
       "chat": ""
     },
-    "identifier": "bluekutkuauriclerune",
+    "identifier": "yseregioscraperrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "NfFP1AKikeHKIoPm": {
-        "_id": "NfFP1AKikeHKIoPm",
-        "type": "save",
+      "ySrgJmp01xxxxxxxxx": {
+        "_id": "ySrgJmp01xxxxxxxxx",
+        "type": "utility",
         "sort": 0,
-        "name": "Fire Breath",
+        "name": "Double Jump Distance",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "bonus",
+          "type": "action",
           "value": null,
-          "condition": "",
+          "condition": "Armor side active",
           "override": false
         },
         "consumption": {
@@ -74,7 +74,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Exhale fire at a target within 15 ft (DC 14 Dex, 3d6 fire)."
+          "chatFlavor": "Double your jump distance for your next jump. 2 uses, regain on short or long rest."
         },
         "duration": {
           "value": "",
@@ -84,8 +84,8 @@
         },
         "effects": [],
         "range": {
-          "value": "15",
-          "units": "ft",
+          "value": null,
+          "units": "self",
           "special": "",
           "override": false
         },
@@ -100,12 +100,12 @@
             "units": "ft"
           },
           "affects": {
-            "count": "1",
-            "type": "creature",
+            "count": "",
+            "type": "self",
             "choice": false,
             "special": ""
           },
-          "prompt": true,
+          "prompt": false,
           "override": false
         },
         "uses": {
@@ -113,42 +113,19 @@
           "max": "",
           "recovery": []
         },
-        "damage": {
-          "parts": [
-            {
-              "number": 3,
-              "denomination": 6,
-              "bonus": "",
-              "types": [
-                "fire"
-              ],
-              "custom": {
-                "enabled": false
-              }
-            }
-          ],
-          "onSave": "half"
-        },
-        "save": {
-          "ability": [
-            "dex"
-          ],
-          "dc": {
-            "calculation": "",
-            "formula": "14"
-          }
-        },
         "midiProperties": {
-          "identifier": "fire-breath",
-          "displayActivityName": true,
-          "magicDamage": true
+          "identifier": "double-jump-distance",
+          "displayActivityName": true
         },
         "roll": {
           "formula": "",
           "name": "",
           "prompt": false,
           "visible": false
-        }
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
       }
     },
     "container": null,
@@ -159,10 +136,10 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
+      "max": "2",
       "recovery": [
         {
-          "period": "lr",
+          "period": "sr",
           "type": "recoverAll"
         }
       ]
@@ -170,8 +147,8 @@
   },
   "effects": [
     {
-      "_id": "x9vCiSs15g9Q3mL0",
-      "name": "Blue Kut-Ku Auricle Rune (Equip)",
+      "_id": "yScrEq01xxxxxxxx",
+      "name": "Y.Seregios Scraper Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -227,8 +204,8 @@
       }
     },
     {
-      "_id": "puCPIg2lQYRq5o4I",
-      "name": "Blue Kut-Ku Auricle - Fire Breath",
+      "_id": "yScrWpn01xxxxxxx",
+      "name": "Y.Seregios Scraper - FastCharge",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -243,7 +220,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Bonus action: 15 ft, DC 14 Dex save, 3d6 fire (half on save). 1/LR via item activity.",
+      "description": "On initiative: greatsword/longsword/charge blade gains 1 charge, spirit, or phial charge (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -263,7 +240,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "Fire Breath"
+          "materialEffectName": "FastCharge"
         }
       },
       "_stats": {
@@ -278,8 +255,8 @@
       }
     },
     {
-      "_id": "n41IsszBMBsTqHLd",
-      "name": "Blue Kut-Ku Auricle - Skill Check Boost",
+      "_id": "yScrArm01xxxxxxx",
+      "name": "Y.Seregios Scraper - Jump Master",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -294,7 +271,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: +2 to a skill check. 2 uses, regain on long rest (track manually).",
+      "description": "Action: double your jump distance. 2 uses, regain on short or long rest (item activity).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +291,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Skill Check Boost"
+          "materialEffectName": "Jump Master"
         }
       },
       "_stats": {
@@ -330,28 +307,28 @@
     }
   ],
   "folder": null,
-  "sort": 4300000,
+  "sort": 6450000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Blue Kut-Ku Auricle",
-      "monsterName": "Blue Yian Kut-Ku",
+      "runeName": "Y.Seregios Scraper",
+      "monsterName": "Young Seregios",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — Fire Breath"
+          "label": "Weapon Effect — FastCharge"
         },
         "armor": {
-          "label": "Armor Effect — Skill Check Boost"
+          "label": "Armor Effect — Jump Master"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Blue Kut-Ku Auricle Rune",
+        "name": "Y.Seregios Scraper Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -377,8 +354,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788119579646,
-    "modifiedTime": 1788119579646,
+    "createdTime": 1788119579648,
+    "modifiedTime": 1788119579648,
     "lastModifiedBy": null
   }
 }

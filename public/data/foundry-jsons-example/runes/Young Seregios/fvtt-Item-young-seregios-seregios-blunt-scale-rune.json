@@ -1,6 +1,6 @@
 {
-  "_id": "lxmvTIGSJR14adrm",
-  "name": "Blue Kut-Ku Auricle Rune",
+  "_id": "ySrgBlntScl00001",
+  "name": "Seregios Blunt Scale Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Blue Yian Kut-Ku | CR: 5 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While attuned to this weapon, you can use a bonus action to exhale fire at a target within 15 feet of you. The target must make a DC 14 Dexterity saving throw, taking [[/r 3d6]] fire damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.</p>\n<h3>Armor Effect</h3>\n<p>When you make a skill check while wearing this armor, you can use your reaction to gain a +2 bonus to the check. You can use this property twice, regaining all expended uses after you finish a long rest.</p>\n<p><em><strong>Tags:</strong> mechanic:bonus-action, mechanic:saving-throw, damage:fire, type:offensive, mechanic:reaction, mechanic:skill, mechanic:long-rest, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Young Seregios | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Hunter.</em> While attuned to this weapon you gain one extra ration from whatever you hunt.\n<h3>Armor Effect</h3>\n<p>You reduce slashing damage you take by 3 while you wear this armor.</p>\n<p><em><strong>Tags:</strong> damage:slashing, type:defensive, type:utility</em></p>",
       "chat": ""
     },
-    "identifier": "bluekutkuauriclerune",
+    "identifier": "seregiosbluntscalerune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "common",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -43,114 +43,7 @@
     "properties": [],
     "proficient": null,
     "strength": null,
-    "activities": {
-      "NfFP1AKikeHKIoPm": {
-        "_id": "NfFP1AKikeHKIoPm",
-        "type": "save",
-        "sort": 0,
-        "name": "Fire Breath",
-        "img": "mh-icons/material-rune.webp",
-        "activation": {
-          "type": "bonus",
-          "value": null,
-          "condition": "",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": [
-            {
-              "type": "itemUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
-        },
-        "description": {
-          "chatFlavor": "Exhale fire at a target within 15 ft (DC 14 Dex, 3d6 fire)."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": "15",
-          "units": "ft",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "1",
-            "type": "creature",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": true,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "",
-          "recovery": []
-        },
-        "damage": {
-          "parts": [
-            {
-              "number": 3,
-              "denomination": 6,
-              "bonus": "",
-              "types": [
-                "fire"
-              ],
-              "custom": {
-                "enabled": false
-              }
-            }
-          ],
-          "onSave": "half"
-        },
-        "save": {
-          "ability": [
-            "dex"
-          ],
-          "dc": {
-            "calculation": "",
-            "formula": "14"
-          }
-        },
-        "midiProperties": {
-          "identifier": "fire-breath",
-          "displayActivityName": true,
-          "magicDamage": true
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
-        }
-      }
-    },
+    "activities": {},
     "container": null,
     "cover": null,
     "crewed": false,
@@ -159,19 +52,14 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
-      "recovery": [
-        {
-          "period": "lr",
-          "type": "recoverAll"
-        }
-      ]
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "x9vCiSs15g9Q3mL0",
-      "name": "Blue Kut-Ku Auricle Rune (Equip)",
+      "_id": "ySrgEq01xxxxxxxx",
+      "name": "Seregios Blunt Scale Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -227,8 +115,8 @@
       }
     },
     {
-      "_id": "puCPIg2lQYRq5o4I",
-      "name": "Blue Kut-Ku Auricle - Fire Breath",
+      "_id": "ySrgWpn01xxxxxxx",
+      "name": "Seregios Blunt Scale - Hunter",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -243,7 +131,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Bonus action: 15 ft, DC 14 Dex save, 3d6 fire (half on save). 1/LR via item activity.",
+      "description": "While attuned: gain one extra ration from whatever you hunt (manual).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -263,7 +151,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "Fire Breath"
+          "materialEffectName": "Hunter"
         }
       },
       "_stats": {
@@ -278,12 +166,25 @@
       }
     },
     {
-      "_id": "n41IsszBMBsTqHLd",
-      "name": "Blue Kut-Ku Auricle - Skill Check Boost",
+      "_id": "ySrgArm01xxxxxxx",
+      "name": "Seregios Blunt Scale - Slashing Reduction",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
-      "changes": [],
+      "changes": [
+        {
+          "key": "system.traits.dm.amount.slashing",
+          "mode": 2,
+          "value": "-3",
+          "priority": 20
+        },
+        {
+          "key": "system.traits.dm.midi.slashing",
+          "mode": 2,
+          "value": "-3",
+          "priority": 20
+        }
+      ],
       "disabled": true,
       "duration": {
         "startTime": null,
@@ -294,7 +195,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction: +2 to a skill check. 2 uses, regain on long rest (track manually).",
+      "description": "Reduce slashing damage taken by 3.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -314,7 +215,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Skill Check Boost"
+          "materialEffectName": "Slashing Reduction"
         }
       },
       "_stats": {
@@ -330,28 +231,28 @@
     }
   ],
   "folder": null,
-  "sort": 4300000,
+  "sort": 6400000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Blue Kut-Ku Auricle",
-      "monsterName": "Blue Yian Kut-Ku",
+      "runeName": "Seregios Blunt Scale",
+      "monsterName": "Young Seregios",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — Fire Breath"
+          "label": "Weapon Effect — Hunter"
         },
         "armor": {
-          "label": "Armor Effect — Skill Check Boost"
+          "label": "Armor Effect — Slashing Reduction"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Blue Kut-Ku Auricle Rune",
+        "name": "Seregios Blunt Scale Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -377,8 +278,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788119579646,
-    "modifiedTime": 1788119579646,
+    "createdTime": 1788119579648,
+    "modifiedTime": 1788119579648,
     "lastModifiedBy": null
   }
 }

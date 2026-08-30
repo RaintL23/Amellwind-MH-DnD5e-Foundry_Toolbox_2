@@ -1,6 +1,6 @@
 {
-  "_id": "lxmvTIGSJR14adrm",
-  "name": "Blue Kut-Ku Auricle Rune",
+  "_id": "b7kR0m3TuskWpn01",
+  "name": "Bulldrome Tusk Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Blue Yian Kut-Ku | CR: 5 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>While attuned to this weapon, you can use a bonus action to exhale fire at a target within 15 feet of you. The target must make a DC 14 Dexterity saving throw, taking [[/r 3d6]] fire damage on a failed save, or half as much damage on a successful one. Once used, this property cannot be used again until you finish a long rest.</p>\n<h3>Armor Effect</h3>\n<p>When you make a skill check while wearing this armor, you can use your reaction to gain a +2 bonus to the check. You can use this property twice, regaining all expended uses after you finish a long rest.</p>\n<p><em><strong>Tags:</strong> mechanic:bonus-action, mechanic:saving-throw, damage:fire, type:offensive, mechanic:reaction, mechanic:skill, mechanic:long-rest, type:utility</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Bulldrome | CR: 2 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Your slashing weapon deals an extra 2 slashing damage.</p>\n<p><em><strong>Tags:</strong> damage:slashing, type:offensive, mechanic:extra-damage:minor</em></p>",
       "chat": ""
     },
-    "identifier": "bluekutkuauriclerune",
+    "identifier": "bulldrometuskrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "common",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -43,114 +43,7 @@
     "properties": [],
     "proficient": null,
     "strength": null,
-    "activities": {
-      "NfFP1AKikeHKIoPm": {
-        "_id": "NfFP1AKikeHKIoPm",
-        "type": "save",
-        "sort": 0,
-        "name": "Fire Breath",
-        "img": "mh-icons/material-rune.webp",
-        "activation": {
-          "type": "bonus",
-          "value": null,
-          "condition": "",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": [
-            {
-              "type": "itemUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
-        },
-        "description": {
-          "chatFlavor": "Exhale fire at a target within 15 ft (DC 14 Dex, 3d6 fire)."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": "15",
-          "units": "ft",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "1",
-            "type": "creature",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": true,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "",
-          "recovery": []
-        },
-        "damage": {
-          "parts": [
-            {
-              "number": 3,
-              "denomination": 6,
-              "bonus": "",
-              "types": [
-                "fire"
-              ],
-              "custom": {
-                "enabled": false
-              }
-            }
-          ],
-          "onSave": "half"
-        },
-        "save": {
-          "ability": [
-            "dex"
-          ],
-          "dc": {
-            "calculation": "",
-            "formula": "14"
-          }
-        },
-        "midiProperties": {
-          "identifier": "fire-breath",
-          "displayActivityName": true,
-          "magicDamage": true
-        },
-        "roll": {
-          "formula": "",
-          "name": "",
-          "prompt": false,
-          "visible": false
-        }
-      }
-    },
+    "activities": {},
     "container": null,
     "cover": null,
     "crewed": false,
@@ -159,19 +52,14 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
-      "recovery": [
-        {
-          "period": "lr",
-          "type": "recoverAll"
-        }
-      ]
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "x9vCiSs15g9Q3mL0",
-      "name": "Blue Kut-Ku Auricle Rune (Equip)",
+      "_id": "bTuskEq01xxxxxxxx",
+      "name": "Bulldrome Tusk Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -227,12 +115,25 @@
       }
     },
     {
-      "_id": "puCPIg2lQYRq5o4I",
-      "name": "Blue Kut-Ku Auricle - Fire Breath",
+      "_id": "bTuskWpn01xxxxxxxx",
+      "name": "Bulldrome Tusk - Extra Slashing",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
-      "changes": [],
+      "changes": [
+        {
+          "key": "system.bonuses.mwak.damage",
+          "mode": 2,
+          "value": "2[slashing]",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.rwak.damage",
+          "mode": 2,
+          "value": "2[slashing]",
+          "priority": 20
+        }
+      ],
       "disabled": true,
       "duration": {
         "startTime": null,
@@ -243,7 +144,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Bonus action: 15 ft, DC 14 Dex save, 3d6 fire (half on save). 1/LR via item activity.",
+      "description": "Slashing weapons deal an extra 2 slashing damage on weapon attacks.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -263,58 +164,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "Fire Breath"
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
-        "lastModifiedBy": null
-      }
-    },
-    {
-      "_id": "n41IsszBMBsTqHLd",
-      "name": "Blue Kut-Ku Auricle - Skill Check Boost",
-      "img": "mh-icons/material-rune.webp",
-      "type": "base",
-      "system": {},
-      "changes": [],
-      "disabled": true,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "description": "Reaction: +2 to a skill check. 2 uses, regain on long rest (track manually).",
-      "origin": null,
-      "tint": "#ffffff",
-      "transfer": false,
-      "statuses": [],
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "enableCondition": "",
-          "selfTarget": false,
-          "selfTargetAlways": false,
-          "stackable": "noneName",
-          "showIcon": false,
-          "durationExpression": "",
-          "specialDuration": [],
-          "disableIncapacitated": false,
-          "dontApply": false
-        },
-        "amellwind-toolbox": {
-          "runeSide": "armor",
-          "materialEffectName": "Skill Check Boost"
+          "materialEffectName": "Extra Slashing"
         }
       },
       "_stats": {
@@ -330,28 +180,25 @@
     }
   ],
   "folder": null,
-  "sort": 4300000,
+  "sort": 2000000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Blue Kut-Ku Auricle",
-      "monsterName": "Blue Yian Kut-Ku",
+      "runeName": "Bulldrome Tusk",
+      "monsterName": "Bulldrome",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — Fire Breath"
-        },
-        "armor": {
-          "label": "Armor Effect — Skill Check Boost"
+          "label": "Weapon Effect — Extra Slashing"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Blue Kut-Ku Auricle Rune",
+        "name": "Bulldrome Tusk Rune",
         "type": "script",
         "scope": "global",
         "author": "",
