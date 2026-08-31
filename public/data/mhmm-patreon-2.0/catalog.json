@@ -14601,7 +14601,7 @@
       "traits": [
         {
           "name": "Active State (Mythic Trait)",
-          "text": "The alatreon has three states it can take. They are the dragon state, fire state, and the ice state. Each state provides benefits and detriments depending on which state it is in, as shown below:"
+          "text": "The alatreon has three states it can take. They are the dragon state, fire state, and the ice state. Each state provides benefits and detriments depending on which state it is in, as shown below:\n\nThe alatreon begins combat in either the fire state or ice state. When it begins combat in the fire state, the order of the states it changes into is fire, dragon, ice, dragon and then repeats. When it starts in the ice stage, the order is: ice, dragon, fire, dragon and then repeats.\n\nWhenever the alatreon hit points are reduced by 100 in its current active state it changes its state to the next one in the order and uses a special reaction to use its element burst. This special reaction can be used even if the alatreon has already used its reaction this round."
         },
         {
           "name": "Fire State",
@@ -14613,7 +14613,7 @@
         },
         {
           "name": "Ice State",
-          "text": "While in the ice state, the alatreon is immune to cold damage, but vulnerable to fire damage. The alatreon begins combat in either the fire state or ice state. When it begins combat in the fire state, the order of the states it changes into is fire, dragon, ice, dragon and then repeats. When it starts in the ice stage, the order is: ice, dragon, fire, dragon and then repeats. Whenever the alatreon hit points are reduced by 100 in its current active state it changes its state to the next one in the order and uses a special reaction to use its element burst. This special reaction can be used even if the alatreon has already used its reaction this round."
+          "text": "While in the ice state, the alatreon is immune to cold damage, but vulnerable to fire damage."
         },
         {
           "name": "Elemental Overload",
@@ -14659,7 +14659,11 @@
         },
         {
           "name": "Elemental Breath (Recharge 5-6)",
-          "text": "Roll a d4 each time you use this action to determine what element the alatreon exhales. On a 1, fire damage; On a 2, cold damage; On a 3, necrotic; On a 4, lightning. The alatreon exhales the rolled element in a 120-foot line that is 10 feet wide. Each creature in that line must make a DC 27 Dexterity saving throw or take 63 (18d6) of the rolled elemental damage on a failed save, or half as much damage on a successful one. Escaton Judgement (Once during the second dragon state, each time the active state order repeats). The alatreon swoops down from the sky (without provoking opportunity attacks) if it is not already on the ground and begins gathering energy until the start of its next turn. While charging the alatreon is immune to the incapacitated, stunned, paralyzed, and unconscious conditions. On its next turn, the alatreon can use its action to release the energy it has gathered in a 600-foot-radiussphere around it. All terrain above ground level in that area is obliterated and each creature in that area must make a DC 30 Dexterity saving throw or take 210 (60d6) force damage on a failed save, or half as much damage on a successful one. The number of damage dice this action deals can be 108 reduced by 10d6 for each horn broken and by an additional #d6 where # is equal to the number of charges its elemental overload has."
+          "text": "Roll a d4 each time you use this action to determine what element the alatreon exhales. On a 1, fire damage; On a 2, cold damage; On a 3, necrotic; On a 4, lightning. The alatreon exhales the rolled element in a 120-foot line that is 10 feet wide. Each creature in that line must make a DC 27 Dexterity saving throw or take 63 (18d6) of the rolled elemental damage on a failed save, or half as much damage on a successful one."
+        },
+        {
+          "name": "Escaton Judgement (Once during the second dragon state, each time the active state order repeats).",
+          "text": "The alatreon swoops down from the sky (without provoking opportunity attacks) if it is not already on the ground and begins gathering energy until the start of its next turn. While charging the alatreon is immune to the incapacitated, stunned, paralyzed, and unconscious conditions.\n\nOn its next turn, the alatreon can use its action to release the energy it has gathered in a 600-foot-radiussphere around it. All terrain above ground level in that area is obliterated and each creature in that area must make a DC 30 Dexterity saving throw or take 210 (60d6) force damage on a failed save, or half as much damage on a successful one.\n\nThe number of damage dice this action deals can be reduced by 10d6 for each horn broken and by an additional #d6 where # is equal to the number of charges its elemental overload has."
         }
       ],
       "reactions": [
@@ -14729,7 +14733,7 @@
         },
         {
           "name": "Ice Shards",
-          "text": "The alatreon freezes the air around it creating ice shards that fill a 5-foot-cube in the air above each creature in a 90-foot radius around it, before they plummet to the ground. Each creature in that area must make a DC 27 Dexterity saving throw, taking 13 (3d8) cold damage plus 18 (4d8) bludgeoning damage, is pushed 5 feet into an unoccupied space, and is knocked prone on a failed save, or half as much damage, is pushed 5 feet into an unoccupied space, but isn't knocked prone on a 109 successful one. If there are no unoccupied spaces around the creature, it fails its saving throw and is knocked prone under the ice chunk until it melts, is destroyed, or it succeeds on a DC 20 Athletics check. The ice shards remain in the spaces they land in until they melt at the start of the alatreon's next turn. The ice shards can be attacked and destroyed (AC 10; 10 hit points; vulnerable to fire damage; immune to cold, poison, and psychic damage). If the ice shard takes necrotic damage, it instead explodes in a 15-foot radius dealing 4 (1d8) piercing damage to each creature in that area."
+          "text": "The alatreon freezes the air around it creating ice shards that fill a 5-foot-cube in the air above each creature in a 90-foot radius around it, before they plummet to the ground. Each creature in that area must make a DC 27 Dexterity saving throw, taking 13 (3d8) cold damage plus 18 (4d8) bludgeoning damage, is pushed 5 feet into an unoccupied space, and is knocked prone on a failed save, or half as much damage, is pushed 5 feet into an unoccupied space, but isn't knocked prone on a successful one. If there are no unoccupied spaces around the creature, it fails its saving throw and is knocked prone under the ice chunk until it melts, is destroyed, or it succeeds on a DC 20 Athletics check.\n\nThe ice shards remain in the spaces they land in until they melt at the start of the alatreon's next turn. The ice shards can be attacked and destroyed (AC 10; 10 hit points; vulnerable to fire damage; immune to cold, poison, and psychic damage). If the ice shard takes necrotic damage, it instead explodes in a 15-foot radius dealing 4 (1d8) piercing damage to each creature in that area."
         }
       ],
       "lootRolls": 6,

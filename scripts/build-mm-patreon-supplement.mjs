@@ -116,13 +116,22 @@ function parseLanguages(raw) {
   return [trimmed];
 }
 
+function textToEntries(text) {
+  const raw = String(text ?? "");
+  const parts = raw
+    .split(/\n\n+/)
+    .map((part) => part.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+  return parts.length > 0 ? parts : [raw];
+}
+
 function mapNamedEntries(list) {
   if (!Array.isArray(list)) return undefined;
   const entries = list
     .filter((e) => e && typeof e === "object" && e.name)
     .map((e) => ({
       name: String(e.name),
-      entries: [String(e.text ?? "")],
+      entries: textToEntries(e.text),
     }));
   return entries.length > 0 ? entries : undefined;
 }
@@ -284,13 +293,7 @@ function toFiveToolsMonster(monster) {
   // Keep bonus actions only on `bonus` (not duplicated into `action` with a
   // "Bonus Action:" prefix) so the stat block can render a separate section.
   const action = mapNamedEntries(monster.actions) ?? [];
-  const legendary = [
-    ...(mapNamedEntries(monster.legendaryActions) ?? []),
-    ...(mapNamedEntries(monster.mythicActions)?.map((entry) => ({
-      ...entry,
-      name: `Mythic: ${entry.name}`,
-    })) ?? []),
-  ];
+  const legendary = mapNamedEntries(monster.legendaryActions) ?? [];
 
   const out = {
     name: monster.name,
