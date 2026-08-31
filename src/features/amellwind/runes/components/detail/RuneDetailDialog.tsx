@@ -41,6 +41,7 @@ const EMPTY_EFFECT_FILTERS: RuneListEffectFilters = {
   slot: "",
   tag: [],
   materialEffectTier: [],
+  materialEffectName: [],
 };
 
 export function RuneDetailDialog({

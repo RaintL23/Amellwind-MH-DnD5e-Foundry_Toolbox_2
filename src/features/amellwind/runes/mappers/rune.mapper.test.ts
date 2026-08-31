@@ -54,6 +54,34 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
   });
 
+  it("tags flat elemental damage reduction (Warm Pelt pattern)", () => {
+    const tags = extractRuneEffectTags(
+      "You reduce thunder damage you take by 2 while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "damage:thunder",
+        "mechanic:damage-reduction",
+        "type:defensive",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags ranged attack damage reduction (White Velociprey pattern)", () => {
+    const tags = extractRuneEffectTags(
+      "You reduce damage you take from ranged weapon and spell attacks by 2.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:damage-reduction",
+        "type:defensive",
+      ]),
+    );
+  });
+
   it("tags disease and poison shorthand immunity", () => {
     const tags = extractRuneEffectTags(
       "You are immune to poison and disease while you wear this armor.",

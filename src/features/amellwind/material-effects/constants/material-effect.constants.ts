@@ -21,6 +21,12 @@ export const INLINE_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Rare";
 /** Always-on damage immunity in rune text (one step above resistance). */
 export const INLINE_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Very Rare";
 
+/** Always-on flat damage reduction (-N while wearing), weaker than resistance. */
+export const INLINE_FLAT_DAMAGE_REDUCTION_RARITY: ResourceRarity = "Uncommon";
+
+/** Limited flat DR (uses per rest, dice pools). One step above always-on Uncommon. */
+export const INLINE_LIMITED_FLAT_DAMAGE_REDUCTION_RARITY: ResourceRarity = "Rare";
+
 /**
  * Activated / limited resistance (reaction, bonus action, or action; short duration;
  * uses per rest). Common Amellwind pattern — one step below always-on Rare.

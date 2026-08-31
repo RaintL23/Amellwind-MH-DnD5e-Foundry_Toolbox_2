@@ -12,6 +12,7 @@ import {
   spellTagsFromLevels,
   type SpellLevelLookup,
 } from "../utils/spell-level-lookup.utils";
+import { matchesFlatDamageReduction } from "../utils/rune-damage-reduction.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
@@ -194,15 +195,7 @@ const MECHANIC_PATTERNS: Array<[RegExp, string]> = [
   [/resist(?:ant|ance) to\s+\w/i, "mechanic:resistance"],
   // `mechanic:immunity` — also via `immunityTag()` ("cannot be knocked prone", …)
   [/immune to|immunity to/i, "mechanic:immunity"],
-  [
-    /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i,
-    "mechanic:damage-reduction",
-  ],
-  [/damage (?:you take )?is reduced (?:by|to)/i, "mechanic:damage-reduction"],
-  [
-    /when you (?:take|would take)(?: \w+)* damage[^.]*reduce/i,
-    "mechanic:damage-reduction",
-  ],
+  // mechanic:damage-reduction — also via matchesFlatDamageReduction() after loop
   [/bonus action/i, "mechanic:bonus-action"],
   [/\breaction\b/i, "mechanic:reaction"],
   [/saving throw/i, "mechanic:saving-throw"],
@@ -1238,11 +1231,7 @@ function typeTags(text: string): string[] {
     /immune to|immunity to/i.test(text) ||
     conditionImmunityCannotBeTag(text) != null ||
     endDotTag(text) != null ||
-    /(?:reduce|reduces) (?:the |that |any )?damage(?: you take)? (?:by|to)/i.test(
-      text,
-    ) ||
-    /damage (?:you take )?is reduced (?:by|to)/i.test(text) ||
-    /when you (?:take|would take)(?: \w+)* damage[^.]*reduce/i.test(text) ||
+    matchesFlatDamageReduction(text) ||
     /Guard AC/i.test(text) ||
     /\+\d+\s*bonus\s+(?:on|to)\s+\w+\s+saving throws?/i.test(text) ||
     (/saving throw/i.test(text) &&
@@ -1313,6 +1302,9 @@ function extractTags(
   }
   for (const [pattern, tag] of MECHANIC_PATTERNS) {
     if (pattern.test(effectText)) tags.add(tag);
+  }
+  if (matchesFlatDamageReduction(effectText)) {
+    tags.add("mechanic:damage-reduction");
   }
 
   const acceleratedRest = acceleratedRestTag(effectText);

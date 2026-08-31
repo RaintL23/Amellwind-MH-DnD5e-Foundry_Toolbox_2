@@ -13,6 +13,7 @@ export interface RuneDialogFiltersState {
   tag: string[];
   monsterTier: string[];
   materialEffectTier: string[];
+  materialEffect: string[];
 }
 
 export interface RuneFiltersState extends RuneDialogFiltersState {
@@ -27,6 +28,7 @@ export const DEFAULT_RUNE_DIALOG_FILTERS: RuneDialogFiltersState = {
   tag: [],
   monsterTier: [],
   materialEffectTier: [],
+  materialEffect: [],
 };
 
 const OBTAINMENT_OPTIONS = [
@@ -56,6 +58,7 @@ export function buildRuneFilterSections(
   uniqueMonsters: string[],
   uniqueMonsterCrs: string[],
   uniqueTags: string[],
+  uniqueMaterialEffects: string[],
 ): ListFilterSectionConfig[] {
   return [
     { id: "slot", title: "Slot", mode: "single", options: SLOT_OPTIONS },
@@ -81,6 +84,15 @@ export function buildRuneFilterSections(
       options: uniqueTags.map((tag) => ({
         value: tag,
         label: formatTag(tag),
+      })),
+    },
+    {
+      id: "materialEffect",
+      title: "Material Effect",
+      mode: "multi",
+      options: uniqueMaterialEffects.map((name) => ({
+        value: name,
+        label: name,
       })),
     },
     {
@@ -113,6 +125,7 @@ export function countActiveRuneDialogFilters(
   if (filters.slot) count++;
   if (filters.obtainment.length > 0) count++;
   if (filters.tag.length > 0) count++;
+  if (filters.materialEffect.length > 0) count++;
   if (filters.monsterTier.length > 0) count++;
   if (filters.materialEffectTier.length > 0) count++;
   return count;

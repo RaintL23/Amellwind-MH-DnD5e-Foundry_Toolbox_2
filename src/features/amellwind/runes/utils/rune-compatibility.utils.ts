@@ -2,7 +2,11 @@ import type { MaterialEffectSlot, Rune } from "@/shared/types";
 import type { Class, Subclass, Weapon } from "@/shared/types";
 import { resolveWeaponProficiency } from "@/features/amellwind/weapons/data/weapon-proficiencies.data";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
-import { getMaterialEffectTierForText } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
+import {
+  getMaterialEffectTierForText,
+  getMaterialEffectNamesForRuneSide,
+  normalizeMaterialEffectFilterName,
+} from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
 import type { MaterialEffectTierFilter } from "@/features/amellwind/material-effects/constants/material-effect.constants";
 
 export interface RuneCompatibilityContext {
@@ -356,6 +360,7 @@ export interface RuneListEffectFilters {
   slot: "" | "A" | "W";
   tag: string[];
   materialEffectTier: string[];
+  materialEffectName: string[];
 }
 
 export function hasActiveRuneEffectListFilters(
@@ -365,7 +370,8 @@ export function hasActiveRuneEffectListFilters(
     filters.slot === "A" ||
     filters.slot === "W" ||
     filters.tag.length > 0 ||
-    filters.materialEffectTier.length > 0
+    filters.materialEffectTier.length > 0 ||
+    filters.materialEffectName.length > 0
   );
 }
 
@@ -399,9 +405,30 @@ export function runeEffectMatchesListFilters(
       materialEffectIndex,
       tags,
     );
-    return filters.materialEffectTier.includes(
-      tier as MaterialEffectTierFilter,
+    if (
+      !filters.materialEffectTier.includes(tier as MaterialEffectTierFilter)
+    ) {
+      return false;
+    }
+  }
+
+  if (filters.materialEffectName.length > 0) {
+    if (!materialEffectIndex) return false;
+    const sideNames = getMaterialEffectNamesForRuneSide(
+      rune,
+      kind,
+      materialEffectIndex,
     );
+    const normalizedSide = new Set(
+      sideNames.map((name) => normalizeMaterialEffectFilterName(name)),
+    );
+    if (
+      !filters.materialEffectName.some((selected) =>
+        normalizedSide.has(normalizeMaterialEffectFilterName(selected)),
+      )
+    ) {
+      return false;
+    }
   }
 
   return true;

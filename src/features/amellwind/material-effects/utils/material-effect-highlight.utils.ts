@@ -7,6 +7,7 @@ import {
 import { parseFiveToolsMarkup } from "@/shared/utils/fivetools-parser";
 import { slugifyKebab } from "@/shared/utils/slugify.utils";
 import { inferInlineDamageDefenseRarity } from "./inline-defense-rarity.utils";
+import { inferInlineFlatDamageReductionRarity } from "./inline-damage-reduction-rarity.utils";
 import { inferInlineExtraDamageRarity } from "./inline-extra-damage-rarity.utils";
 import { inferRarityFromAcBonus } from "./inline-ac-bonus-rarity.utils";
 import { inferRarityFromAttackAdvantageTags } from "./inline-attack-advantage-rarity.utils";
@@ -82,6 +83,11 @@ function normalizeEffectName(name: string): string {
     .trim()
     .replace(/\s+(\+\d+)\s*$/, "$1")
     .toLowerCase();
+}
+
+/** Normalizes a material effect title for exact filter comparison. */
+export function normalizeMaterialEffectFilterName(name: string): string {
+  return normalizeEffectName(name);
 }
 
 function parseEffectNameParts(name: string): {
@@ -403,6 +409,7 @@ export function getMaterialEffectTierForText(
 
   const inferred = [
     inferInlineDamageDefenseRarity(text),
+    inferInlineFlatDamageReductionRarity(text),
     inferInlineExtraDamageRarity(text),
   ].filter((rarity): rarity is ResourceRarity => rarity != null);
 
@@ -550,4 +557,43 @@ export function getReferencedMaterialEffectsForRune(
   }
 
   return [...found.values()];
+}
+
+/** Collects exact material-effect titles referenced on one rune side. */
+export function getMaterialEffectNamesForRuneSide(
+  rune: Rune,
+  slot: MaterialEffectSlot,
+  index: MaterialEffectNameIndex,
+): string[] {
+  const text = slot === "armor" ? rune.armorEffect : rune.weaponEffect;
+  if (!text) return [];
+
+  const names = new Set<string>();
+  const leading = extractLeadingMaterialEffectName(text);
+  if (leading) names.add(leading.replace(/\.$/, "").trim());
+
+  const parsed = parseFiveToolsMarkup(text);
+  for (const name of findMatchingMaterialEffectNames(
+    parsed,
+    index.bySlot[slot],
+  )) {
+    names.add(name);
+  }
+  return [...names];
+}
+
+/** Unique material effect names across all runes (for list filter options). */
+export function getMaterialEffectNamesFromRunes(
+  runes: Rune[],
+  index: MaterialEffectNameIndex,
+): string[] {
+  const names = new Set<string>();
+  for (const rune of runes) {
+    for (const slot of ["armor", "weapon"] as const) {
+      for (const name of getMaterialEffectNamesForRuneSide(rune, slot, index)) {
+        names.add(name);
+      }
+    }
+  }
+  return [...names].sort((a, b) => a.localeCompare(b));
 }

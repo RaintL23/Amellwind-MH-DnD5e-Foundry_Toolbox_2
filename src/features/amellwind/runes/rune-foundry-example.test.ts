@@ -238,4 +238,94 @@ describe("Foundry example runes — requested set", () => {
     expect(weaponFx[0]?.flags?.["amellwind-toolbox"]?.materialEffectName).toBe("FastCharge");
     expect(weaponFx[0]?.description).toMatch(/initiative/i);
   });
+
+  it("Great Jagras Claw wires Full Belly activities and Palico Rally notes", () => {
+    const item = loadRune(
+      "Great Jagras/fvtt-Item-great-jagras-great-jagras-claw-rune.json",
+    );
+    expectUnifiedRuneShell(item, "Great Jagras Claw", "Great Jagras");
+
+    const activities = Object.values(item.system.activities ?? {});
+    expect(activities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Full Belly", activation: expect.objectContaining({ type: "action" }) }),
+        expect.objectContaining({ name: "Regurgitate", activation: expect.objectContaining({ type: "bonus" }) }),
+      ]),
+    );
+
+    const weaponFx = sideEffects(item, "weapon");
+    expect(weaponFx[0]?.flags?.["amellwind-toolbox"]?.materialEffectName).toBe("Palico Rally");
+    expect(weaponFx[0]?.description).toMatch(/NPC allies within 10 ft/i);
+
+    const armorFx = sideEffects(item, "armor");
+    expect(armorFx[0]?.flags?.["amellwind-toolbox"]?.materialEffectName).toBe("Full Belly");
+  });
+
+  it("Doshaguma Fang wires Dwarf Thrower activity and Palamute Rally notes", () => {
+    const item = loadRune("Doshaguma/fvtt-Item-doshaguma-doshaguma-fang-rune.json");
+    expectUnifiedRuneShell(item, "Doshaguma Fang", "Doshaguma");
+
+    const activities = Object.values(item.system.activities ?? {});
+    expect(activities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          name: "Dwarf Thrower",
+          activation: expect.objectContaining({ type: "action" }),
+        }),
+      ]),
+    );
+
+    const weaponFx = sideEffects(item, "weapon");
+    expect(weaponFx[0]?.flags?.["amellwind-toolbox"]?.materialEffectName).toBe("Dwarf Thrower");
+
+    const armorFx = sideEffects(item, "armor");
+    expect(armorFx[0]?.flags?.["amellwind-toolbox"]?.materialEffectName).toBe("Palamute Rally");
+    expect(armorFx[0]?.description).toMatch(/NPC allies within 10 ft/i);
+  });
+
+  it("Velocidrome Head automates sleep/unconscious save bonus on armor only", () => {
+    const item = loadRune(
+      "Velocidrome/fvtt-Item-velocidrome-velocidrome-head-rune.json",
+    );
+    expectUnifiedRuneShell(item, "Velocidrome Head", "Velocidrome");
+
+    const sides = toolboxFlags(item)?.sides as Record<string, unknown>;
+    expect(Object.keys(sides)).toEqual(["armor"]);
+
+    const armorFx = sideEffects(item, "armor");
+    expect(armorFx[0]?.changes).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          key: "flags.midi-qol.onUseMacroName",
+          value: "ItemMacro.Velocidrome Head Rune,isSave",
+        }),
+      ]),
+    );
+
+    const macro = macroCommand(item);
+    expect(macro).toContain("saveBonus");
+    expect(macro).toContain("unconscious");
+    expect(macro).toContain("sleep");
+  });
+
+  it("Great Izuchi Tail wires Friends activity and Palamute Rally notes", () => {
+    const item = loadRune(
+      "Great Izuchi/fvtt-Item-great-izuchi-great-izuchi-tail-rune.json",
+    );
+    expectUnifiedRuneShell(item, "Great Izuchi Tail", "Great Izuchi");
+
+    const activities = Object.values(item.system.activities ?? {});
+    expect(activities).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ name: "Friends Cantrip" }),
+      ]),
+    );
+
+    const weaponFx = sideEffects(item, "weapon");
+    expect(weaponFx[0]?.flags?.["amellwind-toolbox"]?.materialEffectName).toBe("Friends Cantrip");
+    expect(weaponFx[0]?.description).toMatch(/spellcasters/i);
+
+    const armorFx = sideEffects(item, "armor");
+    expect(armorFx[0]?.flags?.["amellwind-toolbox"]?.materialEffectName).toBe("Palamute Rally");
+  });
 });

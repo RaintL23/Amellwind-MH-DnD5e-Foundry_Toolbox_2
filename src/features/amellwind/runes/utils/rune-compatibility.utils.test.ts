@@ -125,7 +125,12 @@ describe("runeEffectMatchesListFilters", () => {
   });
 
   it("matches both sides when no effect-scoped filters are active", () => {
-    const filters = { slot: "" as const, tag: [], materialEffectTier: [] };
+    const filters = {
+      slot: "" as const,
+      tag: [],
+      materialEffectTier: [],
+      materialEffectName: [],
+    };
     expect(
       runeEffectMatchesListFilters(tetsucabraClaw, "armor", filters, emptyIndex),
     ).toBe(true);
@@ -144,6 +149,7 @@ describe("runeEffectMatchesListFilters", () => {
       slot: "" as const,
       tag: [],
       materialEffectTier: [UNKNOWN_MATERIAL_EFFECT_TIER],
+      materialEffectName: [],
     };
     // Armor has no catalog/inferred rarity → Unknown
     expect(
@@ -165,6 +171,7 @@ describe("runeEffectMatchesListFilters", () => {
       slot: "A" as const,
       tag: [],
       materialEffectTier: [],
+      materialEffectName: [],
     };
     expect(
       runeEffectMatchesListFilters(tetsucabraClaw, "armor", filters, emptyIndex),
@@ -184,6 +191,7 @@ describe("runeEffectMatchesListFilters", () => {
       slot: "" as const,
       tag: ["mechanic:cantrip"],
       materialEffectTier: [],
+      materialEffectName: [],
     };
     expect(
       runeEffectMatchesListFilters(tetsucabraClaw, "armor", filters, emptyIndex),

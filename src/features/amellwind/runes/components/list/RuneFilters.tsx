@@ -13,6 +13,7 @@ interface RuneFiltersProps {
   uniqueMonsters: string[];
   uniqueMonsterCrs: string[];
   uniqueTags: string[];
+  uniqueMaterialEffects: string[];
   onChange: (filters: RuneFiltersState) => void;
   /** Immediate search draft; when set, typing does not push filters until the parent commits. */
   onSearchChange?: (name: string) => void;
@@ -23,13 +24,19 @@ export function RuneFilters({
   uniqueMonsters,
   uniqueMonsterCrs,
   uniqueTags,
+  uniqueMaterialEffects,
   onChange,
   onSearchChange,
 }: RuneFiltersProps) {
   const sections = useMemo(
     () =>
-      buildRuneFilterSections(uniqueMonsters, uniqueMonsterCrs, uniqueTags),
-    [uniqueMonsters, uniqueMonsterCrs, uniqueTags],
+      buildRuneFilterSections(
+        uniqueMonsters,
+        uniqueMonsterCrs,
+        uniqueTags,
+        uniqueMaterialEffects,
+      ),
+    [uniqueMonsters, uniqueMonsterCrs, uniqueTags, uniqueMaterialEffects],
   );
 
   const sectionIds = useMemo(
@@ -45,6 +52,7 @@ export function RuneFilters({
       slot: ((values.slot as string) || "") as RuneFiltersState["slot"],
       obtainment: (values.obtainment as string[]) ?? [],
       tag: (values.tag as string[]) ?? [],
+      materialEffect: (values.materialEffect as string[]) ?? [],
       monsterTier: (values.monsterTier as string[]) ?? [],
       materialEffectTier: (values.materialEffectTier as string[]) ?? [],
     });

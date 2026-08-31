@@ -1,29 +1,20 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
+import type { ColumnFiltersState, OnChangeFn, PaginationState, SortingState } from "@tanstack/react-table";
 import { Rune } from "@/shared/types";
 import { parseCR } from "@/shared/utils/cr.utils";
 import { getAllRunes } from "../../services/rune.service";
 import { getMaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
-import { Pagination } from "@/components/ui/pagination";
+import { getMaterialEffectNamesFromRunes } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
 import { RuneDetailDialog } from "../detail/RuneDetailDialog";
 import { RulesPanel } from "../rules/RulesPanel";
 import { ObtainMaterialsPanel } from "../rules/ObtainmentRulesPanel";
 import { BuildDrawer } from "../build/BuildDrawer";
 import { RuneFilters, type RuneFiltersState } from "./RuneFilters";
 import type { RuneSlotFilter } from "./rune-filters.utils";
-import { RuneTable } from "./RuneTable";
+import { RuneDataTable } from "./RuneDataTable";
 import { useRuneBuild } from "../../context/RuneBuildContext";
-import {
-  buildRuneSearchIndex,
-  matchesRuneSearchQuery,
-  type RuneSearchIndexEntry,
-} from "../../utils/rune-search.utils";
-import {
-  hasActiveRuneEffectListFilters,
-  runeEffectMatchesListFilters,
-  type RuneListEffectFilters,
-} from "../../utils/rune-compatibility.utils";
-import type { MaterialEffectSlot } from "@/shared/types";
+import { buildRuneSearchIndex } from "../../utils/rune-search.utils";
 import { RUNE_DEFAULT_PAGE_SIZE } from "./rune-list-url.utils";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { MhmmSourceNotice } from "@/shared/components/MhmmSourceNotice";
@@ -31,15 +22,29 @@ import { useDebouncedListSearch } from "@/shared/hooks/useDebouncedListSearch";
 import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { parsePositiveInt } from "@/shared/utils/list-url-params.utils";
 import { Layers } from "lucide-react";
+import {
+  buildRuneColumnFilters,
+  matchesRuneListRow,
+  payloadFromRuneFilters,
+  type RuneListRow,
+} from "./rune-table-filters.utils";
+
+function sortingFromSession(
+  sortId: string,
+  sortDesc: string,
+): SortingState {
+  if (!sortId) return [];
+  return [{ id: sortId, desc: sortDesc === "true" }];
+}
 
 export function RuneList() {
   const { q, getString, getAll, patchFilters } = useListSessionFilters({
     listId: "mh-runes",
-    stringKeys: ["q", "slot", "page", "pageSize"],
-    multiKeys: ["monster", "mcr", "obtain", "tag", "mtier", "etier"],
+    stringKeys: ["q", "slot", "page", "pageSize", "sortId", "sortDesc"],
+    multiKeys: ["monster", "mcr", "obtain", "tag", "mtier", "etier", "meffect"],
   });
   const [runes, setRunes] = useState<Rune[]>([]);
-  const [searchIndex, setSearchIndex] = useState<RuneSearchIndexEntry[]>([]);
+  const [searchIndex, setSearchIndex] = useState<RuneListRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState<Rune | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
@@ -58,6 +63,7 @@ export function RuneList() {
       tag: getAll("tag"),
       monsterTier: getAll("mtier"),
       materialEffectTier: getAll("etier"),
+      materialEffect: getAll("meffect"),
     }),
     [q, getString, getAll],
   );
@@ -67,6 +73,17 @@ export function RuneList() {
     getString("pageSize") || null,
     RUNE_DEFAULT_PAGE_SIZE,
   );
+
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(() =>
+    buildRuneColumnFilters(filters),
+  );
+  const [sorting, setSorting] = useState<SortingState>(() =>
+    sortingFromSession(getString("sortId") || "", getString("sortDesc") || ""),
+  );
+  const [pagination, setPagination] = useState<PaginationState>(() => ({
+    pageIndex: page - 1,
+    pageSize,
+  }));
 
   const commitName = useCallback(
     (name: string) => {
@@ -94,6 +111,24 @@ export function RuneList() {
     );
   }, []);
 
+  useEffect(() => {
+    setColumnFilters(buildRuneColumnFilters({ ...filters, name: appliedSearch }));
+  }, [
+    appliedSearch,
+    filters.monster,
+    filters.monsterCr,
+    filters.slot,
+    filters.obtainment,
+    filters.tag,
+    filters.monsterTier,
+    filters.materialEffectTier,
+    filters.materialEffect,
+  ]);
+
+  useEffect(() => {
+    setPagination({ pageIndex: page - 1, pageSize });
+  }, [page, pageSize]);
+
   const uniqueMonsters = useMemo(
     () => Array.from(new Set(runes.map((r) => r.monsterName))).sort(),
     [runes],
@@ -112,79 +147,28 @@ export function RuneList() {
     [runes],
   );
 
-  const filtered = useMemo(() => {
-    const searchContext = {
-      slot: filters.slot,
-      tags: filters.tag,
-      materialEffectTier: filters.materialEffectTier,
-    };
-    let result = searchIndex;
+  const uniqueMaterialEffects = useMemo(
+    () =>
+      materialEffectIndex
+        ? getMaterialEffectNamesFromRunes(runes, materialEffectIndex)
+        : [],
+    [runes, materialEffectIndex],
+  );
 
-    if (appliedSearch.trim()) {
-      result = result.filter((entry) =>
-        matchesRuneSearchQuery(entry, appliedSearch, searchContext),
-      );
-    }
-    if (filters.monster.length > 0)
-      result = result.filter((entry) =>
-        filters.monster.includes(entry.rune.monsterName),
-      );
-    if (filters.monsterCr.length > 0) {
-      result = result.filter((entry) =>
-        entry.rune.monsterCrs.some((cr) => filters.monsterCr.includes(cr)),
-      );
-    }
-    if (filters.obtainment.length > 0) {
-      result = result.filter((entry) =>
-        filters.obtainment.some((obtainment) => {
-          if (obtainment === "Carveable") return entry.rune.carveChance !== "-";
-          if (obtainment === "Capturable")
-            return entry.rune.captureChance !== "-";
-          if (obtainment === "Both" || obtainment === "Ambas")
-            return (
-              entry.rune.carveChance !== "-" && entry.rune.captureChance !== "-"
-            );
-          return false;
-        }),
-      );
-    }
-    if (filters.monsterTier.length > 0) {
-      result = result.filter((entry) =>
-        filters.monsterTier.includes(String(entry.rune.tier)),
-      );
-    }
+  const filterPayload = useMemo(
+    () => payloadFromRuneFilters({ ...filters, name: appliedSearch }),
+    [filters, appliedSearch],
+  );
 
-    const effectFilters: RuneListEffectFilters = {
-      slot: filters.slot,
-      tag: filters.tag,
-      materialEffectTier: filters.materialEffectTier,
-    };
-    if (hasActiveRuneEffectListFilters(effectFilters)) {
-      result = result.filter((entry) =>
-        (["weapon", "armor"] as MaterialEffectSlot[]).some((kind) =>
-          runeEffectMatchesListFilters(
-            entry.rune,
-            kind,
-            effectFilters,
-            materialEffectIndex,
-          ),
-        ),
-      );
-    }
-
-    return result.map((entry) => entry.rune);
-  }, [
-    searchIndex,
-    appliedSearch,
-    filters.monster,
-    filters.monsterCr,
-    filters.slot,
-    filters.obtainment,
-    filters.tag,
-    filters.monsterTier,
-    filters.materialEffectTier,
-    materialEffectIndex,
-  ]);
+  const filteredRunes = useMemo(
+    () =>
+      searchIndex
+        .filter((row) =>
+          matchesRuneListRow(row, filterPayload, materialEffectIndex),
+        )
+        .map((row) => row.rune),
+    [searchIndex, filterPayload, materialEffectIndex],
+  );
 
   const updateFilters = useCallback(
     (next: RuneFiltersState) => {
@@ -198,31 +182,56 @@ export function RuneList() {
         tag: next.tag,
         mtier: next.monsterTier,
         etier: next.materialEffectTier,
+        meffect: next.materialEffect,
         page: "1",
       });
     },
     [patchFilters, commitSearch],
   );
 
-  const handlePageChange = useCallback(
-    (nextPage: number) => {
-      patchFilters({ page: String(nextPage) });
+  const handleSortingChange = useCallback<OnChangeFn<SortingState>>(
+    (updater) => {
+      setSorting((prev) => {
+        const next = typeof updater === "function" ? updater(prev) : updater;
+        const primary = next[0];
+        patchFilters({
+          sortId: primary?.id ?? "",
+          sortDesc: primary?.desc ? "true" : "false",
+          page: "1",
+        });
+        return next;
+      });
     },
     [patchFilters],
   );
 
-  const handlePageSizeChange = useCallback(
-    (size: number) => {
-      patchFilters({ pageSize: String(size), page: "1" });
+  const handlePaginationChange = useCallback<OnChangeFn<PaginationState>>(
+    (updater) => {
+      setPagination((prev) => {
+        const next = typeof updater === "function" ? updater(prev) : updater;
+        patchFilters({
+          page: String(next.pageIndex + 1),
+          pageSize: String(next.pageSize),
+        });
+        return next;
+      });
     },
     [patchFilters],
   );
 
-  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-  const safePage = Math.min(page, totalPages);
-  const paginated = filtered.slice(
-    (safePage - 1) * pageSize,
-    safePage * pageSize,
+  const effectFilters = useMemo(
+    () => ({
+      slot: filters.slot,
+      tag: filters.tag,
+      materialEffectTier: filters.materialEffectTier,
+      materialEffectName: filters.materialEffect,
+    }),
+    [
+      filters.slot,
+      filters.tag,
+      filters.materialEffectTier,
+      filters.materialEffect,
+    ],
   );
 
   return (
@@ -236,7 +245,7 @@ export function RuneList() {
                 <>
                   {isSearchPending
                     ? "Updating…"
-                    : `${filtered.length} / ${runes.length} materials`}
+                    : `${filteredRunes.length} / ${runes.length} materials`}
                 </>
               )}
             </p>
@@ -259,6 +268,7 @@ export function RuneList() {
           uniqueMonsters={uniqueMonsters}
           uniqueMonsterCrs={uniqueMonsterCrs}
           uniqueTags={uniqueTags}
+          uniqueMaterialEffects={uniqueMaterialEffects}
           onSearchChange={setSearchDraft}
           onChange={updateFilters}
         />
@@ -266,26 +276,21 @@ export function RuneList() {
         {loading ? (
           <ListAreaLoading />
         ) : (
-          <>
-            <RuneTable
-              runes={paginated}
-              totalFiltered={filtered.length}
-              isInBuild={isInBuild}
-              onSelect={(rune) => {
-                setSelected(rune);
-                setDialogOpen(true);
-              }}
-            />
-
-            <Pagination
-              page={safePage}
-              totalPages={totalPages}
-              totalItems={filtered.length}
-              pageSize={pageSize}
-              onPageChange={handlePageChange}
-              onPageSizeChange={handlePageSizeChange}
-            />
-          </>
+          <RuneDataTable
+            rows={searchIndex}
+            materialEffectIndex={materialEffectIndex}
+            isInBuild={isInBuild}
+            columnFilters={columnFilters}
+            onColumnFiltersChange={setColumnFilters}
+            sorting={sorting}
+            onSortingChange={handleSortingChange}
+            pagination={pagination}
+            onPaginationChange={handlePaginationChange}
+            onSelect={(rune) => {
+              setSelected(rune);
+              setDialogOpen(true);
+            }}
+          />
         )}
 
         {dialogOpen && selected && (
@@ -295,11 +300,12 @@ export function RuneList() {
             onOpenChange={setDialogOpen}
             materialEffectIndex={materialEffectIndex}
             effectFilters={{
-              slot: filters.slot,
-              tag: filters.tag,
-              materialEffectTier: filters.materialEffectTier,
+              slot: effectFilters.slot,
+              tag: effectFilters.tag,
+              materialEffectTier: effectFilters.materialEffectTier,
+              materialEffectName: effectFilters.materialEffectName,
             }}
-            filteredRunes={filtered}
+            filteredRunes={filteredRunes}
             onNavigate={setSelected}
           />
         )}

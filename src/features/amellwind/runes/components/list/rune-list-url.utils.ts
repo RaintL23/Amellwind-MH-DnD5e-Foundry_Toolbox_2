@@ -23,6 +23,7 @@ export function parseRuneListUrlState(searchParams: URLSearchParams): {
       tag: searchParams.getAll("tag"),
       monsterTier: searchParams.getAll("mtier"),
       materialEffectTier: searchParams.getAll("etier"),
+      materialEffect: searchParams.getAll("meffect"),
     },
     page: parsePositiveInt(searchParams.get("page"), 1),
     pageSize: parsePositiveInt(
@@ -46,6 +47,7 @@ export function buildRuneListSearchParams(
   appendAll(next, "tag", filters.tag);
   appendAll(next, "mtier", filters.monsterTier);
   appendAll(next, "etier", filters.materialEffectTier);
+  appendAll(next, "meffect", filters.materialEffect);
   setIntIfNotDefault(next, "page", page, 1);
   setIntIfNotDefault(next, "pageSize", pageSize, RUNE_DEFAULT_PAGE_SIZE);
   return next;
