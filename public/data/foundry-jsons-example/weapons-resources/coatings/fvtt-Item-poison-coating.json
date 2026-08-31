@@ -1,12 +1,12 @@
 {
-  "_id": "KcOFgvyKrDiLIre8",
-  "name": "Acid Coating",
+  "_id": "faDCQLBrwHEFPkx2",
+  "name": "Poison Coating",
   "type": "consumable",
   "img": "mh-icons/coating-full.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Acid Coating</strong> (Bow coating vial)</p><p>On a hit with the Bow while this coating is active, the attack deals an extra [[/r 1d6]] acid damage.</p><p><em>Apply Coating</em> (once per turn, no action): expend this vial to gain <strong>3 charges</strong>. Each ranged attack with the Bow spends 1 charge (hit or miss). Remaining charges are lost if you apply a different coating or finish a Short or Long Rest. Coatings do not regenerate.</p><p><em>Crafted coating (not sold in standard shops).</em></p>",
-      "chat": "<p><strong>Acid Coating</strong></p><p>Extra [[/r 1d6]] acid on hit while active (3 charges per vial).</p>"
+      "value": "<p><strong>Poison Coating</strong> (Bow coating vial · Advanced)</p><p>On a hit, the attack deals an extra [[/r 1d4]] poison damage, and the target must succeed on a Constitution saving throw against your Bow Save DC or have the Poisoned condition for 1 minute.</p><p><em>Apply Coating</em> (once per turn, no action): expend this vial to gain <strong>3 charges</strong>. Each ranged attack with the Bow spends 1 charge (hit or miss). Remaining charges are lost if you apply a different coating or finish a Short or Long Rest. Coatings do not regenerate.</p>",
+      "chat": "<p><strong>Poison Coating</strong></p><p>+1d4 poison; Con save or Poisoned 1 minute (3 charges per vial).</p>"
     },
     "source": {
       "custom": "",
@@ -16,14 +16,14 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "acid-coating",
+    "identifier": "poison-coating",
     "quantity": 1,
     "weight": {
       "value": 0.25,
       "units": "lb"
     },
     "price": {
-      "value": 2,
+      "value": 4,
       "denomination": "gp"
     },
     "rarity": "",
@@ -66,8 +66,8 @@
       "autoDestroy": true
     },
     "activities": {
-      "u1qdkZBLXUve4WBP": {
-        "_id": "u1qdkZBLXUve4WBP",
+      "b7acJTIIYBy5aVBH": {
+        "_id": "b7acJTIIYBy5aVBH",
         "type": "utility",
         "sort": 0,
         "name": "Apply Coating",
@@ -97,7 +97,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Apply Acid Coating (3 charges)"
+          "chatFlavor": "Apply Poison Coating (3 charges)"
         },
         "duration": {
           "value": "",
@@ -178,15 +178,15 @@
   },
   "effects": [
     {
-      "_id": "bFnGjodJw1LrlKvO",
-      "name": "Acid Coating (Active) [3/3]",
+      "_id": "8TrCTUkCTBuph0WN",
+      "name": "Poison Coating (Active) [3/3]",
       "img": "mh-icons/coating-full.webp",
-      "description": "<p>Coating effect while charges remain. Charges tracked by Bow Item Macro.</p>",
+      "description": "<p>Advanced coating rider resolved by Bow Item Macro on hit. Charges tracked by Bow Item Macro.</p>",
       "changes": [
         {
           "key": "system.bonuses.rwak.damage",
           "mode": 2,
-          "value": "1d6[acid]",
+          "value": "1d4[poison]",
           "priority": 20
         }
       ],
@@ -226,9 +226,10 @@
           "bow": {
             "isCoatingTemplate": true,
             "isCoatingActive": true,
-            "coatingKey": "acid",
+            "coatingKey": "poison",
             "charges": 3,
-            "chargesMax": 3
+            "chargesMax": 3,
+            "riderKind": "poison-save"
           }
         }
       },
@@ -238,14 +239,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189641388,
-        "modifiedTime": 1788189641388,
+        "createdTime": 1788189641389,
+        "modifiedTime": 1788189641389,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 300000,
+  "sort": 800000,
   "ownership": {
     "default": 0
   },
@@ -258,8 +259,9 @@
     "world": {
       "bow": {
         "isCoating": true,
-        "coatingKey": "acid",
-        "chargesPerVial": 3
+        "coatingKey": "poison",
+        "chargesPerVial": 3,
+        "riderKind": "poison-save"
       }
     },
     "midi-qol": {
@@ -279,7 +281,7 @@
     },
     "itemacro": {
       "macro": {
-        "name": "Acid Coating",
+        "name": "Poison Coating",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -311,8 +313,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189641388,
-    "modifiedTime": 1788189641388,
+    "createdTime": 1788189641389,
+    "modifiedTime": 1788189641389,
     "lastModifiedBy": null
   }
 }

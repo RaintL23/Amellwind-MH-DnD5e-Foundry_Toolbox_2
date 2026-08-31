@@ -1,5 +1,5 @@
 {
-  "_id": "LxPwu3rGsmxetlWP",
+  "_id": "D27jDl5O7AE0skzL",
   "name": "Storm Magazine Upgrade I",
   "type": "consumable",
   "img": "mh-icons/bowgun-ammo.webp",
@@ -225,14 +225,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786208397047,
-        "modifiedTime": 1786208397047,
+        "createdTime": 1788189641401,
+        "modifiedTime": 1788189641401,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 2000000,
+  "sort": 1800000,
   "ownership": {
     "default": 0
   },
@@ -304,8 +304,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786208397047,
-    "modifiedTime": 1786208397047,
+    "createdTime": 1788189641401,
+    "modifiedTime": 1788189641401,
     "lastModifiedBy": null
   }
 }

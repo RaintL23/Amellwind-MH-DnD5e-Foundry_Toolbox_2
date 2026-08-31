@@ -258,6 +258,178 @@ const clearSidestepBuff = async () => {
   await actorDoc.deleteEmbeddedDocuments("ActiveEffect", buffs.map((e) => e.id));
 };
 
+const bowSaveDc = () => {
+  const dex = Number(actorDoc.system?.abilities?.dex?.mod ?? 0);
+  const pb = Number(actorDoc.system?.attributes?.prof ?? 2);
+  return 8 + pb + dex;
+};
+
+const measureDistanceFt = (fromTok, toTok) => {
+  if (!fromTok || !toTok) return Infinity;
+  if (globalThis.MidiQOL?.computeDistance) {
+    return Number(MidiQOL.computeDistance(fromTok, toTok, { wallsBlock: false })) || Infinity;
+  }
+  if (canvas?.grid?.measureDistance) {
+    return Number(canvas.grid.measureDistance(fromTok.center, toTok.center)) || Infinity;
+  }
+  return Infinity;
+};
+
+const rollAbilitySaveVsDc = async (targetActor, ability, dc, flavor) => {
+  if (!targetActor) return null;
+  if (typeof targetActor.rollAbilitySave === "function") {
+    return targetActor.rollAbilitySave(ability, {
+      targetValue: dc,
+      fastForward: false,
+      chatMessage: true,
+      flavor,
+    });
+  }
+  return null;
+};
+
+const applyCoatingStatus = async (targetActor, data) => {
+  if (!targetActor) return;
+  await targetActor.createEmbeddedDocuments("ActiveEffect", [data]);
+};
+
+const resolveAdvancedCoatingRider = async () => {
+  if (!isHit || !isPostDamage) return;
+
+  const ae = actorDoc.effects.find(isCoatingActiveAe);
+  if (!ae) return;
+
+  const coatingKey = String(foundry.utils.getProperty(ae, "flags.world.bow.coatingKey") ?? "").toLowerCase();
+  if (!["blast", "poison", "paralysis", "sleep"].includes(coatingKey)) return;
+
+  const dc = bowSaveDc();
+  const hits = [...(workflow?.hitTargets ?? args?.[0]?.hitTargets ?? [])];
+  const primaryTok = hits[0];
+  const primaryActor = primaryTok?.actor ?? primaryTok?.document?.actor;
+
+  if (coatingKey === "blast" && primaryTok) {
+    const splashTargets = (canvas?.tokens?.placeables ?? []).filter((tok) => {
+      if (tok.id === primaryTok.id) return false;
+      const targetActor = tok.actor;
+      if (!targetActor || targetActor.uuid === actorDoc.uuid) return false;
+      return measureDistanceFt(primaryTok, tok) <= 5;
+    });
+
+    for (const tok of splashTargets) {
+      const targetActor = tok.actor;
+      if (!targetActor) continue;
+      const save = await rollAbilitySaveVsDc(targetActor, "dex", dc, "Blast Coating splash");
+      if ((save?.total ?? 999) >= dc) continue;
+      const roll = await new Roll("1d8").evaluate();
+      await roll.toMessage({
+        speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+        flavor: `Blast Coating — ${targetActor.name}`,
+      });
+      if (globalThis.MidiQOL?.applyTokenDamage) {
+        await MidiQOL.applyTokenDamage(
+          [{ damage: roll.total, type: "fire" }],
+          roll.total,
+          new Set([tok]),
+          item,
+          new Set(),
+        );
+      } else if (typeof targetActor.applyDamage === "function") {
+        await targetActor.applyDamage(roll.total);
+      }
+    }
+    return;
+  }
+
+  if (!primaryActor) return;
+
+  if (coatingKey === "poison") {
+    const save = await rollAbilitySaveVsDc(primaryActor, "con", dc, "Poison Coating");
+    if ((save?.total ?? 999) < dc) {
+      await applyCoatingStatus(primaryActor, {
+        name: "Poison Coating — Poisoned",
+        img: "systems/dnd5e/icons/svg/statuses/poisoned.svg",
+        type: "base",
+        disabled: false,
+        transfer: false,
+        changes: [],
+        duration: { seconds: 60, rounds: 10 },
+        statuses: ["poisoned"],
+        flags: {
+          dae: {
+            stackable: "noneName",
+            showIcon: true,
+            specialDuration: [],
+          },
+          world: { bow: { isCoatingRider: true, coatingKey: "poison" } },
+        },
+      });
+    }
+    return;
+  }
+
+  if (coatingKey === "paralysis") {
+    const immuneUntil = Number(
+      foundry.utils.getProperty(primaryActor, "flags.world.bow.paralysisCoatingImmuneUntil") ?? 0,
+    );
+    if (immuneUntil && game.time.worldTime < immuneUntil) {
+      ui.notifications.info(`${primaryActor.name} is immune to Paralysis Coating.`);
+      return;
+    }
+    const save = await rollAbilitySaveVsDc(primaryActor, "con", dc, "Paralysis Coating");
+    if ((save?.total ?? 999) >= dc) {
+      await primaryActor.setFlag("world", "bow.paralysisCoatingImmuneUntil", game.time.worldTime + 86400);
+      return;
+    }
+    await applyCoatingStatus(primaryActor, {
+      name: "Paralysis Coating — Paralyzed",
+      img: "systems/dnd5e/icons/svg/statuses/paralyzed.svg",
+      type: "base",
+      disabled: false,
+      transfer: false,
+      changes: [],
+      duration: { turns: 1 },
+      statuses: ["paralyzed"],
+      flags: {
+        dae: {
+          stackable: "noneName",
+          showIcon: true,
+          specialDuration: ["turnEndTarget"],
+        },
+        world: { bow: { isCoatingRider: true, coatingKey: "paralysis" } },
+      },
+    });
+    return;
+  }
+
+  if (coatingKey === "sleep") {
+    const creatureType = String(primaryActor.system?.details?.type?.value ?? "").toLowerCase();
+    if (creatureType.includes("construct") || creatureType.includes("undead")) return;
+
+    const save = await rollAbilitySaveVsDc(primaryActor, "con", dc, "Sleep Coating");
+    if ((save?.total ?? 999) < dc) {
+      await applyCoatingStatus(primaryActor, {
+        name: "Sleep Coating — Unconscious",
+        img: "systems/dnd5e/icons/svg/statuses/unconscious.svg",
+        type: "base",
+        disabled: false,
+        transfer: false,
+        changes: [],
+        duration: { seconds: 60, rounds: 10 },
+        statuses: ["unconscious"],
+        flags: {
+          dae: {
+            stackable: "noneName",
+            showIcon: true,
+            specialDuration: [],
+          },
+          world: { bow: { isCoatingRider: true, coatingKey: "sleep" } },
+        },
+      });
+    }
+  }
+};
+
+await resolveAdvancedCoatingRider();
 await spendCoatingCharge();
 await clearSidestepBuff();
 

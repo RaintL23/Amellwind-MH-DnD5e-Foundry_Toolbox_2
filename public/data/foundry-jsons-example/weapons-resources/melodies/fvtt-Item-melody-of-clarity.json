@@ -1,5 +1,5 @@
 {
-  "_id": "plgRGyCA8VXQGSU9",
+  "_id": "xmEF9Nn9JvgP6pVe",
   "name": "Melody of Clarity",
   "type": "feat",
   "img": "icons/magic/perception/eye-ringed-glow-angry-teal.webp",
@@ -37,7 +37,7 @@
   },
   "effects": [
     {
-      "_id": "w4Hv43eDXgoLaHjG",
+      "_id": "aP26NLXXmhRHNmeF",
       "name": "Melody of Clarity (Aura 15 ft)",
       "img": "icons/magic/perception/eye-ringed-glow-angry-teal.webp",
       "description": "",
@@ -101,14 +101,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1787754553652,
-        "modifiedTime": 1787754553652,
+        "createdTime": 1788189641415,
+        "modifiedTime": 1788189641415,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 3000000,
+  "sort": 3300000,
   "ownership": {
     "default": 0
   },
@@ -132,8 +132,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1787754553652,
-    "modifiedTime": 1787754553652,
+    "createdTime": 1788189641415,
+    "modifiedTime": 1788189641415,
     "lastModifiedBy": null
   }
 }

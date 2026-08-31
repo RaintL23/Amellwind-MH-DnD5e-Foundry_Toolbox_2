@@ -1,12 +1,12 @@
 {
-  "_id": "AiSSvSan9Sskpo8a",
-  "name": "Exhaust Phial",
+  "_id": "wPU025qZ3EteBTA6",
+  "name": "Dragon Phial",
   "type": "feat",
-  "img": "icons/magic/control/silhouette-hold-beam-blue.webp",
+  "img": "icons/magic/unholy/orb-holding-green.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Exhaust Phial</strong></p><p>Deals an extra [[/r 1d6]] Bludgeoning damage. The target's speed is reduced by 10 feet and it cannot take Reactions until the start of its next turn.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
-      "chat": "<p><strong>Exhaust Phial</strong></p><p>Extra [[/r 1d6]] Bludgeoning; −10 ft speed and no Reactions until start of its next turn.</p>"
+      "value": "<p><strong>Dragon Phial</strong></p><p>Acts as an Element Phial but deals an extra [[/r 1d10]] Necrotic damage when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
+      "chat": "<p><strong>Dragon Phial</strong></p><p>Extra [[/r 1d10]] Necrotic on Phial Discharge.</p>"
     },
     "source": {
       "custom": "",
@@ -16,7 +16,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "exhaust-phial",
+    "identifier": "dragon-phial",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -24,12 +24,12 @@
     "requirements": "Switch Axe (Phial Gauge)",
     "properties": [],
     "activities": {
-      "Z35DqGrKAqSgdgZJ": {
-        "_id": "Z35DqGrKAqSgdgZJ",
+      "Wg415WvG9X7iGETI": {
+        "_id": "Wg415WvG9X7iGETI",
         "type": "utility",
         "sort": 0,
         "name": "Install Phial",
-        "img": "icons/magic/control/silhouette-hold-beam-blue.webp",
+        "img": "icons/magic/unholy/orb-holding-green.webp",
         "activation": {
           "type": "special",
           "value": null,
@@ -45,7 +45,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Install Exhaust Phial. Disable other Phial Install AEs so only one is active."
+          "chatFlavor": "Install Dragon Phial. Disable other Phial Install AEs so only one is active."
         },
         "duration": {
           "value": "",
@@ -55,7 +55,7 @@
         },
         "effects": [
           {
-            "_id": "BTv1HbJEEuSMfFLA"
+            "_id": "SFTvK6TFLrWk0aNI"
           }
         ],
         "range": {
@@ -102,7 +102,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "install-exhaust-phial",
+          "identifier": "install-dragon-phial",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -138,9 +138,9 @@
   },
   "effects": [
     {
-      "_id": "BTv1HbJEEuSMfFLA",
-      "name": "Exhaust Phial (Installed)",
-      "img": "icons/magic/control/silhouette-hold-beam-blue.webp",
+      "_id": "SFTvK6TFLrWk0aNI",
+      "name": "Dragon Phial (Installed)",
+      "img": "icons/magic/unholy/orb-holding-green.webp",
       "description": "",
       "changes": [],
       "disabled": true,
@@ -175,9 +175,9 @@
         "world": {
           "sa": {
             "isPhialInstalled": true,
-            "phialKey": "exhaust",
-            "damageFormula": "1d6",
-            "damageType": "bludgeoning"
+            "phialKey": "dragon",
+            "damageFormula": "1d10",
+            "damageType": "necrotic"
           }
         }
       },
@@ -194,7 +194,7 @@
     }
   ],
   "folder": null,
-  "sort": 4500000,
+  "sort": 4700000,
   "ownership": {
     "default": 0
   },
@@ -208,7 +208,7 @@
     "world": {
       "sa": {
         "isPhial": true,
-        "phialKey": "exhaust"
+        "phialKey": "dragon"
       }
     }
   },

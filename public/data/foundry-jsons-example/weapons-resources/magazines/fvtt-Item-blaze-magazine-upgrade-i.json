@@ -1,5 +1,5 @@
 {
-  "_id": "cZXTiHhBErJZHBWT",
+  "_id": "If98kSxKHZnUd2Ei",
   "name": "Blaze Magazine Upgrade I",
   "type": "consumable",
   "img": "mh-icons/bowgun-ammo.webp",
@@ -234,14 +234,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786208397047,
-        "modifiedTime": 1786208397047,
+        "createdTime": 1788189641400,
+        "modifiedTime": 1788189641400,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 1800000,
+  "sort": 1600000,
   "ownership": {
     "default": 0
   },
@@ -315,8 +315,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786208397047,
-    "modifiedTime": 1786208397047,
+    "createdTime": 1788189641400,
+    "modifiedTime": 1788189641400,
     "lastModifiedBy": null
   }
 }

@@ -1,5 +1,5 @@
 {
-  "_id": "CJAfEilpwm1SjR35",
+  "_id": "KTQ2nbzrlLT97ZKl",
   "name": "Melody of Precision",
   "type": "feat",
   "img": "icons/skills/targeting/crosshair-scope-yellow.webp",
@@ -37,7 +37,7 @@
   },
   "effects": [
     {
-      "_id": "RTGFpsRW0A8Ghxl5",
+      "_id": "2w8usOrXPEkOR2w9",
       "name": "Melody of Precision (Aura 15 ft)",
       "img": "icons/skills/targeting/crosshair-scope-yellow.webp",
       "description": "",
@@ -126,14 +126,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1787754553652,
-        "modifiedTime": 1787754553652,
+        "createdTime": 1788189641414,
+        "modifiedTime": 1788189641414,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 2100000,
+  "sort": 2400000,
   "ownership": {
     "default": 0
   },
@@ -157,8 +157,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1787754553652,
-    "modifiedTime": 1787754553652,
+    "createdTime": 1788189641414,
+    "modifiedTime": 1788189641414,
     "lastModifiedBy": null
   }
 }
