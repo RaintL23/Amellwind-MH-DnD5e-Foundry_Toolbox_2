@@ -174,4 +174,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** —
 - **Armor effect:** You have resistance to fire damage while you wear this armor.
-- **Weapon effect:** Your Strength score is 19 while you wear these gauntlets. They have no effect on you if your Strength is already 19 or higher without them.
+- **Weapon effect:** Your Strength score is 19 while you are attuned to this weapon. They have no effect on you if your Strength is already 19 or higher without them.

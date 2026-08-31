@@ -161,7 +161,11 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 13-14
 - **Capture:** —
 - **Armor effect:** Item Prolonger+. Whenever you use a consumable item that has a duration, its duration is increased by an additional 12 seconds.
-- **Weapon effect:** Depending on which weapon this material is placed into, it gains the following benefits: Bow. When you hit a creature with a poison coated arrow, you can inflict iceblight instead of the poisoned condition. Dual Repeaters. Your cryo ammo now inflicts iceblight instead of waterblight when empowered. Heavy Bowgun. When you hit a creature with your poison ammo, you can inflict waterblight instead of the poisoned condition. Light Bowgun. When you hit a creature with water ammo, its movement speed is reduced by 5 feet until the end of its next turn.
+- **Weapon effect:** Depending on which weapon this material is placed into, it gains the following benefits: 
+    - Bow. When you hit a creature with a poison coated arrow, you can inflict iceblight instead of the poisoned condition. 
+    - Dual Repeaters. Your cryo ammo now inflicts iceblight instead of waterblight when empowered.
+    - Heavy Bowgun. When you hit a creature with your poison ammo, you can inflict waterblight instead of the poisoned condition.
+    - Light Bowgun. When you hit a creature with water ammo, its movement speed is reduced by 5 feet until the end of its next turn.
 
 ### Cryo Sac
 

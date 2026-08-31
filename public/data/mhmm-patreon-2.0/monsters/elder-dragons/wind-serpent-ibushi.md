@@ -224,4 +224,11 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** —
 - **Armor effect:** Resonance. When you attune to this armor for the first time, choose one willing creature which you are familiar with. While attuned to this armor, you and the willing creature are linked as if by the telepathy spell. You cannot link to a new creature until the willing creature dies. The link is also lost if the material is removed from the armor or trinket.
-- **Weapon effect:** Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. Hunting Horn. Melodies duration is increased by 1 minute. Insect Glaive. Kinsects Essence duration is increased by 1 minute. Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. Tonfas. Earth Style. weapon damage die is increased to a d10.
+- **Weapon effect:** Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: 
+    - Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. 
+    - Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. 
+    - Hunting Horn. Melodies duration is increased by 1 minute. 
+    - Insect Glaive. Kinsects Essence duration is increased by 1 minute. 
+    - Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. 
+    - Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. 
+    - Tonfas. Earth Style. weapon damage die is increased to a d10.

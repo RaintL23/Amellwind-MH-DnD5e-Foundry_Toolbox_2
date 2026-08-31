@@ -302,4 +302,11 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** —
 - **Armor effect:** You are immune to force damage and resistant to necrotic damage while you wear this armor.
-- **Weapon effect:** Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. Hunting Horn. Melodies duration is increased by 1 minute. Insect Glaive. Kinsects Essence duration is increased by 1 minute. Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. Tonfas. Earth Style. weapon damage die is increased to a d10.
+- **Weapon effect:** Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: 
+    - Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. 
+    - Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. 
+    - Hunting Horn. Melodies duration is increased by 1 minute. 
+    - Insect Glaive. Kinsects Essence duration is increased by 1 minute. 
+    - Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. 
+    - Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. 
+    - Tonfas. Earth Style. weapon damage die is increased to a d10.

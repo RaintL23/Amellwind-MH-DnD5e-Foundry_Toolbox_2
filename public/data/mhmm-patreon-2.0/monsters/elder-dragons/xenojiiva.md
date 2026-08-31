@@ -214,7 +214,14 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 18-19
 - **Capture:** —
 - **Armor effect:** While you're wearing this armor, you can speak its command word as an action to gain the effect of the etherealness spell, which lasts for 10 minutes or until you remove the armor or use an action to speak the command word again. This property of the armor can't be used again until the next dawn.
-- **Weapon effect:** Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. Hunting Horn. Melodies duration is increased by 1 minute. Insect Glaive. Kinsects Essence duration is increased by 1 minute. Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. Tonfas. Earth Style. weapon damage die is increased to a d10.
+- **Weapon effect:** Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: 
+    - Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. 
+    - Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. 
+    - Hunting Horn. Melodies duration is increased by 1 minute. 
+    - Insect Glaive. Kinsects Essence duration is increased by 1 minute. 
+    - Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. 
+    - Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. 
+    - Tonfas. Earth Style. weapon damage die is increased to a d10.
 
 ### Xeno'jiiva Gem
 

@@ -196,7 +196,11 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 15-16
 - **Capture:** —
 - **Armor effect:** Shield+. While you are attuned to this armor and you use a reaction that would increase your AC, you gain an additional +2 bonus to your AC until the start of your next turn.
-- **Weapon effect:** Shield Upgrade. Depending on which weapon this material is placed into, it gains the following benefits: Charge Blade. When you use your Elemental Guard, you increase your AC by half your proficiency bonus until the start of your next turn Gunlance. The Guard Reload weapon property now reloads all expended shells. Lance. The first time you use your Powerguard in a round, it does not use up your reaction. Sword & Shield. When a creature adjacent makes a Dexterity saving throw, you can use your reaction to grant that creature a bonus to its save equal to your shield's AC.
+- **Weapon effect:** Shield Upgrade. Depending on which weapon this material is placed into, it gains the following benefits: 
+    - Charge Blade. When you use your Elemental Guard, you increase your AC by half your proficiency bonus until the start of your next turn 
+    - Gunlance. The Guard Reload weapon property now reloads all expended shells. 
+    - Lance. The first time you use your Powerguard in a round, it does not use up your reaction. 
+    - Sword & Shield. When a creature adjacent makes a Dexterity saving throw, you can use your reaction to grant that creature a bonus to its save equal to your shield's AC.
 
 ### Primordial Tail
 

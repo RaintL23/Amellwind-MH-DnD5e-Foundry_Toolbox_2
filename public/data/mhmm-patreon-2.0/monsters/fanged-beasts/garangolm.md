@@ -141,7 +141,9 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 1-2
 - **Capture:** 1-2
-- **Armor effect:** When you place this material into your armor, choose one of the options below: Your armor looks like it’s made of rocks and natural materials but also has the appearance of being far heavier than it actually is. Your armor has water flowing over it with embers orbiting your arms. There is a slight aura of steam coming off of you.
+- **Armor effect:** When you place this material into your armor, choose one of the options below: 
+    - Your armor looks like it’s made of rocks and natural materials but also has the appearance of being far heavier than it actually is. 
+    - Your armor has water flowing over it with embers orbiting your arms. There is a slight aura of steam coming off of you.
 - **Weapon effect:** When you finish a short or long rest you choose a damage type. This damage type can be either cold or fire damage. A creature hit by this weapon takes an extra 1d8 of the chosen damage type. If you are using a weapon with a main hand and offhand, instead of choosing a damage type your main hand deals cold damage and your offhand deals fire damage.
 
 ### Garangolm Shard

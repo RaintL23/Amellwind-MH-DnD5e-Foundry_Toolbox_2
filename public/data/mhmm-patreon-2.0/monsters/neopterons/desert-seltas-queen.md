@@ -203,4 +203,6 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** W
 - **Carve:** 20
 - **Capture:** 20
-- **Weapon effect:** (Bowgun only) Depending on which weapon this material is placed into, it gains the following benefits: Light Bowgun. This weapon can now use the heavy bowgun's slicing ammo and wyvern ammo. Heavy Bowgun This weapon can now use the light bowgun's armor ammo and demon ammo.
+- **Weapon effect:** (Bowgun only) Depending on which weapon this material is placed into, it gains the following benefits: 
+    - Light Bowgun. This weapon can now use the heavy bowgun's slicing ammo and wyvern ammo.
+    - Heavy Bowgun. This weapon can now use the light bowgun's armor ammo and demon ammo.

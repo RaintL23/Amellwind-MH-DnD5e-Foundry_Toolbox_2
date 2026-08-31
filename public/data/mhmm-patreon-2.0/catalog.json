@@ -14922,7 +14922,7 @@
             "W"
           ],
           "armorEffect": "You are immune to force damage and resistant to necrotic damage while you wear this armor.",
-          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. Hunting Horn. Melodies duration is increased by 1 minute. Insect Glaive. Kinsects Essence duration is increased by 1 minute. Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. Tonfas. Earth Style. weapon damage die is increased to a d10.",
+          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits:\n• Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds.\n• Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used.\n• Hunting Horn. Melodies duration is increased by 1 minute.\n• Insect Glaive. Kinsects Essence duration is increased by 1 minute.\n• Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used.\n• Switch Axe. You regain one extra expended charge when you hit a creature in axe mode.\n• Tonfas. Earth Style. weapon damage die is increased to a d10.",
           "otherEffect": null
         }
       ],
@@ -21415,7 +21415,7 @@
             "W"
           ],
           "armorEffect": "You are immune to fire damage while you wear this armor.",
-          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. Great Sword Guard grants a +4 AC bonus for the duration of the turn it is used. Hunting Horn. Melodies duration is increased by 1 minute. Insect Glaive. Kinsects Essence duration is increased by 1 minute. Lance Powerguard grants a +4 AC bonus for the duration of the turn it is used. Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. Tonfas. Earth Style. weapon damage die is increased to a d10.",
+          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits:\n• Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds.\n• Great Sword Guard grants a +4 AC bonus for the duration of the turn it is used.\n• Hunting Horn. Melodies duration is increased by 1 minute.\n• Insect Glaive. Kinsects Essence duration is increased by 1 minute.\n• Lance Powerguard grants a +4 AC bonus for the duration of the turn it is used.\n• Switch Axe. You regain one extra expended charge when you hit a creature in axe mode.\n• Tonfas. Earth Style. weapon damage die is increased to a d10.",
           "otherEffect": null
         }
       ],
@@ -23954,7 +23954,7 @@
             "W"
           ],
           "armorEffect": "Shield+. While you are attuned to this armor and you use a reaction that would increase your AC, you gain an additional +2 bonus to your AC until the start of your next turn.",
-          "weaponEffect": "Shield Upgrade. Depending on which weapon this material is placed into, it gains the following benefits: Charge Blade. When you use your Elemental Guard, you increase your AC by half your proficiency bonus until the start of your next turn Gunlance. The Guard Reload weapon property now reloads all expended shells. Lance. The first time you use your Powerguard in a round, it does not use up your reaction. Sword & Shield. When a creature adjacent makes a Dexterity saving throw, you can use your reaction to grant that creature a bonus to its save equal to your shield's AC.",
+          "weaponEffect": "Shield Upgrade. Depending on which weapon this material is placed into, it gains the following benefits:\n• Charge Blade. When you use your Elemental Guard, you increase your AC by half your proficiency bonus until the start of your next turn.\n• Gunlance. The Guard Reload weapon property now reloads all expended shells.\n• Lance. The first time you use your Powerguard in a round, it does not use up your reaction.\n• Sword & Shield. When a creature adjacent makes a Dexterity saving throw, you can use your reaction to grant that creature a bonus to its save equal to your shield's AC.",
           "otherEffect": null
         },
         {
@@ -29867,7 +29867,7 @@
             "W"
           ],
           "armorEffect": "Resonance. When you attune to this armor for the first time, choose one willing creature which you are familiar with. While attuned to this armor, you and the willing creature are linked as if by the telepathy spell. You cannot link to a new creature until the willing creature dies. The link is also lost if the material is removed from the armor or trinket.",
-          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. Hunting Horn. Melodies duration is increased by 1 minute. Insect Glaive. Kinsects Essence duration is increased by 1 minute. Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. Tonfas. Earth Style. weapon damage die is increased to a d10.",
+          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits:\n• Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds.\n• Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used.\n• Hunting Horn. Melodies duration is increased by 1 minute.\n• Insect Glaive. Kinsects Essence duration is increased by 1 minute.\n• Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used.\n• Switch Axe. You regain one extra expended charge when you hit a creature in axe mode.\n• Tonfas. Earth Style. weapon damage die is increased to a d10.",
           "otherEffect": null
         }
       ],
@@ -30160,7 +30160,7 @@
             "W"
           ],
           "armorEffect": "While you're wearing this armor, you can speak its command word as an action to gain the effect of the etherealness spell, which lasts for 10 minutes or until you remove the armor or use an action to speak the command word again. This property of the armor can't be used again until the next dawn.",
-          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits: Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds. Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used. Hunting Horn. Melodies duration is increased by 1 minute. Insect Glaive. Kinsects Essence duration is increased by 1 minute. Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used. Switch Axe. You regain one extra expended charge when you hit a creature in axe mode. Tonfas. Earth Style. weapon damage die is increased to a d10.",
+          "weaponEffect": "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits:\n• Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds.\n• Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used.\n• Hunting Horn. Melodies duration is increased by 1 minute.\n• Insect Glaive. Kinsects Essence duration is increased by 1 minute.\n• Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used.\n• Switch Axe. You regain one extra expended charge when you hit a creature in axe mode.\n• Tonfas. Earth Style. weapon damage die is increased to a d10.",
           "otherEffect": null
         },
         {
@@ -47481,7 +47481,7 @@
             "W"
           ],
           "armorEffect": "You have resistance to fire damage while you wear this armor.",
-          "weaponEffect": "Your Strength score is 19 while you wear these gauntlets. They have no effect on you if your Strength is already 19 or higher without them.",
+          "weaponEffect": "Your Strength score is 19 while you are attuned to this weapon. They have no effect on you if your Strength is already 19 or higher without them.",
           "otherEffect": null
         }
       ],
@@ -65730,7 +65730,7 @@
             "W"
           ],
           "armorEffect": "Item Prolonger+. Whenever you use a consumable item that has a duration, its duration is increased by an additional 12 seconds.",
-          "weaponEffect": "Depending on which weapon this material is placed into, it gains the following benefits: Bow. When you hit a creature with a poison coated arrow, you can inflict iceblight instead of the poisoned condition. Dual Repeaters. Your cryo ammo now inflicts iceblight instead of waterblight when empowered. Heavy Bowgun. When you hit a creature with your poison ammo, you can inflict waterblight instead of the poisoned condition. Light Bowgun. When you hit a creature with water ammo, its movement speed is reduced by 5 feet until the end of its next turn.",
+          "weaponEffect": "Depending on which weapon this material is placed into, it gains the following benefits:\n• Bow. When you hit a creature with a poison coated arrow, you can inflict iceblight instead of the poisoned condition.\n• Dual Repeaters. Your cryo ammo now inflicts iceblight instead of waterblight when empowered.\n• Heavy Bowgun. When you hit a creature with your poison ammo, you can inflict waterblight instead of the poisoned condition.\n• Light Bowgun. When you hit a creature with water ammo, its movement speed is reduced by 5 feet until the end of its next turn.",
           "otherEffect": null
         },
         {
@@ -69224,7 +69224,7 @@
             "W"
           ],
           "armorEffect": null,
-          "weaponEffect": "(Bowgun only) Depending on which weapon this material is placed into, it gains the following benefits: Light Bowgun. This weapon can now use the heavy bowgun's slicing ammo and wyvern ammo. Heavy Bowgun This weapon can now use the light bowgun's armor ammo and demon ammo.",
+          "weaponEffect": "(Bowgun only) Depending on which weapon this material is placed into, it gains the following benefits:\n• Light Bowgun. This weapon can now use the heavy bowgun's slicing ammo and wyvern ammo.\n• Heavy Bowgun. This weapon can now use the light bowgun's armor ammo and demon ammo.",
           "otherEffect": null
         }
       ],
