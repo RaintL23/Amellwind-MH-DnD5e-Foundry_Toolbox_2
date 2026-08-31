@@ -9,6 +9,10 @@ const EXAMPLES = {
   uncommon:
     "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-uncommon.json",
   rare: "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-rare.json",
+  veryRare:
+    "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-very-rare.json",
+  legendary:
+    "public/data/foundry-jsons-example/weapons/magus-staff/fvtt-Item-magus-staff-legendary.json",
 } as const;
 
 describe("Magus Staff Weapon Forge catalog", () => {
@@ -243,12 +247,14 @@ describe("Magus Staff Weapon Forge catalog", () => {
 
   it("keeps Foundry examples in sync with the exporter", () => {
     const rows: Array<{
-      rarity: "Common" | "Uncommon" | "Rare";
+      rarity: "Common" | "Uncommon" | "Rare" | "Very Rare" | "Legendary";
       path: string;
     }> = [
       { rarity: "Common", path: EXAMPLES.common },
       { rarity: "Uncommon", path: EXAMPLES.uncommon },
       { rarity: "Rare", path: EXAMPLES.rare },
+      { rarity: "Very Rare", path: EXAMPLES.veryRare },
+      { rarity: "Legendary", path: EXAMPLES.legendary },
     ];
 
     for (const { rarity, path } of rows) {

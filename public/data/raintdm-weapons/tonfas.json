@@ -141,7 +141,7 @@
       {
         "id": "89062d89-b55e-4403-ac92-d46af45b496e",
         "name": "Spirit Gauge Upgrade IV",
-        "description": "You can store a maximum of 5 charges.",
+        "description": "You can store a maximum of 6 charges.",
         "upgradesFromId": "525f9803-9518-4e4e-8392-8d7acc4c7629"
       },
       {

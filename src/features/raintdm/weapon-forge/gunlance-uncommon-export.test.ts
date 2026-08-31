@@ -192,6 +192,6 @@ describe("Gunlance uncommon Foundry export", () => {
       "public/data/foundry-jsons-example/weapons-resources/gunlance/gunlance-item-macro.js",
       "utf8",
     );
-    expect(command).toBe(companion);
+    expect(command.replace(/\r\n/g, "\n")).toBe(companion.replace(/\r\n/g, "\n"));
   });
 });

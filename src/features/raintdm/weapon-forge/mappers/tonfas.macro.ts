@@ -58,7 +58,13 @@ const isSpiritBurst =
 
 const isTonfaStyles =
   actId.includes("tonfa-styles")
-  || actName.includes("tonfa styles");
+  || actName.includes("tonfa styles")
+  || actId.includes("style-master")
+  || actName.includes("style master");
+
+const isFastSpiritCharge =
+  actId.includes("fast-spirit")
+  || actName.includes("fast spirit");
 
 const itemDoc = item ?? workflow?.item ?? args?.[0]?.item ?? null;
 const actorDoc = actor ?? workflow?.actor ?? itemDoc?.actor ?? null;
@@ -95,6 +101,11 @@ if (macroPass.includes("pretargeting") || macroPass.includes("preitemroll")) {
 }
 
 if (!macroPass.includes("postactiveeffects")) return;
+
+if (isFastSpiritCharge) {
+  await recoverSpiritCharges(2);
+  return;
+}
 
 if (isAttack && !isSpiritBurst) {
   const hitCount = Number(

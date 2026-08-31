@@ -95,6 +95,17 @@ export const SWITCH_AXE_PHIAL_FEATS: Record<string, PhialFeatDef> = {
         "CON save (DC 8 + PB + STR) or Poisoned until the end of its next turn.",
     },
   },
+  "dragon phial": {
+    name: "Dragon Phial",
+    phialKey: "dragon",
+    img: "icons/magic/unholy/orb-holding-green.webp",
+    bodyHtml:
+      "<p><strong>Dragon Phial</strong></p><p>Acts as an Element Phial but deals an extra [[/r 1d10]] Necrotic damage when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
+    chatHtml:
+      "<p><strong>Dragon Phial</strong></p><p>Extra [[/r 1d10]] Necrotic on Phial Discharge.</p>",
+    damageFormula: "1d10",
+    damageType: "necrotic",
+  },
 };
 
 function buildInstallActivity(def: PhialFeatDef): Record<string, unknown> {

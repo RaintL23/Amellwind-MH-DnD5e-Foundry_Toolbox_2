@@ -39,6 +39,7 @@ import { applyMagusStaffOverlay } from "./weapon-forge-magus-staff.export";
 import { buildWeaponMelodyFeatItems } from "./weapon-forge-melody.export";
 import { buildWeaponPhialFeatItems } from "./weapon-forge-phial.export";
 import { buildWeaponMagazineConsumableItems } from "./weapon-forge-magazine.export";
+import { buildWeaponCoatingConsumableItems } from "./weapon-forge-coating.export";
 import { applyChargeBladeOverlay } from "./weapon-forge-charge-blade.export";
 import { applySwitchAxeOverlay } from "./weapon-forge-switch-axe.export";
 import { applyTonfasOverlay } from "./weapon-forge-tonfas.export";
@@ -83,6 +84,10 @@ export function buildWeaponFoundryResourceGroups(
   const magazines = buildWeaponMagazineConsumableItems(weapon, rarityIndex);
   if (magazines.length > 0) {
     groups.push({ id: "magazines", label: "Magazines", items: magazines });
+  }
+  const coatings = buildWeaponCoatingConsumableItems(weapon, rarityIndex);
+  if (coatings.length > 0) {
+    groups.push({ id: "coatings", label: "Coatings", items: coatings });
   }
   return groups;
 }

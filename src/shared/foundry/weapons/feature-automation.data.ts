@@ -1200,6 +1200,14 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Does not consume Reaction — trigger is optional spend when falling.",
   ),
+  "wyvern ride": saveAction({
+    activation: "action",
+    saveAbility: "str",
+    consumeItemUses: true,
+    consumeAmount: "1",
+    chatFlavor:
+      "While Grappling a Tethered creature at least one size larger, force a STR save vs Silkbind DC. On a failure, choose Forced Movement, Directed Attack, or Ramming Maneuver (see feature text).",
+  }),
 
   // ── Tonfas (Spirit Charges + Sky / Earth styles) ────────────────────
   "tonfa styles": spec("mode_switch", {
@@ -1236,6 +1244,11 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     chatFlavor:
       "Expend N Spirit Charges for +Nd8 Force damage on that hit.",
   }),
+  "spirit burst upgrade iii": spec("upgrade_scaler", {
+    damageFormula: "1d10",
+    chatFlavor:
+      "Expend N Spirit Charges for +Nd10 Force damage on that hit. Apex Spirit: spending 5 charges in one burst may Incapacitate the target (see feature text).",
+  }),
   "spirit gauge upgrade i": scaleUses("3"),
   "sky step": spec(
     "action_ability",
@@ -1254,6 +1267,40 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activityImg: "icons/skills/movement/arrow-upward-yellow.webp",
     },
     "Requires Sky Style (Tonfa Styles toggle). Movement is manual.",
+  ),
+  "fast spirit charge": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      consumeItemUses: false,
+      activationCondition: "When you roll Initiative",
+      chatFlavor:
+        "Generate 2 Spirit Charges (Item Macro adjusts the Spirit Gauge pool).",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/magic/fire/flame-burning-hand-orange.webp",
+    },
+    "Use once when combat starts. Item Macro recovers 2 charges.",
+  ),
+  "sky dash": spec(
+    "action_ability",
+    {
+      activation: "reaction",
+      activityType: "utility",
+      consumeItemUses: true,
+      consumeAmount: "1",
+      activationCondition:
+        "While in Sky Style, when an enemy misses you with a melee attack",
+      chatFlavor:
+        "Expend 1 Spirit Charge: move up to 15 ft without provoking Opportunity Attacks; gain fly speed for this movement only.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/magic/air/wind-stream-blue-gray.webp",
+    },
+    "Requires Sky Style. Movement is manual; fall if you end in the air.",
   ),
   "earth impact": spec(
     "action_ability",

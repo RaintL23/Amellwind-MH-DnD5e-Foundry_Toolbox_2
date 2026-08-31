@@ -48,7 +48,10 @@ export function resolveTonfaSpiritMax(
   weapon: CustomWeapon,
   rarityIndex: number,
 ): number {
-  if (hasFeature(weapon, rarityIndex, /^spirit\s*gauge\s*upgrade\s*(iii|iv|3|4)$/i)) {
+  if (hasFeature(weapon, rarityIndex, /^spirit\s*gauge\s*upgrade\s*(iv|4)$/i)) {
+    return 6;
+  }
+  if (hasFeature(weapon, rarityIndex, /^spirit\s*gauge\s*upgrade\s*(iii|3)$/i)) {
     return 5;
   }
   if (hasFeature(weapon, rarityIndex, /^spirit\s*gauge\s*upgrade\s*ii$/i)) {
@@ -113,6 +116,7 @@ function patchSpiritBurstActivities(
   if (!activities) return;
 
   const max = resolveTonfaSpiritMax(weapon, rarityIndex);
+  const burstDie = resolveSpiritBurstDie(weapon, rarityIndex);
 
   for (const activity of Object.values(activities)) {
     if (!activity) continue;
@@ -140,6 +144,76 @@ function patchSpiritBurstActivities(
     if (activityId) {
       wireTriggeredFromAttacks(item, activityId, "hits > 0");
     }
+  }
+
+  ensureSpiritBurstButtonsUpToMax(activities, max, burstDie, magical);
+}
+
+function parseDieDenomination(die: string): number {
+  const match = /^1d(\d+)$/i.exec(die.trim());
+  return match ? Number.parseInt(match[1] ?? "4", 10) : 4;
+}
+
+function ensureSpiritBurstButtonsUpToMax(
+  activities: Record<string, Record<string, unknown>>,
+  max: number,
+  burstDie: string,
+  magical: boolean,
+): void {
+  if (max <= 4) return;
+
+  const template = Object.values(activities).find((activity) => {
+    if (!activity) return false;
+    const name = String(activity.name ?? "");
+    return name === "Spirit Burst ×4" || name === "Spirit Burst ×1";
+  });
+  if (!template) return;
+
+  const denomination = parseDieDenomination(burstDie);
+
+  for (let n = 5; n <= max; n++) {
+    const existing = Object.values(activities).some(
+      (activity) => String(activity?.name ?? "") === `Spirit Burst ×${n}`,
+    );
+    if (existing) continue;
+
+    const id = foundryIdFromSeed(`act-spirit-burst-${n}-tonfas`);
+    const clone = structuredClone(template) as Record<string, unknown>;
+    clone._id = id;
+    clone.name = `Spirit Burst ×${n}`;
+    clone.sort = 401000 + n * 1000;
+
+    const consumption = clone.consumption as
+      | {
+          scaling?: { max?: string };
+          targets?: { value?: string }[];
+        }
+      | undefined;
+    if (consumption?.scaling) consumption.scaling.max = String(max);
+    if (consumption?.targets?.[0]) consumption.targets[0].value = String(n);
+
+    const midi =
+      (clone.midiProperties as Record<string, unknown> | undefined) ?? {};
+    clone.midiProperties = {
+      ...midi,
+      identifier: `spirit-burst-${n}`,
+      magicEffect: magical,
+      magicDamage: magical,
+    };
+
+    clone.description = {
+      chatFlavor: `Expend ${n} Spirit Charges for +${n}d${denomination} Force damage on that hit. Consumes ${n} (+${n}d${denomination}).`,
+    };
+
+    const damage = clone.damage as
+      | { parts?: { number?: number; denomination?: number }[] }
+      | undefined;
+    if (damage?.parts?.[0]) {
+      damage.parts[0].number = n;
+      damage.parts[0].denomination = denomination;
+    }
+
+    activities[id] = clone;
   }
 }
 
@@ -200,6 +274,7 @@ function ensureStyleEffects(item: FoundryItem): {
 function patchTonfaStylesActivity(
   item: FoundryItem,
   styleIds: { skyId: string; earthId: string },
+  isStyleMaster = false,
 ): void {
   const activities = activitiesOf(item);
   if (!activities) return;
@@ -207,14 +282,24 @@ function patchTonfaStylesActivity(
   for (const activity of Object.values(activities)) {
     if (!activity) continue;
     const { name, id } = activityMeta(activity);
-    if (!id.includes("tonfa-styles") && !name.includes("tonfa styles")) {
+    if (
+      !id.includes("tonfa-styles") &&
+      !name.includes("tonfa styles") &&
+      !id.includes("style-master") &&
+      !name.includes("style master")
+    ) {
       continue;
     }
 
-    activity.name = "Tonfa Styles";
+    if (name.includes("style master")) {
+      activity.name = "Style Master";
+    } else {
+      activity.name = "Tonfa Styles";
+    }
     activity.description = {
-      chatFlavor:
-        "Toggle Sky Style ↔ Earth Style. Item Macro updates style indicators on the actor.",
+      chatFlavor: isStyleMaster
+        ? "Toggle Sky Style ↔ Earth Style once per turn without a Bonus Action (Style Master); otherwise use Bonus Action."
+        : "Toggle Sky Style ↔ Earth Style. Item Macro updates style indicators on the actor.",
     };
     activity.effects = [{ _id: styleIds.skyId }, { _id: styleIds.earthId }];
     activity.midiProperties = defaultMidiProperties({
@@ -293,7 +378,11 @@ export function applyTonfasOverlay(
   patchSpiritBurstActivities(item, weapon, rarityIndex, magical);
 
   const styleIds = ensureStyleEffects(item);
-  patchTonfaStylesActivity(item, styleIds);
+  patchTonfaStylesActivity(
+    item,
+    styleIds,
+    hasFeature(weapon, rarityIndex, /^style\s*master$/i),
+  );
   patchEarthImpactActivity(item, magical);
 
   const spiritMax = resolveTonfaSpiritMax(weapon, rarityIndex);
@@ -316,6 +405,14 @@ export function applyTonfasOverlay(
         burstDie,
         hasEarthImpact: hasFeature(weapon, rarityIndex, /^earth\s*impact$/i),
         hasSkyStep: hasFeature(weapon, rarityIndex, /^sky\s*step$/i),
+        hasFastSpiritCharge: hasFeature(
+          weapon,
+          rarityIndex,
+          /^fast\s*spirit\s*charge$/i,
+        ),
+        hasSkyDash: hasFeature(weapon, rarityIndex, /^sky\s*dash$/i),
+        hasStyleMaster: hasFeature(weapon, rarityIndex, /^style\s*master$/i),
+        hasApexSpirit: hasFeature(weapon, rarityIndex, /^apex\s*spirit$/i),
       },
     },
   };

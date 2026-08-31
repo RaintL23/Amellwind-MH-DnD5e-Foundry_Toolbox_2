@@ -73,4 +73,61 @@ describe("Tonfas Foundry export", () => {
     expect(byName["Earth Impact"]).toBeDefined();
     expect(byName["Sky Step"]).toBeDefined();
   });
+
+  it("very rare: +2 bonus, max 5 spirit, fast spirit charge, sky dash", () => {
+    const weapon = loadTonfas();
+    const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Very Rare");
+    const item = buildWeaponFoundryItem(weapon, idx);
+    const system = item.system as Record<string, unknown>;
+    const activities = system.activities as Record<
+      string,
+      Record<string, unknown>
+    >;
+    const byName = Object.fromEntries(
+      Object.values(activities).map((a) => [String(a.name ?? ""), a]),
+    );
+
+    expect(item.name).toBe("Tonfas (Very Rare)");
+    expect(system.rarity).toBe("veryRare");
+    expect(system.magicalBonus).toBe(2);
+    expect(system.uses).toMatchObject({ spent: 5, max: "5" });
+    expect(byName["Fast Spirit Charge"]).toBeDefined();
+    expect(byName["Sky Dash"]).toBeDefined();
+    expect(byName["Spirit Burst ×5"]).toBeDefined();
+  });
+
+  it("legendary: +3 bonus, max 6 spirit, style master", () => {
+    const weapon = loadTonfas();
+    const idx = weapon.rarityRows.findIndex((r) => r.rarity === "Legendary");
+    const item = buildWeaponFoundryItem(weapon, idx);
+    const system = item.system as Record<string, unknown>;
+    const activities = system.activities as Record<
+      string,
+      Record<string, unknown>
+    >;
+    const byName = Object.fromEntries(
+      Object.values(activities).map((a) => [String(a.name ?? ""), a]),
+    );
+    const flags = item.flags as {
+      world?: {
+        tonfas?: {
+          spiritMax?: number;
+          burstDie?: string;
+          hasStyleMaster?: boolean;
+          hasApexSpirit?: boolean;
+        };
+      };
+    };
+
+    expect(item.name).toBe("Tonfas (Legendary)");
+    expect(system.rarity).toBe("legendary");
+    expect(system.magicalBonus).toBe(3);
+    expect(system.uses).toMatchObject({ spent: 6, max: "6" });
+    expect(byName["Spirit Burst ×6"]).toBeDefined();
+    expect(byName["Style Master"]).toBeDefined();
+    expect(flags.world?.tonfas?.spiritMax).toBe(6);
+    expect(flags.world?.tonfas?.burstDie).toBe("1d10");
+    expect(flags.world?.tonfas?.hasStyleMaster).toBe(true);
+    expect(flags.world?.tonfas?.hasApexSpirit).toBe(true);
+  });
 });
