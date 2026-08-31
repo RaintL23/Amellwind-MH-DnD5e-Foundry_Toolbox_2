@@ -9,12 +9,18 @@ import { slugifyKebab } from "@/shared/utils/slugify.utils";
 import { inferInlineDamageDefenseRarity } from "./inline-defense-rarity.utils";
 import { inferInlineFlatDamageReductionRarity } from "./inline-damage-reduction-rarity.utils";
 import { inferInlineExtraDamageRarity } from "./inline-extra-damage-rarity.utils";
+import { inferRarityFromAbilityScoreIncreaseTags } from "./inline-ability-score-increase-rarity.utils";
 import { inferRarityFromAcBonus } from "./inline-ac-bonus-rarity.utils";
 import { inferRarityFromAttackAdvantageTags } from "./inline-attack-advantage-rarity.utils";
 import { inferRarityFromAttackRangeTags } from "./inline-attack-range-rarity.utils";
 import { inferRarityFromAcceleratedRestTags } from "./inline-accelerated-rest-rarity.utils";
 import { inferRarityFromClassResourceRecoveryTags } from "./inline-class-resource-rarity.utils";
-import { inferRarityFromConditionDefenseTags, inferRarityFromConditionImmunityTags } from "./inline-condition-rarity.utils";
+import { inferRarityFromBaseAc } from "./inline-base-ac-rarity.utils";
+import { inferRarityFromCosmeticTags } from "./inline-cosmetic-rarity.utils";
+import { inferRarityFromExtraLimbsTags } from "./inline-extra-limbs-rarity.utils";
+import { inferRarityFromProficiencyGrantTags } from "./inline-proficiency-rarity.utils";
+import { inferRarityFromPotionEffectTags } from "./inline-potion-effect-rarity.utils";
+import { inferRarityFromConditionDefenseTags, inferRarityFromConditionImmunityTags, inferRarityFromAgainstDamageSaveTags } from "./inline-condition-rarity.utils";
 import { inferRarityFromEndDotTags } from "./inline-end-dot-rarity.utils";
 import { inferRarityFromGatherResourceTags } from "./inline-gather-rarity.utils";
 import { inferRarityFromHealOtherTags } from "./inline-heal-other-rarity.utils";
@@ -29,6 +35,11 @@ import { inferRarityFromSkillUtilityTags } from "./inline-skill-rarity.utils";
 import { inferRarityFromSpellBuff } from "./inline-spell-buff-rarity.utils";
 import { inferRarityFromSpellMechanicTags } from "./inline-spell-rarity.utils";
 import { inferRarityFromSpellcastingFocusTags } from "./inline-spellcasting-focus-rarity.utils";
+import { inferRarityFromTemperatureToleranceTags, inferRarityFromConditionalFlavorTags } from "./inline-temperature-rarity.utils";
+import { highestSpecialEffectRarity } from "./inline-special-effect-rarity.utils";
+import { highestUtilityEffectRarity } from "./inline-utility-effect-rarity.utils";
+import { inferRarityFromHealingTags } from "./inline-healing-rarity.utils";
+import { inferRarityFromSpecialSenseTags } from "./inline-sense-rarity.utils";
 import { lookupDiscoveredEffectRarity } from "../data/discovered-effect-rarity.data";
 
 export interface MaterialEffectNameIndex {
@@ -71,6 +82,65 @@ export function extractLeadingMaterialEffectName(text: string): string | null {
   if ((name.match(/,/g) ?? []).length >= 2) return null;
 
   return name;
+}
+
+function higherMaterialEffectRarity(
+  a: ResourceRarity,
+  b: ResourceRarity,
+): ResourceRarity {
+  return MATERIAL_EFFECT_RARITIES.indexOf(a) >= MATERIAL_EFFECT_RARITIES.indexOf(b)
+    ? a
+    : b;
+}
+
+/** Best rarity from all tag-driven inline inferencers (multi-effect texts use the highest). */
+function highestTagInferredRarity(
+  text: string,
+  effectTags: string[],
+): ResourceRarity | null {
+  const candidates: (ResourceRarity | null)[] = [
+    inferRarityFromCosmeticTags(effectTags),
+    inferRarityFromSpellMechanicTags(effectTags),
+    inferRarityFromSpellcastingFocusTags(effectTags),
+    inferRarityFromSpellBuff(text, effectTags),
+    inferRarityFromAcBonus(text, effectTags),
+    inferRarityFromBaseAc(text, effectTags),
+    inferRarityFromPotionEffectTags(text, effectTags),
+    inferRarityFromConditionDefenseTags(effectTags),
+    inferRarityFromAgainstDamageSaveTags(effectTags),
+    inferRarityFromConditionImmunityTags(effectTags),
+    inferRarityFromEndDotTags(effectTags),
+    inferRarityFromHealOtherTags(effectTags),
+    inferRarityFromInitiativeTags(effectTags),
+    inferRarityFromSkillUtilityTags(effectTags),
+    inferRarityFromProficiencyGrantTags(effectTags),
+    inferRarityFromMithralArmorTags(effectTags),
+    inferRarityFromRoll20UtilityTags(effectTags),
+    inferRarityFromReactionAttackTags(effectTags),
+    inferRarityFromExtraLimbsTags(effectTags),
+    inferRarityFromHoldBreathUnderwaterTags(effectTags),
+    inferRarityFromAcceleratedRestTags(effectTags),
+    inferRarityFromGatherResourceTags(effectTags),
+    inferRarityFromClassResourceRecoveryTags(effectTags),
+    inferRarityFromAttackRangeTags(effectTags),
+    inferRarityFromAttackAdvantageTags(effectTags),
+    inferRarityFromMovementTags(effectTags),
+    inferRarityFromLightDarknessTags(effectTags),
+    inferRarityFromTemperatureToleranceTags(text, effectTags),
+    inferRarityFromConditionalFlavorTags(effectTags),
+    inferRarityFromAbilityScoreIncreaseTags(text, effectTags),
+    inferRarityFromHealingTags(effectTags),
+    inferRarityFromSpecialSenseTags(text, effectTags),
+    highestSpecialEffectRarity(text, effectTags),
+    highestUtilityEffectRarity(effectTags),
+  ];
+
+  let best: ResourceRarity | null = null;
+  for (const rarity of candidates) {
+    if (!rarity) continue;
+    best = best ? higherMaterialEffectRarity(best, rarity) : rarity;
+  }
+  return best;
 }
 
 function isDiscoveredEffect(effect: MaterialEffect): boolean {
@@ -422,74 +492,9 @@ export function getMaterialEffectTierForText(
     );
   }
 
-  // Only when still Unknown: spell / cantrip / spell-slot tags from the rune side.
-  const spellRarity = inferRarityFromSpellMechanicTags(effectTags);
-  if (spellRarity) return spellRarity;
-
-  const spellcastingFocusRarity =
-    inferRarityFromSpellcastingFocusTags(effectTags);
-  if (spellcastingFocusRarity) return spellcastingFocusRarity;
-
-  const spellBuffRarity = inferRarityFromSpellBuff(text, effectTags);
-  if (spellBuffRarity) return spellBuffRarity;
-
-  const acBonusRarity = inferRarityFromAcBonus(text, effectTags);
-  if (acBonusRarity) return acBonusRarity;
-
-  const conditionDefenseRarity =
-    inferRarityFromConditionDefenseTags(effectTags);
-  if (conditionDefenseRarity) return conditionDefenseRarity;
-
-  const conditionImmunityRarity =
-    inferRarityFromConditionImmunityTags(effectTags);
-  if (conditionImmunityRarity) return conditionImmunityRarity;
-
-  const endDotRarity = inferRarityFromEndDotTags(effectTags);
-  if (endDotRarity) return endDotRarity;
-
-  const healOtherRarity = inferRarityFromHealOtherTags(effectTags);
-  if (healOtherRarity) return healOtherRarity;
-
-  const initiativeRarity = inferRarityFromInitiativeTags(effectTags);
-  if (initiativeRarity) return initiativeRarity;
-
-  const skillUtilityRarity = inferRarityFromSkillUtilityTags(effectTags);
-  if (skillUtilityRarity) return skillUtilityRarity;
-
-  const mithralRarity = inferRarityFromMithralArmorTags(effectTags);
-  if (mithralRarity) return mithralRarity;
-
-  const roll20UtilityRarity = inferRarityFromRoll20UtilityTags(effectTags);
-  if (roll20UtilityRarity) return roll20UtilityRarity;
-
-  const reactionAttackRarity = inferRarityFromReactionAttackTags(effectTags);
-  if (reactionAttackRarity) return reactionAttackRarity;
-
-  const holdBreathRarity = inferRarityFromHoldBreathUnderwaterTags(effectTags);
-  if (holdBreathRarity) return holdBreathRarity;
-
-  const acceleratedRestRarity = inferRarityFromAcceleratedRestTags(effectTags);
-  if (acceleratedRestRarity) return acceleratedRestRarity;
-
-  const gatherRarity = inferRarityFromGatherResourceTags(effectTags);
-  if (gatherRarity) return gatherRarity;
-
-  const classResourceRarity =
-    inferRarityFromClassResourceRecoveryTags(effectTags);
-  if (classResourceRarity) return classResourceRarity;
-
-  const attackRangeRarity = inferRarityFromAttackRangeTags(effectTags);
-  if (attackRangeRarity) return attackRangeRarity;
-
-  const attackAdvantageRarity =
-    inferRarityFromAttackAdvantageTags(effectTags);
-  if (attackAdvantageRarity) return attackAdvantageRarity;
-
-  const movementRarity = inferRarityFromMovementTags(effectTags);
-  if (movementRarity) return movementRarity;
-
-  const lightDarknessRarity = inferRarityFromLightDarknessTags(effectTags);
-  if (lightDarknessRarity) return lightDarknessRarity;
+  // Only when still Unknown: tag-driven inline rarity (highest wins on multi-effect text).
+  const tagRarity = highestTagInferredRarity(text, effectTags);
+  if (tagRarity) return tagRarity;
 
   return UNKNOWN_MATERIAL_EFFECT_TIER;
 }

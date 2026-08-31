@@ -21,6 +21,18 @@ export function inferRarityFromConditionDefenseTags(
   return INLINE_CONDITION_SAVE_ADVANTAGE_RARITY;
 }
 
+/** Infers Common for advantage on saves vs attacks/spells of a damage type. */
+export function inferRarityFromAgainstDamageSaveTags(
+  tags: string[],
+): ResourceRarity | null {
+  const set = new Set(tags);
+  if (!set.has("mechanic:against-damage")) return null;
+  if (!set.has("mechanic:advantage") && !set.has("mechanic:save-bonus")) {
+    return null;
+  }
+  return INLINE_CONDITION_SAVE_ADVANTAGE_RARITY;
+}
+
 /**
  * Infers Uncommon for immunity to a named condition (`condition-*` + `immunity`).
  * Does not cover damage-type immunity alone (no `condition-*` tag).

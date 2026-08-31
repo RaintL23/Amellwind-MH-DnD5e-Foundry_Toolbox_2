@@ -30,6 +30,18 @@ export function parseAcBonusAmount(text: string): number | null {
     amounts.push(parseInt(match[1], 10));
   }
 
+  for (const match of cleaned.matchAll(
+    /(?:increasing|increase)\s+(?:your\s+)?(?:AC|armor class)\s+by\s+\+?\s*(\d+)/gi,
+  )) {
+    amounts.push(parseInt(match[1], 10));
+  }
+
+  for (const match of cleaned.matchAll(
+    /gain a \+\s*(\d+)\s*bonus to (?:their\s+)?(?:AC|armor class)/gi,
+  )) {
+    amounts.push(parseInt(match[1], 10));
+  }
+
   if (amounts.length === 0) return null;
   return Math.max(...amounts);
 }
@@ -43,6 +55,12 @@ export function inferRarityFromAcBonus(
   tags: string[],
 ): ResourceRarity | null {
   if (!tags.includes("mechanic:armor-class")) return null;
+  if (
+    tags.includes("mechanic:degrading-ac") ||
+    tags.includes("mechanic:conditional-ac")
+  ) {
+    return null;
+  }
 
   const amount = parseAcBonusAmount(text);
   if (amount == null || amount < 1) return null;

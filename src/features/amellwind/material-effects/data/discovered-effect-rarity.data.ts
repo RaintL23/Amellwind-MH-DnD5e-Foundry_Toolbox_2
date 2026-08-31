@@ -8,6 +8,30 @@ const DISCOVERED_EFFECT_RARITY_BY_KEY: Record<string, ResourceRarity> = {
   "armor:flexible leathercraft": "Common",
   /** Always-on DoT cleanse at start of turn (Khezu / Gigginox / Red Khezu). */
   "armor:recovery level": "Rare",
+  /** Strong Winds immunity (Legiana / Kut-Ku). */
+  "armor:wind resist": "Common",
+  /** Long-rest exhaustion recovery (Chaotic Gore Magala). */
+  "armor:stamina recovery": "Very Rare",
+  /** Psychoserum duration extension (Bloodbath Diablos). */
+  "armor:psychic": "Uncommon",
+  /** Mineral gather advantage + double yield (Crystalbeard Uragaan). */
+  "armor:crystallography": "Rare",
+  /** Herb die upgrade to hit die (Dreadqueen Rathian). */
+  "armor:pro herbology": "Common",
+  /** Save DC +2 and area consumable share (Dreadqueen Mantle). */
+  "armor:dreadqueen": "Rare",
+  /** Hunting Horn miss-trigger notes (Dalamadur). */
+  "weapon:jingle": "Uncommon",
+  /** Barbarian haste bloodrage (Bloodbath Diablos). */
+  "weapon:slugger": "Uncommon",
+  "armor:trap master": "Uncommon",
+  "armor:trap master+": "Rare",
+
+  /** Max-HP sacrifice for turn-limited damage boost (Gaismagorm Qurio). */
+  "weapon:dereliction": "Rare",
+
+  /** Stacks Rajang Apoplexy + Hardclaw (Furious Rajang). */
+  "weapon:rajang will": "Rare",
 
   "weapon:fastcharge": "Uncommon",
   "weapon:fastcharge+": "Rare",

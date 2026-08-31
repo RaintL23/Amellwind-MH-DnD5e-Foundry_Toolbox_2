@@ -58,6 +58,29 @@ describe("parseInlineDamageDefenses", () => {
     ).toEqual([{ kind: "immunity", types: ["poison"], limited: false }]);
   });
 
+  it("detects MHMM lighting typo as lightning immunity", () => {
+    expect(
+      parseInlineDamageDefenses(
+        "You are immune to lighting damage while you wear this armor.",
+      ),
+    ).toEqual([{ kind: "immunity", types: ["lightning"], limited: false }]);
+  });
+
+  it("detects chained resistance after immunity with bare and resistance to", () => {
+    expect(
+      parseInlineDamageDefenses(
+        "You are immune to acid damage and resistance to cold, thunder, and lightning damage while you wear this armor.",
+      ),
+    ).toEqual([
+      {
+        kind: "resistance",
+        types: ["cold", "thunder", "lightning"],
+        limited: false,
+      },
+      { kind: "immunity", types: ["acid"], limited: false },
+    ]);
+  });
+
   it("detects reaction/bonus-action temporary resistance", () => {
     expect(
       parseInlineDamageDefenses(
@@ -88,6 +111,14 @@ describe("inferInlineDamageDefenseRarity", () => {
     expect(
       inferInlineDamageDefenseRarity(
         "You have resistance to cold damage while you wear this armor.",
+      ),
+    ).toBe("Rare");
+  });
+
+  it("catalogues plural resistances to multiple types as Rare", () => {
+    expect(
+      inferInlineDamageDefenseRarity(
+        "You have resistances to fire, lightning, and necrotic damage while you wear this armor.",
       ),
     ).toBe("Rare");
   });
@@ -128,6 +159,14 @@ describe("inferInlineDamageDefenseRarity", () => {
     expect(
       inferInlineDamageDefenseRarity(
         "You are immune to poison and disease while you wear this armor.",
+      ),
+    ).toBe("Very Rare");
+  });
+
+  it("catalogues MHMM lighting typo immunity as Very Rare", () => {
+    expect(
+      inferInlineDamageDefenseRarity(
+        "You are immune to lighting damage while you wear this armor.",
       ),
     ).toBe("Very Rare");
   });

@@ -13,14 +13,24 @@ describe("inferRarityFromRoll20UtilityTags", () => {
     ).toBe("Common");
   });
 
-  it("returns null without a push", () => {
+  it("returns null without a push or no-damage rider", () => {
+    expect(
+      inferRarityFromRoll20UtilityTags([
+        "mechanic:roll-20",
+        "mechanic:push",
+        "mechanic:unarmed",
+      ]),
+    ).toBeNull();
+  });
+
+  it("assigns Common to nat-20 no-damage without push", () => {
     expect(
       inferRarityFromRoll20UtilityTags([
         "mechanic:roll-20",
         "mechanic:no-damage",
         "mechanic:unarmed",
       ]),
-    ).toBeNull();
+    ).toBe("Common");
   });
 
   it("returns null when the rider deals extra damage", () => {

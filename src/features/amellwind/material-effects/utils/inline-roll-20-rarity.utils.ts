@@ -1,5 +1,8 @@
 import type { ResourceRarity } from "@/shared/types";
-import { INLINE_ROLL20_PUSH_NO_DAMAGE_RARITY } from "../constants/material-effect.constants";
+import {
+  INLINE_ROLL20_NO_DAMAGE_RARITY,
+  INLINE_ROLL20_PUSH_NO_DAMAGE_RARITY,
+} from "../constants/material-effect.constants";
 
 /**
  * Infers Common for a nat-20 rider that only pushes and deals no extra damage.
@@ -11,6 +14,6 @@ export function inferRarityFromRoll20UtilityTags(
   const set = new Set(tags);
   if (!set.has("mechanic:roll-20")) return null;
   if (!set.has("mechanic:no-damage")) return null;
-  if (!set.has("mechanic:push")) return null;
-  return INLINE_ROLL20_PUSH_NO_DAMAGE_RARITY;
+  if (set.has("mechanic:push")) return INLINE_ROLL20_PUSH_NO_DAMAGE_RARITY;
+  return INLINE_ROLL20_NO_DAMAGE_RARITY;
 }

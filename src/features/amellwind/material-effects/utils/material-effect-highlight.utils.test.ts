@@ -11,6 +11,7 @@ import {
   splitRuneEffectDisplayLines,
   findMatchingMaterialEffectNames,
 } from "./material-effect-highlight.utils";
+import { extractRuneEffectTags } from "@/features/amellwind/runes/mappers/tags/rune-effect-tags";
 import type { Rune } from "@/shared/types";
 
 function makeEffect(
@@ -739,7 +740,7 @@ describe("getMaterialEffectTierForText — light / darkness when Unknown", () =>
     ).toBe("Rare");
   });
 
-  it("leaves bare darkness utility as Unknown", () => {
+  it("assigns Uncommon to Hide-in-darkness bonus-action utility", () => {
     expect(
       getMaterialEffectTierForText(
         "While in dim light or darkness, you can take the Hide action as a bonus action.",
@@ -752,11 +753,447 @@ describe("getMaterialEffectTierForText — light / darkness when Unknown", () =>
           "mechanic:active",
         ],
       ),
-    ).toBe("Unknown");
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Common to light-snuffing weapons", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "When held, this weapon draws in light, snuffing all nonmagical flames within 20 feet out. It turns dim light into darkness and bright light into dim light.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:darkness",
+          "mechanic:nonmagical-darkness",
+          "mechanic:light-suppression",
+          "mechanic:area",
+          "type:utility",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Uncommon to hill-giant-strength potion replication", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are attuned to this weapon, you can use an action to gain the same benefits as a potion of hill giants strength for 1 hour. Once you use this property, you cannot use it again for 3 days.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:potion-effect",
+          "mechanic:recharge-extended",
+          "mechanic:active",
+          "type:utility",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Rare to base AC 14 + Dex unarmored defense", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "If you aren't wearing light, medium, or heavy armor; your base Armor Class is 14 + your Dexterity modifier.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:armor-class",
+          "mechanic:base-ac",
+          "type:defensive",
+          "type:utility",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon to extra-limb bonus-action unarmed package", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While attuned to this armor, you grow two additional arms. As a bonus action you can have the arms make two unarmed strikes. The strikes can only deal 1 + your strength modifier.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:extra-limbs",
+          "mechanic:unarmed",
+          "mechanic:bonus-action",
+          "mechanic:active",
+          "type:offensive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+});
+
+describe("getMaterialEffectTierForText — temperature tolerance when Unknown", () => {
+  it("assigns Common to basic -20 °F cold tolerance", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You suffer no harm in temperature as cold as -20 degrees Fahrenheit while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:temperature-tolerance",
+          "damage:cold",
+          "mechanic:passive",
+          "type:utility",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Common to 120 °F heat tolerance", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You suffer no harm from temperatures as warm as 120 degrees Fahrenheit while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:temperature-tolerance",
+          "damage:fire",
+          "mechanic:passive",
+          "type:utility",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Uncommon to Hot Drink–tier cold tolerance", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you wear this armor, you can tolerate temperatures as low as -50 degrees Fahrenheit without any additional protection. If you wear heavy clothes, you can tolerate temperatures as low as -100 degrees Fahrenheit.",
+        "armor",
+        emptyIndex,
+        ["mechanic:temperature-tolerance", "damage:cold", "type:utility"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Rare to dual hot + cold tolerance", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Adaptability. You are always under the effects of both a Cool Drink and a Hot Drink while you are wearing this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:temperature-tolerance",
+          "damage:cold",
+          "damage:fire",
+          "type:utility",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+});
+
+describe("getMaterialEffectTierForText — special mechanics when Unknown", () => {
+  it("assigns Uncommon to ranged pull on hit", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Whenever you hit a creature with a range weapon attack, you can use a bonus action to pull the creature 10 feet towards you.",
+        "weapon",
+        emptyIndex,
+        [
+          "mechanic:forced-movement",
+          "weapon-type:ranged",
+          "mechanic:bonus-action",
+          "type:offensive",
+        ],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Common to jump-and-grab movement", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are attuned to this armor, when you jump and grab onto an object or surface with your hand(s), the distance traveled does not count against your movement for the turn.",
+        "armor",
+        emptyIndex,
+        ["mechanic:jump-movement", "type:utility", "mechanic:passive"],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Rare to partial exhaustion mitigation", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are attuned to this armor, you ignore the effects of the first 2 levels of exhaustion unless your exhaustion level is 3 or higher.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:exhaustion-mitigation",
+          "mechanic:condition-exhaustion",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Rare to magic resistance vs spells", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You have advantage on saving throws against spells while you wear this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:magic-resistance",
+          "mechanic:advantage",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Rare to reaction halve damage with limited uses", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While you are wearing this armor and an attacker that you can see hits you with an attack, you can use your reaction to halve the attack's damage against you. You can use this property a number of times equal to half your proficiency bonus (rounded down), regaining all expended uses when you finish a long rest.",
+        "armor",
+        emptyIndex,
+        ["mechanic:damage-reduction", "mechanic:reaction", "type:defensive"],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Rare to crit negation", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "While wearing this armor, any critical hit against you becomes a normal hit.",
+        "armor",
+        emptyIndex,
+        ["mechanic:crit-negation", "type:defensive", "mechanic:passive"],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon to Elemental Atk Up extra die", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Elemental Atk Up. If your weapon deals cold, fire, lightning, or necrotic damage and you hit a creature with this weapon; roll one additional damage die for the elemental damage.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:extra-damage-die", "type:offensive", "damage:fire"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Common to flavor-only cosmetic effects", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "This weapon is so finely constructed it never needs maintenance, cannot rust or tarnish.",
+        "weapon",
+        emptyIndex,
+        ["type:cosmetic", "mechanic:maintenance-free"],
+      ),
+    ).toBe("Common");
+  });
+
+  it("uses highest rarity for save bonus plus plane shift", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You gain a +1 bonus to saving throws while you wear this armor. You can use an action to enter the Elemental Plane of fire along with everything you are wearing and carrying. You remain there until you use an action to return to the plane you were on.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:save-bonus",
+          "mechanic:plane-shift",
+          "type:defensive",
+          "mechanic:active",
+        ],
+      ),
+    ).toBe("Very Rare");
+  });
+
+  it("assigns Common to Rapid Morph weapon mode switch", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Rapid Morph. While attuned to this weapon, you can switch its modes as a free action.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:weapon-mode", "type:utility", "mechanic:passive"],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Rare to degrading mud AC", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Your armor is caked in a mud like substance increasing your AC by 3. Each time you are hit, some of the mud breaks off reducing the bonus by 1. The mud reforms on your armor when you finish a long rest.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:degrading-ac",
+          "mechanic:armor-class",
+          "type:defensive",
+        ],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon to Palamute Rally", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Palamute Rally. NPC allies within 10 feet of you gain a +1 bonus to their AC and attack rolls while you are attuned to this armor.",
+        "armor",
+        emptyIndex,
+        ["mechanic:ally-aura", "type:support"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Very Rare to dragonpiercer +3 uses", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Bow Charge Plus++. While attuned to this weapon, you can use your dragonpiercer three additional times between rests and it recharges after a Short or Long rest.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:dragonpiercer", "type:utility"],
+      ),
+    ).toBe("Very Rare");
+  });
+
+  it("assigns Very Rare to conditional +4 AC below half HP", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "When you are below half of your maximum hit points, you can use your bonus action to increase your AC by 4 for 1 minute. Once you use this feature, you cannot use it again until you complete a short or long rest.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:conditional-ac",
+          "mechanic:bonus-action",
+          "mechanic:active",
+        ],
+      ),
+    ).toBe("Very Rare");
+  });
+
+  it("assigns Rare to Mind's Eye resistance bypass", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:resistance-bypass", "type:offensive"],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Uncommon to Hasten Recovery", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Hasten Recovery. When you regain hit points from magical healing, you can reroll any 1s or 2s on the healing dice.",
+        "armor",
+        emptyIndex,
+        ["mechanic:healing-reroll", "type:defensive"],
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns Legendary to Strength 29 floor", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Your Strength score is 29 while you are attuned to this weapon.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:ability-score-set"],
+      ),
+    ).toBe("Legendary");
+  });
+
+  it("assigns Rare to Psychic Vision", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Psychic Vision. While you are attuned to this armor, you know the location of all creatures within 60 feet of you, but you are vulnerable to psychic damage.",
+        "armor",
+        emptyIndex,
+        ["mechanic:creature-sense", "mechanic:vulnerability"],
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Common to muddy terrain immunity", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "You do not suffer from difficult terrain in muddy or swamp terrain while wearing this armor.",
+        "armor",
+        emptyIndex,
+        [
+          "mechanic:ignore-difficult-terrain",
+          "mechanic:movement",
+          "type:utility",
+        ],
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns tiers for common inline MHMM effect patterns", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Hammer & Lance Only) You gain a +1 bonus to your attack rolls if you move 20 feet in a straight line towards a creature without taking damage.",
+        "weapon",
+        emptyIndex,
+        extractRuneEffectTags(
+          "(Hammer & Lance Only) You gain a +1 bonus to your attack rolls if you move 20 feet in a straight line towards a creature without taking damage.",
+        ),
+      ),
+    ).toBe("Uncommon");
+
+    expect(
+      getMaterialEffectTierForText(
+        "You have advantage on checks to find a fishing spot and to catch any fish while you wear this armor.",
+        "weapon",
+        emptyIndex,
+        extractRuneEffectTags(
+          "You have advantage on checks to find a fishing spot and to catch any fish while you wear this armor.",
+        ),
+      ),
+    ).toBe("Common");
+
+    expect(
+      getMaterialEffectTierForText(
+        "While you wear this armor, your eye's glow red at night, much like the nargacuga's.",
+        "armor",
+        emptyIndex,
+        extractRuneEffectTags(
+          "While you wear this armor, your eye's glow red at night, much like the nargacuga's.",
+        ),
+      ),
+    ).toBe("Common");
+
+    expect(
+      getMaterialEffectTierForText(
+        "Your Strength score is 19 while attuned to this weapon. It has no effect on you if your Strength is already 19 or higher.",
+        "weapon",
+        emptyIndex,
+        extractRuneEffectTags(
+          "Your Strength score is 19 while attuned to this weapon. It has no effect on you if your Strength is already 19 or higher.",
+        ),
+      ),
+    ).toBe("Rare");
+
+    expect(
+      getMaterialEffectTierForText(
+        "While wearing this armor, you regain 1d6 Hit Points every 10 minutes, provided that you have at least 1 hit point. If you lose a body part, the armor causes the missing part to regrow and return to full functionality after 1d6 + 1 days if you have at least 1 hit point the whole time.",
+        "armor",
+        emptyIndex,
+        extractRuneEffectTags(
+          "While wearing this armor, you regain 1d6 Hit Points every 10 minutes, provided that you have at least 1 hit point. If you lose a body part, the armor causes the missing part to regrow and return to full functionality after 1d6 + 1 days if you have at least 1 hit point the whole time.",
+        ),
+      ),
+    ).toBe("Very Rare");
   });
 });
 
 describe("getMaterialEffectTierForText — discovered named overlay", () => {
+  it("assigns Common to MHMM cosmetic weapon effects", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "(Cosmetic) While attuned to this weapon, it seems to glow with an inner heat but is otherwise harmless.",
+        "weapon",
+        emptyIndex,
+        ["type:cosmetic", "mechanic:passive"],
+      ),
+    ).toBe("Common");
+  });
+
   it("assigns Common to Flexible Leathercraft", () => {
     const rune = makeRune({
       name: "Chatacabra Hide",
@@ -852,6 +1289,220 @@ describe("getMaterialEffectTierForText — discovered named overlay", () => {
     expect(
       getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
     ).toBe("Unknown");
+  });
+});
+
+describe("getMaterialEffectTierForText — reviewed inline MHMM patterns", () => {
+  it("assigns tiers for opportunity attacks, resistances, and save reroll", () => {
+    const noOaText =
+      "When you make a melee attack against a creature while wearing this armor, you don't provoke opportunity attacks from that creature for the rest of the turn, whether you hit or not.";
+    const noOaTags = extractRuneEffectTags(noOaText);
+    expect(
+      getMaterialEffectTierForText(noOaText, "armor", emptyIndex, noOaTags),
+    ).toBe("Uncommon");
+
+    const resistText =
+      "You have resistances to fire, lightning, and necrotic damage while you wear this armor.";
+    expect(getMaterialEffectTierForText(resistText, "armor", emptyIndex)).toBe(
+      "Rare",
+    );
+
+    const saveRerollText =
+      "While you wear this armor, you can pass a Dexterity saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.";
+    const saveRerollTags = extractRuneEffectTags(saveRerollText);
+    expect(
+      getMaterialEffectTierForText(
+        saveRerollText,
+        "armor",
+        emptyIndex,
+        saveRerollTags,
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns tiers for web sense, poison margin KO, and Dereliction", () => {
+    const webText =
+      "While in contact with a web, you know the exact location of any other creature in contact with the same web.";
+    const webTags = extractRuneEffectTags(webText);
+    expect(
+      getMaterialEffectTierForText(webText, "weapon", emptyIndex, webTags),
+    ).toBe("Uncommon");
+
+    const poisonText =
+      "When you poison a creature and it fail the saving throw by 5 or more, the creature falls unconscious until it takes damage, are shaken awake, or the poison is removed.";
+    const poisonTags = extractRuneEffectTags(poisonText);
+    expect(
+      getMaterialEffectTierForText(
+        poisonText,
+        "weapon",
+        emptyIndex,
+        poisonTags,
+      ),
+    ).toBe("Rare");
+
+    const derelictionText =
+      "Dereliction. While you are attuned to this weapon you can use your bonus action to roll a d20. Your hit point maximum is reduced by the roll and the next attack you hit with before the start of your next turn, deals extra damage equal to double the roll. The reduction lasts until you finish a long rest. You die if this effect reduces your hit point maximum to 0.";
+    const derelictionTags = extractRuneEffectTags(derelictionText);
+    expect(
+      getMaterialEffectTierForText(
+        derelictionText,
+        "weapon",
+        emptyIndex,
+        derelictionTags,
+      ),
+    ).toBe("Rare");
+  });
+});
+
+describe("getMaterialEffectTierForText — utility and environment effects", () => {
+  it("assigns tiers for gliding, wind, feast, bloodrage, and invisibility", () => {
+    const glideText =
+      "When you place this material into your armor it gains a gliding membrane. As an action or reaction, you can extend your arms to reduce your fall speed to 10 feet per round.";
+    const glideTags = extractRuneEffectTags(glideText);
+    expect(
+      getMaterialEffectTierForText(glideText, "armor", emptyIndex, glideTags),
+    ).toBe("Uncommon");
+
+    const windText =
+      "Wind Resist. You and your equipment suffer no ill effects from Strong Winds (DMG p.110) while you wear this armor.";
+    const windTags = extractRuneEffectTags(windText);
+    expect(
+      getMaterialEffectTierForText(windText, "armor", emptyIndex, windTags),
+    ).toBe("Common");
+
+    const feastText =
+      "Whenever you finish a long rest, you gain the benefits of the Heroes' Feast spell.";
+    const feastTags = extractRuneEffectTags(feastText);
+    expect(
+      getMaterialEffectTierForText(feastText, "armor", emptyIndex, feastTags),
+    ).toBe("Very Rare");
+
+    const bloodrageText =
+      "Bloodrage. When you are reduced below half of your maximum hit points while raging, you can use your reaction to enter a bloodrage until your rage ends. When in a bloodrage, you gain the effects of the haste spell, but you do not need to concentrate on it.";
+    const bloodrageTags = extractRuneEffectTags(bloodrageText);
+    expect(
+      getMaterialEffectTierForText(
+        bloodrageText,
+        "weapon",
+        emptyIndex,
+        bloodrageTags,
+      ),
+    ).toBe("Uncommon");
+
+    const invisText =
+      "While you are wearing this armor and you take damage, you can use your reaction to magically turn invisible until the start of your next turn.";
+    const invisTags = extractRuneEffectTags(invisText);
+    expect(
+      getMaterialEffectTierForText(invisText, "armor", emptyIndex, invisTags),
+    ).toBe("Rare");
+
+    const staminaText =
+      "Stamina Recovery. When you take a long rest, you reduce your exhaustion by 5 levels instead of 1.";
+    const staminaTags = extractRuneEffectTags(staminaText);
+    expect(
+      getMaterialEffectTierForText(
+        staminaText,
+        "armor",
+        emptyIndex,
+        staminaTags,
+      ),
+    ).toBe("Very Rare");
+  });
+});
+
+describe("getMaterialEffectTierForText — proficiency and utility patterns", () => {
+  it("assigns Common to Athletic skill proficiency and extinguish utility", () => {
+    const athleticsText =
+      "You have proficiency in the Athletic skill while you are attuned to this armor.";
+    const athleticsTags = extractRuneEffectTags(athleticsText);
+    expect(
+      getMaterialEffectTierForText(
+        athleticsText,
+        "armor",
+        emptyIndex,
+        athleticsTags,
+      ),
+    ).toBe("Common");
+
+    const extinguishText =
+      "While you are attuned to this weapon you can draw it, to extinguish all nonmagical flames within 30 feet of you. This property can be used no more than once per hour.";
+    const extinguishTags = extractRuneEffectTags(extinguishText);
+    expect(
+      getMaterialEffectTierForText(
+        extinguishText,
+        "weapon",
+        emptyIndex,
+        extinguishTags,
+      ),
+    ).toBe("Common");
+  });
+
+  it("assigns Uncommon to expertise, inspiration, and conjure horns", () => {
+    const hornText =
+      "You gain proficiency with the Horn musical instruments. If you are already proficient, you double your proficiency bonus when using it.";
+    const hornTags = extractRuneEffectTags(hornText);
+    expect(
+      getMaterialEffectTierForText(hornText, "weapon", emptyIndex, hornTags),
+    ).toBe("Uncommon");
+
+    const inspirationText =
+      "Whenever you finish a long rest you can attempt a DC 15 Charisma (Performance) check using an instrument you are proficient with. On a success, you gain inspiration if you do not already have it.";
+    const inspirationTags = extractRuneEffectTags(inspirationText);
+    expect(
+      getMaterialEffectTierForText(
+        inspirationText,
+        "armor",
+        emptyIndex,
+        inspirationTags,
+      ),
+    ).toBe("Uncommon");
+
+    const conjureText =
+      "While attuned to this armor, you can use an action to speak its command word and conjure an Armor Horn, Antidote Horn, Field Horn, or Health Horn into your hands.";
+    const conjureTags = extractRuneEffectTags(conjureText);
+    expect(
+      getMaterialEffectTierForText(
+        conjureText,
+        "armor",
+        emptyIndex,
+        conjureTags,
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns scaled rarity to poison DC boost and save DC boost", () => {
+    const poisonText =
+      "If you coat this weapon with poison, the poisons save DC is increased by 5.";
+    const poisonTags = extractRuneEffectTags(poisonText);
+    expect(
+      getMaterialEffectTierForText(
+        poisonText,
+        "weapon",
+        emptyIndex,
+        poisonTags,
+      ),
+    ).toBe("Very Rare");
+
+    const dreadqueenText =
+      "Dreadqueen. While attuned to this armor, your save DC for condition causing effects, such as the sleep spell, or a material effect, is increased by 2.";
+    const dreadqueenTags = extractRuneEffectTags(dreadqueenText);
+    expect(
+      getMaterialEffectTierForText(
+        dreadqueenText,
+        "armor",
+        emptyIndex,
+        dreadqueenTags,
+      ),
+    ).toBe("Rare");
+  });
+
+  it("assigns Legendary to nonmagical damage resistance package", () => {
+    const text =
+      "You have resistance to nonmagical damage while you wear this armor. Additionally, you can use an action to make yourself immune to nonmagical damage for 10 minutes or until you are no longer wearing the armor. Once this special action is used, it can't be used again until the next dawn.";
+    const tags = extractRuneEffectTags(text);
+    expect(
+      getMaterialEffectTierForText(text, "armor", emptyIndex, tags),
+    ).toBe("Legendary");
   });
 });
 
