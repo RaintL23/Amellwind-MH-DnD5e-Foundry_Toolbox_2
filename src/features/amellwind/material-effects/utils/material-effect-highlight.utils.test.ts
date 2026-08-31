@@ -1354,6 +1354,88 @@ describe("getMaterialEffectTierForText — reviewed inline MHMM patterns", () =>
   });
 });
 
+describe("getMaterialEffectTierForText — reviewed MHMM weapon/armor patterns", () => {
+  it("assigns tiers for charm, peak performance, redirection, and dodge AC save", () => {
+    const charmText =
+      "When you hit a creature with this weapon, it must succeed on a DC 12 Wisdom saving throw or become charmed by you for 1 minute or until you or your companions do anything harmful to it. Once you use this property, you can't use it again until you finish a short or long rest.";
+    const charmTags = extractRuneEffectTags(charmText);
+    expect(
+      getMaterialEffectTierForText(charmText, "weapon", emptyIndex, charmTags),
+    ).toBe("Uncommon");
+
+    const peakText =
+      "Peak Performance. When your hit points are full and you roll a 1 or 2 on a damage die for an attack you make with a melee weapon, you can reroll the die and must use the new roll, even if the new roll is a 1 or a 2.";
+    const peakTags = extractRuneEffectTags(peakText);
+    expect(
+      getMaterialEffectTierForText(peakText, "weapon", emptyIndex, peakTags),
+    ).toBe("Uncommon");
+
+    const redirectText =
+      "Redirection. When you are the target of a melee attack, you can use your reaction to swap your position with another creature within 5 feet of you that is the same size or smaller than you. If the creature is unwilling, you must succeed on a Strength (Athletics) or Dexterity (Acrobatics) check contested by its Strength (Athletics) or Dexterity (Acrobatics) check or remain in your space. You can use this property a number of times equal to half of your proficiency bonus, regaining all expended uses when you finish a long rest.";
+    const redirectTags = extractRuneEffectTags(redirectText);
+    expect(
+      getMaterialEffectTierForText(
+        redirectText,
+        "armor",
+        emptyIndex,
+        redirectTags,
+      ),
+    ).toBe("Rare");
+
+    const dodgeAcText =
+      "Uragaan Minor Protection. When you must make a saving throw while taking the dodge action, you can use your Armor Class in place of making the roll. Once used, you can't use this property again until you finish a long rest.";
+    const dodgeAcTags = extractRuneEffectTags(dodgeAcText);
+    expect(
+      getMaterialEffectTierForText(
+        dodgeAcText,
+        "armor",
+        emptyIndex,
+        dodgeAcTags,
+      ),
+    ).toBe("Uncommon");
+  });
+
+  it("assigns tiers for heal boost, ammo buff, cord length, and blade dancer", () => {
+    const healBoostText =
+      "While you wear this armor, you gain 2 additional hit points whenever you regain hit points by magical or non-magical means, except when spending hit dice.";
+    const healBoostTags = extractRuneEffectTags(healBoostText);
+    expect(
+      getMaterialEffectTierForText(
+        healBoostText,
+        "armor",
+        emptyIndex,
+        healBoostTags,
+      ),
+    ).toBe("Uncommon");
+
+    const ammoBuffText =
+      "(Light Bowgun Only) When you hit a creature with your demon ammo, its duration and effect are doubled.";
+    const ammoBuffTags = extractRuneEffectTags(ammoBuffText);
+    expect(
+      getMaterialEffectTierForText(
+        ammoBuffText,
+        "weapon",
+        emptyIndex,
+        ammoBuffTags,
+      ),
+    ).toBe("Uncommon");
+
+    const cordText =
+      "(Hunting Horn Only) Your maximum cord length is increased by 1 when holding this weapon.";
+    const cordTags = extractRuneEffectTags(cordText);
+    expect(
+      getMaterialEffectTierForText(cordText, "weapon", emptyIndex, cordTags),
+    ).toBe("Common");
+
+    const bladeText =
+      "(One-Handed Melee Attacks Only) Blade Dancer. While you are attuned to this weapon, you can use your bonus action to make two attacks instead of one. You must meet the normal conditions to make the bonus action attack for this material to work. You can use this property a number of times equal to double your proficiency modifier, regaining all expended uses when you finish a long rest.";
+    const bladeTags = extractRuneEffectTags(bladeText);
+    expect(
+      getMaterialEffectTierForText(bladeText, "weapon", emptyIndex, bladeTags),
+    ).toBe("Rare");
+  });
+});
+
 describe("getMaterialEffectTierForText — utility and environment effects", () => {
   it("assigns tiers for gliding, wind, feast, bloodrage, and invisibility", () => {
     const glideText =

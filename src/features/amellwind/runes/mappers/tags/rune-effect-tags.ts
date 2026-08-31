@@ -582,6 +582,13 @@ function healOtherTag(text: string): string | null {
     return "mechanic:heal-self-boost";
   }
 
+  if (
+    /gain \d+ additional hit points whenever you regain hit points/i.test(text) ||
+    /whenever you regain hit points.{0,80}additional hit points/i.test(text)
+  ) {
+    return "mechanic:heal-self-boost";
+  }
+
   return null;
 }
 
@@ -630,7 +637,7 @@ function itemRelatedTags(text: string): string[] {
   const tags: string[] = [];
   const hasTrap = MH_TRAP_ITEM.test(text) || MH_TRAP_BARE.test(text);
   const hasConjuredItem =
-    /\bconjure (?:an |a |two )?[\w\s,-]+(?:Horn|earplugs)\b/i.test(text) ||
+    /\bconjure (?:an |a |two )?[\w\s,-]+(?:Horn|earplugs|totem)\b/i.test(text) ||
     /\bconjure two earplugs\b/i.test(text);
   if (/\{@item\b/i.test(text) || hasTrap || hasConjuredItem) {
     tags.push("mechanic:item-related");
@@ -874,6 +881,13 @@ function movementTags(text: string): string[] {
     tags.push("mechanic:ignore-difficult-terrain");
   }
 
+  if (
+    /move up to \d+ feet without provoking opportunity attacks/i.test(text) ||
+    /without provoking opportunity attacks/i.test(text)
+  ) {
+    tags.push("mechanic:no-opportunity-attacks");
+  }
+
   const hasGeneralMovement =
     /(?:movement|speed|jump)\s+(?:increase[sd]?|by|of|\d+)/i.test(text) ||
     /speed (?:is |are )?(?:reduced|doubled|increased)/i.test(text) ||
@@ -961,6 +975,14 @@ function conditionImmunityCannotBeTag(text: string): string | null {
  */
 function againstConditionTag(text: string): string | null {
   if (/can'?t be afflicted (?:with|to)/i.test(text)) {
+    return "mechanic:against-condition";
+  }
+
+  if (
+    /lightly obscured.{0,100}disadvantage on your Wisdom \(Perception\)/i.test(
+      text,
+    )
+  ) {
     return "mechanic:against-condition";
   }
 
@@ -1389,7 +1411,9 @@ function typeTags(text: string): string[] {
     /pass a (?:\w+\s+)?saving throw you otherwise would have failed/i.test(
       text,
     ) ||
-    /(?:don't|do not|doesn't|does not) provoke opportunity attacks/i.test(text);
+    /(?:don't|do not|doesn't|does not) provoke opportunity attacks/i.test(text) ||
+    (/reaction to (?:take the |use the )?shove action/i.test(text) &&
+      /hits? you with a melee weapon attack/i.test(text));
 
   if (isDefensive) tags.push("type:defensive");
 
@@ -1410,14 +1434,22 @@ function typeTags(text: string): string[] {
       /changes the damage type your weapon deals/i.test(text) ||
       /deal \w+ damage instead of its normal damage type/i.test(text) ||
       (PUSH_RE.test(text) && /(?:when you hit|on a hit)/i.test(text)) ||
-      /make one additional attack|make another attack/i.test(text) ||
+      /make (?:one|two) additional attacks?|make another attack|make two attacks instead of one/i.test(
+        text,
+      ) ||
       (/\{@condition/i.test(text) &&
         /(?:hit|attack|strike|on a hit)/i.test(text)) ||
+      (new RegExp(
+        `(?:when you hit|on a hit).{0,120}\\b(?:${CONDITION_TERM_ALT})\\b`,
+        "i",
+      ).test(text) &&
+        /saving throw/i.test(text)) ||
       new RegExp(
         String.raw`(?:deals?|dealing|extra|takes?|taking)\s+(?:an?\s+)?(?:additional\s+)?${DAMAGE_AMOUNT.source}`,
         "i",
       ).test(text) ||
       (/\{@spell/i.test(text) && /deals?\s+\w+\s+damage/i.test(text)) ||
+      /deals? \w+ damage equal to \d+d\d+/i.test(text) ||
       (/\badvantage\b/i.test(text) &&
         /\b(?:the )?attack rolls?\b/i.test(text) &&
         !/\bdisadvantage\b/i.test(text)) ||
@@ -1427,7 +1459,13 @@ function typeTags(text: string): string[] {
         /save DC is increased by/i.test(text)) ||
       /fail(?:s)? the saving throw by \d+ or more/i.test(text) ||
       /when you (?:poison|paralyze) a creature/i.test(text) ||
-      /deals extra damage equal to/i.test(text));
+      /deals extra damage equal to/i.test(text) ||
+      (/\bdisadvantage on the save\b/i.test(text) &&
+        (/\bhidden\b/i.test(text) || /ally is within \d+ feet/i.test(text))) ||
+      /demon ammo.{0,60}(?:duration and )?effect (?:is|are) doubled/i.test(
+        text,
+      ) ||
+      /reduce the damage you deal by half to grapple/i.test(text));
 
   if (isOffensive) tags.push("type:offensive");
 
@@ -1554,7 +1592,7 @@ function forcedMovementReductionTag(text: string): string | null {
 
 /** Action / BA conjure a temporary item into your hands. */
 function conjureItemTag(text: string): string | null {
-  return /\bconjure (?:an |a |two )?[\w\s,-]+(?:Horn|earplugs)\b/i.test(text)
+  return /\bconjure (?:an |a |two )?[\w\s,-]+(?:Horn|earplugs|totem)\b/i.test(text)
     ? "mechanic:conjure-item"
     : null;
 }
@@ -1791,7 +1829,9 @@ function allyReactionMoveTag(text: string): string | null {
 }
 
 function extraAttackTag(text: string): string | null {
-  return /make one additional attack|make another attack/i.test(text)
+  return /make (?:one|two) additional attacks?|make another attack|make two attacks instead of one/i.test(
+    text,
+  )
     ? "mechanic:extra-attack"
     : null;
 }
@@ -1935,7 +1975,7 @@ function blightSwapTag(text: string): string | null {
 }
 
 function ammoCapacityTag(text: string): string | null {
-  return /(?:normal )?ammo capacity doubles|coat up to \d+ additional arrows/i.test(
+  return /(?:normal )?ammo capacity doubles|coat up to \d+ additional arrows|ammo pouch can hold double/i.test(
     text,
   )
     ? "mechanic:ammo-capacity"
@@ -2277,6 +2317,80 @@ function temperatureToleranceTags(text: string): string[] {
   return tags;
 }
 
+function onHitTag(text: string): string | null {
+  return /when you hit a (?:creature|target) with (?:this weapon|your [\w-]+ ammo)/i.test(
+    text,
+  )
+    ? "mechanic:on-hit"
+    : null;
+}
+
+function damageRerollTag(text: string): string | null {
+  return /reroll the die and must use the new roll, even if the new roll is a 1 or a 2/i.test(
+    text,
+  )
+    ? "mechanic:damage-reroll"
+    : null;
+}
+
+function grappleOnHitTag(text: string): string | null {
+  return /reduce the damage you deal by half to grapple/i.test(text)
+    ? "mechanic:grapple-on-hit"
+    : null;
+}
+
+function positionSwapTag(text: string): string | null {
+  return /swap your position with another creature/i.test(text)
+    ? "mechanic:position-swap"
+    : null;
+}
+
+function ammoBuffTag(text: string): string | null {
+  return /demon ammo.{0,60}(?:duration and )?effect (?:is|are) doubled/i.test(text)
+    ? "mechanic:ammo-buff"
+    : null;
+}
+
+function cordLengthTag(text: string): string | null {
+  return /maximum cord length is increased/i.test(text)
+    ? "mechanic:cord-length"
+    : null;
+}
+
+function hammerChargeTag(text: string): string | null {
+  return /hammer's charge only requires you to move \d+ feet/i.test(text)
+    ? "mechanic:hammer-charge"
+    : null;
+}
+
+function reactionShoveTag(text: string): string | null {
+  return /reaction to (?:take the |use the )?shove action/i.test(text) &&
+    /hits? you with a melee weapon attack/i.test(text)
+    ? "mechanic:reaction-shove"
+    : null;
+}
+
+function bowMeleeModeTag(text: string): string | null {
+  return /special melee weapon attack with it/i.test(text) &&
+    /\bbow\b/i.test(text)
+    ? "mechanic:bow-melee-mode"
+    : null;
+}
+
+function dodgeAcSaveTag(text: string): string | null {
+  return /taking the dodge action/i.test(text) &&
+    /Armor Class in place of making the roll/i.test(text)
+    ? "mechanic:dodge-ac-save"
+    : null;
+}
+
+function hiddenSaveDisadvantageTag(text: string): string | null {
+  return /\bdisadvantage on the save\b/i.test(text) &&
+    (/\bhidden\b/i.test(text) || /ally is within \d+ feet/i.test(text))
+    ? "mechanic:hidden-save-disadvantage"
+    : null;
+}
+
 const UTILITY_MECHANIC_TAGS = new Set([
   "mechanic:gather-resources",
   "mechanic:hold-breath",
@@ -2306,6 +2420,8 @@ const UTILITY_MECHANIC_TAGS = new Set([
   "mechanic:light-suppression",
   "mechanic:base-ac",
   "mechanic:class-feature",
+  "mechanic:cord-length",
+  "mechanic:hammer-charge",
   "mechanic:recharge-extended",
   "mechanic:recharge-hourly",
   "mechanic:material-sense",
@@ -2749,6 +2865,42 @@ function extractTags(
 
   const allyReactionMove = allyReactionMoveTag(normalizedText);
   if (allyReactionMove) tags.add(allyReactionMove);
+
+  const onHit = onHitTag(normalizedText);
+  if (onHit) tags.add(onHit);
+
+  const damageReroll = damageRerollTag(normalizedText);
+  if (damageReroll) tags.add(damageReroll);
+
+  const grappleOnHit = grappleOnHitTag(normalizedText);
+  if (grappleOnHit) tags.add(grappleOnHit);
+
+  const positionSwap = positionSwapTag(normalizedText);
+  if (positionSwap) tags.add(positionSwap);
+
+  const ammoBuff = ammoBuffTag(normalizedText);
+  if (ammoBuff) tags.add(ammoBuff);
+
+  const cordLength = cordLengthTag(normalizedText);
+  if (cordLength) tags.add(cordLength);
+
+  const hammerCharge = hammerChargeTag(normalizedText);
+  if (hammerCharge) {
+    tags.add(hammerCharge);
+    tags.add("mechanic:movement");
+  }
+
+  const reactionShove = reactionShoveTag(normalizedText);
+  if (reactionShove) tags.add(reactionShove);
+
+  const bowMeleeMode = bowMeleeModeTag(normalizedText);
+  if (bowMeleeMode) tags.add(bowMeleeMode);
+
+  const dodgeAcSave = dodgeAcSaveTag(normalizedText);
+  if (dodgeAcSave) tags.add(dodgeAcSave);
+
+  const hiddenSaveDisadvantage = hiddenSaveDisadvantageTag(normalizedText);
+  if (hiddenSaveDisadvantage) tags.add(hiddenSaveDisadvantage);
 
   if (/never needs maintenance|cannot rust or tarnish/i.test(normalizedText)) {
     tags.add("mechanic:maintenance-free");

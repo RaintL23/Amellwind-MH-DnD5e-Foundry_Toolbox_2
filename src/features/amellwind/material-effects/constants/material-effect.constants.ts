@@ -657,6 +657,36 @@ export const INLINE_CONDITIONAL_FLAVOR_RARITY: ResourceRarity = "Common";
 /** Extreme cold environment immunity without a °F threshold (Giadrome / Legiana). */
 export const INLINE_EXTREME_COLD_IMMUNITY_RARITY: ResourceRarity = "Common";
 
+/** Reroll 1s/2s on weapon or spell damage dice (Peak Performance, Astalos spell rider). */
+export const INLINE_DAMAGE_REROLL_RARITY: ResourceRarity = "Uncommon";
+
+/** Reaction position swap with a nearby creature (Redirection). */
+export const INLINE_POSITION_SWAP_RARITY: ResourceRarity = "Rare";
+
+/** Trade half damage on hit to grapple (Najarala fang). */
+export const INLINE_GRAPPLE_ON_HIT_RARITY: ResourceRarity = "Uncommon";
+
+/** Doubled demon-ammo duration/effect (Magnamalo / Odogaron LBG). */
+export const INLINE_AMMO_BUFF_RARITY: ResourceRarity = "Uncommon";
+
+/** Hunting Horn maximum cord length bump. */
+export const INLINE_CORD_LENGTH_RARITY: ResourceRarity = "Common";
+
+/** Reduced straight-line distance for hammer charge (Jade Barroth). */
+export const INLINE_HAMMER_CHARGE_RARITY: ResourceRarity = "Common";
+
+/** Bow gains a melee blade attack mode (Magnamalo). */
+export const INLINE_BOW_MELEE_MODE_RARITY: ResourceRarity = "Uncommon";
+
+/** Reaction shove when hit in melee (Lagiacrus tail armor). */
+export const INLINE_REACTION_SHOVE_RARITY: ResourceRarity = "Uncommon";
+
+/** On-hit saving throw rider (Hypnocatrice charm, …). */
+export const INLINE_ON_HIT_SAVE_RARITY: ResourceRarity = "Uncommon";
+
+/** Use AC in place of a save while dodging, once per rest (Uragaan Minor Protection). */
+export const INLINE_DODGE_AC_SAVE_RARITY: ResourceRarity = "Uncommon";
+
 export const UNKNOWN_MATERIAL_EFFECT_TIER = "Unknown" as const;
 
 export type MaterialEffectTierFilter =

@@ -37,6 +37,28 @@ const DISCOVERED_EFFECT_RARITY_BY_KEY: Record<string, ResourceRarity> = {
   "weapon:fastcharge+": "Rare",
   "weapon:fastcharge+2": "Rare",
 
+  /** Dodge-action AC-for-save once per long rest (Juvenile Uragaan). */
+  "armor:uragaan minor protection": "Uncommon",
+
+  /** Bonus-action off-hand double attack (Lala Barina). */
+  "weapon:blade dancer": "Rare",
+
+  /** Crit move without OAs (Lala Barina). */
+  "weapon:graceful strike": "Common",
+
+  /** Hidden / flanking save disadvantage (Lucent Nargacuga). */
+  "weapon:sneak attack": "Uncommon",
+
+  /** Reaction position swap (Lunagaron). */
+  "armor:redirection": "Rare",
+  "armor:redirection+": "Very Rare",
+
+  /** Full-HP damage-die reroll on melee attacks. */
+  "weapon:peak performance": "Uncommon",
+
+  /** HH melody duration + cord length (Elderfrost Gammoth / Dreadqueen). */
+  "weapon:horn maestro+2": "Uncommon",
+
   "armor:divine blessing": "Rare",
   "armor:divine blessing+": "Rare",
   "armor:divine blessing+2": "Very Rare",

@@ -4,10 +4,12 @@ import {
   INLINE_ALLY_THROW_RARITY,
   INLINE_ALLY_REACTION_MOVE_RARITY,
   INLINE_AMMO_CAPACITY_RARITY,
+  INLINE_AMMO_BUFF_RARITY,
   INLINE_AMMO_UNLOCK_RARITY,
   INLINE_ATTACK_BYPASS_IMMUNITY_RARITY,
   INLINE_ATTACK_BYPASS_RESISTANCE_RARITY,
   INLINE_BLIGHT_SWAP_RARITY,
+  INLINE_BOW_MELEE_MODE_RARITY,
   INLINE_CARVE_CHECK_RARITY,
   INLINE_CONJURE_ITEM_RARITY,
   INLINE_CONSUMABLE_SHARE_RARITY,
@@ -19,6 +21,8 @@ import {
   INLINE_CRIT_NEGATION_RARITY,
   INLINE_CRIT_NO_REACTIONS_RARITY,
   INLINE_DAMAGE_TYPE_SHIFT_RARITY,
+  INLINE_DAMAGE_REROLL_RARITY,
+  INLINE_DODGE_AC_SAVE_RARITY,
   INLINE_DEGRADING_AC_RARITY,
   INLINE_DISPLACEMENT_RARITY,
   INLINE_DRAGONPIERCER_EXTRA_USES_RARITY,
@@ -70,6 +74,12 @@ import {
   INLINE_WOUND_CRIT_RARITY,
   INLINE_COMPOSITE_EFFECT_RARITY,
   INLINE_CHARGE_MOVEMENT_RARITY,
+  INLINE_CORD_LENGTH_RARITY,
+  INLINE_GRAPPLE_ON_HIT_RARITY,
+  INLINE_HAMMER_CHARGE_RARITY,
+  INLINE_ON_HIT_SAVE_RARITY,
+  INLINE_POSITION_SWAP_RARITY,
+  INLINE_REACTION_SHOVE_RARITY,
   MATERIAL_EFFECT_RARITIES,
 } from "../constants/material-effect.constants";
 import { parseAcBonusAmount } from "./inline-ac-bonus-rarity.utils";
@@ -720,6 +730,86 @@ export function inferRarityFromTrapPlacementTags(
   return tags.includes("mechanic:trap") ? INLINE_TRAP_PLACEMENT_RARITY : null;
 }
 
+export function inferRarityFromDamageRerollTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:damage-reroll")
+    ? INLINE_DAMAGE_REROLL_RARITY
+    : null;
+}
+
+export function inferRarityFromPositionSwapTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:position-swap")
+    ? INLINE_POSITION_SWAP_RARITY
+    : null;
+}
+
+export function inferRarityFromGrappleOnHitTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:grapple-on-hit")
+    ? INLINE_GRAPPLE_ON_HIT_RARITY
+    : null;
+}
+
+export function inferRarityFromAmmoBuffTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:ammo-buff") ? INLINE_AMMO_BUFF_RARITY : null;
+}
+
+export function inferRarityFromCordLengthTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:cord-length")
+    ? INLINE_CORD_LENGTH_RARITY
+    : null;
+}
+
+export function inferRarityFromHammerChargeTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:hammer-charge")
+    ? INLINE_HAMMER_CHARGE_RARITY
+    : null;
+}
+
+export function inferRarityFromBowMeleeModeTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:bow-melee-mode")
+    ? INLINE_BOW_MELEE_MODE_RARITY
+    : null;
+}
+
+export function inferRarityFromReactionShoveTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:reaction-shove")
+    ? INLINE_REACTION_SHOVE_RARITY
+    : null;
+}
+
+export function inferRarityFromOnHitSaveTags(
+  tags: string[],
+): ResourceRarity | null {
+  const set = new Set(tags);
+  if (!set.has("mechanic:on-hit") || !set.has("mechanic:saving-throw")) {
+    return null;
+  }
+  return INLINE_ON_HIT_SAVE_RARITY;
+}
+
+export function inferRarityFromDodgeAcSaveTags(
+  tags: string[],
+): ResourceRarity | null {
+  return tags.includes("mechanic:dodge-ac-save")
+    ? INLINE_DODGE_AC_SAVE_RARITY
+    : null;
+}
+
 /** Picks the highest rarity from special-effect tag inferences. */
 export function highestSpecialEffectRarity(
   text: string,
@@ -791,6 +881,16 @@ export function highestSpecialEffectRarity(
     inferRarityFromHealSelfBoostTags(tags),
     inferRarityFromAllyReactionMoveTags(tags),
     inferRarityFromTrapPlacementTags(tags),
+    inferRarityFromDamageRerollTags(tags),
+    inferRarityFromPositionSwapTags(tags),
+    inferRarityFromGrappleOnHitTags(tags),
+    inferRarityFromAmmoBuffTags(tags),
+    inferRarityFromCordLengthTags(tags),
+    inferRarityFromHammerChargeTags(tags),
+    inferRarityFromBowMeleeModeTags(tags),
+    inferRarityFromReactionShoveTags(tags),
+    inferRarityFromOnHitSaveTags(tags),
+    inferRarityFromDodgeAcSaveTags(tags),
   ];
 
   let best: ResourceRarity | null = null;

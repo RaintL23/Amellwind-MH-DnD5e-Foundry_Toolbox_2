@@ -3526,3 +3526,164 @@ describe("extractRuneEffectTags — weapon type mentions", () => {
     );
   });
 });
+
+describe("extractRuneEffectTags — reviewed MHMM weapon/armor patterns", () => {
+  it("tags on-hit charm, reaction shove, hammer charge, and heal boost", () => {
+    const charm = extractRuneEffectTags(
+      "When you hit a creature with this weapon, it must succeed on a DC 12 Wisdom saving throw or become charmed by you for 1 minute or until you or your companions do anything harmful to it. Once you use this property, you can't use it again until you finish a short or long rest.",
+    );
+    expect(charm).toEqual(
+      expect.arrayContaining([
+        "mechanic:on-hit",
+        "mechanic:saving-throw",
+        "mechanic:condition-charmed",
+        "mechanic:condition",
+        "mechanic:short-rest",
+        "mechanic:long-rest",
+        "mechanic:active",
+        "type:offensive",
+      ]),
+    );
+
+    const shove = extractRuneEffectTags(
+      "When a creature hits you with a melee weapon attack while you wear this armor, you can use your reaction to take the shove action and push the attacker away from you.",
+    );
+    expect(shove).toEqual(
+      expect.arrayContaining([
+        "mechanic:reaction-shove",
+        "mechanic:reaction",
+        "mechanic:active",
+        "type:defensive",
+      ]),
+    );
+
+    const hammer = extractRuneEffectTags(
+      "(Hammer only) While attuned to this weapon, your hammer's charge only requires you to move 10 feet in a straight line instead of 20 feet.",
+    );
+    expect(hammer).toEqual(
+      expect.arrayContaining([
+        "weapon-type:hammer",
+        "mechanic:hammer-charge",
+        "mechanic:movement",
+        "mechanic:passive",
+      ]),
+    );
+
+    const healBoost = extractRuneEffectTags(
+      "While you wear this armor, you gain 2 additional hit points whenever you regain hit points by magical or non-magical means, except when spending hit dice.",
+    );
+    expect(healBoost).toEqual(
+      expect.arrayContaining([
+        "mechanic:heal-self-boost",
+        "mechanic:passive",
+        "type:support",
+      ]),
+    );
+  });
+
+  it("tags named combat riders and utility patterns", () => {
+    const blade = extractRuneEffectTags(
+      "(One-Handed Melee Attacks Only) Blade Dancer. While you are attuned to this weapon, you can use your bonus action to make two attacks instead of one. You must meet the normal conditions to make the bonus action attack for this material to work. You can use this property a number of times equal to double your proficiency modifier, regaining all expended uses when you finish a long rest.",
+    );
+    expect(blade).toEqual(
+      expect.arrayContaining([
+        "mechanic:bonus-action",
+        "mechanic:extra-attack",
+        "mechanic:long-rest",
+        "mechanic:active",
+        "type:offensive",
+      ]),
+    );
+
+    const graceful = extractRuneEffectTags(
+      "Graceful Strike. When you critically hit a creature with this weapon, you can move up to 10 feet without provoking opportunity attacks.",
+    );
+    expect(graceful).toEqual(
+      expect.arrayContaining([
+        "mechanic:critical",
+        "mechanic:no-opportunity-attacks",
+        "mechanic:movement",
+        "type:offensive",
+      ]),
+    );
+
+    const sneak = extractRuneEffectTags(
+      "Sneak Attack. When you force a creature to make a Dexterity saving throw while you are hidden or when an ally is within 5 feet of the creature, that creature has disadvantage on the save.",
+    );
+    expect(sneak).toEqual(
+      expect.arrayContaining([
+        "mechanic:hidden-save-disadvantage",
+        "mechanic:disadvantage",
+        "mechanic:saving-throw",
+        "mechanic:area",
+        "mechanic:passive",
+        "type:offensive",
+      ]),
+    );
+
+    const redirect = extractRuneEffectTags(
+      "Redirection. When you are the target of a melee attack, you can use your reaction to swap your position with another creature within 5 feet of you that is the same size or smaller than you. If the creature is unwilling, you must succeed on a Strength (Athletics) or Dexterity (Acrobatics) check contested by its Strength (Athletics) or Dexterity (Acrobatics) check or remain in your space. You can use this property a number of times equal to half of your proficiency bonus, regaining all expended uses when you finish a long rest.",
+    );
+    expect(redirect).toEqual(
+      expect.arrayContaining([
+        "mechanic:position-swap",
+        "mechanic:reaction",
+        "mechanic:long-rest",
+        "mechanic:active",
+        "type:support",
+      ]),
+    );
+  });
+
+  it("tags bow melee mode, ammo buff, grapple trade, and perception utility", () => {
+    const bow = extractRuneEffectTags(
+      "(Bow Only) While attuned to this weapon, blades appear on the limbs of the bow. Additionally, you can make a special melee weapon attack with it using your Strength or Dexterity modifier. If you hit with this attack, you deal slashing damage equal to 1d8 + your modifier used to make the attack.",
+    );
+    expect(bow).toEqual(
+      expect.arrayContaining([
+        "weapon-type:bow",
+        "mechanic:bow-melee-mode",
+        "damage:slashing",
+        "mechanic:passive",
+        "type:offensive",
+      ]),
+    );
+
+    const demon = extractRuneEffectTags(
+      "(Light Bowgun Only) When you hit a creature with your demon ammo, its duration and effect are doubled.",
+    );
+    expect(demon).toEqual(
+      expect.arrayContaining([
+        "weapon-type:light-bowgun",
+        "mechanic:ammo-buff",
+        "mechanic:on-hit",
+        "type:offensive",
+      ]),
+    );
+
+    const grapple = extractRuneEffectTags(
+      "(Melee Weapon Only) When you hit a creature with this weapon, you can choose to reduce the damage you deal by half to grapple the target.",
+    );
+    expect(grapple).toEqual(
+      expect.arrayContaining([
+        "weapon-type:melee",
+        "mechanic:grapple-on-hit",
+        "mechanic:on-hit",
+        "type:offensive",
+      ]),
+    );
+
+    const perception = extractRuneEffectTags(
+      "While you wear this armor, being in a lightly obscured area doesn't impose disadvantage on your Wisdom (Perception) checks if you can both see and hear.",
+    );
+    expect(perception).toEqual(
+      expect.arrayContaining([
+        "mechanic:against-condition",
+        "mechanic:disadvantage",
+        "mechanic:skill-perception",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+});
