@@ -1,6 +1,10 @@
 import type { ListFilterSectionConfig } from "@/shared/components/list-filters";
 import { TIER_LABELS } from "../../constants/rune.constants";
-import { formatTag } from "../../utils/rune-tag.utils";
+import {
+  RUNE_TAG_FILTER_SECTION_IDS,
+  splitTagsByCategory,
+  tagOptionsFromValues,
+} from "../../utils/rune-tag-categories.utils";
 import { MATERIAL_EFFECT_TIER_FILTER_OPTIONS } from "@/features/amellwind/material-effects/constants/material-effect.constants";
 
 export type RuneSlotFilter = "" | "A" | "W";
@@ -54,12 +58,56 @@ const MATERIAL_EFFECT_TIER_OPTIONS = MATERIAL_EFFECT_TIER_FILTER_OPTIONS.map(
   }),
 );
 
+function buildTagFilterSection(
+  id: string,
+  title: string,
+  tags: string[],
+): ListFilterSectionConfig | null {
+  if (tags.length === 0) return null;
+  return {
+    id,
+    title,
+    mode: "multi",
+    options: tagOptionsFromValues(tags),
+  };
+}
+
 export function buildRuneFilterSections(
   uniqueMonsters: string[],
   uniqueMonsterCrs: string[],
   uniqueTags: string[],
   uniqueMaterialEffects: string[],
 ): ListFilterSectionConfig[] {
+  const tagBuckets = splitTagsByCategory(uniqueTags);
+
+  const tagSections = [
+    buildTagFilterSection(
+      RUNE_TAG_FILTER_SECTION_IDS.weapon,
+      "Weapons",
+      tagBuckets.weapon,
+    ),
+    buildTagFilterSection(
+      RUNE_TAG_FILTER_SECTION_IDS.class,
+      "Classes",
+      tagBuckets.class,
+    ),
+    buildTagFilterSection(
+      RUNE_TAG_FILTER_SECTION_IDS.damage,
+      "Damage Related",
+      tagBuckets.damage,
+    ),
+    buildTagFilterSection(
+      RUNE_TAG_FILTER_SECTION_IDS.playStyle,
+      "Play Style",
+      tagBuckets.playStyle,
+    ),
+    buildTagFilterSection(
+      RUNE_TAG_FILTER_SECTION_IDS.other,
+      "Tags (same effect)",
+      tagBuckets.other,
+    ),
+  ].filter((section): section is ListFilterSectionConfig => section != null);
+
   return [
     { id: "slot", title: "Slot", mode: "single", options: SLOT_OPTIONS },
     {
@@ -77,15 +125,7 @@ export function buildRuneFilterSections(
         label: `CR ${cr}`,
       })),
     },
-    {
-      id: "tag",
-      title: "Tags (same effect)",
-      mode: "multi",
-      options: uniqueTags.map((tag) => ({
-        value: tag,
-        label: formatTag(tag),
-      })),
-    },
+    ...tagSections,
     {
       id: "materialEffect",
       title: "Material Effect",
