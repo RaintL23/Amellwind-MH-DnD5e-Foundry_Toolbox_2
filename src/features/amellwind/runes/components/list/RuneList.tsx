@@ -26,6 +26,7 @@ import {
   buildRuneColumnFilters,
   matchesRuneListRow,
   payloadFromRuneFilters,
+  sortRuneListRows,
   type RuneListRow,
 } from "./rune-table-filters.utils";
 
@@ -162,12 +163,13 @@ export function RuneList() {
 
   const filteredRunes = useMemo(
     () =>
-      searchIndex
-        .filter((row) =>
+      sortRuneListRows(
+        searchIndex.filter((row) =>
           matchesRuneListRow(row, filterPayload, materialEffectIndex),
-        )
-        .map((row) => row.rune),
-    [searchIndex, filterPayload, materialEffectIndex],
+        ),
+        sorting,
+      ).map((row) => row.rune),
+    [searchIndex, filterPayload, materialEffectIndex, sorting],
   );
 
   const updateFilters = useCallback(
@@ -236,34 +238,40 @@ export function RuneList() {
 
   return (
     <>
-      <div className="p-6">
-        <div className="mb-4 flex items-start justify-between gap-4">
-          <div>
+      <div className="flex flex-col h-full min-h-0 p-4 sm:p-6">
+        <div className="mb-3 flex shrink-0 flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
             <h1 className="text-2xl font-bold text-foreground">Runes</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {!loading && (
+            <p className="text-sm text-muted-foreground mt-0.5">
+              {loading ? (
+                <>
+                  ("loading...) / (loading...) runes"
+                </>
+              ): (
                 <>
                   {isSearchPending
                     ? "Updating…"
-                    : `${filteredRunes.length} / ${runes.length} materials`}
+                    : `${filteredRunes.length} / ${runes.length} runes`}
                 </>
               )}
             </p>
           </div>
-          {totalRunes > 0 && (
-            <div className="flex items-center gap-1.5 rounded-md bg-amber-600/10 border border-amber-600/30 px-3 py-1.5 text-xs text-amber-400 font-medium shrink-0">
-              <Layers className="h-3.5 w-3.5" />
-              {totalRunes} in your build
-            </div>
-          )}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
+            <ObtainMaterialsPanel />
+            <RulesPanel />
+            {totalRunes > 0 && (
+              <div className="flex items-center gap-1.5 rounded-md bg-amber-600/10 border border-amber-600/30 px-3 py-1.5 text-xs text-amber-400 font-medium">
+                <Layers className="h-3.5 w-3.5" />
+                {totalRunes} in your build
+              </div>
+            )}
+          </div>
         </div>
 
-        <MhmmSourceNotice className="mb-4" />
+        <MhmmSourceNotice className="mb-3 shrink-0" />
 
-        <ObtainMaterialsPanel />
-        <RulesPanel />
-
-        <RuneFilters
+        <div className="mb-3 shrink-0">
+          <RuneFilters
           filters={{ ...filters, name: searchDraft }}
           uniqueMonsters={uniqueMonsters}
           uniqueMonsterCrs={uniqueMonsterCrs}
@@ -271,12 +279,14 @@ export function RuneList() {
           uniqueMaterialEffects={uniqueMaterialEffects}
           onSearchChange={setSearchDraft}
           onChange={updateFilters}
-        />
+          />
+        </div>
 
-        {loading ? (
-          <ListAreaLoading />
-        ) : (
-          <RuneDataTable
+        <div className="min-h-0 flex-1">
+          {loading ? (
+            <ListAreaLoading />
+          ) : (
+            <RuneDataTable
             rows={searchIndex}
             materialEffectIndex={materialEffectIndex}
             isInBuild={isInBuild}
@@ -290,8 +300,9 @@ export function RuneList() {
               setSelected(rune);
               setDialogOpen(true);
             }}
-          />
-        )}
+            />
+          )}
+        </div>
 
         {dialogOpen && selected && (
           <RuneDetailDialog

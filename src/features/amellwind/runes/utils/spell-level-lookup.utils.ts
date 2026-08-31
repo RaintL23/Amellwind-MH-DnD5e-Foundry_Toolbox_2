@@ -70,7 +70,11 @@ export function findCatalogSpellLevelsInPlainText(
   if (lookup.size === 0) return [];
 
   const lower = text.toLowerCase().replace(/\s+/g, " ");
-  if (!/\bcast(?:s|ing)?\b|\bknow(?:s|ing)?\b|\bcantrip\b/.test(lower)) {
+  if (
+    !/\bcast(?:s|ing)?\b|\bknow(?:s|ing)?\b|\bcantrip\b|\bbenefits of the\b|\beffects of the\b|\bacts as the\b/.test(
+      lower,
+    )
+  ) {
     return [];
   }
 
@@ -100,7 +104,11 @@ export function findCatalogSpellLevelsInPlainText(
       const nearKnow = /\bknow(?:s|ing)?\b/.test(before);
       const nearCantrip =
         /\bcantrip\b/.test(before) || /^\s+cantrip\b/.test(after);
-      if (!nearCast && !nearKnow && !nearCantrip) continue;
+      const nearReplication =
+        /\bbenefits of the\b/.test(before) ||
+        /\beffects of the\b/.test(before) ||
+        /\bacts as the\b/.test(before);
+      if (!nearCast && !nearKnow && !nearCantrip && !nearReplication) continue;
 
       const level = lookup.get(name);
       if (typeof level !== "number") continue;

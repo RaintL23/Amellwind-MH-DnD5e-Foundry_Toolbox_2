@@ -1,5 +1,5 @@
-import type { ColumnFiltersState, FilterFn } from "@tanstack/react-table";
-import type { MaterialEffectSlot } from "@/shared/types";
+import type { ColumnFiltersState, FilterFn, SortingState } from "@tanstack/react-table";
+import type { MaterialEffectSlot, Rune } from "@/shared/types";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
 import {
   hasActiveRuneEffectListFilters,
@@ -13,6 +13,47 @@ import {
 import type { RuneFiltersState, RuneSlotFilter } from "./rune-filters.utils";
 
 export type RuneListRow = RuneSearchIndexEntry;
+
+/** Stable row id — matches RuneDataTable `getRowId`. */
+export function runeRowKey(rune: Rune): string {
+  return `${rune.monsterSource}-${rune.monsterName}-${rune.name}`;
+}
+
+const RUNE_LIST_SORT_ACCESSORS: Record<
+  string,
+  (row: RuneListRow) => string | number
+> = {
+  name: (row) => row.rune.name,
+  monsterName: (row) => row.rune.monsterName,
+  tier: (row) => row.rune.tier,
+};
+
+/** Applies the same single-column sort as the rune list table (Name / Monster / Tier). */
+export function sortRuneListRows(
+  rows: RuneListRow[],
+  sorting: SortingState,
+): RuneListRow[] {
+  const primary = sorting[0];
+  if (!primary) return rows;
+
+  const accessor = RUNE_LIST_SORT_ACCESSORS[primary.id];
+  if (!accessor) return rows;
+
+  return [...rows].sort((a, b) => {
+    const aVal = accessor(a);
+    const bVal = accessor(b);
+    let cmp: number;
+    if (typeof aVal === "number" && typeof bVal === "number") {
+      cmp = aVal - bVal;
+    } else {
+      cmp = String(aVal).localeCompare(String(bVal), undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
+    }
+    return primary.desc ? -cmp : cmp;
+  });
+}
 
 /** Hidden TanStack column id — holds the composite list filter payload. */
 export const RUNE_LIST_FILTER_COLUMN_ID = "_filters";

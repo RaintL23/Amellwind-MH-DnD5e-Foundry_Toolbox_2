@@ -54,6 +54,89 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
   });
 
+  it("tags lightning immunity when MHMM typo uses lighting damage", () => {
+    const tags = extractRuneEffectTags(
+      "You are immune to lighting damage while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:immunity",
+        "damage:lightning",
+        "type:defensive",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags lightning and thunder for mixed lighting immunity + thunder resistance", () => {
+    const tags = extractRuneEffectTags(
+      "You have immunity to lighting damage and resistance to thunder damage while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:immunity",
+        "mechanic:resistance",
+        "damage:lightning",
+        "damage:thunder",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags every elemental type in dual immunity armor effects", () => {
+    const tags = extractRuneEffectTags(
+      "You are immune to cold and fire damage while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "damage:cold",
+        "damage:fire",
+        "mechanic:immunity",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags all physical damage types in shared-suffix immunity lists", () => {
+    const tags = extractRuneEffectTags(
+      "You are immune to bludgeoning, piercing, and slashing damage from CR 2 or lower creatures while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "damage:bludgeoning",
+        "damage:piercing",
+        "damage:slashing",
+        "mechanic:immunity",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags MHMM cosmetic weapon effects", () => {
+    const tags = extractRuneEffectTags(
+      "(Cosmetic) While attuned to this weapon, it seems to glow with an inner heat but is otherwise harmless.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
+    expect(tags).not.toContain("type:offensive");
+    expect(tags).not.toContain("type:defensive");
+  });
+
+  it("tags cosmetic effects with slot restrictions in the prefix", () => {
+    const tags = extractRuneEffectTags(
+      "(Cosmetic; Shield Only) While attuned to this weapon, you can use your action to transform your shield's surface into a tray of frost.",
+    );
+
+    expect(tags).toContain("type:cosmetic");
+    expect(tags).toContain("mechanic:active");
+  });
+
   it("tags flat elemental damage reduction (Warm Pelt pattern)", () => {
     const tags = extractRuneEffectTags(
       "You reduce thunder damage you take by 2 while you wear this armor.",
@@ -1052,6 +1135,233 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
 
     expect(tags).toContain("mechanic:underwater");
     expect(tags).not.toContain("mechanic:hold-breath");
+    expect(tags).toContain("mechanic:temperature-tolerance");
+    expect(tags).toContain("damage:cold");
+    expect(tags).toContain("type:utility");
+  });
+
+  it("tags basic cold temperature tolerance on armor", () => {
+    const tags = extractRuneEffectTags(
+      "You suffer no harm in temperature as cold as -20 degrees Fahrenheit while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:temperature-tolerance",
+        "damage:cold",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+    expect(tags).not.toContain("damage:fire");
+  });
+
+  it("tags heat temperature tolerance on armor", () => {
+    const tags = extractRuneEffectTags(
+      "You suffer no harm from temperatures as warm as 120 degrees Fahrenheit while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:temperature-tolerance",
+        "damage:fire",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+    expect(tags).not.toContain("damage:cold");
+  });
+
+  it("tags extended cold tolerance (Hot Drink tier)", () => {
+    const tags = extractRuneEffectTags(
+      "While you wear this armor, you can tolerate temperatures as low as -50 degrees Fahrenheit without any additional protection. If you wear heavy clothes, you can tolerate temperatures as low as -100 degrees Fahrenheit.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:temperature-tolerance",
+        "damage:cold",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags dual hot and cold tolerance (Adaptability)", () => {
+    const tags = extractRuneEffectTags(
+      "Adaptability. You are always under the effects of both a Cool Drink and a Hot Drink while you are wearing this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:temperature-tolerance",
+        "damage:cold",
+        "damage:fire",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("does not tag weapon freezing-temperature light shedding as temperature tolerance", () => {
+    const tags = extractRuneEffectTags(
+      "When you are in freezing temperatures, this weapon sheds bright light in a 10-foot radius and dim light for an additional 10 feet.",
+    );
+
+    expect(tags).not.toContain("mechanic:temperature-tolerance");
+  });
+
+  it("tags ranged pull on hit as forced-movement, ranged, bonus-action, offensive", () => {
+    const tags = extractRuneEffectTags(
+      "Whenever you hit a creature with a range weapon attack, you can use a bonus action to pull the creature 10 feet towards you.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:forced-movement",
+        "weapon-type:ranged",
+        "mechanic:bonus-action",
+        "mechanic:active",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags jump-and-grab movement preservation", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this armor, when you jump and grab onto an object or surface with your hand(s), the distance traveled does not count against your movement for the turn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:jump-movement",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags partial exhaustion mitigation as defensive", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this armor, you ignore the effects of the first 2 levels of exhaustion unless your exhaustion level is 3 or higher.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:exhaustion-mitigation",
+        "mechanic:condition-exhaustion",
+        "mechanic:condition",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags magic resistance on saves vs spells", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on saving throws against spells while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:magic-resistance",
+        "mechanic:saving-throw",
+        "mechanic:advantage",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags reaction damage halving as damage-reduction and defensive", () => {
+    const tags = extractRuneEffectTags(
+      "While you are wearing this armor and an attacker that you can see hits you with an attack, you can use your reaction to halve the attack's damage against you. You can use this property a number of times equal to half your proficiency bonus (rounded down), regaining all expended uses when you finish a long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:damage-reduction",
+        "mechanic:reaction",
+        "mechanic:long-rest",
+        "mechanic:active",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags crit negation as defensive, not offensive", () => {
+    const tags = extractRuneEffectTags(
+      "While wearing this armor, any critical hit against you becomes a normal hit.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:crit-negation",
+        "mechanic:critical",
+        "mechanic:passive",
+        "type:defensive",
+      ]),
+    );
+    expect(tags).not.toContain("type:offensive");
+  });
+
+  it("tags Elemental Atk Up with extra die and elemental damage types", () => {
+    const tags = extractRuneEffectTags(
+      "Elemental Atk Up. If your weapon deals cold, fire, lightning, or necrotic damage and you hit a creature with this weapon; roll one additional damage die for the elemental damage.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:extra-damage-die",
+        "damage:cold",
+        "damage:fire",
+        "damage:lightning",
+        "damage:necrotic",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags flavor-only dirty armor and maintenance-free weapons as cosmetic", () => {
+    const armorTags = extractRuneEffectTags(
+      "While wearing this armor, you are always dirty. You leave muddy footprints, your hands are always dirty, and shaking out your hair causes a small pile of dirt to form on the ground.",
+    );
+    const weaponTags = extractRuneEffectTags(
+      "This weapon is so finely constructed it never needs maintenance, cannot rust or tarnish.",
+    );
+
+    expect(armorTags).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
+    expect(weaponTags).toEqual(
+      expect.arrayContaining([
+        "type:cosmetic",
+        "mechanic:maintenance-free",
+      ]),
+    );
+  });
+
+  it("does not tag Protective Polish extra damage as cosmetic", () => {
+    const tags = extractRuneEffectTags(
+      "Protective Polish. This weapon is so finely constructed it never needs maintenance, cannot rust or tarnish, and deals an extra 1d6 weapon damage.",
+    );
+
+    expect(tags).not.toContain("type:cosmetic");
+    expect(tags).toContain("mechanic:maintenance-free");
+  });
+
+  it("tags plane shift and generic save bonus together", () => {
+    const tags = extractRuneEffectTags(
+      "You gain a +1 bonus to saving throws while you wear this armor. You can use an action to enter the Elemental Plane of fire along with everything you are wearing and carrying. You remain there until you use an action to return to the plane you were on. You reappear in the last space you occupied, or if that space is occupied, the nearest unoccupied space. Once you use this property, you can't use it again until the next dawn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:save-bonus",
+        "mechanic:plane-shift",
+        "mechanic:saving-throw",
+        "mechanic:active",
+        "type:defensive",
+      ]),
+    );
   });
 
   it("keeps named Critical Status as both critical and roll-20", () => {
@@ -1283,6 +1593,1133 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
 
     expect(tags).toContain("mechanic:spell-buff:save");
     expect(tags).toContain("mechanic:attack-roll");
+  });
+
+  it("tags hill-giant-strength potion replication", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this weapon, you can use an action to gain the same benefits as a potion of hill giants strength for 1 hour. Once you use this property, you cannot use it again for 3 days.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:potion-effect",
+        "mechanic:recharge-extended",
+        "mechanic:active",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags base AC unarmored defense", () => {
+    const tags = extractRuneEffectTags(
+      "If you aren't wearing light, medium, or heavy armor; your base Armor Class is 14 + your Dexterity modifier.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:armor-class",
+        "mechanic:base-ac",
+        "type:defensive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags extra-limb unarmed bonus-action package", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned to this armor, you grow two additional arms. As a bonus action you can have the arms make two unarmed strikes. The strikes can only deal 1 + your strength modifier.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:extra-limbs",
+        "mechanic:unarmed",
+        "mechanic:bonus-action",
+        "mechanic:active",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags light-snuffing with area and light-suppression", () => {
+    const tags = extractRuneEffectTags(
+      "When held, this weapon draws in light, snuffing all nonmagical flames within 20 feet out. It turns dim light into darkness and bright light into dim light.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:darkness",
+        "mechanic:nonmagical-darkness",
+        "mechanic:light-suppression",
+        "mechanic:area",
+        "type:utility",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:light");
+  });
+
+  it("tags reaction halve damage with curly apostrophe in attack's", () => {
+    const tags = extractRuneEffectTags(
+      "While you are wearing this armor and an attacker that you can see hits you with an attack, you can use your reaction to halve the attack\u2019s damage against you. You can use this property a number of times equal to half your proficiency bonus (rounded down), regaining all expended uses when you finish a long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:damage-reduction",
+        "mechanic:reaction",
+        "mechanic:long-rest",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags Rapid Morph weapon mode switch", () => {
+    const tags = extractRuneEffectTags(
+      "(Charge Blade & Switchaxe Only) Rapid Morph. While attuned to this weapon, you can switch its modes as a free action.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:weapon-mode",
+        "weapon-type:charge-blade",
+        "weapon-type:switchaxe",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags degrading mud AC coating", () => {
+    const tags = extractRuneEffectTags(
+      "Your armor is caked in a mud like substance increasing your AC by 3. Each time you are hit, some of the mud breaks off reducing the bonus by 1. The mud reforms on your armor when you finish a long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:degrading-ac",
+        "mechanic:armor-class",
+        "mechanic:long-rest",
+        "type:defensive",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags telescope transform utility", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned to this weapon you can use an action to speak its commmand word, transforming it into a telescope for 10 minutes or a magnifying glass for 1 minute.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:item-transform",
+        "mechanic:active",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags Palamute Rally ally aura as support", () => {
+    const tags = extractRuneEffectTags(
+      "Palamute Rally. NPC allies within 10 feet of you gain a +1 bonus to their AC and attack rolls while you are attuned to this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:ally-aura",
+        "mechanic:armor-class",
+        "mechanic:attack-roll",
+        "mechanic:area",
+        "type:support",
+        "type:defensive",
+        "type:offensive",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Dwarf Thrower ally throw", () => {
+    const tags = extractRuneEffectTags(
+      "Dwarf Thrower. While attuned to this armor you can use your Action to throw a willing ally that isn't grappled a number of feet equal to 5 times your Strength modifier. The ally lands as safely as possible in the space you throw them.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:ally-throw",
+        "mechanic:condition-grappled",
+        "mechanic:active",
+        "type:support",
+      ]),
+    );
+  });
+
+  it("tags Powerhouse reaction AC rider", () => {
+    const tags = extractRuneEffectTags(
+      "Powerhouse. When you use a reaction that increases your AC and causes an attack that would hit to miss, the next attack with this weapon deals extra damage equal to your proficiency bonus.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:powerhouse",
+        "mechanic:reaction",
+        "mechanic:armor-class",
+        "mechanic:active",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags extended summon shamos", () => {
+    const tags = extractRuneEffectTags(
+      "While holding this weapon, you can use an action to summon 1d4 shamos to your aid for 1 hour. They will act on your turn in the initiative and will flee if you or your allies attempt to harm either of them. One you use this property, you cannot use it again for 3 days.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:summon",
+        "mechanic:recharge-extended",
+        "mechanic:active",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags fire damage type shift", () => {
+    const tags = extractRuneEffectTags(
+      "While you are holding this weapon, you can use an action to make this weapon deal fire damage instead of its normal damage type. This effect lasts one hour and cannot be used again until you have finished a long rest. You can use another action to end the effect before the duration expires.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:damage-type-shift",
+        "damage:fire",
+        "mechanic:long-rest",
+        "mechanic:active",
+      ]),
+    );
+  });
+
+  it("tags dragonpiercer extra uses", () => {
+    const tags = extractRuneEffectTags(
+      "(Bow Only) Bow Charge Plus++. While attuned to this weapon, you can use your dragonpiercer three additional times between rests and it recharges after a Short or Long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:dragonpiercer",
+        "weapon-type:bow",
+        "mechanic:short-rest",
+        "mechanic:long-rest",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags conditional AC when below half hit points", () => {
+    const tags = extractRuneEffectTags(
+      "When you are below half of your maximum hit points, you can use your bonus action to increase your AC by 4 for 1 minute. Once you use this feature, you cannot use it again until you complete a short or long rest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:conditional-ac",
+        "mechanic:armor-class",
+        "mechanic:bonus-action",
+        "mechanic:short-rest",
+        "mechanic:long-rest",
+        "mechanic:active",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags crit no reactions without tagging terror wave fear", () => {
+    const critTags = extractRuneEffectTags(
+      "When you critically hit with this weapon, the target can't take reactions until the start of its next turn.",
+    );
+    const terrorTags = extractRuneEffectTags(
+      "While holding it, you can use an action and expend 1 rune to release a wave of terror. Each creature of your choice in a 30-foot radius extending from you must succeed on a DC 19 Wisdom saving throw or become frightened of you for 1 minute. While it is frightened in this way, a creature must spend its turns trying to move as far away from you as it can, and it can't willingly move to a space within 30 feet of you. It also can't take reactions.",
+    );
+
+    expect(critTags).toEqual(
+      expect.arrayContaining([
+        "mechanic:crit-no-reactions",
+        "mechanic:critical",
+        "type:offensive",
+      ]),
+    );
+    expect(terrorTags).not.toContain("mechanic:crit-no-reactions");
+  });
+
+  it("tags spell and attack resistance bypass variants", () => {
+    const spellTags = extractRuneEffectTags(
+      "While you are attuned to this weapon, your cold, fire, and lightning spells bypass a creatures resistance and immunities.",
+    );
+    const mindTags = extractRuneEffectTags(
+      "Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature.",
+    );
+    const polishTags = extractRuneEffectTags(
+      "Heavy Polish+. This weapon's attacks bypass a creature's immunity and resistance to slashing damage.",
+    );
+
+    expect(spellTags).toEqual(
+      expect.arrayContaining([
+        "mechanic:spell-bypass",
+        "mechanic:resistance-bypass",
+        "mechanic:immunity-bypass",
+      ]),
+    );
+    expect(mindTags).toEqual(
+      expect.arrayContaining(["mechanic:resistance-bypass"]),
+    );
+    expect(polishTags).toEqual(
+      expect.arrayContaining([
+        "mechanic:resistance-bypass",
+        "mechanic:immunity-bypass",
+        "damage:slashing",
+      ]),
+    );
+  });
+
+  it("tags Hasten Recovery healing dice reroll", () => {
+    const tags = extractRuneEffectTags(
+      "Hasten Recovery. When you regain hit points from magical healing, such as from the cure wounds spell or a potion of healing, you can reroll any 1s or 2s on the healing dice. You must use the new roll, even if it is a 1 or 2. If creatures other than you are targeted by the magical healing effect, they do not heal for the new value rolled.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:healing-reroll",
+        "type:defensive",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Flayer wound crit burst", () => {
+    const tags = extractRuneEffectTags(
+      "Flayer. When you score a critical hit against a target with a wound with this weapon, roll a d6. The target's wound closes, and it loses a number of hit points equal to the number rolled times the targets wound damage.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:wound-crit",
+        "mechanic:critical",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags unarmed slashing upgrade package", () => {
+    const tags = extractRuneEffectTags(
+      "You are proficient in unarmed strikes while you are attuned to this weapon. Additionally, your unarmed strikes deal slashing damage instead of bludgeoning damage and you can use a d6 in place of the normal weapon damage dice with unarmed strikes.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:unarmed",
+        "mechanic:unarmed-upgrade",
+        "damage:slashing",
+        "damage:bludgeoning",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags prehensile monkey tail utility", () => {
+    const tags = extractRuneEffectTags(
+      "While wearing this armor, you grow a monkey-like tail. You can use the tail to hold an object or stow or retrieve an item from your bags. The tail can't attack, activate magic items, or carry more than 15 pounds.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:prehensile-tail",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Razor Sharp healing reduction and wound lock", () => {
+    const tags = extractRuneEffectTags(
+      "(Bladed Weapon Only) Razor Sharp. Once per turn, when you hit a creature with this weapon, anytime it would regain hit points before the end of its next turn, it regains half as many. Additionally, if the creature is afflicted with a wound, such as the odogaron's bloody wound, it can only be closed by magical healing for 1 minute.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:healing-reduction",
+        "mechanic:wound-lock",
+        "weapon-type:bladed",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags Combination Pro crafting max output", () => {
+    const tags = extractRuneEffectTags(
+      "Combination Pro. When you succeed on crafting an item while attuned to this weapon, you gain the maximum number possible.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:crafting-max",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Filthy Rich gold doubling", () => {
+    const tags = extractRuneEffectTags(
+      "Filthy Rich. While attuned to this armor, the gold you receive as a reward magically doubles, but only if you were attuned to this armor for the duration of the hunt or quest.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:gold-double",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags ability score floor while attuned", () => {
+    const tags = extractRuneEffectTags(
+      "Your Strength score is 29 while you are attuned to this weapon. It has no effect on you if your Strength is already 29 or higher.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:ability-score-set",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags ability score floor with shortened attuned wording", () => {
+    const tags = extractRuneEffectTags(
+      "Your Strength score is 19 while attuned to this weapon. It has no effect on you if your Strength is already 19 or higher.",
+    );
+
+    expect(tags).toContain("mechanic:ability-score-set");
+  });
+
+  it("tags charge attack bonus for hammer and lance", () => {
+    const tags = extractRuneEffectTags(
+      "(Hammer & Lance Only) You gain a +1 bonus to your attack rolls if you move 20 feet in a straight line towards a creature without taking damage.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:charge-attack",
+        "mechanic:attack-roll",
+        "weapon-type:hammer",
+        "weapon-type:lance",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags fishing advantage without gather-resources yield", () => {
+    const tags = extractRuneEffectTags(
+      "You have advantage on checks to find a fishing spot and to catch any fish while you wear this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:fishing", "mechanic:advantage"]),
+    );
+    expect(tags).not.toContain("mechanic:gather-resources");
+  });
+
+  it("tags cosmetic eye glow as flavor-only", () => {
+    const tags = extractRuneEffectTags(
+      "While you wear this armor, your eye's glow red at night, much like the nargacuga's.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
+  });
+
+  it("tags gliding membrane and fall-control armor effects", () => {
+    const tags = extractRuneEffectTags(
+      "When you place this material into your armor it gains a gliding membrane, which extends from your forearms to your hindlegs. As an action or reaction, you can extend your arms to reduce your fall speed to 10 feet per round while traveling in a forward motion until you reach the ground, you are grappled, or you use your action to end the effect early.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:glide",
+        "mechanic:reaction",
+        "mechanic:condition-grappled",
+        "mechanic:active",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags Strong Winds immunity and steam flavor cosmetic", () => {
+    expect(
+      extractRuneEffectTags(
+        "While you are attuned to this armor, you and your equipment suffer no ill effects from Strong Winds.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:wind-resist",
+        "type:defensive",
+        "mechanic:passive",
+      ]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "When you are agitated, angry, or annoyed while wearing this armor, steam radiates from it and creates minute explosions around you.",
+      ),
+    ).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
+  });
+
+  it("tags spell replication, psychoserum extend, and Bloodrage haste", () => {
+    expect(
+      extractRuneEffectTags(
+        "Whenever you finish a long rest, you gain the benefits of the Heroes' Feast spell.",
+      ),
+    ).toEqual(
+      expect.arrayContaining(["mechanic:spell:lvl6", "mechanic:long-rest"]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "Psychic. When you drink a psychoserum (AGtMH p.64), the effects last an additional 1d6 days.",
+      ),
+    ).toEqual(
+      expect.arrayContaining(["mechanic:psychoserum-extend", "type:utility"]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "(Barbarian only) Bloodrage. When you are reduced below half of your maximum hit points while raging, you can use your reaction to enter a bloodrage until your rage ends. When in a bloodrage, you gain the effects of the haste spell, but you do not need to concentrate on it.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "class:barbarian",
+        "mechanic:spell:lvl3",
+        "mechanic:reaction",
+        "mechanic:active",
+      ]),
+    );
+  });
+
+  it("tags indigo marks, language command phrase, and anti-tracking", () => {
+    expect(
+      extractRuneEffectTags(
+        "The bearer can use this weapon to make indigo colored marks on any surface. The marks will fade away in 24 hours.",
+      ),
+    ).toEqual(expect.arrayContaining(["type:cosmetic"]));
+
+    expect(
+      extractRuneEffectTags(
+        'While touching this weapon you can speak its command phrase: "The limits of my language are the limits of my world" to gain proficiency in any language of your choice for 24 hours.',
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:proficiency-language",
+        "type:utility",
+      ]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "While wearing this armor all creatures have disadvantage on skills checks when trying to track you.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:anti-tracking",
+        "mechanic:disadvantage",
+        "mechanic:skill-survival",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags Acrobatic skill alias, grapple contest, and conditional speed", () => {
+    expect(
+      extractRuneEffectTags(
+        "You have advantage on Acrobatic checks while you wear this armor.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:skill-acrobatics",
+        "mechanic:advantage",
+        "mechanic:passive",
+      ]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "While you are attuned to this weapon, whenever a creature attempts to break a grapple with you, you make your skill check with advantage.",
+      ),
+    ).toEqual(
+      expect.arrayContaining(["mechanic:grapple-contest", "mechanic:advantage"]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "While attuned to this weapon, your movement speed is doubled whenever you use your movement to close the distance between you and the last creature you hit.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:conditional-speed",
+        "mechanic:movement",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags invisibility reaction, stamina recovery, and terrain damage shift", () => {
+    expect(
+      extractRuneEffectTags(
+        "While you are wearing this armor and you take damage, you can use your reaction to magically turn invisible until the start of your next turn or until you attack, make a damage roll, or force someone to make a saving throw.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:invisibility-reaction",
+        "mechanic:condition-invisible",
+        "mechanic:reaction",
+        "type:defensive",
+      ]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "Stamina Recovery. When you take a long rest, you reduce your exhaustion by 5 levels instead of 1.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:exhaustion-recovery",
+        "mechanic:condition-exhaustion",
+        "type:defensive",
+      ]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "While attuned to this weapon you can use your bonus action to scoop up a piece of the terrain you are on and coat your weapon with it. The coating lasts for 1 minute and changes the damage type your weapon deals based on the table found in the Chatacabra stat block.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:damage-type-shift",
+        "mechanic:bonus-action",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags Kut-Ku horn deafened suppress and Xu Wu disengage-hide", () => {
+    expect(
+      extractRuneEffectTags(
+        "As a bonus action, you can conjure a horn in the shape of the Kut-Ku's ear. When held up to your ear, this horn suppresses the effects of the deafened condition on you, allowing you to hear normally.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:condition-suppress",
+        "mechanic:condition-deafened",
+        "mechanic:bonus-action",
+        "type:utility",
+      ]),
+    );
+
+    expect(
+      extractRuneEffectTags(
+        "While attuned to this armor you can take the Disengage or Hide action as a bonus action. Once you use this property you can't use it again until you finish a long rest.",
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        "mechanic:disengage-hide",
+        "mechanic:bonus-action",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags help-action ally magic weapon buff", () => {
+    const tags = extractRuneEffectTags(
+      "Whenever the bearer of this weapon takes a help action in combat, the aided ally can treat its weapon as a +1 magic weapon until the end of its next turn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:help-action", "type:support"]),
+    );
+  });
+
+  it("tags buried material sense as activated mining utility", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned to this weapon you can stab it into the ground to sense the presence of buried materials. Once you use this property, you can't use it again for 1 hour.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:material-sense",
+        "mechanic:mining",
+        "mechanic:gather-resources",
+        "mechanic:recharge-hourly",
+        "mechanic:active",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags Strength (Athletic) mine ore skill bonus", () => {
+    const tags = extractRuneEffectTags(
+      "You gain a +2 bonus to Strength (Athletic) checks to mine ore.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:skill-bonus",
+        "mechanic:skill-athletics",
+        "mechanic:mining",
+        "type:utility",
+      ]),
+    );
+    expect(tags).not.toContain("mechanic:gather-resources");
+  });
+
+  it("tags spider-climb wording as climbing movement", () => {
+    const tags = extractRuneEffectTags(
+      "While you hold this weapon, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:climbing",
+        "mechanic:movement",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags breathe-any-environment and gas save advantage", () => {
+    const tags = extractRuneEffectTags(
+      "While wearing this armor, you can breathe normally in any Environment, and you have advantage on saving throws made against harmful gases and vapors (such as cloudkill and stinking cloud effects, inhaled poisons, and the breath weapons of some dragons).",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:breathe-any-environment",
+        "mechanic:against-condition",
+        "mechanic:advantage",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags improvised weapon proficiency", () => {
+    const tags = extractRuneEffectTags(
+      "You are proficient with improvised weapons while attuned to this weapon.",
+    );
+
+    expect(tags).toContain("mechanic:proficiency-improvised");
+  });
+
+  it("tags ability score increase on armor", () => {
+    const tags = extractRuneEffectTags(
+      "Increase your Dexterity score by 1, to a maximum of 20 while you wear this armor.",
+    );
+
+    expect(tags).toContain("mechanic:ability-score-increase");
+  });
+
+  it("tags reckless barbarian extra attack", () => {
+    const tags = extractRuneEffectTags(
+      "(Barbarian only) After you make a weapon attack while attacking recklessly with this weapon, you may make another attack with the same weapon against a different creature that is within 5 feet of the original target that is within range of this weapon. You can use this property once per turn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "class:barbarian",
+        "mechanic:extra-attack",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags on-hit push as offensive", () => {
+    const tags = extractRuneEffectTags(
+      "When you hit a Huge or smaller creature with this weapon, it must succeed on a DC 17 Strength check or be pushed back 5 feet.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:push", "type:offensive"]),
+    );
+  });
+
+  it("tags regeneration armor healing as major", () => {
+    const tags = extractRuneEffectTags(
+      "While wearing this armor, you regain 1d6 Hit Points every 10 minutes, provided that you have at least 1 hit point. If you lose a body part, the armor causes the missing part to regrow and return to full functionality after 1d6 + 1 days if you have at least 1 hit point the whole time.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:regeneration",
+        "mechanic:healing:major",
+      ]),
+    );
+  });
+
+  it("tags Psychic Vision creature sense and vulnerability", () => {
+    const tags = extractRuneEffectTags(
+      "Psychic Vision. While you are attuned to this armor, you know the location of all creatures within 60 feet of you, but you are vulnerable to psychic damage.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:creature-sense",
+        "mechanic:vulnerability",
+        "mechanic:area",
+        "damage:psychic",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Everlasting consumable duration extension", () => {
+    const tags = extractRuneEffectTags(
+      "Everlasting. The duration of consumable items is doubled while you are attuned to this armor and you no longer need to concentrate on the effect if the consumable normally requires it.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:consumable-extend",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags lightning signal flare", () => {
+    const tags = extractRuneEffectTags(
+      "While holding this weapon, you can use an action to shoot a harmless spark of lightning into the air. In the open, this flare is visible for up to 1 mile.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:signal-flare",
+        "mechanic:active",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags ice reservoir difficult terrain", () => {
+    const tags = extractRuneEffectTags(
+      "This weapon has a reservoir of ice magic that can freeze the ground. While holding it, you can use a bonus action to plant the weapon in the ground, releasing the ice magic within, causing the ground in a 15-foot radius around the weapon to become icy and difficult terrain for the duration, or until you remove from the ground as a bonus action.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:ice-reservoir",
+        "mechanic:difficult-terrain",
+        "mechanic:bonus-action",
+        "mechanic:area",
+        "mechanic:movement",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags blight swap by weapon type", () => {
+    const tags = extractRuneEffectTags(
+      "Depending on which weapon this material is placed into, it gains the following benefits: Bow. When you hit a creature with a poison coated arrow, you can inflict iceblight instead of the poisoned condition. Dual Repeaters. Your cryo ammo now inflicts iceblight instead of waterblight when empowered.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:blight-swap",
+        "mechanic:condition-iceblight",
+        "mechanic:condition-waterblight",
+        "mechanic:condition-poisoned",
+      ]),
+    );
+  });
+
+  it("tags Cliffhanger climb speed and muddy terrain immunity", () => {
+    const climbTags = extractRuneEffectTags(
+      "Cliffhanger. While wearing this armor, you have a climb speed equal to your walking speed.",
+    );
+    const mudTags = extractRuneEffectTags(
+      "You do not suffer from difficult terrain in muddy or swamp terrain while wearing this armor.",
+    );
+
+    expect(climbTags).toEqual(
+      expect.arrayContaining([
+        "mechanic:climbing",
+        "mechanic:movement",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+    expect(mudTags).toEqual(
+      expect.arrayContaining([
+        "mechanic:ignore-difficult-terrain",
+        "mechanic:difficult-terrain",
+        "mechanic:movement",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags Ammo Up capacity and coating", () => {
+    const tags = extractRuneEffectTags(
+      "(Range Weapon Only) Ammo Up. Your bowgun's normal ammo capacity doubles while you are attuned to this weapon. Additionally, when coating, you can coat up to 10 additional arrows.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:ammo-capacity",
+        "weapon-type:ranged",
+        "type:utility",
+        "mechanic:passive",
+      ]),
+    );
+  });
+});
+
+describe("extractRuneEffectTags — proficiency, utility, and defense patterns", () => {
+  it("tags extinguish flames on draw with light-suppression and hourly recharge", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this weapon you can draw it, to extinguish all nonmagical flames within 30 feet of you. This property can be used no more than once per hour.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:area",
+        "mechanic:light-suppression",
+        "mechanic:recharge-hourly",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags tool proficiency choice on attune", () => {
+    const tags = extractRuneEffectTags(
+      "When you attune to this armor, you gain proficiency with either alchemist's supplies or tinker's tools. You can change which tool you are proficient with daily at dawn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:proficiency-tool",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags Athletic skill proficiency while attuned", () => {
+    const tags = extractRuneEffectTags(
+      "You have proficiency in the Athletic skill while you are attuned to this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:proficiency-skill",
+        "mechanic:skill-athletics",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags instrument proficiency and expertise", () => {
+    const tags = extractRuneEffectTags(
+      "You gain proficiency with the Horn musical instruments. If you are already proficient, you double your proficiency bonus when using it.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:proficiency-instrument",
+        "mechanic:expertise",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags long-rest inspiration via Performance", () => {
+    const tags = extractRuneEffectTags(
+      "Whenever you finish a long rest you can attempt a DC 15 Charisma (Performance) check using an instrument you are proficient with. On a success, you gain inspiration if you do not already have it.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:long-rest",
+        "mechanic:skill-performance",
+        "mechanic:inspiration",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags crystal cosmetic appearance", () => {
+    const tags = extractRuneEffectTags(
+      "When you attune to this weapon, a layer of crystals forms over it. The weapon glimmers in the light, with jagged edges that seem to catch and refract the surrounding light in a mesmerizing display.",
+    );
+
+    expect(tags).toEqual(expect.arrayContaining(["type:cosmetic"]));
+  });
+
+  it("tags Crystallography mining major gather", () => {
+    const tags = extractRuneEffectTags(
+      "Crystallography. When you roll for a mineral resource roll 2d6 and take the higher of the two as your result to determine what type of mineral you obtained and you gather two of that mineral instead of one.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:mining",
+        "mechanic:gather-resources",
+        "mechanic:gather-resources:major",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags Hunting Horn Jingle miss trigger", () => {
+    const tags = extractRuneEffectTags(
+      "(Hunting Horn Only) Jingle. When you miss a hostile creature with this weapon, you can choose to elicit a number of notes equal to half of your hunting horn's cord length as a bonus action.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:hunting-horn",
+        "mechanic:miss-trigger",
+        "mechanic:bonus-action",
+        "mechanic:active",
+      ]),
+    );
+  });
+
+  it("tags poison coat save DC boost", () => {
+    const tags = extractRuneEffectTags(
+      "If you coat this weapon with poison, the poisons save DC is increased by 5.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:poison-dc-boost"]),
+    );
+  });
+
+  it("tags bowgun ammo unlock variant", () => {
+    const tags = extractRuneEffectTags(
+      "(Bowgun only) Depending on which weapon this material is placed into, it gains the following benefits: Light Bowgun. This weapon can now use the heavy bowgun's slicing ammo and wyvern ammo. Heavy Bowgun This weapon can now use the light bowgun's armor ammo and demon ammo.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:bowgun",
+        "weapon-type:light-bowgun",
+        "weapon-type:heavy-bowgun",
+        "mechanic:weapon-variant",
+        "mechanic:ammo-unlock",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags forced movement reduction reaction", () => {
+    const tags = extractRuneEffectTags(
+      "While you wear this armor, if an effect moves you against your will along the ground, you can use your reaction to reduce the distance you are moved by up to 10 feet.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:reaction",
+        "mechanic:forced-movement-reduction",
+        "mechanic:active",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags conjure horns action", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned to this armor, you can use an action to speak its command word and conjure an Armor Horn, Antidote Horn, Field Horn, or Health Horn into your hands. You do not need to be attuned to the horn to use it, and it does not occupy a trinket slot. The horn persists for 1 hour or until used, at which point it vanishes.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:conjure-item",
+        "mechanic:item-related",
+        "mechanic:active",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags conditional fire save bonus", () => {
+    const tags = extractRuneEffectTags(
+      "Whenever you make a saving throw against an attack or spell that deals fire damage, you do so with a +2 bonus.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:saving-throw",
+        "mechanic:save-bonus",
+        "damage:fire",
+        "type:defensive",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags nonmagical damage resistance and limited immunity", () => {
+    const tags = extractRuneEffectTags(
+      "You have resistance to nonmagical damage while you wear this armor. Additionally, you can use an action to make yourself immune to nonmagical damage for 10 minutes or until you are no longer wearing the armor. Once this special action is used, it can't be used again until the next dawn.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:resistance",
+        "mechanic:immunity",
+        "mechanic:nonmagical-damage-defense",
+        "type:defensive",
+        "mechanic:active",
+      ]),
+    );
+  });
+
+  it("tags Pro Herbology herb consumption", () => {
+    const tags = extractRuneEffectTags(
+      "Pro Herbology. Instead of rolling 1d4 when you eat an herb, you roll a die equal to your hit die while attuned to this armor.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:herb-consumption",
+        "mechanic:plant",
+        "mechanic:passive",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags Dreadqueen save DC boost and consumable share", () => {
+    const tags = extractRuneEffectTags(
+      "Dreadqueen. While attuned to this armor, your save DC for condition causing effects, such as the sleep spell, or a material effect, is increased by 2. Additionally, when you use Herbs, Antidotes, Cool Drinks, Hot Drinks, Adamant Seeds, or Might Seeds; all other creatures within a 20-foot radius of you gain its effect.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:save-dc-boost",
+        "mechanic:consumable-share",
+        "mechanic:area",
+        "type:support",
+        "mechanic:passive",
+      ]),
+    );
   });
 });
 
@@ -1564,5 +3001,528 @@ describe("mapRunesFromMonster — OTHER MATERIAL EFFECTS", () => {
       otherEffect:
         "A Material that replaces the sleep herb when crafting tranq bombs or tranq ammo.",
     });
+  });
+
+  it("matches armor effects when loot name uses a tier suffix variant", () => {
+    const runes = mapRunesFromMonster({
+      name: "Test",
+      source: "MHMM",
+      cr: "5",
+      fluff: {
+        entries: [
+          {
+            type: "inset",
+            name: "Test",
+            entries: [
+              {
+                type: "table",
+                rows: [["Challenge Rating", "5", "Carves", "3"]],
+              },
+              {
+                type: "table",
+                colLabels: ["Carve Chance", "Material", "Slots"],
+                rows: [["1-6", "Marathon Runner", "(A)"]],
+              },
+              {
+                type: "list",
+                name: "ARMOR MATERIAL EFFECTS",
+                items: [
+                  {
+                    type: "entries",
+                    name: "Marathon Runner+",
+                    entries: [
+                      "Marathon Runner+. While wearing this armor, your walking speed increases by 10 feet.",
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    expect(runes[0]?.armorEffect).toContain("walking speed increases by 10");
+  });
+});
+
+describe("extractRuneEffectTags — reviewed inline MHMM patterns", () => {
+  it("tags no-opportunity-attacks melee rider as defensive", () => {
+    const tags = extractRuneEffectTags(
+      "When you make a melee attack against a creature while wearing this armor, you don't provoke opportunity attacks from that creature for the rest of the turn, whether you hit or not.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:no-opportunity-attacks",
+        "type:defensive",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
+  it("tags bonus-action charge movement toward an enemy", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned to this weapon, you can use a bonus action to move up to half your movement speed towards an enemy creature.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:charge-movement",
+        "mechanic:movement",
+        "mechanic:bonus-action",
+        "mechanic:active",
+      ]),
+    );
+  });
+
+  it("tags Intelligence (History) as a bonus-action skill", () => {
+    const tags = extractRuneEffectTags(
+      "While you are attuned to this armor, you can make Intelligence (History) checks as a bonus action.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:skill-history",
+        "mechanic:skill-bonus-action",
+        "mechanic:bonus-action",
+      ]),
+    );
+  });
+
+  it("tags plural resistances and all damage types", () => {
+    const tags = extractRuneEffectTags(
+      "You have resistances to fire, lightning, and necrotic damage while you wear this armor.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:resistance",
+        "damage:fire",
+        "damage:lightning",
+        "damage:necrotic",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags cook's utensils proficiency as tool proficiency", () => {
+    const tags = extractRuneEffectTags(
+      "You have proficiency with cook's utensils while you are attuned to this armor.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:proficiency-tool", "type:utility"]),
+    );
+  });
+
+  it("tags dull-tip spines as cosmetic flavor", () => {
+    const tags = extractRuneEffectTags(
+      "While attuned to this armor, it grows numerous dull tip spines which rise and move when agitated or in danger.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
+  });
+
+  it("tags web-linked creature location sense", () => {
+    const tags = extractRuneEffectTags(
+      "While in contact with a web, you know the exact location of any other creature in contact with the same web.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:web-sense", "type:utility"]),
+    );
+  });
+
+  it("tags poison save-failure-margin unconscious rider as offensive", () => {
+    const tags = extractRuneEffectTags(
+      "When you poison a creature and it fail the saving throw by 5 or more, the creature falls unconscious until it takes damage, are shaken awake, or the poison is removed.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:save-failure-margin",
+        "mechanic:condition-unconscious",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags hidden door detection on penguin emblem weapons", () => {
+    const tags = extractRuneEffectTags(
+      "Your weapon is adorned with a penguin emblem when you place this material into it. While attuned to it, it emits a faint cooing sound when in the presence of hidden doors or passages.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:hidden-sense", "type:utility"]),
+    );
+  });
+
+  it("tags extreme cold immunity and temperature tolerance", () => {
+    const tags = extractRuneEffectTags(
+      "The air around you is always unnaturally cold while you wear this armor. Your breath becomes visible, and frost continually forms on the surface of your hair, weapons, and armor. Additionally, you suffer no ill effect from being in extremely cold environments.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:temperature-tolerance",
+        "damage:cold",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags once-per-long-rest save reroll", () => {
+    const tags = extractRuneEffectTags(
+      "While you wear this armor, you can pass a Dexterity saving throw you otherwise would have failed. Once used, this property can't be used again until you finish a long rest.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:save-reroll",
+        "mechanic:long-rest",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags composite material-effect stacking", () => {
+    const tags = extractRuneEffectTags(
+      "Rajang Will. While attuned to this weapon you gain the benefits of both the Rajang Apoplexy and Rajang Hardclaw weapon material effects.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:composite-effect"]),
+    );
+  });
+
+  it("tags HP-threshold conditional flavor without mechanical payoff", () => {
+    const tags = extractRuneEffectTags(
+      "Your armor is covered in crystals formed by the energy from qurios. When you are reduced to half of your hit point maximum or less, the crystals shatter creating maroon flames in their place for 1 hour. The crystals reform on your armor when you finish a short or long rest.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:conditional-flavor",
+        "mechanic:short-rest",
+        "mechanic:long-rest",
+      ]),
+    );
+  });
+
+  it("tags always-on Archdemon Mode weapon class feature", () => {
+    const tags = extractRuneEffectTags(
+      "(Dual Blades Only). Your Archdemon Mode is always active when you are holding both blades and the damage die of your archdemon mode increases by 1.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:weapon-class-mode"]),
+    );
+  });
+
+  it("tags Dereliction HP sacrifice damage rider", () => {
+    const tags = extractRuneEffectTags(
+      "Dereliction. While you are attuned to this weapon you can use your bonus action to roll a d20. Your hit point maximum is reduced by the roll and the next attack you hit with before the start of your next turn, deals extra damage equal to double the roll. The reduction lasts until you finish a long rest. You die if this effect reduces your hit point maximum to 0.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:hp-sacrifice",
+        "mechanic:bonus-action",
+        "type:offensive",
+      ]),
+    );
+  });
+
+  it("tags staunch wound DC reduction", () => {
+    const tags = extractRuneEffectTags(
+      "While you are wearing this armor, the DC to staunch a wound you have is reduced by 2.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["mechanic:wound-staunch", "type:utility"]),
+    );
+  });
+});
+
+describe("extractRuneEffectTags — weapon type mentions", () => {
+  it("tags Dual Blades from restriction parenthetical", () => {
+    const tags = extractRuneEffectTags(
+      "(Dual Blades Only). Your Archdemon Mode is always active when you are holding both blades and the damage die of your archdemon mode increases by 1.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["weapon-type:dual-blades"]),
+    );
+  });
+
+  it("tags every weapon listed in Power Prolonger variant text", () => {
+    const tags = extractRuneEffectTags(
+      "Power Prolonger. Depending on which weapon this material is placed into, it gains the following benefits:\n• Dual Blades. Demon/Archdemon Mode duration is increased by 30 seconds.\n• Great Sword. Guard grants a +4 AC bonus for the duration of the turn it is used.\n• Hunting Horn. Melodies duration is increased by 1 minute.\n• Insect Glaive. Kinsects Essence duration is increased by 1 minute.\n• Lance. Powerguard grants a +4 AC bonus for the duration of the turn it is used.\n• Switch Axe. You regain one extra expended charge when you hit a creature in axe mode.\n• Tonfas. Earth Style. weapon damage die is increased to a d10.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:dual-blades",
+        "weapon-type:greatsword",
+        "weapon-type:hunting-horn",
+        "weapon-type:insect-glaive",
+        "weapon-type:lance",
+        "weapon-type:switchaxe",
+        "weapon-type:tonfas",
+        "mechanic:weapon-variant",
+      ]),
+    );
+  });
+
+  it("tags all weapons in Blast Coat variant lists", () => {
+    const tags = extractRuneEffectTags(
+      "Blast Coat. This material provides one of the following weapon properties depending on which weapon it is placed in: (Bow) Your blast coating deals an extra 1d6 fire damage. (Dual Repeaters) When you hit a creature with your empowered blaze ammo, it now ignites the terrain in a 5-foot line extending from you to the target. (Heavy Bowgun) Your cluster ammo deals an extra 2d6 fire damage. (Light Bowgun) Your flaming ammo now bypasses a creature's resistance to fire damage.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:bow",
+        "weapon-type:dual-repeaters",
+        "weapon-type:heavy-bowgun",
+        "weapon-type:light-bowgun",
+        "weapon-type:bowgun",
+      ]),
+    );
+  });
+
+  it("tags compound Bowgun and Dual Repeaters restriction", () => {
+    const tags = extractRuneEffectTags(
+      "(Bowgun & Dual Repeaters Only) Tetrad Shot+. If you make two or more attacks on your turn while attuned to this weapon, the last attack you make with it deals an extra 1d8 piercing damage.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:bowgun",
+        "weapon-type:dual-repeaters",
+      ]),
+    );
+  });
+
+  it("tags Hammer from possessive mention in effect body", () => {
+    const tags = extractRuneEffectTags(
+      "(Hammer Only) Punish Draw+. A creatures hit by your hammer's mighty weapon make its saving throw at disadvantage.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["weapon-type:hammer"]),
+    );
+  });
+
+  it("does not tag melee from generic melee weapon attack wording", () => {
+    const tags = extractRuneEffectTags(
+      "Whenever you hit a creature with a melee weapon attack using this weapon, you can engulf the target in flames.",
+    );
+    expect(tags).not.toContain("weapon-type:melee");
+  });
+
+  it("tags Shield Upgrade variant weapons including Sword & Shield", () => {
+    const tags = extractRuneEffectTags(
+      "Shield Upgrade. Depending on which weapon this material is placed into, it gains the following benefits:\n• Charge Blade. When you use your Elemental Guard, you increase your AC by half your proficiency bonus until the start of your next turn.\n• Gunlance. The Guard Reload weapon property now reloads all expended shells.\n• Lance. The first time you use your Powerguard in a round, it does not use up your reaction.\n• Sword & Shield. When a creature adjacent makes a Dexterity saving throw, you can use your reaction to grant that creature a bonus to its save equal to your shield's AC.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:weapon-variant",
+        "weapon-type:charge-blade",
+        "weapon-type:gunlance",
+        "weapon-type:lance",
+        "weapon-type:sword-and-shield",
+      ]),
+    );
+  });
+
+  it("tags Blast Coat placed-in variant phrasing", () => {
+    const tags = extractRuneEffectTags(
+      "Blast Coat. This material provides one of the following weapon properties depending on which weapon it is placed in: (Bow) Your blast coating deals an extra 1d6 fire damage. (Dual Repeaters) When you hit a creature with your empowered blaze ammo, it now ignites the terrain in a 5-foot line extending from you to the target.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:weapon-variant",
+        "weapon-type:bow",
+        "weapon-type:dual-repeaters",
+      ]),
+    );
+  });
+
+  it("tags Capacity Boost compound restriction on armor variant text", () => {
+    const tags = extractRuneEffectTags(
+      "(Charge Blade & Gunlance Only) Capacity Boost. This material provides one of the following armor properties depending on which weapon it is placed in: (Charge Blade) Your phial charge maximum is increased by 1. (Gunlance) Your gunlance can hold one extra shell.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:weapon-variant",
+        "weapon-type:charge-blade",
+        "weapon-type:gunlance",
+      ]),
+    );
+  });
+
+  it("tags Tune-Up nested bowgun options", () => {
+    const tags = extractRuneEffectTags(
+      "(Ranged Weapon Only) Tune-Up. When this material is placed into a weapon choose one of the following effects to gain: (Light Bowgun Only). If you miss an attack while hidden, your location is not revealed. (Heavy Bowgun Only). You gain a +1 bonus to your AC while wielding this weapon.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:weapon-variant",
+        "weapon-type:ranged",
+        "weapon-type:light-bowgun",
+        "weapon-type:heavy-bowgun",
+        "weapon-type:bowgun",
+      ]),
+    );
+  });
+
+  it("tags weapons from titleless depending-on-which-weapon list", () => {
+    const tags = extractRuneEffectTags(
+      "Depending on which weapon this material is placed into, it gains the following benefits:\n• Bow. When you hit a creature with a poison coated arrow, you can inflict iceblight instead of the poisoned condition.\n• Dual Repeaters. Your cryo ammo now inflicts iceblight instead of waterblight when empowered.\n• Heavy Bowgun. When you hit a creature with your poison ammo, you can inflict waterblight instead of the poisoned condition.\n• Light Bowgun. When you hit a creature with water ammo, its movement speed is reduced by 5 feet until the end of its next turn.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:weapon-variant",
+        "weapon-type:bow",
+        "weapon-type:dual-repeaters",
+        "weapon-type:heavy-bowgun",
+        "weapon-type:light-bowgun",
+      ]),
+    );
+  });
+
+  it("tags hammer from placed-into-a-hammer wording", () => {
+    const tags = extractRuneEffectTags(
+      "(Hammer Only) KO+. When this material is placed into a hammer, it gains one addition use of its mighty weapon property.",
+    );
+    expect(tags).toEqual(
+      expect.arrayContaining(["weapon-type:hammer"]),
+    );
+  });
+
+  it("tags Slugger and word-number extra Mighty Weapon uses", () => {
+    const tags = extractRuneEffectTags(
+      "(Hammer Only) Slugger. While attuned to this weapon, you may use the Hammer's Mighty Weapon skill two additional times between rests.",
+    );
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "weapon-type:hammer",
+        "mechanic:class-feature",
+        "mechanic:class-feature-extra-use",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags carve-check advantage and plural MH traps", () => {
+    const carve = extractRuneEffectTags(
+      "The first time you make a Carve check on a creature, you do so with advantage.",
+    );
+    const traps = extractRuneEffectTags(
+      "You can set pitfall traps or shock traps as a bonus action while you wear this armor.",
+    );
+
+    expect(carve).toEqual(
+      expect.arrayContaining([
+        "mechanic:carve",
+        "mechanic:advantage",
+        "type:utility",
+      ]),
+    );
+    expect(traps).toEqual(
+      expect.arrayContaining([
+        "mechanic:trap",
+        "mechanic:item-related",
+        "mechanic:bonus-action",
+        "type:utility",
+      ]),
+    );
+  });
+
+  it("tags blindsight, creature proximity glow, and fire save advantage", () => {
+    const blindsight = extractRuneEffectTags(
+      "Your eyes look like snake eyes while you wear this armor, granting you blindsight out to 10 feet.",
+    );
+    const proximity = extractRuneEffectTags(
+      "While you are attuned to this armor, it glows faintly when a rathian, malfestio, agnaktor, or zinogre is near (240 feet or less).",
+    );
+    const fireSave = extractRuneEffectTags(
+      "Whenever you make a saving throw against an attack or spell that deals fire damage, you do so with advantage.",
+    );
+
+    expect(blindsight).toEqual(
+      expect.arrayContaining(["mechanic:blindsight", "type:utility"]),
+    );
+    expect(proximity).toEqual(
+      expect.arrayContaining(["mechanic:creature-proximity", "type:utility"]),
+    );
+    expect(fireSave).toEqual(
+      expect.arrayContaining([
+        "mechanic:against-damage",
+        "damage:fire",
+        "type:defensive",
+      ]),
+    );
+  });
+
+  it("tags limited truesight, fishing-pole transform, and displacement variants", () => {
+    const truesight = extractRuneEffectTags(
+      "While attuned to this armor you can use an action to speak the armor's command word and gain truesight out to 60 feet for 1 hour. Once used, you can't use this property again until you finish a long rest.",
+    );
+    const fishingPole = extractRuneEffectTags(
+      "While holding your weapon, you can speak a command word and transform it into a fishing pole with a hook, a line, and a reel. Speaking the command word again changes the fishing pole back into the weapon.",
+    );
+    const illusion = extractRuneEffectTags(
+      "While you wear this armor, it projects an illusion that makes you appear to be standing in a place near your actual location, causing any creature to have disadvantage on attack rolls against you. If you take damage, the property ceases to function until the start of your next turn. This property is suppressed while you are incapacitated, restrained, or otherwise unable to move.",
+    );
+    const shadows = extractRuneEffectTags(
+      "While wearing this armor you are shrouded in shadows causing any creature to have disadvantage on attack rolls against you. If you take damage, the property ceases to function until the start of your next turn. This property is suppressed while you are incapacitated, restrained, or otherwise unable to move.",
+    );
+
+    expect(truesight).toEqual(
+      expect.arrayContaining(["mechanic:truesight", "mechanic:active"]),
+    );
+    expect(fishingPole).toEqual(
+      expect.arrayContaining([
+        "mechanic:item-transform",
+        "mechanic:fishing",
+        "type:utility",
+      ]),
+    );
+    for (const tags of [illusion, shadows]) {
+      expect(tags).toEqual(
+        expect.arrayContaining([
+          "mechanic:displacement",
+          "type:defensive",
+          "mechanic:attack-roll",
+        ]),
+      );
+    }
+  });
+
+  it("tags cosmetic flavor, cleric heal boost, ally reaction move, and swallow weapon", () => {
+    const veins = extractRuneEffectTags(
+      "While you are attuned to this armor your veins and armor turn bright red when you are angry and a frosty blue when you are calm.",
+    );
+    const healBoost = extractRuneEffectTags(
+      "(Cleric & paladin Only) When you regain hit points from a spell while attuned to this armor, increase the regained amount by half your Cleric or paladin level.",
+    );
+    const readBooks = extractRuneEffectTags(
+      "You can read books you are touching while sleeping.",
+    );
+    const allyMove = extractRuneEffectTags(
+      "When you hit a creature with this weapon, you choose a friendly creature who can see or hear you. That creature can use its reaction to move up to half its speed without provoking opportunity attacks from the target of your attack. Once you use this property you can't use it again until you finish a short or long rest.",
+    );
+    const swallow = extractRuneEffectTags(
+      "(1-Handed or Versatile Weapons Only) While attuned to this weapon, you can safely swallow it instead of sheathing it, and you can draw the weapon the same as any other.",
+    );
+
+    expect(veins).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
+    expect(healBoost).toEqual(
+      expect.arrayContaining([
+        "class:cleric",
+        "class:paladin",
+        "mechanic:heal-self-boost",
+        "type:support",
+      ]),
+    );
+    expect(readBooks).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
+    expect(allyMove).toEqual(
+      expect.arrayContaining([
+        "mechanic:ally-reaction-move",
+        "mechanic:reaction",
+        "type:support",
+      ]),
+    );
+    expect(swallow).toEqual(
+      expect.arrayContaining(["type:cosmetic", "mechanic:passive"]),
+    );
   });
 });

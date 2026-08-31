@@ -11,7 +11,7 @@ import {
   createRuneColumns,
   runeRowClassName,
 } from "./rune-columns";
-import type { RuneListRow } from "./rune-table-filters.utils";
+import { runeRowKey, type RuneListRow } from "./rune-table-filters.utils";
 
 interface RuneDataTableProps {
   rows: RuneListRow[];
@@ -47,9 +47,7 @@ export function RuneDataTable({
     <DataTable
       columns={columns}
       data={rows}
-      getRowId={(row) =>
-        `${row.rune.monsterSource}-${row.rune.monsterName}-${row.rune.name}`
-      }
+      getRowId={(row) => runeRowKey(row.rune)}
       onRowClick={(row) => onSelect(row.rune)}
       getRowClassName={(row) => runeRowClassName(row, isInBuild)}
       emptyMessage="No materials found with the applied filters."

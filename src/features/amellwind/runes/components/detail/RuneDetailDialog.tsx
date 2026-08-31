@@ -20,6 +20,7 @@ import {
   hasActiveRuneEffectListFilters,
   runeEffectMatchesListFilters,
 } from "../../utils/rune-compatibility.utils";
+import { runeRowKey } from "../list/rune-table-filters.utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface RuneDetailDialogProps {
@@ -55,9 +56,7 @@ export function RuneDetailDialog({
   showAddToBuild = true,
 }: RuneDetailDialogProps) {
   const currentIndex = filteredRunes && rune
-    ? filteredRunes.findIndex(
-        (r) => r.name === rune.name && r.monsterName === rune.monsterName,
-      )
+    ? filteredRunes.findIndex((r) => runeRowKey(r) === runeRowKey(rune))
     : -1;
   const hasPrev = currentIndex > 0;
   const hasNext =

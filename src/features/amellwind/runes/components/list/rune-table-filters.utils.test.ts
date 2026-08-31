@@ -4,6 +4,7 @@ import {
   buildRuneColumnFilters,
   matchesRuneListRow,
   payloadFromRuneFilters,
+  sortRuneListRows,
   type RuneListRow,
 } from "./rune-table-filters.utils";
 import type { MaterialEffectNameIndex } from "@/features/amellwind/material-effects/services/material-effect.service";
@@ -91,5 +92,25 @@ describe("rune table column filters", () => {
       monster: ["Rathalos"],
       materialEffectName: ["Fire Resist"],
     });
+  });
+
+  it("sorts filtered rows to match table column order", () => {
+    const rows = [
+      makeRow({ name: "Z Scale", monsterName: "Zinogre" }),
+      makeRow({ name: "A Scale", monsterName: "Anjanath" }),
+      makeRow({ name: "M Scale", monsterName: "Mizutsune" }),
+    ];
+
+    expect(
+      sortRuneListRows(rows, [{ id: "name", desc: false }]).map(
+        (row) => row.rune.name,
+      ),
+    ).toEqual(["A Scale", "M Scale", "Z Scale"]);
+
+    expect(
+      sortRuneListRows(rows, [{ id: "monsterName", desc: true }]).map(
+        (row) => row.rune.monsterName,
+      ),
+    ).toEqual(["Zinogre", "Mizutsune", "Anjanath"]);
   });
 });
