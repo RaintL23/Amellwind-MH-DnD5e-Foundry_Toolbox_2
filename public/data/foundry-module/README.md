@@ -50,7 +50,7 @@ Amellwind MH (RaintDM)/
 
 | Pack (compendium)        | Folder                    | Type  | Source folder                         | Contents |
 | ------------------------ | ------------------------- | ----- | ------------------------------------- | -------- |
-| Weapons                  | Amellwind MH (RaintDM)    | Item  | `weapons/`                            | 36 weapons |
+| Weapons                  | Amellwind MH (RaintDM)    | Item  | `weapons/`                            | 69 weapons |
 | Weapon Resources         | Amellwind MH (RaintDM)    | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
 | Runes                    | Amellwind MH (RaintDM)    | Item  | `runes/<Monster>/`                    | 79 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
 | Combo Crafting           | Amellwind MH (RaintDM)    | Item  | `combo-crafting/`                     | Combo Crafting feature (drop on any actor) |
