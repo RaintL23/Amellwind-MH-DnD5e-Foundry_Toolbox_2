@@ -1,0 +1,791 @@
+{
+  "_id": "Xp6KCnqdcfprjRg6",
+  "name": "Hunting Horn (Legendary)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_huntinghorn.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<p>I'm not hiding (RaintDM), this change is also purely intentional so that the Bard can use this weapon. It seems to me that, conceptually, a weapon that buffs your allies in combat using music is entirely Bardic, but Amellwind's homebrew takes the weapon purely as MH presents it, which is fine. However, I'm taking the creative liberty of making some changes so that it's possible for a Bard to use it.</p><p><a href=\"https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/weapons?weapon=Hunting+Horn\" target=\"_blank\" rel=\"noopener\">Open Hunting Horn in the Toolbox</a></p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Topple)</strong></p><p>If you hit a creature with this weapon, you can force it to make a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength or Charisma modifier). On a failed save, the creature has the Prone condition.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Instrument of War (The Bard Fix)</strong></p><p>This weapon doubles as a musical instrument and a spellcasting focus. If you have the Bardic Inspiration feature, you gain proficiency with this weapon, it loses the Heavy property for you (allowing Small races to wield it comfortably), and you can use your Charisma modifier instead of Strength for its attack and damage rolls.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Recital</strong></p><p><strong>Bonus Action.</strong></p><p>The horn relies on the momentum of combat to generate its magic. When you hit a creature with this weapon on your turn, you can use your Bonus Action to perform a Recital. This ends all Melodies currently active from your Songbook, then activates one Melody of your choice. That Melody emits a 15-foot aura centered on you that lasts for 1 minute, until you are Incapacitated, or until you activate Melodies again.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Encore</strong></p><p>Your mastery over the horn's acoustics improves. When you perform a Recital, after ending all currently active Melodies you can activate two different Melodies at the same time instead of one.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Magnificent Trio</strong></p><p>When you perform a Recital, after ending all currently active Melodies you can activate up to three different Melodies at the same time.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Solo Recital</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can perform a Solo Recital without hitting a creature. This ends all Melodies currently active from your Songbook, then activates one Melody of your choice. That Melody emits a 15-foot aura centered on you that lasts for 1 minute, until you are Incapacitated, or until you activate Melodies again.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Solo Recital Upgrade</strong></p><p>When you perform a Solo Recital, you can activate two different Melodies instead of one after ending all currently active Melodies.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Songbook</strong></p><p>You know two Melodies of your choice. You can change your known Melodies whenever you finish a Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Expanded Songbook</strong></p><p>You know three Melodies.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Expanded Songbook II</strong></p><p>You know four Melodies.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Songbook Mastery</strong></p><p>You know all available Melodies and can switch which ones are active whenever you perform a Recital or Solo Recital.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Earthshaker</strong></p><p><strong>Action.</strong></p><p>As an Action, you slam the horn into the ground to release a devastating shockwave. Every hostile creature within a 20-foot radius must make a Constitution saving throw against a DC equal to 8 + your Proficiency Bonus + your Strength or Charisma modifier. On a failed save, a creature takes [[/r 4d8]] Thunder damage and is Deafened for 1 minute. On a successful save, it takes half as much damage.</p><p>Once you use this feature, you cannot do so again until you finish a Short or Long Rest. Alternatively, if you have the Spellcasting or Bardic Inspiration features, you can bypass this restriction by expending a spell slot of 2nd level or higher, or 2 uses of your Bardic Inspiration.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Infernal Melody</strong></p><p><strong>Bonus Action.</strong></p><p>Once per Long Rest, when you hit a creature, you can use your Bonus Action to play the ultimate song. For the next minute, your aura radius expands to 30 feet, and whenever an ally in the aura scores a hit with an attack, they deal maximum damage with their weapon's base damage dice (for example, a [[/r 1d8]] longsword automatically rolls an 8).</p></div><h3>Melodies</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Melody of Might</strong></p><p>Allies in the aura (including you) can add [[/r 1d4]] to the damage rolls.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Melody of Swiftness</strong></p><p>Allies in the aura have their Speed increased by 10 feet and ignore Difficult Terrain.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Melody of Precision</strong></p><p>Allies in the aura gain a +1 bonus to attack rolls.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Melody of Guile</strong></p><p>When you activate this Melody, choose one skill. Allies in the aura gain a +1 bonus to checks using that skill.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Melody of Warding</strong></p><p>Allies in the aura gain a +1 bonus to their Armor Class.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Melody of Focus</strong></p><p>Allies in the aura (including you) gain a +1 bonus to their spell save DCs.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Melody of Harmful Acid</strong></p><p>Allies in the aura deal an extra [[/r 1d4]] Acid damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Melody of Harmful Cold</strong></p><p>Allies in the aura deal an extra [[/r 1d4]] Cold damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Melody of Harmful Fire</strong></p><p>Allies in the aura deal an extra [[/r 1d4]] Fire damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Melody of Harmful Lightning</strong></p><p>Allies in the aura deal an extra [[/r 1d4]] Lightning damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Melody of Harmful Thunder</strong></p><p>Allies in the aura deal an extra [[/r 1d4]] Thunder damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Clarity</strong></p><p>Allies in the aura have Advantage on saving throws against being Charmed, Frightened, Paralyzed, or Stunned.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Vigor</strong></p><p>At the start of each of their turns, allies in the aura gain Temporary Hit Points equal to your Charisma or Strength modifier (minimum of 1).</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Fortitude</strong></p><p>Allies in the aura gain a +1 bonus to saving throws.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Recovery</strong></p><p>At the start of each of their turns, allies in the aura regain Hit Points equal to your Charisma or Strength modifier (minimum of 1).</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of the Wilds</strong></p><p>Allies in the aura can move across calm liquid as if it were solid ground, and they suffer no harm from extreme cold or extreme heat.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Resistant Acid</strong></p><p>Allies in the aura gain Resistance to Acid damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Resistant Cold</strong></p><p>Allies in the aura gain Resistance to Cold damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Resistant Fire</strong></p><p>Allies in the aura gain Resistance to Fire damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Resistant Lightning</strong></p><p>Allies in the aura gain Resistance to Lightning damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Melody of Resistant Thunder</strong></p><p>Allies in the aura gain Resistance to Thunder damage.</p></div>",
+      "chat": "<p>I'm not hiding (RaintDM), this change is also purely intentional so that the Bard can use this weapon. It seems to me that, conceptually, a weapon that buffs your allies in combat using music is entirely Bardic, but Amellwind's homebrew takes the weapon purely as MH presents it, which is fine. However, I'm taking the creative liberty of making some changes so that it's possible for a Bard to use it.</p><hr><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Topple)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Instrument of War (The Bard Fix)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Recital</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Encore</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Magnificent Trio</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Solo Recital</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Solo Recital Upgrade</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Songbook</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Expanded Songbook</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Expanded Songbook II</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#ff8000\">Songbook Mastery</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Earthshaker</strong></p><p><strong>Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Infernal Melody</strong></p><p><strong>Bonus Action.</strong></p></div>"
+    },
+    "identifier": "huntinghorn",
+    "quantity": 1,
+    "weight": {
+      "value": 8,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "legendary",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "huntinghorn"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 12,
+        "types": [
+          "bludgeoning"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": null,
+    "properties": [
+      "hvy",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "mastery": "topple",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    },
+    "activities": {
+      "l7xlz03WLmsE3LAg": {
+        "_id": "l7xlz03WLmsE3LAg",
+        "type": "attack",
+        "sort": 0,
+        "name": "Attack",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "attack",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionReason": ""
+      },
+      "1Lf0tlCHWFjsxtxG": {
+        "_id": "1Lf0tlCHWFjsxtxG",
+        "sort": 300000,
+        "name": "Magnificent Trio",
+        "img": "icons/skills/trades/music-notes-sound-blue.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Perform a Melody from your Songbook"
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "magnificent-trio",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "XNvGn0aNi0mhZzWF": {
+        "_id": "XNvGn0aNi0mhZzWF",
+        "sort": 400000,
+        "name": "Solo Recital",
+        "img": "icons/skills/trades/music-notes-sound-blue.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Solo Recital can activate two different Melodies at the same time."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "solo-recital",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "xGEfolZFITBHfZ3P": {
+        "_id": "xGEfolZFITBHfZ3P",
+        "sort": 600000,
+        "name": "Earthshaker",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Slam horn; hostile creatures in 20-ft radius."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "radius",
+            "size": "20",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "earthshaker",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "save",
+        "damage": {
+          "parts": [],
+          "onSave": "half"
+        },
+        "save": {
+          "ability": [
+            "con"
+          ],
+          "dc": {
+            "calculation": "",
+            "formula": ""
+          }
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "jd0mGAXFyplCqh0L": {
+        "_id": "jd0mGAXFyplCqh0L",
+        "sort": 310000,
+        "name": "End Melodies",
+        "img": "icons/skills/trades/music-notes-sound-blue.webp",
+        "type": "utility",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "End all active Songbook Melodies"
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": false,
+          "identifier": "end-melodies",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "9Lrd0DmOqdsWo0HI",
+      "name": "Mastery (Topple)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192514,
+        "modifiedTime": 1788189192514,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 8700000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Hunting Horn",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "onUseMacroName": "[preTargeting]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Hunting Horn (Legendary)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Hunting Horn — Item Macro (MidiQOL 12.4 / Foundry v12)\n// On Use: ItemMacro @ \"Called before targeting is resolved (*)\" / preTargeting\n//\n// Compatible with:\n// - Recital (uncommon): flags.world.hh.maxActiveMelodies = 1\n// - Encore / Magnificent Trio: maxActiveMelodies = 2 / 3\n// - Solo Recital: flags.world.hh.maxSoloMelodies = 1 (Upgrade → 2)\n// - End Melodies: disables all Songbook auras (any rarity)\n// Melodies detected via flags.world.hh.isMelody / identifier melody-* / name \"Melody of *\"\n// UI: one dropdown per active Melody slot (no checkboxes); exclusive options when multi-slot.\n// Melody of Guile: flags.world.hh.needsSkillChoice → skill picker rewrites the aura change key.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? workflow?.activity?.midiProperties?.identifier\n  ?? \"\"\n).toLowerCase();\n\nconst isEndMelodies =\n  actId === \"end-melodies\" || actId === \"cancel-melodies\"\n  || actName.includes(\"end melod\") || actName.includes(\"cancel melod\");\n\nconst isSolo =\n  actId === \"solo-recital\" || actId === \"solo-recital-upgrade\"\n  || actName.includes(\"solo recital\");\n\nconst isEncoreLike =\n  actId === \"encore\" || actName.includes(\"encore\")\n  || actName.includes(\"magnificent trio\") || actId.includes(\"magnificent\");\n\nconst isSongUse =\n  isSolo\n  || isEncoreLike\n  || actId === \"recital\"\n  || (!isSolo && actName.includes(\"recital\"));\n\nif (!isEndMelodies && !isSongUse) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Hunting Horn: no se encontró el actor.\");\n  return;\n}\n\nconst isMelodyItem = (i) => {\n  const flag = foundry.utils.getProperty(i, \"flags.world.hh.isMelody\");\n  const id = String(i.system?.identifier ?? \"\");\n  return flag === true\n    || (i.type === \"feat\" && id.startsWith(\"melody-\"))\n    || /^melody of /i.test(i.name ?? \"\");\n};\n\nconst isMelodyAura = (ef) => {\n  const flag = foundry.utils.getProperty(ef, \"flags.world.hh.isMelodyAura\");\n  return flag === true || /melody of/i.test(ef.name ?? \"\");\n};\n\nconst melodies = actorDoc.items.filter(isMelodyItem);\n\nconst disableAllMelodyAuras = async () => {\n  const ops = [];\n  for (const mel of melodies) {\n    for (const ef of mel.effects) {\n      if (!isMelodyAura(ef)) continue;\n      ops.push(ef.update({\n        disabled: true,\n        duration: { seconds: null, rounds: null, turns: null, startTime: null }\n      }));\n    }\n  }\n  for (const ef of actorDoc.effects) {\n    if (!isMelodyAura(ef)) continue;\n    ops.push(ef.update({\n      disabled: true,\n      duration: { seconds: null, rounds: null, turns: null, startTime: null }\n    }));\n  }\n  if (ops.length) await Promise.all(ops);\n  return ops.length;\n};\n\nconst refreshActiveAuras = async (reason) => {\n  try {\n    const sceneId = canvas.scene?.id;\n    if (game.modules.get(\"ActiveAuras\")?.active && sceneId) {\n      if (globalThis.ActiveAuras?.CollateAuras) {\n        await ActiveAuras.CollateAuras(sceneId, true, true, reason);\n      } else if (globalThis.AAHelpers?.collateAuras) {\n        await AAHelpers.collateAuras(sceneId, true, true, reason);\n      }\n    }\n  } catch (err) {\n    console.warn(\"Hunting Horn: Active Auras refresh skipped\", err);\n  }\n};\n\n// ── End Melodies (any rarity) ──────────────────────────────────────────────\nif (isEndMelodies) {\n  if (!melodies.length) {\n    ui.notifications.warn(\"Hunting Horn: no hay Melodies en el Songbook del actor.\");\n    return;\n  }\n  const changed = await disableAllMelodyAuras();\n  await refreshActiveAuras(\"hunting-horn-end\");\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> ends all active Songbook Melodies.</p>${\n      changed ? \"\" : \"<p><em>No active Melody auras were found.</em></p>\"\n    }</div>`\n  });\n  if (!changed) ui.notifications.info(\"Hunting Horn: no había Melodies activas.\");\n  return;\n}\n\n// ── Recital / Solo Recital / Encore (perform) ──────────────────────────────\nif (!melodies.length) {\n  ui.notifications.warn(\"Hunting Horn: no hay Melodies en el Songbook del actor.\");\n  return;\n}\n\nconst maxRecital = Math.max(1, Number(foundry.utils.getProperty(item, \"flags.world.hh.maxActiveMelodies\") ?? 1));\nconst maxSolo = Math.max(1, Number(foundry.utils.getProperty(item, \"flags.world.hh.maxSoloMelodies\") ?? 1));\nconst maxActive = isSolo ? maxSolo : maxRecital;\nconst pickCount = Math.min(maxActive, melodies.length);\nconst title = isSolo\n  ? \"Solo Recital — Songbook\"\n  : (isEncoreLike ? \"Encore — Songbook\" : \"Recital — Songbook\");\n\nui.notifications.info(`${title}: elige ${pickCount} Melody${pickCount > 1 ? \"s\" : \"\"}…`);\n\nconst selectsHtml = Array.from({ length: pickCount }, (_, i) => {\n  const label = pickCount === 1 ? \"Melody\" : `Melody ${i + 1}`;\n  const opts = melodies.map((m, mi) =>\n    `<option value=\"${m.id}\"${mi === i ? \" selected\" : \"\"}>${esc(m.name)}</option>`\n  ).join(\"\");\n  return `\n  <div class=\"form-group\">\n    <label>${label}</label>\n    <div class=\"form-fields\">\n      <select class=\"hh-melody-select\" data-slot=\"${i}\">${opts}</select>\n    </div>\n  </div>`;\n}).join(\"\");\n\nconst promptText = pickCount === 1\n  ? \"Activa 1 Melody (aura 15 ft, 1 minuto).\"\n  : `Elige <strong>${pickCount}</strong> Melodies distintas (aura 15 ft, 1 minuto).`;\n\nconst content = `\n<form class=\"flexcol\">\n  <p>${promptText}</p>\n  ${selectsHtml}\n</form>`;\n\nconst selectedIds = await new Promise((resolve) => {\n  let settled = false;\n  const done = (v) => { if (!settled) { settled = true; resolve(v); } };\n  new Dialog({\n    title,\n    content,\n    buttons: {\n      ok: {\n        icon: '<i class=\"fas fa-music\"></i>',\n        label: \"Perform\",\n        callback: (html) => {\n          const $h = html?.find ? html : $(html);\n          const picked = $h.find(\"select.hh-melody-select\").map((_, el) => el.value).get();\n          if (picked.length !== pickCount || picked.some(id => !id)) {\n            ui.notifications.warn(`Debes elegir ${pickCount} Melody${pickCount > 1 ? \"s\" : \"\"}.`);\n            done(null);\n            return;\n          }\n          if (new Set(picked).size !== picked.length) {\n            ui.notifications.warn(\"Las Melodies deben ser distintas.\");\n            done(null);\n            return;\n          }\n          done(picked);\n        }\n      },\n      cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => done(null) }\n    },\n    default: \"ok\",\n    close: () => done(null),\n    render: (html) => {\n      if (pickCount <= 1) return;\n      const $h = html?.find ? html : $(html);\n      const syncExclusiveOptions = () => {\n        const selects = $h.find(\"select.hh-melody-select\").toArray();\n        const chosen = selects.map((sel) => sel.value);\n        selects.forEach((sel, i) => {\n          const current = chosen[i];\n          const blocked = new Set(chosen.filter((id, j) => j !== i && id));\n          const opts = melodies\n            .filter((m) => m.id === current || !blocked.has(m.id))\n            .map((m) => `<option value=\"${m.id}\"${m.id === current ? \" selected\" : \"\"}>${esc(m.name)}</option>`)\n            .join(\"\");\n          sel.innerHTML = opts;\n          if (current && [...sel.options].some((o) => o.value === current)) sel.value = current;\n        });\n      };\n      $h.find(\"select.hh-melody-select\").off(\"change.hhExclusive\").on(\"change.hhExclusive\", syncExclusiveOptions);\n      syncExclusiveOptions();\n    }\n  }).render(true);\n});\n\nif (!selectedIds?.length) {\n  ui.notifications.warn(\"Cancelado.\");\n  return;\n}\n\nconst selected = selectedIds.map(id => melodies.find(m => m.id === id)).filter(Boolean);\nif (selected.length !== pickCount) {\n  ui.notifications.error(\"Selección de Melodies inválida.\");\n  return;\n}\n\nconst SKILLS = [\n  [\"acr\", \"Acrobatics\"], [\"ani\", \"Animal Handling\"], [\"arc\", \"Arcana\"],\n  [\"ath\", \"Athletics\"], [\"dec\", \"Deception\"], [\"his\", \"History\"],\n  [\"ins\", \"Insight\"], [\"itm\", \"Intimidation\"], [\"inv\", \"Investigation\"],\n  [\"med\", \"Medicine\"], [\"nat\", \"Nature\"], [\"prc\", \"Perception\"],\n  [\"prf\", \"Performance\"], [\"per\", \"Persuasion\"], [\"rel\", \"Religion\"],\n  [\"slt\", \"Sleight of Hand\"], [\"ste\", \"Stealth\"], [\"sur\", \"Survival\"]\n];\n\nconst chooseSkill = async (melodyName) => {\n  const opts = SKILLS.map(([id, label]) => `<option value=\"${id}\">${label}</option>`).join(\"\");\n  return await new Promise((resolve) => {\n    let settled = false;\n    const done = (v) => { if (!settled) { settled = true; resolve(v); } };\n    new Dialog({\n      title: `${melodyName} — Skill`,\n      content: `<form><div class=\"form-group\"><label>Skill</label>\n        <div class=\"form-fields\"><select id=\"hh-skill\">${opts}</select></div></div></form>`,\n      buttons: {\n        ok: {\n          icon: '<i class=\"fas fa-check\"></i>',\n          label: \"Choose\",\n          callback: (html) => {\n            const $h = html?.find ? html : $(html);\n            done($h.find(\"#hh-skill\").val() || \"ste\");\n          }\n        },\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => done(null) }\n      },\n      default: \"ok\",\n      close: () => done(null)\n    }).render(true);\n  });\n};\n\nconst skillByMelodyId = {};\nfor (const mel of selected) {\n  const needs = foundry.utils.getProperty(mel, \"flags.world.hh.needsSkillChoice\") === true\n    || (mel.system?.identifier ?? \"\") === \"melody-of-guile\"\n    || /melody of guile/i.test(mel.name ?? \"\");\n  if (!needs) continue;\n  const skill = await chooseSkill(mel.name);\n  if (!skill) {\n    ui.notifications.warn(\"Cancelado.\");\n    return;\n  }\n  skillByMelodyId[mel.id] = skill;\n}\n\nawait disableAllMelodyAuras();\n\nconst startTime = game.time.worldTime;\nconst enabledNames = [];\n\nfor (const mel of selected) {\n  const auras = mel.effects.filter(isMelodyAura);\n  if (!auras.length) {\n    ui.notifications.error(`${mel.name}: sin Active Effect de aura.`);\n    return;\n  }\n  const skill = skillByMelodyId[mel.id];\n  const skillLabel = skill ? (SKILLS.find(([id]) => id === skill)?.[1] ?? skill) : null;\n  for (const ef of auras) {\n    const update = {\n      disabled: false,\n      duration: {\n        seconds: 60,\n        startTime,\n        rounds: null,\n        turns: null,\n        combat: null,\n        startRound: null,\n        startTurn: null\n      }\n    };\n    if (skill) {\n      update.changes = [\n        { key: `system.skills.${skill}.bonuses.check`, mode: 2, value: \"1\", priority: 20 }\n      ];\n      update.name = `Melody of Guile (${skillLabel}) (Aura 15 ft)`;\n    }\n    await ef.update(update);\n  }\n  enabledNames.push(skillLabel ? `${mel.name} [${skillLabel}]` : mel.name);\n}\n\nawait refreshActiveAuras(\"hunting-horn-song\");\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> performs <em>${esc(enabledNames.join(\" + \"))}</em>.</p><p>15-foot aura(s) active for 1 minute (or until Incapacitated / another performance / End Melodies).</p></div>`\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "hh": {
+        "songbook": true,
+        "melodyFlag": "world.hh.isMelody",
+        "maxActiveMelodies": 3,
+        "maxSoloMelodies": 1
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1788189192513,
+    "modifiedTime": 1788189192513,
+    "lastModifiedBy": null
+  }
+}

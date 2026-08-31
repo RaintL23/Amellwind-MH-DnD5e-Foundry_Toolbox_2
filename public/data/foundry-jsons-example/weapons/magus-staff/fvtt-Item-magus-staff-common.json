@@ -1,5 +1,5 @@
 {
-  "_id": "eguLyMxdTAw0WUJJ",
+  "_id": "E60KC548USCXJM7N",
   "name": "Magus Staff (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_magusstaff.webp",
@@ -91,8 +91,8 @@
       "recovery": []
     },
     "activities": {
-      "alZbyZrmnw2CtsEm": {
-        "_id": "alZbyZrmnw2CtsEm",
+      "9M8MbeuqvGN7spkB": {
+        "_id": "9M8MbeuqvGN7spkB",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -243,8 +243,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1787322021847,
-        "modifiedTime": 1787322021847,
+        "createdTime": 1788189143161,
+        "modifiedTime": 1788189143161,
         "lastModifiedBy": null
       }
     }
@@ -333,8 +333,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1787322021846,
-    "modifiedTime": 1787322021846,
+    "createdTime": 1788189143161,
+    "modifiedTime": 1788189143161,
     "lastModifiedBy": null
   }
 }

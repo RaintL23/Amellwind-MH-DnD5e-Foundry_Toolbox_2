@@ -1,0 +1,930 @@
+{
+  "_id": "WEZiL5VVdNqYpnWC",
+  "name": "Dual Blades (Legendary)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_dualblades.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Nick)</strong></p><p>When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action. This is essential to keep your Bonus Action free for your class features and weapon abilities.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Dual Mastery</strong></p><p>You are a whirlwind of blades. This weapon now possesses both the Nick and Vex Mastery properties simultaneously. (With Vex, if you hit a creature and deal damage to it, you have Advantage on your next attack roll against that creature before the end of your next turn).</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Demon Mode</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you envelop yourself in an aura of boundless stamina for 1 minute (or until you are Incapacitated). You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest. While active, you gain the following benefits:</p><ul><li>Your walking speed increases by 10 feet.</li><li>The extra attack you make using the weapon's Light property deals an additional [[/r 1d4]] slashing damage on a hit.</li></ul><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Demon Upgrade</strong></p><p>Demon Mode's walking speed bonus increases to 15 feet, and the extra damage on your Light property attack increases to [[/r 1d6]].</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Demon Dodge</strong></p><p><strong>Reaction.</strong></p><p>While Demon Mode is active, if you are hit by a melee attack from a creature you can see, you can use your Reaction to add your Proficiency Bonus to your AC against that attack, potentially causing it to miss. If the attack misses, you can immediately move 5 feet without provoking Opportunity Attacks.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Perfect Evade</strong></p><p><strong>Reaction.</strong></p><p>Your Demon Dodge improves. If you use your Reaction to increase your AC and successfully cause the triggering attack to miss, you can make one melee weapon attack against the attacker immediately after your 5-foot movement, as part of the same Reaction.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Archdemon Mode</strong></p><p><strong>Bonus Action.</strong></p><p>The relentless combat charges your blades. When your Demon Mode ends (either because the duration expires or you end it early as a Bonus Action), you enter Archdemon Mode for 1 minute. You lose the movement speed bonus and Demon Dodge features, but you retain the extra [[/r 1d4]] damage on your extra attack from the Light property.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Demon Dance</strong></p><p>While Demon Mode is active, you can use your Action to plant your feet and unleash a devastating, high-commitment flurry against a single foe. Make four melee weapon attacks against a creature within your reach with advantage. Because of the intense focus required, your speed becomes 0 until the end of your current turn. If all attacks hit, you severely expose the target's weak points, inflicting an additional [[/r 4d6]] slashing damage as bonus damage on your last attack. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Heavenly Blade Dance</strong></p><p>You expertly maneuver around massive foes, performing mid-air spins along their bodies. You can move through the space of any Large or Larger creature, and doing so does not provoke Opportunity Attacks. Once per turn, when you move through a hostile creature's space and hit it with an attack using this weapon, you slice along its immense form, dealing an additional [[/r 2d6]] slashing damage.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Nick)</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Dual Mastery</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Demon Mode</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Demon Upgrade</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Demon Dodge</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Perfect Evade</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Archdemon Mode</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Demon Dance</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Heavenly Blade Dance</strong></p></div>"
+    },
+    "identifier": "dualblades",
+    "quantity": 1,
+    "weight": {
+      "value": 4,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "legendary",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "dualblades"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 6,
+        "types": [
+          "slashing"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": 3,
+    "properties": [
+      "fin",
+      "lgt",
+      "mgc"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "mastery": "nick",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    },
+    "activities": {
+      "MpbpAGQ0BUa98EeP": {
+        "_id": "MpbpAGQ0BUa98EeP",
+        "type": "attack",
+        "sort": 0,
+        "name": "Attack",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "useConditionText": "",
+        "effectConditionText": "false",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "attack",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionReason": ""
+      },
+      "dwSFLzmGmlCbYgNE": {
+        "_id": "dwSFLzmGmlCbYgNE",
+        "sort": 200000,
+        "name": "Demon Mode",
+        "img": "icons/magic/unholy/strike-body-life-soul-green.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+10 walk; +1d4 slashing on melee weapon attacks (Light extra attack bonus)."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "8LUopOvCDLb3mwWN"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "@prof",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "demon-mode",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": true,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "PfFyeN6H41m8ymwG": {
+        "_id": "PfFyeN6H41m8ymwG",
+        "sort": 300000,
+        "name": "Demon Dodge",
+        "img": "icons/skills/movement/figure-running-gray.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "While Demon Mode is active, when you are hit by a melee attack you can see",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Add your Proficiency Bonus to AC vs the triggering attack (Midi rechecks). On a miss, move 5 ft without OA."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "demon-dodge",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "eZsaJMzDzDXFj0qG": {
+        "_id": "eZsaJMzDzDXFj0qG",
+        "sort": 400000,
+        "name": "Perfect Evade",
+        "img": "icons/skills/melee/blade-tip-orange.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "After Demon Dodge causes the triggering attack to miss",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "After 5 ft of movement: make one melee weapon attack against the attacker."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "perfect-evade",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "attack",
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": ""
+      },
+      "eRj8yKME92LjRE2D": {
+        "_id": "eRj8yKME92LjRE2D",
+        "sort": 500000,
+        "name": "Archdemon Mode",
+        "img": "icons/magic/unholy/strike-beam-blood-red-purple.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "When Demon Mode ends",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+1d4 slashing retained; no speed bonus / Demon Dodge. Ends Demon Mode if still active."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "dspVYghCOAueZY3D"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "archdemon-mode",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": true,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "p4mlZcBLS72asGuO",
+      "name": "Dual Mastery",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192442,
+        "modifiedTime": 1788189192442,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "8LUopOvCDLb3mwWN",
+      "name": "Demon Mode",
+      "img": "icons/magic/unholy/strike-body-life-soul-green.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "system.bonuses.mwak.damage",
+          "mode": 2,
+          "value": "1d6[slashing]",
+          "priority": 20
+        },
+        {
+          "key": "system.attributes.movement.walk",
+          "mode": 2,
+          "value": "15",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "disableIncapacitated": true,
+          "showIcon": true
+        },
+        "world": {
+          "dualBlades": {
+            "isDemonMode": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192442,
+        "modifiedTime": 1788189192442,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "dspVYghCOAueZY3D",
+      "name": "Archdemon Mode",
+      "img": "icons/magic/unholy/strike-beam-blood-red-purple.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "system.bonuses.mwak.damage",
+          "mode": 2,
+          "value": "1d4[slashing]",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "disableIncapacitated": true,
+          "showIcon": true
+        },
+        "world": {
+          "dualBlades": {
+            "isArchdemonMode": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192442,
+        "modifiedTime": 1788189192442,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 1000000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Dual Blades",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Dual Blades (Legendary)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Dual Blades — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [postActiveEffects]ItemMacro\n//\n// Demon Dodge:\n//   Applies system.attributes.ac.bonus + Proficiency Bonus with dae.specialDuration\n//   isAttacked so Midi can recheck the triggering attack (Shield pattern).\n//   If the attack misses, move 5 feet without Opportunity Attacks (manual).\n//   Rare+: use Perfect Evade for the melee riposte as part of the same Reaction.\n//\n// Archdemon Mode (Rare+ via flags.world.dualBlades.tier):\n//   Clears active Demon Mode AEs when Archdemon Mode is activated.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? \"\").toLowerCase();\n\nconst isDemonDodge =\n  actId === \"demon-dodge\"\n  || actName === \"demon dodge\"\n  || (actName.includes(\"demon dodge\") && !actName.includes(\"perfect\"));\n\nconst isArchdemon =\n  actId === \"archdemon-mode\"\n  || actName === \"archdemon mode\"\n  || actName.includes(\"archdemon\");\n\nif (!isDemonDodge && !isArchdemon) return;\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Dual Blades: actor not found.\");\n  return;\n}\n\nconst tier = String(\n  foundry.utils.getProperty(item, \"flags.world.dualBlades.tier\") ?? \"uncommon\",\n).toLowerCase().replace(/\\s+/g, \"\");\n\nconst perfectEvadeEnabled = [\"rare\", \"veryrare\", \"legendary\"].includes(tier);\n\nconst isDemonMode = (ef) => {\n  if (ef.disabled) return false;\n  const flag = foundry.utils.getProperty(ef, \"flags.world.dualBlades.isDemonMode\");\n  return flag === true || /^demon mode$/i.test(ef.name ?? \"\");\n};\n\nconst isDemonDodgeAc = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.dualBlades.isDemonDodgeAc\") === true\n  || /^demon dodge \\(\\+/i.test(ef.name ?? \"\");\n\n// ── Archdemon Mode: end Demon Mode when entering Archdemon ───────────────────\nif (isArchdemon) {\n  const stale = actorDoc.effects.filter(isDemonMode);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\n      \"ActiveEffect\",\n      stale.map((e) => e.id),\n    );\n  }\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> enters <strong>Archdemon Mode</strong>.</p><p>Speed bonus and Demon Dodge end; keep the extra [[/r 1d4]] slashing on Light-property attacks for 1 minute.</p></div>`,\n  });\n  return;\n}\n\n// ── Demon Dodge ───────────────────────────────────────────────────────────────\nconst demonModeActive = actorDoc.effects.some(isDemonMode);\n\nif (!demonModeActive) {\n  ui.notifications.warn(\"Dual Blades: Demon Mode must be active to use Demon Dodge.\");\n  return;\n}\n\nconst prof = Number(actorDoc.system?.attributes?.prof);\nconst bonus = Number.isFinite(prof) && prof > 0 ? Math.trunc(prof) : 2;\n\nconst stale = actorDoc.effects.filter(isDemonDodgeAc);\nif (stale.length) {\n  await actorDoc.deleteEmbeddedDocuments(\n    \"ActiveEffect\",\n    stale.map((e) => e.id),\n  );\n}\n\nawait actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [\n  {\n    name: `Demon Dodge (+${bonus} AC)`,\n    img: \"icons/skills/movement/figure-running-gray.webp\",\n    transfer: false,\n    disabled: false,\n    changes: [\n      {\n        key: \"system.attributes.ac.bonus\",\n        mode: CONST.ACTIVE_EFFECT_MODES.ADD,\n        value: String(bonus),\n        priority: 20,\n      },\n    ],\n    duration: {\n      startTime: null,\n      seconds: null,\n      combat: null,\n      rounds: null,\n      turns: null,\n      startRound: null,\n      startTurn: null,\n    },\n    flags: {\n      dae: {\n        specialDuration: [\"isAttacked\"],\n        stackable: \"noneName\",\n        showIcon: true,\n        selfTarget: true,\n        selfTargetAlways: true,\n        dontApply: false,\n      },\n      world: {\n        dualBlades: {\n          isDemonDodgeAc: true,\n        },\n      },\n    },\n  },\n]);\n\nconst evadeLine = perfectEvadeEnabled\n  ? `<p>If the attack misses, move <strong>5 feet</strong> without Opportunity Attacks, then use <strong>Perfect Evade</strong> for one melee weapon attack as part of the same Reaction.</p>`\n  : `<p>If the attack misses, immediately move <strong>5 feet</strong> without provoking Opportunity Attacks.</p>`;\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> uses Demon Dodge: <strong>+${bonus} AC</strong> against the triggering melee attack.</p>${evadeLine}</div>`,\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "dualBlades": {
+        "isDualBlades": true,
+        "tier": "legendary"
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1788189192441,
+    "modifiedTime": 1788189192441,
+    "lastModifiedBy": null
+  }
+}

@@ -1,0 +1,1450 @@
+{
+  "_id": "GcnZsmtF4HimTCd1",
+  "name": "Charge Blade (Legendary)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_chargeblade.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Switch Mode</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can transform the weapon between Sword & Shield Mode and Axe Mode.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Elemental Attunement</strong></p><p>Once per Short rest or Long rest, you can change the element attuned to this weapon.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap) (Sword &amp; Shield)</strong></p><p>If you hit a creature, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Cleave) (Axe)</strong></p><p>If you hit a creature, you can make an extra attack against a second creature within 5 feet of the first that is also within your reach.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Phial Charges</strong></p><p>The weapon can hold up to 5 Phial Charges. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. The gauge starts at 0 after a Long Rest. When you hit a creature with an attack in Sword & Shield Mode, you generate 1 Phial Charge.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Point (Elemental Guard)</strong></p><p><strong>Reaction.</strong></p><p>You learn to perfectly time your blocks. As a Reaction when you are hit by a melee attack while in Sword & Shield Mode, you can expend 1 Phial Charge to add +2 to your AC against that attack. If this causes the attack to miss, your shield erupts, dealing [[/r 1d4]] damage of your Elemental Attunement type to the attacker.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Guard Point Upgrade I</strong></p><p>Your Guard Point damage increases to [[/r 1d6]].</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Guard Point Upgrade II</strong></p><p>Your Guard Point damage increases to [[/r 1d8]].</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Elemental Discharge</strong></p><p>While in Axe Mode, the weapon becomes a conduit of raw power. When you hit a creature with an attack in Axe Mode, you can expend 1 Phial Charge to deal an extra [[/r 1d6]] damage of your Elemental Attunement type to the target.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Elemental Discharge Upgrade I</strong></p><p>Your Elemental Discharge (Axe hit) damage increases to [[/r 1d8]].</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Elemental Discharge Upgrade II</strong></p><p>Your Elemental Discharge (Axe hit) damage increases to [[/r 1d10]].</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Amped Element Discharge (AED)</strong></p><p><strong>Action.</strong></p><p>You can unleash all stored energy in one devastating shockwave. As an Action while in Axe Mode, you can expend any number of remaining Phial Charges (minimum of 1) to unleash a 15-foot cone of elemental energy. Each creature in that area must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength or Dexterity modifier). A creature takes [[/r 1d8]] damage of your Elemental Attunement type per phial expended on a failed save, or half as much on a successful one.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Amped Element Discharge Upgrade I</strong></p><p>Your Amped Element Discharge (Cone) damage increases to [[/r 1d10]] per phial expended.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Super Amped Element Discharge</strong></p><p>Your AED transforms into its ultimate form. The cone extends to 30 feet. Additionally, if the cone completely covers the space of a Huge or larger creature, that creature has Disadvantage on the saving throw. Additional your damage increases to [[/r 1d12]] per phial expended.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Charged Shield (Red Shield)</strong></p><p>You can cycle the energy back into the weapon's defense mechanism. When you use your Amped Element Discharge Action, you can choose to cancel the shockwave to charge your shield instead. For 1 minute, your shield grants an additional +1 AC, and your Guard Point feature deals two times your Elemental Discharge elemental damage instead of its normal damage.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Switch Mode</strong></p><p><strong>Bonus Action.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Elemental Attunement</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap) (Sword &amp; Shield)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Cleave) (Axe)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Phial Charges</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Guard Point (Elemental Guard)</strong></p><p><strong>Reaction.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Guard Point Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#ff8000\">Guard Point Upgrade II</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Elemental Discharge</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Elemental Discharge Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#ff8000\">Elemental Discharge Upgrade II</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Amped Element Discharge (AED)</strong></p><p><strong>Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Amped Element Discharge Upgrade I</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#ff8000\">Super Amped Element Discharge</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Charged Shield (Red Shield)</strong></p></div>"
+    },
+    "identifier": "chargeblade",
+    "quantity": 1,
+    "weight": {
+      "value": 7,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "legendary",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "chargeblade"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 6,
+        "types": [
+          "slashing"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": 3,
+    "properties": [
+      "fin",
+      "hvy",
+      "lgt",
+      "mgc",
+      "spc",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "mastery": "sap",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 5,
+      "recovery": [],
+      "max": "5"
+    },
+    "activities": {
+      "5ob76OtIAPmkAwvL": {
+        "_id": "5ob76OtIAPmkAwvL",
+        "type": "attack",
+        "sort": 0,
+        "name": "Sword & Shield",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "slashing"
+              ],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": "@mod"
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "sword-shield",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.cb.mode\") !== \"axe\"",
+        "useConditionReason": "Requires Sword & Shield Mode (use Switch Mode).",
+        "effectConditionText": "false"
+      },
+      "Wx33iCwtr3HFSCyK": {
+        "_id": "Wx33iCwtr3HFSCyK",
+        "type": "attack",
+        "sort": 100000,
+        "name": "Axe",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 12,
+              "types": [
+                "slashing"
+              ],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": "@mod"
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "axe",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.cb.mode\") === \"axe\"",
+        "useConditionReason": "Requires Axe Mode (use Switch Mode).",
+        "effectConditionText": "false"
+      },
+      "waksCfZNx5HPzttC": {
+        "_id": "waksCfZNx5HPzttC",
+        "sort": 100000,
+        "name": "Switch Mode",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Toggle Sword & Shield Mode ↔ Axe Mode. Item Macro updates mode indicators, mastery (Sap/Cleave), and Integrated Shield AC."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "YBbYcsGPRrWF651D"
+          },
+          {
+            "_id": "dwWgFf4PypSIIMjG"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "switch-mode",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "I2HnwKMIrWNYBHrC": {
+        "_id": "I2HnwKMIrWNYBHrC",
+        "sort": 200000,
+        "name": "Elemental Attunement",
+        "img": "icons/magic/symbols/elements-air-earth-fire-water.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "No element chosen yet. Once per Short or Long Rest, choose Acid, Cold, Fire, or Lightning. Discharge, AED, and Guard Point Eruption use that type."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "1",
+          "recovery": [
+            {
+              "period": "sr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "elemental-attunement",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "GEIv1eJAZYJrhsWB": {
+        "_id": "GEIv1eJAZYJrhsWB",
+        "sort": 600000,
+        "name": "Guard Point",
+        "img": "icons/skills/melee/shield-block-gray-orange.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When you are hit by a melee attack while in Sword & Shield Mode",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+2 AC vs the triggering attack (Midi rechecks, Shield pattern). Expends 1 Phial Charge via Item Macro. On a miss, use Guard Point: Eruption (1d8 attuned element)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "guard-point",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "sKbcoG6Pvt1O7mRI": {
+        "_id": "sKbcoG6Pvt1O7mRI",
+        "sort": 700000,
+        "name": "Elemental Discharge",
+        "img": "icons/magic/lightning/bolt-strike-smoke-yellow.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "When you hit a creature with an attack in Axe Mode",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Axe Mode on hit: expend 1 Phial Charge for 1d10 attuned element (Elemental Attunement). Offered automatically after an Axe hit."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "ft",
+          "value": null,
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "elemental-discharge",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.cb.mode\") === \"axe\"",
+        "useConditionReason": "Requires Axe Mode and ≥1 Phial Charge.",
+        "effectConditionText": "",
+        "type": "damage",
+        "damage": {
+          "critical": {
+            "allow": false,
+            "bonus": ""
+          },
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 10,
+              "types": [],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "bJXNIXkKmGjGIrGA": {
+        "_id": "bJXNIXkKmGjGIrGA",
+        "sort": 801000,
+        "name": "Amped Element Discharge (AED)",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "While in Axe Mode",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Axe Mode Action: choose how many Phial Charges to spend (dialog). 1d12 attuned element per charge in a 15-ft cone; DEX save (DC 8 + PB + STR or DEX), half on success."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "cone",
+            "size": "15",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "aed",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.cb.mode\") === \"axe\"",
+        "useConditionReason": "Requires Axe Mode and ≥1 Phial Charge.",
+        "effectConditionText": "",
+        "type": "save",
+        "damage": {
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 12,
+              "types": [],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": ""
+            }
+          ],
+          "onSave": "half"
+        },
+        "save": {
+          "ability": [
+            "dex"
+          ],
+          "dc": {
+            "calculation": "str",
+            "formula": ""
+          }
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none",
+        "img": "icons/magic/fire/blast-jet-stream-splash.webp"
+      },
+      "MnVcs15PNrhoSIME": {
+        "_id": "MnVcs15PNrhoSIME",
+        "type": "damage",
+        "sort": 600500,
+        "name": "Guard Point: Eruption",
+        "img": "icons/magic/lightning/bolt-strike-smoke-yellow.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "When Guard Point causes the triggering melee attack to miss",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Shield erupts for 1d8 attuned element (Elemental Attunement)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "ft",
+          "value": null,
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "damage": {
+          "critical": {
+            "allow": false,
+            "bonus": ""
+          },
+          "parts": [
+            {
+              "number": 1,
+              "denomination": 8,
+              "types": [],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "guard-point-eruption",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.cb.mode\") !== \"axe\"",
+        "useConditionReason": "Requires Sword & Shield Mode.",
+        "effectConditionText": ""
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "2mKMQB2HJXg82DEL",
+      "name": "Mastery (Sap) (Sword & Shield)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192428,
+        "modifiedTime": 1788189192428,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "Aq4y9m8PTIIT3mlG",
+      "name": "Mastery (Cleave) (Axe)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192428,
+        "modifiedTime": 1788189192428,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "Zzf9kBm5E4zn6pf7",
+      "name": "Integrated Shield (+2 AC)",
+      "img": "icons/skills/melee/shield-block-gray-orange.webp",
+      "description": "Base AC from the weapon's integrated shield while equipped.",
+      "changes": [
+        {
+          "key": "system.attributes.ac.bonus",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 100000,
+      "flags": {
+        "dae": {
+          "stackable": "noneName",
+          "showIcon": true
+        },
+        "world": {
+          "integratedShield": {
+            "isIntegratedShield": true,
+            "bonus": 2
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192429,
+        "modifiedTime": 1788189192429,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "YBbYcsGPRrWF651D",
+      "name": "Sword & Shield Mode",
+      "img": "icons/weapons/swords/sword-guard-steel-green.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "flags.world.cb.mode",
+          "mode": 5,
+          "value": "sword",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "world": {
+          "cb": {
+            "isModeIndicator": true,
+            "modeKey": "sword"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192429,
+        "modifiedTime": 1788189192429,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "dwWgFf4PypSIIMjG",
+      "name": "Axe Mode",
+      "img": "icons/weapons/axes/axe-battle-black.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "flags.world.cb.mode",
+          "mode": 5,
+          "value": "axe",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "world": {
+          "cb": {
+            "isModeIndicator": true,
+            "modeKey": "axe"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192429,
+        "modifiedTime": 1788189192429,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 800000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Charge Blade",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[preTargeting]ItemMacro,[preDamageRoll]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "preDamageRoll"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postDamageRoll"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Charge Blade (Legendary)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Charge Blade — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[preDamageRoll]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro\n\nconst GUARD_POINT_DAMAGE = \"1d8\";\nconst ELEMENTAL_DISCHARGE_DAMAGE = \"1d10\";\nconst AED_DAMAGE = \"1d12\";\nconst ELEMENTAL_TYPE = \"\";\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actMidi = rolled?.midiProperties ?? workflow?.activity?.midiProperties ?? {};\nconst actId = String(\n  rolled?.identifier\n  ?? actMidi?.identifier\n  ?? workflow?.activity?.identifier\n  ?? \"\",\n).toLowerCase().trim();\n\nconst weaponItem = item\n  ?? workflow?.item\n  ?? args?.[0]?.item\n  ?? null;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? weaponItem?.actor\n  ?? weaponItem?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!weaponItem || !actorDoc) return;\n\nconst elementalType = String(\n  foundry.utils.getProperty(weaponItem, \"flags.world.chargeBlade.elementalType\")\n  ?? ELEMENTAL_TYPE\n  ?? \"\",\n).toLowerCase();\n\nconst dischargeDie = String(\n  foundry.utils.getProperty(weaponItem, \"flags.world.chargeBlade.elementalDischargeDamage\")\n  ?? ELEMENTAL_DISCHARGE_DAMAGE\n  ?? \"1d6\",\n);\nconst aedDie = String(\n  foundry.utils.getProperty(weaponItem, \"flags.world.chargeBlade.aedDamage\")\n  ?? AED_DAMAGE\n  ?? \"1d8\",\n);\nconst guardDie = String(\n  foundry.utils.getProperty(weaponItem, \"flags.world.chargeBlade.guardPointDamage\")\n  ?? GUARD_POINT_DAMAGE\n  ?? \"1d4\",\n);\n\nconst isModeEf = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.cb.isModeIndicator\") === true\n  || /^(axe|sword(&?\\s*shield)?)\\s*mode$/i.test(ef.name ?? \"\")\n  || /^sword\\s*&\\s*shield\\s*mode$/i.test(ef.name ?? \"\");\n\nconst modeKeyOf = (ef) => {\n  const flagged = String(foundry.utils.getProperty(ef, \"flags.world.cb.modeKey\") ?? \"\").toLowerCase();\n  if (flagged === \"axe\" || flagged === \"sword\") return flagged;\n  if (/^axe\\s*mode$/i.test(ef.name ?? \"\")) return \"axe\";\n  if (/sword/i.test(ef.name ?? \"\")) return \"sword\";\n  return \"\";\n};\n\nconst collectModeEffects = () => {\n  const list = [];\n  for (const ef of weaponItem.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  for (const ef of actorDoc.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  return list;\n};\n\nconst currentMode = () => {\n  const actorMode = String(foundry.utils.getProperty(actorDoc, \"flags.world.cb.mode\") ?? \"\").toLowerCase();\n  if (actorMode === \"axe\" || actorMode === \"sword\") return actorMode;\n  for (const ef of collectModeEffects()) {\n    if (ef.disabled) continue;\n    const key = modeKeyOf(ef);\n    if (key) return key;\n  }\n  return \"sword\";\n};\n\nconst isIntegratedShieldEf = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.integratedShield.isIntegratedShield\") === true\n  || /^integrated\\s*shield/i.test(ef.name ?? \"\");\n\nconst collectIntegratedShieldEffects = () => {\n  const list = [];\n  for (const ef of weaponItem.effects ?? []) {\n    if (isIntegratedShieldEf(ef)) list.push(ef);\n  }\n  for (const ef of actorDoc.effects ?? []) {\n    if (isIntegratedShieldEf(ef)) list.push(ef);\n  }\n  return list;\n};\n\nconst setMode = async (mode) => {\n  const want = mode === \"axe\" ? \"axe\" : \"sword\";\n  const ops = [];\n  for (const ef of collectModeEffects()) {\n    const key = modeKeyOf(ef);\n    if (key !== \"axe\" && key !== \"sword\") continue;\n    ops.push(ef.update({ disabled: key !== want }));\n  }\n  const shieldDisabled = want === \"axe\";\n  for (const ef of collectIntegratedShieldEffects()) {\n    if (Boolean(ef.disabled) !== shieldDisabled) {\n      ops.push(ef.update({ disabled: shieldDisabled }));\n    }\n  }\n  if (ops.length) await Promise.all(ops);\n\n  const swordMastery = String(\n    foundry.utils.getProperty(weaponItem, \"flags.world.chargeBlade.swordMastery\")\n    ?? \"sap\",\n  ).toLowerCase();\n  const axeMastery = String(\n    foundry.utils.getProperty(weaponItem, \"flags.world.chargeBlade.axeMastery\")\n    ?? \"cleave\",\n  ).toLowerCase();\n  const mastery = want === \"axe\" ? axeMastery : swordMastery;\n  try {\n    await weaponItem.update({ \"system.mastery\": mastery });\n  } catch (_) { /* ignore */ }\n\n  try {\n    await actorDoc.setFlag(\"world\", \"cb.mode\", want);\n  } catch (_) {\n    await actorDoc.update({ \"flags.world.cb.mode\": want });\n  }\n  return { mode: want, mastery };\n};\n\nconst phialAvailable = () => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return 0;\n  const max = Math.max(0, Number(uses.max) || 0);\n  const spent = Math.max(0, Number(uses.spent) || 0);\n  return Math.max(0, max - spent);\n};\n\nconst spendPhials = async (n) => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return false;\n  const max = Math.max(0, Number(uses.max) || 0);\n  const spent = Math.max(0, Number(uses.spent) || 0);\n  const available = Math.max(0, max - spent);\n  const take = Math.min(Math.max(0, Number(n) || 0), available);\n  if (take <= 0) return false;\n  await weaponItem.update({ \"system.uses.spent\": spent + take });\n  return true;\n};\n\nconst confirmDialog = (title, content, yesLabel = \"Yes\", noLabel = \"No\") =>\n  new Promise((resolve) => {\n    let settled = false;\n    const done = (v) => {\n      if (!settled) {\n        settled = true;\n        resolve(v);\n      }\n    };\n    new Dialog({\n      title,\n      content: `<div class=\"dnd5e2\">${content}</div>`,\n      buttons: {\n        yes: {\n          icon: '<i class=\"fas fa-check\"></i>',\n          label: yesLabel,\n          callback: () => done(true),\n        },\n        no: {\n          icon: '<i class=\"fas fa-times\"></i>',\n          label: noLabel,\n          callback: () => done(false),\n        },\n      },\n      default: \"yes\",\n      close: () => done(false),\n    }).render(true);\n  });\n\n/** @returns {Promise<number|null>} */\nconst aedChargesDialog = (available) =>\n  new Promise((resolve) => {\n    let settled = false;\n    const done = (v) => {\n      if (!settled) {\n        settled = true;\n        resolve(v);\n      }\n    };\n    const aedDenom = Number(String(aedDie).match(/d(\\d+)/i)?.[1] || 8);\n    const buttons = {};\n    for (let n = 1; n <= available; n += 1) {\n      buttons[`n${n}`] = {\n        icon: '<i class=\"fas fa-bolt\"></i>',\n        label: `×${n} (+${n}d${aedDenom} ${elementalType})`,\n        callback: () => done(n),\n      };\n    }\n    buttons.cancel = {\n      icon: '<i class=\"fas fa-times\"></i>',\n      label: \"Cancel\",\n      callback: () => done(null),\n    };\n    new Dialog({\n      title: \"Amped Element Discharge (AED)\",\n      content: `<div class=\"dnd5e2\"><p>Phial Charges available: <strong>${available}</strong>.</p><p>How many charges do you expend for the 15-ft cone?</p></div>`,\n      buttons,\n      default: \"n1\",\n      close: () => done(null),\n    }).render(true);\n  });\n\nconst setActivityDamageNumber = (act, n) => {\n  if (!act?.damage?.parts?.[0]) return;\n  const part0 = act.damage.parts[0];\n  try {\n    if (typeof act.updateSource === \"function\") {\n      const parts = foundry.utils.duplicate(act.damage.parts);\n      parts[0].number = n;\n      act.updateSource({ \"damage.parts\": parts });\n      return;\n    }\n  } catch (_) { /* fall through */ }\n  part0.number = n;\n};\n\nconst listActivities = () => {\n  const col = weaponItem.system?.activities;\n  if (!col) return [];\n  if (typeof col === \"object\" && Array.isArray(col.contents)) return col.contents;\n  if (typeof col.values === \"function\") return [...col.values()];\n  return Object.values(col);\n};\n\nconst findElementalDischargeActivity = () => {\n  const list = listActivities();\n  return list.find((a) => {\n    const id = String(a?.identifier ?? a?.midiProperties?.identifier ?? \"\").toLowerCase();\n    const name = String(a?.name ?? \"\").toLowerCase();\n    return id === \"elemental-discharge\" || name === \"elemental discharge\";\n  }) ?? null;\n};\n\nconst elementalTypeDialog = () =>\n  new Promise((resolve) => {\n    let settled = false;\n    const done = (v) => {\n      if (!settled) {\n        settled = true;\n        resolve(v);\n      }\n    };\n    const buttons = {};\n    for (const type of [\"acid\", \"cold\", \"fire\", \"lightning\"]) {\n      const label = type.charAt(0).toUpperCase() + type.slice(1);\n      buttons[type] = {\n        icon: '<i class=\"fas fa-flask\"></i>',\n        label,\n        callback: () => done(type),\n      };\n    }\n    buttons.cancel = {\n      icon: '<i class=\"fas fa-times\"></i>',\n      label: \"Cancel\",\n      callback: () => done(null),\n    };\n    new Dialog({\n      title: \"Elemental Attunement\",\n      content: `<div class=\"dnd5e2\"><p>Choose the element attuned to this Charge Blade.</p><p>Current: <strong>${esc(elementalType || \"none\")}</strong></p></div>`,\n      buttons,\n      default: elementalType || \"fire\",\n      close: () => done(null),\n    }).render(true);\n  });\n\nconst applyElementalType = async (type) => {\n  const pretty = type.charAt(0).toUpperCase() + type.slice(1);\n  const updates = {\n    \"flags.world.chargeBlade.elementalType\": type,\n  };\n  for (const act of listActivities()) {\n    const id = act?.id ?? act?._id;\n    if (!id) continue;\n    const name = String(act?.name ?? \"\");\n    const nameLc = name.toLowerCase();\n    if (/^elemental\\s*attunement/i.test(name)) {\n      updates[`system.activities.${id}.name`] = `Elemental Attunement (${pretty})`;\n      updates[`system.activities.${id}.description.chatFlavor`] =\n        `Currently attuned to ${type}. Once per Short or Long Rest, use this to change Acid / Cold / Fire / Lightning.`;\n      continue;\n    }\n    const touchesElement =\n      /^guard\\s*point:\\s*eruption$/i.test(nameLc)\n      || /^elemental\\s*discharge$/i.test(nameLc)\n      || /amped\\s*element\\s*discharge/i.test(nameLc);\n    if (!touchesElement || !act?.damage?.parts?.[0]) continue;\n    const parts = foundry.utils.duplicate(act.damage.parts);\n    parts[0].types = [type];\n    updates[`system.activities.${id}.damage.parts`] = parts;\n  }\n  await weaponItem.update(updates);\n  return pretty;\n};\n\nconst isElementalAttunement =\n  actId === \"elemental-attunement\"\n  || /^elemental\\s*attunement/i.test(actName);\n\nconst isSwordAttack =\n  actId === \"sword-shield\"\n  || actId === \"sword--shield\"\n  || (actId.includes(\"sword\") && actId.includes(\"shield\"))\n  || /^sword\\s*&\\s*shield$/i.test(actName);\n\nconst isAxeAttack = actId === \"axe\" || actName === \"axe\";\n\nconst isSwitchMode =\n  actId === \"switch-mode\"\n  || actName === \"switch mode\"\n  || actName.includes(\"switch mode\");\n\nconst isGuardPoint =\n  actId === \"guard-point\"\n  || (actId.includes(\"guard-point\") && !actId.includes(\"eruption\"))\n  || (/guard\\s*point/i.test(actName) && !/eruption/i.test(actName));\n\nconst isElementalDischarge =\n  actId === \"elemental-discharge\"\n  || actName === \"elemental discharge\";\n\nconst isAed =\n  actId === \"aed\"\n  || actId.startsWith(\"aed\")\n  || actName.includes(\"amped element discharge\");\n\nconst isPre = macroPass.includes(\"pretargeting\");\nconst isPreDamage = macroPass.includes(\"predamageroll\");\nconst isPostDamage = macroPass.includes(\"postdamageroll\");\nconst isPostAe = macroPass.includes(\"postactiveeffects\");\n\n// ── Elemental Attunement (indicate / change damage type) ────────────────────\nif (isElementalAttunement && (isPostAe || !macroPass)) {\n  const chosen = await elementalTypeDialog();\n  if (!chosen) {\n    // Refund the 1/rest use if the player cancels without choosing.\n    try {\n      const act = rolled ?? workflow?.activity;\n      const uses = act?.uses;\n      if (uses && Number(uses.spent) > 0 && typeof act.update === \"function\") {\n        await act.update({ \"uses.spent\": Math.max(0, Number(uses.spent) - 1) });\n      } else if (act?.id || act?._id) {\n        const id = act.id ?? act._id;\n        const spent = Number(\n          foundry.utils.getProperty(weaponItem, `system.activities.${id}.uses.spent`) || 1,\n        );\n        await weaponItem.update({\n          [`system.activities.${id}.uses.spent`]: Math.max(0, spent - 1),\n        });\n      }\n    } catch (_) { /* ignore refund failures */ }\n    return;\n  }\n  const pretty = await applyElementalType(chosen);\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Elemental Attunement</strong> — ${esc(actorDoc.name)} attunes the Charge Blade to <strong>${esc(pretty)}</strong>.</p></div>`,\n  });\n  return;\n}\n\n// ── Switch Mode ─────────────────────────────────────────────────────────────\nif (isSwitchMode && (isPostAe || !macroPass)) {\n  const next = currentMode() === \"axe\" ? \"sword\" : \"axe\";\n  const applied = await setMode(next);\n  const masteryLabel = String(applied.mastery || \"\").toUpperCase() || \"—\";\n  const shieldLine = applied.mode === \"axe\"\n    ? \"<p>Integrated Shield AC bonus is removed while in Axe Mode.</p>\"\n    : \"<p>Integrated Shield AC bonus is restored.</p>\";\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Switch Mode</strong> — ${esc(actorDoc.name)} switches to <strong>${applied.mode === \"axe\" ? \"Axe Mode\" : \"Sword &amp; Shield Mode\"}</strong> (Mastery: <strong>${esc(masteryLabel)}</strong>).</p>${shieldLine}</div>`,\n  });\n  return;\n}\n\n// ── Wrong-mode gates ────────────────────────────────────────────────────────\nif (isPre && isSwordAttack && currentMode() === \"axe\") {\n  ui.notifications.warn(\"Charge Blade: Sword & Shield Attack requires Sword & Shield Mode (Switch Mode).\");\n  if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n  return false;\n}\n\nif (isPre && isAxeAttack && currentMode() !== \"axe\") {\n  ui.notifications.warn(\"Charge Blade: Axe Attack requires Axe Mode (Switch Mode).\");\n  if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n  return false;\n}\n\nif (isPre && (isElementalDischarge || isAed) && currentMode() !== \"axe\") {\n  ui.notifications.warn(\"Charge Blade: Elemental Discharge / AED requires Axe Mode.\");\n  if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n  return false;\n}\n\n// ── AED: choose spend + scale damage ────────────────────────────────────────\nif (isAed && (isPre || isPreDamage)) {\n  if (isPre) {\n    if (!elementalType) {\n      ui.notifications.warn(\"Charge Blade: choose Elemental Attunement first.\");\n      if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n      return false;\n    }\n    const available = phialAvailable();\n    if (available <= 0) {\n      ui.notifications.warn(\"Charge Blade: AED needs ≥1 Phial Charge.\");\n      if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n      return false;\n    }\n    const n = await aedChargesDialog(available);\n    if (!n) {\n      if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n      return false;\n    }\n    const ok = await spendPhials(n);\n    if (!ok) {\n      ui.notifications.warn(\"Charge Blade: could not spend Phial Charges.\");\n      if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n      return false;\n    }\n    try {\n      await weaponItem.setFlag(\"world\", \"cb.aedSpend\", n);\n    } catch (_) {\n      await weaponItem.update({ \"flags.world.cb.aedSpend\": n });\n    }\n    setActivityDamageNumber(rolled, n);\n    setActivityDamageNumber(workflow?.activity, n);\n    return;\n  }\n  if (isPreDamage) {\n    const n = Number(\n      foundry.utils.getProperty(weaponItem, \"flags.world.cb.aedSpend\") || 0,\n    );\n    if (n > 0) {\n      setActivityDamageNumber(rolled, n);\n      setActivityDamageNumber(workflow?.activity, n);\n    }\n  }\n  return;\n}\n\n// ── Guard Point (Shield pattern) ────────────────────────────────────────────\nif (isGuardPoint && (isPostAe || !macroPass)) {\n  if (currentMode() !== \"sword\") {\n    ui.notifications.warn(\"Charge Blade: Guard Point requires Sword & Shield Mode.\");\n    return;\n  }\n  const available = phialAvailable();\n  if (available <= 0) {\n    ui.notifications.warn(\"Charge Blade: Guard Point needs ≥1 Phial Charge.\");\n    return;\n  }\n  await spendPhials(1);\n\n  const isGuardAc = (ef) =>\n    foundry.utils.getProperty(ef, \"flags.world.cb.isGuardPointAc\") === true\n    || /^guard point \\(\\+/i.test(ef.name ?? \"\");\n\n  const stale = actorDoc.effects.filter(isGuardAc);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\n  }\n\n  await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [\n    {\n      name: \"Guard Point (+2 AC)\",\n      img: \"icons/skills/melee/shield-block-gray-orange.webp\",\n      transfer: false,\n      disabled: false,\n      changes: [\n        {\n          key: \"system.attributes.ac.bonus\",\n          mode: CONST.ACTIVE_EFFECT_MODES.ADD,\n          value: \"2\",\n          priority: 20,\n        },\n      ],\n      duration: {\n        startTime: null,\n        seconds: null,\n        combat: null,\n        rounds: null,\n        turns: null,\n        startRound: null,\n        startTurn: null,\n      },\n      flags: {\n        dae: {\n          specialDuration: [\"isAttacked\"],\n          stackable: \"noneName\",\n          showIcon: true,\n          selfTarget: true,\n          selfTargetAlways: true,\n          dontApply: false,\n        },\n        world: { cb: { isGuardPointAc: true } },\n      },\n    },\n  ]);\n\n  const left = phialAvailable();\n  const max = Math.max(0, Number(weaponItem.system?.uses?.max) || 0);\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> uses Guard Point: <strong>+2 AC</strong> against the triggering attack (Shield pattern). Phial Charges: ${left}/${max}.</p><p>If the attack misses, use <strong>Guard Point: Eruption</strong> for [[/r ${guardDie}]][${esc(elementalType)}] damage.</p></div>`,\n  });\n  return;\n}\n\n// ── Axe hit → offer Elemental Discharge ─────────────────────────────────────\nif (isPostDamage && isAxeAttack) {\n  const hitCount = workflow?.hitTargets?.size\n    ?? args?.[0]?.hitTargets?.size\n    ?? 0;\n  if (hitCount <= 0) return;\n  if (currentMode() !== \"axe\") return;\n  if (phialAvailable() <= 0) return;\n  if (!elementalType) {\n    ui.notifications.warn(\"Charge Blade: choose Elemental Attunement before Elemental Discharge.\");\n    return;\n  }\n\n  const yes = await confirmDialog(\n    \"Elemental Discharge\",\n    `<p>Expend <strong>1 Phial Charge</strong> to deal extra <strong>[[/r ${dischargeDie}]][${esc(elementalType)}]</strong> (${esc(elementalType)})?</p>`,\n    \"Discharge\",\n    \"Skip\",\n  );\n  if (!yes) return;\n\n  const discharge = findElementalDischargeActivity();\n  if (discharge && globalThis.MidiQOL?.completeActivityUse) {\n    try {\n      await MidiQOL.completeActivityUse(discharge.uuid ?? {\n        itemUuid: weaponItem.uuid,\n        activityId: discharge.id ?? discharge._id,\n      }, { midiOptions: { targetUuids: [...(workflow?.hitTargets ?? [])].map((t) => t.document?.uuid).filter(Boolean) } });\n      return;\n    } catch (err) {\n      console.warn(\"Charge Blade Elemental Discharge activity failed; falling back to roll.\", err);\n    }\n  }\n\n  const ok = await spendPhials(1);\n  if (!ok) return;\n  const roll = await new Roll(`${dischargeDie}[${elementalType}]`).evaluate();\n  await roll.toMessage({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    flavor: `Elemental Discharge (${elementalType})`,\n  });\n  return;\n}\n\n// ── Phial Charges: recover on Sword & Shield hit ───────────────────────────\nif (!isPostDamage || !isSwordAttack) return;\n\nconst hitCount = workflow?.hitTargets?.size\n  ?? args?.[0]?.hitTargets?.size\n  ?? 0;\nif (hitCount <= 0) return;\n\nconst uses = weaponItem.system?.uses;\nif (!uses) return;\nconst max = Math.max(0, Number(uses.max) || 0);\nif (max <= 0) return;\nconst spent = Math.max(0, Number(uses.spent) || 0);\nif (spent <= 0) return;\n\nconst gain = Math.min(1, spent);\nif (gain <= 0) return;\n\nawait weaponItem.update({ \"system.uses.spent\": spent - gain });\nconst available = max - (spent - gain);\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>Phial Charges</strong> — generated ${gain} charge (${available}/${max}).</p></div>`,\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "chargeBlade": {
+        "isChargeBlade": true,
+        "modeIndicators": true,
+        "hasPhialCharges": true,
+        "guardPointDamage": "1d8",
+        "elementalDischargeDamage": "1d10",
+        "aedDamage": "1d12",
+        "elementalType": "",
+        "swordMastery": "sap",
+        "axeMastery": "cleave"
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1788189192427,
+    "modifiedTime": 1788189192427,
+    "lastModifiedBy": null
+  }
+}

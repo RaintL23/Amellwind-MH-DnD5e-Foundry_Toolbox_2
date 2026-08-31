@@ -1,6 +1,6 @@
 {
-  "_id": "DFXP2CLDV2BHSZDY",
-  "name": "Magus Staff (Uncommon)",
+  "_id": "VnUiPnGIwGDXzmAk",
+  "name": "Magus Staff (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_magusstaff.webp",
   "system": {
@@ -13,8 +13,8 @@
       "revision": 1
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p><p>If you hit a creature with a melee weapon attack using this staff, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spell Core Gauge</strong></p><p>You awaken its internal Spell Core, allowing you to siphon magical energy from your enemies to empower your own spells. The staff can hold a maximum of 3 Spell Counters. It loses all counters when you finish a Short or Long Rest.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Harvest Magic</strong></p><p>When you deal damage to a hostile creature with a Cantrip, the staff absorbs residual magic and gains 1 Spell Counter. If the target of your Cantrip is within 15 feet of you, the staff absorbs energy faster, gaining 2 Spell Counters instead.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Arcane Discharge</strong></p><p>When you cast a leveled spell with a duration of Instantaneous that deals damage, you can expend any number of Spell Counters from the staff. For each counter expended, one target affected by the spell takes an extra [[/r 1d6]] damage of the spell's type.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spell Core Gauge</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Harvest Magic</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Arcane Discharge</strong></p></div>"
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p><p>If you hit a creature with a melee weapon attack using this staff, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spell Core Gauge</strong></p><p>You awaken its internal Spell Core, allowing you to siphon magical energy from your enemies to empower your own spells. The staff can hold a maximum of 3 Spell Counters. It loses all counters when you finish a Short or Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Expanded Gauge</strong></p><p>The staff can now hold a maximum of 5 Spell Counters.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Expanded Gauge Upgrade I</strong></p><p>The staff can now hold a maximum of 7 Spell Counters.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Harvest Magic</strong></p><p>When you deal damage to a hostile creature with a Cantrip, the staff absorbs residual magic and gains 1 Spell Counter. If the target of your Cantrip is within 15 feet of you, the staff absorbs energy faster, gaining 2 Spell Counters instead.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Arcane Discharge</strong></p><p>When you cast a leveled spell with a duration of Instantaneous that deals damage, you can expend any number of Spell Counters from the staff. For each counter expended, one target affected by the spell takes an extra [[/r 1d6]] damage of the spell's type.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Discharge Upgrade I</strong></p><p>The extra damage from your Arcane Discharge increases to [[/r 1d8]] per counter.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Improve Casting</strong></p><p>You gain a +1 bonus to Spell Attack rolls and Spell Save DCs while holding this magic weapon.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Improve Casting Upgrade I</strong></p><p>You gain a +2 bonus to Spell Attack rolls and Spell Save DCs while holding this magic weapon.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Offset Ward</strong></p><p><strong>Reaction.</strong></p><p>You learn to parry attacks using raw magical discharge. As a Reaction when you are hit by a melee attack, you can expend 2 Spell Counters to project a brief, intense barrier, granting you a +5 bonus to your AC against that attack. If this causes the attack to miss, you can immediately cast a Cantrip spell-attack with a casting time of 1 Action targeting the attacker as part of the same Reaction.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Zero Sum Spell</strong></p><p><strong>Action.</strong></p><p>You can overload the Spell Core for a devastating close-range blast. As an Action, you can expend all remaining Spell Counters in the staff (minimum of 3 counters required) to make a melee spell attack against a creature within your reach. On a hit, the target takes [[/r 1d12]] Force damage for each counter expended, and is pushed 15 feet away from you. On a miss, the energy dissipates harmlessly. In both cases, the staff drops to 0 counters.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Spell Core Gauge</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">Expanded Gauge</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Expanded Gauge Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Harvest Magic</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Arcane Discharge</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Discharge Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Improve Casting</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Improve Casting Upgrade I</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Offset Ward</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Zero Sum Spell</strong></p><p><strong>Action.</strong></p></div>"
     },
     "identifier": "magusstaff",
     "quantity": 1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "required",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "veryRare",
     "identified": true,
     "type": {
       "value": "simpleM",
@@ -86,13 +86,13 @@
       "value": null
     },
     "uses": {
-      "spent": 3,
+      "spent": 7,
       "recovery": [],
-      "max": "3"
+      "max": "7"
     },
     "activities": {
-      "CtZWxhD5Azu74lfp": {
-        "_id": "CtZWxhD5Azu74lfp",
+      "TXtVNUgSuwFwuFiz": {
+        "_id": "TXtVNUgSuwFwuFiz",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -330,7 +330,7 @@
         "consumption": {
           "scaling": {
             "allowed": true,
-            "max": "2"
+            "max": "6"
           },
           "spellSlot": false,
           "targets": [
@@ -346,7 +346,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "When casting a damaging leveled Instantaneous spell: expend Spell Counters (scale this activity). For each counter, one affected target takes an extra 1d6 of the spell's damage type. Base 1; max 3."
+          "chatFlavor": "When casting a damaging leveled Instantaneous spell: expend Spell Counters (scale this activity). For each counter, one affected target takes an extra 1d8 of the spell's damage type. Base 1; max 7."
         },
         "duration": {
           "value": "",
@@ -424,7 +424,7 @@
           "parts": [
             {
               "number": 1,
-              "denomination": 6,
+              "denomination": 8,
               "types": [],
               "custom": {
                 "enabled": false,
@@ -456,6 +456,274 @@
         },
         "otherActivityId": "none",
         "img": "icons/magic/lightning/bolt-strike-sparks-teal.webp"
+      },
+      "VvlNEn4Di0aBAXYN": {
+        "_id": "VvlNEn4Di0aBAXYN",
+        "sort": 600000,
+        "name": "Offset Ward",
+        "img": "icons/magic/defensive/barrier-shield-dome-blue-purple.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When you are hit by a melee attack",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "+5 AC vs the triggering melee attack (Midi rechecks). Expends 2 Spell Counters via Item Macro. If this causes a miss, cast a Cantrip spell-attack at the attacker as part of the same Reaction."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "offset-ward",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "b3qhklZBWJytOYwG": {
+        "_id": "b3qhklZBWJytOYwG",
+        "sort": 701000,
+        "name": "Zero Sum Spell (scale)",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": true,
+            "max": "7"
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "3",
+              "scaling": {
+                "mode": "amount",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Melee spell attack; expend chosen counters (min 3). On hit: Force damage + push 15 ft. Clears remaining counters after resolution — spend all you intend via scaling. Base 3 counters; max 10. Per counter: 1d12."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "zero-sum-spell-scale",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "attack",
+        "attack": {
+          "ability": "",
+          "bonus": "",
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          }
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": 3,
+              "denomination": 12,
+              "types": [
+                "force"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "whole",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": ""
       }
     },
     "container": null,
@@ -496,14 +764,68 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189143166,
-        "modifiedTime": 1788189143166,
+        "createdTime": 1788189192536,
+        "modifiedTime": 1788189192536,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "DPA2LI6PgsxtlGPM",
+      "name": "Improve Casting Upgrade I",
+      "img": "icons/magic/symbols/runes-star-magenta.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "system.bonuses.spell.dc",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.msak.attack",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.rsak.attack",
+          "mode": 2,
+          "value": "2",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788189192536,
+        "modifiedTime": 1788189192536,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 500000,
+  "sort": 11300000,
   "ownership": {
     "default": 0
   },
@@ -526,9 +848,13 @@
       "reactionCondition": "",
       "otherCondition": "",
       "effectCondition": "",
-      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroName": "[preTargeting]ItemMacro,[postActiveEffects]ItemMacro",
       "onUseMacroParts": {
         "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
           {
             "macroName": "ItemMacro",
             "option": "postActiveEffects"
@@ -553,7 +879,7 @@
     },
     "itemacro": {
       "macro": {
-        "name": "Magus Staff (Uncommon)",
+        "name": "Magus Staff (Very Rare)",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -575,8 +901,8 @@
     "world": {
       "magusStaff": {
         "isMagusStaff": true,
-        "tier": "uncommon",
-        "spellCoreMax": 3
+        "tier": "veryRare",
+        "spellCoreMax": 7
       }
     }
   },
@@ -586,8 +912,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189143165,
-    "modifiedTime": 1788189143165,
+    "createdTime": 1788189192536,
+    "modifiedTime": 1788189192536,
     "lastModifiedBy": null
   }
 }
