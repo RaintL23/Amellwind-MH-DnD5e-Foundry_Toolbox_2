@@ -160,7 +160,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 12-13
 - **Capture:** —
-- **Armor effect:** When a creature hits you with a melee weapon attack you while you wear this armor, you can use your reaction to use the shove action and push the attacker away from you.
+- **Armor effect:** When a creature hits you with a melee weapon attack while you wear this armor, you can use your reaction to take the shove action and push the attacker away from you.
 - **Weapon effect:** Abnormal Status Atk up (M). Whenever you inflict a condition on a creature or object that has a duration of 1 minute or longer, the maximum duration of the condition is increased by 12 seconds.
 
 ### Alabaster Scale

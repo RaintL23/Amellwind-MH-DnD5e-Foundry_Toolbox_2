@@ -116,7 +116,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 9-10
 - **Capture:** 8-9
 - **Armor effect:** You can read books you are touching while sleeping.
-- **Weapon effect:** When you hit a creature with this weapon, it must make a DC 12 Wisdom saving throw. If it fails the save it becomes charmed by you for 1 minute or until you or your companions do anything harmful to it. Once you use this property once, you can't use it again until you finish a short or long rest.
+- **Weapon effect:** When you hit a creature with this weapon, it must succeed on a DC 12 Wisdom saving throw or become charmed by you for 1 minute or until you or your companions do anything harmful to it. Once you use this property, you can't use it again until you finish a short or long rest.
 
 ### Hypno Sac
 

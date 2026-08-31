@@ -40,7 +40,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 1-4
 - **Capture:** 1-4
 - **Armor effect:** Negate Bleeding. You are immune to wounding effects, such as the Odogaron's bloody wound or the bearded devil's infernal wound while you wear this armor.
-- **Weapon effect:** (Light Bowgun Only) When you hit a target with your demon ammo, its effect is doubled.
+- **Weapon effect:** (Light Bowgun Only) When you hit a creature with your demon ammo, its effect is doubled.
 
 ### T.Ebony Sinew
 

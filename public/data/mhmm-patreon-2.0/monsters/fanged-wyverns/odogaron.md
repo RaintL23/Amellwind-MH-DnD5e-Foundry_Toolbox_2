@@ -126,7 +126,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** W
 - **Carve:** 14-15
 - **Capture:** 13-14
-- **Weapon effect:** (Light Bowgun Only) When you hit a target with your demon ammo, its effect is doubled.
+- **Weapon effect:** (Light Bowgun Only) When you hit a creature with your demon ammo, its effect is doubled.
 
 ### Nourishing Extract
 

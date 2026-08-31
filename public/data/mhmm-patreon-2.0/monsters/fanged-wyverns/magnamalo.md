@@ -179,7 +179,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** —
 - **Capture:** 10-12
 - **Armor effect:** Wide-Range. When you eat or drink an Uncommon or lower consumable item (except potions of resistance), each creature within 10 feet of you also gain its effect.
-- **Weapon effect:** (Light Bowgun Only) When you hit a target with your demon ammo, its duration and effect is doubled.
+- **Weapon effect:** (Light Bowgun Only) When you hit a creature with your demon ammo, its duration and effect are doubled.
 
 ### Magnamalo Tail
 
