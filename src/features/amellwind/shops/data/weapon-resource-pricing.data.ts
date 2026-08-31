@@ -232,6 +232,34 @@ export const WEAPON_RESOURCE_PRICES: WeaponResourcePriceDef[] = [
     category: "Bow",
     weight: "1/4 lb.",
   }),
+  entry({
+    name: "Blast Coating",
+    priceGp: 5,
+    quantity: 1,
+    category: "Bow",
+    weight: "1/4 lb.",
+  }),
+  entry({
+    name: "Paralysis Coating",
+    priceGp: 4,
+    quantity: 1,
+    category: "Bow",
+    weight: "1/4 lb.",
+  }),
+  entry({
+    name: "Poison Coating",
+    priceGp: 4,
+    quantity: 1,
+    category: "Bow",
+    weight: "1/4 lb.",
+  }),
+  entry({
+    name: "Sleep Coating",
+    priceGp: 5,
+    quantity: 1,
+    category: "Bow",
+    weight: "1/4 lb.",
+  }),
 
   // ─── Dual Repeaters magazines ───
   entry({
