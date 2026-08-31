@@ -14,6 +14,7 @@ export interface Monster extends Actor {
   environment?: string[];
   bonusActions?: Entry[];
   legendaryActions?: Entry[];
+  mythicActions?: Entry[];
   loot?: MonsterLoot;
   /** Plain-text lore summary (string paragraphs from fluff). */
   fluff?: string;

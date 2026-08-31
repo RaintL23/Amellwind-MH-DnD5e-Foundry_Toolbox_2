@@ -296,6 +296,13 @@ export function MonsterStatBlock({ monster }: MonsterStatBlockProps) {
           <EntryBlock entries={monster.legendaryActions} />
         </StatBlockSection>
       )}
+
+      {/* Mythic Actions */}
+      {monster.mythicActions && monster.mythicActions.length > 0 && (
+        <StatBlockSection title="Mythic Actions">
+          <EntryBlock entries={monster.mythicActions} />
+        </StatBlockSection>
+      )}
     </div>
   );
 }

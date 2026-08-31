@@ -11,6 +11,9 @@ import { sanitizeNamedEntrySection } from "@/shared/utils/statblock-named-entrie
 /** MHMM dumps often prefix BA names; also catch catalog misfiles still under action. */
 const BONUS_ACTION_NAME_RE = /^bonus\s*actions?\s*:?\s*/i;
 
+/** Legacy supplement.json duplicated mythic entries under legendary with this prefix. */
+const MYTHIC_PREFIX_RE = /^mythic\s*:\s*/i;
+
 function isBonusActionName(name: string): boolean {
   return BONUS_ACTION_NAME_RE.test(name.trim());
 }
@@ -57,6 +60,52 @@ export function partitionMonsterBonusActions(
   };
 }
 
+function isMythicPrefixedLegendary(name: string): boolean {
+  return MYTHIC_PREFIX_RE.test(name.trim());
+}
+
+function stripMythicPrefix(name: string): string {
+  const stripped = name.replace(MYTHIC_PREFIX_RE, "").trim();
+  return stripped || name;
+}
+
+/**
+ * Prefer `raw.mythic`, and lift any `legendary` entries prefixed with "Mythic:"
+ * so the UI can render a dedicated Mythic Actions section.
+ */
+export function partitionMonsterMythicActions(
+  legendary: Entry[],
+  fromMythicField: Entry[],
+): { legendaryActions: Entry[]; mythicActions: Entry[] } {
+  const remaining: Entry[] = [];
+  const fromLegendary: Entry[] = [];
+
+  for (const entry of legendary) {
+    if (isMythicPrefixedLegendary(entry.name)) {
+      fromLegendary.push({
+        ...entry,
+        name: stripMythicPrefix(entry.name),
+      });
+    } else {
+      remaining.push(entry);
+    }
+  }
+
+  const byName = new Map<string, Entry>();
+  for (const entry of fromMythicField) {
+    byName.set(entry.name.toLowerCase(), entry);
+  }
+  for (const entry of fromLegendary) {
+    const key = entry.name.toLowerCase();
+    if (!byName.has(key)) byName.set(key, entry);
+  }
+
+  return {
+    legendaryActions: remaining,
+    mythicActions: [...byName.values()],
+  };
+}
+
 function mapFluffText(fluff: unknown): string {
   if (typeof fluff !== "object" || fluff === null) return "";
   const f = fluff as RawActor;
@@ -98,6 +147,13 @@ export function mapMonster(raw: any): Monster {
     core.actions,
     fromBonus,
   );
+  const fromMythic = mapEntries(
+    sanitizeNamedEntrySection(raw.mythic ?? []),
+  );
+  const { legendaryActions, mythicActions } = partitionMonsterMythicActions(
+    mapEntries(sanitizeNamedEntrySection(raw.legendary ?? [])),
+    fromMythic,
+  );
 
   return {
     ...core,
@@ -108,7 +164,9 @@ export function mapMonster(raw: any): Monster {
     cr,
     environment: Array.isArray(raw.environment) ? raw.environment : undefined,
     bonusActions: bonusActions.length > 0 ? bonusActions : undefined,
-    legendaryActions: mapEntries(sanitizeNamedEntrySection(raw.legendary ?? [])),
+    legendaryActions:
+      legendaryActions.length > 0 ? legendaryActions : undefined,
+    mythicActions: mythicActions.length > 0 ? mythicActions : undefined,
     loot: raw.fluff ? { rolls: extractRolls(raw.fluff) } : undefined,
     fluff: mapFluffText(raw.fluff),
     bio: mapMonsterBio(raw.fluff),

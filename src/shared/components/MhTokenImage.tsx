@@ -5,12 +5,13 @@ interface MhTokenImageProps {
   name: string;
   alt?: string;
   className?: string;
-  size?: "sm" | "md" | "lg" | "xl";
+  size?: "xs" | "sm" | "md" | "lg" | "xl";
   /** Use eager loading for above-the-fold hero tokens. */
   priority?: boolean;
 }
 
 const SIZE_CLASS = {
+  xs: "h-8 w-8",
   sm: "h-10 w-10",
   md: "h-16 w-16",
   lg: "h-24 w-24",

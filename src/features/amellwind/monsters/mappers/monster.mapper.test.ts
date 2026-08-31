@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   mapMonster,
   partitionMonsterBonusActions,
+  partitionMonsterMythicActions,
 } from "./monster.mapper";
 
 describe("partitionMonsterBonusActions", () => {
@@ -42,6 +43,44 @@ describe("partitionMonsterBonusActions", () => {
   });
 });
 
+describe("partitionMonsterMythicActions", () => {
+  it("prefers raw.mythic and strips prefixed legendary duplicates", () => {
+    const result = partitionMonsterMythicActions(
+      [
+        { name: "Fly", entries: ["Flies."] },
+        {
+          name: "Mythic: Dragon Rush",
+          entries: ["Charges forward."],
+        },
+      ],
+      [{ name: "Dragon Rush", entries: ["Charges forward."] }],
+    );
+
+    expect(result.legendaryActions.map((a) => a.name)).toEqual(["Fly"]);
+    expect(result.mythicActions).toEqual([
+      { name: "Dragon Rush", entries: ["Charges forward."] },
+    ]);
+  });
+
+  it("lifts Mythic-prefixed legendary entries when mythic field is empty", () => {
+    const result = partitionMonsterMythicActions(
+      [
+        { name: "Fly", entries: ["Flies."] },
+        {
+          name: "Mythic: Fireball",
+          entries: ["Boom."],
+        },
+      ],
+      [],
+    );
+
+    expect(result.legendaryActions.map((a) => a.name)).toEqual(["Fly"]);
+    expect(result.mythicActions).toEqual([
+      { name: "Fireball", entries: ["Boom."] },
+    ]);
+  });
+});
+
 describe("mapMonster", () => {
   it("maps bonus into a dedicated section and cleans actions", () => {
     const monster = mapMonster({
@@ -73,5 +112,33 @@ describe("mapMonster", () => {
 
     expect(monster.actions.map((a) => a.name)).toEqual(["Bite", "Poison Spit"]);
     expect(monster.bonusActions?.map((a) => a.name)).toEqual(["Aggressive"]);
+  });
+
+  it("maps mythic into a dedicated section and cleans legendary", () => {
+    const monster = mapMonster({
+      name: "Tempered Alatreon (MHW)",
+      source: "MHMM-Patreon",
+      size: "G",
+      type: "dragon",
+      alignment: ["U"],
+      ac: [{ ac: 25 }],
+      hp: { average: 546, formula: "28d20 + 252" },
+      speed: { walk: 40, fly: 120 },
+      str: 30,
+      dex: 18,
+      con: 28,
+      int: 20,
+      wis: 22,
+      cha: 24,
+      cr: "30",
+      legendary: [
+        { name: "Fly", entries: ["Flies."] },
+        { name: "Mythic: Fireball", entries: ["Boom."] },
+      ],
+      mythic: [{ name: "Fireball", entries: ["Boom."] }],
+    });
+
+    expect(monster.legendaryActions?.map((a) => a.name)).toEqual(["Fly"]);
+    expect(monster.mythicActions?.map((a) => a.name)).toEqual(["Fireball"]);
   });
 });
