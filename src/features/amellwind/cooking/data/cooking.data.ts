@@ -57,7 +57,7 @@ export const MEAL_TABLES: MealTable[] = [
       { rank: 1, name: "Moofa Butter", dc: 10, boon: "Once per meal, when you fail a Constitution saving throw to maintain concentration, you can reroll the d20, taking the new result." },
       { rank: 1, name: "Northern Orange", dc: 10, boon: "Your passive Perception is increased by 1." },
       { rank: 1, name: "Sliced Cactus", dc: 10, boon: "As a bonus action, you can make a DC 15 Dexterity (Acrobatics) check. If you succeed, difficult terrain doesn't cost you extra movement until the end of the current turn." },
-      { rank: 1, name: "Snake Salmon", dc: 10, boon: "You have advantage on Wisdom (Athletics) checks to catch fish." },
+      { rank: 1, name: "Snake Salmon", dc: 10, boon: "You have advantage on Strength (Athletics) checks to catch fish." },
       { rank: 1, name: "Snowy Rice", dc: 10, boon: "While holding your weapon in darkness it sheds moonlight, creating bright light in a 15-foot radius and dim light for an additional 15 feet." },
       { rank: 1, name: "Spicy Sausage", dc: 10, boon: "Once per meal, you can roll a d4 and add the number rolled to one ability check of your choice. You can roll the die before or after making the ability check." },
       { rank: 1, name: "Spotted Onion", dc: 10, boon: "You have blindsight out to a range of 5 feet." },
