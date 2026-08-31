@@ -26,6 +26,7 @@ import {
   AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
   dndFeatToBuilderSelection,
 } from "../../utils/origin-feat.constants";
+import { reconcileOriginFeatSlots } from "../../utils/reconcile-origin-feat-slots.utils";
 import { getFeatSlotLevels } from "../../utils/builder-class.utils";
 import {
   createEmptyMulticlassEntry,
@@ -113,6 +114,13 @@ export function useIdentitySlice({
     useState<OriginFeatGrant | null>(null);
   const [backgroundOriginFeat, setBackgroundOriginFeatState] =
     useState<BuilderFeatSelection | null>(null);
+  const [speciesOriginFeatGrantReady, setSpeciesOriginFeatGrantReady] =
+    useState(true);
+  const [backgroundOriginFeatGrantReady, setBackgroundOriginFeatGrantReady] =
+    useState(true);
+
+  const originFeatGrantsReady =
+    speciesOriginFeatGrantReady && backgroundOriginFeatGrantReady;
 
   // Persist backstory/personality with a debounce instead of on every keystroke;
   // a final flush on unmount avoids dropping the last edit during fast navigation.
@@ -156,6 +164,7 @@ export function useIdentitySlice({
     setBackgroundAsiPlus1(null);
     setBackgroundOriginFeatGrant(null);
     setBackgroundOriginFeatState(null);
+    setBackgroundOriginFeatGrantReady(!selection);
     if (!selection) {
       setFactionState(null);
     }
@@ -190,6 +199,7 @@ export function useIdentitySlice({
     setSpeciesAbilityChoices([]);
     setSpeciesOriginFeatGrant(null);
     setSpeciesOriginFeatState(null);
+    setSpeciesOriginFeatGrantReady(!selection);
     setOriginFeatSkillChoicesState([]);
     setSpeciesSpellGroupChoiceState(null);
     onSpeciesChange();
@@ -492,12 +502,14 @@ export function useIdentitySlice({
   useEffect(() => {
     if (!species) {
       setSpeciesOriginFeatGrant(null);
+      setSpeciesOriginFeatGrantReady(true);
       setSpeciesOriginFeatState(null);
       setOriginFeatSkillChoicesState([]);
       return;
     }
 
     let cancelled = false;
+    setSpeciesOriginFeatGrantReady(false);
 
     async function loadOriginFeatGrant() {
       const { base, dndSubrace, mhSubrace } = await resolveSpeciesParts(species!);
@@ -508,8 +520,7 @@ export function useIdentitySlice({
       setSpeciesOriginFeatGrant(grant);
 
       if (!grant) {
-        setSpeciesOriginFeatState(null);
-        setOriginFeatSkillChoicesState([]);
+        setSpeciesOriginFeatGrantReady(true);
         return;
       }
 
@@ -517,10 +528,12 @@ export function useIdentitySlice({
         const feat = await resolveDndFeatForRef(grant.featRefs[0]);
         if (cancelled || !feat) return;
         setSpeciesOriginFeatState(dndFeatToBuilderSelection(feat));
+        setSpeciesOriginFeatGrantReady(true);
         return;
       }
       // "choose" grant: setSpecies already cleared the state synchronously.
       // Do NOT reset here — that would overwrite a rehydrated snapshot value.
+      setSpeciesOriginFeatGrantReady(true);
     }
 
     void loadOriginFeatGrant();
@@ -533,11 +546,13 @@ export function useIdentitySlice({
   useEffect(() => {
     if (!backgroundRef) {
       setBackgroundOriginFeatGrant(null);
+      setBackgroundOriginFeatGrantReady(true);
       setBackgroundOriginFeatState(null);
       return;
     }
 
     let cancelled = false;
+    setBackgroundOriginFeatGrantReady(false);
 
     async function loadBackgroundOriginFeat() {
       const [dndBackground, mhBackground] = await Promise.all([
@@ -558,6 +573,7 @@ export function useIdentitySlice({
 
       if (!grant) {
         setBackgroundOriginFeatState(null);
+        setBackgroundOriginFeatGrantReady(true);
         return;
       }
 
@@ -568,10 +584,12 @@ export function useIdentitySlice({
           ...dndFeatToBuilderSelection(feat),
           name: grant.featRefs[0].displayLabel,
         });
+        setBackgroundOriginFeatGrantReady(true);
         return;
       }
       // Non-fixed grant ("choose" or other): setBackground already cleared the state
       // synchronously. Do NOT reset here — that would overwrite a rehydrated value.
+      setBackgroundOriginFeatGrantReady(true);
     }
 
     void loadBackgroundOriginFeat();
@@ -580,6 +598,30 @@ export function useIdentitySlice({
       cancelled = true;
     };
   }, [backgroundRef?.id]);
+
+  useEffect(() => {
+    if (!originFeatGrantsReady) return;
+
+    const reconciled = reconcileOriginFeatSlots({
+      speciesGrant: speciesOriginFeatGrant,
+      backgroundGrant: backgroundOriginFeatGrant,
+      speciesOriginFeat,
+      backgroundOriginFeat,
+    });
+
+    if (reconciled.speciesOriginFeat !== speciesOriginFeat) {
+      setSpeciesOriginFeatState(reconciled.speciesOriginFeat);
+    }
+    if (reconciled.backgroundOriginFeat !== backgroundOriginFeat) {
+      setBackgroundOriginFeatState(reconciled.backgroundOriginFeat);
+    }
+  }, [
+    originFeatGrantsReady,
+    speciesOriginFeatGrant,
+    backgroundOriginFeatGrant,
+    speciesOriginFeat,
+    backgroundOriginFeat,
+  ]);
 
   // ─── Homebrew cleanup + full reset ──────────────────────────────────────────
 
@@ -644,6 +686,8 @@ export function useIdentitySlice({
     setOriginFeatSkillChoicesState([]);
     setSpeciesOriginFeatGrant(null);
     setSpeciesOriginFeatState(null);
+    setSpeciesOriginFeatGrantReady(true);
+    setBackgroundOriginFeatGrantReady(true);
     setSpeciesSpellGroupChoiceState(null);
   }, []);
 
@@ -663,6 +707,7 @@ export function useIdentitySlice({
       speciesOriginFeat,
       backgroundOriginFeatGrant,
       backgroundOriginFeat,
+      originFeatGrantsReady,
       originFeatSkillChoices,
       backstoryNotes,
       personality,
@@ -724,6 +769,7 @@ export function useIdentitySlice({
       speciesOriginFeat,
       backgroundOriginFeatGrant,
       backgroundOriginFeat,
+      originFeatGrantsReady,
       originFeatSkillChoices,
       backstoryNotes,
       personality,

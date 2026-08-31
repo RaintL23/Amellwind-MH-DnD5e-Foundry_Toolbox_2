@@ -97,6 +97,7 @@ export function FeatLibraryPanel({
     backgroundOriginFeatGrant,
     speciesOriginFeat,
     backgroundOriginFeat,
+    originFeatGrantsReady,
     optionalFeatureOriginFeats,
     setFeatAtIndex,
     setSpeciesOriginFeat,
@@ -405,9 +406,10 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
+      if (!originFeatGrantsReady) return;
       if (originFeatChooseTarget === "background") {
         setBackgroundOriginFeat(nextSelection);
-      } else {
+      } else if (originFeatChooseTarget === "species") {
         setSpeciesOriginFeat(nextSelection);
       }
       return;
@@ -422,6 +424,7 @@ export function FeatLibraryPanel({
     isOriginFeatSlotSelected,
     originFeatLocked,
     originFeatChooseTarget,
+    originFeatGrantsReady,
     featSlotIndex,
     setOptionalFeatureOriginFeatAtIndex,
     setBackgroundOriginFeat,
@@ -483,6 +486,7 @@ export function FeatLibraryPanel({
   }
 
   function setOriginFeatSelection(selection: BuilderFeatSelection | null) {
+    if (!originFeatGrantsReady || !originFeatChooseTarget) return;
     if (originFeatChooseTarget === "background") {
       setBackgroundOriginFeat(selection);
       return;
@@ -513,6 +517,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
+      if (!originFeatGrantsReady) return;
       setOriginFeatSelection(next);
       return;
     }
@@ -531,6 +536,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
+      if (!originFeatGrantsReady) return;
       setOriginFeatSelection(selection);
       setShowFeatList(false);
       return;
@@ -577,6 +583,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
+      if (!originFeatGrantsReady) return;
       setOriginFeatSelection(nextSelection);
       return;
     }

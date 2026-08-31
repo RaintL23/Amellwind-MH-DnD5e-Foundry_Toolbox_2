@@ -409,6 +409,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       speciesOriginFeat: identity.speciesOriginFeat,
       backgroundOriginFeatGrant: identity.backgroundOriginFeatGrant,
       backgroundOriginFeat: identity.backgroundOriginFeat,
+      originFeatGrantsReady: identity.originFeatGrantsReady,
       originFeatSkillChoices: identity.originFeatSkillChoices,
       optionalFeatureOriginFeatSlots: spell.optionalFeatureOriginFeatSlots,
       optionalFeatureOriginFeats: spell.optionalFeatureOriginFeats,

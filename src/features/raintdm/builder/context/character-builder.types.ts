@@ -85,6 +85,8 @@ export interface CharacterBuilderContextValue {
   speciesOriginFeat: BuilderFeatSelection | null;
   backgroundOriginFeatGrant: OriginFeatGrant | null;
   backgroundOriginFeat: BuilderFeatSelection | null;
+  /** False while species/background origin-feat grants are still being resolved. */
+  originFeatGrantsReady: boolean;
   originFeatSkillChoices: SkillKey[];
   optionalFeatureOriginFeatSlots: OptionalFeatureOriginFeatSlot[];
   optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];

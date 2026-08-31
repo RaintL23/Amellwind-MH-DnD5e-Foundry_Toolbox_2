@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
@@ -6,11 +6,20 @@ import {
   buildBuilderPersistPayload,
   hasBuildContent,
   rehydrateBuilderState,
+  type BuilderPersistPayload,
 } from "../storage/builder-persist";
 import {
   loadBuilderAutosave,
   persistBuilderAutosave,
 } from "../storage/builder-autosave.storage";
+
+function originFeatPersistKey(payload: BuilderPersistPayload): string {
+  return JSON.stringify({
+    species: payload.snapshot.speciesOriginFeat,
+    background: payload.snapshot.backgroundOriginFeat,
+    optional: payload.snapshot.optionalFeatureOriginFeats,
+  });
+}
 
 /**
  * Autosaves the active build to localStorage and rehydrates it on mount so the
@@ -37,7 +46,18 @@ export function BuilderAutosaveSync() {
   );
   const payloadRef = useRef(payload);
   payloadRef.current = payload;
+
+  const flushAutosave = useCallback(() => {
+    const latest = payloadRef.current;
+    if (!hasBuildContent(latest)) return;
+    const serialized = JSON.stringify(latest);
+    if (serialized === lastWrittenRef.current) return;
+    lastWrittenRef.current = serialized;
+    persistBuilderAutosave(latest);
+  }, []);
+
   const debounced = useDebouncedValue(payload, 500);
+  const originFeatKey = originFeatPersistKey(payload);
 
   useEffect(() => {
     if (!hydratedRef.current) return;
@@ -48,13 +68,20 @@ export function BuilderAutosaveSync() {
     persistBuilderAutosave(debounced);
   }, [debounced]);
 
+  // Origin feats are often the last pick before closing the tab — persist immediately.
   useEffect(() => {
+    if (!hydratedRef.current) return;
+    flushAutosave();
+  }, [originFeatKey, flushAutosave]);
+
+  useEffect(() => {
+    const onPageHide = () => flushAutosave();
+    window.addEventListener("pagehide", onPageHide);
     return () => {
-      const latest = payloadRef.current;
-      if (!hasBuildContent(latest)) return;
-      persistBuilderAutosave(latest);
+      window.removeEventListener("pagehide", onPageHide);
+      flushAutosave();
     };
-  }, []);
+  }, [flushAutosave]);
 
   return null;
 }

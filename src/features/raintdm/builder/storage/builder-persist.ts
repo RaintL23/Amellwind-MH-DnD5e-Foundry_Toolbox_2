@@ -58,6 +58,9 @@ export function hasBuildContent(payload: BuilderPersistPayload): boolean {
       identity.species ||
       identity.background ||
       snapshot.featSelections.some(Boolean) ||
+      snapshot.speciesOriginFeat ||
+      snapshot.backgroundOriginFeat ||
+      snapshot.optionalFeatureOriginFeats.some(Boolean) ||
       Object.keys(snapshot.spellSelections).length > 0 ||
       eq.mainHand ||
       eq.offHand ||
