@@ -1,6 +1,6 @@
 {
-  "_id": "dS3lt4Rz0rw1ng01",
-  "name": "D.Seltas Razorwing Rune",
+  "_id": "gJgrClw00000001",
+  "name": "Great Jagras Claw Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Desert Seltas | CR: 4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Gunlance Only) Artillery.</em> While attuned to this weapon, your wyvernfire can now be used twice per long rest.\n<h3>Armor Effect</h3>\n<em>Minor Guard Up.</em> When you fail a Dexterity or Strength saving throw, you can use your reaction to use your AC in place of your roll. Once you use this property you can't use it again until you finish a long rest.\n<p><em><strong>Tags:</strong> weapon-type:gunlance, mechanic:class-feature, mechanic:long-rest, type:offensive, mechanic:reaction, mechanic:saving-throw, mechanic:ac, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Great Jagras | CR: 4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Palico Rally.</em> NPC allies within 10 feet of you gain +1 AC and +1 to attack rolls while you are attuned to this weapon.\n<h3>Armor Effect</h3>\n<em>Full Belly.</em> As an action, you can eat up to two days' worth of rations causing your belly to expand for 1 minute or until you regurgitate the rations as a bonus action. For each ration you eat in this way, you gain a +1 bonus to your AC, but your movement speed is reduced by 10 feet.\n<p><em><strong>Tags:</strong> type:offensive, type:defensive, mechanic:action, mechanic:bonus-action, mechanic:ac, mechanic:movement</em></p>",
       "chat": ""
     },
-    "identifier": "dseltasrazorwingrune",
+    "identifier": "greatjagrasclawrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "common",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "mGU01xxxxxxxxxxxxx": {
-        "_id": "mGU01xxxxxxxxxxxxx",
+      "gJgFB01xxxxxxxxxx": {
+        "_id": "gJgFB01xxxxxxxxxx",
         "type": "utility",
         "sort": 0,
-        "name": "Minor Guard Up",
+        "name": "Full Belly",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "action",
           "value": null,
-          "condition": "When you fail a Dexterity or Strength saving throw",
+          "condition": "Armor side active",
           "override": false
         },
         "consumption": {
@@ -62,19 +62,10 @@
             "max": ""
           },
           "spellSlot": false,
-          "targets": [
-            {
-              "type": "itemUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
+          "targets": []
         },
         "description": {
-          "chatFlavor": "Use your AC in place of the failed save."
+          "chatFlavor": "Eat up to 2 days' worth of rations: +1 AC and -10 ft speed per ration for 1 minute (track AC/speed manually)."
         },
         "duration": {
           "value": "",
@@ -114,7 +105,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "minor-guard-up",
+          "identifier": "full-belly",
           "displayActivityName": true
         },
         "roll": {
@@ -122,7 +113,84 @@
           "name": "",
           "prompt": false,
           "visible": false
-        }
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      },
+      "gJgRG01xxxxxxxxxx": {
+        "_id": "gJgRG01xxxxxxxxxx",
+        "type": "utility",
+        "sort": 0,
+        "name": "Regurgitate",
+        "img": "mh-icons/material-rune.webp",
+        "activation": {
+          "type": "bonus",
+          "value": null,
+          "condition": "While Full Belly is active",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "End Full Belly early and restore normal AC/speed."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "identifier": "regurgitate",
+          "displayActivityName": true
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
       }
     },
     "container": null,
@@ -133,19 +201,14 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
-      "recovery": [
-        {
-          "period": "lr",
-          "type": "recoverAll"
-        }
-      ]
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "dRzEq01xxxxxxxxxx",
-      "name": "D.Seltas Razorwing Rune (Equip)",
+      "_id": "gJgEq01xxxxxxxxxx",
+      "name": "Great Jagras Claw Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -201,8 +264,8 @@
       }
     },
     {
-      "_id": "dRzWpn01xxxxxxxxxx",
-      "name": "D.Seltas Razorwing - Artillery",
+      "_id": "gJgWpn01xxxxxxxxx",
+      "name": "Great Jagras Claw - Palico Rally",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -217,7 +280,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "(Gunlance Only) Wyvernfire can be used twice per long rest (manual — update Gunlance wyvernfire uses).",
+      "description": "NPC allies within 10 ft gain +1 AC and +1 attack rolls while you are attuned (apply to allied NPC tokens manually).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -237,7 +300,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "Artillery"
+          "materialEffectName": "Palico Rally"
         }
       },
       "_stats": {
@@ -252,8 +315,8 @@
       }
     },
     {
-      "_id": "dRzArm01xxxxxxxxxx",
-      "name": "D.Seltas Razorwing - Minor Guard Up",
+      "_id": "gJgArm01xxxxxxxxx",
+      "name": "Great Jagras Claw - Full Belly",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -268,7 +331,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction when you fail a Dex or Str save: use AC instead of the roll. 1/LR via item activity.",
+      "description": "Action: eat up to 2 rations (+1 AC, -10 ft speed each) for 1 minute. Bonus action to regurgitate (item activities).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -288,7 +351,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Minor Guard Up"
+          "materialEffectName": "Full Belly"
         }
       },
       "_stats": {
@@ -304,28 +367,28 @@
     }
   ],
   "folder": null,
-  "sort": 4000000,
+  "sort": 3150000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "D.Seltas Razorwing",
-      "monsterName": "Desert Seltas",
+      "runeName": "Great Jagras Claw",
+      "monsterName": "Great Jagras",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — Artillery (Gunlance)"
+          "label": "Weapon Effect — Palico Rally"
         },
         "armor": {
-          "label": "Armor Effect — Minor Guard Up"
+          "label": "Armor Effect — Full Belly"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "D.Seltas Razorwing Rune",
+        "name": "Great Jagras Claw Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -351,8 +414,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788129405021,
-    "modifiedTime": 1788129405021,
+    "createdTime": 1788129405028,
+    "modifiedTime": 1788129405028,
     "lastModifiedBy": null
   }
 }

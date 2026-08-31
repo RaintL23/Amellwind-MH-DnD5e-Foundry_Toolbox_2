@@ -425,6 +425,41 @@ function utilityActivity(id, name, activationType, chatFlavor, condition = "", c
   return { [id]: activity };
 }
 
+function sleepUnconsciousSaveBonusTail() {
+  return `
+if (pass.includes("issave")) {
+  const wf = workflow ?? arg0?.workflow;
+  if (!actorDoc || !wf) return;
+  const looksSleepUnconscious = (obj) => {
+    if (!obj) return false;
+    const dump = JSON.stringify(obj).toLowerCase();
+    return dump.includes("\\"unconscious\\"") || dump.includes("[unconscious]")
+      || dump.includes("\\"sleep\\"") || /\\bsleep\\b/.test(dump)
+      || dump.includes("sleep-like");
+  };
+  let applies = false;
+  try {
+    const activity = wf.activity;
+    for (const ref of activity?.effects ?? []) {
+      const eid = ref?._id ?? ref;
+      const ef = wf.item?.effects?.get?.(eid) ?? wf.item?.effects?.find?.((e) => e.id === eid || e._id === eid);
+      const statuses = ef?.statuses;
+      const hit = statuses?.has?.("unconscious") || [...(statuses ?? [])].includes("unconscious")
+        || looksSleepUnconscious(ef);
+      if (ef && hit) { applies = true; break; }
+    }
+    if (!applies && looksSleepUnconscious(activity)) applies = true;
+    if (!applies && looksSleepUnconscious(wf.item?.system)) applies = true;
+    const desc = String(wf.item?.system?.description?.value ?? "").toLowerCase();
+    if (!applies && (desc.includes("unconscious") || desc.includes("sleep")) && desc.includes("save")) applies = true;
+  } catch (_) {}
+  if (!applies) return;
+  foundry.utils.setProperty(arg0, "saveBonus", (Number(arg0?.saveBonus ?? 0) || 0) + 1);
+  if (wf) wf.saveBonus = (Number(wf.saveBonus ?? 0) || 0) + 1;
+  return;
+}`;
+}
+
 function isSaveProneAdvantageTail() {
   return `
 if (pass.includes("issave")) {
@@ -1120,6 +1155,193 @@ items.push({
         "Jump Master",
         [],
         "Action: double your jump distance. 2 uses, regain on short or long rest (item activity).",
+      ),
+    ],
+  }),
+});
+
+// ─── Great Jagras Claw ───
+items.push({
+  path: path.join(__dirname, "Great Jagras", "fvtt-Item-great-jagras-great-jagras-claw-rune.json"),
+  doc: buildItem({
+    _id: "gJgrClw00000001",
+    identifier: "greatjagrasclawrune",
+    runeName: "Great Jagras Claw",
+    monsterName: "Great Jagras",
+    sort: 3150000,
+    rarity: "common",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Great Jagras | CR: 4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Palico Rally.</em> NPC allies within 10 feet of you gain +1 AC and +1 to attack rolls while you are attuned to this weapon.\n<h3>Armor Effect</h3>\n<em>Full Belly.</em> As an action, you can eat up to two days' worth of rations causing your belly to expand for 1 minute or until you regurgitate the rations as a bonus action. For each ration you eat in this way, you gain a +1 bonus to your AC, but your movement speed is reduced by 10 feet.\n<p><em><strong>Tags:</strong> type:offensive, type:defensive, mechanic:action, mechanic:bonus-action, mechanic:ac, mechanic:movement</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Palico Rally" },
+      armor: { label: "Armor Effect — Full Belly" },
+    },
+    macroName: "Great Jagras Claw Rune",
+    macroTail: "",
+    systemExtra: {
+      activities: {
+        ...utilityActivity(
+          "gJgFB01xxxxxxxxxx",
+          "Full Belly",
+          "action",
+          "Eat up to 2 days' worth of rations: +1 AC and -10 ft speed per ration for 1 minute (track AC/speed manually).",
+          "Armor side active",
+        ),
+        ...utilityActivity(
+          "gJgRG01xxxxxxxxxx",
+          "Regurgitate",
+          "bonus",
+          "End Full Belly early and restore normal AC/speed.",
+          "While Full Belly is active",
+        ),
+      },
+    },
+    effects: [
+      equipEffect("gJgEq01xxxxxxxxxx"),
+      sideEffect(
+        "gJgWpn01xxxxxxxxx",
+        "Great Jagras Claw - Palico Rally",
+        "weapon",
+        "Palico Rally",
+        [],
+        "NPC allies within 10 ft gain +1 AC and +1 attack rolls while you are attuned (apply to allied NPC tokens manually).",
+      ),
+      sideEffect(
+        "gJgArm01xxxxxxxxx",
+        "Great Jagras Claw - Full Belly",
+        "armor",
+        "Full Belly",
+        [],
+        "Action: eat up to 2 rations (+1 AC, -10 ft speed each) for 1 minute. Bonus action to regurgitate (item activities).",
+      ),
+    ],
+  }),
+});
+
+// ─── Doshaguma Fang ───
+items.push({
+  path: path.join(__dirname, "Doshaguma", "fvtt-Item-doshaguma-doshaguma-fang-rune.json"),
+  doc: buildItem({
+    _id: "dshgFng00000001",
+    identifier: "doshagumafangrune",
+    runeName: "Doshaguma Fang",
+    monsterName: "Doshaguma",
+    sort: 2550000,
+    rarity: "common",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Doshaguma | CR: 1 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Dwarf Thrower.</em> While attuned to this weapon you can use your action to throw a willing ally that isn't grappled a number of feet equal to 5 times your Strength modifier. The ally lands as safely as possible in the space you throw them.\n<h3>Armor Effect</h3>\n<em>Palamute Rally.</em> NPC allies within 10 feet of you gain a +1 bonus to their AC and attack rolls while you are attuned to this armor.\n<p><em><strong>Tags:</strong> type:offensive, type:utility, mechanic:action, mechanic:movement</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Dwarf Thrower" },
+      armor: { label: "Armor Effect — Palamute Rally" },
+    },
+    macroName: "Doshaguma Fang Rune",
+    macroTail: "",
+    systemExtra: {
+      activities: utilityActivity(
+        "dshDT01xxxxxxxxxx",
+        "Dwarf Thrower",
+        "action",
+        "Throw a willing, ungrappled ally 5 × your Strength modifier feet (GM resolves landing).",
+        "Weapon side active — while attuned to this weapon",
+      ),
+    },
+    effects: [
+      equipEffect("dshEq01xxxxxxxxxx"),
+      sideEffect(
+        "dshWpn01xxxxxxxxx",
+        "Doshaguma Fang - Dwarf Thrower",
+        "weapon",
+        "Dwarf Thrower",
+        [],
+        "Action: throw a willing ally 5 × STR mod feet (item activity; resolve landing manually).",
+      ),
+      sideEffect(
+        "dshArm01xxxxxxxxx",
+        "Doshaguma Fang - Palamute Rally",
+        "armor",
+        "Palamute Rally",
+        [],
+        "NPC allies within 10 ft gain +1 AC and +1 attack rolls while you are attuned (apply to allied NPC tokens manually).",
+      ),
+    ],
+  }),
+});
+
+// ─── Velocidrome Head (armor only) ───
+items.push({
+  path: path.join(__dirname, "Velocidrome", "fvtt-Item-velocidrome-velocidrome-head-rune.json"),
+  doc: buildItem({
+    _id: "vlcHd0000000001",
+    identifier: "velocidromeheadrune",
+    runeName: "Velocidrome Head",
+    monsterName: "Velocidrome",
+    sort: 8550000,
+    rarity: "common",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Velocidrome | CR: 1 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Armor Effect</h3>\n<p>Whenever you make a saving throw against the @condition[unconscious] condition or other sleep-like effects, you do so with a +1 bonus.</p>\n<p><em><strong>Tags:</strong> mechanic:saving-throw, mechanic:condition, type:defensive</em></p>",
+    sides: {
+      armor: { label: "Armor Effect — Sleep/Unconscious Save Bonus" },
+    },
+    macroName: "Velocidrome Head Rune",
+    macroTail: sleepUnconsciousSaveBonusTail(),
+    effects: [
+      equipEffect("vlcEq01xxxxxxxxxx"),
+      sideEffect(
+        "vlcArm01xxxxxxxxx",
+        "Velocidrome Head - Sleep/Unconscious Save Bonus",
+        "armor",
+        "Sleep/Unconscious Save Bonus",
+        [{ key: "flags.midi-qol.onUseMacroName", mode: 0, value: "ItemMacro.Velocidrome Head Rune,isSave", priority: 20 }],
+        "+1 bonus on saves vs unconscious or sleep-like effects (MidiQOL isSave pass).",
+      ),
+    ],
+  }),
+});
+
+// ─── Great Izuchi Tail ───
+items.push({
+  path: path.join(__dirname, "Great Izuchi", "fvtt-Item-great-izuchi-great-izuchi-tail-rune.json"),
+  doc: buildItem({
+    _id: "gIztTail0000001",
+    identifier: "greatizuchitailrune",
+    runeName: "Great Izuchi Tail",
+    monsterName: "Great Izuchi",
+    sort: 3180000,
+    rarity: "common",
+    description:
+      "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Great Izuchi | CR: 3 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p><em>(Spellcaster Only)</em> You know the @spell[friends] cantrip. If you already know the friends cantrip, the creature doesn't realize that you used magic to influence its mood until 10 minutes after the spell ends.</p>\n<h3>Armor Effect</h3>\n<em>Palamute Rally.</em> NPC allies within 10 feet of you gain a +1 bonus to their AC and attack rolls while you are attuned to this armor.\n<p><em><strong>Tags:</strong> class:spellcaster, mechanic:spell, type:offensive, type:utility</em></p>",
+    sides: {
+      weapon: { label: "Weapon Effect — Friends Cantrip" },
+      armor: { label: "Armor Effect — Palamute Rally" },
+    },
+    macroName: "Great Izuchi Tail Rune",
+    macroTail: "",
+    systemExtra: {
+      activities: utilityActivity(
+        "gIzFr01xxxxxxxxxx",
+        "Friends Cantrip",
+        "action",
+        "Cast friends (spellcasters only). If you already know friends, targets don't realize magic was used until 10 minutes after the spell ends.",
+        "Weapon side active — spellcasters only",
+      ),
+    },
+    effects: [
+      equipEffect("gIzEq01xxxxxxxxxx"),
+      sideEffect(
+        "gIzWpn01xxxxxxxxx",
+        "Great Izuchi Tail - Friends Cantrip",
+        "weapon",
+        "Friends Cantrip",
+        [],
+        "Spellcasters know friends cantrip; extended deception if already known (cast via spell sheet or activity).",
+      ),
+      sideEffect(
+        "gIzArm01xxxxxxxxx",
+        "Great Izuchi Tail - Palamute Rally",
+        "armor",
+        "Palamute Rally",
+        [],
+        "NPC allies within 10 ft gain +1 AC and +1 attack rolls while you are attuned (apply to allied NPC tokens manually).",
       ),
     ],
   }),

@@ -1,6 +1,6 @@
 {
-  "_id": "dS3lt4Rz0rw1ng01",
-  "name": "D.Seltas Razorwing Rune",
+  "_id": "dshgFng00000001",
+  "name": "Doshaguma Fang Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Desert Seltas | CR: 4 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>(Gunlance Only) Artillery.</em> While attuned to this weapon, your wyvernfire can now be used twice per long rest.\n<h3>Armor Effect</h3>\n<em>Minor Guard Up.</em> When you fail a Dexterity or Strength saving throw, you can use your reaction to use your AC in place of your roll. Once you use this property you can't use it again until you finish a long rest.\n<p><em><strong>Tags:</strong> weapon-type:gunlance, mechanic:class-feature, mechanic:long-rest, type:offensive, mechanic:reaction, mechanic:saving-throw, mechanic:ac, type:defensive</em></p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Doshaguma | CR: 1 | Tier: 1</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<em>Dwarf Thrower.</em> While attuned to this weapon you can use your action to throw a willing ally that isn't grappled a number of feet equal to 5 times your Strength modifier. The ally lands as safely as possible in the space you throw them.\n<h3>Armor Effect</h3>\n<em>Palamute Rally.</em> NPC allies within 10 feet of you gain a +1 bonus to their AC and attack rolls while you are attuned to this armor.\n<p><em><strong>Tags:</strong> type:offensive, type:utility, mechanic:action, mechanic:movement</em></p>",
       "chat": ""
     },
-    "identifier": "dseltasrazorwingrune",
+    "identifier": "doshagumafangrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "common",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "mGU01xxxxxxxxxxxxx": {
-        "_id": "mGU01xxxxxxxxxxxxx",
+      "dshDT01xxxxxxxxxx": {
+        "_id": "dshDT01xxxxxxxxxx",
         "type": "utility",
         "sort": 0,
-        "name": "Minor Guard Up",
+        "name": "Dwarf Thrower",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "action",
           "value": null,
-          "condition": "When you fail a Dexterity or Strength saving throw",
+          "condition": "Weapon side active — while attuned to this weapon",
           "override": false
         },
         "consumption": {
@@ -62,19 +62,10 @@
             "max": ""
           },
           "spellSlot": false,
-          "targets": [
-            {
-              "type": "itemUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
+          "targets": []
         },
         "description": {
-          "chatFlavor": "Use your AC in place of the failed save."
+          "chatFlavor": "Throw a willing, ungrappled ally 5 × your Strength modifier feet (GM resolves landing)."
         },
         "duration": {
           "value": "",
@@ -114,7 +105,7 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "minor-guard-up",
+          "identifier": "dwarf-thrower",
           "displayActivityName": true
         },
         "roll": {
@@ -122,7 +113,10 @@
           "name": "",
           "prompt": false,
           "visible": false
-        }
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
       }
     },
     "container": null,
@@ -133,19 +127,14 @@
     },
     "uses": {
       "spent": 0,
-      "max": "1",
-      "recovery": [
-        {
-          "period": "lr",
-          "type": "recoverAll"
-        }
-      ]
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "dRzEq01xxxxxxxxxx",
-      "name": "D.Seltas Razorwing Rune (Equip)",
+      "_id": "dshEq01xxxxxxxxxx",
+      "name": "Doshaguma Fang Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -201,8 +190,8 @@
       }
     },
     {
-      "_id": "dRzWpn01xxxxxxxxxx",
-      "name": "D.Seltas Razorwing - Artillery",
+      "_id": "dshWpn01xxxxxxxxx",
+      "name": "Doshaguma Fang - Dwarf Thrower",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -217,7 +206,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "(Gunlance Only) Wyvernfire can be used twice per long rest (manual — update Gunlance wyvernfire uses).",
+      "description": "Action: throw a willing ally 5 × STR mod feet (item activity; resolve landing manually).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -237,7 +226,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "weapon",
-          "materialEffectName": "Artillery"
+          "materialEffectName": "Dwarf Thrower"
         }
       },
       "_stats": {
@@ -252,8 +241,8 @@
       }
     },
     {
-      "_id": "dRzArm01xxxxxxxxxx",
-      "name": "D.Seltas Razorwing - Minor Guard Up",
+      "_id": "dshArm01xxxxxxxxx",
+      "name": "Doshaguma Fang - Palamute Rally",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -268,7 +257,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Reaction when you fail a Dex or Str save: use AC instead of the roll. 1/LR via item activity.",
+      "description": "NPC allies within 10 ft gain +1 AC and +1 attack rolls while you are attuned (apply to allied NPC tokens manually).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -288,7 +277,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Minor Guard Up"
+          "materialEffectName": "Palamute Rally"
         }
       },
       "_stats": {
@@ -304,28 +293,28 @@
     }
   ],
   "folder": null,
-  "sort": 4000000,
+  "sort": 2550000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "D.Seltas Razorwing",
-      "monsterName": "Desert Seltas",
+      "runeName": "Doshaguma Fang",
+      "monsterName": "Doshaguma",
       "unified": true,
       "sides": {
         "weapon": {
-          "label": "Weapon Effect — Artillery (Gunlance)"
+          "label": "Weapon Effect — Dwarf Thrower"
         },
         "armor": {
-          "label": "Armor Effect — Minor Guard Up"
+          "label": "Armor Effect — Palamute Rally"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "D.Seltas Razorwing Rune",
+        "name": "Doshaguma Fang Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -351,8 +340,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788129405021,
-    "modifiedTime": 1788129405021,
+    "createdTime": 1788129405029,
+    "modifiedTime": 1788129405029,
     "lastModifiedBy": null
   }
 }
