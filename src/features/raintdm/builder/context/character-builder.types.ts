@@ -87,6 +87,8 @@ export interface CharacterBuilderContextValue {
   backgroundOriginFeat: BuilderFeatSelection | null;
   /** False while species/background origin-feat grants are still being resolved. */
   originFeatGrantsReady: boolean;
+  /** True when the player may pick an origin feat (includes AGMH optimistic background grant). */
+  canPickOriginFeat: boolean;
   originFeatSkillChoices: SkillKey[];
   optionalFeatureOriginFeatSlots: OptionalFeatureOriginFeatSlot[];
   optionalFeatureOriginFeats: (BuilderFeatSelection | null)[];
@@ -95,6 +97,8 @@ export interface CharacterBuilderContextValue {
   personality: BuilderPersonality;
   faction: BackgroundFaction | null;
   setSpecies: (selection: CharacterSelectionRef | null) => void;
+  /** Drops an invalid subrace ref without resetting origin feats or other identity picks. */
+  clearInvalidSpeciesSubrace: () => void;
   setBackground: (selection: CharacterSelectionRef | null) => void;
   setClass: (selection: CharacterSelectionRef | null) => void;
   setSubclass: (selection: CharacterSelectionRef | null) => void;

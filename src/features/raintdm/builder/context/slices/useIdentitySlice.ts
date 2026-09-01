@@ -25,6 +25,7 @@ import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import {
   AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
   dndFeatToBuilderSelection,
+  resolveOriginFeatChooseTarget,
 } from "../../utils/origin-feat.constants";
 import { reconcileOriginFeatSlots } from "../../utils/reconcile-origin-feat-slots.utils";
 import { getFeatSlotLevels } from "../../utils/builder-class.utils";
@@ -44,6 +45,7 @@ import {
   type BuilderPersonality,
 } from "../../storage/builder.storage";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
+import { useSyncStatus } from "@/shared/context/SyncContext";
 import {
   clearAmellwindFeats,
   isAmellwindBackgroundSelection,
@@ -55,6 +57,7 @@ export interface IdentitySliceInput {
   onBackgroundChange: () => void;
   onClassChange: () => void;
   clearSubclassOptionalFeatures: () => void;
+  useAmellwindHomebrew: boolean;
 }
 
 export function useIdentitySlice({
@@ -62,6 +65,7 @@ export function useIdentitySlice({
   onBackgroundChange,
   onClassChange,
   clearSubclassOptionalFeatures,
+  useAmellwindHomebrew,
 }: IdentitySliceInput) {
   // ─── Selection state ───────────────────────────────────────────────────────
 
@@ -122,6 +126,26 @@ export function useIdentitySlice({
   const originFeatGrantsReady =
     speciesOriginFeatGrantReady && backgroundOriginFeatGrantReady;
 
+  const canPickOriginFeat =
+    originFeatGrantsReady ||
+    backgroundOriginFeatGrant?.kind === "choose" ||
+    speciesOriginFeatGrant?.kind === "choose" ||
+    (useAmellwindHomebrew && backgroundRef !== null);
+
+  const { syncing } = useSyncStatus();
+  const speciesIdRef = useRef<string | null>(null);
+  const backgroundIdRef = useRef<string | null>(null);
+  /** Explicit user pick — loaders/reconcile must not wipe this unless identity changes. */
+  const userOriginFeatRef = useRef<BuilderFeatSelection | null>(null);
+  const latestOriginFeatsRef = useRef({
+    species: null as BuilderFeatSelection | null,
+    background: null as BuilderFeatSelection | null,
+  });
+  latestOriginFeatsRef.current = {
+    species: speciesOriginFeat,
+    background: backgroundOriginFeat,
+  };
+
   // Persist backstory/personality with a debounce instead of on every keystroke;
   // a final flush on unmount avoids dropping the last edit during fast navigation.
   const debouncedBackstoryNotes = useDebouncedValue(backstoryNotes, 500);
@@ -157,19 +181,60 @@ export function useIdentitySlice({
     [],
   );
 
+  const restoreUserOriginFeatChoice = useCallback(
+    (
+      speciesGrant: OriginFeatGrant | null,
+      backgroundGrant: OriginFeatGrant | null,
+    ) => {
+      const saved = userOriginFeatRef.current;
+      if (!saved) return;
+
+      const target = resolveOriginFeatChooseTarget(
+        speciesGrant,
+        backgroundGrant,
+        useAmellwindHomebrew,
+      );
+      if (!target) return;
+
+      if (target === "background") {
+        setBackgroundOriginFeatState(saved);
+        setSpeciesOriginFeatState(null);
+      } else {
+        setSpeciesOriginFeatState(saved);
+        setBackgroundOriginFeatState(null);
+      }
+    },
+    [useAmellwindHomebrew],
+  );
+
   const setBackground = useCallback((selection: CharacterSelectionRef | null) => {
+    const sameBackgroundId =
+      backgroundIdRef.current !== null &&
+      backgroundIdRef.current === selection?.id &&
+      selection !== null;
+
+    backgroundIdRef.current = selection?.id ?? null;
     setBackgroundRef(selection);
+
+    if (sameBackgroundId) return;
+
+    userOriginFeatRef.current = null;
     setBackgroundAsiMode(null);
     setBackgroundAsiPlus2(null);
     setBackgroundAsiPlus1(null);
-    setBackgroundOriginFeatGrant(null);
     setBackgroundOriginFeatState(null);
-    setBackgroundOriginFeatGrantReady(!selection);
+    if (selection && useAmellwindHomebrew) {
+      setBackgroundOriginFeatGrant(AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT);
+      setBackgroundOriginFeatGrantReady(true);
+    } else {
+      setBackgroundOriginFeatGrant(null);
+      setBackgroundOriginFeatGrantReady(!selection);
+    }
     if (!selection) {
       setFactionState(null);
     }
     onBackgroundChange();
-  }, [onBackgroundChange]);
+  }, [onBackgroundChange, useAmellwindHomebrew]);
 
   const setFaction = useCallback((value: BackgroundFaction | null) => {
     setFactionState(value);
@@ -194,14 +259,28 @@ export function useIdentitySlice({
   }, []);
 
   const setSpecies = useCallback((selection: CharacterSelectionRef | null) => {
+    const sameSpeciesId =
+      speciesIdRef.current !== null &&
+      speciesIdRef.current === selection?.id &&
+      selection !== null;
+
+    speciesIdRef.current = selection?.id ?? null;
     setSpeciesState(selection);
     setSpeciesData(null);
     setSpeciesAbilityChoices([]);
+    setSpeciesSpellGroupChoiceState(null);
+
+    if (sameSpeciesId) {
+      setSpeciesOriginFeatGrantReady(false);
+      onSpeciesChange();
+      return;
+    }
+
+    userOriginFeatRef.current = null;
     setSpeciesOriginFeatGrant(null);
     setSpeciesOriginFeatState(null);
     setSpeciesOriginFeatGrantReady(!selection);
     setOriginFeatSkillChoicesState([]);
-    setSpeciesSpellGroupChoiceState(null);
     onSpeciesChange();
     if (!selection) {
       setUseTashaOrigin(false);
@@ -210,14 +289,36 @@ export function useIdentitySlice({
     }
   }, [onSpeciesChange]);
 
+  /** Clears an invalid subrace without wiping origin feats or other identity picks. */
+  const clearInvalidSpeciesSubrace = useCallback(() => {
+    setSpeciesState((prev) => {
+      if (!prev) return prev;
+      return {
+        id: prev.id,
+        name: prev.name,
+        subraceId: null,
+        subraceName: null,
+      };
+    });
+    setSpeciesData(null);
+    setSpeciesAbilityChoices([]);
+    setSpeciesOriginFeatGrantReady(false);
+    setSpeciesSpellGroupChoiceState(null);
+    onSpeciesChange();
+  }, [onSpeciesChange]);
+
   const setSpeciesOriginFeat = useCallback((selection: BuilderFeatSelection | null) => {
+    userOriginFeatRef.current = selection;
     setSpeciesOriginFeatState(selection);
+    if (selection) setBackgroundOriginFeatState(null);
     if (!selection) setOriginFeatSkillChoicesState([]);
   }, []);
 
   const setBackgroundOriginFeat = useCallback(
     (selection: BuilderFeatSelection | null) => {
+      userOriginFeatRef.current = selection;
       setBackgroundOriginFeatState(selection);
+      if (selection) setSpeciesOriginFeatState(null);
       if (!selection) setOriginFeatSkillChoicesState([]);
     },
     [],
@@ -503,6 +604,7 @@ export function useIdentitySlice({
     if (!species) {
       setSpeciesOriginFeatGrant(null);
       setSpeciesOriginFeatGrantReady(true);
+      userOriginFeatRef.current = null;
       setSpeciesOriginFeatState(null);
       setOriginFeatSkillChoicesState([]);
       return;
@@ -515,6 +617,12 @@ export function useIdentitySlice({
       const { base, dndSubrace, mhSubrace } = await resolveSpeciesParts(species!);
       if (cancelled) return;
 
+      if (!base) {
+        setSpeciesOriginFeatGrant(null);
+        setSpeciesOriginFeatGrantReady(true);
+        return;
+      }
+
       const grant =
         base?.originFeatGrant ?? dndSubrace?.originFeatGrant ?? mhSubrace?.originFeatGrant ?? null;
       setSpeciesOriginFeatGrant(grant);
@@ -524,16 +632,28 @@ export function useIdentitySlice({
         return;
       }
 
+      // AGMH: background owns the origin-feat pick; never overwrite it from species data.
+      if (useAmellwindHomebrew && backgroundRef) {
+        setSpeciesOriginFeatGrantReady(true);
+        restoreUserOriginFeatChoice(
+          grant,
+          backgroundOriginFeatGrant ?? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT,
+        );
+        return;
+      }
+
       if (grant.kind === "fixed" && grant.featRefs[0]) {
         const feat = await resolveDndFeatForRef(grant.featRefs[0]);
         if (cancelled || !feat) return;
-        setSpeciesOriginFeatState(dndFeatToBuilderSelection(feat));
+        const fixed = dndFeatToBuilderSelection(feat);
+        userOriginFeatRef.current = fixed;
+        setSpeciesOriginFeatState(fixed);
+        setBackgroundOriginFeatState(null);
         setSpeciesOriginFeatGrantReady(true);
         return;
       }
-      // "choose" grant: setSpecies already cleared the state synchronously.
-      // Do NOT reset here — that would overwrite a rehydrated snapshot value.
       setSpeciesOriginFeatGrantReady(true);
+      restoreUserOriginFeatChoice(grant, backgroundOriginFeatGrant);
     }
 
     void loadOriginFeatGrant();
@@ -541,12 +661,21 @@ export function useIdentitySlice({
     return () => {
       cancelled = true;
     };
-  }, [species?.id, species?.subraceId]);
+  }, [
+    species?.id,
+    species?.subraceId,
+    syncing,
+    useAmellwindHomebrew,
+    backgroundRef,
+    restoreUserOriginFeatChoice,
+    backgroundOriginFeatGrant,
+  ]);
 
   useEffect(() => {
     if (!backgroundRef) {
       setBackgroundOriginFeatGrant(null);
       setBackgroundOriginFeatGrantReady(true);
+      userOriginFeatRef.current = null;
       setBackgroundOriginFeatState(null);
       return;
     }
@@ -561,18 +690,35 @@ export function useIdentitySlice({
       ]);
       if (cancelled) return;
 
+      if (!dndBackground && !mhBackground) {
+        if (useAmellwindHomebrew) {
+          setBackgroundOriginFeatGrant(AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT);
+        }
+        setBackgroundOriginFeatGrantReady(true);
+        restoreUserOriginFeatChoice(
+          speciesOriginFeatGrant,
+          useAmellwindHomebrew ? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT : null,
+        );
+        return;
+      }
+
       if (mhBackground?.faction) {
         setFactionState(mhBackground.faction);
       }
 
+      const isAmellwindBackground =
+        !!mhBackground && (await isAmellwindBackgroundSelection(backgroundRef!));
       const grant =
         dndBackground?.originFeatGrant ??
         mhBackground?.originFeatGrant ??
-        (mhBackground ? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT : null);
+        (isAmellwindBackground ? AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT : null);
       setBackgroundOriginFeatGrant(grant);
 
       if (!grant) {
-        setBackgroundOriginFeatState(null);
+        if (dndBackground || mhBackground) {
+          userOriginFeatRef.current = null;
+          setBackgroundOriginFeatState(null);
+        }
         setBackgroundOriginFeatGrantReady(true);
         return;
       }
@@ -580,16 +726,18 @@ export function useIdentitySlice({
       if (grant.kind === "fixed" && grant.featRefs[0]) {
         const feat = await resolveDndFeatForRef(grant.featRefs[0]);
         if (cancelled || !feat) return;
-        setBackgroundOriginFeatState({
+        const fixed = {
           ...dndFeatToBuilderSelection(feat),
           name: grant.featRefs[0].displayLabel,
-        });
+        };
+        userOriginFeatRef.current = fixed;
+        setBackgroundOriginFeatState(fixed);
+        setSpeciesOriginFeatState(null);
         setBackgroundOriginFeatGrantReady(true);
         return;
       }
-      // Non-fixed grant ("choose" or other): setBackground already cleared the state
-      // synchronously. Do NOT reset here — that would overwrite a rehydrated value.
       setBackgroundOriginFeatGrantReady(true);
+      restoreUserOriginFeatChoice(speciesOriginFeatGrant, grant);
     }
 
     void loadBackgroundOriginFeat();
@@ -597,35 +745,59 @@ export function useIdentitySlice({
     return () => {
       cancelled = true;
     };
-  }, [backgroundRef?.id]);
+  }, [
+    backgroundRef?.id,
+    syncing,
+    useAmellwindHomebrew,
+    restoreUserOriginFeatChoice,
+    speciesOriginFeatGrant,
+  ]);
 
   useEffect(() => {
-    if (!originFeatGrantsReady) return;
+    const saved = userOriginFeatRef.current;
+    if (!originFeatGrantsReady && !saved) return;
 
+    const { species, background } = latestOriginFeatsRef.current;
     const reconciled = reconcileOriginFeatSlots({
       speciesGrant: speciesOriginFeatGrant,
       backgroundGrant: backgroundOriginFeatGrant,
-      speciesOriginFeat,
-      backgroundOriginFeat,
+      speciesOriginFeat: species,
+      backgroundOriginFeat: background,
+      preferBackgroundChoose: useAmellwindHomebrew,
+      savedUserPick: saved,
     });
 
-    if (reconciled.speciesOriginFeat !== speciesOriginFeat) {
-      setSpeciesOriginFeatState(reconciled.speciesOriginFeat);
-    }
-    if (reconciled.backgroundOriginFeat !== backgroundOriginFeat) {
+    const speciesChanged = reconciled.speciesOriginFeat !== species;
+    const backgroundChanged = reconciled.backgroundOriginFeat !== background;
+    if (!speciesChanged && !backgroundChanged) return;
+
+    // Use the direct state setters so the reconcile does not clear
+    // originFeatSkillChoices as a side effect when migrating a feat between
+    // slots (the public callbacks call setOriginFeatSkillChoicesState([])).
+    if (speciesChanged) setSpeciesOriginFeatState(reconciled.speciesOriginFeat);
+    if (backgroundChanged)
       setBackgroundOriginFeatState(reconciled.backgroundOriginFeat);
+
+    const chosen =
+      reconciled.speciesOriginFeat ?? reconciled.backgroundOriginFeat;
+    if (chosen) {
+      userOriginFeatRef.current = chosen;
+    } else {
+      // Both slots were cleared — the feat was genuinely removed.
+      userOriginFeatRef.current = null;
+      setOriginFeatSkillChoicesState([]);
     }
   }, [
     originFeatGrantsReady,
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
-    speciesOriginFeat,
-    backgroundOriginFeat,
+    useAmellwindHomebrew,
   ]);
 
   // ─── Homebrew cleanup + full reset ──────────────────────────────────────────
 
   const clearAmellwindIdentity = useCallback(async () => {
+    userOriginFeatRef.current = null;
     setFactionState(null);
     setFeatSelections((prev) => clearAmellwindFeats(prev));
     setSpeciesOriginFeatState((prev) =>
@@ -659,6 +831,9 @@ export function useIdentitySlice({
   }, [species, backgroundRef]);
 
   const resetIdentitySlice = useCallback(() => {
+    speciesIdRef.current = null;
+    backgroundIdRef.current = null;
+    userOriginFeatRef.current = null;
     setSpeciesState(null);
     setSpeciesData(null);
     setSpeciesDataLoading(false);
@@ -708,6 +883,7 @@ export function useIdentitySlice({
       backgroundOriginFeatGrant,
       backgroundOriginFeat,
       originFeatGrantsReady,
+      canPickOriginFeat,
       originFeatSkillChoices,
       backstoryNotes,
       personality,
@@ -724,6 +900,7 @@ export function useIdentitySlice({
       multiclassClassData,
       setSpecies,
       setBackground,
+      clearInvalidSpeciesSubrace,
       setClass,
       setSubclass,
       setFeatAtIndex,
@@ -770,6 +947,7 @@ export function useIdentitySlice({
       backgroundOriginFeatGrant,
       backgroundOriginFeat,
       originFeatGrantsReady,
+      canPickOriginFeat,
       originFeatSkillChoices,
       backstoryNotes,
       personality,
@@ -786,6 +964,7 @@ export function useIdentitySlice({
       multiclassClassData,
       setSpecies,
       setBackground,
+      clearInvalidSpeciesSubrace,
       setClass,
       setSubclass,
       setFeatAtIndex,
@@ -815,6 +994,7 @@ export function useIdentitySlice({
       trimFeatSelectionsForLevel,
       resetIdentitySlice,
       clearAmellwindIdentity,
+      clearInvalidSpeciesSubrace,
     ],
   );
 }

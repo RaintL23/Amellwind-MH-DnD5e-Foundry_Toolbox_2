@@ -1,8 +1,86 @@
 import { describe, expect, it } from "vitest";
 import {
+  grantsAcBonusToWearer,
   inferRarityFromAcBonus,
   parseAcBonusAmount,
+  usesAcAsSaveReplacement,
 } from "./inline-ac-bonus-rarity.utils";
+import type { Rune } from "@/shared/types";
+
+function makeRune(partial: Partial<Rune> & Pick<Rune, "name">): Rune {
+  return {
+    monsterName: "Test Monster",
+    monsterSource: "GTMH",
+    monsterCr: "5",
+    monsterCrs: ["5"],
+    tier: 2,
+    carveChance: "1-10",
+    captureChance: "-",
+    rolls: 3,
+    slots: ["A", "W"],
+    armorEffect: null,
+    weaponEffect: null,
+    otherEffect: null,
+    tags: [],
+    weaponTags: [],
+    armorTags: [],
+    ...partial,
+  };
+}
+
+describe("usesAcAsSaveReplacement", () => {
+  it("detects Guard Up failed-save AC substitution", () => {
+    expect(
+      usesAcAsSaveReplacement(
+        "Guard Up When you fail a Dexterity or Strength saving throw, you can use your reaction to use your AC in place of your roll.",
+      ),
+    ).toBe(true);
+  });
+
+  it("detects dodge-action AC substitution", () => {
+    expect(
+      usesAcAsSaveReplacement(
+        "While taking the dodge action, you can use your Armor Class in place of making the roll.",
+      ),
+    ).toBe(true);
+  });
+
+  it("does not flag standing AC bonuses", () => {
+    expect(
+      usesAcAsSaveReplacement(
+        "You have a +2 bonus to your armor class while you wear this armor.",
+      ),
+    ).toBe(false);
+  });
+});
+
+describe("grantsAcBonusToWearer", () => {
+  it("excludes Guard Up from AC bonus rule", () => {
+    expect(
+      grantsAcBonusToWearer(
+        makeRune({
+          name: "Heavy Rustrazor Scalp",
+          armorEffect:
+            "Guard Up When you fail a Dexterity or Strength saving throw, you can use your reaction to use your AC in place of your roll.",
+          armorTags: ["mechanic:guard-up", "mechanic:reaction"],
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("includes real AC bonus materials", () => {
+    expect(
+      grantsAcBonusToWearer(
+        makeRune({
+          name: "Iron Wall",
+          armorEffect:
+            "You have a +2 bonus to your armor class while you wear this armor.",
+          armorTags: ["mechanic:armor-class", "mechanic:passive"],
+        }),
+      ),
+    ).toBe(true);
+  });
+});
 
 describe("parseAcBonusAmount", () => {
   it("parses standing +1 AC", () => {

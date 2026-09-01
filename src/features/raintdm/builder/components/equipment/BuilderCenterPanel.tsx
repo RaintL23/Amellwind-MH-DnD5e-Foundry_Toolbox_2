@@ -32,7 +32,7 @@ import {
   parseOptionalFeatureSlot,
   resolveOptionalFeatureProgressions,
 } from "../../utils/class-optional-features.utils";
-import { resolveOriginFeatChooseTarget } from "../../utils/origin-feat.constants";
+import { resolveEffectiveOriginFeatChooseTarget } from "../../utils/origin-feat.constants";
 import { useEffect, useMemo } from "react";
 import { RuneAssignmentPanel } from "./RuneAssignmentPanel";
 import { WeaponDetailPanel } from "./WeaponDetailPanel";
@@ -342,9 +342,13 @@ export function BuilderCenterPanel() {
         setSubclass(null);
         break;
       case "origin-feat": {
-        const chooseTarget = resolveOriginFeatChooseTarget(
+        const chooseTarget = resolveEffectiveOriginFeatChooseTarget(
           speciesOriginFeatGrant,
           backgroundOriginFeatGrant,
+          {
+            preferBackgroundChoose: useAmellwindHomebrew,
+            hasBackground: background !== null,
+          },
         );
         if (chooseTarget === "species") {
           setSpeciesOriginFeat(null);

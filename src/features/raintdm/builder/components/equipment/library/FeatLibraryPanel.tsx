@@ -28,7 +28,7 @@ import {
 } from "@/features/raintdm/builder/utils/feat-ability-increase-choices.utils";
 import { getFeatSpellListOptions } from "@/features/raintdm/builder/utils/feat-spell-list.utils";
 import {
-  resolveOriginFeatChooseTarget,
+  resolveEffectiveOriginFeatChooseTarget,
 } from "@/features/raintdm/builder/utils/origin-feat.constants";
 import {
   dedupeByNameToListOptions,
@@ -92,12 +92,14 @@ export function FeatLibraryPanel({
 
   const {
     featSelections,
+    background,
     class: classSelection,
+    useAmellwindHomebrew,
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
     speciesOriginFeat,
     backgroundOriginFeat,
-    originFeatGrantsReady,
+    canPickOriginFeat,
     optionalFeatureOriginFeats,
     setFeatAtIndex,
     setSpeciesOriginFeat,
@@ -119,9 +121,13 @@ export function FeatLibraryPanel({
   const featSlotIndex = isFeatSlot ? parseFeatSlotIndex(selectedSlot) : null;
   const isAnyOriginFeatSlotSelected =
     isOriginFeatSlotSelected || isInvocationOriginFeatSlotSelected;
-  const originFeatChooseTarget = resolveOriginFeatChooseTarget(
+  const originFeatChooseTarget = resolveEffectiveOriginFeatChooseTarget(
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
+    {
+      preferBackgroundChoose: useAmellwindHomebrew,
+      hasBackground: background !== null,
+    },
   );
   const originFeatLocked =
     originFeatChooseTarget !== null
@@ -406,7 +412,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
-      if (!originFeatGrantsReady) return;
+      if (!canPickOriginFeat) return;
       if (originFeatChooseTarget === "background") {
         setBackgroundOriginFeat(nextSelection);
       } else if (originFeatChooseTarget === "species") {
@@ -424,7 +430,7 @@ export function FeatLibraryPanel({
     isOriginFeatSlotSelected,
     originFeatLocked,
     originFeatChooseTarget,
-    originFeatGrantsReady,
+    canPickOriginFeat,
     featSlotIndex,
     setOptionalFeatureOriginFeatAtIndex,
     setBackgroundOriginFeat,
@@ -486,7 +492,7 @@ export function FeatLibraryPanel({
   }
 
   function setOriginFeatSelection(selection: BuilderFeatSelection | null) {
-    if (!originFeatGrantsReady || !originFeatChooseTarget) return;
+    if (!canPickOriginFeat || !originFeatChooseTarget) return;
     if (originFeatChooseTarget === "background") {
       setBackgroundOriginFeat(selection);
       return;
@@ -517,7 +523,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
-      if (!originFeatGrantsReady) return;
+      if (!canPickOriginFeat) return;
       setOriginFeatSelection(next);
       return;
     }
@@ -536,7 +542,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
-      if (!originFeatGrantsReady) return;
+      if (!canPickOriginFeat) return;
       setOriginFeatSelection(selection);
       setShowFeatList(false);
       return;
@@ -583,7 +589,7 @@ export function FeatLibraryPanel({
     }
     if (isOriginFeatSlotSelected) {
       if (originFeatLocked) return;
-      if (!originFeatGrantsReady) return;
+      if (!canPickOriginFeat) return;
       setOriginFeatSelection(nextSelection);
       return;
     }

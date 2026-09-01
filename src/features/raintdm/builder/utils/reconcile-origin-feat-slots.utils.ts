@@ -8,6 +8,8 @@ export function reconcileOriginFeatSlots(input: {
   backgroundGrant: OriginFeatGrant | null;
   speciesOriginFeat: BuilderFeatSelection | null;
   backgroundOriginFeat: BuilderFeatSelection | null;
+  preferBackgroundChoose?: boolean;
+  savedUserPick?: BuilderFeatSelection | null;
 }): {
   speciesOriginFeat: BuilderFeatSelection | null;
   backgroundOriginFeat: BuilderFeatSelection | null;
@@ -15,17 +17,20 @@ export function reconcileOriginFeatSlots(input: {
   const target = resolveOriginFeatChooseTarget(
     input.speciesGrant,
     input.backgroundGrant,
+    input.preferBackgroundChoose,
   );
   if (!target) {
     return {
-      speciesOriginFeat:
-        input.speciesGrant?.kind === "fixed" ? input.speciesOriginFeat : null,
-      backgroundOriginFeat:
-        input.backgroundGrant?.kind === "fixed" ? input.backgroundOriginFeat : null,
+      speciesOriginFeat: input.speciesOriginFeat,
+      backgroundOriginFeat: input.backgroundOriginFeat,
     };
   }
 
-  const chosen = input.speciesOriginFeat ?? input.backgroundOriginFeat;
+  const chosen =
+    input.speciesOriginFeat ??
+    input.backgroundOriginFeat ??
+    input.savedUserPick ??
+    null;
   if (!chosen) {
     return { speciesOriginFeat: null, backgroundOriginFeat: null };
   }

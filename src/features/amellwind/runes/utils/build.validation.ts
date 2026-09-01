@@ -1,3 +1,4 @@
+import { grantsAcBonusToWearer } from "@/features/amellwind/material-effects/utils/inline-ac-bonus-rarity.utils";
 import { Rune } from "@/shared/types";
 
 export interface RuleViolation {
@@ -120,7 +121,7 @@ const ARMOR_RULE_GROUPS: RuleGroup[] = [
   },
   {
     rule: "Only 1 material that grants AC bonus (rule 3)",
-    matches: (r) => hasTagPrefix(r.armorTags, "mechanic:armor-class"),
+    matches: grantsAcBonusToWearer,
   },
   {
     rule: "Only 1 material with rune effect (rule 4)",

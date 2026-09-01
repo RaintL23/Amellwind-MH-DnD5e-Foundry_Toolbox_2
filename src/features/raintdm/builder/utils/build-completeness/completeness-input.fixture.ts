@@ -14,6 +14,7 @@ export function createEmptyCompletenessInput(
     subclassData: null,
     speciesData: null,
     dndBackground: null,
+    useAmellwindHomebrew: false,
     speciesOriginFeatGrant: null,
     backgroundOriginFeatGrant: null,
     speciesOriginFeat: null,

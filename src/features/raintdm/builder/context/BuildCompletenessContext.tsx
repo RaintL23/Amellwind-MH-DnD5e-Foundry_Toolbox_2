@@ -56,6 +56,7 @@ export function BuildCompletenessProvider({
       subclassData,
       speciesData,
       dndBackground,
+      useAmellwindHomebrew: builder.useAmellwindHomebrew,
       speciesOriginFeatGrant: builder.speciesOriginFeatGrant,
       backgroundOriginFeatGrant: builder.backgroundOriginFeatGrant,
       speciesOriginFeat: builder.speciesOriginFeat,

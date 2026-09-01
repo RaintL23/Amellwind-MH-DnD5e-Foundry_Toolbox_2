@@ -12,17 +12,49 @@ export const INVOCATION_ORIGIN_FEAT_SOURCE_PREFIX = "Origin Feat · ";
 export function resolveOriginFeatChooseTarget(
   speciesGrant: OriginFeatGrant | null | undefined,
   backgroundGrant: OriginFeatGrant | null | undefined,
+  preferBackgroundChoose = false,
 ): "species" | "background" | null {
+  if (preferBackgroundChoose && backgroundGrant?.kind === "choose") {
+    return "background";
+  }
   if (speciesGrant?.kind === "choose") return "species";
   if (backgroundGrant?.kind === "choose") return "background";
+  return null;
+}
+
+/** Resolves the pick target even before async grants finish loading (AGMH background rule). */
+export function resolveEffectiveOriginFeatChooseTarget(
+  speciesGrant: OriginFeatGrant | null | undefined,
+  backgroundGrant: OriginFeatGrant | null | undefined,
+  options?: {
+    preferBackgroundChoose?: boolean;
+    hasBackground?: boolean;
+  },
+): "species" | "background" | null {
+  const target = resolveOriginFeatChooseTarget(
+    speciesGrant,
+    backgroundGrant,
+    options?.preferBackgroundChoose,
+  );
+  if (target) return target;
+  if (options?.preferBackgroundChoose && options.hasBackground) {
+    return "background";
+  }
   return null;
 }
 
 export function hasOriginFeatChooseGrant(
   speciesGrant: OriginFeatGrant | null | undefined,
   backgroundGrant: OriginFeatGrant | null | undefined,
+  preferBackgroundChoose = false,
+  hasBackground = false,
 ): boolean {
-  return resolveOriginFeatChooseTarget(speciesGrant, backgroundGrant) !== null;
+  return (
+    resolveEffectiveOriginFeatChooseTarget(speciesGrant, backgroundGrant, {
+      preferBackgroundChoose,
+      hasBackground,
+    }) !== null
+  );
 }
 
 export function formatInvocationOriginFeatSourceName(

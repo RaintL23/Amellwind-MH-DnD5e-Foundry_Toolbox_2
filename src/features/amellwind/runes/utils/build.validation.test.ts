@@ -206,4 +206,44 @@ describe("armor rules", () => {
     });
     expect(getArmorViolations([elemental, vsCondition])).toEqual([]);
   });
+
+  it("allows Guard Up alongside a real AC bonus (rule 3)", () => {
+    const ironWall = makeRune({
+      name: "Iron Wall Material",
+      armorEffect:
+        "Iron Wall. You have a +2 bonus to your armor class while you wear this armor.",
+      armorTags: ["mechanic:armor-class", "mechanic:passive", "type:defensive"],
+    });
+    const guardUp = makeRune({
+      name: "Heavy Rustrazor Scalp",
+      armorEffect:
+        "Guard Up When you fail a Dexterity or Strength saving throw, you can use your reaction to expend 1 of its runes to use your AC in place of your roll. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
+      armorTags: [
+        "mechanic:guard-up",
+        "mechanic:reaction",
+        "mechanic:saving-throw",
+        "type:defensive",
+      ],
+    });
+
+    expect(getArmorViolations([ironWall, guardUp])).toEqual([]);
+    expect(wouldViolateRule(ironWall, [guardUp], "armor")).toBeNull();
+    expect(wouldViolateRule(guardUp, [ironWall], "armor")).toBeNull();
+  });
+
+  it("flags two real AC bonus materials (rule 3)", () => {
+    const a = makeRune({
+      name: "Iron Wall A",
+      armorEffect: "You have a +2 bonus to your AC while you wear this armor.",
+      armorTags: ["mechanic:armor-class", "mechanic:passive"],
+    });
+    const b = makeRune({
+      name: "Iron Wall B",
+      armorEffect: "You have a +1 bonus to your AC while you wear this armor.",
+      armorTags: ["mechanic:armor-class", "mechanic:passive"],
+    });
+    const violations = getArmorViolations([a, b]);
+    expect(violations).toHaveLength(1);
+    expect(violations[0].rule).toMatch(/rule 3/);
+  });
 });

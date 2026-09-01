@@ -58,6 +58,7 @@ export interface BuildCompletenessInput {
   subclassData: Subclass | null;
   speciesData: Species | null;
   dndBackground: DndBackground | null;
+  useAmellwindHomebrew: boolean;
   speciesOriginFeatGrant: OriginFeatGrant | null;
   backgroundOriginFeatGrant: OriginFeatGrant | null;
   speciesOriginFeat: BuilderFeatSelection | null;

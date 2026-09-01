@@ -78,6 +78,8 @@ export function evaluateFeatsCompleteness(
     hasOriginFeatChooseGrant(
       input.speciesOriginFeatGrant,
       input.backgroundOriginFeatGrant,
+      input.useAmellwindHomebrew,
+      !!input.background,
     ) &&
     !input.speciesOriginFeat &&
     !input.backgroundOriginFeat

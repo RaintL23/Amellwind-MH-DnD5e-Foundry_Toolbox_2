@@ -93,6 +93,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
     onBackgroundChange,
     onClassChange,
     clearSubclassOptionalFeatures,
+    useAmellwindHomebrew,
   });
 
   const spell = useSpellSlice({
@@ -410,6 +411,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       backgroundOriginFeatGrant: identity.backgroundOriginFeatGrant,
       backgroundOriginFeat: identity.backgroundOriginFeat,
       originFeatGrantsReady: identity.originFeatGrantsReady,
+      canPickOriginFeat: identity.canPickOriginFeat,
       originFeatSkillChoices: identity.originFeatSkillChoices,
       optionalFeatureOriginFeatSlots: spell.optionalFeatureOriginFeatSlots,
       optionalFeatureOriginFeats: spell.optionalFeatureOriginFeats,
@@ -418,6 +420,7 @@ export function CharacterBuilderProvider({ children }: Readonly<{ children: Reac
       personality: identity.personality,
       faction: identity.faction,
       setSpecies: identity.setSpecies,
+      clearInvalidSpeciesSubrace: identity.clearInvalidSpeciesSubrace,
       setBackground: identity.setBackground,
       setClass: identity.setClass,
       setSubclass: identity.setSubclass,

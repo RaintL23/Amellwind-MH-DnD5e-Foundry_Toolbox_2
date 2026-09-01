@@ -47,8 +47,16 @@ export function applyBuilderSnapshot(
   snap.featSelections.forEach((feat, index) =>
     builder.setFeatAtIndex(index, feat),
   );
-  builder.setSpeciesOriginFeat(snap.speciesOriginFeat);
-  builder.setBackgroundOriginFeat(snap.backgroundOriginFeat);
+  // Restore only the non-null slot so that userOriginFeatRef stays set to the
+  // saved feat. Calling both setters would overwrite the ref with null when the
+  // second call is null, breaking the restoreUserOriginFeatChoice flow in the
+  // async grant-loading effects. The null counterpart is already cleared by
+  // setSpecies / setBackground earlier in rehydrateBuilderState.
+  if (snap.speciesOriginFeat) {
+    builder.setSpeciesOriginFeat(snap.speciesOriginFeat);
+  } else if (snap.backgroundOriginFeat) {
+    builder.setBackgroundOriginFeat(snap.backgroundOriginFeat);
+  }
   snap.optionalFeatureOriginFeats.forEach((feat, index) =>
     builder.setOptionalFeatureOriginFeatAtIndex(index, feat),
   );

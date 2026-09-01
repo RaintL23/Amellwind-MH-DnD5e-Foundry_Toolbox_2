@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useDebouncedValue } from "@/shared/hooks/useDebouncedValue";
 import { useCharacterBuilder } from "../context/CharacterBuilderContext";
 import { useBuilderInventory } from "../context/BuilderInventoryContext";
@@ -31,14 +31,25 @@ export function BuilderAutosaveSync() {
   const inventory = useBuilderInventory();
   const hydratedRef = useRef(false);
   const lastWrittenRef = useRef<string | null>(null);
+  const [hydrationSettled, setHydrationSettled] = useState(false);
 
   useEffect(() => {
     if (hydratedRef.current) return;
     hydratedRef.current = true;
     const saved = loadBuilderAutosave();
-    if (saved) rehydrateBuilderState(builder, inventory, saved);
-    // Rehydrate exactly once on mount; the guard above prevents re-entry.
-  }, []);
+    if (saved) {
+      rehydrateBuilderState(builder, inventory, saved);
+      lastWrittenRef.current = JSON.stringify({
+        identity: saved.identity,
+        core: saved.core,
+        multiclass: saved.multiclass,
+        snapshot: saved.snapshot,
+      });
+    }
+    // Wait one render so rehydrated state is reflected in the persist payload
+    // before any debounced save can overwrite a good autosave with empty state.
+    setHydrationSettled(true);
+  }, [builder, inventory]);
 
   const payload = useMemo(
     () => buildBuilderPersistPayload(builder, { items: inventory.items }),
@@ -60,19 +71,19 @@ export function BuilderAutosaveSync() {
   const originFeatKey = originFeatPersistKey(payload);
 
   useEffect(() => {
-    if (!hydratedRef.current) return;
+    if (!hydrationSettled) return;
     if (!hasBuildContent(debounced)) return;
     const serialized = JSON.stringify(debounced);
     if (serialized === lastWrittenRef.current) return;
     lastWrittenRef.current = serialized;
     persistBuilderAutosave(debounced);
-  }, [debounced]);
+  }, [debounced, hydrationSettled]);
 
   // Origin feats are often the last pick before closing the tab — persist immediately.
   useEffect(() => {
-    if (!hydratedRef.current) return;
+    if (!hydrationSettled) return;
     flushAutosave();
-  }, [originFeatKey, flushAutosave]);
+  }, [originFeatKey, flushAutosave, hydrationSettled]);
 
   useEffect(() => {
     const onPageHide = () => flushAutosave();

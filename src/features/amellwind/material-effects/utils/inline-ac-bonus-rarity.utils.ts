@@ -1,9 +1,37 @@
 import type { ResourceRarity } from "@/shared/types";
+import type { Rune } from "@/shared/types";
 import {
   isLimitedFlatBonus,
   rarityForFlatBonusAmount,
   stripConditionalBonusBumps,
 } from "./inline-flat-bonus-rarity.utils";
+
+/**
+ * True when AC is only used as a save replacement (Guard Up, dodge protection),
+ * not a standing bonus to the wearer's armor class.
+ */
+export function usesAcAsSaveReplacement(text: string): boolean {
+  if (
+    /use your AC in place of your roll/i.test(text) &&
+    /fail(?:ed|s)? a (?:Dexterity|Strength)(?:\s+or\s+(?:Dexterity|Strength))?\s+saving throw/i.test(
+      text,
+    )
+  ) {
+    return true;
+  }
+
+  return (
+    /taking the dodge action/i.test(text) &&
+    /Armor Class in place of making the roll/i.test(text)
+  );
+}
+
+/** Whether an armor effect actually grants the wearer an AC bonus (rule 3). */
+export function grantsAcBonusToWearer(rune: Rune): boolean {
+  if (!rune.armorTags.includes("mechanic:armor-class")) return false;
+  if (usesAcAsSaveReplacement(rune.armorEffect ?? "")) return false;
+  return true;
+}
 
 /**
  * Parses the standing +N AC bonus from effect text (ignores elemental/conditional bumps).

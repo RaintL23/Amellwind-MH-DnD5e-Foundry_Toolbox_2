@@ -1,3 +1,4 @@
+import { usesAcAsSaveReplacement } from "@/features/amellwind/material-effects/utils/inline-ac-bonus-rarity.utils";
 import { SKILL_NAME_TO_KEY } from "@/shared/constants/dnd/skills.constants";
 import { extractAllDamageTypesFromText } from "@/shared/utils/damage-type-text.utils";
 import { matchesFlatDamageReduction, normalizeEffectApostrophes } from "../../utils/rune-damage-reduction.utils";
@@ -2384,6 +2385,15 @@ function dodgeAcSaveTag(text: string): string | null {
     : null;
 }
 
+function guardUpTag(text: string): string | null {
+  return /use your AC in place of your roll/i.test(text) &&
+    /fail(?:ed|s)? a (?:Dexterity|Strength)(?:\s+or\s+(?:Dexterity|Strength))?\s+saving throw/i.test(
+      text,
+    )
+    ? "mechanic:guard-up"
+    : null;
+}
+
 function hiddenSaveDisadvantageTag(text: string): string | null {
   return /\bdisadvantage on the save\b/i.test(text) &&
     (/\bhidden\b/i.test(text) || /ally is within \d+ feet/i.test(text))
@@ -2898,6 +2908,13 @@ function extractTags(
 
   const dodgeAcSave = dodgeAcSaveTag(normalizedText);
   if (dodgeAcSave) tags.add(dodgeAcSave);
+
+  const guardUp = guardUpTag(normalizedText);
+  if (guardUp) tags.add(guardUp);
+
+  if (usesAcAsSaveReplacement(normalizedText)) {
+    tags.delete("mechanic:armor-class");
+  }
 
   const hiddenSaveDisadvantage = hiddenSaveDisadvantageTag(normalizedText);
   if (hiddenSaveDisadvantage) tags.add(hiddenSaveDisadvantage);

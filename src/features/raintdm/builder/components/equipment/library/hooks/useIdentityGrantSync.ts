@@ -17,7 +17,7 @@ export function useIdentityGrantSync() {
     speciesSpellGroupChoice,
     useAmellwindHomebrew,
     applyIdentityGrants,
-    setSpecies,
+    clearInvalidSpeciesSubrace,
   } = useCharacterBuilder();
 
   useEffect(() => {
@@ -36,12 +36,7 @@ export function useIdentityGrantSync() {
       if (cancelled) return;
 
       if (invalidSubrace) {
-        setSpecies({
-          id: species.id,
-          name: species.name,
-          subraceId: null,
-          subraceName: null,
-        });
+        clearInvalidSpeciesSubrace();
         return;
       }
 
@@ -57,7 +52,7 @@ export function useIdentityGrantSync() {
     speciesSpellGroupChoice,
     useAmellwindHomebrew,
     applyIdentityGrants,
-    setSpecies,
+    clearInvalidSpeciesSubrace,
   ]);
 
   useEffect(() => {

@@ -34,6 +34,7 @@ import {
 } from "../../utils/multiclass.utils";
 import { resolveOptionalFeatureProgressions } from "../../utils/class-optional-features.utils";
 import { hasOriginFeatChooseGrant } from "../../utils/origin-feat.constants";
+import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import type { Class } from "@/shared/types";
 import type { BuilderOptionalFeatureSelections } from "@/shared/types";
 import type { OptionalFeatureOriginFeatSlot } from "../../utils/optional-feature-feat-grants.utils";
@@ -104,6 +105,7 @@ export function IdentityGridPanel({
   onSelectSlot,
   onUnequipSlot,
 }: IdentityGridPanelProps) {
+  const { useAmellwindHomebrew } = useCharacterBuilder();
   const hasBackstory = backstoryNotes.trim().length > 0;
   const showSubclass = isSubclassLevelReached(classData, primaryClassLevel);
   const classEntries = buildClassLevelEntries(
@@ -124,6 +126,8 @@ export function IdentityGridPanel({
   const originFeatCanChange = hasOriginFeatChooseGrant(
     speciesOriginFeatGrant,
     backgroundOriginFeatGrant,
+    useAmellwindHomebrew,
+    !!background,
   );
   const originFeatEquipped = speciesOriginFeat
     ? {

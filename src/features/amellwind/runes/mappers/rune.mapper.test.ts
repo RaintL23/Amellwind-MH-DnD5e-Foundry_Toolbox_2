@@ -1586,6 +1586,17 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     );
   });
 
+  it("tags Guard Up as save substitution without armor-class", () => {
+    const tags = extractRuneEffectTags(
+      "Guard Up When you fail a Dexterity or Strength saving throw, you can use your reaction to expend 1 of its runes to use your AC in place of your roll. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
+    );
+
+    expect(tags).toContain("mechanic:guard-up");
+    expect(tags).toContain("mechanic:reaction");
+    expect(tags).toContain("mechanic:saving-throw");
+    expect(tags).not.toContain("mechanic:armor-class");
+  });
+
   it("tags Coalescence attack-rolls + spell save DC as spell-buff:save", () => {
     const tags = extractRuneEffectTags(
       "Coalescence+. Whenever you succeed on a saving throw to end a condition, you gain a +2 bonus to your attack rolls and spell save DC, and your weapon or spell attacks deal an extra 1d8 cold damage until the end of your next turn.",
