@@ -11,11 +11,11 @@ import type { ItemRarity } from "../context/RuneBuildContext";
 const STORAGE_KEY = "mh-rune-build";
 
 /**
- * Bump when the persisted shape changes incompatibly. v2 adds the chosen
- * material-effect kind (weapon/armor) for each trinket slot; older builds
- * (v1) are discarded on load.
+ * Bump when the persisted shape changes incompatibly. v3 adds Artificer bonus
+ * slot settings; v2 adds trinket material-effect kinds; older builds are
+ * discarded on load.
  */
-export const RUNE_BUILD_STORAGE_VERSION = 2;
+export const RUNE_BUILD_STORAGE_VERSION = 3;
 
 export interface RuneRef {
   name: string;
@@ -33,6 +33,9 @@ export interface RuneBuildPersistedState {
   /** Which effect (weapon/armor) the trinket rune activates. */
   trinket1Kind: MaterialEffectSlot | null;
   trinket2Kind: MaterialEffectSlot | null;
+  /** Artificer: extra material slots on weapon and armor (levels 10/14/18). */
+  artificerEnabled: boolean;
+  artificerLevel: number;
 }
 
 export function runeToRef(rune: Rune | null): RuneRef | null {

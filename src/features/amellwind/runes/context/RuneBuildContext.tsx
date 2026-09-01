@@ -9,6 +9,7 @@ import {
   ReactNode,
 } from "react";
 import { MaterialEffectSlot, Rune } from "@/shared/types";
+import { getArtificerBonusMaterialSlots } from "@/shared/utils/artificer-material-slots.utils";
 import { getAllRunes } from "../services/rune.service";
 import {
   clearRuneBuild,
@@ -38,6 +39,17 @@ export const RARITY_ORDER: ItemRarity[] = [
   "legendary",
 ];
 
+export function getRuneSlotCount(
+  rarity: ItemRarity,
+  artificerBonusSlots = 0,
+): number {
+  return RARITY_SLOTS[rarity] + artificerBonusSlots;
+}
+
+function resizeSlotArray<T>(prev: T[], newSize: number, fill: T): T[] {
+  return Array.from({ length: newSize }, (_, i) => prev[i] ?? fill);
+}
+
 interface RuneBuildContextValue {
   weaponRarity: ItemRarity;
   armorRarity: ItemRarity;
@@ -48,6 +60,11 @@ interface RuneBuildContextValue {
   /** Chosen effect (weapon/armor) for each trinket rune, null when empty. */
   trinket1Kind: MaterialEffectSlot | null;
   trinket2Kind: MaterialEffectSlot | null;
+  artificerEnabled: boolean;
+  artificerLevel: number;
+  artificerBonusSlots: number;
+  setArtificerEnabled: (enabled: boolean) => void;
+  setArtificerLevel: (level: number) => void;
   setWeaponRarity: (r: ItemRarity) => void;
   setArmorRarity: (r: ItemRarity) => void;
   addRune: (
@@ -65,8 +82,8 @@ interface RuneBuildContextValue {
 
 const RuneBuildContext = createContext<RuneBuildContextValue | null>(null);
 
-function makeSlots(rarity: ItemRarity): (Rune | null)[] {
-  return Array<Rune | null>(RARITY_SLOTS[rarity]).fill(null);
+function makeSlots(rarity: ItemRarity, artificerBonusSlots = 0): (Rune | null)[] {
+  return Array<Rune | null>(getRuneSlotCount(rarity, artificerBonusSlots)).fill(null);
 }
 
 /** Falls back to whichever effect the rune actually has (weapon preferred). */
@@ -91,6 +108,11 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
   // are correct on first render; the runes themselves resolve asynchronously.
   const persistedRef = useRef(loadRuneBuild());
   const persisted = persistedRef.current;
+  const initialArtificerEnabled = persisted?.artificerEnabled ?? false;
+  const initialArtificerLevel = persisted?.artificerLevel ?? 1;
+  const initialArtificerBonus = initialArtificerEnabled
+    ? getArtificerBonusMaterialSlots(initialArtificerLevel)
+    : 0;
   // Suppress persistence until the async rehydration settles, so the transient
   // empty state doesn't overwrite a saved build.
   const hydratedRef = useRef(!persisted);
@@ -102,11 +124,13 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     persisted?.armorRarity ?? "common",
   );
   const [weaponRunes, setWeaponRunes] = useState<(Rune | null)[]>(() =>
-    makeSlots(persisted?.weaponRarity ?? "common"),
+    makeSlots(persisted?.weaponRarity ?? "common", initialArtificerBonus),
   );
   const [armorRunes, setArmorRunes] = useState<(Rune | null)[]>(() =>
-    makeSlots(persisted?.armorRarity ?? "common"),
+    makeSlots(persisted?.armorRarity ?? "common", initialArtificerBonus),
   );
+  const [artificerEnabled, setArtificerEnabledState] = useState(initialArtificerEnabled);
+  const [artificerLevel, setArtificerLevelState] = useState(initialArtificerLevel);
   const [trinket1Rune, setTrinket1Rune] = useState<Rune | null>(null);
   const [trinket2Rune, setTrinket2Rune] = useState<Rune | null>(null);
   const [trinket1Kind, setTrinket1Kind] = useState<MaterialEffectSlot | null>(
@@ -116,6 +140,10 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     null,
   );
 
+  const artificerBonusSlots = artificerEnabled
+    ? getArtificerBonusMaterialSlots(artificerLevel)
+    : 0;
+
   useEffect(() => {
     if (!persisted) return;
     let cancelled = false;
@@ -124,17 +152,20 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
         if (cancelled) return;
         const runeMap = new Map<string, Rune>();
         for (const rune of runes) runeMap.set(runeRefKey(rune), rune);
+        const bonus = persisted.artificerEnabled
+          ? getArtificerBonusMaterialSlots(persisted.artificerLevel)
+          : 0;
         setWeaponRunes(
           resolveSlots(
             persisted.weaponRunes,
-            RARITY_SLOTS[persisted.weaponRarity],
+            getRuneSlotCount(persisted.weaponRarity, bonus),
             runeMap,
           ),
         );
         setArmorRunes(
           resolveSlots(
             persisted.armorRunes,
-            RARITY_SLOTS[persisted.armorRarity],
+            getRuneSlotCount(persisted.armorRarity, bonus),
             runeMap,
           ),
         );
@@ -166,21 +197,61 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     // Rehydrate exactly once on mount from the snapshot loaded above.
   }, []);
 
-  const setWeaponRarity = useCallback((r: ItemRarity) => {
-    setWeaponRarityState(r);
-    setWeaponRunes((prev) => {
-      const newSize = RARITY_SLOTS[r];
-      return Array.from({ length: newSize }, (_, i) => prev[i] ?? null);
-    });
-  }, []);
+  const setWeaponRarity = useCallback(
+    (r: ItemRarity) => {
+      setWeaponRarityState(r);
+      setWeaponRunes((prev) =>
+        resizeSlotArray(
+          prev,
+          getRuneSlotCount(r, artificerBonusSlots),
+          null,
+        ),
+      );
+    },
+    [artificerBonusSlots],
+  );
 
-  const setArmorRarity = useCallback((r: ItemRarity) => {
-    setArmorRarityState(r);
-    setArmorRunes((prev) => {
-      const newSize = RARITY_SLOTS[r];
-      return Array.from({ length: newSize }, (_, i) => prev[i] ?? null);
-    });
-  }, []);
+  const setArmorRarity = useCallback(
+    (r: ItemRarity) => {
+      setArmorRarityState(r);
+      setArmorRunes((prev) =>
+        resizeSlotArray(
+          prev,
+          getRuneSlotCount(r, artificerBonusSlots),
+          null,
+        ),
+      );
+    },
+    [artificerBonusSlots],
+  );
+
+  const applyArtificerBonus = useCallback((bonus: number) => {
+    setWeaponRunes((prev) =>
+      resizeSlotArray(prev, getRuneSlotCount(weaponRarity, bonus), null),
+    );
+    setArmorRunes((prev) =>
+      resizeSlotArray(prev, getRuneSlotCount(armorRarity, bonus), null),
+    );
+  }, [weaponRarity, armorRarity]);
+
+  const setArtificerEnabled = useCallback(
+    (enabled: boolean) => {
+      setArtificerEnabledState(enabled);
+      const bonus = enabled ? getArtificerBonusMaterialSlots(artificerLevel) : 0;
+      applyArtificerBonus(bonus);
+    },
+    [artificerLevel, applyArtificerBonus],
+  );
+
+  const setArtificerLevel = useCallback(
+    (level: number) => {
+      setArtificerLevelState(level);
+      if (artificerEnabled) {
+        applyArtificerBonus(getArtificerBonusMaterialSlots(level));
+      }
+    },
+    [artificerEnabled, applyArtificerBonus],
+  );
 
   const addRune = useCallback(
     (
@@ -278,7 +349,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     const isEmpty =
       totalRunes === 0 &&
       weaponRarity === "common" &&
-      armorRarity === "common";
+      armorRarity === "common" &&
+      !artificerEnabled;
     if (isEmpty) {
       clearRuneBuild();
       return;
@@ -292,6 +364,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
       trinket2Rune: runeToRef(trinket2Rune),
       trinket1Kind: trinket1Rune ? trinket1Kind : null,
       trinket2Kind: trinket2Rune ? trinket2Kind : null,
+      artificerEnabled,
+      artificerLevel,
     });
   }, [
     weaponRarity,
@@ -303,6 +377,8 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
     trinket1Kind,
     trinket2Kind,
     totalRunes,
+    artificerEnabled,
+    artificerLevel,
   ]);
 
   const value = useMemo(
@@ -315,6 +391,11 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
       trinket2Rune,
       trinket1Kind,
       trinket2Kind,
+      artificerEnabled,
+      artificerLevel,
+      artificerBonusSlots,
+      setArtificerEnabled,
+      setArtificerLevel,
       setWeaponRarity,
       setArmorRarity,
       addRune,
@@ -333,6 +414,11 @@ export function RuneBuildProvider({ children }: { children: ReactNode }) {
       trinket2Rune,
       trinket1Kind,
       trinket2Kind,
+      artificerEnabled,
+      artificerLevel,
+      artificerBonusSlots,
+      setArtificerEnabled,
+      setArtificerLevel,
       setWeaponRarity,
       setArmorRarity,
       addRune,

@@ -37,6 +37,9 @@ const DISCOVERED_EFFECT_RARITY_BY_KEY: Record<string, ResourceRarity> = {
   "weapon:fastcharge+": "Rare",
   "weapon:fastcharge+2": "Rare",
 
+  /** Gunlance capstone: unlimited wyvernfire, line AoE, bypass + half vs immunity (Zorah Magdaros). */
+  "weapon:max artillery": "Legendary",
+
   /** Dodge-action AC-for-save once per long rest (Juvenile Uragaan). */
   "armor:uragaan minor protection": "Uncommon",
 

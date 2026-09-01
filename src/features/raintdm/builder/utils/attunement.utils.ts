@@ -1,6 +1,9 @@
-const BASE_ATTUNEMENT_SLOTS = 3;
+import {
+  ARTIFICER_BONUS_MATERIAL_SLOTS_TOOLTIP,
+  getArtificerBonusMaterialSlots,
+} from "@/shared/utils/artificer-material-slots.utils";
 
-const ARTIFICER_BONUS_MATERIAL_LEVELS = [10, 14, 18] as const;
+const BASE_ATTUNEMENT_SLOTS = 3;
 
 export interface AttunementInfo {
   /** Standard magic item attunement slots (always 3 in Amellwind). */
@@ -17,13 +20,12 @@ export function getAttunementInfo(
 ): AttunementInfo {
   const isArtificer = className?.toLowerCase() === "artificer";
   const artificerBonusMaterialSlots = isArtificer
-    ? ARTIFICER_BONUS_MATERIAL_LEVELS.filter((lv) => level >= lv).length
+    ? getArtificerBonusMaterialSlots(level)
     : 0;
 
   let tooltip: string | undefined;
   if (isArtificer && artificerBonusMaterialSlots > 0) {
-    tooltip =
-      "Amellwind: Artificers do not gain extra attunement slots. Instead, +1 material slot on weapon and armor at levels 10, 14, and 18.";
+    tooltip = ARTIFICER_BONUS_MATERIAL_SLOTS_TOOLTIP;
   }
 
   return {

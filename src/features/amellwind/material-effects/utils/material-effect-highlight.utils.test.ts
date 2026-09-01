@@ -1290,6 +1290,61 @@ describe("getMaterialEffectTierForText — discovered named overlay", () => {
       getMaterialEffectTierForText(rune.armorEffect ?? "", "armor", index),
     ).toBe("Unknown");
   });
+
+  it("does not treat Max Artillery as Common via substring Artillery match", () => {
+    const maxArtilleryText =
+      "(Gunlance Only) Max Artillery. While attuned to this weapon, your wyvernfire can now be used an unlimited number of times, its area of effect changes to a 60-foot line that is 10 feet wide, you can add your Strength or Dexterity modifier to the damage of your shell attacks, and your shell's bypass fire resistance and deal half damage to creature's immune to fire damage.";
+    const artilleryRune = makeRune({
+      name: "Seltas Scale",
+      slots: ["W"],
+      weaponEffect:
+        "(Gunlance Only) Artillery. While attuned to this weapon, your wyvernfire can now be used twice per long rest.",
+    });
+    const maxRune = makeRune({
+      name: "Zorah Magdaros Shell",
+      slots: ["W"],
+      weaponEffect: maxArtilleryText,
+      weaponTags: extractRuneEffectTags(maxArtilleryText),
+    });
+    const index = supplementIndexWithRuneEffectNames(emptyIndex, [
+      artilleryRune,
+      maxRune,
+    ]);
+
+    expect(findMatchingMaterialEffectNames(maxArtilleryText, index.all)).toEqual([
+      "Max Artillery",
+    ]);
+    const tier = getMaterialEffectTierForText(
+      maxArtilleryText,
+      "weapon",
+      index,
+      maxRune.weaponTags ?? [],
+    );
+    expect(tier).not.toBe("Common");
+    expect(tier).toBe("Legendary");
+  });
+
+  it("prefers tag inference over substring Artillery catalog match for Max Artillery", () => {
+    const maxArtilleryText =
+      "(Gunlance Only) Max Artillery. While attuned to this weapon, your wyvernfire can now be used an unlimited number of times, its area of effect changes to a 60-foot line that is 10 feet wide, you can add your Strength or Dexterity modifier to the damage of your shell attacks, and your shell's bypass fire resistance and deal half damage to creature's immune to fire damage.";
+    const index = buildMaterialEffectNameIndex([
+      makeEffect({
+        id: "weapon-common-artillery",
+        name: "Artillery",
+        slot: "weapon",
+        rarity: "Common",
+      }),
+    ]);
+
+    expect(
+      getMaterialEffectTierForText(
+        maxArtilleryText,
+        "weapon",
+        index,
+        extractRuneEffectTags(maxArtilleryText),
+      ),
+    ).toBe("Legendary");
+  });
 });
 
 describe("getMaterialEffectTierForText — reviewed inline MHMM patterns", () => {

@@ -1,8 +1,9 @@
 import { Gem, ShieldCheck, Sword } from "lucide-react";
 import { MaterialEffectSlot, Rune } from "@/shared/types";
-import { ItemRarity, RARITY_SLOTS } from "../../context/RuneBuildContext";
+import { ItemRarity, getRuneSlotCount } from "../../context/RuneBuildContext";
 import { RuleViolation } from "../../utils/build.validation";
 import { AccumulatedEffects } from "./AccumulatedEffects";
+import { ArtificerSlotsControl } from "./ArtificerSlotsControl";
 import { BuildSection } from "./BuildSection";
 import { RaritySelect } from "./RaritySelect";
 import { TrinketSlotRow } from "./TrinketSlotRow";
@@ -16,10 +17,15 @@ interface BuildDrawerContentProps {
   trinket2Rune: Rune | null;
   trinket1Kind: MaterialEffectSlot | null;
   trinket2Kind: MaterialEffectSlot | null;
+  artificerEnabled: boolean;
+  artificerLevel: number;
+  artificerBonusSlots: number;
   weaponViolations: RuleViolation[];
   armorViolations: RuleViolation[];
   onWeaponRarityChange: (r: ItemRarity) => void;
   onArmorRarityChange: (r: ItemRarity) => void;
+  onArtificerEnabledChange: (enabled: boolean) => void;
+  onArtificerLevelChange: (level: number) => void;
 }
 
 export function BuildDrawerContent({
@@ -31,13 +37,30 @@ export function BuildDrawerContent({
   trinket2Rune,
   trinket1Kind,
   trinket2Kind,
+  artificerEnabled,
+  artificerLevel,
+  artificerBonusSlots,
   weaponViolations,
   armorViolations,
   onWeaponRarityChange,
   onArmorRarityChange,
+  onArtificerEnabledChange,
+  onArtificerLevelChange,
 }: BuildDrawerContentProps) {
+  const weaponSlotCount = getRuneSlotCount(weaponRarity, artificerBonusSlots);
+  const armorSlotCount = getRuneSlotCount(armorRarity, artificerBonusSlots);
+
   return (
     <>
+      <ArtificerSlotsControl
+        enabled={artificerEnabled}
+        level={artificerLevel}
+        onEnabledChange={onArtificerEnabledChange}
+        onLevelChange={onArtificerLevelChange}
+      />
+
+      <div className="border-t border-border/50" />
+
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <RaritySelect
@@ -46,8 +69,14 @@ export function BuildDrawerContent({
             onChange={onWeaponRarityChange}
           />
           <span className="text-xs text-muted-foreground">
-            {weaponRunes.filter(Boolean).length}/{RARITY_SLOTS[weaponRarity]}{" "}
+            {weaponRunes.filter(Boolean).length}/{weaponSlotCount}{" "}
             slots
+            {artificerBonusSlots > 0 && (
+              <span className="text-amber-500/80">
+                {" "}
+                (+{artificerBonusSlots} Artificer)
+              </span>
+            )}
           </span>
         </div>
         <BuildSection
@@ -70,8 +99,14 @@ export function BuildDrawerContent({
             onChange={onArmorRarityChange}
           />
           <span className="text-xs text-muted-foreground">
-            {armorRunes.filter(Boolean).length}/{RARITY_SLOTS[armorRarity]}{" "}
+            {armorRunes.filter(Boolean).length}/{armorSlotCount}{" "}
             slots
+            {artificerBonusSlots > 0 && (
+              <span className="text-amber-500/80">
+                {" "}
+                (+{artificerBonusSlots} Artificer)
+              </span>
+            )}
           </span>
         </div>
         <BuildSection

@@ -21,6 +21,11 @@ export function BuildDrawer() {
     trinket2Rune,
     trinket1Kind,
     trinket2Kind,
+    artificerEnabled,
+    artificerLevel,
+    artificerBonusSlots,
+    setArtificerEnabled,
+    setArtificerLevel,
     setWeaponRarity,
     setArmorRarity,
     clearBuild,
@@ -83,10 +88,15 @@ export function BuildDrawer() {
             trinket2Rune={trinket2Rune}
             trinket1Kind={trinket1Kind}
             trinket2Kind={trinket2Kind}
+            artificerEnabled={artificerEnabled}
+            artificerLevel={artificerLevel}
+            artificerBonusSlots={artificerBonusSlots}
             weaponViolations={weaponViolations}
             armorViolations={armorViolations}
             onWeaponRarityChange={setWeaponRarity}
             onArmorRarityChange={setArmorRarity}
+            onArtificerEnabledChange={setArtificerEnabled}
+            onArtificerLevelChange={setArtificerLevel}
           />
         </div>
 

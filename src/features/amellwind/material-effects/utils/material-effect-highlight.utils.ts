@@ -434,7 +434,16 @@ export function findMatchingMaterialEffectNames(
     }
   }
 
-  return matched.sort((a, b) => b.length - a.length);
+  const sorted = matched.sort((a, b) => b.length - a.length);
+  // Drop shorter names subsumed by a longer match (e.g. "Artillery" inside "Max Artillery").
+  return sorted.filter(
+    (name, index) =>
+      !sorted.some(
+        (other, otherIndex) =>
+          otherIndex < index &&
+          other.toLowerCase().includes(name.toLowerCase()),
+      ),
+  );
 }
 
 export function getReferencedMaterialEffectsForText(
@@ -459,6 +468,22 @@ export function getMaterialEffectTierForText(
   effectTags: string[] = [],
 ): MaterialEffectTierFilter {
   if (!text.trim()) return UNKNOWN_MATERIAL_EFFECT_TIER;
+
+  const leadingName = extractLeadingMaterialEffectName(text)
+    ?.replace(/\.$/, "")
+    .trim();
+  if (leadingName) {
+    const leadingEffect = resolveMaterialEffectByName(
+      leadingName,
+      slot,
+      index.byKey,
+    );
+    if (leadingEffect && !isDiscoveredEffect(leadingEffect)) {
+      return leadingEffect.rarity;
+    }
+    const leadingRarity = lookupDiscoveredEffectRarity(leadingName, slot);
+    if (leadingRarity) return leadingRarity;
+  }
 
   const refs = getReferencedMaterialEffectsForText(text, slot, index);
   const catalogRef = refs.find((effect) => !isDiscoveredEffect(effect));
