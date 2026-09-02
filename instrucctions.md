@@ -1160,7 +1160,7 @@ Para evitar boilerplate repetido por feature, gran parte de los services del com
 
 ### Listado de Monstruos
 
-**Fuente de datos**: `getMonsterData()` mezcla `mm_current.github` (feed público) con `public/data/mhmm-patreon-2.0/supplement.json` (PDF gratuito de Amellwind, [Loot Tables 2.0](https://www.patreon.com/amellwind/posts/monster-hunter-137502033)). **El PDF gana** por nombre normalizado; GitHub solo aporta nombres que el PDF no tiene. El resultado mezclado se escribe en IndexedDB (`mm_current.data`). Regenerar el overlay con `pnpm build:mm-supplement`.
+**Fuente de datos**: `getMonsterData()` mezcla `mm_current.github` (feed público) con `public/data/mhmm-patreon-2.0/supplement.json` (PDF gratuito de Amellwind, [Loot Tables 2.0](https://www.patreon.com/amellwind/posts/monster-hunter-137502033)). **El PDF gana** por nombre normalizado; GitHub solo aporta nombres que el PDF no tiene. El resultado mezclado se escribe en IndexedDB (`mm_current.data`). Tras editar fichas en `public/data/mhmm-patreon-2.0/monsters/**/*.md`, regenerar con `pnpm build:mm-data` (`.md` → `catalog.json`/`runes.json` → `supplement.json`). Solo overlay: `pnpm build:mm-supplement`.
 
 El dump del PDF aplana listas anidadas de 5etools (p. ej. _Shifting Scales_ de Fatalis) y a veces pega el siguiente `Name (Recharge)` en el texto anterior. `sanitizeNamedEntrySection` (en `mapActorCore`) vuelve a anidar esos hijos bajo el padre y separa acciones pegadas; el JSON de GitHub, que ya trae `type: "list"`, no se toca.
 

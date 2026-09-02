@@ -19,7 +19,23 @@ Source: Amellwind’s free [MHMM with Loot Tables 2.0](https://www.patreon.com/a
 4. The unordered PDF dump is not shipped. Rebuild catalog from a local dump
    with `python scripts/organize-mhmm-dump.py` if you have it.
 
-Regenerate the overlay after editing `catalog.json`:
+Regenerate machine files after editing monster sheets (`monsters/<family>/<slug>.md`):
+
+```bash
+pnpm build:mm-data
+```
+
+That runs `build:mm-catalog` (`.md` → `catalog.json` + `runes.json`) and then
+`build:mm-supplement` (`catalog.json` → `supplement.json` for the app).
+
+Single-sheet update:
+
+```bash
+node scripts/build-mm-patreon-catalog.mjs --file monsters/flying-wyverns/bazelgeuse.md
+pnpm build:mm-supplement
+```
+
+Regenerate only the overlay after hand-editing `catalog.json`:
 
 ```bash
 pnpm build:mm-supplement

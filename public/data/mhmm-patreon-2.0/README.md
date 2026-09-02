@@ -9,7 +9,8 @@ the PDF does not have.
 
 | Want | Use |
 | --- | --- |
-| Runtime overlay | `supplement.json` (`pnpm build:mm-supplement`) |
+| Runtime overlay | `supplement.json` (`pnpm build:mm-data` or `pnpm build:mm-supplement`) |
+| Rebuild from edited `.md` sheets | `pnpm build:mm-data` |
 | Process into JSON / mappers | `catalog.json` + `runes.json` + [`SCHEMA.md`](SCHEMA.md) |
 | Read one creature | `monsters/<family>/<slug>.md` |
 | Browse a family | `02-amphibians.md` … `21-monster-templates.md` |

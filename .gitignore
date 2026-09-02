@@ -46,6 +46,7 @@ scripts/*
 !scripts/build-foundry-module.mjs
 !scripts/validate-mh-tokens.mjs
 !scripts/build-mm-patreon-supplement.mjs
+!scripts/build-mm-patreon-catalog.mjs
 !scripts/data/
 !scripts/data/magic-item-pricing.csv
 

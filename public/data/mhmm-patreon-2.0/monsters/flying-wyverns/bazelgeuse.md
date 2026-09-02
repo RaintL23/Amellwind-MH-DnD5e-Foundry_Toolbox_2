@@ -130,6 +130,8 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 6-9
 - **Capture:** 5-9
 - **Armor effect:** You have an emblem of a burning brazier on your armor. You can use an action to speak the brazier's command word and summon a fire elemental, as if you had cast the conjure elemental spell. Once you use this property, you can't use it again until you finish a long rest.
+- **Weapon effect:** While you are attuned to this weapon, you can use a bonus action to speak its command word and exhale fire at a target within 30 feet of you. The target must make a DC 17 Dexterity saving throw, taking 5d6 fire damage on a failed save, or half as much damage on a successful one.
+Once used, this property cannot be used again until you finish a long rest.
 
 ### Bazelgeuse Fuse
 
@@ -137,6 +139,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 10-13
 - **Capture:** 10-12
 - **Armor effect:** Earplugs. While you are attuned to this armor, you can use a bonus action to conjure two earplugs in the shape of your choice. While using these earplugs, you are considered deafened, and you have advantage on saving throws against thunder damage. You can dispel the ear plugs as a bonus action ending the deafened effect.
+- **Weapon effect:** (Sorcerer & Wizard Only) Bombardier. The weapon has 10 runes, you can use an action to expend 1 or more of its runes to cast one of the following spells from it, using your spell save DC: scorching ray (2 runes), melf's minute meteors (3 runes), or wall of fire (4 runes). The weapon regains 1d6 + 4 expended runes daily at dawn. If you expend the last rune it cannot regain any runes for one week.
 
 ### Bazelgeuse Talon
 
@@ -144,6 +147,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 14-16
 - **Capture:** 13-16
 - **Armor effect:** (Greatsword Only) While attuned to this armor, your Guard AC bonus now lasts until the start of your next turn and you cannot be knocked prone.
+- **Weapon effect:** Your weapon deals an extra 1d8 fire damage.
 
 ### Bazelgeuse Wing
 
@@ -151,6 +155,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 17-19
 - **Capture:** 17-18
 - **Armor effect:** You have a flying speed of 30 feet while you wear this armor.
+- **Weapon effect:** Critical Draw+. When you take the Attack action for the first time in a combat encounter while wielding this weapon, the melee weapon attacks with that action score a critical hit on a roll of 15 or higher.
 
 ### Bazelgeuse Tail
 
@@ -158,6 +163,7 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** —
 - **Capture:** 19-20
 - **Armor effect:** Guts+. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. Once you use this property, you can’t use it again until you finish a long rest.
+- **Weapon effect:** You gain a +2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +3 when the spell you are casting deals fire damage.
 
 ### Bazelgeuse Gem
 
@@ -165,3 +171,4 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 20
 - **Capture:** —
 - **Armor effect:** You are immune to fire damage while you wear this armor.
+- **Weapon effect:** While attuned to this weapon, your Strength score changes to 25. If your Strength is already equal to or greater than 25, the material has no effect on you.\

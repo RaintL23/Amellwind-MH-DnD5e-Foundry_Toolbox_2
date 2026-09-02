@@ -22,7 +22,9 @@
     "validate:foundry-icons": "node scripts/validate-foundry-icons.mjs",
     "validate:mh-tokens": "node scripts/validate-mh-tokens.mjs",
     "build:foundry-module": "node scripts/validate-mh-tokens.mjs && node scripts/build-foundry-module.mjs",
-    "build:mm-supplement": "node scripts/build-mm-patreon-supplement.mjs"
+    "build:mm-catalog": "node scripts/build-mm-patreon-catalog.mjs",
+    "build:mm-supplement": "node scripts/build-mm-patreon-supplement.mjs",
+    "build:mm-data": "node scripts/build-mm-patreon-catalog.mjs && node scripts/build-mm-patreon-supplement.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

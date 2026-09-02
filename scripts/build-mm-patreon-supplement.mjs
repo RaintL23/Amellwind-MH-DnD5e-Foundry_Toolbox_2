@@ -378,7 +378,7 @@ const supplement = {
 
 const manifest = {
   policy:
-    "Patreon MHMM 2.0 sheets win on normalized name. GitHub MHMM entries are kept only when the PDF has no matching name. Regenerated with pnpm build:mm-supplement.",
+    "Patreon MHMM 2.0 sheets win on normalized name. GitHub MHMM entries are kept only when the PDF has no matching name. Regenerated with pnpm build:mm-data.",
   archiveDir: "public/data/mhmm-patreon-2.0",
   supplementUrl: "/data/mhmm-patreon-2.0/supplement.json",
   source: SOURCE,

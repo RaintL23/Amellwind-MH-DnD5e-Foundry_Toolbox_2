@@ -160,7 +160,29 @@ Primary information comes from Amellwind’s homebrew resources in the [TheGiddy
 
 The Hunting Guide JSON also provides species, backgrounds, feats, MH classes, class features (Monstie Sidekick), weapon optional features, and variant rules (downtime).
 
-Monster Manual sheets, runes, conditions, and diseases are loaded from the Patreon PDF overlay in `public/data/mhmm-patreon-2.0/supplement.json`. At runtime the PDF wins on normalized name; the GitHub JSON only fills names the PDF does not have. The merged lists are written to IndexedDB (`mm_current.data`, `condition`, `disease`). Rebuild the overlay with `pnpm build:mm-supplement`.
+Monster Manual sheets, runes, conditions, and diseases are loaded from the Patreon PDF overlay in `public/data/mhmm-patreon-2.0/supplement.json`. At runtime the PDF wins on normalized name; the GitHub JSON only fills names the PDF does not have. The merged lists are written to IndexedDB (`mm_current.data`, `condition`, `disease`).
+
+**Rebuild MHMM data** after editing organized monster sheets in `public/data/mhmm-patreon-2.0/monsters/`:
+
+```bash
+pnpm build:mm-data
+```
+
+This runs two steps in order:
+
+1. `build:mm-catalog` — `.md` → `catalog.json` + `runes.json`
+2. `build:mm-supplement` — `catalog.json` → `supplement.json` (runtime overlay)
+
+**Single sheet** (faster when you only changed one file):
+
+```bash
+node scripts/build-mm-patreon-catalog.mjs --file monsters/flying-wyverns/bazelgeuse.md
+pnpm build:mm-supplement
+```
+
+**Workflow:** edit a sheet → run `pnpm build:mm-data` → reload the app in dev (force an IndexedDB re-sync if cached data does not refresh).
+
+Overlay-only rebuild (after hand-editing `catalog.json`): `pnpm build:mm-supplement`. See [`public/data/mhmm-patreon-2.0/SCHEMA.md`](public/data/mhmm-patreon-2.0/SCHEMA.md) for the full archive schema.
 
 ### Embedded static data
 
