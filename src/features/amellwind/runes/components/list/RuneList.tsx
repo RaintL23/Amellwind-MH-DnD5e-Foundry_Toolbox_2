@@ -1,3 +1,9 @@
+/**
+ * Rune list page — loads cached runes, applies session filters, renders table + detail.
+ *
+ * Data path: `getAllRunes()` → pre-tagged `Rune[]` → search index → filtered rows.
+ * Tag filter options are built from the union of all `rune.tags` (see `uniqueTags`).
+ */
 import { useState, useEffect, useMemo, useCallback } from "react";
 import type { ColumnFiltersState, OnChangeFn, PaginationState, SortingState } from "@tanstack/react-table";
 import { Rune } from "@/shared/types";
@@ -39,6 +45,7 @@ function sortingFromSession(
 }
 
 export function RuneList() {
+  // ─── Session-persisted filters (localStorage key: list-filters:mh-runes) ───
   const { q, getString, getAll, patchFilters } = useListSessionFilters({
     listId: "mh-runes",
     stringKeys: ["q", "slot", "page", "pageSize", "sortId", "sortDesc"],
@@ -101,6 +108,7 @@ export function RuneList() {
     commitSearch,
   } = useDebouncedListSearch(q, commitName);
 
+  // ─── Initial load: runes + material-effect index for tier highlighting ───
   useEffect(() => {
     Promise.all([getAllRunes(), getMaterialEffectNameIndex()]).then(
       ([data, index]) => {
@@ -130,6 +138,7 @@ export function RuneList() {
     setPagination({ pageIndex: page - 1, pageSize });
   }, [page, pageSize]);
 
+  // ─── Filter option sources (derived from loaded rune set) ────────────────────
   const uniqueMonsters = useMemo(
     () => Array.from(new Set(runes.map((r) => r.monsterName))).sort(),
     [runes],
@@ -144,6 +153,7 @@ export function RuneList() {
   );
 
   const uniqueTags = useMemo(
+    // All tags ever assigned at map time — drives the tag filter dialog sections.
     () => Array.from(new Set(runes.flatMap((r) => r.tags))).sort(),
     [runes],
   );
@@ -161,6 +171,7 @@ export function RuneList() {
     [filters, appliedSearch],
   );
 
+  // ─── Client-side filter + sort pipeline ────────────────────────────────────
   const filteredRunes = useMemo(
     () =>
       sortRuneListRows(

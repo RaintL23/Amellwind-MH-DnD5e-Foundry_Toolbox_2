@@ -15,6 +15,10 @@ import { cn } from "@/shared/utils/cn";
 import { splitRuneEffectDisplayLines } from "@/features/amellwind/material-effects/utils/material-effect-highlight.utils";
 import { RUNE_CATALOG_PHRASE_LINKS } from "../../utils/rune-catalog-links";
 
+/**
+ * Single effect block in the rune detail dialog (Armor / Weapon / Other).
+ * Shows rarity tier, per-side tags, and highlighted material-effect phrases.
+ */
 interface EffectSectionProps {
   label: string;
   text: string;

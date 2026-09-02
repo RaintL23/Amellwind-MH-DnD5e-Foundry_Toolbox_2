@@ -1,3 +1,9 @@
+/**
+ * Material effect resolution — joins loot-table names to A/W/O effect list entries.
+ *
+ * Used by `rune.mapper.ts` after the inset lists are parsed. Name matching tolerates
+ * tier suffixes and quantity prefixes (see `rune-material-name.utils.ts`).
+ */
 import { Rune } from "@/shared/types";
 import { flattenEntriesForDisplay } from "@/shared/utils/fivetools-parser";
 import {
@@ -8,6 +14,8 @@ import {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
+
+// ─── Placeability & loot normalization ───────────────────────────────────────
 
 /**
  * Materials with loot slot "O" (Other) — upgrade bones, crafting mats, sellables —
@@ -28,6 +36,8 @@ export function normalizeLootChance(raw: string): string {
 }
 
 export { stripMaterialQuantity } from "../utils/rune-material-name.utils";
+
+// ─── O-slot backfill (shared crafting mats across monsters) ──────────────────
 
 function preferShorterEffect(
   map: Map<string, string>,
@@ -65,6 +75,8 @@ export function backfillSharedOtherEffects(runes: Rune[]): Rune[] {
     return filled ? { ...rune, otherEffect: filled } : rune;
   });
 }
+
+// ─── Effect list indexing & name lookup ──────────────────────────────────────
 
 /** Look up an effect by exact name, then by normalized / tier-flexible variants. */
 export function lookupEffectByMaterialName(

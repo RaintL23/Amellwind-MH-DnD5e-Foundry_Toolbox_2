@@ -1,4 +1,18 @@
+/**
+ * Rune effect tag extraction — turns armor/weapon effect prose into filterable tags.
+ *
+ * Tag namespaces:
+ * - `class:*`        — class restrictions ("Monk only", …)
+ * - `weapon-type:*`  — MH weapon categories (Dual Blades, Bow, …)
+ * - `damage:*`       — damage types referenced in text
+ * - `type:*`         — offensive / defensive / support / cosmetic / utility
+ * - `mechanic:*`     — gameplay mechanics (spells, saves, movement, …)
+ *
+ * Entry point: `extractRuneEffectTags(effectText, spellLevels?)` → string[].
+ * Called once per effect side during mapping; results are stored on `Rune`.
+ */
 import { usesAcAsSaveReplacement } from "@/features/amellwind/material-effects/utils/inline-ac-bonus-rarity.utils";
+import { matchesInlineAbilityScoreSet } from "@/features/amellwind/material-effects/utils/inline-ability-score-set.utils";
 import { SKILL_NAME_TO_KEY } from "@/shared/constants/dnd/skills.constants";
 import { extractAllDamageTypesFromText } from "@/shared/utils/damage-type-text.utils";
 import { matchesFlatDamageReduction, normalizeEffectApostrophes } from "../../utils/rune-damage-reduction.utils";
@@ -7,6 +21,8 @@ import {
   spellTagsFromLevels,
   type SpellLevelLookup,
 } from "../../utils/spell-level-lookup.utils";
+
+// ─── Class restriction patterns ──────────────────────────────────────────────
 
 const CLASS_PATTERNS: Array<[RegExp, string]> = [
   [/spellcaster only/i, "class:spellcaster"],
@@ -24,6 +40,8 @@ const CLASS_PATTERNS: Array<[RegExp, string]> = [
   [/\bFighter\b.*only/i, "class:fighter"],
   [/\bRogue\b.*only/i, "class:rogue"],
 ];
+
+// ─── Weapon-type detection (inline mentions + variant list headers) ──────────
 
 /**
  * MH weapon names and category restrictions mentioned in effect text.
@@ -141,6 +159,8 @@ function weaponTypeTags(text: string): string[] {
   }
   return [...tags];
 }
+
+// ─── Broad mechanic regex table (first-pass tag sweep) ───────────────────────
 
 // mechanic:extra-damage, mechanic:healing, mechanic:spell y mechanic:spell-slot
 // se emiten vía funciones de escala en lugar de patrones simples.
@@ -299,6 +319,8 @@ function mithralArmorTag(text: string): string | null {
 /** Action economy that marks an effect as activated rather than always-on. */
 const ACTION_ECONOMY_RE =
   /\bas an action\b|use (?:an |your )?action\b|bonus action|\breaction\b|spend (?:one|a|an|\d+) minutes?\b|you can stab\b|Once you use this property\b/i;
+
+// ─── Specialized tag extractors (conditions, skills, movement, spells, …) ────
 
 /**
  * Known condition names for wording without `{@condition}` (the X condition,
@@ -1719,14 +1741,14 @@ function goldDoubleTag(text: string): string | null {
 }
 
 function abilityScoreSetTag(text: string): string | null {
-  return /(?:Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma) score is \d+ while (?:you are )?attuned/i.test(
-    text,
-  )
+  return matchesInlineAbilityScoreSet(text)
     ? "mechanic:ability-score-set"
     : null;
 }
 
 function abilityScoreIncreaseTag(text: string): string | null {
+  if (matchesInlineAbilityScoreSet(text)) return null;
+
   return /(?:increase|increases)\s+your\s+(?:Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma)\s+score\s+by\s+\d+/i.test(
     text,
   )
@@ -2486,6 +2508,8 @@ function utilityTypeTags(tags: Set<string>): string[] {
   return hasUtilityMechanic ? ["type:utility"] : [];
 }
 
+// ─── Main orchestrator — runs every extractor on one effect string ───────────
+
 function extractTags(
   effectText: string,
   spellLevels?: SpellLevelLookup | null,
@@ -2934,7 +2958,7 @@ function extractTags(
   return Array.from(tags);
 }
 
-/** Exported for unit tests and shared tag previews. */
+/** Public API — used by `rune.mapper.ts` and unit tests. */
 export function extractRuneEffectTags(
   effectText: string,
   spellLevels?: SpellLevelLookup | null,

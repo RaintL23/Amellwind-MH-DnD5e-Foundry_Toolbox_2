@@ -1,3 +1,7 @@
+/**
+ * Filter section definitions for the rune list dialog.
+ * Tag sections are built from `uniqueTags` bucketed by `rune-tag-categories.utils`.
+ */
 import type { ListFilterSectionConfig } from "@/shared/components/list-filters";
 import { TIER_LABELS } from "../../constants/rune.constants";
 import {

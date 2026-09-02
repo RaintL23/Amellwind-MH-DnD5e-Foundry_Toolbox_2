@@ -1,3 +1,10 @@
+/**
+ * Tag display helpers — badge colors and human-readable labels for filter UI.
+ *
+ * Prefix → color: class=blue, weapon-type/damage=orange, type=red, mechanic=green.
+ * `formatTag` strips the namespace prefix and parenthesizes sub-levels
+ * (e.g. `mechanic:extra-damage:major` → "extra-damage (major)").
+ */
 export function tagVariant(tag: string): "blue" | "orange" | "green" | "red" {
   if (tag.startsWith("class:")) return "blue";
   if (tag.startsWith("weapon-type:")) return "orange";

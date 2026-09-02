@@ -3,6 +3,10 @@ import { Rune } from "@/shared/types";
 import { Badge } from "@/components/ui/badge";
 import { formatTag } from "../../utils/rune-tag.utils";
 
+/**
+ * Detail dialog — groups precomputed tags by namespace for quick scanning.
+ * `weaponTags` / `armorTags` are kept separate so mechanics show per slot side.
+ */
 interface RuneTagsSectionProps {
   rune: Rune;
 }
@@ -10,6 +14,7 @@ interface RuneTagsSectionProps {
 export function RuneTagsSection({ rune }: RuneTagsSectionProps) {
   if (rune.tags.length === 0) return null;
 
+  // ─── Split combined tags by prefix ─────────────────────────────────────────
   const classTags = rune.tags.filter((t) => t.startsWith("class:"));
   const weaponTypeTags = rune.tags.filter((t) => t.startsWith("weapon-type:"));
   const damageTags = rune.tags.filter((t) => t.startsWith("damage:"));

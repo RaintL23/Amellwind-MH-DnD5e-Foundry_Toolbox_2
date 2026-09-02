@@ -1098,6 +1098,17 @@ describe("getMaterialEffectTierForText — special mechanics when Unknown", () =
     ).toBe("Legendary");
   });
 
+  it("assigns Very Rare to Strength 25 floor with changes-to wording", () => {
+    const text =
+      "While attuned to this weapon, your Strength score changes to 25. If your Strength is already equal to or greater than 25, the material has no effect on you.";
+    const tags = extractRuneEffectTags(text);
+
+    expect(tags).toContain("mechanic:ability-score-set");
+    expect(getMaterialEffectTierForText(text, "weapon", emptyIndex, tags)).toBe(
+      "Very Rare",
+    );
+  });
+
   it("assigns Rare to Psychic Vision", () => {
     expect(
       getMaterialEffectTierForText(

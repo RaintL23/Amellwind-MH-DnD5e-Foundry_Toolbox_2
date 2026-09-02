@@ -1,3 +1,10 @@
+/**
+ * Rune data service — loads MHMM monsters from IndexedDB, maps loot rows to `Rune`,
+ * caches in memory via `createEntityService`.
+ *
+ * Tag extraction runs at map time (inside `mapRunesFromMonster`); the list UI reads
+ * precomputed `tags` / `weaponTags` / `armorTags` — it does not re-parse effect text.
+ */
 import { Rune } from "@/shared/types";
 import { getMonsterData, clearMonsterDataCache } from "@/shared/db/sync.service";
 import { createEntityService } from "@/shared/services/create-entity-service";
@@ -5,8 +12,10 @@ import { getAllSpells } from "@/features/dnd/spells/services/spell.service";
 import { isPlaceableRune, mapRunesFromMonster, backfillSharedOtherEffects } from "../mappers/rune.mapper";
 import { buildSpellLevelLookup } from "../utils/spell-level-lookup.utils";
 
+// ─── Entity service (in-memory cache + dedupe) ───────────────────────────────
 const service = createEntityService<Rune, Rune>({
   loadRaw: async () => {
+    // Spell catalog lookup improves `mechanic:spell:lvlN` tag accuracy.
     const [rawData, spells] = await Promise.all([
       getMonsterData(),
       getAllSpells().catch(() => [] as Awaited<ReturnType<typeof getAllSpells>>),
@@ -16,6 +25,7 @@ const service = createEntityService<Rune, Rune>({
     for (const rawMonster of rawData) {
       runes.push(...mapRunesFromMonster(rawMonster, spellLevels));
     }
+    // Copy shared O-slot `otherEffect` text onto rows that omit it on some sheets.
     return backfillSharedOtherEffects(runes);
   },
   map: (rune) => rune,

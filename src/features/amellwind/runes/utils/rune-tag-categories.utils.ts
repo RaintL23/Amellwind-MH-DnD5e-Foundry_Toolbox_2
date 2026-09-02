@@ -1,3 +1,10 @@
+/**
+ * Tag filter categorization — splits `rune.tags` into dialog sections
+ * (Weapons, Classes, Damage Related, Play Style, Other Mechanics).
+ *
+ * Used by `RuneFilters` / `buildRuneFilterSections`; selection is stored as
+ * flat `tag[]` in session filters and matched in `rune-table-filters.utils`.
+ */
 import type { ListFilterOption } from "@/shared/components/list-filters";
 import { formatTag } from "./rune-tag.utils";
 

@@ -1,8 +1,16 @@
+/**
+ * Monster fluff parsing helpers for the rune mapper.
+ *
+ * Finds the inset block that contains the carve loot table and derives slot letters,
+ * CR tier, and display metadata copied onto every `Rune` from that monster.
+ */
 import { RuneSlot, RuneTier } from "@/shared/types";
 import { formatCrDisplay, getBaseCr, getCrValues, parseCR } from "@/shared/utils/cr.utils";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
+
+// ─── Slot & tier derivation ──────────────────────────────────────────────────
 
 export function crToTier(cr: unknown): RuneTier {
   const n = parseCR(getBaseCr(cr));
@@ -18,6 +26,8 @@ export function parseSlots(slotsStr: string): RuneSlot[] {
   if (slotsStr.includes("W")) slots.push("W");
   return slots;
 }
+
+// ─── Inset discovery inside fluff.entries ────────────────────────────────────
 
 function insetHasLootTable(insetEntries: unknown[]): boolean {
   return insetEntries.some((e) => {
@@ -53,6 +63,8 @@ export function findInset(entries: unknown[]): Raw | undefined {
     ) ?? insets[0]
   );
 }
+
+// ─── Shared monster fields stamped on each Rune row ──────────────────────────
 
 export function buildRuneMonsterMeta(monster: Raw) {
   return {

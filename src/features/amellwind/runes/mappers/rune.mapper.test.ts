@@ -2015,6 +2015,19 @@ describe("extractRuneEffectTags — mixed resistance and immunity", () => {
     expect(tags).toContain("mechanic:ability-score-set");
   });
 
+  it("tags ability score floor with changes-to wording (attuned clause first)", () => {
+    const text =
+      "While attuned to this weapon, your Strength score changes to 25. If your Strength is already equal to or greater than 25, the material has no effect on you.";
+    const tags = extractRuneEffectTags(text);
+
+    expect(tags).toEqual(
+      expect.arrayContaining([
+        "mechanic:ability-score-set",
+        "mechanic:passive",
+      ]),
+    );
+  });
+
   it("tags charge attack bonus for hammer and lance", () => {
     const tags = extractRuneEffectTags(
       "(Hammer & Lance Only) You gain a +1 bonus to your attack rolls if you move 20 feet in a straight line towards a creature without taking damage.",

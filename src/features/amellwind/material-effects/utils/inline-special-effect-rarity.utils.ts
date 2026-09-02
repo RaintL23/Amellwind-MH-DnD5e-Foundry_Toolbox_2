@@ -1,4 +1,5 @@
 import type { ResourceRarity } from "@/shared/types";
+import { parseInlineAbilityScoreSet } from "./inline-ability-score-set.utils";
 import {
   INLINE_ALLY_AURA_RARITY,
   INLINE_ALLY_THROW_RARITY,
@@ -485,13 +486,6 @@ function parseWoundCritDie(text: string): number {
   return match ? parseInt(match[1], 10) : 6;
 }
 
-function parseAbilityScoreSet(text: string): number | null {
-  const match = text.match(
-    /(?:Strength|Dexterity|Constitution|Intelligence|Wisdom|Charisma) score is (\d+)/i,
-  );
-  return match ? parseInt(match[1], 10) : null;
-}
-
 export function inferRarityFromHealingRerollTags(
   tags: string[],
 ): ResourceRarity | null {
@@ -558,7 +552,7 @@ export function inferRarityFromAbilityScoreSetTags(
   tags: string[],
 ): ResourceRarity | null {
   if (!tags.includes("mechanic:ability-score-set")) return null;
-  const score = parseAbilityScoreSet(text);
+  const score = parseInlineAbilityScoreSet(text);
   if (score == null) return "Very Rare";
   if (score >= 27) return "Legendary";
   if (score >= 23) return "Very Rare";
