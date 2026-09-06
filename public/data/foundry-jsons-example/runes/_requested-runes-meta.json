@@ -1,0 +1,421 @@
+[
+  {
+    "name": "Barroth Gem",
+    "monster": "Barroth",
+    "cr": "4",
+    "tier": 1,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Guard. You cannot be pushed or knocked backwards while you wear this armor.",
+    "weapon": "You gain +2 AC while attuned to this weapon, but your critical hits no longer deal extra damage."
+  },
+  {
+    "name": "Banbaro Lash",
+    "monster": "Banbaro",
+    "cr": "12",
+    "tier": 3,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Health Boost. While wearing this armor, your hit point maximum increases by 1 for each character level you have.",
+    "weapon": "(Greatsword & Lance Only) Offensive Guard. Whenever you use a reaction that increases your AC, the next attack you make with that weapon deals extra damage equal to the bonus AC the reaction provided."
+  },
+  {
+    "name": "T.Zamtrios Tailbrand",
+    "monster": "Tigerstripe Zamtrios",
+    "cr": "10",
+    "tier": 2,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You have resistance to fire damage while you wear this armor.",
+    "weapon": "Awaken. When this material is placed in a weapon that does not deal cold, fire, lightning, necrotic, or thunder damage, it rolls one additional damage die when it hits. For example, a shortsword now rolls 2d6 and a greatsword deals 3d6."
+  },
+  {
+    "name": "Shining Shieldwing",
+    "monster": "Primordial Malzeno",
+    "cr": "25",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Shield+. While you are attuned to this armor and you use a reaction that would increase your AC, you gain an additional +2 bonus to your AC until the start of your next turn.",
+    "weapon": "Shield Upgrade. Depending on which weapon this material is placed into, it gains the following benefits:"
+  },
+  {
+    "name": "Heavy Wyvern Scalp",
+    "monster": "Tempered Shogun Ceanataur",
+    "cr": "17",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "(Cleric & Paladin Only) When you regain hit points from a spell while attuned to this armor, increase the regained amount by half your Cleric or paladin level.",
+    "weapon": "(Paladin Only) Whenever you restore a creature's hit points with your Lay on Hands feature, it gains temporary hit points equal to the amount healed until the start of your next turn."
+  },
+  {
+    "name": "T.Teostra Mane",
+    "monster": "Tempered Teostra",
+    "cr": "20",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "(Paladin Only) You can use an action to speak this armor's command word to extend your aura by 10 feet for 1 minute. Once you use this property, you can't use it again until you finish a long rest.",
+    "weapon": "Critical Eye+. Your weapon attacks critical hit range is increased by 2."
+  },
+  {
+    "name": "T.Fire Dragon Scale",
+    "monster": "Tempered Teostra",
+    "cr": "20",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Biology. You become proficient with dung bombs while you are wearing this armor, and you are immune to blight effects such as waterblight, iceblight, or the blight spell.",
+    "weapon": "Quick Load. You can reload as a free action while you are attuned to this weapon."
+  },
+  {
+    "name": "Zorah Magdaros Gem",
+    "monster": "Zorah Magdaros",
+    "cr": "Event",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "While you are attuned to this armor, you can use your action to speak its command word to channel the power of Zorah Magdaros for 10 minutes, imbuing yourself with unparalleled endurance and surrounding yourself with molten rock. Until the effect ends, you cannot cast spells, but you gain the following benefits: You gain 50 temporary hit points. If any of these remain when the effect ends, they are lost. If a creature hits you with a melee attack while you have these temporary hit points, the creature takes 25 fire damage. You have advantage on attack rolls that you make with simple and martial weapons. When you hit a target with a weapon attack, that target takes an extra 2d12 fire damage. You have proficiency in Strength and Constitution saving throws. You can attack twice, instead of once, when you take the Attack action on your turn. You ignore this benefit if you already have a feature, like Extra Attack, that gives you extra attacks.",
+    "weapon": "Release Bioenergy. When you reduce a creature to 0 hit points with this weapon, it dies as its life force seeps into the ground beneath it. The energy lingers in the space(s) for 1 minute or until absorbed. The following round after the dead creature's turn in the initiative order, another creature within the energy's area can use its bonus action to absorb the energy, regaining hit points equal to the slain creature's Challenge Rating or double its level. If more than one creature is in the energy's area, the hit points are split evenly between them when absorbed."
+  },
+  {
+    "name": "Heavy Rustrazor Scalp",
+    "monster": "Rustrazor Ceanataur",
+    "cr": "19",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Guard Up When you fail a Dexterity or Strength saving throw, you can use your reaction to expend 1 of its runes to use your AC in place of your roll. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
+    "weapon": "Brawn. While you are attuned to this weapon, it you gain the following effects: Once per turn when a creature must succeed on a saving throw or become stunned by the effect of one of your weapon attacks, it makes its save with disadvantage. Once per turn when you hit a creature with this weapon, it must make a DC 12 Constitution saving throw or gain one level of exhaustion. A creature cannot gain more than 2 levels of exhaustion from this weapon's property."
+  },
+  {
+    "name": "Dalam Tail Scale",
+    "monster": "Dalamadur",
+    "cr": "18",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Iron Wall. You have a +2 bonus to your armor class while you wear this armor.",
+    "weapon": "(Spellcaster Only) You know the melf's minute meteors spell while attuned to this weapon. If you already know the spell, you cast it as if it was one level higher than the spell slot you use."
+  },
+  {
+    "name": "Brach Gem",
+    "monster": "Brachydios",
+    "cr": "17",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to fire damage while you wear this armor.",
+    "weapon": "Spirit. When fighting a Huge or larger creature, this weapon deals 1d6 extra weapon damage and its crit range is increased by 1."
+  },
+  {
+    "name": "Savage Gem",
+    "monster": "Savage Deviljho",
+    "cr": "22",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to cold damage while you wear this armor.",
+    "weapon": "While you are attuned to this weapon, you can speak its command word to exhale a beam of hellfire in a 60-foot line that is 5 feet wide. Each creature in that line must make a DC 15 Dexterity saving throw, taking 17 (5d6) fire damage and 17 (5d6) necrotic damage on a failed save, or half as much damage on a successful one. Once used, you can't use this property again until you finish a long rest."
+  },
+  {
+    "name": "Sturdy Fang",
+    "monster": "Jhen Mohran",
+    "cr": "26",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to fire damage while you wear this armor.",
+    "weapon": "Critical Eye+. Your weapon attacks critical hit range is increased by 2."
+  },
+  {
+    "name": "Vaal Hazak Hardclaw",
+    "monster": "Blackveil Vaal Hazak",
+    "cr": "26",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to poison and disease while you wear this armor.",
+    "weapon": "Your weapon deals an extra 2d6 necrotic damage."
+  },
+  {
+    "name": "Amatsu Hardclaw",
+    "monster": "Amatsumagatsuchi",
+    "cr": "17",
+    "tier": 4,
+    "slots": [
+      "W"
+    ],
+    "armor": "",
+    "weapon": "Latent Power +1. When you are reduced to a quarter of your maximum hit points for the first time in combat or at the start of your turn on the 10th round of combat, whichever comes first, you gain the effects of the haste spell for 1 minute. Once used, you must finish a short or long rest before you can use this property again."
+  },
+  {
+    "name": "Rajang Hardclaw",
+    "monster": "Furious Rajang",
+    "cr": "21",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Health Boost+. While wearing this armor, your hit point maximum increases by 2 for each character level you have.",
+    "weapon": "Heroics. While below 25% of your maximum hit points your weapon attacks deal 1d4 extra damage and you have resistance to all damage except psychic damage."
+  },
+  {
+    "name": "Bazelgeuse Gem",
+    "monster": "Bazelgeuse",
+    "cr": "17",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to fire damage while you wear this armor.",
+    "weapon": "While attuned to this weapon, your Strength score changes to 25. If your Strength is already equal to or greater than 25, the material has no effect on you.\\"
+  },
+  {
+    "name": "Fatalis Webbing",
+    "monster": "Tempered Fatalis (MHW)",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Your Constitution score is 24 while you wear this armor. It has no effect on you if your Constitution is already 24 or higher.",
+    "weapon": "Critical Eye+2. Your weapon attacks critical hit range is increased by 3."
+  },
+  {
+    "name": "S.Dalamadur Gazer",
+    "monster": "Shah Dalamadur",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Guts+2. When you are reduced to 0 hit points but not killed outright, you can drop to 1 hit point instead. Once you use this property, you can’t use it again until you finish a short or long rest.",
+    "weapon": ""
+  },
+  {
+    "name": "Safi'jiiva Cortex",
+    "monster": "Safi'jiiva",
+    "cr": "29",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Evade Window+. This armor has 5 runes, and it regains 1d5 expended runes daily at dawn. When you fail a Dexterity saving throw while wearing it, you can use your reaction to expend 1 of its runes to succeed on that saving throw instead.",
+    "weapon": "Critical Boost+. You can roll two additional weapon damage dice when determining the extra damage for a critical hit with a weapon attack."
+  },
+  {
+    "name": "Heavy Ceanataur Leg",
+    "monster": "Rustrazor Ceanataur",
+    "cr": "19",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Health Boost+. Your hit point maximum increases by 2 for each character level you have while wearing this armor.",
+    "weapon": "Partbreaker+2. You deal an extra 1d8 weapon damage when you critically hit with this weapon."
+  },
+  {
+    "name": "S. Zinogre Umbrage",
+    "monster": "Stygian Zinogre",
+    "cr": "20",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Whenever you critically hit with a weapon attack, Red lightning arcs from your armor for 1 minute. While under this effect, you gain temporary hit points at the start of each of your turns equal to half your character level.",
+    "weapon": "This weapon has 3 runes that it regains daily at dawn. When you hit a creature with this weapon you can expend a rune to generate an explosion of necrotic energy upon impact. The target, and all creatures other than yourself, within 5 feet of the target must make a DC 15 Constitution saving throw, taking an amount of d6's equal to half of your level (rounded down) in necrotic damage on a failed save or half as much damage on a successful one."
+  },
+  {
+    "name": "Cursed Bone",
+    "monster": "Leshen",
+    "cr": "12",
+    "tier": 3,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Recovery Speed. Whenever you roll a Hit Die to regain hit points, double the number of hit points it restores.",
+    "weapon": "Weakness Exploit. When you have advantage on an attack roll with this weapon and you hit the target; you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a long rest."
+  },
+  {
+    "name": "Brachydios Lash",
+    "monster": "Raging Brachydios",
+    "cr": "22",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Adrenaline. The first time you drop below half of your hit point maximum in combat; you gain a rush of adrenaline. On your next turn your movement speed doubles, and you can take one extra action.",
+    "weapon": "Weakness Exploit+. When you have advantage on an attack roll with this weapon and you hit the target, you can have your weapon deal its maximum damage if the lower of the two d20 rolls would also hit the target (all extra damage dice must still be rolled). You can use this property a number of times equal to your Strength or Dexterity modifier (your choice), regaining all expended uses when you finish a short or long rest."
+  },
+  {
+    "name": "Narwa Carapace",
+    "monster": "Thunder Serpent Narwa",
+    "cr": "19",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Constitution+. While you are attuned to this armor, you can reroll a Constitution saving throw that you fail. If you do so, you must use the new roll. You can use this property twice, regaining all expended uses when you finish a long rest.",
+    "weapon": "(Gunlance Only) Artillery+2. While attuned to this weapon, your wyvernfire can now be used three times per long rest and you can add your Strength or Dexterity modifier to the damage of your shell attacks. Narwa Material Bonus* When a character has 2+ narwa materials socketed into their equipment, they gain each of the following the Thunder Alignment bonuses. Thunder Alignment (2 materials). You have resistance to lightning damage while you wear this armor. Thunder Alignment (3 materials). You are immune to lightning damage while you wear this armor. Thunder Alignment (4 materials). This armor has three lucky points. It regains all expended points daily at dawn. When you roll on a creature's loot table you can expend one lucky point, to reroll it and take the new roll. \\*The Thunder Alignment bonuses ignore the standard armor rules"
+  },
+  {
+    "name": "Fatalis Eye",
+    "monster": "Tempered Fatalis (MHW)",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Dark Finale. When you are reduced to 0 hit points but not killed outright, you can use your reaction to become possessed by the Fatalis' evil energies and the following occurs: You heal to your maximum hit points. Your eyes glow red, and an aura of black wisps encompasses your body. At the start of each of your turns, you take 10 (1d20) necrotic damage. This damage bypasses resistances and immunities and can't be reduced or avoided by any means. While possessed, you cannot be grappled, stunned, or restrained. You gain a +2 bonus to AC and you have advantage on all saving throws. You cannot be healed by normal or magical means. When you are reduced to 0 hit points again, you automatically fail 2 death saving throws and the possession ends.",
+    "weapon": "Mind's Eye+. Your attacks with this weapon bypass the damage resistances and immunities of any creature."
+  },
+  {
+    "name": "Rajang Heart",
+    "monster": "Furious Rajang",
+    "cr": "21",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Stamina Surge+3. While wearing this armor, you can use an action to cast the haste spell from it once per day but can target only yourself when you do so.",
+    "weapon": "Your weapon deals an extra 2d6 lightning damage."
+  },
+  {
+    "name": "Fatalis Fellwing",
+    "monster": "Tempered Fatalis (MHW)",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "(Paladin & Cleric Only) You can use your channel divinity feature one additional time between rests.",
+    "weapon": "This weapon acts as an arcane focus for your spellcasting. While holding this weapon you can cast a spell of 4th level or lower that would normally take an action, as a bonus action."
+  },
+  {
+    "name": "Archdemon Tailhook",
+    "monster": "Gaismagorm",
+    "cr": "28",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to cold damage and have resistance to fire damage while you wear this armor.",
+    "weapon": "Resentment+. Until the end of your turn, you gain a +2 bonus to attack and damage rolls against any creature that has damaged you since the end of your last turn."
+  },
+  {
+    "name": "Narwa Sparksac",
+    "monster": "Thunder Serpent Narwa",
+    "cr": "19",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You have a flying speed of 60 feet while you wear this armor.",
+    "weapon": "While you are attuned to this weapon, your lightning spells bypass a creature's resistance."
+  },
+  {
+    "name": "Dragonmoss",
+    "monster": "Yama Tsukami",
+    "cr": "18",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "While attuned to this armor, your Strength score changes to 25. If your Strength is already equal to or greater than 25, the material has no effect on you.",
+    "weapon": "Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature."
+  },
+  {
+    "name": "Skyblade Dragon Sapphire",
+    "monster": "Shah Dalamadur",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to cold and fire damage while you wear this armor.",
+    "weapon": "This weapon has 3 runes which are regained daily at dawn. As an action you can expend a rune to have the target make a DC 21 Charisma saving throw or become charmed by you as if you cast the charm person spell."
+  },
+  {
+    "name": "T.Fulgur Tail",
+    "monster": "Tempered Fulgur Anjanath",
+    "cr": "19",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "While you are attuned to this armor, you can use an action to speak its command word to shroud yourself in electricity for 1 minute. Once before the shroud fades, you can give yourself advantage on one weapon attack roll on your turn. That attack deals an extra 1d8 lightning damage on a hit. Whether you hit or miss, your walking speed increases by 30 feet until the end of that turn. You can use this property a number of times equal to your Constitution modifier, regaining all expended uses when you finish a long rest.",
+    "weapon": "You gain a +2 bonus to your spell attack rolls and spell save DC while attuned to this weapon. This bonus increases to +3 when the spell you are casting deals thunder or lightning damage."
+  },
+  {
+    "name": "Alatreon Mantle",
+    "monster": "Tempered Alatreon (MHW)",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Blightproof. While wearing this armor you are immune to blight spells, spell like abilities, and conditions.",
+    "weapon": "Critical Element. When you critically hit with a weapon or spell that deals cold, fire, lightning, necrotic, or thunder damage, you deal an extra 1d10 damage of that type. Additionally, if a creature fails its saving throw by 5 or more against a spell that deals one of the above damage types, you deal an extra 1d10 of that damage type to it."
+  },
+  {
+    "name": "Behemoth Tail",
+    "monster": "Behemoth",
+    "cr": "27",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to lightning damage and you cannot be paralyzed while you wear this armor.",
+    "weapon": "When you attack a creature with a ranged spell attack and roll a 20 on the attack roll, you can cast fireball as a bonus action using a 3rd level or higher spell slot. The spell must be centered on the creature you hit with the ranged spell attack."
+  }
+]

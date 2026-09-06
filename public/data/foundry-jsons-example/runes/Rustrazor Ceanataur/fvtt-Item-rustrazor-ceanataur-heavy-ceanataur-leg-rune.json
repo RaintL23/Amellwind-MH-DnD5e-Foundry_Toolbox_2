@@ -1,0 +1,286 @@
+{
+  "_id": "IeCsSuut5hUah3RY",
+  "name": "Heavy Ceanataur Leg Rune",
+  "type": "equipment",
+  "img": "mh-icons/material-rune.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Rustrazor Ceanataur | CR: 19 | Tier: 4</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Partbreaker+2. You deal an extra 1d8 weapon damage when you critically hit with this weapon.</p>\n<h3>Armor Effect</h3>\n<p>Health Boost+. Your hit point maximum increases by 2 for each character level you have while wearing this armor.</p>",
+      "chat": ""
+    },
+    "identifier": "heavyceanataurlegrune",
+    "quantity": 1,
+    "weight": {
+      "value": 0.1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "",
+    "equipped": false,
+    "rarity": "veryRare",
+    "identified": true,
+    "type": {
+      "value": "trinket",
+      "baseItem": ""
+    },
+    "armor": {
+      "value": null,
+      "dex": null,
+      "magicalBonus": null
+    },
+    "properties": [],
+    "proficient": null,
+    "strength": null,
+    "activities": {},
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "fflfP9OZyagkz1vt",
+      "name": "Heavy Ceanataur Leg Rune (Equip)",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "macro.itemMacro",
+          "mode": 0,
+          "value": "",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "On equip, choose which rune effect (Weapon or Armor) to activate.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": true,
+      "statuses": [],
+      "sort": -10,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeController": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "8xJmzKUqlxaCrxs3",
+      "name": "Heavy Ceanataur Leg - Partbreaker+2",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.onUseMacroName",
+          "mode": 0,
+          "value": "ItemMacro.Heavy Ceanataur Leg Rune,damageBonus",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "On critical hit: +1d8 weapon damage.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Partbreaker+2"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "RrCFxgxHeN0AVdcL",
+      "name": "Heavy Ceanataur Leg - Health Boost+",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.attributes.hp.bonuses.overall",
+          "mode": 2,
+          "value": "2 * @details.level",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Hit point maximum increases by 2 per character level.",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "armor",
+          "materialEffectName": "Health Boost+"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 9200000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "rune",
+      "runeName": "Heavy Ceanataur Leg",
+      "monsterName": "Rustrazor Ceanataur",
+      "unified": true,
+      "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Partbreaker+2"
+        },
+        "armor": {
+          "label": "Armor Effect — Health Boost+"
+        }
+      }
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Heavy Ceanataur Leg Rune",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Amellwind unified rune controller (Foundry v12 / dnd5e 4.4 / MidiQOL + DAE + Item Macro)\r\n// DAE runs this via change key \"macro.itemMacro\": args[0] === \"on\" when equipped, \"off\" when unequipped.\r\n// MidiQOL on-use passes arrive with args[0].macroPass (registered by the cloned effect on the actor).\r\n//\r\n// Canonical source: public/data/scripts/runes/unified-rune-controller.js\r\n// Injected into each rune Item by foundry-jsons-example/runes/build-runes-itemacro.mjs\r\n// Per-rune combat / on-equip hooks fill the RUNE_COMBAT_PASSES slot below (must run before\r\n// the on/off handlers so wraps of runeApplySide / runeCleanup and runeOnEquip take effect).\r\nconst FLAG = \"amellwind-toolbox\";\r\n// Foundry only allows getFlag/setFlag for active module ids / \"world\" / \"core\".\r\n// This content pack uses a custom namespace, so read/write via getProperty + update.\r\nconst getRuneFlag = (doc, key) => foundry.utils.getProperty(doc, `flags.${FLAG}.${key}`);\r\nconst setRuneFlag = async (doc, key, value) => doc.update({ [`flags.${FLAG}.${key}`]: value });\r\nconst unsetRuneFlag = async (doc, key) => doc.update({ [`flags.${FLAG}.-=${key}`]: null });\r\nconst actorDoc = actor ?? item?.actor ?? item?.parent;\r\nif (!item) return;\r\nconst arg0 = args?.[0];\r\nconst pass = String(arg0?.macroPass ?? \"\").toLowerCase();\r\nconst runeName = getRuneFlag(item, \"runeName\") ?? item.name;\r\n\r\nasync function runeCleanup() {\r\n  if (!actorDoc) return;\r\n  const mine = actorDoc.effects.filter((e) => getRuneFlag(e, \"runeClone\") && e.origin === item.uuid);\r\n  if (mine.length) await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", mine.map((e) => e.id));\r\n  await unsetRuneFlag(item, \"applied\");\r\n}\r\n\r\nfunction runeAeName(side, matName, trinket) {\r\n  let n = `${runeName}-${side}`;\r\n  if (matName) n += `-${matName}`;\r\n  if (trinket) n += \" (Trinket)\";\r\n  return n;\r\n}\r\n\r\nasync function runeApplySide(side, trinket) {\r\n  if (!actorDoc) return;\r\n  const blueprints = item.effects.filter((e) => getRuneFlag(e, \"runeSide\") === side);\r\n  const docs = blueprints.map((e) => {\r\n    const o = e.toObject();\r\n    delete o._id;\r\n    o.origin = item.uuid;\r\n    o.disabled = false;\r\n    o.transfer = false;\r\n    o.name = runeAeName(side, getRuneFlag(e, \"materialEffectName\"), trinket);\r\n    foundry.utils.setProperty(o, `flags.${FLAG}.runeClone`, true);\r\n    // Never clutter the token with rune status icons (many runes equipped at once).\r\n    foundry.utils.setProperty(o, \"flags.dae.showIcon\", false);\r\n    return o;\r\n  });\r\n  if (docs.length) await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", docs);\r\n  await setRuneFlag(item, \"applied\", { side, trinket });\r\n  if (typeof runeOnEquip === \"function\") await runeOnEquip(side, trinket);\r\n}\r\n\r\n// ===== rune-specific combat passes =====\r\nif (pass.includes(\"damagebonus\")) {\n  const wf = workflow ?? arg0?.workflow;\n  if (!wf) return null;\n  if (!(wf.isCritical || arg0?.isCritical)) return null;\n  const itemType = String(wf.item?.type ?? \"\").toLowerCase();\n  const actionType = String(arg0?.itemActionType ?? wf.itemActionType ?? \"\").toLowerCase();\n  const isWeapon = itemType === \"weapon\" || [\"mwak\", \"rwak\"].includes(actionType);\n  if (!isWeapon) return null;\n  return { damageRoll: \"1d8\", flavor: \"Partbreaker+2\" };\n}\n\n\r\nif (arg0 === \"on\") {\r\n  if (!actorDoc) return;\r\n  await runeCleanup();\r\n  const sides = getRuneFlag(item, \"sides\") ?? {};\r\n  const available = Object.keys(sides).filter((s) => sides[s]);\r\n  if (!available.length) return;\r\n  const radios = available\r\n    .map((s, i) => `<label style=\"display:block;margin:.15rem 0\"><input type=\"radio\" name=\"runeSide\" value=\"${s}\" ${i === 0 ? \"checked\" : \"\"}/> ${sides[s].label ?? s}</label>`)\r\n    .join(\"\");\r\n  const content = `<form class=\"dnd5e2\"><p>Choose which effect to activate for <strong>${runeName}</strong>:</p>${radios}<hr/><label style=\"display:block;margin-top:.35rem\"><input type=\"checkbox\" name=\"runeTrinket\"/> Equipped in a trinket</label></form>`;\r\n  const choice = await new Promise((resolve) => {\r\n    new Dialog({\r\n      title: `${runeName} Rune`,\r\n      content,\r\n      buttons: {\r\n        ok: { icon: '<i class=\"fas fa-check\"></i>', label: \"Activate\", callback: (html) => resolve({ side: html.find('input[name=\"runeSide\"]:checked').val(), trinket: html.find('input[name=\"runeTrinket\"]').is(\":checked\") }) },\r\n        cancel: { icon: '<i class=\"fas fa-times\"></i>', label: \"Cancel\", callback: () => resolve(null) },\r\n      },\r\n      default: \"ok\",\r\n      close: () => resolve(null),\r\n    }).render(true);\r\n  });\r\n  if (!choice || !choice.side) { await item.update({ \"system.equipped\": false }); return; }\r\n  await runeApplySide(choice.side, choice.trinket);\r\n  return;\r\n}\r\n\r\nif (arg0 === \"off\") { await runeCleanup(); return; }\r\nif (arg0 === \"each\") return;\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1788712892649,
+    "modifiedTime": 1788712892649,
+    "lastModifiedBy": null
+  }
+}

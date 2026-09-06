@@ -1,0 +1,265 @@
+[
+  {
+    "name": "Garangolm Cortex",
+    "monster": "Garangolm",
+    "cr": "16",
+    "tier": 3,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "When you place this material into your armor, choose one of the options below: (1) Your armor looks like it's made of rocks and natural materials but also has the appearance of being far heavier than it actually is. (2) Your armor has water flowing over it with embers orbiting your arms. There is a slight aura of steam coming off of you.",
+    "weapon": "When you finish a short or long rest you choose a damage type. This damage type can be either cold or fire damage. A creature hit by this weapon takes an extra 1d8 of the chosen damage type. If you are using a weapon with a main hand and offhand, instead of choosing a damage type your main hand deals cold damage and your offhand deals fire damage."
+  },
+  {
+    "name": "Garangolm Shard",
+    "monster": "Garangolm",
+    "cr": "16",
+    "tier": 3,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Flinch Free. While wearing this armor you cannot be knocked prone or unwillingly moved from your current location by any means.",
+    "weapon": "Critical Status (waterblight & fireblight). When you hit a creature with a weapon or spell that deals cold or fire damage and roll a 20 for the attack roll, one of the following effects happens depending on the damage type: If the damage is cold, the creature is afflicted with waterblight for 1 minute. A creature can make a DC 15 Constitution saving throw at the end of each of its turns, ending the effect on itself on a success. If the damage is fire, the target is set ablaze. Until a creature uses an action to douse the fire, the target takes 1d6 fire damage at the start of each of its turns."
+  },
+  {
+    "name": "Consumption Parasite",
+    "monster": "Gaismagorm",
+    "cr": "28",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Recovery Up+. You regain the maximum number of hit points possible from potions or plants that you consume.",
+    "weapon": "(Dual Blades Only). Your Archdemon Mode is always active when you are holding both blades and the damage die of your archdemon mode increases by 1."
+  },
+  {
+    "name": "Pulsing Dragonshell",
+    "monster": "Safi'jiiva",
+    "cr": "29",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to fire damage, and resistance to cold and lightning damage while you wear this armor.",
+    "weapon": "Dragonvein Awakening. This material cannot be placed in a trinket. When placed in a weapon it gains the following benefits: Your weapon deals an extra 1d6 fire damage When a creature must make a saving throw against a spell, weapon effect, or other abilities that inflicts a condition, the save DC is increased by 2. Your weapon attacks critical hit range is increased by 1."
+  },
+  {
+    "name": "Earth Dragongem",
+    "monster": "Jhen Mohran",
+    "cr": "26",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Iron Wall+. You have a +3 bonus to your armor class while you wear this armor.",
+    "weapon": "Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature."
+  },
+  {
+    "name": "Jin Dahaad Claw",
+    "monster": "Jin Dahaad",
+    "cr": "16",
+    "tier": 3,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Tremor-Proof. You can't be knocked prone while you wear this armor.",
+    "weapon": "Inspiring Melody. When you complete a melody, allies within 20 feet who can hear you deal an extra 1d6 damage with their attacks and spells until the end of your next turn."
+  },
+  {
+    "name": "AT.Uth Duna Tentacle",
+    "monster": "Archtempered Uth Duna",
+    "cr": "17",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Health Boost+. Your hit point maximum increases by 2 for each character level you have while wearing this armor.",
+    "weapon": "(Hunting Horn Only) Inspiring Melody+. When you complete a melody, allies within 30 feet who can hear you deal an extra 1d6 damage with their attacks and spells until the end of your next turn."
+  },
+  {
+    "name": "Shimmering Scale",
+    "monster": "Crimson Glow Valstrax",
+    "cr": "22",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Survivor+. When an ally, that you can see, is reduced to 0 hit points you can use your reaction to gain +2 AC, +2 damage, and +2 to attack rolls for 1 minute. Once used, this property can't be used again until you finish a long rest.",
+    "weapon": "Resentment. Until the end of your turn, you gain a +1 bonus to attack and damage rolls against any creature that has damaged you since the end of your last turn."
+  },
+  {
+    "name": "Dreadqueen Cortex",
+    "monster": "Dreadqueen Rathian",
+    "cr": "23",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Divine Blessing+3. When you take damage, you are not immune or resistant to, roll a d10 and reduce the damage you take by the number rolled. You can use this property a number of times equal to your proficiency bonus. You regain all expended uses when you finish a long rest.",
+    "weapon": "(Hunting Horn only) Horn Maestro+2. While attuned to this weapon, your melody lasts 1 minute longer than normal and your maximum cord length is increased by 1."
+  },
+  {
+    "name": "Zionium Crystal",
+    "monster": "Safi'jiiva",
+    "cr": "29",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "While you are wearing this armor you gain the following benefits: You regain consciousness on a roll of 19 or 20 on death saving throws. You can cast the regenerate spell from it but only target yourself. Once you use this property, you can't use it again until the next dawn.",
+    "weapon": "True Dragonvein Awakening. This material cannot be placed in a trinket. When placed in a weapon it gains the following benefits: Your weapon deals an extra 1d8 fire damage When a creature must make a saving throw against a spell, weapon effect, or other abilities that inflict a condition, it does so at disadvantage. Your weapon attacks critical hit range is increased by 2."
+  },
+  {
+    "name": "Annihilating Greathorn",
+    "monster": "Ruiner Nergigante",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "While wearing this armor, you gain a +3 bonus to AC, you are immune to fire damage, and you can understand and speak Draconic. In addition, you can stand on and walk across molten rock as if it were solid ground.",
+    "weapon": "While you are attuned to this weapon, your strength score changes to 29. If your Strength is already equal to or greater than the weapon's score, the item has no effect on you."
+  },
+  {
+    "name": "B.Gravios Conflagrant Sac",
+    "monster": "Black Gravios",
+    "cr": "19",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "(Spell must be part of your class/subclass) While attuned to this weapon you can use an action to cast the protection from energy (fire only) spell from it a number of times equal to your proficiency modifier + 1, without expending a spell slot.",
+    "weapon": "Your weapon deals an extra 1d10 fire damage."
+  },
+  {
+    "name": "A.Lagi Dynamo",
+    "monster": "Abyssal Lagiacrus",
+    "cr": "21",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Great Luck. While you are attuned to this armor, you have two luck points that you regain daily at dawn. You may use these point as if you had the Lucky feat.",
+    "weapon": "FastCharge+2. When you roll for initiative, your greatsword, longsword, charge blade, or tonfas gains 3 charges, spirit, or phial charges."
+  },
+  {
+    "name": "T.Velkhana Crownhorn",
+    "monster": "Tempered Velkhana",
+    "cr": "22",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "(Sorcerer, Warlock, and Wizard Only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 25 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 25 cold damage.",
+    "weapon": "Critical Draw++. During the first round of combat your melee weapon attacks score a critical hit on a roll of 13 or higher. T.Velkhana Divinity Set bonus (2): When you critically hit with a weapon or spell that deals cold damage, you deal an extra 1d8 cold damage. Set bonus (4): An aura of frost builds when your weapon is sheathed for at least 1 minute. When you draw this weapon, it deals an extra 1d8 cold damage for the next 4 rounds."
+  },
+  {
+    "name": "Nergigante Hardclaw",
+    "monster": "Ruiner Nergigante",
+    "cr": "30",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "When a creature within 5 feet of you hits you with a melee attack, you can use your reaction to deal 3d4 piercing damage to them. This damage bypasses resistance and immunity and can't be reduced or avoided by any means.",
+    "weapon": "Your weapon deals an extra 2d6 force damage."
+  },
+  {
+    "name": "Savage Tallfang",
+    "monster": "Savage Deviljho",
+    "cr": "22",
+    "tier": 4,
+    "slots": [
+      "W"
+    ],
+    "armor": null,
+    "weapon": "Partbreaker+3. You deal an extra 1d10 damage when you critically hit with this weapon."
+  },
+  {
+    "name": "Elderfrost Redfur",
+    "monster": "Elderfrost Gammoth",
+    "cr": "20",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You have resistance to cold damage and you ignore difficult terrain created by ice or snow while you wear this armor.",
+    "weapon": "(Hunting Horn only) Horn Maestro+2. While attuned to this weapon, your melody lasts 1 minute longer than normal and your maximum cord length is increased by 1."
+  },
+  {
+    "name": "Diametrical Horn",
+    "monster": "Chaotic Gore Magala",
+    "cr": "24",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You are immune to cold damage while you wear this armor.",
+    "weapon": "You gain a +3 bonus to your spell attack rolls and spell save DC while attuned to this weapon."
+  },
+  {
+    "name": "Gravios Pleura",
+    "monster": "Tempered Gravios",
+    "cr": "21",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": null,
+    "weapon": "(Hunting Horn Only) Muse. When you finish a long rest choose one creature to become your muse until you start a long rest. Your muse gains the magical benefits of your completed melody while they are within 120 feet of you."
+  },
+  {
+    "name": "Rey Dau Shell",
+    "monster": "Rey Dau",
+    "cr": "14",
+    "tier": 3,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "You have advantage on saving throws against being stunned while you wear this armor.",
+    "weapon": "(Hunting Horn Only) Lord's Favor. When you complete a melody, your hunting horn deals an extra 1d12 bludgeoning damage until the end of your next turn."
+  },
+  {
+    "name": "Lunastra Gem",
+    "monster": "Lunastra",
+    "cr": "12",
+    "tier": 3,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "Health Boost. While wearing this armor, your hit point maximum increases by 1 for each character level you have.",
+    "weapon": "Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature."
+  },
+  {
+    "name": "Kirin Icehorn",
+    "monster": "Oroshi Kirin",
+    "cr": "18",
+    "tier": 4,
+    "slots": [
+      "A",
+      "W"
+    ],
+    "armor": "While you wear this armor you are immune to the iceblight disease.",
+    "weapon": "Your cold spells bypass a creature's resistance to cold damage while you are attuned to this weapon."
+  }
+]
