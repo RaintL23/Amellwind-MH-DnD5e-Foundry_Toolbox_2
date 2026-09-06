@@ -198,6 +198,20 @@ export function buildWeaponFoundryExportBundle(
 
   enrichWeaponActivities(item);
 
+  // Canonical primary attack name for Midi overlays / hand-tuned parity.
+  const acts = (item.system as { activities?: Record<string, Record<string, unknown>> })
+    .activities;
+  if (acts) {
+    for (const activity of Object.values(acts)) {
+      if (
+        activity?.type === "attack" &&
+        !String(activity.name ?? "").trim()
+      ) {
+        activity.name = "Attack";
+      }
+    }
+  }
+
   item.flags = {
     ...defaultWeaponForgeItemFlags({
       baseWeaponName: weapon.name,

@@ -1,5 +1,5 @@
 {
-  "_id": "dIMbXFzzD1cPlxCb",
+  "_id": "xvRm6YJSLyglmP7i",
   "name": "Switch Axe (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_switchaxe.webp",
@@ -90,8 +90,8 @@
       "max": "10"
     },
     "activities": {
-      "X2MLSclPLpc2l1ET": {
-        "_id": "X2MLSclPLpc2l1ET",
+      "JgKvD3oBwiySWmzy": {
+        "_id": "JgKvD3oBwiySWmzy",
         "type": "attack",
         "sort": 0,
         "name": "Axe",
@@ -1477,6 +1477,164 @@
           "flat": false,
           "bonus": ""
         }
+      },
+      "tdZs51OMIyKQjCAH": {
+        "_id": "tdZs51OMIyKQjCAH",
+        "sort": 604000,
+        "name": "Phial Discharge (Dragon)",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "Sword Mode — Attack action (expends 1 Phial Charge)",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Dragon Phial (1d10 necrotic). Expends 1 Phial Charge."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "phial-discharge-dragon",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\"",
+        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥1 Phial Charge.",
+        "effectConditionText": "",
+        "type": "attack",
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": 2,
+              "denomination": 6,
+              "types": [
+                "slashing"
+              ],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": "@mod"
+            },
+            {
+              "number": 1,
+              "denomination": 10,
+              "types": [
+                "necrotic"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        }
       }
     },
     "container": null,
@@ -1517,8 +1675,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192559,
-        "modifiedTime": 1788189192559,
+        "createdTime": 1788708672845,
+        "modifiedTime": 1788708672845,
         "lastModifiedBy": null
       }
     },
@@ -1552,8 +1710,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192559,
-        "modifiedTime": 1788189192559,
+        "createdTime": 1788708672845,
+        "modifiedTime": 1788708672845,
         "lastModifiedBy": null
       }
     },
@@ -1602,8 +1760,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192559,
-        "modifiedTime": 1788189192559,
+        "createdTime": 1788708672845,
+        "modifiedTime": 1788708672845,
         "lastModifiedBy": null
       }
     },
@@ -1662,8 +1820,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192559,
-        "modifiedTime": 1788189192559,
+        "createdTime": 1788708672845,
+        "modifiedTime": 1788708672845,
         "lastModifiedBy": null
       }
     },
@@ -1722,8 +1880,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192559,
-        "modifiedTime": 1788189192559,
+        "createdTime": 1788708672845,
+        "modifiedTime": 1788708672845,
         "lastModifiedBy": null
       }
     },
@@ -1779,8 +1937,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192560,
-        "modifiedTime": 1788189192560,
+        "createdTime": 1788708672846,
+        "modifiedTime": 1788708672846,
         "lastModifiedBy": null
       }
     },
@@ -1830,14 +1988,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192561,
-        "modifiedTime": 1788189192561,
+        "createdTime": 1788708672846,
+        "modifiedTime": 1788708672846,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 12000000,
+  "sort": 22200000,
   "ownership": {
     "default": 0
   },
@@ -1923,7 +2081,8 @@
           "power",
           "element",
           "exhaust",
-          "poison"
+          "poison",
+          "dragon"
         ]
       }
     }
@@ -1934,8 +2093,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189192558,
-    "modifiedTime": 1788189192558,
+    "createdTime": 1788708672845,
+    "modifiedTime": 1788708672845,
     "lastModifiedBy": null
   }
 }

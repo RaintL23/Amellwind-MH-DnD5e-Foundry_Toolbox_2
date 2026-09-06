@@ -6,7 +6,9 @@
   "rarity": "none",
   "weight": 2,
   "value": 3000,
-  "property": ["L"],
+  "property": [
+    "L"
+  ],
   "dmg1": "1d4",
   "dmgType": "B",
   "img": "/mh-icons/weapon_tonfas.webp",
@@ -25,7 +27,13 @@
             "Features"
           ],
           "rows": [
-            ["Common", "1", "--", "--", "Mastery: Push"],
+            [
+              "Common",
+              "1",
+              "--",
+              "--",
+              "Mastery: Push"
+            ],
             [
               "Uncommon",
               "2",
@@ -33,8 +41,20 @@
               "--",
               "Wirebug Gauge, Wire-Dash, Wire-Fall"
             ],
-            ["Rare", "3", "+1", "+1", "Silkbind Tether, Silkbind Grapple"],
-            ["Very Rare", "4", "+2", "+2", "Wyvern Ride"],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "Silkbind Tether, Silkbind Grapple"
+            ],
+            [
+              "Very Rare",
+              "4",
+              "+2",
+              "+2",
+              "Wyvern Ride"
+            ],
             [
               "Legendary",
               "5",
@@ -101,7 +121,7 @@
         "id": "47a6bdb1-2174-4213-9072-5615373a27b2",
         "name": "Fierce Ram",
         "description": "The damage of your Ramming Maneuver increases to 5d10.",
-        "upgradesFromId": "60f533e1-644e-4a39-80bc-8d31a0612195"
+        "upgradesFromId": "ecc773eb-27dd-4854-8619-1905c28e740e"
       }
     ],
     "proficiency": {

@@ -1,5 +1,5 @@
 {
-  "_id": "lsDQxZzgcrpsj7g5",
+  "_id": "ounBeGMl1A0yACDT",
   "name": "Normal Magazine",
   "type": "consumable",
   "img": "mh-icons/bowgun-ammo.webp",
@@ -222,8 +222,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189641400,
-        "modifiedTime": 1788189641400,
+        "createdTime": 1788708578463,
+        "modifiedTime": 1788708578463,
         "lastModifiedBy": null
       }
     }
@@ -298,8 +298,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189641400,
-    "modifiedTime": 1788189641400,
+    "createdTime": 1788708578463,
+    "modifiedTime": 1788708578463,
     "lastModifiedBy": null
   }
 }

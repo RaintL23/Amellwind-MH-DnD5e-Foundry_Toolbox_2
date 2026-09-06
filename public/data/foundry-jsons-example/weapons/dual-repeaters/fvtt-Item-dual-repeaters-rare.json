@@ -1,5 +1,5 @@
 {
-  "_id": "yhHHs8STq0BZvdEd",
+  "_id": "SbeVCWJy6dIHpZ9G",
   "name": "Dual Repeaters (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_dualrepeaters.webp",
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "gqYPBbsaQsY2UbnK": {
-        "_id": "gqYPBbsaQsY2UbnK",
+      "d5jiMFlHGC1PIap7": {
+        "_id": "d5jiMFlHGC1PIap7",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -477,14 +477,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786208397040,
-        "modifiedTime": 1786208397040,
+        "createdTime": 1788708672651,
+        "modifiedTime": 1788708672651,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 100000,
+  "sort": 4800000,
   "ownership": {
     "default": 0
   },
@@ -587,8 +587,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786208397037,
-    "modifiedTime": 1786208397037,
+    "createdTime": 1788708672651,
+    "modifiedTime": 1788708672651,
     "lastModifiedBy": null
   }
 }

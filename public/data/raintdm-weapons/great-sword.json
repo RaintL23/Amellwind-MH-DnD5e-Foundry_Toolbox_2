@@ -63,7 +63,7 @@
         "id": "3086f3e2-88c8-487e-9c8e-85a26f52f4a5",
         "name": "True Charged Slash",
         "description": "Your charge becomes deadlier. Your charged slash now deals an extra 4d6 slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.",
-        "upgradesFromId": "afb3ba50-b2c1-434d-a2c8-9750d23975b3"
+        "upgradesFromId": "ba7725b1-f4b7-4d4f-addf-85455a3595a1"
       },
       {
         "id": "da92d966-ddc5-43eb-bf55-6eef1f3022e3",
@@ -82,12 +82,6 @@
       },
       {
         "id": "93cd58af-c56f-4eef-86fa-7dfa870a5e5e",
-        "name": "Charge Upgrade",
-        "description": "Your charged slash now deals an extra 5d6 slashing damage for each charge expended in this way.",
-        "upgradesFromId": "3086f3e2-88c8-487e-9c8e-85a26f52f4a5"
-      },
-      {
-        "id": "b6eb4f59-8b79-4dfa-9754-f26b31e85542",
         "name": "Charge Upgrade",
         "description": "Your charged slash now deals an extra 5d6 slashing damage for each charge expended in this way.",
         "upgradesFromId": "3086f3e2-88c8-487e-9c8e-85a26f52f4a5"

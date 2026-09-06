@@ -176,7 +176,7 @@ describe("Gunlance rare Foundry export", () => {
     });
 
     const companion = readFileSync(
-      "public/data/foundry-jsons-example/weapons-resources/gunlance/gunlance-item-macro.js",
+      "public/data/scripts/weapons-resources/gunlance/gunlance-item-macro.js",
       "utf8",
     );
     expect(command.replace(/\r\n/g, "\n")).toBe(companion.replace(/\r\n/g, "\n"));

@@ -1,5 +1,5 @@
 {
-  "_id": "6mb9NTpxTsJPuCyS",
+  "_id": "LvABFcduIXsmlZzZ",
   "name": "Tonfas (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_tonfas.webp",
@@ -89,8 +89,8 @@
       "max": "4"
     },
     "activities": {
-      "ing4ZEJFzKHFP0P3": {
-        "_id": "ing4ZEJFzKHFP0P3",
+      "BYTCFAbcvfXeCVSk": {
+        "_id": "BYTCFAbcvfXeCVSk",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1180,8 +1180,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788099154990,
-        "modifiedTime": 1788099154990,
+        "createdTime": 1788708672876,
+        "modifiedTime": 1788708672876,
         "lastModifiedBy": null
       }
     },
@@ -1220,8 +1220,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788099154992,
-        "modifiedTime": 1788099154992,
+        "createdTime": 1788708672876,
+        "modifiedTime": 1788708672876,
         "lastModifiedBy": null
       }
     },
@@ -1267,14 +1267,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788099154992,
-        "modifiedTime": 1788099154992,
+        "createdTime": 1788708672876,
+        "modifiedTime": 1788708672876,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 200000,
+  "sort": 23500000,
   "ownership": {
     "default": 0
   },
@@ -1333,7 +1333,7 @@
         "scope": "global",
         "author": "",
         "img": "icons/svg/dice-target.svg",
-        "command": "// Tonfas — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro\n//\n// Spirit Gauge: +1 charge on a melee Attack hit (not Spirit Burst).\n// Tonfa Styles: toggle Sky Style ↔ Earth Style (flags.world.tonfas.style).\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? workflow?.activity?.midiProperties?.identifier\n  ?? \"\",\n).toLowerCase();\n\nconst isAttack =\n  rolled?.type === \"attack\"\n  || workflow?.activity?.type === \"attack\"\n  || actId === \"attack\"\n  || actName === \"attack\"\n  || actName === \"\";\n\nconst isSpiritBurst =\n  actId.includes(\"spirit-burst\")\n  || actName.includes(\"spirit burst\");\n\nconst isTonfaStyles =\n  actId.includes(\"tonfa-styles\")\n  || actName.includes(\"tonfa styles\");\n\nconst itemDoc = item ?? workflow?.item ?? args?.[0]?.item ?? null;\nconst actorDoc = actor ?? workflow?.actor ?? itemDoc?.actor ?? null;\n\nasync function recoverSpiritCharges(amount = 1) {\n  if (!itemDoc?.update || amount <= 0) return;\n  const uses = itemDoc.system?.uses;\n  const max = Number.parseInt(String(uses?.max ?? \"\"), 10);\n  const spent = Number.parseInt(String(uses?.spent ?? 0), 10);\n  if (!Number.isFinite(max) || max <= 0) return;\n  const nextSpent = Math.max(0, spent - amount);\n  if (nextSpent === spent) return;\n  await itemDoc.update({ \"system.uses.spent\": nextSpent });\n}\n\nasync function toggleTonfaStyle() {\n  if (!actorDoc?.update) return;\n  const path = \"flags.world.tonfas.style\";\n  const current = String(foundry.utils.getProperty(actorDoc, path) ?? \"sky\").toLowerCase();\n  const next = current === \"earth\" ? \"sky\" : \"earth\";\n  await actorDoc.update({ [path]: next });\n  const label = next === \"earth\" ? \"Earth Style\" : \"Sky Style\";\n  ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<p><strong>Tonfa Styles:</strong> ${esc(label)} active.</p>`,\n  });\n}\n\nif (macroPass.includes(\"pretargeting\") || macroPass.includes(\"preitemroll\")) {\n  if (isTonfaStyles) {\n    await toggleTonfaStyle();\n  }\n  return;\n}\n\nif (!macroPass.includes(\"postactiveeffects\")) return;\n\nif (isAttack && !isSpiritBurst) {\n  const hitCount = Number(\n    workflow?.hitTargets?.size\n    ?? workflow?.damageRoll?.options?.hitCount\n    ?? 0,\n  );\n  if (hitCount > 0 || workflow?.hitTargets?.size > 0) {\n    await recoverSpiritCharges(1);\n  }\n}\n",
+        "command": "// Tonfas — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[postActiveEffects]ItemMacro\n//\n// Spirit Gauge: +1 charge on a melee Attack hit (not Spirit Burst).\n// Tonfa Styles: toggle Sky Style ↔ Earth Style (flags.world.tonfas.style).\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? workflow?.activity?.midiProperties?.identifier\n  ?? \"\",\n).toLowerCase();\n\nconst isAttack =\n  rolled?.type === \"attack\"\n  || workflow?.activity?.type === \"attack\"\n  || actId === \"attack\"\n  || actName === \"attack\"\n  || actName === \"\";\n\nconst isSpiritBurst =\n  actId.includes(\"spirit-burst\")\n  || actName.includes(\"spirit burst\");\n\nconst isTonfaStyles =\n  actId.includes(\"tonfa-styles\")\n  || actName.includes(\"tonfa styles\")\n  || actId.includes(\"style-master\")\n  || actName.includes(\"style master\");\n\nconst isFastSpiritCharge =\n  actId.includes(\"fast-spirit\")\n  || actName.includes(\"fast spirit\");\n\nconst itemDoc = item ?? workflow?.item ?? args?.[0]?.item ?? null;\nconst actorDoc = actor ?? workflow?.actor ?? itemDoc?.actor ?? null;\n\nasync function recoverSpiritCharges(amount = 1) {\n  if (!itemDoc?.update || amount <= 0) return;\n  const uses = itemDoc.system?.uses;\n  const max = Number.parseInt(String(uses?.max ?? \"\"), 10);\n  const spent = Number.parseInt(String(uses?.spent ?? 0), 10);\n  if (!Number.isFinite(max) || max <= 0) return;\n  const nextSpent = Math.max(0, spent - amount);\n  if (nextSpent === spent) return;\n  await itemDoc.update({ \"system.uses.spent\": nextSpent });\n}\n\nasync function toggleTonfaStyle() {\n  if (!actorDoc?.update) return;\n  const path = \"flags.world.tonfas.style\";\n  const current = String(foundry.utils.getProperty(actorDoc, path) ?? \"sky\").toLowerCase();\n  const next = current === \"earth\" ? \"sky\" : \"earth\";\n  await actorDoc.update({ [path]: next });\n  const label = next === \"earth\" ? \"Earth Style\" : \"Sky Style\";\n  ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<p><strong>Tonfa Styles:</strong> ${esc(label)} active.</p>`,\n  });\n}\n\nif (macroPass.includes(\"pretargeting\") || macroPass.includes(\"preitemroll\")) {\n  if (isTonfaStyles) {\n    await toggleTonfaStyle();\n  }\n  return;\n}\n\nif (!macroPass.includes(\"postactiveeffects\")) return;\n\nif (isFastSpiritCharge) {\n  await recoverSpiritCharges(2);\n  return;\n}\n\nif (isAttack && !isSpiritBurst) {\n  const hitCount = Number(\n    workflow?.hitTargets?.size\n    ?? workflow?.damageRoll?.options?.hitCount\n    ?? 0,\n  );\n  if (hitCount > 0 || workflow?.hitTargets?.size > 0) {\n    await recoverSpiritCharges(1);\n  }\n}\n",
         "folder": null,
         "sort": 0,
         "ownership": {
@@ -1353,7 +1353,11 @@
         "spiritMax": 4,
         "burstDie": "1d8",
         "hasEarthImpact": true,
-        "hasSkyStep": true
+        "hasSkyStep": true,
+        "hasFastSpiritCharge": false,
+        "hasSkyDash": false,
+        "hasStyleMaster": false,
+        "hasApexSpirit": false
       }
     }
   },
@@ -1363,8 +1367,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788099154990,
-    "modifiedTime": 1788099154990,
+    "createdTime": 1788708672876,
+    "modifiedTime": 1788708672876,
     "lastModifiedBy": null
   }
 }

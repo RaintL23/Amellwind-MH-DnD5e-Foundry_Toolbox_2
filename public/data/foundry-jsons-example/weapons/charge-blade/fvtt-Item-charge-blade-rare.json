@@ -1,4 +1,5 @@
 {
+  "_id": "yyt3EW0IScAhJCf9",
   "name": "Charge Blade (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_chargeblade.webp",
@@ -91,8 +92,8 @@
       "max": "5"
     },
     "activities": {
-      "rkKnvgYwIMZBLwV8": {
-        "_id": "rkKnvgYwIMZBLwV8",
+      "ngbFVDeufC6smYnI": {
+        "_id": "ngbFVDeufC6smYnI",
         "type": "attack",
         "sort": 0,
         "name": "Sword & Shield",
@@ -220,8 +221,8 @@
         "useConditionReason": "Requires Sword & Shield Mode (use Switch Mode).",
         "effectConditionText": "false"
       },
-      "xCEZL5jmJas0ntEA": {
-        "_id": "xCEZL5jmJas0ntEA",
+      "EbluP3Hu8n1CChzJ": {
+        "_id": "EbluP3Hu8n1CChzJ",
         "type": "attack",
         "sort": 100000,
         "name": "Axe",
@@ -1126,8 +1127,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786145424931,
-        "modifiedTime": 1786145424931,
+        "createdTime": 1788708672601,
+        "modifiedTime": 1788708672601,
         "lastModifiedBy": null
       }
     },
@@ -1161,13 +1162,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786145424931,
-        "modifiedTime": 1786145424931,
+        "createdTime": 1788708672601,
+        "modifiedTime": 1788708672601,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "2geLRkXEkHJxh1Np",
+      "_id": "4YNJjvlv2rxMxOBH",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -1214,8 +1215,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786145424933,
-        "modifiedTime": 1786145424933,
+        "createdTime": 1788708672603,
+        "modifiedTime": 1788708672603,
         "lastModifiedBy": null
       }
     },
@@ -1274,8 +1275,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786145424933,
-        "modifiedTime": 1786145424933,
+        "createdTime": 1788708672603,
+        "modifiedTime": 1788708672603,
         "lastModifiedBy": null
       }
     },
@@ -1334,13 +1335,17 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786145424933,
-        "modifiedTime": 1786145424933,
+        "createdTime": 1788708672603,
+        "modifiedTime": 1788708672603,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
+  "sort": 2600000,
+  "ownership": {
+    "default": 0
+  },
   "flags": {
     "amellwind-toolbox": {
       "baseWeaponName": "Charge Blade",
@@ -1438,12 +1443,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786145424930,
-    "modifiedTime": 1786145424930,
+    "createdTime": 1788708672600,
+    "modifiedTime": 1788708672600,
     "lastModifiedBy": null
-  },
-  "ownership": {
-    "default": 0
-  },
-  "_id": "WPpr1FidPxMDj3N4"
+  }
 }

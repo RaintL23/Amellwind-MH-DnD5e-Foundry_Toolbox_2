@@ -1,5 +1,5 @@
 {
-  "_id": "GcnZsmtF4HimTCd1",
+  "_id": "1JbfXCCs3A1swm99",
   "name": "Charge Blade (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_chargeblade.webp",
@@ -92,8 +92,8 @@
       "max": "5"
     },
     "activities": {
-      "5ob76OtIAPmkAwvL": {
-        "_id": "5ob76OtIAPmkAwvL",
+      "koxf005CMSSYxNrf": {
+        "_id": "koxf005CMSSYxNrf",
         "type": "attack",
         "sort": 0,
         "name": "Sword & Shield",
@@ -221,8 +221,8 @@
         "useConditionReason": "Requires Sword & Shield Mode (use Switch Mode).",
         "effectConditionText": "false"
       },
-      "Wx33iCwtr3HFSCyK": {
-        "_id": "Wx33iCwtr3HFSCyK",
+      "9cIrSyowTUKfVKpm": {
+        "_id": "9cIrSyowTUKfVKpm",
         "type": "attack",
         "sort": 100000,
         "name": "Axe",
@@ -1127,8 +1127,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192428,
-        "modifiedTime": 1788189192428,
+        "createdTime": 1788708672617,
+        "modifiedTime": 1788708672617,
         "lastModifiedBy": null
       }
     },
@@ -1162,13 +1162,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192428,
-        "modifiedTime": 1788189192428,
+        "createdTime": 1788708672617,
+        "modifiedTime": 1788708672617,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "Zzf9kBm5E4zn6pf7",
+      "_id": "zBfUEa98uj4SNzcA",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -1215,8 +1215,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192429,
-        "modifiedTime": 1788189192429,
+        "createdTime": 1788708672617,
+        "modifiedTime": 1788708672617,
         "lastModifiedBy": null
       }
     },
@@ -1275,8 +1275,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192429,
-        "modifiedTime": 1788189192429,
+        "createdTime": 1788708672617,
+        "modifiedTime": 1788708672617,
         "lastModifiedBy": null
       }
     },
@@ -1335,14 +1335,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192429,
-        "modifiedTime": 1788189192429,
+        "createdTime": 1788708672617,
+        "modifiedTime": 1788708672617,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 800000,
+  "sort": 2800000,
   "ownership": {
     "default": 0
   },
@@ -1443,8 +1443,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189192427,
-    "modifiedTime": 1788189192427,
+    "createdTime": 1788708672616,
+    "modifiedTime": 1788708672616,
     "lastModifiedBy": null
   }
 }

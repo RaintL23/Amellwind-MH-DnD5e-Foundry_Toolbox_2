@@ -1,5 +1,5 @@
 {
-  "_id": "d0JEVBJPcoi8Bsrp",
+  "_id": "JamiWNEJW7T1aqot",
   "name": "Great Sword (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
@@ -13,8 +13,8 @@
       "revision": 1
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p>As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.</p><p>When you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage</p><p>On hit the weapon deals an extra [[/r 3d6]] slashing damage for each charge expended in this way.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p><p>Your charge becomes deadlier. Your charged slash now deals an extra [[/r 4d6]] slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Charge Upgrade</strong></p><p>Your charged slash now deals an extra [[/r 5d6]] slashing damage for each charge expended in this way.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Divine True Charged Slash</strong></p><p>Your charged slash now deals an extra [[/r 6d6]] slashing damage for each charge expended in this way and the creature is Stunned until the start of your next turn from the sheer concussive force.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when you are hit by a melee attack, you can position the broad side of the blade to protect yourself, gaining a +3 bonus to your AC against that attack. If the attack still hits, you reduce the damage by [[/r 1d10]] + your Strength modifier.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p><p>Using a weapon as a shield ruins its edge. After using this Emergency Guard, the weapon loses its Graze Mastery property until you finish a Short or Long Rest, or spend 1 minute sharpening it with a whetstone.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Offset Strike</strong></p><p><strong>Reaction.</strong></p><p>If a creature moves into your reach and makes a melee attack against you, you can use your Reaction to swing simultaneously. Make an attack roll with the Greatsword. If your roll is higher than the attacker's roll, their attack misses, your attack hits automatically, and you deal your normal weapon damage plus an extra [[/r 2d6]].</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Focus Strike</strong></p><p><strong>Bonus Action.</strong></p><p>You master the flow of combat. You can now use your Bonus Action to grant your next attack 1 Charge without needing to forgo an attack from your Attack action.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Charge Upgrade</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#ff8000\">Divine True Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Offset Strike</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Focus Strike</strong></p><p><strong>Bonus Action.</strong></p></div>"
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p>As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.</p><p>When you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage</p><p>On hit the weapon deals an extra [[/r 3d6]] slashing damage for each charge expended in this way.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">True Charged Slash</strong></p><p>Your charge becomes deadlier. Your charged slash now deals an extra [[/r 4d6]] slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Charge Upgrade</strong></p><p>Your charged slash now deals an extra [[/r 5d6]] slashing damage for each charge expended in this way.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Divine True Charged Slash</strong></p><p>Your charged slash now deals an extra [[/r 6d6]] slashing damage for each charge expended in this way and the creature is Stunned until the start of your next turn from the sheer concussive force.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when you are hit by a melee attack, you can position the broad side of the blade to protect yourself, gaining a +3 bonus to your AC against that attack. If the attack still hits, you reduce the damage by [[/r 1d10]] + your Strength modifier.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p><p>Using a weapon as a shield ruins its edge. After using this Emergency Guard, the weapon loses its Graze Mastery property until you finish a Short or Long Rest, or spend 1 minute sharpening it with a whetstone.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Offset Strike</strong></p><p><strong>Reaction.</strong></p><p>If a creature moves into your reach and makes a melee attack against you, you can use your Reaction to swing simultaneously. Make an attack roll with the Greatsword. If your roll is higher than the attacker's roll, their attack misses, your attack hits automatically, and you deal your normal weapon damage plus an extra [[/r 2d6]].</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Focus Strike</strong></p><p><strong>Bonus Action.</strong></p><p>You master the flow of combat. You can now use your Bonus Action to grant your next attack 1 Charge without needing to forgo an attack from your Attack action.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">True Charged Slash</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Charge Upgrade</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#ff8000\">Divine True Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Offset Strike</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Focus Strike</strong></p><p><strong>Bonus Action.</strong></p></div>"
     },
     "identifier": "greatsword",
     "quantity": 1,
@@ -89,11 +89,11 @@
       "max": "3"
     },
     "activities": {
-      "NsfRHCBnroKCsESx": {
-        "_id": "NsfRHCBnroKCsESx",
+      "GFUjoCvZ2AZHTcFN": {
+        "_id": "GFUjoCvZ2AZHTcFN",
         "type": "attack",
         "sort": 0,
-        "name": "",
+        "name": "Attack",
         "activation": {
           "type": "action",
           "value": 1,
@@ -357,7 +357,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 1 (+3d6)."
+          "chatFlavor": "Attack with advantage. Extra 6d6 per charge. On hit: target Stunned until start of your next turn. Consumes 1 (+6d6).  On hit/use apply: stunned."
         },
         "duration": {
           "value": "",
@@ -445,7 +445,7 @@
           "includeBase": true,
           "parts": [
             {
-              "number": 3,
+              "number": 6,
               "denomination": 6,
               "types": [
                 "slashing"
@@ -512,7 +512,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 2 (+6d6)."
+          "chatFlavor": "Attack with advantage. Extra 6d6 per charge. On hit: target Stunned until start of your next turn. Consumes 2 (+12d6).  On hit/use apply: stunned."
         },
         "duration": {
           "value": "",
@@ -600,7 +600,7 @@
           "includeBase": true,
           "parts": [
             {
-              "number": 6,
+              "number": 12,
               "denomination": 6,
               "types": [
                 "slashing"
@@ -667,7 +667,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 3 (+9d6)."
+          "chatFlavor": "Attack with advantage. Extra 6d6 per charge. On hit: target Stunned until start of your next turn. Consumes 3 (+18d6).  On hit/use apply: stunned."
         },
         "duration": {
           "value": "",
@@ -755,7 +755,7 @@
           "includeBase": true,
           "parts": [
             {
-              "number": 9,
+              "number": 18,
               "denomination": 6,
               "types": [
                 "slashing"
@@ -795,7 +795,7 @@
       },
       "VzOYRrSMkVMUQIEL": {
         "_id": "VzOYRrSMkVMUQIEL",
-        "sort": 400000,
+        "sort": 300000,
         "name": "Emergency Guard",
         "activation": {
           "type": "reaction",
@@ -907,7 +907,7 @@
       },
       "H6md4uOMUvC6XU7D": {
         "_id": "H6md4uOMUvC6XU7D",
-        "sort": 600000,
+        "sort": 500000,
         "name": "Offset Strike",
         "activation": {
           "type": "reaction",
@@ -1053,7 +1053,7 @@
       },
       "cwx5ueBDpKXcJAXB": {
         "_id": "cwx5ueBDpKXcJAXB",
-        "sort": 700000,
+        "sort": 600000,
         "name": "Focus Strike",
         "activation": {
           "type": "bonus",
@@ -1203,8 +1203,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192469,
-        "modifiedTime": 1788189192469,
+        "createdTime": 1788708702835,
+        "modifiedTime": 1788708702835,
         "lastModifiedBy": null
       }
     },
@@ -1256,14 +1256,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192469,
-        "modifiedTime": 1788189192469,
+        "createdTime": 1788708702836,
+        "modifiedTime": 1788708702836,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 5800000,
+  "sort": 2800000,
   "ownership": {
     "default": 0
   },
@@ -1309,8 +1309,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189192468,
-    "modifiedTime": 1788189192468,
+    "createdTime": 1788708702835,
+    "modifiedTime": 1788708702835,
     "lastModifiedBy": null
   }
 }

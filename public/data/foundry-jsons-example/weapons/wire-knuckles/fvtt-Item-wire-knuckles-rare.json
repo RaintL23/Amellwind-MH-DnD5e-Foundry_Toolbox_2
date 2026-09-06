@@ -1,5 +1,5 @@
 {
-  "_id": "8zrRBz67MtGD9WMQ",
+  "_id": "vzLiaW623993LjME",
   "name": "Wire Knuckles (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_tonfas.webp",
@@ -94,11 +94,11 @@
       "max": "3"
     },
     "activities": {
-      "luLG71N0skROAwB3": {
-        "_id": "luLG71N0skROAwB3",
+      "qATVkybQFwBNXvuA": {
+        "_id": "qATVkybQFwBNXvuA",
         "type": "attack",
         "sort": 0,
-        "name": "",
+        "name": "Attack",
         "activation": {
           "type": "action",
           "value": 1,
@@ -854,8 +854,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786135781081,
-        "modifiedTime": 1786135781081,
+        "createdTime": 1788708702971,
+        "modifiedTime": 1788708702971,
         "lastModifiedBy": null
       }
     },
@@ -894,14 +894,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786135781082,
-        "modifiedTime": 1786135781082,
+        "createdTime": 1788708702971,
+        "modifiedTime": 1788708702971,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 100000,
+  "sort": 11200000,
   "ownership": {
     "default": 0
   },
@@ -952,8 +952,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786135781078,
-    "modifiedTime": 1786135781078,
+    "createdTime": 1788708702970,
+    "modifiedTime": 1788708702970,
     "lastModifiedBy": null
   }
 }

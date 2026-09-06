@@ -174,7 +174,7 @@ describe("Weapon Forge Foundry example parity", () => {
         .sort(),
     ).toEqual(
       [
-        "(default)",
+        "Attack",
         "Charged Slash: Gather Charge",
         "Charged Slash ×1",
         "Charged Slash ×2",

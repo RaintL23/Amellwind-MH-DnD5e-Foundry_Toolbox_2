@@ -1,5 +1,5 @@
 {
-  "_id": "Xcs0sd8epYuUyZvE",
+  "_id": "SkHE3XnIZHv4F4Zc",
   "name": "Melody of Harmful Lightning",
   "type": "feat",
   "img": "icons/magic/lightning/bolt-strike-blue.webp",
@@ -37,7 +37,7 @@
   },
   "effects": [
     {
-      "_id": "SLyTfiG4INU7dLYD",
+      "_id": "bo5m7A8Wt4iEU2Sq",
       "name": "Melody of Harmful Lightning (Aura 15 ft)",
       "img": "icons/magic/lightning/bolt-strike-blue.webp",
       "description": "",
@@ -126,8 +126,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189641414,
-        "modifiedTime": 1788189641414,
+        "createdTime": 1788708578483,
+        "modifiedTime": 1788708578483,
         "lastModifiedBy": null
       }
     }
@@ -157,8 +157,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189641414,
-    "modifiedTime": 1788189641414,
+    "createdTime": 1788708578483,
+    "modifiedTime": 1788708578483,
     "lastModifiedBy": null
   }
 }

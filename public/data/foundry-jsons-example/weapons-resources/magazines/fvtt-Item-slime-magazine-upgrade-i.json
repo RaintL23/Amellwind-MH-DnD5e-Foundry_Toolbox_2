@@ -1,5 +1,5 @@
 {
-  "_id": "zQramAAC9GseiSWM",
+  "_id": "URjDKcewuZG0zQij",
   "name": "Slime Magazine Upgrade I",
   "type": "consumable",
   "img": "mh-icons/bowgun-ammo.webp",
@@ -225,8 +225,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189641401,
-        "modifiedTime": 1788189641401,
+        "createdTime": 1788708578463,
+        "modifiedTime": 1788708578463,
         "lastModifiedBy": null
       }
     }
@@ -304,8 +304,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189641401,
-    "modifiedTime": 1788189641401,
+    "createdTime": 1788708578464,
+    "modifiedTime": 1788708578464,
     "lastModifiedBy": null
   }
 }

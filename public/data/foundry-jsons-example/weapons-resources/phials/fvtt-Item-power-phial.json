@@ -1,5 +1,5 @@
 {
-  "_id": "QsEA9XHOQ4B381tO",
+  "_id": "ezAUgg4TkF08aN4P",
   "name": "Power Phial",
   "type": "feat",
   "img": "icons/weapons/ammunition/arrowhead-glowing-blue.webp",
@@ -187,8 +187,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189641427,
-        "modifiedTime": 1788189641427,
+        "createdTime": 1788708578508,
+        "modifiedTime": 1788708578508,
         "lastModifiedBy": null
       }
     }
@@ -218,8 +218,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189641427,
-    "modifiedTime": 1788189641427,
+    "createdTime": 1788708578508,
+    "modifiedTime": 1788708578508,
     "lastModifiedBy": null
   }
 }

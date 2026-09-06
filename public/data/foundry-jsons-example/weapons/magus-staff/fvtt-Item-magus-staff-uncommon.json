@@ -1,5 +1,5 @@
 {
-  "_id": "DFXP2CLDV2BHSZDY",
+  "_id": "CO8kbCDMJDv7GEic",
   "name": "Magus Staff (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_magusstaff.webp",
@@ -91,8 +91,8 @@
       "max": "3"
     },
     "activities": {
-      "CtZWxhD5Azu74lfp": {
-        "_id": "CtZWxhD5Azu74lfp",
+      "IPYU4UolFrYAFgBn": {
+        "_id": "IPYU4UolFrYAFgBn",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -496,14 +496,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189143166,
-        "modifiedTime": 1788189143166,
+        "createdTime": 1788708672806,
+        "modifiedTime": 1788708672806,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 500000,
+  "sort": 20400000,
   "ownership": {
     "default": 0
   },
@@ -586,8 +586,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189143165,
-    "modifiedTime": 1788189143165,
+    "createdTime": 1788708672806,
+    "modifiedTime": 1788708672806,
     "lastModifiedBy": null
   }
 }

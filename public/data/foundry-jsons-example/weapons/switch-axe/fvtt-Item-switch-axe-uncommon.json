@@ -1,5 +1,5 @@
 {
-  "_id": "C5cIY8jCXcXvc3it",
+  "_id": "J12OloZBp5PgwZiB",
   "name": "Switch Axe (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_switchaxe.webp",
@@ -89,8 +89,8 @@
       "max": "5"
     },
     "activities": {
-      "bHkBCgJgtKT0p0wh": {
-        "_id": "bHkBCgJgtKT0p0wh",
+      "pZuZi2c7KU3LXYtA": {
+        "_id": "pZuZi2c7KU3LXYtA",
         "type": "attack",
         "sort": 0,
         "name": "Axe",
@@ -846,8 +846,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786139288611,
-        "modifiedTime": 1786139288611,
+        "createdTime": 1788708672827,
+        "modifiedTime": 1788708672827,
         "lastModifiedBy": null
       }
     },
@@ -881,8 +881,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786139288611,
-        "modifiedTime": 1786139288611,
+        "createdTime": 1788708672827,
+        "modifiedTime": 1788708672827,
         "lastModifiedBy": null
       }
     },
@@ -931,8 +931,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786139288612,
-        "modifiedTime": 1786139288612,
+        "createdTime": 1788708672827,
+        "modifiedTime": 1788708672827,
         "lastModifiedBy": null
       }
     },
@@ -991,8 +991,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786139288614,
-        "modifiedTime": 1786139288614,
+        "createdTime": 1788708672827,
+        "modifiedTime": 1788708672827,
         "lastModifiedBy": null
       }
     },
@@ -1051,14 +1051,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1786139288614,
-        "modifiedTime": 1786139288614,
+        "createdTime": 1788708672827,
+        "modifiedTime": 1788708672827,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 100000,
+  "sort": 20900000,
   "ownership": {
     "default": 0
   },
@@ -1153,8 +1153,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786139288607,
-    "modifiedTime": 1786139288607,
+    "createdTime": 1788708672826,
+    "modifiedTime": 1788708672826,
     "lastModifiedBy": null
   }
 }

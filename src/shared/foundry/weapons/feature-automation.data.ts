@@ -471,6 +471,26 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Requires Active Auras. Half Cover for allies within 5 ft.",
   ),
+  "absolute defense": reactionUtility(
+    "When a creature you can see hits you with an attack while you are wielding this weapon",
+    {
+      rollFormula: "2d10",
+      chatFlavor:
+        "Add 2d10 to your AC against that attack (Absolute Defense). See feature text for follow-up limits.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/equipment/shield/heater-stone-orange.webp",
+    },
+  ),
+  "spiral thrust": spec("bonus_action", {
+    activation: "bonus",
+    activityType: "attack",
+    includeBaseDamage: true,
+    chatFlavor:
+      "Bonus Action attack after Absolute Defense or a successful Offset (see feature text).",
+    activityImg: "icons/skills/melee/strike-sword-steel-yellow.webp",
+  }),
   "aegis wall": reactionUtility(
     "When you would make a Dexterity saving throw against an area effect while wielding the shield",
     {
@@ -488,7 +508,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   "anchor rage": spec(
     "unmapped",
     {},
-    "Granted by Counter-Thrust ItemMacro on miss (Rare+): +1d6 piercing until 1Hit / turnEndSource. See lance-counter-thrust-item-macro.js.",
+    "Granted by Counter-Thrust ItemMacro on miss (Rare+): +1d6 piercing until 1Hit / turnEndSource. See public/data/scripts/weapons-resources/lance/lance-counter-thrust-item-macro.js.",
   ),
   "leaping thrust": spec("bonus_action", {
     activation: "bonus",
@@ -713,6 +733,35 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     chatFlavor:
       "Spend 1 Ignition. One extra attack; +1d8 piercing if you already hit with this weapon this turn.",
   }),
+  "wyvernheart upgrade ii": spec("upgrade_scaler", {
+    chatFlavor:
+      "Spend 1 Ignition. One extra attack; +1d10 piercing if you already hit with this weapon this turn.",
+  }),
+  wyvernpiercer: saveAction({
+    activation: "action",
+    saveAbility: "dex",
+    damageFormula: "2d10",
+    damageType: "piercing",
+    onSave: "half",
+    templateType: "line",
+    templateSize: "80",
+    templateWidth: "5",
+    consumeItemUses: true,
+    consumeAmount: "2",
+    chatFlavor:
+      "Spend 2 Ignition. 80-ft line; DEX save vs Ammo DC. Half on success. Cannot Guard until your next turn.",
+    notes: "Heavy Bowgun Very Rare+. Ignition spend is Item Macro / honor-system if uses are Magazine.",
+  }),
+  "wyvernpiercer upgrade": spec("upgrade_scaler", {
+    damageFormula: "4d10",
+    templateSize: "100",
+    chatFlavor:
+      "Spend 2 Ignition. 100-ft line; DEX save vs Ammo DC. Extra 4d10 piercing. Cannot Guard until your next turn.",
+  }),
+  "ignition mode": baUtility(
+    "",
+    "PB/LR: enter Ignition Mode — +2 Ignition on hit; Guard/Wyverncounter off; Wyvernpiercer as Bonus Action.",
+  ),
   guard: reactionUtility(
     "When a creature you can see hits you with an attack while you are wielding this weapon",
     {
@@ -1078,6 +1127,17 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Hand-tuned rare renames ×N to Shelling Strike + ItemMacro ×1/×2/×3 dialog (fvtt-Item-gunlance-rare).",
   ),
+  "wyrmstake cannon": saveAction({
+    activation: "action",
+    saveAbility: "dex",
+    damageFormula: "4d8",
+    damageType: "thunder",
+    onSave: "half",
+    consumeItemUses: true,
+    consumeAmount: "2",
+    chatFlavor:
+      "Expend 2 shells to fire a Wyrmstake: DEX save or take Thunder damage (half on success). See feature text for embedded stake.",
+  }),
   "elemental attunement": spec(
     "action_ability",
     {
@@ -1165,6 +1225,23 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     damageType: "bludgeoning",
     chatFlavor: "Extra damage vs Prone or Stunned targets.",
   }),
+  "upswing / spinning bludgeon": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      activationCondition:
+        "When you hit a creature with an attack empowered by your Power Charge",
+      chatFlavor:
+        "Choose Upswing (push 10 ft; if they hit a solid object or creature, +1d6 bludgeoning) or Spinning Bludgeon (one melee weapon attack vs a second creature within 5 ft of the original target; that attack does not gain Power Charge extra damage).",
+      rangeUnits: "ft",
+      rangeValue: "5",
+      targetAffectsType: "creature",
+      targetPrompt: true,
+      activityImg: "icons/skills/melee/strike-flail-destructive-yellow.webp",
+    },
+    "Hand-tuned rare goldens also expose Upswing: Collision + Spinning Bludgeon as separate activities.",
+  ),
   // ── Wire Knuckles (Wirebug pool + mobility) ─────────────────────────
   "wire-dash": spec(
     "action_ability",
@@ -1208,6 +1285,21 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     chatFlavor:
       "While Grappling a Tethered creature at least one size larger, force a STR save vs Silkbind DC. On a failure, choose Forced Movement, Directed Attack, or Ramming Maneuver (see feature text).",
   }),
+  "punishing ride": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "Wyvern Ride: target has Disadvantage on the STR save. On a failure, Silkbind does not snap, you do not fall Prone, and you maintain the Grapple (cannot Wyvern Ride the same creature again this turn).",
+    },
+  ),
+  "fierce ram": spec(
+    "upgrade_scaler",
+    {
+      damageFormula: "5d10",
+      chatFlavor:
+        "Wyvern Ride Ramming Maneuver damage increases to 5d10 (with Punishing Ride benefits).",
+    },
+  ),
 
   // ── Tonfas (Spirit Charges + Sky / Earth styles) ────────────────────
   "tonfa styles": spec("mode_switch", {

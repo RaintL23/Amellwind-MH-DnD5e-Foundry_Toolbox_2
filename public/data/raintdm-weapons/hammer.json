@@ -116,31 +116,15 @@
         "description": "As a Bonus Action, you begin winding up the hammer. The weapon remains charged for 1 minute, until you hit with an attack using it, until you are knocked Prone or your are incapacitated. While charged, your walking speed increases by 5 feet, and your next successful attack with this weapon deals an extra 1d6 bludgeoning damage."
       },
       {
-        "id": "1a2f2359-c476-43f5-a290-273d19e437a7",
-        "name": "Power Charge",
-        "description": "As a Bonus Action, you begin winding up the hammer. The weapon remains charged for 1 minute, until you hit with an attack using it, until you are knocked Prone or your are incapacitated. While charged, your walking speed increases by 5 feet, and your next successful attack with this weapon deals an extra 1d6 bludgeoning damage."
-      },
-      {
-        "id": "b0901bd5-bed2-4835-af81-84e46d182f3f",
-        "name": "Mighty Weapon",
-        "description": "One per turn when you hit a creature in the head (or just hit it) with a charged attack, you can unleash the built-up kinetic energy to rattle their brain. The target must make a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). On a failed save, the creature is Stunned until the end of your next turn, a Huge or larger creature has advantage on the saving throw. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest."
-      },
-      {
         "id": "1037f3c3-d322-4174-9962-7830d8534f45",
         "name": "Upswing / Spinning Bludgeon",
-        "description": "Your charged attacks gain tactical versatility. When you hit a creature with an attack empowered by your Power Charge, you can choose one of the following additional effects:  \n\nUpswing: The target is pushed 10 feet away from you. If they hit a solid object (like a wall or another creature), they take an additional 1d6 bludgeoning damage.  \n\nSpinning Bludgeon: You carry the momentum into a spin. Choose a second creature within 5 feet of the original target; you can immediately make one melee weapon attack against the second creature (this second attack does not benefit from the charge's extra damage).",
-        "upgradesFromId": "f62e6856-0906-4c27-8fbb-fd1bf07f7d07"
+        "description": "Your charged attacks gain tactical versatility. When you hit a creature with an attack empowered by your Power Charge, you can choose one of the following additional effects:  \n\nUpswing: The target is pushed 10 feet away from you. If they hit a solid object (like a wall or another creature), they take an additional 1d6 bludgeoning damage.  \n\nSpinning Bludgeon: You carry the momentum into a spin. Choose a second creature within 5 feet of the original target; you can immediately make one melee weapon attack against the second creature (this second attack does not benefit from the charge's extra damage)."
       },
       {
         "id": "65ea21d0-d29d-4fe3-bd2b-5c94fe17e5bc",
         "name": "Charge Upgrade I",
         "description": "Your Power Charge now deals an extra 2d6 bludgeoning damage on a hit.",
         "upgradesFromId": "f62e6856-0906-4c27-8fbb-fd1bf07f7d07"
-      },
-      {
-        "id": "73ed4ad6-eb3f-4bff-9315-bdcb6528b5f7",
-        "name": "Upswing / Spinning Bludgeon",
-        "description": "Your charged attacks gain tactical versatility. When you hit a creature with an attack empowered by your Power Charge, you can choose one of the following additional effects:  \n\nUpswing: The target is pushed 10 feet away from you. If they hit a solid object (like a wall or another creature), they take an additional 1d6 bludgeoning damage.  \n\nSpinning Bludgeon: You carry the momentum into a spin. Choose a second creature within 5 feet of the original target; you can immediately make one melee weapon attack against the second creature (this second attack does not benefit from the charge's extra damage)."
       },
       {
         "id": "8ee8f455-5ea1-4bd9-9f0e-e81287529d2f",
@@ -172,7 +156,10 @@
       }
     ],
     "proficiency": {
-      "compatible": ["Warhammer", "Maul"],
+      "compatible": [
+        "Warhammer",
+        "Maul"
+      ],
       "tier": "martial",
       "range": "melee"
     }

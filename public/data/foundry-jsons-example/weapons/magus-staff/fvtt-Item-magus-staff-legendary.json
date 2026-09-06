@@ -1,5 +1,5 @@
 {
-  "_id": "M5dhK57mHINp0Lk6",
+  "_id": "VFpyf9jrefDQBAZ4",
   "name": "Magus Staff (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_magusstaff.webp",
@@ -91,8 +91,8 @@
       "max": "10"
     },
     "activities": {
-      "PDVHFDO29q5fDsoQ": {
-        "_id": "PDVHFDO29q5fDsoQ",
+      "luQqXzVfkinPtx4v": {
+        "_id": "luQqXzVfkinPtx4v",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -764,8 +764,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192542,
-        "modifiedTime": 1788189192542,
+        "createdTime": 1788708672817,
+        "modifiedTime": 1788708672817,
         "lastModifiedBy": null
       }
     },
@@ -818,14 +818,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192543,
-        "modifiedTime": 1788189192543,
+        "createdTime": 1788708672818,
+        "modifiedTime": 1788708672818,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 11400000,
+  "sort": 20700000,
   "ownership": {
     "default": 0
   },
@@ -912,8 +912,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189192542,
-    "modifiedTime": 1788189192542,
+    "createdTime": 1788708672817,
+    "modifiedTime": 1788708672817,
     "lastModifiedBy": null
   }
 }

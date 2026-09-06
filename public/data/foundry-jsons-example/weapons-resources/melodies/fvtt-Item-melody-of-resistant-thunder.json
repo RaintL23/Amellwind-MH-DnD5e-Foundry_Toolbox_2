@@ -1,5 +1,5 @@
 {
-  "_id": "sLLYdXkBrIiAjJvG",
+  "_id": "Nv3VToj762wo6DQo",
   "name": "Melody of Resistant Thunder",
   "type": "feat",
   "img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
@@ -37,7 +37,7 @@
   },
   "effects": [
     {
-      "_id": "0C0txbhds8vr0qC7",
+      "_id": "fN1SAe7n2m9JKdi7",
       "name": "Melody of Resistant Thunder (Aura 15 ft)",
       "img": "icons/magic/sonic/explosion-shock-wave-teal.webp",
       "description": "",
@@ -108,8 +108,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189641415,
-        "modifiedTime": 1788189641415,
+        "createdTime": 1788708578483,
+        "modifiedTime": 1788708578483,
         "lastModifiedBy": null
       }
     }
@@ -139,8 +139,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189641415,
-    "modifiedTime": 1788189641415,
+    "createdTime": 1788708578483,
+    "modifiedTime": 1788708578483,
     "lastModifiedBy": null
   }
 }

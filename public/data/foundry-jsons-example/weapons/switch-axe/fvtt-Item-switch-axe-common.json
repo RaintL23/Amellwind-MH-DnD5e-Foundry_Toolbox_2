@@ -1,0 +1,621 @@
+{
+  "_id": "5D7W67qJmipPZMw4",
+  "name": "Switch Axe (Common)",
+  "type": "weapon",
+  "img": "mh-icons/weapon_switchaxe.webp",
+  "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<p>Axe Mode - Properties: Heavy, Two-Handed, Reach.<br/>Sword Mode - Properties: Heavy, Two-Handed.</p><p><a href=\"https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/weapons?weapon=Switch+Axe\" target=\"_blank\" rel=\"noopener\">Open Switch Axe in the Toolbox</a></p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Cleave) (Axe Mode)</strong></p><p>If you hit a creature with a melee attack, you can make an attack roll against a second creature within 5 feet of the first that is also within your reach.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Graze) (Sword)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Fluid Morph</strong></p><p><strong>Bonus Action.</strong></p><p>You can switch the weapon between its Axe and Sword modes as a Bonus Action. Additionally, once per turn, you can switch modes freely immediately after you finish taking the Attack action.</p></div>",
+      "chat": "<p>Axe Mode - Properties: Heavy, Two-Handed, Reach.<br/>Sword Mode - Properties: Heavy, Two-Handed.</p><hr><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Cleave) (Axe Mode)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Graze) (Sword)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Fluid Morph</strong></p><p><strong>Bonus Action.</strong></p></div>"
+    },
+    "identifier": "switchaxe",
+    "quantity": 1,
+    "weight": {
+      "value": 7,
+      "units": "lb"
+    },
+    "price": {
+      "value": 30,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "common",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "switchaxe"
+    },
+    "damage": {
+      "base": {
+        "number": 1,
+        "denomination": 8,
+        "types": [
+          "slashing"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": null,
+    "properties": [
+      "hvy",
+      "rch",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 10,
+      "units": "ft"
+    },
+    "mastery": "graze",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    },
+    "activities": {
+      "qi7zDMqGvKs0sN6b": {
+        "_id": "qi7zDMqGvKs0sN6b",
+        "type": "attack",
+        "sort": 0,
+        "name": "Axe",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false
+          },
+          "spellSlot": true,
+          "targets": []
+        },
+        "description": {},
+        "duration": {
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "recovery": []
+        },
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        },
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": true,
+          "parts": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "axe",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "",
+        "otherActivityUuid": "",
+        "attackMode": "oneHanded",
+        "ammunition": "",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") !== \"sword\"",
+        "useConditionReason": "Requires Axe Mode (use Fluid Morph to switch).",
+        "effectConditionText": "false"
+      },
+      "uOn0mGfF1iNjRIEP": {
+        "_id": "uOn0mGfF1iNjRIEP",
+        "sort": 300000,
+        "name": "Fluid Morph",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "Or once per turn after the Attack action (no action)",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Toggle Axe Mode ↔ Sword Mode. Item Macro updates the mode indicator AE."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "9X7HIrSFkK2LQ7LA"
+          },
+          {
+            "_id": "wGMEbJrK1SrCbgJE"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "fluid-morph",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      }
+    },
+    "container": null,
+    "cover": null,
+    "crewed": false,
+    "unidentified": {
+      "description": ""
+    }
+  },
+  "effects": [
+    {
+      "_id": "c7yx5iJA5uG62LXN",
+      "name": "Mastery (Cleave) (Axe Mode)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788708672821,
+        "modifiedTime": 1788708672821,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "GPYY3asGjJfVQnGP",
+      "name": "Mastery (Graze) (Sword)",
+      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {},
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788708672821,
+        "modifiedTime": 1788708672821,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "9X7HIrSFkK2LQ7LA",
+      "name": "Axe Mode",
+      "img": "icons/weapons/axes/axe-battle-black.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "flags.world.sa.mode",
+          "mode": 5,
+          "value": "axe",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "world": {
+          "sa": {
+            "isModeIndicator": true,
+            "modeKey": "axe"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788708672822,
+        "modifiedTime": 1788708672822,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "wGMEbJrK1SrCbgJE",
+      "name": "Sword Mode",
+      "img": "icons/weapons/swords/sword-broad-crystal-paired.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "flags.world.sa.mode",
+          "mode": 5,
+          "value": "sword",
+          "priority": 20
+        }
+      ],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "world": {
+          "sa": {
+            "isModeIndicator": true,
+            "modeKey": "sword"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788708672822,
+        "modifiedTime": 1788708672822,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 20800000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "baseWeaponName": "Switch Axe",
+      "exportKind": "weapon-forge"
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[preTargeting]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "preTargeting"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postDamageRoll"
+          },
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Switch Axe (Common)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Switch Axe — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actMidi = rolled?.midiProperties ?? workflow?.activity?.midiProperties ?? {};\nconst actId = String(\n  rolled?.identifier\n  ?? actMidi?.identifier\n  ?? workflow?.activity?.identifier\n  ?? \"\",\n).toLowerCase().trim();\n\nconst weaponItem = item\n  ?? workflow?.item\n  ?? args?.[0]?.item\n  ?? null;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? weaponItem?.actor\n  ?? weaponItem?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!weaponItem || !actorDoc) return;\n\nconst isModeEf = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.sa.isModeIndicator\") === true\n  || /^(axe|sword)\\s*mode$/i.test(ef.name ?? \"\");\n\nconst modeKeyOf = (ef) => {\n  const flagged = String(foundry.utils.getProperty(ef, \"flags.world.sa.modeKey\") ?? \"\").toLowerCase();\n  if (flagged === \"axe\" || flagged === \"sword\") return flagged;\n  if (/^axe\\s*mode$/i.test(ef.name ?? \"\")) return \"axe\";\n  if (/^sword\\s*mode$/i.test(ef.name ?? \"\")) return \"sword\";\n  return \"\";\n};\n\nconst collectModeEffects = () => {\n  const list = [];\n  for (const ef of weaponItem.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  for (const ef of actorDoc.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  return list;\n};\n\nconst currentMode = () => {\n  const actorMode = String(foundry.utils.getProperty(actorDoc, \"flags.world.sa.mode\") ?? \"\").toLowerCase();\n  if (actorMode === \"axe\" || actorMode === \"sword\") return actorMode;\n  for (const ef of collectModeEffects()) {\n    if (ef.disabled) continue;\n    const key = modeKeyOf(ef);\n    if (key) return key;\n  }\n  return \"axe\";\n};\n\nconst setMode = async (mode) => {\n  const want = mode === \"sword\" ? \"sword\" : \"axe\";\n  const ops = [];\n  for (const ef of collectModeEffects()) {\n    const key = modeKeyOf(ef);\n    if (key !== \"axe\" && key !== \"sword\") continue;\n    ops.push(ef.update({ disabled: key !== want }));\n  }\n  if (ops.length) await Promise.all(ops);\n  try {\n    await actorDoc.setFlag(\"world\", \"sa.mode\", want);\n  } catch (_) {\n    await actorDoc.update({ \"flags.world.sa.mode\": want });\n  }\n  return want;\n};\n\nconst phialAvailable = () => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return 0;\n  const max = Math.max(0, Number(uses.max) || 0);\n  const spent = Math.max(0, Number(uses.spent) || 0);\n  return Math.max(0, max - spent);\n};\n\nconst emptyGauge = async () => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return;\n  const max = Math.max(0, Number(uses.max) || 0);\n  await weaponItem.update({ \"system.uses.spent\": max });\n};\n\nconst isAxeAttack = actId === \"axe\" || actName === \"axe\";\nconst isFluidMorph =\n  actId === \"fluid-morph\"\n  || actName === \"fluid morph\"\n  || actName.includes(\"fluid morph\");\nconst isPhialDischarge =\n  actId.startsWith(\"phial-discharge\")\n  || actName.includes(\"phial discharge\");\nconst isZsd =\n  actId.includes(\"zero-sum-discharge\")\n  || actId.includes(\"zsd\")\n  || actName.includes(\"zero sum discharge\")\n  || /\\bzsd\\b/.test(actName);\n\nconst isPre = macroPass.includes(\"pretargeting\");\nconst isPostDamage = macroPass.includes(\"postdamageroll\");\nconst isPostAe = macroPass.includes(\"postactiveeffects\");\n\n// ── Fluid Morph: toggle mode indicators ────────────────────────────────────\nif (isFluidMorph && (isPostAe || !macroPass)) {\n  const next = currentMode() === \"sword\" ? \"axe\" : \"sword\";\n  const applied = await setMode(next);\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Fluid Morph</strong> — ${esc(actorDoc.name)} switches to <strong>${applied === \"sword\" ? \"Sword Mode\" : \"Axe Mode\"}</strong>.</p></div>`,\n  });\n  return;\n}\n\n// ── Sword actions with 0 Phial Charges: abort + revert ──────────────────────\nif (isPre && (isPhialDischarge || isZsd)) {\n  if (phialAvailable() <= 0) {\n    await setMode(\"axe\");\n    ui.notifications.warn(\"Switch Axe: no Phial Charges — reverted to Axe Mode.\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  if (currentMode() !== \"sword\") {\n    ui.notifications.warn(\"Switch Axe: enter Sword Mode with Fluid Morph first.\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  return;\n}\n\n// ── Axe attack only while in Axe Mode ──────────────────────────────────────\nif (isPre && isAxeAttack && currentMode() === \"sword\") {\n  ui.notifications.warn(\"Switch Axe: Axe Attack requires Axe Mode (Fluid Morph).\");\n  if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n  return false;\n}\n\n// ── ZSD: force Axe Mode + empty gauge after resolution ─────────────────────\nif (isZsd && (isPostAe || isPostDamage)) {\n  await emptyGauge();\n  await setMode(\"axe\");\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Zero Sum Discharge</strong> — recoil reverts to <strong>Axe Mode</strong> with 0 Phial Charges.</p></div>`,\n  });\n  return;\n}\n\n// ── Kinetic Generator: recover on Axe hit ──────────────────────────────────\nif (!isPostDamage || !isAxeAttack) return;\n\nconst hitCount = workflow?.hitTargets?.size\n  ?? args?.[0]?.hitTargets?.size\n  ?? 0;\nif (hitCount <= 0) return;\n\nconst uses = weaponItem.system?.uses;\nif (!uses) return;\nconst max = Math.max(0, Number(uses.max) || 0);\nif (max <= 0) return;\nconst spent = Math.max(0, Number(uses.spent) || 0);\nif (spent <= 0) return;\n\nconst isCrit = Boolean(\n  workflow?.isCritical\n  ?? workflow?.attackRoll?.isCritical\n  ?? args?.[0]?.isCritical\n  ?? false,\n);\nconst gain = Math.min(isCrit ? 2 : 1, spent);\nif (gain <= 0) return;\n\nawait weaponItem.update({ \"system.uses.spent\": spent - gain });\nconst available = max - (spent - gain);\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>Kinetic Generator</strong> — recovered ${gain} Phial Charge${gain === 1 ? \"\" : \"s\"} (${available}/${max})${isCrit ? \" <em>(critical)</em>\" : \"\"}.</p></div>`,\n});\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "switchAxe": {
+        "hasKineticGenerator": false,
+        "modeIndicators": true,
+        "isSwitchAxe": true,
+        "unlockedPhials": []
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": 1788708672821,
+    "modifiedTime": 1788708672821,
+    "lastModifiedBy": null
+  }
+}

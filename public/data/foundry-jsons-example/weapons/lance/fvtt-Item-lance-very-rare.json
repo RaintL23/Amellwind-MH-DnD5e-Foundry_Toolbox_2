@@ -1,5 +1,5 @@
 {
-  "_id": "71LhZeIKx4x1xoJy",
+  "_id": "pVeJfw137IuNmhqG",
   "name": "Lance (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_lance.webp",
@@ -89,11 +89,11 @@
       "recovery": []
     },
     "activities": {
-      "x3jhfwdCmrLRF009": {
-        "_id": "x3jhfwdCmrLRF009",
+      "G1FWckgjaSBkeu8Q": {
+        "_id": "G1FWckgjaSBkeu8Q",
         "type": "attack",
         "sort": 0,
-        "name": "",
+        "name": "Attack",
         "activation": {
           "type": "action",
           "value": 1,
@@ -606,8 +606,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192519,
-        "modifiedTime": 1788189192519,
+        "createdTime": 1788708702922,
+        "modifiedTime": 1788708702922,
         "lastModifiedBy": null
       }
     },
@@ -676,13 +676,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192519,
-        "modifiedTime": 1788189192519,
+        "createdTime": 1788708702922,
+        "modifiedTime": 1788708702922,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "8sg0a7X5nnycj5wQ",
+      "_id": "t2Fj583YTfXWDK50",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -729,13 +729,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192520,
-        "modifiedTime": 1788189192520,
+        "createdTime": 1788708702922,
+        "modifiedTime": 1788708702922,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "TeNvciAPTyOrXGID",
+      "_id": "Ho4ML4prDdAHvu34",
       "name": "Lance AC (+2)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Very Rare Lance bonus AC from the rarity table.",
@@ -776,14 +776,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192520,
-        "modifiedTime": 1788189192520,
+        "createdTime": 1788708702922,
+        "modifiedTime": 1788708702922,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 10900000,
+  "sort": 10100000,
   "ownership": {
     "default": 0
   },
@@ -805,7 +805,16 @@
       "itemCondition": "",
       "reactionCondition": "",
       "otherCondition": "",
-      "effectCondition": ""
+      "effectCondition": "",
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
     },
     "midiProperties": {
       "autoFailFriendly": false,
@@ -821,6 +830,33 @@
       "system": "dnd5e",
       "coreVersion": "12.331",
       "systemVersion": "4.4.4"
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Lance",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Lance — Counter-Thrust / Anchor Rage Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\r\n// On Use: [postActiveEffects]ItemMacro\r\n//\r\n// Counter-Thrust:\r\n//   Rolls 1d8 and applies system.attributes.ac.bonus + N with dae.specialDuration\r\n//   isAttacked so Midi can recheck the triggering attack (Shield pattern).\r\n//\r\n// Anchor Rage (Rare+ via flags.world.lance.tier):\r\n//   When Counter-Thrust causes a miss (attack total < new AC), or when Riposte is\r\n//   used, applies +1d6 piercing on the next successful melee weapon attack until\r\n//   end of your next turn (dae: 1Hit + turnEndSource).\r\n\r\nconst esc = (value) => {\r\n  const s = String(value ?? \"\");\r\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\r\n  return s\r\n    .replaceAll(\"&\", \"&amp;\")\r\n    .replaceAll(\"<\", \"&lt;\")\r\n    .replaceAll(\">\", \"&gt;\")\r\n    .replaceAll('\"', \"&quot;\")\r\n    .replaceAll(\"'\", \"&#39;\");\r\n};\r\n\r\nconst macroPass = String(\r\n  args?.[0]?.macroPass\r\n  ?? workflow?.macroPass\r\n  ?? \"\",\r\n).toLowerCase();\r\n\r\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\r\n  ? rolledActivity\r\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\r\n\r\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\r\nconst actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? \"\").toLowerCase();\r\n\r\nconst isRiposte =\r\n  actId === \"counter-thrust-riposte\"\r\n  || actName.includes(\"riposte\");\r\n\r\nconst isCounterThrust =\r\n  actId === \"counter-thrust\"\r\n  || (actName.includes(\"counter-thrust\") && !isRiposte);\r\n\r\nif (!isCounterThrust && !isRiposte) return;\r\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\r\n\r\nconst actorDoc = actor\r\n  ?? workflow?.actor\r\n  ?? item?.actor\r\n  ?? item?.parent\r\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\r\n\r\nif (!actorDoc) {\r\n  ui.notifications.warn(\"Lance: actor not found.\");\r\n  return;\r\n}\r\n\r\nconst tier = String(\r\n  foundry.utils.getProperty(item, \"flags.world.lance.tier\") ?? \"uncommon\",\r\n).toLowerCase().replace(/\\s+/g, \"\");\r\n\r\nconst anchorRageEnabled = [\"rare\", \"veryrare\", \"legendary\"].includes(tier);\r\n\r\nconst isCounterThrustAc = (ef) =>\r\n  foundry.utils.getProperty(ef, \"flags.world.lance.isCounterThrustAc\") === true\r\n  || /^counter-thrust \\(\\+/i.test(ef.name ?? \"\");\r\n\r\nconst isAnchorRage = (ef) =>\r\n  foundry.utils.getProperty(ef, \"flags.world.lance.isAnchorRage\") === true\r\n  || /^anchor rage/i.test(ef.name ?? \"\");\r\n\r\nconst pickBuffActor = () => {\r\n  const myToken = actorDoc.getActiveTokens()?.[0];\r\n  const myDisp = myToken?.document?.disposition ?? 1;\r\n  const targets = Array.from(workflow?.targets ?? []);\r\n\r\n  for (const t of targets) {\r\n    const other = t.actor;\r\n    if (!other || other.id === actorDoc.id) continue;\r\n    const theirDisp = t.document?.disposition ?? other.getActiveTokens()?.[0]?.document?.disposition;\r\n    if (theirDisp != null && myDisp * theirDisp < 0) continue;\r\n    return other;\r\n  }\r\n  return actorDoc;\r\n};\r\n\r\nconst findAttackTotal = () => {\r\n  const opts = args?.[0]?.workflowOptions ?? workflow?.workflowOptions ?? {};\r\n  const direct = Number(opts.attackTotal ?? opts.attackRollTotal ?? args?.[0]?.attackTotal);\r\n  if (Number.isFinite(direct) && direct > 0) return direct;\r\n\r\n  const srcId = opts.triggeredWorkflowId\r\n    ?? opts.sourceWorkflowId\r\n    ?? opts.workflowId\r\n    ?? opts.attackWorkflowId;\r\n  if (srcId && globalThis.MidiQOL?.Workflow?.getWorkflow) {\r\n    const atk = MidiQOL.Workflow.getWorkflow(srcId);\r\n    const t = Number(atk?.attackTotal ?? atk?.attackRoll?.total);\r\n    if (Number.isFinite(t) && t > 0) return t;\r\n  }\r\n  return null;\r\n};\r\n\r\nconst applyAnchorRage = async () => {\r\n  if (!anchorRageEnabled) return;\r\n\r\n  const stale = actorDoc.effects.filter(isAnchorRage);\r\n  if (stale.length) {\r\n    await actorDoc.deleteEmbeddedDocuments(\"ActiveEffect\", stale.map((e) => e.id));\r\n  }\r\n\r\n  await actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [\r\n    {\r\n      name: \"Anchor Rage (+1d6)\",\r\n      img: \"icons/skills/melee/strike-sword-blood-red.webp\",\r\n      transfer: false,\r\n      disabled: false,\r\n      changes: [\r\n        {\r\n          key: \"system.bonuses.mwak.damage\",\r\n          mode: CONST.ACTIVE_EFFECT_MODES.ADD,\r\n          value: \"1d6[piercing]\",\r\n          priority: 20,\r\n        },\r\n      ],\r\n      duration: {\r\n        startTime: null,\r\n        seconds: null,\r\n        combat: null,\r\n        rounds: null,\r\n        turns: null,\r\n        startRound: null,\r\n        startTurn: null,\r\n      },\r\n      flags: {\r\n        dae: {\r\n          specialDuration: [\"1Hit\", \"turnEndSource\"],\r\n          stackable: \"noneName\",\r\n          showIcon: true,\r\n          selfTarget: true,\r\n          selfTargetAlways: true,\r\n          dontApply: false,\r\n        },\r\n        world: {\r\n          lance: {\r\n            isAnchorRage: true,\r\n          },\r\n        },\r\n      },\r\n    },\r\n  ]);\r\n\r\n  await ChatMessage.create({\r\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n    content: `<div class=\"dnd5e2\"><p><strong>Anchor Rage:</strong> ${esc(actorDoc.name)}'s next successful Lance attack deals an extra [[/r 1d6]] piercing damage (until the end of their next turn).</p></div>`,\r\n  });\r\n};\r\n\r\n// ── Riposte: confirm melee miss → Anchor Rage (Rare+) ───────────────────────\r\nif (isRiposte) {\r\n  await applyAnchorRage();\r\n  return;\r\n}\r\n\r\n// ── Counter-Thrust: roll AC bonus and apply AE ──────────────────────────────\r\nconst buffActor = pickBuffActor();\r\n\r\nconst roll = await new Roll(\"1d8\").evaluate();\r\nawait roll.toMessage({\r\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n  flavor: \"Counter-Thrust — AC Bonus\",\r\n});\r\nconst bonus = roll.total;\r\n\r\nconst stale = buffActor.effects.filter(isCounterThrustAc);\r\nif (stale.length) {\r\n  await buffActor.deleteEmbeddedDocuments(\r\n    \"ActiveEffect\",\r\n    stale.map((e) => e.id),\r\n  );\r\n}\r\n\r\nawait buffActor.createEmbeddedDocuments(\"ActiveEffect\", [\r\n  {\r\n    name: `Counter-Thrust (+${bonus} AC)`,\r\n    img: \"icons/skills/melee/shield-damaged-broken-orange.webp\",\r\n    transfer: false,\r\n    disabled: false,\r\n    changes: [\r\n      {\r\n        key: \"system.attributes.ac.bonus\",\r\n        mode: CONST.ACTIVE_EFFECT_MODES.ADD,\r\n        value: String(bonus),\r\n        priority: 20,\r\n      },\r\n    ],\r\n    duration: {\r\n      startTime: null,\r\n      seconds: null,\r\n      combat: null,\r\n      rounds: null,\r\n      turns: null,\r\n      startRound: null,\r\n      startTurn: null,\r\n    },\r\n    flags: {\r\n      dae: {\r\n        specialDuration: [\"isAttacked\"],\r\n        stackable: \"noneName\",\r\n        showIcon: true,\r\n        selfTarget: false,\r\n        selfTargetAlways: false,\r\n        dontApply: false,\r\n      },\r\n      world: {\r\n        lance: {\r\n          isCounterThrustAc: true,\r\n        },\r\n      },\r\n    },\r\n  },\r\n]);\r\n\r\nawait ChatMessage.create({\r\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> intervenes with Counter-Thrust: <em>${esc(buffActor.name)}</em> gains <strong>+${bonus} AC</strong> against the triggering attack.</p><p>If that causes a melee attack to miss, use <strong>Counter-Thrust: Riposte</strong>.</p></div>`,\r\n});\r\n\r\n// Rare+: if we can see the attack total and it now misses, grant Anchor Rage.\r\nif (anchorRageEnabled) {\r\n  const attackTotal = findAttackTotal();\r\n  const ac = Number(buffActor.system?.attributes?.ac?.value);\r\n  if (Number.isFinite(attackTotal) && Number.isFinite(ac) && attackTotal < ac) {\r\n    await applyAnchorRage();\r\n  } else if (!Number.isFinite(attackTotal)) {\r\n    await ChatMessage.create({\r\n      speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\r\n      content: `<div class=\"dnd5e2\"><p><em>Anchor Rage:</em> if Counter-Thrust causes the attack to miss, use <strong>Counter-Thrust: Riposte</strong> (or confirm the miss) to empower your next Lance attack.</p></div>`,\r\n    });\r\n  }\r\n}\r\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "world": {
+      "lance": {
+        "isLance": true,
+        "tier": "rare"
+      }
     }
   },
   "_stats": {
@@ -829,8 +865,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189192518,
-    "modifiedTime": 1788189192518,
+    "createdTime": 1788708702922,
+    "modifiedTime": 1788708702922,
     "lastModifiedBy": null
   }
 }

@@ -1,14 +1,99 @@
 {
+  "_id": "xjm8HlFC7EQAUw4P",
   "name": "Great Sword (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
   "system": {
+    "source": {
+      "custom": "",
+      "book": "RAINTDM",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "description": {
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p>As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.</p><p>When you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage</p><p>On hit the weapon deals an extra [[/r 3d6]] slashing damage for each charge expended in this way.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">True Charged Slash</strong></p><p>Your charge becomes deadlier. Your charged slash now deals an extra [[/r 4d6]] slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when you are hit by a melee attack, you can position the broad side of the blade to protect yourself, gaining a +3 bonus to your AC against that attack. If the attack still hits, you reduce the damage by [[/r 1d10]] + your Strength modifier.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p><p>Using a weapon as a shield ruins its edge. After using this Emergency Guard, the weapon loses its Graze Mastery property until you finish a Short or Long Rest, or spend 1 minute sharpening it with a whetstone.</p></div>",
+      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#0070dd\">True Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p></div>"
+    },
+    "identifier": "greatsword",
+    "quantity": 1,
+    "weight": {
+      "value": 6,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "attuned": false,
+    "attunement": "required",
+    "equipped": false,
+    "rarity": "rare",
+    "identified": true,
+    "type": {
+      "value": "martialM",
+      "baseItem": "greatsword"
+    },
+    "damage": {
+      "base": {
+        "number": 2,
+        "denomination": 6,
+        "types": [
+          "slashing"
+        ],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1,
+          "mode": ""
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": 1,
+    "properties": [
+      "hvy",
+      "mgc",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": 5,
+      "units": "ft"
+    },
+    "mastery": "graze",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 3,
+      "recovery": [],
+      "max": "3"
+    },
     "activities": {
-      "HAG2o683MA4rgcPB": {
-        "_id": "HAG2o683MA4rgcPB",
+      "TrWHE29acLiBvQV4": {
+        "_id": "TrWHE29acLiBvQV4",
         "type": "attack",
         "sort": 0,
-        "name": "",
+        "name": "Attack",
         "activation": {
           "type": "action",
           "value": 1,
@@ -95,7 +180,6 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "useConditionReason": "",
         "macroData": {
           "name": "",
           "command": ""
@@ -113,9 +197,10 @@
           "postRemoveConditionText": ""
         },
         "otherActivityId": "",
+        "otherActivityUuid": "",
         "attackMode": "oneHanded",
         "ammunition": "",
-        "otherActivityUuid": ""
+        "useConditionReason": ""
       },
       "DLUrp8iG0mVg01SI": {
         "_id": "DLUrp8iG0mVg01SI",
@@ -215,6 +300,9 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
+        "useConditionText": "@item.uses.value < @item.uses.max",
+        "useConditionReason": "Already at maximum charges (3).",
+        "effectConditionText": "",
         "type": "utility",
         "roll": {
           "formula": "",
@@ -222,9 +310,6 @@
           "prompt": false,
           "visible": false
         },
-        "useConditionText": "@item.uses.value < @item.uses.max",
-        "useConditionReason": "Already at maximum charges (3).",
-        "effectConditionText": "",
         "macroData": {
           "name": "",
           "command": ""
@@ -272,7 +357,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 1 (+3d6)."
+          "chatFlavor": "Attack with advantage. Extra 4d6 per charge. Large or smaller: STR save (DC 8 + PB + STR) or Prone. Consumes 1 (+4d6)."
         },
         "duration": {
           "value": "",
@@ -337,6 +422,9 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
         "type": "attack",
         "attack": {
           "ability": "",
@@ -357,7 +445,7 @@
           "includeBase": true,
           "parts": [
             {
-              "number": 3,
+              "number": 4,
               "denomination": 6,
               "types": [
                 "slashing"
@@ -374,9 +462,6 @@
             }
           ]
         },
-        "effectConditionText": "false",
-        "useConditionText": "",
-        "useConditionReason": "",
         "macroData": {
           "name": "",
           "command": ""
@@ -394,9 +479,9 @@
           "postRemoveConditionText": ""
         },
         "otherActivityId": "",
+        "otherActivityUuid": "",
         "attackMode": "oneHanded",
-        "ammunition": "",
-        "otherActivityUuid": ""
+        "ammunition": ""
       },
       "UFyKQcJAV3S3mC2P": {
         "_id": "UFyKQcJAV3S3mC2P",
@@ -427,7 +512,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 2 (+6d6)."
+          "chatFlavor": "Attack with advantage. Extra 4d6 per charge. Large or smaller: STR save (DC 8 + PB + STR) or Prone. Consumes 2 (+8d6)."
         },
         "duration": {
           "value": "",
@@ -492,6 +577,9 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
         "type": "attack",
         "attack": {
           "ability": "",
@@ -512,7 +600,7 @@
           "includeBase": true,
           "parts": [
             {
-              "number": 6,
+              "number": 8,
               "denomination": 6,
               "types": [
                 "slashing"
@@ -529,9 +617,6 @@
             }
           ]
         },
-        "effectConditionText": "false",
-        "useConditionText": "",
-        "useConditionReason": "",
         "macroData": {
           "name": "",
           "command": ""
@@ -549,9 +634,9 @@
           "postRemoveConditionText": ""
         },
         "otherActivityId": "",
+        "otherActivityUuid": "",
         "attackMode": "oneHanded",
-        "ammunition": "",
-        "otherActivityUuid": ""
+        "ammunition": ""
       },
       "DP7yi4yOesaRgJXN": {
         "_id": "DP7yi4yOesaRgJXN",
@@ -582,7 +667,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Attack with advantage. Extra damage is Nd6 per charge expended (pick the ×N matching your charges). Consumes 3 (+9d6)."
+          "chatFlavor": "Attack with advantage. Extra 4d6 per charge. Large or smaller: STR save (DC 8 + PB + STR) or Prone. Consumes 3 (+12d6)."
         },
         "duration": {
           "value": "",
@@ -647,6 +732,9 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "false",
         "type": "attack",
         "attack": {
           "ability": "",
@@ -667,7 +755,7 @@
           "includeBase": true,
           "parts": [
             {
-              "number": 9,
+              "number": 12,
               "denomination": 6,
               "types": [
                 "slashing"
@@ -684,9 +772,6 @@
             }
           ]
         },
-        "effectConditionText": "false",
-        "useConditionText": "",
-        "useConditionReason": "",
         "macroData": {
           "name": "",
           "command": ""
@@ -704,13 +789,13 @@
           "postRemoveConditionText": ""
         },
         "otherActivityId": "",
+        "otherActivityUuid": "",
         "attackMode": "oneHanded",
-        "ammunition": "",
-        "otherActivityUuid": ""
+        "ammunition": ""
       },
       "VzOYRrSMkVMUQIEL": {
         "_id": "VzOYRrSMkVMUQIEL",
-        "sort": 400000,
+        "sort": 300000,
         "name": "Emergency Guard",
         "activation": {
           "type": "reaction",
@@ -792,6 +877,9 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
         "type": "utility",
         "roll": {
           "formula": "1d10 + @abilities.str.mod",
@@ -799,9 +887,6 @@
           "prompt": false,
           "visible": false
         },
-        "useConditionText": "",
-        "useConditionReason": "",
-        "effectConditionText": "",
         "macroData": {
           "name": "",
           "command": ""
@@ -821,96 +906,12 @@
         "otherActivityId": "none"
       }
     },
-    "uses": {
-      "spent": 3,
-      "recovery": [],
-      "max": "3"
-    },
-    "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p><p>As part of the Attack action or when you make an opportunity attack you can forgo an attack with this weapon in order to grant the weapon 1 charge (3 max). Charges are lost if not used within 1 minute.</p><p>When you make an attack roll while the weapon has any charges, all charges are expended and that attack is made with advantage</p><p>On hit the weapon deals an extra [[/r 3d6]] slashing damage for each charge expended in this way.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p><p>Your charge becomes deadlier. Your charged slash now deals an extra [[/r 4d6]] slashing damage for each charge expended in this way and a Large or smaller target must succeed on a Strength saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be knocked Prone.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when you are hit by a melee attack, you can position the broad side of the blade to protect yourself, gaining a +3 bonus to your AC against that attack. If the attack still hits, you reduce the damage by [[/r 1d10]] + your Strength modifier.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p><p>Using a weapon as a shield ruins its edge. After using this Emergency Guard, the weapon loses its Graze Mastery property until you finish a Short or Long Rest, or spend 1 minute sharpening it with a whetstone.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery Property (Graze)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">True Charged Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Emergency Guard</strong></p><p><strong>Reaction.</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Dull the Blade</strong></p></div>"
-    },
-    "identifier": "greatsword",
-    "source": {
-      "revision": 1,
-      "rules": "2024",
-      "book": "RAINTDM",
-      "page": "",
-      "custom": "",
-      "license": ""
-    },
-    "identified": true,
-    "unidentified": {
-      "description": ""
-    },
     "container": null,
-    "quantity": 1,
-    "weight": {
-      "value": 6,
-      "units": "lb"
-    },
-    "price": {
-      "value": 50,
-      "denomination": "gp"
-    },
-    "rarity": "rare",
-    "attunement": "required",
     "cover": null,
     "crewed": false,
-    "ammunition": {
-      "type": ""
-    },
-    "armor": {
-      "value": null
-    },
-    "damage": {
-      "base": {
-        "number": 2,
-        "denomination": 6,
-        "types": [
-          "slashing"
-        ],
-        "custom": {
-          "enabled": false
-        },
-        "scaling": {
-          "number": 1,
-          "mode": ""
-        },
-        "bonus": ""
-      },
-      "versatile": {
-        "number": null,
-        "denomination": null,
-        "types": [],
-        "custom": {
-          "enabled": false
-        },
-        "scaling": {
-          "number": 1
-        }
-      }
-    },
-    "magicalBonus": 1,
-    "properties": [
-      "hvy",
-      "mgc",
-      "two"
-    ],
-    "proficient": null,
-    "range": {
-      "value": null,
-      "long": null,
-      "reach": 5,
-      "units": "ft"
-    },
-    "type": {
-      "value": "martialM",
-      "baseItem": "greatsword"
-    },
-    "mastery": "graze",
-    "attuned": false,
-    "equipped": false
+    "unidentified": {
+      "description": ""
+    }
   },
   "effects": [
     {
@@ -921,7 +922,7 @@
       "changes": [],
       "disabled": false,
       "duration": {
-        "startTime": 1781481787,
+        "startTime": null,
         "seconds": null,
         "combat": null,
         "rounds": null,
@@ -943,8 +944,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
+        "createdTime": 1788708702827,
+        "modifiedTime": 1788708702827,
         "lastModifiedBy": null
       }
     },
@@ -985,6 +986,8 @@
           ],
           "stackable": "noneName",
           "selfTarget": true,
+          "selfTargetAlways": false,
+          "dontApply": false,
           "showIcon": true
         }
       },
@@ -994,13 +997,17 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": null,
-        "modifiedTime": null,
+        "createdTime": 1788708702827,
+        "modifiedTime": 1788708702827,
         "lastModifiedBy": null
       }
     }
   ],
-  "folder": "CRXu392wlpAlDBpK",
+  "folder": null,
+  "sort": 2600000,
+  "ownership": {
+    "default": 0
+  },
   "flags": {
     "amellwind-toolbox": {
       "baseWeaponName": "Great Sword",
@@ -1010,21 +1017,6 @@
       "riders": {
         "activity": [],
         "effect": []
-      },
-      "last": {
-        "HAG2o683MA4rgcPB": {
-          "attackMode": "twoHanded",
-          "damageType": {
-            "0": "slashing"
-          }
-        },
-        "PcgohwlKeoCHjGPA": {
-          "attackMode": "twoHanded",
-          "damageType": {
-            "0": "slashing",
-            "1": "slashing"
-          }
-        }
       }
     },
     "midi-qol": {
@@ -1046,19 +1038,20 @@
       "ignoreTotalCover": false
     },
     "exportSource": {
-      "world": "monster-hunter-hunts",
+      "world": "amellwind-toolbox",
       "system": "dnd5e",
       "coreVersion": "12.331",
       "systemVersion": "4.4.4"
     }
   },
   "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1786022400448,
-    "modifiedTime": 1786022416456,
-    "lastModifiedBy": "6fq5bv9o4XfSzYRr"
-  },
-  "_id": "ahAs3Ocj6quREB5C"
+    "createdTime": 1788708702827,
+    "modifiedTime": 1788708702827,
+    "lastModifiedBy": null
+  }
 }

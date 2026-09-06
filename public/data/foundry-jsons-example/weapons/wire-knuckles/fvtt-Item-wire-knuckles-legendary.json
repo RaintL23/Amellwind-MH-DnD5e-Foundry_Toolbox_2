@@ -1,5 +1,5 @@
 {
-  "_id": "RcozFUnZFFQ26ta2",
+  "_id": "WtLBD93HukdPOYsh",
   "name": "Wire Knuckles (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_tonfas.webp",
@@ -63,7 +63,7 @@
         }
       }
     },
-    "magicalBonus": 0,
+    "magicalBonus": null,
     "properties": [
       "lgt"
     ],
@@ -83,20 +83,21 @@
     },
     "uses": {
       "spent": 0,
-      "max": "4",
       "recovery": [
         {
           "period": "sr",
-          "type": "recoverAll"
+          "type": "recoverAll",
+          "formula": ""
         }
-      ]
+      ],
+      "max": "4"
     },
     "activities": {
-      "Rb5M4iK5NB848Gf8": {
-        "_id": "Rb5M4iK5NB848Gf8",
+      "v7Cw9NKtXlXbreBC": {
+        "_id": "v7Cw9NKtXlXbreBC",
         "type": "attack",
         "sort": 0,
-        "name": "",
+        "name": "Attack",
         "activation": {
           "type": "action",
           "value": 1,
@@ -695,7 +696,7 @@
       "ll05idJEKXJve0SI": {
         "_id": "ll05idJEKXJve0SI",
         "sort": 700000,
-        "name": "Fierce Ram",
+        "name": "Wyvern Ride",
         "activation": {
           "type": "action",
           "value": 1,
@@ -721,7 +722,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "While Grappling a Tethered creature at least one size larger, force a STR save vs Silkbind DC. On a failure, choose Forced Movement, Directed Attack, or Ramming Maneuver (see feature text)."
+          "chatFlavor": "Wyvern Ride Ramming Maneuver damage increases to 5d10 (with Punishing Ride benefits)."
         },
         "duration": {
           "value": "",
@@ -775,7 +776,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "fierce-ram",
+          "identifier": "wyvern-ride",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -792,7 +793,22 @@
         "effectConditionText": "",
         "type": "save",
         "damage": {
-          "parts": [],
+          "parts": [
+            {
+              "number": 5,
+              "denomination": 10,
+              "types": [],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ],
           "onSave": "half"
         },
         "save": {
@@ -982,8 +998,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192602,
-        "modifiedTime": 1788189192602,
+        "createdTime": 1788708702979,
+        "modifiedTime": 1788708702979,
         "lastModifiedBy": null
       }
     },
@@ -1022,14 +1038,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788189192603,
-        "modifiedTime": 1788189192603,
+        "createdTime": 1788708702979,
+        "modifiedTime": 1788708702979,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 13000000,
+  "sort": 11400000,
   "ownership": {
     "default": 0
   },
@@ -1080,8 +1096,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788189192602,
-    "modifiedTime": 1788189192602,
+    "createdTime": 1788708702979,
+    "modifiedTime": 1788708702979,
     "lastModifiedBy": null
   }
 }
