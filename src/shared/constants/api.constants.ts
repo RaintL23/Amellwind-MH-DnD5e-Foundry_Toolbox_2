@@ -139,6 +139,9 @@ export const FLUFF_BACKGROUNDS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-back
 export const FEATS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/feats.json`;
 export const FLUFF_FEATS_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/fluff-feats.json`;
 
+/** 5etools conditions, diseases, and statuses. Local: conditionsdiseases.json */
+export const CONDITIONS_DISEASES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/conditionsdiseases.json`;
+
 /** 5etools optional features (EI, Metamagic, Maneuvers, …). Local dev: copy optionalfeatures.json → public/5etools/ */
 export const OPTIONALFEATURES_JSON_URL = `${FIVETOOLS_DATA_BASE_URL}/optionalfeatures.json`;
 

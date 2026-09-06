@@ -5,9 +5,15 @@ import { AlertTriangle } from "lucide-react";
 interface ConditionCardProps {
   condition: MhCondition;
   onClick: () => void;
+  /** Badge under the title. Default: Blight / Condition. */
+  badge?: string;
 }
 
-export function ConditionCard({ condition, onClick }: ConditionCardProps) {
+export function ConditionCard({
+  condition,
+  onClick,
+  badge = "Blight / Condition",
+}: ConditionCardProps) {
   return (
     <Card
       asChild
@@ -23,7 +29,7 @@ export function ConditionCard({ condition, onClick }: ConditionCardProps) {
             {condition.name}
           </h3>
           <span className="inline-block mt-1 rounded border border-rose-800/40 bg-rose-950/30 px-1.5 py-0.5 text-[10px] font-medium text-rose-300">
-            Blight / Condition
+            {badge}
           </span>
         </div>
       </div>

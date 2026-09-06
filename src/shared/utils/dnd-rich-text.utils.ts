@@ -333,10 +333,19 @@ export function parseRichText(
 export function getRichTextSegmentClass(segment: RichTextSegment): string | null {
   if (segment.kind === "keyword") return DND_KEYWORD_CLASS[segment.category];
   if (segment.kind === "phraseLink") {
-    const spellLinked = segment.phraseId.startsWith("spell:");
-    return spellLinked
-      ? `${RICH_TEXT_MARKUP_CLASS.spell} underline-offset-2 hover:underline`
-      : "text-sky-400 font-medium underline-offset-2 hover:underline cursor-pointer";
+    const phraseClass = (() => {
+      if (segment.phraseId.startsWith("spell:")) {
+        return RICH_TEXT_MARKUP_CLASS.spell;
+      }
+      if (segment.phraseId.startsWith("condition:")) {
+        return ENTITY_LINK_KIND_CLASS.condition;
+      }
+      if (segment.phraseId.startsWith("disease:")) {
+        return ENTITY_LINK_KIND_CLASS.disease;
+      }
+      return "text-sky-400 font-medium";
+    })();
+    return `${phraseClass} underline-offset-2 hover:underline cursor-pointer`;
   }
   if (segment.kind === "entityLink") {
     return `${ENTITY_LINK_KIND_CLASS[segment.refKind]} underline-offset-2 hover:underline`;

@@ -40,7 +40,10 @@ describe("buildToolboxEntityHref", () => {
 
   it("routes conditions, classes, and AGMH races", () => {
     expect(buildToolboxEntityHref("condition", "stunned")).toBe(
-      "/conditions?condition=Stunned",
+      "/dnd-conditions?condition=Stunned",
+    );
+    expect(buildToolboxEntityHref("condition", "waterblight", "MHMM")).toBe(
+      "/conditions?condition=Waterblight",
     );
     expect(buildToolboxEntityHref("class", "Wizard")).toBe("/classes/Wizard");
     expect(buildToolboxEntityHref("race", "Wyverian", "AGMH")).toBe(

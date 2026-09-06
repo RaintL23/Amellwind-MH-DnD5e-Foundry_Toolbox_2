@@ -37,9 +37,21 @@ describe("parseRichText entity links", () => {
       { highlightKeywords: false },
     );
     expect(segments.find((seg) => seg.kind === "entityLink")).toMatchObject({
-      href: "/conditions?condition=Stunned",
+      href: "/dnd-conditions?condition=Stunned",
       content: "Stunned",
       refKind: "condition",
+    });
+  });
+
+  it("links {@disease} tags", () => {
+    const segments = parseRichText(
+      "contracts {@disease frenzy virus|MHMM}",
+      { highlightKeywords: false },
+    );
+    expect(segments.find((seg) => seg.kind === "entityLink")).toMatchObject({
+      href: "/conditions?disease=Frenzy+Virus",
+      content: "Frenzy Virus",
+      refKind: "disease",
     });
   });
 });

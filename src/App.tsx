@@ -12,6 +12,7 @@ import { LoadingScreen } from "@/components/layout/LoadingScreen";
 import { NotFound } from "@/components/layout/NotFound";
 import { SyncProvider } from "@/shared/context/SyncContext";
 import { ThemeProvider } from "@/shared/context/ThemeContext";
+import { ConditionDiseasePreviewProvider } from "@/shared/context/ConditionDiseasePreviewContext";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Toaster } from "@/components/ui/sonner";
 import { loadChooseableLanguages } from "@/shared/data/chooseable-languages";
@@ -50,6 +51,11 @@ const ConditionsDiseasesPage = lazy(() =>
   import("@/features/amellwind/conditions/components/ConditionsDiseasesPage").then((m) => ({
     default: m.ConditionsDiseasesPage,
   })),
+);
+const DndConditionsDiseasesPage = lazy(() =>
+  import("@/features/dnd/conditions/components/DndConditionsDiseasesPage").then(
+    (m) => ({ default: m.DndConditionsDiseasesPage }),
+  ),
 );
 const CookingPage = lazy(() =>
   import("@/features/amellwind/cooking/components/CookingPage").then((m) => ({
@@ -262,6 +268,10 @@ async function clearMonsterManualDerivedCaches(): Promise<void> {
   clearRuneCache();
   clearConditionCache();
   clearDiseaseCache();
+  const { clearConditionPhraseLinkNameCache } = await import(
+    "@/shared/hooks/useConditionPhraseLinks"
+  );
+  clearConditionPhraseLinkNameCache();
 }
 
 async function clearGuideDerivedCaches(): Promise<void> {
@@ -335,6 +345,7 @@ export default function App() {
       <SyncProvider syncing={syncing}>
         <TooltipProvider delayDuration={200}>
           <BrowserRouter>
+          <ConditionDiseasePreviewProvider>
           <Routes>
             <Route path="/" element={<MainLayout syncing={syncing} />}>
               {/* ── Home ── */}
@@ -648,6 +659,14 @@ export default function App() {
                 }
               />
               <Route
+                path="dnd-conditions"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DndConditionsDiseasesPage />
+                  </Suspense>
+                }
+              />
+              <Route
                 path="multiclass"
                 element={
                   <Suspense fallback={<PageFallback />}>
@@ -690,6 +709,7 @@ export default function App() {
               <Route path="*" element={<NotFound />} />
             </Route>
             </Routes>
+          </ConditionDiseasePreviewProvider>
           </BrowserRouter>
           <Toaster />
         </TooltipProvider>

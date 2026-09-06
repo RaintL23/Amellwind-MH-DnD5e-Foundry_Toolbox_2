@@ -310,6 +310,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             description: "Official 5e feats.",
           },
           {
+            to: "/dnd-conditions",
+            label: "Conditions & Diseases",
+            icon: AlertTriangle,
+            description:
+              "Classic D&D conditions, statuses, and diseases (PHB / DMG / 2024).",
+          },
+          {
             to: "/multiclass",
             label: "Multiclassing",
             icon: GitMerge,

@@ -110,9 +110,9 @@ const FILTER_PAGE_TO_PATH: Record<string, string> = {
   class: "/classes",
   bestiary: "/bestiary",
   creatures: "/bestiary",
-  conditions: "/conditions",
-  condition: "/conditions",
-  diseases: "/conditions",
+  conditions: "/dnd-conditions",
+  condition: "/dnd-conditions",
+  diseases: "/dnd-conditions",
   optionalfeatures: "/dnd-feats",
   variantrules: "/character-guide",
 };
@@ -211,9 +211,15 @@ export function buildToolboxEntityHref(
       return buildToolboxQueryPath("/dnd-items", "item", trimmed);
     case "condition":
     case "status":
-      return buildToolboxQueryPath("/conditions", "condition", trimmed);
+      if (amellwind) {
+        return buildToolboxQueryPath("/conditions", "condition", trimmed);
+      }
+      return buildToolboxQueryPath("/dnd-conditions", "condition", trimmed);
     case "disease":
-      return buildToolboxQueryPath("/conditions", "disease", trimmed);
+      if (amellwind) {
+        return buildToolboxQueryPath("/conditions", "disease", trimmed);
+      }
+      return buildToolboxQueryPath("/dnd-conditions", "disease", trimmed);
     case "class":
       return src
         ? `/classes/${encodeURIComponent(`${src}::${trimmed}`)}`
@@ -346,8 +352,9 @@ export function buildToolboxFilterHref(
   if (pageSlug === "backgrounds" || pageSlug === "background") {
     return buildToolboxQueryPath(path, "background", formatEntityDisplayName(label));
   }
-  if (pageSlug === "conditions" || pageSlug === "condition") {
-    return buildToolboxQueryPath(path, "condition", formatEntityDisplayName(label));
+if (pageSlug === "conditions" || pageSlug === "condition" || pageSlug === "diseases") {
+    const param = pageSlug === "diseases" ? "disease" : "condition";
+    return buildToolboxQueryPath(path, param, formatEntityDisplayName(label));
   }
   if (pageSlug === "classes" || pageSlug === "class") {
     return `/classes/${encodeURIComponent(formatEntityDisplayName(label))}`;

@@ -61,6 +61,7 @@ Official reference data loaded from [5etools](https://5e.tools) (not Amellwind h
 | **Races**       | `/dnd-races`                 | Official 5e species, lineages, and subraces                |
 | **Backgrounds** | `/dnd-backgrounds`           | Official 5e backgrounds (2014 / 2024)                    |
 | **Feats**       | `/dnd-feats`                 | Official 5e feats                                       |
+| **Conditions & Diseases** | `/dnd-conditions` | Classic D&D conditions, statuses, and diseases (PHB / DMG / 2024) |
 | **Xanathar Backstory** | `/xanathar-backstory` | Random backstory generator using Xanathar’s tables (XGE) |
 | **Shop Generator** | `/shop-generator` | Procedural D&D 5e shops (theme, tier, editable CSV prices) |
 
