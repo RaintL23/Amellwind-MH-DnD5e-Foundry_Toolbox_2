@@ -821,11 +821,18 @@ Si el texto del efecto **no** referencia un material effect nombrado del catálo
 | `You are resistant to poison damage and immune to the poisoned condition…`               | **Rare** (resistencia a daño; la inmunidad a condición no sube rareza) |
 | `…use your reaction or bonus action to gain resistance to lightning…` (usos / long rest) | **Uncommon** (activada / limitada)                                     |
 | `As an action, you gain resistance to … for 1 minute` (1/long rest)                      | **Uncommon**                                                           |
-| `You are immune to fire damage while you wear this armor.`                               | **Very Rare** (siempre activa)                                         |
-| `You are immune to poison and disease while you wear this armor.`                        | **Very Rare** (atajo clásico: `poison` = daño de veneno)               |
-| Inmunidad a daño activada (action / BA / reaction + duración corta)                      | **Rare** (un escalón bajo Very Rare)                                   |
+| `You are immune to fire damage while you wear this armor.`                               | **Legendary** (siempre activa)                                         |
+| `You are immune to poison and disease while you wear this armor.`                        | **Legendary** (atajo clásico: `poison` = daño de veneno)               |
+| Inmunidad a daño activada (action / BA / reaction + duración corta)                      | **Very Rare** (un escalón bajo Legendary)                              |
 
 Solo cuenta inmunidad/resistencia **a un tipo de daño** (no inmunidad a condición). La detección de “limitada” busca gasto de economy (`action` / `bonus action` / `reaction`) junto al grant de resistencia/inmunidad.
+
+**Bypass de resistencia / inmunidad** (`inferRarityFromResistanceBypassTags` en `inline-special-effect-rarity.utils.ts`) — **solo si** tras defensa/daño la rareza seguiría en Unknown:
+
+| Tags / texto (ejemplos)                                                                 | Rareza          |
+| --------------------------------------------------------------------------------------- | --------------- |
+| `mechanic:resistance-bypass` (Mind's Eye, Heavy Polish)                                 | **Rare** (ataques) / **Uncommon** (hechizos) |
+| `mechanic:immunity-bypass` (Mind's Eye+, Heavy Polish+, half damage vs immunity)        | **Legendary**   |
 
 **Daño de arma** (`inline-extra-damage-rarity.utils.ts`), score = dados × caras (o flat) — aplica a daño extra siempre activo y a daño que el efecto hace sufrir al objetivo (p. ej. DoT al crit, AoE `dealing 22 (4d10) fire damage`):
 
@@ -916,7 +923,7 @@ Ejemplos: Rathalos Carapace (+1 AC) → Uncommon; Shield reaction +1 AC → Comm
 
 **Ventaja / bonus vs condición** (`inline-condition-rarity.utils.ts`) — **solo si** tras defensa/daño/hechizo la rareza seguiría en Unknown, y el efecto tiene `mechanic:against-condition` + (`mechanic:advantage` **o** `mechanic:save-bonus`) **sin** `mechanic:immunity` (p. ej. _advantage on saving throws against the poisoned condition_, o _+2 bonus_ vs knocked prone): **Common**.
 
-**Inmunidad a condición** (`inferRarityFromConditionImmunityTags`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:immunity` + algún `mechanic:condition-*` (p. ej. _immune to the poisoned condition_, _cannot be knocked prone_, _can't be stunned_): **Uncommon**. La inmunidad a un **tipo de daño** sigue la tabla de defensas (Rare / Very Rare); no usa esta regla.
+**Inmunidad a condición** (`inferRarityFromConditionImmunityTags`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:immunity` + algún `mechanic:condition-*` (p. ej. _immune to the poisoned condition_, _cannot be knocked prone_, _can't be stunned_): **Uncommon**. La inmunidad a un **tipo de daño** sigue la tabla de defensas (Rare / Legendary); no usa esta regla.
 
 **Fin de DoT / Recovery Level** (`inline-end-dot-rarity.utils.ts`) — **solo si** tras lo anterior la rareza seguiría en Unknown, y el efecto tiene `mechanic:end-dot` (limpia daño continuo al inicio del turno: sangrado, ácido/veneno DoT, fuego, …): **Rare**.
 
@@ -1298,7 +1305,7 @@ Tres listados de referencia derivados del homebrew Amellwind, con caché en memo
 
 | Feature               | Ruta                                   | Fuente / servicio                                                        | Contenido                                                                                                                                                                                                                                                        |
 | --------------------- | -------------------------------------- | ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Material Effects      | `/material-effects`                    | `material-effect.service.ts` (`MaterialEffectList`)                      | Efectos de materiales de monstruo (slots armadura/arma) consultables sin pasar por la tabla de runas. En `/runes`, la rareza del efecto también puede inferirse de resistencia (Rare) o inmunidad a daño (Very Rare) cuando el texto no cita un efecto nombrado. |
+| Material Effects      | `/material-effects`                    | `material-effect.service.ts` (`MaterialEffectList`)                      | Efectos de materiales de monstruo (slots armadura/arma) consultables sin pasar por la tabla de runas. En `/runes`, la rareza del efecto también puede inferirse de resistencia (Rare), inmunidad a daño / bypass de inmunidad (Legendary) cuando el texto no cita un efecto nombrado. |
 | Conditions + Diseases (MH) | `/conditions` (`/diseases` → redirect) | `condition.service.ts` + `disease.service.ts` (`ConditionsDiseasesPage`) | Condiciones blight, venenos y enfermedades del PDF Patreon 2.0 (el JSON de GitHub rellena nombres ausentes) |
 | Conditions + Diseases (D&D) | `/dnd-conditions` | `dnd-condition.service.ts` (`DndConditionsDiseasesPage`) | Condiciones, statuses y enfermedades oficiales 5e desde `conditionsdiseases.json` (PHB/XPHB/DMG/aventuras) |
 

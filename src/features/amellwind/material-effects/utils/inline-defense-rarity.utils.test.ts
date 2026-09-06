@@ -139,12 +139,12 @@ describe("inferInlineDamageDefenseRarity", () => {
     ).toBe("Uncommon");
   });
 
-  it("catalogues always-on immunity as Very Rare", () => {
+  it("catalogues always-on immunity as Legendary", () => {
     expect(
       inferInlineDamageDefenseRarity(
         "You are immune to fire damage while you wear this armor.",
       ),
-    ).toBe("Very Rare");
+    ).toBe("Legendary");
   });
 
   it("uses immunity rarity when both appear", () => {
@@ -152,23 +152,23 @@ describe("inferInlineDamageDefenseRarity", () => {
       inferInlineDamageDefenseRarity(
         "You have resistance to cold damage. You are immune to fire damage while you wear this armor.",
       ),
-    ).toBe("Very Rare");
+    ).toBe("Legendary");
   });
 
-  it("catalogues shorthand poison immunity as Very Rare", () => {
+  it("catalogues shorthand poison immunity as Legendary", () => {
     expect(
       inferInlineDamageDefenseRarity(
         "You are immune to poison and disease while you wear this armor.",
       ),
-    ).toBe("Very Rare");
+    ).toBe("Legendary");
   });
 
-  it("catalogues MHMM lighting typo immunity as Very Rare", () => {
+  it("catalogues MHMM lighting typo immunity as Legendary", () => {
     expect(
       inferInlineDamageDefenseRarity(
         "You are immune to lighting damage while you wear this armor.",
       ),
-    ).toBe("Very Rare");
+    ).toBe("Legendary");
   });
 
   it("catalogues resistant-to poison + poisoned condition as Rare", () => {

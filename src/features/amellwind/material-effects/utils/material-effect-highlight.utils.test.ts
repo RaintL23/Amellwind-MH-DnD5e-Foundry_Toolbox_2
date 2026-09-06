@@ -124,14 +124,14 @@ describe("getMaterialEffectTierForText — inline defenses", () => {
     ).toBe("Rare");
   });
 
-  it("assigns Very Rare to unnamed immunity text", () => {
+  it("assigns Legendary to unnamed immunity text", () => {
     expect(
       getMaterialEffectTierForText(
         "You are immune to fire damage while you wear this armor.",
         "armor",
         emptyIndex,
       ),
-    ).toBe("Very Rare");
+    ).toBe("Legendary");
   });
 
   it("prefers a named catalog rarity over the inline defense fallback", () => {
@@ -1074,6 +1074,27 @@ describe("getMaterialEffectTierForText — special mechanics when Unknown", () =
         ["mechanic:resistance-bypass", "type:offensive"],
       ),
     ).toBe("Rare");
+  });
+
+  it("assigns Legendary to Mind's Eye+ immunity bypass", () => {
+    expect(
+      getMaterialEffectTierForText(
+        "Mind's Eye+. Your attacks with this weapon bypass the damage resistances and immunities of any creature.",
+        "weapon",
+        emptyIndex,
+        ["mechanic:resistance-bypass", "mechanic:immunity-bypass", "type:offensive"],
+      ),
+    ).toBe("Legendary");
+  });
+
+  it("assigns Legendary to spell half-damage vs immunity", () => {
+    const text =
+      "While you are attuned to this weapon, your lightning spells bypass a creature's resistance to lightning damage and deal half damage to a creature that has immunity to lightning damage.";
+    const tags = extractRuneEffectTags(text);
+    expect(tags).toContain("mechanic:immunity-bypass");
+    expect(
+      getMaterialEffectTierForText(text, "weapon", emptyIndex, tags),
+    ).toBe("Legendary");
   });
 
   it("assigns Uncommon to Hasten Recovery", () => {

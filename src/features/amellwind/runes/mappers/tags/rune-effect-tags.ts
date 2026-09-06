@@ -2299,7 +2299,13 @@ function resistanceBypassTags(text: string): string[] {
   if (
     /\bbypass\b.*\bimmunities?\b/i.test(text) ||
     /bypass(?:es)?.*resistances? and immunities/i.test(text) ||
-    /immunity and resistance to \w+ damage/i.test(text)
+    /immunity and resistance to \w+ damage/i.test(text) ||
+    /half (?:as much )?damage to (?:a |the )?creature'?s? (?:that (?:has|is|are) )?(?:immune|immunity)/i.test(
+      text,
+    ) ||
+    /deal(?:s)? half damage to (?:a |the )?creature'?s? (?:that )?(?:has |is |are )?immun/i.test(
+      text,
+    )
   ) {
     tags.push("mechanic:immunity-bypass");
   }

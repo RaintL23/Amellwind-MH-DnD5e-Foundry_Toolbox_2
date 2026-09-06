@@ -18,8 +18,8 @@ export const MATERIAL_EFFECT_RARITIES: ResourceRarity[] = [
 /** Always-on damage resistance in rune text (Armor of Resistance / Ring of Resistance). */
 export const INLINE_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Rare";
 
-/** Always-on damage immunity in rune text (one step above resistance). */
-export const INLINE_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Very Rare";
+/** Always-on damage immunity in rune text (capstone vs resistance). */
+export const INLINE_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Legendary";
 
 /** Always-on flat damage reduction (-N while wearing), weaker than resistance. */
 export const INLINE_FLAT_DAMAGE_REDUCTION_RARITY: ResourceRarity = "Uncommon";
@@ -33,8 +33,8 @@ export const INLINE_LIMITED_FLAT_DAMAGE_REDUCTION_RARITY: ResourceRarity = "Rare
  */
 export const INLINE_LIMITED_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Uncommon";
 
-/** Limited/activated damage immunity — one step below always-on Very Rare. */
-export const INLINE_LIMITED_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Rare";
+/** Limited/activated damage immunity — one step below always-on Legendary. */
+export const INLINE_LIMITED_DAMAGE_IMMUNITY_RARITY: ResourceRarity = "Very Rare";
 
 /**
  * Always-on "extra NdX damage" weapon text, by dice score (n × faces or flat amount).
@@ -167,14 +167,14 @@ export const INLINE_CRIT_NO_REACTIONS_RARITY: ResourceRarity = "Uncommon";
 /** Spells bypass damage resistance (not immunity). */
 export const INLINE_SPELL_BYPASS_RESISTANCE_RARITY: ResourceRarity = "Uncommon";
 
-/** Spells bypass resistance and immunities. */
-export const INLINE_SPELL_BYPASS_IMMUNITY_RARITY: ResourceRarity = "Rare";
+/** Spells bypass resistance and immunities (or half damage vs immunity). */
+export const INLINE_SPELL_BYPASS_IMMUNITY_RARITY: ResourceRarity = "Legendary";
 
 /** Weapon attacks bypass all damage resistances (Mind's Eye). */
 export const INLINE_ATTACK_BYPASS_RESISTANCE_RARITY: ResourceRarity = "Rare";
 
-/** Weapon attacks bypass resistances and immunities (Mind's Eye+). */
-export const INLINE_ATTACK_BYPASS_IMMUNITY_RARITY: ResourceRarity = "Very Rare";
+/** Weapon attacks bypass resistances and immunities (Mind's Eye+ / Heavy Polish+). */
+export const INLINE_ATTACK_BYPASS_IMMUNITY_RARITY: ResourceRarity = "Legendary";
 
 /** Degrading AC coating (mud shell — max +3, chips on hit). */
 export const INLINE_DEGRADING_AC_RARITY: ResourceRarity = "Rare";
@@ -352,7 +352,7 @@ export const INLINE_SKILL_UTILITY_RARITY: ResourceRarity = "Common";
 
 /**
  * Always-on immunity to a named condition (poisoned, stunned, …).
- * Stronger than save advantage; below always-on damage immunity (Rare+).
+ * Stronger than save advantage; below always-on damage immunity (Legendary).
  */
 export const INLINE_CONDITION_IMMUNITY_RARITY: ResourceRarity = "Uncommon";
 
@@ -598,7 +598,7 @@ export const INLINE_NONMAGICAL_DAMAGE_RESISTANCE_RARITY: ResourceRarity = "Legen
 
 /** Activated short-duration immunity to nonmagical damage. */
 export const INLINE_NONMAGICAL_DAMAGE_IMMUNITY_LIMITED_RARITY: ResourceRarity =
-  "Very Rare";
+  "Legendary";
 
 /** Herb consumption die upgrade (Pro Herbology). */
 export const INLINE_HERB_CONSUMPTION_RARITY: ResourceRarity = "Common";

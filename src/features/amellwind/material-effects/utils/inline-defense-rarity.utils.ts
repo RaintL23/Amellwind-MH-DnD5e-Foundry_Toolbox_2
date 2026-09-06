@@ -114,7 +114,7 @@ function higherRarity(a: ResourceRarity, b: ResourceRarity): ResourceRarity {
 
 /**
  * Always-on resistance → Rare; limited/activated resistance → Uncommon.
- * Always-on immunity → Very Rare; limited immunity → Rare.
+ * Always-on immunity → Legendary; limited immunity → Very Rare.
  */
 export function inferInlineDamageDefenseRarity(
   text: string,
