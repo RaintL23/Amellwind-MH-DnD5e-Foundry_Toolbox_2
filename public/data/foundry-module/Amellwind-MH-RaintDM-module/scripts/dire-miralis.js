@@ -186,15 +186,27 @@
     return roll;
   };
 
+  /** Player/NPC saves: always show the dnd5e Advantage / Normal / Disadvantage dialog. */
   const rollSave = async (actor, ability, dc) => {
     if (!actor) return { success: true, total: dc };
+    const ablLabel = CONFIG.DND5E?.abilities?.[ability]?.label ?? String(ability).toUpperCase();
     let result;
     if (typeof actor.rollSavingThrow === "function") {
-      result = await actor.rollSavingThrow({ ability, target: dc, chatMessage: true });
+      result = await actor.rollSavingThrow(
+        { ability, target: dc },
+        { configure: true },
+        { data: { flavor: `${ablLabel} saving throw (DC ${dc})` } },
+      );
     } else if (typeof actor.rollAbilitySave === "function") {
-      result = await actor.rollAbilitySave(ability, { targetValue: dc });
+      result = await actor.rollAbilitySave(ability, {
+        targetValue: dc,
+        fastForward: false,
+        chatMessage: true,
+      });
     }
+    if (result == null) return { success: true, total: dc, cancelled: true };
     const roll = Array.isArray(result) ? result[0] : result;
+    if (!roll) return { success: true, total: dc, cancelled: true };
     const total = Number(roll?.total ?? roll?._total ?? 0);
     return { success: total >= dc, total, roll };
   };

@@ -398,7 +398,9 @@ const saveActivity = ({
     range,
     target,
     uses,
-    midiProperties: midiProps(identifier, midiExtra),
+    // forceRollDialog always: player saves must show Advantage / Normal / Disadvantage
+    // even when the world has Midi auto–fast-forward saves enabled.
+    midiProperties: midiProps(identifier, { ...midiExtra, forceRollDialog: "always" }),
     damage: { parts, onSave },
     save: {
       ability: Array.isArray(saveAbility) ? saveAbility : [saveAbility],
