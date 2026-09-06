@@ -84,7 +84,10 @@ const recipesOut = path.join(__dirname, "combo-recipes.json");
 fs.writeFileSync(recipesOut, JSON.stringify(recipes, null, 2));
 
 // Inject the recipe table into the macro source.
-const macroSrc = fs.readFileSync(path.join(__dirname, "combo-craft-item-macro.js"), "utf8");
+const macroSrc = fs.readFileSync(
+  path.join(ROOT, "public", "data", "scripts", "combo-crafting", "combo-craft-item-macro.js"),
+  "utf8",
+);
 const injection = `const COMBO_RECIPES = ${JSON.stringify(recipes)};`;
 if (!macroSrc.includes("/* @@COMBO_RECIPES@@ */")) {
   throw new Error("combo-craft-item-macro.js is missing the /* @@COMBO_RECIPES@@ */ placeholder");

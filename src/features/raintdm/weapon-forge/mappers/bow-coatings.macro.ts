@@ -1,6 +1,6 @@
 /**
  * Bow coating Item Macro — keep in sync with
- * `public/data/foundry-jsons-example/weapons-resources/coatings/bow-coatings-item-macro.js`
+ * `public/data/scripts/weapons-resources/coatings/bow-coatings-item-macro.js`
  */
 export const BOW_COATINGS_ITEM_MACRO = `// Bow — Item Macros (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)
 //

@@ -13,6 +13,7 @@ import { fileURLToPath } from "node:url";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, "../../../..");
 const TRAPS_SRC = path.join(ROOT, "public", "data", "raintdm-items", "traps.json");
+const scriptsDir = path.join(ROOT, "public", "data", "scripts", "items-forge");
 const OUT_DIR = path.join(__dirname, "traps");
 
 const CORE_VERSION = "12.331";
@@ -358,7 +359,7 @@ function wrapItem({ id, name, img, system, flags, sort }) {
 
 const trapsFile = JSON.parse(fs.readFileSync(TRAPS_SRC, "utf8"));
 const items = Array.isArray(trapsFile.items) ? trapsFile.items : [];
-const macroSrc = fs.readFileSync(path.join(__dirname, "hunter-traps-item-macro.js"), "utf8");
+const macroSrc = fs.readFileSync(path.join(scriptsDir, "hunter-traps-item-macro.js"), "utf8");
 
 fs.mkdirSync(OUT_DIR, { recursive: true });
 

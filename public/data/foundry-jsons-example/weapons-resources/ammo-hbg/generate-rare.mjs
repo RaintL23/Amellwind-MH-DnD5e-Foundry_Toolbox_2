@@ -7,7 +7,10 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const macro = readFileSync(join(here, "heavy-bowgun-item-macro.js"), "utf8");
+const macro = readFileSync(
+  join(here, "..", "..", "..", "scripts", "weapons-resources", "ammo-hbg", "heavy-bowgun-item-macro.js"),
+  "utf8",
+);
 
 const id = (s) => s;
 

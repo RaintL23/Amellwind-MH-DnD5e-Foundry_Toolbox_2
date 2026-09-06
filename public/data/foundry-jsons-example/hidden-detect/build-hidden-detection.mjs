@@ -10,6 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const scriptsDir = path.join(__dirname, "..", "..", "scripts", "hidden-detect");
 
 const CORE_VERSION = "12.331";
 const SYSTEM_ID = "dnd5e";
@@ -29,13 +30,13 @@ const injectEngine = (src, engine) => {
   return src.replace("/* @@SYNC_ENGINE@@ */", engine.trim());
 };
 
-const engineSrc = fs.readFileSync(path.join(__dirname, "hidden-detection-sync-engine.js"), "utf8");
+const engineSrc = fs.readFileSync(path.join(scriptsDir, "hidden-detection-sync-engine.js"), "utf8");
 const itemMacroSrc = injectEngine(
-  fs.readFileSync(path.join(__dirname, "hidden-detection-item-macro.js"), "utf8"),
+  fs.readFileSync(path.join(scriptsDir, "hidden-detection-item-macro.js"), "utf8"),
   engineSrc,
 );
 const syncMacroSrc = injectEngine(
-  fs.readFileSync(path.join(__dirname, "hidden-detection-sync-macro.js"), "utf8"),
+  fs.readFileSync(path.join(scriptsDir, "hidden-detection-sync-macro.js"), "utf8"),
   engineSrc,
 );
 

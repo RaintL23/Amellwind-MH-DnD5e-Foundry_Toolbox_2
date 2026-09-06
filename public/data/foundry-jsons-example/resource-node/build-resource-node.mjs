@@ -10,6 +10,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const scriptsDir = path.join(__dirname, "..", "..", "scripts", "resource-node");
 
 const CORE_VERSION = "12.331";
 const SYSTEM_ID = "dnd5e";
@@ -30,13 +31,13 @@ const injectEngine = (src, engine) => {
   return src.replace("/* @@SYNC_ENGINE@@ */", engine.trim());
 };
 
-const engineSrc = fs.readFileSync(path.join(__dirname, "resource-node-sync-engine.js"), "utf8");
+const engineSrc = fs.readFileSync(path.join(scriptsDir, "resource-node-sync-engine.js"), "utf8");
 const itemMacroSrc = injectEngine(
-  fs.readFileSync(path.join(__dirname, "resource-node-item-macro.js"), "utf8"),
+  fs.readFileSync(path.join(scriptsDir, "resource-node-item-macro.js"), "utf8"),
   engineSrc,
 );
 const syncMacroSrc = injectEngine(
-  fs.readFileSync(path.join(__dirname, "resource-node-sync-macro.js"), "utf8"),
+  fs.readFileSync(path.join(scriptsDir, "resource-node-sync-macro.js"), "utf8"),
   engineSrc,
 );
 
