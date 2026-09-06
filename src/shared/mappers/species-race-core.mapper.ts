@@ -119,6 +119,11 @@ export function mapSpeciesRaceTable(raw: Raw): SpeciesTable {
   };
 }
 
+/**
+ * Flatten 5etools race/species trait entries into display paragraphs + tables.
+ * Handles nested `entries`, `table`, and `list`/`items` (e.g. Warforged
+ * Constructed Resilience benefits). Lists become bullet-prefixed lines.
+ */
 export function collectTraitContent(entries: unknown[]): {
   texts: string[];
   tables: SpeciesTable[];
@@ -135,6 +140,46 @@ export function collectTraitContent(entries: unknown[]): {
     const e = entry as Raw;
     if (e.type === "table") {
       tables.push(mapSpeciesRaceTable(e));
+      continue;
+    }
+    if (e.type === "list" && Array.isArray(e.items)) {
+      for (const item of e.items as unknown[]) {
+        if (typeof item === "string") {
+          const text = parseFiveToolsMarkup(item).trim();
+          if (text) texts.push(`• ${text}`);
+          continue;
+        }
+        if (typeof item !== "object" || item === null) continue;
+        const listItem = item as Raw;
+        const bodyEntries: unknown[] = Array.isArray(listItem.entries)
+          ? (listItem.entries as unknown[])
+          : typeof listItem.entry === "string"
+            ? [listItem.entry]
+            : [];
+        const nested = collectTraitContent(bodyEntries);
+        const name =
+          typeof listItem.name === "string"
+            ? parseFiveToolsMarkup(listItem.name).trim()
+            : "";
+
+        if (name) {
+          if (nested.texts.length === 1 && nested.tables.length === 0) {
+            texts.push(`• ${name}: ${nested.texts[0]}`);
+          } else {
+            texts.push(`• ${name}`);
+            texts.push(...nested.texts);
+            tables.push(...nested.tables);
+          }
+          continue;
+        }
+
+        if (nested.texts.length || nested.tables.length) {
+          texts.push(
+            ...nested.texts.map((t, i) => (i === 0 ? `• ${t}` : t)),
+          );
+          tables.push(...nested.tables);
+        }
+      }
       continue;
     }
     if (Array.isArray(e.entries)) {
