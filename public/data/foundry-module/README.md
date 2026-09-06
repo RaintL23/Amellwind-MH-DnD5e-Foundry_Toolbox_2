@@ -33,6 +33,7 @@ Amellwind MH (RaintDM)/
 ├── Runes
 ├── Combo Crafting
 ├── Items Forge
+├── Conditions & Diseases
 ├── Felyne Kitchen/
 │   ├── Cooking Items
 │   ├── Felyne Cook
@@ -55,8 +56,9 @@ Amellwind MH (RaintDM)/
 | Runes                    | Amellwind MH (RaintDM)    | Item  | `runes/<Monster>/`                    | 79 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
 | Combo Crafting           | Amellwind MH (RaintDM)    | Item  | `combo-crafting/`                     | Combo Crafting feature (drop on any actor) |
 | Items Forge              | Amellwind MH (RaintDM)    | Item  | `items-forge/traps/`                  | Hunter traps (Trap Tool, Pitfall, Shock, +) |
-| Cooking Items            | Felyne Kitchen    | Item  | `cooking-features/` (rank-1, daily-skills) | food + daily skills |
-| Felyne Cook              | Felyne Kitchen    | Actor | `cooking-features/`                   | Felyne Cook (embeds its 46 items) |
+| Conditions & Diseases    | Amellwind MH (RaintDM)    | Item  | `conditions/`                         | Amellwind blights + diseases (Active Effects + HUD statuses) |
+| Cooking Items            | Felyne Kitchen    | Item  | `cooking-features/` (rank-1..4, daily-skills) | food + daily skills |
+| Felyne Cook              | Felyne Kitchen    | Actor | `cooking-features/`                   | Felyne Cook (embeds its meals + skills) |
 | Kitchen Sync             | Felyne Kitchen    | Macro | `cooking-features/`                   | Felyne Cook — Kitchen Sync |
 | Hidden Detection         | Hidden Detection  | Item  | `hidden-detect/`                      | Hidden Detection feature (drop on the hidden object actor) |
 | Hidden Detection Sync    | Hidden Detection  | Macro | `hidden-detect/`                      | Hidden Detection Sync (proximity hooks) |
@@ -188,10 +190,17 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.
 node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
 ```
 
-   If you changed Dire Miralis (or added another hunt monster actor):
+   If you changed Dire Miralis / Tempered Alatreon (or added another hunt monster actor):
 
 ```bash
 node public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs
+node public/data/foundry-jsons-example/monsters/build-tempered-alatreon-mhw-actor.mjs
+```
+
+   If you changed Amellwind conditions / diseases automation:
+
+```bash
+node public/data/foundry-jsons-example/conditions/build-conditions.mjs
 ```
 
 3. Rebuild the packs:
@@ -214,7 +223,7 @@ the rebuilt pack.
 
 ## Felyne Kitchen (camp cook)
 
-Token interaction for Rank 1 artisan meals. World hooks cannot travel inside an
+Token interaction for Artisan Cooking meals (Ranks 1–4). World hooks cannot travel inside an
 Actor alone, so this ships as the **Felyne Cook** actor + a **Kitchen Sync** macro,
 with token double-click armed from `scripts/felyne-cook.js` on every client.
 
@@ -223,13 +232,14 @@ with token double-click armed from `scripts/felyne-cook.js` on every client.
 1. From **Amellwind MH (RaintDM) → Felyne Kitchen → Felyne Cook**, drag the actor onto the scene.
 2. Optional: run **Kitchen Sync** once (or rely on the module script at world ready).
 3. Players double-click the cook token while within **10 ft** to open the kitchen menu.
-4. **Ask for a Meal (Rank 1)** still grants via the Camp Kitchen Aura as a backup.
+4. **Ask for a Meal** still grants via the Camp Kitchen Aura as a backup.
+5. Rank tabs lock by hunter level: Rank 2 (5th), Rank 3 (10th), Rank 4 (15th).
 
 ### Token interactions
 
 | Who | Action | Result |
 | --- | --- | --- |
-| Player | Double-click Felyne Cook token | Open camp kitchen menu (pick meal → pay → cook checks) |
+| Player | Double-click Felyne Cook token | Open camp kitchen menu (pick rank → meal → pay → cook checks) |
 | GM | Double-click (with a PC token on scene) | Open kitchen menu as that hunter (testing) |
 | GM | Double-click (no PC) or Shift+double-click | Open the cook **actor sheet** |
 | Anyone (GM) | Alt+double-click | Open the normal **actor sheet** |
@@ -240,9 +250,10 @@ Item Piles–style. Range is **10 ft** (same as the kitchen aura).
 
 ### Rebuild sources
 
-After editing `cooking-features/*.js`:
+After editing meal JSONs or `cooking-features` / `scripts/cooking-features` sources:
 
 ```bash
+node public/data/foundry-jsons-example/cooking-features/build-meal-items.mjs
 node public/data/foundry-jsons-example/cooking-features/build-felyne-cook-actor.mjs
 pnpm build:foundry-module
 ```
@@ -468,12 +479,62 @@ with furnace light and blindsight 120 ft.
 **Use from the sheet:** Multiattack, Claw, Crush, Tail Sweep, Greater Fireball
 (Recharge 5–6), Lumbering Advance, legendary actions, optional lair actions.
 
+### Tempered Alatreon (MHW) (CR 30)
+
+Gargantuan Elder Dragon. Drag from **Amellwind MH (RaintDM) → Monsters → Monsters**.
+Token is 4×4 (`mh-tokens/alatreon.webp`).
+
+**Automated (module script + Midi QOL):**
+
+- **Active State** (fire / dragon / ice): immunities, vulnerabilities, and dragon-state
+  resistances via AEs; advances after 100 HP lost in the current state and auto-fires
+  **Element Burst** (special reaction)
+- Start Fire Cycle / Start Ice Cycle set the opening order
+- **Elemental Overload** charges (+1 per 10 fire/cold/lightning from a single hit); reset on Escaton
+- **Horns** (2× 200 HP): Apply Horn Damage; broken horn reverts to previous state
+- **Legendary Limit**: each legendary option once per round
+- **Elemental Breath**: rolls 1d4 for damage type (fire/cold/necrotic/lightning)
+- **Escaton Judgement**: Charge → Release; dice = 60 − 10×broken horns − overload charges
+- Blights on failed saves (dragonblight / waterblight / thunderblight / iceblight) + prone riders
+- Scorched Earth / Frost Breath ground zones until the start of its next turn
+- Mythic legendary actions gated to the current Active State
+
+**Use from the sheet:** Multiattack, Bite, Claws, Tail, Elemental Breath (Recharge 5–6),
+Escaton Charge/Release, Element Burst, legendary + mythic actions.
+
 ### Rebuild sources
 
-After editing `monsters/*.js` / the build script:
+After editing `monsters/*.js` / the build scripts:
 
 ```bash
 node public/data/foundry-jsons-example/monsters/build-dire-miralis-actor.mjs
+node public/data/foundry-jsons-example/monsters/build-tempered-alatreon-mhw-actor.mjs
+pnpm build:foundry-module
+```
+
+## Conditions & Diseases (Amellwind)
+
+Amellwind blight conditions and diseases from MHMM (Bloodblight, Dragonblight,
+Frozen, Slick, Tarred, Stench, Thunderblight, Waterblight, Iceblight, Frenzy Virus).
+
+On world load, `scripts/amellwind-conditions.js` registers each affliction in
+`CONFIG.DND5E.conditionTypes` / `CONFIG.statusEffects` so they appear on the
+**token HUD** and character sheet. Toggling a status creates an Active Effect with
+the mechanical changes (speed, Midi disadvantage flags, Frenzy crit threshold, etc.).
+
+The **Conditions & Diseases** pack holds one feat Item per affliction (rules text +
+**Apply Affliction** utility activity that Midi applies to a target for 1 minute).
+
+Boss macros (e.g. Alatreon) can also call:
+
+```js
+await globalThis.__amellwindConditions.applyToActor(actor, "waterblight", { durationSeconds: 60 });
+```
+
+### Rebuild sources
+
+```bash
+node public/data/foundry-jsons-example/conditions/build-conditions.mjs
 pnpm build:foundry-module
 ```
 
@@ -493,11 +554,20 @@ pnpm build:foundry-module
   and Scorching Hide load from `scripts/dire-miralis.js` on world ready (GM
   mutations run on the active GM). Item Macros call that API; they warn if the
   module script is not armed.
+- **Tempered Alatreon (MHW):** Active State, Element Burst, Overload, Horns,
+  Escaton, breath typing, legendary limit, and mythic gates load from
+  `scripts/alatreon.js` on world ready. Item Macros call `__amellwindAlatreon`.
+- **Conditions & Diseases:** HUD statuses + Active Effect automation load from
+  `scripts/amellwind-conditions.js` on init. Pack items live under
+  `foundry-jsons-example/conditions/`.
 - **Hunter traps:** Set / retrieve Item Macros call `scripts/hunter-traps.js`.
   Canvas trigger, camouflage notices, and 1-hour expiry run on the active GM.
-- **Sidecar scripts:** the loose `.js` / `.mjs` / `.fragment.js` files in the source
-  folders are development references and are **not** packed. Item-level automation
-  already travels embedded in each item's `flags.itemacro`.
+- **Sidecar scripts:** Foundry runtime macros and engines live in
+  [`public/data/scripts`](../scripts) (mirrored by feature folder). They are
+  development references and are **not** packed into LevelDB; Item-level
+  automation already travels embedded in each item's `flags.itemacro`. Module
+  client bootstraps (`scripts/*.js` inside the module zip) are generated from
+  those sources by `pnpm build:foundry-module`.
 - **Assets:** hunter `mh-icons` still used by weapons/runes/ammo are bundled.
   Generic actors and loot use Foundry core `icons/...` paths (no extra files).
   If you add hunter items that reference new mh-icons, drop the `.webp` in

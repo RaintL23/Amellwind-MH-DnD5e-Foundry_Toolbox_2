@@ -1,8 +1,8 @@
 {
   "id": "Amellwind-MH-RaintDM-module",
   "title": "Amellwind MH (RaintDM)",
-  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, Items Forge hunter traps, runes, cooking features, combo crafting, hidden object detection, resource gathering nodes, and hunt monsters for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
-  "version": "1.13.0",
+  "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, Items Forge hunter traps, runes, cooking features, combo crafting, hidden object detection, resource gathering nodes, Amellwind conditions & diseases, and hunt monsters for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
+  "version": "1.15.1",
   "authors": [
     {
       "name": "RaintDM"
@@ -13,10 +13,12 @@
     "verified": "12.331"
   },
   "scripts": [
+    "scripts/amellwind-conditions.js",
     "scripts/resource-node.js",
     "scripts/hidden-detection.js",
     "scripts/felyne-cook.js",
     "scripts/dire-miralis.js",
+    "scripts/alatreon.js",
     "scripts/hunter-traps.js"
   ],
   "relationships": {
@@ -226,6 +228,17 @@
         "PLAYER": "OBSERVER",
         "ASSISTANT": "OWNER"
       }
+    },
+    {
+      "name": "conditions",
+      "label": "Conditions & Diseases",
+      "path": "packs/conditions",
+      "type": "Item",
+      "system": "dnd5e",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
     }
   ],
   "packFolders": [
@@ -237,7 +250,8 @@
         "weapon-resources",
         "runes",
         "combo-crafting",
-        "items-forge"
+        "items-forge",
+        "conditions"
       ],
       "folders": [
         {
