@@ -1,0 +1,267 @@
+{
+  "_id": "bVJk3nCJCV9w97y6",
+  "name": "Frozen",
+  "type": "feat",
+  "img": "icons/magic/water/barrier-ice-crystal-wall-faceted-blue.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Amellwind Condition</strong></p><p>A frozen creature's speed is reduced by <strong>10 feet</strong>. The creature cannot attack or use spells and has disadvantage on Dexterity saving throws. For every 1 minute a creature is frozen, it gains one level of exhaustion.</p>\n<p>A creature that is frozen has its body encased in ice and snow. This ice and snow can be attacked and destroyed (<strong>AC 10; hp 15</strong>; vulnerability to fire damage; immunity to cold damage), ending the frozen condition on the creature.</p>\n<p><em>Toggle from the token HUD, or use <strong>Apply Affliction</strong> (Midi applies the Active Effect + status icon).</em></p>",
+      "chat": "<p>Speed −10 ft; can't attack or cast; Dex saves at disadvantage. Ice shell AC 10 / 15 HP (vuln fire, immune cold).</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2014",
+      "revision": 1
+    },
+    "identifier": "frozen",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "",
+    "properties": [],
+    "activities": {
+      "C13nzPA6Iyhm4lT0": {
+        "_id": "C13nzPA6Iyhm4lT0",
+        "type": "utility",
+        "sort": 0,
+        "name": "Apply Affliction",
+        "img": "icons/magic/water/barrier-ice-crystal-wall-faceted-blue.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Apply Frozen (1 minute)."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "EeqcD5nwrvYptfOu",
+            "onSave": false
+          }
+        ],
+        "range": {
+          "value": null,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "apply-frozen",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "EeqcD5nwrvYptfOu",
+      "name": "Frozen",
+      "img": "icons/magic/water/barrier-ice-crystal-wall-faceted-blue.webp",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "system.attributes.movement.walk",
+          "mode": 2,
+          "value": "-10",
+          "priority": 20
+        },
+        {
+          "key": "flags.midi-qol.disadvantage.ability.save.dex",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        },
+        {
+          "key": "flags.midi-qol.fail.attack",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        },
+        {
+          "key": "flags.midi-qol.fail.spell",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": 10,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Speed −10 ft; can't attack or cast; Dex saves at disadvantage. Ice shell AC 10 / 15 HP (vuln fire, immune cold).",
+      "origin": null,
+      "tint": "#88ccff",
+      "transfer": false,
+      "statuses": [
+        "frozen"
+      ],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "disableCondition": "",
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": []
+        },
+        "world": {
+          "amellwindConditions": {
+            "kind": "frozen",
+            "afflictionKind": "condition"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": ""
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "world": {
+      "amellwindConditions": {
+        "kind": "frozen",
+        "afflictionKind": "condition"
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

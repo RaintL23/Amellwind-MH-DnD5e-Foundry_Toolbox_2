@@ -1,0 +1,279 @@
+{
+  "_id": "q6wNZdmwJAaif5YH",
+  "name": "Frenzy Virus",
+  "type": "feat",
+  "img": "systems/dnd5e/icons/svg/statuses/diseased.svg",
+  "system": {
+    "description": {
+      "value": "<p><strong>Amellwind Disease</strong></p><p>The Frenzy Virus is an infectious disease caused by Gore Magala and Shagaru Magala. Infection typically comes from claw/bite hits or breath spores that apply <strong>Frenzy Charges</strong> (3 charges → Con save or become infected).</p>\n<h3>Sentient races (while infected)</h3>\n<ul>\n<li><strong>Improved Critical.</strong> Weapon attacks score a critical hit on a roll of 19 or 20.</li>\n<li><strong>Improved Damage.</strong> All spells and attacks deal an additional 1d4 damage.</li>\n<li><strong>Impaired Healing.</strong> Cannot regain Hit Points except by magical means (potions of healing are <em>not</em> magical for this purpose).</li>\n<li><strong>Suppressed Immunities.</strong> No longer benefits from resistance, absorption, or immunity for conditions or damage.</li>\n<li><strong>Vulnerability.</strong> Gaining a Frenzy Charge while already infected deals an extra 1d6 necrotic from that attack.</li>\n</ul>\n<p>Repeat the Con save each dawn; <em>greater restoration</em> also cures it. Effects on sentient creatures usually last several minutes once active.</p>\n<p><em>Monster / Apex templates are GM-facing; this Active Effect automates the sentient combat modifiers.</em></p>\n<p><em>Toggle from the token HUD, or use <strong>Apply Affliction</strong> (Midi applies the Active Effect + status icon).</em></p>",
+      "chat": "<p>Sentient: crit on 19–20, +1d4 damage, no nonmagical healing, resistances/immunities suppressed. Greater Restoration cures.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2014",
+      "revision": 1
+    },
+    "identifier": "frenzy-virus",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "",
+    "properties": [],
+    "activities": {
+      "huLsELpZCavKSjkN": {
+        "_id": "huLsELpZCavKSjkN",
+        "type": "utility",
+        "sort": 0,
+        "name": "Apply Affliction",
+        "img": "systems/dnd5e/icons/svg/statuses/diseased.svg",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Apply Frenzy Virus (1 minute)."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "Y4QAKoPRS5ul8tQL",
+            "onSave": false
+          }
+        ],
+        "range": {
+          "value": null,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "apply-frenzy-virus",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "Y4QAKoPRS5ul8tQL",
+      "name": "Frenzy Virus",
+      "img": "systems/dnd5e/icons/svg/statuses/diseased.svg",
+      "type": "base",
+      "system": {},
+      "changes": [
+        {
+          "key": "flags.midi-qol.criticalThreshold",
+          "mode": 5,
+          "value": "19",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.mwak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.rwak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.msak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        },
+        {
+          "key": "system.bonuses.rsak.damage",
+          "mode": 2,
+          "value": "1d4",
+          "priority": 20
+        },
+        {
+          "key": "flags.midi-qol.fail.heal.nonmagical",
+          "mode": 0,
+          "value": "1",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": 10,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Sentient: crit on 19–20, +1d4 damage, no nonmagical healing, resistances/immunities suppressed. Greater Restoration cures.",
+      "origin": null,
+      "tint": "#662266",
+      "transfer": false,
+      "statuses": [
+        "frenzy-virus"
+      ],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "disableCondition": "",
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": []
+        },
+        "world": {
+          "amellwindConditions": {
+            "kind": "frenzy-virus",
+            "afflictionKind": "disease"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": ""
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "world": {
+      "amellwindConditions": {
+        "kind": "frenzy-virus",
+        "afflictionKind": "disease"
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

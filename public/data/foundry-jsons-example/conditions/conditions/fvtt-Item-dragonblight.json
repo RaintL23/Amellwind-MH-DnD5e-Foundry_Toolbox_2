@@ -1,0 +1,242 @@
+{
+  "_id": "I8AfSwfwREJEgt0W",
+  "name": "Dragonblight",
+  "type": "feat",
+  "img": "systems/dnd5e/icons/svg/statuses/cursed.svg",
+  "system": {
+    "description": {
+      "value": "<p><strong>Amellwind Condition</strong></p><p>While afflicted with dragonblight, the target can't deal cold, fire, lightning, necrotic, or thunder damage with its spells and attacks, and it can't impose any of the following conditions on other creatures: blinded, charmed, paralyzed, poisoned, and petrified. Dragonblight can be cured early with the <em>lesser restoration</em> spell or similar magic.</p>\n<p><em>Token status indicates the affliction; elemental lockout is enforced at the table / by boss macros.</em></p>\n<p><em>Toggle from the token HUD, or use <strong>Apply Affliction</strong> (Midi applies the Active Effect + status icon).</em></p>",
+      "chat": "<p>Can't deal cold/fire/lightning/necrotic/thunder damage; can't impose blinded, charmed, paralyzed, poisoned, or petrified.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "MHMM",
+      "page": "",
+      "license": "",
+      "rules": "2014",
+      "revision": 1
+    },
+    "identifier": "dragonblight",
+    "type": {
+      "value": "feat",
+      "subtype": ""
+    },
+    "requirements": "",
+    "properties": [],
+    "activities": {
+      "xsHpR1uuSJ6GTito": {
+        "_id": "xsHpR1uuSJ6GTito",
+        "type": "utility",
+        "sort": 0,
+        "name": "Apply Affliction",
+        "img": "systems/dnd5e/icons/svg/statuses/cursed.svg",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Apply Dragonblight (1 minute)."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "QLkgS87kaI4Q2bgF",
+            "onSave": false
+          }
+        ],
+        "range": {
+          "value": null,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "apply-dragonblight",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    },
+    "enchant": {},
+    "prerequisites": {
+      "level": null,
+      "repeatable": false
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": []
+    }
+  },
+  "effects": [
+    {
+      "_id": "QLkgS87kaI4Q2bgF",
+      "name": "Dragonblight",
+      "img": "systems/dnd5e/icons/svg/statuses/cursed.svg",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": 10,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Can't deal cold/fire/lightning/necrotic/thunder damage; can't impose blinded, charmed, paralyzed, poisoned, or petrified.",
+      "origin": null,
+      "tint": "#6622aa",
+      "transfer": false,
+      "statuses": [
+        "dragonblight"
+      ],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "disableCondition": "",
+          "stackable": "noneName",
+          "showIcon": true,
+          "durationExpression": "",
+          "specialDuration": []
+        },
+        "world": {
+          "amellwindConditions": {
+            "kind": "dragonblight",
+            "afflictionKind": "condition"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    }
+  ],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": ""
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "world": {
+      "amellwindConditions": {
+        "kind": "dragonblight",
+        "afflictionKind": "condition"
+      }
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

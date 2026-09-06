@@ -1,0 +1,82 @@
+[
+  {
+    "id": "bloodblight",
+    "name": "Bloodblight",
+    "kind": "condition",
+    "itemId": "EcDPzTTnRyl6ZxC8",
+    "img": "systems/dnd5e/icons/svg/statuses/bleeding.svg",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-bloodblight.json"
+  },
+  {
+    "id": "dragonblight",
+    "name": "Dragonblight",
+    "kind": "condition",
+    "itemId": "I8AfSwfwREJEgt0W",
+    "img": "systems/dnd5e/icons/svg/statuses/cursed.svg",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-dragonblight.json"
+  },
+  {
+    "id": "frozen",
+    "name": "Frozen",
+    "kind": "condition",
+    "itemId": "bVJk3nCJCV9w97y6",
+    "img": "icons/magic/water/barrier-ice-crystal-wall-faceted-blue.webp",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-frozen.json"
+  },
+  {
+    "id": "slick",
+    "name": "Slick",
+    "kind": "condition",
+    "itemId": "4Gvdh5okDDlZuasv",
+    "img": "icons/magic/water/bubbles-air-water-blue.webp",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-slick.json"
+  },
+  {
+    "id": "tarred",
+    "name": "Tarred",
+    "kind": "condition",
+    "itemId": "wFBU7PlAd3WwbW4u",
+    "img": "systems/dnd5e/icons/svg/statuses/restrained.svg",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-tarred.json"
+  },
+  {
+    "id": "stench",
+    "name": "Stench",
+    "kind": "condition",
+    "itemId": "FhTVaqvOH152XiNS",
+    "img": "systems/dnd5e/icons/svg/statuses/poisoned.svg",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-stench.json"
+  },
+  {
+    "id": "thunderblight",
+    "name": "Thunderblight",
+    "kind": "condition",
+    "itemId": "YoHpT0hpTlZ8U0zC",
+    "img": "icons/magic/lightning/bolt-forked-blue.webp",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-thunderblight.json"
+  },
+  {
+    "id": "waterblight",
+    "name": "Waterblight",
+    "kind": "condition",
+    "itemId": "3YFFF4ZHIlJv5UdU",
+    "img": "icons/magic/water/elemental-water.webp",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\conditions\\fvtt-Item-waterblight.json"
+  },
+  {
+    "id": "iceblight",
+    "name": "Iceblight",
+    "kind": "disease",
+    "itemId": "dtdLgniKaJg0ZEsh",
+    "img": "icons/magic/water/barrier-ice-wall-snow.webp",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\diseases\\fvtt-Item-iceblight.json"
+  },
+  {
+    "id": "frenzy-virus",
+    "name": "Frenzy Virus",
+    "kind": "disease",
+    "itemId": "q6wNZdmwJAaif5YH",
+    "img": "systems/dnd5e/icons/svg/statuses/diseased.svg",
+    "file": "public\\data\\foundry-jsons-example\\conditions\\diseases\\fvtt-Item-frenzy-virus.json"
+  }
+]
