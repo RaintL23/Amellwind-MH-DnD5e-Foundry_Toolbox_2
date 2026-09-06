@@ -789,9 +789,9 @@ const elementalOverload = makeFeat({
   identifier: "elemental-overload",
   role: "elementalOverload",
   sort: 100100,
-  description: `<p>The alatreon gains <strong>1 charge</strong> for every <strong>10</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reset to 0 after it uses <strong>Escaton Judgement</strong>.</p>
+  description: `<p>The alatreon gains <strong>1 charge</strong> for every <strong>15</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reset to 0 after it uses <strong>Escaton Judgement</strong>.</p>
 <p><em>Charges are tracked on actor flags (<code>world.alatreon.overloadCharges</code>).</em></p>`,
-  chat: `<p>1 charge per 10 fire/cold/lightning from a single attack or spell. Resets after Escaton Judgement.</p>`,
+  chat: `<p>1 charge per 15 fire/cold/lightning from a single attack or spell. Resets after Escaton Judgement.</p>`,
 });
 
 const hornsActId = stableId("tempered-alatreon-mhw::act::horns");
@@ -1079,9 +1079,10 @@ const escatonJudgement = makeFeat({
   description: `<p><strong>Once during the second dragon state</strong> each time the active-state order repeats.</p>
 <p><strong>Charge (action):</strong> The alatreon swoops down (no opportunity attacks) if airborne and gathers energy until the start of its next turn. While charging it is immune to incapacitated, stunned, paralyzed, and unconscious.</p>
 <p><strong>Release (action, next turn):</strong> Energy erupts in a <strong>600-foot-radius sphere</strong>. Terrain above ground level in the area is obliterated. Each creature must make a <strong>DC 30 Dexterity</strong> saving throw, taking <strong>210 (60d6)</strong> force damage on a failed save, or half as much on a success.</p>
+<p>Against this damage, force traits are inverted: <strong>immunity</strong> becomes resistance, <strong>resistance</strong> becomes normal damage, and creatures with neither are <strong>vulnerable</strong>.</p>
 <p>Reduce damage by <strong>10d6</strong> per broken horn, and by an additional <strong>#d6</strong> equal to Elemental Overload charges.</p>
-<p><em>Charge and Release are gated by the module (second Dragon State). Dice reduction uses horn/overload flags.</em></p>`,
-  chat: `<p>Charge, then Release: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload).</p>`,
+<p><em>Charge and Release are gated by the module (second Dragon State). Dice reduction uses horn/overload flags. Trait inversion is applied by the module script.</em></p>`,
+  chat: `<p>Charge, then Release: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload; force traits invert).</p>`,
   activities: {
     [escatonChargeId]: utilityActivity({
       id: escatonChargeId,
@@ -1700,8 +1701,8 @@ const biography = `<h2>Tempered Alatreon (MHW)</h2>
 <ul>
 <li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after 100 HP lost in the current state; Element Burst as a special reaction.</li>
 <li><strong>Horns:</strong> AC 30, 200 HP each. Breaking a horn reverts the previous state. Use Apply Horn Damage.</li>
-<li><strong>Elemental Overload:</strong> 1 charge per 10 fire/cold/lightning from a single attack or spell; reduces Escaton dice.</li>
-<li><strong>Escaton Judgement:</strong> once during the second dragon state each cycle — Charge, then Release (60d6 force, reduced by horns and charges).</li>
+<li><strong>Elemental Overload:</strong> 1 charge per 15 fire/cold/lightning from a single attack or spell; reduces Escaton dice.</li>
+<li><strong>Escaton Judgement:</strong> once during the second dragon state each cycle — Charge, then Release (60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability).</li>
 <li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options require the matching active state.</li>
 </ul>`;
 

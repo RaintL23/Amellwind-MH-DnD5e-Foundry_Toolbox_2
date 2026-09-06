@@ -18,6 +18,8 @@
   const ESCATON_BASE_DICE = 60;
   const ESCATON_DC = 30;
   const ESCATON_RANGE_FT = 600;
+  /** Elemental Overload: 1 charge per this much fire/cold/lightning from a single hit. */
+  const OVERLOAD_DAMAGE_PER_CHARGE = 15;
   const MELEE_DC = 27;
   const ZONE_ENTER_FORMULA = "3d6";
   const ZONE_MOVE_FORMULA = "2d6";
@@ -276,22 +278,29 @@
     return evaluateRoll(flavored);
   };
 
-  const applyTypedDamageToTokens = async ({ tokens, amount, type = "fire", item = null }) => {
+  const applyTypedDamageToTokens = async ({
+    tokens,
+    amount,
+    type = "fire",
+    item = null,
+    ignoreTraits = false,
+  }) => {
     const list = (tokens ?? []).filter((t) => t?.actor);
     const total = Number(amount) || 0;
     if (!list.length || total <= 0) return;
     const damages = [{ value: total, type, properties: new Set() }];
     const midiDetail = [{ damage: total, type, value: total, damageType: type }];
+    const applyOpts = ignoreTraits ? { ignore: true } : undefined;
     for (const token of list) {
       const actor = token.actor;
       let applied = false;
       if (typeof actor.applyDamage === "function") {
         try {
-          await actor.applyDamage(damages);
+          await actor.applyDamage(damages, applyOpts);
           applied = true;
         } catch {
           try {
-            await actor.applyDamage(total, { type });
+            await actor.applyDamage(total, { type, ...(applyOpts ?? {}) });
             applied = true;
           } catch {
             applied = false;
@@ -302,6 +311,43 @@
         await MidiQOL.applyTokenDamage(midiDetail, total, new Set([token]), item, new Set());
       }
     }
+  };
+
+  /** True if actor traits list includes `type` (or "all"). */
+  const traitHasType = (actor, traitKey, type) => {
+    const raw = actor?.system?.traits?.[traitKey]?.value;
+    if (!raw) return false;
+    const list = raw instanceof Set ? [...raw] : Array.isArray(raw) ? raw : [];
+    return list.includes(type) || list.includes("all");
+  };
+
+  /**
+   * Escaton Judgement force tier vs target traits (before inversion):
+   * immunity | resistance | vulnerability | normal
+   */
+  const escatonForceTier = (actor) => {
+    if (traitHasType(actor, "di", "force")) return "immunity";
+    if (traitHasType(actor, "dr", "force")) return "resistance";
+    if (traitHasType(actor, "dv", "force")) return "vulnerability";
+    return "normal";
+  };
+
+  /**
+   * Invert force protection for Escaton: immune→½, resist→full, else→×2.
+   * Caller must apply with ignoreTraits so dnd5e does not stack modifiers again.
+   */
+  const escatonAdjustedForce = (baseAmount, tier) => {
+    const base = Number(baseAmount) || 0;
+    if (tier === "immunity") return Math.floor(base / 2);
+    if (tier === "resistance") return base;
+    return base * 2;
+  };
+
+  const ESCATON_TIER_NOTE = {
+    immunity: "force immunity → resistance (½)",
+    resistance: "force resistance → normal",
+    normal: "no force trait → vulnerability (×2)",
+    vulnerability: "force vulnerability (×2)",
   };
 
   const applyDamageFormula = async ({ tokens, formula, flavor, type = "fire", item = null }) => {
@@ -793,7 +839,7 @@
 
   const applyOverload = async (actor, elementalAmount) => {
     const amount = Number(elementalAmount) || 0;
-    const gained = Math.floor(amount / 10);
+    const gained = Math.floor(amount / OVERLOAD_DAMAGE_PER_CHARGE);
     if (gained <= 0) return 0;
     const charges = (Number(getFlag(actor, "overloadCharges", 0)) || 0) + gained;
     await patchState(actor, { overloadCharges: charges });
@@ -965,20 +1011,30 @@
     });
     const full = Number(roll.total) || 0;
 
+    const tierLines = [];
     for (const token of targets) {
       const save = await rollSave(token.actor, "dex", ESCATON_DC);
       const amount = save.success ? Math.floor(full / 2) : full;
+      const tier = escatonForceTier(token.actor);
+      const adjusted = escatonAdjustedForce(amount, tier);
       await applyTypedDamageToTokens({
         tokens: [token],
-        amount,
+        amount: adjusted,
         type: "force",
         item,
+        ignoreTraits: true,
       });
+      const name = token.name ?? token.actor?.name ?? "Target";
+      tierLines.push(
+        `<li><strong>${name}</strong>: ${amount} → <strong>${adjusted}</strong> (${ESCATON_TIER_NOTE[tier]}; save ${save.success ? "success" : "fail"})</li>`,
+      );
     }
 
     await chat(
       actor,
       `<p><strong>Escaton Judgement</strong> detonates (${dice}d6 force, DC ${ESCATON_DC} Dex half, ${ESCATON_RANGE_FT} ft). Horns broken: ${hornsBroken}; overload spent: ${overload}. Charges reset to 0.</p>
+       <p><em>Force traits invert:</em> immunity → resistance; resistance → normal; otherwise vulnerability.</p>
+       ${tierLines.length ? `<ul>${tierLines.join("")}</ul>` : ""}
        <p><em>GM:</em> obliterate terrain above ground level in the area.</p>`,
     );
   };

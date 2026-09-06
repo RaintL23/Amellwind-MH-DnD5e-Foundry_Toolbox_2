@@ -490,11 +490,11 @@ Token is 4×4 (`mh-tokens/alatreon.webp`).
   resistances via AEs; advances after 100 HP lost in the current state and auto-fires
   **Element Burst** (special reaction)
 - Start Fire Cycle / Start Ice Cycle set the opening order
-- **Elemental Overload** charges (+1 per 10 fire/cold/lightning from a single hit); reset on Escaton
+- **Elemental Overload** charges (+1 per 15 fire/cold/lightning from a single hit); reset on Escaton
 - **Horns** (2× 200 HP): Apply Horn Damage; broken horn reverts to previous state
 - **Legendary Limit**: each legendary option once per round
 - **Elemental Breath**: rolls 1d4 for damage type (fire/cold/necrotic/lightning)
-- **Escaton Judgement**: Charge → Release; dice = 60 − 10×broken horns − overload charges
+- **Escaton Judgement**: Charge → Release; dice = 60 − 10×broken horns − overload charges; force traits invert (immunity→resistance, resistance→normal, else vulnerability)
 - Blights on failed saves (dragonblight / waterblight / thunderblight / iceblight) + prone riders
 - Scorched Earth / Frost Breath ground zones until the start of its next turn
 - Mythic legendary actions gated to the current Active State

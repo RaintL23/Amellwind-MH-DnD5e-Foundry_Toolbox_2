@@ -85,7 +85,7 @@ Whenever the alatreon hit points are reduced by 100 in its current active state 
 
 ### Elemental Overload
 
-The alatreon gains 1 charge for every 10 elemental damage (fire, cold, lightning) it takes from a single attack or spell. The charges reset to 0 after the alatreon uses its Escaton Judgement.
+The alatreon gains 1 charge for every 15 elemental damage (fire, cold, lightning) it takes from a single attack or spell. The charges reset to 0 after the alatreon uses its Escaton Judgement.
 
 ### Horns
 
@@ -133,7 +133,7 @@ Roll a d4 each time you use this action to determine what element the alatreon e
 ### Escaton Judgement (Once during the second dragon state, each time the active state order repeats).
 
 The alatreon swoops down from the sky (without provoking opportunity attacks) if it is not already on the ground and begins gathering energy until the start of its next turn. While charging the alatreon is immune to the incapacitated, stunned, paralyzed, and unconscious conditions. 
-On its next turn, the alatreon can use its action to release the energy it has gathered in a 600-foot-radiussphere around it. All terrain above ground level in that area is obliterated and each creature in that area must make a DC 30 Dexterity saving throw or take 210 (60d6) force damage on a failed save, or half as much damage on a successful one. 
+On its next turn, the alatreon can use its action to release the energy it has gathered in a 600-foot-radiussphere around it. All terrain above ground level in that area is obliterated and each creature in that area must make a DC 30 Dexterity saving throw or take 210 (60d6) force damage on a failed save, or half as much damage on a successful one. Against this damage, force traits are inverted: immunity becomes resistance, resistance becomes normal damage, and creatures with neither are vulnerable.
 The number of damage dice this action deals can be reduced by 10d6 for each horn broken and by an additional #d6 where # is equal to the number of charges its elemental overload has.
 
 ## Reactions
