@@ -1,5 +1,5 @@
 /**
- * Builds fvtt-Actor-felyne-cook.json from Rank 1 meals, Daily Skills, macros, and kitchen aura.
+ * Builds fvtt-Actor-felyne-cook.json from Rank 1–4 meals, Daily Skills, macros, and kitchen aura.
  * Run: node public/data/foundry-jsons-example/cooking-features/build-felyne-cook-actor.mjs
  */
 import fs from "node:fs";
@@ -7,7 +7,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const rankDir = path.join(__dirname, "rank-1");
+const scriptsDir = path.join(__dirname, "..", "..", "scripts", "cooking-features");
 const dailyDir = path.join(__dirname, "daily-skills");
 const outPath = path.join(__dirname, "fvtt-Actor-felyne-cook.json");
 
@@ -17,8 +17,11 @@ const SYSTEM_VERSION = "4.4.4";
 // Foundry DOCUMENT_OWNERSHIP_LEVELS.OBSERVER — players need item data for the meal menu.
 const CONST_PLAYER_OWNERSHIP = 2;
 
-const FELYNE_IMG = "icons/creatures/mammals/humanoid-cat-skulking-teal.webp";
+const FELYNE_IMG = "mh-tokens/felyne-cook.webp";
+const FELYNE_TOKEN_IMG = "mh-tokens/felyne-cook-token.webp";
 const KITCHEN_IMG = "icons/environment/settlement/tavern.webp";
+const COOK_RANKS = [1, 2, 3, 4];
+const RANK_SORT_BASE = { 1: 100000, 2: 120000, 3: 140000, 4: 160000 };
 
 const randomId = () => {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
@@ -27,7 +30,7 @@ const randomId = () => {
   return id;
 };
 
-const read = (name) => fs.readFileSync(path.join(__dirname, name), "utf8");
+const read = (name) => fs.readFileSync(path.join(scriptsDir, name), "utf8");
 
 const auraHooks = read("felyne-cook-aura-hooks.fragment.js");
 const playerFlow = read("felyne-cook-player-flow.fragment.js");
@@ -80,13 +83,13 @@ if (!template) return;
 
 const data = template.toObject();
 delete data._id;
-data.name = "Ask for a Meal (Rank 1)";
+data.name = "Ask for a Meal";
 data.effects = [];
 foundry.utils.setProperty(data, "flags.world.cooking.playerRequestTemplate", false);
 foundry.utils.setProperty(data, "flags.world.cooking.playerRequest", true);
 foundry.utils.setProperty(data, "flags.world.cooking.fromAura", true);
 foundry.utils.setProperty(data, "flags.world.cooking.cookActorUuid", cook.uuid);
-foundry.utils.setProperty(data, "system.identifier", "ask-for-a-meal-rank-1");
+foundry.utils.setProperty(data, "system.identifier", "ask-for-a-meal");
 await actor.createEmbeddedDocuments("Item", [data]);
 `.trim();
 
@@ -267,13 +270,23 @@ const makeMidiItemacroFlags = (macroName, command) => ({
   },
 });
 
-const meals = fs
-  .readdirSync(rankDir)
-  .filter((f) => f.endsWith(".json"))
-  .sort()
-  .map((f, idx) =>
-    asTemplate(JSON.parse(fs.readFileSync(path.join(rankDir, f), "utf8")), 100000 + idx * 1000),
-  );
+const meals = COOK_RANKS.flatMap((rank) => {
+  const dir = path.join(__dirname, `rank-${rank}`);
+  if (!fs.existsSync(dir)) {
+    console.warn(`  ! missing meal folder: rank-${rank}`);
+    return [];
+  }
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".json"))
+    .sort()
+    .map((f, idx) =>
+      asTemplate(
+        JSON.parse(fs.readFileSync(path.join(dir, f), "utf8")),
+        (RANK_SORT_BASE[rank] ?? 100000) + idx * 1000,
+      ),
+    );
+});
 
 const dailies = fs
   .readdirSync(dailyDir)
@@ -288,16 +301,17 @@ const dailies = fs
 const requestMealActivityId = randomId();
 const requestMeal = {
   _id: randomId(),
-  name: "Request Meal (Rank 1)",
+  name: "Request Meal",
   type: "feat",
   img: KITCHEN_IMG,
   system: {
     description: {
-      value: `<p><strong>Request Meal (Rank 1)</strong> — GM handoff</p>
+      value: `<p><strong>Request Meal</strong> — GM handoff</p>
 <ol>
-<li><strong>Players:</strong> double-click the Felyne Cook token (within 10 ft) to open the camp kitchen menu.</li>
+<li><strong>Players:</strong> double-click the Felyne Cook token (within 10 ft) to open the camp kitchen menu (Ranks 1–4).</li>
 <li><strong>GM (optional):</strong> use this activity to hand off a complimentary cook-in to a nearby hunter.</li>
 <li>Average three checks vs the meal DC. Success grants the meal feature; +4 / +8 → Daily Skills.</li>
+<li><strong>Rank locks:</strong> Rank 2 at 5th level, Rank 3 at 10th, Rank 4 at 15th.</li>
 </ol>
 <p><em>Requires MidiQOL + Item Macro. Ask for a Meal remains available as a backup while in the kitchen aura.</em></p>`,
       chat: "<p>The Felyne Cook looks for a hunter within 10 feet.</p>",
@@ -310,16 +324,16 @@ const requestMeal = {
       rules: "2024",
       revision: 1,
     },
-    identifier: "request-meal-rank-1",
+    identifier: "request-meal",
     type: { value: "feat", subtype: "" },
-    requirements: "Artisan Cooking (Rank 1)",
+    requirements: "Artisan Cooking",
     properties: [],
     activities: {
       [requestMealActivityId]: makeUtilityActivity({
         id: requestMealActivityId,
         name: "Request Meal",
         identifier: "request-meal",
-        chatFlavor: "Request a Rank 1 artisan meal from the Felyne Cook.",
+        chatFlavor: "Request an artisan meal from the Felyne Cook.",
         condition: "Speak with the Felyne Cook",
       }),
     },
@@ -332,11 +346,10 @@ const requestMeal = {
   sort: 0,
   ownership: { default: 0 },
   flags: {
-    ...makeMidiItemacroFlags("Request Meal (Rank 1)", gmMacroCommand),
+    ...makeMidiItemacroFlags("Request Meal", gmMacroCommand),
     world: {
       cooking: {
         requestMeal: true,
-        rank: 1,
       },
     },
   },
@@ -355,18 +368,18 @@ const requestMeal = {
 const askActivityId = randomId();
 const askTemplate = {
   _id: randomId(),
-  name: "Ask for a Meal (Rank 1) (Template)",
+  name: "Ask for a Meal (Template)",
   type: "feat",
   img: KITCHEN_IMG,
   system: {
     description: {
-      value: `<p><strong>Ask for a Meal (Rank 1)</strong></p>
+      value: `<p><strong>Ask for a Meal</strong></p>
 <p><strong>Preferred:</strong> double-click the Felyne Cook token while within 10 feet to open the camp kitchen menu.</p>
-<p>This feature is a backup while you remain in the kitchen aura. Request a Rank 1 meal for yourself (1 serving).</p>
-<p><strong>Price:</strong> <strong>2 gp</strong> (paid when you confirm the order). If you cannot pay, the cook refuses the order.</p>
+<p>This feature is a backup while you remain in the kitchen aura. Request a meal for yourself (1 serving). Higher ranks unlock at character levels 5 / 10 / 15.</p>
+<p><strong>Price:</strong> Rank 1 <strong>2 gp</strong>, Rank 2 <strong>5 gp</strong>, Rank 3 <strong>10 gp</strong>, Rank 4 <strong>20 gp</strong> (paid when you confirm the order).</p>
 <p>Choose a meal, then assign ability scores to the three cooking steps chosen by the cook.</p>
 <p><em>Granted automatically when you enter the Camp Kitchen Aura.</em></p>`,
-      chat: "<p>Ask for a Rank 1 meal from the Felyne Cook (2 gp). Preferred: double-click the cook token.</p>",
+      chat: "<p>Ask the Felyne Cook for a meal. Preferred: double-click the cook token.</p>",
     },
     source: {
       custom: "",
@@ -376,7 +389,7 @@ const askTemplate = {
       rules: "2024",
       revision: 1,
     },
-    identifier: "ask-for-a-meal-rank-1",
+    identifier: "ask-for-a-meal",
     type: { value: "feat", subtype: "" },
     requirements: "Within 10 ft of Felyne Cook",
     properties: [],
@@ -384,8 +397,8 @@ const askTemplate = {
       [askActivityId]: makeUtilityActivity({
         id: askActivityId,
         name: "Ask for a Meal",
-        identifier: "ask-for-a-meal-rank-1",
-        chatFlavor: "Ask the Felyne Cook for a Rank 1 meal (2 gp).",
+        identifier: "ask-for-a-meal",
+        chatFlavor: "Ask the Felyne Cook for a meal.",
         condition: "Within 10 ft of the Felyne Cook",
       }),
     },
@@ -398,11 +411,10 @@ const askTemplate = {
   sort: 5000,
   ownership: { default: 0 },
   flags: {
-    ...makeMidiItemacroFlags("Ask for a Meal (Rank 1)", askMacroCommand),
+    ...makeMidiItemacroFlags("Ask for a Meal", askMacroCommand),
     world: {
       cooking: {
         playerRequestTemplate: true,
-        rank: 1,
       },
     },
   },
@@ -428,11 +440,12 @@ const kitchenAura = {
   system: {
     description: {
       value: `<p><strong>Camp Kitchen Aura (10 ft)</strong></p>
-<p>Hunters within <strong>10 feet</strong> can <strong>double-click the Felyne Cook token</strong> to open the camp kitchen menu (Item Piles–style).</p>
-<p>They also gain <strong>Ask for a Meal (Rank 1)</strong> on their sheet as a backup. Leaving the aura removes that feature.</p>
+<p>Hunters within <strong>10 feet</strong> can <strong>double-click the Felyne Cook token</strong> to open the camp kitchen menu (Item Piles–style) with Ranks 1–4.</p>
+<p>They also gain <strong>Ask for a Meal</strong> on their sheet as a backup. Leaving the aura removes that feature.</p>
+<p>Rank locks follow hunter level: Rank 2 at 5th, Rank 3 at 10th, Rank 4 at 15th.</p>
 <p><strong>GM:</strong> after placing the cook, use <em>Refresh Kitchen Aura</em> once if PCs are already nearby. Shift+double-click / Alt+double-click opens the cook sheet.</p>
 <p><em>Requires <strong>Active Auras</strong> for the visual/temp effect. Token interaction arms from the Amellwind module script (or Kitchen Sync).</em></p>`,
-      chat: "<p>Kitchen aura: double-click the cook token (or Ask) for a Rank 1 meal.</p>",
+      chat: "<p>Kitchen aura: double-click the cook token (or Ask) for artisan meals.</p>",
     },
     source: {
       custom: "",
@@ -485,7 +498,7 @@ const kitchenAura = {
         startTurn: null,
       },
       description:
-        "You are near the Felyne Cook and can use Ask for a Meal (Rank 1).",
+        "You are near the Felyne Cook and can use Ask for a Meal.",
       origin: null,
       tint: "#ffffff",
       transfer: true,
@@ -547,7 +560,6 @@ const kitchenAura = {
     world: {
       cooking: {
         isKitchenAuraItem: true,
-        rank: 1,
       },
     },
   },
@@ -613,12 +625,13 @@ const actor = {
     },
     details: {
       biography: {
-        value: `<p>A cheerful Felyne artisan cook who keeps Rank 1 camp meals ready for hunters.</p>
+        value: `<p>A cheerful Felyne artisan cook who keeps camp meals ready for hunters (Ranks 1–4).</p>
 <p><strong>Interact:</strong> players double-click this token (within 10 ft) to open the camp kitchen menu — same feel as Gather Resource nodes.</p>
-<p><strong>Camp Kitchen Aura (10 ft):</strong> PCs in range also get <em>Ask for a Meal (Rank 1)</em> as a backup. GM: use <em>Refresh Kitchen Aura</em> once after placing the cook.</p>
+<p><strong>Camp Kitchen Aura (10 ft):</strong> PCs in range also get <em>Ask for a Meal</em> as a backup. GM: use <em>Refresh Kitchen Aura</em> once after placing the cook.</p>
+<p><strong>Rank locks:</strong> Rank 2 at 5th level, Rank 3 at 10th, Rank 4 at 15th (locked tabs stay visible in the menu).</p>
 <p><strong>GM:</strong> Shift+double-click or Alt+double-click opens the actor sheet. Request Meal can still hand off a complimentary cook-in.</p>
-<p><em>Menus loaded: Rank 1 only. Daily Skills are inactive templates used for automatic grants.</em></p>`,
-        public: "Double-click this Felyne cook for Rank 1 artisan meals at camp.",
+<p><em>Menus loaded: Ranks 1–4. Daily Skills are inactive templates used for automatic grants.</em></p>`,
+        public: "Double-click this Felyne cook for artisan meals at camp (Ranks 1–4).",
       },
       alignment: "Neutral Good",
       race: "",
@@ -674,7 +687,7 @@ const actor = {
     width: 1,
     height: 1,
     texture: {
-      src: FELYNE_IMG,
+      src: FELYNE_TOKEN_IMG,
       anchorX: 0.5,
       anchorY: 0.5,
       offsetX: 0,
@@ -755,10 +768,11 @@ const actor = {
         cookNpc: true,
         isCookToken: true,
         enabled: true,
-        ranks: [1],
+        ranks: [1, 2, 3, 4],
         kitchenAuraFt: 10,
         interactionDistance: 10,
         mealPriceGp: 2,
+        mealPricesByRank: { 1: 2, 2: 5, 3: 10, 4: 20 },
       },
     },
   },

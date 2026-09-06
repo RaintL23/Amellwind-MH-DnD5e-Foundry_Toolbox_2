@@ -68,7 +68,8 @@ const actName = (rolled?.name ?? workflow?.activity?.name ?? "").toLowerCase();
 const actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? "").toLowerCase();
 
 const isAsk =
-  actId === "ask-for-a-meal-rank-1"
+  actId === "ask-for-a-meal"
+  || actId === "ask-for-a-meal-rank-1"
   || actId === "ask-felyne-cook"
   || actName === "ask for a meal (rank 1)"
   || actName.includes("ask for a meal")
@@ -119,7 +120,7 @@ if (dist > ASK_RANGE_FT + 1e-6) {
   return;
 }
 
-// Paid Ask-for-a-Meal path (Rank 1 camp kitchen).
+// Paid Ask-for-a-Meal path (camp kitchen; rank prices resolved in the cooking UI).
 const MEAL_PRICE_GP = 2;
 const CHARGE_FOR_MEAL = true;
 

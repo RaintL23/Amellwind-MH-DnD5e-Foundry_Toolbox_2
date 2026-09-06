@@ -1,5 +1,5 @@
 // Felyne Cook — Kitchen Aura grant/revoke + distance sync (Foundry runtime)
-// Grants "Ask for a Meal (Rank 1)" to characters within 10 ft of a cookNpc NPC.
+// Grants "Ask for a Meal" to characters within 10 ft of a cookNpc NPC.
 // Wrapped in an IIFE so it can be concatenated with the token sync engine safely.
 
 (() => {
@@ -73,13 +73,13 @@
   
     const data = template.toObject();
     delete data._id;
-    data.name = "Ask for a Meal (Rank 1)";
+    data.name = "Ask for a Meal";
     data.effects = [];
     foundry.utils.setProperty(data, "flags.world.cooking.playerRequestTemplate", false);
     foundry.utils.setProperty(data, "flags.world.cooking.playerRequest", true);
     foundry.utils.setProperty(data, "flags.world.cooking.fromAura", true);
     foundry.utils.setProperty(data, "flags.world.cooking.cookActorUuid", cookActor.uuid);
-    foundry.utils.setProperty(data, "system.identifier", "ask-for-a-meal-rank-1");
+    foundry.utils.setProperty(data, "system.identifier", "ask-for-a-meal");
     await targetActor.createEmbeddedDocuments("Item", [data]);
     return true;
   };

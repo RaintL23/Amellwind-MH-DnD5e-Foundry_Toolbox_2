@@ -9,8 +9,17 @@
 //   - or cookActor + caller already in scope (legacy Ask / handoff macros)
 // Optional in scope / opts:
 //   HANDOFF_MACRO_ID (string, may be "")
-//   CHARGE_FOR_MEAL (boolean) — when true, Rank 1 meals cost MEAL_PRICE_GP
-//   MEAL_PRICE_GP (number, default 2)
+//   CHARGE_FOR_MEAL (boolean) — when true, meals cost RANK_PRICE_GP[rank]
+//   MEAL_PRICE_GP (number, default 2) — legacy fallback for Rank 1 only
+
+const RANK_MIN_LEVEL = { 1: 1, 2: 5, 3: 10, 4: 15 };
+const RANK_PRICE_GP = { 1: 2, 2: 5, 3: 10, 4: 20 };
+const RANK_LABEL = {
+  1: "Any level",
+  2: "5th level",
+  3: "10th level",
+  4: "15th level",
+};
 
 const esc = (value) => {
   const s = String(value ?? "");
@@ -55,9 +64,14 @@ const FELYNE = {
     `Hehe~ a ${name} for ${price} gp! Dig deep in those pouches, partner!`,
   ],
   noGold: (price, have) => [
-    `Nyooo… you only got ${have} gp, buddy-pal. I need ${price} gp for a Rank 1 meal!`,
+    `Nyooo… you only got ${have} gp, buddy-pal. I need ${price} gp for that meal!`,
     `Can't cook on empty purses, meowster! Need ${price} gp (you have ${have}).`,
     `Aww… not enough zenny-gp! Bring ${price} gp next time, partner!`,
+  ],
+  lockedRank: (rank, need) => [
+    `Nyoo~ Rank ${rank} is still simmering, buddy-pal! Come back at ${need}, meow!`,
+    `Hehe, not yet! Rank ${rank} menus open at ${need}, partner!`,
+    `Paws off that Rank ${rank} menu — need ${need} first, nya!`,
   ],
   paid: (price) => [
     `Clink-clink~! ${price} gp received, nya! Time to get grill-cooking!`,
@@ -197,6 +211,37 @@ const COOK_STYLES = `
     font-weight:700; font-size:11px; color: var(--amw-fc-gold);
     text-transform: uppercase; letter-spacing: 0.08em;
   }
+  .amw-fc-ranks {
+    display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:6px;
+  }
+  .amw-fc-rank {
+    display:flex; flex-direction:column; gap:2px; align-items:center;
+    text-align:center; cursor:pointer;
+    padding:8px 6px; border-radius:5px;
+    border:1px solid rgba(224,168,74,0.22);
+    background: var(--amw-fc-panel);
+    color: var(--amw-fc-ink);
+    font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:0.04em;
+  }
+  .amw-fc-rank:hover:not(.is-locked) {
+    border-color: rgba(224,168,74,0.65);
+    background: rgba(224,168,74,0.1);
+  }
+  .amw-fc-rank.is-selected {
+    border-color: var(--amw-fc-gold);
+    box-shadow: inset 0 0 0 1px rgba(224,168,74,0.35);
+    background: linear-gradient(180deg, rgba(224,168,74,0.2), rgba(20,14,10,0.55));
+  }
+  .amw-fc-rank.is-locked {
+    opacity: 0.55;
+    cursor: not-allowed;
+    filter: grayscale(0.55);
+  }
+  .amw-fc-rank .amw-fc-rank-sub {
+    font-size:10px; font-weight:600; color: var(--amw-fc-muted);
+    text-transform: none; letter-spacing: 0;
+  }
+  .amw-fc-rank.is-locked .amw-fc-rank-sub { color: #f0b4aa; }
   .amw-fc-meals {
     display:grid; grid-template-columns:1fr; gap:6px;
     max-height:230px; overflow:auto; padding:2px;
@@ -209,7 +254,7 @@ const COOK_STYLES = `
     background: var(--amw-fc-panel);
     color: var(--amw-fc-ink);
   }
-  .amw-fc-meal:hover {
+  .amw-fc-meal:hover:not(.is-locked) {
     border-color: rgba(224,168,74,0.65);
     background: rgba(224,168,74,0.1);
   }
@@ -217,6 +262,11 @@ const COOK_STYLES = `
     border-color: var(--amw-fc-gold);
     box-shadow: inset 0 0 0 1px rgba(224,168,74,0.35), 0 0 12px rgba(224,168,74,0.12);
     background: linear-gradient(90deg, rgba(224,168,74,0.18), rgba(20,14,10,0.55));
+  }
+  .amw-fc-meal.is-locked {
+    opacity: 0.45;
+    cursor: not-allowed;
+    filter: grayscale(0.7);
   }
   .amw-fc-meal img {
     width:36px; height:36px; object-fit:contain; border-radius:4px;
@@ -382,9 +432,42 @@ const tryCreditCook = async (cook, gpAmount) => {
   }
 };
 
-const getMealTemplates = (cookActor) => cookActor.items.filter((i) => {
+const getHunterLevel = (actor) => {
+  const detailsLevel = Number(actor?.system?.details?.level);
+  if (Number.isFinite(detailsLevel) && detailsLevel > 0) return detailsLevel;
+  const classes = actor?.classes ?? actor?.system?.classes ?? {};
+  let total = 0;
+  for (const cls of Object.values(classes)) {
+    total += Number(cls?.system?.levels ?? cls?.levels ?? 0) || 0;
+  }
+  return total > 0 ? total : 1;
+};
+
+const getCookRanks = (cookActor) => {
+  const flagged = foundry.utils.getProperty(cookActor, "flags.world.cooking.ranks");
+  if (Array.isArray(flagged) && flagged.length) {
+    return flagged.map(Number).filter((r) => r >= 1 && r <= 4).sort((a, b) => a - b);
+  }
+  const fromItems = new Set();
+  for (const i of cookActor.items) {
+    const cooking = foundry.utils.getProperty(i, "flags.world.cooking") ?? {};
+    if (cooking.mealKey && Number.isFinite(Number(cooking.rank))) fromItems.add(Number(cooking.rank));
+  }
+  return fromItems.size ? [...fromItems].sort((a, b) => a - b) : [1];
+};
+
+const isRankUnlocked = (hunterLevel, rank) => hunterLevel >= (RANK_MIN_LEVEL[rank] ?? 99);
+
+const priceForRank = (rank, fallback = 2) => {
+  const priced = Number(RANK_PRICE_GP[rank]);
+  return Number.isFinite(priced) ? priced : Number(fallback) || 2;
+};
+
+const getMealTemplates = (cookActor, rank = null) => cookActor.items.filter((i) => {
   const cooking = foundry.utils.getProperty(i, "flags.world.cooking") ?? {};
-  return Number(cooking.rank) === 1 && Boolean(cooking.mealKey);
+  if (!cooking.mealKey) return false;
+  if (rank == null) return Number.isFinite(Number(cooking.rank));
+  return Number(cooking.rank) === Number(rank);
 }).sort((a, b) => a.name.localeCompare(b.name));
 
 const getDailyTemplates = (cookActor) => {
@@ -431,18 +514,48 @@ const removePriorMeals = async (targetActor) => {
   await targetActor.deleteEmbeddedDocuments("Item", stale.map((i) => i.id));
 };
 
+const extractRollTotal = (rolls) => {
+  const roll = Array.isArray(rolls) ? rolls[0] : rolls;
+  const total = Number(roll?.total ?? roll?._total ?? roll?.dice?.[0]?.total);
+  return Number.isFinite(total) ? total : null;
+};
+
+/**
+ * Roll an ability check through the classic dnd5e dialog (Advantage / Normal / Disadvantage).
+ * @returns {Promise<number|null>} Roll total, or null if the player cancelled the dialog.
+ */
 const rollAbilityCheck = async (caller, abilityId, { addProf = false, flavor = "" } = {}) => {
+  const ablLabel = CONFIG.DND5E?.abilities?.[abilityId]?.label ?? String(abilityId).toUpperCase();
+  const flavorText = flavor || `${ablLabel} check`;
+
+  if (typeof caller.rollAbilityCheck === "function") {
+    const config = { ability: abilityId };
+    if (addProf) {
+      const prof = Number(caller.system?.attributes?.prof ?? 0);
+      if (Number.isFinite(prof) && prof !== 0) config.rolls = [{ parts: [String(prof)] }];
+    }
+    const dialog = { configure: true };
+    const message = { data: { flavor: flavorText } };
+    try {
+      const rolls = await caller.rollAbilityCheck(config, dialog, message);
+      return extractRollTotal(rolls);
+    } catch (_err) {
+      // Fall through to legacy path.
+    }
+  }
+
+  // Legacy / non-dnd5e fallback (no classic adv dialog available).
   const abl = caller.system?.abilities?.[abilityId];
   const mod = Number(abl?.mod ?? 0);
   const prof = Number(caller.system?.attributes?.prof ?? 0);
   const parts = ["1d20", String(mod)];
   if (addProf) parts.push(String(prof));
-  const roll = await new Roll(parts.join(" + ")).evaluate();
+  const roll = await new Roll(parts.join(" + ")).evaluate({ async: true });
   await roll.toMessage({
     speaker: ChatMessage.getSpeaker({ actor: caller }),
-    flavor: flavor || `${CONFIG.DND5E?.abilities?.[abilityId]?.label ?? abilityId} check`,
+    flavor: flavorText,
   });
-  return Number(roll.total ?? 0);
+  return extractRollTotal(roll);
 };
 
 /** @returns {{ index: number, d20: number, d6: number, total: number, formula: string }} */
@@ -494,34 +607,29 @@ const runFelyneCookingFlow = async ({
     return false;
   }
 
-  const meals = getMealTemplates(cookActor);
-  if (!meals.length) {
-    ui.notifications.error("Felyne Cook: no Rank 1 meals loaded on this NPC.");
+  const allMeals = getMealTemplates(cookActor);
+  if (!allMeals.length) {
+    ui.notifications.error("Felyne Cook: no meals loaded on this NPC.");
     return false;
   }
 
-  const price = Number(mealPriceGp) || 2;
+  const ranks = getCookRanks(cookActor);
+  const hunterLevel = getHunterLevel(caller);
   const charge = Boolean(chargeForMeal);
   const cookImg = cookActor.img || "icons/svg/cowled.svg";
   const greet = felynePick(FELYNE.greetMenu);
   const purseCp = currencyToCopper(caller.system?.currency ?? {});
   const purseGp = purseCp / 100;
-  const canAfford = !charge || purseCp >= Math.round(price * 100);
-  const orderLabel = charge
-    ? (canAfford ? `Order meal — ${price} gp` : `Need ${price} gp`)
-    : "Choose abilities";
 
-  const mealCards = meals.map((m, idx) => {
-    const dc = Number(foundry.utils.getProperty(m, "flags.world.cooking.dc") ?? 10);
-    const img = m.img || cookImg;
+  const defaultRank = ranks.find((r) => isRankUnlocked(hunterLevel, r)) ?? ranks[0] ?? 1;
+
+  const rankTabs = ranks.map((rank) => {
+    const unlocked = isRankUnlocked(hunterLevel, rank);
+    const need = RANK_LABEL[rank] ?? `${RANK_MIN_LEVEL[rank]}th level`;
     return `
-      <button type="button" class="amw-fc-meal${idx === 0 ? " is-selected" : ""}" data-meal-id="${esc(m.id)}">
-        <img src="${esc(img)}" alt="" />
-        <span>
-          <span class="amw-fc-meal-name">${esc(m.name)}</span>
-          <span class="amw-fc-meal-sub">Rank 1 · 1 serving</span>
-        </span>
-        <span class="amw-fc-dc">DC ${esc(dc)}</span>
+      <button type="button" class="amw-fc-rank${rank === defaultRank ? " is-selected" : ""}${unlocked ? "" : " is-locked"}" data-rank="${rank}" ${unlocked ? "" : 'aria-disabled="true"'}>
+        <span>Rank ${rank}</span>
+        <span class="amw-fc-rank-sub">${unlocked ? `${priceForRank(rank, mealPriceGp)} gp` : `🔒 ${esc(need)}`}</span>
       </button>
     `;
   }).join("");
@@ -539,72 +647,169 @@ const runFelyneCookingFlow = async ({
       </div>
       <div class="amw-fc-meta">
         <span class="amw-fc-chip">Hunter <strong>${esc(caller.name)}</strong></span>
+        <span class="amw-fc-chip">Level <strong>${esc(hunterLevel)}</strong></span>
         <span class="amw-fc-chip">Range <strong>10 ft</strong></span>
         ${charge
-    ? `<span class="amw-fc-chip">Rank 1 <strong>${esc(price)} gp</strong></span>`
+    ? `<span class="amw-fc-chip price-chip">Price <strong data-price-label>—</strong></span>`
     : `<span class="amw-fc-chip"><strong>Complimentary</strong></span>`}
       </div>
       ${charge ? `
-      <div class="amw-fc-funds${canAfford ? "" : " is-broke"}">
+      <div class="amw-fc-funds" data-funds>
         <span>Your pouch: <strong>${esc(formatGpAmount(purseGp))} gp</strong></span>
-        <span>${canAfford
-    ? `Ready to pay <strong>${esc(price)} gp</strong>`
-    : `<strong>Not enough zenny</strong> — need ${esc(price)} gp`}</span>
+        <span data-funds-msg></span>
       </div>` : ""}
       <div>
+        <span class="amw-fc-section-label">Menu rank</span>
+        <div class="amw-fc-ranks" data-rank-list>${rankTabs}</div>
+        <input type="hidden" name="rank" value="${esc(defaultRank)}" />
+      </div>
+      <div>
         <span class="amw-fc-section-label">Today's menu</span>
-        <div class="amw-fc-meals" data-meal-list>${mealCards}</div>
-        <input type="hidden" name="meal" value="${esc(meals[0].id)}" />
+        <div class="amw-fc-meals" data-meal-list></div>
+        <input type="hidden" name="meal" value="" />
       </div>
       <div>
         <span class="amw-fc-section-label">Boon</span>
         <div class="amw-fc-boon meal-desc"></div>
       </div>
-      <p class="amw-fc-hint">Tip: double-click a dish to confirm instantly.</p>
+      <p class="amw-fc-hint">Higher ranks unlock at levels 5 / 10 / 15. Tip: double-click a dish to confirm.</p>
     </form>`,
-    orderLabel,
+    charge ? "Order meal" : "Choose abilities",
     {
-      width: 560,
-      disableOk: charge && !canAfford,
+      width: 580,
+      disableOk: true,
       render: (html, ctx = {}) => {
         const root = html instanceof jQuery ? html[0] : html;
-        const hidden = root.querySelector('input[name="meal"]');
+        const mealHidden = root.querySelector('input[name="meal"]');
+        const rankHidden = root.querySelector('input[name="rank"]');
+        const mealList = root.querySelector("[data-meal-list]");
         const desc = root.querySelector(".meal-desc");
-        const buttons = [...root.querySelectorAll(".amw-fc-meal")];
+        const funds = root.querySelector("[data-funds]");
+        const fundsMsg = root.querySelector("[data-funds-msg]");
+        const priceLabel = root.querySelector("[data-price-label]");
         const okBtn = ctx.okBtn ?? root.closest(".app")?.querySelector?.('button[data-button="ok"]');
+        const rankButtons = [...root.querySelectorAll(".amw-fc-rank")];
 
-        const selectMeal = (id) => {
-          if (hidden) hidden.value = id;
-          for (const btn of buttons) {
-            btn.classList.toggle("is-selected", btn.dataset.mealId === id);
-          }
-          const meal = meals.find((m) => m.id === id);
-          if (desc) desc.innerHTML = meal ? getMealBoonHtml(meal) : "";
+        let activeRank = Number(rankHidden?.value || defaultRank);
+        let currentMeals = [];
+
+        const setOkEnabled = (enabled) => {
+          if (!okBtn) return;
+          okBtn.disabled = !enabled;
+          okBtn.classList.toggle("disabled", !enabled);
         };
 
-        for (const btn of buttons) {
+        const refreshPriceUi = (rank) => {
+          const price = priceForRank(rank, mealPriceGp);
+          const unlocked = isRankUnlocked(hunterLevel, rank);
+          const canAfford = !charge || purseCp >= Math.round(price * 100);
+          if (priceLabel) priceLabel.textContent = `${price} gp`;
+          if (funds) funds.classList.toggle("is-broke", charge && unlocked && !canAfford);
+          if (fundsMsg) {
+            if (!charge) fundsMsg.textContent = "";
+            else if (!unlocked) fundsMsg.innerHTML = `<strong>Locked</strong> — ${esc(RANK_LABEL[rank] ?? "higher level")}`;
+            else if (canAfford) fundsMsg.innerHTML = `Ready to pay <strong>${esc(price)} gp</strong>`;
+            else fundsMsg.innerHTML = `<strong>Not enough zenny</strong> — need ${esc(price)} gp`;
+          }
+          if (okBtn && charge) {
+            okBtn.innerHTML = `<i class="fas fa-check"></i> ${!unlocked ? "Rank locked" : (canAfford ? `Order meal — ${price} gp` : `Need ${price} gp`)}`;
+          }
+          return { price, unlocked, canAfford };
+        };
+
+        const selectMeal = (id) => {
+          if (!id) return;
+          if (mealHidden) mealHidden.value = id;
+          for (const btn of mealList.querySelectorAll(".amw-fc-meal")) {
+            btn.classList.toggle("is-selected", btn.dataset.mealId === id);
+          }
+          const meal = currentMeals.find((m) => m.id === id);
+          if (desc) desc.innerHTML = meal ? getMealBoonHtml(meal) : "";
+          const { unlocked, canAfford } = refreshPriceUi(activeRank);
+          setOkEnabled(Boolean(meal) && unlocked && (!charge || canAfford));
+        };
+
+        const renderMeals = (rank) => {
+          activeRank = Number(rank);
+          if (rankHidden) rankHidden.value = String(activeRank);
+          for (const btn of rankButtons) {
+            btn.classList.toggle("is-selected", Number(btn.dataset.rank) === activeRank);
+          }
+          const unlocked = isRankUnlocked(hunterLevel, activeRank);
+          currentMeals = getMealTemplates(cookActor, activeRank);
+          if (!currentMeals.length) {
+            mealList.innerHTML = `<p class="amw-fc-hint">No Rank ${activeRank} meals on this cook.</p>`;
+            if (mealHidden) mealHidden.value = "";
+            if (desc) desc.innerHTML = "<p><em>Nothing on this menu yet.</em></p>";
+            refreshPriceUi(activeRank);
+            setOkEnabled(false);
+            return;
+          }
+          mealList.innerHTML = currentMeals.map((m, idx) => {
+            const mealDc = Number(foundry.utils.getProperty(m, "flags.world.cooking.dc") ?? 10);
+            const img = m.img || cookImg;
+            return `
+              <button type="button" class="amw-fc-meal${idx === 0 ? " is-selected" : ""}${unlocked ? "" : " is-locked"}" data-meal-id="${esc(m.id)}" ${unlocked ? "" : "disabled"}>
+                <img src="${esc(img)}" alt="" />
+                <span>
+                  <span class="amw-fc-meal-name">${esc(m.name)}</span>
+                  <span class="amw-fc-meal-sub">Rank ${activeRank} · 1 serving${!unlocked ? ` · requires ${esc(RANK_LABEL[activeRank])}` : ""}</span>
+                </span>
+                <span class="amw-fc-dc">DC ${esc(mealDc)}</span>
+              </button>
+            `;
+          }).join("");
+
+          for (const btn of mealList.querySelectorAll(".amw-fc-meal")) {
+            btn.addEventListener("click", (ev) => {
+              ev.preventDefault();
+              if (!unlocked) {
+                ui.notifications.warn(felynePick(FELYNE.lockedRank(activeRank, RANK_LABEL[activeRank])));
+                return;
+              }
+              selectMeal(btn.dataset.mealId);
+            });
+            btn.addEventListener("dblclick", (ev) => {
+              ev.preventDefault();
+              if (!unlocked || okBtn?.disabled) return;
+              selectMeal(btn.dataset.mealId);
+              okBtn?.click?.();
+            });
+          }
+          selectMeal(currentMeals[0].id);
+        };
+
+        for (const btn of rankButtons) {
           btn.addEventListener("click", (ev) => {
             ev.preventDefault();
-            selectMeal(btn.dataset.mealId);
-          });
-          btn.addEventListener("dblclick", (ev) => {
-            ev.preventDefault();
-            if (okBtn?.disabled) return;
-            selectMeal(btn.dataset.mealId);
-            okBtn?.click?.();
+            const rank = Number(btn.dataset.rank);
+            if (!isRankUnlocked(hunterLevel, rank)) {
+              ui.notifications.warn(felynePick(FELYNE.lockedRank(rank, RANK_LABEL[rank])));
+            }
+            renderMeals(rank);
           });
         }
-        selectMeal(hidden?.value || meals[0].id);
+
+        renderMeals(defaultRank);
       },
     },
   );
   if (!mealForm) return false;
 
+  const selectedRank = Number(mealForm.rank?.value || defaultRank);
+  if (!isRankUnlocked(hunterLevel, selectedRank)) {
+    ui.notifications.warn(felynePick(FELYNE.lockedRank(selectedRank, RANK_LABEL[selectedRank])));
+    return false;
+  }
+
+  const meals = getMealTemplates(cookActor, selectedRank);
   const mealItem = meals.find((m) => m.id === mealForm.meal.value);
   if (!mealItem) {
     ui.notifications.warn("Felyne Cook: meal not found.");
     return false;
   }
+
+  const price = priceForRank(selectedRank, mealPriceGp);
 
   if (charge) {
     // Re-check funds at confirm time (pouch may have changed while the dialog was open).
@@ -633,7 +838,7 @@ const runFelyneCookingFlow = async ({
         <div class="dnd5e2">
           <h3>${esc(cookActor.name)} — Payment</h3>
           <p><em>${esc(paidLine)}</em></p>
-          <p><strong>${esc(caller.name)}</strong> ordered <strong>${esc(mealItem.name)}</strong> for <strong>${price} gp</strong>${credited ? " (added to the cook's pouch)" : " (GM: credit the cook if desired)"}.</p>
+          <p><strong>${esc(caller.name)}</strong> ordered <strong>${esc(mealItem.name)}</strong> (Rank ${selectedRank}) for <strong>${price} gp</strong>${credited ? " (added to the cook's pouch)" : " (GM: credit the cook if desired)"}.</p>
         </div>
       `,
     });
@@ -686,7 +891,7 @@ const runFelyneCookingFlow = async ({
           <option value="3">Add PB to check 3</option>
         </select>
       </div>
-      <p class="amw-fc-hint">If proficient with cook's utensils, add your proficiency bonus to one check.</p>
+      <p class="amw-fc-hint">If proficient with cook's utensils, add your proficiency bonus to one check. Each check opens the Foundry dialog so you can choose Advantage / Normal / Disadvantage.</p>
     </form>`,
     "Roll checks",
     { width: 540 },
@@ -709,10 +914,15 @@ const runFelyneCookingFlow = async ({
     const pick = picks[i];
     const addProf = profOn === i + 1;
     const ablLabel = CONFIG.DND5E?.abilities?.[pick.ability]?.label ?? pick.ability.toUpperCase();
-    totals.push(await rollAbilityCheck(caller, pick.ability, {
+    const total = await rollAbilityCheck(caller, pick.ability, {
       addProf,
       flavor: `Artisan Cooking — ${pick.step} (${ablLabel}${addProf ? " + proficiency" : ""})`,
-    }));
+    });
+    if (total == null) {
+      ui.notifications.warn("Felyne Cook: cooking cancelled — finish each check dialog (or don't cancel), nya!");
+      return false;
+    }
+    totals.push(total);
   }
 
   const average = Math.floor(totals.reduce((a, b) => a + b, 0) / 3);
@@ -776,7 +986,11 @@ const runFelyneCookingFlow = async ({
     resultFlavor = felynePick(FELYNE.ruined);
     resultBody = `<p>The meal does <strong>not</strong> count as a ration. ${esc(caller.name)} must succeed on a Constitution saving throw (DC ${dc}) or become poisoned for 1 hour.</p>`;
     if (typeof caller.rollSavingThrow === "function") {
-      await caller.rollSavingThrow({ ability: "con", targetValue: dc });
+      await caller.rollSavingThrow(
+        { ability: "con", target: dc },
+        { configure: true },
+        { data: { flavor: `Constitution saving throw (DC ${dc}) vs ruined meal` } },
+      );
     } else {
       await rollAbilityCheck(caller, "con", { flavor: `Constitution saving throw (DC ${dc}) vs ruined meal` });
     }
@@ -786,7 +1000,7 @@ const runFelyneCookingFlow = async ({
     speaker: ChatMessage.getSpeaker({ actor: cookActor }),
     content: `
       <div class="dnd5e2">
-        <h3>${esc(cookActor.name)} — Artisan Cooking (Rank 1)</h3>
+        <h3>${esc(cookActor.name)} — Artisan Cooking (Rank ${selectedRank})</h3>
         <p><em>${esc(resultFlavor)}</em></p>
         <p><strong>Cook:</strong> ${esc(caller.name)} &nbsp;|&nbsp; <strong>Meal:</strong> ${esc(mealItem.name)}${charge ? ` &nbsp;|&nbsp; <strong>Paid:</strong> ${price} gp` : ""}</p>
         <p><strong>Checks:</strong> ${totals.join(" / ")} &nbsp;|&nbsp; <strong>Average:</strong> ${average} vs DC ${dc} (${margin >= 0 ? "+" : ""}${margin})</p>

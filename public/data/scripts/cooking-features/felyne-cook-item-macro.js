@@ -1,4 +1,4 @@
-// Felyne Cook — Request Meal (Rank 1) — GM handoff entry
+// Felyne Cook — Request Meal — GM handoff entry
 // MidiQOL 12.4 / Foundry v12 / dnd5e 4.4
 // On Use: [postActiveEffects]ItemMacro
 // Activity identifier: request-meal
@@ -208,10 +208,10 @@ if (!selected) {
 
 const meals = cookActor.items.filter((i) => {
   const cooking = foundry.utils.getProperty(i, "flags.world.cooking") ?? {};
-  return Number(cooking.rank) === 1 && Boolean(cooking.mealKey);
+  return Boolean(cooking.mealKey) && Number.isFinite(Number(cooking.rank));
 });
 if (!meals.length) {
-  ui.notifications.error("Felyne Cook: no Rank 1 meals loaded on this NPC.");
+  ui.notifications.error("Felyne Cook: no meals loaded on this NPC.");
   return;
 }
 

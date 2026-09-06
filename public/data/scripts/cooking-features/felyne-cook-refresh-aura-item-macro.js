@@ -3,7 +3,7 @@
 // Activity identifier: refresh-kitchen-aura
 //
 // GM: run once after placing the cook (or anytime) to grant
-// "Ask for a Meal (Rank 1)" to characters currently within 10 ft.
+// "Ask for a Meal" to characters currently within 10 ft.
 
 /* @@AURA_HOOKS@@ */
 
