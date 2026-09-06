@@ -706,7 +706,7 @@ pushRune({
       "T.Teostra Mane - Critical Eye+",
       "weapon",
       "Critical Eye+",
-      [{ key: "flags.midi-qol.critical.range", mode: 2, value: "2", priority: 20 }],
+      [{ key: "flags.dnd5e.weaponCriticalThreshold", mode: 5, value: "18", priority: 20 }],
       "Critical hit range increased by 2.",
     ),
     sideEffect(ids.armor, "T.Teostra Mane - Extend Aura", "armor", "Extend Aura", [], "(Paladin Only) Action: extend aura +10 ft for 1 minute. 1/LR."),
@@ -908,7 +908,7 @@ pushRune({
       "Sturdy Fang - Critical Eye+",
       "weapon",
       "Critical Eye+",
-      [{ key: "flags.midi-qol.critical.range", mode: 2, value: "2", priority: 20 }],
+      [{ key: "flags.dnd5e.weaponCriticalThreshold", mode: 5, value: "18", priority: 20 }],
       "Critical hit range increased by 2.",
     ),
     sideEffect(
@@ -1043,7 +1043,7 @@ pushRune({
       "Fatalis Webbing - Critical Eye+2",
       "weapon",
       "Critical Eye+2",
-      [{ key: "flags.midi-qol.critical.range", mode: 2, value: "3", priority: 20 }],
+      [{ key: "flags.dnd5e.weaponCriticalThreshold", mode: 5, value: "17", priority: 20 }],
       "Critical hit range increased by 3.",
     ),
     sideEffect(

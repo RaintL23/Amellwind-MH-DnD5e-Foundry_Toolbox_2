@@ -238,7 +238,7 @@ export const AMELLWIND_AFFLICTIONS = [
 <p><em>Monster / Apex templates are GM-facing; this Active Effect automates the sentient combat modifiers.</em></p>`,
     changes: [
       {
-        key: "flags.midi-qol.criticalThreshold",
+        key: "flags.dnd5e.weaponCriticalThreshold",
         mode: MODE.OVERRIDE,
         value: "19",
         priority: 20,

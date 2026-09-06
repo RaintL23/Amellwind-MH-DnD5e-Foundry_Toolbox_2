@@ -147,7 +147,7 @@
       "system": {},
       "changes": [
         {
-          "key": "flags.midi-qol.criticalThreshold",
+          "key": "flags.dnd5e.weaponCriticalThreshold",
           "mode": 5,
           "value": "19",
           "priority": 20

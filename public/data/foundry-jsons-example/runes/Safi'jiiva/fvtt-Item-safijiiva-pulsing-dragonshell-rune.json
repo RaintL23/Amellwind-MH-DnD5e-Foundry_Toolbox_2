@@ -134,9 +134,9 @@
           "priority": 20
         },
         {
-          "key": "flags.midi-qol.critical.range",
-          "mode": 2,
-          "value": "1",
+          "key": "flags.dnd5e.weaponCriticalThreshold",
+          "mode": 5,
+          "value": "19",
           "priority": 20
         }
       ],
@@ -304,7 +304,7 @@
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
     "createdTime": 1788712920217,
-    "modifiedTime": 1788712920217,
+    "modifiedTime": 1788722034443,
     "lastModifiedBy": null
   }
 }

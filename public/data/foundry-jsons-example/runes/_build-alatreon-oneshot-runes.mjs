@@ -394,7 +394,7 @@ if (pass.includes("preattackroll") || pass.includes("preitemroll")) {
   const actionType = String(arg0?.itemActionType ?? wf.itemActionType ?? "").toLowerCase();
   const isMelee = itemType === "weapon" || actionType === "mwak";
   if (!isMelee) return;
-  // Crit on 13+ ≈ midi critical.range +7 from 20
+  // Crit on 13+ — set roll/workflow threshold (dnd5e weaponCriticalThreshold is actor-wide)
   foundry.utils.setProperty(arg0, "criticalThreshold", 13);
   if (wf) wf.criticalThreshold = 13;
   return;
@@ -581,7 +581,7 @@ pushRune({
       "Dragonvein Awakening",
       [
         ...mwakDamage("1d6[fire]"),
-        { key: "flags.midi-qol.critical.range", mode: 2, value: "1", priority: 20 },
+        { key: "flags.dnd5e.weaponCriticalThreshold", mode: 5, value: "19", priority: 20 },
       ],
       "Extra 1d6 fire; crit range +1; condition save DC +2 (manual for DC).",
     ),
@@ -891,7 +891,7 @@ pushRune({
       "True Dragonvein Awakening",
       [
         ...mwakDamage("1d8[fire]"),
-        { key: "flags.midi-qol.critical.range", mode: 2, value: "2", priority: 20 },
+        { key: "flags.dnd5e.weaponCriticalThreshold", mode: 5, value: "18", priority: 20 },
       ],
       "Extra 1d8 fire; crit range +2; condition saves at disadvantage (manual for disadvantage).",
     ),
