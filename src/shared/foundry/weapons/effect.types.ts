@@ -131,6 +131,12 @@ export interface WeaponActiveEffectConfig {
   /** DAE: apply this effect to the item user when the linked activity is used. */
   selfTarget?: boolean;
   selfTargetAlways?: boolean;
+  /**
+   * DAE: do not apply this effect's changes on the actor that owns it.
+   * Required for Active Auras that use `auraIgnoreSelf` + `transfer` — otherwise
+   * Foundry still grants the transferred bonuses to the aura source.
+   */
+  dontApply?: boolean;
 }
 
 export type WeaponEffectChangeDraft = NonNullable<

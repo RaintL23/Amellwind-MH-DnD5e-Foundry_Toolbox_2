@@ -232,6 +232,14 @@ function cloneMergeTier(
       recovery: [],
       max: String(bow.tracerMax),
     };
+  } else if (stem === "gunlance") {
+    const gunlance = {
+      ...((world.gunlance as Record<string, unknown>) ?? {}),
+    };
+    gunlance.isGunlance = true;
+    gunlance.tier = tier === "Very Rare" ? "veryRare" : "legendary";
+    gunlance.shellMax = tier === "Very Rare" ? 5 : 6;
+    world.gunlance = gunlance;
   }
   flags.world = world;
   merged.flags = flags;
@@ -255,6 +263,23 @@ function maybeGraftMacro(
   const golden = loadGolden(stem, graftFrom);
   if (!golden) return item;
   graftMacroFlags(item, golden);
+
+  // Hand-tuned lower tiers carry their own world.tier; refresh for VR/Legendary.
+  if (stem === "gunlance" && (tier === "Very Rare" || tier === "Legendary")) {
+    const flags = (item.flags ?? {}) as Record<string, unknown>;
+    const world = {
+      ...((flags.world as Record<string, unknown>) ?? {}),
+    };
+    world.gunlance = {
+      ...((world.gunlance as Record<string, unknown>) ?? {}),
+      isGunlance: true,
+      tier: tier === "Very Rare" ? "veryRare" : "legendary",
+      shellMax: tier === "Very Rare" ? 5 : 6,
+    };
+    flags.world = world;
+    item.flags = flags;
+  }
+
   return item;
 }
 

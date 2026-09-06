@@ -1,5 +1,5 @@
 {
-  "_id": "nINwEZnSthHWI0Q9",
+  "_id": "p1NG2OVIMtcImJ9X",
   "name": "Gunlance (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_gunlance.webp",
@@ -88,8 +88,8 @@
       "max": "6"
     },
     "activities": {
-      "L9tPJHQIU5K8dlTL": {
-        "_id": "L9tPJHQIU5K8dlTL",
+      "XFUecPx314rYuOQm": {
+        "_id": "XFUecPx314rYuOQm",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -222,7 +222,7 @@
             {
               "type": "itemUses",
               "target": "",
-              "value": "-4",
+              "value": "-6",
               "scaling": {
                 "mode": "",
                 "formula": ""
@@ -1045,7 +1045,7 @@
             "count": "",
             "contiguous": false,
             "type": "cone",
-            "size": "15",
+            "size": "30",
             "width": "",
             "height": "",
             "units": "ft"
@@ -1112,6 +1112,22 @@
                 "number": 1
               },
               "bonus": ""
+            },
+            {
+              "number": 5,
+              "denomination": 6,
+              "types": [
+                "thunder"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
             }
           ],
           "onSave": "half"
@@ -1121,7 +1137,7 @@
             "dex"
           ],
           "dc": {
-            "calculation": "",
+            "calculation": "str",
             "formula": ""
           }
         },
@@ -1147,10 +1163,11 @@
         "_id": "Pco0OMjCyHPIvKQB",
         "sort": 700000,
         "name": "Wyrmstake Cannon",
+        "img": "icons/skills/ranged/rocket-triple-orange.webp",
         "activation": {
-          "type": "action",
-          "value": 1,
-          "condition": "",
+          "type": "special",
+          "value": null,
+          "condition": "When you score a Critical Hit with a melee attack using this weapon, or when you hit a Prone creature",
           "override": false
         },
         "consumption": {
@@ -1163,7 +1180,7 @@
             {
               "type": "itemUses",
               "target": "",
-              "value": "2",
+              "value": "1",
               "scaling": {
                 "mode": "",
                 "formula": ""
@@ -1172,7 +1189,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Expend 2 shells to fire a Wyrmstake: DEX save or take Thunder damage (half on success). See feature text for embedded stake."
+          "chatFlavor": "Expend 1 shell: inject stake; at start of target's next turn, unavoidable 4d10 Thunder."
         },
         "duration": {
           "value": "",
@@ -1241,12 +1258,16 @@
         "useConditionText": "",
         "useConditionReason": "",
         "effectConditionText": "",
-        "type": "save",
+        "type": "damage",
         "damage": {
+          "critical": {
+            "allow": false,
+            "bonus": ""
+          },
           "parts": [
             {
               "number": 4,
-              "denomination": 8,
+              "denomination": 10,
               "types": [
                 "thunder"
               ],
@@ -1260,17 +1281,7 @@
               },
               "bonus": ""
             }
-          ],
-          "onSave": "half"
-        },
-        "save": {
-          "ability": [
-            "dex"
-          ],
-          "dc": {
-            "calculation": "",
-            "formula": ""
-          }
+          ]
         },
         "macroData": {
           "name": "",
@@ -1329,13 +1340,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702850,
-        "modifiedTime": 1788708702850,
+        "createdTime": 1788719955449,
+        "modifiedTime": 1788719955449,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "HRkHlCBrxB1KdpF6",
+      "_id": "Uc0WMKeSWQp3HO3F",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -1382,13 +1393,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702850,
-        "modifiedTime": 1788708702850,
+        "createdTime": 1788719955451,
+        "modifiedTime": 1788719955451,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "9eCz7tXxsLK30LUg",
+      "_id": "L3mSt65PtGBI2aL3",
       "name": "Gunlance AC (+3)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Legendary Gunlance bonus AC from the rarity table.",
@@ -1429,14 +1440,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702850,
-        "modifiedTime": 1788708702850,
+        "createdTime": 1788719955451,
+        "modifiedTime": 1788719955451,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 3100000,
+  "sort": 200000,
   "ownership": {
     "default": 0
   },
@@ -1516,8 +1527,8 @@
     "world": {
       "gunlance": {
         "isGunlance": true,
-        "tier": "rare",
-        "shellMax": 4
+        "tier": "legendary",
+        "shellMax": 6
       }
     }
   },
@@ -1527,8 +1538,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702850,
-    "modifiedTime": 1788708702850,
+    "createdTime": 1788719955449,
+    "modifiedTime": 1788719955449,
     "lastModifiedBy": null
   }
 }

@@ -60,6 +60,11 @@ export interface WeaponActivityParams {
   activityType?: WeaponActivityEmitType;
   damageFormula?: string;
   damageType?: string;
+  /**
+   * Additional damage parts after the primary `damageFormula` / `damageType`
+   * (e.g. Wyvern's Fire Fire + Thunder). Arrays replace on upgrade merge.
+   */
+  extraDamageParts?: Array<{ formula: string; type?: string }>;
   saveAbility?: string;
   saveDcFormula?: string;
   saveDcCalculation?: string;

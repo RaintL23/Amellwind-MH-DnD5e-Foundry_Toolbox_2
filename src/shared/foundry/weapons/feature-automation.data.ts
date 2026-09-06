@@ -120,10 +120,12 @@ function saveAction(opts: {
   saveAbility: string;
   damageFormula?: string;
   damageType?: string;
+  extraDamageParts?: Array<{ formula: string; type?: string }>;
   onSave?: "half" | "none" | "full";
   templateType?: string;
   templateSize?: string;
   templateWidth?: string;
+  saveDcCalculation?: string;
   usesMax?: string;
   usesRecoveryPeriod?: "lr" | "sr" | "day";
   consumeItemUses?: boolean;
@@ -140,10 +142,12 @@ function saveAction(opts: {
       saveAbility: opts.saveAbility,
       damageFormula: opts.damageFormula,
       damageType: opts.damageType,
+      extraDamageParts: opts.extraDamageParts,
       onSave: opts.onSave ?? "half",
       templateType: opts.templateType,
       templateSize: opts.templateSize,
       templateWidth: opts.templateWidth,
+      saveDcCalculation: opts.saveDcCalculation,
       usesMax: opts.usesMax,
       usesRecoveryPeriod: opts.usesRecoveryPeriod,
       consumeItemUses: opts.consumeItemUses,
@@ -243,7 +247,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       targetPrompt: false,
       activityImg: "icons/weapons/ammunition/bullets-cartridge-shell-gray.webp",
     },
-    "Shell capacity as item uses (starts full). BA restores up to 4 via −itemUses.",
+    "Shell capacity as item uses (starts full). BA restores via −itemUses (matches max; Shelling Upgrade / Artillery Expert bump both).",
   ),
   "expanded gauge": scaleUses("5"),
   "expanded gauge i": scaleUses("7"),
@@ -257,8 +261,15 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   "sword gauge upgrade i": scaleUses("30"),
   "sword gauge upgrade ii": scaleUses("40"),
   "sword gauge upgrade iii": scaleUses("50"),
-  "shelling upgrade": scaleUses("5"),
-  "artillery expert": scaleUses("6"),
+  // Also bump Artillery Shells BA reload (−itemUses) so full reload matches capacity.
+  "shelling upgrade": spec("upgrade_scaler", {
+    itemUsesMax: "5",
+    consumeAmount: "-5",
+  }),
+  "artillery expert": spec("upgrade_scaler", {
+    itemUsesMax: "6",
+    consumeAmount: "-6",
+  }),
 
   // ── Mode switch ─────────────────────────────────────────────────────
   "switch mode": spec("mode_switch", { activation: "bonus" }),
@@ -453,6 +464,8 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
         showIcon: true,
         disableIncapacitated: true,
         specialDuration: ["isIncapacitated"],
+        // dontApply + auraIgnoreSelf: transfer would otherwise give Half Cover to the wielder.
+        dontApply: true,
         isAura: true,
         auraTargets: "Allies",
         auraRadius: "5",
@@ -469,7 +482,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
         ],
       },
     },
-    "Requires Active Auras. Half Cover for allies within 5 ft.",
+    "Requires Active Auras + DAE. Half Cover for allies within 5 ft (not the wielder).",
   ),
   "absolute defense": reactionUtility(
     "When a creature you can see hits you with an attack while you are wielding this weapon",
@@ -1002,16 +1015,20 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   }),
   "wyvern's fire": saveAction({
     saveAbility: "dex",
+    saveDcCalculation: "str",
     templateType: "cone",
-    templateSize: "15",
+    templateSize: "30",
     damageFormula: "4d6",
     damageType: "fire",
+    extraDamageParts: [{ formula: "4d6", type: "thunder" }],
     consumeItemUses: true,
     consumeAmount: "4",
-    chatFlavor: "Expend 4 shells: Fire + Thunder blast (add thunder part manually if needed).",
+    chatFlavor:
+      "Expend 4 shells: 4d6 Fire + 4d6 Thunder (DEX save, half on success).",
   }),
   "wyvern's fire upgrade": spec("upgrade_scaler", {
     damageFormula: "5d6",
+    extraDamageParts: [{ formula: "5d6", type: "thunder" }],
     chatFlavor: "5d6 Fire + 5d6 Thunder.",
   }),
   "arcane discharge": counterSpend(
@@ -1127,17 +1144,23 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Hand-tuned rare renames ×N to Shelling Strike + ItemMacro ×1/×2/×3 dialog (fvtt-Item-gunlance-rare).",
   ),
-  "wyrmstake cannon": saveAction({
-    activation: "action",
-    saveAbility: "dex",
-    damageFormula: "4d8",
-    damageType: "thunder",
-    onSave: "half",
-    consumeItemUses: true,
-    consumeAmount: "2",
-    chatFlavor:
-      "Expend 2 shells to fire a Wyrmstake: DEX save or take Thunder damage (half on success). See feature text for embedded stake.",
-  }),
+  "wyrmstake cannon": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "damage",
+      damageFormula: "4d10",
+      damageType: "thunder",
+      consumeItemUses: true,
+      consumeAmount: "1",
+      activationCondition:
+        "When you score a Critical Hit with a melee attack using this weapon, or when you hit a Prone creature",
+      chatFlavor:
+        "Expend 1 shell: inject stake; at start of target's next turn, unavoidable 4d10 Thunder.",
+      activityImg: "icons/skills/ranged/rocket-triple-orange.webp",
+    },
+    "Automatic damage (no save). Timing of delayed detonation is manual / GM.",
+  ),
   "elemental attunement": spec(
     "action_ability",
     {

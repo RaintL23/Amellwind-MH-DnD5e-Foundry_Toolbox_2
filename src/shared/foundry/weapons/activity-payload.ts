@@ -58,6 +58,25 @@ export function damagePartFromParams(
   };
 }
 
+/** Primary damage part plus optional `extraDamageParts`. */
+export function damagePartsFromParams(
+  params: WeaponActivityParams,
+): Record<string, unknown>[] {
+  const parts: Record<string, unknown>[] = [];
+  const primary = damagePartFromParams(params);
+  if (primary) parts.push(primary);
+  for (const extra of params.extraDamageParts ?? []) {
+    const formula = extra.formula?.trim();
+    if (!formula) continue;
+    const part = damagePartFromParams({
+      damageFormula: formula,
+      damageType: extra.type,
+    });
+    if (part) parts.push(part);
+  }
+  return parts;
+}
+
 export function usesBlock(params: WeaponActivityParams): Record<string, unknown> {
   const recovery =
     params.usesMax && params.usesRecoveryPeriod

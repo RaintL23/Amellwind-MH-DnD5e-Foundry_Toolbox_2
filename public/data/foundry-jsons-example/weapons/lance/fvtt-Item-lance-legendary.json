@@ -784,7 +784,8 @@
           ],
           "stackable": "noneName",
           "disableIncapacitated": true,
-          "showIcon": true
+          "showIcon": true,
+          "dontApply": true
         },
         "ActiveAuras": {
           "isAura": true,

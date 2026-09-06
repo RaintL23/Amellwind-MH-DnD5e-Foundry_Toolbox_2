@@ -1,5 +1,5 @@
 {
-  "_id": "iUvkaPADgCwNykHn",
+  "_id": "pLgCqmUstlNMNswI",
   "name": "Gunlance (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_gunlance.webp",
@@ -88,8 +88,8 @@
       "max": "5"
     },
     "activities": {
-      "PAGsnv8TsffhTGEP": {
-        "_id": "PAGsnv8TsffhTGEP",
+      "r6bvmLivTeltvMdR": {
+        "_id": "r6bvmLivTeltvMdR",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -222,7 +222,7 @@
             {
               "type": "itemUses",
               "target": "",
-              "value": "-4",
+              "value": "-5",
               "scaling": {
                 "mode": "",
                 "formula": ""
@@ -1025,7 +1025,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Expend 4 shells: Fire + Thunder blast (add thunder part manually if needed)."
+          "chatFlavor": "Expend 4 shells: 4d6 Fire + 4d6 Thunder (DEX save, half on success)."
         },
         "duration": {
           "value": "",
@@ -1045,7 +1045,7 @@
             "count": "",
             "contiguous": false,
             "type": "cone",
-            "size": "15",
+            "size": "30",
             "width": "",
             "height": "",
             "units": "ft"
@@ -1112,6 +1112,22 @@
                 "number": 1
               },
               "bonus": ""
+            },
+            {
+              "number": 4,
+              "denomination": 6,
+              "types": [
+                "thunder"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
             }
           ],
           "onSave": "half"
@@ -1121,7 +1137,7 @@
             "dex"
           ],
           "dc": {
-            "calculation": "",
+            "calculation": "str",
             "formula": ""
           }
         },
@@ -1182,13 +1198,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702845,
-        "modifiedTime": 1788708702845,
+        "createdTime": 1788719955438,
+        "modifiedTime": 1788719955438,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "5bsI4wGKextTILQJ",
+      "_id": "KdubfWZAzBS7TT1i",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -1235,13 +1251,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702845,
-        "modifiedTime": 1788708702845,
+        "createdTime": 1788719955440,
+        "modifiedTime": 1788719955440,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "VbfxIVQdrqFOfAL1",
+      "_id": "pV5MwOsBnlCcyHH6",
       "name": "Gunlance AC (+2)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Very Rare Gunlance bonus AC from the rarity table.",
@@ -1282,14 +1298,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702845,
-        "modifiedTime": 1788708702845,
+        "createdTime": 1788719955440,
+        "modifiedTime": 1788719955440,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 3000000,
+  "sort": 100000,
   "ownership": {
     "default": 0
   },
@@ -1369,8 +1385,8 @@
     "world": {
       "gunlance": {
         "isGunlance": true,
-        "tier": "rare",
-        "shellMax": 4
+        "tier": "veryRare",
+        "shellMax": 5
       }
     }
   },
@@ -1380,8 +1396,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702844,
-    "modifiedTime": 1788708702844,
+    "createdTime": 1788719955434,
+    "modifiedTime": 1788719955434,
     "lastModifiedBy": null
   }
 }

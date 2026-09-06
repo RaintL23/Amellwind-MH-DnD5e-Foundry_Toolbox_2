@@ -4,7 +4,7 @@ import { defaultMidiProperties } from "../midi";
 import type { WeaponActivityParams, WeaponFeatureAutomationSpec } from "./activity.types";
 import {
   baseActivityFields,
-  damagePartFromParams,
+  damagePartsFromParams,
   defaultActivation,
   midiFor,
   parseDice,
@@ -186,7 +186,6 @@ export function compileResolvedChain(
   let activity: Record<string, unknown>;
 
   if (emitKind === "save") {
-    const part = damagePartFromParams(params);
     activity = {
       ...baseActivityFields({
         id: activityId,
@@ -198,7 +197,7 @@ export function compileResolvedChain(
       }),
       type: "save",
       damage: {
-        parts: part ? [part] : [],
+        parts: damagePartsFromParams(params),
         onSave: params.onSave ?? "half",
       },
       save: {
@@ -212,7 +211,6 @@ export function compileResolvedChain(
       },
     };
   } else if (emitKind === "damage") {
-    const part = damagePartFromParams(params);
     activity = {
       ...baseActivityFields({
         id: activityId,
@@ -225,11 +223,10 @@ export function compileResolvedChain(
       type: "damage",
       damage: {
         critical: { allow: false, bonus: "" },
-        parts: part ? [part] : [],
+        parts: damagePartsFromParams(params),
       },
     };
   } else if (emitKind === "attack") {
-    const part = damagePartFromParams(params);
     const weaponTypeValue = String(
       (item.system as { type?: { value?: string } } | undefined)?.type?.value ??
         "",
@@ -261,7 +258,7 @@ export function compileResolvedChain(
       damage: {
         critical: { bonus: "" },
         includeBase: params.includeBaseDamage ?? false,
-        parts: part ? [part] : [],
+        parts: damagePartsFromParams(params),
       },
     };
   } else if (emitKind === "heal") {

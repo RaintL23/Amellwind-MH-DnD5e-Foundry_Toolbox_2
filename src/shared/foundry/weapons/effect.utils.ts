@@ -102,6 +102,7 @@ export function hasWeaponActiveEffectPayload(
     cfg.overlay === true ||
     cfg.selfTarget === true ||
     cfg.selfTargetAlways === true ||
+    cfg.dontApply === true ||
     cfg.disableIncapacitated === true ||
     !!params.acBonus?.trim() ||
     !!params.speedBonus?.trim()
@@ -124,6 +125,7 @@ function buildDaeFlags(
   }
   if (cfg.selfTarget === true) dae.selfTarget = true;
   if (cfg.selfTargetAlways === true) dae.selfTargetAlways = true;
+  if (cfg.dontApply === true) dae.dontApply = true;
   if (asTrimmed(cfg.disableCondition)) {
     dae.disableCondition = cfg.disableCondition!.trim();
   }

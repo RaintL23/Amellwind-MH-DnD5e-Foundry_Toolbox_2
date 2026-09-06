@@ -757,7 +757,7 @@
             "isIncapacitated"
           ],
           "disableIncapacitated": true,
-          "dontApply": false
+          "dontApply": true
         },
         "world": {
           "lance": {
