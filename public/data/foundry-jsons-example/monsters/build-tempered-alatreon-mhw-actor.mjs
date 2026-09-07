@@ -670,10 +670,6 @@ const abilityBlock = (value, proficient = 0) => ({
   bonuses: { check: "", save: "" },
 });
 
-const stateFire = '@actor.flags.world.alatreon.activeState == "fire"';
-const stateDragon = '@actor.flags.world.alatreon.activeState == "dragon"';
-const stateIce = '@actor.flags.world.alatreon.activeState == "ice"';
-
 const DRAGON_DR_TYPES = [
   "acid",
   "bludgeoning",
@@ -694,6 +690,9 @@ const dragonStateFxId = stableId("tempered-alatreon-mhw::fx::dragon-state");
 const iceStateFxId = stableId("tempered-alatreon-mhw::fx::ice-state");
 const startFireCycleId = stableId("tempered-alatreon-mhw::act::start-fire-cycle");
 const startIceCycleId = stableId("tempered-alatreon-mhw::act::start-ice-cycle");
+const setFireStateId = stableId("tempered-alatreon-mhw::act::set-fire-state");
+const setIceStateId = stableId("tempered-alatreon-mhw::act::set-ice-state");
+const setDragonStateId = stableId("tempered-alatreon-mhw::act::set-dragon-state");
 
 const activeState = makeFeat({
   seed: "active-state",
@@ -705,14 +704,14 @@ const activeState = makeFeat({
   withMacro: true,
   description: `<p>The alatreon has three states: <strong>fire</strong>, <strong>dragon</strong>, and <strong>ice</strong>.</p>
 <ul>
-<li><strong>Fire State:</strong> immune to fire; vulnerable to cold.</li>
-<li><strong>Dragon State:</strong> resistant to all damage except necrotic, poison, and psychic.</li>
-<li><strong>Ice State:</strong> immune to cold; vulnerable to fire.</li>
+<li><strong>Fire State:</strong> immune to fire; vulnerable to cold. Token light turns orange-red.</li>
+<li><strong>Dragon State:</strong> resistant to all damage except necrotic, poison, and psychic. Token light turns violet.</li>
+<li><strong>Ice State:</strong> immune to cold; vulnerable to fire. Token light turns blue.</li>
 </ul>
 <p>It begins combat in fire or ice. Fire cycle order: fire → dragon → ice → dragon (repeat). Ice cycle order: ice → dragon → fire → dragon (repeat).</p>
 <p>Whenever hit points are reduced by <strong>100</strong> in the current active state, it advances to the next state and uses <strong>Element Burst</strong> as a special reaction (even if it already used its reaction).</p>
-<p><em>Toggle state AEs via the module. Use Start Fire Cycle / Start Ice Cycle to set the opening order.</em></p>`,
-  chat: `<p>Mythic active state (fire / dragon / ice). Advance after 100 HP lost in the current state; Element Burst special reaction.</p>`,
+<p><em>Use Start Fire Cycle / Start Ice Cycle for the opening order. Use Set Fire / Ice / Dragon State to jump manually (resets the 100 HP threshold; keeps the current cycle and resyncs Escaton readiness).</em></p>`,
+  chat: `<p>Mythic active state (fire / dragon / ice). Advance after 100 HP lost in the current state; Element Burst special reaction. Manual Set State resets the threshold.</p>`,
   activities: {
     [startFireCycleId]: utilityActivity({
       id: startFireCycleId,
@@ -736,6 +735,39 @@ const activeState = makeFeat({
       midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
       sort: 1000,
     }),
+    [setFireStateId]: utilityActivity({
+      id: setFireStateId,
+      name: "Set Fire State",
+      identifier: "set-fire-state",
+      activationType: "special",
+      img: IMG.fire,
+      range: rangeBlock(null, "self"),
+      target: targetBlock({ affectsType: "self", prompt: false }),
+      midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
+      sort: 2000,
+    }),
+    [setIceStateId]: utilityActivity({
+      id: setIceStateId,
+      name: "Set Ice State",
+      identifier: "set-ice-state",
+      activationType: "special",
+      img: IMG.ice,
+      range: rangeBlock(null, "self"),
+      target: targetBlock({ affectsType: "self", prompt: false }),
+      midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
+      sort: 3000,
+    }),
+    [setDragonStateId]: utilityActivity({
+      id: setDragonStateId,
+      name: "Set Dragon State",
+      identifier: "set-dragon-state",
+      activationType: "special",
+      img: IMG.dragon,
+      range: rangeBlock(null, "self"),
+      target: targetBlock({ affectsType: "self", prompt: false }),
+      midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
+      sort: 4000,
+    }),
   },
   effects: [
     makeEffect({
@@ -745,7 +777,8 @@ const activeState = makeFeat({
       kind: "fireState",
       disabled: false,
       daeExtra: { selfTargetAlways: true, showIcon: true },
-      description: "Immune to fire. Vulnerable to cold.",
+      description:
+        "Immune to fire. Vulnerable to cold. Suggested mythic legendary actions: Fireball, Fire Breath Y, Scorched Earth.",
       changes: [
         { key: "system.traits.di.value", mode: 2, value: "fire", priority: 20 },
         { key: "system.traits.dv.value", mode: 2, value: "cold", priority: 20 },
@@ -758,7 +791,8 @@ const activeState = makeFeat({
       kind: "dragonState",
       disabled: true,
       daeExtra: { selfTargetAlways: true, showIcon: true },
-      description: "Resistant to all damage except necrotic, poison, and psychic.",
+      description:
+        "Resistant to all damage except necrotic, poison, and psychic. Suggested mythic legendary actions: Mythic Multiattack, Dragon Rush.",
       changes: DRAGON_DR_TYPES.map((t) => ({
         key: "system.traits.dr.value",
         mode: 2,
@@ -773,7 +807,8 @@ const activeState = makeFeat({
       kind: "iceState",
       disabled: true,
       daeExtra: { selfTargetAlways: true, showIcon: true },
-      description: "Immune to cold. Vulnerable to fire.",
+      description:
+        "Immune to cold. Vulnerable to fire. Suggested mythic legendary actions: Frost Breath, Ice Shards.",
       changes: [
         { key: "system.traits.di.value", mode: 2, value: "cold", priority: 20 },
         { key: "system.traits.dv.value", mode: 2, value: "fire", priority: 20 },
@@ -789,11 +824,18 @@ const elementalOverload = makeFeat({
   identifier: "elemental-overload",
   role: "elementalOverload",
   sort: 100100,
-  description: `<p>The alatreon gains <strong>1 charge</strong> for every <strong>15</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reset to 0 after it uses <strong>Escaton Judgement</strong>.</p>
-<p><em>Charges are tracked on actor flags (<code>world.alatreon.overloadCharges</code>).</em></p>`,
-  chat: `<p>1 charge per 15 fire/cold/lightning from a single attack or spell. Resets after Escaton Judgement.</p>`,
+  uses: {
+    // Displayed remaining = max - spent. Engine keeps remaining === current charges (0–60).
+    spent: 60,
+    max: "60",
+    recovery: [],
+  },
+  description: `<p>The alatreon gains <strong>1 charge</strong> for every <strong>15</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reduce Escaton Judgement by 1d6 each (max <strong>60</strong>, which zeroes Escaton from overload alone). Charges reset to 0 after <strong>Escaton Judgement</strong>.</p>
+<p><em>Tracked on this feature's uses, on the token's second bar, and in <code>system.resources.overload</code> / <code>flags.world.alatreon.overloadCharges</code>.</em></p>`,
+  chat: `<p>1 charge per 15 fire/cold/lightning from a single hit (max 60). Shown on this feature and the token bar. Resets after Escaton Judgement.</p>`,
 });
 
+const hornsSpawnId = stableId("tempered-alatreon-mhw::act::spawn-horns");
 const hornsActId = stableId("tempered-alatreon-mhw::act::horns");
 const horns = makeFeat({
   seed: "horns",
@@ -808,11 +850,23 @@ const horns = makeFeat({
 <li><strong>AC 30</strong>; <strong>200 hit points</strong> each.</li>
 <li>Resistant to bludgeoning, piercing, and slashing that do not deal siege damage.</li>
 <li>Immune to poison, psychic, and the damage immunity from its current active state.</li>
+<li>Deployed horn tokens sit at <strong>15 ft elevation</strong> (harder for grounded melee).</li>
 </ul>
-<p>Damage to a horn does not damage the alatreon. When a horn is broken, the alatreon reverts to its previous active state.</p>
-<p><em>Use Apply Horn Damage — the engine prompts which horn and the amount.</em></p>`,
-  chat: `<p>Two horns: AC 30, 200 HP each. Breaking a horn reverts the previous active state.</p>`,
+<p>Damage to a horn does not damage the alatreon. When a horn is broken, the alatreon reverts to its previous active state and Escaton Judgement loses <strong>10d6</strong>.</p>
+<p><em>Use Deploy Horn Tokens to place both horns on the VTT (Foundry icon <code>icons/creatures/mammals/ox-bull-horned-glowing-orange.webp</code>). Attack those tokens, or use Apply Horn Damage as a manual fallback.</em></p>`,
+  chat: `<p>Two horns: AC 30, 200 HP each, 15 ft elevation. Breaking a horn reverts the previous active state and weakens Escaton.</p>`,
   activities: {
+    [hornsSpawnId]: utilityActivity({
+      id: hornsSpawnId,
+      name: "Deploy Horn Tokens",
+      identifier: "spawn-horns",
+      activationType: "special",
+      img: "icons/creatures/mammals/ox-bull-horned-glowing-orange.webp",
+      range: rangeBlock(null, "self"),
+      target: targetBlock({ affectsType: "self", prompt: false }),
+      midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
+      sort: 0,
+    }),
     [hornsActId]: utilityActivity({
       id: hornsActId,
       name: "Apply Horn Damage",
@@ -822,6 +876,7 @@ const horns = makeFeat({
       range: rangeBlock(null, "self"),
       target: targetBlock({ affectsType: "self", prompt: false }),
       midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
+      sort: 1000,
     }),
   },
 });
@@ -1076,13 +1131,13 @@ const escatonJudgement = makeFeat({
   role: "escatonJudgement",
   sort: 200500,
   withMacro: true,
-  description: `<p><strong>Once during the second dragon state</strong> each time the active-state order repeats.</p>
+  description: `<p><strong>Suggested timing:</strong> once during the second dragon state each time the active-state order repeats (the module still tracks readiness for GM whispers, but Charge/Release can be used anytime from the sheet).</p>
 <p><strong>Charge (action):</strong> The alatreon swoops down (no opportunity attacks) if airborne and gathers energy until the start of its next turn. While charging it is immune to incapacitated, stunned, paralyzed, and unconscious.</p>
 <p><strong>Release (action, next turn):</strong> Energy erupts in a <strong>600-foot-radius sphere</strong>. Terrain above ground level in the area is obliterated. Each creature must make a <strong>DC 30 Dexterity</strong> saving throw, taking <strong>210 (60d6)</strong> force damage on a failed save, or half as much on a success.</p>
 <p>Against this damage, force traits are inverted: <strong>immunity</strong> becomes resistance, <strong>resistance</strong> becomes normal damage, and creatures with neither are <strong>vulnerable</strong>.</p>
 <p>Reduce damage by <strong>10d6</strong> per broken horn, and by an additional <strong>#d6</strong> equal to Elemental Overload charges.</p>
-<p><em>Charge and Release are gated by the module (second Dragon State). Dice reduction uses horn/overload flags. Trait inversion is applied by the module script.</em></p>`,
-  chat: `<p>Charge, then Release: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload; force traits invert).</p>`,
+<p><em>Dice reduction uses horn/overload flags. Trait inversion is applied by the module script. Automation chat is whispered to GMs only.</em></p>`,
+  chat: `<p>Charge, then Release anytime from the sheet: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload; force traits invert).</p>`,
   activities: {
     [escatonChargeId]: utilityActivity({
       id: escatonChargeId,
@@ -1385,7 +1440,7 @@ const mythicMultiattack = makeFeat({
   identifier: "mythic-multiattack",
   role: "mythicMultiattack",
   sort: 500000,
-  description: `<p><strong>Legendary Action (Dragon State).</strong> The alatreon uses its Multiattack.</p>`,
+  description: `<p><strong>Legendary Action (suggested in Dragon State).</strong> The alatreon uses its Multiattack.</p>`,
   chat: `<p>Legendary (dragon): use Multiattack.</p>`,
   activities: {
     [mythicMultiId]: utilityActivity({
@@ -1397,8 +1452,6 @@ const mythicMultiattack = makeFeat({
       range: rangeBlock(null, "self"),
       target: targetBlock({ affectsType: "self", prompt: false }),
       consume: consumeLegendary(1),
-      useConditionText: stateDragon,
-      useConditionReason: "Available only while in Dragon State.",
     }),
   },
 });
@@ -1413,7 +1466,7 @@ const dragonRush = makeFeat({
   role: "dragonRush",
   sort: 500100,
   withMacro: true,
-  description: `<p><strong>Legendary Action (Dragon State).</strong> The alatreon moves up to half its fly speed in a straight line, moving through creatures without provoking opportunity attacks. Each creature or object it moves through must succeed on a <strong>DC 27 Dexterity</strong> saving throw or take <strong>17 (2d6 + 10)</strong> slashing plus <strong>10 (3d6)</strong> necrotic damage and be knocked <strong>prone</strong> (half damage and not prone on a success).</p>`,
+  description: `<p><strong>Legendary Action (suggested in Dragon State).</strong> The alatreon moves up to half its fly speed in a straight line, moving through creatures without provoking opportunity attacks. Each creature or object it moves through must succeed on a <strong>DC 27 Dexterity</strong> saving throw or take <strong>17 (2d6 + 10)</strong> slashing plus <strong>10 (3d6)</strong> necrotic damage and be knocked <strong>prone</strong> (half damage and not prone on a success).</p>`,
   chat: `<p>Legendary (dragon): rush, DC 27 Dex, 2d6+10 slash + 3d6 necrotic, prone on fail.</p>`,
   activities: {
     [dragonRushActId]: saveActivity({
@@ -1436,8 +1489,6 @@ const dragonRush = makeFeat({
       consume: consumeLegendary(1),
       effects: [{ _id: dragonRushProneId, onSave: false }],
       effectConditionText: "failedSave",
-      useConditionText: stateDragon,
-      useConditionReason: "Available only while in Dragon State.",
     }),
   },
   effects: [
@@ -1462,7 +1513,7 @@ const fireball = makeFeat({
   identifier: "fireball",
   role: "fireball",
   sort: 500200,
-  description: `<p><strong>Legendary Action (Fire State).</strong> The alatreon exhales a fireball that explodes at a point within <strong>120 feet</strong>. Each creature in a <strong>15-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>28 (8d6)</strong> fire damage on a failed save, or half as much on a success.</p>`,
+  description: `<p><strong>Legendary Action (suggested in Fire State).</strong> The alatreon exhales a fireball that explodes at a point within <strong>120 feet</strong>. Each creature in a <strong>15-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>28 (8d6)</strong> fire damage on a failed save, or half as much on a success.</p>`,
   chat: `<p>Legendary (fire): 15-ft sphere within 120 ft, DC 27 Dex, 8d6 fire.</p>`,
   activities: {
     [fireballActId]: saveActivity({
@@ -1482,8 +1533,6 @@ const fireball = makeFeat({
       saveDc: 27,
       parts: [damagePart(8, 6, "fire")],
       consume: consumeLegendary(1),
-      useConditionText: stateFire,
-      useConditionReason: "Available only while in Fire State.",
     }),
   },
 });
@@ -1497,7 +1546,7 @@ const fireBreathY = makeFeat({
   role: "fireBreathY",
   sort: 500300,
   withMacro: true,
-  description: `<p><strong>Legendary Action (Fire State).</strong> The alatreon exhales fire in a <strong>45-foot line</strong> (5 feet wide) that splits into two more 30-foot lines forming a "Y". Each creature in a line must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>35 (10d6)</strong> fire damage on a failed save, or half as much on a success.</p>
+  description: `<p><strong>Legendary Action (suggested in Fire State).</strong> The alatreon exhales fire in a <strong>45-foot line</strong> (5 feet wide) that splits into two more 30-foot lines forming a "Y". Each creature in a line must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>35 (10d6)</strong> fire damage on a failed save, or half as much on a success.</p>
 <p><em>Primary line is the template; fork placement may be assisted by the engine.</em></p>`,
   chat: `<p>Legendary (fire): Y-shaped lines, DC 27 Dex, 10d6 fire.</p>`,
   activities: {
@@ -1519,8 +1568,6 @@ const fireBreathY = makeFeat({
       saveDc: 27,
       parts: [damagePart(10, 6, "fire")],
       consume: consumeLegendary(1),
-      useConditionText: stateFire,
-      useConditionReason: "Available only while in Fire State.",
     }),
   },
 });
@@ -1534,7 +1581,7 @@ const scorchedEarth = makeFeat({
   role: "scorchedEarth",
   sort: 500400,
   withMacro: true,
-  description: `<p><strong>Legendary Action (Fire State).</strong> The alatreon rises 30 feet (no OA) and exhales flames covering the ground in a <strong>30-foot radius</strong> centered on a point directly below it. The ground burns until the start of its next turn. Creatures that start their turn in the area or enter it take <strong>10 (3d6)</strong> fire and ignite (2d6 fire at start of their turns until doused). Moving through the area deals <strong>7 (2d6)</strong> fire per 5 feet.</p>
+  description: `<p><strong>Legendary Action (suggested in Fire State).</strong> The alatreon rises 30 feet (no OA) and exhales flames covering the ground in a <strong>30-foot radius</strong> centered on a point directly below it. The ground burns until the start of its next turn. Creatures that start their turn in the area or enter it take <strong>10 (3d6)</strong> fire and ignite (2d6 fire at start of their turns until doused). Moving through the area deals <strong>7 (2d6)</strong> fire per 5 feet.</p>
 <p><em>Places a burning-ground template (engine).</em></p>`,
   chat: `<p>Legendary (fire): 30-ft burning ground until start of next turn.</p>`,
   activities: {
@@ -1552,8 +1599,6 @@ const scorchedEarth = makeFeat({
         prompt: true,
       }),
       consume: consumeLegendary(1),
-      useConditionText: stateFire,
-      useConditionReason: "Available only while in Fire State.",
     }),
   },
 });
@@ -1568,7 +1613,7 @@ const frostBreath = makeFeat({
   role: "frostBreath",
   sort: 500500,
   withMacro: true,
-  description: `<p><strong>Legendary Action (Ice State).</strong> The alatreon rises 30 feet (no OA) and exhales frost covering the ground in a <strong>30-foot radius</strong> below it until the start of its next turn. Each creature that starts its turn there must make a <strong>DC 27 Constitution</strong> saving throw or take <strong>17 (5d6)</strong> cold damage and <strong>iceblight</strong> for 1 minute (half damage and no blight on a success). Moving through the area deals <strong>7 (2d6)</strong> cold per 5 feet.</p>
+  description: `<p><strong>Legendary Action (suggested in Ice State).</strong> The alatreon rises 30 feet (no OA) and exhales frost covering the ground in a <strong>30-foot radius</strong> below it until the start of its next turn. Each creature that starts its turn there must make a <strong>DC 27 Constitution</strong> saving throw or take <strong>17 (5d6)</strong> cold damage and <strong>iceblight</strong> for 1 minute (half damage and no blight on a success). Moving through the area deals <strong>7 (2d6)</strong> cold per 5 feet.</p>
 <p><em>Places an ice-zone template; engine applies iceblight on failed saves.</em></p>`,
   chat: `<p>Legendary (ice): 30-ft frost zone, DC 27 Con, 5d6 cold + iceblight.</p>`,
   activities: {
@@ -1591,8 +1636,6 @@ const frostBreath = makeFeat({
       consume: consumeLegendary(1),
       effects: [{ _id: iceblightFrostId, onSave: false }],
       effectConditionText: "failedSave",
-      useConditionText: stateIce,
-      useConditionReason: "Available only while in Ice State.",
     }),
   },
   effects: [
@@ -1622,9 +1665,9 @@ const iceShards = makeFeat({
   role: "iceShards",
   sort: 500600,
   withMacro: true,
-  description: `<p><strong>Legendary Action (Ice State).</strong> Ice shards form above each creature in a <strong>90-foot radius</strong> and plummet. Each creature must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>13 (3d8)</strong> cold plus <strong>18 (4d8)</strong> bludgeoning damage, being pushed 5 feet, and knocked <strong>prone</strong> on a fail (half damage, pushed, not prone on a success). Ice chunks remain until the start of the alatreon's next turn (AC 10; 10 HP; vulnerable to fire; immune to cold, poison, psychic; necrotic causes a 15-ft explosion for 1d8 piercing).</p>
-<p><em>Engine places ice-chunk objects and applies prone on fail.</em></p>`,
-  chat: `<p>Legendary (ice): 90-ft radius, DC 27 Dex, 3d8 cold + 4d8 bludgeoning, prone on fail.</p>`,
+  description: `<p><strong>Legendary Action (suggested in Ice State).</strong> Ice shards form above each creature in a <strong>90-foot radius</strong> and plummet. Each creature must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>13 (3d8)</strong> cold plus <strong>18 (4d8)</strong> bludgeoning damage, being pushed 5 feet, and knocked <strong>prone</strong> on a fail (half damage, pushed, not prone on a success). Ice-chunk <strong>tokens</strong> remain on the canvas until the start of the alatreon's next turn (AC 10; 10 HP; vulnerable to fire; immune to cold, poison, psychic). If an ice shard takes necrotic damage, it explodes in a 15-ft radius for 1d8 piercing.</p>
+<p><em>Engine spawns Ice Shard tokens for creatures in the area, applies prone on fail, melts tokens on Alatreon's next turn, and auto-explodes on necrotic.</em></p>`,
+  chat: `<p>Legendary (ice): 90-ft radius, DC 27 Dex, 3d8 cold + 4d8 bludgeoning, prone on fail; ice-chunk tokens on canvas.</p>`,
   activities: {
     [iceShardsActId]: saveActivity({
       id: iceShardsActId,
@@ -1645,8 +1688,6 @@ const iceShards = makeFeat({
       consume: consumeLegendary(1),
       effects: [{ _id: iceShardsProneId, onSave: false }],
       effectConditionText: "failedSave",
-      useConditionText: stateIce,
-      useConditionReason: "Available only while in Ice State.",
     }),
   },
   effects: [
@@ -1699,11 +1740,11 @@ const biography = `<h2>Tempered Alatreon (MHW)</h2>
 <p>An Elder Dragon that cycles through fire, dragon, and ice states. Place the token, set the opening cycle with Active State, and use sheet features. State changes, horn tracking, Elemental Overload, Element Burst, Escaton Judgement, and blight applications run from the Amellwind module script.</p>
 <h3>Combat notes</h3>
 <ul>
-<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after 100 HP lost in the current state; Element Burst as a special reaction.</li>
-<li><strong>Horns:</strong> AC 30, 200 HP each. Breaking a horn reverts the previous state. Use Apply Horn Damage.</li>
-<li><strong>Elemental Overload:</strong> 1 charge per 15 fire/cold/lightning from a single attack or spell; reduces Escaton dice.</li>
-<li><strong>Escaton Judgement:</strong> once during the second dragon state each cycle — Charge, then Release (60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability).</li>
-<li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options require the matching active state.</li>
+<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after 100 HP lost in the current state; Element Burst as a special reaction. Set Fire / Ice / Dragon State jumps manually and resets the 100 HP threshold. Token light follows the state (fire orange, ice blue, dragon violet).</li>
+<li><strong>Horns:</strong> Deploy Horn Tokens (AC 30, 200 HP each, 15 ft elevation). Breaking a horn reverts the previous state and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback.</li>
+<li><strong>Elemental Overload:</strong> 1 charge per 15 fire/cold/lightning from a single attack or spell (max 60). Tracked on the token's second bar and on the Elemental Overload feature uses; reduces Escaton dice.</li>
+<li><strong>Escaton Judgement:</strong> Charge then Release anytime from the sheet (suggested once during the second dragon state). 60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability. Module chat is GM-whisper only.</li>
+<li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options are suggested by Active State (advisory notes on the AE / state chat; not blocked).</li>
 </ul>`;
 
 const actor = {
@@ -1804,6 +1845,7 @@ const actor = {
       legact: { value: 3, max: 3 },
       legres: { value: 3, max: 3 },
       lair: { value: false, initiative: 20, inside: false },
+      overload: { value: 0, max: 60 },
     },
   },
   prototypeToken: {
@@ -1834,22 +1876,22 @@ const actor = {
     disposition: -1,
     displayBars: 40,
     bar1: { attribute: "attributes.hp" },
-    bar2: { attribute: "resources.legact" },
+    bar2: { attribute: "resources.overload" },
     light: {
       negative: false,
       priority: 0,
-      alpha: 0.45,
+      alpha: 0.5,
       angle: 360,
       bright: 5,
-      color: "#4488ff",
+      color: "#ff5522",
       coloration: 1,
       dim: 15,
       attenuation: 0.5,
-      luminosity: 0.4,
+      luminosity: 0.55,
       saturation: 0,
       contrast: 0,
       shadows: 0,
-      animation: { type: "torch", speed: 3, intensity: 3, reverse: false },
+      animation: { type: "torch", speed: 4, intensity: 4, reverse: false },
       darkness: { min: 0, max: 1 },
     },
     sight: {
@@ -1857,7 +1899,7 @@ const actor = {
       range: 240,
       angle: 360,
       visionMode: "basic",
-      color: "#88aaff",
+      color: "#ffaa88",
       attenuation: 0.1,
       brightness: 0,
       saturation: 0,
@@ -1895,10 +1937,8 @@ const actor = {
         stateHpLost: 0,
         overloadCharges: 0,
         horns: {
-          left: 200,
-          right: 200,
-          leftBroken: false,
-          rightBroken: false,
+          left: { hp: 200, broken: false },
+          right: { hp: 200, broken: false },
         },
         escaton: {
           charging: false,

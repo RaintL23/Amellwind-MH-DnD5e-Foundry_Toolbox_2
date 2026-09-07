@@ -488,19 +488,34 @@ Token is 4×4 (`mh-tokens/alatreon.webp`).
 
 - **Active State** (fire / dragon / ice): immunities, vulnerabilities, and dragon-state
   resistances via AEs; advances after 100 HP lost in the current state and auto-fires
-  **Element Burst** (special reaction)
+  **Element Burst** (special reaction). Token light tint follows the state (fire orange,
+  ice blue, dragon violet).
 - Start Fire Cycle / Start Ice Cycle set the opening order
-- **Elemental Overload** charges (+1 per 15 fire/cold/lightning from a single hit); reset on Escaton
-- **Horns** (2× 200 HP): Apply Horn Damage; broken horn reverts to previous state
+- **Set Fire / Ice / Dragon State** jumps manually: resets the 100 HP threshold, keeps the
+  current cycle order, resyncs cycle index + Escaton readiness (no Element Burst)
+- **Elemental Overload** charges (+1 per 15 fire/cold/lightning from a single hit; max 60);
+  shown on the token second bar and on the Elemental Overload feature uses; reset on Escaton
+- **Horns** (2× 200 HP): **Deploy Horn Tokens** places two tokens (Foundry
+  `ox-bull-horned-glowing-orange` icon) at **15 ft elevation** with AC 30 / resistances /
+  state immunities; damaging or destroying a horn token syncs flags, reverts previous
+  state, and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback
 - **Legendary Limit**: each legendary option once per round
 - **Elemental Breath**: rolls 1d4 for damage type (fire/cold/necrotic/lightning)
-- **Escaton Judgement**: Charge → Release; dice = 60 − 10×broken horns − overload charges; force traits invert (immunity→resistance, resistance→normal, else vulnerability)
+- **Escaton Judgement**: Charge → Release anytime from the sheet (second-dragon timing is advisory);
+  dice = 60 − 10×broken horns − overload charges; force traits invert (immunity→resistance,
+  resistance→normal, else vulnerability)
+- Automation chat messages are whispered to GMs only
 - Blights on failed saves (dragonblight / waterblight / thunderblight / iceblight) + prone riders
 - Scorched Earth / Frost Breath ground zones until the start of its next turn
-- Mythic legendary actions gated to the current Active State
+- **Ice Shards**: spawns Ice Shard tokens on the canvas (AC 10, 10 HP, fire vulnerability,
+  cold/poison/psychic immunity); melts on Alatreon's next turn; necrotic → 1d8 piercing
+  explosion in 15 ft
+- Mythic legendary actions suggested by the current Active State (advisory AE note +
+  state-change whisper; sheet use is not blocked)
 
 **Use from the sheet:** Multiattack, Bite, Claws, Tail, Elemental Breath (Recharge 5–6),
-Escaton Charge/Release, Element Burst, legendary + mythic actions.
+Escaton Charge/Release, Element Burst, Deploy Horn Tokens, Set Fire/Ice/Dragon State,
+legendary + mythic actions.
 
 ### Rebuild sources
 

@@ -3,8 +3,9 @@
  * Loaded as a module script on every client; GM-only mutations run on the active GM.
  *
  * Handles: Active State machine + HP thresholds, Element Burst, Elemental Overload,
- * Horns, Escaton Judgement, Elemental Breath typing, Legendary Limit, mythic gating,
- * melee / blight riders, Scorched Earth & Frost Breath zones, Ice Shards reminders.
+ * Horn tokens, Escaton Judgement, Elemental Breath typing, Legendary Limit, mythic gating,
+ * melee / blight riders, Scorched Earth & Frost Breath zones, Ice Shards reminders,
+ * state-linked token light, and manual Active State overrides.
  */
 (() => {
   const NS = "alatreon";
@@ -12,6 +13,9 @@
 
   const STATE_HP_THRESHOLD = 100;
   const HORN_MAX_HP = 200;
+  const HORN_AC = 30;
+  const HORN_ELEVATION_FT = 15;
+  const HORN_IMG = "icons/creatures/mammals/ox-bull-horned-glowing-orange.webp";
   const BURST_FORMULA = "7d6";
   const BURST_DC = 27;
   const BURST_RANGE_FT = 30;
@@ -20,11 +24,17 @@
   const ESCATON_RANGE_FT = 600;
   /** Elemental Overload: 1 charge per this much fire/cold/lightning from a single hit. */
   const OVERLOAD_DAMAGE_PER_CHARGE = 15;
+  /** Cap at Escaton base dice so full overload can zero the release. */
+  const OVERLOAD_MAX = ESCATON_BASE_DICE;
   const MELEE_DC = 27;
   const ZONE_ENTER_FORMULA = "3d6";
   const ZONE_MOVE_FORMULA = "2d6";
   const IGNITE_FORMULA = "2d6";
   const ICE_SHARD_EXPLODE = "1d8";
+  const ICE_SHARD_HP = 10;
+  const ICE_SHARD_AC = 10;
+  const ICE_SHARD_EXPLODE_RANGE_FT = 15;
+  const ICE_SHARD_IMG = "icons/magic/water/projectile-ice-faceted-blue.webp";
 
   const CYCLE_ORDERS = {
     fire: ["fire", "dragon", "ice", "dragon"],
@@ -49,27 +59,52 @@
     ice: "iceState",
   };
 
+  /** Suggested mythic legendary options per Active State (advisory — not enforced). */
+  const STATE_ABILITIES = {
+    fire: ["Fireball", "Fire Breath Y", "Scorched Earth"],
+    dragon: ["Mythic Multiattack", "Dragon Rush"],
+    ice: ["Frost Breath", "Ice Shards"],
+  };
+
+  const stateAbilityNote = (state) => {
+    const list = STATE_ABILITIES[state] ?? [];
+    if (!list.length) return "";
+    return `Suggested mythic legendary actions: <strong>${list.join("</strong>, <strong>")}</strong>.`;
+  };
+
+  const stateDefenseNote = (state) => {
+    if (state === "fire") return "Immune to fire; vulnerable to cold.";
+    if (state === "ice") return "Immune to cold; vulnerable to fire.";
+    return "Resistant to all damage except necrotic, poison, and psychic.";
+  };
+
+  /** Token light tint follows Fire / Ice / Dragon Active State. */
+  const STATE_LIGHT = {
+    fire: {
+      color: "#ff5522",
+      alpha: 0.5,
+      luminosity: 0.55,
+      animation: { type: "torch", speed: 4, intensity: 4, reverse: false },
+    },
+    ice: {
+      color: "#4488ff",
+      alpha: 0.45,
+      luminosity: 0.4,
+      animation: { type: "torch", speed: 2, intensity: 3, reverse: false },
+    },
+    dragon: {
+      color: "#aa44ff",
+      alpha: 0.5,
+      luminosity: 0.45,
+      animation: { type: "torch", speed: 3, intensity: 3, reverse: false },
+    },
+  };
+
   const BREATH_TYPES = {
     1: "fire",
     2: "cold",
     3: "necrotic",
     4: "lightning",
-  };
-
-  const MYTHIC_REQUIRED_STATE = {
-    mythicMultiattack: "dragon",
-    "mythic-multiattack": "dragon",
-    dragonRush: "dragon",
-    "dragon-rush": "dragon",
-    fireball: "fire",
-    fireBreathY: "fire",
-    "fire-breath-y": "fire",
-    scorchedEarth: "fire",
-    "scorched-earth": "fire",
-    frostBreath: "ice",
-    "frost-breath": "ice",
-    iceShards: "ice",
-    "ice-shards": "ice",
   };
 
   const BLIGHT_BY_ROLE = {
@@ -82,6 +117,11 @@
   const recentBossHits = new Map();
   const prevTokenCenters = new Map();
   const prevBossHp = new Map();
+  const prevHornHp = new Map();
+  const prevIceShardHp = new Map();
+  const suppressHornSync = new Set();
+  const suppressIceShardSync = new Set();
+  const recentIceShardHits = new Map();
   const zoneMoveAcc = new Map();
 
   // ─── Core helpers ───
@@ -98,18 +138,27 @@
 
   const isBoss = (actor) => Boolean(actor && getFlag(actor, "bossNpc") === true);
 
+  const isHornActor = (actor) => Boolean(actor && getFlag(actor, "hornToken") === true);
+
+  const isIceShardActor = (actor) => Boolean(actor && getFlag(actor, "iceShardToken") === true);
+
+  const isProxyActor = (actor) => isHornActor(actor) || isIceShardActor(actor);
+
   const bossActors = () => (game.actors?.contents ?? []).filter((a) => isBoss(a));
 
   const bossTokens = (actor) =>
     (canvas?.tokens?.placeables ?? []).filter(
-      (t) => t.actor && (t.actor === actor || t.actor.id === actor?.id),
+      (t) => t.actor && (t.actor === actor || t.actor.id === actor?.id) && !isProxyActor(t.actor),
     );
 
   const speakerFor = (actor) => ChatMessage.getSpeaker({ actor });
 
-  const chat = async (actor, html, { whisperGM = false } = {}) => {
+  /** Boss automation chatter is GM-only by default (players should not see engine noise). */
+  const chat = async (actor, html, { whisperGM = true } = {}) => {
     const data = { speaker: speakerFor(actor), content: html };
-    if (whisperGM) data.whisper = game.users.filter((u) => u.isGM).map((u) => u.id);
+    if (whisperGM) {
+      data.whisper = game.users.filter((u) => u.isGM).map((u) => u.id);
+    }
     await ChatMessage.create(data);
   };
 
@@ -165,8 +214,31 @@
 
   const hornsOf = (actor) => {
     const h = getFlag(actor, "horns", null);
-    if (h?.left && h?.right) return foundry.utils.deepClone(h);
-    return defaultHorns();
+    if (!h) return defaultHorns();
+    // Canonical shape: { left: { hp, broken }, right: { hp, broken } }
+    if (h.left && typeof h.left === "object" && h.right && typeof h.right === "object") {
+      return {
+        left: {
+          hp: Math.max(0, Number(h.left.hp ?? HORN_MAX_HP) || 0),
+          broken: Boolean(h.left.broken),
+        },
+        right: {
+          hp: Math.max(0, Number(h.right.hp ?? HORN_MAX_HP) || 0),
+          broken: Boolean(h.right.broken),
+        },
+      };
+    }
+    // Legacy flat shape from older actor JSON
+    return {
+      left: {
+        hp: Math.max(0, Number(h.left ?? HORN_MAX_HP) || 0),
+        broken: Boolean(h.leftBroken),
+      },
+      right: {
+        hp: Math.max(0, Number(h.right ?? HORN_MAX_HP) || 0),
+        broken: Boolean(h.rightBroken),
+      },
+    };
   };
 
   const brokenHornCount = (actor) => {
@@ -182,6 +254,12 @@
   const cycleOf = (actor) => {
     const c = String(getFlag(actor, "cycle", "fire") || "fire").toLowerCase();
     return c === "ice" ? "ice" : "fire";
+  };
+
+  const stateImmunityType = (state) => {
+    if (state === "fire") return "fire";
+    if (state === "ice") return "cold";
+    return null;
   };
 
   // ─── Distance / tokens ───
@@ -248,6 +326,7 @@
     return (canvas.tokens?.placeables ?? []).filter((t) => {
       if (!t.visible && !game.user.isGM) return false;
       if (!t.actor) return false;
+      if (isProxyActor(t.actor)) return false;
       if (excludeSelf && (t.id === origin.id || t.actor.id === origin.actor?.id)) return false;
       if (t.actor.system?.attributes?.hp?.value <= 0) return false;
       return measureDistanceFt(origin, t) <= rangeFt + 0.5;
@@ -675,6 +754,7 @@
     await expireHazards("scorchedEarth", pred);
     await expireHazards("frostBreath", pred);
     await expireHazards("iceShard", pred);
+    await clearIceShardTokens(actor, { reason: "melted" });
   };
 
   const zoneTickKey = (token) => {
@@ -684,30 +764,124 @@
 
   // ─── Active State machine ───
 
-  const setActiveState = async (actor, state, { announce = true } = {}) => {
+  const applyBossTokenLight = async (actor, state) => {
+    const cfg = STATE_LIGHT[state];
+    if (!cfg || !isActiveGM()) return;
+    for (const token of bossTokens(actor)) {
+      await token.document.update({
+        "light.color": cfg.color,
+        "light.alpha": cfg.alpha,
+        "light.luminosity": cfg.luminosity,
+        "light.animation": cfg.animation,
+      });
+    }
+  };
+
+  const setActiveState = async (actor, state, { announce = true, resetHpLost = true } = {}) => {
     const next = String(state || "").toLowerCase();
     if (!["fire", "dragon", "ice"].includes(next)) {
       ui.notifications?.warn(`Alatreon: unknown state "${state}"`);
       return;
     }
-    await patchState(actor, {
-      activeState: next,
-      stateHpLost: 0,
-    });
+    const patch = { activeState: next };
+    if (resetHpLost) patch.stateHpLost = 0;
+    await patchState(actor, patch);
     for (const [key, kind] of Object.entries(STATE_EFFECT_KIND)) {
       await setEffectDisabled(actor, kind, key !== next);
     }
+    await applyBossTokenLight(actor, next);
+    await syncHornTokenTraits(actor, next);
     if (announce) {
       await chat(
         actor,
         `<p><strong>Tempered Alatreon</strong> enters <strong>${STATE_LABEL[next]}</strong>.</p>
-         <p>${
-           next === "fire"
-             ? "Immune to fire; vulnerable to cold."
-             : next === "ice"
-               ? "Immune to cold; vulnerable to fire."
-               : "Resistant to all damage except necrotic, poison, and psychic."
-         }</p>`,
+         <p>${stateDefenseNote(next)}</p>
+         <p>${stateAbilityNote(next)}</p>
+         <p><em>State restrictions are advisory only — sheet actions are not blocked.</em></p>`,
+      );
+    }
+  };
+
+  /**
+   * Find the soonest matching slot in the current cycle order, searching forward
+   * from the current index (wraps). Returns { index, wrapped }.
+   */
+  const resolveCycleIndexForState = (cycle, desiredState, fromIndex = 0) => {
+    const order = CYCLE_ORDERS[cycle] ?? CYCLE_ORDERS.fire;
+    const start = Math.max(0, Number(fromIndex) || 0) % order.length;
+    for (let step = 0; step < order.length; step += 1) {
+      const idx = (start + step) % order.length;
+      if (order[idx] === desiredState) {
+        return { index: idx, wrapped: step > 0 && idx < start };
+      }
+    }
+    return { index: 0, wrapped: false };
+  };
+
+  const recountEscatonForIndex = (cycle, cycleIndex, previousEscaton = {}) => {
+    const order = CYCLE_ORDERS[cycle] ?? CYCLE_ORDERS.fire;
+    const idx = Math.max(0, Number(cycleIndex) || 0);
+    const dragonStateCount = order
+      .slice(0, idx + 1)
+      .filter((s) => s === "dragon").length;
+    const usedThisCycle = Boolean(previousEscaton.usedThisCycle);
+    return {
+      dragonStateCount,
+      usedThisCycle,
+      charging: Boolean(previousEscaton.charging) && order[idx] === "dragon",
+      ready:
+        !usedThisCycle &&
+        dragonStateCount >= 2 &&
+        order[idx] === "dragon",
+    };
+  };
+
+  /**
+   * GM override: jump to fire / dragon / ice without Element Burst.
+   * Resets the 100 HP threshold, keeps the current cycle order, and resyncs
+   * cycleIndex / Escaton counters so automatic advances stay coherent.
+   */
+  const manualSetState = async (actor, state) => {
+    if (!isBoss(actor)) return;
+    const next = String(state || "").toLowerCase();
+    if (!["fire", "dragon", "ice"].includes(next)) {
+      ui.notifications?.warn(`Alatreon: unknown state "${state}"`);
+      return;
+    }
+    const cycle = cycleOf(actor);
+    const fromIndex = Number(getFlag(actor, "cycleIndex", 0)) || 0;
+    const previousState = activeStateOf(actor);
+    const { index: nextIndex, wrapped } = resolveCycleIndexForState(cycle, next, fromIndex);
+
+    let escaton = foundry.utils.deepClone(getFlag(actor, "escaton", {}) ?? {});
+    if (wrapped) {
+      escaton = {
+        dragonStateCount: 0,
+        ready: false,
+        charging: false,
+        usedThisCycle: false,
+      };
+    }
+    escaton = recountEscatonForIndex(cycle, nextIndex, escaton);
+
+    await patchState(actor, {
+      cycle,
+      cycleIndex: nextIndex,
+      previousState: previousState && previousState !== next ? previousState : getFlag(actor, "previousState", null),
+      stateHpLost: 0,
+      escaton,
+    });
+    await setActiveState(actor, next, { announce: true, resetHpLost: true });
+    await chat(
+      actor,
+      `<p><em>Manual Active State</em> → <strong>${STATE_LABEL[next]}</strong>. State HP threshold reset to 0/${STATE_HP_THRESHOLD}. Cycle order remains <strong>${cycle}</strong> (${CYCLE_ORDERS[cycle].join(" → ")}); auto-advance continues from slot ${nextIndex + 1}/${CYCLE_ORDERS[cycle].length}${wrapped ? " (new cycle wrap)" : ""}.</p>`,
+      { whisperGM: true },
+    );
+    if (escaton.ready) {
+      await chat(
+        actor,
+        `<p><em>Escaton Judgement</em> is available during this Dragon State (once this cycle).</p>`,
+        { whisperGM: true },
       );
     }
   };
@@ -726,7 +900,26 @@
       actor,
       `<p>Horn shattered — Alatreon reverts to its previous <strong>${STATE_LABEL[prev]}</strong>.</p>`,
     );
-    await setActiveState(actor, prev);
+    // Horn break is a forced revert: reset the 100 HP clock for the restored state
+    const cycle = cycleOf(actor);
+    const fromIndex = Number(getFlag(actor, "cycleIndex", 0)) || 0;
+    const { index: nextIndex, wrapped } = resolveCycleIndexForState(cycle, prev, fromIndex);
+    let escaton = foundry.utils.deepClone(getFlag(actor, "escaton", {}) ?? {});
+    if (wrapped) {
+      escaton = {
+        dragonStateCount: 0,
+        ready: false,
+        charging: false,
+        usedThisCycle: false,
+      };
+    }
+    escaton = recountEscatonForIndex(cycle, nextIndex, escaton);
+    await patchState(actor, {
+      cycleIndex: nextIndex,
+      stateHpLost: 0,
+      escaton,
+    });
+    await setActiveState(actor, prev, { announce: false, resetHpLost: true });
   };
 
   const elementBurst = async (actor, state) => {
@@ -818,7 +1011,6 @@
       cycleIndex: 0,
       previousState: null,
       stateHpLost: 0,
-      overloadCharges: Number(getFlag(actor, "overloadCharges", 0)) || 0,
       horns: hornsOf(actor),
       escaton: {
         dragonStateCount: 0,
@@ -828,6 +1020,8 @@
       },
       legendaryUsedThisRound: {},
     });
+    // Preserve overload across cycle start; resync bar / feat uses
+    await setOverloadCharges(actor, overloadChargesOf(actor));
     await setActiveState(actor, startState);
     await chat(
       actor,
@@ -837,16 +1031,53 @@
 
   // ─── HP threshold / overload ───
 
+  const clampInt = (n, min, max) => Math.min(max, Math.max(min, Math.floor(Number(n) || 0)));
+
+  const overloadChargesOf = (actor) => {
+    const fromResource = actor?.system?.resources?.overload?.value;
+    if (fromResource !== undefined && fromResource !== null && fromResource !== "") {
+      return clampInt(fromResource, 0, OVERLOAD_MAX);
+    }
+    return clampInt(getFlag(actor, "overloadCharges", 0), 0, OVERLOAD_MAX);
+  };
+
+  /** Sync flag + token bar resource + Elemental Overload feat uses (sheet shows remaining = charges). */
+  const setOverloadCharges = async (actor, charges) => {
+    const next = clampInt(charges, 0, OVERLOAD_MAX);
+    await patchState(actor, { overloadCharges: next });
+    await actor.update({
+      "system.resources.overload": { value: next, max: OVERLOAD_MAX },
+    });
+    const item = findItemByRole(actor, "elementalOverload");
+    if (item) {
+      // dnd5e 4.x: displayed uses = max - spent → keep remaining equal to charges
+      await item.update({
+        "system.uses.spent": OVERLOAD_MAX - next,
+        "system.uses.max": String(OVERLOAD_MAX),
+      });
+    }
+    return next;
+  };
+
   const applyOverload = async (actor, elementalAmount) => {
     const amount = Number(elementalAmount) || 0;
     const gained = Math.floor(amount / OVERLOAD_DAMAGE_PER_CHARGE);
     if (gained <= 0) return 0;
-    const charges = (Number(getFlag(actor, "overloadCharges", 0)) || 0) + gained;
-    await patchState(actor, { overloadCharges: charges });
+    const before = overloadChargesOf(actor);
+    if (before >= OVERLOAD_MAX) {
+      await chat(
+        actor,
+        `<p><strong>Elemental Overload:</strong> already at maximum (<strong>${OVERLOAD_MAX}</strong>) — Escaton Judgement would deal 0d6 from overload alone.</p>`,
+      );
+      return before;
+    }
+    const charges = await setOverloadCharges(actor, before + gained);
+    const applied = charges - before;
     await chat(
       actor,
-      `<p><strong>Elemental Overload:</strong> +${gained} (now <strong>${charges}</strong> charge${charges === 1 ? "" : "s"}).</p>`,
-      { whisperGM: true },
+      `<p><strong>Elemental Overload:</strong> +${applied} (now <strong>${charges}/${OVERLOAD_MAX}</strong> charge${charges === 1 ? "" : "s"})${
+        charges >= OVERLOAD_MAX ? " — <strong>capped</strong> (Escaton overload reduction maxed)." : ""
+      }.</p>`,
     );
     return charges;
   };
@@ -888,6 +1119,318 @@
 
   // ─── Horns ───
 
+  const hornActorsForBoss = (boss) =>
+    (game.actors?.contents ?? []).filter(
+      (a) => isHornActor(a) && getFlag(a, "bossId") === boss?.id,
+    );
+
+  const hornTokensForBoss = (boss) =>
+    (canvas?.tokens?.placeables ?? []).filter(
+      (t) => t.actor && isHornActor(t.actor) && getFlag(t.actor, "bossId") === boss?.id,
+    );
+
+  const findHornToken = (boss, side) =>
+    hornTokensForBoss(boss).find((t) => getFlag(t.actor, "hornSide") === side) ?? null;
+
+  const findHornActor = (boss, side) =>
+    hornActorsForBoss(boss).find((a) => getFlag(a, "hornSide") === side) ?? null;
+
+  const hornTraitPayload = (state) => {
+    const di = new Set(["poison", "psychic"]);
+    const imm = stateImmunityType(state);
+    if (imm) di.add(imm);
+    return {
+      "system.traits.di.value": [...di],
+      "system.traits.dr.value": ["bludgeoning", "piercing", "slashing"],
+      "system.traits.dr.bypasses": ["siege"],
+    };
+  };
+
+  const syncHornTokenTraits = async (boss, state = null) => {
+    const active = state ?? activeStateOf(boss) ?? "fire";
+    const traits = hornTraitPayload(active);
+    for (const hornActor of hornActorsForBoss(boss)) {
+      if (getFlag(hornActor, "broken")) continue;
+      suppressHornSync.add(hornActor.id);
+      await hornActor.update(traits).catch(() => null);
+      suppressHornSync.delete(hornActor.id);
+    }
+  };
+
+  const syncHornTokenHp = async (boss, side, hp, { broken = false } = {}) => {
+    const hornActor = findHornActor(boss, side);
+    if (!hornActor) return;
+    suppressHornSync.add(hornActor.id);
+    await hornActor
+      .update({
+        "system.attributes.hp.value": broken ? 0 : Math.max(0, Number(hp) || 0),
+        "system.attributes.hp.max": HORN_MAX_HP,
+      })
+      .catch(() => null);
+    suppressHornSync.delete(hornActor.id);
+    if (broken) {
+      await hornActor.update({ [`${FLAG}.broken`]: true }).catch(() => null);
+    }
+  };
+
+  const clearHornTokens = async (boss) => {
+    const scene = canvas?.scene;
+    const tokens = hornTokensForBoss(boss);
+    if (scene && tokens.length) {
+      await scene.deleteEmbeddedDocuments(
+        "Token",
+        tokens.map((t) => t.id),
+      );
+    }
+    const actors = hornActorsForBoss(boss);
+    if (actors.length) {
+      await Actor.deleteDocuments(actors.map((a) => a.id));
+    }
+  };
+
+  const buildHornActorData = (boss, side, { hp = HORN_MAX_HP, broken = false } = {}) => {
+    const label = side === "left" ? "Left" : "Right";
+    const state = activeStateOf(boss) ?? "fire";
+    const traits = hornTraitPayload(state);
+    return {
+      name: `Alatreon ${label} Horn`,
+      type: "npc",
+      img: HORN_IMG,
+      system: {
+        abilities: {
+          str: { value: 1 },
+          dex: { value: 1 },
+          con: { value: 10 },
+          int: { value: 1 },
+          wis: { value: 1 },
+          cha: { value: 1 },
+        },
+        attributes: {
+          ac: { flat: HORN_AC, calc: "flat", formula: "" },
+          hp: {
+            value: broken ? 0 : Math.max(0, Number(hp) || 0),
+            max: HORN_MAX_HP,
+            temp: 0,
+            tempmax: 0,
+            formula: "",
+          },
+          init: { ability: "dex", bonus: "" },
+          movement: {
+            burrow: null,
+            climb: null,
+            fly: 0,
+            swim: null,
+            walk: 0,
+            units: "ft",
+            hover: true,
+          },
+          senses: {
+            darkvision: 0,
+            blindsight: 0,
+            tremorsense: 0,
+            truesight: 0,
+            units: "ft",
+            special: "",
+          },
+        },
+        details: {
+          biography: {
+            value: `<p>One of Alatreon's horns. AC ${HORN_AC}; ${HORN_MAX_HP} HP. Resistant to non-siege bludgeoning, piercing, and slashing. Immune to poison, psychic, and the damage immunity of Alatreon's current Active State. Damage here does not harm Alatreon. Breaking a horn reverts Alatreon to its previous Active State and reduces Escaton Judgement by 10d6.</p>`,
+            public: "",
+          },
+          alignment: "Unaligned",
+          type: { value: "", subtype: "", swarm: "", custom: "Horn" },
+          cr: 0,
+          source: { custom: "Amellwind MH (RaintDM)" },
+        },
+        traits: {
+          size: "med",
+          di: { value: traits["system.traits.di.value"], bypasses: [], custom: "" },
+          dr: {
+            value: traits["system.traits.dr.value"],
+            bypasses: traits["system.traits.dr.bypasses"],
+            custom: "",
+          },
+          dv: { value: [], bypasses: [], custom: "" },
+          ci: {
+            value: [
+              "charmed",
+              "frightened",
+              "poisoned",
+              "paralyzed",
+              "petrified",
+              "prone",
+              "restrained",
+              "stunned",
+              "unconscious",
+            ],
+            custom: "",
+          },
+          languages: { value: [], custom: "" },
+        },
+      },
+      prototypeToken: {
+        name: `Alatreon ${label} Horn`,
+        displayName: 40,
+        actorLink: true,
+        width: 1,
+        height: 1,
+        elevation: HORN_ELEVATION_FT,
+        texture: {
+          src: HORN_IMG,
+          anchorX: 0.5,
+          anchorY: 0.5,
+          fit: "contain",
+          scaleX: 1,
+          scaleY: 1,
+          rotation: 0,
+          tint: "#ffffff",
+        },
+        disposition: -1,
+        displayBars: 40,
+        bar1: { attribute: "attributes.hp" },
+        bar2: { attribute: null },
+        light: { bright: 0, dim: 0 },
+        sight: { enabled: false, range: 0 },
+        flags: {
+          world: {
+            [NS]: {
+              hornToken: true,
+              hornSide: side,
+              bossId: boss.id,
+            },
+          },
+        },
+      },
+      flags: {
+        world: {
+          [NS]: {
+            hornToken: true,
+            hornSide: side,
+            bossId: boss.id,
+            broken: Boolean(broken),
+          },
+        },
+      },
+    };
+  };
+
+  const hornSpawnOffsets = (bossToken, side) => {
+    const size = canvas.grid?.size || 100;
+    const w = bossToken.w ?? (Number(bossToken.document?.width) || 4) * size;
+    const center = bossToken.center;
+    const lateral = w / 2 + size * 0.75;
+    const dx = side === "left" ? -lateral : lateral;
+    return {
+      x: center.x + dx - size / 2,
+      y: center.y - size / 2,
+    };
+  };
+
+  const spawnHornTokens = async (actor) => {
+    if (!isBoss(actor)) return;
+    if (!canvas?.scene) {
+      ui.notifications?.warn("Place Alatreon on a scene before deploying horn tokens.");
+      return;
+    }
+    const origin = bossTokens(actor)[0];
+    if (!origin) {
+      ui.notifications?.warn("Alatreon token not found on the current scene.");
+      return;
+    }
+
+    await clearHornTokens(actor);
+    const horns = hornsOf(actor);
+    const createdActors = [];
+
+    for (const side of ["left", "right"]) {
+      const horn = horns[side];
+      const [hornActor] = await Actor.createDocuments([
+        buildHornActorData(actor, side, {
+          hp: horn.broken ? 0 : horn.hp,
+          broken: Boolean(horn.broken),
+        }),
+      ]);
+      createdActors.push({ side, hornActor, horn });
+    }
+
+    const tokenPayloads = createdActors.map(({ side, hornActor, horn }) => {
+      const pos = hornSpawnOffsets(origin, side);
+      return {
+        name: hornActor.name,
+        actorId: hornActor.id,
+        actorLink: true,
+        x: pos.x,
+        y: pos.y,
+        elevation: HORN_ELEVATION_FT,
+        width: 1,
+        height: 1,
+        texture: { src: HORN_IMG, fit: "contain", scaleX: 1, scaleY: 1 },
+        disposition: -1,
+        displayBars: 40,
+        displayName: 40,
+        bar1: { attribute: "attributes.hp" },
+        hidden: Boolean(horn.broken),
+        flags: {
+          world: {
+            [NS]: {
+              hornToken: true,
+              hornSide: side,
+              bossId: actor.id,
+            },
+          },
+        },
+      };
+    });
+
+    await canvas.scene.createEmbeddedDocuments("Token", tokenPayloads);
+
+    const left = horns.left.broken
+      ? "BROKEN"
+      : `${horns.left.hp}/${HORN_MAX_HP}`;
+    const right = horns.right.broken
+      ? "BROKEN"
+      : `${horns.right.hp}/${HORN_MAX_HP}`;
+    await chat(
+      actor,
+      `<p><strong>Horns deployed</strong> as two tokens (icon Foundry core, elevation <strong>${HORN_ELEVATION_FT} ft</strong>). AC ${HORN_AC}; Left ${left}; Right ${right}.</p>
+       <p>Attack the horn tokens directly. Breaking a horn reverts the previous Active State and weakens Escaton Judgement (−10d6 per broken horn).</p>`,
+    );
+  };
+
+  const onHornHpChanged = async (hornActor, beforeHp, afterHp) => {
+    if (!isActiveGM() || !isHornActor(hornActor)) return;
+    if (suppressHornSync.has(hornActor.id)) return;
+    const side = String(getFlag(hornActor, "hornSide", "") || "").toLowerCase();
+    const bossId = getFlag(hornActor, "bossId");
+    if (!["left", "right"].includes(side) || !bossId) return;
+    const boss = game.actors?.get(bossId);
+    if (!isBoss(boss)) return;
+
+    const horns = hornsOf(boss);
+    const horn = horns[side];
+    if (!horn || horn.broken) return;
+
+    const nextHp = Math.max(0, Number(afterHp) || 0);
+    const dmg = Math.max(0, (Number(beforeHp) || 0) - nextHp);
+    horn.hp = nextHp;
+    const broke = nextHp <= 0;
+    if (broke) {
+      horn.broken = true;
+      horn.hp = 0;
+    }
+    await patchState(boss, { horns });
+    if (dmg > 0 || broke) {
+      await chat(
+        boss,
+        `<p><strong>${side === "left" ? "Left" : "Right"} Horn:</strong> ${
+          dmg > 0 ? `${dmg} damage → ` : ""
+        }<strong>${horn.hp}/${HORN_MAX_HP}</strong>${broke ? " — <strong>broken!</strong>" : ""}</p>`,
+      );
+    }
+    if (broke) await revertToPreviousState(boss);
+  };
+
   const damageHorn = async (actor, side, amount) => {
     if (!isBoss(actor)) return;
     const key = String(side || "").toLowerCase() === "right" ? "right" : "left";
@@ -907,6 +1450,7 @@
       broke = true;
     }
     await patchState(actor, { horns });
+    await syncHornTokenHp(actor, key, horn.hp, { broken: broke });
     await chat(
       actor,
       `<p><strong>${key === "left" ? "Left" : "Right"} Horn:</strong> ${dmg} damage → <strong>${horn.hp}/${HORN_MAX_HP}</strong>${
@@ -919,7 +1463,7 @@
   const promptDamageHorn = async (actor) => {
     const horns = hornsOf(actor);
     const content = `
-      <p>Which horn takes damage? (AC 30; ${HORN_MAX_HP} HP; does not damage Alatreon.)</p>
+      <p>Which horn takes damage? (AC ${HORN_AC}; ${HORN_MAX_HP} HP; does not damage Alatreon.)</p>
       <p>Left: ${horns.left.broken ? "BROKEN" : `${horns.left.hp}/${HORN_MAX_HP}`} · Right: ${
         horns.right.broken ? "BROKEN" : `${horns.right.hp}/${HORN_MAX_HP}`
       }</p>
@@ -958,14 +1502,7 @@
 
   const startEscatonCharge = async (actor) => {
     const escaton = foundry.utils.deepClone(getFlag(actor, "escaton", {}) ?? {});
-    if (escaton.usedThisCycle) {
-      ui.notifications?.warn("Escaton Judgement was already used this active-state cycle.");
-      return;
-    }
-    if (!escaton.ready && Number(escaton.dragonStateCount ?? 0) < 2) {
-      ui.notifications?.warn("Escaton Judgement is only available during the second Dragon State of a cycle.");
-      return;
-    }
+    // GM may fire Escaton at any time from the sheet (cycle readiness is advisory only).
     escaton.charging = true;
     escaton.ready = true;
     await patchState(actor, { escaton });
@@ -979,11 +1516,7 @@
 
   const releaseEscaton = async (actor) => {
     const escaton = foundry.utils.deepClone(getFlag(actor, "escaton", {}) ?? {});
-    if (!escaton.charging && !escaton.ready) {
-      ui.notifications?.warn("Escaton Judgement is not charging / ready.");
-      return;
-    }
-    const overload = Number(getFlag(actor, "overloadCharges", 0)) || 0;
+    const overload = overloadChargesOf(actor);
     const hornsBroken = brokenHornCount(actor);
     const dice = Math.max(0, ESCATON_BASE_DICE - 10 * hornsBroken - overload);
     const origin = bossTokens(actor)[0];
@@ -992,7 +1525,8 @@
     escaton.charging = false;
     escaton.ready = false;
     escaton.usedThisCycle = true;
-    await patchState(actor, { escaton, overloadCharges: 0 });
+    await patchState(actor, { escaton });
+    await setOverloadCharges(actor, 0);
     await setEffectDisabled(actor, "escatonCharging", true);
 
     if (dice <= 0) {
@@ -1260,39 +1794,320 @@
     }
   };
 
+  // ─── Ice Shards (object tokens) ───
+
+  const iceShardActorsForBoss = (boss) =>
+    (game.actors?.contents ?? []).filter(
+      (a) => isIceShardActor(a) && getFlag(a, "bossId") === boss?.id,
+    );
+
+  const iceShardTokensForBoss = (boss) =>
+    (canvas?.tokens?.placeables ?? []).filter(
+      (t) => t.actor && isIceShardActor(t.actor) && getFlag(t.actor, "bossId") === boss?.id,
+    );
+
+  const clearIceShardTokens = async (boss, { reason = "cleared" } = {}) => {
+    const scene = canvas?.scene;
+    const tokens = iceShardTokensForBoss(boss);
+    if (scene && tokens.length) {
+      await scene.deleteEmbeddedDocuments(
+        "Token",
+        tokens.map((t) => t.id),
+      );
+    }
+    const actors = iceShardActorsForBoss(boss);
+    for (const a of actors) suppressIceShardSync.add(a.id);
+    if (actors.length) {
+      await Actor.deleteDocuments(actors.map((a) => a.id));
+      if (reason === "melted" && boss) {
+        await chat(
+          boss,
+          `<p><strong>${actors.length}</strong> Ice Shard${actors.length === 1 ? "" : "s"} melt at the start of Alatreon's turn.</p>`,
+        );
+      }
+    }
+    for (const a of actors) suppressIceShardSync.delete(a.id);
+  };
+
+  const buildIceShardActorData = (boss, index = 1) => ({
+    name: `Ice Shard ${index}`,
+    type: "npc",
+    img: ICE_SHARD_IMG,
+    system: {
+      abilities: {
+        str: { value: 1 },
+        dex: { value: 1 },
+        con: { value: 10 },
+        int: { value: 1 },
+        wis: { value: 1 },
+        cha: { value: 1 },
+      },
+      attributes: {
+        ac: { flat: ICE_SHARD_AC, calc: "flat", formula: "" },
+        hp: {
+          value: ICE_SHARD_HP,
+          max: ICE_SHARD_HP,
+          temp: 0,
+          tempmax: 0,
+          formula: "",
+        },
+        init: { ability: "dex", bonus: "" },
+        movement: {
+          burrow: null,
+          climb: null,
+          fly: 0,
+          swim: null,
+          walk: 0,
+          units: "ft",
+          hover: false,
+        },
+        senses: {
+          darkvision: 0,
+          blindsight: 0,
+          tremorsense: 0,
+          truesight: 0,
+          units: "ft",
+          special: "",
+        },
+      },
+      details: {
+        biography: {
+          value: `<p>Ice chunk left by Alatreon's Ice Shards. AC ${ICE_SHARD_AC}; ${ICE_SHARD_HP} HP; vulnerable to fire; immune to cold, poison, and psychic. Melts at the start of Alatreon's next turn. If it takes necrotic damage, it explodes for ${ICE_SHARD_EXPLODE} piercing in a ${ICE_SHARD_EXPLODE_RANGE_FT}-foot radius.</p>`,
+          public: "",
+        },
+        alignment: "Unaligned",
+        type: { value: "", subtype: "", swarm: "", custom: "Ice Shard" },
+        cr: 0,
+        source: { custom: "Amellwind MH (RaintDM)" },
+      },
+      traits: {
+        size: "sm",
+        di: { value: ["cold", "poison", "psychic"], bypasses: [], custom: "" },
+        dr: { value: [], bypasses: [], custom: "" },
+        dv: { value: ["fire"], bypasses: [], custom: "" },
+        ci: {
+          value: [
+            "charmed",
+            "frightened",
+            "poisoned",
+            "paralyzed",
+            "petrified",
+            "prone",
+            "restrained",
+            "stunned",
+            "unconscious",
+          ],
+          custom: "",
+        },
+        languages: { value: [], custom: "" },
+      },
+    },
+    prototypeToken: {
+      name: `Ice Shard ${index}`,
+      displayName: 40,
+      actorLink: true,
+      width: 1,
+      height: 1,
+      elevation: 0,
+      texture: {
+        src: ICE_SHARD_IMG,
+        anchorX: 0.5,
+        anchorY: 0.5,
+        fit: "contain",
+        scaleX: 1,
+        scaleY: 1,
+        rotation: 0,
+        tint: "#ffffff",
+      },
+      disposition: -1,
+      displayBars: 40,
+      bar1: { attribute: "attributes.hp" },
+      bar2: { attribute: null },
+      light: { bright: 0, dim: 0 },
+      sight: { enabled: false, range: 0 },
+      flags: {
+        world: {
+          [NS]: {
+            iceShardToken: true,
+            bossId: boss.id,
+          },
+        },
+      },
+    },
+    flags: {
+      world: {
+        [NS]: {
+          iceShardToken: true,
+          bossId: boss.id,
+        },
+      },
+    },
+  });
+
+  const destroyIceShard = async (shardActor, { reason = "destroyed" } = {}) => {
+    if (!shardActor || suppressIceShardSync.has(shardActor.id)) return;
+    suppressIceShardSync.add(shardActor.id);
+    const scene = canvas?.scene;
+    const tokens = (canvas?.tokens?.placeables ?? []).filter(
+      (t) => t.actor && t.actor.id === shardActor.id,
+    );
+    if (scene && tokens.length) {
+      await scene.deleteEmbeddedDocuments(
+        "Token",
+        tokens.map((t) => t.id),
+      );
+    }
+    const bossId = getFlag(shardActor, "bossId");
+    const boss = bossId ? game.actors?.get(bossId) : null;
+    if (reason === "melted" && boss) {
+      await chat(boss, `<p>An <strong>Ice Shard</strong> melts away.</p>`);
+    } else if (reason === "destroyed" && boss) {
+      await chat(boss, `<p>An <strong>Ice Shard</strong> is destroyed.</p>`);
+    }
+    await shardActor.delete().catch(() => null);
+    suppressIceShardSync.delete(shardActor.id);
+  };
+
+  const explodeIceShard = async (shardActor) => {
+    if (!shardActor || suppressIceShardSync.has(`explode-${shardActor.id}`)) return;
+    suppressIceShardSync.add(`explode-${shardActor.id}`);
+    const token =
+      (canvas?.tokens?.placeables ?? []).find((t) => t.actor?.id === shardActor.id) ?? null;
+    const bossId = getFlag(shardActor, "bossId");
+    const boss = bossId ? game.actors?.get(bossId) : null;
+    const item = findItemByRole(boss, "iceShards");
+    const targets = token
+      ? tokensInRange(token, ICE_SHARD_EXPLODE_RANGE_FT, { excludeSelf: true })
+      : [];
+
+    await chat(
+      boss ?? shardActor,
+      `<p>An <strong>Ice Shard</strong> takes necrotic damage and <strong>explodes</strong> (${ICE_SHARD_EXPLODE} piercing, ${ICE_SHARD_EXPLODE_RANGE_FT} ft)!</p>`,
+    );
+
+    if (targets.length) {
+      await applyDamageFormula({
+        tokens: targets,
+        formula: ICE_SHARD_EXPLODE,
+        type: "piercing",
+        flavor: "Ice Shard explosion",
+        item,
+      });
+    }
+
+    await destroyIceShard(shardActor, { reason: "exploded" });
+    suppressIceShardSync.delete(`explode-${shardActor.id}`);
+  };
+
+  const onIceShardDamaged = async (shardActor, amount, types = []) => {
+    if (!isActiveGM() || !isIceShardActor(shardActor)) return;
+    if (suppressIceShardSync.has(shardActor.id)) return;
+    const dmg = Number(amount) || 0;
+    if (dmg <= 0 && hpValue(shardActor) > 0) return;
+
+    const uniq = [...new Set((types ?? []).map((t) => String(t).toLowerCase()))];
+    const sig = `${hpValue(shardActor)}|${dmg}|${uniq.join(",")}`;
+    const prev = recentIceShardHits.get(shardActor.id);
+    const now = Date.now();
+    if (prev && prev.sig === sig && now - prev.t < 900) return;
+    recentIceShardHits.set(shardActor.id, { sig, t: now });
+
+    if (uniq.includes("necrotic")) {
+      await explodeIceShard(shardActor);
+      return;
+    }
+    if (hpValue(shardActor) <= 0) {
+      await destroyIceShard(shardActor, { reason: "destroyed" });
+    }
+  };
+
+  const spawnIceShardAtToken = async (boss, targetToken, index) => {
+    if (!canvas?.scene || !targetToken) return null;
+    const [shardActor] = await Actor.createDocuments([buildIceShardActorData(boss, index)]);
+    const size = canvas.grid?.size || 100;
+    const center = targetToken.center;
+    const [tokenDoc] = await canvas.scene.createEmbeddedDocuments("Token", [
+      {
+        name: shardActor.name,
+        actorId: shardActor.id,
+        actorLink: true,
+        x: center.x - size / 2,
+        y: center.y - size / 2,
+        elevation: 0,
+        width: 1,
+        height: 1,
+        texture: { src: ICE_SHARD_IMG, fit: "contain", scaleX: 1, scaleY: 1 },
+        disposition: -1,
+        displayBars: 40,
+        displayName: 40,
+        bar1: { attribute: "attributes.hp" },
+        flags: {
+          world: {
+            [NS]: {
+              iceShardToken: true,
+              bossId: boss.id,
+              pinnedTokenId: targetToken.id,
+            },
+          },
+        },
+      },
+    ]);
+    return tokenDoc;
+  };
+
+  const iceShardTargetTokens = (workflow) => {
+    const byId = new Map();
+    const add = (token) => {
+      if (!token?.actor || isBoss(token.actor) || isProxyActor(token.actor)) return;
+      const id = token.id ?? token.document?.id;
+      if (!id || byId.has(id)) return;
+      byId.set(id, token);
+    };
+    for (const t of workflow?.targets ?? []) add(t);
+    for (const t of workflow?.saves ?? []) add(t);
+    for (const t of failedSaveTokens(workflow)) add(t);
+    for (const t of hitTokens(workflow)) add(t);
+    return [...byId.values()];
+  };
+
   const onIceShards = async (workflow) => {
     const actor = workflow.actor;
     const failed = failedSaveTokens(workflow);
     await applyProne(failed);
+
+    const targets = iceShardTargetTokens(workflow);
+    if (!targets.length) {
+      await chat(
+        actor,
+        `<p><strong>Ice Shards</strong> — no creatures in the area to pin under ice chunks.</p>`,
+      );
+      return;
+    }
+
+    // Fresh set for this legendary use
+    await clearIceShardTokens(actor);
+
+    let spawned = 0;
+    for (let i = 0; i < targets.length; i += 1) {
+      const token = targets[i];
+      try {
+        await spawnIceShardAtToken(actor, token, i + 1);
+        spawned += 1;
+      } catch (err) {
+        console.error("Alatreon | ice shard spawn", err);
+      }
+    }
+
     for (const token of failed) {
       await chat(
         actor,
-        `<p>${token.name} is knocked prone under an <strong>ice chunk</strong> (AC 10; 10 HP; vulnerable to fire; immune to cold/poison/psychic). If it takes necrotic damage, it explodes for ${ICE_SHARD_EXPLODE} piercing in 15 ft.</p>`,
-        { whisperGM: true },
+        `<p>${token.name} is knocked prone under an <strong>Ice Shard</strong> token (AC ${ICE_SHARD_AC}; ${ICE_SHARD_HP} HP; vulnerable to fire; immune to cold/poison/psychic). Necrotic → explodes for ${ICE_SHARD_EXPLODE} piercing (${ICE_SHARD_EXPLODE_RANGE_FT} ft). Melts at the start of Alatreon's next turn.</p>`,
       );
-      // Best-effort small markers at failed-save tokens
-      try {
-        await placeHazardTemplate({
-          x: token.center.x,
-          y: token.center.y,
-          t: "circle",
-          distance: 2.5,
-          fillColor: "#cceeff",
-          borderColor: "#6699cc",
-          hazard: "iceShard",
-          label: "Ice Shard",
-          ownerId: actor.id,
-          until: game.combat
-            ? { combatId: game.combat.id, round: game.combat.round, restoreOnBossTurnStart: true }
-            : null,
-        });
-      } catch {
-        /* ignore placement failures */
-      }
     }
+
     await chat(
       actor,
-      `<p><strong>Ice Shards</strong> land. Chunks remain until the start of Alatreon's next turn. <em>GM:</em> necrotic damage on a chunk → ${ICE_SHARD_EXPLODE} piercing (15 ft).</p>`,
+      `<p><strong>Ice Shards</strong> land — <strong>${spawned}</strong> ice-chunk token${spawned === 1 ? "" : "s"} placed on the canvas. Remain until the start of Alatreon's next turn.</p>`,
     );
   };
 
@@ -1303,16 +2118,6 @@
       [key]: true,
     };
     await patchState(actor, { legendaryUsedThisRound: used });
-  };
-
-  const mythicStateOk = (actor, role, identifier) => {
-    const required =
-      MYTHIC_REQUIRED_STATE[identifier] ??
-      MYTHIC_REQUIRED_STATE[role] ??
-      null;
-    if (!required) return true;
-    const current = activeStateOf(actor);
-    return current === required;
   };
 
   // ─── Elemental Breath typing ───
@@ -1366,22 +2171,18 @@
       await markLegendaryUsed(actor, key);
     }
 
-    if (!mythicStateOk(actor, role, identifier)) {
-      const need =
-        MYTHIC_REQUIRED_STATE[identifier] ?? MYTHIC_REQUIRED_STATE[role];
-      ui.notifications?.warn(
-        `Mythic action requires ${STATE_LABEL[need] ?? need} (currently ${STATE_LABEL[activeStateOf(actor)] ?? "none"}).`,
-      );
-    }
-
     switch (role) {
       case "activeState":
         if (identifier === "start-ice-cycle") await startCycle(actor, "ice");
         else if (identifier === "start-fire-cycle") await startCycle(actor, "fire");
         else if (identifier === "advance-state") await advanceState(actor);
+        else if (identifier === "set-fire-state") await manualSetState(actor, "fire");
+        else if (identifier === "set-ice-state") await manualSetState(actor, "ice");
+        else if (identifier === "set-dragon-state") await manualSetState(actor, "dragon");
         break;
       case "horns":
-        await promptDamageHorn(actor);
+        if (identifier === "apply-horn-damage") await promptDamageHorn(actor);
+        else await spawnHornTokens(actor);
         break;
       case "elementBurst":
         await elementBurst(actor, activeStateOf(actor) ?? "fire");
@@ -1481,16 +2282,58 @@
     if (hooksArmed) return;
     hooksArmed = true;
 
+    // Let token bar2 resolve system.resources.overload on NPCs
+    try {
+      const cfg = CONFIG.Actor?.trackableAttributes?.npc;
+      const path = "resources.overload";
+      if (cfg && Array.isArray(cfg.bar) && !cfg.bar.includes(path)) cfg.bar.push(path);
+      if (cfg && Array.isArray(cfg.value) && !cfg.value.includes(path)) cfg.value.push(path);
+    } catch {
+      /* ignore */
+    }
+
     Hooks.on("preUpdateActor", (actor, changed) => {
-      if (!isBoss(actor)) return;
       if (changed.system?.attributes?.hp?.value === undefined) return;
-      prevBossHp.set(actor.id, hpValue(actor));
+      if (isBoss(actor)) {
+        prevBossHp.set(actor.id, hpValue(actor));
+        return;
+      }
+      if (isHornActor(actor)) {
+        prevHornHp.set(actor.id, hpValue(actor));
+        return;
+      }
+      if (isIceShardActor(actor)) {
+        prevIceShardHp.set(actor.id, hpValue(actor));
+      }
     });
 
     Hooks.on("updateActor", (actor, changed) => {
-      if (!isBoss(actor) || !isActiveGM()) return;
+      if (!isActiveGM()) return;
       const nextHp = changed.system?.attributes?.hp?.value;
       if (nextHp === undefined) return;
+
+      if (isHornActor(actor)) {
+        const before = prevHornHp.get(actor.id);
+        prevHornHp.delete(actor.id);
+        if (before === undefined) return;
+        onHornHpChanged(actor, before, nextHp).catch((err) =>
+          console.error("Alatreon | horn hp", err),
+        );
+        return;
+      }
+
+      if (isIceShardActor(actor)) {
+        const before = prevIceShardHp.get(actor.id);
+        prevIceShardHp.delete(actor.id);
+        if (before === undefined) return;
+        const delta = Math.max(0, Number(before) - Number(nextHp));
+        onIceShardDamaged(actor, delta, ["untyped"]).catch((err) =>
+          console.error("Alatreon | ice shard hp", err),
+        );
+        return;
+      }
+
+      if (!isBoss(actor)) return;
       const before = prevBossHp.get(actor.id);
       prevBossHp.delete(actor.id);
       if (before === undefined) return;
@@ -1511,6 +2354,16 @@
         else if (first?.documentName === "Actor") actor = first;
         else if (second?.actor) actor = second.actor;
         if (!actor && payload?.actorUuid) actor = fromUuidSync(payload.actorUuid);
+
+        if (isIceShardActor(actor)) {
+          const amount = extractAppliedDamage(payload, actor) || extractAppliedDamage(first, actor);
+          const types = [...extractDamageTypes(payload), ...extractDamageTypes(first)];
+          onIceShardDamaged(actor, amount, types).catch((err) =>
+            console.error("Alatreon | ice shard damaged", err),
+          );
+          return;
+        }
+
         if (!isBoss(actor)) return;
         const amount = extractAppliedDamage(payload, actor) || extractAppliedDamage(first, actor);
         const types = [...extractDamageTypes(payload), ...extractDamageTypes(first)];
@@ -1527,6 +2380,16 @@
     Hooks.on("midi-qol.DamageApplied", damageHook);
     Hooks.on("midi-qol.RollComplete", (workflow) => {
       if (!workflow) return;
+      const hitShard = [...(workflow.hitTargets ?? [])].find((t) => isIceShardActor(t.actor));
+      if (hitShard) {
+        const types = extractDamageTypes(workflow);
+        const amount =
+          extractAppliedDamage(workflow, hitShard.actor) ||
+          Number(workflow.totalDamage ?? workflow.damageTotal ?? 0);
+        onIceShardDamaged(hitShard.actor, amount, types).catch((err) =>
+          console.error("Alatreon | ice shard roll complete", err),
+        );
+      }
       const hitBoss = [...(workflow.hitTargets ?? [])].find((t) => isBoss(t.actor));
       if (hitBoss) {
         const types = extractDamageTypes(workflow);
@@ -1593,30 +2456,12 @@
         }
       }
 
-      if (!mythicStateOk(actor, role, identifier)) {
-        const need = MYTHIC_REQUIRED_STATE[identifier] ?? MYTHIC_REQUIRED_STATE[role];
-        ui.notifications?.warn(
-          `Requires ${STATE_LABEL[need] ?? need} (current: ${
-            STATE_LABEL[activeStateOf(actor)] ?? "none"
-          }).`,
-        );
-        return false;
-      }
-
       if (role === "elementalBreath") {
         await mutateBreathDamageType(workflow);
       }
 
-      if (role === "escatonJudgement") {
-        const id = identifier || "charge";
-        if (id === "release" || id === "escaton-release") {
-          const escaton = getFlag(actor, "escaton", {}) ?? {};
-          if (!escaton.charging && !escaton.ready) {
-            ui.notifications?.warn("Escaton Release requires a charge / ready state.");
-            return false;
-          }
-        }
-      }
+      // Escaton Charge / Release are intentionally ungated — GM may use anytime.
+      // Mythic state matching is advisory only (see Active State chat / AE notes).
 
       return true;
     });
@@ -1626,18 +2471,27 @@
     NS,
     FLAG,
     isBoss,
+    isHornActor,
+    isIceShardActor,
     onUse,
     ensureHooks,
     setActiveState,
+    manualSetState,
     advanceState,
     startCycle,
     damageHorn,
+    spawnHornTokens,
+    clearHornTokens,
+    clearIceShardTokens,
     revertToPreviousState,
     applyOverload,
+    overloadChargesOf,
+    setOverloadCharges,
     elementBurst,
     startEscatonCharge,
     releaseEscaton,
     placeHazardTemplate,
+    applyBossTokenLight,
     getFlag,
     patchState,
   };

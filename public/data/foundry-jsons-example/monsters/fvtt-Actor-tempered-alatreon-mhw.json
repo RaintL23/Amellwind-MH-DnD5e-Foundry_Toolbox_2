@@ -112,7 +112,7 @@
     },
     "details": {
       "biography": {
-        "value": "<h2>Tempered Alatreon (MHW)</h2>\n<p><em>Gargantuan dragon (elder), unaligned — Challenge 30</em></p>\n<p>An Elder Dragon that cycles through fire, dragon, and ice states. Place the token, set the opening cycle with Active State, and use sheet features. State changes, horn tracking, Elemental Overload, Element Burst, Escaton Judgement, and blight applications run from the Amellwind module script.</p>\n<h3>Combat notes</h3>\n<ul>\n<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after 100 HP lost in the current state; Element Burst as a special reaction.</li>\n<li><strong>Horns:</strong> AC 30, 200 HP each. Breaking a horn reverts the previous state. Use Apply Horn Damage.</li>\n<li><strong>Elemental Overload:</strong> 1 charge per 15 fire/cold/lightning from a single attack or spell; reduces Escaton dice.</li>\n<li><strong>Escaton Judgement:</strong> once during the second dragon state each cycle — Charge, then Release (60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability).</li>\n<li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options require the matching active state.</li>\n</ul>",
+        "value": "<h2>Tempered Alatreon (MHW)</h2>\n<p><em>Gargantuan dragon (elder), unaligned — Challenge 30</em></p>\n<p>An Elder Dragon that cycles through fire, dragon, and ice states. Place the token, set the opening cycle with Active State, and use sheet features. State changes, horn tracking, Elemental Overload, Element Burst, Escaton Judgement, and blight applications run from the Amellwind module script.</p>\n<h3>Combat notes</h3>\n<ul>\n<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after 100 HP lost in the current state; Element Burst as a special reaction. Set Fire / Ice / Dragon State jumps manually and resets the 100 HP threshold. Token light follows the state (fire orange, ice blue, dragon violet).</li>\n<li><strong>Horns:</strong> Deploy Horn Tokens (AC 30, 200 HP each, 15 ft elevation). Breaking a horn reverts the previous state and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback.</li>\n<li><strong>Elemental Overload:</strong> 1 charge per 15 fire/cold/lightning from a single attack or spell (max 60). Tracked on the token's second bar and on the Elemental Overload feature uses; reduces Escaton dice.</li>\n<li><strong>Escaton Judgement:</strong> Charge then Release anytime from the sheet (suggested once during the second dragon state). 60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability. Module chat is GM-whisper only.</li>\n<li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options are suggested by Active State (advisory notes on the AE / state chat; not blocked).</li>\n</ul>",
         "public": "A tempered Elder Dragon that cycles through fire, dragon, and ice states."
       },
       "alignment": "Unaligned",
@@ -243,6 +243,10 @@
         "value": false,
         "initiative": 20,
         "inside": false
+      },
+      "overload": {
+        "value": 0,
+        "max": 60
       }
     }
   },
@@ -277,26 +281,26 @@
       "attribute": "attributes.hp"
     },
     "bar2": {
-      "attribute": "resources.legact"
+      "attribute": "resources.overload"
     },
     "light": {
       "negative": false,
       "priority": 0,
-      "alpha": 0.45,
+      "alpha": 0.5,
       "angle": 360,
       "bright": 5,
-      "color": "#4488ff",
+      "color": "#ff5522",
       "coloration": 1,
       "dim": 15,
       "attenuation": 0.5,
-      "luminosity": 0.4,
+      "luminosity": 0.55,
       "saturation": 0,
       "contrast": 0,
       "shadows": 0,
       "animation": {
         "type": "torch",
-        "speed": 3,
-        "intensity": 3,
+        "speed": 4,
+        "intensity": 4,
         "reverse": false
       },
       "darkness": {
@@ -309,7 +313,7 @@
       "range": 240,
       "angle": 360,
       "visionMode": "basic",
-      "color": "#88aaff",
+      "color": "#ffaa88",
       "attenuation": 0.1,
       "brightness": 0,
       "saturation": 0,
@@ -339,8 +343,8 @@
       "img": "icons/creatures/abilities/dragon-fire-breath-orange.webp",
       "system": {
         "description": {
-          "value": "<p>The alatreon has three states: <strong>fire</strong>, <strong>dragon</strong>, and <strong>ice</strong>.</p>\n<ul>\n<li><strong>Fire State:</strong> immune to fire; vulnerable to cold.</li>\n<li><strong>Dragon State:</strong> resistant to all damage except necrotic, poison, and psychic.</li>\n<li><strong>Ice State:</strong> immune to cold; vulnerable to fire.</li>\n</ul>\n<p>It begins combat in fire or ice. Fire cycle order: fire → dragon → ice → dragon (repeat). Ice cycle order: ice → dragon → fire → dragon (repeat).</p>\n<p>Whenever hit points are reduced by <strong>100</strong> in the current active state, it advances to the next state and uses <strong>Element Burst</strong> as a special reaction (even if it already used its reaction).</p>\n<p><em>Toggle state AEs via the module. Use Start Fire Cycle / Start Ice Cycle to set the opening order.</em></p>",
-          "chat": "<p>Mythic active state (fire / dragon / ice). Advance after 100 HP lost in the current state; Element Burst special reaction.</p>"
+          "value": "<p>The alatreon has three states: <strong>fire</strong>, <strong>dragon</strong>, and <strong>ice</strong>.</p>\n<ul>\n<li><strong>Fire State:</strong> immune to fire; vulnerable to cold. Token light turns orange-red.</li>\n<li><strong>Dragon State:</strong> resistant to all damage except necrotic, poison, and psychic. Token light turns violet.</li>\n<li><strong>Ice State:</strong> immune to cold; vulnerable to fire. Token light turns blue.</li>\n</ul>\n<p>It begins combat in fire or ice. Fire cycle order: fire → dragon → ice → dragon (repeat). Ice cycle order: ice → dragon → fire → dragon (repeat).</p>\n<p>Whenever hit points are reduced by <strong>100</strong> in the current active state, it advances to the next state and uses <strong>Element Burst</strong> as a special reaction (even if it already used its reaction).</p>\n<p><em>Use Start Fire Cycle / Start Ice Cycle for the opening order. Use Set Fire / Ice / Dragon State to jump manually (resets the 100 HP threshold; keeps the current cycle and resyncs Escaton readiness).</em></p>",
+          "chat": "<p>Mythic active state (fire / dragon / ice). Advance after 100 HP lost in the current state; Element Burst special reaction. Manual Set State resets the threshold.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -583,6 +587,345 @@
             },
             "otherActivityId": "none",
             "effectConditionText": ""
+          },
+          "ZDPDg7KJQTDHN2K3": {
+            "_id": "ZDPDg7KJQTDHN2K3",
+            "type": "utility",
+            "sort": 2000,
+            "name": "Set Fire State",
+            "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set Fire State"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "set-fire-state",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "ithxkJYDvbpXMy4s": {
+            "_id": "ithxkJYDvbpXMy4s",
+            "type": "utility",
+            "sort": 3000,
+            "name": "Set Ice State",
+            "img": "icons/magic/water/projectile-ice-snowball.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set Ice State"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "set-ice-state",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "g7QfHnfCUKi2w94V": {
+            "_id": "g7QfHnfCUKi2w94V",
+            "type": "utility",
+            "sort": 4000,
+            "name": "Set Dragon State",
+            "img": "icons/creatures/abilities/dragon-fire-breath-orange.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set Dragon State"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "set-dragon-state",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
           }
         },
         "enchant": {},
@@ -627,7 +970,7 @@
             "startRound": null,
             "startTurn": null
           },
-          "description": "Immune to fire. Vulnerable to cold.",
+          "description": "Immune to fire. Vulnerable to cold. Suggested mythic legendary actions: Fireball, Fire Breath Y, Scorched Earth.",
           "origin": null,
           "tint": "#ffffff",
           "transfer": true,
@@ -740,7 +1083,7 @@
             "startRound": null,
             "startTurn": null
           },
-          "description": "Resistant to all damage except necrotic, poison, and psychic.",
+          "description": "Resistant to all damage except necrotic, poison, and psychic. Suggested mythic legendary actions: Mythic Multiattack, Dragon Rush.",
           "origin": null,
           "tint": "#ffffff",
           "transfer": true,
@@ -805,7 +1148,7 @@
             "startRound": null,
             "startTurn": null
           },
-          "description": "Immune to cold. Vulnerable to fire.",
+          "description": "Immune to cold. Vulnerable to fire. Suggested mythic legendary actions: Frost Breath, Ice Shards.",
           "origin": null,
           "tint": "#ffffff",
           "transfer": true,
@@ -925,8 +1268,8 @@
       "img": "icons/magic/control/energy-stream-link-spiral-orange.webp",
       "system": {
         "description": {
-          "value": "<p>The alatreon gains <strong>1 charge</strong> for every <strong>15</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reset to 0 after it uses <strong>Escaton Judgement</strong>.</p>\n<p><em>Charges are tracked on actor flags (<code>world.alatreon.overloadCharges</code>).</em></p>",
-          "chat": "<p>1 charge per 15 fire/cold/lightning from a single attack or spell. Resets after Escaton Judgement.</p>"
+          "value": "<p>The alatreon gains <strong>1 charge</strong> for every <strong>15</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reduce Escaton Judgement by 1d6 each (max <strong>60</strong>, which zeroes Escaton from overload alone). Charges reset to 0 after <strong>Escaton Judgement</strong>.</p>\n<p><em>Tracked on this feature's uses, on the token's second bar, and in <code>system.resources.overload</code> / <code>flags.world.alatreon.overloadCharges</code>.</em></p>",
+          "chat": "<p>1 charge per 15 fire/cold/lightning from a single hit (max 60). Shown on this feature and the token bar. Resets after Escaton Judgement.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -950,8 +1293,8 @@
           "repeatable": false
         },
         "uses": {
-          "spent": 0,
-          "max": "",
+          "spent": 60,
+          "max": "60",
           "recovery": []
         }
       },
@@ -1010,8 +1353,8 @@
       "img": "icons/commodities/bones/horn-engraved-orange.webp",
       "system": {
         "description": {
-          "value": "<p>The alatreon has two horns that can be attacked and broken separately:</p>\n<ul>\n<li><strong>AC 30</strong>; <strong>200 hit points</strong> each.</li>\n<li>Resistant to bludgeoning, piercing, and slashing that do not deal siege damage.</li>\n<li>Immune to poison, psychic, and the damage immunity from its current active state.</li>\n</ul>\n<p>Damage to a horn does not damage the alatreon. When a horn is broken, the alatreon reverts to its previous active state.</p>\n<p><em>Use Apply Horn Damage — the engine prompts which horn and the amount.</em></p>",
-          "chat": "<p>Two horns: AC 30, 200 HP each. Breaking a horn reverts the previous active state.</p>"
+          "value": "<p>The alatreon has two horns that can be attacked and broken separately:</p>\n<ul>\n<li><strong>AC 30</strong>; <strong>200 hit points</strong> each.</li>\n<li>Resistant to bludgeoning, piercing, and slashing that do not deal siege damage.</li>\n<li>Immune to poison, psychic, and the damage immunity from its current active state.</li>\n<li>Deployed horn tokens sit at <strong>15 ft elevation</strong> (harder for grounded melee).</li>\n</ul>\n<p>Damage to a horn does not damage the alatreon. When a horn is broken, the alatreon reverts to its previous active state and Escaton Judgement loses <strong>10d6</strong>.</p>\n<p><em>Use Deploy Horn Tokens to place both horns on the VTT (Foundry icon <code>icons/creatures/mammals/ox-bull-horned-glowing-orange.webp</code>). Attack those tokens, or use Apply Horn Damage as a manual fallback.</em></p>",
+          "chat": "<p>Two horns: AC 30, 200 HP each, 15 ft elevation. Breaking a horn reverts the previous active state and weakens Escaton.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -1029,10 +1372,123 @@
         "requirements": "",
         "properties": [],
         "activities": {
+          "Se9kyxb2dGn0VI0w": {
+            "_id": "Se9kyxb2dGn0VI0w",
+            "type": "utility",
+            "sort": 0,
+            "name": "Deploy Horn Tokens",
+            "img": "icons/creatures/mammals/ox-bull-horned-glowing-orange.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Deploy Horn Tokens"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "spawn-horns",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
           "qPdXrpy0jKWEh3RU": {
             "_id": "qPdXrpy0jKWEh3RU",
             "type": "utility",
-            "sort": 0,
+            "sort": 1000,
             "name": "Apply Horn Damage",
             "img": "icons/commodities/bones/horn-engraved-orange.webp",
             "activation": {
@@ -3362,8 +3818,8 @@
       "img": "icons/magic/light/explosion-star-large-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Once during the second dragon state</strong> each time the active-state order repeats.</p>\n<p><strong>Charge (action):</strong> The alatreon swoops down (no opportunity attacks) if airborne and gathers energy until the start of its next turn. While charging it is immune to incapacitated, stunned, paralyzed, and unconscious.</p>\n<p><strong>Release (action, next turn):</strong> Energy erupts in a <strong>600-foot-radius sphere</strong>. Terrain above ground level in the area is obliterated. Each creature must make a <strong>DC 30 Dexterity</strong> saving throw, taking <strong>210 (60d6)</strong> force damage on a failed save, or half as much on a success.</p>\n<p>Against this damage, force traits are inverted: <strong>immunity</strong> becomes resistance, <strong>resistance</strong> becomes normal damage, and creatures with neither are <strong>vulnerable</strong>.</p>\n<p>Reduce damage by <strong>10d6</strong> per broken horn, and by an additional <strong>#d6</strong> equal to Elemental Overload charges.</p>\n<p><em>Charge and Release are gated by the module (second Dragon State). Dice reduction uses horn/overload flags. Trait inversion is applied by the module script.</em></p>",
-          "chat": "<p>Charge, then Release: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload; force traits invert).</p>"
+          "value": "<p><strong>Suggested timing:</strong> once during the second dragon state each time the active-state order repeats (the module still tracks readiness for GM whispers, but Charge/Release can be used anytime from the sheet).</p>\n<p><strong>Charge (action):</strong> The alatreon swoops down (no opportunity attacks) if airborne and gathers energy until the start of its next turn. While charging it is immune to incapacitated, stunned, paralyzed, and unconscious.</p>\n<p><strong>Release (action, next turn):</strong> Energy erupts in a <strong>600-foot-radius sphere</strong>. Terrain above ground level in the area is obliterated. Each creature must make a <strong>DC 30 Dexterity</strong> saving throw, taking <strong>210 (60d6)</strong> force damage on a failed save, or half as much on a success.</p>\n<p>Against this damage, force traits are inverted: <strong>immunity</strong> becomes resistance, <strong>resistance</strong> becomes normal damage, and creatures with neither are <strong>vulnerable</strong>.</p>\n<p>Reduce damage by <strong>10d6</strong> per broken horn, and by an additional <strong>#d6</strong> equal to Elemental Overload charges.</p>\n<p><em>Dice reduction uses horn/overload flags. Trait inversion is applied by the module script. Automation chat is whispered to GMs only.</em></p>",
+          "chat": "<p>Charge, then Release anytime from the sheet: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload; force traits invert).</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -5448,7 +5904,7 @@
       "img": "icons/creatures/claws/claw-talons-glowing-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Dragon State).</strong> The alatreon uses its Multiattack.</p>",
+          "value": "<p><strong>Legendary Action (suggested in Dragon State).</strong> The alatreon uses its Multiattack.</p>",
           "chat": "<p>Legendary (dragon): use Multiattack.</p>"
         },
         "source": {
@@ -5569,8 +6025,8 @@
               "prompt": false,
               "visible": false
             },
-            "useConditionText": "@actor.flags.world.alatreon.activeState == \"dragon\"",
-            "useConditionReason": "Available only while in Dragon State.",
+            "useConditionText": "",
+            "useConditionReason": "",
             "macroData": {
               "name": "",
               "command": ""
@@ -5657,7 +6113,7 @@
       "img": "icons/skills/melee/strike-sword-steel-yellow.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Dragon State).</strong> The alatreon moves up to half its fly speed in a straight line, moving through creatures without provoking opportunity attacks. Each creature or object it moves through must succeed on a <strong>DC 27 Dexterity</strong> saving throw or take <strong>17 (2d6 + 10)</strong> slashing plus <strong>10 (3d6)</strong> necrotic damage and be knocked <strong>prone</strong> (half damage and not prone on a success).</p>",
+          "value": "<p><strong>Legendary Action (suggested in Dragon State).</strong> The alatreon moves up to half its fly speed in a straight line, moving through creatures without provoking opportunity attacks. Each creature or object it moves through must succeed on a <strong>DC 27 Dexterity</strong> saving throw or take <strong>17 (2d6 + 10)</strong> slashing plus <strong>10 (3d6)</strong> necrotic damage and be knocked <strong>prone</strong> (half damage and not prone on a success).</p>",
           "chat": "<p>Legendary (dragon): rush, DC 27 Dex, 2d6+10 slash + 3d6 necrotic, prone on fail.</p>"
         },
         "source": {
@@ -5823,8 +6279,8 @@
                 "formula": "27"
               }
             },
-            "useConditionText": "@actor.flags.world.alatreon.activeState == \"dragon\"",
-            "useConditionReason": "Available only while in Dragon State.",
+            "useConditionText": "",
+            "useConditionReason": "",
             "effectConditionText": "failedSave",
             "macroData": {
               "name": "",
@@ -5996,7 +6452,7 @@
       "img": "icons/magic/fire/explosion-fireball-large-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Fire State).</strong> The alatreon exhales a fireball that explodes at a point within <strong>120 feet</strong>. Each creature in a <strong>15-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>28 (8d6)</strong> fire damage on a failed save, or half as much on a success.</p>",
+          "value": "<p><strong>Legendary Action (suggested in Fire State).</strong> The alatreon exhales a fireball that explodes at a point within <strong>120 feet</strong>. Each creature in a <strong>15-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>28 (8d6)</strong> fire damage on a failed save, or half as much on a success.</p>",
           "chat": "<p>Legendary (fire): 15-ft sphere within 120 ft, DC 27 Dex, 8d6 fire.</p>"
         },
         "source": {
@@ -6142,8 +6598,8 @@
                 "formula": "27"
               }
             },
-            "useConditionText": "@actor.flags.world.alatreon.activeState == \"fire\"",
-            "useConditionReason": "Available only while in Fire State.",
+            "useConditionText": "",
+            "useConditionReason": "",
             "effectConditionText": "",
             "macroData": {
               "name": "",
@@ -6230,7 +6686,7 @@
       "img": "icons/magic/fire/explosion-fireball-medium-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Fire State).</strong> The alatreon exhales fire in a <strong>45-foot line</strong> (5 feet wide) that splits into two more 30-foot lines forming a \"Y\". Each creature in a line must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>35 (10d6)</strong> fire damage on a failed save, or half as much on a success.</p>\n<p><em>Primary line is the template; fork placement may be assisted by the engine.</em></p>",
+          "value": "<p><strong>Legendary Action (suggested in Fire State).</strong> The alatreon exhales fire in a <strong>45-foot line</strong> (5 feet wide) that splits into two more 30-foot lines forming a \"Y\". Each creature in a line must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>35 (10d6)</strong> fire damage on a failed save, or half as much on a success.</p>\n<p><em>Primary line is the template; fork placement may be assisted by the engine.</em></p>",
           "chat": "<p>Legendary (fire): Y-shaped lines, DC 27 Dex, 10d6 fire.</p>"
         },
         "source": {
@@ -6375,8 +6831,8 @@
                 "formula": "27"
               }
             },
-            "useConditionText": "@actor.flags.world.alatreon.activeState == \"fire\"",
-            "useConditionReason": "Available only while in Fire State.",
+            "useConditionText": "",
+            "useConditionReason": "",
             "effectConditionText": "",
             "macroData": {
               "name": "",
@@ -6493,7 +6949,7 @@
       "img": "icons/magic/fire/beam-jet-stream-yellow.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Fire State).</strong> The alatreon rises 30 feet (no OA) and exhales flames covering the ground in a <strong>30-foot radius</strong> centered on a point directly below it. The ground burns until the start of its next turn. Creatures that start their turn in the area or enter it take <strong>10 (3d6)</strong> fire and ignite (2d6 fire at start of their turns until doused). Moving through the area deals <strong>7 (2d6)</strong> fire per 5 feet.</p>\n<p><em>Places a burning-ground template (engine).</em></p>",
+          "value": "<p><strong>Legendary Action (suggested in Fire State).</strong> The alatreon rises 30 feet (no OA) and exhales flames covering the ground in a <strong>30-foot radius</strong> centered on a point directly below it. The ground burns until the start of its next turn. Creatures that start their turn in the area or enter it take <strong>10 (3d6)</strong> fire and ignite (2d6 fire at start of their turns until doused). Moving through the area deals <strong>7 (2d6)</strong> fire per 5 feet.</p>\n<p><em>Places a burning-ground template (engine).</em></p>",
           "chat": "<p>Legendary (fire): 30-ft burning ground until start of next turn.</p>"
         },
         "source": {
@@ -6614,8 +7070,8 @@
               "prompt": false,
               "visible": false
             },
-            "useConditionText": "@actor.flags.world.alatreon.activeState == \"fire\"",
-            "useConditionReason": "Available only while in Fire State.",
+            "useConditionText": "",
+            "useConditionReason": "",
             "macroData": {
               "name": "",
               "command": ""
@@ -6732,7 +7188,7 @@
       "img": "icons/magic/water/barrier-ice-crystal-wall-blue.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Ice State).</strong> The alatreon rises 30 feet (no OA) and exhales frost covering the ground in a <strong>30-foot radius</strong> below it until the start of its next turn. Each creature that starts its turn there must make a <strong>DC 27 Constitution</strong> saving throw or take <strong>17 (5d6)</strong> cold damage and <strong>iceblight</strong> for 1 minute (half damage and no blight on a success). Moving through the area deals <strong>7 (2d6)</strong> cold per 5 feet.</p>\n<p><em>Places an ice-zone template; engine applies iceblight on failed saves.</em></p>",
+          "value": "<p><strong>Legendary Action (suggested in Ice State).</strong> The alatreon rises 30 feet (no OA) and exhales frost covering the ground in a <strong>30-foot radius</strong> below it until the start of its next turn. Each creature that starts its turn there must make a <strong>DC 27 Constitution</strong> saving throw or take <strong>17 (5d6)</strong> cold damage and <strong>iceblight</strong> for 1 minute (half damage and no blight on a success). Moving through the area deals <strong>7 (2d6)</strong> cold per 5 feet.</p>\n<p><em>Places an ice-zone template; engine applies iceblight on failed saves.</em></p>",
           "chat": "<p>Legendary (ice): 30-ft frost zone, DC 27 Con, 5d6 cold + iceblight.</p>"
         },
         "source": {
@@ -6882,8 +7338,8 @@
                 "formula": "27"
               }
             },
-            "useConditionText": "@actor.flags.world.alatreon.activeState == \"ice\"",
-            "useConditionReason": "Available only while in Ice State.",
+            "useConditionText": "",
+            "useConditionReason": "",
             "effectConditionText": "failedSave",
             "macroData": {
               "name": "",
@@ -7065,8 +7521,8 @@
       "img": "icons/magic/water/projectile-ice-faceted-blue.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (Ice State).</strong> Ice shards form above each creature in a <strong>90-foot radius</strong> and plummet. Each creature must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>13 (3d8)</strong> cold plus <strong>18 (4d8)</strong> bludgeoning damage, being pushed 5 feet, and knocked <strong>prone</strong> on a fail (half damage, pushed, not prone on a success). Ice chunks remain until the start of the alatreon's next turn (AC 10; 10 HP; vulnerable to fire; immune to cold, poison, psychic; necrotic causes a 15-ft explosion for 1d8 piercing).</p>\n<p><em>Engine places ice-chunk objects and applies prone on fail.</em></p>",
-          "chat": "<p>Legendary (ice): 90-ft radius, DC 27 Dex, 3d8 cold + 4d8 bludgeoning, prone on fail.</p>"
+          "value": "<p><strong>Legendary Action (suggested in Ice State).</strong> Ice shards form above each creature in a <strong>90-foot radius</strong> and plummet. Each creature must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>13 (3d8)</strong> cold plus <strong>18 (4d8)</strong> bludgeoning damage, being pushed 5 feet, and knocked <strong>prone</strong> on a fail (half damage, pushed, not prone on a success). Ice-chunk <strong>tokens</strong> remain on the canvas until the start of the alatreon's next turn (AC 10; 10 HP; vulnerable to fire; immune to cold, poison, psychic). If an ice shard takes necrotic damage, it explodes in a 15-ft radius for 1d8 piercing.</p>\n<p><em>Engine spawns Ice Shard tokens for creatures in the area, applies prone on fail, melts tokens on Alatreon's next turn, and auto-explodes on necrotic.</em></p>",
+          "chat": "<p>Legendary (ice): 90-ft radius, DC 27 Dex, 3d8 cold + 4d8 bludgeoning, prone on fail; ice-chunk tokens on canvas.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -7231,8 +7687,8 @@
                 "formula": "27"
               }
             },
-            "useConditionText": "@actor.flags.world.alatreon.activeState == \"ice\"",
-            "useConditionReason": "Available only while in Ice State.",
+            "useConditionText": "",
+            "useConditionReason": "",
             "effectConditionText": "failedSave",
             "macroData": {
               "name": "",
@@ -7421,10 +7877,14 @@
         "stateHpLost": 0,
         "overloadCharges": 0,
         "horns": {
-          "left": 200,
-          "right": 200,
-          "leftBroken": false,
-          "rightBroken": false
+          "left": {
+            "hp": 200,
+            "broken": false
+          },
+          "right": {
+            "hp": 200,
+            "broken": false
+          }
         },
         "escaton": {
           "charging": false,
