@@ -55,7 +55,7 @@ pnpm build:mm-supplement
 
 ## `catalog.json` monster object
 
-Maps toward `instrucctions.md` → Monster + Rune:
+Maps toward `docs/domain/entities-actor-monster.md` + `entities-rune.md` (Monster + Rune):
 
 | JSON field | App target |
 | --- | --- |

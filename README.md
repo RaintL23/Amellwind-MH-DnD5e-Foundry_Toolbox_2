@@ -234,7 +234,7 @@ Each feature follows a similar pattern: `components/`, `services/`, `hooks/`, `m
 
 ## Developer documentation
 
-[`instrucctions.md`](./instrucctions.md) holds the detailed technical docs: data architecture, domain entities, 5etools → Foundry mappings, business rules, and code conventions.
+[`docs/domain/`](./docs/domain/index.md) holds the detailed technical docs (split by topic for smaller reads): data architecture, domain entities, 5etools → Foundry mappings, business rules, and code conventions. [`instrucctions.md`](./instrucctions.md) is a short pointer to that folder.
 
 ## Legal notice
 

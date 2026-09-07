@@ -211,7 +211,7 @@ Cada feature sigue un patrón similar: `components/`, `services/`, `hooks/`, `ma
 
 ## Documentación para desarrolladores
 
-El archivo [`instrucctions.md`](./instrucctions.md) contiene la documentación técnica detallada: arquitectura de datos, entidades de dominio, mapeos 5etools → Foundry, reglas de negocio y convenciones del código.
+La carpeta [`docs/domain/`](./docs/domain/index.md) contiene la documentación técnica detallada (partida por tema para lecturas más cortas): arquitectura de datos, entidades de dominio, mapeos 5etools → Foundry, reglas de negocio y convenciones del código. [`instrucctions.md`](./instrucctions.md) es solo un puntero a esa carpeta.
 
 ## Aviso legal
 

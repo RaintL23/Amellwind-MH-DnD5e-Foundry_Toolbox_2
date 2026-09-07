@@ -1,0 +1,26 @@
+# Heavy / regenerable — keep out of Cursor index & @codebase
+graphify-out/
+dist/
+dist-ssr/
+build/
+coverage/
+.pnpm-store/
+node_modules/
+
+# Large data mirrors / backups (not agent working set)
+backup_jsons/
+backup-jsons/
+public/5etools/
+public/rpg-cards/
+
+# Foundry packs & example actor dumps (prefer builders / scripts / Grep)
+public/data/foundry-jsons-example/**/*.json
+public/data/foundry-module/**/packs/
+public/data/foundry-module/**/assets/
+public/data/foundry-module/**/.staging/
+
+# Lockfiles & noise
+pnpm-lock.yaml
+package-lock.json
+*.tsbuildinfo
+stats.html

@@ -1,21 +1,42 @@
 # AGENTS.md
 
-Guía operativa para agentes de IA que trabajan en **Amellwind MH DnD5e Toolbox**. Léela antes de tocar código. Es complementaria, no sustituta, de la documentación humana.
+Operational guide for AI agents working on **Amellwind MH DnD5e Toolbox**. Read this before changing code. It complements human docs; it does not replace them.
 
-## Mapa de documentación (qué leer y cuándo)
+## Documentation map (what to read, when)
 
-| Documento | Cuándo consultarlo |
+| Document | When to open it |
 | --- | --- |
-| `README.md` | Visión de producto, rutas/features, deploy en Vercel, fuentes de datos. |
-| `instrucctions.md` | **Fuente de verdad técnica** (91 KB): arquitectura de datos, entidades de dominio, mapeos 5etools → Foundry, reglas de negocio y convenciones. Búscalo con `grep` por encabezado, no lo leas entero. |
-| Este `AGENTS.md` | Comandos, convenciones de trabajo y mapa de zonas complejas. |
-| `graphify-out/` | Grafo de código (AST) para orientación estructural. Complementa, no sustituye, `instrucctions.md`. |
+| `README.md` | Product vision, routes/features, Vercel deploy, data sources. |
+| [`docs/domain/index.md`](./docs/domain/index.md) | **Technical source of truth** (split files). Open **one** matching file — never the whole folder. |
+| This `AGENTS.md` | Commands, work conventions, complex-zone map, low-token prompt habit. |
+| `graphify-out/` | Code AST graph for structural orientation. Complements domain docs; not a rules source. |
 
-> Antes de implementar algo no trivial, haz `grep` por su sección en `instrucctions.md` (encabezados `##`/`###`). Casi todo el dominio ya está documentado ahí.
+> Before non-trivial work: open `docs/domain/index.md`, then **one** file (or `grep` a heading inside it). Legacy `instrucctions.md` is only a pointer.
 
-## Graphify (mapa estructural del código)
+## Low-token workflow (do this first)
 
-Knowledge graph local generado con [Graphify](https://github.com/Graphify-Labs/graphify). Indexa solo `src/` (ver `.graphifyignore`). No es dependencia de la app.
+```text
+1. graphify query "…" --budget 1500   (or path / explain)
+2. Open ONE docs/domain/<file>.md from the index
+3. Read/Grep only the source files you will edit (prefer ±100 lines)
+4. Surgical change → pnpm lint / build (/ test if Builder)
+```
+
+**Never** read whole actor JSON dumps (`fvtt-Actor-*.json`), `GRAPH_REPORT.md` (unless broad architecture review), or every file under `docs/domain/`.
+
+### Prompt template (humans → agents)
+
+```text
+Zone: <feature path under src/features/… or public/data/…>
+Files: <exact paths>
+Goal: <one concrete outcome>
+Do not read: actor JSON dumps, GRAPH_REPORT, whole docs/domain/
+Docs: docs/domain/<one-file>.md
+```
+
+## Graphify (structural map)
+
+Local knowledge graph from [Graphify](https://github.com/Graphify-Labs/graphify). Indexes `src/` (see `.graphifyignore`). Not an app dependency.
 
 ```bash
 # Rebuild (AST only, no API key)
@@ -23,122 +44,111 @@ graphify extract . --code-only
 # Optional HTML viz
 graphify cluster-only . --no-label
 
-# Queries útiles
-graphify query "what connects foundry export to character builder?"
+# Prefer budgeted queries
+graphify query "what connects foundry export to character builder?" --budget 1500
 graphify path "parse-foundry-actor" "createEntityService"
 graphify explain "CharacterBuilderContext"
 ```
 
-- Skill versionada: `.agents/skills/graphify/`
-- Skill de validación del Builder: `.agents/skills/builder-validation/` (checklist + Vitest sobre `evaluateBuildCompleteness`)
-- Regla Cursor local: `.cursor/rules/graphify.mdc` (carpeta `.cursor/` está en `.gitignore`)
-- `graphify-out/` está en `.gitignore` (regenerable; no hace falta API key con `--code-only`)
-- Dominio Amellwind / 5etools / Foundry schema → sigue siendo `instrucctions.md`
+- Skills: `.agents/skills/graphify/`, `.agents/skills/builder-validation/`, `.agents/skills/foundry-monsters/`
+- Cursor rule: `.cursor/rules/graphify.mdc` (`.cursor/` is gitignored)
+- `graphify-out/` is gitignored (regenerable; no API key with `--code-only`)
+- Domain Amellwind / 5etools / Foundry schema → `docs/domain/`
 
-## Stack y datos en una línea
+## Stack and data in one line
 
-SPA **React 18 + TypeScript + Vite + Tailwind + shadcn/ui (Radix)**, routing con **React Router v6 lazy**, paquetes con **pnpm**, Node **22.x**. Sin backend: datos de Amellwind cacheados en **IndexedDB** (`idb`); compendio D&D 5e cargado bajo demanda desde el mirror de 5etools.
+SPA **React 18 + TypeScript + Vite + Tailwind + shadcn/ui (Radix)**, routing with **React Router v6 lazy**, packages with **pnpm**, Node **22.x**. No backend: Amellwind data cached in **IndexedDB** (`idb`); D&D 5e compendium loaded on demand from the 5etools mirror.
 
-## Comandos
+## Commands
 
-Usa siempre **pnpm** (no npm/yarn). Verificados en `package.json`:
+Always use **pnpm** (not npm/yarn). From `package.json`:
 
 ```bash
-pnpm install          # dependencias
-pnpm dev              # servidor de desarrollo (Vite)
-pnpm build            # tsc -b && vite build  → valida tipos + compila
-pnpm lint             # eslint estricto: --max-warnings 0 (cero warnings permitidos)
-pnpm test             # Vitest (completeness del Builder y tests unitarios)
-pnpm preview          # vista previa del build
-pnpm build:analyze    # build con visualizer del bundle
+pnpm install          # dependencies
+pnpm dev              # Vite dev server
+pnpm build            # tsc -b && vite build  → typecheck + compile
+pnpm lint             # eslint --max-warnings 0
+pnpm test             # Vitest (Builder completeness + unit tests)
+pnpm preview          # preview production build
+pnpm build:analyze    # bundle visualizer
 ```
 
-- **Antes de dar por terminado un cambio de código**, corre `pnpm lint` y `pnpm build`. El lint falla con cualquier warning; el build hace type-check completo (`tsc -b`) además de compilar.
-- Cambios al **Character Builder** (identity, feats, spells, randomizer, export gates): corre también `pnpm test` y sigue `.agents/skills/builder-validation/`.
-- TypeScript está en modo `strict` con `noUnusedLocals` y `noUnusedParameters`: no dejes imports, variables ni parámetros sin usar.
+- Before finishing code changes, run `pnpm lint` and `pnpm build`.
+- Character Builder changes (identity, feats, spells, randomizer, export gates): also `pnpm test` and `.agents/skills/builder-validation/`.
+- Foundry hunt-boss / module scripts: `.agents/skills/foundry-monsters/`.
+- TypeScript is `strict` with `noUnusedLocals` / `noUnusedParameters`: no unused imports, vars, or params.
 
-## Convenciones de código
+## Code conventions
 
-- **Alias de import:** usa `@/...` para todo dentro de `src/` (configurado en `tsconfig.app.json` → `paths`). Evita rutas relativas largas (`../../..`).
-- **TypeScript estricto:** sin `any` salvo justificación; tipa props, services y mappers.
-- **Estilos:** Tailwind + componentes de `src/components/ui/` (shadcn). No añadas librerías de UI nuevas; reutiliza Radix/shadcn ya presentes.
-- **Preferencia de componentes UI:** antes de implementar cualquier elemento visual (botones, diálogos, selects, tooltips, tablas, formularios, badges, etc.), **verifica primero si shadcn/ui ya ofrece un componente adecuado** en `src/components/ui/`. Si existe o puede adaptarse con props/clases de Tailwind, úsalo obligatoriamente. Solo recurre a implementación custom cuando shadcn no tenga equivalente funcional para el caso.
-- **Idioma:** el idioma preferido para **todo** (UI, textos visibles, comentarios de dominio, documentación e identificadores de código) es el **inglés**. Usa inglés por defecto en cualquier texto nuevo que se agregue al proyecto.
-- **Comentarios:** solo donde aclaran lógica no obvia (mira el header de `create-entity-service.ts` como referencia de estilo). Están permitidos **headers de archivo** (qué es + flujo, 3–8 líneas) y **banners de sección** (`// ─── Nombre ───`) en wiring denso (`App.tsx`, slices del Builder, export Foundry). No narres lo obvio línea a línea.
+- **Import alias:** `@/...` for everything under `src/` (`tsconfig.app.json` → `paths`). Avoid deep `../../..`.
+- **Strict TypeScript:** no `any` without justification; type props, services, mappers.
+- **Styles:** Tailwind + `src/components/ui/` (shadcn). No new UI libraries; reuse Radix/shadcn.
+- **UI preference:** before custom UI, check whether shadcn already covers it in `src/components/ui/`.
+- **Language:** English for UI, visible copy, domain comments, docs, and identifiers.
+- **Comments:** only for non-obvious logic (see `create-entity-service.ts` header). File headers (3–8 lines) and section banners (`// ─── Name ───`) are OK in dense wiring.
 
-## Arquitectura por features
+## Feature architecture
 
-El código vive en `src/`:
+Code lives under `src/`:
 
 ```text
 src/
-├── App.tsx              # Router lazy + sync inicial + providers globales
-├── components/          # layout/, data-table/ (TanStack Table), ui/ (shadcn)
+├── App.tsx              # Lazy router + initial sync + global providers
+├── components/          # layout/, data-table/, ui/
 ├── features/
-│   ├── home/            # landing (las 3 secciones)
-│   ├── amellwind/<x>/   # Homebrew Amellwind (misma sección que el Sidebar)
-│   ├── raintdm/<x>/     # RaintDM (Builder + forges)
-│   └── dnd/<x>/         # Compendio D&D 5e
-└── shared/              # constants, context, db, services, types, utils, mappers, components
+│   ├── home/
+│   ├── amellwind/<x>/
+│   ├── raintdm/<x>/
+│   └── dnd/<x>/
+└── shared/
 ```
 
-Cursor/Grep can still list old flat paths (`src/features/builder`, `shops`, …). On disk only `amellwind/`, `raintdm/`, `dnd/`, and `home/` exist under `src/features/`. Prefer those; do not recreate the flat tree.
+On disk only `amellwind/`, `raintdm/`, `dnd/`, and `home/` exist under `src/features/`. Do not recreate old flat trees.
 
-Nav map (Sidebar + Home, including Hunt Planner under World and Exploration): `src/shared/constants/nav-sections.ts`.
+Nav map: `src/shared/constants/nav-sections.ts`.
 
-**Patrón de feature** (no todas tienen todas las carpetas — copia el patrón de una vecina similar):
+**Feature pattern** (copy a similar neighbor):
 
 ```text
 features/<section>/<x>/
-├── components/   # UI de la feature
-├── services/     # acceso a datos (ver factory abajo)
-├── mappers/      # raw (5etools/IndexedDB) → modelo de dominio
-├── hooks/        # lógica de estado/datos
-├── data/         # datos estáticos *.data.ts (cuando aplica)
-└── context/      # estado local de la feature (cuando aplica)
+├── components/
+├── services/
+├── mappers/
+├── hooks/
+├── data/
+└── context/
 ```
 
-Colocación: **misma sección que el Sidebar**. El Character Builder es RaintDM (hub de personaje). Si una feature no tiene ruta (p. ej. `dnd/optionalfeatures`), va con el compendio 5e.
+Placement: **same Sidebar section**. Character Builder is RaintDM. Features without a route (e.g. `dnd/optionalfeatures`) stay with the 5e compendium.
 
-### Capa de datos (clave para no romper nada)
+### Data layer (do not break)
 
-- **Services se construyen con `createEntityService`** (`src/shared/services/create-entity-service.ts`): provee `getAll/getList/getById/getByName/clearCache`, con caché en memoria, dedupe e índices. Para una nueva entidad, **declara un service con esa factory** en vez de hand-rollear caché. Vistas extra (`getXByType`, filtros) son wrappers finos sobre `getAll`.
-- **Filtros de lista vs URL:** usa `useListSessionFilters` (localStorage, clave `list-filters:<listId>`) para búsqueda/filtros; no vuelques `src=` ni facets a la query. Para el ítem abierto usa `useListItemUrlParam` (p. ej. `?spell=Fireball`, `?subclass=` en Classes) o una ruta de detalle.
-- **IndexedDB** (`src/shared/db/database.ts` + `sync.service.ts`): stores `mm_*` (Monster Manual) y `gtmh_*` (Guía de Caza), con esquema current/previous/meta. La sincronización corre al arrancar en `App.tsx`; tras un sync exitoso se invalidan cachés en memoria (MM: monsters/runes/conditions/diseases; GTMH: species/backgrounds/feats/monstie/material-effects/items/weapons/downtime). No accedas a IndexedDB directamente desde componentes: pasa por services.
-- **Flujo:** raw JSON (5etools / IndexedDB) → `mapper` → modelo de dominio → `service` (cachea) → `hook` → `component`.
+- Build services with `createEntityService` (`src/shared/services/create-entity-service.ts`).
+- List filters: `useListSessionFilters`; open item: `useListItemUrlParam` or a detail route.
+- IndexedDB: `src/shared/db/database.ts` + `sync.service.ts`. Invalidate memory caches after successful sync. No direct IndexedDB from components.
+- Flow: raw JSON → mapper → domain model → service → hook → component.
 
-## Zonas complejas (extrema cautela)
+## Complex zones (extreme care)
 
-Estas áreas tienen reglas de negocio densas. Lee su sección en `instrucctions.md` y los tipos involucrados **antes** de editar.
+Read the matching `docs/domain/` file and types **before** editing.
 
-1. **Character Builder (ALPHA)** — `src/features/raintdm/builder/`
-   - Estado compuesto por **slices de hooks** (`context/slices/`: identity, proficiency, equipment, spell) orquestados por `CharacterBuilderContext`. Hay contextos satélite: `BuilderInventoryContext`, `BuildCompletenessContext`, `RpgbotRatingsContext`.
-   - Persistencia propia en `storage/builder.storage.ts`.
-   - Depende de varios catálogos (clases, especies, trasfondos, dotes, conjuros, equipo) y del planificador de runas (`RuneBuildProvider`, compartido con `/runes`).
+1. **Character Builder (ALPHA)** — `src/features/raintdm/builder/` → `docs/domain/features-builder.md`
+2. **Export Foundry VTT (SPA character)** — `src/shared/foundry/` + `builder/foundry-export/` → `features-builder.md`
+3. **Import Foundry VTT** — `builder/foundry-import/` → `features-builder.md`
+4. **Foundry hunt bosses / module** — `public/data/foundry-*` → skill `foundry-monsters` (not actor JSON dumps)
+5. **5etools parsing** — `src/shared/utils/`, `src/shared/data/`
+6. **IndexedDB sync** — `src/shared/db/` → `docs/domain/data-architecture.md`
 
-2. **Export Foundry VTT** — núcleo `src/shared/foundry/` (+ `weapons/`); actor en `src/features/raintdm/builder/foundry-export/`
-   - Genera un actor `character` de **Foundry dnd5e v12**. Infra: tipos/IDs/`downloadFoundryJson`/midi/enrichers/mappings en `shared/foundry/`. Actor: `actor.builder.ts` + `items/*`. Automatización de armas: `shared/foundry/weapons/`.
-   - Cambiar un mapeo aquí puede romper la importación en Foundry: respeta la forma exacta del schema dnd5e.
+## Scope and safety
 
-3. **Import Foundry VTT** — `src/features/raintdm/builder/foundry-import/`
-   - `parse-foundry-actor.ts` reconstruye el build haciendo *matching* de cada entidad contra los catálogos de la app. Cambios en nombres/IDs de catálogos pueden romper el matching.
+- Do not commit the full 5etools mirror or bulk data under `public/5etools/`. `backup_jsons/` is local backup only.
+- No backend or heavy dependencies unless asked: static SPA on Vercel.
+- Surgical diffs only; do not reformat unrelated files.
+- Legal: this repo **organizes** published content; do not invent or alter homebrew rules.
 
-4. **Parsing de 5etools** — `src/shared/utils/` y `src/shared/data/`
-   - Parser de tags 5etools (`{@spell ...}`, `{@item ...}`, etc.), cálculo de CR, dedupe-by-name, fluff. La estructura JSON de 5etools es irregular; preserva el manejo de casos límite existente.
+## Checklist before finishing
 
-5. **Sincronización / IndexedDB** — `src/shared/db/`
-   - Tocar `DB_VERSION`, stores o el esquema afecta a la caché offline de todos los usuarios. Cambia con cuidado y considera migraciones.
-
-## Reglas de alcance y seguridad
-
-- **No commitees** el mirror completo de 5etools ni datos masivos a `public/5etools/` (ver README: en producción se resuelve en runtime desde GitHub). `backup_jsons/` es solo respaldo local.
-- No introduzcas un backend ni dependencias pesadas sin que se pida: la app es SPA estática desplegada en Vercel (`vercel.json`, output `dist`).
-- Cambios quirúrgicos: no reformatees archivos enteros ni toques features ajenas a la tarea.
-- Respeta el aviso legal del README: este repo **organiza** contenido ya publicado; no generes ni alteres reglas homebrew.
-
-## Checklist antes de terminar
-
-1. `pnpm lint` sin warnings.
-2. `pnpm build` (type-check + compilación) en verde.
-3. Cambios acotados a la feature objetivo; imports con alias `@/`; sin código muerto.
-4. Si tocaste dominio documentado, actualiza la sección correspondiente de `instrucctions.md`/`README.md`.
+1. `pnpm lint` with zero warnings.
+2. `pnpm build` green (typecheck + compile).
+3. Scoped to the target feature; `@/` imports; no dead code.
+4. If you changed documented domain rules, update the matching `docs/domain/<file>.md` (and `README.md` if product-facing).

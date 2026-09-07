@@ -9,6 +9,8 @@ description: >-
 
 # Builder Validation
 
+Domain UI notes: `docs/domain/features-builder.md` (open that file only; do not load all of `docs/domain/`).
+
 ## Source of truth
 
 In-app completeness lives in:
