@@ -4,6 +4,7 @@ import {
   checkPhbWeaponNameProficiency,
   checkWeaponProficiency,
   hasMartialFinesseOrLightGrant,
+  resolveToolProficienciesForWeaponGate,
 } from "./equipment-proficiency.utils";
 
 const ROGUE_XPHB_WEAPONS = [
@@ -142,5 +143,56 @@ describe("checkPhbWeaponNameProficiency — mastery picker", () => {
       checkPhbWeaponNameProficiency("Greataxe", "martial", ROGUE_XPHB_WEAPONS)
         .allowed,
     ).toBe(false);
+  });
+});
+
+describe("checkWeaponProficiency — Hunting Horn / Musical Instrument (Bard)", () => {
+  const bardWeapons = ["Simple", "Hand Crossbow", "Longsword", "Rapier", "Shortsword"];
+
+  it("allows Hunting Horn when tools include Musical Instrument category", () => {
+    const result = checkWeaponProficiency(
+      "Hunting Horn",
+      bardWeapons,
+      [],
+      amellwindWeapon("Hunting Horn", ["H", "2H"]),
+      ["Musical Instrument"],
+    );
+    expect(result.allowed).toBe(true);
+    expect(result.effectiveTier).toBe("martial");
+  });
+
+  it("allows Hunting Horn when a specific instrument (Lute) is proficient", () => {
+    const result = checkWeaponProficiency(
+      "Hunting Horn",
+      bardWeapons,
+      [],
+      amellwindWeapon("Hunting Horn", ["H", "2H"]),
+      ["Lute"],
+    );
+    expect(result.allowed).toBe(true);
+  });
+
+  it("denies Hunting Horn for Bard weapon list without instrument tools", () => {
+    const result = checkWeaponProficiency(
+      "Hunting Horn",
+      bardWeapons,
+      [],
+      amellwindWeapon("Hunting Horn", ["H", "2H"]),
+      [],
+    );
+    expect(result.allowed).toBe(false);
+  });
+
+  it("resolveToolProficienciesForWeaponGate treats pending musical grants as Musical Instrument", () => {
+    const tools = resolveToolProficienciesForWeaponGate([], [
+      {
+        kind: "any",
+        count: 3,
+        label: "Musical instruments",
+        options: ["Lute", "Flute", "Drum"],
+        source: { type: "class", name: "Bard" },
+      },
+    ]);
+    expect(tools).toContain("Musical Instrument");
   });
 });

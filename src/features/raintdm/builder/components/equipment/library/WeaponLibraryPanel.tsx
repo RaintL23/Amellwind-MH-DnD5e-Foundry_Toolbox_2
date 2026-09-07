@@ -15,7 +15,7 @@ import { useBuilderInventory } from "@/features/raintdm/builder/context/BuilderI
 
 import type { BuilderSlotSelection } from "@/features/raintdm/builder/hooks/useBuilderSlotSelection";
 
-import { checkWeaponProficiency } from "@/features/raintdm/builder/utils/equipment-proficiency.utils";
+import { checkWeaponProficiency, resolveToolProficienciesForWeaponGate } from "@/features/raintdm/builder/utils/equipment-proficiency.utils";
 
 import { useSelectedClass } from "@/features/raintdm/builder/hooks/useBuilderSelections";
 
@@ -31,12 +31,13 @@ import { buildWeaponInventoryBundle } from "@/features/raintdm/builder/utils/equ
 import { weaponMatchesLibraryFilters } from "@/features/raintdm/builder/utils/builder-library-filters";
 import type { ListFilterValues } from "@/shared/components/list-filters";
 
-import type { Weapon } from "@/shared/types";
+import type { EquippedWeapon, Weapon } from "@/shared/types";
 import type { WeaponLibraryCatalog } from "@/features/raintdm/builder/utils/builder-library-filters";
 
 import { WeaponLibraryDetail } from "./WeaponLibraryDetail";
 
 import { WeaponList } from "./shared/LibraryLists";
+import { LibraryBackToListButton } from "./shared/LibraryUi";
 
 function weaponMatchesLibraryCatalog(
   weapon: Weapon,
@@ -55,6 +56,8 @@ interface WeaponLibraryPanelProps {
 
   /** Only used while Amellwind Homebrew is on. Defaults to forge. */
   weaponCatalog?: WeaponLibraryCatalog;
+
+  onSearchHiddenChange?: (hidden: boolean) => void;
 }
 
 export function WeaponLibraryPanel({
@@ -65,10 +68,14 @@ export function WeaponLibraryPanel({
   listFilters = {},
 
   weaponCatalog = "forge",
+
+  onSearchHiddenChange,
 }: WeaponLibraryPanelProps) {
   const [allWeapons, setAllWeapons] = useState<Weapon[]>([]);
 
   const [weaponsLoading, setWeaponsLoading] = useState(false);
+
+  const [previewWeapon, setPreviewWeapon] = useState<Weapon | null>(null);
 
   const {
     mainHand,
@@ -90,6 +97,10 @@ export function WeaponLibraryPanel({
     resolvedWeaponItems,
 
     resolvedArmorItems,
+
+    resolvedToolItems,
+
+    allToolGrants,
 
     useAmellwindHomebrew,
   } = useCharacterBuilder();
@@ -117,6 +128,11 @@ export function WeaponLibraryPanel({
   const { lookup: rpgbotWeaponLookup, ready: rpgbotWeaponReady } =
     useRpgbotRatingsLookup(rpgbotWeaponContext);
 
+  const toolProficienciesForWeaponGate = useMemo(
+    () => resolveToolProficienciesForWeaponGate(resolvedToolItems, allToolGrants),
+    [resolvedToolItems, allToolGrants],
+  );
+
   useEffect(() => {
     if (!isWeaponSlot) return;
 
@@ -139,6 +155,10 @@ export function WeaponLibraryPanel({
     prefer2024,
     weaponCatalog,
   ]);
+
+  useEffect(() => {
+    setPreviewWeapon(null);
+  }, [selectedSlot]);
 
   const effectiveListFilters = useMemo(
     () => (useAmellwindHomebrew ? { ...listFilters, rarity: "" } : listFilters),
@@ -208,10 +228,16 @@ export function WeaponLibraryPanel({
   const showWeaponDetail =
     isWeaponSlot &&
     !!equippedWeapon &&
+    !previewWeapon &&
     !(selectedSlot === "offHand" && showOffHandWeaponPicker);
 
+  useEffect(() => {
+    if (!isWeaponSlot) return;
+    onSearchHiddenChange?.(!!previewWeapon || showWeaponDetail);
+  }, [isWeaponSlot, previewWeapon, showWeaponDetail, onSearchHiddenChange]);
+
   const dndWeaponVariants = useDndWeaponVariants(
-    !useAmellwindHomebrew && !!equippedWeapon,
+    !useAmellwindHomebrew && !!equippedWeapon && !previewWeapon,
     equippedWeapon?.weapon.name,
   );
 
@@ -243,6 +269,8 @@ export function WeaponLibraryPanel({
         resolvedArmorItems,
 
         weapon,
+
+        toolProficienciesForWeaponGate,
       );
 
       if (!proficiencyCheck.allowed) {
@@ -288,6 +316,8 @@ export function WeaponLibraryPanel({
 
       resolvedWeaponItems,
 
+      toolProficienciesForWeaponGate,
+
       selectedSlot,
 
       hasIntegratedShield,
@@ -312,7 +342,34 @@ export function WeaponLibraryPanel({
     addEquipmentBundle(buildWeaponInventoryBundle(weapon));
   }
 
+  function handleInfoPreview(weapon: Weapon) {
+    setPreviewWeapon(weapon);
+  }
+
   if (!isWeaponSlot) return null;
+
+  if (previewWeapon) {
+    const previewEquipped: EquippedWeapon = {
+      weapon: previewWeapon,
+      rarity: useAmellwindHomebrew
+        ? "Common"
+        : (previewWeapon.itemRarityLabel ?? "Standard"),
+      runeSlots: 0,
+      runes: [],
+      activeModeIndex: 0,
+    };
+
+    return (
+      <div>
+        <LibraryBackToListButton onClick={() => setPreviewWeapon(null)} />
+        <WeaponLibraryDetail
+          equipped={previewEquipped}
+          weaponProficiencies={resolvedWeaponItems}
+          showHomebrewDetails={useAmellwindHomebrew}
+        />
+      </div>
+    );
+  }
 
   if (showWeaponDetail) {
     const gripContext =
@@ -354,6 +411,7 @@ export function WeaponLibraryPanel({
       equipped={equippedWeapon?.weapon.name ?? null}
       weaponProficiencies={resolvedWeaponItems}
       onSelect={handleSelectWeapon}
+      onInfo={handleInfoPreview}
       getDisabledReason={getWeaponDisabledReason}
       rpgbotLookup={rpgbotWeaponReady ? rpgbotWeaponLookup : null}
     />

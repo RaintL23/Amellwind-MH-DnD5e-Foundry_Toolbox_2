@@ -2,6 +2,10 @@ import { Check } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 import type { RpgbotRatingLookupEntry } from "@/features/raintdm/builder/data/rpgbot-ratings.types";
 import { RpgbotRatingBadge } from "@/features/raintdm/builder/components/shared/RpgbotRatingBadge";
+import {
+  LibraryBackToListButton,
+  LibraryInfoButton,
+} from "@/features/raintdm/builder/components/shared/LibraryInfoButton";
 import { RPGBOT_ROW_ACCENT } from "@/features/raintdm/builder/utils/library-variant.utils";
 import { RARITY_BADGE } from "../constants";
 
@@ -18,6 +22,8 @@ export function EmptyState({ text }: { text: string }) {
     <p className="py-6 text-center text-xs text-muted-foreground">{text}</p>
   );
 }
+
+export { LibraryInfoButton, LibraryBackToListButton };
 
 export function LibraryItemBadge({
   children,
@@ -61,6 +67,7 @@ export function ItemRow({
   disabledHint,
   rpgbotRating,
   onClick,
+  onInfo,
 }: {
   icon: React.ReactNode;
   name: string;
@@ -74,23 +81,30 @@ export function ItemRow({
   disabledHint?: string;
   rpgbotRating?: RpgbotRatingLookupEntry | null;
   onClick: () => void;
+  /** When set, shows an info button that opens details without selecting. */
+  onInfo?: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={disabled}
-      title={disabled ? disabledHint : undefined}
+    <div
       className={cn(
-        "mb-1 flex w-full items-center justify-between rounded-md border border-l-2 px-2 py-1.5 text-left text-xs transition-colors",
+        "mb-1 flex w-full items-center justify-between rounded-md border border-l-2 px-2 py-1.5 text-xs transition-colors",
         rpgbotRating
           ? RPGBOT_ROW_ACCENT[rpgbotRating.rating]
           : "border-l-transparent",
         equipped ? "border-violet-400/40 bg-violet-400/5" : "border-border/60",
-        disabled ? "cursor-not-allowed opacity-40" : "hover:bg-muted/50",
+        disabled ? "opacity-40" : "hover:bg-muted/50",
       )}
     >
-      <div className="min-w-0 flex-1">
+      <button
+        type="button"
+        onClick={onClick}
+        disabled={disabled}
+        title={disabled ? disabledHint : undefined}
+        className={cn(
+          "min-w-0 flex-1 text-left",
+          disabled ? "cursor-not-allowed" : "cursor-pointer",
+        )}
+      >
         <div className="flex items-center gap-1 font-medium text-foreground">
           {icon}
           <span className="truncate">{name}</span>
@@ -98,7 +112,7 @@ export function ItemRow({
           {equipped && <Check className="h-3 w-3 shrink-0 text-emerald-400" />}
         </div>
         {meta}
-      </div>
+      </button>
       <div className="ml-2 flex shrink-0 items-center gap-1.5">
         {trailing && (
           <span
@@ -126,7 +140,8 @@ export function ItemRow({
             {source.code}
           </span>
         )}
+        {onInfo && <LibraryInfoButton label={name} onClick={onInfo} />}
       </div>
-    </button>
+    </div>
   );
 }

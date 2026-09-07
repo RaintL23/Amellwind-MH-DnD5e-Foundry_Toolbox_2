@@ -70,7 +70,7 @@ interface BuilderLibraryPanelProps {
 export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) {
   const { search, setSearch, q } = useLibrarySearch(selectedSlot);
   const [showAsiPanel, setShowAsiPanel] = useState(false);
-  const [featSearchHidden, setFeatSearchHidden] = useState(false);
+  const [librarySearchHidden, setLibrarySearchHidden] = useState(false);
   const [filterValues, setFilterValues] = useState<ListFilterValues>({});
   const [filterResetKey, setFilterResetKey] = useState("");
 
@@ -251,7 +251,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
 
   useEffect(() => {
     setShowAsiPanel(false);
-    setFeatSearchHidden(false);
+    setLibrarySearchHidden(false);
   }, [selectedSlot, classSelection?.name]);
 
   const featSource = useMemo(
@@ -305,7 +305,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     isClassDetailVisible(selectedSlot, classSelection, classData) ||
     isSubclassDetailVisible(selectedSlot, subclass, activeSubclass) ||
     showWeaponDetail ||
-    featSearchHidden;
+    librarySearchHidden;
 
   const showRpgbotLegend =
     !!rpgbotClassSlug &&
@@ -391,29 +391,33 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
               q={q}
               listFilters={filterValues}
               weaponCatalog={weaponLibraryCatalog}
+              onSearchHiddenChange={setLibrarySearchHidden}
             />
             <ArmorLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
               listFilters={filterValues}
+              onSearchHiddenChange={setLibrarySearchHidden}
             />
             <IdentityLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
               identitySource={identitySource}
               listFilters={filterValues}
+              onSearchHiddenChange={setLibrarySearchHidden}
             />
             <ClassLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
               listFilters={filterValues}
+              onSearchHiddenChange={setLibrarySearchHidden}
             />
             <FeatLibraryPanel
               selectedSlot={selectedSlot}
               q={q}
               featSource={featSource}
               onShowAsiPanelChange={setShowAsiPanel}
-              onSearchHiddenChange={setFeatSearchHidden}
+              onSearchHiddenChange={setLibrarySearchHidden}
               listFilters={filterValues}
             />
           </ScrollableWhenNeeded>

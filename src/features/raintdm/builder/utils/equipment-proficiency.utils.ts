@@ -1,6 +1,7 @@
 import type { ArmorItem, Weapon } from "@/shared/types";
 import type { NamedProficiencyGrant } from "@/shared/types/proficiency.types";
 import { isClothingArmor, isShieldArmor } from "@/features/raintdm/builder/data/armor.data";
+import { getChooseableMusicalInstruments } from "@/shared/data/chooseable-musical-instruments";
 import { resolveFixedNamedGrants } from "@/shared/utils/named-proficiency.parser";
 import { normalizeWeaponProficiencyKey } from "@/shared/utils/weapon-proficiency-name.utils";
 import {
@@ -8,6 +9,9 @@ import {
   resolveWeaponProficiency,
   type WeaponProficiencyTier,
 } from "@/features/amellwind/weapons/data/weapon-proficiencies.data";
+
+/** Fallback when 5etools instruments are not loaded yet (tests / early boot). */
+const FALLBACK_MUSICAL_INSTRUMENT_NAMES = ["Lute", "Flute", "Drum", "Horn", "Lyre", "Viol"];
 
 export type EffectiveWeaponTier = "simple" | "martial";
 
@@ -166,43 +170,82 @@ function hasShieldProficiency(proficiencies: string[]): boolean {
   return hasProficiency(proficiencies, "shield");
 }
 
-function isMusicalInstrumentProficiency(value: string): boolean {
+function musicalInstrumentNameKeys(): Set<string> {
+  const names = getChooseableMusicalInstruments();
+  const list = names.length > 0 ? names : FALLBACK_MUSICAL_INSTRUMENT_NAMES;
+  return new Set(list.map((name) => normalizeProficiencyKey(name)));
+}
+
+/** True for category labels ("Musical Instruments") or a specific instrument (Lute, Horn, …). */
+export function isMusicalInstrumentProficiency(value: string): boolean {
   const key = normalizeProficiencyKey(value);
-  return key.includes("musical instrument");
+  if (key.includes("musical instrument")) return true;
+  return musicalInstrumentNameKeys().has(key);
+}
+
+/**
+ * Tool items that can unlock Musical Instrument–compatible MH weapons (Hunting Horn).
+ * Includes pending Bard-style "N musical instruments" grants before the picker is filled.
+ */
+export function resolveToolProficienciesForWeaponGate(
+  resolvedToolItems: string[],
+  toolGrants: NamedProficiencyGrant[] = [],
+): string[] {
+  const tools = [...resolvedToolItems];
+  if (tools.some(isMusicalInstrumentProficiency)) return tools;
+
+  const hasMusicalGrant = toolGrants.some((grant) => {
+    if (grant.kind === "any") {
+      return /musical\s+instrument/i.test(grant.label);
+    }
+    if (grant.kind === "fixed") {
+      return grant.items.some(isMusicalInstrumentProficiency);
+    }
+    if (grant.kind === "choose") {
+      return grant.from.some(isMusicalInstrumentProficiency);
+    }
+    return false;
+  });
+
+  if (hasMusicalGrant) tools.push("Musical Instrument");
+  return tools;
 }
 
 function matchesCompatibleWeapon(
-  proficiencies: string[],
+  weaponProficiencies: string[],
   compatibleWeapon: string,
+  toolProficiencies: string[] = [],
 ): boolean {
   const compatibleKey = normalizeProficiencyKey(compatibleWeapon);
 
   if (compatibleKey === "musical instrument") {
-    return proficiencies.some(isMusicalInstrumentProficiency);
+    return [...weaponProficiencies, ...toolProficiencies].some(
+      isMusicalInstrumentProficiency,
+    );
   }
 
   if (compatibleKey === "thrown weapons") {
-    return proficiencies.some((prof) =>
+    return weaponProficiencies.some((prof) =>
       normalizeProficiencyKey(prof).includes("thrown"),
     );
   }
 
-  if (hasProficiency(proficiencies, compatibleWeapon)) {
+  if (hasProficiency(weaponProficiencies, compatibleWeapon)) {
     return true;
   }
 
   if (
-    hasMartialFinesseOrLightGrant(proficiencies) &&
+    hasMartialFinesseOrLightGrant(weaponProficiencies) &&
     isMartialFinesseOrLightWeaponName(compatibleWeapon)
   ) {
     return true;
   }
 
-  if (hasMartialProficiency(proficiencies) && MARTIAL_WEAPON_NAMES.has(compatibleKey)) {
+  if (hasMartialProficiency(weaponProficiencies) && MARTIAL_WEAPON_NAMES.has(compatibleKey)) {
     return true;
   }
 
-  if (hasSimpleProficiency(proficiencies) && SIMPLE_WEAPON_NAMES.has(compatibleKey)) {
+  if (hasSimpleProficiency(weaponProficiencies) && SIMPLE_WEAPON_NAMES.has(compatibleKey)) {
     return true;
   }
 
@@ -210,10 +253,13 @@ function matchesCompatibleWeapon(
 }
 
 function hasCompatibleWeaponProficiency(
-  proficiencies: string[],
+  weaponProficiencies: string[],
   compatible: string[],
+  toolProficiencies: string[] = [],
 ): boolean {
-  return compatible.some((weapon) => matchesCompatibleWeapon(proficiencies, weapon));
+  return compatible.some((weapon) =>
+    matchesCompatibleWeapon(weaponProficiencies, weapon, toolProficiencies),
+  );
 }
 
 function resolveEffectiveTier(
@@ -342,6 +388,7 @@ export function checkWeaponProficiency(
   weaponProficiencies: string[],
   armorProficiencies: string[],
   weapon?: Weapon,
+  toolProficiencies: string[] = [],
 ): WeaponProficiencyCheckResult {
   if (weapon?.contentSource === "dnd") {
     return checkDndWeaponCategoryProficiency(weapon, weaponProficiencies);
@@ -362,6 +409,7 @@ export function checkWeaponProficiency(
   const hasCompatible = hasCompatibleWeaponProficiency(
     weaponProficiencies,
     rule.compatible,
+    toolProficiencies,
   );
   const hasSimple = hasSimpleProficiency(weaponProficiencies);
   const hasMartial = hasMartialProficiency(weaponProficiencies);
@@ -454,9 +502,14 @@ export function getClassEquipmentConflictReason(
   equippedArmor: ArmorItem | null,
   classArmorGrants: NamedProficiencyGrant[],
   classWeaponGrants: NamedProficiencyGrant[],
+  classToolGrants: NamedProficiencyGrant[] = [],
 ): string | null {
   const armorProficiencies = resolveProficiencyItems(classArmorGrants);
   const weaponProficiencies = resolveProficiencyItems(classWeaponGrants);
+  const toolProficiencies = resolveToolProficienciesForWeaponGate(
+    resolveProficiencyItems(classToolGrants),
+    classToolGrants,
+  );
   const conflicts: string[] = [];
 
   if (equippedArmor && !isClothingArmor(equippedArmor)) {
@@ -472,6 +525,8 @@ export function getClassEquipmentConflictReason(
       weaponName,
       weaponProficiencies,
       armorProficiencies,
+      undefined,
+      toolProficiencies,
     );
     if (!weaponCheck.allowed && weaponCheck.reason) {
       conflicts.push(`${weaponName}: ${weaponCheck.reason}`);
@@ -486,6 +541,7 @@ export function getWeaponEffectiveTierLabel(
   weaponName: string,
   weaponProficiencies: string[],
   weapon?: Weapon,
+  toolProficiencies: string[] = [],
 ): string | null {
   const rule = weapon
     ? resolveWeaponProficiency(weapon)
@@ -497,6 +553,7 @@ export function getWeaponEffectiveTierLabel(
     weaponProficiencies,
     [],
     weapon,
+    toolProficiencies,
   );
   if (!check.allowed || check.effectiveTier !== "simple") return null;
 
