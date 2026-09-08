@@ -125,6 +125,11 @@ if (isEndMelodies) {
   }
   const changed = await disableAllMelodyAuras();
   await refreshActiveAuras("hunting-horn-end");
+  try {
+    await globalThis.__amellwindHhRuneEffects?.onMelodyPerformance?.(actorDoc, { ending: true });
+  } catch (err) {
+    console.warn("Hunting Horn: rune muse sync on end failed", err);
+  }
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
     content: `<div class="dnd5e2"><p><strong>${esc(actorDoc.name)}</strong> ends all active Songbook Melodies.</p>${
@@ -326,6 +331,12 @@ for (const mel of selected) {
 }
 
 await refreshActiveAuras("hunting-horn-song");
+
+try {
+  await globalThis.__amellwindHhRuneEffects?.onMelodyPerformance?.(actorDoc, { ending: false });
+} catch (err) {
+  console.warn("Hunting Horn: rune melody effects failed", err);
+}
 
 await ChatMessage.create({
   speaker: ChatMessage.getSpeaker({ actor: actorDoc }),

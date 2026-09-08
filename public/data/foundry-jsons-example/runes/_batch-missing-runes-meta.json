@@ -1,0 +1,56 @@
+[
+  {
+    "name": "Allmother Sparksac",
+    "monster": "Narwa the Allmother",
+    "cr": "30",
+    "tier": 4,
+    "slots": ["A", "W"],
+    "armor": "You have a flying speed of 80 feet while you wear this armor.",
+    "weapon": "While you are attuned to this weapon, your lightning spells bypass a creature's resistance and deal half as much damage to creature's immune to lightning damage."
+  },
+  {
+    "name": "Malzeno Beautifang",
+    "monster": "Primordial Malzeno",
+    "cr": "25",
+    "tier": 4,
+    "slots": ["A", "W"],
+    "armor": "White Knight. Your Charisma score is 19 while you wear this armor. It has no effect on you if your Charisma is already 20 or higher. Additionally, you have advantage on Charisma skill checks when interacting with nobles while you wear this armor.",
+    "weapon": "Blood Awakening. When you regain hit points from dealing damage with a Weapon or Spell attack while attuned to this weapon, your next attack deals an extra 10 damage."
+  },
+  {
+    "name": "Qurupeco Feather",
+    "monster": "Qurupeco",
+    "cr": "6",
+    "tier": 2,
+    "slots": ["A", "W"],
+    "armor": "Whenever you finish a long rest you can attempt a DC 15 Charisma (Performance) check using an instrument you are proficient with. On a success, you gain inspiration if you do not already have it.",
+    "weapon": "While holding this weapon, you can use an action to summon a jaggi to your aid for 1 hour. It will act on your turn in the initiative and will flee if you or your allies attempt to harm it. Once you use this property, you cannot use it again for one week."
+  },
+  {
+    "name": "Azure Lao-Shan Hardhorn",
+    "monster": "Ashen Lao-Shan Lung",
+    "cr": "30",
+    "tier": 4,
+    "slots": ["A", "W"],
+    "armor": "Psychic Vision. While you are attuned to this armor, you know the location of all creatures within 60 feet of you, but you are vulnerable to psychic damage.",
+    "weapon": "Benediction. When you heal a creature while attuned to this weapon, you reduce the damage (from the next source of damage) by an amount equal to the number of hit points you healed."
+  },
+  {
+    "name": "Nightcloak Plume",
+    "monster": "Nightcloak Malfestio",
+    "cr": "14",
+    "tier": 3,
+    "slots": ["A", "W"],
+    "armor": "You have advantage on Insight checks while you wear this armor.",
+    "weapon": "(Hunting Horn only) Horn Maestro+. While attuned to this weapon, your melody lasts 1 minute longer than normal."
+  },
+  {
+    "name": "Uth Duna Tentacle",
+    "monster": "Uth Duna",
+    "cr": "12",
+    "tier": 3,
+    "slots": ["A", "W"],
+    "armor": "Health Boost. While wearing this armor, your hit point maximum increases by 1 for each character level you have.",
+    "weapon": "(Hunting Horn Only) Inspiring Melody. When you complete a melody, allies within 20 feet who can hear you deal an extra 1d6 damage with their attacks and spells until the end of your next turn."
+  }
+]
