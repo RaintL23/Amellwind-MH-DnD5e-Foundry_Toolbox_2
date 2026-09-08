@@ -1,0 +1,306 @@
+{
+  "_id": "LargeBoulderItm1",
+  "name": "Large Boulder",
+  "type": "weapon",
+  "img": "icons/commodities/stone/ore-pile-grey.webp",
+  "system": {
+    "description": {
+      "value": "<p><strong>Size</strong> Varies; <strong>Armor Class</strong> —; <strong>Hit Points</strong> —</p>\n<p><strong>Damage Immunities</strong> poison; psychic</p>\n<p>A large boulder might be hanging from a large group of vines far overhead, or a chunk of the mountain side. In an arena, the boulder might be held above the arena floor by ropes and pulleys. The boulder doesn't necessarily have to be a boulder — it could be an ancient tree trunk or part of a building that comes toppling down.</p>\n<p>The boulder can be knocked loose by attacking it, by a lever, or some other way to release it as a trap.</p>\n<p>Any creature under the boulder when it hits the ground must make a DC 15 Dexterity saving throw or take 22 (4d10) bludgeoning damage and be knocked prone on a failed save. On a successful save, the creature takes half as much damage, is not knocked prone, and is pushed into an unoccupied space adjacent to the boulder.</p>\n<p><em>Source: AGMH p.83</em></p>",
+      "chat": "<p><strong>Large Boulder</strong> — DC 15 Dexterity, 4d10 bludgeoning; prone on a failed save.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "83",
+      "license": "",
+      "rules": "2014",
+      "revision": 1
+    },
+    "identifier": "large-boulder",
+    "quantity": 1,
+    "weight": {
+      "value": 0,
+      "units": "lb"
+    },
+    "price": {
+      "value": 0,
+      "denomination": "gp"
+    },
+    "rarity": "",
+    "identified": true,
+    "unidentified": {
+      "description": "",
+      "name": "Mysterious Siege Engine"
+    },
+    "container": null,
+    "attunement": "",
+    "attuned": false,
+    "equipped": false,
+    "type": {
+      "value": "martialR",
+      "baseItem": ""
+    },
+    "ability": "",
+    "damage": {
+      "base": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false,
+          "formula": ""
+        },
+        "scaling": {
+          "mode": "",
+          "number": null
+        },
+        "bonus": ""
+      },
+      "versatile": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false,
+          "formula": ""
+        },
+        "scaling": {
+          "number": 1
+        }
+      }
+    },
+    "magicalBonus": null,
+    "properties": [
+      "siege",
+      "two"
+    ],
+    "proficient": null,
+    "range": {
+      "value": null,
+      "long": null,
+      "reach": null,
+      "units": "ft"
+    },
+    "mastery": "",
+    "ammunition": {
+      "type": ""
+    },
+    "armor": {
+      "value": null
+    },
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": [],
+      "autoDestroy": false
+    },
+    "activities": {
+      "BoulderDropAct01": {
+        "_id": "BoulderDropAct01",
+        "type": "save",
+        "sort": 0,
+        "name": "Falling Boulder",
+        "img": "icons/commodities/stone/ore-pile-grey.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Falling Boulder — DC 15 Dexterity. Fail: full damage + prone. Success: half damage, pushed to an adjacent space."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "BoulderProneFx001",
+            "onSave": false
+          }
+        ],
+        "range": {
+          "value": null,
+          "long": null,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "cube",
+            "size": "10",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "always",
+          "forceDamageDialog": "default",
+          "confirmTargets": "never",
+          "autoTargetType": "any",
+          "autoTargetAction": "always",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "falling-boulder",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "damage": {
+          "parts": [
+            {
+              "number": 4,
+              "denomination": 10,
+              "types": [
+                "bludgeoning"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ],
+          "onSave": "half"
+        },
+        "save": {
+          "ability": [
+            "dex"
+          ],
+          "dc": {
+            "calculation": "",
+            "formula": "15"
+          }
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "failedSave"
+      }
+    }
+  },
+  "effects": [
+    {
+      "_id": "BoulderProneFx001",
+      "name": "Prone",
+      "img": "systems/dnd5e/icons/svg/statuses/prone.svg",
+      "type": "base",
+      "origin": null,
+      "duration": {
+        "rounds": null,
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "disabled": false,
+      "transfer": false,
+      "statuses": [
+        "prone"
+      ],
+      "changes": [],
+      "description": "Knocked prone by a falling boulder.",
+      "tint": "#ffffff",
+      "flags": {}
+    }
+  ],
+  "folder": null,
+  "sort": 200000,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": ""
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "amellwind-toolbox": {
+      "exportKind": "items-forge",
+      "resourceKind": "siege-weapon",
+      "siegeKey": "large-boulder"
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

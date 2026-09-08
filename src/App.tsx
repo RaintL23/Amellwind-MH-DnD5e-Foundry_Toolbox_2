@@ -72,6 +72,13 @@ const ItemList = lazy(() =>
     default: m.ItemList,
   })),
 );
+const SiegeWeaponList = lazy(() =>
+  import("@/features/amellwind/siege-weapons/components/SiegeWeaponList").then(
+    (m) => ({
+      default: m.SiegeWeaponList,
+    }),
+  ),
+);
 const ShopList = lazy(() =>
   import("@/features/amellwind/shops/components/ShopList").then((m) => ({
     default: m.ShopList,
@@ -284,6 +291,7 @@ async function clearGuideDerivedCaches(): Promise<void> {
     { clearItemCache },
     { clearWeaponCache },
     { clearDowntimeCache },
+    { clearSiegeWeaponCache },
   ] = await Promise.all([
     import("@/features/amellwind/species/services/species.service"),
     import("@/features/amellwind/backgrounds/services/background.service"),
@@ -293,6 +301,7 @@ async function clearGuideDerivedCaches(): Promise<void> {
     import("@/features/amellwind/shops/services/item.service"),
     import("@/features/amellwind/weapons/services/weapon.service"),
     import("@/features/amellwind/downtime/services/downtime.service"),
+    import("@/features/amellwind/siege-weapons/services/siege-weapon.service"),
   ]);
   clearSpeciesCache();
   clearBackgroundCache();
@@ -302,6 +311,7 @@ async function clearGuideDerivedCaches(): Promise<void> {
   clearItemCache();
   clearWeaponCache();
   clearDowntimeCache();
+  clearSiegeWeaponCache();
 }
 
 /**
@@ -445,6 +455,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <ItemList />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="siege-weapons"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <SiegeWeaponList />
                   </Suspense>
                 }
               />

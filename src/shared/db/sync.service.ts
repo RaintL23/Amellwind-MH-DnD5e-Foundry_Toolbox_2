@@ -22,6 +22,7 @@ const FEAT_STORE_KEY = "feat";
 const VARIANT_RULE_STORE_KEY = "variantrule";
 const CLASS_FEATURE_STORE_KEY = "classFeature";
 const CLASS_STORE_KEY = "class";
+const OBJECT_STORE_KEY = "object";
 const BOOK_DATA_STORE_KEY = "bookData";
 const CONDITION_STORE_KEY = "condition";
 const DISEASE_STORE_KEY = "disease";
@@ -214,6 +215,9 @@ async function writeGtmhDerivedStores(
   }
   if (Array.isArray(json.class)) {
     await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, json.class);
+  }
+  if (Array.isArray(json.object)) {
+    await setStoreValue("GTMH_CURRENT", OBJECT_STORE_KEY, json.object);
   }
   if (json.bookData && typeof json.bookData === "object") {
     await setStoreValue("GTMH_CURRENT", BOOK_DATA_STORE_KEY, json.bookData);
@@ -534,6 +538,14 @@ export async function getClassFeaturesRaw(): Promise<unknown[]> {
 
 export async function getVariantRulesRaw(): Promise<unknown[]> {
   return ensureGtmhArrayStore("variantrule", VARIANT_RULE_STORE_KEY);
+}
+
+/**
+ * Returns the raw object array from the GTMH JSON (siege weapons, etc.).
+ * Lazy-populates from remote if not yet cached.
+ */
+export async function getObjectsRaw(): Promise<unknown[]> {
+  return ensureGtmhArrayStore("object", OBJECT_STORE_KEY);
 }
 
 /**

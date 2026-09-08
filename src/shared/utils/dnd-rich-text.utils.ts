@@ -78,6 +78,7 @@ const ENTITY_LINK_KIND_CLASS: Record<ToolboxEntityKind, string> = {
   creature: "text-rose-300 font-medium",
   feat: "text-violet-300 font-medium",
   background: "text-teal-300 font-medium",
+  object: "text-orange-300 font-medium",
 };
 
 export { DND_KEYWORD_CLASS };

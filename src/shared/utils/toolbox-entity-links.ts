@@ -48,7 +48,8 @@ export type ToolboxEntityKind =
   | "creature"
   | "weapon"
   | "feat"
-  | "background";
+  | "background"
+  | "object";
 
 export interface ParsedFiveToolsTag {
   tag: string;
@@ -248,6 +249,11 @@ export function buildToolboxEntityHref(
         return buildToolboxQueryPath("/backgrounds", "background", trimmed);
       }
       return buildToolboxQueryPath("/dnd-backgrounds", "background", trimmed);
+    case "object":
+      if (amellwind || !src) {
+        return buildToolboxQueryPath("/siege-weapons", "object", trimmed);
+      }
+      return null;
     default:
       return null;
   }

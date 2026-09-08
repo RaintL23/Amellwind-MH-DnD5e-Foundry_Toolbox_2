@@ -53,6 +53,13 @@ describe("buildToolboxEntityHref", () => {
       "/dnd-races?race=Elf",
     );
   });
+
+  it("routes AGMH objects to /siege-weapons", () => {
+    expect(buildToolboxEntityHref("object", "Dragonator", "AGMH")).toBe(
+      "/siege-weapons?object=Dragonator",
+    );
+    expect(buildToolboxEntityHref("object", "Ballista", "DMG")).toBeNull();
+  });
 });
 
 describe("resolveToolboxEntityRef", () => {

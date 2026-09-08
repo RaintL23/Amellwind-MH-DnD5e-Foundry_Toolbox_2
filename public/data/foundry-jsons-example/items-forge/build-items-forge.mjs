@@ -1,8 +1,9 @@
 /**
- * Builds Items Forge Foundry items from `public/data/raintdm-items/traps.json`.
+ * Builds Items Forge Foundry items from `public/data/raintdm-items/traps.json`
+ * and AGMH siege weapons (`build-siege-weapons.mjs`).
  *
  * Magazines already ship in `weapons-resources/magazines/` (Dual Repeaters).
- * This pack is the hunter-trap catalog (Trap Tool + Pitfall / Shock / +).
+ * This pack is hunter traps + siege engines (Dragonator, Dragonrazer, Large Boulder).
  *
  * Run: node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
  */
@@ -419,3 +420,6 @@ for (const raw of items) {
 }
 
 console.log(`Items Forge traps: ${items.length}`);
+
+const { buildSiegeWeapons } = await import("./build-siege-weapons.mjs");
+buildSiegeWeapons();

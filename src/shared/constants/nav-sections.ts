@@ -198,6 +198,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             icon: Layers,
             description: "Catalog of items from the Hunter's Guide.",
           },
+          {
+            to: "/siege-weapons",
+            label: "Siege Weapons",
+            icon: Crosshair,
+            description:
+              "Dragonator, Dragonrazer, and other AGMH siege engines.",
+          },
         ],
       },
       {

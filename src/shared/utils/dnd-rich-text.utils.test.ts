@@ -54,4 +54,15 @@ describe("parseRichText entity links", () => {
       refKind: "disease",
     });
   });
+
+  it("links {@object} AGMH tags to siege weapons", () => {
+    const segments = parseRichText("{@object Dragonator|AGMH}", {
+      highlightKeywords: false,
+    });
+    expect(segments.find((seg) => seg.kind === "entityLink")).toMatchObject({
+      href: "/siege-weapons?object=Dragonator",
+      content: "Dragonator",
+      refKind: "object",
+    });
+  });
 });
