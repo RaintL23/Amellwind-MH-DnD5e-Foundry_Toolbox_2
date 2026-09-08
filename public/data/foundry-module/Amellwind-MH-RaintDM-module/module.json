@@ -2,7 +2,7 @@
   "id": "Amellwind-MH-RaintDM-module",
   "title": "Amellwind MH (RaintDM)",
   "description": "Monster Hunter homebrew content for the Amellwind campaign (RaintDM): weapons, weapon resources, Items Forge hunter traps, runes, cooking features, combo crafting, hidden object detection, resource gathering nodes, Amellwind conditions & diseases, and hunt monsters for the D&D 5e system. Auto-generated from the Toolbox JSON exports.",
-  "version": "1.15.1",
+  "version": "1.17.0",
   "authors": [
     {
       "name": "RaintDM"
@@ -13,6 +13,8 @@
     "verified": "12.331"
   },
   "scripts": [
+    "scripts/player-save-rolls.js",
+    "scripts/rune-runtime.js",
     "scripts/amellwind-conditions.js",
     "scripts/resource-node.js",
     "scripts/hidden-detection.js",
@@ -42,6 +44,11 @@
         "id": "itemacro",
         "type": "module",
         "reason": "Several items ship an embedded Item Macro (flags.itemacro) that runs their special behavior via Midi [pass]ItemMacro hooks."
+      },
+      {
+        "id": "socketlib",
+        "type": "module",
+        "reason": "Boss/trap automation requests saving throws on the connected player owner instead of the GM client."
       }
     ],
     "recommends": [

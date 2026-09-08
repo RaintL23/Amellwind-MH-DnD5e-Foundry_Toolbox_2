@@ -11,19 +11,41 @@
   const NS = "alatreon";
   const FLAG = `flags.world.${NS}`;
 
-  const STATE_HP_THRESHOLD = 100;
-  const HORN_MAX_HP = 200;
+  /** Stat-block baseline (3 hunters / Amellwind max HP). Thresholds derive as % of scaled max HP. */
+  const BASE_BOSS_HP = 820;
+  const BASE_STATE_HP_THRESHOLD = 100;
+  const BASE_HORN_MAX_HP = 200;
+  /** Elemental Overload: 1 charge per this much fire/cold/lightning from a single hit (1–3 hunters). */
+  const BASE_OVERLOAD_DAMAGE_PER_CHARGE = 15;
+  /** Soft overload curve by hunters (does not scale 1:1 with boss HP; capped at 20). */
+  const OVERLOAD_DAMAGE_PER_CHARGE_BY_HUNTERS = Object.freeze({
+    1: 15,
+    2: 15,
+    3: 15,
+    4: 17,
+    5: 19,
+    6: 20,
+  });
+  /**
+   * Amellwind solo-boss HP multipliers (3 = max, 4 = +50%, 5 = ×2).
+   * 1–2 use max HP with no extra multiplier; 6 is a toolbox extension (×2.5).
+   */
+  const HUNTER_HP_MULTIPLIER = Object.freeze({
+    1: 1,
+    2: 1,
+    3: 1,
+    4: 1.5,
+    5: 2,
+    6: 2.5,
+  });
   const HORN_AC = 30;
   const HORN_ELEVATION_FT = 15;
   const HORN_IMG = "icons/creatures/mammals/ox-bull-horned-glowing-orange.webp";
-  const BURST_FORMULA = "7d6";
   const BURST_DC = 27;
   const BURST_RANGE_FT = 30;
   const ESCATON_BASE_DICE = 60;
   const ESCATON_DC = 30;
   const ESCATON_RANGE_FT = 600;
-  /** Elemental Overload: 1 charge per this much fire/cold/lightning from a single hit. */
-  const OVERLOAD_DAMAGE_PER_CHARGE = 15;
   /** Cap at Escaton base dice so full overload can zero the release. */
   const OVERLOAD_MAX = ESCATON_BASE_DICE;
   const MELEE_DC = 27;
@@ -138,6 +160,35 @@
 
   const isBoss = (actor) => Boolean(actor && getFlag(actor, "bossNpc") === true);
 
+  const huntersQuantityOf = (actor) => {
+    const n = Math.floor(Number(getFlag(actor, "huntersQuantity", 3)) || 3);
+    return Math.min(6, Math.max(1, n));
+  };
+
+  /** Derive boss HP + absolute thresholds from hunters quantity (ratios vs BASE_BOSS_HP). */
+  const scalingOf = (actor) => {
+    const hunters = huntersQuantityOf(actor);
+    const mult = HUNTER_HP_MULTIPLIER[hunters] ?? 1;
+    const bossMaxHp = Math.round(BASE_BOSS_HP * mult);
+    const stateHpThreshold = Math.max(
+      1,
+      Math.round(bossMaxHp * (BASE_STATE_HP_THRESHOLD / BASE_BOSS_HP)),
+    );
+    const hornMaxHp = Math.max(
+      1,
+      Math.round(bossMaxHp * (BASE_HORN_MAX_HP / BASE_BOSS_HP)),
+    );
+    const overloadDamagePerCharge = Math.min(
+      20,
+      OVERLOAD_DAMAGE_PER_CHARGE_BY_HUNTERS[hunters] ?? BASE_OVERLOAD_DAMAGE_PER_CHARGE,
+    );
+    return { hunters, mult, bossMaxHp, stateHpThreshold, hornMaxHp, overloadDamagePerCharge };
+  };
+
+  const stateHpThresholdOf = (actor) => scalingOf(actor).stateHpThreshold;
+  const hornMaxHpOf = (actor) => scalingOf(actor).hornMaxHp;
+  const overloadPerChargeOf = (actor) => scalingOf(actor).overloadDamagePerCharge;
+
   const isHornActor = (actor) => Boolean(actor && getFlag(actor, "hornToken") === true);
 
   const isIceShardActor = (actor) => Boolean(actor && getFlag(actor, "iceShardToken") === true);
@@ -164,6 +215,84 @@
 
   const findItemByRole = (actor, role) =>
     actor?.items?.find((i) => foundry.utils.getProperty(i, `${FLAG}.role`) === role) ?? null;
+
+  const activitiesOf = (item) => {
+    const raw = item?.system?.activities;
+    if (!raw) return [];
+    if (typeof raw.contents !== "undefined") return [...raw.contents];
+    if (typeof raw === "object") return Object.values(raw);
+    return [];
+  };
+
+  const findActivity = (item, identifier) => {
+    const want = String(identifier ?? "");
+    if (!want || !item) return null;
+    return (
+      activitiesOf(item).find((a) => {
+        const id =
+          a?.midiProperties?.identifier ?? a?.identifier ?? a?.id ?? a?._id ?? "";
+        return String(id) === want;
+      }) ?? null
+    );
+  };
+
+  const tokenUuid = (token) =>
+    token?.document?.uuid ?? token?.uuid ?? token?.actor?.uuid ?? null;
+
+  const setActivityDamageType = (activity, type) => {
+    const parts = activity?.damage?.parts;
+    if (!parts) return;
+    for (const part of parts) {
+      if (!part) continue;
+      if (part.types instanceof Set) {
+        part.types.clear();
+        part.types.add(type);
+      } else if (Array.isArray(part.types)) {
+        part.types.length = 0;
+        part.types.push(type);
+      } else {
+        part.types = [type];
+      }
+      if ("type" in part) part.type = type;
+    }
+  };
+
+  /**
+   * Run a Midi/dnd5e activity so player owners roll saves via Midi (not GM rollSave).
+   * @returns {Promise<object|null>} Midi workflow when available
+   */
+  const useActivity = async (
+    item,
+    { identifier, targetUuids = [], midiOptions = {}, configure = false } = {},
+  ) => {
+    const activity = findActivity(item, identifier);
+    if (!activity) {
+      console.warn("Alatreon | activity not found", identifier, item?.name);
+      return null;
+    }
+    const options = {
+      midiOptions: {
+        targetUuids: targetUuids.filter(Boolean),
+        ...midiOptions,
+      },
+    };
+    try {
+      if (typeof MidiQOL?.completeActivityUse === "function") {
+        return await MidiQOL.completeActivityUse(
+          activity,
+          options,
+          { configure },
+          { create: true },
+        );
+      }
+      if (typeof activity.use === "function") {
+        return await activity.use(options, { configure }, { create: true });
+      }
+    } catch (err) {
+      console.error("Alatreon | useActivity failed", identifier, err);
+    }
+    return null;
+  };
 
   const activityIdentifier = (workflow) =>
     String(
@@ -207,23 +336,27 @@
     await actor.update({ [`flags.world.${NS}`]: next });
   };
 
-  const defaultHorns = () => ({
-    left: { hp: HORN_MAX_HP, broken: false },
-    right: { hp: HORN_MAX_HP, broken: false },
-  });
+  const defaultHorns = (actor) => {
+    const max = hornMaxHpOf(actor);
+    return {
+      left: { hp: max, broken: false },
+      right: { hp: max, broken: false },
+    };
+  };
 
   const hornsOf = (actor) => {
+    const max = hornMaxHpOf(actor);
     const h = getFlag(actor, "horns", null);
-    if (!h) return defaultHorns();
+    if (!h) return defaultHorns(actor);
     // Canonical shape: { left: { hp, broken }, right: { hp, broken } }
     if (h.left && typeof h.left === "object" && h.right && typeof h.right === "object") {
       return {
         left: {
-          hp: Math.max(0, Number(h.left.hp ?? HORN_MAX_HP) || 0),
+          hp: Math.max(0, Number(h.left.hp ?? max) || 0),
           broken: Boolean(h.left.broken),
         },
         right: {
-          hp: Math.max(0, Number(h.right.hp ?? HORN_MAX_HP) || 0),
+          hp: Math.max(0, Number(h.right.hp ?? max) || 0),
           broken: Boolean(h.right.broken),
         },
       };
@@ -231,11 +364,11 @@
     // Legacy flat shape from older actor JSON
     return {
       left: {
-        hp: Math.max(0, Number(h.left ?? HORN_MAX_HP) || 0),
+        hp: Math.max(0, Number(h.left ?? max) || 0),
         broken: Boolean(h.leftBroken),
       },
       right: {
-        hp: Math.max(0, Number(h.right ?? HORN_MAX_HP) || 0),
+        hp: Math.max(0, Number(h.right ?? max) || 0),
         broken: Boolean(h.rightBroken),
       },
     };
@@ -444,31 +577,6 @@
       item,
     });
     return roll;
-  };
-
-  /** Player/NPC saves: always show the dnd5e Advantage / Normal / Disadvantage dialog. */
-  const rollSave = async (actor, ability, dc) => {
-    if (!actor) return { success: true, total: dc };
-    const ablLabel = CONFIG.DND5E?.abilities?.[ability]?.label ?? String(ability).toUpperCase();
-    let result;
-    if (typeof actor.rollSavingThrow === "function") {
-      result = await actor.rollSavingThrow(
-        { ability, target: dc },
-        { configure: true },
-        { data: { flavor: `${ablLabel} saving throw (DC ${dc})` } },
-      );
-    } else if (typeof actor.rollAbilitySave === "function") {
-      result = await actor.rollAbilitySave(ability, {
-        targetValue: dc,
-        fastForward: false,
-        chatMessage: true,
-      });
-    }
-    if (result == null) return { success: true, total: dc, cancelled: true };
-    const roll = Array.isArray(result) ? result[0] : result;
-    if (!roll) return { success: true, total: dc, cancelled: true };
-    const total = Number(roll?.total ?? roll?._total ?? 0);
-    return { success: total >= dc, total, roll };
   };
 
   const failedSaveTokens = (workflow) => {
@@ -874,7 +982,7 @@
     await setActiveState(actor, next, { announce: true, resetHpLost: true });
     await chat(
       actor,
-      `<p><em>Manual Active State</em> → <strong>${STATE_LABEL[next]}</strong>. State HP threshold reset to 0/${STATE_HP_THRESHOLD}. Cycle order remains <strong>${cycle}</strong> (${CYCLE_ORDERS[cycle].join(" → ")}); auto-advance continues from slot ${nextIndex + 1}/${CYCLE_ORDERS[cycle].length}${wrapped ? " (new cycle wrap)" : ""}.</p>`,
+      `<p><em>Manual Active State</em> → <strong>${STATE_LABEL[next]}</strong>. State HP threshold reset to 0/${stateHpThresholdOf(actor)}. Cycle order remains <strong>${cycle}</strong> (${CYCLE_ORDERS[cycle].join(" → ")}); auto-advance continues from slot ${nextIndex + 1}/${CYCLE_ORDERS[cycle].length}${wrapped ? " (new cycle wrap)" : ""}.</p>`,
       { whisperGM: true },
     );
     if (escaton.ready) {
@@ -936,23 +1044,13 @@
       return;
     }
 
-    const roll = await evaluateDamageRoll(BURST_FORMULA, damageType);
-    await roll.toMessage({
-      speaker: speakerFor(actor),
-      flavor: `Element Burst (${damageType})`,
-    });
-    const full = Number(roll.total) || 0;
+    const activity = findActivity(item, "element-burst");
+    if (activity) setActivityDamageType(activity, damageType);
 
-    for (const token of targets) {
-      const save = await rollSave(token.actor, "dex", BURST_DC);
-      const amount = save.success ? Math.floor(full / 2) : full;
-      await applyTypedDamageToTokens({
-        tokens: [token],
-        amount,
-        type: damageType,
-        item,
-      });
-    }
+    await useActivity(item, {
+      identifier: "element-burst",
+      targetUuids: targets.map(tokenUuid),
+    });
 
     await chat(
       actor,
@@ -1061,7 +1159,8 @@
 
   const applyOverload = async (actor, elementalAmount) => {
     const amount = Number(elementalAmount) || 0;
-    const gained = Math.floor(amount / OVERLOAD_DAMAGE_PER_CHARGE);
+    const perCharge = overloadPerChargeOf(actor);
+    const gained = Math.floor(amount / perCharge);
     if (gained <= 0) return 0;
     const before = overloadChargesOf(actor);
     if (before >= OVERLOAD_MAX) {
@@ -1077,16 +1176,17 @@
       actor,
       `<p><strong>Elemental Overload:</strong> +${applied} (now <strong>${charges}/${OVERLOAD_MAX}</strong> charge${charges === 1 ? "" : "s"})${
         charges >= OVERLOAD_MAX ? " — <strong>capped</strong> (Escaton overload reduction maxed)." : ""
-      }.</p>`,
+      }. <em>(${perCharge} elemental per charge)</em></p>`,
     );
     return charges;
   };
 
   const tallyStateHp = async (actor, amount) => {
+    const threshold = stateHpThresholdOf(actor);
     let lost = (Number(getFlag(actor, "stateHpLost", 0)) || 0) + (Number(amount) || 0);
     let advanced = 0;
-    while (lost >= STATE_HP_THRESHOLD) {
-      lost -= STATE_HP_THRESHOLD;
+    while (lost >= threshold) {
+      lost -= threshold;
       advanced += 1;
       // advanceState → setActiveState resets stateHpLost to 0; keep residual in local `lost`
       await advanceState(actor);
@@ -1119,21 +1219,106 @@
 
   // ─── Horns ───
 
-  const hornActorsForBoss = (boss) =>
+  const emptyHornRefs = () => ({
+    left: { actorId: null, tokenId: null, sceneId: null },
+    right: { actorId: null, tokenId: null, sceneId: null },
+  });
+
+  const hornRefsOf = (boss) => {
+    const raw = getFlag(boss, "hornRefs", null) ?? {};
+    const side = (key) => ({
+      actorId: raw?.[key]?.actorId || null,
+      tokenId: raw?.[key]?.tokenId || null,
+      sceneId: raw?.[key]?.sceneId || null,
+    });
+    return { left: side("left"), right: side("right") };
+  };
+
+  /** Fallback discovery when persisted refs are missing or stale. */
+  const discoverHornActors = (boss) =>
     (game.actors?.contents ?? []).filter(
       (a) => isHornActor(a) && getFlag(a, "bossId") === boss?.id,
     );
 
-  const hornTokensForBoss = (boss) =>
+  const discoverHornTokens = (boss) =>
     (canvas?.tokens?.placeables ?? []).filter(
       (t) => t.actor && isHornActor(t.actor) && getFlag(t.actor, "bossId") === boss?.id,
     );
 
-  const findHornToken = (boss, side) =>
-    hornTokensForBoss(boss).find((t) => getFlag(t.actor, "hornSide") === side) ?? null;
+  const findHornActor = (boss, side) => {
+    const key = side === "right" ? "right" : "left";
+    const ref = hornRefsOf(boss)[key];
+    if (ref.actorId) {
+      const a = game.actors?.get(ref.actorId);
+      if (a && isHornActor(a) && getFlag(a, "bossId") === boss?.id) return a;
+    }
+    return discoverHornActors(boss).find((a) => getFlag(a, "hornSide") === key) ?? null;
+  };
 
-  const findHornActor = (boss, side) =>
-    hornActorsForBoss(boss).find((a) => getFlag(a, "hornSide") === side) ?? null;
+  const findHornToken = (boss, side) => {
+    const key = side === "right" ? "right" : "left";
+    const ref = hornRefsOf(boss)[key];
+    if (ref.tokenId) {
+      const scene =
+        (ref.sceneId && game.scenes?.get(ref.sceneId)) || canvas?.scene || null;
+      const doc = scene?.tokens?.get(ref.tokenId);
+      if (doc) return doc.object ?? canvas?.tokens?.get(ref.tokenId) ?? null;
+      const placeable = canvas?.tokens?.get(ref.tokenId);
+      if (placeable) return placeable;
+    }
+    if (ref.actorId) {
+      const byActor =
+        (canvas?.tokens?.placeables ?? []).find((t) => t.actor?.id === ref.actorId) ?? null;
+      if (byActor) return byActor;
+    }
+    return (
+      discoverHornTokens(boss).find((t) => getFlag(t.actor, "hornSide") === key) ?? null
+    );
+  };
+
+  const hornActorsForBoss = (boss) => {
+    const out = [];
+    const seen = new Set();
+    for (const side of ["left", "right"]) {
+      const a = findHornActor(boss, side);
+      if (a && !seen.has(a.id)) {
+        seen.add(a.id);
+        out.push(a);
+      }
+    }
+    for (const a of discoverHornActors(boss)) {
+      if (!seen.has(a.id)) {
+        seen.add(a.id);
+        out.push(a);
+      }
+    }
+    return out;
+  };
+
+  const hornTokensForBoss = (boss) => {
+    const out = [];
+    const seen = new Set();
+    for (const side of ["left", "right"]) {
+      const t = findHornToken(boss, side);
+      const id = t?.id ?? t?.document?.id;
+      if (t && id && !seen.has(id)) {
+        seen.add(id);
+        out.push(t);
+      }
+    }
+    for (const t of discoverHornTokens(boss)) {
+      const id = t.id;
+      if (id && !seen.has(id)) {
+        seen.add(id);
+        out.push(t);
+      }
+    }
+    return out;
+  };
+
+  const persistHornRefs = async (boss, refs) => {
+    await patchState(boss, { hornRefs: refs ?? emptyHornRefs() });
+  };
 
   const hornTraitPayload = (state) => {
     const di = new Set(["poison", "psychic"]);
@@ -1160,11 +1345,12 @@
   const syncHornTokenHp = async (boss, side, hp, { broken = false } = {}) => {
     const hornActor = findHornActor(boss, side);
     if (!hornActor) return;
+    const hornMax = hornMaxHpOf(boss);
     suppressHornSync.add(hornActor.id);
     await hornActor
       .update({
         "system.attributes.hp.value": broken ? 0 : Math.max(0, Number(hp) || 0),
-        "system.attributes.hp.max": HORN_MAX_HP,
+        "system.attributes.hp.max": hornMax,
       })
       .catch(() => null);
     suppressHornSync.delete(hornActor.id);
@@ -1174,21 +1360,46 @@
   };
 
   const clearHornTokens = async (boss) => {
-    const scene = canvas?.scene;
-    const tokens = hornTokensForBoss(boss);
-    if (scene && tokens.length) {
-      await scene.deleteEmbeddedDocuments(
-        "Token",
-        tokens.map((t) => t.id),
-      );
+    const refs = hornRefsOf(boss);
+    const tokenIdsByScene = new Map();
+    const addToken = (sceneId, tokenId) => {
+      if (!sceneId || !tokenId) return;
+      if (!tokenIdsByScene.has(sceneId)) tokenIdsByScene.set(sceneId, new Set());
+      tokenIdsByScene.get(sceneId).add(tokenId);
+    };
+
+    for (const side of ["left", "right"]) {
+      const r = refs[side];
+      addToken(r.sceneId || canvas?.scene?.id, r.tokenId);
     }
-    const actors = hornActorsForBoss(boss);
-    if (actors.length) {
-      await Actor.deleteDocuments(actors.map((a) => a.id));
+    for (const t of hornTokensForBoss(boss)) {
+      const tokenId = t.id ?? t.document?.id;
+      const sceneId = t.document?.parent?.id ?? t.scene?.id ?? canvas?.scene?.id;
+      addToken(sceneId, tokenId);
     }
+
+    for (const [sceneId, ids] of tokenIdsByScene) {
+      const scene = game.scenes?.get(sceneId);
+      if (!scene || !ids.size) continue;
+      const existing = [...ids].filter((id) => scene.tokens?.has(id));
+      if (existing.length) {
+        await scene.deleteEmbeddedDocuments("Token", existing).catch(() => null);
+      }
+    }
+
+    const actorIds = new Set();
+    for (const side of ["left", "right"]) {
+      if (refs[side].actorId) actorIds.add(refs[side].actorId);
+    }
+    for (const a of hornActorsForBoss(boss)) actorIds.add(a.id);
+    const toDelete = [...actorIds].filter((id) => game.actors?.get(id));
+    if (toDelete.length) await Actor.deleteDocuments(toDelete).catch(() => null);
+
+    await persistHornRefs(boss, emptyHornRefs());
   };
 
-  const buildHornActorData = (boss, side, { hp = HORN_MAX_HP, broken = false } = {}) => {
+  const buildHornActorData = (boss, side, { hp, broken = false } = {}) => {
+    const hornMax = hornMaxHpOf(boss);
     const label = side === "left" ? "Left" : "Right";
     const state = activeStateOf(boss) ?? "fire";
     const traits = hornTraitPayload(state);
@@ -1208,8 +1419,8 @@
         attributes: {
           ac: { flat: HORN_AC, calc: "flat", formula: "" },
           hp: {
-            value: broken ? 0 : Math.max(0, Number(hp) || 0),
-            max: HORN_MAX_HP,
+            value: broken ? 0 : Math.max(0, Number(hp ?? hornMax) || 0),
+            max: hornMax,
             temp: 0,
             tempmax: 0,
             formula: "",
@@ -1235,7 +1446,7 @@
         },
         details: {
           biography: {
-            value: `<p>One of Alatreon's horns. AC ${HORN_AC}; ${HORN_MAX_HP} HP. Resistant to non-siege bludgeoning, piercing, and slashing. Immune to poison, psychic, and the damage immunity of Alatreon's current Active State. Damage here does not harm Alatreon. Breaking a horn reverts Alatreon to its previous Active State and reduces Escaton Judgement by 10d6.</p>`,
+            value: `<p>One of Alatreon's horns. AC ${HORN_AC}; ${hornMax} HP. Resistant to non-siege bludgeoning, piercing, and slashing. Immune to poison, psychic, and the damage immunity of Alatreon's current Active State. Damage here does not harm Alatreon. Breaking a horn reverts Alatreon to its previous Active State and reduces Escaton Judgement by 10d6.</p>`,
             public: "",
           },
           alignment: "Unaligned",
@@ -1383,18 +1594,36 @@
       };
     });
 
-    await canvas.scene.createEmbeddedDocuments("Token", tokenPayloads);
+    const createdTokens = await canvas.scene.createEmbeddedDocuments("Token", tokenPayloads);
 
+    const hornRefs = emptyHornRefs();
+    for (const { side, hornActor } of createdActors) {
+      const tokDoc =
+        createdTokens.find((t) => t.actorId === hornActor.id) ??
+        createdTokens.find(
+          (t) => foundry.utils.getProperty(t, `${FLAG}.hornSide`) === side,
+        ) ??
+        null;
+      hornRefs[side] = {
+        actorId: hornActor.id,
+        tokenId: tokDoc?.id ?? null,
+        sceneId: canvas.scene.id,
+      };
+    }
+    await persistHornRefs(actor, hornRefs);
+
+    const hornMax = hornMaxHpOf(actor);
     const left = horns.left.broken
       ? "BROKEN"
-      : `${horns.left.hp}/${HORN_MAX_HP}`;
+      : `${horns.left.hp}/${hornMax}`;
     const right = horns.right.broken
       ? "BROKEN"
-      : `${horns.right.hp}/${HORN_MAX_HP}`;
+      : `${horns.right.hp}/${hornMax}`;
     await chat(
       actor,
       `<p><strong>Horns deployed</strong> as two tokens (icon Foundry core, elevation <strong>${HORN_ELEVATION_FT} ft</strong>). AC ${HORN_AC}; Left ${left}; Right ${right}.</p>
-       <p>Attack the horn tokens directly. Breaking a horn reverts the previous Active State and weakens Escaton Judgement (−10d6 per broken horn).</p>`,
+       <p>Attack the horn tokens directly. Breaking a horn reverts the previous Active State and weakens Escaton Judgement (−10d6 per broken horn).</p>
+       <p><em>Boss tracks horn actor/token ids in <code>flags.world.alatreon.hornRefs</code>.</em></p>`,
     );
   };
 
@@ -1425,7 +1654,7 @@
         boss,
         `<p><strong>${side === "left" ? "Left" : "Right"} Horn:</strong> ${
           dmg > 0 ? `${dmg} damage → ` : ""
-        }<strong>${horn.hp}/${HORN_MAX_HP}</strong>${broke ? " — <strong>broken!</strong>" : ""}</p>`,
+        }<strong>${horn.hp}/${hornMaxHpOf(boss)}</strong>${broke ? " — <strong>broken!</strong>" : ""}</p>`,
       );
     }
     if (broke) await revertToPreviousState(boss);
@@ -1436,12 +1665,13 @@
     const key = String(side || "").toLowerCase() === "right" ? "right" : "left";
     const horns = hornsOf(actor);
     const horn = horns[key];
+    const hornMax = hornMaxHpOf(actor);
     if (!horn || horn.broken) {
       ui.notifications?.info(`Alatreon ${key} horn is already broken.`);
       return;
     }
     const dmg = Math.max(0, Number(amount) || 0);
-    const nextHp = Math.max(0, Number(horn.hp ?? HORN_MAX_HP) - dmg);
+    const nextHp = Math.max(0, Number(horn.hp ?? hornMax) - dmg);
     horn.hp = nextHp;
     let broke = false;
     if (nextHp <= 0) {
@@ -1453,7 +1683,7 @@
     await syncHornTokenHp(actor, key, horn.hp, { broken: broke });
     await chat(
       actor,
-      `<p><strong>${key === "left" ? "Left" : "Right"} Horn:</strong> ${dmg} damage → <strong>${horn.hp}/${HORN_MAX_HP}</strong>${
+      `<p><strong>${key === "left" ? "Left" : "Right"} Horn:</strong> ${dmg} damage → <strong>${horn.hp}/${hornMax}</strong>${
         broke ? " — <strong>broken!</strong>" : ""
       }</p>`,
     );
@@ -1462,10 +1692,11 @@
 
   const promptDamageHorn = async (actor) => {
     const horns = hornsOf(actor);
+    const hornMax = hornMaxHpOf(actor);
     const content = `
-      <p>Which horn takes damage? (AC ${HORN_AC}; ${HORN_MAX_HP} HP; does not damage Alatreon.)</p>
-      <p>Left: ${horns.left.broken ? "BROKEN" : `${horns.left.hp}/${HORN_MAX_HP}`} · Right: ${
-        horns.right.broken ? "BROKEN" : `${horns.right.hp}/${HORN_MAX_HP}`
+      <p>Which horn takes damage? (AC ${HORN_AC}; ${hornMax} HP; does not damage Alatreon.)</p>
+      <p>Left: ${horns.left.broken ? "BROKEN" : `${horns.left.hp}/${hornMax}`} · Right: ${
+        horns.right.broken ? "BROKEN" : `${horns.right.hp}/${hornMax}`
       }</p>
       <div class="form-group"><label>Damage</label><input type="number" name="amount" value="10" min="0" step="1"/></div>
     `;
@@ -1514,63 +1745,104 @@
     );
   };
 
-  const releaseEscaton = async (actor) => {
-    const escaton = foundry.utils.deepClone(getFlag(actor, "escaton", {}) ?? {});
-    const overload = overloadChargesOf(actor);
-    const hornsBroken = brokenHornCount(actor);
-    const dice = Math.max(0, ESCATON_BASE_DICE - 10 * hornsBroken - overload);
-    const origin = bossTokens(actor)[0];
-    const item = findItemByRole(actor, "escatonJudgement");
+  let escatonReleaseBusy = false;
 
-    escaton.charging = false;
-    escaton.ready = false;
-    escaton.usedThisCycle = true;
-    await patchState(actor, { escaton });
-    await setOverloadCharges(actor, 0);
-    await setEffectDisabled(actor, "escatonCharging", true);
+  const releaseEscaton = async (actor, workflow = null) => {
+    // completeActivityUse re-enters via ItemMacro onUse — ignore nested call.
+    if (escatonReleaseBusy) return;
+    escatonReleaseBusy = true;
+    try {
+      const escaton = foundry.utils.deepClone(getFlag(actor, "escaton", {}) ?? {});
+      const overload = overloadChargesOf(actor);
+      const hornsBroken = brokenHornCount(actor);
+      const dice = Math.max(0, ESCATON_BASE_DICE - 10 * hornsBroken - overload);
+      const origin = bossTokens(actor)[0];
+      const item = findItemByRole(actor, "escatonJudgement");
 
-    if (dice <= 0) {
+      escaton.charging = false;
+      escaton.ready = false;
+      escaton.usedThisCycle = true;
+      await patchState(actor, { escaton });
+      await setOverloadCharges(actor, 0);
+      await setEffectDisabled(actor, "escatonCharging", true);
+
+      if (dice <= 0) {
+        await chat(
+          actor,
+          `<p><strong>Escaton Release</strong> — energy collapses to nothing (0d6 after horns/overload). Overload charges reset to 0.</p>`,
+        );
+        return;
+      }
+
+      let wf = workflow;
+      if (!wf) {
+        const targets = origin ? tokensInRange(origin, ESCATON_RANGE_FT) : [];
+        wf = await useActivity(item, {
+          identifier: "escaton-release",
+          targetUuids: targets.map(tokenUuid),
+        });
+      }
+
+      const roll = await evaluateDamageRoll(`${dice}d6`, "force");
+      await roll.toMessage({
+        speaker: speakerFor(actor),
+        flavor: `Escaton Judgement Release (${dice}d6 force)`,
+      });
+      const full = Number(roll.total) || 0;
+
+      const failed = new Set(
+        failedSaveTokens(wf).map((t) => t.id ?? t.document?.id).filter(Boolean),
+      );
+      const byId = new Map();
+      for (const token of [
+        ...(wf?.targets ?? []),
+        ...failedSaveTokens(wf),
+        ...(wf?.saves ?? []),
+      ]) {
+        const id = token?.id ?? token?.document?.id;
+        if (!id || !token?.actor || byId.has(id)) continue;
+        byId.set(id, token);
+      }
+      if (!byId.size && origin) {
+        for (const token of tokensInRange(origin, ESCATON_RANGE_FT)) {
+          const id = token.id ?? token.document?.id;
+          if (id) byId.set(id, token);
+        }
+      }
+
+      const hasSaveResults = Boolean(
+        failed.size || wf?.saves?.size || wf?.failedSaves?.size || wf?.saves?.length,
+      );
+      const tierLines = [];
+      for (const token of byId.values()) {
+        const tid = token.id ?? token.document?.id;
+        const saved = hasSaveResults ? !failed.has(tid) : false;
+        const amount = saved ? Math.floor(full / 2) : full;
+        const tier = escatonForceTier(token.actor);
+        const adjusted = escatonAdjustedForce(amount, tier);
+        await applyTypedDamageToTokens({
+          tokens: [token],
+          amount: adjusted,
+          type: "force",
+          item,
+          ignoreTraits: true,
+        });
+        const name = token.name ?? token.actor?.name ?? "Target";
+        tierLines.push(
+          `<li><strong>${name}</strong>: ${amount} → <strong>${adjusted}</strong> (${ESCATON_TIER_NOTE[tier]}; save ${saved ? "success" : "fail"})</li>`,
+        );
+      }
+
       await chat(
         actor,
-        `<p><strong>Escaton Release</strong> — energy collapses to nothing (0d6 after horns/overload). Overload charges reset to 0.</p>`,
-      );
-      return;
-    }
-
-    const targets = origin ? tokensInRange(origin, ESCATON_RANGE_FT) : [];
-    const roll = await evaluateDamageRoll(`${dice}d6`, "force");
-    await roll.toMessage({
-      speaker: speakerFor(actor),
-      flavor: `Escaton Judgement Release (${dice}d6 force)`,
-    });
-    const full = Number(roll.total) || 0;
-
-    const tierLines = [];
-    for (const token of targets) {
-      const save = await rollSave(token.actor, "dex", ESCATON_DC);
-      const amount = save.success ? Math.floor(full / 2) : full;
-      const tier = escatonForceTier(token.actor);
-      const adjusted = escatonAdjustedForce(amount, tier);
-      await applyTypedDamageToTokens({
-        tokens: [token],
-        amount: adjusted,
-        type: "force",
-        item,
-        ignoreTraits: true,
-      });
-      const name = token.name ?? token.actor?.name ?? "Target";
-      tierLines.push(
-        `<li><strong>${name}</strong>: ${amount} → <strong>${adjusted}</strong> (${ESCATON_TIER_NOTE[tier]}; save ${save.success ? "success" : "fail"})</li>`,
-      );
-    }
-
-    await chat(
-      actor,
-      `<p><strong>Escaton Judgement</strong> detonates (${dice}d6 force, DC ${ESCATON_DC} Dex half, ${ESCATON_RANGE_FT} ft). Horns broken: ${hornsBroken}; overload spent: ${overload}. Charges reset to 0.</p>
+        `<p><strong>Escaton Judgement</strong> detonates (${dice}d6 force, DC ${ESCATON_DC} Dex half, ${ESCATON_RANGE_FT} ft). Horns broken: ${hornsBroken}; overload spent: ${overload}. Charges reset to 0.</p>
        <p><em>Force traits invert:</em> immunity → resistance; resistance → normal; otherwise vulnerability.</p>
        ${tierLines.length ? `<ul>${tierLines.join("")}</ul>` : ""}
        <p><em>GM:</em> obliterate terrain above ground level in the area.</p>`,
-    );
+      );
+    } finally {
+      escatonReleaseBusy = false;
+    }
   };
 
   // ─── Zones ───
@@ -1700,23 +1972,13 @@
     const tpls = hazardTemplates("frostBreath");
     if (!tpls.length || !tpls.some((tpl) => tokenInTemplate(token, tpl))) return;
     const boss = bossActors()[0];
-    const save = await rollSave(token.actor, "con", MELEE_DC);
-    const roll = await evaluateDamageRoll("5d6", "cold");
-    await roll.toMessage({
-      speaker: speakerFor(boss ?? token.actor),
-      flavor: "Frost Breath (start of turn)",
+    const item = findItemByRole(boss, "frostBreath");
+    const uuid = tokenUuid(token);
+    if (!item || !uuid) return;
+    await useActivity(item, {
+      identifier: "frost-zone-turn",
+      targetUuids: [uuid],
     });
-    const full = Number(roll.total) || 0;
-    const amount = save.success ? Math.floor(full / 2) : full;
-    await applyTypedDamageToTokens({
-      tokens: [token],
-      amount,
-      type: "cold",
-      item: findItemByRole(boss, "frostBreath"),
-    });
-    if (!save.success && boss) {
-      await applyEffectKindToActor(boss, token.actor, "iceblight", { durationSeconds: 60 });
-    }
   };
 
   const ignitedStartOfTurn = async (token) => {
@@ -1761,29 +2023,7 @@
   };
 
   // ─── Melee / blight riders ───
-
-  const onBiteOrClaws = async (workflow) => {
-    const actor = workflow.actor;
-    for (const token of hitTokens(workflow)) {
-      if (!token.actor) continue;
-      const save = await rollSave(token.actor, "con", MELEE_DC);
-      if (save.success) continue;
-      await applyEffectKindToActor(actor, token.actor, "dragonblight", { durationSeconds: 60 });
-      await chat(
-        actor,
-        `<p>${token.name} fails DC ${MELEE_DC} Con and is afflicted with <strong>dragonblight</strong> (1 minute).</p>`,
-      );
-    }
-  };
-
-  const onTail = async (workflow) => {
-    for (const token of hitTokens(workflow)) {
-      if (!token.actor) continue;
-      const save = await rollSave(token.actor, "str", MELEE_DC);
-      if (save.success) continue;
-      await applyProne([token]);
-    }
-  };
+  // Bite / Claws / Tail on-hit saves are Midi other-activities on the weapons.
 
   const onBlightSaveAction = async (workflow, role) => {
     const meta = BLIGHT_BY_ROLE[role];
@@ -2154,6 +2394,64 @@
 
   // ─── onUse ───
 
+  const applyHuntersQuantity = async (actor, count) => {
+    if (!isBoss(actor)) return;
+    const hunters = Math.min(6, Math.max(1, Math.floor(Number(count) || 3)));
+    const prev = scalingOf(actor);
+    const oldHornMax = prev.hornMaxHp;
+    const oldBossMax = Number(actor.system?.attributes?.hp?.max) || prev.bossMaxHp;
+    const oldBossValue = Number(actor.system?.attributes?.hp?.value) || oldBossMax;
+
+    await patchState(actor, { huntersQuantity: hunters });
+    const next = scalingOf(actor);
+
+    const ratio = oldBossMax > 0 ? oldBossValue / oldBossMax : 1;
+    const newValue = Math.max(0, Math.round(next.bossMaxHp * ratio));
+    await actor.update({
+      "system.attributes.hp.max": next.bossMaxHp,
+      "system.attributes.hp.value": newValue,
+    });
+
+    const horns = hornsOf(actor);
+    for (const side of ["left", "right"]) {
+      const horn = horns[side];
+      if (horn.broken) {
+        horn.hp = 0;
+        continue;
+      }
+      const hRatio = oldHornMax > 0 ? Number(horn.hp) / oldHornMax : 1;
+      horn.hp = Math.max(0, Math.min(next.hornMaxHp, Math.round(next.hornMaxHp * hRatio)));
+    }
+    await patchState(actor, { horns, stateHpLost: 0, huntersQuantity: hunters });
+
+    for (const side of ["left", "right"]) {
+      await syncHornTokenHp(actor, side, horns[side].hp, {
+        broken: Boolean(horns[side].broken),
+      });
+    }
+
+    const multLabel =
+      hunters <= 3
+        ? "×1 (max HP)"
+        : hunters === 4
+          ? "×1.5 (max + 50%)"
+          : hunters === 5
+            ? "×2"
+            : "×2.5";
+
+    await chat(
+      actor,
+      `<p><strong>Hunters Quantity:</strong> <strong>${hunters}</strong> (${multLabel}).</p>
+       <ul>
+         <li>Boss HP → <strong>${newValue}/${next.bossMaxHp}</strong></li>
+         <li>Active State threshold → <strong>${next.stateHpThreshold}</strong> HP</li>
+         <li>Horn HP → <strong>${next.hornMaxHp}</strong> each</li>
+         <li>Elemental Overload → 1 charge per <strong>${next.overloadDamagePerCharge}</strong> fire/cold/lightning</li>
+       </ul>
+       <p><em>State HP lost counter reset to 0. State threshold and horns scale as ~${BASE_STATE_HP_THRESHOLD}/${BASE_BOSS_HP} and ~${BASE_HORN_MAX_HP}/${BASE_BOSS_HP} of boss max HP. Overload uses a soft curve (15 / 17 / 19 / 20 by hunters; max 20).</em></p>`,
+    );
+  };
+
   const onUse = async (payload) => {
     if (!isActiveGM()) return;
     const workflow = payload?.workflow ?? payload;
@@ -2180,16 +2478,21 @@
         else if (identifier === "set-ice-state") await manualSetState(actor, "ice");
         else if (identifier === "set-dragon-state") await manualSetState(actor, "dragon");
         break;
+      case "huntersQuantity": {
+        const match = String(identifier).match(/hunters-([1-6])/);
+        if (match) await applyHuntersQuantity(actor, Number(match[1]));
+        break;
+      }
       case "horns":
         if (identifier === "apply-horn-damage") await promptDamageHorn(actor);
         else await spawnHornTokens(actor);
         break;
       case "elementBurst":
-        await elementBurst(actor, activeStateOf(actor) ?? "fire");
+        // Midi save activity already resolved (sheet or completeActivityUse).
         break;
       case "escatonJudgement":
         if (identifier === "release" || identifier === "escaton-release") {
-          await releaseEscaton(actor);
+          await releaseEscaton(actor, workflow);
         } else {
           await startEscatonCharge(actor);
         }
@@ -2199,10 +2502,8 @@
         break;
       case "bite":
       case "claws":
-        await onBiteOrClaws(workflow);
-        break;
       case "tail":
-        await onTail(workflow);
+        // On-hit Con/Str saves + blight/prone are Midi other-activities.
         break;
       case "waterBreath":
       case "arcLightning":
@@ -2210,6 +2511,7 @@
         await onBlightSaveAction(workflow, role);
         break;
       case "frostBreath":
+        if (identifier === "frost-zone-turn") break;
         await onFrostBreath(workflow);
         break;
       case "scorchedEarth":
@@ -2460,6 +2762,12 @@
         await mutateBreathDamageType(workflow);
       }
 
+      if (role === "elementBurst") {
+        const type = STATE_BURST_TYPE[activeStateOf(actor) ?? "fire"] ?? "fire";
+        workflow.defaultDamageType = type;
+        if (workflow.activity) setActivityDamageType(workflow.activity, type);
+      }
+
       // Escaton Charge / Release are intentionally ungated — GM may use anytime.
       // Mythic state matching is advisory only (see Active State chat / AE notes).
 
@@ -2479,9 +2787,14 @@
     manualSetState,
     advanceState,
     startCycle,
+    applyHuntersQuantity,
+    scalingOf,
     damageHorn,
     spawnHornTokens,
     clearHornTokens,
+    hornRefsOf,
+    findHornActor,
+    findHornToken,
     clearIceShardTokens,
     revertToPreviousState,
     applyOverload,

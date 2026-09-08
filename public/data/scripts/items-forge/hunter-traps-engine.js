@@ -120,6 +120,13 @@
   const rollSave = async (actor, ability, dc, { advantage = false } = {}) => {
     const key = ability === "str" ? "str" : "con";
     const label = key === "str" ? "Strength" : "Constitution";
+    const api = globalThis.__amellwindPlayerSaves;
+    if (api?.rollSave) {
+      return api.rollSave(actor, key, dc, {
+        advantage,
+        flavor: `${label} saving throw vs DC ${dc}${advantage ? " (Advantage)" : ""}`,
+      });
+    }
     if (typeof actor.rollSavingThrow === "function") {
       const roll = await actor.rollSavingThrow({
         ability: key,

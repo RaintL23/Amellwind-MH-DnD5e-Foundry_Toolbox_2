@@ -21,8 +21,6 @@
   const LAVA_DAMAGE = "2d10";
   const BOILING_DAMAGE = "1d10";
   const STEAM_DAMAGE = "2d6";
-  const FIREBALL_DAMAGE = "11d6";
-  const FIREBALL_DC = 17;
   const FIREBALL_RADIUS_FT = 25;
   const FIREBALL_STAGGER_MS = 200;
   const pendingUntagged = [];
@@ -186,29 +184,60 @@
     return roll;
   };
 
-  /** Player/NPC saves: always show the dnd5e Advantage / Normal / Disadvantage dialog. */
-  const rollSave = async (actor, ability, dc) => {
-    if (!actor) return { success: true, total: dc };
-    const ablLabel = CONFIG.DND5E?.abilities?.[ability]?.label ?? String(ability).toUpperCase();
-    let result;
-    if (typeof actor.rollSavingThrow === "function") {
-      result = await actor.rollSavingThrow(
-        { ability, target: dc },
-        { configure: true },
-        { data: { flavor: `${ablLabel} saving throw (DC ${dc})` } },
-      );
-    } else if (typeof actor.rollAbilitySave === "function") {
-      result = await actor.rollAbilitySave(ability, {
-        targetValue: dc,
-        fastForward: false,
-        chatMessage: true,
-      });
+  const activitiesOf = (item) => {
+    const raw = item?.system?.activities;
+    if (!raw) return [];
+    if (typeof raw.contents !== "undefined") return [...raw.contents];
+    if (typeof raw === "object") return Object.values(raw);
+    return [];
+  };
+
+  const findActivity = (item, identifier) => {
+    const want = String(identifier ?? "");
+    if (!want || !item) return null;
+    return (
+      activitiesOf(item).find((a) => {
+        const id =
+          a?.midiProperties?.identifier ?? a?.identifier ?? a?.id ?? a?._id ?? "";
+        return String(id) === want;
+      }) ?? null
+    );
+  };
+
+  const tokenUuid = (token) =>
+    token?.document?.uuid ?? token?.uuid ?? token?.actor?.uuid ?? null;
+
+  const useActivity = async (
+    item,
+    { identifier, targetUuids = [], midiOptions = {}, configure = false } = {},
+  ) => {
+    const activity = findActivity(item, identifier);
+    if (!activity) {
+      console.warn("Dire Miralis | activity not found", identifier, item?.name);
+      return null;
     }
-    if (result == null) return { success: true, total: dc, cancelled: true };
-    const roll = Array.isArray(result) ? result[0] : result;
-    if (!roll) return { success: true, total: dc, cancelled: true };
-    const total = Number(roll?.total ?? roll?._total ?? 0);
-    return { success: total >= dc, total, roll };
+    const options = {
+      midiOptions: {
+        targetUuids: targetUuids.filter(Boolean),
+        ...midiOptions,
+      },
+    };
+    try {
+      if (typeof MidiQOL?.completeActivityUse === "function") {
+        return await MidiQOL.completeActivityUse(
+          activity,
+          options,
+          { configure },
+          { create: true },
+        );
+      }
+      if (typeof activity.use === "function") {
+        return await activity.use(options, { configure }, { create: true });
+      }
+    } catch (err) {
+      console.error("Dire Miralis | useActivity failed", identifier, err);
+    }
+    return null;
   };
 
   const hpMax = (actor) =>
@@ -1252,20 +1281,17 @@
       await chat(actor, `<p>Greater Fireball detonates — no creatures in the 25-foot radius.</p>`);
       return;
     }
-    const roll = await evaluateDamageRoll(FIREBALL_DAMAGE, "fire");
-    await roll.toMessage({ speaker: speakerFor(actor), flavor: "Calamity Rain — Greater Fireball" });
-    const full = Number(roll.total) || 0;
-    const half = Math.floor(full / 2);
-    for (const token of targets) {
-      const save = await rollSave(token.actor, "dex", FIREBALL_DC);
-      const dmg = save.success ? half : full;
-      await applyTypedDamageToTokens({
-        tokens: [token],
-        amount: dmg,
-        type: "fire",
-        item: item ?? null,
-      });
-    }
+    // Midi save activity — player owners roll. Skip recharge consume (Calamity Rain path).
+    await useActivity(item, {
+      identifier: "greater-fireball",
+      targetUuids: targets.map(tokenUuid),
+      midiOptions: {
+        consumeUsage: false,
+        consumeResource: false,
+        consumeQuantity: false,
+        consumeSpellSlot: false,
+      },
+    });
   };
 
   const detonateCalamity = async (actor) => {
