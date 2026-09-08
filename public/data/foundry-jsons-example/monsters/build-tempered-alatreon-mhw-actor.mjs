@@ -74,14 +74,16 @@ const midiProps = (identifier, extra = {}) => ({
 
 const envelope = (activity) => ({
   macroData: { name: "", command: "" },
-  ignoreTraits: { idi: false, idr: false, idv: false, ida: false },
+  ignoreTraits: activity.ignoreTraits ?? { idi: false, idr: false, idv: false, ida: false },
   isOverTimeFlag: false,
   overTimeProperties: {
     saveRemoves: true,
     preRemoveConditionText: "",
     postRemoveConditionText: "",
   },
-  otherActivityId: activity.type === "attack" ? "" : "none",
+  otherActivityId:
+    activity.otherActivityId
+    ?? (activity.type === "attack" ? "" : "none"),
   ...(activity.type === "attack"
     ? { otherActivityUuid: "", attackMode: "oneHanded", ammunition: "" }
     : {}),
@@ -383,6 +385,10 @@ const makeFeat = ({
   };
 };
 
+/**
+ * @param {object} [otherSave] Optional Midi "other activity" save after a hit:
+ *   { id, name, identifier, saveAbility, saveDc, effectIds, img? }
+ */
 const makeNaturalWeapon = ({
   seed,
   name,
@@ -398,9 +404,11 @@ const makeNaturalWeapon = ({
   extraParts = [],
   withMacro = false,
   effects = [],
+  otherSave = null,
   sort = 0,
 }) => {
   const atkId = stableId(`tempered-alatreon-mhw::act::${seed}`);
+  const saveId = otherSave?.id ?? null;
   const flags = withMacro
     ? midiItemacroFlags(name)
     : {
@@ -424,6 +432,44 @@ const makeNaturalWeapon = ({
           noConcentrationCheck: false,
         },
       };
+  const activities = {
+    [atkId]: attackActivity({
+      id: atkId,
+      name,
+      identifier,
+      img,
+      attackValue: "melee",
+      ability: "str",
+      includeBase: true,
+      parts: extraParts,
+      range: rangeBlock(null, "ft", `Reach ${reach} ft`),
+      target: targetBlock({ affectsType: "creature", affectsCount: "1" }),
+      otherActivityId: saveId ?? "",
+    }),
+  };
+  if (otherSave && saveId) {
+    activities[saveId] = saveActivity({
+      id: saveId,
+      name: otherSave.name,
+      identifier: otherSave.identifier,
+      activationType: "special",
+      img: otherSave.img ?? img,
+      range: rangeBlock(null, "ft", `Reach ${reach} ft`),
+      target: targetBlock({ affectsType: "creature", affectsCount: "1", prompt: false }),
+      saveAbility: otherSave.saveAbility,
+      saveDc: otherSave.saveDc,
+      parts: [],
+      onSave: "none",
+      effects: (otherSave.effectIds ?? []).map((effectId) => ({ _id: effectId, onSave: false })),
+      effectConditionText: "failedSave",
+      midiExtra: {
+        autoTargetAction: "never",
+        confirmTargets: "never",
+        automationOnly: true,
+      },
+      sort: 1000,
+    });
+  }
   return {
     _id: stableId(`tempered-alatreon-mhw::item::${seed}`),
     name,
@@ -468,20 +514,7 @@ const makeNaturalWeapon = ({
       ammunition: { type: "" },
       armor: { value: null },
       uses: emptyUses(),
-      activities: {
-        [atkId]: attackActivity({
-          id: atkId,
-          name,
-          identifier,
-          img,
-          attackValue: "melee",
-          ability: "str",
-          includeBase: true,
-          parts: extraParts,
-          range: rangeBlock(null, "ft", `Reach ${reach} ft`),
-          target: targetBlock({ affectsType: "creature", affectsCount: "1" }),
-        }),
-      },
+      activities,
     },
     effects,
     folder: null,
@@ -560,6 +593,7 @@ const attackActivity = ({
   consume = [],
   uses = emptyUses(),
   sort = 0,
+  otherActivityId = "",
 }) =>
   wrapActivity({
     _id: id,
@@ -575,6 +609,7 @@ const attackActivity = ({
     range,
     target,
     uses,
+    otherActivityId,
     midiProperties: midiProps(identifier),
     attack: {
       ability,
@@ -661,6 +696,7 @@ const IMG = {
   shards: "icons/magic/water/projectile-ice-faceted-blue.webp",
   blight: "icons/magic/unholy/strike-beam-blood-red-pink.webp",
   overload: "icons/magic/control/energy-stream-link-spiral-orange.webp",
+  hunters: "icons/skills/social/diplomacy-handshake-blue.webp",
 };
 
 const abilityBlock = (value, proficient = 0) => ({
@@ -709,9 +745,9 @@ const activeState = makeFeat({
 <li><strong>Ice State:</strong> immune to cold; vulnerable to fire. Token light turns blue.</li>
 </ul>
 <p>It begins combat in fire or ice. Fire cycle order: fire → dragon → ice → dragon (repeat). Ice cycle order: ice → dragon → fire → dragon (repeat).</p>
-<p>Whenever hit points are reduced by <strong>100</strong> in the current active state, it advances to the next state and uses <strong>Element Burst</strong> as a special reaction (even if it already used its reaction).</p>
-<p><em>Use Start Fire Cycle / Start Ice Cycle for the opening order. Use Set Fire / Ice / Dragon State to jump manually (resets the 100 HP threshold; keeps the current cycle and resyncs Escaton readiness).</em></p>`,
-  chat: `<p>Mythic active state (fire / dragon / ice). Advance after 100 HP lost in the current state; Element Burst special reaction. Manual Set State resets the threshold.</p>`,
+<p>Whenever hit points are reduced by the <strong>Active State threshold</strong> in the current active state (base <strong>100</strong> HP at 820 max; scales with <strong>Hunters Quantity</strong>), it advances to the next state and uses <strong>Element Burst</strong> as a special reaction (even if it already used its reaction).</p>
+<p><em>Use Start Fire Cycle / Start Ice Cycle for the opening order. Use Set Fire / Ice / Dragon State to jump manually (resets the state HP threshold; keeps the current cycle and resyncs Escaton readiness). Use Hunters Quantity before the fight to scale HP and thresholds.</em></p>`,
+  chat: `<p>Mythic active state (fire / dragon / ice). Advance after the state HP threshold is lost; Element Burst special reaction. Manual Set State resets the threshold. Threshold scales with Hunters Quantity.</p>`,
   activities: {
     [startFireCycleId]: utilityActivity({
       id: startFireCycleId,
@@ -830,9 +866,51 @@ const elementalOverload = makeFeat({
     max: "60",
     recovery: [],
   },
-  description: `<p>The alatreon gains <strong>1 charge</strong> for every <strong>15</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reduce Escaton Judgement by 1d6 each (max <strong>60</strong>, which zeroes Escaton from overload alone). Charges reset to 0 after <strong>Escaton Judgement</strong>.</p>
+  description: `<p>The alatreon gains <strong>1 charge</strong> for every chunk of elemental damage (fire, cold, or lightning) it takes from a single attack or spell. The chunk size follows a soft <strong>Hunters Quantity</strong> curve (not 1:1 with boss HP): <strong>15</strong> (1–3 hunters), <strong>17</strong> (4), <strong>19</strong> (5), <strong>20</strong> (6; cap). Charges reduce Escaton Judgement by 1d6 each (max <strong>60</strong>, which zeroes Escaton from overload alone). Charges reset to 0 after <strong>Escaton Judgement</strong>.</p>
 <p><em>Tracked on this feature's uses, on the token's second bar, and in <code>system.resources.overload</code> / <code>flags.world.alatreon.overloadCharges</code>.</em></p>`,
-  chat: `<p>1 charge per 15 fire/cold/lightning from a single hit (max 60). Shown on this feature and the token bar. Resets after Escaton Judgement.</p>`,
+  chat: `<p>1 charge per soft-scaled elemental chunk (15→17→19→20 by hunters; max 60 charges). Shown on this feature and the token bar. Resets after Escaton Judgement.</p>`,
+});
+
+const huntersQuantityIds = Object.fromEntries(
+  [1, 2, 3, 4, 5, 6].map((n) => [
+    n,
+    stableId(`tempered-alatreon-mhw::act::hunters-${n}`),
+  ]),
+);
+const huntersQuantity = makeFeat({
+  seed: "hunters-quantity",
+  name: "Hunters Quantity",
+  img: IMG.hunters,
+  identifier: "hunters-quantity",
+  role: "huntersQuantity",
+  sort: 99900,
+  withMacro: true,
+  description: `<p>Scale Tempered Alatreon for the hunting party before combat. Uses Amellwind solo-boss HP rules, plus a toolbox extension for 6 hunters:</p>
+<ul>
+<li><strong>1–3 hunters:</strong> max HP (820) — Amellwind "maximize" baseline</li>
+<li><strong>4 hunters:</strong> max HP + 50% (1230)</li>
+<li><strong>5 hunters:</strong> max HP × 2 (1640)</li>
+<li><strong>6 hunters:</strong> max HP × 2.5 (2050)</li>
+</ul>
+<p>Active State threshold and horn HP scale as fractions of boss max HP (100 / 820 and 200 / 820). Elemental Overload uses a soft curve: 15 (1–3) / 17 (4) / 19 (5) / 20 (6; cap).</p>
+<p><em>Run one of the Set N Hunters activities once after placing the token. Current HP and unbroken horns scale proportionally; the state HP-lost counter resets.</em></p>`,
+  chat: `<p>Apply Amellwind party HP scaling (1–5) + ×2.5 at 6. State threshold and horns scale with max HP; overload uses soft 15→20 curve.</p>`,
+  activities: Object.fromEntries(
+    [1, 2, 3, 4, 5, 6].map((n) => [
+      huntersQuantityIds[n],
+      utilityActivity({
+        id: huntersQuantityIds[n],
+        name: `Set ${n} Hunter${n === 1 ? "" : "s"}`,
+        identifier: `hunters-${n}`,
+        activationType: "special",
+        img: IMG.hunters,
+        range: rangeBlock(null, "self"),
+        target: targetBlock({ affectsType: "self", prompt: false }),
+        midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
+        sort: (n - 1) * 1000,
+      }),
+    ]),
+  ),
 });
 
 const hornsSpawnId = stableId("tempered-alatreon-mhw::act::spawn-horns");
@@ -847,14 +925,14 @@ const horns = makeFeat({
   withMacro: true,
   description: `<p>The alatreon has two horns that can be attacked and broken separately:</p>
 <ul>
-<li><strong>AC 30</strong>; <strong>200 hit points</strong> each.</li>
+<li><strong>AC 30</strong>; base <strong>200 hit points</strong> each at 820 boss HP (~200/820 of max). Scales with <strong>Hunters Quantity</strong>.</li>
 <li>Resistant to bludgeoning, piercing, and slashing that do not deal siege damage.</li>
 <li>Immune to poison, psychic, and the damage immunity from its current active state.</li>
 <li>Deployed horn tokens sit at <strong>15 ft elevation</strong> (harder for grounded melee).</li>
 </ul>
 <p>Damage to a horn does not damage the alatreon. When a horn is broken, the alatreon reverts to its previous active state and Escaton Judgement loses <strong>10d6</strong>.</p>
-<p><em>Use Deploy Horn Tokens to place both horns on the VTT (Foundry icon <code>icons/creatures/mammals/ox-bull-horned-glowing-orange.webp</code>). Attack those tokens, or use Apply Horn Damage as a manual fallback.</em></p>`,
-  chat: `<p>Two horns: AC 30, 200 HP each, 15 ft elevation. Breaking a horn reverts the previous active state and weakens Escaton.</p>`,
+<p><em>Use Deploy Horn Tokens to place both horns on the VTT (Foundry icon <code>icons/creatures/mammals/ox-bull-horned-glowing-orange.webp</code>). Attack those tokens, or use Apply Horn Damage as a manual fallback. Apply Hunters Quantity before deploying if the party is not 3 hunters. Deploy persists horn actor/token ids on the boss in <code>flags.world.alatreon.hornRefs</code>.</em></p>`,
+  chat: `<p>Two horns: AC 30, HP scales with Hunters Quantity (base 200 at 820 boss HP), 15 ft elevation. Breaking a horn reverts the previous active state and weakens Escaton.</p>`,
   activities: {
     [hornsSpawnId]: utilityActivity({
       id: hornsSpawnId,
@@ -982,6 +1060,7 @@ const multiattack = makeFeat({
 });
 
 const dragonblightBiteId = stableId("tempered-alatreon-mhw::fx::dragonblight-bite");
+const biteSaveId = stableId("tempered-alatreon-mhw::act::bite-dragonblight-save");
 const bite = makeNaturalWeapon({
   seed: "bite",
   name: "Bite",
@@ -997,8 +1076,17 @@ const bite = makeNaturalWeapon({
   sort: 200100,
   description: `<p><em>Melee Weapon Attack:</em> +19 to hit, reach 15 ft., one target.</p>
 <p><em>Hit:</em> <strong>28 (4d8 + 10)</strong> piercing damage plus <strong>3 (1d6)</strong> necrotic damage, and the target must succeed on a <strong>DC 27 Constitution</strong> saving throw or be afflicted with <strong>dragonblight</strong> for 1 minute. Repeat the save at the end of each of its turns, ending the blight on a success.</p>
-<p><em>On hit, the engine rolls DC 27 Con and applies Dragonblight on a fail.</em></p>`,
+<p><em>On hit, Midi runs the linked Constitution save (player owner); Dragonblight applies on a fail.</em></p>`,
   chat: `<p>+19 to hit, 4d8+10 piercing + 1d6 necrotic; DC 27 Con or dragonblight.</p>`,
+  otherSave: {
+    id: biteSaveId,
+    name: "Dragonblight Save",
+    identifier: "bite-dragonblight-save",
+    saveAbility: "con",
+    saveDc: 27,
+    effectIds: [dragonblightBiteId],
+    img: IMG.blight,
+  },
   effects: [
     makeEffect({
       id: dragonblightBiteId,
@@ -1017,6 +1105,7 @@ const bite = makeNaturalWeapon({
 });
 
 const dragonblightClawId = stableId("tempered-alatreon-mhw::fx::dragonblight-claw");
+const clawsSaveId = stableId("tempered-alatreon-mhw::act::claws-dragonblight-save");
 const claws = makeNaturalWeapon({
   seed: "claws",
   name: "Claws",
@@ -1032,8 +1121,17 @@ const claws = makeNaturalWeapon({
   sort: 200200,
   description: `<p><em>Melee Weapon Attack:</em> +19 to hit, reach 10 ft., one target.</p>
 <p><em>Hit:</em> <strong>17 (2d6 + 10)</strong> slashing damage plus <strong>3 (1d6)</strong> necrotic damage, and the target must succeed on a <strong>DC 27 Constitution</strong> saving throw or be afflicted with <strong>dragonblight</strong> for 1 minute. Repeat the save at the end of each of its turns, ending the blight on a success.</p>
-<p><em>On hit, the engine rolls DC 27 Con and applies Dragonblight on a fail.</em></p>`,
+<p><em>On hit, Midi runs the linked Constitution save (player owner); Dragonblight applies on a fail.</em></p>`,
   chat: `<p>+19 to hit, 2d6+10 slashing + 1d6 necrotic; DC 27 Con or dragonblight.</p>`,
+  otherSave: {
+    id: clawsSaveId,
+    name: "Dragonblight Save",
+    identifier: "claws-dragonblight-save",
+    saveAbility: "con",
+    saveDc: 27,
+    effectIds: [dragonblightClawId],
+    img: IMG.blight,
+  },
   effects: [
     makeEffect({
       id: dragonblightClawId,
@@ -1052,6 +1150,7 @@ const claws = makeNaturalWeapon({
 });
 
 const proneTailId = stableId("tempered-alatreon-mhw::fx::tail-prone");
+const tailSaveId = stableId("tempered-alatreon-mhw::act::tail-prone-save");
 const tail = makeNaturalWeapon({
   seed: "tail",
   name: "Tail",
@@ -1067,8 +1166,17 @@ const tail = makeNaturalWeapon({
   sort: 200300,
   description: `<p><em>Melee Weapon Attack:</em> +19 to hit, reach 20 ft., one target.</p>
 <p><em>Hit:</em> <strong>32 (4d10 + 10)</strong> bludgeoning damage, and the target must succeed on a <strong>DC 27 Strength</strong> saving throw or be knocked <strong>prone</strong>.</p>
-<p><em>On hit, the engine rolls DC 27 Str and applies Prone on a fail.</em></p>`,
+<p><em>On hit, Midi runs the linked Strength save (player owner); Prone applies on a fail.</em></p>`,
   chat: `<p>+19 to hit, 4d10+10 bludgeoning; DC 27 Str or prone.</p>`,
+  otherSave: {
+    id: tailSaveId,
+    name: "Knock Prone",
+    identifier: "tail-prone-save",
+    saveAbility: "str",
+    saveDc: 27,
+    effectIds: [proneTailId],
+    img: "systems/dnd5e/icons/svg/statuses/prone.svg",
+  },
   effects: [
     makeEffect({
       id: proneTailId,
@@ -1136,7 +1244,7 @@ const escatonJudgement = makeFeat({
 <p><strong>Release (action, next turn):</strong> Energy erupts in a <strong>600-foot-radius sphere</strong>. Terrain above ground level in the area is obliterated. Each creature must make a <strong>DC 30 Dexterity</strong> saving throw, taking <strong>210 (60d6)</strong> force damage on a failed save, or half as much on a success.</p>
 <p>Against this damage, force traits are inverted: <strong>immunity</strong> becomes resistance, <strong>resistance</strong> becomes normal damage, and creatures with neither are <strong>vulnerable</strong>.</p>
 <p>Reduce damage by <strong>10d6</strong> per broken horn, and by an additional <strong>#d6</strong> equal to Elemental Overload charges.</p>
-<p><em>Dice reduction uses horn/overload flags. Trait inversion is applied by the module script. Automation chat is whispered to GMs only.</em></p>`,
+<p><em>Release is a Midi save activity (player owners roll). The module sets dice from horns/overload and applies force-trait inversion after the save. Automation chat is whispered to GMs only.</em></p>`,
   chat: `<p>Charge, then Release anytime from the sheet: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload; force traits invert).</p>`,
   activities: {
     [escatonChargeId]: utilityActivity({
@@ -1150,7 +1258,7 @@ const escatonJudgement = makeFeat({
       midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
       sort: 0,
     }),
-    [escatonReleaseId]: utilityActivity({
+    [escatonReleaseId]: saveActivity({
       id: escatonReleaseId,
       name: "Release",
       identifier: "escaton-release",
@@ -1163,7 +1271,15 @@ const escatonJudgement = makeFeat({
         affectsType: "creature",
         prompt: false,
       }),
-      midiExtra: { autoTargetAction: "never", confirmTargets: "never" },
+      saveAbility: "dex",
+      saveDc: 30,
+      // No Midi damage — engine rolls Nd6 (horns/overload) and applies force-trait inversion.
+      parts: [],
+      onSave: "none",
+      midiExtra: {
+        autoTargetAction: "never",
+        confirmTargets: "never",
+      },
       sort: 1000,
     }),
   },
@@ -1199,7 +1315,7 @@ const elementBurst = makeFeat({
   withMacro: true,
   description: `<p>When the alatreon changes active states, it can use this special reaction to release elemental energy. Each creature in a <strong>30-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>24 (7d6)</strong> damage on a failed save, or half as much on a success.</p>
 <p>Damage type matches the <strong>new</strong> state: fire (fire), necrotic (dragon), cold (ice).</p>
-<p><em>May auto-fire on state change; type is set by the engine.</em></p>`,
+<p><em>May auto-fire on state change via Midi completeActivityUse; type is set by the engine. Player owners roll the Dex save.</em></p>`,
   chat: `<p>Special reaction on state change: 30-ft sphere, DC 27 Dex, 7d6 (type by new state).</p>`,
   activities: {
     [burstActId]: saveActivity({
@@ -1605,6 +1721,7 @@ const scorchedEarth = makeFeat({
 
 const iceblightFrostId = stableId("tempered-alatreon-mhw::fx::iceblight-frost");
 const frostBreathActId = stableId("tempered-alatreon-mhw::act::frost-breath");
+const frostZoneTurnActId = stableId("tempered-alatreon-mhw::act::frost-zone-turn");
 const frostBreath = makeFeat({
   seed: "frost-breath",
   name: "Frost Breath",
@@ -1614,7 +1731,7 @@ const frostBreath = makeFeat({
   sort: 500500,
   withMacro: true,
   description: `<p><strong>Legendary Action (suggested in Ice State).</strong> The alatreon rises 30 feet (no OA) and exhales frost covering the ground in a <strong>30-foot radius</strong> below it until the start of its next turn. Each creature that starts its turn there must make a <strong>DC 27 Constitution</strong> saving throw or take <strong>17 (5d6)</strong> cold damage and <strong>iceblight</strong> for 1 minute (half damage and no blight on a success). Moving through the area deals <strong>7 (2d6)</strong> cold per 5 feet.</p>
-<p><em>Places an ice-zone template; engine applies iceblight on failed saves.</em></p>`,
+<p><em>Places an ice-zone template. Start-of-turn ticks use the Frost Zone — Start of Turn save activity (Midi / player owners). Movement cold stays module-scripted.</em></p>`,
   chat: `<p>Legendary (ice): 30-ft frost zone, DC 27 Con, 5d6 cold + iceblight.</p>`,
   activities: {
     [frostBreathActId]: saveActivity({
@@ -1636,6 +1753,26 @@ const frostBreath = makeFeat({
       consume: consumeLegendary(1),
       effects: [{ _id: iceblightFrostId, onSave: false }],
       effectConditionText: "failedSave",
+    }),
+    [frostZoneTurnActId]: saveActivity({
+      id: frostZoneTurnActId,
+      name: "Frost Zone — Start of Turn",
+      identifier: "frost-zone-turn",
+      activationType: "special",
+      img: IMG.frost,
+      range: rangeBlock(null, "self"),
+      target: targetBlock({ affectsType: "creature", affectsCount: "1", prompt: false }),
+      saveAbility: "con",
+      saveDc: 27,
+      parts: [damagePart(5, 6, "cold")],
+      effects: [{ _id: iceblightFrostId, onSave: false }],
+      effectConditionText: "failedSave",
+      midiExtra: {
+        autoTargetAction: "never",
+        confirmTargets: "never",
+        automationOnly: true,
+      },
+      sort: 1000,
     }),
   },
   effects: [
@@ -1707,6 +1844,7 @@ const iceShards = makeFeat({
 // ─── Assemble ────────────────────────────────────────────────────────────────
 
 const items = [
+  huntersQuantity,
   activeState,
   elementalOverload,
   horns,
@@ -1740,9 +1878,10 @@ const biography = `<h2>Tempered Alatreon (MHW)</h2>
 <p>An Elder Dragon that cycles through fire, dragon, and ice states. Place the token, set the opening cycle with Active State, and use sheet features. State changes, horn tracking, Elemental Overload, Element Burst, Escaton Judgement, and blight applications run from the Amellwind module script.</p>
 <h3>Combat notes</h3>
 <ul>
-<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after 100 HP lost in the current state; Element Burst as a special reaction. Set Fire / Ice / Dragon State jumps manually and resets the 100 HP threshold. Token light follows the state (fire orange, ice blue, dragon violet).</li>
-<li><strong>Horns:</strong> Deploy Horn Tokens (AC 30, 200 HP each, 15 ft elevation). Breaking a horn reverts the previous state and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback.</li>
-<li><strong>Elemental Overload:</strong> 1 charge per 15 fire/cold/lightning from a single attack or spell (max 60). Tracked on the token's second bar and on the Elemental Overload feature uses; reduces Escaton dice.</li>
+<li><strong>Hunters Quantity:</strong> set 1–6 before the fight. Amellwind solo-boss HP (3 max / 4 +50% / 5 ×2) plus ×2.5 at 6. State threshold (~100/820) and horn HP (~200/820) scale with max HP. Overload soft curve: 15 / 17 / 19 / 20 (cap).</li>
+<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after the scaled state HP threshold is lost; Element Burst as a special reaction. Set Fire / Ice / Dragon State jumps manually and resets the threshold. Token light follows the state (fire orange, ice blue, dragon violet).</li>
+<li><strong>Horns:</strong> Deploy Horn Tokens (AC 30, base 200 HP each at 820 boss HP, 15 ft elevation). Breaking a horn reverts the previous state and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback.</li>
+<li><strong>Elemental Overload:</strong> 1 charge per soft-scaled elemental chunk (15→20 by hunters; max 60). Tracked on the token's second bar and on the Elemental Overload feature uses; reduces Escaton dice.</li>
 <li><strong>Escaton Judgement:</strong> Charge then Release anytime from the sheet (suggested once during the second dragon state). 60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability. Module chat is GM-whisper only.</li>
 <li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options are suggested by Active State (advisory notes on the AE / state chat; not blocked).</li>
 </ul>`;
@@ -1930,6 +2069,7 @@ const actor = {
     world: {
       alatreon: {
         bossNpc: true,
+        huntersQuantity: 3,
         activeState: "fire",
         cycle: "fire",
         cycleIndex: 0,
@@ -1939,6 +2079,10 @@ const actor = {
         horns: {
           left: { hp: 200, broken: false },
           right: { hp: 200, broken: false },
+        },
+        hornRefs: {
+          left: { actorId: null, tokenId: null, sceneId: null },
+          right: { actorId: null, tokenId: null, sceneId: null },
         },
         escaton: {
           charging: false,

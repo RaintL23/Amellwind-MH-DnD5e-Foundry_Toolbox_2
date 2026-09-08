@@ -112,7 +112,7 @@
     },
     "details": {
       "biography": {
-        "value": "<h2>Tempered Alatreon (MHW)</h2>\n<p><em>Gargantuan dragon (elder), unaligned — Challenge 30</em></p>\n<p>An Elder Dragon that cycles through fire, dragon, and ice states. Place the token, set the opening cycle with Active State, and use sheet features. State changes, horn tracking, Elemental Overload, Element Burst, Escaton Judgement, and blight applications run from the Amellwind module script.</p>\n<h3>Combat notes</h3>\n<ul>\n<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after 100 HP lost in the current state; Element Burst as a special reaction. Set Fire / Ice / Dragon State jumps manually and resets the 100 HP threshold. Token light follows the state (fire orange, ice blue, dragon violet).</li>\n<li><strong>Horns:</strong> Deploy Horn Tokens (AC 30, 200 HP each, 15 ft elevation). Breaking a horn reverts the previous state and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback.</li>\n<li><strong>Elemental Overload:</strong> 1 charge per 15 fire/cold/lightning from a single attack or spell (max 60). Tracked on the token's second bar and on the Elemental Overload feature uses; reduces Escaton dice.</li>\n<li><strong>Escaton Judgement:</strong> Charge then Release anytime from the sheet (suggested once during the second dragon state). 60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability. Module chat is GM-whisper only.</li>\n<li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options are suggested by Active State (advisory notes on the AE / state chat; not blocked).</li>\n</ul>",
+        "value": "<h2>Tempered Alatreon (MHW)</h2>\n<p><em>Gargantuan dragon (elder), unaligned — Challenge 30</em></p>\n<p>An Elder Dragon that cycles through fire, dragon, and ice states. Place the token, set the opening cycle with Active State, and use sheet features. State changes, horn tracking, Elemental Overload, Element Burst, Escaton Judgement, and blight applications run from the Amellwind module script.</p>\n<h3>Combat notes</h3>\n<ul>\n<li><strong>Hunters Quantity:</strong> set 1–6 before the fight. Amellwind solo-boss HP (3 max / 4 +50% / 5 ×2) plus ×2.5 at 6. State threshold (~100/820) and horn HP (~200/820) scale with max HP. Overload soft curve: 15 / 17 / 19 / 20 (cap).</li>\n<li><strong>Active State:</strong> starts Fire (or Ice via Start Ice Cycle). Advance after the scaled state HP threshold is lost; Element Burst as a special reaction. Set Fire / Ice / Dragon State jumps manually and resets the threshold. Token light follows the state (fire orange, ice blue, dragon violet).</li>\n<li><strong>Horns:</strong> Deploy Horn Tokens (AC 30, base 200 HP each at 820 boss HP, 15 ft elevation). Breaking a horn reverts the previous state and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback.</li>\n<li><strong>Elemental Overload:</strong> 1 charge per soft-scaled elemental chunk (15→20 by hunters; max 60). Tracked on the token's second bar and on the Elemental Overload feature uses; reduces Escaton dice.</li>\n<li><strong>Escaton Judgement:</strong> Charge then Release anytime from the sheet (suggested once during the second dragon state). 60d6 force, reduced by horns and charges; force immunity→resistance, resistance→normal, else vulnerability. Module chat is GM-whisper only.</li>\n<li><strong>Legendary Limit:</strong> each legendary option once per round. Mythic options are suggested by Active State (advisory notes on the AE / state chat; not blocked).</li>\n</ul>",
         "public": "A tempered Elder Dragon that cycles through fire, dragon, and ice states."
       },
       "alignment": "Unaligned",
@@ -337,14 +337,808 @@
   },
   "items": [
     {
+      "_id": "ZqErYbn60R0mSvVY",
+      "name": "Hunters Quantity",
+      "type": "feat",
+      "img": "icons/skills/social/diplomacy-handshake-blue.webp",
+      "system": {
+        "description": {
+          "value": "<p>Scale Tempered Alatreon for the hunting party before combat. Uses Amellwind solo-boss HP rules, plus a toolbox extension for 6 hunters:</p>\n<ul>\n<li><strong>1–3 hunters:</strong> max HP (820) — Amellwind \"maximize\" baseline</li>\n<li><strong>4 hunters:</strong> max HP + 50% (1230)</li>\n<li><strong>5 hunters:</strong> max HP × 2 (1640)</li>\n<li><strong>6 hunters:</strong> max HP × 2.5 (2050)</li>\n</ul>\n<p>Active State threshold and horn HP scale as fractions of boss max HP (100 / 820 and 200 / 820). Elemental Overload uses a soft curve: 15 (1–3) / 17 (4) / 19 (5) / 20 (6; cap).</p>\n<p><em>Run one of the Set N Hunters activities once after placing the token. Current HP and unbroken horns scale proportionally; the state HP-lost counter resets.</em></p>",
+          "chat": "<p>Apply Amellwind party HP scaling (1–5) + ×2.5 at 6. State threshold and horns scale with max HP; overload uses soft 15→20 curve.</p>"
+        },
+        "source": {
+          "custom": "Amellwind MH (RaintDM)",
+          "book": "MHMM-Patreon",
+          "page": "",
+          "license": "",
+          "rules": "2014",
+          "revision": 1
+        },
+        "identifier": "hunters-quantity",
+        "type": {
+          "value": "monster",
+          "subtype": ""
+        },
+        "requirements": "",
+        "properties": [],
+        "activities": {
+          "reHGRauXCg8dZSds": {
+            "_id": "reHGRauXCg8dZSds",
+            "type": "utility",
+            "sort": 0,
+            "name": "Set 1 Hunter",
+            "img": "icons/skills/social/diplomacy-handshake-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set 1 Hunter"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "hunters-1",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "OkdDSOYVfNDhffAj": {
+            "_id": "OkdDSOYVfNDhffAj",
+            "type": "utility",
+            "sort": 1000,
+            "name": "Set 2 Hunters",
+            "img": "icons/skills/social/diplomacy-handshake-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set 2 Hunters"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "hunters-2",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "5cyDprmFW9NA7WfU": {
+            "_id": "5cyDprmFW9NA7WfU",
+            "type": "utility",
+            "sort": 2000,
+            "name": "Set 3 Hunters",
+            "img": "icons/skills/social/diplomacy-handshake-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set 3 Hunters"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "hunters-3",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "Eo8mL6eUeFqfYGRI": {
+            "_id": "Eo8mL6eUeFqfYGRI",
+            "type": "utility",
+            "sort": 3000,
+            "name": "Set 4 Hunters",
+            "img": "icons/skills/social/diplomacy-handshake-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set 4 Hunters"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "hunters-4",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "rwkiz7v7miDn442q": {
+            "_id": "rwkiz7v7miDn442q",
+            "type": "utility",
+            "sort": 4000,
+            "name": "Set 5 Hunters",
+            "img": "icons/skills/social/diplomacy-handshake-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set 5 Hunters"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "hunters-5",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          },
+          "QUg4e17CbjBr8ewt": {
+            "_id": "QUg4e17CbjBr8ewt",
+            "type": "utility",
+            "sort": 5000,
+            "name": "Set 6 Hunters",
+            "img": "icons/skills/social/diplomacy-handshake-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Set 6 Hunters"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "",
+                "type": "self",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "default",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": false,
+              "otherActivityCompatible": true,
+              "identifier": "hunters-6",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "roll": {
+              "formula": "",
+              "name": "",
+              "prompt": false,
+              "visible": false
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none",
+            "effectConditionText": ""
+          }
+        },
+        "enchant": {},
+        "prerequisites": {
+          "level": null,
+          "repeatable": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        }
+      },
+      "effects": [],
+      "folder": null,
+      "sort": 99900,
+      "ownership": {
+        "default": 0
+      },
+      "flags": {
+        "dnd5e": {
+          "riders": {
+            "activity": [],
+            "effect": []
+          }
+        },
+        "midi-qol": {
+          "fumbleThreshold": null,
+          "rollAttackPerTarget": "default",
+          "removeAttackDamageButtons": "default",
+          "itemCondition": "",
+          "reactionCondition": "",
+          "otherCondition": "",
+          "effectCondition": "",
+          "onUseMacroName": "[postActiveEffects]ItemMacro",
+          "onUseMacroParts": {
+            "items": [
+              {
+                "macroName": "ItemMacro",
+                "option": "postActiveEffects"
+              }
+            ]
+          }
+        },
+        "midiProperties": {
+          "autoFailFriendly": false,
+          "autoSaveFriendly": false,
+          "magicdam": false,
+          "magiceffect": false,
+          "toggleEffect": false,
+          "ignoreTotalCover": false,
+          "noConcentrationCheck": false
+        },
+        "itemacro": {
+          "macro": {
+            "name": "Hunters Quantity",
+            "type": "script",
+            "scope": "global",
+            "author": "",
+            "img": "icons/svg/dice-target.svg",
+            "command": "// Tempered Alatreon (MHW) — Item Macro dispatcher\n// MidiQOL On Use: [postActiveEffects]ItemMacro\ntry {\n  const api = globalThis.__amellwindAlatreon;\n  if (!api?.onUse) {\n    ui.notifications?.warn(\"Tempered Alatreon automations are not armed. Enable the Amellwind MH (RaintDM) module.\");\n    return;\n  }\n  const payload = typeof args !== \"undefined\" ? args[0] : {};\n  await api.onUse(payload);\n} catch (err) {\n  console.error(\"Tempered Alatreon | item macro\", err);\n}\n",
+            "folder": null,
+            "sort": 0,
+            "ownership": {
+              "default": 0
+            },
+            "flags": {},
+            "_stats": {
+              "coreVersion": "12.331",
+              "systemId": "dnd5e",
+              "systemVersion": "4.4.4"
+            }
+          }
+        },
+        "world": {
+          "alatreon": {
+            "role": "huntersQuantity"
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
       "_id": "Otc6ABv89AAtoWlx",
       "name": "Active State (Mythic Trait)",
       "type": "feat",
       "img": "icons/creatures/abilities/dragon-fire-breath-orange.webp",
       "system": {
         "description": {
-          "value": "<p>The alatreon has three states: <strong>fire</strong>, <strong>dragon</strong>, and <strong>ice</strong>.</p>\n<ul>\n<li><strong>Fire State:</strong> immune to fire; vulnerable to cold. Token light turns orange-red.</li>\n<li><strong>Dragon State:</strong> resistant to all damage except necrotic, poison, and psychic. Token light turns violet.</li>\n<li><strong>Ice State:</strong> immune to cold; vulnerable to fire. Token light turns blue.</li>\n</ul>\n<p>It begins combat in fire or ice. Fire cycle order: fire → dragon → ice → dragon (repeat). Ice cycle order: ice → dragon → fire → dragon (repeat).</p>\n<p>Whenever hit points are reduced by <strong>100</strong> in the current active state, it advances to the next state and uses <strong>Element Burst</strong> as a special reaction (even if it already used its reaction).</p>\n<p><em>Use Start Fire Cycle / Start Ice Cycle for the opening order. Use Set Fire / Ice / Dragon State to jump manually (resets the 100 HP threshold; keeps the current cycle and resyncs Escaton readiness).</em></p>",
-          "chat": "<p>Mythic active state (fire / dragon / ice). Advance after 100 HP lost in the current state; Element Burst special reaction. Manual Set State resets the threshold.</p>"
+          "value": "<p>The alatreon has three states: <strong>fire</strong>, <strong>dragon</strong>, and <strong>ice</strong>.</p>\n<ul>\n<li><strong>Fire State:</strong> immune to fire; vulnerable to cold. Token light turns orange-red.</li>\n<li><strong>Dragon State:</strong> resistant to all damage except necrotic, poison, and psychic. Token light turns violet.</li>\n<li><strong>Ice State:</strong> immune to cold; vulnerable to fire. Token light turns blue.</li>\n</ul>\n<p>It begins combat in fire or ice. Fire cycle order: fire → dragon → ice → dragon (repeat). Ice cycle order: ice → dragon → fire → dragon (repeat).</p>\n<p>Whenever hit points are reduced by the <strong>Active State threshold</strong> in the current active state (base <strong>100</strong> HP at 820 max; scales with <strong>Hunters Quantity</strong>), it advances to the next state and uses <strong>Element Burst</strong> as a special reaction (even if it already used its reaction).</p>\n<p><em>Use Start Fire Cycle / Start Ice Cycle for the opening order. Use Set Fire / Ice / Dragon State to jump manually (resets the state HP threshold; keeps the current cycle and resyncs Escaton readiness). Use Hunters Quantity before the fight to scale HP and thresholds.</em></p>",
+          "chat": "<p>Mythic active state (fire / dragon / ice). Advance after the state HP threshold is lost; Element Burst special reaction. Manual Set State resets the threshold. Threshold scales with Hunters Quantity.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -1268,8 +2062,8 @@
       "img": "icons/magic/control/energy-stream-link-spiral-orange.webp",
       "system": {
         "description": {
-          "value": "<p>The alatreon gains <strong>1 charge</strong> for every <strong>15</strong> elemental damage (fire, cold, or lightning) it takes from a single attack or spell. Charges reduce Escaton Judgement by 1d6 each (max <strong>60</strong>, which zeroes Escaton from overload alone). Charges reset to 0 after <strong>Escaton Judgement</strong>.</p>\n<p><em>Tracked on this feature's uses, on the token's second bar, and in <code>system.resources.overload</code> / <code>flags.world.alatreon.overloadCharges</code>.</em></p>",
-          "chat": "<p>1 charge per 15 fire/cold/lightning from a single hit (max 60). Shown on this feature and the token bar. Resets after Escaton Judgement.</p>"
+          "value": "<p>The alatreon gains <strong>1 charge</strong> for every chunk of elemental damage (fire, cold, or lightning) it takes from a single attack or spell. The chunk size follows a soft <strong>Hunters Quantity</strong> curve (not 1:1 with boss HP): <strong>15</strong> (1–3 hunters), <strong>17</strong> (4), <strong>19</strong> (5), <strong>20</strong> (6; cap). Charges reduce Escaton Judgement by 1d6 each (max <strong>60</strong>, which zeroes Escaton from overload alone). Charges reset to 0 after <strong>Escaton Judgement</strong>.</p>\n<p><em>Tracked on this feature's uses, on the token's second bar, and in <code>system.resources.overload</code> / <code>flags.world.alatreon.overloadCharges</code>.</em></p>",
+          "chat": "<p>1 charge per soft-scaled elemental chunk (15→17→19→20 by hunters; max 60 charges). Shown on this feature and the token bar. Resets after Escaton Judgement.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -1353,8 +2147,8 @@
       "img": "icons/commodities/bones/horn-engraved-orange.webp",
       "system": {
         "description": {
-          "value": "<p>The alatreon has two horns that can be attacked and broken separately:</p>\n<ul>\n<li><strong>AC 30</strong>; <strong>200 hit points</strong> each.</li>\n<li>Resistant to bludgeoning, piercing, and slashing that do not deal siege damage.</li>\n<li>Immune to poison, psychic, and the damage immunity from its current active state.</li>\n<li>Deployed horn tokens sit at <strong>15 ft elevation</strong> (harder for grounded melee).</li>\n</ul>\n<p>Damage to a horn does not damage the alatreon. When a horn is broken, the alatreon reverts to its previous active state and Escaton Judgement loses <strong>10d6</strong>.</p>\n<p><em>Use Deploy Horn Tokens to place both horns on the VTT (Foundry icon <code>icons/creatures/mammals/ox-bull-horned-glowing-orange.webp</code>). Attack those tokens, or use Apply Horn Damage as a manual fallback.</em></p>",
-          "chat": "<p>Two horns: AC 30, 200 HP each, 15 ft elevation. Breaking a horn reverts the previous active state and weakens Escaton.</p>"
+          "value": "<p>The alatreon has two horns that can be attacked and broken separately:</p>\n<ul>\n<li><strong>AC 30</strong>; base <strong>200 hit points</strong> each at 820 boss HP (~200/820 of max). Scales with <strong>Hunters Quantity</strong>.</li>\n<li>Resistant to bludgeoning, piercing, and slashing that do not deal siege damage.</li>\n<li>Immune to poison, psychic, and the damage immunity from its current active state.</li>\n<li>Deployed horn tokens sit at <strong>15 ft elevation</strong> (harder for grounded melee).</li>\n</ul>\n<p>Damage to a horn does not damage the alatreon. When a horn is broken, the alatreon reverts to its previous active state and Escaton Judgement loses <strong>10d6</strong>.</p>\n<p><em>Use Deploy Horn Tokens to place both horns on the VTT (Foundry icon <code>icons/creatures/mammals/ox-bull-horned-glowing-orange.webp</code>). Attack those tokens, or use Apply Horn Damage as a manual fallback. Apply Hunters Quantity before deploying if the party is not 3 hunters. Deploy persists horn actor/token ids on the boss in <code>flags.world.alatreon.hornRefs</code>.</em></p>",
+          "chat": "<p>Two horns: AC 30, HP scales with Hunters Quantity (base 200 at 820 boss HP), 15 ft elevation. Breaking a horn reverts the previous active state and weakens Escaton.</p>"
         },
         "source": {
           "custom": "Amellwind MH (RaintDM)",
@@ -2432,7 +3226,7 @@
           "revision": 1
         },
         "description": {
-          "value": "<p><em>Melee Weapon Attack:</em> +19 to hit, reach 15 ft., one target.</p>\n<p><em>Hit:</em> <strong>28 (4d8 + 10)</strong> piercing damage plus <strong>3 (1d6)</strong> necrotic damage, and the target must succeed on a <strong>DC 27 Constitution</strong> saving throw or be afflicted with <strong>dragonblight</strong> for 1 minute. Repeat the save at the end of each of its turns, ending the blight on a success.</p>\n<p><em>On hit, the engine rolls DC 27 Con and applies Dragonblight on a fail.</em></p>",
+          "value": "<p><em>Melee Weapon Attack:</em> +19 to hit, reach 15 ft., one target.</p>\n<p><em>Hit:</em> <strong>28 (4d8 + 10)</strong> piercing damage plus <strong>3 (1d6)</strong> necrotic damage, and the target must succeed on a <strong>DC 27 Constitution</strong> saving throw or be afflicted with <strong>dragonblight</strong> for 1 minute. Repeat the save at the end of each of its turns, ending the blight on a success.</p>\n<p><em>On hit, Midi runs the linked Constitution save (player owner); Dragonblight applies on a fail.</em></p>",
           "chat": "<p>+19 to hit, 4d8+10 piercing + 1d6 necrotic; DC 27 Con or dragonblight.</p>"
         },
         "identifier": "bite",
@@ -2569,6 +3363,7 @@
               "max": "",
               "recovery": []
             },
+            "otherActivityId": "PDsc9n5hhIKAJXBz",
             "midiProperties": {
               "ignoreTraits": [],
               "triggeredActivityId": "none",
@@ -2648,13 +3443,138 @@
               "preRemoveConditionText": "",
               "postRemoveConditionText": ""
             },
-            "otherActivityId": "",
             "otherActivityUuid": "",
             "attackMode": "oneHanded",
             "ammunition": "",
             "useConditionText": "",
             "useConditionReason": "",
             "effectConditionText": "false"
+          },
+          "PDsc9n5hhIKAJXBz": {
+            "_id": "PDsc9n5hhIKAJXBz",
+            "type": "save",
+            "sort": 1000,
+            "name": "Dragonblight Save",
+            "img": "icons/magic/unholy/strike-beam-blood-red-pink.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Dragonblight Save"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [
+              {
+                "_id": "ThwlAQ1TzAnYM6Lt",
+                "onSave": false
+              }
+            ],
+            "range": {
+              "value": null,
+              "units": "ft",
+              "special": "Reach 15 ft",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "always",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": true,
+              "otherActivityCompatible": true,
+              "identifier": "bite-dragonblight-save",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "con"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "27"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "failedSave",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
           }
         }
       },
@@ -2816,7 +3736,7 @@
           "revision": 1
         },
         "description": {
-          "value": "<p><em>Melee Weapon Attack:</em> +19 to hit, reach 10 ft., one target.</p>\n<p><em>Hit:</em> <strong>17 (2d6 + 10)</strong> slashing damage plus <strong>3 (1d6)</strong> necrotic damage, and the target must succeed on a <strong>DC 27 Constitution</strong> saving throw or be afflicted with <strong>dragonblight</strong> for 1 minute. Repeat the save at the end of each of its turns, ending the blight on a success.</p>\n<p><em>On hit, the engine rolls DC 27 Con and applies Dragonblight on a fail.</em></p>",
+          "value": "<p><em>Melee Weapon Attack:</em> +19 to hit, reach 10 ft., one target.</p>\n<p><em>Hit:</em> <strong>17 (2d6 + 10)</strong> slashing damage plus <strong>3 (1d6)</strong> necrotic damage, and the target must succeed on a <strong>DC 27 Constitution</strong> saving throw or be afflicted with <strong>dragonblight</strong> for 1 minute. Repeat the save at the end of each of its turns, ending the blight on a success.</p>\n<p><em>On hit, Midi runs the linked Constitution save (player owner); Dragonblight applies on a fail.</em></p>",
           "chat": "<p>+19 to hit, 2d6+10 slashing + 1d6 necrotic; DC 27 Con or dragonblight.</p>"
         },
         "identifier": "claws",
@@ -2953,6 +3873,7 @@
               "max": "",
               "recovery": []
             },
+            "otherActivityId": "e063aij79IFXyjPo",
             "midiProperties": {
               "ignoreTraits": [],
               "triggeredActivityId": "none",
@@ -3032,13 +3953,138 @@
               "preRemoveConditionText": "",
               "postRemoveConditionText": ""
             },
-            "otherActivityId": "",
             "otherActivityUuid": "",
             "attackMode": "oneHanded",
             "ammunition": "",
             "useConditionText": "",
             "useConditionReason": "",
             "effectConditionText": "false"
+          },
+          "e063aij79IFXyjPo": {
+            "_id": "e063aij79IFXyjPo",
+            "type": "save",
+            "sort": 1000,
+            "name": "Dragonblight Save",
+            "img": "icons/magic/unholy/strike-beam-blood-red-pink.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Dragonblight Save"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [
+              {
+                "_id": "0mqPzCvL7mnTqDz7",
+                "onSave": false
+              }
+            ],
+            "range": {
+              "value": null,
+              "units": "ft",
+              "special": "Reach 10 ft",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "always",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": true,
+              "otherActivityCompatible": true,
+              "identifier": "claws-dragonblight-save",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "con"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "27"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "failedSave",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
           }
         }
       },
@@ -3200,7 +4246,7 @@
           "revision": 1
         },
         "description": {
-          "value": "<p><em>Melee Weapon Attack:</em> +19 to hit, reach 20 ft., one target.</p>\n<p><em>Hit:</em> <strong>32 (4d10 + 10)</strong> bludgeoning damage, and the target must succeed on a <strong>DC 27 Strength</strong> saving throw or be knocked <strong>prone</strong>.</p>\n<p><em>On hit, the engine rolls DC 27 Str and applies Prone on a fail.</em></p>",
+          "value": "<p><em>Melee Weapon Attack:</em> +19 to hit, reach 20 ft., one target.</p>\n<p><em>Hit:</em> <strong>32 (4d10 + 10)</strong> bludgeoning damage, and the target must succeed on a <strong>DC 27 Strength</strong> saving throw or be knocked <strong>prone</strong>.</p>\n<p><em>On hit, Midi runs the linked Strength save (player owner); Prone applies on a fail.</em></p>",
           "chat": "<p>+19 to hit, 4d10+10 bludgeoning; DC 27 Str or prone.</p>"
         },
         "identifier": "tail",
@@ -3337,6 +4383,7 @@
               "max": "",
               "recovery": []
             },
+            "otherActivityId": "2iweXb4erDkbceFC",
             "midiProperties": {
               "ignoreTraits": [],
               "triggeredActivityId": "none",
@@ -3399,13 +4446,138 @@
               "preRemoveConditionText": "",
               "postRemoveConditionText": ""
             },
-            "otherActivityId": "",
             "otherActivityUuid": "",
             "attackMode": "oneHanded",
             "ammunition": "",
             "useConditionText": "",
             "useConditionReason": "",
             "effectConditionText": "false"
+          },
+          "2iweXb4erDkbceFC": {
+            "_id": "2iweXb4erDkbceFC",
+            "type": "save",
+            "sort": 1000,
+            "name": "Knock Prone",
+            "img": "systems/dnd5e/icons/svg/statuses/prone.svg",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Knock Prone"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [
+              {
+                "_id": "yL1HEh6WCwmsSROi",
+                "onSave": false
+              }
+            ],
+            "range": {
+              "value": null,
+              "units": "ft",
+              "special": "Reach 20 ft",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "always",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": true,
+              "otherActivityCompatible": true,
+              "identifier": "tail-prone-save",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "str"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "27"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "failedSave",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
           }
         }
       },
@@ -3818,7 +4990,7 @@
       "img": "icons/magic/light/explosion-star-large-orange.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Suggested timing:</strong> once during the second dragon state each time the active-state order repeats (the module still tracks readiness for GM whispers, but Charge/Release can be used anytime from the sheet).</p>\n<p><strong>Charge (action):</strong> The alatreon swoops down (no opportunity attacks) if airborne and gathers energy until the start of its next turn. While charging it is immune to incapacitated, stunned, paralyzed, and unconscious.</p>\n<p><strong>Release (action, next turn):</strong> Energy erupts in a <strong>600-foot-radius sphere</strong>. Terrain above ground level in the area is obliterated. Each creature must make a <strong>DC 30 Dexterity</strong> saving throw, taking <strong>210 (60d6)</strong> force damage on a failed save, or half as much on a success.</p>\n<p>Against this damage, force traits are inverted: <strong>immunity</strong> becomes resistance, <strong>resistance</strong> becomes normal damage, and creatures with neither are <strong>vulnerable</strong>.</p>\n<p>Reduce damage by <strong>10d6</strong> per broken horn, and by an additional <strong>#d6</strong> equal to Elemental Overload charges.</p>\n<p><em>Dice reduction uses horn/overload flags. Trait inversion is applied by the module script. Automation chat is whispered to GMs only.</em></p>",
+          "value": "<p><strong>Suggested timing:</strong> once during the second dragon state each time the active-state order repeats (the module still tracks readiness for GM whispers, but Charge/Release can be used anytime from the sheet).</p>\n<p><strong>Charge (action):</strong> The alatreon swoops down (no opportunity attacks) if airborne and gathers energy until the start of its next turn. While charging it is immune to incapacitated, stunned, paralyzed, and unconscious.</p>\n<p><strong>Release (action, next turn):</strong> Energy erupts in a <strong>600-foot-radius sphere</strong>. Terrain above ground level in the area is obliterated. Each creature must make a <strong>DC 30 Dexterity</strong> saving throw, taking <strong>210 (60d6)</strong> force damage on a failed save, or half as much on a success.</p>\n<p>Against this damage, force traits are inverted: <strong>immunity</strong> becomes resistance, <strong>resistance</strong> becomes normal damage, and creatures with neither are <strong>vulnerable</strong>.</p>\n<p>Reduce damage by <strong>10d6</strong> per broken horn, and by an additional <strong>#d6</strong> equal to Elemental Overload charges.</p>\n<p><em>Release is a Midi save activity (player owners roll). The module sets dice from horns/overload and applies force-trait inversion after the save. Automation chat is whispered to GMs only.</em></p>",
           "chat": "<p>Charge, then Release anytime from the sheet: 600-ft sphere, DC 30 Dex, 60d6 force (reduced by horns and overload; force traits invert).</p>"
         },
         "source": {
@@ -3952,7 +5124,7 @@
           },
           "WszhyWwVeEeSUwXT": {
             "_id": "WszhyWwVeEeSUwXT",
-            "type": "utility",
+            "type": "save",
             "sort": 1000,
             "name": "Release",
             "img": "icons/magic/light/explosion-star-large-orange.webp",
@@ -4018,7 +5190,7 @@
               "triggeredActivityRollAs": "self",
               "autoConsume": false,
               "forceConsumeDialog": "default",
-              "forceRollDialog": "default",
+              "forceRollDialog": "always",
               "forceDamageDialog": "default",
               "confirmTargets": "never",
               "autoTargetType": "any",
@@ -4037,14 +5209,22 @@
               "noConcentrationCheck": false,
               "autoCEEffects": "default"
             },
-            "roll": {
-              "formula": "",
-              "name": "",
-              "prompt": false,
-              "visible": false
+            "damage": {
+              "parts": [],
+              "onSave": "none"
+            },
+            "save": {
+              "ability": [
+                "dex"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "30"
+              }
             },
             "useConditionText": "",
             "useConditionReason": "",
+            "effectConditionText": "",
             "macroData": {
               "name": "",
               "command": ""
@@ -4061,8 +5241,7 @@
               "preRemoveConditionText": "",
               "postRemoveConditionText": ""
             },
-            "otherActivityId": "none",
-            "effectConditionText": ""
+            "otherActivityId": "none"
           }
         },
         "enchant": {},
@@ -4239,7 +5418,7 @@
       "img": "icons/magic/fire/explosion-mushroom-nuke-orange.webp",
       "system": {
         "description": {
-          "value": "<p>When the alatreon changes active states, it can use this special reaction to release elemental energy. Each creature in a <strong>30-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>24 (7d6)</strong> damage on a failed save, or half as much on a success.</p>\n<p>Damage type matches the <strong>new</strong> state: fire (fire), necrotic (dragon), cold (ice).</p>\n<p><em>May auto-fire on state change; type is set by the engine.</em></p>",
+          "value": "<p>When the alatreon changes active states, it can use this special reaction to release elemental energy. Each creature in a <strong>30-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>24 (7d6)</strong> damage on a failed save, or half as much on a success.</p>\n<p>Damage type matches the <strong>new</strong> state: fire (fire), necrotic (dragon), cold (ice).</p>\n<p><em>May auto-fire on state change via Midi completeActivityUse; type is set by the engine. Player owners roll the Dex save.</em></p>",
           "chat": "<p>Special reaction on state change: 30-ft sphere, DC 27 Dex, 7d6 (type by new state).</p>"
         },
         "source": {
@@ -7188,7 +8367,7 @@
       "img": "icons/magic/water/barrier-ice-crystal-wall-blue.webp",
       "system": {
         "description": {
-          "value": "<p><strong>Legendary Action (suggested in Ice State).</strong> The alatreon rises 30 feet (no OA) and exhales frost covering the ground in a <strong>30-foot radius</strong> below it until the start of its next turn. Each creature that starts its turn there must make a <strong>DC 27 Constitution</strong> saving throw or take <strong>17 (5d6)</strong> cold damage and <strong>iceblight</strong> for 1 minute (half damage and no blight on a success). Moving through the area deals <strong>7 (2d6)</strong> cold per 5 feet.</p>\n<p><em>Places an ice-zone template; engine applies iceblight on failed saves.</em></p>",
+          "value": "<p><strong>Legendary Action (suggested in Ice State).</strong> The alatreon rises 30 feet (no OA) and exhales frost covering the ground in a <strong>30-foot radius</strong> below it until the start of its next turn. Each creature that starts its turn there must make a <strong>DC 27 Constitution</strong> saving throw or take <strong>17 (5d6)</strong> cold damage and <strong>iceblight</strong> for 1 minute (half damage and no blight on a success). Moving through the area deals <strong>7 (2d6)</strong> cold per 5 feet.</p>\n<p><em>Places an ice-zone template. Start-of-turn ticks use the Frost Zone — Start of Turn save activity (Midi / player owners). Movement cold stays module-scripted.</em></p>",
           "chat": "<p>Legendary (ice): 30-ft frost zone, DC 27 Con, 5d6 cold + iceblight.</p>"
         },
         "source": {
@@ -7297,6 +8476,148 @@
               "automationOnly": false,
               "otherActivityCompatible": true,
               "identifier": "frost-breath",
+              "displayActivityName": true,
+              "rollMode": "default",
+              "chooseEffects": false,
+              "toggleEffect": false,
+              "ignoreFullCover": false,
+              "removeChatButtons": "default",
+              "magicEffect": false,
+              "magicDamage": false,
+              "noConcentrationCheck": false,
+              "autoCEEffects": "default"
+            },
+            "damage": {
+              "parts": [
+                {
+                  "number": 5,
+                  "denomination": 6,
+                  "types": [
+                    "cold"
+                  ],
+                  "custom": {
+                    "enabled": false,
+                    "formula": ""
+                  },
+                  "scaling": {
+                    "mode": "",
+                    "number": 1
+                  },
+                  "bonus": ""
+                }
+              ],
+              "onSave": "half"
+            },
+            "save": {
+              "ability": [
+                "con"
+              ],
+              "dc": {
+                "calculation": "",
+                "formula": "27"
+              }
+            },
+            "useConditionText": "",
+            "useConditionReason": "",
+            "effectConditionText": "failedSave",
+            "macroData": {
+              "name": "",
+              "command": ""
+            },
+            "ignoreTraits": {
+              "idi": false,
+              "idr": false,
+              "idv": false,
+              "ida": false
+            },
+            "isOverTimeFlag": false,
+            "overTimeProperties": {
+              "saveRemoves": true,
+              "preRemoveConditionText": "",
+              "postRemoveConditionText": ""
+            },
+            "otherActivityId": "none"
+          },
+          "aBaSAZjGaGIS2Fbi": {
+            "_id": "aBaSAZjGaGIS2Fbi",
+            "type": "save",
+            "sort": 1000,
+            "name": "Frost Zone — Start of Turn",
+            "img": "icons/magic/water/barrier-ice-crystal-wall-blue.webp",
+            "activation": {
+              "type": "special",
+              "value": null,
+              "condition": "",
+              "override": false
+            },
+            "consumption": {
+              "scaling": {
+                "allowed": false,
+                "max": ""
+              },
+              "spellSlot": false,
+              "targets": []
+            },
+            "description": {
+              "chatFlavor": "Frost Zone — Start of Turn"
+            },
+            "duration": {
+              "value": "",
+              "units": "inst",
+              "concentration": false,
+              "override": false
+            },
+            "effects": [
+              {
+                "_id": "QpJdi4cPX30RIaD4",
+                "onSave": false
+              }
+            ],
+            "range": {
+              "units": "self",
+              "special": "",
+              "override": false
+            },
+            "target": {
+              "template": {
+                "count": "",
+                "contiguous": false,
+                "type": "",
+                "size": "",
+                "width": "",
+                "height": "",
+                "units": "ft"
+              },
+              "affects": {
+                "count": "1",
+                "type": "creature",
+                "choice": false,
+                "special": ""
+              },
+              "prompt": false,
+              "override": false
+            },
+            "uses": {
+              "spent": 0,
+              "max": "",
+              "recovery": []
+            },
+            "midiProperties": {
+              "ignoreTraits": [],
+              "triggeredActivityId": "none",
+              "triggeredActivityConditionText": "",
+              "triggeredActivityTargets": "targets",
+              "triggeredActivityRollAs": "self",
+              "autoConsume": false,
+              "forceConsumeDialog": "default",
+              "forceRollDialog": "always",
+              "forceDamageDialog": "default",
+              "confirmTargets": "never",
+              "autoTargetType": "any",
+              "autoTargetAction": "never",
+              "automationOnly": true,
+              "otherActivityCompatible": true,
+              "identifier": "frost-zone-turn",
               "displayActivityName": true,
               "rollMode": "default",
               "chooseEffects": false,
@@ -7870,6 +9191,7 @@
     "world": {
       "alatreon": {
         "bossNpc": true,
+        "huntersQuantity": 3,
         "activeState": "fire",
         "cycle": "fire",
         "cycleIndex": 0,
@@ -7884,6 +9206,18 @@
           "right": {
             "hp": 200,
             "broken": false
+          }
+        },
+        "hornRefs": {
+          "left": {
+            "actorId": null,
+            "tokenId": null,
+            "sceneId": null
+          },
+          "right": {
+            "actorId": null,
+            "tokenId": null,
+            "sceneId": null
           }
         },
         "escaton": {
