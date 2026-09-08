@@ -65,7 +65,7 @@ export const HUNT_RULE_SECTIONS: HuntRuleSection[] = [
               {
                 name: "Solo boss fight",
                 items: [
-                  "For 3 PCs, maximize the creature's hit points. For 4 PCs, maximize its hit points and then add an additional 50% more hit points. For 5 PCs maximize its hit points and then double it.",
+                  "For 3 PCs, maximize the creature's hit points. For 4 PCs, maximize its hit points and then add an additional 50% more hit points. For 5 PCs maximize its hit points and then double it. For 6 PCs (toolbox extension), maximize and multiply by 2.5.",
                   "Additionally due to their damage output on their turn, you might consider reducing the number of attacks its multiattack can make, and instead give it a number of legendary attack actions equal to the number of attacks removed from its multi attack.",
                 ],
               },

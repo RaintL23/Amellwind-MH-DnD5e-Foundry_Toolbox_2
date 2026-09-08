@@ -110,6 +110,8 @@ export function getHuntHpMultiplier(hunterCount: number): {
       return { multiplier: 1.5, label: "Max HP + 50% (4 PCs)" };
     case 5:
       return { multiplier: 2, label: "Max HP × 2 (5 PCs)" };
+    case 6:
+      return { multiplier: 2.5, label: "Max HP × 2.5 (6 PCs)" };
     default:
       return { multiplier: null, label: null };
   }
@@ -142,8 +144,8 @@ export function getScaledBossHp(
       multiplier: null,
       multiplierLabel: null,
       note:
-        hunterCount < 3 || hunterCount > 5
-          ? "Amellwind solo-boss HP scaling is defined for 3–5 PCs. Showing max HP without party-size multiplier."
+        hunterCount < 3 || hunterCount > 6
+          ? "Amellwind solo-boss HP scaling is defined for 3–5 PCs (toolbox adds ×2.5 at 6). Showing max HP without party-size multiplier."
           : null,
     };
   }

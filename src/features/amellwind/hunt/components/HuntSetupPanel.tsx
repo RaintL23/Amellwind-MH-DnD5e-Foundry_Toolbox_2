@@ -390,7 +390,7 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                 Scaled Boss HP
               </CardTitle>
               <CardDescription>
-                Amellwind solo-boss scaling: 3 PCs max HP, 4 PCs +50%, 5 PCs ×2.
+                Amellwind solo-boss scaling: 3 PCs max HP, 4 PCs +50%, 5 PCs ×2, 6 PCs ×2.5.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2 p-4 pt-0">

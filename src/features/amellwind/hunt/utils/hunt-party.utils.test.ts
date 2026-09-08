@@ -51,11 +51,11 @@ describe("hunt-party.utils", () => {
     expect(getTotalTargetCr(monsters)).toBe(5);
   });
 
-  it("applies Amellwind HP multipliers for 3/4/5 PCs", () => {
+  it("applies Amellwind HP multipliers for 3/4/5 PCs and toolbox ×2.5 at 6", () => {
     expect(getHuntHpMultiplier(3)).toEqual({ multiplier: 1, label: expect.any(String) });
     expect(getHuntHpMultiplier(4).multiplier).toBe(1.5);
     expect(getHuntHpMultiplier(5).multiplier).toBe(2);
-    expect(getHuntHpMultiplier(6).multiplier).toBeNull();
+    expect(getHuntHpMultiplier(6).multiplier).toBe(2.5);
   });
 
   it("scales boss HP from formula", () => {
