@@ -1,5 +1,5 @@
 {
-  "_id": "h38FQqJASWnAzZbi",
+  "_id": "kQdGX0ClRNRmN4sd",
   "name": "Sword and Shield (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_swordandshield.webp",
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "2lXZUlTY9iQatPyv": {
-        "_id": "2lXZUlTY9iQatPyv",
+      "1AtkS5yOyEXoQBv8": {
+        "_id": "1AtkS5yOyEXoQBv8",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -489,7 +489,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "5d6 extra; STR save or Prone per description."
+          "chatFlavor": "Once per turn after Sword + Shield Bash hit the same creature: +5d6. Target CON save (DC 8 + PB + STR or DEX) or Stunned until start of its next turn."
         },
         "duration": {
           "value": "",
@@ -602,6 +602,83 @@
           "postRemoveConditionText": ""
         },
         "otherActivityId": "none"
+      },
+      "JyaYJITIo0e8bksO": {
+        "_id": "JyaYJITIo0e8bksO",
+        "type": "save",
+        "sort": 701000,
+        "name": "True Perfect Rush: Stun",
+        "img": "icons/magic/control/silhouette-fall-slip-prone.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "After Perfect Rush damage hits",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "CON save vs SnS DC or Stunned until the start of the target's next turn."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "damage": {
+          "parts": [],
+          "onSave": "none"
+        },
+        "save": {
+          "ability": [
+            "con"
+          ],
+          "dc": {
+            "calculation": "str",
+            "formula": ""
+          }
+        },
+        "midiProperties": {
+          "identifier": "true-perfect-rush-stun",
+          "displayActivityName": true
+        }
       }
     },
     "container": null,
@@ -642,8 +719,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702961,
-        "modifiedTime": 1788708702961,
+        "createdTime": 1788906281880,
+        "modifiedTime": 1788906281880,
         "lastModifiedBy": null
       }
     },
@@ -681,8 +758,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702961,
-        "modifiedTime": 1788708702961,
+        "createdTime": 1788906281880,
+        "modifiedTime": 1788906281880,
         "lastModifiedBy": null
       }
     },
@@ -732,8 +809,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702961,
-        "modifiedTime": 1788708702961,
+        "createdTime": 1788906281880,
+        "modifiedTime": 1788906281880,
         "lastModifiedBy": null
       }
     },
@@ -756,7 +833,7 @@
       "origin": null,
       "transfer": false,
       "statuses": [
-        "prone"
+        "stunned"
       ],
       "type": "base",
       "system": {},
@@ -769,13 +846,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702961,
-        "modifiedTime": 1788708702961,
+        "createdTime": 1788906281880,
+        "modifiedTime": 1788906281880,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "uk1jbxNpnmU7c3xk",
+      "_id": "Wg1s4JOu6ZNZCK9k",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -822,13 +899,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702962,
-        "modifiedTime": 1788708702962,
+        "createdTime": 1788906281880,
+        "modifiedTime": 1788906281880,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "rOIhLrhJpmAvEFyj",
+      "_id": "cedzZDL3aKDxC4zY",
       "name": "Sword and Shield AC (+3)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Legendary Sword and Shield bonus AC from the rarity table.",
@@ -869,14 +946,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702962,
-        "modifiedTime": 1788708702962,
+        "createdTime": 1788906281880,
+        "modifiedTime": 1788906281880,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 10900000,
+  "sort": 23400000,
   "ownership": {
     "default": 0
   },
@@ -928,8 +1005,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702961,
-    "modifiedTime": 1788708702961,
+    "createdTime": 1788906281880,
+    "modifiedTime": 1788906281880,
     "lastModifiedBy": null
   }
 }

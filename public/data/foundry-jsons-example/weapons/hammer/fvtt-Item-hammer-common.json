@@ -1,5 +1,5 @@
 {
-  "_id": "XF2j3DfdHHWXgANo",
+  "_id": "qniyLj3chw3r0W82",
   "name": "Hammer (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_hammer.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "Rg4cCXdzF2PA2dCQ": {
-        "_id": "Rg4cCXdzF2PA2dCQ",
+      "7cWGvCt2yvJzjL9p": {
+        "_id": "7cWGvCt2yvJzjL9p",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -240,14 +240,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702854,
-        "modifiedTime": 1788708702854,
+        "createdTime": 1788906281716,
+        "modifiedTime": 1788906281716,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 3200000,
+  "sort": 12500000,
   "ownership": {
     "default": 0
   },
@@ -293,8 +293,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702854,
-    "modifiedTime": 1788708702854,
+    "createdTime": 1788906281715,
+    "modifiedTime": 1788906281715,
     "lastModifiedBy": null
   }
 }

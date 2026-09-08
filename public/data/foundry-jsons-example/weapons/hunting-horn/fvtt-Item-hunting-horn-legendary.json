@@ -1,5 +1,5 @@
 {
-  "_id": "k9y7oxBvhSrKi3HI",
+  "_id": "lwD3TASf1zDswcF7",
   "name": "Hunting Horn (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_huntinghorn.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "JuqBL1cdFtwKR237": {
-        "_id": "JuqBL1cdFtwKR237",
+      "GchnnqSpsKvX5oqZ": {
+        "_id": "GchnnqSpsKvX5oqZ",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -547,6 +547,139 @@
         },
         "otherActivityId": "none"
       },
+      "RIAL2S7PohRjwtKE": {
+        "_id": "RIAL2S7PohRjwtKE",
+        "sort": 700000,
+        "name": "Infernal Melody",
+        "img": "icons/magic/sonic/bell-alarm-red-purple.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "When you hit a creature",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "1/LR: aura expands to 30 ft for 1 minute; allies in the aura deal maximum weapon base damage dice on hit (honor-system / AE flag)."
+        },
+        "duration": {
+          "value": "1",
+          "units": "minute",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [
+          {
+            "_id": "gJADX7LIVBDPYsCP"
+          }
+        ],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "1",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "infernal-melody",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
       "jd0mGAXFyplCqh0L": {
         "_id": "jd0mGAXFyplCqh0L",
         "sort": 310000,
@@ -700,14 +833,53 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702914,
-        "modifiedTime": 1788708702914,
+        "createdTime": 1788906281776,
+        "modifiedTime": 1788906281776,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "gJADX7LIVBDPYsCP",
+      "name": "Infernal Melody",
+      "img": "icons/magic/sonic/bell-alarm-red-purple.webp",
+      "description": "Infernal Melody: aura 30 ft. Allies scoring a weapon hit deal maximum base weapon damage dice.",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": 60,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "showIcon": true
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788906281776,
+        "modifiedTime": 1788906281776,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 7800000,
+  "sort": 17300000,
   "ownership": {
     "default": 0
   },
@@ -774,7 +946,9 @@
         "songbook": true,
         "melodyFlag": "world.hh.isMelody",
         "maxActiveMelodies": 3,
-        "maxSoloMelodies": 1
+        "maxSoloMelodies": 1,
+        "songbookMastery": true,
+        "infernalMelody": true
       }
     }
   },
@@ -784,8 +958,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702913,
-    "modifiedTime": 1788708702913,
+    "createdTime": 1788906281775,
+    "modifiedTime": 1788906281775,
     "lastModifiedBy": null
   }
 }

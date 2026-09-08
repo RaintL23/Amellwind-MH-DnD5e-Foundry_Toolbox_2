@@ -1,5 +1,5 @@
 {
-  "_id": "p1NG2OVIMtcImJ9X",
+  "_id": "29OM5Bai3vwA3zCV",
   "name": "Gunlance (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_gunlance.webp",
@@ -88,8 +88,8 @@
       "max": "6"
     },
     "activities": {
-      "XFUecPx314rYuOQm": {
-        "_id": "XFUecPx314rYuOQm",
+      "B4yYfW8AFqP4NcPX": {
+        "_id": "B4yYfW8AFqP4NcPX",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1340,13 +1340,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788719955449,
-        "modifiedTime": 1788719955449,
+        "createdTime": 1788906281712,
+        "modifiedTime": 1788906281712,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "Uc0WMKeSWQp3HO3F",
+      "_id": "RinoaFpxHiwH4iAQ",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -1393,13 +1393,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788719955451,
-        "modifiedTime": 1788719955451,
+        "createdTime": 1788906281712,
+        "modifiedTime": 1788906281712,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "L3mSt65PtGBI2aL3",
+      "_id": "ERiShScRSYaOD1S7",
       "name": "Gunlance AC (+3)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Legendary Gunlance bonus AC from the rarity table.",
@@ -1440,14 +1440,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788719955451,
-        "modifiedTime": 1788719955451,
+        "createdTime": 1788906281712,
+        "modifiedTime": 1788906281712,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 200000,
+  "sort": 12400000,
   "ownership": {
     "default": 0
   },
@@ -1538,8 +1538,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788719955449,
-    "modifiedTime": 1788719955449,
+    "createdTime": 1788906281712,
+    "modifiedTime": 1788906281712,
     "lastModifiedBy": null
   }
 }

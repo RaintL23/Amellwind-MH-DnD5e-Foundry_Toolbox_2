@@ -1,5 +1,5 @@
 {
-  "_id": "FURqPpGJuDGyV0GX",
+  "_id": "IH2Daw9AQEGCdxLh",
   "name": "Gunlance (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_gunlance.webp",
@@ -87,8 +87,8 @@
       "recovery": []
     },
     "activities": {
-      "BlOB7Spocptt3FYI": {
-        "_id": "BlOB7Spocptt3FYI",
+      "ImiArbc0qBQr6AsM": {
+        "_id": "ImiArbc0qBQr6AsM",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -239,13 +239,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702839,
-        "modifiedTime": 1788708702839,
+        "createdTime": 1788906281704,
+        "modifiedTime": 1788906281704,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "yi82RBSLKoAvMiBY",
+      "_id": "kBbquweiEX2ROSKM",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -292,14 +292,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702839,
-        "modifiedTime": 1788708702839,
+        "createdTime": 1788906281704,
+        "modifiedTime": 1788906281704,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 2900000,
+  "sort": 12200000,
   "ownership": {
     "default": 0
   },
@@ -345,8 +345,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702839,
-    "modifiedTime": 1788708702839,
+    "createdTime": 1788906281704,
+    "modifiedTime": 1788906281704,
     "lastModifiedBy": null
   }
 }

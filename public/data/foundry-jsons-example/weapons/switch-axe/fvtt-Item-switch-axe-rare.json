@@ -1,5 +1,5 @@
 {
-  "_id": "YkigFlO2J6n377P1",
+  "_id": "wVrAslJnekdADUFy",
   "name": "Switch Axe (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_switchaxe.webp",
@@ -90,8 +90,8 @@
       "max": "7"
     },
     "activities": {
-      "nE2AhgIqLoeV5zkD": {
-        "_id": "nE2AhgIqLoeV5zkD",
+      "b9VhgIjDkcaOGBVe": {
+        "_id": "b9VhgIjDkcaOGBVe",
         "type": "attack",
         "sort": 0,
         "name": "Axe",
@@ -1394,8 +1394,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672833,
-        "modifiedTime": 1788708672833,
+        "createdTime": 1788906281852,
+        "modifiedTime": 1788906281852,
         "lastModifiedBy": null
       }
     },
@@ -1429,8 +1429,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672833,
-        "modifiedTime": 1788708672833,
+        "createdTime": 1788906281852,
+        "modifiedTime": 1788906281852,
         "lastModifiedBy": null
       }
     },
@@ -1479,8 +1479,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672833,
-        "modifiedTime": 1788708672833,
+        "createdTime": 1788906281853,
+        "modifiedTime": 1788906281853,
         "lastModifiedBy": null
       }
     },
@@ -1539,8 +1539,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672833,
-        "modifiedTime": 1788708672833,
+        "createdTime": 1788906281853,
+        "modifiedTime": 1788906281853,
         "lastModifiedBy": null
       }
     },
@@ -1599,8 +1599,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672833,
-        "modifiedTime": 1788708672833,
+        "createdTime": 1788906281853,
+        "modifiedTime": 1788906281853,
         "lastModifiedBy": null
       }
     },
@@ -1656,8 +1656,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672834,
-        "modifiedTime": 1788708672834,
+        "createdTime": 1788906281854,
+        "modifiedTime": 1788906281854,
         "lastModifiedBy": null
       }
     },
@@ -1707,14 +1707,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672834,
-        "modifiedTime": 1788708672834,
+        "createdTime": 1788906281854,
+        "modifiedTime": 1788906281854,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 21200000,
+  "sort": 21400000,
   "ownership": {
     "default": 0
   },
@@ -1801,7 +1801,8 @@
           "element",
           "exhaust",
           "poison"
-        ]
+        ],
+        "elementalAwakening": false
       }
     }
   },
@@ -1811,8 +1812,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672832,
-    "modifiedTime": 1788708672832,
+    "createdTime": 1788906281852,
+    "modifiedTime": 1788906281852,
     "lastModifiedBy": null
   }
 }

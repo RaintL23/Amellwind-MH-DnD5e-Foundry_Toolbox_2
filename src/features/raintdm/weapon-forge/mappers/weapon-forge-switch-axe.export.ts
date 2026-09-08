@@ -839,6 +839,37 @@ export function applySwitchAxeOverlay(
     rarityIndex,
     /^kinetic\s*generator$/i,
   );
+  const elementalAwakening = hasFeature(
+    weapon,
+    rarityIndex,
+    /^elemental\s*awakening$/i,
+  );
+  if (elementalAwakening) {
+    const acts = activitiesOf(item);
+    if (acts) {
+      for (const activity of Object.values(acts)) {
+        const name = String(activity?.name ?? "").toLowerCase();
+        if (!name.includes("element") && !name.includes("zsd") && !name.includes("zero sum")) {
+          continue;
+        }
+        const midi =
+          (activity.midiProperties as Record<string, unknown> | undefined) ??
+          {};
+        const ignoreTraits =
+          (midi.ignoreTraits as Record<string, boolean> | undefined) ?? {
+            idi: false,
+            idr: false,
+            idv: false,
+            ida: false,
+          };
+        activity.midiProperties = {
+          ...midi,
+          ignoreTraits: { ...ignoreTraits, idr: true },
+        };
+      }
+    }
+  }
+
   applySwitchAxeItemMacro(item, { hasKinetic });
 
   const existingWorld =
@@ -853,6 +884,7 @@ export function applySwitchAxeOverlay(
         ...existingSa,
         isSwitchAxe: true,
         unlockedPhials: unlocked.map((d) => d.phialKey),
+        elementalAwakening,
       },
     },
   };

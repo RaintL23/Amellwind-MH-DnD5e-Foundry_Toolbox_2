@@ -4,6 +4,7 @@ import { DUAL_BLADES_DEMON_DODGE_ITEM_MACRO } from "./dual-blades-demon-dodge.ma
 import { DUAL_REPEATERS_MAGAZINES_ITEM_MACRO } from "./dual-repeaters-magazines.macro";
 import { HUNTING_HORN_RECITAL_ITEM_MACRO } from "./hunting-horn-recital.macro";
 import type { CustomWeapon } from "../types/weapon-forge.types";
+import { getAssignedFeaturesForRow } from "../utils/weapon-forge-features.utils";
 import { listUnlockedMagazineKeys } from "./weapon-forge-magazine.export";
 
 /** Default item-level Midi / dnd5e flags stamped on Weapon Forge exports. */
@@ -341,6 +342,16 @@ export function applyHuntingHornSongbookOverlay(item: FoundryItem): boolean {
   const existingHh =
     (existingWorld.hh as Record<string, unknown> | undefined) ?? {};
 
+  const actNames = Object.values(activities).map((a) =>
+    String(a?.name ?? "").toLowerCase(),
+  );
+  const songbookMastery =
+    actNames.some((n) => n.includes("songbook mastery"))
+    || /songbook mastery/i.test(
+      (system.description as { value?: string } | undefined)?.value ?? "",
+    );
+  const hasInfernal = actNames.some((n) => n.includes("infernal melody"));
+
   embedItemMacro(item, {
     command: HUNTING_HORN_RECITAL_ITEM_MACRO,
     passes: ["preTargeting"],
@@ -357,6 +368,8 @@ export function applyHuntingHornSongbookOverlay(item: FoundryItem): boolean {
         melodyFlag: "world.hh.isMelody",
         maxActiveMelodies,
         maxSoloMelodies,
+        songbookMastery,
+        infernalMelody: hasInfernal,
       },
     },
   };
@@ -407,7 +420,7 @@ function resolveDualBladesTier(item: FoundryItem): string {
 
 function tagDualBladesEffect(
   effect: { name?: string; flags?: Record<string, unknown> },
-  flagKey: "isDemonMode" | "isArchdemonMode",
+  flagKey: "isDemonMode" | "isArchdemonMode" | "isHeavenlyBladeDance",
 ): void {
   const flags = (effect.flags ?? {}) as Record<string, unknown>;
   const world = (flags.world as Record<string, unknown> | undefined) ?? {};
@@ -458,7 +471,27 @@ export function applyDualBladesDemonDodgeOverlay(item: FoundryItem): boolean {
       tagDualBladesEffect(effect, "isDemonMode");
     } else if (/^archdemon mode$/i.test(effectName)) {
       tagDualBladesEffect(effect, "isArchdemonMode");
+    } else if (/heavenly\s*blade\s*dance/i.test(effectName)) {
+      tagDualBladesEffect(effect, "isHeavenlyBladeDance");
     }
+  }
+
+  const actNames = Object.values(activities).map((a) =>
+    String(a?.name ?? "").toLowerCase(),
+  );
+  const hasDemonDance = actNames.some((n) => n.includes("demon dance"));
+  const hasHeavenly = actNames.some((n) => n.includes("heavenly blade"))
+    || item.effects.some((e) => /heavenly\s*blade/i.test(e.name ?? ""));
+  const dualMastery =
+    String(system.mastery ?? "").toLowerCase() === "nick"
+    || actNames.some((n) => n.includes("dual mastery"))
+    || /dual mastery/i.test(
+      (item.system as { description?: { value?: string } }).description?.value
+        ?? "",
+    );
+
+  if (dualMastery) {
+    system.mastery = "nick";
   }
 
   const existingWorld =
@@ -479,6 +512,9 @@ export function applyDualBladesDemonDodgeOverlay(item: FoundryItem): boolean {
         ...existingDb,
         isDualBlades: true,
         tier: resolveDualBladesTier(item),
+        dualMastery,
+        demonDance: hasDemonDance,
+        heavenlyBladeDance: hasHeavenly,
       },
     },
   };
@@ -719,6 +755,54 @@ export function applyDualRepeatersOverlay(
   const existingDr =
     (existingWorld.dualRepeaters as Record<string, unknown> | undefined) ?? {};
 
+  const featureNames = weapon
+    ? (() => {
+        const names: string[] = [];
+        const end = Math.min(rarityIndex, weapon.rarityRows.length - 1);
+        for (let i = 0; i <= end; i++) {
+          const row = weapon.rarityRows[i];
+          if (!row) continue;
+          for (const ref of getAssignedFeaturesForRow(
+            row,
+            weapon.customFeatures,
+          )) {
+            names.push(ref.name.trim().toLowerCase());
+          }
+        }
+        return names;
+      })()
+    : [];
+
+  const capacitiveFrame = featureNames.some((n) =>
+    n.includes("capacitive frame"),
+  );
+  const tacticalMods = featureNames.some((n) =>
+    n.includes("tactical modifications"),
+  );
+  const perfectEmpowerment = featureNames.some((n) =>
+    n.includes("perfect empowerment"),
+  );
+
+  // Rename Perfect Empowerment leaf (or keep Empowered Reload renamed).
+  for (const activity of Object.values(activities)) {
+    const nm = String(activity?.name ?? "").trim();
+    if (
+      perfectEmpowerment
+      && (/^empowered\s*reload$/i.test(nm) || /^perfect\s*empowerment$/i.test(nm))
+    ) {
+      activity.name = "Perfect Empowerment";
+      const midi =
+        (activity.midiProperties as Record<string, unknown> | undefined) ?? {};
+      activity.midiProperties = {
+        ...midi,
+        identifier: "empowered-reload",
+        displayActivityName: true,
+      };
+      (activity.description as { chatFlavor?: string }).chatFlavor =
+        "Expend one Magazine to reload Charges (6). Empowered (+1d6) if a hostile is within attack range (30 ft, or 60 ft if Scoped).";
+    }
+  }
+
   embedItemMacro(item, {
     command: DUAL_REPEATERS_MAGAZINES_ITEM_MACRO,
     passes: ["preTargeting", "postAttackRoll", "postDamageRoll"],
@@ -733,9 +817,108 @@ export function applyDualRepeatersOverlay(
         isDualRepeaters: true,
         volleysMax: 6,
         unlockedMagazines,
+        capacitiveFrame,
+        tacticalModifications: tacticalMods,
+        perfectEmpowerment,
+        empoweredDamage: perfectEmpowerment ? "1d6" : "1d4",
       },
     },
   };
+
+  return true;
+}
+
+/**
+ * Sword and Shield Legendary: True Perfect Rush adds a companion CON save for Stunned.
+ */
+export function polishSwordAndShieldTruePerfectRush(item: FoundryItem): boolean {
+  if (!/^sword and shield/i.test(item.name ?? "")) return false;
+
+  const system = item.system as Record<string, unknown>;
+  const activities = system.activities as
+    | Record<string, Record<string, unknown>>
+    | undefined;
+  if (!activities) return false;
+
+  const perfect = Object.values(activities).find((a) =>
+    /^perfect\s*rush$/i.test(String(a?.name ?? "").trim()),
+  );
+  if (!perfect) return false;
+
+  const isLegendary = /legendary/i.test(item.name ?? "");
+  const dmg = perfect.damage as
+    | { parts?: Array<{ number?: number; denomination?: number }> }
+    | undefined;
+  const isTrue =
+    isLegendary
+    || (dmg?.parts?.[0]?.number === 5 && dmg?.parts?.[0]?.denomination === 6);
+  if (!isTrue) return false;
+
+  (perfect.description as { chatFlavor?: string }).chatFlavor =
+    "Once per turn after Sword + Shield Bash hit the same creature: +5d6. Target CON save (DC 8 + PB + STR or DEX) or Stunned until start of its next turn.";
+
+  const stunId = foundryIdFromSeed("act-sns-true-perfect-rush-stun");
+  if (!activities[stunId]) {
+    activities[stunId] = {
+      _id: stunId,
+      type: "save",
+      sort: Number(perfect.sort ?? 500000) + 1000,
+      name: "True Perfect Rush: Stun",
+      img: "icons/magic/control/silhouette-fall-slip-prone.webp",
+      activation: {
+        type: "special",
+        value: null,
+        condition: "After Perfect Rush damage hits",
+        override: false,
+      },
+      consumption: {
+        scaling: { allowed: false, max: "" },
+        spellSlot: false,
+        targets: [],
+      },
+      description: {
+        chatFlavor:
+          "CON save vs SnS DC or Stunned until the start of the target's next turn.",
+      },
+      duration: {
+        value: "",
+        units: "inst",
+        concentration: false,
+        override: false,
+      },
+      effects: [],
+      range: { units: "self", special: "", override: false },
+      target: {
+        template: {
+          count: "",
+          contiguous: false,
+          type: "",
+          size: "",
+          width: "",
+          height: "",
+          units: "ft",
+        },
+        affects: {
+          count: "1",
+          type: "creature",
+          choice: false,
+          special: "",
+        },
+        prompt: true,
+        override: false,
+      },
+      uses: { spent: 0, max: "", recovery: [] },
+      damage: { parts: [], onSave: "none" },
+      save: {
+        ability: ["con"],
+        dc: { calculation: "str", formula: "" },
+      },
+      midiProperties: {
+        identifier: "true-perfect-rush-stun",
+        displayActivityName: true,
+      },
+    };
+  }
 
   return true;
 }

@@ -11,6 +11,8 @@ export const CHARGE_BLADE_ITEM_MACRO = `// Charge Blade — Item Macro (MidiQOL 
 const GUARD_POINT_DAMAGE = "__GUARD_POINT_DAMAGE__";
 const ELEMENTAL_DISCHARGE_DAMAGE = "__ELEMENTAL_DISCHARGE_DAMAGE__";
 const AED_DAMAGE = "__AED_DAMAGE__";
+const AED_CONE = "__AED_CONE__";
+const CHARGED_SHIELD = "__CHARGED_SHIELD__" === "true";
 const ELEMENTAL_TYPE = "__ELEMENTAL_TYPE__";
 
 const esc = (value) => {
@@ -214,7 +216,7 @@ const confirmDialog = (title, content, yesLabel = "Yes", noLabel = "No") =>
     }).render(true);
   });
 
-/** @returns {Promise<number|null>} */
+/** @returns {Promise<number|null|'red-shield'>} */
 const aedChargesDialog = (available) =>
   new Promise((resolve) => {
     let settled = false;
@@ -225,7 +227,19 @@ const aedChargesDialog = (available) =>
       }
     };
     const aedDenom = Number(String(aedDie).match(/d(\\d+)/i)?.[1] || 8);
+    const coneFt = String(
+      foundry.utils.getProperty(weaponItem, "flags.world.chargeBlade.aedConeSize")
+      ?? AED_CONE
+      ?? "15",
+    );
     const buttons = {};
+    if (CHARGED_SHIELD || foundry.utils.getProperty(weaponItem, "flags.world.chargeBlade.chargedShield") === true) {
+      buttons.redShield = {
+        icon: '<i class="fas fa-shield-alt"></i>',
+        label: "Charged Shield (cancel shockwave)",
+        callback: () => done("red-shield"),
+      };
+    }
     for (let n = 1; n <= available; n += 1) {
       buttons[\`n\${n}\`] = {
         icon: '<i class="fas fa-bolt"></i>',
@@ -240,7 +254,7 @@ const aedChargesDialog = (available) =>
     };
     new Dialog({
       title: "Amped Element Discharge (AED)",
-      content: \`<div class="dnd5e2"><p>Phial Charges available: <strong>\${available}</strong>.</p><p>How many charges do you expend for the 15-ft cone?</p></div>\`,
+      content: \`<div class="dnd5e2"><p>Phial Charges available: <strong>\${available}</strong>.</p><p>How many charges do you expend for the \${coneFt}-ft cone?\${CHARGED_SHIELD || foundry.utils.getProperty(weaponItem, "flags.world.chargeBlade.chargedShield") ? " Or cancel the shockwave to charge your <strong>Red Shield</strong>." : ""}</p></div>\`,
       buttons,
       default: "n1",
       close: () => done(null),
@@ -454,6 +468,62 @@ if (isAed && (isPre || isPreDamage)) {
       return false;
     }
     const n = await aedChargesDialog(available);
+    if (n === "red-shield") {
+      const ok = await spendPhials(1);
+      if (!ok) {
+        ui.notifications.warn("Charge Blade: could not spend Phial Charges for Red Shield.");
+        if (typeof workflow !== "undefined" && workflow) workflow.aborted = true;
+        return false;
+      }
+      const stale = actorDoc.effects.filter((ef) =>
+        foundry.utils.getProperty(ef, "flags.world.chargeBlade.isRedShield") === true
+        || /^charged shield|red shield$/i.test(ef.name ?? ""),
+      );
+      if (stale.length) {
+        await actorDoc.deleteEmbeddedDocuments("ActiveEffect", stale.map((e) => e.id));
+      }
+      const gpDie = String(
+        foundry.utils.getProperty(weaponItem, "flags.world.chargeBlade.elementalDischargeDamage")
+        ?? "__ELEMENTAL_DISCHARGE_DAMAGE__",
+      );
+      await actorDoc.createEmbeddedDocuments("ActiveEffect", [
+        {
+          name: "Charged Shield (Red Shield)",
+          img: "icons/equipment/shield/heater-steel-red.webp",
+          transfer: false,
+          disabled: false,
+          changes: [
+            {
+              key: "system.attributes.ac.bonus",
+              mode: CONST.ACTIVE_EFFECT_MODES.ADD,
+              value: "1",
+              priority: 20,
+            },
+          ],
+          duration: { seconds: 60 },
+          flags: {
+            dae: {
+              showIcon: true,
+              stackable: "noneName",
+              dontApply: false,
+            },
+            world: {
+              chargeBlade: {
+                isRedShield: true,
+                guardPointMultiplier: 2,
+                guardPointBaseDie: gpDie,
+              },
+            },
+          },
+        },
+      ]);
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+        content: \`<div class="dnd5e2"><p><strong>\${esc(actorDoc.name)}</strong> cancels the AED shockwave and charges the <strong>Red Shield</strong> (+1 AC for 1 minute; Guard Point deals 2× Elemental Discharge).</p></div>\`,
+      });
+      if (typeof workflow !== "undefined" && workflow) workflow.aborted = true;
+      return false;
+    }
     if (!n) {
       if (typeof workflow !== "undefined" && workflow) workflow.aborted = true;
       return false;

@@ -1,5 +1,5 @@
 {
-  "_id": "S5wNCMgJtt3fjO8H",
+  "_id": "9cSVBL8rbA1cIQwx",
   "name": "Great Sword (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
@@ -89,8 +89,8 @@
       "max": "3"
     },
     "activities": {
-      "PBHTYKvHB1EwwdBA": {
-        "_id": "PBHTYKvHB1EwwdBA",
+      "ZFJFjjppgTHFDZMu": {
+        "_id": "ZFJFjjppgTHFDZMu",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1090,8 +1090,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702831,
-        "modifiedTime": 1788708702831,
+        "createdTime": 1788906281698,
+        "modifiedTime": 1788906281698,
         "lastModifiedBy": null
       }
     },
@@ -1143,14 +1143,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702831,
-        "modifiedTime": 1788708702831,
+        "createdTime": 1788906281698,
+        "modifiedTime": 1788906281698,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 2700000,
+  "sort": 12000000,
   "ownership": {
     "default": 0
   },
@@ -1196,8 +1196,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702830,
-    "modifiedTime": 1788708702830,
+    "createdTime": 1788906281698,
+    "modifiedTime": 1788906281698,
     "lastModifiedBy": null
   }
 }

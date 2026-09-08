@@ -1,5 +1,5 @@
 {
-  "_id": "3rivcXYmHJtthBBz",
+  "_id": "1gGKp7xB4ESLSrpd",
   "name": "Lance (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_lance.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "efVZMp6S9SbStCL6": {
-        "_id": "efVZMp6S9SbStCL6",
+      "IKsUR0uWWVtAvFrS": {
+        "_id": "IKsUR0uWWVtAvFrS",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -240,13 +240,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702917,
-        "modifiedTime": 1788708702917,
+        "createdTime": 1788906281780,
+        "modifiedTime": 1788906281780,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "2sWnLDpRCPBrT1pP",
+      "_id": "ohaBbLzCx1tDvYKU",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -293,14 +293,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702917,
-        "modifiedTime": 1788708702917,
+        "createdTime": 1788906281780,
+        "modifiedTime": 1788906281780,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 10000000,
+  "sort": 19500000,
   "ownership": {
     "default": 0
   },
@@ -346,8 +346,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702917,
-    "modifiedTime": 1788708702917,
+    "createdTime": 1788906281780,
+    "modifiedTime": 1788906281780,
     "lastModifiedBy": null
   }
 }

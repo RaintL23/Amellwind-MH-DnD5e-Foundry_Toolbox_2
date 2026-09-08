@@ -1,5 +1,5 @@
 {
-  "_id": "CgyYWxLH9JJfH5LZ",
+  "_id": "D0ZYScPPWDhBRbqk",
   "name": "Light Bowgun (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_lightbowgun.webp",
@@ -89,8 +89,8 @@
       "max": "15"
     },
     "activities": {
-      "JASpB79EtAuEmCpE": {
-        "_id": "JASpB79EtAuEmCpE",
+      "ETLUa1ia5FpltRCB": {
+        "_id": "ETLUa1ia5FpltRCB",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -3264,8 +3264,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702941,
-        "modifiedTime": 1788708702941,
+        "createdTime": 1788906281800,
+        "modifiedTime": 1788906281800,
         "lastModifiedBy": null
       }
     }

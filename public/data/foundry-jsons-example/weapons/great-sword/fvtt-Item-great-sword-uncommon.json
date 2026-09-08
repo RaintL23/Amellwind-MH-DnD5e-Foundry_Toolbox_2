@@ -1,5 +1,5 @@
 {
-  "_id": "dums0cWxBXBpBZip",
+  "_id": "Y0J22Icjzvdp9wyH",
   "name": "Great Sword (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
@@ -88,8 +88,8 @@
       "max": "3"
     },
     "activities": {
-      "rxtcjeWsZMTFRCIC": {
-        "_id": "rxtcjeWsZMTFRCIC",
+      "8uqca4ehxPDAAKBC": {
+        "_id": "8uqca4ehxPDAAKBC",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -831,8 +831,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702822,
-        "modifiedTime": 1788708702822,
+        "createdTime": 1788906281693,
+        "modifiedTime": 1788906281693,
         "lastModifiedBy": null
       }
     },
@@ -884,14 +884,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702823,
-        "modifiedTime": 1788708702823,
+        "createdTime": 1788906281693,
+        "modifiedTime": 1788906281693,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 2500000,
+  "sort": 11800000,
   "ownership": {
     "default": 0
   },
@@ -937,8 +937,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702822,
-    "modifiedTime": 1788708702822,
+    "createdTime": 1788906281692,
+    "modifiedTime": 1788906281692,
     "lastModifiedBy": null
   }
 }

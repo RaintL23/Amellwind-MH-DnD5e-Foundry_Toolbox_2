@@ -1,5 +1,5 @@
 {
-  "_id": "uQwmdc1oLMVeEJoX",
+  "_id": "7aWF9JSNuoAELlXd",
   "name": "Hunting Horn (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_huntinghorn.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "J9KlWV3JaAqw0DsB": {
-        "_id": "J9KlWV3JaAqw0DsB",
+      "6FZbgez9H7ChzbeH": {
+        "_id": "6FZbgez9H7ChzbeH",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -580,14 +580,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702898,
-        "modifiedTime": 1788708702898,
+        "createdTime": 1788906281761,
+        "modifiedTime": 1788906281761,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 3900000,
+  "sort": 13400000,
   "ownership": {
     "default": 0
   },
@@ -654,7 +654,9 @@
         "songbook": true,
         "melodyFlag": "world.hh.isMelody",
         "maxActiveMelodies": 1,
-        "maxSoloMelodies": 1
+        "maxSoloMelodies": 1,
+        "songbookMastery": false,
+        "infernalMelody": false
       }
     }
   },
@@ -664,8 +666,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702898,
-    "modifiedTime": 1788708702898,
+    "createdTime": 1788906281761,
+    "modifiedTime": 1788906281761,
     "lastModifiedBy": null
   }
 }

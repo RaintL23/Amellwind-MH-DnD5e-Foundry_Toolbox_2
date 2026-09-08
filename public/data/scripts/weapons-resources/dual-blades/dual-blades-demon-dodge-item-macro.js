@@ -44,7 +44,16 @@ const isArchdemon =
   || actName === "archdemon mode"
   || actName.includes("archdemon");
 
-if (!isDemonDodge && !isArchdemon) return;
+const isDemonDance =
+  actId === "demon-dance"
+  || actName === "demon dance"
+  || actName.includes("demon dance");
+
+const isAttack =
+  actId === "attack"
+  || actName === "attack";
+
+if (!isDemonDodge && !isArchdemon && !isDemonDance && !isAttack) return;
 if (macroPass && !macroPass.includes("postactiveeffects")) return;
 
 const actorDoc = actor
@@ -63,6 +72,7 @@ const tier = String(
 ).toLowerCase().replace(/\s+/g, "");
 
 const perfectEvadeEnabled = ["rare", "veryrare", "legendary"].includes(tier);
+const heavenlyEnabled = foundry.utils.getProperty(item, "flags.world.dualBlades.heavenlyBladeDance") === true;
 
 const isDemonMode = (ef) => {
   if (ef.disabled) return false;
@@ -74,88 +84,26 @@ const isDemonDodgeAc = (ef) =>
   foundry.utils.getProperty(ef, "flags.world.dualBlades.isDemonDodgeAc") === true
   || /^demon dodge \(\+/i.test(ef.name ?? "");
 
-// ── Archdemon Mode: end Demon Mode when entering Archdemon ───────────────────
-if (isArchdemon) {
-  const stale = actorDoc.effects.filter(isDemonMode);
-  if (stale.length) {
-    await actorDoc.deleteEmbeddedDocuments(
-      "ActiveEffect",
-      stale.map((e) => e.id),
-    );
+// ── Demon Dance ──────────────────────────────────────────────────────────────
+if (isDemonDance) {
+  const demonModeActive = actorDoc.effects.some(isDemonMode);
+  if (!demonModeActive) {
+    ui.notifications.warn("Dual Blades: Demon Mode must be active to use Demon Dance.");
+    return;
   }
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
-    content: `<div class="dnd5e2"><p><strong>${esc(actorDoc.name)}</strong> enters <strong>Archdemon Mode</strong>.</p><p>Speed bonus and Demon Dodge end; keep the extra [[/r 1d4]] slashing on Light-property attacks for 1 minute.</p></div>`,
+    content: `<div class="dnd5e2"><p><strong>Demon Dance:</strong> make <strong>four</strong> melee weapon attacks against one creature with <strong>Advantage</strong>. Your speed is 0 until the end of this turn. If all four hit, add [[/r 4d6]] slashing on the last attack.</p></div>`,
   });
   return;
 }
 
-// ── Demon Dodge ───────────────────────────────────────────────────────────────
-const demonModeActive = actorDoc.effects.some(isDemonMode);
-
-if (!demonModeActive) {
-  ui.notifications.warn("Dual Blades: Demon Mode must be active to use Demon Dodge.");
-  return;
-}
-
-const prof = Number(actorDoc.system?.attributes?.prof);
-const bonus = Number.isFinite(prof) && prof > 0 ? Math.trunc(prof) : 2;
-
-const stale = actorDoc.effects.filter(isDemonDodgeAc);
-if (stale.length) {
-  await actorDoc.deleteEmbeddedDocuments(
-    "ActiveEffect",
-    stale.map((e) => e.id),
-  );
-}
-
-await actorDoc.createEmbeddedDocuments("ActiveEffect", [
-  {
-    name: `Demon Dodge (+${bonus} AC)`,
-    img: "icons/skills/movement/figure-running-gray.webp",
-    transfer: false,
-    disabled: false,
-    changes: [
-      {
-        key: "system.attributes.ac.bonus",
-        mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-        value: String(bonus),
-        priority: 20,
-      },
-    ],
-    duration: {
-      startTime: null,
-      seconds: null,
-      combat: null,
-      rounds: null,
-      turns: null,
-      startRound: null,
-      startTurn: null,
-    },
-    flags: {
-      dae: {
-        specialDuration: ["isAttacked"],
-        stackable: "noneName",
-        showIcon: true,
-        selfTarget: true,
-        selfTargetAlways: true,
-        dontApply: false,
-      },
-      world: {
-        dualBlades: {
-          isDemonDodgeAc: true,
-        },
-      },
-    },
-  },
-]);
-
-const evadeLine = perfectEvadeEnabled
-  ? `<p>If the attack misses, move <strong>5 feet</strong> without Opportunity Attacks, then use <strong>Perfect Evade</strong> for one melee weapon attack as part of the same Reaction.</p>`
-  : `<p>If the attack misses, immediately move <strong>5 feet</strong> without provoking Opportunity Attacks.</p>`;
-
-await ChatMessage.create({
-  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
-  content: `<div class="dnd5e2"><p><strong>${esc(actorDoc.name)}</strong> uses Demon Dodge: <strong>+${bonus} AC</strong> against the triggering melee attack.</p>${evadeLine}</div>`,
-});
-
+// ── Heavenly Blade Dance (on Attack hit) ─────────────────────────────────────
+if (isAttack && heavenlyEnabled) {
+  const ht = workflow?.hitTargets;
+  const hitCount = ht instanceof Set ? ht.size : Array.isArray(ht) ? ht.length : Number(ht?.size ?? 0);
+  if (hitCount > 0) {
+    const combat = game.combat;
+    const turnKey = combat
+      ? `${combat.id}:${combat.round}:${combat.turn}`
+      : `ooc:${game.time?.worldTime ?? 0}\

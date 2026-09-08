@@ -1,5 +1,5 @@
 {
-  "_id": "WtLBD93HukdPOYsh",
+  "_id": "pCzhGEJEMzHaxGEv",
   "name": "Wire Knuckles (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_tonfas.webp",
@@ -93,8 +93,8 @@
       "max": "4"
     },
     "activities": {
-      "v7Cw9NKtXlXbreBC": {
-        "_id": "v7Cw9NKtXlXbreBC",
+      "Aal0wiytv5CYb5XH": {
+        "_id": "Aal0wiytv5CYb5XH",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -998,8 +998,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702979,
-        "modifiedTime": 1788708702979,
+        "createdTime": 1788906281919,
+        "modifiedTime": 1788906281919,
         "lastModifiedBy": null
       }
     },
@@ -1038,14 +1038,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702979,
-        "modifiedTime": 1788708702979,
+        "createdTime": 1788906281919,
+        "modifiedTime": 1788906281919,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 11400000,
+  "sort": 24400000,
   "ownership": {
     "default": 0
   },
@@ -1096,8 +1096,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702979,
-    "modifiedTime": 1788708702979,
+    "createdTime": 1788906281919,
+    "modifiedTime": 1788906281919,
     "lastModifiedBy": null
   }
 }

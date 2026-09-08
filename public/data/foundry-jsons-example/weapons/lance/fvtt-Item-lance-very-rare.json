@@ -1,5 +1,5 @@
 {
-  "_id": "pVeJfw137IuNmhqG",
+  "_id": "KZYvjogq6cIO91DJ",
   "name": "Lance (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_lance.webp",
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "G1FWckgjaSBkeu8Q": {
-        "_id": "G1FWckgjaSBkeu8Q",
+      "ZDDFqyKmRiCC9B0n": {
+        "_id": "ZDDFqyKmRiCC9B0n",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -606,8 +606,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702922,
-        "modifiedTime": 1788708702922,
+        "createdTime": 1788906281784,
+        "modifiedTime": 1788906281784,
         "lastModifiedBy": null
       }
     },
@@ -653,9 +653,9 @@
             "isIncapacitated"
           ],
           "stackable": "noneName",
+          "dontApply": true,
           "disableIncapacitated": true,
-          "showIcon": true,
-          "dontApply": true
+          "showIcon": true
         },
         "ActiveAuras": {
           "isAura": true,
@@ -677,13 +677,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702922,
-        "modifiedTime": 1788708702922,
+        "createdTime": 1788906281784,
+        "modifiedTime": 1788906281784,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "t2Fj583YTfXWDK50",
+      "_id": "PWOI6syxcBa6sFvO",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -730,13 +730,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702922,
-        "modifiedTime": 1788708702922,
+        "createdTime": 1788906281784,
+        "modifiedTime": 1788906281784,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "Ho4ML4prDdAHvu34",
+      "_id": "Kjhg0AsoNpHdwmc5",
       "name": "Lance AC (+2)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Very Rare Lance bonus AC from the rarity table.",
@@ -777,14 +777,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702922,
-        "modifiedTime": 1788708702922,
+        "createdTime": 1788906281784,
+        "modifiedTime": 1788906281784,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 10100000,
+  "sort": 19600000,
   "ownership": {
     "default": 0
   },
@@ -866,8 +866,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702922,
-    "modifiedTime": 1788708702922,
+    "createdTime": 1788906281784,
+    "modifiedTime": 1788906281784,
     "lastModifiedBy": null
   }
 }

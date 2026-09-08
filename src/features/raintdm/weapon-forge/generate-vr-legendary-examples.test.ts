@@ -53,7 +53,6 @@ const GRAFT_MACRO_FROM: Record<string, Tier> = {
   "bow.json": "Rare",
   "wire-knuckles.json": "Rare",
   "gunlance.json": "Rare",
-  "hammer.json": "Rare",
   "lance.json": "Rare",
   "sword-and-shield.json": "Rare",
 };
@@ -64,7 +63,6 @@ const PRESERVE_EXISTING_TIERS: Record<string, Tier[]> = {
   "light-bowgun.json": ["Uncommon", "Rare", "Very Rare"],
   "bow.json": ["Uncommon", "Rare"],
   "gunlance.json": ["Uncommon", "Rare"],
-  "hammer.json": ["Uncommon", "Rare"],
   "lance.json": ["Uncommon", "Rare"],
 };
 
@@ -232,6 +230,21 @@ function cloneMergeTier(
       recovery: [],
       max: String(bow.tracerMax),
     };
+    if (tier === "Legendary") {
+      const acts = mSys.activities as Record<string, Record<string, unknown>>;
+      for (const act of Object.values(acts ?? {})) {
+        if (/^dragonpiercer$/i.test(String(act?.name ?? "").trim())) {
+          act.name = "True Dragonpiercer";
+          const midi =
+            (act.midiProperties as Record<string, unknown> | undefined) ?? {};
+          act.midiProperties = {
+            ...midi,
+            identifier: "true-dragonpiercer",
+            displayActivityName: true,
+          };
+        }
+      }
+    }
   } else if (stem === "gunlance") {
     const gunlance = {
       ...((world.gunlance as Record<string, unknown>) ?? {}),

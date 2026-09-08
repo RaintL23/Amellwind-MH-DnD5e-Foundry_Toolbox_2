@@ -1,5 +1,5 @@
 {
-  "_id": "BDeujgXNd55xxjSx",
+  "_id": "e9Sa6L5NYvDRf4CS",
   "name": "Longsword (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_longsword.webp",
@@ -88,8 +88,8 @@
       "max": "6"
     },
     "activities": {
-      "ADXk6myXz7kx20OZ": {
-        "_id": "ADXk6myXz7kx20OZ",
+      "7nU5dqC2XYnK5C7T": {
+        "_id": "7nU5dqC2XYnK5C7T",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1050,14 +1050,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672797,
-        "modifiedTime": 1788708672797,
+        "createdTime": 1788906281817,
+        "modifiedTime": 1788906281817,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 20100000,
+  "sort": 20300000,
   "ownership": {
     "default": 0
   },
@@ -1145,8 +1145,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672796,
-    "modifiedTime": 1788708672796,
+    "createdTime": 1788906281817,
+    "modifiedTime": 1788906281817,
     "lastModifiedBy": null
   }
 }

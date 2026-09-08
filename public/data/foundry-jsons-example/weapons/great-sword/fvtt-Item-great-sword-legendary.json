@@ -1,5 +1,5 @@
 {
-  "_id": "JamiWNEJW7T1aqot",
+  "_id": "tPw5ONVTyn0T1M37",
   "name": "Great Sword (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
@@ -89,8 +89,8 @@
       "max": "3"
     },
     "activities": {
-      "GFUjoCvZ2AZHTcFN": {
-        "_id": "GFUjoCvZ2AZHTcFN",
+      "k03tiyveH4W84DB6": {
+        "_id": "k03tiyveH4W84DB6",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1203,8 +1203,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702835,
-        "modifiedTime": 1788708702835,
+        "createdTime": 1788906281701,
+        "modifiedTime": 1788906281701,
         "lastModifiedBy": null
       }
     },
@@ -1256,14 +1256,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702836,
-        "modifiedTime": 1788708702836,
+        "createdTime": 1788906281701,
+        "modifiedTime": 1788906281701,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 2800000,
+  "sort": 12100000,
   "ownership": {
     "default": 0
   },
@@ -1309,8 +1309,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702835,
-    "modifiedTime": 1788708702835,
+    "createdTime": 1788906281701,
+    "modifiedTime": 1788906281701,
     "lastModifiedBy": null
   }
 }

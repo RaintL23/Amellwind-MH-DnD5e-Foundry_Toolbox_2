@@ -1,5 +1,5 @@
 {
-  "_id": "XrhrQEkAdd08u5n7",
+  "_id": "0Sj9aE1wduJvN5Qn",
   "name": "Longsword (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_longsword.webp",
@@ -88,8 +88,8 @@
       "max": "6"
     },
     "activities": {
-      "hzG6loOVL8dOclgf": {
-        "_id": "hzG6loOVL8dOclgf",
+      "DSUsBYRRPtcGGk0P": {
+        "_id": "DSUsBYRRPtcGGk0P",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1163,14 +1163,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672801,
-        "modifiedTime": 1788708672801,
+        "createdTime": 1788906281822,
+        "modifiedTime": 1788906281822,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 20200000,
+  "sort": 20400000,
   "ownership": {
     "default": 0
   },
@@ -1258,8 +1258,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672801,
-    "modifiedTime": 1788708672801,
+    "createdTime": 1788906281821,
+    "modifiedTime": 1788906281821,
     "lastModifiedBy": null
   }
 }

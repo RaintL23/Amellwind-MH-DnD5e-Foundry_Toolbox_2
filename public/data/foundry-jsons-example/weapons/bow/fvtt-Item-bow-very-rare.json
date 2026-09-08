@@ -1,5 +1,5 @@
 {
-  "_id": "IlSm4RtWMpqjJlVy",
+  "_id": "cIlo0GNCwmc0rYw2",
   "name": "Bow (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_bow.webp",
@@ -89,8 +89,8 @@
       "max": "4"
     },
     "activities": {
-      "3YmwbfBIhr3Gi5i2": {
-        "_id": "3YmwbfBIhr3Gi5i2",
+      "OZ2GrobDbFLrhM5R": {
+        "_id": "OZ2GrobDbFLrhM5R",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -983,8 +983,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702798,
-        "modifiedTime": 1788708702798,
+        "createdTime": 1788906281592,
+        "modifiedTime": 1788906281592,
         "lastModifiedBy": null
       }
     }

@@ -1,5 +1,5 @@
 {
-  "_id": "4TbkvFn4Bx0wPfnE",
+  "_id": "5GLRl1EBTgIeiyUG",
   "name": "Longsword (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_longsword.webp",
@@ -87,8 +87,8 @@
       "recovery": []
     },
     "activities": {
-      "ksiioaAukMnDKkBY": {
-        "_id": "ksiioaAukMnDKkBY",
+      "CadX2pyz5XXg1uS5": {
+        "_id": "CadX2pyz5XXg1uS5",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -239,14 +239,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672787,
-        "modifiedTime": 1788708672787,
+        "createdTime": 1788906281807,
+        "modifiedTime": 1788906281807,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 19800000,
+  "sort": 20000000,
   "ownership": {
     "default": 0
   },
@@ -292,8 +292,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672787,
-    "modifiedTime": 1788708672787,
+    "createdTime": 1788906281807,
+    "modifiedTime": 1788906281807,
     "lastModifiedBy": null
   }
 }

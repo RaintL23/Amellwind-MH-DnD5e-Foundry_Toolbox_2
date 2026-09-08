@@ -1,5 +1,5 @@
 {
-  "_id": "SLBGXotaXAOaQrio",
+  "_id": "qXkzxvccjx5zH4gV",
   "name": "Dual Blades (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_dualblades.webp",
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "GcZuNY6TkiDF2tKf": {
-        "_id": "GcZuNY6TkiDF2tKf",
+      "BRyAaxUqE95FerIG": {
+        "_id": "BRyAaxUqE95FerIG",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -684,6 +684,135 @@
           "postRemoveConditionText": ""
         },
         "otherActivityId": "none"
+      },
+      "TQrxagCHUkpSvewG": {
+        "_id": "TQrxagCHUkpSvewG",
+        "sort": 600000,
+        "name": "Demon Dance",
+        "img": "icons/skills/melee/blade-tip-orange.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "While Demon Mode is active",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Four melee weapon attacks vs one creature with Advantage. Speed 0 until end of turn. If all hit: +4d6 slashing on the last attack. ItemMacro / honor-system for the four rolls."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "@prof",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "demon-dance",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
       }
     },
     "container": null,
@@ -724,8 +853,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672638,
-        "modifiedTime": 1788708672638,
+        "createdTime": 1788906281662,
+        "modifiedTime": 1788906281662,
         "lastModifiedBy": null
       }
     },
@@ -782,8 +911,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672638,
-        "modifiedTime": 1788708672638,
+        "createdTime": 1788906281662,
+        "modifiedTime": 1788906281662,
         "lastModifiedBy": null
       }
     },
@@ -834,8 +963,52 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672638,
-        "modifiedTime": 1788708672638,
+        "createdTime": 1788906281662,
+        "modifiedTime": 1788906281662,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "x9XYo0DP6yiwOYgF",
+      "name": "Heavenly Blade Dance",
+      "img": "icons/skills/movement/figure-running-gray.webp",
+      "description": "You can move through the space of any Large or larger creature without provoking Opportunity Attacks.",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": true,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "showIcon": true
+        },
+        "world": {
+          "dualBlades": {
+            "isHeavenlyBladeDance": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1788906281662,
+        "modifiedTime": 1788906281662,
         "lastModifiedBy": null
       }
     }
@@ -896,7 +1069,7 @@
         "scope": "global",
         "author": "",
         "img": "icons/svg/dice-target.svg",
-        "command": "// Dual Blades — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [postActiveEffects]ItemMacro\n//\n// Demon Dodge:\n//   Applies system.attributes.ac.bonus + Proficiency Bonus with dae.specialDuration\n//   isAttacked so Midi can recheck the triggering attack (Shield pattern).\n//   If the attack misses, move 5 feet without Opportunity Attacks (manual).\n//   Rare+: use Perfect Evade for the melee riposte as part of the same Reaction.\n//\n// Archdemon Mode (Rare+ via flags.world.dualBlades.tier):\n//   Clears active Demon Mode AEs when Archdemon Mode is activated.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? \"\").toLowerCase();\n\nconst isDemonDodge =\n  actId === \"demon-dodge\"\n  || actName === \"demon dodge\"\n  || (actName.includes(\"demon dodge\") && !actName.includes(\"perfect\"));\n\nconst isArchdemon =\n  actId === \"archdemon-mode\"\n  || actName === \"archdemon mode\"\n  || actName.includes(\"archdemon\");\n\nif (!isDemonDodge && !isArchdemon) return;\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Dual Blades: actor not found.\");\n  return;\n}\n\nconst tier = String(\n  foundry.utils.getProperty(item, \"flags.world.dualBlades.tier\") ?? \"uncommon\",\n).toLowerCase().replace(/\\s+/g, \"\");\n\nconst perfectEvadeEnabled = [\"rare\", \"veryrare\", \"legendary\"].includes(tier);\n\nconst isDemonMode = (ef) => {\n  if (ef.disabled) return false;\n  const flag = foundry.utils.getProperty(ef, \"flags.world.dualBlades.isDemonMode\");\n  return flag === true || /^demon mode$/i.test(ef.name ?? \"\");\n};\n\nconst isDemonDodgeAc = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.dualBlades.isDemonDodgeAc\") === true\n  || /^demon dodge \\(\\+/i.test(ef.name ?? \"\");\n\n// ── Archdemon Mode: end Demon Mode when entering Archdemon ───────────────────\nif (isArchdemon) {\n  const stale = actorDoc.effects.filter(isDemonMode);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\n      \"ActiveEffect\",\n      stale.map((e) => e.id),\n    );\n  }\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> enters <strong>Archdemon Mode</strong>.</p><p>Speed bonus and Demon Dodge end; keep the extra [[/r 1d4]] slashing on Light-property attacks for 1 minute.</p></div>`,\n  });\n  return;\n}\n\n// ── Demon Dodge ───────────────────────────────────────────────────────────────\nconst demonModeActive = actorDoc.effects.some(isDemonMode);\n\nif (!demonModeActive) {\n  ui.notifications.warn(\"Dual Blades: Demon Mode must be active to use Demon Dodge.\");\n  return;\n}\n\nconst prof = Number(actorDoc.system?.attributes?.prof);\nconst bonus = Number.isFinite(prof) && prof > 0 ? Math.trunc(prof) : 2;\n\nconst stale = actorDoc.effects.filter(isDemonDodgeAc);\nif (stale.length) {\n  await actorDoc.deleteEmbeddedDocuments(\n    \"ActiveEffect\",\n    stale.map((e) => e.id),\n  );\n}\n\nawait actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [\n  {\n    name: `Demon Dodge (+${bonus} AC)`,\n    img: \"icons/skills/movement/figure-running-gray.webp\",\n    transfer: false,\n    disabled: false,\n    changes: [\n      {\n        key: \"system.attributes.ac.bonus\",\n        mode: CONST.ACTIVE_EFFECT_MODES.ADD,\n        value: String(bonus),\n        priority: 20,\n      },\n    ],\n    duration: {\n      startTime: null,\n      seconds: null,\n      combat: null,\n      rounds: null,\n      turns: null,\n      startRound: null,\n      startTurn: null,\n    },\n    flags: {\n      dae: {\n        specialDuration: [\"isAttacked\"],\n        stackable: \"noneName\",\n        showIcon: true,\n        selfTarget: true,\n        selfTargetAlways: true,\n        dontApply: false,\n      },\n      world: {\n        dualBlades: {\n          isDemonDodgeAc: true,\n        },\n      },\n    },\n  },\n]);\n\nconst evadeLine = perfectEvadeEnabled\n  ? `<p>If the attack misses, move <strong>5 feet</strong> without Opportunity Attacks, then use <strong>Perfect Evade</strong> for one melee weapon attack as part of the same Reaction.</p>`\n  : `<p>If the attack misses, immediately move <strong>5 feet</strong> without provoking Opportunity Attacks.</p>`;\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> uses Demon Dodge: <strong>+${bonus} AC</strong> against the triggering melee attack.</p>${evadeLine}</div>`,\n});\n",
+        "command": "// Dual Blades — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [postActiveEffects]ItemMacro\n//\n// Demon Dodge:\n//   Applies system.attributes.ac.bonus + Proficiency Bonus with dae.specialDuration\n//   isAttacked so Midi can recheck the triggering attack (Shield pattern).\n//   If the attack misses, move 5 feet without Opportunity Attacks (manual).\n//   Rare+: use Perfect Evade for the melee riposte as part of the same Reaction.\n//\n// Archdemon Mode (Rare+ via flags.world.dualBlades.tier):\n//   Clears active Demon Mode AEs when Archdemon Mode is activated.\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = (rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(rolled?.identifier ?? workflow?.activity?.identifier ?? \"\").toLowerCase();\n\nconst isDemonDodge =\n  actId === \"demon-dodge\"\n  || actName === \"demon dodge\"\n  || (actName.includes(\"demon dodge\") && !actName.includes(\"perfect\"));\n\nconst isArchdemon =\n  actId === \"archdemon-mode\"\n  || actName === \"archdemon mode\"\n  || actName.includes(\"archdemon\");\n\nconst isDemonDance =\n  actId === \"demon-dance\"\n  || actName === \"demon dance\"\n  || actName.includes(\"demon dance\");\n\nconst isAttack =\n  actId === \"attack\"\n  || actName === \"attack\";\n\nif (!isDemonDodge && !isArchdemon && !isDemonDance && !isAttack) return;\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Dual Blades: actor not found.\");\n  return;\n}\n\nconst tier = String(\n  foundry.utils.getProperty(item, \"flags.world.dualBlades.tier\") ?? \"uncommon\",\n).toLowerCase().replace(/\\s+/g, \"\");\n\nconst perfectEvadeEnabled = [\"rare\", \"veryrare\", \"legendary\"].includes(tier);\nconst heavenlyEnabled = foundry.utils.getProperty(item, \"flags.world.dualBlades.heavenlyBladeDance\") === true;\n\nconst isDemonMode = (ef) => {\n  if (ef.disabled) return false;\n  const flag = foundry.utils.getProperty(ef, \"flags.world.dualBlades.isDemonMode\");\n  return flag === true || /^demon mode$/i.test(ef.name ?? \"\");\n};\n\nconst isDemonDodgeAc = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.dualBlades.isDemonDodgeAc\") === true\n  || /^demon dodge \\(\\+/i.test(ef.name ?? \"\");\n\n// ── Demon Dance ──────────────────────────────────────────────────────────────\nif (isDemonDance) {\n  const demonModeActive = actorDoc.effects.some(isDemonMode);\n  if (!demonModeActive) {\n    ui.notifications.warn(\"Dual Blades: Demon Mode must be active to use Demon Dance.\");\n    return;\n  }\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Demon Dance:</strong> make <strong>four</strong> melee weapon attacks against one creature with <strong>Advantage</strong>. Your speed is 0 until the end of this turn. If all four hit, add [[/r 4d6]] slashing on the last attack.</p></div>`,\n  });\n  return;\n}\n\n// ── Heavenly Blade Dance (on Attack hit) ─────────────────────────────────────\nif (isAttack && heavenlyEnabled) {\n  const ht = workflow?.hitTargets;\n  const hitCount = ht instanceof Set ? ht.size : Array.isArray(ht) ? ht.length : Number(ht?.size ?? 0);\n  if (hitCount > 0) {\n    const combat = game.combat;\n    const turnKey = combat\n      ? `${combat.id}:${combat.round}:${combat.turn}`\n      : `ooc:${game.time?.worldTime ?? 0}`;\n    const used = foundry.utils.getProperty(item, \"flags.world.dualBlades.heavenlyUsedTurn\");\n    if (used !== turnKey) {\n      await item.setFlag(\"world\", \"dualBlades.heavenlyUsedTurn\", turnKey);\n      await ChatMessage.create({\n        speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n        content: `<div class=\"dnd5e2\"><p><strong>Heavenly Blade Dance:</strong> if you moved through this Large+ creature's space this turn, add [[/r 2d6]] slashing (once per turn).</p></div>`,\n      });\n    }\n  }\n  return;\n}\n\nif (!isDemonDodge && !isArchdemon) return;\n\n// ── Archdemon Mode: end Demon Mode when entering Archdemon ───────────────────\nif (isArchdemon) {\n  const stale = actorDoc.effects.filter(isDemonMode);\n  if (stale.length) {\n    await actorDoc.deleteEmbeddedDocuments(\n      \"ActiveEffect\",\n      stale.map((e) => e.id),\n    );\n  }\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> enters <strong>Archdemon Mode</strong>.</p><p>Speed bonus and Demon Dodge end; keep the extra [[/r 1d4]] slashing on Light-property attacks for 1 minute.</p></div>`,\n  });\n  return;\n}\n\n// ── Demon Dodge ───────────────────────────────────────────────────────────────\nconst demonModeActive = actorDoc.effects.some(isDemonMode);\n\nif (!demonModeActive) {\n  ui.notifications.warn(\"Dual Blades: Demon Mode must be active to use Demon Dodge.\");\n  return;\n}\n\nconst prof = Number(actorDoc.system?.attributes?.prof);\nconst bonus = Number.isFinite(prof) && prof > 0 ? Math.trunc(prof) : 2;\n\nconst stale = actorDoc.effects.filter(isDemonDodgeAc);\nif (stale.length) {\n  await actorDoc.deleteEmbeddedDocuments(\n    \"ActiveEffect\",\n    stale.map((e) => e.id),\n  );\n}\n\nawait actorDoc.createEmbeddedDocuments(\"ActiveEffect\", [\n  {\n    name: `Demon Dodge (+${bonus} AC)`,\n    img: \"icons/skills/movement/figure-running-gray.webp\",\n    transfer: false,\n    disabled: false,\n    changes: [\n      {\n        key: \"system.attributes.ac.bonus\",\n        mode: CONST.ACTIVE_EFFECT_MODES.ADD,\n        value: String(bonus),\n        priority: 20,\n      },\n    ],\n    duration: {\n      startTime: null,\n      seconds: null,\n      combat: null,\n      rounds: null,\n      turns: null,\n      startRound: null,\n      startTurn: null,\n    },\n    flags: {\n      dae: {\n        specialDuration: [\"isAttacked\"],\n        stackable: \"noneName\",\n        showIcon: true,\n        selfTarget: true,\n        selfTargetAlways: true,\n        dontApply: false,\n      },\n      world: {\n        dualBlades: {\n          isDemonDodgeAc: true,\n        },\n      },\n    },\n  },\n]);\n\nconst evadeLine = perfectEvadeEnabled\n  ? `<p>If the attack misses, move <strong>5 feet</strong> without Opportunity Attacks, then use <strong>Perfect Evade</strong> for one melee weapon attack as part of the same Reaction.</p>`\n  : `<p>If the attack misses, immediately move <strong>5 feet</strong> without provoking Opportunity Attacks.</p>`;\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>${esc(actorDoc.name)}</strong> uses Demon Dodge: <strong>+${bonus} AC</strong> against the triggering melee attack.</p>${evadeLine}</div>`,\n});\n",
         "folder": null,
         "sort": 0,
         "ownership": {
@@ -913,7 +1086,10 @@
     "world": {
       "dualBlades": {
         "isDualBlades": true,
-        "tier": "legendary"
+        "tier": "legendary",
+        "dualMastery": true,
+        "demonDance": true,
+        "heavenlyBladeDance": true
       }
     }
   },
@@ -923,8 +1099,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672638,
-    "modifiedTime": 1788708672638,
+    "createdTime": 1788906281662,
+    "modifiedTime": 1788906281662,
     "lastModifiedBy": null
   }
 }

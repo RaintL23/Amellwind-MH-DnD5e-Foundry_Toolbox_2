@@ -1,5 +1,5 @@
 {
-  "_id": "5MKGtKTk9etlLwnC",
+  "_id": "KlJKH7NuQZRmjEOq",
   "name": "Light Bowgun (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_lightbowgun.webp",
@@ -88,8 +88,8 @@
       "max": "6"
     },
     "activities": {
-      "z8CBlFOd0SzB4f3m": {
-        "_id": "z8CBlFOd0SzB4f3m",
+      "zWHkewFZ0c3xcHeY": {
+        "_id": "zWHkewFZ0c3xcHeY",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -491,14 +491,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702932,
-        "modifiedTime": 1788708702932,
+        "createdTime": 1788906281791,
+        "modifiedTime": 1788906281791,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 10300000,
+  "sort": 19800000,
   "ownership": {
     "default": 0
   },
@@ -544,8 +544,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702932,
-    "modifiedTime": 1788708702932,
+    "createdTime": 1788906281791,
+    "modifiedTime": 1788906281791,
     "lastModifiedBy": null
   }
 }

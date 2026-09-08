@@ -57,7 +57,16 @@ const isArchdemon =
   || actName === "archdemon mode"
   || actName.includes("archdemon");
 
-if (!isDemonDodge && !isArchdemon) return;
+const isDemonDance =
+  actId === "demon-dance"
+  || actName === "demon dance"
+  || actName.includes("demon dance");
+
+const isAttack =
+  actId === "attack"
+  || actName === "attack";
+
+if (!isDemonDodge && !isArchdemon && !isDemonDance && !isAttack) return;
 if (macroPass && !macroPass.includes("postactiveeffects")) return;
 
 const actorDoc = actor
@@ -76,6 +85,7 @@ const tier = String(
 ).toLowerCase().replace(/\\s+/g, "");
 
 const perfectEvadeEnabled = ["rare", "veryrare", "legendary"].includes(tier);
+const heavenlyEnabled = foundry.utils.getProperty(item, "flags.world.dualBlades.heavenlyBladeDance") === true;
 
 const isDemonMode = (ef) => {
   if (ef.disabled) return false;
@@ -86,6 +96,43 @@ const isDemonMode = (ef) => {
 const isDemonDodgeAc = (ef) =>
   foundry.utils.getProperty(ef, "flags.world.dualBlades.isDemonDodgeAc") === true
   || /^demon dodge \\(\\+/i.test(ef.name ?? "");
+
+// ── Demon Dance ──────────────────────────────────────────────────────────────
+if (isDemonDance) {
+  const demonModeActive = actorDoc.effects.some(isDemonMode);
+  if (!demonModeActive) {
+    ui.notifications.warn("Dual Blades: Demon Mode must be active to use Demon Dance.");
+    return;
+  }
+  await ChatMessage.create({
+    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+    content: \`<div class="dnd5e2"><p><strong>Demon Dance:</strong> make <strong>four</strong> melee weapon attacks against one creature with <strong>Advantage</strong>. Your speed is 0 until the end of this turn. If all four hit, add [[/r 4d6]] slashing on the last attack.</p></div>\`,
+  });
+  return;
+}
+
+// ── Heavenly Blade Dance (on Attack hit) ─────────────────────────────────────
+if (isAttack && heavenlyEnabled) {
+  const ht = workflow?.hitTargets;
+  const hitCount = ht instanceof Set ? ht.size : Array.isArray(ht) ? ht.length : Number(ht?.size ?? 0);
+  if (hitCount > 0) {
+    const combat = game.combat;
+    const turnKey = combat
+      ? \`\${combat.id}:\${combat.round}:\${combat.turn}\`
+      : \`ooc:\${game.time?.worldTime ?? 0}\`;
+    const used = foundry.utils.getProperty(item, "flags.world.dualBlades.heavenlyUsedTurn");
+    if (used !== turnKey) {
+      await item.setFlag("world", "dualBlades.heavenlyUsedTurn", turnKey);
+      await ChatMessage.create({
+        speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+        content: \`<div class="dnd5e2"><p><strong>Heavenly Blade Dance:</strong> if you moved through this Large+ creature's space this turn, add [[/r 2d6]] slashing (once per turn).</p></div>\`,
+      });
+    }
+  }
+  return;
+}
+
+if (!isDemonDodge && !isArchdemon) return;
 
 // ── Archdemon Mode: end Demon Mode when entering Archdemon ───────────────────
 if (isArchdemon) {

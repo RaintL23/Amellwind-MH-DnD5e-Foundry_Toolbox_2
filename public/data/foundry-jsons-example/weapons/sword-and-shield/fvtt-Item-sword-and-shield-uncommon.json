@@ -1,5 +1,5 @@
 {
-  "_id": "ABnC4WaOrOBuBZEn",
+  "_id": "v7gMAvZvq1rwM833",
   "name": "Sword and Shield (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_swordandshield.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "0K7Be7ZkDBPIWe7b": {
-        "_id": "0K7Be7ZkDBPIWe7b",
+      "QbHF8NApZ0mv2bUz": {
+        "_id": "QbHF8NApZ0mv2bUz",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -500,8 +500,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702952,
-        "modifiedTime": 1788708702952,
+        "createdTime": 1788906281871,
+        "modifiedTime": 1788906281871,
         "lastModifiedBy": null
       }
     },
@@ -539,13 +539,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702952,
-        "modifiedTime": 1788708702952,
+        "createdTime": 1788906281871,
+        "modifiedTime": 1788906281871,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "9M8lWa5xYsQj2WbT",
+      "_id": "bzSCWB5qVxTZWF5X",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -592,14 +592,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702952,
-        "modifiedTime": 1788708702952,
+        "createdTime": 1788906281871,
+        "modifiedTime": 1788906281871,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 10600000,
+  "sort": 23100000,
   "ownership": {
     "default": 0
   },
@@ -645,8 +645,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702952,
-    "modifiedTime": 1788708702952,
+    "createdTime": 1788906281870,
+    "modifiedTime": 1788906281870,
     "lastModifiedBy": null
   }
 }

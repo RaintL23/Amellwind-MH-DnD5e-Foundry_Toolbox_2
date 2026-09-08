@@ -1,5 +1,5 @@
 {
-  "_id": "mSC2bk4wdHECuOSe",
+  "_id": "GPUB2YpHh0av5jSc",
   "name": "Heavy Bowgun (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_heavybowgun.webp",
@@ -89,8 +89,8 @@
       "max": "4"
     },
     "activities": {
-      "tet7Bi47jxmpm6uF": {
-        "_id": "tet7Bi47jxmpm6uF",
+      "3l6bjqKw0ig7Y5Ko": {
+        "_id": "3l6bjqKw0ig7Y5Ko",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -353,14 +353,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702868,
-        "modifiedTime": 1788708702868,
+        "createdTime": 1788906281735,
+        "modifiedTime": 1788906281735,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 3500000,
+  "sort": 13000000,
   "ownership": {
     "default": 0
   },
@@ -406,8 +406,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702867,
-    "modifiedTime": 1788708702867,
+    "createdTime": 1788906281735,
+    "modifiedTime": 1788906281735,
     "lastModifiedBy": null
   }
 }

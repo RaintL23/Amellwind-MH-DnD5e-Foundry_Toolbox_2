@@ -737,6 +737,28 @@ const shouldResolve =
   || (isPostAttack && !isHit)
   || (isPostDamage && !isHit);
 
+// Capacitive Frame (Legendary): crit refills Charges to full.
+if (
+  isPostAttack
+  && isAttack
+  && foundry.utils.getProperty(item, "flags.world.dualRepeaters.capacitiveFrame") === true
+) {
+  const isCrit = (() => {
+    if (workflow?.isCritical === true) return true;
+    if (workflow?.attackRoll?.isCritical === true) return true;
+    const dice = workflow?.attackRoll?.dice ?? [];
+    return dice.some((d) => d?.results?.some((r) => r?.result === d.faces && !r?.discarded));
+  })();
+  if (isCrit) {
+    const max = Number(item.system?.uses?.max ?? 6) || 6;
+    await item.update({ "system.uses.spent": 0 });
+    await ChatMessage.create({
+      speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+      content: \`<div class="dnd5e2"><p><strong>Capacitive Frame:</strong> critical hit reloads Charges to full (\${max}).</p></div>\`,
+    });
+  }
+}
+
 if (!shouldResolve) return;
 
 // itemUses consumption already spent 1 Charge on the Attack activity.

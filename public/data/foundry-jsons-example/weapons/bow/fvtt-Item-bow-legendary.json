@@ -1,5 +1,5 @@
 {
-  "_id": "FzUsV6E3c5TYH9Yp",
+  "_id": "1FUEmKXEhNGIne5W",
   "name": "Bow (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_bow.webp",
@@ -89,8 +89,8 @@
       "max": "5"
     },
     "activities": {
-      "f7XciJGjP6gIZkXz": {
-        "_id": "f7XciJGjP6gIZkXz",
+      "2Onz6iwUM99NVFSC": {
+        "_id": "2Onz6iwUM99NVFSC",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -318,7 +318,7 @@
       "ZU3LEPYF0OfkKQzD": {
         "_id": "ZU3LEPYF0OfkKQzD",
         "sort": 400000,
-        "name": "Dragonpiercer",
+        "name": "True Dragonpiercer",
         "activation": {
           "type": "action",
           "value": 1,
@@ -394,7 +394,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "dragonpiercer",
+          "identifier": "true-dragonpiercer",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -983,8 +983,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702811,
-        "modifiedTime": 1788708702811,
+        "createdTime": 1788906281605,
+        "modifiedTime": 1788906281605,
         "lastModifiedBy": null
       }
     }

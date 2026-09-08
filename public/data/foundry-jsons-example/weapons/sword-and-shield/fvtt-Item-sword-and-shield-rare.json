@@ -1,5 +1,5 @@
 {
-  "_id": "2D5ayNXs9Tc8dLkF",
+  "_id": "2q4yh0De6QtRr1pu",
   "name": "Sword and Shield (Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_swordandshield.webp",
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "2fKEnA0uctwL0MtC": {
-        "_id": "2fKEnA0uctwL0MtC",
+      "MPiJYEYT7ZLifJXf": {
+        "_id": "MPiJYEYT7ZLifJXf",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -509,8 +509,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702955,
-        "modifiedTime": 1788708702955,
+        "createdTime": 1788906281873,
+        "modifiedTime": 1788906281873,
         "lastModifiedBy": null
       }
     },
@@ -548,8 +548,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702955,
-        "modifiedTime": 1788708702955,
+        "createdTime": 1788906281873,
+        "modifiedTime": 1788906281873,
         "lastModifiedBy": null
       }
     },
@@ -599,13 +599,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702955,
-        "modifiedTime": 1788708702955,
+        "createdTime": 1788906281874,
+        "modifiedTime": 1788906281874,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "zUfvgAJSog7FNmw0",
+      "_id": "pn6dRTWmkRB3xMu9",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -652,13 +652,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702955,
-        "modifiedTime": 1788708702955,
+        "createdTime": 1788906281874,
+        "modifiedTime": 1788906281874,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "LBoTYxqd8lTeuVA3",
+      "_id": "GkOPkLE8lgVYcr9Q",
       "name": "Sword and Shield AC (+1)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Rare Sword and Shield bonus AC from the rarity table.",
@@ -699,14 +699,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702955,
-        "modifiedTime": 1788708702955,
+        "createdTime": 1788906281874,
+        "modifiedTime": 1788906281874,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 10700000,
+  "sort": 23200000,
   "ownership": {
     "default": 0
   },
@@ -758,8 +758,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702954,
-    "modifiedTime": 1788708702954,
+    "createdTime": 1788906281873,
+    "modifiedTime": 1788906281873,
     "lastModifiedBy": null
   }
 }

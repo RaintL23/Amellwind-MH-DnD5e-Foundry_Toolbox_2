@@ -750,7 +750,13 @@ function patchElementalDischarge(
  */
 function patchAedActivities(
   item: FoundryItem,
-  opts: { magical: boolean; elementalType: string; damageFormula: string },
+  opts: {
+    magical: boolean;
+    elementalType: string;
+    damageFormula: string;
+    coneSize: string;
+    chargedShield: boolean;
+  },
 ): void {
   const activities = activitiesOf(item);
   if (!activities) return;
@@ -758,7 +764,7 @@ function patchAedActivities(
   const aedEntries = Object.entries(activities).filter(([, activity]) => {
     if (!activity) return false;
     const name = String(activity.name ?? "").trim();
-    return /amped\s*element\s*discharge/i.test(name) && !/super/i.test(name);
+    return /amped\s*element\s*discharge/i.test(name);
   });
   if (aedEntries.length === 0) return;
 
@@ -771,8 +777,14 @@ function patchAedActivities(
     opts.damageFormula,
     opts.elementalType,
   );
-  // Placeholders; ItemMacro sets `number` to the chosen charge spend.
-  keep.name = "Amped Element Discharge (AED)";
+  const coneLabel = `${opts.coneSize}-ft`;
+  keep.name = opts.chargedShield
+    ? "Amped Element Discharge (AED)"
+    : "Amped Element Discharge (AED)";
+  // Super Amped leaf still displays as AED activity (scaled cone/die).
+  if (/super/i.test(String(keep.name))) {
+    keep.name = "Amped Element Discharge (AED)";
+  }
   keep.type = "save";
   keep.img = "icons/magic/fire/blast-jet-stream-splash.webp";
   keep.activation = {
@@ -781,14 +793,15 @@ function patchAedActivities(
     condition: "While in Axe Mode",
     override: false,
   };
-  // Macro spends after the charge dialog — avoid unpaid Midi filters.
   keep.consumption = {
     scaling: { allowed: false, max: "" },
     spellSlot: false,
     targets: [],
   };
   keep.description = {
-    chatFlavor: `Axe Mode Action: choose how many Phial Charges to spend (dialog). ${opts.damageFormula} ${elementalLabel(opts.elementalType)} per charge in a 15-ft cone; DEX save (DC 8 + PB + STR or DEX), half on success.`,
+    chatFlavor: opts.chargedShield
+      ? `Axe Mode Action: choose Phial spend (dialog). ${opts.damageFormula} ${elementalLabel(opts.elementalType)} per charge in a ${coneLabel} cone; DEX save, half on success. Or cancel the shockwave for Charged Shield (Red Shield).`
+      : `Axe Mode Action: choose how many Phial Charges to spend (dialog). ${opts.damageFormula} ${elementalLabel(opts.elementalType)} per charge in a ${coneLabel} cone; DEX save (DC 8 + PB + STR or DEX), half on success.`,
   };
   keep.damage = {
     parts: [part],
@@ -803,7 +816,7 @@ function patchAedActivities(
       count: "",
       contiguous: false,
       type: "cone",
-      size: "15",
+      size: opts.coneSize,
       width: "",
       height: "",
       units: "ft",
@@ -846,6 +859,9 @@ function applyChargeBladeItemMacro(
     elementalType: string;
     swordMastery: string;
     axeMastery: string;
+    chargedShield: boolean;
+    aedConeSize: string;
+    hasSuperAed: boolean;
   },
 ): void {
   const existingWorld =
@@ -859,7 +875,12 @@ function applyChargeBladeItemMacro(
   )
     .replaceAll("__ELEMENTAL_DISCHARGE_DAMAGE__", opts.elementalDischargeDamage)
     .replaceAll("__AED_DAMAGE__", opts.aedDamage)
-    .replaceAll("__ELEMENTAL_TYPE__", opts.elementalType);
+    .replaceAll("__ELEMENTAL_TYPE__", opts.elementalType)
+    .replaceAll("__AED_CONE__", opts.aedConeSize)
+    .replaceAll(
+      "__CHARGED_SHIELD__",
+      opts.chargedShield ? "true" : "false",
+    );
 
   embedItemMacro(item, {
     command: macro,
@@ -886,6 +907,9 @@ function applyChargeBladeItemMacro(
         elementalType: opts.elementalType,
         swordMastery: opts.swordMastery,
         axeMastery: opts.axeMastery,
+        chargedShield: opts.chargedShield,
+        aedConeSize: opts.aedConeSize,
+        hasSuperAed: opts.hasSuperAed,
       },
     },
   };
@@ -971,11 +995,24 @@ export function applyChargeBladeOverlay(
     rarityIndex,
     /^amped\s*element\s*discharge/i,
   );
+  const hasSuperAed = hasFeature(
+    weapon,
+    rarityIndex,
+    /^super\s*amped/i,
+  );
+  const chargedShield = hasFeature(
+    weapon,
+    rarityIndex,
+    /^charged\s*shield/i,
+  );
+  const aedConeSize = hasSuperAed ? "30" : "15";
   if (hasAed) {
     patchAedActivities(item, {
       magical,
       elementalType,
       damageFormula: aedDamage,
+      coneSize: aedConeSize,
+      chargedShield,
     });
   }
 
@@ -989,6 +1026,9 @@ export function applyChargeBladeOverlay(
     elementalType,
     swordMastery: masteries.sword,
     axeMastery: masteries.axe,
+    chargedShield,
+    aedConeSize,
+    hasSuperAed,
   });
 
   return true;

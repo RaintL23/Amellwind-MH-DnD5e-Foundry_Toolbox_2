@@ -33,6 +33,7 @@ import {
   applyHuntingHornSongbookOverlay,
   applyWireKnucklesSilkbindOverlay,
   defaultWeaponForgeItemFlags,
+  polishSwordAndShieldTruePerfectRush,
 } from "./weapon-forge-foundry-envelope";
 import { applyLongswordOverlay } from "./weapon-forge-longsword.export";
 import { applyMagusStaffOverlay } from "./weapon-forge-magus-staff.export";
@@ -41,6 +42,7 @@ import { buildWeaponPhialFeatItems } from "./weapon-forge-phial.export";
 import { buildWeaponMagazineConsumableItems } from "./weapon-forge-magazine.export";
 import { buildWeaponCoatingConsumableItems } from "./weapon-forge-coating.export";
 import { applyChargeBladeOverlay } from "./weapon-forge-charge-blade.export";
+import { applyHammerOverlay } from "./weapon-forge-hammer.export";
 import { applySwitchAxeOverlay } from "./weapon-forge-switch-axe.export";
 import { applyTonfasOverlay } from "./weapon-forge-tonfas.export";
 
@@ -226,9 +228,11 @@ export function buildWeaponFoundryExportBundle(
   applyWireKnucklesSilkbindOverlay(item);
   applySwitchAxeOverlay(item, weapon, clamped);
   applyChargeBladeOverlay(item, weapon, clamped);
+  applyHammerOverlay(item, weapon, clamped);
   applyLongswordOverlay(item, weapon, clamped);
   applyMagusStaffOverlay(item, weapon, clamped);
   applyTonfasOverlay(item, weapon, clamped);
+  polishSwordAndShieldTruePerfectRush(item);
   applyFoundryModuleCompat(item, { light: true });
 
   const resourceGroups = buildWeaponFoundryResourceGroups(weapon, clamped);

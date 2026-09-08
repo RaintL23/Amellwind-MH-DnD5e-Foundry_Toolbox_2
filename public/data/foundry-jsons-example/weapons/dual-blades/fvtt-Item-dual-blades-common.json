@@ -1,5 +1,5 @@
 {
-  "_id": "nVvYA1UZaCEpPglu",
+  "_id": "dGUOJnOMNXmyIgFB",
   "name": "Dual Blades (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_dualblades.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "6xNRxUGy7SxahJFq": {
-        "_id": "6xNRxUGy7SxahJFq",
+      "JHdrfHVkSvz5k2Cp": {
+        "_id": "JHdrfHVkSvz5k2Cp",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -240,8 +240,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672623,
-        "modifiedTime": 1788708672623,
+        "createdTime": 1788906281648,
+        "modifiedTime": 1788906281648,
         "lastModifiedBy": null
       }
     }
@@ -293,8 +293,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672622,
-    "modifiedTime": 1788708672622,
+    "createdTime": 1788906281647,
+    "modifiedTime": 1788906281647,
     "lastModifiedBy": null
   }
 }

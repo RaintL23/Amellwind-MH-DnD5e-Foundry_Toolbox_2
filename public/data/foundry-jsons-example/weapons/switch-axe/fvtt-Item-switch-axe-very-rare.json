@@ -1,5 +1,5 @@
 {
-  "_id": "EvONOBz6tLYtvdTR",
+  "_id": "zq2TpNxUufAPBp6k",
   "name": "Switch Axe (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_switchaxe.webp",
@@ -90,8 +90,8 @@
       "max": "9"
     },
     "activities": {
-      "qDeIa0WxTdpG34fy": {
-        "_id": "qDeIa0WxTdpG34fy",
+      "d9YAqmjeQHhla3Hn": {
+        "_id": "d9YAqmjeQHhla3Hn",
         "type": "attack",
         "sort": 0,
         "name": "Axe",
@@ -552,7 +552,9 @@
           "recovery": []
         },
         "midiProperties": {
-          "ignoreTraits": [],
+          "ignoreTraits": {
+            "idr": true
+          },
           "triggeredActivityId": "7uWgslhJ82DjJjCA",
           "triggeredActivityConditionText": "true",
           "triggeredActivityTargets": "targets",
@@ -864,7 +866,9 @@
           }
         },
         "midiProperties": {
-          "ignoreTraits": [],
+          "ignoreTraits": {
+            "idr": true
+          },
           "triggeredActivityId": "none",
           "triggeredActivityConditionText": "",
           "triggeredActivityTargets": "targets",
@@ -953,7 +957,9 @@
           "recovery": []
         },
         "midiProperties": {
-          "ignoreTraits": [],
+          "ignoreTraits": {
+            "idr": true
+          },
           "triggeredActivityId": "none",
           "triggeredActivityConditionText": "",
           "triggeredActivityTargets": "targets",
@@ -1517,8 +1523,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672839,
-        "modifiedTime": 1788708672839,
+        "createdTime": 1788906281858,
+        "modifiedTime": 1788906281858,
         "lastModifiedBy": null
       }
     },
@@ -1552,8 +1558,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672839,
-        "modifiedTime": 1788708672839,
+        "createdTime": 1788906281858,
+        "modifiedTime": 1788906281858,
         "lastModifiedBy": null
       }
     },
@@ -1602,8 +1608,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672839,
-        "modifiedTime": 1788708672839,
+        "createdTime": 1788906281858,
+        "modifiedTime": 1788906281858,
         "lastModifiedBy": null
       }
     },
@@ -1662,8 +1668,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672839,
-        "modifiedTime": 1788708672839,
+        "createdTime": 1788906281859,
+        "modifiedTime": 1788906281859,
         "lastModifiedBy": null
       }
     },
@@ -1722,8 +1728,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672839,
-        "modifiedTime": 1788708672839,
+        "createdTime": 1788906281859,
+        "modifiedTime": 1788906281859,
         "lastModifiedBy": null
       }
     },
@@ -1779,8 +1785,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672840,
-        "modifiedTime": 1788708672840,
+        "createdTime": 1788906281859,
+        "modifiedTime": 1788906281859,
         "lastModifiedBy": null
       }
     },
@@ -1830,14 +1836,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672840,
-        "modifiedTime": 1788708672840,
+        "createdTime": 1788906281859,
+        "modifiedTime": 1788906281859,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 21700000,
+  "sort": 21900000,
   "ownership": {
     "default": 0
   },
@@ -1924,7 +1930,8 @@
           "element",
           "exhaust",
           "poison"
-        ]
+        ],
+        "elementalAwakening": true
       }
     }
   },
@@ -1934,8 +1941,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672838,
-    "modifiedTime": 1788708672838,
+    "createdTime": 1788906281858,
+    "modifiedTime": 1788906281858,
     "lastModifiedBy": null
   }
 }

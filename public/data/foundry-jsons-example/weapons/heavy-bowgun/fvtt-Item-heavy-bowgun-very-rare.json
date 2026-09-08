@@ -1,5 +1,5 @@
 {
-  "_id": "g4gzM7WD82c8PAVs",
+  "_id": "8N9QldJDhrCgZaDg",
   "name": "Heavy Bowgun (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_heavybowgun.webp",
@@ -90,8 +90,8 @@
       "max": "10"
     },
     "activities": {
-      "m4UAZbnbfWKoLvTt": {
-        "_id": "m4UAZbnbfWKoLvTt",
+      "Bp89cKZ4OpQbKQCo": {
+        "_id": "Bp89cKZ4OpQbKQCo",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -2663,8 +2663,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702876,
-        "modifiedTime": 1788708702876,
+        "createdTime": 1788906281741,
+        "modifiedTime": 1788906281741,
         "lastModifiedBy": null
       }
     }

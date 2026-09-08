@@ -452,7 +452,23 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "",
     "Recover 1 counter on the Charged Slash pool without forgoing an Attack action attack.",
   ),
-  "power charge": baUtility("", "Weapon remains charged for 1 minute or until you hit."),
+  "power charge": spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      speedBonus: "5",
+      durationValue: "1",
+      durationUnits: "minute",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      chatFlavor:
+        "+5 walk; next hit with this hammer deals +1d6 bludgeoning. Ends on hit, Prone, or Incapacitated.",
+      activityImg: "icons/skills/melee/strike-hammer-destructive-orange.webp",
+    },
+    "Hammer overlay builds the Power Charge AE (damage scales with Charge Upgrade I–III).",
+  ),
   "guard dash": baUtility("", "Move up to 15 ft without provoking opportunity attacks."),
   "shielding presence": spec(
     "passive_stat",
@@ -582,6 +598,76 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Same Magazines dialog; applies Empowered AE when a hostile is within 15 ft.",
   ),
+  "perfect empowerment": spec(
+    "upgrade_scaler",
+    {
+      damageFormula: "1d6",
+      chatFlavor:
+        "Empowered extra damage is 1d6. Empowered Reload triggers within normal attack range (30 ft, or 60 ft if Scoped).",
+    },
+    "Dual Repeaters Legendary leaf renames Empowered Reload.",
+  ),
+  "tactical modifications": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      activationCondition: "As part of a Short Rest",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      chatFlavor:
+        "Choose Scoped Sights (60/180), Lightweight Frame (+10 walk), or Tactician's Chamber (free Empowered Reload at Initiative if empty). ItemMacro dialog applies the chosen AE.",
+      activityImg: "icons/tools/smithing/anvil.webp",
+    },
+  ),
+  "capacitive frame": spec(
+    "passive_stat",
+    {
+      effectTransfer: true,
+      chatFlavor:
+        "On a Critical Hit with these weapons, refill Charges to full (ItemMacro).",
+      activeEffect: {
+        img: "icons/magic/lightning/bolt-strike-blue.webp",
+        showIcon: true,
+        description:
+          "Capacitive Frame: critical hits instantly refill the loaded magazine Charges.",
+      },
+    },
+  ),
+  "charged shield (red shield)": spec(
+    "action_ability",
+    {
+      activation: "special",
+      activityType: "utility",
+      activationCondition:
+        "When you use Amped Element Discharge (AED), cancel the shockwave",
+      durationValue: "1",
+      durationUnits: "minute",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      chatFlavor:
+        "Cancel AED shockwave to charge the shield: +1 AC for 1 minute; Guard Point deals 2× Elemental Discharge damage. Prefer the AED Yes/No dialog (ItemMacro).",
+      activityImg: "icons/equipment/shield/heater-steel-red.webp",
+      acBonus: "1",
+      activeEffect: {
+        img: "icons/equipment/shield/heater-steel-red.webp",
+        showIcon: true,
+        durationSeconds: 60,
+        description:
+          "Red Shield: +1 AC. Guard Point eruption deals two times Elemental Discharge damage.",
+      },
+    },
+  ),
+  "elemental awakening": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "Element Phial (and ZSD) damage ignores Resistance to that damage type.",
+    },
+    "Switch Axe overlay sets midi ignore resistance on Element discharge when unlocked.",
+  ),
   recital: spec(
     "bonus_action",
     {
@@ -628,6 +714,45 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "Overlay sets maxSoloMelodies=2 when this leaf is present.",
   ),
   encore: baUtility("", "Recital can keep two melodies active."),
+  "magnificent trio": baUtility(
+    "",
+    "Recital can keep three melodies active (Songbook overlay).",
+  ),
+  "infernal melody": spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      usesMax: "1",
+      usesRecoveryPeriod: "lr",
+      consumeItemUses: true,
+      activationCondition: "When you hit a creature",
+      durationValue: "1",
+      durationUnits: "minute",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      chatFlavor:
+        "1/LR: aura expands to 30 ft for 1 minute; allies in the aura deal maximum weapon base damage dice on hit (honor-system / AE flag).",
+      activityImg: "icons/magic/sonic/bell-alarm-red-purple.webp",
+      speedBonus: undefined,
+      activeEffect: {
+        img: "icons/magic/sonic/bell-alarm-red-purple.webp",
+        showIcon: true,
+        durationSeconds: 60,
+        description:
+          "Infernal Melody: aura 30 ft. Allies scoring a weapon hit deal maximum base weapon damage dice.",
+      },
+    },
+  ),
+  "songbook mastery": spec(
+    "upgrade_scaler",
+    {
+      chatFlavor:
+        "You know all Melodies and can switch which ones are active whenever you Recital / Solo Recital.",
+    },
+    "Songbook overlay sets flags.world.hh.songbookMastery = true.",
+  ),
   /**
    * Sword and Shield (Common): somatic spellcasting while both sword and shield
    * are held — same scope as the War Caster feat's somatic clause.
@@ -936,6 +1061,49 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       disableIncapacitated: true,
     },
   }),
+  /** Dual Blades Very Rare: Nick + Vex mastery simultaneously (passive AE). */
+  "dual mastery": spec(
+    "mastery",
+    {
+      mastery: "nick",
+      chatFlavor:
+        "This weapon has Nick and Vex simultaneously (Vex: Advantage on your next attack vs the same creature before end of your next turn).",
+    },
+    "Overlay also tags Vex via flags.world.dualBlades.dualMastery.",
+  ),
+  /** Dual Blades Legendary: Action flurry (4 attacks w/ Adv). */
+  "demon dance": spec(
+    "action_ability",
+    {
+      activation: "action",
+      activityType: "utility",
+      usesMax: "@prof",
+      usesRecoveryPeriod: "lr",
+      consumeItemUses: true,
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activationCondition: "While Demon Mode is active",
+      chatFlavor:
+        "Four melee weapon attacks vs one creature with Advantage. Speed 0 until end of turn. If all hit: +4d6 slashing on the last attack. ItemMacro / honor-system for the four rolls.",
+      activityImg: "icons/skills/melee/blade-tip-orange.webp",
+    },
+  ),
+  /** Dual Blades Legendary: move through Large+ without OA; +2d6 once/turn on hit after moving through. */
+  "heavenly blade dance": spec(
+    "passive_stat",
+    {
+      effectTransfer: true,
+      chatFlavor:
+        "Move through Large or larger creatures' spaces without OA. Once per turn, after moving through a hostile and hitting it with this weapon: +2d6 slashing (ItemMacro).",
+      activeEffect: {
+        img: "icons/skills/movement/figure-running-gray.webp",
+        showIcon: true,
+        description:
+          "You can move through the space of any Large or larger creature without provoking Opportunity Attacks.",
+      },
+    },
+  ),
   reload: spec(
     "bonus_action",
     {
@@ -1113,8 +1281,9 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   }),
   "true perfect rush": spec("upgrade_scaler", {
     damageFormula: "5d6",
-    statuses: ["prone"],
-    chatFlavor: "5d6 extra; STR save or Prone per description.",
+    statuses: ["stunned"],
+    chatFlavor:
+      "5d6 extra; CON save (DC 8 + PB + STR or DEX) or Stunned until start of its next turn.",
   }),
 
   // ── On-hit optional riders (manual activity — not midi-auto chained) ─
@@ -1217,11 +1386,37 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     onSave: "none",
     usesMax: "1",
     usesRecoveryPeriod: "sr",
+    consumeItemUses: true,
     chatFlavor: "On hit vs Large or smaller: CON save or Stunned until end of your next turn.",
   }),
   "mighty weapon upgrade i": spec("upgrade_scaler", { usesMax: "2" }),
   "mighty weapon upgrade ii": spec("upgrade_scaler", { usesMax: "3" }),
   "mighty weapon upgrade iii": spec("upgrade_scaler", { usesMax: "4" }),
+  /** RaintDM Hammer VR: removes Huge+ Adv on Mighty Weapon save (overlay + ItemMacro). */
+  "stun upgrade": spec(
+    "upgrade_scaler",
+    {},
+    "Hammer overlay: keeps Mighty Weapon activity; flags.world.hammer.stunUpgrade skips Huge+ save Adv.",
+  ),
+  /**
+   * Power Charge leaf upgrades (RaintDM Hammer). Distinct from Charge Upgrade I (H)
+   * which scales the Charge (H) dash feature.
+   */
+  "charge upgrade i": spec(
+    "upgrade_scaler",
+    { damageFormula: "2d6" },
+    "Hammer Power Charge extra damage → 2d6 (overlay AE).",
+  ),
+  "charge upgrade ii": spec(
+    "upgrade_scaler",
+    { damageFormula: "3d6" },
+    "Hammer Power Charge extra damage → 3d6 (overlay AE).",
+  ),
+  "charge upgrade iii": spec(
+    "upgrade_scaler",
+    { damageFormula: "4d6" },
+    "Hammer Power Charge extra damage → 4d6 (overlay AE).",
+  ),
   "charge (h)": spec("action_ability", {
     activation: "special",
     activityType: "damage",

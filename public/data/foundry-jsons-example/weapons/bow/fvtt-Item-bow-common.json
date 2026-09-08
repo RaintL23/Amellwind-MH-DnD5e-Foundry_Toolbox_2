@@ -1,5 +1,5 @@
 {
-  "_id": "tG6xpGtYaqawWZZx",
+  "_id": "z3pKcQeanUab9bwo",
   "name": "Bow (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_bow.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "k5ypH6WG2u7XPPzy": {
-        "_id": "k5ypH6WG2u7XPPzy",
+      "IoygNKGK9xIgpI2S": {
+        "_id": "IoygNKGK9xIgpI2S",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -240,8 +240,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708702786,
-        "modifiedTime": 1788708702786,
+        "createdTime": 1788906281579,
+        "modifiedTime": 1788906281579,
         "lastModifiedBy": null
       }
     }
@@ -293,8 +293,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708702782,
-    "modifiedTime": 1788708702782,
+    "createdTime": 1788906281575,
+    "modifiedTime": 1788906281575,
     "lastModifiedBy": null
   }
 }

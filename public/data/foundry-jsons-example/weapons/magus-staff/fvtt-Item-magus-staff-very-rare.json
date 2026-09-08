@@ -1,5 +1,5 @@
 {
-  "_id": "5KeQds9bwoCJm5rv",
+  "_id": "BBhFvs4sb0MgOz1F",
   "name": "Magus Staff (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_magusstaff.webp",
@@ -91,8 +91,8 @@
       "max": "7"
     },
     "activities": {
-      "PaaVprHN0kUj1eMw": {
-        "_id": "PaaVprHN0kUj1eMw",
+      "Z4BlcR3iIDyZGbfA": {
+        "_id": "Z4BlcR3iIDyZGbfA",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -764,8 +764,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672814,
-        "modifiedTime": 1788708672814,
+        "createdTime": 1788906281835,
+        "modifiedTime": 1788906281835,
         "lastModifiedBy": null
       }
     },
@@ -818,14 +818,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708672814,
-        "modifiedTime": 1788708672814,
+        "createdTime": 1788906281835,
+        "modifiedTime": 1788906281835,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 20600000,
+  "sort": 20800000,
   "ownership": {
     "default": 0
   },
@@ -912,8 +912,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708672813,
-    "modifiedTime": 1788708672813,
+    "createdTime": 1788906281834,
+    "modifiedTime": 1788906281834,
     "lastModifiedBy": null
   }
 }
