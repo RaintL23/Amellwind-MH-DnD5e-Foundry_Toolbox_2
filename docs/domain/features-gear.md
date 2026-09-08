@@ -26,7 +26,9 @@ Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a
 
 **Charge Blade (Uncommon+)**: overlay `applyChargeBladeOverlay` — AEs indicador **Sword & Shield Mode** (default) / **Axe Mode**; Attacks por modo con **`@mod`** en damage parts; **Switch Mode** BA + deshabilita Integrated Shield en Axe + swap mastery Sap/Cleave; **Elemental Attunement** utility 1/SR (diálogo Acid/Cold/Fire/Lightning; sin elemento por defecto — actualiza `flags.world.chargeBlade.elementalType` y types de Eruption/Discharge/AED); **Phial Charges** recupera 1 en hit Sword; **Guard Point** patrón Shield/Lance; **Rare:** Elemental Discharge (diálogo Yes/No tras hit Axe) + **AED** Activity única con diálogo de cargas (1…available). Macro: `charge-blade.macro.ts`. Ejemplos: `weapons/charge-blade/fvtt-Item-charge-blade-uncommon.json`, `weapons/charge-blade/fvtt-Item-charge-blade-rare.json`.
 
-**Heavy Bowgun (Uncommon+)**: artillería vs Light Bowgun (ráfaga/movilidad). Magazine 4→6→8→10→12 (detrás de LBG; override inline, no heredar 6→8→10→12→15). Ignition máx. 3 (no escala). Uncommon: **Wyvernheart** BA (gasta 1 Ignition; +1d8 si ya impactaste), **Guard** Reaction +1d4 CA (lockout el turno de Wyvernheart), Special Ammo cap 2. Munición Uncommon: Pierce 40 ft; Spread cono 15 ft 1d10; Cluster 2d6 fire; Recover 1d4. Rare: Special 4, Guard 1d6, **Wyverncounter** (Offset: si Guard hace fallar, gasta 1 Ignition y disparas), Poison/Paralysis/Sticky/Slicing 4d6/Wyvern 2d12 (AGMH). VR: Special 6, Wyvernheart +1d10, **Wyvernpiercer** Action (2 Ignition, línea 80 ft +2d10; sin Guard hasta tu próximo turno), upgrades de ammo (Cluster 3d6). Legendary: Special 8, Wyvernpiercer 100 ft +4d10, **Ignition Mode** (PB/LR: +2 Ignition al hit, Guard/Wyverncounter off, Wyvernpiercer como BA). Ejemplos Foundry: `weapons/heavy-bowgun/fvtt-Item-heavy-bowgun-uncommon.json`, `weapons/heavy-bowgun/fvtt-Item-heavy-bowgun-rare.json`, `weapons-resources/ammo-hbg/`. VR/Legendary Forge only por ahora.
+**Heavy Bowgun (Uncommon+)**: artillería vs Light Bowgun (ráfaga/movilidad). Magazine 4→6→8→10→12 (detrás de LBG; override inline, no heredar 6→8→10→12→15). Ignition máx. 3 (no escala). Uncommon: **Wyvernheart** BA (gasta 1 Ignition; +1d8 si ya impactaste), **Guard** Reaction +1d4 CA (lockout el turno de Wyvernheart), Special Ammo cap 2. Munición Uncommon: Pierce 40 ft; Spread cono 15 ft 1d10; Cluster 2d6 fire; Recover 1d4. Rare: Special 4, Guard 1d6, **Wyverncounter** (Offset: si Guard hace fallar, gasta 1 Ignition y disparas), Poison/Paralysis/Sticky/Slicing 4d6/Wyvern 2d12 (AGMH). VR: Special 6, Wyvernheart +1d10, **Wyvernpiercer** Action (2 Ignition, línea 80 ft +2d10; sin Guard hasta tu próximo turno), upgrades de ammo (Cluster 3d6). Legendary: Special 8, Wyvernpiercer 100 ft +4d10, **Ignition Mode** (PB/LR: +2 Ignition al hit, Guard/Wyverncounter off, Wyvernpiercer como BA). Ejemplos Foundry: `weapons/heavy-bowgun/fvtt-Item-heavy-bowgun-uncommon.json`, `weapons/heavy-bowgun/fvtt-Item-heavy-bowgun-rare.json`, `weapons/heavy-bowgun/fvtt-Item-heavy-bowgun-very-rare.json`, `weapons/heavy-bowgun/fvtt-Item-heavy-bowgun-legendary.json`, `weapons-resources/ammo-hbg/`.
+
+**Very Rare / Legendary (todas las armas Forge)**: los goldens `fvtt-Item-*-very-rare.json` / `*-legendary.json` se regeneran con `UPDATE_FOUNDRY_EXAMPLES=1` + `generate-vr-legendary-examples.test.ts`. Features nuevas de combate emiten Activity/AE (p. ej. Hammer Offset Smash / Big Bang, Charge Blade Charged Shield + SAED 30 ft 1d12, Dual Blades Demon Dance / Heavenly Blade Dance / Dual Mastery, Hunting Horn Infernal Melody + Songbook Mastery, Dual Repeaters Tactical Modifications / Perfect Empowerment / Capacitive Frame, SnS True Perfect Rush: Stun, Bow True Dragonpiercer). Los `upgrade_scaler` no crean Activity extra: mutan la del padre (dados, alcance, uses). Overlays Midi + ItemMacro viven en `weapon-forge-*-export.ts` / `*.macro.ts` con espejo en `public/data/scripts/weapons-resources/`.
 
 **Dual Repeaters (Uncommon+)**: Magazines son **Weapon Resources** consumibles: cada magazine llena las **Charges** del arma (`system.uses` max 6, empieza vacío — UI de Charges en la ficha). Attack gasta 1 Charge. AE `Magazine (Loaded)` marca el tipo cargado (damage type) y riders Rare (p. ej. Blaze Upgrade I → +1d6 fire en AE). Overlay `applyDualRepeatersOverlay` + macro `dual-repeaters-magazines.macro.ts` (on-hit: Cryo/Storm/Slime Upgrade I, Dawnstar, Twilight). Ejemplos: `weapons/dual-repeaters/fvtt-Item-dual-repeaters-uncommon.json`, `weapons/dual-repeaters/fvtt-Item-dual-repeaters-rare.json`, `weapons-resources/magazines/`.
 
@@ -80,6 +82,28 @@ Features opcionales de armas (Melody, Phials, etc.) almacenadas en `gtmh_current
 | -------------------- | -------------------------------------- |
 | `getAllWeapons()`    | Filtra `HW`, mapea y cachea en memoria |
 | `clearWeaponCache()` | Invalida caché tras sync               |
+
+---
+
+### Siege Weapons
+
+**Ruta**: `/siege-weapons`
+**Fuente**: `object[]` en `gtmh_current` (GTMH), filtrado a `objectType === "SW"`.
+
+Catálogo de objetos de asedio AGMH (Dragonator, Dragonrazer, Large Boulder). Ballista/Cannon del DMG no se indexan aquí. Enlaces `{@object Name|AGMH}` resuelven a `/siege-weapons?object=Name`.
+
+#### Entidad `SiegeWeapon`
+
+- `name`, `source`, `page`, `sizeLabel`, `objectType`, `acLabel`, `hpLabel`, `immunities[]`
+- `paragraphs[]` — descripción parseada
+- `actions[]` — `{ name, paragraphs[] }` desde `actionEntries`
+
+Servicio: `siege-weapon.service.ts` (`getAllSiegeWeapons` / `clearSiegeWeaponCache`).
+
+**Foundry**: Items en `public/data/foundry-jsons-example/items-forge/siege-weapons/`
+(pack **Items Forge** → folder Siege Weapons). Generar con
+`node public/data/foundry-jsons-example/items-forge/build-siege-weapons.mjs`
+(o `build-items-forge.mjs`, que también regenera traps).
 
 ---
 

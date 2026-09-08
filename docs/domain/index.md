@@ -16,7 +16,7 @@ Technical source of truth for Amellwind / 5etools / Foundry domain rules, split 
 | [`entities-player.md`](./entities-player.md) | small | Player entity |
 | [`features-catalog.md`](./features-catalog.md) | medium | Monster/Rune/condition list UIs |
 | [`features-cooking-combo.md`](./features-cooking-combo.md) | medium | Artisan Cooking, Combo List |
-| [`features-gear.md`](./features-gear.md) | medium | Hunter weapons, shops, Items Forge |
+| [`features-gear.md`](./features-gear.md) | medium | Hunter weapons, siege weapons, shops, Items Forge |
 | [`features-world.md`](./features-world.md) | small | Resources, Environments |
 | [`features-rune-planner.md`](./features-rune-planner.md) | small | Rune `BuildDrawer` |
 | [`features-builder.md`](./features-builder.md) | medium | Character Builder (ALPHA) |

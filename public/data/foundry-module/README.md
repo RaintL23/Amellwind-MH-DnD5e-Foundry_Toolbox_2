@@ -7,11 +7,14 @@ compendium packs, so you can import everything at once instead of dragging JSON
 files one by one.
 
 - **Target:** Foundry VTT core **12.331**, system **dnd5e 4.4.4**.
-- **Required modules:** [Midi QOL](https://foundryvtt.com/packages/midi-qol) and
-  [Item Macro](https://foundryvtt.com/packages/itemacro). They are declared as hard
+- **Required modules:** [Midi QOL](https://foundryvtt.com/packages/midi-qol),
+  [Item Macro](https://foundryvtt.com/packages/itemacro), and
+  [socketlib](https://foundryvtt.com/packages/socketlib). They are declared as hard
   dependencies in `module.json` (`relationships.requires`), so **Foundry will not let
-  you enable this module unless both are installed and enabled** (Foundry also pulls in
-  Midi QOL's own dependencies such as socketlib, libWrapper and DAE).
+  you enable this module unless they are installed and enabled** (Midi QOL also pulls in
+  libWrapper and DAE). socketlib backs `player-save-rolls.js` as a **last-resort**
+  helper when a save cannot go through a Midi activity (e.g. Hunter Traps). Boss
+  saves should use Activities + Midi where possible.
 - **Recommended (Foundry 12 / dnd5e 4.4.x):** [Plutonium](https://foundryvtt.com/packages/plutonium)
   (content links), [Cauldron of Plentiful Resources](https://foundryvtt.com/packages/chris-premades)
   (Actor Medkit on PHB/XPHB names), [Gambit's Premades](https://foundryvtt.com/packages/gambits-premades)
@@ -55,7 +58,7 @@ Amellwind MH (RaintDM)/
 | Weapon Resources         | Amellwind MH (RaintDM)    | Item  | `weapons-resources/`                  | ammo, coatings, magazines, melodies, phials |
 | Runes                    | Amellwind MH (RaintDM)    | Item  | `runes/<Monster>/`                    | 79 unified runes (one folder per source monster; equip dialog picks Weapon/Armor) |
 | Combo Crafting           | Amellwind MH (RaintDM)    | Item  | `combo-crafting/`                     | Combo Crafting feature (drop on any actor) |
-| Items Forge              | Amellwind MH (RaintDM)    | Item  | `items-forge/traps/`                  | Hunter traps (Trap Tool, Pitfall, Shock, +) |
+| Items Forge              | Amellwind MH (RaintDM)    | Item  | `items-forge/traps/`, `items-forge/siege-weapons/` | Hunter traps + AGMH siege weapons |
 | Conditions & Diseases    | Amellwind MH (RaintDM)    | Item  | `conditions/`                         | Amellwind blights + diseases (Active Effects + HUD statuses) |
 | Cooking Items            | Felyne Kitchen    | Item  | `cooking-features/` (rank-1..4, daily-skills) | food + daily skills |
 | Felyne Cook              | Felyne Kitchen    | Actor | `cooking-features/`                   | Felyne Cook (embeds its meals + skills) |
@@ -184,7 +187,7 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node.mjs
 node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.mjs
 ```
 
-   If you changed Items Forge hunter traps (`public/data/raintdm-items/traps.json`):
+   If you changed Items Forge hunter traps or siege weapons:
 
 ```bash
 node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
@@ -201,6 +204,12 @@ node public/data/foundry-jsons-example/monsters/build-tempered-alatreon-mhw-acto
 
 ```bash
 node public/data/foundry-jsons-example/conditions/build-conditions.mjs
+```
+
+   If you changed the shared rune Item Macro / combat passes:
+
+```bash
+node public/data/foundry-jsons-example/runes/build-runes-itemacro.mjs
 ```
 
 3. Rebuild the packs:
@@ -415,20 +424,26 @@ node public/data/foundry-jsons-example/resource-node/build-resource-node-actors.
 pnpm build:foundry-module
 ```
 
-## Items Forge (hunter traps)
+## Items Forge (hunter traps + siege weapons)
 
-Consumable hunter traps from `/item-forge` (`public/data/raintdm-items/traps.json`).
+Consumable hunter traps from `/item-forge` (`public/data/raintdm-items/traps.json`)
+and AGMH siege engines from GTMH `object[]` (Dragonator, Dragonrazer, Large Boulder).
 Dual Repeaters **magazines** stay in **Weapon Resources** (they already ship with
-Load Magazine automation). Drag traps from
-**Amellwind MH (RaintDM) → Items Forge**.
+Load Magazine automation). Drag from
+**Amellwind MH (RaintDM) → Items Forge** (folders **Traps** and **Siege Weapons**).
 
 World hooks cannot travel inside an Item pack alone, so canvas trigger / expiry
-ship as `scripts/hunter-traps.js` (armed on world ready).
+for traps ship as `scripts/hunter-traps.js` (armed on world ready).
 
-**Items:** Trap Tool (crafting component), Pitfall Trap / Pitfall Trap+, Shock Trap /
+**Traps:** Trap Tool (crafting component), Pitfall Trap / Pitfall Trap+, Shock Trap /
 Shock Trap+.
 
-**Automated (module script + Midi QOL + Item Macro):**
+**Siege Weapons (AGMH p.83):** Dragonator (+12 melee line, default 3d6 piercing),
+Dragonrazer (Load ×2 / Aim / Fire +8 5d10 + Harpoon Explosion DC 15 Dex 8d6 fire),
+Large Boulder (Falling Boulder DC 15 Dex 4d10 + prone on fail). Object AC/HP/immunities
+are in each Item description. Ballista/Cannon remain DMG references (not in this pack).
+
+**Automated traps (module script + Midi QOL + Item Macro):**
 
 - **Set Trap** (Action): place a camouflaged 10-ft square within 5 ft (hidden from
   players). Spends 1 from the stack.
@@ -448,6 +463,47 @@ node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
 pnpm build:foundry-module
 ```
 
+Siege weapons alone:
+
+```bash
+node public/data/foundry-jsons-example/items-forge/build-siege-weapons.mjs
+pnpm build:foundry-module
+```
+
+## Runes (unified materials)
+
+Unified runes are trinket Items with an equip dialog (Weapon / Armor side). Automation
+lives in the shared Item Macro (`public/data/scripts/runes/unified-rune-controller.js`)
+plus module script `scripts/rune-runtime.js`.
+
+**Weapon-type equip gate:** sides with `(Hunting Horn Only)`, `(Gunlance Only)`, etc.
+carry `flags.amellwind-toolbox.sides.<side>.requireWeaponTypes` (e.g. `["huntinghorn"]`).
+The equip dialog disables locked sides; activating without the matching weapon equipped
+warns and unequips. Unequipping that weapon later deactivates the rune (runtime hooks).
+
+**Hunting Horn rune effects** (after Recital / Encore / Solo / End Melodies):
+
+- **Inspiring Melody** (Uth Duna / AT.Uth Duna / Jin Dahaad): allies in 20 ft (30 ft for
+  AT) gain +1d6 attack/spell damage until end of the horn player's next turn.
+- **Lord's Favor** (Rey Dau): horn player gains +1d12 bludgeoning until end of next turn.
+- **Muse** (Gravios Pleura): use **Choose Muse** (1/LR) to pick a creature. While that
+  muse is within 120 ft, they receive personal clones of your active Songbook melody
+  benefits (even outside the normal 15 ft aura). Cleared on End Melodies, long rest, or
+  leaving range (token move sync).
+
+**Saves via Midi activities** (prefer Activities over scripted `rollSavingThrow`):
+
+- Nerscylla / Fey Chelicera (on hit), Somnacanth Gem (crit), V.Kadachi Gem (nat 20),
+  Stygian Zinogre Umbrage (on hit, consumes a use) call `MidiQOL.completeActivityUse` so
+  target owners roll saves. `player-save-rolls.js` is not used for these runes.
+
+Rebuild Item Macros after controller edits:
+
+```bash
+node public/data/foundry-jsons-example/runes/build-runes-itemacro.mjs
+pnpm build:foundry-module
+```
+
 ## Monsters (hunt bosses)
 
 NPC actors for table bosses. World hooks cannot travel inside an Actor pack
@@ -462,6 +518,8 @@ with furnace light and blindsight 120 ft.
 
 **Automated (module script + Midi QOL):**
 
+- **Calamity Rain** detonation fires Greater Fireball via Midi `completeActivityUse`
+  (player owners roll Dex; Sequencer/JB2A stay scripted)
 - Boiling Presence (1d10 fire to creatures within 10 ft at the start of its turn)
 - Magma Armor at &lt;70% HP (161/230; AC 22 + B/P/S resistance); cracks on a cold hit,
   interrupted Calamity Rain, or Calamity heat-shock; shatters after 6 cold hits
@@ -486,18 +544,24 @@ Token is 4×4 (`mh-tokens/alatreon.webp`).
 
 **Automated (module script + Midi QOL):**
 
+- **Hunters Quantity** (1–6): Amellwind solo-boss HP (3 max / 4 +50% / 5 ×2) plus
+  toolbox ×2.5 at 6. Active State threshold and horn HP scale as fractions of boss max
+  HP (baseline 100/820, 200/820). Overload damage-per-charge uses a soft curve:
+  15 (1–3) / 17 (4) / 19 (5) / 20 (6; cap).
 - **Active State** (fire / dragon / ice): immunities, vulnerabilities, and dragon-state
-  resistances via AEs; advances after 100 HP lost in the current state and auto-fires
+  resistances via AEs; advances after the scaled state HP threshold is lost and auto-fires
   **Element Burst** (special reaction). Token light tint follows the state (fire orange,
   ice blue, dragon violet).
 - Start Fire Cycle / Start Ice Cycle set the opening order
-- **Set Fire / Ice / Dragon State** jumps manually: resets the 100 HP threshold, keeps the
+- **Set Fire / Ice / Dragon State** jumps manually: resets the state HP threshold, keeps the
   current cycle order, resyncs cycle index + Escaton readiness (no Element Burst)
-- **Elemental Overload** charges (+1 per 15 fire/cold/lightning from a single hit; max 60);
-  shown on the token second bar and on the Elemental Overload feature uses; reset on Escaton
-- **Horns** (2× 200 HP): **Deploy Horn Tokens** places two tokens (Foundry
+- **Elemental Overload** charges (+1 per soft-scaled elemental chunk: 15/17/19/20 by
+  hunters; max 60); shown on the token second bar and on the Elemental Overload feature
+  uses; reset on Escaton
+- **Horns** (base 2× 200 HP at 820 boss HP; scales with Hunters Quantity): **Deploy Horn Tokens** places two tokens (Foundry
   `ox-bull-horned-glowing-orange` icon) at **15 ft elevation** with AC 30 / resistances /
-  state immunities; damaging or destroying a horn token syncs flags, reverts previous
+  state immunities; persists `flags.world.alatreon.hornRefs` (`actorId` / `tokenId` /
+  `sceneId` per side) on the boss for tracking (with `bossId` fallback scan); damaging or destroying a horn token syncs flags, reverts previous
   state, and cuts Escaton by 10d6. Apply Horn Damage remains as a manual fallback
 - **Legendary Limit**: each legendary option once per round
 - **Elemental Breath**: rolls 1d4 for damage type (fire/cold/necrotic/lightning)
@@ -505,6 +569,10 @@ Token is 4×4 (`mh-tokens/alatreon.webp`).
   dice = 60 − 10×broken horns − overload charges; force traits invert (immunity→resistance,
   resistance→normal, else vulnerability)
 - Automation chat messages are whispered to GMs only
+- **Saves via Midi activities** (player owners roll when Midi **Player Roll Saves** is not auto-GM):
+  Bite/Claws/Tail on-hit other-activities; Element Burst (`completeActivityUse` on state
+  change); Escaton Release save then module force-inversion; Frost zone start-of-turn
+  activity. `player-save-rolls.js` remains a last-resort helper (e.g. Hunter Traps).
 - Blights on failed saves (dragonblight / waterblight / thunderblight / iceblight) + prone riders
 - Scorched Earth / Frost Breath ground zones until the start of its next turn
 - **Ice Shards**: spawns Ice Shard tokens on the canvas (AC 10, 10 HP, fire vulnerability,
@@ -513,9 +581,9 @@ Token is 4×4 (`mh-tokens/alatreon.webp`).
 - Mythic legendary actions suggested by the current Active State (advisory AE note +
   state-change whisper; sheet use is not blocked)
 
-**Use from the sheet:** Multiattack, Bite, Claws, Tail, Elemental Breath (Recharge 5–6),
-Escaton Charge/Release, Element Burst, Deploy Horn Tokens, Set Fire/Ice/Dragon State,
-legendary + mythic actions.
+**Use from the sheet:** Hunters Quantity (Set 1–6 Hunters), Multiattack, Bite, Claws, Tail,
+Elemental Breath (Recharge 5–6), Escaton Charge/Release, Element Burst, Deploy Horn Tokens,
+Set Fire/Ice/Dragon State, legendary + mythic actions.
 
 ### Rebuild sources
 
@@ -572,11 +640,21 @@ pnpm build:foundry-module
 - **Tempered Alatreon (MHW):** Active State, Element Burst, Overload, Horns,
   Escaton, breath typing, legendary limit, and mythic gates load from
   `scripts/alatreon.js` on world ready. Item Macros call `__amellwindAlatreon`.
+  Melee blight/prone, Burst, Escaton saves, and Frost zone ticks use Midi
+  activities (`completeActivityUse` / other-activity); the script orchestrates
+  only what Activities cannot (state machine, dice reduction, force inversion).
 - **Conditions & Diseases:** HUD statuses + Active Effect automation load from
   `scripts/amellwind-conditions.js` on init. Pack items live under
   `foundry-jsons-example/conditions/`.
+- **Runes:** Weapon-type equip gate, Muse range sync, and Hunting Horn buff helpers
+  load from `scripts/rune-runtime.js` (`__amellwindRuneRuntime` /
+  `__amellwindHhRuneEffects`). Shared Item Macro is
+  `public/data/scripts/runes/unified-rune-controller.js` (re-inject with
+  `build-runes-itemacro.mjs`). On-hit saves prefer Midi save activities via
+  `completeActivityUse`.
 - **Hunter traps:** Set / retrieve Item Macros call `scripts/hunter-traps.js`.
   Canvas trigger, camouflage notices, and 1-hour expiry run on the active GM.
+  Trap saves still use `player-save-rolls.js` (canvas trigger is not an activity).
 - **Sidecar scripts:** Foundry runtime macros and engines live in
   [`public/data/scripts`](../scripts) (mirrored by feature folder). They are
   development references and are **not** packed into LevelDB; Item-level

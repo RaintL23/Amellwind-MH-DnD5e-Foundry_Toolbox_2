@@ -6,7 +6,7 @@ engines used by Amellwind / RaintDM content. Folder names mirror
 
 | Folder | What lives here |
 | --- | --- |
-| `weapons-resources/` | Item Macros for ammo, coatings, magazines, melodies, gunlance, lance, dual blades |
+| `weapons-resources/` | Item Macros for ammo, coatings, magazines, melodies, gunlance, lance, dual blades, hammer |
 | `cooking-features/` | Felyne Cook Item Macros, aura fragments, player flow, sync engine |
 | `hidden-detect/` | Hidden Detection configure + sync macro/engine |
 | `resource-node/` | Resource Node configure + sync macro/engine |

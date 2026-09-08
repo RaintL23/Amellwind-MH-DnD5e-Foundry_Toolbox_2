@@ -66,6 +66,7 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 | `variantrule`  | `variantrule[]`     | Reglas variantes (downtime, guías)     |
 | `classFeature` | `classFeature[]`    | Features de Monstie Sidekick           |
 | `class`        | `class[]`           | Clases MH (p. ej. Hunter)              |
+| `object`       | `object[]`          | Siege weapons AGMH (`objectType: SW`)  |
 
 Al sincronizar GTMH, `sync.service.ts` persiste cada array por separado. Si una clave no está cacheada (p. ej. tras upgrade), `ensureGtmhArrayStore()` puede hacer lazy-fetch del JSON remoto.
 
