@@ -35,7 +35,14 @@
               "--",
               "Artillery Shells, Shelling Strike, Guard Reload"
             ],
-            ["Rare", "3", "+1", "+1", "+1", "Blast Dash, Full Burst"],
+            [
+              "Rare",
+              "3",
+              "+1",
+              "+1",
+              "+1",
+              "Blast Dash, Full Burst, Guard Reload Upgrade, Shelling Strike Upgrade I"
+            ],
             [
               "Very Rare",
               "4",
@@ -50,7 +57,7 @@
               "+3",
               "+3",
               "+3",
-              "Wyrmstake Cannon, Artillery Expert, Wyvern's Fire Upgrade"
+              "Wyrmstake Cannon, Artillery Expert, Shelling Strike Upgrade II, Wyvern's Fire Upgrade"
             ]
           ]
         }
@@ -86,9 +93,21 @@
         "description": "You can use the weapon's recoil for extreme mobility. As a Bonus Action, you can expend 1 shell to propel yourself up to 20 feet in a straight line. This movement does not provoke Opportunity Attacks. If you end this movement within reach of a hostile creature, you can make one melee weapon attack against it as part of the same Bonus Action."
       },
       {
+        "id": "7d4b4227-e5f1-4da9-8261-f2a0fbf35fa2",
+        "name": "Guard Reload Upgrade",
+        "description": "When a creature hits you with a melee attack while you are wielding the shield, you can use your Reaction to roll your Shelling Strike damage die and add it to your AC against that attack, potentially causing it to miss. If the attack misses, you instantly reload up to 2 expended shells.",
+        "upgradesFromId": "0848df51-c301-445a-9454-f0c5c239c082"
+      },
+      {
         "id": "991b1bf3-1f3a-4ff2-a3c2-aca716d9528d",
         "name": "Full Burst",
-        "description": "When you use your Shelling Strike, you can choose to expend up to 3 shells at once instead of just 1. The attack deals an extra 1d8 Thunder damage for each shell expended this way.",
+        "description": "When you use your Shelling Strike, you can choose to expend up to 3 shells at once instead of just 1. The attack deals your Shelling Strike Thunder damage for each shell expended this way.",
+        "upgradesFromId": "66c21a09-968d-4e1f-83ed-57787c526fc3"
+      },
+      {
+        "id": "c2237f07-51ff-4eaa-87e1-d12356e8e55b",
+        "name": "Shelling Strike Upgrade I",
+        "description": "The damage die of your Shelling Strike increases to 1d8 Thunder damage.",
         "upgradesFromId": "66c21a09-968d-4e1f-83ed-57787c526fc3"
       },
       {
@@ -100,7 +119,7 @@
       {
         "id": "9ff9f7b4-9c65-4785-96ea-c593640366c7",
         "name": "Wyvern's Fire",
-        "description": "You can overheat the core for a massive payload. As an Action, you can expend 4 shells to unleash a devastating blast of fire and concussive force. Creatures in a 30-foot cone must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). They take 4d6 Fire damage and 4d6 Thunder damage on a failed save, or half as much on a successful one. Once you use this feature, you cannot use it again until you finish a Short or Long Rest."
+        "description": "You can overheat the core for a massive payload. As an Action, you can expend 4 shells to unleash a devastating blast of fire and concussive force. Creatures in a 30-foot cone must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength modifier). They take 4d6 Fire damage and 4d6 Thunder damage on a failed save, or half as much on a successful one. On a failed save, a Large or smaller creature is also knocked Prone. Once you use this feature, you cannot use it again until you finish a Short or Long Rest."
       },
       {
         "id": "3fb43997-b630-4f39-a813-cb7668714ea0",
@@ -110,8 +129,14 @@
       {
         "id": "37239849-9e19-40e9-90b8-2e24db57407f",
         "name": "Artillery Expert",
-        "description": "Your weapon can now hold a maximum of 6 shells, and the damage die of your Shelling Strike increases to 1d10 Thunder damage per shell.",
+        "description": "Your weapon can now hold a maximum of 6 shells.",
         "upgradesFromId": "8a101b39-2bba-415e-a432-df98b9172fcd"
+      },
+      {
+        "id": "237d679a-9573-4ac4-943f-20e168cbae43",
+        "name": "Shelling Strike Upgrade II",
+        "description": "The damage die of your Shelling Strike increases to 1d10 Thunder damage.",
+        "upgradesFromId": "c2237f07-51ff-4eaa-87e1-d12356e8e55b"
       },
       {
         "id": "0e600885-54d6-4ecc-9f0c-754c19e22638",

@@ -436,6 +436,17 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     // Hand-tuned uncommon example: useCondition isMissed melee + ItemMacro Yes/No.
     "Shared Artillery Shells pool. Negative itemUses restores up to 2 (Foundry clamps). See fvtt-Item-gunlance-uncommon ItemMacro.",
   ),
+  "guard reload upgrade": spec(
+    "upgrade_scaler",
+    {
+      activationCondition:
+        "When a creature hits you with a melee attack while you are wielding the shield",
+      rollFormula: "1d8",
+      chatFlavor:
+        "Add your Shelling Strike die to AC against that attack; if it misses, reload up to 2 shells.",
+    },
+    "Rare+: AC boost uses Shelling Strike die (1d8 with Upgrade I; honor-system 1d10 with Upgrade II).",
+  ),
   "counter mine": reactionUtility(
     "When a creature hits you with a melee attack",
     {
@@ -1192,12 +1203,13 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     consumeItemUses: true,
     consumeAmount: "4",
     chatFlavor:
-      "Expend 4 shells: 4d6 Fire + 4d6 Thunder (DEX save, half on success).",
+      "Expend 4 shells: 4d6 Fire + 4d6 Thunder (DEX save, half on success). Failed save: Large or smaller also Prone.",
   }),
   "wyvern's fire upgrade": spec("upgrade_scaler", {
     damageFormula: "5d6",
     extraDamageParts: [{ formula: "5d6", type: "thunder" }],
-    chatFlavor: "5d6 Fire + 5d6 Thunder.",
+    chatFlavor:
+      "5d6 Fire + 5d6 Thunder. Failed save: Large or smaller also Prone.",
   }),
   "arcane discharge": counterSpend(
     {
@@ -1302,17 +1314,24 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       chatFlavor: "On melee hit: expend shells for extra Thunder damage.",
       activityImg: "icons/magic/fire/explosion-fireball-medium-orange.webp",
     },
-    "Shared Artillery Shells pool. Full Burst upgrades spendMax/die. Hand-tuned uncommon: on-hit ItemMacro dialog → completeActivityUse ×1.",
+    "Shared Artillery Shells pool. Full Burst bumps spendMax; Shelling Strike Upgrade I/II bump die. Hand-tuned uncommon: on-hit ItemMacro dialog → completeActivityUse ×1.",
   ),
   "full burst": spec(
     "upgrade_scaler",
     {
       spendMax: 3,
-      damageFormula: "1d8",
-      chatFlavor: "Spend up to 3 shells; 1d8 Thunder each.",
+      chatFlavor: "Spend up to 3 shells; Shelling Strike Thunder die each.",
     },
     "Hand-tuned rare renames ×N to Shelling Strike + ItemMacro ×1/×2/×3 dialog (fvtt-Item-gunlance-rare).",
   ),
+  "shelling strike upgrade i": spec("upgrade_scaler", {
+    damageFormula: "1d8",
+    chatFlavor: "Shelling Strike die → 1d8 Thunder per shell.",
+  }),
+  "shelling strike upgrade ii": spec("upgrade_scaler", {
+    damageFormula: "1d10",
+    chatFlavor: "Shelling Strike die → 1d10 Thunder per shell.",
+  }),
   "wyrmstake cannon": spec(
     "action_ability",
     {
