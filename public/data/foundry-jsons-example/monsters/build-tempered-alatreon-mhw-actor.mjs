@@ -1202,7 +1202,7 @@ const elementalBreath = makeFeat({
   withMacro: true,
   uses: rechargeUses("5"),
   description: `<p><strong>Recharge 5–6.</strong> Roll a d4 to determine the element: 1 fire, 2 cold, 3 necrotic, 4 lightning. The alatreon exhales that element in a <strong>120-foot line</strong> that is <strong>10 feet</strong> wide. Each creature in the line must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>63 (18d6)</strong> damage of the rolled type on a failed save, or half as much on a successful one.</p>
-<p><em>Placeholder damage type is fire; the engine rolls d4 and replaces the damage type.</em></p>`,
+<p><em>Place the line template for targeting. Midi runs the Dex save only; the module rolls the d4 + 18d6 of that type and applies half on a successful save.</em></p>`,
   chat: `<p>Recharge 5–6. 120-ft × 10-ft line, DC 27 Dex, 18d6 (type by d4).</p>`,
   activities: {
     [breathActId]: saveActivity({
@@ -1221,9 +1221,15 @@ const elementalBreath = makeFeat({
       }),
       saveAbility: "dex",
       saveDc: 27,
-      parts: [damagePart(18, 6, "fire")],
+      // No Midi damage — engine rolls d4 type + 18d6 after the save (Midi always kept fire).
+      parts: [],
+      onSave: "none",
       consume: consumeItemUses(1),
       uses: emptyUses(),
+      midiExtra: {
+        autoTargetAction: "default",
+        confirmTargets: "never",
+      },
     }),
   },
 });
@@ -1315,7 +1321,7 @@ const elementBurst = makeFeat({
   withMacro: true,
   description: `<p>When the alatreon changes active states, it can use this special reaction to release elemental energy. Each creature in a <strong>30-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>24 (7d6)</strong> damage on a failed save, or half as much on a success.</p>
 <p>Damage type matches the <strong>new</strong> state: fire (fire), necrotic (dragon), cold (ice).</p>
-<p><em>Auto-fires on state change via Midi completeActivityUse with engine-selected targets in 30 ft; type is set by the engine. Player owners roll the Dex save.</em></p>`,
+<p><em>Midi runs the Dex save only (no Midi damage). The module rolls 7d6 of the state type and applies half on a successful save — same pattern as Escaton Release.</em></p>`,
   chat: `<p>Special reaction on state change: 30-ft sphere, DC 27 Dex, 7d6 (type by new state).</p>`,
   activities: {
     [burstActId]: saveActivity({
@@ -1336,7 +1342,9 @@ const elementBurst = makeFeat({
       }),
       saveAbility: "dex",
       saveDc: 27,
-      parts: [damagePart(7, 6, "fire")],
+      // No Midi damage — engine rolls 7d6 of the Active State type after the save.
+      parts: [],
+      onSave: "none",
       midiExtra: {
         autoTargetAction: "never",
         confirmTargets: "never",

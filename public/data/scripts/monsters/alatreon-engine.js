@@ -329,9 +329,19 @@
       console.warn("Alatreon | activity not found", identifier, item?.name);
       return null;
     }
+    const uuids = targetUuids.filter(Boolean);
+    // Prefer Foundry token targets so Midi cannot fall back to an empty set.
+    if (uuids.length && canvas?.tokens?.placeables) {
+      const list = uuids
+        .map((u) => canvas.tokens.placeables.find((t) => tokenUuid(t) === u))
+        .filter(Boolean);
+      if (list.length && typeof game.user?.updateTokenTargets === "function") {
+        game.user.updateTokenTargets(list.map((t) => t.id));
+      }
+    }
     const options = {
       midiOptions: {
-        targetUuids: targetUuids.filter(Boolean),
+        targetUuids: uuids,
         ...midiOptions,
       },
     };
@@ -581,11 +591,31 @@
     item = null,
     ignoreTraits = false,
   }) => {
-    const list = (tokens ?? []).filter((t) => t?.actor);
+    const list = (tokens ?? [])
+      .map((t) => t?.object ?? t)
+      .filter((t) => t?.actor);
     const total = Number(amount) || 0;
     if (!list.length || total <= 0) return;
-    const damages = [{ value: total, type, properties: new Set() }];
-    const midiDetail = [{ damage: total, type, value: total, damageType: type }];
+
+    // Midi wraps Actor#applyDamage into a confirm card (often "No Tokens Selected").
+    // Prefer applyTokenDamage with an explicit token set so HP updates immediately.
+    if (typeof MidiQOL?.applyTokenDamage === "function") {
+      const midiDetail = [{ damage: total, type, value: total, damageType: type }];
+      try {
+        await MidiQOL.applyTokenDamage(
+          midiDetail,
+          total,
+          new Set(list),
+          item ?? null,
+          new Set(),
+        );
+        return;
+      } catch (err) {
+        console.warn("Alatreon | MidiQOL.applyTokenDamage failed", err);
+      }
+    }
+
+    const damages = [{ value: total, type }];
     const applyOpts = ignoreTraits ? { ignore: true } : undefined;
     for (const token of list) {
       const actor = token.actor;
@@ -603,10 +633,101 @@
           }
         }
       }
-      if (!applied && typeof MidiQOL?.applyTokenDamage === "function") {
-        await MidiQOL.applyTokenDamage(midiDetail, total, new Set([token]), item, new Set());
+      if (!applied) {
+        const cur = Number(actor.system?.attributes?.hp?.value ?? 0);
+        await actor.update({
+          "system.attributes.hp.value": Math.max(0, cur - total),
+        });
       }
     }
+  };
+
+  /** Post a damage roll to chat without Midi's orphaned APPLY button. */
+  const postDamageRollMessage = async (actor, roll, flavor) => {
+    const data = {
+      speaker: speakerFor(actor),
+      flavor,
+      content: `<p><strong>${flavor}</strong>: <strong>${Number(roll.total) || 0}</strong></p>`,
+    };
+    if (typeof roll?.toJSON === "function") {
+      data.rolls = [roll];
+      data.sound = CONFIG.sounds?.dice ?? undefined;
+    }
+    await ChatMessage.create(data);
+  };
+
+  const tokensFromWorkflowOrRange = (workflow, boss, rangeFt) => {
+    let tokens = [...(workflow?.targets ?? [])]
+      .map((t) => t?.object ?? t)
+      .filter((t) => t?.actor && !isBoss(t.actor) && !isProxyActor(t.actor));
+    if (tokens.length) return tokens;
+    const origin = bossTokens(boss)[0];
+    if (!origin) return [];
+    return tokensInRange(origin, rangeFt).filter(
+      (t) => t?.actor && !isBoss(t.actor) && !isProxyActor(t.actor),
+    );
+  };
+
+  const applySaveHalfDamage = async ({
+    actor,
+    workflow,
+    tokens,
+    formula,
+    damageType,
+    item,
+    label,
+    dc,
+  }) => {
+    const list = (tokens ?? []).filter((t) => t?.actor);
+    if (!list.length) {
+      await chat(
+        actor,
+        `<p><strong>${label}</strong> (${damageType}) — no valid targets.</p>`,
+      );
+      return null;
+    }
+
+    const roll = await evaluateDamageRoll(formula, damageType);
+    await postDamageRollMessage(actor, roll, `${label} (${damageType})`);
+    const full = Number(roll.total) || 0;
+
+    const failed = new Set(
+      failedSaveTokens(workflow)
+        .map((t) => t?.object ?? t)
+        .filter((t) => t?.actor && !isBoss(t.actor) && !isProxyActor(t.actor))
+        .map((t) => t.id ?? t.document?.id)
+        .filter(Boolean),
+    );
+    const hasSaveResults = Boolean(
+      failed.size ||
+        workflow?.saves?.size ||
+        workflow?.failedSaves?.size ||
+        workflow?.saves?.length,
+    );
+
+    const lines = [];
+    for (const token of list) {
+      const tid = token.id ?? token.document?.id;
+      const saved = hasSaveResults ? !failed.has(tid) : false;
+      const amount = saved ? Math.floor(full / 2) : full;
+      await applyTypedDamageToTokens({
+        tokens: [token],
+        amount,
+        type: damageType,
+        item,
+      });
+      const name = token.name ?? token.actor?.name ?? "Target";
+      lines.push(
+        `<li><strong>${name}</strong>: <strong>${amount}</strong> ${damageType} (save ${saved ? "success" : "fail"})</li>`,
+      );
+    }
+
+    await chat(
+      actor,
+      `<p><strong>${label}</strong> — <strong>${damageType}</strong> (DC ${dc} Dexterity, half on success).</p>
+       ${lines.length ? `<ul>${lines.join("")}</ul>` : ""}`,
+    );
+    return roll;
   };
 
   /** True if actor traits list includes `type` (or "all"). */
@@ -1114,34 +1235,105 @@
     await setActiveState(actor, prev, { announce: false, resetHpLost: true });
   };
 
-  const elementBurst = async (actor, state) => {
-    const damageType = STATE_BURST_TYPE[state] ?? "fire";
-    const origin = bossTokens(actor)[0];
-    const item = findItemByRole(actor, "elementBurst");
-    const targets = origin ? tokensInRange(origin, BURST_RANGE_FT) : [];
+  let elementBurstBusy = false;
 
-    if (!targets.length) {
+  const burstTargetTokens = (boss) => {
+    const origin = bossTokens(boss)[0];
+    if (!origin) return [];
+    return tokensInRange(origin, BURST_RANGE_FT).filter(
+      (t) => t?.actor && !isBoss(t.actor) && !isProxyActor(t.actor),
+    );
+  };
+
+  /**
+   * Midi only runs the Dex save. Engine rolls 7d6 of the Active State type and applies
+   * (half on success) — Midi activity damage is intentionally empty (always showed fire).
+   */
+  const resolveElementBurstDamage = async (actor, workflow, stateOrType) => {
+    const key = String(stateOrType ?? activeStateOf(actor) ?? "fire").toLowerCase();
+    const damageType = STATE_BURST_TYPE[key] ?? (STATE_BURST_TYPE[activeStateOf(actor)] ?? "fire");
+    const item = findItemByRole(actor, "elementBurst");
+    const tokens = tokensFromWorkflowOrRange(workflow, actor, BURST_RANGE_FT);
+    if (!tokens.length) {
       await chat(
         actor,
-        `<p><strong>Element Burst</strong> (${damageType}, DC ${BURST_DC} Dex half) — special reaction; no creatures in ${BURST_RANGE_FT} ft.</p>`,
+        `<p><strong>Element Burst</strong> (${damageType}, DC ${BURST_DC} Dex half) — no creatures in ${BURST_RANGE_FT} ft.</p>`,
+      );
+      return;
+    }
+    await applySaveHalfDamage({
+      actor,
+      workflow,
+      tokens,
+      formula: "7d6",
+      damageType,
+      item,
+      label: "Element Burst",
+      dc: BURST_DC,
+    });
+  };
+
+  /**
+   * Midi only runs the Dex save (+ line template). Engine rolls d4 for type, then 18d6,
+   * and applies half on success — same fix as Element Burst (Midi always rolled fire).
+   */
+  const resolveElementalBreathDamage = async (actor, workflow) => {
+    const item = findItemByRole(actor, "elementalBreath");
+    const typeRoll = await new Roll("1d4").evaluate();
+    const damageType = BREATH_TYPES[typeRoll.total] ?? "fire";
+    await chat(
+      actor,
+      `<p><strong>Elemental Breath</strong> element roll: <strong>${typeRoll.total}</strong> → <strong>${damageType}</strong> damage.</p>`,
+    );
+
+    const tokens = [...(workflow?.targets ?? [])]
+      .map((t) => t?.object ?? t)
+      .filter((t) => t?.actor && !isBoss(t.actor) && !isProxyActor(t.actor));
+    if (!tokens.length) {
+      await chat(
+        actor,
+        `<p><strong>Elemental Breath</strong> (${damageType}) — no creatures in the line.</p>`,
       );
       return;
     }
 
-    const activity = findActivity(item, "element-burst");
-    if (activity) await persistActivityDamageType(activity, damageType);
-    if (globalThis.MidiQOL) MidiQOL.MQdefaultDamageType = damageType;
-
-    await useActivity(item, {
-      identifier: "element-burst",
-      targetUuids: targets.map(tokenUuid),
-      midiOptions: { defaultDamageType: damageType },
-    });
-
-    await chat(
+    await applySaveHalfDamage({
       actor,
-      `<p><strong>Element Burst</strong> releases ${damageType} energy (DC ${BURST_DC} Dexterity, half on success). Special reaction — does not consume the reaction.</p>`,
-    );
+      workflow,
+      tokens,
+      formula: "18d6",
+      damageType,
+      item,
+      label: "Elemental Breath",
+      dc: BURST_DC,
+    });
+  };
+
+  const elementBurst = async (actor, state) => {
+    if (elementBurstBusy) return;
+    elementBurstBusy = true;
+    try {
+      const damageType = STATE_BURST_TYPE[state] ?? "fire";
+      const item = findItemByRole(actor, "elementBurst");
+      const targets = burstTargetTokens(actor);
+
+      if (!targets.length) {
+        await chat(
+          actor,
+          `<p><strong>Element Burst</strong> (${damageType}, DC ${BURST_DC} Dex half) — special reaction; no creatures in ${BURST_RANGE_FT} ft.</p>`,
+        );
+        return;
+      }
+
+      const wf = await useActivity(item, {
+        identifier: "element-burst",
+        targetUuids: targets.map(tokenUuid),
+      });
+      // Pass state key (fire/dragon/ice) so damage type resolves even if workflow targets were empty.
+      await resolveElementBurstDamage(actor, wf, state);
+    } finally {
+      elementBurstBusy = false;
+    }
   };
 
   const advanceState = async (actor) => {
@@ -2455,18 +2647,7 @@
   };
 
   // ─── Elemental Breath typing ───
-
-  const mutateBreathDamageType = async (workflow) => {
-    // Stat block: d4 chooses element (not Active State). 1 fire / 2 cold / 3 necrotic / 4 lightning.
-    const roll = await new Roll("1d4").evaluate();
-    const type = BREATH_TYPES[roll.total] ?? "fire";
-    await applyWorkflowDamageType(workflow, type);
-    await chat(
-      workflow.actor,
-      `<p><strong>Elemental Breath</strong> element roll: <strong>${roll.total}</strong> → <strong>${type}</strong> damage.</p>`,
-    );
-    return type;
-  };
+  // Damage type + dice are resolved in resolveElementalBreathDamage (Midi parts are empty).
 
   // ─── onUse ───
 
@@ -2564,7 +2745,13 @@
         else await spawnHornTokens(actor);
         break;
       case "elementBurst":
-        // Midi save activity already resolved (sheet or completeActivityUse).
+        // Nested completeActivityUse from elementBurst() — damage applied there.
+        if (elementBurstBusy) break;
+        await resolveElementBurstDamage(
+          actor,
+          workflow,
+          activeStateOf(actor) ?? "fire",
+        );
         break;
       case "escatonJudgement":
         if (identifier === "release" || identifier === "escaton-release") {
@@ -2574,7 +2761,7 @@
         }
         break;
       case "elementalBreath":
-        // Typing handled in preItemRoll; announce already sent there.
+        await resolveElementalBreathDamage(actor, workflow);
         break;
       case "bite":
       case "claws":
@@ -2834,23 +3021,9 @@
         }
       }
 
-      if (role === "elementalBreath") {
-        await mutateBreathDamageType(workflow);
-      }
-
       if (role === "elementBurst") {
-        const type = STATE_BURST_TYPE[activeStateOf(actor) ?? "fire"] ?? "fire";
-        await applyWorkflowDamageType(workflow, type);
-
-        // Safety net: sheet use or Midi template wipe can leave zero targets.
-        const existing = [...(workflow.targets ?? [])];
-        if (!existing.length) {
-          const origin = workflow.token ?? bossTokens(actor)[0];
-          const found = origin ? tokensInRange(origin, BURST_RANGE_FT) : [];
-          if (found.length) {
-            setWorkflowTargets(workflow, found);
-          }
-        }
+        // Always use engine range targets (ignore Midi empty / self-inclusive sets).
+        setWorkflowTargets(workflow, burstTargetTokens(actor));
       }
 
       if (
@@ -2864,23 +3037,6 @@
       // Escaton Charge / Release are intentionally ungated — GM may use anytime.
       // Mythic state matching is advisory only (see Active State chat / AE notes).
 
-      return true;
-    });
-
-    // Re-assert type right before Midi builds DamageRoll (preItemRoll alone is not enough).
-    Hooks.on("midi-qol.preDamageRoll", async (workflow) => {
-      const actor = workflow?.actor;
-      if (!isBoss(actor)) return true;
-      const role = foundry.utils.getProperty(workflow.item, `${FLAG}.role`);
-      if (role === "elementBurst") {
-        const type = STATE_BURST_TYPE[activeStateOf(actor) ?? "fire"] ?? "fire";
-        await applyWorkflowDamageType(workflow, type);
-      } else if (role === "elementalBreath") {
-        const rolled = String(workflow.defaultDamageType ?? "").toLowerCase();
-        if (Object.values(BREATH_TYPES).includes(rolled)) {
-          await applyWorkflowDamageType(workflow, rolled);
-        }
-      }
       return true;
     });
   };
