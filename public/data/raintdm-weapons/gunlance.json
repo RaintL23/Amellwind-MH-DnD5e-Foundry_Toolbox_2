@@ -101,7 +101,7 @@
       {
         "id": "991b1bf3-1f3a-4ff2-a3c2-aca716d9528d",
         "name": "Full Burst",
-        "description": "When you use your Shelling Strike, you can choose to expend up to 3 shells at once instead of just 1. The attack deals your Shelling Strike Thunder damage for each shell expended this way.",
+        "description": "When you use your Shelling Strike, you can choose to expend up to 3 shells at once instead of just 1.",
         "upgradesFromId": "66c21a09-968d-4e1f-83ed-57787c526fc3"
       },
       {
