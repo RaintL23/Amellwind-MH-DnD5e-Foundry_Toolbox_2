@@ -67,19 +67,13 @@ The alatreon can then fly 30 feet straight up into the air.
 
 The alatreon has three states it can take. They are the dragon state, fire state, and the ice state. Each state provides benefits and detriments depending on which state it is in, as shown below:
 
-## Fire State
+**Fire State.** While in the fire state, the alatreon is immune to fire damage, but vulnerable to cold damage.
 
-While in the fire state, the alatreon is immune to fire damage, but vulnerable to cold damage.
+**Dragon State.** While in the dragon state, the alatreon is resistant to all damage except for necrotic, poison, and psychic damage.
 
-## Dragon State
+**Ice State.** While in the ice state, the alatreon is immune to cold damage, but vulnerable to fire damage.
 
-While in the dragon state, the alatreon is resistant to all damage except for necrotic, poison, and psychic damage.
-
-## Ice State
-
-While in the ice state, the alatreon is immune to cold damage, but vulnerable to fire damage. 
-
-The alatreon begins combat in either the fire state or ice state. When it begins combat in the fire state, the order of the states it changes into is fire, dragon, ice, dragon and then repeats. When it starts in the ice stage, the order is: ice, dragon, fire, dragon and then repeats. 
+The alatreon begins combat in either the fire state or ice state. When it begins combat in the fire state, the order of the states it changes into is fire, dragon, ice, dragon and then repeats. When it starts in the ice stage, the order is: ice, dragon, fire, dragon and then repeats.
 
 Whenever the alatreon hit points are reduced by 100 in its current active state it changes its state to the next one in the order and uses a special reaction to use its element burst. This special reaction can be used even if the alatreon has already used its reaction this round.
 
@@ -89,7 +83,7 @@ The alatreon gains 1 charge for every 15 elemental damage (fire, cold, lightning
 
 ### Horns
 
-the alatreon has two horns, each which can be attacked and broken (AC 30; 200 hit points; resistant to bludgeoning, piercing, slashing damage that do not deal siege damage; immunity to poison, psychic, and the damage immunity alatreon gains from its current active state). Dealing damage to the horn deals no damage to the alatreon. When a horn is broken the alatreon reverts back to its previous active state.
+The alatreon has two horns, each which can be attacked and broken (AC 30; 200 hit points; resistant to bludgeoning, piercing, slashing damage that do not deal siege damage; immunity to poison, psychic, and the damage immunity alatreon gains from its current active state). Dealing damage to the horn deals no damage to the alatreon. When a horn is broken the alatreon reverts back to its previous active state.
 
 ### Legendary Limit
 
@@ -176,11 +170,11 @@ The alatreon can use the options below as legendary actions depending on which s
 
 The alatreon can use the following legendary actions while in the dragon state.
 
-## Multiattack
+### Multiattack
 
 The alatreon uses its multiattack.
 
-## Dragon Rush
+### Dragon Rush
 
 The alatreon moves up to half its fly speed in a straight line, during this move it can move through other creatures without provoking opportunity attacks. Each creature or object the alatreon moves through must succeed on a DC 27 Dexterity saving throw, taking 17 (2d6 + 10) slashing damage plus 10 (3d6) necrotic damage and be knocked prone on a failed save, or half as much damage and isn't knocked prone on a successful one.
 
@@ -188,15 +182,15 @@ The alatreon moves up to half its fly speed in a straight line, during this move
 
 The alatreon can use the following legendary actions while in the fire state.
 
-## Fireball
+### Fireball
 
-The alatreon exhales a fireball which explodes at a point within 120 feet of it. Each creature in a 15foot radius sphere centered on that point must make a DC 27 Dexterity saving throw, taking 28 (8d6) fire damage on a failed save, or half as much damage on a successful one.
+The alatreon exhales a fireball which explodes at a point within 120 feet of it. Each creature in a 15-foot radius sphere centered on that point must make a DC 27 Dexterity saving throw, taking 28 (8d6) fire damage on a failed save, or half as much damage on a successful one.
 
-## Fire Breath Y
+### Fire Breath Y
 
 The alatreon exhales fire in a 45-foot line that is 5 feet wide and then splits into a two more lines forming a "Y" shape that are 30 feet long and wide 5 feet. Each creature in a line must make a DC 27 Dexterity saving throw, taking 35 (10d6) fire damage on a failed save, or half as much damage on a successful one.
 
-## Scorched Earth
+### Scorched Earth
 
 The alatreon rises 30 feet into the air, without provoking opportunity attacks, and exhales flames that covers the ground in a 30-foot radius centered on a point directly below it. The ground continues to burn until the start of the alatreon's next turn. Flammable objects in the area that aren't being worn or carried ignite. A creature that starts its turn in the area or enters it for the first time on a turn takes 10 (3d6) fire damage and ignites. Until a creature takes an action to douse the fire, the burning creature takes 7 (2d6) fire damage at the start of each of its turns. When a creature moves into or within the area, it takes 7 (2d6) fire damage for every 5 feet it travels.
 
@@ -204,13 +198,13 @@ The alatreon rises 30 feet into the air, without provoking opportunity attacks, 
 
 The alatreon can use the following legendary actions while in the ice state.
 
-## Frost Breath
+### Frost Breath
 
-The alatreon rises 30 feet into the air, without provoking opportunity attacks, and exhales frost that covers the ground in a 30-foot radius centered on a point directly below it. The frost remains until the start of the alatreon's next turn and Each creature that starts its turn in that area must make a DC 27 Constitution saving throw or take 17 (5d6) cold damage and be afflicted with iceblight for 1 minute on a failed save, or half as much damage and is not afflicted with iceblight on a successful one. When a creature moves into or within the area, it takes 7 (2d6) cold damage for every 5 feet it travels.
+The alatreon rises 30 feet into the air, without provoking opportunity attacks, and exhales frost that covers the ground in a 30-foot radius centered on a point directly below it. The frost remains until the start of the alatreon's next turn and each creature that starts its turn in that area must make a DC 27 Constitution saving throw or take 17 (5d6) cold damage and be afflicted with iceblight for 1 minute on a failed save, or half as much damage and is not afflicted with iceblight on a successful one. When a creature moves into or within the area, it takes 7 (2d6) cold damage for every 5 feet it travels.
 
-## Ice Shards
+### Ice Shards
 
-The alatreon freezes the air around it creating ice shards that fill a 5-foot-cube in the air above each creature in a 90-foot radius around it, before they plummet to the ground. Each creature in that area must make a DC 27 Dexterity saving throw, taking 13 (3d8) cold damage plus 18 (4d8) bludgeoning damage, is pushed 5 feet into an unoccupied space, and is knocked prone on a failed save, or half as much damage, is pushed 5 feet into an unoccupied space, but isn't knocked prone on a 109 successful one. If there are no unoccupied spaces around the creature, it fails its saving throw and is knocked prone under the ice chunk until it melts, is destroyed, or it succeeds on a DC 20 Athletics check. 
+The alatreon freezes the air around it creating ice shards that fill a 5-foot-cube in the air above each creature in a 90-foot radius around it, before they plummet to the ground. Each creature in that area must make a DC 27 Dexterity saving throw, taking 13 (3d8) cold damage plus 18 (4d8) bludgeoning damage, is pushed 5 feet into an unoccupied space, and is knocked prone on a failed save, or half as much damage, is pushed 5 feet into an unoccupied space, but isn't knocked prone on a successful one. If there are no unoccupied spaces around the creature, it fails its saving throw and is knocked prone under the ice chunk until it melts, is destroyed, or it succeeds on a DC 20 Athletics check.
 The ice shards remain in the spaces they land in until they melt at the start of the alatreon's next turn. The ice shards can be attacked and destroyed (AC 10; 10 hit points; vulnerable to fire damage; immune to cold, poison, and psychic damage). If the ice shard takes necrotic damage, it instead explodes in a 15-foot radius dealing 4 (1d8) piercing damage to each creature in that area.
 
 

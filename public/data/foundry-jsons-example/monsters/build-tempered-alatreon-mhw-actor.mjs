@@ -1315,7 +1315,7 @@ const elementBurst = makeFeat({
   withMacro: true,
   description: `<p>When the alatreon changes active states, it can use this special reaction to release elemental energy. Each creature in a <strong>30-foot-radius sphere</strong> must make a <strong>DC 27 Dexterity</strong> saving throw, taking <strong>24 (7d6)</strong> damage on a failed save, or half as much on a success.</p>
 <p>Damage type matches the <strong>new</strong> state: fire (fire), necrotic (dragon), cold (ice).</p>
-<p><em>May auto-fire on state change via Midi completeActivityUse; type is set by the engine. Player owners roll the Dex save.</em></p>`,
+<p><em>Auto-fires on state change via Midi completeActivityUse with engine-selected targets in 30 ft; type is set by the engine. Player owners roll the Dex save.</em></p>`,
   chat: `<p>Special reaction on state change: 30-ft sphere, DC 27 Dex, 7d6 (type by new state).</p>`,
   activities: {
     [burstActId]: saveActivity({
@@ -1326,15 +1326,21 @@ const elementBurst = makeFeat({
       condition: "When the alatreon changes active states",
       img: IMG.burst,
       range: rangeBlock(null, "self"),
+      // Engine passes targetUuids via completeActivityUse — same as Escaton Release.
+      // prompt/autoTarget would place a template and wipe those targets → "No targets to save".
       target: targetBlock({
         templateType: "sphere",
         templateSize: "30",
         affectsType: "creature",
-        prompt: true,
+        prompt: false,
       }),
       saveAbility: "dex",
       saveDc: 27,
       parts: [damagePart(7, 6, "fire")],
+      midiExtra: {
+        autoTargetAction: "never",
+        confirmTargets: "never",
+      },
     }),
   },
 });

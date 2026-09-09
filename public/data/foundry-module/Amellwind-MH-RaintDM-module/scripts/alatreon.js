@@ -244,22 +244,81 @@
   const tokenUuid = (token) =>
     token?.document?.uuid ?? token?.uuid ?? token?.actor?.uuid ?? null;
 
+  const normalizeDamageType = (type) => String(type ?? "fire").toLowerCase();
+
+  const setPartDamageType = (part, type) => {
+    if (!part) return;
+    const t = normalizeDamageType(type);
+    if (part.types instanceof Set) {
+      part.types.clear();
+      part.types.add(t);
+    } else if (Array.isArray(part.types)) {
+      part.types.length = 0;
+      part.types.push(t);
+    } else {
+      part.types = [t];
+    }
+    if ("type" in part) part.type = t;
+  };
+
+  /** In-memory mutate of activity damage parts (live Midi / dnd5e objects). */
   const setActivityDamageType = (activity, type) => {
     const parts = activity?.damage?.parts;
     if (!parts) return;
-    for (const part of parts) {
-      if (!part) continue;
-      if (part.types instanceof Set) {
-        part.types.clear();
-        part.types.add(type);
-      } else if (Array.isArray(part.types)) {
-        part.types.length = 0;
-        part.types.push(type);
-      } else {
-        part.types = [type];
-      }
-      if ("type" in part) part.type = type;
+    const list =
+      typeof parts[Symbol.iterator] === "function" ? [...parts] : Object.values(parts);
+    for (const part of list) setPartDamageType(part, type);
+  };
+
+  /**
+   * Persist damage type on the activity document so Midi/dnd5e damage dialogs and
+   * DamageRoll see the new type (in-memory Set mutation alone is ignored).
+   */
+  const persistActivityDamageType = async (activity, type) => {
+    const t = normalizeDamageType(type);
+    if (!activity) return;
+    setActivityDamageType(activity, t);
+    if (typeof activity.update !== "function") return;
+
+    let rawParts = [];
+    try {
+      rawParts = foundry.utils.deepClone(activity.toObject()?.damage?.parts ?? []);
+    } catch {
+      rawParts = [];
     }
+    if (!rawParts.length && activity.damage?.parts) {
+      rawParts = [...activity.damage.parts].map((p) =>
+        typeof p?.toObject === "function" ? p.toObject() : foundry.utils.deepClone(p),
+      );
+    }
+    if (!rawParts.length) return;
+    for (const part of rawParts) {
+      part.types = [t];
+      if ("type" in part) part.type = t;
+    }
+    try {
+      await activity.update({ "damage.parts": rawParts });
+    } catch (err) {
+      console.warn("Alatreon | persistActivityDamageType failed", err);
+    }
+    setActivityDamageType(activity, t);
+  };
+
+  /** Force Midi + activity to use a dynamic damage type (Dual Repeaters pattern). */
+  const applyWorkflowDamageType = async (workflow, type) => {
+    const t = normalizeDamageType(type);
+    if (workflow) {
+      workflow.defaultDamageType = t;
+      foundry.utils.setProperty(workflow, "options.midiOptions.defaultDamageType", t);
+    }
+    if (globalThis.MidiQOL) MidiQOL.MQdefaultDamageType = t;
+    if (workflow?.activity) await persistActivityDamageType(workflow.activity, t);
+    if (Array.isArray(workflow?.damageDetail)) {
+      for (const row of workflow.damageDetail) {
+        if (row && typeof row === "object") row.type = t;
+      }
+    }
+    return t;
   };
 
   /**
@@ -469,6 +528,31 @@
       if (t.actor.system?.attributes?.hp?.value <= 0) return false;
       return measureDistanceFt(origin, t) <= rangeFt + 0.5;
     });
+  };
+
+  /** Escaton (and similar AoEs) must never hit Alatreon, its horns, or ice shards. */
+  const isEscatonValidTarget = (token, boss) => {
+    if (!token?.actor) return false;
+    if (isBoss(token.actor) || isProxyActor(token.actor)) return false;
+    if (boss && (token.actor.id === boss.id || token.id === bossTokens(boss)[0]?.id)) return false;
+    if (Number(token.actor.system?.attributes?.hp?.value ?? 0) <= 0) return false;
+    return true;
+  };
+
+  const escatonTargetTokens = (boss) => {
+    const origin = bossTokens(boss)[0];
+    if (!origin) return [];
+    return tokensInRange(origin, ESCATON_RANGE_FT).filter((t) => isEscatonValidTarget(t, boss));
+  };
+
+  const setWorkflowTargets = (workflow, tokens) => {
+    if (!workflow) return;
+    const list = tokens.filter(Boolean);
+    const uuids = list.map(tokenUuid).filter(Boolean);
+    workflow.targets = new Set(list);
+    if (workflow.hitTargets instanceof Set) workflow.hitTargets = new Set(list);
+    foundry.utils.setProperty(workflow, "options.midiOptions.targetUuids", uuids);
+    foundry.utils.setProperty(workflow, "options.targetUuids", uuids);
   };
 
   // ─── Damage helpers ───
@@ -1050,11 +1134,13 @@
     }
 
     const activity = findActivity(item, "element-burst");
-    if (activity) setActivityDamageType(activity, damageType);
+    if (activity) await persistActivityDamageType(activity, damageType);
+    if (globalThis.MidiQOL) MidiQOL.MQdefaultDamageType = damageType;
 
     await useActivity(item, {
       identifier: "element-burst",
       targetUuids: targets.map(tokenUuid),
+      midiOptions: { defaultDamageType: damageType },
     });
 
     await chat(
@@ -1761,7 +1847,6 @@
       const overload = overloadChargesOf(actor);
       const hornsBroken = brokenHornCount(actor);
       const dice = Math.max(0, ESCATON_BASE_DICE - 10 * hornsBroken - overload);
-      const origin = bossTokens(actor)[0];
       const item = findItemByRole(actor, "escatonJudgement");
 
       escaton.charging = false;
@@ -1781,11 +1866,16 @@
 
       let wf = workflow;
       if (!wf) {
-        const targets = origin ? tokensInRange(origin, ESCATON_RANGE_FT) : [];
+        const targets = escatonTargetTokens(actor);
         wf = await useActivity(item, {
           identifier: "escaton-release",
           targetUuids: targets.map(tokenUuid),
         });
+      } else {
+        // Sheet / Midi may have included Alatreon + horn tokens — strip them.
+        const cleaned = [...(wf.targets ?? [])].filter((t) => isEscatonValidTarget(t, actor));
+        const fallback = cleaned.length ? cleaned : escatonTargetTokens(actor);
+        setWorkflowTargets(wf, fallback);
       }
 
       const roll = await evaluateDamageRoll(`${dice}d6`, "force");
@@ -1796,7 +1886,10 @@
       const full = Number(roll.total) || 0;
 
       const failed = new Set(
-        failedSaveTokens(wf).map((t) => t.id ?? t.document?.id).filter(Boolean),
+        failedSaveTokens(wf)
+          .filter((t) => isEscatonValidTarget(t, actor))
+          .map((t) => t.id ?? t.document?.id)
+          .filter(Boolean),
       );
       const byId = new Map();
       for (const token of [
@@ -1806,10 +1899,11 @@
       ]) {
         const id = token?.id ?? token?.document?.id;
         if (!id || !token?.actor || byId.has(id)) continue;
+        if (!isEscatonValidTarget(token, actor)) continue;
         byId.set(id, token);
       }
-      if (!byId.size && origin) {
-        for (const token of tokensInRange(origin, ESCATON_RANGE_FT)) {
+      if (!byId.size) {
+        for (const token of escatonTargetTokens(actor)) {
           const id = token.id ?? token.document?.id;
           if (id) byId.set(id, token);
         }
@@ -2368,28 +2462,10 @@
   // ─── Elemental Breath typing ───
 
   const mutateBreathDamageType = async (workflow) => {
+    // Stat block: d4 chooses element (not Active State). 1 fire / 2 cold / 3 necrotic / 4 lightning.
     const roll = await new Roll("1d4").evaluate();
     const type = BREATH_TYPES[roll.total] ?? "fire";
-    workflow.defaultDamageType = type;
-    if (workflow.activity?.damage?.parts) {
-      for (const part of workflow.activity.damage.parts) {
-        if (part?.types) {
-          if (part.types instanceof Set) {
-            part.types.clear();
-            part.types.add(type);
-          } else if (Array.isArray(part.types)) {
-            part.types.length = 0;
-            part.types.push(type);
-          } else {
-            part.types = [type];
-          }
-        }
-        if (part && "type" in part) part.type = type;
-      }
-    }
-    if (workflow.item?.system?.damage?.parts) {
-      /* legacy shape — best effort */
-    }
+    await applyWorkflowDamageType(workflow, type);
     await chat(
       workflow.actor,
       `<p><strong>Elemental Breath</strong> element roll: <strong>${roll.total}</strong> → <strong>${type}</strong> damage.</p>`,
@@ -2769,13 +2845,47 @@
 
       if (role === "elementBurst") {
         const type = STATE_BURST_TYPE[activeStateOf(actor) ?? "fire"] ?? "fire";
-        workflow.defaultDamageType = type;
-        if (workflow.activity) setActivityDamageType(workflow.activity, type);
+        await applyWorkflowDamageType(workflow, type);
+
+        // Safety net: sheet use or Midi template wipe can leave zero targets.
+        const existing = [...(workflow.targets ?? [])];
+        if (!existing.length) {
+          const origin = workflow.token ?? bossTokens(actor)[0];
+          const found = origin ? tokensInRange(origin, BURST_RANGE_FT) : [];
+          if (found.length) {
+            setWorkflowTargets(workflow, found);
+          }
+        }
+      }
+
+      if (
+        role === "escatonJudgement" &&
+        (identifier === "release" || identifier === "escaton-release")
+      ) {
+        // Never let Midi save/damage Alatreon, horns, or ice shards.
+        setWorkflowTargets(workflow, escatonTargetTokens(actor));
       }
 
       // Escaton Charge / Release are intentionally ungated — GM may use anytime.
       // Mythic state matching is advisory only (see Active State chat / AE notes).
 
+      return true;
+    });
+
+    // Re-assert type right before Midi builds DamageRoll (preItemRoll alone is not enough).
+    Hooks.on("midi-qol.preDamageRoll", async (workflow) => {
+      const actor = workflow?.actor;
+      if (!isBoss(actor)) return true;
+      const role = foundry.utils.getProperty(workflow.item, `${FLAG}.role`);
+      if (role === "elementBurst") {
+        const type = STATE_BURST_TYPE[activeStateOf(actor) ?? "fire"] ?? "fire";
+        await applyWorkflowDamageType(workflow, type);
+      } else if (role === "elementalBreath") {
+        const rolled = String(workflow.defaultDamageType ?? "").toLowerCase();
+        if (Object.values(BREATH_TYPES).includes(rolled)) {
+          await applyWorkflowDamageType(workflow, rolled);
+        }
+      }
       return true;
     });
   };
