@@ -6,7 +6,6 @@ import {
   foundryActivationLeadHtml,
   foundryActivationLabelFromType,
   foundryFeatureCardHtml,
-  foundryChatFeatureCardHtml,
   foundryUpgradeBlockHtml,
   formatFeatureBodyHtml,
   toFoundryDescriptionHtml,
@@ -18,10 +17,7 @@ import {
   type ColumnChains,
   type FeatureUpgradeLink,
 } from "@/shared/foundry/weapons";
-import {
-  isPrimaryFeaturesColumn,
-  type CustomWeapon,
-} from "../types/weapon-forge.types";
+import type { CustomWeapon } from "../types/weapon-forge.types";
 import {
   getTypedBonusValue,
   resolveFeatureDef,
@@ -114,39 +110,6 @@ function appendFeatureChainCard(
   parts.push(foundryFeatureCardHtml(inner.join(""), tipRarity));
 }
 
-function appendFeatureChainChatCard(
-  parts: string[],
-  weapon: CustomWeapon,
-  features: NonNullable<CustomWeapon["customFeatures"]>,
-  chainFeatures: { name: string; rarityIndex: number }[],
-): void {
-  if (chainFeatures.length === 0) return;
-
-  const root = chainFeatures[0]!;
-  const tip = chainFeatures[chainFeatures.length - 1]!;
-  const tipRarity = weapon.rarityRows[tip.rarityIndex]?.rarity;
-  const rootDef = resolveFeatureDef(features, root.name);
-  const rootName = rootDef?.name ?? root.name;
-  const rootRarity = weapon.rarityRows[root.rarityIndex]?.rarity;
-
-  const inner: string[] = [
-    `<p>${foundryRarityTitleHtml(rootName, rootRarity)}</p>`,
-    activationLeadFromDescription(rootDef?.description),
-  ];
-
-  for (let i = 1; i < chainFeatures.length; i += 1) {
-    const feat = chainFeatures[i]!;
-    const def = resolveFeatureDef(features, feat.name);
-    const displayName = def?.name ?? feat.name;
-    const rarityLabel = weapon.rarityRows[feat.rarityIndex]?.rarity;
-    inner.push(
-      `<p style="margin:0.2em 0 0 0.35em">▸ ${foundryRarityTitleHtml(displayName, rarityLabel)}</p>`,
-    );
-  }
-
-  parts.push(foundryChatFeatureCardHtml(inner.join(""), tipRarity));
-}
-
 export function resolveVisibleColumnChains(
   weapon: CustomWeapon,
   rarityIndex: number,
@@ -226,32 +189,15 @@ export function buildFoundryDescriptionHtml(
 }
 
 /**
- * Condensed Foundry chat card: base weapon text + combat feature cards
- * (names + activation lead + upgrade names). Resource columns omitted.
+ * Foundry chat card: simple weapon intro only (description + notes).
+ * Full feature text stays on the item sheet (`buildFoundryDescriptionHtml`).
  */
 export function buildFoundryChatDescriptionHtml(
   weapon: CustomWeapon,
-  rarityIndex: number,
+  _rarityIndex: number,
 ): string {
   const parts: string[] = [];
   appendWeaponIntroHtml(parts, weapon, { includeFiveToolsLink: false });
-
-  const features = weapon.customFeatures ?? [];
-  const featureCols = resolveVisibleColumnChains(weapon, rarityIndex).filter(
-    ({ label }) => isPrimaryFeaturesColumn(label),
-  );
-  if (featureCols.length === 0) return parts.join("");
-
-  if (parts.length > 0) {
-    parts.push(foundryDividerHtml());
-  }
-
-  for (const { chains } of featureCols) {
-    for (const chain of chains) {
-      appendFeatureChainChatCard(parts, weapon, features, chain.features);
-    }
-  }
-
   return parts.join("");
 }
 

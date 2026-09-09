@@ -14,7 +14,7 @@
     },
     "description": {
       "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap):</strong></p><p>If you hit a creature with this weapon, that creature has Disadvantage on its next attack roll before the start of your next turn.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Sap):</strong></p></div>"
+      "chat": ""
     },
     "identifier": "lance",
     "quantity": 1,

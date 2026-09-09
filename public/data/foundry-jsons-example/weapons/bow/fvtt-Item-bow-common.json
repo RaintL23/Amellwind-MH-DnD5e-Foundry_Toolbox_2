@@ -14,7 +14,7 @@
     },
     "description": {
       "value": "<p>Bow Save DC: 8 + your Proficiency Bonus + your Dexterity modifier</p><p><a href=\"https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/weapons?weapon=Bow\" target=\"_blank\" rel=\"noopener\">Open Bow in the Toolbox</a></p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p><p>If you hit a creature with this weapon and deal damage to it, the creature's Speed is reduced by 10 feet until the start of your next turn.</p></div>",
-      "chat": "<p>Bow Save DC: 8 + your Proficiency Bonus + your Dexterity modifier</p><hr><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Slow)</strong></p></div>"
+      "chat": "<p>Bow Save DC: 8 + your Proficiency Bonus + your Dexterity modifier</p>"
     },
     "identifier": "bow",
     "quantity": 1,
