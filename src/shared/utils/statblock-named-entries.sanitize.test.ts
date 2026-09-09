@@ -120,6 +120,67 @@ describe("foldNestedNamedEntries", () => {
     const form = nested[0] as { name: string; entries: unknown[] };
     expect(form.name).toBe("Black Scales");
   });
+
+  it("nests Alatreon mythic options under each elemental State", () => {
+    const folded = foldNestedNamedEntries([
+      {
+        name: "Dragon State",
+        entries: [
+          "The alatreon can use the following legendary actions while in the dragon state.",
+        ],
+      },
+      { name: "Multiattack", entries: ["The alatreon uses its multiattack."] },
+      { name: "Dragon Rush", entries: ["The alatreon rushes."] },
+      {
+        name: "Fire State",
+        entries: [
+          "The alatreon can use the following legendary actions while in the fire state.",
+        ],
+      },
+      { name: "Fireball", entries: ["Boom."] },
+      { name: "Fire Breath Y", entries: ["Y breath."] },
+      { name: "Scorched Earth", entries: ["Burns ground."] },
+      {
+        name: "Ice State",
+        entries: [
+          "The alatreon can use the following legendary actions while in the ice state.",
+        ],
+      },
+      { name: "Frost Breath", entries: ["Frost."] },
+      { name: "Ice Shards", entries: ["Shards."] },
+    ]);
+
+    expect(folded.map((entry) => entry.name)).toEqual([
+      "Dragon State",
+      "Fire State",
+      "Ice State",
+    ]);
+
+    const dragonList = folded[0].entries.find(
+      (entry) => typeof entry === "object" && (entry as { type?: string }).type === "list",
+    ) as { items: { name: string }[] };
+    expect(dragonList.items.map((item) => item.name)).toEqual([
+      "Multiattack",
+      "Dragon Rush",
+    ]);
+
+    const fireList = folded[1].entries.find(
+      (entry) => typeof entry === "object" && (entry as { type?: string }).type === "list",
+    ) as { items: { name: string }[] };
+    expect(fireList.items.map((item) => item.name)).toEqual([
+      "Fireball",
+      "Fire Breath Y",
+      "Scorched Earth",
+    ]);
+
+    const iceList = folded[2].entries.find(
+      (entry) => typeof entry === "object" && (entry as { type?: string }).type === "list",
+    ) as { items: { name: string }[] };
+    expect(iceList.items.map((item) => item.name)).toEqual([
+      "Frost Breath",
+      "Ice Shards",
+    ]);
+  });
 });
 
 describe("sanitizeNamedEntrySection", () => {

@@ -141,4 +141,63 @@ describe("mapMonster", () => {
     expect(monster.legendaryActions?.map((a) => a.name)).toEqual(["Fly"]);
     expect(monster.mythicActions?.map((a) => a.name)).toEqual(["Fireball"]);
   });
+
+  it("nests Alatreon mythic actions under Dragon / Fire / Ice State", () => {
+    const monster = mapMonster({
+      name: "Tempered Alatreon (MHW)",
+      source: "MHMM-Patreon",
+      size: "G",
+      type: "dragon",
+      alignment: ["U"],
+      ac: [{ ac: 24 }],
+      hp: { average: 820, formula: "39d20 + 390" },
+      speed: { walk: 60, fly: 120 },
+      str: 30,
+      dex: 12,
+      con: 30,
+      int: 14,
+      wis: 23,
+      cha: 24,
+      cr: "30",
+      mythic: [
+        {
+          name: "Dragon State",
+          entries: [
+            "The alatreon can use the following legendary actions while in the dragon state.",
+          ],
+        },
+        { name: "Multiattack", entries: ["The alatreon uses its multiattack."] },
+        { name: "Dragon Rush", entries: ["Rush."] },
+        {
+          name: "Fire State",
+          entries: [
+            "The alatreon can use the following legendary actions while in the fire state.",
+          ],
+        },
+        { name: "Fireball", entries: ["Boom."] },
+        { name: "Fire Breath Y", entries: ["Y."] },
+        { name: "Scorched Earth", entries: ["Burn."] },
+        {
+          name: "Ice State",
+          entries: [
+            "The alatreon can use the following legendary actions while in the ice state.",
+          ],
+        },
+        { name: "Frost Breath", entries: ["Frost."] },
+        { name: "Ice Shards", entries: ["Shards."] },
+      ],
+    });
+
+    expect(monster.mythicActions?.map((a) => a.name)).toEqual([
+      "Dragon State",
+      "Fire State",
+      "Ice State",
+    ]);
+    const dragon = monster.mythicActions?.[0];
+    expect(dragon?.content?.some((block) => block.type === "list")).toBe(true);
+    const list = dragon?.content?.find((block) => block.type === "list");
+    expect(list && list.type === "list" ? list.items.map((item) =>
+      item.type === "named" ? item.name : "",
+    ) : []).toEqual(["Multiattack", "Dragon Rush"]);
+  });
 });

@@ -67,11 +67,9 @@ The alatreon can then fly 30 feet straight up into the air.
 
 The alatreon has three states it can take. They are the dragon state, fire state, and the ice state. Each state provides benefits and detriments depending on which state it is in, as shown below:
 
-**Fire State.** While in the fire state, the alatreon is immune to fire damage, but vulnerable to cold damage.
-
-**Dragon State.** While in the dragon state, the alatreon is resistant to all damage except for necrotic, poison, and psychic damage.
-
-**Ice State.** While in the ice state, the alatreon is immune to cold damage, but vulnerable to fire damage.
+- **Fire State.** While in the fire state, the alatreon is immune to fire damage, but vulnerable to cold damage.
+- **Dragon State.** While in the dragon state, the alatreon is resistant to all damage except for necrotic, poison, and psychic damage.
+- **Ice State.** While in the ice state, the alatreon is immune to cold damage, but vulnerable to fire damage.
 
 The alatreon begins combat in either the fire state or ice state. When it begins combat in the fire state, the order of the states it changes into is fire, dragon, ice, dragon and then repeats. When it starts in the ice stage, the order is: ice, dragon, fire, dragon and then repeats.
 

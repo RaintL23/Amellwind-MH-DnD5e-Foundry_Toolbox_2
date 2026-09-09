@@ -16,7 +16,10 @@ const PASSIVE_RECHARGE_TRAIT =
   /mythic trait|risen state|limited recharge/i;
 
 const NESTS_FOLLOWING =
-  /benefits below|following effects|one of the following|depending on which|replacing .{5,160} with/i;
+  /benefits below|following effects|one of the following|the following|depending on which|replacing .{5,160} with/i;
+
+/** Mythic / form headers like "Dragon State", "Fire State" that group child actions. */
+const STATE_GROUP_NAME_RE = /\bstates?\s*$/i;
 
 const RIDER_TEXT =
   /not included in the attack|attacks? deals? an additional/i;
@@ -181,10 +184,18 @@ function isLikelyNestedChild(
   return false;
 }
 
-function groupFoldedChildren(children: RawNamedEntry[]): unknown[] {
+function isStateGroupEntry(entry: RawNamedEntry): boolean {
+  return STATE_GROUP_NAME_RE.test(entry.name.trim());
+}
+
+function groupFoldedChildren(
+  children: RawNamedEntry[],
+  { bulleted = false }: { bulleted?: boolean } = {},
+): unknown[] {
   const blocks: unknown[] = [];
   let currentForm: { name: string; items: RawNamedEntry[] } | null = null;
   const ungrouped: RawNamedEntry[] = [];
+  const listStyle = bulleted ? undefined : "list-hang-notitle";
 
   const flushForm = () => {
     if (!currentForm) return;
@@ -194,7 +205,7 @@ function groupFoldedChildren(children: RawNamedEntry[]): unknown[] {
       entries: [
         {
           type: "list",
-          style: "list-hang-notitle",
+          ...(listStyle ? { style: listStyle } : {}),
           items: currentForm.items.map(toNamedItem),
         },
       ],
@@ -224,7 +235,7 @@ function groupFoldedChildren(children: RawNamedEntry[]): unknown[] {
   if (ungrouped.length > 0) {
     blocks.unshift({
       type: "list",
-      style: "list-hang-notitle",
+      ...(listStyle ? { style: listStyle } : {}),
       items: ungrouped.map(toNamedItem),
     });
   }
@@ -250,12 +261,23 @@ export function foldNestedNamedEntries(
 
     const children: RawNamedEntry[] = [];
     let cursor = index + 1;
-    while (
-      cursor < entries.length &&
-      isLikelyNestedChild(entries[cursor], entry, siblingBaseNames)
-    ) {
-      children.push(entries[cursor]);
-      cursor += 1;
+    const stateGroup = isStateGroupEntry(entry);
+
+    if (stateGroup) {
+      // Dragon State / Fire State / Ice State: nest every following ability
+      // until the next state header (Alatreon mythic actions).
+      while (cursor < entries.length && !isStateGroupEntry(entries[cursor])) {
+        children.push(entries[cursor]);
+        cursor += 1;
+      }
+    } else {
+      while (
+        cursor < entries.length &&
+        isLikelyNestedChild(entries[cursor], entry, siblingBaseNames)
+      ) {
+        children.push(entries[cursor]);
+        cursor += 1;
+      }
     }
 
     if (children.length === 0) {
@@ -265,7 +287,10 @@ export function foldNestedNamedEntries(
 
     result.push({
       name: entry.name,
-      entries: [...entry.entries, ...groupFoldedChildren(children)],
+      entries: [
+        ...entry.entries,
+        ...groupFoldedChildren(children, { bulleted: stateGroup }),
+      ],
     });
     index = cursor - 1;
   }

@@ -118,6 +118,56 @@ function parseLanguages(raw) {
 
 function textToEntries(text) {
   const raw = String(text ?? "");
+  // Prefer structured parse when markdown bullets / paragraphs are present.
+  if (/^\s*[-*]\s+/m.test(raw) || /\n\n/.test(raw)) {
+    // Inline copy of catalog parseEntryBody for bullet support when only text is set.
+    const normalized = raw.replace(/\r\n/g, "\n").trim();
+    const result = [];
+    const lines = normalized.split("\n");
+    let paraLines = [];
+    let listItems = [];
+    const flushPara = () => {
+      const paragraph = paraLines.join(" ").replace(/\s+/g, " ").trim();
+      if (paragraph) result.push(paragraph);
+      paraLines = [];
+    };
+    const flushList = () => {
+      if (listItems.length === 0) return;
+      result.push({ type: "list", items: listItems });
+      listItems = [];
+    };
+    for (const line of lines) {
+      const bullet = line.match(/^\s*[-*]\s+(.*)$/);
+      if (bullet) {
+        flushPara();
+        const content = bullet[1].trim();
+        const named = content.match(/^\*\*(.+?)\*\*\.?\s*(.*)$/);
+        if (named) {
+          const itemName = named[1].trim().replace(/\.$/, "");
+          const itemBody = named[2].replace(/\s+/g, " ").trim();
+          listItems.push({
+            type: "item",
+            name: itemName,
+            entries: itemBody ? [itemBody] : [""],
+          });
+        } else {
+          listItems.push(content.replace(/\s+/g, " ").trim());
+        }
+        continue;
+      }
+      if (line.trim() === "") {
+        flushList();
+        flushPara();
+        continue;
+      }
+      flushList();
+      paraLines.push(line.trim());
+    }
+    flushList();
+    flushPara();
+    if (result.length > 0) return result;
+  }
+
   const parts = raw
     .split(/\n\n+/)
     .map((part) => part.replace(/\s+/g, " ").trim())
@@ -131,7 +181,10 @@ function mapNamedEntries(list) {
     .filter((e) => e && typeof e === "object" && e.name)
     .map((e) => ({
       name: String(e.name),
-      entries: textToEntries(e.text),
+      entries:
+        Array.isArray(e.entries) && e.entries.length > 0
+          ? e.entries
+          : textToEntries(e.text),
     }));
   return entries.length > 0 ? entries : undefined;
 }

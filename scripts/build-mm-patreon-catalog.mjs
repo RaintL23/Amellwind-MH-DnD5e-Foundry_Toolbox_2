@@ -167,9 +167,91 @@ function parseNamedEntries(content) {
     const name = (nl === -1 ? chunk : chunk.slice(0, nl)).trim();
     const text = (nl === -1 ? "" : chunk.slice(nl + 1)).trim();
     if (!name) continue;
-    entries.push({ name, text: text.replace(/\s+/g, " ").trim() });
+    const structured = parseEntryBody(text);
+    entries.push({
+      name,
+      text: structured
+        .map((part) => {
+          if (typeof part === "string") return part;
+          if (part && typeof part === "object" && part.type === "list") {
+            return (part.items ?? [])
+              .map((item) => {
+                if (typeof item === "string") return item;
+                const body = Array.isArray(item.entries)
+                  ? item.entries.filter((e) => typeof e === "string").join(" ")
+                  : "";
+                return `${item.name}. ${body}`.trim();
+              })
+              .join(" ");
+          }
+          return "";
+        })
+        .filter(Boolean)
+        .join(" "),
+      entries: structured,
+    });
   }
   return entries.length > 0 ? entries : undefined;
+}
+
+/**
+ * Split a named-entry body into 5etools-shaped paragraphs and bullet lists.
+ * Markdown `- **Name.** text` becomes `{ type: "list", items: [{ type: "item", ... }] }`.
+ */
+function parseEntryBody(rawText) {
+  const text = String(rawText ?? "").replace(/\r\n/g, "\n").trim();
+  if (!text) return [""];
+
+  const result = [];
+  const lines = text.split("\n");
+  let paraLines = [];
+  let listItems = [];
+
+  const flushPara = () => {
+    const paragraph = paraLines.join(" ").replace(/\s+/g, " ").trim();
+    if (paragraph) result.push(paragraph);
+    paraLines = [];
+  };
+
+  const flushList = () => {
+    if (listItems.length === 0) return;
+    result.push({ type: "list", items: listItems });
+    listItems = [];
+  };
+
+  for (const line of lines) {
+    const bullet = line.match(/^\s*[-*]\s+(.*)$/);
+    if (bullet) {
+      flushPara();
+      const content = bullet[1].trim();
+      const named = content.match(/^\*\*(.+?)\*\*\.?\s*(.*)$/);
+      if (named) {
+        const itemName = named[1].trim().replace(/\.$/, "");
+        const itemBody = named[2].replace(/\s+/g, " ").trim();
+        listItems.push({
+          type: "item",
+          name: itemName,
+          entries: itemBody ? [itemBody] : [""],
+        });
+      } else {
+        listItems.push(content.replace(/\s+/g, " ").trim());
+      }
+      continue;
+    }
+
+    if (line.trim() === "") {
+      flushList();
+      flushPara();
+      continue;
+    }
+
+    flushList();
+    paraLines.push(line.trim());
+  }
+
+  flushList();
+  flushPara();
+  return result.length > 0 ? result : [text.replace(/\s+/g, " ").trim()];
 }
 
 function parseStatBlockBullets(content) {
