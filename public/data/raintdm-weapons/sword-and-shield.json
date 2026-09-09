@@ -26,7 +26,7 @@
           ],
           "rows": [
             ["Common", "1", "--", "--", "--", "Mastery (Nick), Free Hands"],
-            ["Uncommon", "2", "--", "--", "--", "Shield Bash, Item Prodigy"],
+            ["Uncommon", "2", "--", "--", "--", "Shield Strike, Item Prodigy"],
             ["Rare", "3", "+1", "+1", "+1", "Alchemical Rend, Advancing Slash"],
             [
               "Very Rare",
@@ -65,8 +65,8 @@
       },
       {
         "id": "fe875ab2-88b5-4d1b-a1f0-1369d65402fe",
-        "name": "Shield Bash",
-        "description": "You learn to seamlessly weave your shield into your attack forms. While equipped, the shield functions as a Martial Melee weapon that deals 1d4 Bludgeoning damage and has the Light property."
+        "name": "Shield Strike",
+        "description": "While equipped, your shield counts as a Martial Melee weapon that deals 1d4 Bludgeoning damage and has the Light property."
       },
       {
         "id": "a2ac631b-e5ed-4b38-b78a-fb84b039f835",
@@ -81,7 +81,7 @@
       {
         "id": "06fc58e2-804b-4278-afbf-cabda88af2f0",
         "name": "Perfect Rush",
-        "description": "You unlock the weapon's most devastating combo. Once per turn, if you hit the same creature with both your Sword and your Shield Bash during the same Attack action, you can unleash a flurry of follow-up strikes. The creature takes an extra 3d6 Slashing or Bludgeoning damage, and its Speed is reduced to 0 until the start of its next turn."
+        "description": "You unlock the weapon's most devastating combo. Once per turn, if you hit the same creature with both your Sword and your Shield Strike during the same Attack action, you can unleash a flurry of follow-up strikes. The creature takes an extra 3d6 Slashing or Bludgeoning damage, and its Speed is reduced to 0 until the start of its next turn."
       },
       {
         "id": "3d3578a9-a3c9-4cc6-aa20-40f3c36bed84",

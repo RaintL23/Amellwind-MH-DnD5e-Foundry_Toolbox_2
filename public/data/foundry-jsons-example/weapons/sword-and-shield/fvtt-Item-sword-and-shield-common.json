@@ -1,5 +1,5 @@
 {
-  "_id": "zXsG0SDN05uHrD1f",
+  "_id": "7H3LICHrqhZS1Fh8",
   "name": "Sword and Shield (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_swordandshield.webp",
@@ -14,7 +14,7 @@
     },
     "description": {
       "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p><p>When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Free Hands</strong></p><p>While wielding this weapon, you can perform the somatic components of spells even while holding both the sword and the shield.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Free Hands</strong></p></div>"
+      "chat": ""
     },
     "identifier": "swordandshield",
     "quantity": 1,
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "6Na3iC4ccEA6tWi8": {
-        "_id": "6Na3iC4ccEA6tWi8",
+      "90P87z7VJBKuiwde": {
+        "_id": "90P87z7VJBKuiwde",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -240,8 +240,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281868,
-        "modifiedTime": 1788906281868,
+        "createdTime": 1788990060181,
+        "modifiedTime": 1788990060181,
         "lastModifiedBy": null
       }
     },
@@ -279,13 +279,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281868,
-        "modifiedTime": 1788906281868,
+        "createdTime": 1788990060181,
+        "modifiedTime": 1788990060181,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "RqDfoeWNBRDFyowr",
+      "_id": "aQfFztI5Fv6S0MKV",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -332,14 +332,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281868,
-        "modifiedTime": 1788906281868,
+        "createdTime": 1788990060182,
+        "modifiedTime": 1788990060182,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 23000000,
+  "sort": 100000,
   "ownership": {
     "default": 0
   },
@@ -385,8 +385,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281868,
-    "modifiedTime": 1788906281868,
+    "createdTime": 1788990060177,
+    "modifiedTime": 1788990060177,
     "lastModifiedBy": null
   }
 }

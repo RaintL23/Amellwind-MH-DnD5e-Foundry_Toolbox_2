@@ -855,7 +855,7 @@ export function polishSwordAndShieldTruePerfectRush(item: FoundryItem): boolean 
   if (!isTrue) return false;
 
   (perfect.description as { chatFlavor?: string }).chatFlavor =
-    "Once per turn after Sword + Shield Bash hit the same creature: +5d6. Target CON save (DC 8 + PB + STR or DEX) or Stunned until start of its next turn.";
+    "Once per turn after Sword + Shield Strike hit the same creature: +5d6. Target CON save (DC 8 + PB + STR or DEX) or Stunned until start of its next turn.";
 
   const stunId = foundryIdFromSeed("act-sns-true-perfect-rush-stun");
   if (!activities[stunId]) {

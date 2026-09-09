@@ -785,7 +785,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
    * Sword and Shield (Uncommon+): secondary Martial Melee attack (Light, 1d4 B).
    * Does not include the sword’s base damage; Ability mod via activity roll.
    */
-  "shield bash": spec(
+  "shield strike": spec(
     "action_ability",
     {
       activation: "action",
@@ -797,7 +797,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
         "Martial Melee (Light): 1d4 Bludgeoning. Pair with Mastery (Nick) as part of the Attack action.",
       activityImg: "icons/equipment/shield/heater-steel-boss-red.webp",
     },
-    "Secondary shield attack; exclude sword base damage (includeBase=false).",
+    "Secondary shield attack (not Shield Master's Shield Bash); exclude sword base damage (includeBase=false).",
   ),
   /**
    * Sword and Shield (Rare+): on hit, target has Disadvantage on its next save
@@ -825,7 +825,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
           "Disadvantage on the next saving throw against an item or a spell (until the end of the attacker's next turn).",
       },
     },
-    "Link AE to Attack + Shield Bash; clear effectConditionText on those attacks so Midi can apply on hit.",
+    "Link AE to Attack + Shield Strike; clear effectConditionText on those attacks so Midi can apply on hit.",
   ),
   "advancing slash": spec(
     "upgrade_scaler",
@@ -1289,7 +1289,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     activation: "special",
     activityType: "damage",
     damageFormula: "3d6",
-    chatFlavor: "Once per turn after Sword + Shield Bash hit the same creature.",
+    chatFlavor: "Once per turn after Sword + Shield Strike hit the same creature.",
   }),
   "true perfect rush": spec("upgrade_scaler", {
     damageFormula: "5d6",

@@ -1,5 +1,5 @@
 {
-  "_id": "DZMNyjE3LcczRkcp",
+  "_id": "CCtLu6eQrHMYyBy8",
   "name": "Sword and Shield (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_swordandshield.webp",
@@ -13,8 +13,8 @@
       "revision": 1
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p><p>When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Free Hands</strong></p><p>While wielding this weapon, you can perform the somatic components of spells even while holding both the sword and the shield.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shield Bash</strong></p><p>You learn to seamlessly weave your shield into your attack forms. While equipped, the shield functions as a Martial Melee weapon that deals [[/r 1d4]] Bludgeoning damage and has the Light property.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Item Prodigy</strong></p><p><strong>Bonus Action.</strong></p><p>The hallmark of the weapon. You can take the Utilize action (such as drinking a potion, throwing alchemist's fire, or setting a trap) as a Bonus Action. You can do this even while holding both the sword and the shield.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Item Efficiency</strong></p><p>Whenever you roll dice to determine the healing or damage of an item you use with your Utilize action (such as a Potion of Healing or a Bomb), you can reroll any 1s or 2s, but you must use the new roll.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Alchemical Rend</strong></p><p>You use your rapid strikes to create openings for your items and spells. When you hit a creature with this weapon, that creature has Disadvantage on the next saving throw it makes against an item (like a bomb, poison, or caltrops) or a spell before the end of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Advancing Slash</strong></p><p>Your mobility in combat increases. When you use your Item Prodigy feature to take the Utilize action, you can immediately move up to 10 feet without provoking Opportunity Attacks.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Perfect Rush</strong></p><p>You unlock the weapon's most devastating combo. Once per turn, if you hit the same creature with both your Sword and your Shield Bash during the same Attack action, you can unleash a flurry of follow-up strikes. The creature takes an extra [[/r 3d6]] Slashing or Bludgeoning damage, and its Speed is reduced to 0 until the start of its next turn.</p></div>",
-      "chat": "<div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Free Hands</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shield Bash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Item Prodigy</strong></p><p><strong>Bonus Action.</strong></p><p style=\"margin:0.2em 0 0 0.35em\">▸ <strong style=\"color:#a335ee\">Item Efficiency</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Alchemical Rend</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Advancing Slash</strong></p></div><div style=\"margin:0.4em 0;padding:0.35em 0.55em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Perfect Rush</strong></p></div>"
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Nick)</strong></p><p>When you make the extra attack of the Light property, you can make it as part of the Attack action instead of taking a Bonus Action.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Free Hands</strong></p><p>While wielding this weapon, you can perform the somatic components of spells even while holding both the sword and the shield.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Shield Strike</strong></p><p>While equipped, your shield counts as a Martial Melee weapon that deals [[/r 1d4]] Bludgeoning damage and has the Light property.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Item Prodigy</strong></p><p><strong>Bonus Action.</strong></p><p>The hallmark of the weapon. You can take the Utilize action (such as drinking a potion, throwing alchemist's fire, or setting a trap) as a Bonus Action. You can do this even while holding both the sword and the shield.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Item Efficiency</strong></p><p>Whenever you roll dice to determine the healing or damage of an item you use with your Utilize action (such as a Potion of Healing or a Bomb), you can reroll any 1s or 2s, but you must use the new roll.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Alchemical Rend</strong></p><p>You use your rapid strikes to create openings for your items and spells. When you hit a creature with this weapon, that creature has Disadvantage on the next saving throw it makes against an item (like a bomb, poison, or caltrops) or a spell before the end of your next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Advancing Slash</strong></p><p>Your mobility in combat increases. When you use your Item Prodigy feature to take the Utilize action, you can immediately move up to 10 feet without provoking Opportunity Attacks.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Perfect Rush</strong></p><p>You unlock the weapon's most devastating combo. Once per turn, if you hit the same creature with both your Sword and your Shield Strike during the same Attack action, you can unleash a flurry of follow-up strikes. The creature takes an extra [[/r 3d6]] Slashing or Bludgeoning damage, and its Speed is reduced to 0 until the start of its next turn.</p></div>",
+      "chat": ""
     },
     "identifier": "swordandshield",
     "quantity": 1,
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "wunbEhy2Cfa8ENGn": {
-        "_id": "wunbEhy2Cfa8ENGn",
+      "Yrv5QngRayIed6s4": {
+        "_id": "Yrv5QngRayIed6s4",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -209,7 +209,7 @@
       "lZNIMEuGCjRghhNM": {
         "_id": "lZNIMEuGCjRghhNM",
         "sort": 300000,
-        "name": "Shield Bash",
+        "name": "Shield Strike",
         "img": "icons/equipment/shield/heater-steel-boss-red.webp",
         "activation": {
           "type": "action",
@@ -284,7 +284,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "shield-bash",
+          "identifier": "shield-strike",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -489,7 +489,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Once per turn after Sword + Shield Bash hit the same creature."
+          "chatFlavor": "Once per turn after Sword + Shield Strike hit the same creature."
         },
         "duration": {
           "value": "",
@@ -638,8 +638,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281877,
-        "modifiedTime": 1788906281877,
+        "createdTime": 1788990060202,
+        "modifiedTime": 1788990060202,
         "lastModifiedBy": null
       }
     },
@@ -677,8 +677,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281877,
-        "modifiedTime": 1788906281877,
+        "createdTime": 1788990060202,
+        "modifiedTime": 1788990060202,
         "lastModifiedBy": null
       }
     },
@@ -728,13 +728,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281877,
-        "modifiedTime": 1788906281877,
+        "createdTime": 1788990060202,
+        "modifiedTime": 1788990060202,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "CxMFyE4TWKFHFaT4",
+      "_id": "64jAD3hVIDNnAANY",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -781,13 +781,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281877,
-        "modifiedTime": 1788906281877,
+        "createdTime": 1788990060202,
+        "modifiedTime": 1788990060202,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "6sgBTfQcHnm1kQCK",
+      "_id": "F6JBbGG4h2LNAhVy",
       "name": "Sword and Shield AC (+2)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Very Rare Sword and Shield bonus AC from the rarity table.",
@@ -828,14 +828,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281877,
-        "modifiedTime": 1788906281877,
+        "createdTime": 1788990060203,
+        "modifiedTime": 1788990060203,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 23300000,
+  "sort": 400000,
   "ownership": {
     "default": 0
   },
@@ -887,8 +887,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281876,
-    "modifiedTime": 1788906281876,
+    "createdTime": 1788990060201,
+    "modifiedTime": 1788990060201,
     "lastModifiedBy": null
   }
 }
