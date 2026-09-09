@@ -54,7 +54,7 @@ describe("Wire Knuckles rare Foundry export", () => {
     expect(
       (tether.consumption as { targets: { value: string; type: string }[] })
         .targets[0],
-    ).toMatchObject({ type: "itemUses", value: "1" });
+    ).toMatchObject({ type: "itemUses", value: "2" });
     expect(
       (tether.target as { affects: { type: string } }).affects.type,
     ).toBe("creature");
@@ -88,5 +88,11 @@ describe("Wire Knuckles rare Foundry export", () => {
       (item.flags as { world?: { wireKnuckles?: { hasSilkbind?: boolean } } })
         .world?.wireKnuckles?.hasSilkbind,
     ).toBe(true);
+
+    // Asymmetric rarity: +1 magical / +3 damage → +2 flat on base damage.
+    expect(system.magicalBonus).toBe(1);
+    expect(
+      (system.damage as { base?: { bonus?: string } }).base?.bonus,
+    ).toBe("2");
   });
 });

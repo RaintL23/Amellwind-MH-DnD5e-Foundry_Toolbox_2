@@ -1652,16 +1652,49 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Manual: apply Prone on failed save. Requires Earth Style + critical hit.",
   ),
+  "wirebug recall": spec(
+    "bonus_action",
+    {
+      activation: "bonus",
+      activityType: "utility",
+      consumeItemUses: true,
+      // Negative itemUses restores charges (Foundry clamps spent ≥ 0).
+      consumeAmount: "-1",
+      chatFlavor: "Regain 1 expended Wirebug.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/magic/nature/leaf-glow-teal.webp",
+    },
+    "Shared Wirebug Gauge pool. BA restores via −itemUses.",
+  ),
+  "wirebug recall upgrade": spec("upgrade_scaler", {
+    consumeAmount: "-2",
+    chatFlavor: "Regain 2 expended Wirebugs.",
+  }),
+  "wirebug reflex": reactionUtility(
+    "When a creature misses you with an attack roll",
+    {
+      consumeItemUses: true,
+      consumeAmount: "-1",
+      chatFlavor: "Regain 1 expended Wirebug.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/movement/figure-running-gray.webp",
+    },
+    "Shared Wirebug Gauge pool. Negative itemUses restores 1 (Foundry clamps).",
+  ),
   "silkbind tether": spec(
     "action_ability",
     {
       activation: "special",
       activityType: "utility",
       consumeItemUses: true,
-      consumeAmount: "1",
+      consumeAmount: "2",
       activationCondition: "When you hit a creature with this weapon",
       chatFlavor:
-        "Expend 1 Wirebug: apply Tethered (cannot move more than 15 ft from the embed point). Start-of-turn STR save uses Snap Silkbind.",
+        "Expend 2 Wirebugs: apply Tethered (cannot move more than 15 ft from the embed point). Start-of-turn STR save uses Snap Silkbind.",
       targetAffectsType: "creature",
       targetPrompt: true,
       rangeUnits: "ft",
@@ -1686,13 +1719,13 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activityType: "utility",
       activationCondition: "While a creature is Tethered by your Silkbind",
       chatFlavor:
-        "While a creature is Tethered by your Silkbind, you may attempt to Grapple it even if it is up to two size categories larger than you.",
+        "Automatically Grapple a Tethered creature (even up to two sizes larger). The Grapple does not end if you become Incapacitated, and it remains after the silkbind tether ends.",
       rangeUnits: "self",
       targetAffectsType: "self",
       targetPrompt: false,
       activityImg: "icons/skills/melee/unarmed-punch-fist-yellow-red.webp",
     },
-    "Narrative size override for Grapple — no mechanical consume.",
+    "Auto-succeed Grapple + size override — no mechanical consume.",
   ),
 
   // ── Charged Slash family (self-owned counter + Gather + ×N attacks) ─

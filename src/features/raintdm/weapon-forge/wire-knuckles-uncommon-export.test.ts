@@ -12,7 +12,7 @@ function loadWireKnuckles() {
 }
 
 describe("Wire Knuckles uncommon Foundry export", () => {
-  it("emits Wirebug Gauge + Wire-Dash / Wire-Fall consume-uses activities", () => {
+  it("emits Wirebug Gauge + Wire-Dash / Wire-Fall / Wirebug Recall activities", () => {
     const weapon = loadWireKnuckles();
     const uncommonIndex = weapon.rarityRows.findIndex(
       (r) => r.rarity === "Uncommon",
@@ -67,6 +67,21 @@ describe("Wire Knuckles uncommon Foundry export", () => {
       (fall.consumption as { targets: { value: string; type: string }[] })
         .targets[0],
     ).toMatchObject({ type: "itemUses", value: "1" });
+
+    const recall = byName["Wirebug Recall"];
+    expect(recall).toBeDefined();
+    expect(recall.type).toBe("utility");
+    expect(recall.activation).toMatchObject({ type: "bonus" });
+    expect(
+      (recall.consumption as { targets: { value: string; type: string }[] })
+        .targets[0],
+    ).toMatchObject({ type: "itemUses", value: "-1" });
+
+    // Flat +2 damage, no magical to-hit bonus yet.
+    expect(system.magicalBonus == null || system.magicalBonus === 0).toBe(true);
+    expect(
+      (system.damage as { base?: { bonus?: string } }).base?.bonus,
+    ).toBe("2");
 
     // Rare+ features must not appear on uncommon.
     expect(byName["Silkbind Tether"]).toBeUndefined();
