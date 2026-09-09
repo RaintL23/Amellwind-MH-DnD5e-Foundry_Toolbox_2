@@ -28,7 +28,22 @@ export function slugifyIdentifier(value: string): string {
     .replace(/^-|-$/g, "");
 }
 
+/**
+ * Foundry `system.magicalBonus` applies to both attack and damage.
+ * Prefer the to-hit column (incl. legacy single "Bonus"). Excess damage
+ * (damage > toHit) goes through `resolveExtraDamageBonus`.
+ */
 export function resolveMagicalBonus(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): number {
+  const row = weapon.rarityRows[rarityIndex];
+  if (!row || isBaseRarity(row.rarity)) return 0;
+  return parseBonusNumber(getTypedBonusValue(row, "toHit"));
+}
+
+/** Flat damage above the magical to-hit bonus (e.g. Rare +1 hit / +3 damage → 2). */
+export function resolveExtraDamageBonus(
   weapon: CustomWeapon,
   rarityIndex: number,
 ): number {
@@ -36,7 +51,8 @@ export function resolveMagicalBonus(
   if (!row || isBaseRarity(row.rarity)) return 0;
   const toHit = parseBonusNumber(getTypedBonusValue(row, "toHit"));
   const damage = parseBonusNumber(getTypedBonusValue(row, "damage"));
-  return Math.max(toHit, damage);
+  if (damage <= 0) return 0;
+  return Math.max(0, damage - toHit);
 }
 
 export function isRangedWeapon(weapon: Weapon): boolean {

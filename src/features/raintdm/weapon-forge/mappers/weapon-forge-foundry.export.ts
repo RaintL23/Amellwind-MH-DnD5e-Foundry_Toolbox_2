@@ -14,7 +14,10 @@ import {
 } from "@/shared/foundry/weapons";
 import { applyFoundryModuleCompat } from "@/shared/foundry";
 import type { CustomWeapon } from "../types/weapon-forge.types";
-import { resolveMagicalBonus } from "./weapon-forge-foundry.helpers";
+import {
+  resolveExtraDamageBonus,
+  resolveMagicalBonus,
+} from "./weapon-forge-foundry.helpers";
 import {
   buildFoundryDescriptionHtml,
   buildFoundryChatDescriptionHtml,
@@ -112,6 +115,7 @@ export function buildWeaponFoundryExportBundle(
   const row = weapon.rarityRows[clamped];
   const rarityLabel = row?.rarity ?? "Common";
   const magicalBonus = resolveMagicalBonus(weapon, clamped);
+  const extraDamageBonus = resolveExtraDamageBonus(weapon, clamped);
 
   const weaponCategory: Weapon["weaponCategory"] =
     weapon.proficiency?.tier === "simple"
@@ -167,6 +171,17 @@ export function buildWeaponFoundryExportBundle(
       if (!props.includes("mgc")) props.push("mgc");
       system.properties = props;
       magical = true;
+    }
+    if (extraDamageBonus > 0) {
+      const damage = system.damage as
+        | { base?: { bonus?: string } }
+        | undefined;
+      if (damage?.base) {
+        const existing = String(damage.base.bonus ?? "").trim();
+        damage.base.bonus = existing
+          ? `${existing}+${extraDamageBonus}`
+          : String(extraDamageBonus);
+      }
     }
   }
 
