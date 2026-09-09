@@ -7,6 +7,7 @@ import {
   Dices,
   Heart,
   Loader2,
+  Plus,
   Shuffle,
   Skull,
   MapPin,
@@ -41,6 +42,7 @@ import {
 } from "@/components/ui/popover";
 import { Select } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
 import { NumberStepper } from "@/shared/components/NumberStepper";
 import { cn } from "@/shared/utils/cn";
 import { BIOME_ICONS } from "@/features/amellwind/environments/constants/environment.constants";
@@ -61,6 +63,25 @@ interface HuntSetupPanelProps {
 
 export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
   const [monsterPickerOpen, setMonsterPickerOpen] = useState(false);
+  const [commonLargePickerOpen, setCommonLargePickerOpen] = useState(false);
+
+  const commonLargeDisplayNames = (() => {
+    const seen = new Set<string>();
+    const names: string[] = [];
+    for (const name of [
+      ...hunt.commonLargePool,
+      ...hunt.commonLargeSelection,
+    ]) {
+      if (seen.has(name)) continue;
+      seen.add(name);
+      names.push(name);
+    }
+    return names;
+  })();
+
+  const commonLargeAddCandidates = hunt.compatibleMonsters.filter(
+    (monster) => !hunt.commonLargeSelection.includes(monster.name),
+  );
 
   return (
     <div className="space-y-5">
@@ -149,9 +170,12 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                             <CommandItem
                               key={`${monster.name}-${monster.source ?? ""}`}
                               value={`${monster.name} CR ${monster.cr}`}
+                              onMouseDown={(e) => {
+                                // Keep the popover + search filter open for multi-add.
+                                e.preventDefault();
+                              }}
                               onSelect={() => {
                                 hunt.addMonster(monster);
-                                setMonsterPickerOpen(false);
                               }}
                             >
                               <Check
@@ -319,20 +343,61 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                 Hunting Party
               </CardTitle>
               <CardDescription>
-                Set hunter count and levels to calculate average party level and
-                compare against total quarry CR.
+                Set hunter count and an APL for everyone, or per-hunter levels,
+                then compare against total quarry CR.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4 p-4 pt-0">
+              <div className="flex items-center gap-2.5 rounded-lg border border-border bg-muted/10 px-3 py-2">
+                <Switch
+                  id="hunt-use-apl"
+                  checked={hunt.useHunterApl}
+                  onCheckedChange={hunt.setUseHunterApl}
+                />
+                <Label
+                  htmlFor="hunt-use-apl"
+                  className="flex flex-1 cursor-pointer flex-col gap-0.5"
+                >
+                  <span className="text-xs font-medium text-foreground">
+                    Use average party level (APL)
+                  </span>
+                  <span className="text-[10px] font-normal text-muted-foreground">
+                    {hunt.useHunterApl
+                      ? "One level for the whole party — turn off to set each hunter"
+                      : "Per-hunter levels — turn on to apply one APL to all"}
+                  </span>
+                </Label>
+              </div>
               <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Number of hunters</Label>
-                  <NumberStepper
-                    value={hunt.hunterCount}
-                    min={1}
-                    max={6}
-                    onChange={hunt.setHunterCount}
-                  />
+                <div
+                  className={cn(
+                    "grid gap-3",
+                    hunt.useHunterApl ? "grid-cols-2" : "grid-cols-1",
+                  )}
+                >
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">Number of hunters</Label>
+                    <NumberStepper
+                      value={hunt.hunterCount}
+                      min={1}
+                      max={6}
+                      onChange={hunt.setHunterCount}
+                    />
+                  </div>
+                  {hunt.useHunterApl ? (
+                    <div className="space-y-1.5">
+                      <Label className="text-xs">
+                        Average party level (APL)
+                      </Label>
+                      <NumberStepper
+                        value={hunt.averagePartyLevel}
+                        min={1}
+                        max={20}
+                        onChange={hunt.setHunterApl}
+                        ariaLabel="APL"
+                      />
+                    </div>
+                  ) : null}
                 </div>
                 <div className="rounded-md border border-border bg-muted/20 px-3 py-2 space-y-2">
                   <div className="flex flex-wrap items-center gap-2">
@@ -361,25 +426,27 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
-                {hunt.hunterLevels.map((level, index) => (
-                  <div key={index} className="space-y-1">
-                    <Label className="text-[10px] text-muted-foreground">
-                      Hunter {index + 1}
-                    </Label>
-                    <Input
-                      type="number"
-                      min={1}
-                      max={20}
-                      value={level}
-                      onChange={(e) =>
-                        hunt.setHunterLevel(index, Number(e.target.value))
-                      }
-                      className="h-8 text-xs"
-                    />
-                  </div>
-                ))}
-              </div>
+              {!hunt.useHunterApl ? (
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
+                  {hunt.hunterLevels.map((level, index) => (
+                    <div key={index} className="space-y-1">
+                      <Label className="text-[10px] text-muted-foreground">
+                        Hunter {index + 1}
+                      </Label>
+                      <Input
+                        type="number"
+                        min={1}
+                        max={20}
+                        value={level}
+                        onChange={(e) =>
+                          hunt.setHunterLevel(index, Number(e.target.value))
+                        }
+                        className="h-8 text-xs"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
             </CardContent>
           </Card>
 
@@ -449,9 +516,23 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
                   <Label htmlFor="tier-select" className="text-xs">
                     Party level tier
                   </Label>
+                  <div className="flex items-center gap-2 rounded-md border border-border bg-muted/10 px-2.5 py-1.5">
+                    <Switch
+                      id="auto-tier-apl"
+                      checked={hunt.autoTierFromApl}
+                      onCheckedChange={hunt.setAutoTierFromApl}
+                    />
+                    <Label
+                      htmlFor="auto-tier-apl"
+                      className="cursor-pointer text-[10px] font-normal leading-snug text-muted-foreground"
+                    >
+                      Auto calculated by APL selected
+                    </Label>
+                  </div>
                   <Select
                     id="tier-select"
                     value={hunt.selectedTierIndex}
+                    disabled={hunt.autoTierFromApl}
                     onChange={(e) =>
                       hunt.setSelectedTierIndex(Number(e.target.value))
                     }
@@ -508,19 +589,99 @@ export function HuntSetupPanel({ hunt }: HuntSetupPanelProps) {
               </div>
 
               {hunt.selectedTier && (
-                <div className="rounded-md border border-border bg-muted/20 px-3 py-2 text-[11px] text-muted-foreground space-y-1">
+                <div className="rounded-md border border-border bg-muted/20 px-3 py-2 text-[11px] text-muted-foreground space-y-2">
                   <p>
                     <span className="text-foreground font-medium">
                       Common small:
                     </span>{" "}
                     {hunt.selectedTier.commonSmallMonsters}
                   </p>
-                  <p>
-                    <span className="text-foreground font-medium">
-                      Common large:
-                    </span>{" "}
-                    {hunt.selectedTier.commonLargeMonsters}
-                  </p>
+                  <div className="space-y-1.5">
+                    <div className="flex flex-wrap items-baseline justify-between gap-2">
+                      <span className="text-foreground font-medium">
+                        Common large:
+                      </span>
+                      <span className="text-[10px]">
+                        {hunt.commonLargeSelection.length} selected (
+                        {hunt.commonLargePool.length} from tier) — toggle or
+                        add more to widen local threats
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {commonLargeDisplayNames.map((name) => {
+                        const selected =
+                          hunt.commonLargeSelection.includes(name);
+                        const fromTier = hunt.commonLargePool.includes(name);
+                        return (
+                          <Button
+                            key={name}
+                            type="button"
+                            size="sm"
+                            variant={selected ? "default" : "outline"}
+                            className={cn(
+                              "h-7 px-2 text-[10px] font-normal",
+                              !selected && "text-muted-foreground",
+                            )}
+                            onClick={() => hunt.toggleCommonLargeMonster(name)}
+                            aria-pressed={selected}
+                            title={
+                              fromTier
+                                ? "From environment tier"
+                                : "Custom addition"
+                            }
+                          >
+                            {name}
+                            {!fromTier ? " +" : ""}
+                          </Button>
+                        );
+                      })}
+                    </div>
+                    <Popover
+                      open={commonLargePickerOpen}
+                      onOpenChange={setCommonLargePickerOpen}
+                    >
+                      <PopoverTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-7 text-[10px]"
+                        >
+                          <Plus className="mr-1 h-3 w-3" />
+                          Add common large
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent align="start" className="w-72 p-0">
+                        <Command>
+                          <CommandInput placeholder="Search monsters..." />
+                          <CommandList>
+                            <CommandEmpty>No monster found.</CommandEmpty>
+                            <CommandGroup>
+                              {commonLargeAddCandidates.map((monster) => (
+                                <CommandItem
+                                  key={`${monster.name}-${monster.source ?? ""}`}
+                                  value={`${monster.name} CR ${monster.cr}`}
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                  }}
+                                  onSelect={() => {
+                                    hunt.addCommonLargeMonster(monster.name);
+                                  }}
+                                >
+                                  <span className="truncate">
+                                    {monster.name}
+                                  </span>
+                                  <span className="ml-auto shrink-0 text-xs text-muted-foreground">
+                                    CR {monster.cr}
+                                  </span>
+                                </CommandItem>
+                              ))}
+                            </CommandGroup>
+                          </CommandList>
+                        </Command>
+                      </PopoverContent>
+                    </Popover>
+                  </div>
                 </div>
               )}
             </CardContent>

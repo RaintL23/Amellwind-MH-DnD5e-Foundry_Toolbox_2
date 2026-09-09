@@ -1,4 +1,5 @@
 import type { Background, Environment, Monster, Species } from "@/shared/types";
+import type { ArmorClass } from "@/shared/types/actor.types";
 import type { LevelTier } from "@/shared/types/environment.types";
 import { parseCR } from "@/shared/utils/cr.utils";
 import { getNpcTemplateById } from "@/features/amellwind/npc-generator/services/npc-generator.service";
@@ -54,7 +55,7 @@ const PREY_MONSTERS = [
   "Moofah",
 ];
 
-function parseMonsterNames(csv: string): string[] {
+export function parseMonsterNames(csv: string): string[] {
   return csv
     .split(",")
     .map((name) => name.trim())
@@ -234,13 +235,37 @@ async function buildFriendlyNpcEntry(
     template,
     background,
   );
+  const acLabel = formatNpcArmorClassLabel(npc.armorClass);
 
   return [
     `Friendly NPC: ${npc.name} — ${descriptor}.`,
-    `CR ${npc.cr}, AC ${npc.armorClass}, HP ${npc.hp.average ?? "?"}.`,
+    `CR ${npc.cr}, AC ${acLabel}, HP ${npc.hp.average ?? "?"}.`,
     `They share a lead on ${target.name} in ${environment.name} and may trade supplies or escort the party briefly.`,
-    "Use the NPC Generator (/npc-generator) to expand this character.",
+    "Expand this character in the NPC Generator (/npc-generator).",
   ].join(" ");
+}
+
+function formatNpcArmorClassLabel(
+  armorClass: ArmorClass[] | number | unknown,
+): string {
+  if (typeof armorClass === "number" && Number.isFinite(armorClass)) {
+    return String(armorClass);
+  }
+  if (!Array.isArray(armorClass) || armorClass.length === 0) return "?";
+  return armorClass
+    .map((entry) => {
+      if (typeof entry === "number" && Number.isFinite(entry)) {
+        return String(entry);
+      }
+      if (entry && typeof entry === "object" && "ac" in entry) {
+        const ac = entry as ArmorClass;
+        return ac.from?.length
+          ? `${ac.ac} (${ac.from.join(", ")})`
+          : String(ac.ac);
+      }
+      return "?";
+    })
+    .join(", ");
 }
 
 function toTableEntries(texts: string[]): HuntPrepTables["signs"] {
@@ -341,22 +366,21 @@ export async function generateHuntPrepTables(
   ];
 
   if (environment.name === "Verdant Hills") {
-    benefits.push(
-      "Veggie Elder: a friendly elder offers bonus plants and a hint about the prey's last direction.",
-    );
+    benefits[3] =
+      "Veggie Elder: a friendly elder offers bonus plants and a hint about the prey's last direction.";
   }
 
   if (environment.name === "Snowy Mountains") {
-    benefits.push(
-      "Veggie Elder: a frost-hardened elder trades warm herbs and points toward fresh tracks.",
-    );
+    benefits[3] =
+      "Veggie Elder: a frost-hardened elder trades warm herbs and points toward fresh tracks.";
   }
 
   return {
-    signs: toTableEntries(signs),
-    minorChallenges: toTableEntries(minorChallenges.slice(0, 10)),
+    signs: toTableEntries(signs.slice(0, 8)),
+    // Die-friendly table sizes (d8 / d4) for random prep rolls.
+    minorChallenges: toTableEntries(minorChallenges.slice(0, 8)),
     majorChallenges: toTableEntries(majorChallenges.slice(0, 4)),
-    benefits: toTableEntries(benefits.slice(0, 5)),
+    benefits: toTableEntries(benefits.slice(0, 4)),
   };
 }
 

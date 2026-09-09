@@ -24,28 +24,28 @@ export const HUNT_PREP_TABLE_META: HuntPrepTableMeta[] = [
     title: "Signs",
     description:
       "Clues tied to your quarry — tracks, kills, markings, and roars.",
-    suggestedCount: "Generated from the target monster and environment.",
+    suggestedCount: "8 entries (d8).",
   },
   {
     key: "minorChallenges",
     title: "Minor Challenges",
     description:
       "Setbacks using local monsters from the environment stat block.",
-    suggestedCount: "Filtered by encounter difficulty in setup.",
+    suggestedCount: "8 entries (d8).",
   },
   {
     key: "majorChallenges",
     title: "Major Challenges",
     description:
       "Dangerous threats drawn from harder local monsters and environment events.",
-    suggestedCount: "Filtered by encounter difficulty in setup.",
+    suggestedCount: "4 entries (d4).",
   },
   {
     key: "benefits",
     title: "Benefits",
     description:
       "Boons including friendly NPCs, carvable corpses, and hunter caches.",
-    suggestedCount: "Includes NPC details and carve targets.",
+    suggestedCount: "4 entries (d4).",
   },
 ];
 

@@ -33,6 +33,7 @@ import {
 } from "../data/hunt-prep-defaults.data";
 import {
   generateHuntPrepTables,
+  parseMonsterNames,
   type HuntEncounterDifficulty,
 } from "../utils/hunt-prep-generator.utils";
 import { loadNpcGeneratorData } from "@/features/amellwind/npc-generator/services/npc-generator.service";
@@ -41,6 +42,7 @@ import {
   createHuntTarget,
   createTargetProgressMap,
   DEFAULT_HUNTER_COUNT,
+  findTierIndexForApl,
   formatHuntTargetLabel,
   getAveragePartyLevel,
   getHuntCombatDifficulty,
@@ -101,6 +103,9 @@ export interface UseHuntStateResult {
   compatibleEnvironments: Environment[];
   compatibleMonsters: Monster[];
   selectedTierIndex: number;
+  autoTierFromApl: boolean;
+  commonLargePool: string[];
+  commonLargeSelection: string[];
   signsRequired: number;
   targetProgress: Record<string, HuntTargetProgress>;
   activeTrackingTargetKey: string | null;
@@ -112,6 +117,7 @@ export interface UseHuntStateResult {
   survivalSucceeded: boolean;
   hunterCount: number;
   hunterLevels: number[];
+  useHunterApl: boolean;
   averagePartyLevel: number;
   totalTargetCr: number;
   combatDifficulty: ReturnType<typeof getHuntCombatDifficulty>;
@@ -121,6 +127,9 @@ export interface UseHuntStateResult {
   selectedTier: Environment["levelTiers"][number] | null;
   prepTables: HuntPrepTables;
   setSelectedTierIndex: (index: number) => void;
+  setAutoTierFromApl: (value: boolean) => void;
+  toggleCommonLargeMonster: (name: string) => void;
+  addCommonLargeMonster: (name: string) => void;
   setSignsRequired: (value: number) => void;
   setFlatBonus: (value: number) => void;
   setRollMode: (mode: RollMode) => void;
@@ -129,6 +138,8 @@ export interface UseHuntStateResult {
   setSurvivalSucceeded: (value: boolean) => void;
   setHunterCount: (count: number) => void;
   setHunterLevel: (index: number, level: number) => void;
+  setUseHunterApl: (value: boolean) => void;
+  setHunterApl: (level: number) => void;
   setActiveTrackingTargetKey: (key: string | null) => void;
   setScoutAmbushSpotNoticed: (value: boolean) => void;
   setEncounterDifficulty: (value: HuntEncounterDifficulty) => void;
@@ -208,8 +219,14 @@ export function useHuntState(): UseHuntStateResult {
         ) ?? null
       );
     });
-  const [selectedTierIndex, setSelectedTierIndex] = useState(
+  const [selectedTierIndex, setSelectedTierIndexState] = useState(
     persisted?.selectedTierIndex ?? 0,
+  );
+  const [autoTierFromApl, setAutoTierFromAplState] = useState(
+    persisted?.autoTierFromApl ?? true,
+  );
+  const [commonLargeSelection, setCommonLargeSelection] = useState<string[]>(
+    [],
   );
   const [signsRequired, setSignsRequired] = useState(
     persisted?.signsRequired ?? 3,
@@ -240,6 +257,9 @@ export function useHuntState(): UseHuntStateResult {
   const [hunterLevels, setHunterLevels] = useState<number[]>(
     persisted?.hunterLevels ??
       createDefaultHunterLevels(persisted?.hunterCount ?? DEFAULT_HUNTER_COUNT),
+  );
+  const [useHunterApl, setUseHunterAplState] = useState(
+    persisted?.useHunterApl ?? true,
   );
   const [scoutAmbushSpotNoticed, setScoutAmbushSpotNoticed] = useState(
     persisted?.scoutAmbushSpotNoticed ?? false,
@@ -317,6 +337,23 @@ export function useHuntState(): UseHuntStateResult {
     selectedEnvironment?.levelTiers[0] ??
     null;
 
+  const commonLargePool = useMemo(
+    () => parseMonsterNames(selectedTier?.commonLargeMonsters ?? ""),
+    [selectedTier],
+  );
+
+  const effectiveTier = useMemo(() => {
+    if (!selectedTier) return null;
+    const selected =
+      commonLargeSelection.length > 0
+        ? commonLargeSelection
+        : commonLargePool;
+    return {
+      ...selectedTier,
+      commonLargeMonsters: selected.join(", "),
+    };
+  }, [commonLargePool, commonLargeSelection, selectedTier]);
+
   const averagePartyLevel = useMemo(
     () => getAveragePartyLevel(hunterLevels),
     [hunterLevels],
@@ -363,8 +400,61 @@ export function useHuntState(): UseHuntStateResult {
     setRollHistory([]);
   }, []);
 
+  const setSelectedTierIndex = useCallback((index: number) => {
+    setAutoTierFromAplState(false);
+    setSelectedTierIndexState(index);
+  }, []);
+
+  const setAutoTierFromApl = useCallback(
+    (value: boolean) => {
+      setAutoTierFromAplState(value);
+      if (value && selectedEnvironment) {
+        setSelectedTierIndexState(
+          findTierIndexForApl(
+            averagePartyLevel,
+            selectedEnvironment.levelTiers,
+          ),
+        );
+      }
+    },
+    [averagePartyLevel, selectedEnvironment],
+  );
+
+  const toggleCommonLargeMonster = useCallback((name: string) => {
+    setCommonLargeSelection((prev) => {
+      if (prev.includes(name)) {
+        if (prev.length <= 1) return prev;
+        return prev.filter((entry) => entry !== name);
+      }
+      return [...prev, name];
+    });
+  }, []);
+
+  const addCommonLargeMonster = useCallback((name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    setCommonLargeSelection((prev) =>
+      prev.includes(trimmed) ? prev : [...prev, trimmed],
+    );
+  }, []);
+
+  useEffect(() => {
+    if (!autoTierFromApl || !selectedEnvironment) return;
+    const nextIndex = findTierIndexForApl(
+      averagePartyLevel,
+      selectedEnvironment.levelTiers,
+    );
+    setSelectedTierIndexState((current) =>
+      current === nextIndex ? current : nextIndex,
+    );
+  }, [autoTierFromApl, averagePartyLevel, selectedEnvironment]);
+
+  useEffect(() => {
+    setCommonLargeSelection(commonLargePool);
+  }, [commonLargePool]);
+
   const regeneratePrepTables = useCallback(() => {
-    if (selectedTargets.length === 0 || !selectedEnvironment || !selectedTier) {
+    if (selectedTargets.length === 0 || !selectedEnvironment || !effectiveTier) {
       return;
     }
     if (npcSpecies.length === 0) return;
@@ -373,7 +463,7 @@ export function useHuntState(): UseHuntStateResult {
     void generateHuntPrepTables({
       targets: selectedMonsters,
       environment: selectedEnvironment,
-      tier: selectedTier,
+      tier: effectiveTier,
       difficulty: encounterDifficulty,
       allMonsters: monsters,
       species: npcSpecies,
@@ -388,6 +478,7 @@ export function useHuntState(): UseHuntStateResult {
       });
   }, [
     encounterDifficulty,
+    effectiveTier,
     invalidateSetup,
     monsters,
     npcBackgrounds,
@@ -395,17 +486,16 @@ export function useHuntState(): UseHuntStateResult {
     selectedEnvironment,
     selectedMonsters,
     selectedTargets,
-    selectedTier,
   ]);
 
   useEffect(() => {
     if (hydrationPendingRef.current) {
-      if (!hasBaseSetup || !selectedTier || npcSpecies.length === 0) return;
+      if (!hasBaseSetup || !effectiveTier || npcSpecies.length === 0) return;
       hydrationPendingRef.current = false;
       return;
     }
 
-    if (!hasBaseSetup || !selectedTier || npcSpecies.length === 0) {
+    if (!hasBaseSetup || !effectiveTier || npcSpecies.length === 0) {
       setPrepTables(createEmptyHuntPrepTables());
       return;
     }
@@ -415,7 +505,7 @@ export function useHuntState(): UseHuntStateResult {
     void generateHuntPrepTables({
       targets: selectedMonsters,
       environment: selectedEnvironment!,
-      tier: selectedTier,
+      tier: effectiveTier,
       difficulty: encounterDifficulty,
       allMonsters: monsters,
       species: npcSpecies,
@@ -435,6 +525,7 @@ export function useHuntState(): UseHuntStateResult {
     };
   }, [
     encounterDifficulty,
+    effectiveTier,
     hasBaseSetup,
     invalidateSetup,
     monsters,
@@ -443,8 +534,6 @@ export function useHuntState(): UseHuntStateResult {
     selectedEnvironment,
     selectedMonsters,
     selectedTargets,
-    selectedTier,
-    selectedTierIndex,
   ]);
 
   const completeSetup = useCallback(() => {
@@ -467,7 +556,7 @@ export function useHuntState(): UseHuntStateResult {
         !environmentMatchesMonster(selectedEnvironment, monster)
       ) {
         setSelectedEnvironment(null);
-        setSelectedTierIndex(0);
+        setSelectedTierIndexState(0);
       }
     },
     [invalidateSetup, selectedEnvironment],
@@ -492,7 +581,7 @@ export function useHuntState(): UseHuntStateResult {
   const pickEnvironment = useCallback(
     (environment: Environment | null) => {
       setSelectedEnvironment(environment);
-      setSelectedTierIndex(0);
+      setSelectedTierIndexState(0);
       invalidateSetup();
       if (
         environment &&
@@ -533,15 +622,26 @@ export function useHuntState(): UseHuntStateResult {
     );
     setActiveTrackingTargetKey(nextTarget?.id ?? null);
     setSelectedEnvironment(nextEnvironment ?? null);
-    setSelectedTierIndex(0);
+    setSelectedTierIndexState(0);
     invalidateSetup();
   }, [environments, invalidateSetup, monsters, selectedEnvironment, selectedMonsters, selectedTargets]);
 
-  const setHunterCount = useCallback((count: number) => {
-    const clamped = Math.min(6, Math.max(1, count));
-    setHunterCountState(clamped);
-    setHunterLevels((prev) => resizeHunterLevels(prev, clamped));
-  }, []);
+  const setHunterCount = useCallback(
+    (count: number) => {
+      const clamped = Math.min(6, Math.max(1, count));
+      setHunterCountState(clamped);
+      setHunterLevels((prev) => {
+        if (useHunterApl) {
+          return createDefaultHunterLevels(
+            clamped,
+            getAveragePartyLevel(prev),
+          );
+        }
+        return resizeHunterLevels(prev, clamped);
+      });
+    },
+    [useHunterApl],
+  );
 
   const setHunterLevel = useCallback((index: number, level: number) => {
     const clampedLevel = Math.min(20, Math.max(1, level));
@@ -549,6 +649,23 @@ export function useHuntState(): UseHuntStateResult {
       prev.map((value, idx) => (idx === index ? clampedLevel : value)),
     );
   }, []);
+
+  const setUseHunterApl = useCallback((value: boolean) => {
+    setUseHunterAplState(value);
+    if (value) {
+      setHunterLevels((prev) =>
+        createDefaultHunterLevels(prev.length, getAveragePartyLevel(prev)),
+      );
+    }
+  }, []);
+
+  const setHunterApl = useCallback(
+    (level: number) => {
+      const clampedLevel = Math.min(20, Math.max(1, level));
+      setHunterLevels(createDefaultHunterLevels(hunterCount, clampedLevel));
+    },
+    [hunterCount],
+  );
 
   const updatePrepEntry = useCallback(
     (table: HuntPrepTableKey, id: string, text: string) => {
@@ -854,6 +971,8 @@ export function useHuntState(): UseHuntStateResult {
       survivalSucceeded,
       hunterCount,
       hunterLevels,
+      useHunterApl,
+      autoTierFromApl,
       scoutAmbushSpotNoticed,
       rollHistory,
       prepTables,
@@ -876,6 +995,8 @@ export function useHuntState(): UseHuntStateResult {
     survivalSucceeded,
     hunterCount,
     hunterLevels,
+    useHunterApl,
+    autoTierFromApl,
     scoutAmbushSpotNoticed,
     rollHistory,
     prepTables,
@@ -887,7 +1008,9 @@ export function useHuntState(): UseHuntStateResult {
     hydrationPendingRef.current = false;
     setSelectedTargets([]);
     setSelectedEnvironment(null);
-    setSelectedTierIndex(0);
+    setSelectedTierIndexState(0);
+    setAutoTierFromAplState(true);
+    setCommonLargeSelection([]);
     setSignsRequired(3);
     setTargetProgress({});
     setActiveTrackingTargetKey(null);
@@ -899,6 +1022,7 @@ export function useHuntState(): UseHuntStateResult {
     setSurvivalSucceeded(true);
     setHunterCountState(DEFAULT_HUNTER_COUNT);
     setHunterLevels(createDefaultHunterLevels(DEFAULT_HUNTER_COUNT));
+    setUseHunterAplState(true);
     setScoutAmbushSpotNoticed(false);
     setRollHistory([]);
     setPrepTables(createEmptyHuntPrepTables());
@@ -920,6 +1044,9 @@ export function useHuntState(): UseHuntStateResult {
     compatibleEnvironments,
     compatibleMonsters,
     selectedTierIndex,
+    autoTierFromApl,
+    commonLargePool,
+    commonLargeSelection,
     signsRequired,
     targetProgress,
     activeTrackingTargetKey,
@@ -931,6 +1058,7 @@ export function useHuntState(): UseHuntStateResult {
     survivalSucceeded,
     hunterCount,
     hunterLevels,
+    useHunterApl,
     averagePartyLevel,
     totalTargetCr,
     combatDifficulty,
@@ -940,6 +1068,9 @@ export function useHuntState(): UseHuntStateResult {
     selectedTier,
     prepTables,
     setSelectedTierIndex,
+    setAutoTierFromApl,
+    toggleCommonLargeMonster,
+    addCommonLargeMonster,
     setSignsRequired,
     setFlatBonus,
     setRollMode,
@@ -948,6 +1079,8 @@ export function useHuntState(): UseHuntStateResult {
     setSurvivalSucceeded,
     setHunterCount,
     setHunterLevel,
+    setUseHunterApl,
+    setHunterApl,
     setActiveTrackingTargetKey,
     setScoutAmbushSpotNoticed,
     setEncounterDifficulty,

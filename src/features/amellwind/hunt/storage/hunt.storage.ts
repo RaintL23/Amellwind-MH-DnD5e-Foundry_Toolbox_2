@@ -92,6 +92,10 @@ export interface HuntPersistedState {
   survivalSucceeded: boolean;
   hunterCount: number;
   hunterLevels: number[];
+  /** When true (default), party uses one APL for all hunters. */
+  useHunterApl: boolean;
+  /** When true (default), party level tier follows APL. */
+  autoTierFromApl: boolean;
   scoutAmbushSpotNoticed: boolean;
   rollHistory: HuntRollEntry[];
   prepTables: HuntPrepTables;
@@ -202,6 +206,8 @@ function migrateV2ToV3(raw: HuntPersistedStateV2): HuntPersistedState {
     hunterLevels:
       raw.hunterLevels ??
       createDefaultHunterLevels(raw.hunterCount ?? DEFAULT_HUNTER_COUNT),
+    useHunterApl: true,
+    autoTierFromApl: true,
     scoutAmbushSpotNoticed: raw.scoutAmbushSpotNoticed ?? false,
     rollHistory: reviveRollHistory(raw.rollHistory),
     prepTables: raw.prepTables ?? createEmptyHuntPrepTables(),
@@ -245,6 +251,8 @@ export function loadHuntState(): HuntPersistedState | null {
     hunterLevels:
       state.hunterLevels ??
       createDefaultHunterLevels(state.hunterCount ?? DEFAULT_HUNTER_COUNT),
+    useHunterApl: state.useHunterApl ?? true,
+    autoTierFromApl: state.autoTierFromApl ?? true,
     scoutAmbushSpotNoticed: state.scoutAmbushSpotNoticed ?? false,
     rollHistory: reviveRollHistory(state.rollHistory),
     prepTables: state.prepTables ?? createEmptyHuntPrepTables(),

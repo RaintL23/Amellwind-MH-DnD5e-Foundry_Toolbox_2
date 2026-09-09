@@ -59,3 +59,21 @@ Biomas del sistema de cacería con reglas de exploración, clima y tablas por ni
 
 ---
 
+### Hunt Planner (habitat filter)
+
+**Ruta**: `/hunt`
+
+Compatible monsters/environments use `HUNT_ENVIRONMENT_MAPPINGS` (location → 5etools `environment` tags) in `hunt-roll.utils.ts`:
+
+- Direct tag overlap with the selected map, **or**
+- **Wide-habitat** quarry (≥ 5 mapped hunt biomes, e.g. Rathalos / Rathian) stays available in every hunt environment, **or**
+- Monsters with no `environment` tags are treated as unrestricted (same as before for setup validation).
+
+**Hunt Parameters**:
+
+- **Party level tier** can auto-follow APL (`autoTierFromApl`, default on) via `findTierIndexForApl`.
+- **Common large** monsters are toggleable chips; you can also **add** extra monsters beyond the tier list. The selected subset feeds prep-table generation.
+- Prep tables generate die-sized counts: Signs/Minor Challenges **8 (d8)**, Major Challenges/Benefits **4 (d4)**.
+
+---
+

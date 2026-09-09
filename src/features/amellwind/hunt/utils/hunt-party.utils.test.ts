@@ -3,6 +3,7 @@ import type { Monster } from "@/shared/types";
 import {
   countTargetsOfMonster,
   createHuntTarget,
+  findTierIndexForApl,
   formatHuntTargetLabel,
   getAveragePartyLevel,
   getHuntCombatDifficulty,
@@ -79,5 +80,17 @@ describe("hunt-party.utils", () => {
     expect(formatHuntTargetLabel(first, targets)).toBe("Test Monster #1");
     expect(formatHuntTargetLabel(second, targets)).toBe("Test Monster #2");
     expect(countTargetsOfMonster(targets, monster)).toBe(2);
+  });
+
+  it("picks the environment tier that contains the party APL", () => {
+    const tiers = [
+      { levelRange: "1-4" },
+      { levelRange: "5-10" },
+      { levelRange: "11-16" },
+      { levelRange: "17-20" },
+    ];
+    expect(findTierIndexForApl(1, tiers)).toBe(0);
+    expect(findTierIndexForApl(5, tiers)).toBe(1);
+    expect(findTierIndexForApl(20, tiers)).toBe(3);
   });
 });

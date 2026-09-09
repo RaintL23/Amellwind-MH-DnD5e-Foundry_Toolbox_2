@@ -107,8 +107,34 @@ export function resolveFindingSignsRoll(
   };
 }
 
+function normalizeEnvTag(tag: string): string {
+  return tag.trim().toLowerCase();
+}
+
 function getMonsterEnvironmentTags(monster: Monster): Set<string> {
-  return new Set(monster.environment ?? []);
+  return new Set((monster.environment ?? []).map(normalizeEnvTag));
+}
+
+/**
+ * Min hunt biomes a monster must already match (via tag overlap) to count as
+ * wide-ranging — e.g. Rathalos / Rathian, which the MM lists across most
+ * habitats and should stay pickable in any Hunt Planner environment.
+ */
+export const WIDE_HABITAT_MIN_BIOMES = 5;
+
+/** How many mapped hunt environments share at least one tag with the monster. */
+export function countMatchingHuntEnvironments(monster: Monster): number {
+  const monsterTags = getMonsterEnvironmentTags(monster);
+  if (monsterTags.size === 0) return HUNT_ENVIRONMENT_MAPPINGS.length;
+  return HUNT_ENVIRONMENT_MAPPINGS.filter((mapping) =>
+    mapping.tags.some((tag) => monsterTags.has(normalizeEnvTag(tag))),
+  ).length;
+}
+
+/** True when the monster is tagged for most hunt biomes (or has no tags). */
+export function isWideHabitatMonster(monster: Monster): boolean {
+  if (!monster.environment?.length) return true;
+  return countMatchingHuntEnvironments(monster) >= WIDE_HABITAT_MIN_BIOMES;
 }
 
 export function getCompatibleEnvironments(
@@ -126,13 +152,9 @@ export function getCompatibleEnvironments(
   const withTags = list.filter((monster) => monster.environment?.length);
   if (withTags.length === 0) return environments;
 
-  const compatible = environments.filter((env) => {
-    const envTags = getTagsForEnvironment(env.name);
-    return withTags.every((monster) => {
-      const monsterTags = getMonsterEnvironmentTags(monster);
-      return envTags.some((tag) => monsterTags.has(tag));
-    });
-  });
+  const compatible = environments.filter((env) =>
+    environmentMatchesAllMonsters(env, withTags),
+  );
 
   return compatible.length > 0 ? compatible : environments;
 }
@@ -146,9 +168,8 @@ export function getCompatibleMonsters(
   const tags = getTagsForEnvironment(environment.name);
   if (tags.length === 0) return monsters;
 
-  const tagSet = new Set(tags);
   const compatible = monsters.filter((monster) =>
-    monster.environment?.some((tag) => tagSet.has(tag)),
+    environmentMatchesMonster(environment, monster),
   );
 
   return compatible.length > 0 ? compatible : monsters;
@@ -161,7 +182,10 @@ export function environmentMatchesMonster(
   if (!monster.environment?.length) return true;
   const tags = getTagsForEnvironment(environment.name);
   if (tags.length === 0) return true;
-  return monster.environment.some((tag) => tags.includes(tag));
+  const monsterTags = getMonsterEnvironmentTags(monster);
+  if (tags.some((tag) => monsterTags.has(normalizeEnvTag(tag)))) return true;
+  // Multi-biome quarry (Rathalos, etc.): keep available in every hunt map.
+  return isWideHabitatMonster(monster);
 }
 
 export function environmentMatchesAllMonsters(

@@ -244,6 +244,40 @@ function isAplWithinTier(apl: number, tierLevelRange: string): boolean {
   return true;
 }
 
+function tierRangeMidpoint(tierLevelRange: string): number {
+  const rangeMatch = /^(\d+)\s*-\s*(\d+)$/.exec(tierLevelRange.trim());
+  if (rangeMatch) {
+    const min = Number.parseInt(rangeMatch[1], 10);
+    const max = Number.parseInt(rangeMatch[2], 10);
+    return (min + max) / 2;
+  }
+  const single = Number.parseInt(tierLevelRange.trim(), 10);
+  return Number.isFinite(single) ? single : 1;
+}
+
+/** Pick the environment level-tier index that best matches party APL. */
+export function findTierIndexForApl(
+  apl: number,
+  tiers: readonly { levelRange: string }[],
+): number {
+  if (tiers.length === 0) return 0;
+  const exact = tiers.findIndex((tier) =>
+    isAplWithinTier(apl, tier.levelRange),
+  );
+  if (exact >= 0) return exact;
+
+  let bestIdx = 0;
+  let bestDist = Number.POSITIVE_INFINITY;
+  for (let i = 0; i < tiers.length; i += 1) {
+    const dist = Math.abs(tierRangeMidpoint(tiers[i].levelRange) - apl);
+    if (dist < bestDist) {
+      bestDist = dist;
+      bestIdx = i;
+    }
+  }
+  return bestIdx;
+}
+
 export function createDefaultHunterLevels(count: number, defaultLevel = 1): number[] {
   return Array.from({ length: count }, () => defaultLevel);
 }

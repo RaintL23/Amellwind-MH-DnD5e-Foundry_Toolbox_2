@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Dices, Plus, RotateCcw, Table2, Trash2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { Check, Dices, Pencil, Plus, RotateCcw, Table2, Trash2 } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -49,16 +50,52 @@ const TABLE_BG: Record<HuntPrepTableKey, string> = {
 
 const DEFAULT_OPEN_TABLES = HUNT_PREP_TABLE_META.map((meta) => meta.key);
 
+const APP_PATH_PATTERN = /(\/[a-z0-9-]+(?:\/[a-z0-9-]*)*)/gi;
+
+function PrepEntryRichText({ text }: { text: string }) {
+  const parts = text.split(APP_PATH_PATTERN);
+  return (
+    <p className="min-w-0 flex-1 whitespace-pre-wrap text-xs text-foreground">
+      {parts.map((part, index) => {
+        if (part.startsWith("/") && /^\/[a-z0-9-]+/i.test(part)) {
+          return (
+            <Link
+              key={`${part}-${index}`}
+              to={part}
+              className="font-medium text-primary underline underline-offset-2 hover:text-primary/80"
+            >
+              {part}
+            </Link>
+          );
+        }
+        return <span key={`${part}-${index}`}>{part}</span>;
+      })}
+    </p>
+  );
+}
+
 export function HuntPrepTablesPanel({ hunt }: HuntPrepTablesPanelProps) {
   const [previewByTable, setPreviewByTable] = useState<
     Partial<Record<HuntPrepTableKey, string>>
   >({});
+  const [editingEntryIds, setEditingEntryIds] = useState<Set<string>>(
+    () => new Set(),
+  );
 
   function handlePreviewRoll(key: HuntPrepTableKey) {
     const entry = hunt.rollPrepTable(key);
     if (entry) {
       setPreviewByTable((prev) => ({ ...prev, [key]: entry }));
     }
+  }
+
+  function toggleEditing(entryId: string) {
+    setEditingEntryIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(entryId)) next.delete(entryId);
+      else next.add(entryId);
+      return next;
+    });
   }
 
   return (
@@ -124,10 +161,12 @@ export function HuntPrepTablesPanel({ hunt }: HuntPrepTablesPanelProps) {
                   <div className="min-w-0 space-y-0.5">
                     <div className="flex flex-wrap items-center gap-2 text-sm font-semibold">
                       {meta.title}
-                      <Badge variant="outline">{entries.length}</Badge>
+                      <Badge variant="outline">
+                        {entries.length > 0 ? `d${entries.length}` : "0"}
+                      </Badge>
                     </div>
                     <p className="text-xs font-normal text-muted-foreground">
-                      {meta.description}
+                      {meta.description} {meta.suggestedCount}
                     </p>
                   </div>
                 </AccordionTrigger>
@@ -189,44 +228,72 @@ export function HuntPrepTablesPanel({ hunt }: HuntPrepTablesPanelProps) {
                     </p>
                   ) : (
                     <ul className="max-h-96 space-y-2 overflow-y-auto overscroll-contain pr-1 pb-1">
-                      {entries.map((entry, index) => (
-                        <li
-                          key={entry.id}
-                          className="flex items-center gap-2 rounded-md border border-border bg-background/70 p-2"
-                        >
-                          <span className="w-5 shrink-0 text-center text-[11px] text-muted-foreground">
-                            {index + 1}.
-                          </span>
-                          <Textarea
-                            value={entry.text}
-                            onChange={(e) =>
-                              hunt.updatePrepEntry(
-                                meta.key,
-                                entry.id,
-                                e.target.value,
-                              )
-                            }
-                            placeholder={`${meta.title} entry...`}
-                            rows={Math.min(
-                              4,
-                              Math.max(2, Math.ceil(entry.text.length / 72)),
-                            )}
-                            className="min-h-[4rem] flex-1 resize-y text-xs"
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 shrink-0 text-muted-foreground hover:text-rose-400"
-                            onClick={() =>
-                              hunt.removePrepEntry(meta.key, entry.id)
-                            }
-                            aria-label={`Remove ${meta.title} entry`}
+                      {entries.map((entry, index) => {
+                        const isEditing = editingEntryIds.has(entry.id);
+                        return (
+                          <li
+                            key={entry.id}
+                            className="flex items-start gap-2 rounded-md border border-border bg-background/70 p-2"
                           >
-                            <Trash2 className="h-3.5 w-3.5" />
-                          </Button>
-                        </li>
-                      ))}
+                            <span className="mt-1 w-5 shrink-0 text-center text-[11px] text-muted-foreground">
+                              {index + 1}.
+                            </span>
+                            {isEditing || !entry.text.trim() ? (
+                              <Textarea
+                                value={entry.text}
+                                onChange={(e) =>
+                                  hunt.updatePrepEntry(
+                                    meta.key,
+                                    entry.id,
+                                    e.target.value,
+                                  )
+                                }
+                                placeholder={`${meta.title} entry...`}
+                                rows={Math.min(
+                                  4,
+                                  Math.max(2, Math.ceil(entry.text.length / 72)),
+                                )}
+                                className="min-h-[4rem] flex-1 resize-y text-xs"
+                                autoFocus={isEditing}
+                              />
+                            ) : (
+                              <PrepEntryRichText text={entry.text} />
+                            )}
+                            <div className="flex shrink-0 flex-col gap-1">
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-foreground"
+                                onClick={() => toggleEditing(entry.id)}
+                                aria-label={
+                                  isEditing
+                                    ? `Done editing ${meta.title} entry`
+                                    : `Edit ${meta.title} entry`
+                                }
+                              >
+                                {isEditing ? (
+                                  <Check className="h-3.5 w-3.5" />
+                                ) : (
+                                  <Pencil className="h-3.5 w-3.5" />
+                                )}
+                              </Button>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-muted-foreground hover:text-rose-400"
+                                onClick={() =>
+                                  hunt.removePrepEntry(meta.key, entry.id)
+                                }
+                                aria-label={`Remove ${meta.title} entry`}
+                              >
+                                <Trash2 className="h-3.5 w-3.5" />
+                              </Button>
+                            </div>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
