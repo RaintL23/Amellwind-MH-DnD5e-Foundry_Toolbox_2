@@ -23,6 +23,15 @@ Fetch centralizado en `shared/data/fivetools-fetch.ts` (offline-first _stale-whi
 
 ---
 
+### Creation Guide (D&D 5e)
+
+**Ruta**: `/dnd-character-guide`
+**Fuente**: `dnd-character-guide.data.ts` (estático).
+
+Guía de creación de personaje comparando **PHB 2014** y **PHB 2024** (XPHB). Switch de edición arriba a la derecha (por defecto **2024**; query `?edition=2014`). Pestañas: Creating a Character, Ability Scores, Describe Your Character, Equipment & Higher Level, Tips & Party Roles. Incluye la tabla de starting equipment a niveles altos y enlaces al Builder / catálogos oficiales. El panel de tips del Builder (modo D&D) enlaza aquí.
+
+---
+
 ### Xanathar Backstory
 
 **Ruta**: `/xanathar-backstory`

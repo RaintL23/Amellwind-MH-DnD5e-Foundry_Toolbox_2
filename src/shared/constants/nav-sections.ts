@@ -359,6 +359,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
         label: "Character Tools",
         items: [
           {
+            to: "/dnd-character-guide",
+            label: "Creation Guide",
+            icon: BookOpen,
+            description:
+              "Character creation walkthrough comparing PHB 2014 and PHB 2024.",
+          },
+          {
             to: "/encounter-calculator",
             label: "Encounter Calculator",
             icon: Calculator,

@@ -71,6 +71,7 @@ Estado de cobertura del manual / features de la app:
 - [x] **D&D Items** — Compendio de ítems con carga por fuente (+ catálogo de equipo del builder).
 - [x] **Bestiary** — Criaturas oficiales con carga bajo demanda por source book.
 - [x] **Xanathar Backstory** — Generador de trasfondo con tablas de XGE.
+- [x] **Creation Guide** — Guía de creación PHB 2014 / 2024 (`/dnd-character-guide`).
 
 ### En progreso o pendiente
 
@@ -113,6 +114,7 @@ src/
 │       ├── spells/ classes/ races/ backgrounds/ feats/ items/
 │       ├── optionalfeatures/  # sin ruta; usado por builder/classes
 │       ├── bestiary/
+│       ├── character-guide/   # Creation Guide PHB 2014/2024
 │       ├── xanathar-backstory/
 │       └── shop-generator/
 ├── shared/

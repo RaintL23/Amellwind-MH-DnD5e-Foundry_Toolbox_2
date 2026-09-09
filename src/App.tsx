@@ -206,6 +206,13 @@ const XanatharBackstoryPage = lazy(() =>
     }),
   ),
 );
+const DndCharacterGuidePage = lazy(() =>
+  import("@/features/dnd/character-guide/components/DndCharacterGuidePage").then(
+    (m) => ({
+      default: m.DndCharacterGuidePage,
+    }),
+  ),
+);
 const EncounterCalculatorPage = lazy(() =>
   import("@/features/dnd/encounter-calculator/components/EncounterCalculatorPage").then(
     (m) => ({
@@ -697,6 +704,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <DamageCalculatorPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="dnd-character-guide"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <DndCharacterGuidePage />
                   </Suspense>
                 }
               />

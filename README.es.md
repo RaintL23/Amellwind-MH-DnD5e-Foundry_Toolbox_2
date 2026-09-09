@@ -61,6 +61,7 @@ Datos oficiales de referencia cargados desde [5etools](https://5e.tools) (no son
 | **Races**       | `/dnd-races`                 | Especies, linajes y subrazas oficiales 5e                |
 | **Backgrounds** | `/dnd-backgrounds`           | Trasfondos oficiales 5e (2014 / 2024)                    |
 | **Feats**       | `/dnd-feats`                 | Dotes oficiales 5e                                       |
+| **Creation Guide** | `/dnd-character-guide` | Guía de creación de personaje comparando PHB 2014 y PHB 2024 |
 | **Xanathar Backstory** | `/xanathar-backstory` | Generador de trasfondo aleatorio con las tablas de Xanathar (XGE) |
 | **Shop Generator** | `/shop-generator` | Tiendas D&D 5e procedurales (tema, tier, precios CSV editables) |
 

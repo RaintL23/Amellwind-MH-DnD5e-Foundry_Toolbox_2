@@ -9,13 +9,15 @@ import {
 import { useCharacterBuilder } from "../../context/CharacterBuilderContext";
 import {
   BUILDER_WORKFLOW_STEPS,
-  DND_BUILDER_WORKFLOW_STEPS,
-  DND_STARTING_EQUIPMENT_TABLE,
   STARTING_ARMOR_TABLE,
   STARTING_MATERIALS_TABLE,
   STARTING_WEALTH_TABLE,
   STARTING_WEAPONS_TABLE,
 } from "@/features/amellwind/character-guide/data/character-guide.data";
+import {
+  DND_BUILDER_WORKFLOW_STEPS,
+  DND_STARTING_EQUIPMENT_TABLE,
+} from "@/features/dnd/character-guide/data/dnd-character-guide.data";
 const GuideTable = lazy(() =>
   import("@/features/amellwind/character-guide/components/GuideTable").then((m) => ({
     default: m.GuideTable,
@@ -65,16 +67,18 @@ export function CharacterCreationTipsPanel() {
         <span className="text-sm font-semibold text-foreground flex-1">
           {panelTitle}
         </span>
-        {useAmellwindHomebrew && (
-          <Link
-            to="/character-guide"
-            onClick={(e) => e.stopPropagation()}
-            className="hidden sm:inline-flex items-center gap-1 text-xs text-primary hover:underline mr-2"
-          >
-            Full guide
-            <ExternalLink className="h-3 w-3" />
-          </Link>
-        )}
+        <Link
+          to={
+            useAmellwindHomebrew
+              ? "/character-guide"
+              : "/dnd-character-guide"
+          }
+          onClick={(e) => e.stopPropagation()}
+          className="hidden sm:inline-flex items-center gap-1 text-xs text-primary hover:underline mr-2"
+        >
+          Full guide
+          <ExternalLink className="h-3 w-3" />
+        </Link>
         <ChevronDown
           className={cn(
             "h-4 w-4 text-muted-foreground transition-transform duration-200",

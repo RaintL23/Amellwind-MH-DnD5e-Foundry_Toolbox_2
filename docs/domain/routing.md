@@ -46,6 +46,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /item-forge                → Items Forge (catálogo curated RaintDM)
 
 ── Compendio D&D 5e ──
+/dnd-character-guide       → Guía de creación de personaje (PHB 2014 / 2024)
 /spells                    → Conjuros (5etools)
 /classes                   → Listado de clases base
 /classes/:classId          → Detalle de clase (variantes por fuente; `?subclass=SOURCE::Name` selecciona subclase y auto-carga su source brew si hace falta)
@@ -139,7 +140,7 @@ El equipo equipable del Builder proviene de ítems añadidos al carrito en Shops
 | D&D 5e Compendium   | Character Options             | Races, Backgrounds, Feats                                                   |
 | D&D 5e Compendium   | Bestiary                      | Bestiary                                                                    |
 | D&D 5e Compendium   | Equipment                     | Items                                                                       |
-| D&D 5e Compendium   | Character Tools               | Xanathar Backstory, Shop Generator                                          |
+| D&D 5e Compendium   | Character Tools               | Creation Guide, Encounter Calculator, Xanathar Backstory, Shop Generator |
 
 ### Layout global (`MainLayout`)
 

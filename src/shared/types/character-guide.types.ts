@@ -16,6 +16,8 @@ export interface GuideQuote {
 
 export interface GuideSubsection {
   name: string;
+  /** When set, only shown for that PHB edition filter. */
+  edition?: "2014" | "2024";
   paragraphs?: string[];
   table?: GuideTable;
   orderedList?: string[];
