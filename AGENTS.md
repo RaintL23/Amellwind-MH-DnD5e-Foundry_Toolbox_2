@@ -18,11 +18,13 @@ Operational guide for AI agents working on **Amellwind MH DnD5e Toolbox**. Read 
 ```text
 1. graphify query "…" --budget 1500   (or path / explain)
 2. Open ONE docs/domain/<file>.md from the index
-3. Read/Grep only the source files you will edit (prefer ±100 lines)
+3. File path / content search: prefer fff MCP (fffind, ffgrep, fff-multi-grep) when available; then Read only the files you will edit (±100 lines)
 4. Surgical change → pnpm lint / build (/ test if Builder)
 ```
 
 **Never** read whole actor JSON dumps (`fvtt-Actor-*.json`), `GRAPH_REPORT.md` (unless broad architecture review), or every file under `docs/domain/`.
+
+Use the fff MCP tools for file search and grep in this git-indexed repo instead of default Grep/Glob when the server is connected. Keep graphify for architecture / symbol relationships.
 
 ### Prompt template (humans → agents)
 
@@ -33,6 +35,18 @@ Goal: <one concrete outcome>
 Do not read: actor JSON dumps, GRAPH_REPORT, whole docs/domain/
 Docs: docs/domain/<one-file>.md
 ```
+
+## FFF (file search MCP)
+
+[fff](https://github.com/dmtrKovalenko/fff) MCP server for fast path/content search (`fffind`, `ffgrep`, `fff-multi-grep`). Wired in [`.cursor/mcp.json`](./.cursor/mcp.json). Not an app dependency.
+
+**Install (Windows PowerShell):**
+
+```powershell
+irm https://raw.githubusercontent.com/dmtrKovalenko/fff/main/install-mcp.ps1 | iex
+```
+
+Then **Cursor Settings → MCP → Reload** (or Reload Window). Binary defaults to `%LOCALAPPDATA%\fff-mcp\bin\fff-mcp.exe`. If Cursor cannot find `fff-mcp` on PATH, set `command` in `.cursor/mcp.json` to that absolute path.
 
 ## Graphify (structural map)
 
@@ -51,7 +65,7 @@ graphify explain "CharacterBuilderContext"
 ```
 
 - Skills: `.agents/skills/graphify/`, `.agents/skills/builder-validation/`, `.agents/skills/foundry-monsters/`
-- Cursor rule: `.cursor/rules/graphify.mdc` (`.cursor/` is gitignored)
+- Cursor rule: `.cursor/rules/graphify.mdc` (`.cursor/` is gitignored except `.cursor/mcp.json`)
 - `graphify-out/` is gitignored (regenerable; no API key with `--code-only`)
 - Domain Amellwind / 5etools / Foundry schema → `docs/domain/`
 

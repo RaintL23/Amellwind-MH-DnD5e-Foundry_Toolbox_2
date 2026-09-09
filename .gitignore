@@ -77,7 +77,8 @@ public/5etools/bestiary/**
 !.vscode/extensions.json
 !.vscode/settings.json
 .idea/
-.cursor/
+.cursor/*
+!.cursor/mcp.json
 *.suo
 *.ntvs*
 *.njsproj
