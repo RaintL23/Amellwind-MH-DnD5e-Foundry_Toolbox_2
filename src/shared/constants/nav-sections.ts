@@ -6,6 +6,7 @@
 import type { LucideIcon } from "lucide-react";
 import {
   AlertTriangle,
+  BookMarked,
   BookOpen,
   Bot,
   Calculator,
@@ -120,30 +121,13 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             description:
               "Step-by-step guide to creating an Amellwind character.",
           },
-        ],
-      },
-      {
-        label: "Bestiary and Rules",
-        items: [
           {
-            to: "/monsters",
-            label: "Monsters",
-            icon: Skull,
+            to: "/lore",
+            label: "Lore",
+            icon: BookMarked,
             description:
-              "Complete bestiary of Monster Hunter with stat blocks.",
+              "Myths, history, gods, and peoples of the Old World (Chapter 1).",
           },
-          {
-            to: "/conditions",
-            label: "Conditions & Diseases",
-            icon: AlertTriangle,
-            description:
-              "Blight conditions, afflictions and infectious diseases from Amellwind.",
-          },
-        ],
-      },
-      {
-        label: "Species and Character Options",
-        items: [
           {
             to: "/species",
             label: "Species",
@@ -168,6 +152,25 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             label: "Feats",
             icon: Sparkles,
             description: "Exclusive feats from the Amellwind homebrew.",
+          },
+        ],
+      },
+      {
+        label: "Bestiary and Rules",
+        items: [
+          {
+            to: "/monsters",
+            label: "Monsters",
+            icon: Skull,
+            description:
+              "Complete bestiary of Monster Hunter with stat blocks.",
+          },
+          {
+            to: "/conditions",
+            label: "Conditions & Diseases",
+            icon: AlertTriangle,
+            description:
+              "Blight conditions, afflictions and infectious diseases from Amellwind.",
           },
         ],
       },
