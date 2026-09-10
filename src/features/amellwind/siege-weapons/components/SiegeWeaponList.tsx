@@ -8,6 +8,7 @@ import { useListSessionFilters } from "@/shared/hooks/useListSessionFilters";
 import { ClearableSearchInput } from "@/shared/components/list-filters";
 import { SiegeWeaponCard } from "./SiegeWeaponCard";
 import { SiegeWeaponDetailDialog } from "./SiegeWeaponDetailDialog";
+import { DragonshipRulesPanel } from "./DragonshipRulesPanel";
 import { Crosshair } from "lucide-react";
 
 export function SiegeWeaponList() {
@@ -89,12 +90,13 @@ export function SiegeWeaponList() {
         </div>
         <p className="text-sm text-muted-foreground">
           Powered siege engines from Amellwind&apos;s Guide to Monster Hunting
-          (Dragonator, Dragonrazer, Large Boulder). Ballista and Cannon remain
-          DMG references.
+          (Dragonator, Dragonrazer, Large Boulder), plus Dragonship blueprint and
+          upgrade rules. Ballista and Cannon remain DMG references.
         </p>
       </div>
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3 space-y-3">
+        <DragonshipRulesPanel />
         <ClearableSearchInput
           value={searchDraft}
           onChange={setSearchDraft}
