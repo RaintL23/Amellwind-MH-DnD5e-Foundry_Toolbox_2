@@ -7,9 +7,9 @@ Cooking / Combo: [`features-cooking-combo.md`](./features-cooking-combo.md).
 ### Hunter Weapons (Armas)
 
 **Ruta**: `/weapons`
-**Fuente de datos**: store `gtmh_current` → ítems con `type === "HW"` → `WeaponMapper`.
+**Fuente de datos**: store `gtmh_current` → ítems con `type === "HW"` → `WeaponMapper`. `gtmh_current` se forma con merge local-wins (`public/data/gtmh-patreon/supplement.json`, regenerar con `pnpm build:gtmh-supplement` desde `public/data/gtmh-patreon/gtmh-patreon.md`) sobre el feed GitHub de GTMH.
 
-Las 14 armas de Monster Hunter del manual GTMH. Cada arma escala de **Common** a **Legendary** mediante una tabla de rarezas embebida en un bloque `inset` dentro de `entries[]`. La UI de armas / Weapon Forge añade una tier previa **Base** (`WEAPON_RARITY_ORDER`: Base → Common → … → Legendary) para features que aplican a todas las rarezas (Switch Mode, Melody, Loading, …). `RARITY_ORDER` (sin Base) sigue usándose en builder/runas/NPC.
+Las armas de Monster Hunter del manual GTMH (Patreon overlay puede añadir entradas nuevas como **Wire Knuckles**). Cada arma escala de **Common** a **Legendary** mediante una tabla de rarezas embebida en un bloque `inset` dentro de `entries[]`. La UI de armas / Weapon Forge añade una tier previa **Base** (`WEAPON_RARITY_ORDER`: Base → Common → … → Legendary) para features que aplican a todas las rarezas (Switch Mode, Melody, Loading, …). `RARITY_ORDER` (sin Base) sigue usándose en builder/runas/NPC.
 
 **Weapon Forge — export Foundry VTT**: el botón JSON de la lista/dialog de `/weapon-forge` abre un menú: **Forge JSON** (catálogo `public/data/raintdm-weapons/`, un archivo por arma vía `weaponToRawExport`) o **Foundry VTT JSON** (Item `weapon` standalone por rareza, Core **12.331** / dnd5e **4.4.4** vía `FOUNDRY_EXPORT_TARGET`; `exportWeaponFoundryJson` → `buildWeaponFoundryExportBundle` + description/activities helpers). Nombre canónico del Item: `"{Weapon} ({Rarity})"` para **todas** las rarezas incluida Base (p. ej. `Great Sword (Rare)`, `Great Sword (Base)`); archivo siempre `fvtt-Item-{weapon}-{rarity}.json` (p. ej. `fvtt-Item-great-sword-rare.json`) vía `buildFoundryItemFilename` / `downloadFoundryJson` (fuerza el prefijo en cualquier Item). `system.identifier` / `type.baseItem` siguen el stem sin rareza (`greatsword`). Armas Amellwind/RaintDM exportan `system.attunement: "required"` (las de D&D 5e siguen `""`). El item incluye attack **activities** (una por modo de switch si aplica; Versatile PHB usa `damage.versatile`), descripción HTML enriquecida vía `toFoundryDescriptionHtml` (`shared/foundry/description.ts`), features agrupadas por **cadenas de upgrade** (`buildColumnChains`) en **cards HTML** al estilo PHB 2024 (solo en `system.description.value` de la ficha), `system.description.chat` solo con la descripción sencilla del arma (sin cards de features), `midiProperties` por activity (dialecto Midi **nuevo**: `autoConsume` / `force*Dialog` / …), envelope Foundry (`enrichWeaponActivities`: `macroData`, `ignoreTraits`, `overTimeProperties`, …), flags de item (`dnd5e.riders`, `midi-qol`, `midiProperties`, `exportSource`), AE pasivos, y `applyItemAutomation` si existe overlay por nombre. Ejemplos de contrato en `public/data/foundry-jsons-example/weapons/<weapon-stem>/` (una subcarpeta por arma; no editar a mano como fuente de reglas — sirven de golden files; tests en `foundry-example-parity.test.ts`). `pnpm build:foundry-module` replica esas subcarpetas como Folders del pack Weapons. El catálogo Amellwind reutiliza el mismo builder (`weaponToExportCustomWeapon` → `buildWeaponFoundryItem`).
 
@@ -61,7 +61,7 @@ Columnas de bonus numérico (`Bonus`, `Bonus to Hit`, `Bonus to Damage`, `AC Bon
 
 #### Entidad `OptionalFeature`
 
-Features opcionales de armas (Melody, Phials, etc.) almacenadas en `gtmh_current` / clave `optfeatures`:
+Features opcionales de armas (Melody, Phials, etc.) almacenadas en `gtmh_current` / clave `optfeatures` (mismo merge local-wins con fallback GitHub):
 
 - `name`, `source`, `page`, `featureType[]`
 - `weaponName` — arma base parseada del prerequisite
@@ -88,7 +88,7 @@ Features opcionales de armas (Melody, Phials, etc.) almacenadas en `gtmh_current
 ### Siege Weapons
 
 **Ruta**: `/siege-weapons`
-**Fuente**: `object[]` en `gtmh_current` (GTMH), filtrado a `objectType === "SW"`.
+**Fuente**: `object[]` en `gtmh_current` (GTMH), filtrado a `objectType === "SW"`; overlay local puede sobreescribir por nombre y GitHub completa faltantes.
 
 Catálogo de objetos de asedio AGMH (Dragonator, Dragonrazer, Large Boulder). Ballista/Cannon del DMG no se indexan aquí. Enlaces `{@object Name|AGMH}` resuelven a `/siege-weapons?object=Name`.
 
@@ -110,7 +110,7 @@ Servicio: `siege-weapon.service.ts` (`getAllSiegeWeapons` / `clearSiegeWeaponCac
 ### Ítems y Tiendas
 
 **Rutas**: `/items` (catálogo), `/shops` (tiendas)
-**Fuentes**: ítems desde `gtmh_current` (GTMH); tiendas desde `shops.data.ts` (estático).
+**Fuentes**: ítems desde `gtmh_current` (GTMH merge local-wins + fallback GitHub); tiendas desde `shops.data.ts` (estático).
 
 #### Entidad `MHItem`
 

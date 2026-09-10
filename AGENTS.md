@@ -80,7 +80,8 @@ Always use **pnpm** (not npm/yarn). From `package.json`:
 ```bash
 pnpm install          # dependencies
 pnpm dev              # Vite dev server
-pnpm build            # tsc -b && vite build  → typecheck + compile
+pnpm build            # gtmh-supplement + foundry-module + tsc -b && vite build
+pnpm pricing:build    # magic-item pricing CSV → data.ts (manual; not part of build/dev)
 pnpm lint             # eslint --max-warnings 0
 pnpm test             # Vitest (Builder completeness + unit tests)
 pnpm preview          # preview production build

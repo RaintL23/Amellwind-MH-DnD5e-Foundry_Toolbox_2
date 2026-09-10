@@ -121,7 +121,7 @@ pnpm pricing:build
 pnpm build:analyze
 ```
 
-`pnpm build` and `pnpm dev` also run `pricing:build` automatically. To update prices: replace `scripts/data/magic-item-pricing.csv` (CSV export from the [Magic Item Pricing](https://dumpstatadventures.com/the-gm-is-always-right/pricing-magic-items-2024-dungeon-masters-guide) Dump Stat Adventures sheet — DMG 2024 tabs + XGTE/TCoE rows) and run `pnpm pricing:build` (or any build/dev). The app attributes those prices to VaranSL / Dump Stat Adventures; they are not original calculations from this project.
+`pnpm build` also runs `build:gtmh-supplement` and `build:foundry-module` before the Vite production compile. Magic-item pricing stays separate: replace `scripts/data/magic-item-pricing.csv` (CSV export from the [Magic Item Pricing](https://dumpstatadventures.com/the-gm-is-always-right/pricing-magic-items-2024-dungeon-masters-guide) Dump Stat Adventures sheet — DMG 2024 tabs + XGTE/TCoE rows) and run `pnpm pricing:build`. The app attributes those prices to VaranSL / Dump Stat Adventures; they are not original calculations from this project.
 
 The app stores all data in **IndexedDB**, its runtime **source of truth**. GitHub is only an *update feed* (offline-first): on startup, cached data is shown immediately and, if older than 24h, refreshed in the background; only the first launch (no data yet) waits for the download. If the network fails, the app keeps working with what is already in IndexedDB.
 
@@ -159,6 +159,7 @@ Primary information comes from Amellwind’s homebrew resources in the [TheGiddy
 - [Amellwind; Monster Hunter Monster Manual](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Monster%20Hunter%20Monster%20Manual.json) (public GitHub feed; fallback for names the PDF does not cover)
 - [MHMM with Loot Tables 2.0](https://www.patreon.com/amellwind/posts/monster-hunter-137502033) — Amellwind’s free Patreon PDF (stat blocks, loot tables, and runes shown in the app)
 - [Amellwind; Amellwind's Guide to Monster Hunting](https://raw.githubusercontent.com/TheGiddyLimit/homebrew/master/collection/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json)
+- [GTMH GMBinder source](https://www.gmbinder.com/share/-LCk9FgQaqaXBVmLeCeT#newfeats) — staged locally as `public/data/gtmh-patreon/supplement.json` and merged at runtime (local-wins by name; GitHub fills uncovered names)
 
 The Hunting Guide JSON also provides species, backgrounds, feats, MH classes, class features (Monstie Sidekick), weapon optional features, and variant rules (downtime).
 
@@ -185,6 +186,14 @@ pnpm build:mm-supplement
 **Workflow:** edit a sheet → run `pnpm build:mm-data` → reload the app in dev (force an IndexedDB re-sync if cached data does not refresh).
 
 Overlay-only rebuild (after hand-editing `catalog.json`): `pnpm build:mm-supplement`. See [`public/data/mhmm-patreon-2.0/SCHEMA.md`](public/data/mhmm-patreon-2.0/SCHEMA.md) for the full archive schema.
+
+**Rebuild GTMH Patreon overlay** after editing staged GTMH chapter files (also runs as part of `pnpm build`):
+
+```bash
+pnpm build:gtmh-data
+```
+
+Current extraction covers new feats and GTMH hunt-role/downtime variant rules from the local chapter markdown; the merge pipeline is wired for all GTMH keys and keeps GitHub fallback data where local arrays are empty.
 
 ### Embedded static data
 

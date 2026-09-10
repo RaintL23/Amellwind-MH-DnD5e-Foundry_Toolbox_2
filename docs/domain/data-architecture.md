@@ -49,7 +49,7 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 | `mm_current`    | `data`: lista mezclada (PDF Patreon 2.0 gana por nombre). `github`: snapshot del feed público. `condition` / `disease`: mismas reglas (PDF gana; GitHub rellena). Snapshots GitHub: `githubCondition`, `githubDisease`. |
 | `mm_previous`   | Snapshot anterior del Monster Manual (para rollback)                                                                                                                                                                    |
 | `mm_meta`       | Timestamp del último fetch, versión, etc.                                                                                                                                                                               |
-| `gtmh_current`  | Datos de la Guía de Caza (ver claves abajo)                                                                                                                                                                             |
+| `gtmh_current`  | `data`: lista mezclada GTMH (overlay local GMBinder/Patreon gana por nombre). Snapshots GitHub por clave: `github`, `githubOptionalfeature`, `githubRace`, `githubSubrace`, `githubBackground`, `githubFeat`, `githubVariantrule`, `githubClassFeature`, `githubClass`, `githubObject`, `githubBookData`. |
 | `gtmh_previous` | Snapshot anterior de la Guía de Caza                                                                                                                                                                                    |
 | `gtmh_meta`     | Timestamp del último fetch, versión, etc.                                                                                                                                                                               |
 
@@ -68,7 +68,7 @@ IndexedDB permite almacenar objetos grandes, hacer consultas por clave, y es per
 | `class`        | `class[]`           | Clases MH (p. ej. Hunter)              |
 | `object`       | `object[]`          | Siege weapons AGMH (`objectType: SW`)  |
 
-Al sincronizar GTMH, `sync.service.ts` persiste cada array por separado. Si una clave no está cacheada (p. ej. tras upgrade), `ensureGtmhArrayStore()` puede hacer lazy-fetch del JSON remoto.
+Al sincronizar GTMH, `sync.service.ts` guarda primero snapshots crudos GitHub (`github*`) y luego aplica merge local-wins con `public/data/gtmh-patreon/supplement.json` para poblar `data`, `feat`, `race`, `optfeatures`, `bookData`, etc. Si una clave local está vacía, se mantiene la lista GitHub/caché como fallback. `bookData` local (Material Effects del dump Patreon) reemplaza el `bookData` de GitHub cuando el overlay lo trae no vacío.
 
 #### Datos 5etools (persistidos en IndexedDB)
 

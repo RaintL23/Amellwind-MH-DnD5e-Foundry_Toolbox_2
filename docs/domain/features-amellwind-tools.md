@@ -16,14 +16,16 @@ Calculadora independiente del builder para estimar el **daño esperado por turno
 
 ---
 
-### Species, Backgrounds y Feats
+### Species, Backgrounds, Feats y Lore
 
-**Rutas**: `/species`, `/backgrounds`, `/feats`
-**Fuente**: claves `race`, `subrace`, `background`, `feat` en `gtmh_current` (sync o lazy-fetch).
+**Rutas**: `/species`, `/backgrounds`, `/feats`, `/lore`, `/factions`
+**Fuente**: claves `race`, `subrace`, `background`, `feat` en `gtmh_current` (merge local-wins desde `public/data/gtmh-patreon/supplement.json` + fallback GitHub). Lore/Factions son guías estáticas regeneradas desde el capítulo 1 (`lore.generated.json`, `factions.generated.json`).
 
-- **Species**: grid de tarjetas con filtros por categoría (ancestry, folk, elder-dragon, subrace, lineage) y modo Roots/Subraces. Detalle en dialog.
-- **Backgrounds**: listado con búsqueda y detalle parseado (traits, features, equipment).
-- **Feats**: listado filtrable con detalle y referencias cruzadas parseadas.
+- **Species**: grid de species raíz locales + subspecies huérfanas (p. ej. Elder Dragonborn sin base AGMH). Detalle en dialog con switcher Base / Subspecies que acumula traits e info de la subespecie sobre la base. Overlay Patreon de razas aún stub (fallback GitHub).
+- **Backgrounds**: listado con búsqueda y detalle parseado (traits, features, equipment). Overlay local desde el capítulo 1 Patreon (`Helix`, `Hunter's Guild`, `Scriveners`, `Talon`, `Wycademy`).
+- **Factions** (`/factions`): guía estática regenerada desde el mismo capítulo (`pnpm build:gtmh-supplement` → `factions.generated.json`).
+- **Lore** (`/lore`): Tale of the Five, History & Myths, Gods, Races narrativas (`lore.generated.json`).
+- **Feats**: listado filtrable con detalle. Texto curado desde el capítulo 2 (`new-feats.md`) con párrafos y listas de beneficios al estilo del PDF; parser en `scripts/gtmh/feats.mjs`.
 
 Servicios: `species.service.ts`, `background.service.ts`, `feat.service.ts` con caché en memoria invalidada tras sync GTMH.
 

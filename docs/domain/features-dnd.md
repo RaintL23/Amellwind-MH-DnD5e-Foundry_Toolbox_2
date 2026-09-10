@@ -44,7 +44,7 @@ Generador de trasfondo de personaje basado en las tablas aleatorias de _Xanathar
 
 **Ruta**: `/shop-generator`
 
-Generador de tiendas del compendio 5e (no confundir con `/shops` Amellwind). Usa el catálogo `dnd-items`, temas/tiers, filtros (types, rarities, sources, class affinities) y precios desde `scripts/data/magic-item-pricing.csv` (unión **DMG 2024 + XGTE + TCoE** de la hoja _Magic Item Pricing_ de Dump Stat Adventures / VaranSL; regenerar con `pnpm pricing:build` → `magic-item-pricing.data.ts` + meta Note/Source Sheet).
+Generador de tiendas del compendio 5e (no confundir con `/shops` Amellwind). Usa el catálogo `dnd-items`, temas/tiers, filtros (types, rarities, sources, class affinities) y precios desde `scripts/data/magic-item-pricing.csv` (unión **DMG 2024 + XGTE + TCoE** de la hoja _Magic Item Pricing_ de Dump Stat Adventures / VaranSL; regenerar a mano con `pnpm pricing:build` → `magic-item-pricing.data.ts` + meta Note/Source Sheet; no forma parte de `pnpm build` / `pnpm dev`).
 
 **Setup dialog** (`ShopSetupDialog`): un solo diálogo concentra item count, tier, theme, magic/attunement, sources y afinidades. Esos valores son **lineamientos de generación** (pool + bias al sortear), no filtros post-roll. Fuera queda resumen/pills + Generate.
 
