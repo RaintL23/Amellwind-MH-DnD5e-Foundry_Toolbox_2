@@ -53,14 +53,14 @@
               "4",
               "+2",
               "+4",
-              "Wyvern Ride, Wirebug Recall Upgrade, Wirebug Reflex"
+              "Wyvern Ride, Wirebug Recall Upgrade, Wirebug Reflex, Silkbind Upgrade"
             ],
             [
               "Legendary",
               "5",
               "+3",
               "+5",
-              "Wirebug Whisperer, Punishing Ride, Fierce Ram"
+              "Wirebug Whisperer, Punishing Ride, Fierce Ram, Silkbind Upgrade (Legendary)"
             ]
           ]
         }
@@ -122,6 +122,12 @@
         "description": "When a creature misses you with an attack roll, you can use your Reaction to regain 1 expended Wirebug."
       },
       {
+        "id": "687afee0-01c0-4c5e-82a5-739028a0b97f",
+        "name": "Silkbind Upgrade",
+        "description": "The radius the creature can move while silkbound is reduced to 10 feet and the save DC increases by +1.",
+        "upgradesFromId": "cd0033dc-9e6f-43a2-9bb4-ddb160a4f080"
+      },
+      {
         "id": "7b57feaa-ddba-4f03-a82f-e660ac38096a",
         "name": "Wirebug Whisperer",
         "description": "Your gauntlets can now house up to 4 Wirebugs. Additionally, whenever you score a Critical Hit with this weapon, you immediately regain 1 expended Wirebug.",
@@ -138,6 +144,12 @@
         "name": "Fierce Ram",
         "description": "The damage of your Ramming Maneuver increases to 5d10.",
         "upgradesFromId": "ecc773eb-27dd-4854-8619-1905c28e740e"
+      },
+      {
+        "id": "3b9e7ca7-a381-4bd2-ab47-4c93a4ba182e",
+        "name": "Silkbind Upgrade (Legendary)",
+        "description": "The save DC now increases by +2 instead of +1.",
+        "upgradesFromId": "687afee0-01c0-4c5e-82a5-739028a0b97f"
       }
     ],
     "proficiency": {
