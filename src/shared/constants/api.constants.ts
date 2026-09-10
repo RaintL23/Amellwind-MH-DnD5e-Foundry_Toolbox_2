@@ -54,6 +54,23 @@ export const MM_GITHUB_DISEASE_KEY = "githubDisease";
 
 /** Amellwind's Guide to Monster Hunting (homebrew): items, species, backgrounds, feats, MH classes, class features, weapon optional features and variant rules. */
 export const GUIDE_TO_MONSTER_HUNTING_URL = `${HOMEBREW_COLLECTION_BASE}/Amellwind;%20Amellwind's%20Guide%20to%20Monster%20Hunting.json`;
+/** Public GMBinder source used for GTMH Patreon/local overlay updates. */
+export const GTMH_GMBINDER_URL =
+  "https://www.gmbinder.com/share/-LCk9FgQaqaXBVmLeCeT#newfeats";
+/** Local GTMH Patreon/GMBinder supplement merged over the GitHub feed (local wins). */
+export const GTMH_PATREON_SUPPLEMENT_URL = "/data/gtmh-patreon/supplement.json";
+/** Raw GitHub snapshot keys for GTMH merged stores. */
+export const GTMH_GITHUB_ITEM_KEY = "github";
+export const GTMH_GITHUB_OPTFEATURE_KEY = "githubOptionalfeature";
+export const GTMH_GITHUB_RACE_KEY = "githubRace";
+export const GTMH_GITHUB_SUBRACE_KEY = "githubSubrace";
+export const GTMH_GITHUB_BACKGROUND_KEY = "githubBackground";
+export const GTMH_GITHUB_FEAT_KEY = "githubFeat";
+export const GTMH_GITHUB_VARIANTRULE_KEY = "githubVariantrule";
+export const GTMH_GITHUB_CLASSFEATURE_KEY = "githubClassFeature";
+export const GTMH_GITHUB_CLASS_KEY = "githubClass";
+export const GTMH_GITHUB_OBJECT_KEY = "githubObject";
+export const GTMH_GITHUB_BOOK_DATA_KEY = "githubBookData";
 
 /**
  * Cache freshness window (ms): 24h. Past this, stored data is still served

@@ -6,6 +6,17 @@ import {
   MM_GITHUB_FEED_KEY,
   MM_GITHUB_CONDITION_KEY,
   MM_GITHUB_DISEASE_KEY,
+  GTMH_GITHUB_ITEM_KEY,
+  GTMH_GITHUB_OPTFEATURE_KEY,
+  GTMH_GITHUB_RACE_KEY,
+  GTMH_GITHUB_SUBRACE_KEY,
+  GTMH_GITHUB_BACKGROUND_KEY,
+  GTMH_GITHUB_FEAT_KEY,
+  GTMH_GITHUB_VARIANTRULE_KEY,
+  GTMH_GITHUB_CLASSFEATURE_KEY,
+  GTMH_GITHUB_CLASS_KEY,
+  GTMH_GITHUB_OBJECT_KEY,
+  GTMH_GITHUB_BOOK_DATA_KEY,
 } from "../constants/api.constants";
 import {
   getRawMonsterName,
@@ -13,6 +24,10 @@ import {
   mergeMonsterFeeds,
   mergeNamedFeeds,
 } from "./mm-supplement";
+import {
+  clearGtmhPatreonSupplementCache,
+  loadGtmhPatreonOverlay,
+} from "./gtmh-supplement";
 
 const OPT_FEATURES_STORE_KEY = "optfeatures";
 const RACE_STORE_KEY = "race";
@@ -26,6 +41,42 @@ const OBJECT_STORE_KEY = "object";
 const BOOK_DATA_STORE_KEY = "bookData";
 const CONDITION_STORE_KEY = "condition";
 const DISEASE_STORE_KEY = "disease";
+
+const GTMH_ARRAY_KEYS = [
+  {
+    jsonKey: "optionalfeature",
+    dataKey: OPT_FEATURES_STORE_KEY,
+    githubKey: GTMH_GITHUB_OPTFEATURE_KEY,
+  },
+  { jsonKey: "race", dataKey: RACE_STORE_KEY, githubKey: GTMH_GITHUB_RACE_KEY },
+  {
+    jsonKey: "subrace",
+    dataKey: SUBRACE_STORE_KEY,
+    githubKey: GTMH_GITHUB_SUBRACE_KEY,
+  },
+  {
+    jsonKey: "background",
+    dataKey: BACKGROUND_STORE_KEY,
+    githubKey: GTMH_GITHUB_BACKGROUND_KEY,
+  },
+  { jsonKey: "feat", dataKey: FEAT_STORE_KEY, githubKey: GTMH_GITHUB_FEAT_KEY },
+  {
+    jsonKey: "variantrule",
+    dataKey: VARIANT_RULE_STORE_KEY,
+    githubKey: GTMH_GITHUB_VARIANTRULE_KEY,
+  },
+  {
+    jsonKey: "classFeature",
+    dataKey: CLASS_FEATURE_STORE_KEY,
+    githubKey: GTMH_GITHUB_CLASSFEATURE_KEY,
+  },
+  { jsonKey: "class", dataKey: CLASS_STORE_KEY, githubKey: GTMH_GITHUB_CLASS_KEY },
+  {
+    jsonKey: "object",
+    dataKey: OBJECT_STORE_KEY,
+    githubKey: GTMH_GITHUB_OBJECT_KEY,
+  },
+] as const;
 
 let mmRawCache: unknown[] | null = null;
 let mmRawPromise: Promise<unknown[]> | null = null;
@@ -53,42 +104,6 @@ async function isDataFresh(
   const meta = await getStoreValue<DataMeta>(storeName, "meta");
   if (!meta) return false;
   return Date.now() - meta.timestamp < CACHE_TTL_MS;
-}
-
-async function fetchAndCache(
-  url: string,
-  currentStore: "MM_CURRENT" | "GTMH_CURRENT",
-  previousStore: "MM_PREVIOUS" | "GTMH_PREVIOUS",
-  metaStore: "MM_META" | "GTMH_META",
-  dataKey: string,
-  onFullJson?: (json: Record<string, unknown>) => Promise<void>,
-): Promise<unknown | null> {
-  try {
-    const response = await fetch(url);
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
-
-    const json = (await response.json()) as Record<string, unknown>;
-    const newData = json[dataKey] ?? json;
-
-    // Keep the previous copy before overwriting.
-    const current = await getStoreValue(currentStore, "data");
-    if (current !== undefined) {
-      await setStoreValue(previousStore, "data", current);
-    }
-
-    await setStoreValue(currentStore, "data", newData);
-    await setStoreValue(metaStore, "meta", {
-      timestamp: Date.now(),
-      url,
-    } satisfies DataMeta);
-
-    if (onFullJson) await onFullJson(json);
-
-    return newData;
-  } catch (error) {
-    console.warn(`[SyncService] Fetch failed for ${url}:`, error);
-    return null;
-  }
 }
 
 async function readGithubNamedFeed(
@@ -180,48 +195,111 @@ async function writeMmDerivedStores(
   }
 }
 
-/** Persist the derived GTMH sub-collections (species, backgrounds, feats, MH classes, …). */
-async function writeGtmhDerivedStores(
-  json: Record<string, unknown>,
-): Promise<void> {
-  if (Array.isArray(json.optionalfeature)) {
-    await setStoreValue(
-      "GTMH_CURRENT",
-      OPT_FEATURES_STORE_KEY,
-      json.optionalfeature,
-    );
+async function writeGtmhGithubStores(json: Record<string, unknown>): Promise<void> {
+  if (Array.isArray(json.item)) {
+    await setStoreValue("GTMH_CURRENT", GTMH_GITHUB_ITEM_KEY, json.item);
   }
-  if (Array.isArray(json.race)) {
-    await setStoreValue("GTMH_CURRENT", RACE_STORE_KEY, json.race);
-  }
-  if (Array.isArray(json.subrace)) {
-    await setStoreValue("GTMH_CURRENT", SUBRACE_STORE_KEY, json.subrace);
-  }
-  if (Array.isArray(json.background)) {
-    await setStoreValue("GTMH_CURRENT", BACKGROUND_STORE_KEY, json.background);
-  }
-  if (Array.isArray(json.feat)) {
-    await setStoreValue("GTMH_CURRENT", FEAT_STORE_KEY, json.feat);
-  }
-  if (Array.isArray(json.variantrule)) {
-    await setStoreValue("GTMH_CURRENT", VARIANT_RULE_STORE_KEY, json.variantrule);
-  }
-  if (Array.isArray(json.classFeature)) {
-    await setStoreValue(
-      "GTMH_CURRENT",
-      CLASS_FEATURE_STORE_KEY,
-      json.classFeature,
-    );
-  }
-  if (Array.isArray(json.class)) {
-    await setStoreValue("GTMH_CURRENT", CLASS_STORE_KEY, json.class);
-  }
-  if (Array.isArray(json.object)) {
-    await setStoreValue("GTMH_CURRENT", OBJECT_STORE_KEY, json.object);
+  for (const key of GTMH_ARRAY_KEYS) {
+    if (Array.isArray(json[key.jsonKey])) {
+      await setStoreValue("GTMH_CURRENT", key.githubKey, json[key.jsonKey]);
+    }
   }
   if (json.bookData && typeof json.bookData === "object") {
-    await setStoreValue("GTMH_CURRENT", BOOK_DATA_STORE_KEY, json.bookData);
+    await setStoreValue("GTMH_CURRENT", GTMH_GITHUB_BOOK_DATA_KEY, json.bookData);
   }
+}
+
+async function readGithubGtmhList(githubKey: string, dataKey: string): Promise<unknown[]> {
+  const github = await getStoreValue<unknown[]>("GTMH_CURRENT", githubKey);
+  if (Array.isArray(github) && github.length > 0) return github;
+  const data = (await getStoreValue<unknown[]>("GTMH_CURRENT", dataKey)) ?? [];
+  return Array.isArray(data) ? data : [];
+}
+
+async function persistMergedGtmhNamedList(options: {
+  githubKey: string;
+  dataKey: string;
+  local: unknown[];
+  githubFeed?: unknown[];
+}): Promise<unknown[]> {
+  const github =
+    options.githubFeed ??
+    (await readGithubGtmhList(options.githubKey, options.dataKey));
+
+  if (options.local.length === 0) {
+    if (options.githubFeed) {
+      await setStoreValue("GTMH_CURRENT", options.githubKey, github);
+    }
+    const existing =
+      (await getStoreValue<unknown[]>("GTMH_CURRENT", options.dataKey)) ?? github;
+    return Array.isArray(existing) && existing.length > 0 ? existing : github;
+  }
+
+  const { items } = mergeNamedFeeds(github, options.local);
+  await setStoreValue("GTMH_CURRENT", options.githubKey, github);
+  await setStoreValue("GTMH_CURRENT", options.dataKey, items);
+  return items;
+}
+
+async function persistMergedGtmhData(
+  githubJson?: Record<string, unknown>,
+): Promise<unknown[]> {
+  const overlay = await loadGtmhPatreonOverlay();
+  const githubItem = githubJson?.item;
+  const githubItems = Array.isArray(githubItem) ? githubItem : undefined;
+
+  const mergedItems = await persistMergedGtmhNamedList({
+    githubKey: GTMH_GITHUB_ITEM_KEY,
+    dataKey: "data",
+    local: overlay.item,
+    githubFeed: githubItems,
+  });
+
+  for (const key of GTMH_ARRAY_KEYS) {
+    const local = Array.isArray(overlay[key.jsonKey]) ? overlay[key.jsonKey] : [];
+    const github = Array.isArray(githubJson?.[key.jsonKey])
+      ? (githubJson?.[key.jsonKey] as unknown[])
+      : undefined;
+    await persistMergedGtmhNamedList({
+      githubKey: key.githubKey,
+      dataKey: key.dataKey,
+      local,
+      githubFeed: github,
+    });
+  }
+
+  const githubBookData =
+    githubJson?.bookData && typeof githubJson.bookData === "object"
+      ? (githubJson.bookData as Record<string, unknown>)
+      : undefined;
+  const localBookData = overlay.bookData;
+  if (Object.keys(localBookData).length > 0) {
+    if (githubBookData) {
+      await setStoreValue("GTMH_CURRENT", GTMH_GITHUB_BOOK_DATA_KEY, githubBookData);
+    }
+    await setStoreValue("GTMH_CURRENT", BOOK_DATA_STORE_KEY, localBookData);
+  } else {
+    if (githubBookData) {
+      await setStoreValue("GTMH_CURRENT", GTMH_GITHUB_BOOK_DATA_KEY, githubBookData);
+      await setStoreValue("GTMH_CURRENT", BOOK_DATA_STORE_KEY, githubBookData);
+    } else {
+      const existing = await getStoreValue<Record<string, unknown>>(
+        "GTMH_CURRENT",
+        BOOK_DATA_STORE_KEY,
+      );
+      if (!existing || Object.keys(existing).length === 0) {
+        const fallback = await getStoreValue<Record<string, unknown>>(
+          "GTMH_CURRENT",
+          GTMH_GITHUB_BOOK_DATA_KEY,
+        );
+        if (fallback && Object.keys(fallback).length > 0) {
+          await setStoreValue("GTMH_CURRENT", BOOK_DATA_STORE_KEY, fallback);
+        }
+      }
+    }
+  }
+
+  return mergedItems;
 }
 
 type OnDataUpdated = (updated: { mm: boolean; gtmh: boolean }) => void;
@@ -267,6 +345,35 @@ async function fetchAndCacheMonsterManual(): Promise<unknown[] | null> {
   }
 }
 
+async function fetchAndCacheGuideToMonsterHunting(): Promise<unknown[] | null> {
+  try {
+    const response = await fetch(GUIDE_TO_MONSTER_HUNTING_URL);
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const json = (await response.json()) as Record<string, unknown>;
+    const current = await getStoreValue("GTMH_CURRENT", "data");
+    if (current !== undefined) {
+      await setStoreValue("GTMH_PREVIOUS", "data", current);
+    }
+
+    await setStoreValue("GTMH_META", "meta", {
+      timestamp: Date.now(),
+      url: GUIDE_TO_MONSTER_HUNTING_URL,
+    } satisfies DataMeta);
+
+    await writeGtmhGithubStores(json);
+    clearGtmhPatreonSupplementCache();
+    gtmhJsonPromise = null;
+    return persistMergedGtmhData(json);
+  } catch (error) {
+    console.warn(
+      `[SyncService] Fetch failed for ${GUIDE_TO_MONSTER_HUNTING_URL}:`,
+      error,
+    );
+    return null;
+  }
+}
+
 /** Background refresh of the Monster Manual feed; updates the stores for the next load. */
 async function refreshMonsterManual(onUpdated?: OnDataUpdated): Promise<void> {
   if (mmRefreshInFlight) return;
@@ -288,14 +395,7 @@ async function refreshGuideToMonsterHunting(
   if (gtmhRefreshInFlight) return;
   gtmhRefreshInFlight = true;
   try {
-    const fetched = await fetchAndCache(
-      GUIDE_TO_MONSTER_HUNTING_URL,
-      "GTMH_CURRENT",
-      "GTMH_PREVIOUS",
-      "GTMH_META",
-      "item",
-      writeGtmhDerivedStores,
-    );
+    const fetched = await fetchAndCacheGuideToMonsterHunting();
     if (fetched !== null) {
       onUpdated?.({ mm: false, gtmh: true });
     }
@@ -357,21 +457,25 @@ export async function syncData(options: SyncOptions = {}): Promise<SyncResult> {
     })(),
     (async () => {
       if (gtmhStored !== undefined) {
-        gtmhData = gtmhStored;
+        const hadGithubFeed = await getStoreValue<unknown[]>(
+          "GTMH_CURRENT",
+          GTMH_GITHUB_ITEM_KEY,
+        );
+        const migrating = !Array.isArray(hadGithubFeed);
+        gtmhData = await persistMergedGtmhData();
+        if (migrating) {
+          gtmhUpdated = true;
+          onUpdated?.({ mm: false, gtmh: true });
+        }
         if (!gtmhFresh) void refreshGuideToMonsterHunting(onUpdated);
       } else {
-        const fetched = await fetchAndCache(
-          GUIDE_TO_MONSTER_HUNTING_URL,
-          "GTMH_CURRENT",
-          "GTMH_PREVIOUS",
-          "GTMH_META",
-          "item",
-          writeGtmhDerivedStores,
-        );
+        const fetched = await fetchAndCacheGuideToMonsterHunting();
         if (fetched !== null) {
           gtmhData = fetched;
           gtmhUpdated = true;
           onUpdated?.({ mm: false, gtmh: true });
+        } else {
+          gtmhData = await persistMergedGtmhData({});
         }
       }
     })(),
@@ -439,6 +543,11 @@ async function ensureGtmhArrayStore(
   const cached = await getStoreValue<unknown[]>("GTMH_CURRENT", storeKey);
   if (cached && cached.length > 0) return cached;
 
+  const mergedItems = await persistMergedGtmhData();
+  if (storeKey === "data") return mergedItems;
+  const merged = await getStoreValue<unknown[]>("GTMH_CURRENT", storeKey);
+  if (merged && merged.length > 0) return merged;
+
   try {
     const json = await fetchGtmhJsonOnce();
     const data: unknown[] = Array.isArray(json[jsonKey])
@@ -452,7 +561,9 @@ async function ensureGtmhArrayStore(
 }
 
 export async function getGtmhData(): Promise<unknown> {
-  return getStoreValue<unknown>("GTMH_CURRENT", "data");
+  const cached = await getStoreValue<unknown>("GTMH_CURRENT", "data");
+  if (cached !== undefined) return cached;
+  return persistMergedGtmhData();
 }
 
 /**
@@ -463,40 +574,13 @@ export async function getOptionalFeaturesRaw(): Promise<unknown[]> {
   return ensureGtmhArrayStore("optionalfeature", OPT_FEATURES_STORE_KEY);
 }
 
-async function fetchGtmhSpeciesArrays(): Promise<{
-  race: unknown[];
-  subrace: unknown[];
-}> {
-  const json = await fetchGtmhJsonOnce();
-  const race = Array.isArray(json.race) ? (json.race as unknown[]) : [];
-  const subrace = Array.isArray(json.subrace) ? (json.subrace as unknown[]) : [];
-  await setStoreValue("GTMH_CURRENT", RACE_STORE_KEY, race);
-  await setStoreValue("GTMH_CURRENT", SUBRACE_STORE_KEY, subrace);
-  return { race, subrace };
-}
-
 /**
  * Returns raw race + subrace entries from the GTMH JSON (merged).
  * Subraces include Dragonborn elder-dragon variants and AGMH subraces (Felyne, etc.).
  */
 export async function getRacesRaw(): Promise<unknown[]> {
-  let race =
-    (await getStoreValue<unknown[]>("GTMH_CURRENT", RACE_STORE_KEY)) ?? [];
-  let subrace =
-    (await getStoreValue<unknown[]>("GTMH_CURRENT", SUBRACE_STORE_KEY)) ?? [];
-
-  if (race.length > 0 && subrace.length > 0) {
-    return [...race, ...subrace];
-  }
-
-  try {
-    const fetched = await fetchGtmhSpeciesArrays();
-    race = fetched.race;
-    subrace = fetched.subrace;
-  } catch {
-    // use whatever partial cache exists
-  }
-
+  const race = await ensureGtmhArrayStore("race", RACE_STORE_KEY);
+  const subrace = await ensureGtmhArrayStore("subrace", SUBRACE_STORE_KEY);
   return [...race, ...subrace];
 }
 
