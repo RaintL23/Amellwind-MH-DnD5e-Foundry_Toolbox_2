@@ -10,6 +10,7 @@ import type { ListFilterValues } from "@/shared/components/list-filters";
 import { FeatCard } from "./FeatCard";
 import { FeatDetailDialog } from "./FeatDetailDialog";
 import { Award } from "lucide-react";
+import { GtmhSourceNotice } from "@/shared/components/GtmhSourceNotice";
 
 type FeatFilter = "" | "repeatable" | "ability" | "prerequisite";
 
@@ -126,6 +127,7 @@ export function FeatList() {
       </div>
 
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <GtmhSourceNotice className="mb-3" />
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}

@@ -1,8 +1,15 @@
-import { Entry } from "./actor.types";
+import type { Entry } from "./actor.types";
 
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 
-export type BackgroundFaction = "hunters-guild" | "handlers-guild" | "wycademy";
+export type BackgroundFaction =
+  | "helix-commission"
+  | "hunters-guild"
+  | "royal-scrivener"
+  | "talon-society"
+  | "wycademy"
+  /** @deprecated Prefer hunters-guild (Handler Initiate is a Hunter's Guild background). */
+  | "handlers-guild";
 
 export interface BackgroundTable {
   caption?: string;
@@ -42,7 +49,10 @@ export interface Background {
 }
 
 export const BACKGROUND_FACTION_LABELS: Record<BackgroundFaction, string> = {
-  "hunters-guild": "Hunters Guild",
-  "handlers-guild": "Handlers",
+  "helix-commission": "Helix Commission",
+  "hunters-guild": "Hunter's Guild",
+  "royal-scrivener": "Royal Scriveners",
+  "talon-society": "Talon Society",
   wycademy: "Wycademy",
+  "handlers-guild": "Handlers",
 };

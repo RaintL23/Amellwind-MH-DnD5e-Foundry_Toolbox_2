@@ -19,10 +19,28 @@ function backgroundId(raw: Raw): string {
   return `${raw.name}::${raw.source}`;
 }
 
-function inferFaction(name: string): BackgroundFaction {
+function inferFaction(name: string, rawFaction?: unknown): BackgroundFaction {
+  if (typeof rawFaction === "string") {
+    const allowed: BackgroundFaction[] = [
+      "helix-commission",
+      "hunters-guild",
+      "royal-scrivener",
+      "talon-society",
+      "wycademy",
+      "handlers-guild",
+    ];
+    if (allowed.includes(rawFaction as BackgroundFaction)) {
+      return rawFaction as BackgroundFaction;
+    }
+  }
   const n = name.toLowerCase();
+  if (n.includes("helix")) return "helix-commission";
   if (n.includes("wycademy")) return "wycademy";
-  if (n.includes("handler")) return "handlers-guild";
+  if (n.includes("scrivener")) return "royal-scrivener";
+  if (n.includes("poacher") || n.includes("infiltrator") || n.includes("talon")) {
+    return "talon-society";
+  }
+  if (n.includes("handler")) return "hunters-guild";
   return "hunters-guild";
 }
 
@@ -66,7 +84,7 @@ export function mapBackground(raw: any): Background {
     name: String(raw.name ?? "Unknown"),
     source: String(raw.source ?? "AGMH"),
     page: typeof raw.page === "number" ? raw.page : undefined,
-    faction: inferFaction(String(raw.name ?? "")),
+    faction: inferFaction(String(raw.name ?? ""), raw._faction),
     fluff: mapFluffEntriesToText(raw.fluff),
     proficiencies: {
       skills: listProf.skills !== "—" ? listProf.skills : mapSkillSummary(raw),

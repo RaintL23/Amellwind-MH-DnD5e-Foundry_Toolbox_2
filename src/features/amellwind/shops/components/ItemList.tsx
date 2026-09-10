@@ -14,6 +14,7 @@ import { ItemTabBar } from "./ItemTabBar";
 import { SearchInput } from "./SearchInput";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { useListItemUrlParam } from "@/shared/hooks/useListItemUrlParam";
+import { GtmhSourceNotice } from "@/shared/components/GtmhSourceNotice";
 
 export function ItemList() {
   const { items, loading, uniqueTypes } = useItems();
@@ -109,6 +110,9 @@ export function ItemList() {
         onChange={setSearchDraft}
         placeholder="Search items by name…"
       />
+      <div className="mb-4">
+        <GtmhSourceNotice />
+      </div>
 
       {loading || isSearchPending ? (
         <ListAreaLoading />

@@ -64,7 +64,7 @@ export function SpeciesCard({ species, onClick }: SpeciesCardProps) {
 
       <div className="space-y-1.5 mb-3 text-sm">
         <p className="text-muted-foreground">
-          <span className="text-foreground/80 font-medium">Atributos:</span>{" "}
+          <span className="text-foreground/80 font-medium">Ability Bonuses:</span>{" "}
           {species.abilitySummary}
         </p>
         <p className="text-xs text-muted-foreground">

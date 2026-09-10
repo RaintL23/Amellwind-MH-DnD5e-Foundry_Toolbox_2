@@ -13,12 +13,15 @@ import type { ListFilterValues } from "@/shared/components/list-filters";
 import { BackgroundCard } from "./BackgroundCard";
 import { BackgroundDetailDialog } from "./BackgroundDetailDialog";
 import { ScrollText } from "lucide-react";
+import { GtmhSourceNotice } from "@/shared/components/GtmhSourceNotice";
 
 const FACTION_OPTIONS = (
   Object.entries(BACKGROUND_FACTION_LABELS) as Array<
     [BackgroundFaction, string]
   >
-).map(([value, label]) => ({ value, label }));
+)
+  .filter(([value]) => value !== "handlers-guild")
+  .map(([value, label]) => ({ value, label }));
 
 const BACKGROUND_FILTER_SECTIONS = [
   {
@@ -98,12 +101,14 @@ export function BackgroundList() {
           )}
         </div>
         <p className="text-sm text-muted-foreground">
-          Backgrounds from Amellwind&apos;s Guide to Monster Hunting: Hunters
-          Guild, Handlers Guild and Wycademy.
+          Backgrounds from Amellwind&apos;s Guide to Monster Hunting: Helix
+          Commission, Hunter&apos;s Guild, Royal Scriveners, Talon Society, and
+          Wycademy.
         </p>
       </div>
 
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <GtmhSourceNotice className="mb-3" />
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}

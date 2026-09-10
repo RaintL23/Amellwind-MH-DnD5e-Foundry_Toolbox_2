@@ -14,23 +14,40 @@ import type { ListFilterValues } from "@/shared/components/list-filters";
 import { SpeciesCard } from "./SpeciesCard";
 import { SpeciesDetailDialog } from "./SpeciesDetailDialog";
 import { Users } from "lucide-react";
-
-type ViewMode = "All" | "Roots" | "Subraces";
-
-const VIEW_OPTIONS = [
-  { value: "All", label: "All" },
-  { value: "Roots", label: "Roots" },
-  { value: "Subraces", label: "Subraces" },
-];
+import { GtmhSourceNotice } from "@/shared/components/GtmhSourceNotice";
 
 const CATEGORY_OPTIONS = (
   Object.entries(SPECIES_CATEGORY_LABELS) as Array<[SpeciesCategory, string]>
 ).map(([value, label]) => ({ value, label }));
 
+function matchesQuery(item: Species, query: string): boolean {
+  return (
+    item.name.toLowerCase().includes(query) ||
+    item.parentSpecies?.toLowerCase().includes(query) === true ||
+    item.fluff.toLowerCase().includes(query)
+  );
+}
+
+/**
+ * Catalog cards: local root species, plus subspecies whose parent is not in
+ * this catalog (e.g. Elder Dragonborn → PHB Dragonborn).
+ */
+function buildCatalogEntries(all: Species[]): Species[] {
+  const roots = all.filter((item) => !item.isSubrace);
+  const rootNames = new Set(roots.map((item) => item.name.toLowerCase()));
+  const orphans = all.filter(
+    (item) =>
+      item.isSubrace &&
+      (!item.parentSpecies ||
+        !rootNames.has(item.parentSpecies.toLowerCase())),
+  );
+  return [...roots, ...orphans].sort((a, b) => a.name.localeCompare(b.name));
+}
+
 export function SpeciesList() {
   const { q, getString, patchFilters } = useListSessionFilters({
     listId: "mh-species",
-    stringKeys: ["q", "view", "category", "parent"],
+    stringKeys: ["q", "category"],
     multiKeys: [],
     urlPreserveKeys: ["species"],
   });
@@ -45,9 +62,10 @@ export function SpeciesList() {
   const { searchDraft, setSearchDraft, appliedSearch, isSearchPending } =
     useDebouncedListSearch(q, commitSearch);
   const categoryFilter = getString("category") as "" | SpeciesCategory;
-  const parentFilter = getString("parent");
-  const viewMode = (getString("view") || "All") as ViewMode;
   const [selected, setSelected] = useState<Species | null>(null);
+  const [initialSubspeciesId, setInitialSubspeciesId] = useState<string | null>(
+    null,
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
@@ -56,108 +74,104 @@ export function SpeciesList() {
       .finally(() => setLoading(false));
   }, []);
 
+  const catalog = useMemo(() => buildCatalogEntries(species), [species]);
+
+  const childrenByParent = useMemo(() => {
+    const map = new Map<string, Species[]>();
+    for (const item of species) {
+      if (!item.isSubrace || !item.parentSpecies) continue;
+      const key = item.parentSpecies.toLowerCase();
+      const list = map.get(key) ?? [];
+      list.push(item);
+      map.set(key, list);
+    }
+    return map;
+  }, [species]);
+
+  const openSpecies = useCallback(
+    (item: Species, subspeciesId: string | null = null) => {
+      setSelected(item);
+      setInitialSubspeciesId(subspeciesId);
+      setDialogOpen(true);
+      if (subspeciesId) {
+        const sub = species.find((s) => s.id === subspeciesId);
+        setUrlSpecies(sub?.name ?? item.name);
+      } else {
+        setUrlSpecies(item.name);
+      }
+    },
+    [setUrlSpecies, species],
+  );
+
   useEffect(() => {
     if (!urlSpecies) {
       setDialogOpen(false);
       setSelected(null);
+      setInitialSubspeciesId(null);
       return;
     }
     if (loading) return;
+
     const found = species.find(
       (item) => item.name.toLowerCase() === urlSpecies.toLowerCase(),
     );
-    if (found) {
-      setSelected(found);
-      setDialogOpen(true);
-    }
-  }, [urlSpecies, species, loading]);
+    if (!found) return;
 
-  const parentOptions = useMemo(() => {
-    const set = new Set<string>();
-    for (const s of species) {
-      if (!s.parentSpecies) continue;
-      set.add(
-        s.parentSource
-          ? `${s.parentSpecies} (${s.parentSource})`
-          : s.parentSpecies,
+    // Subspecies with a local base → open the base dialog on that subspecies.
+    if (found.isSubrace && found.parentSpecies) {
+      const parent = catalog.find(
+        (item) =>
+          !item.isSubrace &&
+          item.name.toLowerCase() === found.parentSpecies!.toLowerCase(),
       );
+      if (parent) {
+        setSelected(parent);
+        setInitialSubspeciesId(found.id);
+        setDialogOpen(true);
+        return;
+      }
     }
-    return Array.from(set).sort();
-  }, [species]);
+
+    setSelected(found);
+    setInitialSubspeciesId(null);
+    setDialogOpen(true);
+  }, [urlSpecies, species, loading, catalog]);
 
   const filterSections = useMemo(
     () => [
-      { id: "view", title: "View", mode: "single" as const, options: VIEW_OPTIONS },
       {
         id: "category",
         title: "Category",
         mode: "single" as const,
         options: CATEGORY_OPTIONS,
       },
-      {
-        id: "parent",
-        title: "Parent Species",
-        mode: "single" as const,
-        options: parentOptions.map((parent) => ({
-          value: parent,
-          label: parent,
-        })),
-      },
     ],
-    [parentOptions],
+    [],
   );
 
   const filtered = useMemo(() => {
-    let result = species;
+    let result = catalog;
+    const query = appliedSearch.trim().toLowerCase();
 
-    if (viewMode === "Roots") result = result.filter((s) => !s.isSubrace);
-    if (viewMode === "Subraces") result = result.filter((s) => s.isSubrace);
-
-    if (appliedSearch.trim()) {
-      const query = appliedSearch.toLowerCase();
-      result = result.filter(
-        (s) =>
-          s.name.toLowerCase().includes(query) ||
-          s.parentSpecies?.toLowerCase().includes(query) ||
-          s.fluff.toLowerCase().includes(query),
-      );
+    if (query) {
+      result = result.filter((item) => {
+        if (matchesQuery(item, query)) return true;
+        if (item.isSubrace) return false;
+        const children = childrenByParent.get(item.name.toLowerCase()) ?? [];
+        return children.some((child) => matchesQuery(child, query));
+      });
     }
 
     if (categoryFilter) {
-      result = result.filter((s) => s.category === categoryFilter);
+      result = result.filter((item) => item.category === categoryFilter);
     }
 
-    if (parentFilter) {
-      result = result.filter(
-        (s) =>
-          s.parentSpecies === parentFilter ||
-          `${s.parentSpecies} (${s.parentSource})` === parentFilter,
-      );
-    }
-
-    return [...result].sort((a, b) => {
-      const parentCmp = (a.parentSpecies ?? a.name).localeCompare(
-        b.parentSpecies ?? b.name,
-      );
-      if (parentCmp !== 0) return parentCmp;
-      return a.name.localeCompare(b.name);
-    });
-  }, [species, appliedSearch, categoryFilter, parentFilter, viewMode]);
-
-  function handleSelect(item: Species) {
-    setSelected(item);
-    setDialogOpen(true);
-    setUrlSpecies(item.name);
-  }
+    return result;
+  }, [catalog, appliedSearch, categoryFilter, childrenByParent]);
 
   function applyDialogFilters(values: ListFilterValues) {
-    const view =
-      typeof values.view === "string" && values.view !== "All"
-        ? values.view
-        : "";
     const category = typeof values.category === "string" ? values.category : "";
-    const parent = typeof values.parent === "string" ? values.parent : "";
-    patchFilters({ view, category, parent });
+    patchFilters({ category });
   }
 
   return (
@@ -180,6 +194,7 @@ export function SpeciesList() {
       </div>
 
       <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+        <GtmhSourceNotice className="mb-3" />
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -187,13 +202,11 @@ export function SpeciesList() {
           inputClassName="h-8 text-sm"
           sections={filterSections}
           filterValues={{
-            view: viewMode,
             category: categoryFilter,
-            parent: parentFilter,
           }}
           onFiltersApply={applyDialogFilters}
           dialogTitle="Species Filters"
-          dialogDescription="Filter by view mode, category, and parent species."
+          dialogDescription="Filter by category."
         />
       </div>
 
@@ -211,7 +224,7 @@ export function SpeciesList() {
               <SpeciesCard
                 key={item.id}
                 species={item}
-                onClick={() => handleSelect(item)}
+                onClick={() => openSpecies(item)}
               />
             ))}
           </div>
@@ -222,9 +235,13 @@ export function SpeciesList() {
         <SpeciesDetailDialog
           species={selected}
           open={dialogOpen}
+          initialSubspeciesId={initialSubspeciesId}
           onOpenChange={(open) => {
             setDialogOpen(open);
-            if (!open) setUrlSpecies(null);
+            if (!open) {
+              setUrlSpecies(null);
+              setInitialSubspeciesId(null);
+            }
           }}
         />
       )}

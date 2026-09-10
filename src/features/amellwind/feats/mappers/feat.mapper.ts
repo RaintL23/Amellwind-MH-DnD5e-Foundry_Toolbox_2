@@ -193,7 +193,9 @@ function mapPrerequisites(raw: Raw): MappedPrerequisites {
       for (const alt of alternatives) {
         for (const req of alt) {
           const label = ABILITY_LABELS[req.ability];
-          if (label) pushPrereq(out, "ability", `${label} ${req.min}+`);
+          if (label) {
+            pushPrereq(out, "ability", `${label} ${req.min} or higher`);
+          }
         }
       }
     }

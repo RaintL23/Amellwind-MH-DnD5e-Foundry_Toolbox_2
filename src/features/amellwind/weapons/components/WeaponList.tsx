@@ -11,6 +11,7 @@ import { WeaponDialog } from "./WeaponDialog";
 import { WeaponListFilters } from "./WeaponListFilters";
 import { weaponMatchesCompatibleProficiency } from "../data/weapon-proficiencies.data";
 import { Swords } from "lucide-react";
+import { GtmhSourceNotice } from "@/shared/components/GtmhSourceNotice";
 
 export function WeaponList() {
   const { q, getString, patchFilters } = useListSessionFilters({
@@ -129,7 +130,7 @@ export function WeaponList() {
           )}
         </div>
         <p className="text-sm text-muted-foreground">
-          14 weapons from Monster Hunter adapted to the D&D 5e system. Each
+          Hunter weapons from Monster Hunter adapted to the D&D 5e system. Each
           scales from Common to Legendary.
         </p>
       </div>
@@ -139,6 +140,9 @@ export function WeaponList() {
         onSearchChange={setSearchDraft}
         onFiltersApply={applyWeaponFilters}
       />
+      <div className="shrink-0 px-6 pt-3">
+        <GtmhSourceNotice />
+      </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-6">
         {loading || isSearchPending ? (

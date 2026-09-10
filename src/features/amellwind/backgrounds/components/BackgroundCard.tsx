@@ -8,15 +8,21 @@ import { Card } from "@/components/ui/card";
 import { ScrollText } from "lucide-react";
 
 const FACTION_ACCENT: Record<BackgroundFaction, string> = {
+  "helix-commission": "text-rose-400",
   "hunters-guild": "text-emerald-400",
-  "handlers-guild": "text-sky-400",
+  "royal-scrivener": "text-amber-400",
+  "talon-society": "text-orange-400",
   wycademy: "text-violet-400",
+  "handlers-guild": "text-sky-400",
 };
 
 const FACTION_BG: Record<BackgroundFaction, string> = {
+  "helix-commission": "bg-rose-950/60",
   "hunters-guild": "bg-emerald-950/60",
-  "handlers-guild": "bg-sky-950/60",
+  "royal-scrivener": "bg-amber-950/60",
+  "talon-society": "bg-orange-950/60",
   wycademy: "bg-violet-950/60",
+  "handlers-guild": "bg-sky-950/60",
 };
 
 interface BackgroundCardProps {

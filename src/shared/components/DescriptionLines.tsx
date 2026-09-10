@@ -45,6 +45,28 @@ export function DescriptionLines({
           );
         }
 
+        if (isBullet) {
+          return (
+            <p
+              key={i}
+              className={cn(
+                sizeClass,
+                "leading-relaxed text-muted-foreground flex gap-2 pl-1",
+              )}
+            >
+              <span className="shrink-0 select-none" aria-hidden="true">
+                •
+              </span>
+              <span className="min-w-0">
+                <DndRichText
+                  text={line.replace(/^•\s*/, "")}
+                  phraseLinks={phraseLinks}
+                />
+              </span>
+            </p>
+          );
+        }
+
         return (
           <p
             key={i}
@@ -53,13 +75,11 @@ export function DescriptionLines({
               "leading-relaxed",
               isInset
                 ? cn("italic border-l-2 pl-3 py-1", insetBorder, insetText)
-                : isBullet
-                  ? "text-muted-foreground pl-3"
-                  : "text-muted-foreground",
+                : "text-muted-foreground",
             )}
           >
             <DndRichText
-              text={line.replace(/^[»•]\s*/, "")}
+              text={line.replace(/^»\s*/, "")}
               phraseLinks={phraseLinks}
             />
           </p>
