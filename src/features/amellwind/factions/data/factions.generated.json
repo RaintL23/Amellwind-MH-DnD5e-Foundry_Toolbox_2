@@ -1,0 +1,1075 @@
+{
+  "intro": "Factions shape how your hunter fits into the Old World. Membership ties into backgrounds, renown, contacts, and — for spellcasters — expanded spell lists. Rules below follow Amellwind's Guide to Monster Hunting (Chapter 1).",
+  "sections": [
+    {
+      "id": "overview",
+      "name": "Factions Overview",
+      "page": 24,
+      "paragraphs": [
+        "There are many factions in the Monster Hunter Universe. Some of them make up the foundation of society, while others seek to destroy it. Many of these factions are voluntary associations led by guildmasters, but that’s the extent of their resemblance to the craft and merchant guilds found in most Dungeons & Dragons worlds. They include many different kinds of organizations:"
+      ],
+      "bulletList": [
+        "A central governing body, the Hunter's Guild A corporation led by His Immenseness, the Elder Dragon Observation Team Two research institutions, Wycademy, and the Royal Paleontology Scriveners A poachers ring, the Talon Society A cult of fanatics, the Cult of Fatalis The denizens of the Old World aren't born into factions. An individual can choose to belong to any, or be tricked into some faction or more commonly belong to no faction at all. Some Factions actively recruit new members, while others simply accept those who seek membership. People within a family might join different factions, which can lead to strong connections between the factions in question or to painful animosity in families whose members follow different paths."
+      ],
+      "subsections": [
+        {
+          "name": "Faction Membership",
+          "paragraphs": [
+            "You establish your character's membership in a faction by choosing one of their faction backgrounds from among those detailed in this chapter. This guide assumes that you have chosen a faction and that you maintain your association with it throughout your life. As a result, your choice of faction can play a more significant role than most backgrounds do in shaping what your character does now.",
+            "The backgrounds associated with factions in this chapter work like those in the Player's Handbook, giving you proficiencies, languages, equipment, and suggested characteristics (personality traits, ideals, bonds, and flaws). Each faction entry also provides personal contacts; suggestions for your alignment, race, and class; and a list of spells that you can add to your spell list if you're a member of a spellcasting class."
+          ],
+          "subsections": [
+            {
+              "name": "Faction Spells",
+              "paragraphs": [
+                "The spellcasters of the Old World's factions have magic specific to their guild. A faction's description includes a list of faction spells.",
+                "If you play a character who has the Spellcasting or the Pact Magic class feature, your guild spells are added to the spell list for your class, thereby expanding the spell options available to you."
+              ]
+            },
+            {
+              "name": "Additional Rules",
+              "paragraphs": [
+                "The factions in the Monster Hunter Universe use the same rules for renown and contacts as found in The Guildmaster's Guide to Ravnica starting on page 29. As such I cannot just put all that information into this guide, but I will sum up a generic explanation of each rule."
+              ]
+            },
+            {
+              "name": "Contacts",
+              "paragraphs": [
+                "Contacts are people you know. They might be a rival, a mentor, a friend, just another member of the faction or possibly a member of a different faction entirely. These contacts should be created with your DM and may provide additional depth for your character. When you create a character you have a number of contacts equal to your Intelligence modifier (minimum of 1)."
+              ]
+            },
+            {
+              "name": "Renown",
+              "paragraphs": [
+                "Renown is your status in a faction. The higher your renown is, typically the more known and respected you are within the faction. It's also possible to gain renown in other factions, though this renown won't allow you to gain any ranks within the other factions.",
+                "To gain renown you must advance the guild’s agenda in some way. You will find in the Rank and Renown section of each faction, some suggestions that would merit an increase in your renown, but you should also check the goals of the faction to help determine other ways to gain renown. When you join a faction as a starting character, your renown score with that faction is 1. It is up to the DM when you gain renown, not the player.",
+                "There are other rules for gaining renown outside of the list above, but that can be found in The Guildmaster's Guide to Ravnica."
+              ]
+            },
+            {
+              "name": "Benefits of Renown",
+              "paragraphs": [
+                "There are many benefits when you gain renown in a faction, most often it is tied to an increase in rank within the faction you are in, but not all are guild specific such as the two below: Renown 3 or Higher. You have established yourself as a respected member of the guild and as such, the guild members are friendly to you by default (though some members might have a reason to dislike you). Renown 5 or Higher. You gain another contact. This might be a member of your faction, or perhaps someone else you met on your adventures."
+              ]
+            },
+            {
+              "name": "Losing Renown",
+              "paragraphs": [
+                "If you go against your faction, or commit a crime against society or nature, you might lose renown. It is up to the DM to determine how much based on the offense. You cannot drop below 0 renown with a faction, but if your renown drops below the required amount for your rank, then you lose the rank and any benefits it gave you. It also may be much harder to obtain that rank again."
+              ]
+            },
+            {
+              "name": "Changing Factions",
+              "paragraphs": [
+                "If for some reason you chose to change factions, be it due to the narrative of the story, or some other reason, you then lose all renown with your previous faction and start with 0 renown with the new faction. The only exception with this is if you already gained renown with the new faction prior to joining them. Then instead you start with the renown you already had with them, though it may still take time for you to rise in the ranks.",
+                "\"Guided by prudence, we meld might and magic to forge hybrid monstrosities, shielding our world. In defiance of judgment, we craft protectors where perception and protection entwine, etching our name in destiny's annals.\"",
+                "- Helix Agent Iihane Hune"
+              ]
+            }
+          ]
+        }
+      ],
+      "footerNote": "Additional Factions will be added in future updates to Amellwind's Guide to Monster Hunting."
+    },
+    {
+      "id": "helix-commission",
+      "name": "The Helix Commission",
+      "page": 24,
+      "paragraphs": [
+        "In the world, there is an organization shrouded in secrecy known as the Helix Commission. The origins of this group are unknown, but some believe it was created by a faction of Wycademy researchers and royal scriveners who discovered an ancient incomplete Equal Dragon Weapon in the ruins of an ancient civilization research lab. It has been said that a few lead scientists and researchers within this faction became interested in following in the footsteps of the ancient civilization and began experimenting with creating hybrids of monsters. However, their requests to conduct this research were denied by the leaders of the ruling factions, who wished to keep this information secret.",
+        "Despite being denied permission, these scientists and researchers continued their research in secret. They created new hybrid monsters, some of which may be the subspecies, variants, and deviants we see today. But eventually, their experiments were discovered by the Hunter's Guild, who raided their labs and destroyed their work. Those who managed to escape the raid formed the Helix Commission, an organization dedicated to continuing their research in secret and away from the prying eyes of the Hunter's Guild, Wycademy, and Royal Scriveners.",
+        "The Helix Commission is known to experiment with genetic engineering and hybridization, and rumors persist that they are responsible for the creation of many of the subspecies of monsters that exist in the world today. Despite their secrecy, some brave hunters have managed to infiltrate the Helix Commission's lairs and retrieve valuable information about their research. But even with this knowledge, the true goals and motivations of the Helix Commission remain shrouded in mystery."
+      ],
+      "subsections": [
+        {
+          "name": "Role of the Helix Commission",
+          "paragraphs": [
+            "The Helix Commission is dedicated to studying and experimenting with the creation of hybrid monsters by combining two distinct species. They believe that these hybrids could have incredible potential, both for scientific understanding and practical application. Their goal is to create new, more powerful species that could be used to benefit humanity. However, this research is considered illegal by the Hunter's Guild and immoral by both the Royal Scriveners and Wycademy. Despite this, the Helix Commission continues to work tirelessly towards their goal of creating hybrid monsters that can benefit the world."
+          ]
+        },
+        {
+          "name": "Methods of the Helix Commission",
+          "paragraphs": [
+            "To conduct their research, the Helix Commission works outside of the expected norms of the world. They perform these experiments in secret, in hidden laboratories scattered throughout the world. They also employ a team of skilled hunters to retrieve the necessary samples and conduct experiments. The process of creating hybrids is complex and risky, often resulting in dangerous and unpredictable creatures. Nonetheless, the Helix Commission believes that the benefits of their research far outweigh the risks."
+          ]
+        },
+        {
+          "name": "Members of the Helix Commission",
+          "paragraphs": [
+            "The members of the Helix Commission are scientists who have left the Royal Scriveners or Wycademy for a variety of reasons. They are driven by a desire to push the boundaries of scientific knowledge, even if it means breaking the law or operating outside the norms of society. Some members are former hunters who became disillusioned with the Hunter's Guild and its strict code of ethics.",
+            "Scientists of the Helix Commission all have diverse types of specializations. Some choose to spend their lives inside the organization, continuing research of old or performing experiments on the creatures brought to them by their hunters. Other researchers choose to venture into the world, discovering new species or gathering new knowledge on known species.",
+            "Hierarchy of the Helix Commission"
+          ]
+        },
+        {
+          "name": "Helix Commission Director",
+          "paragraphs": [
+            "The Director is the leader of the research facility. They are the driving force behind the group's research. They oversee all experiments and are responsible for making the final decision on which species to hybridize. The leader is highly respected among the group members and seen as the ultimate authority on all research matters."
+          ]
+        },
+        {
+          "name": "Lead Scientist",
+          "paragraphs": [
+            "Lead scientists are the most experienced and knowledgeable members of the Helix Commission. They have extensive knowledge of the genetic makeup of monsters and are responsible for designing experiments that create hybrids. They work closely with the director of their facility to ensure that their research stays on track."
+          ]
+        },
+        {
+          "name": "Scientist",
+          "paragraphs": [
+            "Scientists have all different types of specializations. They are responsible for conducting experiments, analyzing data, and sharing their findings with the rest of the Helix Commission. They may also accompany hunters into the field to collect samples or conduct experiments on live subjects."
+          ]
+        },
+        {
+          "name": "Agent",
+          "paragraphs": [
+            "The Agent role within the Helix Commission oversees the practical implementation of the Commission's research and development projects. This includes recruiting hunters and mercenaries to aid in the collection of research specimens, coordinating with the Commission's scientists to ensure that the necessary equipment and personnel are in place for field research, and liaising with external organizations to procure any additional resources or support that may be required.",
+            "Agents are typically skilled hunters or mercenaries who possess a deep understanding of monster ecology and behavior. They work closely with the Commission's researchers to identify and locate specimens, and often engage in dangerous missions to capture or eliminate specimens that are deemed too dangerous or unstable for further research.",
+            "Additionally, Agents may also act as enforcers for the Commission's strict confidentiality policies, ensuring that any sensitive information or technology is kept strictly secret and out of the hands of rival organizations or factions.",
+            "Overall, the Agent role within the Helix Commission is a crucial link between the Commission's scientific research and the practical implementation of that research in the field."
+          ]
+        },
+        {
+          "name": "Junior Scientist",
+          "paragraphs": [
+            "Junior scientists are the newest members of the Helix Commission. They are responsible for assisting the senior scientists in their research and are often tasked with the more menial tasks such as gathering materials or cleaning equipment. However, they are also given the opportunity to learn from the more experienced members of the group and to participate in the creation of new hybrids.",
+            "Figures of Interest"
+          ]
+        },
+        {
+          "name": "Dr. Elara Amastacia",
+          "paragraphs": [
+            "Founder Half-Elf Artificer One of the founding members of the Helix Commission, Dr. Amastacia is a renowned monster researcher and expert in hybridization. She is credited with creating some of the most successful and dangerous hybrid monsters known to date."
+          ]
+        },
+        {
+          "name": "Sah'tin",
+          "paragraphs": [
+            "Infiltrator, Lizardfolk Ranger A skilled monster hunter who went rogue and joined the Helix Commission, Sah'tin is known for his ruthlessness and willingness to do whatever it takes to achieve his goals. He has been linked to several high-profile attacks on Hunter's Guild facilities and personnel."
+          ]
+        },
+        {
+          "name": "Professor Alastair Wren",
+          "paragraphs": [
+            "Lead Scientist, Banbaroborn Artificer. A former member of the Wycademy, Professor Wren left to join the Helix Commission after he became disillusioned with the",
+            "Wycademy's stance on monster hybridization. He is an expert in monster physiology and has been instrumental in developing new techniques for hybridization."
+          ]
+        },
+        {
+          "name": "Dr. Naluria",
+          "paragraphs": [
+            "Scientist, Wyverian Sorcerer A brilliant geneticist who specializes in creating new species of monsters, Dr. Naluria is a rising star within the Helix Commission. She is known for her experiments involving the incorporation of human DNA into monster hybrids, a practice that is widely considered unethical."
+          ]
+        },
+        {
+          "name": "Director Eilif Ironfist",
+          "paragraphs": [
+            "Director, Dwarf Wizard The current director of the Helix Commission, Ironfist, is a former member of the Royal Scriveners who joined the Helix Commission after discovering information that could have saved countless lives had it been shared. He is known for his strategic thinking and has been instrumental in expanding the Commission's reach and influence.",
+            "Commission Characters Alignment: Usually chaotic neutral Suggested Races: Any Suggested Classes: Any",
+            "Consider the commission for your character if one or more of the following sentences rings true:",
+            "You want to find and fight new, interesting, and potentially challenging monsters. You want to help contribute to making a difference in the world, to change it in ways never seen before You have a sense of duty, helping the Helix Commission create hybrid monsters is the most pragmatic way to protect against worse monsters."
+          ]
+        },
+        {
+          "name": "Joining the Helix Commission",
+          "paragraphs": [
+            "There are several ways to join the Commission. The main way is being recruited by the Commission themselves, as they keep an eye out for potential bright minds who might be willing to work for them. It is not uncommon for invitations to be sent out in this way. Another way would be encountering one of the escaped monsters of the commission, and helping take care of it before it could hurt others, proving their worth. The final way is being a convict of some kind, like poachers or criminals, as the commission always needs expendable minions.",
+            "Helix Commission Spells Prerequisite: Spellcasting or Pact Magic class feature",
+            "For you, the spells on the Helix Commission Spells table are added to the spell list of your spellcasting class. (If you are a multiclass character with multiple spell lists, these spells are added to all of them.)",
+            "Helix Commission Spells Spell Level Spells Cantrip druidcraft, message 1st disguise self, Heroism"
+          ]
+        },
+        {
+          "name": "Helix Commission Backgrounds",
+          "paragraphs": [
+            "As you set out into the world, you must decide where your ambitions lie within the Helix Commission. The members of this secretive organization are driven by a desire to push the boundaries of scientific knowledge through genetic engineering and hybridization, even if it means operating outside the norms of society. There is no specific training to become a member of the Helix Commission, as they are often recruited from other factions due to their specialized skills."
+          ]
+        },
+        {
+          "name": "Guild Feature: Experimental Resources",
+          "paragraphs": [
+            "As a member of the Helix Commission, you have access to advanced experimental equipment and resources not available to the public. You can use this equipment to enhance your weapons and armor, craft unique items, or conduct research on monsters and their behaviors (work with your DM to determine what these might be)."
+          ]
+        },
+        {
+          "name": "Helix Agent",
+          "paragraphs": [
+            "You are a member of a secret organization dedicated to understanding and manipulating the natural world for the betterment of humanity. Whether you are a trained hunter, a skilled tracker, or a trusted messenger, you have been selected to work for the Commission because of your unique abilities and your unwavering loyalty to the cause.",
+            "{@background Helix Agent|AGMH}"
+          ]
+        },
+        {
+          "name": "Feature: Helix Network",
+          "paragraphs": [
+            "You have connections to the Helix Commission and can call on its resources for assistance. When you arrive in a new town or city, you can contact a member of the Commission to provide you with information about the local monster population, or to request assistance with capturing a specific target. However, be warned that the Commission is not always popular and your association with it may draw unwanted attention or suspicion."
+          ]
+        },
+        {
+          "name": "Helix Field Scout",
+          "paragraphs": [
+            "The Helix Commission has many cogs that must work perfectly together. One such cog is the Field scouts, who are highly skilled and specialized individuals; responsible for gathering and analyzing data on various creatures and species to help determine which ones are suitable for hybridization. Their primary objective would be to develop new hybrid monsters that possess a combination of the most desirable traits and abilities from the original creatures.",
+            "{@background Helix Field Scout|AGMH}"
+          ]
+        },
+        {
+          "name": "Feature: Hybrid Hunter",
+          "paragraphs": [
+            "You are experienced and have expertise in tracking and hunting down hybrid creatures that have escaped from the faction's laboratories or breeding facilities. You recognize the signs of a hybrid creature when acting as the trailblazer or scout. Additionally, you can find a place to hide, rest, or recuperate among other members of the commission, if doing so does not put them in danger.",
+            "How do I fit in? As a member of the Helix Commission, you would be an expert of monster anatomy. Carving and tracking such monsters is a small feat of your skills. Your role would be to help track down monsters, explain their habits, and lead your allies into battle so you can learn more about every monster.",
+            "Outside of combat, you would be responsible for tracking the monster, examining bodies of said monsters and taking samples from them, and getting rid of the small amounts of evidence left over from escaped Commission Monsters.",
+            "Overall, your role as a member of the Helix Commission would be to lead and protect your companions, as well as keeping an eye out for new recruits for the Commission."
+          ]
+        },
+        {
+          "name": "Joining a Hunter's Guild Party",
+          "paragraphs": [
+            "As a member of the Helix Commission, you would likely have an interest in studying the monsters that a hunting party encounters, especially if they are creatures that are suitable for hybridization. You might join the party to study the monsters in their natural habitats and to collect samples to bring back to the Helix Commission for further analysis.",
+            "To hide your true identity and affiliation with the Helix Commission, you might adopt a false identity, using a disguise kit to change your appearance and clothing. You might also use your skills in deception to blend in with the group and avoid drawing attention to yourself.",
+            "As for how you might fit into the group, you would be an asset due to your knowledge and expertise in studying monsters. You might be able to provide useful information about the creatures you encounter, such as their behavior, weaknesses, and strengths."
+          ]
+        },
+        {
+          "name": "A Commission Party",
+          "paragraphs": [
+            "The Helix Commission is not known by many, due to many efforts from the Commission to keep their important duties secret, knowing many would not approve of their methods to protect the masses. As such, while it's common for Commission members to be part of groups of hunters, aiding them in hunts, it is rare for the group to know the truth unless they are trusted allies."
+          ]
+        },
+        {
+          "name": "Rank and Renown",
+          "paragraphs": [
+            "The Helix Commission is a secretive organization that specializes in studying and researching the arcane forces that shape the world. Members of the Helix Commission gain renown by making groundbreaking discoveries, uncovering lost knowledge, or solving arcane mysteries. As members gain renown, they can advance through the ranks of the organization. Advancement is based on a combination of renown, demonstrated expertise in arcane matters, and the approval of the Commission's leadership.",
+            "Rank 1: Novice Prerequisite: Renown 1 or higher in the Helix Commission",
+            "As a Novice of the Helix Commission, you have demonstrated a basic understanding of arcane or scientific theory and have proven your dedication to the pursuit of knowledge. You are granted access to the Commission's library and archives, but you may be ordered on dangerous missions and tests by lead",
+            "scientists. Additionally, you may consult with other members of the Commission for advice and guidance.",
+            "Rank 2: Full-fledged Member Prerequisite: Rank 1 and renown 10 or higher in the Helix Commission",
+            "As a full-fledged member of the Helix Commission, you have shown a deeper understanding of arcane and scientific principles and have contributed to the organization's body of knowledge. You are granted access to more advanced texts and research materials and may be assigned to assist more senior members of the Commission on their projects. You also receive a salary that allows you to maintain a comfortable lifestyle.",
+            "Hybrid Hunter (Special Role) Prerequisite: Rank 2 and renown 25 or higher in the Helix Commission and must have captured at least three escaped hybrids.",
+            "As highly trained member of the Helix Commission you specialize in tracking and capturing escaped test subjects. This role requires exceptional combat skills, knowledge of the creatures being hunted, and a thorough understanding of the Commission's testing facilities.",
+            "Your role grants access to special equipment to aid in the capture and containment of escaped hybrids, the authority to detain and arrest those suspected of aiding escaped hybrids, and to to purchase rare and exotic monster parts from the Helix Commission for use in creating specialized traps and restraints.",
+            "At this rank, you are provided with an income to satisfy a modest lifestyle.",
+            "Rank 3: Scientist Prerequisite: Rank 2 and renown 25 or higher in the Helix Commission",
+            "As a scientist of the Helix Commission, you have made significant contributions to the organization's research efforts and have demonstrated a talent for solving complex puzzles. You are granted access to the most innovative research materials and may be given your own research project to pursue, and 1d4 junior scientists (commoners) to assist you. You also receive additional research funding and can publish your findings under the Commission's name.",
+            "Infiltrator (Special Role) Prerequisite: Rank 3 and renown 50 or higher in the Helix Commission and must stole information from at least one organization.",
+            "A specialized member of the Helix Commission who is tasked with gathering information from other organizations, including but not limited to the Hunter's Guild. This role requires exceptional stealth and deception skills and knowledge of the target organization's culture and practices.",
+            "Your role grants access to sensitive information about the Hunter's Guild, such as their hunting schedules, tactics, and high-priority targets, the ability to purchase forged documents and other materials from the Helix",
+            "Commission for use in maintaining your cover, and the authority to recruit informants and allies within the Hunter's Guild and other organizations.",
+            "At this rank, you are provided with an income to satisfy a comfortable lifestyle.",
+            "Rank 4: Lead Scientist Prerequisite: Rank 3 and renown 50 or higher in the Helix Commission",
+            "As a lead scientist of the Helix Commission, you are one of the most accomplished scholars of arcane lore in the world. Your expertise is sought after by other organizations and governments, and you may be called upon to advise on matters of great magical importance. You have access to the most closely guarded secrets of the Commission, and at your request, you are provided with two young seregios to act as loyal guards, or bait. Additionally, are granted a generous stipend, allowing you to live a wealthy lifestyle.",
+            "Rank 5: Director Prerequisite: Rank 4 and renown 100 or higher in the Helix Commission and must have served as a member of the Commission for a minimum of 5 years.",
+            "The Director of the Helix Commission is responsible for overseeing all aspects of the organization, from research and testing to security and personnel management. This role requires exceptional leadership and strategic skills and a deep understanding of the ethical and moral implications of the Commission's work. As the director, you are given ultimate authority over all Helix Commission operations and personnel in your territory, allowed to allocate resources and personnel as needed to achieve the Commission's goals, and you can call upon 21 (6d6) scientists and support staff to assist you in your research or downtime actions.",
+            "I am the esteemed instructor of the Pokke Training School. I am currently looking for as many students as possible to join my hunter's training school. It was ten years ago that this school started with a dream...",
+            "... a dream held by hunters who burn with the desires of youth, a dream held by those who wish to become real hunters, a dream held by hunters looking to perfect their skills, a dream held by hunters looking to tie their hopes onto me in their three legged race to first class status! The gate to my Training School is always open, especially to my fans!",
+            "-Hunter Training School Master Azrar"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "hunters-guild",
+      "name": "The Hunter's Guild",
+      "page": 28,
+      "paragraphs": [
+        "The Hunter's Guild is the central governing body within the Monster Hunter universe. The Hunter's Guild unifies and regulates all hunting activities on which many people make their living. The guild aggregates hunting and gathering requests from far and wide, and posts them within their gathering halls and outposts throughout the land for professional hunters to undertake. These \"quests\" can have many purposes, including defense of citizens or towns, or research into monster anatomy and biology. The Hunter's Guild is also well-known for preventing poaching. Any unsanctioned hunting is illegal to the Hunter's Guild and can lead to a multitude of punishments, but most commonly death at the hand of a Guild Knight.",
+        "The Hunter's Guild headquarters are located in the city of Dundorma, and all major announcements and actions are made from this location. Beyond this, the Hunter's Guild commands a sprawling territory comprising many districts located in a multitude of regions. Each district has a guild master that manages the district, though not all of them are the best managers. Hunter's Guild-certified gathering halls can be found in all major city centers such as the ones noted above. Smaller Hunter's Guild outposts, commonly set up in less populous and more remote towns and villages, such as Pokke Village, Moga Village, or Yukumo Village, and are handled by one or more Hunter's Guild-employed representatives. These smaller outposts are considered to be a part of the larger districts in which they are located.",
+        "Though the Hunter's Guild is connected together, each district of it prefers to work alone. This means that not every district is aware of new discoveries made by the other, such as locations and monsters."
+      ],
+      "subsections": [
+        {
+          "name": "The Four Swords of the Guild",
+          "paragraphs": [
+            "The Hunter's Guild crest has four symbols on it. Each symbol on the crest has a meaning that the Hunter's Guild follows. The north represents Respect for nature, the west represents Life as a community, the south represents Crafting from nature, and the east represents Prosperity from nature."
+          ]
+        },
+        {
+          "name": "Fate of Most Captured Monsters",
+          "paragraphs": [
+            "Usually when a monster is captured, it is torn apart in its sleep with ease by the corporation that requested it. This is due to said corporation wanting to research the body parts and organs of said monster, allowing them to better understand a certain species. The corporations that request for monsters to be captured include Elder Dragon Observation Team, Wycademy, and the Royal Paleontology Scriveners. Only on some rare occasions, is the monster tamed and becomes a person's pet."
+          ]
+        },
+        {
+          "name": "Goal of the Hunter's Guild",
+          "paragraphs": [
+            "The Hunter's Guild doesn't exist to annihilate all monsters, they exist to harmonize society with nature. Their primary goal is to prevent further damage to the monster populations, so they can prevent other monster species from going extinct like some ancient species. However, if a monster threatens lives, towns, cities, etc, then hunters are allowed to hunt it to prevent destruction. If the monster is rare, the guild will sometimes seek to repel the monster rather than kill it.",
+            "The Hunter's Guild also seeks to minimize poaching. Any kill or capture unsanctioned by the Hunter's Guild is illegal in the eyes of the guild. Poaching can lead to a multitude of punishments, but most commonly death at the hand of a Guild Knight.",
+            "Furthermore, the Hunter's Guild is responsible for discovering and determining specific hunting grounds throughout the land. Only when a swath of area is officially within the guild's jurisdiction can it be embarked upon for the purposes of undertaking quests. Even despite this, the guild will sometimes only allow hunters within a specific city or region to accept certain quests.",
+            "Finally, the Hunter’s Guild seeks to rid the world of the monsters that succumb to corruption. These creatures are treated with the highest priority and are one of the few creatures allowed to be killed outside of a hunting ground.",
+            "Hierarchy of the Guild"
+          ]
+        },
+        {
+          "name": "Guild Masters",
+          "paragraphs": [
+            "Guild masters are the leaders of their district. Beyond bureaucratic work, they mainly help hunters register into the Hunter's Guild, in order to let them hunt legally under this corporation and test a hunter's strength. They are known to test a hunter's strength with Urgent Quests in order to see if the hunter is worthy of ranking up. Guild masters are also known to give the hunters various types of advice to help them overcome challenges.",
+            "Under the laws set by His Immenseness, the guild master job/title is limited only to wyverians and elves. There are currently four known guild masters located in Dundorma, Loc Lac, Minegarde, and Val Harbor, each a wyverian, responsible for their own districts."
+          ]
+        },
+        {
+          "name": "Guild Managers",
+          "paragraphs": [
+            "The guild managers are much like the guild masters, helping hunters register into the Hunter's Guild and providing various types of advice to help them overcome challenges. In addition to their Hunter's Guild responsibilities., the guild managers act like mayors of the town or village they live in, answering only to the guild master in the district where they reside. The guild manager job is also limited to elves and wyverians."
+          ]
+        },
+        {
+          "name": "Guild Knights",
+          "paragraphs": [
+            "The main job of a guild knight is to hunt down poachers, other illegal hunters, and wanted murderers; bringing them to justice, typically by killing them. This also applies to hunters that break the rules of the Hunter's Guild. If an emergency situation happens during their post, guild knights try to keep order by acting as leaders. Guild knights have also been known to act as negotiators for settlements and collect info on monsters unknown to the public.",
+            "In each district and outpost of the Hunter’s Guild, there can be at least twelve guild knights in one location at a time, though there can sometimes be less. Who the guild knights are is mostly unknown to the common members of the guild. Preferring to keep their job a secret, many of the guild knights do other jobs within the guild, acting as receptionists, hunters, teachers, or merchants."
+          ]
+        },
+        {
+          "name": "Guild Receptionists",
+          "paragraphs": [
+            "Since monster hunting is a popular job among the world and the geography of the world being mostly unknown, along with its history, a special few individuals have the job of collecting information. This information is not only about an area but the monsters that inhabit it. It is the guild receptionist's job to give hunters quests and to inform them about any monsters within their rank. The job mainly allows females to be guild receptionists, however, some males can be qualified as one too.",
+            "The uniforms are different for each district for guild receptionists. Some uniforms are perfect for going to many different environments, others just make it easier to move from place to place while on the job. Many handlers chose to become receptionists after retiring from the field.",
+            "Figures of Interest"
+          ]
+        },
+        {
+          "name": "Felcote",
+          "paragraphs": [
+            "Guild Knight, Felyne Battlemaster A secret guild knight found typically in pokke village. Felcote is a very secretive individual that is seemingly calm and polite. Her job is to search for extremely talented hunters in the world and send them on secret requests to test their skills. Felcote does this to recruit new hunters into the Hunter's Guild highest ranks of honor."
+          ]
+        },
+        {
+          "name": "Becky",
+          "paragraphs": [
+            "Guild Knight, Human Paladin She is a guild receptionist, and secretly a guild knight found in Minegarde and occasionally Kokoto Village. She doesn’t really like to work much, though she can be quite blunt, giving those that do not know her the impression that she is rude. She sometimes investigates the room of hunters and kills those that break the rules of the Hunter’s Guild with a single smash of her hammer. She also occasionally goes out on hunts by herself."
+          ]
+        },
+        {
+          "name": "Patty",
+          "paragraphs": [
+            "Guild Receptionist, Human Cleric Patty is known for being a workaholic. She is also known for being kind-hearted, though someone, like Becky, can scare her or make her cry quite easily. Though she is just a receptionist, Patty now watches over Jumbo Village due to her \"father\", Jumbo Chief, leaving her to travel around the world. She has a dream to travel around the world someday, just like him."
+          ]
+        },
+        {
+          "name": "Kokoto Chief",
+          "paragraphs": [
+            "Guild Manager, Wyverian Samurai At one time, he was adventurous and didn't fear any challenges. Nowadays, Kokoto Chief doesn't really show too many emotions. In his youth, he was a legendary hunter that helped shape hunting today. From the beginning of his hunting career, he loved hunting together with his three companions and his wife, even allowing her to attend some hunts. This sadly led to an incident only known as the Five. Today, Kokoto Chief is retired and watches over Kokoto Village. Kokoto Chief also now trains the next generation of hunters.",
+            "Hunter's Guild Characters Alignment: Usually lawful or good, often neutral Suggested Races: Any race, but rarely do monstrous races join Suggested Classes: All",
+            "Consider the Hunter's Guild for your character if one or more of the following sentences ring true:",
+            "You seek fame and fortune. You have a thirst for adventure. You enjoy the great outdoors, exploration, and finding rare and undiscovered creatures"
+          ]
+        },
+        {
+          "name": "Joining the Hunter's Guild",
+          "paragraphs": [
+            "In order to undertake guild-sponsored quests, you must first register yourself as an official Monster Hunter under the Hunter's Guild. Following this, you are sent to a training school where you undergo rigorous physical and mental training. Afterwards you are given a specific measure of personal skill or \"Hunter Rank\" (often shortened to HR), based on how well you do in the training."
+          ]
+        },
+        {
+          "name": "Hunter Rank",
+          "paragraphs": [
+            "A hunter rank is how the Hunter's Guild can gauge one's ability to undertake varying levels of hunting requests. In accordance with this, the guild will assign rankings, often on a number-of-stars basis, to quests listings to ensure that dangerous or difficult quests are only embarked upon by skilled hunters who have proven their aptitude. This is both to ensure the safety of its hunters and to ensure that the request is properly completed.",
+            "If hunters are extremely skilled, they will sometimes be sent to do secret requests or investigations for extremely dangerous monsters. They will do these quests secretly so it won't cause a panic to the public, in order to get a better understanding of said situation, because in some cases it is just a false alarm, and so the Hunter's Guild can come up with the proper actions needed to protect the truth or the public without causing a panic."
+          ]
+        },
+        {
+          "name": "Guild Card",
+          "paragraphs": [
+            "Each hunter is also given a Guild Card that they can customize at their own free will. They are used as an ID for hunters to list their name, awards they've collected, and the monsters they have slain. These cards can be made out of various materials like timber, ore, and monster materials. The Guild Cards of some elite hunters are known to be made of parts belonging to more dangerous monsters, such as Nargacuga scales and the shell of Zinogre. Some legendary hunters have cards made out of Elder Dragon materials. Each hunter is known to have their own personalized title given to them by their guildmaster.",
+            "Hunter's Guild Spells Prerequisite: Spellcasting or Pact Magic class feature",
+            "For you, the spells on the Hunter's Guild Spells table are added to the spell list of your spellcasting class. (If you are a multiclass character with multiple spell lists, these spells are added to all of them.)",
+            "Hunter's Guild Spells Spell Level Spells Cantrip produce flame, resistance 1st detect poison and disease, longstrider 2nd enhance ability, gust of wind 3rd fear, plant growth 4th elemental bane, guardian of nature Sth awaken, skill empowerment"
+          ]
+        },
+        {
+          "name": "Hunter's Guild Backgrounds",
+          "paragraphs": [
+            "As your training comes to an end and your adventuring career begins, you must decide where your ambitions lie in your future with the Hunter's Guild. In this section you will find a number of backgrounds based on the many employment opportunities a hunter has as their Hunter Rank increases.",
+            "No matter the background you pick, each member of the Hunter's Guild has the same background feature.",
+            "Guild Feature: Guild Membership All Hunter's Guild backgrounds have the same feature Your guild will provide you with food and accommodation if necessary. You have access to a guild hall if one is present (located in most cities, towns, and villages). The guild will support you in legal matters, so long as your rank is high enough and you are in good standing with the guild, and is a good way to gain introduction to influential members of society. Connections made through the guild for personal reasons may require a donation to the guild coffers. The guild requires dues of 5gp a month or at least one completed hunt per month."
+          ]
+        },
+        {
+          "name": "Hunter Initiate",
+          "paragraphs": [
+            "You aspire to greatness like many of the legendary hunters before you. You joined the guild not to find a cozy job within the guild hall’s safe walls, but to seek adventure, protect others, or perhaps discover an unknown species.",
+            "{@background Hunter Initiate|AGMH}"
+          ]
+        },
+        {
+          "name": "Apprentice Guild Knight",
+          "paragraphs": [
+            "The Guild Knights are an elite group of hunters whose main job is to hunt down poachers or other illegal hunters, and wanted murderers. Guild Knights also act as leaders during times of crisis, negotiators for settlements, and also collect info on monsters unknown to the public. As an apprentice to the Guild Knights you are expected to enforce the laws of the guild while following the teachings of your mentor.",
+            "{@background Apprentice Guild Knight|AGMH}"
+          ]
+        },
+        {
+          "name": "Handler Initiate",
+          "paragraphs": [
+            "You have spent your time in the Hunter's Guild training under the tutelage of the handlers that came before you. Even as an initiate you are the caretaker of your party. You use your knowledge of monsters to prepare your group and ensure that they are taken care of, whether they are in the town or in the field. You also act as the liaison between the guild and the hunters, providing detailed reports on the hunts and other events when you return to town.",
+            "{@background Handler Initiate|AGMH}"
+          ]
+        },
+        {
+          "name": "A Hunter's Guild Party",
+          "paragraphs": [
+            "An adventuring party made up entirely of Hunter's Guild members could be a specialized team dedicated to the preservation of nature and society. A hunter initiate (a rogue or ranger) and a guild knight apprentice (fighter, or paladin) would form the core of the party, supported by a handler (cleric or druid) who helps direct their missions."
+          ]
+        },
+        {
+          "name": "Hunter Rank and Renown",
+          "paragraphs": [
+            "A member of the Hunter's Guild gains renown typically when they complete dangerous hunts, discover new information about creatures, or prevent something from disrupting nature's balance, such as poachers. By gaining renown as a member of the Hunter's Guild, you can advance your hunter rank within the guild. Promotion through the ranks requires the approval of the guild master. Advancement is a reward for services rendered to the guild, rather than an automatic consequence of increased renown.",
+            "HR 1 Prerequisite: Renown 1 or higher in the Hunter's Guild",
+            "Having completed your first dangerous hunt, the guild recognizes you as a true hunter. Your rank allows you to take on higher difficulty hunts and the guild provides you with a home and a modest living wage while you are in a town or village where a guild hall can be found. The guild also provides you with supplies you need to complete those missions (within reason) and access to their guild store.",
+            "HR 2 Prerequisite: Rank 1 and renown 10 or higher in the Hunter's Guild, 4th level or higher",
+            "At this rank, you have begun to make a name for yourself and as such the guild provides you with access to purchase CR 2 or lower materials that the guild store offers (DMs choice of what materials and when the stock changes). Additionally you are given a lynian caretaker for your home and even though they may not go hunt in the field with you, it is not unheard of for a caretaker to give its hunter gifts when they return from a hunt.",
+            "HR 3 Prerequisite: Rank 2 and renown 25 or higher in the Hunter's Guild, 8th level or higher",
+            "At HR 3, you are responsible for hunting some of the more dangerous monsters in the world when they become a threat to a settlement or the ecosystem it is located in. As such, you are given access to the guilds wingdrakes (see page 191 of the MHMM for its stat block) or other mounts for faster travel between locations. Additionally, the guild grants you permission to purchase CR 4 or lower materials that the guild store offers (DMs choice of what materials and when the stock changes).",
+            "HR 4 Prerequisite: Rank 3 and renown 50 or higher in the Hunter's Guild, 12th level or higher",
+            "As a HR 4, you are an elite hunter and given access to G ranked hunts (hunts kept hidden from the populace for their own safety and to prevent panic should the knowledge get out) and other secret information hidden away by the guild. As an elite hunter your words and actions reflect immensely on the guild, but also carry an immeasurable weight with them. As such, nobles and other members of high society treat you with great respect, unless you prove yourself untrustworthy.",
+            "\"\"As a Royal Scrivener, it's our duty to document every detail of a hunter's expedition, from the smallest triumphs to the most epic battles. Our records serve as a testament to the courage and skill of those who venture out into the unknown, and we take great pride in preserving their legacy for generations to come.\"",
+            "-Senior Scrivener Flight D. Eisenhower"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "royal-scrivener",
+      "name": "Royal Paleontology Scriveners",
+      "page": 34,
+      "paragraphs": [
+        "The Royal Paleontology Scriveners are a group of scholars and researchers dedicated to studying and observing the ecologies of various monster species creatures. Their work involves collecting and analyzing fossils, reconstructing the skeletal structures of monsters, and piecing together the evolutionary history of these creatures. They use their knowledge to inform the wider community about the behaviors, habitats, and weaknesses of these monsters, providing valuable insights that can help hunters take on new challenges in the field. The Royal Paleontology Scriveners are an essential part of the wider research community, and their work helps to deepen our understanding of the world and its inhabitants.",
+        "How do They Pass This Information Along? The knowledge obtained by the Royal Paleontology Scriveners is relayed to the Elder Dragon Observation Team, who then publishes this information in Hunting Insights Magazine, a monthly publication sold to hunters to keep them abreast of the latest findings. Additionally, new discoveries are compiled into encyclopedias for wider distribution."
+      ],
+      "subsections": [
+        {
+          "name": "Hunters of the Royal Scriveners",
+          "paragraphs": [
+            "A hunter of the Royal Paleontology Scriveners in Monster Hunter is a skilled researcher and adventurer dedicated to studying monsters and their environment. These hunters are responsible for conducting field research, collecting fossils, and studying the remains of monsters. They use their expertise to analyze monster's weaknesses, classify fossils,",
+            "reconstruct skeletons, and piece together the evolutionary history of these extinct creatures. Depending on their specialization, they may focus on a particular area of paleontology, such as the study of fossils from a specific environment or time period. They may also specialize in a particular skill, such as paleontological illustration, where they create detailed drawings and reconstructions of ancient creatures based on fossil evidence. Hunters of the Royal Paleontology Scriveners are an essential part of the wider research community in Monster Hunter, and their work helps to deepen our understanding of the world and its inhabitants.",
+            "Hierarchy of the Royal Scriveners"
+          ]
+        },
+        {
+          "name": "Head Scrivener",
+          "paragraphs": [
+            "The highest-ranking member of the Royal Paleontology Scriveners, responsible for overseeing all aspects of the organization's research and operations."
+          ]
+        },
+        {
+          "name": "Head of Field Research",
+          "paragraphs": [
+            "Oversees the team of scriveners who conduct field research, collect fossils, and study the remains of monsters."
+          ]
+        },
+        {
+          "name": "Head of Laboratory Research",
+          "paragraphs": [
+            "Oversees the team of scriveners who analyze and classify fossils, reconstruct skeletons, and study the evolutionary history of monsters."
+          ]
+        },
+        {
+          "name": "Senior Scrivener",
+          "paragraphs": [
+            "Experienced researchers who specialize in a particular area, such as the study of monsters from a specific region, time period, or type."
+          ]
+        },
+        {
+          "name": "Paleontological Illustrator",
+          "paragraphs": [
+            "Creates detailed drawings and reconstructions of creatures based on fossil evidence, research notes, or face to face contact; helping to bring the past to life for the wider community."
+          ]
+        },
+        {
+          "name": "Paleontological Technician",
+          "paragraphs": [
+            "Provides technical support for the laboratory and field research teams, ensuring that equipment is properly maintained and calibrated."
+          ]
+        },
+        {
+          "name": "Junior Scrivener",
+          "paragraphs": [
+            "Entry-level researchers who assist senior scriveners with their work, performing tasks such as fossil cleaning, sorting, resource gathering, and monster material collecting.",
+            "Figures of Interest"
+          ]
+        },
+        {
+          "name": "John Arthur",
+          "paragraphs": [
+            "Original Director of Paleontology, Unknown Class John Arthur, a renowned hunter, and the original leader of the Royal Paleontology Scriveners, was widely respected for his expertise in the study of Monster Hunter's diverse array of species. He was particularly noted for his innovative creation of the Ecological Tree Plot and his fearless fieldwork in some of the world's most perilous ecosystems. However, while conducting research in the Great Forest, John Arthur mysteriously vanished, leaving behind only a single page from his notebook, which read: \"There are many species yet to be",
+            "discovered in the world.\" Intriguingly, a torn book on Elder Dragons, attributed to John Arthur, was later discovered in the Volcano, leading some to speculate that he may still be alive and exploring the unknown corners of the world."
+          ]
+        },
+        {
+          "name": "Gustave Ron",
+          "paragraphs": [
+            "Director of Paleontology, Humanoid Wizard Gustave Ron has taken up the mantle of leadership within the Royal Paleontology Scriveners, but unlike his predecessor John Arthur, Gustave has a particular interest in Monster Hunter's historical elements and has been known to keep information about monsters concealed in the shadows. However, many members of the Scriveners still hold fast to John Arthur's original vision, and they continue to follow his examples rather than Gustave Ron's divergent approach."
+          ]
+        },
+        {
+          "name": "Darren Dino",
+          "paragraphs": [
+            "Head of Field Research, Humanoid Ranger Within the Royal Paleontology Scriveners, Darren Dino is renowned for his expertise in the study of Elder Dragons, drawing many comparisons to the legendary John Arthur. As a seasoned researcher, Darren has penned many reports detailing the habits and behaviors of Elder Dragons, including infamous species such as Teostra, Kushala Daora, and Yama Tsukami. He has also dedicated much of his research to uncovering the myths and legends that surround the enigmatic Fatalis, further cementing his status as a leading figure in the field."
+          ]
+        },
+        {
+          "name": "Sir Beynes",
+          "paragraphs": [
+            "Paleontological Illustrator, Human Paladin A knight of the Royal Paleontology Scriveners, Sir Beynes is renowned for his exceptional skill in creating accurate paintings of monsters, often producing astonishingly precise depictions based solely on lore and documents. His most celebrated works feature the formidable Rajang and the massive Lao-Shan Lung.",
+            "Scrivener Characters Alignment: Usually neutral Suggested Races: Any Suggested Classes: Any",
+            "Consider the Scrivener's for your character if one or more of the following sentences ring true:",
+            "You seek unique opportunities for research and discovery. You want to contribute to the knowledge and understanding of the world's many species, including those that are still undiscovered. You want access to advanced information on monsters."
+          ]
+        },
+        {
+          "name": "Joining the Royal Scriveners",
+          "paragraphs": [
+            "There are several paths that might lead someone to join the Royal Paleontology Scriveners in Monster Hunter. One possibility is a background in academic research or a fascination with monster ecology and behavior. Another path could be through a desire to hunt and study rare or powerful monsters, and to share that knowledge with others. Alternatively, someone might join the Scriveners after experiencing a profound encounter with a particular monster, which sparked their curiosity and led them to pursue a",
+            "deeper understanding of its biology and habits.",
+            "Royal Scrivener Spells Prerequisite: Spellcasting or Pact Magic class feature",
+            "For you, the spells on the Royal Scrivener Spells table are added to the spell list of your spellcasting class. (If you are a multiclass character with multiple spell lists, these spells are added to all of them.)",
+            "Royal Scrivener Spells Spell Level Spells Cantrip guidance, mending 1st purify food and drink, heroism 2nd animal messenger, enhance ability 3rd speak with dead, water walk 4th freedom of movement, fabricate Sth commune with nature, modify memory"
+          ]
+        },
+        {
+          "name": "Scrivener Backgrounds",
+          "paragraphs": [
+            "You are part of a group of scholars who study monsters and their behaviors. You work for the royal family and are responsible for maintaining the Monster Hunter Archives, a collection of information about various monsters.",
+            "No matter the background you pick, each member of the Royal Paleontology Scriveners has the same background guild feature in addition to their normal background feature."
+          ]
+        },
+        {
+          "name": "Feature: Specialty",
+          "paragraphs": [
+            "To determine which category of monsters you are most knowledgeable about, roll a d10 or choose from the options in the table below."
+          ],
+          "table": {
+            "colLabels": [
+              "d10",
+              "Monster Category"
+            ],
+            "rows": [
+              [
+                "1",
+                "Amphibians & Carapaceon"
+              ],
+              [
+                "2",
+                "Lynians & Herbivores"
+              ],
+              [
+                "3",
+                "Bird Wyverns & Fanged Beasts"
+              ],
+              [
+                "4",
+                "Leviathans & Piscine Wyverns"
+              ],
+              [
+                "5",
+                "Flying Wyverns"
+              ],
+              [
+                "6",
+                "Elder Dragons"
+              ],
+              [
+                "7",
+                "Snake Wyverns, Temnoceran, & Unknown"
+              ],
+              [
+                "8",
+                "Neopterons & Theropods"
+              ],
+              [
+                "9",
+                "Brute Wyverns & Fanged Wyverns"
+              ],
+              [
+                "10",
+                "Reroll"
+              ]
+            ]
+          }
+        },
+        {
+          "name": "Guild Feature: Scrivener Researcher",
+          "paragraphs": [
+            "When you attempt to learn or recall a piece of information about a creature mentioned by someone or that you have encountered, if you do not know that information, you often know where and from whom you can obtain it. Usually, this information comes from the hunter's guild, dragon observation team, wycademy, or a scrivener or other learned",
+            "person or creature. Your DM might rule that the knowledge you seek is secreted away in an almost inaccessible place, or that it simply cannot be found. Unearthing the deepest secrets of reclusive or unknown monsters of the world can require an adventure or even a whole campaign."
+          ]
+        },
+        {
+          "name": "Scrivener",
+          "paragraphs": [
+            "You have dedicated years to mastering the lore of monsters from the ancient civilization to the present. Your tireless efforts have led you to scour countless manuscripts, study ancient scrolls, and learn from the greatest experts in your field. Through your rigorous studies, you have become a true master of monster behavior and hunting techniques.",
+            "{@background Scrivener|AGMH}"
+          ]
+        },
+        {
+          "name": "Feature: Investigation",
+          "paragraphs": [
+            "Expanding the knowledge of your research is an important aspect of your job at the Royal Paleontology Scriveners. When you discover new information about a creature related to your specialty, you can bring that information to a Royal Paleontology Scriveners owned location to receive a stipend. Discuss with your DM what that amount is and if you can make more depending on what you discover or as you level up.",
+            "How do I Fit In? As a member of the Royal Paleontology Scriveners in the Monster Hunter world, you would be a valuable asset to any hunting party due to your extensive knowledge of monster behavior and weaknesses. Your role would be to provide insight and guidance to the hunters, using your expertise to help them develop effective strategies for taking down their quarry.",
+            "During a hunt, you would likely stay at a safe distance from the monsters (though this is not always the case), observing their behavior and taking notes on their strengths and weaknesses. You might use your knowledge to help the hunters identify weak points on the monster's body or develop tactics for avoiding dangerous attacks.",
+            "Outside of combat, you would be responsible for analyzing the data collected during hunts and updating the Royal Paleontology Scriveners' database on monster behavior. This information would be invaluable to future hunting parties and could help improve the efficiency and success of future hunts.",
+            "Overall, your role as a member of the Royal Paleontology Scriveners would be to support and augment the abilities of the hunters, helping them to succeed in their dangerous and challenging work."
+          ]
+        },
+        {
+          "name": "A Scrivener Party",
+          "paragraphs": [
+            "The Royal Paleontology Scriveners are also well-known to travel in groups and work in the natural habitats of monsters to study their ecosystem or discover new species. In these groups, they are protected from monsters by their own personal guards. However, sometimes the guards are not enough to protect the researchers from monsters, so the Hunter's Guild is known to request some hunters to accompany them for extra protection."
+          ]
+        },
+        {
+          "name": "Rank and Renown",
+          "paragraphs": [
+            "A member of the Royal Scriveners gains renown typically when they make a new discovery, be it an unknown species, information about a known species, information about the ancient civilization, or some new use for a resource, etc. By gaining renown as a member of the Royal Scriveners, your course of advancement leads to increased responsibility. Promotion through the ranks requires the approval of the Head Scrivener. Advancement is a reward for services rendered to the Royal Scriveners, rather than an automatic consequence of increased renown.",
+            "Rank 1: Junior Scrivener Prerequisite: Renown 3 or higher in the Royal Scriveners",
+            "As a junior scrivener within the Royal Paleontology Scriveners, you would be responsible for learning the basics of the organization's field of study. You might spend time studying the anatomy of different monsters, learning about the history and lore of ancient monsters, and familiarizing yourself with the various tools and techniques used by the organization.",
+            "While completing a task that requires you to stay away from home for a week or longer, your senior researcher may provide you with a modest living wage until you return.",
+            "Rank 2: Journeyman Scrivener Prerequisite: Rank 1 and renown 10 or higher in the Royal Scriveners",
+            "After completing your basic training as a junior scrivener, you have gained a solid understanding of the organization's field of study. Thus, you are expected to take on more responsibilities within the organization. As a journeyman, you work and study under a senior scrivener, assisting in fieldwork and research projects, including excavating and analyzing monster fossils. In addition to collaborating with other members of the organization on larger research projects and serving as a liaison between the organization and other groups, such as guilds or research institutions.",
+            "If your research requires it, your senior researcher or chief researcher may assign a junior scrivener to assist you in advancing the project before you undertake a mission or an experiment. In addition, you are provided a salary that provides a modest lifestyle.",
+            "Rank 3: Senior Scrivener Prerequisite: Rank 2 and renown 25 or higher in the Royal Scriveners",
+            "As a proven researcher, you are a highly respected member of the organization, having demonstrated significant knowledge and expertise in the field. You are considered a leader and mentor to other members of the organization, and would be responsible for research projects and initiatives, including organizing fieldwork and laboratory research. The Head Scrivener of your institution gives you access to some classified documents, and you have a staff of 3d12 journeyman scriveners (which use the stat blocks of commoners from the Monster Manual). You can have this staff work on projects for you, which can include downtime actions.",
+            "With your vast array of knowledge of monsters. You can pick two additional monster categories from the Specialty feature, and you gain a +2 bonus to Intelligence (History) and Wisdom (Nature) checks related to the monster.",
+            "Rank 4: Head of Field Research Prerequisite: Rank 2 and renown 50 or higher in the Royal Scriveners",
+            "As a famous researcher or a successful project leader, you stand ready to take on a supervisory role for an entire institution. New Royal Scrivener locations are rarely built, so you must wait for the previous head of field research to retire before a position exists for you to fill, except in truly exceptional circumstances.",
+            "As the Head of Field Research within the Royal Paleontology Scriveners, you would be responsible for overseeing all the organization's fieldwork initiatives. With your extensive experience in conducting field research and managing teams of scriveners, you would be a senior member of the organization, respected and relied upon by your colleagues.",
+            "You would be the driving force behind planning and organizing field expeditions to collect data and samples for analysis, and would develop protocols and procedures for conducting fieldwork that all scriveners would be trained",
+            "in. Your expertise in analyzing data and interpreting results would be invaluable to the organization's research initiatives.",
+            "As a leader within the organization, you can call upon a team of 5d12 scriveners and support staff, to assist with maintaining relationships with local communities and authorities to ensure that fieldwork is conducted ethically and with respect for local customs and traditions.",
+            "Head Scrivener (Special Role) Prerequisite: Renown 50 or higher in the Royal Scriveners",
+            "You are eligible to become the Head of the Royal Paleontology Scriveners. The selection of a new Director (in the event of an existing Head's retiring, dying, or otherwise leaving the position) with the His Immenseness choosing the new Head. If you emerge as the victor, you will hold the highest rank within the organization and be responsible for overseeing all aspects of its operations. You would provide strategic leadership and direction to the organization and work closely with other senior members to develop and implement research initiatives.",
+            "Your extensive knowledge and experience in paleontology would be invaluable in guiding the organization's research priorities and ensuring that all research conducted by the organization is of the highest quality. You would be responsible for developing and maintaining relationships with other organizations and individuals in the field and for representing the organization at academic conferences and other events.",
+            "As the Head Scrivener, you would be a respected and influential member of the Monster Hunter world's scientific community, with the ability to shape the direction of the field of paleontology and contribute to the understanding of the world's ancient creatures.",
+            "\"I left the Red Talon Society because I found their methods too destructive for both hunting and artifact collecting. But don't be fooled by their facade. They hide behind the word 'poacher' to make themselves seem disorganized, but their strength can rival the Guilds. If left unchecked the resulting clash would leave a permanent mark on the land.\"",
+            "-Former Talon Member Heavy"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "talon-society",
+      "name": "The Talon Society",
+      "page": 38,
+      "paragraphs": [
+        "The Talon Society is a secretive organization of poachers known to specialize in hunting rare and exotic creatures. They operate in the shadows, avoiding the authorities and conducting their illegal activities under the cover of darkness. They are motivated by profit and are willing to go to great lengths to secure valuable trophies, which can fetch high prices on the black market. They are skilled hunters and trackers, often employing traps and other means to capture their prey alive. The Talon members are notorious for their disregard of wildlife conservation and have been known to cause considerable damage to the ecosystem. Despite the risks involved in their line of work, membership in the society is highly sought after, as it offers lucrative rewards and the chance to become one of the most successful poachers in the land."
+      ],
+      "subsections": [
+        {
+          "name": "Role of the Talon Society",
+          "paragraphs": [
+            "The Talon Society's main goal is to capture rare and exotic creatures for profit. They are known for their expertise in tracking and capturing these creatures and have been hired by wealthy collectors and traders from all over the world. The society is also responsible for collecting and selling rare materials from the creatures they capture, such as scales, fur, and horns.",
+            "To capture these rare creatures, the Talon Society uses a variety of techniques and equipment, including traps, poisons, and specialized weapons. They are constantly innovating and experimenting with new methods to increase their success rate."
+          ]
+        },
+        {
+          "name": "Poachers of the Talon Society",
+          "paragraphs": [
+            "The Talon Society is a group of skilled poachers who specialize in hunting and capturing rare and valuable",
+            "monsters. They are known to infiltrate the Hunters Guild and gather information on rare creatures to pass along to the Talon Society. They seek to steal knowledge from the Hunters Guild by theft or by accessing sites of ancient technology.",
+            "Using this knowledge, they develop their own tools and magics to make their job easier. The Talon Society believes that they have the right to hunt and capture any monster they desire, regardless of the laws and regulations of the land. Their ultimate goal is to accumulate as much wealth and power as possible by exploiting the resources provided by these creatures.",
+            "Hierarchy of the Talon Society"
+          ]
+        },
+        {
+          "name": "Raxis the Everliving",
+          "paragraphs": [
+            "Raxis is the leader of the Talon Society and is considered to be the best poacher in the group. However, Raxis is not just any ordinary poacher. He is a lich and champion of the Lord of Bones, and his true goal is to punish those who do not fear and respect death. Many members of the hunter's guild do not respect death, taking jobs to gather rare scales or kill monsters for trivial reasons, such as killing a monster because it will not move out of their way. Raxis believes they all need to learn the value of life and death, and he is willing to do whatever it takes to teach them. His appearance is similar to the avatar of the Lord of Bones, with a skeletal figure hidden in flowing black robes. He speaks in a high whisper, conveying no emotion."
+          ]
+        },
+        {
+          "name": "Talon Knights",
+          "paragraphs": [
+            "Talon Knights are the elite hunters of the Talon Society and are hand-picked by Raxis for their exceptional skills. They are trained in various techniques to capture and subdue their prey, including magic and conventional traps, poison, and other trade tools. Talon Knights are responsible for training new recruits and maintaining the society's equipment. They are also tasked with carrying out Raxis's orders, which can sometimes be extreme. They are some of the only members of the Talon Society that are aware that Raxis is a lich."
+          ]
+        },
+        {
+          "name": "Talon Members",
+          "paragraphs": [
+            "Talon Members are experienced poachers who have proven their worth to Raxis and have been granted full membership into the society. They are responsible for carrying out missions and assisting the Talon Knights in their duties. Talon Members are also responsible for reporting any valuable information they obtain from their poaching activities to the talon knights, who use this knowledge to further Raxis and their own goals."
+          ]
+        },
+        {
+          "name": "Talon Recruits",
+          "paragraphs": [
+            "Talon Recruits are new members of the society who are still learning the ropes. Often, these recruits join up due to the rumors of the spoils and riches they might receive as a member of the Talon Society. They are tasked with assisting the Talon Knights on missions and are trained in basic poaching techniques. Recruits must prove themselves before they can be promoted to Talon Knight or Talon Member status.",
+            "Figures of Interest"
+          ]
+        },
+        {
+          "name": "Patton the Silent",
+          "paragraphs": [
+            "Talon Knight, Human Rogue Patton the Silent is known for his cunning and sly demeanor. He often wears a sly grin on his face, exuding confidence, and arrogance. He has a quick wit and a sharp tongue, always ready with a quip or a cutting remark. Despite his tendency towards mischief and deception, Patton is fiercely loyal to the Talon Society and will do whatever it takes to complete his missions and protect his fellow knights. His dual blades are feared for their ability to silence his enemies with a single strike. In combat, Patton is a whirlwind of motion, darting in and out of the shadows with ease. He is known for his cunning and his ability to turn any situation to his advantage."
+          ]
+        },
+        {
+          "name": "Elizabeth the Countess",
+          "paragraphs": [
+            "Talon Knight, High Elf Wizard Elizabeth is a powerful wizard with a penchant for blood magic. Once a beautiful high elf, Elizabeth has become twisted and corrupted by her obsession with dark magic. Her Pure White hair and Blood-filled eyes, coupled with her blood-stained robes and gloves, give her an almost vampire-like appearance. She is a master of arcane knowledge and uses her Glavenus Pyroshell in tandem with her magus staff to imbued with to boil her enemies' blood from within, burning them from the inside out. Her expertise in blood magic also enables her to manipulate the life force of her foes, drawing power from their suffering."
+          ]
+        },
+        {
+          "name": "Venra the Grave Whisperer",
+          "paragraphs": [
+            "Talon Knight, Halfling Cleric Venra is a cleric who worships the lord of bones. She is a quiet and tactical member of the Talon Knights, using her powers of divination to speak with the dead and gather information for Raxis. Venra is known for her ability to provide support to her allies, even bringing fallen comrades back from the brink of death. Her opal-colored hair and green eyes give her an otherworldly appearance, hinting at the power she wields."
+          ]
+        },
+        {
+          "name": "The Collector",
+          "paragraphs": [
+            "Business Proprietor, Unknown While not an official member of the Talon Society, the Collector is a wealthy trader who hires the Talon Society to capture rare creatures for his collection. He pays generously for each successful capture and is willing to go to great lengths to acquire the creatures he desires."
+          ]
+        },
+        {
+          "name": "The Poisonsmith",
+          "paragraphs": [
+            "Talon Member, Unknown The Poisonsmith is a mysterious figure who supplies the Talon Society with a variety of deadly poisons. He is known for his expertise in creating poisons that are deadly to specific types of creatures, making him a valuable asset to the society."
+          ]
+        },
+        {
+          "name": "The Trapper",
+          "paragraphs": [
+            "Talon Member, Unknown The Trapper, was once a member of the Wycademy or Royal Scriveners that was known for their expertise in capturing and training monsters. They have also gained a reputation as a skilled archaeologist, spending years studying ancient ruins and artifacts to uncover lost",
+            "knowledge and techniques for monster capture. The Trapper's mastery of both magical and conventional traps is matched by their deep understanding of monster behavior and psychology, allowing them to train and control even the most fearsome beasts. Their extensive knowledge of ancient civilizations has also made them a valuable asset to the Talon Society, providing insights into historical methods of controlling monsters.",
+            "Talon Society Characters Alignment: Usually chaotic neutral or evil Suggested Races: Any Suggested Classes: Fighter, Monk, Ranger, Rogue",
+            "Consider the Talon Society for your character if one or more of the following sentences ring true:",
+            "You enjoy hunting monsters and collecting their valuable parts. You are fascinated by ancient technologies and artifacts. You enjoy spying and gathering information from other organizations."
+          ]
+        },
+        {
+          "name": "Joining the Talon Society",
+          "paragraphs": [
+            "The Talon Society is a group of poachers and hunters seeking to hunt monsters for valuable materials and to gather knowledge about rare creatures for profit. When you join the Talon Society, choose one of the following roles for your character."
+          ]
+        },
+        {
+          "name": "Artifact Hunter",
+          "paragraphs": [
+            "As an Artifact Hunter, you seek out ancient technologies and artifacts to uncover their secrets. You may spend your time studying ancient ruins or infiltrating the Hunters Guild to gather information on secret locations."
+          ]
+        },
+        {
+          "name": "Poacher",
+          "paragraphs": [
+            "As a Poacher, you specialize in hunting and collecting valuable parts of monsters. You see the Talon Society as the ultimate destination for your talents, a place where you can put your abilities to use for maximum profit. You join the society not only for the resources and training it provides, but also for the prestige of being associated with such a notorious and elite group of poachers.",
+            "{@background Poacher|AGMH}"
+          ]
+        },
+        {
+          "name": "Information Broker",
+          "paragraphs": [
+            "As an Information Broker, your job is to gather and provide valuable information to the Talon Society. This information could include the location of valuable resources, potential targets for poaching, or information on the society's rivals. Your connections and ability to gather this information will be highly valued within the society and could earn you special privileges and rewards.",
+            "Talon Society Spells Prerequisite: Spellcasting or Pact Magic class feature",
+            "For you, the spells on the Talon Society Spells table are added to the spell list of your spellcasting class. (If you are a multiclass character with multiple spell lists, these spells are added to all of them.)",
+            "Talon Society Spells Spell Level Spells Cantrip mage hand, minor illusion 1st detect magic, longstrider 2nd pass without trace, locate object 3rd nondetection, speak with dead 4th divination, arcane eye Sth mislead, modify memory"
+          ]
+        },
+        {
+          "name": "Talon Society Backgrounds",
+          "paragraphs": [
+            "As your training with the Talon Society ends and your adventuring career begins, you must decide where your ambitions lie within the society. In this section, you will find several backgrounds based on the many employment opportunities a Talon Society member can pursue as they advance in rank.",
+            "No matter which background you choose, each member of the Talon Society has the same background feature: a deep knowledge and understanding of poaching, tracking, and hunting monsters for valuable materials and resources."
+          ]
+        },
+        {
+          "name": "Guild Feature: Talon Network",
+          "paragraphs": [
+            "You have connections to the Talon Society's vast network of poachers, scouts, and other operatives. You can call upon these contacts to gain information about monsters, track down rare resources, or arrange transportation to remote locations."
+          ]
+        },
+        {
+          "name": "Poacher",
+          "paragraphs": [
+            "As a member of the Talon Society, you have honed your skills in the art of poaching and hunting rare and exotic creatures for valuable materials and resources. Whether you were born into this secretive organization or joined its ranks later in life, you have dedicated yourself to the pursuit of dangerous prey and the thrill of the hunt.",
+            "{@background Poacher|AGMH}"
+          ]
+        },
+        {
+          "name": "Feature: Black Market Connections",
+          "paragraphs": [
+            "You have a network of contacts within the criminal underworld who can help you sell your poached goods. You can sell animal parts for 50% more than their normal market value, but only if you can find a willing buyer."
+          ]
+        },
+        {
+          "name": "Infiltrator",
+          "paragraphs": [
+            "You were trained to infiltrate the Hunter's Guild and gather information on rare and valuable creatures to pass along to the Talon Society. Your goal is to steal knowledge and secrets from the guild by any means necessary, including theft or breaking into sites of ancient technology.",
+            "{@background Infiltrator|AGMH}"
+          ]
+        },
+        {
+          "name": "Feature: False Identity",
+          "paragraphs": [
+            "As a poacher, you have developed skills in hiding your identity and blending in with your surroundings. You have a false identity and the necessary paperwork to back it up, allowing you to move about undetected in certain areas.",
+            "How do I Fit In? As a member of the Talon Society, your primary goal is to hunt creatures for profit while avoiding detection from the authorities. Due to this, you are expected to keep your hunting activities hidden and operate within the shadows. You may also be tasked with stealing rare creatures from protected areas and delivering them to wealthy clients.",
+            "As a member of the Talon Society, you will spend time between hunts, gathering information about your targets, such as their location and weaknesses, and on forging connections with wealthy clients who are interested in purchasing rare creatures. You may also need to invest in equipment and weapons that can aid in your hunting and poaching activities.",
+            "Self-preservation is also an important part of your mission. Anything you can do to protect yourself from authorities or other rival poaching groups - whether it's learning new survival skills or developing connections with influential people - makes you a more efficient poacher and increases your chances of success."
+          ]
+        },
+        {
+          "name": "A Talon Society Party",
+          "paragraphs": [
+            "Unless you are playing a chaotic or evil campaign an adventuring party will almost never consist of all talon society members. Instead, you might have one talon member that infiltrated a hunting group. On the off chance it is a full party of talon society members, one of those members may be infiltrating the talon society and working for the Hunter's Guild."
+          ]
+        },
+        {
+          "name": "Rank and Renown",
+          "paragraphs": [
+            "In the Talon Society, members can gain rank and renown through various means, but one of the most significant ways is by bringing in valuable prey through poaching. Successfully capturing and delivering rare and exotic creatures can earn a member prestige and recognition within the society, leading to promotions and higher ranks.",
+            "Members can also gain rank and renown by completing missions assigned by the society, as well as by demonstrating their skills and loyalty through service to the society. Those who show exceptional cunning and resourcefulness in the field, whether through poaching or other means, can rise through the ranks quickly and earn the respect of their peers.",
+            "However, it's important to note that poaching without the approval of the society is strictly forbidden and can result in severe consequences such as expulsion from the society or even death. The Talon Society values secrecy and discretion, and members must be careful to only target creatures that have been designated as acceptable prey by the society's leadership.",
+            "Rank 1: Talon Recruit Prerequisite: Renown 10 or higher in the Talon Society",
+            "As someone starting out in the Talon Society, you would begin as a Talon recruit. Your main role would involve learning the fundamentals of poaching and hunting, as well as becoming knowledgeable about the different types of creatures that the society targets. Your duties may include scouting and gathering information on potential hunting grounds, identifying valuable targets, and supporting higher-ranked members of the society on their hunts.",
+            "As a Talon recruit, you may also be expected to assist with other tasks such as maintaining equipment, caring for captured creatures, and helping with the transportation of goods and materials. The goal for a Talon recruit is to prove your worth and rise through the ranks of the society to gain more prestige and renown within the organization.",
+            "At this rank, you are provided with an income to satisfy a modest lifestyle... so long as your last mission was a success.",
+            "Rank 2: Talon Member Prerequisite: Rank 1 and renown 25 or higher in the Talon Society",
+            "As someone who is part of the Talon Society, your primary responsibility as a talon member would be to carry out tasks related to poaching and trafficking exotic creatures. This could include identifying valuable targets, tracking, and capturing them, and ensuring their safe transportation to buyers. You might also be tasked with training and",
+            "overseeing new recruits, ensuring that they follow the Society's values and code.",
+            "Since the Talon Society operates in secrecy, it's important for members to avoid detection by authorities and other rival factions. To do this, you might need to cultivate a network of contacts and informants and utilize covert methods to stay hidden.",
+            "When you reach the rank of member, you are provided with a monster hunter weapon of your choice. This weapon can be either uncommon or rare. When going on missions that require you to stay away from home for a week or longer, the talon knight you serve under may provide you with locations of safehouses and hidden caches for storing or obtaining poaching equipment.",
+            "Talon Knight (Special Role) Prerequisite: Rank 2 and renown 40 or higher in the Talon Society",
+            "To become a Talon Knight, you must first become a highly respected and skilled member of the Talon Society. This requires years of dedicated service, exceptional hunting and poaching skills, and a deep understanding of the Society's values and code.",
+            "Once you have achieved a prominent level of renown and respect within the Society, you may be considered for the position of Talon Knight. However, it is important to note that there can only ever be five Talon Knights at any given time, and they are not replaced until they die. This means that the position is highly coveted and exceedingly difficult to attain.",
+            "To increase your chances of being considered for the position, it's essential to maintain a close relationship with the current Talon Knights, as they are the ones who ultimately choose who will take their place. It's also important to show a willingness to carry out the will of Raxis, even if it means deviating from the Society's normal tasks.",
+            "Overall, becoming a Talon Knight is a long and complicated process that requires unwavering dedication and exceptional skills. But for those who can achieve this esteemed position, it is a great honor and a mark of true mastery in the art of poaching and hunting.",
+            "In this role, you are advised and in regular communication with Raxis, who places you in charge of a major territory and all talon members residing within. You might be tasked with obtaining rare or valuable specimens, sabotaging, or disrupting the activities of rival factions, to gather information on their plans and operations, eliminating individuals or groups that pose a threat to the Talon Society, or special assignments that are particularly challenging or sensitive missions that require your unique talents and expertise.",
+            "You continue to draw a salary sufficient to maintain a comfortable lifestyle.",
+            "\"The Wycademy is a wonderful foundation in any person's pursuit of knowledge. The staff are willing. The facilities, proven. The buffet, full. I, myself, have branched off into study of the ancient civilization. For whom are we, who do not know our past? Our present? For our future is built upon both and I hope that the Wycademy can be your beginning.\"",
+            "-Wycademy Field Researcher Al'Set Alokin"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "wycademy",
+      "name": "The Wycademy",
+      "page": 42,
+      "paragraphs": [
+        "Long ago, the village of Bherna was visited by the Royal Scribes of Paleontology. During the visit, it was discovered the limestone formations around the village contained quantities of fossils of monsters and plants extinct today. From the Royal Paleontology Scriveners investigation and report, the scribes dispatched a small group to set up camp. Over the years scholars focused on laboratory work, leaving field work to hunters, and giving rise to the Wycademy."
+      ],
+      "subsections": [
+        {
+          "name": "Role of the Wycademy",
+          "paragraphs": [
+            "Originally, the Wycademy was tasked with solving mysteries within the village though that has changed over time. Now the Wycademy is tasked with carrying out research in newly discovered areas in order to clearly define its ecosystem, its geography as well as its fauna and flora. This information is essential so that other groups such as the Hunter's Guild and other corporations like the Elder Dragon Observation Team can work there or establish a small village safe from danger.",
+            "To more easily carry out their research on an area, the Wycademy uses airships for aerial surveillance as well as to quickly drop hunters into the area.",
+            "Being a Guild organization, it is also in charge of managing and assigning missions to the hunters who come to this region, which helps the organization to obtain information about the new monsters.",
+            "More secretly, the Wycademia conducts an exhaustive study of the strange variants of the monsters that have appeared all over the world, called Deviants. Since truly little information is known about them and they are extremely dangerous, they can only be hunted by experienced hunters."
+          ]
+        },
+        {
+          "name": "Hunters of the Wycademy",
+          "paragraphs": [
+            "In order to facilitate the research of scientists in the field, the Wycademy sends specialized hunters to scout various regions and discover info about known species of monsters. If necessary, the hunters repel or kill the monsters present in the area. They are also sent on urgent missions when it is a question of studying an unidentified species without having for as much needing to kill it; these hunters therefore have, in addition to their hunting talent, a great scientific knowledge.",
+            "Hierarchy of the Wycademy"
+          ]
+        },
+        {
+          "name": "Wycademy Director",
+          "paragraphs": [
+            "Directors are the leaders of their research facility. The director holds the same rank as a guild manager (many times acting as the guild manager as well), answering only to the guild masters who manage the territory they are in. Beyond bureaucratic work, an academy director is responsible for managing academy teachers, researchers, and hunters. The director recruits for replacements when there are positions open. Directors establish performance goals for wycademy personnel, evaluate their performances and coach them throughout the year to help each employee to perform at his best."
+          ]
+        },
+        {
+          "name": "Chief Researcher",
+          "paragraphs": [
+            "A chief researcher knows more than other researchers within their facility. The knowledge they do have is shared freely, including with hunters, unless deemed forbidden by the director. The chief, however, does not know about some species due to the Wycademy council's limited jurisdiction. From this, they are known to ask visitors, or other researchers not from their area, about monsters from faraway lands to perform further studies for the Wycademy."
+          ]
+        },
+        {
+          "name": "Researcher",
+          "paragraphs": [
+            "Researchers have all different types of specializations. Some choose to spend their lives inside the wycademy, continuing research of old, or performing experiments on resources and creatures brought to them by hunters. Other researchers choose to wander into the world, discovering lost ruins, discovering unknown species, or perhaps gathering new knowledge on known species. These field researchers are known to be handlers for hunter groups, or hunters themselves."
+          ]
+        },
+        {
+          "name": "Student",
+          "paragraphs": [
+            "Wycademy students varied in age. Some started their educational journey during childhood, while others who aspired to be hunters arrived at the wycademy after passing the initial hunter exams.",
+            "Figures of Interest"
+          ]
+        },
+        {
+          "name": "Bherna Guild Manager",
+          "paragraphs": [
+            "Director, Wyverian Sorcerer The Guild Manager is a kind-hearted woman that will sometimes talk in a strange way. She is the director of the Wycademy and serves as the Guild Manager of Bherna. The Guild Manager is known to constantly read and decipher ancient books to better understand certain locations, while also identifying new",
+            "species yet to be discovered. Though some lives will be lost in these investigations, it is for the greater good."
+          ]
+        },
+        {
+          "name": "Bherna Chief Researcher",
+          "paragraphs": [
+            "Chief Researcher, Wyverian Artificer Though he has a name, everyone just calls him Chief. He is a calm and collective individual with a friendly way of speaking. Like most chief researchers, he has some knowledge on a number of monsters that the Wycademy is aware of and shares the information he has freely."
+          ]
+        },
+        {
+          "name": "Hymel",
+          "paragraphs": [
+            "Field Researcher (Wyventurer), Wyverian Wizard Hymel is the youngest member to ever join the research corporation of the wycademy, he is known to have a stronger sense of responsibility and does his best to ensure any mission is completed as efficiently as possible. He helps perform further research on monsters and studies in different environments through varying investigations. Hymel is also one of the researchers who built the Soaratorium, even becoming the captain of that Airship."
+          ]
+        },
+        {
+          "name": "Luce",
+          "paragraphs": [
+            "Guild Receptionist/Wycademy Researcher, Human Monk Luce has a positive attitude and is highly respectful towards others that she meets. She is a young researcher at the Wycademy, that was immediately put on the Soaratorium the moment it was ready to lift off into the sky, acting as a guild receptionist aboard the airship."
+          ]
+        },
+        {
+          "name": "Ms. Meow-It-All",
+          "paragraphs": [
+            "Wycademy Research Assistant, Lynian Sorcerer Ms. Meow-it-All is a research assistant to Hymel that is known to be an extremely hard worker. She is an important member on the Soaratorium, acting as support for the laboratory on the Airship.",
+            "Wycademy Characters Alignment: Usually neutral Suggested Races: Any Suggested Classes: Spellcasters",
+            "Consider the Wycademy for your character if one or more of the following sentences ring true:",
+            "Prying into secrets and mysteries inspires your curiosity. You like playing artificers, sorcerer, or wizards. You want to make the world a better place through research."
+          ]
+        },
+        {
+          "name": "Joining the Wycademy",
+          "paragraphs": [
+            "Many paths lead people to the Wycademy, all of them guided by the notion that tomorrow can be made better than today. All of the Wycademy's efforts strive to achieve a safer future that they believe is within reach. When you join the Wycademy, choose one of the following roles for your character."
+          ]
+        },
+        {
+          "name": "Ancient Civilization Researcher",
+          "paragraphs": [
+            "The Ancient Civilization was a once thriving civilization that mysteriously went extinct some centuries ago. You seek to",
+            "learn the secrets that were lost when this advanced civilization fell. These researchers may spend their time deciphering scrolls in the depths of the Wycademy or travel the world seeking these ruins. Thanks to these researchers' weapons with multiple modes and several types of ammunition for the bowguns have been discovered."
+          ]
+        },
+        {
+          "name": "Endemic Researcher",
+          "paragraphs": [
+            "You choose to study endemic life. This refers broadly to all small lifeforms that inhabit an area. Some endemic life can be used to provide long lasting benefits to hunters on a hunt, or temporary effects that may help or hinder a creature that interacts with them. Your goal is to study these creatures, classifying new endemic life once you determine their effects as one of the following: Hunting Helpers, Ensnaring Life, Craft Creatures, Rare Creatures, Other."
+          ]
+        },
+        {
+          "name": "Resource Researcher",
+          "paragraphs": [
+            "You choose to research into the natural materials the world provides, attempting to locate unknown resources or ways to make use of known materials (such as earth crystals, thunderbugs, popfish) in different ways. Those who focus on minerals are known as geologists; those who study plants are known as botanists; insects are known as entomologists; fish, ichthyologist; mushrooms, mycologist. If you don't specialize in one type of resource, you are known as a naturalist."
+          ]
+        },
+        {
+          "name": "Monster Researcher",
+          "paragraphs": [
+            "Monster researchers are split into two distinct types. The zoologist studies known creatures by observing various species in their habitats, zoologists understand how animals behave in the wild. Their goal is to identify and monitor how different species interact within their ecosystem. This is particularly important as many species continue to transform various habitats.",
+            "A researcher who searches for and studies unknown, legendary, or extinct animals whose present existence is disputed or unsubstantiated is known as a cryptozoologist. These researchers spend their time in the field almost exclusively seeking rumors of unknown creatures or traveling to some of the most dangerous areas in the world to find what lives there.",
+            "Wycademy Spells Prerequisite: Spellcasting or Pact Magic class feature",
+            "For you, the spells on the Wycademy Spells table are added to the spell list of your spellcasting class. (If you are a multiclass character with multiple spell lists, these spells are added to all of them.)",
+            "Wycademy Spells Spell Level Spells Cantrip druidcraft, light 1st comprehend languages, expeditious retreat 2nd alter self, locate animals or plants 3rd water breathing, tongues 4th control water, leomund's secret chest Sth commune with nature, legend lore"
+          ]
+        },
+        {
+          "name": "Wycademy Backgrounds",
+          "paragraphs": [
+            "As your training comes to an end and your adventuring career begins, you must decide where your ambitions lie in your future with the Hunter's Guild. In this section you will find some backgrounds based on the many employment opportunities a hunter has as their Hunter Rank increases.",
+            "No matter the background you pick, each member of the Hunter's Guild has the same background guild feature in addition to their normal background feature."
+          ]
+        },
+        {
+          "name": "Guild Feature: Magic Gathering",
+          "paragraphs": [
+            "When you attempt to gather a resource, you can use the specified cantrip from the table below to automatically succeed on the gather check, but you do not gain the effects from materials that provide additional resources from gathering when you gather resources in this way."
+          ]
+        },
+        {
+          "name": "Wycademy Student",
+          "paragraphs": [
+            "As a child you were always curious about the world, whether it was exploring lost ruins near home, collecting bugs and plants, or drawing the khelbi that graze in the nearby fields. In your formative years you made your way to the wycademy with a goal in mind, to learn all you can and decide what you are going to do with the rest of your life. Now that your first year is over, it's time to head out into the field and learn firsthand.",
+            "{@background Wycademy Student|AGMH}"
+          ]
+        },
+        {
+          "name": "Feature: Unrestricted Access",
+          "paragraphs": [
+            "The Wycademy possess and maintain their own restricted system of libraries which often include extremely detailed knowledge of creatures and secrets of the surrounding area. You are allowed access to these restricted areas, as well as most other major libraries as a matter of scholarly courtesy. You are also allowed to lodge in many wycademy owned or sponsored schools or major sites of research as a student and pilgrim."
+          ]
+        },
+        {
+          "name": "Wycademy Researcher",
+          "paragraphs": [
+            "Having graduated from the wycademy, you chose to continue your studies dedicating your life to becoming an expert in your chosen field. Now you have struck out to increase your knowledge, for good or evil, for everyone or for yourself, that is up to you to decide.",
+            "{@background Wycademy Researcher|AGMH}"
+          ]
+        },
+        {
+          "name": "Feature: Research Group",
+          "paragraphs": [
+            "Your research search group is a loose network of wycademy graduates who each typically work in a different village that you share knowledge with. Their studies can help you with your hunts and investigations. You can select what you research from the Group Research table or roll randomly."
+          ],
+          "table": {
+            "colLabels": [
+              "d8",
+              "Research Type"
+            ],
+            "rows": [
+              [
+                "1",
+                "Endemic Life"
+              ],
+              [
+                "2",
+                "Lynians"
+              ],
+              [
+                "3",
+                "Botanical"
+              ],
+              [
+                "4",
+                "Mineralogical (Ore)"
+              ],
+              [
+                "5",
+                "Piscine (Fish)"
+              ],
+              [
+                "6",
+                "Archeologist"
+              ],
+              [
+                "7",
+                "Ancient Civilization"
+              ],
+              [
+                "8",
+                "Exotic Monsters from Far Off Lands"
+              ]
+            ]
+          }
+        },
+        {
+          "name": "Feature: Investigation",
+          "paragraphs": [
+            "Expanding the knowledge of your research is an important aspect of your job at the Wycademy. When you discover new information about a creature or resource related to your research, you can bring that information to a Wycademy owned location to receive a stipend. Discuss with your DM what that amount is and if you can make more depending on what you discover or as you level up.",
+            "How do I Fit In? As a member of the Wycademy, your primary goal is to carry out research in any area you are in order to clearly note changes its ecosystem, its geography as well as its fauna and flora. Due to this, you are expected to keep tabs on the monster populations in areas and report any strange events to the Wycademy and the Hunter's Guild.",
+            "As a member of the Wycademy, you will spend time between compiling your research during down time to send to the Wycademy and joining hunters on hunts, as one of the members of the party or possibly as a handler. Self-improvement is also an important part of your mission. Anything you can do to make yourself more capable- whether learning a new spell or discovering a new technology to use -",
+            "gives the Wycademy and hunters a more efficient way to hunt."
+          ]
+        },
+        {
+          "name": "A Wycademy Party",
+          "paragraphs": [
+            "An adventuring party is rarely ever made up of only Wycademy members. Typically, parties will have one or two Wycademy members with members of the Hunter's Guild filling the rest of the parties' roles."
+          ]
+        },
+        {
+          "name": "Rank and Renown",
+          "paragraphs": [
+            "A member of the Wycademy gains renown typically when they make a new discovery, be it an unknown species, information about a known species, information about the ancient civilization, or some new use for a resource, etc. By gaining renown as a member of the Wycademy, your course of advancement leads to increased responsibility. Promotion through the ranks requires the approval of the Wycademy Director. Advancement is a reward for services rendered to the Wycademy, rather than an automatic consequence of increased renown.",
+            "Rank 1: Junior Researcher Prerequisite: Renown 3 or higher in the Wycademy",
+            "As a junior researcher, you are responsible for evaluating and interpreting scientific results from laboratory investigations and experiments. Junior researchers assist the senior researchers in gathering information to support research studies and claims. You perform both laboratory and field trials to collect samples for further examinations. Such errands can bring you into contact with members of other guilds and lead to adventures.",
+            "While completing a task that requires you to stay away from home for a period of a week or longer, your senior researcher may provide you with a modest living wage until you return.",
+            "Rank 2: Researcher Prerequisite: Rank 1 and renown 10 or higher in the Wycademy",
+            "After doing your time as a junior researcher, you are eligible to lead your own experiments. You must be associated with a project and must work on experiments related to its primary focus under the general guidance of the senior researcher. Senior researchers are more hands-on, ensuring that your research contributes to reaching the immediate objective. Your chief researcher may check in from time to time, but they give you wide latitude to pursue your own experiments under the general aegis of the Wycademy's interests.",
+            "If your research requires it, your senior researcher or chief researcher can provide you with specific materials related to advancing the project before you undertake a mission or an experiment. In addition, you gain a +2 bonus to checks related to your role within the wycademy.",
+            "Rank 3: Senior Researcher Prerequisite: Rank 2 and renown 25 or higher in the Wycademy",
+            "A proven researcher, you are eligible to oversee your own project, directing the efforts of other researchers toward the solution of some problem facing the Wycademy or Hunter's Guild. The director of your institution gives you laboratory space, and you have a staff of 3d12 researchers (which use the stat blocks of commoners from the Monster Manual). You can have this staff work on projects for you, which can include downtime actions.",
+            "Hosting the work of a successful and important project reflects well on your director, so they keep a close eye on your work. On the positive side, you can count on access to the director's considerable resources if your research is going well. On the other hand, you can expect your director to expect constant updates (by way of the sending spell if you are in the field) to ensure that your efforts remain relevant to the overall goals of the Wycademy.",
+            "Rank 4: Chief Researcher Prerequisite: Rank 2 and renown 50 or higher in the Wycademy",
+            "As a famous researcher or a successful project leader, you stand ready to take on a supervisory role for an entire institution. New Wycademy locations are rarely built, so you must wait for your chief researcher to retire before a position exists for you to fill, except in truly exceptional circumstances. Like a project leader, you are responsible for directing the efforts of researchers exploring a wide variety of projects related to the focus of the Wycademy. Unless an experiment turns out to be especially interesting, these efforts can carry on without your supervision. If you need to, you can enlist the aid of 5d12 researchers (which use the stat blocks of commoners from the Monster Manual), and you can also request the support of Hunter's Guild members from the guild manager of any Hunter's Guild in a town where the members of your institution live and work.",
+            "Wycademy Director (Special Role) Prerequisite: Renown 50 or higher in the Wycademy",
+            "You are eligible to become the Director of a Wycademy institution. The selection of a new Director (in the event of an existing Speaker's retiring, dying, or otherwise leaving the position) takes place through a combination of popular election and the input of the other Wycademy Directors, with the His Immenseness having the final word. If you emerge as the victor after this rigorous process, you assume the leadership of your Wycademy and are empowered to bring its concerns before His Immenseness.",
+            "You are a political leader rather than a scientific one, so you have authority over other members of the combine only if they live and work in your area. If an institution has a laboratory in your area, you have the right (and responsibility) to supervise its activities to ensure compliance with laws and regulations, but not to interfere in its research beyond that point. And if the chief researcher lives in a different area, you have no authority whatsoever over that person."
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -47,6 +47,10 @@ scripts/*
 !scripts/validate-mh-tokens.mjs
 !scripts/build-mm-patreon-supplement.mjs
 !scripts/build-mm-patreon-catalog.mjs
+!scripts/build-gtmh-patreon-supplement.mjs
+!scripts/gtmh/
+!scripts/gtmh/*.mjs
+!scripts/gtmh/*.ts
 !scripts/data/
 !scripts/data/magic-item-pricing.csv
 

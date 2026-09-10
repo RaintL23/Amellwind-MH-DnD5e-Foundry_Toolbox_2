@@ -1,0 +1,204 @@
+{
+  "intro": "Desert travel vessels from Amellwind's Guide (Chapter 4). Stat block, blueprint notes, upgrades, and Ghosts of Saltmarsh combat/travel references.",
+  "page": 107,
+  "paragraphs": [
+    "Dragonships are fast-moving designs focused on travel across the desert. They are sometimes used for fending off large monsters that get too close to desert towns and cities.",
+    "A dragonship has the following features:"
+  ],
+  "subsections": [
+    {
+      "name": "Ceilings",
+      "paragraphs": [
+        "The ceilings in the lower deck, holds, and cabins are 8 feet high with 6-foot-high doorways."
+      ]
+    },
+    {
+      "name": "Doors",
+      "paragraphs": [
+        "The ship's doors are made of wood and have AC 15. 18 hit points. and immunity to poison and psychic damage. A lock can be picked with a successful DC 15 Dexterity check made using thieves' tools, or the door can be forced open with a successful DC 20 Strength (Athletics) check."
+      ]
+    },
+    {
+      "name": "Footlockers",
+      "paragraphs": [
+        "Footlockers on the ship are iron and have AC 19, 18 hit points, and immunity to poison and psychic damage."
+      ]
+    },
+    {
+      "name": "Light",
+      "paragraphs": [
+        "Hanging lanterns cast bright light throughout the ship."
+      ]
+    },
+    {
+      "name": "Rigging",
+      "paragraphs": [
+        "Rigging on the ship can be climbed without an ability check."
+      ]
+    },
+    {
+      "name": "Sails",
+      "paragraphs": [
+        "The ship has one 80-foot-tall mast with a sail to catch the wind."
+      ]
+    },
+    {
+      "name": "Example Crew",
+      "paragraphs": [
+        "A dragonship requires a large crew to properly sail the vessel. Warships carry extra soldiers to fight battles and fire the siege weapons. If the characters are guests on a dragonship, the crew consists of the following creatures. all of which have proficiency with water vehicles in addition to their normal statistics:",
+        "One captain (hobgoblin captain) Four other officers: a first mate, a bosun, a quartermaster, and a cook (nobles) Twenty sailors (commoners)",
+        "1. Main Deck The main deck of the ship has the following features:"
+      ]
+    },
+    {
+      "name": "Cannon",
+      "paragraphs": [
+        "Dragonships have two cannons, attached to the deck. Each weapon has 10 cannon balls stacked and secured near it."
+      ]
+    },
+    {
+      "name": "Hatch",
+      "paragraphs": [
+        "A covered, 10-foot by 5-foot rectangle opening leads to the lower deck."
+      ]
+    },
+    {
+      "name": "Sandskiffs",
+      "paragraphs": [
+        "Four sandskiffs are stacked on top of each other on this deck. Ropes and pulleys can hoist these desert vehicles in and out of the sand.",
+        "2. Officer's Quarters Four beds stand in the officer's quarters. Beneath each is an iron footlocker that holds the officer's belongings. The officers sleep in shifts so someone remains on duty to command the crew and carry out the captain's orders.",
+        "3. Captain's Quarters The captain's quarters hold a bed and a desk. Beneath the bed is an iron footlocker that holds the captain's belongings.",
+        "4. Supplies This area holds tools, barrels of tar. rope. extra material to repair sails. and other supplies needed to maintain the ship.",
+        "5. Forecastle The forecastle has the following features:"
+      ]
+    },
+    {
+      "name": "Ballista",
+      "paragraphs": [
+        "A ballista (DMG, ch. 8) is attached to the deck. Ten ballista arrows are stacked and secured nearby."
+      ]
+    },
+    {
+      "name": "Dragonator",
+      "paragraphs": [
+        "Dragonships have one dragonator, attached to the front of the ship. This dragonator can serve as the ship's naval ram."
+      ]
+    },
+    {
+      "name": "Figurehead",
+      "paragraphs": [
+        "Warships have an iron or bone figurehead at the front of their forecastle, often shaped to look like a fearsome sea predator."
+      ]
+    },
+    {
+      "name": "Railing",
+      "paragraphs": [
+        "The forecastle has a 3-foot-high rail around its perimeter that provides half cover for Medium creatures and three-quarters cover for Small creatures behind it.",
+        "6. Quarterdeck The quarterdeck has the following features:"
+      ]
+    },
+    {
+      "name": "Ballista",
+      "paragraphs": [
+        "On a warship, a ballista (DMG, ch. 8) is attached to the deck. Ten ballista arrows are stacked and secured nearby."
+      ]
+    },
+    {
+      "name": "Railing",
+      "paragraphs": [
+        "The quarterdeck has a 3·foot-high rail around its perimeter that provides half cover for Medium creatures and three-quarters cover for Small creatures behind it."
+      ]
+    },
+    {
+      "name": "Wheel",
+      "paragraphs": [
+        "The ship's wheel stands at the aft of the quarterdeck.",
+        "7. Privy Benches line the walls of this room. Four holes carved in them house chamber pots.",
+        "8. Medical Cabin Hooks and shelves on the walls hold medical instruments. bandages, balms, tonics, jars of leeches, and more, ready to treat injuries from combat or sailing mishaps.",
+        "9. Guest Cabin and Brig This cabin is meant for guests and visiting high-ranking officials along for the journey. Since warships often have a greater need to house prisoners rather than guests, each bed aboard such a vessel also has a set of manacles (see chapter 5 in the Player's Handbook) attached to its frame.",
+        "10. Hold This area houses both passengers and cargo. The ship's off-duty crew sleep on bedrolls among the crates and barrels of food, water, and other supplies.",
+        "11. Armory The ship's supply of weapons and armor is held in this cabin. Its walls are fitted with built-in weapon and armor racks on one side and shelves and rope on the walls of the other side of this cabin secure cannonballs and ballista arrows. The front of this cabin holds the machinery used to power the dragonator. The door to this cabin is usually locked, the key kept by one of the ship's officers.",
+        "Dragonship Gargantuan vehicle (90 ft. by 20 ft.)",
+        "Creature Capacity 30 crew. 20 passengers Cargo Capacity 100 tons Travel Pace 5 miles per hour (120 miles per day) STR DEX CON INT WIS CHA 20 (-5) 7 (-2) 17 (+3) 0 0 0 Damage Immunities poison, psychic Condition Immunities blinded, charmed, deafened, exhaustion, frightened, incapacitated, paralyzed, petrified, poisoned, prone, stunned, unconscious"
+      ]
+    },
+    {
+      "name": "Actions",
+      "paragraphs": [
+        "On its turn, the ship can take 3 actions, choosing from the options below. It can take only 2 actions if it has fewer than twenty crew and only 1 action if it has fewer than ten. It can't take these actions if it has fewer than three crew."
+      ]
+    },
+    {
+      "name": "Fire Ballistas",
+      "paragraphs": [
+        "The ship can fire its ballista."
+      ]
+    },
+    {
+      "name": "Fire Cannons",
+      "paragraphs": [
+        "The ship can fire its cannon."
+      ]
+    },
+    {
+      "name": "Move",
+      "paragraphs": [
+        "The ship can use its helm to move with its sails.",
+        "Use Dragonator (Costs 2 Actions). The ship can use its Dragonator.",
+        "Hull Armor Class 15 Hit Points 500 (damage threshold 20)",
+        "Control: Helm Armor Class 18 Hit Points 50",
+        "Move up to the speed of the ship's sails, with one 90-degree turn. If the helm is destroyed, the ship can't turn.",
+        "Movement: Sails Armor Class 12 Hit Points 100 ; -5 ft. speed per 25 damage taken Speed (water) 45 ft.; 15 ft. while sailing into the wind; 60 ft. while sailing with the wind",
+        "Weapon: Ballista (2) Armor Class 15 Hit Points 50",
+        "Ranged Weapon Attack: +6 to hit, range 120/480 ft., one target. Hit: 16 (3d10) piercing damage.",
+        "Weapon: Cannon (2) Armor Class: 19 Hit Points: 75",
+        "Ranged Weapon Attack: +6 to hit, range 600/2,400 ft., one target. Hit: 44 (8d10) bludgeoning damage.",
+        "Weapon: Dragonator Armor Class: 25 Hit Points: 100 Recharge: 1 hour",
+        "Melee Weapon Attack: +12 to hit, reach 15 ft., all creatures in a straight line within its reach. Hit: 55 (10d10) piercing damage. Miss: Creature takes half as much damage."
+      ]
+    },
+    {
+      "name": "Dragonship Stat Block",
+      "paragraphs": [
+        "Dragonship Gargantuan vehicle (90 ft. by 20 ft.)",
+        "Creature Capacity 30 crew. 20 passengers Cargo Capacity 100 tons Travel Pace 5 miles per hour (120 miles per day) STR DEX CON INT WIS CHA 20 (-5) 7 (-2) 17 (+3) 0 0 0 Damage Immunities poison, psychic Condition Immunities blinded, charmed, deafened, exhaustion, frightened, incapacitated, paralyzed, petrified, poisoned, prone, stunned, unconscious ### Actions",
+        "On its turn, the ship can take 3 actions, choosing from the options below. It can take only 2 actions if it has fewer than twenty crew and only 1 action if it has fewer than ten. It can't take these actions if it has fewer than three crew.",
+        "### Fire Ballistas",
+        "The ship can fire its ballista.",
+        "### Fire Cannons",
+        "The ship can fire its cannon.",
+        "### Move",
+        "The ship can use its helm to move with its sails.",
+        "Use Dragonator (Costs 2 Actions). The ship can use its Dragonator.",
+        "Hull Armor Class 15 Hit Points 500 (damage threshold 20)",
+        "Control: Helm Armor Class 18 Hit Points 50",
+        "Move up to the speed of the ship's sails, with one 90-degree turn. If the helm is destroyed, the ship can't turn.",
+        "Movement: Sails Armor Class 12 Hit Points 100 ; -5 ft. speed per 25 damage taken Speed (water) 45 ft.; 15 ft. while sailing into the wind; 60 ft. while sailing with the wind",
+        "Weapon: Ballista (2) Armor Class 15 Hit Points 50",
+        "Ranged Weapon Attack: +6 to hit, range 120/480 ft., one target. Hit: 16 (3d10) piercing damage.",
+        "Weapon: Cannon (2) Armor Class: 19 Hit Points: 75",
+        "Ranged Weapon Attack: +6 to hit, range 600/2,400 ft., one target. Hit: 44 (8d10) bludgeoning damage.",
+        "Weapon: Dragonator Armor Class: 25 Hit Points: 100 Recharge: 1 hour",
+        "Melee Weapon Attack: +12 to hit, reach 15 ft., all creatures in a straight line within its reach. Hit: 55 (10d10) piercing damage. Miss: Creature takes half as much damage."
+      ]
+    },
+    {
+      "name": "Dragonship Blueprint",
+      "paragraphs": [
+        "A gridded version of these blueprints can be found without numbers HERE."
+      ]
+    },
+    {
+      "name": "Upgrading the Dragonship",
+      "paragraphs": [
+        "If the party happens to own a dragonship at some point during the campaign, they can upgrade it with the same ship upgrades provided in The Ghost of Saltmarshes (page.196)"
+      ]
+    },
+    {
+      "name": "Ships in Combat & Traveling at Sea",
+      "paragraphs": [
+        "The dragonship uses the same rules found in The Ghost of Saltmarshes (page.198) for both ship combat and traveling at sea, requiring some minor changes or rules to ignore since this ship only works in the desert."
+      ]
+    }
+  ]
+}

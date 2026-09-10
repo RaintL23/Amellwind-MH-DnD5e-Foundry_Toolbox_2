@@ -8,8 +8,8 @@
     "node": "22.x"
   },
   "scripts": {
-    "dev": "node scripts/generate-raintdm-manifest.mjs && node scripts/build-magic-item-pricing.mjs && vite",
-    "build": "node scripts/generate-raintdm-manifest.mjs && node scripts/build-magic-item-pricing.mjs && tsc -b && vite build",
+    "dev": "node scripts/generate-raintdm-manifest.mjs && vite",
+    "build": "node scripts/generate-raintdm-manifest.mjs && pnpm build:gtmh-supplement && pnpm build:foundry-module && tsc -b && vite build",
     "build:analyze": "tsc -b && vite build --mode analyze",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run",
@@ -24,7 +24,9 @@
     "build:foundry-module": "node scripts/validate-mh-tokens.mjs && node scripts/build-foundry-module.mjs",
     "build:mm-catalog": "node scripts/build-mm-patreon-catalog.mjs",
     "build:mm-supplement": "node scripts/build-mm-patreon-supplement.mjs",
-    "build:mm-data": "node scripts/build-mm-patreon-catalog.mjs && node scripts/build-mm-patreon-supplement.mjs"
+    "build:mm-data": "node scripts/build-mm-patreon-catalog.mjs && node scripts/build-mm-patreon-supplement.mjs",
+    "build:gtmh-supplement": "node scripts/build-gtmh-patreon-supplement.mjs",
+    "build:gtmh-data": "node scripts/build-gtmh-patreon-supplement.mjs"
   },
   "dependencies": {
     "@radix-ui/react-accordion": "^1.2.12",

@@ -1,0 +1,666 @@
+{
+  "intro": "Lore of the Old World from Amellwind's Guide to Monster Hunting (Chapter 1): creation myths, history, the pantheon, and the peoples who inhabit the setting.",
+  "sections": [
+    {
+      "id": "tale",
+      "name": "The Tale of the Five",
+      "page": 2,
+      "paragraphs": [
+        "Once there was a world without time. The world was nothing but white light, inhabited only by people and five dragons.",
+        "In that world, there was only eternity, and a sun that burned without beginning or end. And because there was only timeless eternity, nothing was ever lost … yet nothing was ever gained.",
+        "One day, the people began to wonder why their world had no beginning or end, so they asked the dragons.",
+        "The dragons opened their mouths as if to answer, but from their mouths poured water instead of words. It rushed out in streams to create the sky and the oceans, and the dragons swam away. The dragons swam to the center of the ocean and there they began to transform into an island.",
+        "One dragon sank into the sea and became the land.",
+        "One dragon lifted its gaze to the sky and became the mountains.",
+        "One dragon stooped low and became the lakes, and scattered its scale to create the rain.",
+        "One dragon fell into a deep slumber and became the forests.",
+        "The last dragon climbed far into the sky to become a Star of Sapphire Blue, shining brightly above the island.",
+        "The people could not understand why the dragons had left, or why they had transformed. Eventually, a lone youth decided to go to the island to seek the answers from the dragons themselves. He donned a simple cloak, climbed into a simple boat, and cast off alone into the murky seas.",
+        "At last, guided by the light of Sapphire Star, he reached the Island of The Five.",
+        "Some time passed, and the youth returned.",
+        "“Did you speak with the Dragons?” the people asked.",
+        "“Yes, I spoke with them,” he replied.",
+        "“Then tell us, why did they create the island?”",
+        "But the youth did not answer. Instead, he reached into his cloak and pulled out five Dragon Scales, which he gave to the people. And then, before anyone realized, the youth disappeared.",
+        "The people left their white world and sailed across the ocean.",
+        "Using the five scales, they created their own lands, their own mountains, their own lakes, and their own forests. Last of all they created a bright moon, so that the Sapphire Star, which had guided the youth during his voyage to seek the dragons, would no longer shine alone in the sky.",
+        "The land grew large enough to obscure the sun, and day and night were born.",
+        "The mountains, lakes and forests breathed together, and the seasons were born. The moon casts its light on the ocean, and waves were born.",
+        "And thus time was also born.",
+        "Swept up on the almighty current of time, the people came to know death. But the people also came to know life.",
+        "Countless days and countless nights have passed since people first came to live on the islands they had created. As time passed, they lost their memory of the Five Dragons, and even the memory of how Time itself had been born.",
+        "But deep in their hearts there dwelt a quiet knowledge of the Island of The Five, the most sacred place in the world, which to this day sleeps in the middle of the ocean, uninhabited by people, and unchanged even by the relentless flow of time.",
+        "From the village chiefs, who protect and guide young hunters, to academics of the Wycademy, who research the mysteries of the world, everyone has their own ideas about the origins of the Old World, but the widely accepted version of this worlds creation is the Tale of the Five Dragons.",
+        "There are many myths and unknowns to what happened after the creation of the five continents. In villages, village chiefs pass down myths and tales of godlike creatures that continue to shape the world in the dragons' image to this day. Father tells the stories of great heroes and ferocious beasts to their sons and daughters. Others remain focused on the few existing truths, exploring beneath the rot and ruin that hides the technology of the ancients, scars of old battles, and forgotten hunters of old. The details are often debated, and while the common folk may live their entire lives with little care for the question of where we all came from, the question remains, consuming the curious, calling those hungry for purpose, and fueling the business of adventuring to delve into the dangerous shadows of ancient ruins."
+      ],
+      "subsections": []
+    },
+    {
+      "id": "history",
+      "name": "The History and Myths of the Old World",
+      "page": 3,
+      "paragraphs": [
+        "The following information outlines what is known within scholarly circles and historical archives, kept by the Wycademy, Royal Paleontology Scriveners, and the Wyverians. The learned student may begin their journey with seeds of this history to explore, while others uncover its truths as they wander along their path. Regardless, we all came from somewhere, and to learn from history is to write a better destiny."
+      ],
+      "subsections": [
+        {
+          "name": "The Myth of the Old World"
+        },
+        {
+          "name": "The Tale of the Five",
+          "paragraphs": [
+            "Once there was a world without time. The world was nothing but white light, inhabited only by people and five dragons. In that world, there was only eternity, and a sun that burned without beginning or end. And because there was only timeless eternity, nothing was ever lost … yet nothing was ever gained. One day, the people began to wonder why their world had no beginning or end, so they asked the dragons.",
+            "The dragons opened their mouths as if to answer, but from their mouths poured water instead of words. It rushed out in streams to create the sky and the oceans, and the dragons swam away. The dragons swam to the center of the ocean and there they began to transform into an island. One dragon sank into the sea and became the land. One dragon lifted its gaze to the sky and became the mountains. One dragon stooped low and became the lakes, and scattered its scale to create the rain. One dragon fell into a deep slumber and became the forests. The last dragon climbed far into the sky to become a Star of Sapphire Blue, shining brightly above the island.",
+            "The people could not understand why the dragons had left, or why they had transformed. Eventually, a lone youth decided to go to the island to seek the answers from the dragons themselves. He donned a simple cloak, climbed into a simple boat, and cast off alone into the murky seas. At last, guided by the light of Sapphire Star, he reached the Island of The Five. Some time passed, and the youth returned.",
+            "“Did you speak with the Dragons?” the people asked. “Yes, I spoke with them,” he replied. “Then tell us, why did they create the island?” But the youth did not answer. Instead, he reached into his cloak and pulled out five Dragon Scales, which he gave to the people. And then, before anyone realized, the youth disappeared.",
+            "The people left their white world and sailed across the ocean. Using the five scales, they created their own lands, their own mountains, their own lakes, and their own forests.",
+            "Last of all they created a bright moon, so that the Sapphire Star, which had guided the youth during his voyage to seek the dragons, would no longer shine alone in the sky.",
+            "The land grew large enough to obscure the sun, and day and night were born. The mountains, lakes and forests breathed together, and the seasons were born. The moon casts its light on the ocean, and waves",
+            "Swept up on the almighty current of time, the people came to know death. But the people also came to know life. Countless days and countless nights have passed since people first came to live on the islands they had created. As time passed, they lost their memory of the Five Dragons, and even the memory of how Time itself had been born.",
+            "But deep in their hearts there dwelt a quiet knowledge of the Island of The Five, the most sacred place in the world, which to this day sleeps in the middle of the ocean, uninhabited by people, and unchanged even by the relentless flow of time."
+          ]
+        },
+        {
+          "name": "Time Began",
+          "paragraphs": [
+            "As the hand of time ticked its first second, the five looked down on their creation and found it empty. Vast oceans, islands, mountains, and forests filled the world, but it contained only humans.",
+            "Thus, the Five formed the first creatures, the Elder Dragons, created with physical power reflecting the Five themselves. The Elder Dragons had the power to shape the land, adapt and change it to fit the Five's image. As the first minute went by, the second creatures were molded — the leviathans, amphibians, and other sea creatures; including the ancestors of the desert piscine wyverns who lived in the sea at this time.",
+            "As Jhen Mohran and Ceadeus's ancestors modeled the seas to provide its new occupants a place to dwell, islands dotted the landscape and enormous coral reefs that seemed to stretch forever into the depths formed, creating a colorful display beneath clear ocean waves. The sea flourished and the humans who set sail began to take notice. Believing the mohran's and ceadeus to be the sea architect of the Five, the humans began to pray and worship the Elder Dragons.",
+            "Touched by the humans’ worship of the dragons, the first of the Five Dragons infused its worshipers with the power of the sea, creating the first tritons, or sea people, as they are commonly known.",
+            "As time continued to tick, the second of the Five Dragons wrought the elves. Worshipers of Kirin and other powerful and beautiful Elder Dragons, the elves have an unearthly grace and fine features, that is sometimes compared to the Five's own divinity.",
+            "The Five continued to create as the day went on. Creatures began to appear in the sky and large beasts patrolled the land. Many races were formed as the human's continued to discover new Elder Dragons to worship.",
+            "Satisfied with their creation, the Five departed this world, but not before leaving aspects of themselves as the new gods, or The Aspects as they are typically known to the common man, to watch over the world from the Outer Planes.",
+            "In the time after the five dragons, ancient species of monsters ruled the world. The world was at peace, many species of Elder Dragons thrived in their environments, living in harmony with other creatures. Nature was truly at peace with itself in this age."
+          ]
+        },
+        {
+          "name": "The Age of the Ancients",
+          "paragraphs": [
+            "It is unknown when the age of the ancients began, but most researchers and scholars believe it started when the first races experienced death for the first time. Having been immortal before time began, the first races feared this unending sleep and prayed to the Five who blessed them with these forms to save them. The Aspects heard their plight and were crushed to see the pain in the hearts of the first races, and so the Aspects sought to ease their suffering. First, by extending the life of the halflings by a hundred years or so, hoping that this extended time would ease their pain before the unending sleep. To their dismay, it only prolonged the inevitable. The Aspects continued to experiment, extending the life of dwarves, gnomes, elves, and lastly the wyverians far beyond that of humans, but they found it was not within their power to extend the life of the first races indefinitely, but they could mold it. Death was not the end, but instead it was the beginning and end of a cycle. When a creature died, the Aspects welcomed the first races and all other creations of the five to the Outer Planes where they remained until they were infused with new life and returned to the material plane. This is commonly referred to as \"The Wheel.\"",
+            "But the Wheel was flawed. Unknown to the Aspects, the twisting and contorting of the Five's original creation had corrupted it. This corruption slowly seeped into the pores of the Outer Plane, forming the Fatalis, the lord of the newly formed Lower Planes. Thought to be created by the mixing of energy between Limbo, the Abyss, and the Nine Hells the Fatalis sought to destroy and recreate in its own image. In the beginning it started small, first influencing small monsters making them rabid and territorial. The harmony of nature had been broken, but the Aspects did not take notice. Their concern for the first races blinded them to small changes in the world. As the wheel turned, the Fatalis grew in power and began twisting and contorting the monsters under its command into the first demons.",
+            "Next it moved its sights to the first races, offering power and knowledge to the weakest of them. The ones who accepted the Fatalis's offer became the first devils. The ones who attempted to resist the Fatalis but failed, were twisted into the monstrous races like the orcs, goblins, or kobolds.",
+            "The Aspects looked on in horror as these abominations to nature invaded the Five's creation. Monsters and humanoids alike were being slaughtered, forests were burning, mountains were demolished, and seas became sand. The War of the Ancients had begun."
+          ]
+        },
+        {
+          "name": "War of the Ancients",
+          "paragraphs": [
+            "The War of the Ancients threatened to undo everything the Five created. The battle took place across all creation and the Aspects were unable to focus their assistance in just one area. So they shared their knowledge with the first races, showing them how to fortify themselves by creating walled settlements. They taught them how to harness the nature around them to fight, how to bend the earth to their will, use the bodies of fallen monsters to strengthen themselves, harness the destructive power of the magic they possessed, and work with the uncorrupted monsters of the world. A century went by, but inch by inch the monsters and first races forged ahead together. They pushed back the corruption from the world, winning skirmish after skirmish until the emergence of a new threat.",
+            "The Fatalis released its generals across the Material and Upper Planes. Created from granting its most powerful warriors fused with its own essence, the Archdevils were the ones to invade the Upper Planes in an attempt to break the Wheel and spread the corruption further. On the material plane Demon Lords, created from elder dragons under its influence of the Fatalis, trampled armies and once again threatened the existence of the Five's creation. With hope waning, the first races once again turned to the Aspects again, praying for assistance.",
+            "It was never in the Aspect's power to grant immortality to all of the first races and they knew that, but it was within their power to gift it to a select few. In doing so they would weaken themselves, but it was what was required. And so, the Aspects called upon the most faithful, wise, and powerful of the first races and ascended them to godhood. These lesser pantheons of gods took to the battlefield against the Archdevils and Demonlords, pushing them back into the Nine Hells and the Abyss. The Aspects themselves took the fight to the Fatali's lair where they sealed Fatalis away, preventing it from ever physically leaving its lair for eternity, but at the cost of the first Aspect Io's life.",
+            "Notable Events and Locations during the War of the Ancients"
+          ]
+        },
+        {
+          "name": "Heaven's Mount",
+          "paragraphs": [
+            "In the small village of Cathar, old folktales are told of Heaven's Mounts creation during the War of the Ancients. It has been said that the peak of Heaven's mount is a gateway to the Upper Planes and was guarded by a number of elder dragons known as dalamadur. When the Archdevils attacked the Upper Planes, they used the gate atop the mountain to invade, but not before the dalamadurs massacred much of the Devil's army. Now the mountains have markings all over them, showing where each of these elder dragons dug. In the present, chunks of the mountains are falling to the ground and the formations don't look natural in the slightest. It is said that these giant elder dragons went underground under the mountain and still guard the gate to this day."
+          ]
+        },
+        {
+          "name": "Great Forest Brawl",
+          "paragraphs": [
+            "In the War of the Ancients, a brawl took place in the Great Forest. This fight was between an espinas and an unknown elder dragon, believed to be the first of many created by the Fatalis.",
+            "Espinas was the ruler and protected its home with all of its might, even going as far as taking on the elder dragon solo to stay. Through determination and power, espinas was able to defeat the elder dragon and claim its title as Lord of the Great Forest. This made espinas one of the few monsters equal to an elder dragon during this age, but there is no known sighting of espinas in recent years."
+          ]
+        },
+        {
+          "name": "The Great Seas",
+          "paragraphs": [
+            "In Ancient times, the desert region of the Old World was covered by a great sea filled with the ancestors of some monsters seen today. The Jhen Mohran's ancestors ruled the region and defended it with the tritons against the Demon Lord Dagon and its army during the War of the Ancients. These sea battles did untold damage not only to the sea itself, but it remained in a constant stalemate between the two forces until the end of the war. Whenever one side would win a battle, the other would counter attack somewhere else, canceling out the territory each gain. It wasn't until the lesser gods entered the battle that Dagon was forced back to the abyss, but not before he opened a portal to the Shadowsea that would consume the entirety of the region's water before vanishing. For centuries after the war, the region remained an inhospitable barren waste of sea creature bones and decayed vegetation until the Sand God, Odibatorasu transformed the region into the deserts found in the present."
+          ]
+        },
+        {
+          "name": "The End of the War",
+          "paragraphs": [
+            "The war finally came to a close when Fatalis and its generals were finally pushed back to their respective planes. The second Aspect, Pelor, filled the void that the First Aspect left behind, becoming the leader of the other Aspects and gods. The lesser gods, or guardians as they came to be known as, said their goodbyes to the first races and joined the remaining Aspects in the Upper Planes. The first races and the monsters of the material plane went their separate ways, nature was once again in harmony, for now...",
+            "Though the Fatalis was sealed, the corruption of the Five's creation still seeped into the Lower Plane, forming new devils, creatures, and other abominations. It was only a matter of time before the corruption once again leaked into the Material Plane. So, the Aspects and Guardians set forward their plans to protect the world.",
+            "Unlike the original five Aspects, the Guardians did not agree on how exactly to go about protecting the world and split into smaller pantheons that reported to one of the Aspects. They were known as: The Platinum Court, The Wild Lords, and the Radiant Eye. Some believed the creation of new monsters and expansion of nature was the best solution, and so they went to the Beastlands to begin their work. Others believed that the first races were the answer. After all the Aspects choose them to become gods. So they shared their power and knowledge with those deserving and created what is now known as the ancient civilization. Finally, a select few sought to contain the corruption, hoping to prevent its spread. In doing so, the world would remain in harmony forever, or so they thought."
+          ]
+        },
+        {
+          "name": "The Time of the Ancient Civilization"
+        },
+        {
+          "name": "The Platinum Court",
+          "paragraphs": [
+            "When the Guardians formed the Platinum Court they presented themselves to the new leaders of the first races at the request of the third Aspect Bahamut. The pantheon nurtured the first races, expanding their knowledge and power beyond their wildest dreams. Thousands of years passed and the ancestors of the first races came to be known as the ancient civilization. In time they used their newfound knowledge and the materials they collected from the monster corpses during the War of the Ancients to build giant towers that reached to the heavens, cities of stone within the mountains, elegant towns in the forests, and settlements of all different types across the world. They became a highly-advanced society with technology that the races of today still can't figure out."
+          ]
+        },
+        {
+          "name": "The Wild Lords",
+          "paragraphs": [
+            "The Wild Lords under the leadership of the Fifth Aspect Eldath, spent their time repairing the world and creating monsters to inhabit it. They started with the creation of three monsters; the akantor, odibatorasu, and ukanlos. To the races of the present day they are known respectively as the black, white, and sand gods. The odibatorasu created the deserts from the now empty sea, while the ukanlos and akantor repaired the damage from the demons within the Northern El De regions. They filled the world with warrior monsters to defend the land. These formidable beasts could mold the world around them and bend the elements to their will."
+          ]
+        },
+        {
+          "name": "The Radiant Eye",
+          "paragraphs": [
+            "Before the world could return to what it once was, the Radiant Eye under the command of the Fourth Aspect, Tiamat, set out to rid the material plane of the corruption that remained after the War of the Ancients. They enlisted the members of the ancient civilization and monsters alike to hunt down the rabid beasts, and sanctify the lands across the world. Using the technology of the ancient civilization and with the assistance of the Platinum Court they crafted weapons and armor to combat the new monsters born from the corruption. They used the powers granted to them by the gods, blessing the land, and sending the corruption back to the Lower Plane, but in doing so they strengthened the demons, devils, and the Fatalis himself."
+          ]
+        },
+        {
+          "name": "The Great Dragon War",
+          "paragraphs": [
+            "Nobody knows exactly when the war that wiped out almost every monster and race began, but scholars and other researchers suggest it started long before the ancient civilization attempted to create the equal dragon weapon. A set of dominos that fell into place if you will. Though it is mostly unknown what exactly happened in the war, The Legend of the Black Dragon is said to describe all that happened in the Great Dragon War. The war ended with most of the dragons extinct and with ancient civilization gone for good.",
+            "The Unknown History. It all started with the Great Wheel. Tiamat along with the assistance of the Radiant Eyes attempted to patch the holes in the Great Wheel where the corruption emanated from. If successful, the corruption would grow no stronger, and the Lower Planes and Fatalis would no longer be able to use it to enter the material plane without first weakening themselves in the process. The patch for a time was a success, but it was applied at an unknown and devastating cost. The corruption had taken hold of Tiamat and as it grew within her, so did the Fatalis's influence.",
+            "With Tiamat as its new vestige, the Fatalis set its plan in motion. Tiamat slowly spread the corruption through the Radiant Eyes and its followers, twisting and contorting them into the pantheon known as the Eyes of the Abyss. Soon the corrupt monsters roamed free, spreading Fatalis's influence to the Wild Lord's creations.",
+            "During this time, the ancient civilization had stalled. Reports of Tiamat's successful patching of the Great Wheel brought celebration to the ancients, but with their resources running dry from the War of the Ancients and with the now corrupt followers of the Radiant Eye no longer killing new monsters, the ancients grew desperate. After much discussion and a bit of influence by Fatalis, the decision was made to begin hunting the monsters throughout the world. Waiting for them to die was too slow and would only ever be enough for repairs.",
+            "At the same time the other gods began to take notice of the spreading corruption throughout the Five's world. The three confronted Tiamat who responded by opening a portal for the Archdevils and their army to enter the Upper Plane, sending the heavens into chaos. The Great Dragon War had begun.",
+            "As the war raged in the heaven's above, the ancient civilization continued to advance on the material plane. Their advancement did not come without sacrifices as an innumerable amount of dragons were hunted, killed, and captured for the sake of research; to improve the quality of life for the ancients. Because of this, many of the species were left on the brink of extinction. This wanton destruction of the their kin angered the dragons. No longer would they sit idly by and let their kind be killed or be used as mere cattle. It was time to break away from the ancients who had forgotten the rules of nature, and destroy them.",
+            "Eventually the wars converged, Tiamat and the archdevils were pushed out of the Upper Planes into the Material Plane. In an attempt to weaken the Aspects army, Fatalis sent an aspect of itself to destroy the kingdom of Schrade. The material plane became the battle field for all sides. The monsters of the world had been fully consumed by the corruption and joined the demons and devils in the war. This began a long, violent war between the ancients, dragons, devils, and demons that spread worldwide, leaving behind mass destruction just about everywhere.",
+            "At the end of the war, the ancient civilization and almost every creature in the world was wiped out. Tiamat was banished to the Nine Hells, along with the Archdevils. Those within her pantheon were scattered across the Planes of Limbo and Pandemonium, a punishment for their treason. The Aspect of Fatalis was sealed away in the ruins of Castle Schrade and the Platinum Court with the Wild Lords returned to the Upper Planes victorious in the war at the cost of everything."
+          ]
+        },
+        {
+          "name": "Rebuilding the World",
+          "paragraphs": [
+            "Centuries passed before the gods regained their power, and many were devastated by the destruction of their creations. Some gods were so filled with despair and grief they wished to leave and start anew. Others wished to stay and rebuild. After much debate and input from the remaining three Aspects, the gods looked to rebuild. There was just one complication.",
+            "When the Great Wheel was patched by Tiamat, the corruption had only one place to go, into the life of the new creations. The corruption and fatalis's influence would always remain within anything the gods created and they no longer had the power to change or create a new system. So they did only what they could, they poured their own divine influence into the wheel. Their creations from this point forward would be capable of both good and evil, and the war with Fatalis would continue through their creations, but so long as they guided them towards the light, the balance would remain.",
+            "The Wild Lords filled the world with new creatures, big and small, but none as powerful as the warrior monsters that existed before. They adapted nature to work with the corruption and keep it in balance with the help of the wyverians, who became the first druids and rangers.",
+            "The Platinum Court created the races once more. Using religion and worship, the Platinum Court guided the masses indirectly towards the light. They shared their power with those they deemed worthy and limited the knowledge they gave, letting the races advance their technology slowly through the information found in the ruined settlements of the ancient civilization."
+          ]
+        },
+        {
+          "name": "The Rise of Hunting",
+          "paragraphs": [
+            "Hundreds of years after the rebuilding of the world, some wyverians began to hunt down monsters at the request of the Wild Lords. This was the beginning of the hunting career. These wyverians were known to wander the world in search of creatures that fell to the Fatalis's corruption but also to be one with nature itself, due to having a great compassion for it and its many life forms. Besides hunting, some wyverians became merchants and began to take requests from people to do certain things, such as gathering mushrooms or mining for rare ore. The main reason why the wyverians started hunting is because the other races were defenseless against the harsh monsters that haunted many areas, due to the Platinum's Court decision to limit the knowledge they passed down. This led to wyverians protecting the other races against said monsters due to the will of the Wild Lords and taking pity on the other races. Some of the other races saw this act and followed in the footsteps of the wyverians. This eventually led to the Hunter's Guild forming some time later.",
+            "The Hunter's Guild is Formed The Hunter's Guild was formed when the other races saw what the wyverians were doing in order to help preserve all species and to harmonize all races with nature. This led to the corporation growing overtime and becoming well-known among the world for its hunters and hunting restrictions. Other corporations soon formed, such as the Royal Paleontology Scriveners and Elder Dragon Observation Team."
+          ]
+        },
+        {
+          "name": "Generations",
+          "paragraphs": [
+            "Generations passed since the founding of the Hunter's guild. In this time, new rules were founded in the hunters guild and technology continued to progress as hunters and other explorers searched the ruins of the ancient civilization that were dotted across the world. But those are stories for another time.",
+            "Additional history will be added in future updates to Amellwind's Guide to Monster Hunting"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "gods",
+      "name": "The Gods of Monster Hunter",
+      "page": 8,
+      "paragraphs": [
+        "The gods found within these pages are not set in stone and you should feel free to add or remove them as you see fit. In addition you will find that some of the lore may have changed from a standard dungeons and dragons setting so that the gods would fit within this new setting."
+      ],
+      "subsections": [
+        {
+          "name": "The Five",
+          "paragraphs": [
+            "The Five were the creators of the world and the Upper Planes. They populated the universe with creatures and blessed the many of the first humans with their power, creating the first races. Once their work was done, the Five left aspects of themselves to watch over their creation before leaving the Universe. The Five were never named, and only ever referenced by their number."
+          ]
+        },
+        {
+          "name": "The Aspects",
+          "paragraphs": [
+            "The Aspects were created from a portion of the Five's power. They are the leaders of all lesser gods and the creators of \"The Great Wheel\". They are also responsible, albeit unintentionally, for the creation of the god, Fatalis, and the Lower Planes."
+          ]
+        },
+        {
+          "name": "The First Aspect Io",
+          "paragraphs": [
+            "Alignment: Neutral • Domains: Dragons, Knowledge, Magic, Spells, Strength, Travel, and Wealth.",
+            "Io cared for all of the Five's “children,” but favored the dragons, and their continued existence in the world. Io was considered to be the greatest dragon of them all and as such was the leader of the Aspects, granting him the title of the Prime Deity. He is the Concordant Dragon, encompassing good and evil, law and chaos, and transcends them all. It was said that Io only manifested once on the material plane, during the War of the Ancients, when he ascended the first human to godhood.",
+            "At the end of the War of the Ancients Io sacrificed himself to seal Fatalis away in its lair. Though Io is dead, he is remembered and celebrated through the teachings of the Platinum Court and the Wild Lords. To this day, a few wyverians and dragonborn pay homage and live in service to Io through Bahamut.",
+            "His symbol was a multi-coloured disk."
+          ]
+        },
+        {
+          "name": "Remembrance of Io",
+          "paragraphs": [
+            "When Io was still alive, one of his rituals involved the blending of many things together, reflecting Io's own nature. One common ritual involved drinking wine with a drop of blood from each participant dissolved in it. After Io's death, the followers of both the Wild Lords and the Platinum court honor this rite during the Autumn Harvest Festival. Those who can't drink, such as children, instead hold a potluck in the middle of town."
+          ]
+        },
+        {
+          "name": "The Second Aspect Pelor",
+          "paragraphs": [
+            "Alignment: Neutral Good • Domains: Good, Healing, Strength, Sun, Travel",
+            "The God of the sun and summer, Pelor is the keeper of time. He supports those in need and opposes all that is evil and for that reason, he took it upon himself to become the Prime Deity after Io's death. As the Prime Deity, Pelor guides and lords over the remaining aspects and the lesser pantheons. He believes justice and freedom are brought about through charity, modesty, and perseverance.",
+            "Pelor's leadership and resolve was tested with the betrayal of Tiamat, but he did not falter. Instead his wrath and the wrath of his followers were more focused than ever on the corruption of the world.",
+            "Pelor’s strength is a spiritual strength, opposed to physical strength. His strength is the power of will and hope, the need to face evil in the face of insurmountable odds. Pelor is wrathful against the forces of evil, corruption, and darkness, and is especially opposed to the undead. However, Pelor urges his followers to remember that excessive attention to things of evil can blind one to the truly important things: compassion and goodness.",
+            "Pelor's priests teach that the truly strong don't need to prove their power. Pelorians strive to perform so many good acts that evil has no room in which to exist, though they will fight if necessary.",
+            "In times of war, his clerics heal the sick, bless the crops, and destroy any evil that threatens the balance of the world. Pelorian paladins, known as Crusaders, are at the forefront of almost every battle. They see themselves as the burning light of the sun which scours away darkness and evil and brings strength and comfort to the innocent.",
+            "Pelor’s services involve communal prayer, the singing of hymns, and the distribution of alms. Prayers to Pelor are often affirmations in the first person, for example, “I am merciful, just as the Sun of Mercy shines on me.” Weddings and rites of passage often take place at the beginning of a new season. Farmers often request a ritual known as the Blessing of the Sun-Kissed Field.",
+            "Pelor’s temples are tall, with large windows; many are stained-glass cathedrals. They are arranged so that the sun shines into most of the rooms during the day, and many feature large courtyards. They tend to be airy and blindingly white. Temple trappings are typically yellow or gold. They are always kept clean. Many Pelorian temples have hospital wings.",
+            "Commandments of Pelor",
+            "Alleviate suffering wherever you find it. Bring Pelor’s light into places of darkness, showing kindness, mercy, and compassion. Be ever vigilant for evil. People are quick to forget the lessons of the past.",
+            "The Third Aspect Bahamut Alignment: Lawful Good • Domains: Life, War",
+            "Bahamut, also known as \"The Platinum Dragon\", is revered in many locales. The pillar of justice, protection, nobility, and honor, Bahamut stands as the leader of the Platinum Court. He stood vehemently against all evil and as such, was the first to take up arms against Fatalis in the War of the Ancients and against his own sister Tiamat during the Great Dragon War.",
+            "After the Great Dragon War, Bahamut was a beacon in the darkness to all the races and revered by the elder dragons. He, along with the Platinum Court, sought to guide the races of the world on how to survive and live with nature.",
+            "In agreement with the remaining Aspects, Bahamut locked away the knowledge of the ancient civilization within his hoard, only sharing the information to those in need and that he deemed worthy. However he also pursued viciously, (usually sending his champions and followers) those who tried to steal the hoard from his palace as, after all, he was a god of justice.",
+            "In spite of his stance against evil, Bahamut is also considered one of the most compassionate beings in the multiverse. He has limitless empathy for the downtrodden, the dispossessed, and the helpless. He usually preferred to polymorph those who had offended him into kelbi, and other herbivores, instead of killing them.",
+            "Bahamut accepts only good clerics. Clerics of Bahamut, be they dragons, half-dragons, or other beings attracted to Bahamut’s philosophy, strive to take constant but subtle action on behalf of good, intervening wherever they are needed but trying to do as little harm as possible in the process. Many wyverians maintain simple shrines to Bahamut in their homes, usually nothing more elaborate than Bahamut’s symbol scribed on a wall.",
+            "Temples to Bahamut were extremely rare, as the Platinum Dragon didn't appreciate being honored by objects, taking into account deeds instead. The few temples that were made to honor him were beautiful and elegant buildings with simple furniture and no embellishment or adornment.",
+            "Bahamut's worshipers and clergy had no formal rituals or ceremonies. Those who followed the Platinum Dragon believed in the philosophy of \"praying through their deeds\". The only activity that was considered as something like a ritual was the Rite of Rebirth, the magical process by which non-dragon humanoids transformed themselves into dragonborn.",
+            "Commandments of The Platinum Dragon",
+            "Stand as a paragon of honor and justice. Smite evil wherever it is found, yet show compassion to those who have strayed from righteousness. Defend the weak, bring freedom to those without, and protect the ideals of just order. The Fourth Aspect Tiamat Alignment: Lawful Evil, Chaotic Evil • Domains: Trickery",
+            "Also known as \"The Undying Queen\", Tiamat once sought to contain the corruption of the world, but during her attempts to contain it, she instead succumbed to it. Once a god who followed in the footsteps of her brother Bahamut and the Prime Deity, Pelor. Tiamat has since become arrogant, greedy, hateful, spiteful and vain. She never forgives any kind of slight and is focused on obtaining more power and wealth. She disdained mortals, regarding them as mere disposable tools in her schemes.",
+            "Tiamat resides in the Lower Planes after her banishment during the Great Dragon War. After being abandoned by Fatalis for her failures during the war, Tiamat's maliciousness and insanity grew. As such, she constantly seeks to extend the power and dominion of her rule over the land, particularly by twisting creatures made by the Wild Lords into her servants. She believes deities of all creeds and from every pantheon are inherently tyrannical, and therefore her rivals. She considered herself the only being powerful enough to defy these gods, including Fatalis, and overthrow their despotic rule.",
+            "Tiamat has an insatiable greed for treasures, but prefers that her followers bring it to her in the form of gifts instead of searching for riches on her own. As such, Tiamat only accepts those with evil in their heart. Her followers work tirelessly toward her agenda of world domination. When Tiamat assumed her throne as the only goddess of the Realms, her draconic children would serve her as dukes, or so her followers believed, and her clergy struggled to gain the position vassals when that move came.",
+            "In her natural form, Tiamat is a thick-bodied dragon with five heads and a wyvern’s tail. Each head is a different color: white, black, green, blue, and red. Her massive body is striped in those colors.",
+            "Though many evil beings honor Tiamat, few keep shrines dedicated to her in their lairs because they don’t want Tiamat’s greedy eyes gazing at their treasure hoards. Instead, they dedicate vast, gloomy caverns to their deity and keep them stocked with treasure and sacrifices",
+            "Commandments of The Undying Queen",
+            "Amass wealth, and spend little. The gold, and the power that comes with it, is sufficient reward. Do not forgive nor forget an indignity to yourself. Let no affront go unpunished. Take what you covet. Those without the strength to defend their dominion are not worthy to have a dominion.",
+            "The Fifth Aspect Eldath Alignment: Neutral good • Domains: Life, Nature",
+            "Also known as \"The Green Goddess\", the Fifth Aspect Eldath acts as the guardian of nature, her presence is felt wherever there is calm. She is a pacifist who avoids hostile action, even if threatened. Although shy, quiet and enigmatic, Eldath possesses unknown depths of character and unexpressed resolve that could not be broken.",
+            "As leader of the Wild Lords, Eldath protects rivers, streams, and druids' groves; her dogma is pacifistic, and her followers only resort to violence in defense of themselves, of their friends and loved ones, and of pools and groves. As such wyverians, elves, and other peaceful monstrous races typically worship her.",
+            "Her worshipers, known as Eldathyns, are organized into a simplistic hierarchy, where priests report to a local high priest responsible for a realm or larger region. Most followers dwelt in quiet forest communities with open-air sacred places of worship or in woodside cottages.",
+            "Many people came to Eldath for help in overcoming memories of a violent past, sometimes a single event that affected them but it could also have been an accumulation of battles fought by the individual.",
+            "Her clergy often followed migratory patterns traveling from holy site to holy site in a local area. They took care of the holy sites and allied with the local druids who followed the Wild Lords, of which Eldath was the leader of. Violence of any kind against an Eldathan priest was considered taboo, and murdering one was said to bring extremely bad luck. Even so, most servants of Eldath preferred to avoid conflict rather than trying to pacify it because they understood that peace cannot be forced. They would happily preside over peaceful meetings and witness political treaties.",
+            "Commandments of The Green Goddess",
+            "Seek stillness and thereby find peace. Tend to nature Nurture and aid, and do not restrict or punish. Work violence only to defend, and slay no thing of the forest except to prevent it from slaying themselves or another under their protection. Share with all beings the beneficial things that grow in or come from running water that all may know of and praise Eldath."
+          ]
+        },
+        {
+          "name": "The Lesser Gods",
+          "paragraphs": [
+            "Also known as \"The Guardians\", were originally members of the first races that ascended to godhood during the War of the Ancients. The members of the Platinum Court and the Wild Lords guide the first races and nature itself to this day, but the lesser gods who were once part of the Radiant Eye now corrupted serve themselves."
+          ]
+        },
+        {
+          "name": "The Platinum Court",
+          "paragraphs": [
+            "The Platinum Court was formed after the War of the Ancients, around the same time as the Wild Lords and Radiant Eye. Located on the Celestial plane, the court is led by the third aspect, Bahamut. Under his leadership the Platinum Court guides the races of the world, sharing their knowledge with those they believe to be pillars of the communities and punishing those that stray from their teachings.",
+            "The All-Father Alignment: Lawful Good • Domains: Forge, Knowledge",
+            "Moradin is the god of the dwarves and troverians; and the patron of craft and creation. He is worshipped by smiths, artisans, and miners alike, granting inspiration where respect and prayer are given. After the Great Dragon War, Moradin recreated the dalamadur and other creatures to form and shape the mountains, providing homes for his followers.",
+            "The All-Father is a harsh but fair judge, he is strength and force of will embodied. Moradin inspires dwarven and troverian inventions and constantly sought to improve the races, encouraging their good nature, intelligence, and harmonious existence with other good races while battling their pride and isolationist tendencies.",
+            "Moradin’s avatar appears as a stern faced male dwarf with powerful musculature, especially in the upper body, and with flowing black hair and beard. He always wears a field plate and carries a large shield and a war hammer.",
+            "Moradin is worshipped at forges and hearths. Melted metals are sacrificed to him monthly during the crescent moon. The church of Moradin has an active role in guiding the morals of dwarven and troverian communities. They emphasize the All-Father’s hand in everyday activities such as mining, smithing, and engineering, and invoke his blessings when these tasks are begun. They take an active role in teaching the young of the communities and oversee most formal ceremonies.",
+            "His symbol is a hammer and anvil.",
+            "Commandments of The All-Father",
+            "Honor him by emulating his principles and workmanship in smithing, stoneworking, and other tasks.",
+            "Found new kingdoms and clan lands, defending the existing ones from all threats. Innovate with new processes and skills. The Broken God Alignment: Lawful Good • Domains: Life",
+            "Ilmater is the god of those who suffered, the oppressed, and the persecuted, who offered them relief and support, encouraged them to endure, and who encouraged others to help them, to take their burdens or take their places. He is the incarnation of compassion, and the eternal foe of suffering.",
+            "Those who were oppressed, sick, lame, or poor are likely to be worshipers of Ilmater, and people who had been injured or were otherwise suffering would often call upon him for aid. His faith is popular among the poor in big cities, and with serfs and slaves, as well as merchants, thieves, and a few guards. Although people of any alignment can worship Ilmater, he is largely followed by folk of a lawful and good bent, especially among his own clergy.",
+            "Ilmater appeared as a short man with a burly build and wearing only a breechcloth, with a plain but kind and comforting face, balding head, and a hairy body. But this body bore the marks of mutilation and torture on the rack, covered with open cuts, closed scars, burns, and a range of other wounds. Ilmater's joints were broken, his limbs were ravaged, and his hands were smashed yet still functional. Moving caused him a great deal of pain as he dragged himself around. No matter how much his avatar healed, it still showed these terrible wounds.",
+            "His Symbol is hands bound at the wrist with a red cord.",
+            "Commandments of The Broken God",
+            "Help ease the suffering of all, Stand against those who enjoy causing destruction and spreading pain and suffering for others. Encourage those to endure, encourage others to help, and take their burdens or take their place. The Even-Handed Alignment: Lawful Good • Domains: Order, War",
+            "Tyr, also known as \"The God of Justice\", rules over the concepts of courage, law, protection, trust, strategy, tactics, war, and writing.",
+            "Among Tyr's worshipers were guards, judges, lawyers, magistrates, the oppressed, and paladins. The highly organized church of Tyr was strong in the more civilized lands of the Realms. They were known for never refusing service or aid to the faithful when they were in distress. Followers of Tyr were expected to show fairness, wisdom, and kindness to the innocent. Tyrrans never enforced an unjust law.",
+            "Commoners view Tyr and his clerics as stern arbiters of justice, often missing the paternal philosophical nuances of Tyrran doctrine for its more obvious black-and-white teachings on the nature of morality. They tend to view Tyr as something of a divine constant. They know that Tyr expects fairness, good judgment, and kindness toward the innocent from his followers, and hence afford Tyr’s clerics a great deal of trust.",
+            "Tyr was portrayed as blind or with a bloody bandage over his eyes and missing his right hand, for which he bore his title of the Maimed God. (His title of the Even-Handed, though it referred to his position of god of justice, was also seen as dark humor.) His wounded eyes were seen as symbolic of \"blind justice\" and the sometimes cost of living a lawful life. He usually was shown as a burly, noble warrior with a powerful build and a bearded face.",
+            "His symbol is balanced scales resting on a warhammer.",
+            "Commandments of The Even-Handed",
+            "Reveal the truth, punish the guilty, right the wrong, and always be true and just in your actions. Uphold the law wherever you go and punish those who do wrong under the law. Be vigilant in your observations and anticipations so you may detect those who plan injustices before their actions threaten law and order. Deliver vengeance to the guilty for those who cannot do it themselves."
+          ]
+        },
+        {
+          "name": "The Hand of Righteousness",
+          "paragraphs": [
+            "Alignment: Lawful Good • Domains: Law, Protection, Strength, War",
+            "Torm the True, patron of paladins and an unswerving enemy of corruption and evil, serves the people of the Old World by exemplifying the chivalric ideal. An ascended hero who lived his mortal life in service to a just sovereign, Torm eschews the pretense of his fellow deities, instead adopting a humble position that he exists to serve the common good and the rule of law as established by honorable mortal rulers.",
+            "Torm's worshipers consisted mainly of human males and females who favored the causes of both good and law. Righteousness, honesty, loyalty and truth were their primary pursuits. After the Great Dragon War, the number of dwarven and elvish members was increasing. In the present generations, Torm's followers shine as beacons of hope and courage.",
+            "Temples of Torm frequently double as Fortresses. Often constructed high on mountains to offer their residents a clear view of the surrounding area, such structures feature drilling grounds, high towers, austere quarters for resident and visiting knights, and plainly adorned, simple worship halls. White granite walls and statues of teostras and armored figures predominate, with badges of knights who fell in duty lining the high-ceilinged hallways.",
+            "His symbol was a right-hand gauntlet held upright with palm forward",
+            "Commandments of The Hand of Righteousness",
+            "Salvation may be found through service. Strive to maintain law and order. Bring painful, quick death to traitors. Question unjust laws by suggesting improvement or alternatives, not additional laws. Your fourfold duties are to faith, family, masters, and all good beings of the Old World. The Moonmaiden Alignment: Chaotic Good • Domains: Knowledge, Life",
+            "Selûne is the goddess of the moon, moonlight and stars; beauty and purity; love and marriage; navigation and navigators; tracking, wanderers, and seekers; diviners and dreams; good and non-evil lycanthropes; and autumn. Hers was the moon's mysterious power, the heavenly force that governed the world's tides and a mother's reproductive cycles, caused lycanthropes to shift form, and drew one to the brink of madness, and back again. Her nature, appearance, and mood all changed in turn with the phases of the moon and as such worked closely with the Wild Lords during the creation of the mizutsune, zinogre, and nargacuga.",
+            "Selûne and her teachings of compassion and guidance were appealing to all folk who lived their lives by the moonlit night sky, and hence her faithful were a very diverse group. She was followed by those who were lost and those who were questing. In particular, she was commonly worshiped by tritons and many of his temples mark the center of their settlements.",
+            "The appearance of Selune’s temples vary as much as her clerics, from small shrines in the wilderness to huge open-air or skylit buildings the size of great mansions. Reflecting ponds, small gardens, and feminine zymology dominate Selûnite architecture.",
+            "Her holy symbol is a bright pair of eyes of a darkly beautiful human woman, encircled by seven silver stars.",
+            "Commandments of The Moonmaiden",
+            "Let all on whom Selûne’s light falls be welcome if they desire. As the silver moon waxes and wanes, so too does life. See all other beings as equals. Turn to the moon, and she will be your true guide. Promote acceptance and tolerance. Aid fellow Selûnites as if they were your dearest friends."
+          ]
+        },
+        {
+          "name": "The Wild Lords",
+          "paragraphs": [
+            "Under the leadership of the Fifth Aspect Eldath, the Wild Lords maintain the sanctity of nature, life and their respective creations. During the reemergence, the Wild Lords set out to balance nature and sought to minimize Fatalis and Tiamat's influence over it. While some of the gods within the pantheon disagree on how exactly to go about this (creating creatures of all different shapes and sizes, and shaping the land based on their own vision), they all agree that the corruption must be contained.",
+            "The Forest Father Alignment: Neutral • Domains: Nature",
+            "Silvanus, also known as \"The Old Oak\" is a god of nature and one of the oldest of the sentient races when he ascended. His worshipers protect places of nature from the encroachment of civilization with vigor and were implacable foes of industrious peoples. It is due to these ideals that both wyverians and firbolgs are the Forest Fathers most common worshippers.",
+            "The church of Silvanus endlessly strives to preserve the sacred Balance, despite population pressures that lead to too-heavy hunting or farming. Members of the clergy work to redirect development and control populations through covert sponsorship of brigands, breeding and selective placing of predators, and other means. It is essential that such work be as secretive as possible, so that most folk view the servants of Silvanus as essentially benign lovers of trees. Wildlife breeding, nursing sick animals, and replanting trees and wild shrubs are all work that should be done as publicly as possible to support this perception--and as necessary work to redress the slipping Balance, of course",
+            "The Forest Father appears to mortals most commonly as a withered, timeworn, bearded man, usually levitating amongst scenes of nature, like trees, possibly springing from an old, large oak tree. To druids and rangers, however, he appears as a long-limbed young man covered in armor made of oak leaves. He carries an enchanted maul hammer, \"The Great Mallet of Silvanus\", and mauls are his clergy's favored weapon.",
+            "Many rituals of worship to the deity take place in a crown stand or tall, ancient trees on a hilltop. The deity must always be worshiped by sacrifice, but never by blood sacrifice. Instead, something made from material taken from wood must be ceremonially broken and buried--not burned.",
+            "His symbol is a green living oak tree leaf.",
+            "Commandments of the Forest Father",
+            "Hold your distance and take in the total situation, rather than latching on to the popular idea of what is best. It is the duty of the devout to see the cycle and the sacred Balance as clearly as possible. Make others see the Balance and work against those that would disturb it. Watch, anticipate, and quietly manipulate. Resort to violence and open confrontation only when pressured by time or hostile action. Fight against the felling of forests, banish disease wherever you find it, defend the trees, and plant new flora wherever possible. Guardian of the Deep Alignment: Good • Domains: Deep Wilds",
+            "Sculptor and architect of many wonders throughout the multiverse, Persana is best known for recreation of the seas on the material plane. After the Great Dragon War, Persana took it upon himself to bring life back to the seas. First with the reemergence of the tritons. Then the elder dragons and so forth until the sea was once again a majestic body of beauty. The Architect of the Deep works in many mediums, from stone and shell to coral and water, and even his foes cannot in good faith say his creations are ugly or uninspired. Little interests him besides his creations, but more than one of his enemies has been fooled into thinking that means he maintains no associations with other powers of the sea.",
+            "Persana rarely manifested his power to directly aid his followers. Instead, he favors communicating to his followers in dreams and sendings, sometimes directing them to build someplace or something, he may also indicate a place or object must be guarded or defended; often these are places or objects of great magical power or great evil.",
+            "Persana’s priesthood tends to have an aloof and superior attitude towards other clergies, even those they are on good terms with. They willingly work with and help allied clergies and communities, but it can often take a substantial effort and great evidence to mobilize them; once mobilized, however, they are a force to be reckoned with under the waves.",
+            "Temples honoring Persana can be found in most triton communities, with only the smallest settlements lacking one. These temples are grand constructions, featuring the best architecture tritons can muster, and are widely regarded as among the most beautiful buildings to be found under the waves, although sea elves often disagree. They are built upon a geometric plan, with soaring spires regularly placed around the structure.",
+            "His symbol is a silver trident against a silhouetted conch.",
+            "Commandments of Guardian of the Deep",
+            "Protect both the depths and the shallows against the great evils that lurk in the deep trenches. Evil always rises, and good will always confront it; justice is found in the balance between these forces Always strive to better your skills and improve your creations Nature dictates the shape of the world, for good or ill, so the only concern of the creatures that inhabit it is survival. The Huntsman Alignment: Chaotic good • Domains: Nature, War",
+            "Solonor Thelandira, the god of hunting, archery, and survival in wild and harsh places. He teaches his followers the arts of hunting; including archery, moving unseen and hiding in the wild places. He is always in pursuit of quarry, and he rarely remains in one location for very long. Unlike many hunters, the Great Archer stalks prey only out of concern for the overall balance between the species and to destroy evil-doers, particularly the creations of Fatalis and Tiamat.",
+            "The Huntsman is a well-respected member of the Wild Lords, answering to Eldath. He counts his allies as practically all good-aligned nature deities as well as Silvanus and several beast cults. Solonor considers Lolth his worst foe. His worshipers are invariably elves or half-elves of a natural bent, usually rangers, or other warriors who were particularly skilled at archery.",
+            "The church of Solonor is a disparate one, with little communication among groups of clerics except to exchange information. Solonor’s clerics serve as scouts and archers in elven armies, as bowyers, fletchers, archery instructors in elven settlements, and as hunters and providers for far-flung rural communities.",
+            "Solonor manifests as a lean & muscular male elf clad in a cloak of leaves. Wolf, a Beast Totem Spirit worshiped by wood elves, is often depicted at the side of Solonor in religious iconography.",
+            "Solonor’s faithful generally eschew frivolous celebrations, considering them unnecessary distractions to the tasks at hand. Once per lunar month, under the soft light of the full moon, the Great Archer’s faithful assemble to give thanks for the skills Solonor has taught and the bounty thus provided. Hunters sacrifice hunting trophies that cannot otherwise be employed, and unbroken arrows engraved with the symbol of Solonor are fired into the sky to poke holes in the firmament and allow the light of Solonor’s teachings to shine forth on his people. Each Harvest Festival, the followers of Solonor assemble to compete in great archery meets. The winners of such contests are said to receive Keen-Eye’s blessing.",
+            "Commandments of The Huntsman",
+            "Walk in harmony with nature and oppose the efforts of those who would disturb her delicate balance. Preserve the wild places from excessive encroachment, and work with those who would settle the land to preserve the beauty that first attracted them. Hunt only for sustenance, culling the old and the weak from the herd so that all species may prosper. Choose your targets carefully, for an ill-considered action can have a long-reaching impact. The Lady of the Woods Alignment: Good • Domains: Deep Wilds",
+            "Shilallia is the patron and protector of pregnant forest creatures, a planter of trees and nurturer of seedlings. She rejoices in life and shields against death. She is said to be earthy and winsome, and when not taking care of their needs delights in frolicking in the woods and playing with the woodland creatures who are her charges.",
+            "Shiallia's church is casually organized, without much of a formal structure or hierarchy. Her followers are sometimes known as the Silent Helpers, perhaps for the tales of their quiet and unseen aid in guiding lost children and fools past the dangers of the Great Forest. Certain particularly dedicated priests of The Lady of the Woods are known as Woodwives, and it is said that they possess spells which can increase fertility and ease childbirth. She has been known to confer acorns of desire on especially favored worshipers, which can grant them wishes.",
+            "The Lady of the Woods usually appears as a voluptuously beautiful female korred whose long blond hair was festooned with garlands of oak leaves and golden acorns.",
+            "Her symbol is a golden acorn.",
+            "Commandments of The Lady of the Woods",
+            "The only true goal of any living thing is to procreate. Death is not to be feared, for it is part of the natural cycle of life. Life, particularly the birth of new life, is to be encouraged and nurtured whenever and wherever possible. Nature dictates the shape of the world, for good or ill, so the only concern of the creatures that inhabit it is survival. Lord Firemane Alignment: Chaotic good • Domains: Nature, War",
+            "Nobanion, also known as \"Lord Firemane\", leads his faithful along a noble path, without force or coercion, and never takes the rear in command. He genuinely wants his pride to willingly choose benevolent and good actions over the alternatives by their own accord. He is a deity of virtue, and would never ask another to take an action that he himself would not, including the sacrifice of their own life.",
+            "Nobanion's worshipers included druids and rangers of the Old World, of mixed lawful and good alignments in areas such as the Verdant Hills and the Terosu Jungle. Nobanion’s followers are strictly ordered in rank but not otherwise organized. The Pride of Nobanion fills leadership roles in many communities where he is revered. Many serve as benevolent monarchs, judges, militia, constables, or as guardians against evil.",
+            "When Lord Firemane manifests in the world he appears as a Great Teostra radiating a powerful, yet gentle presence. Nobanion possesses a majesty and charisma that can be overwhelming at times. Even the smallest of animals feels comfortable around him.",
+            "The Festival of the Pride, known by the common folk as the Summer Twilight Festival normally takes place on the 28th of Dusk and lasts for a week. This is a time for frolicking, dancing, courting a mate, lovemaking, and generally celebrating the bounty of life and its potential.",
+            "His symbol is a male lion’s head on a green shield.",
+            "Commandments of Lord Firemane",
+            "Hunt only when hungry and do not gorge without need. Waste nothing and all shall have plenty. Live and let live unless provoked. Protect the pride and all its members, but if injury or illness bring them down, allow him or her a swift and painless end to suffering. The law of the jungle is that only the strong survive, but they survive best by being leaders, not tyrants, by protecting the weak, not bullying them."
+          ]
+        },
+        {
+          "name": "The Corrupted Gods",
+          "paragraphs": [
+            "Created by the corruption of the Great Wheel or born from it, the Corrupted seek to twist and pervert the Fives creation to their own image. Though each serves under Tiamat or Fatalis in some way, it does not mean they are necessarily loyal or willing to work with each other outside of their respective pantheons or groups. This shortcoming allowed the Aspects and Guardians to defeat and banish the corrupt gods back to the lower planes.",
+            "Fatalis Alignment: Chaotic Evil • Domains: Creation, Death, Trickery",
+            "Fatalis is an evil god of eternal darkness, decay, destruction, entropy, malign knowledge, and insanity. It is an evil incarnate that threatens the very existence of not only the material plane, but the very multiverse. Fatalis is hated by nearly all other gods, who would gladly put aside their differences to stop the Dark God from escaping its demiplane prison.",
+            "In its endless imprisonment, Fatalis exerts its will on the creatures of the material plane and brings the infinite depths of its mind into reality. The Aspects had thought it locked away at the end of the War of the Ancients until its aspect returned to ruin the world during the Great Dragon War. When the aspect was sealed away in the Ruins of Castle Schrade, its chaotic mind has fallen into more frightful dreams, imagining nightmarish creatures into existence.",
+            "Fatalis's few followers are almost all insane, and those who are not are extremely dangerous. Contact with the imprisoned God is only possible in proximity to one of his remaining artifacts or forgotten unholy sites, and even then his blessings come at the cost of madness. Its followers are highly secretive, and its temples are well hidden. Many follow it in the optimistic belief that Fatalis will spare its loyal servants when it destroys the multiverse. Their goal is to bring together all of its artifacts, and to free Fatalis from his imprisonment, where it will destroy the multiverse. Although the cult's leaders are fully aware of this, many low-ranking members merely seek revenge against society, and are unaware of the full extent of the Dark God's destruction, should it be freed.",
+            "Followers of Fatalis conduct terrible rituals of sacrifice. Most of their rites involve failed attempts to commune with their deity, or learn the secrets to unlocking the seals that bind it. If it has holy days, they are unknown to all but perhaps some of his followers.",
+            "His holy symbol is a jagged counterclockwise dark spiral rune known as the Spiral of Decay.",
+            "Commandments of Fatalis",
+            "Light must be snuffed, perfection decayed, order dissolved, and minds fragmented."
+          ]
+        },
+        {
+          "name": "The Eyes of the Abyss",
+          "paragraphs": [
+            "Once known as the Radiant Eye, the pantheon was twisted and corrupted by its leader Tiamat. Once they sought to contain the corruption, they now seek ways to release it upon the material plane. The members of the pantheon remain allies in the thinnest terms while continuing to serve Tiamat, but only so long as it benefits them.",
+            "The Black Lord Alignment: Lawful Evil • Domains: Order, War",
+            "Bane is the evil and malicious greater deity of fear, hatred, tyranny, and ruler of Banehold. Preferring to plot and scheme, Bane rarely appears to act in a direct manner; instead acting through his worshipers and other various agents. His ultimate goal was to eventually control all of the Old World.",
+            "Like many of the younger gods, Bane was once a mortal human that ascended during the War of the Ancients. Originally part of the Radiant Eye, Bane succumbed to the corruption and was twisted under the leadership of Tiamat. Now part of the Eyes of the Abyss, he forged an alliance with Bhaal and Myrkul. The three forged a pact of mutual aid and ambition: together they would conquer not just the world, but the heavens, becoming gods unto themselves.",
+            "Among the evil gods, Bane's church is among the most stable and powerful. While there was a time when the god encouraged sectarianism and violent disputes, that time has long since passed and today the god's faithful are as likely to solve their disputes through reasonable debate as through show of force. That being said, Bane's church obeys a strict hierarchy extending from the god's most powerful worshipers to his weakest ones, with the god himself the lord of everything they do. Though worshipers of Bane come from every station in life, they all know to whom they owe their blessings, ready to turn it over to the Black Lord at any time.",
+            "When summoned he has a dark and rather shadowy appearance with a resemblance of dark armor and his tell-tale jeweled dark gauntlet. He emanates an aura of vast power and cruel intelligence.",
+            "His symbol is an upright black right hand, thumb and fingers together.",
+            "Commandments of The Black Lord",
+            "Serve no one but The Black Lord. Fear him always and make others fear him even more than you do. Spread the dark fear of Bane. Submit to the word of The Black Lord as uttered by his ranking clergy, since true power can only be gained through service to him. Dark Mother Alignment: Chaotic Evil • Domains: Trickery, War",
+            "Once known as the god of love, Sune. She was worshiped by all, but Elves were the most common among her clergy. When Sune succumbed to the corruption of the Great Wheel she took on a new name, Lolth the Mother of Lust. Lolth is the goddess of the drow, a chaotic deity who revels in chaos, inspiring it in her followers along with the veneration of spiders. Using her newfound power and influence, Lolth corrupted and twisted the elves that worshipped her when she was known as Sune, creating the first drow.",
+            "Her love of chaos often makes her appear mad but the wise see her as a calculating individual who is always several steps ahead of those who believe that they can anticipate her. She is cruel and domineering, forcing her will upon her followers and her enemies, a will which instructed the strong to crush the weak in the most torturous way imaginable.",
+            "The way that new-born spider broods tore each other apart to survive especially appealed to her. She promoted this by encouraging her worshipers to kill their rivals, thus ensuring that they were the strongest of the brood. Her real goals were to hold absolute control over the dark elves, prevent the rise of alternative faiths or ideas, and avoid complacency (even though she found amusement in the strife that plagued her followers' communities). However, in the long run her influence proved to be an obstacle to the growth and success of the drow, preventing them from unifying against common enemies or for a common cause.",
+            "Lolth's follower base was varied. It mainly consisted of drow but also included aranea, chitine, draegloth and deep dragons. She gained a few elven followers and tried to gain more worshipers by assuming the aspect of a deity of rot.",
+            "Lolth's clerics are usually female, although there are rare male clerics, but none of which are allowed to achieve the rank of high priest. Her clerics wear red and black, and drow tunics and helms. The Spider Queen's sacred animals are (naturally) arachnids. She is worshipped on the full moon in underground marble temples. Enemies and riches are sacrificed to her monthly. Servants who fail Lolth (and there are many ways to fail the capricious goddess) are usually either slain or transformed into creatures called driders.",
+            "Lolth usually appears in two forms: drow and arachnid. In drow form, the Spider Queen appears as an \"exquisitely beautiful\" female dark elf, sometimes covered in clinging spiders. In her arachnid form, Lolth takes the appearance of",
+            "a giant black widow spider with the head of a female drow or human peering from between the eight spider-eyes. Sometimes, the two foremost pairs of her spider-legs are actually humanoid arms. On rare occasions her arachnid form has taken more of a drider-like appearance.",
+            "Commandments of the Dark Mother",
+            "The strong should rule over the weak. There are no other rules."
+          ]
+        },
+        {
+          "name": "Lord of Bones",
+          "paragraphs": [
+            "Alignment: Neutral Evil • Domains: Death, Decay, Old age, Exhaustion, Dusk, Autumn",
+            "After Tiamat's corruption, Myrkul became known as the Lord of Bones, the Lord of the Dead and the Reaper. He had become a god of the dead in the Old World. Myrkul has a cold, malignant intelligence. He is always alert, never sleeps, and is never surprised. He has never been known to lose his temper or be anything other than coldly amused when a mortal succeeds in avoiding his directives or chosen fates.",
+            "The worship of Myrkul is not popular in the Old World. His worshipers, who are often undertakers in one form or another, are a morose, secretive lot, reticent to share their faith with those outside his meager and unorganized church. These Myrkulytes are tasked with ensuring the people of Toril both feared and respected death. To aggrandize Myrkul's power they would propagate rumors that merely touching one of his priests would bring certain death.",
+            "The avatar of Myrkul appears as a skeleton of a man hidden in flowing black robes. His wrinkled, lesioned skin and blackened, cracked lips gives the appearance he was just on the verge of death. He speaks in a rather high whisper, though his words never show enough inflection to convey feeling or concern.",
+            "The holy symbol of Myrkul is a white skull inset into a black triangle.",
+            "Commandments of the Lord of Bones",
+            "Know me and fear me. My embrace is for all and is patient but sure. The dead can always find you. My hand is everywhere - there is no door I cannot pass, nor guardian who can withstand me."
+          ]
+        },
+        {
+          "name": "Lord of Murder",
+          "paragraphs": [
+            "Alignment: Neutral Evil • Domains: Death, Decay, Old age, Exhaustion, Dusk, Autumn",
+            "After the Radiant Eye became the Eye of the Abyss, Bhaal became a god of death who favored murders that were carried out through violent or ritualistic means.",
+            "The Lord of Murder is feared throughout all of the Old World especially on the island Aya. Despite this shared dread throughout the Realms, the exact nature of what the Lord of Murder has power over is contested among sages and scholars. In his best incarnation he might have taken strength in violently punishing murderers and warmongers. Challengers of this notion insisted that he judged whether a murder was righteous or not.",
+            "The clergy of Bhaal in the Old World are known as Bhaalists or Bhaalyn, the latter being used more commonly in the lands east of the Terosu Jungle. Together they were a disorderly network of local hierarchies, with the urban and rural branches maintaining distant relations from one another. Collectively, they believed that murder was both a duty to their god and a game for their enjoyment. Each cleric of Bhaal was expected to perform at least one murder every tenday, in the darkest moment in the dead of night.",
+            "Bhaal has three avatar forms; a shape-shifting one called Kazgoroth, a human-sized one called the Slayer, and a giant called the Ravager. The Slayer appears as a corpse-like male humanoid, whereas the Ravager is large and bestial.",
+            "The holy symbol of Bhaal is a skull surrounded by a ring of bloody droplets.",
+            "Commandments of the Lord of Murder",
+            "Commit murder once every ten days. If imprisonment or other constraining circumstances make this impossible, murder twice for each death missed. Make all folk fear Bhaal. Let your killings be especially elegant, or grisly, or seem easy so that those observing them are awed or terrified. Tell folk that gold proffered can make the Lord of Murder overlook them for today. The Undying King Alignment: Neutral Evil • Domains: Evil, Knowledge, Magic",
+            "Vecna is considered the most powerful and the most evil lich in history. He rose to power during the Great Dragon War as a lieutenant of Fatalis but was eventually destroyed, and his left hand and left eye were the only parts of his body to survive. Seeing Vecna's value after his death, Fatalis rewarded Vecna by ascending him to godhood.",
+            "With his new found power Vecna joined the Eyes of the Abyss, but not before creating many secret strongholds in far-off regions of the Material Plane. There, the souls of those who worshipped the Undying King in life continue to serve him in death.",
+            "Vecna and his faithful believe in the power of secrets and their ultimate ability to destroy anyone, no matter how powerful. Vecna hopes one day to destroy every other deity in existence, leaving himself the sole ruler of creation, but until his power grows beyond contention, the Eyes of the Abyss provide him safety and powerful allies.",
+            "Vecna's cult is very secretive, and cells have been uncovered, at various points in history. Clerics of Vecna often don't realize which god they're serving when they're first initiated. Many are deluded into believing they belong to an obscure sect of Torm or Shilallia. The truth is not revealed to them until they show their willingness to do anything in the pursuit of knowledge and power.",
+            "Each position in Vecna's cult is named for a certain body part. At the top is Vecna himself, followed by the Voice of Vecna, which can only be filled by Vecna's manifestation. Next is the Heart of Vecna, the high priest of the cult. Individual congregations are known as Organs. Each Organ is led by a Thought of Vecna. Lesser priests are known as Memories of Vecna.",
+            "Vecna is usually depicted as a powerful magician resembling a desiccated corpse missing his left hand and eye. A constant theme in the adventures in which Vecna appears is his never-ending quest for power, ending, should he succeed, with Vecna as the only deity in existence.",
+            "Commandments of The Undying King",
+            "Secrets are power. Never reveal all you know. There is a secret evil within every being, no matter how virtuous. This seed of evil can and should be exploited by those able to identify it."
+          ]
+        },
+        {
+          "name": "Archdevils and Demon Lords",
+          "paragraphs": [
+            "The Archdevils and Demon Lords were born from corruption when the Abyss and Nine Hells were formed. Being born in this way, these god-like beings have no innate allegiance to Fatalis, but they're willing to work with it and its followers if it proves to work in their favor. The standard 5e Demon Lords and Archdevils are all found within this setting."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "races",
+      "name": "The Races of Monster Hunter",
+      "page": 18,
+      "paragraphs": [
+        "Since the reemergence after the Great Dragon War a thousand years ago, the races of the world crawled back from extinction. Even with the slow advancements of technology, twelve of the races left their mark in the Old World. Working together with each other, under the guidance of the Platinum Court and Wild Lords, these races set out to become the society we have today.",
+        "This section stands as a resource to help inspire you in deciding how your character’s racial background fits within the Monster Hunter Universe. The game statistics of each of the standard 5e races are identical to those in the Players Hand Book. The statistics for the new races can be found in Chapter 3 of this guide."
+      ],
+      "subsections": [
+        {
+          "name": "Dragonborn",
+          "paragraphs": [
+            "In the time of the ancient civilization the dragonborn were known far and wide, as the most devout and honorable race of the time. The original dragonborn were known to be humans who had ascended, by the grace of Io, to a state of body and mind that closely resembled the original image of the Five. These dragonborn excelled at all they did, becoming great heroes, community leaders, head of clergies and other research institutions of the ancient civilization.",
+            "By the end of the Great Dragon War, most of the dragonborn had been wiped out with many of the elder dragonborn bloodlines going extinct with their elder dragon brethren. After the reemergence dragonborns were a rare sight for villages and even some towns. Those that lived in cities were typically well respected noble families that could trace their heritage back to the ancient civilization. New dragonborns that weren't born from these families were almost unheard of. It was a rare occasion when a person of any race proved themselves worthy to an Aspect, and were granted the gift as a reward. In Tiamat's case, she lorded the ascension over her followers, only granting the gift to those who bring her priceless artifacts, great wealth, or progress her plans beyond her expectations. Those who fail her, or request the ascension, instead are typically turned into kobolds.",
+            "Dragonborn of any age have a well-known dedication to honor, but how deeply rooted this trait is remains debatable. However, all dragonborn tended to view all living things, even hated enemies, as deserving of courtesy and respect. To dragonborn, honor was more than a word and was often considered more important than life itself. Cowardice was not simply undesirable among dragonborn, it was considered outright repulsive.",
+            "Part of the roots of this honorable attitude lay in the dragonborn's drive for self-improvement. The draconic nature of dragonborn gave them a strong self-consciousness and a tendency for strong emotions. Both of these combined to make dragonborn particularly wanting for the approval of others. Dragonborn placed great value on the skill of an individual, including themselves. Failing at a task was anathema to dragonborn and as a result they could sometimes push themselves to unhealthy extremes of effort. This aspect of the dragonborn mind meant few of the race took a laid-back approach to any skill or ability, striving always to become the masters of a particular skill, and dragonborn respected those among other races who approached life in the same manner. As a result, most dragonborn adventurers came to their way of life through a desire to prove themselves and win respect from their brethren."
+          ]
+        },
+        {
+          "name": "Dwarves",
+          "paragraphs": [
+            "The bold and hardy dwarves of the Old World are known as skilled warriors, miners, and workers of stone and metal. Modeled by the All-Father after the reemergence almost every dwarf in the Old World originates from Harth, a village near the Everwoods (located west of the Old World). Harth itself still stands as the central heart of dwarven society, but in the last few hundred years they have welcomed the troverians into their home. Combining their crafts, the troverians and dwarves have made a dramatic impact on a hunter's quality of life. Mountain and hill dwarves alike can be found in the many cities and locales of the Old World, but typically in small numbers. Hill dwarves are known to make above ground settlements of their own. If drawn to more dangerous pursuits, many dwarves turn to mercenary work, working with the hunters guild and wycademy in search of ancient civilization artifacts."
+          ]
+        },
+        {
+          "name": "Duergar",
+          "paragraphs": [
+            "The dwarves that stray away from their heritage and gave into the corruption in their heart became the first duergar. As generations passed, the duergar carved out an existence in the Underdark, near the volcanoes in the northern el de region. Their kinship to other dwarven subraces could be compared to that of the drow to surface elves.",
+            "Duergar are a dark and cruel race, who show no mercy to their foes and who take great pleasure in inflicting pain on others. They are pessimistic of their future and deeply cynical regarding the motives of others. Because of their pessimism, duergar rarely adventured of their own free will and were instead most commonly exiles cast out of their society. These adventurers, most commonly concerned with personal gratification, were commonly outlanders, gladiators, criminals, or urchins."
+          ]
+        },
+        {
+          "name": "Hill Dwarves",
+          "paragraphs": [
+            "Hill dwarves are stout, tough individuals like their mountain brethren but are less off-putting and gruff in nature. They are a deeply materialistic race who believe that the resources of the natural world exist only to serve the purpose of conscious beings. To a hill dwarf, there is no greater purpose than to fashion the minerals of the earth into things of beauty.",
+            "Hill dwarves were once mountain dwarves that were exiled from their homes or had their home destroyed and moved above ground instead of deeper like their duergar cousins. As generations passed, these dwarves settled above ground, forsaking the old ways and in exchange found new friends, new business opportunities, spiritual enlightenment, and even arcane knowledge."
+          ]
+        },
+        {
+          "name": "Mountain Dwarves",
+          "paragraphs": [
+            "Whether or not the mountain dwarves claim that they'd been carved from the world's stone was true, dwarves shared many qualities considered similar to the stone they lived with. Strong, hardy, and dependable, dwarves are polite, particularly to elders, and possess a wisdom beyond that of many other races. Dwarves value their traditions and look for inspiration from the ancient civilization. Dwarves were also known for their stubborn nature and cynicism.",
+            "A mountain dwarves friendship and trust is hard to earn, but was ironclad once won. For dwarves, loyalty is more than a word and they feel that it should be both valued and rewarded. Naturally suspicious, the mountain dwarves are slow to trust others and rightfully so. Many of their attempts at expanding their territory proved disastrous due to trusting other races. They do not forgive these past mistakes easily and the entire race has more or less declared war on goblins and orcs as a whole, wiping them out where they find them."
+          ]
+        },
+        {
+          "name": "Elves",
+          "paragraphs": [
+            "The elves were one of the first races created after the creation of the Old World. They were the first race to be created by Eldath meant to represent the beauty of nature. The elves originated in the wooded lands of the Verdant Hills, and many elves still call the forest their home. After the War of the Ancients, when the elves allied themselves with Eldath against Fatalis and its demonic horde, many of the high elf families did not return to the forest, instead choosing a new life in the city of Riveru. Even after the reemergence, Riveru was a wonderous thing of beauty. Many elven heroes and hunters originate from this city."
+          ]
+        },
+        {
+          "name": "High Elves",
+          "paragraphs": [
+            "The high elves, named for their close resemblance to Eldath and innate magic ability, call the city of Riveru home. Within the city, the elves focus their studies and talents on the protection of the city. Many of the high elves were known to join the wycademy to expand their knowledge while others joined the Hunters Guild before returning to the city to pass along their new found knowledge.",
+            "The high elves are in good standing with their wood elf kin, and with the other races of the world. They have a deep seeded hatred for the Dark Mother and the drow that follow her. Seeking to disrupt her plans over anything else, besides the protection of their city."
+          ]
+        },
+        {
+          "name": "Wood Elves",
+          "paragraphs": [
+            "Since ancient times, the wood elves have fought to protect their homeland. After the founding of the Hunters Guild and the Elder Dragon Observation team, young wood elves found that their wanderlust and skills in hunting and survival were a perfect fit for these organizations. Over the passage of time, the wood elf clans spread far and wide, preferring to take up residence in the small villages or outposts near or in the forests of the world. They viewed themselves as guardians of these forests. They were allies and teachers rather than rivals to those in their communities. As a people, wood elves are largely seen as calm and level-headed.",
+            "Many hours of a typical wood elf's life are spent on the hunt, which was both a practical activity and a pleasurable",
+            "one. Most of the time that wood elves were not hunting they were enjoying themselves at ease within the highest branches of their forest homes."
+          ]
+        },
+        {
+          "name": "Drow Elves",
+          "paragraphs": [
+            "Few elves let alone other races wish to be associated with their subterranean kin. The drow were once high elves that worshiped the goddess Sune. When the goddess was corrupted she used her alluring whispers to convince her followers to ally with Fatalis in the Great Dragon War. After the Dark Mothers banishment to the Lower Planes, her high elf followers went into exile, hiding below the earth. As generations went by, the high elves blonde hair turned a silvery white, eyes blood red, and their once beautiful skin turned the color of ash. They took on a new name, no longer the high elves, but the drow servants of Lolth.",
+            "Drow, by reputation, were almost entirely evil. The drow society nominally had two purposes, called \"the First and Second Part of the Destiny of the People\". The former was about forcing all other races of the Underdark into subservience, while the latter was about driving the entire elven population into extinction. To achieve this Lolth promoted perpetual infighting and violent competition, so that the constant training would make them stronger and smarter. However, the extreme, self-destructive degree to which this was taken prevented the drow from achieving either of their purposes, barring possibilities for significant growth. In fact, despite her rhetoric, Lolth merely enjoyed the infighting that she promoted and put no effort into reaching the supposed goals.",
+            "Drow rarely come to the surface, for most are too proud to return defeated to the sun-drenched lands of the Green Goddess, even to escape the madness of the underworld. Nevertheless, some still choose this dishonorable path. Those that travel to Riveru seeking redemption are executed before they enter the gates. The drow that return to their original homeland are welcomed by the wood elves, but only after renouncing Lolth and embracing Eldath once again. Others seek to join the Hunters Guild, as a way of atoning for their races' past sins by slaying the corruption that seeps into other creatures, like it did to their ancestors."
+          ]
+        },
+        {
+          "name": "Half-Elves",
+          "paragraphs": [
+            "For a human, having a half-elf child was a blessing that brought their family closer to the gods. They grew up adored in their communities, growing up with acceptance and praise. It is uncommon for a half-elf to leave their families or communities when they come of age. Most of them take over family businesses or find a respectable job in town. Those that do feel the wanderlust from their elven heritage, usually join the Hunters Guild or Wycademy as a way to satiate that need.",
+            "For the elves, their opinions varied. The wood elves welcome the half-elves with arms wide open, sharing their traditions and knowledge. The high elves of Riveru are not so accepting, the half-elves in their eyes are tainted. Their innate magic and ancestry are weakened by the human blood flowing within them, but that isn't to say that the half-elves have their uses. half-elves in Riveru work as house servants and doing other menial tasks in the town.",
+            "It is a tough life, that many half-elves choose to leave once they come of age, never to return to the city. Finally, the drow do not breed with weaker races, as such no drow half-elves are known to exist, but should one ever come to be, it would only find death by both the high elves and drow, but it might find sanctuary with the wood elves."
+          ]
+        },
+        {
+          "name": "Gnomes",
+          "paragraphs": [
+            "The gnomes and gnomish culture were extremely prevalent during the time of the ancient civilization. There wasn't a village street or a city block where the sound of gears grinding, minor explosions, and yelps of surprise were mixed in with bursts of laughter and joy. The gnomes were responsible for many of the great innovations and inventions of the time. After the reemergence the ruins of the Tower to the far east and the Sky's Corridor on a remote island off the east coast of the great forest still stand as a testament to their work."
+          ]
+        },
+        {
+          "name": "Rock Gnomes",
+          "paragraphs": [
+            "The rock gnomes are more closely related to their ancestors than their cousins the forest gnomes. They have a natural curiosity towards technology and seek to find ways to better improve the lives of those in their communities. Their natural inventiveness leads them to become alchemists and tinkerers, seeking ways to use the resources around them in new ways."
+          ]
+        },
+        {
+          "name": "Forest Gnomes",
+          "paragraphs": [
+            "Descendants of a community of rock gnomes that inadvertently teleported themselves to the beastlands while experimenting during the ancient civilization. Unable to find a way back to the material plane the rock gnomes slowly adapted to their new environment.",
+            "By the time they had returned to the Old World, generations had passed. The forest gnomes, as they were now called, had taken up residence in the Verdant Hills. Preferring to live in nature than in the bustling cities like their kin, the forest gnomes are more than happy to help their rock gnomish kin in their search to understand how nature works and how to manipulate it.",
+            "They tend to be good friends with good-spirited woodland folk, aiding them in their endeavors. Forest gnomes make great scouts for the Hunters Guild and Elder Dragon Observation Team due to their ability to befriend small woodland animals. Using these animals the forest gnomes are able to relay information about threats that might prowl their lands."
+          ]
+        },
+        {
+          "name": "Goliaths",
+          "paragraphs": [
+            "One of the last races created by the gods before the Great Dragon War, the goliaths were outlanders who resided in the Snowy Mountains. Molded by Eldath from those who worshiped the ukanlos that resided deep in the mountain range, the goliaths are a race wrapped in tradition. Their society's key focus was competitiveness and held equality and fairness in high regard. They kept track of their accomplishments and saw everything as a challenge. Many outside of the race that didn't understand this tradition would find it quite annoying when a goliath would bring up how many times a certain thing would happen.",
+            "This was not the case however. To goliaths, score-keeping was a natural and integral part of life, not meant to belittle or demean anyone.",
+            "Ancient goliaths lived in small tribes in the Snowy Mountains, that numbered between forty and sixty. This was usually made up of three to five extended families. Most goliaths lived in the same tribe their entire life. On rare occasions, a tribe that got too large would split into smaller tribes or smaller tribes would merge together.",
+            "These tribes only went to war as a final option, and for much of the Great Dragon War they were successful in this endeavor. It wasn't until the death of their beloved ukanlos by the hands of the Dark Mother's cultists that they allied with the Aspects. The war was bloody for the goliaths, many of the families and tribes were wiped out. Those that survived returned to the Snowy Mountains beaten and bruised, but with a new found respect for their allies.",
+            "After the reemergence, the goliaths were an integral part of the Pokke Village's founding. The Snowy Mountains had always been their home, and their knowledge of the territory prevented many casualties in those initial years. Though most goliath tribes are nomadic, many of them chose to remain in Pokke Village as gladiators, soldiers, and hunters. In fact, after the founding of the Hunters Guild in Pokke Village, the goliaths were one of the first to join up. The guild to them, represented the tradition that was lost after ukanlos' death. They were able to compete not only with their fellow goliaths, but also all the other members of the guild. Rumors in the past have told of goliath hunters returning to the Snowy Mountain with large pure white eggs. Though they deny it, many believe the goliaths are searching for a ukanlos egg, in hopes of returning on to the mountains once again."
+          ]
+        },
+        {
+          "name": "Halflings",
+          "paragraphs": [
+            "Halfling clans have always been known for their curiosity and tendency to collect things. Before the War of the Ancients the halflings were the leading experts in botany and were most commonly herbalists. They lead expeditions across the world collecting plants, mushrooms, and other rare resources that they could study and use to better the life of the races and creatures alike.",
+            "When the War of the Ancients began, the halfling clans splintered. The lightfoot clan wished to avoid the war directly, instead focusing their attention on the curative and other beneficial properties the resources they gathered could provide their armies. The Stoutfoot were ready to fight, but while the adults headed to the front lines, their young took to defending the settlements as guards. The forgefoot clan as they came to be known during the war, strayed from plants and mushrooms. Instead they turned their focus on ways to bend the earth to the war's needs.",
+            "After the war the halfling clans did not reunite. Two of the clans had found a new passion while the lightfoot clan stuck to the halfling traditions. The lightfoots resented the other clans for straying from the old ways which caused some minor conflicts between the clans throughout the time of the ancient civilization, but their accomplishments overshadowed these \"minor\" skirmishes."
+          ]
+        },
+        {
+          "name": "Lightfoots",
+          "paragraphs": [
+            "After the reemergence the lightfoot clan has spread far and wide. Their traditions still hold strong throughout the clan with most lightfoots using their knowledge to become alchemists, herbalists, researchers, clerics, and druids. They have a tendency to avoid being up front fighters and would rather run when in danger than fight.",
+            "The Lightfoots still hold a grudge against the other halfling clans, but they will still work with them if required, albeit reluctantly. They are also not against bringing up any faults in plans or issues caused by their halfling brethren."
+          ]
+        },
+        {
+          "name": "Stout",
+          "paragraphs": [
+            "The Stoutfoot clan took a new name after the reemergence. Tired of having a name similar to the traditionalist who are unwilling to change, the Stoutfoot clan came to be known as the Stoutguard clan. The Stoutguards are well known throughout the settlements of the Old World. Many do not take up hunting, instead choosing to guard the villages, cities, and towns they were born in. On a rare occasion, a Stoutguard has been known to enter the ranks of guild knight. Those who reach this achievement are treated as heroes and legends in their halfling communities."
+          ]
+        },
+        {
+          "name": "Humans",
+          "paragraphs": [
+            "During the ancient times the human civilizations were widespread across the known world. They are diverse in skills and quick to adapt, which allowed them to learn and live with the other races without conflict. After the reemergence, the humans were recreated by the Aspect Pelor. With the Great Wheel infused with both divine and corruption, the Humans were made stronger, but their once good nature was now shaped by the world around them. Human hunters and folk heroes can originate from anywhere in the Old World and are typically found in all villages, cities, and towns. Most Commonly though, hunters that graduate from the hunter academy are from Minegarde or villages nearby in the Verdant Hills.",
+            "Humans living in the Verdant hills provide the infrastructure for port and trade between the three largest cities; Dundorma, Verudo, and Riveru; and the rest of the world. As such, humans are typically skilled in some craft, business, or production. For the humans seeking a life away from civilization, more often than not find work with the wycademy or hunters guild as research explorers, archeologist, handlers, or hunters themselves."
+          ]
+        },
+        {
+          "name": "Lynians",
+          "paragraphs": [
+            "The Lynians are a relatively common race in the Old World, able to adapt to their environments much like humans. Although many of the lynian subspecies originated on the main continent in the Old World many of them have migrated to all corners of the world. For those who stay within multispecies communities, their short stature and beast-like nature has always proved a social hindrance in the lands of the tall folk. While lynians fight for respect within human communities, they can prove themselves through deeds, or humor, among their taller neighbors. They've been seen being farmers, traders, adventurers, etc. Some Lynians, known as \"palicos\", are known to assist hunters and quite a few are independent monster hunters, known as prowlers."
+          ]
+        },
+        {
+          "name": "Boaboa",
+          "paragraphs": [
+            "Cousins to the shakalaka, the boaboa are one of the few lynians that can tolerate the cold. They call the arctic regions of the world home and strangely enough worship the popo as a god. During the Great Dragon War, the boaboa allied with the Dark Mother when the goliaths and warforged came for the popo’s fur and meat. At the Dark Mother's request, the boaboa were tasked with killing their enemies in the most torturous way possible. In return, the Dark Mother promised her protection of the popo. The boaboa excelled at their task, and it wasn't until her banishment that they realized her betrayal. The northern sea had been poisoned, filled with the corpses of the goliaths the boaboa had slain. It tainted everything, killing the popo and boaboa alike.",
+            "After the reemergence, the boaboa worship the Wild Lords. It was by their grace that the popo returned to the world. They still have a great hate for the goliaths, just as the goliaths do for them. They're slow to trust, but once you earn it, the boaboa can prove to be an invaluable lifelong friend.",
+            "Felyne & Melynx The felyne and melynx are the most common lynian subspecies found in the Old World. While both easily adapt to lifestyles with other races taking up jobs as chefs, blacksmith assistants, and other odd jobs, the melynx have a tendency to revert back to their more... wild nature. They are known to occasionally have items of value \"appear\" in their hands with no knowledge of how they got there. Of course they gladly return the items if asked, but any that go unclaimed are taken to their homes for safekeeping until their owner comes to retrieve them. For those felyne and melynx seeking greater respect, they typically join up with hunters as their palico or as prowlers themselves.",
+            "Felyne and Melynx that live in the wild are looked at as their own culture due to their intelligence, lifestyle, and groups. They are known to form villages in secluded areas, where most monsters wouldn't dare to venture to. These villages are known to have tribal exchanges with other lynians and other cultures. They are also known to worship the Wild Lords, with many felyne and melynx druids and rangers originating from these settlements."
+          ]
+        },
+        {
+          "name": "Gajalaka",
+          "paragraphs": [
+            "The gajalaka worship the Lord of Murder and answered his call for war during the Great Dragon War. They are outlanders much like their shakalaka cousins, but are aggressive towards all monsters and hunters that enter their territory. After the reemergence the few that remained after the war hid themselves away in an attempt to build their numbers back up. It wasn't until recent history that the gajalaka showed themselves once more. A gajalaka rarely works with anyone from the civilized world, unless exiled, or if it benefits them. They are also rarely accepted due to many of them being acolytes to the Lord of Murder, necromancers, criminals, or thieves."
+          ]
+        },
+        {
+          "name": "Grimalkyne",
+          "paragraphs": [
+            "The grimalkyne were once one large tribe during the time of the ancient civilization. They were outlanders, who lived off the land and worked in harmony with nature. They worshiped the Wild Lords and still do to this day.",
+            "The reason the grimalkyne split into the separate tribes of today during the Great Dragon War, was due to a disagreement between its four leaders. Each of them believed they were walking the grimalkyne down the correct path. The Bugtrappers tribe headed into the ancient forests, choosing to seclude themselves like the shakalaka. The Protectors and Troupers tribes joined the other races of the world in the fight against Fatalis and Tiamat. Those grimalkyne who become palicos or prowlers are typically from these two tribes. Finally the Plunderers tribe sought to scavenge the battlefields and other ruins of the world, gathering enough supplies to protect themselves.",
+            "After the reemergence the Bugtrappers remained in the forests as outlanders, hermits, and sages. They assist hunters and provide aid to those who enter their territories. The Protectors and Troupers took their leave, traveling into the deserts and high mountains to build their own communities. Occasionally these tribes have been known to send emissaries to towns, cities, and guilds as a sign of good will. The Plunderers tribe still remain scavengers and criminals. It is not unheard of for a Plunderers tribe grimalkyne to impersonate a Protector or Trouper as a way to enter a town or guild without suspicion."
+          ]
+        },
+        {
+          "name": "Shakalaka",
+          "paragraphs": [
+            "The Shakalaka are very similar to humans, in that they hunt and gather, but are less civilized in nature. Even before the rise of the ancient civilization the shakalaka had secluded themselves deep in the forests of the world. In doing so, the shakalaka avoided much of the carnage of the Great Dragon War, but also stunted their growth as a society, leaving themselves primitive and barbaric even after the reemergence. Even so, the shakalaka are a proud and barbaric subspecies of lynians, attacking most creatures, including hunters, on sight. Young shakalaka or, Ōme Shakalaka (unripe shakalaka) as they are known in their tribes, have been known to befriend hunters, helping them on their quests.",
+            "Hunters typically encounter these young Shakalaka when they partake in a coming-of-age ritual in which they are sent out of their settlement to bring back items of great value to their tribe. This can take the form of a rare monster material, treasure, or an object with historical or cultural importance to the tribe (such as a special mask).",
+            "Hunters are able to spot an Ōme Shakalaka by their mask. These masks aren't the usual telltale orange gourd masks that adult shakalaka wear. Instead young shakalaka wear masks of all varieties, most commonly acorn masks. Shakalaka that become palicos or prowlers are known to have full helms crafted from the creatures they've killed."
+          ]
+        },
+        {
+          "name": "Tieflings",
+          "paragraphs": [
+            "Power hungry, unworthy, untrustworthy scoundrels, and abomination are many of the words that the races of the world used to describe the ancient tieflings. Created when a cult of teostra, shunned by the gods for their power hungry nature, began experimenting in an attempt to ascend by themselves. After numerous failed attempts, their leader cried out to the gods every night, begging for an answer, until he finally received one. Unknowingly under the guidance of the newly manifested Fatalis, the cultist succeeded in their endeavor, but not before killing their beloved teostra and",
+            "completing the ritual by injecting its blood into their veins.",
+            "These first tieflings had a more beastial look similar to the teostra. They had a fiery coloration, thick horns that curve backwards, large fangs, and a tail that ended in a clump of fur. The males had long flowing red hair and a beard that resembled the teostra's flowing mane. Female tieflings' hair varied in length and the hair between their horns was varying shades of yellow.",
+            "Though they had ascended, they had committed an unspeakable act. Killing an elder dragon during this point in history was tantamount to attacking one of the Five themselves. The tieflings were forced to live as outlanders in small communities, or as hermits, but their allure of ascension brought those who felt ignored by the gods to their ranks. The tieflings continued to experiment with other elder dragon blood on the humans that came to them, creating new tieflings of all different colors and abilities. Their continual killing of the elder dragons did not go unnoticed. The Fifth Aspect, Eldath, sensed the blasphemy and the growing threat of the tieflings. So with the help of the other 4 Aspects, the tieflings were banished to the Lower Planes and the ritual was lost to the ages.",
+            "The tieflings did not return to the material plane until the Great Dragon War. Their time in the Lower Planes had changed their appearance to the commonly known demonic look of today. Many of the tieflings fought in the archdevils armies, but tieflings were no longer predisposed to evil or power hungry as they once were. Those that sought to defect took the chance to escape and fight on the side of the Platinum Court and Wild Lords, who allowed them to remain on the material plane after the war had ended.",
+            "Although their evil ancestors could be many generations removed, the taint lingered. Tieflings tend to have an unsettling air about them, and most people are uncomfortable around them, whether they are aware of the tiefling's unsavory ancestry or not.",
+            "When these prejudices were put aside, the tieflings' cunning and personal allure, which made them excellent deceivers, also made them inspiring leaders. Members of other races find that once they demonstrate friendship and trust towards a tiefling, it would quickly be reciprocated in full. Once that bond was forged, it was rarely broken."
+          ]
+        },
+        {
+          "name": "Tritons",
+          "paragraphs": [
+            "The tritons were the first humans to worship the Fives creation and as such were infused with the power of the sea. Due to this, many tritons come across as arrogant, but they are in fact benevolent creatures at heart, convinced that other civilized races deserve their protection. Their attitude might grate, but when pirate fleets prowl the waves or a ceadeus awakens from its slumber, they are among the first to take up arms to protect others.",
+            "During the War of the Ancients, the tritons suffered massive defeats and many were twisted by Fatalis’ offer of power, transforming them into sahuagins. It wasn't until Persana ascended to godhood that the tritons were finally able to push the sahuagins and other corrupt creatures back to the elemental plane of water.",
+            "In the aftermath of the war the tritons were tasked by Persana to be the caretakers of the sea. So they began building some small settlements beside deep trenches and even some in other dangerous spots far from the land.",
+            "That isn't to say that all triton's live so far from the other races. Many of them call Moga Village and many of the port towns across the Old World home.",
+            "Many triton's that live among the other races work as dockhands, shipwrights, or merchants in the ports. While others may join the hunters guild or other research guilds, using their unique attributes to their advantage."
+          ]
+        },
+        {
+          "name": "Troverians",
+          "paragraphs": [
+            "Known as the forgefoots in ancient times, the troverians took their new name after the reemergence. Unlike the dwarves who were molded by stone and minerals by the all-father, the troverians were born from humans who worshiped the creatures of the earth, and were the last to be ascended by Io before his sacrifice.",
+            "The troverians were an instrumental part of the ancient civilization, working with gnomes and dwarves and combining their technology with their own. It was this adaptability that led to the creation of the equal hunter weapons. It was one of their greatest accomplishments and greatest regrets. The equal hunter weapons made life easier for the ancient civilization, but also was the spark that would eventually begin the Great Dragon War.",
+            "The troverians live in the mountains and hills, in recent years they were welcomed to the village of Harth where they work together with the dwarves to develop new weapons and items for the Hunters Guild. Most troverian adventurers have some sort of smithing or artisan skill, and typically join one of the many factions to find hidden technology and rare materials that they can bring back home."
+          ]
+        },
+        {
+          "name": "Warforged",
+          "paragraphs": [
+            "During the time of the ancient civilization a new race was created, not by the gods, but by man. These Equal Hunter Weapons or \"EHWs\" were created near the end of the ancient civilization as an attempt to meet the ancient civilizations' needs. Mindless automatons, these first EHWs were used to collect vast resources, be it minerals, herbs, or hunting some of the less intelligent species of wyverns.",
+            "By the time of the Great Dragon War, the ancient civilization had made vast improvements to their original design. By pumping wyvern blood through their body and using energized streamstone as its core, the ancient civilization had produced a sapient hunter, now more commonly known as warforged. During the Great Dragon War, these warforged were not just front line soldiers and defenders of the many settlements across the world, they were also tasked with the collection of vast amounts of dragon blood to fuel the ancient civilizations newest weapon, the Equal Dragon Weapon. By the end of the war, all of the warforged had been destroyed, deactivated, or left incomplete in workshop ruins.",
+            "After the reemergence, there have been different points in history when a warforged or two have woken up, their programing either incomplete or degraded over time, these warforged have a greater range of free will, and as such, albeit begrudgingly by some of the races, have been recognized as a new species."
+          ]
+        },
+        {
+          "name": "Wyverian",
+          "paragraphs": [
+            "While wyverians superficially resemble humans, they actually descend from the first wyverns. After time began, the Fifth Aspect Eldath sought to expand the races' understanding of the Fives creations. As such, she molded the first wyverians from those wyverns who were up to the task.",
+            "At the end of the Great Dragon War, the wyverians were one of the few races that survived the end of the ancient civilization. Even so, only a handful of them remained. Seeking to prevent the atrocities that occurred during the Great Dragon War, these ancient wyverians made a pact to hide their knowledge for the rest of the world, but they would also guide the lost and teach them how to be one with nature.",
+            "The new wyverians, who came about after the reemergence, call the village of Cathar home. Their population remains small due to the fact that they reproduce less often than many of the other races, but each wyverian seeks to better the world. It is rare to see an evil wyverian, so much so, that there has never been one in recorded history.",
+            "When these new wyverians reach adolescence they leave Cathar and head out into the world on a journey of self discovery. Many of these wyverians return to Cathar a few years after their journey began. Others join the Hunters Guild; become academics, joining the Wycademy or the Elder Dragon Observation Team; or become hermits and sages, protecting the balance of nature in the territory they call home. Due to their long life span many of them who never return to Cathar become chiefs of villages, lead researchers, and other positions of respect and power in their old age."
+          ]
+        },
+        {
+          "name": "Other Races",
+          "paragraphs": [
+            "There are many other races that live within the Monster Hunter Universe. Many of these races fought alongside or against the humans, elves, and all the other races listed above in one of the two wars. Their origins all begin with being created by one god or another, and which one that created them might vary in your world. Their history and relevance to the ancient civilization are for you to choose, but typically their culture and personalities remain the same as they would in any standard dungeons and dragons campaign setting."
+          ]
+        },
+        {
+          "name": "Monstrous Races",
+          "paragraphs": [
+            "The monstrous races of the Old World were born in many different ways. Many of them were born when Fatalis and the other corrupted gods attempted to influence the races of the world. The kobolds were once dragonborns that were twisted into the scrawny-like creatures of today. The Orcs were once goliaths and humans; the goblins, halflings; and tritons were molded into sahuagin.",
+            "Not all of the monstrous races were created in this way though, many of them were created from the corruption themselves. Bugbears, hobgoblins, and yuan-ti were all created in such a way. Other than their creation most of these races all act as the GM sees fit. The character's aren't defined by their origins, but by their actions and how they were raised."
+          ]
+        }
+      ]
+    }
+  ]
+}
