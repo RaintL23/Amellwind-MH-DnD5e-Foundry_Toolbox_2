@@ -11,11 +11,21 @@ import {
   FACTIONS_INTRO,
 } from "../data/factions.data";
 
-type TabId = "overview" | "hunters-guild";
+type TabId =
+  | "overview"
+  | "helix-commission"
+  | "hunters-guild"
+  | "royal-scrivener"
+  | "talon-society"
+  | "wycademy";
 
 const TABS: Array<{ id: TabId; label: string }> = [
   { id: "overview", label: "Overview" },
+  { id: "helix-commission", label: "Helix Commission" },
   { id: "hunters-guild", label: "Hunter's Guild" },
+  { id: "royal-scrivener", label: "Royal Scriveners" },
+  { id: "talon-society", label: "Talon Society" },
+  { id: "wycademy", label: "Wycademy" },
 ];
 
 const VALID_TAB_IDS = new Set<TabId>(TABS.map((tab) => tab.id));
@@ -195,7 +205,7 @@ export function FactionsPage() {
           <h1 className="text-xl font-bold text-foreground">Factions</h1>
         </div>
         <p className="text-sm text-muted-foreground max-w-3xl">
-          Chapter 2 —{" "}
+          Chapter 1 —{" "}
           <span className="text-foreground/80">
             Amellwind&apos;s Guide to Monster Hunting
           </span>

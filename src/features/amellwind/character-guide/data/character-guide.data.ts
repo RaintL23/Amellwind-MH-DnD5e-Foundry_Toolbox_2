@@ -227,7 +227,7 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
       {
         name: "Arcana",
         description:
-          "If your DM plans to use the shrine benefits or cursed shrine complications, an arcana check can help determine if it's worth touching when the shrine is more closely related to magic than religion. An arcana check can also help identify magical effects left by creatures, such as the Gore Magala's frenzy virus.",
+          "If your DM plans to use the shrine benefits or cursed shrine complications. An Arcana check can help determine if it's worth touching, if the shrine is more closely related to magic than religion. An Arcana check can also help identify magical effects left by creatures, such as the Gore Magala's frenzy virus.",
       },
       {
         name: "History",
@@ -237,7 +237,7 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
       {
         name: "Investigation",
         description:
-          "Used for finding resources in an area and looking for signs when a perception check finds nothing.",
+          "Used for finding resources in an area and looking for signs when a Perception check finds nothing.",
       },
       {
         name: "Medicine",
@@ -247,27 +247,27 @@ export const CHARACTER_GUIDE_SECTIONS: GuideSection[] = [
       {
         name: "Nature",
         description:
-          "Used when attempting to discern what creature(s) a party is dealing with by the signs they find, silhouettes off in the distance, or the impact the creature has on the environment.",
+          "Used when attempting to discern what a creature(s) is by the signs they find, the silhouettes they see off in the distance, or possibly by the impact the creature has on the environment.",
       },
       {
         name: "Perception",
         description:
-          "Used by both the scout and spotter roles during hunts (see the Hunt Roles section for more information).",
+          "Used by both the scout and spotter roles during hunts (see the Scout and Spotter roles in this chapter for more information).",
       },
       {
         name: "Religion",
         description:
-          "If your DM plans to use the shrine benefits or cursed shrine complications, a religion check can help determine if it's worth touching when the shrine is more religiously based.",
+          "If your DM plans to use the shrine benefits or cursed shrine complications. A Religion check can help determine if it's worth touching, if the shrine is more religiously based.",
       },
       {
         name: "Stealth",
         description:
-          "Commonly used by the scout role during hunts (see the Scout role in the Hunt Roles section for more information).",
+          "Commonly used by the scout role during hunts (see the Scout role in this chapter for more information).",
       },
       {
         name: "Survival",
         description:
-          "Used by the trailblazer role during hunts (see the Trailblazer role in the Hunt Roles section for more information).",
+          "Used by the trailblazer role during hunts (see the Trailblazer role in this chapter for more information).",
       },
     ],
   },
