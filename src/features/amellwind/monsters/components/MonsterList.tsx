@@ -251,7 +251,7 @@ export function MonsterList() {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="flex flex-col h-full min-h-0 p-4 md:p-6">
+    <div className="flex h-full min-h-0 flex-col overflow-hidden p-4 md:p-6">
       <div className="mb-3 shrink-0 md:mb-6">
         <h1 className="text-2xl font-bold text-foreground">Monsters</h1>
         <p className="text-sm text-muted-foreground mt-1">
@@ -285,9 +285,9 @@ export function MonsterList() {
         <ListAreaLoading />
       ) : (
         <>
-          <div className="flex-1 min-h-0">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
             {/* Mobile card list */}
-            <div className="md:hidden space-y-2">
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto md:hidden">
               {paginated.map((monster) => {
                 const typeLabel =
                   monster.type.type.charAt(0).toUpperCase() +
@@ -323,7 +323,7 @@ export function MonsterList() {
             </div>
 
             {/* Desktop table */}
-            <div className="hidden max-h-full overflow-auto rounded-lg border border-border md:block">
+            <div className="hidden min-h-0 flex-1 overflow-auto rounded-lg border border-border md:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
@@ -415,7 +415,7 @@ export function MonsterList() {
             </div>
           </div>
 
-          <div className="shrink-0">
+          <div className="relative z-10 shrink-0 border-t border-border bg-background pt-3">
             <Pagination
               page={page}
               totalPages={totalPages}

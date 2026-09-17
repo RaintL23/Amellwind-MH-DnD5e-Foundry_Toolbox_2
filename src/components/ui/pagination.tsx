@@ -1,7 +1,7 @@
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { cn } from "@/shared/utils/cn";
 
-const PAGE_SIZE_OPTIONS = [10, 20, 30, 40, 50];
+const PAGE_SIZE_OPTIONS = [10, 20, 25, 30, 40, 50];
 
 interface PaginationProps {
   page: number;
@@ -47,7 +47,7 @@ export function Pagination({
     "inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md text-sm transition-colors disabled:pointer-events-none disabled:opacity-40";
 
   return (
-    <div className="flex items-center justify-between mt-4 gap-4 flex-wrap">
+    <div className="mt-0 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       {/* Rango visible + selector de tamaño */}
       <div className="flex items-center gap-3">
         <p className="text-xs text-muted-foreground">
@@ -61,7 +61,10 @@ export function Pagination({
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
               className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
             >
-              {PAGE_SIZE_OPTIONS.map((opt) => (
+              {(PAGE_SIZE_OPTIONS.includes(pageSize)
+                ? PAGE_SIZE_OPTIONS
+                : [...PAGE_SIZE_OPTIONS, pageSize].sort((a, b) => a - b)
+              ).map((opt) => (
                 <option key={opt} value={opt}>
                   {opt}
                 </option>
@@ -72,7 +75,7 @@ export function Pagination({
       </div>
 
       {/* Controles */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 overflow-x-auto">
         <button
           className={cn(btnBase, "hover:bg-muted")}
           onClick={() => onPageChange(1)}
