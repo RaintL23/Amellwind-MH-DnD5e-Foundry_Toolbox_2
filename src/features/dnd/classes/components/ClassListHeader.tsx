@@ -14,7 +14,7 @@ export function ClassListHeader({
   totalCount,
 }: ClassListHeaderProps) {
   return (
-    <div className="shrink-0 border-b border-border px-6 py-5">
+    <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
       <div className="flex items-center gap-3 mb-1">
         <User className="h-6 w-6 text-sky-400" />
         <h1 className="text-xl font-bold text-foreground">

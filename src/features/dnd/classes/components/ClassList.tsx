@@ -144,7 +144,7 @@ export function ClassList() {
         totalCount={classes.length}
       />
 
-      <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+      <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
         <ListSearchWithFilters
           searchValue={searchDraft}
           onSearchChange={setSearchDraft}
@@ -161,7 +161,7 @@ export function ClassList() {
         />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-6">
+      <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
         {loading || isSearchPending ? (
           <ClassListLoading />
         ) : listClasses.length === 0 ? (

@@ -76,7 +76,7 @@ export function ClassDetailPage() {
         onSourceSelect={handleSourceSelectPreserveScroll}
       />
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
         <div className="mx-auto space-y-4">
           <ClassDetailMetaSection
             active={active}

@@ -55,6 +55,7 @@ export function createRuneColumns({
       header: ({ column }) => (
         <DataTableColumnHeader column={column} title="Monster" />
       ),
+      meta: { hideBelowMd: true },
       cell: ({ row }) => (
         <span className="text-muted-foreground">{row.original.rune.monsterName}</span>
       ),
@@ -79,6 +80,7 @@ export function createRuneColumns({
       accessorFn: (row) => row.rune.carveChance,
       enableSorting: false,
       header: "Carve",
+      meta: { hideBelowMd: true },
       cell: ({ row }) =>
         row.original.rune.carveChance === "-" ? (
           <span className="text-muted-foreground/40">—</span>
@@ -93,6 +95,7 @@ export function createRuneColumns({
       accessorFn: (row) => row.rune.captureChance,
       enableSorting: false,
       header: "Capture",
+      meta: { hideBelowMd: true },
       cell: ({ row }) =>
         row.original.rune.captureChance === "-" ? (
           <span className="text-muted-foreground/40">—</span>

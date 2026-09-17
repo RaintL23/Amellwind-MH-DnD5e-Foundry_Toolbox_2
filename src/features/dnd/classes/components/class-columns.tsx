@@ -79,6 +79,7 @@ export const classColumns: ColumnDef<Class>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Subclasses" />
     ),
+    meta: { hideBelowMd: true },
     cell: ({ row }) => (
       <span className="text-muted-foreground">{row.original.subclasses.length}</span>
     ),
@@ -88,6 +89,7 @@ export const classColumns: ColumnDef<Class>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Source" />
     ),
+    meta: { hideBelowMd: true },
     cell: ({ row }) => (
       <span className="text-muted-foreground font-mono text-xs">
         {row.original.source}
@@ -99,6 +101,7 @@ export const classColumns: ColumnDef<Class>[] = [
     id: "variants",
     accessorFn: (row) => row.variantCount ?? 1,
     header: "Variants",
+    meta: { hideBelowMd: true },
     cell: ({ row }) => {
       const count = row.original.variantCount ?? 1;
       if (count <= 1) return null;
@@ -113,6 +116,7 @@ export const classColumns: ColumnDef<Class>[] = [
   {
     accessorKey: "edition",
     header: "Edition",
+    meta: { hideBelowMd: true },
     cell: ({ row }) => row.original.edition ?? "—",
     filterFn: editionFilter,
   },

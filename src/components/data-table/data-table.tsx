@@ -109,6 +109,44 @@ export function DataTable<TData, TValue>({
   const pagination = controlledPagination ?? internalPagination;
   const setPagination = onPaginationChange ?? setInternalPagination;
 
+  useEffect(() => {
+    const hideIds = columns
+      .filter((col) => col.meta?.hideBelowMd && !col.meta?.filterOnly)
+      .map((col) => {
+        if (col.id) return col.id;
+        if ("accessorKey" in col && typeof col.accessorKey === "string") {
+          return col.accessorKey;
+        }
+        return null;
+      })
+      .filter((id): id is string => Boolean(id));
+
+    if (hideIds.length === 0) return;
+
+    const mq = window.matchMedia("(min-width: 768px)");
+
+    function apply(isMdUp: boolean) {
+      setColumnVisibility((prev) => {
+        const next = { ...prev };
+        for (const id of hideIds) {
+          if (!isMdUp) {
+            next[id] = false;
+          } else if (id in initialColumnVisibility) {
+            next[id] = initialColumnVisibility[id] ?? true;
+          } else {
+            delete next[id];
+          }
+        }
+        return next;
+      });
+    }
+
+    apply(mq.matches);
+    const onChange = (event: MediaQueryListEvent) => apply(event.matches);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [columns, initialColumnVisibility]);
+
   const table = useReactTable({
     data,
     columns,
@@ -183,7 +221,7 @@ export function DataTable<TData, TValue>({
         <ListAreaLoading />
       ) : (
         <>
-          <div className="rounded-lg border border-border overflow-hidden">
+          <div className="rounded-lg border border-border overflow-hidden [&_th]:px-3 [&_td]:px-3 md:[&_th]:px-4 md:[&_td]:px-4">
             <Table>
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (

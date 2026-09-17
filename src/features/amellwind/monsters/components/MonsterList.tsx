@@ -251,8 +251,8 @@ export function MonsterList() {
   const paginated = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
-    <div className="flex flex-col h-full min-h-0 p-6">
-      <div className="mb-6 shrink-0">
+    <div className="flex flex-col h-full min-h-0 p-4 md:p-6">
+      <div className="mb-3 shrink-0 md:mb-6">
         <h1 className="text-2xl font-bold text-foreground">Monsters</h1>
         <p className="text-sm text-muted-foreground mt-1">
           {!loading && (
@@ -261,11 +261,11 @@ export function MonsterList() {
             </>
           )}
         </p>
-        <MhmmSourceNotice className="mt-4" />
+        <MhmmSourceNotice className="mt-3 md:mt-4" />
       </div>
 
       <ListSearchWithFilters
-        className="mb-6 shrink-0"
+        className="mb-3 shrink-0 md:mb-6"
         searchValue={searchDraft}
         onSearchChange={setSearchDraft}
         searchPlaceholder="Search by name..."
@@ -286,7 +286,44 @@ export function MonsterList() {
       ) : (
         <>
           <div className="flex-1 min-h-0">
-            <div className="max-h-full overflow-auto rounded-lg border border-border">
+            {/* Mobile card list */}
+            <div className="md:hidden space-y-2">
+              {paginated.map((monster) => {
+                const typeLabel =
+                  monster.type.type.charAt(0).toUpperCase() +
+                  monster.type.type.slice(1);
+                return (
+                  <button
+                    key={`${monster.source}-${monster.name}`}
+                    type="button"
+                    className="flex w-full items-center gap-3 rounded-lg border border-border bg-card/40 px-3 py-2.5 text-left transition-colors hover:bg-muted/30"
+                    onClick={() => handleSelect(monster)}
+                  >
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center">
+                      <MhTokenImage name={monster.name} size="sm" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate font-medium text-foreground">
+                        {monster.name}
+                      </p>
+                      <p className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs text-muted-foreground">
+                        <span>CR {monster.cr}</span>
+                        <TierBadge tier={getTier(monster.cr)} />
+                        <span className="capitalize">{typeLabel}</span>
+                      </p>
+                    </div>
+                  </button>
+                );
+              })}
+              {filtered.length === 0 && (
+                <p className="px-2 py-10 text-center text-sm text-muted-foreground">
+                  No monsters found with the applied filters.
+                </p>
+              )}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden max-h-full overflow-auto rounded-lg border border-border md:block">
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-border">
@@ -300,7 +337,7 @@ export function MonsterList() {
                     ).map(({ key, label }) => (
                       <th
                         key={key}
-                        className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors backdrop-blur-sm"
+                        className="sticky top-0 z-10 bg-muted/95 px-3 py-3 text-left font-semibold text-muted-foreground cursor-pointer select-none hover:text-foreground transition-colors backdrop-blur-sm lg:px-4"
                         onClick={() => toggleSort(key)}
                       >
                         <span className="flex items-center gap-1">
@@ -313,7 +350,7 @@ export function MonsterList() {
                         </span>
                       </th>
                     ))}
-                    <th className="sticky top-0 z-10 bg-muted/95 px-4 py-3 text-left font-semibold text-muted-foreground backdrop-blur-sm">
+                    <th className="sticky top-0 z-10 hidden bg-muted/95 px-3 py-3 text-left font-semibold text-muted-foreground backdrop-blur-sm lg:table-cell lg:px-4">
                       Environment
                     </th>
                   </tr>
@@ -325,7 +362,7 @@ export function MonsterList() {
                       className="border-b border-border/50 hover:bg-muted/30 cursor-pointer transition-colors"
                       onClick={() => handleSelect(monster)}
                     >
-                      <td className="px-4 py-3 font-medium text-foreground">
+                      <td className="px-3 py-3 font-medium text-foreground lg:px-4">
                         <div className="flex items-center gap-3">
                           <div className="flex h-10 w-10 shrink-0 items-center justify-center">
                             <MhTokenImage name={monster.name} size="sm" />
@@ -333,17 +370,17 @@ export function MonsterList() {
                           <span>{monster.name}</span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground">
+                      <td className="px-3 py-3 text-muted-foreground lg:px-4">
                         {monster.cr}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="px-3 py-3 lg:px-4">
                         <TierBadge tier={getTier(monster.cr)} />
                       </td>
-                      <td className="px-4 py-3 text-muted-foreground capitalize">
+                      <td className="px-3 py-3 text-muted-foreground capitalize lg:px-4">
                         {monster.type.type.charAt(0).toUpperCase() +
                           monster.type.type.slice(1)}
                       </td>
-                      <td className="px-4 py-3">
+                      <td className="hidden px-3 py-3 lg:table-cell lg:px-4">
                         <div className="flex flex-wrap gap-1">
                           {(monster.environment ?? []).slice(0, 3).map((env) => (
                             <Badge

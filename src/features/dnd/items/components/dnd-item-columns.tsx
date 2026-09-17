@@ -120,6 +120,7 @@ export const dndItemColumns: ColumnDef<DndItem>[] = [
     accessorFn: (row) => resolveItemPriceGp(row).basePriceGp,
     header: "Price",
     enableSorting: false,
+    meta: { hideBelowMd: true },
     cell: ({ row }) => {
       const resolved = resolveItemPriceGp(row.original);
       return (
@@ -136,6 +137,7 @@ export const dndItemColumns: ColumnDef<DndItem>[] = [
     accessorKey: "weight",
     header: "Weight",
     enableSorting: false,
+    meta: { hideBelowMd: true },
     cell: ({ row }) => (
       <span className="text-muted-foreground text-xs whitespace-nowrap">
         {row.original.weight ?? "—"}
@@ -155,6 +157,7 @@ export const dndItemColumns: ColumnDef<DndItem>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Source" />
     ),
+    meta: { hideBelowMd: true },
     cell: ({ row }) => {
       const item = row.original;
       const sources = item.variantSources ?? [item.source];

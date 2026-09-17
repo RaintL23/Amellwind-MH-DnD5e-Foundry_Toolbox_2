@@ -8,6 +8,8 @@ declare module "@tanstack/react-table" {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars -- module augmentation requires type params
   interface ColumnMeta<TData, TValue> {
     filterOnly?: boolean;
+    /** Hide this column below the Tailwind `md` breakpoint (768px). */
+    hideBelowMd?: boolean;
   }
 }
 

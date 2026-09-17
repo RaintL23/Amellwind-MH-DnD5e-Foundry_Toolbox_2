@@ -119,7 +119,7 @@ export function WeaponList() {
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-6 py-5">
+      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
         <div className="flex items-center gap-3 mb-1">
           <Swords className="h-6 w-6 text-primary" />
           <h1 className="text-xl font-bold text-foreground">Hunter Weapons</h1>
@@ -144,7 +144,7 @@ export function WeaponList() {
         <GtmhSourceNotice />
       </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-6">
+      <div className="flex-1 overflow-y-auto px-4 py-4 md:px-6 md:py-6">
         {loading || isSearchPending ? (
           <ListAreaLoading variant="cards" />
         ) : filtered.length === 0 ? (

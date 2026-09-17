@@ -21,7 +21,7 @@ export function getStoredTheme(): AppTheme {
   } catch {
     /* localStorage unavailable */
   }
-  return "mh";
+  return "dark";
 }
 
 export function applyTheme(theme: AppTheme): void {

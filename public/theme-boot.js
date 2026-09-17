@@ -4,7 +4,7 @@
   var theme =
     stored === "light" || stored === "dark" || stored === "mh"
       ? stored
-      : "mh";
+      : "dark";
   document.documentElement.setAttribute("data-theme", theme);
   if (theme !== "light") document.documentElement.classList.add("dark");
 })();

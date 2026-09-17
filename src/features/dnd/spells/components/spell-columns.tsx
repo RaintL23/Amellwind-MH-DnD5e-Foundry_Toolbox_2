@@ -107,6 +107,7 @@ export const spellColumns: ColumnDef<Spell>[] = [
     accessorKey: "castingTime",
     header: "Casting Time",
     enableSorting: false,
+    meta: { hideBelowMd: true },
     cell: ({ row }) => (
       <TruncatedCell text={String(row.getValue("castingTime") ?? "")} />
     ),
@@ -115,6 +116,7 @@ export const spellColumns: ColumnDef<Spell>[] = [
     accessorKey: "range",
     header: "Range",
     enableSorting: false,
+    meta: { hideBelowMd: true },
     cell: ({ row }) => (
       <TruncatedCell text={String(row.getValue("range") ?? "")} />
     ),
@@ -160,6 +162,7 @@ export const spellColumns: ColumnDef<Spell>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Source" />
     ),
+    meta: { hideBelowMd: true },
     cell: ({ row }) => {
       const spell = row.original;
       const sources = spell.variantSources ?? [spell.source];

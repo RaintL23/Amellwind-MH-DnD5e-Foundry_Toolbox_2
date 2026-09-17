@@ -100,6 +100,7 @@ export const dndRaceColumns: ColumnDef<DndRace>[] = [
     accessorKey: "sizes",
     header: "Size",
     enableSorting: false,
+    meta: { hideBelowMd: true },
     cell: ({ row }) => (
       <span className="text-muted-foreground text-xs whitespace-nowrap">
         {row.original.sizes.join(", ")}
@@ -110,6 +111,7 @@ export const dndRaceColumns: ColumnDef<DndRace>[] = [
     accessorKey: "source",
     enableSorting: false,
     header: "Source",
+    meta: { hideBelowMd: true },
     cell: ({ row }) => {
       const race = row.original;
       const sources = race.variantSources ?? [race.source];

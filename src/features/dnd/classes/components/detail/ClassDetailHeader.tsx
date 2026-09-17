@@ -25,7 +25,7 @@ export function ClassDetailHeader({
 }: ClassDetailHeaderProps) {
   const navigate = useNavigate();
   return (
-    <div className="shrink-0 border-b border-border px-6 py-5">
+    <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
       <button
         onClick={() => navigate(-1)}
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-sky-400 transition-colors mb-4"

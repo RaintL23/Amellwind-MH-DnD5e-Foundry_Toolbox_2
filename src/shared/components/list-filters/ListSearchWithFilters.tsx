@@ -55,7 +55,7 @@ export function ListSearchWithFilters({
     <>
       <div
         className={cn(
-          compact ? "flex flex-row gap-2" : "flex flex-col sm:flex-row gap-2",
+          "flex flex-row items-center gap-2",
           className,
         )}
       >
@@ -65,7 +65,7 @@ export function ListSearchWithFilters({
           placeholder={searchPlaceholder}
           compact={compact}
           inputClassName={inputClassName}
-          className="flex-1"
+          className="min-w-0 flex-1"
         />
 
         {hasFilters && (
@@ -73,7 +73,7 @@ export function ListSearchWithFilters({
             type="button"
             variant="outline"
             className={cn(
-              "shrink-0 gap-2",
+              "h-9 shrink-0 gap-2 px-3",
               compact && "h-8 px-2.5 text-xs",
             )}
             onClick={() => setDialogOpen(true)}

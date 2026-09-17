@@ -71,7 +71,7 @@ export function WeaponListFilters({
   }
 
   return (
-    <div className="shrink-0 border-b border-border bg-card/50 px-6 py-3">
+    <div className="shrink-0 border-b border-border bg-card/50 px-4 py-3 md:px-6">
       <ListSearchWithFilters
         searchValue={filters.search}
         onSearchChange={onSearchChange}

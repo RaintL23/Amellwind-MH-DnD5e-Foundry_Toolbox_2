@@ -33,6 +33,7 @@ export const dndBackgroundColumns: ColumnDef<DndBackground>[] = [
     accessorKey: "source",
     header: "Source",
     enableSorting: false,
+    meta: { hideBelowMd: true },
     cell: ({ row }) => {
       const bg = row.original;
       const sources = bg.variantSources ?? [bg.source];

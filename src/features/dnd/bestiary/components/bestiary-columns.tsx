@@ -77,6 +77,7 @@ export const bestiaryColumns: ColumnDef<BestiaryCreature>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Size" />
     ),
+    meta: { hideBelowMd: true },
     cell: ({ row }) => (
       <span className="text-muted-foreground text-xs whitespace-nowrap">
         {row.getValue("size")}
@@ -118,6 +119,7 @@ export const bestiaryColumns: ColumnDef<BestiaryCreature>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title="Source" />
     ),
+    meta: { hideBelowMd: true },
     cell: ({ row }) => {
       const c = row.original;
       const sources = c.variantSources ?? [c.source];
