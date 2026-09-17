@@ -16,11 +16,7 @@ export function DndItemDataTable({ items, onRowClick }: DndItemDataTableProps) {
       emptyMessage="No items found with those filters."
       pageSize={25}
       initialColumnVisibility={{ mundaneMagic: false }}
-      toolbar={(ctx) => (
-        <p className="text-xs text-muted-foreground">
-          Showing {ctx.filteredCount} of {ctx.totalCount} items
-        </p>
-      )}
+      enableSearchToolbar={false}
     />
   );
 }

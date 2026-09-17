@@ -21,11 +21,7 @@ export function ClassDataTable({ classes, onRowClick }: ClassDataTableProps) {
       emptyMessage="No classes found with those filters."
       pageSize={25}
       initialColumnVisibility={{ edition: false }}
-      toolbar={(ctx) => (
-        <p className="text-xs text-muted-foreground">
-          Showing {ctx.filteredCount} of {ctx.totalCount} classes
-        </p>
-      )}
+      enableSearchToolbar={false}
     />
   );
 }

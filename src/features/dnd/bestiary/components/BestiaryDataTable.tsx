@@ -20,11 +20,7 @@ export function BestiaryDataTable({
       emptyMessage="No creatures found with those filters."
       pageSize={25}
       initialColumnVisibility={{ environment: false }}
-      toolbar={(ctx) => (
-        <p className="text-xs text-muted-foreground">
-          Showing {ctx.filteredCount} of {ctx.totalCount} creatures
-        </p>
-      )}
+      enableSearchToolbar={false}
     />
   );
 }

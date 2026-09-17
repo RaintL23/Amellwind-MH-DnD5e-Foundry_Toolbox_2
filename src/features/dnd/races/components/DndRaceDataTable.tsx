@@ -22,11 +22,7 @@ export function DndRaceDataTable({ races, onRowClick }: DndRaceDataTableProps) {
       onRowClick={onRowClick}
       emptyMessage="No races found with those filters."
       pageSize={25}
-      toolbar={(ctx) => (
-        <p className="text-xs text-muted-foreground">
-          Showing {ctx.filteredCount} of {ctx.totalCount} races
-        </p>
-      )}
+      enableSearchToolbar={false}
     />
   );
 }

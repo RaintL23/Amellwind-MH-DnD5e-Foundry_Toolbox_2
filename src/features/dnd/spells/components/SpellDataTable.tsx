@@ -20,11 +20,7 @@ export function SpellDataTable({ spells, onRowClick }: SpellDataTableProps) {
       emptyMessage="No spells found with those filters."
       pageSize={25}
       initialColumnVisibility={{ classNames: false }}
-      toolbar={(ctx) => (
-        <p className="text-xs text-muted-foreground">
-          Showing {ctx.filteredCount} of {ctx.totalCount} spells
-        </p>
-      )}
+      enableSearchToolbar={false}
     />
   );
 }

@@ -18,11 +18,7 @@ export function DndBackgroundDataTable({
       onRowClick={onRowClick}
       emptyMessage="No backgrounds found with those filters."
       pageSize={25}
-      toolbar={(ctx) => (
-        <p className="text-xs text-muted-foreground">
-          Showing {ctx.filteredCount} of {ctx.totalCount} backgrounds
-        </p>
-      )}
+      enableSearchToolbar={false}
     />
   );
 }
