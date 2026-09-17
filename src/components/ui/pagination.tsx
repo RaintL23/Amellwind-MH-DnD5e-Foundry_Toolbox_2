@@ -25,46 +25,52 @@ export function Pagination({
   const from = (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, totalItems);
 
-  // Generar ventana de páginas: siempre muestra hasta 5 números centrados en la página actual
   function getPageNumbers(): (number | "…")[] {
-    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    if (totalPages <= 5) {
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    }
 
     const pages: (number | "…")[] = [1];
 
-    if (page > 3) pages.push("…");
+    if (page > 2) pages.push("…");
 
-    const start = Math.max(2, page - 1);
-    const end = Math.min(totalPages - 1, page + 1);
-    for (let i = start; i <= end; i++) pages.push(i);
+    const start = Math.max(2, page);
+    const end = Math.min(totalPages - 1, page);
+    for (let i = start; i <= end; i++) {
+      if (i !== 1 && i !== totalPages) pages.push(i);
+    }
 
-    if (page < totalPages - 2) pages.push("…");
+    if (page < totalPages - 1) pages.push("…");
     pages.push(totalPages);
 
     return pages;
   }
 
   const btnBase =
-    "inline-flex items-center justify-center h-8 min-w-8 px-2 rounded-md text-sm transition-colors disabled:pointer-events-none disabled:opacity-40";
+    "inline-flex items-center justify-center h-7 min-w-7 px-1.5 rounded-md text-xs sm:h-8 sm:min-w-8 sm:px-2 sm:text-sm transition-colors disabled:pointer-events-none disabled:opacity-40";
+
+  const pageSizeOptions = PAGE_SIZE_OPTIONS.includes(pageSize)
+    ? PAGE_SIZE_OPTIONS
+    : [...PAGE_SIZE_OPTIONS, pageSize].sort((a, b) => a - b);
 
   return (
-    <div className="mt-0 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-      {/* Rango visible + selector de tamaño */}
-      <div className="flex items-center gap-3">
-        <p className="text-xs text-muted-foreground">
+    <div className="flex flex-nowrap items-center justify-between gap-2">
+      <div className="flex shrink-0 items-center gap-2">
+        <p className="hidden text-xs text-muted-foreground whitespace-nowrap sm:block">
           {from}–{to} of {totalItems}
         </p>
         {onPageSizeChange && (
           <div className="flex items-center gap-1.5">
-            <span className="text-xs text-muted-foreground">Per page:</span>
+            <span className="hidden text-xs text-muted-foreground sm:inline">
+              Per page:
+            </span>
             <select
               value={pageSize}
               onChange={(e) => onPageSizeChange(Number(e.target.value))}
-              className="h-7 rounded-md border border-input bg-background px-2 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              aria-label="Per page"
+              className="h-7 rounded-md border border-input bg-background px-1.5 text-xs text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring sm:px-2"
             >
-              {(PAGE_SIZE_OPTIONS.includes(pageSize)
-                ? PAGE_SIZE_OPTIONS
-                : [...PAGE_SIZE_OPTIONS, pageSize].sort((a, b) => a - b)
-              ).map((opt) => (
+              {pageSizeOptions.map((opt) => (
                 <option key={opt} value={opt}>
                   {opt}
                 </option>
@@ -74,8 +80,7 @@ export function Pagination({
         )}
       </div>
 
-      {/* Controles */}
-      <div className="flex items-center gap-1 overflow-x-auto">
+      <div className="flex min-w-0 items-center justify-end gap-0.5 overflow-x-auto sm:gap-1">
         <button
           className={cn(btnBase, "hover:bg-muted")}
           onClick={() => onPageChange(1)}
@@ -95,7 +100,10 @@ export function Pagination({
 
         {getPageNumbers().map((p, i) =>
           p === "…" ? (
-            <span key={`ellipsis-${i}`} className="px-1 text-muted-foreground text-sm select-none">
+            <span
+              key={`ellipsis-${i}`}
+              className="select-none px-0.5 text-xs text-muted-foreground sm:px-1 sm:text-sm"
+            >
               …
             </span>
           ) : (
@@ -104,14 +112,14 @@ export function Pagination({
               className={cn(
                 btnBase,
                 p === page
-                  ? "bg-primary text-primary-foreground font-semibold"
-                  : "hover:bg-muted text-muted-foreground"
+                  ? "bg-primary font-semibold text-primary-foreground"
+                  : "text-muted-foreground hover:bg-muted",
               )}
               onClick={() => onPageChange(p)}
             >
               {p}
             </button>
-          )
+          ),
         )}
 
         <button
