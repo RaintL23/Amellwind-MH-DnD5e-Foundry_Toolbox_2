@@ -14,6 +14,7 @@ import {
   Crosshair,
   Flame,
   FlaskConical,
+  Gem,
   Hammer,
   Layers,
   Landmark,
@@ -266,6 +267,12 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             label: "Monstie Sidekick",
             icon: PawPrint,
             description: "Monstie sidekick rules and creator.",
+          },
+          {
+            to: "/guardian-template",
+            label: "Guardian Template",
+            icon: Gem,
+            description: "Rules to turn monsters into Guardians.",
           },
           {
             to: "/npc-generator",

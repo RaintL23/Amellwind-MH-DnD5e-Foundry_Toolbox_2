@@ -5,7 +5,8 @@ Organized from Amellwind’s free Patreon PDF:
 
 Wired into the app via `supplement.json` (monsters, conditions, diseases).
 Local sheets win over the public GitHub MHMM JSON; GitHub only fills names
-the PDF does not have.
+the PDF does not have. Monster `environment` tags come from Appendix A in
+`22-appendices.md` when you run `pnpm build:mm-supplement`.
 
 | Want | Use |
 | --- | --- |

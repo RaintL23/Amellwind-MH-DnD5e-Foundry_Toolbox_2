@@ -202,7 +202,7 @@ Añade los siguientes campos sobre la base del Actor:
 - **source** _(string)_ — Código de la fuente (ej. `"MHMM"`, `"AGMH"`).
 - **page** _(int)_ — Página del libro de origen.
 - **cr** _(string)_ — Challenge Rating (ej. `"19"`, `"1/2"`, `"0"`). Es string porque puede ser fracción.
-- **environment** _(array)_ — Entornos donde habita. Valores del MM analizado: `forest`, `desert`, `swamp`, `mountain`, `underdark`, `arctic`, `coastal`, `grassland`, `urban`, `underwater`.
+- **environment** _(array)_ — Entornos donde habita. Tags 5etools-style: `forest`, `desert`, `swamp`, `mountain`, `underdark`, `arctic`, `coastal`, `grassland`, `hill`, `urban`, `underwater`, plus MHMM `volcano`. For local MHMM Patreon sheets, filled at `pnpm build:mm-supplement` from Appendix A (`22-appendices.md`); Roaming tables expand to every standard tag.
 - **bonusActions** _(array)_ — Bonus actions. Misma estructura que `actions`. Viene de `raw.bonus` (5etools); si el feed aún embebe entradas `Bonus Action: …` dentro de `action`, el mapper las separa aquí y las quita de Actions.
 - **legendaryActions** _(array)_ — Acciones legendarias. Misma estructura que `actions`. Solo presente en monstruos legendarios.
 - **loot** — Resumen de obtención de materiales al derrotar o capturar el monstruo:

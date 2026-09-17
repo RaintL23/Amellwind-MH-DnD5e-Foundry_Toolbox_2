@@ -48,6 +48,8 @@ scripts/*
 !scripts/build-mm-patreon-supplement.mjs
 !scripts/build-mm-patreon-catalog.mjs
 !scripts/build-gtmh-patreon-supplement.mjs
+!scripts/lib/
+!scripts/lib/*.mjs
 !scripts/gtmh/
 !scripts/gtmh/*.mjs
 !scripts/gtmh/*.ts

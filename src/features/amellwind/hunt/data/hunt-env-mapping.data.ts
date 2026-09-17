@@ -31,7 +31,8 @@ export const HUNT_ENVIRONMENT_MAPPINGS: HuntEnvironmentMapping[] = [
   },
   {
     envName: "Volcano",
-    tags: ["mountain", "underdark"],
+    // `volcano` comes from MHMM Appendix A; mountain/underdark cover GitHub tags.
+    tags: ["volcano", "mountain", "underdark"],
   },
   {
     envName: "The Wetlands",

@@ -43,9 +43,18 @@ Pestañas: Creating a Character, Higher Level, Skills, Hunt Roles. Renderiza sec
 ### Monstie Sidekick
 
 **Ruta**: `/monstie-sidekick`
-**Fuente**: `classFeature[]` y reglas en `variantrule[]` (GTMH).
+**Fuente**: curado estático desde Appendix C Patreon (`monstie-appendix.data.ts`) + `classFeature[]` / `variantrule[]` (GTMH sync).
 
-Pestañas **Rules** (progresión, class features) y **Monstie Creator** (contexto interactivo para armar un sidekick). Servicio: `monstie-sidekick.service.ts`.
+Pestañas **Rules** (overview Appendix C, progresión sync, class features) y **Monstie Creator** (contexto interactivo para armar un sidekick). Servicio: `monstie-sidekick.service.ts`.
+
+---
+
+### Guardian Template
+
+**Ruta**: `/guardian-template`
+**Fuente**: estática desde MHMM Patreon (`guardian-template.data.ts` ← `21-monster-templates.md` / `guardian-template.md`).
+
+Reglas para aplicar el template Guardian a un monstruo (tipo Construct, resistencias/inmunidades, Synthetic Suppression, Wylk Explosion + tabla por CR, Wylk Crystals). Enlace al bestiary para elegir la base.
 
 ---
 

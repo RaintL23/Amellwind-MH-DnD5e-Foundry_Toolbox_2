@@ -5,8 +5,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { MonstieSidekickGuide } from "@/shared/types";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
 import { getMonstieSidekickGuide } from "../services/monstie-sidekick.service";
+import { MONSTIE_CLASS_INTRO } from "../data/monstie-appendix.data";
 import { MonstieCreatorProvider } from "../context/MonstieCreatorContext";
 import { MonstieCreatorPanel } from "./MonstieCreatorPanel";
+import { MonstieAppendixOverview } from "./MonstieAppendixOverview";
 import { MonstieRulesContentView } from "./MonstieRulesContent";
 import { MonstieProgressionTable } from "./MonstieProgressionTable";
 import { MonstieClassFeaturesList } from "./MonstieClassFeaturesList";
@@ -39,9 +41,12 @@ export function MonstieSidekickPage() {
           </h1>
         </div>
         <p className="text-sm text-muted-foreground max-w-3xl">
-          Monster companions for the Monstie Sidekick class (AGMH p.169). Create
-          a sidekick based on a monster from the Monster Manual, with balanced
-          rules and a custom template.
+          Monster companions for the Monstie Sidekick class (AGMH Appendix C).
+          Create a sidekick based on a monster from the Monster Manual, with
+          balanced rules and a custom template.
+        </p>
+        <p className="text-sm text-muted-foreground max-w-3xl mt-2">
+          {MONSTIE_CLASS_INTRO}
         </p>
       </div>
 
@@ -68,20 +73,18 @@ export function MonstieSidekickPage() {
 
           {activeTab === "rules" && (
             <div className="max-w-4xl space-y-6">
+              <MonstieAppendixOverview />
+
               {loading ? (
                 <ListAreaLoading variant="detail" className="p-0" />
               ) : !guide ? (
                 <p className="text-sm text-muted-foreground">
-                  No data found. Sync the AGMH guide.
+                  Sync the AGMH guide for class progression and feature entries.
                 </p>
               ) : (
                 <>
-                  {guide.rules.length > 0 ? (
+                  {guide.rules.length > 0 && (
                     <MonstieRulesContentView content={guide.rules} />
-                  ) : (
-                    <p className="text-sm text-muted-foreground">
-                      No Monstie Sidekicks variant found.
-                    </p>
                   )}
 
                   {guide.sidekickClass && (

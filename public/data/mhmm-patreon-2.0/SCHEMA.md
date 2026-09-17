@@ -12,7 +12,9 @@ Source: Amellwind’s free [MHMM with Loot Tables 2.0](https://www.patreon.com/a
    family indexes).
 2. `supplement.json` contains every catalog monster, plus `condition[]` and
    `disease[]` from `01-conditions-poisons-diseases.md` (Frenzy Virus is taken
-   from the Shagaru Magala sheet when the chapter omits it).
+   from the Shagaru Magala sheet when the chapter omits it). Monster
+   `environment[]` tags are filled from Appendix A in `22-appendices.md`
+   (Roaming → all standard biome tags; `volcano` is kept as its own tag).
 3. At runtime, local sheets win on normalized name. GitHub `mm_current.github`
    is appended only for names the PDF does not have. The merged list is written
    to IndexedDB as `mm_current.data`.

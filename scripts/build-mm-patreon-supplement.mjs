@@ -1,12 +1,17 @@
 /**
  * Convert catalog.json into a 5etools-shaped overlay. Local sheets win at
  * runtime; GitHub fills names the PDF does not have.
+ * Environment tags come from Appendix A in 22-appendices.md.
  *
  * Usage: node scripts/build-mm-patreon-supplement.mjs
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import {
+  getAppendixEnvironmentsForName,
+  parseAppendixEnvironments,
+} from "./lib/parse-mm-appendix-environments.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const stagingDir = path.resolve(__dirname, "../public/data/mhmm-patreon-2.0");
@@ -340,13 +345,14 @@ function extractFrenzyVirus(catalogMonsters) {
   return { name: "Frenzy Virus", source: SOURCE, entries: paras };
 }
 
-function toFiveToolsMonster(monster) {
+function toFiveToolsMonster(monster, envByNorm) {
   const { senses, passive } = parseSenses(monster.senses);
   const abilities = monster.abilities ?? {};
   // Keep bonus actions only on `bonus` (not duplicated into `action` with a
   // "Bonus Action:" prefix) so the stat block can render a separate section.
   const action = mapNamedEntries(monster.actions) ?? [];
   const legendary = mapNamedEntries(monster.legendaryActions) ?? [];
+  const environment = getAppendixEnvironmentsForName(envByNorm, monster.name);
 
   const out = {
     name: monster.name,
@@ -382,6 +388,7 @@ function toFiveToolsMonster(monster) {
     passive,
     languages: parseLanguages(monster.languages),
     cr: mapCr(monster.cr),
+    environment,
     trait: mapNamedEntries(monster.traits),
     action: action.length > 0 ? action : undefined,
     reaction: mapNamedEntries(monster.reactions),
@@ -399,6 +406,12 @@ function toFiveToolsMonster(monster) {
 const catalog = JSON.parse(
   readFileSync(path.join(stagingDir, "catalog.json"), "utf8"),
 );
+const appendixMd = readFileSync(
+  path.join(stagingDir, "22-appendices.md"),
+  "utf8",
+);
+const envByNorm = parseAppendixEnvironments(appendixMd);
+
 const all = Array.isArray(catalog.monsters) ? catalog.monsters : [];
 const localOnly = all.filter(
   (m) => m && !SKIP_NAMES.has(m.name),
@@ -408,7 +421,10 @@ const skipped = all
   .filter((m) => m && SKIP_NAMES.has(m.name))
   .map((m) => m.name);
 
-const monsters = localOnly.map(toFiveToolsMonster);
+const monsters = localOnly.map((m) => toFiveToolsMonster(m, envByNorm));
+const withEnvironment = monsters.filter(
+  (m) => Array.isArray(m.environment) && m.environment.length > 0,
+).length;
 
 const chapterMd = readFileSync(
   path.join(stagingDir, "01-conditions-poisons-diseases.md"),
@@ -422,20 +438,29 @@ if (!diseases.some((d) => d.name === "Frenzy Virus")) {
 
 const supplement = {
   source: SOURCE,
-  generatedFrom: "catalog.json",
+  generatedFrom: ["catalog.json", "22-appendices.md#appendix-a"],
   policy: "local-wins-by-normalized-name",
   monster: monsters,
   condition: conditions,
   disease: diseases,
 };
 
+const rathalosEnv = monsters.find((m) => m.name === "Rathalos")?.environment;
+if (!rathalosEnv?.includes("desert") || !rathalosEnv?.includes("forest")) {
+  throw new Error(
+    `Appendix A environments missing for Rathalos (got ${JSON.stringify(rathalosEnv)})`,
+  );
+}
+
 const manifest = {
   policy:
-    "Patreon MHMM 2.0 sheets win on normalized name. GitHub MHMM entries are kept only when the PDF has no matching name. Regenerated with pnpm build:mm-data.",
+    "Patreon MHMM 2.0 sheets win on normalized name. GitHub MHMM entries are kept only when the PDF has no matching name. Regenerated with pnpm build:mm-data. Monster environment tags come from Appendix A (22-appendices.md).",
   archiveDir: "public/data/mhmm-patreon-2.0",
   supplementUrl: "/data/mhmm-patreon-2.0/supplement.json",
   source: SOURCE,
   localCount: monsters.length,
+  withEnvironmentCount: withEnvironment,
+  appendixEnvironmentNames: envByNorm.size,
   localNames: localOnly.map((m) => m.name),
   githubOverlapCount: overlap.length,
   githubOverlapNames: overlap,
@@ -456,5 +481,5 @@ writeFileSync(
 );
 
 console.log(
-  `Wrote supplement.json (${monsters.length} local sheets, ${conditions.length} conditions, ${diseases.length} diseases).`,
+  `Wrote supplement.json (${monsters.length} local sheets, ${withEnvironment}/${monsters.length} with environment from Appendix A, ${conditions.length} conditions, ${diseases.length} diseases).`,
 );

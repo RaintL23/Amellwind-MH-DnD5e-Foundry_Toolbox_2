@@ -17,6 +17,7 @@ Todas las rutas de página se cargan con **`React.lazy`** y `<Suspense>` (fallba
 /damage-calculator         → Calculadora de daño por turno
 /character-guide           → Guía de creación de personajes
 /monstie-sidekick          → Reglas y creador de Monstie Sidekick
+/guardian-template         → Reglas del Monster Guardian Template (MHMM)
 /npc-generator             → Generador de NPCs humanoides
 /species                   → Especies y subrazas (GTMH)
 /backgrounds               → Trasfondos (GTMH)

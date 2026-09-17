@@ -19,6 +19,7 @@ It started at my table: I play with friends who care more about D&D than Monster
 | **Damage Calculator**| `/damage-calculator`| Expected damage-per-turn calculator for comparing weapon builds (persisted) |
 | **Creation Guide**   | `/character-guide`  | Character creation guide from the manual (species, roles, skills, etc.)      |
 | **Monstie Sidekick** | `/monstie-sidekick` | Rules and creator for Monstie sidekicks                                         |
+| **Guardian Template** | `/guardian-template` | Rules to apply the MHMM Guardian monster template                               |
 | **NPC Generator**    | `/npc-generator`    | Humanoid NPC stat block generator                                 |
 | **Species**          | `/species`          | Species and subraces from the Hunting Guide                                        |
 | **Backgrounds**      | `/backgrounds`      | Hunter backgrounds from the manual                                              |

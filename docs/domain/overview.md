@@ -46,7 +46,8 @@ Estado de cobertura del manual / features de la app:
 - [x] **Backgrounds** — Trasfondos GTMH con detalle parseado.
 - [x] **Feats** — Dotes GTMH con filtros y detalle.
 - [x] **Character Guide** — Guía de creación (datos estáticos, pestañas).
-- [x] **Monstie Sidekick** — Reglas, progresión, creador interactivo.
+- [x] **Monstie Sidekick** — Reglas (Appendix C + sync GTMH), progresión, creador interactivo.
+- [x] **Guardian Template** — Reglas estáticas para crear Guardians (MHMM p.619).
 - [x] **NPC Generator** — Stat blocks humanoides con species/background/templates.
 - [x] **Downtime** — Actividades parseadas de `variantrule[]`.
 - [x] **Cooking System** — Datos estáticos, pantalla con pestañas y tiradas.

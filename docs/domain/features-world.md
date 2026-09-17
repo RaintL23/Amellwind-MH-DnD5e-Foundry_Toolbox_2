@@ -69,6 +69,8 @@ Compatible monsters/environments use `HUNT_ENVIRONMENT_MAPPINGS` (location → 5
 - **Wide-habitat** quarry (≥ 5 mapped hunt biomes, e.g. Rathalos / Rathian) stays available in every hunt environment, **or**
 - Monsters with no `environment` tags are treated as unrestricted (same as before for setup validation).
 
+MHMM local sheets get `monster.environment` from Appendix A (`22-appendices.md`) when regenerating `supplement.json` (`pnpm build:mm-supplement`). Volcano hunt maps include the custom `volcano` tag.
+
 **Hunt Parameters**:
 
 - **Party level tier** can auto-follow APL (`autoTierFromApl`, default on) via `findTierIndexForApl`.

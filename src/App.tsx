@@ -164,6 +164,11 @@ const MonstieSidekickPage = lazy(() =>
     (m) => ({ default: m.MonstieSidekickPage }),
   ),
 );
+const GuardianTemplatePage = lazy(() =>
+  import("@/features/amellwind/guardian-template/components/GuardianTemplatePage").then(
+    (m) => ({ default: m.GuardianTemplatePage }),
+  ),
+);
 const NpcGeneratorPage = lazy(() =>
   import("@/features/amellwind/npc-generator/components/NpcGeneratorPage").then((m) => ({
     default: m.NpcGeneratorPage,
@@ -604,6 +609,14 @@ export default function App() {
                 element={
                   <Suspense fallback={<PageFallback />}>
                     <MonstieSidekickPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="guardian-template"
+                element={
+                  <Suspense fallback={<PageFallback />}>
+                    <GuardianTemplatePage />
                   </Suspense>
                 }
               />
