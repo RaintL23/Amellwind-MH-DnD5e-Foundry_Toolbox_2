@@ -3,6 +3,7 @@ import {
   DND_KEYWORD_CLASS,
   splitDndKeywords,
 } from "./dnd-keywords.utils";
+import { PROPERTY_LABELS } from "@/shared/types/weapon.types";
 import {
   type ToolboxEntityKind,
   buildToolboxFilterHref,
@@ -192,6 +193,18 @@ function segmentsFromFiveToolsTag(tag: string, body: string): RichTextSegment[] 
       }
       return display ? [{ kind: "text", content: display }] : [];
     }
+    case "itemproperty": {
+      // `{@itemProperty AF|XDMG|Ammunition}` — prefer display, else known label.
+      const parts = body.split("|");
+      const abbrev = (parts[0] ?? "").trim();
+      const display = (parts[2] ?? "").trim();
+      const label =
+        display ||
+        PROPERTY_LABELS[abbrev] ||
+        PROPERTY_LABELS[abbrev.toUpperCase()] ||
+        abbrev;
+      return label ? [{ kind: "text", content: label }] : [];
+    }
     default:
       return content ? [{ kind: "text", content }] : [];
   }
@@ -346,10 +359,11 @@ export function getRichTextSegmentClass(segment: RichTextSegment): string | null
       }
       return "text-sky-400 font-medium";
     })();
-    return `${phraseClass} underline-offset-2 hover:underline cursor-pointer`;
+    // Always underline so links read as interactive (not only on hover).
+    return `${phraseClass} underline underline-offset-2 decoration-current/55 hover:decoration-current cursor-pointer`;
   }
   if (segment.kind === "entityLink") {
-    return `${ENTITY_LINK_KIND_CLASS[segment.refKind]} underline-offset-2 hover:underline`;
+    return `${ENTITY_LINK_KIND_CLASS[segment.refKind]} underline underline-offset-2 decoration-current/55 hover:decoration-current cursor-pointer`;
   }
   if (segment.kind === "text") return null;
   return RICH_TEXT_MARKUP_CLASS[segment.kind];

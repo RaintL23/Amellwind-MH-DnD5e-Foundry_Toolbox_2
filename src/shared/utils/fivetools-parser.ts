@@ -4,6 +4,19 @@
  */
 
 import { ABILITY_NAMES, toAbilityKey } from "@/shared/constants/dnd/abilities.constants";
+import { PROPERTY_LABELS } from "@/shared/types/weapon.types";
+
+/** `{@itemProperty Abbrev|Source|Display}` → display, else known label, else abbrev. */
+function formatItemPropertyTagLabel(
+  abbreviation: string,
+  display?: string,
+): string {
+  const shown = display?.trim();
+  if (shown) return shown;
+  const key = abbreviation.trim();
+  if (!key) return "";
+  return PROPERTY_LABELS[key] ?? PROPERTY_LABELS[key.toUpperCase()] ?? key;
+}
 
 /**
  * Formats a 5etools `{ type: "abilityDc", name, attributes }` block into book-style text.
@@ -45,6 +58,11 @@ const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: stri
   [
     /\{@item ([^}|]+)(?:\|([^}|]*))?(?:\|([^}|]*))?\}/g,
     (_m, item, _source, display) => display?.trim() || item,
+  ],
+  [
+    /\{@itemProperty ([^}|]+)(?:\|([^}|]*))?(?:\|([^}|]*))?\}/gi,
+    (_m, abbrev, _source, display) =>
+      formatItemPropertyTagLabel(abbrev ?? "", display),
   ],
   [/\{@creature ([^}|]+)(?:\|[^}]*)?\}/g, (_m, creature) => creature],
   [/\{@action ([^}|]+)(?:\|[^}]*)?\}/g, (_m, action) => action],

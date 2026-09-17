@@ -102,8 +102,12 @@ export const PROPERTY_LABELS: Record<string, string> = {
   R: "Reach",
   V: "Versatile",
   A: "Ammunition",
+  /** DMG / XDMG firearm ammunition (distinct abbreviation from PHB `A`). */
+  AF: "Ammunition",
   S: "Special",
   T: "Thrown",
+  BF: "Burst Fire",
+  RLD: "Reload",
   /** AGMH bowgun property — replaces the standard 5e Loading property. */
   MHL: "Loading",
   LD: "Loading",

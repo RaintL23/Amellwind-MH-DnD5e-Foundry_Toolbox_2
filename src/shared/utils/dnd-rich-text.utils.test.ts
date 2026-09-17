@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseRichText } from "./dnd-rich-text.utils";
+import { parseRichText, getRichTextSegmentClass } from "./dnd-rich-text.utils";
 
 describe("parseRichText entity links", () => {
   it("turns {@spell} into an in-app spell link", () => {
@@ -64,5 +64,41 @@ describe("parseRichText entity links", () => {
       content: "Dragonator",
       refKind: "object",
     });
+  });
+
+  it("resolves {@itemProperty} to display name, not abbreviation", () => {
+    const withDisplay = parseRichText(
+      "weapon with the {@itemProperty AF|XDMG|Ammunition} property",
+      { highlightKeywords: false },
+    );
+    expect(withDisplay.map((s) => s.content).join("")).toBe(
+      "weapon with the Ammunition property",
+    );
+
+    const withoutDisplay = parseRichText(
+      "weapon with the {@itemProperty AF|XDMG} property",
+      { highlightKeywords: false },
+    );
+    expect(withoutDisplay.map((s) => s.content).join("")).toBe(
+      "weapon with the Ammunition property",
+    );
+  });
+
+  it("styles phrase and entity links with a visible underline", () => {
+    const phrase = parseRichText("learn two Arcane Shot options", {
+      highlightKeywords: false,
+      phraseLinks: [{ id: "opt:arcane", phrase: "Arcane Shot options" }],
+    });
+    const phraseSeg = phrase.find((s) => s.kind === "phraseLink");
+    expect(phraseSeg).toBeTruthy();
+    expect(getRichTextSegmentClass(phraseSeg!)).toContain("underline");
+    expect(getRichTextSegmentClass(phraseSeg!)).not.toContain("hover:underline");
+
+    const entity = parseRichText("{@spell haste|XPHB}", {
+      highlightKeywords: false,
+    });
+    const entitySeg = entity.find((s) => s.kind === "entityLink");
+    expect(entitySeg).toBeTruthy();
+    expect(getRichTextSegmentClass(entitySeg!)).toContain("underline");
   });
 });

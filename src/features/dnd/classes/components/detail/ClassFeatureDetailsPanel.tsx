@@ -52,7 +52,7 @@ const ClassFeatureDetailPanel = memo(function ClassFeatureDetailPanel({
           <button
             type="button"
             onClick={() => onTitleClick?.(titleProgressionId!)}
-            className="text-sm font-semibold text-sky-300 hover:underline underline-offset-2"
+            className="text-sm font-semibold text-sky-300 underline underline-offset-2 decoration-sky-300/55 hover:decoration-sky-300 cursor-pointer"
             title="View options"
           >
             {feature.displayName}
