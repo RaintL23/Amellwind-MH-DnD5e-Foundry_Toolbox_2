@@ -89,9 +89,22 @@ describe("companion scaling formulas", () => {
     });
   });
 
+  it("resolves XPHB-style HP specials that use plus instead of +", () => {
+    expect(
+      resolveHpSpecial(
+        "5 plus five times your Ranger level (the beast has a number of Hit Dice [d8s] equal to your Ranger level)",
+        16,
+      ),
+    ).toEqual({
+      average: 85,
+      label:
+        "85 (the beast has a number of Hit Dice [d8s] equal to your Ranger level)",
+    });
+  });
+
   it("resolves save expressions with PB", () => {
-    expect(resolvePbBonusExpression("+1 + PB", 4)).toBe("+5");
-    expect(resolvePbBonusExpression("PB", 3)).toBe("+3");
+    expect(resolvePbBonusExpression("+1 + PB", 4)).toBe("+5 (+1 + PB)");
+    expect(resolvePbBonusExpression("PB", 3)).toBe("+3 (PB)");
   });
 });
 
@@ -148,12 +161,59 @@ describe("applyCompanionScaling", () => {
     expect(scaled.proficiencyBonus).toBe(3);
     expect(scaled.armorClass[0]?.ac).toBe(17);
     expect(scaled.armorClass[0]?.special).toBeUndefined();
+    expect(scaled.armorClass[0]?.from).toEqual(["14 + PB (natural armor)"]);
     expect(scaled.hp.average).toBe(30);
-    expect(scaled.savingThrows.dex).toBe("+4");
+    expect(scaled.hp.special).toBeUndefined();
+    expect(scaled.hp.formula).toContain("five times your ranger level");
+    expect(scaled.savingThrows.dex).toBe("+4 (+1 + PB)");
     expect(scaled.actions[0]?.content?.[0]).toMatchObject({
       type: "paragraph",
-      text: expect.stringContaining("plus 3"),
+      text: expect.stringContaining("plus 3 (PB)"),
     });
+  });
+
+  it("scales XPHB Beast of the Land AC and HP from Wisdom and level", () => {
+    const scaled = applyCompanionScaling(
+      baseCreature({
+        name: "Beast of the Land",
+        source: "XPHB",
+        armorClass: [{ ac: 0, special: "13 plus your Wisdom modifier" }],
+        hp: {
+          special:
+            "5 plus five times your Ranger level (the beast has a number of Hit Dice [d8s] equal to your Ranger level)",
+        },
+        savingThrows: {},
+        actions: [
+          {
+            name: "Beast's Strike",
+            entries: [
+              "{@hitYourSpellAttack Bonus equals your spell attack modifier}, reach 5 ft. {@h} plus your Wisdom modifier.",
+            ],
+            content: [
+              {
+                type: "paragraph",
+                text: "{@hitYourSpellAttack Bonus equals your spell attack modifier}, reach 5 ft. {@h} plus your Wisdom modifier.",
+              },
+            ],
+          },
+        ],
+      }),
+      { ownerLevel: 16, abilityScore: 16 },
+    );
+
+    expect(scaled.armorClass[0]?.ac).toBe(16);
+    expect(scaled.armorClass[0]?.from).toEqual([
+      "13 plus your Wisdom modifier",
+    ]);
+    expect(scaled.hp.average).toBe(85);
+    expect(scaled.hp.formula).toContain("five times your Ranger level");
+    expect(scaled.proficiencyBonus).toBe(5);
+    const text =
+      scaled.actions[0]?.content?.[0]?.type === "paragraph"
+        ? scaled.actions[0].content[0].text
+        : "";
+    expect(text).toContain("+8 (your spell attack modifier)");
+    expect(text).toContain("+3 (your Wisdom modifier)");
   });
 
   it("auto-calcs spell attack and ability mod from ability score", () => {
@@ -179,12 +239,14 @@ describe("applyCompanionScaling", () => {
       },
     );
     expect(scaled.armorClass[0]?.ac).toBe(16);
+    expect(scaled.armorClass[0]?.from).toEqual([
+      "13 + your Charisma modifier",
+    ]);
     const text =
       scaled.actions[0]?.content?.[0]?.type === "paragraph"
         ? scaled.actions[0].content[0].text
         : "";
     expect(text).toContain("{@hit 6}");
-    expect(text).toContain("+3");
-    expect(text.toLowerCase()).not.toContain("charisma modifier");
+    expect(text).toContain("+3 (your Charisma modifier)");
   });
 });

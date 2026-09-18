@@ -252,6 +252,7 @@ export function resolveAcSpecial(
 /**
  * Parse HP specials like:
  * - "5 + five times your ranger level (…)"
+ * - "5 plus five times your Ranger level (…)" (XPHB wording)
  * - "5 + five times your druid level"
  */
 export function resolveHpSpecial(
@@ -260,7 +261,7 @@ export function resolveHpSpecial(
 ): { average: number; label: string } | null {
   const level = Math.min(20, Math.max(1, Math.floor(ownerLevel) || 1));
   const m = special.match(
-    /^(\d+)\s*\+\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+times your \w+ level\b(.*)$/i,
+    /^(\d+)\s*(?:\+|plus)\s*(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+times your \w+ level\b(.*)$/i,
   );
   if (!m) return null;
   const base = Number(m[1]);
@@ -279,19 +280,34 @@ export function resolvePbBonusExpression(
   pb: number,
 ): string {
   const trimmed = expression.trim();
-  if (/^PB$/i.test(trimmed)) return formatModifier(pb);
+  if (/^PB$/i.test(trimmed)) {
+    return withCalculationNote(formatModifier(pb), trimmed);
+  }
 
   const plusPb = trimmed.match(/^([+-]?\d+)\s*\+\s*PB$/i);
   if (plusPb) {
-    return formatModifier(Number(plusPb[1]) + pb);
+    return withCalculationNote(
+      formatModifier(Number(plusPb[1]) + pb),
+      trimmed,
+    );
   }
 
   const pbPlus = trimmed.match(/^PB\s*\+\s*([+-]?\d+)$/i);
   if (pbPlus) {
-    return formatModifier(pb + Number(pbPlus[1]));
+    return withCalculationNote(formatModifier(pb + Number(pbPlus[1])), trimmed);
   }
 
-  return trimmed.replace(/\bPB\b/g, String(pb));
+  return trimmed.replace(/\bPB\b/g, (match, offset: number, full: string) => {
+    if (offset > 0 && full[offset - 1] === "(") return match;
+    return withCalculationNote(String(pb), "PB");
+  });
+}
+
+function withCalculationNote(value: string, note: string): string {
+  const trimmedNote = note.trim();
+  if (!trimmedNote) return value;
+  if (value.includes(`(${trimmedNote})`)) return value;
+  return `${value} (${trimmedNote})`;
 }
 
 function scalePlainText(
@@ -308,32 +324,56 @@ function scalePlainText(
       `{@hit ${spellAttackBonus}}`,
     );
     result = result.replace(
-      /\byour spell attack modifier\b/gi,
-      formatModifier(spellAttackBonus),
+      /\{@hitYourSpellAttack\s+([^}]+)\}/gi,
+      (_match, body: string) =>
+        body.replace(/\byour spell attack modifier\b/gi, (phrase) =>
+          withCalculationNote(formatModifier(spellAttackBonus), phrase),
+        ),
+    );
+    result = result.replace(/\byour spell attack modifier\b/gi, (phrase) =>
+      withCalculationNote(formatModifier(spellAttackBonus), phrase),
     );
   } else {
     result = result.replace(
       /\{@hitYourSpellAttack\}/gi,
       "your spell attack modifier",
     );
+    result = result.replace(
+      /\{@hitYourSpellAttack\s+([^}]+)\}/gi,
+      (_match, body: string) => body,
+    );
   }
 
   if (typeof spellSaveDc === "number") {
-    result = result.replace(/\byour spell save DC\b/gi, `DC ${spellSaveDc}`);
+    result = result.replace(/\byour spell save DC\b/gi, (phrase) =>
+      withCalculationNote(`DC ${spellSaveDc}`, phrase),
+    );
   }
 
   if (typeof abilityModifier === "number") {
     result = result.replace(
       /\byour (strength|dexterity|constitution|intelligence|wisdom|charisma) modifier\b/gi,
-      formatModifier(abilityModifier),
+      (phrase) => withCalculationNote(formatModifier(abilityModifier), phrase),
     );
   }
 
-  result = result.replace(/\byour proficiency bonus\b/gi, formatModifier(pb));
-  result = result.replace(/\byour Proficiency\b/g, formatModifier(pb));
-  result = result.replace(/\bplus PB\b/g, `plus ${pb}`);
-  result = result.replace(/\+\s*PB\b/g, `+ ${pb}`);
-  result = result.replace(/\bPB\b/g, String(pb));
+  result = result.replace(/\byour proficiency bonus\b/gi, (phrase) =>
+    withCalculationNote(formatModifier(pb), phrase),
+  );
+  result = result.replace(/\byour Proficiency\b/g, (phrase) =>
+    withCalculationNote(formatModifier(pb), phrase),
+  );
+  result = result.replace(/\bplus PB\b/g, () =>
+    withCalculationNote(`plus ${pb}`, "PB"),
+  );
+  result = result.replace(/\+\s*PB\b/g, () =>
+    withCalculationNote(`+ ${pb}`, "PB"),
+  );
+  result = result.replace(/\bPB\b/g, (match, offset: number, full: string) => {
+    // Skip PB already wrapped by withCalculationNote, e.g. "3 (PB)".
+    if (offset > 0 && full[offset - 1] === "(") return match;
+    return withCalculationNote(String(pb), "PB");
+  });
 
   return result;
 }
@@ -401,9 +441,13 @@ function scaleArmorClass(
       derived.abilityModifier,
     );
     if (!resolved) return ac;
+    const from = [...(ac.from ?? [])];
+    if (!from.includes(ac.special)) {
+      from.unshift(ac.special);
+    }
     return {
       ac: resolved.value,
-      from: ac.from,
+      from: from.length > 0 ? from : undefined,
       special: undefined,
     };
   });
@@ -415,6 +459,8 @@ function scaleHp(hp: HP, ownerLevel: number): HP {
   if (!resolved) return hp;
   return {
     average: resolved.average,
+    // Preserve the original 5etools formula so the UI can show
+    // "85 (5 plus five times your Ranger level …)".
     formula: hp.special,
     special: undefined,
   };
