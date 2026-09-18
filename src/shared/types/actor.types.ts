@@ -53,6 +53,8 @@ export interface HP {
   average?: number;
   current?: number;
   temp?: number;
+  /** Variable HP formula (e.g. companion "5 + five times your ranger level"). */
+  special?: string;
 }
 
 // ─── Armor Class ─────────────────────────────────────────────────────────────
@@ -60,6 +62,8 @@ export interface HP {
 export interface ArmorClass {
   ac: number;
   from?: string[];
+  /** Variable AC formula (e.g. companion "14 + PB (natural armor)"). */
+  special?: string;
 }
 
 // ─── Senses ──────────────────────────────────────────────────────────────────
@@ -93,6 +97,8 @@ export interface ConditionalDamage {
   resist?: DamageType[];
   note?: string;
   cond?: boolean;
+  /** Free-form immunity/resistance text (companions, variable traits). */
+  special?: string;
 }
 
 export type DamageEntry = DamageType | ConditionalDamage;
@@ -125,6 +131,11 @@ export interface Actor {
   speed: Speed;
   initiative: number;
   proficiencyBonus: number;
+  /**
+   * When set (e.g. "equals your bonus"), PB and related formulas scale with the
+   * summoner's proficiency / class level rather than CR.
+   */
+  pbNote?: string;
   abilities: AbilityScores;
   savingThrows: Partial<Record<AbilityKey, string>>;
   skills: Skills;

@@ -38,12 +38,20 @@ export function mapEntries(entries: unknown[]): Entry[] {
 
 export function mapArmorClass(ac: unknown): ArmorClass[] {
   if (!Array.isArray(ac)) return [];
-  return ac.map((a: RawActor) => {
+  return ac.map((a: RawActor | number) => {
     if (typeof a === "number") return { ac: a };
-    return {
-      ac: Number(a.ac ?? 0),
-      from: Array.isArray(a.from) ? a.from : undefined,
-    };
+    if (typeof a === "object" && a !== null) {
+      const special =
+        typeof a.special === "string" && a.special.trim()
+          ? a.special.trim()
+          : undefined;
+      return {
+        ac: typeof a.ac === "number" ? a.ac : special ? 0 : Number(a.ac ?? 0),
+        from: Array.isArray(a.from) ? a.from.map(String) : undefined,
+        special,
+      };
+    }
+    return { ac: 0 };
   });
 }
 
@@ -63,9 +71,14 @@ export function mapSpeed(speed: unknown): Speed {
 export function mapHP(hp: unknown): HP {
   if (typeof hp !== "object" || hp === null) return {};
   const h = hp as RawActor;
+  const special =
+    typeof h.special === "string" && h.special.trim()
+      ? h.special.trim()
+      : undefined;
   return {
     formula: typeof h.formula === "string" ? h.formula : undefined,
     average: typeof h.average === "number" ? h.average : undefined,
+    special,
   };
 }
 
@@ -125,6 +138,105 @@ export function mapSize(raw: RawActor): string {
   return SIZE_MAP[size as string] ?? String(size ?? "Medium");
 }
 
+/** Flatten messy 5etools `type` values (string, object, choose, tags-as-objects). */
+export function mapCreatureType(raw: RawActor): { type: string; tags?: string[] } {
+  const rawType = raw.type;
+
+  if (typeof rawType === "string") {
+    return { type: rawType };
+  }
+
+  if (Array.isArray(rawType)) {
+    const parts = rawType
+      .map((part) => formatTypePiece(part))
+      .filter(Boolean);
+    return { type: parts.join(" or ") || "unknown" };
+  }
+
+  if (typeof rawType === "object" && rawType !== null) {
+    const t = rawType as RawActor;
+    const typeLabel = formatTypePiece(t.type ?? t.choose ?? t);
+    const tags = flattenTypeTags(t.tags);
+    return {
+      type: typeLabel || "unknown",
+      tags: tags.length > 0 ? tags : undefined,
+    };
+  }
+
+  return { type: "unknown" };
+}
+
+function formatTypePiece(value: unknown): string {
+  if (value == null) return "";
+  if (typeof value === "string" || typeof value === "number") {
+    return String(value);
+  }
+  if (Array.isArray(value)) {
+    return value.map(formatTypePiece).filter(Boolean).join(" or ");
+  }
+  if (typeof value === "object") {
+    const obj = value as RawActor;
+    if (typeof obj.type === "string") return obj.type;
+    if (Array.isArray(obj.from)) {
+      return obj.from.map(formatTypePiece).filter(Boolean).join(" or ");
+    }
+    if (obj.choose != null) return formatTypePiece(obj.choose);
+    if (typeof obj.special === "string") return obj.special;
+  }
+  return "";
+}
+
+function flattenTypeTags(tags: unknown): string[] {
+  if (!Array.isArray(tags)) return [];
+  return tags
+    .map((tag) => {
+      if (typeof tag === "string") return tag;
+      if (typeof tag === "object" && tag !== null) {
+        const obj = tag as RawActor;
+        if (typeof obj.tag === "string") return obj.tag;
+        if (typeof obj.prefix === "string" && typeof obj.tag === "string") {
+          return `${obj.prefix} ${obj.tag}`;
+        }
+        if (typeof obj.special === "string") return obj.special;
+      }
+      return "";
+    })
+    .filter(Boolean);
+}
+
+function mapConditionImmunities(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((c) => {
+      if (typeof c === "string") return c;
+      if (typeof c === "object" && c !== null) {
+        const obj = c as RawActor;
+        if (typeof obj.conditionImmune === "string") return obj.conditionImmune;
+        if (Array.isArray(obj.conditionImmune)) {
+          return obj.conditionImmune.map(String).join(", ");
+        }
+        if (typeof obj.special === "string") return obj.special;
+      }
+      return "";
+    })
+    .filter(Boolean);
+}
+
+function mapLanguages(raw: unknown): string[] {
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .map((lang) => {
+      if (typeof lang === "string") return lang;
+      if (typeof lang === "object" && lang !== null) {
+        const obj = lang as RawActor;
+        if (typeof obj.special === "string") return obj.special;
+        if (typeof obj.language === "string") return obj.language;
+      }
+      return "";
+    })
+    .filter(Boolean);
+}
+
 export function mapActorCore(raw: RawActor): Omit<Monster, "group" | "source" | "page" | "cr" | "environment" | "legendaryActions" | "loot" | "fluff"> {
   const abilities: AbilityScores = {
     str: raw.str ?? 10,
@@ -141,23 +253,23 @@ export function mapActorCore(raw: RawActor): Omit<Monster, "group" | "source" | 
     raw.trait ?? [],
     baseNamesFromNamedEntries(sanitizedActions),
   );
+  const pbNote =
+    typeof raw.pbNote === "string" && raw.pbNote.trim()
+      ? raw.pbNote.trim()
+      : undefined;
 
   return {
     name: String(raw.name ?? "Unknown"),
     shortName: raw.shortName ? String(raw.shortName) : undefined,
     size: mapSize(raw),
-    type: {
-      type: typeof raw.type === "string"
-        ? raw.type
-        : String(raw.type?.type ?? "unknown"),
-      tags: Array.isArray(raw.type?.tags) ? raw.type.tags : [],
-    },
+    type: mapCreatureType(raw),
     alignment: Array.isArray(raw.alignment) ? raw.alignment.map(String) : ["U"],
     armorClass: mapArmorClass(raw.ac),
     hp: mapHP(raw.hp),
     speed: mapSpeed(raw.speed),
     initiative: getAbilityModifier(abilities.dex),
     proficiencyBonus: getProficiencyBonus(cr),
+    pbNote,
     abilities,
     savingThrows: raw.save ? raw.save : {},
     skills: raw.skill ? raw.skill : {},
@@ -166,12 +278,8 @@ export function mapActorCore(raw: RawActor): Omit<Monster, "group" | "source" | 
     damageImmunities: raw.immune ?? [],
     damageResistances: raw.resist ?? [],
     damageVulnerabilities: raw.vulnerable ?? [],
-    conditionImmunities: Array.isArray(raw.conditionImmune)
-      ? raw.conditionImmune.map((c: unknown) =>
-          typeof c === "string" ? c : String((c as RawActor).conditionImmune ?? c),
-        )
-      : [],
-    languages: Array.isArray(raw.languages) ? raw.languages : [],
+    conditionImmunities: mapConditionImmunities(raw.conditionImmune),
+    languages: mapLanguages(raw.languages),
     traits: mapEntries(sanitizedTraits),
     actions: mapEntries(sanitizedActions),
     reactions: mapEntries(sanitizeNamedEntrySection(raw.reaction ?? [])),
