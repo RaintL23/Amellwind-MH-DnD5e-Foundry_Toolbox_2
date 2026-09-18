@@ -34,7 +34,8 @@ function contentToDescription(
 ): string[] {
   return content
     .map(statBlockContentToPlainText)
-    .map((line) => line.trim())
+    // Strip remaining entity tags for plain-text search / grant detection.
+    .map((line) => parseFiveToolsMarkup(line).trim())
     .filter(Boolean);
 }
 

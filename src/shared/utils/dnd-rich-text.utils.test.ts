@@ -2,6 +2,19 @@ import { describe, expect, it } from "vitest";
 import { parseRichText, getRichTextSegmentClass } from "./dnd-rich-text.utils";
 
 describe("parseRichText entity links", () => {
+  it("links {@creature} tags to the bestiary", () => {
+    const segments = parseRichText(
+      "See the {@creature Drake Companion|FTD} stat block.",
+      { highlightKeywords: false },
+    );
+    expect(segments.find((seg) => seg.kind === "entityLink")).toMatchObject({
+      kind: "entityLink",
+      content: "Drake Companion",
+      href: "/bestiary/Drake%20Companion_FTD",
+      refKind: "creature",
+    });
+  });
+
   it("turns {@spell} into an in-app spell link", () => {
     const segments = parseRichText(
       "you can cast {@spell dimension door|XPHB}",

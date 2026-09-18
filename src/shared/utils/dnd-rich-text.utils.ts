@@ -160,6 +160,8 @@ function segmentsFromFiveToolsTag(tag: string, body: string): RichTextSegment[] 
       return [{ kind: "dc", content: `DC ${content}` }];
     case "hit":
       return [{ kind: "hit", content: `+${content} to hit` }];
+    case "hityourspellattack":
+      return [{ kind: "hit", content: "your spell attack modifier" }];
     case "h":
       return [{ kind: "text", content: "Hit: " }];
     case "atk":

@@ -12,8 +12,11 @@ import {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type Raw = Record<string, any>;
 
+/** Markup options for UI content destined for `DndRichText`. */
+const UI_MARKUP = { preserveEntityTags: true } as const;
+
 function mapTable(raw: Raw): DowntimeTable {
-  return mapFiveToolsTable(raw);
+  return mapFiveToolsTable(raw, UI_MARKUP);
 }
 
 function mapListItems(items: unknown[]): StatBlockListItem[] {
@@ -21,14 +24,20 @@ function mapListItems(items: unknown[]): StatBlockListItem[] {
 
   for (const item of items) {
     if (typeof item === "string") {
-      result.push({ type: "text", text: parseFiveToolsMarkup(item) });
+      result.push({
+        type: "text",
+        text: parseFiveToolsMarkup(item, UI_MARKUP),
+      });
       continue;
     }
     if (typeof item !== "object" || item === null) continue;
 
     const entry = item as Raw;
     if (entry.type === "item" || typeof entry.name === "string") {
-      const name = parseFiveToolsMarkup(String(entry.name ?? "")).trim();
+      const name = parseFiveToolsMarkup(
+        String(entry.name ?? ""),
+        UI_MARKUP,
+      ).trim();
       const children = mapStatBlockEntries(
         Array.isArray(entry.entries) ? (entry.entries as unknown[]) : [],
       );
@@ -93,7 +102,10 @@ export function mapStatBlockEntries(entries: unknown[]): StatBlockContent[] {
 
   for (const entry of entries) {
     if (typeof entry === "string") {
-      result.push({ type: "paragraph", text: parseFiveToolsMarkup(entry) });
+      result.push({
+        type: "paragraph",
+        text: parseFiveToolsMarkup(entry, UI_MARKUP),
+      });
       continue;
     }
     if (typeof entry !== "object" || entry === null) continue;
@@ -115,7 +127,10 @@ export function mapStatBlockEntries(entries: unknown[]): StatBlockContent[] {
     }
 
     if (e.type === "abilityDc") {
-      const name = typeof e.name === "string" ? parseFiveToolsMarkup(e.name) : "Save";
+      const name =
+        typeof e.name === "string"
+          ? parseFiveToolsMarkup(e.name, UI_MARKUP)
+          : "Save";
       result.push({
         type: "paragraph",
         text: formatAbilityDcText(name, e.attributes),
@@ -125,7 +140,9 @@ export function mapStatBlockEntries(entries: unknown[]): StatBlockContent[] {
 
     if (e.type === "inset" && Array.isArray(e.entries)) {
       const insetName =
-        typeof e.name === "string" ? parseFiveToolsMarkup(e.name).trim() : "Note";
+        typeof e.name === "string"
+          ? parseFiveToolsMarkup(e.name, UI_MARKUP).trim()
+          : "Note";
       result.push({
         type: "section",
         name: insetName,
@@ -136,7 +153,9 @@ export function mapStatBlockEntries(entries: unknown[]): StatBlockContent[] {
 
     if (e.type === "entries" || typeof e.name === "string") {
       const name =
-        typeof e.name === "string" ? parseFiveToolsMarkup(e.name).trim() : "";
+        typeof e.name === "string"
+          ? parseFiveToolsMarkup(e.name, UI_MARKUP).trim()
+          : "";
       const children = mapStatBlockEntries(
         Array.isArray(e.entries) ? (e.entries as unknown[]) : [],
       );

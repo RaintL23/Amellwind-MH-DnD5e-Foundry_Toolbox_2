@@ -43,6 +43,41 @@ export function formatAbilityDcText(
   return `${label} save DC = 8 + your proficiency bonus + ${abilityPart}`;
 }
 
+/**
+ * Tags that {@link DndRichText} turns into in-app entity links. When
+ * `preserveEntityTags` is set, these stay as `{@tag …}` for the rich renderer.
+ */
+const PRESERVED_ENTITY_TAGS = new Set([
+  "creature",
+  "spell",
+  "condition",
+  "disease",
+  "item",
+  "class",
+  "race",
+  "species",
+  "feat",
+  "background",
+  "object",
+  "weapon",
+  "status",
+  "filter",
+  "subclass",
+]);
+
+export interface ParseFiveToolsMarkupOptions {
+  /**
+   * Leave entity-link tags (`{@creature}`, `{@spell}`, …) intact so
+   * `DndRichText` can turn them into in-app links.
+   */
+  preserveEntityTags?: boolean;
+}
+
+function isPreservedEntityTagMatch(match: string): boolean {
+  const tag = /^\{@([a-zA-Z]+)/.exec(match)?.[1]?.toLowerCase();
+  return tag != null && PRESERVED_ENTITY_TAGS.has(tag);
+}
+
 const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: string[]) => string)]> = [
   [/\{@atk mw\}/g, "Melee Weapon Attack:"],
   [/\{@atk rw\}/g, "Ranged Weapon Attack:"],
@@ -91,14 +126,23 @@ const FIVETOOLS_PATTERNS: Array<[RegExp, string | ((match: string, ...args: stri
   [/\{@[a-zA-Z]+ ([^}|]+)(?:\|[^}]*)?\}/g, (_m, text) => text],
 ];
 
-export function parseFiveToolsMarkup(text: string): string {
+export function parseFiveToolsMarkup(
+  text: string,
+  options: ParseFiveToolsMarkupOptions = {},
+): string {
+  const preserve = Boolean(options.preserveEntityTags);
   let result = text;
   for (const [pattern, replacement] of FIVETOOLS_PATTERNS) {
-    if (typeof replacement === "string") {
-      result = result.replace(pattern, replacement);
-    } else {
-      result = result.replace(pattern, replacement as (...args: string[]) => string);
-    }
+    // Clone so global lastIndex does not leak across calls.
+    const re = new RegExp(pattern.source, pattern.flags);
+    result = result.replace(re, (match, ...args) => {
+      if (preserve && isPreservedEntityTagMatch(match)) return match;
+      if (typeof replacement === "string") return replacement;
+      return (replacement as (match: string, ...args: string[]) => string)(
+        match,
+        ...(args as string[]),
+      );
+    });
   }
   return result;
 }
@@ -122,14 +166,18 @@ export function formatFiveToolsRoll(roll: unknown): string {
 
 /**
  * Flattens a 5etools table cell (string, `{type:"cell"}`, nested entries) to
- * display text. When `parseMarkup` is true, `{@…}` tags are resolved to plain text.
+ * display text. When `parseMarkup` is true, `{@…}` tags are resolved (entity
+ * tags may be preserved via options). When false, tags are left untouched.
  */
 export function formatFiveToolsTableCell(
   cell: unknown,
-  parseMarkup = true,
+  parseMarkup: boolean | ParseFiveToolsMarkupOptions = true,
 ): string {
+  const markupOptions =
+    typeof parseMarkup === "object" ? parseMarkup : undefined;
+  const shouldParse = parseMarkup !== false;
   const apply = (text: string) =>
-    parseMarkup ? parseFiveToolsMarkup(text) : text;
+    shouldParse ? parseFiveToolsMarkup(text, markupOptions) : text;
 
   if (cell == null) return "";
   if (typeof cell === "string") return apply(cell).trim();
@@ -183,10 +231,13 @@ export interface FiveToolsTableData {
 /** Maps a raw 5etools `{type:"table"}` object into display-ready string cells. */
 export function mapFiveToolsTable(
   raw: Record<string, unknown>,
-  parseMarkup = true,
+  parseMarkup: boolean | ParseFiveToolsMarkupOptions = true,
 ): FiveToolsTableData {
+  const markupOptions =
+    typeof parseMarkup === "object" ? parseMarkup : undefined;
+  const shouldParse = parseMarkup !== false;
   const apply = (text: string) =>
-    parseMarkup ? parseFiveToolsMarkup(text) : text;
+    shouldParse ? parseFiveToolsMarkup(text, markupOptions) : text;
 
   const colLabels = Array.isArray(raw.colLabels)
     ? (raw.colLabels as unknown[]).map((label) =>
@@ -354,6 +405,18 @@ export interface RenderEntriesOptions {
   insetPrefix?: string | null;
   /** When true, inset prefix is only applied at depth 0 (MH feats). */
   insetPrefixAtRootOnly?: boolean;
+  /**
+   * Keep entity-link tags (`{@creature}`, `{@spell}`, …) for `DndRichText`.
+   */
+  preserveEntityTags?: boolean;
+}
+
+function markupOptionsFromRender(
+  options: RenderEntriesOptions,
+): ParseFiveToolsMarkupOptions {
+  return options.preserveEntityTags
+    ? { preserveEntityTags: true }
+    : {};
 }
 
 /** Resolve body text for a `{type:"item"}` from singular `entry` or `entries[]`. */
@@ -362,8 +425,9 @@ function resolveItemBody(
   options: RenderEntriesOptions,
   depth: number,
 ): string {
+  const markup = markupOptionsFromRender(options);
   if (typeof item.entry === "string") {
-    return parseFiveToolsMarkup(item.entry).trim();
+    return parseFiveToolsMarkup(item.entry, markup).trim();
   }
   if (Array.isArray(item.entries)) {
     return renderFiveToolsEntries(item.entries as unknown[], options, depth + 1)
@@ -386,10 +450,11 @@ function renderFiveToolsListItems(
     listDepthIndent,
   } = options;
   const linePrefix = listDepthIndent && depth > 0 ? listDepthIndent : "";
+  const markup = markupOptionsFromRender(options);
 
   for (const item of items) {
     if (typeof item === "string") {
-      const text = parseFiveToolsMarkup(item).trim();
+      const text = parseFiveToolsMarkup(item, markup).trim();
       if (text) result.push(`${linePrefix}${bullet}${text}`);
       continue;
     }
@@ -398,7 +463,7 @@ function renderFiveToolsListItems(
     const subObj = item as Record<string, any>;
 
     if (renderItemObjects && subObj.type === "item" && subObj.name) {
-      const name = parseFiveToolsMarkup(String(subObj.name)).trim();
+      const name = parseFiveToolsMarkup(String(subObj.name), markup).trim();
       const body = resolveItemBody(subObj, options, depth);
       result.push(
         body
@@ -409,7 +474,7 @@ function renderFiveToolsListItems(
     }
 
     if (renderListEntryObjects && subObj.type === "entries" && subObj.name) {
-      const name = parseFiveToolsMarkup(String(subObj.name)).trim();
+      const name = parseFiveToolsMarkup(String(subObj.name), markup).trim();
       result.push(`${linePrefix}**${name}**`);
       if (Array.isArray(subObj.entries)) {
         result.push(
@@ -457,12 +522,13 @@ export function renderFiveToolsEntries(
     insetPrefix = "» ",
     insetPrefixAtRootOnly = false,
   } = options;
+  const markup = markupOptionsFromRender(options);
 
   const result: string[] = [];
 
   for (const entry of entries) {
     if (typeof entry === "string") {
-      const text = parseFiveToolsMarkup(entry).trim();
+      const text = parseFiveToolsMarkup(entry, markup).trim();
       if (text) result.push(text);
       continue;
     }
@@ -473,14 +539,14 @@ export function renderFiveToolsEntries(
     if (obj.type === "list" && Array.isArray(obj.items)) {
       renderFiveToolsListItems(obj.items as unknown[], options, depth, result);
     } else if (boldNamedEntries && obj.type === "entries" && obj.name) {
-      result.push(`**${parseFiveToolsMarkup(String(obj.name))}**`);
+      result.push(`**${parseFiveToolsMarkup(String(obj.name), markup)}**`);
       if (Array.isArray(obj.entries)) {
         result.push(
           ...renderFiveToolsEntries(obj.entries as unknown[], options, depth + 1),
         );
       }
     } else if (renderTableCaption && obj.type === "table") {
-      const table = mapFiveToolsTable(obj);
+      const table = mapFiveToolsTable(obj, markup);
       if (table.caption) {
         result.push(`**${table.caption}**`);
       }
@@ -519,7 +585,7 @@ export function renderFiveToolsEntries(
         const homebrewEntry = sub as Record<string, any>;
         if (homebrewEntry.name && Array.isArray(homebrewEntry.items)) {
           result.push(
-            `**${parseFiveToolsMarkup(String(homebrewEntry.name))}**`,
+            `**${parseFiveToolsMarkup(String(homebrewEntry.name), markup)}**`,
           );
           renderFiveToolsListItems(
             homebrewEntry.items as unknown[],
@@ -549,6 +615,7 @@ export const PLAIN_ENTRY_OPTIONS: RenderEntriesOptions = {
   boldNamedEntries: false,
   renderTableCaption: false,
   insetPrefix: null,
+  preserveEntityTags: true,
 };
 
 /** Preset matching legacy MH feat entry rendering (`renderEntries` / `renderListItems`). */

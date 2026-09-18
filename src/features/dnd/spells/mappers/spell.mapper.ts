@@ -213,7 +213,7 @@ function mapCastTimeUnits(raw: Raw): string[] {
 }
 
 function renderEntries(entries: unknown[]): string[] {
-  return renderFiveToolsEntries(entries);
+  return renderFiveToolsEntries(entries, { preserveEntityTags: true });
 }
 
 function mapSpellClassLists(raw: Raw): { classNames: string[]; classes: string[] } {

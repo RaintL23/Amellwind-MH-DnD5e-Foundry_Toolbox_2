@@ -60,6 +60,15 @@ describe("buildToolboxEntityHref", () => {
     );
     expect(buildToolboxEntityHref("object", "Ballista", "DMG")).toBeNull();
   });
+
+  it("routes creatures to bestiary detail paths", () => {
+    expect(buildToolboxEntityHref("creature", "Drake Companion", "FTD")).toBe(
+      "/bestiary/Drake%20Companion_FTD",
+    );
+    expect(
+      buildToolboxEntityHref("creature", "Construct Spirit", "TCE"),
+    ).toBe("/bestiary/Construct%20Spirit_TCE");
+  });
 });
 
 describe("resolveToolboxEntityRef", () => {
