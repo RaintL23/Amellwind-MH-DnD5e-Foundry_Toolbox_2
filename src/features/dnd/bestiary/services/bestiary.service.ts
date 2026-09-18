@@ -69,6 +69,15 @@ export async function getBestiaryCreatureById(
   const byCanonical = await service.getById(canonicalId);
   if (byCanonical) return byCanonical;
 
+  // Companion / summon blocks often live outside default sources (TCE, FTD, …).
+  const loaded = new Set(getLoadedBestiarySources());
+  if (!loaded.has(parsed.source)) {
+    await service.loadSourceOnDemand(parsed.source);
+    const afterLoad =
+      (await service.getById(id)) ?? (await service.getById(canonicalId));
+    if (afterLoad) return afterLoad;
+  }
+
   const group = await service.getByName(parsed.name);
   if (!group.length) return undefined;
 
