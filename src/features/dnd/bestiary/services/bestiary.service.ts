@@ -56,6 +56,28 @@ export const loadSourceOnDemand = service.loadSourceOnDemand;
 export const getBestiarySourceCatalog = service.getSourceCatalog;
 export const clearBestiaryCache = service.clearCache;
 
+async function findCreatureByNameSource(
+  name: string,
+  source: string,
+): Promise<BestiaryCreature | undefined> {
+  const exact = await service.getByName(name);
+  if (exact.length > 0) {
+    return exact.find((c) => c.source === source) ?? exact[0];
+  }
+
+  // Entity links may title-case articles ("Beast Of The Sea") while 5etools
+  // keeps them lowercase ("Beast of the Sea").
+  const all = await service.getAll();
+  const needle = name.toLowerCase();
+  const matches = all.filter((c) => c.name.toLowerCase() === needle);
+  if (matches.length === 0) return undefined;
+
+  const sourceNeedle = source.toLowerCase();
+  return (
+    matches.find((c) => c.source.toLowerCase() === sourceNeedle) ?? matches[0]
+  );
+}
+
 export async function getBestiaryCreatureById(
   id: string,
 ): Promise<BestiaryCreature | undefined> {
@@ -78,10 +100,7 @@ export async function getBestiaryCreatureById(
     if (afterLoad) return afterLoad;
   }
 
-  const group = await service.getByName(parsed.name);
-  if (!group.length) return undefined;
-
-  return group.find((c) => c.source === parsed.source) ?? group[0];
+  return findCreatureByNameSource(parsed.name, parsed.source);
 }
 
 export async function getCreaturesByName(name: string): Promise<BestiaryCreature[]> {

@@ -14,6 +14,11 @@ describe("formatEntityDisplayName", () => {
     expect(formatEntityDisplayName("dimension door")).toBe("Dimension Door");
     expect(formatEntityDisplayName("Dimension Door")).toBe("Dimension Door");
   });
+
+  it("preserves mixed-case 5etools names (articles stay lowercase)", () => {
+    expect(formatEntityDisplayName("Beast of the Sea")).toBe("Beast of the Sea");
+    expect(formatEntityDisplayName("Drake Companion")).toBe("Drake Companion");
+  });
 });
 
 describe("buildToolboxEntityHref", () => {
@@ -68,6 +73,9 @@ describe("buildToolboxEntityHref", () => {
     expect(
       buildToolboxEntityHref("creature", "Construct Spirit", "TCE"),
     ).toBe("/bestiary/Construct%20Spirit_TCE");
+    expect(
+      buildToolboxEntityHref("creature", "Beast of the Sea", "XPHB"),
+    ).toBe("/bestiary/Beast%20of%20the%20Sea_XPHB");
   });
 });
 

@@ -126,12 +126,18 @@ export function isHunterWeaponName(name: string): boolean {
   return HUNTER_WEAPON_NAMES.has(name.trim().toLowerCase());
 }
 
-/** Title-cases a 5etools lookup name (`dimension door` → `Dimension Door`). */
+/**
+ * Title-cases a 5etools lookup name (`dimension door` → `Dimension Door`).
+ * Preserves mixed-case names already provided by tags (`Beast of the Sea`),
+ * so bestiary / catalog ids stay aligned with 5etools casing.
+ */
 export function formatEntityDisplayName(name: string): string {
-  return name
-    .trim()
-    .replace(/\s+/g, " ")
-    .replace(/\b([a-z])/g, (ch) => ch.toUpperCase());
+  const trimmed = name.trim().replace(/\s+/g, " ");
+  if (!trimmed) return trimmed;
+  if (/[A-Z]/.test(trimmed) && /[a-z]/.test(trimmed)) {
+    return trimmed;
+  }
+  return trimmed.replace(/\b([a-z])/g, (ch) => ch.toUpperCase());
 }
 
 export function buildToolboxQueryPath(

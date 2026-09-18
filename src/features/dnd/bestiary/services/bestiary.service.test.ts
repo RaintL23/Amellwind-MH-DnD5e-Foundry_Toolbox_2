@@ -2,12 +2,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const getById = vi.fn();
 const getByName = vi.fn();
+const getAll = vi.fn();
 const loadSourceOnDemand = vi.fn();
 const getLoadedBestiarySources = vi.fn(() => [] as string[]);
 
 vi.mock("@/shared/services/create-on-demand-entity-service", () => ({
   createOnDemandEntityService: () => ({
-    getAll: vi.fn(),
+    getAll,
     getList: vi.fn(),
     getById,
     getByName,
@@ -58,9 +59,12 @@ describe("getBestiaryCreatureById on-demand source", () => {
   beforeEach(() => {
     getById.mockReset();
     getByName.mockReset();
+    getAll.mockReset();
     loadSourceOnDemand.mockReset();
     getLoadedBestiarySources.mockReset();
     getLoadedBestiarySources.mockReturnValue([]);
+    getByName.mockResolvedValue([]);
+    getAll.mockResolvedValue([]);
   });
 
   it("loads the route source when it is not already cached", async () => {
@@ -81,6 +85,25 @@ describe("getBestiaryCreatureById on-demand source", () => {
     const found = await getBestiaryCreatureById("Drake%20Companion_FTD");
 
     expect(loadSourceOnDemand).toHaveBeenCalledWith("FTD");
+    expect(found).toEqual(creature);
+  });
+
+  it("resolves title-cased companion names after loading the source", async () => {
+    const creature = {
+      id: "Beast%20of%20the%20Sea_XPHB",
+      name: "Beast of the Sea",
+      source: "XPHB",
+    };
+
+    getById.mockResolvedValue(undefined);
+    getByName.mockResolvedValue([]);
+    getAll.mockResolvedValue([creature]);
+    loadSourceOnDemand.mockResolvedValue([creature]);
+
+    const { getBestiaryCreatureById } = await import("./bestiary.service");
+    const found = await getBestiaryCreatureById("Beast Of The Sea_XPHB");
+
+    expect(loadSourceOnDemand).toHaveBeenCalledWith("XPHB");
     expect(found).toEqual(creature);
   });
 });
