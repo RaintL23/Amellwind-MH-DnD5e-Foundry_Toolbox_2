@@ -1,3 +1,4 @@
+import { useMemo, useState } from "react";
 import type { BestiaryCreature, SpellcastingBlock } from "@/shared/types/bestiary-creature.types";
 import type { Entry, SkillKey } from "@/shared/types";
 import { SpellcastingBlockView } from "@/components/statblock/SpellcastingBlockView";
@@ -11,6 +12,13 @@ import {
   ABILITY_ABBREVIATIONS,
   SKILL_LABELS,
 } from "@/shared/constants/dnd";
+import { CompanionScalingPanel } from "./CompanionScalingPanel";
+import {
+  applyCompanionScaling,
+  detectCompanionScaling,
+  DEFAULT_COMPANION_ABILITY_SCORE,
+  type CompanionScaleInputs,
+} from "../utils/companion-scaling.utils";
 
 const ABILITY_LABELS = ABILITY_KEYS.map(
   (key) => [key, ABILITY_ABBREVIATIONS[key]] as const,
@@ -62,15 +70,42 @@ function formatDamage(items: BestiaryCreature["damageImmunities"]): string {
     items
       .map((item) => {
         if (typeof item === "string") return item;
-        if (item && typeof item === "object" && "resist" in item) {
-          const note = item.note ? ` (${item.note})` : "";
-          return (item.resist ?? []).join(", ") + note;
+        if (item && typeof item === "object") {
+          if ("special" in item && typeof item.special === "string") {
+            return item.special;
+          }
+          if ("resist" in item) {
+            const note = item.note ? ` (${item.note})` : "";
+            return (item.resist ?? []).join(", ") + note;
+          }
         }
         return "";
       })
       .filter(Boolean)
       .join("; ") || "—"
   );
+}
+
+function formatArmorClass(creature: BestiaryCreature): string {
+  if (creature.armorClass.length === 0) return "—";
+  return creature.armorClass
+    .map((ac) => {
+      if (ac.special) return ac.special;
+      const from = ac.from?.length ? ` (${ac.from.join(", ")})` : "";
+      return `${ac.ac}${from}`;
+    })
+    .join(", ");
+}
+
+function formatHitPoints(creature: BestiaryCreature): string {
+  if (creature.hp.special) return creature.hp.special;
+  if (creature.hp.average != null) {
+    return creature.hp.formula
+      ? `${creature.hp.average} (${creature.hp.formula})`
+      : String(creature.hp.average);
+  }
+  if (creature.hp.formula) return creature.hp.formula;
+  return "—";
 }
 
 function EntryBlock({
@@ -120,11 +155,36 @@ interface BestiaryStatBlockProps {
   creature: BestiaryCreature;
 }
 
-export function BestiaryStatBlock({ creature }: BestiaryStatBlockProps) {
+export function BestiaryStatBlock({ creature: rawCreature }: BestiaryStatBlockProps) {
+  const detection = useMemo(
+    () => detectCompanionScaling(rawCreature),
+    [rawCreature],
+  );
+  const [scaleInputs, setScaleInputs] = useState<CompanionScaleInputs>({
+    ownerLevel: 3,
+    abilityScore: DEFAULT_COMPANION_ABILITY_SCORE,
+  });
+
+  const creature = useMemo(
+    () =>
+      detection.isScaled
+        ? applyCompanionScaling(rawCreature, scaleInputs)
+        : rawCreature,
+    [detection.isScaled, rawCreature, scaleInputs],
+  );
+
   const spellcastingParts = partitionSpellcasting(creature.spellcasting);
 
   return (
-    <div className="font-sans text-sm">
+    <div className="font-sans text-sm space-y-3">
+      {detection.isScaled && (
+        <CompanionScalingPanel
+          detection={detection}
+          value={scaleInputs}
+          onChange={setScaleInputs}
+        />
+      )}
+
       <p className="text-muted-foreground italic mb-3">
         {creature.size} {creature.type.type}
         {creature.type.tags && creature.type.tags.length > 0
@@ -139,22 +199,11 @@ export function BestiaryStatBlock({ creature }: BestiaryStatBlockProps) {
       <div className="mt-3 space-y-1">
         <p>
           <strong className="text-amber-400">Armor Class</strong>{" "}
-          <span className="text-foreground">
-            {creature.armorClass.map((ac, i) => (
-              <span key={i}>
-                {ac.ac}
-                {ac.from ? ` (${ac.from.join(", ")})` : ""}
-                {i < creature.armorClass.length - 1 ? ", " : ""}
-              </span>
-            ))}
-          </span>
+          <span className="text-foreground">{formatArmorClass(creature)}</span>
         </p>
         <p>
           <strong className="text-amber-400">Hit Points</strong>{" "}
-          <span className="text-foreground">
-            {creature.hp.average ?? "—"}
-            {creature.hp.formula ? ` (${creature.hp.formula})` : ""}
-          </span>
+          <span className="text-foreground">{formatHitPoints(creature)}</span>
         </p>
         <p>
           <strong className="text-amber-400">Speed</strong>{" "}
@@ -250,7 +299,8 @@ export function BestiaryStatBlock({ creature }: BestiaryStatBlockProps) {
         <p>
           <strong className="text-amber-400">Challenge</strong>{" "}
           <span className="text-foreground">
-            {creature.crDisplay} (Proficiency Bonus +{creature.proficiencyBonus})
+            {creature.crDisplay} (Proficiency Bonus +{creature.proficiencyBonus}
+            {creature.pbNote ? `; ${creature.pbNote}` : ""})
           </span>
         </p>
         {creature.group && creature.group.length > 0 && (
