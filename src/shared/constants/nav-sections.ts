@@ -289,25 +289,14 @@ export const NAV_SECTIONS: NavSectionDef[] = [
     label: "D&D 5e Compendium",
     groups: [
       {
-        label: "Spells and Classes",
+        label: "Character Options",
         items: [
-          {
-            to: "/spells",
-            label: "Spells",
-            icon: Wand2,
-            description: "Spells with filters by class, level, and source.",
-          },
           {
             to: "/classes",
             label: "Classes",
             icon: Swords,
             description: "Base classes with subclass details.",
           },
-        ],
-      },
-      {
-        label: "Character Options",
-        items: [
           {
             to: "/dnd-races",
             label: "Races",
@@ -327,18 +316,29 @@ export const NAV_SECTIONS: NavSectionDef[] = [
             description: "Official 5e feats.",
           },
           {
-            to: "/dnd-conditions",
-            label: "Conditions & Diseases",
-            icon: AlertTriangle,
-            description:
-              "Classic D&D conditions, statuses, and diseases (PHB / DMG / 2024).",
-          },
-          {
             to: "/multiclass",
             label: "Multiclassing",
             icon: GitMerge,
             description:
               "Multiclass rules, class prerequisites, and spell slot calculator.",
+          },
+        ],
+      },
+      {
+        label: "Spells and Conditions",
+        items: [
+          {
+            to: "/spells",
+            label: "Spells",
+            icon: Wand2,
+            description: "Spells with filters by class, level, and source.",
+          },
+          {
+            to: "/dnd-conditions",
+            label: "Conditions & Diseases",
+            icon: AlertTriangle,
+            description:
+              "Classic D&D conditions, statuses, and diseases (PHB / DMG / 2024).",
           },
         ],
       },
