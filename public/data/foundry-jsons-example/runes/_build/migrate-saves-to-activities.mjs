@@ -1,13 +1,14 @@
 /**
  * Migrate on-hit/crit save runes to Midi save activities + thin combat orchestration.
- * Run: node public/data/foundry-jsons-example/runes/_migrate-rune-saves-to-activities.mjs
+ * Run: node public/data/foundry-jsons-example/runes/_build/migrate-saves-to-activities.mjs
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { composeRuneItemMacroCommand } from "../../scripts/runes/compose-rune-itemacro.mjs";
+import { composeRuneItemMacroCommand } from "../../../scripts/runes/compose-rune-itemacro.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const RUNES_ROOT = path.resolve(__dirname, "..");
 const FLAG = "amellwind-toolbox";
 
 function id8() {
@@ -159,7 +160,7 @@ ${checks.join("\n")}
 
 const migrations = [
   {
-    file: path.join(__dirname, "Nerscylla/fvtt-Item-nerscylla-nerscylla-chelicera-rune.json"),
+    file: path.join(RUNES_ROOT, "Nerscylla/fvtt-Item-nerscylla-nerscylla-chelicera-rune.json"),
     effectId: "nrsCheliPoisonEf01",
     activityId: "nrsCheliPoisonSv01",
     activityName: "Poisoned Strike",
@@ -177,7 +178,7 @@ const migrations = [
     combat: () => combatHitSave("poisoned-strike"),
   },
   {
-    file: path.join(__dirname, "Fey Nerscylla/fvtt-Item-fey-nerscylla-fey-nerscylla-chelicera-rune.json"),
+    file: path.join(RUNES_ROOT, "Fey Nerscylla/fvtt-Item-fey-nerscylla-fey-nerscylla-chelicera-rune.json"),
     effectId: "feyCheliPoisonEf01",
     activityId: "feyCheliPoisonSv01",
     activityName: "Poisoned Strike",
@@ -195,7 +196,7 @@ const migrations = [
     combat: () => combatHitSave("poisoned-strike"),
   },
   {
-    file: path.join(__dirname, "Somnacanth/fvtt-Item-somnacanth-somnacanth-gem-rune.json"),
+    file: path.join(RUNES_ROOT, "Somnacanth/fvtt-Item-somnacanth-somnacanth-gem-rune.json"),
     effectId: "somGemIncapEf0001",
     activityId: "somGemIncapSv0001",
     activityName: "Critical Status (Incapacitate)",
@@ -213,7 +214,7 @@ const migrations = [
     combat: () => combatHitSave("critical-status-incapacitate", { critOnly: true }),
   },
   {
-    file: path.join(__dirname, "Viper Tobi-Kadachi/fvtt-Item-viper-tobi-kadachi-v-kadachi-gem-rune.json"),
+    file: path.join(RUNES_ROOT, "Viper Tobi-Kadachi/fvtt-Item-viper-tobi-kadachi-v-kadachi-gem-rune.json"),
     effectId: "vkadGemPoisonEf01",
     activityId: "vkadGemPoisonSv01",
     activityName: "Poison on Natural 20",
@@ -269,7 +270,7 @@ function foundryFlag(e, key) {
 // Stygian Zinogre — wire existing Necrotic Explosion
 {
   const file = path.join(
-    __dirname,
+    RUNES_ROOT,
     "Stygian Zinogre/fvtt-Item-stygian-zinogre-s-zinogre-umbrage-rune.json",
   );
   const j = JSON.parse(fs.readFileSync(file, "utf8"));

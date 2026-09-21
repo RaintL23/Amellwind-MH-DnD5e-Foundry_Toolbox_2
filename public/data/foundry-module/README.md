@@ -209,7 +209,7 @@ node public/data/foundry-jsons-example/conditions/build-conditions.mjs
    If you changed the shared rune Item Macro / combat passes:
 
 ```bash
-node public/data/foundry-jsons-example/runes/build-runes-itemacro.mjs
+node public/data/foundry-jsons-example/runes/_build/sync-itemacro.mjs
 ```
 
 3. Rebuild the packs:
@@ -500,7 +500,7 @@ warns and unequips. Unequipping that weapon later deactivates the rune (runtime 
 Rebuild Item Macros after controller edits:
 
 ```bash
-node public/data/foundry-jsons-example/runes/build-runes-itemacro.mjs
+node public/data/foundry-jsons-example/runes/_build/sync-itemacro.mjs
 pnpm build:foundry-module
 ```
 
@@ -650,7 +650,7 @@ pnpm build:foundry-module
   load from `scripts/rune-runtime.js` (`__amellwindRuneRuntime` /
   `__amellwindHhRuneEffects`). Shared Item Macro is
   `public/data/scripts/runes/unified-rune-controller.js` (re-inject with
-  `build-runes-itemacro.mjs`). On-hit saves prefer Midi save activities via
+  `_build/sync-itemacro.mjs`). On-hit saves prefer Midi save activities via
   `completeActivityUse`.
 - **Hunter traps:** Set / retrieve Item Macros call `scripts/hunter-traps.js`.
   Canvas trigger, camouflage notices, and 1-hour expiry run on the active GM.

@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Espinas Tail",
+    "monster": "Young Espinas",
+    "cr": "6",
+    "tier": 2,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "Stamina Surge+1. While wearing this armor, you can use an action to cast the haste spell from it once per day but can target only yourself when you do so and you gain 2 levels of exhaustion when the spell ends.",
+    "weapon": "Awaken. When this material is placed in a weapon that does not deal cold, fire, lightning, necrotic, or thunder damage, it rolls one extra damage die when it hits. For example, a shortsword now rolls 2d6 and a greatsword deals 3d6."
+  },
+  {
+    "name": "Wyvern Stone",
+    "monster": "Plesioth",
+    "cr": "9",
+    "tier": 2,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "Wide-Range. When you eat or drink an Uncommon or lower consumable item (except potions of resistance), each creature within 10 feet of you also gain its effect.",
+    "weapon": "Quick Load. You can reload as a free action while you are attuned to this weapon."
+  },
+  {
+    "name": "Rathian Plate",
+    "monster": "Rathian",
+    "cr": "8",
+    "tier": 2,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "You are immune to the poisoned condition while you wear this armor.",
+    "weapon": "When you cast a spell that deals poison damage, you increase its spell save DC by 1."
+  },
+  {
+    "name": "Y.Narga Pelt",
+    "monster": "Young Nargacuga",
+    "cr": "5",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A"],
+    "armor": "While you wear this armor, your eyes glow red at night, much like the nargacuga's. You gain darkvision out to 60 feet. If you already have darkvision, it is increased by an additional 60 feet.",
+    "weapon": null
+  },
+  {
+    "name": "G.Agnak Fin",
+    "monster": "Glacial Agnaktor",
+    "cr": "9",
+    "tier": 2,
+    "rarity": "rare",
+    "slots": ["W"],
+    "armor": null,
+    "weapon": "Mind's Eye. Your attacks with this weapon bypass the damage resistances of any creature."
+  },
+  {
+    "name": "Anjanath Fang",
+    "monster": "Anjanath",
+    "cr": "7",
+    "tier": 2,
+    "rarity": "rare",
+    "slots": ["A", "W"],
+    "armor": "When you are attacked by a creature within 30 feet of you that you can see, you can use your reaction to impose disadvantage on the attack roll, causing a blinding white flame to erupt from your mouth before the attack hits or misses. An attacker that can't be blinded is immune to this property. You can use this property two times. You regain all expended uses when you finish a long rest.",
+    "weapon": "(Clerics, Druids, and Rangers Only) You know the produce flame cantrip while attuned to this weapon. If you already know it, you gain a +1 bonus to its spell attack roll."
+  },
+  {
+    "name": "Hirabami Hide",
+    "monster": "Hirabami",
+    "cr": "9",
+    "tier": 2,
+    "rarity": "uncommon",
+    "slots": ["A"],
+    "armor": "Divine Blessing+. While wearing this armor, you have a pool of divine dice equal to your proficiency bonus, which are d6s. When you take damage that you aren't immune or resistant to, you can expend one or more divine dice to reduce the damage by the total rolled. You regain all expended dice when you finish a long rest.",
+    "weapon": null
+  }
+]

@@ -43,7 +43,7 @@ Grupos de tags **mutuamente excluyentes** al colocar materiales. El match usa **
 
 Drawer lateral colapsable: selectores de rareza, filas de slots, resumen de efectos parseados, botón limpiar build. Desde **RuneList** / **RuneDetailDialog** se pueden añadir runas al planificador. Con filtros de efecto activos en el catálogo, el diálogo atenúa el lado que no matchea y deshabilita su botón de añadir (sigue permitiendo quitar si ya estaba en el build).
 
-**Export Foundry** (`BuildDrawerFooter` → `downloadAllBuildRuneJsons` / `buildRuneFoundryItem`): descarga un Item `equipment` por runa del build. **Solo descripción** (HTML enriquecido); sin activities ni Active Effects. Las automatizaciones curadas viven en `public/data/foundry-jsons-example/runes` (Item Macro compartido: `public/data/scripts/runes/unified-rune-controller.js`, sync con `build-runes-itemacro.mjs`).
+**Export Foundry** (`BuildDrawerFooter` → `downloadAllBuildRuneJsons` / `buildRuneFoundryItem`): descarga un Item `equipment` por runa del build. **Solo descripción** (HTML enriquecido); sin activities ni Active Effects. Las automatizaciones curadas viven en `public/data/foundry-jsons-example/runes` (Item Macro compartido: `public/data/scripts/runes/unified-rune-controller.js`, sync con `_build/sync-itemacro.mjs`).
 
 ---
 

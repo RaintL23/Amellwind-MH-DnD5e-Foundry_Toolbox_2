@@ -1,166 +1,29 @@
 /**
- * One-off generator for missing / fixed Foundry rune items.
- * Run: node public/data/foundry-jsons-example/runes/_build-missing-runes.mjs
+ * One-off missing/fixed runes (inline IDs)
+ * Run via: node public/data/foundry-jsons-example/runes/_build/build.mjs missing
  */
-import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { composeRuneItemMacroCommand } from "../../scripts/runes/compose-rune-itemacro.mjs";
+import {
+  createRuneBatch,
+  CORE,
+  DAE,
+  STATS,
+  buildItem,
+  composeRuneItemMacroCommand,
+  equipEffect,
+  extraSlashingDamageChanges,
+  midi,
+  sideEffect,
+  slashingReductionChanges,
+  slugify,
+  trinketSystem,
+  utilityActivity,
+} from "../../../../scripts/runes/build-rune-lib.mjs";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-const CORE = {
-  coreVersion: "12.331",
-  systemId: "dnd5e",
-  systemVersion: "4.4.4",
-};
-
-const STATS = {
-  compendiumSource: null,
-  duplicateSource: null,
-  ...CORE,
-  createdTime: null,
-  modifiedTime: null,
-  lastModifiedBy: null,
-};
-
-const DAE = {
-  enableCondition: "",
-  selfTarget: false,
-  selfTargetAlways: false,
-  stackable: "noneName",
-  showIcon: false,
-  durationExpression: "",
-  specialDuration: [],
-  disableIncapacitated: false,
-  dontApply: false,
-};
-
-const DURATION = {
-  startTime: null,
-  seconds: null,
-  combat: null,
-  rounds: null,
-  turns: null,
-  startRound: null,
-  startTurn: null,
-};
-
-function trinketSystem(description, identifier, rarity = "uncommon", extra = {}) {
-  return {
-    source: { custom: "", book: "MHMM", page: "", license: "", rules: "2024", revision: 1 },
-    description: { value: description, chat: "" },
-    identifier,
-    quantity: 1,
-    weight: { value: 0.1, units: "lb" },
-    price: { value: 0, denomination: "gp" },
-    attuned: false,
-    attunement: "",
-    equipped: false,
-    rarity,
-    identified: true,
-    type: { value: "trinket", baseItem: "" },
-    armor: { value: null, dex: null, magicalBonus: null },
-    properties: [],
-    proficient: null,
-    strength: null,
-    activities: {},
-    container: null,
-    cover: null,
-    crewed: false,
-    unidentified: { description: "" },
-    uses: { spent: 0, max: "", recovery: [] },
-    ...extra,
-  };
-}
-
-function equipEffect(id) {
-  return {
-    _id: id,
-    name: "", // filled per rune
-    img: "mh-icons/material-rune.webp",
-    type: "base",
-    system: {},
-    changes: [{ key: "macro.itemMacro", mode: 0, value: "", priority: 20 }],
-    disabled: false,
-    duration: { ...DURATION },
-    description: "On equip, choose which rune effect (Weapon or Armor) to activate.",
-    origin: null,
-    tint: "#ffffff",
-    transfer: true,
-    statuses: [],
-    sort: -10,
-    flags: { dae: { ...DAE }, "amellwind-toolbox": { runeController: true } },
-    _stats: { ...STATS },
-  };
-}
-
-function sideEffect(id, name, side, materialEffectName, changes = [], description = "", extra = {}) {
-  return {
-    _id: id,
-    name,
-    img: "mh-icons/material-rune.webp",
-    type: "base",
-    system: {},
-    changes,
-    disabled: true,
-    duration: { ...DURATION },
-    description,
-    origin: null,
-    tint: "#ffffff",
-    transfer: false,
-    statuses: [],
-    sort: 0,
-    flags: {
-      dae: { ...DAE },
-      "amellwind-toolbox": { runeSide: side, materialEffectName },
-      ...extra.flags,
-    },
-    _stats: { ...STATS },
-    ...extra.body,
-  };
-}
-
-function buildItem({ _id, name, identifier, description, runeName, monsterName, sides, effects, macroName, macroTail, sort, rarity, systemExtra }) {
-  const equip = effects.find((e) => e.flags?.["amellwind-toolbox"]?.runeController);
-  if (equip) equip.name = `${runeName} Rune (Equip)`;
-  return {
-    _id,
-    name: `${runeName} Rune`,
-    type: "equipment",
-    img: "mh-icons/material-rune.webp",
-    system: trinketSystem(description, identifier, rarity, systemExtra),
-    effects,
-    folder: null,
-    sort,
-    ownership: { default: 0 },
-    flags: {
-      "amellwind-toolbox": {
-        exportKind: "rune",
-        runeName,
-        monsterName,
-        unified: true,
-        sides,
-      },
-      itemacro: {
-        macro: {
-          name: macroName,
-          type: "script",
-          scope: "global",
-          author: "",
-          img: "icons/svg/dice-target.svg",
-          command: composeRuneItemMacroCommand(macroTail),
-          folder: null,
-          sort: 0,
-          ownership: { default: 0 },
-          flags: {},
-          _stats: { ...CORE },
-        },
-      },
-    },
-    _stats: { ...STATS, createdTime: Date.now(), modifiedTime: Date.now() },
-  };
-}
+const runesRoot = path.resolve(__dirname, "../..");
+const { queueItem, writeAll } = createRuneBatch({ runesRoot });
 
 function spellAttackElementBonus(types, label) {
   const checks = types
@@ -294,62 +157,6 @@ if (pass.includes("postdamageroll") || pass.includes("postactiveeffects") || pas
   return;
 }`;
 }
-
-function slashingReductionChanges(amount) {
-  const value = `-${amount}`;
-  return [
-    { key: "system.traits.dm.amount.slashing", mode: 2, value, priority: 20 },
-    { key: "system.traits.dm.midi.slashing", mode: 2, value, priority: 20 },
-  ];
-}
-
-function extraSlashingDamageChanges(amount) {
-  const value = `${amount}[slashing]`;
-  return [
-    { key: "system.bonuses.mwak.damage", mode: 2, value, priority: 20 },
-    { key: "system.bonuses.rwak.damage", mode: 2, value, priority: 20 },
-  ];
-}
-
-function slugify(text) {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-}
-
-function utilityActivity(id, name, activationType, chatFlavor, condition = "", consumeItemUse = false) {
-  const activity = {
-    _id: id,
-    type: "utility",
-    sort: 0,
-    name,
-    img: "mh-icons/material-rune.webp",
-    activation: { type: activationType, value: null, condition, override: false },
-    consumption: {
-      scaling: { allowed: false, max: "" },
-      spellSlot: false,
-      targets: consumeItemUse
-        ? [{ type: "itemUses", value: "1", scaling: { mode: "", formula: "" } }]
-        : [],
-    },
-    description: { chatFlavor },
-    duration: { value: "", units: "inst", concentration: false, override: false },
-    effects: [],
-    range: { value: null, units: "self", special: "", override: false },
-    target: {
-      template: { count: "", contiguous: false, type: "", size: "", width: "", height: "", units: "ft" },
-      affects: { count: "", type: "self", choice: false, special: "" },
-      prompt: false,
-      override: false,
-    },
-    uses: { spent: 0, max: "", recovery: [] },
-    midiProperties: { identifier: slugify(name), displayActivityName: true },
-    roll: { formula: "", name: "", prompt: false, visible: false },
-    useConditionText: "",
-    useConditionReason: "",
-    effectConditionText: "",
-  };
-  return { [id]: activity };
-}
-
 function sleepUnconsciousSaveBonusTail() {
   return `
 if (pass.includes("issave")) {
@@ -421,12 +228,8 @@ if (pass.includes("issave")) {
 }`;
 }
 
-const items = [];
-
 // ─── Flood Sac (fix) ───
-items.push({
-  path: path.join(__dirname, "Coral Pukei-Pukei", "fvtt-Item-coral-pukei-pukei-flood-sac-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Coral Pukei-Pukei", "fvtt-Item-coral-pukei-pukei-flood-sac-rune.json"), buildItem({
     _id: "1n13jcat9mx2x18h",
     name: "Flood Sac Rune",
     identifier: "floodsacrune",
@@ -461,13 +264,10 @@ items.push({
         "Acid spells deal extra damage equal to half your proficiency bonus.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Sharpened Fang+ ───
-items.push({
-  path: path.join(__dirname, "Volvidon", "fvtt-Item-volvidon-sharpened-fang-plus-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Volvidon", "fvtt-Item-volvidon-sharpened-fang-plus-rune.json"), buildItem({
     _id: "BcWmaQzdieuwiGwk",
     identifier: "sharpenedfangplusrune",
     runeName: "Sharpened Fang+",
@@ -542,13 +342,10 @@ items.push({
         "Reaction or bonus action: slashing resistance until end of next turn. 1/LR.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Quematrice Gem ───
-items.push({
-  path: path.join(__dirname, "Quematrice", "fvtt-Item-quematrice-quematrice-gem-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Quematrice", "fvtt-Item-quematrice-quematrice-gem-rune.json"), buildItem({
     _id: "5sw49pKx30WI6lw7",
     identifier: "quematricegemrune",
     runeName: "Quematrice Gem",
@@ -581,13 +378,10 @@ items.push({
         "Advantage on saves vs being knocked prone.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Blue Kut-Ku Auricle ───
-items.push({
-  path: path.join(__dirname, "Blue Yian Kut-Ku", "fvtt-Item-blue-yian-kut-ku-blue-kut-ku-auricle-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Blue Yian Kut-Ku", "fvtt-Item-blue-yian-kut-ku-blue-kut-ku-auricle-rune.json"), buildItem({
     _id: "lxmvTIGSJR14adrm",
     identifier: "bluekutkuauriclerune",
     runeName: "Blue Kut-Ku Auricle",
@@ -648,13 +442,10 @@ items.push({
         "Reaction: +2 to a skill check. 2 uses, regain on long rest (track manually).",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Pumpkin.U Jaw ───
-items.push({
-  path: path.join(__dirname, "Pumpkin Uragaan", "fvtt-Item-pumpkin-uragaan-pumpkin-u-jaw-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Pumpkin Uragaan", "fvtt-Item-pumpkin-uragaan-pumpkin-u-jaw-rune.json"), buildItem({
     _id: "AL00Co0VffBks3w5",
     identifier: "pumpkinujawrune",
     runeName: "Pumpkin.U Jaw",
@@ -675,13 +466,10 @@ items.push({
       sideEffect("h4rWDnSVjZnsTgAu", "Pumpkin.U Jaw - Resentment (Damage)", "weapon", "Resentment", [{ key: "flags.midi-qol.onUseMacroName", mode: 0, value: "ItemMacro.Pumpkin.U Jaw Rune,damageBonus", priority: 20 }], "+1 damage vs Resentment targets."),
       sideEffect("jaabF2sv62wRPAYI", "Pumpkin.U Jaw - Second Wind Boost", "armor", "Second Wind Boost", [], "Fighter only: +1d10 HP when using Second Wind (manual)."),
     ],
-  }),
-});
+  }));
 
 // ─── Uragaan Ruby (armor only) ───
-items.push({
-  path: path.join(__dirname, "Uragaan", "fvtt-Item-uragaan-uragaan-ruby-rune.json"),
-  doc: {
+queueItem(path.join(runesRoot, "Uragaan", "fvtt-Item-uragaan-uragaan-ruby-rune.json"), {
     _id: "jyfvPUi0Hz9QiF4D",
     name: "Uragaan Ruby Rune",
     type: "equipment",
@@ -752,13 +540,10 @@ items.push({
       },
     },
     _stats: { ...STATS, createdTime: Date.now(), modifiedTime: Date.now() },
-  },
-});
+  });
 
 // ─── Bulldrome Tusk (weapon only) ───
-items.push({
-  path: path.join(__dirname, "Bulldrome", "fvtt-Item-bulldrome-bulldrome-tusk-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Bulldrome", "fvtt-Item-bulldrome-bulldrome-tusk-rune.json"), buildItem({
     _id: "b7kR0m3TuskWpn01",
     identifier: "bulldrometuskrune",
     runeName: "Bulldrome Tusk",
@@ -786,13 +571,10 @@ items.push({
         "Slashing weapons deal an extra 2 slashing damage on weapon attacks.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Juv.Astalos Membrane ───
-items.push({
-  path: path.join(__dirname, "Juvenile Astalos", "fvtt-Item-juvenile-astalos-juv-astalos-membrane-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Juvenile Astalos", "fvtt-Item-juvenile-astalos-juv-astalos-membrane-rune.json"), buildItem({
     _id: "jAm3mbr4n3Astl0s",
     identifier: "juvastalosmembranerune",
     runeName: "Juv.Astalos Membrane",
@@ -826,13 +608,10 @@ items.push({
         "Walking speed increases by 5 feet.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── D.Seltas Razorwing ───
-items.push({
-  path: path.join(__dirname, "Desert Seltas", "fvtt-Item-desert-seltas-d-seltas-razorwing-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Desert Seltas", "fvtt-Item-desert-seltas-d-seltas-razorwing-rune.json"), buildItem({
     _id: "dS3lt4Rz0rw1ng01",
     identifier: "dseltasrazorwingrune",
     runeName: "D.Seltas Razorwing",
@@ -902,13 +681,10 @@ items.push({
         "Reaction when you fail a Dex or Str save: use AC instead of the roll. 1/LR via item activity.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Sharpened Fang (Volvidon Pup) ───
-items.push({
-  path: path.join(__dirname, "Volvidon Pup", "fvtt-Item-volvidon-pup-sharpened-fang-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Volvidon Pup", "fvtt-Item-volvidon-pup-sharpened-fang-rune.json"), buildItem({
     _id: "vPupShrpFng00001",
     identifier: "sharpenedfangrune",
     runeName: "Sharpened Fang",
@@ -942,13 +718,10 @@ items.push({
         "Reduce slashing damage taken by 2.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Lagombi Plastron ───
-items.push({
-  path: path.join(__dirname, "Lagombi", "fvtt-Item-lagombi-lagombi-plastron-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Lagombi", "fvtt-Item-lagombi-lagombi-plastron-rune.json"), buildItem({
     _id: "lPl4str0nLgm0001",
     identifier: "lagombiplastronrune",
     runeName: "Lagombi Plastron",
@@ -991,13 +764,10 @@ items.push({
         "Ignore difficult terrain created by ice or snow (passive).",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Seregios Blunt Scale ───
-items.push({
-  path: path.join(__dirname, "Young Seregios", "fvtt-Item-young-seregios-seregios-blunt-scale-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Young Seregios", "fvtt-Item-young-seregios-seregios-blunt-scale-rune.json"), buildItem({
     _id: "ySrgBlntScl00001",
     identifier: "seregiosbluntscalerune",
     runeName: "Seregios Blunt Scale",
@@ -1031,13 +801,10 @@ items.push({
         "Reduce slashing damage taken by 3.",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Y.Seregios Scraper ───
-items.push({
-  path: path.join(__dirname, "Young Seregios", "fvtt-Item-young-seregios-y-seregios-scraper-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Young Seregios", "fvtt-Item-young-seregios-y-seregios-scraper-rune.json"), buildItem({
     _id: "ySrgScrpr0000001",
     identifier: "yseregioscraperrune",
     runeName: "Y.Seregios Scraper",
@@ -1082,13 +849,10 @@ items.push({
         "Action: double your jump distance. 2 uses, regain on short or long rest (item activity).",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Great Jagras Claw ───
-items.push({
-  path: path.join(__dirname, "Great Jagras", "fvtt-Item-great-jagras-great-jagras-claw-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Great Jagras", "fvtt-Item-great-jagras-great-jagras-claw-rune.json"), buildItem({
     _id: "gJgrClw00000001",
     identifier: "greatjagrasclawrune",
     runeName: "Great Jagras Claw",
@@ -1140,13 +904,10 @@ items.push({
         "Action: eat up to 2 rations (+1 AC, -10 ft speed each) for 1 minute. Bonus action to regurgitate (item activities).",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Doshaguma Fang ───
-items.push({
-  path: path.join(__dirname, "Doshaguma", "fvtt-Item-doshaguma-doshaguma-fang-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Doshaguma", "fvtt-Item-doshaguma-doshaguma-fang-rune.json"), buildItem({
     _id: "dshgFng00000001",
     identifier: "doshagumafangrune",
     runeName: "Doshaguma Fang",
@@ -1189,13 +950,10 @@ items.push({
         "NPC allies within 10 ft gain +1 AC and +1 attack rolls while you are attuned (apply to allied NPC tokens manually).",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Velocidrome Head (armor only) ───
-items.push({
-  path: path.join(__dirname, "Velocidrome", "fvtt-Item-velocidrome-velocidrome-head-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Velocidrome", "fvtt-Item-velocidrome-velocidrome-head-rune.json"), buildItem({
     _id: "vlcHd0000000001",
     identifier: "velocidromeheadrune",
     runeName: "Velocidrome Head",
@@ -1220,13 +978,10 @@ items.push({
         "+1 bonus on saves vs unconscious or sleep-like effects (MidiQOL isSave pass).",
       ),
     ],
-  }),
-});
+  }));
 
 // ─── Great Izuchi Tail ───
-items.push({
-  path: path.join(__dirname, "Great Izuchi", "fvtt-Item-great-izuchi-great-izuchi-tail-rune.json"),
-  doc: buildItem({
+queueItem(path.join(runesRoot, "Great Izuchi", "fvtt-Item-great-izuchi-great-izuchi-tail-rune.json"), buildItem({
     _id: "gIztTail0000001",
     identifier: "greatizuchitailrune",
     runeName: "Great Izuchi Tail",
@@ -1269,11 +1024,6 @@ items.push({
         "NPC allies within 10 ft gain +1 AC and +1 attack rolls while you are attuned (apply to allied NPC tokens manually).",
       ),
     ],
-  }),
-});
+  }));
 
-for (const { path: filePath, doc } of items) {
-  fs.mkdirSync(path.dirname(filePath), { recursive: true });
-  fs.writeFileSync(filePath, JSON.stringify(doc, null, 2) + "\n");
-  console.log("Wrote", path.relative(__dirname, filePath));
-}
+writeAll();
