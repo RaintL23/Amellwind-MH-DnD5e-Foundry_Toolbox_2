@@ -1,10 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useBookSourceNames } from "@/shared/hooks/useBookSourceNames";
+import { useSourceCatalog } from "@/shared/hooks/useSourceCatalog";
 import {
   getAllFeats,
   getFeatById,
 } from "@/features/amellwind/feats/services/feat.service";
 import {
+  ensureDndFeatUaSourcesLoaded,
   getDndFeatById,
   getDndFeatsByName,
   getListDndFeats,
@@ -30,6 +32,7 @@ import { getFeatSpellListOptions } from "@/features/raintdm/builder/utils/feat-s
 import {
   resolveEffectiveOriginFeatChooseTarget,
 } from "@/features/raintdm/builder/utils/origin-feat.constants";
+import { isDnd2024Feat } from "@/features/raintdm/builder/utils/dnd-feat-edition.utils";
 import {
   dedupeByNameToListOptions,
   entityToLibraryOption,
@@ -49,7 +52,9 @@ import type {
 import type { ListFilterValues } from "@/shared/components/list-filters";
 import {
   asFilterString,
+  asFilterStringArray,
   dndFeatMatchesTypeFilter,
+  libraryOptionMatchesSourceFilter,
   type FeatDataSource,
 } from "@/features/raintdm/builder/utils/builder-library-filters";
 import { isGeneralFeatSlotCategory } from "@/features/raintdm/builder/utils/feat-prerequisites.utils";
@@ -57,14 +62,6 @@ import { AsiLibraryPanel } from "../AsiLibraryPanel";
 import { FeatLibraryDetail } from "./FeatLibraryDetail";
 import { FeatList } from "./shared/LibraryLists";
 import { EmptyState, LibraryBackToListButton } from "./shared/LibraryUi";
-
-function isDnd2024Feat(feat: DndFeat): boolean {
-  return (
-    feat.source === "XPHB" ||
-    feat.basicRules2024 === true ||
-    feat.srd52 === true
-  );
-}
 
 interface FeatLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -114,6 +111,7 @@ export function FeatLibraryPanel({
   } = useCharacterBuilder();
 
   const identityBookNames = useBookSourceNames();
+  const sourceCatalog = useSourceCatalog();
 
   const isOriginFeatSlotSelected =
     selectedSlot !== null && isOriginFeatSlot(selectedSlot);
@@ -142,6 +140,27 @@ export function FeatLibraryPanel({
 
   const isFeatPickerSlot = isFeatSlot || isAnyOriginFeatSlotSelected;
 
+  const sourceFilterKey = Array.isArray(listFilters.src)
+    ? [...listFilters.src].sort().join("|")
+    : typeof listFilters.src === "string"
+      ? listFilters.src
+      : "";
+  const sourceFilter = useMemo(
+    () => asFilterStringArray(listFilters.src),
+    [sourceFilterKey],
+  );
+
+  const refreshDndFeatCatalog = useCallback(() => {
+    if (!isFeatPickerSlot) return;
+    setFeatsLoading(true);
+    Promise.all([getAllFeats(), getListDndFeats()])
+      .then(([amellwind, dnd]) => {
+        setAmellwindFeats(amellwind);
+        setDndFeats(dnd);
+      })
+      .finally(() => setFeatsLoading(false));
+  }, [isFeatPickerSlot]);
+
   const rpgbotFeatContext = useMemo(() => {
     const useDnd2024 = isAnyOriginFeatSlotSelected || featSource === "dnd2024";
     if (!useDnd2024) return null;
@@ -157,14 +176,26 @@ export function FeatLibraryPanel({
 
   useEffect(() => {
     if (!isFeatPickerSlot) return;
-    setFeatsLoading(true);
-    Promise.all([getAllFeats(), getListDndFeats()])
-      .then(([amellwind, dnd]) => {
-        setAmellwindFeats(amellwind);
-        setDndFeats(dnd);
-      })
-      .finally(() => setFeatsLoading(false));
-  }, [isFeatPickerSlot, selectedSlot]);
+    refreshDndFeatCatalog();
+  }, [isFeatPickerSlot, selectedSlot, refreshDndFeatCatalog]);
+
+  // Partnered / UA brew loads on demand when Origin Feat Sources change.
+  useEffect(() => {
+    if (!isAnyOriginFeatSlotSelected || sourceFilter.length === 0) return;
+    let cancelled = false;
+    void ensureDndFeatUaSourcesLoaded(sourceFilter).then((changed) => {
+      if (cancelled || !changed) return;
+      refreshDndFeatCatalog();
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    isAnyOriginFeatSlotSelected,
+    sourceFilterKey,
+    sourceFilter,
+    refreshDndFeatCatalog,
+  ]);
 
   useEffect(() => {
     setShowFeatList(true);
@@ -255,9 +286,7 @@ export function FeatLibraryPanel({
     if (isAnyOriginFeatSlotSelected) {
       const originFeats = dndFeats.filter(
         (f) =>
-          isDnd2024Feat(f) &&
-          f.isOriginFeat &&
-          dndFeatMatchesTypeFilter(f, featTypeFilter),
+          f.isOriginFeat && dndFeatMatchesTypeFilter(f, featTypeFilter),
       );
       const deduped = dedupeByNameToListOptions(originFeats, (group) =>
         group
@@ -265,11 +294,20 @@ export function FeatLibraryPanel({
           .join(" ")
           .toLowerCase(),
       );
-      return prepareLibraryListOptions(
+      const prepared = prepareLibraryListOptions(
         deduped,
         q,
         rpgbotFeatLookup,
         rpgbotFeatReady,
+      );
+      if (sourceFilter.length === 0) return prepared;
+      return prepared.filter((option) =>
+        libraryOptionMatchesSourceFilter(
+          option,
+          sourceFilter,
+          sourceCatalog,
+          identityBookNames,
+        ),
       );
     }
 
@@ -343,6 +381,9 @@ export function FeatLibraryPanel({
     rpgbotFeatLookup,
     rpgbotFeatReady,
     featTypeFilter,
+    sourceFilter,
+    sourceCatalog,
+    identityBookNames,
   ]);
 
   const isDndFeatSelection =

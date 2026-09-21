@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { buildLibrarySourceFilterSections } from "./builder-library-filters";
+import {
+  buildLibrarySourceFilterSections,
+  buildLibrarySourceFilterSectionsFrom2024,
+} from "./builder-library-filters";
 import { buildSourcesFilterSection } from "@/shared/utils/compendium-source-filter.utils";
 import type { SourceCatalogEntry } from "@/shared/services/source-catalog.service";
 import { buildDefaultFilterValues } from "@/shared/components/list-filters/list-filter.utils";
@@ -56,5 +59,32 @@ describe("buildLibrarySourceFilterSections defaults", () => {
     const section = buildSourcesFilterSection(catalog.keys(), catalog, {});
     expect(section.options.length).toBe(2);
     expect(section.defaultValues?.length).toBe(2);
+  });
+
+  it("From2024 preselects official 2024+ and excludes UA, Partnered, and 2014", () => {
+    const catalog = new Map<string, SourceCatalogEntry>([
+      entry("XPHB", "Player's Handbook (2024)"),
+      entry("FRHoF", "Forgotten Realms: Heroes of Faerûn"),
+      entry("PHB", "Player's Handbook", "official", 2014),
+      entry("UAFoo", "UA Something", "ua", 2024),
+      entry("PartBar", "Partnered Book", "partnered", 2024),
+    ]);
+
+    const sections = buildLibrarySourceFilterSectionsFrom2024(
+      catalog.keys(),
+      catalog,
+      {},
+    );
+    expect(sections).toHaveLength(1);
+    expect(sections[0].defaultValues).toEqual(
+      expect.arrayContaining(["XPHB", "FRHoF"]),
+    );
+    expect(sections[0].defaultValues).not.toEqual(
+      expect.arrayContaining(["PHB", "UAFoo", "PartBar"]),
+    );
+    // Options still list UA / Partnered so Filters can opt them in.
+    expect(sections[0].options.map((o) => o.value)).toEqual(
+      expect.arrayContaining(["UAFoo", "PartBar", "PHB"]),
+    );
   });
 });

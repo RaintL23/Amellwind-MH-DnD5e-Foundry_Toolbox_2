@@ -1,8 +1,10 @@
 import type { AbilityKey, BuilderFeatSelection, DndFeat } from "@/shared/types";
 import type { OriginFeatGrant } from "@/shared/utils/origin-feat-grant.parser";
 import { buildFeatAbilityIncreaseChoices } from "./feat-ability-increase-choices.utils";
+import { isDnd2024Feat } from "./dnd-feat-edition.utils";
 
 export { AMELLWIND_BACKGROUND_ORIGIN_FEAT_GRANT } from "@/features/amellwind/backgrounds/constants/origin-feat.constants";
+export { isDnd2024Feat } from "./dnd-feat-edition.utils";
 
 export const ORIGIN_FEAT_SOURCE_NAME = "Origin Feat";
 
@@ -81,10 +83,7 @@ export function dndFeatToBuilderSelection(
   const selection: BuilderFeatSelection = {
     id: feat.id,
     name: feat.name,
-    source:
-      feat.source === "XPHB" || feat.basicRules2024 || feat.srd52
-        ? "dnd2024"
-        : "dnd2014",
+    source: isDnd2024Feat(feat) ? "dnd2024" : "dnd2014",
   };
 
   if (feat.abilityIncreases.length > 0) {

@@ -54,6 +54,7 @@ import {
   buildFeatCatalogFilterSection,
   buildIdentityCatalogFilterSection,
   buildLibrarySourceFilterSections,
+  buildLibrarySourceFilterSectionsFrom2024,
   buildWeaponCatalogFilterSection,
   parseFeatDataSource,
   parseIdentityDataSource,
@@ -62,6 +63,7 @@ import {
   type IdentityDataSource,
 } from "@/features/raintdm/builder/utils/builder-library-filters";
 import { getClassFilterSourceCodes } from "@/features/dnd/classes/services/class.service";
+import { getDndFeatFilterSourceCodes } from "@/features/dnd/feats/services/dnd-feat.service";
 
 interface BuilderLibraryPanelProps {
   selectedSlot: BuilderSlotSelection;
@@ -128,6 +130,9 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
   const [classFilterSourceCodes, setClassFilterSourceCodes] = useState<
     string[]
   >([]);
+  const [featFilterSourceCodes, setFeatFilterSourceCodes] = useState<string[]>(
+    [],
+  );
 
   useEffect(() => {
     if (!isClassOrSubclassSlot) return;
@@ -139,6 +144,17 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
       cancelled = true;
     };
   }, [isClassOrSubclassSlot]);
+
+  useEffect(() => {
+    if (!isAnyOriginFeatSlotSelected) return;
+    let cancelled = false;
+    void getDndFeatFilterSourceCodes().then((codes) => {
+      if (!cancelled) setFeatFilterSourceCodes(codes);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [isAnyOriginFeatSlotSelected]);
 
   const rpgbotClassSlug = classSelection?.name
     ? toRpgbotClassSlug(classSelection.name)
@@ -178,7 +194,14 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
           ];
     }
     if (isFeatPicker) {
-      if (isAnyOriginFeatSlotSelected) return FEAT_LIBRARY_FILTER_SECTIONS;
+      if (isAnyOriginFeatSlotSelected) {
+        const sourceSections = buildLibrarySourceFilterSectionsFrom2024(
+          featFilterSourceCodes,
+          catalog,
+          bookNames,
+        );
+        return [...FEAT_LIBRARY_FILTER_SECTIONS, ...sourceSections];
+      }
       return [
         buildFeatCatalogFilterSection({
           includeAmellwind: useAmellwindHomebrew,
@@ -218,6 +241,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     defaultFeatCatalog,
     defaultIdentityCatalog,
     classFilterSourceCodes,
+    featFilterSourceCodes,
     catalog,
     bookNames,
   ]);
@@ -231,6 +255,9 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     return `${src.defaultValues.length}:${src.options.length}`;
   }, [filterSections]);
 
+  const usesSourceFilterDefaults =
+    isIdentityOrClassSlot || isAnyOriginFeatSlotSelected;
+
   const nextFilterResetKey = [
     selectedSlot ?? "",
     useAmellwindHomebrew ? "1" : "0",
@@ -241,7 +268,7 @@ export function BuilderLibraryPanel({ selectedSlot }: BuilderLibraryPanelProps) 
     isArmorSlot ? "a" : "",
     isFeatPicker ? "f" : "",
     isAnyOriginFeatSlotSelected ? "o" : "",
-    isIdentityOrClassSlot ? `src:${sourceSectionDefaultsKey}` : "",
+    usesSourceFilterDefaults ? `src:${sourceSectionDefaultsKey}` : "",
   ].join("|");
 
   if (nextFilterResetKey !== filterResetKey) {

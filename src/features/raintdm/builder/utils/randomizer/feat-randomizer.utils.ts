@@ -14,16 +14,9 @@ import {
 } from "@/features/raintdm/builder/data/rpgbot-ratings.utils";
 import { getFeatSlotLevels } from "../builder-class.utils";
 import { dndFeatToBuilderSelection } from "../origin-feat.constants";
+import { isDnd2024Feat } from "../dnd-feat-edition.utils";
 import { isEligibleGeneralFeat } from "../feat-prerequisites.utils";
 import { pickByRpgbot, prefer2024Edition } from "./character-randomizer.utils";
-
-function isDnd2024Feat(feat: DndFeat): boolean {
-  return (
-    feat.source === "XPHB" ||
-    feat.basicRules2024 === true ||
-    feat.srd52 === true
-  );
-}
 
 function filterOriginFeats(feats: DndFeat[]): DndFeat[] {
   const origin = prefer2024Edition(feats.filter((feat) => feat.category === "O"));
