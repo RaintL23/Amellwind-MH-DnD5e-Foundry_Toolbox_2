@@ -1,6 +1,6 @@
 {
-  "_id": "pja1wj0tpac56t4u",
-  "name": "Hirabami Hide Rune",
+  "_id": "VuUgwlmDeH90qQIE",
+  "name": "Wyvern Stone Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Hirabami | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<p>Divine Blessing+. While wearing this armor, you have a pool of divine dice equal to your proficiency bonus, which are d6s. When you take damage that you aren't immune or resistant to, you can expend one or more divine dice to reduce the damage by the total rolled. You regain all expended dice when you finish a long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Plesioth | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>Quick Load. You can reload as a free action while you are attuned to this weapon.</p>\n<h3>Armor Effect</h3>\n<p>Wide-Range. When you eat or drink an Uncommon or lower consumable item (except potions of resistance), each creature within 10 feet of you also gain its effect.</p>",
       "chat": ""
     },
-    "identifier": "hirabamihiderune",
+    "identifier": "wyvernstonerune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "oaYL2rA7IJE8ol36": {
-        "_id": "oaYL2rA7IJE8ol36",
+      "FjT2Qj8orT59siD2": {
+        "_id": "FjT2Qj8orT59siD2",
         "type": "utility",
         "sort": 0,
-        "name": "Divine Blessing+",
+        "name": "Quick Load Reminder",
         "img": "mh-icons/material-rune.webp",
         "activation": {
-          "type": "reaction",
+          "type": "special",
           "value": null,
-          "condition": "When you take damage you are not immune or resistant to — Armor side active",
+          "condition": "Weapon side active",
           "override": false
         },
         "consumption": {
@@ -62,19 +62,10 @@
             "max": ""
           },
           "spellSlot": false,
-          "targets": [
-            {
-              "type": "itemUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
+          "targets": []
         },
         "description": {
-          "chatFlavor": "Expend one divine die (1d6) to reduce the damage taken by the roll. Spend extra item uses for more dice (apply total manually)."
+          "chatFlavor": "Quick Load: reload as a free action while attuned (weapon side)."
         },
         "duration": {
           "value": "",
@@ -114,14 +105,88 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "divine-blessing",
+          "identifier": "quick-load-reminder",
           "displayActivityName": true
         },
         "roll": {
-          "formula": "1d6",
-          "name": "Divine Blessing+",
-          "prompt": true,
-          "visible": true
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      },
+      "rT3Vy65iAFKO6lP9": {
+        "_id": "rT3Vy65iAFKO6lP9",
+        "type": "utility",
+        "sort": 0,
+        "name": "Wide-Range Share",
+        "img": "mh-icons/material-rune.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "Armor side active — when you consume an eligible item",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Wide-Range: when you eat/drink an Uncommon or lower consumable (except potions of resistance), allies within 10 ft also gain the effect (apply manually)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "identifier": "wide-range-share",
+          "displayActivityName": true
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
         },
         "useConditionText": "",
         "useConditionReason": "",
@@ -136,19 +201,14 @@
     },
     "uses": {
       "spent": 0,
-      "max": "@prof",
-      "recovery": [
-        {
-          "period": "lr",
-          "type": "recoverAll"
-        }
-      ]
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "chj755nf4zw9xa3k",
-      "name": "Hirabami Hide Rune (Equip)",
+      "_id": "hlyObkQICAzAzz0h",
+      "name": "Wyvern Stone Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -204,8 +264,8 @@
       }
     },
     {
-      "_id": "x7eedtjvzhwjr64d",
-      "name": "Hirabami Hide - Divine Blessing+",
+      "_id": "ftmX8vgnmQPnJVzV",
+      "name": "Wyvern Stone - Quick Load",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -220,7 +280,58 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Pool of d6s (= proficiency bonus). Reaction: expend dice to reduce incoming damage. Regain on long rest.",
+      "description": "Reload as a free action (manual / activity reminder).",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Quick Load"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "GHHrPxhZEOZsFrJ0",
+      "name": "Wyvern Stone - Wide-Range",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Share Uncommon-or-lower consumable effects with allies within 10 ft (manual / activity reminder).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -240,7 +351,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Divine Blessing+"
+          "materialEffectName": "Wide-Range"
         }
       },
       "_stats": {
@@ -256,25 +367,28 @@
     }
   ],
   "folder": null,
-  "sort": 4100000,
+  "sort": 9910000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hirabami Hide",
-      "monsterName": "Hirabami",
+      "runeName": "Wyvern Stone",
+      "monsterName": "Plesioth",
       "unified": true,
       "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Quick Load"
+        },
         "armor": {
-          "label": "Armor Effect — Divine Blessing+"
+          "label": "Armor Effect — Wide-Range"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hirabami Hide Rune",
+        "name": "Wyvern Stone Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -300,8 +414,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1790019752268,
-    "modifiedTime": 1790019752268,
+    "createdTime": 1790019752266,
+    "modifiedTime": 1790019752266,
     "lastModifiedBy": null
   }
 }

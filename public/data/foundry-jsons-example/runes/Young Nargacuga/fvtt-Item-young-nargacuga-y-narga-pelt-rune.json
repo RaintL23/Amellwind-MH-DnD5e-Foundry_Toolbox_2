@@ -1,6 +1,6 @@
 {
-  "_id": "pja1wj0tpac56t4u",
-  "name": "Hirabami Hide Rune",
+  "_id": "A8kN86iNaf2UEVL4",
+  "name": "Y.Narga Pelt Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Hirabami | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<p>Divine Blessing+. While wearing this armor, you have a pool of divine dice equal to your proficiency bonus, which are d6s. When you take damage that you aren't immune or resistant to, you can expend one or more divine dice to reduce the damage by the total rolled. You regain all expended dice when you finish a long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Young Nargacuga | CR: 5 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<p>While you wear this armor, your eyes glow red at night, much like the nargacuga's. You gain darkvision out to 60 feet. If you already have darkvision, it is increased by an additional 60 feet.</p>",
       "chat": ""
     },
-    "identifier": "hirabamihiderune",
+    "identifier": "ynargapeltrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -43,91 +43,7 @@
     "properties": [],
     "proficient": null,
     "strength": null,
-    "activities": {
-      "oaYL2rA7IJE8ol36": {
-        "_id": "oaYL2rA7IJE8ol36",
-        "type": "utility",
-        "sort": 0,
-        "name": "Divine Blessing+",
-        "img": "mh-icons/material-rune.webp",
-        "activation": {
-          "type": "reaction",
-          "value": null,
-          "condition": "When you take damage you are not immune or resistant to — Armor side active",
-          "override": false
-        },
-        "consumption": {
-          "scaling": {
-            "allowed": false,
-            "max": ""
-          },
-          "spellSlot": false,
-          "targets": [
-            {
-              "type": "itemUses",
-              "value": "1",
-              "scaling": {
-                "mode": "",
-                "formula": ""
-              }
-            }
-          ]
-        },
-        "description": {
-          "chatFlavor": "Expend one divine die (1d6) to reduce the damage taken by the roll. Spend extra item uses for more dice (apply total manually)."
-        },
-        "duration": {
-          "value": "",
-          "units": "inst",
-          "concentration": false,
-          "override": false
-        },
-        "effects": [],
-        "range": {
-          "value": null,
-          "units": "self",
-          "special": "",
-          "override": false
-        },
-        "target": {
-          "template": {
-            "count": "",
-            "contiguous": false,
-            "type": "",
-            "size": "",
-            "width": "",
-            "height": "",
-            "units": "ft"
-          },
-          "affects": {
-            "count": "",
-            "type": "self",
-            "choice": false,
-            "special": ""
-          },
-          "prompt": false,
-          "override": false
-        },
-        "uses": {
-          "spent": 0,
-          "max": "",
-          "recovery": []
-        },
-        "midiProperties": {
-          "identifier": "divine-blessing",
-          "displayActivityName": true
-        },
-        "roll": {
-          "formula": "1d6",
-          "name": "Divine Blessing+",
-          "prompt": true,
-          "visible": true
-        },
-        "useConditionText": "",
-        "useConditionReason": "",
-        "effectConditionText": ""
-      }
-    },
+    "activities": {},
     "container": null,
     "cover": null,
     "crewed": false,
@@ -136,19 +52,14 @@
     },
     "uses": {
       "spent": 0,
-      "max": "@prof",
-      "recovery": [
-        {
-          "period": "lr",
-          "type": "recoverAll"
-        }
-      ]
+      "max": "",
+      "recovery": []
     }
   },
   "effects": [
     {
-      "_id": "chj755nf4zw9xa3k",
-      "name": "Hirabami Hide Rune (Equip)",
+      "_id": "22MyKkAv9S0tqH2R",
+      "name": "Y.Narga Pelt Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -204,12 +115,19 @@
       }
     },
     {
-      "_id": "x7eedtjvzhwjr64d",
-      "name": "Hirabami Hide - Divine Blessing+",
+      "_id": "oF6YbCH24c1dykF3",
+      "name": "Y.Narga Pelt - Darkvision",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
-      "changes": [],
+      "changes": [
+        {
+          "key": "system.attributes.senses.darkvision",
+          "mode": 2,
+          "value": "60",
+          "priority": 20
+        }
+      ],
       "disabled": true,
       "duration": {
         "startTime": null,
@@ -220,7 +138,7 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Pool of d6s (= proficiency bonus). Reaction: expend dice to reduce incoming damage. Regain on long rest.",
+      "description": "Gain darkvision 60 ft, or increase existing darkvision by 60 ft.",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -240,7 +158,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Divine Blessing+"
+          "materialEffectName": "Darkvision +60"
         }
       },
       "_stats": {
@@ -256,25 +174,25 @@
     }
   ],
   "folder": null,
-  "sort": 4100000,
+  "sort": 9930000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hirabami Hide",
-      "monsterName": "Hirabami",
+      "runeName": "Y.Narga Pelt",
+      "monsterName": "Young Nargacuga",
       "unified": true,
       "sides": {
         "armor": {
-          "label": "Armor Effect — Divine Blessing+"
+          "label": "Armor Effect — Darkvision +60"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hirabami Hide Rune",
+        "name": "Y.Narga Pelt Rune",
         "type": "script",
         "scope": "global",
         "author": "",
@@ -300,8 +218,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1790019752268,
-    "modifiedTime": 1790019752268,
+    "createdTime": 1790019752267,
+    "modifiedTime": 1790019752267,
     "lastModifiedBy": null
   }
 }

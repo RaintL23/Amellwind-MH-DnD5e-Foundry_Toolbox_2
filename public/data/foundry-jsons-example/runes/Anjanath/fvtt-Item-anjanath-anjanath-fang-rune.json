@@ -1,6 +1,6 @@
 {
-  "_id": "pja1wj0tpac56t4u",
-  "name": "Hirabami Hide Rune",
+  "_id": "pxysQhmR0l3cEdZv",
+  "name": "Anjanath Fang Rune",
   "type": "equipment",
   "img": "mh-icons/material-rune.webp",
   "system": {
@@ -13,10 +13,10 @@
       "revision": 1
     },
     "description": {
-      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Hirabami | CR: 9 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor</p>\n<h3>Armor Effect</h3>\n<p>Divine Blessing+. While wearing this armor, you have a pool of divine dice equal to your proficiency bonus, which are d6s. When you take damage that you aren't immune or resistant to, you can expend one or more divine dice to reduce the damage by the total rolled. You regain all expended dice when you finish a long rest.</p>",
+      "value": "<h4>Source Monster</h4>\n<p><strong>Monster:</strong> Anjanath | CR: 7 | Tier: 2</p>\n<p><strong>Compatible Slots:</strong> Armor, Weapon</p>\n<h3>Weapon Effect</h3>\n<p>(Clerics, Druids, and Rangers Only) You know the produce flame cantrip while attuned to this weapon. If you already know it, you gain a +1 bonus to its spell attack roll.</p>\n<h3>Armor Effect</h3>\n<p>When you are attacked by a creature within 30 feet of you that you can see, you can use your reaction to impose disadvantage on the attack roll, causing a blinding white flame to erupt from your mouth before the attack hits or misses. An attacker that can't be blinded is immune to this property. You can use this property two times. You regain all expended uses when you finish a long rest.</p>",
       "chat": ""
     },
-    "identifier": "hirabamihiderune",
+    "identifier": "anjanathfangrune",
     "quantity": 1,
     "weight": {
       "value": 0.1,
@@ -29,7 +29,7 @@
     "attuned": false,
     "attunement": "",
     "equipped": false,
-    "rarity": "uncommon",
+    "rarity": "rare",
     "identified": true,
     "type": {
       "value": "trinket",
@@ -44,16 +44,16 @@
     "proficient": null,
     "strength": null,
     "activities": {
-      "oaYL2rA7IJE8ol36": {
-        "_id": "oaYL2rA7IJE8ol36",
+      "uBSLoxceeoIcvTT9": {
+        "_id": "uBSLoxceeoIcvTT9",
         "type": "utility",
         "sort": 0,
-        "name": "Divine Blessing+",
+        "name": "Blinding Flame",
         "img": "mh-icons/material-rune.webp",
         "activation": {
           "type": "reaction",
           "value": null,
-          "condition": "When you take damage you are not immune or resistant to — Armor side active",
+          "condition": "Armor side — when attacked by a creature within 30 ft that you can see",
           "override": false
         },
         "consumption": {
@@ -74,7 +74,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Expend one divine die (1d6) to reduce the damage taken by the roll. Spend extra item uses for more dice (apply total manually)."
+          "chatFlavor": "Impose disadvantage on an attack roll from a creature within 30 ft that you can see (blinding white flame). Attackers that can't be blinded are immune. 2/LR."
         },
         "duration": {
           "value": "",
@@ -114,14 +114,88 @@
           "recovery": []
         },
         "midiProperties": {
-          "identifier": "divine-blessing",
+          "identifier": "blinding-flame",
           "displayActivityName": true
         },
         "roll": {
-          "formula": "1d6",
-          "name": "Divine Blessing+",
-          "prompt": true,
-          "visible": true
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      },
+      "1QnTV6yYiUy7ufDf": {
+        "_id": "1QnTV6yYiUy7ufDf",
+        "type": "utility",
+        "sort": 0,
+        "name": "Produce Flame Reminder",
+        "img": "mh-icons/material-rune.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "Weapon side active",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "(Cleric/Druid/Ranger) You know produce flame while attuned. If you already know it: +1 to its spell attack roll (apply manually)."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": null,
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "identifier": "produce-flame-reminder",
+          "displayActivityName": true
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
         },
         "useConditionText": "",
         "useConditionReason": "",
@@ -136,7 +210,7 @@
     },
     "uses": {
       "spent": 0,
-      "max": "@prof",
+      "max": "2",
       "recovery": [
         {
           "period": "lr",
@@ -147,8 +221,8 @@
   },
   "effects": [
     {
-      "_id": "chj755nf4zw9xa3k",
-      "name": "Hirabami Hide Rune (Equip)",
+      "_id": "6tbjA8mWIswCxrgu",
+      "name": "Anjanath Fang Rune (Equip)",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -204,8 +278,8 @@
       }
     },
     {
-      "_id": "x7eedtjvzhwjr64d",
-      "name": "Hirabami Hide - Divine Blessing+",
+      "_id": "OA3Hu2uHEYRgqFAk",
+      "name": "Anjanath Fang - Produce Flame",
       "img": "mh-icons/material-rune.webp",
       "type": "base",
       "system": {},
@@ -220,7 +294,58 @@
         "startRound": null,
         "startTurn": null
       },
-      "description": "Pool of d6s (= proficiency bonus). Reaction: expend dice to reduce incoming damage. Regain on long rest.",
+      "description": "(Cleric/Druid/Ranger) Know produce flame; +1 spell attack if already known (manual / activity reminder).",
+      "origin": null,
+      "tint": "#ffffff",
+      "transfer": false,
+      "statuses": [],
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "enableCondition": "",
+          "selfTarget": false,
+          "selfTargetAlways": false,
+          "stackable": "noneName",
+          "showIcon": false,
+          "durationExpression": "",
+          "specialDuration": [],
+          "disableIncapacitated": false,
+          "dontApply": false
+        },
+        "amellwind-toolbox": {
+          "runeSide": "weapon",
+          "materialEffectName": "Produce Flame"
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "XwSeGSbyT1li8jPz",
+      "name": "Anjanath Fang - Blinding Flame",
+      "img": "mh-icons/material-rune.webp",
+      "type": "base",
+      "system": {},
+      "changes": [],
+      "disabled": true,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "description": "Reaction: impose disadvantage on an attack within 30 ft. 2/LR (use activity).",
       "origin": null,
       "tint": "#ffffff",
       "transfer": false,
@@ -240,7 +365,7 @@
         },
         "amellwind-toolbox": {
           "runeSide": "armor",
-          "materialEffectName": "Divine Blessing+"
+          "materialEffectName": "Blinding Flame Reaction"
         }
       },
       "_stats": {
@@ -256,25 +381,28 @@
     }
   ],
   "folder": null,
-  "sort": 4100000,
+  "sort": 9950000,
   "ownership": {
     "default": 0
   },
   "flags": {
     "amellwind-toolbox": {
       "exportKind": "rune",
-      "runeName": "Hirabami Hide",
-      "monsterName": "Hirabami",
+      "runeName": "Anjanath Fang",
+      "monsterName": "Anjanath",
       "unified": true,
       "sides": {
+        "weapon": {
+          "label": "Weapon Effect — Produce Flame"
+        },
         "armor": {
-          "label": "Armor Effect — Divine Blessing+"
+          "label": "Armor Effect — Blinding Flame Reaction"
         }
       }
     },
     "itemacro": {
       "macro": {
-        "name": "Hirabami Hide Rune",
+        "name": "Anjanath Fang Rune",
         "type": "script",
         "scope": "global",
         "author": "",
