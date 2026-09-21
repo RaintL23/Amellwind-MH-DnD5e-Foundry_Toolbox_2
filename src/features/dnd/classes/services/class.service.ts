@@ -161,13 +161,27 @@ export const ensureClassUaSourcesLoaded = createUaSourceLoader({
 });
 
 export async function getClassFilterSourceCodes(): Promise<string[]> {
-  const [list, brewCodes] = await Promise.all([
-    getListClasses(),
+  const [all, brewCodes] = await Promise.all([
+    getAllClasses(),
     collectOnDemandBrewSourceCodesForProps(["class", "subclass"]),
   ]);
-  const codes = new Set<string>(
-    list.flatMap((c) => c.variantSources ?? [c.source]),
-  );
+  return collectClassFilterSourceCodes(all, brewCodes);
+}
+
+/**
+ * Union of base-class and subclass book codes (plus on-demand brew).
+ * Subclass-only books (e.g. RHW Phantom Rogue) must appear in Sources.
+ */
+export function collectClassFilterSourceCodes(
+  classes: readonly Class[],
+  brewCodes: readonly string[] = [],
+): string[] {
+  const codes = new Set<string>();
+  for (const cls of classes) {
+    codes.add(cls.source);
+    for (const source of cls.variantSources ?? []) codes.add(source);
+    for (const subclass of cls.subclasses) codes.add(subclass.source);
+  }
   for (const code of brewCodes) codes.add(code);
   return [...codes];
 }
