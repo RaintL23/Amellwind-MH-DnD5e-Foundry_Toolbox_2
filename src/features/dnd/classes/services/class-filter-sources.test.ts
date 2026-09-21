@@ -7,9 +7,10 @@ function subclass(source: string, name = "Subclass"): Subclass {
     id: `${name}::${source}`,
     name,
     source,
+    classSource: "XPHB",
     shortName: name,
-    features: [],
-  } as Subclass;
+    progression: [],
+  };
 }
 
 function cls(
