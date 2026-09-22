@@ -5,7 +5,10 @@ import { formatDamageTypeLabel } from "@/shared/utils/defense-grant.parser";
 import type { DamageType } from "@/shared/types";
 import { cn } from "@/shared/utils/cn";
 import { ALL_DAMAGE_TYPES, formatPercent } from "../utils/damage-math.utils";
-import type { WeaponDamageResult, WeaponSetup } from "../types/damage-calculator.types";
+import type {
+  WeaponDamageResult,
+  WeaponSetup,
+} from "../types/damage-calculator.types";
 
 interface WeaponSettingsPanelProps {
   weapon: WeaponSetup;
@@ -41,49 +44,13 @@ export function WeaponSettingsPanel({
 
       <div className="rounded-lg border border-border/60 bg-card p-3.5">
         <h2 className="mb-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
-          Target
-        </h2>
-        <div className="space-y-3">
-          <SettingRow label="Armor class">
-            <NumberStepper
-              value={weapon.targetAC}
-              min={5}
-              max={30}
-              ariaLabel="Target armor class"
-              onChange={(targetAC) => onUpdate({ targetAC })}
-            />
-          </SettingRow>
-          <SettingRow label="Save bonus">
-            <NumberStepper
-              value={weapon.targetSaveBonus}
-              min={-5}
-              max={15}
-              ariaLabel="Target saving throw bonus"
-              onChange={(targetSaveBonus) => onUpdate({ targetSaveBonus })}
-            />
-          </SettingRow>
-          <DefenseToggleGroup
-            label="Resistances"
-            types={weapon.damageResistances}
-            onChange={(damageResistances) => onUpdate({ damageResistances })}
-          />
-          <DefenseToggleGroup
-            label="Immunities"
-            types={weapon.damageImmunities}
-            onChange={(damageImmunities) => onUpdate({ damageImmunities })}
-          />
-        </div>
-      </div>
-
-      <div className="rounded-lg border border-border/60 bg-card p-3.5">
-        <h2 className="mb-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
           Critical hits
         </h2>
         <div className="space-y-3">
           <SettingRow label="Crit on">
             <NumberStepper
               value={weapon.critRange}
-              min={18}
+              min={10}
               max={20}
               ariaLabel="Critical hit range"
               onChange={(critRange) => onUpdate({ critRange })}
@@ -118,6 +85,42 @@ export function WeaponSettingsPanel({
               />
             </SettingRow>
           )}
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-border/60 bg-card p-3.5">
+        <h2 className="mb-3 text-[11px] font-medium uppercase tracking-wider text-muted-foreground">
+          Target
+        </h2>
+        <div className="space-y-3">
+          <SettingRow label="Armor class">
+            <NumberStepper
+              value={weapon.targetAC}
+              min={5}
+              max={30}
+              ariaLabel="Target armor class"
+              onChange={(targetAC) => onUpdate({ targetAC })}
+            />
+          </SettingRow>
+          <SettingRow label="Save bonus">
+            <NumberStepper
+              value={weapon.targetSaveBonus}
+              min={-5}
+              max={15}
+              ariaLabel="Target saving throw bonus"
+              onChange={(targetSaveBonus) => onUpdate({ targetSaveBonus })}
+            />
+          </SettingRow>
+          <DefenseToggleGroup
+            label="Resistances"
+            types={weapon.damageResistances}
+            onChange={(damageResistances) => onUpdate({ damageResistances })}
+          />
+          <DefenseToggleGroup
+            label="Immunities"
+            types={weapon.damageImmunities}
+            onChange={(damageImmunities) => onUpdate({ damageImmunities })}
+          />
         </div>
       </div>
 
