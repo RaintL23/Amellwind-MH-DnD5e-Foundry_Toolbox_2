@@ -1,8 +1,12 @@
 /**
- * Amellwind — request saving throws on the connected player owner (not the GM).
- * Loaded as a module script on every client before boss / trap automation.
+ * Amellwind — request saving throws / skill checks on the connected player owner
+ * (not the GM). Loaded as a module script on every client before boss / trap / loot
+ * automation.
  *
- * API: globalThis.__amellwindPlayerSaves.rollSave(actor, ability, dc, opts?)
+ * API:
+ *   globalThis.__amellwindPlayerSaves.rollSave(actor, ability, dc, opts?)
+ *   globalThis.__amellwindPlayerSaves.rollSkill(actor, skill, dc, opts?)
+ *
  * Uses socketlib (via Midi QOL dependency). Falls back to a local roll only when
  * no non-GM owner is online, or the current user already is that owner.
  */
@@ -35,7 +39,7 @@
     );
   };
 
-  const parseSaveResult = (result, dc) => {
+  const parseCheckResult = (result, dc) => {
     if (result == null) return { success: true, total: dc, cancelled: true };
     if (typeof result.success === "boolean" && result.total != null) {
       return {
@@ -43,12 +47,25 @@
         total: Number(result.total),
         roll: result.roll,
         cancelled: Boolean(result.cancelled),
+        isCritical: Boolean(result.isCritical),
+        isFumble: Boolean(result.isFumble),
       };
     }
     const roll = Array.isArray(result) ? result[0] : result;
     if (!roll) return { success: true, total: dc, cancelled: true };
     const total = Number(roll?.total ?? roll?._total ?? 0);
-    return { success: total >= dc, total, roll };
+    const d20 = Number(
+      roll?.dice?.[0]?.total
+      ?? roll?.terms?.find?.((t) => t.faces === 20)?.total
+      ?? NaN,
+    );
+    return {
+      success: total >= dc,
+      total,
+      roll,
+      isCritical: Number.isFinite(d20) && d20 === 20,
+      isFumble: Number.isFinite(d20) && d20 === 1,
+    };
   };
 
   const rollSaveLocal = async (actor, ability, dc, opts = {}) => {
@@ -74,7 +91,99 @@
         flavor,
       });
     }
-    return parseSaveResult(result, dc);
+    return parseCheckResult(result, dc);
+  };
+
+  const extractSkillTotal = (result) => {
+    if (result == null) return NaN;
+    if (typeof result.total === "number") return result.total;
+    if (Array.isArray(result)) return Number(result[0]?.total ?? result[0]?._total ?? NaN);
+    return Number(result?.total ?? result?._total ?? result?.rolls?.[0]?.total ?? NaN);
+  };
+
+  const extractSkillD20 = (result) => {
+    const roll = Array.isArray(result) ? result[0] : result;
+    if (!roll) return NaN;
+    const die = roll?.dice?.find?.((d) => d.faces === 20)
+      ?? roll?.terms?.find?.((t) => t.faces === 20);
+    if (die) return Number(die.total ?? die.results?.[0]?.result ?? NaN);
+    return Number(roll?.dice?.[0]?.total ?? NaN);
+  };
+
+  /**
+   * Dexterity (Survival) carve checks: Survival skill with optional ability override
+   * and an extra proficiency bonus when the Carving Knife grants it.
+   */
+  const rollSkillLocal = async (actor, skill, dc, opts = {}) => {
+    if (!actor) return { success: true, total: dc, cancelled: true };
+    const skillKey = String(skill || "sur").toLowerCase();
+    const skillLabel = CONFIG.DND5E?.skills?.[skillKey]?.label ?? skillKey.toUpperCase();
+    const ability = opts.ability ? String(opts.ability).toLowerCase() : undefined;
+    const ablLabel = ability
+      ? (CONFIG.DND5E?.abilities?.[ability]?.label ?? ability.toUpperCase())
+      : null;
+    const flavor = opts.flavor
+      ?? (ablLabel
+        ? `${ablLabel} (${skillLabel}) check (DC ${dc})`
+        : `${skillLabel} check (DC ${dc})`);
+    const advantage = Boolean(opts.advantage);
+    const disadvantage = Boolean(opts.disadvantage);
+    const bonus = opts.bonus != null && opts.bonus !== "" ? String(opts.bonus) : undefined;
+
+    let result;
+    const config = {
+      skill: skillKey,
+      target: dc,
+      targetValue: dc,
+      advantage,
+      disadvantage,
+      ability,
+      bonus,
+      event: null,
+      configure: opts.configure !== false,
+      fastForward: opts.configure === false,
+      chatMessage: true,
+      flavor,
+    };
+
+    try {
+      if (typeof actor.rollSkill === "function") {
+        try {
+          result = await actor.rollSkill(config);
+        } catch (_err) {
+          result = await actor.rollSkill(skillKey, {
+            targetValue: dc,
+            advantage,
+            disadvantage,
+            ability,
+            bonus,
+            event: null,
+            fastForward: opts.configure === false,
+            chatMessage: true,
+            flavor,
+          });
+        }
+      }
+    } catch (err) {
+      console.warn(`${LOG} | rollSkillLocal failed`, err);
+      return { success: false, total: 0, cancelled: true };
+    }
+
+    if (result == null) return { success: false, total: 0, cancelled: true };
+
+    const total = extractSkillTotal(result);
+    if (!Number.isFinite(total)) {
+      return parseCheckResult(result, dc);
+    }
+    const d20 = extractSkillD20(result);
+    return {
+      success: total >= dc,
+      total,
+      roll: result,
+      cancelled: false,
+      isCritical: Number.isFinite(d20) && d20 === 20,
+      isFumble: Number.isFinite(d20) && d20 === 1,
+    };
   };
 
   const rollViaOwnSocket = async (owner, actor, ability, dc, opts) => {
@@ -83,6 +192,21 @@
       actorUuid: actor.uuid,
       ability,
       dc,
+      advantage: Boolean(opts.advantage),
+      disadvantage: Boolean(opts.disadvantage),
+      flavor: opts.flavor,
+      configure: opts.configure !== false,
+    });
+  };
+
+  const rollSkillViaOwnSocket = async (owner, actor, skill, dc, opts) => {
+    if (!socket?.executeAsUser) return null;
+    return socket.executeAsUser("rollSkillCheck", owner.id, {
+      actorUuid: actor.uuid,
+      skill,
+      dc,
+      ability: opts.ability,
+      bonus: opts.bonus,
       advantage: Boolean(opts.advantage),
       disadvantage: Boolean(opts.disadvantage),
       flavor: opts.flavor,
@@ -106,7 +230,28 @@
         flavor: opts.flavor,
       },
     });
-    return parseSaveResult(result, dc);
+    return parseCheckResult(result, dc);
+  };
+
+  const rollSkillViaMidiSocket = async (owner, actor, skill, dc, opts) => {
+    if (typeof MidiQOL?.socket !== "function") return null;
+    const result = await MidiQOL.socket().executeAsUser("rollAbility", owner.id, {
+      request: "skill",
+      targetUuid: actor.uuid,
+      ability: skill,
+      options: {
+        target: dc,
+        targetValue: dc,
+        ability: opts.ability,
+        bonus: opts.bonus,
+        advantage: Boolean(opts.advantage),
+        disadvantage: Boolean(opts.disadvantage),
+        fastForward: opts.configure === false,
+        chatMessage: true,
+        flavor: opts.flavor,
+      },
+    });
+    return parseCheckResult(result, dc);
   };
 
   /**
@@ -140,6 +285,37 @@
     return rollSaveLocal(actor, ability, dc, opts);
   };
 
+  /**
+   * @param {Actor} actor
+   * @param {string} skill  e.g. "sur"
+   * @param {number} dc
+   * @param {{ ability?: string, bonus?: string|number, advantage?: boolean, disadvantage?: boolean, flavor?: string, configure?: boolean }} [opts]
+   */
+  const rollSkill = async (actor, skill, dc, opts = {}) => {
+    if (!actor) return { success: true, total: dc };
+    const owner = activePlayerOwner(actor);
+
+    if (owner && owner.id !== game.user.id) {
+      try {
+        const viaOwn = await rollSkillViaOwnSocket(owner, actor, skill, dc, opts);
+        if (viaOwn) return viaOwn;
+      } catch (err) {
+        console.warn(`${LOG} | module skill socket request failed`, err);
+      }
+      try {
+        const viaMidi = await rollSkillViaMidiSocket(owner, actor, skill, dc, opts);
+        if (viaMidi) return viaMidi;
+      } catch (err) {
+        console.warn(`${LOG} | MidiQOL skill request failed`, err);
+      }
+      ui.notifications?.warn?.(
+        `${actor.name}: skill request to ${owner.name} failed — GM rolling as fallback.`,
+      );
+    }
+
+    return rollSkillLocal(actor, skill, dc, opts);
+  };
+
   const registerSocket = () => {
     if (socket || !globalThis.socketlib?.registerModule) return;
     try {
@@ -155,6 +331,13 @@
         ?? (await fromUuid(uuid));
       return rollSaveLocal(actor, payload.ability, payload.dc, payload);
     });
+    socket.register("rollSkillCheck", async (payload = {}) => {
+      const uuid = payload.actorUuid;
+      const actor =
+        (typeof fromUuidSync === "function" ? fromUuidSync(uuid) : null)
+        ?? (await fromUuid(uuid));
+      return rollSkillLocal(actor, payload.skill, payload.dc, payload);
+    });
     console.log(`${LOG} | socket armed`);
   };
 
@@ -164,6 +347,8 @@
   globalThis.__amellwindPlayerSaves = {
     rollSave,
     rollSaveLocal,
+    rollSkill,
+    rollSkillLocal,
     activePlayerOwner,
   };
 })();
