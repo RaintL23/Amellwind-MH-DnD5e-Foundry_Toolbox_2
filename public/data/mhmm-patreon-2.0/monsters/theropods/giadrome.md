@@ -108,33 +108,42 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A
 - **Carve:** 1-3
 - **Capture:** —
+- **Armor effect:** You have a +1 bonus to Insight checks while you wear this armor.
 
 ### Giadrome Claw
 
 - **Slots:** W
 - **Carve:** 4-13
 - **Capture:** —
+- **Weapon effect:** When you cast a spell that deals cold damage, add half of your proficiency bonus to that damage.
 
 ### Screamer Sac x2
 
 - **Slots:** O
 - **Carve:** —
 - **Capture:** 1-7
+- **Other effect:** A crafting material used to make sonic bombs.
 
 ### Giadrome Hide
 
 - **Slots:** A, W
 - **Carve:** 14-18
 - **Capture:** 8-18
+- **Armor effect:** You reduce cold damage you take by 3 while you wear this armor.
+- **Weapon effect:** Icy wind and snowflakes bluster around this weapon, even in warm environments. While touching it, you can walk on the surface of the lightest snow, leaving no footprints.
 
 ### Giadrome Skull
 
 - **Slots:** A, W
 - **Carve:** 19
 - **Capture:** 19
+- **Armor effect:** The air around you is always unnaturally cold while you wear this armor. Your breath becomes visible, and frost continually forms on the surface of your hair, weapons, and armor. Additionally, you suffer no ill effect from being in extremely cold environments.
+- **Weapon effect:** The first time you make a Carve check on a creature, you do so with advantage.
 
 ### Giadrome Shard
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 20
+- **Armor effect:** Detect. You gain a +1 bonus to your passive Perception while you wear this armor.
+- **Weapon effect:** (Druid, Sorcerer, Warlock, or Wizard) While attuned to this weapon you know the frostbite cantrip.

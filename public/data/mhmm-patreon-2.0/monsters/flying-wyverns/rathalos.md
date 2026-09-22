@@ -43,14 +43,15 @@ If the paolumu lacks the room to become Large, it attains the maximum size possi
 
 ## Stat Block
 
-*Huge wyvern (flying), unaligned*
+_Huge wyvern (flying), unaligned_
+
 - **Armor Class:** 19 (natural armor)
 - **Hit Points:** 149 (13d12 + 65)
 - **Speed:** 40 ft., fly 80 ft.
 
 | STR | DEX | CON | INT | WIS | CHA |
-| ---: | ---: | ---: | ---: | ---: | ---: |
-| 21 | 10 | 21 | 8 | 13 | 10 |
+| --: | --: | --: | --: | --: | --: |
+|  21 |  10 |  21 |   8 |  13 |  10 |
 
 - **Skills:** Athletics +9, Perception +5
 - **Damage Resistances:** poison
@@ -83,22 +84,21 @@ Melee Weapon Attack: +9 to hit, reach 5 ft., one target. Hit: 15 (3d6 + 5) bludg
 
 The rathalos exhales a fireball at a point within 100 feet of it. Each creature in a 10-foot radius sphere centered on that point must make a DC 17 Dexterity saving throw, taking 45 (13d6) fire damage on a failed save, or half as much damage on a successful one.
 
-
 ## Loot
 
 **Carves/Capture rolls:** 3
 
-| Carve | Capture | Material | Slots |
-| --- | --- | --- | --- |
-| 1-4 | 1-4 | Rathalos Scale | A |
-| 5-6 | — | R.Inferno Sac | A, W |
-| 7-10 | 5-10 | Rathalos Carapace | A |
-| — | 11-13 | Rathalos Webbing | A |
-| 11 | 14-15 | Rathalos Marrow | A, W |
-| 12-16 | 16-17 | Rathalos Tail | A, W, O |
-| 17-18 | — | Rathalos Wing | A |
-| 19 | 18-19 | Rathalos Plate | A, W |
-| 20 | 20 | Rathalos Ruby | A, W |
+| Carve | Capture | Material          | Slots   |
+| ----- | ------- | ----------------- | ------- |
+| 1-4   | 1-4     | Rathalos Scale    | A       |
+| 5-6   | —       | R.Inferno Sac     | A, W    |
+| 7-10  | 5-10    | Rathalos Carapace | A       |
+| —     | 11-13   | Rathalos Webbing  | A       |
+| 11    | 14-15   | Rathalos Marrow   | A, W    |
+| 12-16 | 16-17   | Rathalos Tail     | A, W, O |
+| 17-18 | —       | Rathalos Wing     | A       |
+| 19    | 18-19   | Rathalos Plate    | A, W    |
+| 20    | 20      | Rathalos Ruby     | A, W    |
 
 ## Materials (Runes)
 
@@ -117,45 +117,58 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Carve:** 5-6
 - **Capture:** —
 - **Armor effect:** While you are attuned to this armor, you can use a bonus action to speak its command word and exhale fire at a target within 30 feet of you. The target must make a DC 16 Dexterity saving throw, taking 4d6 fire damage on a failed save, or half as much damage on a successful one. You can use this property a number of times equal to half your proficiency bonus, regaining all expended uses when you finish a long rest.
+- **Weapon effect:** Your weapon deals an extra 1d6 fire damage.
 
 ### Rathalos Carapace
 
 - **Slots:** A
 - **Carve:** 7-10
 - **Capture:** 5-10
+- **Armor effect:** You have a +1 bonus to your AC while you wear this armor.
 
 ### Rathalos Webbing
 
 - **Slots:** A
 - **Carve:** —
 - **Capture:** 11-13
+- **Armor effect:** When you must succeed on a saving throw or be knocked prone, you do so with advantage.
 
 ### Rathalos Marrow
 
 - **Slots:** A, W
 - **Carve:** 11
 - **Capture:** 14-15
+- **Armor effect:** You suffer no harm from temperatures as warm as 120 degrees Fahrenheit while you wear this armor.
+- **Weapon effect:** You can use a bonus action to speak this weapon's command word, causing flames to erupt from the weapon. These flames shed bright light in a 40-foot radius and dim light for an additional 40 feet.
 
 ### Rathalos Tail
 
 - **Slots:** A, W, O
 - **Carve:** 12-16
 - **Capture:** 16-17
+- **Armor effect:** Archaeologist+. When you successfully gather a bone resource, you instead gather 1d4.
+- **Weapon effect:** When you hit a creature with this weapon, it must make a DC 12 Wisdom saving throw or be frightened of you for 1 minute. The frightened creature can repeat the save at the end of each of its turns, ending the effect on a success. On a successful save, the target is immune to this effect for 24 hours.
+- **Other effect:** Very rare armor or weapon upgrade material.
 
 ### Rathalos Wing
 
 - **Slots:** A
 - **Carve:** 17-18
 - **Capture:** —
+- **Armor effect:** While you are attuned to this armor you can cast the fly spell. Once you use this property, you can't use it again until the next dawn.
 
 ### Rathalos Plate
 
 - **Slots:** A, W
 - **Carve:** 19
 - **Capture:** 18-19
+- **Armor effect:** You have resistance to fire damage while you wear this armor.
+- **Weapon effect:** Critical Eye. Your weapon attacks critical hit range is increased by 1.
 
 ### Rathalos Ruby
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 20
+- **Armor effect:** You are immune to fire damage while you wear this armor.
+- **Weapon effect:** Your weapon deals an extra 1d8 fire damage.

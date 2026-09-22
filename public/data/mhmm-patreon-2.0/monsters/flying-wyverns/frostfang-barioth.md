@@ -33,17 +33,7 @@ Finally, much of the frostfang barioth's body is covered with a form of frost to
 
 These frost trails will cause the creatures that touches them to be covered in frost. The frostfang barioth also maintains much of its physical prowess similar to the original monster, allowing it to deal heavy damage to anyone who is unfortunate enough to get caught by the debilitating effects of its icy breath.
 
-However, the frostfang barioth tends to use its breath attack more and jumps around less often. Rugged Pleura You have resistance to fire damage while you wear this armor. S.Barioth Lash You are immune to fire damage while you wear this armor. Hvy Indigo Tusks While you're wearing this armor, you can speak its command word as an action to cast the blur spell.
-
-When cast using this property your body is obscured by dust, sand, and other debris. You can use this property twice, regaining all expended uses when you finish a long rest. WEAPON MATERIAL EFFECTS S.Barioth Cortex While attuned to this weapon, sand and dust whip around it like a micro dust devil.
-
-S.Barioth Fur (Spellcaster only) This weapon has 4 runes. While holding it, you can use an action to expend 1 or more of its charges to cast one of the following spells from it, using your spell save DC: mirror image (2 charges), or wall of sand (2 charges). The weapon regains 1d4 expended runes daily at dawn.
-
-If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week. S.Barioth Talon Your Dexterity score is 16 while attuned to this weapon. It has no effect on you if your Dexterity is already 16 or higher. Rugged Pleura Your weapon deals an extra 1d6 slashing damage.
-
-S.Barioth Lash (Druid, Sorcerer, & Wizard only) This weapon has 6 runes. While holding it, you can use an action to expend 1 or more of its runes to cast the dust devil spell from it. For 1 rune, you cast the 2nd-level version of the spell. You can increase the spell slot level by one for each additional rune you expend.
-
-The weapon regains 1d6 + 1 expended runes daily at dawn. If you expend the weapon's last rune, roll a d20. On a 1, you can't regain any runes on this weapon for 1 week. Hvy Indigo Tusks Your weapon deals an extra 1d8 slashing damage.
+However, the frostfang barioth tends to use its breath attack more and jumps around less often.
 
 ## Stat Block
 
@@ -150,7 +140,7 @@ The barioth exhales an icy blast of hoarfrost in a 90-foot line that is 5 feet w
 | 11-13 | 10-13 | Cryo Sac | A, W |
 | 14-19 | 14-17 | Silverwhite Frostfang | A, W |
 | 20 | 18-20 | Silversnow Gem | A, W |
-| 344 | — | Frostfang Material Bonus When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use. | O |
+| 344 | — | Frostfang Material Bonus | O |
 
 ## Materials (Runes)
 
@@ -161,39 +151,52 @@ These map to `Rune` entities (`name`, `carveChance`, `captureChance`, `slots`, `
 - **Slots:** A, W
 - **Carve:** 1-4
 - **Capture:** —
+- **Armor effect:** While you wear this armor, you ignore difficult terrain created by ice or snow and you can tolerate temperatures as low as -50 degrees Fahrenheit without any additional protection. If you wear heavy clothes, you can tolerate temperatures as low as -100 degrees Fahrenheit.
+- **Weapon effect:** Quick Sheath. While attuned to this weapon, you can always sheath it as a free action even if you have already drawn a weapon as part of your move action.
 
 ### Bergcrusher Claw
 
 - **Slots:** A, W
 - **Carve:** 5-6
 - **Capture:** 1-6
+- **Armor effect:** While you are wearing this armor you have advantage on Charisma (Intimidation) checks, but your demeanor is cold-hearted. Kind words come out as uncaring or hurtful, your generosity comes off as self-serving, etc.
+- **Weapon effect:** Hitter. When a creature must succeed on a saving throw or be stunned by the effect of a weapon attack, increase the save DC by 2.
 
 ### Barioth Lash
 
 - **Slots:** A, W
 - **Carve:** 7-10
 - **Capture:** 7-9
+- **Armor effect:** While wearing this armor, you can move up, down, and across vertical surfaces and upside down along ceilings, while leaving your hands free. You have a climbing speed equal to your walking speed. However, the armor doesn't allow you to move this way on a slippery surface, such as one covered by oil, but it does work on ice and snow.
+- **Weapon effect:** Critical Draw+. When you take the Attack action for the first time in a combat encounter while wielding this weapon, the melee weapon attacks with that action score a critical hit on a roll of 15 or higher.
 
 ### Cryo Sac
 
 - **Slots:** A, W
 - **Carve:** 11-13
 - **Capture:** 10-13
+- **Armor effect:** You have resistance to cold damage while you wear this armor.
+- **Weapon effect:** Your weapon deals an extra 1d6 cold damage.
 
 ### Silverwhite Frostfang
 
 - **Slots:** A, W
 - **Carve:** 14-19
 - **Capture:** 14-17
+- **Armor effect:** (Sorcerer, Warlock, and Wizard only) This armor has two runes that it regains daily at dawn. As an action you can expend one of these runes to coat your armor in magical ice, gaining 25 temporary hit points. If a creature hits you with a melee attack while you have these hit points, the creature takes 25 cold damage.
+- **Weapon effect:** While you are attuned to this weapon, your cold spells bypasses a creature's resistance to cold damage and deals half damage to a creature that has immunity to cold damage.
 
 ### Silversnow Gem
 
 - **Slots:** A, W
 - **Carve:** 20
 - **Capture:** 18-20
+- **Armor effect:** You are immune to cold damage while you wear this armor.
+- **Weapon effect:** Critical Eye+. Your weapon attacks critical hit range is increased by 2.
 
-### Frostfang Material Bonus When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use.
+### Frostfang Material Bonus
 
 - **Slots:** O
 - **Carve:** 344
 - **Capture:** —
+- **Other effect:** When a character has three frostfang materials socketed into their equipment, they gain the Frostfang Absolute Art bonus. Frostfang Absolute Art. (Hammer Only) Punishing Draw. During the first round of combat you can use the hammer's mighty weapon property without expending a use.
