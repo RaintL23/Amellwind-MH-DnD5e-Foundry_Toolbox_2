@@ -36,15 +36,9 @@
               "2",
               "--",
               "--",
-              "Phial Charges, Guard Point (Elemental Guard)"
+              "Phial Charges, Elemental Guard, Elemental Discharge"
             ],
-            [
-              "Rare",
-              "3",
-              "+1",
-              "+1",
-              "Elemental Discharge, Amped Element Discharge (AED)"
-            ],
+            ["Rare", "3", "+1", "+1", "Amped Element Discharge (AED)"],
             [
               "Very Rare",
               "4",
@@ -77,7 +71,7 @@
       {
         "id": "b7c4e210-8f3a-4d6e-9c1b-2a0f5d8e6c71",
         "name": "Elemental Attunement",
-        "description": "Once per Short rest or Long rest, you can change the element attuned to this weapon."
+        "description": "This weapon can be attuned to one damage type: acid, cold, fire, or lightning. Choose that type when you first attune the weapon (or when you first equip it if it has no attuned type yet). Whenever a Charge Blade feature deals damage of your Elemental Attunement type (Elemental Guard, Elemental Discharge, Amped Element Discharge, and their upgrades), it uses the type you currently have chosen — you do not pick the type again when you use those features.\n\nOnce per short or long rest, you can change the weapon's attuned element to a different one from the list above. Until you change it again, that choice remains in effect."
       },
       {
         "id": "cba18750-7d9b-47d2-937f-717d6abcfc11",
@@ -96,52 +90,47 @@
       },
       {
         "id": "138046c6-326c-44db-93e1-4e9e9d69f8e7",
-        "name": "Guard Point (Elemental Guard)",
-        "description": "You learn to perfectly time your blocks. As a Reaction when you are hit by a melee attack while in Sword & Shield Mode, you can expend 1 Phial Charge to add +2 to your AC against that attack. If this causes the attack to miss, your shield erupts, dealing 1d4 damage of your Elemental Attunement type to the attacker."
-      },
-      {
-        "id": "c8e3227c-53d1-4334-b3ae-08f169aff1b5",
-        "name": "Elemental Discharge",
-        "description": "While in Axe Mode, the weapon becomes a conduit of raw power. When you hit a creature with an attack in Axe Mode, you can expend 1 Phial Charge to deal an extra 1d6 damage of your Elemental Attunement type to the target."
+        "name": "Elemental Guard",
+        "description": "Guard Point (Elemental Guard). You learn to perfectly time your blocks. While in Sword & Shield Mode, when you are hit by a melee attack, you can use your Reaction to expend 1 Phial Charge and roll your Guard Dice (a d4). Add the number rolled to your AC against that attack.\n\nIf this causes the attack to miss, your shield erupts: roll the Guard Die again and deal that much damage of your Elemental Attunement type to the attacker."
       },
       {
         "id": "866f6967-c7d5-46ca-9d0f-863caf51247e",
         "name": "Amped Element Discharge (AED)",
-        "description": "You can unleash all stored energy in one devastating shockwave. As an Action while in Axe Mode, you can expend any number of remaining Phial Charges (minimum of 1) to unleash a 15-foot cone of elemental energy. Each creature in that area must make a Dexterity saving throw (DC 8 + your Proficiency Bonus + your Strength or Dexterity modifier). A creature takes 1d8 damage of your Elemental Attunement type per phial expended on a failed save, or half as much on a successful one."
+        "description": "Once per turn when you take the Attack action on your turn, you can replace one of your attacks with this property: expend any number of Phial Charges (minimum 1) to release a shockwave of your Elemental Attunement type in a 15-foot cone in front of you. Each creature in that area must make a Dexterity saving throw (DC 8 + your proficiency bonus + your Strength modifier). On a failed save, a creature takes #d6 damage of your Elemental Attunement type, where # is the number of Phial Charges expended. On a successful save, the creature takes half as much damage. You can use this property a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a long rest."
       },
       {
         "id": "0da72473-8e45-440b-b096-94a4a2dd51ac",
         "name": "Charged Shield (Red Shield)",
-        "description": "You can cycle the energy back into the weapon's defense mechanism. When you use your Amped Element Discharge Action, you can choose to cancel the shockwave to charge your shield instead. For 1 minute, your shield grants an additional +1 AC, and your Guard Point feature deals two times your Elemental Discharge elemental damage instead of its normal damage."
+        "description": "You can cycle the energy back into the weapon's defense mechanism. When you use your Amped Element Discharge attack, you can choose to cancel the shockwave to charge your shield instead. For 1 minute, your shield grants an additional +1 AC, and your Guard Point feature deals two times your Elemental Discharge elemental damage instead of its normal damage."
       },
       {
         "id": "9eaf6061-6c2d-46bd-9f52-f7d80c318c90",
         "name": "Elemental Discharge Upgrade I",
         "description": "Your Elemental Discharge (Axe hit) damage increases to 1d8.",
-        "upgradesFromId": "c8e3227c-53d1-4334-b3ae-08f169aff1b5"
+        "upgradesFromId": "97466158-2783-4450-a10d-ee4facb95bfa"
       },
       {
         "id": "a350bfd3-137b-4cfa-8cf6-b41380cc1f8b",
         "name": "Guard Point Upgrade I",
-        "description": "Your Guard Point damage increases to 1d6.",
+        "description": "Your Guard Dice increases to 1d6.",
         "upgradesFromId": "138046c6-326c-44db-93e1-4e9e9d69f8e7"
       },
       {
         "id": "7db58e95-33c2-499f-8d32-f929ef800143",
         "name": "Amped Element Discharge Upgrade I",
-        "description": "Your Amped Element Discharge (Cone) damage increases to 1d10 per phial expended.",
+        "description": "Your Amped Element Discharge (Cone) damage increases to 1d8 per phial expended.",
         "upgradesFromId": "866f6967-c7d5-46ca-9d0f-863caf51247e"
       },
       {
         "id": "7bead823-a2ab-4e2f-aae8-c10d36f3df23",
         "name": "Super Amped Element Discharge",
-        "description": "Your AED transforms into its ultimate form. The cone extends to 30 feet. Additionally, if the cone completely covers the space of a Huge or larger creature, that creature has Disadvantage on the saving throw. Additional your damage increases to 1d12 per phial expended.",
+        "description": "Your AED transforms into its ultimate form. The cone extends to 30 feet. Additionally, if the cone completely covers the space of a Huge or larger creature, that creature has Disadvantage on the saving throw. Additional your damage increases to 1d10 per phial expended.",
         "upgradesFromId": "7db58e95-33c2-499f-8d32-f929ef800143"
       },
       {
         "id": "96608ab2-e407-4d0c-a2d0-4d9454b2af85",
         "name": "Guard Point Upgrade II",
-        "description": "Your Guard Point damage increases to 1d8.",
+        "description": "Your Guard Dice increases to 1d8.",
         "upgradesFromId": "a350bfd3-137b-4cfa-8cf6-b41380cc1f8b"
       },
       {
@@ -149,6 +138,11 @@
         "name": "Elemental Discharge Upgrade II",
         "description": "Your Elemental Discharge (Axe hit) damage increases to 1d10.",
         "upgradesFromId": "9eaf6061-6c2d-46bd-9f52-f7d80c318c90"
+      },
+      {
+        "id": "97466158-2783-4450-a10d-ee4facb95bfa",
+        "name": "Elemental Discharge",
+        "description": "While in Axe Mode, the weapon becomes a conduit of raw power. When you hit a creature with an attack in Axe Mode, you can expend 1 Phial Charge to deal an extra 1d6 damage of your Elemental Attunement type to the target."
       }
     ],
     "modes": [

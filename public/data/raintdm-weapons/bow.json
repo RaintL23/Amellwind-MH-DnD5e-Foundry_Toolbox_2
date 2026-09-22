@@ -122,7 +122,7 @@
       {
         "id": "9a2fe2b7-585f-499a-ad7a-6141d7efa932",
         "name": "Dragonpiercer",
-        "description": "As an Action, you fire an arrow in a 30-foot line that is 5 feet wide. Each creature in that line must make a Dexterity saving throw against your Bow Save DC. A creature takes 4d6 piercing damage on a failed save, or half as much on a successful one. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest."
+        "description": "Once per turn when you take the Attack action on your turn, you can replace one of your attacks to fire a dragonpiercer, striking all creatures in a 30-foot line that is 5 feet wide. Each creature in that line must make a Dexterity saving throw equal to your Coating save DC, taking 2d6 piercing damage on a failed save, or half as much on a successful one. If a creature is Huge or larger, it takes double damage. You can use this feature a number of times equal to your Proficiency Bonus, regaining all expended uses when you finish a Long Rest."
       },
       {
         "id": "ae68eb34-3b65-4fb1-a656-140055db1a65",
@@ -209,7 +209,7 @@
       {
         "id": "6c5ffecb-ea2f-426d-92e9-720c377bf69b",
         "name": "True Dragonpiercer",
-        "description": "Your Dragonpiercer damage becomes 6d6. The shot ignores half cover and three-quarters cover.",
+        "description": "Your Dragonpiercer damage becomes 4d6. The shot ignores half cover and three-quarters cover, and ignores resistance to piercing damage.",
         "upgradesFromId": "9a2fe2b7-585f-499a-ad7a-6141d7efa932"
       },
       {
