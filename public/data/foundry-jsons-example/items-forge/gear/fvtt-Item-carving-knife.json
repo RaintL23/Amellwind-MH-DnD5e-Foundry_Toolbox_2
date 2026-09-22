@@ -1,0 +1,256 @@
+{
+  "_id": "CarvingKnifeItm01",
+  "name": "Carving Knife",
+  "type": "consumable",
+  "img": "mh-icons/throwing-knife.webp",
+  "system": {
+    "description": {
+      "value": "<p>A hunter's <strong>Carving Knife</strong>. Allows the wielder to add their proficiency bonus to carve checks if they are not already proficient with the Survival skill.</p>\n<p><strong>Carving.</strong> As an Action, choose a creature within 5 feet that is dead, unconscious, or at 0 hit points. Set the Carve DC and number of carves (or capture rolls), then resolve Dexterity (Survival) checks (Slay) or loot dice (Capture). Compare each loot d20 to the creature's Monster Hunter loot table.</p>\n<p><em>Carve DC = 10 + ½ the creature's CR (rounded down). On a failed carve check, treat the loot roll as 1. Requires MidiQOL + Item Macro. The Amellwind module requests Survival rolls from the hunter's connected owner when available.</em></p>",
+      "chat": "<p><strong>Carving Knife</strong> — carve a defeated creature for materials.</p>"
+    },
+    "source": {
+      "custom": "",
+      "book": "AGMH",
+      "page": "",
+      "license": "",
+      "rules": "2024",
+      "revision": 1
+    },
+    "identifier": "carving-knife",
+    "quantity": 1,
+    "weight": {
+      "value": 1,
+      "units": "lb"
+    },
+    "price": {
+      "value": 50,
+      "denomination": "gp"
+    },
+    "rarity": "",
+    "identified": true,
+    "unidentified": {
+      "description": "",
+      "name": "Mysterious Hunter Gear"
+    },
+    "container": null,
+    "attunement": "",
+    "attuned": false,
+    "equipped": false,
+    "type": {
+      "value": "trinket",
+      "subtype": ""
+    },
+    "damage": {
+      "base": {
+        "number": null,
+        "denomination": null,
+        "types": [],
+        "custom": {
+          "enabled": false,
+          "formula": ""
+        },
+        "scaling": {
+          "mode": "",
+          "number": null
+        },
+        "bonus": ""
+      },
+      "replace": false
+    },
+    "magicalBonus": null,
+    "properties": [],
+    "uses": {
+      "spent": 0,
+      "max": "",
+      "recovery": [],
+      "autoDestroy": false
+    },
+    "activities": {
+      "CarvingAct000001": {
+        "_id": "CarvingAct000001",
+        "type": "utility",
+        "sort": 0,
+        "name": "Carving",
+        "img": "mh-icons/throwing-knife.webp",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "Target is dead, unconscious, or at 0 HP",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Carve a defeated creature within 5 feet for materials."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "value": 5,
+          "units": "ft",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "1",
+            "type": "creature",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": true,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "carving",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      }
+    }
+  },
+  "effects": [],
+  "folder": null,
+  "sort": 0,
+  "ownership": {
+    "default": 0
+  },
+  "flags": {
+    "amellwind-toolbox": {
+      "exportKind": "items-forge",
+      "resourceKind": "gear",
+      "gearKey": "carving-knife"
+    },
+    "world": {
+      "carvingKnife": {
+        "item": true
+      }
+    },
+    "dnd5e": {
+      "riders": {
+        "activity": [],
+        "effect": []
+      }
+    },
+    "midi-qol": {
+      "fumbleThreshold": null,
+      "rollAttackPerTarget": "default",
+      "removeAttackDamageButtons": "default",
+      "itemCondition": "",
+      "reactionCondition": "",
+      "otherCondition": "",
+      "effectCondition": "",
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
+    },
+    "midiProperties": {
+      "autoFailFriendly": false,
+      "autoSaveFriendly": false,
+      "magicdam": false,
+      "magiceffect": false,
+      "noConcentrationCheck": false,
+      "toggleEffect": false,
+      "ignoreTotalCover": false
+    },
+    "itemacro": {
+      "macro": {
+        "name": "Carving Knife",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Carving Knife — Amellwind (Foundry v12 / dnd5e 4.4 / MidiQOL + Item Macro)\r\n// On Use: [postActiveEffects]ItemMacro\r\n//\r\n// Activity \"Carving\":\r\n//   1. Require a target within 5 ft that is dead / unconscious / at 0 HP\r\n//      (token name is used in the chat summary).\r\n//   2. Dialog: Carve DC, number of carves, Slay (carve) vs Capture.\r\n//   3. Slay — Dexterity (Survival) checks on the hunter's connected owner\r\n//      (Foundry-style: player rolls if online, else GM). Carving Knife grants\r\n//      Survival proficiency for the check if the hunter lacks it.\r\n//      Success → roll d20 loot; fail → loot result 1.\r\n//      Natural 20 (variant): extra d20 added to loot (cap 20).\r\n//   4. Capture — no check; roll one d20 per carve count.\r\n//   5. Chat summary with creature name + loot die results (no rune lookup).\r\n\r\n(async () => {\r\n  const macroPass = String(\r\n    (typeof args !== \"undefined\" ? args?.[0]?.macroPass : \"\")\r\n      ?? (typeof workflow !== \"undefined\" ? workflow?.macroPass : \"\")\r\n      ?? \"\",\r\n  ).toLowerCase();\r\n  if (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\r\n\r\n  const rolled =\r\n    (typeof rolledActivity !== \"undefined\" && rolledActivity)\r\n    || workflow?.activity\r\n    || args?.[0]?.activity\r\n    || null;\r\n  const actName = String(rolled?.name ?? \"\").toLowerCase();\r\n  const actId = String(\r\n    rolled?.identifier\r\n      ?? rolled?.midiProperties?.identifier\r\n      ?? \"\",\r\n  ).toLowerCase();\r\n  const isCarving =\r\n    !actId && !actName\r\n    || actId === \"carving\"\r\n    || actName === \"carving\"\r\n    || actName.startsWith(\"carving\");\r\n  if (!isCarving) return;\r\n\r\n  const hunter =\r\n    (typeof actor !== \"undefined\" && actor)\r\n    || workflow?.actor\r\n    || item?.actor\r\n    || item?.parent\r\n    || (typeof token !== \"undefined\" ? token?.actor : null);\r\n\r\n  if (!hunter) {\r\n    ui.notifications.warn(\"Carving Knife: hunter actor not found.\");\r\n    return;\r\n  }\r\n\r\n  const esc = (value) => {\r\n    const s = String(value ?? \"\");\r\n    if (globalThis.Handlebars?.Utils?.escapeExpression) {\r\n      return Handlebars.Utils.escapeExpression(s);\r\n    }\r\n    return s\r\n      .replaceAll(\"&\", \"&amp;\")\r\n      .replaceAll(\"<\", \"&lt;\")\r\n      .replaceAll(\">\", \"&gt;\")\r\n      .replaceAll('\"', \"&quot;\")\r\n      .replaceAll(\"'\", \"&#39;\");\r\n  };\r\n\r\n  const workflowTargets = () => {\r\n    const fromWf = Array.from(workflow?.targets ?? []);\r\n    if (fromWf.length) return fromWf;\r\n    const fromHits = Array.from(workflow?.hitTargets ?? []);\r\n    if (fromHits.length) return fromHits;\r\n    return Array.from(game.user?.targets ?? []);\r\n  };\r\n\r\n  const hasStatus = (targetActor, id) => {\r\n    if (!targetActor) return false;\r\n    const statuses = targetActor.statuses;\r\n    if (statuses?.has?.(id)) return true;\r\n    return [...(targetActor.effects ?? [])].some(\r\n      (ef) => !ef.disabled && (ef.statuses?.has?.(id) || String(ef.name ?? \"\").toLowerCase() === id),\r\n    );\r\n  };\r\n\r\n  const isCarveable = (targetActor, targetTok) => {\r\n    if (!targetActor) return false;\r\n    const hp = Number(targetActor.system?.attributes?.hp?.value ?? NaN);\r\n    if (Number.isFinite(hp) && hp <= 0) return true;\r\n    if (hasStatus(targetActor, \"dead\")) return true;\r\n    if (hasStatus(targetActor, \"unconscious\")) return true;\r\n    // Combat \"defeated\" toggle / death overlay on the token.\r\n    if (targetTok?.combatant?.isDefeated) return true;\r\n    if (targetTok?.document?.overlayEffect) return true;\r\n    return false;\r\n  };\r\n\r\n  const parseCr = (raw) => {\r\n    if (raw == null || raw === \"\") return null;\r\n    if (typeof raw === \"number\" && Number.isFinite(raw)) return raw;\r\n    const s = String(raw).trim();\r\n    if (/^\\d+\\/\\d+$/.test(s)) {\r\n      const [a, b] = s.split(\"/\").map(Number);\r\n      if (b) return a / b;\r\n    }\r\n    const n = Number.parseFloat(s);\r\n    return Number.isFinite(n) ? n : null;\r\n  };\r\n\r\n  const suggestCarveDc = (targetActor) => {\r\n    const cr = parseCr(targetActor?.system?.details?.cr);\r\n    if (cr == null) return 10;\r\n    return 10 + Math.floor(cr / 2);\r\n  };\r\n\r\n  const suggestCarveCount = (targetActor) => {\r\n    const fromFlag = Number(\r\n      foundry.utils.getProperty(targetActor, \"flags.world.amellwind.carveRolls\")\r\n        ?? foundry.utils.getProperty(targetActor, \"flags.amellwind.carveRolls\")\r\n        ?? NaN,\r\n    );\r\n    if (Number.isFinite(fromFlag) && fromFlag > 0) return Math.min(12, Math.floor(fromFlag));\r\n    return 3;\r\n  };\r\n\r\n  const survivalProficiency = (actorDoc) => {\r\n    const sur = actorDoc?.system?.skills?.sur;\r\n    const value = Number(sur?.value ?? sur?.prof?.multiplier ?? sur?.prof ?? 0) || 0;\r\n    return value > 0;\r\n  };\r\n\r\n  const knifeProficiencyBonus = (actorDoc) => {\r\n    if (survivalProficiency(actorDoc)) return null;\r\n    const pb = Number(actorDoc?.system?.attributes?.prof ?? 0) || 0;\r\n    return pb > 0 ? pb : null;\r\n  };\r\n\r\n  const targets = workflowTargets();\r\n  if (!targets.length) {\r\n    ui.notifications.warn(\"Carving Knife: select a creature within 5 feet to carve.\");\r\n    return;\r\n  }\r\n  const targetToken = targets[0];\r\n  const prey = targetToken?.actor ?? null;\r\n  const preyName = String(targetToken?.name ?? prey?.name ?? \"Unknown Creature\");\r\n\r\n  if (!prey) {\r\n    ui.notifications.warn(\"Carving Knife: target has no actor.\");\r\n    return;\r\n  }\r\n  if (!isCarveable(prey, targetToken)) {\r\n    ui.notifications.warn(\r\n      `Carving Knife: ${preyName} must be at 0 HP, dead, or unconscious.`,\r\n    );\r\n    return;\r\n  }\r\n\r\n  const defaultDc = suggestCarveDc(prey);\r\n  const defaultCount = suggestCarveCount(prey);\r\n\r\n  const promptSetup = () =>\r\n    new Promise((resolve) => {\r\n      let settled = false;\r\n      const done = (value) => {\r\n        if (settled) return;\r\n        settled = true;\r\n        resolve(value);\r\n      };\r\n      new Dialog({\r\n        title: `Carving — ${preyName}`,\r\n        content: `\r\n          <form class=\"dnd5e2 flexcol\" style=\"gap:.5rem\">\r\n            <p style=\"margin:0 0 .35rem\">Carve <strong>${esc(preyName)}</strong>. Set the carve DC, how many materials this creature yields, and whether it was <em>Slain</em> or <em>Captured</em>.</p>\r\n            <div class=\"form-group\">\r\n              <label>Carve DC</label>\r\n              <input type=\"number\" name=\"dc\" value=\"${defaultDc}\" min=\"1\" max=\"40\" step=\"1\"/>\r\n              <p class=\"hint\" style=\"margin:.15rem 0 0;opacity:.75\">Rule of thumb: 10 + ½ CR (rounded down). Suggested from token CR when available.</p>\r\n            </div>\r\n            <div class=\"form-group\">\r\n              <label>Number of carves / capture rolls</label>\r\n              <input type=\"number\" name=\"count\" value=\"${defaultCount}\" min=\"1\" max=\"12\" step=\"1\"/>\r\n            </div>\r\n            <div class=\"form-group\">\r\n              <label>Outcome</label>\r\n              <div class=\"flexrow\" style=\"gap:1rem;align-items:center\">\r\n                <label style=\"display:flex;gap:.35rem;align-items:center;white-space:nowrap\">\r\n                  <input type=\"radio\" name=\"mode\" value=\"slay\" checked/> Slay (Carve)\r\n                </label>\r\n                <label style=\"display:flex;gap:.35rem;align-items:center;white-space:nowrap\">\r\n                  <input type=\"radio\" name=\"mode\" value=\"capture\"/> Capture\r\n                </label>\r\n              </div>\r\n              <p class=\"hint\" style=\"margin:.15rem 0 0;opacity:.75\">\r\n                <strong>Slay:</strong> Dexterity (Survival) vs DC per carve, then d20 loot on success (fail → 1).<br/>\r\n                <strong>Capture:</strong> no check — one d20 loot roll per carve count (loot gathered in town).\r\n              </p>\r\n            </div>\r\n          </form>\r\n        `,\r\n        buttons: {\r\n          carve: {\r\n            icon: '<i class=\"fas fa-cut\"></i>',\r\n            label: \"Begin\",\r\n            callback: (html) => {\r\n              const root = html[0] ?? html;\r\n              const dc = Math.max(1, Math.min(40, Number(root.querySelector('[name=\"dc\"]')?.value) || defaultDc));\r\n              const count = Math.max(1, Math.min(12, Math.floor(Number(root.querySelector('[name=\"count\"]')?.value) || defaultCount)));\r\n              const mode = String(root.querySelector('[name=\"mode\"]:checked')?.value || \"slay\");\r\n              done({ dc, count, mode: mode === \"capture\" ? \"capture\" : \"slay\" });\r\n            },\r\n          },\r\n          cancel: {\r\n            icon: '<i class=\"fas fa-times\"></i>',\r\n            label: \"Cancel\",\r\n            callback: () => done(null),\r\n          },\r\n        },\r\n        default: \"carve\",\r\n        close: () => done(null),\r\n      }).render(true);\r\n    });\r\n\r\n  const setup = await promptSetup();\r\n  if (!setup) return;\r\n\r\n  const { dc, count, mode } = setup;\r\n  const knifeBonus = knifeProficiencyBonus(hunter);\r\n  const api = globalThis.__amellwindPlayerSaves;\r\n\r\n  const rollSurvival = async (index) => {\r\n    const flavor = `Carving Knife — Carve ${index}/${count} vs ${preyName} (DC ${dc}`\r\n      + `${knifeBonus != null ? `; +${knifeBonus} from Carving Knife` : \"\"})`;\r\n    const opts = {\r\n      ability: \"dex\",\r\n      bonus: knifeBonus != null ? knifeBonus : undefined,\r\n      flavor,\r\n      configure: true,\r\n    };\r\n    if (api?.rollSkill) {\r\n      return api.rollSkill(hunter, \"sur\", dc, opts);\r\n    }\r\n    // Fallback if the module client script is not loaded yet.\r\n    if (typeof hunter.rollSkill === \"function\") {\r\n      try {\r\n        const result = await hunter.rollSkill({\r\n          skill: \"sur\",\r\n          ability: \"dex\",\r\n          target: dc,\r\n          bonus: knifeBonus != null ? String(knifeBonus) : undefined,\r\n          flavor,\r\n          configure: true,\r\n          chatMessage: true,\r\n        });\r\n        const total = Number(result?.total ?? result?.[0]?.total ?? NaN);\r\n        if (!Number.isFinite(total)) return { success: false, total: 0, cancelled: true };\r\n        return { success: total >= dc, total, cancelled: false };\r\n      } catch (_err) {\r\n        /* fall through */\r\n      }\r\n    }\r\n    const dex = Number(hunter.system?.abilities?.dex?.mod ?? 0) || 0;\r\n    const sur = hunter.system?.skills?.sur;\r\n    const profMult = Number(sur?.value ?? sur?.prof?.multiplier ?? 0) || 0;\r\n    const pb = Number(hunter.system?.attributes?.prof ?? 0) || 0;\r\n    const profBonus = survivalProficiency(hunter) ? Math.floor(pb * (profMult || 1)) : (knifeBonus ?? 0);\r\n    const roll = await new Roll(`1d20 + ${dex} + ${profBonus}`).evaluate();\r\n    await roll.toMessage({\r\n      speaker: ChatMessage.getSpeaker({ actor: hunter }),\r\n      flavor,\r\n    });\r\n    return { success: roll.total >= dc, total: roll.total, cancelled: false, isCritical: roll.dice?.[0]?.total === 20 };\r\n  };\r\n\r\n  const rollLootD20 = async (label) => {\r\n    const roll = await new Roll(\"1d20\").evaluate();\r\n    await roll.toMessage({\r\n      speaker: ChatMessage.getSpeaker({ actor: hunter }),\r\n      flavor: label,\r\n    });\r\n    return Number(roll.total) || 1;\r\n  };\r\n\r\n  /** Variant nat-20: extra d20 added to loot, capped at 20. */\r\n  const resolveLoot = async (base, { nat20 = false, label } = {}) => {\r\n    let loot = base;\r\n    if (nat20) {\r\n      const extra = await rollLootD20(`${label} — natural 20 bonus`);\r\n      loot = Math.min(20, base + extra);\r\n    }\r\n    return Math.max(1, Math.min(20, loot));\r\n  };\r\n\r\n  const rows = [];\r\n\r\n  if (mode === \"capture\") {\r\n    for (let i = 1; i <= count; i += 1) {\r\n      const loot = await rollLootD20(`Carving Knife — Capture loot ${i}/${count} (${preyName})`);\r\n      rows.push({\r\n        index: i,\r\n        kind: \"capture\",\r\n        checkTotal: null,\r\n        checkSuccess: true,\r\n        loot,\r\n        note: \"No Survival check (Capture)\",\r\n      });\r\n    }\r\n  } else {\r\n    for (let i = 1; i <= count; i += 1) {\r\n      const check = await rollSurvival(i);\r\n      if (check?.cancelled) {\r\n        rows.push({\r\n          index: i,\r\n          kind: \"slay\",\r\n          checkTotal: check?.total ?? null,\r\n          checkSuccess: false,\r\n          loot: null,\r\n          note: \"Cancelled\",\r\n        });\r\n        continue;\r\n      }\r\n      const success = Boolean(check?.success);\r\n      let loot = 1;\r\n      if (success) {\r\n        const base = await rollLootD20(`Carving Knife — Loot ${i}/${count} (${preyName})`);\r\n        loot = await resolveLoot(base, {\r\n          nat20: Boolean(check?.isCritical),\r\n          label: `Carving Knife — Loot ${i}/${count}`,\r\n        });\r\n      }\r\n      rows.push({\r\n        index: i,\r\n        kind: \"slay\",\r\n        checkTotal: check?.total ?? null,\r\n        checkSuccess: success,\r\n        loot,\r\n        note: success\r\n          ? (check?.isCritical ? \"Success (nat 20)\" : \"Success\")\r\n          : \"Fail → loot 1\",\r\n      });\r\n    }\r\n  }\r\n\r\n  const modeLabel = mode === \"capture\" ? \"Capture\" : \"Slay (Carve)\";\r\n  const rowHtml = rows\r\n    .map((r) => {\r\n      const checkCell = r.checkTotal == null\r\n        ? \"—\"\r\n        : `${r.checkTotal} vs DC ${dc} ${r.checkSuccess ? \"✓\" : \"✗\"}`;\r\n      const lootCell = r.loot == null ? \"—\" : `<strong>${r.loot}</strong>`;\r\n      return `<tr>\r\n        <td style=\"text-align:center\">${r.index}</td>\r\n        <td>${esc(checkCell)}</td>\r\n        <td style=\"text-align:center\">${lootCell}</td>\r\n        <td>${esc(r.note)}</td>\r\n      </tr>`;\r\n    })\r\n    .join(\"\");\r\n\r\n  const successCount = rows.filter((r) => r.loot != null && (mode === \"capture\" || r.checkSuccess)).length;\r\n  const lootList = rows\r\n    .filter((r) => r.loot != null)\r\n    .map((r) => r.loot)\r\n    .join(\", \");\r\n\r\n  const html = `\r\n    <div class=\"dnd5e2\">\r\n      <p><strong>${esc(hunter.name)}</strong> carved <strong>${esc(preyName)}</strong>\r\n      with a <em>Carving Knife</em> — <strong>${esc(modeLabel)}</strong>\r\n      (DC ${dc}, ${count} roll${count === 1 ? \"\" : \"s\"}).</p>\r\n      <table class=\"dnd5e\" style=\"width:100%;margin:.4rem 0\">\r\n        <thead>\r\n          <tr>\r\n            <th>#</th>\r\n            <th>Survival</th>\r\n            <th>Loot d20</th>\r\n            <th>Note</th>\r\n          </tr>\r\n        </thead>\r\n        <tbody>${rowHtml}</tbody>\r\n      </table>\r\n      <p style=\"margin:.35rem 0 0\">\r\n        Materials obtained (compare each d20 to the creature's loot table):\r\n        <strong>${esc(lootList || \"—\")}</strong>\r\n        ${mode === \"slay\" ? ` · ${successCount}/${count} successful carve${successCount === 1 ? \"\" : \"s\"}` : \"\"}.\r\n      </p>\r\n      <p class=\"hint\" style=\"opacity:.75;margin:.25rem 0 0\">\r\n        Runes are not auto-granted — look up results on the Monster Hunter loot table.\r\n      </p>\r\n    </div>\r\n  `;\r\n\r\n  await ChatMessage.create({\r\n    speaker: ChatMessage.getSpeaker({ actor: hunter }),\r\n    content: html,\r\n  });\r\n})();\r\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
+    "exportSource": {
+      "world": "amellwind-toolbox",
+      "system": "dnd5e",
+      "coreVersion": "12.331",
+      "systemVersion": "4.4.4"
+    }
+  },
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "12.331",
+    "systemId": "dnd5e",
+    "systemVersion": "4.4.4",
+    "createdTime": null,
+    "modifiedTime": null,
+    "lastModifiedBy": null
+  }
+}

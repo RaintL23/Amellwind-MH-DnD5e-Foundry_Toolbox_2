@@ -423,3 +423,5 @@ console.log(`Items Forge traps: ${items.length}`);
 
 const { buildSiegeWeapons } = await import("./build-siege-weapons.mjs");
 buildSiegeWeapons();
+
+await import("./build-carving-knife.mjs");

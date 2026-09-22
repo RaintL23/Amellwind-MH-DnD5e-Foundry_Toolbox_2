@@ -10,7 +10,7 @@ engines used by Amellwind / RaintDM content. Folder names mirror
 | `cooking-features/` | Felyne Cook Item Macros, aura fragments, player flow, sync engine |
 | `hidden-detect/` | Hidden Detection configure + sync macro/engine |
 | `resource-node/` | Resource Node configure + sync macro/engine |
-| `items-forge/` | Hunter traps Item Macro + canvas engine |
+| `items-forge/` | Hunter traps Item Macro + canvas engine; Carving Knife Item Macro |
 | `conditions/` | Amellwind conditions & diseases registry + HUD/Active Effect engine |
 | `monsters/` | Dire Miralis + Tempered Alatreon (MHW) combat automation engines |
 | `combo-crafting/` | Combo Crafting Item Macro (recipes injected at build time) |
