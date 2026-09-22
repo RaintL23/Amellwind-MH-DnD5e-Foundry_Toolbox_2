@@ -87,6 +87,37 @@ export function trinketSystem(description, identifier, rarity = "uncommon", extr
   };
 }
 
+/**
+ * Foundry dnd5e expects damage-type keys on traits.dr/di/dv (e.g. "lightning"),
+ * not prose like "lightning damage" — the latter lands in custom and breaks automation.
+ */
+export function normalizeDamageTypeKey(type) {
+  return String(type ?? "")
+    .trim()
+    .replace(/\s+damage$/i, "")
+    .toLowerCase();
+}
+
+export function damageTraitChange(trait, type, { mode = 2, priority = 20 } = {}) {
+  return {
+    key: `system.traits.${trait}.value`,
+    mode,
+    value: normalizeDamageTypeKey(type),
+    priority,
+  };
+}
+
+function sanitizeEffectChanges(changes) {
+  if (!Array.isArray(changes)) return changes;
+  return changes.map((ch) => {
+    if (!ch || typeof ch !== "object") return ch;
+    if (!/^system\.traits\.d[riv]\.value$/.test(String(ch.key ?? ""))) return ch;
+    if (typeof ch.value !== "string") return ch;
+    const value = normalizeDamageTypeKey(ch.value);
+    return value === ch.value ? ch : { ...ch, value };
+  });
+}
+
 export function equipEffect(id) {
   return {
     _id: id,
@@ -115,7 +146,7 @@ export function sideEffect(id, name, side, materialEffectName, changes = [], des
     img: "mh-icons/material-rune.webp",
     type: "base",
     system: {},
-    changes,
+    changes: sanitizeEffectChanges(changes),
     disabled: true,
     duration: { ...DURATION },
     description,
@@ -151,13 +182,17 @@ export function buildItem({
 }) {
   const equip = effects.find((e) => e.flags?.["amellwind-toolbox"]?.runeController);
   if (equip) equip.name = `${runeName} Rune (Equip)`;
+  const sanitizedEffects = effects.map((e) => {
+    if (!e || !Array.isArray(e.changes)) return e;
+    return { ...e, changes: sanitizeEffectChanges(e.changes) };
+  });
   return {
     _id,
     name: `${runeName} Rune`,
     type: "equipment",
     img: "mh-icons/material-rune.webp",
     system: trinketSystem(description, identifier, rarity, systemExtra),
-    effects,
+    effects: sanitizedEffects,
     folder: null,
     sort,
     ownership: { default: 0 },

@@ -188,7 +188,7 @@
         {
           "key": "system.traits.dr.value",
           "mode": 2,
-          "value": "lightning damage",
+          "value": "lightning",
           "priority": 20
         }
       ],
