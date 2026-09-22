@@ -844,7 +844,7 @@
       "bJXNIXkKmGjGIrGA": {
         "_id": "bJXNIXkKmGjGIrGA",
         "sort": 801000,
-        "name": "Amped Element Discharge (AED)",
+        "name": "Super Amped Element Discharge (SAED)",
         "activation": {
           "type": "action",
           "value": 1,
@@ -860,7 +860,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Axe Mode Action: choose Phial spend (dialog). 1d12 attuned element per charge in a 30-ft cone; DEX save, half on success. Or cancel the shockwave for Charged Shield (Red Shield)."
+          "chatFlavor": "SAED (Axe Mode): choose Phial spend (dialog). 1d12 attuned element per charge in a 30-ft cone; DEX save, half on success. If the cone completely covers a Huge or larger creature, it has Disadvantage on the save. Or cancel the shockwave for Charged Shield (Red Shield)."
         },
         "duration": {
           "value": "",
@@ -914,7 +914,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "aed",
+          "identifier": "saed",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,

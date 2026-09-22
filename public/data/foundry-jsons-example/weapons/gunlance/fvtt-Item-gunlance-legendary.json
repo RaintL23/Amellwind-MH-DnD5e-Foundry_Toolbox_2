@@ -354,7 +354,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Spend up to 3 shells; 1d8 Thunder each. Consumes 1 (+1d8)."
+          "chatFlavor": "Expend 1 shell: +1d10 thunder (Shelling Strike Upgrade II)."
         },
         "duration": {
           "value": "",
@@ -432,7 +432,7 @@
           "parts": [
             {
               "number": 1,
-              "denomination": 8,
+              "denomination": 10,
               "types": [
                 "thunder"
               ],
@@ -496,7 +496,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Spend up to 3 shells; 1d8 Thunder each. Consumes 2 (+2d8)."
+          "chatFlavor": "Expend 2 shells: +2d10 thunder (Shelling Strike Upgrade II)."
         },
         "duration": {
           "value": "",
@@ -574,7 +574,7 @@
           "parts": [
             {
               "number": 2,
-              "denomination": 8,
+              "denomination": 10,
               "types": [
                 "thunder"
               ],
@@ -638,7 +638,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Spend up to 3 shells; 1d8 Thunder each. Consumes 3 (+3d8)."
+          "chatFlavor": "Expend 3 shells: +3d10 thunder (Shelling Strike Upgrade II)."
         },
         "duration": {
           "value": "",
@@ -716,7 +716,7 @@
           "parts": [
             {
               "number": 3,
-              "denomination": 8,
+              "denomination": 10,
               "types": [
                 "thunder"
               ],
@@ -1282,6 +1282,119 @@
               "bonus": ""
             }
           ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "04317417a4ed4706": {
+        "_id": "04317417a4ed4706",
+        "sort": 800000,
+        "name": "Guard Reload Upgrade",
+        "img": "icons/equipment/shield/heater-wooden-brown-scarred.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When a creature hits you with a melee attack while you are wielding the shield",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Roll [[/r 1d10]] (Shelling die) and add it to your AC against that attack, potentially causing it to miss."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "guard-reload-upgrade",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "1d10",
+          "name": "Shelling die (1d10) → AC",
+          "prompt": false,
+          "visible": true
         },
         "macroData": {
           "name": "",

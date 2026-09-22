@@ -987,6 +987,64 @@
         "modifiedTime": 1788906281605,
         "lastModifiedBy": null
       }
+    },
+    {
+      "_id": "KhfDZgi85DIQqvsd",
+      "name": "Charging Sidestep (+1d4)",
+      "img": "icons/skills/movement/figure-running-gray.webp",
+      "description": "",
+      "changes": [
+        {
+          "key": "system.bonuses.rwak.damage",
+          "mode": 2,
+          "value": "1d4[piercing]",
+          "priority": 20
+        }
+      ],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "specialDuration": [
+            "turnEndSource"
+          ],
+          "stackable": "noneName",
+          "selfTarget": true,
+          "selfTargetAlways": true,
+          "showIcon": true,
+          "dontApply": false
+        },
+        "world": {
+          "bow": {
+            "isSidestepBuff": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1785988000000,
+        "modifiedTime": 1785988000000,
+        "lastModifiedBy": null
+      }
     }
   ],
   "folder": null,

@@ -1406,7 +1406,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Expend 5 Spirit Charges for +5d10 Force damage on that hit. Consumes 5 (+5d10)."
+          "chatFlavor": "Apex Spirit: expend 5 Spirit Charges for +5d10 Force damage; target is Incapacitated until the end of its next turn."
         },
         "duration": {
           "value": "",
@@ -1414,7 +1414,11 @@
           "concentration": false,
           "override": false
         },
-        "effects": [],
+        "effects": [
+          {
+            "_id": "tnfApexIncapEff1"
+          }
+        ],
         "range": {
           "value": null,
           "units": "",
@@ -1787,6 +1791,52 @@
         "systemVersion": "4.4.4",
         "createdTime": 1788906281904,
         "modifiedTime": 1788906281904,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "tnfApexIncapEff1",
+      "name": "Apex Spirit (Incapacitated)",
+      "img": "icons/magic/control/encase-creature-monster-hold.webp",
+      "description": "",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": 1,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [
+        "incapacitated"
+      ],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "specialDuration": [
+            "turnEnd"
+          ],
+          "stackable": "noneName",
+          "showIcon": true,
+          "dontApply": false
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": 1790020848121,
+        "modifiedTime": 1790020848121,
         "lastModifiedBy": null
       }
     }
