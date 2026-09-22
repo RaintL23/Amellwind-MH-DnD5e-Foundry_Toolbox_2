@@ -51,7 +51,6 @@ const GRAFT_MACRO_FROM: Record<string, Tier> = {
   "heavy-bowgun.json": "Rare",
   "light-bowgun.json": "Very Rare",
   "bow.json": "Rare",
-  "wire-knuckles.json": "Rare",
   "gunlance.json": "Rare",
   "lance.json": "Rare",
   "sword-and-shield.json": "Rare",

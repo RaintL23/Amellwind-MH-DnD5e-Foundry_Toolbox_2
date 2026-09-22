@@ -3,6 +3,7 @@ import { FOUNDRY_EXPORT_TARGET, foundryIdFromSeed, embedItemMacro } from "@/shar
 import { DUAL_BLADES_DEMON_DODGE_ITEM_MACRO } from "./dual-blades-demon-dodge.macro";
 import { DUAL_REPEATERS_MAGAZINES_ITEM_MACRO } from "./dual-repeaters-magazines.macro";
 import { HUNTING_HORN_RECITAL_ITEM_MACRO } from "./hunting-horn-recital.macro";
+import { WIRE_KNUCKLES_SILKBIND_ITEM_MACRO } from "./wire-knuckles-silkbind.macro";
 import type { CustomWeapon } from "../types/weapon-forge.types";
 import { getAssignedFeaturesForRow } from "../utils/weapon-forge-features.utils";
 import { listUnlockedMagazineKeys } from "./weapon-forge-magazine.export";
@@ -523,8 +524,12 @@ export function applyDualBladesDemonDodgeOverlay(item: FoundryItem): boolean {
 }
 
 /**
- * Wire Knuckles (Rare+): companion STR save to snap Silkbind Tether.
- * The 15-ft leash is description-only; this activity rolls the start-of-turn save.
+ * Wire Knuckles (Rare+): Silkbind tether zone, auto-grapple, and Snap Tether.
+ *
+ * - Silkbind Tether / Upgrade → Item Macro places a radius template + grants the
+ *   target a temporary Snap Tether feat (STR save clears zone + AE).
+ * - Silkbind Grapple → applies Grappled; requires Tethered (macro warns).
+ * - Snap Tether (on this weapon) → hunter releases tether with no save.
  */
 export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
   if (!/^wire knuckles/i.test(item.name ?? "")) return false;
@@ -535,29 +540,197 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
     | undefined;
   if (!activities) return false;
 
+  // Foundry rarity may be "veryRare" or "very-rare".
+  const rarityKey = String(system.rarity ?? "")
+    .toLowerCase()
+    .replace(/[\s_-]+/g, "");
+
+  const isTetherActivity = (name: string) =>
+    /^silkbind tether$/i.test(name) || /^silkbind upgrade\b/i.test(name);
+
   const hasTether = Object.values(activities).some((activity) =>
-    /^silkbind tether$/i.test(String(activity?.name ?? "").trim()),
+    isTetherActivity(String(activity?.name ?? "").trim()),
   );
   if (!hasTether) return false;
 
-  const snapId = foundryIdFromSeed("act-wire-knuckles-snap-silkbind");
-  if (activities[snapId]) return true;
+  const tetherRadius =
+    rarityKey === "veryrare" || rarityKey === "legendary" ? 10 : 15;
+  const dcBonus =
+    rarityKey === "legendary" ? 2 : rarityKey === "veryrare" ? 1 : 0;
+  const dcNote =
+    dcBonus > 0
+      ? `Silkbind DC +${dcBonus}${rarityKey === "legendary" ? " (Legendary upgrade)" : ""}. Tether radius ${tetherRadius} ft.`
+      : `Tether radius ${tetherRadius} ft.`;
 
   const magical =
     Number((system.magicalBonus as number | null | undefined) ?? 0) > 0 ||
     (Array.isArray(system.properties) &&
       (system.properties as string[]).includes("mgc"));
 
+  // ── Silkbind Tether / Upgrade flavor + AE description ──
+  for (const activity of Object.values(activities)) {
+    if (!isTetherActivity(String(activity?.name ?? "").trim())) continue;
+    activity.description = {
+      ...((activity.description as Record<string, unknown> | undefined) ?? {}),
+      chatFlavor: `Expend 2 Wirebugs: apply Tethered (cannot move more than ${tetherRadius} ft from the embed point). ${dcNote} Target gains Snap Tether (STR save). Hunter may Snap Tether to release safely.`,
+    };
+    // Keep Midi identifier stable for the Item Macro.
+    const midi =
+      (activity.midiProperties as Record<string, unknown> | undefined) ?? {};
+    activity.midiProperties = {
+      ...midi,
+      identifier: "silkbind-tether",
+      displayActivityName: true,
+    };
+  }
+
+  const tetherEffect = item.effects.find((e) =>
+    /^tethered$/i.test(String(e.name ?? "")),
+  );
+  if (tetherEffect) {
+    tetherEffect.description = `Tethered by ironsilk. Cannot move more than ${tetherRadius} feet away from the point where the silk was embedded. Use your Snap Tether feat to attempt a Strength saving throw against the silkbinder's Silkbind DC; on a success the silk snaps and this effect ends.`;
+    const efFlags = (tetherEffect.flags ?? {}) as Record<string, unknown>;
+    const efWorld = (efFlags.world as Record<string, unknown> | undefined) ?? {};
+    tetherEffect.flags = {
+      ...efFlags,
+      dae: {
+        ...((efFlags.dae as Record<string, unknown> | undefined) ?? {}),
+        stackable: "noneName",
+        showIcon: true,
+      },
+      world: {
+        ...efWorld,
+        wireKnuckles: {
+          isTethered: true,
+        },
+      },
+    };
+  }
+
+  // ── Silkbind Grapple: target creature + Grappled status AE ──
+  let grappledEffect = item.effects.find((e) =>
+    /^grappled \(silkbind\)$/i.test(String(e.name ?? "")),
+  );
+  if (!grappledEffect) {
+    const grappledId = foundryIdFromSeed("eff-wire-knuckles-silkbind-grapple");
+    grappledEffect = {
+      _id: grappledId,
+      name: "Grappled (Silkbind)",
+      img: "icons/skills/melee/unarmed-punch-fist-yellow-red.webp",
+      description:
+        "Grappled by Silkbind. Succeeds automatically while Tethered (even up to two sizes larger). Does not end if the silkbinder becomes Incapacitated, and remains after the tether ends.",
+      changes: [],
+      disabled: false,
+      duration: {
+        startTime: null,
+        seconds: null,
+        combat: null,
+        rounds: null,
+        turns: null,
+        startRound: null,
+        startTurn: null,
+      },
+      origin: null,
+      transfer: false,
+      statuses: ["grappled"],
+      type: "base",
+      system: {},
+      tint: "#ffffff",
+      sort: 0,
+      flags: {
+        dae: {
+          stackable: "noneName",
+          showIcon: true,
+        },
+        world: {
+          wireKnuckles: {
+            isSilkbindGrapple: true,
+          },
+        },
+      },
+      _stats: {
+        compendiumSource: null,
+        duplicateSource: null,
+        coreVersion: FOUNDRY_EXPORT_TARGET.coreVersion,
+        systemId: FOUNDRY_EXPORT_TARGET.systemId,
+        systemVersion: FOUNDRY_EXPORT_TARGET.systemVersion,
+        createdTime: null,
+        modifiedTime: null,
+        lastModifiedBy: null,
+      },
+    };
+    item.effects.push(grappledEffect);
+  }
+
+  for (const activity of Object.values(activities)) {
+    if (!/^silkbind grapple$/i.test(String(activity?.name ?? "").trim())) {
+      continue;
+    }
+    activity.description = {
+      ...((activity.description as Record<string, unknown> | undefined) ?? {}),
+      chatFlavor:
+        "Automatically Grapple a Tethered creature (even up to two sizes larger). No contested check. Grapple does not end if you become Incapacitated, and remains after the tether ends.",
+    };
+    activity.range = {
+      value: "5",
+      units: "ft",
+      special: "",
+      override: false,
+    };
+    activity.target = {
+      template: {
+        count: "",
+        contiguous: false,
+        type: "",
+        size: "",
+        width: "",
+        height: "",
+        units: "ft",
+      },
+      affects: {
+        count: "1",
+        type: "creature",
+        choice: false,
+        special: "",
+      },
+      prompt: true,
+      override: false,
+    };
+    const linked = Array.isArray(activity.effects)
+      ? (activity.effects as Array<{ _id: string }>)
+      : [];
+    if (!linked.some((e) => e._id === grappledEffect!._id)) {
+      activity.effects = [...linked, { _id: grappledEffect!._id }];
+    }
+  }
+
+  // ── Snap Tether on weapon = hunter release (no save) ──
+  // Remove legacy Snap Silkbind save if present under the old seed id.
+  const legacySnapId = foundryIdFromSeed("act-wire-knuckles-snap-silkbind");
+  if (activities[legacySnapId]) {
+    delete activities[legacySnapId];
+  }
+  for (const [id, activity] of Object.entries(activities)) {
+    if (/^snap silkbind$/i.test(String(activity?.name ?? "").trim())) {
+      delete activities[id];
+    }
+  }
+
+  const snapId = foundryIdFromSeed("act-wire-knuckles-snap-tether");
+  const maxSort = Math.max(
+    0,
+    ...Object.values(activities).map((a) => Number(a.sort ?? 0) || 0),
+  );
   activities[snapId] = {
     _id: snapId,
-    type: "save",
-    sort: 600000,
-    name: "Snap Silkbind",
+    type: "utility",
+    sort: maxSort + 100000,
+    name: "Snap Tether",
     img: "icons/magic/control/debuff-chains-purple.webp",
     activation: {
       type: "special",
       value: null,
-      condition: "At the start of a Tethered creature's turn",
+      condition: "While a creature is Tethered by your Silkbind",
       override: false,
     },
     consumption: {
@@ -567,7 +740,7 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
     },
     description: {
       chatFlavor:
-        "STR save vs Silkbind DC (8 + PB + STR or DEX — use the higher). On a success, remove the Tethered effect.",
+        "Safely release your ironsilk tether (no save). Removes Tethered, the tether zone template, and the target's Snap Tether feat.",
     },
     duration: {
       value: "",
@@ -578,7 +751,7 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
     effects: [],
     range: {
       units: "ft",
-      value: 5,
+      value: 30,
       special: "",
       override: false,
     },
@@ -621,7 +794,7 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
       autoTargetAction: "default",
       automationOnly: false,
       otherActivityCompatible: true,
-      identifier: "snap-silkbind",
+      identifier: "snap-tether",
       displayActivityName: true,
       rollMode: "default",
       chooseEffects: false,
@@ -633,21 +806,10 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
       noConcentrationCheck: false,
       autoCEEffects: "default",
     },
-    damage: {
-      parts: [],
-      onSave: "none",
-    },
-    save: {
-      ability: ["str"],
-      dc: {
-        // Prefer STR; chat notes DEX if higher (Foundry DC calc is single-ability).
-        calculation: "str",
-        formula: "",
-      },
-    },
     useConditionText: "",
     useConditionReason: "",
     effectConditionText: "",
+    roll: { formula: "", name: "", prompt: false, visible: false },
     macroData: { name: "", command: "" },
     ignoreTraits: { idi: false, idr: false, idv: false, ida: false },
     isOverTimeFlag: false,
@@ -659,6 +821,12 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
     otherActivityId: "none",
   };
 
+  embedItemMacro(item, {
+    command: WIRE_KNUCKLES_SILKBIND_ITEM_MACRO,
+    passes: ["postActiveEffects"],
+    midiMode: "merge",
+  });
+
   const existingWorld =
     (item.flags?.world as Record<string, unknown> | undefined) ?? {};
   item.flags = {
@@ -667,6 +835,8 @@ export function applyWireKnucklesSilkbindOverlay(item: FoundryItem): boolean {
       ...existingWorld,
       wireKnuckles: {
         hasSilkbind: true,
+        tetherRadius,
+        dcBonus,
       },
     },
   };

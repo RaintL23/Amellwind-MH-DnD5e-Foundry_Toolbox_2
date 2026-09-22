@@ -1694,7 +1694,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       consumeAmount: "2",
       activationCondition: "When you hit a creature with this weapon",
       chatFlavor:
-        "Expend 2 Wirebugs: apply Tethered (cannot move more than 15 ft from the embed point). Start-of-turn STR save uses Snap Silkbind.",
+        "Expend 2 Wirebugs: apply Tethered and place a radius tether zone (15 ft Rare / 10 ft with Silkbind Upgrade). Target gains Snap Tether (STR save). Hunter may Snap Tether to release safely.",
       targetAffectsType: "creature",
       targetPrompt: true,
       rangeUnits: "ft",
@@ -1707,10 +1707,10 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
         showIcon: true,
         stackable: "noneName",
         description:
-          "Tethered by ironsilk. Cannot move more than 15 feet away from the point where the silk was embedded. At the start of each of your turns, you may attempt a Strength saving throw against the silkbinder's Silkbind DC (use Snap Silkbind on their weapon) to snap the silk and end this effect.",
+          "Tethered by ironsilk. Cannot move more than 15 feet away from the point where the silk was embedded. Use your Snap Tether feat to attempt a Strength saving throw against the silkbinder's Silkbind DC; on a success the silk snaps and this effect ends.",
       },
     },
-    "Apply AE manually via Midi on use. 15-ft leash is theater-of-the-mind / measured from embed token mark.",
+    "Item Macro places MeasuredTemplate + grants Snap Tether feat on the target. Overlay sets radius/DC by rarity.",
   ),
   "silkbind grapple": spec(
     "action_ability",
@@ -1719,13 +1719,14 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activityType: "utility",
       activationCondition: "While a creature is Tethered by your Silkbind",
       chatFlavor:
-        "Automatically Grapple a Tethered creature (even up to two sizes larger). The Grapple does not end if you become Incapacitated, and it remains after the silkbind tether ends.",
-      rangeUnits: "self",
-      targetAffectsType: "self",
-      targetPrompt: false,
+        "Automatically Grapple a Tethered creature (even up to two sizes larger). No contested check. Grapple does not end if you become Incapacitated, and remains after the tether ends.",
+      rangeUnits: "ft",
+      rangeValue: "5",
+      targetAffectsType: "creature",
+      targetPrompt: true,
       activityImg: "icons/skills/melee/unarmed-punch-fist-yellow-red.webp",
     },
-    "Auto-succeed Grapple + size override — no mechanical consume.",
+    "Overlay links Grappled (Silkbind) status AE. Item Macro warns if target is not Tethered.",
   ),
 
   // ── Charged Slash family (self-owned counter + Gather + ×N attacks) ─

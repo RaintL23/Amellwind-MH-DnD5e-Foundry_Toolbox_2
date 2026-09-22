@@ -1,5 +1,5 @@
 {
-  "_id": "pCzhGEJEMzHaxGEv",
+  "_id": "fdpKEkqws7t4eelN",
   "name": "Wire Knuckles (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_tonfas.webp",
@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery: Push</strong></p><p>If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wirebug Gauge</strong></p><p>Your gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Wirebug Whisperer</strong></p><p>Your gauntlets can now house up to 4 Wirebugs. Additionally, whenever you roll a 20 on an attack roll with this weapon, you immediately regain 1 expended Wirebug.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Dash</strong></p><p>When you take damage, you can expend 1 Wirebug to immediately move up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Fall</strong></p><p>When you fall, you can expend 1 Wirebug to arrest your momentum, stopping your descent in mid-air until the start of your next turn and taking no fall damage from the previous drop.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Tether</strong></p><p>You can use ironsilk to restrict a monster's movement. When you hit a creature with this weapon, you can expend 1 Wirebug to embed a thread of ironsilk into it. The creature is Tethered to the ground at its current location. It cannot move more than 15 feet away from that center point.</p><p>At the start of its turns, the creature can make a Strength saving throw (DC 8 + your Proficiency Bonus + your Dexterity or Strength modifier) to snap the silk and end the effect.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Grapple</strong></p><p>While a creature is Tethered by your Silkbind, you can attempt to Grapple it even if it is up to two size categories larger than you.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Wyvern Ride</strong></p><p><strong>Action.</strong></p><p>You can manipulate the ironsilk to puppeteer colossal beasts. As an Action, while you are Grappling a Tethered creature that is at least one size category larger than you, you can force the creature to make a Strength saving throw against your Silkbind DC. On a failed save, you forcefully ride the creature and choose one of the following effects:</p><ul><li>Forced Movement: The creature immediately moves up to its speed in a direction of your choice.</li><li>Directed Attack: The creature immediately makes one of its basic melee attacks against a target of your choice within its reach.</li><li>Ramming Maneuver: The creature uses its movement to violently crash into a wall, tree, or another creature. The mounted creature takes [[/r 3d10]] Bludgeoning damage, and if it crashed into another creature, that second creature must succeed on a Dexterity saving throw or take the same damage.</li></ul><p>After resolving the chosen effect, the Silkbind snaps, the grapple ends, and both you and the creature fall Prone.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Punishing Ride</strong></p><p>When you use your Wyvern Ride feature, the creature has Disadvantage on the saving throw. If it fails, the Silkbind does not snap after the effect is resolved, you do not fall Prone, and you maintain the Grapple (though you cannot use Wyvern Ride on the same creature again on the same turn).</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Fierce Ram</strong></p><p>The damage of your Ramming Maneuver increases to [[/r 5d10]].</p></div></div>",
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery: Push</strong></p><p>If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wirebug Gauge</strong></p><p>Your gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Wirebug Whisperer</strong></p><p>Your gauntlets can now house up to 4 Wirebugs. Additionally, whenever you score a Critical Hit with this weapon, you immediately regain 1 expended Wirebug.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Dash</strong></p><p>When you take damage, you can expend 1 Wirebug to immediately move up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Fall</strong></p><p>When you fall, you can expend 1 Wirebug to arrest your momentum, stopping your descent in mid-air until the start of your next turn and taking no fall damage from the previous drop.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wirebug Recall</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can regain 1 expended Wirebug.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Wirebug Recall Upgrade</strong></p><p>When you use Wirebug Recall, you regain 2 expended Wirebugs instead of 1.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Tether</strong></p><p>You can use ironsilk to restrict a monster's movement. When you hit a creature with this weapon, you can expend 2 Wirebugs to embed a thread of ironsilk into it. The creature is Tethered to the ground at its current location. It cannot move more than 15 feet away from that center point.</p><p>At the start of its turns, the creature can make a Strength saving throw (DC 8 + your Proficiency Bonus + your Dexterity or Strength modifier) to snap the silk and end the effect.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Silkbind Upgrade</strong></p><p>The radius the creature can move while silkbound is reduced to 10 feet and the save DC increases by +1.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Silkbind Upgrade (Legendary)</strong></p><p>The save DC now increases by +2 instead of +1.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Grapple</strong></p><p>While a creature is Tethered by your Silkbind, you can Grapple it even if it is up to two size categories larger than you. The Grapple succeeds automatically — no contested check is required — and the creature becomes Grappled by you.</p><p>The Grappled condition from this feature does not end if you become Incapacitated. It remains grappled by you even after it breaks free of the silkbind tether.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Wyvern Ride</strong></p><p><strong>Action.</strong></p><p>You can manipulate the ironsilk to puppeteer colossal beasts. As an Action, while you are Grappling a Tethered creature that is at least one size category larger than you, you can force the creature to make a Strength saving throw against your Silkbind DC. On a failed save, you forcefully ride the creature and choose one of the following effects:</p><ul><li>Forced Movement: The creature immediately moves up to its speed in a direction of your choice.</li><li>Directed Attack: The creature immediately makes one of its basic melee attacks against a target of your choice within its reach.</li><li>Ramming Maneuver: The creature uses its movement to violently crash into a wall, tree, or another creature. The mounted creature takes [[/r 3d10]] Bludgeoning damage, and if it crashed into another creature, that second creature must succeed on a Dexterity saving throw or take the same damage.</li></ul><p>After resolving the chosen effect, the Silkbind snaps, the grapple ends, and both you and the creature fall Prone.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Punishing Ride</strong></p><p>When you use your Wyvern Ride feature, the creature has Disadvantage on the saving throw. If it fails, the Silkbind does not snap after the effect is resolved, you do not fall Prone, and you maintain the Grapple (though you cannot use Wyvern Ride on the same creature again on the same turn).</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Fierce Ram</strong></p><p>The damage of your Ramming Maneuver increases to [[/r 5d10]].</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Wirebug Reflex</strong></p><p><strong>Reaction.</strong></p><p>When a creature misses you with an attack roll, you can use your Reaction to regain 1 expended Wirebug.</p></div>",
       "chat": ""
     },
     "identifier": "wireknuckles",
@@ -49,7 +49,7 @@
           "number": 1,
           "mode": ""
         },
-        "bonus": ""
+        "bonus": "2"
       },
       "versatile": {
         "number": null,
@@ -63,9 +63,10 @@
         }
       }
     },
-    "magicalBonus": null,
+    "magicalBonus": 3,
     "properties": [
-      "lgt"
+      "lgt",
+      "mgc"
     ],
     "proficient": null,
     "range": {
@@ -93,8 +94,8 @@
       "max": "4"
     },
     "activities": {
-      "Aal0wiytv5CYb5XH": {
-        "_id": "Aal0wiytv5CYb5XH",
+      "WqekiaV7t4rGYx4l": {
+        "_id": "WqekiaV7t4rGYx4l",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -179,8 +180,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -296,8 +297,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -419,8 +420,131 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "ByaghdJEOvaJAfFL": {
+        "_id": "ByaghdJEOvaJAfFL",
+        "sort": 500000,
+        "name": "Wirebug Recall",
+        "img": "icons/magic/nature/leaf-glow-teal.webp",
+        "activation": {
+          "type": "bonus",
+          "value": 1,
+          "condition": "",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "-2",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Regain 2 expended Wirebugs."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "wirebug-recall",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -454,8 +578,8 @@
       },
       "ZgCTnVYBQIjVYwaB": {
         "_id": "ZgCTnVYBQIjVYwaB",
-        "sort": 500000,
-        "name": "Silkbind Tether",
+        "sort": 600000,
+        "name": "Silkbind Upgrade (Legendary)",
         "img": "icons/magic/control/debuff-chains-blue.webp",
         "activation": {
           "type": "special",
@@ -473,7 +597,7 @@
             {
               "type": "itemUses",
               "target": "",
-              "value": "1",
+              "value": "2",
               "scaling": {
                 "mode": "",
                 "formula": ""
@@ -482,7 +606,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Expend 1 Wirebug: apply Tethered (cannot move more than 15 ft from the embed point). Start-of-turn STR save uses Snap Silkbind."
+          "chatFlavor": "Expend 2 Wirebugs: apply Tethered (cannot move more than 10 ft from the embed point). Silkbind DC +2 (Legendary upgrade). Tether radius 10 ft. Target gains Snap Tether (STR save). Hunter may Snap Tether to release safely."
         },
         "duration": {
           "value": "",
@@ -547,8 +671,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -582,7 +706,7 @@
       },
       "f0xKITkCSkhNUBAD": {
         "_id": "f0xKITkCSkhNUBAD",
-        "sort": 600000,
+        "sort": 700000,
         "name": "Silkbind Grapple",
         "img": "icons/skills/melee/unarmed-punch-fist-yellow-red.webp",
         "activation": {
@@ -600,7 +724,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "While a creature is Tethered by your Silkbind, you may attempt to Grapple it even if it is up to two size categories larger than you."
+          "chatFlavor": "Automatically Grapple a Tethered creature (even up to two sizes larger). No contested check. Grapple does not end if you become Incapacitated, and remains after the tether ends."
         },
         "duration": {
           "value": "",
@@ -608,9 +732,14 @@
           "concentration": false,
           "override": false
         },
-        "effects": [],
+        "effects": [
+          {
+            "_id": "wOzS3PMAbYgNEEqC"
+          }
+        ],
         "range": {
-          "units": "self",
+          "value": "5",
+          "units": "ft",
           "special": "",
           "override": false
         },
@@ -625,12 +754,12 @@
             "units": "ft"
           },
           "affects": {
-            "count": "",
-            "type": "self",
+            "count": "1",
+            "type": "creature",
             "choice": false,
             "special": ""
           },
-          "prompt": false,
+          "prompt": true,
           "override": false
         },
         "uses": {
@@ -660,8 +789,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -695,7 +824,7 @@
       },
       "ll05idJEKXJve0SI": {
         "_id": "ll05idJEKXJve0SI",
-        "sort": 700000,
+        "sort": 800000,
         "name": "Wyvern Ride",
         "activation": {
           "type": "action",
@@ -783,8 +912,8 @@
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
@@ -838,16 +967,139 @@
         },
         "otherActivityId": "none"
       },
-      "cgkCjCEPXoS7qCEA": {
-        "_id": "cgkCjCEPXoS7qCEA",
-        "type": "save",
-        "sort": 600000,
-        "name": "Snap Silkbind",
+      "foZsWkVJSYghFLvO": {
+        "_id": "foZsWkVJSYghFLvO",
+        "sort": 900000,
+        "name": "Wirebug Reflex",
+        "img": "icons/skills/movement/figure-running-gray.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When a creature misses you with an attack roll",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "-1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Regain 1 expended Wirebug."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "wirebug-reflex",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
+      "wGI6mGAHxiNzeVkK": {
+        "_id": "wGI6mGAHxiNzeVkK",
+        "type": "utility",
+        "sort": 1000000,
+        "name": "Snap Tether",
         "img": "icons/magic/control/debuff-chains-purple.webp",
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "At the start of a Tethered creature's turn",
+          "condition": "While a creature is Tethered by your Silkbind",
           "override": false
         },
         "consumption": {
@@ -859,7 +1111,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "STR save vs Silkbind DC (8 + PB + STR or DEX — use the higher). On a success, remove the Tethered effect."
+          "chatFlavor": "Safely release your ironsilk tether (no save). Removes Tethered, the tether zone template, and the target's Snap Tether feat."
         },
         "duration": {
           "value": "",
@@ -870,7 +1122,7 @@
         "effects": [],
         "range": {
           "units": "ft",
-          "value": 5,
+          "value": 30,
           "special": "",
           "override": false
         },
@@ -913,34 +1165,27 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "snap-silkbind",
+          "identifier": "snap-tether",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
           "toggleEffect": false,
           "ignoreFullCover": false,
           "removeChatButtons": "default",
-          "magicEffect": false,
-          "magicDamage": false,
+          "magicEffect": true,
+          "magicDamage": true,
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
-        },
-        "damage": {
-          "parts": [],
-          "onSave": "none"
-        },
-        "save": {
-          "ability": [
-            "str"
-          ],
-          "dc": {
-            "calculation": "str",
-            "formula": ""
-          }
         },
         "useConditionText": "",
         "useConditionReason": "",
         "effectConditionText": "",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
         "macroData": {
           "name": "",
           "command": ""
@@ -998,8 +1243,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281919,
-        "modifiedTime": 1788906281919,
+        "createdTime": 1790022305090,
+        "modifiedTime": 1790022305090,
         "lastModifiedBy": null
       }
     },
@@ -1007,7 +1252,7 @@
       "_id": "UJvxWcZNDEXJETzK",
       "name": "Tethered",
       "img": "icons/magic/control/debuff-chains-blue.webp",
-      "description": "Tethered by ironsilk. Cannot move more than 15 feet away from the point where the silk was embedded. At the start of each of your turns, you may attempt a Strength saving throw against the silkbinder's Silkbind DC (use Snap Silkbind on their weapon) to snap the silk and end this effect.",
+      "description": "Tethered by ironsilk. Cannot move more than 10 feet away from the point where the silk was embedded. Use your Snap Tether feat to attempt a Strength saving throw against the silkbinder's Silkbind DC; on a success the silk snaps and this effect ends.",
       "changes": [],
       "disabled": false,
       "duration": {
@@ -1030,6 +1275,11 @@
         "dae": {
           "stackable": "noneName",
           "showIcon": true
+        },
+        "world": {
+          "wireKnuckles": {
+            "isTethered": true
+          }
         }
       },
       "_stats": {
@@ -1038,14 +1288,61 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281919,
-        "modifiedTime": 1788906281919,
+        "createdTime": 1790022305090,
+        "modifiedTime": 1790022305090,
+        "lastModifiedBy": null
+      }
+    },
+    {
+      "_id": "wOzS3PMAbYgNEEqC",
+      "name": "Grappled (Silkbind)",
+      "img": "icons/skills/melee/unarmed-punch-fist-yellow-red.webp",
+      "description": "Grappled by Silkbind. Succeeds automatically while Tethered (even up to two sizes larger). Does not end if the silkbinder becomes Incapacitated, and remains after the tether ends.",
+      "changes": [],
+      "disabled": false,
+      "duration": {
+        "startTime": null,
+        "seconds": null,
+        "combat": null,
+        "rounds": null,
+        "turns": null,
+        "startRound": null,
+        "startTurn": null
+      },
+      "origin": null,
+      "transfer": false,
+      "statuses": [
+        "grappled"
+      ],
+      "type": "base",
+      "system": {},
+      "tint": "#ffffff",
+      "sort": 0,
+      "flags": {
+        "dae": {
+          "stackable": "noneName",
+          "showIcon": true
+        },
+        "world": {
+          "wireKnuckles": {
+            "isSilkbindGrapple": true
+          }
+        }
+      },
+      "_stats": {
+        "compendiumSource": null,
+        "duplicateSource": null,
+        "coreVersion": "12.331",
+        "systemId": "dnd5e",
+        "systemVersion": "4.4.4",
+        "createdTime": null,
+        "modifiedTime": null,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 24400000,
+  "sort": 500000,
   "ownership": {
     "default": 0
   },
@@ -1067,7 +1364,16 @@
       "itemCondition": "",
       "reactionCondition": "",
       "otherCondition": "",
-      "effectCondition": ""
+      "effectCondition": "",
+      "onUseMacroName": "[postActiveEffects]ItemMacro",
+      "onUseMacroParts": {
+        "items": [
+          {
+            "macroName": "ItemMacro",
+            "option": "postActiveEffects"
+          }
+        ]
+      }
     },
     "midiProperties": {
       "autoFailFriendly": false,
@@ -1084,9 +1390,32 @@
       "coreVersion": "12.331",
       "systemVersion": "4.4.4"
     },
+    "itemacro": {
+      "macro": {
+        "name": "Wire Knuckles (Legendary)",
+        "type": "script",
+        "scope": "global",
+        "author": "",
+        "img": "icons/svg/dice-target.svg",
+        "command": "// Wire Knuckles — Silkbind Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [postActiveEffects]ItemMacro\n//\n// Silkbind Tether — radius template + Tethered metadata + grant Snap Tether feat\n// Silkbind Grapple — require Tethered (Grappled AE is activity-linked)\n// Snap Tether (weapon) — hunter release: clear tether zone + effect (no save)\n\nconst NS = \"wireKnuckles\";\nconst FLAG = `flags.world.${NS}`;\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase();\nconst actId = String(\n  rolled?.identifier\n  ?? rolled?.midiProperties?.identifier\n  ?? workflow?.activity?.identifier\n  ?? \"\",\n).toLowerCase();\n\nconst isTether =\n  actId === \"silkbind-tether\"\n  || actName === \"silkbind tether\"\n  || actName.startsWith(\"silkbind upgrade\");\nconst isGrapple =\n  actId === \"silkbind-grapple\"\n  || actName === \"silkbind grapple\";\nconst isRelease =\n  actId === \"snap-tether\"\n  || actId === \"snap-silkbind\"\n  || actName === \"snap tether\"\n  || actName === \"snap silkbind\";\n\nif (!isTether && !isGrapple && !isRelease) return;\nif (macroPass && !macroPass.includes(\"postactiveeffects\")) return;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? item?.actor\n  ?? item?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!actorDoc) {\n  ui.notifications.warn(\"Wire Knuckles: actor not found.\");\n  return;\n}\n\nconst cfg = foundry.utils.getProperty(item, FLAG) ?? {};\nconst tetherRadius = Math.max(5, Number(cfg.tetherRadius ?? 15) || 15);\nconst dcBonus = Math.max(0, Number(cfg.dcBonus ?? 0) || 0);\n\nconst silkbindDc = (sourceActor) => {\n  const pb = Number(sourceActor?.system?.attributes?.prof ?? 0) || 0;\n  const str = Number(sourceActor?.system?.abilities?.str?.mod ?? 0) || 0;\n  const dex = Number(sourceActor?.system?.abilities?.dex?.mod ?? 0) || 0;\n  return 8 + pb + Math.max(str, dex) + dcBonus;\n};\n\nconst workflowTargets = () => {\n  const fromWf = Array.from(workflow?.targets ?? []);\n  if (fromWf.length) return fromWf;\n  return Array.from(game.user?.targets ?? []);\n};\n\nconst isTetheredEffect = (ef) => {\n  if (!ef || ef.disabled) return false;\n  if (foundry.utils.getProperty(ef, `${FLAG}.isTethered`) === true) return true;\n  return /^tethered$/i.test(String(ef.name ?? \"\"));\n};\n\nconst findTethered = (targetActor) =>\n  [...(targetActor?.effects ?? [])].find((ef) => isTetheredEffect(ef)) ?? null;\n\nconst ensureCleanupHook = () => {\n  if (globalThis.__amellwindWireKnucklesHooks) return;\n  globalThis.__amellwindWireKnucklesHooks = true;\n\n  Hooks.on(\"deleteActiveEffect\", async (ef) => {\n    try {\n      if (foundry.utils.getProperty(ef, `${FLAG}.isTethered`) !== true) return;\n      const templateId = foundry.utils.getProperty(ef, `${FLAG}.templateId`);\n      const snapItemUuid = foundry.utils.getProperty(ef, `${FLAG}.snapItemUuid`);\n      if (templateId && canvas.scene) {\n        const tpl = canvas.scene.templates?.get(templateId);\n        if (tpl) await tpl.delete();\n      }\n      if (snapItemUuid) {\n        const snapItem = await fromUuid(snapItemUuid);\n        if (snapItem) await snapItem.delete();\n      }\n    } catch (err) {\n      console.warn(\"Wire Knuckles | tether cleanup failed\", err);\n    }\n  });\n};\n\nconst placeTetherTemplate = async (tokenDoc, radiusFt) => {\n  const scene = canvas.scene;\n  if (!scene || !tokenDoc) return null;\n  const center = tokenDoc.center\n    ?? tokenDoc.getCenterPoint?.()\n    ?? {\n      x: tokenDoc.x + (tokenDoc.width * (canvas.grid?.size ?? 100)) / 2,\n      y: tokenDoc.y + (tokenDoc.height * (canvas.grid?.size ?? 100)) / 2,\n    };\n\n  // Remove prior tether templates from this weapon/origin.\n  const prior = (scene.templates ?? []).filter(\n    (tpl) =>\n      foundry.utils.getProperty(tpl, `${FLAG}.isTetherZone`) === true\n      && foundry.utils.getProperty(tpl, `${FLAG}.weaponUuid`) === item.uuid,\n  );\n  if (prior.length) {\n    await scene.deleteEmbeddedDocuments(\n      \"MeasuredTemplate\",\n      prior.map((t) => t.id),\n    );\n  }\n\n  const [doc] = await scene.createEmbeddedDocuments(\"MeasuredTemplate\", [\n    {\n      t: \"circle\",\n      user: game.user.id,\n      x: center.x,\n      y: center.y,\n      direction: 0,\n      distance: radiusFt,\n      angle: 0,\n      width: 0,\n      borderColor: \"#6ec6ff\",\n      fillColor: \"#1a4a6e\",\n      hidden: false,\n      flags: {\n        world: {\n          [NS]: {\n            isTetherZone: true,\n            weaponUuid: item.uuid,\n            originUuid: actorDoc.uuid,\n            radius: radiusFt,\n          },\n        },\n      },\n    },\n  ]);\n  return doc;\n};\n\nconst SNAP_TETHER_MACRO = `// Snap Tether (granted by Silkbind) — postSave cleanup\nconst pass = String(args?.[0]?.macroPass ?? workflow?.macroPass ?? \"\").toLowerCase();\nif (pass && !pass.includes(\"postsave\")) return;\n\nconst failed = new Set(\n  [...(workflow?.failedSaves ?? [])].map((t) => t.id ?? t.document?.id),\n);\nconst saved = [...(workflow?.saves ?? workflow?.targets ?? [])].filter((t) => {\n  const id = t.id ?? t.document?.id;\n  return id && !failed.has(id);\n});\n\n// Save activity targeting self: success = workflow.saves has the actor / no failedSaves\nconst actorDoc = actor ?? workflow?.actor ?? item?.actor ?? item?.parent;\nif (!actorDoc) return;\n\nconst selfToken = actorDoc.getActiveTokens?.()?.[0];\nconst selfId = selfToken?.id;\nconst succeeded =\n  (selfId && saved.some((t) => (t.id ?? t.document?.id) === selfId))\n  || (workflow?.saveResults?.length && !failed.size)\n  || (Array.from(workflow?.saves ?? []).length > 0 && failed.size === 0);\n\nif (!succeeded && failed.size) return;\n\nconst tetherEf = [...(actorDoc.effects ?? [])].find((ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.wireKnuckles.isTethered\") === true\n  || /^tethered$/i.test(String(ef.name ?? \"\")),\n);\nif (!tetherEf) {\n  if (item) await item.delete();\n  return;\n}\nawait tetherEf.delete();\n`;\n\nconst grantSnapTetherFeat = async (targetActor, meta) => {\n  // Drop prior snap feats from this weapon.\n  const stale = targetActor.items.filter(\n    (i) =>\n      foundry.utils.getProperty(i, `${FLAG}.isSnapTether`) === true\n      && foundry.utils.getProperty(i, `${FLAG}.weaponUuid`) === item.uuid,\n  );\n  if (stale.length) {\n    await targetActor.deleteEmbeddedDocuments(\n      \"Item\",\n      stale.map((i) => i.id),\n    );\n  }\n\n  const snapActId = foundry.utils.randomID?.(16)\n    ?? Math.random().toString(36).slice(2, 18);\n  const [created] = await targetActor.createEmbeddedDocuments(\"Item\", [\n    {\n      name: \"Snap Tether\",\n      type: \"feat\",\n      img: \"icons/magic/control/debuff-chains-purple.webp\",\n      system: {\n        description: {\n          value:\n            \"<p>At the start of your turn (or as allowed by the GM), attempt a Strength saving throw against the silkbinder's Silkbind DC. On a success, the ironsilk snaps: the Tethered effect and tether zone end.</p>\",\n        },\n        activities: {\n          [snapActId]: {\n            _id: snapActId,\n            type: \"save\",\n            sort: 0,\n            name: \"Snap Tether\",\n            img: \"icons/magic/control/debuff-chains-purple.webp\",\n            activation: {\n              type: \"special\",\n              value: null,\n              condition: \"While you are Tethered (typically at the start of your turn)\",\n              override: false,\n            },\n            consumption: {\n              scaling: { allowed: false, max: \"\" },\n              spellSlot: false,\n              targets: [],\n            },\n            description: {\n              chatFlavor:\n                `STR save vs Silkbind DC ${meta.dc}. On a success, remove Tethered and the tether zone.`,\n            },\n            duration: {\n              value: \"\",\n              units: \"inst\",\n              concentration: false,\n              override: false,\n            },\n            effects: [],\n            range: { units: \"self\", special: \"\", override: false },\n            target: {\n              template: {\n                count: \"\",\n                contiguous: false,\n                type: \"\",\n                size: \"\",\n                width: \"\",\n                height: \"\",\n                units: \"ft\",\n              },\n              affects: {\n                count: \"\",\n                type: \"self\",\n                choice: false,\n                special: \"\",\n              },\n              prompt: false,\n              override: false,\n            },\n            uses: { spent: 0, max: \"\", recovery: [] },\n            midiProperties: {\n              ignoreTraits: [],\n              triggeredActivityId: \"none\",\n              triggeredActivityConditionText: \"\",\n              triggeredActivityTargets: \"targets\",\n              triggeredActivityRollAs: \"self\",\n              autoConsume: false,\n              forceConsumeDialog: \"default\",\n              forceRollDialog: \"default\",\n              forceDamageDialog: \"default\",\n              confirmTargets: \"default\",\n              autoTargetType: \"any\",\n              autoTargetAction: \"default\",\n              automationOnly: false,\n              otherActivityCompatible: true,\n              identifier: \"snap-tether\",\n              displayActivityName: true,\n              rollMode: \"default\",\n              chooseEffects: false,\n              toggleEffect: false,\n              ignoreFullCover: false,\n              removeChatButtons: \"default\",\n              magicEffect: false,\n              magicDamage: false,\n              noConcentrationCheck: false,\n              autoCEEffects: \"default\",\n            },\n            damage: { parts: [], onSave: \"none\" },\n            save: {\n              ability: [\"str\"],\n              dc: { calculation: \"\", formula: String(meta.dc) },\n            },\n            useConditionText: \"\",\n            useConditionReason: \"\",\n            effectConditionText: \"\",\n            otherActivityId: \"none\",\n          },\n        },\n      },\n      flags: {\n        world: {\n          [NS]: {\n            isSnapTether: true,\n            weaponUuid: item.uuid,\n            originUuid: actorDoc.uuid,\n            tetherEffectId: meta.effectId,\n          },\n        },\n        \"midi-qol\": {\n          onUseMacroName: \"[postSave]ItemMacro\",\n          onUseMacroParts: {\n            items: [{ macroName: \"ItemMacro\", option: \"postSave\" }],\n          },\n        },\n        itemacro: {\n          macro: {\n            name: \"Snap Tether\",\n            type: \"script\",\n            scope: \"global\",\n            command: SNAP_TETHER_MACRO,\n            img: \"icons/svg/dice-target.svg\",\n          },\n        },\n      },\n    },\n  ]);\n  return created;\n};\n\nconst clearTetherOnActor = async (targetActor) => {\n  const ef = findTethered(targetActor);\n  if (ef) {\n    await ef.delete();\n    return;\n  }\n  // Effect already gone — still try orphan template cleanup via weapon uuid.\n  const scene = canvas.scene;\n  if (!scene) return;\n  const prior = (scene.templates ?? []).filter(\n    (tpl) =>\n      foundry.utils.getProperty(tpl, `${FLAG}.isTetherZone`) === true\n      && foundry.utils.getProperty(tpl, `${FLAG}.weaponUuid`) === item.uuid,\n  );\n  if (prior.length) {\n    await scene.deleteEmbeddedDocuments(\n      \"MeasuredTemplate\",\n      prior.map((t) => t.id),\n    );\n  }\n};\n\nensureCleanupHook();\n\nif (isTether) {\n  const dc = silkbindDc(actorDoc);\n  for (const t of workflowTargets()) {\n    const targetActor = t.actor;\n    const tokenDoc = t.document ?? t;\n    if (!targetActor) continue;\n\n    const tpl = await placeTetherTemplate(tokenDoc, tetherRadius);\n    const ef = findTethered(targetActor);\n    if (!ef) {\n      ui.notifications.warn(\n        \"Wire Knuckles: Tethered effect missing on target — place template only.\",\n      );\n    }\n\n    const snap = ef\n      ? await grantSnapTetherFeat(targetActor, { dc, effectId: ef.id })\n      : null;\n\n    if (ef) {\n      await ef.update({\n        description:\n          `Tethered by ironsilk. Cannot move more than ${tetherRadius} feet away from the embed point. Use your <strong>Snap Tether</strong> feat (STR save DC ${dc}) to snap the silk.`,\n        flags: {\n          ...(ef.flags ?? {}),\n          world: {\n            ...((ef.flags?.world) ?? {}),\n            [NS]: {\n              isTethered: true,\n              templateId: tpl?.id ?? null,\n              weaponUuid: item.uuid,\n              originUuid: actorDoc.uuid,\n              snapItemUuid: snap?.uuid ?? null,\n              dc,\n              radius: tetherRadius,\n            },\n          },\n        },\n      });\n    }\n  }\n  return;\n}\n\nif (isGrapple) {\n  for (const t of workflowTargets()) {\n    const targetActor = t.actor;\n    if (!targetActor) continue;\n    if (!findTethered(targetActor)) {\n      ui.notifications.warn(\n        `Silkbind Grapple: ${targetActor.name} is not Tethered.`,\n      );\n    }\n  }\n  return;\n}\n\nif (isRelease) {\n  for (const t of workflowTargets()) {\n    const targetActor = t.actor;\n    if (!targetActor) continue;\n    await clearTetherOnActor(targetActor);\n  }\n}\n",
+        "folder": null,
+        "sort": 0,
+        "ownership": {
+          "default": 0
+        },
+        "flags": {},
+        "_stats": {
+          "coreVersion": "12.331",
+          "systemId": "dnd5e",
+          "systemVersion": "4.4.4"
+        }
+      }
+    },
     "world": {
       "wireKnuckles": {
-        "hasSilkbind": true
+        "hasSilkbind": true,
+        "tetherRadius": 10,
+        "dcBonus": 2
       }
     }
   },
@@ -1096,8 +1425,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281919,
-    "modifiedTime": 1788906281919,
+    "createdTime": 1790022305089,
+    "modifiedTime": 1790022305089,
     "lastModifiedBy": null
   }
 }
