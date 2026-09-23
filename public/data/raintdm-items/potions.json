@@ -1,0 +1,543 @@
+{
+  "version": "1.0",
+  "description": "AGMH potions and simple consumable buffs for Items Forge (Active Effect automation).",
+  "items": [
+    {
+      "name": "Adamant Pill",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "uncommon",
+      "value": 20000,
+      "weight": 0,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Immunizer",
+        "item2": "Adamant Seed",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, uncommon.",
+        "You gain +2 AC for the next 10 minutes. Taking more than one adamant pill at a time does not increase your AC beyond the +2 bonus it already provides; it instead increases the duration."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "adamant-pill"
+      }
+    },
+    {
+      "name": "Armorskin",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "rare",
+      "value": 37500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Catalyst",
+        "item2": "Adamant Seed",
+        "dc": "17",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, rare.",
+        "Your AC becomes 13 + your Dexterity modifier for the next 8 hours."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "armorskin"
+      }
+    },
+    {
+      "name": "Mega Armorskin",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "veryRare",
+      "value": 75000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Armorskin",
+        "item2": "Pale Extract",
+        "dc": "20",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, very rare.",
+        "Your AC becomes 15 + your Dexterity modifier for the next 8 hours."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "mega-armorskin"
+      }
+    },
+    {
+      "name": "Dash Juice",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "uncommon",
+      "value": 7500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Brewer's Supplies",
+        "item1": "Catalyst",
+        "item2": "Raw Meat",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, uncommon.",
+        "This potion is in a conical smooth glass bottle. It has a yellow color and fizzing bubbles. When you drink this potion, your speed increases by 10 feet for 1 hour."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "dash-juice"
+      }
+    },
+    {
+      "name": "Mega Dash Juice",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "veryRare",
+      "value": 37500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Brewer's Supplies",
+        "item1": "Dash Extract",
+        "item2": "Well-done Steak",
+        "dc": "17",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, very rare.",
+        "This potion is in a small crystal vial embossed with a winged boot. The yellow liquid inside spins at a high rate of speed, even when left alone on a shelf. When you drink this potion, your speed increases by 20 feet for 1 hour."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "mega-dash-juice"
+      }
+    },
+    {
+      "name": "Demondrug",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "rare",
+      "value": 150000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Catalyst",
+        "item2": "Might Seed",
+        "dc": "17",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, rare.",
+        "When you drink this potion, your Strength score increases by +2 for 1 hour."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "demondrug"
+      }
+    },
+    {
+      "name": "Mega Demondrug",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "veryRare",
+      "value": 400000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Demondrug",
+        "item2": "Pale Extract",
+        "dc": "20",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, very rare.",
+        "When you drink this potion, your Strength score increases by +4 for 1 hour."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "mega-demondrug"
+      }
+    },
+    {
+      "name": "Nutrients",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "common",
+      "value": null,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Godbug",
+        "item2": "Blue Mushroom",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "A creature that drinks this vial of liquid increases its hit point maximum by 5 and it gains the same number of hit points. This benefit lasts for 8 hours."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "nutrients"
+      }
+    },
+    {
+      "name": "Mega Nutrients",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "uncommon",
+      "value": null,
+      "weight": 1,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Nutrients",
+        "item2": "Honey",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "A creature that drinks this vial of liquid increases its hit point maximum by 10 and it gains the same number of hit points. This benefit lasts for 8 hours."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "mega-nutrients"
+      }
+    },
+    {
+      "name": "Frozen Berry",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "common",
+      "value": null,
+      "weight": 0,
+      "crafting": {
+        "tool": "Cook's Utensils",
+        "item1": "Tropical Berry",
+        "item2": "Ice Crystal",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "When you eat this berry, you gain resistance to fire damage for 1 hour.",
+        "This item can't be bought, only crafted from the Combo List."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "frozen-berry"
+      }
+    },
+    {
+      "name": "Ancient Potion",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "veryRare",
+      "value": 1000000,
+      "weight": 1,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Mega Nutrients",
+        "item2": "Kelbi Horn",
+        "dc": "20",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, very rare.",
+        "When you drink this potion, you regain 45 hit points. It also removes any exhaustion you are suffering from."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "ancient-potion"
+      }
+    },
+    {
+      "name": "Max Potion",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "veryRare",
+      "value": 1000000,
+      "weight": 1,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Mega Nutrients",
+        "item2": "Dragon Toadstool",
+        "dc": "20",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, very rare.",
+        "When you drink this pale yellow potion, it removes all effects that are reducing your hit point maximum and you regain 70 hit points.",
+        "Foundry: the heal is automated; clear HP-max reduction effects manually if needed."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "max-potion"
+      }
+    },
+    {
+      "name": "Herbal Medicine",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "uncommon",
+      "value": 7500,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Cactus Flower",
+        "item2": "Bitterbug",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, uncommon.",
+        "When you drink this vial of liquid, you gain advantage on saving throws against poison for 1 hour and you heal for 1d4 hit points. It confers no benefit to undead or constructs."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "herbal-medicine"
+      }
+    },
+    {
+      "name": "Lifepowder",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "rare",
+      "value": 30000,
+      "weight": 1,
+      "crafting": {
+        "tool": "Herbalism Kit",
+        "item1": "Lifecrystals",
+        "item2": "Bird Wyvern Fang",
+        "dc": "17",
+        "quantity": "1"
+      },
+      "entries": [
+        "Wondrous item, rare.",
+        "When used, you and the 7 closest creatures within 30 feet of you heal for 1d4+2 hit points."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "lifepowder"
+      }
+    },
+    {
+      "name": "Dust of Life",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "veryRare",
+      "value": 100000,
+      "weight": 1,
+      "entries": [
+        "Wondrous item, very rare.",
+        "When used, you and the 7 closest creatures within 30 feet of you heal for 1d6 + 2 hit points."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "dust-of-life"
+      }
+    },
+    {
+      "name": "Energy Drink",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "rare",
+      "value": 200000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Brewer's Supplies",
+        "item1": "Nitroshroom",
+        "item2": "Honey",
+        "dc": "17",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, rare.",
+        "When you drink this vial, you reduce your exhaustion level by one."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "energy-drink"
+      }
+    },
+    {
+      "name": "Air Philter",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "uncommon",
+      "value": 7500,
+      "weight": 1,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Catalyst",
+        "item2": "Airweed",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, uncommon.",
+        "When you drink this potion you can breathe normally in any environment for 1 hour, and you have advantage on saving throws made against harmful gases and vapors (such as cloudkill and stinking cloud effects, inhaled poisons, and the breath weapons of some dragons)."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "air-philter"
+      }
+    },
+    {
+      "name": "Mega Air Philter",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "rare",
+      "value": 18000,
+      "weight": 1,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Airweed",
+        "item2": "Dash Extract",
+        "dc": "17",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, rare.",
+        "When you drink this potion you can breathe normally in any environment for 24 hours, and you have advantage on saving throws made against harmful gases and vapors (such as cloudkill and stinking cloud effects, inhaled poisons, and the breath weapons of some dragons)."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "mega-air-philter"
+      }
+    },
+    {
+      "name": "Might Pill",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "common",
+      "value": 150000,
+      "weight": 0,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Immunizer",
+        "item2": "Might Seed",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, common.",
+        "When you swallow this pill, your Strength score increases by +4 for 1 minute. Once the effect wears off you gain one level of exhaustion. This bonus does not stack with any other effect that increases your Strength score.",
+        "Foundry: Strength is automated; apply 1 exhaustion manually when the effect ends."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "might-pill"
+      }
+    },
+    {
+      "name": "Power Juice",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "rare",
+      "value": 40000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Brewer's Supplies",
+        "item1": "Catalyst",
+        "item2": "Raw Meat",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Potion, rare.",
+        "You gain the benefits of the haste spell for 1 minute or until your Concentration ends (as if concentrating on a spell).",
+        "Foundry: AC +2, doubled walk speed, and Advantage on Dexterity saves are automated; the extra Attack action from Haste is not."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "power-juice"
+      }
+    },
+    {
+      "name": "Psychoserum",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "rare",
+      "value": 50000,
+      "weight": 0.5,
+      "entries": [
+        "Potion, rare.",
+        "This potion temporarily sharpens your sixth sense and attunes you to the ways of monsters. You have advantage on Wisdom (Survival) checks when tracking a creature for 24 hours."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "psychoserum"
+      }
+    },
+    {
+      "name": "Immunizer",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "common",
+      "value": 18000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Catalyst",
+        "item2": "Bindshroom",
+        "dc": "15",
+        "quantity": "10"
+      },
+      "entries": [
+        "A creature that drinks this vial of opaque liquid gains advantage on saving throws against diseases for 1 hour. It confers no benefit to undead or constructs."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "immunizer"
+      }
+    },
+    {
+      "name": "Antiseptic Stone",
+      "source": "AGMH",
+      "type": "MHPOTION",
+      "rarity": "common",
+      "value": 5000,
+      "weight": 1,
+      "crafting": {
+        "tool": "Alchemist's Supplies",
+        "item1": "Earth Crystal",
+        "item2": "Bitterbug",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "An unnatural crystal with enhanced antiseptic qualities. As an action you can crush the stone, to gain advantage on saving throws against diseases for 1 hour."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "potion",
+        "potionKey": "antiseptic-stone"
+      }
+    }
+  ]
+}

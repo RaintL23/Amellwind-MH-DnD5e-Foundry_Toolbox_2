@@ -1,0 +1,242 @@
+{
+  "version": "1.0",
+  "description": "AGMH handheld bombs, barrel bombs, and throwables for Items Forge (AoE save / attack Activities).",
+  "items": [
+    {
+      "name": "Flash Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 10000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Bomb Casing",
+        "item2": "Flashbug",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an action, light this bomb and throw it at a point up to 60 feet away. Each creature within 5 feet of that point must succeed on a {@dc 13} Constitution saving throw or be {@condition blinded} for 1 minute. A blinded creature can repeat its saving throw at the end of each of its turns, ending the effect on a success."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "flash-bomb"
+      }
+    },
+    {
+      "name": "Sonic Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 10000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Gunpowder (10 oz)",
+        "item2": "Screamer Sac",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an action, light this bomb and throw it at a point up to 60 feet away, creating an ear-piercing sound on impact. Each creature within 30 feet of that point must succeed on a {@dc 13} Constitution saving throw or be {@condition deafened} for 1 minute. A creature can repeat this saving throw at the end of each of its turns, ending the effect on a success."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "sonic-bomb"
+      }
+    },
+    {
+      "name": "Smoke Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 5000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Bomb Casing",
+        "item2": "Ivy",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an action, throw this bomb at a point up to 40 feet away. One round after it lands, it emits a cloud of smoke that creates a heavily obscured area in a 20-foot radius. A moderate wind (at least 10 miles per hour) disperses the smoke in 4 rounds; a strong wind (20 or more miles per hour) disperses it in 1 round.",
+        "Foundry: place the 20-ft radius template on use (treat the delay narratively or wait one round before placing)."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "smoke-bomb"
+      }
+    },
+    {
+      "name": "Poison Smoke Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 5000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Bomb Casing",
+        "item2": "Toadstool",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an action, throw this bomb at a point up to 40 feet away. One round after it lands, it emits poisonous smoke (heavily obscured, 20-foot radius). A creature that starts its turn in the smoke must succeed on a {@dc 13} Constitution saving throw or be {@condition poisoned} for 1 hour. Wind disperses as Smoke Bomb. A poisoned creature can repeat its saving throw at the end of its turn, ending the effect on itself on a success.",
+        "Foundry: Throw places the cloud template; Use Gas runs the Con save against creatures in the area (proxy for starting a turn in the smoke)."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "poison-smoke-bomb"
+      }
+    },
+    {
+      "name": "Sm Barrel-Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 3500,
+      "weight": 5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Small Barrel",
+        "item2": "Gunpowder (80 oz)",
+        "dc": "12",
+        "quantity": "1"
+      },
+      "entries": [
+        "Setting fire to a sm barrel-bomb causes it to explode, dealing {@dice 3d6} fire damage to creatures within 10 feet of it. A successful {@dc 12} Dexterity saving throw halves the damage."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "sm-barrel-bomb"
+      }
+    },
+    {
+      "name": "Lg Barrel-Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 25000,
+      "weight": 20,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Gunpowder (160 oz)",
+        "item2": "Large Barrel",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "Setting fire to a lg barrel-bomb causes it to explode, dealing {@dice 7d6} fire damage to creatures within 10 feet of it. A successful {@dc 15} Dexterity saving throw halves the damage."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "lg-barrel-bomb"
+      }
+    },
+    {
+      "name": "Bounce Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 5000,
+      "weight": 5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Sm Barrel-Bomb",
+        "item2": "Gunpowder (80 oz)",
+        "dc": "20",
+        "quantity": "1"
+      },
+      "entries": [
+        "Setting fire to a bounce bomb causes it to launch 100 feet into the air and explode. It explodes early if it impacts a creature or object before reaching its maximum height, dealing {@dice 3d6} fire damage to creatures within 10 feet of it. A successful {@dc 12} Dexterity saving throw halves the damage.",
+        "Foundry: choose the explosion point (up to 100 feet up / along the path) when you Ignite."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "bounce-bomb"
+      }
+    },
+    {
+      "name": "Dung Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 10000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Bomb Casing",
+        "item2": "Dung",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an action, throw this bomb up to 60 feet. Make a ranged attack against a creature or object, treating the dung bomb as an improvised weapon. On a hit, the creature has disadvantage on Wisdom ({@skill Perception}) checks that rely on smell for 1 hour and disadvantage on Constitution saving throws to maintain concentration for 1 minute. If the target is a creature with an Intelligence score of 8 or lower, it must succeed on a {@dc 15} Constitution saving throw or immediately use its reaction to move up to its speed away from you.",
+        "Foundry: attack + stench AE are automated; the Int 8 flee save is manual."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "dung-bomb"
+      }
+    },
+    {
+      "name": "Tranq Bomb",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 5000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Sleep Herb",
+        "item2": "Bomb Casing",
+        "dc": "15",
+        "quantity": "1"
+      },
+      "entries": [
+        "As an action, throw this bomb up to 40 feet. Make a ranged attack against a creature or object (improvised weapon). On a hit, roll {@dice 5d8}. If the target is below one-fourth of its maximum hit points and its remaining hit points are below the number rolled, it falls {@condition unconscious} for 24 hours.",
+        "You can hit a creature with up to three tranq bombs or ammo, adding the totals. After a third miss of the threshold, the creature is immune for 24 hours. Creatures without a capture loot table are immune.",
+        "Foundry: attack and 5d8 roll are automated; apply unconscious / stacking / immunity manually."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "tranq-bomb"
+      }
+    },
+    {
+      "name": "Paintball",
+      "source": "AGMH",
+      "type": "MHBOMB",
+      "rarity": "common",
+      "value": 2000,
+      "weight": 0.5,
+      "crafting": {
+        "tool": "Tinker's Tools",
+        "item1": "Sap Plant",
+        "item2": "Paintberry",
+        "dc": "10",
+        "quantity": "1d4"
+      },
+      "entries": [
+        "When you throw this item at a creature, make a ranged weapon attack. On a hit, the creature is marked for 1 hour. While marked you have advantage on Wisdom ({@skill Perception}) and Wisdom ({@skill Survival}) checks to find it."
+      ],
+      "_raintdm": {
+        "author": "Amellwind",
+        "kind": "bomb",
+        "bombKey": "paintball"
+      }
+    }
+  ]
+}

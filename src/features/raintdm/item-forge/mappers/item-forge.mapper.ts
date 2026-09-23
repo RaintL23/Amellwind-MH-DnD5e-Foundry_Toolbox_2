@@ -7,6 +7,8 @@ import type {
 const TYPE_LABELS: Record<string, string> = {
   MHMAG: "Magazine (Repeaters)",
   MHTRAP: "Traps",
+  MHPOTION: "Potions & Consumables",
+  MHBOMB: "Bombs",
 };
 
 function isRecord(value: unknown): value is Record<string, unknown> {
@@ -28,6 +30,8 @@ function parseRaintdmMeta(raw: unknown): RaintdmItemMeta | undefined {
   const kind = parseString(raw.kind);
   const magazineKey = parseString(raw.magazineKey);
   const trapKey = parseString(raw.trapKey);
+  const potionKey = parseString(raw.potionKey);
+  const bombKey = parseString(raw.bombKey);
   const chargesPerMagazine = parseNumber(raw.chargesPerMagazine);
   const damageType = parseString(raw.damageType);
   const baseWeapon = parseString(raw.baseWeapon);
@@ -37,6 +41,8 @@ function parseRaintdmMeta(raw: unknown): RaintdmItemMeta | undefined {
     !kind &&
     !magazineKey &&
     !trapKey &&
+    !potionKey &&
+    !bombKey &&
     chargesPerMagazine == null &&
     !damageType &&
     !baseWeapon
@@ -49,6 +55,8 @@ function parseRaintdmMeta(raw: unknown): RaintdmItemMeta | undefined {
     kind,
     magazineKey,
     trapKey,
+    potionKey,
+    bombKey,
     chargesPerMagazine,
     damageType,
     baseWeapon,
