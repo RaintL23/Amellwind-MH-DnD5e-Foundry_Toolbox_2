@@ -192,6 +192,37 @@ export function WeaponForgeList() {
               your custom weapons stay in this browser until you export JSON.
             </p>
           </div>
+        </div>
+
+        <Accordion
+          type="single"
+          collapsible
+          className="mt-4 max-w-3xl rounded-md border border-amber-800/40 bg-amber-950/20 px-3"
+        >
+          <AccordionItem value="important" className="border-b-0">
+            <AccordionTrigger className="py-2.5 text-xs font-medium text-amber-200 hover:no-underline">
+              Important
+            </AccordionTrigger>
+            <AccordionContent className="text-xs text-amber-100/90 leading-relaxed">
+              Creating a weapon here does <strong>not</strong> publish it to the
+              shared Catalog automatically. Weapons in <em>My Weapons</em> are
+              stored in this browser only — clearing site data can remove them,
+              so download a JSON backup if you care about keeping them. To have
+              your weapon appear in the Catalog for everyone, download the JSON
+              and send it to <strong>RaintDM</strong> so it can be shipped with
+              the app.
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+
+        <div className="mt-4 flex flex-wrap items-center gap-3">
+          <ClearableSearchInput
+            value={searchDraft}
+            onChange={setSearchDraft}
+            placeholder="Search weapons…"
+            className="max-w-xs"
+            inputClassName="h-9"
+          />
 
           <div className="flex flex-wrap gap-2">
             <Button type="button" onClick={openCreate}>
@@ -232,37 +263,6 @@ export function WeaponForgeList() {
               Compare
             </Button>
           </div>
-        </div>
-
-        <Accordion
-          type="single"
-          collapsible
-          className="mt-4 max-w-3xl rounded-md border border-amber-800/40 bg-amber-950/20 px-3"
-        >
-          <AccordionItem value="important" className="border-b-0">
-            <AccordionTrigger className="py-2.5 text-xs font-medium text-amber-200 hover:no-underline">
-              Important
-            </AccordionTrigger>
-            <AccordionContent className="text-xs text-amber-100/90 leading-relaxed">
-              Creating a weapon here does <strong>not</strong> publish it to the
-              shared Catalog automatically. Weapons in <em>My Weapons</em> are
-              stored in this browser only — clearing site data can remove them,
-              so download a JSON backup if you care about keeping them. To have
-              your weapon appear in the Catalog for everyone, download the JSON
-              and send it to <strong>RaintDM</strong> so it can be shipped with
-              the app.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <ClearableSearchInput
-            value={searchDraft}
-            onChange={setSearchDraft}
-            placeholder="Search weapons…"
-            className="max-w-xs"
-            inputClassName="h-9"
-          />
 
           {compareMode && (
             <div className="flex flex-wrap items-center gap-2">
