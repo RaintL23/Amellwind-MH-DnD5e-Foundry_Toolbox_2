@@ -1,5 +1,5 @@
 {
-  "_id": "7aWF9JSNuoAELlXd",
+  "_id": "RIgNkO1tDTro5iyc",
   "name": "Hunting Horn (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_huntinghorn.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "6FZbgez9H7ChzbeH": {
-        "_id": "6FZbgez9H7ChzbeH",
+      "0mwQSGqDWJV0sBBE": {
+        "_id": "0mwQSGqDWJV0sBBE",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -580,8 +580,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281761,
-        "modifiedTime": 1788906281761,
+        "createdTime": 1790093097898,
+        "modifiedTime": 1790093097898,
         "lastModifiedBy": null
       }
     }
@@ -666,8 +666,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281761,
-    "modifiedTime": 1788906281761,
+    "createdTime": 1790093097898,
+    "modifiedTime": 1790093097898,
     "lastModifiedBy": null
   }
 }

@@ -1,5 +1,5 @@
 {
-  "_id": "GQXB8a7peqryVQRq",
+  "_id": "hTtu5dfqEBvuRQ5H",
   "name": "Hammer (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_hammer.webp",
@@ -95,8 +95,8 @@
       ]
     },
     "activities": {
-      "a0tEuXRK3qTYWAHG": {
-        "_id": "a0tEuXRK3qTYWAHG",
+      "Y0mkrEIs0YDt3fRT": {
+        "_id": "Y0mkrEIs0YDt3fRT",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1065,8 +1065,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281731,
-        "modifiedTime": 1788906281731,
+        "createdTime": 1790093097810,
+        "modifiedTime": 1790093097810,
         "lastModifiedBy": null
       }
     },
@@ -1129,8 +1129,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281731,
-        "modifiedTime": 1788906281731,
+        "createdTime": 1790093097811,
+        "modifiedTime": 1790093097811,
         "lastModifiedBy": null
       }
     },
@@ -1139,6 +1139,7 @@
       "name": "Mighty Weapon (Stunned)",
       "img": "icons/magic/control/silhouette-fall-slip-prone.webp",
       "description": "",
+      "changes": [],
       "disabled": false,
       "duration": {
         "startTime": null,
@@ -1174,8 +1175,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281731,
-        "modifiedTime": 1788906281731,
+        "createdTime": 1790093097811,
+        "modifiedTime": 1790093097811,
         "lastModifiedBy": null
       }
     }
@@ -1270,8 +1271,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281731,
-    "modifiedTime": 1788906281731,
+    "createdTime": 1790093097809,
+    "modifiedTime": 1790093097809,
     "lastModifiedBy": null
   }
 }

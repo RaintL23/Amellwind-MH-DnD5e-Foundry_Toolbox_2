@@ -1,5 +1,5 @@
 {
-  "_id": "AziEQ1jHqI7DyG5f",
+  "_id": "4AlzZoXYEFy3f0HK",
   "name": "Tonfas (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_tonfas.webp",
@@ -89,8 +89,8 @@
       "max": "6"
     },
     "activities": {
-      "jnJWLMEZQ6eSdjDR": {
-        "_id": "jnJWLMEZQ6eSdjDR",
+      "OZ8TA0RdkP6LbiJn": {
+        "_id": "OZ8TA0RdkP6LbiJn",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -1406,7 +1406,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Apex Spirit: expend 5 Spirit Charges for +5d10 Force damage; target is Incapacitated until the end of its next turn."
+          "chatFlavor": "Expend 5 Spirit Charges for +5d10 Force damage on that hit. Consumes 5 (+5d10)."
         },
         "duration": {
           "value": "",
@@ -1414,11 +1414,7 @@
           "concentration": false,
           "override": false
         },
-        "effects": [
-          {
-            "_id": "tnfApexIncapEff1"
-          }
-        ],
+        "effects": [],
         "range": {
           "value": null,
           "units": "",
@@ -1702,8 +1698,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281903,
-        "modifiedTime": 1788906281903,
+        "createdTime": 1790093098212,
+        "modifiedTime": 1790093098212,
         "lastModifiedBy": null
       }
     },
@@ -1742,8 +1738,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281904,
-        "modifiedTime": 1788906281904,
+        "createdTime": 1790093098213,
+        "modifiedTime": 1790093098213,
         "lastModifiedBy": null
       }
     },
@@ -1789,60 +1785,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281904,
-        "modifiedTime": 1788906281904,
-        "lastModifiedBy": null
-      }
-    },
-    {
-      "_id": "tnfApexIncapEff1",
-      "name": "Apex Spirit (Incapacitated)",
-      "img": "icons/magic/control/encase-creature-monster-hold.webp",
-      "description": "",
-      "changes": [],
-      "disabled": false,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": 1,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "origin": null,
-      "transfer": false,
-      "statuses": [
-        "incapacitated"
-      ],
-      "type": "base",
-      "system": {},
-      "tint": "#ffffff",
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "specialDuration": [
-            "turnEnd"
-          ],
-          "stackable": "noneName",
-          "showIcon": true,
-          "dontApply": false
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": 1790020848121,
-        "modifiedTime": 1790020848121,
+        "createdTime": 1790093098213,
+        "modifiedTime": 1790093098213,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 23900000,
+  "sort": 25100000,
   "ownership": {
     "default": 0
   },
@@ -1935,8 +1885,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281903,
-    "modifiedTime": 1788906281903,
+    "createdTime": 1790093098212,
+    "modifiedTime": 1790093098212,
     "lastModifiedBy": null
   }
 }

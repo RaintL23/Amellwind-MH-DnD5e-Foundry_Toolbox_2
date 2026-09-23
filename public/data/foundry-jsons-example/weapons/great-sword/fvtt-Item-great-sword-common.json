@@ -1,5 +1,5 @@
 {
-  "_id": "FFgjRUDCsWFkOetT",
+  "_id": "qqukzdWlDMRRxxIV",
   "name": "Great Sword (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "vcDsaCX1whCaJoDs": {
-        "_id": "vcDsaCX1whCaJoDs",
+      "UW8q1mRQiHFAPjj1": {
+        "_id": "UW8q1mRQiHFAPjj1",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -240,8 +240,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281691,
-        "modifiedTime": 1788906281691,
+        "createdTime": 1790093097687,
+        "modifiedTime": 1790093097687,
         "lastModifiedBy": null
       }
     }
@@ -293,8 +293,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281690,
-    "modifiedTime": 1788906281690,
+    "createdTime": 1790093097687,
+    "modifiedTime": 1790093097687,
     "lastModifiedBy": null
   }
 }

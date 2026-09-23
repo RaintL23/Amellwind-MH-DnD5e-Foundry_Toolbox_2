@@ -1,5 +1,5 @@
 {
-  "_id": "PfgC73IoIKIOmM8h",
+  "_id": "o6iqHcmnmKezeUOZ",
   "name": "Dual Blades (Very Rare)",
   "type": "weapon",
   "img": "mh-icons/weapon_dualblades.webp",
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "ADeoQMqtW8rSiOCz": {
-        "_id": "ADeoQMqtW8rSiOCz",
+      "fRmCGSl9rfT6wUfb": {
+        "_id": "fRmCGSl9rfT6wUfb",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -724,8 +724,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281659,
-        "modifiedTime": 1788906281659,
+        "createdTime": 1790093097614,
+        "modifiedTime": 1790093097614,
         "lastModifiedBy": null
       }
     },
@@ -782,8 +782,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281659,
-        "modifiedTime": 1788906281659,
+        "createdTime": 1790093097614,
+        "modifiedTime": 1790093097614,
         "lastModifiedBy": null
       }
     },
@@ -834,8 +834,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281659,
-        "modifiedTime": 1788906281659,
+        "createdTime": 1790093097615,
+        "modifiedTime": 1790093097615,
         "lastModifiedBy": null
       }
     }
@@ -926,8 +926,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281658,
-    "modifiedTime": 1788906281658,
+    "createdTime": 1790093097613,
+    "modifiedTime": 1790093097613,
     "lastModifiedBy": null
   }
 }

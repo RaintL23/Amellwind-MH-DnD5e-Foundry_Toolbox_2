@@ -1,5 +1,5 @@
 {
-  "_id": "7H3LICHrqhZS1Fh8",
+  "_id": "s05JrwBJr97gHapD",
   "name": "Sword and Shield (Common)",
   "type": "weapon",
   "img": "mh-icons/weapon_swordandshield.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "90P87z7VJBKuiwde": {
-        "_id": "90P87z7VJBKuiwde",
+      "YhJbQ7g78TQssMCA": {
+        "_id": "YhJbQ7g78TQssMCA",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -240,8 +240,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788990060181,
-        "modifiedTime": 1788990060181,
+        "createdTime": 1790093098158,
+        "modifiedTime": 1790093098158,
         "lastModifiedBy": null
       }
     },
@@ -279,13 +279,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788990060181,
-        "modifiedTime": 1788990060181,
+        "createdTime": 1790093098158,
+        "modifiedTime": 1790093098158,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "aQfFztI5Fv6S0MKV",
+      "_id": "c9RQDOs3ucr0mp2V",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -332,14 +332,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788990060182,
-        "modifiedTime": 1788990060182,
+        "createdTime": 1790093098158,
+        "modifiedTime": 1790093098158,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 100000,
+  "sort": 24200000,
   "ownership": {
     "default": 0
   },
@@ -385,8 +385,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788990060177,
-    "modifiedTime": 1788990060177,
+    "createdTime": 1790093098158,
+    "modifiedTime": 1790093098158,
     "lastModifiedBy": null
   }
 }

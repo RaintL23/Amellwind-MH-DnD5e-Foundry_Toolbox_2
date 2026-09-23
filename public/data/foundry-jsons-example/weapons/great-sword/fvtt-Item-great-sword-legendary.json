@@ -1,5 +1,5 @@
 {
-  "_id": "tPw5ONVTyn0T1M37",
+  "_id": "0d4UXN7hqDuRDFrE",
   "name": "Great Sword (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_greatsword.webp",
@@ -89,8 +89,8 @@
       "max": "3"
     },
     "activities": {
-      "k03tiyveH4W84DB6": {
-        "_id": "k03tiyveH4W84DB6",
+      "Oy8GkL7HBzet0Rbv": {
+        "_id": "Oy8GkL7HBzet0Rbv",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -812,7 +812,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "+3 AC vs triggering attack; if it still hits, reduce damage by 1d10 + STR. Dull the Blade: lose Graze until a Short/Long Rest or 1 minute with a whetstone."
+          "chatFlavor": "+3 AC vs triggering attack; reduce damage by 1d10 + STR on a hit."
         },
         "duration": {
           "value": "",
@@ -820,11 +820,7 @@
           "concentration": false,
           "override": false
         },
-        "effects": [
-          {
-            "_id": "gsDullBladeEff01"
-          }
-        ],
+        "effects": [],
         "range": {
           "units": "self",
           "special": "",
@@ -1181,7 +1177,7 @@
       "_id": "vhh8HPMEELQQETIM",
       "name": "Mastery Property (Graze)",
       "img": "systems/dnd5e/icons/svg/items/equipment.svg",
-      "description": "<p>Lost while Dull the Blade is active (after Emergency Guard).</p>",
+      "description": "",
       "changes": [],
       "disabled": false,
       "duration": {
@@ -1207,8 +1203,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281701,
-        "modifiedTime": 1788906281701,
+        "createdTime": 1790093097723,
+        "modifiedTime": 1790093097723,
         "lastModifiedBy": null
       }
     },
@@ -1260,54 +1256,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281701,
-        "modifiedTime": 1788906281701,
-        "lastModifiedBy": null
-      }
-    },
-    {
-      "_id": "gsDullBladeEff01",
-      "name": "Dull the Blade",
-      "img": "icons/skills/melee/blade-tip-chipped-orange-blue.webp",
-      "description": "<p>The weapon has lost its Graze Mastery property. Ends after a Short or Long Rest, or after spending 1 minute sharpening with a whetstone.</p>",
-      "changes": [],
-      "disabled": false,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "origin": null,
-      "transfer": false,
-      "statuses": [],
-      "type": "base",
-      "system": {},
-      "tint": "#ffffff",
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "stackable": "noneName",
-          "showIcon": true,
-          "dontApply": false
-        },
-        "world": {
-          "greatSword": {
-            "dullBlade": true
-          }
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": 1790020848130,
-        "modifiedTime": 1790020848130,
+        "createdTime": 1790093097723,
+        "modifiedTime": 1790093097723,
         "lastModifiedBy": null
       }
     }
@@ -1359,8 +1309,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281701,
-    "modifiedTime": 1788906281701,
+    "createdTime": 1790093097723,
+    "modifiedTime": 1790093097723,
     "lastModifiedBy": null
   }
 }

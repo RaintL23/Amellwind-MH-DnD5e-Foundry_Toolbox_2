@@ -1,5 +1,5 @@
 {
-  "_id": "ASqUjKxxS5VOSolh",
+  "_id": "5qMxi6nKQlXi2VPM",
   "name": "Melody of Resistant Lightning",
   "type": "feat",
   "img": "icons/magic/lightning/bolt-strike-blue.webp",
@@ -37,7 +37,7 @@
   },
   "effects": [
     {
-      "_id": "VqhKk0SGAHtWFxpo",
+      "_id": "iI0ldQweXhS1MNxv",
       "name": "Melody of Resistant Lightning (Aura 15 ft)",
       "img": "icons/magic/lightning/bolt-strike-blue.webp",
       "description": "",
@@ -108,8 +108,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708578483,
-        "modifiedTime": 1788708578483,
+        "createdTime": 1790105120860,
+        "modifiedTime": 1790105120860,
         "lastModifiedBy": null
       }
     }
@@ -139,8 +139,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708578483,
-    "modifiedTime": 1788708578483,
+    "createdTime": 1790105120860,
+    "modifiedTime": 1790105120860,
     "lastModifiedBy": null
   }
 }

@@ -1,5 +1,5 @@
 {
-  "_id": "CfF2sz77GlCC72RJ",
+  "_id": "P0KuTH4oHMHs1ShF",
   "name": "Sword and Shield (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_swordandshield.webp",
@@ -88,8 +88,8 @@
       "recovery": []
     },
     "activities": {
-      "3jehM4VG5N60INkd": {
-        "_id": "3jehM4VG5N60INkd",
+      "cDSzZGQMpZSueuJU": {
+        "_id": "cDSzZGQMpZSueuJU",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -500,8 +500,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788990060190,
-        "modifiedTime": 1788990060190,
+        "createdTime": 1790093098162,
+        "modifiedTime": 1790093098162,
         "lastModifiedBy": null
       }
     },
@@ -539,13 +539,13 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788990060191,
-        "modifiedTime": 1788990060191,
+        "createdTime": 1790093098162,
+        "modifiedTime": 1790093098162,
         "lastModifiedBy": null
       }
     },
     {
-      "_id": "RfrWDV8HAKrGChIB",
+      "_id": "jydsFBQ39j8bn0DY",
       "name": "Integrated Shield (+2 AC)",
       "img": "icons/skills/melee/shield-block-gray-orange.webp",
       "description": "Base AC from the weapon's integrated shield while equipped.",
@@ -592,14 +592,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788990060192,
-        "modifiedTime": 1788990060192,
+        "createdTime": 1790093098163,
+        "modifiedTime": 1790093098163,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 200000,
+  "sort": 24300000,
   "ownership": {
     "default": 0
   },
@@ -645,8 +645,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788990060190,
-    "modifiedTime": 1788990060190,
+    "createdTime": 1790093098162,
+    "modifiedTime": 1790093098162,
     "lastModifiedBy": null
   }
 }

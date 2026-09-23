@@ -1,5 +1,5 @@
 {
-  "_id": "ycYeBWp89Cj0jPKp",
+  "_id": "gnWI2WraFZSoiaef",
   "name": "Heavy Bowgun (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_heavybowgun.webp",
@@ -90,8 +90,8 @@
       "max": "12"
     },
     "activities": {
-      "r3UFBQYq7xZQaE3T": {
-        "_id": "r3UFBQYq7xZQaE3T",
+      "hRCmmlCYrcNh1hJR": {
+        "_id": "hRCmmlCYrcNh1hJR",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -2776,8 +2776,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281751,
-        "modifiedTime": 1788906281751,
+        "createdTime": 1790093097869,
+        "modifiedTime": 1790093097869,
         "lastModifiedBy": null
       }
     }

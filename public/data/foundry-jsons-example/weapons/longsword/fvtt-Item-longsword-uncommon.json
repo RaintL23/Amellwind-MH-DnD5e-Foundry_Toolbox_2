@@ -1,5 +1,5 @@
 {
-  "_id": "6BHzEtGrTLejb93e",
+  "_id": "tG6B3vFK5ZMhxdkH",
   "name": "Longsword (Uncommon)",
   "type": "weapon",
   "img": "mh-icons/weapon_longsword.webp",
@@ -87,8 +87,8 @@
       "max": "6"
     },
     "activities": {
-      "TmNPq1e5WX7jv10M": {
-        "_id": "TmNPq1e5WX7jv10M",
+      "cpQR5IVvghfEs3RB": {
+        "_id": "cpQR5IVvghfEs3RB",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -380,8 +380,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281810,
-        "modifiedTime": 1788906281810,
+        "createdTime": 1790093098030,
+        "modifiedTime": 1790093098030,
         "lastModifiedBy": null
       }
     }
@@ -475,8 +475,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281810,
-    "modifiedTime": 1788906281810,
+    "createdTime": 1790093098030,
+    "modifiedTime": 1790093098030,
     "lastModifiedBy": null
   }
 }

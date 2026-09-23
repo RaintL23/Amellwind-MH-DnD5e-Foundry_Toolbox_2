@@ -1,5 +1,5 @@
 {
-  "_id": "nJJRXMa0wml4S3pG",
+  "_id": "FrFydDvKSPmVGOYf",
   "name": "Dual Repeaters (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_dualrepeaters.webp",
@@ -89,8 +89,8 @@
       "recovery": []
     },
     "activities": {
-      "vUXWUyQBhPKTXUtu": {
-        "_id": "vUXWUyQBhPKTXUtu",
+      "ZB667OTb0CllN8ZZ": {
+        "_id": "ZB667OTb0CllN8ZZ",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -590,8 +590,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906376089,
-        "modifiedTime": 1788906376089,
+        "createdTime": 1790093097678,
+        "modifiedTime": 1790093097678,
         "lastModifiedBy": null
       }
     },
@@ -629,14 +629,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906376089,
-        "modifiedTime": 1788906376089,
+        "createdTime": 1790093097678,
+        "modifiedTime": 1790093097678,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 6100000,
+  "sort": 9400000,
   "ownership": {
     "default": 0
   },
@@ -743,8 +743,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906376088,
-    "modifiedTime": 1788906376088,
+    "createdTime": 1790093097677,
+    "modifiedTime": 1790093097677,
     "lastModifiedBy": null
   }
 }
