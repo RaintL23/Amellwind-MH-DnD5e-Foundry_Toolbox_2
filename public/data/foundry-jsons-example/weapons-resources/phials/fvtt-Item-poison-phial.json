@@ -1,11 +1,11 @@
 {
-  "_id": "YTgvxXG8SkxOprcd",
+  "_id": "J8NFPSrcI1kllgbC",
   "name": "Poison Phial",
   "type": "feat",
   "img": "icons/magic/acid/dissolve-arm-flesh.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Poison Phial</strong></p><p>Deals an extra [[/r 1d6]] Poison damage. The target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be Poisoned until the end of its next turn.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
+      "value": "<p><strong>Poison Phial</strong></p><p>Deals an extra [[/r 1d6]] Poison damage. The target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be Poisoned until the end of its next turn.</p><p><em>Install one Phial Type after a Long Rest via the Switch Axe <strong>Switch Phial</strong> activity. Only one Phial can be installed at a time.</em></p>",
       "chat": "<p><strong>Poison Phial</strong></p><p>Extra [[/r 1d6]] Poison; CON save or Poisoned until end of its next turn.</p>"
     },
     "source": {
@@ -33,7 +33,7 @@
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "When you finish a Long Rest",
+          "condition": "When you finish a Long Rest (or use Switch Phial on the Switch Axe)",
           "override": false
         },
         "consumption": {
@@ -45,7 +45,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Install Poison Phial. Disable other Phial Install AEs so only one is active."
+          "chatFlavor": "Install Poison Phial. Prefer the Switch Axe Switch Phial activity so only one Phial stays active."
         },
         "duration": {
           "value": "",
@@ -187,14 +187,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708578508,
-        "modifiedTime": 1788708578508,
+        "createdTime": 1790105120882,
+        "modifiedTime": 1790105120882,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 4600000,
+  "sort": 4900000,
   "ownership": {
     "default": 0
   },
@@ -218,8 +218,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708578508,
-    "modifiedTime": 1788708578508,
+    "createdTime": 1790105120882,
+    "modifiedTime": 1790105120882,
     "lastModifiedBy": null
   }
 }

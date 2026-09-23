@@ -1,12 +1,12 @@
 {
-  "_id": "YqtIFk509RLrc8SR",
-  "name": "Element Phial",
+  "_id": "NaHy0Tdz9EmRDOdP",
+  "name": "Lightning Phial",
   "type": "feat",
-  "img": "icons/magic/fire/projectile-embers-orange.webp",
+  "img": "icons/magic/lightning/bolt-strike-blue.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Element Phial</strong></p><p>Deals an extra [[/r 1d8]] Acid, Cold, Fire, or Lightning damage (chosen during your Long Rest) when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time. Set the damage type on the Discharge activity to match your choice.</em></p>",
-      "chat": "<p><strong>Element Phial</strong></p><p>Extra [[/r 1d8]] Acid/Cold/Fire/Lightning on Phial Discharge.</p>"
+      "value": "<p><strong>Lightning Phial</strong></p><p>Deals an extra [[/r 1d6]] Lightning damage when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest via the Switch Axe <strong>Switch Phial</strong> activity. Only one Phial can be installed at a time.</em></p>",
+      "chat": "<p><strong>Lightning Phial</strong></p><p>Extra [[/r 1d6]] Lightning on Phial Discharge.</p>"
     },
     "source": {
       "custom": "",
@@ -16,7 +16,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "element-phial",
+    "identifier": "lightning-phial",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -24,16 +24,16 @@
     "requirements": "Switch Axe (Phial Gauge)",
     "properties": [],
     "activities": {
-      "1tOcNUFIyHXBDT7D": {
-        "_id": "1tOcNUFIyHXBDT7D",
+      "Trh8L69Pwt5PveFP": {
+        "_id": "Trh8L69Pwt5PveFP",
         "type": "utility",
         "sort": 0,
         "name": "Install Phial",
-        "img": "icons/magic/fire/projectile-embers-orange.webp",
+        "img": "icons/magic/lightning/bolt-strike-blue.webp",
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "When you finish a Long Rest",
+          "condition": "When you finish a Long Rest (or use Switch Phial on the Switch Axe)",
           "override": false
         },
         "consumption": {
@@ -45,7 +45,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Install Element Phial. Disable other Phial Install AEs so only one is active."
+          "chatFlavor": "Install Lightning Phial. Prefer the Switch Axe Switch Phial activity so only one Phial stays active."
         },
         "duration": {
           "value": "",
@@ -55,7 +55,7 @@
         },
         "effects": [
           {
-            "_id": "Hb7Dm8DP0WcohRzH"
+            "_id": "llCLQ7mOUotGTMME"
           }
         ],
         "range": {
@@ -102,7 +102,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "install-element-phial",
+          "identifier": "install-lightning-phial",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -138,9 +138,9 @@
   },
   "effects": [
     {
-      "_id": "Hb7Dm8DP0WcohRzH",
-      "name": "Element Phial (Installed)",
-      "img": "icons/magic/fire/projectile-embers-orange.webp",
+      "_id": "llCLQ7mOUotGTMME",
+      "name": "Lightning Phial (Installed)",
+      "img": "icons/magic/lightning/bolt-strike-blue.webp",
       "description": "",
       "changes": [],
       "disabled": true,
@@ -175,9 +175,9 @@
         "world": {
           "sa": {
             "isPhialInstalled": true,
-            "phialKey": "element",
-            "damageFormula": "1d8",
-            "damageType": ""
+            "phialKey": "lightning",
+            "damageFormula": "1d6",
+            "damageType": "lightning"
           }
         }
       },
@@ -187,14 +187,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788708578508,
-        "modifiedTime": 1788708578508,
+        "createdTime": 1790105120882,
+        "modifiedTime": 1790105120882,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 4400000,
+  "sort": 4700000,
   "ownership": {
     "default": 0
   },
@@ -208,7 +208,7 @@
     "world": {
       "sa": {
         "isPhial": true,
-        "phialKey": "element"
+        "phialKey": "lightning"
       }
     }
   },
@@ -218,8 +218,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788708578508,
-    "modifiedTime": 1788708578508,
+    "createdTime": 1790105120882,
+    "modifiedTime": 1790105120882,
     "lastModifiedBy": null
   }
 }

@@ -13,15 +13,17 @@ import { getAssignedFeaturesForRow } from "../utils/weapon-forge-features.utils"
 
 export interface PhialFeatDef {
   name: string;
-  /** Short key stored on flags.world.sa.phialKey */
+  /** Short key stored on flags.world.sa.phialKey / installedPhial */
   phialKey: string;
   img: string;
   bodyHtml: string;
   chatHtml: string;
   /** Damage die for Phial Discharge when this phial is installed. */
   damageFormula: string;
-  /** Damage type id (empty for Element — player picks Acid/Cold/Fire/Lightning). */
+  /** Damage type id (always set — elemental phials are split by type). */
   damageType: string;
+  /** True for Acid / Cold / Fire / Lightning / Dragon (Elemental Awakening). */
+  isElemental?: boolean;
   /**
    * Optional on-hit rider after Phial Discharge (Exhaust speed/reactions,
    * Poison CON save, …).
@@ -36,36 +38,70 @@ export interface PhialFeatDef {
   };
 }
 
+const INSTALL_BLURB =
+  "<p><em>Install one Phial Type after a Long Rest via the Switch Axe <strong>Switch Phial</strong> activity. Only one Phial can be installed at a time.</em></p>";
+
 /** Hand-tuned Switch Axe Phials for Foundry resource feats. */
 export const SWITCH_AXE_PHIAL_FEATS: Record<string, PhialFeatDef> = {
   "power phial": {
     name: "Power Phial",
     phialKey: "power",
     img: "icons/weapons/ammunition/arrowhead-glowing-blue.webp",
-    bodyHtml:
-      "<p><strong>Power Phial</strong></p><p>Deals an extra [[/r 1d6]] Slashing damage when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
+    bodyHtml: `<p><strong>Power Phial</strong></p><p>Deals an extra [[/r 1d8]] Slashing damage when your Phial Discharge activates.</p>${INSTALL_BLURB}`,
     chatHtml:
-      "<p><strong>Power Phial</strong></p><p>Extra [[/r 1d6]] Slashing on Phial Discharge.</p>",
-    damageFormula: "1d6",
+      "<p><strong>Power Phial</strong></p><p>Extra [[/r 1d8]] Slashing on Phial Discharge.</p>",
+    damageFormula: "1d8",
     damageType: "slashing",
   },
-  "element phial": {
-    name: "Element Phial",
-    phialKey: "element",
-    img: "icons/magic/fire/projectile-embers-orange.webp",
-    bodyHtml:
-      "<p><strong>Element Phial</strong></p><p>Deals an extra [[/r 1d8]] Acid, Cold, Fire, or Lightning damage (chosen during your Long Rest) when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time. Set the damage type on the Discharge activity to match your choice.</em></p>",
+  "acid phial": {
+    name: "Acid Phial",
+    phialKey: "acid",
+    img: "icons/magic/acid/projectile-glowing-bubbles.webp",
+    bodyHtml: `<p><strong>Acid Phial</strong></p><p>Deals an extra [[/r 1d6]] Acid damage when your Phial Discharge activates.</p>${INSTALL_BLURB}`,
     chatHtml:
-      "<p><strong>Element Phial</strong></p><p>Extra [[/r 1d8]] Acid/Cold/Fire/Lightning on Phial Discharge.</p>",
-    damageFormula: "1d8",
-    damageType: "",
+      "<p><strong>Acid Phial</strong></p><p>Extra [[/r 1d6]] Acid on Phial Discharge.</p>",
+    damageFormula: "1d6",
+    damageType: "acid",
+    isElemental: true,
+  },
+  "cold phial": {
+    name: "Cold Phial",
+    phialKey: "cold",
+    img: "icons/magic/water/projectile-ice-snowball.webp",
+    bodyHtml: `<p><strong>Cold Phial</strong></p><p>Deals an extra [[/r 1d6]] Cold damage when your Phial Discharge activates.</p>${INSTALL_BLURB}`,
+    chatHtml:
+      "<p><strong>Cold Phial</strong></p><p>Extra [[/r 1d6]] Cold on Phial Discharge.</p>",
+    damageFormula: "1d6",
+    damageType: "cold",
+    isElemental: true,
+  },
+  "fire phial": {
+    name: "Fire Phial",
+    phialKey: "fire",
+    img: "icons/magic/fire/projectile-embers-orange.webp",
+    bodyHtml: `<p><strong>Fire Phial</strong></p><p>Deals an extra [[/r 1d6]] Fire damage when your Phial Discharge activates.</p>${INSTALL_BLURB}`,
+    chatHtml:
+      "<p><strong>Fire Phial</strong></p><p>Extra [[/r 1d6]] Fire on Phial Discharge.</p>",
+    damageFormula: "1d6",
+    damageType: "fire",
+    isElemental: true,
+  },
+  "lightning phial": {
+    name: "Lightning Phial",
+    phialKey: "lightning",
+    img: "icons/magic/lightning/bolt-strike-blue.webp",
+    bodyHtml: `<p><strong>Lightning Phial</strong></p><p>Deals an extra [[/r 1d6]] Lightning damage when your Phial Discharge activates.</p>${INSTALL_BLURB}`,
+    chatHtml:
+      "<p><strong>Lightning Phial</strong></p><p>Extra [[/r 1d6]] Lightning on Phial Discharge.</p>",
+    damageFormula: "1d6",
+    damageType: "lightning",
+    isElemental: true,
   },
   "exhaust phial": {
     name: "Exhaust Phial",
     phialKey: "exhaust",
     img: "icons/magic/control/silhouette-hold-beam-blue.webp",
-    bodyHtml:
-      "<p><strong>Exhaust Phial</strong></p><p>Deals an extra [[/r 1d6]] Bludgeoning damage. The target's speed is reduced by 10 feet and it cannot take Reactions until the start of its next turn.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
+    bodyHtml: `<p><strong>Exhaust Phial</strong></p><p>Deals an extra [[/r 1d6]] Bludgeoning damage. The target's speed is reduced by 10 feet and it cannot take Reactions until the start of its next turn.</p>${INSTALL_BLURB}`,
     chatHtml:
       "<p><strong>Exhaust Phial</strong></p><p>Extra [[/r 1d6]] Bludgeoning; −10 ft speed and no Reactions until start of its next turn.</p>",
     damageFormula: "1d6",
@@ -81,8 +117,7 @@ export const SWITCH_AXE_PHIAL_FEATS: Record<string, PhialFeatDef> = {
     name: "Poison Phial",
     phialKey: "poison",
     img: "icons/magic/acid/dissolve-arm-flesh.webp",
-    bodyHtml:
-      "<p><strong>Poison Phial</strong></p><p>Deals an extra [[/r 1d6]] Poison damage. The target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be Poisoned until the end of its next turn.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
+    bodyHtml: `<p><strong>Poison Phial</strong></p><p>Deals an extra [[/r 1d6]] Poison damage. The target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be Poisoned until the end of its next turn.</p>${INSTALL_BLURB}`,
     chatHtml:
       "<p><strong>Poison Phial</strong></p><p>Extra [[/r 1d6]] Poison; CON save or Poisoned until end of its next turn.</p>",
     damageFormula: "1d6",
@@ -99,12 +134,12 @@ export const SWITCH_AXE_PHIAL_FEATS: Record<string, PhialFeatDef> = {
     name: "Dragon Phial",
     phialKey: "dragon",
     img: "icons/magic/unholy/orb-holding-green.webp",
-    bodyHtml:
-      "<p><strong>Dragon Phial</strong></p><p>Acts as an Element Phial but deals an extra [[/r 1d10]] Necrotic damage when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest. Only one Phial can be installed at a time.</em></p>",
+    bodyHtml: `<p><strong>Dragon Phial</strong></p><p>Deals an extra [[/r 1d10]] Necrotic damage when your Phial Discharge activates.</p>${INSTALL_BLURB}`,
     chatHtml:
       "<p><strong>Dragon Phial</strong></p><p>Extra [[/r 1d10]] Necrotic on Phial Discharge.</p>",
     damageFormula: "1d10",
     damageType: "necrotic",
+    isElemental: true,
   },
 };
 
@@ -119,7 +154,7 @@ function buildInstallActivity(def: PhialFeatDef): Record<string, unknown> {
     activation: {
       type: "special",
       value: null,
-      condition: "When you finish a Long Rest",
+      condition: "When you finish a Long Rest (or use Switch Phial on the Switch Axe)",
       override: false,
     },
     consumption: {
@@ -128,7 +163,7 @@ function buildInstallActivity(def: PhialFeatDef): Record<string, unknown> {
       targets: [],
     },
     description: {
-      chatFlavor: `Install ${def.name}. Disable other Phial Install AEs so only one is active.`,
+      chatFlavor: `Install ${def.name}. Prefer the Switch Axe Switch Phial activity so only one Phial stays active.`,
     },
     duration: {
       value: "",

@@ -1,12 +1,12 @@
 {
-  "_id": "mrQ2a54RVO2unfcE",
-  "name": "Dragon Phial",
+  "_id": "RzaeXxItAab6kKhK",
+  "name": "Fire Phial",
   "type": "feat",
-  "img": "icons/magic/unholy/orb-holding-green.webp",
+  "img": "icons/magic/fire/projectile-embers-orange.webp",
   "system": {
     "description": {
-      "value": "<p><strong>Dragon Phial</strong></p><p>Deals an extra [[/r 1d10]] Necrotic damage when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest via the Switch Axe <strong>Switch Phial</strong> activity. Only one Phial can be installed at a time.</em></p>",
-      "chat": "<p><strong>Dragon Phial</strong></p><p>Extra [[/r 1d10]] Necrotic on Phial Discharge.</p>"
+      "value": "<p><strong>Fire Phial</strong></p><p>Deals an extra [[/r 1d6]] Fire damage when your Phial Discharge activates.</p><p><em>Install one Phial Type after a Long Rest via the Switch Axe <strong>Switch Phial</strong> activity. Only one Phial can be installed at a time.</em></p>",
+      "chat": "<p><strong>Fire Phial</strong></p><p>Extra [[/r 1d6]] Fire on Phial Discharge.</p>"
     },
     "source": {
       "custom": "",
@@ -16,7 +16,7 @@
       "rules": "2024",
       "revision": 1
     },
-    "identifier": "dragon-phial",
+    "identifier": "fire-phial",
     "type": {
       "value": "feat",
       "subtype": ""
@@ -24,12 +24,12 @@
     "requirements": "Switch Axe (Phial Gauge)",
     "properties": [],
     "activities": {
-      "Wg415WvG9X7iGETI": {
-        "_id": "Wg415WvG9X7iGETI",
+      "HrppG2LAWz9eFLQI": {
+        "_id": "HrppG2LAWz9eFLQI",
         "type": "utility",
         "sort": 0,
         "name": "Install Phial",
-        "img": "icons/magic/unholy/orb-holding-green.webp",
+        "img": "icons/magic/fire/projectile-embers-orange.webp",
         "activation": {
           "type": "special",
           "value": null,
@@ -45,7 +45,7 @@
           "targets": []
         },
         "description": {
-          "chatFlavor": "Install Dragon Phial. Prefer the Switch Axe Switch Phial activity so only one Phial stays active."
+          "chatFlavor": "Install Fire Phial. Prefer the Switch Axe Switch Phial activity so only one Phial stays active."
         },
         "duration": {
           "value": "",
@@ -55,7 +55,7 @@
         },
         "effects": [
           {
-            "_id": "SFTvK6TFLrWk0aNI"
+            "_id": "bRg4LQELewlCLAXJ"
           }
         ],
         "range": {
@@ -102,7 +102,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "install-dragon-phial",
+          "identifier": "install-fire-phial",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -138,9 +138,9 @@
   },
   "effects": [
     {
-      "_id": "SFTvK6TFLrWk0aNI",
-      "name": "Dragon Phial (Installed)",
-      "img": "icons/magic/unholy/orb-holding-green.webp",
+      "_id": "bRg4LQELewlCLAXJ",
+      "name": "Fire Phial (Installed)",
+      "img": "icons/magic/fire/projectile-embers-orange.webp",
       "description": "",
       "changes": [],
       "disabled": true,
@@ -175,9 +175,9 @@
         "world": {
           "sa": {
             "isPhialInstalled": true,
-            "phialKey": "dragon",
-            "damageFormula": "1d10",
-            "damageType": "necrotic"
+            "phialKey": "fire",
+            "damageFormula": "1d6",
+            "damageType": "fire"
           }
         }
       },
@@ -194,7 +194,7 @@
     }
   ],
   "folder": null,
-  "sort": 5000000,
+  "sort": 4600000,
   "ownership": {
     "default": 0
   },
@@ -208,7 +208,7 @@
     "world": {
       "sa": {
         "isPhial": true,
-        "phialKey": "dragon"
+        "phialKey": "fire"
       }
     }
   },
