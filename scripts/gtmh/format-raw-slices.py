@@ -20,6 +20,10 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from shop_tables import SHOP_SUBHEADINGS, try_shop_catalog_table  # noqa: E402
+
 ROOT = Path(__file__).resolve().parents[2]
 RAW = ROOT / "public/data/gtmh-patreon/gtmh-patreon.md"
 OUT_DIR = ROOT / "public/data/gtmh-patreon"
@@ -191,6 +195,26 @@ DICE_ROW_RX = re.compile(r"^(\d+(?:\s*-\s*\d+)?)\s+(.+)$")
 TOC_ENTRY_RX = re.compile(r"^(\d+)\s+(.+)$")
 CHAPTER_MARK_RX = re.compile(r"^Chapter\s+(\d+)\.\s*$", re.I)
 APPENDIX_MARK_RX = re.compile(r"^Appendix\s+([A-C])\.\s*$", re.I)
+
+# Ammo Vendor dump headers → markdown tables (must run before FEATURE_LEAD)
+VENDOR_HEADER_RX = re.compile(
+    r"^(Type Cost(?: Base)? Capacity|Item Cost Weight Max Capacity)$"
+)
+# Weapon-appendix rows: "Blaze Ammo. (12) 1 gp 48" / "Pierce lvl 1. (10) 1 gp 10"
+VENDOR_SIMPLE_ROW_RX = re.compile(
+    r"^(.+?)\.?\s+\((\d+)\)\s+(\d+)\s*gp\s+(.+)$",
+    re.I,
+)
+# Shop chapter rows: "Normal Ammo (20) 1 gp 1.5 lb. 80" / "Power Coating (1) 1 gp 1/4 lb. —"
+VENDOR_WEIGHT_ROW_RX = re.compile(
+    r"^(.+?)\s+\((\d+)\)\s+(\d+(?:\.\d+)?)\s*gp\s+"
+    r"((?:\d+/\d+|\d+(?:\.\d+)?)\s*(?:lb\.?|lbs\.?)|—|-)\s+(.+)$",
+    re.I,
+)
+VENDOR_CATEGORY_RX = re.compile(
+    r"^(Bowgun Ammo|Heavy Bowgun only ammo|Light Bowgun only ammo|Bow\*?|Dual Repeater)$",
+    re.I,
+)
 
 BODY_SPLITS = [
     ("intro", None, "Chapter 1"),
@@ -409,6 +433,116 @@ def try_multi_col_resource_table(lines: list[str], i: int) -> tuple[list[str], i
     return out, j
 
 
+def try_ammo_vendor_table(lines: list[str], i: int) -> tuple[list[str], int] | None:
+    """
+    Convert Ammo Vendor dump blocks into markdown tables.
+
+    Headers seen in the raw dump:
+      Type Cost Capacity
+      Type Cost Base Capacity
+      Item Cost Weight Max Capacity
+
+    Without this, FEATURE_LEAD turns "Armor Ammo. (1) 8 gp 1" into ### headings.
+    """
+    header = lines[i].strip()
+    if not VENDOR_HEADER_RX.match(header):
+        return None
+
+    with_weight = header == "Item Cost Weight Max Capacity"
+    capacity_label = (
+        "Base Capacity"
+        if "Base" in header
+        else ("Max Capacity" if with_weight else "Capacity")
+    )
+
+    rows: list[str] = []
+    j = i + 1
+    footnote: str | None = None
+
+    while j < len(lines):
+        s = lines[j].strip()
+        if not s:
+            break
+        if s.startswith("*"):
+            footnote = s
+            j += 1
+            break
+        if s.lower().startswith("variant:"):
+            break
+        if RARITY_RX.match(s) or s.startswith("Chapter ") or s.startswith("Appendix "):
+            break
+
+        if VENDOR_CATEGORY_RX.match(s):
+            label = s
+            if with_weight:
+                rows.append(f"| **{label}** | | | |")
+            else:
+                rows.append(f"| **{label}** | | |")
+            j += 1
+            continue
+
+        if with_weight:
+            rm = VENDOR_WEIGHT_ROW_RX.match(s)
+            if rm:
+                name, qty, cost, weight, cap = (
+                    rm.group(1).strip().rstrip("."),
+                    rm.group(2),
+                    rm.group(3),
+                    rm.group(4).strip(),
+                    rm.group(5).strip(),
+                )
+                rows.append(f"| {name} ({qty}) | {cost} gp | {weight} | {cap} |")
+                j += 1
+                continue
+            sm = VENDOR_SIMPLE_ROW_RX.match(s)
+            if not sm:
+                break
+            name, qty, cost, cap = (
+                sm.group(1).strip().rstrip("."),
+                sm.group(2),
+                sm.group(3),
+                sm.group(4).strip(),
+            )
+            rows.append(f"| {name} ({qty}) | {cost} gp | — | {cap} |")
+            j += 1
+            continue
+
+        sm = VENDOR_SIMPLE_ROW_RX.match(s)
+        if not sm:
+            break
+        name, qty, cost, cap = (
+            sm.group(1).strip().rstrip("."),
+            sm.group(2),
+            sm.group(3),
+            sm.group(4).strip(),
+        )
+        rows.append(f"| {name} ({qty}) | {cost} gp | {cap} |")
+        j += 1
+
+    if len(rows) < 2:
+        return None
+
+    if with_weight:
+        table = [
+            "| Item | Cost | Weight | Max Capacity |",
+            "| --- | ---: | --- | ---: |",
+            *rows,
+            "",
+        ]
+    else:
+        table = [
+            f"| Type | Cost | {capacity_label} |",
+            "| --- | ---: | ---: |",
+            *rows,
+            "",
+        ]
+    if footnote:
+        note = footnote if footnote.startswith("\\*") else f"\\{footnote}"
+        table.append(note)
+        table.append("")
+    return table, j
+
+
 def try_simple_dice_table(lines: list[str], i: int) -> tuple[list[str], int] | None:
     """
     Convert:
@@ -591,6 +725,27 @@ def format_lines(raw: str, slice_titles: set[str], slice_key: str) -> str:
         dice = try_simple_dice_table(lines, i)
         if dice:
             chunk, nxt = dice
+            out.extend(chunk)
+            i = nxt
+            continue
+
+        # Ammo Vendor pricing tables (before FEATURE_LEAD, which would ### the rows)
+        vendor = try_ammo_vendor_table(lines, i)
+        if vendor:
+            chunk, nxt = vendor
+            out.extend(chunk)
+            i = nxt
+            continue
+
+        # Item / weapon / armor / material CR shop catalogs
+        if stripped in SHOP_SUBHEADINGS:
+            out.append(f"### {stripped}")
+            out.append("")
+            i += 1
+            continue
+        shop = try_shop_catalog_table(lines, i)
+        if shop:
+            chunk, nxt = shop
             out.extend(chunk)
             i = nxt
             continue

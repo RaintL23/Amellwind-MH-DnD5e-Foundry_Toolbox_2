@@ -2083,14 +2083,15 @@ Selling materials can be a difficult task at times. Demand is not always there a
 
 A character who wants to sell materials must make a Charisma (Persuasion) check to determine what kind of offer comes in. The character can always opt not to sell, instead forfeiting the workweek of effort and trying again later. Use the Material Base Price and Material Item Offer tables below to determine the sale price.
 
-Material Base Price
-Creatures CR level Base Price*
-0-3 25 gp
-4-8 100 gp
-9-13 500 gp
-14-19 2,000 gp
-20+ 4,000 gp
-*All materials are the same price from a creature based on its CR level.
+| Creatures CR | Base Price |
+| --- | ---: |
+| 0-3 | 25 gp |
+| 4-8 | 100 gp |
+| 9-13 | 500 gp |
+| 14-19 | 2,000 gp |
+| 20+ | 4,000 gp |
+
+\*All materials are the same price from a creature based on its CR level.
 
 Material Item Offer
 Check Total Offer

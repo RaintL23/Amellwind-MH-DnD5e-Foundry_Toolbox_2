@@ -244,47 +244,54 @@ There are many materials you may find while hunting monsters. These cosmetic mat
 
 ### Armor & Weapon Pricing
 
-Weapons* Cost Damage AC Weight Properties
-Accel Axe 50 gp 1d12 slashing — 8 lb. heavy, two-handed
-Charge Blade 30 gp Varies, see Appendix B. Varies 7 lb. heavy, two-handed, switch mode
-Dual Blades 30 gp 1d6 slashing — 4 lb. finesse, light, comes with a main & offhand weapon
-Great Sword 50 gp 2d6 slashing — 6 lb. heavy, two-handed.
-Gunlance 50 gp 1d8 piercing +2 12 lb. reach, reload, comes with a shield
-Hammer 35 gp 2d6 bludgeoning — 10 lb. heavy, two-handed
-Hunting Horn 50 gp 1d12 bludgeoning — 8 lb. heavy, two-handed, chord length: 2
-Insect Glaive 35 gp 1d10 slashing — 5 lb. two-handed
-Lance 40 gp 1d8 piercing +2 12 lb. reach, versatile (1d10), comes with a shield
-Longsword 25 gp 1d10 slashing — 3 lb. two-handed
-Magnet Spike 35 gp Varies see Appendix B. — 7 lb. heavy, two-handed
-Magus Staff 20 gp 1d6 bludgeoning — 4 lb. versatile (1d8)
-Splint Rapier 30 gp Varies, see Appendix B. — 4 lb. finesse, light
-Switch Axe 30 gp Varies, see Appendix B. — 7 lb. heavy, two-handed
-Sword & Shield 20 gp 1d6 slashing +2 8 lb. finesse, light
-Tonfas 25 gp 1d6 bludgeoning — 6 lb. light, comes with a main & offhand weapon
-Wired Knuckles 30 gp 1d4 bludgeoning — 2 lb. light, comes with a main & offhand weapon
-Wyvern Boomerang 40 gp 1d10 slashing — 8 lb. two-handed, thrown (60/180)
-Bow 24 gp 1d8 piercing — 2 lb. ammunition (range 150/600), two-handed
-Dual Repeaters 25 gp 2d4 piercing — 5 lb. ammunition (range 30/120), finesse, loading (6), light, special.
-Heavy Bowgun 50 gp 1d10 piercing, — 18 lb. ammunition (range 100/400, heavy, two-handed
-Light Bowgun 24 gp 1d4 piercing — 5 lb. ammunition (range 80/320), two-handed, rapid fire
-Armor Cost Armour Class (AC) Strength Stealth Weight
-Light Armor
-Padded 5 gp 11 + Dex modifier — Disadvantage 8 lb.
-Leather 10 gp 11 + Dex modifier — — 10 lb.
-Studded Leather 45 gp 12 + Dex modifier — — 13 lb.
-Medium Armor
-Hide 10 gp 12 + Dex modifier (max 2) — — 12 lb.
-Chain Shirt 50 gp 13 + Dex modifier (max 2) — — 20 lb.
-Scale Mail 50 gp 14 + Dex modifier (max 2) — Disadvantage 45 lb.
-Breastplate 400 gp 14 + Dex modifier (max 2) — — 20 lb.
-Half Plate 700 gp 15 + Dex modifier (max 2) — Disadvantage —
-Heavy Armor
-Ring Mail 30 gp 14 — Disadvantage 40 lb.
-Chain Mail 75 gp 16 Str 13 Disadvantage 55 lb.
-Splint 200 gp 17 Str 15 Disadvantage 60 lb.
-Plate 1,500 gp 18 Str 15 Disadvantage 65 lb.
-*Weapons have additional magical properties depending on their rarity. You can find more information about each weapon in Appendix B.
-**Shields are not sold separately by the smithy, they are part of specific weapon purchases. \***No other armor exists in Monster Hunter. +1 armor or +3 armor is not something you will find at the smithy or on a hunt.
+| Weapon | Cost | Damage | AC | Weight | Properties |
+| --- | ---: | --- | :---: | --- | --- |
+| Accel Axe | 50 gp | 1d12 slashing | — | 8 lb. | heavy, two-handed |
+| Charge Blade | 30 gp | Varies, see Appendix B. | Varies | 7 lb. | heavy, two-handed, switch mode |
+| Dual Blades | 30 gp | 1d6 slashing | — | 4 lb. | finesse, light, comes with a main & offhand weapon |
+| Great Sword | 50 gp | 2d6 slashing | — | 6 lb. | heavy, two-handed. |
+| Gunlance | 50 gp | 1d8 piercing | +2 | 12 lb. | reach, reload, comes with a shield |
+| Hammer | 35 gp | 2d6 bludgeoning | — | 10 lb. | heavy, two-handed |
+| Hunting Horn | 50 gp | 1d12 bludgeoning | — | 8 lb. | heavy, two-handed, chord length: 2 |
+| Insect Glaive | 35 gp | 1d10 slashing | — | 5 lb. | two-handed |
+| Lance | 40 gp | 1d8 piercing | +2 | 12 lb. | reach, versatile (1d10), comes with a shield |
+| Longsword | 25 gp | 1d10 slashing | — | 3 lb. | two-handed |
+| Magnet Spike | 35 gp | Varies see Appendix B. | — | 7 lb. | heavy, two-handed |
+| Magus Staff | 20 gp | 1d6 bludgeoning | — | 4 lb. | versatile (1d8) |
+| Splint Rapier | 30 gp | Varies, see Appendix B. | — | 4 lb. | finesse, light |
+| Switch Axe | 30 gp | Varies, see Appendix B. | — | 7 lb. | heavy, two-handed |
+| Sword & Shield | 20 gp | 1d6 slashing | +2 | 8 lb. | finesse, light |
+| Tonfas | 25 gp | 1d6 bludgeoning | — | 6 lb. | light, comes with a main & offhand weapon |
+| Wired Knuckles | 30 gp | 1d4 bludgeoning | — | 2 lb. | light, comes with a main & offhand weapon |
+| Wyvern Boomerang | 40 gp | 1d10 slashing | — | 8 lb. | two-handed, thrown (60/180) |
+| Bow | 24 gp | 1d8 piercing | — | 2 lb. | ammunition (range 150/600), two-handed |
+| Dual Repeaters | 25 gp | 2d4 piercing | — | 5 lb. | ammunition (range 30/120), finesse, loading (6), light, special. |
+| Heavy Bowgun | 50 gp | 1d10 piercing | — | 18 lb. | ammunition (range 100/400, heavy, two-handed |
+| Light Bowgun | 24 gp | 1d4 piercing | — | 5 lb. | ammunition (range 80/320), two-handed, rapid fire |
+
+| Armor | Cost | Armor Class (AC) | Strength | Stealth | Weight |
+| --- | ---: | --- | --- | --- | --- |
+| **Light Armor** | | | | | |
+| Padded | 5 gp | 11 + Dex modifier | — | Disadvantage | 8 lb. |
+| Leather | 10 gp | 11 + Dex modifier | — | — | 10 lb. |
+| Studded Leather | 45 gp | 12 + Dex modifier | — | — | 13 lb. |
+| **Medium Armor** | | | | | |
+| Hide | 10 gp | 12 + Dex modifier (max 2) | — | — | 12 lb. |
+| Chain Shirt | 50 gp | 13 + Dex modifier (max 2) | — | — | 20 lb. |
+| Scale Mail | 50 gp | 14 + Dex modifier (max 2) | — | Disadvantage | 45 lb. |
+| Breastplate | 400 gp | 14 + Dex modifier (max 2) | — | — | 20 lb. |
+| Half Plate | 700 gp | 15 + Dex modifier (max 2) | — | Disadvantage | — |
+| **Heavy Armor** | | | | | |
+| Ring Mail | 30 gp | 14 | — | Disadvantage | 40 lb. |
+| Chain Mail | 75 gp | 16 | Str 13 | Disadvantage | 55 lb. |
+| Splint | 200 gp | 17 | Str 15 | Disadvantage | 60 lb. |
+| Plate | 1,500 gp | 18 | Str 15 | Disadvantage | 65 lb. |
+
+\*Weapons have additional magical properties depending on their rarity. You can find more information about each weapon in Appendix B.
+
+\**Shields are not sold separately by the smithy, they are part of specific weapon purchases.
+
+\***No other armor exists in Monster Hunter. +1 armor or +3 armor is not something you will find at the smithy or on a hunt.
 
 ### Let's walk through it all
 
@@ -632,89 +639,96 @@ This potion temporarily sharpens your sixth sense and attunes you to the ways of
 
 ## Monster Hunter Items
 
-Item Cost Weight
-Antidote 75 gp —
-Antiseptic Stone 50 gp 1 lb.
-Barrel Bombs
-Bounce Bomb 50 gp 5 lb.
-Lg Barrel-bomb 250 gp 20 lb.
-Sm Barrel-bomb 35 gp 5 lb.
-BBQ Spit 1 gp 4 lb.
-Bomb Casing 10 gp 0 lb.
-Bug Net 2 gp 1 lb.
-Carving Knife 50 gp 1 lb.
-Catalyst 50 gp 1 lb.
-Cleanser 300 gp 1/2 lb.
-Cool Drink 90 gp 1/2 lb.
-Deodorant 200 gp 1/2 lb.
-Disposable Earplugs 10 gp —
-Fishing Lures
-Fishing Lure (Arrowana) 1 gp 1/4 lb.
-Fishing Lure (Popfish) 1 gp 1/4 lb.
-Fishing Lure (Sushifish) 1 gp 1/4 lb.
-Fishing Lure (Tuna) 1 gp 1/4 lb.
-Fishing Lure (Whetfish) 1 gp 1/4 lb.
-Frozen Berry* — —
-Gunpowder (10 oz) 3 gp —
-Handheld Bombs
-Dung Bomb 100 gp 1/2 lb.
-Flash Bomb 100 gp 1/2 lb.
-Poison Smoke Bomb 50 gp 1/2 lb.
-Smoke Bomb 50 gp 1/2 lb.
-Sonic Bomb 100 gp 1/2 lb.
-Tranq Bomb 50 gp 1/2 lb.
-Horns
-Armor Horn 1200 gp 2 lb.
-Antidote Horn 300 gp 2 lb.
-Field Horn 400 gp 2 lb.
-Health Horn 500 gp 2 lb.
-Hot Drink 90 gp 1/2 lb.
-Immunizer 180 gp 1/2 lb.
-Large Barrel 2 gp 2 lb.
-*This item can't be bought, only crafted from the combo list.
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Antidote | 75 gp | — |
+| Antiseptic Stone | 50 gp | 1 lb. |
+| **Barrel Bombs** | | |
+| Bounce Bomb | 50 gp | 5 lb. |
+| Lg Barrel-bomb | 250 gp | 20 lb. |
+| Sm Barrel-bomb | 35 gp | 5 lb. |
+| BBQ Spit | 1 gp | 4 lb. |
+| Bomb Casing | 10 gp | 0 lb. |
+| Bug Net | 2 gp | 1 lb. |
+| Carving Knife | 50 gp | 1 lb. |
+| Catalyst | 50 gp | 1 lb. |
+| Cleanser | 300 gp | 1/2 lb. |
+| Cool Drink | 90 gp | 1/2 lb. |
+| Deodorant | 200 gp | 1/2 lb. |
+| Disposable Earplugs | 10 gp | — |
+| **Fishing Lures** | | |
+| Fishing Lure (Arrowana) | 1 gp | 1/4 lb. |
+| Fishing Lure (Popfish) | 1 gp | 1/4 lb. |
+| Fishing Lure (Sushifish) | 1 gp | 1/4 lb. |
+| Fishing Lure (Tuna) | 1 gp | 1/4 lb. |
+| Fishing Lure (Whetfish) | 1 gp | 1/4 lb. |
+| Frozen Berry* | — | — |
+| Gunpowder (10 oz) | 3 gp | — |
+| **Handheld Bombs** | | |
+| Dung Bomb | 100 gp | 1/2 lb. |
+| Flash Bomb | 100 gp | 1/2 lb. |
+| Poison Smoke Bomb | 50 gp | 1/2 lb. |
+| Smoke Bomb | 50 gp | 1/2 lb. |
+| Sonic Bomb | 100 gp | 1/2 lb. |
+| Tranq Bomb | 50 gp | 1/2 lb. |
+| **Horns** | | |
+| Armor Horn | 1200 gp | 2 lb. |
+| Antidote Horn | 300 gp | 2 lb. |
+| Field Horn | 400 gp | 2 lb. |
+| Health Horn | 500 gp | 2 lb. |
+| Hot Drink | 90 gp | 1/2 lb. |
+| Immunizer | 180 gp | 1/2 lb. |
+| Large Barrel | 2 gp | 2 lb. |
 
-Item Cost Weight
-Meat
-Meat (Chilled)_ — 1 lb.
-Meat (Drugged)_ — 1 lb.
-Meat (Hot)_ — 1 lb.
-Meat (Poisoned)_ — 1 lb.
-Meat (Tainted)_ — 1 lb.
-Mega Nutrients_ — 1 lb.
-Mega Bug Net 1,500 gp 1 lb.
-Mega Fishing Pole 1,500 gp 3 lb.
-Mega Pickaxe 1,500 gp 10 lb.
-Nutrients* — 1/2 lb.
-Oxygen Supply 15 gp 1 lb.
-Paintball 20 gp 1/2 lb.
-Small Barrel 1 gp 1 lb.
-Traps
-Pitfall Trap 700 gp 10 lb.
-Pitfall Trap+ 1500 gp 10 lb.
-Shock Trap 1000 gp 10 lb.
-Shock Trap+ 2000 gp 10 lb.
-Trap Tool 500 gp 10 lb.
-Well-done Steak* — 1 lb.
-Magic Items
-Item Cost Weight
-Ancient Potion 10,000 gp 1 lb.
-Adamant Pill 200 gp —
-Air Philter 75 gp 1 lb.
-Armorskin 375 gp 1/2 lb.
-Dash Juice 75 gp 1/2 lb.
-Demondrug 1500 gp 1/2 lb.
-Dust of Life 1000 gp 1 lb.
-Energy Drink 2000 gp 1/2 lb.
-Herbal Medicine 75 gp 1/2 lb.
-Lifepowder 300 gp 1 lb.
-Max Potion 10,000 gp 1 lb.
-Mega Air Philter 180 gp 1 lb.
-Mega Armorskin 750 gp 1/2 lb.
-Mega Dash Juice 375 gp 1/2 lb.
-Mega Demondrug 4000 gp 1/2 lb.
-Might Pill 1500 gp —
-Power Juice 400 gp 1/2 lb.
-Psychoserum 500 gp 1/2 lb.
+\*This item can't be bought, only crafted from the combo list.
+
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| **Meat** | | |
+| Meat (Chilled)_ | — | 1 lb. |
+| Meat (Drugged)_ | — | 1 lb. |
+| Meat (Hot)_ | — | 1 lb. |
+| Meat (Poisoned)_ | — | 1 lb. |
+| Meat (Tainted)_ | — | 1 lb. |
+| Mega Nutrients_ | — | 1 lb. |
+| Mega Bug Net | 1,500 gp | 1 lb. |
+| Mega Fishing Pole | 1,500 gp | 3 lb. |
+| Mega Pickaxe | 1,500 gp | 10 lb. |
+| Nutrients* | — | 1/2 lb. |
+| Oxygen Supply | 15 gp | 1 lb. |
+| Paintball | 20 gp | 1/2 lb. |
+| Small Barrel | 1 gp | 1 lb. |
+| **Traps** | | |
+| Pitfall Trap | 700 gp | 10 lb. |
+| Pitfall Trap+ | 1500 gp | 10 lb. |
+| Shock Trap | 1000 gp | 10 lb. |
+| Shock Trap+ | 2000 gp | 10 lb. |
+| Trap Tool | 500 gp | 10 lb. |
+| Well-done Steak* | — | 1 lb. |
+
+### Magic Items
+
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Ancient Potion | 10,000 gp | 1 lb. |
+| Adamant Pill | 200 gp | — |
+| Air Philter | 75 gp | 1 lb. |
+| Armorskin | 375 gp | 1/2 lb. |
+| Dash Juice | 75 gp | 1/2 lb. |
+| Demondrug | 1500 gp | 1/2 lb. |
+| Dust of Life | 1000 gp | 1 lb. |
+| Energy Drink | 2000 gp | 1/2 lb. |
+| Herbal Medicine | 75 gp | 1/2 lb. |
+| Lifepowder | 300 gp | 1 lb. |
+| Max Potion | 10,000 gp | 1 lb. |
+| Mega Air Philter | 180 gp | 1 lb. |
+| Mega Armorskin | 750 gp | 1/2 lb. |
+| Mega Dash Juice | 375 gp | 1/2 lb. |
+| Mega Demondrug | 4000 gp | 1/2 lb. |
+| Might Pill | 1500 gp | — |
+| Power Juice | 400 gp | 1/2 lb. |
+| Psychoserum | 500 gp | 1/2 lb. |
+
 ## Shops
 
 There is a wide variety for shops in monster hunter, the most common of them are the Provision Stockpile, the Smithy, and the General Store. There are also traveling merchants that appear on occasion offering an assortment of items.
@@ -723,279 +737,300 @@ There is a wide variety for shops in monster hunter, the most common of them are
 
 The provision stockpile appears in almost all cities, towns, and villages. Typically found within a guild hall and run by a guild receptionist. Characters that do not belong to the hunter's guild cannot purchase from the Provision Stockpile. Below you will find a list of items the provision stockpile sells.
 
-Item Cost Weight
-Antidote 75 gp —
-Adamant Pill 200 gp ---
-Antiseptic Stone 50 gp 1 lb.
-Armorskin 375 gp 1/2 lb.
-Barrel Bombs
-Bounce Bomb 50 gp 5 lb.
-Lg Barrel-bomb 250 gp 20 lb.
-Sm Barrel-bomb 35 gp 5 lb.
-BBQ Spit 1 gp 4 lb.
-Bomb Casing 10 gp 0 lb.
-Bug Net 2 gp 1 lb.
-Carving Knife 50 gp 1 lb.
-Cleanser 300 gp 1/2 lb.
-Cool Drink 90 gp 1/2 lb.
-Dash Juice 75 gp 1/2 lb.
-Demondrug 1500 gp 1/2 lb.
-Deodorant 200 gp 1/2 lb.
-Disposable Earplugs 10 gp ---
-Dust of Life 1000 gp 1 lb.
-Energy Drink 2000 gp 1/2 lb.
-Item Cost Weight
-Handheld Bombs
-Dung Bomb 100 gp 1/2 lb.
-Flash Bomb 100 gp 1/2 lb.
-Poison Smoke Bomb 50 gp 1/2 lb.
-Smoke Bomb 50 gp 1/2 lb.
-Sonic Bomb 100 gp 1/2 lb.
-Tranq Bomb 50 gp 1/2 lb.
-Herbal Medicine 75 gp 1/2 lb.
-Item Cost Weight
-Horns
-Armor Horn 1200 gp 2 lb.
-Antidote Horn 300 gp 2 lb.
-Field Horn 400 gp 2 lb.
-Health Horn 500 gp 2 lb.
-Hot Drink 90 gp 1/2 lb.
-Immunizer 180 gp 1/2 lb.
-Lifepowder 300 gp 1 lb.
-Mega Armorskin 750 gp 1/2 lb.
-Mega Bug Net 1,500 gp 1 lb.
-Mega Dash Juice 375 gp 1/2 lb.
-Mega Demondrug 4000 gp 1/2 lb.
-Mega Fishing Pole 1,500 gp 3 lb.
-Mega Pickaxe 1,500 gp 10 lb.
-Might Pill 1500 gp ---
-Paintball 20 gp 1/2 lb.
-Psychoserum 500 gp 1/2 lb.
-Traps
-Pitfall Trap 700 gp 10 lb.
-Pitfall Trap+ 1500 gp 10 lb.
-Shock Trap 1000 gp 10 lb.
-Shock Trap+ 2000 gp 10 lb.
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Antidote | 75 gp | — |
+| Adamant Pill | 200 gp | — |
+| Antiseptic Stone | 50 gp | 1 lb. |
+| Armorskin | 375 gp | 1/2 lb. |
+| **Barrel Bombs** | | |
+| Bounce Bomb | 50 gp | 5 lb. |
+| Lg Barrel-bomb | 250 gp | 20 lb. |
+| Sm Barrel-bomb | 35 gp | 5 lb. |
+| BBQ Spit | 1 gp | 4 lb. |
+| Bomb Casing | 10 gp | 0 lb. |
+| Bug Net | 2 gp | 1 lb. |
+| Carving Knife | 50 gp | 1 lb. |
+| Cleanser | 300 gp | 1/2 lb. |
+| Cool Drink | 90 gp | 1/2 lb. |
+| Dash Juice | 75 gp | 1/2 lb. |
+| Demondrug | 1500 gp | 1/2 lb. |
+| Deodorant | 200 gp | 1/2 lb. |
+| Disposable Earplugs | 10 gp | — |
+| Dust of Life | 1000 gp | 1 lb. |
+| Energy Drink | 2000 gp | 1/2 lb. |
+| **Handheld Bombs** | | |
+| Dung Bomb | 100 gp | 1/2 lb. |
+| Flash Bomb | 100 gp | 1/2 lb. |
+| Poison Smoke Bomb | 50 gp | 1/2 lb. |
+| Smoke Bomb | 50 gp | 1/2 lb. |
+| Sonic Bomb | 100 gp | 1/2 lb. |
+| Tranq Bomb | 50 gp | 1/2 lb. |
+| Herbal Medicine | 75 gp | 1/2 lb. |
+| **Horns** | | |
+| Armor Horn | 1200 gp | 2 lb. |
+| Antidote Horn | 300 gp | 2 lb. |
+| Field Horn | 400 gp | 2 lb. |
+| Health Horn | 500 gp | 2 lb. |
+| Hot Drink | 90 gp | 1/2 lb. |
+| Immunizer | 180 gp | 1/2 lb. |
+| Lifepowder | 300 gp | 1 lb. |
+| Mega Armorskin | 750 gp | 1/2 lb. |
+| Mega Bug Net | 1,500 gp | 1 lb. |
+| Mega Dash Juice | 375 gp | 1/2 lb. |
+| Mega Demondrug | 4000 gp | 1/2 lb. |
+| Mega Fishing Pole | 1,500 gp | 3 lb. |
+| Mega Pickaxe | 1,500 gp | 10 lb. |
+| Might Pill | 1500 gp | — |
+| Paintball | 20 gp | 1/2 lb. |
+| Psychoserum | 500 gp | 1/2 lb. |
+| **Traps** | | |
+| Pitfall Trap | 700 gp | 10 lb. |
+| Pitfall Trap+ | 1500 gp | 10 lb. |
+| Shock Trap | 1000 gp | 10 lb. |
+| Shock Trap+ | 2000 gp | 10 lb. |
+
 ### The General Store
 
 The general store has all your basic lifestyle and hunter needs. Here you will find a variety of items, tools, and trinkets any person may use in their life along with a few standard items for hunting. Below are some of the items you may find in a general store.
 
-Item Cost Weight
-Abacus 2 gp 2 lb.
-Acid (vial) 25 gp 1 lb.
-Alchemist’s fire (flask) 50 gp 1 lb.
-Alchemist's supplies 50 gp 8 lb.
-Antitoxin (vial) 50 gp —
-Backpack 2 gp 5 lb.
-Bedroll 1 gp 7 lb.
-Bottle, glass 2 gp 2 lb.
-Brewer's supplies 20 gp 9 lb.
-Bucket 5 cp 2 lb.
-Bug net 1 sp 1 lb.
-Candle 1 cp —
-Item Cost Weight
-Chest 5 gp 25 lb.
-Climber's kit 25 gp 12 lb.
-Clothes, traveler’s 2 gp 4 lb.
-Deodorant 200gp 1/2 lb.
-Flask or tankard 2 cp 1 lb.
-Fishing Lures
-Fishing Lure (Arrowana) 1 gp 1/4 lb.
-Fishing Lure (Popfish) 1 gp 1/4 lb.
-Fishing Lure (Sushifish) 1 gp 1/4 lb.
-Fishing Lure (Tuna) 1 gp 1/4 lb.
-Fishing Lure (Whetfish) 1 gp 1/4 lb.
-Fishing tackle 1 gp 4 lb.
-Grappling hook 2 gp 4 lb.
-Healer’s kit 5 gp 3 lb.
-Herbalism kit 5 gp 3 lb.
-Horn 3 gp 2 lb.
-Ink (1 ounce bottle) 10 gp —
-Ink pen 2 cp —
-Magnifying glass 100 gp —
-Mess kit 2 sp 1 lb.
-Oil (flask) 1 sp 1 lb.
-Poisoner's Kit 50 gp 2 lb.
-Potion of healing 50 gp 1/2 lb.
-Rations (1 day) 5 sp 2 lb.
-Rope, hempen (50 feet) 1 gp 10 lb.
-Rope, silk (50 feet) 10 gp 5 lb.
-Sack 1 cp 1/2 lb.
-Tent, two-person 2 gp 20 lb.
-Tinderbox 5 sp 1 lb.
-Torch 1 cp 1 lb.
-Vial 1 gp —
-Waterskin 2 sp 5 lb. (full)
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Abacus | 2 gp | 2 lb. |
+| Acid (vial) | 25 gp | 1 lb. |
+| Alchemist’s fire (flask) | 50 gp | 1 lb. |
+| Alchemist's supplies | 50 gp | 8 lb. |
+| Antitoxin (vial) | 50 gp | — |
+| Backpack | 2 gp | 5 lb. |
+| Bedroll | 1 gp | 7 lb. |
+| Bottle, glass | 2 gp | 2 lb. |
+| Brewer's supplies | 20 gp | 9 lb. |
+| Bucket | 5 cp | 2 lb. |
+| Bug net | 1 sp | 1 lb. |
+| Candle | 1 cp | — |
+| Chest | 5 gp | 25 lb. |
+| Climber's kit | 25 gp | 12 lb. |
+| Clothes, traveler’s | 2 gp | 4 lb. |
+| Deodorant | 200 gp | 1/2 lb. |
+| Flask or tankard | 2 cp | 1 lb. |
+| **Fishing Lures** | | |
+| Fishing Lure (Arrowana) | 1 gp | 1/4 lb. |
+| Fishing Lure (Popfish) | 1 gp | 1/4 lb. |
+| Fishing Lure (Sushifish) | 1 gp | 1/4 lb. |
+| Fishing Lure (Tuna) | 1 gp | 1/4 lb. |
+| Fishing Lure (Whetfish) | 1 gp | 1/4 lb. |
+| Fishing tackle | 1 gp | 4 lb. |
+| Grappling hook | 2 gp | 4 lb. |
+| Healer’s kit | 5 gp | 3 lb. |
+| Herbalism kit | 5 gp | 3 lb. |
+| Horn | 3 gp | 2 lb. |
+| Ink (1 ounce bottle) | 10 gp | — |
+| Ink pen | 2 cp | — |
+| Magnifying glass | 100 gp | — |
+| Mess kit | 2 sp | 1 lb. |
+| Oil (flask) | 1 sp | 1 lb. |
+| Poisoner's Kit | 50 gp | 2 lb. |
+| Potion of healing | 50 gp | 1/2 lb. |
+| Rations (1 day) | 5 sp | 2 lb. |
+| Rope, hempen (50 feet) | 1 gp | 10 lb. |
+| Rope, silk (50 feet) | 10 gp | 5 lb. |
+| Sack | 1 cp | 1/2 lb. |
+| Tent, two-person | 2 gp | 20 lb. |
+| Tinderbox | 5 sp | 1 lb. |
+| Torch | 1 cp | 1 lb. |
+| Vial | 1 gp | — |
+| Waterskin | 2 sp | 5 lb. (full) |
+
 ### Traveling Merchants
 
 Traveling Merchants are vendors who randomly visit towns for one day before heading off to their next destination. Their inventory is an assortment of random items, typically between 5-10 items. These can range from typical general store items to rarer monster materials. When a traveling merchant arrives it is up to the GM to determine what they might be selling.
 
 If the traveling merchant is selling monster materials, the price of the material can roughly be determined by the creatures CR as shown on the table below.
 
-Material Base Price
-Creatures CR level Base Price*
-0-3 100 gp
-4-8 400 gp
-9-13 2000 gp
-14-19 8,000 gp
-20+ 20,000 gp
-*The higher the material on the roll table, typically the 17-20 roll range, should have its price doubled as it is the stronger effects you can gain from hunting those creatures.
+| Creatures CR | Base Price |
+| --- | ---: |
+| 0-3 | 100 gp |
+| 4-8 | 400 gp |
+| 9-13 | 2000 gp |
+| 14-19 | 8,000 gp |
+| 20+ | 20,000 gp |
+
+\*The higher the material on the roll table, typically the 17-20 roll range, should have its price doubled as it is the stronger effects you can gain from hunting those creatures.
+
 \*For low CR creatures, the lowest material on the table should be at half price.
 
-Example Traveling Merchant 1
-Item Cost Weight
-Cool Drink 90gp 1/2 lb.
-Crowbar 2 gp 5 lb.
-Grappling Hook 2 gp 4 lb.
-Great Jaggi Head 200 gp 5 lb.
-Hot Drink 90gp 1/2 lb.
-Hunting trap 5 gp 25 lb.
-Jaggi Scale 50 gp —
-Lantern, hooded 5 gp 2 lb.
-Pick, miner’s 2 gp 10 lb.
-Rations (1 day) 5 sp 2 lb.
-Rope, hempen (50 feet) 1 gp 10 lb.
-Example Traveling Merchant 2
-Item Cost Weight
-Armor Horn 1200 gp 2 lb.
-Barroth Gem 800 gp —
-Bounce Bomb 50 gp 5 lb.
-Fishing Lure (Popfish) 1 gp 1/4 lb.
-Grappling Hook 2 gp 4 lb.
-Hot Drink 90gp 1/2 lb.
-Potion of healing 50 gp 1/2 lb.
-Rathian Carapace 400 gp —
-Rations (1 day) 5 sp 2 lb.
-Rope, hempen (50 feet) 1 gp 10 lb.
-Torch 1 cp 1 lb.
+### Example Traveling Merchant 1
+
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Cool Drink | 90 gp | 1/2 lb. |
+| Crowbar | 2 gp | 5 lb. |
+| Grappling Hook | 2 gp | 4 lb. |
+| Great Jaggi Head | 200 gp | 5 lb. |
+| Hot Drink | 90 gp | 1/2 lb. |
+| Hunting trap | 5 gp | 25 lb. |
+| Jaggi Scale | 50 gp | — |
+| Lantern, hooded | 5 gp | 2 lb. |
+| Pick, miner’s | 2 gp | 10 lb. |
+| Rations (1 day) | 5 sp | 2 lb. |
+| Rope, hempen (50 feet) | 1 gp | 10 lb. |
+
+### Example Traveling Merchant 2
+
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Armor Horn | 1200 gp | 2 lb. |
+| Barroth Gem | 800 gp | — |
+| Bounce Bomb | 50 gp | 5 lb. |
+| Fishing Lure (Popfish) | 1 gp | 1/4 lb. |
+| Grappling Hook | 2 gp | 4 lb. |
+| Hot Drink | 90 gp | 1/2 lb. |
+| Potion of healing | 50 gp | 1/2 lb. |
+| Rathian Carapace | 400 gp | — |
+| Rations (1 day) | 5 sp | 2 lb. |
+| Rope, hempen (50 feet) | 1 gp | 10 lb. |
+| Torch | 1 cp | 1 lb. |
+
 ### The Smithy
 
 A workshop designed to answer all equipment-related needs, the Smithy may be the most vital of facilities for any hunter. At the Smithy, hunters can not only purchase new weapons and armor, but they can upgrade their existing weapons and armor, allowing them to place additional creature materials into them. The Smithy also acts as a standard blacksmith for those around the town, providing them with items for everyday use. Below you will find a list of items you can find at the Smithy.
 
-Weapons Cost Damage AC Weight Properties
-Accel Axe 50 gp 1d12 slashing — 8 lb. heavy, two-handed
-Charge Blade* 30 gp Varies see Appendix B. Varies 7 lb. heavy, two-handed, switch mode
-Dual Blades 30 gp 1d6 slashing — 4 lb. finesse, light, comes with a main & offhand weapon
-Great Sword 50 gp 2d6 slashing — 6 lb. heavy, two-handed.
-Gunlance* 50 gp 1d8 piercing +2 12 lb. reach, reload, comes with a shield
-Hammer 35 gp 2d6 bludgeoning — 10 lb. heavy, two-handed
-Hunting Horn 50 gp 1d12 bludgeoning — 8 lb. heavy, two-handed, chord length: 2
-Insect Glaive 35 gp 1d10 slashing — 5 lb. two-handed
-Lance* 40 gp 1d8 piercing +2 12 lb. reach, versatile (1d10), comes with a shield
-Longsword 25 gp 1d10 slashing — 3 lb. two-handed
-Magnet Spike 35 gp Varies see Appendix B. — 7 lb. heavy, two-handed
-Magus Staff 20 gp 1d6 bludgeoning — 4 lb. versatile (1d8)
-Splint Rapier 30 gp Varies, see Appendix B. — 4 lb. finesse, light
-Switch Axe 30 gp Varies see Appendix B. — 7 lb. heavy, two-handed
-Sword & Shield* 20 gp 1d6 slashing +2 8 lb. finesse, light
-Tonfas 25 gp 1d6 bludgeoning — 6 lb. light, comes with a main & offhand weapon
-Wired Knuckles 30 gp 1d4 bludgeoning — 2 lb. light, comes with a main & offhand weapon
-Wyvern Boomerang 40 gp 1d10 slashing — 8 lb. two-handed, thrown (60/180)
-Bow 24 gp 1d8 piercing — 2 lb. ammunition (range 150/600), two-handed
-Dual Repeaters 25 gp 2d4 piercing — 5 lb. ammunition (range 30/120), finesse, loading (6), light, special.
-Heavy Bowgun 50 gp 1d10 piercing, — 18 lb. ammunition (range 100/400, heavy, two-handed
-Light Bowgun 24 gp 1d4 piercing — 5 lb. ammunition (range 80/320), two-handed, rapid fire
-Armor** Cost Armour Class (AC) Strength Stealth Weight
-Light Armor
-Padded 5 gp 11 + Dex modifier — Disadvantage 8 lb.
-Leather 10 gp 11 + Dex modifier — — 10 lb.
-Studded Leather 45 gp 12 + Dex modifier — — 13 lb.
-Medium Armor
-Hide 10 gp 12 + Dex modifier (max 2) — — 12 lb.
-Chain Shirt 50 gp 13 + Dex modifier (max 2) — — 20 lb.
-Scale Mail 50 gp 14 + Dex modifier (max 2) — Disadvantage 45 lb.
-Breastplate 400 gp 14 + Dex modifier (max 2) — — 20 lb.
-Half Plate 700 gp 15 + Dex modifier (max 2) — Disadvantage —
-Heavy Armor
-Ring Mail 30 gp 14 — Disadvantage 40 lb.
-Chain Mail 75 gp 16 Str 13 Disadvantage 55 lb.
-Splint 200 gp 17 Str 15 Disadvantage 60 lb.
-Plate 1,500 gp 18 Str 15 Disadvantage 65 lb.
+| Weapon | Cost | Damage | AC | Weight | Properties |
+| --- | ---: | --- | :---: | --- | --- |
+| Accel Axe | 50 gp | 1d12 slashing | — | 8 lb. | heavy, two-handed |
+| Charge Blade* | 30 gp | Varies see Appendix B. | Varies | 7 lb. | heavy, two-handed, switch mode |
+| Dual Blades | 30 gp | 1d6 slashing | — | 4 lb. | finesse, light, comes with a main & offhand weapon |
+| Great Sword | 50 gp | 2d6 slashing | — | 6 lb. | heavy, two-handed. |
+| Gunlance* | 50 gp | 1d8 piercing | +2 | 12 lb. | reach, reload, comes with a shield |
+| Hammer | 35 gp | 2d6 bludgeoning | — | 10 lb. | heavy, two-handed |
+| Hunting Horn | 50 gp | 1d12 bludgeoning | — | 8 lb. | heavy, two-handed, chord length: 2 |
+| Insect Glaive | 35 gp | 1d10 slashing | — | 5 lb. | two-handed |
+| Lance* | 40 gp | 1d8 piercing | +2 | 12 lb. | reach, versatile (1d10), comes with a shield |
+| Longsword | 25 gp | 1d10 slashing | — | 3 lb. | two-handed |
+| Magnet Spike | 35 gp | Varies see Appendix B. | — | 7 lb. | heavy, two-handed |
+| Magus Staff | 20 gp | 1d6 bludgeoning | — | 4 lb. | versatile (1d8) |
+| Splint Rapier | 30 gp | Varies, see Appendix B. | — | 4 lb. | finesse, light |
+| Switch Axe | 30 gp | Varies see Appendix B. | — | 7 lb. | heavy, two-handed |
+| Sword & Shield* | 20 gp | 1d6 slashing | +2 | 8 lb. | finesse, light |
+| Tonfas | 25 gp | 1d6 bludgeoning | — | 6 lb. | light, comes with a main & offhand weapon |
+| Wired Knuckles | 30 gp | 1d4 bludgeoning | — | 2 lb. | light, comes with a main & offhand weapon |
+| Wyvern Boomerang | 40 gp | 1d10 slashing | — | 8 lb. | two-handed, thrown (60/180) |
+| Bow | 24 gp | 1d8 piercing | — | 2 lb. | ammunition (range 150/600), two-handed |
+| Dual Repeaters | 25 gp | 2d4 piercing | — | 5 lb. | ammunition (range 30/120), finesse, loading (6), light, special. |
+| Heavy Bowgun | 50 gp | 1d10 piercing | — | 18 lb. | ammunition (range 100/400, heavy, two-handed |
+| Light Bowgun | 24 gp | 1d4 piercing | — | 5 lb. | ammunition (range 80/320), two-handed, rapid fire |
+
+| Armor | Cost | Armor Class (AC) | Strength | Stealth | Weight |
+| --- | ---: | --- | --- | --- | --- |
+| **Light Armor** | | | | | |
+| Padded | 5 gp | 11 + Dex modifier | — | Disadvantage | 8 lb. |
+| Leather | 10 gp | 11 + Dex modifier | — | — | 10 lb. |
+| Studded Leather | 45 gp | 12 + Dex modifier | — | — | 13 lb. |
+| **Medium Armor** | | | | | |
+| Hide | 10 gp | 12 + Dex modifier (max 2) | — | — | 12 lb. |
+| Chain Shirt | 50 gp | 13 + Dex modifier (max 2) | — | — | 20 lb. |
+| Scale Mail | 50 gp | 14 + Dex modifier (max 2) | — | Disadvantage | 45 lb. |
+| Breastplate | 400 gp | 14 + Dex modifier (max 2) | — | — | 20 lb. |
+| Half Plate | 700 gp | 15 + Dex modifier (max 2) | — | Disadvantage | — |
+| **Heavy Armor** | | | | | |
+| Ring Mail | 30 gp | 14 | — | Disadvantage | 40 lb. |
+| Chain Mail | 75 gp | 16 | Str 13 | Disadvantage | 55 lb. |
+| Splint | 200 gp | 17 | Str 15 | Disadvantage | 60 lb. |
+| Plate | 1,500 gp | 18 | Str 15 | Disadvantage | 65 lb. |
+
 \*Shields are not sold separately by the smithy, they are part of specific weapon purchases.
-**No other armor exists in Monster Hunter. +1 armor or +3 armor is not something you will find at the smithy or on a hunt.
+
+\**No other armor exists in Monster Hunter. +1 armor or +3 armor is not something you will find at the smithy or on a hunt.
 
 The Smithy Continued.
 Ammo
-Item Cost Weight Max Capacity
-Bowgun Ammo
-Normal Ammo (20) 1 gp 1.5 lb. 80
-Spread Ammo (20) 3 gp 1.5 lb. 40
-Tranq Ammo (1) 50 gp 1.5 lb. 20
-Heavy Bowgun only ammo
-Pierce lvl 1 (20) 2 gp 1.5 lb. 20
-Pierce lvl 2 (20) 3 gp 1.5 lb. 20
-Pierce lvl 3 (20) 4 gp 1.5 lb. 20
-Light Bowgun only ammo
-Pierce Ammo (20) 2 gp 1.5 lb. 40
-Bow
-Arrows (20) 1 gp 1 lb. —
-Dual Repeater
-Normal Ammo (18) 1 gp 1 lb. —
+| Item | Cost | Weight | Max Capacity |
+| --- | ---: | --- | ---: |
+| **Bowgun Ammo** | | | |
+| Normal Ammo (20) | 1 gp | 1.5 lb. | 80 |
+| Spread Ammo (20) | 3 gp | 1.5 lb. | 40 |
+| Tranq Ammo (1) | 50 gp | 1.5 lb. | 20 |
+| **Heavy Bowgun only ammo** | | | |
+| Pierce lvl 1 (20) | 2 gp | 1.5 lb. | 20 |
+| Pierce lvl 2 (20) | 3 gp | 1.5 lb. | 20 |
+| Pierce lvl 3 (20) | 4 gp | 1.5 lb. | 20 |
+| **Light Bowgun only ammo** | | | |
+| Pierce Ammo (20) | 2 gp | 1.5 lb. | 40 |
+| **Bow** | | | |
+| Arrows (20) | 1 gp | 1 lb. | — |
+| **Dual Repeater** | | | |
+| Normal Ammo (18) | 1 gp | 1 lb. | — |
+
 Adventuring Gear
-Item Cost Weight
-Ball Bearings (bag of 1,000) 1 gp 2 lb.
-Bell 1 gp —
-Block and Tackle 1 gp 5 lb.
-Chain (10 feet) 5 gp 10 lb.
-Crowbar 2 gp 5 lb.
-Grappling Hook 2 gp 4 lb.
-Basic Hammer 1 gp 3 lb.
-Hammer, sledge 2 gp 10 lb.
-Hunting trap 5 gp 25 lb.
-Lamp 5 sp 1 lb.
-Lantern, bullseye 10 gp 2 lb.
-Lantern, hooded 5 gp 2 lb.
-Lock 10 gp 1 lb.
-Manacles 2 gp 6 lb.
-Mirror, steel 5 gp 1/2 lb.
-Pick, miner’s 2 gp 10 lb.
-Piton 5 cp 1/4 lb.
-Pot, iron 2 gp 10 lb.
-Shovel 2 gp 5 lb.
-Spikes, iron (10) 1 gp 5 lb.
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Ball Bearings (bag of 1,000) | 1 gp | 2 lb. |
+| Bell | 1 gp | — |
+| Block and Tackle | 1 gp | 5 lb. |
+| Chain (10 feet) | 5 gp | 10 lb. |
+| Crowbar | 2 gp | 5 lb. |
+| Grappling Hook | 2 gp | 4 lb. |
+| Basic Hammer | 1 gp | 3 lb. |
+| Hammer, sledge | 2 gp | 10 lb. |
+| Hunting trap | 5 gp | 25 lb. |
+| Lamp | 5 sp | 1 lb. |
+| Lantern, bullseye | 10 gp | 2 lb. |
+| Lantern, hooded | 5 gp | 2 lb. |
+| Lock | 10 gp | 1 lb. |
+| Manacles | 2 gp | 6 lb. |
+| Mirror, steel | 5 gp | 1/2 lb. |
+| Pick, miner’s | 2 gp | 10 lb. |
+| Piton | 5 cp | 1/4 lb. |
+| Pot, iron | 2 gp | 10 lb. |
+| Shovel | 2 gp | 5 lb. |
+| Spikes, iron (10) | 1 gp | 5 lb. |
+
 Tools
-Item Cost Weight
-Cook's Utensils 1 gp 8 lb.
-Item Cost Weight
-Glassblower's tools 30 gp 5 lb.
-Smith’s tools 20 gp 8 lb.
-Tinker’s tools 50 gp 10 lb.
-Woodcarver's tools 1 gp 5 lb.
+| Item | Cost | Weight |
+| --- | ---: | --- |
+| Cook's Utensils | 1 gp | 8 lb. |
+| Glassblower's tools | 30 gp | 5 lb. |
+| Smith’s tools | 20 gp | 8 lb. |
+| Tinker’s tools | 50 gp | 10 lb. |
+| Woodcarver's tools | 1 gp | 5 lb. |
+
 ### Ammo Vendor
 
 An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition types or just a few of your DMs choice. Below you will find information on each type of ammo the vendor can have.
 
-Item Cost Weight Max Capacity
-Bowgun Ammo
-Normal Ammo (20) 1 gp 1.5 lb. 80
-Paralysis Ammo (1) 4 gp 1.5 lb. 4
-Poison Ammo (1) 4 gp 1.5 lb. 8
-Recover lvl 1 (1) 5 gp 1.5 lb. 4
-Recover lvl 2 (1) 7 gp 1.5 lb. 4
-Spread Ammo (20) 3 gp 1.5 lb. 40
-Sticky Ammo (1) 1 gp 1.5 lb. 10
-Tranq Ammo (1) 50 gp 1.5 lb. 20
-Heavy Bowgun only ammo
-Cluster Ammo (1) 5 gp 1.5 lb. 5
-Pierce lvl 1 (20) 2 gp 1.5 lb. 20
-Pierce lvl 2 (20) 3 gp 1.5 lb. 20
-Pierce lvl 3 (20) 4 gp 1.5 lb. 20
-Slicing Ammo (1) 5 gp 1.5 lb. 5
-Wyvern Ammo (1) 10 gp 1.5 lb. 3
-Light Bowgun only ammo
-Armor Ammo (1) 8 gp 1.5 lb. 5
-Demon Ammo (1) 8 gp 1.5 lb. 5
-Dragon Ammo (20) 3 gp 1.5 lb. 40
-Flaming Ammo (20) 3 gp 1.5 lb. 40
-Pierce Ammo (20) 2 gp 1.5 lb. 40
-Sleep Ammo (1) 5 gp 1.5 lb. 5
-Thunder Ammo (20) 3 gp 1.5 lb. 40
-Water Ammo (20) 3 gp 1.5 lb. 40
-Bow*
-Arrows (20) 1 gp 1 lb. —
-Power Coating (1) 1 gp 1/4 lb. —
-Close Range Coating (1) 1 gp 1/4 lb. —
-*Other coatings are available, use pricing from bowgun ammo for its price, or you can require them to be crafted.
+| Item | Cost | Weight | Max Capacity |
+| --- | ---: | --- | ---: |
+| **Bowgun Ammo** | | | |
+| Normal Ammo (20) | 1 gp | 1.5 lb. | 80 |
+| Paralysis Ammo (1) | 4 gp | 1.5 lb. | 4 |
+| Poison Ammo (1) | 4 gp | 1.5 lb. | 8 |
+| Recover lvl 1 (1) | 5 gp | 1.5 lb. | 4 |
+| Recover lvl 2 (1) | 7 gp | 1.5 lb. | 4 |
+| Spread Ammo (20) | 3 gp | 1.5 lb. | 40 |
+| Sticky Ammo (1) | 1 gp | 1.5 lb. | 10 |
+| Tranq Ammo (1) | 50 gp | 1.5 lb. | 20 |
+| **Heavy Bowgun only ammo** | | | |
+| Cluster Ammo (1) | 5 gp | 1.5 lb. | 5 |
+| Pierce lvl 1 (20) | 2 gp | 1.5 lb. | 20 |
+| Pierce lvl 2 (20) | 3 gp | 1.5 lb. | 20 |
+| Pierce lvl 3 (20) | 4 gp | 1.5 lb. | 20 |
+| Slicing Ammo (1) | 5 gp | 1.5 lb. | 5 |
+| Wyvern Ammo (1) | 10 gp | 1.5 lb. | 3 |
+| **Light Bowgun only ammo** | | | |
+| Armor Ammo (1) | 8 gp | 1.5 lb. | 5 |
+| Demon Ammo (1) | 8 gp | 1.5 lb. | 5 |
+| Dragon Ammo (20) | 3 gp | 1.5 lb. | 40 |
+| Flaming Ammo (20) | 3 gp | 1.5 lb. | 40 |
+| Pierce Ammo (20) | 2 gp | 1.5 lb. | 40 |
+| Sleep Ammo (1) | 5 gp | 1.5 lb. | 5 |
+| Thunder Ammo (20) | 3 gp | 1.5 lb. | 40 |
+| Water Ammo (20) | 3 gp | 1.5 lb. | 40 |
+| **Bow*** | | | |
+| Arrows (20) | 1 gp | 1 lb. | — |
+| Power Coating (1) | 1 gp | 1/4 lb. | — |
+| Close Range Coating (1) | 1 gp | 1/4 lb. | — |
+
+\*Other coatings are available, use pricing from bowgun ammo for its price, or you can require them to be crafted.
 
 ## Combo List
 

@@ -1671,46 +1671,18 @@ If you miss a target with an attack from this repeater while hiding, your positi
 
 An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition, which will be up to your GM. Below you will find each type of ammo, the amount you can carry, how much they cost.
 
-Type Cost Capacity
-### Blaze Ammo
-
-(12) 1 gp 48
-
-### Cryo Ammo
-
-(12) 2 gp 48
-
-### Dawnstar Ammo
-
-(1) 2 gp 18
-
-### Full-Bore Ammo
-
-(1) 1 gp 18
-
-### Marksman Ammo
-
-(1) 1 gp 12
-
-### Normal Ammo
-
-(18) 1 gp 78
-
-### Storm Ammo
-
-(12) 2 gp 48
-
-### Slime Ammo
-
-(12) 1 gp 48
-
-### Tranq Ammo
-
-(1) 50 gp 78
-
-### Twlight Ammo
-
-(1) 2 gp 18
+| Type | Cost | Capacity |
+| --- | ---: | ---: |
+| Blaze Ammo (12) | 1 gp | 48 |
+| Cryo Ammo (12) | 2 gp | 48 |
+| Dawnstar Ammo (1) | 2 gp | 18 |
+| Full-Bore Ammo (1) | 1 gp | 18 |
+| Marksman Ammo (1) | 1 gp | 12 |
+| Normal Ammo (18) | 1 gp | 78 |
+| Storm Ammo (12) | 2 gp | 48 |
+| Slime Ammo (12) | 1 gp | 48 |
+| Tranq Ammo (1) | 50 gp | 78 |
+| Twlight Ammo (1) | 2 gp | 18 |
 
 ### Variant: Crafting Ammunition
 
@@ -1814,49 +1786,25 @@ You quadruple the base ammo capacity your ammo pouch can hold for all ammo.
 
 An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition, which will be up to your GM. Below you will find each type of ammo, the amount you can carry, how much they cost.
 
-Type Cost Base Capacity
-### Cluster Ammo
+| Type | Cost | Base Capacity |
+| --- | ---: | ---: |
+| Cluster Ammo (1) | 5 gp | 2 |
+| Normal Ammo (20) | 1 gp | Unlimited* |
+| Paralysis Ammo (1) | 4 gp | 1 |
+| Pierce lvl 1 (10) | 1 gp | 10 |
+| Pierce lvl 2 (10) | 2 gp | 10 |
+| Pierce lvl 3 (10) | 3 gp | 10 |
+| Poison Ammo (1) | 4 gp | 3 |
+| Recover lvl 1 (1) | 5 gp | 1 |
+| Recover lvl 2 (1) | 7 gp | 1 |
+| Slicing Ammo (1) | 5 gp | 1 |
+| Spread Ammo (20) | 3 gp | 10 |
+| Sticky Ammo (1) | 1 gp | 2 |
+| Tranq Ammo (1) | 50 gp | 20 |
+| Wyvern Ammo (1) | 10 gp | 1 |
 
-(1) 5 gp 2
+\*Up to the GM on how much you can hold
 
-### Normal Ammo
-
-(20) 1 gp Unlimited*
-
-### Paralysis Ammo
-
-(1) 4 gp 1
-
-Pierce lvl 1. (10) 1 gp 10
-Pierce lvl 2. (10) 2 gp 10
-Pierce lvl 3. (10) 3 gp 10
-### Poison Ammo
-
-(1) 4 gp 3
-
-Recover lvl 1. (1) 5 gp 1
-Recover lvl 2. (1) 7 gp 1
-### Slicing Ammo
-
-(1) 5 gp 1
-
-### Spread Ammo
-
-(20) 3 gp 10
-
-### Sticky Ammo
-
-(1) 1 gp 2
-
-### Tranq Ammo
-
-(1) 50 gp 20
-
-### Wyvern Ammo
-
-(1) 10 gp 1
-
-*Up to the GM on how much you can hold
 ### Variant: Crafting Ammunition
 
 You can craft ammunition to produce for your Bowgun. At the end of each long rest, you can create 20 rounds of ammunition. After each short rest, you can produce 5 rounds. It takes 3 rounds of ammunition when you craft any single round of ammunition that has a maximum capacity below 20.
@@ -1988,66 +1936,27 @@ You quadruple the base ammo capacity your ammo pouch can hold for all ammo.
 
 An ammo vendor may be located in a general store, near a blacksmith, or perhaps they have their own shop. A store may have a large supply of ammunition, which will be up to your GM. Below you will find each type of ammo, the amount you can carry, how much they cost.
 
-Type Cost Capacity
-### Armor Ammo
+| Type | Cost | Capacity |
+| --- | ---: | ---: |
+| Armor Ammo (1) | 8 gp | 1 |
+| Demon Ammo (1) | 8 gp | 1 |
+| Dragon Ammo (10) | 3 gp | 10 |
+| Flaming Ammo (10) | 3 gp | 10 |
+| Normal Ammo (20) | 1 gp | Unlimited* |
+| Paralysis Ammo (1) | 4 gp | 1 |
+| Pierce Ammo (10) | 2 gp | 10 |
+| Poison Ammo (1) | 4 gp | 3 |
+| Recover lvl 1 (1) | 5 gp | 1 |
+| Recover lvl 2 (1) | 7 gp | 1 |
+| Sleep Ammo (1) | 5 gp | 1 |
+| Spread Ammo (10) | 3 gp | 10 |
+| Sticky Ammo (1) | 1 gp | 2 |
+| Thunder Ammo (10) | 3 gp | 10 |
+| Tranq Ammo (1) | 50 gp | 20 |
+| Water Ammo (10) | 3 gp | 10 |
 
-(1) 8 gp 1
+\*Up to the GM on how much you can hold
 
-### Demon Ammo
-
-(1) 8 gp 1
-
-### Dragon Ammo
-
-(10) 3 gp 10
-
-### Flaming Ammo
-
-(10) 3 gp 10
-
-### Normal Ammo
-
-(20) 1 gp Unlimited*
-
-### Paralysis Ammo
-
-(1) 4 gp 1
-
-### Pierce Ammo
-
-(10) 2 gp 10
-
-### Poison Ammo
-
-(1) 4 gp 3
-
-Recover lvl 1. (1) 5 gp 1
-Recover lvl 2. (1) 7 gp 1
-### Sleep Ammo
-
-(1) 5 gp 1
-
-### Spread Ammo
-
-(10) 3 gp 10
-
-### Sticky Ammo
-
-(1) 1 gp 2
-
-### Thunder Ammo
-
-(10) 3 gp 10
-
-### Tranq Ammo
-
-(1) 50 gp 20
-
-### Water Ammo
-
-(10) 3 gp 10
-
-*Up to the GM on how much you can hold
 ### Variant: Crafting Ammunition
 
 You can craft ammunition to produce for your Bowgun. At the end of each long rest, you can create 20 rounds of ammunition. After each short rest, you can produce 5 rounds. It takes 3 rounds of ammunition when you craft a single round of ammunition that has a maximum capacity below 20.
