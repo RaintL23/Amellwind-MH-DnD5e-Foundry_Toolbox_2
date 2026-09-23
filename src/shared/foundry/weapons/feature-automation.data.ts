@@ -117,6 +117,7 @@ function reactionAttack(
 
 function saveAction(opts: {
   activation?: "action" | "bonus" | "reaction" | "special";
+  activationCondition?: string;
   saveAbility: string;
   damageFormula?: string;
   damageType?: string;
@@ -138,6 +139,7 @@ function saveAction(opts: {
     "action_ability",
     {
       activation: opts.activation ?? "action",
+      activationCondition: opts.activationCondition,
       activityType: "save",
       saveAbility: opts.saveAbility,
       damageFormula: opts.damageFormula,
@@ -366,7 +368,8 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     },
     "Companion to Demon Dodge (same reaction), Rare+.",
   ),
-  "elemental guard": reactionUtility(
+  // GTMH Charge Blade (Sword reaction damage). Distinct from RaintDM "Elemental Guard".
+  "elemental guard (sword)": reactionUtility(
     "When you are hit by an attack (Sword mode)",
     {
       activityType: "damage",
@@ -376,28 +379,41 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       chatFlavor: "Expend 1 phial: deal 1d4 acid/cold/fire/lightning to the attacker.",
     },
   ),
-  "guard point (elemental guard)": reactionUtility(
+  // RaintDM Charge Blade: Guard Dice AC reaction (feature renamed to Elemental Guard).
+  "elemental guard": reactionUtility(
     "When you are hit by a melee attack while in Sword & Shield Mode",
     {
       // Do NOT consume itemUses here — Midi filters out unpaid reactions.
       // Charge Blade overlay spends 1 Phial Charge in ItemMacro (Lance Shield pattern).
       chatFlavor:
-        "Expend 1 phial: +2 AC vs the attack (Midi rechecks). On a miss, Guard Point: Eruption deals elemental damage.",
+        "Expend 1 phial: roll Guard Dice and add to AC vs the attack (Midi rechecks). On a miss, Guard Point: Eruption deals elemental damage.",
       rangeUnits: "self",
       targetAffectsType: "self",
       targetPrompt: false,
       activityImg: "icons/skills/melee/shield-block-gray-orange.webp",
     },
     // Empty Midi useCondition (default isHit). See applyChargeBladeOverlay.
-    "Needs ItemMacro AC AE + Eruption (Lance Counter-Thrust / Shield pattern).",
+    "Needs ItemMacro Guard Dice AC AE + Eruption (Lance Counter-Thrust / Shield pattern).",
+  ),
+  "guard point (elemental guard)": reactionUtility(
+    "When you are hit by a melee attack while in Sword & Shield Mode",
+    {
+      chatFlavor:
+        "Expend 1 phial: roll Guard Dice and add to AC vs the attack (Midi rechecks). On a miss, Guard Point: Eruption deals elemental damage.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/melee/shield-block-gray-orange.webp",
+    },
+    "Legacy name alias for Elemental Guard. Needs ItemMacro Guard Dice AC AE + Eruption.",
   ),
   "guard point upgrade i": spec("upgrade_scaler", {
     damageFormula: "1d6",
-    chatFlavor: "Guard Point Eruption damage 1d6.",
+    chatFlavor: "Guard Dice → 1d6 (AC roll and Eruption).",
   }),
   "guard point upgrade ii": spec("upgrade_scaler", {
     damageFormula: "1d8",
-    chatFlavor: "Guard Point Eruption damage 1d8.",
+    chatFlavor: "Guard Dice → 1d8 (AC roll and Eruption).",
   }),
   "offset morph": reactionUtility(
     "When a creature you can see makes a melee attack against you",
@@ -652,7 +668,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activation: "special",
       activityType: "utility",
       activationCondition:
-        "When you use Amped Element Discharge (AED), cancel the shockwave",
+        "When you use your Amped Element Discharge attack, cancel the shockwave",
       durationValue: "1",
       durationUnits: "minute",
       rangeUnits: "self",
@@ -675,9 +691,9 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     "upgrade_scaler",
     {
       chatFlavor:
-        "Element Phial (and ZSD) damage ignores Resistance to that damage type.",
+        "Acid, Cold, Fire, Lightning, and Dragon Phial (and ZSD) damage ignores Resistance to that damage type.",
     },
-    "Switch Axe overlay sets midi ignore resistance on Element discharge when unlocked.",
+    "Switch Axe overlay sets midi ignore resistance on elemental discharges when unlocked.",
   ),
   recital: spec(
     "bonus_action",
@@ -1136,18 +1152,22 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       emitGather: false,
       spendMin: 1,
       spendMax: 5,
-      damageFormula: "1d8",
+      damageFormula: "1d6",
       activityType: "save",
       saveAbility: "dex",
+      saveDcCalculation: "str",
       onSave: "half",
       templateType: "cone",
       templateSize: "15",
-      activation: "action",
-      activationCondition: "While in Axe Mode",
+      activation: "special",
+      activationCondition:
+        "Once per turn when you take the Attack action, replace one attack",
+      usesMax: "@prof",
+      usesRecoveryPeriod: "lr",
       chatFlavor:
-        "Expend phial counters for a cone of elemental energy (per phial die below).",
+        "Replace one Attack-action attack: expend phials (min 1) for #d6 attuned element in a 15-ft cone (DEX save, half). PB uses / Long Rest.",
     },
-    "Shared Phial Charges pool. Emits ×1…×5 save activities (or scale if max grows).",
+    "Shared Phial Charges pool. Overlay collapses ×N into one AED with spend dialog.",
   ),
   "amped element discharge (aed)": counterSpend(
     {
@@ -1155,36 +1175,55 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       emitGather: false,
       spendMin: 1,
       spendMax: 5,
-      damageFormula: "1d8",
+      damageFormula: "1d6",
       activityType: "save",
       saveAbility: "dex",
+      saveDcCalculation: "str",
       onSave: "half",
       templateType: "cone",
       templateSize: "15",
-      activation: "action",
-      activationCondition: "While in Axe Mode",
-      chatFlavor: "AED cone; expend chosen number of remaining phials (min 1).",
+      activation: "special",
+      activationCondition:
+        "Once per turn when you take the Attack action, replace one attack",
+      usesMax: "@prof",
+      usesRecoveryPeriod: "lr",
+      chatFlavor:
+        "AED: replace one Attack-action attack; spend phials (dialog). #d6 attuned element / charge in a 15-ft cone; DEX save (STR DC), half on success. PB / LR.",
     },
   ),
+  "amped element discharge upgrade i": spec("upgrade_scaler", {
+    damageFormula: "1d8",
+    chatFlavor: "AED cone damage → 1d8 per phial expended.",
+  }),
   "super amped element discharge": spec("upgrade_scaler", {
     templateSize: "30",
-    damageFormula: "1d12",
-    chatFlavor: "SAED: 30-ft cone; 1d12 per phial; Huge+ coverage rider per description.",
+    damageFormula: "1d10",
+    chatFlavor:
+      "SAED: 30-ft cone; 1d10 per phial; Huge+ full coverage → Disadvantage on the save.",
   }),
   dragonpiercer: saveAction({
+    activation: "special",
+    activationCondition:
+      "Once per turn when you take the Attack action, replace one attack",
     saveAbility: "dex",
+    saveDcCalculation: "dex",
     templateType: "line",
     templateSize: "30",
     templateWidth: "5",
-    damageFormula: "4d6",
+    damageFormula: "2d6",
     damageType: "piercing",
-    usesMax: "1",
+    usesMax: "@prof",
     usesRecoveryPeriod: "lr",
-    notes: "Amellwind marks 1/LR; Raint may differ — uses capped at 1/LR by default.",
+    chatFlavor:
+      "Replace one Attack-action attack: 30-ft line (5 ft wide). DEX save vs Bow Save DC. 2d6 piercing (half on success). Huge+ take double damage. PB uses / Long Rest.",
+    notes:
+      "RaintDM: replace one attack of the Attack action; Huge+ double damage. Tracer ×N activities add +1d6 each (hand-tuned on bow goldens).",
   }),
   "true dragonpiercer": spec("upgrade_scaler", {
-    damageFormula: "6d6",
+    damageFormula: "4d6",
     ignoreCover: true,
+    chatFlavor:
+      "True Dragonpiercer: 4d6 piercing; ignores half/three-quarters cover and piercing resistance. Huge+ still take double.",
   }),
   earthshaker: saveAction({
     saveAbility: "con",
@@ -1253,17 +1292,29 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       emitGather: false,
       spendMin: 2,
       spendMax: 10,
-      damageFormula: "1d10",
+      damageFormula: "1d6",
       activityType: "attack",
-      includeBaseDamage: true,
-      activation: "action",
-      advantageOnUse: true,
-      activationCondition: "Sword mode with at least 2 Phial Charges",
+      includeBaseDamage: false,
+      activation: "special",
+      activationCondition:
+        "Once per turn when you take the Attack action, replace one attack (Sword Mode, ≥2 Phial Charges)",
+      usesMax: "@prof",
+      usesRecoveryPeriod: "sr",
+      rangeValue: "10",
+      rangeUnits: "ft",
       chatFlavor:
-        "ZSD thrust with advantage. Expend chosen phials (min 2); +1d10 phial damage each. Recoil / mode swap per description.",
+        "ZSD: replace one Attack-action attack (Reach 10 ft). Dump all Phial Charges (scale to match current; min 2); +1d6 phial damage each. Recoil → Axe Mode at 0. PB uses / Short Rest.",
     },
-    "Shared Phial Gauge. Wide range → scaled attack with advantage AE.",
+    "Shared Phial Gauge. Scaled attack; dump-all via macro. PB uses / SR.",
   ),
+  "zero sum discharge upgrade i": spec("upgrade_scaler", {
+    damageFormula: "1d8",
+    chatFlavor: "ZSD Phial damage → 1d8 per charge expended.",
+  }),
+  "zero sum discharge upgrade ii": spec("upgrade_scaler", {
+    damageFormula: "1d10",
+    chatFlavor: "ZSD Phial damage → 1d10 per charge expended.",
+  }),
   "zero sum discharge splash": spec(
     "upgrade_scaler",
     {
@@ -1271,14 +1322,6 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
         "ZSD Splash (Rare+): even on a miss, creatures within 5 ft of the target DEX save or take half the Phial explosion damage (companion Save activity).",
     },
     "Leaf renames ZSD. Companion DEX save emitted by Switch Axe overlay.",
-  ),
-  "true zero sum discharge": spec(
-    "upgrade_scaler",
-    {
-      chatFlavor:
-        "On hit: also add STR modifier once per phial expended to the phial explosion damage.",
-    },
-    "STR-per-phial bonus is manual / description until a formula AE exists.",
   ),
   "burst slash": saveAction({
     saveAbility: "dex",
@@ -1360,7 +1403,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       targetAffectsType: "self",
       targetPrompt: false,
       chatFlavor:
-        "Once per Short or Long Rest: choose the element attuned to this weapon (Acid, Cold, Fire, or Lightning). Guard Point Eruption, Elemental Discharge, and AED use that type.",
+        "Choose Acid, Cold, Fire, or Lightning when first attuning/equipping. Once per Short or Long Rest: change the attuned element. Elemental Guard, Elemental Discharge, AED, and upgrades use that type (no re-pick on use).",
       activityImg: "icons/magic/symbols/elements-air-earth-fire-water.webp",
     },
     "Charge Blade: ItemMacro dialog sets flags.world.chargeBlade.elementalType and updates elemental activity damage types. No default element.",
@@ -1378,8 +1421,9 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
   }),
   /**
    * Switch Axe: Sword-mode hits must spend 1 Phial Charge to activate the installed
-   * Phial. Default formula is Power (1d6 S); Element (1d8) is emitted as a sibling
-   * activity by `applySwitchAxeOverlay` when that Phial is unlocked.
+   * Phial. Default formula is Power (1d6 S); sibling activities are emitted per
+   * unlocked Phial (Acid/Cold/Fire/Lightning/Exhaust/Poison/Dragon) by
+   * `applySwitchAxeOverlay`. Use Switch Phial (1/LR) to install one type.
    */
   "phial discharge": spec("action_ability", {
     activation: "special",
@@ -1390,7 +1434,7 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
     consumeAmount: "1",
     activationCondition: "Sword mode on hit",
     chatFlavor:
-      "Expend 1 Phial Charge to activate your installed Phial (Power 1d6 Slashing / Element 1d8 Acid, Cold, Fire, or Lightning).",
+      "Expend 1 Phial Charge to activate your installed Phial (Power 1d6 Slashing / Acid·Cold·Fire·Lightning 1d8 / Exhaust·Poison 1d6 / Dragon 1d10).",
   }),
   "elemental discharge upgrade i": spec("upgrade_scaler", {
     damageFormula: "1d8",
@@ -1487,15 +1531,28 @@ export const WEAPON_FEATURE_AUTOMATION_REGISTRY: Record<
       activityType: "utility",
       consumeItemUses: true,
       consumeAmount: "1",
-      activationCondition: "When you take damage",
       chatFlavor:
-        "Expend 1 Wirebug: move up to 15 ft in any direction (including vertically). This movement does not provoke Opportunity Attacks.",
+        "Expend 1 Wirebug: propel yourself up to 15 ft in any direction (including vertically). No Action/Bonus Action/Reaction. Usable multiple times per turn. Does not provoke Opportunity Attacks.",
       rangeUnits: "self",
       targetAffectsType: "self",
       targetPrompt: false,
       activityImg: "icons/skills/movement/figure-running-gray.webp",
     },
-    "Does not consume Reaction — trigger is optional spend when damaged.",
+    "Free Wirebug spend — no Action/Bonus/Reaction; can be used multiple times per turn.",
+  ),
+  "wire-escape": reactionUtility(
+    "When you take damage",
+    {
+      consumeItemUses: true,
+      consumeAmount: "1",
+      chatFlavor:
+        "Expend 1 Wirebug: move up to 15 ft in any direction (including vertically). This movement does not provoke Opportunity Attacks.",
+      rangeUnits: "self",
+      targetAffectsType: "self",
+      targetPrompt: false,
+      activityImg: "icons/skills/movement/feet-winged-boots-brown.webp",
+    },
+    "Reaction when damaged — reactive Wirebug escape.",
   ),
   "wire-fall": spec(
     "action_ability",
