@@ -1,9 +1,10 @@
 /**
- * Builds Items Forge Foundry items from `public/data/raintdm-items/traps.json`
- * and AGMH siege weapons (`build-siege-weapons.mjs`).
+ * Builds Items Forge Foundry items from `public/data/raintdm-items/traps.json`,
+ * `potions.json`, and AGMH siege weapons (`build-siege-weapons.mjs`).
  *
  * Magazines already ship in `weapons-resources/magazines/` (Dual Repeaters).
- * This pack is hunter traps + siege engines (Dragonator, Dragonrazer, Large Boulder).
+ * This pack is hunter traps + AGMH buff potions + bombs + siege engines
+ * (Dragonator, Dragonrazer, Large Boulder) + carving knife.
  *
  * Run: node public/data/foundry-jsons-example/items-forge/build-items-forge.mjs
  */
@@ -420,6 +421,12 @@ for (const raw of items) {
 }
 
 console.log(`Items Forge traps: ${items.length}`);
+
+const { buildPotions } = await import("./build-potions.mjs");
+buildPotions();
+
+const { buildBombs } = await import("./build-bombs.mjs");
+buildBombs();
 
 const { buildSiegeWeapons } = await import("./build-siege-weapons.mjs");
 buildSiegeWeapons();
