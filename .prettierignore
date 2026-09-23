@@ -1,0 +1,10 @@
+node_modules
+dist
+graphify-out
+public/data
+public/5etools
+backup_jsons
+backup-jsons
+pnpm-lock.yaml
+*.min.js
+*.min.css
