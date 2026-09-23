@@ -221,7 +221,8 @@ function cloneMergeTier(
   } else if (stem === "bow") {
     const bow = { ...((world.bow as Record<string, unknown>) ?? {}) };
     bow.tier = tier === "Very Rare" ? "veryRare" : "legendary";
-    bow.tracerMax = tier === "Very Rare" ? 4 : 5;
+    // Tracer I=3, II=5 (VR), III=7 (Legendary)
+    bow.tracerMax = tier === "Very Rare" ? 5 : 7;
     world.bow = bow;
     // Tracer charge pool on item uses.
     mSys.uses = {
@@ -229,19 +230,62 @@ function cloneMergeTier(
       recovery: [],
       max: String(bow.tracerMax),
     };
-    if (tier === "Legendary") {
-      const acts = mSys.activities as Record<string, Record<string, unknown>>;
-      for (const act of Object.values(acts ?? {})) {
-        if (/^dragonpiercer$/i.test(String(act?.name ?? "").trim())) {
-          act.name = "True Dragonpiercer";
-          const midi =
-            (act.midiProperties as Record<string, unknown> | undefined) ?? {};
-          act.midiProperties = {
-            ...midi,
-            identifier: "true-dragonpiercer",
-            displayActivityName: true,
-          };
-        }
+    const baseDice = tier === "Legendary" ? 4 : 2;
+    const acts = mSys.activities as Record<string, Record<string, unknown>>;
+    for (const act of Object.values(acts ?? {})) {
+      const name = String(act?.name ?? "").trim();
+      const tracerMatch = name.match(/^dragonpiercer\s*[×x]\s*(\d+)\s*tracer$/i);
+      const isBase =
+        /^dragonpiercer$/i.test(name) || /^true\s*dragonpiercer$/i.test(name);
+      if (!tracerMatch && !isBase) continue;
+
+      const tracers = tracerMatch ? Number(tracerMatch[1]) : 0;
+      const dice = baseDice + tracers;
+      const damage = act.damage as
+        | { parts?: Array<Record<string, unknown>> }
+        | undefined;
+      if (damage?.parts?.[0]) {
+        damage.parts[0].number = dice;
+        damage.parts[0].denomination = 6;
+      }
+      act.activation = {
+        type: "special",
+        value: 1,
+        condition:
+          "Once per turn when you take the Attack action, replace one attack",
+        override: false,
+      };
+      const flavorBits = [
+        "30-ft line (5 ft wide). Dex save vs Bow Save DC.",
+        `${dice}d6 piercing (half on success).`,
+        "Huge+ take double damage.",
+      ];
+      if (tracers > 0) flavorBits.push(`Spends ${tracers} Tracer.`);
+      if (tier === "Legendary") {
+        flavorBits.push(
+          "Ignores half/three-quarters cover and piercing resistance.",
+        );
+      }
+      act.description = {
+        ...((act.description as Record<string, unknown>) ?? {}),
+        chatFlavor: flavorBits.join(" "),
+      };
+      if (tier === "Legendary" && isBase) {
+        act.name = "True Dragonpiercer";
+        const midi =
+          (act.midiProperties as Record<string, unknown> | undefined) ?? {};
+        act.midiProperties = {
+          ...midi,
+          identifier: "true-dragonpiercer",
+          displayActivityName: true,
+          ignoreFullCover: true,
+        };
+        act.ignoreTraits = {
+          idi: false,
+          idr: true,
+          idv: false,
+          ida: false,
+        };
       }
     }
   } else if (stem === "gunlance") {
