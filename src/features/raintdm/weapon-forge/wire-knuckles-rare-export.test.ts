@@ -42,6 +42,7 @@ describe("Wire Knuckles rare Foundry export", () => {
 
     // Uncommon mobility still present.
     expect(byName["Wire-Dash"]).toBeDefined();
+    expect(byName["Wire-Escape"]).toBeDefined();
     expect(byName["Wire-Fall"]).toBeDefined();
 
     const tether = byName["Silkbind Tether"];

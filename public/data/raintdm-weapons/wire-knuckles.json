@@ -39,7 +39,7 @@
               "2",
               "--",
               "+2",
-              "Wirebug Gauge, Wire-Dash, Wire-Fall, Wirebug Recall"
+              "Wirebug Gauge, Wire-Dash, Wire-Escape, Wire-Fall, Wirebug Recall"
             ],
             [
               "Rare",
@@ -81,9 +81,14 @@
         "description": "Your gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest."
       },
       {
-        "id": "4695089f-7741-4e30-8819-4bcc11d3ca96",
+        "id": "0fe042a6-68c0-4869-876c-64c7e76143ac",
         "name": "Wire-Dash",
-        "description": "When you take damage, you can expend 1 Wirebug to immediately move up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks."
+        "description": "You can expend 1 Wirebug (no action required) to propel yourself up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks, and you can use this feature multiple times on the same turn (expending 1 Wirebug each time)."
+      },
+      {
+        "id": "4695089f-7741-4e30-8819-4bcc11d3ca96",
+        "name": "Wire-Escape",
+        "description": "When you take damage, you can use your Reaction to expend 1 Wirebug to immediately move up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks."
       },
       {
         "id": "2a6e0ae8-fde3-4c0b-942c-f93274e772e7",

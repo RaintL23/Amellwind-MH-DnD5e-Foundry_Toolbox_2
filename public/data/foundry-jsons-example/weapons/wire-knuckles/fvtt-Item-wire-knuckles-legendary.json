@@ -1,5 +1,5 @@
 {
-  "_id": "fdpKEkqws7t4eelN",
+  "_id": "VXRoPuRlGmqQITlm",
   "name": "Wire Knuckles (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_tonfas.webp",
@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery: Push</strong></p><p>If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wirebug Gauge</strong></p><p>Your gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Wirebug Whisperer</strong></p><p>Your gauntlets can now house up to 4 Wirebugs. Additionally, whenever you score a Critical Hit with this weapon, you immediately regain 1 expended Wirebug.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Dash</strong></p><p>When you take damage, you can expend 1 Wirebug to immediately move up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Fall</strong></p><p>When you fall, you can expend 1 Wirebug to arrest your momentum, stopping your descent in mid-air until the start of your next turn and taking no fall damage from the previous drop.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wirebug Recall</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can regain 1 expended Wirebug.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Wirebug Recall Upgrade</strong></p><p>When you use Wirebug Recall, you regain 2 expended Wirebugs instead of 1.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Tether</strong></p><p>You can use ironsilk to restrict a monster's movement. When you hit a creature with this weapon, you can expend 2 Wirebugs to embed a thread of ironsilk into it. The creature is Tethered to the ground at its current location. It cannot move more than 15 feet away from that center point.</p><p>At the start of its turns, the creature can make a Strength saving throw (DC 8 + your Proficiency Bonus + your Dexterity or Strength modifier) to snap the silk and end the effect.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Silkbind Upgrade</strong></p><p>The radius the creature can move while silkbound is reduced to 10 feet and the save DC increases by +1.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Silkbind Upgrade (Legendary)</strong></p><p>The save DC now increases by +2 instead of +1.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Grapple</strong></p><p>While a creature is Tethered by your Silkbind, you can Grapple it even if it is up to two size categories larger than you. The Grapple succeeds automatically — no contested check is required — and the creature becomes Grappled by you.</p><p>The Grappled condition from this feature does not end if you become Incapacitated. It remains grappled by you even after it breaks free of the silkbind tether.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Wyvern Ride</strong></p><p><strong>Action.</strong></p><p>You can manipulate the ironsilk to puppeteer colossal beasts. As an Action, while you are Grappling a Tethered creature that is at least one size category larger than you, you can force the creature to make a Strength saving throw against your Silkbind DC. On a failed save, you forcefully ride the creature and choose one of the following effects:</p><ul><li>Forced Movement: The creature immediately moves up to its speed in a direction of your choice.</li><li>Directed Attack: The creature immediately makes one of its basic melee attacks against a target of your choice within its reach.</li><li>Ramming Maneuver: The creature uses its movement to violently crash into a wall, tree, or another creature. The mounted creature takes [[/r 3d10]] Bludgeoning damage, and if it crashed into another creature, that second creature must succeed on a Dexterity saving throw or take the same damage.</li></ul><p>After resolving the chosen effect, the Silkbind snaps, the grapple ends, and both you and the creature fall Prone.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Punishing Ride</strong></p><p>When you use your Wyvern Ride feature, the creature has Disadvantage on the saving throw. If it fails, the Silkbind does not snap after the effect is resolved, you do not fall Prone, and you maintain the Grapple (though you cannot use Wyvern Ride on the same creature again on the same turn).</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Fierce Ram</strong></p><p>The damage of your Ramming Maneuver increases to [[/r 5d10]].</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Wirebug Reflex</strong></p><p><strong>Reaction.</strong></p><p>When a creature misses you with an attack roll, you can use your Reaction to regain 1 expended Wirebug.</p></div>",
+      "value": "<h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery: Push</strong></p><p>If you hit a creature with this weapon, you can push the creature up to 10 feet straight away from yourself if it is Large or smaller.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wirebug Gauge</strong></p><p>Your gauntlets house 3 Wirebugs (Charges). You regain all expended Wirebugs when you finish a Short or Long Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Wirebug Whisperer</strong></p><p>Your gauntlets can now house up to 4 Wirebugs. Additionally, whenever you score a Critical Hit with this weapon, you immediately regain 1 expended Wirebug.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Dash</strong></p><p>You can expend 1 Wirebug to propel yourself up to 15 feet in any direction (including vertically). This movement does not require an Action, Bonus Action, or Reaction, does not provoke Opportunity Attacks, and you can use this feature multiple times on the same turn (expending 1 Wirebug each time).</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Escape</strong></p><p><strong>Reaction.</strong></p><p>When you take damage, you can use your Reaction to expend 1 Wirebug to immediately move up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wire-Fall</strong></p><p>When you fall, you can expend 1 Wirebug to arrest your momentum, stopping your descent in mid-air until the start of your next turn and taking no fall damage from the previous drop.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Wirebug Recall</strong></p><p><strong>Bonus Action.</strong></p><p>As a Bonus Action, you can regain 1 expended Wirebug.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Wirebug Recall Upgrade</strong></p><p>When you use Wirebug Recall, you regain 2 expended Wirebugs instead of 1.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Tether</strong></p><p>You can use ironsilk to restrict a monster's movement. When you hit a creature with this weapon, you can expend 2 Wirebugs to embed a thread of ironsilk into it. The creature is Tethered to the ground at its current location. It cannot move more than 15 feet away from that center point.</p><p>At the start of its turns, the creature can make a Strength saving throw (DC 8 + your Proficiency Bonus + your Dexterity or Strength modifier) to snap the silk and end the effect.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Silkbind Upgrade</strong></p><p>The radius the creature can move while silkbound is reduced to 10 feet and the save DC increases by +1.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Silkbind Upgrade (Legendary)</strong></p><p>The save DC now increases by +2 instead of +1.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Silkbind Grapple</strong></p><p>While a creature is Tethered by your Silkbind, you can Grapple it even if it is up to two size categories larger than you. The Grapple succeeds automatically — no contested check is required — and the creature becomes Grappled by you.</p><p>The Grappled condition from this feature does not end if you become Incapacitated. It remains grappled by you even after it breaks free of the silkbind tether.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Wyvern Ride</strong></p><p><strong>Action.</strong></p><p>You can manipulate the ironsilk to puppeteer colossal beasts. As an Action, while you are Grappling a Tethered creature that is at least one size category larger than you, you can force the creature to make a Strength saving throw against your Silkbind DC. On a failed save, you forcefully ride the creature and choose one of the following effects:</p><ul><li>Forced Movement: The creature immediately moves up to its speed in a direction of your choice.</li><li>Directed Attack: The creature immediately makes one of its basic melee attacks against a target of your choice within its reach.</li><li>Ramming Maneuver: The creature uses its movement to violently crash into a wall, tree, or another creature. The mounted creature takes [[/r 3d10]] Bludgeoning damage, and if it crashed into another creature, that second creature must succeed on a Dexterity saving throw or take the same damage.</li></ul><p>After resolving the chosen effect, the Silkbind snaps, the grapple ends, and both you and the creature fall Prone.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Punishing Ride</strong></p><p>When you use your Wyvern Ride feature, the creature has Disadvantage on the saving throw. If it fails, the Silkbind does not snap after the effect is resolved, you do not fall Prone, and you maintain the Grapple (though you cannot use Wyvern Ride on the same creature again on the same turn).</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Fierce Ram</strong></p><p>The damage of your Ramming Maneuver increases to [[/r 5d10]].</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Wirebug Reflex</strong></p><p><strong>Reaction.</strong></p><p>When a creature misses you with an attack roll, you can use your Reaction to regain 1 expended Wirebug.</p></div>",
       "chat": ""
     },
     "identifier": "wireknuckles",
@@ -94,8 +94,8 @@
       "max": "4"
     },
     "activities": {
-      "WqekiaV7t4rGYx4l": {
-        "_id": "WqekiaV7t4rGYx4l",
+      "fLPYAvHEh8DQ3pzJ": {
+        "_id": "fLPYAvHEh8DQ3pzJ",
         "type": "attack",
         "sort": 0,
         "name": "Attack",
@@ -207,15 +207,15 @@
         "ammunition": "",
         "useConditionReason": ""
       },
-      "wptCfdREHjsCEj4H": {
-        "_id": "wptCfdREHjsCEj4H",
+      "KELQMMUFRvtlwG2D": {
+        "_id": "KELQMMUFRvtlwG2D",
         "sort": 300000,
         "name": "Wire-Dash",
         "img": "icons/skills/movement/figure-running-gray.webp",
         "activation": {
           "type": "special",
           "value": null,
-          "condition": "When you take damage",
+          "condition": "",
           "override": false
         },
         "consumption": {
@@ -237,7 +237,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Expend 1 Wirebug: move up to 15 ft in any direction (including vertically). This movement does not provoke Opportunity Attacks."
+          "chatFlavor": "Expend 1 Wirebug: propel yourself up to 15 ft in any direction (including vertically). No Action/Bonus Action/Reaction. Usable multiple times per turn. Does not provoke Opportunity Attacks."
         },
         "duration": {
           "value": "",
@@ -330,9 +330,132 @@
         },
         "otherActivityId": "none"
       },
+      "wptCfdREHjsCEj4H": {
+        "_id": "wptCfdREHjsCEj4H",
+        "sort": 400000,
+        "name": "Wire-Escape",
+        "img": "icons/skills/movement/feet-winged-boots-brown.webp",
+        "activation": {
+          "type": "reaction",
+          "value": 1,
+          "condition": "When you take damage",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Expend 1 Wirebug: move up to 15 ft in any direction (including vertically). This movement does not provoke Opportunity Attacks."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "wire-escape",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": "",
+        "type": "utility",
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none"
+      },
       "1LjllCqOWNEjNUcB": {
         "_id": "1LjllCqOWNEjNUcB",
-        "sort": 400000,
+        "sort": 500000,
         "name": "Wire-Fall",
         "img": "icons/magic/air/wind-stream-blue-gray.webp",
         "activation": {
@@ -455,7 +578,7 @@
       },
       "ByaghdJEOvaJAfFL": {
         "_id": "ByaghdJEOvaJAfFL",
-        "sort": 500000,
+        "sort": 600000,
         "name": "Wirebug Recall",
         "img": "icons/magic/nature/leaf-glow-teal.webp",
         "activation": {
@@ -578,7 +701,7 @@
       },
       "ZgCTnVYBQIjVYwaB": {
         "_id": "ZgCTnVYBQIjVYwaB",
-        "sort": 600000,
+        "sort": 700000,
         "name": "Silkbind Upgrade (Legendary)",
         "img": "icons/magic/control/debuff-chains-blue.webp",
         "activation": {
@@ -706,7 +829,7 @@
       },
       "f0xKITkCSkhNUBAD": {
         "_id": "f0xKITkCSkhNUBAD",
-        "sort": 700000,
+        "sort": 800000,
         "name": "Silkbind Grapple",
         "img": "icons/skills/melee/unarmed-punch-fist-yellow-red.webp",
         "activation": {
@@ -824,7 +947,7 @@
       },
       "ll05idJEKXJve0SI": {
         "_id": "ll05idJEKXJve0SI",
-        "sort": 800000,
+        "sort": 900000,
         "name": "Wyvern Ride",
         "activation": {
           "type": "action",
@@ -969,7 +1092,7 @@
       },
       "foZsWkVJSYghFLvO": {
         "_id": "foZsWkVJSYghFLvO",
-        "sort": 900000,
+        "sort": 1000000,
         "name": "Wirebug Reflex",
         "img": "icons/skills/movement/figure-running-gray.webp",
         "activation": {
@@ -1093,7 +1216,7 @@
       "wGI6mGAHxiNzeVkK": {
         "_id": "wGI6mGAHxiNzeVkK",
         "type": "utility",
-        "sort": 1000000,
+        "sort": 1100000,
         "name": "Snap Tether",
         "img": "icons/magic/control/debuff-chains-purple.webp",
         "activation": {
@@ -1243,8 +1366,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1790022305090,
-        "modifiedTime": 1790022305090,
+        "createdTime": 1790102586691,
+        "modifiedTime": 1790102586691,
         "lastModifiedBy": null
       }
     },
@@ -1288,8 +1411,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1790022305090,
-        "modifiedTime": 1790022305090,
+        "createdTime": 1790102586691,
+        "modifiedTime": 1790102586691,
         "lastModifiedBy": null
       }
     },
@@ -1425,8 +1548,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1790022305089,
-    "modifiedTime": 1790022305089,
+    "createdTime": 1790102586690,
+    "modifiedTime": 1790102586690,
     "lastModifiedBy": null
   }
 }

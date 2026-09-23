@@ -12,7 +12,7 @@ function loadWireKnuckles() {
 }
 
 describe("Wire Knuckles uncommon Foundry export", () => {
-  it("emits Wirebug Gauge + Wire-Dash / Wire-Fall / Wirebug Recall activities", () => {
+  it("emits Wirebug Gauge + Wire-Dash / Wire-Escape / Wire-Fall / Wirebug Recall activities", () => {
     const weapon = loadWireKnuckles();
     const uncommonIndex = weapon.rarityRows.findIndex(
       (r) => r.rarity === "Uncommon",
@@ -42,10 +42,11 @@ describe("Wire Knuckles uncommon Foundry export", () => {
     const dash = byName["Wire-Dash"];
     expect(dash).toBeDefined();
     expect(dash.type).toBe("utility");
-    expect(dash.activation).toMatchObject({
-      type: "special",
-      condition: "When you take damage",
-    });
+    expect(dash.activation).toMatchObject({ type: "special" });
+    expect(
+      (dash.activation as { condition?: string }).condition == null ||
+        (dash.activation as { condition?: string }).condition === "",
+    ).toBe(true);
     expect(
       (dash.consumption as { targets: { value: string; type: string }[] })
         .targets[0],
@@ -55,6 +56,23 @@ describe("Wire Knuckles uncommon Foundry export", () => {
         .type,
     ).toBe("self");
     expect((dash.target as { prompt: boolean }).prompt).toBe(false);
+
+    const escape = byName["Wire-Escape"];
+    expect(escape).toBeDefined();
+    expect(escape.type).toBe("utility");
+    expect(escape.activation).toMatchObject({
+      type: "reaction",
+      condition: "When you take damage",
+    });
+    expect(
+      (escape.consumption as { targets: { value: string; type: string }[] })
+        .targets[0],
+    ).toMatchObject({ type: "itemUses", value: "1" });
+    expect(
+      (escape.target as { affects: { type: string }; prompt: boolean }).affects
+        .type,
+    ).toBe("self");
+    expect((escape.target as { prompt: boolean }).prompt).toBe(false);
 
     const fall = byName["Wire-Fall"];
     expect(fall).toBeDefined();
