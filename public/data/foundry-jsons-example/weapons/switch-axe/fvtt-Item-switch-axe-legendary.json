@@ -1,5 +1,5 @@
 {
-  "_id": "59jZLFt3gVkuDPaV",
+  "_id": "drN0tA8G3TKhFGXO",
   "name": "Switch Axe (Legendary)",
   "type": "weapon",
   "img": "mh-icons/weapon_switchaxe.webp",
@@ -13,7 +13,7 @@
       "revision": 1
     },
     "description": {
-      "value": "<p>Axe Mode - Properties: Heavy, Two-Handed, Reach.<br/>Sword Mode - Properties: Heavy, Two-Handed.</p><p><a href=\"https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/weapons?weapon=Switch+Axe\" target=\"_blank\" rel=\"noopener\">Open Switch Axe in the Toolbox</a></p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Cleave) (Axe Mode)</strong></p><p>If you hit a creature with a melee attack, you can make an attack roll against a second creature within 5 feet of the first that is also within your reach.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Graze) (Sword)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Fluid Morph</strong></p><p><strong>Bonus Action.</strong></p><p>You can switch the weapon between its Axe and Sword modes as a Bonus Action. Additionally, once per turn, you can switch modes freely immediately after you finish taking the Attack action.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Phial Gauge</strong></p><p>The weapon can hold a maximum of 5 Phial Charges. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. The gauge resets to 0 after a Long Rest. When you finish a Long Rest, you choose one Phial Type to install: Power or Element.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Expanded Gauge I</strong></p><p>The weapon can now hold a maximum of 7 Phial Charges.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Expanded Gauge II</strong></p><p>The weapon can now hold a maximum of 9 Phial Charges.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Maximum Gauge</strong></p><p>The weapon can now hold a maximum of 10 Phial Charges.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Kinetic Generator</strong></p><p>When you hit a creature with an attack in Axe mode, the weapon gains 1 Phial Charge (or 2 charges if it was a Critical Hit).</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Phial Discharge</strong></p><p>When you hit a creature with an attack in Sword mode, you must expend 1 Phial Charge to activate your installed Phial. If you have 0 charges, you cannot attack in Sword mode and the weapon reverts to Axe mode.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Zero Sum Discharge (ZSD)</strong></p><p>While in Sword mode with at least 2 Phial Charges, you can use your Action to thrust the blade into a creature and overheat its core. Make one melee weapon attack with Advantage against a target within your reach. On a hit, you deal the weapon's normal damage and expend all remaining Phial Charges, dealing an extra [[/r 1d10]] damage of your installed Phial's type for each charge expended. Regardless of whether the attack hits or misses, the explosive recoil pushes you 5 feet away from the target without provoking Opportunity Attacks, and the weapon immediately reverts to Axe mode with 0 charges.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Zero Sum Discharge Splash</strong></p><p>The explosion of your Zero Sum Discharge becomes massive. When you use ZSD even if you miss, any  creature within 5 feet of the target must succeed on a Dexterity saving throw or take half of the total Phial damage dealt.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">True Zero Sum Discharge</strong></p><p>When you hit with your ZSD, you add your Strength modifier to the damage of each Phial Charge expended (e.g., expending 10 charges adds your Strength modifier 10 times to the total explosion damage).</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Offset Morph</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when a creature you can see makes a melee attack against you, you can expend 1 Phial Charge to morph the weapon and attempt a clash. You add your Phial die to your AC against that attack. If this causes the attack to miss, you can immediately make one weapon attack against the attacker using the weapon's newly morphed mode.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Elemental Awakening</strong></p><p>Damage dealt by your Element Phial (including during a ZSD) ignores Resistance to that damage type.</p></div><h3>Phials</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Power Phial</strong></p><p>Deals an extra [[/r 1d6]] Slashing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Element Phial</strong></p><p>Deals an extra [[/r 1d8]] Acid, Cold, Fire, or Lightning damage, chosen during your Long Rest.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Exhaust Phial</strong></p><p>Deals [[/r 1d6]] extra Bludgeoning damage, and the target's speed is reduced by 10 feet and it cannot take Reactions until the start of its next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Poison Phial</strong></p><p>Deals [[/r 1d6]] extra Poison damage. Target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be Poisoned until the end of its next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Dragon Phial</strong></p><p>You can install a Dragon Phial, which acts as an Element Phial but deals [[/r 1d10]] Necrotic damage.</p></div>",
+      "value": "<p>Axe Mode - Properties: Heavy, Two-Handed, Reach.<br/>Sword Mode - Properties: Heavy, Two-Handed.</p><p><a href=\"https://amellwind-mh-dn-d5e-foundry-toolbox-2.vercel.app/weapons?weapon=Switch+Axe\" target=\"_blank\" rel=\"noopener\">Open Switch Axe in the Toolbox</a></p><hr><h3>Features</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Cleave) (Axe Mode)</strong></p><p>If you hit a creature with a melee attack, you can make an attack roll against a second creature within 5 feet of the first that is also within your reach.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Mastery (Graze) (Sword)</strong></p><p>If your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #c0c0c0;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#c0c0c0\">Fluid Morph</strong></p><p><strong>Bonus Action.</strong></p><p>You can switch the weapon between its Axe and Sword modes as a Bonus Action. Additionally, once per turn, you can switch modes freely immediately after you finish taking the Attack action.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Phial Gauge</strong></p><p>The weapon can hold a maximum of 5 Phial Charges. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. When you finish a Long Rest, the gauge resets to 0 and you choose one Phial Type to install.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Expanded Gauge I</strong></p><p>The weapon can now hold a maximum of 7 Phial Charges.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Expanded Gauge II</strong></p><p>The weapon can now hold a maximum of 9 Phial Charges.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #ff8000;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#ff8000\">Maximum Gauge</strong></p><p>The weapon can now hold a maximum of 10 Phial Charges.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Kinetic Generator</strong></p><p>When you hit a creature with an attack in Axe mode, the weapon gains 1 Phial Charge (or 2 charges if it was a Critical Hit).</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Phial Discharge</strong></p><p>When you hit a creature with an attack in Sword mode, you must expend 1 Phial Charge to activate your installed Phial. If you have 0 charges, you cannot attack in Sword mode and the weapon reverts to Axe mode.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Zero Sum Discharge (ZSD)</strong></p><p>Once per turn when you take the Attack action on your turn while in Sword mode with at least 2 Phial Charges, you can replace one of your attacks with this property: make one melee weapon attack with a reach of 10 feet against a target within that reach.<br/>On a hit, you deal the weapon's normal damage and expend all remaining Phial Charges, dealing an extra [[/r 1d6]] damage of your installed Phial's type for each charge expended. Regardless of whether the attack hits or misses, the explosive recoil pushes you 5 feet away from the target without provoking Opportunity Attacks, and the weapon immediately reverts to Axe mode with 0 charges.<br/>You can use this property a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a Short Rest.</p><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Zero Sum Discharge Upgrade I</strong></p><p>Your Zero Sum Discharge Phial damage increases to [[/r 1d8]] per charge expended.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #0070dd;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#0070dd\">Zero Sum Discharge Splash</strong></p><p>The explosion of your Zero Sum Discharge becomes massive. When you use ZSD, even if you miss, any creature within 5 feet of the target must succeed on a Dexterity saving throw or take half of the total Phial damage dealt.</p></div><div style=\"margin:0.45em 0 0.1em 0.35em;padding:0.4em 0.55em;border-left:2px solid #a335ee;background:rgba(255,255,255,0.03);border-radius:0 3px 3px 0\"><p>▸ Upgrade — <strong style=\"color:#a335ee\">Zero Sum Discharge Upgrade II</strong></p><p>Your Zero Sum Discharge Phial damage increases to [[/r 1d10]] per charge expended.</p></div></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Offset Morph</strong></p><p><strong>Reaction.</strong></p><p>As a Reaction when a creature you can see makes a melee attack against you, you can expend 1 Phial Charge to morph the weapon and attempt a clash. You add your Phial die to your AC against that attack. If this causes the attack to miss, you can immediately make one weapon attack against the attacker using the weapon's newly morphed mode.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #a335ee;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#a335ee\">Elemental Awakening</strong></p><p>Damage dealt by your elemental Phials (Acid, Cold, Fire, Lightning, or Dragon), including during a ZSD, ignores Resistance to that damage type.</p></div><h3>Phials</h3><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Power Phial</strong></p><p>Deals an extra [[/r 1d8]] Slashing damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Acid Phial</strong></p><p>Deals an extra [[/r 1d6]] Acid damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Cold Phial</strong></p><p>Deals an extra [[/r 1d6]] Cold damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Fire Phial</strong></p><p>Deals an extra [[/r 1d6]] Fire damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #1eff00;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#1eff00\">Lightning Phial</strong></p><p>Deals an extra [[/r 1d6]] Lightning damage.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Exhaust Phial</strong></p><p>Deals [[/r 1d6]] extra Bludgeoning damage, and the target's speed is reduced by 10 feet and it cannot take Reactions until the start of its next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #0070dd;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#0070dd\">Poison Phial</strong></p><p>Deals [[/r 1d6]] extra Poison damage. Target must succeed on a Constitution saving throw (DC 8 + your Proficiency Bonus + your Strength modifier) or be Poisoned until the end of its next turn.</p></div><div style=\"margin:0.65em 0;padding:0.55em 0.7em;border-left:3px solid #ff8000;background:rgba(255,255,255,0.04);border-radius:0 4px 4px 0\"><p><strong style=\"color:#ff8000\">Dragon Phial</strong></p><p>Deals an extra [[/r 1d10]] Necrotic damage.</p></div>",
       "chat": "<p>Axe Mode - Properties: Heavy, Two-Handed, Reach.<br/>Sword Mode - Properties: Heavy, Two-Handed.</p>"
     },
     "identifier": "switchaxe",
@@ -90,8 +90,8 @@
       "max": "10"
     },
     "activities": {
-      "Y0WBH3gtDoieRbRk": {
-        "_id": "Y0WBH3gtDoieRbRk",
+      "q5fCeNAQN87UfUPv": {
+        "_id": "q5fCeNAQN87UfUPv",
         "type": "attack",
         "sort": 0,
         "name": "Axe",
@@ -351,7 +351,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Power Phial (1d6 slashing). Expends 1 Phial Charge."
+          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Power Phial (1d8 slashing). Expends 1 Phial Charge."
         },
         "duration": {
           "value": "",
@@ -407,8 +407,8 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\"",
-        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥1 Phial Charge.",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"power\"",
+        "useConditionReason": "Requires Sword Mode + Power Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
         "effectConditionText": "",
         "type": "attack",
         "damage": {
@@ -434,7 +434,7 @@
             },
             {
               "number": 1,
-              "denomination": 6,
+              "denomination": 8,
               "types": [
                 "slashing"
               ],
@@ -485,9 +485,9 @@
         "sort": 701000,
         "name": "Zero Sum Discharge Splash",
         "activation": {
-          "type": "action",
+          "type": "special",
           "value": 1,
-          "condition": "Sword Mode with at least 2 Phial Charges (Splash on hit or miss)",
+          "condition": "Once per turn when you take the Attack action, replace one attack (Sword Mode, ≥2 Phial Charges; Splash on hit or miss)",
           "override": false
         },
         "consumption": {
@@ -509,7 +509,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "ZSD with Splash: thrust with advantage. Then use / auto-trigger ZSD Splash DEX save (5 ft of target, hit or miss)."
+          "chatFlavor": "ZSD with Splash (Reach 10 ft): dump all Phial Charges (+1d10 each). Then use / auto-trigger ZSD Splash DEX save (5 ft of target, hit or miss). PB uses / Short Rest."
         },
         "duration": {
           "value": "",
@@ -517,15 +517,12 @@
           "concentration": false,
           "override": false
         },
-        "effects": [
-          {
-            "_id": "cJ2u1WJI5i4L6LEP"
-          }
-        ],
+        "effects": [],
         "range": {
-          "units": "self",
+          "value": 10,
+          "units": "ft",
           "special": "",
-          "override": false
+          "override": true
         },
         "target": {
           "template": {
@@ -548,8 +545,14 @@
         },
         "uses": {
           "spent": 0,
-          "max": "",
-          "recovery": []
+          "max": "@prof",
+          "recovery": [
+            {
+              "period": "sr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
         },
         "midiProperties": {
           "ignoreTraits": {
@@ -581,7 +584,7 @@
           "autoCEEffects": "default"
         },
         "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\"",
-        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥2 Phial Charges.",
+        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥2 Phial Charges and an unused ZSD use.",
         "effectConditionText": "",
         "type": "attack",
         "attack": {
@@ -898,10 +901,112 @@
         "useConditionReason": "Requires Sword Mode.",
         "effectConditionText": ""
       },
-      "gJTBPjRE9uSz92aJ": {
-        "_id": "gJTBPjRE9uSz92aJ",
+      "ndZNAHyDeg0WvOcB": {
+        "_id": "ndZNAHyDeg0WvOcB",
+        "type": "utility",
+        "sort": 50,
+        "name": "Switch Phial",
+        "img": "icons/containers/laboratory/flask-blue.webp",
+        "activation": {
+          "type": "special",
+          "value": null,
+          "condition": "When you finish a Long Rest",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": []
+        },
+        "description": {
+          "chatFlavor": "Choose one unlocked Phial to install: Power, Acid, Cold, Fire, Lightning, Exhaust, Poison, Dragon. Only one Phial can be installed at a time. Phial Discharge uses the installed type."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "special": "",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "count": "",
+            "contiguous": false,
+            "type": "",
+            "size": "",
+            "width": "",
+            "height": "",
+            "units": "ft"
+          },
+          "affects": {
+            "count": "",
+            "type": "self",
+            "choice": false,
+            "special": ""
+          },
+          "prompt": false,
+          "override": false
+        },
+        "uses": {
+          "spent": 0,
+          "max": "1",
+          "recovery": [
+            {
+              "period": "lr",
+              "type": "recoverAll",
+              "formula": ""
+            }
+          ]
+        },
+        "midiProperties": {
+          "ignoreTraits": [],
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "switch-phial",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": false,
+          "magicDamage": false,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "roll": {
+          "formula": "",
+          "name": "",
+          "prompt": false,
+          "visible": false
+        },
+        "useConditionText": "",
+        "useConditionReason": "",
+        "effectConditionText": ""
+      },
+      "RQMzWvWJ05ySBidN": {
+        "_id": "RQMzWvWJ05ySBidN",
         "sort": 601000,
-        "name": "Phial Discharge (Element)",
+        "name": "Phial Discharge (Acid)",
         "activation": {
           "type": "action",
           "value": 1,
@@ -927,7 +1032,7 @@
           ]
         },
         "description": {
-          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Element Phial (1d8). Expends 1 Phial Charge."
+          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Acid Phial (1d6 acid). Expends 1 Phial Charge."
         },
         "duration": {
           "value": "",
@@ -973,7 +1078,7 @@
           "autoTargetAction": "default",
           "automationOnly": false,
           "otherActivityCompatible": true,
-          "identifier": "phial-discharge-element",
+          "identifier": "phial-discharge-acid",
           "displayActivityName": true,
           "rollMode": "default",
           "chooseEffects": false,
@@ -985,8 +1090,8 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\"",
-        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥1 Phial Charge.",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"acid\"",
+        "useConditionReason": "Requires Sword Mode + Acid Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
         "effectConditionText": "",
         "type": "attack",
         "damage": {
@@ -1012,8 +1117,490 @@
             },
             {
               "number": 1,
-              "denomination": 8,
-              "types": [],
+              "denomination": 6,
+              "types": [
+                "acid"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        }
+      },
+      "oGEX7eRB51e8TUvC": {
+        "_id": "oGEX7eRB51e8TUvC",
+        "sort": 602000,
+        "name": "Phial Discharge (Cold)",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "Sword Mode — Attack action (expends 1 Phial Charge)",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Cold Phial (1d6 cold). Expends 1 Phial Charge."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": {
+            "idr": true
+          },
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "phial-discharge-cold",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"cold\"",
+        "useConditionReason": "Requires Sword Mode + Cold Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
+        "effectConditionText": "",
+        "type": "attack",
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": 2,
+              "denomination": 6,
+              "types": [
+                "slashing"
+              ],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": "@mod"
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "cold"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        }
+      },
+      "gR3e0a7Pl4PYRvWB": {
+        "_id": "gR3e0a7Pl4PYRvWB",
+        "sort": 603000,
+        "name": "Phial Discharge (Fire)",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "Sword Mode — Attack action (expends 1 Phial Charge)",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Fire Phial (1d6 fire). Expends 1 Phial Charge."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": {
+            "idr": true
+          },
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "phial-discharge-fire",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"fire\"",
+        "useConditionReason": "Requires Sword Mode + Fire Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
+        "effectConditionText": "",
+        "type": "attack",
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": 2,
+              "denomination": 6,
+              "types": [
+                "slashing"
+              ],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": "@mod"
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "fire"
+              ],
+              "custom": {
+                "enabled": false,
+                "formula": ""
+              },
+              "scaling": {
+                "mode": "",
+                "number": 1
+              },
+              "bonus": ""
+            }
+          ]
+        },
+        "macroData": {
+          "name": "",
+          "command": ""
+        },
+        "ignoreTraits": {
+          "idi": false,
+          "idr": false,
+          "idv": false,
+          "ida": false
+        },
+        "isOverTimeFlag": false,
+        "overTimeProperties": {
+          "saveRemoves": true,
+          "preRemoveConditionText": "",
+          "postRemoveConditionText": ""
+        },
+        "otherActivityId": "none",
+        "attack": {
+          "ability": "",
+          "type": {
+            "value": "melee",
+            "classification": "weapon"
+          },
+          "critical": {
+            "threshold": null
+          },
+          "flat": false,
+          "bonus": ""
+        }
+      },
+      "a3iZgdkNBXo01tCL": {
+        "_id": "a3iZgdkNBXo01tCL",
+        "sort": 604000,
+        "name": "Phial Discharge (Lightning)",
+        "activation": {
+          "type": "action",
+          "value": 1,
+          "condition": "Sword Mode — Attack action (expends 1 Phial Charge)",
+          "override": false
+        },
+        "consumption": {
+          "scaling": {
+            "allowed": false,
+            "max": ""
+          },
+          "spellSlot": false,
+          "targets": [
+            {
+              "type": "itemUses",
+              "target": "",
+              "value": "1",
+              "scaling": {
+                "mode": "",
+                "formula": ""
+              }
+            }
+          ]
+        },
+        "description": {
+          "chatFlavor": "Sword Mode attack: 2d6 Slashing + Lightning Phial (1d6 lightning). Expends 1 Phial Charge."
+        },
+        "duration": {
+          "value": "",
+          "units": "inst",
+          "concentration": false,
+          "override": false
+        },
+        "effects": [],
+        "range": {
+          "units": "self",
+          "override": false
+        },
+        "target": {
+          "template": {
+            "contiguous": false,
+            "units": "ft"
+          },
+          "affects": {
+            "choice": false
+          },
+          "override": false,
+          "prompt": true
+        },
+        "uses": {
+          "spent": 0,
+          "max": "",
+          "recovery": []
+        },
+        "midiProperties": {
+          "ignoreTraits": {
+            "idr": true
+          },
+          "triggeredActivityId": "none",
+          "triggeredActivityConditionText": "",
+          "triggeredActivityTargets": "targets",
+          "triggeredActivityRollAs": "self",
+          "autoConsume": false,
+          "forceConsumeDialog": "default",
+          "forceRollDialog": "default",
+          "forceDamageDialog": "default",
+          "confirmTargets": "default",
+          "autoTargetType": "any",
+          "autoTargetAction": "default",
+          "automationOnly": false,
+          "otherActivityCompatible": true,
+          "identifier": "phial-discharge-lightning",
+          "displayActivityName": true,
+          "rollMode": "default",
+          "chooseEffects": false,
+          "toggleEffect": false,
+          "ignoreFullCover": false,
+          "removeChatButtons": "default",
+          "magicEffect": true,
+          "magicDamage": true,
+          "noConcentrationCheck": false,
+          "autoCEEffects": "default"
+        },
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"lightning\"",
+        "useConditionReason": "Requires Sword Mode + Lightning Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
+        "effectConditionText": "",
+        "type": "attack",
+        "damage": {
+          "critical": {
+            "bonus": ""
+          },
+          "includeBase": false,
+          "parts": [
+            {
+              "number": 2,
+              "denomination": 6,
+              "types": [
+                "slashing"
+              ],
+              "custom": {
+                "enabled": false
+              },
+              "scaling": {
+                "number": 1,
+                "mode": ""
+              },
+              "bonus": "@mod"
+            },
+            {
+              "number": 1,
+              "denomination": 6,
+              "types": [
+                "lightning"
+              ],
               "custom": {
                 "enabled": false,
                 "formula": ""
@@ -1058,7 +1645,7 @@
       },
       "aJALj45D5LU7yKXJ": {
         "_id": "aJALj45D5LU7yKXJ",
-        "sort": 602000,
+        "sort": 605000,
         "name": "Phial Discharge (Exhaust)",
         "activation": {
           "type": "action",
@@ -1145,8 +1732,8 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\"",
-        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥1 Phial Charge.",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"exhaust\"",
+        "useConditionReason": "Requires Sword Mode + Exhaust Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
         "effectConditionText": "hits > 0",
         "type": "attack",
         "damage": {
@@ -1328,7 +1915,7 @@
       },
       "GELbkpGENYNvhJrK": {
         "_id": "GELbkpGENYNvhJrK",
-        "sort": 603000,
+        "sort": 606000,
         "name": "Phial Discharge (Poison)",
         "activation": {
           "type": "action",
@@ -1411,8 +1998,8 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\"",
-        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥1 Phial Charge.",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"poison\"",
+        "useConditionReason": "Requires Sword Mode + Poison Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
         "effectConditionText": "",
         "type": "attack",
         "damage": {
@@ -1486,7 +2073,7 @@
       },
       "tdZs51OMIyKQjCAH": {
         "_id": "tdZs51OMIyKQjCAH",
-        "sort": 604000,
+        "sort": 607000,
         "name": "Phial Discharge (Dragon)",
         "activation": {
           "type": "action",
@@ -1543,7 +2130,9 @@
           "recovery": []
         },
         "midiProperties": {
-          "ignoreTraits": [],
+          "ignoreTraits": {
+            "idr": true
+          },
           "triggeredActivityId": "none",
           "triggeredActivityConditionText": "",
           "triggeredActivityTargets": "targets",
@@ -1569,8 +2158,8 @@
           "noConcentrationCheck": false,
           "autoCEEffects": "default"
         },
-        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\"",
-        "useConditionReason": "Requires Sword Mode (Fluid Morph). Needs ≥1 Phial Charge.",
+        "useConditionText": "foundry.utils.getProperty(actor, \"flags.world.sa.mode\") === \"sword\" && foundry.utils.getProperty(actor, \"flags.world.sa.installedPhial\") === \"dragon\"",
+        "useConditionReason": "Requires Sword Mode + Dragon Phial installed (Switch Phial). Needs ≥1 Phial Charge.",
         "effectConditionText": "",
         "type": "attack",
         "damage": {
@@ -1681,8 +2270,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281864,
-        "modifiedTime": 1788906281864,
+        "createdTime": 1790106433614,
+        "modifiedTime": 1790106433614,
         "lastModifiedBy": null
       }
     },
@@ -1716,58 +2305,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281864,
-        "modifiedTime": 1788906281864,
-        "lastModifiedBy": null
-      }
-    },
-    {
-      "_id": "cJ2u1WJI5i4L6LEP",
-      "name": "Zero Sum Discharge (ZSD) (Advantage)",
-      "img": "systems/dnd5e/icons/svg/items/equipment.svg",
-      "description": "",
-      "changes": [
-        {
-          "key": "flags.midi-qol.advantage.attack.all",
-          "mode": 0,
-          "value": "1",
-          "priority": 20
-        }
-      ],
-      "disabled": false,
-      "duration": {
-        "startTime": null,
-        "seconds": null,
-        "combat": null,
-        "rounds": null,
-        "turns": null,
-        "startRound": null,
-        "startTurn": null
-      },
-      "origin": null,
-      "transfer": false,
-      "statuses": [],
-      "type": "base",
-      "system": {},
-      "tint": "#ffffff",
-      "sort": 0,
-      "flags": {
-        "dae": {
-          "specialDuration": [
-            "1Attack"
-          ],
-          "stackable": "noneName",
-          "showIcon": true
-        }
-      },
-      "_stats": {
-        "compendiumSource": null,
-        "duplicateSource": null,
-        "coreVersion": "12.331",
-        "systemId": "dnd5e",
-        "systemVersion": "4.4.4",
-        "createdTime": 1788906281864,
-        "modifiedTime": 1788906281864,
+        "createdTime": 1790106433615,
+        "modifiedTime": 1790106433615,
         "lastModifiedBy": null
       }
     },
@@ -1826,8 +2365,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281864,
-        "modifiedTime": 1788906281864,
+        "createdTime": 1790106433615,
+        "modifiedTime": 1790106433615,
         "lastModifiedBy": null
       }
     },
@@ -1886,8 +2425,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281864,
-        "modifiedTime": 1788906281864,
+        "createdTime": 1790106433615,
+        "modifiedTime": 1790106433615,
         "lastModifiedBy": null
       }
     },
@@ -1943,8 +2482,8 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281865,
-        "modifiedTime": 1788906281865,
+        "createdTime": 1790106433616,
+        "modifiedTime": 1790106433616,
         "lastModifiedBy": null
       }
     },
@@ -1994,14 +2533,14 @@
         "coreVersion": "12.331",
         "systemId": "dnd5e",
         "systemVersion": "4.4.4",
-        "createdTime": 1788906281865,
-        "modifiedTime": 1788906281865,
+        "createdTime": 1790106433616,
+        "modifiedTime": 1790106433616,
         "lastModifiedBy": null
       }
     }
   ],
   "folder": null,
-  "sort": 22400000,
+  "sort": 2400000,
   "ownership": {
     "default": 0
   },
@@ -2064,7 +2603,7 @@
         "scope": "global",
         "author": "",
         "img": "icons/svg/dice-target.svg",
-        "command": "// Switch Axe — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actMidi = rolled?.midiProperties ?? workflow?.activity?.midiProperties ?? {};\nconst actId = String(\n  rolled?.identifier\n  ?? actMidi?.identifier\n  ?? workflow?.activity?.identifier\n  ?? \"\",\n).toLowerCase().trim();\n\nconst weaponItem = item\n  ?? workflow?.item\n  ?? args?.[0]?.item\n  ?? null;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? weaponItem?.actor\n  ?? weaponItem?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!weaponItem || !actorDoc) return;\n\nconst isModeEf = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.sa.isModeIndicator\") === true\n  || /^(axe|sword)\\s*mode$/i.test(ef.name ?? \"\");\n\nconst modeKeyOf = (ef) => {\n  const flagged = String(foundry.utils.getProperty(ef, \"flags.world.sa.modeKey\") ?? \"\").toLowerCase();\n  if (flagged === \"axe\" || flagged === \"sword\") return flagged;\n  if (/^axe\\s*mode$/i.test(ef.name ?? \"\")) return \"axe\";\n  if (/^sword\\s*mode$/i.test(ef.name ?? \"\")) return \"sword\";\n  return \"\";\n};\n\nconst collectModeEffects = () => {\n  const list = [];\n  for (const ef of weaponItem.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  for (const ef of actorDoc.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  return list;\n};\n\nconst currentMode = () => {\n  const actorMode = String(foundry.utils.getProperty(actorDoc, \"flags.world.sa.mode\") ?? \"\").toLowerCase();\n  if (actorMode === \"axe\" || actorMode === \"sword\") return actorMode;\n  for (const ef of collectModeEffects()) {\n    if (ef.disabled) continue;\n    const key = modeKeyOf(ef);\n    if (key) return key;\n  }\n  return \"axe\";\n};\n\nconst setMode = async (mode) => {\n  const want = mode === \"sword\" ? \"sword\" : \"axe\";\n  const ops = [];\n  for (const ef of collectModeEffects()) {\n    const key = modeKeyOf(ef);\n    if (key !== \"axe\" && key !== \"sword\") continue;\n    ops.push(ef.update({ disabled: key !== want }));\n  }\n  if (ops.length) await Promise.all(ops);\n  try {\n    await actorDoc.setFlag(\"world\", \"sa.mode\", want);\n  } catch (_) {\n    await actorDoc.update({ \"flags.world.sa.mode\": want });\n  }\n  return want;\n};\n\nconst phialAvailable = () => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return 0;\n  const max = Math.max(0, Number(uses.max) || 0);\n  const spent = Math.max(0, Number(uses.spent) || 0);\n  return Math.max(0, max - spent);\n};\n\nconst emptyGauge = async () => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return;\n  const max = Math.max(0, Number(uses.max) || 0);\n  await weaponItem.update({ \"system.uses.spent\": max });\n};\n\nconst isAxeAttack = actId === \"axe\" || actName === \"axe\";\nconst isFluidMorph =\n  actId === \"fluid-morph\"\n  || actName === \"fluid morph\"\n  || actName.includes(\"fluid morph\");\nconst isPhialDischarge =\n  actId.startsWith(\"phial-discharge\")\n  || actName.includes(\"phial discharge\");\nconst isZsd =\n  actId.includes(\"zero-sum-discharge\")\n  || actId.includes(\"zsd\")\n  || actName.includes(\"zero sum discharge\")\n  || /\\bzsd\\b/.test(actName);\n\nconst isPre = macroPass.includes(\"pretargeting\");\nconst isPostDamage = macroPass.includes(\"postdamageroll\");\nconst isPostAe = macroPass.includes(\"postactiveeffects\");\n\n// ── Fluid Morph: toggle mode indicators ────────────────────────────────────\nif (isFluidMorph && (isPostAe || !macroPass)) {\n  const next = currentMode() === \"sword\" ? \"axe\" : \"sword\";\n  const applied = await setMode(next);\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Fluid Morph</strong> — ${esc(actorDoc.name)} switches to <strong>${applied === \"sword\" ? \"Sword Mode\" : \"Axe Mode\"}</strong>.</p></div>`,\n  });\n  return;\n}\n\n// ── Sword actions with 0 Phial Charges: abort + revert ──────────────────────\nif (isPre && (isPhialDischarge || isZsd)) {\n  if (phialAvailable() <= 0) {\n    await setMode(\"axe\");\n    ui.notifications.warn(\"Switch Axe: no Phial Charges — reverted to Axe Mode.\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  if (currentMode() !== \"sword\") {\n    ui.notifications.warn(\"Switch Axe: enter Sword Mode with Fluid Morph first.\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  return;\n}\n\n// ── Axe attack only while in Axe Mode ──────────────────────────────────────\nif (isPre && isAxeAttack && currentMode() === \"sword\") {\n  ui.notifications.warn(\"Switch Axe: Axe Attack requires Axe Mode (Fluid Morph).\");\n  if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n  return false;\n}\n\n// ── ZSD: force Axe Mode + empty gauge after resolution ─────────────────────\nif (isZsd && (isPostAe || isPostDamage)) {\n  await emptyGauge();\n  await setMode(\"axe\");\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Zero Sum Discharge</strong> — recoil reverts to <strong>Axe Mode</strong> with 0 Phial Charges.</p></div>`,\n  });\n  return;\n}\n\n// ── Kinetic Generator: recover on Axe hit ──────────────────────────────────\nif (!isPostDamage || !isAxeAttack) return;\n\nconst hitCount = workflow?.hitTargets?.size\n  ?? args?.[0]?.hitTargets?.size\n  ?? 0;\nif (hitCount <= 0) return;\n\nconst uses = weaponItem.system?.uses;\nif (!uses) return;\nconst max = Math.max(0, Number(uses.max) || 0);\nif (max <= 0) return;\nconst spent = Math.max(0, Number(uses.spent) || 0);\nif (spent <= 0) return;\n\nconst isCrit = Boolean(\n  workflow?.isCritical\n  ?? workflow?.attackRoll?.isCritical\n  ?? args?.[0]?.isCritical\n  ?? false,\n);\nconst gain = Math.min(isCrit ? 2 : 1, spent);\nif (gain <= 0) return;\n\nawait weaponItem.update({ \"system.uses.spent\": spent - gain });\nconst available = max - (spent - gain);\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>Kinetic Generator</strong> — recovered ${gain} Phial Charge${gain === 1 ? \"\" : \"s\"} (${available}/${max})${isCrit ? \" <em>(critical)</em>\" : \"\"}.</p></div>`,\n});\n",
+        "command": "// Switch Axe — Item Macro (MidiQOL 12.4 / Foundry v12 / dnd5e 4.4)\n// On Use: [preTargeting]ItemMacro,[postDamageRoll]ItemMacro,[postActiveEffects]ItemMacro\n\nconst esc = (value) => {\n  const s = String(value ?? \"\");\n  if (globalThis.Handlebars?.Utils?.escapeExpression) return Handlebars.Utils.escapeExpression(s);\n  return s\n    .replaceAll(\"&\", \"&amp;\")\n    .replaceAll(\"<\", \"&lt;\")\n    .replaceAll(\">\", \"&gt;\")\n    .replaceAll('\"', \"&quot;\")\n    .replaceAll(\"'\", \"&#39;\");\n};\n\nconst PHIAL_LABELS = {\n  power: \"Power\",\n  acid: \"Acid\",\n  cold: \"Cold\",\n  fire: \"Fire\",\n  lightning: \"Lightning\",\n  exhaust: \"Exhaust\",\n  poison: \"Poison\",\n  dragon: \"Dragon\",\n};\n\nconst macroPass = String(\n  args?.[0]?.macroPass\n  ?? workflow?.macroPass\n  ?? \"\",\n).toLowerCase();\n\nconst rolled = (typeof rolledActivity !== \"undefined\" && rolledActivity)\n  ? rolledActivity\n  : (workflow?.activity ?? args?.[0]?.activity ?? null);\n\nconst actName = String(rolled?.name ?? workflow?.activity?.name ?? \"\").toLowerCase().trim();\nconst actMidi = rolled?.midiProperties ?? workflow?.activity?.midiProperties ?? {};\nconst actId = String(\n  rolled?.identifier\n  ?? actMidi?.identifier\n  ?? workflow?.activity?.identifier\n  ?? \"\",\n).toLowerCase().trim();\n\nconst weaponItem = item\n  ?? workflow?.item\n  ?? args?.[0]?.item\n  ?? null;\n\nconst actorDoc = actor\n  ?? workflow?.actor\n  ?? weaponItem?.actor\n  ?? weaponItem?.parent\n  ?? (typeof token !== \"undefined\" ? token?.actor : null);\n\nif (!weaponItem || !actorDoc) return;\n\nconst isModeEf = (ef) =>\n  foundry.utils.getProperty(ef, \"flags.world.sa.isModeIndicator\") === true\n  || /^(axe|sword)\\s*mode$/i.test(ef.name ?? \"\");\n\nconst modeKeyOf = (ef) => {\n  const flagged = String(foundry.utils.getProperty(ef, \"flags.world.sa.modeKey\") ?? \"\").toLowerCase();\n  if (flagged === \"axe\" || flagged === \"sword\") return flagged;\n  if (/^axe\\s*mode$/i.test(ef.name ?? \"\")) return \"axe\";\n  if (/^sword\\s*mode$/i.test(ef.name ?? \"\")) return \"sword\";\n  return \"\";\n};\n\nconst collectModeEffects = () => {\n  const list = [];\n  for (const ef of weaponItem.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  for (const ef of actorDoc.effects ?? []) {\n    if (isModeEf(ef)) list.push(ef);\n  }\n  return list;\n};\n\nconst currentMode = () => {\n  const actorMode = String(foundry.utils.getProperty(actorDoc, \"flags.world.sa.mode\") ?? \"\").toLowerCase();\n  if (actorMode === \"axe\" || actorMode === \"sword\") return actorMode;\n  for (const ef of collectModeEffects()) {\n    if (ef.disabled) continue;\n    const key = modeKeyOf(ef);\n    if (key) return key;\n  }\n  return \"axe\";\n};\n\nconst setMode = async (mode) => {\n  const want = mode === \"sword\" ? \"sword\" : \"axe\";\n  const ops = [];\n  for (const ef of collectModeEffects()) {\n    const key = modeKeyOf(ef);\n    if (key !== \"axe\" && key !== \"sword\") continue;\n    ops.push(ef.update({ disabled: key !== want }));\n  }\n  if (ops.length) await Promise.all(ops);\n  try {\n    await actorDoc.setFlag(\"world\", \"sa.mode\", want);\n  } catch (_) {\n    await actorDoc.update({ \"flags.world.sa.mode\": want });\n  }\n  return want;\n};\n\nconst installedPhial = () =>\n  String(\n    foundry.utils.getProperty(actorDoc, \"flags.world.sa.installedPhial\")\n    ?? foundry.utils.getProperty(weaponItem, \"flags.world.switchAxe.installedPhial\")\n    ?? \"\",\n  ).toLowerCase();\n\nconst unlockedPhialKeys = () => {\n  const fromFlags = foundry.utils.getProperty(weaponItem, \"flags.world.switchAxe.unlockedPhials\");\n  if (Array.isArray(fromFlags) && fromFlags.length) {\n    return fromFlags.map((k) => String(k).toLowerCase());\n  }\n  return Object.keys(PHIAL_LABELS);\n};\n\nconst syncPhialResourceMarkers = async (phialKey) => {\n  const ops = [];\n  for (const owned of actorDoc.items ?? []) {\n    const key = String(foundry.utils.getProperty(owned, \"flags.world.sa.phialKey\") ?? \"\").toLowerCase();\n    if (!key) continue;\n    for (const ef of owned.effects ?? []) {\n      if (foundry.utils.getProperty(ef, \"flags.world.sa.isPhialInstalled\") !== true) continue;\n      const efKey = String(foundry.utils.getProperty(ef, \"flags.world.sa.phialKey\") ?? key).toLowerCase();\n      ops.push(ef.update({ disabled: efKey !== phialKey }));\n    }\n  }\n  if (ops.length) await Promise.all(ops);\n};\n\nconst applyInstalledPhial = async (phialKey) => {\n  const key = String(phialKey ?? \"\").toLowerCase();\n  const pretty = PHIAL_LABELS[key] ?? (key.charAt(0).toUpperCase() + key.slice(1));\n  const updates = {\n    \"flags.world.switchAxe.installedPhial\": key,\n  };\n  for (const act of Object.values(weaponItem.system?.activities ?? {})) {\n    const id = act?.id ?? act?._id;\n    if (!id) continue;\n    const name = String(act?.name ?? \"\");\n    const midiId = String(act?.midiProperties?.identifier ?? act?.identifier ?? \"\").toLowerCase();\n    if (\n      /^switch\\s*phial/i.test(name)\n      || /^install\\s*phial/i.test(name)\n      || midiId === \"switch-phial\"\n    ) {\n      updates[`system.activities.${id}.name`] = `Switch Phial (${pretty})`;\n      updates[`system.activities.${id}.description.chatFlavor`] =\n        `Currently installed: ${pretty} Phial. Once per Long Rest, switch among unlocked Phials.`;\n    }\n  }\n  await weaponItem.update(updates);\n  try {\n    await actorDoc.setFlag(\"world\", \"sa.installedPhial\", key);\n  } catch (_) {\n    await actorDoc.update({ \"flags.world.sa.installedPhial\": key });\n  }\n  await syncPhialResourceMarkers(key);\n  return pretty;\n};\n\nconst phialDialog = (keys) =>\n  new Promise((resolve) => {\n    let settled = false;\n    const done = (v) => {\n      if (!settled) {\n        settled = true;\n        resolve(v);\n      }\n    };\n    const buttons = {};\n    for (const key of keys) {\n      const label = PHIAL_LABELS[key] ?? (key.charAt(0).toUpperCase() + key.slice(1));\n      buttons[key] = {\n        icon: '<i class=\"fas fa-flask\"></i>',\n        label: `${label} Phial`,\n        callback: () => done(key),\n      };\n    }\n    buttons.cancel = {\n      icon: '<i class=\"fas fa-times\"></i>',\n      label: \"Cancel\",\n      callback: () => done(null),\n    };\n    const current = installedPhial();\n    const currentLabel = current\n      ? (PHIAL_LABELS[current] ? `${PHIAL_LABELS[current]} Phial` : current)\n      : \"none\";\n    new Dialog({\n      title: \"Switch Phial\",\n      content: `<div class=\"dnd5e2\"><p>Choose one Phial Type to install on this Switch Axe.</p><p>Current: <strong>${esc(currentLabel)}</strong></p></div>`,\n      buttons,\n      default: current || keys[0] || \"cancel\",\n      close: () => done(null),\n    }).render(true);\n  });\n\nconst phialAvailable = () => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return 0;\n  const max = Math.max(0, Number(uses.max) || 0);\n  const spent = Math.max(0, Number(uses.spent) || 0);\n  return Math.max(0, max - spent);\n};\n\nconst emptyGauge = async () => {\n  const uses = weaponItem.system?.uses;\n  if (!uses) return;\n  const max = Math.max(0, Number(uses.max) || 0);\n  await weaponItem.update({ \"system.uses.spent\": max });\n};\n\nconst isAxeAttack = actId === \"axe\" || actName === \"axe\";\nconst isFluidMorph =\n  actId === \"fluid-morph\"\n  || actName === \"fluid morph\"\n  || actName.includes(\"fluid morph\");\nconst isSwitchPhial =\n  actId === \"switch-phial\"\n  || /^switch\\s*phial/i.test(actName)\n  || /^install\\s*phial/i.test(actName);\nconst isPhialDischarge =\n  actId.startsWith(\"phial-discharge\")\n  || actName.includes(\"phial discharge\");\nconst isZsd =\n  actId.includes(\"zero-sum-discharge\")\n  || actId.includes(\"zsd\")\n  || actName.includes(\"zero sum discharge\")\n  || /\\bzsd\\b/.test(actName);\n\nconst isPre = macroPass.includes(\"pretargeting\");\nconst isPostDamage = macroPass.includes(\"postdamageroll\");\nconst isPostAe = macroPass.includes(\"postactiveeffects\");\n\n// ── Switch Phial: install one unlocked Phial Type ──────────────────────────\nif (isSwitchPhial && (isPostAe || !macroPass)) {\n  const keys = unlockedPhialKeys();\n  if (!keys.length) {\n    ui.notifications.warn(\"Switch Axe: no Phial Types unlocked yet.\");\n    return;\n  }\n  const chosen = await phialDialog(keys);\n  if (!chosen) return;\n  const pretty = await applyInstalledPhial(chosen);\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Switch Phial</strong> — ${esc(actorDoc.name)} installs <strong>${esc(pretty)} Phial</strong>.</p></div>`,\n  });\n  return;\n}\n\n// ── Fluid Morph: toggle mode indicators ────────────────────────────────────\nif (isFluidMorph && (isPostAe || !macroPass)) {\n  const next = currentMode() === \"sword\" ? \"axe\" : \"sword\";\n  const applied = await setMode(next);\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Fluid Morph</strong> — ${esc(actorDoc.name)} switches to <strong>${applied === \"sword\" ? \"Sword Mode\" : \"Axe Mode\"}</strong>.</p></div>`,\n  });\n  return;\n}\n\n// ── Sword actions with 0 Phial Charges: abort + revert ──────────────────────\nif (isPre && (isPhialDischarge || isZsd)) {\n  if (!installedPhial()) {\n    ui.notifications.warn(\"Switch Axe: choose Switch Phial first (install a Phial Type).\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  if (phialAvailable() < 2 && isZsd) {\n    ui.notifications.warn(\"Switch Axe: Zero Sum Discharge needs at least 2 Phial Charges.\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  if (phialAvailable() <= 0) {\n    await setMode(\"axe\");\n    ui.notifications.warn(\"Switch Axe: no Phial Charges — reverted to Axe Mode.\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  if (currentMode() !== \"sword\") {\n    ui.notifications.warn(\"Switch Axe: enter Sword Mode with Fluid Morph first.\");\n    if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n    return false;\n  }\n  return;\n}\n\n// ── Axe attack only while in Axe Mode ──────────────────────────────────────\nif (isPre && isAxeAttack && currentMode() === \"sword\") {\n  ui.notifications.warn(\"Switch Axe: Axe Attack requires Axe Mode (Fluid Morph).\");\n  if (typeof workflow !== \"undefined\" && workflow) workflow.aborted = true;\n  return false;\n}\n\n// ── ZSD: force Axe Mode + empty gauge after resolution ─────────────────────\nif (isZsd && (isPostAe || isPostDamage)) {\n  await emptyGauge();\n  await setMode(\"axe\");\n  await ChatMessage.create({\n    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n    content: `<div class=\"dnd5e2\"><p><strong>Zero Sum Discharge</strong> — recoil reverts to <strong>Axe Mode</strong> with 0 Phial Charges.</p></div>`,\n  });\n  return;\n}\n\n// ── Kinetic Generator: recover on Axe hit ──────────────────────────────────\nif (!isPostDamage || !isAxeAttack) return;\n\nconst hitCount = workflow?.hitTargets?.size\n  ?? args?.[0]?.hitTargets?.size\n  ?? 0;\nif (hitCount <= 0) return;\n\nconst uses = weaponItem.system?.uses;\nif (!uses) return;\nconst max = Math.max(0, Number(uses.max) || 0);\nif (max <= 0) return;\nconst spent = Math.max(0, Number(uses.spent) || 0);\nif (spent <= 0) return;\n\nconst isCrit = Boolean(\n  workflow?.isCritical\n  ?? workflow?.attackRoll?.isCritical\n  ?? args?.[0]?.isCritical\n  ?? false,\n);\nconst gain = Math.min(isCrit ? 2 : 1, spent);\nif (gain <= 0) return;\n\nawait weaponItem.update({ \"system.uses.spent\": spent - gain });\nconst available = max - (spent - gain);\n\nawait ChatMessage.create({\n  speaker: ChatMessage.getSpeaker({ actor: actorDoc }),\n  content: `<div class=\"dnd5e2\"><p><strong>Kinetic Generator</strong> — recovered ${gain} Phial Charge${gain === 1 ? \"\" : \"s\"} (${available}/${max})${isCrit ? \" <em>(critical)</em>\" : \"\"}.</p></div>`,\n});\n",
         "folder": null,
         "sort": 0,
         "ownership": {
@@ -2085,7 +2624,10 @@
         "isSwitchAxe": true,
         "unlockedPhials": [
           "power",
-          "element",
+          "acid",
+          "cold",
+          "fire",
+          "lightning",
           "exhaust",
           "poison",
           "dragon"
@@ -2100,8 +2642,8 @@
     "coreVersion": "12.331",
     "systemId": "dnd5e",
     "systemVersion": "4.4.4",
-    "createdTime": 1788906281864,
-    "modifiedTime": 1788906281864,
+    "createdTime": 1790106433614,
+    "modifiedTime": 1790106433614,
     "lastModifiedBy": null
   }
 }

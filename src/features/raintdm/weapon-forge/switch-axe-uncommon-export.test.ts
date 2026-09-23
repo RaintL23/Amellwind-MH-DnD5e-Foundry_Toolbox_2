@@ -62,9 +62,15 @@ describe("Switch Axe uncommon Foundry export", () => {
     expect(byName["Kinetic Generator"]).toBeUndefined();
 
     const power = byName["Phial Discharge (Power)"];
-    const element = byName["Phial Discharge (Element)"];
+    const acid = byName["Phial Discharge (Acid)"];
+    const cold = byName["Phial Discharge (Cold)"];
+    const fire = byName["Phial Discharge (Fire)"];
+    const lightning = byName["Phial Discharge (Lightning)"];
     expect(power).toBeDefined();
-    expect(element).toBeDefined();
+    expect(acid).toBeDefined();
+    expect(cold).toBeDefined();
+    expect(fire).toBeDefined();
+    expect(lightning).toBeDefined();
     expect(power.type).toBe("attack");
     expect(
       (
@@ -88,27 +94,60 @@ describe("Switch Axe uncommon Foundry export", () => {
     });
     expect(powerParts[1]).toMatchObject({
       number: 1,
-      denomination: 6,
+      denomination: 8,
       types: ["slashing"],
     });
+    const fireParts = (
+      fire.damage as {
+        parts: { number: number; denomination: number; types?: string[] }[];
+      }
+    ).parts;
+    expect(fireParts[1]).toMatchObject({
+      number: 1,
+      denomination: 6,
+      types: ["fire"],
+    });
     expect(power.useConditionText).toContain("sword");
+    expect(power.useConditionText).toContain("installedPhial");
+    expect(power.useConditionText).toContain('"power"');
+    expect(fire.useConditionText).toContain('"fire"');
+
+    const switchPhial = byName["Switch Phial"];
+    expect(switchPhial).toBeDefined();
+    expect(switchPhial.type).toBe("utility");
+    expect(switchPhial.uses).toMatchObject({
+      max: "1",
+      recovery: [expect.objectContaining({ period: "lr" })],
+    });
+    expect(
+      (switchPhial.midiProperties as { identifier?: string }).identifier,
+    ).toBe("switch-phial");
 
     const zsd = byName["Zero Sum Discharge (ZSD) (scale)"];
     expect(zsd).toBeDefined();
     expect(zsd.type).toBe("attack");
+    expect(zsd.activation).toMatchObject({
+      type: "special",
+      condition: expect.stringMatching(/replace one attack/i),
+    });
+    expect(zsd.uses).toMatchObject({
+      max: "@prof",
+      recovery: [expect.objectContaining({ period: "sr" })],
+    });
+    expect(zsd.range).toMatchObject({ value: 10, units: "ft", override: true });
     const zsdDamage = zsd.damage as {
       includeBase: boolean;
       parts: { number: number; denomination: number }[];
     };
     expect(zsdDamage.includeBase).toBe(false);
     expect(zsdDamage.parts[0]).toMatchObject({ number: 2, denomination: 6 });
+    // Phial part scales from 1d6 base (min 2 charges → 2d6 in the scale activity).
+    expect(zsdDamage.parts[1]).toMatchObject({ number: 2, denomination: 6 });
 
     const zsdAdv = item.effects.find((effect) =>
       effect.name.includes("Zero Sum Discharge (ZSD) (Advantage)"),
     );
-    expect(
-      (zsdAdv?.flags as { dae?: { showIcon?: boolean } })?.dae?.showIcon,
-    ).toBe(true);
+    expect(zsdAdv).toBeUndefined();
 
     const flags = item.flags as {
       itemacro?: { macro?: { command?: string } };
@@ -117,17 +156,29 @@ describe("Switch Axe uncommon Foundry export", () => {
         switchAxe?: {
           hasKineticGenerator?: boolean;
           modeIndicators?: boolean;
+          unlockedPhials?: string[];
         };
       };
     };
     expect(flags["midi-qol"]?.onUseMacroName).toContain("preTargeting");
     expect(flags["midi-qol"]?.onUseMacroName).toContain("postDamageRoll");
     expect(flags.itemacro?.macro?.command).toContain("Fluid Morph");
+    expect(flags.itemacro?.macro?.command).toContain("Switch Phial");
     expect(flags.world?.switchAxe?.hasKineticGenerator).toBe(true);
     expect(flags.world?.switchAxe?.modeIndicators).toBe(true);
+    expect(flags.world?.switchAxe?.unlockedPhials?.sort()).toEqual([
+      "acid",
+      "cold",
+      "fire",
+      "lightning",
+      "power",
+    ]);
 
     expect(resources.map((r) => r.name).sort()).toEqual([
-      "Element Phial",
+      "Acid Phial",
+      "Cold Phial",
+      "Fire Phial",
+      "Lightning Phial",
       "Power Phial",
     ]);
     expect(resourceGroups.map((g) => g.id)).toContain("phials");

@@ -40,14 +40,14 @@
               "--",
               "--",
               "Phial Gauge, Kinetic Generator, Phial Discharge, Zero Sum Discharge (ZSD)",
-              "Power Phial, Element Phial"
+              "Power Phial, Acid Phial, Cold Phial, Fire Phial, Lightning Phial"
             ],
             [
               "Rare",
               "3",
               "1",
               "1",
-              "Expanded Gauge I, Zero Sum Discharge Splash",
+              "Expanded Gauge I, Zero Sum Discharge Upgrade I, Zero Sum Discharge Splash",
               "Exhaust Phial, Poison Phial"
             ],
             [
@@ -55,7 +55,7 @@
               "4",
               "2",
               "2",
-              "Expanded Gauge II, Offset Morph, Elemental Awakening",
+              "Expanded Gauge II, Offset Morph, Elemental Awakening, Zero Sum Discharge Upgrade II",
               "--"
             ],
             [
@@ -63,7 +63,7 @@
               "5",
               "3",
               "3",
-              "Maximum Gauge, True Zero Sum Discharge",
+              "Maximum Gauge",
               "Dragon Phial"
             ]
           ]
@@ -93,7 +93,7 @@
       {
         "id": "a6398e06-4e5d-4274-91ed-ceb5de518e0d",
         "name": "Phial Gauge",
-        "description": "The weapon can hold a maximum of 5 Phial Charges. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. The gauge resets to 0 after a Long Rest. When you finish a Long Rest, you choose one Phial Type to install: Power or Element."
+        "description": "The weapon can hold a maximum of 5 Phial Charges. Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. When you finish a Long Rest, the gauge resets to 0 and you choose one Phial Type to install."
       },
       {
         "id": "7268bae9-8baf-409b-a4fe-dc38ac24b586",
@@ -108,19 +108,37 @@
       {
         "id": "ec54a32a-1825-4b6c-ad4e-3c4aab0d8263",
         "name": "Power Phial",
-        "description": "Deals an extra 1d6 Slashing damage.",
+        "description": "Deals an extra 1d8 Slashing damage.",
         "resourceColumn": "Phials"
       },
       {
-        "id": "b899b695-aa23-46df-82c2-ae168d96dafe",
-        "name": "Element Phial",
-        "description": "Deals an extra 1d8 Acid, Cold, Fire, or Lightning damage, chosen during your Long Rest.",
+        "id": "8bfeb1d2-379a-4ecd-b94e-8eb57a431007",
+        "name": "Acid Phial",
+        "description": "Deals an extra 1d6 Acid damage.",
+        "resourceColumn": "Phials"
+      },
+      {
+        "id": "40223111-9cee-4cd3-954b-35d02b57be80",
+        "name": "Cold Phial",
+        "description": "Deals an extra 1d6 Cold damage.",
+        "resourceColumn": "Phials"
+      },
+      {
+        "id": "0881a322-8250-401d-a8ec-199f96d87881",
+        "name": "Fire Phial",
+        "description": "Deals an extra 1d6 Fire damage.",
+        "resourceColumn": "Phials"
+      },
+      {
+        "id": "bf3ec0c7-8855-4ec4-a417-457b3a4aa3ad",
+        "name": "Lightning Phial",
+        "description": "Deals an extra 1d6 Lightning damage.",
         "resourceColumn": "Phials"
       },
       {
         "id": "739b81c7-dcdc-4744-a635-c6b02d82ec5c",
         "name": "Zero Sum Discharge (ZSD)",
-        "description": "While in Sword mode with at least 2 Phial Charges, you can use your Action to thrust the blade into a creature and overheat its core. Make one melee weapon attack with Advantage against a target within your reach. On a hit, you deal the weapon's normal damage and expend all remaining Phial Charges, dealing an extra 1d10 damage of your installed Phial's type for each charge expended. Regardless of whether the attack hits or misses, the explosive recoil pushes you 5 feet away from the target without provoking Opportunity Attacks, and the weapon immediately reverts to Axe mode with 0 charges."
+        "description": "Once per turn when you take the Attack action on your turn while in Sword mode with at least 2 Phial Charges, you can replace one of your attacks with this property: make one melee weapon attack with a reach of 10 feet against a target within that reach. \nOn a hit, you deal the weapon's normal damage and expend all remaining Phial Charges, dealing an extra 1d6 damage of your installed Phial's type for each charge expended. Regardless of whether the attack hits or misses, the explosive recoil pushes you 5 feet away from the target without provoking Opportunity Attacks, and the weapon immediately reverts to Axe mode with 0 charges. \nYou can use this property a number of times equal to your proficiency bonus, and you regain all expended uses when you finish a Short Rest."
       },
       {
         "id": "05d148e8-a569-4cbb-aac6-007eab1e0f8a",
@@ -141,9 +159,15 @@
         "resourceColumn": "Phials"
       },
       {
+        "id": "0e96f422-a699-402e-ac18-d2c3d60611aa",
+        "name": "Zero Sum Discharge Upgrade I",
+        "description": "Your Zero Sum Discharge Phial damage increases to 1d8 per charge expended.",
+        "upgradesFromId": "739b81c7-dcdc-4744-a635-c6b02d82ec5c"
+      },
+      {
         "id": "ef270ce7-e009-4461-a950-72e0e8ae6092",
         "name": "Zero Sum Discharge Splash",
-        "description": "The explosion of your Zero Sum Discharge becomes massive. When you use ZSD even if you miss, any  creature within 5 feet of the target must succeed on a Dexterity saving throw or take half of the total Phial damage dealt.",
+        "description": "The explosion of your Zero Sum Discharge becomes massive. When you use ZSD, even if you miss, any creature within 5 feet of the target must succeed on a Dexterity saving throw or take half of the total Phial damage dealt.",
         "upgradesFromId": "739b81c7-dcdc-4744-a635-c6b02d82ec5c"
       },
       {
@@ -160,8 +184,13 @@
       {
         "id": "bf633b4e-9b9f-4944-afea-814d4626bbfb",
         "name": "Elemental Awakening",
-        "description": "Damage dealt by your Element Phial (including during a ZSD) ignores Resistance to that damage type.",
-        "upgradesFromId": "b899b695-aa23-46df-82c2-ae168d96dafe"
+        "description": "Damage dealt by your elemental Phials (Acid, Cold, Fire, Lightning, or Dragon), including during a ZSD, ignores Resistance to that damage type."
+      },
+      {
+        "id": "b9666e64-efac-41ef-8c6e-351c65dcdbd6",
+        "name": "Zero Sum Discharge Upgrade II",
+        "description": "Your Zero Sum Discharge Phial damage increases to 1d10 per charge expended.",
+        "upgradesFromId": "0e96f422-a699-402e-ac18-d2c3d60611aa"
       },
       {
         "id": "de61bb4b-d0ac-4636-bf6c-378eda76f8c9",
@@ -170,15 +199,9 @@
         "upgradesFromId": "1dbba3e1-6a21-4cc6-9456-b06593411434"
       },
       {
-        "id": "bc86080f-669e-4cd6-b792-a7d7a8259700",
-        "name": "True Zero Sum Discharge",
-        "description": "When you hit with your ZSD, you add your Strength modifier to the damage of each Phial Charge expended (e.g., expending 10 charges adds your Strength modifier 10 times to the total explosion damage).",
-        "upgradesFromId": "ef270ce7-e009-4461-a950-72e0e8ae6092"
-      },
-      {
         "id": "43918845-6923-4937-b073-4e412b0eff0e",
         "name": "Dragon Phial",
-        "description": "You can install a Dragon Phial, which acts as an Element Phial but deals 1d10 Necrotic damage.",
+        "description": "Deals an extra 1d10 Necrotic damage.",
         "resourceColumn": "Phials"
       }
     ],

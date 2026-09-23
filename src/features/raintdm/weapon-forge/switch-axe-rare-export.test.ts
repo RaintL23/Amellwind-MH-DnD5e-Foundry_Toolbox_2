@@ -44,8 +44,16 @@ describe("Switch Axe rare Foundry export", () => {
     expect(byName["Fluid Morph"]).toBeDefined();
     expect(item.effects.some((e) => e.name === "Axe Mode")).toBe(true);
 
-    // Four Phial Discharge attacks.
-    for (const label of ["Power", "Element", "Exhaust", "Poison"] as const) {
+    // Seven Phial Discharge attacks (Power + 4 elements + Exhaust + Poison).
+    for (const label of [
+      "Power",
+      "Acid",
+      "Cold",
+      "Fire",
+      "Lightning",
+      "Exhaust",
+      "Poison",
+    ] as const) {
       const act = byName[`Phial Discharge (${label})`];
       expect(act, label).toBeDefined();
       expect(act.type).toBe("attack");
@@ -53,6 +61,9 @@ describe("Switch Axe rare Foundry export", () => {
         (act.consumption as { targets: { value: string }[] }).targets[0].value,
       ).toBe("1");
     }
+
+    expect(byName["Switch Phial"]).toBeDefined();
+    expect(byName["Phial Discharge (Element)"]).toBeUndefined();
 
     const exhaust = byName["Phial Discharge (Exhaust)"];
     const exhaustParts = (
@@ -106,6 +117,20 @@ describe("Switch Axe rare Foundry export", () => {
       byName["Zero Sum Discharge Splash (scale)"];
     expect(zsd).toBeDefined();
     expect(zsd.type).toBe("attack");
+    expect(zsd.activation).toMatchObject({
+      type: "special",
+      condition: expect.stringMatching(/replace one attack/i),
+    });
+    expect(zsd.uses).toMatchObject({
+      max: "@prof",
+      recovery: [expect.objectContaining({ period: "sr" })],
+    });
+    expect(zsd.range).toMatchObject({ value: 10, units: "ft", override: true });
+    const zsdDamage = zsd.damage as {
+      parts: { number: number; denomination: number }[];
+    };
+    // Upgrade I → 1d8 per charge; scale activity starts at min 2 → 2d8.
+    expect(zsdDamage.parts[1]).toMatchObject({ number: 2, denomination: 8 });
     const splash = byName["ZSD Splash"];
     expect(splash).toBeDefined();
     expect(splash.type).toBe("save");
@@ -113,6 +138,9 @@ describe("Switch Axe rare Foundry export", () => {
     expect(
       (splash.target as { template: { type: string; size: string } }).template,
     ).toMatchObject({ type: "radius", size: "5" });
+    expect(
+      (splash.damage as { parts: { denomination: number }[] }).parts[0],
+    ).toMatchObject({ denomination: 8 });
     expect(
       (zsd.midiProperties as { triggeredActivityId?: string })
         .triggeredActivityId,
@@ -125,13 +153,14 @@ describe("Switch Axe rare Foundry export", () => {
         /zero sum discharge/i.test(effect.name) &&
         /advantage/i.test(effect.name),
     );
-    expect(
-      (splashAdv?.flags as { dae?: { showIcon?: boolean } })?.dae?.showIcon,
-    ).toBe(true);
+    expect(splashAdv).toBeUndefined();
 
     expect(resources.map((r) => r.name).sort()).toEqual([
-      "Element Phial",
+      "Acid Phial",
+      "Cold Phial",
       "Exhaust Phial",
+      "Fire Phial",
+      "Lightning Phial",
       "Poison Phial",
       "Power Phial",
     ]);

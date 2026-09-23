@@ -211,6 +211,102 @@ function patchAxeAttackGate(item: FoundryItem): void {
   }
 }
 
+/**
+ * Long-Rest install picker: choose among unlocked Phials (Power / Acid / …).
+ * ItemMacro writes flags.world.sa.installedPhial and renames this activity.
+ */
+function ensureSwitchPhialActivity(
+  item: FoundryItem,
+  unlocked: PhialFeatDef[],
+): void {
+  if (unlocked.length === 0) return;
+  const activities = activitiesOf(item);
+  if (!activities) return;
+
+  const existingId = Object.keys(activities).find((id) => {
+    const activity = activities[id];
+    const name = String(activity?.name ?? "").trim();
+    const midiId = String(
+      (activity?.midiProperties as { identifier?: string } | undefined)
+        ?.identifier ?? "",
+    );
+    return (
+      /^switch\s*phial(\s*\([^)]+\))?$/i.test(name) ||
+      /^install\s*phial(\s*\([^)]+\))?$/i.test(name) ||
+      midiId === "switch-phial"
+    );
+  });
+
+  const id = existingId ?? foundryIdFromSeed("act-switch-axe-switch-phial");
+  const prev = existingId ? activities[existingId] : undefined;
+  const labels = unlocked.map((d) => d.name.replace(/\s*Phial$/i, "").trim());
+  const activity: Record<string, unknown> = {
+    ...(prev ?? {}),
+    _id: id,
+    type: "utility",
+    sort: Number(prev?.sort ?? 50),
+    name: String(prev?.name ?? "Switch Phial"),
+    img:
+      String(prev?.img ?? "") ||
+      "icons/containers/laboratory/flask-blue.webp",
+    activation: {
+      type: "special",
+      value: null,
+      condition: "When you finish a Long Rest",
+      override: false,
+    },
+    consumption: {
+      scaling: { allowed: false, max: "" },
+      spellSlot: false,
+      targets: [],
+    },
+    description: {
+      chatFlavor: `Choose one unlocked Phial to install: ${labels.join(", ")}. Only one Phial can be installed at a time. Phial Discharge uses the installed type.`,
+    },
+    duration: {
+      value: "",
+      units: "inst",
+      concentration: false,
+      override: false,
+    },
+    effects: [],
+    range: { units: "self", special: "", override: false },
+    target: {
+      template: {
+        count: "",
+        contiguous: false,
+        type: "",
+        size: "",
+        width: "",
+        height: "",
+        units: "ft",
+      },
+      affects: {
+        count: "",
+        type: "self",
+        choice: false,
+        special: "",
+      },
+      prompt: false,
+      override: false,
+    },
+    uses: {
+      spent: 0,
+      max: "1",
+      recovery: [{ period: "lr", type: "recoverAll", formula: "" }],
+    },
+    midiProperties: defaultMidiProperties({
+      identifier: "switch-phial",
+      displayActivityName: true,
+    }),
+    roll: { formula: "", name: "", prompt: false, visible: false },
+    useConditionText: "",
+    useConditionReason: "",
+    effectConditionText: "",
+  };
+  activities[id] = activity;
+}
+
 function patchFluidMorph(
   item: FoundryItem,
   modeEffectIds: { axeId: string; swordId: string },
@@ -283,6 +379,16 @@ function patchZeroSumDischargeForSwordMode(
     rarityIndex,
     /^zero\s*sum\s*discharge\s*splash$/i,
   );
+  const phialDie = resolveZsdPhialDie(weapon, rarityIndex);
+
+  // Advantage was removed from ZSD rules — strip legacy AEs on re-export.
+  item.effects = item.effects.filter(
+    (effect) =>
+      !(
+        /zero\s*sum\s*discharge/i.test(effect.name) &&
+        /advantage/i.test(effect.name)
+      ),
+  );
 
   let zsdActivity: Record<string, unknown> | undefined;
 
@@ -302,20 +408,12 @@ function patchZeroSumDischargeForSwordMode(
       ? [...(damage.parts as Record<string, unknown>[])]
       : [];
 
-    // Drop any prior sword die without @mod so re-export stays clean.
+    // counter_spend emits only the phial explosion dice; overlay adds Sword 2d6.
+    // Do not drop phial parts that happen to match the sword die size (e.g. 2×1d6).
     const phialParts = parts.filter((part) => {
-      const dice = parseDice(
-        `${String(part.number ?? "")}d${String(part.denomination ?? "")}`,
-      );
-      const swordDice = parseDice(String(swordPart.number) + "d" + String(swordPart.denomination));
-      if (
-        swordDice &&
-        dice &&
-        dice.number === swordDice.number &&
-        dice.denomination === swordDice.denomination
-      ) {
-        return false;
-      }
+      const bonus = String(part.bonus ?? "");
+      // Drop a prior sword part that already includes @mod (re-export hygiene).
+      if (bonus.includes("@mod")) return false;
       return true;
     });
 
@@ -323,17 +421,30 @@ function patchZeroSumDischargeForSwordMode(
     damage.parts = [swordPart, ...phialParts];
     activity.damage = damage;
     activity.activation = {
-      type: "action",
+      type: "special",
       value: 1,
       condition: hasSplash
-        ? "Sword Mode with at least 2 Phial Charges (Splash on hit or miss)"
-        : "Sword Mode with at least 2 Phial Charges",
+        ? "Once per turn when you take the Attack action, replace one attack (Sword Mode, ≥2 Phial Charges; Splash on hit or miss)"
+        : "Once per turn when you take the Attack action, replace one attack (Sword Mode, ≥2 Phial Charges)",
       override: false,
     };
+    activity.uses = {
+      spent: 0,
+      max: "@prof",
+      recovery: [{ period: "sr", type: "recoverAll", formula: "" }],
+    };
+    // Reach 10 ft for this thrust only (Sword Mode otherwise has no Reach).
+    activity.range = {
+      value: 10,
+      units: "ft",
+      special: "",
+      override: true,
+    };
+    activity.effects = [];
     activity.useConditionText =
       'foundry.utils.getProperty(actor, "flags.world.sa.mode") === "sword"';
     activity.useConditionReason =
-      "Requires Sword Mode (Fluid Morph). Needs ≥2 Phial Charges.";
+      "Requires Sword Mode (Fluid Morph). Needs ≥2 Phial Charges and an unused ZSD use.";
     const midi =
       (activity.midiProperties as Record<string, unknown> | undefined) ?? {};
     activity.midiProperties = {
@@ -346,26 +457,51 @@ function patchZeroSumDischargeForSwordMode(
         ...(typeof activity.description === "object" && activity.description
           ? (activity.description as Record<string, unknown>)
           : {}),
-        chatFlavor:
-          "ZSD with Splash: thrust with advantage. Then use / auto-trigger ZSD Splash DEX save (5 ft of target, hit or miss).",
+        chatFlavor: `ZSD with Splash (Reach 10 ft): dump all Phial Charges (+1d${phialDie} each). Then use / auto-trigger ZSD Splash DEX save (5 ft of target, hit or miss). PB uses / Short Rest.`,
       };
       // Prefer a clean name without the counter_spend "(scale)" suffix.
       if (/\(scale\)$/i.test(String(activity.name ?? ""))) {
         activity.name = "Zero Sum Discharge Splash";
       }
+    } else {
+      activity.description = {
+        ...(typeof activity.description === "object" && activity.description
+          ? (activity.description as Record<string, unknown>)
+          : {}),
+        chatFlavor: `ZSD (Reach 10 ft): replace one Attack-action attack. Dump all Phial Charges (+1d${phialDie} each). Recoil → Axe Mode at 0. PB uses / Short Rest.`,
+      };
     }
     zsdActivity = activity;
   }
 
   if (hasSplash && zsdActivity) {
-    emitZsdSplashSave(item, zsdActivity);
+    emitZsdSplashSave(item, zsdActivity, phialDie);
   }
+}
+
+/** Phial explosion die for ZSD / Splash placeholder (1d6 → 1d8 → 1d10). */
+function resolveZsdPhialDie(
+  weapon: CustomWeapon,
+  rarityIndex: number,
+): number {
+  if (
+    hasFeature(weapon, rarityIndex, /^zero\s*sum\s*discharge\s*upgrade\s*ii$/i)
+  ) {
+    return 10;
+  }
+  if (
+    hasFeature(weapon, rarityIndex, /^zero\s*sum\s*discharge\s*upgrade\s*i$/i)
+  ) {
+    return 8;
+  }
+  return 6;
 }
 
 /** DEX save radius 5 ft — half of the ZSD Phial explosion (adjust dice to match). */
 function emitZsdSplashSave(
   item: FoundryItem,
   zsdActivity: Record<string, unknown>,
+  phialDie: number,
 ): void {
   const activities = activitiesOf(item);
   if (!activities) return;
@@ -424,7 +560,7 @@ function emitZsdSplashSave(
       parts: [
         {
           number: 2,
-          denomination: 10,
+          denomination: phialDie,
           types: [],
           custom: { enabled: false, formula: "" },
           scaling: { mode: "", number: 1 },
@@ -581,10 +717,12 @@ function applyPhialToDischargeActivity(
     includeBase: false,
     parts: [swordPart, damagePartFromPhial(def)],
   };
-  activity.useConditionText =
-    'foundry.utils.getProperty(actor, "flags.world.sa.mode") === "sword"';
+  activity.useConditionText = [
+    'foundry.utils.getProperty(actor, "flags.world.sa.mode") === "sword"',
+    `foundry.utils.getProperty(actor, "flags.world.sa.installedPhial") === "${def.phialKey}"`,
+  ].join(" && ");
   activity.useConditionReason =
-    "Requires Sword Mode (Fluid Morph). Needs ≥1 Phial Charge.";
+    `Requires Sword Mode + ${def.name} installed (Switch Phial). Needs ≥1 Phial Charge.`;
   activity.range = { units: "self", override: false };
   activity.target = {
     template: { contiguous: false, units: "ft" },
@@ -832,6 +970,7 @@ export function applySwitchAxeOverlay(
   patchZeroSumDischargeForSwordMode(item, weapon, rarityIndex);
 
   const unlocked = listUnlockedPhialDefs(weapon, rarityIndex);
+  ensureSwitchPhialActivity(item, unlocked);
   patchPhialDischargeActivities(item, weapon, unlocked, magical);
 
   const hasKinetic = hasFeature(
@@ -845,16 +984,28 @@ export function applySwitchAxeOverlay(
     /^elemental\s*awakening$/i,
   );
   if (elementalAwakening) {
+    const elementalKeys = new Set(
+      unlocked.filter((d) => d.isElemental).map((d) => d.phialKey),
+    );
     const acts = activitiesOf(item);
     if (acts) {
       for (const activity of Object.values(acts)) {
-        const name = String(activity?.name ?? "").toLowerCase();
-        if (!name.includes("element") && !name.includes("zsd") && !name.includes("zero sum")) {
-          continue;
-        }
+        if (!activity) continue;
+        const name = String(activity.name ?? "").toLowerCase();
         const midi =
           (activity.midiProperties as Record<string, unknown> | undefined) ??
           {};
+        const midiId = String(midi.identifier ?? "").toLowerCase();
+        const dischargeKey = midiId.replace(/^phial-discharge-/, "");
+        const isElementalDischarge =
+          midiId.startsWith("phial-discharge-") &&
+          elementalKeys.has(dischargeKey);
+        const isZsd =
+          name.includes("zsd") ||
+          name.includes("zero sum") ||
+          midiId.includes("zero-sum") ||
+          midiId.includes("zsd");
+        if (!isElementalDischarge && !isZsd) continue;
         const ignoreTraits =
           (midi.ignoreTraits as Record<string, boolean> | undefined) ?? {
             idi: false,
