@@ -120,8 +120,16 @@ describe("Charge Blade uncommon Foundry export", () => {
       recovery: [{ period: "sr", type: "recoverAll" }],
     });
 
-    // Rare+ must not appear on uncommon.
-    expect(byName["Elemental Discharge"]).toBeUndefined();
+    // Rare+ must not appear on uncommon — Discharge + Guard are Uncommon.
+    expect(byName["Elemental Discharge"]).toBeDefined();
+    expect(byName["Elemental Discharge"].type).toBe("damage");
+    expect(
+      (
+        byName["Elemental Discharge"].damage as {
+          parts: { number: number; denomination: number }[];
+        }
+      ).parts[0],
+    ).toMatchObject({ number: 1, denomination: 6 });
     expect(byName["Amped Element Discharge (AED)"]).toBeUndefined();
     expect(
       Object.keys(byName).some((n) => /amped element discharge/i.test(n)),
@@ -229,6 +237,7 @@ describe("Charge Blade uncommon Foundry export", () => {
       )?.targets ?? [],
     ).toEqual([]);
     expect(byName["Guard Point: Eruption"]).toBeDefined();
+    expect(byName["Elemental Discharge"]).toBeDefined();
 
     const swordMode = example.effects?.find(
       (e) => e.name === "Sword & Shield Mode",

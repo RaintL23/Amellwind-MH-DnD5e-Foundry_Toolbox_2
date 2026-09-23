@@ -601,7 +601,7 @@ function fixChargeBladeSaedFlavor() {
   if (aed) {
     aed.name = "Super Amped Element Discharge (SAED)";
     aed.description.chatFlavor =
-      "SAED (Axe Mode): choose Phial spend (dialog). 1d12 attuned element per charge in a 30-ft cone; DEX save, half on success. If the cone completely covers a Huge or larger creature, it has Disadvantage on the save. Or cancel the shockwave for Charged Shield (Red Shield).";
+      "SAED: replace one Attack-action attack; choose Phial spend (dialog). 1d10 attuned element per charge in a 30-ft cone; DEX save (STR DC), half on success. If the cone completely covers a Huge or larger creature, it has Disadvantage on the save. Or cancel for Charged Shield (Red Shield). PB uses / Long Rest.";
     if (aed.midiProperties) aed.midiProperties.identifier = "saed";
   }
   save(fp, item);

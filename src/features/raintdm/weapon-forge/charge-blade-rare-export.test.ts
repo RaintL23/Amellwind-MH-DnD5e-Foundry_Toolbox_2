@@ -90,8 +90,16 @@ describe("Charge Blade rare Foundry export", () => {
     expect(byName["Amped Element Discharge (AED) ×5"]).toBeUndefined();
     const aed = byName["Amped Element Discharge (AED)"];
     expect(aed.type).toBe("save");
-    expect(aed.activation).toMatchObject({ type: "action" });
-    expect(String(aed.useConditionText)).toContain("axe");
+    expect(aed.activation).toMatchObject({
+      type: "special",
+      condition:
+        "Once per turn when you take the Attack action, replace one attack",
+    });
+    expect(aed.uses).toMatchObject({
+      max: "@prof",
+      recovery: [{ period: "lr", type: "recoverAll" }],
+    });
+    expect(String(aed.useConditionText ?? "")).toBe("");
     expect(
       (aed.consumption as { targets: unknown[] } | undefined)?.targets ?? [],
     ).toEqual([]);
@@ -108,7 +116,7 @@ describe("Charge Blade rare Foundry export", () => {
           parts: { number: number; denomination: number; types?: string[] }[];
         }
       ).parts[0],
-    ).toMatchObject({ number: 1, denomination: 8, types: [] });
+    ).toMatchObject({ number: 1, denomination: 6, types: [] });
 
     expect(byName["Charged Shield (Red Shield)"]).toBeUndefined();
 
@@ -124,11 +132,12 @@ describe("Charge Blade rare Foundry export", () => {
     };
     expect(flags.world?.chargeBlade?.isChargeBlade).toBe(true);
     expect(flags.world?.chargeBlade?.elementalType).toBe("");
-    expect(flags.world?.chargeBlade?.aedDamage).toBe("1d8");
+    expect(flags.world?.chargeBlade?.aedDamage).toBe("1d6");
     expect(flags.itemacro?.macro?.command).toContain("aedChargesDialog");
     expect(flags.itemacro?.macro?.command).toContain("Elemental Attunement");
     expect(flags.itemacro?.macro?.command).toContain("applyElementalType");
     expect(flags.itemacro?.macro?.command).toContain("new Dialog");
+    expect(flags.itemacro?.macro?.command).toContain("Guard Dice");
   });
 
   it("hand-tuned rare example matches builder export contract", () => {

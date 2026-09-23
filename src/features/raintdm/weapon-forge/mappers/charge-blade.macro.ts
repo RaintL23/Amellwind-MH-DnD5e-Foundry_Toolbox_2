@@ -72,7 +72,7 @@ const dischargeDie = String(
 const aedDie = String(
   foundry.utils.getProperty(weaponItem, "flags.world.chargeBlade.aedDamage")
   ?? AED_DAMAGE
-  ?? "1d8",
+  ?? "1d6",
 );
 const guardDie = String(
   foundry.utils.getProperty(weaponItem, "flags.world.chargeBlade.guardPointDamage")
@@ -373,7 +373,9 @@ const isSwitchMode =
 const isGuardPoint =
   actId === "guard-point"
   || (actId.includes("guard-point") && !actId.includes("eruption"))
-  || (/guard\\s*point/i.test(actName) && !/eruption/i.test(actName));
+  || actId === "elemental-guard"
+  || (/guard\\s*point/i.test(actName) && !/eruption/i.test(actName))
+  || (/elemental\\s*guard/i.test(actName) && !/eruption/i.test(actName));
 
 const isElementalDischarge =
   actId === "elemental-discharge"
@@ -381,6 +383,7 @@ const isElementalDischarge =
 
 const isAed =
   actId === "aed"
+  || actId === "saed"
   || actId.startsWith("aed")
   || actName.includes("amped element discharge");
 
@@ -447,8 +450,8 @@ if (isPre && isAxeAttack && currentMode() !== "axe") {
   return false;
 }
 
-if (isPre && (isElementalDischarge || isAed) && currentMode() !== "axe") {
-  ui.notifications.warn("Charge Blade: Elemental Discharge / AED requires Axe Mode.");
+if (isPre && isElementalDischarge && currentMode() !== "axe") {
+  ui.notifications.warn("Charge Blade: Elemental Discharge requires Axe Mode.");
   if (typeof workflow !== "undefined" && workflow) workflow.aborted = true;
   return false;
 }
@@ -577,9 +580,16 @@ if (isGuardPoint && (isPostAe || !macroPass)) {
     await actorDoc.deleteEmbeddedDocuments("ActiveEffect", stale.map((e) => e.id));
   }
 
+  const acRoll = await new Roll(guardDie).evaluate();
+  await acRoll.toMessage({
+    speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
+    flavor: "Guard Point — Guard Dice (AC)",
+  });
+  const acBonus = Math.max(0, Number(acRoll.total) || 0);
+
   await actorDoc.createEmbeddedDocuments("ActiveEffect", [
     {
-      name: "Guard Point (+2 AC)",
+      name: \`Guard Point (+\${acBonus} AC)\`,
       img: "icons/skills/melee/shield-block-gray-orange.webp",
       transfer: false,
       disabled: false,
@@ -587,7 +597,7 @@ if (isGuardPoint && (isPostAe || !macroPass)) {
         {
           key: "system.attributes.ac.bonus",
           mode: CONST.ACTIVE_EFFECT_MODES.ADD,
-          value: "2",
+          value: String(acBonus),
           priority: 20,
         },
       ],
@@ -618,7 +628,7 @@ if (isGuardPoint && (isPostAe || !macroPass)) {
   const max = Math.max(0, Number(weaponItem.system?.uses?.max) || 0);
   await ChatMessage.create({
     speaker: ChatMessage.getSpeaker({ actor: actorDoc }),
-    content: \`<div class="dnd5e2"><p><strong>\${esc(actorDoc.name)}</strong> uses Guard Point: <strong>+2 AC</strong> against the triggering attack (Shield pattern). Phial Charges: \${left}/\${max}.</p><p>If the attack misses, use <strong>Guard Point: Eruption</strong> for [[/r \${guardDie}]][\${esc(elementalType)}] damage.</p></div>\`,
+    content: \`<div class="dnd5e2"><p><strong>\${esc(actorDoc.name)}</strong> uses Guard Point: Guard Dice [[/r \${guardDie}]] → <strong>+\${acBonus} AC</strong> against the triggering attack (Shield pattern). Phial Charges: \${left}/\${max}.</p><p>If the attack misses, use <strong>Guard Point: Eruption</strong> for [[/r \${guardDie}]][\${esc(elementalType)}] damage.</p></div>\`,
   });
   return;
 }

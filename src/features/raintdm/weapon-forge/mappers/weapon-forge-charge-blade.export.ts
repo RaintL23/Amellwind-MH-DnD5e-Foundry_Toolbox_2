@@ -77,7 +77,7 @@ function resolveElementalDischargeDamage(
 
 function resolveAedDamage(weapon: CustomWeapon, rarityIndex: number): string {
   if (hasFeature(weapon, rarityIndex, /^super\s*amped/i)) {
-    return "1d12";
+    return "1d10";
   }
   if (
     hasFeature(
@@ -86,9 +86,19 @@ function resolveAedDamage(weapon: CustomWeapon, rarityIndex: number): string {
       /^amped\s*element\s*discharge\s*upgrade\s*i$/i,
     )
   ) {
-    return "1d10";
+    return "1d8";
   }
-  return "1d8";
+  return "1d6";
+}
+
+/** Match Elemental Guard / legacy Guard Point activity names (not Eruption). */
+function isGuardPointActivityName(name: string): boolean {
+  const n = name.trim();
+  if (/eruption/i.test(n)) return false;
+  return (
+    /^elemental\s*guard$/i.test(n) ||
+    /^guard\s*point(\s*\(elemental\s*guard\))?$/i.test(n)
+  );
 }
 
 const ELEMENTAL_TYPES = new Set(["acid", "cold", "fire", "lightning"]);
@@ -418,8 +428,7 @@ function patchGuardPoint(
   for (const activity of Object.values(activities)) {
     if (!activity) continue;
     const name = String(activity.name ?? "").trim();
-    if (!/^guard\s*point(\s*\(elemental\s*guard\))?$/i.test(name)) continue;
-    if (/eruption/i.test(name)) continue;
+    if (!isGuardPointActivityName(name)) continue;
 
     // Mirror Lance Counter-Thrust / Shield: empty useCondition (Midi defaults to
     // isHit) and NO itemUses consumption on the activity. Phial spend happens in
@@ -439,7 +448,7 @@ function patchGuardPoint(
       targets: [],
     };
     activity.description = {
-      chatFlavor: `+2 AC vs the triggering attack (Midi rechecks, Shield pattern). Expends 1 Phial Charge via Item Macro. On a miss, use Guard Point: Eruption (${opts.damageFormula} ${elementalLabel(opts.elementalType)}).`,
+      chatFlavor: `Roll Guard Dice (${opts.damageFormula}) and add to AC vs the triggering attack (Midi rechecks, Shield pattern). Expends 1 Phial Charge via Item Macro. On a miss, use Guard Point: Eruption (${opts.damageFormula} ${elementalLabel(opts.elementalType)}).`,
     };
     activity.range = {
       value: null,
@@ -588,72 +597,93 @@ function patchElementalAttunement(
   const activities = activitiesOf(item);
   if (!activities) return;
 
-  for (const activity of Object.values(activities)) {
-    if (!activity) continue;
+  let attuneId = Object.keys(activities).find((id) => {
+    const activity = activities[id];
+    if (!activity) return false;
     const name = String(activity.name ?? "").trim();
-    if (!/^elemental\s*attunement(\s*\([^)]+\))?$/i.test(name)) continue;
+    const midiId = String(
+      (activity.midiProperties as { identifier?: string } | undefined)
+        ?.identifier ?? "",
+    );
+    return (
+      /^elemental\s*attunement(\s*\([^)]+\))?$/i.test(name) ||
+      midiId === "elemental-attunement"
+    );
+  });
 
-    const label = elementalType
-      ? `Elemental Attunement (${elementalType.charAt(0).toUpperCase()}${elementalType.slice(1)})`
-      : "Elemental Attunement";
-
-    activity.name = label;
-    activity.type = "utility";
-    activity.img =
-      "icons/magic/symbols/elements-air-earth-fire-water.webp";
-    activity.activation = {
-      type: "special",
-      value: null,
-      condition: "",
-      override: false,
-    };
-    activity.consumption = {
-      scaling: { allowed: false, max: "" },
-      spellSlot: false,
-      targets: [],
-    };
-    activity.uses = {
-      spent: 0,
-      max: "1",
-      recovery: [{ period: "sr", type: "recoverAll", formula: "" }],
-    };
-    activity.description = {
-      chatFlavor: elementalType
-        ? `Currently attuned to ${elementalType}. Once per Short or Long Rest, use this to change Acid / Cold / Fire / Lightning.`
-        : "No element chosen yet. Once per Short or Long Rest, choose Acid, Cold, Fire, or Lightning. Discharge, AED, and Guard Point Eruption use that type.",
-    };
-    activity.range = { units: "self", special: "", override: false };
-    activity.target = {
-      template: {
-        count: "",
-        contiguous: false,
-        type: "",
-        size: "",
-        width: "",
-        height: "",
-        units: "ft",
-      },
-      affects: {
-        count: "",
-        type: "self",
-        choice: false,
-        special: "",
-      },
-      prompt: false,
-      override: false,
-    };
-    const midi =
-      (activity.midiProperties as Record<string, unknown> | undefined) ?? {};
-    activity.midiProperties = {
-      ...defaultMidiProperties({
-        identifier: "elemental-attunement",
-        displayActivityName: true,
-      }),
-      ...midi,
-      identifier: "elemental-attunement",
-      displayActivityName: true,
+  if (!attuneId) {
+    attuneId = foundryIdFromSeed("act-charge-blade-elemental-attunement");
+    activities[attuneId] = {
+      _id: attuneId,
+      type: "utility",
+      sort: 40,
+      name: "Elemental Attunement",
     };
   }
+
+  const activity = activities[attuneId];
+  if (!activity) return;
+
+  const label = elementalType
+    ? `Elemental Attunement (${elementalType.charAt(0).toUpperCase()}${elementalType.slice(1)})`
+    : "Elemental Attunement";
+
+  activity.name = label;
+  activity.type = "utility";
+  activity.img =
+    "icons/magic/symbols/elements-air-earth-fire-water.webp";
+  activity.activation = {
+    type: "special",
+    value: null,
+    condition: "",
+    override: false,
+  };
+  activity.consumption = {
+    scaling: { allowed: false, max: "" },
+    spellSlot: false,
+    targets: [],
+  };
+  activity.uses = {
+    spent: 0,
+    max: "1",
+    recovery: [{ period: "sr", type: "recoverAll", formula: "" }],
+  };
+  activity.description = {
+    chatFlavor: elementalType
+      ? `Currently attuned to ${elementalType}. Once per Short or Long Rest, use this to change Acid / Cold / Fire / Lightning.`
+      : "No element chosen yet. Choose Acid, Cold, Fire, or Lightning (once when first equipping/attuning). Once per Short or Long Rest you can change it. Discharge, AED, and Guard Point Eruption use that type.",
+  };
+  activity.range = { units: "self", special: "", override: false };
+  activity.target = {
+    template: {
+      count: "",
+      contiguous: false,
+      type: "",
+      size: "",
+      width: "",
+      height: "",
+      units: "ft",
+    },
+    affects: {
+      count: "",
+      type: "self",
+      choice: false,
+      special: "",
+    },
+    prompt: false,
+    override: false,
+  };
+  const midi =
+    (activity.midiProperties as Record<string, unknown> | undefined) ?? {};
+  activity.midiProperties = {
+    ...defaultMidiProperties({
+      identifier: "elemental-attunement",
+      displayActivityName: true,
+    }),
+    ...midi,
+    identifier: "elemental-attunement",
+    displayActivityName: true,
+  };
 }
 
 /** Rare+: on-hit Axe phial spend → elemental bonus damage. */
@@ -745,8 +775,9 @@ function patchElementalDischarge(
 }
 
 /**
- * Rare+: collapse AED ×N into one Action. ItemMacro dialog asks how many
- * Phial Charges to spend (1…available) and scales the NdX damage.
+ * Rare+: collapse AED ×N into one special activity. ItemMacro dialog asks how
+ * many Phial Charges to spend (1…available) and scales the NdX damage.
+ * Replaces one Attack-action attack; PB uses / Long Rest (not Axe-gated).
  */
 function patchAedActivities(
   item: FoundryItem,
@@ -756,6 +787,7 @@ function patchAedActivities(
     damageFormula: string;
     coneSize: string;
     chargedShield: boolean;
+    hasSuperAed: boolean;
   },
 ): void {
   const activities = activitiesOf(item);
@@ -778,19 +810,16 @@ function patchAedActivities(
     opts.elementalType,
   );
   const coneLabel = `${opts.coneSize}-ft`;
-  keep.name = opts.chargedShield
-    ? "Amped Element Discharge (AED)"
+  keep.name = opts.hasSuperAed
+    ? "Super Amped Element Discharge (SAED)"
     : "Amped Element Discharge (AED)";
-  // Super Amped leaf still displays as AED activity (scaled cone/die).
-  if (/super/i.test(String(keep.name))) {
-    keep.name = "Amped Element Discharge (AED)";
-  }
   keep.type = "save";
   keep.img = "icons/magic/fire/blast-jet-stream-splash.webp";
   keep.activation = {
-    type: "action",
+    type: "special",
     value: 1,
-    condition: "While in Axe Mode",
+    condition:
+      "Once per turn when you take the Attack action, replace one attack",
     override: false,
   };
   keep.consumption = {
@@ -798,10 +827,18 @@ function patchAedActivities(
     spellSlot: false,
     targets: [],
   };
+  keep.uses = {
+    spent: 0,
+    max: "@prof",
+    recovery: [{ period: "lr", type: "recoverAll", formula: "" }],
+  };
+  const hugeNote = opts.hasSuperAed
+    ? " If the cone completely covers a Huge or larger creature, it has Disadvantage on the save."
+    : "";
   keep.description = {
     chatFlavor: opts.chargedShield
-      ? `Axe Mode Action: choose Phial spend (dialog). ${opts.damageFormula} ${elementalLabel(opts.elementalType)} per charge in a ${coneLabel} cone; DEX save, half on success. Or cancel the shockwave for Charged Shield (Red Shield).`
-      : `Axe Mode Action: choose how many Phial Charges to spend (dialog). ${opts.damageFormula} ${elementalLabel(opts.elementalType)} per charge in a ${coneLabel} cone; DEX save (DC 8 + PB + STR or DEX), half on success.`,
+      ? `Replace one Attack-action attack: choose Phial spend (dialog). ${opts.damageFormula} ${elementalLabel(opts.elementalType)} per charge in a ${coneLabel} cone; DEX save (STR DC), half on success.${hugeNote} Or cancel the shockwave for Charged Shield (Red Shield). PB uses / Long Rest.`
+      : `Replace one Attack-action attack: choose how many Phial Charges to spend (dialog). ${opts.damageFormula} ${elementalLabel(opts.elementalType)} per charge in a ${coneLabel} cone; DEX save (DC 8 + PB + STR), half on success.${hugeNote} PB uses / Long Rest.`,
   };
   keep.damage = {
     parts: [part],
@@ -830,19 +867,20 @@ function patchAedActivities(
     prompt: true,
     override: false,
   };
-  keep.useConditionText = axeModeUseCondition();
-  keep.useConditionReason = "Requires Axe Mode and ≥1 Phial Charge.";
+  // Phial spend is gated in ItemMacro; no Axe Mode requirement on current rules.
+  keep.useConditionText = "";
+  keep.useConditionReason = "Requires ≥1 Phial Charge and an unused AED use.";
   const midi =
     (keep.midiProperties as Record<string, unknown> | undefined) ?? {};
   keep.midiProperties = {
     ...defaultMidiProperties({
-      identifier: "aed",
+      identifier: opts.hasSuperAed ? "saed" : "aed",
       displayActivityName: true,
       magicDamage: opts.magical,
       magicEffect: opts.magical,
     }),
     ...midi,
-    identifier: "aed",
+    identifier: opts.hasSuperAed ? "saed" : "aed",
     displayActivityName: true,
     magicDamage: opts.magical,
     magicEffect: opts.magical,
@@ -917,8 +955,9 @@ function applyChargeBladeItemMacro(
 
 /**
  * Charge Blade: mode-indicator AEs (default Sword & Shield), gated Attacks,
- * Switch Mode toggle, Phial Charges on Sword hit, Guard Point AC + Eruption.
- * Rare+: Elemental Discharge (prompt on Axe hit) + single AED with spend dialog.
+ * Switch Mode toggle, Phial Charges on Sword hit, Guard Point (Elemental Guard)
+ * Guard Dice AC + Eruption. Uncommon+: Elemental Discharge on Axe hit.
+ * Rare+: single AED (replace one Attack-action attack) with spend dialog.
  */
 export function applyChargeBladeOverlay(
   item: FoundryItem,
@@ -957,7 +996,7 @@ export function applyChargeBladeOverlay(
   const hasGuardPoint = hasFeature(
     weapon,
     rarityIndex,
-    /^guard\s*point(\s*\(elemental\s*guard\))?$/i,
+    /^(elemental\s*guard|guard\s*point(\s*\(elemental\s*guard\))?)$/i,
   );
 
   const hasElementalAttunement = hasFeature(
@@ -1013,6 +1052,7 @@ export function applyChargeBladeOverlay(
       damageFormula: aedDamage,
       coneSize: aedConeSize,
       chargedShield,
+      hasSuperAed,
     });
   }
 
@@ -1022,7 +1062,7 @@ export function applyChargeBladeOverlay(
     elementalDischargeDamage: hasElementalDischarge
       ? elementalDischargeDamage
       : "1d6",
-    aedDamage: hasAed ? aedDamage : "1d8",
+    aedDamage: hasAed ? aedDamage : "1d6",
     elementalType,
     swordMastery: masteries.sword,
     axeMastery: masteries.axe,
