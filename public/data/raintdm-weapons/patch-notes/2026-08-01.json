@@ -1,0 +1,89 @@
+{
+  "date": "2026-08-01",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Streamline weapon JSON structure by removing redundant base rows",
+      "commit": "328f60d",
+      "weapons": [
+        {
+          "name": "Bow",
+          "file": "bow.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        },
+        {
+          "name": "Dual Repeaters",
+          "file": "dual-repeaters.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        },
+        {
+          "name": "Gunlance",
+          "file": "gunlance.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        },
+        {
+          "name": "Hunting Horn",
+          "file": "hunting-horn.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        },
+        {
+          "name": "Lance",
+          "file": "lance.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        },
+        {
+          "name": "Sword and Shield",
+          "file": "sword-and-shield.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        },
+        {
+          "name": "Wire Knuckles",
+          "file": "wire-knuckles.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

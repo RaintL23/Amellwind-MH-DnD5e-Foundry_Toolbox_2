@@ -1,13 +1,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Download, GitCompare, Hammer, Plus, Upload } from "lucide-react";
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  Download,
+  GitCompare,
+  Hammer,
+  Info,
+  Plus,
+  Upload,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogBody,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select } from "@/components/ui/select";
 import { ListAreaLoading } from "@/shared/components/ListAreaLoading";
@@ -22,9 +32,11 @@ import { weaponToFormValues } from "../types/weapon-forge.types";
 import { WeaponForgeCard } from "./WeaponForgeCard";
 import { WeaponForgeDialog } from "./WeaponForgeDialog";
 import { WeaponComparePanel } from "./WeaponComparePanel";
+import { WeaponForgePatchNotesDialog } from "./WeaponForgePatchNotesDialog";
 
 export function WeaponForgeList() {
   const navigate = useNavigate();
+  const [patchNotesOpen, setPatchNotesOpen] = useState(false);
   const {
     curated,
     userWeapons,
@@ -177,65 +189,130 @@ export function WeaponForgeList() {
 
   return (
     <div className="flex flex-col h-full min-h-0">
-      <div className="shrink-0 border-b border-border px-6 py-5">
-        <div className="flex items-start justify-between gap-4 flex-wrap">
-          <div>
-            <div className="flex items-center gap-3 mb-1">
-              <Hammer className="h-6 w-6 text-primary" />
-              <h1 className="text-xl font-bold text-foreground">
-                MH Weapons — Amellwind Format by RaintDM
+      <div className="shrink-0 border-b border-border px-4 py-4 md:px-6 md:py-5">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 sm:gap-3 mb-1">
+              <Hammer className="h-5 w-5 sm:h-6 sm:w-6 shrink-0 text-primary" />
+              <h1 className="text-lg sm:text-xl font-bold text-foreground truncate">
+                <span className="sm:hidden">Weapon Forge</span>
+                <span className="hidden sm:inline">
+                  MH Weapons — Amellwind Format by RaintDM
+                </span>
               </h1>
             </div>
-            <p className="text-sm text-muted-foreground max-w-2xl">
+            <p className="hidden sm:block text-sm text-muted-foreground max-w-2xl">
               Create and tweak Monster Hunter weapons using Amellwind&apos;s
               format for your own tables. Curated catalog ships with the app;
               your custom weapons stay in this browser until you export JSON.
             </p>
           </div>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                title="Important notes about Weapon Forge"
+                aria-label="Important notes about Weapon Forge"
+                className="h-8 shrink-0 gap-1.5 px-2 text-amber-200/80 hover:bg-amber-950/40 hover:text-amber-100"
+              >
+                <Info className="h-3.5 w-3.5" />
+                <span className="hidden sm:inline text-xs">Important</span>
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2 text-amber-200">
+                  <Info className="h-5 w-5" />
+                  Important
+                </DialogTitle>
+                <DialogDescription>
+                  How catalog vs custom weapons work in Weapon Forge.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogBody className="space-y-4 text-sm text-muted-foreground leading-relaxed">
+                <div>
+                  <p className="font-medium text-foreground mb-1">
+                    Catalog is curated
+                  </p>
+                  <p>
+                    Creating a weapon here does <strong>not</strong> publish it
+                    to the shared Catalog automatically.
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground mb-1">
+                    My Weapons stay local
+                  </p>
+                  <p>
+                    Weapons in <em>My Weapons</em> are stored in this browser
+                    only — clearing site data can remove them, so download a
+                    JSON backup if you care about keeping them.
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground mb-1">
+                    Want it in the Catalog?
+                  </p>
+                  <p>
+                    Download the JSON and send it to{" "}
+                    <strong className="text-foreground">RaintDM</strong> so it
+                    can be shipped with the app.
+                  </p>
+                </div>
+                <div>
+                  <p className="font-medium text-foreground mb-1">
+                    Why a{" "}
+                    <button
+                      type="button"
+                      onClick={() => setPatchNotesOpen(true)}
+                      className="text-amber-200 underline underline-offset-2 decoration-amber-200/50 hover:text-amber-100 hover:decoration-amber-100 transition-colors"
+                    >
+                      Patch Notes
+                    </button>
+                    ?
+                  </p>
+                  <p>
+                    Because I find the idea funny and this page is for my use
+                    and enjoyment haha.
+                  </p>
+                </div>
+              </DialogBody>
+            </DialogContent>
+          </Dialog>
+
+          <WeaponForgePatchNotesDialog
+            open={patchNotesOpen}
+            onOpenChange={setPatchNotesOpen}
+          />
         </div>
 
-        <Accordion
-          type="single"
-          collapsible
-          className="mt-4 max-w-3xl rounded-md border border-amber-800/40 bg-amber-950/20 px-3"
-        >
-          <AccordionItem value="important" className="border-b-0">
-            <AccordionTrigger className="py-2.5 text-xs font-medium text-amber-200 hover:no-underline">
-              Important
-            </AccordionTrigger>
-            <AccordionContent className="text-xs text-amber-100/90 leading-relaxed">
-              Creating a weapon here does <strong>not</strong> publish it to the
-              shared Catalog automatically. Weapons in <em>My Weapons</em> are
-              stored in this browser only — clearing site data can remove them,
-              so download a JSON backup if you care about keeping them. To have
-              your weapon appear in the Catalog for everyone, download the JSON
-              and send it to <strong>RaintDM</strong> so it can be shipped with
-              the app.
-            </AccordionContent>
-          </AccordionItem>
-        </Accordion>
-
-        <div className="mt-4 flex flex-wrap items-center gap-3">
+        <div className="mt-3 sm:mt-4 flex flex-wrap items-center gap-2 sm:gap-3">
           <ClearableSearchInput
             value={searchDraft}
             onChange={setSearchDraft}
             placeholder="Search weapons…"
-            className="max-w-xs"
+            className="w-full max-w-xs sm:w-auto"
             inputClassName="h-9"
           />
 
           <div className="flex flex-wrap gap-2">
-            <Button type="button" onClick={openCreate}>
+            <Button type="button" onClick={openCreate} className="h-9">
               <Plus className="h-3 w-3 mr-1" />
-              New weapon
+              <span className="hidden sm:inline">New weapon</span>
+              <span className="sm:hidden">New</span>
             </Button>
             <Button
               type="button"
               variant="outline"
+              className="h-9"
               onClick={() => fileInputRef.current?.click()}
             >
               <Upload className="h-3 w-3 mr-1" />
-              Import JSON
+              <span className="hidden sm:inline">Import JSON</span>
+              <span className="sm:hidden">Import</span>
             </Button>
             <input
               ref={fileInputRef}
@@ -251,6 +328,7 @@ export function WeaponForgeList() {
             <Button
               type="button"
               variant={compareMode ? "default" : "outline"}
+              className="h-9"
               onClick={() => {
                 setCompareMode((v) => !v);
                 if (compareMode) {
@@ -301,7 +379,7 @@ export function WeaponForgeList() {
         </div>
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto px-6 py-4 space-y-4">
+      <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 md:px-6 space-y-4">
         {compareOpen && compareWeapons.length >= 2 && (
           <WeaponComparePanel
             weapons={compareWeapons}
@@ -331,7 +409,7 @@ export function WeaponForgeList() {
                 description="Curated weapons load from public/data/raintdm-weapons/ (one JSON per weapon). Add a file and rebuild, or create weapons under My Weapons."
               />
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filteredCurated.map((weapon) => (
                   <WeaponForgeCard
                     key={weapon.id}
@@ -375,7 +453,7 @@ export function WeaponForgeList() {
                 }
               />
             ) : (
-              <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filteredUser.map((weapon) => (
                   <WeaponForgeCard
                     key={weapon.id}

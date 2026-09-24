@@ -1,0 +1,53 @@
+{
+  "date": "2026-09-10",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Retune Lance and Wire Knuckles rarity features",
+      "commit": "19e4bc6",
+      "weapons": [
+        {
+          "name": "Lance",
+          "file": "lance.json",
+          "changes": [
+            {
+              "kind": "feature-removed",
+              "feature": "Aegis Wall",
+              "text": "Removed feature \"Aegis Wall\"."
+            }
+          ]
+        },
+        {
+          "name": "Wire Knuckles",
+          "file": "wire-knuckles.json",
+          "changes": [
+            {
+              "kind": "feature-added",
+              "feature": "Silkbind Upgrade",
+              "text": "Added feature \"Silkbind Upgrade\": The radius the creature can move while silkbound is reduced to 10 feet and the save DC increases by +1.",
+              "after": "The radius the creature can move while silkbound is reduced to 10 feet and the save DC increases by +1."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Silkbind Upgrade (Legendary)",
+              "text": "Added feature \"Silkbind Upgrade (Legendary)\": The save DC now increases by +2 instead of +1.",
+              "after": "The save DC now increases by +2 instead of +1."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "…Recall Upgrade, Wirebug Reflex",
+              "after": "…Recall Upgrade, Wirebug Reflex, Silkbind Upgrade"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Legendary rarity features updated.",
+              "before": "…Whisperer, Punishing Ride, Fierce Ram",
+              "after": "…Whisperer, Punishing Ride, Fierce Ram, Silkbind Upgrade (Legendary)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

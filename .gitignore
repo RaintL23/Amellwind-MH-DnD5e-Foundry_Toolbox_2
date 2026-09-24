@@ -41,6 +41,7 @@ public/rpg-cards/
 scripts/*
 !scripts/scrape-rpgbot.mjs
 !scripts/generate-raintdm-manifest.mjs
+!scripts/generate-weapon-forge-patch-notes.mjs
 !scripts/optimize-mh-icons.mjs
 !scripts/build-magic-item-pricing.mjs
 !scripts/build-foundry-module.mjs

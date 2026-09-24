@@ -1,0 +1,161 @@
+{
+  "date": "2026-07-30",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Miscelaneous",
+      "commit": "ca962de",
+      "weapons": [
+        {
+          "name": "Dual Repeaters",
+          "file": "dual-repeaters.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Magazines",
+              "text": "Rewrote \"Magazines\" text.",
+              "before": "You load both repeaters simultaneously.…",
+              "after": "Using your bonus action, you can load both repeaters simultaneously.…"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Dual Repeaters to the raintdm weapons catalog",
+      "commit": "c9ce5d5",
+      "weapons": [
+        {
+          "name": "Dual Repeaters",
+          "file": "dual-repeaters.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Dual Repeaters\" to the catalog (20 features)."
+            }
+          ]
+        },
+        {
+          "name": "Hunting Horn",
+          "file": "hunting-horn.json",
+          "changes": [
+            {
+              "kind": "feature-removed",
+              "feature": "Melody of the Elements",
+              "text": "Removed feature \"Melody of the Elements\"."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of the Harmful Elements",
+              "text": "Added feature \"Melody of the Harmful Elements\": When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura deal an extra 1d4 damage of that type.",
+              "after": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura deal an extra 1d4 damage of that type."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of the Resistant Elements",
+              "text": "Added feature \"Melody of the Resistant Elements\": When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura gain Resistance to the chosen damage type.",
+              "after": "When you perform this Recital, choose Acid, Cold, Fire, Lightning, or Thunder. Allies in the aura gain Resistance to the chosen damage type."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Hunting Horn to the raintdm weapons catalog",
+      "commit": "5fbea80",
+      "weapons": [
+        {
+          "name": "Hunting Horn",
+          "file": "hunting-horn.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Hunting Horn\" to the catalog (17 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add proficiency details to various weapons in the raintdm catalog",
+      "commit": "b3fd4ae",
+      "weapons": [
+        {
+          "name": "Wire Knuckles",
+          "file": "wire-knuckles.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Wire Knuckles\" to the catalog (10 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Sword and Shield to the raintdm weapons catalog",
+      "commit": "dd326c6",
+      "weapons": [
+        {
+          "name": "Sword and Shield",
+          "file": "sword-and-shield.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Sword and Shield\" to the catalog (9 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Bow to the raintdm weapons catalog",
+      "commit": "2aee122",
+      "weapons": [
+        {
+          "name": "Bow",
+          "file": "bow.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Bow\" to the catalog (23 features)."
+            }
+          ]
+        },
+        {
+          "name": "Switch Axe",
+          "file": "switch-axe.json",
+          "changes": [
+            {
+              "kind": "feature-renamed",
+              "feature": "Mastery (Graze) (Sword)",
+              "text": "Renamed feature \"Mastery (Vex) (Sword)\" → \"Mastery (Graze) (Sword)\".",
+              "before": "Mastery (Vex) (Sword)",
+              "after": "Mastery (Graze) (Sword)"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Mastery (Graze) (Sword)",
+              "text": "Rewrote \"Mastery (Graze) (Sword)\" text.",
+              "before": "…hit a creature and deal damage to it, you have Advantage on your next attack roll against that creature before the end of your next turn.",
+              "after": "…your attack roll with this weapon misses a creature, you can deal damage to that creature equal to the ability modifier you used to make the attack roll."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Phial Gauge",
+              "text": "Rewrote \"Phial Gauge\" text.",
+              "before": "…The gauge starts at…",
+              "after": "…Any unspent charges safely dissipate if you haven't made an attack with this weapon for 1 minute. The gauge resets to…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Common rarity features updated.",
+              "before": "…(Cleave) (Axe Mode), Mastery (Vex) (Sword), Fluid Morph",
+              "after": "…(Cleave) (Axe Mode), Mastery (Graze) (Sword), Fluid Morph"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

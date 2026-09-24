@@ -1,0 +1,169 @@
+{
+  "date": "2026-09-23",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Split Wire-Dash mobility from Wire-Escape reaction",
+      "commit": "1f4f5fb",
+      "weapons": [
+        {
+          "name": "Wire Knuckles",
+          "file": "wire-knuckles.json",
+          "changes": [
+            {
+              "kind": "feature-renamed",
+              "feature": "Wire-Escape",
+              "text": "Renamed feature \"Wire-Dash\" → \"Wire-Escape\".",
+              "before": "Wire-Dash",
+              "after": "Wire-Escape"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Wire-Escape",
+              "text": "Rewrote \"Wire-Escape\" text.",
+              "before": "When you take damage, you can expend 1 Wirebug to immediately…",
+              "after": "When you take damage, you can use your Reaction to expend 1 Wirebug to immediately…"
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Wire-Dash",
+              "text": "Added feature \"Wire-Dash\": You can expend 1 Wirebug (no action required) to propel yourself up to 15 feet in any direction (including vertically). This movement does not provoke Opportun…",
+              "after": "You can expend 1 Wirebug (no action required) to propel yourself up to 15 feet in any direction (including vertically). This movement does not provoke Opportunity Attacks, and you can use this featur…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "Wirebug Gauge, Wire-Dash, Wire-Fall, Wirebug Recall",
+              "after": "Wirebug Gauge, Wire-Dash, Wire-Escape, Wire-Fall, Wirebug Recall"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Switch Phial install and update ZSD rules",
+      "commit": "787b286",
+      "weapons": [
+        {
+          "name": "Switch Axe",
+          "file": "switch-axe.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Phial Gauge",
+              "text": "Rewrote \"Phial Gauge\" text.",
+              "before": "…The gauge resets to 0 after a Long Rest. When you finish a Long Rest, you choose one Phial Type to install: Power or Element.",
+              "after": "…When you finish a Long Rest, the gauge resets to 0 and you choose one Phial Type to install."
+            },
+            {
+              "kind": "dice",
+              "feature": "Power Phial",
+              "text": "\"Power Phial\" dice 1d6 → 1d8.",
+              "before": "1d6",
+              "after": "1d8"
+            },
+            {
+              "kind": "dice",
+              "feature": "Zero Sum Discharge (ZSD)",
+              "text": "\"Zero Sum Discharge (ZSD)\" dice 1d10 → 1d6.",
+              "before": "1d10",
+              "after": "1d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Zero Sum Discharge (ZSD)",
+              "text": "Rewrote \"Zero Sum Discharge (ZSD)\" text.",
+              "before": "While in Sword mode with at least 2 Phial Charges, you can use your Action to thrust the blade into a creature and overheat its core. Make one melee weapon att…",
+              "after": "Once per turn when you take the Attack action on your turn while in Sword mode with at least 2 Phial Charges, you can replace one of your attacks with this pro…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Zero Sum Discharge Splash",
+              "text": "Rewrote \"Zero Sum Discharge Splash\" text.",
+              "before": "…becomes massive. When you use ZSD even if you miss, any creature…",
+              "after": "…becomes massive. When you use ZSD, even if you miss, any creature…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Elemental Awakening",
+              "text": "Rewrote \"Elemental Awakening\" text.",
+              "before": "…Element Phial (including during a ZSD)…",
+              "after": "…elemental Phials (Acid, Cold, Fire, Lightning, or Dragon), including during a ZSD,…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Dragon Phial",
+              "text": "Rewrote \"Dragon Phial\" text.",
+              "before": "You can install a Dragon Phial, which acts as an Element Phial but deals…",
+              "after": "Deals an extra…"
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Element Phial",
+              "text": "Removed feature \"Element Phial\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "True Zero Sum Discharge",
+              "text": "Removed feature \"True Zero Sum Discharge\"."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Acid Phial",
+              "text": "Added feature \"Acid Phial\": Deals an extra 1d6 Acid damage.",
+              "after": "Deals an extra 1d6 Acid damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Cold Phial",
+              "text": "Added feature \"Cold Phial\": Deals an extra 1d6 Cold damage.",
+              "after": "Deals an extra 1d6 Cold damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Fire Phial",
+              "text": "Added feature \"Fire Phial\": Deals an extra 1d6 Fire damage.",
+              "after": "Deals an extra 1d6 Fire damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Lightning Phial",
+              "text": "Added feature \"Lightning Phial\": Deals an extra 1d6 Lightning damage.",
+              "after": "Deals an extra 1d6 Lightning damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Zero Sum Discharge Upgrade I",
+              "text": "Added feature \"Zero Sum Discharge Upgrade I\": Your Zero Sum Discharge Phial damage increases to 1d8 per charge expended.",
+              "after": "Your Zero Sum Discharge Phial damage increases to 1d8 per charge expended."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Zero Sum Discharge Upgrade II",
+              "text": "Added feature \"Zero Sum Discharge Upgrade II\": Your Zero Sum Discharge Phial damage increases to 1d10 per charge expended.",
+              "after": "Your Zero Sum Discharge Phial damage increases to 1d10 per charge expended."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Rare rarity features updated.",
+              "before": "…Gauge I, Zero Sum Discharge Splash",
+              "after": "…Gauge I, Zero Sum Discharge Upgrade I, Zero Sum Discharge Splash"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "…Offset Morph, Elemental Awakening",
+              "after": "…Offset Morph, Elemental Awakening, Zero Sum Discharge Upgrade II"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Legendary rarity features updated.",
+              "before": "Maximum Gauge, True Zero Sum Discharge",
+              "after": "Maximum Gauge"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

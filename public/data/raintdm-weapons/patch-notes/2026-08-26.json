@@ -1,0 +1,224 @@
+{
+  "date": "2026-08-26",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add Overheat and retune Rapid Fire progression",
+      "commit": "e0ec268",
+      "weapons": [
+        {
+          "name": "Light Bowgun",
+          "file": "light-bowgun.json",
+          "changes": [
+            {
+              "kind": "feature-added",
+              "feature": "Overheat",
+              "text": "Added feature \"Overheat\": When you resolve an attack made with your Rapid Fire feature, you gain 1 stack of Overheat. Resolve that attack first (applying any Overheat stacks you already…",
+              "after": "When you resolve an attack made with your Rapid Fire feature, you gain 1 stack of Overheat. Resolve that attack first (applying any Overheat stacks you already have), then gain the new stack; the att…"
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Overheat Upgrade I",
+              "text": "Added feature \"Overheat Upgrade I\": Overheat's damage penalty is 2 per stack instead of 3.",
+              "after": "Overheat's damage penalty is 2 per stack instead of 3."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Common rarity features updated.",
+              "before": "Mastery (Slow), Rapid Fire, Magazine, Reload",
+              "after": "Mastery (Slow), Rapid Fire, Overheat, Magazine, Reload"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Rare rarity features updated.",
+              "before": "Rapid Fire Upgrade II, Magazine Upgrade II, Special…",
+              "after": "Magazine Upgrade II, Special…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "Rapid Fire Upgrade III, Magazine Upgrade III, Special…",
+              "after": "Rapid Fire Upgrade II, Overheat Upgrade I, Magazine Upgrade III, Special…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Legendary rarity features updated.",
+              "before": "Magazine Upgrade IV, Special…",
+              "after": "Rapid Fire Upgrade III, Magazine Upgrade IV, Special…"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Expand Songbook with Solo Recital and split melodies",
+      "commit": "92782e7",
+      "weapons": [
+        {
+          "name": "Hunting Horn",
+          "file": "hunting-horn.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Recital",
+              "text": "Rewrote \"Recital\" text.",
+              "before": "…You activate one Melody from your Songbook (see below). The Melody emits a 15-foot aura centered on you that lasts for 1 minute, until you are Incapacitated,…",
+              "after": "…This ends all Melodies currently active from your Songbook, then activates one Melody of your choice. That Melody emits a 15-foot aura centered on you that la…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Encore",
+              "text": "Rewrote \"Encore\" text.",
+              "before": "…use your Bonus Action to perform a Recital, you can have two different Melodies active at the same time.",
+              "after": "…perform a Recital, after ending all currently active Melodies you can activate two different Melodies at the same time instead of one."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Magnificent Trio",
+              "text": "Rewrote \"Magnificent Trio\" text.",
+              "before": "You can now have up to three different Melodies active at the same time when you perform a Recital.",
+              "after": "When you perform a Recital, after ending all currently active Melodies you can activate up to three different Melodies at the same time."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Songbook Mastery",
+              "text": "Rewrote \"Songbook Mastery\" text.",
+              "before": "…every time you hit a creature and use your Bonus Action.",
+              "after": "…whenever you perform a Recital or Solo Recital."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Melody of the Harmful Elements",
+              "text": "Removed feature \"Melody of the Harmful Elements\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Melody of the Resistant Elements",
+              "text": "Removed feature \"Melody of the Resistant Elements\"."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Solo Recital",
+              "text": "Added feature \"Solo Recital\": As a Bonus Action, you can perform a Solo Recital without hitting a creature. This ends all Melodies currently active from your Songbook, then activates one Me…",
+              "after": "As a Bonus Action, you can perform a Solo Recital without hitting a creature. This ends all Melodies currently active from your Songbook, then activates one Melody of your choice. That Melody emits a…"
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Precision",
+              "text": "Added feature \"Melody of Precision\": Allies in the aura gain a +1 bonus to attack rolls.",
+              "after": "Allies in the aura gain a +1 bonus to attack rolls."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Guile",
+              "text": "Added feature \"Melody of Guile\": When you activate this Melody, choose one skill. Allies in the aura gain a +1 bonus to checks using that skill.",
+              "after": "When you activate this Melody, choose one skill. Allies in the aura gain a +1 bonus to checks using that skill."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Focus",
+              "text": "Added feature \"Melody of Focus\": Allies in the aura (including you) gain a +1 bonus to their spell save DCs.",
+              "after": "Allies in the aura (including you) gain a +1 bonus to their spell save DCs."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Harmful Acid",
+              "text": "Added feature \"Melody of Harmful Acid\": Allies in the aura deal an extra 1d4 Acid damage.",
+              "after": "Allies in the aura deal an extra 1d4 Acid damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Harmful Cold",
+              "text": "Added feature \"Melody of Harmful Cold\": Allies in the aura deal an extra 1d4 Cold damage.",
+              "after": "Allies in the aura deal an extra 1d4 Cold damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Harmful Fire",
+              "text": "Added feature \"Melody of Harmful Fire\": Allies in the aura deal an extra 1d4 Fire damage.",
+              "after": "Allies in the aura deal an extra 1d4 Fire damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Harmful Lightning",
+              "text": "Added feature \"Melody of Harmful Lightning\": Allies in the aura deal an extra 1d4 Lightning damage.",
+              "after": "Allies in the aura deal an extra 1d4 Lightning damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Harmful Thunder",
+              "text": "Added feature \"Melody of Harmful Thunder\": Allies in the aura deal an extra 1d4 Thunder damage.",
+              "after": "Allies in the aura deal an extra 1d4 Thunder damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Solo Recital Upgrade",
+              "text": "Added feature \"Solo Recital Upgrade\": When you perform a Solo Recital, you can activate two different Melodies instead of one after ending all currently active Melodies.",
+              "after": "When you perform a Solo Recital, you can activate two different Melodies instead of one after ending all currently active Melodies."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Fortitude",
+              "text": "Added feature \"Melody of Fortitude\": Allies in the aura gain a +1 bonus to saving throws.",
+              "after": "Allies in the aura gain a +1 bonus to saving throws."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Recovery",
+              "text": "Added feature \"Melody of Recovery\": At the start of each of their turns, allies in the aura regain Hit Points equal to your Charisma or Strength modifier (minimum of 1).",
+              "after": "At the start of each of their turns, allies in the aura regain Hit Points equal to your Charisma or Strength modifier (minimum of 1)."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of the Wilds",
+              "text": "Added feature \"Melody of the Wilds\": Allies in the aura can move across calm liquid as if it were solid ground, and they suffer no harm from extreme cold or extreme heat.",
+              "after": "Allies in the aura can move across calm liquid as if it were solid ground, and they suffer no harm from extreme cold or extreme heat."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Resistant Acid",
+              "text": "Added feature \"Melody of Resistant Acid\": Allies in the aura gain Resistance to Acid damage.",
+              "after": "Allies in the aura gain Resistance to Acid damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Resistant Cold",
+              "text": "Added feature \"Melody of Resistant Cold\": Allies in the aura gain Resistance to Cold damage.",
+              "after": "Allies in the aura gain Resistance to Cold damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Resistant Fire",
+              "text": "Added feature \"Melody of Resistant Fire\": Allies in the aura gain Resistance to Fire damage.",
+              "after": "Allies in the aura gain Resistance to Fire damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Resistant Lightning",
+              "text": "Added feature \"Melody of Resistant Lightning\": Allies in the aura gain Resistance to Lightning damage.",
+              "after": "Allies in the aura gain Resistance to Lightning damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Melody of Resistant Thunder",
+              "text": "Added feature \"Melody of Resistant Thunder\": Allies in the aura gain Resistance to Thunder damage.",
+              "after": "Allies in the aura gain Resistance to Thunder damage."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "…(The Bard Fix), Recital, Songbook",
+              "after": "…(The Bard Fix), Recital, Solo Recital, Songbook"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "Magnificent Trio, Expanded Songbook II, Earthshaker",
+              "after": "Magnificent Trio, Solo Recital Upgrade, Expanded Songbook II, Earthshaker"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

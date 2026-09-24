@@ -1,0 +1,44 @@
+{
+  "date": "2026-09-06",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Refresh Foundry exports and forge automation.",
+      "commit": "977e47c",
+      "weapons": [
+        {
+          "name": "Great Sword",
+          "file": "great-sword.json",
+          "changes": [
+            {
+              "kind": "feature-removed",
+              "feature": "Charge Upgrade",
+              "text": "Removed feature \"Charge Upgrade\"."
+            }
+          ]
+        },
+        {
+          "name": "Hammer",
+          "file": "hammer.json",
+          "changes": [
+            {
+              "kind": "feature-removed",
+              "feature": "Power Charge",
+              "text": "Removed feature \"Power Charge\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Mighty Weapon",
+              "text": "Removed feature \"Mighty Weapon\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Upswing / Spinning Bludgeon",
+              "text": "Removed feature \"Upswing / Spinning Bludgeon\"."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

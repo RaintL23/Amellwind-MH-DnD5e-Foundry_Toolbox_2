@@ -1,0 +1,57 @@
+{
+  "date": "2026-08-17",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add Longsword Spirit Gauge export and Foundry overlay",
+      "commit": "0b4ba82",
+      "weapons": [
+        {
+          "name": "Longsword",
+          "file": "longsword.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Longsword\" to the catalog (11 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Heavy Bowgun catalog, ammo, and Foundry examples",
+      "commit": "dcbac34",
+      "weapons": [
+        {
+          "name": "Heavy Bowgun",
+          "file": "heavy-bowgun.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Heavy Bowgun\" to the catalog (36 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Shorten Light Bowgun Pierce Ammo to a 20-ft line",
+      "commit": "367bc2a",
+      "weapons": [
+        {
+          "name": "Light Bowgun",
+          "file": "light-bowgun.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Pierce Ammo",
+              "text": "Rewrote \"Pierce Ammo\" text.",
+              "before": "You fire in a 30-foot line that is 5 feet wide.…",
+              "after": "You fire in a 20-foot line that is 5 feet wide.…"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

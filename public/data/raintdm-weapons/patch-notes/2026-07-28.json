@@ -1,0 +1,100 @@
+{
+  "date": "2026-07-28",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Streamline feature handling and update weapon dialog options",
+      "commit": "e38cae9",
+      "weapons": [
+        {
+          "name": "Switch Axe",
+          "file": "switch-axe.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Base rarity features updated.",
+              "before": "--"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Switch Axe to the curated raintdm weapons catalog",
+      "commit": "09980a8",
+      "weapons": [
+        {
+          "name": "Switch Axe",
+          "file": "switch-axe.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Switch Axe\" to the catalog (19 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Hammer to the curated raintdm weapons catalog",
+      "commit": "bdcd631",
+      "weapons": [
+        {
+          "name": "Hammer",
+          "file": "hammer.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Hammer\" to the catalog (20 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Misceelaneous",
+      "commit": "5152182",
+      "weapons": [
+        {
+          "name": "Great Sword",
+          "file": "great-sword.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Mastery Property (Graze)",
+              "text": "Rewrote \"Mastery Property (Graze)\" text.",
+              "before": "…used to make the attack roll. This perfectly simulates the sheer weight of the weapon—even if you miss the direct hit, the momentum still causes damage.",
+              "after": "…used to make the attack roll."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Split curated weapons into per-file catalog with manifest",
+      "commit": "5ae6661",
+      "weapons": [
+        {
+          "name": "Dual Blades",
+          "file": "dual-blades.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Dual Blades\" to the catalog (13 features)."
+            }
+          ]
+        },
+        {
+          "name": "Great Sword",
+          "file": "great-sword.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Great Sword\" to the catalog (16 features)."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

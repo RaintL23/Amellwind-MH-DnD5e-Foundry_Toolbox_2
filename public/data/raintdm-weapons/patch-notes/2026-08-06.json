@@ -1,0 +1,31 @@
+{
+  "date": "2026-08-06",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Streamline charge blade properties and enhance description clarity",
+      "commit": "0df208d",
+      "weapons": [
+        {
+          "name": "Charge Blade",
+          "file": "charge-blade.json",
+          "changes": [
+            {
+              "kind": "dice",
+              "feature": "Charged Shield (Red Shield)",
+              "text": "\"Charged Shield (Red Shield)\" dice 2d6 → —.",
+              "before": "2d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Charged Shield (Red Shield)",
+              "text": "Rewrote \"Charged Shield (Red Shield)\" text.",
+              "before": "…your Guard Point feature deals 2d6 elemental damage instead of…",
+              "after": "…your Guard Point feature deals two times your Elemental Discharge elemental damage instead of…"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "preview": "vite preview",
     "pricing:build": "node scripts/build-magic-item-pricing.mjs",
+    "patch-notes:build": "node scripts/generate-weapon-forge-patch-notes.mjs",
     "scrape:rpgbot": "node scripts/scrape-rpgbot.mjs",
     "optimize:icons": "node scripts/optimize-mh-icons.mjs",
     "optimize:tokens": "node scripts/optimize-mh-tokens.mjs",

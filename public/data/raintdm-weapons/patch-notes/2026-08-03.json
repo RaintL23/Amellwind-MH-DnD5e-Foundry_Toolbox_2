@@ -1,0 +1,32 @@
+{
+  "date": "2026-08-03",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add Charge Blade and Light Bowgun weapon entries",
+      "commit": "8065951",
+      "weapons": [
+        {
+          "name": "Charge Blade",
+          "file": "charge-blade.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Charge Blade\" to the catalog (14 features)."
+            }
+          ]
+        },
+        {
+          "name": "Light Bowgun",
+          "file": "light-bowgun.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Light Bowgun\" to the catalog (32 features)."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

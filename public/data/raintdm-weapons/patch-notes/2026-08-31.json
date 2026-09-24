@@ -1,0 +1,25 @@
+{
+  "date": "2026-08-31",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Extend tonfas export, coatings, phials, and automation.",
+      "commit": "f1a80e1",
+      "weapons": [
+        {
+          "name": "Tonfas",
+          "file": "tonfas.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Spirit Gauge Upgrade IV",
+              "text": "Rewrote \"Spirit Gauge Upgrade IV\" text.",
+              "before": "You can store a maximum of 5 charges.",
+              "after": "You can store a maximum of 6 charges."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

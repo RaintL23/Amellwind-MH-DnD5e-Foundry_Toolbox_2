@@ -1,0 +1,184 @@
+{
+  "date": "2026-09-09",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add Recall/Reflex and retune rarity bonuses",
+      "commit": "468f1e4",
+      "weapons": [
+        {
+          "name": "Wire Knuckles",
+          "file": "wire-knuckles.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Silkbind Tether",
+              "text": "Rewrote \"Silkbind Tether\" text.",
+              "before": "…this weapon, you can expend 1 Wirebug to embed a thread of ironsilk…",
+              "after": "…this weapon, you can expend 2 Wirebugs to embed a thread of ironsilk…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Silkbind Grapple",
+              "text": "Rewrote \"Silkbind Grapple\" text.",
+              "before": "…attempt to Grapple it even if it is up to two size categories larger than you.",
+              "after": "…Grapple it even if it is up to two size categories larger than you. The Grapple succeeds automatically — no contested check is required — and the creature bec…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Wirebug Whisperer",
+              "text": "Rewrote \"Wirebug Whisperer\" text.",
+              "before": "…roll a 20 on an attack roll…",
+              "after": "…score a Critical Hit…"
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Wirebug Recall",
+              "text": "Added feature \"Wirebug Recall\": As a Bonus Action, you can regain 1 expended Wirebug.",
+              "after": "As a Bonus Action, you can regain 1 expended Wirebug."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Wirebug Recall Upgrade",
+              "text": "Added feature \"Wirebug Recall Upgrade\": When you use Wirebug Recall, you regain 2 expended Wirebugs instead of 1.",
+              "after": "When you use Wirebug Recall, you regain 2 expended Wirebugs instead of 1."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Wirebug Reflex",
+              "text": "Added feature \"Wirebug Reflex\": When a creature misses you with an attack roll, you can use your Reaction to regain 1 expended Wirebug.",
+              "after": "When a creature misses you with an attack roll, you can use your Reaction to regain 1 expended Wirebug."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "…Gauge, Wire-Dash, Wire-Fall",
+              "after": "…Gauge, Wire-Dash, Wire-Fall, Wirebug Recall"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "Wyvern Ride",
+              "after": "Wyvern Ride, Wirebug Recall Upgrade, Wirebug Reflex"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Rename Shield Bash to Shield Strike",
+      "commit": "8745da7",
+      "weapons": [
+        {
+          "name": "Sword and Shield",
+          "file": "sword-and-shield.json",
+          "changes": [
+            {
+              "kind": "feature-renamed",
+              "feature": "Shield Strike",
+              "text": "Renamed feature \"Shield Bash\" → \"Shield Strike\".",
+              "before": "Shield Bash",
+              "after": "Shield Strike"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Shield Strike",
+              "text": "Rewrote \"Shield Strike\" text.",
+              "before": "You learn to seamlessly weave your shield into your attack forms. While equipped, the shield functions…",
+              "after": "While equipped, your shield counts…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Perfect Rush",
+              "text": "Rewrote \"Perfect Rush\" text.",
+              "before": "…your Sword and your Shield Bash during the same Attack action,…",
+              "after": "…your Sword and your Shield Strike during the same Attack action,…"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Fix miscelaneous",
+      "commit": "1ab96b6",
+      "weapons": [
+        {
+          "name": "Gunlance",
+          "file": "gunlance.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Full Burst",
+              "text": "Rewrote \"Full Burst\" text.",
+              "before": "…shells at once instead of just 1. The attack deals your Shelling Strike Thunder damage for each shell expended this way.",
+              "after": "…shells at once instead of just 1."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Enhance weapon features and upgrade mechanics",
+      "commit": "1eb9326",
+      "weapons": [
+        {
+          "name": "Gunlance",
+          "file": "gunlance.json",
+          "changes": [
+            {
+              "kind": "dice",
+              "feature": "Full Burst",
+              "text": "\"Full Burst\" dice 1d8 → —.",
+              "before": "1d8"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Full Burst",
+              "text": "Rewrote \"Full Burst\" text.",
+              "before": "…of just 1. The attack deals an extra 1d8 Thunder damage for each shell…",
+              "after": "…of just 1. The attack deals your Shelling Strike Thunder damage for each shell…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Wyvern's Fire",
+              "text": "Rewrote \"Wyvern's Fire\" text.",
+              "before": "…much on a successful one. Once you use this feature, you…",
+              "after": "…much on a successful one. On a failed save, a Large or smaller creature is also knocked Prone. Once you use this feature, you…"
+            },
+            {
+              "kind": "dice",
+              "feature": "Artillery Expert",
+              "text": "\"Artillery Expert\" dice 1d10 → —.",
+              "before": "1d10"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Artillery Expert",
+              "text": "Rewrote \"Artillery Expert\" text.",
+              "before": "…now hold a maximum of 6 shells, and the damage die of your Shelling Strike increases to 1d10 Thunder damage per shell.",
+              "after": "…now hold a maximum of 6 shells."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Guard Reload Upgrade",
+              "text": "Added feature \"Guard Reload Upgrade\": When a creature hits you with a melee attack while you are wielding the shield, you can use your Reaction to roll your Shelling Strike damage die and add it to…",
+              "after": "When a creature hits you with a melee attack while you are wielding the shield, you can use your Reaction to roll your Shelling Strike damage die and add it to your AC against that attack, potentiall…"
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Shelling Strike Upgrade I",
+              "text": "Added feature \"Shelling Strike Upgrade I\": The damage die of your Shelling Strike increases to 1d8 Thunder damage.",
+              "after": "The damage die of your Shelling Strike increases to 1d8 Thunder damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Shelling Strike Upgrade II",
+              "text": "Added feature \"Shelling Strike Upgrade II\": The damage die of your Shelling Strike increases to 1d10 Thunder damage.",
+              "after": "The damage die of your Shelling Strike increases to 1d10 Thunder damage."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

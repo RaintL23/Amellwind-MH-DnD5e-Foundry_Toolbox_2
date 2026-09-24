@@ -1,0 +1,229 @@
+{
+  "date": "2026-08-27",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add 'Free Hands' feature to sword and shield items",
+      "commit": "3b2a279",
+      "weapons": [
+        {
+          "name": "Sword and Shield",
+          "file": "sword-and-shield.json",
+          "changes": [
+            {
+              "kind": "feature-added",
+              "feature": "Free Hands",
+              "text": "Added feature \"Free Hands\": While wielding this weapon, you can perform the somatic components of spells even while holding both the sword and the shield.",
+              "after": "While wielding this weapon, you can perform the somatic components of spells even while holding both the sword and the shield."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Update Tonfas properties and descriptions",
+      "commit": "0efe0c8",
+      "weapons": [
+        {
+          "name": "Tonfas",
+          "file": "tonfas.json",
+          "changes": [
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Gauge",
+              "text": "Renamed feature \"Ryuuki Gauge\" → \"Spirit Gauge\".",
+              "before": "Ryuuki Gauge",
+              "after": "Spirit Gauge"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Spirit Gauge",
+              "text": "Rewrote \"Spirit Gauge\" text.",
+              "before": "…using this weapon, you gain 1 Ryuuki Charge (up to the maximum of…",
+              "after": "…using this weapon, you gain 1 Spirit Charge (up to the maximum of…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Burst",
+              "text": "Renamed feature \"Ryuuki Burst\" → \"Spirit Burst\".",
+              "before": "Ryuuki Burst",
+              "after": "Spirit Burst"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Spirit Burst",
+              "text": "Rewrote \"Spirit Burst\" text.",
+              "before": "…You can expend any number of Ryuuki Charges you currently have…",
+              "after": "…You can expend any number of Spirit Charges you currently have…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Gauge Upgrade I",
+              "text": "Renamed feature \"Ryuuki Gauge Upgrade I\" → \"Spirit Gauge Upgrade I\".",
+              "before": "Ryuuki Gauge Upgrade I",
+              "after": "Spirit Gauge Upgrade I"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Burst Upgrade I",
+              "text": "Renamed feature \"Ryuuki Burst Upgrade I\" → \"Spirit Burst Upgrade I\".",
+              "before": "Ryuuki Burst Upgrade I",
+              "after": "Spirit Burst Upgrade I"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Spirit Burst Upgrade I",
+              "text": "Rewrote \"Spirit Burst Upgrade I\" text.",
+              "before": "Your Ryuuki Burst increases to 1d6 Force…",
+              "after": "Your Spirit Burst increases to 1d6 Force…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Sky Step",
+              "text": "Rewrote \"Sky Step\" text.",
+              "before": "…standing jump, you can expend 1 Ryuuki Charge to double your jump…",
+              "after": "…standing jump, you can expend 1 Spirit Charge to double your jump…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Gauge Upgrade II",
+              "text": "Renamed feature \"Ryuuki Gauge Upgrade II\" → \"Spirit Gauge Upgrade II\".",
+              "before": "Ryuuki Gauge Upgrade II",
+              "after": "Spirit Gauge Upgrade II"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Burst Upgrade II",
+              "text": "Renamed feature \"Ryuuki Burst Upgrade II\" → \"Spirit Burst Upgrade II\".",
+              "before": "Ryuuki Burst Upgrade II",
+              "after": "Spirit Burst Upgrade II"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Spirit Burst Upgrade II",
+              "text": "Rewrote \"Spirit Burst Upgrade II\" text.",
+              "before": "Your Ryuuki Burst increases to 1d8 Force…",
+              "after": "Your Spirit Burst increases to 1d8 Force…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Earth Impact",
+              "text": "Rewrote \"Earth Impact\" text.",
+              "before": "…creature, you can expend 1 Ryuuki Charge. If you do, the target…",
+              "after": "…creature, you can expend 1 Spirit Charge. If you do, the target…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Gauge Upgrade III",
+              "text": "Renamed feature \"Ryuuki Gauge Upgrade III\" → \"Spirit Gauge Upgrade III\".",
+              "before": "Ryuuki Gauge Upgrade III",
+              "after": "Spirit Gauge Upgrade III"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Fast Spirit Charge",
+              "text": "Renamed feature \"Fast Ryuuki Charge\" → \"Fast Spirit Charge\".",
+              "before": "Fast Ryuuki Charge",
+              "after": "Fast Spirit Charge"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Fast Spirit Charge",
+              "text": "Rewrote \"Fast Spirit Charge\" text.",
+              "before": "…Initiative, your Tonfas generate 2 Ryuuki Charges.",
+              "after": "…Initiative, your Tonfas generate 2 Spirit Charges."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Sky Dash",
+              "text": "Rewrote \"Sky Dash\" text.",
+              "before": "…melee attack, you can expend 1 Ryuuki Charge to use your Reaction…",
+              "after": "…melee attack, you can expend 1 Spirit Charge to use your Reaction…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Gauge Upgrade IV",
+              "text": "Renamed feature \"Ryuuki Gauge Upgrade IV\" → \"Spirit Gauge Upgrade IV\".",
+              "before": "Ryuuki Gauge Upgrade IV",
+              "after": "Spirit Gauge Upgrade IV"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Spirit Burst Upgrade III",
+              "text": "Renamed feature \"Ryuuki Burst Upgrade III\" → \"Spirit Burst Upgrade III\".",
+              "before": "Ryuuki Burst Upgrade III",
+              "after": "Spirit Burst Upgrade III"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Spirit Burst Upgrade III",
+              "text": "Rewrote \"Spirit Burst Upgrade III\" text.",
+              "before": "Your Ryuuki Burst increases to 1d10 Force…",
+              "after": "Your Spirit Burst increases to 1d10 Force…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Apex Spirit",
+              "text": "Renamed feature \"Apex Ryuuki\" → \"Apex Spirit\".",
+              "before": "Apex Ryuuki",
+              "after": "Apex Spirit"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Apex Spirit",
+              "text": "Rewrote \"Apex Spirit\" text.",
+              "before": "…Ryuuki Charges in a single Ryuuki…",
+              "after": "…Spirit Charges in a single Spirit…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Common rarity features updated.",
+              "before": "…Ryuuki Gauge, Tonfa Styles, Ryuuki…",
+              "after": "…Spirit Gauge, Tonfa Styles, Spirit…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "Ryuuki Gauge Upgrade I, Ryuuki…",
+              "after": "Spirit Gauge Upgrade I, Spirit…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Rare rarity features updated.",
+              "before": "Ryuuki Gauge Upgrade II, Ryuuki…",
+              "after": "Spirit Gauge Upgrade II, Spirit…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "Ryuuki Gauge Upgrade III, Fast Ryuuki…",
+              "after": "Spirit Gauge Upgrade III, Fast Spirit…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Legendary rarity features updated.",
+              "before": "Ryuuki Gauge Upgrade IV, Ryuuki Burst Upgrade III, Style Master, Apex Ryuuki",
+              "after": "Spirit Gauge Upgrade IV, Spirit Burst Upgrade III, Style Master, Apex Spirit"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Tonfas weapon and update manifest",
+      "commit": "4456db4",
+      "weapons": [
+        {
+          "name": "Tonfas",
+          "file": "tonfas.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Tonfas\" to the catalog (17 features)."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

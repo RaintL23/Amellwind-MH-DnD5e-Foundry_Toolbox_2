@@ -1,0 +1,532 @@
+{
+  "date": "2026-08-07",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add Charge Blade variants with unique abilities",
+      "commit": "2c46348",
+      "weapons": [
+        {
+          "name": "Charge Blade",
+          "file": "charge-blade.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Guard Point (Elemental Guard)",
+              "text": "Rewrote \"Guard Point (Elemental Guard)\" text.",
+              "before": "…Acid, Cold, Fire, or Lightning damage (your choice upon attunement)…",
+              "after": "…damage of your Elemental Attunement type…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Elemental Discharge",
+              "text": "Rewrote \"Elemental Discharge\" text.",
+              "before": "…elemental damage (of your chosen type)…",
+              "after": "…damage of your Elemental Attunement type…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Amped Element Discharge (AED)",
+              "text": "Rewrote \"Amped Element Discharge (AED)\" text.",
+              "before": "…all remaining Phial Charges (minimum of 1) to unleash a 15-foot cone of elemental energy. Each creature in that area must make a Dexterity saving throw (DC 8…",
+              "after": "…any number of remaining Phial Charges (minimum of 1) to unleash a 15-foot cone of elemental energy. Each creature in that area must make a Dexterity saving th…"
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Elemental Attunement",
+              "text": "Added feature \"Elemental Attunement\": Once per Short rest or Long rest, you can change the element attuned to this weapon.",
+              "after": "Once per Short rest or Long rest, you can change the element attuned to this weapon."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Common rarity features updated.",
+              "before": "Switch Mode, Mastery (Sap) (Sword & Shield),…",
+              "after": "Switch Mode, Elemental Attunement, Mastery (Sap) (Sword & Shield),…"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Wire Knuckles (Rare and Uncommon) with unique abilities",
+      "commit": "5433956",
+      "weapons": [
+        {
+          "name": "Wire Knuckles",
+          "file": "wire-knuckles.json",
+          "changes": [
+            {
+              "kind": "field",
+              "text": "Icon: — → /mh-icons/weapon_tonfas.webp.",
+              "before": "—",
+              "after": "/mh-icons/weapon_tonfas.webp"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Wirebug Gauge",
+              "text": "Rewrote \"Wirebug Gauge\" text.",
+              "before": "our gauntlets house 3 Wirebugs…",
+              "after": "Your gauntlets house 3 Wirebugs…"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Dual Blades variants and associated macros",
+      "commit": "a7f7151",
+      "weapons": [
+        {
+          "name": "Dual Blades",
+          "file": "dual-blades.json",
+          "changes": [
+            {
+              "kind": "field",
+              "text": "Value: 30 → 3000.",
+              "before": "30",
+              "after": "3000"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Update Light Bowgun damage and upgrade descriptions",
+      "commit": "756607c",
+      "weapons": [
+        {
+          "name": "Light Bowgun",
+          "file": "light-bowgun.json",
+          "changes": [
+            {
+              "kind": "dice",
+              "text": "Base damage 1d6 → 1d4.",
+              "before": "1d6",
+              "after": "1d4"
+            },
+            {
+              "kind": "dice",
+              "feature": "Normal Ammo",
+              "text": "\"Normal Ammo\" dice 1d6 → 1d4.",
+              "before": "1d6",
+              "after": "1d4"
+            },
+            {
+              "kind": "dice",
+              "feature": "Spread Ammo",
+              "text": "\"Spread Ammo\" dice 1d6 → 1d4.",
+              "before": "1d6",
+              "after": "1d4"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Evading Reload",
+              "text": "Rewrote \"Evading Reload\" text.",
+              "before": "…fully reload your magazine as part of that movement without expending an action.",
+              "after": "…reload half your magazine as part of that movement without expending an action. When you do so, choose either standard ammunition (Normal, Pierce, or Spread A…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Rapid Fire Upgrade I",
+              "text": "Rewrote \"Rapid Fire Upgrade I\" text.",
+              "before": "…make an attack as a Bonus Action, you can make two…",
+              "after": "…attack as a Bonus Action, you can make two additional…"
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Ammunition Damage Upgrades",
+              "text": "Removed feature \"Ammunition Damage Upgrades\"."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Rapid Fire Upgrade II",
+              "text": "Added feature \"Rapid Fire Upgrade II\": When you use your Rapid Fire feature to attack as a Bonus Action, you can make three additional attacks instead of two.",
+              "after": "When you use your Rapid Fire feature to attack as a Bonus Action, you can make three additional attacks instead of two."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Rapid Fire Upgrade III",
+              "text": "Added feature \"Rapid Fire Upgrade III\": When you use your Rapid Fire feature to attack as a Bonus Action, you can make four additional attacks instead of three.",
+              "after": "When you use your Rapid Fire feature to attack as a Bonus Action, you can make four additional attacks instead of three."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Normal Ammo Upgrade",
+              "text": "Added feature \"Normal Ammo Upgrade\": Your Normal Ammo now deals an extra 1d6 Piercing damage.",
+              "after": "Your Normal Ammo now deals an extra 1d6 Piercing damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Pierce Ammo Upgrade",
+              "text": "Added feature \"Pierce Ammo Upgrade\": Your Pierce Ammo now deals an extra 1d6 Piercing damage.",
+              "after": "Your Pierce Ammo now deals an extra 1d6 Piercing damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Spread Ammo Upgrade",
+              "text": "Added feature \"Spread Ammo Upgrade\": Your Spread Ammo now deals an extra 1d6 Piercing damage.",
+              "after": "Your Spread Ammo now deals an extra 1d6 Piercing damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Recover Ammo Upgrade",
+              "text": "Added feature \"Recover Ammo Upgrade\": Your Recover Ammo now restores 2d4 + your Proficiency Bonus hit points.",
+              "after": "Your Recover Ammo now restores 2d4 + your Proficiency Bonus hit points."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Flaming Ammo Upgrade",
+              "text": "Added feature \"Flaming Ammo Upgrade\": Your Flaming Ammo now deals an extra 1d6 Fire damage.",
+              "after": "Your Flaming Ammo now deals an extra 1d6 Fire damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Water Ammo Upgrade",
+              "text": "Added feature \"Water Ammo Upgrade\": Your Water Ammo now deals an extra 1d6 Acid damage.",
+              "after": "Your Water Ammo now deals an extra 1d6 Acid damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Thunder Ammo Upgrade",
+              "text": "Added feature \"Thunder Ammo Upgrade\": Your Thunder Ammo now deals an extra 1d6 Lightning damage.",
+              "after": "Your Thunder Ammo now deals an extra 1d6 Lightning damage."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Freeze Ammo Upgrade",
+              "text": "Added feature \"Freeze Ammo Upgrade\": Your Freeze Ammo now deals an extra 1d6 Cold damage.",
+              "after": "Your Freeze Ammo now deals an extra 1d6 Cold damage."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Common rarity features updated.",
+              "before": "…Rapid Fire, Magazine, Reload, Evading Reload",
+              "after": "…Rapid Fire, Magazine, Reload"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "Magazine Upgrade I, Special Ammo, Wyvernblast",
+              "after": "Rapid Fire Upgrade I, Magazine Upgrade I, Special Ammo, Wyvernblast, Evading Reload"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Rare rarity features updated.",
+              "before": "Magazine Upgrade II, Special…",
+              "after": "Rapid Fire Upgrade II, Magazine Upgrade II, Special…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "…I, Magazine Upgrade III, Special Ammo Upgrade II, Counter Mine, Ammunition Damage Upgrades",
+              "after": "…III, Magazine Upgrade III, Special Ammo Upgrade II, Counter Mine"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Redesign Bow coatings and Tracer progression",
+      "commit": "7510aea",
+      "weapons": [
+        {
+          "name": "Bow",
+          "file": "bow.json",
+          "changes": [
+            {
+              "kind": "field",
+              "text": "Properties: 2H → A, 2H.",
+              "before": "2H",
+              "after": "A, 2H"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Coatings",
+              "text": "Renamed feature \"Coating Charges\" → \"Coatings\".",
+              "before": "Coating Charges",
+              "after": "Coatings"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Coatings",
+              "text": "Rewrote \"Coatings\" text.",
+              "before": "The bow's magical quiver generates its own specialized coatings. It holds a maximum of 5 Coating Charges, regaining all expended charges when you finish a Shor…",
+              "after": "This weapon can apply specialized coatings that you purchase or craft as inventory items. You can apply only coating types unlocked for this weapon's rarity (a…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Charging Sidestep",
+              "text": "Rewrote \"Charging Sidestep\" text.",
+              "before": "…can leap up to 15 feet in any direction and generate 1 Coating Charge. This movement does not provoke Opportunity Attacks. If you make a ranged weapon attack…",
+              "after": "…leap up to 15 feet without provoking Opportunity Attacks. If you make a ranged attack with this bow later on the same turn, that…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Power Coating",
+              "text": "Rewrote \"Power Coating\" text.",
+              "before": "The attack deals an extra 1d6 Piercing…",
+              "after": "On a hit, the attack deals an extra 1d6 piercing…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Close Range Coating",
+              "text": "Rewrote \"Close Range Coating\" text.",
+              "before": "…can use this coating before you make the attack roll. You do not suffer Disadvantage for making this ranged attack while a hostile creature is within 5 feet o…",
+              "after": "…do not have Disadvantage on this ranged attack from a hostile creature within 5 feet of you. This coating expends a charge when you make the attack, hit or mi…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Acid Coating",
+              "text": "Rewrote \"Acid Coating\" text.",
+              "before": "The attack deals an extra 1d6 Acid damage",
+              "after": "On a hit, the attack deals an extra 1d6 acid damage."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Cold Coating",
+              "text": "Rewrote \"Cold Coating\" text.",
+              "before": "The attack deals an extra 1d6 Cold damage",
+              "after": "On a hit, the attack deals an extra 1d6 cold damage."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Fire Coating",
+              "text": "Rewrote \"Fire Coating\" text.",
+              "before": "The attack deals an extra 1d6 Fire damage",
+              "after": "On a hit, the attack deals an extra 1d6 fire damage."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Lightning Coating",
+              "text": "Rewrote \"Lightning Coating\" text.",
+              "before": "The attack deals an extra 1d6 Lightning damage",
+              "after": "On a hit, the attack deals an extra 1d6 lightning damage."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Dragonpiercer",
+              "text": "Rewrote \"Dragonpiercer\" text.",
+              "before": "…plant your feet and fire a penetrating shot. You fire an arrow in a 30-foot line that is 5 feet wide. Each creature in that line must make a Dexterity saving…",
+              "after": "…fire an arrow in a 30-foot line that is 5 feet wide. Each creature in that line must make a Dexterity saving throw against your Bow Save DC. A creature takes…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Tracer I",
+              "text": "Renamed feature \"Gauge Upgrade I\" → \"Tracer I\".",
+              "before": "Gauge Upgrade I",
+              "after": "Tracer I"
+            },
+            {
+              "kind": "dice",
+              "feature": "Tracer I",
+              "text": "\"Tracer I\" dice — → 1d6.",
+              "after": "1d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Tracer I",
+              "text": "Rewrote \"Tracer I\" text.",
+              "before": "The quiver can now hold up to 7 Coating Charges.",
+              "after": "When you hit a creature with a ranged attack using this bow, you gain 1 Tracer (maximum 3). All Tracer fades if you haven't made an attack with this bow for 1…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Advanced Coatings",
+              "text": "Rewrote \"Advanced Coatings\" text.",
+              "before": "…devastating alchemical mixtures.",
+              "after": "…Blast, Poison, Paralysis, and Sleep coatings."
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Blast Coating",
+              "text": "Renamed feature \"Blast Coating (Cost: 1 Charge)\" → \"Blast Coating\".",
+              "before": "Blast Coating (Cost: 1 Charge)",
+              "after": "Blast Coating"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Blast Coating",
+              "text": "Rewrote \"Blast Coating\" text.",
+              "before": "The attack deals its normal damage, and every creature within 5 feet of the target must succeed on a Dexterity saving or take 1d8 Fire…",
+              "after": "On a hit, each other creature within 5 feet of the target must succeed on a Dexterity saving throw against your Bow Save DC or take 1d8 fire…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Poison Coating",
+              "text": "Renamed feature \"Poison Coating (Cost: 2 Charges)\" → \"Poison Coating\".",
+              "before": "Poison Coating (Cost: 2 Charges)",
+              "after": "Poison Coating"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Poison Coating",
+              "text": "Rewrote \"Poison Coating\" text.",
+              "before": "The attack deals an extra 1d4 Poison Damage and the target is Poisoned for 1 minute. It can repeat the save at the end of each of its turns.",
+              "after": "On a hit, the attack deals an extra 1d4 poison damage, and the target must succeed on a Constitution saving throw against your Bow Save DC or have the Poisoned…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Paralysis Coating",
+              "text": "Renamed feature \"Paralysis Coating (Cost: 2 Charges)\" → \"Paralysis Coating\".",
+              "before": "Paralysis Coating (Cost: 2 Charges)",
+              "after": "Paralysis Coating"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Paralysis Coating",
+              "text": "Rewrote \"Paralysis Coating\" text.",
+              "before": "The attack deals an extra 1d4 Lightning damage and the target is Paralyzed until the end of its next turn. Once a creature…",
+              "after": "On a hit, the attack deals an extra 1d4 lightning damage, and the target must succeed on a Constitution saving throw against your Bow Save DC or have the Paral…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Sleep Coating",
+              "text": "Renamed feature \"Sleep Coating (Cost: 2 Charges)\" → \"Sleep Coating\".",
+              "before": "Sleep Coating (Cost: 2 Charges)",
+              "after": "Sleep Coating"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Sleep Coating",
+              "text": "Rewrote \"Sleep Coating\" text.",
+              "before": "The target falls Unconscious for 1 minute, or until it takes damage or someone uses an action to shake it awake.",
+              "after": "On a hit, the target must succeed on a Constitution saving throw against your Bow Save DC or have the Unconscious condition for 1 minute, or until it takes dam…"
+            },
+            {
+              "kind": "dice",
+              "feature": "Power Coating Upgrade I",
+              "text": "\"Power Coating Upgrade I\" dice 1d6 → 2d6.",
+              "before": "1d6",
+              "after": "2d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Power Coating Upgrade I",
+              "text": "Rewrote \"Power Coating Upgrade I\" text.",
+              "before": "When you use your Power Shot Coating, you can now expend up to 2 Coating Charges at once. You roll one additional weapon damage die (1d6) for each charge expen…",
+              "after": "Your Power Coating's extra damage becomes 2d6 piercing."
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Tracer II",
+              "text": "Renamed feature \"Gauge Upgrade II\" → \"Tracer II\".",
+              "before": "Gauge Upgrade II",
+              "after": "Tracer II"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Tracer II",
+              "text": "Rewrote \"Tracer II\" text.",
+              "before": "The quiver can now hold up to 9 Coating Charges.",
+              "after": "Your Tracer maximum becomes 5."
+            },
+            {
+              "kind": "dice",
+              "feature": "Power Coating Upgrade II",
+              "text": "\"Power Coating Upgrade II\" dice — → 3d6.",
+              "after": "3d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Power Coating Upgrade II",
+              "text": "Rewrote \"Power Coating Upgrade II\" text.",
+              "before": "…can now expend up to 3 Coating Charges at once.",
+              "after": "Your Power Coating's extra damage becomes 3d6 piercing."
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Acid Coating Upgrade I",
+              "text": "Renamed feature \"Elemental Coatings\" → \"Acid Coating Upgrade I\".",
+              "before": "Elemental Coatings",
+              "after": "Acid Coating Upgrade I"
+            },
+            {
+              "kind": "dice",
+              "feature": "Acid Coating Upgrade I",
+              "text": "\"Acid Coating Upgrade I\" dice — → 2d6.",
+              "after": "2d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Acid Coating Upgrade I",
+              "text": "Rewrote \"Acid Coating Upgrade I\" text.",
+              "before": "…quiver adapts to exploit monster vulnerabilities. When you expend a charge to apply a coating on a hit, you can choose to apply an Element Coating.",
+              "after": "…Acid Coating's extra damage becomes 2d6 acid."
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Cold Coating Upgrade I",
+              "text": "Renamed feature \"Elemental Coatings Upgrade I\" → \"Cold Coating Upgrade I\".",
+              "before": "Elemental Coatings Upgrade I",
+              "after": "Cold Coating Upgrade I"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Cold Coating Upgrade I",
+              "text": "Rewrote \"Cold Coating Upgrade I\" text.",
+              "before": "Elemental dice damage increases to 2d6.",
+              "after": "Your Cold Coating's extra damage becomes 2d6 cold."
+            },
+            {
+              "kind": "feature-text",
+              "feature": "True Dragonpiercer",
+              "text": "Rewrote \"True Dragonpiercer\" text.",
+              "before": "…increases to 6d6. Additionally, the shot is so powerful it ignores half…",
+              "after": "…becomes 6d6. The shot ignores half cover…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Tracer III",
+              "text": "Renamed feature \"Gauge Upgrade III\" → \"Tracer III\".",
+              "before": "Gauge Upgrade III",
+              "after": "Tracer III"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Tracer III",
+              "text": "Rewrote \"Tracer III\" text.",
+              "before": "The quiver can now hold up to 12 Coating Charges.",
+              "after": "Your Tracer maximum becomes 7."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Fire Coating Upgrade I",
+              "text": "Added feature \"Fire Coating Upgrade I\": Your Fire Coating's extra damage becomes 2d6 fire.",
+              "after": "Your Fire Coating's extra damage becomes 2d6 fire."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Lightning Coating Upgrade I",
+              "text": "Added feature \"Lightning Coating Upgrade I\": Your Lightning Coating's extra damage becomes 2d6 lightning.",
+              "after": "Your Lightning Coating's extra damage becomes 2d6 lightning."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "Charging Sidestep, Coating Charges",
+              "after": "Coatings, Charging Sidestep"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Rare rarity features updated.",
+              "before": "Elemental Coatings, Dragonpiercer, Gauge Upgrade…",
+              "after": "Dragonpiercer, Tracer…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Very Rare rarity features updated.",
+              "before": "Gauge Upgrade…",
+              "after": "Advanced Coatings, Tracer…"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Legendary rarity features updated.",
+              "before": "Elemental Coatings Upgrade I, True Dragonpiercer, Gauge Upgrade…",
+              "after": "True Dragonpiercer, Tracer…"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

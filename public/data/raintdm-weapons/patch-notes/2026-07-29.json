@@ -1,0 +1,90 @@
+{
+  "date": "2026-07-29",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add Gunlance and Magus Staff to the curated raintdm weapons catalog",
+      "commit": "b331a45",
+      "weapons": [
+        {
+          "name": "Gunlance",
+          "file": "gunlance.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Gunlance\" to the catalog (11 features)."
+            }
+          ]
+        },
+        {
+          "name": "Magus Staff",
+          "file": "magus-staff.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Magus Staff\" to the catalog (14 features)."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Enhance feature resolution and streamline rarity handling",
+      "commit": "1311900",
+      "weapons": [
+        {
+          "name": "Great Sword",
+          "file": "great-sword.json",
+          "changes": [
+            {
+              "kind": "feature-removed",
+              "feature": "Charged Slash",
+              "text": "Removed feature \"Charged Slash\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Guard (GS)",
+              "text": "Removed feature \"Guard (GS)\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Charged Slash Upgrade I",
+              "text": "Removed feature \"Charged Slash Upgrade I\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Guard Upgrade I (GS)",
+              "text": "Removed feature \"Guard Upgrade I (GS)\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Charged Slash Upgrade II",
+              "text": "Removed feature \"Charged Slash Upgrade II\"."
+            },
+            {
+              "kind": "feature-removed",
+              "feature": "Guard Upgrade II (GS)",
+              "text": "Removed feature \"Guard Upgrade II (GS)\"."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Lance to the curated raintdm weapons catalog",
+      "commit": "7c5b7f1",
+      "weapons": [
+        {
+          "name": "Lance",
+          "file": "lance.json",
+          "changes": [
+            {
+              "kind": "weapon-added",
+              "text": "Added \"Lance\" to the catalog (9 features)."
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

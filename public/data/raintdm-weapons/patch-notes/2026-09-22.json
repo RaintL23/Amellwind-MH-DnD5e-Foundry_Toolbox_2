@@ -1,0 +1,139 @@
+{
+  "date": "2026-09-22",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Update bow Dragonpiercer and charge blade feature rules",
+      "commit": "cdef33a",
+      "weapons": [
+        {
+          "name": "Bow",
+          "file": "bow.json",
+          "changes": [
+            {
+              "kind": "dice",
+              "feature": "Dragonpiercer",
+              "text": "\"Dragonpiercer\" dice 4d6 → 2d6.",
+              "before": "4d6",
+              "after": "2d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Dragonpiercer",
+              "text": "Rewrote \"Dragonpiercer\" text.",
+              "before": "As an Action, you fire an arrow in a 30-foot line that is 5 feet wide. Each creature in that line must make a Dexterity saving throw against your Bow Save DC.…",
+              "after": "Once per turn when you take the Attack action on your turn, you can replace one of your attacks to fire a dragonpiercer, striking all creatures in a 30-foot li…"
+            },
+            {
+              "kind": "dice",
+              "feature": "True Dragonpiercer",
+              "text": "\"True Dragonpiercer\" dice 6d6 → 4d6.",
+              "before": "6d6",
+              "after": "4d6"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "True Dragonpiercer",
+              "text": "Rewrote \"True Dragonpiercer\" text.",
+              "before": "…6d6. The shot ignores half cover and three-quarters cover.",
+              "after": "…4d6. The shot ignores half cover and three-quarters cover, and ignores resistance to piercing damage."
+            }
+          ]
+        },
+        {
+          "name": "Charge Blade",
+          "file": "charge-blade.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Elemental Attunement",
+              "text": "Rewrote \"Elemental Attunement\" text.",
+              "before": "Once per Short rest or Long rest, you can change the element attuned to this weapon.",
+              "after": "This weapon can be attuned to one damage type: acid, cold, fire, or lightning. Choose that type when you first attune the weapon (or when you first equip it if…"
+            },
+            {
+              "kind": "feature-renamed",
+              "feature": "Elemental Guard",
+              "text": "Renamed feature \"Guard Point (Elemental Guard)\" → \"Elemental Guard\".",
+              "before": "Guard Point (Elemental Guard)",
+              "after": "Elemental Guard"
+            },
+            {
+              "kind": "dice",
+              "feature": "Elemental Guard",
+              "text": "\"Elemental Guard\" dice 1d4 → —.",
+              "before": "1d4"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Elemental Guard",
+              "text": "Rewrote \"Elemental Guard\" text.",
+              "before": "You learn to perfectly time your blocks. As a Reaction when you are hit by a melee attack while in Sword & Shield Mode, you can expend 1 Phial Charge to add +2…",
+              "after": "Guard Point (Elemental Guard). You learn to perfectly time your blocks. While in Sword & Shield Mode, when you are hit by a melee attack, you can use your Reac…"
+            },
+            {
+              "kind": "dice",
+              "feature": "Amped Element Discharge (AED)",
+              "text": "\"Amped Element Discharge (AED)\" dice 1d8 → —.",
+              "before": "1d8"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Amped Element Discharge (AED)",
+              "text": "Rewrote \"Amped Element Discharge (AED)\" text.",
+              "before": "You can unleash all stored energy in one devastating shockwave. As an Action while in Axe Mode, you can expend any number of remaining Phial Charges (minimum o…",
+              "after": "Once per turn when you take the Attack action on your turn, you can replace one of your attacks with this property: expend any number of Phial Charges (minimum…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Charged Shield (Red Shield)",
+              "text": "Rewrote \"Charged Shield (Red Shield)\" text.",
+              "before": "…your Amped Element Discharge Action, you can choose to cancel the…",
+              "after": "…your Amped Element Discharge attack, you can choose to cancel the…"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Guard Point Upgrade I",
+              "text": "Rewrote \"Guard Point Upgrade I\" text.",
+              "before": "Your Guard Point damage increases to 1d6.",
+              "after": "Your Guard Dice increases to 1d6."
+            },
+            {
+              "kind": "dice",
+              "feature": "Amped Element Discharge Upgrade I",
+              "text": "\"Amped Element Discharge Upgrade I\" dice 1d10 → 1d8.",
+              "before": "1d10",
+              "after": "1d8"
+            },
+            {
+              "kind": "dice",
+              "feature": "Super Amped Element Discharge",
+              "text": "\"Super Amped Element Discharge\" dice 1d12 → 1d10.",
+              "before": "1d12",
+              "after": "1d10"
+            },
+            {
+              "kind": "feature-text",
+              "feature": "Guard Point Upgrade II",
+              "text": "Rewrote \"Guard Point Upgrade II\" text.",
+              "before": "Your Guard Point damage increases to 1d8.",
+              "after": "Your Guard Dice increases to 1d8."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "…Guard Point (Elemental Guard)",
+              "after": "…Elemental Guard, Elemental Discharge"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Rare rarity features updated.",
+              "before": "Elemental Discharge, Amped Element Discharge (AED)",
+              "after": "Amped Element Discharge (AED)"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

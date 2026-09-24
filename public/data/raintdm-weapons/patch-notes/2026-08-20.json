@@ -1,0 +1,91 @@
+{
+  "date": "2026-08-20",
+  "generatedAt": "2026-09-24T21:27:17.926Z",
+  "entries": [
+    {
+      "summary": "Add legendary Longsword technique spirit-on-hit",
+      "commit": "9478d93",
+      "weapons": [
+        {
+          "name": "Longsword",
+          "file": "longsword.json",
+          "changes": [
+            {
+              "kind": "feature-text",
+              "feature": "Spirit Gauge",
+              "text": "Rewrote \"Spirit Gauge\" text.",
+              "before": "…attack do not generate spirit. You cannot apply Spirit Blade…",
+              "after": "…attack do not generate spirit unless a later upgrade says otherwise. You cannot apply Spirit Blade…"
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Foresight Slash Upgrade I",
+              "text": "Added feature \"Foresight Slash Upgrade I\": When the Foresight Slash counter-attack hits, you gain 1 spirit (in addition to the spirit you regain if you caused the triggering attack to miss).",
+              "after": "When the Foresight Slash counter-attack hits, you gain 1 spirit (in addition to the spirit you regain if you caused the triggering attack to miss)."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Spirit Thrust Upgrade I",
+              "text": "Added feature \"Spirit Thrust Upgrade I\": On a hit, this attack now generates 1 spirit.",
+              "after": "On a hit, this attack now generates 1 spirit."
+            },
+            {
+              "kind": "feature-added",
+              "feature": "Spirit Roundslash Upgrade I",
+              "text": "Added feature \"Spirit Roundslash Upgrade I\": On a hit, this attack now generates 1 spirit.",
+              "after": "On a hit, this attack now generates 1 spirit."
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Legendary rarity features updated.",
+              "before": "Special Sheathe (Iai Spirit…",
+              "after": "Foresight Slash Upgrade I, Spirit Thrust Upgrade I, Spirit Roundslash Upgrade I, Special Sheathe (Iai Spirit…"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Enhance export functionality and UI for Foundry VTT JSON",
+      "commit": "39f70f2",
+      "weapons": [
+        {
+          "name": "Heavy Bowgun",
+          "file": "heavy-bowgun.json",
+          "changes": [
+            {
+              "kind": "rarity-table",
+              "text": "Uncommon rarity features updated.",
+              "before": "…Upgrade I, Ignition, Wyvernheart, Wyvernheart Upgrade I, Guard, Special Ammo",
+              "after": "…Upgrade I, Ignition, Wyvernheart, Guard, Special Ammo"
+            },
+            {
+              "kind": "rarity-table",
+              "text": "Rare rarity features updated.",
+              "before": "Magazine Upgrade II, Special…",
+              "after": "Wyvernheart Upgrade I, Magazine Upgrade II, Special…"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "summary": "Add Lance Aegis Wall upgrade and Foundry overlay",
+      "commit": "7f837cf",
+      "weapons": [
+        {
+          "name": "Lance",
+          "file": "lance.json",
+          "changes": [
+            {
+              "kind": "feature-added",
+              "feature": "Aegis Wall",
+              "text": "Added feature \"Aegis Wall\": Your Shielding Presence improves. Once per Long Rest, when you would make a Dexterity saving throw against an area effect while you are conscious and wielding…",
+              "after": "Your Shielding Presence improves. Once per Long Rest, when you would make a Dexterity saving throw against an area effect while you are conscious and wielding the shield, you can use your Reaction to…"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
